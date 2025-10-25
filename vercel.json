@@ -11,5 +11,12 @@
     "deploymentEnabled": {
       "main": true
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/oldpage",
+      "destination": "/",
+      "permanent": false
+    }
+  ]
 }
