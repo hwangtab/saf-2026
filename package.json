@@ -1,0 +1,39 @@
+{
+  "name": "saf-2026",
+  "version": "1.0.0",
+  "description": "SAF(Seed Art Festival) 2026 공식 웹사이트",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "format": "prettier --write .",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "framer-motion": "^10.16.0",
+    "lite-youtube-embed": "^0.3.0",
+    "next": "^14.0.0",
+    "react": "^18.2.0",
+    "react-countup": "^6.4.0",
+    "react-dom": "^18.2.0",
+    "react-intersection-observer": "^9.5.0",
+    "react-share": "^4.4.0",
+    "recharts": "^2.10.0",
+    "tailwindcss": "^3.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^8.52.0",
+    "eslint-config-next": "^14.0.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.0.0",
+    "postcss": "^8.4.31",
+    "prettier": "^3.0.0",
+    "typescript": "^5.3.0"
+  }
+}

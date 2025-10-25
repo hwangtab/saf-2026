@@ -1,0 +1,142 @@
+'use client';
+
+import { useState } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { usePathname } from 'next/navigation';
+import { motion } from 'framer-motion';
+import { EXTERNAL_LINKS } from '@/lib/constants';
+
+const navigation = [
+  { name: '씨앗:페 2026', href: '/' },
+  { name: '우리의 현실', href: '/our-reality' },
+  { name: '우리의 증명', href: '/our-proof' },
+  { name: '참여 예술가', href: '/artists' },
+  { name: '아카이브', href: '/archive' },
+  { name: '전시 안내', href: '/exhibition' },
+];
+
+export default function Header() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  const isActive = (href: string) => {
+    if (href === '/' && pathname === '/') return true;
+    if (href !== '/' && pathname.startsWith(href)) return true;
+    return false;
+  };
+
+  return (
+    <header className="sticky top-0 z-50 bg-white shadow-sm">
+      <nav className="container-max flex items-center justify-between h-16">
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2 font-bold text-xl hover:opacity-80 transition-opacity">
+          <Image
+            src="/images/logo/saf1.png"
+            alt="씨앗:페 로고"
+            width={40}
+            height={40}
+            className="w-10 h-10"
+            priority
+          />
+          <span>씨앗:페</span>
+        </Link>
+
+        {/* Desktop Navigation */}
+        <div className="hidden lg:flex items-center gap-8">
+          {navigation.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`text-sm font-medium transition-colors ${
+                isActive(item.href)
+                  ? 'text-primary border-b-2 border-primary'
+                  : 'text-gray-700 hover:text-primary'
+              }`}
+            >
+              {item.name}
+            </Link>
+          ))}
+        </div>
+
+        {/* Donate Button (Desktop) */}
+        <div className="hidden lg:flex">
+          <a
+            href={EXTERNAL_LINKS.DONATE}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-primary hover:bg-yellow-500 text-black font-bold px-6 py-2 rounded-lg transition-colors"
+          >
+            ❤️ 후원하기
+          </a>
+        </div>
+
+        {/* Mobile Menu Button */}
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="lg:hidden p-2 text-gray-700 hover:text-primary"
+          aria-label="메뉴 토글"
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            {mobileMenuOpen ? (
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            ) : (
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            )}
+          </svg>
+        </button>
+      </nav>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          className="lg:hidden bg-white border-t"
+        >
+          <div className="container-max py-4 space-y-3">
+            {navigation.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className={`block py-2 px-4 rounded-lg transition-colors ${
+                  isActive(item.href)
+                    ? 'bg-primary text-black font-bold'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                {item.name}
+              </Link>
+            ))}
+            <a
+              href={EXTERNAL_LINKS.DONATE}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block w-full bg-primary hover:bg-yellow-500 text-black font-bold px-4 py-2 rounded-lg text-center transition-colors"
+            >
+              ❤️ 후원하기
+            </a>
+          </div>
+        </motion.div>
+      )}
+    </header>
+  );
+}
