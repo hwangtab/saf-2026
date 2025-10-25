@@ -32,3 +32,6 @@ yarn-error.log*
 *.swp
 *.swo
 *~
+
+# Vercel
+.vercel/

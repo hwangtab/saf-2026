@@ -32,7 +32,7 @@ export default function Header() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 font-bold text-xl hover:opacity-80 transition-opacity">
           <Image
-            src="/images/logo/saf1.png"
+            src="/images/logo/saf2.png"
             alt="씨앗:페 로고"
             width={40}
             height={40}

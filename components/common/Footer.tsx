@@ -7,26 +7,24 @@ export default function Footer() {
   return (
     <footer className="bg-gray-900 text-white mt-20">
       <div className="container-max py-12">
-        {/* Logo */}
-        <div className="mb-8">
-          <Image
-            src="/images/logo/saf1.png"
-            alt="씨앗:페 로고"
-            width={60}
-            height={60}
-            className="w-16 h-16"
-          />
-        </div>
-
         {/* Footer Content Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-          {/* Organization Info */}
+          {/* Organization Info with Logo */}
           <div>
-            <h3 className="font-bold text-lg mb-4">씨앗:페 2026</h3>
+            <div className="flex items-center gap-3 mb-6">
+              <Image
+                src="/images/logo/saf2.png"
+                alt="씨앗:페 로고"
+                width={48}
+                height={48}
+                className="w-12 h-12 flex-shrink-0"
+              />
+              <h3 className="font-bold text-lg">씨앗:페 2026</h3>
+            </div>
             <p className="text-gray-300 text-sm mb-4">
               한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인입니다.
             </p>
-            <div className="text-sm text-gray-400">
+            <div className="text-sm text-gray-400 space-y-1">
               <p>{CONTACT.ORGANIZATION_NAME}</p>
               <p>{CONTACT.ADDRESS}</p>
               <p>{CONTACT.PHONE}</p>
