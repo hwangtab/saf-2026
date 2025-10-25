@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import CountUp from 'react-countup';
 import { useInView } from 'react-intersection-observer';
 
@@ -20,13 +20,13 @@ export default function DynamicCounter({ items }: DynamicCounterProps) {
     threshold: 0.5,
   });
 
-  const hasStarted = useRef(false);
+  const [hasStarted, setHasStarted] = useState(false);
 
   useEffect(() => {
-    if (inView && !hasStarted.current) {
-      hasStarted.current = true;
+    if (inView && !hasStarted) {
+      setHasStarted(true);
     }
-  }, [inView]);
+  }, [inView, hasStarted]);
 
   return (
     <section ref={ref} className="py-12 bg-gradient-to-b from-primary/10 to-transparent">
@@ -41,7 +41,7 @@ export default function DynamicCounter({ items }: DynamicCounterProps) {
                 {item.label}
               </h3>
               <div className="text-3xl font-bold text-primary">
-                {hasStarted.current ? (
+                {hasStarted ? (
                   <>
                     <CountUp end={item.value} duration={2} separator="," />
                     <span className="text-lg">{item.unit}</span>
