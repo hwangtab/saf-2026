@@ -90,8 +90,8 @@ export default function ArchivePage() {
                 rel="noopener noreferrer"
                 className="group bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
               >
-                {article.thumbnail && (
-                  <div className="aspect-video bg-gradient-to-br from-primary/20 to-primary/5 overflow-hidden">
+                <div className="aspect-video bg-gradient-to-br from-primary/20 to-primary/5 overflow-hidden flex items-center justify-center">
+                  {article.thumbnail ? (
                     <Image
                       src={article.thumbnail}
                       alt={article.title}
@@ -99,8 +99,13 @@ export default function ArchivePage() {
                       height={450}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                     />
-                  </div>
-                )}
+                  ) : (
+                    <div className="text-gray-300 text-center">
+                      <div className="text-4xl mb-2">📄</div>
+                      <p className="text-sm">이미지 없음</p>
+                    </div>
+                  )}
+                </div>
                 <div className="p-6">
                   <p className="text-sm text-gray-500 mb-2">
                     {article.source} • {new Date(article.date).toLocaleDateString('ko-KR')}
@@ -189,7 +194,7 @@ export default function ArchivePage() {
       <section className="py-12 md:py-20 bg-white">
         <div className="container-max">
           <h2 className="text-3xl font-bold mb-12">📸 씨앗페 2023 현장</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {saf2023Photos.map((photo) => (
               <div
                 key={photo.id}
@@ -221,7 +226,7 @@ export default function ArchivePage() {
                 <VideoEmbed id={video.youtubeId} title={video.title} />
                 <div className="p-6">
                   <h3 className="text-xl font-bold mb-2">{video.title}</h3>
-                  <p className="text-gray-600 text-sm">{video.description}</p>
+                  <p className="text-gray-600 text-sm line-clamp-3">{video.description}</p>
                 </div>
               </div>
             ))}

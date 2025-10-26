@@ -177,7 +177,7 @@ export default function Home() {
               href={EXTERNAL_LINKS.ONLINE_GALLERY}
               target="_blank"
               rel="noopener noreferrer"
-              className="group p-8 bg-white border-2 border-gray-300 rounded-lg hover:shadow-lg transition-all hover:border-primary"
+              className="group p-8 bg-white border-2 border-primary rounded-lg hover:shadow-lg transition-all"
             >
               <div className="text-4xl mb-4">🎨</div>
               <h3 className="text-xl font-bold mb-3">작품 구매</h3>
@@ -191,7 +191,7 @@ export default function Home() {
 
             <Link
               href="/exhibition"
-              className="group p-8 bg-white border-2 border-gray-300 rounded-lg hover:shadow-lg transition-all hover:border-primary"
+              className="group p-8 bg-white border-2 border-primary rounded-lg hover:shadow-lg transition-all"
             >
               <div className="text-4xl mb-4">🏛️</div>
               <h3 className="text-xl font-bold mb-3">전시 방문</h3>

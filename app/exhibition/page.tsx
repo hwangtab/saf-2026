@@ -79,16 +79,16 @@ export default function ExhibitionPage() {
                 <div className="space-y-4">
                   <div className="border-l-4 border-primary pl-4">
                     <h3 className="text-sm text-gray-500 font-semibold mb-1">행사명</h3>
-                    <p className="text-xl font-bold">{EXHIBITION.NAME}</p>
+                    <p className="text-lg font-semibold">{EXHIBITION.NAME}</p>
                   </div>
                   <div className="border-l-4 border-primary pl-4">
                     <h3 className="text-sm text-gray-500 font-semibold mb-1">기간</h3>
-                    <p className="text-lg">{EXHIBITION.DATE}</p>
+                    <p className="text-lg font-semibold">{EXHIBITION.DATE}</p>
                   </div>
                   <div className="border-l-4 border-primary pl-4">
                     <h3 className="text-sm text-gray-500 font-semibold mb-1">장소</h3>
                     <p className="text-lg font-semibold">{EXHIBITION.LOCATION}</p>
-                    <p className="text-gray-600">{EXHIBITION.ADDRESS}</p>
+                    <p className="text-gray-600 text-sm">{EXHIBITION.ADDRESS}</p>
                   </div>
                 </div>
               </div>
@@ -124,7 +124,7 @@ export default function ExhibitionPage() {
                 href={EXTERNAL_LINKS.INSA_GALLERY_KAKAO}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block mt-4 bg-yellow-400 hover:bg-yellow-500 text-black font-bold px-4 py-2 rounded text-sm transition-colors"
+                className="inline-block mt-4 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold px-6 py-3 rounded-lg transition-colors"
               >
                 카카오맵에서 보기
               </a>

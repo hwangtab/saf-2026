@@ -65,21 +65,21 @@ export default function OurProof() {
 
           {/* Success Stories */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-            <div className="bg-gray-50 p-8 rounded-lg">
+            <div className="bg-white p-8 rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow">
               <div className="text-4xl font-bold text-primary mb-4">150+</div>
               <h3 className="font-bold text-lg mb-2">지원받은 예술인</h3>
               <p className="text-gray-600 text-sm">
                 이미 수백 명의 예술인이 상호부조 대출의 도움을 받았습니다.
               </p>
             </div>
-            <div className="bg-gray-50 p-8 rounded-lg">
+            <div className="bg-white p-8 rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow">
               <div className="text-4xl font-bold text-primary mb-4">95%</div>
               <h3 className="font-bold text-lg mb-2">상환율</h3>
               <p className="text-gray-600 text-sm">
                 95% 이상의 예술인들이 성실하게 대출금을 상환하고 있습니다.
               </p>
             </div>
-            <div className="bg-gray-50 p-8 rounded-lg">
+            <div className="bg-white p-8 rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow">
               <div className="text-4xl font-bold text-primary mb-4">4.99%</div>
               <h3 className="font-bold text-lg mb-2">저금리</h3>
               <p className="text-gray-600 text-sm">
