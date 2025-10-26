@@ -59,12 +59,12 @@ export default function RootLayout({
         <meta name="theme-color" content="#F4D03F" />
         <link rel="icon" href="/favicon.ico" />
       </head>
-      <body className="bg-white text-gray-900">
+      <body className="bg-white text-gray-900 flex flex-col min-h-screen">
         <a href="#main-content" className="skip-to-main">
           메인 콘텐츠로 이동
         </a>
         <Header />
-        <main id="main-content" role="main">
+        <main id="main-content" role="main" className="flex-grow">
           <Suspense fallback={<div>로딩 중...</div>}>{children}</Suspense>
         </main>
         <Footer />

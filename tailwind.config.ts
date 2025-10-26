@@ -26,10 +26,13 @@ const config: Config = {
       },
       fontFamily: {
         sans: [
+          'Pretendard',
           '-apple-system',
           'BlinkMacSystemFont',
-          'Pretendard',
-          'SUIT',
+          'system-ui',
+          'Roboto',
+          'Helvetica Neue',
+          'Arial',
           'sans-serif',
         ],
       },

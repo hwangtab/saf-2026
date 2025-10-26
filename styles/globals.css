@@ -1,17 +1,21 @@
+/* 1. Pretendard 폰트 import를 최상단으로 이동 */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css');
+
+/* 2. Tailwind 지시어 */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css');
-
-/* Tailwind's Preflight already handles reset - only keep box-sizing */
-*, *::before, *::after {
-  box-sizing: border-box;
+/* 3. Reusable component classes using @layer */
+@layer components {
+  .container-max {
+    @apply max-w-screen-xl mx-auto px-5;
+  }
 }
 
+/* 4. Base HTML and body styles */
 html {
   scroll-behavior: smooth;
-  font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
 body {
@@ -62,13 +66,7 @@ button:focus {
   outline: none;
 }
 
-/* Utility classes */
-.container-max {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
+/* Text gradient utility */
 .text-gradient {
   background: linear-gradient(135deg, #F4D03F 0%, #FFE66D 100%);
   -webkit-background-clip: text;
