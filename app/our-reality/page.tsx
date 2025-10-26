@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
+import TestimonialCard from '@/components/ui/TestimonialCard';
 
 const FirstBankAccessChart = dynamic(
   () =>
@@ -69,7 +70,7 @@ export default function OurReality() {
       <section className="py-16 md:py-24 bg-gradient-to-br from-gray-50 to-gray-100 text-center">
         <div className="container-max">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">우리의 현실</h1>
-          <p className="text-lg md:text-xl text-gray-600 mb-12 max-w-3xl mx-auto">
+          <p className="text-lg md:text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
             2025 예술인 금융 재난 보고서가 밝혀낸 한국 예술인의 금융 위기의 구조적 현실
           </p>
 
@@ -122,20 +123,17 @@ export default function OurReality() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-12 mb-12">
-            <div>
-              <FirstBankAccessChart />
-            </div>
             <div className="flex flex-col justify-center space-y-6">
               <div>
                 <h3 className="text-xl font-bold mb-3">은행의 문은 왜 닫혔나?</h3>
                 <ul className="space-y-3 text-gray-700">
                   <li className="flex gap-3">
                     <span className="font-bold text-red-500">•</span>
-                    <span><strong>53.1%</strong>는 대출 신청 후 직접적으로 <strong>'거절'</strong></span>
+                    <span><strong>53.1%</strong>는 대출 신청 후 직접적으로 <strong>거절</strong></span>
                   </li>
                   <li className="flex gap-3">
                     <span className="font-bold text-red-500">•</span>
-                    <span><strong>31.8%</strong>는 어차피 안 될 것이라 예상하며 <strong>'신청 포기'</strong></span>
+                    <span><strong>31.8%</strong>는 어차피 안 될 것이라 예상하며 <strong>신청 포기</strong></span>
                   </li>
                 </ul>
               </div>
@@ -143,28 +141,28 @@ export default function OurReality() {
                 <RejectionReasonsChart />
               </div>
             </div>
+            <div>
+              <FirstBankAccessChart />
+            </div>
           </div>
 
           {/* Stage 1 Testimony */}
-          <div className="bg-white p-8 rounded-lg border-l-4 border-red-500 max-w-2xl">
-            <p className="text-lg text-gray-700 italic mb-4">
-              "연극배우라고 하자 '무직자'라고 대출 담당자에게 들었습니다."
-            </p>
-            <p className="font-semibold text-gray-800">— 50대 배우</p>
-            <p className="text-sm text-gray-600 mt-3">
-              은행이 찍은 '무직자'라는 낙인은 성실한 예술가들을 시스템 밖으로 밀어내는 '자기실현적 예언'이 되었습니다.
-            </p>
-          </div>
+          <TestimonialCard
+            quote="연극배우라고 하자 무직자라고 대출 담당자에게 들었습니다."
+            author="50대 배우"
+            context="은행이 찍은 무직자라는 낙인은 성실한 예술가들을 시스템 밖으로 밀어내는 자기실현적 예언이 되었습니다."
+            borderColor="border-red-500"
+          />
         </div>
       </section>
 
       {/* Stage 2: 약탈 (48.6%) */}
-      <section className="py-12 md:py-20 bg-white">
+      <section className="py-12 md:py-20 bg-red-50/30">
         <div className="container-max">
           <div className="mb-12">
-            <span className="text-sm font-bold text-orange-500 uppercase">STAGE 2</span>
+            <span className="text-sm font-bold text-red-600 uppercase">STAGE 2</span>
             <h2 className="text-4xl md:text-5xl font-bold mb-4">낭떠러지: 고금리로 내몰리다</h2>
-            <p className="text-xl text-gray-600 max-w-2xl">고금리 상품 노출률 <strong className="text-orange-500">48.6%</strong> (연 15% 이상)</p>
+            <p className="text-xl text-gray-600 max-w-2xl">고금리 상품 노출률 <strong className="text-red-600">48.6%</strong> (연 15% 이상)</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-12 mb-12">
@@ -190,15 +188,13 @@ export default function OurReality() {
           </div>
 
           {/* Stage 2 Testimony */}
-          <div className="bg-red-50 p-8 rounded-lg border-l-4 border-orange-500 max-w-2xl">
-            <p className="text-lg text-gray-700 italic mb-4">
-              "12년간 낸 이자의 절반만 되었어도 빚을 없앴을 겁니다. 작품보다 매달 소일거리 찾기에 집중해야 하는 악순환에 갇혀있는 느낌이 듭니다."
-            </p>
-            <p className="font-semibold text-gray-800">— 40대 음악인</p>
-            <p className="text-sm text-gray-600 mt-3">
-              고금리는 단순한 이자가 아닙니다. 그것은 예술가의 시간을 빼앗고, 창작 의지를 꺾으며, 삶을 서서히 파괴하는 '보이지 않는 족쇄'입니다.
-            </p>
-          </div>
+          <TestimonialCard
+            quote="12년간 낸 이자의 절반만 되었어도 빚을 없앴을 겁니다. 이자 갚느라 작품 할 시간을 잃었습니다."
+            author="40대 음악인"
+            context="고금리는 단순한 이자가 아닙니다. 그것은 예술가의 시간을 빼앗고, 창작 의지를 꺾으며, 삶을 서서히 파괴하는 보이지 않는 족쇄입니다."
+            borderColor="border-red-600"
+            bgColor="bg-white"
+          />
         </div>
       </section>
 
@@ -206,15 +202,12 @@ export default function OurReality() {
       <section className="py-12 md:py-20 bg-red-50">
         <div className="container-max">
           <div className="mb-12">
-            <span className="text-sm font-bold text-red-600 uppercase">STAGE 3</span>
+            <span className="text-sm font-bold text-red-700 uppercase">STAGE 3</span>
             <h2 className="text-4xl md:text-5xl font-bold mb-4">파괴: 창작이 멈춘다</h2>
-            <p className="text-xl text-gray-600 max-w-2xl">채권추심 경험자의 창작 중단율 <strong className="text-red-600">88.3%</strong></p>
+            <p className="text-xl text-gray-600 max-w-2xl">채권추심 경험자의 창작 중단율 <strong className="text-red-700">88.3%</strong></p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-12 mb-12">
-            <div>
-              <DebtCollectionChart />
-            </div>
             <div className="flex flex-col justify-center space-y-6">
               <div>
                 <h3 className="text-xl font-bold mb-3">생존의 위기</h3>
@@ -227,37 +220,36 @@ export default function OurReality() {
 
               <CreativeImpactChart />
             </div>
+            <div>
+              <DebtCollectionChart />
+            </div>
           </div>
 
           {/* Stage 3 Testimonies */}
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl">
-            <div className="bg-white p-8 rounded-lg border-l-4 border-red-600">
-              <p className="text-lg text-gray-700 italic mb-4">
-                "아이들 모르게 나만 3일을 굶었던 기억."
-              </p>
-              <p className="font-semibold text-gray-800">— 50대 연극인</p>
-            </div>
+            <TestimonialCard
+              quote="아이들 모르게 나만 3일을 굶었던 기억."
+              author="50대 연극인"
+              borderColor="border-red-700"
+            />
 
-            <div className="bg-white p-8 rounded-lg border-l-4 border-red-600">
-              <p className="text-lg text-gray-700 italic mb-4">
-                "돈이 없어 절박했던 치과 치료를 못 받고 있어요. 병원을 제때 가야 하는데, 안 가고 웬만하면 참는 것이 이젠 습관이 돼버렸습니다."
-              </p>
-              <p className="font-semibold text-gray-800">— 50대 배우</p>
-            </div>
+            <TestimonialCard
+              quote="돈이 없어 절박했던 치과 치료를 못 받고 있어요. 병원을 제때 가야 하는데, 안 가고 웬만하면 참는 것이 이젠 습관이 돼버렸습니다."
+              author="50대 배우"
+              borderColor="border-red-700"
+            />
 
-            <div className="bg-white p-8 rounded-lg border-l-4 border-red-600">
-              <p className="text-lg text-gray-700 italic mb-4">
-                "독촉 전화로 연습과 공연에 지장을 주고 이로 인해 심리적 부담감과 압박이 하루하루를 고통스럽게 합니다."
-              </p>
-              <p className="font-semibold text-gray-800">— 40대 연극인</p>
-            </div>
+            <TestimonialCard
+              quote="독촉 전화로 연습과 공연에 지장을 주고 이로 인해 심리적 부담감과 압박이 하루하루를 고통스럽게 합니다."
+              author="40대 연극인"
+              borderColor="border-red-700"
+            />
 
-            <div className="bg-white p-8 rounded-lg border-l-4 border-red-600">
-              <p className="text-lg text-gray-700 italic mb-4">
-                "하루 4시간도 채 못 자며 알바와 연극을 병행하지만, 공연을 할수록 빚만 늘어가는 상황이 계속되어 공연을 그만두기로 함."
-              </p>
-              <p className="font-semibold text-gray-800">— 30대 배우</p>
-            </div>
+            <TestimonialCard
+              quote="하루 4시간도 채 못 자며 알바와 연극을 병행하지만, 공연을 할수록 빚만 늘어가는 상황이 계속되어 공연을 그만두기로 함."
+              author="30대 배우"
+              borderColor="border-red-700"
+            />
           </div>
         </div>
       </section>
@@ -326,25 +318,43 @@ export default function OurReality() {
 
       {/* 제언: 산소호흡기가 필요하다 */}
       <section className="py-12 md:py-20 bg-gray-50">
-        <div className="container-max max-w-3xl">
-          <h2 className="text-3xl md:text-4xl font-bold mb-8">산소호흡기가 필요하다</h2>
-          <div className="space-y-6 text-lg text-gray-700 mb-8">
+        <div className="container-max">
+          <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">산소호흡기가 필요하다</h2>
+          <div className="space-y-6 text-lg text-gray-700 mb-12 max-w-3xl mx-auto">
             <p>
               예술인에게 필요한 것은 일시적인 지원금이나 복지가 아닙니다.
               <strong> 예측 불가능한 소득 공백기를 버텨낼 안정적인 금융</strong>입니다.
             </p>
             <p>
-              복지는 '물고기'를 주는 것이라면, 금융은 물고기를 잡으러 나갈 다음 기회까지
-              버틸 수 있게 해주는 <strong>'산소호흡기'</strong>입니다.
+              복지는 물고기를 주는 것이라면, 금융은 물고기를 잡으러 나갈 다음 기회까지
+              버틸 수 있게 해주는 <strong>산소호흡기</strong>입니다.
             </p>
-            <p>
-              저금리의 안정적인 금융 접근권을 통해:
-            </p>
-            <ul className="space-y-2 list-disc list-inside">
-              <li>창작 시간을 살려내고</li>
-              <li>예술적 존엄성을 지킬 수 있으며</li>
-              <li>문화예술 생태계를 지속가능하게 할 수 있습니다</li>
-            </ul>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            <div className="bg-white p-6 rounded-lg shadow-sm border-t-4 border-primary">
+              <div className="text-4xl mb-3">⏱️</div>
+              <h4 className="font-bold text-lg mb-2">창작 시간을 살려내고</h4>
+              <p className="text-sm text-gray-600">
+                안정적인 금융으로 소득 공백기를 버티며 창작에 집중할 수 있습니다
+              </p>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm border-t-4 border-primary">
+              <div className="text-4xl mb-3">🎭</div>
+              <h4 className="font-bold text-lg mb-2">예술적 존엄성을 지키며</h4>
+              <p className="text-sm text-gray-600">
+                부당한 조건을 거부하고 자신의 예술적 가치를 지킬 수 있습니다
+              </p>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm border-t-4 border-primary">
+              <div className="text-4xl mb-3">🌱</div>
+              <h4 className="font-bold text-lg mb-2">생태계를 지속가능하게</h4>
+              <p className="text-sm text-gray-600">
+                문화예술 생태계의 다양성과 지속가능성을 확보할 수 있습니다
+              </p>
+            </div>
           </div>
         </div>
       </section>
