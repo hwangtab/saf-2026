@@ -116,15 +116,15 @@ export default function OurReality() {
 
       {/* Stage 1: 배제 (84.9%) */}
       <section className="py-12 md:py-20 bg-gray-50">
-        <div className="container-max space-y-12">
-          <div>
+        <div className="container-max">
+          <div className="mb-12">
             <span className="text-sm font-bold text-red-500 uppercase">STAGE 1</span>
             <h2 className="text-4xl md:text-5xl font-bold mb-4">닫힌 문: 은행이 거절하다</h2>
             <p className="text-xl text-gray-600 max-w-2xl">제1금융권 배제율 <strong className="text-red-500">84.9%</strong></p>
           </div>
 
           {/* Description Text */}
-          <div className="max-w-3xl">
+          <div className="max-w-3xl mb-12">
             <h3 className="text-xl font-bold mb-3">은행의 문은 왜 닫혔나?</h3>
             <ul className="space-y-3 text-gray-700">
               <li className="flex gap-3">
@@ -139,7 +139,7 @@ export default function OurReality() {
           </div>
 
           {/* Chart Grid */}
-          <div className="grid md:grid-cols-2 gap-12 items-start">
+          <div className="grid md:grid-cols-2 gap-12 items-start mb-16">
             <div className="h-96">
               <RejectionReasonsChart />
             </div>
@@ -160,15 +160,15 @@ export default function OurReality() {
 
       {/* Stage 2: 약탈 (48.6%) */}
       <section className="py-12 md:py-20 bg-red-50/30">
-        <div className="container-max space-y-12">
-          <div>
+        <div className="container-max">
+          <div className="mb-12">
             <span className="text-sm font-bold text-red-600 uppercase">STAGE 2</span>
             <h2 className="text-4xl md:text-5xl font-bold mb-4">낭떠러지: 고금리로 내몰리다</h2>
             <p className="text-xl text-gray-600 max-w-2xl">고금리 상품 노출률 <strong className="text-red-600">48.6%</strong> (연 15% 이상)</p>
           </div>
 
           {/* Description Text */}
-          <div className="max-w-3xl">
+          <div className="max-w-3xl mb-12">
             <h3 className="text-xl font-bold mb-3">선택이 아닌 생존</h3>
             <p className="text-gray-700 mb-4">
               은행 문이 닫힌 순간, 예술인들은 곧바로 저축은행, 카드론, 대부업체로 내몰립니다.
@@ -180,7 +180,7 @@ export default function OurReality() {
           </div>
 
           {/* Chart Grid */}
-          <div className="grid md:grid-cols-2 gap-12 items-start">
+          <div className="grid md:grid-cols-2 gap-12 items-start mb-16">
             <div className="h-96">
               <InterestRateDistributionChart />
             </div>
@@ -202,15 +202,15 @@ export default function OurReality() {
 
       {/* Stage 3: 파괴 (88.3%) */}
       <section className="py-12 md:py-20 bg-red-50">
-        <div className="container-max space-y-12">
-          <div>
+        <div className="container-max">
+          <div className="mb-12">
             <span className="text-sm font-bold text-red-700 uppercase">STAGE 3</span>
             <h2 className="text-4xl md:text-5xl font-bold mb-4">파괴: 창작이 멈춘다</h2>
             <p className="text-xl text-gray-600 max-w-2xl">채권추심 경험자의 창작 중단율 <strong className="text-red-700">88.3%</strong></p>
           </div>
 
           {/* Description Text */}
-          <div className="max-w-3xl">
+          <div className="max-w-3xl mb-12">
             <h3 className="text-xl font-bold mb-3">생존의 위기</h3>
             <p className="text-gray-700 mb-4">
               채권추심을 경험한 예술인은 <strong>10명 중 4명(43%)</strong>입니다.
@@ -220,7 +220,7 @@ export default function OurReality() {
           </div>
 
           {/* Chart Grid */}
-          <div className="grid md:grid-cols-2 gap-12 items-start">
+          <div className="grid md:grid-cols-2 gap-12 items-start mb-16">
             <div className="h-96">
               <CreativeImpactChart />
             </div>
@@ -230,7 +230,7 @@ export default function OurReality() {
           </div>
 
           {/* Stage 3 Testimonies */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <TestimonialCard
               quote="아이들 모르게 나만 3일을 굶었던 기억."
               author="50대 연극인"
