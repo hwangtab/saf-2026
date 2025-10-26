@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   FacebookShareButton,
   TwitterShareButton,
@@ -20,6 +20,18 @@ export default function ShareButtons({
   description,
 }: ShareButtonsProps) {
   const [copied, setCopied] = useState(false);
+
+  // Initialize Kakao SDK
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.Kakao && !window.Kakao.isInitialized()) {
+      // Kakao SDK is loaded but not initialized
+      // Note: Requires NEXT_PUBLIC_KAKAO_JS_KEY environment variable
+      const kakaoKey = process.env.NEXT_PUBLIC_KAKAO_JS_KEY;
+      if (kakaoKey) {
+        window.Kakao.init(kakaoKey);
+      }
+    }
+  }, []);
 
   const handleCopyLink = async () => {
     try {

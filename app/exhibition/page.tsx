@@ -162,7 +162,7 @@ export default function ExhibitionPage() {
               <div className="space-y-4 text-gray-600">
                 <div>
                   <p className="font-semibold text-gray-900">주소</p>
-                  <p>서울시 종로구 인사동</p>
+                  <p>서울시 종로구 인사동길 41-1</p>
                 </div>
                 <div>
                   <p className="font-semibold text-gray-900">주차</p>

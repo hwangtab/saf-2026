@@ -137,7 +137,7 @@ export default function Footer() {
           {/* Copyright */}
           <div className="text-center text-sm text-gray-400">
             <p>
-              © 2025 SAF 2026. All rights reserved. | 한국스마트협동조합{' '}
+              © {new Date().getFullYear()} SAF 2026. All rights reserved. | 한국스마트협동조합{' '}
               {CONTACT.PERSON_NAME}
             </p>
           </div>

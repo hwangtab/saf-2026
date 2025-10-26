@@ -11,7 +11,6 @@ const navigation = [
   { name: '씨앗:페 2026', href: '/' },
   { name: '우리의 현실', href: '/our-reality' },
   { name: '우리의 증명', href: '/our-proof' },
-  { name: '참여 예술가', href: '/artists' },
   { name: '아카이브', href: '/archive' },
   { name: '전시 안내', href: '/exhibition' },
   { name: '온라인 갤러리', href: EXTERNAL_LINKS.ONLINE_GALLERY, external: true },
