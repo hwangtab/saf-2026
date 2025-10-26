@@ -235,7 +235,7 @@ export default function ArchivePage() {
       </section>
 
       {/* Call to Action */}
-      <section className="py-12 md:py-20 bg-primary/5">
+      <section className="py-12 md:py-20 bg-primary/20">
         <div className="container-max text-center">
           <h2 className="text-3xl font-bold mb-6">이 역사에 당신도 함께하세요</h2>
           <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">

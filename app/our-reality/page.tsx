@@ -363,7 +363,7 @@ export default function OurReality() {
       </section>
 
       {/* Call to Action */}
-      <section className="py-12 md:py-20 bg-primary/10">
+      <section className="py-12 md:py-20 bg-primary/20">
         <div className="container-max text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">이제 행동할 시간입니다</h2>
           <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">

@@ -257,7 +257,7 @@ export default function ExhibitionPage() {
       </section>
 
       {/* Contact Section */}
-      <section className="py-12 md:py-20 bg-primary/5">
+      <section className="py-12 md:py-20 bg-primary/20">
         <div className="container-max text-center">
           <h2 className="text-3xl font-bold mb-8">문의사항</h2>
           <div className="space-y-4">
