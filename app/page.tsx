@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import DynamicCounter from '@/components/features/DynamicCounter';
+import BackgroundSlider from '@/components/features/BackgroundSlider';
 import { EXTERNAL_LINKS } from '@/lib/constants';
 
 export const metadata: Metadata = {
@@ -26,17 +27,18 @@ export default function Home() {
   return (
     <>
       {/* Hero Section */}
-      <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 py-12 md:py-20">
-        <div className="container-max text-center">
+      <section className="relative min-h-screen flex items-center justify-center py-12 md:py-20">
+        <BackgroundSlider />
+        <div className="relative z-10 container-max text-center">
           <div className="mb-8">
-            <span className="text-6xl md:text-8xl">🌱</span>
+            <span className="text-6xl md:text-8xl drop-shadow-lg">🌱</span>
           </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-white drop-shadow-lg">
             예술인의 금융 위기,
             <br />
             함께 해결합니다
           </h1>
-          <p className="text-lg md:text-xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg md:text-xl text-white/90 mb-12 max-w-2xl mx-auto leading-relaxed drop-shadow-lg">
             한국 예술인의 84.9%가 제1금융권에서 배제되고, 절반이 약탈적 고금리에 노출되어 있습니다.
             <br />
             이 문제를 해결하기 위해 씨앗:페가 시작되었습니다.
@@ -57,7 +59,7 @@ export default function Home() {
               📊 현실 알아보기
             </Link>
           </div>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-white/70 drop-shadow-lg">
             📌 11월 15일 인사아트센터에서 시작합니다
           </p>
         </div>
