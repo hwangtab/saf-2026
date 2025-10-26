@@ -16,6 +16,8 @@
 /* 4. Base HTML and body styles */
 html {
   scroll-behavior: smooth;
+  word-break: keep-all; /* 한글 단어 중간 줄바꿈 방지 */
+  overflow-wrap: break-word; /* 긴 단어는 줄바꿈 허용 */
 }
 
 body {
