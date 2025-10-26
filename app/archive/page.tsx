@@ -2,8 +2,10 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
+import VideoEmbed from '@/components/features/VideoEmbed';
 import { newsArticles } from '@/content/news';
 import { saf2023Photos } from '@/content/saf2023-photos';
+import { videos } from '@/content/videos';
 import { EXTERNAL_LINKS } from '@/lib/constants';
 
 export const metadata: Metadata = {
@@ -213,13 +215,16 @@ export default function ArchivePage() {
       <section className="py-12 md:py-20 bg-gray-50">
         <div className="container-max">
           <h2 className="text-3xl font-bold mb-12">📹 영상 아카이브</h2>
-          <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-8 text-center">
-            <p className="text-gray-600 mb-4">
-              곧 씨앗:페 2026의 현장 영상과 참여 예술인 인터뷰가 공개될 예정입니다.
-            </p>
-            <p className="text-gray-500 text-sm">
-              YouTube 채널을 구독하시면 가장 먼저 소식을 받으실 수 있습니다.
-            </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {videos.map((video) => (
+              <div key={video.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+                <VideoEmbed id={video.youtubeId} title={video.title} />
+                <div className="p-6">
+                  <h3 className="text-xl font-bold mb-2">{video.title}</h3>
+                  <p className="text-gray-600 text-sm">{video.description}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>

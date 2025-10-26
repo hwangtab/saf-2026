@@ -14,6 +14,7 @@ const navigation = [
   { name: '참여 예술가', href: '/artists' },
   { name: '아카이브', href: '/archive' },
   { name: '전시 안내', href: '/exhibition' },
+  { name: '온라인 갤러리', href: EXTERNAL_LINKS.ONLINE_GALLERY, external: true },
 ];
 
 export default function Header() {
@@ -44,21 +45,32 @@ export default function Header() {
 
         {/* Desktop Navigation */}
         <div className="hidden lg:flex items-center gap-8">
-          {navigation.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`text-sm font-medium transition-colors ${
-                isActive(item.href)
-                  ? 'text-primary border-b-2 border-primary'
-                  : 'text-gray-700 hover:text-primary'
-              }`}
-            >
-              {item.name}
-            </Link>
-          ))}
+          {navigation.map((item) =>
+            item.external ? (
+              <a
+                key={item.href}
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-medium text-gray-700 hover:text-primary transition-colors"
+              >
+                {item.name}
+              </a>
+            ) : (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`text-sm font-medium transition-colors ${
+                  isActive(item.href)
+                    ? 'text-primary border-b-2 border-primary'
+                    : 'text-gray-700 hover:text-primary'
+                }`}
+              >
+                {item.name}
+              </Link>
+            )
+          )}
         </div>
-
         {/* Donate Button (Desktop) */}
         <div className="hidden lg:flex">
           <a
@@ -111,20 +123,33 @@ export default function Header() {
           className="lg:hidden bg-white border-t"
         >
           <div className="container-max py-4 space-y-3">
-            {navigation.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className={`block py-2 px-4 rounded-lg transition-colors ${
-                  isActive(item.href)
-                    ? 'bg-primary text-black font-bold'
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
-              >
-                {item.name}
-              </Link>
-            ))}
+            {navigation.map((item) =>
+              item.external ? (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block py-2 px-4 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                  {item.name}
+                </a>
+              ) : (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`block py-2 px-4 rounded-lg transition-colors ${
+                    isActive(item.href)
+                      ? 'bg-primary text-black font-bold'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              )
+            )}
             <a
               href={EXTERNAL_LINKS.DONATE}
               target="_blank"

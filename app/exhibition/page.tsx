@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import PageHero from '@/components/ui/PageHero';
+import KakaoMap from '@/components/features/KakaoMap';
 import { EXHIBITION, EXTERNAL_LINKS } from '@/lib/constants';
 
 export const metadata: Metadata = {
@@ -116,25 +117,17 @@ export default function ExhibitionPage() {
               </div>
             </div>
 
-            {/* Map Placeholder */}
+            {/* Interactive Map */}
             <div>
-              <div className="bg-gray-100 rounded-lg overflow-hidden h-96 flex items-center justify-center border-2 border-gray-300">
-                <div className="text-center">
-                  <p className="text-6xl mb-4">📍</p>
-                  <h3 className="text-lg font-bold mb-2">인사아트센터</h3>
-                  <p className="text-gray-600 text-sm px-4">
-                    서울시 종로구 인사동
-                  </p>
-                  <a
-                    href={EXTERNAL_LINKS.INSA_GALLERY_KAKAO}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block mt-4 bg-yellow-400 hover:bg-yellow-500 text-black font-bold px-4 py-2 rounded text-sm transition-colors"
-                  >
-                    카카오맵에서 보기
-                  </a>
-                </div>
-              </div>
+              <KakaoMap />
+              <a
+                href={EXTERNAL_LINKS.INSA_GALLERY_KAKAO}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block mt-4 bg-yellow-400 hover:bg-yellow-500 text-black font-bold px-4 py-2 rounded text-sm transition-colors"
+              >
+                카카오맵에서 보기
+              </a>
             </div>
           </div>
         </div>
