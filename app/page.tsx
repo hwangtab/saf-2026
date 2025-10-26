@@ -109,7 +109,15 @@ export default function Home() {
                 🤝 해결책: 상호부조
               </h3>
               <p className="text-gray-600 leading-relaxed">
-                한국스마트협동조합의 기금과 북서울신협의 신뢰로 만든
+                <a
+                  href={EXTERNAL_LINKS.KOSMART_HOME}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:underline"
+                >
+                  한국스마트협동조합
+                </a>
+                의 기금과 북서울신협의 신뢰로 만든
                 상호부조 대출이 답입니다.
               </p>
             </div>
@@ -129,7 +137,15 @@ export default function Home() {
                 📈 95% 상환율의 신뢰
               </h3>
               <p className="text-gray-600 leading-relaxed mb-4">
-                한국스마트협동조합이 일정한 기금을 조성하면, 북서울신협이
+                <a
+                  href={EXTERNAL_LINKS.KOSMART_HOME}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:underline"
+                >
+                  한국스마트협동조합
+                </a>
+                이 일정한 기금을 조성하면, 북서울신협이
                 그 기금의 약 7배까지 예술인들에게 저금리로 대출합니다.
               </p>
             </div>

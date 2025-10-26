@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import TestimonialCard from '@/components/ui/TestimonialCard';
+import { EXTERNAL_LINKS } from '@/lib/constants';
 
 const FirstBankAccessChart = dynamic(
   () =>
@@ -380,7 +381,15 @@ export default function OurReality() {
             ❤️ 지금 후원하기
           </a>
           <p className="text-sm text-gray-600 mt-6">
-            2025 예술인 금융 재난 보고서 기반 | 한국스마트협동조합
+            2025 예술인 금융 재난 보고서 기반 |{' '}
+            <a
+              href={EXTERNAL_LINKS.KOSMART_HOME}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline"
+            >
+              한국스마트협동조합
+            </a>
           </p>
         </div>
       </section>

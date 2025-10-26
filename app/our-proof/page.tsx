@@ -35,7 +35,15 @@ export default function OurProof() {
               <h2 className="text-3xl font-bold mb-6">상호부조 대출이란?</h2>
               <div className="space-y-4 text-gray-700">
                 <p>
-                  한국스마트협동조합이 일정한 기금을 조성하면, 북서울신협이 그 기금의 약 7배까지 예술인들에게 <strong>저금리</strong>로 대출하는 시스템입니다.
+                  <a
+                    href={EXTERNAL_LINKS.KOSMART_HOME}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:underline"
+                  >
+                    한국스마트협동조합
+                  </a>
+                  이 일정한 기금을 조성하면, 북서울신협이 그 기금의 약 7배까지 예술인들에게 <strong>저금리</strong>로 대출하는 시스템입니다.
                 </p>
                 <p>
                   이는 단순한 금융상품이 아닙니다. 예술인들을 신뢰하고, 그들의 성실함에 베팅하는 '상호부조'의 정신이 담겨있습니다.

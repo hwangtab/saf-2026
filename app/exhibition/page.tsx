@@ -265,7 +265,16 @@ export default function ExhibitionPage() {
               행사와 관련하여 궁금한 점이 있으시면 아래로 연락주세요.
             </p>
             <div className="space-y-2">
-              <p className="font-semibold">한국스마트협동조합</p>
+              <p className="font-semibold">
+                <a
+                  href={EXTERNAL_LINKS.KOSMART_HOME}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-primary transition-colors"
+                >
+                  한국스마트협동조합
+                </a>
+              </p>
               <p>📧 contact@kosmart.co.kr</p>
               <p>📞 02-764-3114</p>
             </div>

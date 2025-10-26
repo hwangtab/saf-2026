@@ -137,7 +137,15 @@ export default function Footer() {
           {/* Copyright */}
           <div className="text-center text-sm text-gray-400">
             <p>
-              © {new Date().getFullYear()} SAF 2026. All rights reserved. | 한국스마트협동조합{' '}
+              © {new Date().getFullYear()} SAF 2026. All rights reserved. |{' '}
+              <a
+                href={EXTERNAL_LINKS.KOSMART_HOME}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-primary transition-colors"
+              >
+                한국스마트협동조합
+              </a>{' '}
               {CONTACT.PERSON_NAME}
             </p>
           </div>
