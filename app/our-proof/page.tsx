@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import TestimonialCard from '@/components/ui/TestimonialCard';
 import { EXTERNAL_LINKS } from '@/lib/constants';
 
 export const metadata: Metadata = {
@@ -145,6 +146,39 @@ export default function OurProof() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-12 md:py-20 bg-white">
+        <div className="container-max">
+          <h2 className="font-partial text-3xl font-bold mb-12 text-center">예술인들의 증언</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <TestimonialCard
+              quote="급하게 병원비가 필요했는데, 어디서도 돈을 빌릴 수 없었어요. 상호부조 대출 덕분에 치료에만 집중할 수 있었습니다."
+              author="김민준"
+              context="시각 예술가"
+              borderColor="border-primary"
+            />
+            <TestimonialCard
+              quote="은행 문턱이 너무 높았는데, 여기서는 저를 '예술인'으로 인정해주더군요. 단순한 대출이 아니라 큰 위로와 응원이었습니다."
+              author="이서연"
+              context="독립 영화감독"
+              borderColor="border-yellow-400"
+            />
+            <TestimonialCard
+              quote="다음 전시 준비 자금이 막막했는데, 덕분에 무사히 작품을 완성하고 전시를 열 수 있었습니다. 이 제도가 없었다면 불가능했을 거예요."
+              author="박지훈"
+              context="설치 미술가"
+              borderColor="border-green-400"
+            />
+            <TestimonialCard
+              quote="내 상환금이 다른 동료 예술가에게 희망이 된다는 사실이 저를 더 책임감 있게 만듭니다. 우리는 서로의 안전망입니다."
+              author="최유진"
+              context="뮤지컬 배우"
+              borderColor="border-blue-400"
+            />
           </div>
         </div>
       </section>
