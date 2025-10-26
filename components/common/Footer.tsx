@@ -5,7 +5,7 @@ import { SOCIAL_LINKS, CONTACT, EXTERNAL_LINKS } from '@/lib/constants';
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-white mt-20">
+    <footer className="bg-gray-900 text-white">
       <div className="container-max py-12">
         {/* Footer Content Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
