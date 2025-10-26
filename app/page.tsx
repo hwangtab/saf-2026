@@ -33,7 +33,7 @@ export default function Home() {
           <div className="mb-8">
             <span className="text-6xl md:text-8xl drop-shadow-lg">🌱</span>
           </div>
-          <h1 className="font-partial text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-white drop-shadow-lg">
+          <h1 className="font-partial text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight text-white drop-shadow-lg">
             예술인의 금융 위기,
             <br />
             함께 해결합니다
@@ -75,7 +75,7 @@ export default function Home() {
       {/* Problem Section */}
       <section className="py-16 md:py-24">
         <div className="container-max">
-          <h2 className="font-partial text-3xl md:text-4xl font-bold mb-12 text-center">
+          <h2 className="font-partial text-3xl md:text-4xl mb-12 text-center">
             우리가 직면한 문제
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
@@ -130,7 +130,7 @@ export default function Home() {
       {/* Solution Section */}
       <section className="py-16 md:py-24 bg-primary/5">
         <div className="container-max">
-          <h2 className="font-partial text-3xl md:text-4xl font-bold mb-12 text-center">
+          <h2 className="font-partial text-3xl md:text-4xl mb-12 text-center">
             우리의 해결책
           </h2>
           <div className="bg-white rounded-lg shadow-lg p-8 md:p-12 max-w-3xl mx-auto">
@@ -173,7 +173,7 @@ export default function Home() {
       {/* Call to Action Section */}
       <section className="py-16 md:py-24">
         <div className="container-max">
-          <h2 className="font-partial text-3xl md:text-4xl font-bold mb-12 text-center">
+          <h2 className="font-partial text-3xl md:text-4xl mb-12 text-center">
             당신도 함께할 수 있습니다
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

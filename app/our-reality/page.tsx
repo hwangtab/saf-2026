@@ -70,7 +70,7 @@ export default function OurReality() {
       {/* Enhanced Hero: 95% 상환율을 중심으로 */}
       <section className="py-16 md:py-24 bg-gradient-to-br from-gray-50 to-gray-100 text-center">
         <div className="container-max">
-          <h1 className="font-partial text-4xl md:text-6xl font-bold mb-6">우리의 현실</h1>
+          <h1 className="font-partial text-4xl md:text-6xl mb-6">우리의 현실</h1>
           <p className="text-lg md:text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
             2025 예술인 금융 재난 보고서가 밝혀낸 한국 예술인의 금융 위기의 구조적 현실
           </p>
@@ -78,7 +78,7 @@ export default function OurReality() {
           {/* Key Evidence: 95% 상환율 */}
           <div className="bg-white rounded-lg shadow-lg p-8 md:p-12 max-w-2xl mx-auto border-l-4 border-primary">
             <p className="text-sm font-semibold text-primary uppercase mb-2">증명된 사실</p>
-            <h2 className="font-partial text-5xl md:text-6xl font-bold text-primary mb-4">95%</h2>
+            <h2 className="font-partial text-5xl md:text-6xl text-primary mb-4">95%</h2>
             <p className="text-lg text-gray-700 mb-4">
               상호부조 대출 상환율
             </p>
@@ -95,7 +95,7 @@ export default function OurReality() {
       <section className="py-12 md:py-20 bg-white">
         <div className="container-max">
           <div className="max-w-3xl mx-auto">
-            <h2 className="font-partial text-3xl md:text-4xl font-bold mb-8">예술인에게 금융은 산소호흡기</h2>
+            <h2 className="font-partial text-3xl md:text-4xl mb-8">예술인에게 금융은 산소호흡기</h2>
             <div className="space-y-6 text-lg text-gray-700">
               <p>
                 예술인들은 정기적인 급여가 아닌, 프로젝트 기반의 불규칙한 소득을 얻습니다. 공연과 공연 사이, 전시와 전시 사이 발생하는
@@ -119,7 +119,7 @@ export default function OurReality() {
         <div className="container-max">
           <div className="mb-12">
             <span className="text-sm font-bold text-red-500 uppercase">STAGE 1</span>
-            <h2 className="font-partial text-4xl md:text-5xl font-bold mb-4">닫힌 문: 은행이 거절하다</h2>
+            <h2 className="font-partial text-4xl md:text-5xl mb-4">닫힌 문: 은행이 거절하다</h2>
             <p className="text-xl text-gray-600 max-w-2xl">제1금융권 배제율 <strong className="text-red-500">84.9%</strong></p>
           </div>
 
@@ -163,7 +163,7 @@ export default function OurReality() {
         <div className="container-max">
           <div className="mb-12">
             <span className="text-sm font-bold text-red-600 uppercase">STAGE 2</span>
-            <h2 className="font-partial text-4xl md:text-5xl font-bold mb-4">낭떠러지: 고금리로 내몰리다</h2>
+            <h2 className="font-partial text-4xl md:text-5xl mb-4">낭떠러지: 고금리로 내몰리다</h2>
             <p className="text-xl text-gray-600 max-w-2xl">고금리 상품 노출률 <strong className="text-red-600">48.6%</strong> (연 15% 이상)</p>
           </div>
 
@@ -205,7 +205,7 @@ export default function OurReality() {
         <div className="container-max">
           <div className="mb-12">
             <span className="text-sm font-bold text-red-700 uppercase">STAGE 3</span>
-            <h2 className="font-partial text-4xl md:text-5xl font-bold mb-4">파괴: 창작이 멈춘다</h2>
+            <h2 className="font-partial text-4xl md:text-5xl mb-4">파괴: 창작이 멈춘다</h2>
             <p className="text-xl text-gray-600 max-w-2xl">채권추심 경험자의 창작 중단율 <strong className="text-red-700">88.3%</strong></p>
           </div>
 
@@ -262,7 +262,7 @@ export default function OurReality() {
       <section className="py-12 md:py-20 bg-gradient-to-br from-primary/10 to-yellow-100">
         <div className="container-max">
           <div className="max-w-3xl mx-auto text-center mb-12">
-            <h2 className="font-partial text-4xl md:text-5xl font-bold mb-8">
+            <h2 className="font-partial text-4xl md:text-5xl mb-8">
               하지만 우리는 증거를 찾았습니다
             </h2>
             <p className="text-xl text-gray-700">
@@ -301,7 +301,7 @@ export default function OurReality() {
       {/* 진단: 사회적 재난 */}
       <section className="py-12 md:py-20 bg-white">
         <div className="container-max max-w-3xl">
-          <h2 className="font-partial text-3xl md:text-4xl font-bold mb-8">이것은 개인의 문제가 아닙니다</h2>
+          <h2 className="font-partial text-3xl md:text-4xl mb-8">이것은 개인의 문제가 아닙니다</h2>
           <div className="space-y-6 text-lg text-gray-700">
             <p>
               예술인 금융 위기는 개인의 나태나 불성실의 결과가 아닙니다.
@@ -323,7 +323,7 @@ export default function OurReality() {
       {/* 제언: 산소호흡기가 필요하다 */}
       <section className="py-12 md:py-20 bg-gray-50">
         <div className="container-max">
-          <h2 className="font-partial text-3xl md:text-4xl font-bold mb-8 text-center">산소호흡기가 필요하다</h2>
+          <h2 className="font-partial text-3xl md:text-4xl mb-8 text-center">산소호흡기가 필요하다</h2>
           <div className="space-y-6 text-lg text-gray-700 mb-12 max-w-3xl mx-auto">
             <p>
               예술인에게 필요한 것은 일시적인 지원금이나 복지가 아닙니다.
@@ -366,7 +366,7 @@ export default function OurReality() {
       {/* Call to Action */}
       <section className="py-12 md:py-20 bg-primary/20">
         <div className="container-max text-center">
-          <h2 className="font-partial text-3xl md:text-4xl font-bold mb-6">이제 행동할 시간입니다</h2>
+          <h2 className="font-partial text-3xl md:text-4xl mb-6">이제 행동할 시간입니다</h2>
           <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
             한국 예술인들의 창작 시간을 살려내는 일에 함께해주세요.
             <br />

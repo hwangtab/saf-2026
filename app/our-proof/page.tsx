@@ -21,7 +21,7 @@ export default function OurProof() {
       <section className="py-12 md:py-20 bg-gradient-to-br from-primary/20 to-primary/5">
         <div className="container-max text-center">
           <div className="text-5xl md:text-7xl font-bold text-primary mb-6">95%</div>
-          <h1 className="font-partial text-4xl md:text-5xl font-bold mb-6">상호부조 대출 상환율</h1>
+          <h1 className="font-partial text-4xl md:text-5xl mb-6">상호부조 대출 상환율</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             신뢰할 수 있는 금융 시스템만 있으면, 예술인들은 얼마든지 책임감 있게 행동합니다.
           </p>
@@ -33,7 +33,7 @@ export default function OurProof() {
         <div className="container-max">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
             <div>
-              <h2 className="font-partial text-3xl font-bold mb-6">상호부조 대출이란?</h2>
+              <h2 className="font-partial text-3xl mb-6">상호부조 대출이란?</h2>
               <div className="space-y-4 text-gray-700">
                 <p>
                   <a
@@ -99,7 +99,7 @@ export default function OurProof() {
 
           {/* Why It Works */}
           <div className="bg-white rounded-lg shadow-lg p-8 md:p-12 max-w-3xl mx-auto mb-16">
-            <h2 className="font-partial text-3xl font-bold mb-8 text-center">왜 95% 상환율이 가능할까?</h2>
+            <h2 className="font-partial text-3xl mb-8 text-center">왜 95% 상환율이 가능할까?</h2>
             <div className="space-y-6">
               <div className="flex gap-4">
                 <div className="flex-shrink-0">
@@ -153,7 +153,7 @@ export default function OurProof() {
       {/* Testimonials Section */}
       <section className="py-12 md:py-20 bg-white">
         <div className="container-max">
-          <h2 className="font-partial text-3xl font-bold mb-12 text-center">예술인들의 증언</h2>
+          <h2 className="font-partial text-3xl mb-12 text-center">예술인들의 증언</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <TestimonialCard
               quote="급하게 병원비가 필요했는데, 어디서도 돈을 빌릴 수 없었어요. 상호부조 대출 덕분에 치료에만 집중할 수 있었습니다."
@@ -186,7 +186,7 @@ export default function OurProof() {
       {/* Statistics Comparison */}
       <section className="py-12 md:py-20 bg-gray-50">
         <div className="container-max">
-          <h2 className="font-partial text-3xl font-bold mb-12 text-center">기존 금융 vs 상호부조 대출</h2>
+          <h2 className="font-partial text-3xl mb-12 text-center">기존 금융 vs 상호부조 대출</h2>
           <div className="overflow-x-auto">
             <table className="w-full bg-white rounded-lg shadow-sm overflow-hidden">
               <thead className="bg-gray-100 border-b-2 border-gray-300">
@@ -231,7 +231,7 @@ export default function OurProof() {
       {/* Call to Action */}
       <section className="py-12 md:py-20">
         <div className="container-max text-center">
-          <h2 className="font-partial text-3xl md:text-4xl font-bold mb-8">
+          <h2 className="font-partial text-3xl md:text-4xl mb-8">
             당신도 이 신뢰의 체계에 참여할 수 있습니다
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
