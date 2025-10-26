@@ -52,12 +52,14 @@ export default function Home() {
             >
               ❤️ 지금 후원하기
             </a>
-            <Link
-              href="/our-reality"
+            <a
+              href={EXTERNAL_LINKS.ONLINE_GALLERY}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-block bg-gray-900 hover:bg-gray-800 text-white font-bold px-8 py-4 rounded-lg transition-colors"
             >
-              📊 현실 알아보기
-            </Link>
+              🎨 작품 구매하기
+            </a>
           </div>
           <p className="text-sm text-white/70 drop-shadow-lg">
             📌 11월 15일 인사아트센터에서 시작합니다
