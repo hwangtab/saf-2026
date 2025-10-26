@@ -230,7 +230,7 @@ export default function OurReality() {
           </div>
 
           {/* Stage 3 Testimonies */}
-          <div className="grid md:grid-cols-2 gap-6 max-w-4xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             <TestimonialCard
               quote="아이들 모르게 나만 3일을 굶었던 기억."
               author="50대 연극인"
