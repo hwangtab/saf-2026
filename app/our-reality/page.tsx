@@ -122,26 +122,27 @@ export default function OurReality() {
             <p className="text-xl text-gray-600 max-w-2xl">제1금융권 배제율 <strong className="text-red-500">84.9%</strong></p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-12 mb-12">
-            <div className="flex flex-col justify-center space-y-6">
-              <div>
-                <h3 className="text-xl font-bold mb-3">은행의 문은 왜 닫혔나?</h3>
-                <ul className="space-y-3 text-gray-700">
-                  <li className="flex gap-3">
-                    <span className="font-bold text-red-500">•</span>
-                    <span><strong>53.1%</strong>는 대출 신청 후 직접적으로 <strong>거절</strong></span>
-                  </li>
-                  <li className="flex gap-3">
-                    <span className="font-bold text-red-500">•</span>
-                    <span><strong>31.8%</strong>는 어차피 안 될 것이라 예상하며 <strong>신청 포기</strong></span>
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <RejectionReasonsChart />
-              </div>
+          {/* Description Text */}
+          <div className="max-w-3xl mb-8">
+            <h3 className="text-xl font-bold mb-3">은행의 문은 왜 닫혔나?</h3>
+            <ul className="space-y-3 text-gray-700">
+              <li className="flex gap-3">
+                <span className="font-bold text-red-500">•</span>
+                <span><strong>53.1%</strong>는 대출 신청 후 직접적으로 <strong>거절</strong></span>
+              </li>
+              <li className="flex gap-3">
+                <span className="font-bold text-red-500">•</span>
+                <span><strong>31.8%</strong>는 어차피 안 될 것이라 예상하며 <strong>신청 포기</strong></span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Chart Grid */}
+          <div className="grid md:grid-cols-2 gap-12 items-start mb-12">
+            <div className="h-96">
+              <RejectionReasonsChart />
             </div>
-            <div>
+            <div className="h-96">
               <FirstBankAccessChart />
             </div>
           </div>
@@ -165,24 +166,24 @@ export default function OurReality() {
             <p className="text-xl text-gray-600 max-w-2xl">고금리 상품 노출률 <strong className="text-red-600">48.6%</strong> (연 15% 이상)</p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-12 mb-12">
-            <div className="flex flex-col justify-center space-y-6">
-              <div>
-                <h3 className="text-xl font-bold mb-3">선택이 아닌 생존</h3>
-                <p className="text-gray-700 mb-4">
-                  은행 문이 닫힌 순간, 예술인들은 곧바로 저축은행, 카드론, 대부업체로 내몰립니다.
-                  <strong> 83.2%의 예술인이 고금리 금융 상품을 이용</strong>한 경험이 있습니다.
-                </p>
-                <p className="text-gray-700">
-                  이는 선택이 아닌, 생존을 위한 유일한 탈출구였습니다.
-                </p>
-              </div>
-              <div>
-                <InterestRateDistributionChart />
-              </div>
-            </div>
+          {/* Description Text */}
+          <div className="max-w-3xl mb-8">
+            <h3 className="text-xl font-bold mb-3">선택이 아닌 생존</h3>
+            <p className="text-gray-700 mb-4">
+              은행 문이 닫힌 순간, 예술인들은 곧바로 저축은행, 카드론, 대부업체로 내몰립니다.
+              <strong> 83.2%의 예술인이 고금리 금융 상품을 이용</strong>한 경험이 있습니다.
+            </p>
+            <p className="text-gray-700">
+              이는 선택이 아닌, 생존을 위한 유일한 탈출구였습니다.
+            </p>
+          </div>
 
-            <div>
+          {/* Chart Grid */}
+          <div className="grid md:grid-cols-2 gap-12 items-start mb-12">
+            <div className="h-96">
+              <InterestRateDistributionChart />
+            </div>
+            <div className="h-96">
               <HighInterestProductChart />
             </div>
           </div>
@@ -207,20 +208,22 @@ export default function OurReality() {
             <p className="text-xl text-gray-600 max-w-2xl">채권추심 경험자의 창작 중단율 <strong className="text-red-700">88.3%</strong></p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-12 mb-12">
-            <div className="flex flex-col justify-center space-y-6">
-              <div>
-                <h3 className="text-xl font-bold mb-3">생존의 위기</h3>
-                <p className="text-gray-700 mb-4">
-                  채권추심을 경험한 예술인은 <strong>10명 중 4명(43%)</strong>입니다.
-                  이들은 멈추지 않는 전화, 모욕적인 언사, 집으로 찾아오는 추심원 앞에서
-                  생존의 벼랑 끝으로 내몰립니다.
-                </p>
-              </div>
+          {/* Description Text */}
+          <div className="max-w-3xl mb-8">
+            <h3 className="text-xl font-bold mb-3">생존의 위기</h3>
+            <p className="text-gray-700 mb-4">
+              채권추심을 경험한 예술인은 <strong>10명 중 4명(43%)</strong>입니다.
+              이들은 멈추지 않는 전화, 모욕적인 언사, 집으로 찾아오는 추심원 앞에서
+              생존의 벼랑 끝으로 내몰립니다.
+            </p>
+          </div>
 
+          {/* Chart Grid */}
+          <div className="grid md:grid-cols-2 gap-12 items-start mb-12">
+            <div className="h-96">
               <CreativeImpactChart />
             </div>
-            <div>
+            <div className="h-96">
               <DebtCollectionChart />
             </div>
           </div>
