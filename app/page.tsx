@@ -33,7 +33,7 @@ export default function Home() {
           <div className="mb-8">
             <span className="text-6xl md:text-8xl drop-shadow-lg">🌱</span>
           </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-white drop-shadow-lg">
+          <h1 className="font-partial text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-white drop-shadow-lg">
             예술인의 금융 위기,
             <br />
             함께 해결합니다
@@ -75,12 +75,12 @@ export default function Home() {
       {/* Problem Section */}
       <section className="py-16 md:py-24">
         <div className="container-max">
-          <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
+          <h2 className="font-partial text-3xl md:text-4xl font-bold mb-12 text-center">
             우리가 직면한 문제
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div className="space-y-4">
-              <h3 className="text-xl font-bold text-primary">
+              <h3 className="font-watermelon text-xl font-bold text-primary">
                 🚫 금융 시장의 차별
               </h3>
               <p className="text-gray-600 leading-relaxed">
@@ -89,7 +89,7 @@ export default function Home() {
               </p>
             </div>
             <div className="space-y-4">
-              <h3 className="text-xl font-bold text-primary">
+              <h3 className="font-watermelon text-xl font-bold text-primary">
                 💳 고금리의 악순환
               </h3>
               <p className="text-gray-600 leading-relaxed">
@@ -98,7 +98,7 @@ export default function Home() {
               </p>
             </div>
             <div className="space-y-4">
-              <h3 className="text-xl font-bold text-primary">
+              <h3 className="font-watermelon text-xl font-bold text-primary">
                 😔 심각한 피해
               </h3>
               <p className="text-gray-600 leading-relaxed">
@@ -130,12 +130,12 @@ export default function Home() {
       {/* Solution Section */}
       <section className="py-16 md:py-24 bg-primary/5">
         <div className="container-max">
-          <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
+          <h2 className="font-partial text-3xl md:text-4xl font-bold mb-12 text-center">
             우리의 해결책
           </h2>
           <div className="bg-white rounded-lg shadow-lg p-8 md:p-12 max-w-3xl mx-auto">
             <div className="mb-8">
-              <h3 className="text-2xl font-bold text-primary mb-4">
+              <h3 className="font-watermelon text-2xl font-bold text-primary mb-4">
                 📈 95% 상환율의 신뢰
               </h3>
               <p className="text-gray-600 leading-relaxed mb-4">
@@ -173,7 +173,7 @@ export default function Home() {
       {/* Call to Action Section */}
       <section className="py-16 md:py-24">
         <div className="container-max">
-          <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
+          <h2 className="font-partial text-3xl md:text-4xl font-bold mb-12 text-center">
             당신도 함께할 수 있습니다
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -184,7 +184,7 @@ export default function Home() {
               className="group p-8 bg-white border-2 border-primary rounded-lg hover:shadow-lg transition-all"
             >
               <div className="text-4xl mb-4">❤️</div>
-              <h3 className="text-xl font-bold mb-3">후원하기</h3>
+              <h3 className="font-watermelon text-xl font-bold mb-3">후원하기</h3>
               <p className="text-gray-600 mb-4">
                 당신의 후원은 예술인들을 위한 기금이 됩니다.
               </p>
@@ -200,7 +200,7 @@ export default function Home() {
               className="group p-8 bg-white border-2 border-primary rounded-lg hover:shadow-lg transition-all"
             >
               <div className="text-4xl mb-4">🎨</div>
-              <h3 className="text-xl font-bold mb-3">작품 구매</h3>
+              <h3 className="font-watermelon text-xl font-bold mb-3">작품 구매</h3>
               <p className="text-gray-600 mb-4">
                 참여 예술가들의 작품을 구매하며 지원합니다.
               </p>
@@ -214,7 +214,7 @@ export default function Home() {
               className="group p-8 bg-white border-2 border-primary rounded-lg hover:shadow-lg transition-all"
             >
               <div className="text-4xl mb-4">🏛️</div>
-              <h3 className="text-xl font-bold mb-3">전시 방문</h3>
+              <h3 className="font-watermelon text-xl font-bold mb-3">전시 방문</h3>
               <p className="text-gray-600 mb-4">
                 인사아트센터에서 펼쳐지는 예술의 현장을 직접 방문하세요.
               </p>
