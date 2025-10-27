@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
-import Link from 'next/link';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import VideoEmbed from '@/components/features/VideoEmbed';
@@ -55,26 +54,6 @@ export default function ArchivePage() {
       <section className="py-8 bg-primary/5 border-b border-primary/20">
         <div className="container-max">
           <ShareButtons url={currentUrl} title={pageTitle} description={pageDescription} />
-        </div>
-      </section>
-
-      {/* Press CTA */}
-      <section className="py-12 md:py-20">
-        <div className="container-max">
-          <div className="bg-white border border-primary/20 rounded-2xl p-8 md:p-12 shadow-md flex flex-col md:flex-row md:items-center gap-8">
-            <div className="flex-1 space-y-4">
-              <h2 className="font-partial text-3xl">📰 언론 보도 모아보기</h2>
-              <p className="text-gray-600 text-sm md:text-base leading-relaxed">
-                씨앗:페 캠페인을 다룬 최신 기사와 인터뷰는 전용 페이지에서 썸네일과 메타데이터와 함께 확인할 수 있습니다.
-              </p>
-            </div>
-            <Link
-              href="/news"
-              className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-primary text-black font-bold transition-colors hover:bg-yellow-500"
-            >
-              언론 보도 페이지로 이동
-            </Link>
-          </div>
         </div>
       </section>
 
