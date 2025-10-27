@@ -6,7 +6,14 @@ import { Map, MapMarker, useKakaoLoader } from 'react-kakao-maps-sdk';
 const KAKAO_MAP_APP_KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
 
 export default function KakaoMap() {
-  if (!KAKAO_MAP_APP_KEY) {
+  const hasAppKey = Boolean(KAKAO_MAP_APP_KEY);
+  const [loading, error] = useKakaoLoader({
+    appkey: hasAppKey ? KAKAO_MAP_APP_KEY : 'invalid-kakao-app-key',
+    libraries: ['services'],
+  });
+  const [isOpen, setIsOpen] = useState(false);
+
+  if (!hasAppKey) {
     return (
       <div className="flex h-[400px] w-full items-center justify-center rounded-lg border border-dashed border-gray-300 bg-gray-50 text-sm text-gray-500">
         카카오 지도 APP KEY가 설정되지 않았습니다. 환경 변수 `NEXT_PUBLIC_KAKAO_MAP_KEY`에
@@ -14,12 +21,6 @@ export default function KakaoMap() {
       </div>
     );
   }
-
-  const [loading, error] = useKakaoLoader({
-    appkey: KAKAO_MAP_APP_KEY,
-    libraries: ['services'],
-  });
-  const [isOpen, setIsOpen] = useState(false);
 
   if (loading) {
     return (
@@ -42,12 +43,7 @@ export default function KakaoMap() {
 
   return (
     <div className="w-full h-[400px] rounded-lg overflow-hidden shadow-md">
-      <Map
-        center={center}
-        style={{ width: '100%', height: '100%' }}
-        level={3}
-        appkey={KAKAO_MAP_APP_KEY}
-      >
+      <Map center={center} style={{ width: '100%', height: '100%' }} level={3}>
         <MapMarker position={center} onClick={() => setIsOpen(true)} clickable>
           {isOpen && (
             <div style={{ padding: '10px', color: '#000', minWidth: '150px' }}>

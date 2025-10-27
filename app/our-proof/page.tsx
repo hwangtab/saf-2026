@@ -47,10 +47,10 @@ export default function OurProof() {
                   이 일정한 기금을 조성하면, 북서울신협이 그 기금의 약 7배까지 예술인들에게 <strong>저금리</strong>로 대출하는 시스템입니다.
                 </p>
                 <p>
-                  이는 단순한 금융상품이 아닙니다. 예술인들을 신뢰하고, 그들의 성실함에 베팅하는 '상호부조'의 정신이 담겨있습니다.
+                  이는 단순한 금융상품이 아닙니다. 예술인들을 신뢰하고, 그들의 성실함에 베팅하는 &lsquo;상호부조&rsquo;의 정신이 담겨있습니다.
                 </p>
                 <p className="font-semibold">
-                  기존 금융이 "정기 소득을 증명할 수 없으니 불가능"이라고 말할 때, 우리는 "당신을 믿습니다"라고 말합니다.
+                  기존 금융이 &ldquo;정기 소득을 증명할 수 없으니 불가능&rdquo;이라고 말할 때, 우리는 &ldquo;당신을 믿습니다&rdquo;라고 말합니다.
                 </p>
               </div>
             </div>
@@ -108,7 +108,7 @@ export default function OurProof() {
                 <div>
                   <h3 className="font-watermelon font-bold text-lg mb-2">신뢰</h3>
                   <p className="text-gray-600">
-                    "당신을 믿습니다"라는 신뢰 자체가 대출자들을 책임감 있게 만듭니다.
+                    &ldquo;당신을 믿습니다&rdquo;라는 신뢰 자체가 대출자들을 책임감 있게 만듭니다.
                   </p>
                 </div>
               </div>
@@ -141,7 +141,7 @@ export default function OurProof() {
                 <div>
                   <h3 className="font-watermelon font-bold text-lg mb-2">상호부조의 정신</h3>
                   <p className="text-gray-600">
-                    "당신의 상환이 다른 예술가들의 희망이 됩니다"라는 메시지가 시스템 전체의 신뢰도를 높입니다.
+                    &ldquo;당신의 상환이 다른 예술가들의 희망이 됩니다&rdquo;라는 메시지가 시스템 전체의 신뢰도를 높입니다.
                   </p>
                 </div>
               </div>
