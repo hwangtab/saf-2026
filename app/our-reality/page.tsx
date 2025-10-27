@@ -372,14 +372,24 @@ export default function OurReality() {
             <br />
             당신의 참여와 후원이 산소호흡기가 되어 예술이 계속 숨 쉬게 합니다.
           </p>
-          <a
-            href="https://www.socialfunch.org/SAF"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block bg-primary hover:bg-yellow-500 text-black font-bold px-8 py-4 rounded-lg transition-colors text-lg"
-          >
-            ❤️ 지금 후원하기
-          </a>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <a
+              href={EXTERNAL_LINKS.DONATE}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center bg-primary hover:bg-yellow-500 text-black font-bold px-8 py-4 rounded-lg transition-colors text-lg"
+            >
+              ❤️ 지금 후원하기
+            </a>
+            <a
+              href={EXTERNAL_LINKS.ONLINE_GALLERY}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center bg-gray-900 hover:bg-gray-800 text-white font-bold px-8 py-4 rounded-lg transition-colors text-lg"
+            >
+              🎨 작품 구매하기
+            </a>
+          </div>
           <p className="text-sm text-gray-600 mt-6">
             2025 예술인 금융 재난 보고서 기반 |{' '}
             <a

@@ -168,14 +168,24 @@ export default function ArchivePage() {
           <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
             씨앗:페 2026의 성공은 당신의 참여와 후원으로 만들어집니다.
           </p>
-          <a
-            href="https://www.socialfunch.org/SAF"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block bg-primary hover:bg-yellow-500 text-black font-bold px-8 py-4 rounded-lg transition-colors"
-          >
-            지금 후원하기
-          </a>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <a
+              href={EXTERNAL_LINKS.DONATE}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center bg-primary hover:bg-yellow-500 text-black font-bold px-8 py-4 rounded-lg transition-colors"
+            >
+              ❤️ 지금 후원하기
+            </a>
+            <a
+              href={EXTERNAL_LINKS.ONLINE_GALLERY}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center bg-gray-900 hover:bg-gray-800 text-white font-bold px-8 py-4 rounded-lg transition-colors"
+            >
+              🎨 작품 구매하기
+            </a>
+          </div>
         </div>
       </section>
     </>
