@@ -33,9 +33,11 @@ export default function KakaoMap() {
   }
 
   if (error) {
+    console.error('Kakao map load error', error);
     return (
       <div className="flex h-[400px] w-full items-center justify-center rounded-lg border border-red-200 bg-red-50 text-sm text-red-600">
         카카오 지도를 불러오지 못했습니다. APP KEY와 도메인 설정을 확인해주세요.
+        <span className="ml-2 text-xs text-red-500">{String(error)}</span>
       </div>
     );
   }
