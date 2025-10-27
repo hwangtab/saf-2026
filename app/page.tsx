@@ -107,7 +107,7 @@ export default function Home() {
               </p>
             </div>
             <div className="space-y-4">
-              <h3 className="text-xl font-bold text-primary">
+              <h3 className="font-watermelon text-xl font-bold text-primary">
                 🤝 해결책: 상호부조
               </h3>
               <p className="text-gray-600 leading-relaxed">

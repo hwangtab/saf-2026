@@ -12,7 +12,7 @@ export default function PageHero({
   return (
     <section className={`py-12 md:py-20 bg-gradient-to-br ${backgroundGradient}`}>
       <div className="container-max text-center">
-        <h1 className="text-4xl md:text-5xl font-bold mb-6">{title}</h1>
+        <h1 className="font-partial text-4xl md:text-5xl mb-6">{title}</h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">{description}</p>
       </div>
     </section>

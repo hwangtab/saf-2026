@@ -78,15 +78,15 @@ export default function ExhibitionPage() {
                 <h2 className="font-partial text-2xl mb-6">전시 정보</h2>
                 <div className="space-y-4">
                   <div className="border-l-4 border-primary pl-4">
-                    <h3 className="text-sm text-gray-500 font-semibold mb-1">행사명</h3>
+                    <h3 className="font-watermelon text-sm text-gray-500 font-semibold mb-1">행사명</h3>
                     <p className="text-lg font-semibold">{EXHIBITION.NAME}</p>
                   </div>
                   <div className="border-l-4 border-primary pl-4">
-                    <h3 className="text-sm text-gray-500 font-semibold mb-1">기간</h3>
+                    <h3 className="font-watermelon text-sm text-gray-500 font-semibold mb-1">기간</h3>
                     <p className="text-lg font-semibold">{EXHIBITION.DATE}</p>
                   </div>
                   <div className="border-l-4 border-primary pl-4">
-                    <h3 className="text-sm text-gray-500 font-semibold mb-1">장소</h3>
+                    <h3 className="font-watermelon text-sm text-gray-500 font-semibold mb-1">장소</h3>
                     <p className="text-lg font-semibold">{EXHIBITION.LOCATION}</p>
                     <p className="text-gray-600 text-sm">{EXHIBITION.ADDRESS}</p>
                   </div>
@@ -177,7 +177,7 @@ export default function ExhibitionPage() {
 
           {/* Accessibility */}
           <div className="bg-white border-2 border-blue-200 rounded-lg p-6">
-            <h3 className="font-bold mb-3">♿ 접근성 정보</h3>
+            <h3 className="font-watermelon font-bold mb-3">♿ 접근성 정보</h3>
             <ul className="text-gray-600 space-y-2 text-sm">
               <li>✓ 장애인 휠체어 접근 가능</li>
               <li>✓ 엘리베이터 및 휠체어 화장실 보유</li>
@@ -244,7 +244,7 @@ export default function ExhibitionPage() {
             </div>
 
             <div className="pt-8 border-t">
-              <h3 className="font-bold mb-4">📋 기본 정보</h3>
+              <h3 className="font-watermelon font-bold mb-4">📋 기본 정보</h3>
               <ul className="text-gray-600 space-y-2 text-sm">
                 <li>✓ 입장료: 무료 (후원금은 자율)</li>
                 <li>✓ 개별 방문 및 단체 관람 가능</li>

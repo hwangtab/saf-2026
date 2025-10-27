@@ -76,21 +76,21 @@ export default function OurProof() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
             <div className="bg-white p-8 rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow">
               <div className="text-4xl font-bold text-primary mb-4">150+</div>
-              <h3 className="font-bold text-lg mb-2">지원받은 예술인</h3>
+              <h3 className="font-watermelon font-bold text-lg mb-2">지원받은 예술인</h3>
               <p className="text-gray-600 text-sm">
                 이미 수백 명의 예술인이 상호부조 대출의 도움을 받았습니다.
               </p>
             </div>
             <div className="bg-white p-8 rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow">
               <div className="text-4xl font-bold text-primary mb-4">95%</div>
-              <h3 className="font-bold text-lg mb-2">상환율</h3>
+              <h3 className="font-watermelon font-bold text-lg mb-2">상환율</h3>
               <p className="text-gray-600 text-sm">
                 95% 이상의 예술인들이 성실하게 대출금을 상환하고 있습니다.
               </p>
             </div>
             <div className="bg-white p-8 rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow">
               <div className="text-4xl font-bold text-primary mb-4">4.99%</div>
-              <h3 className="font-bold text-lg mb-2">저금리</h3>
+              <h3 className="font-watermelon font-bold text-lg mb-2">저금리</h3>
               <p className="text-gray-600 text-sm">
                 기존 고금리(15~30%)와 비교하여 획기적으로 낮은 금리입니다.
               </p>
@@ -106,7 +106,7 @@ export default function OurProof() {
                   <span className="text-2xl font-bold text-primary">1</span>
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg mb-2">신뢰</h3>
+                  <h3 className="font-watermelon font-bold text-lg mb-2">신뢰</h3>
                   <p className="text-gray-600">
                     "당신을 믿습니다"라는 신뢰 자체가 대출자들을 책임감 있게 만듭니다.
                   </p>
@@ -117,7 +117,7 @@ export default function OurProof() {
                   <span className="text-2xl font-bold text-primary">2</span>
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg mb-2">정당한 금리</h3>
+                  <h3 className="font-watermelon font-bold text-lg mb-2">정당한 금리</h3>
                   <p className="text-gray-600">
                     약탈적인 금리가 아니라 정당한 금리이므로, 상환 부담이 현저히 낮습니다.
                   </p>
@@ -128,7 +128,7 @@ export default function OurProof() {
                   <span className="text-2xl font-bold text-primary">3</span>
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg mb-2">문제 해결</h3>
+                  <h3 className="font-watermelon font-bold text-lg mb-2">문제 해결</h3>
                   <p className="text-gray-600">
                     금융 문제로 인한 창작 방해가 사라지면서, 예술인들이 경제활동에 집중할 수 있게 됩니다.
                   </p>
@@ -139,7 +139,7 @@ export default function OurProof() {
                   <span className="text-2xl font-bold text-primary">4</span>
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg mb-2">상호부조의 정신</h3>
+                  <h3 className="font-watermelon font-bold text-lg mb-2">상호부조의 정신</h3>
                   <p className="text-gray-600">
                     "당신의 상환이 다른 예술가들의 희망이 됩니다"라는 메시지가 시스템 전체의 신뢰도를 높입니다.
                   </p>

@@ -19,7 +19,7 @@ export default function Footer() {
                 height={48}
                 className="w-12 h-12 flex-shrink-0"
               />
-              <h3 className="font-bold text-lg">씨앗:페 2026</h3>
+              <h3 className="font-watermelon font-bold text-lg">씨앗:페 2026</h3>
             </div>
             <p className="text-gray-300 text-sm mb-4">
               한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인입니다.
@@ -34,7 +34,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-bold text-lg mb-4">링크</h3>
+            <h3 className="font-watermelon font-bold text-lg mb-4">링크</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <a
@@ -81,7 +81,7 @@ export default function Footer() {
 
           {/* Social Links */}
           <div>
-            <h3 className="font-bold text-lg mb-4">팔로우</h3>
+            <h3 className="font-watermelon font-bold text-lg mb-4">팔로우</h3>
             <div className="flex gap-4">
               <a
                 href={SOCIAL_LINKS.INSTAGRAM}
