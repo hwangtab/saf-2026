@@ -15,10 +15,10 @@ export const EXTERNAL_LINKS = {
 
 // Social Links
 export const SOCIAL_LINKS = {
-  INSTAGRAM: 'https://instagram.com/saf2026',
-  FACEBOOK: 'https://facebook.com/saf2026',
+  INSTAGRAM: 'https://www.instagram.com/koreasmartcoop',
+  FACEBOOK: 'https://www.facebook.com/koreasmartcoop',
   TWITTER: 'https://twitter.com/saf2026',
-  YOUTUBE: 'https://youtube.com/@saf2026',
+  YOUTUBE: 'https://www.youtube.com/@Social_Mutual_ART',
 };
 
 // Contact
