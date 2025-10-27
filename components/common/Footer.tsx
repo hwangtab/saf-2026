@@ -11,15 +11,15 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {/* Organization Info with Logo */}
           <div>
-            <div className="flex items-center gap-3 mb-6">
+            <div className="flex items-start gap-3 mb-6">
               <Image
-                src="/images/logo/saf2.png"
+                src="/images/logo/320pxX90px.png"
                 alt="씨앗:페 로고"
-                width={48}
-                height={48}
-                className="w-12 h-12 flex-shrink-0"
+                width={200}
+                height={56}
+                className="h-12 w-auto flex-shrink-0"
               />
-              <h3 className="font-watermelon font-bold text-lg">씨앗:페 2026</h3>
+              <span className="sr-only">씨앗:페 2026</span>
             </div>
             <p className="text-gray-300 text-sm mb-4">
               한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인입니다.

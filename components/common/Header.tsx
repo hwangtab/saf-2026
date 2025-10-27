@@ -31,16 +31,16 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-white shadow-sm">
       <nav className="container-max flex items-center justify-between h-16">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 font-bold text-xl hover:opacity-80 transition-opacity">
+        <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
           <Image
-            src="/images/logo/saf2.png"
+            src="/images/logo/320pxX90px.png"
             alt="씨앗:페 로고"
-            width={40}
-            height={40}
-            className="w-10 h-10"
+            width={160}
+            height={45}
+            className="h-9 w-auto"
             priority
           />
-          <span>씨앗:페</span>
+          <span className="sr-only">씨앗:페 2026 홈</span>
         </Link>
 
         {/* Desktop Navigation */}
