@@ -26,7 +26,16 @@ export default function Footer() {
             </p>
             <div className="text-sm text-gray-400 space-y-1">
               <p>{CONTACT.ORGANIZATION_NAME}</p>
-              <p>{CONTACT.ADDRESS}</p>
+              <p>
+                <a
+                  href={EXTERNAL_LINKS.KOSMART_OFFICE_MAP}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-primary transition-colors"
+                >
+                  {CONTACT.ADDRESS}
+                </a>
+              </p>
               <p>{CONTACT.PHONE}</p>
               <p>{CONTACT.EMAIL}</p>
             </div>

@@ -9,6 +9,8 @@ export const EXTERNAL_LINKS = {
     'https://place.map.kakao.com/158908100',
   AUDIO_GUY_STUDIO_KAKAO:
     'https://place.map.kakao.com/27349395',
+  KOSMART_OFFICE_MAP:
+    'https://map.kakao.com/?q=%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EC%9D%80%ED%8F%89%EA%B5%AC%20%ED%86%B5%EC%9D%BC%EB%A1%9C68%EA%B8%B8%204%20302%ED%98%B8',
 };
 
 // Social Links
@@ -25,7 +27,7 @@ export const CONTACT = {
   PHONE: '02-764-3114',
   ORGANIZATION_NAME: '한국스마트협동조합',
   PERSON_NAME: '황경하 조직국장',
-  ADDRESS: '서울시 종로구 효자로31',
+  ADDRESS: '서울특별시 은평구 통일로 68길 4 302호',
 };
 
 // Exhibition Info
