@@ -235,9 +235,9 @@ export default function OurProof() {
             당신도 이 신뢰의 체계에 참여할 수 있습니다
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
-            <div>
+            <div className="flex flex-col min-h-[200px]">
               <h3 className="font-watermelon text-lg font-bold mb-3">예술인이신가요?</h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-gray-600 mb-4 flex-grow">
                 상호부조 대출을 신청하여 금융 어려움에서 벗어나세요.
               </p>
               <a
@@ -249,9 +249,9 @@ export default function OurProof() {
                 대출 신청하기
               </a>
             </div>
-            <div>
+            <div className="flex flex-col min-h-[200px]">
               <h3 className="font-watermelon text-lg font-bold mb-3">응원하고 싶으신가요?</h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-gray-600 mb-4 flex-grow">
                 당신의 후원이 다른 예술인들의 희망이 됩니다.
               </p>
               <a
