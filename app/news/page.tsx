@@ -118,7 +118,7 @@ export default function NewsPage() {
                       <span>{article.source}</span>
                       <span>{formatDate(article.date)}</span>
                     </div>
-                    <h3 className="font-partial text-xl leading-tight text-gray-900">
+                    <h3 className="font-watermelon text-xl font-bold leading-tight text-gray-900">
                       {article.title}
                     </h3>
                     <p className="text-sm text-gray-600 leading-relaxed">
