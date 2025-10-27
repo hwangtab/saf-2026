@@ -5,11 +5,11 @@ import { EXTERNAL_LINKS } from '@/lib/constants';
 export const metadata: Metadata = {
   title: '우리의 증명 | 씨앗:페 2026',
   description:
-    '95% 상환율로 증명하는 상호부조 대출의 신뢰도. 예술인들의 성실한 상환 기록.',
+    '예술인 상호부조 대출 305건, 누적 6억 900만원 지원. 데이터로 확인하는 상호부조 금융의 성과.',
   openGraph: {
     title: '우리의 증명 | 씨앗:페 2026',
     description:
-      '95% 상환율로 증명하는 상호부조 대출의 신뢰도. 예술인들의 성실한 상환 기록.',
+      '예술인 상호부조 대출 305건, 누적 6억 900만원 지원. 데이터로 확인하는 상호부조 금융의 성과.',
     url: 'https://saf2026.org/our-proof',
     images: ['/images/og-image.png'],
   },
@@ -20,10 +20,11 @@ export default function OurProof() {
     <>
       <section className="py-12 md:py-20 bg-gradient-to-br from-primary/20 to-primary/5">
         <div className="container-max text-center">
-          <div className="text-5xl md:text-7xl font-bold text-primary mb-6">95%</div>
-          <h1 className="font-partial text-4xl md:text-5xl mb-6">상호부조 대출 상환율</h1>
+          <div className="text-5xl md:text-7xl font-bold text-primary mb-6">305건</div>
+          <h1 className="font-partial text-4xl md:text-5xl mb-6">예술인 상호부조 대출의 실제 성과</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            신뢰할 수 있는 금융 시스템만 있으면, 예술인들은 얼마든지 책임감 있게 행동합니다.
+            2022년 12월부터 2025년 4월까지, 총 <strong>305건</strong>의 대출을 통해 <strong>609,000,000원</strong>을
+            예술인에게 공급했습니다. 상호부조의 신뢰가 실제 데이터로 증명되었습니다.
           </p>
         </div>
       </section>
@@ -58,15 +59,19 @@ export default function OurProof() {
               <h3 className="font-watermelon text-2xl font-bold mb-8 text-center">기금의 힘</h3>
               <div className="space-y-6">
                 <div>
-                  <p className="text-sm text-gray-600">협동조합이 조성한 기금</p>
-                  <p className="text-3xl font-bold">1억 2,534만 원</p>
+                  <p className="text-sm text-gray-600">누적 조성된 기금</p>
+                  <p className="text-3xl font-bold">39,000,000원</p>
                 </div>
                 <div>
-                  <p className="text-gray-600">↓ × 약 7배 ↓</p>
+                  <p className="text-gray-600">대위변제 발생 후에도</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">태릉신협이 대출할 수 있는 금액</p>
-                  <p className="text-3xl font-bold text-primary">약 10억 원</p>
+                  <p className="text-sm text-gray-600">현재 안정기금 잔액</p>
+                  <p className="text-3xl font-bold text-primary">35,608,224원</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">누적 대위변제액 (20건)</p>
+                  <p className="text-2xl font-bold">31,080,986원 · 5.10%</p>
                 </div>
               </div>
             </div>
@@ -75,40 +80,40 @@ export default function OurProof() {
           {/* Success Stories */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
             <div className="bg-white p-8 rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-              <div className="text-4xl font-bold text-primary mb-4">150+</div>
-              <h3 className="font-watermelon font-bold text-lg mb-2">지원받은 예술인</h3>
+              <div className="text-4xl font-bold text-primary mb-4">305건</div>
+              <h3 className="font-watermelon font-bold text-lg mb-2">누적 대출 실행</h3>
               <p className="text-gray-600 text-sm">
-                이미 수백 명의 예술인이 상호부조 대출의 도움을 받았습니다.
+                2022년 12월부터 2025년 4월까지 305건의 상호부조 대출이 실행되었습니다.
               </p>
             </div>
             <div className="bg-white p-8 rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-              <div className="text-4xl font-bold text-primary mb-4">95%</div>
-              <h3 className="font-watermelon font-bold text-lg mb-2">상환율</h3>
+              <div className="text-4xl font-bold text-primary mb-4">609,000,000원</div>
+              <h3 className="font-watermelon font-bold text-lg mb-2">누적 지원 금액</h3>
               <p className="text-gray-600 text-sm">
-                95% 이상의 예술인들이 성실하게 대출금을 상환하고 있습니다.
+                생활비·창작비·프로젝트 자금 등으로 총 6억 9백만원이 투입되었습니다.
               </p>
             </div>
             <div className="bg-white p-8 rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-              <div className="text-4xl font-bold text-primary mb-4">4.99%</div>
-              <h3 className="font-watermelon font-bold text-lg mb-2">저금리</h3>
+              <div className="text-4xl font-bold text-primary mb-4">5.10%</div>
+              <h3 className="font-watermelon font-bold text-lg mb-2">대위변제율</h3>
               <p className="text-gray-600 text-sm">
-                기존 고금리(15~30%)와 비교하여 획기적으로 낮은 금리입니다.
+                총 20건, 31,080,986원이 대위변제 처리되어 전체 실행액 대비 5.10% 수준입니다.
               </p>
             </div>
           </div>
 
           {/* Why It Works */}
           <div className="bg-white rounded-lg shadow-lg p-8 md:p-12 max-w-3xl mx-auto mb-16">
-            <h2 className="font-partial text-3xl mb-8 text-center">왜 95% 상환율이 가능할까?</h2>
+            <h2 className="font-partial text-3xl mb-8 text-center">왜 상호부조 금융이 작동할까?</h2>
             <div className="space-y-6">
               <div className="flex gap-4">
                 <div className="flex-shrink-0">
                   <span className="text-2xl font-bold text-primary">1</span>
                 </div>
                 <div>
-                  <h3 className="font-watermelon font-bold text-lg mb-2">신뢰</h3>
+                  <h3 className="font-watermelon font-bold text-lg mb-2">기금과 특별조합비</h3>
                   <p className="text-gray-600">
-                    &ldquo;당신을 믿습니다&rdquo;라는 신뢰 자체가 대출자들을 책임감 있게 만듭니다.
+                    조합이 조성한 3,900만원의 기금과 대출자 특별조합비로 안정기금 잔액 35,608,224원을 유지하며 리스크를 공동으로 감당합니다.
                   </p>
                 </div>
               </div>
@@ -117,9 +122,9 @@ export default function OurProof() {
                   <span className="text-2xl font-bold text-primary">2</span>
                 </div>
                 <div>
-                  <h3 className="font-watermelon font-bold text-lg mb-2">정당한 금리</h3>
+                  <h3 className="font-watermelon font-bold text-lg mb-2">연 5% 고정금리</h3>
                   <p className="text-gray-600">
-                    약탈적인 금리가 아니라 정당한 금리이므로, 상환 부담이 현저히 낮습니다.
+                    프로젝트형·긴급생활형 상품 모두 연 5% 고정금리로 설계되어 고금리 대출 대비 평균 14%p 이상 이자 부담을 덜어줍니다.
                   </p>
                 </div>
               </div>
@@ -128,9 +133,9 @@ export default function OurProof() {
                   <span className="text-2xl font-bold text-primary">3</span>
                 </div>
                 <div>
-                  <h3 className="font-watermelon font-bold text-lg mb-2">문제 해결</h3>
+                  <h3 className="font-watermelon font-bold text-lg mb-2">용도별 맞춤 상품</h3>
                   <p className="text-gray-600">
-                    금융 문제로 인한 창작 방해가 사라지면서, 예술인들이 경제활동에 집중할 수 있게 됩니다.
+                    긴급·익일·특별·프로젝트 대출 등 네 가지 상품으로 생활비부터 창작비까지 필요한 시점에 자금을 공급합니다.
                   </p>
                 </div>
               </div>
@@ -139,9 +144,9 @@ export default function OurProof() {
                   <span className="text-2xl font-bold text-primary">4</span>
                 </div>
                 <div>
-                  <h3 className="font-watermelon font-bold text-lg mb-2">상호부조의 정신</h3>
+                  <h3 className="font-watermelon font-bold text-lg mb-2">투명한 리스크 관리</h3>
                   <p className="text-gray-600">
-                    &ldquo;당신의 상환이 다른 예술가들의 희망이 됩니다&rdquo;라는 메시지가 시스템 전체의 신뢰도를 높입니다.
+                    대위변제 20건(6.56%) 중 11,396,305원을 회수했고, 실시간 모니터링과 회수 계획으로 상호부조 신뢰를 지켜가고 있습니다.
                   </p>
                 </div>
               </div>
@@ -205,7 +210,7 @@ export default function OurProof() {
                 <tr className="border-b">
                   <td className="px-6 py-4 font-semibold">금리</td>
                   <td className="px-6 py-4 text-center text-red-500">15~30%</td>
-                  <td className="px-6 py-4 text-center text-primary font-semibold">4.99%</td>
+                  <td className="px-6 py-4 text-center text-primary font-semibold">연 5% 고정</td>
                 </tr>
                 <tr className="border-b">
                   <td className="px-6 py-4 font-semibold">대출 한도</td>
