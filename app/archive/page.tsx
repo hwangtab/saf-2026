@@ -72,15 +72,15 @@ export default function ArchivePage() {
                 <p className="text-gray-600 text-sm">참여 예술인</p>
               </div>
               <div className="text-center">
-                <p className="text-3xl font-bold text-primary">1,253만원</p>
-                <p className="text-gray-600 text-sm">모금액</p>
+                <p className="text-3xl font-bold text-primary">4,253만원</p>
+                <p className="text-gray-600 text-sm">기금 마련</p>
               </div>
             </div>
             <p className="text-gray-600 mb-4">
               2023년 3월 21일부터 3월 31일까지 서울시 종로구 인사동의 오디오가이 스튜디오와
               인디프레스 갤러리에서 전시와 공연이 펼쳐졌습니다. 국내 저명 뮤지션, 화가, 무용가
-              등 50명 이상의 예술인이 참여하여 예술인 금융 위기의 심각성을 알리고, 1,253만원의
-              기금을 모았습니다.
+              등 50명 이상의 예술인이 참여하여 예술인 금융 위기의 심각성을 알리고, 작품 판매 수익을
+              포함해 총 4,253만원의 기금을 마련했습니다.
             </p>
             <a
               href={EXTERNAL_LINKS.KOSMERT_2023_GALLERY}
