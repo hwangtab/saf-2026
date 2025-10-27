@@ -55,25 +55,13 @@ export default function OurProof() {
                 </p>
               </div>
             </div>
-            <div className="bg-primary/10 rounded-lg p-8 border-2 border-primary">
-              <h3 className="font-watermelon text-2xl font-bold mb-8 text-center">기금의 힘</h3>
-              <div className="space-y-6">
-                <div>
-                  <p className="text-sm text-gray-600">누적 조성된 기금</p>
-                  <p className="text-3xl font-bold">39,000,000원</p>
-                </div>
-                <div>
-                  <p className="text-gray-600">대위변제 발생 후에도</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">현재 안정기금 잔액</p>
-                  <p className="text-3xl font-bold text-primary">35,608,224원</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">누적 대위변제액 (20건)</p>
-                  <p className="text-2xl font-bold">31,080,986원 · 5.10%</p>
-                </div>
-              </div>
+            <div className="bg-primary/10 rounded-lg p-8 border-2 border-primary text-center">
+              <h3 className="font-watermelon text-2xl font-bold mb-6">기금의 힘</h3>
+              <p className="text-sm text-gray-600 mb-3">누적 조성된 상호부조 기금</p>
+              <p className="text-4xl font-bold text-primary">39,000,000원</p>
+              <p className="text-sm text-gray-600 mt-4">
+                작품 판매와 후원, 특별조합비로 함께 채워온 신뢰의 안전망입니다.
+              </p>
             </div>
           </div>
 
