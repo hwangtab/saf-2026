@@ -234,33 +234,33 @@ export default function OurProof() {
           <h2 className="font-partial text-3xl md:text-4xl mb-8">
             당신도 이 신뢰의 체계에 참여할 수 있습니다
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
-            <div className="flex flex-col min-h-[200px]">
-              <h3 className="font-watermelon text-lg font-bold mb-3">예술인이신가요?</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+            <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-lg bg-white text-left shadow-sm">
+              <h3 className="font-watermelon text-lg font-bold mb-3">후원으로 기금에 힘을 보태주세요</h3>
               <p className="text-gray-600 mb-4 flex-grow">
-                상호부조 대출을 신청하여 금융 어려움에서 벗어나세요.
+                상호부조 대출 기금은 시민 후원으로 확대됩니다. 정기후원·일시후원 모두 큰 도움이 됩니다.
               </p>
               <a
-                href={EXTERNAL_LINKS.LOAN_INFO}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block bg-primary hover:bg-yellow-500 text-black font-bold px-6 py-3 rounded-lg transition-colors"
-              >
-                대출 신청하기
-              </a>
-            </div>
-            <div className="flex flex-col min-h-[200px]">
-              <h3 className="font-watermelon text-lg font-bold mb-3">응원하고 싶으신가요?</h3>
-              <p className="text-gray-600 mb-4 flex-grow">
-                당신의 후원이 다른 예술인들의 희망이 됩니다.
-              </p>
-              <a
-                href="https://www.socialfunch.org/SAF"
+                href={EXTERNAL_LINKS.DONATE}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block bg-primary hover:bg-yellow-500 text-black font-bold px-6 py-3 rounded-lg transition-colors"
               >
                 후원하기
+              </a>
+            </div>
+            <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-lg bg-white text-left shadow-sm">
+              <h3 className="font-watermelon text-lg font-bold mb-3">작품을 구매해 예술인을 응원하세요</h3>
+              <p className="text-gray-600 mb-4 flex-grow">
+                판매 수익은 전액 기금으로 귀속됩니다. 온라인 갤러리에서 작품을 만나보세요.
+              </p>
+              <a
+                href={EXTERNAL_LINKS.ONLINE_GALLERY}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block bg-gray-900 hover:bg-gray-800 text-white font-bold px-6 py-3 rounded-lg transition-colors"
+              >
+                작품 구매하기
               </a>
             </div>
           </div>
