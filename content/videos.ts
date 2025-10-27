@@ -9,8 +9,9 @@ export interface Video {
 export const videos: Video[] = [
   {
     id: '1',
-    title: '씨앗:페 2023 영상 기록',
-    description: '씨앗:페 2023 현장을 담은 영상 아카이브입니다.',
+    title: '[씨앗페] Launch & Highlights (2023.3.24-26)',
+    description:
+      '씨앗페 2023의 오프닝과 주요 하이라이트를 담은 기록 영상입니다. 상호부조 대출 캠페인의 취지를 소개하는 공식 요약본입니다.',
     youtubeId: '-HicY7-natU',
   },
   {
