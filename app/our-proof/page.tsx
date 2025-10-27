@@ -82,21 +82,21 @@ export default function OurProof() {
             <div className="bg-white p-8 rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow">
               <div className="text-4xl font-bold text-primary mb-4">305건</div>
               <h3 className="font-watermelon font-bold text-lg mb-2">누적 대출 실행</h3>
-              <p className="text-gray-600 text-sm">
+              <p className="text-gray-600 text-sm text-balance">
                 2022년 12월부터 2025년 4월까지 305건의 상호부조 대출이 실행되었습니다.
               </p>
             </div>
             <div className="bg-white p-8 rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow">
               <div className="text-4xl font-bold text-primary mb-4">609,000,000원</div>
               <h3 className="font-watermelon font-bold text-lg mb-2">누적 지원 금액</h3>
-              <p className="text-gray-600 text-sm">
+              <p className="text-gray-600 text-sm text-balance">
                 생활비·창작비·프로젝트 자금 등으로 총 6억 9백만원이 투입되었습니다.
               </p>
             </div>
             <div className="bg-white p-8 rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow">
               <div className="text-4xl font-bold text-primary mb-4">5.10%</div>
               <h3 className="font-watermelon font-bold text-lg mb-2">대위변제율</h3>
-              <p className="text-gray-600 text-sm">
+              <p className="text-gray-600 text-sm text-balance">
                 총 20건, 31,080,986원이 대위변제 처리되어 전체 실행액 대비 5.10% 수준입니다.
               </p>
             </div>
@@ -112,7 +112,7 @@ export default function OurProof() {
                 </div>
                 <div>
                   <h3 className="font-watermelon font-bold text-lg mb-2">기금과 특별조합비</h3>
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 text-balance">
                     조합이 조성한 3,900만원의 기금과 대출자 특별조합비로 안정기금 잔액 35,608,224원을 유지하며 리스크를 공동으로 감당합니다.
                   </p>
                 </div>
@@ -123,7 +123,7 @@ export default function OurProof() {
                 </div>
                 <div>
                   <h3 className="font-watermelon font-bold text-lg mb-2">연 5% 고정금리</h3>
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 text-balance">
                     프로젝트형·긴급생활형 상품 모두 연 5% 고정금리로 설계되어 고금리 대출 대비 평균 14%p 이상 이자 부담을 덜어줍니다.
                   </p>
                 </div>
@@ -134,7 +134,7 @@ export default function OurProof() {
                 </div>
                 <div>
                   <h3 className="font-watermelon font-bold text-lg mb-2">용도별 맞춤 상품</h3>
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 text-balance">
                     긴급·익일·특별·프로젝트 대출 등 네 가지 상품으로 생활비부터 창작비까지 필요한 시점에 자금을 공급합니다.
                   </p>
                 </div>
@@ -145,7 +145,7 @@ export default function OurProof() {
                 </div>
                 <div>
                   <h3 className="font-watermelon font-bold text-lg mb-2">투명한 리스크 관리</h3>
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 text-balance">
                     대위변제 20건(6.56%) 중 11,396,305원을 회수했고, 실시간 모니터링과 회수 계획으로 상호부조 신뢰를 지켜가고 있습니다.
                   </p>
                 </div>
