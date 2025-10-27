@@ -29,8 +29,8 @@ export default function ExhibitionPage() {
     name: '씨앗페 2026 - 예술인 금융 위기 해결 캠페인',
     description:
       '한국 예술인들의 금융 위기를 해결하기 위한 전시 및 공연 행사',
-    startDate: '2026-11-15',
-    endDate: '2026-12-30',
+    startDate: '2026-01-14',
+    endDate: '2026-01-27',
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode:
       'https://schema.org/OfflineEventAttendanceMode',
@@ -196,46 +196,46 @@ export default function ExhibitionPage() {
               <h3 className="font-watermelon text-xl font-bold mb-4">📅 주요 일정</h3>
               <div className="space-y-4">
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-20 font-bold text-primary">
-                    11월 15일
+                  <div className="flex-shrink-0 w-24 font-bold text-primary">
+                    1월 14일
                   </div>
                   <div className="flex-1">
-                    <p className="font-semibold">개막식 & 오픈닝 공연</p>
+                    <p className="font-semibold">개막식 & 오프닝 퍼포먼스</p>
                     <p className="text-gray-600 text-sm">
-                      참여 예술인들의 축하 공연
+                      참여 예술인들의 개막 퍼포먼스와 캠페인 소개, 주요 후원자 라운드테이블
                     </p>
                   </div>
                 </div>
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-20 font-bold text-primary">
-                    11월 15-30일
+                  <div className="flex-shrink-0 w-24 font-bold text-primary">
+                    1월 15-26일
                   </div>
                   <div className="flex-1">
-                    <p className="font-semibold">전시 및 공연</p>
+                    <p className="font-semibold">상설 전시 & 야간 프로그램</p>
                     <p className="text-gray-600 text-sm">
-                      참여 예술가의 작품 전시와 정기 공연
+                      매일 11:00-20:00 전시 운영, 저녁에는 음악/퍼포먼스 릴레이와 상호부조 상담 부스 운영
                     </p>
                   </div>
                 </div>
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-20 font-bold text-primary">
-                    12월 1일
+                  <div className="flex-shrink-0 w-24 font-bold text-primary">
+                    1월 20일
                   </div>
                   <div className="flex-1">
-                    <p className="font-semibold">고도화 프로젝트 시작</p>
+                    <p className="font-semibold">Meet the Artists 토크</p>
                     <p className="text-gray-600 text-sm">
-                      영상 아카이브, 추가 공연 등
+                      참여 작가와 상호부조 대출 이용 예술인들의 라이브 토크 & 미니 콘서트
                     </p>
                   </div>
                 </div>
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-20 font-bold text-primary">
-                    12월 30일
+                  <div className="flex-shrink-0 w-24 font-bold text-primary">
+                    1월 27일
                   </div>
                   <div className="flex-1">
-                    <p className="font-semibold">폐막</p>
+                    <p className="font-semibold">폐막 & 모금 결산</p>
                     <p className="text-gray-600 text-sm">
-                      마지막 행사 및 감사 메시지
+                      모금 결과 공개, 후원자 감사 행사, 2026년 캠페인 계획 발표
                     </p>
                   </div>
                 </div>
