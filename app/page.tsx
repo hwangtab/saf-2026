@@ -3,18 +3,40 @@ import Image from 'next/image';
 import Link from 'next/link';
 import DynamicCounter from '@/components/features/DynamicCounter';
 import BackgroundSlider from '@/components/features/BackgroundSlider';
-import { EXTERNAL_LINKS } from '@/lib/constants';
+import { EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
+
+const HOME_OG_IMAGE_PATH = '/images/saf2023/IMG_0250.png';
+const HOME_OG_IMAGE_URL = `${SITE_URL}${HOME_OG_IMAGE_PATH}`;
 
 export const metadata: Metadata = {
   title: '씨앗:페 2026 - 예술인 금융 위기 해결 캠페인',
   description:
-    '예술인 상호부조 대출, 작품 전시, 후원으로 함께하는 캠페인. 한국 예술인들의 금융 위기를 해결하세요.',
+    '씨앗:페 2026은 예술인 상호부조 대출 기금 마련을 위해 후원과 작품 구매를 연결하는 캠페인입니다. 금융 사각지대에 놓인 예술인에게 안정적인 창작 환경을 선물하세요.',
+  alternates: {
+    canonical: SITE_URL,
+  },
   openGraph: {
+    type: 'website',
+    siteName: '씨앗:페 2026',
     title: '씨앗:페 2026 - 예술인 금융 위기 해결 캠페인',
     description:
-      '예술인 상호부조 대출, 작품 전시, 후원으로 함께하는 캠페인. 한국 예술인들의 금융 위기를 해결하세요.',
-    url: 'https://saf2026.org',
-    images: ['/images/og-image.png'],
+      '후원과 작품 구매로 예술인 상호부조 대출 기금을 확장하고, 금융 위기 속에서도 창작이 지속되도록 힘을 보태주세요.',
+    url: SITE_URL,
+    images: [
+      {
+        url: HOME_OG_IMAGE_URL,
+        width: 1200,
+        height: 630,
+        alt: '씨앗페 2023 전시 현장에서 관람객과 작품이 어우러진 모습',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '씨앗:페 2026 - 예술인 금융 위기 해결 캠페인',
+    description:
+      '예술인의 금융 위기를 해결하는 상호부조 대출 캠페인, 씨앗:페 2026에 함께하세요.',
+    images: [HOME_OG_IMAGE_URL],
   },
 };
 

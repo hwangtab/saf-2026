@@ -1,7 +1,10 @@
 import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import TestimonialCard from '@/components/ui/TestimonialCard';
-import { EXTERNAL_LINKS } from '@/lib/constants';
+import { EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
+
+const PAGE_URL = `${SITE_URL}/our-reality`;
+const OG_IMAGE_URL = `${SITE_URL}/images/saf2023/IMG_0313.png`;
 
 const FirstBankAccessChart = dynamic(
   () =>
@@ -54,13 +57,29 @@ const CreativeImpactChart = dynamic(
 export const metadata: Metadata = {
   title: '우리의 현실 | 씨앗:페 2026',
   description:
-    '한국 예술인의 금융 위기 현황을 데이터로 보여줍니다. 2025 예술인 금융 재난 보고서의 배제, 약탈, 파괴의 악순환 구조.',
+    '2025 예술인 금융 재난 보고서가 보여준 배제·약탈·파괴의 악순환과 씨앗:페가 제시하는 상호부조 해법을 확인하세요.',
+  alternates: {
+    canonical: PAGE_URL,
+  },
   openGraph: {
     title: '우리의 현실 | 씨앗:페 2026',
     description:
-      '한국 예술인의 금융 위기 현황을 데이터로 보여줍니다. 2025 예술인 금융 재난 보고서의 배제, 약탈, 파괴의 악순환 구조.',
-    url: 'https://saf2026.org/our-reality',
-    images: ['/images/og-image.png'],
+      '금융 사각지대에 놓인 예술인의 현실과 상호부조 대출이 필요한 이유를 데이터와 증언으로 살펴봅니다.',
+    url: PAGE_URL,
+    images: [
+      {
+        url: OG_IMAGE_URL,
+        width: 1200,
+        height: 630,
+        alt: '씨앗페 2023 데이터 전시 패널과 관람객',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '우리의 현실 | 씨앗:페 2026',
+    description: '예술인이 겪는 금융 재난의 구조와 데이터를 한눈에 확인하세요.',
+    images: [OG_IMAGE_URL],
   },
 };
 

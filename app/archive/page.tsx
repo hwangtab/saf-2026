@@ -5,23 +5,42 @@ import ShareButtons from '@/components/common/ShareButtons';
 import VideoEmbed from '@/components/features/VideoEmbed';
 import { saf2023Photos } from '@/content/saf2023-photos';
 import { videos } from '@/content/videos';
-import { EXTERNAL_LINKS } from '@/lib/constants';
+import { EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
+
+const PAGE_URL = `${SITE_URL}/archive`;
+const OG_IMAGE_URL = `${SITE_URL}/images/saf2023/IMG_0327.png`;
 
 export const metadata: Metadata = {
   title: '아카이브 | 씨앗:페 2026',
   description:
-    '씨앗:페의 활동 기록, 언론 보도, 영상 아카이브. 지난 행사와 성과들을 기록합니다.',
+    '씨앗:페 2023 성과, 언론 보도, 영상 기록을 모아둔 공식 아카이브입니다.',
+  alternates: {
+    canonical: PAGE_URL,
+  },
   openGraph: {
     title: '아카이브 | 씨앗:페 2026',
     description:
-      '씨앗:페의 활동 기록, 언론 보도, 영상 아카이브. 지난 행사와 성과들을 기록합니다.',
-    url: 'https://saf2026.org/archive',
-    images: ['/images/og-image.png'],
+      '씨앗:페 캠페인의 기록과 언론 보도, 영상 아카이브를 한 곳에서 확인하세요.',
+    url: PAGE_URL,
+    images: [
+      {
+        url: OG_IMAGE_URL,
+        width: 1200,
+        height: 630,
+        alt: '씨앗페 2023 전시와 공연 현장을 기록한 사진 모음',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '씨앗:페 2026 아카이브',
+    description: '씨앗:페 캠페인의 기록과 영상, 언론 보도를 아카이브에서 확인하세요.',
+    images: [OG_IMAGE_URL],
   },
 };
 
 export default function ArchivePage() {
-  const currentUrl = 'https://saf2026.org/archive';
+  const currentUrl = PAGE_URL;
   const pageTitle = '아카이브 | 씨앗:페 2026';
   const pageDescription = '씨앗:페의 활동 기록과 성과들을 담아냅니다.';
 
@@ -35,7 +54,7 @@ export default function ArchivePage() {
     publisher: {
       '@type': 'Organization',
       name: '한국스마트협동조합',
-      url: 'https://saf2026.org',
+      url: SITE_URL,
     },
   };
 

@@ -2,23 +2,42 @@ import type { Metadata } from 'next';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import KakaoMap from '@/components/features/KakaoMap';
-import { EXHIBITION, EXTERNAL_LINKS } from '@/lib/constants';
+import { EXHIBITION, EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
+
+const EXHIBITION_PAGE_URL = `${SITE_URL}/exhibition`;
+const EXHIBITION_OG_IMAGE = `${SITE_URL}/images/saf2023/IMG_0340.png`;
 
 export const metadata: Metadata = {
   title: '전시 안내 | 씨앗:페 2026',
   description:
-    '씨앗:페 2026 전시 정보. 일시, 장소, 오시는 길, 공연 일정 안내.',
+    '씨앗:페 2026 전시 일정, 프로그램, 위치 정보를 확인하고 현장 후원과 작품 구매에 참여하세요.',
+  alternates: {
+    canonical: EXHIBITION_PAGE_URL,
+  },
   openGraph: {
     title: '전시 안내 | 씨앗:페 2026',
     description:
-      '씨앗:페 2026 전시 정보. 일시, 장소, 오시는 길, 공연 일정 안내.',
-    url: 'https://saf2026.org/exhibition',
-    images: ['/images/og-image.png'],
+      '씨앗:페 2026 전시 정보와 현장 프로그램을 확인하고 캠페인에 함께하세요.',
+    url: EXHIBITION_PAGE_URL,
+    images: [
+      {
+        url: EXHIBITION_OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: '씨앗페 전시장에서 작품을 감상 중인 관람객들',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '씨앗:페 2026 전시 안내',
+    description: '전시 일정과 프로그램, 참여 방법을 확인하세요.',
+    images: [EXHIBITION_OG_IMAGE],
   },
 };
 
 export default function ExhibitionPage() {
-  const canonicalUrl = 'https://saf2026.org/exhibition';
+  const canonicalUrl = EXHIBITION_PAGE_URL;
   const shareTitle = '전시 안내 | 씨앗:페 2026';
   const shareDescription = '씨앗:페 2026 전시 정보. 일시, 장소, 오시는 길, 공연 일정 안내.';
 
@@ -49,7 +68,7 @@ export default function ExhibitionPage() {
     organizer: {
       '@type': 'Organization',
       name: '한국스마트협동조합',
-      url: 'https://saf2026.org',
+      url: SITE_URL,
     },
     offers: {
       '@type': 'Offer',
@@ -58,7 +77,7 @@ export default function ExhibitionPage() {
       priceCurrency: 'KRW',
       availability: 'https://schema.org/InStock',
     },
-    image: 'https://saf2026.org/images/og-image.png',
+    image: EXHIBITION_OG_IMAGE,
     url: canonicalUrl,
   };
 

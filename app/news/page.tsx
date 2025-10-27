@@ -3,21 +3,41 @@ import Image from 'next/image';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import { newsArticles } from '@/content/news';
+import { SITE_URL } from '@/lib/constants';
+
+const PAGE_URL = `${SITE_URL}/news`;
+const OG_IMAGE_URL = `${SITE_URL}/images/saf2023/IMG_0346.png`;
 
 export const metadata: Metadata = {
   title: '언론 보도 | 씨앗:페 2026',
   description:
-    '뉴스아트 등 주요 매체가 보도한 씨앗:페 캠페인 소식을 한 곳에서 확인하세요.',
+    '뉴스아트, 아시아경제 등 주요 매체가 전하는 씨앗:페 캠페인 소식을 모았습니다.',
+  alternates: {
+    canonical: PAGE_URL,
+  },
   openGraph: {
     title: '언론 보도 | 씨앗:페 2026',
     description:
-      '뉴스아트 등 주요 매체가 보도한 씨앗:페 캠페인 소식을 한 곳에서 확인하세요.',
-    url: 'https://saf2026.org/news',
-    images: ['/images/og-image.png'],
+      '언론 보도를 통해 씨앗:페 상호부조 캠페인의 영향력과 협력 사례를 확인하세요.',
+    url: PAGE_URL,
+    images: [
+      {
+        url: OG_IMAGE_URL,
+        width: 1200,
+        height: 630,
+        alt: '씨앗페 2026 언론 보도와 자료가 정리된 모습',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '씨앗:페 2026 언론 보도',
+    description: '씨앗:페 캠페인을 다룬 최신 기사와 인터뷰를 한눈에 확인하세요.',
+    images: [OG_IMAGE_URL],
   },
 };
 
-const canonicalUrl = 'https://saf2026.org/news';
+const canonicalUrl = PAGE_URL;
 
 const sortedArticles = [...newsArticles].sort((a, b) => {
   return new Date(b.date).getTime() - new Date(a.date).getTime();

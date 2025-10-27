@@ -2,10 +2,11 @@ import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
+import { SITE_URL } from '@/lib/constants';
 import '@/styles/globals.css';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://saf2026.org'),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: '씨앗:페 2026 | 예술인 금융 위기 해결 캠페인',
     template: '%s | 씨앗:페 2026',
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'ko_KR',
-    url: 'https://saf2026.org',
+    url: SITE_URL,
     title: '씨앗:페 2026 | 예술인 금융 위기 해결 캠페인',
     description:
       '한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인. 상호부조 대출, 작품 전시, 후원에 참여하세요.',

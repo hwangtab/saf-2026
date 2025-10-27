@@ -1,4 +1,6 @@
 // External Links
+export const SITE_URL = 'https://saf2026.vercel.app';
+
 export const EXTERNAL_LINKS = {
   DONATE: 'https://www.socialfunch.org/SAF',
   ONLINE_GALLERY: 'https://auto-graph.co.kr',
