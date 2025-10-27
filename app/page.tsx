@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import DynamicCounter from '@/components/features/DynamicCounter';
 import BackgroundSlider from '@/components/features/BackgroundSlider';
@@ -30,8 +31,15 @@ export default function Home() {
       <section className="relative min-h-screen flex items-center justify-center py-12 md:py-20">
         <BackgroundSlider />
         <div className="relative z-10 container-max text-center">
-          <div className="mb-8">
-            <span className="text-6xl md:text-8xl drop-shadow-lg">🌱</span>
+          <div className="mb-8 flex justify-center">
+            <Image
+              src="/images/logo/320pxX90px_white.png"
+              alt="씨앗:페 2026 로고"
+              width={280}
+              height={80}
+              className="w-48 md:w-72 h-auto drop-shadow-2xl"
+              priority
+            />
           </div>
           <h1 className="font-partial text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight text-white drop-shadow-lg">
             예술인의 금융 위기,

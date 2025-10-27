@@ -13,7 +13,7 @@ export default function Footer() {
           <div>
             <div className="flex items-start gap-3 mb-6">
               <Image
-                src="/images/logo/320pxX90px.png"
+                src="/images/logo/320pxX90px_white.png"
                 alt="씨앗:페 로고"
                 width={200}
                 height={56}
