@@ -144,14 +144,14 @@ export default function ExhibitionPage() {
                     문의:{' '}
                     <a
                       href="tel:027643114"
-                      className="underline hover:text-primary"
+                      className="underline hover:text-primary link-underline-offset"
                     >
                       02-764-3114
                     </a>{' '}
                     /{' '}
                     <a
                       href="mailto:contact@kosmart.co.kr"
-                      className="underline hover:text-primary"
+                      className="underline hover:text-primary link-underline-offset"
                     >
                       contact@kosmart.co.kr
                     </a>
@@ -220,7 +220,7 @@ export default function ExhibitionPage() {
               <li>✓ 휠체어 사용자 주차 공간 가능</li>
               <li>
                 자세한 문의:{' '}
-                <a href="mailto:contact@kosmart.co.kr" className="underline hover:text-primary">
+                <a href="mailto:contact@kosmart.co.kr" className="underline hover:text-primary link-underline-offset">
                   contact@kosmart.co.kr
                 </a>
               </li>
@@ -291,7 +291,7 @@ export default function ExhibitionPage() {
                 <li>✓ 개별 방문 및 단체 관람 가능</li>
                 <li>
                   ✓ 단체 관람 사전 예약:{' '}
-                  <a href="mailto:contact@kosmart.co.kr" className="underline hover:text-primary">
+                  <a href="mailto:contact@kosmart.co.kr" className="underline hover:text-primary link-underline-offset">
                     contact@kosmart.co.kr
                   </a>
                 </li>
@@ -323,13 +323,13 @@ export default function ExhibitionPage() {
               </p>
               <p>
                 📧{' '}
-                <a href="mailto:contact@kosmart.co.kr" className="underline hover:text-primary">
+                <a href="mailto:contact@kosmart.co.kr" className="underline hover:text-primary link-underline-offset">
                   contact@kosmart.co.kr
                 </a>
               </p>
               <p>
                 📞{' '}
-                <a href="tel:027643114" className="underline hover:text-primary">
+                <a href="tel:027643114" className="underline hover:text-primary link-underline-offset">
                   02-764-3114
                 </a>
               </p>

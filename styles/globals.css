@@ -123,3 +123,9 @@ button:focus {
     word-break: keep-all;
   }
 }
+
+.link-underline-offset {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}

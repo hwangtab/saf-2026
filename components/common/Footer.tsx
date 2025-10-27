@@ -31,18 +31,24 @@ export default function Footer() {
                   href={EXTERNAL_LINKS.KOSMART_OFFICE_MAP}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-primary transition-colors"
+                  className="hover:text-primary transition-colors link-underline-offset"
                 >
                   {CONTACT.ADDRESS}
                 </a>
               </p>
               <p>
-                <a href={`tel:${CONTACT.PHONE.replace(/-/g, '')}`} className="hover:text-primary transition-colors">
+                <a
+                  href={`tel:${CONTACT.PHONE.replace(/-/g, '')}`}
+                  className="hover:text-primary transition-colors link-underline-offset"
+                >
                   {CONTACT.PHONE}
                 </a>
               </p>
               <p>
-                <a href={`mailto:${CONTACT.EMAIL}`} className="hover:text-primary transition-colors">
+                <a
+                  href={`mailto:${CONTACT.EMAIL}`}
+                  className="hover:text-primary transition-colors link-underline-offset"
+                >
                   {CONTACT.EMAIL}
                 </a>
               </p>
