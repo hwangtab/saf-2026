@@ -64,7 +64,7 @@ export default function RootLayout({
           메인 콘텐츠로 이동
         </a>
         <Header />
-        <main id="main-content" role="main" className="flex-grow">
+        <main id="main-content" role="main" className="flex-1">
           <Suspense fallback={<div>로딩 중...</div>}>{children}</Suspense>
         </main>
         <Footer />

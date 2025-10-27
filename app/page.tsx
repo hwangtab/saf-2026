@@ -181,11 +181,11 @@ export default function Home() {
               href={EXTERNAL_LINKS.DONATE}
               target="_blank"
               rel="noopener noreferrer"
-              className="group p-8 bg-white border-2 border-primary rounded-lg hover:shadow-lg transition-all"
+              className="group flex flex-col p-8 bg-white border-2 border-gray-300 rounded-lg hover:border-primary hover:shadow-lg transition-all"
             >
               <div className="text-4xl mb-4">❤️</div>
               <h3 className="font-watermelon text-xl font-bold mb-3">후원하기</h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-gray-600 mb-4 flex-grow">
                 당신의 후원은 예술인들을 위한 기금이 됩니다.
               </p>
               <span className="inline-block group-hover:translate-x-1 transition-transform">
@@ -197,11 +197,11 @@ export default function Home() {
               href={EXTERNAL_LINKS.ONLINE_GALLERY}
               target="_blank"
               rel="noopener noreferrer"
-              className="group p-8 bg-white border-2 border-primary rounded-lg hover:shadow-lg transition-all"
+              className="group flex flex-col p-8 bg-white border-2 border-gray-300 rounded-lg hover:border-primary hover:shadow-lg transition-all"
             >
               <div className="text-4xl mb-4">🎨</div>
               <h3 className="font-watermelon text-xl font-bold mb-3">작품 구매</h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-gray-600 mb-4 flex-grow">
                 참여 예술가들의 작품을 구매하며 지원합니다.
               </p>
               <span className="inline-block group-hover:translate-x-1 transition-transform">
@@ -211,11 +211,11 @@ export default function Home() {
 
             <Link
               href="/exhibition"
-              className="group p-8 bg-white border-2 border-primary rounded-lg hover:shadow-lg transition-all"
+              className="group flex flex-col p-8 bg-white border-2 border-gray-300 rounded-lg hover:border-primary hover:shadow-lg transition-all"
             >
               <div className="text-4xl mb-4">🏛️</div>
               <h3 className="font-watermelon text-xl font-bold mb-3">전시 방문</h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-gray-600 mb-4 flex-grow">
                 인사아트센터에서 펼쳐지는 예술의 현장을 직접 방문하세요.
               </p>
               <span className="inline-block group-hover:translate-x-1 transition-transform">
