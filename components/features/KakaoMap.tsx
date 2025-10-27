@@ -3,12 +3,14 @@
 import { useState } from 'react';
 import { Map, MapMarker, useKakaoLoader } from 'react-kakao-maps-sdk';
 
-const KAKAO_MAP_APP_KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
+const RAW_KAKAO_APP_KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY ?? '';
+const FALLBACK_APP_KEY = 'invalid-kakao-app-key';
 
 export default function KakaoMap() {
-  const hasAppKey = Boolean(KAKAO_MAP_APP_KEY);
+  const hasAppKey = RAW_KAKAO_APP_KEY.length > 0;
+  const appKey = hasAppKey ? RAW_KAKAO_APP_KEY : FALLBACK_APP_KEY;
   const [loading, error] = useKakaoLoader({
-    appkey: hasAppKey ? KAKAO_MAP_APP_KEY : 'invalid-kakao-app-key',
+    appkey: appKey,
     libraries: ['services'],
   });
   const [isOpen, setIsOpen] = useState(false);
