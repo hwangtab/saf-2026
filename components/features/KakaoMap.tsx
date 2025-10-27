@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Map, MapMarker, useKakaoLoader } from 'react-kakao-maps-sdk';
 
-const RAW_KAKAO_APP_KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY ?? '';
+const RAW_KAKAO_APP_KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY?.trim() ?? '';
 const FALLBACK_APP_KEY = 'invalid-kakao-app-key';
 
 export default function KakaoMap() {
