@@ -113,3 +113,13 @@ button:focus {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+.text-balance {
+  text-wrap: balance;
+}
+
+@supports not (text-wrap: balance) {
+  .text-balance {
+    word-break: keep-all;
+  }
+}

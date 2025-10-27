@@ -70,8 +70,8 @@ export default function OurReality() {
       {/* Enhanced Hero: 95% 상환율을 중심으로 */}
       <section className="py-16 md:py-24 bg-gradient-to-br from-gray-50 to-gray-100 text-center">
         <div className="container-max">
-          <h1 className="font-partial text-4xl md:text-6xl mb-6">우리의 현실</h1>
-          <p className="text-lg md:text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
+          <h1 className="font-partial text-4xl md:text-6xl mb-6 text-balance">우리의 현실</h1>
+          <p className="text-lg md:text-xl text-gray-600 mb-12 max-w-2xl mx-auto text-balance">
             2025 예술인 금융 재난 보고서가 밝혀낸 한국 예술인의 금융 위기의 구조적 현실
           </p>
 

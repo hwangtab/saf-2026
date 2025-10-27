@@ -21,8 +21,8 @@ export default function OurProof() {
       <section className="py-12 md:py-20 bg-gradient-to-br from-primary/20 to-primary/5">
         <div className="container-max text-center">
           <div className="text-5xl md:text-7xl font-bold text-primary mb-6">305건</div>
-          <h1 className="font-partial text-4xl md:text-5xl mb-6">예술인 상호부조 대출의 실제 성과</h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <h1 className="font-partial text-4xl md:text-5xl mb-6 text-balance">예술인 상호부조 대출의 실제 성과</h1>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto text-balance">
             2022년 12월부터 2025년 4월까지, 총 <strong>305건</strong>의 대출을 통해 <strong>609,000,000원</strong>을
             예술인에게 공급했습니다. 상호부조의 신뢰가 실제 데이터로 증명되었습니다.
           </p>

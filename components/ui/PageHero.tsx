@@ -17,7 +17,7 @@ export default function PageHero({
     <section className={`py-12 md:py-20 bg-gradient-to-br ${backgroundGradient}`}>
       <div className="container-max text-center">
         <h1
-          className="font-partial text-4xl md:text-5xl mb-6 tracking-tight"
+          className="font-partial text-4xl md:text-5xl mb-6 tracking-tight text-balance"
           style={{
             fontFamily:
               'PartialSans, GMarketSans, -apple-system, BlinkMacSystemFont, system-ui, sans-serif',
@@ -25,7 +25,7 @@ export default function PageHero({
         >
           {title}
         </h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">{description}</p>
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto text-balance">{description}</p>
         {children ? <div className="mt-8 flex justify-center">{children}</div> : null}
       </div>
     </section>

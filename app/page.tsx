@@ -41,7 +41,7 @@ export default function Home() {
               priority
             />
           </div>
-          <h1 className="font-partial text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight text-white drop-shadow-lg">
+          <h1 className="font-partial text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight text-white drop-shadow-lg text-balance">
             예술인의 금융 위기,
             <br />
             함께 해결합니다
