@@ -62,8 +62,11 @@ npm run start
 `.env.local.example`을 참고하여 `.env.local` 파일을 생성하세요:
 
 ```bash
-# Kakao SDK (SNS 공유 기능)
-NEXT_PUBLIC_KAKAO_MAP_KEY=your_kakao_api_key_here
+# Kakao 지도(JavaScript 키)
+NEXT_PUBLIC_KAKAO_MAP_KEY=your_kakao_map_key_here
+
+# Kakao 공유(JavaScript 키)
+NEXT_PUBLIC_KAKAO_JS_KEY=your_kakao_js_key_here
 
 # Google Analytics (선택사항)
 NEXT_PUBLIC_GA_ID=your_google_analytics_id
