@@ -44,7 +44,7 @@ export default function OurProof() {
                   >
                     한국스마트협동조합
                   </a>
-                  이 일정한 기금을 조성하면, 북서울신협이 그 기금의 약 7배까지 예술인들에게 <strong>저금리</strong>로 대출하는 시스템입니다.
+                  이 일정한 기금을 조성하면, 태릉신협이 그 기금의 약 7배까지 예술인들에게 <strong>저금리</strong>로 대출하는 시스템입니다.
                 </p>
                 <p>
                   이는 단순한 금융상품이 아닙니다. 예술인들을 신뢰하고, 그들의 성실함에 베팅하는 &lsquo;상호부조&rsquo;의 정신이 담겨있습니다.
@@ -65,7 +65,7 @@ export default function OurProof() {
                   <p className="text-gray-600">↓ × 약 7배 ↓</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">북서울신협이 대출할 수 있는 금액</p>
+                  <p className="text-sm text-gray-600">태릉신협이 대출할 수 있는 금액</p>
                   <p className="text-3xl font-bold text-primary">약 10억 원</p>
                 </div>
               </div>
