@@ -48,14 +48,9 @@ export default function ArchivePage() {
       <PageHero
         title="아카이브"
         description="씨앗:페의 발자취와 성과, 언론 보도를 기록합니다"
-      />
-
-      {/* Share Buttons */}
-      <section className="py-8 bg-gradient-to-br from-gray-50 to-gray-100">
-        <div className="container-max">
-          <ShareButtons url={currentUrl} title={pageTitle} description={pageDescription} />
-        </div>
-      </section>
+      >
+        <ShareButtons url={currentUrl} title={pageTitle} description={pageDescription} />
+      </PageHero>
 
       {/* Past Events Section */}
       <section className="py-12 md:py-20 bg-gray-50">
