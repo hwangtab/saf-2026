@@ -51,7 +51,7 @@ export default function ArchivePage() {
       />
 
       {/* Share Buttons */}
-      <section className="py-8 bg-primary/5 border-b border-primary/20">
+      <section className="py-8 bg-gradient-to-br from-gray-50 to-gray-100">
         <div className="container-max">
           <ShareButtons url={currentUrl} title={pageTitle} description={pageDescription} />
         </div>
