@@ -71,17 +71,13 @@ export default function NewsPage() {
         title="언론 보도"
         description="씨앗:페 캠페인을 조명한 기사와 인터뷰를 모았습니다."
         backgroundGradient="from-primary/10 via-primary/5 to-white"
-      />
-
-      <section className="py-8 bg-primary/5 border-b border-primary/20">
-        <div className="container-max">
-          <ShareButtons
-            url={canonicalUrl}
-            title="언론 보도 | 씨앗:페 2026"
-            description="씨앗:페 캠페인을 다룬 언론 보도를 한 눈에 확인해보세요."
-          />
-        </div>
-      </section>
+      >
+        <ShareButtons
+          url={canonicalUrl}
+          title="언론 보도 | 씨앗:페 2026"
+          description="씨앗:페 캠페인을 다룬 언론 보도를 한 눈에 확인해보세요."
+        />
+      </PageHero>
 
       <section className="py-12 md:py-20">
         <div className="container-max">

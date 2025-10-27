@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import PageHero from '@/components/ui/PageHero';
+import ShareButtons from '@/components/common/ShareButtons';
 import KakaoMap from '@/components/features/KakaoMap';
 import { EXHIBITION, EXTERNAL_LINKS } from '@/lib/constants';
 
@@ -17,6 +18,10 @@ export const metadata: Metadata = {
 };
 
 export default function ExhibitionPage() {
+  const canonicalUrl = 'https://saf2026.org/exhibition';
+  const shareTitle = '전시 안내 | 씨앗:페 2026';
+  const shareDescription = '씨앗:페 2026 전시 정보. 일시, 장소, 오시는 길, 공연 일정 안내.';
+
   // JSON-LD Schema for Event
   const eventSchema = {
     '@context': 'https://schema.org',
@@ -48,13 +53,13 @@ export default function ExhibitionPage() {
     },
     offers: {
       '@type': 'Offer',
-      url: 'https://saf2026.org/exhibition',
+      url: canonicalUrl,
       price: '0',
       priceCurrency: 'KRW',
       availability: 'https://schema.org/InStock',
     },
     image: 'https://saf2026.org/images/og-image.png',
-    url: 'https://saf2026.org/exhibition',
+    url: canonicalUrl,
   };
 
   return (
@@ -66,7 +71,9 @@ export default function ExhibitionPage() {
       <PageHero
         title="전시 안내"
         description="씨앗:페 2026을 직접 만나보세요"
-      />
+      >
+        <ShareButtons url={canonicalUrl} title={shareTitle} description={shareDescription} />
+      </PageHero>
 
       {/* Exhibition Info */}
       <section className="py-12 md:py-20">
