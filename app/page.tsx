@@ -31,13 +31,13 @@ export default function Home() {
       <section className="relative min-h-screen flex items-center justify-center py-12 md:py-20">
         <BackgroundSlider />
         <div className="relative z-10 container-max text-center">
-          <div className="mb-10 flex justify-center">
+          <div className="mb-12 flex justify-center">
             <Image
               src="/images/logo/320pxX90px_white.png"
               alt="씨앗:페 2026 로고"
-              width={560}
-              height={160}
-              className="w-72 md:w-[28rem] h-auto drop-shadow-2xl"
+              width={1120}
+              height={320}
+              className="w-96 md:w-[56rem] h-auto drop-shadow-2xl"
               priority
             />
           </div>
