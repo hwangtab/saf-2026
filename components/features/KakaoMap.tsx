@@ -6,7 +6,12 @@ import { Map, MapMarker, useKakaoLoader } from 'react-kakao-maps-sdk';
 const RAW_KAKAO_APP_KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY?.trim() ?? '';
 const FALLBACK_APP_KEY = 'invalid-kakao-app-key';
 
-export default function KakaoMap() {
+interface KakaoMapProps {
+  className?: string;
+}
+
+export default function KakaoMap(props?: KakaoMapProps) {
+  const { className } = props ?? {};
   const hasAppKey = RAW_KAKAO_APP_KEY.length > 0;
   const appKey = hasAppKey ? RAW_KAKAO_APP_KEY : FALLBACK_APP_KEY;
   const [loading, error] = useKakaoLoader({
@@ -45,8 +50,19 @@ export default function KakaoMap() {
   // 인사아트센터: 서울 종로구 인사동길 41-1
   const center = { lat: 37.5718, lng: 126.9857 };
 
+  const containerClassName = [
+    'w-full',
+    'min-h-[360px]',
+    'h-full',
+    'rounded-lg',
+    'overflow-hidden',
+    'shadow-md',
+  ]
+    .concat(className ? [className] : [])
+    .join(' ');
+
   return (
-    <div className="w-full h-[400px] rounded-lg overflow-hidden shadow-md">
+    <div className={containerClassName}>
       <Map center={center} style={{ width: '100%', height: '100%' }} level={3}>
         <MapMarker position={center} onClick={() => setIsOpen(true)} clickable>
           {isOpen && (

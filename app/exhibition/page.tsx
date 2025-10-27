@@ -78,9 +78,9 @@ export default function ExhibitionPage() {
       {/* Exhibition Info */}
       <section className="py-12 md:py-20">
         <div className="container-max">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-stretch">
             {/* Info */}
-            <div className="space-y-8">
+            <div className="flex flex-col gap-8 h-full">
               <div>
                 <h2 className="font-partial text-2xl mb-6">전시 정보</h2>
                 <div className="space-y-4">
@@ -101,7 +101,7 @@ export default function ExhibitionPage() {
               </div>
 
               {/* Quick Links */}
-              <div>
+              <div className="mt-auto space-y-3">
                 <h3 className="font-watermelon text-lg font-bold mb-4">참여하기</h3>
                 <div className="space-y-3">
                   <a
@@ -125,8 +125,8 @@ export default function ExhibitionPage() {
             </div>
 
             {/* Interactive Map */}
-            <div>
-              <KakaoMap />
+            <div className="h-full">
+              <KakaoMap className="min-h-[400px]" />
             </div>
           </div>
         </div>
