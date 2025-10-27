@@ -50,7 +50,17 @@ export const newsArticles: NewsArticle[] = [
     link: 'https://www.news-art.co.kr/news/article.html?no=32826',
     thumbnail: 'https://www.news-art.co.kr/data/photos/20250937/art_17574805036594_823433.png',
     description:
-      "뉴스아트 편집부 | 금융 사각지대에 놓인 예술인을 위해 운영 중인 ‘예술인상호부조대출’이 누적 대출액 7억원을 돌파하며 신뢰받는 사회안전망으로 자리 잡았다는 소식을 전한다.",
+      "뉴스아트 편집부 | 금융 사각지대에 놓인 예술인들을 위해 한국스마트협동조합이 운영하는 예술인상호부조대출이 누적 7억 원을 돌파한 소식을 전하는 기사.",
+  },
+  {
+    id: 'news-32773',
+    title: "[뉴스아트] 신용점수 없어도 돈 빌릴 수 있다? 예술인들의 '금융 반란' 성공기",
+    source: '뉴스아트',
+    date: '2025-05-22',
+    link: 'https://www.news-art.co.kr/news/article.html?no=32773',
+    thumbnail: 'https://www.news-art.co.kr/data/photos/20250521/art_17479029709267_f16e6e.png',
+    description:
+      '뉴스아트 편집부 | 한국스마트협동조합이 운영하는 예술인상호부조대출의 성과와 2024 운용보고서 내용을 소개하며 상호부조 금융 모델을 조명한다.',
   },
   {
     id: 'news-32749',
@@ -62,6 +72,46 @@ export const newsArticles: NewsArticle[] = [
     thumbnail: 'https://www.news-art.co.kr/data/photos/20250313/art_17429771615682_0f2f90.jpg',
     description:
       "뉴스아트 편집부 | 누적 대출 건수 300건·총액 6억원을 돌파한 ‘예술인상호부조대출’이 예술계의 사회안전망으로 성장하고 있으며, 대위변제율은 5.01%로 안정적이라는 분석을 담았다.",
+  },
+  {
+    id: 'news-29518',
+    title: '[뉴스아트] 신용불량자도 저금리 익일소액대출 by 한국스마트협동조합',
+    source: '뉴스아트',
+    date: '2024-01-02',
+    link: 'https://www.news-art.co.kr/news/article.html?no=29518',
+    thumbnail: 'https://www.news-art.co.kr/data/photos/20240101/art_17041725871048_15ff42.jpg',
+    description:
+      '뉴스아트 김시우 기자 | 한국스마트협동조합이 익일 소액대출 서비스를 공개하며 신용불량 상태라도 연 5% 저금리로 자금을 지원하는 구조를 설명한다.',
+  },
+  {
+    id: 'news-29471',
+    title: '[뉴스아트] 예술인상호부조대출, 300만원으로 증액',
+    source: '뉴스아트',
+    date: '2023-12-28',
+    link: 'https://www.news-art.co.kr/news/article.html?no=29471',
+    thumbnail: 'https://www.news-art.co.kr/data/photos/20231252/art_17037334058548_0f9f85.jpg',
+    description:
+      '뉴스아트 이명신 기자 | 한국스마트협동조합이 2024년부터 예술인상호부조대출 한도를 300만원으로 증액하기로 한 배경과 성과를 설명한다.',
+  },
+  {
+    id: 'news-27529',
+    title: '[뉴스아트] 예술인 은행대출 문턱 낮추기',
+    source: '뉴스아트',
+    date: '2023-07-07',
+    link: 'https://www.news-art.co.kr/news/article.html?no=27529',
+    thumbnail: 'https://www.news-art.co.kr/data/photos/20230727/art_16887146539998_21c79d.jpg',
+    description:
+      '뉴스아트 김시우 기자 | 예술인상호부조대출의 100% 상환 성과를 짚으며 예술인을 위한 금융 접근성 개선 필요성을 강조한다.',
+  },
+  {
+    id: 'news-27413',
+    title: '[뉴스아트] <예술인상호부조대출> 박람회에 소개된다',
+    source: '뉴스아트',
+    date: '2023-06-28',
+    link: 'https://www.news-art.co.kr/news/article.html?no=27413',
+    thumbnail: 'https://www.news-art.co.kr/data/photos/20230626/art_16879167132386_de7953.png',
+    description:
+      '뉴스아트 김시우 기자 | 대한민국 사회적경제박람회에서 예술인상호부조대출이 소개되는 소식을 전하며 프로그램의 의미를 설명한다.',
   },
   {
     id: 'news-sin-519',
