@@ -118,7 +118,7 @@ export default function ExhibitionPage() {
                   rel="noopener noreferrer"
                   className="block w-full bg-gray-900 hover:bg-gray-800 text-white font-bold px-6 py-3 rounded-lg transition-colors text-center"
                 >
-                  🎨 온라인 갤러리
+                  🎨 작품 구매하기
                 </a>
                 <div className="pt-4 text-sm text-gray-600">
                   <p>
