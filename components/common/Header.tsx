@@ -12,6 +12,7 @@ const navigation = [
   { name: '우리의 현실', href: '/our-reality' },
   { name: '우리의 증명', href: '/our-proof' },
   { name: '아카이브', href: '/archive' },
+  { name: '언론 보도', href: '/news' },
   { name: '전시 안내', href: '/exhibition' },
   { name: '온라인 갤러리', href: EXTERNAL_LINKS.ONLINE_GALLERY, external: true },
 ];

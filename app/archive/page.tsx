@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
+import Link from 'next/link';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import VideoEmbed from '@/components/features/VideoEmbed';
-import { newsArticles } from '@/content/news';
 import { saf2023Photos } from '@/content/saf2023-photos';
 import { videos } from '@/content/videos';
 import { EXTERNAL_LINKS } from '@/lib/constants';
@@ -38,25 +38,6 @@ export default function ArchivePage() {
       name: '한국스마트협동조합',
       url: 'https://saf2026.org',
     },
-    mainEntity: {
-      '@type': 'ItemList',
-      itemListElement: newsArticles.map((article, index) => ({
-        '@type': 'ListItem',
-        position: index + 1,
-        item: {
-          '@type': 'NewsArticle',
-          headline: article.title,
-          description: article.description || '',
-          datePublished: new Date(article.date).toISOString(),
-          author: {
-            '@type': 'Organization',
-            name: article.source,
-          },
-          image: article.thumbnail || 'https://saf2026.org/images/og-image.png',
-          url: article.link,
-        },
-      })),
-    },
   };
 
   return (
@@ -77,50 +58,22 @@ export default function ArchivePage() {
         </div>
       </section>
 
-      {/* News Section */}
+      {/* Press CTA */}
       <section className="py-12 md:py-20">
         <div className="container-max">
-          <h2 className="font-partial text-3xl mb-12">📰 언론 보도</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {newsArticles.map((article) => (
-              <a
-                key={article.id}
-                href={article.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
-              >
-                <div className="aspect-video bg-gradient-to-br from-primary/20 to-primary/5 overflow-hidden flex items-center justify-center">
-                  {article.thumbnail ? (
-                    <Image
-                      src={article.thumbnail}
-                      alt={article.title}
-                      width={800}
-                      height={450}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                    />
-                  ) : (
-                    <div className="text-gray-300 text-center">
-                      <div className="text-4xl mb-2">📄</div>
-                      <p className="text-sm">이미지 없음</p>
-                    </div>
-                  )}
-                </div>
-                <div className="p-6">
-                  <p className="text-sm text-gray-500 mb-2">
-                    {article.source} • {new Date(article.date).toLocaleDateString('ko-KR')}
-                  </p>
-                  <h3 className="font-watermelon text-lg font-bold mb-3 group-hover:text-primary transition-colors">
-                    {article.title}
-                  </h3>
-                  {article.description && (
-                    <p className="text-gray-600 text-sm line-clamp-3">
-                      {article.description}
-                    </p>
-                  )}
-                </div>
-              </a>
-            ))}
+          <div className="bg-white border border-primary/20 rounded-2xl p-8 md:p-12 shadow-md flex flex-col md:flex-row md:items-center gap-8">
+            <div className="flex-1 space-y-4">
+              <h2 className="font-partial text-3xl">📰 언론 보도 모아보기</h2>
+              <p className="text-gray-600 text-sm md:text-base leading-relaxed">
+                씨앗:페 캠페인을 다룬 최신 기사와 인터뷰는 전용 페이지에서 썸네일과 메타데이터와 함께 확인할 수 있습니다.
+              </p>
+            </div>
+            <Link
+              href="/news"
+              className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-primary text-black font-bold transition-colors hover:bg-yellow-500"
+            >
+              언론 보도 페이지로 이동
+            </Link>
           </div>
         </div>
       </section>
