@@ -127,14 +127,6 @@ export default function ExhibitionPage() {
             {/* Interactive Map */}
             <div>
               <KakaoMap />
-              <a
-                href={EXTERNAL_LINKS.INSA_GALLERY_KAKAO}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block mt-4 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold px-6 py-3 rounded-lg transition-colors"
-              >
-                카카오맵에서 보기
-              </a>
             </div>
           </div>
         </div>
