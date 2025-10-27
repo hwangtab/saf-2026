@@ -189,7 +189,7 @@ export default function OurReality() {
           {/* Description Text */}
           <div className="max-w-3xl mb-12">
             <h3 className="font-watermelon text-xl font-bold mb-3">선택이 아닌 생존</h3>
-            <p className="text-gray-700 mb-4">
+            <p className="text-gray-700 mb-4 text-balance">
               은행 문이 닫힌 순간, 예술인들은 곧바로 저축은행, 카드론, 대부업체로 내몰립니다.
               <strong> 83.2%의 예술인이 고금리 금융 상품을 이용</strong>한 경험이 있습니다.
             </p>
@@ -231,7 +231,7 @@ export default function OurReality() {
           {/* Description Text */}
           <div className="max-w-3xl mb-12">
             <h3 className="font-watermelon text-xl font-bold mb-3">생존의 위기</h3>
-            <p className="text-gray-700 mb-4">
+            <p className="text-gray-700 mb-4 text-balance">
               채권추심을 경험한 예술인은 <strong>10명 중 4명(43%)</strong>입니다.
               이들은 멈추지 않는 전화, 모욕적인 언사, 집으로 찾아오는 추심원 앞에서
               생존의 벼랑 끝으로 내몰립니다.
