@@ -103,24 +103,42 @@ export default function ExhibitionPage() {
               {/* Quick Links */}
               <div className="mt-auto space-y-3">
                 <h3 className="font-watermelon text-lg font-bold mb-4">참여하기</h3>
-                <div className="space-y-3">
-                  <a
-                    href={EXTERNAL_LINKS.DONATE}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block w-full bg-primary hover:bg-yellow-500 text-black font-bold px-6 py-3 rounded-lg transition-colors text-center"
-                  >
-                    ❤️ 후원하기
-                  </a>
-                  <a
-                    href={EXTERNAL_LINKS.ONLINE_GALLERY}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block w-full bg-gray-900 hover:bg-gray-800 text-white font-bold px-6 py-3 rounded-lg transition-colors text-center"
-                  >
-                    🎨 온라인 갤러리
-                  </a>
+              <div className="space-y-3">
+                <a
+                  href={EXTERNAL_LINKS.DONATE}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full bg-primary hover:bg-yellow-500 text-black font-bold px-6 py-3 rounded-lg transition-colors text-center"
+                >
+                  ❤️ 후원하기
+                </a>
+                <a
+                  href={EXTERNAL_LINKS.ONLINE_GALLERY}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full bg-gray-900 hover:bg-gray-800 text-white font-bold px-6 py-3 rounded-lg transition-colors text-center"
+                >
+                  🎨 온라인 갤러리
+                </a>
+                <div className="pt-4 text-sm text-gray-600">
+                  <p>
+                    문의:{' '}
+                    <a
+                      href="tel:027643114"
+                      className="underline hover:text-primary"
+                    >
+                      02-764-3114
+                    </a>{' '}
+                    /{' '}
+                    <a
+                      href="mailto:contact@kosmart.co.kr"
+                      className="underline hover:text-primary"
+                    >
+                      contact@kosmart.co.kr
+                    </a>
+                  </p>
                 </div>
+              </div>
               </div>
             </div>
 
@@ -181,7 +199,12 @@ export default function ExhibitionPage() {
               <li>✓ 장애인 휠체어 접근 가능</li>
               <li>✓ 엘리베이터 및 휠체어 화장실 보유</li>
               <li>✓ 휠체어 사용자 주차 공간 가능</li>
-              <li>자세한 문의: contact@kosmart.co.kr</li>
+              <li>
+                자세한 문의:{' '}
+                <a href="mailto:contact@kosmart.co.kr" className="underline hover:text-primary">
+                  contact@kosmart.co.kr
+                </a>
+              </li>
             </ul>
           </div>
         </div>
@@ -247,7 +270,12 @@ export default function ExhibitionPage() {
               <ul className="text-gray-600 space-y-2 text-sm">
                 <li>✓ 입장료: 무료 (후원금은 자율)</li>
                 <li>✓ 개별 방문 및 단체 관람 가능</li>
-                <li>✓ 단체 관람 사전 예약: contact@kosmart.co.kr</li>
+                <li>
+                  ✓ 단체 관람 사전 예약:{' '}
+                  <a href="mailto:contact@kosmart.co.kr" className="underline hover:text-primary">
+                    contact@kosmart.co.kr
+                  </a>
+                </li>
                 <li>✓ 어린이/청소년 관람 환영</li>
               </ul>
             </div>
@@ -274,8 +302,18 @@ export default function ExhibitionPage() {
                   한국스마트협동조합
                 </a>
               </p>
-              <p>📧 contact@kosmart.co.kr</p>
-              <p>📞 02-764-3114</p>
+              <p>
+                📧{' '}
+                <a href="mailto:contact@kosmart.co.kr" className="underline hover:text-primary">
+                  contact@kosmart.co.kr
+                </a>
+              </p>
+              <p>
+                📞{' '}
+                <a href="tel:027643114" className="underline hover:text-primary">
+                  02-764-3114
+                </a>
+              </p>
             </div>
           </div>
         </div>

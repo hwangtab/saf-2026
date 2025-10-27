@@ -10,7 +10,7 @@ export const EXTERNAL_LINKS = {
   AUDIO_GUY_STUDIO_KAKAO:
     'https://place.map.kakao.com/27349395',
   KOSMART_OFFICE_MAP:
-    'https://map.kakao.com/?q=%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EC%9D%80%ED%8F%89%EA%B5%AC%20%ED%86%B5%EC%9D%BC%EB%A1%9C68%EA%B8%B8%204%20302%ED%98%B8',
+    'https://map.kakao.com/?q=%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EC%9D%80%ED%8F%89%EA%B5%AC%20%ED%86%B5%EC%9D%BC%EB%A1%9C%2068%EA%B8%B8%204%20302%ED%98%B8',
 };
 
 // Social Links

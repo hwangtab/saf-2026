@@ -36,8 +36,16 @@ export default function Footer() {
                   {CONTACT.ADDRESS}
                 </a>
               </p>
-              <p>{CONTACT.PHONE}</p>
-              <p>{CONTACT.EMAIL}</p>
+              <p>
+                <a href={`tel:${CONTACT.PHONE.replace(/-/g, '')}`} className="hover:text-primary transition-colors">
+                  {CONTACT.PHONE}
+                </a>
+              </p>
+              <p>
+                <a href={`mailto:${CONTACT.EMAIL}`} className="hover:text-primary transition-colors">
+                  {CONTACT.EMAIL}
+                </a>
+              </p>
             </div>
           </div>
 
