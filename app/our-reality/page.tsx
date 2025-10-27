@@ -82,7 +82,7 @@ export default function OurReality() {
             <p className="text-lg text-gray-700 mb-4">
               상호부조 대출 상환율
             </p>
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-balance">
               신용점수와 무관하게 진행된 354건의 대출, 약 7억 원 규모에서 달성한 상환율입니다.
               <br />
               <strong>예술인은 위험하지 않다. 위험한 것은 이들을 약탈하도록 방치하는 금융 시스템이다.</strong>
