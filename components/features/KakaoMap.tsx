@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Map, MapMarker, useKakaoLoader } from 'react-kakao-maps-sdk';
+import { Map, MapMarker, InfoWindow, useKakaoLoader } from 'react-kakao-maps-sdk';
 
 const RAW_KAKAO_APP_KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY?.trim() ?? '';
 const FALLBACK_APP_KEY = 'invalid-kakao-app-key';
@@ -64,23 +64,31 @@ export default function KakaoMap(props?: KakaoMapProps) {
   return (
     <div className={containerClassName}>
       <Map center={center} style={{ width: '100%', height: '100%' }} level={3}>
-        <MapMarker position={center} onClick={() => setIsOpen(true)} clickable>
-          {isOpen && (
+        <MapMarker position={center} onClick={() => setIsOpen((prev) => !prev)} clickable />
+        {isOpen ? (
+          <InfoWindow
+            position={center}
+            zIndex={2}
+            removable
+            onCloseClick={() => setIsOpen(false)}
+          >
             <div
               style={{
                 padding: '12px',
-                color: '#000',
-                minWidth: '190px',
-                maxWidth: '240px',
+                color: '#000000',
+                minWidth: '210px',
                 lineHeight: 1.5,
                 wordBreak: 'keep-all',
+                fontSize: '14px',
               }}
             >
               <strong style={{ display: 'block', marginBottom: '4px' }}>인사아트센터</strong>
-              <span style={{ whiteSpace: 'normal' }}>서울 종로구 인사동길 41-1</span>
+              <span style={{ display: 'block', whiteSpace: 'normal' }}>
+                서울 종로구 인사동길 41-1
+              </span>
             </div>
-          )}
-        </MapMarker>
+          </InfoWindow>
+        ) : null}
       </Map>
     </div>
   );
