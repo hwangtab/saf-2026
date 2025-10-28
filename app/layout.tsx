@@ -15,9 +15,7 @@ export const metadata: Metadata = {
     canonical: SITE_URL,
     languages: {
       'ko-KR': SITE_URL,
-    },
-    other: {
-      'without-www': SITE_URL_ALIAS,
+      'x-default': SITE_URL_ALIAS,
     },
   },
   description:
