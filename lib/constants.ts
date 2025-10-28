@@ -45,7 +45,7 @@ export const CONTACT = {
 export const EXHIBITION = {
   NAME: '씨앗:페(SAF) 2026',
   DATE: '2026년 1월 14일 - 2026년 1월 27일',
-  LOCATION: '인사아트센터',
+  LOCATION: '인사아트센터 3층 G&J 갤러리',
   ADDRESS: '서울시 종로구 인사동길 41-1',
   LAT: 37.573,
   LNG: 126.986,

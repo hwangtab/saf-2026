@@ -91,7 +91,7 @@ export default function Home() {
             </a>
           </div>
           <p className="text-sm text-white/70 drop-shadow-lg">
-            📌 11월 15일 인사아트센터에서 시작합니다
+            📌 1월 14일 인사아트센터 3층 G&J 갤러리에서 시작합니다
           </p>
         </div>
       </section>
@@ -243,7 +243,7 @@ export default function Home() {
               <div className="text-4xl mb-4">🏛️</div>
               <h3 className="font-watermelon text-xl font-bold mb-3">전시 방문</h3>
               <p className="text-charcoal-muted mb-4 flex-grow">
-                인사아트센터에서 펼쳐지는 예술의 현장을 직접 방문하세요.
+                인사아트센터 3층 G&J 갤러리에서 펼쳐지는 예술의 현장을 직접 방문하세요.
               </p>
               <span className="inline-block group-hover:translate-x-1 transition-transform">
                 정보 보기 →

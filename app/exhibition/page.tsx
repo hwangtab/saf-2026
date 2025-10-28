@@ -54,7 +54,7 @@ export default function ExhibitionPage() {
       'https://schema.org/OfflineEventAttendanceMode',
     location: {
       '@type': 'Place',
-      name: '인사아트센터',
+      name: '인사아트센터 3층 G&J 갤러리',
       address: {
         '@type': 'PostalAddress',
         streetAddress: '서울시 종로구 인사동',
@@ -113,7 +113,7 @@ export default function ExhibitionPage() {
                   </div>
                   <div className="border-l-4 border-primary pl-4">
                     <h3 className="font-watermelon text-sm text-gray-500 font-semibold mb-1">장소</h3>
-                    <p className="text-lg font-semibold">{EXHIBITION.LOCATION}</p>
+                  <p className="text-lg font-semibold">{EXHIBITION.LOCATION}</p>
                     <p className="text-charcoal-muted text-sm">{EXHIBITION.ADDRESS}</p>
                   </div>
                 </div>

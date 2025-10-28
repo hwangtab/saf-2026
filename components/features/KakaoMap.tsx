@@ -47,7 +47,7 @@ export default function KakaoMap(props?: KakaoMapProps) {
     );
   }
 
-  // 인사아트센터: 서울 종로구 인사동길 41-1
+  // 인사아트센터 3층 G&J 갤러리: 서울 종로구 인사동길 41-1
   const center = { lat: 37.5718, lng: 126.9857 };
 
   const containerClassName = [
@@ -82,7 +82,9 @@ export default function KakaoMap(props?: KakaoMapProps) {
                 fontSize: '14px',
               }}
             >
-              <strong style={{ display: 'block', marginBottom: '4px' }}>인사아트센터</strong>
+              <strong style={{ display: 'block', marginBottom: '4px' }}>
+                인사아트센터 3층 G&amp;J 갤러리
+              </strong>
               <span style={{ display: 'block', whiteSpace: 'normal' }}>
                 서울 종로구 인사동길 41-1
               </span>
