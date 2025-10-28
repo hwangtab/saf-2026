@@ -1,6 +1,6 @@
 # 🌱 씨앗:페 2026 공식 웹사이트
 
-[SAF(Seed Art Festival) 2026](https://saf2026.vercel.app)의 공식 웹사이트입니다.
+[SAF(Seed Art Festival) 2026](https://www.saf2026.com)의 공식 웹사이트입니다.
 
 한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인의 모든 정보를 담고 있습니다.
 
@@ -210,7 +210,7 @@ git push origin main
 - 💰 [후원하기](https://www.socialfunch.org/SAF)
 - 🎨 [작품 구매](https://auto-graph.co.kr)
 - 📣 SNS에서 공유하기
-- 🏛️ [전시 방문하기](https://saf2026.vercel.app/exhibition)
+- 🏛️ [전시 방문하기](https://www.saf2026.com/exhibition)
 
 ---
 

@@ -1,5 +1,6 @@
 // External Links
-export const SITE_URL = 'https://saf2026.vercel.app';
+export const SITE_URL = 'https://www.saf2026.com';
+export const SITE_URL_ALIAS = 'https://saf2026.com';
 
 export const EXTERNAL_LINKS = {
   DONATE: 'https://www.socialfunch.org/SAF',
