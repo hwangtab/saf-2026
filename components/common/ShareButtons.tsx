@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import {
   FacebookShareButton,
   TwitterShareButton,
@@ -95,11 +96,17 @@ export default function ShareButtons({
       {/* Kakao Talk - if Kakao SDK is available */}
       <button
         onClick={handleKakaoShare}
-        className="w-8 h-8 rounded-full bg-accent-soft flex items-center justify-center hover:bg-accent transition-colors"
+        className="w-8 h-8 flex items-center justify-center transition-transform hover:scale-105"
         title="카카오톡 공유"
         aria-label="카카오톡으로 공유하기"
       >
-        <span className="text-xs font-bold text-accent-strong">K</span>
+        <Image
+          src="/icons/kakao-talk.svg"
+          alt="카카오톡 아이콘"
+          width={32}
+          height={32}
+          className="w-8 h-8"
+        />
       </button>
 
       {/* Copy Link */}
