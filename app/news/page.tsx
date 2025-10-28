@@ -89,7 +89,7 @@ export default function NewsPage() {
       <PageHero
         title="언론 보도"
         description="씨앗:페 캠페인을 조명한 기사와 인터뷰를 모았습니다."
-        backgroundGradient="from-primary/10 via-primary/5 to-white"
+        backgroundClass="bg-canvas-soft"
       >
         <ShareButtons
           url={canonicalUrl}

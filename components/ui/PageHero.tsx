@@ -3,18 +3,18 @@ import type { ReactNode } from 'react';
 interface PageHeroProps {
   title: string;
   description: string;
-  backgroundGradient?: string;
+  backgroundClass?: string;
   children?: ReactNode;
 }
 
 export default function PageHero({
   title,
   description,
-  backgroundGradient = 'from-gray-50 to-gray-100',
+  backgroundClass = 'bg-canvas-soft',
   children,
 }: PageHeroProps) {
   return (
-    <section className={`py-12 md:py-20 bg-gradient-to-br ${backgroundGradient}`}>
+    <section className={`py-12 md:py-20 ${backgroundClass}`}>
       <div className="container-max text-center">
         <h1
           className="font-partial text-4xl md:text-5xl mb-6 tracking-tight text-balance"

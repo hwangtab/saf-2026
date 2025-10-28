@@ -104,10 +104,10 @@ saf/
 ## 🎨 디자인 시스템
 
 ### 색상
-- **브랜드 베이스**: `#799EFF` (Azure Bloom) – 중간 제목, 핵심 데이터
-- **주요 CTA**: `#FFBC4C` (Amber Bloom) – 후원/참여 버튼
-- **하이라이트**: `#FFDE63` (Golden Beam) – 정보 카드, KPI 배지
-- **배경 톤**: `#FEFFC4` (Soft Canary) – 페이지 배경, 섹션 워시
+- **브랜드 베이스**: `#6FA4AF` (Tidal Teal) – 중간 제목, 핵심 데이터
+- **주요 CTA**: `#D97D55` (Clay Ember) – 후원/참여 버튼
+- **하이라이트**: `#B8C4A9` (Sage Meadow) – 정보 카드, KPI 배지
+- **배경 톤**: `#F4E9D7` (Sand Shell) – 페이지 배경, 섹션 워시
 - **자세한 가이드**: `docs/brand-palette.md` 참조
 
 ### 폰트

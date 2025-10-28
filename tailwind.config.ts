@@ -9,46 +9,46 @@ const config: Config = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#799EFF', // Azure Bloom
-          soft: '#D5E0FF', // Azure Mist
-          strong: '#4F78F4', // Azure Core
-          surface: '#EEF3FF', // Azure Veil
+          DEFAULT: '#6FA4AF', // Tidal Teal
+          soft: '#D2E3E6', // Teal Mist
+          strong: '#4E8893', // Deep Teal
+          surface: '#EDF4F5', // Teal Veil
         },
         accent: {
-          DEFAULT: '#FFBC4C', // Amber Bloom
-          soft: '#FFE0A8', // Amber Glow
-          strong: '#E29D2E', // Amber Core
+          DEFAULT: '#D97D55', // Clay Ember
+          soft: '#F2CDBC', // Clay Glow
+          strong: '#B8663F', // Clay Core
         },
         highlight: {
-          DEFAULT: '#FFDE63', // Golden Beam
-          soft: '#FFF1B5', // Golden Haze
-          strong: '#FFCA24', // Golden Core
+          DEFAULT: '#B8C4A9', // Sage Meadow
+          soft: '#E2E7D9', // Sage Mist
+          strong: '#9FAA8B', // Sage Core
         },
         canvas: {
-          DEFAULT: '#FEFFC4', // Soft Canary
-          soft: '#FFF9E0', // Canary Mist
-          strong: '#F0F48C', // Canary Core
+          DEFAULT: '#F4E9D7', // Sand Shell
+          soft: '#FBF4E8', // Sand Light
+          strong: '#E3D1B4', // Sand Core
         },
         charcoal: {
-          DEFAULT: '#2F2C33', // Night Ink
-          muted: '#484551', // Soft Slate
-          soft: '#6B6774', // Mist Slate
+          DEFAULT: '#2F2926', // Hearth Ink
+          muted: '#4A433E', // Hearth Stone
+          soft: '#6C635C', // Hearth Mist
         },
-        success: '#4CAF6D',
-        warning: '#FFCA24',
-        danger: '#E05858',
+        success: '#6FA4AF',
+        warning: '#D97D55',
+        danger: '#B85A48',
         light: '#FFFFFF',
         gray: {
-          50: '#F9FAFF',
-          100: '#EEF1FF',
-          200: '#E0E5F5',
-          300: '#CBD0E4',
-          400: '#AEB5CD',
-          500: '#8E94B0',
-          600: '#6F7592',
-          700: '#555A75',
-          800: '#3C4157',
-          900: '#2A2E3C',
+          50: '#FBF8F1',
+          100: '#F2E9DB',
+          200: '#E4D7C2',
+          300: '#D2C3AA',
+          400: '#B8A890',
+          500: '#9A8C78',
+          600: '#7C7261',
+          700: '#61584C',
+          800: '#473F37',
+          900: '#332C26',
         },
       },
       fontFamily: {

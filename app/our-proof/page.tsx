@@ -37,7 +37,7 @@ export const metadata: Metadata = {
 export default function OurProof() {
   return (
     <>
-      <section className="py-12 md:py-20 bg-gradient-to-br from-primary/20 to-primary/5">
+      <section className="py-12 md:py-20 bg-highlight-soft">
         <div className="container-max text-center">
           <div className="text-5xl md:text-7xl font-bold text-primary mb-6">305건</div>
           <h1 className="font-partial text-4xl md:text-5xl mb-6 text-balance">예술인 상호부조 대출의 실제 성과</h1>
