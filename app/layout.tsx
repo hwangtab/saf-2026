@@ -72,7 +72,7 @@ export default function RootLayout({
     <html lang="ko">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#84994F" />
+        <meta name="theme-color" content="#5B532C" />
         <link rel="icon" href="/favicon.ico" />
       </head>
       <body className="bg-gray-50 text-charcoal flex flex-col min-h-screen">

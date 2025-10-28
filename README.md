@@ -104,10 +104,10 @@ saf/
 ## 🎨 디자인 시스템
 
 ### 색상
-- **브랜드 베이스**: `#84994F` (Sage Canopy) – 중간 제목, 핵심 데이터
-- **주요 CTA**: `#FCB53B` (Harvest Amber) – 후원/참여 버튼
-- **하이라이트**: `#FFE797` (Morning Grain) – 정보 카드, 서브 컬러
-- **강조 포인트**: `#B45253` (Terracotta Ember) – 위험 메시지, 스토리 피크
+- **브랜드 베이스**: `#5B532C` (Deep Olive) – 중간 제목, 핵심 데이터
+- **주요 CTA**: `#FFC50F` (Sunbeam Amber) – 후원/참여 버튼
+- **하이라이트**: `#FDE7B3` (Wheat Cream) – 정보 카드, 서브 컬러
+- **긍정 메시지**: `#63A361` (Meadow Green) – 성공 사례, 서브 CTA
 - **자세한 가이드**: `docs/brand-palette.md` 참조
 
 ### 폰트
