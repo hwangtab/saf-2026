@@ -94,7 +94,7 @@ export default function ExhibitionPage() {
       </PageHero>
 
       {/* Exhibition Info */}
-      <section className="py-12 md:py-20">
+      <section className="py-12 md:py-20 bg-primary-surface">
         <div className="container-max">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-stretch">
             {/* Info */}
@@ -229,7 +229,7 @@ export default function ExhibitionPage() {
       </section>
 
       {/* Schedule Section */}
-      <section className="py-12 md:py-20">
+      <section className="py-12 md:py-20 bg-gray-50">
         <div className="container-max">
           <h2 className="font-partial text-3xl mb-12">행사 일정</h2>
           <div className="bg-white rounded-lg shadow-lg p-8">

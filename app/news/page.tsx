@@ -98,7 +98,7 @@ export default function NewsPage() {
         />
       </PageHero>
 
-      <section className="py-12 md:py-20">
+      <section className="py-12 md:py-20 bg-primary-surface">
         <div className="container-max">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {sortedArticles.map((article) => (

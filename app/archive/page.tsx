@@ -71,7 +71,7 @@ export default function ArchivePage() {
       </PageHero>
 
       {/* Past Events Section */}
-      <section className="py-12 md:py-20 bg-canvas-soft">
+      <section className="py-12 md:py-20 bg-primary-surface">
         <div className="container-max">
           <h2 className="font-partial text-3xl mb-12">🎉 2023년 행사 기록</h2>
           <div className="bg-white rounded-lg shadow-sm p-8 mb-12">

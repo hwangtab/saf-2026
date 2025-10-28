@@ -37,7 +37,7 @@ export const metadata: Metadata = {
 export default function OurProof() {
   return (
     <>
-      <section className="py-12 md:py-20 bg-highlight-soft">
+      <section className="py-12 md:py-20 bg-primary-surface">
         <div className="container-max text-center">
           <div className="text-5xl md:text-7xl font-bold text-primary mb-6">305건</div>
           <h1 className="font-partial text-4xl md:text-5xl mb-6 text-balance">예술인 상호부조 대출의 실제 성과</h1>
@@ -241,7 +241,7 @@ export default function OurProof() {
       </section>
 
       {/* Call to Action */}
-      <section className="py-12 md:py-20">
+      <section className="py-12 md:py-20 bg-primary/20">
         <div className="container-max text-center">
           <h2 className="font-partial text-3xl md:text-4xl mb-8">
             당신도 이 신뢰의 체계에 참여할 수 있습니다
