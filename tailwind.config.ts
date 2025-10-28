@@ -8,20 +8,37 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: '#F4D03F', // 따뜻한 노란색 (희망과 연대)
-        dark: '#14161c',
-        light: '#ffffff',
+        primary: {
+          DEFAULT: '#F6B300', // Honey Gold
+          soft: '#FFE9A6', // Honey Tint
+          strong: '#D99000', // Amber Core
+          surface: '#FFF4D1', // Honey Veil
+        },
+        charcoal: {
+          DEFAULT: '#222326', // Soft Charcoal
+          muted: '#3B3C40', // Evening Slate
+          soft: '#4E4F52', // Fog Graphite
+        },
+        accent: {
+          DEFAULT: '#2CA6A4', // Modern Teal
+          soft: '#7BCDCB', // Seafoam Mist
+          strong: '#1E7C7A', // Deep Ocean
+        },
+        success: '#3BB273',
+        warning: '#FFB020',
+        danger: '#E15554',
+        light: '#FFFFFF',
         gray: {
-          50: '#f7f8fa',
-          100: '#eceef3',
-          200: '#d9dce4',
-          300: '#bcc1cd',
-          400: '#99a0b4',
-          500: '#777f96',
-          600: '#596076',
-          700: '#404559',
-          800: '#282d3b',
-          900: '#171b24',
+          50: '#F9F9F8',
+          100: '#EFEFEA',
+          200: '#E1E2DA',
+          300: '#C8C9BC',
+          400: '#A4A58F',
+          500: '#7A7C64',
+          600: '#5C5F4A',
+          700: '#45483A',
+          800: '#2E3128',
+          900: '#1E2119',
         },
       },
       fontFamily: {

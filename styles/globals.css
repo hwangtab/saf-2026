@@ -58,8 +58,8 @@ html {
 }
 
 body {
-  background-color: #ffffff;
-  color: #14161c;
+  background-color: #F9F9F8;
+  color: #222326;
   line-height: 1.6;
   font-weight: 300;
 }
@@ -85,7 +85,7 @@ body {
 /* Focus styles for accessibility */
 a:focus,
 button:focus {
-  outline: 2px solid #F4D03F;
+  outline: 2px solid #F6B300;
   outline-offset: 2px;
 }
 
@@ -94,8 +94,8 @@ button:focus {
   position: absolute;
   top: -40px;
   left: 0;
-  background: #F4D03F;
-  color: #000;
+  background: #F6B300;
+  color: #222326;
   padding: 8px;
   text-decoration: none;
   border-radius: 0 0 4px 0;
@@ -108,7 +108,7 @@ button:focus {
 
 /* Text gradient utility */
 .text-gradient {
-  background: linear-gradient(135deg, #F4D03F 0%, #FFE66D 100%);
+  background: linear-gradient(135deg, #F6B300 0%, #FFE9A6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

@@ -257,7 +257,7 @@ export default function OurProof() {
                 href={EXTERNAL_LINKS.DONATE}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center bg-primary hover:bg-yellow-500 text-black font-bold px-6 py-3 rounded-lg transition-colors"
+                className="inline-flex items-center justify-center bg-primary hover:bg-primary-strong text-charcoal font-bold px-6 py-3 rounded-lg transition-colors"
               >
                 후원하기
               </a>

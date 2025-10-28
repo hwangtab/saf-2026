@@ -80,7 +80,7 @@ export default function Home() {
               href={EXTERNAL_LINKS.DONATE}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block bg-primary hover:bg-yellow-500 text-black font-bold px-8 py-4 rounded-lg transition-colors"
+              className="inline-block bg-primary hover:bg-primary-strong text-charcoal font-bold px-8 py-4 rounded-lg transition-colors"
             >
               ❤️ 지금 후원하기
             </a>
@@ -191,7 +191,7 @@ export default function Home() {
                 href={EXTERNAL_LINKS.LOAN_INFO}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block bg-primary hover:bg-yellow-500 text-black font-bold px-6 py-3 rounded-lg transition-colors"
+                className="inline-block bg-primary hover:bg-primary-strong text-charcoal font-bold px-6 py-3 rounded-lg transition-colors"
               >
                 대출 신청하기 →
               </a>

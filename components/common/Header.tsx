@@ -77,7 +77,7 @@ export default function Header() {
             href={EXTERNAL_LINKS.DONATE}
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-primary hover:bg-yellow-500 text-black font-bold px-6 py-2 rounded-lg transition-colors"
+            className="bg-primary hover:bg-primary-strong text-charcoal font-bold px-6 py-2 rounded-lg transition-colors"
           >
             ❤️ 후원하기
           </a>
@@ -142,7 +142,7 @@ export default function Header() {
                   onClick={() => setMobileMenuOpen(false)}
                   className={`block py-2 px-4 rounded-lg transition-colors ${
                     isActive(item.href)
-                      ? 'bg-primary text-black font-bold'
+                      ? 'bg-primary-soft text-charcoal font-bold'
                       : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
@@ -155,7 +155,7 @@ export default function Header() {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setMobileMenuOpen(false)}
-              className="block w-full bg-primary hover:bg-yellow-500 text-black font-bold px-4 py-2 rounded-lg text-center transition-colors"
+              className="block w-full bg-primary hover:bg-primary-strong text-charcoal font-bold px-4 py-2 rounded-lg text-center transition-colors"
             >
               ❤️ 후원하기
             </a>

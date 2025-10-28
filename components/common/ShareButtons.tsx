@@ -95,11 +95,11 @@ export default function ShareButtons({
       {/* Kakao Talk - if Kakao SDK is available */}
       <button
         onClick={handleKakaoShare}
-        className="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center hover:bg-yellow-500 transition-colors"
+        className="w-8 h-8 rounded-full bg-primary-soft flex items-center justify-center hover:bg-primary transition-colors text-charcoal"
         title="카카오톡 공유"
         aria-label="카카오톡으로 공유하기"
       >
-        <span className="text-xs font-bold">K</span>
+        <span className="text-xs font-bold text-charcoal">K</span>
       </button>
 
       {/* Copy Link */}

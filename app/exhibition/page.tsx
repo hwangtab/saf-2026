@@ -127,7 +127,7 @@ export default function ExhibitionPage() {
                   href={EXTERNAL_LINKS.DONATE}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block w-full bg-primary hover:bg-yellow-500 text-black font-bold px-6 py-3 rounded-lg transition-colors text-center"
+                  className="block w-full bg-primary hover:bg-primary-strong text-charcoal font-bold px-6 py-3 rounded-lg transition-colors text-center"
                 >
                   ❤️ 후원하기
                 </a>

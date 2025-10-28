@@ -64,10 +64,10 @@ export default function RootLayout({
     <html lang="ko">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#F4D03F" />
+        <meta name="theme-color" content="#F6B300" />
         <link rel="icon" href="/favicon.ico" />
       </head>
-      <body className="bg-white text-gray-900 flex flex-col min-h-screen">
+      <body className="bg-gray-50 text-charcoal flex flex-col min-h-screen">
         <a href="#main-content" className="skip-to-main">
           메인 콘텐츠로 이동
         </a>
