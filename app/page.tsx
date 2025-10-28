@@ -100,7 +100,7 @@ export default function Home() {
       <DynamicCounter items={counterItems} />
 
       {/* Problem Section */}
-      <section className="py-16 md:py-24">
+      <section className="py-16 md:py-24 bg-sun-soft">
         <div className="container-max">
           <h2 className="font-partial text-3xl md:text-4xl mb-12 text-center">
             우리가 직면한 문제
@@ -155,7 +155,7 @@ export default function Home() {
       </section>
 
       {/* Solution Section */}
-      <section className="py-16 md:py-24 bg-primary/5">
+      <section className="py-16 md:py-24 bg-primary-surface">
         <div className="container-max">
           <h2 className="font-partial text-3xl md:text-4xl mb-12 text-center">
             우리의 해결책
@@ -198,7 +198,7 @@ export default function Home() {
       </section>
 
       {/* Call to Action Section */}
-      <section className="py-16 md:py-24">
+      <section className="py-16 md:py-24 bg-accent-soft">
         <div className="container-max">
           <h2 className="font-partial text-3xl md:text-4xl mb-12 text-center">
             당신도 함께할 수 있습니다
