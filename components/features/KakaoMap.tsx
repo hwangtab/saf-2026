@@ -66,10 +66,18 @@ export default function KakaoMap(props?: KakaoMapProps) {
       <Map center={center} style={{ width: '100%', height: '100%' }} level={3}>
         <MapMarker position={center} onClick={() => setIsOpen(true)} clickable>
           {isOpen && (
-            <div style={{ padding: '10px', color: '#000', minWidth: '150px' }}>
-              <strong>인사아트센터</strong>
-              <br />
-              서울 종로구 인사동길 41-1
+            <div
+              style={{
+                padding: '12px',
+                color: '#000',
+                minWidth: '190px',
+                maxWidth: '240px',
+                lineHeight: 1.5,
+                wordBreak: 'keep-all',
+              }}
+            >
+              <strong style={{ display: 'block', marginBottom: '4px' }}>인사아트센터</strong>
+              <span style={{ whiteSpace: 'normal' }}>서울 종로구 인사동길 41-1</span>
             </div>
           )}
         </MapMarker>
