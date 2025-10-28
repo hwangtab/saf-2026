@@ -9,41 +9,46 @@ const config: Config = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#25324D', // Deep Indigo
-          soft: '#E0E6F1', // Indigo Mist
-          strong: '#1B253B', // Midnight Indigo
-          surface: '#F3F5FB', // Indigo Veil
-        },
-        charcoal: {
-          DEFAULT: '#1F2330', // Soft Ink
-          muted: '#343A4A', // Dusk Slate
-          soft: '#4A5063', // Overcast Graphite
+          DEFAULT: '#84994F', // Sage Canopy
+          soft: '#DDE6B0', // Canopy Mist
+          strong: '#6F7C3C', // Woodland Core
+          surface: '#F4F7DE', // Canopy Veil
         },
         accent: {
-          DEFAULT: '#D93F2B', // Ember Orange
-          soft: '#FFD0C5', // Ember Tint
-          strong: '#B23321', // Ember Core
+          DEFAULT: '#FCB53B', // Harvest Amber
+          soft: '#FFE3B5', // Amber Glow
+          strong: '#D9931F', // Ember Honey
         },
-        support: {
-          DEFAULT: '#4CB59F', // Sage Teal
-          soft: '#D8F2EA', // Mist Mint
-          strong: '#2F806E', // Deep Spruce
+        highlight: {
+          DEFAULT: '#FFE797', // Morning Grain
+          soft: '#FFF4D3', // Golden Haze
+          strong: '#FFD86B', // Solar Crest
         },
-        success: '#2F946F',
-        warning: '#F4B63B',
-        danger: '#D94452',
+        ember: {
+          DEFAULT: '#B45253', // Terracotta Ember
+          soft: '#F0C6C7', // Ember Blush
+          strong: '#8F3D3E', // Deep Terracotta
+        },
+        charcoal: {
+          DEFAULT: '#2C2824', // Hearth Ink
+          muted: '#4A443E', // Hearth Stone
+          soft: '#6A625A', // Hearth Mist
+        },
+        success: '#6F7C3C',
+        warning: '#FCB53B',
+        danger: '#B45253',
         light: '#FFFFFF',
         gray: {
-          50: '#F5F6F8',
-          100: '#E6E8ED',
-          200: '#D2D6DF',
-          300: '#B6BBC9',
-          400: '#949BB0',
-          500: '#6F7790',
-          600: '#535A70',
-          700: '#3D4356',
-          800: '#292E3F',
-          900: '#1E2330',
+          50: '#F7F5ED',
+          100: '#EDE6D9',
+          200: '#DDD4BE',
+          300: '#C4BA9C',
+          400: '#AA9F84',
+          500: '#8A7F66',
+          600: '#6D6350',
+          700: '#544C3E',
+          800: '#3B352C',
+          900: '#251F19',
         },
       },
       fontFamily: {
