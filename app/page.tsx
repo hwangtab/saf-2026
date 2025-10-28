@@ -40,7 +40,7 @@ export const metadata: Metadata = {
 export default function Home() {
   const counterItems = [
     { label: '제1금융권 배제율', value: 84.9, unit: '%' },
-    { label: '고금리 노출 예술인', value: 48.6, unit: '%' },
+    { label: '고리대금 노출 예술인', value: 48.6, unit: '%' },
     { label: '상호부조 대출 상환율', value: 95, unit: '%' },
   ];
 
@@ -68,7 +68,7 @@ export default function Home() {
           <p className="text-lg md:text-xl text-white/90 mb-12 max-w-2xl mx-auto leading-relaxed drop-shadow-lg">
             한국 예술인의 84.9%가 제1금융권에서 배제되고,
             <br />
-            절반이 약탈적 고금리에 노출되어 있습니다.
+            절반이 약탈적 고리대금에 노출되어 있습니다.
             <br className="hidden md:block" />
             이 문제를 해결하기 위해 씨앗:페가 시작되었습니다.
           </p>
@@ -117,11 +117,11 @@ export default function Home() {
             </div>
             <div className="space-y-4">
               <h3 className="font-watermelon text-xl font-bold text-charcoal">
-                💳 고금리의 악순환
+                💳 고리대금의 악순환
               </h3>
               <p className="text-charcoal-muted leading-relaxed">
                 대출받을 곳이 없어 카드론, 현금서비스 등 연 20%에 육박하는
-                고금리 상품에 의존하게 됩니다.
+                고리대금 상품에 의존하게 됩니다.
               </p>
             </div>
             <div className="space-y-4">

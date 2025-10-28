@@ -54,7 +54,7 @@
     *   **구현 그래프**:
         *   그래프 1 (제1금융권 접근): Pie Chart (도넛 형태)
         *   그래프 2 (거절/포기 사유): Horizontal Bar Chart
-        *   그래프 3 (고금리 상품 이용): Vertical Bar Chart
+        *   그래프 3 (고리대금 상품 이용): Vertical Bar Chart
         *   그래프 4 (이자율 분포): Vertical Bar Chart
         *   그래프 5 (채권추심 경험): Pie Chart (도넛 형태)
         *   그래프 6 (창작 영향): Horizontal Bar Chart

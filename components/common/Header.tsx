@@ -60,9 +60,9 @@ export default function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`text-sm font-medium transition-colors ${
+                className={`text-sm font-medium transition-colors pb-1 border-b-2 border-transparent ${
                   isActive(item.href)
-                    ? 'text-primary border-b-2 border-primary'
+                    ? 'text-primary border-primary'
                     : 'text-charcoal hover:text-primary'
                 }`}
               >
@@ -140,9 +140,9 @@ export default function Header() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`block py-2 px-4 rounded-lg transition-colors ${
+                  className={`block py-2 px-4 transition-colors border-b border-transparent ${
                     isActive(item.href)
-                      ? 'bg-primary-soft text-primary font-bold'
+                      ? 'text-primary font-semibold border-primary'
                       : 'text-charcoal hover:bg-gray-100'
                   }`}
                 >

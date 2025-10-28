@@ -131,7 +131,7 @@ export default function OurProof() {
                 <div>
                   <h3 className="font-watermelon font-bold text-lg mb-2">연 5% 고정금리</h3>
                   <p className="text-charcoal-muted text-balance">
-                    프로젝트형·긴급생활형 상품 모두 연 5% 고정금리로 설계되어 고금리 대출 대비 평균 14%p 이상 이자 부담을 덜어줍니다.
+                    프로젝트형·긴급생활형 상품 모두 연 5% 고정금리로 설계되어 고리대금 대출 대비 평균 14%p 이상 이자 부담을 덜어줍니다.
                   </p>
                 </div>
               </div>

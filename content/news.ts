@@ -65,7 +65,7 @@ export const newsArticles: NewsArticle[] = [
   {
     id: 'news-32749',
     title:
-      "[뉴스아트] 고금리 부담 벗어나는 예술인들... '예술인상호부조대출' 누적 6억원 돌파",
+      "[뉴스아트] 고리대금 부담 벗어나는 예술인들... '예술인상호부조대출' 누적 6억원 돌파",
     source: '뉴스아트',
     date: '2025-03-26',
     link: 'https://www.news-art.co.kr/news/article.html?no=32749',
@@ -205,13 +205,13 @@ export const newsArticles: NewsArticle[] = [
   },
   {
     id: 'news-26276',
-    title: '[뉴스아트] 씨앗페 하는 이유, 7%도 고금리인데 예술인은 19.9%?',
+    title: '[뉴스아트] 씨앗페 하는 이유, 7%도 고리대금인데 예술인은 19.9%?',
     source: '뉴스아트',
     date: '2023-03-17',
     link: 'https://www.news-art.co.kr/news/article.html?no=26276',
     thumbnail: 'https://www.news-art.co.kr/data/photos/20230311/art_16790200974545_c510b0.jpg',
     description:
-      '뉴스아트 이명신 기자 | 정부의 고금리 기준과 대비되는 예술인의 대출 현실을 짚으며 씨앗페가 필요한 이유를 설명한다.',
+      '뉴스아트 이명신 기자 | 정부의 고리대금 기준과 대비되는 예술인의 대출 현실을 짚으며 씨앗페가 필요한 이유를 설명한다.',
   },
   {
     id: 'news-abcn-71851',

@@ -190,9 +190,9 @@ export default function OurReality() {
               ⚠️
             </div>
             <span className="text-sm font-bold text-accent-strong uppercase">STAGE 2</span>
-            <h2 className="font-partial text-4xl md:text-5xl mb-4">낭떠러지: 고금리로 내몰리다</h2>
+            <h2 className="font-partial text-4xl md:text-5xl mb-4">낭떠러지: 고리대금로 내몰리다</h2>
             <p className="text-xl text-charcoal-muted max-w-2xl leading-relaxed">
-              고금리 상품 노출률 <strong className="text-accent-strong">48.6%</strong> (연 15% 이상)
+              고리대금 상품 노출률 <strong className="text-accent-strong">48.6%</strong> (연 15% 이상)
             </p>
           </div>
 
@@ -201,7 +201,7 @@ export default function OurReality() {
             <h3 className="font-watermelon text-xl font-bold mb-3">선택이 아닌 생존</h3>
             <p className="text-charcoal mb-4 text-balance leading-relaxed">
               은행 문이 닫힌 순간, 예술인들은 곧바로 저축은행, 카드론, 대부업체로 내몰립니다.
-              <strong> 83.2%의 예술인이 고금리 금융 상품을 이용</strong>한 경험이 있습니다.
+              <strong> 83.2%의 예술인이 고리대금 금융 상품을 이용</strong>한 경험이 있습니다.
             </p>
             <p className="text-charcoal leading-relaxed">
               이는 선택이 아닌, 생존을 위한 유일한 탈출구였습니다.
@@ -222,7 +222,7 @@ export default function OurReality() {
           <TestimonialCard
             quote="12년간 낸 이자의 절반만 되었어도 빚을 없앴을 겁니다. 이자 갚느라 작품 할 시간을 잃었습니다."
             author="40대 음악인"
-            context="고금리는 단순한 이자가 아닙니다. 그것은 예술가의 시간을 빼앗고, 창작 의지를 꺾으며, 삶을 서서히 파괴하는 보이지 않는 족쇄입니다."
+            context="고리대금는 단순한 이자가 아닙니다. 그것은 예술가의 시간을 빼앗고, 창작 의지를 꺾으며, 삶을 서서히 파괴하는 보이지 않는 족쇄입니다."
             borderColor="border-accent"
             bgColor="bg-white"
             contextColor="text-accent-strong"

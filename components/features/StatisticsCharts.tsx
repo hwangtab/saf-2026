@@ -109,7 +109,7 @@ export function RejectionReasonsChart() {
   );
 }
 
-// Chart 3: 고금리 상품 이용 현황 (Bar Chart)
+// Chart 3: 고리대금 상품 이용 현황 (Bar Chart)
 export function HighInterestProductChart() {
   const data = [
     { product: '카드론', percentage: 42 },
@@ -120,7 +120,7 @@ export function HighInterestProductChart() {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm">
-      <h3 className="font-watermelon text-lg font-bold mb-4">고금리 상품 이용 현황</h3>
+      <h3 className="font-watermelon text-lg font-bold mb-4">고리대금 상품 이용 현황</h3>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
@@ -136,7 +136,7 @@ export function HighInterestProductChart() {
         </BarChart>
       </ResponsiveContainer>
       <p className="text-sm text-charcoal-muted mt-4">
-        많은 예술인들이 연 20% 이상의 고금리 상품을 사용하고 있습니다.
+        많은 예술인들이 연 20% 이상의 고리대금 상품을 사용하고 있습니다.
       </p>
     </div>
   );
@@ -169,7 +169,7 @@ export function InterestRateDistributionChart() {
         </BarChart>
       </ResponsiveContainer>
       <p className="text-sm text-charcoal-muted mt-4">
-        절반 이상이 15% 이상의 고금리에 노출되어 있습니다.
+        절반 이상이 15% 이상의 고리대금에 노출되어 있습니다.
       </p>
     </div>
   );

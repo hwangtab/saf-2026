@@ -54,7 +54,7 @@ export const EXHIBITION = {
 // Statistics Data
 export const STATISTICS_DATA = [
   { label: '예술인의 1금융권 배제율', value: 84.9, unit: '%' },
-  { label: '고금리 노출 예술인', value: 48.6, unit: '%' },
+  { label: '고리대금 노출 예술인', value: 48.6, unit: '%' },
   { label: '상호부조 대출 상환율', value: 95, unit: '%' },
   { label: '지원 예술인 수', value: 150, unit: '명' },
   { label: '조성 기금', value: 125340000, unit: '원' },
