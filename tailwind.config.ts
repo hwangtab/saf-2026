@@ -9,46 +9,46 @@ const config: Config = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#5B532C', // Deep Olive
-          soft: '#D6CEA2', // Olive Mist
-          strong: '#433D1F', // Forest Core
-          surface: '#F6F1D8', // Olive Veil
+          DEFAULT: '#799EFF', // Azure Bloom
+          soft: '#D5E0FF', // Azure Mist
+          strong: '#4F78F4', // Azure Core
+          surface: '#EEF3FF', // Azure Veil
         },
         accent: {
-          DEFAULT: '#FFC50F', // Sunbeam Amber
-          soft: '#FFE59A', // Amber Glow
-          strong: '#E0A500', // Golden Ember
+          DEFAULT: '#FFBC4C', // Amber Bloom
+          soft: '#FFE0A8', // Amber Glow
+          strong: '#E29D2E', // Amber Core
         },
         highlight: {
-          DEFAULT: '#FDE7B3', // Wheat Cream
-          soft: '#FFF2D4', // Cream Haze
-          strong: '#FBD88A', // Wheat Crest
+          DEFAULT: '#FFDE63', // Golden Beam
+          soft: '#FFF1B5', // Golden Haze
+          strong: '#FFCA24', // Golden Core
         },
-        support: {
-          DEFAULT: '#63A361', // Meadow Green
-          soft: '#C9E5C7', // Meadow Mist
-          strong: '#4E824C', // Grove Core
+        canvas: {
+          DEFAULT: '#FEFFC4', // Soft Canary
+          soft: '#FFF9E0', // Canary Mist
+          strong: '#F0F48C', // Canary Core
         },
         charcoal: {
-          DEFAULT: '#2F2A1E', // Earth Ink
-          muted: '#4F4733', // Earth Stone
-          soft: '#6D644A', // Earth Mist
+          DEFAULT: '#2F2C33', // Night Ink
+          muted: '#484551', // Soft Slate
+          soft: '#6B6774', // Mist Slate
         },
-        success: '#63A361',
-        warning: '#FFC50F',
-        danger: '#5B532C',
+        success: '#4CAF6D',
+        warning: '#FFCA24',
+        danger: '#E05858',
         light: '#FFFFFF',
         gray: {
-          50: '#FFF2D4',
-          100: '#F1E5C2',
-          200: '#E4D4AD',
-          300: '#D0C196',
-          400: '#B8A57A',
-          500: '#A3926F',
-          600: '#7F7254',
-          700: '#6D644A',
-          800: '#504834',
-          900: '#332E1F',
+          50: '#F9FAFF',
+          100: '#EEF1FF',
+          200: '#E0E5F5',
+          300: '#CBD0E4',
+          400: '#AEB5CD',
+          500: '#8E94B0',
+          600: '#6F7592',
+          700: '#555A75',
+          800: '#3C4157',
+          900: '#2A2E3C',
         },
       },
       fontFamily: {

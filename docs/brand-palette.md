@@ -1,60 +1,59 @@
 # Brand Palette Guidelines
 
 ## Strategy
-- Ground the experience in an organic olive base (`#5B532C`) so data-heavy sections feel stable without defaulting to pure black.
-- Use a bold sunbeam accent (`#FFC50F`) to elevate CTAs and key metrics above surrounding copy.
-- Layer in a wheat highlight (`#FDE7B3`) for supportive surfaces and a meadow green (`#63A361`) for growth-positive storytelling.
+- Anchor the interface in a bright azure primary (`#799EFF`) to keep data-heavy sections energetic and contemporary.
+- Use layered sunshine hues (`#FFBC4C`, `#FFDE63`, `#FEFFC4`) to create warmth, hierarchy, and approachable CTAs.
+- Balance vibrancy with cool grays so typography remains crisp and accessible.
 
 ## Core Tokens
 | Token | Hex | Tailwind Alias | Primary Use |
 | --- | --- | --- | --- |
-| `primary` | `#5B532C` | `text-primary`, `bg-primary`, `border-primary` | Section leads, KPI numbers |
-| `primary-strong` | `#433D1F` | `bg-primary-strong`, `hover:text-primary-strong` | Dense cards, hero overlays |
-| `primary-soft` | `#D6CEA2` | `bg-primary-soft` | Statistic tiles, pill backgrounds |
-| `primary-surface` | `#F6F1D8` | `bg-primary-surface` | Section washes, table headers |
-| `accent` | `#FFC50F` | `bg-accent`, `text-accent` | Primary CTAs, peak metrics |
-| `accent-strong` | `#E0A500` | `hover:bg-accent-strong` | Hover/active states |
-| `accent-soft` | `#FFE59A` | `bg-accent-soft` | Secondary badges, chart highlights |
-| `highlight` | `#FDE7B3` | `bg-highlight`, `text-highlight` | Info banners, inline emphasis |
-| `highlight-soft` | `#FFF2D4` | `bg-highlight-soft` | Table stripes, light surfaces |
-| `support` | `#63A361` | `bg-support`, `text-support` | Success stories, optimistic stats |
-| `support-strong` | `#4E824C` | `hover:bg-support-strong` | Hover, graph focus states |
+| `primary` | `#799EFF` | `text-primary`, `bg-primary`, `border-primary` | Section leads, key metrics |
+| `primary-strong` | `#4F78F4` | `bg-primary-strong`, `hover:text-primary-strong` | Hero overlays, emphasized stats |
+| `primary-soft` | `#D5E0FF` | `bg-primary-soft` | Cards, pills, timeline badges |
+| `primary-surface` | `#EEF3FF` | `bg-primary-surface` | Section backgrounds, table headers |
+| `accent` | `#FFBC4C` | `bg-accent`, `text-accent` | Primary CTAs, focus highlights |
+| `accent-strong` | `#E29D2E` | `hover:bg-accent-strong` | Hover/active states |
+| `accent-soft` | `#FFE0A8` | `bg-accent-soft` | Secondary badges, chips |
+| `highlight` | `#FFDE63` | `bg-highlight`, `text-highlight` | KPI callouts, alerts |
+| `highlight-soft` | `#FFF1B5` | `bg-highlight-soft` | Table stripes, surface blends |
+| `canvas` | `#FEFFC4` | `bg-canvas`, `text-canvas` | Page background, hero underlay |
 
 ## Neutral Ramp
-Warm neutrals remain exposed through `gray-50` → `gray-900`.
+Custom grays live under `gray-50` → `gray-900` in `tailwind.config.ts` to keep typography legible next to the bright palette.
 
-- `gray-50` `#FFF2D4`: Page background, large canvas areas.
-- `gray-100` `#F1E5C2`: Subtle section breaks, hover states.
-- `gray-300` `#D0C196`: Dividers, chart axes.
-- `gray-500` `#A3926F`: Secondary text, metadata.
-- `gray-700` `#6D644A`: Navigation, tertiary headings.
-- `gray-900` `#332E1F`: Text on dark fills, overlay typography.
+- `gray-50` `#F9FAFF`: Default page/section background.
+- `gray-100` `#EEF1FF`: Cards, hover fills.
+- `gray-300` `#CBD0E4`: Borders, dividers.
+- `gray-500` `#8E94B0`: Secondary text, metadata.
+- `gray-700` `#555A75`: Navigation, tertiary headings.
+- `gray-900` `#2A2E3C`: Text on dark fills, modal overlays.
 
 ## Interaction & Feedback
-- Success leverages the meadow green (`#63A361`), warning the sunbeam accent (`#FFC50F`), and destructive states default to the deep olive (`#5B532C`) until a separate alert hue is introduced.
-- Focus outline: `#FFC50F` to remain both accessible and on-brand.
-- Gradient treatments: `primary` → `accent` → `highlight` for hero ribbons.
+- Success `#4CAF6D`, Warning `#FFCA24`, Danger `#E05858`.
+- Focus ring defaults to `#FFBC4C` to align with CTA energy and stay AA compliant.
+- Gradients blend `primary` → `accent` for hero bands; use `highlight` sparingly to avoid visual fatigue.
 
 ## Contrast Guide
-- `text-primary` on `bg-gray-50` ≈ 7.0:1 (section headings).
-- `text-light` on `bg-accent` ≈ 5.7:1 (primary CTA).
-- `text-primary` on `bg-primary-soft` ≈ 8.6:1 (data tiles).
-- `text-support` on `bg-support-soft` ≈ 5.1:1 (success banners).
-- `text-charcoal` on `bg-highlight-soft` ≈ 9.4:1 (body copy).
+- `text-primary` on `bg-gray-50` ≈ 6.4:1 (section headings).
+- `text-light` on `bg-accent` ≈ 5.1:1 (primary CTA).
+- `text-primary` on `bg-primary-soft` ≈ 8.9:1 (stat tiles).
+- `text-highlight` on `bg-canvas` ≈ 4.5:1 (alerts, badges).
+- `text-gray-700` on `bg-gray-50` ≈ 5.8:1 (body copy).
 
 ## Usage Notes
-- Allow only one `bg-accent` CTA per viewport; promote supporting actions with `bg-support` or `bg-primary-soft`.
-- Assign `text-primary` to 중간 제목·핵심 데이터 so they outrank standard body text without grabbing the CTA spotlight.
-- Pair `bg-highlight` with `border-primary` for storytelling blocks to keep hierarchy clear.
-- Reserve `bg-support` for positive messages to maintain semantic color language.
+- Reserve `bg-accent` for the most important action per screen; lean on `bg-primary-soft` and `bg-highlight-soft` for supporting modules.
+- Apply `text-primary` or `text-highlight` to statistic numbers so they stand apart from surrounding copy.
+- Use `bg-canvas` for large background regions to keep the experience light while allowing CTAs to pop.
+- Pair `text-charcoal` with sunshine backgrounds to maintain readability.
 
 ## Implementation Checklist
 - Tailwind tokens updated in `tailwind.config.ts`.
-- Global defaults (`styles/globals.css`) aligned: background, text color, focus ring, skip-link.
-- CTAs use `bg-accent` + `hover:bg-accent-strong` with `text-light`; supporting actions can pull `bg-support`.
-- Metadata `theme-color` matches the olive base (`#5B532C`).
+- Global defaults (`styles/globals.css`) refreshed: background, focus ring, skip link, gradients.
+- CTA utilities (`bg-accent`, `hover:bg-accent-strong`, `text-light`) aligned with the new scheme.
+- Metadata `theme-color` set to the azure base (`#799EFF`).
 
 ## Next Steps
-- Update Figma color styles to the olive/sunbeam/meadow scheme.
-- Refresh marketing assets (SNS cards, banners) with the new combo to avoid residual indigo/coral usage.
-- Evaluate destructive/error color separately if product surfaces begin to rely on red semantics.
+- Update Figma design tokens to mirror the azure + sunshine palette.
+- Regenerate marketing assets (SNS, press kits) to remove residual olive tones.
+- Evaluate dark-mode compatibility if needed and derive CMYK/Pantone values for print collateral.

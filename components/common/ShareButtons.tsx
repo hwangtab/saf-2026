@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
+import { SiKakaotalk } from 'react-icons/si';
 import {
   FacebookShareButton,
   TwitterShareButton,
@@ -96,17 +96,11 @@ export default function ShareButtons({
       {/* Kakao Talk - if Kakao SDK is available */}
       <button
         onClick={handleKakaoShare}
-        className="w-8 h-8 flex items-center justify-center transition-transform hover:scale-105"
+        className="w-8 h-8 rounded-full bg-[#FEE500] text-[#381E1F] flex items-center justify-center transition-transform hover:scale-105"
         title="카카오톡 공유"
         aria-label="카카오톡으로 공유하기"
       >
-        <Image
-          src="/icons/kakao-talk.svg"
-          alt="카카오톡 아이콘"
-          width={32}
-          height={32}
-          className="w-8 h-8"
-        />
+        <SiKakaotalk className="w-5 h-5" aria-hidden />
       </button>
 
       {/* Copy Link */}
