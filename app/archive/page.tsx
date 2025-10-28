@@ -66,12 +66,13 @@ export default function ArchivePage() {
       <PageHero
         title="아카이브"
         description="씨앗:페의 발자취와 성과, 언론 보도를 기록합니다"
+        backgroundClass="bg-primary-surface"
       >
         <ShareButtons url={currentUrl} title={pageTitle} description={pageDescription} />
       </PageHero>
 
       {/* Past Events Section */}
-      <section className="py-12 md:py-20 bg-primary-surface">
+      <section className="py-12 md:py-20 bg-sun-soft">
         <div className="container-max">
           <h2 className="font-partial text-3xl mb-12">🎉 2023년 행사 기록</h2>
           <div className="bg-white rounded-lg shadow-sm p-8 mb-12">
@@ -162,7 +163,7 @@ export default function ArchivePage() {
       </section>
 
       {/* Video Archive Section */}
-      <section className="py-12 md:py-20 bg-canvas-soft">
+      <section className="py-12 md:py-20 bg-accent-soft">
         <div className="container-max">
           <h2 className="font-partial text-3xl mb-12">📹 영상 아카이브</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

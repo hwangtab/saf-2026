@@ -89,6 +89,7 @@ export default function ExhibitionPage() {
       <PageHero
         title="전시 안내"
         description="씨앗:페 2026을 직접 만나보세요"
+        backgroundClass="bg-sun-soft"
       >
         <ShareButtons url={canonicalUrl} title={shareTitle} description={shareDescription} />
       </PageHero>
@@ -169,7 +170,7 @@ export default function ExhibitionPage() {
       </section>
 
       {/* Access Information */}
-      <section className="py-12 md:py-20 bg-canvas-soft">
+      <section className="py-12 md:py-20 bg-accent-soft">
         <div className="container-max">
           <h2 className="font-partial text-3xl mb-12">오시는 길</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">

@@ -37,7 +37,7 @@ export const metadata: Metadata = {
 export default function OurProof() {
   return (
     <>
-      <section className="py-12 md:py-20 bg-primary-surface">
+      <section className="py-12 md:py-20 bg-accent-soft">
         <div className="container-max text-center">
           <div className="text-5xl md:text-7xl font-bold text-primary mb-6">305건</div>
           <h1 className="font-partial text-4xl md:text-5xl mb-6 text-balance">예술인 상호부조 대출의 실제 성과</h1>
@@ -49,7 +49,7 @@ export default function OurProof() {
       </section>
 
       {/* Proof Section */}
-      <section className="py-12 md:py-20">
+      <section className="py-12 md:py-20 bg-white">
         <div className="container-max">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
             <div>
@@ -163,7 +163,7 @@ export default function OurProof() {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-12 md:py-20 bg-white">
+      <section className="py-12 md:py-20 bg-sun-soft">
         <div className="container-max">
           <h2 className="font-partial text-3xl mb-12 text-center">예술인들의 증언</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -196,7 +196,7 @@ export default function OurProof() {
       </section>
 
       {/* Statistics Comparison */}
-      <section className="py-12 md:py-20 bg-canvas-soft">
+      <section className="py-12 md:py-20 bg-primary-surface">
         <div className="container-max">
           <h2 className="font-partial text-3xl mb-12 text-center">기존 금융 vs 상호부조 대출</h2>
           <div className="overflow-x-auto">
