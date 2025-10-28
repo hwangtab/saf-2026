@@ -43,7 +43,7 @@ export default function OurProof() {
           <h1 className="font-partial text-4xl md:text-5xl mb-6 text-balance">예술인 상호부조 대출의 실제 성과</h1>
           <p className="text-lg text-charcoal-muted max-w-2xl mx-auto text-balance">
             2022년 12월부터 2025년 4월까지, 총 <strong>305건</strong>의 대출을 통해 <strong>609,000,000원</strong>을
-            예술인에게 공급했습니다. 상호부조의 신뢰가 실제 데이터로 증명되었습니다.
+            예술인에게 공급했습니다. <span className="text-sky-strong font-semibold">상호부조의 신뢰</span>가 실제 데이터로 증명되었습니다.
           </p>
         </div>
       </section>
@@ -172,24 +172,28 @@ export default function OurProof() {
               author="김OO"
               context="시각 예술가"
               borderColor="border-primary"
+              contextColor="text-sky-strong"
             />
             <TestimonialCard
               quote="은행 문턱이 너무 높았는데, 여기서는 저를 '예술인'으로 인정해주더군요. 단순한 대출이 아니라 큰 위로와 응원이었습니다."
               author="이OO"
               context="독립 영화감독"
               borderColor="border-sun"
+              contextColor="text-sun-strong"
             />
             <TestimonialCard
               quote="다음 전시 준비 자금이 막막했는데, 덕분에 무사히 작품을 완성하고 전시를 열 수 있었습니다. 이 제도가 없었다면 불가능했을 거예요."
               author="박OO"
               context="설치 미술가"
               borderColor="border-accent"
+              contextColor="text-accent-strong"
             />
             <TestimonialCard
               quote="내 상환금이 다른 동료 예술가에게 희망이 된다는 사실이 저를 더 책임감 있게 만듭니다. 우리는 서로의 안전망입니다."
               author="최OO"
               context="뮤지컬 배우"
               borderColor="border-primary-strong"
+              contextColor="text-primary-strong"
             />
           </div>
         </div>

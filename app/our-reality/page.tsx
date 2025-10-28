@@ -115,14 +115,14 @@ export default function OurReality() {
           <div className="max-w-3xl mx-auto">
             <h2 className="font-partial text-3xl md:text-4xl mb-8 text-center sm:text-left">예술인에게 금융은 산소호흡기</h2>
             <div className="space-y-6 text-lg text-charcoal">
-              <p>
-                예술인들은 정기적인 급여가 아닌, 프로젝트 기반의 불규칙한 소득을 얻습니다. 공연과 공연 사이, 전시와 전시 사이 발생하는
-                <strong> &ldquo;소득 공백기&rdquo;</strong>는 그들이 피할 수 없는 구조적 현실입니다.
-              </p>
-              <p>
-                이 공백기 동안 월세, 식비, 창작 재료비를 버텨낼 방법이 필요합니다. 안정적인 금융은 단순한 &lsquo;빚&rsquo;이 아닌,
-                <strong> 창작의 시간을 살려내는 생명의 산소</strong>입니다.
-              </p>
+            <p>
+              예술인들은 정기적인 급여가 아닌, 프로젝트 기반의 불규칙한 소득을 얻습니다. 공연과 공연 사이, 전시와 전시 사이 발생하는
+              <strong> &ldquo;소득 공백기&rdquo;</strong>는 그들이 피할 수 없는 구조적 현실입니다.
+            </p>
+            <p>
+              이 공백기 동안 월세, 식비, 창작 재료비를 버텨낼 방법이 필요합니다. 안정적인 금융은 단순한 &lsquo;빚&rsquo;이 아닌,
+              <strong> 창작의 시간을 살려내는 <span className="text-sun-strong">생명의 산소</span></strong>입니다.
+            </p>
               <p>
                 그러나 한국의 금융 시스템은 예술인을 정상적인 금융 고객으로 인정하지 않았습니다. 그 결과 예술인들은
                 <strong> 배제 → 약탈 → 파괴</strong>라는 악순환에 갇혀있습니다.
@@ -139,10 +139,10 @@ export default function OurReality() {
             <div className="text-5xl mb-4" aria-hidden="true">
               🚫
             </div>
-            <span className="text-sm font-bold text-red-500 uppercase">STAGE 1</span>
+            <span className="text-sm font-bold text-primary-strong uppercase">STAGE 1</span>
             <h2 className="font-partial text-4xl md:text-5xl mb-4">닫힌 문: 은행이 거절하다</h2>
             <p className="text-xl text-charcoal-muted max-w-2xl leading-relaxed">
-              제1금융권 배제율 <strong className="text-red-500">84.9%</strong>
+              제1금융권 배제율 <strong className="text-primary-strong">84.9%</strong>
             </p>
           </div>
 
@@ -151,11 +151,11 @@ export default function OurReality() {
             <h3 className="font-watermelon text-xl font-bold mb-3">은행의 문은 왜 닫혔나?</h3>
             <ul className="space-y-3 text-charcoal">
               <li className="flex gap-3">
-                <span className="font-bold text-red-500">•</span>
+                <span className="font-bold text-primary-strong">•</span>
                 <span><strong>53.1%</strong>는 대출 신청 후 직접적으로 <strong>거절</strong></span>
               </li>
               <li className="flex gap-3">
-                <span className="font-bold text-red-500">•</span>
+                <span className="font-bold text-primary-strong">•</span>
                 <span><strong>31.8%</strong>는 어차피 안 될 것이라 예상하며 <strong>신청 포기</strong></span>
               </li>
             </ul>
@@ -176,7 +176,8 @@ export default function OurReality() {
             quote="연극배우라고 하자 무직자라고 대출 담당자에게 들었습니다."
             author="50대 배우"
             context="은행이 찍은 무직자라는 낙인은 성실한 예술가들을 시스템 밖으로 밀어내는 자기실현적 예언이 되었습니다."
-            borderColor="border-danger"
+            borderColor="border-primary-strong"
+            contextColor="text-primary-strong"
           />
         </div>
       </section>
@@ -188,10 +189,10 @@ export default function OurReality() {
             <div className="text-5xl mb-4" aria-hidden="true">
               ⚠️
             </div>
-            <span className="text-sm font-bold text-red-600 uppercase">STAGE 2</span>
+            <span className="text-sm font-bold text-accent-strong uppercase">STAGE 2</span>
             <h2 className="font-partial text-4xl md:text-5xl mb-4">낭떠러지: 고금리로 내몰리다</h2>
             <p className="text-xl text-charcoal-muted max-w-2xl leading-relaxed">
-              고금리 상품 노출률 <strong className="text-red-600">48.6%</strong> (연 15% 이상)
+              고금리 상품 노출률 <strong className="text-accent-strong">48.6%</strong> (연 15% 이상)
             </p>
           </div>
 
@@ -222,8 +223,9 @@ export default function OurReality() {
             quote="12년간 낸 이자의 절반만 되었어도 빚을 없앴을 겁니다. 이자 갚느라 작품 할 시간을 잃었습니다."
             author="40대 음악인"
             context="고금리는 단순한 이자가 아닙니다. 그것은 예술가의 시간을 빼앗고, 창작 의지를 꺾으며, 삶을 서서히 파괴하는 보이지 않는 족쇄입니다."
-            borderColor="border-danger"
+            borderColor="border-accent"
             bgColor="bg-white"
+            contextColor="text-accent-strong"
           />
         </div>
       </section>
@@ -235,10 +237,10 @@ export default function OurReality() {
             <div className="text-5xl mb-4" aria-hidden="true">
               💔
             </div>
-            <span className="text-sm font-bold text-red-700 uppercase">STAGE 3</span>
+            <span className="text-sm font-bold text-danger uppercase">STAGE 3</span>
             <h2 className="font-partial text-4xl md:text-5xl mb-4">파괴: 창작이 멈춘다</h2>
             <p className="text-xl text-charcoal-muted max-w-2xl leading-relaxed">
-              채권추심 경험자의 창작 중단율 <strong className="text-red-700">88.3%</strong>
+              채권추심 경험자의 창작 중단율 <strong className="text-danger">88.3%</strong>
             </p>
           </div>
 
@@ -298,7 +300,7 @@ export default function OurReality() {
             <h2 className="font-partial text-4xl md:text-5xl mb-8">
               하지만 우리는 증거를 찾았습니다
             </h2>
-            <p className="text-xl text-charcoal">
+            <p className="text-xl text-sky-strong">
               3년간 신용점수와 무관하게 진행된 상호부조 대출의 결과
             </p>
           </div>
@@ -403,7 +405,7 @@ export default function OurReality() {
           <p className="text-lg text-charcoal-muted mb-8 max-w-2xl mx-auto">
             한국 예술인들의 창작 시간을 살려내는 일에 함께해주세요.
             <br />
-            당신의 참여와 후원이 산소호흡기가 되어 예술이 계속 숨 쉬게 합니다.
+            당신의 참여와 후원이 <span className="text-sun-strong font-semibold">산소호흡기</span>가 되어 예술이 계속 숨 쉬게 합니다.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <a

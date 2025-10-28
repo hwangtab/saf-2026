@@ -40,7 +40,7 @@ export function FirstBankAccessChart() {
     { name: '제1금융권 배제', value: 84.9 },
     { name: '접근 가능', value: 15.1 },
   ];
-  const COLORS = ['#ef4444', '#10b981'];
+  const COLORS = ['#D94F45', '#2176FF'];
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm">
@@ -99,7 +99,7 @@ export function RejectionReasonsChart() {
             labelStyle={tooltipLabelStyle}
             itemStyle={tooltipItemStyle}
           />
-          <Bar dataKey="count" fill="#f4d03f" name="응답자 수" />
+          <Bar dataKey="count" fill="#2176FF" name="응답자 수" />
         </BarChart>
       </ResponsiveContainer>
       <p className="text-sm text-charcoal-muted mt-4">
@@ -132,7 +132,7 @@ export function HighInterestProductChart() {
             labelStyle={tooltipLabelStyle}
             itemStyle={tooltipItemStyle}
           />
-          <Bar dataKey="percentage" fill="#ef4444" name="이용률" />
+          <Bar dataKey="percentage" fill="#F79824" name="이용률" />
         </BarChart>
       </ResponsiveContainer>
       <p className="text-sm text-charcoal-muted mt-4">
@@ -165,7 +165,7 @@ export function InterestRateDistributionChart() {
             labelStyle={tooltipLabelStyle}
             itemStyle={tooltipItemStyle}
           />
-          <Bar dataKey="count" fill="#f59e0b" name="응답자" />
+          <Bar dataKey="count" fill="#FDCA40" name="응답자" />
         </BarChart>
       </ResponsiveContainer>
       <p className="text-sm text-charcoal-muted mt-4">
@@ -181,7 +181,7 @@ export function DebtCollectionChart() {
     { name: '경험함', value: 38 },
     { name: '경험 없음', value: 62 },
   ];
-  const COLORS = ['#dc2626', '#6b7280'];
+  const COLORS = ['#D94F45', '#495156'];
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm">
@@ -240,7 +240,7 @@ export function CreativeImpactChart() {
             labelStyle={tooltipLabelStyle}
             itemStyle={tooltipItemStyle}
           />
-          <Bar dataKey="percentage" fill="#ef4444" name="비율" />
+          <Bar dataKey="percentage" fill="#2176FF" name="비율" />
         </BarChart>
       </ResponsiveContainer>
       <p className="text-sm text-charcoal-muted mt-4">
