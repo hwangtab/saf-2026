@@ -37,13 +37,21 @@ export const metadata: Metadata = {
     description:
       '한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인. 상호부조 대출, 작품 전시, 후원에 참여하세요.',
     siteName: '씨앗:페 2026',
-    images: ['/images/og-image.png'],
+    images: [
+      {
+        url: '/images/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: '씨앗:페 2026 캠페인 홍보 이미지',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: '씨앗:페 2026',
     description:
       '한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인',
+    images: ['/images/og-image.png'],
   },
   robots: {
     index: true,
