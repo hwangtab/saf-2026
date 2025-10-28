@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
 import TestimonialCard from '@/components/ui/TestimonialCard';
-import { EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
+import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL } from '@/lib/constants';
 
 const PAGE_URL = `${SITE_URL}/our-proof`;
-const OG_IMAGE_URL = `${SITE_URL}/images/saf2023/IMG_0334.png`;
 
 export const metadata: Metadata = {
   title: '우리의 증명 | 씨앗:페 2026',
@@ -19,10 +18,10 @@ export const metadata: Metadata = {
     url: PAGE_URL,
     images: [
       {
-        url: OG_IMAGE_URL,
-        width: 1200,
-        height: 630,
-        alt: '씨앗페 현장에서 공유된 예술인 상호부조 데이터 인포그래픽',
+        url: OG_IMAGE.url,
+        width: OG_IMAGE.width,
+        height: OG_IMAGE.height,
+        alt: OG_IMAGE.alt,
       },
     ],
   },
@@ -31,7 +30,7 @@ export const metadata: Metadata = {
     title: '씨앗:페 2026 상호부조 데이터',
     description:
       '상호부조 대출 305건, 누적 6억 900만원 지원. 예술인 금융 안전망의 실제 성과를 확인하세요.',
-    images: [OG_IMAGE_URL],
+    images: [OG_IMAGE.url],
   },
 };
 

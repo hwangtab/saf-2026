@@ -5,10 +5,9 @@ import ShareButtons from '@/components/common/ShareButtons';
 import VideoEmbed from '@/components/features/VideoEmbed';
 import { saf2023Photos } from '@/content/saf2023-photos';
 import { videos } from '@/content/videos';
-import { EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
+import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL } from '@/lib/constants';
 
 const PAGE_URL = `${SITE_URL}/archive`;
-const OG_IMAGE_URL = `${SITE_URL}/images/saf2023/IMG_0327.png`;
 
 export const metadata: Metadata = {
   title: '아카이브 | 씨앗:페 2026',
@@ -24,10 +23,10 @@ export const metadata: Metadata = {
     url: PAGE_URL,
     images: [
       {
-        url: OG_IMAGE_URL,
-        width: 1200,
-        height: 630,
-        alt: '씨앗페 2023 전시와 공연 현장을 기록한 사진 모음',
+        url: OG_IMAGE.url,
+        width: OG_IMAGE.width,
+        height: OG_IMAGE.height,
+        alt: OG_IMAGE.alt,
       },
     ],
   },
@@ -35,7 +34,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: '씨앗:페 2026 아카이브',
     description: '씨앗:페 캠페인의 기록과 영상, 언론 보도를 아카이브에서 확인하세요.',
-    images: [OG_IMAGE_URL],
+    images: [OG_IMAGE.url],
   },
 };
 

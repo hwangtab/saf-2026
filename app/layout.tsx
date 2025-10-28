@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
-import { SITE_URL, SITE_URL_ALIAS } from '@/lib/constants';
+import { OG_IMAGE, SITE_URL, SITE_URL_ALIAS } from '@/lib/constants';
 import '@/styles/globals.css';
 
 export const metadata: Metadata = {
@@ -39,10 +39,10 @@ export const metadata: Metadata = {
     siteName: '씨앗:페 2026',
     images: [
       {
-        url: '/images/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: '씨앗:페 2026 캠페인 홍보 이미지',
+        url: OG_IMAGE.url,
+        width: OG_IMAGE.width,
+        height: OG_IMAGE.height,
+        alt: OG_IMAGE.alt,
       },
     ],
   },
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     title: '씨앗:페 2026',
     description:
       '한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인',
-    images: ['/images/og-image.png'],
+    images: [OG_IMAGE.url],
   },
   robots: {
     index: true,

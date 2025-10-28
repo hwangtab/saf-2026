@@ -1,10 +1,9 @@
 import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import TestimonialCard from '@/components/ui/TestimonialCard';
-import { EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
+import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL } from '@/lib/constants';
 
 const PAGE_URL = `${SITE_URL}/our-reality`;
-const OG_IMAGE_URL = `${SITE_URL}/images/saf2023/IMG_0313.png`;
 
 const FirstBankAccessChart = dynamic(
   () =>
@@ -68,10 +67,10 @@ export const metadata: Metadata = {
     url: PAGE_URL,
     images: [
       {
-        url: OG_IMAGE_URL,
-        width: 1200,
-        height: 630,
-        alt: '씨앗페 2023 데이터 전시 패널과 관람객',
+        url: OG_IMAGE.url,
+        width: OG_IMAGE.width,
+        height: OG_IMAGE.height,
+        alt: OG_IMAGE.alt,
       },
     ],
   },
@@ -79,7 +78,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: '우리의 현실 | 씨앗:페 2026',
     description: '예술인이 겪는 금융 재난의 구조와 데이터를 한눈에 확인하세요.',
-    images: [OG_IMAGE_URL],
+    images: [OG_IMAGE.url],
   },
 };
 

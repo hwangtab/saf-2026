@@ -3,10 +3,9 @@ import Image from 'next/image';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import { newsArticles } from '@/content/news';
-import { SITE_URL } from '@/lib/constants';
+import { OG_IMAGE, SITE_URL } from '@/lib/constants';
 
 const PAGE_URL = `${SITE_URL}/news`;
-const OG_IMAGE_URL = `${SITE_URL}/images/saf2023/IMG_0346.png`;
 
 export const metadata: Metadata = {
   title: '언론 보도 | 씨앗:페 2026',
@@ -22,10 +21,10 @@ export const metadata: Metadata = {
     url: PAGE_URL,
     images: [
       {
-        url: OG_IMAGE_URL,
-        width: 1200,
-        height: 630,
-        alt: '씨앗페 2026 언론 보도와 자료가 정리된 모습',
+        url: OG_IMAGE.url,
+        width: OG_IMAGE.width,
+        height: OG_IMAGE.height,
+        alt: OG_IMAGE.alt,
       },
     ],
   },
@@ -33,7 +32,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: '씨앗:페 2026 언론 보도',
     description: '씨앗:페 캠페인을 다룬 최신 기사와 인터뷰를 한눈에 확인하세요.',
-    images: [OG_IMAGE_URL],
+    images: [OG_IMAGE.url],
   },
 };
 

@@ -2,10 +2,9 @@ import type { Metadata } from 'next';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import KakaoMap from '@/components/features/KakaoMap';
-import { EXHIBITION, EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
+import { EXHIBITION, EXTERNAL_LINKS, OG_IMAGE, SITE_URL } from '@/lib/constants';
 
 const EXHIBITION_PAGE_URL = `${SITE_URL}/exhibition`;
-const EXHIBITION_OG_IMAGE = `${SITE_URL}/images/saf2023/IMG_0340.png`;
 
 export const metadata: Metadata = {
   title: '전시 안내 | 씨앗:페 2026',
@@ -21,10 +20,10 @@ export const metadata: Metadata = {
     url: EXHIBITION_PAGE_URL,
     images: [
       {
-        url: EXHIBITION_OG_IMAGE,
-        width: 1200,
-        height: 630,
-        alt: '씨앗페 전시장에서 작품을 감상 중인 관람객들',
+        url: OG_IMAGE.url,
+        width: OG_IMAGE.width,
+        height: OG_IMAGE.height,
+        alt: OG_IMAGE.alt,
       },
     ],
   },
@@ -32,7 +31,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: '씨앗:페 2026 전시 안내',
     description: '전시 일정과 프로그램, 참여 방법을 확인하세요.',
-    images: [EXHIBITION_OG_IMAGE],
+    images: [OG_IMAGE.url],
   },
 };
 
@@ -77,7 +76,7 @@ export default function ExhibitionPage() {
       priceCurrency: 'KRW',
       availability: 'https://schema.org/InStock',
     },
-    image: EXHIBITION_OG_IMAGE,
+    image: OG_IMAGE.url,
     url: canonicalUrl,
   };
 
