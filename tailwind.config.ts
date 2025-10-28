@@ -9,36 +9,41 @@ const config: Config = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#F6B300', // Honey Gold
-          soft: '#FFE9A6', // Honey Tint
-          strong: '#D99000', // Amber Core
-          surface: '#FFF4D1', // Honey Veil
+          DEFAULT: '#25324D', // Deep Indigo
+          soft: '#E0E6F1', // Indigo Mist
+          strong: '#1B253B', // Midnight Indigo
+          surface: '#F3F5FB', // Indigo Veil
         },
         charcoal: {
-          DEFAULT: '#222326', // Soft Charcoal
-          muted: '#3B3C40', // Evening Slate
-          soft: '#4E4F52', // Fog Graphite
+          DEFAULT: '#1F2330', // Soft Ink
+          muted: '#343A4A', // Dusk Slate
+          soft: '#4A5063', // Overcast Graphite
         },
         accent: {
-          DEFAULT: '#2CA6A4', // Modern Teal
-          soft: '#7BCDCB', // Seafoam Mist
-          strong: '#1E7C7A', // Deep Ocean
+          DEFAULT: '#D93F2B', // Ember Orange
+          soft: '#FFD0C5', // Ember Tint
+          strong: '#B23321', // Ember Core
         },
-        success: '#3BB273',
-        warning: '#FFB020',
-        danger: '#E15554',
+        support: {
+          DEFAULT: '#4CB59F', // Sage Teal
+          soft: '#D8F2EA', // Mist Mint
+          strong: '#2F806E', // Deep Spruce
+        },
+        success: '#2F946F',
+        warning: '#F4B63B',
+        danger: '#D94452',
         light: '#FFFFFF',
         gray: {
-          50: '#F9F9F8',
-          100: '#EFEFEA',
-          200: '#E1E2DA',
-          300: '#C8C9BC',
-          400: '#A4A58F',
-          500: '#7A7C64',
-          600: '#5C5F4A',
-          700: '#45483A',
-          800: '#2E3128',
-          900: '#1E2119',
+          50: '#F5F6F8',
+          100: '#E6E8ED',
+          200: '#D2D6DF',
+          300: '#B6BBC9',
+          400: '#949BB0',
+          500: '#6F7790',
+          600: '#535A70',
+          700: '#3D4356',
+          800: '#292E3F',
+          900: '#1E2330',
         },
       },
       fontFamily: {

@@ -396,7 +396,7 @@ export default function OurReality() {
               href={EXTERNAL_LINKS.DONATE}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center bg-primary hover:bg-primary-strong text-charcoal font-bold px-8 py-4 rounded-lg transition-colors text-lg"
+              className="inline-flex items-center justify-center bg-accent hover:bg-accent-strong text-light font-bold px-8 py-4 rounded-lg transition-colors text-lg"
             >
               ❤️ 지금 후원하기
             </a>
