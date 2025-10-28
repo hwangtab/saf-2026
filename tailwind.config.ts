@@ -9,46 +9,51 @@ const config: Config = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#BADFDB', // Soft Teal
-          soft: '#E3F2F2', // Teal Mist
-          strong: '#7FBFBB', // Teal Core
-          surface: '#F0FAF9', // Teal Veil
+          DEFAULT: '#2176FF', // Crayola Blue
+          soft: '#D2E1FF', // Blue Mist
+          strong: '#0E4ECF', // Deep Blue
+          surface: '#EDF3FF', // Blue Veil
+        },
+        sky: {
+          DEFAULT: '#33A1FD', // Celestial Blue
+          soft: '#CDE9FF', // Sky Mist
+          strong: '#0F7FDB', // Sky Core
+        },
+        sun: {
+          DEFAULT: '#FDCA40', // Sun Glow
+          soft: '#FEE9A3', // Sun Mist
+          strong: '#E3AC0D', // Sun Core
         },
         accent: {
-          DEFAULT: '#FFA4A4', // Blossom Coral
-          soft: '#FFD6D6', // Blossom Glow
-          strong: '#FF7C7C', // Blossom Core
-        },
-        highlight: {
-          DEFAULT: '#FFBDBD', // Petal Blush
-          soft: '#FFE3E3', // Petal Mist
-          strong: '#FF9090', // Petal Core
+          DEFAULT: '#F79824', // Carrot Orange
+          soft: '#FFD4A3', // Carrot Glow
+          strong: '#D97800', // Carrot Core
         },
         canvas: {
-          DEFAULT: '#FCF9EA', // Vanilla Cream
-          soft: '#FFFCF2', // Vanilla Light
-          strong: '#F3ECD4', // Vanilla Core
+          DEFAULT: '#FFF6DD', // Soft Sand
+          soft: '#FFF9E8', // Sand Mist
+          strong: '#F3E2AA', // Sand Core
         },
         charcoal: {
-          DEFAULT: '#2D2A29', // Soft Ink
-          muted: '#4F4A48', // Warm Slate
-          soft: '#736C6A', // Mist Slate
+          DEFAULT: '#31393C', // Gunmetal
+          muted: '#495156', // Slate
+          soft: '#6A7378', // Fog Slate
         },
-        success: '#7EB28A',
-        warning: '#FFA4A4',
-        danger: '#FF7C7C',
+        success: '#2E9F7B',
+        warning: '#FDCA40',
+        danger: '#D94F45',
         light: '#FFFFFF',
         gray: {
-          50: '#FEFCF7',
-          100: '#F8F2E9',
-          200: '#EEE3D4',
-          300: '#DFCDB9',
-          400: '#CBB39A',
-          500: '#AF9378',
-          600: '#8F7560',
-          700: '#6F594A',
-          800: '#4F3E35',
-          900: '#362922',
+          50: '#F7F8FA',
+          100: '#E6EAF0',
+          200: '#D1D7E0',
+          300: '#B3BAC7',
+          400: '#8F98A5',
+          500: '#707A84',
+          600: '#555E67',
+          700: '#3D464D',
+          800: '#2C3238',
+          900: '#1F2428',
         },
       },
       fontFamily: {

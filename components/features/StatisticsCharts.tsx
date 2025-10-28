@@ -43,7 +43,7 @@ export function FirstBankAccessChart() {
           <Tooltip formatter={(value) => `${value}%`} />
         </PieChart>
       </ResponsiveContainer>
-      <p className="text-sm text-gray-600 mt-4 text-center">
+      <p className="text-sm text-charcoal-muted mt-4 text-center">
         예술인의 84.9%가 제1금융권에서 배제되고 있습니다.
       </p>
     </div>
@@ -72,7 +72,7 @@ export function RejectionReasonsChart() {
           <Bar dataKey="count" fill="#f4d03f" name="응답자 수" />
         </BarChart>
       </ResponsiveContainer>
-      <p className="text-sm text-gray-600 mt-4">
+      <p className="text-sm text-charcoal-muted mt-4">
         정기적인 소득 입증의 어려움이 가장 큰 이유입니다.
       </p>
     </div>
@@ -100,7 +100,7 @@ export function HighInterestProductChart() {
           <Bar dataKey="percentage" fill="#ef4444" name="이용률" />
         </BarChart>
       </ResponsiveContainer>
-      <p className="text-sm text-gray-600 mt-4">
+      <p className="text-sm text-charcoal-muted mt-4">
         많은 예술인들이 연 20% 이상의 고금리 상품을 사용하고 있습니다.
       </p>
     </div>
@@ -129,7 +129,7 @@ export function InterestRateDistributionChart() {
           <Bar dataKey="count" fill="#f59e0b" name="응답자" />
         </BarChart>
       </ResponsiveContainer>
-      <p className="text-sm text-gray-600 mt-4">
+      <p className="text-sm text-charcoal-muted mt-4">
         절반 이상이 15% 이상의 고금리에 노출되어 있습니다.
       </p>
     </div>
@@ -166,7 +166,7 @@ export function DebtCollectionChart() {
           <Tooltip formatter={(value) => `${value}%`} />
         </PieChart>
       </ResponsiveContainer>
-      <p className="text-sm text-gray-600 mt-4 text-center">
+      <p className="text-sm text-charcoal-muted mt-4 text-center">
         예술인의 38%가 채권추심 경험을 겪었습니다.
       </p>
     </div>
@@ -194,7 +194,7 @@ export function CreativeImpactChart() {
           <Bar dataKey="percentage" fill="#ef4444" name="비율" />
         </BarChart>
       </ResponsiveContainer>
-      <p className="text-sm text-gray-600 mt-4">
+      <p className="text-sm text-charcoal-muted mt-4">
         금융 어려움이 예술인들의 창작활동을 심각하게 방해하고 있습니다.
       </p>
     </div>

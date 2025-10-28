@@ -15,9 +15,9 @@ export default function TestimonialCard({
 }: TestimonialCardProps) {
   return (
     <div className={`${bgColor} p-8 rounded-lg border-l-4 ${borderColor}`}>
-      <p className="text-lg text-gray-700 italic mb-4">&quot;{quote}&quot;</p>
+      <p className="text-lg text-charcoal italic mb-4">&quot;{quote}&quot;</p>
       <p className="font-semibold text-gray-800">— {author}</p>
-      {context && <p className="text-sm text-gray-600 mt-3">{context}</p>}
+      {context && <p className="text-sm text-charcoal-muted mt-3">{context}</p>}
     </div>
   );
 }

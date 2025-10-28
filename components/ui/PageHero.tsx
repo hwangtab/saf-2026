@@ -25,7 +25,7 @@ export default function PageHero({
         >
           {title}
         </h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto text-balance">{description}</p>
+        <p className="text-lg text-charcoal-muted max-w-2xl mx-auto text-balance">{description}</p>
         {children ? <div className="mt-8 flex justify-center">{children}</div> : null}
       </div>
     </section>

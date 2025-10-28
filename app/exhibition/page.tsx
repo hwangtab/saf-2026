@@ -113,7 +113,7 @@ export default function ExhibitionPage() {
                   <div className="border-l-4 border-primary pl-4">
                     <h3 className="font-watermelon text-sm text-gray-500 font-semibold mb-1">장소</h3>
                     <p className="text-lg font-semibold">{EXHIBITION.LOCATION}</p>
-                    <p className="text-gray-600 text-sm">{EXHIBITION.ADDRESS}</p>
+                    <p className="text-charcoal-muted text-sm">{EXHIBITION.ADDRESS}</p>
                   </div>
                 </div>
               </div>
@@ -138,7 +138,7 @@ export default function ExhibitionPage() {
                 >
                   🎨 작품 구매하기
                 </a>
-                <div className="pt-4 text-sm text-gray-600">
+                <div className="pt-4 text-sm text-charcoal-muted">
                   <p>
                     문의:{' '}
                     <a
@@ -169,13 +169,13 @@ export default function ExhibitionPage() {
       </section>
 
       {/* Access Information */}
-      <section className="py-12 md:py-20 bg-gray-50">
+      <section className="py-12 md:py-20 bg-canvas-soft">
         <div className="container-max">
           <h2 className="font-partial text-3xl mb-12">오시는 길</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
             <div>
               <h3 className="font-watermelon text-xl font-bold mb-4">🚇 대중교통</h3>
-              <div className="space-y-4 text-gray-600">
+              <div className="space-y-4 text-charcoal-muted">
                 <div>
                   <p className="font-semibold text-gray-900">지하철</p>
                   <p>
@@ -194,7 +194,7 @@ export default function ExhibitionPage() {
             </div>
             <div>
               <h3 className="font-watermelon text-xl font-bold mb-4">🚗 자동차</h3>
-              <div className="space-y-4 text-gray-600">
+              <div className="space-y-4 text-charcoal-muted">
                 <div>
                   <p className="font-semibold text-gray-900">주소</p>
                   <p>서울시 종로구 인사동길 41-1</p>
@@ -213,7 +213,7 @@ export default function ExhibitionPage() {
           {/* Accessibility */}
           <div className="bg-white border-2 border-blue-200 rounded-lg p-6">
             <h3 className="font-watermelon font-bold mb-3">♿ 접근성 정보</h3>
-            <ul className="text-gray-600 space-y-2 text-sm">
+            <ul className="text-charcoal-muted space-y-2 text-sm">
               <li>✓ 장애인 휠체어 접근 가능</li>
               <li>✓ 엘리베이터 및 휠체어 화장실 보유</li>
               <li>✓ 휠체어 사용자 주차 공간 가능</li>
@@ -242,7 +242,7 @@ export default function ExhibitionPage() {
                   </div>
                   <div className="flex-1">
                     <p className="font-semibold">개막식 & 오프닝 퍼포먼스</p>
-                    <p className="text-gray-600 text-sm">
+                    <p className="text-charcoal-muted text-sm">
                       참여 예술인들의 개막 퍼포먼스와 캠페인 소개, 주요 후원자 라운드테이블
                     </p>
                   </div>
@@ -253,7 +253,7 @@ export default function ExhibitionPage() {
                   </div>
                   <div className="flex-1">
                     <p className="font-semibold">상설 전시 & 야간 프로그램</p>
-                    <p className="text-gray-600 text-sm">
+                    <p className="text-charcoal-muted text-sm">
                       매일 11:00-20:00 전시 운영, 저녁에는 음악/퍼포먼스 릴레이와 상호부조 상담 부스 운영
                     </p>
                   </div>
@@ -264,7 +264,7 @@ export default function ExhibitionPage() {
                   </div>
                   <div className="flex-1">
                     <p className="font-semibold">Meet the Artists 토크</p>
-                    <p className="text-gray-600 text-sm">
+                    <p className="text-charcoal-muted text-sm">
                       참여 작가와 상호부조 대출 이용 예술인들의 라이브 토크 & 미니 콘서트
                     </p>
                   </div>
@@ -275,7 +275,7 @@ export default function ExhibitionPage() {
                   </div>
                   <div className="flex-1">
                     <p className="font-semibold">폐막 & 모금 결산</p>
-                    <p className="text-gray-600 text-sm">
+                    <p className="text-charcoal-muted text-sm">
                       모금 결과 공개, 후원자 감사 행사, 2026년 캠페인 계획 발표
                     </p>
                   </div>
@@ -285,7 +285,7 @@ export default function ExhibitionPage() {
 
             <div className="pt-8 border-t">
               <h3 className="font-watermelon font-bold mb-4">📋 기본 정보</h3>
-              <ul className="text-gray-600 space-y-2 text-sm">
+              <ul className="text-charcoal-muted space-y-2 text-sm">
                 <li>✓ 입장료: 무료 (후원금은 자율)</li>
                 <li>✓ 개별 방문 및 단체 관람 가능</li>
                 <li>
@@ -306,7 +306,7 @@ export default function ExhibitionPage() {
         <div className="container-max text-center">
           <h2 className="font-partial text-3xl mb-8">문의사항</h2>
           <div className="space-y-4">
-            <p className="text-lg text-gray-600">
+            <p className="text-lg text-charcoal-muted">
               행사와 관련하여 궁금한 점이 있으시면 아래로 연락주세요.
             </p>
             <div className="space-y-2">

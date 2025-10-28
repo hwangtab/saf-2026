@@ -41,7 +41,7 @@ export default function OurProof() {
         <div className="container-max text-center">
           <div className="text-5xl md:text-7xl font-bold text-primary mb-6">305건</div>
           <h1 className="font-partial text-4xl md:text-5xl mb-6 text-balance">예술인 상호부조 대출의 실제 성과</h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto text-balance">
+          <p className="text-lg text-charcoal-muted max-w-2xl mx-auto text-balance">
             2022년 12월부터 2025년 4월까지, 총 <strong>305건</strong>의 대출을 통해 <strong>609,000,000원</strong>을
             예술인에게 공급했습니다. 상호부조의 신뢰가 실제 데이터로 증명되었습니다.
           </p>
@@ -54,7 +54,7 @@ export default function OurProof() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
             <div>
               <h2 className="font-partial text-3xl mb-6">상호부조 대출이란?</h2>
-              <div className="space-y-4 text-gray-700">
+              <div className="space-y-4 text-charcoal">
                 <p>
                   <a
                     href={EXTERNAL_LINKS.KOSMART_HOME}
@@ -76,9 +76,9 @@ export default function OurProof() {
             </div>
             <div className="bg-primary/10 rounded-lg p-8 border-2 border-primary text-center">
               <h3 className="font-watermelon text-2xl font-bold mb-6">기금의 힘</h3>
-              <p className="text-sm text-gray-600 mb-3">누적 조성된 상호부조 기금</p>
+              <p className="text-sm text-charcoal-muted mb-3">누적 조성된 상호부조 기금</p>
               <p className="text-4xl font-bold text-primary">39,000,000원</p>
-              <p className="text-sm text-gray-600 mt-4">
+              <p className="text-sm text-charcoal-muted mt-4">
                 작품 판매와 후원, 특별조합비로 함께 채워온 신뢰의 안전망입니다.
               </p>
             </div>
@@ -89,21 +89,21 @@ export default function OurProof() {
             <div className="bg-white p-8 rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow">
               <div className="text-4xl font-bold text-primary mb-4">305건</div>
               <h3 className="font-watermelon font-bold text-lg mb-2">누적 대출 실행</h3>
-              <p className="text-gray-600 text-sm text-balance">
+              <p className="text-charcoal-muted text-sm text-balance">
                 2022년 12월부터 2025년 4월까지 305건의 상호부조 대출이 실행되었습니다.
               </p>
             </div>
             <div className="bg-white p-8 rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow">
               <div className="text-4xl font-bold text-primary mb-4">609,000,000원</div>
               <h3 className="font-watermelon font-bold text-lg mb-2">누적 지원 금액</h3>
-              <p className="text-gray-600 text-sm text-balance">
+              <p className="text-charcoal-muted text-sm text-balance">
                 생활비·창작비·프로젝트 자금 등으로 총 6억 9백만원이 투입되었습니다.
               </p>
             </div>
             <div className="bg-white p-8 rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow">
               <div className="text-4xl font-bold text-primary mb-4">5.10%</div>
               <h3 className="font-watermelon font-bold text-lg mb-2">대위변제율</h3>
-              <p className="text-gray-600 text-sm text-balance">
+              <p className="text-charcoal-muted text-sm text-balance">
                 총 20건, 31,080,986원이 대위변제 처리되어 전체 실행액 대비 5.10% 수준입니다.
               </p>
             </div>
@@ -119,7 +119,7 @@ export default function OurProof() {
                 </div>
                 <div>
                   <h3 className="font-watermelon font-bold text-lg mb-2">기금과 특별조합비</h3>
-                  <p className="text-gray-600 text-balance">
+                  <p className="text-charcoal-muted text-balance">
                     조합이 조성한 3,900만원의 기금과 대출자 특별조합비로 안정기금 잔액 35,608,224원을 유지하며 리스크를 공동으로 감당합니다.
                   </p>
                 </div>
@@ -130,7 +130,7 @@ export default function OurProof() {
                 </div>
                 <div>
                   <h3 className="font-watermelon font-bold text-lg mb-2">연 5% 고정금리</h3>
-                  <p className="text-gray-600 text-balance">
+                  <p className="text-charcoal-muted text-balance">
                     프로젝트형·긴급생활형 상품 모두 연 5% 고정금리로 설계되어 고금리 대출 대비 평균 14%p 이상 이자 부담을 덜어줍니다.
                   </p>
                 </div>
@@ -141,7 +141,7 @@ export default function OurProof() {
                 </div>
                 <div>
                   <h3 className="font-watermelon font-bold text-lg mb-2">용도별 맞춤 상품</h3>
-                  <p className="text-gray-600 text-balance">
+                  <p className="text-charcoal-muted text-balance">
                     긴급·익일·특별·프로젝트 대출 등 네 가지 상품으로 생활비부터 창작비까지 필요한 시점에 자금을 공급합니다.
                   </p>
                 </div>
@@ -152,7 +152,7 @@ export default function OurProof() {
                 </div>
                 <div>
                   <h3 className="font-watermelon font-bold text-lg mb-2">투명한 리스크 관리</h3>
-                  <p className="text-gray-600 text-balance">
+                  <p className="text-charcoal-muted text-balance">
                     대위변제 20건(6.56%) 중 11,396,305원을 회수했고, 실시간 모니터링과 회수 계획으로 상호부조 신뢰를 지켜가고 있습니다.
                   </p>
                 </div>
@@ -196,7 +196,7 @@ export default function OurProof() {
       </section>
 
       {/* Statistics Comparison */}
-      <section className="py-12 md:py-20 bg-gray-50">
+      <section className="py-12 md:py-20 bg-canvas-soft">
         <div className="container-max">
           <h2 className="font-partial text-3xl mb-12 text-center">기존 금융 vs 상호부조 대출</h2>
           <div className="overflow-x-auto">
@@ -249,7 +249,7 @@ export default function OurProof() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
             <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-lg bg-white text-left shadow-sm">
               <h3 className="font-watermelon text-lg font-bold mb-3">후원으로 기금에 힘을 보태주세요</h3>
-              <p className="text-gray-600 mb-4 flex-grow">
+              <p className="text-charcoal-muted mb-4 flex-grow">
                 상호부조 대출 기금은 시민 후원으로 확대됩니다. 정기후원·일시후원 모두 큰 도움이 됩니다.
               </p>
               <a
@@ -263,7 +263,7 @@ export default function OurProof() {
             </div>
             <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-lg bg-white text-left shadow-sm">
               <h3 className="font-watermelon text-lg font-bold mb-3">작품을 구매해 예술인을 응원하세요</h3>
-              <p className="text-gray-600 mb-4 flex-grow">
+              <p className="text-charcoal-muted mb-4 flex-grow">
                 판매 수익은 전액 기금으로 귀속됩니다. 온라인 갤러리에서 작품을 만나보세요.
               </p>
               <a

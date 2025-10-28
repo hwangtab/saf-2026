@@ -52,7 +52,7 @@ export default function Header() {
                 href={item.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm font-medium text-gray-700 hover:text-primary transition-colors"
+                className="text-sm font-medium text-charcoal hover:text-primary transition-colors"
               >
                 {item.name}
               </a>
@@ -63,7 +63,7 @@ export default function Header() {
                 className={`text-sm font-medium transition-colors ${
                   isActive(item.href)
                     ? 'text-primary border-b-2 border-primary'
-                    : 'text-gray-700 hover:text-primary'
+                    : 'text-charcoal hover:text-primary'
                 }`}
               >
                 {item.name}
@@ -86,7 +86,7 @@ export default function Header() {
         {/* Mobile Menu Button */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="lg:hidden p-2 text-gray-700 hover:text-primary"
+          className="lg:hidden p-2 text-charcoal hover:text-primary"
           aria-label="메뉴 토글"
         >
           <svg
@@ -131,7 +131,7 @@ export default function Header() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block py-2 px-4 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+                  className="block py-2 px-4 rounded-lg text-charcoal hover:bg-gray-100 transition-colors"
                 >
                   {item.name}
                 </a>
@@ -143,7 +143,7 @@ export default function Header() {
                   className={`block py-2 px-4 rounded-lg transition-colors ${
                     isActive(item.href)
                       ? 'bg-primary-soft text-primary font-bold'
-                      : 'text-gray-700 hover:bg-gray-100'
+                      : 'text-charcoal hover:bg-gray-100'
                   }`}
                 >
                   {item.name}

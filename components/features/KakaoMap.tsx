@@ -22,7 +22,7 @@ export default function KakaoMap(props?: KakaoMapProps) {
 
   if (!hasAppKey) {
     return (
-      <div className="flex h-[400px] w-full items-center justify-center rounded-lg border border-dashed border-gray-300 bg-gray-50 text-sm text-gray-500">
+      <div className="flex h-[400px] w-full items-center justify-center rounded-lg border border-dashed border-gray-300 bg-canvas-soft text-sm text-charcoal-soft">
         카카오 지도 APP KEY가 설정되지 않았습니다. 환경 변수 `NEXT_PUBLIC_KAKAO_MAP_KEY`에
         JavaScript 키를 등록해주세요.
       </div>
@@ -31,7 +31,7 @@ export default function KakaoMap(props?: KakaoMapProps) {
 
   if (loading) {
     return (
-      <div className="flex h-[400px] w-full items-center justify-center rounded-lg bg-gray-50 text-sm text-gray-500">
+      <div className="flex h-[400px] w-full items-center justify-center rounded-lg bg-canvas-soft text-sm text-charcoal-soft">
         지도를 불러오는 중입니다…
       </div>
     );

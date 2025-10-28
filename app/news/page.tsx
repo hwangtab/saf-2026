@@ -136,7 +136,7 @@ export default function NewsPage() {
                     <h3 className="font-watermelon text-xl font-bold leading-tight text-gray-900">
                       {article.title}
                     </h3>
-                    <p className="text-sm text-gray-600 leading-relaxed">
+                    <p className="text-sm text-charcoal-muted leading-relaxed">
                       {article.description}
                     </p>
                     <span className="mt-auto inline-flex items-center gap-2 text-sm font-semibold text-primary">

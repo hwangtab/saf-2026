@@ -37,7 +37,7 @@ export default function DynamicCounter({ items }: DynamicCounterProps) {
               key={index}
               className="text-center p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
             >
-              <h3 className="font-watermelon text-sm font-medium text-gray-600 mb-2">
+              <h3 className="font-watermelon text-sm font-medium text-charcoal-muted mb-2">
                 {item.label}
               </h3>
               <div className="text-3xl font-bold text-primary">

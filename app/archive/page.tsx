@@ -71,7 +71,7 @@ export default function ArchivePage() {
       </PageHero>
 
       {/* Past Events Section */}
-      <section className="py-12 md:py-20 bg-gray-50">
+      <section className="py-12 md:py-20 bg-canvas-soft">
         <div className="container-max">
           <h2 className="font-partial text-3xl mb-12">🎉 2023년 행사 기록</h2>
           <div className="bg-white rounded-lg shadow-sm p-8 mb-12">
@@ -79,22 +79,22 @@ export default function ArchivePage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
               <div className="text-center">
                 <p className="text-3xl font-bold text-primary">7일</p>
-                <p className="text-gray-600 text-sm">전시 기간</p>
+                <p className="text-charcoal-muted text-sm">전시 기간</p>
               </div>
               <div className="text-center">
                 <p className="text-3xl font-bold text-primary">5일</p>
-                <p className="text-gray-600 text-sm">공연 일정</p>
+                <p className="text-charcoal-muted text-sm">공연 일정</p>
               </div>
               <div className="text-center">
                 <p className="text-3xl font-bold text-primary">50+</p>
-                <p className="text-gray-600 text-sm">참여 예술인</p>
+                <p className="text-charcoal-muted text-sm">참여 예술인</p>
               </div>
               <div className="text-center">
                 <p className="text-3xl font-bold text-primary">3,000만원</p>
-                <p className="text-gray-600 text-sm">기금 마련</p>
+                <p className="text-charcoal-muted text-sm">기금 마련</p>
               </div>
             </div>
-            <p className="text-gray-600 mb-4">
+            <p className="text-charcoal-muted mb-4">
               2023년 3월 21일부터 3월 31일까지 서울시 종로구 인사동의 오디오가이 스튜디오와
               인디프레스 갤러리에서 전시와 공연이 펼쳐졌습니다. 국내 저명 뮤지션, 화가, 무용가
               등 50명 이상의 예술인이 참여하여 예술인 금융 위기의 심각성을 알리고, 작품 판매 수익을
@@ -114,7 +114,7 @@ export default function ArchivePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
               <h4 className="font-bold text-lg mb-4">📍 전시 장소</h4>
-              <ul className="space-y-2 text-gray-600">
+              <ul className="space-y-2 text-charcoal-muted">
                 <li>
                   🎪 오디오가이 스튜디오 (서울시 종로구 효자로 23)
                 </li>
@@ -125,7 +125,7 @@ export default function ArchivePage() {
             </div>
             <div>
               <h4 className="font-bold text-lg mb-4">⏰ 공연 일정</h4>
-              <ul className="space-y-2 text-gray-600 text-sm">
+              <ul className="space-y-2 text-charcoal-muted text-sm">
                 <li>3월 22-28일: 매일 다양한 뮤지션 공연</li>
                 <li>30분 간격으로 번갈아가며 진행</li>
                 <li>선착순 무료입장</li>
@@ -155,14 +155,14 @@ export default function ArchivePage() {
               </div>
             ))}
           </div>
-          <p className="text-center text-gray-600 mt-12 text-sm">
+          <p className="text-center text-charcoal-muted mt-12 text-sm">
             2023년 3월 21일부터 3월 31일까지 인사동에서 펼쳐진 씨앗페 2023의 생생한 현장 모습입니다.
           </p>
         </div>
       </section>
 
       {/* Video Archive Section */}
-      <section className="py-12 md:py-20 bg-gray-50">
+      <section className="py-12 md:py-20 bg-canvas-soft">
         <div className="container-max">
           <h2 className="font-partial text-3xl mb-12">📹 영상 아카이브</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -171,7 +171,7 @@ export default function ArchivePage() {
                 <VideoEmbed id={video.youtubeId} title={video.title} />
                 <div className="p-6">
                   <h3 className="font-watermelon text-xl font-bold mb-2">{video.title}</h3>
-                  <p className="text-gray-600 text-sm line-clamp-3">{video.description}</p>
+                  <p className="text-charcoal-muted text-sm line-clamp-3">{video.description}</p>
                 </div>
               </div>
             ))}
@@ -183,7 +183,7 @@ export default function ArchivePage() {
       <section className="py-12 md:py-20 bg-primary/20">
         <div className="container-max text-center">
           <h2 className="font-partial text-3xl mb-6">이 역사에 당신도 함께하세요</h2>
-          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg text-charcoal-muted mb-8 max-w-2xl mx-auto">
             씨앗:페 2026의 성공은 당신의 참여와 후원으로 만들어집니다.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">

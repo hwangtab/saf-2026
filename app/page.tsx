@@ -110,7 +110,7 @@ export default function Home() {
               <h3 className="font-watermelon text-xl font-bold text-primary">
                 🚫 금융 시장의 차별
               </h3>
-              <p className="text-gray-600 leading-relaxed">
+              <p className="text-charcoal-muted leading-relaxed">
                 예술인들은 정기적인 소득을 입증하기 어려워 은행 대출에서 거절당합니다.
                 신용등급이 없으면 금융권에서 완전히 배제됩니다.
               </p>
@@ -119,7 +119,7 @@ export default function Home() {
               <h3 className="font-watermelon text-xl font-bold text-primary">
                 💳 고금리의 악순환
               </h3>
-              <p className="text-gray-600 leading-relaxed">
+              <p className="text-charcoal-muted leading-relaxed">
                 대출받을 곳이 없어 카드론, 현금서비스 등 연 20%에 육박하는
                 고금리 상품에 의존하게 됩니다.
               </p>
@@ -128,7 +128,7 @@ export default function Home() {
               <h3 className="font-watermelon text-xl font-bold text-primary">
                 😔 심각한 피해
               </h3>
-              <p className="text-gray-600 leading-relaxed">
+              <p className="text-charcoal-muted leading-relaxed">
                 이는 예술가들의 창작활동을 방해하고 예술 생태계의
                 지속가능성을 위협합니다.
               </p>
@@ -137,7 +137,7 @@ export default function Home() {
               <h3 className="font-watermelon text-xl font-bold text-primary">
                 🤝 해결책: 상호부조
               </h3>
-              <p className="text-gray-600 leading-relaxed">
+              <p className="text-charcoal-muted leading-relaxed">
                 <a
                   href={EXTERNAL_LINKS.KOSMART_HOME}
                   target="_blank"
@@ -165,7 +165,7 @@ export default function Home() {
               <h3 className="font-watermelon text-2xl font-bold text-primary mb-4">
                 📈 95% 상환율의 신뢰
               </h3>
-              <p className="text-gray-600 leading-relaxed mb-4">
+              <p className="text-charcoal-muted leading-relaxed mb-4">
                 <a
                   href={EXTERNAL_LINKS.KOSMART_HOME}
                   target="_blank"
@@ -179,7 +179,7 @@ export default function Home() {
               </p>
             </div>
             <div className="border-t pt-8">
-              <p className="text-gray-700 mb-6">
+              <p className="text-charcoal mb-6">
                 이미 지원받은 예술인들의 95% 이상이 성실하게 상환하고 있습니다.
                 이는 예술인들이 신뢰할 수 있는 금융 시스템만 있으면,
                 얼마든지 책임감 있게 행동할 수 있다는 증거입니다.
@@ -212,7 +212,7 @@ export default function Home() {
             >
               <div className="text-4xl mb-4">❤️</div>
               <h3 className="font-watermelon text-xl font-bold mb-3">후원하기</h3>
-              <p className="text-gray-600 mb-4 flex-grow">
+              <p className="text-charcoal-muted mb-4 flex-grow">
                 당신의 후원은 예술인들을 위한 기금이 됩니다.
               </p>
               <span className="inline-block group-hover:translate-x-1 transition-transform">
@@ -228,7 +228,7 @@ export default function Home() {
             >
               <div className="text-4xl mb-4">🎨</div>
               <h3 className="font-watermelon text-xl font-bold mb-3">작품 구매</h3>
-              <p className="text-gray-600 mb-4 flex-grow">
+              <p className="text-charcoal-muted mb-4 flex-grow">
                 참여 예술가들의 작품을 구매하며 지원합니다.
               </p>
               <span className="inline-block group-hover:translate-x-1 transition-transform">
@@ -242,7 +242,7 @@ export default function Home() {
             >
               <div className="text-4xl mb-4">🏛️</div>
               <h3 className="font-watermelon text-xl font-bold mb-3">전시 방문</h3>
-              <p className="text-gray-600 mb-4 flex-grow">
+              <p className="text-charcoal-muted mb-4 flex-grow">
                 인사아트센터에서 펼쳐지는 예술의 현장을 직접 방문하세요.
               </p>
               <span className="inline-block group-hover:translate-x-1 transition-transform">
