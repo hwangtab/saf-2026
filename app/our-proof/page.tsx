@@ -177,19 +177,19 @@ export default function OurProof() {
               quote="은행 문턱이 너무 높았는데, 여기서는 저를 '예술인'으로 인정해주더군요. 단순한 대출이 아니라 큰 위로와 응원이었습니다."
               author="이OO"
               context="독립 영화감독"
-              borderColor="border-yellow-400"
+              borderColor="border-sun"
             />
             <TestimonialCard
               quote="다음 전시 준비 자금이 막막했는데, 덕분에 무사히 작품을 완성하고 전시를 열 수 있었습니다. 이 제도가 없었다면 불가능했을 거예요."
               author="박OO"
               context="설치 미술가"
-              borderColor="border-green-400"
+              borderColor="border-accent"
             />
             <TestimonialCard
               quote="내 상환금이 다른 동료 예술가에게 희망이 된다는 사실이 저를 더 책임감 있게 만듭니다. 우리는 서로의 안전망입니다."
               author="최OO"
               context="뮤지컬 배우"
-              borderColor="border-blue-400"
+              borderColor="border-primary-strong"
             />
           </div>
         </div>

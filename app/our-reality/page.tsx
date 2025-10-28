@@ -136,9 +136,14 @@ export default function OurReality() {
       <section className="py-12 md:py-20 bg-primary-surface">
         <div className="container-max">
           <div className="mb-12">
+            <div className="text-5xl mb-4" aria-hidden="true">
+              🚫
+            </div>
             <span className="text-sm font-bold text-red-500 uppercase">STAGE 1</span>
             <h2 className="font-partial text-4xl md:text-5xl mb-4">닫힌 문: 은행이 거절하다</h2>
-            <p className="text-xl text-charcoal-muted max-w-2xl">제1금융권 배제율 <strong className="text-red-500">84.9%</strong></p>
+            <p className="text-xl text-charcoal-muted max-w-2xl leading-relaxed">
+              제1금융권 배제율 <strong className="text-red-500">84.9%</strong>
+            </p>
           </div>
 
           {/* Description Text */}
@@ -171,28 +176,33 @@ export default function OurReality() {
             quote="연극배우라고 하자 무직자라고 대출 담당자에게 들었습니다."
             author="50대 배우"
             context="은행이 찍은 무직자라는 낙인은 성실한 예술가들을 시스템 밖으로 밀어내는 자기실현적 예언이 되었습니다."
-            borderColor="border-red-500"
+            borderColor="border-danger"
           />
         </div>
       </section>
 
       {/* Stage 2: 약탈 (48.6%) */}
-      <section className="py-12 md:py-20 bg-red-50/30">
+      <section className="py-12 md:py-20 bg-accent-soft">
         <div className="container-max">
           <div className="mb-12">
+            <div className="text-5xl mb-4" aria-hidden="true">
+              ⚠️
+            </div>
             <span className="text-sm font-bold text-red-600 uppercase">STAGE 2</span>
             <h2 className="font-partial text-4xl md:text-5xl mb-4">낭떠러지: 고금리로 내몰리다</h2>
-            <p className="text-xl text-charcoal-muted max-w-2xl">고금리 상품 노출률 <strong className="text-red-600">48.6%</strong> (연 15% 이상)</p>
+            <p className="text-xl text-charcoal-muted max-w-2xl leading-relaxed">
+              고금리 상품 노출률 <strong className="text-red-600">48.6%</strong> (연 15% 이상)
+            </p>
           </div>
 
           {/* Description Text */}
           <div className="max-w-3xl mb-12">
             <h3 className="font-watermelon text-xl font-bold mb-3">선택이 아닌 생존</h3>
-            <p className="text-charcoal mb-4 text-balance">
+            <p className="text-charcoal mb-4 text-balance leading-relaxed">
               은행 문이 닫힌 순간, 예술인들은 곧바로 저축은행, 카드론, 대부업체로 내몰립니다.
               <strong> 83.2%의 예술인이 고금리 금융 상품을 이용</strong>한 경험이 있습니다.
             </p>
-            <p className="text-charcoal">
+            <p className="text-charcoal leading-relaxed">
               이는 선택이 아닌, 생존을 위한 유일한 탈출구였습니다.
             </p>
           </div>
@@ -212,25 +222,30 @@ export default function OurReality() {
             quote="12년간 낸 이자의 절반만 되었어도 빚을 없앴을 겁니다. 이자 갚느라 작품 할 시간을 잃었습니다."
             author="40대 음악인"
             context="고금리는 단순한 이자가 아닙니다. 그것은 예술가의 시간을 빼앗고, 창작 의지를 꺾으며, 삶을 서서히 파괴하는 보이지 않는 족쇄입니다."
-            borderColor="border-red-600"
+            borderColor="border-danger"
             bgColor="bg-white"
           />
         </div>
       </section>
 
       {/* Stage 3: 파괴 (88.3%) */}
-      <section className="py-12 md:py-20 bg-red-50">
+      <section className="py-12 md:py-20 bg-red-100">
         <div className="container-max">
           <div className="mb-12">
+            <div className="text-5xl mb-4" aria-hidden="true">
+              💔
+            </div>
             <span className="text-sm font-bold text-red-700 uppercase">STAGE 3</span>
             <h2 className="font-partial text-4xl md:text-5xl mb-4">파괴: 창작이 멈춘다</h2>
-            <p className="text-xl text-charcoal-muted max-w-2xl">채권추심 경험자의 창작 중단율 <strong className="text-red-700">88.3%</strong></p>
+            <p className="text-xl text-charcoal-muted max-w-2xl leading-relaxed">
+              채권추심 경험자의 창작 중단율 <strong className="text-red-700">88.3%</strong>
+            </p>
           </div>
 
           {/* Description Text */}
           <div className="max-w-3xl mb-12">
             <h3 className="font-watermelon text-xl font-bold mb-3">생존의 위기</h3>
-            <p className="text-charcoal mb-4 text-balance">
+            <p className="text-charcoal mb-4 text-balance leading-relaxed">
               채권추심을 경험한 예술인은 <strong>10명 중 4명(43%)</strong>입니다.
               이들은 멈추지 않는 전화, 모욕적인 언사, 집으로 찾아오는 추심원 앞에서
               생존의 벼랑 끝으로 내몰립니다.
@@ -252,25 +267,25 @@ export default function OurReality() {
             <TestimonialCard
               quote="아이들 모르게 나만 3일을 굶었던 기억."
               author="50대 연극인"
-              borderColor="border-red-700"
+              borderColor="border-danger"
             />
 
             <TestimonialCard
               quote="돈이 없어 절박했던 치과 치료를 못 받고 있어요. 병원을 제때 가야 하는데, 안 가고 웬만하면 참는 것이 이젠 습관이 돼버렸습니다."
               author="50대 배우"
-              borderColor="border-red-700"
+              borderColor="border-danger"
             />
 
             <TestimonialCard
               quote="독촉 전화로 연습과 공연에 지장을 주고 이로 인해 심리적 부담감과 압박이 하루하루를 고통스럽게 합니다."
               author="40대 연극인"
-              borderColor="border-red-700"
+              borderColor="border-danger"
             />
 
             <TestimonialCard
               quote="하루 4시간도 채 못 자며 알바와 연극을 병행하지만, 공연을 할수록 빚만 늘어가는 상황이 계속되어 공연을 그만두기로 함."
               author="30대 배우"
-              borderColor="border-red-700"
+              borderColor="border-danger"
             />
           </div>
         </div>

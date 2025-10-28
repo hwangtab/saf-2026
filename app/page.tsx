@@ -77,7 +77,7 @@ export default function Home() {
               href={EXTERNAL_LINKS.DONATE}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block bg-accent hover:bg-accent-strong text-light font-bold px-8 py-4 rounded-lg transition-colors"
+              className="inline-block bg-accent hover:bg-accent-strong text-light font-bold px-8 py-4 rounded-lg transition-all duration-200 active:scale-95"
             >
               ❤️ 지금 후원하기
             </a>
@@ -85,7 +85,7 @@ export default function Home() {
               href={EXTERNAL_LINKS.ONLINE_GALLERY}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block bg-gray-900 hover:bg-gray-800 text-white font-bold px-8 py-4 rounded-lg transition-colors"
+              className="inline-block bg-gray-900 hover:bg-gray-800 text-white font-bold px-8 py-4 rounded-lg transition-all duration-200 active:scale-95"
             >
               🎨 작품 구매하기
             </a>
@@ -102,9 +102,10 @@ export default function Home() {
       {/* Problem Section */}
       <section className="py-16 md:py-24 bg-sun-soft">
         <div className="container-max">
-          <h2 className="font-partial text-3xl md:text-4xl mb-12 text-center">
+          <h2 className="font-partial text-3xl md:text-4xl text-center">
             우리가 직면한 문제
           </h2>
+          <div className="w-16 h-1 bg-primary mx-auto mb-12 rounded-full" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div className="space-y-4">
               <h3 className="font-watermelon text-xl font-bold text-charcoal">
@@ -157,9 +158,10 @@ export default function Home() {
       {/* Solution Section */}
       <section className="py-16 md:py-24 bg-primary-surface">
         <div className="container-max">
-          <h2 className="font-partial text-3xl md:text-4xl mb-12 text-center">
+          <h2 className="font-partial text-3xl md:text-4xl text-center">
             우리의 해결책
           </h2>
+          <div className="w-16 h-1 bg-primary mx-auto mb-12 rounded-full" />
           <div className="bg-white rounded-lg shadow-lg p-8 md:p-12 max-w-3xl mx-auto">
             <div className="mb-8">
               <h3 className="font-watermelon text-2xl font-bold text-charcoal mb-4">
@@ -208,7 +210,7 @@ export default function Home() {
               href={EXTERNAL_LINKS.DONATE}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex flex-col p-8 bg-white border-2 border-gray-300 rounded-lg hover:border-primary hover:shadow-lg transition-all"
+              className="group flex flex-col p-8 bg-white border-2 border-gray-300 rounded-lg shadow-sm hover:border-primary hover:shadow-xl transition-all duration-200 active:scale-95"
             >
               <div className="text-4xl mb-4">❤️</div>
               <h3 className="font-watermelon text-xl font-bold mb-3">후원하기</h3>
@@ -224,7 +226,7 @@ export default function Home() {
               href={EXTERNAL_LINKS.ONLINE_GALLERY}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex flex-col p-8 bg-white border-2 border-gray-300 rounded-lg hover:border-primary hover:shadow-lg transition-all"
+              className="group flex flex-col p-8 bg-white border-2 border-gray-300 rounded-lg shadow-sm hover:border-primary hover:shadow-xl transition-all duration-200 active:scale-95"
             >
               <div className="text-4xl mb-4">🎨</div>
               <h3 className="font-watermelon text-xl font-bold mb-3">작품 구매</h3>
@@ -238,7 +240,7 @@ export default function Home() {
 
             <Link
               href="/exhibition"
-              className="group flex flex-col p-8 bg-white border-2 border-gray-300 rounded-lg hover:border-primary hover:shadow-lg transition-all"
+              className="group flex flex-col p-8 bg-white border-2 border-gray-300 rounded-lg shadow-sm hover:border-primary hover:shadow-xl transition-all duration-200 active:scale-95"
             >
               <div className="text-4xl mb-4">🏛️</div>
               <h3 className="font-watermelon text-xl font-bold mb-3">전시 방문</h3>

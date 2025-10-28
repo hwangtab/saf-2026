@@ -1,5 +1,6 @@
 'use client';
 
+import type { CSSProperties } from 'react';
 import {
   PieChart,
   Pie,
@@ -12,6 +13,26 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
+
+const tooltipContentStyle: CSSProperties = {
+  borderRadius: '0.75rem',
+  border: '1px solid #E6EAF0',
+  boxShadow: '0 20px 45px rgba(17, 24, 39, 0.15)',
+  backgroundColor: '#FFFFFF',
+  padding: '12px 16px',
+};
+
+const tooltipLabelStyle: CSSProperties = {
+  color: '#495156',
+  fontWeight: 600,
+  fontSize: '0.75rem',
+};
+
+const tooltipItemStyle: CSSProperties = {
+  color: '#2176FF',
+  fontWeight: 600,
+  fontSize: '0.8rem',
+};
 
 // Chart 1: 제1금융권 접근 (Pie Chart)
 export function FirstBankAccessChart() {
@@ -40,7 +61,12 @@ export function FirstBankAccessChart() {
               <Cell key={`cell-${index}`} fill={COLORS[index]} />
             ))}
           </Pie>
-          <Tooltip formatter={(value) => `${value}%`} />
+          <Tooltip
+            formatter={(value) => `${value}%`}
+            contentStyle={tooltipContentStyle}
+            labelStyle={tooltipLabelStyle}
+            itemStyle={tooltipItemStyle}
+          />
         </PieChart>
       </ResponsiveContainer>
       <p className="text-sm text-charcoal-muted mt-4 text-center">
@@ -68,7 +94,11 @@ export function RejectionReasonsChart() {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis type="number" />
           <YAxis dataKey="reason" type="category" width={120} />
-          <Tooltip />
+          <Tooltip
+            contentStyle={tooltipContentStyle}
+            labelStyle={tooltipLabelStyle}
+            itemStyle={tooltipItemStyle}
+          />
           <Bar dataKey="count" fill="#f4d03f" name="응답자 수" />
         </BarChart>
       </ResponsiveContainer>
@@ -96,7 +126,12 @@ export function HighInterestProductChart() {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="product" />
           <YAxis label={{ value: '이용률 (%)', angle: -90, position: 'insideLeft' }} />
-          <Tooltip formatter={(value) => `${value}%`} />
+          <Tooltip
+            formatter={(value) => `${value}%`}
+            contentStyle={tooltipContentStyle}
+            labelStyle={tooltipLabelStyle}
+            itemStyle={tooltipItemStyle}
+          />
           <Bar dataKey="percentage" fill="#ef4444" name="이용률" />
         </BarChart>
       </ResponsiveContainer>
@@ -125,7 +160,11 @@ export function InterestRateDistributionChart() {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="range" />
           <YAxis label={{ value: '응답자 수', angle: -90, position: 'insideLeft' }} />
-          <Tooltip />
+          <Tooltip
+            contentStyle={tooltipContentStyle}
+            labelStyle={tooltipLabelStyle}
+            itemStyle={tooltipItemStyle}
+          />
           <Bar dataKey="count" fill="#f59e0b" name="응답자" />
         </BarChart>
       </ResponsiveContainer>
@@ -163,7 +202,12 @@ export function DebtCollectionChart() {
               <Cell key={`cell-${index}`} fill={COLORS[index]} />
             ))}
           </Pie>
-          <Tooltip formatter={(value) => `${value}%`} />
+          <Tooltip
+            formatter={(value) => `${value}%`}
+            contentStyle={tooltipContentStyle}
+            labelStyle={tooltipLabelStyle}
+            itemStyle={tooltipItemStyle}
+          />
         </PieChart>
       </ResponsiveContainer>
       <p className="text-sm text-charcoal-muted mt-4 text-center">
@@ -190,7 +234,12 @@ export function CreativeImpactChart() {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis type="number" label={{ value: '영향받음 (%)', position: 'insideBottom', offset: -5 }} />
           <YAxis dataKey="impact" type="category" width={100} />
-          <Tooltip formatter={(value) => `${value}%`} />
+          <Tooltip
+            formatter={(value) => `${value}%`}
+            contentStyle={tooltipContentStyle}
+            labelStyle={tooltipLabelStyle}
+            itemStyle={tooltipItemStyle}
+          />
           <Bar dataKey="percentage" fill="#ef4444" name="비율" />
         </BarChart>
       </ResponsiveContainer>
