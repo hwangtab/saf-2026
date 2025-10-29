@@ -52,7 +52,7 @@ export default function Home() {
         <div className="relative z-10 container-max text-center">
           <div className="mb-12 flex justify-center">
             <Image
-              src="/images/logo/320pxX90px_white.png"
+              src="/images/logo/320pxX90px_white.webp"
               alt="씨앗:페 2026 로고"
               width={1120}
               height={320}
