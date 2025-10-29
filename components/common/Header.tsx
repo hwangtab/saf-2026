@@ -52,7 +52,7 @@ export default function Header() {
                 href={item.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm font-medium transition-colors pb-1 border-b-2 border-transparent text-charcoal hover:text-primary"
+                className="text-sm font-medium transition-colors pb-1 border-b-2 border-transparent text-charcoal hover:text-primary hover:border-primary/40"
               >
                 {item.name}
               </a>
@@ -60,10 +60,10 @@ export default function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`text-sm font-medium transition-colors pb-1 border-b-2 border-transparent ${
+                className={`text-sm font-medium transition-colors pb-1 border-b-2 ${
                   isActive(item.href)
                     ? 'text-primary border-primary'
-                    : 'text-charcoal hover:text-primary'
+                    : 'border-transparent text-charcoal hover:text-primary hover:border-primary/40'
                 }`}
               >
                 {item.name}
@@ -131,7 +131,7 @@ export default function Header() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block py-2 px-4 transition-colors border-b border-transparent text-charcoal hover:bg-gray-100"
+                  className="block py-2 px-4 text-base transition-colors border-b-2 border-transparent text-charcoal hover:text-primary hover:border-primary/40"
                 >
                   {item.name}
                 </a>
@@ -140,10 +140,10 @@ export default function Header() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`block py-2 px-4 transition-colors border-b border-transparent ${
+                  className={`block py-2 px-4 text-base transition-colors border-b-2 ${
                     isActive(item.href)
                       ? 'text-primary font-semibold border-primary'
-                      : 'text-charcoal hover:bg-gray-100'
+                      : 'border-transparent text-charcoal hover:text-primary hover:border-primary/40'
                   }`}
                 >
                   {item.name}
