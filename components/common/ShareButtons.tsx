@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { SiKakaotalk } from 'react-icons/si';
 import {
   FacebookShareButton,
   TwitterShareButton,
@@ -21,6 +20,33 @@ export default function ShareButtons({
   description,
 }: ShareButtonsProps) {
   const [copied, setCopied] = useState(false);
+
+  const KakaoTalkIcon = () => (
+    <svg
+      width={32}
+      height={32}
+      viewBox="0 0 32 32"
+      role="img"
+      aria-hidden
+    >
+      <circle cx={16} cy={16} r={16} fill="#FEE500" />
+      <path
+        d="M16 9c-5.52 0-10 3.35-10 7.48 0 2.82 2.03 5.27 5.07 6.58l-.97 3.64a.5.5 0 0 0 .74.54l4.11-2.28c.33.03.67.05 1.01.05 5.52 0 10-3.35 10-7.49C25.95 12.35 21.52 9 16 9Z"
+        fill="#381E1F"
+      />
+      <text
+        x="16"
+        y="18.2"
+        textAnchor="middle"
+        fontFamily="GMarketSans, Arial, sans-serif"
+        fontWeight="700"
+        fontSize="6.2"
+        fill="#FEE500"
+      >
+        TALK
+      </text>
+    </svg>
+  );
 
   // Initialize Kakao SDK
   useEffect(() => {
@@ -96,11 +122,11 @@ export default function ShareButtons({
       {/* Kakao Talk - if Kakao SDK is available */}
       <button
         onClick={handleKakaoShare}
-        className="w-8 h-8 rounded-full bg-[#FEE500] text-[#381E1F] flex items-center justify-center transition-transform hover:scale-105"
+        className="w-8 h-8 flex items-center justify-center transition-transform hover:scale-105 focus:outline-none focus-visible:outline-none"
         title="카카오톡 공유"
         aria-label="카카오톡으로 공유하기"
       >
-        <SiKakaotalk className="w-5 h-5" aria-hidden />
+        <KakaoTalkIcon />
       </button>
 
       {/* Copy Link */}
