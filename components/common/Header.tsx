@@ -52,7 +52,7 @@ export default function Header() {
                 href={item.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm font-medium transition-colors pb-1 border-b-2 border-transparent text-charcoal hover:text-primary hover:border-primary/40"
+                className="text-sm font-medium transition-colors pb-1 border-b-2 border-transparent text-charcoal hover:text-primary hover:border-primary/40 focus-visible:outline-none focus-visible:border-primary"
               >
                 {item.name}
               </a>
@@ -63,7 +63,7 @@ export default function Header() {
                 className={`text-sm font-medium transition-colors pb-1 border-b-2 ${
                   isActive(item.href)
                     ? 'text-primary border-primary'
-                    : 'border-transparent text-charcoal hover:text-primary hover:border-primary/40'
+                    : 'border-transparent text-charcoal hover:text-primary hover:border-primary/40 focus-visible:border-primary'
                 }`}
               >
                 {item.name}
@@ -131,7 +131,7 @@ export default function Header() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block py-2 px-4 text-base transition-colors border-b-2 border-transparent text-charcoal hover:text-primary hover:border-primary/40"
+                  className="block py-2 px-4 text-base transition-colors border-b-2 border-transparent text-charcoal hover:text-primary hover:border-primary/40 focus-visible:outline-none focus-visible:border-primary"
                 >
                   {item.name}
                 </a>
@@ -143,7 +143,7 @@ export default function Header() {
                   className={`block py-2 px-4 text-base transition-colors border-b-2 ${
                     isActive(item.href)
                       ? 'text-primary font-semibold border-primary'
-                      : 'border-transparent text-charcoal hover:text-primary hover:border-primary/40'
+                      : 'border-transparent text-charcoal hover:text-primary hover:border-primary/40 focus-visible:border-primary'
                   }`}
                 >
                   {item.name}
