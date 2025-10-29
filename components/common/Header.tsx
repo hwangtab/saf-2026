@@ -52,7 +52,7 @@ export default function Header() {
                 href={item.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm font-medium text-charcoal hover:text-primary transition-colors"
+                className="text-sm font-medium transition-colors pb-1 border-b-2 border-transparent text-charcoal hover:text-primary"
               >
                 {item.name}
               </a>
@@ -131,7 +131,7 @@ export default function Header() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block py-2 px-4 rounded-lg text-charcoal hover:bg-gray-100 transition-colors"
+                  className="block py-2 px-4 transition-colors border-b border-transparent text-charcoal hover:bg-gray-100"
                 >
                   {item.name}
                 </a>

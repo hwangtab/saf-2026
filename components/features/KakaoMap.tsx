@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { Map, MapMarker, MapInfoWindow, useKakaoLoader } from 'react-kakao-maps-sdk';
+import { useEffect, useState } from 'react';
+import { Map, MapMarker, useKakaoLoader } from 'react-kakao-maps-sdk';
+import { EXHIBITION } from '@/lib/constants';
 
 const RAW_KAKAO_APP_KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY?.trim() ?? '';
 const FALLBACK_APP_KEY = 'invalid-kakao-app-key';
@@ -18,7 +19,36 @@ export default function KakaoMap(props?: KakaoMapProps) {
     appkey: appKey,
     libraries: ['services'],
   });
-  const [isOpen, setIsOpen] = useState(false);
+  const [position, setPosition] = useState<{ lat: number; lng: number }>({
+    lat: EXHIBITION.LAT,
+    lng: EXHIBITION.LNG,
+  });
+
+  useEffect(() => {
+    if (!hasAppKey || loading) {
+      return;
+    }
+    if (typeof window === 'undefined') {
+      return;
+    }
+    const { kakao } = window as typeof window & { kakao?: any };
+    if (!kakao?.maps?.services) {
+      return;
+    }
+    const geocoder = new kakao.maps.services.Geocoder();
+    geocoder.addressSearch(
+      EXHIBITION.ADDRESS,
+      (result: Array<{ x: string; y: string }>, status: string) => {
+        if (status === kakao.maps.services.Status.OK && result?.[0]) {
+          const { x, y } = result[0];
+          setPosition({
+            lat: Number(y),
+            lng: Number(x),
+          });
+        }
+      }
+    );
+  }, [hasAppKey, loading]);
 
   if (!hasAppKey) {
     return (
@@ -47,9 +77,6 @@ export default function KakaoMap(props?: KakaoMapProps) {
     );
   }
 
-  // 인사아트센터 3층 G&J 갤러리: 서울 종로구 인사동길 41-1
-  const center = { lat: 37.5718, lng: 126.9857 };
-
   const containerClassName = [
     'w-full',
     'min-h-[360px]',
@@ -63,50 +90,8 @@ export default function KakaoMap(props?: KakaoMapProps) {
 
   return (
     <div className={containerClassName}>
-      <Map center={center} style={{ width: '100%', height: '100%' }} level={3}>
-        <MapMarker
-          position={center}
-          onClick={() => setIsOpen((prev) => !prev)}
-          clickable
-        >
-          {isOpen ? (
-            <MapInfoWindow position={center} zIndex={2}>
-              <div
-                style={{
-                  padding: '12px',
-                  color: '#000000',
-                  minWidth: '210px',
-                  lineHeight: 1.5,
-                  wordBreak: 'keep-all',
-                  fontSize: '14px',
-                }}
-              >
-                <strong style={{ display: 'block', marginBottom: '4px' }}>
-                  인사아트센터 3층 G&amp;J 갤러리
-                </strong>
-                <span style={{ display: 'block', whiteSpace: 'normal' }}>
-                  서울 종로구 인사동길 41-1
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setIsOpen(false)}
-                  style={{
-                    marginTop: '8px',
-                    background: '#2176FF',
-                    color: '#FFFFFF',
-                    border: 'none',
-                    borderRadius: '4px',
-                    padding: '4px 8px',
-                    fontSize: '12px',
-                    cursor: 'pointer',
-                  }}
-                >
-                  닫기
-                </button>
-              </div>
-            </MapInfoWindow>
-          ) : null}
-        </MapMarker>
+      <Map center={position} style={{ width: '100%', height: '100%' }} level={3}>
+        <MapMarker position={position} title="인사아트센터 3층 G&J 갤러리" />
       </Map>
     </div>
   );
