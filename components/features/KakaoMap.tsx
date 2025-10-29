@@ -70,12 +70,7 @@ export default function KakaoMap(props?: KakaoMapProps) {
           clickable
         >
           {isOpen ? (
-            <MapInfoWindow
-              position={center}
-              zIndex={2}
-              removable
-              onCloseClick={() => setIsOpen(false)}
-            >
+            <MapInfoWindow position={center} zIndex={2}>
               <div
                 style={{
                   padding: '12px',
@@ -92,6 +87,22 @@ export default function KakaoMap(props?: KakaoMapProps) {
                 <span style={{ display: 'block', whiteSpace: 'normal' }}>
                   서울 종로구 인사동길 41-1
                 </span>
+                <button
+                  type="button"
+                  onClick={() => setIsOpen(false)}
+                  style={{
+                    marginTop: '8px',
+                    background: '#2176FF',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    borderRadius: '4px',
+                    padding: '4px 8px',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  닫기
+                </button>
               </div>
             </MapInfoWindow>
           ) : null}
