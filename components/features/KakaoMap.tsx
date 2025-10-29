@@ -74,7 +74,7 @@ export default function KakaoMap(props?: KakaoMapProps) {
               position={center}
               zIndex={2}
               removable
-              onClose={() => setIsOpen(false)}
+              onCloseClick={() => setIsOpen(false)}
             >
               <div
                 style={{
