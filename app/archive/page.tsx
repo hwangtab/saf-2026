@@ -4,6 +4,7 @@ import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import VideoEmbed from '@/components/features/VideoEmbed';
 import { saf2023Photos } from '@/content/saf2023-photos';
+import { saf2023Artworks } from '@/content/saf2023-artworks';
 import { videos } from '@/content/videos';
 import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL } from '@/lib/constants';
 
@@ -132,6 +133,39 @@ export default function ArchivePage() {
                 <li>선착순 무료입장</li>
               </ul>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SAF 2023 Artworks Section */}
+      <section className="py-12 md:py-20 bg-gray-50">
+        <div className="container-max">
+          <h2 className="font-partial text-3xl mb-12">🎨 2023년 출품작</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {saf2023Artworks.map((artwork) => (
+              <div
+                key={artwork.id}
+                className="bg-white rounded-lg shadow-md overflow-hidden group flex flex-col"
+              >
+                <div className="relative aspect-square w-full overflow-hidden">
+                  <Image
+                    src={artwork.imageUrl}
+                    alt={`${artwork.artist} - ${artwork.title}`}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  />
+                </div>
+                <div className="p-6 flex-grow flex flex-col">
+                  <h3 className="font-watermelon text-xl font-bold mb-2">{artwork.title}</h3>
+                  <p className="text-primary font-semibold mb-3">{artwork.artist}</p>
+                  <p className="text-charcoal-muted text-sm mb-4 flex-grow">{artwork.description}</p>
+                  {artwork.details && (
+                    <p className="text-xs text-gray-500 mt-auto pt-4 border-t border-gray-200">{artwork.details}</p>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
