@@ -60,7 +60,7 @@ export default function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`text-sm font-medium transition-colors pb-1 border-b-2 ${
+                className={`text-sm font-medium transition-colors pb-1 border-b-2 focus-visible:outline-none ${
                   isActive(item.href)
                     ? 'text-primary border-primary'
                     : 'border-transparent text-charcoal hover:text-primary hover:border-primary/40 focus-visible:border-primary'
@@ -140,7 +140,7 @@ export default function Header() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`block py-2 px-4 text-base transition-colors border-b-2 ${
+                  className={`block py-2 px-4 text-base transition-colors border-b-2 focus-visible:outline-none ${
                     isActive(item.href)
                       ? 'text-primary font-semibold border-primary'
                       : 'border-transparent text-charcoal hover:text-primary hover:border-primary/40 focus-visible:border-primary'
