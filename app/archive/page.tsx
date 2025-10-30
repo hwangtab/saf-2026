@@ -92,7 +92,7 @@ export default function ArchivePage() {
                 <p className="text-charcoal-muted text-sm">참여 예술인</p>
               </div>
               <div className="text-center">
-                <p className="text-3xl font-bold text-primary">3,000만원</p>
+                <p className="text-3xl font-bold text-primary">3,400만원</p>
                 <p className="text-charcoal-muted text-sm">기금 마련</p>
               </div>
             </div>
