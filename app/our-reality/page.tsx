@@ -177,7 +177,7 @@ export default function OurReality() {
       />
 
       {testimonialsData.map((group, groupIndex) => (
-        <section key={groupIndex} className={`py-12 md:py-20 ${groupIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
+        <section key={groupIndex} className={`py-12 md:py-20 ${groupIndex === 0 ? 'bg-white' : groupIndex === 1 ? 'bg-gray-50' : 'bg-canvas-soft'}`}>
           <div className="container-max">
             <h2 className="font-partial text-3xl md:text-4xl mb-12 text-center">
               {group.category}
