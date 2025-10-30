@@ -58,14 +58,14 @@
 }
 
 @font-face {
-    font-family: 'Taenada';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2210-2@1.0/Tenada.woff2') format('woff2');
+    font-family: 'GiantsInline';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2307-1@1.1/Giants-Inline.woff2') format('woff2');
     font-weight: normal;
     font-display: swap;
 }
 
-.font-taenada {
-    font-family: 'Taenada', sans-serif;
+.font-giants-inline {
+    font-family: 'GiantsInline', sans-serif;
 }
 
 /* 3. Reusable component classes using @layer */
