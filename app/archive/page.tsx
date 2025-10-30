@@ -149,7 +149,7 @@ export default function ArchivePage() {
               >
                 <div className="relative aspect-square w-full overflow-hidden">
                   <Image
-                    src={artwork.imageUrl}
+                    src={encodeURI(artwork.imageUrl)}
                     alt={`${artwork.artist} - ${artwork.title}`}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -181,7 +181,7 @@ export default function ArchivePage() {
                 className="group relative aspect-square overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow"
               >
                 <Image
-                  src={`/images/saf2023/${photo.filename}`}
+                  src={encodeURI(`/images/saf2023/${photo.filename}`)}
                   alt={photo.alt}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-300"
