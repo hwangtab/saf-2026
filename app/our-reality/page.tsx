@@ -1,10 +1,88 @@
 import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
-import TestimonialCard from '@/components/ui/TestimonialCard';
 import PageHero from '@/components/ui/PageHero';
+import TestimonialGroup from '@/components/features/TestimonialGroup';
 import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL } from '@/lib/constants';
 
 const PAGE_URL = `${SITE_URL}/our-reality`;
+
+const testimonialsData = [
+  {
+    category: '1. 생존의 위협: "돈이 없어 치료를 포기했습니다"',
+    items: [
+      {
+        quote: '아이들 모르게 나만 3일을 굶었던 기억.',
+        author: '50대, 연극인',
+      },
+      {
+        quote: '돈이 없어 절박했던 치과 치료를 못 받고 있어요. 병원을 제때 가야 하는데, 안 가고 웬만하면 참는 것이 이젠 습관이 돼버렸습니다.',
+        author: '50대, 배우',
+      },
+      {
+        quote: '돈이 없어서 귀 치료를 계속 미뤘고, 그로 인해 양쪽 귀 다 증상이 악화됐습니다.',
+        author: '30대, 음악인',
+      },
+      {
+        quote: '병원에 입원 중이신 어머니의 병원비를 낼 수 없어, 퇴원을 미루기도, 받아야 할 검사와 치료를 포기하실 수밖에 없었습니다.',
+        author: '50대, 배우/방송인',
+      },
+      {
+        quote: '임대료 연체로 인해 단체 사업장이자 거주지에서 비자발적으로 퇴거해야 하는 상황이 있었습니다. 금융권은 물론 예술인 대출도 도움이 되지 못했습니다.',
+        author: '50대, 배우',
+      },
+      {
+        quote: '경제적 형편의 문제로 갈 곳이 없어 고시원, 연습실 등을 전전하다 한동안 노숙을 한 적이 있습니다.',
+        author: '30대, 음악인',
+      },
+    ],
+  },
+  {
+    category: '2. 창작의 좌절: "공연을 할수록 빚만 늘어 그만두기로 했습니다"',
+    items: [
+      {
+        quote: '하루 4시간도 채 못 자며 알바와 연극을 병행하지만, 공연을 할수록 빚만 늘어가는 상황이 계속되어 공연을 그만두기로 함.',
+        author: '30대, 배우',
+      },
+      {
+        quote: '작품보다 매달의 금전적 해결을 우선순위로 집중해야 하는 상황이 아쉽습니다. 예술인으로서 큰 수익을 내려면 작품이 잘 돼야 하는데, 작품보다 매달 소일거리 찾기에 집중해야 함이 악순환 속에 갇혀있는 느낌이 듭니다.',
+        author: '40대, 음악인',
+      },
+      {
+        quote: '당장의 매달 닥쳐오는 대출금으로 인해 공연을 접고 알바에 집중한 적이 많음.',
+        author: '50대, 배우',
+      },
+      {
+        quote: '독촉 전화로 연습과 공연에 지장을 주고, 이로 인해 심리적 부담감과 압박이 하루하루를 고통스럽게 하고 다음날이 두려워짐.',
+        author: '40대, 연극인',
+      },
+      {
+        quote: '돈이 없으면 삶이 무너지는데 예술 창작은 꿈도 못 꾸죠.',
+        author: '50대, 예술가',
+      },
+    ],
+  },
+  {
+    category: '3. 관계의 단절과 인간적 모멸감: "치욕감과 인연 단절"',
+    items: [
+      {
+        quote: '지인들에게 돈을 빌리면서 드는 그 치욕감과 인연 단절, 그리고 갚지 못하면서 밀려오는 압박감, 무력감.',
+        author: '50대, 만화가/미술가',
+      },
+      {
+        quote: '힘들 때는 친한 지인의 경조사에 참석할 수도 없을 정도였고, 그로 인해 인간관계조차 단절된 적이 있다.',
+        author: '50대, 배우/방송인',
+      },
+      {
+        quote: '서민을 위한 제도임에도 예술인이라는 이유로 증빙이 부족할 때 자괴감을 느낍니다.',
+        author: '30대, 영화/방송인',
+      },
+      {
+        quote: '연극배우라고 하자 \'무직자\'라고 대출담당으로부터 들었던 것.',
+        author: '50대, 배우',
+      },
+    ],
+  },
+];
 
 const FirstBankAccessChart = dynamic(
   () =>
@@ -92,6 +170,12 @@ export default function OurReality() {
         backgroundClass="bg-sun-soft"
       />
 
+      <TestimonialGroup
+        title="예술인의 목소리: 금융 재난의 민낯"
+        testimonials={testimonialsData}
+        backgroundClass="bg-canvas-soft"
+      />
+
       {/* 도입: 금융의 재정의 */}
       <section className="py-12 md:py-20 bg-white">
         <div className="container-max">
@@ -154,14 +238,7 @@ export default function OurReality() {
             </div>
           </div>
 
-          {/* Stage 1 Testimony */}
-          <TestimonialCard
-            quote="연극배우라고 하자 무직자라고 대출 담당자에게 들었습니다."
-            author="50대 배우"
-            context="은행이 찍은 무직자라는 낙인은 성실한 예술가들을 시스템 밖으로 밀어내는 자기실현적 예언이 되었습니다."
-            borderColor="border-primary-strong"
-            contextColor="text-primary-strong"
-          />
+
         </div>
       </section>
 
@@ -201,15 +278,7 @@ export default function OurReality() {
             </div>
           </div>
 
-          {/* Stage 2 Testimony */}
-          <TestimonialCard
-            quote="12년간 낸 이자의 절반만 되었어도 빚을 없앴을 겁니다. 이자 갚느라 작품 할 시간을 잃었습니다."
-            author="40대 음악인"
-            context="고리대금는 단순한 이자가 아닙니다. 그것은 예술가의 시간을 빼앗고, 창작 의지를 꺾으며, 삶을 서서히 파괴하는 보이지 않는 족쇄입니다."
-            borderColor="border-accent"
-            bgColor="bg-white"
-            contextColor="text-accent-strong"
-          />
+
         </div>
       </section>
 
@@ -247,32 +316,7 @@ export default function OurReality() {
             </div>
           </div>
 
-          {/* Stage 3 Testimonies */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <TestimonialCard
-              quote="아이들 모르게 나만 3일을 굶었던 기억."
-              author="50대 연극인"
-              borderColor="border-danger"
-            />
 
-            <TestimonialCard
-              quote="돈이 없어 절박했던 치과 치료를 못 받고 있어요. 병원을 제때 가야 하는데, 안 가고 웬만하면 참는 것이 이젠 습관이 돼버렸습니다."
-              author="50대 배우"
-              borderColor="border-danger"
-            />
-
-            <TestimonialCard
-              quote="독촉 전화로 연습과 공연에 지장을 주고 이로 인해 심리적 부담감과 압박이 하루하루를 고통스럽게 합니다."
-              author="40대 연극인"
-              borderColor="border-danger"
-            />
-
-            <TestimonialCard
-              quote="하루 4시간도 채 못 자며 알바와 연극을 병행하지만, 공연을 할수록 빚만 늘어가는 상황이 계속되어 공연을 그만두기로 함."
-              author="30대 배우"
-              borderColor="border-danger"
-            />
-          </div>
         </div>
       </section>
 
