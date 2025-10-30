@@ -50,8 +50,7 @@ export default function OurProof() {
 
 
 
-      {/* The Evidence: 95% 상환율 */}
-      <section className="py-12 md:py-20 bg-white">
+      <section className="py-12 md:py-20 bg-primary-surface">
         <div className="container-max">
           <div className="max-w-3xl mx-auto text-center mb-12">
             <h2 className="font-partial text-3xl md:text-4xl mb-8">
