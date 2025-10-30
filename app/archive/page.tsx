@@ -102,14 +102,7 @@ export default function ArchivePage() {
               등 50명 이상의 예술인이 참여하여 예술인 금융 위기의 심각성을 알리고, 작품 판매 수익을
               포함해 총 6,000만원을 조성하여 화가들에게 작품비를 지급하고, 대관 등 행사진행비를 제외하고 3,400만원의 기금을 조성하였습니다.
             </p>
-            <a
-              href={EXTERNAL_LINKS.KOSMERT_2023_GALLERY}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block bg-accent hover:bg-accent-strong text-light font-bold px-6 py-2 rounded-lg transition-colors"
-            >
-              2023년 출품작 보기 →
-            </a>
+
           </div>
 
           {/* Event Details */}
