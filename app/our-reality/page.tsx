@@ -86,7 +86,7 @@ export default function OurReality() {
   return (
     <>
       {/* Enhanced Hero: 95% 상환율을 중심으로 */}
-      <section className="py-16 md:py-24 bg-sun-soft text-center">
+      <section className="py-12 md:py-20 bg-sun-soft text-center">
         <div className="container-max">
           <h1 className="font-partial text-4xl md:text-6xl mb-6 text-balance">우리의 현실</h1>
           <p className="text-lg md:text-xl text-charcoal-muted mb-12 max-w-2xl mx-auto text-balance">
