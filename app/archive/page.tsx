@@ -88,7 +88,7 @@ export default function ArchivePage() {
                 <p className="text-charcoal-muted text-sm">공연 일정</p>
               </div>
               <div className="text-center">
-                <p className="text-3xl font-bold text-primary">50+</p>
+                <p className="text-3xl font-bold text-primary">120+</p>
                 <p className="text-charcoal-muted text-sm">참여 예술인</p>
               </div>
               <div className="text-center">
