@@ -51,10 +51,10 @@ export default function OurProof() {
 
 
       {/* The Evidence: 95% 상환율 */}
-      <section className="py-12 md:py-20 bg-accent-soft">
+      <section className="py-12 md:py-20 bg-white">
         <div className="container-max">
           <div className="max-w-3xl mx-auto text-center mb-12">
-            <h2 className="font-partial text-4xl md:text-5xl mb-8">
+            <h2 className="font-partial text-3xl md:text-4xl mb-8">
               증명된 사실: 예술인은 위험하지 않다
             </h2>
             <p className="text-xl text-sky-strong">
