@@ -42,6 +42,32 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom Fonts */
+@font-face {
+    font-family: 'PartialSans';
+    src: url('/fonts/PartialSansKR-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'GMarketSans';
+    src: url('/fonts/GmarketSansTTFMedium.woff2') format('woff2');
+    font-weight: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Cafe24ProUp';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2507-1@1.0/Cafe24PROUP.woff2') format('woff2');
+    font-weight: normal;
+    font-display: swap;
+}
+
+.font-cafe24 {
+    font-family: 'Cafe24ProUp', sans-serif;
+}
+
 /* 3. Reusable component classes using @layer */
 @layer components {
   .container-max {
