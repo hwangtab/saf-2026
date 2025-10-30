@@ -96,7 +96,7 @@ export default function OurReality() {
       <section className="py-12 md:py-20 bg-white">
         <div className="container-max">
           <div className="max-w-3xl mx-auto">
-            <h2 className="font-partial text-3xl md:text-4xl mb-8 text-center sm:text-left">예술인에게 금융은 산소호흡기</h2>
+            <h2 className="font-partial text-3xl md:text-4xl mb-8 text-center">예술인에게 금융은 산소호흡기</h2>
             <div className="space-y-6 text-lg text-charcoal">
             <p>
               예술인들은 정기적인 급여가 아닌, 프로젝트 기반의 불규칙한 소득을 얻습니다. 공연과 공연 사이, 전시와 전시 사이 발생하는
