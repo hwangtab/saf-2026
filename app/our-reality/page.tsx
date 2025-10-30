@@ -1,12 +1,18 @@
 import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import PageHero from '@/components/ui/PageHero';
-import TestimonialGroup from '@/components/features/TestimonialGroup';
+
 import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL } from '@/lib/constants';
 
 const PAGE_URL = `${SITE_URL}/our-reality`;
 
-const testimonialsData = [
+interface TestimonialItem {
+  quote: string;
+  author: string;
+  context?: string;
+}
+
+const testimonialsData: { category: string; items: TestimonialItem[] }[] = [
   {
     category: '1. 생존의 위협: "돈이 없어 치료를 포기했습니다"',
     items: [
@@ -170,11 +176,33 @@ export default function OurReality() {
         backgroundClass="bg-sun-soft"
       />
 
-      <TestimonialGroup
-        title="예술인의 목소리: 금융 재난의 민낯"
-        testimonials={testimonialsData}
-        backgroundClass="bg-canvas-soft"
-      />
+      {testimonialsData.map((group, groupIndex) => (
+        <section key={groupIndex} className={`py-12 md:py-20 ${groupIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
+          <div className="container-max">
+            <h2 className="font-partial text-3xl md:text-4xl mb-12 text-center">
+              {group.category}
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {group.items.map((item, itemIndex) => (
+                <div
+                  key={itemIndex}
+                  className="bg-white p-6 rounded-lg shadow-lg border-l-8 border-primary flex flex-col justify-between"
+                >
+                  <p className="text-xl md:text-2xl font-bold text-charcoal mb-4 italic leading-relaxed">
+                    &ldquo;{item.quote}&rdquo;
+                  </p>
+                  <div>
+                    <p className="font-semibold text-primary">{item.author}</p>
+                    {item.context && (
+                      <p className="text-sm text-charcoal-muted">{item.context}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      ))}
 
       {/* 도입: 금융의 재정의 */}
       <section className="py-12 md:py-20 bg-white">
