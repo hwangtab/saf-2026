@@ -39,10 +39,10 @@ export default function OurProof() {
     <>
       <section className="py-12 md:py-20 bg-accent-soft">
         <div className="container-max text-center">
-          <div className="text-5xl md:text-7xl font-bold text-primary mb-6">305건</div>
+          <div className="text-5xl md:text-7xl font-bold text-primary mb-6">354건</div>
           <h1 className="font-partial text-4xl md:text-5xl mb-6 text-balance">예술인 상호부조 대출의 실제 성과</h1>
           <p className="text-lg text-charcoal-muted max-w-2xl mx-auto text-balance">
-            2022년 12월부터 2025년 4월까지, 총 <strong>305건</strong>의 대출을 통해 <strong>609,000,000원</strong>을
+            2022년 12월부터 2025년 4월까지, 총 <strong>354건</strong>의 대출을 통해 <strong>약 7억 원</strong>을
             예술인에게 공급했습니다. <span className="text-sky-strong font-semibold">상호부조의 신뢰</span>가 실제 데이터로 증명되었습니다.
           </p>
         </div>
@@ -128,17 +128,17 @@ export default function OurProof() {
           {/* Success Stories */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
             <div className="bg-white p-8 rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-              <div className="text-4xl font-bold text-primary mb-4">305건</div>
+              <div className="text-4xl font-bold text-primary mb-4">354건</div>
               <h3 className="font-watermelon font-bold text-lg mb-2">누적 대출 실행</h3>
               <p className="text-charcoal-muted text-sm text-balance">
-                2022년 12월부터 2025년 4월까지 305건의 상호부조 대출이 실행되었습니다.
+                2022년 12월부터 2025년 4월까지 354건의 상호부조 대출이 실행되었습니다.
               </p>
             </div>
             <div className="bg-white p-8 rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-              <div className="text-4xl font-bold text-primary mb-4">609,000,000원</div>
+              <div className="text-4xl font-bold text-primary mb-4">약 7억 원</div>
               <h3 className="font-watermelon font-bold text-lg mb-2">누적 지원 금액</h3>
               <p className="text-charcoal-muted text-sm text-balance">
-                생활비·창작비·프로젝트 자금 등으로 총 6억 9백만원이 투입되었습니다.
+                생활비·창작비·프로젝트 자금 등으로 총 약 7억 원이 투입되었습니다.
               </p>
             </div>
             <div className="bg-white p-8 rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow">
