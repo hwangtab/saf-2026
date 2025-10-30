@@ -48,33 +48,17 @@ export default function OurProof() {
         </div>
       </section>
 
-      {/* Key Evidence: 95% 상환율 */}
-      <section className="py-12 md:py-20 bg-sun-soft text-center">
-        <div className="container-max">
-          <div className="bg-white rounded-lg shadow-lg p-8 md:p-12 max-w-2xl mx-auto border-l-4 border-primary">
-            <p className="text-sm font-semibold text-primary uppercase mb-2">증명된 사실</p>
-            <h2 className="font-partial text-5xl md:text-6xl text-primary mb-4">95%</h2>
-            <p className="text-lg text-charcoal mb-4">
-              상호부조 대출 상환율
-            </p>
-            <p className="text-charcoal-muted text-balance">
-              신용점수와 무관하게 진행된 354건의 대출, 약 7억 원 규모에서 달성한 상환율입니다.
-              <br />
-              <strong>예술인은 위험하지 않다. 위험한 것은 이들을 약탈하도록 방치하는 금융 시스템이다.</strong>
-            </p>
-          </div>
-        </div>
-      </section>
+
 
       {/* The Evidence: 95% 상환율 */}
       <section className="py-12 md:py-20 bg-accent-soft">
         <div className="container-max">
           <div className="max-w-3xl mx-auto text-center mb-12">
             <h2 className="font-partial text-4xl md:text-5xl mb-8">
-              하지만 우리는 증거를 찾았습니다
+              증명된 사실: 예술인은 위험하지 않다
             </h2>
             <p className="text-xl text-sky-strong">
-              3년간 신용점수와 무관하게 진행된 상호부조 대출의 결과
+              신용점수와 무관하게 진행된 354건의 대출, 약 7억 원 규모에서 달성한 95% 상환율
             </p>
           </div>
 
@@ -90,8 +74,8 @@ export default function OurProof() {
             <div className="bg-white p-8 rounded-lg shadow text-center border-t-4 border-primary">
               <p className="text-5xl font-bold text-primary mb-2">95%</p>
               <p className="text-charcoal-muted">상환율 달성</p>
-            </div>
-          </div>
+            </div >
+          </div >
 
           <div className="mt-12 bg-white p-8 rounded-lg max-w-3xl mx-auto border-l-4 border-primary">
             <p className="text-lg text-charcoal mb-4">
