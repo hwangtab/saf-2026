@@ -93,19 +93,7 @@ export default function OurReality() {
             2025 예술인 금융 재난 보고서가 밝혀낸 한국 예술인의 금융 위기의 구조적 현실
           </p>
 
-          {/* Key Evidence: 95% 상환율 */}
-          <div className="bg-white rounded-lg shadow-lg p-8 md:p-12 max-w-2xl mx-auto border-l-4 border-primary">
-            <p className="text-sm font-semibold text-primary uppercase mb-2">증명된 사실</p>
-            <h2 className="font-partial text-5xl md:text-6xl text-primary mb-4">95%</h2>
-            <p className="text-lg text-charcoal mb-4">
-              상호부조 대출 상환율
-            </p>
-            <p className="text-charcoal-muted text-balance">
-              신용점수와 무관하게 진행된 354건의 대출, 약 7억 원 규모에서 달성한 상환율입니다.
-              <br />
-              <strong>예술인은 위험하지 않다. 위험한 것은 이들을 약탈하도록 방치하는 금융 시스템이다.</strong>
-            </p>
-          </div>
+
         </div>
       </section>
 
@@ -293,45 +281,7 @@ export default function OurReality() {
         </div>
       </section>
 
-      {/* The Evidence: 95% 상환율 */}
-      <section className="py-12 md:py-20 bg-accent-soft">
-        <div className="container-max">
-          <div className="max-w-3xl mx-auto text-center mb-12">
-            <h2 className="font-partial text-4xl md:text-5xl mb-8">
-              하지만 우리는 증거를 찾았습니다
-            </h2>
-            <p className="text-xl text-sky-strong">
-              3년간 신용점수와 무관하게 진행된 상호부조 대출의 결과
-            </p>
-          </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <div className="bg-white p-8 rounded-lg shadow text-center border-t-4 border-primary">
-              <p className="text-4xl font-bold text-primary mb-2">354건</p>
-              <p className="text-charcoal-muted">신용 무관 대출 건수</p>
-            </div>
-            <div className="bg-white p-8 rounded-lg shadow text-center border-t-4 border-primary">
-              <p className="text-4xl font-bold text-primary mb-2">약 7억 원</p>
-              <p className="text-charcoal-muted">총 대출 규모</p>
-            </div>
-            <div className="bg-white p-8 rounded-lg shadow text-center border-t-4 border-primary">
-              <p className="text-5xl font-bold text-primary mb-2">95%</p>
-              <p className="text-charcoal-muted">상환율 달성</p>
-            </div>
-          </div>
-
-          <div className="mt-12 bg-white p-8 rounded-lg max-w-3xl mx-auto border-l-4 border-primary">
-            <p className="text-lg text-charcoal mb-4">
-              이 데이터는 명백한 사실을 증명합니다.
-            </p>
-            <p className="text-2xl font-bold text-gray-800">
-              <span className="text-primary">예술인은 위험하지 않습니다.</span>
-              <br />
-              위험한 것은 이들을 약탈하도록 방치하는 현재의 금융 시스템입니다.
-            </p>
-          </div>
-        </div>
-      </section>
 
       {/* 진단: 사회적 재난 */}
       <section className="py-12 md:py-20 bg-white">
