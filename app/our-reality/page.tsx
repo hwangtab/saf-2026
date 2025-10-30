@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import TestimonialCard from '@/components/ui/TestimonialCard';
+import PageHero from '@/components/ui/PageHero';
 import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL } from '@/lib/constants';
 
 const PAGE_URL = `${SITE_URL}/our-reality`;
@@ -85,17 +86,11 @@ export const metadata: Metadata = {
 export default function OurReality() {
   return (
     <>
-      {/* Enhanced Hero: 95% 상환율을 중심으로 */}
-      <section className="py-12 md:py-20 bg-sun-soft text-center">
-        <div className="container-max">
-          <h1 className="font-partial text-4xl md:text-6xl mb-6 text-balance">우리의 현실</h1>
-          <p className="text-lg md:text-xl text-charcoal-muted mb-12 max-w-2xl mx-auto text-balance">
-            2025 예술인 금융 재난 보고서가 밝혀낸 한국 예술인의 금융 위기의 구조적 현실
-          </p>
-
-
-        </div>
-      </section>
+      <PageHero
+        title="우리의 현실"
+        description="2025 예술인 금융 재난 보고서가 밝혀낸 한국 예술인의 금융 위기의 구조적 현실"
+        backgroundClass="bg-sun-soft"
+      />
 
       {/* 도입: 금융의 재정의 */}
       <section className="py-12 md:py-20 bg-white">
