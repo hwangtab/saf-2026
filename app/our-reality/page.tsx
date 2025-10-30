@@ -50,7 +50,7 @@ const testimonialsData: { category: string; items: TestimonialItem[] }[] = [
         author: '30대, 배우',
       },
       {
-        quote: '작품보다 매달의 금전적 해결을 <strong>우선순위로 집중</strong>해야 하는 상황이 아쉽습니다. 예술인으로서 큰 수익을 내려면 작품이 잘 돼야 하는데, 작품보다 매달 소일거리 찾기에 집중해야 함이 악순환 속에 갇혀있는 느낌이 듭니다.',
+        quote: '작품보다 매달의 <strong>금전적 해결을 우선</strong>순위로 집중해야 하는 상황이 아쉽습니다. 예술인으로서 큰 수익을 내려면 작품이 잘 돼야 하는데, 작품보다 매달 소일거리 찾기에 집중해야 함이 <strong>악순환</strong> 속에 갇혀있는 느낌이 듭니다.',
         author: '40대, 음악인',
       },
       {
