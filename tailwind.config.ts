@@ -83,6 +83,14 @@ const config: Config = {
           'system-ui',
           'sans-serif',
         ],
+        'giants-inline': [
+          'GiantsInline',
+          'GMarketSans',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'system-ui',
+          'sans-serif',
+        ],
       },
       spacing: {
         safe: 'max(1rem, env(safe-area-inset-bottom))',
