@@ -75,7 +75,7 @@ const testimonialsData: { category: string; items: TestimonialItem[] }[] = [
         author: '50대, 만화가/미술가',
       },
       {
-        quote: '힘들 때는 친한 지인의 경조사에 참석할 수도 없을 정도였고, 그로 인해 인간관계조차 <strong>단절된 적이</strong> 있다.',
+        quote: '힘들 때는 친한 지인의 경조사에 참석할 수도 없을 정도였고, 그로 인해 <strong>인간관계조차 단절</strong>된 적이 있다.',
         author: '50대, 배우/방송인',
       },
       {
