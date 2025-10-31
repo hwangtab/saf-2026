@@ -84,7 +84,7 @@ const config: Config = {
           'sans-serif',
         ],
         'giants-inline': [
-          'GiantsInline',
+          "'GiantsInline'",
           'GMarketSans',
           '-apple-system',
           'BlinkMacSystemFont',
