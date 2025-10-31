@@ -58,7 +58,7 @@ const testimonialsData: { category: string; items: TestimonialItem[] }[] = [
         author: '50대, 배우',
       },
       {
-        quote: '독촉 전화로 연습과 공연에 <strong>지장을 주고</strong>, 이로 인해 심리적 부담감과 압박이 하루하루를 고통스럽게 하고 다음날이 <strong>두려워짐</strong>.',
+        quote: '독촉 전화로 <strong>연습과 공연에 지장을 주고</strong>, 이로 인해 심리적 부담감과 압박이 하루하루를 <strong>고통스럽게</strong> 하고 다음날이 <strong>두려워짐</strong>.',
         author: '40대, 연극인',
       },
       {
