@@ -37,26 +37,7 @@
     font-display: swap;
 }
 
-/* 2. Tailwind 지시어 */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* Custom Fonts */
-@font-face {
-    font-family: 'PartialSans';
-    src: url('/fonts/PartialSansKR-Regular.woff2') format('woff2');
-    font-weight: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'GMarketSans';
-    src: url('/fonts/GmarketSansTTFMedium.woff2') format('woff2');
-    font-weight: normal;
-    font-display: swap;
-}
-
+/* Giants-Inline 폰트 - 섹션 제목용 */
 @font-face {
     font-family: 'GiantsInline';
     src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2307-1@1.1/Giants-Inline.woff2') format('woff2');
@@ -64,9 +45,10 @@
     font-display: swap;
 }
 
-.font-giants-inline {
-    font-family: 'GiantsInline', sans-serif;
-}
+/* 2. Tailwind 지시어 */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* 3. Reusable component classes using @layer */
 @layer components {
