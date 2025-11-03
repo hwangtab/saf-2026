@@ -46,7 +46,7 @@ const testimonialsData: { category: string; items: TestimonialItem[] }[] = [
     category: '2. 창작의 좌절: "공연을 할수록 빚만 늘어 그만두기로 했습니다"',
     items: [
       {
-        quote: '하루 4시간도 채 못 자며 알바와 연극을 병행하지만, 공연을 할수록 빚만 늘어가는 상황이 계속되어 공연을 <strong>그만두기로 함</strong>.',
+        quote: '하루 4시간도 채 못 자며 알바와 연극을 병행하지만, 공연을 할수록 빚만 늘어가는 상황이 계속되어 <strong>공연을 그만두기로 함</strong>.',
         author: '30대, 배우',
       },
       {
