@@ -75,7 +75,7 @@ export default function ArchivePage() {
       {/* Past Events Section */}
       <section className="py-12 md:py-20 bg-sun-soft">
         <div className="container-max">
-          <h2 className="font-jeju-stone text-3xl mb-12">🎉 2023년 행사 기록</h2>
+          <h2 className="font-jeju-stone text-3xl md:text-4xl mb-12">🎉 2023년 행사 기록</h2>
           <div className="bg-white rounded-lg shadow-sm p-8 mb-12">
             <h3 className="font-watermelon text-2xl font-bold mb-4">씨앗:페 2023 성과</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
@@ -133,7 +133,7 @@ export default function ArchivePage() {
       {/* SAF 2023 Artworks Section */}
       <section className="py-12 md:py-20 bg-gray-50">
         <div className="container-max">
-          <h2 className="font-jeju-stone text-3xl mb-12">🎨 2023년 출품작</h2>
+          <h2 className="font-jeju-stone text-3xl md:text-4xl mb-12">🎨 2023년 출품작</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {saf2023Artworks.map((artwork) => (
               <div
@@ -167,7 +167,7 @@ export default function ArchivePage() {
       {/* SAF 2023 Gallery Section */}
       <section className="py-12 md:py-20 bg-white">
         <div className="container-max">
-          <h2 className="font-jeju-stone text-3xl mb-12">📸 씨앗페 2023 현장</h2>
+          <h2 className="font-jeju-stone text-3xl md:text-4xl mb-12">📸 씨앗페 2023 현장</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {saf2023Photos.map((photo) => (
               <div
@@ -194,7 +194,7 @@ export default function ArchivePage() {
       {/* Video Archive Section */}
       <section className="py-12 md:py-20 bg-accent-soft">
         <div className="container-max">
-          <h2 className="font-jeju-stone text-3xl mb-12">📹 영상 아카이브</h2>
+          <h2 className="font-jeju-stone text-3xl md:text-4xl mb-12">📹 영상 아카이브</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {videos.map((video) => (
               <div key={video.id} className="bg-white rounded-lg shadow-md overflow-hidden">
@@ -212,7 +212,7 @@ export default function ArchivePage() {
       {/* Call to Action */}
       <section className="py-12 md:py-20 bg-primary/20">
         <div className="container-max text-center">
-          <h2 className="font-jeju-stone text-3xl mb-6">이 역사에 당신도 함께하세요</h2>
+          <h2 className="font-jeju-stone text-3xl md:text-4xl mb-6">이 역사에 당신도 함께하세요</h2>
           <p className="text-lg text-charcoal-muted mb-8 max-w-2xl mx-auto">
             씨앗:페 2026의 성공은 당신의 참여와 후원으로 만들어집니다.
           </p>
