@@ -54,7 +54,7 @@ const testimonialsData: { category: string; items: TestimonialItem[] }[] = [
         author: '40대, 음악인',
       },
       {
-        quote: '당장의 매달 닥쳐오는 대출금으로 인해 공연을 <strong>접고 알바에 집중</strong>한 적이 많음.',
+        quote: '당장의 매달 닥쳐오는 대출금으로 인해 <strong>공연을 접고 알바에 집중</strong>한 적이 많음.',
         author: '50대, 배우',
       },
       {
