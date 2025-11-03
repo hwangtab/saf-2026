@@ -83,8 +83,8 @@ const config: Config = {
           'system-ui',
           'sans-serif',
         ],
-        'giants-inline': [
-          "'GiantsInline'",
+        'jeju-stone': [
+          "'JejuStoneWall'",
           'GMarketSans',
           '-apple-system',
           'BlinkMacSystemFont',

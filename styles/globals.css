@@ -37,10 +37,10 @@
     font-display: swap;
 }
 
-/* Giants-Inline 폰트 - 섹션 제목용 */
+/* JejuStoneWall 폰트 - 섹션 제목용 */
 @font-face {
-    font-family: 'GiantsInline';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2307-1@1.1/Giants-Inline.woff2') format('woff2');
+    font-family: 'JejuStoneWall';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2210-EF@1.0/EF_jejudoldam.woff2') format('woff2');
     font-weight: normal;
     font-display: swap;
 }
