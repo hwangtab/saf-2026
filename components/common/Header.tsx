@@ -11,10 +11,10 @@ const navigation = [
   { name: '씨앗:페 2026', href: '/' },
   { name: '우리의 현실', href: '/our-reality' },
   { name: '우리의 증명', href: '/our-proof' },
-  { name: '아카이브', href: '/archive' },
-  { name: '언론 보도', href: '/news' },
   { name: '전시 안내', href: '/exhibition' },
   { name: '작품 구매하기', href: EXTERNAL_LINKS.ONLINE_GALLERY, external: true },
+  { name: '아카이브', href: '/archive' },
+  { name: '언론 보도', href: '/news' },
 ];
 
 export default function Header() {
