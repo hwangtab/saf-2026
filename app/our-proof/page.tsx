@@ -42,7 +42,7 @@ export default function OurProof() {
           <div className="text-5xl md:text-7xl font-bold text-primary mb-6">354건</div>
           <h1 className="font-partial text-4xl md:text-5xl mb-6 text-balance">예술인 상호부조 대출의 실제 성과</h1>
           <p className="text-lg text-charcoal-muted max-w-2xl mx-auto text-balance">
-            2022년 12월부터 2025년 4월까지, 총 <strong>354건</strong>의 대출을 통해 <strong>약 7억 원</strong>을
+            2022년 12월부터 2025년 9월말까지, 총 <strong>354건</strong>의 대출을 통해 <strong>약 7억 원</strong>을
             예술인에게 공급했습니다. <span className="text-sky-strong font-semibold">상호부조의 신뢰</span>가 실제 데이터로 증명되었습니다.
           </p>
         </div>
@@ -118,7 +118,7 @@ export default function OurProof() {
             <div className="bg-primary/10 rounded-lg p-8 border-2 border-primary text-center">
               <h3 className="font-watermelon text-2xl font-bold mb-6">기금의 힘</h3>
               <p className="text-sm text-charcoal-muted mb-3">누적 조성된 상호부조 기금</p>
-              <p className="text-4xl font-bold text-primary">39,000,000원</p>
+              <p className="text-4xl font-bold text-primary">77,000,000원</p>
               <p className="text-sm text-charcoal-muted mt-4">
                 작품 판매와 후원, 특별조합비로 함께 채워온 신뢰의 안전망입니다.
               </p>
@@ -131,7 +131,7 @@ export default function OurProof() {
               <div className="text-4xl font-bold text-primary mb-4">354건</div>
               <h3 className="font-watermelon font-bold text-lg mb-2">누적 대출 실행</h3>
               <p className="text-charcoal-muted text-sm text-balance">
-                2022년 12월부터 2025년 4월까지 354건의 상호부조 대출이 실행되었습니다.
+                2022년 12월부터 2025년 9월말까지 354건의 상호부조 대출이 실행되었습니다.
               </p>
             </div>
             <div className="bg-white p-8 rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow">
@@ -161,7 +161,7 @@ export default function OurProof() {
                 <div>
                   <h3 className="font-watermelon font-bold text-lg mb-2">기금과 특별조합비</h3>
                   <p className="text-charcoal-muted text-balance">
-                    조합이 조성한 3,900만원의 기금과 대출자 특별조합비로 안정기금 잔액 35,608,224원을 유지하며 리스크를 공동으로 감당합니다.
+                    조합이 조성한 7,700만원의 기금과 대출자 특별조합비로 안정기금 잔액 35,608,224원을 유지하며 리스크를 공동으로 감당합니다.
                   </p>
                 </div>
               </div>
