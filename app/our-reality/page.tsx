@@ -21,7 +21,7 @@ const testimonialsData: { category: string; items: TestimonialItem[] }[] = [
         author: '50대, 연극인',
       },
       {
-        quote: '돈이 없어 절박했던 치과 치료를 <strong>못 받고</strong> 있어요. 병원을 제때 가야 하는데, 안 가고 웬만하면 참는 것이 이젠 습관이 돼버렸습니다.',
+        quote: '돈이 없어 절박했던 치과 <strong>치료를 못 받고</strong> 있어요. 병원을 제때 가야 하는데, 안 가고 웬만하면 참는 것이 이젠 습관이 돼버렸습니다.',
         author: '50대, 배우',
       },
       {
