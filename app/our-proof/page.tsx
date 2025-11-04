@@ -54,7 +54,7 @@ export default function OurProof() {
         <div className="container-max">
           <div className="max-w-3xl mx-auto text-center mb-12">
             <h2 className="font-jeju-stone text-4xl md:text-5xl mb-8">
-              증명된 사실: 예술인은 위험하지 않다
+              증명된 사실:<br />예술인은 위험하지 않다
             </h2>
             <p className="text-xl text-sky-strong">
               신용점수와 무관하게 진행된 354건의 대출, 약 7억 원 규모에서 달성한 95% 상환율
