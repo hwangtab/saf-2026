@@ -17,7 +17,7 @@ export default function PageHero({
     <section className={`py-12 md:py-20 ${backgroundClass}`}>
       <div className="container-max text-center">
         <h1
-          className="font-partial text-4xl md:text-5xl mb-6 tracking-tight text-balance"
+          className="font-partial text-5xl md:text-6xl mb-6 tracking-tight text-balance"
           style={{
             fontFamily:
               'PartialSans, GMarketSans, -apple-system, BlinkMacSystemFont, system-ui, sans-serif',
