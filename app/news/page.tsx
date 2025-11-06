@@ -70,6 +70,37 @@ const structuredData = {
   },
 };
 
+const highlightQuotes = [
+  {
+    id: 'hani-20251105',
+    label: '11.5',
+    source: '한겨레',
+    excerpt:
+      '제1금융권에서 거절당한 예술인은 고금리 대출로 향한다. 연극인 이수경씨는 과거 카드빚 600만원을 7년동안 갚은 기억을 전했다. 이씨는 “(이자 부담이 커) 갚은 돈이 1천만원을 넘는 것 같다”고 했다. 채권 추심도 피하지 못했다. “처음에는 전기료나 가스비 같은 공공요금에서 빼가다가 통장이 동결됐어요. 채권 추심 전화를 받는데 영화에서나 본 조폭 같은 목소리였습니다. 끔찍했어요.” 예술인들 사이에 흔한 얘기다.',
+  },
+  {
+    id: 'mixing-20251106',
+    label: '11.6',
+    source: '월간 믹싱',
+    excerpt:
+      '현재 예술인 집단의 대다수가 금융 사각지대에 놓여 있다는 것은 우리나라 문화예술의 기반을 위협하는 심각한 문제다. 금융기관과 예술 단체, 정부가 예술인의 복지 향상과 대안적 금융에 적극적으로 관심을 기울여야 한다.',
+  },
+  {
+    id: 'asiae-20251105',
+    label: '11.5',
+    source: '아시아경제',
+    excerpt:
+      '은행 문턱을 넘지 못한 예술인 상당수는 고금리 대부업체로 내몰렸으며, 응답자의 48.6%가 연 15% 이상 초고금리 대출을 경험한 것으로 조사됐다.',
+  },
+  {
+    id: 'newsart-20251105',
+    label: '11.5',
+    source: '뉴스아트',
+    excerpt:
+      "3단계, '파괴': 결국 빚의 무게는 삶의 기반을 무너뜨린다. 채권 추심을 경험한 예술인의 88.3%가 창작 활동을 중단하거나 현저히 위축됐다. 한 편의 시와 한 곡의 노래가 빚 독촉 전화에 짓밟히는 순간, K-문화의 미래 자산도 함께 소멸되고 있었다.",
+  },
+];
+
 function formatDate(isoString: string) {
   return new Date(isoString).toLocaleDateString('ko-KR', {
     year: 'numeric',
@@ -97,6 +128,38 @@ export default function NewsPage() {
           description="씨앗:페 캠페인을 다룬 언론 보도를 한 눈에 확인해보세요."
         />
       </PageHero>
+
+      <section className="py-12 md:py-16 bg-white">
+        <div className="container-max flex flex-col gap-8">
+          <div className="max-w-3xl">
+            <span className="inline-flex items-center px-3 py-1 rounded-full border border-primary text-primary text-xs font-semibold tracking-wide uppercase">
+              Press Highlights
+            </span>
+            <h2 className="mt-4 text-3xl md:text-4xl font-watermelon font-bold text-gray-900 leading-tight">
+              언론이 짚어낸 예술인 금융 위기의 핵심 메시지
+            </h2>
+            <p className="mt-3 text-base md:text-lg text-charcoal-muted leading-relaxed">
+              최근 보도에서 반복적으로 등장한 증언과 수치를 통해, 예술인이 겪는 금융 사각지대의
+              현실과 제도 개선의 절박함을 강조합니다.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {highlightQuotes.map((item) => (
+              <figure
+                key={item.id}
+                className="h-full rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
+              >
+                <figcaption className="text-xs font-semibold tracking-widest uppercase text-primary">
+                  {item.label} · {item.source} 보도
+                </figcaption>
+                <blockquote className="mt-3 text-base md:text-lg text-gray-900 leading-relaxed">
+                  {item.excerpt}
+                </blockquote>
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
 
       <section className="py-12 md:py-20 bg-primary-surface">
         <div className="container-max">
