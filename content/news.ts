@@ -2,6 +2,56 @@ import { NewsArticle } from '@/lib/types';
 
 export const newsArticles: NewsArticle[] = [
   {
+    id: 'news-mixing-37028',
+    title: '왜 예술인은 고금리 대출을 받을 수 밖에 없나',
+    source: '월간 믹싱',
+    date: '2025-11-06',
+    link: 'https://mixing.co.kr/37028',
+    thumbnail: 'https://mmagimg.speedgabia.com/2025/11/img-1762384976993-f5326e9fdfd4713d.jpeg',
+    description:
+      '월간 믹싱 박찬울 칼럼 | 예술인 금융 사각지대의 구조적 문제와 한국스마트협동조합이 95% 상환율을 기록한 상호부조 대출 사례를 짚으며 민관 협력 금융 모델의 필요성을 제안한다.',
+  },
+  {
+    id: 'news-ebn-1685475',
+    title: '예술인 84.9% 제1금융권 접근 불가',
+    source: 'EBN',
+    date: '2025-11-05',
+    link: 'https://www.ebn.co.kr/news/articleView.html?idxno=1685475',
+    thumbnail: 'https://cdn.ebn.co.kr/news/thumbnail/202511/1685475_703389_313_v150.jpg',
+    description:
+      'EBN 김지성 기자 | 국회 토론회에서 공개된 \'2025 예술인 금융재난 보고서\'가 예술인의 84.9%가 제1금융권 대출을 받지 못한 현실과 95% 상환율을 기록한 상호부조 대출 모델을 소개했다.',
+  },
+  {
+    id: 'news-asiae-20251105',
+    title: '예술인 84.9% 제1금융권 대출 막혀…"사회적 재난"',
+    source: '아시아경제',
+    date: '2025-11-05',
+    link: 'https://www.asiae.co.kr/article/2025110517572066097',
+    thumbnail: 'https://cphoto.asiae.co.kr/listimglink/1/2025110517522196297_1762332741.jpg',
+    description:
+      '아시아경제 이이슬 기자 | \'2025 예술인 금융재난 보고서\'를 통해 고금리 대출과 창작 중단 사례가 공유되고, 한국스마트협동조합의 95% 상환율 모델과 민관 협력 필요성이 제시됐다.',
+  },
+  {
+    id: 'news-32865',
+    title: "[뉴스아트] 은행이 '무직자'라 부른 예술가들…'상환율 95%'의 반격",
+    source: '뉴스아트',
+    date: '2025-11-05',
+    link: 'https://www.news-art.co.kr/news/article.html?no=32865',
+    thumbnail: 'https://www.news-art.co.kr/data/photos/20251145/art_17623403153642_d40d7b.jpg',
+    description:
+      '뉴스아트 편집부 | \'2025 예술인 금융재난 보고서\'가 밝힌 배제·약탈·파괴의 악순환과 한국스마트협동조합의 상호부조 대출 95% 상환율을 통해 시스템 변화를 촉구한다.',
+  },
+  {
+    id: 'news-hani-1227472',
+    title: '예술인들에게 가혹한 은행…제1금융권 대출 경험 15%뿐',
+    source: '한겨레',
+    date: '2025-11-05',
+    link: 'https://www.hani.co.kr/arti/society/society_general/1227472.html',
+    thumbnail: 'https://flexible.img.hani.co.kr/flexible/normal/800/533/imgdb/original/2025/1105/20251105501193.webp',
+    description:
+      '한겨레 조해영·박찬희 기자 | 179명 설문으로 예술인 15%만 제1금융권 대출을 경험했고 채권추심이 창작 중단으로 이어지는 현실을 전하며 상호부조 대출 모델과 제도 개선 필요성을 짚는다.',
+  },
+  {
     id: 'news-gg-92298',
     title: '양문석 의원 "예술인생활안정자금 \'아트론\'실효성 제고 필요"',
     source: '경기종합뉴스',
