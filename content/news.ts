@@ -12,6 +12,16 @@ export const newsArticles: NewsArticle[] = [
       '월간 믹싱 박찬울 칼럼 | 예술인 금융 사각지대의 구조적 문제와 한국스마트협동조합이 95% 상환율을 기록한 상호부조 대출 사례를 짚으며 민관 협력 금융 모델의 필요성을 제안한다.',
   },
   {
+    id: 'news-ndn-923967',
+    title: '양문석 국회의원, "문체부-예술인복지재단-민간 협업을 통해 예술인생활안정자금을 신속하고 효능감 있게 운용해야"',
+    source: '남도일보',
+    date: '2025-11-05',
+    link: 'https://www.ndnnews.co.kr/news/articleView.html?idxno=923967',
+    thumbnail: 'https://cdn.ndnnews.co.kr/news/photo/202511/923967_934058_123.png',
+    description:
+      '남도일보 | 양문석 의원이 예술인 금융재난 토론회에서 문화체육관광부, 예술인복지재단, 한국스마트협동조합의 민관 협업을 통해 대출의 신속성과 효능감을 동시에 달성해야 한다고 강조했다.',
+  },
+  {
     id: 'news-ebn-1685475',
     title: '예술인 84.9% 제1금융권 접근 불가',
     source: 'EBN',
