@@ -56,7 +56,7 @@ export default function OurProof() {
             <h2 className="font-jeju-stone text-4xl md:text-5xl mb-8">
               증명된 사실:<br />예술인은 빌린 돈을 약속대로 갚습니다
             </h2>
-            <p className="text-xl text-sky-strong font-watermelon">
+            <p className="text-xl text-sky-strong">
               신용점수에 상관없이 빌려준 354건, 약 7억 원 가운데 95%가 제때 돌아왔고
               빚을 대신 갚아야 했던 비율도 5.10%뿐이라 흔한 저신용 대출보다 오히려 안정적입니다.
             </p>
@@ -73,22 +73,22 @@ export default function OurProof() {
             </div>
             <div className="bg-white p-8 rounded-lg shadow text-center border-t-4 border-primary">
               <p className="text-5xl font-bold text-primary mb-2">95%</p>
-              <p className="text-charcoal-muted font-watermelon">상환율 (대위변제율 5.10%)</p>
-              <p className="text-xs text-charcoal-muted mt-2 font-watermelon">
+              <p className="text-charcoal-muted">상환율 (대위변제율 5.10%)</p>
+              <p className="text-xs text-charcoal-muted mt-2">
                 같은 기간 일반 저신용 대출보다 낮은 위험도
               </p>
             </div >
           </div >
 
           <div className="mt-12 bg-white p-8 rounded-lg max-w-3xl mx-auto border-l-4 border-primary">
-            <p className="text-lg text-charcoal mb-2 font-watermelon">
+            <p className="text-lg text-charcoal mb-2">
               이 데이터는 명백한 사실을 증명합니다. <span className="text-primary font-semibold">예술인은 빚을 떼먹는 사람이 아닙니다.</span>
             </p>
-            <p className="text-base text-charcoal-muted mb-6 font-watermelon">
+            <p className="text-base text-charcoal-muted mb-6">
               354건 중 95%가 제때 갚혔고 대위변제율도 5.10%에 머물러 뉴스아트(2025.05.22)가 소개한 것처럼
               일반 금융기관 저신용 대출 연체율보다 낮은 수준이 유지되고 있습니다.
             </p>
-            <p className="text-2xl font-bold text-gray-800 font-partial">
+            <p className="text-2xl font-bold text-gray-800">
               위험한 것은 이들을 약탈하도록 방치하는 현재의 금융 시스템입니다.
             </p>
           </div>
