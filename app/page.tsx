@@ -61,9 +61,9 @@ export default function Home() {
             />
           </div>
           <h1 className="font-partial text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight text-white drop-shadow-lg text-balance">
-            예술인의 금융 위기,
+            고리대금의 벽,
             <br />
-            함께 해결합니다
+            예술인의 연대로 무너뜨립니다
           </h1>
           <p className="text-lg md:text-xl text-white/90 mb-12 max-w-2xl mx-auto leading-relaxed drop-shadow-lg">
             한국 예술인의 84.9%가 제1금융권에서 배제되고,
