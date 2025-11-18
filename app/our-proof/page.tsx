@@ -54,10 +54,11 @@ export default function OurProof() {
         <div className="container-max">
           <div className="max-w-3xl mx-auto text-center mb-12">
             <h2 className="font-jeju-stone text-4xl md:text-5xl mb-8">
-              증명된 사실:<br />예술인은 위험하지 않다
+              증명된 사실:<br />예술인은 금융권이 우려하는 '고위험 차주'가 아니다
             </h2>
             <p className="text-xl text-sky-strong">
-              신용점수와 무관하게 진행된 354건의 대출, 약 7억 원 규모에서 달성한 95% 상환율
+              신용점수와 무관하게 실행된 354건, 약 7억 원 규모의 상호부조 대출에서 상환율은 95%,
+              대위변제율은 5.10%에 불과해 일반 금융기관 저신용자 대출 연체율보다 낮은 수준입니다.
             </p>
           </div>
 
@@ -72,17 +73,22 @@ export default function OurProof() {
             </div>
             <div className="bg-white p-8 rounded-lg shadow text-center border-t-4 border-primary">
               <p className="text-5xl font-bold text-primary mb-2">95%</p>
-              <p className="text-charcoal-muted">상환율 달성</p>
+              <p className="text-charcoal-muted">상환율 (대위변제율 5.10%)</p>
+              <p className="text-xs text-charcoal-muted mt-2">
+                일반 저신용자 대출 연체율보다 낮은 리스크를 입증
+              </p>
             </div >
           </div >
 
           <div className="mt-12 bg-white p-8 rounded-lg max-w-3xl mx-auto border-l-4 border-primary">
-            <p className="text-lg text-charcoal mb-4">
-              이 데이터는 명백한 사실을 증명합니다.
+            <p className="text-lg text-charcoal mb-2">
+              이 데이터는 명백한 사실을 증명합니다. <span className="text-primary font-semibold">예술인은 금융에서 위험한 차주가 아닙니다.</span>
+            </p>
+            <p className="text-base text-charcoal-muted mb-6">
+              354건 중 95%가 정상 상환되었고 대위변제율도 5.10%에 그쳐, 뉴스아트(2025.05.22) 보도에서 지적했듯
+              일반 금융기관 저신용자 대출 연체율보다 낮은 수준이 유지되고 있습니다.
             </p>
             <p className="text-2xl font-bold text-gray-800">
-              <span className="text-primary">예술인은 위험하지 않습니다.</span>
-              <br />
               위험한 것은 이들을 약탈하도록 방치하는 현재의 금융 시스템입니다.
             </p>
           </div>
