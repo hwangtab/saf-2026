@@ -68,7 +68,7 @@ const config: Config = {
           'sans-serif',
         ],
         watermelon: [
-          'Watermelon',
+          'Paperozi',
           'GMarketSans',
           '-apple-system',
           'BlinkMacSystemFont',

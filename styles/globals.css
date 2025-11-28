@@ -21,14 +21,6 @@
   font-display: swap;
 }
 
-/* 중간 제목 폰트 - Watermelon */
-@font-face {
-  font-family: 'Watermelon';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2210-EF@1.0/EF_watermelonSalad.woff2') format('woff2');
-  font-weight: normal;
-  font-display: swap;
-}
-
 /* 큰 제목 폰트 - PartialSans */
 @font-face {
   font-family: 'PartialSans';
@@ -114,6 +106,10 @@
 
   .font-jeju-stone {
     font-weight: 700;
+  }
+
+  .font-watermelon {
+    font-weight: 500;
   }
 }
 
