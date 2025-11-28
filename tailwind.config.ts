@@ -84,7 +84,7 @@ const config: Config = {
           'sans-serif',
         ],
         'jeju-stone': [
-          "'JejuStoneWall'",
+          'Paperozi',
           'GMarketSans',
           '-apple-system',
           'BlinkMacSystemFont',
