@@ -7,7 +7,7 @@ export const OG_IMAGE = {
   url: `${SITE_URL}/images/og-image.png`,
   width: 1200,
   height: 630,
-  alt: '씨앗:페 2026 캠페인 대표 이미지',
+  alt: '씨앗페 2026 캠페인 대표 이미지',
 } as const;
 
 export const EXTERNAL_LINKS = {
@@ -43,7 +43,7 @@ export const CONTACT = {
 
 // Exhibition Info
 export const EXHIBITION = {
-  NAME: '씨앗:페(SAF) 2026',
+  NAME: '씨앗페(SAF) 2026',
   DATE: '2026년 1월 14일 - 2026년 1월 27일',
   LOCATION: '인사아트센터 3층 G&J 갤러리',
   ADDRESS: '서울시 종로구 인사동길 41-1',

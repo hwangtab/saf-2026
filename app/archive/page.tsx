@@ -11,16 +11,16 @@ import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL } from '@/lib/constants';
 const PAGE_URL = `${SITE_URL}/archive`;
 
 export const metadata: Metadata = {
-  title: '아카이브 | 씨앗:페 2026',
+  title: '아카이브 | 씨앗페 2026',
   description:
-    '씨앗:페 2023 성과, 언론 보도, 영상 기록을 모아둔 공식 아카이브입니다.',
+    '씨앗페 2023 성과, 언론 보도, 영상 기록을 모아둔 공식 아카이브입니다.',
   alternates: {
     canonical: PAGE_URL,
   },
   openGraph: {
-    title: '아카이브 | 씨앗:페 2026',
+    title: '아카이브 | 씨앗페 2026',
     description:
-      '씨앗:페 캠페인의 기록과 언론 보도, 영상 아카이브를 한 곳에서 확인하세요.',
+      '씨앗페 캠페인의 기록과 언론 보도, 영상 아카이브를 한 곳에서 확인하세요.',
     url: PAGE_URL,
     images: [
       {
@@ -33,16 +33,16 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '씨앗:페 2026 아카이브',
-    description: '씨앗:페 캠페인의 기록과 영상, 언론 보도를 아카이브에서 확인하세요.',
+    title: '씨앗페 2026 아카이브',
+    description: '씨앗페 캠페인의 기록과 영상, 언론 보도를 아카이브에서 확인하세요.',
     images: [OG_IMAGE.url],
   },
 };
 
 export default function ArchivePage() {
   const currentUrl = PAGE_URL;
-  const pageTitle = '아카이브 | 씨앗:페 2026';
-  const pageDescription = '씨앗:페의 활동 기록과 성과들을 담아냅니다.';
+  const pageTitle = '아카이브 | 씨앗페 2026';
+  const pageDescription = '씨앗페의 활동 기록과 성과들을 담아냅니다.';
 
   // JSON-LD Schema for CollectionPage with Articles
   const collectionSchema = {
@@ -66,7 +66,7 @@ export default function ArchivePage() {
       />
       <PageHero
         title="아카이브"
-        description="씨앗:페의 발자취와 성과, 언론 보도를 기록합니다"
+        description="씨앗페의 발자취와 성과, 언론 보도를 기록합니다"
         backgroundClass="bg-primary-surface"
       >
         <ShareButtons url={currentUrl} title={pageTitle} description={pageDescription} />
@@ -77,7 +77,7 @@ export default function ArchivePage() {
         <div className="container-max">
           <h2 className="font-jeju-stone text-4xl md:text-5xl mb-12">🎉 2023년 행사 기록</h2>
           <div className="bg-white rounded-lg shadow-sm p-8 mb-12">
-            <h3 className="font-watermelon text-2xl font-bold mb-4">씨앗:페 2023 성과</h3>
+            <h3 className="font-watermelon text-2xl font-bold mb-4">씨앗페 2023 성과</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
               <div className="text-center">
                 <p className="text-3xl font-bold text-primary">7일</p>
@@ -214,7 +214,7 @@ export default function ArchivePage() {
         <div className="container-max text-center">
           <h2 className="font-jeju-stone text-4xl md:text-5xl mb-6">이 역사에 당신도 함께하세요</h2>
           <p className="text-lg text-charcoal-muted mb-8 max-w-2xl mx-auto">
-            씨앗:페 2026의 성공은 당신의 참여와 후원으로 만들어집니다.
+            씨앗페 2026의 성공은 당신의 참여와 후원으로 만들어집니다.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <a

@@ -9,16 +9,16 @@ import { OG_IMAGE, SITE_URL } from '@/lib/constants';
 const PAGE_URL = `${SITE_URL}/news`;
 
 export const metadata: Metadata = {
-  title: '언론 보도 | 씨앗:페 2026',
+  title: '언론 보도 | 씨앗페 2026',
   description:
-    '뉴스아트, 아시아경제 등 주요 매체가 전하는 씨앗:페 캠페인 소식을 모았습니다.',
+    '뉴스아트, 아시아경제 등 주요 매체가 전하는 씨앗페 캠페인 소식을 모았습니다.',
   alternates: {
     canonical: PAGE_URL,
   },
   openGraph: {
-    title: '언론 보도 | 씨앗:페 2026',
+    title: '언론 보도 | 씨앗페 2026',
     description:
-      '언론 보도를 통해 씨앗:페 상호부조 캠페인의 영향력과 협력 사례를 확인하세요.',
+      '언론 보도를 통해 씨앗페 상호부조 캠페인의 영향력과 협력 사례를 확인하세요.',
     url: PAGE_URL,
     images: [
       {
@@ -31,8 +31,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '씨앗:페 2026 언론 보도',
-    description: '씨앗:페 캠페인을 다룬 최신 기사와 인터뷰를 한눈에 확인하세요.',
+    title: '씨앗페 2026 언론 보도',
+    description: '씨앗페 캠페인을 다룬 최신 기사와 인터뷰를 한눈에 확인하세요.',
     images: [OG_IMAGE.url],
   },
 };
@@ -46,9 +46,9 @@ const sortedArticles = [...newsArticles].sort((a, b) => {
 const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
-  name: '씨앗:페 2026 언론 보도',
+  name: '씨앗페 2026 언론 보도',
   description:
-    '뉴스아트 등 주요 매체가 보도한 씨앗:페 캠페인의 최신 기사 모음입니다.',
+    '뉴스아트 등 주요 매체가 보도한 씨앗페 캠페인의 최신 기사 모음입니다.',
   url: canonicalUrl,
   mainEntity: {
     '@type': 'ItemList',
@@ -197,13 +197,13 @@ export default function NewsPage() {
 
       <PageHero
         title="언론 보도"
-        description="씨앗:페 캠페인을 조명한 기사와 인터뷰를 모았습니다."
+        description="씨앗페 캠페인을 조명한 기사와 인터뷰를 모았습니다."
         backgroundClass="bg-accent-soft"
       >
         <ShareButtons
           url={canonicalUrl}
-          title="언론 보도 | 씨앗:페 2026"
-          description="씨앗:페 캠페인을 다룬 언론 보도를 한 눈에 확인해보세요."
+          title="언론 보도 | 씨앗페 2026"
+          description="씨앗페 캠페인을 다룬 언론 보도를 한 눈에 확인해보세요."
         />
       </PageHero>
 

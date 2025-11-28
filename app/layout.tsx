@@ -8,8 +8,8 @@ import '@/styles/globals.css';
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: '씨앗:페 2026 | 예술인 금융 위기 해결 캠페인',
-    template: '%s | 씨앗:페 2026',
+    default: '씨앗페 2026 | 예술인 금융 위기 해결 캠페인',
+    template: '%s | 씨앗페 2026',
   },
   alternates: {
     canonical: SITE_URL,
@@ -33,10 +33,10 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'ko_KR',
     url: SITE_URL,
-    title: '씨앗:페 2026 | 예술인 금융 위기 해결 캠페인',
+    title: '씨앗페 2026 | 예술인 금융 위기 해결 캠페인',
     description:
       '한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인. 상호부조 대출, 작품 전시, 후원에 참여하세요.',
-    siteName: '씨앗:페 2026',
+    siteName: '씨앗페 2026',
     images: [
       {
         url: OG_IMAGE.url,
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '씨앗:페 2026',
+    title: '씨앗페 2026',
     description:
       '한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인',
     images: [OG_IMAGE.url],
@@ -84,6 +84,43 @@ export default function RootLayout({
           <Suspense fallback={<div>로딩 중...</div>}>{children}</Suspense>
         </main>
         <Footer />
+
+        {/* Organization JSON-LD Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Organization',
+              name: '한국스마트협동조합',
+              url: 'https://www.saf2026.com',
+              logo: 'https://www.saf2026.com/images/og-image.png',
+              description:
+                '한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인',
+              sameAs: [
+                'https://www.instagram.com/koreasmartcoop',
+                'https://www.facebook.com/koreasmartcoop',
+                'https://twitter.com/saf2026',
+                'https://www.youtube.com/@Social_Mutual_ART',
+              ],
+              address: {
+                '@type': 'PostalAddress',
+                streetAddress:
+                  '서울특별시 은평구 통일로 68길 4 302호',
+                addressLocality: '서울시',
+                addressRegion: '은평구',
+                postalCode: '03100',
+                addressCountry: 'KR',
+              },
+              contactPoint: {
+                '@type': 'ContactPoint',
+                contactType: 'Customer Service',
+                telephone: '+82-2-764-3114',
+                email: 'contact@kosmart.co.kr',
+              },
+            }),
+          }}
+        />
 
         {/* Kakao SDK for Share functionality */}
         <script

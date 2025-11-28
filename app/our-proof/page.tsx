@@ -5,14 +5,14 @@ import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL } from '@/lib/constants';
 const PAGE_URL = `${SITE_URL}/our-proof`;
 
 export const metadata: Metadata = {
-  title: '우리의 증명 | 씨앗:페 2026',
+  title: '우리의 증명 | 씨앗페 2026',
   description:
     '예술인 상호부조 대출 305건, 누적 6억 900만원 지원. 데이터로 확인하는 상호부조 금융의 성과.',
   alternates: {
     canonical: PAGE_URL,
   },
   openGraph: {
-    title: '우리의 증명 | 씨앗:페 2026',
+    title: '우리의 증명 | 씨앗페 2026',
     description:
       '예술인 상호부조 대출 305건, 누적 6억 900만원 지원. 데이터로 확인하는 상호부조 금융의 성과.',
     url: PAGE_URL,
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '씨앗:페 2026 상호부조 데이터',
+    title: '씨앗페 2026 상호부조 데이터',
     description:
       '상호부조 대출 305건, 누적 6억 900만원 지원. 예술인 금융 안전망의 실제 성과를 확인하세요.',
     images: [OG_IMAGE.url],

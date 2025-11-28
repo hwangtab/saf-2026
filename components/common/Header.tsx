@@ -8,7 +8,7 @@ import { motion } from 'framer-motion';
 import { EXTERNAL_LINKS } from '@/lib/constants';
 
 const navigation = [
-  { name: '씨앗:페 2026', href: '/' },
+  { name: '씨앗페 2026', href: '/' },
   { name: '우리의 현실', href: '/our-reality' },
   { name: '우리의 증명', href: '/our-proof' },
   { name: '전시 안내', href: '/exhibition' },
@@ -34,13 +34,13 @@ export default function Header() {
         <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
           <Image
             src="/images/logo/320pxX90px.webp"
-            alt="씨앗:페 로고"
+            alt="씨앗페 로고"
             width={160}
             height={45}
             className="h-9 w-auto"
             priority
           />
-          <span className="sr-only">씨앗:페 2026 홈</span>
+          <span className="sr-only">씨앗페 2026 홈</span>
         </Link>
 
         {/* Desktop Navigation */}

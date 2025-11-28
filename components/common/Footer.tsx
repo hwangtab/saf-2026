@@ -14,12 +14,12 @@ export default function Footer() {
             <div className="flex items-start gap-3 mb-6">
               <Image
                 src="/images/logo/320pxX90px_feet.webp"
-                alt="씨앗:페 로고"
+                alt="씨앗페 로고"
                 width={200}
                 height={56}
                 className="h-12 w-auto flex-shrink-0"
               />
-              <span className="sr-only">씨앗:페 2026</span>
+              <span className="sr-only">씨앗페 2026</span>
             </div>
             <p className="text-gray-300 text-sm mb-4">
               한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인입니다.
