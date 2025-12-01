@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
-import Link from 'next/link';
 import Button from '@/components/ui/Button';
+import ActionCard from '@/components/ui/ActionCard';
 import DynamicCounter from '@/components/features/DynamicCounter';
 import BackgroundSlider from '@/components/features/BackgroundSlider';
 import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL } from '@/lib/constants';
@@ -205,51 +205,31 @@ export default function Home() {
             당신도 함께할 수 있습니다
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <a
+            <ActionCard
               href={EXTERNAL_LINKS.DONATE}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex flex-col p-8 bg-white border-2 border-gray-300 rounded-lg shadow-sm hover:border-primary hover:shadow-xl transition-all duration-200 active:scale-95"
-            >
-              <div className="text-4xl mb-4">❤️</div>
-              <h3 className="font-watermelon text-xl font-bold mb-3">후원하기</h3>
-              <p className="text-charcoal-muted mb-4 flex-grow">
-                당신의 후원은 예술인들을 위한 기금이 됩니다.
-              </p>
-              <span className="inline-block group-hover:translate-x-1 transition-transform">
-                후원하기 →
-              </span>
-            </a>
+              external
+              icon="❤️"
+              title="후원하기"
+              description="당신의 후원은 예술인들을 위한 기금이 됩니다."
+              linkText="후원하기 →"
+            />
 
-            <a
+            <ActionCard
               href={EXTERNAL_LINKS.ONLINE_GALLERY}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex flex-col p-8 bg-white border-2 border-gray-300 rounded-lg shadow-sm hover:border-primary hover:shadow-xl transition-all duration-200 active:scale-95"
-            >
-              <div className="text-4xl mb-4">🎨</div>
-              <h3 className="font-watermelon text-xl font-bold mb-3">작품 구매</h3>
-              <p className="text-charcoal-muted mb-4 flex-grow">
-                참여 예술가들의 작품을 구매하며 지원합니다.
-              </p>
-              <span className="inline-block group-hover:translate-x-1 transition-transform">
-                갤러리 방문 →
-              </span>
-            </a>
+              external
+              icon="🎨"
+              title="작품 구매"
+              description="참여 예술가들의 작품을 구매하며 지원합니다."
+              linkText="갤러리 방문 →"
+            />
 
-            <Link
+            <ActionCard
               href="/exhibition"
-              className="group flex flex-col p-8 bg-white border-2 border-gray-300 rounded-lg shadow-sm hover:border-primary hover:shadow-xl transition-all duration-200 active:scale-95"
-            >
-              <div className="text-4xl mb-4">🏛️</div>
-              <h3 className="font-watermelon text-xl font-bold mb-3">전시 방문</h3>
-              <p className="text-charcoal-muted mb-4 flex-grow">
-                인사아트센터 3층 G&J 갤러리에서 펼쳐지는 예술의 현장을 직접 방문하세요.
-              </p>
-              <span className="inline-block group-hover:translate-x-1 transition-transform">
-                정보 보기 →
-              </span>
-            </Link>
+              icon="🏛️"
+              title="전시 방문"
+              description="인사아트센터 3층 G&J 갤러리에서 펼쳐지는 예술의 현장을 직접 방문하세요."
+              linkText="정보 보기 →"
+            />
           </div>
         </div>
       </section>
