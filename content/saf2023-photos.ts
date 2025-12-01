@@ -5,11 +5,7 @@ export interface SAF2023Photo {
 }
 
 export const saf2023Photos: SAF2023Photo[] = [
-  {
-    id: '1',
-    filename: 'IMG_0250.webp',
-    alt: '씨앗페 2023 전시 현장 1',
-  },
+
   {
     id: '2',
     filename: 'IMG_0261.webp',
