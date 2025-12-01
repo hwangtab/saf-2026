@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
+import Button from '@/components/ui/Button';
 import DynamicCounter from '@/components/features/DynamicCounter';
 import BackgroundSlider from '@/components/features/BackgroundSlider';
 import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL } from '@/lib/constants';
@@ -73,22 +74,22 @@ export default function Home() {
             이 문제를 해결하기 위해 씨앗페가 시작되었습니다.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <a
+            <Button
               href={EXTERNAL_LINKS.DONATE}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block bg-accent hover:bg-accent-strong text-light font-bold px-8 py-4 rounded-lg transition-all duration-200 active:scale-95"
+              external
+              variant="accent"
+              size="lg"
             >
               ❤️ 지금 후원하기
-            </a>
-            <a
+            </Button>
+            <Button
               href={EXTERNAL_LINKS.ONLINE_GALLERY}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block bg-gray-900 hover:bg-gray-800 text-white font-bold px-8 py-4 rounded-lg transition-all duration-200 active:scale-95"
+              external
+              variant="secondary"
+              size="lg"
             >
               🎨 작품 구매하기
-            </a>
+            </Button>
           </div>
           <p className="text-sm text-white/70 drop-shadow-lg">
             📌 1월 14일 인사아트센터 3층 G&J 갤러리에서 시작합니다
@@ -184,14 +185,14 @@ export default function Home() {
                 이는 예술인들이 신뢰할 수 있는 금융 시스템만 있으면,
                 얼마든지 책임감 있게 행동할 수 있다는 증거입니다.
               </p>
-              <a
+              <Button
                 href={EXTERNAL_LINKS.LOAN_INFO}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block bg-accent hover:bg-accent-strong text-light font-bold px-6 py-3 rounded-lg transition-colors"
+                external
+                variant="accent"
+                size="md"
               >
                 대출 신청하기 →
-              </a>
+              </Button>
             </div>
           </div>
         </div>

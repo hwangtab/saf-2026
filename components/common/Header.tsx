@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { EXTERNAL_LINKS } from '@/lib/constants';
 
 const navigation = [
@@ -26,6 +26,23 @@ export default function Header() {
     if (href !== '/' && pathname.startsWith(href)) return true;
     return false;
   };
+
+  // 모바일 메뉴 열릴 때 body 스크롤 비활성화
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [mobileMenuOpen]);
+
+  // 페이지 전환 시 모바일 메뉴 닫기
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
 
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm">
@@ -60,11 +77,10 @@ export default function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`text-sm font-medium transition-colors pb-1 border-b-2 focus:outline-none focus-visible:outline-none ${
-                  isActive(item.href)
+                className={`text-sm font-medium transition-colors pb-1 border-b-2 focus:outline-none focus-visible:outline-none ${isActive(item.href)
                     ? 'text-primary border-primary'
                     : 'border-transparent text-charcoal hover:text-primary hover:border-primary/40 focus-visible:border-primary'
-                }`}
+                  }`}
               >
                 {item.name}
               </Link>
@@ -88,6 +104,7 @@ export default function Header() {
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           className="lg:hidden p-2 text-charcoal hover:text-primary"
           aria-label="메뉴 토글"
+          aria-expanded={mobileMenuOpen}
         >
           <svg
             className="w-6 h-6"
@@ -114,54 +131,68 @@ export default function Header() {
         </button>
       </nav>
 
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          className="lg:hidden bg-white border-t"
-        >
-          <div className="container-max py-4 space-y-3">
-            {navigation.map((item) =>
-              item.external ? (
+      {/* Mobile Menu with AnimatePresence */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <>
+            {/* Overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileMenuOpen(false)}
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+            />
+
+            {/* Menu */}
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed top-16 right-0 bottom-0 w-80 max-w-[85%] bg-white shadow-2xl z-50 lg:hidden overflow-y-auto"
+            >
+              <div className="py-4 px-5 space-y-3">
+                {navigation.map((item) =>
+                  item.external ? (
+                    <a
+                      key={item.href}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block py-3 px-4 text-base rounded-lg transition-colors border-l-4 border-transparent text-charcoal hover:bg-primary/5 hover:border-primary"
+                    >
+                      {item.name}
+                    </a>
+                  ) : (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`block py-3 px-4 text-base rounded-lg transition-colors border-l-4 ${isActive(item.href)
+                          ? 'text-primary font-semibold border-primary bg-primary/10'
+                          : 'border-transparent text-charcoal hover:bg-primary/5 hover:border-primary'
+                        }`}
+                    >
+                      {item.name}
+                    </Link>
+                  )
+                )}
                 <a
-                  key={item.href}
-                  href={item.href}
+                  href={EXTERNAL_LINKS.DONATE}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block py-2 px-4 text-base transition-colors border-b-2 border-transparent text-charcoal hover:text-primary hover:border-primary/40 focus:outline-none focus-visible:outline-none focus-visible:border-primary"
+                  className="block w-full bg-accent hover:bg-accent-strong text-light font-bold px-4 py-3 rounded-lg text-center transition-colors mt-4"
                 >
-                  {item.name}
+                  ❤️ 후원하기
                 </a>
-              ) : (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`block py-2 px-4 text-base transition-colors border-b-2 focus:outline-none focus-visible:outline-none ${
-                    isActive(item.href)
-                      ? 'text-primary font-semibold border-primary'
-                      : 'border-transparent text-charcoal hover:text-primary hover:border-primary/40 focus-visible:border-primary'
-                  }`}
-                >
-                  {item.name}
-                </Link>
-              )
-            )}
-            <a
-              href={EXTERNAL_LINKS.DONATE}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block w-full bg-accent hover:bg-accent-strong text-light font-bold px-4 py-2 rounded-lg text-center transition-colors"
-            >
-              ❤️ 후원하기
-            </a>
-          </div>
-        </motion.div>
-      )}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </header>
   );
 }
