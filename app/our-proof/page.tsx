@@ -74,9 +74,7 @@ export default function OurProof() {
             <div className="bg-white p-8 rounded-lg shadow text-center border-t-4 border-primary">
               <p className="text-5xl font-bold text-primary mb-2">95%</p>
               <p className="text-charcoal-muted">상환율 (대위변제율 5.10%)</p>
-              <p className="text-xs text-charcoal-muted mt-2">
-                같은 기간 일반 저신용 대출보다 낮은 위험도
-              </p>
+
             </div >
           </div >
 
