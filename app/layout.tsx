@@ -29,6 +29,10 @@ export const metadata: Metadata = {
     '한국스마트협동조합',
   ],
   authors: [{ name: '한국스마트협동조합' }],
+  viewport: 'width=device-width, initial-scale=1',
+  icons: {
+    icon: '/favicon.ico',
+  },
   openGraph: {
     type: 'website',
     locale: 'ko_KR',
@@ -71,9 +75,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#2176FF" />
-        <link rel="icon" href="/favicon.ico" />
       </head>
       <body className="bg-canvas-soft text-charcoal flex flex-col min-h-screen">
         <a href="#main-content" className="skip-to-main">
