@@ -68,7 +68,7 @@ const config: Config = {
           'sans-serif',
         ],
         watermelon: [
-          'Paperozi',
+          'MissedSimsim',
           'GMarketSans',
           '-apple-system',
           'BlinkMacSystemFont',
@@ -84,7 +84,7 @@ const config: Config = {
           'sans-serif',
         ],
         'jeju-stone': [
-          'Paperozi',
+          'MissedSimsim',
           'GMarketSans',
           '-apple-system',
           'BlinkMacSystemFont',
