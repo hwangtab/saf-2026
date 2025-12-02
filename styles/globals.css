@@ -129,3 +129,38 @@ button:focus {
   text-decoration-thickness: 1px;
   text-underline-offset: 4px;
 }
+
+/* Typography utilities for consistent text hierarchy */
+@layer utilities {
+  .text-display {
+    @apply font-display text-5xl md:text-6xl lg:text-7xl leading-tight;
+  }
+
+  .text-headline {
+    @apply font-decorative text-4xl md:text-5xl leading-snug;
+  }
+
+  .text-title {
+    @apply font-decorative text-2xl md:text-3xl leading-normal;
+  }
+
+  .text-subtitle {
+    @apply font-sans font-bold text-xl md:text-2xl leading-normal;
+  }
+
+  .text-body-large {
+    @apply font-sans text-lg md:text-xl leading-relaxed;
+  }
+}
+
+/* Respect user's motion preferences for accessibility */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

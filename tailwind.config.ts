@@ -36,7 +36,7 @@ const config: Config = {
         },
         charcoal: {
           DEFAULT: '#31393C', // Gunmetal
-          muted: '#495156', // Slate
+          muted: '#555E67', // Slate (개선: 더 어두워져 대비 향상)
           soft: '#6A7378', // Fog Slate
         },
         success: '#2E9F7B',
@@ -67,6 +67,23 @@ const config: Config = {
           'Arial',
           'sans-serif',
         ],
+        display: [
+          'PartialSans',
+          'GMarketSans',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'system-ui',
+          'sans-serif',
+        ],
+        decorative: [
+          'MissedSimsim',
+          'GMarketSans',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'system-ui',
+          'sans-serif',
+        ],
+        // Deprecated: Use 'decorative' instead
         watermelon: [
           'MissedSimsim',
           'GMarketSans',
@@ -75,6 +92,7 @@ const config: Config = {
           'system-ui',
           'sans-serif',
         ],
+        // Deprecated: Use 'display' instead
         partial: [
           'PartialSans',
           'GMarketSans',
@@ -83,6 +101,7 @@ const config: Config = {
           'system-ui',
           'sans-serif',
         ],
+        // Deprecated: Use 'decorative' instead
         'jeju-stone': [
           'MissedSimsim',
           'GMarketSans',
@@ -94,6 +113,15 @@ const config: Config = {
       },
       spacing: {
         safe: 'max(1rem, env(safe-area-inset-bottom))',
+      },
+      animation: {
+        shimmer: 'shimmer 2s infinite',
+      },
+      keyframes: {
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
+        },
       },
     },
   },
