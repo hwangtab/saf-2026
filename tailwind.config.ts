@@ -57,6 +57,7 @@ const config: Config = {
         },
       },
       fontFamily: {
+        // 기본 폰트 - 모든 텍스트에 사용
         sans: [
           'GMarketSans',
           '-apple-system',
@@ -67,43 +68,9 @@ const config: Config = {
           'Arial',
           'sans-serif',
         ],
+        // 히어로 타이틀 전용
         display: [
           'PartialSans',
-          'GMarketSans',
-          '-apple-system',
-          'BlinkMacSystemFont',
-          'system-ui',
-          'sans-serif',
-        ],
-        decorative: [
-          'MissedSimsim',
-          'GMarketSans',
-          '-apple-system',
-          'BlinkMacSystemFont',
-          'system-ui',
-          'sans-serif',
-        ],
-        // Deprecated: Use 'decorative' instead
-        watermelon: [
-          'MissedSimsim',
-          'GMarketSans',
-          '-apple-system',
-          'BlinkMacSystemFont',
-          'system-ui',
-          'sans-serif',
-        ],
-        // Deprecated: Use 'display' instead
-        partial: [
-          'PartialSans',
-          'GMarketSans',
-          '-apple-system',
-          'BlinkMacSystemFont',
-          'system-ui',
-          'sans-serif',
-        ],
-        // Deprecated: Use 'decorative' instead
-        'jeju-stone': [
-          'MissedSimsim',
           'GMarketSans',
           '-apple-system',
           'BlinkMacSystemFont',

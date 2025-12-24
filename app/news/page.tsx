@@ -198,7 +198,7 @@ export default function NewsPage() {
       <PageHero
         title="언론 보도"
         description="씨앗페 캠페인을 조명한 기사와 인터뷰를 모았습니다."
-        backgroundClass="bg-accent-soft"
+        
       >
         <ShareButtons
           url={canonicalUrl}
@@ -213,7 +213,7 @@ export default function NewsPage() {
             <span className="inline-flex items-center px-3 py-1 rounded-full border border-primary text-primary text-xs font-semibold tracking-wide uppercase">
               Press Highlights
             </span>
-            <h2 className="mt-4 text-3xl md:text-4xl font-watermelon font-bold text-gray-900 leading-tight">
+            <h2 className="mt-4 text-3xl md:text-4xl font-sans font-bold font-bold text-gray-900 leading-tight">
               언론이 짚어낸 예술인 금융 위기의 핵심 메시지
             </h2>
             <p className="mt-3 text-base md:text-lg text-charcoal-muted leading-relaxed">
@@ -274,7 +274,7 @@ export default function NewsPage() {
                       <span>{article.source}</span>
                       <span>{formatDate(article.date)}</span>
                     </div>
-                    <h3 className="font-watermelon text-xl font-bold leading-tight text-gray-900">
+                    <h3 className="font-sans font-bold text-xl font-bold leading-tight text-gray-900">
                       {article.title}
                     </h3>
                     <p className="text-sm text-charcoal-muted leading-relaxed">

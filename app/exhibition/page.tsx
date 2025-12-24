@@ -89,7 +89,7 @@ export default function ExhibitionPage() {
       <PageHero
         title="전시 안내"
         description="씨앗페 2026을 직접 만나보세요"
-        backgroundClass="bg-sun-soft"
+        
       >
         <ShareButtons url={canonicalUrl} title={shareTitle} description={shareDescription} />
       </PageHero>
@@ -101,19 +101,19 @@ export default function ExhibitionPage() {
             {/* Info */}
             <div className="flex flex-col gap-8 h-full">
               <div>
-                <h2 className="font-jeju-stone text-4xl md:text-5xl mb-6">전시 정보</h2>
+                <h2 className="font-sans font-bold text-4xl md:text-5xl mb-6">전시 정보</h2>
                 <div className="space-y-4">
                   <div className="border-l-4 border-primary pl-4">
-                    <h3 className="font-watermelon text-sm text-gray-500 font-semibold mb-1">행사명</h3>
+                    <h3 className="font-sans font-bold text-sm text-gray-500 font-semibold mb-1">행사명</h3>
                     <p className="text-lg font-semibold">{EXHIBITION.NAME}</p>
                   </div>
                   <div className="border-l-4 border-primary pl-4">
-                    <h3 className="font-watermelon text-sm text-gray-500 font-semibold mb-1">기간</h3>
+                    <h3 className="font-sans font-bold text-sm text-gray-500 font-semibold mb-1">기간</h3>
                     <p className="text-lg font-semibold">{EXHIBITION.DATE}</p>
                   </div>
                   <div className="border-l-4 border-primary pl-4">
-                    <h3 className="font-watermelon text-sm text-gray-500 font-semibold mb-1">장소</h3>
-                  <p className="text-lg font-semibold">{EXHIBITION.LOCATION}</p>
+                    <h3 className="font-sans font-bold text-sm text-gray-500 font-semibold mb-1">장소</h3>
+                    <p className="text-lg font-semibold">{EXHIBITION.LOCATION}</p>
                     <p className="text-charcoal-muted text-sm">{EXHIBITION.ADDRESS}</p>
                   </div>
                 </div>
@@ -121,43 +121,43 @@ export default function ExhibitionPage() {
 
               {/* Quick Links */}
               <div className="mt-auto space-y-3">
-                <h3 className="font-watermelon text-lg font-bold mb-4">참여하기</h3>
-              <div className="space-y-3">
-                <a
-                  href={EXTERNAL_LINKS.DONATE}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block w-full bg-accent hover:bg-accent-strong text-light font-bold px-6 py-3 rounded-lg transition-colors text-center"
-                >
-                  ❤️ 후원하기
-                </a>
-                <a
-                  href={EXTERNAL_LINKS.ONLINE_GALLERY}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block w-full bg-gray-900 hover:bg-gray-800 text-white font-bold px-6 py-3 rounded-lg transition-colors text-center"
-                >
-                  🎨 작품 구매하기
-                </a>
-                <div className="pt-4 text-sm text-charcoal-muted">
-                  <p>
-                    문의:{' '}
-                    <a
-                      href="tel:027643114"
-                      className="underline hover:text-primary link-underline-offset"
-                    >
-                      02-764-3114
-                    </a>{' '}
-                    /{' '}
-                    <a
-                      href="mailto:contact@kosmart.co.kr"
-                      className="underline hover:text-primary link-underline-offset"
-                    >
-                      contact@kosmart.co.kr
-                    </a>
-                  </p>
+                <h3 className="font-sans font-bold text-lg font-bold mb-4">참여하기</h3>
+                <div className="space-y-3">
+                  <a
+                    href={EXTERNAL_LINKS.DONATE}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block w-full bg-accent hover:bg-accent-strong text-light font-bold px-6 py-3 rounded-lg transition-colors text-center"
+                  >
+                    ❤️ 후원하기
+                  </a>
+                  <a
+                    href={EXTERNAL_LINKS.ONLINE_GALLERY}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block w-full bg-gray-900 hover:bg-gray-800 text-white font-bold px-6 py-3 rounded-lg transition-colors text-center"
+                  >
+                    🎨 작품 구매하기
+                  </a>
+                  <div className="pt-4 text-sm text-charcoal-muted">
+                    <p>
+                      문의:{' '}
+                      <a
+                        href="tel:027643114"
+                        className="underline hover:text-primary link-underline-offset"
+                      >
+                        02-764-3114
+                      </a>{' '}
+                      /{' '}
+                      <a
+                        href="mailto:contact@kosmart.org"
+                        className="underline hover:text-primary link-underline-offset"
+                      >
+                        contact@kosmart.org
+                      </a>
+                    </p>
+                  </div>
                 </div>
-              </div>
               </div>
             </div>
 
@@ -172,10 +172,10 @@ export default function ExhibitionPage() {
       {/* Access Information */}
       <section className="py-12 md:py-20 bg-accent-soft">
         <div className="container-max">
-          <h2 className="font-jeju-stone text-4xl md:text-5xl mb-12">오시는 길</h2>
+          <h2 className="font-sans font-bold text-4xl md:text-5xl mb-12">오시는 길</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
             <div>
-              <h3 className="font-watermelon text-xl font-bold mb-4">🚇 대중교통</h3>
+              <h3 className="font-sans font-bold text-xl font-bold mb-4">🚇 대중교통</h3>
               <div className="space-y-4 text-charcoal-muted">
                 <div>
                   <p className="font-semibold text-gray-900">지하철</p>
@@ -194,7 +194,7 @@ export default function ExhibitionPage() {
               </div>
             </div>
             <div>
-              <h3 className="font-watermelon text-xl font-bold mb-4">🚗 자동차</h3>
+              <h3 className="font-sans font-bold text-xl font-bold mb-4">🚗 자동차</h3>
               <div className="space-y-4 text-charcoal-muted">
                 <div>
                   <p className="font-semibold text-gray-900">주소</p>
@@ -213,15 +213,15 @@ export default function ExhibitionPage() {
 
           {/* Accessibility */}
           <div className="bg-white border-2 border-blue-200 rounded-lg p-6">
-            <h3 className="font-watermelon font-bold mb-3">♿ 접근성 정보</h3>
+            <h3 className="font-sans font-bold font-bold mb-3">♿ 접근성 정보</h3>
             <ul className="text-charcoal-muted space-y-2 text-sm">
               <li>✓ 장애인 휠체어 접근 가능</li>
               <li>✓ 엘리베이터 및 휠체어 화장실 보유</li>
               <li>✓ 휠체어 사용자 주차 공간 가능</li>
               <li>
                 자세한 문의:{' '}
-                <a href="mailto:contact@kosmart.co.kr" className="underline hover:text-primary link-underline-offset">
-                  contact@kosmart.co.kr
+                <a href="mailto:contact@kosmart.org" className="underline hover:text-primary link-underline-offset">
+                  contact@kosmart.org
                 </a>
               </li>
             </ul>
@@ -232,10 +232,10 @@ export default function ExhibitionPage() {
       {/* Schedule Section */}
       <section className="py-12 md:py-20 bg-gray-50">
         <div className="container-max">
-          <h2 className="font-jeju-stone text-4xl md:text-5xl mb-12">행사 일정</h2>
+          <h2 className="font-sans font-bold text-4xl md:text-5xl mb-12">행사 일정</h2>
           <div className="bg-white rounded-lg shadow-lg p-8">
             <div className="mb-8">
-              <h3 className="font-watermelon text-xl font-bold mb-4">📅 주요 일정</h3>
+              <h3 className="font-sans font-bold text-xl font-bold mb-4">📅 주요 일정</h3>
               <div className="space-y-4">
                 <div className="flex gap-4">
                   <div className="flex-shrink-0 w-24 font-bold text-primary">
@@ -285,14 +285,14 @@ export default function ExhibitionPage() {
             </div>
 
             <div className="pt-8 border-t">
-              <h3 className="font-watermelon font-bold mb-4">📋 기본 정보</h3>
+              <h3 className="font-sans font-bold font-bold mb-4">📋 기본 정보</h3>
               <ul className="text-charcoal-muted space-y-2 text-sm">
                 <li>✓ 입장료: 무료 (후원금은 자율)</li>
                 <li>✓ 개별 방문 및 단체 관람 가능</li>
                 <li>
                   ✓ 단체 관람 사전 예약:{' '}
-                  <a href="mailto:contact@kosmart.co.kr" className="underline hover:text-primary link-underline-offset">
-                    contact@kosmart.co.kr
+                  <a href="mailto:contact@kosmart.org" className="underline hover:text-primary link-underline-offset">
+                    contact@kosmart.org
                   </a>
                 </li>
                 <li>✓ 어린이/청소년 관람 환영</li>
@@ -305,7 +305,7 @@ export default function ExhibitionPage() {
       {/* Contact Section */}
       <section className="py-12 md:py-20 bg-primary/20">
         <div className="container-max text-center">
-          <h2 className="font-jeju-stone text-4xl md:text-5xl mb-8">문의사항</h2>
+          <h2 className="font-sans font-bold text-4xl md:text-5xl mb-8">문의사항</h2>
           <div className="space-y-4">
             <p className="text-lg text-charcoal-muted">
               행사와 관련하여 궁금한 점이 있으시면 아래로 연락주세요.
@@ -323,8 +323,8 @@ export default function ExhibitionPage() {
               </p>
               <p>
                 📧{' '}
-                <a href="mailto:contact@kosmart.co.kr" className="underline hover:text-primary link-underline-offset">
-                  contact@kosmart.co.kr
+                <a href="mailto:contact@kosmart.org" className="underline hover:text-primary link-underline-offset">
+                  contact@kosmart.org
                 </a>
               </p>
               <p>

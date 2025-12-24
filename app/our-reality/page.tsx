@@ -173,13 +173,13 @@ export default function OurReality() {
       <PageHero
         title="우리의 현실"
         description="2025 예술인 금융 재난 보고서가 밝혀낸 한국 예술인의 금융 위기의 구조적 현실"
-        backgroundClass="bg-sun-soft"
+        
       />
 
       {testimonialsData.map((group, groupIndex) => (
         <section key={groupIndex} className={`py-12 md:py-20 ${groupIndex === 0 ? 'bg-white' : groupIndex === 1 ? 'bg-gray-50' : 'bg-canvas-soft'}`}>
           <div className="container-max">
-            <h2 className="font-jeju-stone text-4xl md:text-5xl mb-12 text-center text-balance">
+            <h2 className="font-sans font-bold text-4xl md:text-5xl mb-12 text-center text-balance">
               {group.category}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -208,8 +208,8 @@ export default function OurReality() {
       {/* 도입: 금융의 재정의 */}
       <section className="py-12 md:py-20 bg-white">
         <div className="container-max">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="font-jeju-stone text-4xl md:text-5xl mb-8 text-center">예술인에게 금융은 산소호흡기</h2>
+          <div className="max-w-3xl mx-auto text-balance">
+            <h2 className="font-sans font-bold text-4xl md:text-5xl mb-8 text-center">예술인에게 금융은 산소호흡기</h2>
             <div className="space-y-6 text-lg text-charcoal">
             <p>
               예술인들은 정기적인 급여가 아닌, 프로젝트 기반의 불규칙한 소득을 얻습니다. 공연과 공연 사이, 전시와 전시 사이 발생하는
@@ -236,7 +236,7 @@ export default function OurReality() {
               🚫
             </div>
             <span className="text-sm font-bold text-primary-strong uppercase">STAGE 1</span>
-            <h2 className="font-jeju-stone text-4xl md:text-5xl mb-4">닫힌 문: 은행이 거절하다</h2>
+            <h2 className="font-sans font-bold text-4xl md:text-5xl mb-4">닫힌 문: 은행이 거절하다</h2>
             <p className="text-xl text-charcoal-muted max-w-2xl leading-relaxed">
               제1금융권 배제율 <strong className="text-primary-strong">84.9%</strong>
             </p>
@@ -244,7 +244,7 @@ export default function OurReality() {
 
           {/* Description Text */}
           <div className="max-w-3xl mb-12">
-            <h3 className="font-watermelon text-xl font-bold mb-3">은행의 문은 왜 닫혔나?</h3>
+            <h3 className="font-sans font-bold text-xl font-bold mb-3">은행의 문은 왜 닫혔나?</h3>
             <ul className="space-y-3 text-charcoal">
               <li className="flex gap-3">
                 <span className="font-bold text-primary-strong">•</span>
@@ -279,7 +279,7 @@ export default function OurReality() {
               ⚠️
             </div>
             <span className="text-sm font-bold text-accent-strong uppercase">STAGE 2</span>
-            <h2 className="font-jeju-stone text-4xl md:text-5xl mb-4">낭떠러지: 고리대금로 내몰리다</h2>
+            <h2 className="font-sans font-bold text-4xl md:text-5xl mb-4">낭떠러지: 고리대금로 내몰리다</h2>
             <p className="text-xl text-charcoal-muted max-w-2xl leading-relaxed">
               고리대금 상품 노출률 <strong className="text-accent-strong">48.6%</strong> (연 15% 이상)
             </p>
@@ -287,7 +287,7 @@ export default function OurReality() {
 
           {/* Description Text */}
           <div className="max-w-3xl mb-12">
-            <h3 className="font-watermelon text-xl font-bold mb-3">선택이 아닌 생존</h3>
+            <h3 className="font-sans font-bold text-xl font-bold mb-3">선택이 아닌 생존</h3>
             <p className="text-charcoal mb-4 text-balance leading-relaxed">
               은행 문이 닫힌 순간, 예술인들은 곧바로 저축은행, 카드론, 대부업체로 내몰립니다.
               <strong> 83.2%의 예술인이 고리대금 금융 상품을 이용</strong>한 경험이 있습니다.
@@ -319,7 +319,7 @@ export default function OurReality() {
               💔
             </div>
             <span className="text-sm font-bold text-danger uppercase">STAGE 3</span>
-            <h2 className="font-jeju-stone text-4xl md:text-5xl mb-4">파괴: 창작이 멈춘다</h2>
+            <h2 className="font-sans font-bold text-4xl md:text-5xl mb-4">파괴: 창작이 멈춘다</h2>
             <p className="text-xl text-charcoal-muted max-w-2xl leading-relaxed">
               채권추심 경험자의 창작 중단율 <strong className="text-danger">88.3%</strong>
             </p>
@@ -327,7 +327,7 @@ export default function OurReality() {
 
           {/* Description Text */}
           <div className="max-w-3xl mb-12">
-            <h3 className="font-watermelon text-xl font-bold mb-3">생존의 위기</h3>
+            <h3 className="font-sans font-bold text-xl font-bold mb-3">생존의 위기</h3>
             <p className="text-charcoal mb-4 text-balance leading-relaxed">
               채권추심을 경험한 예술인은 <strong>10명 중 4명(43%)</strong>입니다.
               이들은 멈추지 않는 전화, 모욕적인 언사, 집으로 찾아오는 추심원 앞에서
@@ -354,7 +354,7 @@ export default function OurReality() {
       {/* 진단: 사회적 재난 */}
       <section className="py-12 md:py-20 bg-white">
         <div className="container-max max-w-3xl">
-          <h2 className="font-jeju-stone text-4xl md:text-5xl mb-8 text-center">이것은 개인의 문제가 아닙니다</h2>
+          <h2 className="font-sans font-bold text-4xl md:text-5xl mb-8 text-center">이것은 개인의 문제가 아닙니다</h2>
           <div className="space-y-6 text-lg text-charcoal">
             <p>
               예술인 금융 위기는 개인의 나태나 불성실의 결과가 아닙니다.
@@ -376,8 +376,8 @@ export default function OurReality() {
       {/* 제언: 산소호흡기가 필요하다 */}
       <section className="py-12 md:py-20 bg-canvas-soft">
         <div className="container-max">
-          <h2 className="font-jeju-stone text-4xl md:text-5xl mb-8 text-center">산소호흡기가 필요하다</h2>
-          <div className="space-y-6 text-lg text-charcoal mb-12 max-w-3xl mx-auto">
+          <h2 className="font-sans font-bold text-4xl md:text-5xl mb-8 text-center">산소호흡기가 필요하다</h2>
+          <div className="space-y-6 text-lg text-charcoal mb-12 max-w-3xl mx-auto text-balance">
             <p>
               예술인에게 필요한 것은 일시적인 지원금이나 복지가 아닙니다.
               <strong> 예측 불가능한 소득 공백기를 버텨낼 안정적인 금융</strong>입니다.
@@ -419,8 +419,8 @@ export default function OurReality() {
       {/* Call to Action */}
       <section className="py-12 md:py-20 bg-primary/20">
         <div className="container-max text-center">
-          <h2 className="font-jeju-stone text-4xl md:text-5xl mb-6">이제 행동할 시간입니다</h2>
-          <p className="text-lg text-charcoal-muted mb-8 max-w-2xl mx-auto">
+          <h2 className="font-sans font-bold text-4xl md:text-5xl mb-6">이제 행동할 시간입니다</h2>
+          <p className="text-lg text-charcoal-muted mb-8 max-w-2xl mx-auto text-balance">
             한국 예술인들의 창작 시간을 살려내는 일에 함께해주세요.
             <br />
             당신의 참여와 후원이 <span className="text-sun-strong font-semibold">산소호흡기</span>가 되어 예술이 계속 숨 쉬게 합니다.

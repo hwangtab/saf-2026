@@ -29,13 +29,7 @@
   font-display: swap;
 }
 
-/* 그리운심심체 - 섹션 제목용 */
-@font-face {
-  font-family: 'MissedSimsim';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2511-1@1.0/Griun_Simsimche-Rg.woff2') format('woff2');
-  font-weight: normal;
-  font-display: swap;
-}
+/* (Paperozi 폰트 제거됨 - 이제 GMarketSans 사용) */
 
 /* 2. Tailwind 지시어 */
 @tailwind base;
@@ -130,24 +124,27 @@ button:focus {
   text-underline-offset: 4px;
 }
 
-/* Typography utilities for consistent text hierarchy */
+/* ============================================
+   Typography System (타이포그래피 시스템)
+   ============================================ */
 @layer utilities {
-  .text-display {
+
+  /* 히어로 타이틀 - PartialSans 사용 */
+  .text-hero {
     @apply font-display text-5xl md:text-6xl lg:text-7xl leading-tight;
   }
 
-  .text-headline {
-    @apply font-decorative text-4xl md:text-5xl leading-snug;
+  /* 섹션 제목 (h2) - GMarketSans Bold */
+  .text-section {
+    @apply font-sans font-bold text-4xl md:text-5xl leading-snug;
   }
 
-  .text-title {
-    @apply font-decorative text-2xl md:text-3xl leading-normal;
-  }
-
-  .text-subtitle {
+  /* 카드/서브섹션 제목 (h3) - GMarketSans Bold */
+  .text-card-title {
     @apply font-sans font-bold text-xl md:text-2xl leading-normal;
   }
 
+  /* 본문 큰 글씨 */
   .text-body-large {
     @apply font-sans text-lg md:text-xl leading-relaxed;
   }

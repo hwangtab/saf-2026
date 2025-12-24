@@ -57,7 +57,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-watermelon font-bold text-lg mb-4">링크</h3>
+            <h3 className="font-sans font-bold font-bold text-lg mb-4">링크</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <a
@@ -104,7 +104,7 @@ export default function Footer() {
 
           {/* Social Links */}
           <div>
-            <h3 className="font-watermelon font-bold text-lg mb-4">팔로우</h3>
+            <h3 className="font-sans font-bold font-bold text-lg mb-4">팔로우</h3>
             <div className="flex gap-4">
               <a
                 href={SOCIAL_LINKS.INSTAGRAM}

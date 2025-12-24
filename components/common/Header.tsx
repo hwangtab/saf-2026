@@ -11,6 +11,7 @@ const navigation = [
   { name: '씨앗페 2026', href: '/' },
   { name: '우리의 현실', href: '/our-reality' },
   { name: '우리의 증명', href: '/our-proof' },
+  { name: '출품작', href: '/artworks' },
   { name: '전시 안내', href: '/exhibition' },
   { name: '작품 구매하기', href: EXTERNAL_LINKS.ONLINE_GALLERY, external: true },
   { name: '아카이브', href: '/archive' },
@@ -78,8 +79,8 @@ export default function Header() {
                 key={item.href}
                 href={item.href}
                 className={`text-sm font-medium transition-colors pb-1 border-b-2 focus:outline-none focus-visible:outline-none ${isActive(item.href)
-                    ? 'text-primary border-primary'
-                    : 'border-transparent text-charcoal hover:text-primary hover:border-primary/40 focus-visible:border-primary'
+                  ? 'text-primary border-primary'
+                  : 'border-transparent text-charcoal hover:text-primary hover:border-primary/40 focus-visible:border-primary'
                   }`}
               >
                 {item.name}
@@ -171,8 +172,8 @@ export default function Header() {
                       href={item.href}
                       onClick={() => setMobileMenuOpen(false)}
                       className={`block py-3 px-4 text-base rounded-lg transition-colors border-l-4 ${isActive(item.href)
-                          ? 'text-primary font-semibold border-primary bg-primary/10'
-                          : 'border-transparent text-charcoal hover:bg-primary/5 hover:border-primary'
+                        ? 'text-primary font-semibold border-primary bg-primary/10'
+                        : 'border-transparent text-charcoal hover:bg-primary/5 hover:border-primary'
                         }`}
                     >
                       {item.name}

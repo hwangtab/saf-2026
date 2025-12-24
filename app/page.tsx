@@ -61,7 +61,7 @@ export default function Home() {
               priority
             />
           </div>
-          <h1 className="font-partial text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight text-white drop-shadow-lg text-balance">
+          <h1 className="font-display text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight text-white drop-shadow-lg text-balance">
             고리대금의 벽,
             <br />
             예술인의 연대로 무너뜨립니다
@@ -103,12 +103,12 @@ export default function Home() {
       {/* Problem Section */}
       <section className="py-16 md:py-24 bg-sun-soft">
         <div className="container-max">
-          <h2 className="font-jeju-stone text-4xl md:text-5xl text-center mb-12">
+          <h2 className="font-sans font-bold text-4xl md:text-5xl text-center mb-12">
             우리가 직면한 문제
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div className="space-y-4">
-              <h3 className="font-watermelon text-xl font-bold text-charcoal">
+              <h3 className="font-sans font-bold text-xl font-bold text-charcoal">
                 🚫 금융 시장의 차별
               </h3>
               <p className="text-charcoal-muted leading-relaxed">
@@ -117,7 +117,7 @@ export default function Home() {
               </p>
             </div>
             <div className="space-y-4">
-              <h3 className="font-watermelon text-xl font-bold text-charcoal">
+              <h3 className="font-sans font-bold text-xl font-bold text-charcoal">
                 💳 고리대금의 악순환
               </h3>
               <p className="text-charcoal-muted leading-relaxed">
@@ -126,7 +126,7 @@ export default function Home() {
               </p>
             </div>
             <div className="space-y-4">
-              <h3 className="font-watermelon text-xl font-bold text-charcoal">
+              <h3 className="font-sans font-bold text-xl font-bold text-charcoal">
                 😔 심각한 피해
               </h3>
               <p className="text-charcoal-muted leading-relaxed">
@@ -135,7 +135,7 @@ export default function Home() {
               </p>
             </div>
             <div className="space-y-4">
-              <h3 className="font-watermelon text-xl font-bold text-charcoal">
+              <h3 className="font-sans font-bold text-xl font-bold text-charcoal">
                 🤝 해결책: 상호부조
               </h3>
               <p className="text-charcoal-muted leading-relaxed">
@@ -158,12 +158,12 @@ export default function Home() {
       {/* Solution Section */}
       <section className="py-16 md:py-24 bg-primary-surface">
         <div className="container-max">
-          <h2 className="font-jeju-stone text-4xl md:text-5xl text-center mb-12">
+          <h2 className="font-sans font-bold text-4xl md:text-5xl text-center mb-12">
             우리의 해결책
           </h2>
-          <div className="bg-white rounded-lg shadow-lg p-8 md:p-12 max-w-3xl mx-auto">
+          <div className="bg-white rounded-lg shadow-lg p-8 md:p-12 max-w-3xl mx-auto text-balance">
             <div className="mb-8">
-              <h3 className="font-watermelon text-2xl font-bold text-charcoal mb-4">
+              <h3 className="font-sans font-bold text-2xl font-bold text-charcoal mb-4">
                 📈 95% 상환율의 신뢰
               </h3>
               <p className="text-charcoal-muted leading-relaxed mb-4">
@@ -201,7 +201,7 @@ export default function Home() {
       {/* Call to Action Section */}
       <section className="py-16 md:py-24 bg-accent-soft">
         <div className="container-max">
-          <h2 className="font-jeju-stone text-4xl md:text-5xl mb-12 text-center">
+          <h2 className="font-sans font-bold text-4xl md:text-5xl mb-12 text-center">
             당신도 함께할 수 있습니다
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
