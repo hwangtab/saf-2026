@@ -77,6 +77,14 @@ const config: Config = {
           'system-ui',
           'sans-serif',
         ],
+        // 섹션 제목 전용
+        section: [
+          'NoonnuBasicGothic',
+          'GMarketSans',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'sans-serif',
+        ],
       },
       spacing: {
         safe: 'max(1rem, env(safe-area-inset-bottom))',

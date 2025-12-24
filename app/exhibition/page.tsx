@@ -101,7 +101,7 @@ export default function ExhibitionPage() {
             {/* Info */}
             <div className="flex flex-col gap-8 h-full">
               <div>
-                <h2 className="font-sans font-bold text-4xl md:text-5xl mb-6">전시 정보</h2>
+                <h2 className="font-section font-normal text-4xl md:text-5xl mb-6">전시 정보</h2>
                 <div className="space-y-4">
                   <div className="border-l-4 border-primary pl-4">
                     <h3 className="font-sans font-bold text-sm text-gray-500 font-semibold mb-1">행사명</h3>
@@ -172,7 +172,7 @@ export default function ExhibitionPage() {
       {/* Access Information */}
       <section className="py-12 md:py-20 bg-accent-soft">
         <div className="container-max">
-          <h2 className="font-sans font-bold text-4xl md:text-5xl mb-12">오시는 길</h2>
+          <h2 className="font-section font-normal text-4xl md:text-5xl mb-12">오시는 길</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
             <div>
               <h3 className="font-sans font-bold text-xl font-bold mb-4">🚇 대중교통</h3>
@@ -232,7 +232,7 @@ export default function ExhibitionPage() {
       {/* Schedule Section */}
       <section className="py-12 md:py-20 bg-gray-50">
         <div className="container-max">
-          <h2 className="font-sans font-bold text-4xl md:text-5xl mb-12">행사 일정</h2>
+          <h2 className="font-section font-normal text-4xl md:text-5xl mb-12">행사 일정</h2>
           <div className="bg-white rounded-lg shadow-lg p-8">
             <div className="mb-8">
               <h3 className="font-sans font-bold text-xl font-bold mb-4">📅 주요 일정</h3>
@@ -305,7 +305,7 @@ export default function ExhibitionPage() {
       {/* Contact Section */}
       <section className="py-12 md:py-20 bg-primary/20">
         <div className="container-max text-center">
-          <h2 className="font-sans font-bold text-4xl md:text-5xl mb-8">문의사항</h2>
+          <h2 className="font-section font-normal text-4xl md:text-5xl mb-8">문의사항</h2>
           <div className="space-y-4">
             <p className="text-lg text-charcoal-muted">
               행사와 관련하여 궁금한 점이 있으시면 아래로 연락주세요.

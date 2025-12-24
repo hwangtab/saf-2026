@@ -53,10 +53,16 @@ export default function MasonryGallery({ artworks }: MasonryGalleryProps) {
                                     {artwork.title}
                                 </h3>
                                 <p className="text-sm text-gray-600 mt-1">{artwork.artist}</p>
-                                <p className="text-xs text-gray-400 mt-2">
-                                    {artwork.material} · {artwork.size}
-                                </p>
-                                <p className="text-sm font-semibold text-primary mt-1">{artwork.price}</p>
+                                {(artwork.material !== '확인 중' || artwork.size !== '확인 중') && (
+                                    <p className="text-xs text-gray-400 mt-2">
+                                        {artwork.material !== '확인 중' && artwork.material}
+                                        {artwork.material !== '확인 중' && artwork.size !== '확인 중' && ' · '}
+                                        {artwork.size !== '확인 중' && artwork.size}
+                                    </p>
+                                )}
+                                {artwork.price !== '문의' && artwork.price !== '확인 중' && (
+                                    <p className="text-sm font-semibold text-primary mt-1">{artwork.price}</p>
+                                )}
                             </div>
                         </div>
                     </Link>
