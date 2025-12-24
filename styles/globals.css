@@ -29,10 +29,10 @@
   font-display: swap;
 }
 
-/* 섹션 제목 폰트 - NoonnuBasicGothic */
+/* 섹션 제목 폰트 - Simple (Danjo-bold) */
 @font-face {
-  font-family: 'NoonnuBasicGothic';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noon-2410@1.0/NoonnuBasicGothicRegular.woff2') format('woff2');
+  font-family: 'Simple';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2307-1@1.1/Danjo-bold-Regular.woff2') format('woff2');
   font-weight: normal;
   font-display: swap;
 }

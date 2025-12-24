@@ -79,7 +79,7 @@ const config: Config = {
         ],
         // 섹션 제목 전용
         section: [
-          'NoonnuBasicGothic',
+          'Simple',
           'GMarketSans',
           '-apple-system',
           'BlinkMacSystemFont',
