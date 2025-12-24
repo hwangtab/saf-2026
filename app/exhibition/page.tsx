@@ -135,7 +135,7 @@ export default function ExhibitionPage() {
 
               {/* Quick Links */}
               <div className="mt-auto space-y-3">
-                <h3 className="font-sans font-bold text-lg font-bold mb-4">참여하기</h3>
+                <h3 className="font-sans font-bold text-lg mb-4">참여하기</h3>
                 <div className="space-y-3">
                   <a
                     href={EXTERNAL_LINKS.DONATE}
@@ -189,7 +189,7 @@ export default function ExhibitionPage() {
           <h2 className="font-section font-normal text-4xl md:text-5xl mb-12">오시는 길</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
             <div>
-              <h3 className="font-sans font-bold text-xl font-bold mb-4">🚇 대중교통</h3>
+              <h3 className="font-sans font-bold text-xl mb-4">🚇 대중교통</h3>
               <div className="space-y-4 text-charcoal-muted">
                 <div>
                   <p className="font-semibold text-gray-900">지하철</p>
@@ -208,7 +208,7 @@ export default function ExhibitionPage() {
               </div>
             </div>
             <div>
-              <h3 className="font-sans font-bold text-xl font-bold mb-4">🚗 자동차</h3>
+              <h3 className="font-sans font-bold text-xl mb-4">🚗 자동차</h3>
               <div className="space-y-4 text-charcoal-muted">
                 <div>
                   <p className="font-semibold text-gray-900">주소</p>
@@ -227,7 +227,7 @@ export default function ExhibitionPage() {
 
           {/* Accessibility */}
           <div className="bg-white border-2 border-blue-200 rounded-lg p-6">
-            <h3 className="font-sans font-bold font-bold mb-3">♿ 접근성 정보</h3>
+            <h3 className="font-sans font-bold mb-3">♿ 접근성 정보</h3>
             <ul className="text-charcoal-muted space-y-2 text-sm">
               <li>✓ 장애인 휠체어 접근 가능</li>
               <li>✓ 엘리베이터 및 휠체어 화장실 보유</li>
@@ -249,7 +249,7 @@ export default function ExhibitionPage() {
           <h2 className="font-section font-normal text-4xl md:text-5xl mb-12">행사 일정</h2>
           <div className="bg-white rounded-lg shadow-lg p-8">
             <div className="mb-8">
-              <h3 className="font-sans font-bold text-xl font-bold mb-4">📅 주요 일정</h3>
+              <h3 className="font-sans font-bold text-xl mb-4">📅 주요 일정</h3>
               <div className="space-y-4">
                 <div className="flex gap-4">
                   <div className="flex-shrink-0 w-24 font-bold text-primary">
@@ -299,7 +299,7 @@ export default function ExhibitionPage() {
             </div>
 
             <div className="pt-8 border-t">
-              <h3 className="font-sans font-bold font-bold mb-4">📋 기본 정보</h3>
+              <h3 className="font-sans font-bold mb-4">📋 기본 정보</h3>
               <ul className="text-charcoal-muted space-y-2 text-sm">
                 <li>✓ 입장료: 무료 (후원금은 자율)</li>
                 <li>✓ 개별 방문 및 단체 관람 가능</li>

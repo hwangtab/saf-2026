@@ -47,7 +47,7 @@ export default function ActionCard({
                     {icon}
                 </motion.div>
 
-                <h3 className="font-sans font-bold text-xl font-bold mb-3">{title}</h3>
+                <h3 className="font-sans text-xl font-bold mb-3">{title}</h3>
                 <p className="text-charcoal-muted mb-4 flex-grow leading-relaxed">{description}</p>
 
                 {/* Link with arrow animation */}

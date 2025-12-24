@@ -76,7 +76,7 @@ export default function ArtworkDetailPage({ params }: Props) {
                     {/* Info Section */}
                     <div className="lg:sticky lg:top-32 space-y-8">
                         <header>
-                            <h1 className="text-3xl md:text-4xl font-bold font-sans font-bold text-charcoal mb-2">
+                            <h1 className="text-3xl md:text-4xl font-bold font-sans text-charcoal mb-2">
                                 {artwork.title}
                             </h1>
                             <p className="text-xl text-gray-600 font-medium">

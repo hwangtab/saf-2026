@@ -44,7 +44,7 @@ export function FirstBankAccessChart() {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm">
-      <h3 className="font-sans font-bold text-lg font-bold mb-4">제1금융권 접근 현황</h3>
+      <h3 className="font-sans font-bold text-lg mb-4">제1금융권 접근 현황</h3>
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <Pie
@@ -88,7 +88,7 @@ export function RejectionReasonsChart() {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm">
-      <h3 className="font-sans font-bold text-lg font-bold mb-4">대출 거절/포기 주요 사유</h3>
+      <h3 className="font-sans font-bold text-lg mb-4">대출 거절/포기 주요 사유</h3>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data} layout="vertical">
           <CartesianGrid strokeDasharray="3 3" />
@@ -120,7 +120,7 @@ export function HighInterestProductChart() {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm">
-      <h3 className="font-sans font-bold text-lg font-bold mb-4">고리대금 상품 이용 현황</h3>
+      <h3 className="font-sans font-bold text-lg mb-4">고리대금 상품 이용 현황</h3>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
@@ -154,7 +154,7 @@ export function InterestRateDistributionChart() {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm">
-      <h3 className="font-sans font-bold text-lg font-bold mb-4">대출 이자율 분포</h3>
+      <h3 className="font-sans font-bold text-lg mb-4">대출 이자율 분포</h3>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
@@ -185,7 +185,7 @@ export function DebtCollectionChart() {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm">
-      <h3 className="font-sans font-bold text-lg font-bold mb-4">채권추심 경험 여부</h3>
+      <h3 className="font-sans font-bold text-lg mb-4">채권추심 경험 여부</h3>
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <Pie
@@ -228,7 +228,7 @@ export function CreativeImpactChart() {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm">
-      <h3 className="font-sans font-bold text-lg font-bold mb-4">금융 어려움으로 인한 창작활동 영향</h3>
+      <h3 className="font-sans font-bold text-lg mb-4">금융 어려움으로 인한 창작활동 영향</h3>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data} layout="vertical">
           <CartesianGrid strokeDasharray="3 3" />

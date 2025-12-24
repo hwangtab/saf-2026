@@ -1,9 +1,15 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Suspense } from 'react';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import { OG_IMAGE, SITE_URL, SITE_URL_ALIAS } from '@/lib/constants';
 import '@/styles/globals.css';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#2176FF',
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -29,7 +35,6 @@ export const metadata: Metadata = {
     '한국스마트협동조합',
   ],
   authors: [{ name: '한국스마트협동조합' }],
-  viewport: 'width=device-width, initial-scale=1',
   icons: {
     icon: '/favicon.ico',
   },
