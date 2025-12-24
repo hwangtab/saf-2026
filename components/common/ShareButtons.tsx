@@ -99,8 +99,6 @@ export default function ShareButtons({
 
   return (
     <div className="flex items-center gap-3 flex-wrap">
-      <span className="text-sm font-medium text-charcoal">공유하기:</span>
-
       {/* Facebook */}
       <FacebookShareButton
         url={url}

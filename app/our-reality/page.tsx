@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import PageHero from '@/components/ui/PageHero';
+import ShareButtons from '@/components/common/ShareButtons';
 
 import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL } from '@/lib/constants';
 
@@ -173,8 +174,13 @@ export default function OurReality() {
       <PageHero
         title="우리의 현실"
         description="2025 예술인 금융 재난 보고서가 밝혀낸 한국 예술인의 금융 위기의 구조적 현실"
-        
-      />
+      >
+        <ShareButtons
+          url={PAGE_URL}
+          title="우리의 현실 - 씨앗페 2026"
+          description="예술인이 겪는 금융 재난의 구조와 데이터를 확인하세요."
+        />
+      </PageHero>
 
       {testimonialsData.map((group, groupIndex) => (
         <section key={groupIndex} className={`py-12 md:py-20 ${groupIndex === 0 ? 'bg-white' : groupIndex === 1 ? 'bg-gray-50' : 'bg-canvas-soft'}`}>
@@ -211,14 +217,14 @@ export default function OurReality() {
           <div className="max-w-3xl mx-auto text-balance">
             <h2 className="font-sans font-bold text-4xl md:text-5xl mb-8 text-center">예술인에게 금융은 산소호흡기</h2>
             <div className="space-y-6 text-lg text-charcoal">
-            <p>
-              예술인들은 정기적인 급여가 아닌, 프로젝트 기반의 불규칙한 소득을 얻습니다. 공연과 공연 사이, 전시와 전시 사이 발생하는
-              <strong> &ldquo;소득 공백기&rdquo;</strong>는 그들이 피할 수 없는 구조적 현실입니다.
-            </p>
-            <p>
-              이 공백기 동안 월세, 식비, 창작 재료비를 버텨낼 방법이 필요합니다. 안정적인 금융은 단순한 &lsquo;빚&rsquo;이 아닌,
-              <strong> 창작의 시간을 살려내는 <span className="text-sun-strong">생명의 산소</span></strong>입니다.
-            </p>
+              <p>
+                예술인들은 정기적인 급여가 아닌, 프로젝트 기반의 불규칙한 소득을 얻습니다. 공연과 공연 사이, 전시와 전시 사이 발생하는
+                <strong> &ldquo;소득 공백기&rdquo;</strong>는 그들이 피할 수 없는 구조적 현실입니다.
+              </p>
+              <p>
+                이 공백기 동안 월세, 식비, 창작 재료비를 버텨낼 방법이 필요합니다. 안정적인 금융은 단순한 &lsquo;빚&rsquo;이 아닌,
+                <strong> 창작의 시간을 살려내는 <span className="text-sun-strong">생명의 산소</span></strong>입니다.
+              </p>
               <p>
                 그러나 한국의 금융 시스템은 예술인을 정상적인 금융 고객으로 인정하지 않았습니다. 그 결과 예술인들은
                 <strong> 배제 → 약탈 → 파괴</strong>라는 악순환에 갇혀있습니다.

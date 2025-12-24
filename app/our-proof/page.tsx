@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import PageHero from '@/components/ui/PageHero';
+import ShareButtons from '@/components/common/ShareButtons';
 import TestimonialCard from '@/components/ui/TestimonialCard';
 import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL } from '@/lib/constants';
 
@@ -41,7 +42,13 @@ export default function OurProof() {
       <PageHero
         title="우리의 증명"
         description="예술인 상호부조 대출의 실제 성과. 354건, 약 7억 원의 신뢰가 데이터로 증명되었습니다."
-      />
+      >
+        <ShareButtons
+          url={PAGE_URL}
+          title="우리의 증명 - 씨앗페 2026"
+          description="예술인 상호부조 대출 354건, 누적 약 7억 원 지원. 데이터로 확인하세요."
+        />
+      </PageHero>
 
 
 
