@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import KakaoMap from '@/components/features/KakaoMap';
@@ -89,7 +90,7 @@ export default function ExhibitionPage() {
       <PageHero
         title="전시 안내"
         description="씨앗페 2026을 직접 만나보세요"
-        
+
       >
         <ShareButtons url={canonicalUrl} title={shareTitle} description={shareDescription} />
       </PageHero>
@@ -97,11 +98,24 @@ export default function ExhibitionPage() {
       {/* Exhibition Info */}
       <section className="py-12 md:py-20 bg-primary-surface">
         <div className="container-max">
+          <h2 className="font-section font-normal text-4xl md:text-5xl mb-8">전시 정보</h2>
+
+          {/* Poster - Full Width */}
+          <div className="mb-12">
+            <Image
+              src="/images/safposter.png"
+              alt="씨앗페 2026 공식 포스터"
+              width={1200}
+              height={1700}
+              className="w-full rounded-2xl shadow-xl"
+              priority
+            />
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-stretch">
             {/* Info */}
             <div className="flex flex-col gap-8 h-full">
               <div>
-                <h2 className="font-section font-normal text-4xl md:text-5xl mb-6">전시 정보</h2>
                 <div className="space-y-4">
                   <div className="border-l-4 border-primary pl-4">
                     <h3 className="font-sans font-bold text-sm text-gray-500 font-semibold mb-1">행사명</h3>
