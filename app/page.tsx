@@ -4,6 +4,7 @@ import Button from '@/components/ui/Button';
 import ActionCard from '@/components/ui/ActionCard';
 import DynamicCounter from '@/components/features/DynamicCounter';
 import BackgroundSlider from '@/components/features/BackgroundSlider';
+import ShareButtons from '@/components/common/ShareButtons';
 import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL } from '@/lib/constants';
 
 export const metadata: Metadata = {
@@ -91,9 +92,16 @@ export default function Home() {
               🎨 작품 구매하기
             </Button>
           </div>
-          <p className="text-sm text-white/70 drop-shadow-lg">
+          <p className="text-sm text-white/70 drop-shadow-lg mb-8">
             📌 1월 14일 인사아트센터 3층 G&J 갤러리에서 시작합니다
           </p>
+          <div className="flex justify-center">
+            <ShareButtons
+              url={SITE_URL}
+              title="씨앗페 2026 - 예술인 금융 위기 해결 캠페인"
+              description="한국 예술인의 금융 위기 해결을 위한 연대, 씨앗페 2026에 함께해주세요."
+            />
+          </div>
         </div>
       </section>
 
