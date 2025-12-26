@@ -441,9 +441,7 @@ export default function OurReality() {
               ❤️ 지금 후원하기
             </a>
             <a
-              href={EXTERNAL_LINKS.ONLINE_GALLERY}
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/artworks"
               className="inline-flex items-center justify-center bg-gray-900 hover:bg-gray-800 text-white font-bold px-8 py-4 rounded-lg transition-colors text-lg"
             >
               🎨 작품 구매하기

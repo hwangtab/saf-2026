@@ -67,7 +67,7 @@ export default function ArchivePage() {
       <PageHero
         title="아카이브"
         description="씨앗페의 발자취와 성과, 언론 보도를 기록합니다"
-        
+
       >
         <ShareButtons url={currentUrl} title={pageTitle} description={pageDescription} />
       </PageHero>
@@ -226,9 +226,7 @@ export default function ArchivePage() {
               ❤️ 지금 후원하기
             </a>
             <a
-              href={EXTERNAL_LINKS.ONLINE_GALLERY}
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/artworks"
               className="inline-flex items-center justify-center bg-gray-900 hover:bg-gray-800 text-white font-bold px-8 py-4 rounded-lg transition-colors"
             >
               🎨 작품 구매하기
