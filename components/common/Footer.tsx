@@ -164,7 +164,7 @@ export default function Footer() {
           {/* Copyright */}
           <div className="text-center text-sm text-gray-400">
             <p>
-              © {new Date().getFullYear()} SAF 2026. All rights reserved.
+              © {new Date().getFullYear()} 씨앗페. All rights reserved.
             </p>
           </div>
         </div>
