@@ -210,7 +210,7 @@ export default function ArtworkDetailPage({ params }: Props) {
                                         className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-200 rounded-lg hover:border-primary hover:text-primary transition-colors bg-white"
                                     >
                                         <span>✉️</span>
-                                        <span className="text-sm font-medium">이메일 문의</span>
+                                        <span className="text-sm font-medium">contact@kosmart.org</span>
                                     </a>
                                 </div>
                             </div>
