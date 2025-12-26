@@ -7,13 +7,18 @@ import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { EXTERNAL_LINKS } from '@/lib/constants';
 
-const navigation = [
+type NavigationItem = {
+  name: string;
+  href: string;
+  external?: boolean;
+};
+
+const navigation: NavigationItem[] = [
   { name: '씨앗페 2026', href: '/' },
   { name: '우리의 현실', href: '/our-reality' },
   { name: '우리의 증명', href: '/our-proof' },
   { name: '전시 안내', href: '/exhibition' },
   { name: '출품작', href: '/artworks' },
-  { name: '작품 구매하기', href: EXTERNAL_LINKS.ONLINE_GALLERY, external: true },
   { name: '아카이브', href: '/archive' },
   { name: '언론 보도', href: '/news' },
 ];
