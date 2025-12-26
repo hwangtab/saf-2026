@@ -161,21 +161,61 @@ export default function ArtworkDetailPage({ params }: Props) {
                 <article className="container-max py-10 lg:py-16">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
 
-                        {/* Image Section */}
-                        <div className="relative rounded-2xl overflow-hidden bg-gray-50 shadow-sm">
-                            <Image
-                                src={`/images/artworks/${artwork.image}`}
-                                alt={artwork.title}
-                                width={1000}
-                                height={1000}
-                                className="w-full h-auto object-contain max-h-[80vh]"
-                                priority
-                            />
+                        {/* Left Column: Image & CTA */}
+                        <div className="space-y-8">
+                            <div className="relative rounded-2xl overflow-hidden bg-gray-50 shadow-sm">
+                                <Image
+                                    src={`/images/artworks/${artwork.image}`}
+                                    alt={artwork.title}
+                                    width={1000}
+                                    height={1000}
+                                    className="w-full h-auto object-contain max-h-[80vh]"
+                                    priority
+                                />
+                            </div>
+
+                            {/* CTA Section - Moved here for better visibility */}
+                            <div className="pt-4 space-y-6">
+                                {/* 온라인 구매 버튼 */}
+                                <a
+                                    href={artwork.shopUrl || EXTERNAL_LINKS.ONLINE_GALLERY}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center justify-center gap-3 w-full bg-primary hover:bg-primary/90 text-white font-bold px-8 py-4 rounded-xl transition-all shadow-lg hover:shadow-xl text-lg"
+                                >
+                                    온라인 구매
+                                </a>
+
+                                {/* 구분선 */}
+                                <div className="flex items-center gap-4">
+                                    <div className="flex-1 h-px bg-gray-200" />
+                                    <span className="text-gray-400 text-sm">또는 직접 문의</span>
+                                    <div className="flex-1 h-px bg-gray-200" />
+                                </div>
+
+                                {/* 연락처 옵션 */}
+                                <div className="grid grid-cols-2 gap-4">
+                                    <a
+                                        href="tel:02-764-3114"
+                                        className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-200 rounded-lg hover:border-primary hover:text-primary transition-colors bg-white group"
+                                    >
+                                        <span className="grayscale group-hover:grayscale-0 transition-all">📞</span>
+                                        <span className="text-sm font-medium">02-764-3114</span>
+                                    </a>
+                                    <a
+                                        href="mailto:contact@kosmart.org"
+                                        className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-200 rounded-lg hover:border-primary hover:text-primary transition-colors bg-white group"
+                                    >
+                                        <span className="grayscale group-hover:grayscale-0 transition-all">✉️</span>
+                                        <span className="text-sm font-medium">이메일 문의</span>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
 
-                        {/* Info Section */}
-                        <div className="lg:sticky lg:top-32 space-y-8">
-                            <header>
+                        {/* Right Column: Info Section */}
+                        <div className="space-y-8">
+                            <header className="sticky top-24 bg-white/95 backdrop-blur-sm z-30 py-4 -mt-4 mb-4 border-b lg:border-none lg:static lg:bg-transparent lg:p-0 lg:m-0">
                                 <h1 className="text-3xl md:text-4xl font-bold font-sans text-charcoal mb-2">
                                     {artwork.title}
                                 </h1>
@@ -213,13 +253,13 @@ export default function ArtworkDetailPage({ params }: Props) {
                                     <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider">작가 소개</h3>
                                     {artwork.profile && (
                                         <div>
-                                            <p className="text-gray-700 leading-relaxed text-sm">
+                                            <p className="text-gray-700 leading-relaxed text-sm whitespace-pre-line">
                                                 {artwork.profile}
                                             </p>
                                         </div>
                                     )}
                                     {artwork.history && (
-                                        <div className="pt-2 border-t border-gray-200">
+                                        <div className="pt-4 border-t border-gray-200 mt-4">
                                             <h4 className="text-xs font-semibold text-gray-500 mb-2">주요 경력</h4>
                                             <p className="text-gray-600 leading-relaxed text-sm whitespace-pre-line">
                                                 {artwork.history}
@@ -238,43 +278,6 @@ export default function ArtworkDetailPage({ params }: Props) {
                                     </p>
                                 </div>
                             )}
-
-                            <div className="pt-8 space-y-6">
-                                {/* 온라인 구매 버튼 */}
-                                <a
-                                    href={artwork.shopUrl || EXTERNAL_LINKS.ONLINE_GALLERY}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex items-center justify-center gap-3 w-full bg-primary hover:bg-primary/90 text-white font-bold px-8 py-4 rounded-xl transition-all shadow-lg hover:shadow-xl text-lg"
-                                >
-                                    온라인 구매
-                                </a>
-
-                                {/* 구분선 */}
-                                <div className="flex items-center gap-4">
-                                    <div className="flex-1 h-px bg-gray-200" />
-                                    <span className="text-gray-400 text-sm">또는 직접 문의</span>
-                                    <div className="flex-1 h-px bg-gray-200" />
-                                </div>
-
-                                {/* 연락처 옵션 */}
-                                <div className="grid grid-cols-2 gap-4">
-                                    <a
-                                        href="tel:02-764-3114"
-                                        className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-200 rounded-lg hover:border-primary hover:text-primary transition-colors bg-white"
-                                    >
-                                        <span>📞</span>
-                                        <span className="text-sm font-medium">02-764-3114</span>
-                                    </a>
-                                    <a
-                                        href="mailto:contact@kosmart.org"
-                                        className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-200 rounded-lg hover:border-primary hover:text-primary transition-colors bg-white"
-                                    >
-                                        <span>✉️</span>
-                                        <span className="text-sm font-medium">contact@kosmart.org</span>
-                                    </a>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </article>
