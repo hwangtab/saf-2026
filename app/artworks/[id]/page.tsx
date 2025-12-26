@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
-import { EXTERNAL_LINKS } from '@/lib/constants';
+import { EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
 
 interface Props {
     params: {
@@ -21,11 +21,43 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         };
     }
 
+    const pageUrl = `${SITE_URL}/artworks/${artwork.id}`;
+    const imageUrl = `${SITE_URL}/images/artworks/${artwork.image}`;
+
+    // Create description from available data
+    const description = artwork.description
+        ? artwork.description.substring(0, 155) + '...'
+        : artwork.profile
+            ? `${artwork.artist} 작가: ${artwork.profile.substring(0, 100)}...`
+            : `${artwork.artist}의 작품 "${artwork.title}" - ${artwork.material}, ${artwork.size}. 씨앗페 2026 출품작.`;
+
     return {
-        title: `${artwork.title} - ${artwork.artist} | 2026 씨앗페`,
-        description: artwork.description.substring(0, 160),
+        title: `${artwork.title} - ${artwork.artist} | 씨앗페 2026 출품작`,
+        description,
+        alternates: {
+            canonical: pageUrl,
+        },
         openGraph: {
-            images: [`/images/artworks/${artwork.image}`],
+            title: `${artwork.title} - ${artwork.artist}`,
+            description,
+            url: pageUrl,
+            siteName: '씨앗페 2026',
+            images: [
+                {
+                    url: imageUrl,
+                    width: 800,
+                    height: 800,
+                    alt: `${artwork.artist} - ${artwork.title}`,
+                },
+            ],
+            type: 'website',
+            locale: 'ko_KR',
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: `${artwork.title} - ${artwork.artist}`,
+            description,
+            images: [imageUrl],
         },
     };
 }
@@ -49,20 +81,30 @@ export default function ArtworkDetailPage({ params }: Props) {
     const numericPrice = artwork.price.replace(/[₩,원\s]/g, '');
     const isInquiry = artwork.price === '문의' || isNaN(Number(numericPrice));
 
-    // Product JSON-LD Schema for SEO
+    // Create rich description for schema
+    const schemaDescription = artwork.description
+        || artwork.profile
+        || `${artwork.artist}의 작품 "${artwork.title}"`;
+
+    // Product + VisualArtwork JSON-LD Schema for SEO
     const productSchema = {
         '@context': 'https://schema.org',
-        '@type': 'Product',
+        '@type': ['Product', 'VisualArtwork'],
         name: artwork.title,
-        image: `https://www.saf2026.com/images/artworks/${artwork.image}`,
-        description: artwork.description || `${artwork.artist}의 작품 "${artwork.title}"`,
-        brand: {
+        image: `${SITE_URL}/images/artworks/${artwork.image}`,
+        description: schemaDescription.substring(0, 300),
+        creator: {
             '@type': 'Person',
             name: artwork.artist,
+            description: artwork.profile || undefined,
         },
+        artMedium: artwork.material !== '확인 중' ? artwork.material : undefined,
+        artworkSurface: artwork.material !== '확인 중' ? artwork.material : undefined,
+        dateCreated: artwork.year !== '확인 중' ? artwork.year : undefined,
+        width: artwork.size !== '확인 중' ? artwork.size : undefined,
         offers: {
             '@type': 'Offer',
-            url: `https://www.saf2026.com/artworks/${artwork.id}`,
+            url: `${SITE_URL}/artworks/${artwork.id}`,
             priceCurrency: 'KRW',
             price: isInquiry ? undefined : numericPrice,
             priceValidUntil: '2026-01-27',
@@ -70,25 +112,31 @@ export default function ArtworkDetailPage({ params }: Props) {
             seller: {
                 '@type': 'Organization',
                 name: '한국스마트협동조합',
+                url: 'https://www.saf2026.com',
             },
         },
         additionalProperty: [
-            {
+            artwork.material !== '확인 중' && {
                 '@type': 'PropertyValue',
                 name: '재료',
                 value: artwork.material,
             },
-            {
+            artwork.size !== '확인 중' && {
                 '@type': 'PropertyValue',
                 name: '크기',
                 value: artwork.size,
             },
-            {
+            artwork.year !== '확인 중' && {
                 '@type': 'PropertyValue',
                 name: '제작년도',
                 value: artwork.year,
             },
-        ],
+            artwork.edition && {
+                '@type': 'PropertyValue',
+                name: '에디션',
+                value: artwork.edition,
+            },
+        ].filter(Boolean),
     };
 
     return (
