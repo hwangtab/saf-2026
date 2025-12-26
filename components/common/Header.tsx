@@ -99,9 +99,9 @@ export default function Header() {
             href={EXTERNAL_LINKS.DONATE}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-1.5 bg-accent hover:bg-accent-strong text-light font-bold px-6 py-2.5 rounded-lg transition-colors leading-none"
+            className="group hidden lg:inline-flex items-center justify-center gap-1.5 bg-accent hover:bg-accent-strong text-light font-bold px-6 py-2.5 rounded-lg transition-all duration-300 ease-out hover:scale-105 hover:shadow-lg active:scale-95 leading-none"
           >
-            <span>❤️</span>
+            <span className="group-hover:scale-125 transition-transform duration-300">❤️</span>
             <span className="pt-0.5">후원하기</span>
           </a>
         </div>
@@ -109,7 +109,7 @@ export default function Header() {
         {/* Mobile Menu Button */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="lg:hidden p-2 text-charcoal hover:text-primary"
+          className="lg:hidden p-2 text-charcoal hover:text-primary transition-transform active:scale-90"
           aria-label="메뉴 토글"
           aria-expanded={mobileMenuOpen}
         >
@@ -168,7 +168,7 @@ export default function Header() {
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="block py-3 px-4 text-base rounded-lg transition-colors border-l-4 border-transparent text-charcoal hover:bg-primary/5 hover:border-primary"
+                      className="block py-3 px-4 text-base rounded-lg transition-colors border-l-4 border-transparent text-charcoal hover:bg-primary/5 hover:border-primary active:bg-primary/10"
                     >
                       {item.name}
                     </a>
@@ -179,7 +179,7 @@ export default function Header() {
                       onClick={() => setMobileMenuOpen(false)}
                       className={`block py-3 px-4 text-base rounded-lg transition-colors border-l-4 ${isActive(item.href)
                         ? 'text-primary font-semibold border-primary bg-primary/10'
-                        : 'border-transparent text-charcoal hover:bg-primary/5 hover:border-primary'
+                        : 'border-transparent text-charcoal hover:bg-primary/5 hover:border-primary active:bg-primary/10'
                         }`}
                     >
                       {item.name}
@@ -191,9 +191,9 @@ export default function Header() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center gap-1.5 w-full bg-accent hover:bg-accent-strong text-light font-bold px-4 py-3 rounded-lg text-center transition-colors mt-4 leading-none"
+                  className="group flex items-center justify-center gap-1.5 w-full bg-accent hover:bg-accent-strong text-light font-bold px-4 py-3 rounded-lg text-center transition-all duration-300 ease-out hover:scale-[1.02] hover:shadow-md active:scale-95 mt-4 leading-none"
                 >
-                  <span>❤️</span>
+                  <span className="group-hover:scale-125 transition-transform duration-300">❤️</span>
                   <span className="pt-0.5">후원하기</span>
                 </a>
               </div>
@@ -201,6 +201,6 @@ export default function Header() {
           </>
         )}
       </AnimatePresence>
-    </header>
+    </header >
   );
 }
