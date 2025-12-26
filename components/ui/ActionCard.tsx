@@ -26,18 +26,11 @@ export default function ActionCard({
         : {};
 
     return (
-        <Component
-            href={href}
-            {...externalProps}
-            className="group relative flex flex-col p-8 bg-white border-2 border-gray-300 rounded-lg shadow-sm transition-shadow duration-300 overflow-hidden focus:outline-none focus:ring-4 focus:ring-primary/50"
-            whileHover={{ y: -8, borderColor: '#2176FF', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)' }}
-            whileTap={{ scale: 0.98 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-        >
+        <div className="group relative flex flex-col h-full p-8 bg-white border-2 border-gray-300 rounded-lg shadow-sm hover:border-primary hover:shadow-xl transition-all duration-300 overflow-hidden">
             {/* Gradient overlay on hover */}
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
-            <div className="relative z-10">
+            <div className="relative z-10 flex flex-col h-full">
                 {/* Icon with scale animation */}
                 <motion.div
                     className="text-4xl mb-4"
@@ -48,10 +41,14 @@ export default function ActionCard({
                 </motion.div>
 
                 <h3 className="font-sans text-xl font-bold mb-3">{title}</h3>
-                <p className="text-charcoal-muted mb-4 flex-grow leading-relaxed">{description}</p>
+                <p className="text-charcoal-muted mb-6 leading-relaxed flex-grow">{description}</p>
 
-                {/* Link with arrow animation */}
-                <span className="inline-flex items-center gap-2 text-primary font-semibold">
+                {/* Button */}
+                <Component
+                    href={href}
+                    {...externalProps}
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-white font-semibold rounded-lg transition-colors focus:outline-none focus:ring-4 focus:ring-primary/50"
+                >
                     {linkText}
                     <motion.svg
                         className="w-4 h-4"
@@ -64,8 +61,8 @@ export default function ActionCard({
                     >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </motion.svg>
-                </span>
+                </Component>
             </div>
-        </Component>
+        </div>
     );
 }
