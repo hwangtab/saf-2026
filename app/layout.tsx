@@ -129,6 +129,27 @@ export default function RootLayout({
           }}
         />
 
+        {/* WebSite JSON-LD Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'WebSite',
+              name: '씨앗페 2026',
+              alternateName: 'SAF 2026',
+              url: 'https://www.saf2026.com',
+              description:
+                '한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인',
+              inLanguage: 'ko-KR',
+              publisher: {
+                '@type': 'Organization',
+                name: '한국스마트협동조합',
+              },
+            }),
+          }}
+        />
+
         {/* Kakao SDK for Share functionality */}
         <script
           src="https://developers.kakao.com/sdk/js/kakao.js"
