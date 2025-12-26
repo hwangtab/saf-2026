@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import Button from '@/components/ui/Button';
 import { EXTERNAL_LINKS } from '@/lib/constants';
 
 type NavigationItem = {
@@ -95,15 +96,15 @@ export default function Header() {
         </div>
         {/* Donate Button (Desktop) */}
         <div className="hidden lg:flex">
-          <a
+          <Button
             href={EXTERNAL_LINKS.DONATE}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group hidden lg:inline-flex items-center justify-center gap-1.5 bg-accent hover:bg-accent-strong text-light font-bold px-6 py-2.5 rounded-lg transition-all duration-300 ease-out hover:scale-105 hover:shadow-lg active:scale-95 leading-none"
+            variant="accent"
+            external
+            className="gap-1.5"
           >
             <span className="group-hover:scale-125 transition-transform duration-300">❤️</span>
             <span className="pt-0.5">후원하기</span>
-          </a>
+          </Button>
         </div>
 
         {/* Mobile Menu Button */}
@@ -186,16 +187,18 @@ export default function Header() {
                     </Link>
                   )
                 )}
-                <a
-                  href={EXTERNAL_LINKS.DONATE}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="group flex items-center justify-center gap-1.5 w-full bg-accent hover:bg-accent-strong text-light font-bold px-4 py-3 rounded-lg text-center transition-all duration-300 ease-out hover:scale-[1.02] hover:shadow-md active:scale-95 mt-4 leading-none"
-                >
-                  <span className="group-hover:scale-125 transition-transform duration-300">❤️</span>
-                  <span className="pt-0.5">후원하기</span>
-                </a>
+                <div className="mt-4">
+                  <Button
+                    href={EXTERNAL_LINKS.DONATE}
+                    variant="accent"
+                    external
+                    className="w-full gap-1.5"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <span className="group-hover:scale-125 transition-transform duration-300">❤️</span>
+                    <span className="pt-0.5">후원하기</span>
+                  </Button>
+                </div>
               </div>
             </motion.div>
           </>

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
+import Button from '@/components/ui/Button';
 
 interface Props {
     params: {
@@ -177,14 +178,16 @@ export default function ArtworkDetailPage({ params }: Props) {
                             {/* CTA Section - Moved here for better visibility */}
                             <div className="pt-4 space-y-6">
                                 {/* 온라인 구매 버튼 */}
-                                <a
+                                {/* 온라인 구매 버튼 */}
+                                <Button
                                     href={artwork.shopUrl || EXTERNAL_LINKS.ONLINE_GALLERY}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex items-center justify-center gap-3 w-full bg-primary hover:bg-primary/90 text-white font-bold px-8 py-4 rounded-xl transition-all shadow-lg hover:shadow-xl text-lg"
+                                    variant="primary"
+                                    size="lg"
+                                    external
+                                    className="w-full text-lg gap-3 rounded-xl"
                                 >
                                     온라인 구매
-                                </a>
+                                </Button>
 
                                 {/* 구분선 */}
                                 <div className="flex items-center gap-4">
@@ -195,20 +198,22 @@ export default function ArtworkDetailPage({ params }: Props) {
 
                                 {/* 연락처 옵션 */}
                                 <div className="grid grid-cols-2 gap-4">
-                                    <a
+                                    <Button
                                         href="tel:02-764-3114"
-                                        className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-200 rounded-lg hover:border-primary hover:text-primary transition-colors bg-white group"
+                                        variant="white"
+                                        className="gap-2 group"
                                     >
                                         <span className="grayscale group-hover:grayscale-0 transition-all">📞</span>
                                         <span className="text-sm font-medium">02-764-3114</span>
-                                    </a>
-                                    <a
+                                    </Button>
+                                    <Button
                                         href="mailto:contact@kosmart.org"
-                                        className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-200 rounded-lg hover:border-primary hover:text-primary transition-colors bg-white group"
+                                        variant="white"
+                                        className="gap-2 group"
                                     >
                                         <span className="grayscale group-hover:grayscale-0 transition-all">✉️</span>
                                         <span className="text-sm font-medium">이메일 문의</span>
-                                    </a>
+                                    </Button>
                                 </div>
                             </div>
                         </div>

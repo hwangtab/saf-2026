@@ -8,7 +8,7 @@ interface ButtonProps {
     children: React.ReactNode;
     href?: string;
     onClick?: () => Promise<void> | void;
-    variant?: 'primary' | 'secondary' | 'accent';
+    variant?: 'primary' | 'secondary' | 'accent' | 'outline' | 'white' | 'ghost';
     size?: 'sm' | 'md' | 'lg';
     external?: boolean;
     loading?: boolean;
@@ -43,24 +43,31 @@ export default function Button({
     };
 
     const baseStyles =
-        'inline-flex items-center justify-center font-bold rounded-lg transition-all duration-200';
+        'inline-flex items-center justify-center font-bold rounded-lg transition-all duration-300 ease-out group';
 
     const variantStyles = {
-        primary: 'bg-primary hover:bg-primary-strong text-white',
-        secondary: 'bg-gray-900 hover:bg-gray-800 text-white',
-        accent: 'bg-accent hover:bg-accent-strong text-light',
+        primary: 'bg-primary hover:bg-primary-strong text-white hover:scale-105 hover:shadow-lg',
+        secondary: 'bg-gray-900 hover:bg-gray-800 text-white hover:scale-105 hover:shadow-lg',
+        accent: 'bg-accent hover:bg-accent-strong text-light hover:scale-105 hover:shadow-lg',
+        outline: 'border-2 border-gray-200 hover:border-primary hover:text-primary bg-white text-gray-700 hover:bg-white hover:scale-105 hover:shadow-md',
+        white: 'bg-white border border-gray-200 text-gray-900 hover:border-primary hover:text-primary hover:scale-105 hover:shadow-md',
+        ghost: 'bg-transparent hover:bg-gray-100 text-gray-700 hover:text-primary',
     };
 
     const sizeStyles = {
         sm: 'px-4 py-2 text-sm',
-        md: 'px-6 py-3 text-base',
+        md: 'px-6 py-2.5 text-base', // Adjusted py consistent with previous manual edits
         lg: 'px-8 py-4 text-lg',
     };
 
     const isDisabled = disabled || loading || isLoading;
 
-    const styles = `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className} ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'active:scale-95'
-        }`;
+    // Apply interactive classes only when not disabled
+    const interactiveClasses = isDisabled
+        ? 'opacity-50 cursor-not-allowed transform-none'
+        : 'active:scale-95 cursor-pointer';
+
+    const styles = `${baseStyles} ${variantStyles[variant as keyof typeof variantStyles]} ${sizeStyles[size]} ${className} ${interactiveClasses}`;
 
     const content = (
         <>
