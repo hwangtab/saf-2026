@@ -160,20 +160,34 @@ export default function ArtworkDetailPage({ params }: Props) {
                             </div>
 
                             {/* Artist Profile */}
-                            {artwork.profile && (
-                                <div className="bg-gray-50 p-6 rounded-xl space-y-2">
-                                    <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider">About the Artist</h3>
-                                    <p className="text-gray-700 leading-relaxed whitespace-pre-line text-sm">
-                                        {artwork.profile}
-                                    </p>
+                            {(artwork.profile || artwork.history) && (
+                                <div className="bg-gray-50 p-6 rounded-xl space-y-4">
+                                    <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider">작가 소개</h3>
+                                    {artwork.profile && (
+                                        <div>
+                                            <p className="text-gray-700 leading-relaxed text-sm">
+                                                {artwork.profile}
+                                            </p>
+                                        </div>
+                                    )}
+                                    {artwork.history && (
+                                        <div className="pt-2 border-t border-gray-200">
+                                            <h4 className="text-xs font-semibold text-gray-500 mb-2">주요 경력</h4>
+                                            <p className="text-gray-600 leading-relaxed text-sm whitespace-pre-line">
+                                                {artwork.history}
+                                            </p>
+                                        </div>
+                                    )}
                                 </div>
                             )}
 
                             {/* Artist Note */}
                             {artwork.description && (
-                                <div className="prose prose-lg text-gray-700 leading-relaxed whitespace-pre-line">
-                                    <h3 className="text-lg font-bold text-charcoal mb-4">Artist Note</h3>
-                                    {artwork.description}
+                                <div className="bg-white border border-gray-100 p-6 rounded-xl">
+                                    <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">작가 노트</h3>
+                                    <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                                        {artwork.description}
+                                    </p>
                                 </div>
                             )}
 

@@ -4,6 +4,7 @@ export interface Artwork {
   title: string;
   description: string; // 작가 노트
   profile?: string; // 작가 프로필
+  history?: string; // 작가 이력
   size: string; // 크기
   material: string; // 재료
   year: string; // 년도
@@ -121,28 +122,30 @@ export const artworks: Artwork[] = [
   {
     "id": "10",
     "artist": "신예리",
-    "title": "작품명 확인 중",
+    "title": "야형화접도 (夜螢花蝶圖)",
     "description": "",
-    "profile": "",
-    "size": "확인 중",
-    "material": "확인 중",
-    "year": "확인 중",
+    "profile": "담몽(淡夢) 신예리. 경원대학교(현 가천대) 섬유미술과 졸업. 경기무형문화재 화각장 한춘섭화각공예 수석디자이너로 10년 재직. 현 민화공예공방 '담몽' 대표.",
+    "history": "대한민국 국가미술특별초대전 초대작가, SNAF 성남아트페어 작가전, 목원회 단체전 등 참여",
+    "size": "24x114cm",
+    "material": "먹 염색한 한지 위에 분채",
+    "year": "2023",
     "edition": "",
-    "price": "문의",
+    "price": "₩4,000,000",
     "image": "10.jpg"
   },
   {
     "id": "11",
     "artist": "신예리",
-    "title": "작품명 확인 중",
+    "title": "책거리 (Chaekgeori)",
     "description": "",
-    "profile": "",
-    "size": "확인 중",
-    "material": "확인 중",
-    "year": "확인 중",
+    "profile": "담몽(淡夢) 신예리. 경원대학교(현 가천대) 섬유미술과 졸업. 경기무형문화재 화각장 한춘섭화각공예 수석디자이너로 10년 재직. 현 민화공예공방 '담몽' 대표.",
+    "history": "대한민국 국가미술특별초대전 초대작가, SNAF 성남아트페어 작가전, 목원회 단체전 등 참여",
+    "size": "103.5x68.3cm",
+    "material": "염색한지 위에 분채",
+    "year": "2020",
     "edition": "",
-    "price": "문의",
-    "image": "11.jpg"
+    "price": "₩6,000,000",
+    "image": "11.png"
   },
   {
     "id": "12",
