@@ -50,17 +50,6 @@ export default function ActionCard({
                     className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-white font-semibold rounded-lg transition-colors focus:outline-none focus:ring-4 focus:ring-primary/50"
                 >
                     {linkText}
-                    <motion.svg
-                        className="w-4 h-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        initial={{ x: 0 }}
-                        whileHover={{ x: 4 }}
-                        transition={{ type: 'spring', stiffness: 400, damping: 10 }}
-                    >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </motion.svg>
                 </Component>
             </div>
         </div>
