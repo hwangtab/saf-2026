@@ -23,10 +23,10 @@ export default function DynamicCounter({ items }: DynamicCounterProps) {
   const [hasStarted, setHasStarted] = useState(false);
 
   useEffect(() => {
-    if (inView && !hasStarted) {
+    if (inView) {
       setHasStarted(true);
     }
-  }, [inView, hasStarted]);
+  }, [inView]);
 
   return (
     <section ref={ref} className="py-12 bg-canvas-soft">
