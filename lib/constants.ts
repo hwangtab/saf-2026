@@ -17,7 +17,7 @@ export const EXTERNAL_LINKS = {
   KOSMART_HOME: 'https://www.kosmart.co.kr',
   KOSMERT_2023_GALLERY: 'https://www.news-art.co.kr/news/section_list_all.html?sec_no=135',
   INSA_GALLERY_KAKAO:
-    'https://place.map.kakao.com/158908100',
+    'https://kko.to/SGmIwAnAmT',
   AUDIO_GUY_STUDIO_KAKAO:
     'https://place.map.kakao.com/27349395',
   KOSMART_OFFICE_MAP:

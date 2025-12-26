@@ -25,7 +25,6 @@ export default function Footer() {
               한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인입니다.
             </p>
             <div className="text-sm text-gray-400 space-y-1">
-              <p>{CONTACT.ORGANIZATION_NAME}</p>
               <p>
                 <a
                   href={EXTERNAL_LINKS.INSA_GALLERY_KAKAO}
@@ -34,22 +33,6 @@ export default function Footer() {
                   className="hover:text-primary transition-colors link-underline-offset"
                 >
                   {EXHIBITION.LOCATION} <br className="hidden md:inline" />({EXHIBITION.ADDRESS})
-                </a>
-              </p>
-              <p>
-                <a
-                  href={`tel:${CONTACT.PHONE.replace(/-/g, '')}`}
-                  className="hover:text-primary transition-colors link-underline-offset"
-                >
-                  {CONTACT.PHONE}
-                </a>
-              </p>
-              <p>
-                <a
-                  href={`mailto:${CONTACT.EMAIL}`}
-                  className="hover:text-primary transition-colors link-underline-offset"
-                >
-                  {CONTACT.EMAIL}
                 </a>
               </p>
             </div>
@@ -102,10 +85,10 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Social Links */}
+          {/* Social Links & Contact */}
           <div>
             <h3 className="font-sans font-bold text-lg mb-4">팔로우</h3>
-            <div className="flex gap-4">
+            <div className="flex gap-4 mb-6">
               <a
                 href={SOCIAL_LINKS.INSTAGRAM}
                 target="_blank"
@@ -152,6 +135,27 @@ export default function Footer() {
                 </svg>
               </a>
             </div>
+
+            <h3 className="font-sans font-bold text-lg mb-4">문의</h3>
+            <div className="text-sm text-gray-400 space-y-1">
+              <p>{CONTACT.ORGANIZATION_NAME}</p>
+              <p>
+                <a
+                  href={`tel:${CONTACT.PHONE.replace(/-/g, '')}`}
+                  className="hover:text-primary transition-colors link-underline-offset"
+                >
+                  {CONTACT.PHONE}
+                </a>
+              </p>
+              <p>
+                <a
+                  href={`mailto:${CONTACT.EMAIL}`}
+                  className="hover:text-primary transition-colors link-underline-offset"
+                >
+                  {CONTACT.EMAIL}
+                </a>
+              </p>
+            </div>
           </div>
         </div>
 
@@ -160,16 +164,7 @@ export default function Footer() {
           {/* Copyright */}
           <div className="text-center text-sm text-gray-400">
             <p>
-              © {new Date().getFullYear()} SAF 2026. All rights reserved. |{' '}
-              <a
-                href={EXTERNAL_LINKS.KOSMART_HOME}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-primary transition-colors"
-              >
-                한국스마트협동조합
-              </a>{' '}
-              {CONTACT.PERSON_NAME}
+              © {new Date().getFullYear()} SAF 2026. All rights reserved.
             </p>
           </div>
         </div>
