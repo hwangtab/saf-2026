@@ -226,7 +226,7 @@ export default function Home() {
               icon="🎨"
               title="작품 구매"
               description="참여 예술가들의 작품을 구매하며 지원합니다."
-              linkText="갤러리 방문 →"
+              linkText="출품작 보기 →"
             />
 
             <ActionCard
