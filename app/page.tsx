@@ -84,8 +84,7 @@ export default function Home() {
               ❤️ 지금 후원하기
             </Button>
             <Button
-              href={EXTERNAL_LINKS.ONLINE_GALLERY}
-              external
+              href="/artworks"
               variant="secondary"
               size="lg"
             >
@@ -223,8 +222,7 @@ export default function Home() {
             />
 
             <ActionCard
-              href={EXTERNAL_LINKS.ONLINE_GALLERY}
-              external
+              href="/artworks"
               icon="🎨"
               title="작품 구매"
               description="참여 예술가들의 작품을 구매하며 지원합니다."
