@@ -185,8 +185,7 @@ export default function ArtworkDetailPage({ params }: Props) {
                                     rel="noopener noreferrer"
                                     className="flex items-center justify-center gap-3 w-full bg-primary hover:bg-primary/90 text-white font-bold px-8 py-4 rounded-xl transition-all shadow-lg hover:shadow-xl text-lg"
                                 >
-                                    <span>🛒</span>
-                                    <span>온라인 구매</span>
+                                    온라인 구매
                                 </a>
 
                                 {/* 구분선 */}
