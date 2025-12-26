@@ -10,6 +10,7 @@ export interface Artwork {
   edition: string; // 에디션 넘버 (빈 문자열이면 원본)
   price: string;
   image: string; // 이미지 파일명
+  shopUrl?: string; // Cafe24 상품 상세 페이지 URL
 }
 
 export const artworks: Artwork[] = [

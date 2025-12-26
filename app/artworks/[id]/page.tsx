@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
+import { EXTERNAL_LINKS } from '@/lib/constants';
 
 interface Props {
     params: {
@@ -176,13 +177,42 @@ export default function ArtworkDetailPage({ params }: Props) {
                                 </div>
                             )}
 
-                            <div className="pt-8">
+                            <div className="pt-8 space-y-6">
+                                {/* 온라인 구매 버튼 */}
                                 <a
-                                    href="mailto:contact@kosmart.org?subject=작품 구매 문의"
-                                    className="inline-block bg-primary hover:bg-light text-white hover:text-primary border border-transparent hover:border-primary font-bold px-8 py-3 rounded-lg transition-colors"
+                                    href={artwork.shopUrl || EXTERNAL_LINKS.ONLINE_GALLERY}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center justify-center gap-3 w-full bg-primary hover:bg-primary/90 text-white font-bold px-8 py-4 rounded-xl transition-all shadow-lg hover:shadow-xl text-lg"
                                 >
-                                    작품 구매 문의하기
+                                    <span>🛒</span>
+                                    <span>온라인 구매</span>
                                 </a>
+
+                                {/* 구분선 */}
+                                <div className="flex items-center gap-4">
+                                    <div className="flex-1 h-px bg-gray-200" />
+                                    <span className="text-gray-400 text-sm">또는 직접 문의</span>
+                                    <div className="flex-1 h-px bg-gray-200" />
+                                </div>
+
+                                {/* 연락처 옵션 */}
+                                <div className="grid grid-cols-2 gap-4">
+                                    <a
+                                        href="tel:02-764-3114"
+                                        className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-200 rounded-lg hover:border-primary hover:text-primary transition-colors bg-white"
+                                    >
+                                        <span>📞</span>
+                                        <span className="text-sm font-medium">02-764-3114</span>
+                                    </a>
+                                    <a
+                                        href="mailto:contact@kosmart.org"
+                                        className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-200 rounded-lg hover:border-primary hover:text-primary transition-colors bg-white"
+                                    >
+                                        <span>✉️</span>
+                                        <span className="text-sm font-medium">이메일 문의</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
