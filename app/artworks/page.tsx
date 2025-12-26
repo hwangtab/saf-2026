@@ -35,7 +35,9 @@ export const metadata: Metadata = {
 };
 
 export default function ArtworksPage() {
-    const artworks = getAllArtworks();
+    const artworks = getAllArtworks().sort((a, b) =>
+        a.artist.localeCompare(b.artist, 'ko-KR')
+    );
 
     return (
         <main className="min-h-screen bg-gray-50 pb-20">
