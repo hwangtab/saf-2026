@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { SOCIAL_LINKS, CONTACT, EXTERNAL_LINKS } from '@/lib/constants';
+import { SOCIAL_LINKS, CONTACT, EXTERNAL_LINKS, EXHIBITION } from '@/lib/constants';
 
 export default function Footer() {
   return (
@@ -28,12 +28,12 @@ export default function Footer() {
               <p>{CONTACT.ORGANIZATION_NAME}</p>
               <p>
                 <a
-                  href={EXTERNAL_LINKS.KOSMART_OFFICE_MAP}
+                  href={EXTERNAL_LINKS.INSA_GALLERY_KAKAO}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-primary transition-colors link-underline-offset"
                 >
-                  {CONTACT.ADDRESS}
+                  {EXHIBITION.LOCATION} <br className="hidden md:inline" />({EXHIBITION.ADDRESS})
                 </a>
               </p>
               <p>
