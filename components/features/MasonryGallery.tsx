@@ -83,6 +83,12 @@ export default function MasonryGallery({ artworks }: MasonryGalleryProps) {
                                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                     />
                                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+                                    {/* SOLD 배지 */}
+                                    {artwork.sold && (
+                                        <div className="absolute top-3 right-3 bg-red-600 text-white px-3 py-1 rounded-md font-bold text-sm shadow-md">
+                                            SOLD
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className="p-4 bg-white">
@@ -97,7 +103,10 @@ export default function MasonryGallery({ artworks }: MasonryGalleryProps) {
                                             {artwork.size !== '확인 중' && artwork.size}
                                         </p>
                                     )}
-                                    {artwork.price !== '문의' && artwork.price !== '확인 중' && (
+                                    {/* 판매완료 또는 가격 표시 */}
+                                    {artwork.sold ? (
+                                        <p className="text-sm font-semibold text-red-600 mt-1">판매완료</p>
+                                    ) : artwork.price !== '문의' && artwork.price !== '확인 중' && (
                                         <p className="text-sm font-semibold text-primary mt-1">{artwork.price}</p>
                                     )}
                                 </div>

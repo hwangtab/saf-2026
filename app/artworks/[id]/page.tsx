@@ -173,12 +173,18 @@ export default function ArtworkDetailPage({ params }: Props) {
                                     className="w-full h-auto object-contain max-h-[80vh]"
                                     priority
                                 />
+                                {/* SOLD 배지 */}
+                                {artwork.sold && (
+                                    <div className="absolute top-4 right-4 bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-lg shadow-lg transform rotate-3">
+                                        SOLD
+                                    </div>
+                                )}
                             </div>
 
                             {/* CTA Section - Moved here for better visibility */}
                             <div className="pt-4 space-y-6">
-                                {/* 온라인 구매 버튼 - 가격이 있는 경우에만 표시 */}
-                                {artwork.price && artwork.price !== '문의' && (
+                                {/* 온라인 구매 버튼 - 가격이 있고 판매되지 않은 경우에만 표시 */}
+                                {artwork.price && artwork.price !== '문의' && !artwork.sold && (
                                     <>
                                         <Button
                                             href={artwork.shopUrl || EXTERNAL_LINKS.ONLINE_GALLERY}

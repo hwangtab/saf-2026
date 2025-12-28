@@ -12,6 +12,7 @@ export interface Artwork {
   price: string;
   image: string; // 이미지 파일명
   shopUrl?: string; // Cafe24 상품 상세 페이지 URL
+  sold?: boolean; // 판매 완료 여부
 }
 
 export const artworks: Artwork[] = [
@@ -73,7 +74,8 @@ export const artworks: Artwork[] = [
     "price": "₩1,200,000",
     "image": "5.jpg",
     "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/24",
-    "history": "부산외국어대 명예교수, 사진비평가, 국제문화예술교류원 전속 작가\n2025 중한예술가국제사생전 (단체전), 중국 무석시 태호미술관 소장\n2025 중한예술가국제교류전 (단체전), 중국 소주시 동산국빈관 미술관 소장"
+    "history": "부산외국어대 명예교수, 사진비평가, 국제문화예술교류원 전속 작가\n2025 중한예술가국제사생전 (단체전), 중국 무석시 태호미술관 소장\n2025 중한예술가국제교류전 (단체전), 중국 소주시 동산국빈관 미술관 소장",
+    "sold": true
   },
   {
     "id": "6",
