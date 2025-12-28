@@ -146,7 +146,7 @@ const rows = artworksArray.map((artwork, index) => {
         'Y', // 추천상품영역
         productName, // 상품명
         '', // 영문 상품명
-        `[${artwork.id}] ${artwork.artist} - ${artwork.title}`, // 상품명(관리용)
+        `[${artwork.id}] ${artwork.artist}`.substring(0, 16), // 상품명(관리용) - 50byte 제한
         '', // 공급사 상품명
         '', // 모델명
         summary, // 상품 요약설명
@@ -188,7 +188,7 @@ const rows = artworksArray.map((artwork, index) => {
         IMAGE_BASE_URL + artwork.image, // 이미지등록(작은목록)
         IMAGE_BASE_URL + artwork.image, // 이미지등록(축소)
         '', // 이미지등록(추가)
-        artwork.artist, // 제조사
+        '', // 제조사 (비워둠 - Cafe24에서 미등록 제조사 오류)
         '', // 공급사
         '', // 브랜드
         '', // 트렌드
