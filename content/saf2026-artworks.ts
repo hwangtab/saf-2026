@@ -27,7 +27,7 @@ export const artworks: Artwork[] = [
     "edition": "",
     "price": "₩4,500,000",
     "image": "2.jpg",
-    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/22",
+    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/21",
     "history": "개인전\n2023 POP KIDS (갤러리H, 서울)\nBelieving Is Seeing (아터테인 갤러리, 서울)\nFace (호서대학교 중앙도서관 전시관, 천안)\n2019 최윤정 초대전 (갤러리H, 청주)\n2018 There Being (갤러리 반디트라소, 서울)\n2016 Follow ME (반디트라소 갤러리, 서울)\nPop Kids (YTN Art Square, 서울)\n2014 Into The Pinhole (A.Style, 홍콩)\nShow Me the Money (갤러리 그리다, 서울)\n2013 Desire (가일미술관, 가평)\nInto The Pinhole (갤러리 192, 서울)\n2010 Fantasyland (사이아트 갤러리, 서울)\n최윤정 개인전 (위드스페이스 갤러리, 베이징)\n2009 Moderno (부산아트센터, 부산)\n2008 Nostalgia (한전프라자 갤러리, 서울)\n\n단체전\n2023 키아프 (코엑스, 서울)\n화랑미술제 (코엑스, 서울)\n홍범도-장군의 초상 (나무아트, 서울)\n우리 안부 실태 조사 (조선대학교 미술관, 광주)\n드로잉박스 (아트레온 갤러리, 서울)\n연희아트페어 (아터테인 갤러리, 서울)\n세상의 모든 드로잉 (아터테인 갤러리, 서울)\n소공의 겨울 (소공 스페이스, 서울)\n공감23 (아트레온 갤러리, 서울)\n2023 광주 에이블아트페어(김대중컨벤션센터, 광주)\n2022 19th Asian Art Biennale Bangladesh 2022 (National Art Gallery, Dhaka)\nI Am What I Paint (칼리파 갤러리, 서울)\n욕망 (아트레온 갤러리, 서울)\n토탈 서포트 (토탈미술관, 서울)\nArt Project,22 (아트스페이스 케이씨, 판교)\n천년길 위에 새겨진, 너와 나의 시선 (경기새천년길갤러리, 수원)\n2021 거대한 뿌리 (인사아트센터, 서울)\n세상의 모든 드로잉 (아터테인, 서울)\n연희아트페어 (아터테인, 서울)\n현대미술로 바라본 여성 인권 이야기_행진 (아트노이드178, 서울)\n현대미술로 바라본 여성 인권 이야기_행진 (금정예술공연지원센터갤러리, 부산)\n현대미술로 바라본 여성 인권 이야기_행진 (서구문화회관, 인천)\n공감 2021 (아트레온 갤러리, 서울)\n조형아트페어 (코엑스, 서울)\n어반 브레이크 (코엑스, 서울)\n2020 시각적 상상력 (서해미술관, 서산)\n자화만사성 (아트 터미널-작은미술관, 정선)\n카트 뮤지엄 (아트 터미널-작은미술관, 정선)\n슈퍼 콜렉션 (슈페리어 갤러리, 서울)\n일상으로부터 (갤러리 더플로우, 서울)\n모두의 드로잉 (아터테인, 서울)\n2019 WIT : What's the Issue These days? (조선대학교미술관, 광주)\n이웃작가들 (나무아트, 서울)\nArt Busaan (Bexco, 부산)\n가족의 정원 (양평군립미술관, 양평)\nDo The Right Thing (제주조각공원 전시관, 제주/국회의원회관, 서울)\n2018 SCOPE MIAMI (마이애미비치, 마이애미)\n대구아트페어 (대구컨벤션센터, 대구)\n상하이 아트 페어 (상하이 월드 엑스포 엑스비션&컨벤션 센터, 상하이)\n아트 마이닝 (DDP, 서울)\n코리안 팝아트 (하남문화재단, 하남)\nDo The Right Thing (성북구청갤러리, 서울)\n오산시립미술관 신소장품전 (오산시립미술관, 오산)\n2017 미디어 엑스터시 (경북대학교미술관, 대구)\nFantastic Show Show Show (갤러리 자인제노, 서울)\nDo The Right Thing (글렌데일도서관, LA)\n아라리 플랫폼‐POP (아트 터미널_작은 미술관, 정선)\n이미지와 타자의 눈 (서산문화센터, 서산)\n2016 우리시대의 유산 (양평군립미술관, 양평)\n오, 독불장군 (우종미술관, 보성)\n2015 서울 어포더블 아트페어 (DDP, 서울)\n아트차이나 (national Agricultural Exhibition Center, 베이징)\nRun to Fancyland (The Popsy Room, 홍콩)\n헬로우! 팝 (제주도립미술관, 제주)\nInter‐Reflection (서산시문화회관, 서산)\nUncertain Paradise (갤러리 이마주, 서울)\n아트 부산 (벡스코, 부산)\n홍콩 어포더블 아트페어 (HKCEC, 홍콩)\n비욘드 팝 (롯데호텔 갤러리, 서울)\n컨버전스의 담론전 (사이아트 스페이스, 서울)\n2014 Live and Let Live (갤러리 클레이, 시드니)\n싱가폴 어포더블 아트 페어 (F1 Pit Building, 싱가폴)\n키아프 2014 (코엑스, 서울)\n아트광주 14 (김대중컨벤션센터, 광주)\n부산아트쇼 2014 (벡스코, 서울)\nAsia Contemporary Art Show (콘라드호텔, 홍콩)\n화랑미술제 (코엑스, 서울)\n2013 소녀의 꿈 (롯데갤러리, 서울)\n테헤란로에서 좀비를 만나다 (갤러리 이마주, 서울)\nAsia Contemporary Art Show (JW Marriott, 홍콩)\n만화에 빠지다 (롯데갤러리, 대전)\n보이는대로 (갤러리 그리다, 서울)\n흑교전 (TV12 갤러리, 서울)\n2012 Asia Contemporary Art Show (Grand Hyatt Hotel, 홍콩)\nReal/Unreal (위드스페이스 갤러리, 베이징)\nART Plage (롯데갤러리, 부산/서울)\n이것이 대중미술이다 (세종문화회관 미술관, 서울)\nReal/Unreal ‐ two realities and an interpretation in between (사이아트 갤러리, 서울)\nCan you find me? (일현미술관, 양양)\n2011 양평군립미술관 개관기획전 <마법의 나라, 양평> (양평군립미술관, 양평)\nFun + Pop 유쾌한 현대미술 (과천시민회관, 과천)\n이머징 아티스트 파트3 (MK2 아트 스페이스, 베이징)\n욕망의 심리학‐우리를 말한다 (가일 미술관, 가평)\n2010 Art Share (동덕아트갤러리, 서울)\n한국 현대미술의 흐름Ⅲ‐Pop Art (김해 문화의 전당, 김해)\nDepartopia (롯데 갤러리, 안양)\n9th Funny Painting Funny Sculpture (세줄 갤러리, 서울)\n하하하호호호 (신세계 갤러리, 광주/부산)\nWork Collection\n국립현대미술관 미술은행(과천), 양평군립미술관(양평), 오산미술관(오산), 하이트진로(서울),\nMETA Korea(서울), 호서대학교(아산), AnaPass(서울), YK BNC(서울) 외 다수 개인소장\nResidence Program & Other Project\n2013 콜라보레이션 with LOTTE (서울)\n2011 콜라보레이션 with HITE (서울)\n2011 리인위미 창작스튜디오 (C.O.L. Art Management, 베이징)"
   },
   {
@@ -42,7 +42,7 @@ export const artworks: Artwork[] = [
     "edition": "",
     "price": "₩4,500,000",
     "image": "3.jpg",
-    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/23",
+    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/22",
     "history": "개인전\n2023 POP KIDS (갤러리H, 서울)\nBelieving Is Seeing (아터테인 갤러리, 서울)\nFace (호서대학교 중앙도서관 전시관, 천안)\n2019 최윤정 초대전 (갤러리H, 청주)\n2018 There Being (갤러리 반디트라소, 서울)\n2016 Follow ME (반디트라소 갤러리, 서울)\nPop Kids (YTN Art Square, 서울)\n2014 Into The Pinhole (A.Style, 홍콩)\nShow Me the Money (갤러리 그리다, 서울)\n2013 Desire (가일미술관, 가평)\nInto The Pinhole (갤러리 192, 서울)\n2010 Fantasyland (사이아트 갤러리, 서울)\n최윤정 개인전 (위드스페이스 갤러리, 베이징)\n2009 Moderno (부산아트센터, 부산)\n2008 Nostalgia (한전프라자 갤러리, 서울)\n\n단체전\n2023 키아프 (코엑스, 서울)\n화랑미술제 (코엑스, 서울)\n홍범도-장군의 초상 (나무아트, 서울)\n우리 안부 실태 조사 (조선대학교 미술관, 광주)\n드로잉박스 (아트레온 갤러리, 서울)\n연희아트페어 (아터테인 갤러리, 서울)\n세상의 모든 드로잉 (아터테인 갤러리, 서울)\n소공의 겨울 (소공 스페이스, 서울)\n공감23 (아트레온 갤러리, 서울)\n2023 광주 에이블아트페어(김대중컨벤션센터, 광주)\n2022 19th Asian Art Biennale Bangladesh 2022 (National Art Gallery, Dhaka)\nI Am What I Paint (칼리파 갤러리, 서울)\n욕망 (아트레온 갤러리, 서울)\n토탈 서포트 (토탈미술관, 서울)\nArt Project,22 (아트스페이스 케이씨, 판교)\n천년길 위에 새겨진, 너와 나의 시선 (경기새천년길갤러리, 수원)\n2021 거대한 뿌리 (인사아트센터, 서울)\n세상의 모든 드로잉 (아터테인, 서울)\n연희아트페어 (아터테인, 서울)\n현대미술로 바라본 여성 인권 이야기_행진 (아트노이드178, 서울)\n현대미술로 바라본 여성 인권 이야기_행진 (금정예술공연지원센터갤러리, 부산)\n현대미술로 바라본 여성 인권 이야기_행진 (서구문화회관, 인천)\n공감 2021 (아트레온 갤러리, 서울)\n조형아트페어 (코엑스, 서울)\n어반 브레이크 (코엑스, 서울)\n2020 시각적 상상력 (서해미술관, 서산)\n자화만사성 (아트 터미널-작은미술관, 정선)\n카트 뮤지엄 (아트 터미널-작은미술관, 정선)\n슈퍼 콜렉션 (슈페리어 갤러리, 서울)\n일상으로부터 (갤러리 더플로우, 서울)\n모두의 드로잉 (아터테인, 서울)\n2019 WIT : What's the Issue These days? (조선대학교미술관, 광주)\n이웃작가들 (나무아트, 서울)\nArt Busaan (Bexco, 부산)\n가족의 정원 (양평군립미술관, 양평)\nDo The Right Thing (제주조각공원 전시관, 제주/국회의원회관, 서울)\n2018 SCOPE MIAMI (마이애미비치, 마이애미)\n대구아트페어 (대구컨벤션센터, 대구)\n상하이 아트 페어 (상하이 월드 엑스포 엑스비션&컨벤션 센터, 상하이)\n아트 마이닝 (DDP, 서울)\n코리안 팝아트 (하남문화재단, 하남)\nDo The Right Thing (성북구청갤러리, 서울)\n오산시립미술관 신소장품전 (오산시립미술관, 오산)\n2017 미디어 엑스터시 (경북대학교미술관, 대구)\nFantastic Show Show Show (갤러리 자인제노, 서울)\nDo The Right Thing (글렌데일도서관, LA)\n아라리 플랫폼‐POP (아트 터미널_작은 미술관, 정선)\n이미지와 타자의 눈 (서산문화센터, 서산)\n2016 우리시대의 유산 (양평군립미술관, 양평)\n오, 독불장군 (우종미술관, 보성)\n2015 서울 어포더블 아트페어 (DDP, 서울)\n아트차이나 (national Agricultural Exhibition Center, 베이징)\nRun to Fancyland (The Popsy Room, 홍콩)\n헬로우! 팝 (제주도립미술관, 제주)\nInter‐Reflection (서산시문화회관, 서산)\nUncertain Paradise (갤러리 이마주, 서울)\n아트 부산 (벡스코, 부산)\n홍콩 어포더블 아트페어 (HKCEC, 홍콩)\n비욘드 팝 (롯데호텔 갤러리, 서울)\n컨버전스의 담론전 (사이아트 스페이스, 서울)\n2014 Live and Let Live (갤러리 클레이, 시드니)\n싱가폴 어포더블 아트 페어 (F1 Pit Building, 싱가폴)\n키아프 2014 (코엑스, 서울)\n아트광주 14 (김대중컨벤션센터, 광주)\n부산아트쇼 2014 (벡스코, 서울)\nAsia Contemporary Art Show (콘라드호텔, 홍콩)\n화랑미술제 (코엑스, 서울)\n2013 소녀의 꿈 (롯데갤러리, 서울)\n테헤란로에서 좀비를 만나다 (갤러리 이마주, 서울)\nAsia Contemporary Art Show (JW Marriott, 홍콩)\n만화에 빠지다 (롯데갤러리, 대전)\n보이는대로 (갤러리 그리다, 서울)\n흑교전 (TV12 갤러리, 서울)\n2012 Asia Contemporary Art Show (Grand Hyatt Hotel, 홍콩)\nReal/Unreal (위드스페이스 갤러리, 베이징)\nART Plage (롯데갤러리, 부산/서울)\n이것이 대중미술이다 (세종문화회관 미술관, 서울)\nReal/Unreal ‐ two realities and an interpretation in between (사이아트 갤러리, 서울)\nCan you find me? (일현미술관, 양양)\n2011 양평군립미술관 개관기획전 <마법의 나라, 양평> (양평군립미술관, 양평)\nFun + Pop 유쾌한 현대미술 (과천시민회관, 과천)\n이머징 아티스트 파트3 (MK2 아트 스페이스, 베이징)\n욕망의 심리학‐우리를 말한다 (가일 미술관, 가평)\n2010 Art Share (동덕아트갤러리, 서울)\n한국 현대미술의 흐름Ⅲ‐Pop Art (김해 문화의 전당, 김해)\nDepartopia (롯데 갤러리, 안양)\n9th Funny Painting Funny Sculpture (세줄 갤러리, 서울)\n하하하호호호 (신세계 갤러리, 광주/부산)\nWork Collection\n국립현대미술관 미술은행(과천), 양평군립미술관(양평), 오산미술관(오산), 하이트진로(서울),\nMETA Korea(서울), 호서대학교(아산), AnaPass(서울), YK BNC(서울) 외 다수 개인소장\nResidence Program & Other Project\n2013 콜라보레이션 with LOTTE (서울)\n2011 콜라보레이션 with HITE (서울)\n2011 리인위미 창작스튜디오 (C.O.L. Art Management, 베이징)"
   },
   {
@@ -57,7 +57,7 @@ export const artworks: Artwork[] = [
     "edition": "에디션 5/5",
     "price": "문의",
     "image": "4.jpg",
-    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/24",
+    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/23",
     "history": "오사카예술대학교(OSAKA UNIVERSITY OF ART) 사진학과 졸업\n상명대학교 예술·디자인대학원(사진학과-순수/이미지사이언스 전공)졸업\n07-12년 대구예술대학교 사진학과 강사\n08-09년 국민대학교 조형대학 강사\n13-17년 상명대 사진영상학과 강사\n10-현재 충남대학교 디자인창의학과 강사\n\n개인전\n23년 記憶의 여정 – 여미갤러리외 19회\n\n단체전\n22년 붉은 언덕_Crimson Hill전 – 연희동미술관외 40여회"
   },
   {
@@ -72,7 +72,7 @@ export const artworks: Artwork[] = [
     "edition": "",
     "price": "₩1,200,000",
     "image": "5.jpg",
-    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/25",
+    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/24",
     "history": "부산외국어대 명예교수, 사진비평가, 국제문화예술교류원 전속 작가\n2025 중한예술가국제사생전 (단체전), 중국 무석시 태호미술관 소장\n2025 중한예술가국제교류전 (단체전), 중국 소주시 동산국빈관 미술관 소장"
   },
   {
@@ -87,7 +87,7 @@ export const artworks: Artwork[] = [
     "edition": "",
     "price": "₩1,200,000",
     "image": "6.jpg",
-    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/26",
+    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/25",
     "history": "부산외국어대 명예교수, 사진비평가, 국제문화예술교류원 전속 작가\n2025 중한예술가국제사생전 (단체전), 중국 무석시 태호미술관 소장\n2025 중한예술가국제교류전 (단체전), 중국 소주시 동산국빈관 미술관 소장"
   },
   {
@@ -102,7 +102,7 @@ export const artworks: Artwork[] = [
     "edition": "에디션 1/8",
     "price": "₩2,400,000",
     "image": "7.jpg",
-    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/27",
+    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/26",
     "history": ""
   },
   {
@@ -117,7 +117,7 @@ export const artworks: Artwork[] = [
     "edition": "에디션 1/10",
     "price": "₩1,500,000",
     "image": "8.jpg",
-    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/28",
+    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/27",
     "history": ""
   },
   {
@@ -132,7 +132,7 @@ export const artworks: Artwork[] = [
     "edition": "에디션 2/10",
     "price": "₩600,000",
     "image": "9.jpg",
-    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/29",
+    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/28",
     "history": ""
   },
   {
@@ -148,7 +148,7 @@ export const artworks: Artwork[] = [
     "edition": "",
     "price": "₩4,000,000",
     "image": "10.jpg",
-    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/30"
+    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/29"
   },
   {
     "id": "11",
@@ -163,7 +163,7 @@ export const artworks: Artwork[] = [
     "edition": "",
     "price": "₩6,000,000",
     "image": "11.png",
-    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/31"
+    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/30"
   },
   {
     "id": "12",
@@ -177,7 +177,7 @@ export const artworks: Artwork[] = [
     "edition": "",
     "price": "문의",
     "image": "12.jpg",
-    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/32",
+    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/31",
     "history": "학력\n이화여자대학교 미술대학 서양화과 졸업\n홍익대학교 산업미술대학원 사진디자인 전공 석사\n\n전시 경력\n2024 그 집에 산다, 갤러리 브레송, 서울\n2024 기억의 집 초대전, 예술곳간, 청주 외 개인전 13회\n2024 그라운드 서학, 전주 아트갤러리, 전주\n2024 마음의 집, 송파구 예송미술관, 서울 외 단체전 31회\n\n출판\n2020 밤의 집 The Houses at Night, 눈빛\n2021 밤의 집 The Houses at Night, 나미브\n\n수상\n2022 BELT 2022 판화사진 공모 작가 사진부문 선정\n2021 제2회 FNK Photography Award 예술사진부문 당선\n2018 서울시청 하늘광장 갤러리 작가 공모당선\n연락처 및 SNS\n홈페이지: www.soneunyoung.com\n인스타그램: _young_eye\nE-mail: eye7148@hanmail.net"
   },
   {
@@ -192,7 +192,7 @@ export const artworks: Artwork[] = [
     "edition": "",
     "price": "문의",
     "image": "13.jpg",
-    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/33",
+    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/32",
     "history": "학력\n이화여자대학교 미술대학 서양화과 졸업\n홍익대학교 산업미술대학원 사진디자인 전공 석사\n\n전시 경력\n2024 그 집에 산다, 갤러리 브레송, 서울\n2024 기억의 집 초대전, 예술곳간, 청주 외 개인전 13회\n2024 그라운드 서학, 전주 아트갤러리, 전주\n2024 마음의 집, 송파구 예송미술관, 서울 외 단체전 31회\n\n출판\n2020 밤의 집 The Houses at Night, 눈빛\n2021 밤의 집 The Houses at Night, 나미브\n\n수상\n2022 BELT 2022 판화사진 공모 작가 사진부문 선정\n2021 제2회 FNK Photography Award 예술사진부문 당선\n2018 서울시청 하늘광장 갤러리 작가 공모당선\n연락처 및 SNS\n홈페이지: www.soneunyoung.com\n인스타그램: _young_eye\nE-mail: eye7148@hanmail.net"
   },
   {
@@ -207,7 +207,7 @@ export const artworks: Artwork[] = [
     "edition": "",
     "price": "₩700,000",
     "image": "14.jpg",
-    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/34",
+    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/33",
     "history": "개인전\n2021 휘어진 세계로부터 갤러리 브레송, 서울 외 다수\n2019 사건 으로부터, 로부터 갤러리구피, 서울\n2019 사진은 세계를 만지고 포토그래퍼스 갤러리 코리아, 서울\n2019 TOUCH 갤러리 브레송, 서울\n2018 이미지의 귀환 third story IMAGE2IMAGE 공간더인 공간더인, 서울\n2015 CONTACT 포토그래퍼스 갤러리 코리아, 서울\n2013 IMAGE2IMAGE2 갤러리 유키, 도쿄 일본\n2012 IMAGE2IMAGE 갤러리 유키, 서울\n2009 낯선 하루 공간 루, 서울\n\n단체전\n2022 본질에 대하여 홍천 미술관, 홍천\n2022 GRAPHOS 비움 갤러리, 서울\n2022 인천개항장 국제사진영상페스티벌 한국작가 15인전 화교역사관, 인천 2022 TANGLED COSMOS 메탈하우스 갤러리, 양평\n2022 Neo-orbis_新世界 홍천 미술관, 홍천\n2022 Contemporary Korea Photography 김영섭사진화랑, 서울\n2021 날씨의 맛 갤러리 브레송, 서울\n2021 바라보다3-다시보다 갤러리 아지트, 서울\n2021 환경전시: To The Negentropia 충무로 갤러리, 서울\n2020 Seoul in my mind 금산 갤러리, 서울\n2020 관계하다 비움 갤러리, 서울\n2020 확장된 감각 와이아트 갤러리, 서울\n2019 포스트 포토 토포 하우스, 서울\n2019 On Photography 갤러리 브레송, 서울\n2018 고양이 아미미술관, 당진 충남\n2018 D cut Image for Yourself 아트스페이스엣, 서울\n2018 경계해체, 사진과 회화의 경계 에코락 갤러리, 서울\n2017 경계해체II 사진과 회화의 경계 에코락 갤러리, 서울\n2012 Let's Play Space Radio M, 서울\n2011 사진,,,매체로서의 예술 스페이스 이노, 서울\n2011 회사원전 작은공간 이소, 대구\n\n출판\n2019 <TOUCH> 나미브 출판사\n2019 <On Photography> 눈빛 출판사 p37~43"
   },
   {
@@ -222,7 +222,7 @@ export const artworks: Artwork[] = [
     "edition": "unique edition",
     "price": "₩5,000,000",
     "image": "15.jpg",
-    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/35",
+    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/34",
     "history": "개인전\n2021 휘어진 세계로부터 갤러리 브레송, 서울 외 다수\n2019 사건 으로부터, 로부터 갤러리구피, 서울\n2019 사진은 세계를 만지고 포토그래퍼스 갤러리 코리아, 서울\n2019 TOUCH 갤러리 브레송, 서울\n2018 이미지의 귀환 third story IMAGE2IMAGE 공간더인 공간더인, 서울\n2015 CONTACT 포토그래퍼스 갤러리 코리아, 서울\n2013 IMAGE2IMAGE2 갤러리 유키, 도쿄 일본\n2012 IMAGE2IMAGE 갤러리 유키, 서울\n2009 낯선 하루 공간 루, 서울\n\n단체전\n2022 본질에 대하여 홍천 미술관, 홍천\n2022 GRAPHOS 비움 갤러리, 서울\n2022 인천개항장 국제사진영상페스티벌 한국작가 15인전 화교역사관, 인천 2022 TANGLED COSMOS 메탈하우스 갤러리, 양평\n2022 Neo-orbis_新世界 홍천 미술관, 홍천\n2022 Contemporary Korea Photography 김영섭사진화랑, 서울\n2021 날씨의 맛 갤러리 브레송, 서울\n2021 바라보다3-다시보다 갤러리 아지트, 서울\n2021 환경전시: To The Negentropia 충무로 갤러리, 서울\n2020 Seoul in my mind 금산 갤러리, 서울\n2020 관계하다 비움 갤러리, 서울\n2020 확장된 감각 와이아트 갤러리, 서울\n2019 포스트 포토 토포 하우스, 서울\n2019 On Photography 갤러리 브레송, 서울\n2018 고양이 아미미술관, 당진 충남\n2018 D cut Image for Yourself 아트스페이스엣, 서울\n2018 경계해체, 사진과 회화의 경계 에코락 갤러리, 서울\n2017 경계해체II 사진과 회화의 경계 에코락 갤러리, 서울\n2012 Let's Play Space Radio M, 서울\n2011 사진,,,매체로서의 예술 스페이스 이노, 서울\n2011 회사원전 작은공간 이소, 대구\n\n출판\n2019 <TOUCH> 나미브 출판사\n2019 <On Photography> 눈빛 출판사 p37~43"
   },
   {
@@ -237,7 +237,7 @@ export const artworks: Artwork[] = [
     "edition": "",
     "price": "₩1,200,000",
     "image": "16.jpg",
-    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/36",
+    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/35",
     "history": "개인전\n2021 휘어진 세계로부터 갤러리 브레송, 서울 외 다수\n2019 사건 으로부터, 로부터 갤러리구피, 서울\n2019 사진은 세계를 만지고 포토그래퍼스 갤러리 코리아, 서울\n2019 TOUCH 갤러리 브레송, 서울\n2018 이미지의 귀환 third story IMAGE2IMAGE 공간더인 공간더인, 서울\n2015 CONTACT 포토그래퍼스 갤러리 코리아, 서울\n2013 IMAGE2IMAGE2 갤러리 유키, 도쿄 일본\n2012 IMAGE2IMAGE 갤러리 유키, 서울\n2009 낯선 하루 공간 루, 서울\n\n단체전\n2022 본질에 대하여 홍천 미술관, 홍천\n2022 GRAPHOS 비움 갤러리, 서울\n2022 인천개항장 국제사진영상페스티벌 한국작가 15인전 화교역사관, 인천 2022 TANGLED COSMOS 메탈하우스 갤러리, 양평\n2022 Neo-orbis_新世界 홍천 미술관, 홍천\n2022 Contemporary Korea Photography 김영섭사진화랑, 서울\n2021 날씨의 맛 갤러리 브레송, 서울\n2021 바라보다3-다시보다 갤러리 아지트, 서울\n2021 환경전시: To The Negentropia 충무로 갤러리, 서울\n2020 Seoul in my mind 금산 갤러리, 서울\n2020 관계하다 비움 갤러리, 서울\n2020 확장된 감각 와이아트 갤러리, 서울\n2019 포스트 포토 토포 하우스, 서울\n2019 On Photography 갤러리 브레송, 서울\n2018 고양이 아미미술관, 당진 충남\n2018 D cut Image for Yourself 아트스페이스엣, 서울\n2018 경계해체, 사진과 회화의 경계 에코락 갤러리, 서울\n2017 경계해체II 사진과 회화의 경계 에코락 갤러리, 서울\n2012 Let's Play Space Radio M, 서울\n2011 사진,,,매체로서의 예술 스페이스 이노, 서울\n2011 회사원전 작은공간 이소, 대구\n\n출판\n2019 <TOUCH> 나미브 출판사\n2019 <On Photography> 눈빛 출판사 p37~43"
   },
   {
@@ -252,7 +252,7 @@ export const artworks: Artwork[] = [
     "edition": "",
     "price": "문의",
     "image": "17.jpg",
-    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/37",
+    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/36",
     "history": ""
   },
   {
@@ -267,7 +267,7 @@ export const artworks: Artwork[] = [
     "edition": "",
     "price": "문의",
     "image": "18.jpg",
-    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/38",
+    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/37",
     "history": ""
   },
   {
@@ -282,7 +282,7 @@ export const artworks: Artwork[] = [
     "edition": "",
     "price": "문의",
     "image": "19.jpg",
-    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/39",
+    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/38",
     "history": ""
   },
   {
@@ -297,7 +297,7 @@ export const artworks: Artwork[] = [
     "edition": "",
     "price": "₩800,000",
     "image": "20.jpg",
-    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/40",
+    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/39",
     "history": ""
   },
   {
@@ -312,7 +312,7 @@ export const artworks: Artwork[] = [
     "edition": "",
     "price": "₩800,000",
     "image": "21.jpg",
-    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/41",
+    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/40",
     "history": ""
   },
   {
@@ -327,7 +327,7 @@ export const artworks: Artwork[] = [
     "edition": "",
     "price": "₩3,000,000",
     "image": "22.jpg",
-    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/42",
+    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/41",
     "history": ""
   },
   {
@@ -342,7 +342,7 @@ export const artworks: Artwork[] = [
     "edition": "",
     "price": "₩12,000,000",
     "image": "23.jpg",
-    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/43",
+    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/42",
     "history": ""
   },
   {
@@ -357,7 +357,7 @@ export const artworks: Artwork[] = [
     "edition": "",
     "price": "₩25,000,000",
     "image": "24.jpg",
-    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/44",
+    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/43",
     "history": ""
   },
   {
@@ -372,7 +372,7 @@ export const artworks: Artwork[] = [
     "edition": "",
     "price": "문의",
     "image": "25.jpg",
-    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/45",
+    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/44",
     "history": ""
   },
   {
@@ -387,7 +387,7 @@ export const artworks: Artwork[] = [
     "edition": "",
     "price": "문의",
     "image": "26.jpg",
-    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/46",
+    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/45",
     "history": ""
   },
   {
@@ -402,7 +402,7 @@ export const artworks: Artwork[] = [
     "edition": "",
     "price": "문의",
     "image": "27.jpg",
-    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/47",
+    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/46",
     "history": ""
   },
   {
@@ -417,7 +417,7 @@ export const artworks: Artwork[] = [
     "edition": "",
     "price": "₩5,000,000",
     "image": "1.jpeg",
-    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/21",
+    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/47",
     "history": "담몽(淡夢) 신예리\n경원대학교(현 가천대) 섬유미술과 졸업 (2003)\n경기무형문화재 화각장 한춘섭화각공예 수석디자이너로 10년 재직\n현(現) 민화공예공방 ‘담몽’ 대표\n대한민국 국가미술특별초대전 초대작가\nSNAF성남아트페어 작가전\n목원회 단체전 등 참여"
   },
   {
