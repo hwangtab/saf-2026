@@ -177,24 +177,27 @@ export default function ArtworkDetailPage({ params }: Props) {
 
                             {/* CTA Section - Moved here for better visibility */}
                             <div className="pt-4 space-y-6">
-                                {/* 온라인 구매 버튼 */}
-                                {/* 온라인 구매 버튼 */}
-                                <Button
-                                    href={artwork.shopUrl || EXTERNAL_LINKS.ONLINE_GALLERY}
-                                    variant="primary"
-                                    size="lg"
-                                    external
-                                    className="w-full text-lg gap-3 rounded-xl"
-                                >
-                                    온라인 구매
-                                </Button>
+                                {/* 온라인 구매 버튼 - 가격이 있는 경우에만 표시 */}
+                                {artwork.price && artwork.price !== '문의' && (
+                                    <>
+                                        <Button
+                                            href={artwork.shopUrl || EXTERNAL_LINKS.ONLINE_GALLERY}
+                                            variant="primary"
+                                            size="lg"
+                                            external
+                                            className="w-full text-lg gap-3 rounded-xl"
+                                        >
+                                            온라인 구매
+                                        </Button>
 
-                                {/* 구분선 */}
-                                <div className="flex items-center gap-4">
-                                    <div className="flex-1 h-px bg-gray-200" />
-                                    <span className="text-gray-400 text-sm">또는 직접 문의</span>
-                                    <div className="flex-1 h-px bg-gray-200" />
-                                </div>
+                                        {/* 구분선 */}
+                                        <div className="flex items-center gap-4">
+                                            <div className="flex-1 h-px bg-gray-200" />
+                                            <span className="text-gray-400 text-sm">또는 직접 문의</span>
+                                            <div className="flex-1 h-px bg-gray-200" />
+                                        </div>
+                                    </>
+                                )}
 
                                 {/* 연락처 옵션 */}
                                 <div className="grid grid-cols-2 gap-4">
