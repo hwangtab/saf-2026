@@ -191,19 +191,19 @@ const rows = artworksArray.map((artwork, index) => {
         '', // 브랜드
         '', // 트렌드
         '', // 자체분류 코드
-        manufactureDate, // 제조일자
-        '2026-01-14', // 출시일자 (전시 시작일)
-        'N', // 유효기간 사용여부
+        '', // 제조일자 (비워둠)
+        '', // 출시일자 (비워둠)
+        '', // 유효기간 사용여부
         '', // 유효기간
-        ORIGIN, // 원산지
+        '', // 원산지 (비워둠 - 숫자코드만 가능)
         '', // 상품부피
         '', // 상품결제안내
         '', // 상품배송안내
         '', // 교환/반품안내
         '', // 서비스문의/안내
-        'T', // 배송정보 (개별배송)
-        'C', // 배송방법 (택배)
-        'A', // 국내/해외배송
+        '', // 배송정보 (비워둠)
+        '', // 배송방법 (비워둠)
+        '', // 국내/해외배송
         '', // 배송지역
         '', // 배송비 선결제 설정
         '', // 배송기간
@@ -213,18 +213,18 @@ const rows = artworksArray.map((artwork, index) => {
         '', // 상품 전체중량
         '', // HS코드
         '', // 상품 구분(해외통관)
-        artwork.material || '', // 상품소재
+        '', // 상품소재 (비워둠)
         '', // 영문 상품소재
         '', // 옷감(해외통관)
-        'Y', // SEO 검색엔진 노출 설정
-        `${productName} | 씨앗페 2026`, // SEO Title
-        artwork.artist, // SEO Author
-        `${artwork.artist} 작가의 ${artwork.title}. ${summary}`, // SEO Description
-        keywords, // SEO Keywords
-        `${productName} 작품 이미지`, // SEO 이미지 Alt
+        '', // SEO 검색엔진 노출 설정 (비워둠)
+        '', // SEO Title (비워둠)
+        '', // SEO Author (비워둠)
+        '', // SEO Description (비워둠)
+        '', // SEO Keywords (비워둠)
+        '', // SEO 이미지 Alt (비워둠)
         '', // 개별결제수단설정
         '', // 상품배송유형 코드
-        `씨앗페 2026 전시 작품 (${genre})` // 메모
+        '' // 메모 (비워둠)
     ];
 
     return row.map(escapeCSV).join(',');
