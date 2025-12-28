@@ -26,6 +26,7 @@ console.log(`📦 Found ${artworksArray.length} artworks to convert`);
 const CATEGORY_NO = '43'; // 씨앗페 2026
 const TAX_TYPE = 'B'; // 면세 (예술품)
 const ORIGIN = '국산';
+const IMAGE_BASE_URL = '//ecimg.cafe24img.com/pg1248b38284644098/koreasmartcoop/saf2026/';
 
 // Cafe24 CSV 헤더 (86개 컬럼)
 const headers = [
@@ -182,10 +183,10 @@ const rows = artworksArray.map((artwork, index) => {
         '', // 추가입력옵션 명칭
         '', // 추가입력옵션 선택/필수여부
         '', // 입력글자수
-        artwork.image, // 이미지등록(상세)
-        artwork.image, // 이미지등록(목록)
-        artwork.image, // 이미지등록(작은목록)
-        artwork.image, // 이미지등록(축소)
+        IMAGE_BASE_URL + artwork.image, // 이미지등록(상세)
+        IMAGE_BASE_URL + artwork.image, // 이미지등록(목록)
+        IMAGE_BASE_URL + artwork.image, // 이미지등록(작은목록)
+        IMAGE_BASE_URL + artwork.image, // 이미지등록(축소)
         '', // 이미지등록(추가)
         artwork.artist, // 제조사
         '', // 공급사
