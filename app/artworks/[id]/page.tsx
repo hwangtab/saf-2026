@@ -164,7 +164,7 @@ export default function ArtworkDetailPage({ params }: Props) {
 
                         {/* Left Column: Image & CTA */}
                         <div className="space-y-8">
-                            <div className="relative rounded-2xl overflow-hidden bg-gray-50 shadow-sm">
+                            <div className="relative rounded-2xl overflow-hidden shadow-sm">
                                 <Image
                                     src={`/images/artworks/${artwork.image}`}
                                     alt={artwork.title}
