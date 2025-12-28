@@ -108,14 +108,12 @@ function generateHtmlDescription(artwork) {
     return html;
 }
 
-// Escape CSV field
+// Escape CSV field - always wrap in quotes for safety
 function escapeCSV(field) {
-    if (field === null || field === undefined) return '';
+    if (field === null || field === undefined) return '""';
     const str = String(field);
-    if (str.includes(',') || str.includes('\n') || str.includes('"') || str.includes('\r')) {
-        return '"' + str.replace(/"/g, '""') + '"';
-    }
-    return str;
+    // Always wrap in quotes and escape internal quotes
+    return '"' + str.replace(/"/g, '""') + '"';
 }
 
 // ====== CONVERT ARTWORKS ======
