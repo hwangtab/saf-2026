@@ -98,16 +98,20 @@ function validateArtworks() {
         });
 
         // 형식 검사
-        ['size', 'price', 'year', 'material', 'shopUrl'].forEach(field => {
+        ['size', 'price', 'year', 'material'].forEach(field => {
             const result = rules[field](artwork[field], artwork.id);
             if (result) {
-                if (field === 'shopUrl' || field === 'price') {
+                if (field === 'price') {
                     errors.push(result);
                 } else {
                     warnings.push(result);
                 }
             }
         });
+
+        // shopUrl 검사 (경고로 처리 - 나중에 추가할 수 있음)
+        const shopUrlResult = rules.shopUrl(artwork.shopUrl, artwork.id);
+        if (shopUrlResult) warnings.push(shopUrlResult);
 
         // 에디션 경고
         const editionResult = rules.edition(artwork.edition, artwork.id);
