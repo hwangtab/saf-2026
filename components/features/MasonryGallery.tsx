@@ -96,13 +96,17 @@ export default function MasonryGallery({ artworks }: MasonryGalleryProps) {
                                         {artwork.title}
                                     </h3>
                                     <p className="text-sm text-gray-600 mt-1">{artwork.artist}</p>
-                                    {(artwork.material !== '확인 중' || artwork.size !== '확인 중') && (
-                                        <p className="text-xs text-gray-400 mt-2">
-                                            {artwork.material !== '확인 중' && artwork.material}
-                                            {artwork.material !== '확인 중' && artwork.size !== '확인 중' && ' · '}
-                                            {artwork.size !== '확인 중' && artwork.size}
-                                        </p>
-                                    )}
+                                    {/* 재료 및 크기 표시 (정보가 있을 때만) */}
+                                    {(artwork.material || artwork.size) &&
+                                        (artwork.material !== '확인 중' || artwork.size !== '확인 중') &&
+                                        (artwork.material !== '' || artwork.size !== '') && (
+                                            <p className="text-xs text-gray-400 mt-2">
+                                                {artwork.material && artwork.material !== '확인 중' && artwork.material}
+                                                {artwork.material && artwork.material !== '확인 중' &&
+                                                    artwork.size && artwork.size !== '확인 중' && ' · '}
+                                                {artwork.size && artwork.size !== '확인 중' && artwork.size}
+                                            </p>
+                                        )}
                                     {/* 판매완료 또는 가격 표시 */}
                                     {artwork.sold ? (
                                         <p className="text-sm font-semibold text-red-600 mt-1">판매완료</p>
