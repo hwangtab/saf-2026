@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
-import { EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
+import { SITE_URL } from '@/lib/constants';
 import Button from '@/components/ui/Button';
 
 interface Props {
@@ -183,11 +183,11 @@ export default function ArtworkDetailPage({ params }: Props) {
 
                             {/* CTA Section - Moved here for better visibility */}
                             <div className="pt-4 space-y-6">
-                                {/* 온라인 구매 버튼 - 가격이 있고 판매되지 않은 경우에만 표시 */}
-                                {artwork.price && artwork.price !== '문의' && !artwork.sold && (
+                                {/* 온라인 구매 버튼 - 가격이 있고, shopUrl이 있고, 판매되지 않은 경우에만 표시 */}
+                                {artwork.price && artwork.price !== '문의' && artwork.shopUrl && !artwork.sold && (
                                     <>
                                         <Button
-                                            href={artwork.shopUrl || EXTERNAL_LINKS.ONLINE_GALLERY}
+                                            href={artwork.shopUrl}
                                             variant="primary"
                                             size="lg"
                                             external
