@@ -68,7 +68,7 @@ export default function Header() {
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden lg:flex items-center gap-8">
+        <div className="hidden lg:flex items-center gap-8 h-full">
           {navigation.map((item) =>
             item.external ? (
               <a
@@ -76,7 +76,7 @@ export default function Header() {
                 href={item.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm font-medium transition-colors pb-1 border-b-2 border-transparent text-charcoal hover:text-primary hover:border-primary/40 focus:outline-none focus-visible:outline-none focus-visible:border-primary"
+                className="flex items-center h-full text-sm font-medium transition-colors border-b-2 border-transparent text-charcoal hover:text-primary hover:border-primary/40 focus:outline-none focus-visible:outline-none focus-visible:border-primary"
               >
                 {item.name}
               </a>
@@ -84,7 +84,7 @@ export default function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`text-sm font-medium transition-colors pb-1 border-b-2 focus:outline-none focus-visible:outline-none ${isActive(item.href)
+                className={`flex items-center h-full text-sm font-medium transition-colors border-b-2 focus:outline-none focus-visible:outline-none ${isActive(item.href)
                   ? 'text-primary border-primary'
                   : 'border-transparent text-charcoal hover:text-primary hover:border-primary/40 focus-visible:border-primary'
                   }`}
