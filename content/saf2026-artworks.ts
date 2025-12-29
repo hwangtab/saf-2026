@@ -512,7 +512,7 @@ export const artworks: Artwork[] = [
     "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/53",
     "history": "오사카예술대학교(OSAKA UNIVERSITY OF ART) 사진학과 졸업\n상명대학교 예술·디자인대학원(사진학과-순수/이미지사이언스 전공)졸업\n07-12년 대구예술대학교 사진학과 강사\n08-09년 국민대학교 조형대학 강사\n13-17년 상명대 사진영상학과 강사\n10-현재 충남대학교 디자인창의학과 강사\n\n개인전\n23년 記憶의 여정 – 여미갤러리외 19회\n\n단체전\n22년 붉은 언덕_Crimson Hill전 – 연희동미술관외 40여회"
   }
-,
+  ,
   {
     "id": "34",
     "artist": "이호철",
@@ -524,7 +524,8 @@ export const artworks: Artwork[] = [
     "year": "확인 중",
     "edition": "",
     "price": "₩5,000,000",
-    "image": "34.png"
+    "image": "34.png",
+    "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/54"
   }];
 
 export function getAllArtworks(): Artwork[] {
