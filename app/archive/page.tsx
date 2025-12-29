@@ -77,7 +77,7 @@ export default function ArchivePage() {
         <div className="container-max">
           <h2 className="font-section font-normal text-4xl md:text-5xl mb-12">🎉 2023년 행사 기록</h2>
           <div className="bg-white rounded-lg shadow-sm p-8 mb-12">
-            <h3 className="font-sans font-bold text-2xl mb-4">씨앗페 2023 성과</h3>
+            <h3 className="text-card-title mb-4">씨앗페 2023 성과</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
               <div className="text-center">
                 <p className="text-3xl font-bold text-primary">7일</p>
@@ -155,7 +155,7 @@ export default function ArchivePage() {
                   <p className="text-primary font-semibold mb-3">{artwork.artist}</p>
                   <p className="text-charcoal-muted text-sm mb-4 flex-grow">{artwork.description}</p>
                   {artwork.details && (
-                    <p className="text-xs text-gray-500 mt-auto pt-4 border-t border-gray-200">{artwork.details}</p>
+                    <p className="text-xs text-charcoal-soft mt-auto pt-4 border-t border-gray-200">{artwork.details}</p>
                   )}
                 </div>
               </div>

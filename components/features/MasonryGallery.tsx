@@ -95,12 +95,12 @@ export default function MasonryGallery({ artworks }: MasonryGalleryProps) {
                                     <h3 className="text-lg font-bold text-charcoal font-sans group-hover:text-primary transition-colors">
                                         {artwork.title}
                                     </h3>
-                                    <p className="text-sm text-gray-600 mt-1">{artwork.artist}</p>
+                                    <p className="text-sm text-charcoal-muted mt-1">{artwork.artist}</p>
                                     {/* 재료 및 크기 표시 (정보가 있을 때만) */}
                                     {(artwork.material || artwork.size) &&
                                         (artwork.material !== '확인 중' || artwork.size !== '확인 중') &&
                                         (artwork.material !== '' || artwork.size !== '') && (
-                                            <p className="text-xs text-gray-400 mt-2">
+                                            <p className="text-xs text-charcoal-soft mt-2">
                                                 {artwork.material && artwork.material !== '확인 중' && artwork.material}
                                                 {artwork.material && artwork.material !== '확인 중' &&
                                                     artwork.size && artwork.size !== '확인 중' && ' · '}

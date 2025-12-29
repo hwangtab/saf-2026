@@ -118,15 +118,15 @@ export default function ExhibitionPage() {
               <div>
                 <div className="space-y-4">
                   <div className="border-l-4 border-primary pl-4">
-                    <h3 className="font-sans font-bold text-sm text-gray-500 font-semibold mb-1">행사명</h3>
+                    <h3 className="font-sans font-bold text-sm text-charcoal-muted mb-1">행사명</h3>
                     <p className="text-lg font-semibold">{EXHIBITION.NAME}</p>
                   </div>
                   <div className="border-l-4 border-primary pl-4">
-                    <h3 className="font-sans font-bold text-sm text-gray-500 font-semibold mb-1">기간</h3>
+                    <h3 className="font-sans font-bold text-sm text-charcoal-muted mb-1">기간</h3>
                     <p className="text-lg font-semibold">{EXHIBITION.DATE}</p>
                   </div>
                   <div className="border-l-4 border-primary pl-4">
-                    <h3 className="font-sans font-bold text-sm text-gray-500 font-semibold mb-1">장소</h3>
+                    <h3 className="font-sans font-bold text-sm text-charcoal-muted mb-1">장소</h3>
                     <p className="text-lg font-semibold">{EXHIBITION.LOCATION}</p>
                     <p className="text-charcoal-muted text-sm">{EXHIBITION.ADDRESS}</p>
                   </div>
@@ -190,14 +190,14 @@ export default function ExhibitionPage() {
               <h3 className="font-sans font-bold text-xl mb-4">🚇 대중교통</h3>
               <div className="space-y-4 text-charcoal-muted">
                 <div>
-                  <p className="font-semibold text-gray-900">지하철</p>
+                  <p className="font-semibold text-charcoal">지하철</p>
                   <p>
                     3호선 안국역 1번 출구에서 도보 5분<br />
                     5호선 광화문역 2번 출구에서 도보 10분
                   </p>
                 </div>
                 <div>
-                  <p className="font-semibold text-gray-900">버스</p>
+                  <p className="font-semibold text-charcoal">버스</p>
                   <p>
                     효자로 정류소 하차<br />
                     202, 703, 721, 910 등
@@ -209,11 +209,11 @@ export default function ExhibitionPage() {
               <h3 className="font-sans font-bold text-xl mb-4">🚗 자동차</h3>
               <div className="space-y-4 text-charcoal-muted">
                 <div>
-                  <p className="font-semibold text-gray-900">주소</p>
+                  <p className="font-semibold text-charcoal">주소</p>
                   <p>서울시 종로구 인사동길 41-1</p>
                 </div>
                 <div>
-                  <p className="font-semibold text-gray-900">주차</p>
+                  <p className="font-semibold text-charcoal">주차</p>
                   <p>
                     인사동 주변 공영주차장 이용<br />
                     (카카오맵에서 확인 가능)

@@ -142,19 +142,29 @@ button:focus {
     @apply font-display text-5xl md:text-6xl lg:text-7xl leading-tight;
   }
 
-  /* 섹션 제목 (h2) - GMarketSans Normal */
-  .text-section {
-    @apply font-sans font-normal text-4xl md:text-5xl leading-snug;
+  /* 섹션 제목 (h2) - SchoolSafetyPoster 사용 */
+  .text-section-title {
+    @apply font-section font-normal text-4xl md:text-5xl leading-snug;
   }
 
-  /* 카드/서브섹션 제목 (h3) - GMarketSans Bold */
+  /* 카드/서브섹션 제목 (h3) - GMarketSans Bold, text-xl 통일 */
   .text-card-title {
-    @apply font-sans font-bold text-xl md:text-2xl leading-normal;
+    @apply font-sans font-bold text-xl leading-normal;
   }
 
   /* 본문 큰 글씨 */
   .text-body-large {
     @apply font-sans text-lg md:text-xl leading-relaxed;
+  }
+
+  /* 라벨/캡션 - 보조 텍스트 */
+  .text-label {
+    @apply font-sans text-sm text-charcoal-muted;
+  }
+
+  /* 헬퍼/메타 정보 */
+  .text-helper {
+    @apply font-sans text-xs text-charcoal-soft;
   }
 }
 
