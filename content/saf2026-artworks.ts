@@ -164,7 +164,7 @@ export const artworks: Artwork[] = [
     "year": "2020",
     "edition": "",
     "price": "₩6,000,000",
-    "image": "11.png",
+    "image": "11.jpg",
     "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/30"
   },
   {
@@ -598,7 +598,7 @@ export const artworks: Artwork[] = [
     "year": "2025",
     "edition": "",
     "price": "₩2,000,000",
-    "image": "39.png",
+    "image": "39.jpg",
     "shopUrl": "",
     "history": ""
   },
@@ -658,7 +658,7 @@ export const artworks: Artwork[] = [
     "year": "2022",
     "edition": "",
     "price": "₩2,800,000",
-    "image": "43.png",
+    "image": "43.jpg",
     "shopUrl": "",
     "history": "개인전:\n2020년 '미동' / 자하미술관, 서울\n2019년 '生·물(水)' / 나무화랑, 서울\n2017년 '귀가' / 창룡마을창작센터, 경기\n2017년 '비오톱의 저녁' / 나무화랑, 서울\n2015년 '흐르는 빛' / 오산시립미술관, 경기"
   },
