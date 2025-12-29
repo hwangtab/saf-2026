@@ -76,7 +76,7 @@ export default function Header() {
                 href={item.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center h-full text-sm font-medium transition-colors border-b-2 border-transparent text-charcoal hover:text-primary hover:border-primary/40 focus:outline-none focus-visible:outline-none focus-visible:border-primary"
+                className="relative flex items-center h-full text-sm font-medium transition-colors text-charcoal hover:text-primary focus:outline-none focus-visible:outline-none after:absolute after:bottom-3 after:left-0 after:right-0 after:h-0.5 after:bg-transparent hover:after:bg-primary/40 after:transition-colors"
               >
                 {item.name}
               </a>
@@ -84,9 +84,9 @@ export default function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center h-full text-sm font-medium transition-colors border-b-2 focus:outline-none focus-visible:outline-none ${isActive(item.href)
-                  ? 'text-primary border-primary'
-                  : 'border-transparent text-charcoal hover:text-primary hover:border-primary/40 focus-visible:border-primary'
+                className={`relative flex items-center h-full text-sm font-medium transition-colors focus:outline-none focus-visible:outline-none after:absolute after:bottom-3 after:left-0 after:right-0 after:h-0.5 after:transition-colors ${isActive(item.href)
+                  ? 'text-primary after:bg-primary'
+                  : 'text-charcoal hover:text-primary after:bg-transparent hover:after:bg-primary/40'
                   }`}
               >
                 {item.name}
