@@ -108,7 +108,7 @@ export default function ArchivePage() {
           {/* Event Details */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
-              <h4 className="font-bold text-lg mb-4">📍 전시 장소</h4>
+              <h4 className="text-card-title mb-4">📍 전시 장소</h4>
               <ul className="space-y-2 text-charcoal-muted">
                 <li>
                   🎪 오디오가이 스튜디오 (서울시 종로구 효자로 23)
@@ -119,7 +119,7 @@ export default function ArchivePage() {
               </ul>
             </div>
             <div>
-              <h4 className="font-bold text-lg mb-4">⏰ 공연 일정</h4>
+              <h4 className="text-card-title mb-4">⏰ 공연 일정</h4>
               <ul className="space-y-2 text-charcoal-muted text-sm">
                 <li>3월 22-28일: 매일 다양한 뮤지션 공연</li>
                 <li>30분 간격으로 번갈아가며 진행</li>

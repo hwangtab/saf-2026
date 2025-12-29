@@ -115,7 +115,7 @@ export default function Home() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div className="space-y-4">
-              <h3 className="font-sans font-bold text-xl text-charcoal">
+              <h3 className="text-card-title text-charcoal">
                 🚫 금융 시장의 차별
               </h3>
               <p className="text-charcoal-muted leading-relaxed">
@@ -124,7 +124,7 @@ export default function Home() {
               </p>
             </div>
             <div className="space-y-4">
-              <h3 className="font-sans font-bold text-xl text-charcoal">
+              <h3 className="text-card-title text-charcoal">
                 💳 고리대금의 악순환
               </h3>
               <p className="text-charcoal-muted leading-relaxed">
@@ -133,7 +133,7 @@ export default function Home() {
               </p>
             </div>
             <div className="space-y-4">
-              <h3 className="font-sans font-bold text-xl text-charcoal">
+              <h3 className="text-card-title text-charcoal">
                 😔 심각한 피해
               </h3>
               <p className="text-charcoal-muted leading-relaxed">
@@ -142,7 +142,7 @@ export default function Home() {
               </p>
             </div>
             <div className="space-y-4">
-              <h3 className="font-sans font-bold text-xl text-charcoal">
+              <h3 className="text-card-title text-charcoal">
                 🤝 해결책: 상호부조
               </h3>
               <p className="text-charcoal-muted leading-relaxed">
@@ -170,7 +170,7 @@ export default function Home() {
           </h2>
           <div className="bg-white rounded-lg shadow-lg p-8 md:p-12 max-w-3xl mx-auto text-balance">
             <div className="mb-8">
-              <h3 className="font-sans font-bold text-2xl text-charcoal mb-4">
+              <h3 className="text-card-title text-charcoal mb-4">
                 📈 95% 상환율의 신뢰
               </h3>
               <p className="text-charcoal-muted leading-relaxed mb-4">
