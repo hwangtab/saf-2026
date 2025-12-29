@@ -53,7 +53,7 @@ export default function ArtworksPage() {
             </PageHero>
 
             {/* Gallery Section */}
-            <section className="container-max py-12">
+            <section className="container-max pt-4 pb-12">
                 <MasonryGallery artworks={artworks} />
             </section>
         </main>
