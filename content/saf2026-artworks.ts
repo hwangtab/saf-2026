@@ -56,7 +56,7 @@ export const artworks: Artwork[] = [
     "material": "pigment print on paper",
     "year": "2011",
     "edition": "에디션 5/5",
-    "price": "문의",
+    "price": "₩1,000,000",
     "image": "4.jpg",
     "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/23",
     "history": "오사카예술대학교(OSAKA UNIVERSITY OF ART) 사진학과 졸업\n상명대학교 예술·디자인대학원(사진학과-순수/이미지사이언스 전공)졸업\n07-12년 대구예술대학교 사진학과 강사\n08-09년 국민대학교 조형대학 강사\n13-17년 상명대 사진영상학과 강사\n10-현재 충남대학교 디자인창의학과 강사\n\n개인전\n23년 記憶의 여정 – 여미갤러리외 19회\n\n단체전\n22년 붉은 언덕_Crimson Hill전 – 연희동미술관외 40여회"
@@ -177,7 +177,7 @@ export const artworks: Artwork[] = [
     "material": "Archival pigment print",
     "year": "2022",
     "edition": "",
-    "price": "문의",
+    "price": "₩2,500,000",
     "image": "12.jpg",
     "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/31",
     "history": "학력\n이화여자대학교 미술대학 서양화과 졸업\n홍익대학교 산업미술대학원 사진디자인 전공 석사\n\n전시 경력\n2024 그 집에 산다, 갤러리 브레송, 서울\n2024 기억의 집 초대전, 예술곳간, 청주 외 개인전 13회\n2024 그라운드 서학, 전주 아트갤러리, 전주\n2024 마음의 집, 송파구 예송미술관, 서울 외 단체전 31회\n\n출판\n2020 밤의 집 The Houses at Night, 눈빛\n2021 밤의 집 The Houses at Night, 나미브\n\n수상\n2022 BELT 2022 판화사진 공모 작가 사진부문 선정\n2021 제2회 FNK Photography Award 예술사진부문 당선\n2018 서울시청 하늘광장 갤러리 작가 공모당선\n연락처 및 SNS\n홈페이지: www.soneunyoung.com\n인스타그램: _young_eye\nE-mail: eye7148@hanmail.net"
@@ -192,7 +192,7 @@ export const artworks: Artwork[] = [
     "material": "Archival pigment print",
     "year": "2024",
     "edition": "",
-    "price": "문의",
+    "price": "₩1,500,000",
     "image": "13.jpg",
     "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/32",
     "history": "학력\n이화여자대학교 미술대학 서양화과 졸업\n홍익대학교 산업미술대학원 사진디자인 전공 석사\n\n전시 경력\n2024 그 집에 산다, 갤러리 브레송, 서울\n2024 기억의 집 초대전, 예술곳간, 청주 외 개인전 13회\n2024 그라운드 서학, 전주 아트갤러리, 전주\n2024 마음의 집, 송파구 예송미술관, 서울 외 단체전 31회\n\n출판\n2020 밤의 집 The Houses at Night, 눈빛\n2021 밤의 집 The Houses at Night, 나미브\n\n수상\n2022 BELT 2022 판화사진 공모 작가 사진부문 선정\n2021 제2회 FNK Photography Award 예술사진부문 당선\n2018 서울시청 하늘광장 갤러리 작가 공모당선\n연락처 및 SNS\n홈페이지: www.soneunyoung.com\n인스타그램: _young_eye\nE-mail: eye7148@hanmail.net"
@@ -245,14 +245,14 @@ export const artworks: Artwork[] = [
   {
     "id": "17",
     "artist": "이호철",
-    "title": "The great resurrection (위대한부활)",
+    "title": "화려한재봉틀전축",
     "description": "",
     "profile": "이호철 작가의 그림에는 닫혀 있는 세계와 열려 있는 세계의 묘한 함수관계 같은 것이 암시되어 있다. 작가의 작품에 자주 등장 하는 서랍이나 틀의 이미지는 닫힘과 열림의 경계에 있는 하나의 문지방 역할을 하기도 하며, 백자 뿐 아니라 대접, 흔히 사발이라 부르는 다완은 담백하고 수더분한 자태를 지닌다. 두툼한 기벽 외면의 굵은 물레 자국의 빠른 움직임이 순식간에 휙 지나간 듯 도자기 외벽에 거칠게 나 있는 것을 그대로 그렸다. 물의 흐름처럼, 바람이 불어오는 것 처럼 도체 전면을 분장하여 자유로움을 표현하고 있는 이호철 작가의 달항아리 작품은 백토의 자연스러운 흔적을 상당히 정교하고 섬세하게 묘사해 내고 있다. 더 없는 회화적인 맛을 풍성하게 표현하고 있는 백토는 충분히 매력적인 붓질의 회화 작품으로 추상화처럼 느껴진다. 이호철 작가는 홍익대학교 서양화과를 거쳐 동대학교 대학원 서양화과를 졸업한 후 1990년 금호 미술관에서의 첫 개인전을 시작으로 노화랑, 표갤러리, 아라리오, 선화랑 등 다수의 개인전을 가졌으며, 국제 Impact Art Festival (일본, 경도(京都)), 제8회 JAALA (TOKYO, JAPAN), 한국현대회화 50년 조망전(서울 갤러리) 등 국내외 단체전에 150여회 참여하였다.",
     "size": "30호",
     "material": "Acrylic on canvas, Acrylic on supermirror",
     "year": "확인 중",
     "edition": "",
-    "price": "문의",
+    "price": "₩4,000,000",
     "image": "17.jpg",
     "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/36",
     "history": ""
@@ -260,14 +260,14 @@ export const artworks: Artwork[] = [
   {
     "id": "18",
     "artist": "이호철",
-    "title": "작품명 확인 중",
+    "title": "전축&창문빛",
     "description": "",
     "profile": "이호철 작가의 그림에는 닫혀 있는 세계와 열려 있는 세계의 묘한 함수관계 같은 것이 암시되어 있다. 작가의 작품에 자주 등장 하는 서랍이나 틀의 이미지는 닫힘과 열림의 경계에 있는 하나의 문지방 역할을 하기도 하며, 백자 뿐 아니라 대접, 흔히 사발이라 부르는 다완은 담백하고 수더분한 자태를 지닌다. 두툼한 기벽 외면의 굵은 물레 자국의 빠른 움직임이 순식간에 휙 지나간 듯 도자기 외벽에 거칠게 나 있는 것을 그대로 그렸다. 물의 흐름처럼, 바람이 불어오는 것 처럼 도체 전면을 분장하여 자유로움을 표현하고 있는 이호철 작가의 달항아리 작품은 백토의 자연스러운 흔적을 상당히 정교하고 섬세하게 묘사해 내고 있다. 더 없는 회화적인 맛을 풍성하게 표현하고 있는 백토는 충분히 매력적인 붓질의 회화 작품으로 추상화처럼 느껴진다. 이호철 작가는 홍익대학교 서양화과를 거쳐 동대학교 대학원 서양화과를 졸업한 후 1990년 금호 미술관에서의 첫 개인전을 시작으로 노화랑, 표갤러리, 아라리오, 선화랑 등 다수의 개인전을 가졌으며, 국제 Impact Art Festival (일본, 경도(京都)), 제8회 JAALA (TOKYO, JAPAN), 한국현대회화 50년 조망전(서울 갤러리) 등 국내외 단체전에 150여회 참여하였다.",
     "size": "확인 중",
     "material": "확인 중",
     "year": "확인 중",
     "edition": "",
-    "price": "문의",
+    "price": "₩6,000,000",
     "image": "18.jpg",
     "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/37",
     "history": ""
@@ -275,14 +275,14 @@ export const artworks: Artwork[] = [
   {
     "id": "19",
     "artist": "이호철",
-    "title": "작품명 확인 중",
+    "title": "바이올린소녀",
     "description": "",
     "profile": "이호철 작가의 그림에는 닫혀 있는 세계와 열려 있는 세계의 묘한 함수관계 같은 것이 암시되어 있다. 작가의 작품에 자주 등장 하는 서랍이나 틀의 이미지는 닫힘과 열림의 경계에 있는 하나의 문지방 역할을 하기도 하며, 백자 뿐 아니라 대접, 흔히 사발이라 부르는 다완은 담백하고 수더분한 자태를 지닌다. 두툼한 기벽 외면의 굵은 물레 자국의 빠른 움직임이 순식간에 휙 지나간 듯 도자기 외벽에 거칠게 나 있는 것을 그대로 그렸다. 물의 흐름처럼, 바람이 불어오는 것 처럼 도체 전면을 분장하여 자유로움을 표현하고 있는 이호철 작가의 달항아리 작품은 백토의 자연스러운 흔적을 상당히 정교하고 섬세하게 묘사해 내고 있다. 더 없는 회화적인 맛을 풍성하게 표현하고 있는 백토는 충분히 매력적인 붓질의 회화 작품으로 추상화처럼 느껴진다. 이호철 작가는 홍익대학교 서양화과를 거쳐 동대학교 대학원 서양화과를 졸업한 후 1990년 금호 미술관에서의 첫 개인전을 시작으로 노화랑, 표갤러리, 아라리오, 선화랑 등 다수의 개인전을 가졌으며, 국제 Impact Art Festival (일본, 경도(京都)), 제8회 JAALA (TOKYO, JAPAN), 한국현대회화 50년 조망전(서울 갤러리) 등 국내외 단체전에 150여회 참여하였다.",
     "size": "확인 중",
     "material": "확인 중",
     "year": "확인 중",
     "edition": "",
-    "price": "문의",
+    "price": "₩6,000,000",
     "image": "19.jpg",
     "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/38",
     "history": ""
