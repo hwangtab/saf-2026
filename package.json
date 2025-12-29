@@ -10,6 +10,7 @@
     "lint": "next lint",
     "format": "prettier --write .",
     "type-check": "tsc --noEmit",
+    "validate-artworks": "node scripts/validate_artworks.js",
     "test": "jest",
     "test:watch": "jest --watch"
   },
