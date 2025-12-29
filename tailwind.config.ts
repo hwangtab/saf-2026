@@ -79,7 +79,7 @@ const config: Config = {
         ],
         // 섹션 제목 전용
         section: [
-          'Simple',
+          'SchoolSafetyPoster',
           'GMarketSans',
           '-apple-system',
           'BlinkMacSystemFont',
