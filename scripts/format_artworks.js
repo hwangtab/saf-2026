@@ -39,7 +39,8 @@ function smartCleanText(text) {
         '수상', '수상 경력', '수상경력', '수상 내역',
         '소장처', '작품 소장', '작품소장',
         '레지던시', '경력', '전시 이력', '전시이력', '교육',
-        '강의', '저서', 'Art Fair', '기타경력'
+        '강의', '저서', 'Art Fair', '기타경력',
+        'Solo Exhibition', 'Group Exhibition', 'Team Project activities'
     ];
 
     headers.forEach(header => {
