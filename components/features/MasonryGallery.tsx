@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Artwork } from '@/content/saf2026-artworks';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo } from 'react';
 
 interface MasonryGalleryProps {
     artworks: Artwork[];
