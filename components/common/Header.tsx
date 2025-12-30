@@ -57,7 +57,7 @@ export default function Header() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
           <Image
-            src="/images/logo/320pxX90px.webp"
+            src="/images/logo/saf-logo320.png"
             alt="씨앗페 로고"
             width={160}
             height={45}
