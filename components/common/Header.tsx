@@ -211,7 +211,7 @@ export default function Header() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-[calc(4rem+env(safe-area-inset-top,0px))] right-0 w-80 max-w-[85%] bg-white shadow-2xl z-50 lg:hidden overflow-y-auto pb-[env(safe-area-inset-bottom,20px)]"
+              className="fixed top-[calc(4rem+env(safe-area-inset-top,0px))] right-0 w-80 max-w-[85%] bg-white shadow-2xl z-[55] lg:hidden overflow-y-auto pb-[env(safe-area-inset-bottom,20px)]"
               style={{ bottom: 'env(safe-area-inset-bottom, 0px)' }}
             >
               <div className="py-4 px-5 space-y-3">

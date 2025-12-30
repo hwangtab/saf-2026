@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import type { CSSProperties } from 'react';
 import {
   PieChart,
@@ -35,7 +36,7 @@ const tooltipItemStyle: CSSProperties = {
 };
 
 // Chart 1: 제1금융권 접근 (Pie Chart)
-export function FirstBankAccessChart() {
+export const FirstBankAccessChart = memo(function FirstBankAccessChart() {
   const data = [
     { name: '제1금융권 배제', value: 84.9 },
     { name: '접근 가능', value: 15.1 },
@@ -74,10 +75,10 @@ export function FirstBankAccessChart() {
       </p>
     </div>
   );
-}
+});
 
 // Chart 2: 거절/포기 사유 (Bar Chart)
-export function RejectionReasonsChart() {
+export const RejectionReasonsChart = memo(function RejectionReasonsChart() {
   const data = [
     { reason: '정기 소득 없음', count: 65 },
     { reason: '신용등급 부족', count: 58 },
@@ -107,10 +108,10 @@ export function RejectionReasonsChart() {
       </p>
     </div>
   );
-}
+});
 
 // Chart 3: 고리대금 상품 이용 현황 (Bar Chart)
-export function HighInterestProductChart() {
+export const HighInterestProductChart = memo(function HighInterestProductChart() {
   const data = [
     { product: '카드론', percentage: 42 },
     { product: '현금서비스', percentage: 38 },
@@ -140,10 +141,10 @@ export function HighInterestProductChart() {
       </p>
     </div>
   );
-}
+});
 
 // Chart 4: 이자율 분포 (Bar Chart)
-export function InterestRateDistributionChart() {
+export const InterestRateDistributionChart = memo(function InterestRateDistributionChart() {
   const data = [
     { range: '~ 10%', count: 8 },
     { range: '10 ~ 15%', count: 12 },
@@ -173,10 +174,10 @@ export function InterestRateDistributionChart() {
       </p>
     </div>
   );
-}
+});
 
 // Chart 5: 채권추심 경험 (Pie Chart)
-export function DebtCollectionChart() {
+export const DebtCollectionChart = memo(function DebtCollectionChart() {
   const data = [
     { name: '경험함', value: 38 },
     { name: '경험 없음', value: 62 },
@@ -215,10 +216,10 @@ export function DebtCollectionChart() {
       </p>
     </div>
   );
-}
+});
 
 // Chart 6: 창작활동 영향 (Bar Chart)
-export function CreativeImpactChart() {
+export const CreativeImpactChart = memo(function CreativeImpactChart() {
   const data = [
     { impact: '창작 중단', percentage: 45 },
     { impact: '창작량 감소', percentage: 68 },
@@ -232,7 +233,10 @@ export function CreativeImpactChart() {
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data} layout="vertical">
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis type="number" label={{ value: '영향받음 (%)', position: 'insideBottom', offset: -5 }} />
+          <XAxis
+            type="number"
+            label={{ value: '영향받음 (%)', position: 'insideBottom', offset: -5 }}
+          />
           <YAxis dataKey="impact" type="category" width={90} tick={{ fontSize: 11 }} />
           <Tooltip
             formatter={(value) => `${value}%`}
@@ -248,4 +252,4 @@ export function CreativeImpactChart() {
       </p>
     </div>
   );
-}
+});
