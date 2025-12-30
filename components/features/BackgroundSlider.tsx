@@ -23,6 +23,8 @@ export default function BackgroundSlider() {
 
   useEffect(() => {
     const interval = setInterval(() => {
+      // 탭이 백그라운드에 있으면 스킵
+      if (document.hidden) return;
       setCurrentIndex((prev) => (prev + 1) % HERO_IMAGES.length);
     }, 5000);
     return () => clearInterval(interval);

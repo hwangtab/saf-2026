@@ -25,11 +25,7 @@ interface PageHeroProps {
   children?: ReactNode;
 }
 
-export default function PageHero({
-  title,
-  description,
-  children,
-}: PageHeroProps) {
+export default function PageHero({ title, description, children }: PageHeroProps) {
   const [bgImage, setBgImage] = useState('');
 
   useEffect(() => {
@@ -39,17 +35,9 @@ export default function PageHero({
   }, []);
 
   return (
-    <section className="relative min-h-[60vh] flex items-center justify-center py-12 md:py-20 overflow-hidden">
+    <section className="relative min-h-[60vh] flex items-center justify-center py-12 md:py-20 overflow-hidden bg-charcoal">
       {/* Background Image */}
-      {bgImage && (
-        <Image
-          src={bgImage}
-          alt=""
-          fill
-          className="object-cover"
-          priority
-        />
-      )}
+      {bgImage && <Image src={bgImage} alt="" fill className="object-cover" priority />}
       {/* Dark Overlay */}
       <div className="absolute inset-0 bg-black/60" />
 
@@ -63,11 +51,7 @@ export default function PageHero({
             {description}
           </p>
         )}
-        {children && (
-          <div className="mt-8 flex justify-center">
-            {children}
-          </div>
-        )}
+        {children && <div className="mt-8 flex justify-center">{children}</div>}
       </div>
     </section>
   );

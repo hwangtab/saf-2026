@@ -52,13 +52,21 @@ export default function Header() {
     setMobileMenuOpen(false);
   }, [pathname]);
 
-  // 스크롤 감지 로직
+  // 스크롤 감지 로직 (RAF 쓰로틀링 적용)
   useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 10);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll(); // 초기 상태 확인
 
     return () => {
@@ -67,7 +75,15 @@ export default function Header() {
   }, []);
 
   // 히어로 섹션(어두운 배경)이 있는 페이지 목록
-  const HERO_PAGES = ['/', '/our-reality', '/our-proof', '/exhibition', '/archive', '/news', '/artworks'];
+  const HERO_PAGES = [
+    '/',
+    '/our-reality',
+    '/our-proof',
+    '/exhibition',
+    '/archive',
+    '/news',
+    '/artworks',
+  ];
   const hasHero = HERO_PAGES.includes(pathname);
 
   // Optimize header style logic to prevent stacking context issues
@@ -91,7 +107,9 @@ export default function Header() {
   const isDarkText = isScrolled || mobileMenuOpen || !hasHero;
 
   const textColor = isDarkText ? 'text-charcoal' : 'text-white';
-  const logoSrc = isDarkText ? '/images/logo/320pxX90px.webp' : '/images/logo/320pxX90px_white.webp';
+  const logoSrc = isDarkText
+    ? '/images/logo/320pxX90px.webp'
+    : '/images/logo/320pxX90px_white.webp';
 
   return (
     <header
@@ -128,10 +146,11 @@ export default function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`relative flex items-center h-full text-sm font-medium transition-colors focus:outline-none focus-visible:outline-none after:absolute after:bottom-3 after:left-0 after:right-0 after:h-0.5 after:transition-colors ${isActive(item.href)
-                  ? 'text-primary after:bg-primary'
-                  : `${textColor} hover:text-primary after:bg-transparent hover:after:bg-primary/40`
-                  }`}
+                className={`relative flex items-center h-full text-sm font-medium transition-colors focus:outline-none focus-visible:outline-none after:absolute after:bottom-3 after:left-0 after:right-0 after:h-0.5 after:transition-colors ${
+                  isActive(item.href)
+                    ? 'text-primary after:bg-primary'
+                    : `${textColor} hover:text-primary after:bg-transparent hover:after:bg-primary/40`
+                }`}
               >
                 {item.name}
               </Link>
@@ -140,12 +159,7 @@ export default function Header() {
         </div>
         {/* Donate Button (Desktop) */}
         <div className="hidden lg:flex">
-          <Button
-            href={EXTERNAL_LINKS.DONATE}
-            variant="accent"
-            external
-            className="gap-1.5"
-          >
+          <Button href={EXTERNAL_LINKS.DONATE} variant="accent" external className="gap-1.5">
             <span className="group-hover:scale-125 transition-transform duration-300">❤️</span>
             <span className="pt-0.5">후원하기</span>
           </Button>
@@ -158,12 +172,7 @@ export default function Header() {
           aria-label="메뉴 토글"
           aria-expanded={mobileMenuOpen}
         >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             {mobileMenuOpen ? (
               <path
                 strokeLinecap="round"
@@ -223,10 +232,11 @@ export default function Header() {
                       key={item.href}
                       href={item.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className={`block py-3 px-4 text-base rounded-lg transition-colors border-l-4 ${isActive(item.href)
-                        ? 'text-primary font-semibold border-primary bg-primary/10'
-                        : 'border-transparent text-charcoal hover:bg-primary/5 hover:border-primary active:bg-primary/10'
-                        }`}
+                      className={`block py-3 px-4 text-base rounded-lg transition-colors border-l-4 ${
+                        isActive(item.href)
+                          ? 'text-primary font-semibold border-primary bg-primary/10'
+                          : 'border-transparent text-charcoal hover:bg-primary/5 hover:border-primary active:bg-primary/10'
+                      }`}
                     >
                       {item.name}
                     </Link>
@@ -240,7 +250,9 @@ export default function Header() {
                     className="w-full gap-1.5"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    <span className="group-hover:scale-125 transition-transform duration-300">❤️</span>
+                    <span className="group-hover:scale-125 transition-transform duration-300">
+                      ❤️
+                    </span>
                     <span className="pt-0.5">후원하기</span>
                   </Button>
                 </div>
