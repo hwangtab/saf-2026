@@ -26,6 +26,7 @@ const navigation: NavigationItem[] = [
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
 
   const isActive = (href: string) => {
@@ -51,17 +52,40 @@ export default function Header() {
     setMobileMenuOpen(false);
   }, [pathname]);
 
+  // 스크롤 감지 로직
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // 초기 상태 확인
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  const headerStyle = isScrolled || mobileMenuOpen
+    ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-200/50'
+    : 'bg-transparent';
+
+  const textColor = isScrolled || mobileMenuOpen ? 'text-charcoal' : 'text-white';
+  const logoSrc = isScrolled || mobileMenuOpen ? '/images/logo/320pxX90px.webp' : '/images/logo/320pxX90px_white.webp';
+
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-sm">
-      <nav className="container-max flex items-center justify-between h-16">
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${headerStyle}`}
+    >
+      <nav className="container-max flex items-center justify-between h-20 transition-all duration-300" style={{ height: isScrolled ? '64px' : '80px' }}>
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
           <Image
-            src="/images/logo/320pxX90px.webp"
+            src={logoSrc}
             alt="씨앗페 로고"
             width={160}
             height={45}
-            className="h-9 w-auto"
+            className="h-9 w-auto object-contain transition-all duration-300"
             priority
           />
           <span className="sr-only">씨앗페 2026 홈</span>
@@ -76,7 +100,7 @@ export default function Header() {
                 href={item.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="relative flex items-center h-full text-sm font-medium transition-colors text-charcoal hover:text-primary focus:outline-none focus-visible:outline-none after:absolute after:bottom-3 after:left-0 after:right-0 after:h-0.5 after:bg-transparent hover:after:bg-primary/40 after:transition-colors"
+                className={`relative flex items-center h-full text-sm font-medium transition-colors focus:outline-none focus-visible:outline-none after:absolute after:bottom-3 after:left-0 after:right-0 after:h-0.5 after:bg-transparent hover:after:bg-primary/40 after:transition-colors ${textColor} hover:text-primary`}
               >
                 {item.name}
               </a>
@@ -85,8 +109,8 @@ export default function Header() {
                 key={item.href}
                 href={item.href}
                 className={`relative flex items-center h-full text-sm font-medium transition-colors focus:outline-none focus-visible:outline-none after:absolute after:bottom-3 after:left-0 after:right-0 after:h-0.5 after:transition-colors ${isActive(item.href)
-                  ? 'text-primary after:bg-primary'
-                  : 'text-charcoal hover:text-primary after:bg-transparent hover:after:bg-primary/40'
+                    ? 'text-primary after:bg-primary'
+                    : `${textColor} hover:text-primary after:bg-transparent hover:after:bg-primary/40`
                   }`}
               >
                 {item.name}
@@ -110,7 +134,7 @@ export default function Header() {
         {/* Mobile Menu Button */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="lg:hidden p-2 text-charcoal hover:text-primary transition-transform active:scale-90"
+          className={`lg:hidden p-2 transition-transform active:scale-90 ${textColor} hover:text-primary`}
           aria-label="메뉴 토글"
           aria-expanded={mobileMenuOpen}
         >
@@ -149,7 +173,7 @@ export default function Header() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMobileMenuOpen(false)}
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden top-[64px]"
             />
 
             {/* Menu */}
@@ -158,7 +182,7 @@ export default function Header() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-16 right-0 bottom-0 w-80 max-w-[85%] bg-white shadow-2xl z-50 lg:hidden overflow-y-auto"
+              className="fixed top-[64px] right-0 bottom-0 w-80 max-w-[85%] bg-white shadow-2xl z-50 lg:hidden overflow-y-auto"
             >
               <div className="py-4 px-5 space-y-3">
                 {navigation.map((item) =>
@@ -204,6 +228,6 @@ export default function Header() {
           </>
         )}
       </AnimatePresence>
-    </header >
+    </header>
   );
 }
