@@ -1,12 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import {
-  FacebookShareButton,
-  TwitterShareButton,
-  FacebookIcon,
-  TwitterIcon,
-} from 'react-share';
+import { FacebookShareButton, TwitterShareButton, FacebookIcon, TwitterIcon } from 'react-share';
 
 interface ShareButtonsProps {
   url: string;
@@ -14,15 +9,8 @@ interface ShareButtonsProps {
   description: string;
 }
 
-
 const KakaoSvgIcon = () => (
-  <svg
-    width={32}
-    height={32}
-    viewBox="0 0 32 32"
-    role="img"
-    aria-hidden
-  >
+  <svg width={32} height={32} viewBox="0 0 32 32" role="img" aria-hidden>
     <circle cx={16} cy={16} r={16} fill="#FEE500" />
     <path
       d="M16 9c-5.52 0-10 3.35-10 7.48 0 2.82 2.03 5.27 5.07 6.58l-.97 3.64a.5.5 0 0 0 .74.54l4.11-2.28c.33.03.67.05 1.01.05 5.52 0 10-3.35 10-7.49C25.95 12.35 21.52 9 16 9Z"
@@ -42,12 +30,9 @@ const KakaoSvgIcon = () => (
   </svg>
 );
 
-export default function ShareButtons({
-  url,
-  title,
-  description,
-}: ShareButtonsProps) {
+export default function ShareButtons({ url, title, description }: ShareButtonsProps) {
   const [copied, setCopied] = useState(false);
+  const [copyError, setCopyError] = useState(false);
 
   // Initialize Kakao SDK
   useEffect(() => {
@@ -65,9 +50,12 @@ export default function ShareButtons({
     try {
       await navigator.clipboard.writeText(url);
       setCopied(true);
+      setCopyError(false);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error('Failed to copy:', err);
+      setCopyError(true);
+      setTimeout(() => setCopyError(false), 2000);
     }
   };
 
@@ -110,11 +98,7 @@ export default function ShareButtons({
       </FacebookShareButton>
 
       {/* Twitter/X */}
-      <TwitterShareButton
-        url={url}
-        title={title}
-        className="hover:opacity-80 transition-opacity"
-      >
+      <TwitterShareButton url={url} title={title} className="hover:opacity-80 transition-opacity">
         <TwitterIcon size={32} round />
       </TwitterShareButton>
 
@@ -134,7 +118,7 @@ export default function ShareButtons({
         className="px-3 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded-full transition-colors"
         title="링크 복사"
       >
-        {copied ? '✓ 복사됨' : '링크 복사'}
+        {copyError ? '❌ 복사 실패' : copied ? '✓ 복사됨' : '링크 복사'}
       </button>
     </div>
   );
