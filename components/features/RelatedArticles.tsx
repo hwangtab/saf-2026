@@ -13,19 +13,17 @@ export default function RelatedArticles({ articles }: RelatedArticlesProps) {
   }
 
   return (
-    <section className="mt-8 pt-6 border-t border-gray-200">
-      <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">
-        작가 관련 자료
-      </h2>
+    <section className="mt-12 pt-8 border-t border-gray-200">
+      <h2 className="font-section text-2xl font-bold text-charcoal mb-6">작가 관련 자료</h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {articles.map((article, index) => (
           <Link
             key={index}
             href={article.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="group block p-4 bg-gray-50 border border-gray-200 rounded-lg hover:border-primary hover:bg-white hover:shadow-md transition-all duration-300"
+            className="group block p-5 bg-white border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition-all duration-300"
           >
             {/* Source Badge */}
             <div className="flex items-center justify-between mb-3">
