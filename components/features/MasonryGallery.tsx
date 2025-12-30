@@ -64,7 +64,7 @@ export default function MasonryGallery({ artworks, showArtistNav = true }: Mason
 
             {/* Gallery using CSS Columns */}
             <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6 px-4">
-                {artworks.map((artwork, index) => (
+                {artworks.map((artwork) => (
                     <motion.div
                         key={artwork.id}
                         id={`artwork-${artwork.id}`}
