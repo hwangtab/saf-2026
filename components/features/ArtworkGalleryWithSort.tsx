@@ -6,181 +6,182 @@ import SortControls, { SortOption } from './SortControls';
 import SearchBar from './SearchBar';
 import { Artwork } from '@/content/saf2026-artworks';
 import { parsePrice } from '@/lib/parsePrice';
+import { scrollToElement } from '@/lib/scroll';
 
 interface ArtworkGalleryWithSortProps {
-    artworks: Artwork[];
+  artworks: Artwork[];
 }
 
 function sortArtworks(artworks: Artwork[], sortOption: SortOption): Artwork[] {
-    const sorted = [...artworks];
+  const sorted = [...artworks];
 
-    switch (sortOption) {
-        case 'artist-asc':
-            return sorted.sort((a, b) => a.artist.localeCompare(b.artist, 'ko-KR'));
+  switch (sortOption) {
+    case 'artist-asc':
+      return sorted.sort((a, b) => a.artist.localeCompare(b.artist, 'ko-KR'));
 
-        case 'title-asc':
-            return sorted.sort((a, b) => a.title.localeCompare(b.title, 'ko-KR'));
+    case 'title-asc':
+      return sorted.sort((a, b) => a.title.localeCompare(b.title, 'ko-KR'));
 
-        case 'price-desc':
-            return sorted.sort((a, b) => {
-                const priceA = parsePrice(a.price);
-                const priceB = parsePrice(b.price);
-                // Infinity (문의/확인중)는 맨 뒤로
-                if (priceA === Infinity && priceB === Infinity) return 0;
-                if (priceA === Infinity) return 1;
-                if (priceB === Infinity) return -1;
-                return priceB - priceA; // 높은 가격 먼저
-            });
+    case 'price-desc':
+      return sorted.sort((a, b) => {
+        const priceA = parsePrice(a.price);
+        const priceB = parsePrice(b.price);
+        // Infinity (문의/확인중)는 맨 뒤로
+        if (priceA === Infinity && priceB === Infinity) return 0;
+        if (priceA === Infinity) return 1;
+        if (priceB === Infinity) return -1;
+        return priceB - priceA; // 높은 가격 먼저
+      });
 
-        case 'price-asc':
-            return sorted.sort((a, b) => {
-                const priceA = parsePrice(a.price);
-                const priceB = parsePrice(b.price);
-                // Infinity (문의/확인중)는 맨 뒤로
-                if (priceA === Infinity && priceB === Infinity) return 0;
-                if (priceA === Infinity) return 1;
-                if (priceB === Infinity) return -1;
-                return priceA - priceB; // 낮은 가격 먼저
-            });
+    case 'price-asc':
+      return sorted.sort((a, b) => {
+        const priceA = parsePrice(a.price);
+        const priceB = parsePrice(b.price);
+        // Infinity (문의/확인중)는 맨 뒤로
+        if (priceA === Infinity && priceB === Infinity) return 0;
+        if (priceA === Infinity) return 1;
+        if (priceB === Infinity) return -1;
+        return priceA - priceB; // 낮은 가격 먼저
+      });
 
-        default:
-            return sorted;
-    }
+    default:
+      return sorted;
+  }
 }
 
 export default function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithSortProps) {
-    const [sortOption, setSortOption] = useState<SortOption>('artist-asc');
-    const [searchQuery, setSearchQuery] = useState('');
+  const [sortOption, setSortOption] = useState<SortOption>('artist-asc');
+  const [searchQuery, setSearchQuery] = useState('');
 
-    // 1. 검색어 필터링
-    const filteredArtworks = useMemo(() => {
-        if (!searchQuery.trim()) return artworks;
+  // 1. 검색어 필터링
+  const filteredArtworks = useMemo(() => {
+    if (!searchQuery.trim()) return artworks;
 
-        const query = searchQuery.toLowerCase().trim();
-        return artworks.filter(artwork =>
-            artwork.title.toLowerCase().includes(query) ||
-            artwork.artist.toLowerCase().includes(query) ||
-
-            artwork.description?.toLowerCase().includes(query)
-        );
-    }, [artworks, searchQuery]);
-
-    // 2. 정렬 적용
-    const sortedArtworks = useMemo(
-        () => sortArtworks(filteredArtworks, sortOption),
-        [filteredArtworks, sortOption]
+    const query = searchQuery.toLowerCase().trim();
+    return artworks.filter(
+      (artwork) =>
+        artwork.title.toLowerCase().includes(query) ||
+        artwork.artist.toLowerCase().includes(query) ||
+        artwork.description?.toLowerCase().includes(query)
     );
+  }, [artworks, searchQuery]);
 
-    // 3. 작가 네비게이션 로직 (이동됨)
-    const uniqueArtists = useMemo(() => {
-        const seen = new Set<string>();
-        return sortedArtworks.filter(a => {
-            if (seen.has(a.artist)) return false;
-            seen.add(a.artist);
-            return true;
-        }).map(a => a.artist);
-    }, [sortedArtworks]);
+  // 2. 정렬 적용
+  const sortedArtworks = useMemo(
+    () => sortArtworks(filteredArtworks, sortOption),
+    [filteredArtworks, sortOption]
+  );
 
-    // Track which artists appear first (for anchor)
-    const firstArtworkByArtist = useMemo(() => {
-        const map = new Map<string, string>();
-        sortedArtworks.forEach(a => {
-            if (!map.has(a.artist)) {
-                map.set(a.artist, a.id);
-            }
-        });
-        return map;
-    }, [sortedArtworks]);
+  // 3. 작가 네비게이션 로직 (이동됨)
+  const uniqueArtists = useMemo(() => {
+    const seen = new Set<string>();
+    return sortedArtworks
+      .filter((a) => {
+        if (seen.has(a.artist)) return false;
+        seen.add(a.artist);
+        return true;
+      })
+      .map((a) => a.artist);
+  }, [sortedArtworks]);
 
-    const scrollToArtist = (artist: string) => {
-        const artworkId = firstArtworkByArtist.get(artist);
-        if (artworkId) {
-            // ID를 가진 요소를 찾습니다.
-            const element = document.getElementById(`artwork-${artworkId}`);
-            if (element) {
-                // Header (64px) + sticky controls offset calculation
-                // Sticky container is around 130-150px depending on content
-                // A safe offset is around 200px to properly show the title
-                const offset = 220;
-                const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-                window.scrollTo({
-                    top: elementPosition - offset,
-                    behavior: 'smooth'
-                });
-            }
-        }
-    };
+  // Track which artists appear first (for anchor)
+  const firstArtworkByArtist = useMemo(() => {
+    const map = new Map<string, string>();
+    sortedArtworks.forEach((a) => {
+      if (!map.has(a.artist)) {
+        map.set(a.artist, a.id);
+      }
+    });
+    return map;
+  }, [sortedArtworks]);
 
-    // 작가명순일 때만 작가 네비게이션 표시 (검색어가 없을 때만)
-    const showArtistNav = sortOption === 'artist-asc' && !searchQuery;
+  const scrollToArtist = (artist: string) => {
+    const artworkId = firstArtworkByArtist.get(artist);
+    if (artworkId) {
+      // Use centralized scroll utility with header-aware offset
+      scrollToElement(`artwork-${artworkId}`, 150); // Additional offset for sticky controls
+    }
+  };
 
-    return (
+  // 작가명순일 때만 작가 네비게이션 표시 (검색어가 없을 때만)
+  const showArtistNav = sortOption === 'artist-asc' && !searchQuery;
 
-        <div>
-            {/* Controls & Nav Section (Combined Sticky) */}
-            <div className="md:sticky md:top-[60px] z-40 bg-gray-50/95 backdrop-blur-sm border-b border-gray-200/50">
-                <div className="container-max">
-                    {/* Search & Sort Controls */}
-                    <div className="flex flex-col md:flex-row gap-4 items-center justify-between py-3">
-                        <SearchBar
-                            value={searchQuery}
-                            onChange={setSearchQuery}
-                            placeholder="작가명, 작품명으로 검색해보세요"
-                        />
-                        <SortControls value={sortOption} onChange={setSortOption} />
-                    </div>
+  return (
+    <div>
+      {/* Controls & Nav Section (Combined Sticky) */}
+      <div className="md:sticky md:top-[60px] z-40 bg-gray-50/95 backdrop-blur-sm border-b border-gray-200/50">
+        <div className="container-max">
+          {/* Search & Sort Controls */}
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-between py-3">
+            <SearchBar
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder="작가명, 작품명으로 검색해보세요"
+            />
+            <SortControls value={sortOption} onChange={setSortOption} />
+          </div>
 
-                    {/* Artist Navigation - Hidden on mobile, visible on desktop */}
-                    {showArtistNav && (
-                        <div className="hidden md:block pb-4 pt-1">
-                            <div className="grid grid-cols-2 md:grid-cols-9 lg:grid-cols-11 gap-2">
-                                {uniqueArtists.map((artist) => (
-                                    <button
-                                        key={artist}
-                                        onClick={() => scrollToArtist(artist)}
-                                        className="px-2 py-1.5 text-xs sm:text-sm font-medium bg-white border border-gray-200 rounded-full hover:border-primary hover:text-primary hover:bg-primary/5 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 text-center truncate"
-                                    >
-                                        {artist}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-                </div>
+          {/* Artist Navigation - Hidden on mobile, visible on desktop */}
+          {showArtistNav && (
+            <div className="hidden md:block pb-4 pt-1">
+              <div className="grid grid-cols-2 md:grid-cols-9 lg:grid-cols-11 gap-2">
+                {uniqueArtists.map((artist) => (
+                  <button
+                    key={artist}
+                    onClick={() => scrollToArtist(artist)}
+                    className="px-2 py-1.5 text-xs sm:text-sm font-medium bg-white border border-gray-200 rounded-full hover:border-primary hover:text-primary hover:bg-primary/5 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 text-center truncate"
+                  >
+                    {artist}
+                  </button>
+                ))}
+              </div>
             </div>
-
-            {/* Results Message */}
-            {searchQuery && (
-                <div className="mb-6 container-max mt-6">
-                    <p className="text-gray-500">
-                        <span className="font-semibold text-primary">&apos;{searchQuery}&apos;</span> 검색 결과: {filteredArtworks.length}개
-                    </p>
-                </div>
-            )}
-
-            {/* No Results State */}
-            {filteredArtworks.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-20 text-center">
-                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                        <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                    </div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">검색 결과가 없습니다</h3>
-                    <p className="text-gray-500 mb-6">다른 키워드로 검색해보거나, 모든 작품을 둘러보세요.</p>
-                    <button
-                        onClick={() => setSearchQuery('')}
-                        className="px-6 py-2 bg-charcoal text-white rounded-full hover:bg-black transition-colors"
-                    >
-                        전체 목록 보기
-                    </button>
-                </div>
-            ) : (
-                <div className={showArtistNav ? "mt-6" : ""}>
-                    <MasonryGallery artworks={sortedArtworks} showArtistNav={false} />
-                </div>
-            )}
+          )}
         </div>
-    );
+      </div>
 
+      {/* Results Message */}
+      {searchQuery && (
+        <div className="mb-6 container-max mt-6">
+          <p className="text-gray-500">
+            <span className="font-semibold text-primary">&apos;{searchQuery}&apos;</span> 검색 결과:{' '}
+            {filteredArtworks.length}개
+          </p>
+        </div>
+      )}
+
+      {/* No Results State */}
+      {filteredArtworks.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+            <svg
+              className="w-8 h-8 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          </div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">검색 결과가 없습니다</h3>
+          <p className="text-gray-500 mb-6">다른 키워드로 검색해보거나, 모든 작품을 둘러보세요.</p>
+          <button
+            onClick={() => setSearchQuery('')}
+            className="px-6 py-2 bg-charcoal text-white rounded-full hover:bg-black transition-colors"
+          >
+            전체 목록 보기
+          </button>
+        </div>
+      ) : (
+        <div className={showArtistNav ? 'mt-6' : ''}>
+          <MasonryGallery artworks={sortedArtworks} showArtistNav={false} />
+        </div>
+      )}
+    </div>
+  );
 }
