@@ -60,7 +60,7 @@ export default function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithS
         return artworks.filter(artwork =>
             artwork.title.toLowerCase().includes(query) ||
             artwork.artist.toLowerCase().includes(query) ||
-            artwork.material?.toLowerCase().includes(query) ||
+
             artwork.description?.toLowerCase().includes(query)
         );
     }, [artworks, searchQuery]);
@@ -81,7 +81,7 @@ export default function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithS
                 <SearchBar
                     value={searchQuery}
                     onChange={setSearchQuery}
-                    placeholder="작가명, 작품명, 재료 등을 검색해보세요"
+                    placeholder="작가명, 작품명으로 검색해보세요"
                 />
                 <SortControls value={sortOption} onChange={setSortOption} />
             </div>
@@ -90,7 +90,7 @@ export default function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithS
             {searchQuery && (
                 <div className="mb-6 container-max">
                     <p className="text-gray-500">
-                        <span className="font-semibold text-primary">'{searchQuery}'</span> 검색 결과: {filteredArtworks.length}개
+                        <span className="font-semibold text-primary">&apos;{searchQuery}&apos;</span> 검색 결과: {filteredArtworks.length}개
                     </p>
                 </div>
             )}
