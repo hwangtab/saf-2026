@@ -239,6 +239,50 @@ export default function Home() {
           </div>
         </div>
       </section>
+      {/* FAQ JSON-LD Schema for AI Optimization */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: [
+              {
+                '@type': 'Question',
+                name: '씨앗페 2026이란 무엇인가요?',
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: '씨앗페 2026은 한국 예술인들의 금융 위기를 해결하기 위한 상호부조 대출 기금 마련 캠페인입니다. 후원과 작품 구매를 통해 예술인들에게 안정적인 창작 환경을 제공합니다.',
+                },
+              },
+              {
+                '@type': 'Question',
+                name: '후원은 어떻게 하나요?',
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: '홈페이지의 "후원하기" 버튼을 눌러 한국스마트협동조합의 상호부조 기금 조성에 참여하실 수 있습니다. 정기 후원과 일시 후원 모두 가능합니다.',
+                },
+              },
+              {
+                '@type': 'Question',
+                name: '전시는 언제 어디서 열리나요?',
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: '씨앗페 2026 전시는 2026년 1월 14일부터 1월 26일까지 서울 인사아트센터 3층 G&J 갤러리에서 열립니다. 무료로 관람하실 수 있습니다.',
+                },
+              },
+              {
+                '@type': 'Question',
+                name: '상호부조 대출이란 무엇인가요?',
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: '제1금융권에서 소외된 예술인들을 위해, 조성된 기금을 바탕으로 연 5%의 고정금리로 대출해주는 시스템입니다. 현재 95%의 높은 상환율을 유지하고 있습니다.',
+                },
+              },
+            ],
+          }),
+        }}
+      />
     </>
   );
 }
