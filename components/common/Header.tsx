@@ -87,7 +87,7 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 border-b transition-all duration-300 ${headerStyle}`}
+      className={`fixed top-0 left-0 right-0 z-50 border-b transition-all duration-300 pt-[env(safe-area-inset-top,0px)] ${headerStyle}`}
     >
       <nav className="container-max flex items-center justify-between h-16 transition-all duration-300">
         {/* Logo */}
@@ -146,7 +146,7 @@ export default function Header() {
         {/* Mobile Menu Button */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className={`lg:hidden p-2 transition-transform active:scale-90 ${textColor} hover:text-primary`}
+          className={`lg:hidden p-3 min-w-[44px] min-h-[44px] flex items-center justify-center transition-transform active:scale-90 ${textColor} hover:text-primary`}
           aria-label="메뉴 토글"
           aria-expanded={mobileMenuOpen}
         >
@@ -185,7 +185,7 @@ export default function Header() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMobileMenuOpen(false)}
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden top-16"
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden top-[calc(4rem+env(safe-area-inset-top,0px))]"
             />
 
             {/* Menu */}
@@ -194,7 +194,8 @@ export default function Header() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-16 right-0 bottom-0 w-80 max-w-[85%] bg-white shadow-2xl z-50 lg:hidden overflow-y-auto"
+              className="fixed top-[calc(4rem+env(safe-area-inset-top,0px))] right-0 w-80 max-w-[85%] bg-white shadow-2xl z-50 lg:hidden overflow-y-auto pb-[env(safe-area-inset-bottom,20px)]"
+              style={{ bottom: 'env(safe-area-inset-bottom, 0px)' }}
             >
               <div className="py-4 px-5 space-y-3">
                 {navigation.map((item) =>
