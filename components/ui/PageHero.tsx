@@ -13,6 +13,10 @@ const HERO_IMAGES = [
   '/images/hero/5.jpg',
   '/images/hero/6.jpg',
   '/images/hero/7.jpg',
+  '/images/hero/8.jpg',
+  '/images/hero/9.jpg',
+  '/images/hero/10.jpg',
+  '/images/hero/11.jpg',
 ];
 
 interface PageHeroProps {

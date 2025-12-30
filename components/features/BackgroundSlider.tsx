@@ -12,6 +12,10 @@ const HERO_IMAGES = [
   { id: '5', filename: '5.jpg', alt: '2026 씨앗페 출품작' },
   { id: '6', filename: '6.jpg', alt: '2026 씨앗페 출품작' },
   { id: '7', filename: '7.jpg', alt: '2026 씨앗페 출품작' },
+  { id: '8', filename: '8.jpg', alt: '2026 씨앗페 출품작' },
+  { id: '9', filename: '9.jpg', alt: '2026 씨앗페 출품작' },
+  { id: '10', filename: '10.jpg', alt: '2026 씨앗페 출품작' },
+  { id: '11', filename: '11.jpg', alt: '2026 씨앗페 출품작' },
 ];
 
 export default function BackgroundSlider() {
