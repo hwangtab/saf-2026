@@ -16,7 +16,7 @@ const HERO_IMAGES = [
   '/images/hero/8.jpg',
   '/images/hero/9.jpg',
   '/images/hero/10.jpg',
-  '/images/hero/11.jpg',
+  // 11.jpg는 메인 페이지 전용으로 제외
 ];
 
 interface PageHeroProps {
