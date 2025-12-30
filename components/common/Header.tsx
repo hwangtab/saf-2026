@@ -77,7 +77,7 @@ export default function Header() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${headerStyle}`}
     >
-      <nav className="container-max flex items-center justify-between h-20 transition-all duration-300" style={{ height: isScrolled ? '64px' : '80px' }}>
+      <nav className="container-max flex items-center justify-between h-16 transition-all duration-300">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
           <Image
@@ -109,8 +109,8 @@ export default function Header() {
                 key={item.href}
                 href={item.href}
                 className={`relative flex items-center h-full text-sm font-medium transition-colors focus:outline-none focus-visible:outline-none after:absolute after:bottom-3 after:left-0 after:right-0 after:h-0.5 after:transition-colors ${isActive(item.href)
-                    ? 'text-primary after:bg-primary'
-                    : `${textColor} hover:text-primary after:bg-transparent hover:after:bg-primary/40`
+                  ? 'text-primary after:bg-primary'
+                  : `${textColor} hover:text-primary after:bg-transparent hover:after:bg-primary/40`
                   }`}
               >
                 {item.name}
