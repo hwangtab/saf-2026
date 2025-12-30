@@ -43,34 +43,6 @@ export default function MasonryGallery({ artworks, showArtistNav = true }: Mason
         }
     };
 
-    // Columns state for responsive layout
-    const [columns, setColumns] = useState(1);
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-        setMounted(true);
-        const updateColumns = () => {
-            if (window.innerWidth >= 1024) setColumns(3); // lg
-            else if (window.innerWidth >= 768) setColumns(2); // md
-            else setColumns(1);
-        };
-
-        updateColumns();
-        window.addEventListener('resize', updateColumns);
-        return () => window.removeEventListener('resize', updateColumns);
-    }, []);
-
-    // Distribute artworks into columns for Left-to-Right flow
-    const distributedArtworks = useMemo(() => {
-        const cols = Array.from({ length: columns }, () => [] as Array<Artwork & { originalIndex: number }>);
-        artworks.forEach((art, i) => {
-            cols[i % columns].push({ ...art, originalIndex: i });
-        });
-        return cols;
-    }, [artworks, columns]);
-
-    if (!mounted) return null;
-
     return (
         <div>
             {/* Artist Navigation - only shown when sorted by artist */}
@@ -90,68 +62,64 @@ export default function MasonryGallery({ artworks, showArtistNav = true }: Mason
                 </div>
             )}
 
-            {/* Gallery */}
-            <div className="flex gap-6 p-4">
-                {distributedArtworks.map((column, colIndex) => (
-                    <div key={colIndex} className="flex-1 flex flex-col gap-6">
-                        {column.map((artwork) => (
-                            <motion.div
-                                key={artwork.id}
-                                id={`artwork-${artwork.id}`}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.5, delay: (artwork.originalIndex % 20) * 0.05 }} // Limit delay to avoid too long waits on large lists
-                                className="break-inside-avoid"
-                            >
-                                <Link href={`/artworks/${artwork.id}`} className="group block">
-                                    <div className="relative overflow-hidden rounded-xl bg-gray-100 shadow-sm transition-shadow hover:shadow-md">
-                                        <div className="relative w-full">
-                                            <Image
-                                                src={`/images/artworks/${artwork.image}`}
-                                                alt={artwork.title}
-                                                width={500}
-                                                height={500}
-                                                className="w-full h-auto object-cover transform transition-transform duration-500 group-hover:scale-105"
-                                                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                                            />
-                                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
-                                            {/* SOLD 배지 */}
-                                            {artwork.sold && (
-                                                <div className="absolute top-3 right-3 bg-red-600 text-white px-3 py-1 rounded-md font-bold text-sm shadow-md">
-                                                    SOLD
-                                                </div>
-                                            )}
+            {/* Gallery using CSS Columns */}
+            <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6 px-4">
+                {artworks.map((artwork, index) => (
+                    <motion.div
+                        key={artwork.id}
+                        id={`artwork-${artwork.id}`}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "50px" }}
+                        transition={{ duration: 0.4, delay: 0.05 }} // Fixed short delay to avoid staggered jank
+                        className="break-inside-avoid mb-6"
+                    >
+                        <Link href={`/artworks/${artwork.id}`} className="group block h-full">
+                            <div className="relative overflow-hidden rounded-xl bg-gray-100 shadow-sm transition-shadow hover:shadow-md">
+                                <div className="relative w-full">
+                                    <Image
+                                        src={`/images/artworks/${artwork.image}`}
+                                        alt={artwork.title}
+                                        width={500}
+                                        height={500}
+                                        className="w-full h-auto object-cover transform transition-transform duration-500 group-hover:scale-105"
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                    />
+                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+                                    {/* SOLD 배지 */}
+                                    {artwork.sold && (
+                                        <div className="absolute top-3 right-3 bg-red-600 text-white px-3 py-1 rounded-md font-bold text-sm shadow-md">
+                                            SOLD
                                         </div>
+                                    )}
+                                </div>
 
-                                        <div className="p-4 bg-white">
-                                            <h3 className="text-lg font-bold text-charcoal font-sans group-hover:text-primary transition-colors">
-                                                {artwork.title}
-                                            </h3>
-                                            <p className="text-sm text-charcoal-muted mt-1">{artwork.artist}</p>
-                                            {/* 재료 및 크기 표시 (정보가 있을 때만) */}
-                                            {(artwork.material || artwork.size) &&
-                                                (artwork.material !== '확인 중' || artwork.size !== '확인 중') &&
-                                                (artwork.material !== '' || artwork.size !== '') && (
-                                                    <p className="text-xs text-charcoal-soft mt-2">
-                                                        {artwork.material && artwork.material !== '확인 중' && artwork.material}
-                                                        {artwork.material && artwork.material !== '확인 중' &&
-                                                            artwork.size && artwork.size !== '확인 중' && ' · '}
-                                                        {artwork.size && artwork.size !== '확인 중' && artwork.size}
-                                                    </p>
-                                                )}
-                                            {/* 판매완료 또는 가격 표시 */}
-                                            {artwork.sold ? (
-                                                <p className="text-sm font-semibold text-red-600 mt-1">판매완료</p>
-                                            ) : artwork.price !== '문의' && artwork.price !== '확인 중' && (
-                                                <p className="text-sm font-semibold text-primary mt-1">{artwork.price}</p>
-                                            )}
-                                        </div>
-                                    </div>
-                                </Link>
-                            </motion.div>
-                        ))}
-                    </div>
+                                <div className="p-4 bg-white">
+                                    <h3 className="text-lg font-bold text-charcoal font-sans group-hover:text-primary transition-colors">
+                                        {artwork.title}
+                                    </h3>
+                                    <p className="text-sm text-charcoal-muted mt-1">{artwork.artist}</p>
+                                    {/* 재료 및 크기 표시 (정보가 있을 때만) */}
+                                    {(artwork.material || artwork.size) &&
+                                        (artwork.material !== '확인 중' || artwork.size !== '확인 중') &&
+                                        (artwork.material !== '' || artwork.size !== '') && (
+                                            <p className="text-xs text-charcoal-soft mt-2">
+                                                {artwork.material && artwork.material !== '확인 중' && artwork.material}
+                                                {artwork.material && artwork.material !== '확인 중' &&
+                                                    artwork.size && artwork.size !== '확인 중' && ' · '}
+                                                {artwork.size && artwork.size !== '확인 중' && artwork.size}
+                                            </p>
+                                        )}
+                                    {/* 판매완료 또는 가격 표시 */}
+                                    {artwork.sold ? (
+                                        <p className="text-sm font-semibold text-red-600 mt-1">판매완료</p>
+                                    ) : artwork.price !== '문의' && artwork.price !== '확인 중' && (
+                                        <p className="text-sm font-semibold text-primary mt-1">{artwork.price}</p>
+                                    )}
+                                </div>
+                            </div>
+                        </Link>
+                    </motion.div>
                 ))}
             </div>
         </div>
