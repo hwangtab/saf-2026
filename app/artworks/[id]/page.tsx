@@ -146,9 +146,9 @@ export default function ArtworkDetailPage({ params }: Props) {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
             />
-            <main className="min-h-screen bg-white pb-20">
+            <main className="min-h-screen bg-white pb-20 pt-[calc(4rem+env(safe-area-inset-top,0px))]">
                 {/* Navigation Bar */}
-                <nav className="border-b sticky top-16 z-40 bg-white/90 backdrop-blur-sm">
+                <nav className="border-b sticky top-[calc(4rem+env(safe-area-inset-top,0px))] z-40 bg-white/90 backdrop-blur-sm">
                     <div className="container-max py-4">
                         <Link
                             href="/artworks"
