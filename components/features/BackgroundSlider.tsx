@@ -5,6 +5,7 @@ import Image from 'next/image';
 
 // 메인 페이지 히어로용 고해상도 이미지 (public/images/hero/)
 const HERO_IMAGES = [
+  { id: '11', filename: '11.jpg', alt: '2026 씨앗페 출품작' },
   { id: '1', filename: '1.jpg', alt: '2026 씨앗페 출품작' },
   { id: '2', filename: '2.jpg', alt: '2026 씨앗페 출품작' },
   { id: '3', filename: '3.jpg', alt: '2026 씨앗페 출품작' },
@@ -15,7 +16,6 @@ const HERO_IMAGES = [
   { id: '8', filename: '8.jpg', alt: '2026 씨앗페 출품작' },
   { id: '9', filename: '9.jpg', alt: '2026 씨앗페 출품작' },
   { id: '10', filename: '10.jpg', alt: '2026 씨앗페 출품작' },
-  { id: '11', filename: '11.jpg', alt: '2026 씨앗페 출품작' },
 ];
 
 export default function BackgroundSlider() {
