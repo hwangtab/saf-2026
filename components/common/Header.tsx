@@ -67,15 +67,15 @@ export default function Header() {
   }, []);
 
   const headerStyle = isScrolled || mobileMenuOpen
-    ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-200/50'
-    : 'bg-transparent';
+    ? 'bg-white/95 backdrop-blur-md shadow-sm border-gray-200/50'
+    : 'bg-transparent border-transparent';
 
   const textColor = isScrolled || mobileMenuOpen ? 'text-charcoal' : 'text-white';
   const logoSrc = isScrolled || mobileMenuOpen ? '/images/logo/320pxX90px.webp' : '/images/logo/320pxX90px_white.webp';
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${headerStyle}`}
+      className={`fixed top-0 left-0 right-0 z-50 border-b transition-all duration-300 ${headerStyle}`}
     >
       <nav className="container-max flex items-center justify-between h-16 transition-all duration-300">
         {/* Logo */}
