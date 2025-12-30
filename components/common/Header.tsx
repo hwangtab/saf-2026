@@ -66,9 +66,21 @@ export default function Header() {
     };
   }, []);
 
-  const headerStyle = isScrolled || mobileMenuOpen
-    ? 'bg-white/95 backdrop-blur-md shadow-sm border-gray-200/50'
-    : 'bg-transparent border-transparent';
+  // Optimize header style logic to prevent stacking context issues
+  const getHeaderStyle = () => {
+    if (mobileMenuOpen) {
+      // Solid white, no backdrop blur (prevents containing block issues for fixed children)
+      return 'bg-white shadow-sm border-gray-200/50';
+    }
+    if (isScrolled) {
+      // Translucent with blur when scrolled
+      return 'bg-white/95 backdrop-blur-md shadow-sm border-gray-200/50';
+    }
+    // Transparent at top
+    return 'bg-transparent border-transparent';
+  };
+
+  const headerStyle = getHeaderStyle();
 
   const textColor = isScrolled || mobileMenuOpen ? 'text-charcoal' : 'text-white';
   const logoSrc = isScrolled || mobileMenuOpen ? '/images/logo/320pxX90px.webp' : '/images/logo/320pxX90px_white.webp';
@@ -173,7 +185,7 @@ export default function Header() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMobileMenuOpen(false)}
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden top-[64px]"
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden top-16"
             />
 
             {/* Menu */}
@@ -182,7 +194,7 @@ export default function Header() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-[64px] right-0 bottom-0 w-80 max-w-[85%] bg-white shadow-2xl z-50 lg:hidden overflow-y-auto"
+              className="fixed top-16 right-0 bottom-0 w-80 max-w-[85%] bg-white shadow-2xl z-50 lg:hidden overflow-y-auto"
             >
               <div className="py-4 px-5 space-y-3">
                 {navigation.map((item) =>
