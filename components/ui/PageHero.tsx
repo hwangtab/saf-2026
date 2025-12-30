@@ -50,8 +50,8 @@ export default function PageHero({
       <div className="absolute inset-0 bg-black/60" />
 
       {/* Content */}
-      <div className="relative z-10 container-max text-center">
-        <h1 className="font-display text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight text-white drop-shadow-lg">
+      <div className="relative z-10 container-max text-center w-full">
+        <h1 className="font-display text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight text-white drop-shadow-lg break-keep">
           {title}
         </h1>
         {description && (
