@@ -77,7 +77,7 @@ export default function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithS
     return (
         <div>
             {/* Controls Section */}
-            <div className="flex flex-col md:flex-row gap-4 mb-6 items-center justify-between sticky top-[60px] z-40 bg-gray-50/95 backdrop-blur-sm py-4 border-b border-gray-200/50 container-max">
+            <div className="flex flex-col md:flex-row gap-4 mb-0 items-center justify-between sticky top-[60px] z-40 bg-gray-50/95 backdrop-blur-sm py-3 border-b border-gray-200/50 container-max">
                 <SearchBar
                     value={searchQuery}
                     onChange={setSearchQuery}

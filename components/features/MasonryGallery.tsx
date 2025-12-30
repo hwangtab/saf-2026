@@ -75,7 +75,7 @@ export default function MasonryGallery({ artworks, showArtistNav = true }: Mason
         <div>
             {/* Artist Navigation - only shown when sorted by artist */}
             {showArtistNav && (
-                <div className="sticky top-16 z-30 bg-gray-50/95 backdrop-blur-sm py-2 border-b border-gray-200">
+                <div className="sticky top-16 z-30 bg-gray-50/95 backdrop-blur-sm py-4 mb-8 border-b border-gray-200">
                     <div className="grid grid-cols-5 sm:grid-cols-7 md:grid-cols-9 lg:grid-cols-11 gap-2 px-4">
                         {uniqueArtists.map((artist) => (
                             <button
