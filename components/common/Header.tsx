@@ -66,24 +66,32 @@ export default function Header() {
     };
   }, []);
 
+  // 히어로 섹션(어두운 배경)이 있는 페이지 목록
+  const HERO_PAGES = ['/', '/our-reality', '/our-proof', '/exhibition', '/archive', '/news', '/artworks'];
+  const hasHero = HERO_PAGES.includes(pathname);
+
   // Optimize header style logic to prevent stacking context issues
   const getHeaderStyle = () => {
     if (mobileMenuOpen) {
       // Solid white, no backdrop blur (prevents containing block issues for fixed children)
       return 'bg-white shadow-sm border-gray-200/50';
     }
-    if (isScrolled) {
-      // Translucent with blur when scrolled
+    if (isScrolled || !hasHero) {
+      // Scrolled state OR page without hero -> Translucent white
       return 'bg-white/95 backdrop-blur-md shadow-sm border-gray-200/50';
     }
-    // Transparent at top
+    // Top of Hero page -> Transparent
     return 'bg-transparent border-transparent';
   };
 
   const headerStyle = getHeaderStyle();
 
-  const textColor = isScrolled || mobileMenuOpen ? 'text-charcoal' : 'text-white';
-  const logoSrc = isScrolled || mobileMenuOpen ? '/images/logo/320pxX90px.webp' : '/images/logo/320pxX90px_white.webp';
+  // If page generally has dark text (no hero) or is scrolled/menu open -> dark text
+  // Only transparent hero pages at top get white text
+  const isDarkText = isScrolled || mobileMenuOpen || !hasHero;
+
+  const textColor = isDarkText ? 'text-charcoal' : 'text-white';
+  const logoSrc = isDarkText ? '/images/logo/320pxX90px.webp' : '/images/logo/320pxX90px_white.webp';
 
   return (
     <header

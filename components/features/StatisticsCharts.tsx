@@ -93,7 +93,7 @@ export function RejectionReasonsChart() {
         <BarChart data={data} layout="vertical">
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis type="number" />
-          <YAxis dataKey="reason" type="category" width={120} />
+          <YAxis dataKey="reason" type="category" width={100} tick={{ fontSize: 11 }} />
           <Tooltip
             contentStyle={tooltipContentStyle}
             labelStyle={tooltipLabelStyle}
@@ -233,7 +233,7 @@ export function CreativeImpactChart() {
         <BarChart data={data} layout="vertical">
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis type="number" label={{ value: '영향받음 (%)', position: 'insideBottom', offset: -5 }} />
-          <YAxis dataKey="impact" type="category" width={100} />
+          <YAxis dataKey="impact" type="category" width={90} tick={{ fontSize: 11 }} />
           <Tooltip
             formatter={(value) => `${value}%`}
             contentStyle={tooltipContentStyle}

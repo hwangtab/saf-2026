@@ -75,13 +75,13 @@ export default function MasonryGallery({ artworks, showArtistNav = true }: Mason
         <div>
             {/* Artist Navigation - only shown when sorted by artist */}
             {showArtistNav && (
-                <div className="sticky top-16 z-30 bg-gray-50/95 backdrop-blur-sm py-4 mb-8 border-b border-gray-200">
-                    <div className="grid grid-cols-5 sm:grid-cols-7 md:grid-cols-9 lg:grid-cols-11 gap-2 px-4">
+                <div className="sticky top-[calc(4rem+env(safe-area-inset-top,0px))] z-30 bg-gray-50/95 backdrop-blur-sm py-4 mb-8 border-b border-gray-200">
+                    <div className="flex flex-wrap gap-2 px-4 justify-center">
                         {uniqueArtists.map((artist) => (
                             <button
                                 key={artist}
                                 onClick={() => scrollToArtist(artist)}
-                                className="px-2 py-1.5 text-xs sm:text-sm font-medium bg-white border border-gray-200 rounded-full hover:border-primary hover:text-primary hover:bg-primary/5 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 text-center truncate"
+                                className="px-3 py-2 min-h-[44px] text-sm font-medium bg-white border border-gray-200 rounded-full hover:border-primary hover:text-primary hover:bg-primary/5 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 text-center truncate flex items-center justify-center"
                             >
                                 {artist}
                             </button>

@@ -121,7 +121,7 @@ export default function ShareButtons({
       {/* Kakao Talk - if Kakao SDK is available */}
       <button
         onClick={handleKakaoShare}
-        className="w-8 h-8 flex items-center justify-center transition-transform hover:scale-105 focus:outline-none focus-visible:outline-none"
+        className="min-w-[44px] min-h-[44px] flex items-center justify-center transition-transform hover:scale-105 focus:outline-none focus-visible:outline-none"
         title="카카오톡 공유"
         aria-label="카카오톡으로 공유하기"
       >
