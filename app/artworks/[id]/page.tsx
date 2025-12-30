@@ -1,4 +1,5 @@
 import { getAllArtworks, getArtworkById } from '@/content/saf2026-artworks';
+import { getArticlesByArtist } from '@/content/artist-articles';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -6,6 +7,7 @@ import { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import { SITE_URL } from '@/lib/constants';
 import Button from '@/components/ui/Button';
+import RelatedArticles from '@/components/features/RelatedArticles';
 
 // Dynamic import for client-side ShareButtons
 const ShareButtons = dynamic(() => import('@/components/common/ShareButtons'), { ssr: false });
@@ -89,6 +91,9 @@ export default function ArtworkDetailPage({ params }: Props) {
   // Create rich description for schema
   const schemaDescription =
     artwork.description || artwork.profile || `${artwork.artist}의 작품 "${artwork.title}"`;
+
+  // Get related articles for this artist
+  const relatedArticles = getArticlesByArtist(artwork.artist);
 
   // Product + VisualArtwork JSON-LD Schema for SEO
   const productSchema = {
@@ -298,6 +303,9 @@ export default function ArtworkDetailPage({ params }: Props) {
                   </p>
                 </div>
               )}
+
+              {/* Related Articles */}
+              <RelatedArticles articles={relatedArticles} />
             </div>
           </div>
         </article>
