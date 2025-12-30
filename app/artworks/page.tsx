@@ -1,5 +1,5 @@
 import { getAllArtworks } from '@/content/saf2026-artworks';
-import MasonryGallery from '@/components/features/MasonryGallery';
+import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import { OG_IMAGE, SITE_URL } from '@/lib/constants';
@@ -35,9 +35,7 @@ export const metadata: Metadata = {
 };
 
 export default function ArtworksPage() {
-    const artworks = getAllArtworks().sort((a, b) =>
-        a.artist.localeCompare(b.artist, 'ko-KR')
-    );
+    const artworks = getAllArtworks();
 
     return (
         <main className="min-h-screen bg-gray-50 pb-20">
@@ -54,7 +52,7 @@ export default function ArtworksPage() {
 
             {/* Gallery Section */}
             <section className="container-max pt-4 pb-12">
-                <MasonryGallery artworks={artworks} />
+                <ArtworkGalleryWithSort artworks={artworks} />
             </section>
         </main>
     );

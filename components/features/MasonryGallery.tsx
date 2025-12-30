@@ -8,9 +8,10 @@ import { useMemo } from 'react';
 
 interface MasonryGalleryProps {
     artworks: Artwork[];
+    showArtistNav?: boolean;
 }
 
-export default function MasonryGallery({ artworks }: MasonryGalleryProps) {
+export default function MasonryGallery({ artworks, showArtistNav = true }: MasonryGalleryProps) {
     // Get unique artist names in order of appearance (already sorted by ㄱㄴㄷ)
     const uniqueArtists = useMemo(() => {
         const seen = new Set<string>();
@@ -44,20 +45,22 @@ export default function MasonryGallery({ artworks }: MasonryGalleryProps) {
 
     return (
         <div>
-            {/* Artist Navigation */}
-            <div className="sticky top-16 z-30 bg-gray-50/95 backdrop-blur-sm py-2 border-b border-gray-200">
-                <div className="grid grid-cols-5 sm:grid-cols-7 md:grid-cols-9 lg:grid-cols-11 gap-2 px-4">
-                    {uniqueArtists.map((artist) => (
-                        <button
-                            key={artist}
-                            onClick={() => scrollToArtist(artist)}
-                            className="px-2 py-1.5 text-xs sm:text-sm font-medium bg-white border border-gray-200 rounded-full hover:border-primary hover:text-primary hover:bg-primary/5 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 text-center truncate"
-                        >
-                            {artist}
-                        </button>
-                    ))}
+            {/* Artist Navigation - only shown when sorted by artist */}
+            {showArtistNav && (
+                <div className="sticky top-16 z-30 bg-gray-50/95 backdrop-blur-sm py-2 border-b border-gray-200">
+                    <div className="grid grid-cols-5 sm:grid-cols-7 md:grid-cols-9 lg:grid-cols-11 gap-2 px-4">
+                        {uniqueArtists.map((artist) => (
+                            <button
+                                key={artist}
+                                onClick={() => scrollToArtist(artist)}
+                                className="px-2 py-1.5 text-xs sm:text-sm font-medium bg-white border border-gray-200 rounded-full hover:border-primary hover:text-primary hover:bg-primary/5 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 text-center truncate"
+                            >
+                                {artist}
+                            </button>
+                        ))}
+                    </div>
                 </div>
-            </div>
+            )}
 
             {/* Gallery */}
             <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6 p-4">
