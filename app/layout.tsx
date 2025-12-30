@@ -101,7 +101,7 @@ export default function RootLayout({
               '@type': 'Organization',
               name: '한국스마트협동조합',
               url: 'https://www.saf2026.com',
-              logo: 'https://www.saf2026.com/images/og-image.png',
+              logo: 'https://www.saf2026.com/images/og-image2.png',
               description:
                 '한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인',
               sameAs: [
