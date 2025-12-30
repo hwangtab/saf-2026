@@ -71,24 +71,87 @@ export default function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithS
         [filteredArtworks, sortOption]
     );
 
+    // 3. 작가 네비게이션 로직 (이동됨)
+    const uniqueArtists = useMemo(() => {
+        const seen = new Set<string>();
+        return sortedArtworks.filter(a => {
+            if (seen.has(a.artist)) return false;
+            seen.add(a.artist);
+            return true;
+        }).map(a => a.artist);
+    }, [sortedArtworks]);
+
+    // Track which artists appear first (for anchor)
+    const firstArtworkByArtist = useMemo(() => {
+        const map = new Map<string, string>();
+        sortedArtworks.forEach(a => {
+            if (!map.has(a.artist)) {
+                map.set(a.artist, a.id);
+            }
+        });
+        return map;
+    }, [sortedArtworks]);
+
+    const scrollToArtist = (artist: string) => {
+        const artworkId = firstArtworkByArtist.get(artist);
+        if (artworkId) {
+            // ID를 가진 요소를 찾습니다.
+            const element = document.getElementById(`artwork-${artworkId}`);
+            if (element) {
+                // Header (64px) + sticky controls offset calculation
+                // Sticky container is around 130-150px depending on content
+                // A safe offset is around 200px to properly show the title
+                const offset = 220;
+                const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+                window.scrollTo({
+                    top: elementPosition - offset,
+                    behavior: 'smooth'
+                });
+            }
+        }
+    };
+
     // 작가명순일 때만 작가 네비게이션 표시 (검색어가 없을 때만)
     const showArtistNav = sortOption === 'artist-asc' && !searchQuery;
 
     return (
+
         <div>
-            {/* Controls Section */}
-            <div className="flex flex-col md:flex-row gap-4 mb-0 items-center justify-between sticky top-[60px] z-40 bg-gray-50/95 backdrop-blur-sm py-3 border-b border-gray-200/50 container-max">
-                <SearchBar
-                    value={searchQuery}
-                    onChange={setSearchQuery}
-                    placeholder="작가명, 작품명으로 검색해보세요"
-                />
-                <SortControls value={sortOption} onChange={setSortOption} />
+            {/* Controls & Nav Section (Combined Sticky) */}
+            <div className="sticky top-[60px] z-40 bg-gray-50/95 backdrop-blur-sm border-b border-gray-200/50">
+                <div className="container-max">
+                    {/* Search & Sort Controls */}
+                    <div className="flex flex-col md:flex-row gap-4 items-center justify-between py-3">
+                        <SearchBar
+                            value={searchQuery}
+                            onChange={setSearchQuery}
+                            placeholder="작가명, 작품명으로 검색해보세요"
+                        />
+                        <SortControls value={sortOption} onChange={setSortOption} />
+                    </div>
+
+                    {/* Artist Navigation */}
+                    {showArtistNav && (
+                        <div className="pb-4 pt-1">
+                            <div className="grid grid-cols-5 sm:grid-cols-7 md:grid-cols-9 lg:grid-cols-11 gap-2">
+                                {uniqueArtists.map((artist) => (
+                                    <button
+                                        key={artist}
+                                        onClick={() => scrollToArtist(artist)}
+                                        className="px-2 py-1.5 text-xs sm:text-sm font-medium bg-white border border-gray-200 rounded-full hover:border-primary hover:text-primary hover:bg-primary/5 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 text-center truncate"
+                                    >
+                                        {artist}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
 
             {/* Results Message */}
             {searchQuery && (
-                <div className="mb-6 container-max">
+                <div className="mb-6 container-max mt-6">
                     <p className="text-gray-500">
                         <span className="font-semibold text-primary">&apos;{searchQuery}&apos;</span> 검색 결과: {filteredArtworks.length}개
                     </p>
@@ -113,8 +176,11 @@ export default function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithS
                     </button>
                 </div>
             ) : (
-                <MasonryGallery artworks={sortedArtworks} showArtistNav={showArtistNav} />
+                <div className={showArtistNav ? "mt-6" : ""}>
+                    <MasonryGallery artworks={sortedArtworks} showArtistNav={false} />
+                </div>
             )}
         </div>
     );
+
 }
