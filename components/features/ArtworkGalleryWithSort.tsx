@@ -124,15 +124,17 @@ function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithSortProps) {
       {/* Controls & Nav Section (Combined Sticky) */}
       <div className="md:sticky md:top-[calc(4rem+env(safe-area-inset-top,0px))] z-30 bg-gray-50/95 backdrop-blur-sm border-b border-gray-200/50">
         <div className="container-max">
-          {/* Search & Sort Controls */}
-          <div className="flex flex-col gap-3 py-3">
-            <SearchBar
-              value={searchQuery}
-              onChange={setSearchQuery}
-              placeholder="작가명, 작품명으로 검색해보세요"
-            />
+          {/* Search & Sort Controls - Single row on desktop, stacked on mobile */}
+          <div className="flex flex-col md:flex-row md:items-center gap-3 py-3">
+            <div className="flex-1">
+              <SearchBar
+                value={searchQuery}
+                onChange={setSearchQuery}
+                placeholder="작가명, 작품명으로 검색해보세요"
+              />
+            </div>
 
-            <div className="flex flex-row items-center justify-between gap-2 w-full">
+            <div className="flex flex-row items-center justify-between md:justify-end gap-2">
               {/* Status Filter Buttons */}
               <div
                 role="radiogroup"
