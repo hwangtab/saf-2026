@@ -134,7 +134,7 @@ function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithSortProps) {
               />
             </div>
 
-            <div className="flex flex-row items-center justify-between md:justify-end gap-2 shrink-0">
+            <div className="flex flex-row items-center gap-2 shrink-0 ml-auto">
               {/* Status Filter Buttons */}
               <div
                 role="radiogroup"

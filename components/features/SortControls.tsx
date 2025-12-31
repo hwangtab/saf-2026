@@ -93,7 +93,7 @@ export default function SortControls({ value, onChange }: SortControlsProps) {
         aria-expanded={isOpen}
         aria-label="정렬 옵션 선택"
       >
-        <span className="text-sm font-medium text-charcoal">
+        <span className="text-xs sm:text-sm font-medium text-charcoal whitespace-nowrap">
           {currentOption?.icon} {currentOption?.label}
         </span>
         <svg
