@@ -88,27 +88,32 @@ export const artistArticles: Record<string, Article[]> = {
 
 ## 🎨 스타일링 규칙
 
-### 섹션 제목 스타일
+### 통일된 디자인 시스템
 
-모든 작가 정보 섹션은 **일관된 제목 스타일** 사용:
-
-```tsx
-<h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider">작가 소개</h3>
-```
-
-**예외**: 관련 기사 섹션만 큰 제목 사용
+모든 작가 정보 섹션은 **동일한 스타일**을 사용합니다:
 
 ```tsx
-<h2 className="font-section text-2xl font-bold text-charcoal mb-6">작가 관련 자료</h2>
+// 공통 컨테이너
+<div className="bg-gray-50 p-6 rounded-xl">
+
+// 공통 섹션 제목
+<h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">
+  섹션 제목
+</h3>
+
+// 공통 본문 텍스트
+<p className="text-gray-700 leading-relaxed text-sm whitespace-pre-line">
+  내용
+</p>
 ```
 
 ### 카드 배경 스타일
 
-| 섹션          | 배경 스타일                                      | 용도           |
-| ------------- | ------------------------------------------------ | -------------- |
-| **작가 소개** | `bg-gray-50 p-6 rounded-xl`                      | 주요 정보 강조 |
-| **작가 노트** | `bg-white border border-gray-100 p-6 rounded-xl` | 부드러운 구분  |
-| **관련 기사** | `bg-white border border-gray-200 p-5 rounded-lg` | 외부 링크 카드 |
+| 섹션          | 배경 스타일                 | 비고                |
+| ------------- | --------------------------- | ------------------- |
+| **작가 소개** | `bg-gray-50 p-6 rounded-xl` | 주요 정보           |
+| **작가 노트** | `bg-gray-50 p-6 rounded-xl` | 작품 설명           |
+| **관련 기사** | `bg-gray-50 p-6 rounded-xl` | 외부 링크 카드 포함 |
 
 ### Hover 효과
 
