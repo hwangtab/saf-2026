@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 import { Artwork } from '@/content/saf2026-artworks';
 import { useMemo, memo } from 'react';
 
@@ -67,14 +66,10 @@ function MasonryGallery({ artworks, showArtistNav = true }: MasonryGalleryProps)
       {/* Gallery using CSS Columns */}
       <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6 px-4">
         {artworks.map((artwork) => (
-          <motion.div
+          <div
             key={artwork.id}
             id={`artwork-${artwork.id}`}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '50px' }}
-            transition={{ duration: 0.4, delay: 0.05 }} // Fixed short delay to avoid staggered jank
-            className="break-inside-avoid mb-6"
+            className="break-inside-avoid mb-6 animate-fade-in-up"
           >
             <Link href={`/artworks/${artwork.id}`} className="group block h-full">
               <div className="relative bg-gray-100 shadow-sm transition-shadow hover:shadow-md">
@@ -127,7 +122,7 @@ function MasonryGallery({ artworks, showArtistNav = true }: MasonryGalleryProps)
                 </div>
               </div>
             </Link>
-          </motion.div>
+          </div>
         ))}
       </div>
     </div>
