@@ -50,6 +50,22 @@ export const artistArticles: Record<string, Article[]> = {
       source: '서울시립미술관',
     },
   ],
+  김상구: [
+    {
+      url: 'https://www.mmca.go.kr/exhibitions/exhibitionsDetail.do?exhId=202001090001225',
+      title: '판화, 판화, 판화 - 국립현대미술관 전시',
+      description:
+        '한국 추상 목판화를 대표하는 원로 작가 김상구의 작품이 소개된 국립현대미술관 전시 (2020). 50여 년간 1,500여 점의 작품을 발표하며 한국 현대 목판화의 기틀을 마련한 중요 작가.',
+      source: '국립현대미술관',
+    },
+    {
+      url: 'https://www.daljin.com/column/12502',
+      title: '김상구 / 나무에서 나무에로',
+      description:
+        '김상구 작가의 목판화 작품세계를 다룬 미술평론. 작가의 작품이 지닌 형식적 특징과 서정성, 대중성의 조화를 분석.',
+      source: '서울아트가이드',
+    },
+  ],
 };
 
 /**
