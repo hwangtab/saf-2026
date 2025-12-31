@@ -4,6 +4,7 @@ import { useState, useMemo, memo } from 'react';
 import MasonryGallery from './MasonryGallery';
 import SortControls, { SortOption } from './SortControls';
 import SearchBar from './SearchBar';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { Artwork } from '@/content/saf2026-artworks';
 import { parsePrice } from '@/lib/parsePrice';
 import { scrollToElement } from '@/lib/scroll';
@@ -115,6 +116,17 @@ function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithSortProps) {
       scrollToElement(`artwork-${artworkId}`, 150); // Additional offset for sticky controls
     }
   };
+
+  // 4. Infinite Scroll Integration
+  const {
+    visibleData: visibleArtworks,
+    observerTarget,
+    hasMore,
+  } = useInfiniteScroll(sortedArtworks, {
+    initialCount: 20, // Start with 20 items
+    batchSize: 20, // Load 20 more at a time
+    threshold: 0.1, // Trigger when 10% of sentinel is visible
+  });
 
   // 작가명순일 때만 작가 네비게이션 표시 (검색어가 없을 때만, 전체보기일 때만 권장하지만 강제하진 않음)
   const showArtistNav = sortOption === 'artist-asc' && !searchQuery;
@@ -241,7 +253,18 @@ function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithSortProps) {
         </div>
       ) : (
         <div className={showArtistNav ? 'mt-6' : ''}>
-          <MasonryGallery artworks={sortedArtworks} />
+          <MasonryGallery artworks={visibleArtworks} />
+          {/* Sentinel for Infinite Scroll - only needed if there are more items */}
+          {hasMore && (
+            <div
+              ref={observerTarget}
+              className="h-20 w-full flex items-center justify-center p-4"
+              role="status"
+            >
+              <div className="w-8 h-8 border-4 border-gray-200 border-t-primary rounded-full animate-spin" />
+              <span className="sr-only">Loading more artworks...</span>
+            </div>
+          )}
         </div>
       )}
     </div>
