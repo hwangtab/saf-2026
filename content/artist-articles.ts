@@ -359,6 +359,43 @@ export const artistArticles: Record<string, Article[]> = {
       source: '전국시대',
     },
   ],
+  이익태: [
+    {
+      url: 'https://youtu.be/l_-jUX50zK8',
+      title: '암울했던 시절, 한국이 배출한 천재 아티스트가 미국 예술계를 뒤흔들었던 이야기',
+      description:
+        '70년대 한국 최초의 독립영화 감독 이익태 작가. 미국으로 건너가 독창적이면서도 인간에 대한 깊은 이해와 애정이 담긴 퍼포먼스로 예술계의 화제. 귀한 필름 자료 발굴.',
+      source: '고효경과 재야의 고수들',
+    },
+    {
+      url: 'https://www.news-art.co.kr/news/article.html?no=32876',
+      title: '재난의 폐허 위에 치유의 씨앗을 심다 - 이익태 작가 추모',
+      description:
+        '한국 현대예술의 가장 뜨거운 전위에 섰던 토탈 아티스트 이익태. 1970년 한국 최초 독립영화 "아침과 저녁 사이"로 전위의 포문. 광주항쟁, LA 폭동, 분단 등 시대의 아픔을 행위로 씻어낸 샤먼. 향년 78세 별세.',
+      source: '뉴스아트',
+    },
+    {
+      url: 'https://koreagalleries.or.kr/exhibition/%EC%9D%B4%EC%9D%B5%ED%83%9C-everyone-pierrot/',
+      title: '이익태 : Everyone Pierrot 전시',
+      description:
+        '한국화랑협회에서 소개하는 이익태 작가 전시 "Everyone Pierrot". 피에로를 주제로 한 작품들. Big Mouth, 나 홀로 웃다, 빨간 코 마리오네트 등 전시.',
+      source: '한국화랑협회',
+    },
+    {
+      url: 'https://www.yna.co.kr/view/AKR20130222076900005',
+      title: '전방위 예술가 이익태 초대전 빔 플라워',
+      description:
+        '전방위 예술가라는 별명으로도 불리는 서양화가 이익태의 전시. 분당구 서현동 아트스페이스 아프리카나에서 개최.',
+      source: '연합뉴스',
+    },
+    {
+      url: 'https://www.kgnews.co.kr/news/article.html?no=752882',
+      title: '인간에 대한 깊은 연민 - Everyone Pierrot 전시',
+      description:
+        '용인 갤러리위에서 열린 이익태 작가 전시. 59점의 피에로 주제 작품. 작가가 바라보는 사회와 우리 모습, 인간에 대한 깊은 연민을 담은 작품. 위트와 페이소스의 상징.',
+      source: '경기뉴스',
+    },
+  ],
 };
 
 /**
