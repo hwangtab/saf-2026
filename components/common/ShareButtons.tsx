@@ -12,7 +12,6 @@ interface ShareButtonsProps {
 
 export default function ShareButtons({ url, title, description }: ShareButtonsProps) {
   const [copied, setCopied] = useState(false);
-  const [copyError, setCopyError] = useState(false);
 
   // Initialize Kakao SDK
   useEffect(() => {
@@ -30,12 +29,10 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
     try {
       await navigator.clipboard.writeText(url);
       setCopied(true);
-      setCopyError(false);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error('Failed to copy:', err);
-      setCopyError(true);
-      setTimeout(() => setCopyError(false), 2000);
+      console.error('Failed to copy:', err);
     }
   };
 
