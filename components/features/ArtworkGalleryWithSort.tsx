@@ -52,19 +52,32 @@ function sortArtworks(artworks: Artwork[], sortOption: SortOption): Artwork[] {
 export default function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithSortProps) {
   const [sortOption, setSortOption] = useState<SortOption>('artist-asc');
   const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'selling' | 'sold'>('all');
 
-  // 1. 검색어 필터링
+  // 1. 필터링 (검색어 + 판매상태)
   const filteredArtworks = useMemo(() => {
-    if (!searchQuery.trim()) return artworks;
+    let result = artworks;
 
-    const query = searchQuery.toLowerCase().trim();
-    return artworks.filter(
-      (artwork) =>
-        artwork.title.toLowerCase().includes(query) ||
-        artwork.artist.toLowerCase().includes(query) ||
-        artwork.description?.toLowerCase().includes(query)
-    );
-  }, [artworks, searchQuery]);
+    // Status Filter
+    if (statusFilter === 'selling') {
+      result = result.filter((a) => !a.sold);
+    } else if (statusFilter === 'sold') {
+      result = result.filter((a) => a.sold === true);
+    }
+
+    // Search Filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      result = result.filter(
+        (artwork) =>
+          artwork.title.toLowerCase().includes(query) ||
+          artwork.artist.toLowerCase().includes(query) ||
+          artwork.description?.toLowerCase().includes(query)
+      );
+    }
+
+    return result;
+  }, [artworks, searchQuery, statusFilter]);
 
   // 2. 정렬 적용
   const sortedArtworks = useMemo(
@@ -103,7 +116,7 @@ export default function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithS
     }
   };
 
-  // 작가명순일 때만 작가 네비게이션 표시 (검색어가 없을 때만)
+  // 작가명순일 때만 작가 네비게이션 표시 (검색어가 없을 때만, 전체보기일 때만 권장하지만 강제하진 않음)
   const showArtistNav = sortOption === 'artist-asc' && !searchQuery;
 
   return (
@@ -118,7 +131,46 @@ export default function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithS
               onChange={setSearchQuery}
               placeholder="작가명, 작품명으로 검색해보세요"
             />
-            <SortControls value={sortOption} onChange={setSortOption} />
+
+            <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
+              {/* Status Filter Buttons */}
+              <div className="flex bg-white rounded-lg p-1 border border-gray-200 shadow-sm">
+                <button
+                  onClick={() => setStatusFilter('all')}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                    statusFilter === 'all'
+                      ? 'bg-charcoal text-white shadow-sm'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  전체
+                </button>
+                <button
+                  onClick={() => setStatusFilter('selling')}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                    statusFilter === 'selling'
+                      ? 'bg-charcoal text-white shadow-sm'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  판매중
+                </button>
+                <button
+                  onClick={() => setStatusFilter('sold')}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                    statusFilter === 'sold'
+                      ? 'bg-charcoal text-white shadow-sm'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  판매완료
+                </button>
+              </div>
+
+              <div className="h-6 w-px bg-gray-300 hidden md:block" />
+
+              <SortControls value={sortOption} onChange={setSortOption} />
+            </div>
           </div>
 
           {/* Artist Navigation - Hidden on mobile, visible on desktop */}
