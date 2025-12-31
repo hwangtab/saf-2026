@@ -260,6 +260,22 @@ export const artistArticles: Record<string, Article[]> = {
       source: 'Brunch',
     },
   ],
+  심현희: [
+    {
+      url: 'http://www.hakgojae.com/page/2-1-view.php?artist_num=63',
+      title: '심현희 작가 프로필 - 학고재갤러리',
+      description:
+        '학고재갤러리 소속 작가 심현희. 2002년, 2005년 학고재갤러리에서 개인전 개최. 꽃과 나비를 주제로 한 회화 작업.',
+      source: '학고재갤러리',
+    },
+    {
+      url: 'https://www.hani.co.kr/arti/culture/music/974137.html',
+      title: '코로나 시대, 고립의 고통을 역설로 그리다',
+      description:
+        '중견 화가 심현희(62) 신작전. 꽃과 사람의 모습을 거친 형상과 원색의 아크릴물감으로 표현. 파랑, 빨강, 하양, 노랑, 초록의 원색으로 코로나 시대 고립의 고통을 역설적으로 그림.',
+      source: '한겨레',
+    },
+  ],
 };
 
 /**
