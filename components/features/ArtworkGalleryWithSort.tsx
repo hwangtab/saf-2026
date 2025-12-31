@@ -122,7 +122,7 @@ function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithSortProps) {
   return (
     <div>
       {/* Controls & Nav Section (Combined Sticky) */}
-      <div className="md:sticky md:top-[calc(4rem+env(safe-area-inset-top,0px))] z-40 bg-gray-50/95 backdrop-blur-sm border-b border-gray-200/50">
+      <div className="md:sticky md:top-[calc(4rem+env(safe-area-inset-top,0px))] z-30 bg-gray-50/95 backdrop-blur-sm border-b border-gray-200/50">
         <div className="container-max">
           {/* Search & Sort Controls */}
           <div className="flex flex-col gap-3 py-3">
