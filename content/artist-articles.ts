@@ -95,6 +95,20 @@ export const artistArticles: Record<string, Article[]> = {
         '이웃 사람들이 겪는 삶의 욕망과 정서를 고스란히 담은 김주호의 조각. 일상의 생생한 풍경을 친근한 재료에 예리하면서도 따뜻한 기지로 표현.',
       source: '오마이뉴스',
     },
+    {
+      url: 'https://inartplatform.kr/residency/view?residency=87&category=2013',
+      title: '인천아트플랫폼 입주작가',
+      description:
+        '인천아트플랫폼 2013년 입주작가로 선정된 김주호. 예술창작공간에서 작품 활동을 이어가며 지역 예술 생태계에 기여.',
+      source: '인천아트플랫폼',
+    },
+    {
+      url: 'http://www.ganghwanews.co.kr/news/articleView.html?idxno=10921',
+      title: '강화군 내가면 조각가 김주호, 김종영미술상 수상',
+      description:
+        '강화군 내가면에 거주하는 조각가 김주호(76)가 독창적이고 혁신적인 예술 세계를 인정받아 김종영미술상 수상. 거대하고 권위적인 조각과는 달리 친근하고 인간적인 조각으로 평가.',
+      source: '강화뉴스',
+    },
   ],
 };
 
