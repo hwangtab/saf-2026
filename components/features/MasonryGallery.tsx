@@ -57,6 +57,7 @@ function MasonryGallery({ artworks, showArtistNav = true }: MasonryGalleryProps)
                 key={artist}
                 onClick={() => scrollToArtist(artist)}
                 className="px-3 py-2 min-h-[44px] text-sm font-medium bg-white border border-gray-200 rounded-full hover:border-primary hover:text-primary hover:bg-primary/5 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 text-center truncate flex items-center justify-center"
+                aria-label={`${artist} 작가 작품으로 이동`}
               >
                 {artist}
               </button>

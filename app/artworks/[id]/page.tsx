@@ -149,12 +149,12 @@ export default function ArtworkDetailPage({ params }: Props) {
     ].filter(Boolean),
   };
 
+  // Safely stringify JSON-LD to prevent XSS (escape < as \u003c)
+  const safeJsonLd = JSON.stringify(productSchema).replace(/</g, '\\u003c');
+
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd }} />
       <main className="min-h-screen bg-white pb-20 pt-[calc(4rem+env(safe-area-inset-top,0px))]">
         {/* Navigation Bar */}
         <nav className="border-b sticky top-[calc(4rem+env(safe-area-inset-top,0px))] z-40 bg-white/90 backdrop-blur-sm">
