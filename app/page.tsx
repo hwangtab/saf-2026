@@ -61,7 +61,7 @@ export default function Home() {
               priority
             />
           </div>
-          <h1 className="font-display text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight text-white drop-shadow-lg text-balance">
+          <h1 className="mt-12 md:mt-0 font-display text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight text-white drop-shadow-lg text-balance">
             고리대금의 벽,
             <br />
             예술인의 연대로 무너뜨립니다
