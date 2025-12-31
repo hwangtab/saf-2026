@@ -308,6 +308,43 @@ export const artistArticles: Record<string, Article[]> = {
       source: '뉴스클래식M',
     },
   ],
+  이윤엽: [
+    {
+      url: 'https://ggc.ggcf.kr/p/5bfde8b0fb94a32d139339cb',
+      title: '심심/ 판화/ 현장 - 이윤엽 작가',
+      description:
+        '경기문화재단 지지씨플랫폼에 소개된 이윤엽 작가의 판화 작업. 현장을 기록하고 표현하는 민중미술가의 작품세계.',
+      source: '경기문화재단 지지씨',
+    },
+    {
+      url: 'https://www.hani.co.kr/arti/culture/music/1084923.html',
+      title: '아이들이 노동자 친근하게 느끼도록 이야기 그림 그렸죠',
+      description:
+        '민중미술가 이윤엽 작가의 이야기 그림책 "시간이 조금 걸리더라도". 2008년부터 약 10년간 어린이 잡지 "고래가 그랬어"에 연재한 이야기 판화 그림을 모음.',
+      source: '한겨레',
+    },
+    {
+      url: 'https://www.khan.co.kr/article/201112062116375',
+      title: '김규항의 좌판 - 판화가 이윤엽',
+      description:
+        '경기 안성시 보개면 시골마을 작업실에서 작업하는 이윤엽. 폐가를 8개월간 손수 매달려 살려낸 작업실. 버려진 물건들을 모아 작품으로 재탄생시키는 민중미술가.',
+      source: '경향신문',
+    },
+    {
+      url: 'https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0002082451',
+      title: '세상을 풍자하는 칼노래 - 이윤엽을 만나다',
+      description:
+        '이윤엽의 남풍리 판화통신 전시. 안성 보개면 남풍리 작업장에서 만난 이윤엽 작가. 11번째 목판화전과 아트북 "한국현대미술선-이윤엽" 출간.',
+      source: '오마이뉴스',
+    },
+    {
+      url: 'https://brunch.co.kr/@todolphin/17',
+      title: '이윤엽 판화 - 단순하고 깊은',
+      description:
+        '진실처럼 단순하고 깊은 이윤엽의 판화. 대추리, 용산, 거제 조선소, 밀양, 구럼비, 4대강, 쌍용차 등 사회적 의제를 현장에서 함께하며 기록. 예술은 자기 얘기를 하는 것, 진실을 보고 싶어 하는 마음.',
+      source: 'Brunch',
+    },
+  ],
 };
 
 /**
