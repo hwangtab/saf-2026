@@ -101,7 +101,7 @@ export default function Home() {
       <section className="py-16 md:py-24 bg-sun-soft">
         <div className="container-max">
           <SectionTitle className="text-center mb-12">우리가 직면한 문제</SectionTitle>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
             <div className="space-y-4">
               <h3 className="text-card-title text-charcoal">🚫 금융 시장의 차별</h3>
               <p className="text-charcoal-muted leading-relaxed">
@@ -178,7 +178,7 @@ export default function Home() {
       <section className="py-16 md:py-24 bg-accent-soft">
         <div className="container-max">
           <SectionTitle className="mb-12 text-center">당신도 함께할 수 있습니다</SectionTitle>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             <ActionCard
               href={EXTERNAL_LINKS.DONATE}
               external

@@ -2,21 +2,24 @@
 /* 일반 텍스트 폰트 - GMarketSans */
 @font-face {
   font-family: 'GMarketSans';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansLight.woff') format('woff');
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansLight.woff')
+    format('woff');
   font-weight: 300;
   font-display: swap;
 }
 
 @font-face {
   font-family: 'GMarketSans';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff')
+    format('woff');
   font-weight: 500;
   font-display: swap;
 }
 
 @font-face {
   font-family: 'GMarketSans';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff') format('woff');
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff')
+    format('woff');
   font-weight: 700;
   font-display: swap;
 }
@@ -24,7 +27,8 @@
 /* 큰 제목 폰트 - PartialSans */
 @font-face {
   font-family: 'PartialSans';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2307-1@1.1/PartialSansKR-Regular.woff2') format('woff2');
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2307-1@1.1/PartialSansKR-Regular.woff2')
+    format('woff2');
   font-weight: normal;
   font-display: swap;
 }
@@ -32,7 +36,8 @@
 /* 섹션 제목 폰트 - SchoolSafetyPoster (학교안심포스터) */
 @font-face {
   font-family: 'SchoolSafetyPoster';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2511-1@1.0/HakgyoansimPosterB.woff2') format('woff2');
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2511-1@1.0/HakgyoansimPosterB.woff2')
+    format('woff2');
   font-weight: normal;
   font-display: swap;
 }
@@ -47,7 +52,7 @@
 /* 3. Reusable component classes using @layer */
 @layer components {
   .container-max {
-    @apply max-w-screen-xl mx-auto px-5;
+    @apply max-w-screen-xl mx-auto px-4 sm:px-5;
   }
 }
 
@@ -63,14 +68,13 @@ html {
 }
 
 body {
-  background-color: #FFF6DD;
-  color: #31393C;
+  background-color: #fff6dd;
+  color: #31393c;
   line-height: 1.6;
   font-weight: 300;
 }
 
 /* Scrollbar Styles */
-
 
 ::-webkit-scrollbar {
   width: 10px;
@@ -92,7 +96,7 @@ body {
 /* Focus styles for accessibility */
 a:focus,
 button:focus {
-  outline: 2px solid #2176FF;
+  outline: 2px solid #2176ff;
   outline-offset: 2px;
 }
 
@@ -101,8 +105,8 @@ button:focus {
   position: absolute;
   top: -40px;
   left: 0;
-  background: #FDCA40;
-  color: #31393C;
+  background: #fdca40;
+  color: #31393c;
   padding: 8px;
   text-decoration: none;
   border-radius: 0 0 4px 0;
@@ -115,7 +119,7 @@ button:focus {
 
 /* Text gradient utility */
 .text-gradient {
-  color: #2176FF;
+  color: #2176ff;
 }
 
 .text-balance {
@@ -138,7 +142,6 @@ button:focus {
    Typography System (타이포그래피 시스템)
    ============================================ */
 @layer utilities {
-
   /* 히어로 타이틀 - PartialSans 사용 */
   .text-hero {
     @apply font-display text-5xl md:text-6xl lg:text-7xl leading-tight;
@@ -172,7 +175,6 @@ button:focus {
 
 /* Respect user's motion preferences for accessibility */
 @media (prefers-reduced-motion: reduce) {
-
   *,
   *::before,
   *::after {

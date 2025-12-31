@@ -239,8 +239,8 @@ export default function ArtworkDetailPage({ params }: Props) {
 
             {/* Right Column: Info Section */}
             <div className="space-y-8">
-              <header className="sticky top-[calc(6rem+env(safe-area-inset-top,0px))] bg-white/95 backdrop-blur-sm z-30 py-4 -mt-4 mb-4 border-b lg:border-none lg:static lg:bg-transparent lg:p-0 lg:m-0">
-                <h1 className="text-3xl md:text-4xl font-bold font-sans text-charcoal mb-2">
+              <header className="mb-6 border-b border-gray-100 pb-6 lg:border-none lg:pb-0 lg:mb-0">
+                <h1 className="text-3xl md:text-4xl font-bold font-sans text-charcoal mb-2 break-keep">
                   {artwork.title}
                 </h1>
                 <p className="text-xl text-gray-600 font-medium">{artwork.artist}</p>
