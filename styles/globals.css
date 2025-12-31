@@ -97,11 +97,17 @@ body {
   background: #555;
 }
 
-/* Focus styles for accessibility */
-a:focus,
-button:focus {
+/* Focus styles for accessibility - only show on keyboard navigation */
+a:focus-visible,
+button:focus-visible {
   outline: 2px solid #2176ff;
   outline-offset: 2px;
+}
+
+/* Remove focus outline on mouse click */
+a:focus:not(:focus-visible),
+button:focus:not(:focus-visible) {
+  outline: none;
 }
 
 /* Skip to main content link */
