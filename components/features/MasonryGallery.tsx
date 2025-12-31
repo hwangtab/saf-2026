@@ -38,15 +38,17 @@ function MasonryGallery({ artworks }: MasonryGalleryProps) {
             <div className="bg-gray-100 shadow-sm transition-shadow hover:shadow-md group rounded-sm overflow-hidden">
               <Link href={`/artworks/${artwork.id}`} className="block h-full">
                 <div className="relative w-full overflow-hidden">
+                  {/* Shimmer placeholder - visible before image loads */}
+                  <div className="absolute inset-0 shimmer-loading" />
                   <Image
                     src={`/images/artworks/${artwork.image}`}
                     alt={`${artwork.title} - ${artwork.artist}`}
                     width={500}
                     height={500}
-                    className="w-full h-auto object-cover transform transition-transform duration-300 group-hover:scale-105"
+                    className="relative w-full h-auto object-cover transform transition-transform duration-300 group-hover:scale-105"
                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 pointer-events-none" />
                   {artwork.sold && (
                     <div className="absolute top-3 right-3 bg-red-600 text-white px-3 py-1 rounded-md font-bold text-sm shadow-md">
                       SOLD
