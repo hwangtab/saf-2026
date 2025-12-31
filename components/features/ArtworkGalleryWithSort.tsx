@@ -125,14 +125,14 @@ export default function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithS
       <div className="md:sticky md:top-[calc(4rem+env(safe-area-inset-top,0px))] z-40 bg-gray-50/95 backdrop-blur-sm border-b border-gray-200/50">
         <div className="container-max">
           {/* Search & Sort Controls */}
-          <div className="flex flex-col md:flex-row gap-4 items-center justify-between py-3">
+          <div className="flex flex-col gap-3 py-3">
             <SearchBar
               value={searchQuery}
               onChange={setSearchQuery}
               placeholder="작가명, 작품명으로 검색해보세요"
             />
 
-            <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
+            <div className="flex flex-row items-center justify-between gap-2 w-full">
               {/* Status Filter Buttons */}
               <div className="flex bg-white rounded-lg p-1 border border-gray-200 shadow-sm">
                 <button
@@ -166,8 +166,6 @@ export default function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithS
                   판매완료
                 </button>
               </div>
-
-              <div className="h-6 w-px bg-gray-300 hidden md:block" />
 
               <SortControls value={sortOption} onChange={setSortOption} />
             </div>
