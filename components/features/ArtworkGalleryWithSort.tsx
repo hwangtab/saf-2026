@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, memo } from 'react';
 import MasonryGallery from './MasonryGallery';
 import SortControls, { SortOption } from './SortControls';
 import SearchBar from './SearchBar';
@@ -49,7 +49,7 @@ function sortArtworks(artworks: Artwork[], sortOption: SortOption): Artwork[] {
   }
 }
 
-export default function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithSortProps) {
+function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithSortProps) {
   const [sortOption, setSortOption] = useState<SortOption>('artist-asc');
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'selling' | 'sold'>('all');
@@ -134,8 +134,14 @@ export default function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithS
 
             <div className="flex flex-row items-center justify-between gap-2 w-full">
               {/* Status Filter Buttons */}
-              <div className="flex bg-white rounded-lg p-1 border border-gray-200 shadow-sm">
+              <div
+                role="radiogroup"
+                aria-label="판매 상태 필터"
+                className="flex bg-white rounded-lg p-1 border border-gray-200 shadow-sm"
+              >
                 <button
+                  role="radio"
+                  aria-checked={statusFilter === 'all'}
                   onClick={() => setStatusFilter('all')}
                   className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
                     statusFilter === 'all'
@@ -146,6 +152,8 @@ export default function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithS
                   전체
                 </button>
                 <button
+                  role="radio"
+                  aria-checked={statusFilter === 'selling'}
                   onClick={() => setStatusFilter('selling')}
                   className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
                     statusFilter === 'selling'
@@ -156,6 +164,8 @@ export default function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithS
                   판매중
                 </button>
                 <button
+                  role="radio"
+                  aria-checked={statusFilter === 'sold'}
                   onClick={() => setStatusFilter('sold')}
                   className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
                     statusFilter === 'sold'
@@ -179,6 +189,7 @@ export default function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithS
                   <button
                     key={artist}
                     onClick={() => scrollToArtist(artist)}
+                    aria-label={`${artist} 작가 작품으로 이동`}
                     className="px-2 py-1.5 text-xs sm:text-sm font-medium bg-white border border-gray-200 rounded-full hover:border-primary hover:text-primary hover:bg-primary/5 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 text-center truncate"
                   >
                     {artist}
@@ -192,7 +203,7 @@ export default function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithS
 
       {/* Results Message */}
       {searchQuery && (
-        <div className="mb-6 container-max mt-6">
+        <div className="mb-6 container-max mt-6" role="status" aria-live="polite">
           <p className="text-gray-500">
             <span className="font-semibold text-primary">&apos;{searchQuery}&apos;</span> 검색 결과:{' '}
             {filteredArtworks.length}개
@@ -230,9 +241,11 @@ export default function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithS
         </div>
       ) : (
         <div className={showArtistNav ? 'mt-6' : ''}>
-          <MasonryGallery artworks={sortedArtworks} showArtistNav={false} />
+          <MasonryGallery artworks={sortedArtworks} />
         </div>
       )}
     </div>
   );
 }
+
+export default memo(ArtworkGalleryWithSort);
