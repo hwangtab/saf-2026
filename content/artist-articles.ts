@@ -425,6 +425,29 @@ export const artistArticles: Record<string, Article[]> = {
       source: 'EBS',
     },
   ],
+  정미정: [
+    {
+      url: 'https://m.artgg.ggcf.kr/pastArtists/%EC%A0%95%EB%AF%B8%EC%A0%95',
+      title: '정미정 작가 - 아트경기',
+      description:
+        '경기미술품활성화사업 아트경기 소속 작가 정미정. The time in between(2022), Line and Light(2021), 랑데부(2020) 등 개인전. 다다르다, Who is next?, New Age Art 등 그룹전 참여.',
+      source: '아트경기',
+    },
+    {
+      url: 'https://www.geconomy.co.kr/news/article.html?no=307005',
+      title: '기억의 흔적을 따라가는 회화적 여정',
+      description:
+        '서양화가 정미정 작가 초대 개인전 "Palimpsest: 팔림프세스트". 서울 종로구 가회동 공간 썬더에서 2025년 9월 13일부터 21일까지 개최. 북촌의 전통과 현대가 어우러진 공간.',
+      source: '지이코노미',
+    },
+    {
+      url: 'https://v.daum.net/v/uEgG76HlW2',
+      title: '기억으로 피어난 풍경의 시학',
+      description:
+        '정미정의 회화는 기억의 풍경을 그리는 것이 아니라, 시간이 풍경으로 전이되는 순간을 포착. 흐름과 체류, 번짐과 여운의 감각으로 존재하는 화면. 안현정 미술평론가 추천.',
+      source: '청년타임스',
+    },
+  ],
 };
 
 /**
