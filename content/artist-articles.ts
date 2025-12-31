@@ -113,17 +113,17 @@ export const artistArticles: Record<string, Article[]> = {
   김준권: [
     {
       url: 'https://youtu.be/B_yXVVbpFOU',
-      title: '김준권 작가 인터뷰 영상',
+      title: '한국 목판화의 거장, 김준권 작가',
       description:
-        '목판화 거장 김준권 작가의 작품세계와 창작 철학을 담은 인터뷰 영상. 70년대 말 비판적 현실주의와 민중목판화로 시작한 창작 여정을 소개.',
-      source: 'YouTube',
+        '목판화 거장 김준권 작가의 작품세계와 창작 철학을 담은 인터뷰 영상. 나무에 새긴 40년, 충북 진천군 백곡면 작업실과 진천군립 생거판화미술관 방문.',
+      source: 'KBS 인생내컷',
     },
     {
       url: 'https://www.youtube.com/watch?v=PPVPrUywlvw',
-      title: '김준권 목판화 작업 과정',
+      title: 'MMCA 작가와의 대화 - 길 위의 예술가 김준권',
       description:
-        '김준권 작가의 목판화 제작 과정을 담은 영상. 해인사 팔만대장경에서 영감을 받은 전통 목판화 기법을 현대적으로 재해석.',
-      source: 'YouTube',
+        '국립현대미술관 작가와의 대화. 김준권 작가의 초기작부터 통일대원도(1987), 대동천지굿(1988), 90년대 풍경 판화, 산에서 작품까지 작품세계 전반을 소개.',
+      source: '국립현대미술관',
     },
     {
       url: 'http://www.sctoday.co.kr/news/articleView.html?idxno=44436',
