@@ -448,6 +448,42 @@ export const artistArticles: Record<string, Article[]> = {
       source: '청년타임스',
     },
   ],
+  주재환: [
+    {
+      url: 'https://namu.wiki/w/%EC%A3%BC%EC%9E%AC%ED%99%98',
+      title: '주재환 - 나무위키',
+      description:
+        '대한민국의 민중미술가. 1940년 경성부에서 태어남. 민중미술 운동의 주요 작가로 활동.',
+      source: '나무위키',
+    },
+    {
+      url: 'http://www.hakgojae.com/page/2-1-view.php?artist_num=299',
+      title: '주재환 작가 프로필 - 학고재갤러리',
+      description: '학고재갤러리 소속 작가 주재환. 작가의 전시 이력과 작품세계를 소개.',
+      source: '학고재갤러리',
+    },
+    {
+      url: 'https://www.daljin.com/column/13547',
+      title: '주재환의 유쾌한 딴지걸기 - 윤범모 미술시평',
+      description:
+        '윤범모 미술평론가의 주재환 작가 작품 평론. 유쾌한 딴지걸기라는 제목으로 작가의 작품세계 분석.',
+      source: '서울아트가이드',
+    },
+    {
+      url: 'https://koreana.or.kr/koreana/na/ntt/selectNttInfo.do?nttSn=103523&bbsId=1125',
+      title: '이미지와 텍스트로 소통하다 - 주재환',
+      description:
+        '한국국제교류재단 코리아나 아트 리뷰. 주재환 작가의 이미지와 텍스트를 통한 소통 방식 분석.',
+      source: '한국국제교류재단',
+    },
+    {
+      url: 'https://www.mmca.go.kr/collections/collectionsDetailPage.do?wrkinfoSeqno=8752',
+      title: '주재환 - 아침 햇살 (1998) - 국립현대미술관 소장',
+      description:
+        '국립현대미술관 소장 주재환 작가 작품 "아침 햇살"(1998). MMCA 이건희 컬렉션 특별전: 한국미술명작.',
+      source: '국립현대미술관',
+    },
+  ],
 };
 
 /**
