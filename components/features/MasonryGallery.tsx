@@ -68,13 +68,15 @@ function MasonryGallery({ artworks }: MasonryGalleryProps) {
                       {showSize && artwork.size}
                     </p>
                   )}
-                  {artwork.sold ? (
+                  {artwork.sold && (
                     <p className="text-sm font-semibold text-red-600 mt-1">판매완료</p>
-                  ) : (
-                    artwork.price !== '문의' &&
-                    artwork.price !== '확인 중' && (
-                      <p className="text-sm font-semibold text-primary mt-1">{artwork.price}</p>
-                    )
+                  )}
+                  {artwork.price !== '문의' && artwork.price !== '확인 중' && (
+                    <p
+                      className={`text-sm font-semibold mt-1 ${artwork.sold ? 'text-gray-400 line-through' : 'text-primary'}`}
+                    >
+                      {artwork.price}
+                    </p>
                   )}
                 </div>
               </Link>
