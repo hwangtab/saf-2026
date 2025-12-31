@@ -396,6 +396,35 @@ export const artistArticles: Record<string, Article[]> = {
       source: '경기뉴스',
     },
   ],
+  이철수: [
+    {
+      url: 'https://www.mokpan.com/home/main.php',
+      title: '이철수의 집 - 공식 홈페이지',
+      description: '판화가 이철수 작가의 공식 홈페이지. 작가의 작품세계와 활동을 소개하는 공간.',
+      source: '이철수의 집',
+    },
+    {
+      url: 'https://www.chosun.com/site/data/html_dir/2012/12/14/2012121401198.html',
+      title: '시골살이 25년 판화가 이철수 - 판화로 시 쓰는 농부',
+      description:
+        '봄·여름·가을엔 농사짓고 겨울엔 밑그림 그리는 삶. 농사지은 것의 8할은 어려운 이웃들과 나눔. 80년대 말 독일 쇼크 이후 시위 걸개그림 벗어나 예술로 성찰하는 삶. 권정생 선생의 글로 힐링.',
+      source: '조선일보',
+    },
+    {
+      url: 'https://www.sedaily.com/NewsView/1S28YL9479',
+      title: '시대 아픔 담고 대중과 호흡 - 이념 넘어 생명·평화 새기죠',
+      description:
+        '충북 제천 천등산 박달재 아래 자리잡은 판화가 이철수(64). 시대의 아픔을 담고 대중과 호흡하며, 이념을 넘어 생명과 평화를 새기는 작가.',
+      source: '서울경제',
+    },
+    {
+      url: 'https://www.ebs.co.kr/tv/show?prodId=7745&lectId=60054821',
+      title: '목판에 마음을 새기다 - 이철수 화백',
+      description:
+        'EBS 방송. 데뷔 40주년을 맞이한 판화가 이철수. 평범한 삶 속의 일상사에 대한 깊은 통찰과 다채로운 자연 속에 깃들어 사는 인간의 모습. 목판화가, 환경운동연합 상임대표.',
+      source: 'EBS',
+    },
+  ],
 };
 
 /**
