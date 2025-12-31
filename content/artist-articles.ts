@@ -507,6 +507,29 @@ export const artistArticles: Record<string, Article[]> = {
       source: '미술은행',
     },
   ],
+  최윤정: [
+    {
+      url: 'https://www.chosunartgallery.com/%EB%B3%B5%EC%A0%9C-%EC%B0%A8%EC%98%81%EA%B7%9C',
+      title: '최윤정 작가 - 조선화랑',
+      description:
+        'Pop Kids 시리즈. 현대사회에서 미디어와 인간의 욕망에 주목. 안경은 사고의 프레임을 상징하는 장치. 미디어가 만들어낸 이미지와 이슈의 무비판적 수용과 소비에 대한 질문.',
+      source: '조선화랑',
+    },
+    {
+      url: 'https://sites.google.com/view/sunwha/11%EA%B8%B0/%EC%B5%9C%EC%9C%A4%EC%A0%95',
+      title: '최윤정 작가 프로필 및 전시 이력',
+      description:
+        '홍익대학교 미술대학 회화과 졸업. Pop Kids, Fantasyland, Moderno 등 다수 개인전. 국립현대미술관 미술은행, 양평군립미술관, 오산미술관 소장. 한국 팝아트 대표 작가.',
+      source: '선화동문전',
+    },
+    {
+      url: 'https://inside.ytn.co.kr/news/view.php?page=2&sort=4&id=33',
+      title: '욕망, 우리의 눈을 가리다 - 팝 아티스트 최윤정',
+      description:
+        'YTN INSIDE 인터뷰. 미디어의 포장 능력과 현대인의 욕망. 현재를 이야기하는 작가. 풍자와 희화화를 통한 카타르시스. 가벼워 보이는 색으로 무거운 메시지 전달.',
+      source: 'YTN INSIDE',
+    },
+  ],
 };
 
 /**
