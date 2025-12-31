@@ -8,6 +8,7 @@ import dynamic from 'next/dynamic';
 import { SITE_URL } from '@/lib/constants';
 import Button from '@/components/ui/Button';
 import RelatedArticles from '@/components/features/RelatedArticles';
+import ExpandableHistory from '@/components/features/ExpandableHistory';
 
 // Dynamic import for client-side ShareButtons
 const ShareButtons = dynamic(() => import('@/components/common/ShareButtons'), { ssr: false });
@@ -268,27 +269,15 @@ export default function ArtworkDetailPage({ params }: Props) {
                 </div>
               </div>
 
-              {/* Artist Profile */}
-              {(artwork.profile || artwork.history) && (
-                <div className="bg-gray-50 p-6 rounded-xl space-y-4">
-                  <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider">
+              {/* Artist Profile (profile only, no history) */}
+              {artwork.profile && (
+                <div className="bg-gray-50 p-6 rounded-xl">
+                  <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">
                     작가 소개
                   </h3>
-                  {artwork.profile && (
-                    <div>
-                      <p className="text-gray-700 leading-relaxed text-sm whitespace-pre-line">
-                        {artwork.profile}
-                      </p>
-                    </div>
-                  )}
-                  {artwork.history && (
-                    <div className="pt-4 border-t border-gray-200 mt-4">
-                      <h4 className="text-xs font-semibold text-gray-500 mb-2">주요 경력</h4>
-                      <p className="text-gray-600 leading-relaxed text-sm whitespace-pre-line">
-                        {artwork.history}
-                      </p>
-                    </div>
-                  )}
+                  <p className="text-gray-700 leading-relaxed text-sm whitespace-pre-line">
+                    {artwork.profile}
+                  </p>
                 </div>
               )}
 
@@ -303,6 +292,9 @@ export default function ArtworkDetailPage({ params }: Props) {
                   </p>
                 </div>
               )}
+
+              {/* Artist History - separate card, below artist note */}
+              {artwork.history && <ExpandableHistory history={artwork.history} />}
 
               {/* Related Articles */}
               <RelatedArticles articles={relatedArticles} />
