@@ -10,33 +10,48 @@ interface MasonryGalleryProps {
 }
 
 function MasonryGallery({ artworks }: MasonryGalleryProps) {
-  const [columns, setColumns] = useState(1);
+  const [columns, setColumns] = useState(0); // Default to 0 to indicate unknown
   const [mounted, setMounted] = useState(false);
 
   // Helper function to check if a value is displayable
   const isDisplayable = (value: string | undefined): value is string =>
     Boolean(value && value !== '확인 중' && value !== '');
 
-  // Determine column count based on window width
+  // Determine column count based on window width using matchMedia
   useEffect(() => {
     setMounted(true);
-    const updateColumns = () => {
-      if (window.innerWidth >= 1024) {
+
+    // Check current width immediately
+    const checkWidth = () => {
+      if (window.matchMedia('(min-width: 1024px)').matches) {
         setColumns(3);
-      } else if (window.innerWidth >= 768) {
+      } else if (window.matchMedia('(min-width: 768px)').matches) {
         setColumns(2);
       } else {
         setColumns(1);
       }
     };
 
-    updateColumns();
-    window.addEventListener('resize', updateColumns);
-    return () => window.removeEventListener('resize', updateColumns);
+    checkWidth();
+
+    // Add listeners
+    const mediaQueryLg = window.matchMedia('(min-width: 1024px)');
+    const mediaQueryMd = window.matchMedia('(min-width: 768px)');
+
+    const handler = () => checkWidth();
+
+    mediaQueryLg.addEventListener('change', handler);
+    mediaQueryMd.addEventListener('change', handler);
+
+    return () => {
+      mediaQueryLg.removeEventListener('change', handler);
+      mediaQueryMd.removeEventListener('change', handler);
+    };
   }, []);
 
   // Distribute artworks into columns
   const columnArtworks = useMemo(() => {
+    if (columns === 0) return []; // Should not happen if rendering logic handles 0
     const cols: Artwork[][] = Array.from({ length: columns }, () => []);
     artworks.forEach((artwork, index) => {
       cols[index % columns].push(artwork);
@@ -44,18 +59,12 @@ function MasonryGallery({ artworks }: MasonryGalleryProps) {
     return cols;
   }, [artworks, columns]);
 
-  // Prevent hydration mismatch by rendering a simple grid or hidden content initially
-  // Ideally, we could render a server-friendly layout, but for Masonry,
-  // we'll stabilize after mount. To avoid flash, we can default to 1 responsive grid or similar.
-  // Here we render immediately but column count changes on client.
-  // Using a key on the container forces refresh if needed, but flex handles it.
-
-  if (!mounted) {
-    // Return a simple CSS column layout for SSR/initial render to avoid CLS if possible,
-    // or just loading state. Given the requirement for stable additions, let's just render.
-    // We'll use a simple 1-col default for SSR to be safe.
+  // Render CSS Grid Fallback while determining columns (SSR or initial client render)
+  // This ensures responsive layout via CSS before JS takes over
+  if (!mounted || columns === 0) {
+    // Return a simple CSS column layout for SSR/initial render to avoid CLS
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 pt-2 supports-[grid-template-rows:masonry]:grid-rows-masonry">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 pt-2">
         {artworks.slice(0, 12).map((artwork) => (
           <ArtworkCard key={artwork.id} artwork={artwork} isDisplayable={isDisplayable} />
         ))}
