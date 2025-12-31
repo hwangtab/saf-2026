@@ -33,8 +33,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: '씨앗페 2026 - 예술인 금융 위기 해결 캠페인',
-    description:
-      '예술인의 금융 위기를 해결하는 상호부조 대출 캠페인, 씨앗페 2026에 함께하세요.',
+    description: '예술인의 금융 위기를 해결하는 상호부조 대출 캠페인, 씨앗페 2026에 함께하세요.',
     images: [OG_IMAGE.url],
   },
 };
@@ -52,7 +51,7 @@ export default function Home() {
       <section className="relative min-h-screen flex items-center justify-center py-12 md:py-20">
         <BackgroundSlider />
         <div className="relative z-10 container-max text-center">
-          <div className="mb-12 flex justify-center">
+          <div className="mb-12 hidden md:flex justify-center">
             <Image
               src="/images/logo/320pxX90px_white.webp"
               alt="씨앗페 2026 로고"
@@ -71,23 +70,13 @@ export default function Home() {
             한국 예술인의 84.9%가 제1금융권에서 배제되고,
             <br />
             절반이 약탈적 고리대금에 노출되어 있습니다.
-            <br className="hidden md:block" />
-            이 문제를 해결하기 위해 씨앗페가 시작되었습니다.
+            <br className="hidden md:block" />이 문제를 해결하기 위해 씨앗페가 시작되었습니다.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button
-              href={EXTERNAL_LINKS.DONATE}
-              external
-              variant="accent"
-              size="lg"
-            >
+            <Button href={EXTERNAL_LINKS.DONATE} external variant="accent" size="lg">
               ❤️ 지금 후원하기
             </Button>
-            <Button
-              href="/artworks"
-              variant="secondary"
-              size="lg"
-            >
+            <Button href="/artworks" variant="secondary" size="lg">
               🎨 작품 구매하기
             </Button>
           </div>
@@ -115,36 +104,27 @@ export default function Home() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div className="space-y-4">
-              <h3 className="text-card-title text-charcoal">
-                🚫 금융 시장의 차별
-              </h3>
+              <h3 className="text-card-title text-charcoal">🚫 금융 시장의 차별</h3>
               <p className="text-charcoal-muted leading-relaxed">
-                예술인들은 정기적인 소득을 입증하기 어려워 은행 대출에서 거절당합니다.
-                신용등급이 없으면 금융권에서 완전히 배제됩니다.
+                예술인들은 정기적인 소득을 입증하기 어려워 은행 대출에서 거절당합니다. 신용등급이
+                없으면 금융권에서 완전히 배제됩니다.
               </p>
             </div>
             <div className="space-y-4">
-              <h3 className="text-card-title text-charcoal">
-                💳 고리대금의 악순환
-              </h3>
+              <h3 className="text-card-title text-charcoal">💳 고리대금의 악순환</h3>
               <p className="text-charcoal-muted leading-relaxed">
-                대출받을 곳이 없어 카드론, 현금서비스 등 연 20%에 육박하는
-                고리대금 상품에 의존하게 됩니다.
+                대출받을 곳이 없어 카드론, 현금서비스 등 연 20%에 육박하는 고리대금 상품에 의존하게
+                됩니다.
               </p>
             </div>
             <div className="space-y-4">
-              <h3 className="text-card-title text-charcoal">
-                😔 심각한 피해
-              </h3>
+              <h3 className="text-card-title text-charcoal">😔 심각한 피해</h3>
               <p className="text-charcoal-muted leading-relaxed">
-                이는 예술가들의 창작활동을 방해하고 예술 생태계의
-                지속가능성을 위협합니다.
+                이는 예술가들의 창작활동을 방해하고 예술 생태계의 지속가능성을 위협합니다.
               </p>
             </div>
             <div className="space-y-4">
-              <h3 className="text-card-title text-charcoal">
-                🤝 해결책: 상호부조
-              </h3>
+              <h3 className="text-card-title text-charcoal">🤝 해결책: 상호부조</h3>
               <p className="text-charcoal-muted leading-relaxed">
                 <a
                   href={EXTERNAL_LINKS.KOSMART_HOME}
@@ -154,8 +134,7 @@ export default function Home() {
                 >
                   한국스마트협동조합
                 </a>
-                의 기금과 협약금융기관의 신뢰로 만든
-                상호부조 대출이 답입니다.
+                의 기금과 협약금융기관의 신뢰로 만든 상호부조 대출이 답입니다.
               </p>
             </div>
           </div>
@@ -170,9 +149,7 @@ export default function Home() {
           </h2>
           <div className="bg-white rounded-lg shadow-lg p-8 md:p-12 max-w-3xl mx-auto text-balance">
             <div className="mb-8">
-              <h3 className="text-card-title text-charcoal mb-4">
-                📈 95% 상환율의 신뢰
-              </h3>
+              <h3 className="text-card-title text-charcoal mb-4">📈 95% 상환율의 신뢰</h3>
               <p className="text-charcoal-muted leading-relaxed mb-4">
                 <a
                   href={EXTERNAL_LINKS.KOSMART_HOME}
@@ -182,22 +159,17 @@ export default function Home() {
                 >
                   한국스마트협동조합
                 </a>
-                이 일정한 기금을 조성하면, 협약금융기관이
-                그 기금의 약 7배까지 예술인들에게 저금리로 대출합니다.
+                이 일정한 기금을 조성하면, 협약금융기관이 그 기금의 약 7배까지 예술인들에게 저금리로
+                대출합니다.
               </p>
             </div>
             <div className="border-t pt-8">
               <p className="text-charcoal mb-6">
-                이미 지원받은 예술인들의 95% 이상이 성실하게 상환하고 있습니다.
-                이는 예술인들이 신뢰할 수 있는 금융 시스템만 있으면,
-                얼마든지 책임감 있게 행동할 수 있다는 증거입니다.
+                이미 지원받은 예술인들의 95% 이상이 성실하게 상환하고 있습니다. 이는 예술인들이
+                신뢰할 수 있는 금융 시스템만 있으면, 얼마든지 책임감 있게 행동할 수 있다는
+                증거입니다.
               </p>
-              <Button
-                href={EXTERNAL_LINKS.LOAN_INFO}
-                external
-                variant="accent"
-                size="md"
-              >
+              <Button href={EXTERNAL_LINKS.LOAN_INFO} external variant="accent" size="md">
                 대출 신청하기 →
               </Button>
             </div>
