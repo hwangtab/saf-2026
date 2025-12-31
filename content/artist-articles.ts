@@ -244,6 +244,22 @@ export const artistArticles: Record<string, Article[]> = {
       source: 'artlecture',
     },
   ],
+  심모비: [
+    {
+      url: 'https://www.daljin.com/?WS=21&BC=gdv&GNO=D103448',
+      title: 'SIM_Purgatory 연옥 : 회화의 윤회',
+      description:
+        '갤러리도스에서 2025년 7월 23일부터 29일까지 진행되는 심모비 개인전. 생과 사, 연옥을 주제로 한 회화 작품 전시.',
+      source: '서울아트가이드',
+    },
+    {
+      url: 'https://brunch.co.kr/@fellas/22',
+      title: '생과 사, 연옥의 풍경 속으로 - 심모비 인터뷰',
+      description:
+        '폭스바겐 독일 본사를 거쳐 일본 도요타 그룹 인테리어 디자이너로 재직 중인 NFT아티스트. 일본 거주하며 세계 각국에서 전시. 2023년 6월 나고야에서 10번째 개인전, 통산 55번째 전시 진행.',
+      source: 'Brunch',
+    },
+  ],
 };
 
 /**
