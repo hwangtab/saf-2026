@@ -344,6 +344,20 @@ export const artistArticles: Record<string, Article[]> = {
         '진실처럼 단순하고 깊은 이윤엽의 판화. 대추리, 용산, 거제 조선소, 밀양, 구럼비, 4대강, 쌍용차 등 사회적 의제를 현장에서 함께하며 기록. 예술은 자기 얘기를 하는 것, 진실을 보고 싶어 하는 마음.',
       source: 'Brunch',
     },
+    {
+      url: 'https://m.woodplanet.co.kr/news/view/1065608303022949',
+      title: '목판화가 이윤엽 - 손에 잡히는 대로 깎고 칠한다',
+      description:
+        '소박한 사람들을 관찰하는 이윤엽의 뜨거운 손끝. 예술과 사회를 말할 땐 차갑지만 나무를 만나면 순박한 소년이 되는 목판화가. 손에 잡히는 대로 깎고 칠하는 작업.',
+      source: 'woodplanet',
+    },
+    {
+      url: 'https://www.youtube.com/watch?v=paAa3tT3K5M',
+      title: '약자들의 투쟁을 목판에 새겼다 - 이윤엽 작가 개인전 둥질',
+      description:
+        '포항 스페이스298에서 열린 이윤엽 작가 개인전 "둥질" 소개 영상. 약자들의 투쟁을 목판화로 기록한 작가의 전시.',
+      source: '전국시대',
+    },
   ],
 };
 
