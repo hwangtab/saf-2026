@@ -126,7 +126,7 @@ function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithSortProps) {
         <div className="container-max">
           {/* Search & Sort Controls - Single row on desktop, stacked on mobile */}
           <div className="flex flex-col md:flex-row md:items-center gap-3 py-3">
-            <div className="flex-1">
+            <div className="flex-1 min-w-0 md:max-w-md">
               <SearchBar
                 value={searchQuery}
                 onChange={setSearchQuery}
@@ -134,7 +134,7 @@ function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithSortProps) {
               />
             </div>
 
-            <div className="flex flex-row items-center justify-between md:justify-end gap-2">
+            <div className="flex flex-row items-center justify-between md:justify-end gap-2 shrink-0">
               {/* Status Filter Buttons */}
               <div
                 role="radiogroup"
