@@ -77,7 +77,7 @@ function MasonryGallery({ artworks, showArtistNav = true }: MasonryGalleryProps)
             className="break-inside-avoid mb-6"
           >
             <Link href={`/artworks/${artwork.id}`} className="group block h-full">
-              <div className="relative overflow-hidden rounded-xl bg-gray-100 shadow-sm transition-shadow hover:shadow-md">
+              <div className="relative bg-gray-100 shadow-sm transition-shadow hover:shadow-md">
                 <div className="relative w-full">
                   <Image
                     src={`/images/artworks/${artwork.image}`}
