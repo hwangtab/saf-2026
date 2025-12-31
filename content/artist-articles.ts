@@ -214,6 +214,36 @@ export const artistArticles: Record<string, Article[]> = {
       source: 'zineseminar',
     },
   ],
+  손은영: [
+    {
+      url: 'https://www.soneunyoung.com/',
+      title: '손은영 작가 공식 홈페이지 - Working on a picture of the house',
+      description:
+        '집에서 비롯된 향수와 기억을 주제로 한 집 시리즈 작업. 사진으로 집의 기억을 구현하고, 오래된 집을 수리하듯 그림을 그려 집이라는 장소에서의 삶의 아름다움과 특별함을 표현.',
+      source: '작가 홈페이지',
+    },
+    {
+      url: 'http://virtualgallery.co.kr/artists/%EC%86%90%EC%9D%80%EC%98%81',
+      title: '손은영 작가 프로필 및 전시 이력',
+      description:
+        '이화여대 서양화과, 홍익대 사진디자인전공 졸업. 검은 숲(2022), 밤의 집(2020-2021), 검은 집(2019), The underground(2018) 시리즈. 제2회 FNK Photography Award 수상.',
+      source: '버추얼갤러리',
+    },
+    {
+      url: 'https://www.hani.co.kr/arti/culture/culture_general/972511.html',
+      title: '오묘한 빛과 색감…세월이 만든 도시 변두리 집들',
+      description:
+        '도시 변두리 달동네의 밤, 어둠 속에서 빛을 내며 드러나는 작은 집들. 각양각색의 생긴 꼴을 한 집들을 통해 세월이 만든 도시 변두리의 풍경을 담은 밤의 집 시리즈.',
+      source: '한겨레',
+    },
+    {
+      url: 'https://artlecture.com/article/3269',
+      title: '그 집에 산다 - 손은영의 집',
+      description:
+        '회화 같은 리터칭을 통해 완성한 프레임으로 작가의 심상에서 길어 낸 한 장면을 보여주는 작업. 집을 주제로 꾸준히 작업하는 손은영 작가의 마음의 풍경.',
+      source: 'artlecture',
+    },
+  ],
 };
 
 /**
