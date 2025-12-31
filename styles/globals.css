@@ -65,6 +65,8 @@ html {
   /* 긴 단어는 줄바꿈 허용 */
   font-weight: 300;
   /* GMarketSans Light (300) 적용 */
+  overflow-x: hidden;
+  /* 수평 오버플로우 방지 */
 }
 
 body {
@@ -72,6 +74,8 @@ body {
   color: #31393c;
   line-height: 1.6;
   font-weight: 300;
+  overflow-x: hidden;
+  /* 수평 오버플로우 방지 */
 }
 
 /* Scrollbar Styles */
