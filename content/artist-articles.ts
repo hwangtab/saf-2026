@@ -110,6 +110,50 @@ export const artistArticles: Record<string, Article[]> = {
       source: '강화뉴스',
     },
   ],
+  김준권: [
+    {
+      url: 'https://youtu.be/B_yXVVbpFOU',
+      title: '김준권 작가 인터뷰 영상',
+      description:
+        '목판화 거장 김준권 작가의 작품세계와 창작 철학을 담은 인터뷰 영상. 70년대 말 비판적 현실주의와 민중목판화로 시작한 창작 여정을 소개.',
+      source: 'YouTube',
+    },
+    {
+      url: 'https://www.youtube.com/watch?v=PPVPrUywlvw',
+      title: '김준권 목판화 작업 과정',
+      description:
+        '김준권 작가의 목판화 제작 과정을 담은 영상. 해인사 팔만대장경에서 영감을 받은 전통 목판화 기법을 현대적으로 재해석.',
+      source: 'YouTube',
+    },
+    {
+      url: 'http://www.sctoday.co.kr/news/articleView.html?idxno=44436',
+      title: '목판화, 색을 입다 - 김준권 초대전',
+      description:
+        '한국소리문화의전당에서 열린 《김준권의 국토-판각장정》 전시. 우리 땅-우리의 진경이라는 고전적 명제에 충실하며 목판화 기법을 깊이 연구한 작가의 70년대 이후 창작 여정.',
+      source: '서울문화투데이',
+    },
+    {
+      url: 'https://www.daljin.com/display/D100155',
+      title: '2025 김준권의 국토 판각장정',
+      description:
+        '한국소리문화의전당에서 2025년 1월 17일부터 3월 30일까지 진행되는 김준권 개인전. 목판화로 표현한 우리 국토의 아름다움.',
+      source: '서울아트가이드',
+    },
+    {
+      url: 'https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0002468988',
+      title: '노무현 전 대통령이 사랑한 판화가 김준권',
+      description:
+        '남북정상회담 시 판문점 평화의집에 내걸린 작품 "산운"의 작가 김준권. 진천군립 생거판화미술관 초대전 개최.',
+      source: '오마이뉴스',
+    },
+    {
+      url: 'https://www.sac.or.kr/site/main/show/show_view?SN=46449',
+      title: '예술의전당 서울서예박물관 전시',
+      description:
+        '2022년 4월 15일부터 5월 8일까지 예술의전당 서울서예박물관에서 열린 김준권 목판화 전시. 한국목판화연구소 주최.',
+      source: '예술의전당',
+    },
+  ],
 };
 
 /**
