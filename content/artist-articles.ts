@@ -284,6 +284,13 @@ export const artistArticles: Record<string, Article[]> = {
         '흔적과 빛에 관한 이야기. 과거의 역사적 사실과 시간의 흐름에 따라 변화하는 인간의 의식과 기억의 오류를 디지털사진으로 표현. 근대문화유산을 통해 세월과 함께 희미해지는 역사의 기억을 시각화.',
       source: '김영섭사진화랑',
     },
+    {
+      url: 'https://blog.naver.com/isanacademy/221480596390',
+      title: '이수철 작가 작품 소개',
+      description:
+        '이수철 작가의 사진 작업과 작품세계를 소개하는 이산아카데미 블로그 포스팅. 작가의 작품 활동과 전시 정보.',
+      source: '이산아카데미',
+    },
   ],
 };
 
