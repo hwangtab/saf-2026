@@ -35,15 +35,19 @@ export default function Header() {
     return false;
   };
 
-  // 모바일 메뉴 열릴 때 body 스크롤 비활성화
+  // 모바일 메뉴 열릴 때 body 스크롤 비활성화 (스크롤바 너비 보정으로 레이아웃 이동 방지)
   useEffect(() => {
     if (mobileMenuOpen) {
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
       document.body.style.overflow = 'hidden';
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
     }
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
     };
   }, [mobileMenuOpen]);
 
