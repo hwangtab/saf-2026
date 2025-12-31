@@ -63,13 +63,13 @@ function MasonryGallery({ artworks, showArtistNav = true }: MasonryGalleryProps)
         </div>
       )}
 
-      {/* Gallery using CSS Columns */}
-      <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6 px-4">
+      {/* Gallery using Flexbox - Left to Right flow */}
+      <div className="flex flex-wrap gap-6 px-4 items-start">
         {artworks.map((artwork) => (
           <div
             key={artwork.id}
             id={`artwork-${artwork.id}`}
-            className="break-inside-avoid mb-6 animate-fade-in-up"
+            className="w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] animate-fade-in-up"
           >
             <Link href={`/artworks/${artwork.id}`} className="group block h-full">
               <div className="relative bg-gray-100 shadow-sm transition-shadow hover:shadow-md">

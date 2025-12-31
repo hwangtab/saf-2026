@@ -154,6 +154,43 @@ export const artistArticles: Record<string, Article[]> = {
       source: '예술의전당',
     },
   ],
+  류연복: [
+    {
+      url: 'https://www.khan.co.kr/article/201912102150005',
+      title: '칼끝으로 새긴 땅과 생명 - 회고전 온몸이 길이다',
+      description:
+        '목판에 시대상을, 삶의 지혜와 통찰을, 이 땅의 생명성을 조각칼로 새겨온 지 35년. 목판화 작업은 뜨거운 땀을 요구하는 노동의 길, 수도자의 길. 실존적 인간으로서, 예민한 감각의 예술가로서 살아있는 이유이자 자기 확인작업.',
+      source: '경향신문',
+    },
+    {
+      url: 'https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0000361807',
+      title: '류연복의 진경산수 판화',
+      description:
+        '1980년 중반부터 90년대 중반까지 우리 사회를 변화시키는데 중요한 역할을 했던 민중미술. 한국화와 서양화 목판화에 시대정신을 담은 민중화가 류연복의 진경산수 판화.',
+      source: '오마이뉴스',
+    },
+    {
+      url: 'http://www.sctoday.co.kr/news/articleView.html?idxno=31273',
+      title: '민중의 한이 꿈틀대는 온몸이 길이다 목판화전',
+      description:
+        '진천군립 생거판화미술관 전시. 1984년부터 2019년까지 류연복 목판화 전부를 선보임. 민중에 대한 저항의 역사와 일상적인 삶에 대한 잠언, 작은 생명에 대한 풍경을 주제로 한 작품들.',
+      source: '서울문화투데이',
+    },
+    {
+      url: 'https://memory.library.kr/collection/show/220000535?ggmType=T',
+      title: '류연복 아카이브 - 1980년대 소집단 미술운동',
+      description:
+        '서울미술공동체, 활화산, 민족미술인협의회에서 활동한 류연복 작가의 1980-1988년 기록. 벽화 공동 제작 작업 노트, 무명미술가 선언, 정릉벽화산건 기록 등 1980년대 소집단 미술운동사 연구 자료.',
+      source: '경기도메모리',
+    },
+    {
+      url: 'https://www.youtube.com/watch?v=fPaEzoO6FWA',
+      title: '2016 옆집에 사는 예술가 - 류연복 작가의 작업실',
+      description:
+        '경기문화재단이 제작한 류연복 작가 작업실 방문 영상. 자연, 인간, 예술, 다시 자연이라는 주제로 안성에서 진행된 2016년 프로그램.',
+      source: '경기문화재단',
+    },
+  ],
 };
 
 /**
