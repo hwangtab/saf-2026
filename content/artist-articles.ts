@@ -558,6 +558,29 @@ export const artistArticles: Record<string, Article[]> = {
       source: '월간미술',
     },
   ],
+  한애규: [
+    {
+      url: 'https://www.daljin.com/column/18726',
+      title: '한애규의 흙으로 빚은 삶에 대한 열망',
+      description:
+        '서울아트가이드 그외자료. 김의연 평론. 테라코타 작가 한애규의 작품세계. 흙으로 빚은 삶에 대한 열망.',
+      source: '서울아트가이드',
+    },
+    {
+      url: 'https://topclass.chosun.com/news/articleView.html?idxno=323',
+      title: '나는 여자다. 인류를 잉태하고 기르고, 집을 관장하는 주체적인 존재다',
+      description:
+        '톱클래스 우리 시대의 미술가. 한국 미술계에서 독보적인 테라코타 작가 한애규. 서울대 미대 응용미술과, 프랑스 앙굴렘 미술학교 졸업. 1980년대 후반부터 여성을 빚어내는 작업. 부조로 된 도자기판에 여성으로서 자신의 삶을 담음.',
+      source: '톱클래스',
+    },
+    {
+      url: 'https://kiaf.org/insights/14272',
+      title: 'Besides - 한애규 개인전',
+      description:
+        '아트사이드 갤러리 개인전 (2022.06.17-07.09). 한국의 테라코타 작업을 선두에서 이끈 여성작가. 많은 미술관에 소장. 온전히 흙을 통해 자신만의 작품세계를 구축.',
+      source: 'Kiaf SEOUL',
+    },
+  ],
 };
 
 /**
