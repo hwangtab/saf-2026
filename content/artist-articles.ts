@@ -191,6 +191,29 @@ export const artistArticles: Record<string, Article[]> = {
       source: '경기문화재단',
     },
   ],
+  류준화: [
+    {
+      url: 'https://www.daljin.com/column/20773',
+      title: '여성이 바라본 여성의 현실',
+      description:
+        '현대미술포럼에 실린 류준화 작가의 여성주의 미술 작업. 여성이 바라본 여성의 현실을 작품으로 표현한 페미니즘 미술가의 시각.',
+      source: '서울아트가이드',
+    },
+    {
+      url: 'https://www.nyjnews.net/19369',
+      title: '소녀는 항해하면서 푸른 빛 판타지를 펼친다',
+      description:
+        '류준화 작가의 작품세계. "나는 치명적이다"라는 제목의 작품을 통해 소녀의 항해와 푸른 빛 판타지를 표현.',
+      source: '남양주뉴스',
+    },
+    {
+      url: 'http://www.zineseminar.com/wp/issue03/interview-ipgimandtoday/',
+      title: '한국 페미니즘 행동주의 미술의 궤적과 교차점 - 입김 인터뷰',
+      description:
+        '여성미술연구회 입김 멤버 류준화, 정정엽, 곽은숙 인터뷰. 1999년 종묘공원 아방궁 프로젝트와 여성문화축제, 한국 페미니즘 미술운동의 역사와 행동주의를 이야기.',
+      source: 'zineseminar',
+    },
+  ],
 };
 
 /**
