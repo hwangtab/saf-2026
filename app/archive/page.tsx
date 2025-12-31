@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
+import SectionTitle from '@/components/ui/SectionTitle';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import VideoEmbed from '@/components/features/VideoEmbed';
@@ -12,15 +13,13 @@ const PAGE_URL = `${SITE_URL}/archive`;
 
 export const metadata: Metadata = {
   title: '아카이브 | 씨앗페 2026',
-  description:
-    '씨앗페 2023 성과, 언론 보도, 영상 기록을 모아둔 공식 아카이브입니다.',
+  description: '씨앗페 2023 성과, 언론 보도, 영상 기록을 모아둔 공식 아카이브입니다.',
   alternates: {
     canonical: PAGE_URL,
   },
   openGraph: {
     title: '아카이브 | 씨앗페 2026',
-    description:
-      '씨앗페 캠페인의 기록과 언론 보도, 영상 아카이브를 한 곳에서 확인하세요.',
+    description: '씨앗페 캠페인의 기록과 언론 보도, 영상 아카이브를 한 곳에서 확인하세요.',
     url: PAGE_URL,
     images: [
       {
@@ -64,18 +63,14 @@ export default function ArchivePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }}
       />
-      <PageHero
-        title="아카이브"
-        description="씨앗페의 발자취와 성과, 언론 보도를 기록합니다"
-
-      >
+      <PageHero title="아카이브" description="씨앗페의 발자취와 성과, 언론 보도를 기록합니다">
         <ShareButtons url={currentUrl} title={pageTitle} description={pageDescription} />
       </PageHero>
 
       {/* Past Events Section */}
       <section className="py-12 md:py-20 bg-sun-soft">
         <div className="container-max">
-          <h2 className="font-section font-normal text-4xl md:text-5xl mb-12">🎉 2023년 행사 기록</h2>
+          <SectionTitle className="mb-12">🎉 2023년 행사 기록</SectionTitle>
           <div className="bg-white rounded-lg shadow-sm p-8 mb-12">
             <h3 className="text-card-title mb-4">씨앗페 2023 성과</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
@@ -98,11 +93,11 @@ export default function ArchivePage() {
             </div>
             <p className="text-charcoal-muted mb-4">
               2023년 3월 21일부터 3월 31일까지 서울시 종로구 인사동의 오디오가이 스튜디오와
-              인디프레스 갤러리에서 전시와 공연이 펼쳐졌습니다. 국내 저명 뮤지션, 화가, 무용가
-              등 50명 이상의 예술인이 참여하여 예술인 금융 위기의 심각성을 알리고, 작품 판매 수익을
-              포함해 총 6,000만원을 조성하여 화가들에게 작품비를 지급하고, 대관 등 행사진행비를 제외하고 3,400만원의 기금을 조성하였습니다.
+              인디프레스 갤러리에서 전시와 공연이 펼쳐졌습니다. 국내 저명 뮤지션, 화가, 무용가 등
+              50명 이상의 예술인이 참여하여 예술인 금융 위기의 심각성을 알리고, 작품 판매 수익을
+              포함해 총 6,000만원을 조성하여 화가들에게 작품비를 지급하고, 대관 등 행사진행비를
+              제외하고 3,400만원의 기금을 조성하였습니다.
             </p>
-
           </div>
 
           {/* Event Details */}
@@ -110,12 +105,8 @@ export default function ArchivePage() {
             <div>
               <h4 className="text-card-title mb-4">📍 전시 장소</h4>
               <ul className="space-y-2 text-charcoal-muted">
-                <li>
-                  🎪 오디오가이 스튜디오 (서울시 종로구 효자로 23)
-                </li>
-                <li>
-                  🎨 인디프레스 갤러리 (서울시 종로구 효자로 31)
-                </li>
+                <li>🎪 오디오가이 스튜디오 (서울시 종로구 효자로 23)</li>
+                <li>🎨 인디프레스 갤러리 (서울시 종로구 효자로 31)</li>
               </ul>
             </div>
             <div>
@@ -133,7 +124,7 @@ export default function ArchivePage() {
       {/* SAF 2023 Artworks Section */}
       <section className="py-12 md:py-20 bg-gray-50">
         <div className="container-max">
-          <h2 className="font-section font-normal text-4xl md:text-5xl mb-12">🎨 2023년 출품작</h2>
+          <SectionTitle className="mb-12">🎨 2023년 출품작</SectionTitle>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {saf2023Artworks.map((artwork) => (
               <div
@@ -153,9 +144,13 @@ export default function ArchivePage() {
                 <div className="p-6 flex-grow flex flex-col">
                   <h3 className="font-sans font-bold text-xl mb-2">{artwork.title}</h3>
                   <p className="text-primary font-semibold mb-3">{artwork.artist}</p>
-                  <p className="text-charcoal-muted text-sm mb-4 flex-grow">{artwork.description}</p>
+                  <p className="text-charcoal-muted text-sm mb-4 flex-grow">
+                    {artwork.description}
+                  </p>
                   {artwork.details && (
-                    <p className="text-xs text-charcoal-soft mt-auto pt-4 border-t border-gray-200">{artwork.details}</p>
+                    <p className="text-xs text-charcoal-soft mt-auto pt-4 border-t border-gray-200">
+                      {artwork.details}
+                    </p>
                   )}
                 </div>
               </div>
@@ -167,7 +162,7 @@ export default function ArchivePage() {
       {/* SAF 2023 Gallery Section */}
       <section className="py-12 md:py-20 bg-white">
         <div className="container-max">
-          <h2 className="font-section font-normal text-4xl md:text-5xl mb-12">📸 씨앗페 2023 현장</h2>
+          <SectionTitle className="mb-12">📸 씨앗페 2023 현장</SectionTitle>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {saf2023Photos.map((photo) => (
               <div
@@ -194,7 +189,7 @@ export default function ArchivePage() {
       {/* Video Archive Section */}
       <section className="py-12 md:py-20 bg-accent-soft">
         <div className="container-max">
-          <h2 className="font-section font-normal text-4xl md:text-5xl mb-12">📹 영상 아카이브</h2>
+          <SectionTitle className="mb-12">📹 영상 아카이브</SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {videos.map((video) => (
               <div key={video.id} className="bg-white rounded-lg shadow-md overflow-hidden">
@@ -212,7 +207,7 @@ export default function ArchivePage() {
       {/* Call to Action */}
       <section className="py-12 md:py-20 bg-primary/20">
         <div className="container-max text-center">
-          <h2 className="font-section font-normal text-4xl md:text-5xl mb-6">이 역사에 당신도 함께하세요</h2>
+          <SectionTitle className="mb-6">이 역사에 당신도 함께하세요</SectionTitle>
           <p className="text-lg text-charcoal-muted mb-8 max-w-2xl mx-auto text-balance">
             씨앗페 2026의 성공은 당신의 참여와 후원으로 만들어집니다.
           </p>
