@@ -484,6 +484,29 @@ export const artistArticles: Record<string, Article[]> = {
       source: '국립현대미술관',
     },
   ],
+  최경선: [
+    {
+      url: 'https://kiaf.org/insights/44956',
+      title: 'Floating In Colors - 히든엠갤러리 3인전',
+      description:
+        '최경선, 최우, 황도유 작가 3인전. 자연을 소재로 삶의 생동, 슬픔, 치유를 화폭에 담는 최경선 작가. 마음의 유영을 표현한 작품들. 고요한 수면, 야트막하게 핀 꽃, 흔들리는 풀숲을 통해 생명의 언어를 표현.',
+      source: 'Kiaf SEOUL',
+    },
+    {
+      url: 'https://kiaf.org/insights/46664',
+      title: '소리쟁이들 - 최경선 개인전',
+      description:
+        '히든엠갤러리 개인전 (2024.11.07-12.05). 삶에 적극적인 반응자들이라는 주제로 풀꽃을 소재로 한 20여점 신작. 소리쟁이, 달리는 꽃, 엄마의 밭, 노래하는 개망초 시리즈. 광음향 효과를 통한 생명의 찬가.',
+      source: 'Kiaf SEOUL',
+    },
+    {
+      url: 'https://www.artbank.go.kr/home/art/productDetail.do?artId=190425000031453',
+      title: '최경선 작품 - 미술은행 소장',
+      description:
+        '국립현대미술관 미술은행 소장 최경선 작가 작품. 2016년 서양화 작품. 대여 가능 작품.',
+      source: '미술은행',
+    },
+  ],
 };
 
 /**
