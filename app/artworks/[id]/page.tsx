@@ -168,7 +168,7 @@ export default function ArtworkDetailPage({ params }: Props) {
           </div>
         </nav>
 
-        <article className="container-max py-10 lg:py-16">
+        <article className="container-max pt-10 lg:pt-16 pb-0">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
             {/* Left Column: Image & CTA */}
             <div className="space-y-8">
