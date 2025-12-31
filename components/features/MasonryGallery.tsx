@@ -14,8 +14,17 @@ function MasonryGallery({ artworks }: MasonryGalleryProps) {
   const isDisplayable = (value: string | undefined): value is string =>
     Boolean(value && value !== '확인 중' && value !== '');
 
+  // For very few items, use a centered grid layout instead of columns
+  const useCenteredGrid = artworks.length <= 3;
+
   return (
-    <div className="columns-1 md:columns-2 lg:columns-3 gap-6 px-4 pt-2">
+    <div
+      className={
+        useCenteredGrid
+          ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 pt-2 justify-items-center'
+          : 'columns-1 md:columns-2 lg:columns-3 gap-6 px-4 pt-2'
+      }
+    >
       {artworks.map((artwork) => {
         const showMaterial = isDisplayable(artwork.material);
         const showSize = isDisplayable(artwork.size);
