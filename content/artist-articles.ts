@@ -116,7 +116,7 @@ export const artistArticles: Record<string, Article[]> = {
       title: '한국 목판화의 거장, 김준권 작가',
       description:
         '목판화 거장 김준권 작가의 작품세계와 창작 철학을 담은 인터뷰 영상. 나무에 새긴 40년, 충북 진천군 백곡면 작업실과 진천군립 생거판화미술관 방문.',
-      source: 'KBS 인생내컷',
+      source: '대전MBC',
     },
     {
       url: 'https://www.youtube.com/watch?v=PPVPrUywlvw',
