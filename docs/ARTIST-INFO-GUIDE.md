@@ -15,22 +15,26 @@ saf/
 │   ├── saf2026-artworks.ts          # 작품 데이터 (작가 프로필, 이력 포함)
 │   └── artist-articles.ts           # 작가별 관련 기사/자료 데이터
 ├── components/features/
-│   └── RelatedArticles.tsx          # 관련 기사 카드 컴포넌트
+│   ├── RelatedArticles.tsx          # 관련 기사 카드 컴포넌트
+│   └── ExpandableHistory.tsx        # 주요 경력 (접기/펼치기)
 └── app/artworks/[id]/
     └── page.tsx                     # 작품 상세 페이지
 ```
 
 ---
 
-## 🎨 섹션 구성 순서
+## 🎨 섹션 구성 순서 (중요도 기준)
 
 작품 상세 페이지의 우측 정보 컬럼은 다음 순서로 구성됩니다:
 
 1. **작품 제목 & 작가명** (sticky header)
 2. **작품 정보** (재료, 크기, 년도, 가격)
-3. **작가 소개** (`artwork.profile` + `artwork.history`)
-4. **작가 노트** (`artwork.description`)
-5. **작가 관련 자료** (외부 링크 카드)
+3. **작가 소개** (`artwork.profile`) - 별도 카드
+4. **작가 노트** (`artwork.description`) - 별도 카드
+5. **주요 경력** (`artwork.history`) - 별도 카드, **3줄 말줄임 + 더보기**
+6. **작가 관련 자료** (외부 링크 카드)
+
+> ⚠️ **중요**: 주요 경력은 중요도가 낮으므로 작가 노트 아래에 배치되고, 접기/펼치기 기능으로 화면을 차지하지 않습니다.
 
 ---
 
