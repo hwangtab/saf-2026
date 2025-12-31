@@ -109,7 +109,7 @@ export default function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithS
   return (
     <div>
       {/* Controls & Nav Section (Combined Sticky) */}
-      <div className="md:sticky md:top-[60px] z-40 bg-gray-50/95 backdrop-blur-sm border-b border-gray-200/50">
+      <div className="md:sticky md:top-[calc(4rem+env(safe-area-inset-top,0px))] z-40 bg-gray-50/95 backdrop-blur-sm border-b border-gray-200/50">
         <div className="container-max">
           {/* Search & Sort Controls */}
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between py-3">

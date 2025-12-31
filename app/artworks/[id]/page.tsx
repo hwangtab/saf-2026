@@ -175,7 +175,7 @@ export default function ArtworkDetailPage({ params }: Props) {
               <div className="relative shadow-sm">
                 <Image
                   src={`/images/artworks/${artwork.image}`}
-                  alt={artwork.title}
+                  alt={`${artwork.title} - ${artwork.artist}`}
                   width={1000}
                   height={1000}
                   className="w-full h-auto object-contain max-h-[80vh]"
@@ -239,7 +239,7 @@ export default function ArtworkDetailPage({ params }: Props) {
 
             {/* Right Column: Info Section */}
             <div className="space-y-8">
-              <header className="sticky top-24 bg-white/95 backdrop-blur-sm z-30 py-4 -mt-4 mb-4 border-b lg:border-none lg:static lg:bg-transparent lg:p-0 lg:m-0">
+              <header className="sticky top-[calc(6rem+env(safe-area-inset-top,0px))] bg-white/95 backdrop-blur-sm z-30 py-4 -mt-4 mb-4 border-b lg:border-none lg:static lg:bg-transparent lg:p-0 lg:m-0">
                 <h1 className="text-3xl md:text-4xl font-bold font-sans text-charcoal mb-2">
                   {artwork.title}
                 </h1>

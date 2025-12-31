@@ -11,8 +11,9 @@ interface MasonryGalleryProps {
 }
 
 function MasonryGallery({ artworks, showArtistNav = true }: MasonryGalleryProps) {
-  // Get unique artist names in order of appearance (already sorted by ㄱㄴㄷ)
+  // Only compute artist navigation data when needed (showArtistNav=true)
   const uniqueArtists = useMemo(() => {
+    if (!showArtistNav) return [];
     const seen = new Set<string>();
     return artworks
       .filter((a) => {
@@ -21,10 +22,11 @@ function MasonryGallery({ artworks, showArtistNav = true }: MasonryGalleryProps)
         return true;
       })
       .map((a) => a.artist);
-  }, [artworks]);
+  }, [artworks, showArtistNav]);
 
-  // Track which artists appear first (for anchor)
+  // Track which artists appear first (for anchor) - only when showArtistNav=true
   const firstArtworkByArtist = useMemo(() => {
+    if (!showArtistNav) return new Map<string, string>();
     const map = new Map<string, string>();
     artworks.forEach((a) => {
       if (!map.has(a.artist)) {
@@ -32,7 +34,7 @@ function MasonryGallery({ artworks, showArtistNav = true }: MasonryGalleryProps)
       }
     });
     return map;
-  }, [artworks]);
+  }, [artworks, showArtistNav]);
 
   const scrollToArtist = (artist: string) => {
     const artworkId = firstArtworkByArtist.get(artist);
@@ -64,7 +66,7 @@ function MasonryGallery({ artworks, showArtistNav = true }: MasonryGalleryProps)
       )}
 
       {/* Gallery using CSS Columns */}
-      <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6 px-4">
+      <div className="columns-1 md:columns-2 lg:columns-3 gap-6 px-4">
         {artworks.map((artwork) => (
           <div
             key={artwork.id}
@@ -76,7 +78,7 @@ function MasonryGallery({ artworks, showArtistNav = true }: MasonryGalleryProps)
                 <div className="relative w-full">
                   <Image
                     src={`/images/artworks/${artwork.image}`}
-                    alt={artwork.title}
+                    alt={`${artwork.title} - ${artwork.artist}`}
                     width={500}
                     height={500}
                     className="w-full h-auto object-cover transform transition-transform duration-500 group-hover:scale-105"
