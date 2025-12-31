@@ -29,7 +29,7 @@ export default function ExpandableHistory({ history }: ExpandableHistoryProps) {
             onClick={() => setIsExpanded(!isExpanded)}
             className="mt-3 text-sm font-medium text-primary hover:text-primary-strong transition-colors"
           >
-            {isExpanded ? '접기 ▲' : '...더보기 ▼'}
+            {isExpanded ? '접기 ▲' : '더보기 ▼'}
           </button>
         )}
       </div>
