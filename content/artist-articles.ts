@@ -292,6 +292,22 @@ export const artistArticles: Record<string, Article[]> = {
       source: '이산아카데미',
     },
   ],
+  이열: [
+    {
+      url: 'https://brunch.co.kr/@6d18ba65f0a04b0/23',
+      title: '사진작가 이열 - 느린인간과 나무이야기',
+      description:
+        '파인 아트 사진 작가 이열의 느린인간 프로젝트. 사진은 카메라 프레임을 통해 실제 존재하는 사물의 일부분을 잘라내어 사진가의 의도와 생각을 담아내는 작업. 나무를 주제로 한 포토에세이.',
+      source: 'Brunch',
+    },
+    {
+      url: 'https://www.classicm.co.kr/news/articleView.html?idxno=5340',
+      title: '나무는 느린 인간, 인간은 빠른 나무 - 이열 전시',
+      description:
+        '서울 삼청동 복합문화공간 라플란드에서 열린 이열 작가 전시 "느린 인간". 오랫동안 촬영해 온 나무 사진들을 모아 책으로 펴내고 전시. 나무와 함께한 추억과 나무 곁에서 들은 이야기들을 담은 작품.',
+      source: '뉴스클래식M',
+    },
+  ],
 };
 
 /**
