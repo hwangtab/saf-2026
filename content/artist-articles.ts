@@ -66,6 +66,36 @@ export const artistArticles: Record<string, Article[]> = {
       source: '서울아트가이드',
     },
   ],
+  김주호: [
+    {
+      url: 'https://www.mk.co.kr/news/culture/11457683',
+      title: '김종영미술상 2025 수상 - 우리것을 찾아낸 뚝심',
+      description:
+        '김종영미술상 2025 수상자 조각가 김주호. 서양미술에 주눅들지 않고 평생 우리것을 찾아낸 뚝심. 강화도에서 전업작가 33년째, 환하게 웃는 유쾌한 인물 조각으로 긍정과 희망을 전달.',
+      source: '매일경제',
+    },
+    {
+      url: 'https://www.joongang.co.kr/article/330571',
+      title: '조각가 김주호 세상 들여다보기 展',
+      description:
+        '강화도 외포리에서 작업하는 조각가 김주호의 전시. 노래방 풍속도 등 일상의 생생한 풍경을 질구이 작품으로 표현. 밭 갈고 포도 심으며 삶과 예술을 함께하는 작가.',
+      source: '중앙일보',
+    },
+    {
+      url: 'https://monthlyart.com/02-artist/special-artist-%EA%B9%80%EC%A3%BC%ED%98%B8/',
+      title: 'SPECIAL ARTIST 김주호 - 말하는 조각들',
+      description:
+        '테라코타, 나무, 돌, 철판 등 다양한 재료를 다루는 조각가 김주호의 작품세계. 일상의 정서를 담은 친근하고 따뜻한 조각들.',
+      source: '월간미술',
+    },
+    {
+      url: 'https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0001740413',
+      title: '삶과 통하는 단비 같은 조각',
+      description:
+        '이웃 사람들이 겪는 삶의 욕망과 정서를 고스란히 담은 김주호의 조각. 일상의 생생한 풍경을 친근한 재료에 예리하면서도 따뜻한 기지로 표현.',
+      source: '오마이뉴스',
+    },
+  ],
 };
 
 /**
