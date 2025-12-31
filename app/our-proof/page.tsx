@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
+import SectionTitle from '@/components/ui/SectionTitle';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import TestimonialCard from '@/components/ui/TestimonialCard';
@@ -50,17 +52,15 @@ export default function OurProof() {
         />
       </PageHero>
 
-
-
       <section className="py-12 md:py-20 bg-primary-surface">
         <div className="container-max">
           <div className="max-w-3xl mx-auto text-center mb-12">
-            <h2 className="font-section font-normal text-4xl md:text-5xl mb-8">
-              증명된 사실:<br />예술인은 빌린 돈을 약속대로 갚습니다
-            </h2>
+            <SectionTitle className="mb-8">
+              <span className="text-primary font-bold">95%</span>의 상환율이 증명합니다
+            </SectionTitle>
             <p className="text-xl text-sky-strong">
-              신용점수에 상관없이 빌려준 354건, 약 7억 원 가운데 95%가 제때 돌아왔고
-              빚을 대신 갚아야 했던 비율도 5.10%뿐이라 흔한 저신용 대출보다 오히려 안정적입니다.
+              신용점수에 상관없이 빌려준 354건, 약 7억 원 가운데 95%가 제때 돌아왔고 빚을 대신
+              갚아야 했던 비율도 5.10%뿐이라 흔한 저신용 대출보다 오히려 안정적입니다.
             </p>
           </div>
 
@@ -76,17 +76,19 @@ export default function OurProof() {
             <div className="bg-white p-8 rounded-lg shadow text-center border-t-4 border-primary">
               <p className="text-5xl font-bold text-primary mb-2">95%</p>
               <p className="text-charcoal-muted">상환율 (대위변제율 5.10%)</p>
-
-            </div >
-          </div >
+            </div>
+          </div>
 
           <div className="mt-12 bg-white p-8 rounded-lg max-w-3xl mx-auto border-l-4 border-primary">
             <p className="text-lg text-charcoal mb-2">
-              이 데이터는 명백한 사실을 증명합니다. <span className="text-primary font-semibold">예술인은 빚을 떼먹는 사람이 아닙니다.</span>
+              이 데이터는 명백한 사실을 증명합니다.{' '}
+              <span className="text-primary font-semibold">
+                예술인은 빚을 떼먹는 사람이 아닙니다.
+              </span>
             </p>
             <p className="text-base text-charcoal-muted mb-6">
-              354건 중 95%가 제때 갚혔고 대위변제율도 5.10%에 머물러 뉴스아트(2025.05.22)가 소개한 것처럼
-              일반 금융기관 저신용 대출 연체율보다 낮은 수준이 유지되고 있습니다.
+              354건 중 95%가 제때 갚혔고 대위변제율도 5.10%에 머물러 뉴스아트(2025.05.22)가 소개한
+              것처럼 일반 금융기관 저신용 대출 연체율보다 낮은 수준이 유지되고 있습니다.
             </p>
             <p className="text-2xl font-bold text-charcoal">
               위험한 것은 이들을 약탈하도록 방치하는 현재의 금융 시스템입니다.
@@ -100,7 +102,7 @@ export default function OurProof() {
         <div className="container-max">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
             <div>
-              <h2 className="font-section font-normal text-4xl md:text-5xl mb-6">상호부조 대출이란?</h2>
+              <SectionTitle className="mb-6">상호부조 대출이란?</SectionTitle>
               <div className="space-y-4 text-charcoal">
                 <p>
                   <a
@@ -111,13 +113,16 @@ export default function OurProof() {
                   >
                     한국스마트협동조합
                   </a>
-                  이 일정한 기금을 조성하면, 협약금융기관이 그 기금의 약 7배까지 예술인들에게 <strong>저금리</strong>로 대출하는 시스템입니다.
+                  이 일정한 기금을 조성하면, 협약금융기관이 그 기금의 약 7배까지 예술인들에게{' '}
+                  <strong>저금리</strong>로 대출하는 시스템입니다.
                 </p>
                 <p>
-                  이는 단순한 금융상품이 아닙니다. 예술인들을 신뢰하고, 그들의 성실함에 베팅하는 &lsquo;상호부조&rsquo;의 정신이 담겨있습니다.
+                  이는 단순한 금융상품이 아닙니다. 예술인들을 신뢰하고, 그들의 성실함에 베팅하는
+                  &lsquo;상호부조&rsquo;의 정신이 담겨있습니다.
                 </p>
                 <p className="font-semibold">
-                  기존 금융이 &ldquo;정기 소득을 증명할 수 없으니 불가능&rdquo;이라고 말할 때, 우리는 &ldquo;당신을 믿습니다&rdquo;라고 말합니다.
+                  기존 금융이 &ldquo;정기 소득을 증명할 수 없으니 불가능&rdquo;이라고 말할 때,
+                  우리는 &ldquo;당신을 믿습니다&rdquo;라고 말합니다.
                 </p>
               </div>
             </div>
@@ -158,7 +163,7 @@ export default function OurProof() {
 
           {/* Why It Works */}
           <div className="bg-white rounded-lg shadow-lg p-8 md:p-12 max-w-3xl mx-auto mb-16">
-            <h2 className="font-section font-normal text-4xl md:text-5xl mb-8 text-center">왜 상호부조 금융이 작동할까?</h2>
+            <SectionTitle className="mb-8 text-center">왜 상호부조 금융이 작동할까?</SectionTitle>
             <div className="space-y-6">
               <div className="flex gap-4">
                 <div className="flex-shrink-0">
@@ -167,7 +172,8 @@ export default function OurProof() {
                 <div>
                   <h3 className="text-card-title mb-2">기금과 특별조합비</h3>
                   <p className="text-charcoal-muted text-balance">
-                    조합이 조성한 7,700만원의 기금과 대출자 특별조합비로 안정기금 잔액 35,608,224원을 유지하며 리스크를 공동으로 감당합니다.
+                    조합이 조성한 7,700만원의 기금과 대출자 특별조합비로 안정기금 잔액
+                    35,608,224원을 유지하며 리스크를 공동으로 감당합니다.
                   </p>
                 </div>
               </div>
@@ -178,7 +184,8 @@ export default function OurProof() {
                 <div>
                   <h3 className="text-card-title mb-2">연 5% 고정금리</h3>
                   <p className="text-charcoal-muted text-balance">
-                    프로젝트형·긴급생활형 상품 모두 연 5% 고정금리로 설계되어 고리대금 대출 대비 평균 14%p 이상 이자 부담을 덜어줍니다.
+                    프로젝트형·긴급생활형 상품 모두 연 5% 고정금리로 설계되어 고리대금 대출 대비
+                    평균 14%p 이상 이자 부담을 덜어줍니다.
                   </p>
                 </div>
               </div>
@@ -189,7 +196,8 @@ export default function OurProof() {
                 <div>
                   <h3 className="text-card-title mb-2">용도별 맞춤 상품</h3>
                   <p className="text-charcoal-muted text-balance">
-                    긴급·익일·특별·프로젝트 대출 등 네 가지 상품으로 생활비부터 창작비까지 필요한 시점에 자금을 공급합니다.
+                    긴급·익일·특별·프로젝트 대출 등 네 가지 상품으로 생활비부터 창작비까지 필요한
+                    시점에 자금을 공급합니다.
                   </p>
                 </div>
               </div>
@@ -200,7 +208,8 @@ export default function OurProof() {
                 <div>
                   <h3 className="text-card-title mb-2">투명한 리스크 관리</h3>
                   <p className="text-charcoal-muted text-balance">
-                    대위변제 20건(6.56%) 중 11,396,305원을 회수했고, 실시간 모니터링과 회수 계획으로 상호부조 신뢰를 지켜가고 있습니다.
+                    대위변제 20건(6.56%) 중 11,396,305원을 회수했고, 실시간 모니터링과 회수 계획으로
+                    상호부조 신뢰를 지켜가고 있습니다.
                   </p>
                 </div>
               </div>
@@ -212,7 +221,7 @@ export default function OurProof() {
       {/* Testimonials Section */}
       <section className="py-12 md:py-20 bg-sun-soft">
         <div className="container-max">
-          <h2 className="font-section font-normal text-4xl md:text-5xl mb-12 text-center">예술인들의 증언</h2>
+          <SectionTitle className="mb-12 text-center">예술인들의 증언</SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <TestimonialCard
               quote="급하게 병원비가 필요했는데, 어디서도 돈을 빌릴 수 없었어요. 상호부조 대출 덕분에 치료에만 집중할 수 있었습니다."
@@ -249,7 +258,7 @@ export default function OurProof() {
       {/* Statistics Comparison */}
       <section className="py-12 md:py-20 bg-primary-surface">
         <div className="container-max">
-          <h2 className="font-section font-normal text-4xl md:text-5xl mb-12 text-center">기존 금융 vs 상호부조 대출</h2>
+          <SectionTitle className="mb-12 text-center">기존 금융 vs 상호부조 대출</SectionTitle>
           <div className="overflow-x-auto">
             <table className="w-full bg-white rounded-lg shadow-sm overflow-hidden">
               <thead className="bg-gray-100 border-b-2 border-gray-300">
@@ -301,7 +310,8 @@ export default function OurProof() {
             <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-lg bg-white text-left shadow-sm">
               <h3 className="text-card-title mb-3">후원으로 기금에 힘을 보태주세요</h3>
               <p className="text-charcoal-muted mb-4 flex-grow">
-                상호부조 대출 기금은 시민 후원으로 확대됩니다. 정기후원·일시후원 모두 큰 도움이 됩니다.
+                상호부조 대출 기금은 시민 후원으로 확대됩니다. 정기후원·일시후원 모두 큰 도움이
+                됩니다.
               </p>
               <a
                 href={EXTERNAL_LINKS.DONATE}

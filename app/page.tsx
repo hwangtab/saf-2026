@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Button from '@/components/ui/Button';
+import SectionTitle from '@/components/ui/SectionTitle';
 import ActionCard from '@/components/ui/ActionCard';
 import DynamicCounter from '@/components/features/DynamicCounter';
 import BackgroundSlider from '@/components/features/BackgroundSlider';
@@ -99,9 +100,7 @@ export default function Home() {
       {/* Problem Section */}
       <section className="py-16 md:py-24 bg-sun-soft">
         <div className="container-max">
-          <h2 className="font-section font-normal text-4xl md:text-5xl text-center mb-12 text-balance">
-            우리가 직면한 문제
-          </h2>
+          <SectionTitle className="text-center mb-12">우리가 직면한 문제</SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div className="space-y-4">
               <h3 className="text-card-title text-charcoal">🚫 금융 시장의 차별</h3>
@@ -144,9 +143,7 @@ export default function Home() {
       {/* Solution Section */}
       <section className="py-16 md:py-24 bg-primary-surface">
         <div className="container-max">
-          <h2 className="font-section font-normal text-4xl md:text-5xl text-center mb-12 text-balance">
-            우리의 해결책
-          </h2>
+          <SectionTitle className="text-center mb-12">우리의 해결책</SectionTitle>
           <div className="bg-white rounded-lg shadow-lg p-8 md:p-12 max-w-3xl mx-auto text-balance">
             <div className="mb-8">
               <h3 className="text-card-title text-charcoal mb-4">📈 95% 상환율의 신뢰</h3>
@@ -180,9 +177,7 @@ export default function Home() {
       {/* Call to Action Section */}
       <section className="py-16 md:py-24 bg-accent-soft">
         <div className="container-max">
-          <h2 className="font-section font-normal text-4xl md:text-5xl mb-12 text-center text-balance">
-            당신도 함께할 수 있습니다
-          </h2>
+          <SectionTitle className="mb-12 text-center">당신도 함께할 수 있습니다</SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <ActionCard
               href={EXTERNAL_LINKS.DONATE}
