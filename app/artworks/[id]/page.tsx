@@ -294,11 +294,11 @@ export default function ArtworkDetailPage({ params }: Props) {
 
               {/* Artist Note */}
               {artwork.description && (
-                <div className="bg-white border border-gray-100 p-6 rounded-xl">
+                <div className="bg-gray-50 p-6 rounded-xl">
                   <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">
                     작가 노트
                   </h3>
-                  <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                  <p className="text-gray-700 leading-relaxed text-sm whitespace-pre-line">
                     {artwork.description}
                   </p>
                 </div>

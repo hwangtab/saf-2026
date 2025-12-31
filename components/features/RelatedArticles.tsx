@@ -13,8 +13,10 @@ export default function RelatedArticles({ articles }: RelatedArticlesProps) {
   }
 
   return (
-    <section className="mt-12 pt-8 border-t border-gray-200">
-      <h2 className="font-section text-2xl font-bold text-charcoal mb-6">작가 관련 자료</h2>
+    <section className="bg-gray-50 p-6 rounded-xl">
+      <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">
+        작가 관련 자료
+      </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {articles.map((article, index) => (
