@@ -35,7 +35,7 @@ export default function RelatedArtworksSlider({
     },
     [
       Autoplay({
-        delay: 0,
+        delay: 3000,
         stopOnInteraction: false,
         stopOnMouseEnter: true,
       }),
