@@ -9,6 +9,7 @@ import { SITE_URL } from '@/lib/constants';
 import Button from '@/components/ui/Button';
 import RelatedArticles from '@/components/features/RelatedArticles';
 import ExpandableHistory from '@/components/features/ExpandableHistory';
+import RelatedArtworksSlider from '@/components/features/RelatedArtworksSlider';
 
 // Dynamic import for client-side ShareButtons
 const ShareButtons = dynamic(() => import('@/components/common/ShareButtons'), { ssr: false });
@@ -359,6 +360,9 @@ export default function ArtworkDetailPage({ params }: Props) {
             </div>
           </div>
         </article>
+
+        {/* Related Artworks Slider */}
+        <RelatedArtworksSlider currentArtworkId={artwork.id} currentArtist={artwork.artist} />
       </main>
     </>
   );
