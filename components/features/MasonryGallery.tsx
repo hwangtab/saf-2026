@@ -12,8 +12,7 @@ interface MasonryGalleryProps {
 
 function MasonryGallery({ artworks, forceGrid }: MasonryGalleryProps) {
   // Helper function to check if a value is displayable
-  const isDisplayable = (value: string | undefined): value is string =>
-    Boolean(value && value !== '확인 중' && value !== '');
+  const isDisplayable = (value: string | undefined): value is string => Boolean(value);
 
   // For very few items OR when forceGrid is true, use a centered grid layout instead of columns
   const useCenteredGrid = forceGrid || artworks.length <= 3;
@@ -71,7 +70,7 @@ function MasonryGallery({ artworks, forceGrid }: MasonryGalleryProps) {
                   {artwork.sold && (
                     <p className="text-sm font-semibold text-red-600 mt-1">판매완료</p>
                   )}
-                  {artwork.price !== '문의' && artwork.price !== '확인 중' && (
+                  {artwork.price && artwork.price !== '문의' && (
                     <p
                       className={`text-sm font-semibold mt-1 ${artwork.sold ? 'text-gray-400 line-through' : 'text-primary'}`}
                     >

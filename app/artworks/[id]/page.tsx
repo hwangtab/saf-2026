@@ -21,7 +21,6 @@ interface Props {
 }
 
 // Generate metadata for SEO
-// Generate metadata for SEO
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const artwork = getArtworkById(params.id);
 
@@ -38,9 +37,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const summary = [
     `작가: ${artwork.artist}`,
     `작품명: ${artwork.title}`,
-    artwork.year !== '확인 중' && artwork.year ? `제작년도: ${artwork.year}` : '',
-    artwork.material !== '확인 중' && artwork.material ? `재료: ${artwork.material}` : '',
-    artwork.size !== '확인 중' && artwork.size ? `크기: ${artwork.size}` : '',
+    artwork.year ? `제작년도: ${artwork.year}` : '',
+    artwork.material ? `재료: ${artwork.material}` : '',
+    artwork.size ? `크기: ${artwork.size}` : '',
   ]
     .filter(Boolean)
     .join(', ');
@@ -138,13 +137,12 @@ export default function ArtworkDetailPage({ params }: Props) {
       '@type': 'Person',
       name: artwork.artist,
       description: artwork.profile || undefined,
-      sameAs: artwork.year && artwork.history ? undefined : undefined, // Could link to wiki if exists
     },
-    artMedium: artwork.material !== '확인 중' ? artwork.material : undefined,
-    artworkSurface: artwork.material !== '확인 중' ? artwork.material : undefined, // Often same for basic schema
-    dateCreated: artwork.year !== '확인 중' ? artwork.year : undefined,
-    width: artwork.size !== '확인 중' ? { '@type': 'Distance', name: artwork.size } : undefined,
-    height: artwork.size !== '확인 중' ? { '@type': 'Distance', name: artwork.size } : undefined,
+    artMedium: artwork.material || undefined,
+    artworkSurface: artwork.material || undefined,
+    dateCreated: artwork.year || undefined,
+    width: artwork.size ? { '@type': 'Distance', name: artwork.size } : undefined,
+    height: artwork.size ? { '@type': 'Distance', name: artwork.size } : undefined,
     offers: {
       '@type': 'Offer',
       url: `${SITE_URL}/artworks/${artwork.id}`,
@@ -159,17 +157,17 @@ export default function ArtworkDetailPage({ params }: Props) {
       },
     },
     additionalProperty: [
-      artwork.material !== '확인 중' && {
+      artwork.material && {
         '@type': 'PropertyValue',
         name: '재료',
         value: artwork.material,
       },
-      artwork.size !== '확인 중' && {
+      artwork.size && {
         '@type': 'PropertyValue',
         name: '크기',
         value: artwork.size,
       },
-      artwork.year !== '확인 중' && {
+      artwork.year && {
         '@type': 'PropertyValue',
         name: '제작년도',
         value: artwork.year,
