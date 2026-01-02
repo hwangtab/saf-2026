@@ -1,13 +1,3 @@
-/**
- * Artwork Text Smart Formatter
- * 
- * Rules:
- * 1. Single spacing for lists (remove excessive newlines)
- * 2. Double spacing before major headers (e.g., '학력', '개인전')
- * 3. Trim whitespace from lines and full text
- * 4. Remove tabs
- */
-
 const fs = require('fs');
 const path = require('path');
 
@@ -18,82 +8,93 @@ if (!fs.existsSync(artworksPath)) {
     process.exit(1);
 }
 
-let content = fs.readFileSync(artworksPath, 'utf-8');
+function formatArtworks() {
+    let content = fs.readFileSync(artworksPath, 'utf-8');
 
-// 스마트 텍스트 정리 함수
-function smartCleanText(text) {
-    if (!text) return "";
+    // Formatting logic:
+    // 1. Normalize line endings
+    // 2. Identify headers and add double newlines
+    const formatText = (text) => {
+        if (!text) return text;
 
-    // 1. 탭 제거
-    let cleaned = text.replace(/\t/g, '');
+        // 1. Replace multiple newlines with single newline, remove tabs
+        let cleaned = text.replace(/\\n+/g, '\n').replace(/\n+/g, '\n').replace(/\t/g, '');
 
-    // 2. 각 줄의 공백 제거
-    cleaned = cleaned.split('\n').map(line => line.trim()).join('\n');
+        // 2. Trim lines
+        cleaned = cleaned.split('\n').map(l => l.trim()).join('\n');
 
-    // 3. 모든 줄바꿈을 일단 단일 줄바꿈으로 통일 (과도한 줄바꿈 제거)
-    cleaned = cleaned.replace(/\n+/g, '\n');
+        // 3. Trim outer
+        cleaned = cleaned.trim();
 
-    // 4. 주요 섹션 헤더 앞에는 이중 줄바꿈 추가 (가독성 확보)
-    const headers = [
-        '학력', '개인전', '단체전', '주요 개인전', '주요 단체전',
-        '수상', '수상 경력', '수상경력', '수상 내역', '수상 및 지원',
-        '소장처', '작품 소장', '작품소장',
-        '레지던시', '경력', '전시 이력', '전시이력', '교육',
-        '강의', '저서', 'Art Fair', '기타경력',
-        'Solo Exhibition', 'Group Exhibition', 'Team Project activities'
-    ];
+        // 3. Insert double newline before headers
+        const headers = [
+            '학력', '개인전', '단체전', '주요전시', '전시', '수상', '소장', '경력', '주요경력',
+            'Solo Exhibition', 'Group Exhibition', 'Selected Exhibition', 'Awards', 'Collections', 'Education', 'Career',
+            'Residence', 'Residency', '레지던시', '출판', '저서', '현재', '현\\)', '작품소장', 'Team Project activities'
+        ];
 
-    headers.forEach(header => {
-        // 정규식: (시작 또는 줄바꿈) + (헤더 텍스트) + (줄바꿈 또는 콜론 또는 끝)
-        // [^\n]*는 헤더 앞의 장식문자(---, < 등)를 포용하기 위함
-        const pattern = new RegExp(`(?:^|\\n)(.*${header}.*)(?:\\n|:|$)`, 'g');
+        const lines = cleaned.split('\n');
+        const formattedLines = [];
 
-        cleaned = cleaned.replace(pattern, (match, p1) => {
-            // p1은 헤더 라인 전체
-            return `\n\n${p1.trim()}\n`;
+        for (let i = 0; i < lines.length; i++) {
+            let line = lines[i];
+            if (!line) continue;
+
+            // Check if this line looks like a header
+            let isHeader = false;
+            for (const h of headers) {
+                // Check exact match or starts with (e.g. "2023 개인전" is NOT a header, but "개인전" IS)
+                // "현)" or "학력" usually starts the line.
+                // Regex: ^(Header) or ^[Header] or ^<Header>
+                const regex = new RegExp(`^(\\[|<)?${h}(\\]|>)?`, 'i');
+                if (regex.test(line)) {
+                    isHeader = true;
+                    break;
+                }
+            }
+
+            if (isHeader && formattedLines.length > 0) {
+                formattedLines.push('');
+            }
+
+            formattedLines.push(line);
+        }
+
+        // Join with \n
+        return formattedLines.join('\\n');
+    };
+
+    // Apply to 'history', 'profile', 'description' fields
+    // Regex matches: key:\s*QUOTE(.*?)QUOTE
+    const fields = ['history', 'profile']; // description might be sensitive to formatting, but let's include if safe. 
+    // User specifically asked for history. Let's stick to history and profile for now as they are long texts.
+
+    fields.forEach(field => {
+        const regex = new RegExp(`(${field}:\\s*)(['"\`])((?:.|[\\r\\n])*?)\\2`, 'g');
+        content = content.replace(regex, (match, prefix, quote, value) => {
+            // Unescape for processing if not backtick
+            let raw = value;
+            if (quote !== '\`') {
+                raw = raw.replace(/\\n/g, '\n');
+            }
+
+            const formatted = formatText(raw);
+
+            // Re-escape
+            if (quote !== '\`') {
+                // If the quote used is single quote, we must escape single quotes inside?
+                // The regex match captured the wrapper quote. 
+                // We should ensure the content doesn't break the quote.
+                // But simplified: we just return formatted with proper \n escapes.
+                return `${prefix}${quote}${formatted}${quote}`;
+            } else {
+                return `${prefix}${quote}${formatted}${quote}`;
+            }
         });
     });
 
-    // 5. 전체 앞뒤 공백 제거
-    cleaned = cleaned.trim();
-
-    // 6. 결과적으로 \n\n\n이 생길 수 있으므로 다시 최대 2줄로 제한
-    cleaned = cleaned.replace(/\n{3,}/g, '\n\n');
-
-    return cleaned;
+    fs.writeFileSync(artworksPath, content, 'utf-8');
+    console.log('✅ Artwork text formatting completed.');
 }
 
-// 필드 교체 함수
-function replaceField(content, fieldName, cleaner) {
-    // 모든 작품의 해당 필드를 찾아서 교체
-    // "key": "value" 패턴 찾기 (이스케이프된 따옴표 고려)
-    const fieldPattern = new RegExp(`"${fieldName}": "((?:[^"\\\\]|\\\\.)*)"`, 'g');
-
-    return content.replace(fieldPattern, (match, originalValue) => {
-        let decodedValue;
-        try {
-            decodedValue = JSON.parse(`"${originalValue}"`);
-        } catch (e) { return match; } // 파싱 실패시 무시
-
-        const cleanedValue = cleaner(decodedValue);
-
-        if (decodedValue === cleanedValue) return match;
-
-        const safeValue = JSON.stringify(cleanedValue);
-        return `"${fieldName}": ${safeValue}`;
-    });
-}
-
-console.log('Running Smart Text Formatting on all artworks...');
-
-let newContent = content;
-newContent = replaceField(newContent, 'profile', smartCleanText);
-newContent = replaceField(newContent, 'description', smartCleanText);
-newContent = replaceField(newContent, 'history', smartCleanText);
-
-if (newContent !== content) {
-    fs.writeFileSync(artworksPath, newContent, 'utf-8');
-    console.log('✅ Formatting applied successfully.');
-} else {
-    console.log('✨ No formatting changes needed.');
-}
+formatArtworks();

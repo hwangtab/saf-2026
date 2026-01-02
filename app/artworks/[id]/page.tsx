@@ -20,6 +20,7 @@ interface Props {
 }
 
 // Generate metadata for SEO
+// Generate metadata for SEO
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const artwork = getArtworkById(params.id);
 
@@ -32,30 +33,54 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const pageUrl = `${SITE_URL}/artworks/${artwork.id}`;
   const imageUrl = `${SITE_URL}/images/artworks/${artwork.image}`;
 
-  // Create description from available data
-  const description = artwork.description
-    ? artwork.description.substring(0, 155) + '...'
-    : artwork.profile
-      ? `${artwork.artist} 작가: ${artwork.profile.substring(0, 100)}...`
-      : `${artwork.artist}의 작품 "${artwork.title}" - ${artwork.material}, ${artwork.size}. 씨앗페 2026 출품작.`;
+  // 1. Create a rich, fact-filled description for AI
+  const summary = [
+    `작가: ${artwork.artist}`,
+    `작품명: ${artwork.title}`,
+    artwork.year !== '확인 중' && artwork.year ? `제작년도: ${artwork.year}` : '',
+    artwork.material !== '확인 중' && artwork.material ? `재료: ${artwork.material}` : '',
+    artwork.size !== '확인 중' && artwork.size ? `크기: ${artwork.size}` : '',
+  ]
+    .filter(Boolean)
+    .join(', ');
+
+  const profileSnippet = artwork.profile ? artwork.profile.substring(0, 150) : '';
+  const descSnippet = artwork.description ? artwork.description.substring(0, 150) : '';
+
+  // Priority: Custom Description > Profile > Summary
+  const seoDescription =
+    `${summary}. ` +
+    (descSnippet ? `작품 설명: ${descSnippet}... ` : '') +
+    (profileSnippet ? `작가 소개: ${profileSnippet}...` : '');
 
   return {
-    title: `${artwork.title} - ${artwork.artist} | 씨앗페 2026 출품작`,
-    description,
+    title: `${artwork.title} - ${artwork.artist} | 씨앗페 2026`,
+    description: seoDescription.substring(0, 300), // Max for SEO
+    keywords: [
+      artwork.artist,
+      artwork.title,
+      '씨앗페',
+      '씨앗페 2026',
+      'SAF 2026',
+      '예술인 연대',
+      '미술품 구매',
+      '상호부조',
+      artwork.material.split(' ')[0], // Main material e.g., 'Oil', 'Acrylic'
+    ].filter(Boolean),
     alternates: {
       canonical: pageUrl,
     },
     openGraph: {
       title: `${artwork.title} - ${artwork.artist}`,
-      description,
+      description: seoDescription.substring(0, 200),
       url: pageUrl,
       siteName: '씨앗페 2026',
       images: [
         {
           url: imageUrl,
-          width: 800,
-          height: 800,
-          alt: `${artwork.artist} - ${artwork.title}`,
+          width: 1200,
+          height: 630,
+          alt: `${artwork.title} by ${artwork.artist}`,
         },
       ],
       type: 'website',
@@ -64,7 +89,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     twitter: {
       card: 'summary_large_image',
       title: `${artwork.title} - ${artwork.artist}`,
-      description,
+      description: seoDescription.substring(0, 200),
       images: [imageUrl],
     },
   };
@@ -96,29 +121,36 @@ export default function ArtworkDetailPage({ params }: Props) {
   // Get related articles for this artist
   const relatedArticles = getArticlesByArtist(artwork.artist);
 
-  // Product + VisualArtwork JSON-LD Schema for SEO
+  // Enhanced VisualArtwork + Product Schema for AI & Search Engines
   const productSchema = {
     '@context': 'https://schema.org',
-    '@type': ['Product', 'VisualArtwork'],
+    '@type': ['VisualArtwork', 'Product'],
     name: artwork.title,
-    image: `${SITE_URL}/images/artworks/${artwork.image}`,
-    description: schemaDescription.substring(0, 300),
+    image: {
+      '@type': 'ImageObject',
+      url: `${SITE_URL}/images/artworks/${artwork.image}`,
+      name: `${artwork.title} - ${artwork.artist}`,
+    },
+    description: schemaDescription.substring(0, 500),
+    sku: `SAF2026-${artwork.id}`,
     creator: {
       '@type': 'Person',
       name: artwork.artist,
       description: artwork.profile || undefined,
+      sameAs: artwork.year && artwork.history ? undefined : undefined, // Could link to wiki if exists
     },
     artMedium: artwork.material !== '확인 중' ? artwork.material : undefined,
-    artworkSurface: artwork.material !== '확인 중' ? artwork.material : undefined,
+    artworkSurface: artwork.material !== '확인 중' ? artwork.material : undefined, // Often same for basic schema
     dateCreated: artwork.year !== '확인 중' ? artwork.year : undefined,
-    width: artwork.size !== '확인 중' ? artwork.size : undefined,
+    width: artwork.size !== '확인 중' ? { '@type': 'Distance', name: artwork.size } : undefined,
+    height: artwork.size !== '확인 중' ? { '@type': 'Distance', name: artwork.size } : undefined,
     offers: {
       '@type': 'Offer',
       url: `${SITE_URL}/artworks/${artwork.id}`,
       priceCurrency: 'KRW',
       price: isInquiry ? undefined : numericPrice,
-      priceValidUntil: '2026-01-27',
-      availability: 'https://schema.org/InStock',
+      priceValidUntil: '2026-12-31',
+      availability: artwork.sold ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock',
       seller: {
         '@type': 'Organization',
         name: '한국스마트협동조합',
@@ -145,6 +177,11 @@ export default function ArtworkDetailPage({ params }: Props) {
         '@type': 'PropertyValue',
         name: '에디션',
         value: artwork.edition,
+      },
+      artwork.history && {
+        '@type': 'PropertyValue',
+        name: '작가이력',
+        value: artwork.history.substring(0, 200),
       },
     ].filter(Boolean),
   };

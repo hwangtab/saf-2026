@@ -6,7 +6,6 @@ import SortControls, { SortOption } from './SortControls';
 import SearchBar from './SearchBar';
 import { Artwork } from '@/content/saf2026-artworks';
 import { parsePrice } from '@/lib/parsePrice';
-import { scrollToElement } from '@/lib/scroll';
 
 interface ArtworkGalleryWithSortProps {
   artworks: Artwork[];
@@ -53,6 +52,7 @@ function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithSortProps) {
   const [sortOption, setSortOption] = useState<SortOption>('artist-asc');
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'selling' | 'sold'>('all');
+  const [selectedArtist, setSelectedArtist] = useState<string | null>(null);
 
   // 1. 필터링 (검색어 + 판매상태)
   const filteredArtworks = useMemo(() => {
@@ -76,8 +76,13 @@ function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithSortProps) {
       );
     }
 
+    // Artist Filter
+    if (selectedArtist) {
+      result = result.filter((a) => a.artist === selectedArtist);
+    }
+
     return result;
-  }, [artworks, searchQuery, statusFilter]);
+  }, [artworks, searchQuery, statusFilter, selectedArtist]);
 
   // 2. 정렬 적용
   const sortedArtworks = useMemo(
@@ -85,39 +90,34 @@ function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithSortProps) {
     [filteredArtworks, sortOption]
   );
 
-  // 3. 작가 네비게이션 로직 (이동됨)
+  // 작가 네비게이션 로직 - get unique artists from ORIGINAL sorted list (not filtered)
   const uniqueArtists = useMemo(() => {
+    // When artist is selected, still show all artists for navigation
+    const baseArtworks = selectedArtist ? sortArtworks(artworks, sortOption) : sortedArtworks;
     const seen = new Set<string>();
-    return sortedArtworks
+    return baseArtworks
       .filter((a) => {
         if (seen.has(a.artist)) return false;
         seen.add(a.artist);
         return true;
       })
       .map((a) => a.artist);
-  }, [sortedArtworks]);
+  }, [artworks, sortedArtworks, sortOption, selectedArtist]);
 
-  // Track which artists appear first (for anchor)
-  const firstArtworkByArtist = useMemo(() => {
-    const map = new Map<string, string>();
-    sortedArtworks.forEach((a) => {
-      if (!map.has(a.artist)) {
-        map.set(a.artist, a.id);
-      }
-    });
-    return map;
-  }, [sortedArtworks]);
-
-  const scrollToArtist = (artist: string) => {
-    const artworkId = firstArtworkByArtist.get(artist);
-    if (artworkId) {
-      // Use centralized scroll utility with header-aware offset
-      scrollToElement(`artwork-${artworkId}`, 150); // Additional offset for sticky controls
+  // Handler for artist button click - toggle filter
+  const handleArtistClick = (artist: string) => {
+    if (selectedArtist === artist) {
+      setSelectedArtist(null); // Deselect if same artist clicked
+    } else {
+      setSelectedArtist(artist);
     }
   };
 
-  // 작가명순일 때만 작가 네비게이션 표시 (검색어가 없을 때만, 전체보기일 때만 권장하지만 강제하진 않음)
+  // 작가명순일 때만 작가 네비게이션 표시
   const showArtistNav = sortOption === 'artist-asc' && !searchQuery;
+
+  // Use grid layout when artist is selected (few items)
+  const useGridLayout = !!selectedArtist;
 
   return (
     <div>
@@ -190,9 +190,14 @@ function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithSortProps) {
                 {uniqueArtists.map((artist) => (
                   <button
                     key={artist}
-                    onClick={() => scrollToArtist(artist)}
-                    aria-label={`${artist} 작가 작품으로 이동`}
-                    className="px-2 py-1.5 text-xs sm:text-sm font-medium bg-white border border-gray-200 rounded-full hover:border-primary hover:text-primary hover:bg-primary/5 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 text-center truncate"
+                    onClick={() => handleArtistClick(artist)}
+                    aria-label={`${artist} 작가 작품 보기`}
+                    aria-pressed={selectedArtist === artist}
+                    className={`px-2 py-1.5 text-xs sm:text-sm font-medium border rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 text-center truncate ${
+                      selectedArtist === artist
+                        ? 'bg-charcoal text-white border-charcoal'
+                        : 'bg-white border-gray-200 hover:border-primary hover:text-primary hover:bg-primary/5'
+                    }`}
                   >
                     {artist}
                   </button>
@@ -243,7 +248,7 @@ function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithSortProps) {
         </div>
       ) : (
         <div className={showArtistNav ? 'mt-6' : ''}>
-          <MasonryGallery artworks={sortedArtworks} />
+          <MasonryGallery artworks={sortedArtworks} forceGrid={useGridLayout} />
         </div>
       )}
     </div>

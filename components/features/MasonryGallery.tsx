@@ -7,15 +7,16 @@ import { memo } from 'react';
 
 interface MasonryGalleryProps {
   artworks: Artwork[];
+  forceGrid?: boolean;
 }
 
-function MasonryGallery({ artworks }: MasonryGalleryProps) {
+function MasonryGallery({ artworks, forceGrid }: MasonryGalleryProps) {
   // Helper function to check if a value is displayable
   const isDisplayable = (value: string | undefined): value is string =>
     Boolean(value && value !== '확인 중' && value !== '');
 
-  // For very few items, use a centered grid layout instead of columns
-  const useCenteredGrid = artworks.length <= 3;
+  // For very few items OR when forceGrid is true, use a centered grid layout instead of columns
+  const useCenteredGrid = forceGrid || artworks.length <= 3;
 
   return (
     <div
@@ -37,15 +38,14 @@ function MasonryGallery({ artworks }: MasonryGalleryProps) {
           >
             <div className="bg-gray-100 shadow-sm transition-shadow hover:shadow-md group rounded-sm overflow-hidden">
               <Link href={`/artworks/${artwork.id}`} className="block h-full">
-                <div className="relative w-full overflow-hidden">
+                <div className="relative w-full overflow-hidden aspect-[4/5]">
                   {/* Shimmer placeholder - visible before image loads */}
                   <div className="absolute inset-0 shimmer-loading" />
                   <Image
                     src={`/images/artworks/${artwork.image}`}
                     alt={`${artwork.title} - ${artwork.artist}`}
-                    width={500}
-                    height={500}
-                    className="relative w-full h-auto object-cover transform transition-transform duration-300 group-hover:scale-105"
+                    fill
+                    className="relative object-cover transform transition-transform duration-300 group-hover:scale-105"
                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 pointer-events-none" />
