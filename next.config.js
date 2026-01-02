@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
+    unoptimized: true,
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       // 뉴스 사이트 썸네일 도메인 (content/news.ts에서 사용)

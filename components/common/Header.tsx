@@ -91,13 +91,21 @@ export default function Header() {
     '/news',
     '/artworks',
   ];
-  const hasHero = HERO_PAGES.includes(pathname);
+  // Artwork detail page check: /artworks/[id] but not /artworks
+  const isArtworkDetail = pathname.startsWith('/artworks/') && pathname !== '/artworks';
+
+  // Ensure detail pages are never treated as having a hero header
+  const hasHero = HERO_PAGES.includes(pathname) && !isArtworkDetail;
 
   // Optimize header style logic to prevent stacking context issues
   const getHeaderStyle = () => {
     if (mobileMenuOpen) {
       // Solid white, no backdrop blur (prevents containing block issues for fixed children)
       return 'bg-white shadow-sm border-gray-200/50';
+    }
+    // Force solid header for artwork detail pages
+    if (isArtworkDetail) {
+      return 'bg-white/95 backdrop-blur-md shadow-sm border-gray-200/50';
     }
     if (isScrolled || !hasHero) {
       // Scrolled state OR page without hero -> Translucent white
@@ -111,7 +119,7 @@ export default function Header() {
 
   // If page generally has dark text (no hero) or is scrolled/menu open -> dark text
   // Only transparent hero pages at top get white text
-  const isDarkText = isScrolled || mobileMenuOpen || !hasHero;
+  const isDarkText = isScrolled || mobileMenuOpen || !hasHero || isArtworkDetail;
 
   const textColor = isDarkText ? 'text-charcoal' : 'text-white';
   const logoSrc = isDarkText
