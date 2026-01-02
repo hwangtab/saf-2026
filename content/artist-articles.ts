@@ -530,34 +530,6 @@ export const artistArticles: Record<string, Article[]> = {
       source: 'YTN INSIDE',
     },
   ],
-  최은경: [
-    {
-      url: 'http://www.koreanartistproject.com/kor_artist.art?method=artistView&auth_reg_no=125&flag=artist',
-      title: '최은경 작가 - Korean Artist Project',
-      description: '끝 무렵 시리즈. 캔버스에 유화 작품. 한국 현대미술 작가 프로젝트 소개.',
-      source: 'Korean Artist Project',
-    },
-    {
-      url: 'https://m.artgg.ggcf.kr/pastArtists/%EC%B5%9C%EC%9D%80%EA%B2%BD',
-      title: '최은경 작가 - 아트경기',
-      description:
-        '경기미술품활성화사업 소속 작가. 보통의 의지(2021), 낯빛(2019), 우리 마을의 어스름(2018) 개인전. 경기시각예술 성과발표展, 21세기의 회화, 우리 집은 어디인가? 그룹전 참여.',
-      source: '아트경기',
-    },
-    {
-      url: 'https://cmoa.cheongju.go.kr/cjas/speclExbiView.do?key=106&exbiNo=280',
-      title: '최은경 작가 전시 - 청주미술창작스튜디오',
-      description: '청주미술창작스튜디오에서 열린 최은경 작가 전시. 지난 전시 정보.',
-      source: '청주미술창작스튜디오',
-    },
-    {
-      url: 'https://monthlyart.com/03-exhibition/1402-exhibition-e12/',
-      title: '최은경 어스름 전시 리뷰',
-      description:
-        '월간미술 전시 리뷰. 최은경 작가의 어스름 전시. 작가의 작업 변화와 작품세계 분석.',
-      source: '월간미술',
-    },
-  ],
   한애규: [
     {
       url: 'https://www.daljin.com/column/18726',
