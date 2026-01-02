@@ -1068,7 +1068,7 @@ export const artworks: Artwork[] = [
     edition: '에디션',
     price: '₩1,100,000',
     image: '63.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/83',
     history: '',
   },
   {
@@ -1083,7 +1083,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩700,000',
     image: '64.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/84',
     history:
       '개인전\n2025 이문형개인전 2025 (한뼘미술관,천안)\n\n단체전\n민화의 비상전_제6장.반복과 패턴 (한국미술관,서울) 외 20회\n\n아트페어\n2025 제7회 대한민국 민화아트페어 개인부스전 (setec,서울) 외 1회\n\n수상\n제13회 현대민화공모전 우수상',
   },
@@ -1099,7 +1099,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩840,000',
     image: '65.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/85',
     history:
       '개인전\n2025 이문형개인전 2025 (한뼘미술관,천안)\n\n단체전\n민화의 비상전_제6장.반복과 패턴 (한국미술관,서울) 외 20회\n\n아트페어\n2025 제7회 대한민국 민화아트페어 개인부스전 (setec,서울) 외 1회\n\n수상\n제13회 현대민화공모전 우수상',
   },
@@ -1116,7 +1116,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩7,700,000',
     image: '66.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/86',
     history:
       "초대 개인전\n2025  초대 개인전:과거의 파편과 미래의 조각이 스쳐 지나가는 그날을 기록하다, 갤러리 청풍, 강릉, 대한민국\n\n초대 그룹전\n2025 Future Yarning, Piano Craft Gallery, 보스턴, 미국\n2025 Boundary and Beyond, Arts Collaborative Medford, MA, 미국\n2025 Information overload, 808 Commonwealth gallery, 보스턴, 미국\n2025 Urban Resistance, Arise Artspace, 부산, 대한민국\n2024 Changing tides, Hopkinton Center for the Art, 매사세츠, 미국\n2024 Digital Soup residency at Fountain street art Sidewalk gallery, 보스턴, 미국\n2023 Digital Soup residency at Cyber Art Gallery, 보스턴, 미국\n2023 Water, Ancient Greek philosophy and in Western alchemy,LaguanaART.com Gallery, Mission Viejo, 캘리포니아, 미국\n2023 Boston MFA Mixer, Nancy and Edward Roberts Gallery,Lesely UniversityCollege of Art and Design, 보스턴, 미국\n2022 What's Next:Perspectives, Micro to Macro, Emerson College Media Art Gallery, 보스턴, 미국\n2022 Unfolding, Behind VS Shadow, 보스턴, 미국\n2022 Burning Man Decompression, Knockdown Center, 뉴욕, 미국\n2022 Banging the Door, Piano Craft Gallery, 보스턴, 미국\n2021 “God of Water”, Bower Union, 뉴욕, 미국",
   },
@@ -1133,7 +1133,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩3,500,000',
     image: '67.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/87',
     history:
       "초대 개인전\n2025  초대 개인전:과거의 파편과 미래의 조각이 스쳐 지나가는 그날을 기록하다, 갤러리 청풍, 강릉, 대한민국\n\n초대 그룹전\n2025 Future Yarning, Piano Craft Gallery, 보스턴, 미국\n2025 Boundary and Beyond, Arts Collaborative Medford, MA, 미국\n2025 Information overload, 808 Commonwealth gallery, 보스턴, 미국\n2025 Urban Resistance, Arise Artspace, 부산, 대한민국\n2024 Changing tides, Hopkinton Center for the Art, 매사세츠, 미국\n2024 Digital Soup residency at Fountain street art Sidewalk gallery, 보스턴, 미국\n2023 Digital Soup residency at Cyber Art Gallery, 보스턴, 미국\n2023 Water, Ancient Greek philosophy and in Western alchemy,LaguanaART.com Gallery, Mission Viejo, 캘리포니아, 미국\n2023 Boston MFA Mixer, Nancy and Edward Roberts Gallery,Lesely UniversityCollege of Art and Design, 보스턴, 미국\n2022 What's Next:Perspectives, Micro to Macro, Emerson College Media Art Gallery, 보스턴, 미국\n2022 Unfolding, Behind VS Shadow, 보스턴, 미국\n2022 Burning Man Decompression, Knockdown Center, 뉴욕, 미국\n2022 Banging the Door, Piano Craft Gallery, 보스턴, 미국\n2021 “God of Water”, Bower Union, 뉴욕, 미국",
   },
@@ -1150,7 +1150,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     image: '68.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/88',
     history:
       '홍익대학교 미술대학 졸업\n\n개인전\n2025  더불어 숲, 갤러리오르, 용인\n2024  숲, 순환과 치유, 벗이미술관 갤러리, 용인\n2023  여름 숲에서, 동백문고갤러리 초대전, 용인\n2022  봄이 옵니다, 아산병원갤러리 초대전, 서울\n2021  그대의 숲, 갤러리가비 초대전, 서울\n2021  작은 숲, 돈의문박물관 작가갤러리 선정작가전, 서울\n2020  당신이 그리워질 때, 갤러리가비 초대전, 서울\n2019  봄, 날아올라 피다, 대림창고갤러리 초대전, 서울\n2017  기억의 숲, 갤러리가비 선정작가전, 서울\n2016  분홍 숲, 갤러리라이프 초대전, 서울\n2015  실로 그린 숲, 성북예술창작센터 갤러리맺음 선정작가전, 서울\n2014  숲. 숨. 쉼, THE K갤러리 초대전, 서울\n2012  실로 그린 숲, JH갤러리 선정작가전, 서울\n2011  실로 그린 숲, KB국민은행 서초PB센터 초대전, 서울\n2009  초록이 그리울 때, 갤러리토포하우스, 서울\n\n단체전\n2025  50인의 미리 봄봄, 이글락아트스페이스, 서울\n2024  아트경기 런 페스티벌, 갤러리끼, 파주\n2024  100인 100작품전, 아트리갤러리, 서울\n2024  갤러리71 아트마켓, 갤러리71, 서울\n2023  마중물 아트마켓, 김리아갤러리, 서울\n2023  아트페스타 제주, 제주국제컨벤션센터, 제주\n2022  평화를 준수하라, 전태일기념관, 서울\n2021  업클로즈03, 플랫폼엘뮤지엄, 서울\n2021  아트 DMZ 페스티벌, 스튜디오끼, 파주\n2021  신장동 할로윈아트마켓, 협업공간한치각, 평택\n2021  아트경기x 아트로드77. 갤러리움, 파주헤이리\n2021  자연과 인간을 잇는 생태예술, 경기도청 북부청사 경기천년길 갤러리, 의정부\n2020  제38회 화랑미술제, COEX, 서울\n2019  아트 리빙하우스 아트페어, 경기상상캠퍼스 공간1986, 수원\n2019  아트경기x 유니온 아트페어, 에스팩토리, 서울\n2019  제5회 DOUZ전, 이정아갤러리 공모작가전, 서울\n2018  제3회 아트경기 우리집 그림 한점, 이천세계도자센터& 경기도순회전시장\n2018  제36회 화랑미술제, COEX, 서울\n2017  제51회 한국미술협회전, 예술의전당 한가람미술관, 서울\n2016  싱가폴 어포더블 아트페어, F1Pit 빌딩, 싱가폴\n2015  즐거운 시작, 희수갤러리 공모작가전, 서울\n2015  꿈과 마주치다, 갤러리일호 공모작가전, 서울\n2013  제2회 로컬컬러뉴욕공모전, 뉴욕 맨하탄\n2013  제47회 한국미술협회전, 예술의전당 한가람미술관, 서울\n2013  행복한 화요일, KB국민은행 스타시티PB센터, 서울\n2012  일곱개의 시선, JH갤러리 공모작가전, 서울\n2011  예술의 전당 작가스튜디오전Ⅱ, 예술의전당 갤러리7, 서울\n2011  제45회 한국미술협회전, SETEC, 서울\n2011  제6회 경향미술대전, 경향갤러리, 서울\n2010  AW컨벤션센터 갤러리AW 작가공모전, AW컨벤션센터, 서울\n2010  제14회 나혜석 미술대전, 수원미술관, 수원\n2010  The Realism, 갤러리가가 공모작가전, 서울\n2009  제38회 구상전, 성남아트센터, 분당\n2009  현대미술&빈티지, 갤러리영, 서울\n2008  한미교류전, 갤러리훈 뉴욕, 갤러리호 서울\n2008  제1회 예술의 전당 작가스튜디오전, 예술의전당 한가람미술관, 서울\n\n수상\n2025  용인특례시 문화예술공모사업 선정작가\n2024  용인문화재단 전시문화공모사업 선정작가\n2021  송정미술문화재단 창작지원 선정작가\n2021  경기문화재단 선정작가\n2020  서울시 공모 돈의문박물관마을 작가갤러리 선정작가\n2019  경기문화재단 선정작가\n2018  경기문화재단 선정작가\n2015  서울문화재단 주최, 후원 성북예술창작센터 선정작가\n2013  제2회 로컬컬러 뉴욕공모전 우수상\n2011  제6회 경향미술대전 장려상\n2010  제14회 나혜석 미술대전 입선\n2009  제38회 구상전 입선\n\n기사\n2025.11.05  [용인시민신문] 숲과 더불어 사는 삶 화폭에...홍진희 개인전\n2025.10.31  [코리아아트뉴스] 실로 짜낸 숲의 감성 홍진희 개인전, 용인서 개막\n2024.11.01  [용인시민신문] ‘눈으로 만나는 자연의 아름다움’ 벗이미술관 홍진희 개인전\n2023.07.16  [용인시민신문] 실로 그린 여름 숲은 어떤 모습일까?... 홍진희, 용인 동백문고 개인전\n2020.02.19  [투데이갤러리] 홍진희의 ‘그날 오후’\n2020.02.23  [e갤러리] 실타래 몸부림처럼 봄이 온다...홍진희 ‘봄날 아침‘\n2016.05     개인전 분홍 숲 https://www.youtube.com/watch?v=Iaa8uGL9Z9Q\n2016.06     Journal of Creative Arts & Minds 인터뷰기사 (Jumbo Arts International Red Springs, North Carolina, USA)\n2015.05.19  서울문화재단 네이버 블로그 인터뷰기사 (http://me2.do/FeH7rkHr) 실로 자연과 열정을 그려내는 작가 홍진희<실로 그린 숲>\n2011.06.01  시사저널1128호 ‘여인의 손에서 새로 태어난 실들 화폭 속 숲으로 우거지다’\n2011.09.30.  여성가족부 위민넷 공식블로그 ‘무모한 도전? 아니 무한 도전! 실작가 홍진희\n\n\n출간\n2012.07  Healing Forest created by threads Spring Summer, Fall and Winter (주)오렌지디지트코리아\nhttps://youtu.be/2y-6nsIQK_M?si=bsSCmjLs3F71InC8\n2012.11  A Love story of Altair and Vega (주)오렌지디지트코리아\nhttps://youtu.be/2y-6nsIQK_M?si=bsSCmjLs3F71InC8\n\n협찬\n2010  SBS TV 드라마 <커피하우스> <여자를 몰라> 그림협조\n\n작품소장\n국립현대미술관(미술은행), 경기도미술관, 산학협동재단, 해성한의원(강남분원), (주)이와이드플러스, (주)연홍개발, 까페코인(명동1호점), 갤러리가비, JH갤러리, THE k갤러리, 대림창고갤러리, 그 외 개인소장 다수\n\n현재  한국미술협회회원',
   },
@@ -1167,7 +1167,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     image: '69.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/89',
     history:
       '홍익대학교 미술대학 졸업\n\n개인전\n2025  더불어 숲, 갤러리오르, 용인\n2024  숲, 순환과 치유, 벗이미술관 갤러리, 용인\n2023  여름 숲에서, 동백문고갤러리 초대전, 용인\n2022  봄이 옵니다, 아산병원갤러리 초대전, 서울\n2021  그대의 숲, 갤러리가비 초대전, 서울\n2021  작은 숲, 돈의문박물관 작가갤러리 선정작가전, 서울\n2020  당신이 그리워질 때, 갤러리가비 초대전, 서울\n2019  봄, 날아올라 피다, 대림창고갤러리 초대전, 서울\n2017  기억의 숲, 갤러리가비 선정작가전, 서울\n2016  분홍 숲, 갤러리라이프 초대전, 서울\n2015  실로 그린 숲, 성북예술창작센터 갤러리맺음 선정작가전, 서울\n2014  숲. 숨. 쉼, THE K갤러리 초대전, 서울\n2012  실로 그린 숲, JH갤러리 선정작가전, 서울\n2011  실로 그린 숲, KB국민은행 서초PB센터 초대전, 서울\n2009  초록이 그리울 때, 갤러리토포하우스, 서울\n\n단체전\n2025  50인의 미리 봄봄, 이글락아트스페이스, 서울\n2024  아트경기 런 페스티벌, 갤러리끼, 파주\n2024  100인 100작품전, 아트리갤러리, 서울\n2024  갤러리71 아트마켓, 갤러리71, 서울\n2023  마중물 아트마켓, 김리아갤러리, 서울\n2023  아트페스타 제주, 제주국제컨벤션센터, 제주\n2022  평화를 준수하라, 전태일기념관, 서울\n2021  업클로즈03, 플랫폼엘뮤지엄, 서울\n2021  아트 DMZ 페스티벌, 스튜디오끼, 파주\n2021  신장동 할로윈아트마켓, 협업공간한치각, 평택\n2021  아트경기x 아트로드77. 갤러리움, 파주헤이리\n2021  자연과 인간을 잇는 생태예술, 경기도청 북부청사 경기천년길 갤러리, 의정부\n2020  제38회 화랑미술제, COEX, 서울\n2019  아트 리빙하우스 아트페어, 경기상상캠퍼스 공간1986, 수원\n2019  아트경기x 유니온 아트페어, 에스팩토리, 서울\n2019  제5회 DOUZ전, 이정아갤러리 공모작가전, 서울\n2018  제3회 아트경기 우리집 그림 한점, 이천세계도자센터& 경기도순회전시장\n2018  제36회 화랑미술제, COEX, 서울\n2017  제51회 한국미술협회전, 예술의전당 한가람미술관, 서울\n2016  싱가폴 어포더블 아트페어, F1Pit 빌딩, 싱가폴\n2015  즐거운 시작, 희수갤러리 공모작가전, 서울\n2015  꿈과 마주치다, 갤러리일호 공모작가전, 서울\n2013  제2회 로컬컬러뉴욕공모전, 뉴욕 맨하탄\n2013  제47회 한국미술협회전, 예술의전당 한가람미술관, 서울\n2013  행복한 화요일, KB국민은행 스타시티PB센터, 서울\n2012  일곱개의 시선, JH갤러리 공모작가전, 서울\n2011  예술의 전당 작가스튜디오전Ⅱ, 예술의전당 갤러리7, 서울\n2011  제45회 한국미술협회전, SETEC, 서울\n2011  제6회 경향미술대전, 경향갤러리, 서울\n2010  AW컨벤션센터 갤러리AW 작가공모전, AW컨벤션센터, 서울\n2010  제14회 나혜석 미술대전, 수원미술관, 수원\n2010  The Realism, 갤러리가가 공모작가전, 서울\n2009  제38회 구상전, 성남아트센터, 분당\n2009  현대미술&빈티지, 갤러리영, 서울\n2008  한미교류전, 갤러리훈 뉴욕, 갤러리호 서울\n2008  제1회 예술의 전당 작가스튜디오전, 예술의전당 한가람미술관, 서울\n\n수상\n2025  용인특례시 문화예술공모사업 선정작가\n2024  용인문화재단 전시문화공모사업 선정작가\n2021  송정미술문화재단 창작지원 선정작가\n2021  경기문화재단 선정작가\n2020  서울시 공모 돈의문박물관마을 작가갤러리 선정작가\n2019  경기문화재단 선정작가\n2018  경기문화재단 선정작가\n2015  서울문화재단 주최, 후원 성북예술창작센터 선정작가\n2013  제2회 로컬컬러 뉴욕공모전 우수상\n2011  제6회 경향미술대전 장려상\n2010  제14회 나혜석 미술대전 입선\n2009  제38회 구상전 입선\n\n기사\n2025.11.05  [용인시민신문] 숲과 더불어 사는 삶 화폭에...홍진희 개인전\n2025.10.31  [코리아아트뉴스] 실로 짜낸 숲의 감성 홍진희 개인전, 용인서 개막\n2024.11.01  [용인시민신문] ‘눈으로 만나는 자연의 아름다움’ 벗이미술관 홍진희 개인전\n2023.07.16  [용인시민신문] 실로 그린 여름 숲은 어떤 모습일까?... 홍진희, 용인 동백문고 개인전\n2020.02.19  [투데이갤러리] 홍진희의 ‘그날 오후’\n2020.02.23  [e갤러리] 실타래 몸부림처럼 봄이 온다...홍진희 ‘봄날 아침‘\n2016.05     개인전 분홍 숲 https://www.youtube.com/watch?v=Iaa8uGL9Z9Q\n2016.06     Journal of Creative Arts & Minds 인터뷰기사 (Jumbo Arts International Red Springs, North Carolina, USA)\n2015.05.19  서울문화재단 네이버 블로그 인터뷰기사 (http://me2.do/FeH7rkHr) 실로 자연과 열정을 그려내는 작가 홍진희<실로 그린 숲>\n2011.06.01  시사저널1128호 ‘여인의 손에서 새로 태어난 실들 화폭 속 숲으로 우거지다’\n2011.09.30.  여성가족부 위민넷 공식블로그 ‘무모한 도전? 아니 무한 도전! 실작가 홍진희\n\n\n출간\n2012.07  Healing Forest created by threads Spring Summer, Fall and Winter (주)오렌지디지트코리아\nhttps://youtu.be/2y-6nsIQK_M?si=bsSCmjLs3F71InC8\n2012.11  A Love story of Altair and Vega (주)오렌지디지트코리아\nhttps://youtu.be/2y-6nsIQK_M?si=bsSCmjLs3F71InC8\n\n협찬\n2010  SBS TV 드라마 <커피하우스> <여자를 몰라> 그림협조\n\n작품소장\n국립현대미술관(미술은행), 경기도미술관, 산학협동재단, 해성한의원(강남분원), (주)이와이드플러스, (주)연홍개발, 까페코인(명동1호점), 갤러리가비, JH갤러리, THE k갤러리, 대림창고갤러리, 그 외 개인소장 다수\n\n현재  한국미술협회회원',
   },
@@ -1184,7 +1184,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩6,000,000',
     image: '70.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/90',
     history:
       '* 추계예술대학교 서양화과 졸업\n* 동국대학교 교육대학원 미술교육과 졸업\n\n* 석사학위 취득 논문: 고암 이응노 작품 연구\n* 화집발간: A Collection of Kim Dong Seok Paintings (도서출판, 솔과학, 2019)\n길...어디에도 있었다 (도서출판, 차이DEU, 2017)\nTHE PATH (도서출판, 차이DEU, 2017)\n\n* 개인전 31회 (서울, 순천, 부산, 원주, 구미, 북경, LA)\n* 아트페어 41회 (서울, 부산, 대구, 청주, 광주, 상하이, 북경, 홍콩, LA, 뉴욕, 덴마크, 싱가포르)\n* 기획초대전 및 단체전 610여 회 참가\n\n* 교육경력 및 주요경력\n삼육의명대학, 삼육대학교, 추계예술대학교, 백석예술대학교, 전남대학교, 동국대학교 외래교수 역임, 북부교육청 미술영재교육, 강동교육청 미술영재교육, (사)한국미술협회 사무국장, (사)한국미술협회 송파지부장, 송파미술가협회 회장 역임\n\n* 주요심사위원 및 운영위원\n한성백제미술대상전 상임추진위원장, 대한민국평화미술대전, 행주미술대전, 심사임당미술대전, 대한민국문화미술대전, 광양미술대전, 충남미술대전, 순천미술대전, 여수바다사생미술제, 호국미술대전, 공무원미술대전 심사위원 등 전국미술대전 운영 및 심사위원 다수\n\n* 주요작품소장:\n국립현대미술관(미술은행), 한국불교미술박물관, 묵산미술박물관, 양평군립미술관, 김환기미술관, 전남도립미술관, 서울아산병원, SK 텔레콤 본사, 프랑스 대통령궁, 중국 엔따이 문경대학교, 국립순천대학교, 추계예술대학교, 송파구청, 안산문화예술의전당, 아침편지문화재단, 국민일보, 국방문화연구센터, 로얄스퀘어호텔, 서울동부지방검찰청, ㈜신풍제지, ㈜오알켐, ㈜김천 포도CC, 현대심리학개론 대학교교재 작품수록 출판사 솔과학, KBS, NETFLIX, OBS 등 출연 및 작품협찬, ㈜교학도서(고등학교 미술교과서 작품수록) 외 개인소장 다수\n\n* 현: 전업작가, 국제저작권자협회 회원(©ADAGP), (사)한국미술협회, 송파미술가협회, 누리무리 회원',
   },
@@ -1201,7 +1201,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩9,000,000',
     image: '71.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/91',
     history:
       '* 추계예술대학교 서양화과 졸업\n* 동국대학교 교육대학원 미술교육과 졸업\n\n* 석사학위 취득 논문: 고암 이응노 작품 연구\n* 화집발간: A Collection of Kim Dong Seok Paintings (도서출판, 솔과학, 2019)\n길...어디에도 있었다 (도서출판, 차이DEU, 2017)\nTHE PATH (도서출판, 차이DEU, 2017)\n\n* 개인전 31회 (서울, 순천, 부산, 원주, 구미, 북경, LA)\n* 아트페어 41회 (서울, 부산, 대구, 청주, 광주, 상하이, 북경, 홍콩, LA, 뉴욕, 덴마크, 싱가포르)\n* 기획초대전 및 단체전 610여 회 참가\n\n* 교육경력 및 주요경력\n삼육의명대학, 삼육대학교, 추계예술대학교, 백석예술대학교, 전남대학교, 동국대학교 외래교수 역임, 북부교육청 미술영재교육, 강동교육청 미술영재교육, (사)한국미술협회 사무국장, (사)한국미술협회 송파지부장, 송파미술가협회 회장 역임\n\n* 주요심사위원 및 운영위원\n한성백제미술대상전 상임추진위원장, 대한민국평화미술대전, 행주미술대전, 심사임당미술대전, 대한민국문화미술대전, 광양미술대전, 충남미술대전, 순천미술대전, 여수바다사생미술제, 호국미술대전, 공무원미술대전 심사위원 등 전국미술대전 운영 및 심사위원 다수\n\n* 주요작품소장:\n국립현대미술관(미술은행), 한국불교미술박물관, 묵산미술박물관, 양평군립미술관, 김환기미술관, 전남도립미술관, 서울아산병원, SK 텔레콤 본사, 프랑스 대통령궁, 중국 엔따이 문경대학교, 국립순천대학교, 추계예술대학교, 송파구청, 안산문화예술의전당, 아침편지문화재단, 국민일보, 국방문화연구센터, 로얄스퀘어호텔, 서울동부지방검찰청, ㈜신풍제지, ㈜오알켐, ㈜김천 포도CC, 현대심리학개론 대학교교재 작품수록 출판사 솔과학, KBS, NETFLIX, OBS 등 출연 및 작품협찬, ㈜교학도서(고등학교 미술교과서 작품수록) 외 개인소장 다수\n\n* 현: 전업작가, 국제저작권자협회 회원(©ADAGP), (사)한국미술협회, 송파미술가협회, 누리무리 회원',
   },
@@ -1218,7 +1218,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩800,000',
     image: '72.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/92',
     history:
       '학력\n서강대학교 전문대학원 철학과 석사졸업\n인천가톨릭대학교 전통종교미술학과 학사졸업\n\n개인전\n2024 c ; stand up for yourself, ㅁ, (갤러리오우도, 서울)\n2020 c ; summer, (양출서울, 서울)\n2013 empty interval, (갤러리더케이, 서울)\n2008 clean, Cloud, (갤러리호시, 일본 동경)\n\n단체전\n2023 Eternal Moments, (갤러리그라프, 서울)\n2022 갤러리 개관전, (Edition, 캐나다 몬트리올)\n2022 Selasart International Visual Art Exhibition, (Ohana Cafe, 인도네시아 메트로)\n2020 TRiCERA PRESENTS SPECIAL PROMOTION (Shinwa Auction, 일본 동경)\n2017 알록달록 아메바 놀이터, (문화비축기지, 서울)\n2014 그들이 보는 세상-세 개의 예민한 시선, (조선대학교미술관, 광주)\n2011 The Blank, (키미아트, 서울)\n2009 광주&서울시립미술관 창작스튜디오 교류 N0..., (광주시립미술관, 광주)\n2009 THE FORGOTTEN TIME, (Love2arts gallery, 벨기에 엔트워프)\n2008 99Tents, 99 Dreams, One World, (좌우미술관, 중국 북경)\n\n레지던시\n2009 광주시립미술관 창작스튜디오 레지던시, (광주)\n2008 하대리 여름숲속미술제 레지던시, (강원도)',
   },
@@ -1235,7 +1235,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     image: '73.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/93',
     history:
       '학력\n서강대학교 전문대학원 철학과 석사졸업\n인천가톨릭대학교 전통종교미술학과 학사졸업\n\n개인전\n2024 c ; stand up for yourself, ㅁ, (갤러리오우도, 서울)\n2020 c ; summer, (양출서울, 서울)\n2013 empty interval, (갤러리더케이, 서울)\n2008 clean, Cloud, (갤러리호시, 일본 동경)\n\n단체전\n2023 Eternal Moments, (갤러리그라프, 서울)\n2022 갤러리 개관전, (Edition, 캐나다 몬트리올)\n2022 Selasart International Visual Art Exhibition, (Ohana Cafe, 인도네시아 메트로)\n2020 TRiCERA PRESENTS SPECIAL PROMOTION (Shinwa Auction, 일본 동경)\n2017 알록달록 아메바 놀이터, (문화비축기지, 서울)\n2014 그들이 보는 세상-세 개의 예민한 시선, (조선대학교미술관, 광주)\n2011 The Blank, (키미아트, 서울)\n2009 광주&서울시립미술관 창작스튜디오 교류 N0..., (광주시립미술관, 광주)\n2009 THE FORGOTTEN TIME, (Love2arts gallery, 벨기에 엔트워프)\n2008 99Tents, 99 Dreams, One World, (좌우미술관, 중국 북경)\n\n레지던시\n2009 광주시립미술관 창작스튜디오 레지던시, (광주)\n2008 하대리 여름숲속미술제 레지던시, (강원도)',
   },
@@ -1251,7 +1251,7 @@ export const artworks: Artwork[] = [
     edition: '에디션1/5',
     price: '₩1,000,000',
     image: '74.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/94',
     history:
       '홍익대학교 미술대학 판화과 및 동 대학원 졸업\n\n출간 아트만두의 ‘목표는 방구防口’다 <한길사 / 2022>\n아트만두의 ‘비틀뉴스’ <붓과펜 / 2025>\n\n수상 2021 SICAF 서울국제만화애니메이션페스티벌 코믹부문 공로상 <서울>\n2019 The Brandlaureate World Bestbrands Awards 2019\n- 퍼스널 아티스트 부문 수상 <10월 31일, 샹그릴라 호텔 타워 볼룸, 싱가포르>\n\n개인전\n2026 아트만두의 ‘비틀뉴스’ <Born Star Rocks Gallery, 뉴욕>\n2022 캐리커처戰 ‘이색기이 耳塞奇異’\n캐리커처戰 ‘눈 깔아’\n아트만두의 ‘인간대백과사전’ <한국만화영상진흥원 제2기획전시실, 부천>\n2022 캐리커쳐 초대전 ‘우리가 사랑한 사람들’ <시카고 알바니팍 공립도서관, 미국> 외 9회\n\n그룹전\n2025 국제풍자만화전 –동아시아의 눈\n<도쿄 사이타마 미디어타워 뉴스아트 갤러리워크, 도쿄>\nByond the People전 <마루아트, 서울>\n한국샐라티스트협회전, 한-벨 수교 120주년기념한국만화특별전\n<벨기에한국문화원, 벨기에>\n생쥐스트르마르텔 국제시사만화살롱展 <생쥐스트르마르텔, 프랑스>\n등 다수',
   },
@@ -1267,7 +1267,7 @@ export const artworks: Artwork[] = [
     edition: '에디션1/5',
     price: '₩1,000,000',
     image: '75.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/95',
     history:
       '홍익대학교 미술대학 판화과 및 동 대학원 졸업\n\n출간 아트만두의 ‘목표는 방구防口’다 <한길사 / 2022>\n아트만두의 ‘비틀뉴스’ <붓과펜 / 2025>\n\n수상 2021 SICAF 서울국제만화애니메이션페스티벌 코믹부문 공로상 <서울>\n2019 The Brandlaureate World Bestbrands Awards 2019\n- 퍼스널 아티스트 부문 수상 <10월 31일, 샹그릴라 호텔 타워 볼룸, 싱가포르>\n\n개인전\n2026 아트만두의 ‘비틀뉴스’ <Born Star Rocks Gallery, 뉴욕>\n2022 캐리커처戰 ‘이색기이 耳塞奇異’\n캐리커처戰 ‘눈 깔아’\n아트만두의 ‘인간대백과사전’ <한국만화영상진흥원 제2기획전시실, 부천>\n2022 캐리커쳐 초대전 ‘우리가 사랑한 사람들’ <시카고 알바니팍 공립도서관, 미국> 외 9회\n\n그룹전\n2025 국제풍자만화전 –동아시아의 눈\n<도쿄 사이타마 미디어타워 뉴스아트 갤러리워크, 도쿄>\nByond the People전 <마루아트, 서울>\n한국샐라티스트협회전, 한-벨 수교 120주년기념한국만화특별전\n<벨기에한국문화원, 벨기에>\n생쥐스트르마르텔 국제시사만화살롱展 <생쥐스트르마르텔, 프랑스>\n등 다수',
   },
@@ -1284,7 +1284,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     image: '76.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/96',
     history: '',
   },
   {
@@ -1300,7 +1300,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     image: '77.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/97',
     history: '',
   },
   {
@@ -1316,7 +1316,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     image: '78.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/98',
     history:
       '홍익대학교 미술대학 동양화과 박사\n교육경력_울산대학교 객원교수 역임.\n경성대학교, 조선대학교, 울산대학교 강사\n\n개인전_\n2024년 반추_反芻_Rumination (가기갤러리_울산)\n2022년 바운더리(Boundary)여행 (북구문화예술회관_울산)\n2017년 The Journey to The Recovery (가나아트스페이스_서울)\n2016년 The Journey to The Recovery 초대전 (Caffebene Time Square_뉴욕·미국)\n2015년 The Journey to The Recovery 초대전 (THE WHEEL HOUSE_뉴욕·미국)\n2012년 Only Dream-ing Traveler 기획전 (THE K Gallery_서울, 화봉갤러리초대전_서울)\n2010년 Only Dream-ing Traveler 기획전(Gallery SU_서울)\n2009년 Joy of Voyage 초대전 (Gallery HOSI_동경·일본)\nJoy of Voyage 기획전 (영아트 갤러리_서울)\n2008년 일탈 속 즐거움 기획전(Gallery Young_서울)\n2007년 일탈 속 즐거움 (Gallery Spacs pause_동경·일본)\n\n단체전 _\n2025년 세상에 맞닿는 시도: 공유 (레온갤러리_서울)\n2024년 Our Summer (VVS MUSEUM_서울)\n“DREAM” (미개척지 스튜디오_서울)\n2023년 색채로 기록한 시간의 역사 展 (인사아트센터_서울\n울산문화박람회&울산에이팜 초대전 (유에코_울산)\n2022년 공존하는 세 개의 시선 기획전 (한국에너지공단_울산)\n우리에게도 여름방학이 필요해 초대전 (F1963_부산)\n8가지 여정 초대전 (교문갤러리_부산)\n2021년 일상을 노래하다(백송화랑_서울)\n辛丑年 한국화전 초대전 (Gallery hoM_서울)\n여행 그 너머 초대전 (현대미술관_울산)\n2020년 마음으로 보는 빛과 색 (동덕아트갤러리_서울)\n2018년 아시아프&히든아티스트 페스티벌 (동대문디자인플라자(DDP)_서울) 그 외다수\n\n레지던시_ ARPNY_ Artist Residency Program_뉴욕·미국\n작품소장_ 울산문화예술회관, 울산대학교, 울주세계산악영화제, CK 치과병원, CNP압구정 차앤박피부과 기업체 및 개인 소장 등',
   },
@@ -1333,7 +1333,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩3,000,000',
     image: '79.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/99',
     history:
       '홍익대학교 미술대학 동양화과 박사\n교육경력_울산대학교 객원교수 역임.\n경성대학교, 조선대학교, 울산대학교 강사\n\n개인전_\n2024년 반추_反芻_Rumination (가기갤러리_울산)\n2022년 바운더리(Boundary)여행 (북구문화예술회관_울산)\n2017년 The Journey to The Recovery (가나아트스페이스_서울)\n2016년 The Journey to The Recovery 초대전 (Caffebene Time Square_뉴욕·미국)\n2015년 The Journey to The Recovery 초대전 (THE WHEEL HOUSE_뉴욕·미국)\n2012년 Only Dream-ing Traveler 기획전 (THE K Gallery_서울, 화봉갤러리초대전_서울)\n2010년 Only Dream-ing Traveler 기획전(Gallery SU_서울)\n2009년 Joy of Voyage 초대전 (Gallery HOSI_동경·일본)\nJoy of Voyage 기획전 (영아트 갤러리_서울)\n2008년 일탈 속 즐거움 기획전(Gallery Young_서울)\n2007년 일탈 속 즐거움 (Gallery Spacs pause_동경·일본)\n\n단체전 _\n2025년 세상에 맞닿는 시도: 공유 (레온갤러리_서울)\n2024년 Our Summer (VVS MUSEUM_서울)\n“DREAM” (미개척지 스튜디오_서울)\n2023년 색채로 기록한 시간의 역사 展 (인사아트센터_서울\n울산문화박람회&울산에이팜 초대전 (유에코_울산)\n2022년 공존하는 세 개의 시선 기획전 (한국에너지공단_울산)\n우리에게도 여름방학이 필요해 초대전 (F1963_부산)\n8가지 여정 초대전 (교문갤러리_부산)\n2021년 일상을 노래하다(백송화랑_서울)\n辛丑年 한국화전 초대전 (Gallery hoM_서울)\n여행 그 너머 초대전 (현대미술관_울산)\n2020년 마음으로 보는 빛과 색 (동덕아트갤러리_서울)\n2018년 아시아프&히든아티스트 페스티벌 (동대문디자인플라자(DDP)_서울) 그 외다수\n\n레지던시_ ARPNY_ Artist Residency Program_뉴욕·미국\n작품소장_ 울산문화예술회관, 울산대학교, 울주세계산악영화제, CK 치과병원, CNP압구정 차앤박피부과 기업체 및 개인 소장 등',
   },
@@ -1350,7 +1350,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩1,800,000',
     image: '80.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/100',
     history: '',
   },
   {
@@ -1366,7 +1366,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩3,600,000',
     image: '81.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/101',
     history: '',
   },
   {
@@ -1382,7 +1382,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     image: '82.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/102',
     history: '',
   },
   {
@@ -1398,7 +1398,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩5,400,000',
     image: '83.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/103',
     history: '',
   },
   {
@@ -1413,7 +1413,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     image: '84.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/104',
     history:
       '1955년 부산 생~\n1983년 부산수산대학 식품공학과 졸업\n\n개인전\n1989년 우리들의 일상-I : 그림미당민-서울,\n온다라미술관 초대전-전주\n1992년 우리들의 일상-II :그림마당 민-서울,\n온다라 미술관 초대전-전주,\n갤럴리 누보 초대전-부산\n2005년 Good days! 안녕한 일상들 (덕원갤러리-서울)\n2006년 Good days!! (부산민주공원 초대전-부산)\n2010년  Old story (박진화 미술관 초대전-인천)\n2018년 In the paradise (나무아트 갤러리 초대전-서울)\n2021년 지구 표류기 (부산 민주공원 초대전-부산)\n2023년 거리에서 (나무아트 갤러리 초대전-서울)\n2025년  홀로이즘(From the Invisible to the Visible)전   Artverse in Paris\n\n단체전 약 150회\n2026\n2025     판을 뒤집다(경기미술관)\n호수에 뜬 달그림자와 같은 헛소리展 (아르떼 숲)\n5.18 민중항쟁 45주년 미디어 아트 특별전(REGENERATION)   대안예술공간 이포\n평화 문화제 (동두천 평화의 깃발전)  소요산 동두천 옛 성병관리소 농성장 앞 주차장\n2025 세계예술인 한반도 평화대회‘Art Revolution’전  헤이리 예술마을 갤러리 한길\n정선 국제책사랑 장서표전\n빛의 연대기전 / 민주화운동 기념관',
   },
@@ -1429,7 +1429,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩2,500,000',
     image: '85.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/105',
     history:
       '1955년 부산 생~\n1983년 부산수산대학 식품공학과 졸업\n\n개인전\n1989년 우리들의 일상-I : 그림미당민-서울,\n온다라미술관 초대전-전주\n1992년 우리들의 일상-II :그림마당 민-서울,\n온다라 미술관 초대전-전주,\n갤럴리 누보 초대전-부산\n2005년 Good days! 안녕한 일상들 (덕원갤러리-서울)\n2006년 Good days!! (부산민주공원 초대전-부산)\n2010년  Old story (박진화 미술관 초대전-인천)\n2018년 In the paradise (나무아트 갤러리 초대전-서울)\n2021년 지구 표류기 (부산 민주공원 초대전-부산)\n2023년 거리에서 (나무아트 갤러리 초대전-서울)\n2025년  홀로이즘(From the Invisible to the Visible)전   Artverse in Paris\n\n단체전 약 150회\n2026\n2025     판을 뒤집다(경기미술관)\n호수에 뜬 달그림자와 같은 헛소리展 (아르떼 숲)\n5.18 민중항쟁 45주년 미디어 아트 특별전(REGENERATION)   대안예술공간 이포\n평화 문화제 (동두천 평화의 깃발전)  소요산 동두천 옛 성병관리소 농성장 앞 주차장\n2025 세계예술인 한반도 평화대회‘Art Revolution’전  헤이리 예술마을 갤러리 한길\n정선 국제책사랑 장서표전\n빛의 연대기전 / 민주화운동 기념관',
   },
@@ -1446,7 +1446,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩5,000,000',
     image: '86.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/106',
     history:
       '학력\n- 2016 무사시노 미술대학 ( Musashino Art University ) 유화학과 유화 전공\n\n개인전\n- 2025 갤러리 충장 22 초대전 < refresh Gwangju >\n- 2025 도화헌 미술관 초대전 < refresh Goheung >\n- 2024 갤러리 177 초대전 < refresh Busan >\n- 2024 노을 아티잔 센터 초대전 < refresh Seoul >\n- 2024 설미재 미술관 초대전 < refresh >\n- 2020 아트 스페이스 앳 개인전 < 어흥전 >\n- 2017 THE PLOT GALLERY 초대전 <그림이 싱싱해>\n- 2017 BANKAN encore 초대전 ( Japan )\n- 2015 BANKAN 초대전 ( Japan )\n\n단체전\n- 2024 N2 아트스페이스 단체전 < 동시다발전 >\n- 2023 아리수 갤러리 단체전 < 아낌없이 주는 나무 >\n- 2016 롯폰기 국립 신 미술관 5대 미술전 ( Japan )\n- 2016 Musashino Art University graduation exhibit ( Japan )\n\n작품 소장\n- 2025 도화헌 미술관 / 작품명 : 블랙홀\n\n강의\n- 2018 세종과학예술영재학교 특별강연 [ 무의식해석하기 ]\n- 2024 세종과학예술영재학교 특별강연 [ 무의식해석하기 ]',
   },
@@ -1463,7 +1463,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩4,000,000',
     image: '87.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/107',
     history:
       '학력\n- 2016 무사시노 미술대학 ( Musashino Art University ) 유화학과 유화 전공\n\n개인전\n- 2025 갤러리 충장 22 초대전 < refresh Gwangju >\n- 2025 도화헌 미술관 초대전 < refresh Goheung >\n- 2024 갤러리 177 초대전 < refresh Busan >\n- 2024 노을 아티잔 센터 초대전 < refresh Seoul >\n- 2024 설미재 미술관 초대전 < refresh >\n- 2020 아트 스페이스 앳 개인전 < 어흥전 >\n- 2017 THE PLOT GALLERY 초대전 <그림이 싱싱해>\n- 2017 BANKAN encore 초대전 ( Japan )\n- 2015 BANKAN 초대전 ( Japan )\n\n단체전\n- 2024 N2 아트스페이스 단체전 < 동시다발전 >\n- 2023 아리수 갤러리 단체전 < 아낌없이 주는 나무 >\n- 2016 롯폰기 국립 신 미술관 5대 미술전 ( Japan )\n- 2016 Musashino Art University graduation exhibit ( Japan )\n\n작품 소장\n- 2025 도화헌 미술관 / 작품명 : 블랙홀\n\n강의\n- 2018 세종과학예술영재학교 특별강연 [ 무의식해석하기 ]\n- 2024 세종과학예술영재학교 특별강연 [ 무의식해석하기 ]',
   },
@@ -1480,7 +1480,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     image: '88.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/108',
     history:
       '학력\n- 2016 무사시노 미술대학 ( Musashino Art University ) 유화학과 유화 전공\n\n개인전\n- 2025 갤러리 충장 22 초대전 < refresh Gwangju >\n- 2025 도화헌 미술관 초대전 < refresh Goheung >\n- 2024 갤러리 177 초대전 < refresh Busan >\n- 2024 노을 아티잔 센터 초대전 < refresh Seoul >\n- 2024 설미재 미술관 초대전 < refresh >\n- 2020 아트 스페이스 앳 개인전 < 어흥전 >\n- 2017 THE PLOT GALLERY 초대전 <그림이 싱싱해>\n- 2017 BANKAN encore 초대전 ( Japan )\n- 2015 BANKAN 초대전 ( Japan )\n\n단체전\n- 2024 N2 아트스페이스 단체전 < 동시다발전 >\n- 2023 아리수 갤러리 단체전 < 아낌없이 주는 나무 >\n- 2016 롯폰기 국립 신 미술관 5대 미술전 ( Japan )\n- 2016 Musashino Art University graduation exhibit ( Japan )\n\n작품 소장\n- 2025 도화헌 미술관 / 작품명 : 블랙홀\n\n강의\n- 2018 세종과학예술영재학교 특별강연 [ 무의식해석하기 ]\n- 2024 세종과학예술영재학교 특별강연 [ 무의식해석하기 ]',
   },
@@ -1497,7 +1497,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     image: '89.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/109',
     history:
       '학력\n- 2016 무사시노 미술대학 ( Musashino Art University ) 유화학과 유화 전공\n\n개인전\n- 2025 갤러리 충장 22 초대전 < refresh Gwangju >\n- 2025 도화헌 미술관 초대전 < refresh Goheung >\n- 2024 갤러리 177 초대전 < refresh Busan >\n- 2024 노을 아티잔 센터 초대전 < refresh Seoul >\n- 2024 설미재 미술관 초대전 < refresh >\n- 2020 아트 스페이스 앳 개인전 < 어흥전 >\n- 2017 THE PLOT GALLERY 초대전 <그림이 싱싱해>\n- 2017 BANKAN encore 초대전 ( Japan )\n- 2015 BANKAN 초대전 ( Japan )\n\n단체전\n- 2024 N2 아트스페이스 단체전 < 동시다발전 >\n- 2023 아리수 갤러리 단체전 < 아낌없이 주는 나무 >\n- 2016 롯폰기 국립 신 미술관 5대 미술전 ( Japan )\n- 2016 Musashino Art University graduation exhibit ( Japan )\n\n작품 소장\n- 2025 도화헌 미술관 / 작품명 : 블랙홀\n\n강의\n- 2018 세종과학예술영재학교 특별강연 [ 무의식해석하기 ]\n- 2024 세종과학예술영재학교 특별강연 [ 무의식해석하기 ]',
   },
@@ -1514,7 +1514,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩4,500,000',
     image: '90.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/110',
     history:
       "학력\n2019 벨기에 브뤼셀 왕립 미술 대학교 조각과 석사 졸업\n2016 벨기에 브뤼셀 왕립 미술 대학교 조각과 학사 졸업\n2015 프랑스 뚤롱 보자르 예술학부 학사 (DNAP) 졸업\n\n수상 및 선정\n2024 안젤리미술관상 수상\n2023 노원문화재단 <경춘선숲길 갤러리 & 문화공간 정담 2023 시각예술 전시지원사업>\n2021 포르쉐 코리아 '드리머스 온 아트 어워드' 선정\n2021 제7회 가송예술상 '우수상' (동화약품 가송재단)\n2020 마포구 <우리동네아트테리어 사업>\n2017 'Young Belgian Talents' 선정 (Affordable Art Fair Brussels)\n\n개인전\n2023 <자취의 기록 n'1> CICA미술관, 김포\n단체전\n2024 <Drawing now 2024> CICA미술관, 김포\n2024 <제19회 광화문국제아트페스티벌\" 2023 아시아 현대미술청년작가전\"> 세종문화회관미술관,서울\n2024 <닌자 '슳竄ý> 공간투, 서울\n2024 <AAC 아름다운 동행> 안젤리미술관, 용인\n\n2023 <경춘선숲길 갤러리 & 문화공간 정담 2023 시각예술 전시지원사업 by 노원문화재단>,\n경춘선 숲길 갤러리, 서울\n2023 <4월의 정원>, 갤러리 The J, 인천\n\n2022 <시간과 공간 사이 <청년,바이브하라>, 익산청년시청, 익산\n2022 <2022 그린 르네상스 프로젝트 \"자연아트큐브전\" by 그룹 야투>, 전주팔복예술공장, 전주\n2022 <Drawinging 드로잉 페스티벌> 인사1010, 서울\n2022 <THE HOUSE OF MACAN BY 포르쉐 코리아> Cafe Poze, 서울\n\n2021 <Dreamers.On in Porsche Now 부산>피아크, 부산\n2021 <선택과 변화> (EX) 이리금융협회. 익산\n2021 <2021광주디자인비엔날레_ Dreamers.On by 포르쉐 코리아> 광주비엔날레, 광주\n2021 <제7회 여름생색> 인사아트센터, 서울\n\n2020 <충청북도 교육문화회관 특별전 '자연아트큐브전' 12x12x12+Nature> 예봄갤러리, 청주\n2020 <금강자연미술비엔날레 2020 '자연미술큐브전 '12x12x12+Nature'>, 금강자연미술센터, 공주\n2020 <Abstract mind> CICA미술관, 김포\n\n2018 <Festival 'Triennale de l'art et du Vegetal'> La Maison Culturelle d'Ath Center, Ath, 벨기에\n2018 <Love - Ath> Espace alternatif, Ath,벨기에\n2018 <Carte de Visite> ARTopenKUNST Espace vanderborght bruxelles, 브뤼셀, 벨기에\n\n2017 <L'Apropos> KULTURANIVL, 니벨, 벨기에\n2017 <Autonomy> Espace alternatif, 브뤼셀, 벨기에\n2017 <Young Belgian Talents 6 Artistes, Affordable Art Fair 브뤼셀> Tour et Taxis, 브뤼셀, 벨기에\n2017 <Carte de Visite> ARTopenKUNST Espace vanderborght bruxelles, 브뤼셀, 벨기에\n\n2016 <Ministère d' Affairs Intérieures> Espace alternatif, 브뤼셀, 벨기에\n2016 <Extraordinaires objets de l'ordinaire> 갤러리 데 AAB, 파리, 프랑스\n2016 <Cachan Biennale d'Art contemporain> Hôtel de ville-Orangerie-Chateau Raspail, 까샹, 프랑스\n\n2014 <INSTALLATION PRESSING-EBB AND FLOW> 갤러리 르 프레싱, 라센쉬르메르, 프랑스\n\n소장\n동화약품",
   },
@@ -1531,7 +1531,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩5,400,000',
     image: '91.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/111',
     history:
       "학력\n2019 벨기에 브뤼셀 왕립 미술 대학교 조각과 석사 졸업\n2016 벨기에 브뤼셀 왕립 미술 대학교 조각과 학사 졸업\n2015 프랑스 뚤롱 보자르 예술학부 학사 (DNAP) 졸업\n\n수상 및 선정\n2024 안젤리미술관상 수상\n2023 노원문화재단 <경춘선숲길 갤러리 & 문화공간 정담 2023 시각예술 전시지원사업>\n2021 포르쉐 코리아 '드리머스 온 아트 어워드' 선정\n2021 제7회 가송예술상 '우수상' (동화약품 가송재단)\n2020 마포구 <우리동네아트테리어 사업>\n2017 'Young Belgian Talents' 선정 (Affordable Art Fair Brussels)\n\n개인전\n2023 <자취의 기록 n'1> CICA미술관, 김포\n단체전\n2024 <Drawing now 2024> CICA미술관, 김포\n2024 <제19회 광화문국제아트페스티벌\" 2023 아시아 현대미술청년작가전\"> 세종문화회관미술관,서울\n2024 <닌자 '슳竄ý> 공간투, 서울\n2024 <AAC 아름다운 동행> 안젤리미술관, 용인\n\n2023 <경춘선숲길 갤러리 & 문화공간 정담 2023 시각예술 전시지원사업 by 노원문화재단>,\n경춘선 숲길 갤러리, 서울\n2023 <4월의 정원>, 갤러리 The J, 인천\n\n2022 <시간과 공간 사이 <청년,바이브하라>, 익산청년시청, 익산\n2022 <2022 그린 르네상스 프로젝트 \"자연아트큐브전\" by 그룹 야투>, 전주팔복예술공장, 전주\n2022 <Drawinging 드로잉 페스티벌> 인사1010, 서울\n2022 <THE HOUSE OF MACAN BY 포르쉐 코리아> Cafe Poze, 서울\n\n2021 <Dreamers.On in Porsche Now 부산>피아크, 부산\n2021 <선택과 변화> (EX) 이리금융협회. 익산\n2021 <2021광주디자인비엔날레_ Dreamers.On by 포르쉐 코리아> 광주비엔날레, 광주\n2021 <제7회 여름생색> 인사아트센터, 서울\n\n2020 <충청북도 교육문화회관 특별전 '자연아트큐브전' 12x12x12+Nature> 예봄갤러리, 청주\n2020 <금강자연미술비엔날레 2020 '자연미술큐브전 '12x12x12+Nature'>, 금강자연미술센터, 공주\n2020 <Abstract mind> CICA미술관, 김포\n\n2018 <Festival 'Triennale de l'art et du Vegetal'> La Maison Culturelle d'Ath Center, Ath, 벨기에\n2018 <Love - Ath> Espace alternatif, Ath,벨기에\n2018 <Carte de Visite> ARTopenKUNST Espace vanderborght bruxelles, 브뤼셀, 벨기에\n\n2017 <L'Apropos> KULTURANIVL, 니벨, 벨기에\n2017 <Autonomy> Espace alternatif, 브뤼셀, 벨기에\n2017 <Young Belgian Talents 6 Artistes, Affordable Art Fair 브뤼셀> Tour et Taxis, 브뤼셀, 벨기에\n2017 <Carte de Visite> ARTopenKUNST Espace vanderborght bruxelles, 브뤼셀, 벨기에\n\n2016 <Ministère d' Affairs Intérieures> Espace alternatif, 브뤼셀, 벨기에\n2016 <Extraordinaires objets de l'ordinaire> 갤러리 데 AAB, 파리, 프랑스\n2016 <Cachan Biennale d'Art contemporain> Hôtel de ville-Orangerie-Chateau Raspail, 까샹, 프랑스\n\n2014 <INSTALLATION PRESSING-EBB AND FLOW> 갤러리 르 프레싱, 라센쉬르메르, 프랑스\n\n소장\n동화약품",
   },
@@ -1548,7 +1548,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩9,000,000',
     image: '92.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/112',
     history:
       '영남대학교 서양화전공 석사\n개인전24회 2025. K-POP ART 송광연전, PAC 갤러리 개관 기획 초대전, 진주\n2025. 나비의 꿈-송광연, 갤러리 썬 초대전, 서울\n2025. 나비의 꿈-송광연, (울산문화재단 울산예술지원 선정사업, 20/ 22/ 24/ 25년), 울산\n2024. 나비의 꿈-송광연, BNK경남은행 본점 아트갤러리 초대전, 창원\n2019. 송광연 초대전, 울주문화예술회관, 울산\n2018. 나비의 꿈-송광연, DGB 갤러리(갤러리 G&G 기획,대구은행 제2본점)초대전, 대구\n2016. 나비의 꿈-송광연전, 아트허브 온라인 갤러리 초대전\n2015. 나비의 꿈-송광연, 칠곡경북대학교 병원 힐링갤러리 초대전, 대구\n2014. 나비의 꿈-송광연, 갤러리 청담 초대전, 대구\n2010. 나비의 꿈-송광연, 갤러리 H 초대전, 현대백화점울산점\n2010. 나비의 꿈,송광연 초대전, 동원화랑, 대구\n2008. 맥향화랑개관32주년 송광연 초대전, 맥향화랑, 대구\n솔로 부스전 2017. START 2017 (솔로부스 작가로 선정), 사치 갤러리, 런던, 영국\n개인전 2016. POP of KOLOR (Kyungjoo Park & Kwangyeon Song), 주미 한국대사관 한국문화원 초대전, 워싱턴DC, 미국\n2인전 2021. 전통의 미학속으로, 2인 초대 기획전 임상진̛송광연, 갤러리 무아, 부산\n3인전 2017. 온고지신, 한중3인전, 주상해 한국문화원,상해 향강화랑 주관 초대전, 주상하이 한국 문화원, 중국\n기획전60여회 無窮 畵, 꽃이 피었습니다, 천안시립미술관, 천안\nWow~! Funny Pop, 경남도립미술관, 창원\n어느 정도 예술공동체: 부기우기 미술관, 울산시립미술관\nTrue Luxury with ART (StART Art Fair Seoul 2022 Preview),그랜드 인터컨티넨탈 서울 파르나스\nSTEP-UP: MOMENTUM, 리나갤러리, 서울\n마릴린 먼로와 코리안 팝아트(신세계센텀시티 그랜드오픈 기념 특별전 및 신세 계 순회전시, 부산, 서울, 광주)\n행복을 부르는 그림(세종문화회관기획), 북 서울 꿈의 숲 아트센터\nArt & Joy (박영덕화랑/인사갤러리주관), 인사갤러리, 서울\n울산예술의 힘, 울산중견작가 25인 초대전, 울산 문화예술회관\n블루닷아시아 , 예술의 전당 한가람 미술관, 서울\n한국의 팝아트, 인사미술제, 서울\n시간여행전, 아트파크갤러리, 서울\n미인화전, 인사갤러리, 서울\n확, 눈, 떠, 블루닷엠갤러리 개관전, 창원\n철학을 입은 미술가들, 금강 미술관, 창원\n미학패러독스, 남가람박물관, 진주\nColores de Corea, 주 스페인 한국 문화원 기획 4인전, 마드리드, 스페인\n아트페어: 스타트 아트페어(런던 사치갤러리), 아트 싱가포르, 아트 베이징, 아트 타이베이, 스타트아트페어 서울, 서울 오픈아트페어,\n한국 국제 아트페어, 아트 부산, 화랑미술제, 대구아트페어, 아시아 컨템포러리 아트쇼(홍콩), 부산국제화랑아트페어,\n서울 아트쇼, LA아트쇼\n작품소장: 울산 시립미술관, 한국민속촌 미술관, 갤러리 위(평택), 리안 갤러리, 인사 갤러리, 갤러리 아트파크,\n갤러리 청담(대구), 동원화랑 , 기타 기업및 병원, 개인 컬렉터 다수 소장',
   },
@@ -1565,7 +1565,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩9,000,000',
     image: '93.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/113',
     history:
       '영남대학교 서양화전공 석사\n개인전24회 2025. K-POP ART 송광연전, PAC 갤러리 개관 기획 초대전, 진주\n2025. 나비의 꿈-송광연, 갤러리 썬 초대전, 서울\n2025. 나비의 꿈-송광연, (울산문화재단 울산예술지원 선정사업, 20/ 22/ 24/ 25년), 울산\n2024. 나비의 꿈-송광연, BNK경남은행 본점 아트갤러리 초대전, 창원\n2019. 송광연 초대전, 울주문화예술회관, 울산\n2018. 나비의 꿈-송광연, DGB 갤러리(갤러리 G&G 기획,대구은행 제2본점)초대전, 대구\n2016. 나비의 꿈-송광연전, 아트허브 온라인 갤러리 초대전\n2015. 나비의 꿈-송광연, 칠곡경북대학교 병원 힐링갤러리 초대전, 대구\n2014. 나비의 꿈-송광연, 갤러리 청담 초대전, 대구\n2010. 나비의 꿈-송광연, 갤러리 H 초대전, 현대백화점울산점\n2010. 나비의 꿈,송광연 초대전, 동원화랑, 대구\n2008. 맥향화랑개관32주년 송광연 초대전, 맥향화랑, 대구\n솔로 부스전 2017. START 2017 (솔로부스 작가로 선정), 사치 갤러리, 런던, 영국\n개인전 2016. POP of KOLOR (Kyungjoo Park & Kwangyeon Song), 주미 한국대사관 한국문화원 초대전, 워싱턴DC, 미국\n2인전 2021. 전통의 미학속으로, 2인 초대 기획전 임상진̛송광연, 갤러리 무아, 부산\n3인전 2017. 온고지신, 한중3인전, 주상해 한국문화원,상해 향강화랑 주관 초대전, 주상하이 한국 문화원, 중국\n기획전60여회 無窮 畵, 꽃이 피었습니다, 천안시립미술관, 천안\nWow~! Funny Pop, 경남도립미술관, 창원\n어느 정도 예술공동체: 부기우기 미술관, 울산시립미술관\nTrue Luxury with ART (StART Art Fair Seoul 2022 Preview),그랜드 인터컨티넨탈 서울 파르나스\nSTEP-UP: MOMENTUM, 리나갤러리, 서울\n마릴린 먼로와 코리안 팝아트(신세계센텀시티 그랜드오픈 기념 특별전 및 신세 계 순회전시, 부산, 서울, 광주)\n행복을 부르는 그림(세종문화회관기획), 북 서울 꿈의 숲 아트센터\nArt & Joy (박영덕화랑/인사갤러리주관), 인사갤러리, 서울\n울산예술의 힘, 울산중견작가 25인 초대전, 울산 문화예술회관\n블루닷아시아 , 예술의 전당 한가람 미술관, 서울\n한국의 팝아트, 인사미술제, 서울\n시간여행전, 아트파크갤러리, 서울\n미인화전, 인사갤러리, 서울\n확, 눈, 떠, 블루닷엠갤러리 개관전, 창원\n철학을 입은 미술가들, 금강 미술관, 창원\n미학패러독스, 남가람박물관, 진주\nColores de Corea, 주 스페인 한국 문화원 기획 4인전, 마드리드, 스페인\n아트페어: 스타트 아트페어(런던 사치갤러리), 아트 싱가포르, 아트 베이징, 아트 타이베이, 스타트아트페어 서울, 서울 오픈아트페어,\n한국 국제 아트페어, 아트 부산, 화랑미술제, 대구아트페어, 아시아 컨템포러리 아트쇼(홍콩), 부산국제화랑아트페어,\n서울 아트쇼, LA아트쇼\n작품소장: 울산 시립미술관, 한국민속촌 미술관, 갤러리 위(평택), 리안 갤러리, 인사 갤러리, 갤러리 아트파크,\n갤러리 청담(대구), 동원화랑 , 기타 기업및 병원, 개인 컬렉터 다수 소장',
   },
@@ -1582,7 +1582,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩900,000',
     image: '94.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/114',
     history:
       '<학력>\n중앙대학교 예술대학원 조형예술학과 졸업\n<개인전>\n2024 21세게 도시, KMJ아트갤러리, 인천\n외 총 12회\n<단체전>\n2025 아시아프, 문화역서울284, 서울\n2024「아트·T 인천」 미술은행 기획전시, 남동문화센터, 인천\n평화와 생태계, 평화누리길 어울림센터, 연천\n구입소장품전 픽셀(pixel):풍경의 재해석, 여주시미술관\n아트뮤지엄 려, 여주\n외 총 250 여회\n<수상>\n2019 안견사랑전국미술대전 대상\n2019 앙데팡당KOREA 최우수상\n2018 인천미술대전 대상\n<선정>\n2024 인천문화재단 예술창작 지원\n2023 서울문화재단 원로예술지원\n2023 인천문화재단 예술창작 지원\n2020 고양 예술활동 지원사업 <고양예술은행>\n2020 경기도 문화뉴딜코로나19 예술백신 프로젝트\n2020 서울공공미술 프로젝트 작품기획안 공모\n2019 인천문화재단 예술표현활동\n<소장>\n안국문화재단, 여주시미술관 아트뮤지엄 려, 인천문화재단 미술은행, 양평군립미술관, 경기문화재단,\n국립현대미술관 미술은행, 양평군립미술관, 광주시립미술관, 삼탄아트마인',
   },
@@ -1599,7 +1599,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     image: '95.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/115',
     history:
       '<학력>\n중앙대학교 예술대학원 조형예술학과 졸업\n<개인전>\n2024 21세게 도시, KMJ아트갤러리, 인천\n외 총 12회\n<단체전>\n2025 아시아프, 문화역서울284, 서울\n2024「아트·T 인천」 미술은행 기획전시, 남동문화센터, 인천\n평화와 생태계, 평화누리길 어울림센터, 연천\n구입소장품전 픽셀(pixel):풍경의 재해석, 여주시미술관\n아트뮤지엄 려, 여주\n외 총 250 여회\n<수상>\n2019 안견사랑전국미술대전 대상\n2019 앙데팡당KOREA 최우수상\n2018 인천미술대전 대상\n<선정>\n2024 인천문화재단 예술창작 지원\n2023 서울문화재단 원로예술지원\n2023 인천문화재단 예술창작 지원\n2020 고양 예술활동 지원사업 <고양예술은행>\n2020 경기도 문화뉴딜코로나19 예술백신 프로젝트\n2020 서울공공미술 프로젝트 작품기획안 공모\n2019 인천문화재단 예술표현활동\n<소장>\n안국문화재단, 여주시미술관 아트뮤지엄 려, 인천문화재단 미술은행, 양평군립미술관, 경기문화재단,\n국립현대미술관 미술은행, 양평군립미술관, 광주시립미술관, 삼탄아트마인',
   },
@@ -1617,7 +1617,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩3,500,000',
     image: '96.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/116',
     history: '',
   },
   {
@@ -1634,7 +1634,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     image: '97.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/117',
     history: '',
   },
   {
@@ -1650,7 +1650,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩2,500,000',
     image: '98.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/118',
     history:
       "학 력\n숙명여자대학교 회화과 졸업\n숙명여자대학교 대학원 조형예술학과 졸업\n\n개인전\n2025 <기억의 밀도>, 갤러리초대전, 아트스페이스J, 분당\n2025 <서금앵전>, 갤러리일호, 서울\n2024 <공간의 기운>, 공모전, 중랑아트센터 한평갤러리, 서울\n2023 <평범한 하루의 역설>, 알로초대전, 광화문쌀롱, 서울\n2023 <공간의 기운>, 이랜드 기획전, 켄싱턴리조트 갤러리, 제주\n2022 <공모작가선정전>, 이랜드 스페이스, 서울\n2022 <머물다 시선>, 이랜드 기획전, 구로NC 백화점, 서울\n2020 <일상을 바라보다>, 초대전, 샘표 스페이스, 이천\n2018 <서금앵 초대전>, GS타워 더스트릿 갤러리, 서울\n2016 <흔적, 머물다>, 에이컴퍼니 기획, 휴맥스 빌리지, 분당\n2011 <공간에 마음을 놓다>, 갤러리 공모전, 갤러리 도올, 서울\n2010 <신진작가 공모전>, 토포하우스, 서울\n2008 <Rooms>, 이형아트센터, 서울\n\n그룹전\n2025 <ASYAAF 아시아 대학생·청년작가 미술제>, 문화역서울 284, 서울\n2025 <꿈과 마주치다전>, 공모전, 갤러리 일호, 서울\n2024 <기억의 파도>, 세월호참사10주기추모전, 근현대사미술관담다, 용인\n2024 <제1회 창작 컴퍼런스 기념전>, 이랜드문화재단, 이랜드스페이스, 서울\n2022 <K-Auction 프리미엄 온라인경매 프리뷰 전>, 케이옥션 아트타워, 서울\n2021 <매끈한 것과 홈이 패인 것>, 공갤러리카페, 일산\n2021 <K-Auction 프리미엄 온라인경매 프리뷰 전>, 케이옥션 아트타워, 서울\n2021 <신진작가 공간 지원전>, 유나이티드 갤러리, 서울\n2020 <다, 다른 그림전>, 아트스페이스H, 서울\n2019 <미디어젠 작은 그림전>, 아트스페이스H, 서울\n2019 <브리즈 아트페어>, 노들섬, 서울\n2019 <LOCAL PRIDE>, 공셸 기획, 서촌 카페거리, 서울\n2018 <브리즈 아트페어>, 세종문화회관 미술관, 서울\n2018 <광화문 국제 아트 페스티벌>, 세종문화회관 미술관, 서울\n2017 <ASYAAF 아시아 대학생·청년작가 미술제>, 동대문디자인플라자_DDP, 서울\n2017 <대림창고X미나리 하우스>, 대림창고 갤러리 컬럼, 서울\n2016 <브리즈아트페어>, 블루스퀘어 NEMO, 서울\n2015 <숙명여자대학교 창학110주년 동문전>, 문신미술관, 서울\n2015 <브리즈아트페어> 서울혁신파크, 서울\n2014 <ASYAAF 아시아 대학생·청년작가 미술제>, 문화역서울 284, 서울\n2011 <ASYAAF 아시아 대학생·청년작가 미술제>, 홍익대학교, 서울\n2010 <ASYAAF 아시아 대학생·청년작가 미술제>, 성신여자대학교, 서울\n2010 <夏夏夏, 숙명여대 서양화 동문전>, 인사아트센터, 서울\n2010 <Breathing House Project'>, 갤러리기획전, 키미아트, 서울\n2010 <ARCK U.S. Tour Exhibit-Ⅱ>, Tacoma, Washington, U.S.A.\n2009 <Behind SPACE>, 갤러리기획전, 이엠아트 갤러리, 서울\n2009 <옥션별&하나은행 Gold Club 공동기획전>, 도곡타워 하나은행PB센터, 서울\n2009 <ASYAAF 아시아 대학생·청년작가 미술제> 옛 기무사, 서울\n2009 <ARCK U.S. Tour Exhibit-I gallery HOMELAND>, portland, U.S.A.\n2009 <마음이 움직이다, 숙명여대 서양화 동문전>, 인사아트센터, 서울\n2009 <Seoul Auction 4호 경매 Preview>, 신세계 갤러리 서울, 부산\n2008 <EVERYDAY LIFE>, 갤러리기획전, 갤러리 샘, 부산\n2008 <ASYAAF 아시아 대학생·청년작가 미술제>, 옛 서울역사, 서울\n2008 <현상과 환상전>, 갤러리기획전, AKA SEOUL gallery, 서울\n2008 <아트로드 페스티벌 부스전>, 센트럴시티, 서울\n2008 <Intro 회화전>, 세종문화회관 별관, 서울\n2007 <KPAM pet 매니아전>, 한가람 미술관, 서울\n2007 <studio_UNIT OPEN STUDIO>, gallery HUT, KT art hall, 서울\n2007 <제18,19회 컨테이너&재원전>, 청파 갤러리, 서울\n\n수 상\n2009 ART CONNECTION KOREA 제1회 신진작가 최우수\n2008 대한민국현대미술대전 입선 (홍대 디자인 센터)\n2007 대한민국회화대전 서양화 특선 (서울시립미술관 분관)\n2007 숙명여자대학교 최우수 졸업 작품상 (청파 갤러리)\n2005 세계평화미술대전 서양화 입선 (안산 단원 미술관)\n\n소 장\n국립현대미술관 미술은행, ㈜이랜드 문화재단,\n㈜에이컴퍼니, ㈜에이피씨웍스<월간한옥> 외 다수 개인소",
   },
@@ -1667,7 +1667,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩1,800,000',
     image: '99.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/119',
     history:
       "학 력\n숙명여자대학교 회화과 졸업\n숙명여자대학교 대학원 조형예술학과 졸업\n\n개인전\n2025 <기억의 밀도>, 갤러리초대전, 아트스페이스J, 분당\n2025 <서금앵전>, 갤러리일호, 서울\n2024 <공간의 기운>, 공모전, 중랑아트센터 한평갤러리, 서울\n2023 <평범한 하루의 역설>, 알로초대전, 광화문쌀롱, 서울\n2023 <공간의 기운>, 이랜드 기획전, 켄싱턴리조트 갤러리, 제주\n2022 <공모작가선정전>, 이랜드 스페이스, 서울\n2022 <머물다 시선>, 이랜드 기획전, 구로NC 백화점, 서울\n2020 <일상을 바라보다>, 초대전, 샘표 스페이스, 이천\n2018 <서금앵 초대전>, GS타워 더스트릿 갤러리, 서울\n2016 <흔적, 머물다>, 에이컴퍼니 기획, 휴맥스 빌리지, 분당\n2011 <공간에 마음을 놓다>, 갤러리 공모전, 갤러리 도올, 서울\n2010 <신진작가 공모전>, 토포하우스, 서울\n2008 <Rooms>, 이형아트센터, 서울\n\n그룹전\n2025 <ASYAAF 아시아 대학생·청년작가 미술제>, 문화역서울 284, 서울\n2025 <꿈과 마주치다전>, 공모전, 갤러리 일호, 서울\n2024 <기억의 파도>, 세월호참사10주기추모전, 근현대사미술관담다, 용인\n2024 <제1회 창작 컴퍼런스 기념전>, 이랜드문화재단, 이랜드스페이스, 서울\n2022 <K-Auction 프리미엄 온라인경매 프리뷰 전>, 케이옥션 아트타워, 서울\n2021 <매끈한 것과 홈이 패인 것>, 공갤러리카페, 일산\n2021 <K-Auction 프리미엄 온라인경매 프리뷰 전>, 케이옥션 아트타워, 서울\n2021 <신진작가 공간 지원전>, 유나이티드 갤러리, 서울\n2020 <다, 다른 그림전>, 아트스페이스H, 서울\n2019 <미디어젠 작은 그림전>, 아트스페이스H, 서울\n2019 <브리즈 아트페어>, 노들섬, 서울\n2019 <LOCAL PRIDE>, 공셸 기획, 서촌 카페거리, 서울\n2018 <브리즈 아트페어>, 세종문화회관 미술관, 서울\n2018 <광화문 국제 아트 페스티벌>, 세종문화회관 미술관, 서울\n2017 <ASYAAF 아시아 대학생·청년작가 미술제>, 동대문디자인플라자_DDP, 서울\n2017 <대림창고X미나리 하우스>, 대림창고 갤러리 컬럼, 서울\n2016 <브리즈아트페어>, 블루스퀘어 NEMO, 서울\n2015 <숙명여자대학교 창학110주년 동문전>, 문신미술관, 서울\n2015 <브리즈아트페어> 서울혁신파크, 서울\n2014 <ASYAAF 아시아 대학생·청년작가 미술제>, 문화역서울 284, 서울\n2011 <ASYAAF 아시아 대학생·청년작가 미술제>, 홍익대학교, 서울\n2010 <ASYAAF 아시아 대학생·청년작가 미술제>, 성신여자대학교, 서울\n2010 <夏夏夏, 숙명여대 서양화 동문전>, 인사아트센터, 서울\n2010 <Breathing House Project'>, 갤러리기획전, 키미아트, 서울\n2010 <ARCK U.S. Tour Exhibit-Ⅱ>, Tacoma, Washington, U.S.A.\n2009 <Behind SPACE>, 갤러리기획전, 이엠아트 갤러리, 서울\n2009 <옥션별&하나은행 Gold Club 공동기획전>, 도곡타워 하나은행PB센터, 서울\n2009 <ASYAAF 아시아 대학생·청년작가 미술제> 옛 기무사, 서울\n2009 <ARCK U.S. Tour Exhibit-I gallery HOMELAND>, portland, U.S.A.\n2009 <마음이 움직이다, 숙명여대 서양화 동문전>, 인사아트센터, 서울\n2009 <Seoul Auction 4호 경매 Preview>, 신세계 갤러리 서울, 부산\n2008 <EVERYDAY LIFE>, 갤러리기획전, 갤러리 샘, 부산\n2008 <ASYAAF 아시아 대학생·청년작가 미술제>, 옛 서울역사, 서울\n2008 <현상과 환상전>, 갤러리기획전, AKA SEOUL gallery, 서울\n2008 <아트로드 페스티벌 부스전>, 센트럴시티, 서울\n2008 <Intro 회화전>, 세종문화회관 별관, 서울\n2007 <KPAM pet 매니아전>, 한가람 미술관, 서울\n2007 <studio_UNIT OPEN STUDIO>, gallery HUT, KT art hall, 서울\n2007 <제18,19회 컨테이너&재원전>, 청파 갤러리, 서울\n\n수 상\n2009 ART CONNECTION KOREA 제1회 신진작가 최우수\n2008 대한민국현대미술대전 입선 (홍대 디자인 센터)\n2007 대한민국회화대전 서양화 특선 (서울시립미술관 분관)\n2007 숙명여자대학교 최우수 졸업 작품상 (청파 갤러리)\n2005 세계평화미술대전 서양화 입선 (안산 단원 미술관)\n\n소 장\n국립현대미술관 미술은행, ㈜이랜드 문화재단,\n㈜에이컴퍼니, ㈜에이피씨웍스<월간한옥> 외 다수 개인소",
   },
@@ -1684,7 +1684,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩1,400,000',
     image: '100.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/120',
     history:
       '학력\n홍익대학교 회화과 졸업 및 동대학원 회화과 졸업\n\n개인전\n2025 킵티크 기획 개인전, 노팅힐라운지,감일\n2025 일상적인 것들의 꼴라주 ,강북삼성병원 나눔존\n2020 젊은 작가 공간지원전 공모전 당선-부스개인전, 유나이티드 갤러리,서울\n2002 1회 개인전, 관훈갤러리, 서울\n\n단체전\n2025 강동 청년미술인 지원 공모전 <모든 것이 빛나는 작품전>, 강동아트센터 아트랑,서울\n2025 여름특별초대전: 작가16인의 상상 <내관에 넣어줘>, 스페이스 세컨뷰, 서울\n2024 2024 강동 청년미술인 #우리의 순간 35개의 풍경展, 강동아트센터 아트랑,서울\n2024 관악x서초 교류형 아트페어 BnB, 관천로문화플랫폼s1412&서리풀청년아트갤러리, 서울\n2023 제18회 광화문 국제아트페스티벌-아시아현대미술 청년작가전,세종미술관\n2023 예측 가능한미래-강동아트센터 기획전시, 강동아트센터,서울\n2023 GALLERY IN THE CITY-공사장 울타리 프로젝트, 서울\n2023 킵티크#0002, 아미디갤러리, 서울\n2023 킵티크#0001, 다다프로젝트, 서울\n2022 Form 2022, CICA 미술관, 김포\n2022 아시아프(ASYAAF) ,홍익대학교 현대미술관,서울\n2022 2,3회 호호아트페스티벌, 꼴라보하우스 독산, 서울\n2022 응원합니다展- 강동미술인 지원 프로젝트 공모전, 강동아트센터 아트랑,서울\n2002 cosmetic art 2002- Colorful! Powerful!, 인사아트센터, 서울\n2001 4induction 展,홍익대학교 현대미술관,서울\n외 다수',
   },
@@ -1701,7 +1701,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩1,400,000',
     image: '101.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/121',
     history:
       '학력\n홍익대학교 회화과 졸업 및 동대학원 회화과 졸업\n\n개인전\n2025 킵티크 기획 개인전, 노팅힐라운지,감일\n2025 일상적인 것들의 꼴라주 ,강북삼성병원 나눔존\n2020 젊은 작가 공간지원전 공모전 당선-부스개인전, 유나이티드 갤러리,서울\n2002 1회 개인전, 관훈갤러리, 서울\n\n단체전\n2025 강동 청년미술인 지원 공모전 <모든 것이 빛나는 작품전>, 강동아트센터 아트랑,서울\n2025 여름특별초대전: 작가16인의 상상 <내관에 넣어줘>, 스페이스 세컨뷰, 서울\n2024 2024 강동 청년미술인 #우리의 순간 35개의 풍경展, 강동아트센터 아트랑,서울\n2024 관악x서초 교류형 아트페어 BnB, 관천로문화플랫폼s1412&서리풀청년아트갤러리, 서울\n2023 제18회 광화문 국제아트페스티벌-아시아현대미술 청년작가전,세종미술관\n2023 예측 가능한미래-강동아트센터 기획전시, 강동아트센터,서울\n2023 GALLERY IN THE CITY-공사장 울타리 프로젝트, 서울\n2023 킵티크#0002, 아미디갤러리, 서울\n2023 킵티크#0001, 다다프로젝트, 서울\n2022 Form 2022, CICA 미술관, 김포\n2022 아시아프(ASYAAF) ,홍익대학교 현대미술관,서울\n2022 2,3회 호호아트페스티벌, 꼴라보하우스 독산, 서울\n2022 응원합니다展- 강동미술인 지원 프로젝트 공모전, 강동아트센터 아트랑,서울\n2002 cosmetic art 2002- Colorful! Powerful!, 인사아트센터, 서울\n2001 4induction 展,홍익대학교 현대미술관,서울\n외 다수',
   },
@@ -1718,7 +1718,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩1,000,000',
     image: '102.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/122',
     history: '',
   },
   {
@@ -1733,7 +1733,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩2,500,000',
     image: '103.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/123',
     history:
       '2025년 황무지 유령의 벌판전 (57Th 갤러리)/ 2024년 황무지, 우상의 벌판전 (나무아트)/ 2023년 나무 파르티잔의 게릴라전 홍범도 장군의 초상전(나무아트)/ 2023년 후쿠시마 조삼모사전 (아르떼 숲)/ 2023년 정전70주년 기획전시 그리운 얼굴전(임진각)/ 2023년 씨앗페 예술인지원 기금마련전 (인디프레스)/ 2023년 10.29 이태원 참사 넋기림전(아르떼 숲)/ 2022년 ‘바라보다’ 개인전(나무아트)/ 2021년 김수영 탄생 100주년 기념전(르프랑)/ 2020년 ‘슬프다’ 개인전(화인아트)/ 2019 대한민국 검찰전 (스페이스 유니온)/ 2018년 평화.통일.염원 DMZ국제초대전(오두산 통일전망대)/ 2018년 핵의 사회전 (무국적 아트스페이스)/ 2018년 ‘아프다’ 개인전 (나무아트)/ 2017년 쓴맛이 사는 맛 단체전 (인사아트플라자)/ 2016년 칡뫼김구 초대전(갤러리 화인아츠)/ 2013년 ‘밤골목 이야기’ 개인전(경인미술관)/ 1986년 젊은 세대에 의한 신선한 발언전(그림마당 민)/ 1985년 80년대 대표작품전(그림마당 민)/ 1985년 광복 40주년 기념 거리개인전(강화장터)/ 1984년 향토작가전(칡뫼화랑)/ 1983년 앙데팡당전(국립현대미술관)/ 1982년 동아미술제 출품(국립현대미술관)',
   },
@@ -1749,7 +1749,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     image: '104.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/124',
     history:
       '2025년 황무지 유령의 벌판전 (57Th 갤러리)/ 2024년 황무지, 우상의 벌판전 (나무아트)/ 2023년 나무 파르티잔의 게릴라전 홍범도 장군의 초상전(나무아트)/ 2023년 후쿠시마 조삼모사전 (아르떼 숲)/ 2023년 정전70주년 기획전시 그리운 얼굴전(임진각)/ 2023년 씨앗페 예술인지원 기금마련전 (인디프레스)/ 2023년 10.29 이태원 참사 넋기림전(아르떼 숲)/ 2022년 ‘바라보다’ 개인전(나무아트)/ 2021년 김수영 탄생 100주년 기념전(르프랑)/ 2020년 ‘슬프다’ 개인전(화인아트)/ 2019 대한민국 검찰전 (스페이스 유니온)/ 2018년 평화.통일.염원 DMZ국제초대전(오두산 통일전망대)/ 2018년 핵의 사회전 (무국적 아트스페이스)/ 2018년 ‘아프다’ 개인전 (나무아트)/ 2017년 쓴맛이 사는 맛 단체전 (인사아트플라자)/ 2016년 칡뫼김구 초대전(갤러리 화인아츠)/ 2013년 ‘밤골목 이야기’ 개인전(경인미술관)/ 1986년 젊은 세대에 의한 신선한 발언전(그림마당 민)/ 1985년 80년대 대표작품전(그림마당 민)/ 1985년 광복 40주년 기념 거리개인전(강화장터)/ 1984년 향토작가전(칡뫼화랑)/ 1983년 앙데팡당전(국립현대미술관)/ 1982년 동아미술제 출품(국립현대미술관)',
   },
@@ -1765,7 +1765,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     image: '105.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/125',
     history:
       '2025년 황무지 유령의 벌판전 (57Th 갤러리)/ 2024년 황무지, 우상의 벌판전 (나무아트)/ 2023년 나무 파르티잔의 게릴라전 홍범도 장군의 초상전(나무아트)/ 2023년 후쿠시마 조삼모사전 (아르떼 숲)/ 2023년 정전70주년 기획전시 그리운 얼굴전(임진각)/ 2023년 씨앗페 예술인지원 기금마련전 (인디프레스)/ 2023년 10.29 이태원 참사 넋기림전(아르떼 숲)/ 2022년 ‘바라보다’ 개인전(나무아트)/ 2021년 김수영 탄생 100주년 기념전(르프랑)/ 2020년 ‘슬프다’ 개인전(화인아트)/ 2019 대한민국 검찰전 (스페이스 유니온)/ 2018년 평화.통일.염원 DMZ국제초대전(오두산 통일전망대)/ 2018년 핵의 사회전 (무국적 아트스페이스)/ 2018년 ‘아프다’ 개인전 (나무아트)/ 2017년 쓴맛이 사는 맛 단체전 (인사아트플라자)/ 2016년 칡뫼김구 초대전(갤러리 화인아츠)/ 2013년 ‘밤골목 이야기’ 개인전(경인미술관)/ 1986년 젊은 세대에 의한 신선한 발언전(그림마당 민)/ 1985년 80년대 대표작품전(그림마당 민)/ 1985년 광복 40주년 기념 거리개인전(강화장터)/ 1984년 향토작가전(칡뫼화랑)/ 1983년 앙데팡당전(국립현대미술관)/ 1982년 동아미술제 출품(국립현대미술관)',
   },
@@ -1781,7 +1781,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     image: '106.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/126',
     history:
       '2025년 황무지 유령의 벌판전 (57Th 갤러리)/ 2024년 황무지, 우상의 벌판전 (나무아트)/ 2023년 나무 파르티잔의 게릴라전 홍범도 장군의 초상전(나무아트)/ 2023년 후쿠시마 조삼모사전 (아르떼 숲)/ 2023년 정전70주년 기획전시 그리운 얼굴전(임진각)/ 2023년 씨앗페 예술인지원 기금마련전 (인디프레스)/ 2023년 10.29 이태원 참사 넋기림전(아르떼 숲)/ 2022년 ‘바라보다’ 개인전(나무아트)/ 2021년 김수영 탄생 100주년 기념전(르프랑)/ 2020년 ‘슬프다’ 개인전(화인아트)/ 2019 대한민국 검찰전 (스페이스 유니온)/ 2018년 평화.통일.염원 DMZ국제초대전(오두산 통일전망대)/ 2018년 핵의 사회전 (무국적 아트스페이스)/ 2018년 ‘아프다’ 개인전 (나무아트)/ 2017년 쓴맛이 사는 맛 단체전 (인사아트플라자)/ 2016년 칡뫼김구 초대전(갤러리 화인아츠)/ 2013년 ‘밤골목 이야기’ 개인전(경인미술관)/ 1986년 젊은 세대에 의한 신선한 발언전(그림마당 민)/ 1985년 80년대 대표작품전(그림마당 민)/ 1985년 광복 40주년 기념 거리개인전(강화장터)/ 1984년 향토작가전(칡뫼화랑)/ 1983년 앙데팡당전(국립현대미술관)/ 1982년 동아미술제 출품(국립현대미술관)',
   },
@@ -1798,7 +1798,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩500,000',
     image: '107.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/127',
     history:
       '학력\n\n1984년 홍익대학교 미술대학 회화과 학사\n\n기관 경력\n\n1985년 서울미술공동체 대표\n\n1987년 걷게그림패 활화산 회원\n\n1991년 민족미술협의회 사무국장\n\n1992년 한국민족예술인총연합 대외협력국장\n\n1995년-1998년 한겨레 문화센터 목판화 강사\n\n2004년-2006년 안성천살리기 시민모임 공동대표\n\n2004년- 푸른안성맞춤21, 공동의장\n\n전시\n\n1983년, 류연복, 박종원, 신진식, 제3미술관\n\n1984년, 삶의 미술전, 제3미술관, 관훈미술관, 아랍미술관\n\n1985년, 을축년 미술대동잔치, 아랍미술관\n\n1985년, 80년대 민족미술대표작품전, 하나로미술관\n\n1985년, 한국미술 20대의 힘전, 아랍미술관\n\n1986년, 젊은 세대에 의한 신선한 발언전, 그림마당민\n\n1986년, 한국민중판화전, 오사카\n\n1986년, JALLA전-민중의 아시아전, 동경\n\n1986년-1990년, 통일전, 그림마당민\n\n1987년, 풍자와 해학전, 그림마당민\n\n1987년, 반고문전, 그림마당민\n\n1987년, 한국민중판화전, 그림마당민\n\n1988년, 한국민중판화전, 서울, 전주, 런던\n\n1988년, JALLA전-아시아에 부는 바람, 동경\n\n1988년, 한국민중미술전, 히라까다\n\n1988년, 한국민중판화모음전, 그림마당민\n\n1989년, 류연복 민중판화전, SPARC Gallery, LACC대학교, 시카고 한겨레지사\n\n1989년, 민중판화전, 미국\n\n1990년, 교육현장전, 그림마당민\n\n1990년, 농민미술전, 연세대학교백양로\n\n1990년, 광주여, 오월이여!, 그림마당민\n\n...\n\n2000년, 류연복의 생명전, 공평아트센터, 아트센터마노\n\n2003년, 봉천동 나눔의집-함께 하는 세상 건',
   },
@@ -1815,7 +1815,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     image: '108.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/128',
     history:
       '학력\n\n1984년 홍익대학교 미술대학 회화과 학사\n\n기관 경력\n\n1985년 서울미술공동체 대표\n\n1987년 걷게그림패 활화산 회원\n\n1991년 민족미술협의회 사무국장\n\n1992년 한국민족예술인총연합 대외협력국장\n\n1995년-1998년 한겨레 문화센터 목판화 강사\n\n2004년-2006년 안성천살리기 시민모임 공동대표\n\n2004년- 푸른안성맞춤21, 공동의장\n\n전시\n\n1983년, 류연복, 박종원, 신진식, 제3미술관\n\n1984년, 삶의 미술전, 제3미술관, 관훈미술관, 아랍미술관\n\n1985년, 을축년 미술대동잔치, 아랍미술관\n\n1985년, 80년대 민족미술대표작품전, 하나로미술관\n\n1985년, 한국미술 20대의 힘전, 아랍미술관\n\n1986년, 젊은 세대에 의한 신선한 발언전, 그림마당민\n\n1986년, 한국민중판화전, 오사카\n\n1986년, JALLA전-민중의 아시아전, 동경\n\n1986년-1990년, 통일전, 그림마당민\n\n1987년, 풍자와 해학전, 그림마당민\n\n1987년, 반고문전, 그림마당민\n\n1987년, 한국민중판화전, 그림마당민\n\n1988년, 한국민중판화전, 서울, 전주, 런던\n\n1988년, JALLA전-아시아에 부는 바람, 동경\n\n1988년, 한국민중미술전, 히라까다\n\n1988년, 한국민중판화모음전, 그림마당민\n\n1989년, 류연복 민중판화전, SPARC Gallery, LACC대학교, 시카고 한겨레지사\n\n1989년, 민중판화전, 미국\n\n1990년, 교육현장전, 그림마당민\n\n1990년, 농민미술전, 연세대학교백양로\n\n1990년, 광주여, 오월이여!, 그림마당민\n\n...\n\n2000년, 류연복의 생명전, 공평아트센터, 아트센터마노\n\n2003년, 봉천동 나눔의집-함께 하는 세상 건',
   },
@@ -1832,7 +1832,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     image: '109.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/129',
     history:
       '학력\n\n1984년 홍익대학교 미술대학 회화과 학사\n\n기관 경력\n\n1985년 서울미술공동체 대표\n\n1987년 걷게그림패 활화산 회원\n\n1991년 민족미술협의회 사무국장\n\n1992년 한국민족예술인총연합 대외협력국장\n\n1995년-1998년 한겨레 문화센터 목판화 강사\n\n2004년-2006년 안성천살리기 시민모임 공동대표\n\n2004년- 푸른안성맞춤21, 공동의장\n\n전시\n\n1983년, 류연복, 박종원, 신진식, 제3미술관\n\n1984년, 삶의 미술전, 제3미술관, 관훈미술관, 아랍미술관\n\n1985년, 을축년 미술대동잔치, 아랍미술관\n\n1985년, 80년대 민족미술대표작품전, 하나로미술관\n\n1985년, 한국미술 20대의 힘전, 아랍미술관\n\n1986년, 젊은 세대에 의한 신선한 발언전, 그림마당민\n\n1986년, 한국민중판화전, 오사카\n\n1986년, JALLA전-민중의 아시아전, 동경\n\n1986년-1990년, 통일전, 그림마당민\n\n1987년, 풍자와 해학전, 그림마당민\n\n1987년, 반고문전, 그림마당민\n\n1987년, 한국민중판화전, 그림마당민\n\n1988년, 한국민중판화전, 서울, 전주, 런던\n\n1988년, JALLA전-아시아에 부는 바람, 동경\n\n1988년, 한국민중미술전, 히라까다\n\n1988년, 한국민중판화모음전, 그림마당민\n\n1989년, 류연복 민중판화전, SPARC Gallery, LACC대학교, 시카고 한겨레지사\n\n1989년, 민중판화전, 미국\n\n1990년, 교육현장전, 그림마당민\n\n1990년, 농민미술전, 연세대학교백양로\n\n1990년, 광주여, 오월이여!, 그림마당민\n\n...\n\n2000년, 류연복의 생명전, 공평아트센터, 아트센터마노\n\n2003년, 봉천동 나눔의집-함께 하는 세상 건',
   },
