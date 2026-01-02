@@ -6,44 +6,49 @@ import { getAllArtworks, Artwork } from '@/content/saf2026-artworks';
 import { useMemo } from 'react';
 
 interface RelatedArtworksProps {
-  currentArtworkId: string;
-  currentArtist: string;
+  /** 현재 작품 ID (제외용, optional) */
+  currentArtworkId?: string;
+  /** 현재 작가명 (같은 작가 우선 표시용, optional) */
+  currentArtist?: string;
 }
 
 // 슬라이더 설정
-const CARD_WIDTH = 200; // px (데스크탑 기준)
+const CARD_WIDTH = 200; // px
 const GAP = 16; // gap-4 = 1rem = 16px
 const ITEM_COUNT = 12;
 
 /**
- * 다른 작품 슬라이더 컴포넌트
- * - 같은 작가의 다른 작품 우선 표시
- * - 나머지는 랜덤 작품으로 채움
+ * 작품 슬라이더 컴포넌트
+ * - currentArtist가 있으면 같은 작가 우선 표시
+ * - 없으면 랜덤 작품 표시
  * - CSS 기반 무한 자동 스크롤
  */
 export default function RelatedArtworksSlider({
   currentArtworkId,
   currentArtist,
-}: RelatedArtworksProps) {
+}: RelatedArtworksProps = {}) {
   const relatedArtworks = useMemo(() => {
     const allArtworks = getAllArtworks();
-    const otherArtworks = allArtworks.filter((a) => a.id !== currentArtworkId);
+    const otherArtworks = currentArtworkId
+      ? allArtworks.filter((a) => a.id !== currentArtworkId)
+      : allArtworks;
 
-    // 1. 같은 작가의 다른 작품
-    const sameArtistWorks = otherArtworks.filter((a) => a.artist === currentArtist);
+    // currentArtist가 있으면 같은 작가 우선
+    if (currentArtist) {
+      const sameArtistWorks = otherArtworks.filter((a) => a.artist === currentArtist);
+      const otherArtistWorks = otherArtworks
+        .filter((a) => a.artist !== currentArtist)
+        .sort(() => Math.random() - 0.5);
+      return [...sameArtistWorks, ...otherArtistWorks].slice(0, ITEM_COUNT);
+    }
 
-    // 2. 다른 작가 작품 (랜덤 셔플)
-    const otherArtistWorks = otherArtworks
-      .filter((a) => a.artist !== currentArtist)
-      .sort(() => Math.random() - 0.5);
-
-    // 3. 같은 작가 우선, 총 12개 확보
-    return [...sameArtistWorks, ...otherArtistWorks].slice(0, ITEM_COUNT);
+    // 없으면 전체 랜덤
+    return [...otherArtworks].sort(() => Math.random() - 0.5).slice(0, ITEM_COUNT);
   }, [currentArtworkId, currentArtist]);
 
   if (relatedArtworks.length === 0) return null;
 
-  // 정확한 슬라이드 너비 계산 (카드 너비 + 갭) * 아이템 수
+  // 정확한 슬라이드 너비 계산
   const slideWidth = (CARD_WIDTH + GAP) * relatedArtworks.length;
 
   return (
@@ -53,7 +58,7 @@ export default function RelatedArtworksSlider({
         <p className="text-gray-500 mt-1">더 많은 출품작을 감상하고 예술인을 응원하세요</p>
       </div>
 
-      {/* 슬라이더 트랙 - 두 세트의 카드를 나란히 배치 */}
+      {/* 슬라이더 트랙 */}
       <div className="relative">
         <div
           className="flex gap-4 hover:[animation-play-state:paused]"
@@ -65,14 +70,14 @@ export default function RelatedArtworksSlider({
           {relatedArtworks.map((artwork, index) => (
             <ArtworkCard key={`first-${artwork.id}-${index}`} artwork={artwork} />
           ))}
-          {/* 두 번째 세트 (무한 루프를 위한 복제) */}
+          {/* 두 번째 세트 (무한 루프용) */}
           {relatedArtworks.map((artwork, index) => (
             <ArtworkCard key={`second-${artwork.id}-${index}`} artwork={artwork} />
           ))}
         </div>
       </div>
 
-      {/* 인라인 keyframes 정의 */}
+      {/* 인라인 keyframes */}
       <style jsx>{`
         @keyframes marquee {
           0% {
