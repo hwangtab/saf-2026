@@ -33,10 +33,11 @@ function validateArtworks() {
     // Validation rules
     const rules = {
         // 필수 필드 검증
-        required: ['id', 'artist', 'title', 'price', 'image'],
+        required: ['id', 'artist', 'title', 'image'],
 
         // 크기 형식: 숫자x숫자cm, 숫자호, 확인 중, 또는 빈값 허용 안함
         size: (value, id) => {
+            if (value === '') return null;
             if (!value) return `ID ${id}: size 필드 누락`;
             if (value === '확인 중') return null;
             if (/^\d+(\.\d+)?x\d+(\.\d+)?cm$/.test(value)) return null;
@@ -47,13 +48,16 @@ function validateArtworks() {
 
         // 가격 형식: ₩로 시작, 숫자와 콤마
         price: (value, id) => {
+            if (value === '') return null;
             if (!value) return `ID ${id}: price 필드 누락`;
             if (/^₩[\d,]+$/.test(value)) return null;
+            if (value === '확인 중') return null;
             return `ID ${id}: price 형식 오류 ("${value}") - "₩X,XXX,XXX" 형식 사용`;
         },
 
         // 연도 형식: 4자리 숫자 또는 확인 중
         year: (value, id) => {
+            if (value === '') return null;
             if (!value) return `ID ${id}: year 필드 누락`;
             if (value === '확인 중') return null;
             if (/^\d{4}$/.test(value)) return null;
@@ -76,6 +80,7 @@ function validateArtworks() {
 
         // 재료: 빈값 허용 안함
         material: (value, id) => {
+            if (value === '') return null;
             if (!value) return `ID ${id}: material 필드 누락`;
             return null;
         }

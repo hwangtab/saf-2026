@@ -248,15 +248,31 @@ export default function ArtworkDetailPage({ params }: Props) {
 
               <div className="border-t border-b border-gray-100 py-6">
                 <div className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 items-baseline">
-                  <span className="text-gray-400 font-medium text-sm">재료</span>
-                  <span className="text-charcoal">{artwork.material}</span>
+                  {/* 재료 */}
+                  {artwork.material && (
+                    <>
+                      <span className="text-gray-400 font-medium text-sm">재료</span>
+                      <span className="text-charcoal">{artwork.material}</span>
+                    </>
+                  )}
 
-                  <span className="text-gray-400 font-medium text-sm">크기</span>
-                  <span className="text-charcoal">{artwork.size}</span>
+                  {/* 크기 */}
+                  {artwork.size && (
+                    <>
+                      <span className="text-gray-400 font-medium text-sm">크기</span>
+                      <span className="text-charcoal">{artwork.size}</span>
+                    </>
+                  )}
 
-                  <span className="text-gray-400 font-medium text-sm">년도</span>
-                  <span className="text-charcoal">{artwork.year}</span>
+                  {/* 년도 */}
+                  {artwork.year && (
+                    <>
+                      <span className="text-gray-400 font-medium text-sm">년도</span>
+                      <span className="text-charcoal">{artwork.year}</span>
+                    </>
+                  )}
 
+                  {/* 에디션 */}
                   {artwork.edition && (
                     <>
                       <span className="text-gray-400 font-medium text-sm">에디션</span>
@@ -264,8 +280,13 @@ export default function ArtworkDetailPage({ params }: Props) {
                     </>
                   )}
 
-                  <span className="text-gray-400 font-medium text-sm">가격</span>
-                  <span className="text-charcoal font-semibold">{artwork.price}</span>
+                  {/* 가격 */}
+                  {artwork.price && (
+                    <>
+                      <span className="text-gray-400 font-medium text-sm">가격</span>
+                      <span className="text-charcoal font-semibold">{artwork.price}</span>
+                    </>
+                  )}
                 </div>
               </div>
 
