@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { getAllArtworks, Artwork } from '@/content/saf2026-artworks';
 import { useMemo, useCallback } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
-import Autoplay from 'embla-carousel-autoplay';
+import AutoScroll from 'embla-carousel-auto-scroll';
 
 interface RelatedArtworksProps {
   /** 현재 작품 ID (제외용, optional) */
@@ -19,8 +19,8 @@ const ITEM_COUNT = 12;
 
 /**
  * 작품 슬라이더 컴포넌트
- * - Embla Carousel 기반 터치/드래그 지원
- * - 자동 스크롤 + 수동 조작 가능
+ * - Embla Carousel + Auto Scroll 플러그인
+ * - 부드러운 연속 스크롤 + 터치/드래그 수동 조작
  */
 export default function RelatedArtworksSlider({
   currentArtworkId,
@@ -31,11 +31,11 @@ export default function RelatedArtworksSlider({
       loop: true,
       align: 'start',
       dragFree: true,
-      containScroll: false,
     },
     [
-      Autoplay({
-        delay: 3000,
+      AutoScroll({
+        speed: 1,
+        startDelay: 0,
         stopOnInteraction: false,
         stopOnMouseEnter: true,
       }),
