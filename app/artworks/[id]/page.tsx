@@ -360,10 +360,10 @@ export default function ArtworkDetailPage({ params }: Props) {
             </div>
           </div>
         </article>
-
-        {/* Related Artworks Slider */}
-        <RelatedArtworksSlider currentArtworkId={artwork.id} currentArtist={artwork.artist} />
       </main>
+
+      {/* Related Artworks Slider */}
+      <RelatedArtworksSlider currentArtworkId={artwork.id} currentArtist={artwork.artist} />
     </>
   );
 }
