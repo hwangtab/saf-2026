@@ -879,7 +879,7 @@ export const artworks: Artwork[] = [
     material: 'Oil on canvas',
     year: '2023',
     edition: '',
-    price: '₩3,500,000',
+    price: '확인 중',
     image: '52.jpeg',
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/72',
     history:
@@ -897,7 +897,7 @@ export const artworks: Artwork[] = [
     material: 'Oil on canvas',
     year: '2022',
     edition: '',
-    price: '₩4,500,000',
+    price: '확인 중',
     image: '53.jpeg',
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/73',
     history:
@@ -915,7 +915,7 @@ export const artworks: Artwork[] = [
     material: 'Oil on canvas',
     year: '2023',
     edition: '',
-    price: '₩4,500,000',
+    price: '확인 중',
     image: '54.jpeg',
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/74',
     history:
