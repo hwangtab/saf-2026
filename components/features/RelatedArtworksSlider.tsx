@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { getAllArtworks, Artwork } from '@/content/saf2026-artworks';
-import { useMemo } from 'react';
+import { useMemo, useId } from 'react';
 
 interface RelatedArtworksProps {
   /** 현재 작품 ID (제외용, optional) */
@@ -27,6 +27,9 @@ export default function RelatedArtworksSlider({
   currentArtworkId,
   currentArtist,
 }: RelatedArtworksProps = {}) {
+  const uniqueId = useId();
+  const animationName = `marquee-${uniqueId.replace(/:/g, '')}`;
+
   const relatedArtworks = useMemo(() => {
     const allArtworks = getAllArtworks();
     const otherArtworks = currentArtworkId
@@ -50,6 +53,7 @@ export default function RelatedArtworksSlider({
 
   // 정확한 슬라이드 너비 계산
   const slideWidth = (CARD_WIDTH + GAP) * relatedArtworks.length;
+  const animationDuration = `${relatedArtworks.length * 3}s`;
 
   return (
     <section className="w-full bg-gray-50 py-12 overflow-hidden">
@@ -58,12 +62,27 @@ export default function RelatedArtworksSlider({
         <p className="text-gray-500 mt-1">더 많은 출품작을 감상하고 예술인을 응원하세요</p>
       </div>
 
+      {/* 동적 keyframes 정의 */}
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+            @keyframes ${animationName} {
+              0% { transform: translateX(0); }
+              100% { transform: translateX(-${slideWidth}px); }
+            }
+          `,
+        }}
+      />
+
       {/* 슬라이더 트랙 */}
-      <div className="relative">
+      <div className="relative slider-track">
         <div
-          className="flex gap-4 hover:[animation-play-state:paused]"
+          className="flex gap-4"
           style={{
-            animation: `marquee ${relatedArtworks.length * 3}s linear infinite`,
+            animationName: animationName,
+            animationDuration: animationDuration,
+            animationTimingFunction: 'linear',
+            animationIterationCount: 'infinite',
           }}
         >
           {/* 첫 번째 세트 */}
@@ -76,18 +95,6 @@ export default function RelatedArtworksSlider({
           ))}
         </div>
       </div>
-
-      {/* 인라인 keyframes */}
-      <style jsx>{`
-        @keyframes marquee {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-${slideWidth}px);
-          }
-        }
-      `}</style>
     </section>
   );
 }
