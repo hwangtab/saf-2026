@@ -76,7 +76,7 @@ export default function RelatedArtworksSlider({
   return (
     <section className="w-full bg-gray-50 py-12 overflow-hidden">
       <div className="container-max mb-8">
-        <h2 className="text-2xl font-bold text-charcoal">다른 작품 보기</h2>
+        <h2 className="text-2xl font-bold text-charcoal">씨앗페 출품작 보기</h2>
         <p className="text-gray-500 mt-1">더 많은 출품작을 감상하고 예술인을 응원하세요</p>
       </div>
 
