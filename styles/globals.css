@@ -200,32 +200,11 @@ button:focus:not(:focus-visible) {
   animation: shimmer 1.5s ease-in-out infinite;
 }
 
-/* Related Artworks Slider - Infinite scroll animation */
-@keyframes scroll {
-  0% {
-    transform: translateX(0);
-  }
-
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-.animate-scroll {
-  animation: scroll 30s linear infinite;
-}
-
-.animate-scroll:hover,
-.pause-animation {
-  animation-play-state: paused;
-}
-
 /* Respect user's motion preferences for accessibility */
-/* Note: .slider-track 내의 애니메이션은 콘텐츠 접근성을 위해 예외 처리 */
 @media (prefers-reduced-motion: reduce) {
-  *:not(.slider-track *),
-  *:not(.slider-track *)::before,
-  *:not(.slider-track *)::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

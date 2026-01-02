@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { getAllArtworks, Artwork } from '@/content/saf2026-artworks';
-import { useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import AutoScroll from 'embla-carousel-auto-scroll';
 
@@ -21,6 +21,7 @@ const ITEM_COUNT = 12;
  * 작품 슬라이더 컴포넌트
  * - Embla Carousel + Auto Scroll 플러그인
  * - 부드러운 연속 스크롤 + 터치/드래그 수동 조작
+ * - Hydration Mismatch 방지를 위해 클라이언트 사이드에서만 랜덤 정렬 수행
  */
 export default function RelatedArtworksSlider({
   currentArtworkId,
@@ -42,25 +43,34 @@ export default function RelatedArtworksSlider({
     ]
   );
 
-  const relatedArtworks = useMemo(() => {
+  const [relatedArtworks, setRelatedArtworks] = useState<Artwork[]>([]);
+
+  useEffect(() => {
     const allArtworks = getAllArtworks();
     const otherArtworks = currentArtworkId
       ? allArtworks.filter((a) => a.id !== currentArtworkId)
       : allArtworks;
 
+    let result: Artwork[] = [];
+
     // currentArtist가 있으면 같은 작가 우선
     if (currentArtist) {
       const sameArtistWorks = otherArtworks.filter((a) => a.artist === currentArtist);
-      const otherArtistWorks = otherArtworks
-        .filter((a) => a.artist !== currentArtist)
-        .sort(() => Math.random() - 0.5);
-      return [...sameArtistWorks, ...otherArtistWorks].slice(0, ITEM_COUNT);
+      const otherArtistWorksFiltered = otherArtworks.filter((a) => a.artist !== currentArtist);
+
+      // 랜덤 셔플
+      const shuffledOthers = otherArtistWorksFiltered.sort(() => Math.random() - 0.5);
+
+      result = [...sameArtistWorks, ...shuffledOthers].slice(0, ITEM_COUNT);
+    } else {
+      // 전체 랜덤
+      result = [...otherArtworks].sort(() => Math.random() - 0.5).slice(0, ITEM_COUNT);
     }
 
-    // 없으면 전체 랜덤
-    return [...otherArtworks].sort(() => Math.random() - 0.5).slice(0, ITEM_COUNT);
+    setRelatedArtworks(result);
   }, [currentArtworkId, currentArtist]);
 
+  // 클라이언트 렌더링 전에는 아무것도 표시하지 않음 (Hydration Mismatch 방지)
   if (relatedArtworks.length === 0) return null;
 
   return (
