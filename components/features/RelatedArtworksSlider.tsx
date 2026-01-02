@@ -35,10 +35,9 @@ export default function RelatedArtworksSlider({
     [
       AutoScroll({
         speed: 1,
-        startDelay: 1000,
-        stopOnInteraction: true,
+        startDelay: 0,
+        stopOnInteraction: false,
         stopOnMouseEnter: true,
-        playOnInit: true,
       }),
     ]
   );
