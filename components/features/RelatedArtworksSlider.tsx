@@ -10,6 +10,11 @@ interface RelatedArtworksProps {
   currentArtist: string;
 }
 
+// 슬라이더 설정
+const CARD_WIDTH = 200; // px (데스크탑 기준)
+const GAP = 16; // gap-4 = 1rem = 16px
+const ITEM_COUNT = 12;
+
 /**
  * 다른 작품 슬라이더 컴포넌트
  * - 같은 작가의 다른 작품 우선 표시
@@ -32,14 +37,14 @@ export default function RelatedArtworksSlider({
       .filter((a) => a.artist !== currentArtist)
       .sort(() => Math.random() - 0.5);
 
-    // 3. 같은 작가 우선, 총 12개 이상 확보 (무한 스크롤용)
-    const combined = [...sameArtistWorks, ...otherArtistWorks].slice(0, 12);
-
-    // 무한 스크롤을 위해 배열을 두 번 반복
-    return [...combined, ...combined];
+    // 3. 같은 작가 우선, 총 12개 확보
+    return [...sameArtistWorks, ...otherArtistWorks].slice(0, ITEM_COUNT);
   }, [currentArtworkId, currentArtist]);
 
   if (relatedArtworks.length === 0) return null;
+
+  // 정확한 슬라이드 너비 계산 (카드 너비 + 갭) * 아이템 수
+  const slideWidth = (CARD_WIDTH + GAP) * relatedArtworks.length;
 
   return (
     <section className="w-full bg-gray-50 py-12 overflow-hidden">
@@ -48,18 +53,36 @@ export default function RelatedArtworksSlider({
         <p className="text-gray-500 mt-1">더 많은 출품작을 감상하고 예술인을 응원하세요</p>
       </div>
 
-      {/* 슬라이더 트랙 */}
+      {/* 슬라이더 트랙 - 두 세트의 카드를 나란히 배치 */}
       <div className="relative">
-        <div className="flex gap-4 animate-scroll hover:pause-animation">
+        <div
+          className="flex gap-4 hover:[animation-play-state:paused]"
+          style={{
+            animation: `marquee ${relatedArtworks.length * 3}s linear infinite`,
+          }}
+        >
+          {/* 첫 번째 세트 */}
           {relatedArtworks.map((artwork, index) => (
-            <ArtworkCard key={`${artwork.id}-${index}`} artwork={artwork} />
+            <ArtworkCard key={`first-${artwork.id}-${index}`} artwork={artwork} />
+          ))}
+          {/* 두 번째 세트 (무한 루프를 위한 복제) */}
+          {relatedArtworks.map((artwork, index) => (
+            <ArtworkCard key={`second-${artwork.id}-${index}`} artwork={artwork} />
           ))}
         </div>
       </div>
 
-      {/* 좌우 그라데이션 페이드 */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-gray-50 to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-gray-50 to-transparent" />
+      {/* 인라인 keyframes 정의 */}
+      <style jsx>{`
+        @keyframes marquee {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-${slideWidth}px);
+          }
+        }
+      `}</style>
     </section>
   );
 }
@@ -68,7 +91,8 @@ function ArtworkCard({ artwork }: { artwork: Artwork }) {
   return (
     <Link
       href={`/artworks/${artwork.id}`}
-      className="flex-shrink-0 w-[160px] sm:w-[180px] md:w-[200px] group"
+      className="flex-shrink-0 group"
+      style={{ width: `${CARD_WIDTH}px` }}
     >
       <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100 shadow-sm group-hover:shadow-md transition-shadow">
         <Image
@@ -76,7 +100,7 @@ function ArtworkCard({ artwork }: { artwork: Artwork }) {
           alt={`${artwork.title} - ${artwork.artist}`}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-300"
-          sizes="(max-width: 640px) 160px, (max-width: 768px) 180px, 200px"
+          sizes={`${CARD_WIDTH}px`}
         />
         {artwork.sold && (
           <div className="absolute top-2 right-2 bg-red-600 text-white px-2 py-0.5 rounded text-xs font-bold">
