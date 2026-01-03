@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Suspense } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import { OG_IMAGE, SITE_URL, SITE_URL_ALIAS } from '@/lib/constants';
@@ -63,8 +64,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: '씨앗페 2026',
-    description:
-      '한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인',
+    description: '한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인',
     images: [OG_IMAGE.url],
   },
   robots: {
@@ -77,11 +77,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko">
       <head>
@@ -107,8 +103,7 @@ export default function RootLayout({
               name: '한국스마트협동조합',
               url: 'https://www.saf2026.com',
               logo: 'https://www.saf2026.com/images/og-image2.png',
-              description:
-                '한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인',
+              description: '한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인',
               sameAs: [
                 'https://www.instagram.com/koreasmartcoop',
                 'https://www.facebook.com/koreasmartcoop',
@@ -117,8 +112,7 @@ export default function RootLayout({
               ],
               address: {
                 '@type': 'PostalAddress',
-                streetAddress:
-                  '서울특별시 은평구 통일로 68길 4 302호',
+                streetAddress: '서울특별시 은평구 통일로 68길 4 302호',
                 addressLocality: '서울시',
                 addressRegion: '은평구',
                 postalCode: '03100',
@@ -144,8 +138,7 @@ export default function RootLayout({
               name: '씨앗페 2026',
               alternateName: 'SAF 2026',
               url: 'https://www.saf2026.com',
-              description:
-                '한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인',
+              description: '한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인',
               inLanguage: 'ko-KR',
               publisher: {
                 '@type': 'Organization',
@@ -155,12 +148,8 @@ export default function RootLayout({
           }}
         />
 
-        {/* Kakao SDK for Share functionality */}
-        <script
-          src="https://developers.kakao.com/sdk/js/kakao.js"
-          async
-          defer
-        ></script>
+        <script src="https://developers.kakao.com/sdk/js/kakao.js" async defer></script>
+        <Analytics />
       </body>
     </html>
   );
