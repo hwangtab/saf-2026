@@ -44,7 +44,11 @@ export const FirstBankAccessChart = memo(function FirstBankAccessChart() {
   const COLORS = ['#D94F45', '#2176FF'];
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm">
+    <div
+      className="bg-white p-6 rounded-lg shadow-sm"
+      role="img"
+      aria-label="제1금융권 접근 현황: 예술인의 84.9%가 배제됨, 15.1%만 접근 가능"
+    >
       <h3 className="text-card-title mb-4">제1금융권 접근 현황</h3>
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
@@ -58,8 +62,8 @@ export const FirstBankAccessChart = memo(function FirstBankAccessChart() {
             dataKey="value"
             label={({ value }) => `${value}%`}
           >
-            {data.map((_, index) => (
-              <Cell key={`cell-${index}`} fill={COLORS[index]} />
+            {data.map((entry) => (
+              <Cell key={entry.name} fill={COLORS[data.indexOf(entry)]} />
             ))}
           </Pie>
           <Tooltip
@@ -88,7 +92,11 @@ export const RejectionReasonsChart = memo(function RejectionReasonsChart() {
   ];
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm">
+    <div
+      className="bg-white p-6 rounded-lg shadow-sm"
+      role="img"
+      aria-label="대출 거절/포기 주요 사유: 정기 소득 없음 65명, 신용등급 부족 58명, 담보 부족 52명, 고용 불안정 48명, 기타 35명"
+    >
       <h3 className="text-card-title mb-4">대출 거절/포기 주요 사유</h3>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data} layout="vertical">
@@ -120,7 +128,11 @@ export const HighInterestProductChart = memo(function HighInterestProductChart()
   ];
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm">
+    <div
+      className="bg-white p-6 rounded-lg shadow-sm"
+      role="img"
+      aria-label="고리대금 상품 이용 현황: 카드론 42%, 현금서비스 38%, 소액대출 22%, 사채 15%"
+    >
       <h3 className="text-card-title mb-4">고리대금 상품 이용 현황</h3>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data}>
@@ -154,7 +166,11 @@ export const InterestRateDistributionChart = memo(function InterestRateDistribut
   ];
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm">
+    <div
+      className="bg-white p-6 rounded-lg shadow-sm"
+      role="img"
+      aria-label="대출 이자율 분포: 15~20% 구간이 35명으로 가장 많음, 그 다음 20~30% 구간이 32명"
+    >
       <h3 className="text-card-title mb-4">대출 이자율 분포</h3>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data}>
@@ -185,7 +201,11 @@ export const DebtCollectionChart = memo(function DebtCollectionChart() {
   const COLORS = ['#D94F45', '#495156'];
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm">
+    <div
+      className="bg-white p-6 rounded-lg shadow-sm"
+      role="img"
+      aria-label="채권추심 경험 여부: 경험함 38%, 경험 없음 62%"
+    >
       <h3 className="text-card-title mb-4">채권추심 경험 여부</h3>
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
@@ -199,8 +219,8 @@ export const DebtCollectionChart = memo(function DebtCollectionChart() {
             dataKey="value"
             label={({ value }) => `${value}%`}
           >
-            {data.map((_, index) => (
-              <Cell key={`cell-${index}`} fill={COLORS[index]} />
+            {data.map((entry) => (
+              <Cell key={entry.name} fill={COLORS[data.indexOf(entry)]} />
             ))}
           </Pie>
           <Tooltip
@@ -228,7 +248,11 @@ export const CreativeImpactChart = memo(function CreativeImpactChart() {
   ];
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm">
+    <div
+      className="bg-white p-6 rounded-lg shadow-sm"
+      role="img"
+      aria-label="금융 어려움으로 인한 창작활동 영향: 창작량 감소 68%가 가장 높음, 활동 제한 58%, 품질 저하 52%, 창작 중단 45%"
+    >
       <h3 className="text-card-title mb-4">금융 어려움으로 인한 창작활동 영향</h3>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data} layout="vertical">

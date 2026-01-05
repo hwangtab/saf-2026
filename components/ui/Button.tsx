@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { m, LazyMotion, domAnimation } from 'framer-motion';
+import clsx from 'clsx';
 
 interface ButtonProps {
   children: React.ReactNode;
@@ -30,14 +31,26 @@ export default function Button({
   type = 'button',
 }: ButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   const handleClick = async () => {
     if (onClick && !isLoading && !disabled && !loading) {
       setIsLoading(true);
       try {
         await onClick();
+      } catch (error) {
+        console.error('Button click error:', error);
+        // 에러는 상위 컴포넌트에서 처리하도록 전파
       } finally {
-        setIsLoading(false);
+        if (isMountedRef.current) {
+          setIsLoading(false);
+        }
       }
     }
   };
@@ -58,30 +71,38 @@ export default function Button({
 
   const sizeStyles = {
     sm: 'px-4 py-2 text-sm',
-    md: 'px-6 py-2.5 text-base', // Adjusted py consistent with previous manual edits
+    md: 'px-6 py-2.5 text-base',
     lg: 'px-8 py-4 text-lg',
   };
 
   const isDisabled = disabled || loading || isLoading;
 
-  // Apply interactive classes only when not disabled
   const interactiveClasses = isDisabled
     ? 'opacity-50 cursor-not-allowed transform-none'
     : 'active:scale-[0.98] cursor-pointer';
 
-  const styles = `${baseStyles} ${variantStyles[variant as keyof typeof variantStyles]} ${sizeStyles[size]} ${className} ${interactiveClasses}`;
+  const styles = clsx(
+    baseStyles,
+    variantStyles[variant as keyof typeof variantStyles],
+    sizeStyles[size],
+    interactiveClasses,
+    className
+  );
 
   const content = (
-    <>
-      {(loading || isLoading) && (
-        <motion.div
-          className="mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-        />
-      )}
-      {children}
-    </>
+    <LazyMotion features={domAnimation}>
+      <>
+        {(loading || isLoading) && (
+          <m.div
+            className="mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+            aria-hidden="true"
+          />
+        )}
+        {children}
+      </>
+    </LazyMotion>
   );
 
   if (href) {

@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
-// 메인 페이지 히어로용 고해상도 이미지 (public/images/hero/)
 const HERO_IMAGES = [
   { id: '11', filename: '11.jpg', alt: '2026 씨앗페 출품작' },
   { id: '1', filename: '1.jpg', alt: '2026 씨앗페 출품작' },
@@ -21,9 +21,11 @@ const HERO_IMAGES = [
 export default function BackgroundSlider() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  const nextIndex = (currentIndex + 1) % HERO_IMAGES.length;
+  const nextPhoto = HERO_IMAGES[nextIndex];
+
   useEffect(() => {
     const interval = setInterval(() => {
-      // 탭이 백그라운드에 있으면 스킵
       if (document.hidden) return;
       setCurrentIndex((prev) => (prev + 1) % HERO_IMAGES.length);
     }, 5000);
@@ -33,15 +35,19 @@ export default function BackgroundSlider() {
   const currentPhoto = HERO_IMAGES[currentIndex];
 
   return (
-    <div className="absolute inset-0 -z-10 overflow-hidden">
-      <Image
-        src={`/images/hero/${currentPhoto.filename}`}
-        alt={currentPhoto.alt}
-        fill
-        className="object-cover"
-        priority
-      />
-      <div className="absolute inset-0 bg-black/60" />
-    </div>
+    <>
+      {/* Preload next image */}
+      <Link rel="preload" as="image" href={`/images/hero/${nextPhoto.filename}`} />
+      <div className="absolute inset-0 -z-10 overflow-hidden">
+        <Image
+          src={`/images/hero/${currentPhoto.filename}`}
+          alt={currentPhoto.alt}
+          fill
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-black/60" />
+      </div>
+    </>
   );
 }

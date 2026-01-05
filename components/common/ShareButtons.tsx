@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { FacebookShareButton, TwitterShareButton, FacebookIcon, TwitterIcon } from 'react-share';
+import clsx from 'clsx';
 
 interface ShareButtonsProps {
   url: string;
@@ -12,27 +13,44 @@ interface ShareButtonsProps {
 
 export default function ShareButtons({ url, title, description }: ShareButtonsProps) {
   const [copied, setCopied] = useState(false);
+  const [copyError, setCopyError] = useState(false);
+  const [kakaoReady, setKakaoReady] = useState(false);
 
-  // Initialize Kakao SDK
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.Kakao && !window.Kakao.isInitialized()) {
-      // Kakao SDK is loaded but not initialized
-      // Note: Requires NEXT_PUBLIC_KAKAO_JS_KEY environment variable
-      const kakaoKey = process.env.NEXT_PUBLIC_KAKAO_JS_KEY;
-      if (kakaoKey) {
-        window.Kakao.init(kakaoKey);
+    const initKakao = () => {
+      if (window.Kakao && !window.Kakao.isInitialized()) {
+        const kakaoKey = process.env.NEXT_PUBLIC_KAKAO_JS_KEY;
+        if (kakaoKey) {
+          window.Kakao.init(kakaoKey);
+          setKakaoReady(true);
+        }
+      } else if (window.Kakao?.isInitialized()) {
+        setKakaoReady(true);
+      }
+    };
+
+    if (typeof window !== 'undefined') {
+      if (window.Kakao) {
+        initKakao();
+        return undefined;
+      } else {
+        window.addEventListener('load', initKakao);
+        return () => window.removeEventListener('load', initKakao);
       }
     }
+    return undefined;
   }, []);
 
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(url);
       setCopied(true);
+      setCopyError(false);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error('Failed to copy:', err);
-      console.error('Failed to copy:', err);
+      setCopyError(true);
+      setTimeout(() => setCopyError(false), 2000);
     }
   };
 
@@ -82,7 +100,11 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
       {/* Kakao Talk */}
       <button
         onClick={handleKakaoShare}
-        className="w-8 h-8 flex items-center justify-center transition-opacity hover:opacity-80 focus:outline-none"
+        disabled={!kakaoReady}
+        className={clsx(
+          'w-8 h-8 flex items-center justify-center transition-opacity hover:opacity-80 focus:outline-none',
+          !kakaoReady && 'opacity-50 cursor-not-allowed'
+        )}
         title="카카오톡 공유"
         aria-label="카카오톡으로 공유하기"
       >
@@ -98,15 +120,27 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
       {/* Copy Link */}
       <button
         onClick={handleCopyLink}
-        className={`w-8 h-8 flex items-center justify-center rounded-full transition-all duration-200 ${
-          copied ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-        }`}
+        className={clsx(
+          'w-8 h-8 flex items-center justify-center rounded-full transition-all duration-200',
+          copied && 'bg-green-500 text-white',
+          copyError && 'bg-red-500 text-white',
+          !copied && !copyError && 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+        )}
         title="링크 복사"
-        aria-label="링크 복사하기"
+        aria-label={copied ? '링크가 복사되었습니다' : copyError ? '복사 실패' : '링크 복사하기'}
       >
         {copied ? (
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+        ) : copyError ? (
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         ) : (
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

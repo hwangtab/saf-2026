@@ -3,7 +3,7 @@ import { Suspense } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
-import { OG_IMAGE, SITE_URL, SITE_URL_ALIAS } from '@/lib/constants';
+import { OG_IMAGE, SITE_URL, SITE_URL_ALIAS, escapeJsonLdForScript } from '@/lib/constants';
 import '@/styles/globals.css';
 
 export const viewport: Viewport = {
@@ -97,34 +97,36 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'Organization',
-              name: '한국스마트협동조합',
-              url: 'https://www.saf2026.com',
-              logo: 'https://www.saf2026.com/images/og-image2.png',
-              description: '한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인',
-              sameAs: [
-                'https://www.instagram.com/koreasmartcoop',
-                'https://www.facebook.com/koreasmartcoop',
-                'https://twitter.com/saf2026',
-                'https://www.youtube.com/@Social_Mutual_ART',
-              ],
-              address: {
-                '@type': 'PostalAddress',
-                streetAddress: '서울특별시 은평구 통일로 68길 4 302호',
-                addressLocality: '서울시',
-                addressRegion: '은평구',
-                postalCode: '03100',
-                addressCountry: 'KR',
-              },
-              contactPoint: {
-                '@type': 'ContactPoint',
-                contactType: 'Customer Service',
-                telephone: '+82-2-764-3114',
-                email: 'contact@kosmart.co.kr',
-              },
-            }),
+            __html: escapeJsonLdForScript(
+              JSON.stringify({
+                '@context': 'https://schema.org',
+                '@type': 'Organization',
+                name: '한국스마트협동조합',
+                url: 'https://www.saf2026.com',
+                logo: 'https://www.saf2026.com/images/og-image2.png',
+                description: '한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인',
+                sameAs: [
+                  'https://www.instagram.com/koreasmartcoop',
+                  'https://www.facebook.com/koreasmartcoop',
+                  'https://twitter.com/saf2026',
+                  'https://www.youtube.com/@Social_Mutual_ART',
+                ],
+                address: {
+                  '@type': 'PostalAddress',
+                  streetAddress: '서울특별시 은평구 통일로 68길 4 302호',
+                  addressLocality: '서울시',
+                  addressRegion: '은평구',
+                  postalCode: '03100',
+                  addressCountry: 'KR',
+                },
+                contactPoint: {
+                  '@type': 'ContactPoint',
+                  contactType: 'Customer Service',
+                  telephone: '+82-2-764-3114',
+                  email: 'contact@kosmart.co.kr',
+                },
+              })
+            ),
           }}
         />
 
@@ -132,19 +134,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'WebSite',
-              name: '씨앗페 2026',
-              alternateName: 'SAF 2026',
-              url: 'https://www.saf2026.com',
-              description: '한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인',
-              inLanguage: 'ko-KR',
-              publisher: {
-                '@type': 'Organization',
-                name: '한국스마트협동조합',
-              },
-            }),
+            __html: escapeJsonLdForScript(
+              JSON.stringify({
+                '@context': 'https://schema.org',
+                '@type': 'WebSite',
+                name: '씨앗페 2026',
+                alternateName: 'SAF 2026',
+                url: 'https://www.saf2026.com',
+                description: '한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인',
+                inLanguage: 'ko-KR',
+                publisher: {
+                  '@type': 'Organization',
+                  name: '한국스마트협동조합',
+                },
+              })
+            ),
           }}
         />
 

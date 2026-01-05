@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import dynamic from 'next/dynamic';
-import { SITE_URL } from '@/lib/constants';
+import { SITE_URL, createBreadcrumbSchema, BREADCRUMB_HOME, BREADCRUMBS } from '@/lib/constants';
 import Button from '@/components/ui/Button';
 import RelatedArticles from '@/components/features/RelatedArticles';
 import ExpandableHistory from '@/components/features/ExpandableHistory';
@@ -187,9 +187,21 @@ export default function ArtworkDetailPage({ params }: Props) {
   // Safely stringify JSON-LD to prevent XSS (escape < as \u003c)
   const safeJsonLd = JSON.stringify(productSchema).replace(/</g, '\\u003c');
 
+  // BreadcrumbList Schema
+  const breadcrumbSchema = createBreadcrumbSchema([
+    BREADCRUMB_HOME,
+    BREADCRUMBS['/artworks'],
+    { name: artwork.title, url: `${SITE_URL}/artworks/${artwork.id}` },
+  ]);
+  const safeBreadcrumbJsonLd = JSON.stringify(breadcrumbSchema).replace(/</g, '\\u003c');
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: safeBreadcrumbJsonLd }}
+      />
       <main className="min-h-screen bg-white pb-20 pt-[calc(4rem+env(safe-area-inset-top,0px))]">
         {/* Navigation Bar */}
         <nav className="border-b sticky top-[calc(4rem+env(safe-area-inset-top,0px))] z-30 bg-white/90 backdrop-blur-sm">
@@ -286,7 +298,7 @@ export default function ArtworkDetailPage({ params }: Props) {
                   {/* 재료 */}
                   {artwork.material && (
                     <>
-                      <span className="text-gray-400 font-medium text-sm">재료</span>
+                      <span className="text-gray-600 font-medium text-sm">재료</span>
                       <span className="text-charcoal">{artwork.material}</span>
                     </>
                   )}
@@ -294,7 +306,7 @@ export default function ArtworkDetailPage({ params }: Props) {
                   {/* 크기 */}
                   {artwork.size && (
                     <>
-                      <span className="text-gray-400 font-medium text-sm">크기</span>
+                      <span className="text-gray-600 font-medium text-sm">크기</span>
                       <span className="text-charcoal">{artwork.size}</span>
                     </>
                   )}
@@ -302,7 +314,7 @@ export default function ArtworkDetailPage({ params }: Props) {
                   {/* 년도 */}
                   {artwork.year && (
                     <>
-                      <span className="text-gray-400 font-medium text-sm">년도</span>
+                      <span className="text-gray-600 font-medium text-sm">년도</span>
                       <span className="text-charcoal">{artwork.year}</span>
                     </>
                   )}
@@ -310,7 +322,7 @@ export default function ArtworkDetailPage({ params }: Props) {
                   {/* 에디션 */}
                   {artwork.edition && (
                     <>
-                      <span className="text-gray-400 font-medium text-sm">에디션</span>
+                      <span className="text-gray-600 font-medium text-sm">에디션</span>
                       <span className="text-charcoal">{artwork.edition}</span>
                     </>
                   )}
@@ -318,7 +330,7 @@ export default function ArtworkDetailPage({ params }: Props) {
                   {/* 가격 */}
                   {artwork.price && (
                     <>
-                      <span className="text-gray-400 font-medium text-sm">가격</span>
+                      <span className="text-gray-600 font-medium text-sm">가격</span>
                       <span className="text-charcoal font-semibold">{artwork.price}</span>
                     </>
                   )}

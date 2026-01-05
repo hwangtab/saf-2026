@@ -16,10 +16,8 @@ export const EXTERNAL_LINKS = {
   LOAN_INFO: 'https://www.kosmart.co.kr/loan',
   KOSMART_HOME: 'https://www.kosmart.co.kr',
   KOSMERT_2023_GALLERY: 'https://www.news-art.co.kr/news/section_list_all.html?sec_no=135',
-  INSA_GALLERY_KAKAO:
-    'https://kko.to/SGmIwAnAmT',
-  AUDIO_GUY_STUDIO_KAKAO:
-    'https://place.map.kakao.com/27349395',
+  INSA_GALLERY_KAKAO: 'https://kko.to/SGmIwAnAmT',
+  AUDIO_GUY_STUDIO_KAKAO: 'https://place.map.kakao.com/27349395',
   KOSMART_OFFICE_MAP:
     'https://map.kakao.com/?q=%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EC%98%81%EB%93%B1%ED%8F%AC%EA%B5%AC%20%EC%96%91%EC%82%B0%EB%A1%9C%2096',
 };
@@ -60,3 +58,43 @@ export const STATISTICS_DATA = [
   { label: '조성 기금', value: 125340000, unit: '원' },
   { label: '대출 가능 금액', value: 1000000000, unit: '원' },
 ];
+
+// JSON-LD Security: Escape < characters to prevent XSS
+// This is required when using dangerouslySetInnerHTML with JSON-LD data
+export function escapeJsonLdForScript(json: string): string {
+  return json.replace(/</g, '\\u003c');
+}
+
+// Breadcrumb List Schema helper
+export interface BreadcrumbItem {
+  name: string;
+  url: string;
+}
+
+export function createBreadcrumbSchema(items: BreadcrumbItem[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      item: item.url,
+    })),
+  };
+}
+
+// Common breadcrumb items
+export const BREADCRUMB_HOME: BreadcrumbItem = {
+  name: '홈',
+  url: SITE_URL,
+};
+
+export const BREADCRUMBS: Record<string, BreadcrumbItem> = {
+  '/our-reality': { name: '우리의 현실', url: `${SITE_URL}/our-reality` },
+  '/our-proof': { name: '우리의 증명', url: `${SITE_URL}/our-proof` },
+  '/exhibition': { name: '전시 안내', url: `${SITE_URL}/exhibition` },
+  '/artworks': { name: '출품작', url: `${SITE_URL}/artworks` },
+  '/archive': { name: '아카이브', url: `${SITE_URL}/archive` },
+  '/news': { name: '언론 보도', url: `${SITE_URL}/news` },
+} as const;

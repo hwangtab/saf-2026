@@ -4,9 +4,10 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 import Button from '@/components/ui/Button';
 import { EXTERNAL_LINKS } from '@/lib/constants';
+import clsx from 'clsx';
 
 type NavigationItem = {
   name: string;
@@ -24,6 +25,16 @@ const navigation: NavigationItem[] = [
   { name: '언론 보도', href: '/news' },
 ];
 
+const HERO_PAGES = [
+  '/',
+  '/our-reality',
+  '/our-proof',
+  '/exhibition',
+  '/archive',
+  '/news',
+  '/artworks',
+] as const;
+
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -35,10 +46,8 @@ export default function Header() {
     return false;
   };
 
-  // 모바일 메뉴 열릴 때 body 스크롤 비활성화 (스크롤바 너비 보정으로 레이아웃 이동 방지)
   useEffect(() => {
     if (mobileMenuOpen) {
-      // Use RAF to batch DOM updates and prevent flash
       requestAnimationFrame(() => {
         const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
         document.body.style.overflow = 'hidden';
@@ -54,12 +63,10 @@ export default function Header() {
     };
   }, [mobileMenuOpen]);
 
-  // 페이지 전환 시 모바일 메뉴 닫기
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [pathname]);
 
-  // 스크롤 감지 로직 (RAF 쓰로틀링 적용)
   useEffect(() => {
     let ticking = false;
 
@@ -74,53 +81,31 @@ export default function Header() {
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // 초기 상태 확인
+    handleScroll();
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
-  // 히어로 섹션(어두운 배경)이 있는 페이지 목록
-  const HERO_PAGES = [
-    '/',
-    '/our-reality',
-    '/our-proof',
-    '/exhibition',
-    '/archive',
-    '/news',
-    '/artworks',
-  ];
-  // Artwork detail page check: /artworks/[id] but not /artworks
   const isArtworkDetail = pathname.startsWith('/artworks/') && pathname !== '/artworks';
+  const hasHero = HERO_PAGES.includes(pathname as (typeof HERO_PAGES)[number]) && !isArtworkDetail;
 
-  // Ensure detail pages are never treated as having a hero header
-  const hasHero = HERO_PAGES.includes(pathname) && !isArtworkDetail;
-
-  // Optimize header style logic to prevent stacking context issues
   const getHeaderStyle = () => {
     if (mobileMenuOpen) {
-      // Solid white, no backdrop blur (prevents containing block issues for fixed children)
       return 'bg-white shadow-sm border-gray-200/50';
     }
-    // Force solid header for artwork detail pages
     if (isArtworkDetail) {
       return 'bg-white/95 backdrop-blur-md shadow-sm border-gray-200/50';
     }
     if (isScrolled || !hasHero) {
-      // Scrolled state OR page without hero -> Translucent white
       return 'bg-white/95 backdrop-blur-md shadow-sm border-gray-200/50';
     }
-    // Top of Hero page -> Transparent
     return 'bg-transparent border-transparent';
   };
 
   const headerStyle = getHeaderStyle();
-
-  // If page generally has dark text (no hero) or is scrolled/menu open -> dark text
-  // Only transparent hero pages at top get white text
   const isDarkText = isScrolled || mobileMenuOpen || !hasHero || isArtworkDetail;
-
   const textColor = isDarkText ? 'text-charcoal' : 'text-white';
   const logoSrc = isDarkText
     ? '/images/logo/320pxX90px.webp'
@@ -128,10 +113,13 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-[100] border-b transition-all duration-300 pt-[env(safe-area-inset-top,0px)] ${headerStyle}`}
+      className={clsx(
+        'fixed top-0 left-0 right-0 z-[100] border-b transition-all duration-300',
+        'pt-[env(safe-area-inset-top,0px)]',
+        headerStyle
+      )}
     >
       <nav className="container-max flex items-center justify-between h-16 transition-all duration-300">
-        {/* Logo */}
         <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
           <Image
             src={logoSrc}
@@ -144,7 +132,6 @@ export default function Header() {
           <span className="sr-only">씨앗페 2026 홈</span>
         </Link>
 
-        {/* Desktop Navigation */}
         <div className="hidden lg:flex items-center gap-8 h-full">
           {navigation.map((item) =>
             item.external ? (
@@ -153,7 +140,14 @@ export default function Header() {
                 href={item.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`relative flex items-center h-full text-sm font-medium transition-colors focus:outline-none focus-visible:outline-none after:absolute after:bottom-3 after:left-0 after:right-0 after:h-0.5 after:bg-transparent hover:after:bg-primary/40 after:transition-colors ${textColor} hover:text-primary`}
+                className={clsx(
+                  'relative flex items-center h-full text-sm font-medium transition-colors',
+                  'focus:outline-none focus-visible:outline-none',
+                  'after:absolute after:bottom-3 after:left-0 after:right-0 after:h-0.5',
+                  'after:bg-transparent hover:after:bg-primary/40 after:transition-colors',
+                  textColor,
+                  'hover:text-primary'
+                )}
               >
                 {item.name}
               </a>
@@ -161,18 +155,25 @@ export default function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`relative flex items-center h-full text-sm font-medium transition-colors focus:outline-none focus-visible:outline-none after:absolute after:bottom-3 after:left-0 after:right-0 after:h-0.5 after:transition-colors ${
+                className={clsx(
+                  'relative flex items-center h-full text-sm font-medium transition-colors',
+                  'focus:outline-none focus-visible:outline-none',
+                  'after:absolute after:bottom-3 after:left-0 after:right-0 after:h-0.5',
+                  'after:transition-colors',
                   isActive(item.href)
-                    ? 'text-primary after:bg-primary'
-                    : `${textColor} hover:text-primary after:bg-transparent hover:after:bg-primary/40`
-                }`}
+                    ? ['text-primary', 'after:bg-primary']
+                    : [
+                        textColor,
+                        'hover:text-primary',
+                        'after:bg-transparent hover:after:bg-primary/40',
+                      ]
+                )}
               >
                 {item.name}
               </Link>
             )
           )}
         </div>
-        {/* Donate Button (Desktop) */}
         <div className="hidden lg:flex">
           <Button href={EXTERNAL_LINKS.DONATE} variant="accent" external className="gap-1.5">
             <span className="group-hover:scale-125 transition-transform duration-300">❤️</span>
@@ -180,10 +181,14 @@ export default function Header() {
           </Button>
         </div>
 
-        {/* Mobile Menu Button */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className={`lg:hidden p-3 min-w-[44px] min-h-[44px] flex items-center justify-center transition-transform active:scale-90 ${textColor} hover:text-primary`}
+          className={clsx(
+            'lg:hidden p-3 min-w-[44px] min-h-[44px] flex items-center justify-center',
+            'transition-transform active:scale-90',
+            textColor,
+            'hover:text-primary'
+          )}
           aria-label="메뉴 토글"
           aria-expanded={mobileMenuOpen}
         >
@@ -207,12 +212,10 @@ export default function Header() {
         </button>
       </nav>
 
-      {/* Mobile Menu with AnimatePresence */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <>
-            {/* Overlay */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -220,8 +223,7 @@ export default function Header() {
               className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[110] lg:hidden top-[calc(4rem+env(safe-area-inset-top,0px))]"
             />
 
-            {/* Menu */}
-            <motion.div
+            <m.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
@@ -247,11 +249,15 @@ export default function Header() {
                       key={item.href}
                       href={item.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className={`block py-3 px-4 text-base rounded-lg transition-colors border-l-4 ${
+                      className={clsx(
+                        'block py-3 px-4 text-base rounded-lg transition-colors border-l-4',
                         isActive(item.href)
-                          ? 'text-primary font-semibold border-primary bg-primary/10'
-                          : 'border-transparent text-charcoal hover:bg-primary/5 hover:border-primary active:bg-primary/10'
-                      }`}
+                          ? ['text-primary font-semibold border-primary bg-primary/10']
+                          : [
+                              'border-transparent text-charcoal',
+                              'hover:bg-primary/5 hover:border-primary active:bg-primary/10',
+                            ]
+                      )}
                     >
                       {item.name}
                     </Link>
@@ -272,7 +278,7 @@ export default function Header() {
                   </Button>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           </>
         )}
       </AnimatePresence>

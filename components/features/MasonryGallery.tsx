@@ -56,9 +56,9 @@ function MasonryGallery({ artworks, forceGrid }: MasonryGalleryProps) {
                 </div>
 
                 <div className="p-4 bg-white">
-                  <h3 className="text-lg font-bold text-charcoal font-sans group-hover:text-primary transition-colors duration-300 break-keep">
+                  <h2 className="text-lg font-bold text-charcoal font-sans group-hover:text-primary transition-colors duration-300 break-keep">
                     {artwork.title}
-                  </h3>
+                  </h2>
                   <p className="text-sm text-charcoal-muted mt-1">{artwork.artist}</p>
                   {(showMaterial || showSize) && (
                     <p className="text-xs text-charcoal-soft mt-2 line-clamp-1">
@@ -72,7 +72,7 @@ function MasonryGallery({ artworks, forceGrid }: MasonryGalleryProps) {
                   )}
                   {artwork.price && artwork.price !== '문의' && (
                     <p
-                      className={`text-sm font-semibold mt-1 ${artwork.sold ? 'text-gray-400 line-through' : 'text-primary'}`}
+                      className={`text-sm font-semibold mt-1 ${artwork.sold ? 'text-gray-600 line-through' : 'text-primary'}`}
                     >
                       {artwork.price}
                     </p>

@@ -15,7 +15,7 @@ interface RelatedArtworksProps {
 }
 
 // 슬라이더 설정
-const ITEM_COUNT = 12;
+const ITEM_COUNT = 20;
 
 /**
  * 작품 슬라이더 컴포넌트
