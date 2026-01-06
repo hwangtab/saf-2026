@@ -1,8 +1,5 @@
-'use client';
-
 import { useState, useEffect } from 'react';
 import ExportedImage from 'next-image-export-optimizer';
-import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const HERO_IMAGES = [
@@ -45,8 +42,16 @@ export default function BackgroundSlider() {
 
   return (
     <>
-      {/* Preload next image */}
-      <Link rel="preload" as="image" href={`/images/hero/${nextPhoto.filename}`} />
+      {/* Preload next image using a hidden image component */}
+      <div className="invisible absolute inset-0 -z-20">
+        <ExportedImage
+          src={`/images/hero/${nextPhoto.filename}`}
+          alt={nextPhoto.alt}
+          fill
+          priority
+          className="object-cover"
+        />
+      </div>
       <div className="absolute inset-0 -z-10 overflow-hidden bg-gray-900">
         <AnimatePresence>
           <motion.div
