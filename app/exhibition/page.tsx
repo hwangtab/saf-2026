@@ -48,7 +48,7 @@ export default function ExhibitionPage() {
     name: '씨앗페 2026 - 예술인 금융 위기 해결 캠페인',
     description: '한국 예술인들의 금융 위기를 해결하기 위한 전시 및 공연 행사',
     startDate: '2026-01-14',
-    endDate: '2026-01-27',
+    endDate: '2026-01-26',
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
     location: {
@@ -265,24 +265,6 @@ export default function ExhibitionPage() {
                     <p className="text-charcoal-muted text-sm">
                       매일 11:00-20:00 전시 운영, 저녁에는 음악/퍼포먼스 릴레이와 상호부조 상담 부스
                       운영
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-24 font-bold text-primary">1월 20일</div>
-                  <div className="flex-1">
-                    <p className="font-semibold">Meet the Artists 토크</p>
-                    <p className="text-charcoal-muted text-sm">
-                      참여 작가와 상호부조 대출 이용 예술인들의 라이브 토크 & 미니 콘서트
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-24 font-bold text-primary">1월 27일</div>
-                  <div className="flex-1">
-                    <p className="font-semibold">폐막 & 모금 결산</p>
-                    <p className="text-charcoal-muted text-sm">
-                      모금 결과 공개, 후원자 감사 행사, 2026년 캠페인 계획 발표
                     </p>
                   </div>
                 </div>
