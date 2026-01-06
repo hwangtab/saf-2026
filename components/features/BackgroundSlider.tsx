@@ -65,11 +65,11 @@ export default function BackgroundSlider() {
             animate="animate"
             exit="exit"
             transition={{
-              opacity: { duration: 2.5, ease: 'easeInOut' },
+              opacity: { duration: 3, ease: 'easeInOut' },
               scale: { duration: 6, ease: 'linear' },
-              // IMPORTANT: The exit delay must match the enter duration (2.5s)
+              // IMPORTANT: The exit delay must match the enter duration (3s)
               // to ensure the old image stays visible underneath while the new one fades in.
-              delay: 2.5,
+              delay: 3,
             }}
             className="absolute inset-0"
           >
