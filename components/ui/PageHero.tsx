@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // 히어로 배경용 고해상도 이미지 (public/images/hero/)
 const HERO_IMAGES = [
@@ -37,9 +38,24 @@ export default function PageHero({ title, description, children }: PageHeroProps
   return (
     <section className="relative min-h-[60vh] flex items-center justify-center py-12 md:py-20 overflow-hidden bg-charcoal">
       {/* Background Image */}
-      {bgImage && <Image src={bgImage} alt="" fill className="object-cover" priority />}
+      <AnimatePresence>
+        {bgImage && (
+          <motion.div
+            key={bgImage}
+            initial={{ opacity: 0, scale: 1.1 }}
+            animate={{ opacity: 1, scale: 1.0 }}
+            transition={{
+              opacity: { duration: 1.2 },
+              scale: { duration: 10, ease: 'easeOut' },
+            }}
+            className="absolute inset-0"
+          >
+            <Image src={bgImage} alt="" fill className="object-cover" priority />
+          </motion.div>
+        )}
+      </AnimatePresence>
       {/* Dark Overlay */}
-      <div className="absolute inset-0 bg-black/60" />
+      <div className="absolute inset-0 bg-black/60 z-10" />
 
       {/* Content */}
       <div className="relative z-10 container-max text-center w-full">
