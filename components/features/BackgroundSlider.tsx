@@ -42,14 +42,14 @@ export default function BackgroundSlider() {
       {/* Preload next image */}
       <Link rel="preload" as="image" href={`/images/hero/${nextPhoto.filename}`} />
       <div className="absolute inset-0 -z-10 overflow-hidden bg-gray-900">
-        <AnimatePresence mode="popLayout">
+        <AnimatePresence initial={false}>
           <motion.div
             key={currentPhoto.id}
             initial={{ opacity: 0, scale: 1.05 }}
             animate={{ opacity: 1, scale: 1.0 }}
-            exit={{ opacity: 0 }}
+            exit={{ opacity: 1 }}
             transition={{
-              opacity: { duration: 1.5 },
+              opacity: { duration: 2.5, ease: 'easeInOut' },
               scale: { duration: 6, ease: 'linear' },
             }}
             className="absolute inset-0"
