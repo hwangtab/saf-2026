@@ -1,6 +1,6 @@
 'use client';
 
-import Image from 'next/image';
+import ExportedImage from 'next-image-export-optimizer';
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -46,7 +46,7 @@ export default function PageHeroBackground() {
           }}
           className="absolute inset-0"
         >
-          <Image src={bgImage} alt="" fill className="object-cover" priority />
+          <ExportedImage src={bgImage} alt="" fill className="object-cover" priority />
         </motion.div>
       )}
     </AnimatePresence>

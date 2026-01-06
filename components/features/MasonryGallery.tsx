@@ -1,6 +1,6 @@
 'use client';
 
-import Image from 'next/image';
+import ExportedImage from 'next-image-export-optimizer';
 import Link from 'next/link';
 import { Artwork } from '@/content/saf2026-artworks';
 import { memo } from 'react';
@@ -40,7 +40,7 @@ function MasonryGallery({ artworks, forceGrid }: MasonryGalleryProps) {
                 <div className="relative w-full overflow-hidden aspect-[4/5]">
                   {/* Shimmer placeholder - visible before image loads */}
                   <div className="absolute inset-0 shimmer-loading" />
-                  <Image
+                  <ExportedImage
                     src={`/images/artworks/${artwork.image}`}
                     alt={`${artwork.title} - ${artwork.artist}`}
                     fill

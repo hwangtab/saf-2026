@@ -254,6 +254,7 @@ export default function NewsPage() {
                         fill
                         className="object-cover transition-transform duration-300 hover:scale-105"
                         sizes="(max-width: 768px) 100vw, 50vw"
+                        unoptimized={true}
                       />
                     ) : (
                       <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-400">

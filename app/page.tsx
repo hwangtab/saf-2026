@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
+import ExportedImage from 'next-image-export-optimizer';
 import Button from '@/components/ui/Button';
 import SectionTitle from '@/components/ui/SectionTitle';
 import ActionCard from '@/components/ui/ActionCard';
@@ -53,7 +53,7 @@ export default function Home() {
         <BackgroundSlider />
         <div className="relative z-10 container-max text-center">
           <div className="mb-12 hidden md:flex justify-center">
-            <Image
+            <ExportedImage
               src="/images/logo/320pxX90px_white.webp"
               alt="씨앗페 2026 로고"
               width={1120}

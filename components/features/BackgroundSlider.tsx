@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
+import ExportedImage from 'next-image-export-optimizer';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -82,7 +82,7 @@ export default function BackgroundSlider() {
             style={{ willChange: 'opacity, transform', transform: 'translateZ(0)' }}
             className="absolute inset-0"
           >
-            <Image
+            <ExportedImage
               src={`/images/hero/${currentPhoto.filename}`}
               alt={currentPhoto.alt}
               fill

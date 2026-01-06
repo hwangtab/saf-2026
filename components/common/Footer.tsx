@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import ExportedImage from 'next-image-export-optimizer';
 import { SOCIAL_LINKS, CONTACT, EXTERNAL_LINKS, EXHIBITION } from '@/lib/constants';
 import FooterSliderWrapper from '@/components/common/FooterSliderWrapper';
 
@@ -13,7 +13,7 @@ export default function Footer() {
             {/* Organization Info with Logo */}
             <div>
               <div className="flex items-start gap-3 mb-6">
-                <Image
+                <ExportedImage
                   src="/images/logo/320pxX90px_feet.webp"
                   alt="씨앗페 로고"
                   width={200}

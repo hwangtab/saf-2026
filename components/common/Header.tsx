@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+import ExportedImage from 'next-image-export-optimizer';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import Button from '@/components/ui/Button';
@@ -121,7 +121,7 @@ export default function Header() {
     >
       <nav className="container-max flex items-center justify-between h-16 transition-all duration-300">
         <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <Image
+          <ExportedImage
             src={logoSrc}
             alt="씨앗페 로고"
             width={160}
