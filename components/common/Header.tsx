@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { m, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Button from '@/components/ui/Button';
 import { EXTERNAL_LINKS } from '@/lib/constants';
 import clsx from 'clsx';
@@ -215,7 +215,7 @@ export default function Header() {
       <AnimatePresence>
         {mobileMenuOpen && (
           <>
-            <m.div
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -223,7 +223,7 @@ export default function Header() {
               className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[110] lg:hidden top-[calc(4rem+env(safe-area-inset-top,0px))]"
             />
 
-            <m.div
+            <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
@@ -278,7 +278,7 @@ export default function Header() {
                   </Button>
                 </div>
               </div>
-            </m.div>
+            </motion.div>
           </>
         )}
       </AnimatePresence>
