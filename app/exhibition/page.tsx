@@ -97,7 +97,7 @@ export default function ExhibitionPage() {
           {/* Poster - Full Width */}
           <div className="mb-12">
             <Image
-              src="/images/safposter.png"
+              src="/images/safposter.jpg"
               alt="씨앗페 2026 공식 포스터"
               width={1200}
               height={1700}
