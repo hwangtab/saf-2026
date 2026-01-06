@@ -46,7 +46,12 @@ export default function PageHero({ title, description, children }: PageHeroProps
             animate={{ opacity: 1, scale: 1.0 }}
             transition={{
               opacity: { duration: 1.2 },
-              scale: { duration: 10, ease: 'easeOut' },
+              scale: {
+                duration: 20,
+                ease: 'easeInOut',
+                repeat: Infinity,
+                repeatType: 'reverse',
+              },
             }}
             className="absolute inset-0"
           >
