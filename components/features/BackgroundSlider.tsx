@@ -42,15 +42,23 @@ export default function BackgroundSlider() {
       {/* Preload next image */}
       <Link rel="preload" as="image" href={`/images/hero/${nextPhoto.filename}`} />
       <div className="absolute inset-0 -z-10 overflow-hidden bg-gray-900">
-        <AnimatePresence initial={false}>
+        <AnimatePresence>
           <motion.div
             key={currentPhoto.id}
-            initial={{ opacity: 0, scale: 1.05 }}
-            animate={{ opacity: 1, scale: 1.0 }}
-            exit={{ opacity: 1 }}
+            variants={{
+              initial: { opacity: 0, scale: 1.05, zIndex: 1 },
+              animate: { opacity: 1, scale: 1.0, zIndex: 1 },
+              exit: { opacity: 0, zIndex: 0 },
+            }}
+            initial="initial"
+            animate="animate"
+            exit="exit"
             transition={{
               opacity: { duration: 2.5, ease: 'easeInOut' },
               scale: { duration: 6, ease: 'linear' },
+              // IMPORTANT: The exit delay must match the enter duration (2.5s)
+              // to ensure the old image stays visible underneath while the new one fades in.
+              delay: 2.5,
             }}
             className="absolute inset-0"
           >
