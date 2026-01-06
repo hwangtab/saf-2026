@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
+import ExportedImage from 'next-image-export-optimizer';
 import SectionTitle from '@/components/ui/SectionTitle';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
@@ -96,7 +96,7 @@ export default function ExhibitionPage() {
 
           {/* Poster - Full Width */}
           <div className="mb-12">
-            <Image
+            <ExportedImage
               src="/images/safposter.jpg"
               alt="씨앗페 2026 공식 포스터"
               width={1200}

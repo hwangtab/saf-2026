@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
+import ExportedImage from 'next-image-export-optimizer';
 import SectionTitle from '@/components/ui/SectionTitle';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
@@ -132,13 +132,12 @@ export default function ArchivePage() {
                 className="bg-white rounded-lg shadow-md overflow-hidden group flex flex-col"
               >
                 <div className="relative aspect-square w-full overflow-hidden">
-                  <Image
+                  <ExportedImage
                     src={artwork.imageUrl}
                     alt={`${artwork.artist} - ${artwork.title}`}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    unoptimized
                   />
                 </div>
                 <div className="p-6 flex-grow flex flex-col">
@@ -169,13 +168,12 @@ export default function ArchivePage() {
                 key={photo.id}
                 className="group relative aspect-square overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow"
               >
-                <Image
+                <ExportedImage
                   src={`/images/saf2023/${photo.filename}`}
                   alt={photo.alt}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-300"
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  unoptimized
                 />
               </div>
             ))}

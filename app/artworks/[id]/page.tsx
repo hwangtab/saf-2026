@@ -1,6 +1,6 @@
 import { getAllArtworks, getArtworkById } from '@/content/saf2026-artworks';
 import { getArticlesByArtist } from '@/content/artist-articles';
-import Image from 'next/image';
+import ExportedImage from 'next-image-export-optimizer';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
@@ -220,7 +220,7 @@ export default function ArtworkDetailPage({ params }: Props) {
             {/* Left Column: Image & CTA */}
             <div className="space-y-8">
               <div className="relative shadow-sm">
-                <Image
+                <ExportedImage
                   src={`/images/artworks/${artwork.image}`}
                   alt={`${artwork.title} - ${artwork.artist}`}
                   width={1000}

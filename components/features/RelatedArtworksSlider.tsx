@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
+import ExportedImage from 'next-image-export-optimizer';
 import { getAllArtworks, Artwork } from '@/content/saf2026-artworks';
 import { useState, useEffect } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
@@ -99,7 +99,7 @@ function ArtworkCard({ artwork }: { artwork: Artwork }) {
       className="flex-shrink-0 w-[160px] sm:w-[180px] md:w-[200px] group"
     >
       <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100 shadow-sm group-hover:shadow-md transition-shadow">
-        <Image
+        <ExportedImage
           src={`/images/artworks/${artwork.image}`}
           alt={`${artwork.title} - ${artwork.artist}`}
           fill

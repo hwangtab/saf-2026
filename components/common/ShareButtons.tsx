@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
+import ExportedImage from 'next-image-export-optimizer';
 import { FacebookShareButton, TwitterShareButton, FacebookIcon, TwitterIcon } from 'react-share';
 import clsx from 'clsx';
 
@@ -108,7 +108,7 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
         title="카카오톡 공유"
         aria-label="카카오톡으로 공유하기"
       >
-        <Image
+        <ExportedImage
           src="/images/free-icon-kakao-talk-3669973.png"
           alt="카카오톡"
           width={32}

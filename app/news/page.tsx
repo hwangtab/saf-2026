@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 import type { Metadata } from 'next';
-import Image from 'next/image';
+import ExportedImage from 'next-image-export-optimizer';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import { newsArticles } from '@/content/news';
@@ -248,7 +248,7 @@ export default function NewsPage() {
                 >
                   <div className="relative aspect-video bg-gray-100">
                     {article.thumbnail ? (
-                      <Image
+                      <ExportedImage
                         src={article.thumbnail}
                         alt={article.title}
                         fill
