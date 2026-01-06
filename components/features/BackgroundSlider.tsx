@@ -58,19 +58,28 @@ export default function BackgroundSlider() {
                 scale: 1.05,
                 zIndex: 1,
               }),
-              animate: { opacity: 1, scale: 1.0, zIndex: 1 },
-              exit: { opacity: 0, zIndex: 0 },
+              animate: {
+                opacity: 1,
+                scale: 1.0,
+                zIndex: 1,
+                transition: {
+                  opacity: { duration: 3, ease: 'easeInOut' },
+                  scale: { duration: 6, ease: 'linear' },
+                },
+              },
+              exit: {
+                opacity: 0,
+                zIndex: 0,
+                transition: {
+                  opacity: { duration: 0, delay: 3 }, // Wait 3s then vanish instantly
+                  zIndex: { delay: 3 }, // Keep z-index until vanish
+                },
+              },
             }}
             initial="initial"
             animate="animate"
             exit="exit"
-            transition={{
-              opacity: { duration: 3, ease: 'easeInOut' },
-              scale: { duration: 6, ease: 'linear' },
-              // IMPORTANT: The exit delay must match the enter duration (3s)
-              // to ensure the old image stays visible underneath while the new one fades in.
-              delay: 3,
-            }}
+            style={{ willChange: 'opacity, transform', transform: 'translateZ(0)' }}
             className="absolute inset-0"
           >
             <Image
