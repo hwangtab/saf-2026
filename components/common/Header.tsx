@@ -216,6 +216,7 @@ export default function Header() {
         {mobileMenuOpen && (
           <>
             <motion.div
+              key="backdrop"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -224,6 +225,7 @@ export default function Header() {
             />
 
             <motion.div
+              key="menu"
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
