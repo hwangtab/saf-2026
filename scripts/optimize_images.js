@@ -35,7 +35,11 @@ function optimizeImages() {
                     { width: 1600, quality: 80 },
                     { width: 1400, quality: 75 },
                     { width: 1200, quality: 70 },
-                    { width: 1024, quality: 65 }
+                    { width: 1024, quality: 65 },
+                    { width: 1000, quality: 60 },
+                    { width: 900, quality: 50 },
+                    { width: 800, quality: 50 },
+                    { width: 600, quality: 50 }
                 ];
 
                 for (const step of steps) {
