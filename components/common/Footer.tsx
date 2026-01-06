@@ -1,21 +1,11 @@
-'use client';
-
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
 import { SOCIAL_LINKS, CONTACT, EXTERNAL_LINKS, EXHIBITION } from '@/lib/constants';
-import RelatedArtworksSlider from '@/components/features/RelatedArtworksSlider';
-
-// 슬라이더 제외 경로 (정확히 일치하는 경로만)
-const EXCLUDE_SLIDER_PATHS = ['/artworks'];
+import FooterSliderWrapper from '@/components/common/FooterSliderWrapper';
 
 export default function Footer() {
-  const pathname = usePathname();
-  // /artworks 목록 페이지만 제외, /artworks/[id] 상세 페이지는 표시
-  const showSlider = !EXCLUDE_SLIDER_PATHS.includes(pathname);
-
   return (
     <>
-      {showSlider && <RelatedArtworksSlider />}
+      <FooterSliderWrapper />
       <footer className="bg-gray-900 text-white pb-[env(safe-area-inset-bottom)]">
         <div className="container-max py-12">
           {/* Footer Content Grid */}

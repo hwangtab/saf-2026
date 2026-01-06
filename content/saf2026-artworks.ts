@@ -1475,7 +1475,7 @@ export const artworks: Artwork[] = [
     material: '시멘트, 유사 금박, 왁스, 아크릴',
     year: '2023',
     edition: '',
-    price: '₩4,500,000',
+    price: '₩3,600,000',
     image: '90.jpg',
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/110',
     history:
@@ -1492,7 +1492,7 @@ export const artworks: Artwork[] = [
     material: '시멘트, 유사 금박, 왁스, 아크릴',
     year: '2023',
     edition: '',
-    price: '₩5,400,000',
+    price: '₩3,900,000',
     image: '91.jpg',
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/111',
     history:

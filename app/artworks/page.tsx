@@ -1,9 +1,22 @@
+import dynamic from 'next/dynamic';
 import { getAllArtworks } from '@/content/saf2026-artworks';
-import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import { OG_IMAGE, SITE_URL } from '@/lib/constants';
 import { Metadata } from 'next';
+
+const ArtworkGalleryWithSort = dynamic(
+  () => import('@/components/features/ArtworkGalleryWithSort'),
+  {
+    loading: () => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[...Array(6)].map((_, i) => (
+          <div key={i} className="aspect-[4/5] bg-gray-200 rounded-sm animate-pulse" />
+        ))}
+      </div>
+    ),
+  }
+);
 
 const PAGE_URL = `${SITE_URL}/artworks`;
 
