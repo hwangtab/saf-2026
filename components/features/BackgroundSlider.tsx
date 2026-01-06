@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const HERO_IMAGES = [
   { id: '11', filename: '11.jpg', alt: '2026 씨앗페 출품작' },
@@ -26,8 +27,10 @@ export default function BackgroundSlider() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (document.hidden) return;
-      setCurrentIndex((prev) => (prev + 1) % HERO_IMAGES.length);
+      // Only transition if the tab is focused to save resources and keep sync
+      if (!document.hidden) {
+        setCurrentIndex((prev) => (prev + 1) % HERO_IMAGES.length);
+      }
     }, 5000);
     return () => clearInterval(interval);
   }, []);
@@ -38,15 +41,29 @@ export default function BackgroundSlider() {
     <>
       {/* Preload next image */}
       <Link rel="preload" as="image" href={`/images/hero/${nextPhoto.filename}`} />
-      <div className="absolute inset-0 -z-10 overflow-hidden">
-        <Image
-          src={`/images/hero/${currentPhoto.filename}`}
-          alt={currentPhoto.alt}
-          fill
-          className="object-cover"
-          priority
-        />
-        <div className="absolute inset-0 bg-black/60" />
+      <div className="absolute inset-0 -z-10 overflow-hidden bg-gray-900">
+        <AnimatePresence mode="popLayout">
+          <motion.div
+            key={currentPhoto.id}
+            initial={{ opacity: 0, scale: 1.05 }}
+            animate={{ opacity: 1, scale: 1.0 }}
+            exit={{ opacity: 0 }}
+            transition={{
+              opacity: { duration: 1.5 },
+              scale: { duration: 6, ease: 'linear' },
+            }}
+            className="absolute inset-0"
+          >
+            <Image
+              src={`/images/hero/${currentPhoto.filename}`}
+              alt={currentPhoto.alt}
+              fill
+              className="object-cover"
+              priority
+            />
+          </motion.div>
+        </AnimatePresence>
+        <div className="absolute inset-0 bg-black/60 z-10" />
       </div>
     </>
   );
