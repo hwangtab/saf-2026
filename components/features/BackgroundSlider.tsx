@@ -21,11 +21,17 @@ const HERO_IMAGES = [
 
 export default function BackgroundSlider() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isFirstRender, setIsFirstRender] = useState(true);
 
   const nextIndex = (currentIndex + 1) % HERO_IMAGES.length;
   const nextPhoto = HERO_IMAGES[nextIndex];
 
   useEffect(() => {
+    // After the first render cycle, we enable the fade-in animation for future slides
+    if (isFirstRender) {
+      setIsFirstRender(false);
+    }
+
     const interval = setInterval(() => {
       // Only transition if the tab is focused to save resources and keep sync
       if (!document.hidden) {
@@ -33,7 +39,7 @@ export default function BackgroundSlider() {
       }
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [isFirstRender]);
 
   const currentPhoto = HERO_IMAGES[currentIndex];
 
@@ -45,8 +51,13 @@ export default function BackgroundSlider() {
         <AnimatePresence>
           <motion.div
             key={currentPhoto.id}
+            custom={isFirstRender}
             variants={{
-              initial: { opacity: 0, scale: 1.05, zIndex: 1 },
+              initial: (isFirst: boolean) => ({
+                opacity: isFirst ? 1 : 0,
+                scale: 1.05,
+                zIndex: 1,
+              }),
               animate: { opacity: 1, scale: 1.0, zIndex: 1 },
               exit: { opacity: 0, zIndex: 0 },
             }}
