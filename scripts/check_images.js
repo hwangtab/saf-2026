@@ -10,8 +10,8 @@ const content = fs.readFileSync(artworksPath, 'utf-8');
 // Extract the array using regex or simple parsing since it's a TS file
 const match = content.match(/export const artworks: Artwork\[\] = (\[[\s\S]*?\]);/);
 if (!match) {
-    console.error('Could not find artworks array');
-    process.exit(1);
+  console.error('Could not find artworks array');
+  process.exit(1);
 }
 
 // We need to be careful with eval on TS content as it might have TS types or non-JSON syntax.
@@ -25,7 +25,7 @@ const missing = [];
 const allImages = new Set(fs.readdirSync(imagesDir));
 
 // Iterate over regex matches
-// Note: This regex assumes a specific order, which might be risky. 
+// Note: This regex assumes a specific order, which might be risky.
 // Better logic: match each object {} block, then extract fields.
 
 // Let's just use the validate_artworks approach of eval if the file is simple enough
@@ -40,45 +40,45 @@ const arrayString = content.substring(openBracket, closeBracket + 1);
 
 let artworks;
 try {
-    artworks = eval(arrayString);
+  artworks = eval(arrayString);
 } catch (e) {
-    console.error('Eval failed:', e);
-    // Fallback or exit
-    process.exit(1);
+  console.error('Eval failed:', e);
+  // Fallback or exit
+  process.exit(1);
 }
 
 console.log(`Checking images for ${artworks.length} artworks...`);
 
-artworks.forEach(artwork => {
-    const filename = artwork.image;
-    const artist = artwork.artist;
-    const id = artwork.id;
+artworks.forEach((artwork) => {
+  const filename = artwork.image;
+  const artist = artwork.artist;
+  const id = artwork.id;
 
-    // Check exact match
-    if (artist.includes('김규학') || artist.includes('김동석')) {
-        console.log(`Found ${artist} (ID: ${id}) -> Image: '${filename}'`);
+  // Check exact match
+  if (artist.includes('김규학') || artist.includes('김동석')) {
+    console.log(`Found ${artist} (ID: ${id}) -> Image: '${filename}'`);
+  }
+
+  if (!allImages.has(filename)) {
+    // Check if maybe case sensitive issue or extension mismatch
+    // list files with same base name
+    const basename = filename.split('.')[0];
+    const candidates = Array.from(allImages).filter((f) => f.startsWith(basename + '.'));
+
+    if (candidates.length > 0) {
+      missing.push({ id, artist, expected: filename, found: candidates.join(', ') });
+    } else {
+      missing.push({ id, artist, expected: filename, found: 'NONE' });
     }
-
-    if (!allImages.has(filename)) {
-        // Check if maybe case sensitive issue or extension mismatch
-        // list files with same base name
-        const basename = filename.split('.')[0];
-        const candidates = Array.from(allImages).filter(f => f.startsWith(basename + '.'));
-
-        if (candidates.length > 0) {
-            missing.push({ id, artist, expected: filename, found: candidates.join(', ') });
-        } else {
-            missing.push({ id, artist, expected: filename, found: 'NONE' });
-        }
-    }
+  }
 });
 
 if (missing.length > 0) {
-    console.log('\n❌ Missing or Misnamed Images:');
-    missing.forEach(m => {
-        console.log(`- ID ${m.id} (${m.artist}): Expected '${m.expected}' -> Suggestion: ${m.found}`);
-    });
-    process.exit(1);
+  console.log('\n❌ Missing or Misnamed Images:');
+  missing.forEach((m) => {
+    console.log(`- ID ${m.id} (${m.artist}): Expected '${m.expected}' -> Suggestion: ${m.found}`);
+  });
+  process.exit(1);
 } else {
-    console.log('✅ All images found.');
+  console.log('✅ All images found.');
 }

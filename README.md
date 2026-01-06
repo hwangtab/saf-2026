@@ -13,18 +13,19 @@
 
 ## 📋 페이지 구성
 
-| 페이지 | 경로 | 설명 |
-|--------|------|------|
-| 홈 | `/` | 캠페인 개요, 동적 통계 카운터 |
-| 우리의 현실 | `/our-reality` | 6개 통계 그래프로 보는 현황 |
-| 우리의 증명 | `/our-proof` | 95% 상환율 등 신뢰도 증명 |
-| 참여 예술가 | `/artists` | 참여 뮤지션, 화가 목록 |
-| 아카이브 | `/archive` | 2023년 행사 기록, 언론 보도 |
-| 전시 안내 | `/exhibition` | 일시, 장소, 오시는 길 |
+| 페이지      | 경로           | 설명                          |
+| ----------- | -------------- | ----------------------------- |
+| 홈          | `/`            | 캠페인 개요, 동적 통계 카운터 |
+| 우리의 현실 | `/our-reality` | 6개 통계 그래프로 보는 현황   |
+| 우리의 증명 | `/our-proof`   | 95% 상환율 등 신뢰도 증명     |
+| 참여 예술가 | `/artists`     | 참여 뮤지션, 화가 목록        |
+| 아카이브    | `/archive`     | 2023년 행사 기록, 언론 보도   |
+| 전시 안내   | `/exhibition`  | 일시, 장소, 오시는 길         |
 
 ## 🛠️ 설치 및 실행
 
 ### 필수 사항
+
 - Node.js 18+
 - npm 또는 yarn
 
@@ -104,6 +105,7 @@ saf/
 ## 🎨 디자인 시스템
 
 ### 색상
+
 - **브랜드 베이스**: `#2176FF` (Crayola Blue) – 중간 제목, 핵심 데이터
 - **세컨더리 포인트**: `#33A1FD` (Celestial Blue) – 그래픽, 탭 강조
 - **주요 CTA**: `#F79824` (Carrot Orange) – 후원/참여 버튼
@@ -112,10 +114,12 @@ saf/
 - **자세한 가이드**: `docs/brand-palette.md` 참조
 
 ### 폰트
+
 - **기본 폰트**: Pretendard, SUIT
 - **폰트 크기**: 반응형 (모바일 first)
 
 ### 레이아웃
+
 - **Breakpoints**: sm(640px), md(768px), lg(1024px), xl(1280px)
 - **그리드**: Tailwind CSS의 기본 그리드 시스템
 - **간격**: Consistent spacing 사용
@@ -123,26 +127,31 @@ saf/
 ## 📊 핵심 기능
 
 ### 1. 동적 통계 카운터 (Home)
+
 - `react-countup` + `react-intersection-observer` 조합
 - 뷰포트 진입 시 0부터 목표값까지 애니메이션
 
 ### 2. 인터랙티브 차트 (우리의 현실)
+
 - **라이브러리**: Recharts
 - **차트 종류**: Pie Chart(도넛), Bar Chart(가로/세로)
 - **인터랙션**: 마우스 호버 시 툴팁 표시
 - **반응형**: 모바일에서 스크롤 가능
 
 ### 3. 동적 콘텐츠 렌더링
+
 - `/content` 폴더의 TypeScript 파일에서 데이터 로드
 - 비개발자도 쉽게 업데이트 가능
 - `.map()` 함수로 UI 컴포넌트 생성
 
 ### 4. SNS 공유
+
 - **라이브러리**: react-share
 - **지원 플랫폼**: Facebook, Twitter/X, KakaoTalk, 링크 복사
 - **메타데이터**: 각 페이지의 Open Graph 태그 활용
 
 ### 5. Mobile 최적화
+
 - **헤더**: 데스크톱은 가로 메뉴, 모바일은 햄버거 메뉴
 - **레이아웃**: 1단 또는 2단 그리드로 자동 전환
 - **터치**: 모바일 터치에 적합한 버튼 크기
@@ -150,6 +159,7 @@ saf/
 ## 🚀 배포
 
 ### Vercel 배포
+
 ```bash
 # GitHub에 push하면 자동 배포
 git push origin main
@@ -159,6 +169,7 @@ git push origin main
 ```
 
 ### 도메인 설정
+
 1. Vercel에서 도메인 구매 또는 외부 도메인 연결
 2. DNS 설정 (외부 도메인 사용 시)
 3. SSL 인증서 자동 적용
@@ -166,16 +177,19 @@ git push origin main
 ## 📈 모니터링
 
 ### 성능 지표 (NFR-01)
+
 - Google PageSpeed Insights: 모바일 80점 이상
 - LCP (Largest Contentful Paint): 2.5초 미만
 - 이미지 포맷: WebP 자동 변환
 
 ### SEO (NFR-02)
+
 - 각 페이지 고유 메타태그
 - Open Graph 태그 구현
 - 시맨틱 HTML
 
 ### 접근성 (NFR-03)
+
 - 모든 이미지 alt 텍스트
 - 키보드 네비게이션
 - Lighthouse Accessibility 85점 이상
@@ -183,15 +197,18 @@ git push origin main
 ## 🔧 유지보수
 
 ### 콘텐츠 업데이트
+
 1. **작가 목록 추가**: `content/artists.ts` 수정
 2. **뉴스 추가**: `content/news.ts` 수정
 3. **외부 링크 변경**: `lib/constants.ts` 수정
 
 ### 스타일 수정
+
 - Tailwind CSS를 사용한 인라인 스타일
 - `styles/globals.css`에 전역 스타일
 
 ### 컴포넌트 추가
+
 - `components/ui/`에 재사용 가능한 컴포넌트 생성
 - `components/features/`에 페이지별 기능 컴포넌트 생성
 

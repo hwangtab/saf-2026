@@ -13,7 +13,8 @@ export const newsArticles: NewsArticle[] = [
   },
   {
     id: 'news-ndn-923967',
-    title: '양문석 국회의원, "문체부-예술인복지재단-민간 협업을 통해 예술인생활안정자금을 신속하고 효능감 있게 운용해야"',
+    title:
+      '양문석 국회의원, "문체부-예술인복지재단-민간 협업을 통해 예술인생활안정자금을 신속하고 효능감 있게 운용해야"',
     source: '공직신문',
     date: '2025-11-05',
     link: 'https://www.ndnnews.co.kr/news/articleView.html?idxno=923967',
@@ -29,7 +30,7 @@ export const newsArticles: NewsArticle[] = [
     link: 'https://www.ebn.co.kr/news/articleView.html?idxno=1685475',
     thumbnail: 'https://cdn.ebn.co.kr/news/thumbnail/202511/1685475_703389_313_v150.jpg',
     description:
-      'EBN 김지성 기자 | 국회 토론회에서 공개된 \'2025 예술인 금융재난 보고서\'가 예술인의 84.9%가 제1금융권 대출을 받지 못한 현실과 95% 상환율을 기록한 상호부조 대출 모델을 소개했다.',
+      "EBN 김지성 기자 | 국회 토론회에서 공개된 '2025 예술인 금융재난 보고서'가 예술인의 84.9%가 제1금융권 대출을 받지 못한 현실과 95% 상환율을 기록한 상호부조 대출 모델을 소개했다.",
   },
   {
     id: 'news-asiae-20251105',
@@ -39,7 +40,7 @@ export const newsArticles: NewsArticle[] = [
     link: 'https://www.asiae.co.kr/article/2025110517572066097',
     thumbnail: 'https://cphoto.asiae.co.kr/listimglink/1/2025110517522196297_1762332741.jpg',
     description:
-      '아시아경제 이이슬 기자 | \'2025 예술인 금융재난 보고서\'를 통해 고금리 대출과 창작 중단 사례가 공유되고, 한국스마트협동조합의 95% 상환율 모델과 민관 협력 필요성이 제시됐다.',
+      "아시아경제 이이슬 기자 | '2025 예술인 금융재난 보고서'를 통해 고금리 대출과 창작 중단 사례가 공유되고, 한국스마트협동조합의 95% 상환율 모델과 민관 협력 필요성이 제시됐다.",
   },
   {
     id: 'news-32865',
@@ -49,7 +50,7 @@ export const newsArticles: NewsArticle[] = [
     link: 'https://www.news-art.co.kr/news/article.html?no=32865',
     thumbnail: 'https://www.news-art.co.kr/data/photos/20251145/art_17623403153642_d40d7b.jpg',
     description:
-      '뉴스아트 편집부 | \'2025 예술인 금융재난 보고서\'가 밝힌 배제·약탈·파괴의 악순환과 한국스마트협동조합의 상호부조 대출 95% 상환율을 통해 시스템 변화를 촉구한다.',
+      "뉴스아트 편집부 | '2025 예술인 금융재난 보고서'가 밝힌 배제·약탈·파괴의 악순환과 한국스마트협동조합의 상호부조 대출 95% 상환율을 통해 시스템 변화를 촉구한다.",
   },
   {
     id: 'news-hani-1227472',
@@ -57,7 +58,8 @@ export const newsArticles: NewsArticle[] = [
     source: '한겨레',
     date: '2025-11-05',
     link: 'https://www.hani.co.kr/arti/society/society_general/1227472.html',
-    thumbnail: 'https://flexible.img.hani.co.kr/flexible/normal/800/533/imgdb/original/2025/1105/20251105501193.webp',
+    thumbnail:
+      'https://flexible.img.hani.co.kr/flexible/normal/800/533/imgdb/original/2025/1105/20251105501193.webp',
     description:
       '한겨레 조해영·박찬희 기자 | 179명 설문으로 예술인 15%만 제1금융권 대출을 경험했고 채권추심이 창작 중단으로 이어지는 현실을 전하며 상호부조 대출 모델과 제도 개선 필요성을 짚는다.',
   },
@@ -110,7 +112,7 @@ export const newsArticles: NewsArticle[] = [
     link: 'https://www.news-art.co.kr/news/article.html?no=32826',
     thumbnail: 'https://www.news-art.co.kr/data/photos/20250937/art_17574805036594_823433.png',
     description:
-      "뉴스아트 편집부 | 금융 사각지대에 놓인 예술인들을 위해 한국스마트협동조합이 운영하는 예술인상호부조대출이 누적 7억 원을 돌파한 소식을 전하는 기사.",
+      '뉴스아트 편집부 | 금융 사각지대에 놓인 예술인들을 위해 한국스마트협동조합이 운영하는 예술인상호부조대출이 누적 7억 원을 돌파한 소식을 전하는 기사.',
   },
   {
     id: 'news-32773',
@@ -124,14 +126,13 @@ export const newsArticles: NewsArticle[] = [
   },
   {
     id: 'news-32749',
-    title:
-      "[뉴스아트] 고리대금 부담 벗어나는 예술인들... '예술인상호부조대출' 누적 6억원 돌파",
+    title: "[뉴스아트] 고리대금 부담 벗어나는 예술인들... '예술인상호부조대출' 누적 6억원 돌파",
     source: '뉴스아트',
     date: '2025-03-26',
     link: 'https://www.news-art.co.kr/news/article.html?no=32749',
     thumbnail: 'https://www.news-art.co.kr/data/photos/20250313/art_17429771615682_0f2f90.jpg',
     description:
-      "뉴스아트 편집부 | 누적 대출 건수 300건·총액 6억원을 돌파한 ‘예술인상호부조대출’이 예술계의 사회안전망으로 성장하고 있으며, 대위변제율은 5.01%로 안정적이라는 분석을 담았다.",
+      '뉴스아트 편집부 | 누적 대출 건수 300건·총액 6억원을 돌파한 ‘예술인상호부조대출’이 예술계의 사회안전망으로 성장하고 있으며, 대위변제율은 5.01%로 안정적이라는 분석을 담았다.',
   },
   {
     id: 'news-29518',

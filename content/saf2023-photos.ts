@@ -5,7 +5,6 @@ export interface SAF2023Photo {
 }
 
 export const saf2023Photos: SAF2023Photo[] = [
-
   {
     id: '2',
     filename: 'IMG_0261.webp',

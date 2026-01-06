@@ -52,8 +52,7 @@ export const videos: Video[] = [
   {
     id: '7',
     title: '[씨앗페] Jinu Konda Full Live (2023.3.26 @인디프레스 갤러리)',
-    description:
-      '씨앗페 인디프레스 갤러리에서 진행된 Jinu Konda의 전곡 라이브 세트 영상입니다.',
+    description: '씨앗페 인디프레스 갤러리에서 진행된 Jinu Konda의 전곡 라이브 세트 영상입니다.',
     youtubeId: 'd-LeLZcQ4RA',
   },
   {
@@ -66,8 +65,7 @@ export const videos: Video[] = [
   {
     id: '9',
     title: '[씨앗페] 자이 Full Live (2023.3.26 @오디오가이 스튜디오)',
-    description:
-      '씨앗페 오디오가이 스튜디오에서 진행된 자이의 라이브 풀버전 영상입니다.',
+    description: '씨앗페 오디오가이 스튜디오에서 진행된 자이의 라이브 풀버전 영상입니다.',
     youtubeId: 'KK3POxK7U6w',
   },
 ];

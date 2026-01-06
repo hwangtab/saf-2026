@@ -10,15 +10,13 @@ const PAGE_URL = `${SITE_URL}/news`;
 
 export const metadata: Metadata = {
   title: '언론 보도 | 씨앗페 2026',
-  description:
-    '뉴스아트, 아시아경제 등 주요 매체가 전하는 씨앗페 캠페인 소식을 모았습니다.',
+  description: '뉴스아트, 아시아경제 등 주요 매체가 전하는 씨앗페 캠페인 소식을 모았습니다.',
   alternates: {
     canonical: PAGE_URL,
   },
   openGraph: {
     title: '언론 보도 | 씨앗페 2026',
-    description:
-      '언론 보도를 통해 씨앗페 상호부조 캠페인의 영향력과 협력 사례를 확인하세요.',
+    description: '언론 보도를 통해 씨앗페 상호부조 캠페인의 영향력과 협력 사례를 확인하세요.',
     url: PAGE_URL,
     images: [
       {
@@ -47,8 +45,7 @@ const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
   name: '씨앗페 2026 언론 보도',
-  description:
-    '뉴스아트 등 주요 매체가 보도한 씨앗페 캠페인의 최신 기사 모음입니다.',
+  description: '뉴스아트 등 주요 매체가 보도한 씨앗페 캠페인의 최신 기사 모음입니다.',
   url: canonicalUrl,
   mainEntity: {
     '@type': 'ItemList',
@@ -195,11 +192,7 @@ export default function NewsPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
 
-      <PageHero
-        title="언론 보도"
-        description="씨앗페 캠페인을 조명한 기사와 인터뷰를 모았습니다."
-        
-      >
+      <PageHero title="언론 보도" description="씨앗페 캠페인을 조명한 기사와 인터뷰를 모았습니다.">
         <ShareButtons
           url={canonicalUrl}
           title="언론 보도 | 씨앗페 2026"
@@ -290,7 +283,11 @@ export default function NewsPage() {
                         viewBox="0 0 24 24"
                         aria-hidden="true"
                       >
-                        <path d="M5 12h14M13 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+                        <path
+                          d="M5 12h14M13 5l7 7-7 7"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
                       </svg>
                     </span>
                   </div>
