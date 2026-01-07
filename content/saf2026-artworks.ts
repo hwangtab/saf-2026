@@ -1,19 +1,4 @@
-export interface Artwork {
-  id: string;
-  artist: string;
-  title: string;
-  description: string; // 작가 노트
-  profile?: string; // 작가 프로필
-  history?: string; // 작가 이력
-  size: string; // 크기
-  material: string; // 재료
-  year: string; // 년도
-  edition: string; // 에디션 넘버 (빈 문자열이면 원본)
-  price: string;
-  image: string; // 이미지 파일명
-  shopUrl?: string; // Cafe24 상품 상세 페이지 URL
-  sold?: boolean; // 판매 완료 여부
-}
+import { Artwork } from '@/lib/types';
 
 export const artworks: Artwork[] = [
   {

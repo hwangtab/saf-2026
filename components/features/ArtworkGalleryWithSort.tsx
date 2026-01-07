@@ -4,7 +4,7 @@ import { memo } from 'react';
 import MasonryGallery from './MasonryGallery';
 import SortControls from './SortControls';
 import SearchBar from './SearchBar';
-import { Artwork } from '@/content/saf2026-artworks';
+import { Artwork } from '@/lib/types';
 import { useArtworkFilter } from '@/lib/hooks/useArtworkFilter';
 
 interface ArtworkGalleryWithSortProps {

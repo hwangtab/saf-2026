@@ -1,6 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Artwork } from '@/content/saf2026-artworks';
-import { SortOption } from '@/lib/types';
+import { Artwork, SortOption } from '@/lib/types';
 import { parsePrice } from '@/lib/parsePrice';
 
 export type StatusFilter = 'all' | 'selling' | 'sold';

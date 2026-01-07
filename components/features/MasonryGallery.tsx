@@ -2,7 +2,7 @@
 
 import ExportedImage from 'next-image-export-optimizer';
 import Link from 'next/link';
-import { Artwork } from '@/content/saf2026-artworks';
+import { Artwork } from '@/lib/types';
 import { memo } from 'react';
 
 interface MasonryGalleryProps {

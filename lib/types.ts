@@ -1,4 +1,3 @@
-// Artist Type
 export interface Artist {
   id: string;
   name: string;
@@ -8,7 +7,23 @@ export interface Artist {
   link?: string;
 }
 
-// News/Article Type
+export interface Artwork {
+  id: string;
+  artist: string;
+  title: string;
+  description: string;
+  profile?: string;
+  history?: string;
+  size: string;
+  material: string;
+  year: string;
+  edition: string;
+  price: string;
+  image: string;
+  shopUrl?: string;
+  sold?: boolean;
+}
+
 export interface NewsArticle {
   id: string;
   title: string;
@@ -19,7 +34,6 @@ export interface NewsArticle {
   description?: string;
 }
 
-// Statistics Type
 export interface StatisticItem {
   id: string;
   label: string;
@@ -28,7 +42,6 @@ export interface StatisticItem {
   description?: string;
 }
 
-// Page Metadata
 export interface PageMetadata {
   title: string;
   description: string;
@@ -36,5 +49,4 @@ export interface PageMetadata {
   keywords?: string[];
 }
 
-// Sort Option Type
 export type SortOption = 'artist-asc' | 'title-asc' | 'price-desc' | 'price-asc';
