@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import ExportedImage from 'next-image-export-optimizer';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 
 const HERO_IMAGES = [
   { id: '11', filename: '11.jpg', alt: '2026 씨앗페 출품작' },
@@ -48,15 +48,16 @@ export default function BackgroundSlider() {
       <div className="invisible absolute inset-0 -z-20">
         <ExportedImage
           src={`/images/hero/${nextPhoto.filename}`}
-          alt={nextPhoto.alt}
+          alt=""
           fill
-          priority
+          priority={false}
+          loading="eager"
           className="object-cover"
         />
       </div>
       <div className="absolute inset-0 -z-10 overflow-hidden bg-gray-900">
         <AnimatePresence>
-          <motion.div
+          <m.div
             key={currentPhoto.id}
             custom={isFirstRender}
             variants={{
@@ -96,7 +97,7 @@ export default function BackgroundSlider() {
               className="object-cover"
               priority
             />
-          </motion.div>
+          </m.div>
         </AnimatePresence>
         <div className="absolute inset-0 bg-black/60 z-10" />
       </div>

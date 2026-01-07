@@ -1,6 +1,6 @@
 'use client';
 
-import { m, LazyMotion, domAnimation, useReducedMotion } from 'framer-motion';
+import { m, useReducedMotion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 
 interface FadeInSectionProps {
@@ -32,15 +32,13 @@ export default function FadeInSection({
   }
 
   return (
-    <LazyMotion features={domAnimation}>
-      <m.div
-        ref={ref}
-        initial={{ opacity: 0, ...directionOffset[direction] }}
-        animate={inView ? { opacity: 1, y: 0, x: 0 } : {}}
-        transition={{ duration: 0.6, delay, ease: 'easeOut' }}
-      >
-        {children}
-      </m.div>
-    </LazyMotion>
+    <m.div
+      ref={ref}
+      initial={{ opacity: 0, ...directionOffset[direction] }}
+      animate={inView ? { opacity: 1, y: 0, x: 0 } : {}}
+      transition={{ duration: 0.6, delay, ease: 'easeOut' }}
+    >
+      {children}
+    </m.div>
   );
 }

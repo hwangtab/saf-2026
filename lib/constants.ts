@@ -98,3 +98,15 @@ export const BREADCRUMBS: Record<string, BreadcrumbItem> = {
   '/archive': { name: '아카이브', url: `${SITE_URL}/archive` },
   '/news': { name: '언론 보도', url: `${SITE_URL}/news` },
 } as const;
+
+export const HERO_PAGES = [
+  '/',
+  '/our-reality',
+  '/our-proof',
+  '/exhibition',
+  '/archive',
+  '/news',
+  '/artworks',
+] as const;
+
+export type HeroPage = (typeof HERO_PAGES)[number];

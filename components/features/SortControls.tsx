@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-
-export type SortOption = 'artist-asc' | 'title-asc' | 'price-desc' | 'price-asc';
+import { SortOption } from '@/lib/types';
 
 interface SortControlsProps {
   value: SortOption;

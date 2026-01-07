@@ -2,7 +2,7 @@
 
 import ExportedImage from 'next-image-export-optimizer';
 import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 
 // 히어로 배경용 고해상도 이미지 (public/images/hero/)
 const HERO_IMAGES = [
@@ -31,7 +31,7 @@ export default function PageHeroBackground() {
   return (
     <AnimatePresence>
       {bgImage && (
-        <motion.div
+        <m.div
           key={bgImage}
           initial={{ opacity: 0, scale: 1.1 }}
           animate={{ opacity: 1, scale: 1.0 }}
@@ -47,7 +47,7 @@ export default function PageHeroBackground() {
           className="absolute inset-0"
         >
           <ExportedImage src={bgImage} alt="" fill className="object-cover" priority />
-        </motion.div>
+        </m.div>
       )}
     </AnimatePresence>
   );

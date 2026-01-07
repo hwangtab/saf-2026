@@ -3,6 +3,7 @@ import { Suspense } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
+import AnimationProvider from '@/components/providers/AnimationProvider';
 import { OG_IMAGE, SITE_URL, SITE_URL_ALIAS, escapeJsonLdForScript } from '@/lib/constants';
 import '@/styles/globals.css';
 
@@ -84,14 +85,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="theme-color" content="#2176FF" />
       </head>
       <body className="bg-canvas-soft text-charcoal flex flex-col min-h-screen">
-        <a href="#main-content" className="skip-to-main">
-          메인 콘텐츠로 이동
-        </a>
-        <Header />
-        <main id="main-content" role="main" className="flex-1">
-          <Suspense fallback={<div>로딩 중...</div>}>{children}</Suspense>
-        </main>
-        <Footer />
+        <AnimationProvider>
+          <a href="#main-content" className="skip-to-main">
+            메인 콘텐츠로 이동
+          </a>
+          <Header />
+          <main id="main-content" role="main" className="flex-1">
+            <Suspense fallback={<div>로딩 중...</div>}>{children}</Suspense>
+          </main>
+          <Footer />
+        </AnimationProvider>
 
         {/* Organization JSON-LD Schema */}
         <script
@@ -102,8 +105,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 '@context': 'https://schema.org',
                 '@type': 'Organization',
                 name: '한국스마트협동조합',
-                url: 'https://www.saf2026.com',
-                logo: 'https://www.saf2026.com/images/og-image2.png',
+                url: SITE_URL,
+                logo: `${SITE_URL}/images/og-image2.png`,
                 description: '한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인',
                 sameAs: [
                   'https://www.instagram.com/koreasmartcoop',

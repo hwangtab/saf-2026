@@ -4,9 +4,10 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import ExportedImage from 'next-image-export-optimizer';
 import { usePathname } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 import Button from '@/components/ui/Button';
-import { EXTERNAL_LINKS } from '@/lib/constants';
+import { EXTERNAL_LINKS, HERO_PAGES } from '@/lib/constants';
+import { useScrolled } from '@/lib/hooks/useScrolled';
 import clsx from 'clsx';
 
 type NavigationItem = {
@@ -25,19 +26,9 @@ const navigation: NavigationItem[] = [
   { name: '언론 보도', href: '/news' },
 ];
 
-const HERO_PAGES = [
-  '/',
-  '/our-reality',
-  '/our-proof',
-  '/exhibition',
-  '/archive',
-  '/news',
-  '/artworks',
-] as const;
-
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
+  const isScrolled = useScrolled();
   const pathname = usePathname();
 
   const isActive = (href: string) => {
@@ -66,27 +57,6 @@ export default function Header() {
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [pathname]);
-
-  useEffect(() => {
-    let ticking = false;
-
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          setIsScrolled(window.scrollY > 10);
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
 
   const isArtworkDetail = pathname.startsWith('/artworks/') && pathname !== '/artworks';
   const hasHero = HERO_PAGES.includes(pathname as (typeof HERO_PAGES)[number]) && !isArtworkDetail;
@@ -215,7 +185,7 @@ export default function Header() {
       <AnimatePresence>
         {mobileMenuOpen && (
           <>
-            <motion.div
+            <m.div
               key="backdrop"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -224,7 +194,7 @@ export default function Header() {
               className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[110] lg:hidden top-[calc(4rem+env(safe-area-inset-top,0px))]"
             />
 
-            <motion.div
+            <m.div
               key="menu"
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
@@ -280,7 +250,7 @@ export default function Header() {
                   </Button>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           </>
         )}
       </AnimatePresence>

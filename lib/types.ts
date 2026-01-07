@@ -35,3 +35,6 @@ export interface PageMetadata {
   image?: string;
   keywords?: string[];
 }
+
+// Sort Option Type
+export type SortOption = 'artist-asc' | 'title-asc' | 'price-desc' | 'price-asc';

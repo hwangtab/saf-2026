@@ -32,14 +32,16 @@ export default function DynamicCounter({ items }: DynamicCounterProps) {
                 {item.label}
               </h3>
               <div className="text-3xl font-bold text-primary">
-                {inView ? (
-                  <>
-                    <CountUp end={item.value} duration={2} separator="," />
-                    <span className="text-lg">{item.unit}</span>
-                  </>
-                ) : (
-                  <span>0{item.unit}</span>
-                )}
+                <span aria-live="polite" aria-atomic="true">
+                  {inView ? (
+                    <>
+                      <CountUp end={item.value} duration={2} separator="," />
+                      <span className="text-lg">{item.unit}</span>
+                    </>
+                  ) : (
+                    <span>0{item.unit}</span>
+                  )}
+                </span>
               </div>
             </div>
           ))}
