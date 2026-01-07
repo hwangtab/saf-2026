@@ -1,4 +1,3 @@
-/** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
     loader: 'custom',
@@ -20,7 +19,6 @@ const nextConfig = {
       {
         source: '/(.*)',
         headers: [
-          // Content Security Policy
           {
             key: 'Content-Security-Policy',
             value: [
@@ -30,16 +28,12 @@ const nextConfig = {
               "img-src 'self' data: https: http:",
               "font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
               "connect-src 'self' https://*.kakao.com https://*.daum.net https://*.daumcdn.net https://*.vercel-insights.com",
-              "frame-src 'self'",
+              "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://*.kakao.com",
             ].join('; '),
           },
-          // X-Frame-Options: Prevent clickjacking
           { key: 'X-Frame-Options', value: 'DENY' },
-          // X-Content-Type-Options: Prevent MIME type sniffing
           { key: 'X-Content-Type-Options', value: 'nosniff' },
-          // Referrer-Policy: Control referrer information
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-          // Permissions-Policy: Restrict browser features
           {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=()',

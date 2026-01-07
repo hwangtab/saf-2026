@@ -4,7 +4,8 @@ import { Analytics } from '@vercel/analytics/react';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import AnimationProvider from '@/components/providers/AnimationProvider';
-import { OG_IMAGE, SITE_URL, SITE_URL_ALIAS, escapeJsonLdForScript } from '@/lib/constants';
+import { JsonLdScript } from '@/components/common/JsonLdScript';
+import { OG_IMAGE, SITE_URL, SITE_URL_ALIAS, SOCIAL_LINKS, CONTACT } from '@/lib/constants';
 import '@/styles/globals.css';
 
 export const viewport: Viewport = {
@@ -41,7 +42,7 @@ export const metadata: Metadata = {
     '예술인 후원하기',
     '씨앗페 전시 일정',
   ],
-  authors: [{ name: '한국스마트협동조합' }],
+  authors: [{ name: CONTACT.ORGANIZATION_NAME }],
   icons: {
     icon: '/favicon.ico',
   },
@@ -79,6 +80,47 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const organizationSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: CONTACT.ORGANIZATION_NAME,
+    url: SITE_URL,
+    logo: `${SITE_URL}/images/og-image2.png`,
+    description: '한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인',
+    sameAs: [
+      SOCIAL_LINKS.INSTAGRAM,
+      SOCIAL_LINKS.FACEBOOK,
+      SOCIAL_LINKS.TWITTER,
+      SOCIAL_LINKS.YOUTUBE,
+    ],
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: CONTACT.ADDRESS,
+      addressLocality: '서울시',
+      addressCountry: 'KR',
+    },
+    contactPoint: {
+      '@type': 'ContactPoint',
+      contactType: 'Customer Service',
+      telephone: CONTACT.PHONE,
+      email: CONTACT.EMAIL,
+    },
+  };
+
+  const websiteSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: '씨앗페 2026',
+    alternateName: 'SAF 2026',
+    url: SITE_URL,
+    description: '한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인',
+    inLanguage: 'ko-KR',
+    publisher: {
+      '@type': 'Organization',
+      name: CONTACT.ORGANIZATION_NAME,
+    },
+  };
+
   return (
     <html lang="ko">
       <body className="bg-canvas-soft text-charcoal flex flex-col min-h-screen">
@@ -93,64 +135,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Footer />
         </AnimationProvider>
 
-        {/* Organization JSON-LD Schema */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: escapeJsonLdForScript(
-              JSON.stringify({
-                '@context': 'https://schema.org',
-                '@type': 'Organization',
-                name: '한국스마트협동조합',
-                url: SITE_URL,
-                logo: `${SITE_URL}/images/og-image2.png`,
-                description: '한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인',
-                sameAs: [
-                  'https://www.instagram.com/koreasmartcoop',
-                  'https://www.facebook.com/koreasmartcoop',
-                  'https://twitter.com/saf2026',
-                  'https://www.youtube.com/@Social_Mutual_ART',
-                ],
-                address: {
-                  '@type': 'PostalAddress',
-                  streetAddress: '서울특별시 은평구 통일로 68길 4 302호',
-                  addressLocality: '서울시',
-                  addressRegion: '은평구',
-                  postalCode: '03100',
-                  addressCountry: 'KR',
-                },
-                contactPoint: {
-                  '@type': 'ContactPoint',
-                  contactType: 'Customer Service',
-                  telephone: '+82-2-764-3114',
-                  email: 'contact@kosmart.co.kr',
-                },
-              })
-            ),
-          }}
-        />
-
-        {/* WebSite JSON-LD Schema */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: escapeJsonLdForScript(
-              JSON.stringify({
-                '@context': 'https://schema.org',
-                '@type': 'WebSite',
-                name: '씨앗페 2026',
-                alternateName: 'SAF 2026',
-                url: 'https://www.saf2026.com',
-                description: '한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인',
-                inLanguage: 'ko-KR',
-                publisher: {
-                  '@type': 'Organization',
-                  name: '한국스마트협동조합',
-                },
-              })
-            ),
-          }}
-        />
+        <JsonLdScript data={organizationSchema} />
+        <JsonLdScript data={websiteSchema} />
 
         <script src="https://developers.kakao.com/sdk/js/kakao.js" async defer></script>
         <Analytics />

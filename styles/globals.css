@@ -1,5 +1,3 @@
-/* 1. 폰트 정의 */
-/* 일반 텍스트 폰트 - GMarketSans */
 @font-face {
   font-family: 'GMarketSans';
   src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansLight.woff')
@@ -24,7 +22,6 @@
   font-display: swap;
 }
 
-/* 큰 제목 폰트 - PartialSans */
 @font-face {
   font-family: 'PartialSans';
   src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2307-1@1.1/PartialSansKR-Regular.woff2')
@@ -33,7 +30,6 @@
   font-display: swap;
 }
 
-/* 섹션 제목 폰트 - SchoolSafetyPoster (학교안심포스터) */
 @font-face {
   font-family: 'SchoolSafetyPoster';
   src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2511-1@1.0/HakgyoansimPosterB.woff2')
@@ -42,21 +38,16 @@
   font-display: swap;
 }
 
-/* (Paperozi 폰트 제거됨 - 이제 GMarketSans 사용) */
-
-/* 2. Tailwind 지시어 */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* 3. Reusable component classes using @layer */
 @layer components {
   .container-max {
     @apply max-w-screen-xl mx-auto px-4 sm:px-5;
   }
 }
 
-/* 4. Base HTML and body styles */
 html {
   word-break: keep-all;
   overflow-wrap: break-word;
@@ -75,18 +66,6 @@ body {
   overscroll-behavior-y: contain;
 }
 
-body {
-  background-color: #fff6dd;
-  color: #31393c;
-  line-height: 1.6;
-  font-weight: 300;
-  overflow-x: hidden;
-  /* 수평 오버플로우 방지 */
-  overscroll-behavior-y: contain;
-}
-
-/* Scrollbar Styles */
-
 ::-webkit-scrollbar {
   width: 10px;
 }
@@ -104,20 +83,17 @@ body {
   background: #555;
 }
 
-/* Focus styles for accessibility - only show on keyboard navigation */
 a:focus-visible,
 button:focus-visible {
   outline: 2px solid #2176ff;
   outline-offset: 2px;
 }
 
-/* Remove focus outline on mouse click */
 a:focus:not(:focus-visible),
 button:focus:not(:focus-visible) {
   outline: none;
 }
 
-/* Skip to main content link */
 .skip-to-main {
   position: absolute;
   top: -40px;
@@ -134,7 +110,6 @@ button:focus:not(:focus-visible) {
   outline: none;
 }
 
-/* Text gradient utility */
 .text-gradient {
   color: #2176ff;
 }
@@ -155,42 +130,32 @@ button:focus:not(:focus-visible) {
   text-underline-offset: 4px;
 }
 
-/* ============================================
-   Typography System (타이포그래피 시스템)
-   ============================================ */
 @layer utilities {
-  /* 히어로 타이틀 - PartialSans 사용 */
   .text-hero {
     @apply font-display text-5xl md:text-6xl lg:text-7xl leading-tight;
   }
 
-  /* 섹션 제목 (h2) - SchoolSafetyPoster 사용 */
   .text-section-title {
     @apply font-section font-normal text-4xl md:text-5xl leading-snug;
   }
 
-  /* 카드/서브섹션 제목 (h3) - GMarketSans Bold, text-xl 통일 */
   .text-card-title {
     @apply font-sans font-bold text-xl leading-normal;
   }
 
-  /* 본문 큰 글씨 */
   .text-body-large {
     @apply font-sans text-lg md:text-xl leading-relaxed;
   }
 
-  /* 라벨/캡션 - 보조 텍스트 */
   .text-label {
     @apply font-sans text-sm text-charcoal-muted;
   }
 
-  /* 헬퍼/메타 정보 */
   .text-helper {
     @apply font-sans text-xs text-charcoal-soft;
   }
 }
 
-/* Image loading shimmer animation */
 @keyframes shimmer {
   0% {
     background-position: -200% 0;
@@ -207,7 +172,6 @@ button:focus:not(:focus-visible) {
   animation: shimmer 1.5s ease-in-out infinite;
 }
 
-/* Respect user's motion preferences for accessibility */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
