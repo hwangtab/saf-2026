@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from 'react';
 
-export function useScrolled(threshold = 10) {
+export function useScrolled(threshold = 10, disabled = false) {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
+    if (disabled) return;
+
     let ticking = false;
 
     const handleScroll = () => {
@@ -24,7 +26,7 @@ export function useScrolled(threshold = 10) {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [threshold]);
+  }, [threshold, disabled]);
 
   return isScrolled;
 }

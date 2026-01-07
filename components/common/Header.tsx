@@ -28,7 +28,7 @@ const navigation: NavigationItem[] = [
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const isScrolled = useScrolled();
+  const isScrolled = useScrolled(10, mobileMenuOpen);
   const pathname = usePathname();
   const prevPathname = useRef(pathname);
 
@@ -49,7 +49,7 @@ export default function Header() {
     const body = document.body;
     const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
 
-    body.style.overflow = 'hidden';
+    body.style.overflowY = 'hidden';
     body.style.overscrollBehavior = 'contain';
 
     if (scrollbarWidth > 0) {
@@ -59,16 +59,10 @@ export default function Header() {
 
   const unlockScroll = () => {
     const body = document.body;
-    body.style.overflow = '';
+    body.style.overflowY = '';
     body.style.overscrollBehavior = '';
     body.style.paddingRight = '';
   };
-
-  useEffect(() => {
-    if (mobileMenuOpen) {
-      lockScroll();
-    }
-  }, [mobileMenuOpen]);
 
   useEffect(() => {
     return () => unlockScroll();
@@ -198,75 +192,79 @@ export default function Header() {
         </button>
       </nav>
 
-      <AnimatePresence onExitComplete={unlockScroll}>
+      <AnimatePresence mode="wait" onExitComplete={unlockScroll}>
         {mobileMenuOpen && (
-          <>
-            <m.div
-              key="backdrop"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setMobileMenuOpen(false)}
-              className="fixed inset-0 bg-black/50 z-[110] lg:hidden top-[calc(4rem+env(safe-area-inset-top,0px))]"
-            />
-
-            <m.div
-              key="menu"
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-[calc(4rem+env(safe-area-inset-top,0px))] right-0 w-72 max-w-[85%] bg-white shadow-2xl z-[120] lg:hidden overflow-y-auto pb-[env(safe-area-inset-bottom,20px)]"
-              style={{ bottom: 'env(safe-area-inset-bottom, 0px)' }}
-            >
-              <div className="py-4 px-5 space-y-3">
-                {navigation.map((item) =>
-                  item.external ? (
-                    <a
-                      key={item.href}
-                      href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block py-3 px-4 text-base rounded-lg transition-colors border-l-4 border-transparent text-charcoal hover:bg-primary/5 hover:border-primary active:bg-primary/10"
-                    >
-                      {item.name}
-                    </a>
-                  ) : (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={clsx(
-                        'block py-3 px-4 text-base rounded-lg transition-colors border-l-4',
-                        isActive(item.href)
-                          ? ['text-primary font-semibold border-primary bg-primary/10']
-                          : [
-                              'border-transparent text-charcoal',
-                              'hover:bg-primary/5 hover:border-primary active:bg-primary/10',
-                            ]
-                      )}
-                    >
-                      {item.name}
-                    </Link>
-                  )
-                )}
-                <div className="mt-4">
-                  <Button
-                    href={EXTERNAL_LINKS.DONATE}
-                    variant="accent"
-                    external
-                    className="w-full gap-1.5"
+          <m.div
+            key="mobile-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={() => setMobileMenuOpen(false)}
+            className="fixed inset-0 bg-black/50 z-[110] lg:hidden top-[calc(4rem+env(safe-area-inset-top,0px))]"
+          />
+        )}
+        {mobileMenuOpen && (
+          <m.div
+            key="mobile-menu"
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            onAnimationStart={() => {
+              if (mobileMenuOpen) lockScroll();
+            }}
+            className="fixed top-[calc(4rem+env(safe-area-inset-top,0px))] right-0 w-72 max-w-[85%] bg-white shadow-2xl z-[120] lg:hidden overflow-y-auto pb-[env(safe-area-inset-bottom,20px)]"
+            style={{ bottom: 'env(safe-area-inset-bottom, 0px)' }}
+          >
+            <div className="py-4 px-5 space-y-3">
+              {navigation.map((item) =>
+                item.external ? (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     onClick={() => setMobileMenuOpen(false)}
+                    className="block py-3 px-4 text-base rounded-lg transition-colors border-l-4 border-transparent text-charcoal hover:bg-primary/5 hover:border-primary active:bg-primary/10"
                   >
-                    <span className="group-hover:scale-125 transition-transform duration-300">
-                      ❤️
-                    </span>
-                    <span className="pt-0.5">후원하기</span>
-                  </Button>
-                </div>
+                    {item.name}
+                  </a>
+                ) : (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={clsx(
+                      'block py-3 px-4 text-base rounded-lg transition-colors border-l-4',
+                      isActive(item.href)
+                        ? ['text-primary font-semibold border-primary bg-primary/10']
+                        : [
+                            'border-transparent text-charcoal',
+                            'hover:bg-primary/5 hover:border-primary active:bg-primary/10',
+                          ]
+                    )}
+                  >
+                    {item.name}
+                  </Link>
+                )
+              )}
+              <div className="mt-4">
+                <Button
+                  href={EXTERNAL_LINKS.DONATE}
+                  variant="accent"
+                  external
+                  className="w-full gap-1.5"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span className="group-hover:scale-125 transition-transform duration-300">
+                    ❤️
+                  </span>
+                  <span className="pt-0.5">후원하기</span>
+                </Button>
               </div>
-            </m.div>
-          </>
+            </div>
+          </m.div>
         )}
       </AnimatePresence>
     </header>
