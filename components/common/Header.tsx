@@ -29,6 +29,7 @@ const navigation: NavigationItem[] = [
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMobileMenuClosing, setIsMobileMenuClosing] = useState(false);
   const isScrolled = useScrolled(10, mobileMenuOpen);
   const pathname = usePathname();
   const prevPathname = useRef(pathname);
@@ -39,12 +40,26 @@ export default function Header() {
     return false;
   };
 
+  // 닫기 시작 (애니메이션 시작)
+  const startCloseMenu = () => {
+    setMobileMenuOpen(false);
+    setIsMobileMenuClosing(true);
+  };
+
+  // 닫기 완료 (애니메이션 종료)
+  const finishCloseMenu = () => {
+    setIsMobileMenuClosing(false);
+    unlockScroll();
+  };
+
   useEffect(() => {
     if (prevPathname.current !== pathname) {
-      setMobileMenuOpen(false);
+      if (mobileMenuOpen) {
+        startCloseMenu();
+      }
       prevPathname.current = pathname;
     }
-  }, [pathname]);
+  }, [pathname, mobileMenuOpen]);
 
   const lockScroll = () => {
     const body = document.body;
@@ -73,7 +88,8 @@ export default function Header() {
   const hasHero = HERO_PAGES.includes(pathname as (typeof HERO_PAGES)[number]) && !isArtworkDetail;
 
   const getHeaderStyle = () => {
-    if (mobileMenuOpen) {
+    // 메뉴가 열려있거나 닫히는 중일 때는 흰색 배경 유지
+    if (mobileMenuOpen || isMobileMenuClosing) {
       return 'bg-white shadow-sm border-gray-200/50';
     }
     if (isArtworkDetail) {
@@ -86,7 +102,9 @@ export default function Header() {
   };
 
   const headerStyle = getHeaderStyle();
-  const isDarkText = isScrolled || mobileMenuOpen || !hasHero || isArtworkDetail;
+  // 메뉴가 열려있거나 닫히는 중일 때도 어두운 텍스트(차콜) 유지
+  const isDarkText =
+    isScrolled || mobileMenuOpen || isMobileMenuClosing || !hasHero || isArtworkDetail;
   const textColor = isDarkText ? 'text-charcoal' : 'text-white';
   const logoSrc = isDarkText
     ? '/images/logo/320pxX90px.webp'
@@ -116,7 +134,7 @@ export default function Header() {
         <DesktopNav navigation={navigation} isActive={isActive} textColor={textColor} />
 
         <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          onClick={() => (mobileMenuOpen ? startCloseMenu() : setMobileMenuOpen(true))}
           className={clsx(
             'lg:hidden p-3 min-w-[44px] min-h-[44px] flex items-center justify-center',
             'transition-transform active:scale-90',
@@ -148,13 +166,13 @@ export default function Header() {
 
       <MobileMenu
         isOpen={mobileMenuOpen}
-        onClose={() => setMobileMenuOpen(false)}
+        onClose={startCloseMenu}
         navigation={navigation}
         isActive={isActive}
         onAnimationComplete={(definition) => {
           if (definition === 'animate') lockScroll();
         }}
-        onExitComplete={unlockScroll}
+        onExitComplete={finishCloseMenu}
       />
     </header>
   );
