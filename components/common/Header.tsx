@@ -42,14 +42,19 @@ export default function Header() {
       requestAnimationFrame(() => {
         const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
         document.body.style.overflow = 'hidden';
-        document.body.style.paddingRight = `${scrollbarWidth}px`;
+        document.body.style.overscrollBehavior = 'contain';
+        if (scrollbarWidth > 0) {
+          document.body.style.paddingRight = `${scrollbarWidth}px`;
+        }
       });
     } else {
       document.body.style.overflow = '';
+      document.body.style.overscrollBehavior = '';
       document.body.style.paddingRight = '';
     }
     return () => {
       document.body.style.overflow = '';
+      document.body.style.overscrollBehavior = '';
       document.body.style.paddingRight = '';
     };
   }, [mobileMenuOpen]);
@@ -191,7 +196,7 @@ export default function Header() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMobileMenuOpen(false)}
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[110] lg:hidden top-[calc(4rem+env(safe-area-inset-top,0px))]"
+              className="fixed inset-0 bg-black/50 z-[110] lg:hidden top-[calc(4rem+env(safe-area-inset-top,0px))]"
             />
 
             <m.div
