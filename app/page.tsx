@@ -64,14 +64,13 @@ export default function Home() {
           </div>
           <h1 className="mt-12 md:mt-0 font-display text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight text-white drop-shadow-lg text-balance">
             고리대금의 벽,
-            <br />
+            <br className="hidden md:block" />
             예술인의 연대로 무너뜨립니다
           </h1>
-          <p className="text-lg md:text-xl text-white/90 mb-12 max-w-2xl mx-auto leading-relaxed drop-shadow-lg">
-            한국 예술인의 84.9%가 제1금융권에서 배제되고,
-            <br />
-            절반이 약탈적 고리대금에 노출되어 있습니다.
-            <br className="hidden md:block" />이 문제를 해결하기 위해 씨앗페가 시작되었습니다.
+          <p className="text-lg md:text-xl text-white/90 mb-12 max-w-2xl mx-auto leading-relaxed drop-shadow-lg break-keep text-balance">
+            한국 예술인의 84.9%가 제1금융권에서 배제되고, <br className="hidden md:block" />
+            절반이 약탈적 고리대금에 노출되어 있습니다. <br className="hidden md:block" />이 문제를
+            해결하기 위해 씨앗페가 시작되었습니다.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Button href={EXTERNAL_LINKS.DONATE} external variant="accent" size="lg">
