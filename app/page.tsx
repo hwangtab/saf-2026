@@ -6,7 +6,13 @@ import ActionCard from '@/components/ui/ActionCard';
 import DynamicCounter from '@/components/features/DynamicCounter';
 import BackgroundSlider from '@/components/features/BackgroundSlider';
 import ShareButtons from '@/components/common/ShareButtons';
-import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL, escapeJsonLdForScript } from '@/lib/constants';
+import {
+  EXTERNAL_LINKS,
+  OG_IMAGE,
+  SITE_URL,
+  STATISTICS_DATA,
+  escapeJsonLdForScript,
+} from '@/lib/constants';
 
 export const metadata: Metadata = {
   title: '씨앗페 2026 - 예술인 금융 위기 해결 캠페인',
@@ -40,11 +46,7 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
-  const counterItems = [
-    { label: '제1금융권 배제율', value: 84.9, unit: '%' },
-    { label: '고리대금 노출 예술인', value: 48.6, unit: '%' },
-    { label: '상호부조 대출 상환율', value: 95, unit: '%' },
-  ];
+  const counterItems = STATISTICS_DATA.slice(0, 3);
 
   return (
     <>

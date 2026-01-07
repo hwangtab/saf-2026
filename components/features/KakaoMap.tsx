@@ -31,7 +31,7 @@ export default function KakaoMap(props?: KakaoMapProps) {
     if (typeof window === 'undefined') {
       return;
     }
-    const { kakao } = window as typeof window & { kakao?: any };
+    const { kakao } = window;
     if (!kakao?.maps?.services) {
       return;
     }
