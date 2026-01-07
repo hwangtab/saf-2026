@@ -67,7 +67,7 @@ function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithSortProps) {
                   role="radio"
                   aria-checked={statusFilter === 'all'}
                   onClick={() => setStatusFilter('all')}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                  className={`px-4 py-2.5 text-xs font-medium rounded-md transition-colors ${
                     statusFilter === 'all'
                       ? 'bg-charcoal text-white shadow-sm'
                       : 'text-gray-600 hover:bg-gray-100'
@@ -79,7 +79,7 @@ function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithSortProps) {
                   role="radio"
                   aria-checked={statusFilter === 'selling'}
                   onClick={() => setStatusFilter('selling')}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                  className={`px-4 py-2.5 text-xs font-medium rounded-md transition-colors ${
                     statusFilter === 'selling'
                       ? 'bg-charcoal text-white shadow-sm'
                       : 'text-gray-600 hover:bg-gray-100'
@@ -91,7 +91,7 @@ function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithSortProps) {
                   role="radio"
                   aria-checked={statusFilter === 'sold'}
                   onClick={() => setStatusFilter('sold')}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                  className={`px-4 py-2.5 text-xs font-medium rounded-md transition-colors ${
                     statusFilter === 'sold'
                       ? 'bg-charcoal text-white shadow-sm'
                       : 'text-gray-600 hover:bg-gray-100'

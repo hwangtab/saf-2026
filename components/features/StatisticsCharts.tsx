@@ -14,6 +14,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
+import { useChartDimensions } from '@/lib/hooks/useChartDimensions';
 
 const tooltipContentStyle: CSSProperties = {
   borderRadius: '0.75rem',
@@ -35,8 +36,8 @@ const tooltipItemStyle: CSSProperties = {
   fontSize: '0.8rem',
 };
 
-// Chart 1: 제1금융권 접근 (Pie Chart)
 export const FirstBankAccessChart = memo(function FirstBankAccessChart() {
+  const { pieOuterRadius, pieInnerRadius } = useChartDimensions();
   const data = [
     { name: '제1금융권 배제', value: 84.9 },
     { name: '접근 가능', value: 15.1 },
@@ -56,8 +57,8 @@ export const FirstBankAccessChart = memo(function FirstBankAccessChart() {
             data={data}
             cx="50%"
             cy="50%"
-            innerRadius={80}
-            outerRadius={120}
+            innerRadius={pieInnerRadius}
+            outerRadius={pieOuterRadius}
             paddingAngle={5}
             dataKey="value"
             label={({ value }) => `${value}%`}
@@ -81,8 +82,8 @@ export const FirstBankAccessChart = memo(function FirstBankAccessChart() {
   );
 });
 
-// Chart 2: 거절/포기 사유 (Bar Chart)
 export const RejectionReasonsChart = memo(function RejectionReasonsChart() {
+  const { yAxisWidth, tickFontSize } = useChartDimensions();
   const data = [
     { reason: '정기 소득 없음', count: 65 },
     { reason: '신용등급 부족', count: 58 },
@@ -102,7 +103,12 @@ export const RejectionReasonsChart = memo(function RejectionReasonsChart() {
         <BarChart data={data} layout="vertical">
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis type="number" />
-          <YAxis dataKey="reason" type="category" width={100} tick={{ fontSize: 11 }} />
+          <YAxis
+            dataKey="reason"
+            type="category"
+            width={yAxisWidth}
+            tick={{ fontSize: tickFontSize }}
+          />
           <Tooltip
             contentStyle={tooltipContentStyle}
             labelStyle={tooltipLabelStyle}
@@ -118,8 +124,8 @@ export const RejectionReasonsChart = memo(function RejectionReasonsChart() {
   );
 });
 
-// Chart 3: 고리대금 상품 이용 현황 (Bar Chart)
 export const HighInterestProductChart = memo(function HighInterestProductChart() {
+  const { isMobile, tickFontSize } = useChartDimensions();
   const data = [
     { product: '카드론', percentage: 42 },
     { product: '현금서비스', percentage: 38 },
@@ -137,8 +143,12 @@ export const HighInterestProductChart = memo(function HighInterestProductChart()
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="product" />
-          <YAxis label={{ value: '이용률 (%)', angle: -90, position: 'insideLeft' }} />
+          <XAxis dataKey="product" tick={{ fontSize: tickFontSize }} />
+          <YAxis
+            label={
+              isMobile ? undefined : { value: '이용률 (%)', angle: -90, position: 'insideLeft' }
+            }
+          />
           <Tooltip
             formatter={(value) => `${value}%`}
             contentStyle={tooltipContentStyle}
@@ -155,8 +165,8 @@ export const HighInterestProductChart = memo(function HighInterestProductChart()
   );
 });
 
-// Chart 4: 이자율 분포 (Bar Chart)
 export const InterestRateDistributionChart = memo(function InterestRateDistributionChart() {
+  const { isMobile, tickFontSize } = useChartDimensions();
   const data = [
     { range: '~ 10%', count: 8 },
     { range: '10 ~ 15%', count: 12 },
@@ -175,8 +185,12 @@ export const InterestRateDistributionChart = memo(function InterestRateDistribut
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="range" />
-          <YAxis label={{ value: '응답자 수', angle: -90, position: 'insideLeft' }} />
+          <XAxis dataKey="range" tick={{ fontSize: tickFontSize }} />
+          <YAxis
+            label={
+              isMobile ? undefined : { value: '응답자 수', angle: -90, position: 'insideLeft' }
+            }
+          />
           <Tooltip
             contentStyle={tooltipContentStyle}
             labelStyle={tooltipLabelStyle}
@@ -192,8 +206,8 @@ export const InterestRateDistributionChart = memo(function InterestRateDistribut
   );
 });
 
-// Chart 5: 채권추심 경험 (Pie Chart)
 export const DebtCollectionChart = memo(function DebtCollectionChart() {
+  const { pieOuterRadius, pieInnerRadius } = useChartDimensions();
   const data = [
     { name: '경험함', value: 38 },
     { name: '경험 없음', value: 62 },
@@ -213,8 +227,8 @@ export const DebtCollectionChart = memo(function DebtCollectionChart() {
             data={data}
             cx="50%"
             cy="50%"
-            innerRadius={80}
-            outerRadius={120}
+            innerRadius={pieInnerRadius}
+            outerRadius={pieOuterRadius}
             paddingAngle={5}
             dataKey="value"
             label={({ value }) => `${value}%`}
@@ -238,8 +252,8 @@ export const DebtCollectionChart = memo(function DebtCollectionChart() {
   );
 });
 
-// Chart 6: 창작활동 영향 (Bar Chart)
 export const CreativeImpactChart = memo(function CreativeImpactChart() {
+  const { yAxisWidth, tickFontSize, isMobile } = useChartDimensions();
   const data = [
     { impact: '창작 중단', percentage: 45 },
     { impact: '창작량 감소', percentage: 68 },
@@ -259,9 +273,16 @@ export const CreativeImpactChart = memo(function CreativeImpactChart() {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             type="number"
-            label={{ value: '영향받음 (%)', position: 'insideBottom', offset: -5 }}
+            label={
+              isMobile ? undefined : { value: '영향받음 (%)', position: 'insideBottom', offset: -5 }
+            }
           />
-          <YAxis dataKey="impact" type="category" width={90} tick={{ fontSize: 11 }} />
+          <YAxis
+            dataKey="impact"
+            type="category"
+            width={yAxisWidth}
+            tick={{ fontSize: tickFontSize }}
+          />
           <Tooltip
             formatter={(value) => `${value}%`}
             contentStyle={tooltipContentStyle}

@@ -38,7 +38,7 @@ export default function SearchBar({
         type="text"
         id="artwork-search"
         aria-label="작품 검색"
-        className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-full leading-5 bg-white placeholder-gray-600 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm transition-colors"
+        className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-full leading-5 bg-white placeholder-gray-600 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-primary focus:border-primary text-base sm:text-sm transition-colors"
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
