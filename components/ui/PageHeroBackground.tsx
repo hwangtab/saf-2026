@@ -2,9 +2,8 @@
 
 import ExportedImage from 'next-image-export-optimizer';
 import { useEffect, useState } from 'react';
-import { m, AnimatePresence } from 'framer-motion';
+import { m } from 'framer-motion';
 
-// 히어로 배경용 고해상도 이미지 (public/images/hero/)
 const HERO_IMAGES = [
   '/images/hero/1.jpg',
   '/images/hero/2.jpg',
@@ -16,39 +15,39 @@ const HERO_IMAGES = [
   '/images/hero/8.jpg',
   '/images/hero/9.jpg',
   '/images/hero/10.jpg',
-  // 11.jpg는 메인 페이지 전용으로 제외
 ];
 
 export default function PageHeroBackground() {
-  const [bgImage, setBgImage] = useState('');
+  const [imageIndex, setImageIndex] = useState(0);
+  const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
-    // 클라이언트에서 랜덤 이미지 선택
-    const randomImage = HERO_IMAGES[Math.floor(Math.random() * HERO_IMAGES.length)];
-    setBgImage(randomImage);
+    setImageIndex(Math.floor(Math.random() * HERO_IMAGES.length));
+    setIsHydrated(true);
   }, []);
 
+  const bgImage = HERO_IMAGES[imageIndex];
+
   return (
-    <AnimatePresence>
-      {bgImage && (
-        <m.div
-          key={bgImage}
-          initial={{ opacity: 0, scale: 1.1 }}
-          animate={{ opacity: 1, scale: 1.0 }}
-          transition={{
-            opacity: { duration: 1.2 },
-            scale: {
-              duration: 20,
-              ease: 'easeInOut',
-              repeat: Infinity,
-              repeatType: 'reverse',
-            },
-          }}
-          className="absolute inset-0"
-        >
-          <ExportedImage src={bgImage} alt="" fill className="object-cover" priority />
-        </m.div>
-      )}
-    </AnimatePresence>
+    <div className="absolute inset-0">
+      <m.div
+        key={isHydrated ? bgImage : 'initial'}
+        initial={{ opacity: isHydrated ? 0 : 1, scale: 1.1 }}
+        animate={{ opacity: 1, scale: 1.0 }}
+        transition={{
+          opacity: { duration: isHydrated ? 1.2 : 0 },
+          scale: {
+            duration: 20,
+            ease: 'easeInOut',
+            repeat: Infinity,
+            repeatType: 'reverse',
+          },
+        }}
+        className="absolute inset-0"
+        style={{ willChange: 'transform', transform: 'translateZ(0)' }}
+      >
+        <ExportedImage src={bgImage} alt="" fill className="object-cover" priority />
+      </m.div>
+    </div>
   );
 }
