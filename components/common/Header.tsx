@@ -64,6 +64,15 @@ export default function Header() {
     body.style.paddingRight = '';
   };
 
+  // 메뉴 열림/닫힘 시 즉시 스크롤 잠금/해제
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      lockScroll();
+    } else {
+      unlockScroll();
+    }
+  }, [mobileMenuOpen]);
+
   useEffect(() => {
     return () => unlockScroll();
   }, []);
@@ -87,9 +96,6 @@ export default function Header() {
   const headerStyle = getHeaderStyle();
   const isDarkText = isScrolled || mobileMenuOpen || !hasHero || isArtworkDetail;
   const textColor = isDarkText ? 'text-charcoal' : 'text-white';
-  const logoSrc = isDarkText
-    ? '/images/logo/320pxX90px.webp'
-    : '/images/logo/320pxX90px_white.webp';
 
   return (
     <header
@@ -101,14 +107,30 @@ export default function Header() {
     >
       <nav className="container-max flex items-center justify-between h-16 transition-all duration-300">
         <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <ExportedImage
-            src={logoSrc}
-            alt="씨앗페 로고"
-            width={160}
-            height={45}
-            className="h-9 w-auto object-contain transition-all duration-300"
-            priority
-          />
+          <div className="relative h-9 w-40">
+            <ExportedImage
+              src="/images/logo/320pxX90px.webp"
+              alt="씨앗페 로고"
+              width={160}
+              height={45}
+              className={clsx(
+                'h-9 w-auto object-contain transition-opacity duration-300',
+                isDarkText ? 'opacity-100' : 'opacity-0'
+              )}
+              priority
+            />
+            <ExportedImage
+              src="/images/logo/320pxX90px_white.webp"
+              alt=""
+              width={160}
+              height={45}
+              className={clsx(
+                'absolute top-0 left-0 h-9 w-auto object-contain transition-opacity duration-300',
+                isDarkText ? 'opacity-0' : 'opacity-100'
+              )}
+              priority
+            />
+          </div>
           <span className="sr-only">씨앗페 2026 홈</span>
         </Link>
 
@@ -192,7 +214,7 @@ export default function Header() {
         </button>
       </nav>
 
-      <AnimatePresence onExitComplete={unlockScroll}>
+      <AnimatePresence>
         {mobileMenuOpen && (
           <>
             <m.div
@@ -211,10 +233,7 @@ export default function Header() {
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              onAnimationComplete={(definition) => {
-                if (definition === 'animate') lockScroll();
-              }}
+              transition={{ type: 'tween', duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
               className="fixed top-[calc(4rem+env(safe-area-inset-top,0px))] right-0 w-72 max-w-[85%] bg-white shadow-2xl z-[120] lg:hidden overflow-y-auto pb-[env(safe-area-inset-bottom,20px)]"
               style={{
                 bottom: 'env(safe-area-inset-bottom, 0px)',

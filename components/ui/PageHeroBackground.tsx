@@ -18,15 +18,14 @@ const HERO_IMAGES = [
 ];
 
 export default function PageHeroBackground() {
-  const [imageIndex, setImageIndex] = useState(0);
-  const [isHydrated, setIsHydrated] = useState(false);
+  const [imageIndex, setImageIndex] = useState<number | null>(null);
 
   useEffect(() => {
     setImageIndex(Math.floor(Math.random() * HERO_IMAGES.length));
-    setIsHydrated(true);
   }, []);
 
-  const bgImage = HERO_IMAGES[imageIndex];
+  const bgImage = HERO_IMAGES[imageIndex ?? 0];
+  const isHydrated = imageIndex !== null;
 
   return (
     <div className="absolute inset-0">

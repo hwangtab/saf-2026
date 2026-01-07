@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import ExportedImage from 'next-image-export-optimizer';
-import { getAllArtworks, Artwork } from '@/content/saf2026-artworks';
+import { getAllArtworks } from '@/content/saf2026-artworks';
+import { Artwork } from '@/lib/types';
 import { useState, useEffect } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import AutoScroll from 'embla-carousel-auto-scroll';

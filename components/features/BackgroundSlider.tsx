@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import ExportedImage from 'next-image-export-optimizer';
 import { m, AnimatePresence } from 'framer-motion';
 
@@ -20,16 +20,16 @@ const HERO_IMAGES = [
 
 export default function BackgroundSlider() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isFirstRender, setIsFirstRender] = useState(true);
+  const isFirstRenderRef = useRef(true);
 
   const nextIndex = (currentIndex + 1) % HERO_IMAGES.length;
   const nextPhoto = HERO_IMAGES[nextIndex];
 
   useEffect(() => {
-    // After the first render cycle, we enable the fade-in animation for future slides
-    if (isFirstRender) {
-      setIsFirstRender(false);
-    }
+    // 첫 렌더링 후 플래그 해제
+    const timer = requestAnimationFrame(() => {
+      isFirstRenderRef.current = false;
+    });
 
     const interval = setInterval(() => {
       // Only transition if the tab is focused to save resources and keep sync
@@ -37,8 +37,12 @@ export default function BackgroundSlider() {
         setCurrentIndex((prev) => (prev + 1) % HERO_IMAGES.length);
       }
     }, 5000);
-    return () => clearInterval(interval);
-  }, [isFirstRender]);
+
+    return () => {
+      cancelAnimationFrame(timer);
+      clearInterval(interval);
+    };
+  }, []);
 
   const currentPhoto = HERO_IMAGES[currentIndex];
 
@@ -59,7 +63,7 @@ export default function BackgroundSlider() {
         <AnimatePresence>
           <m.div
             key={currentPhoto.id}
-            custom={isFirstRender}
+            custom={isFirstRenderRef.current}
             variants={{
               initial: (isFirst: boolean) => ({
                 opacity: isFirst ? 1 : 0,
