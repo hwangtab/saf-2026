@@ -84,19 +84,20 @@ export function useArtworkFilter(artworks: Artwork[]) {
     [filteredArtworks, sortOption]
   );
 
-  // 작가 네비게이션 로직 - get unique artists from ORIGINAL sorted list (not filtered)
   const uniqueArtists = useMemo(() => {
-    // When artist is selected, still show all artists for navigation
-    const baseArtworks = selectedArtist ? sortArtworks(artworks, sortOption) : sortedArtworks;
     const seen = new Set<string>();
-    return baseArtworks
-      .filter((a) => {
-        if (seen.has(a.artist)) return false;
-        seen.add(a.artist);
-        return true;
-      })
-      .map((a) => a.artist);
-  }, [artworks, sortedArtworks, sortOption, selectedArtist]);
+    const artists: string[] = [];
+    const source = [...artworks].sort((a, b) => a.artist.localeCompare(b.artist, 'ko-KR'));
+
+    for (const artwork of source) {
+      if (!seen.has(artwork.artist)) {
+        seen.add(artwork.artist);
+        artists.push(artwork.artist);
+      }
+    }
+
+    return artists;
+  }, [artworks]);
 
   return {
     sortOption,

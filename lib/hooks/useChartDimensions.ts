@@ -2,21 +2,34 @@
 
 import { useState, useEffect } from 'react';
 
+const MOBILE_BREAKPOINT = 380;
+const DEBOUNCE_DELAY = 200;
+const DEFAULT_DESKTOP_WIDTH = 1024;
+
 export function useChartDimensions() {
-  const [width, setWidth] = useState(0);
+  const [width, setWidth] = useState<number | null>(null);
 
   useEffect(() => {
     setWidth(window.innerWidth);
 
+    let timeoutId: NodeJS.Timeout;
+
     const handleResize = () => {
-      setWidth(window.innerWidth);
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        setWidth(window.innerWidth);
+      }, DEBOUNCE_DELAY);
     };
 
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(timeoutId);
+    };
   }, []);
 
-  const isMobile = width > 0 && width < 380;
+  const currentWidth = width ?? DEFAULT_DESKTOP_WIDTH;
+  const isMobile = currentWidth < MOBILE_BREAKPOINT;
 
   return {
     isMobile,
