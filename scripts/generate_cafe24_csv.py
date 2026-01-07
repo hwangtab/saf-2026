@@ -36,13 +36,13 @@ def create_html(row):
 
 def main():
     # Read Template Headers
-    with open(template_file, 'r', encoding='utf-8') as f:
+    with open(template_file, 'r', encoding='utf-8-sig') as f:
         reader = csv.reader(f)
         headers = next(reader)
         # We need to map our data to these headers
         
     # Read Source Data
-    with open(source_file, 'r', encoding='utf-8') as f:
+    with open(source_file, 'r', encoding='utf-8-sig') as f:
         # Handle the BOM if present or just utf-8
         reader = csv.DictReader(f)
         source_data = list(reader)
@@ -84,7 +84,16 @@ def main():
         new_row['과세구분'] = 'B' # Tax Free
         
         # "소비자가","공급가","상품가","판매가"
-        price = clean_price(row['가격'])
+        raw_price = row['가격'].replace('₩', '').replace(',', '').strip()
+        
+        # Special case: Park Ji-hye's price should be 0 as per user request
+        if '박지혜' in row['이름']:
+            price = '0'
+        elif not raw_price:
+             price = '0' # Default to 0 if empty
+        else:
+            price = raw_price
+            
         new_row['소비자가'] = price
         new_row['공급가'] = price
         new_row['상품가'] = price
@@ -92,7 +101,7 @@ def main():
         
         # "판매가 대체문구 사용","판매가 대체문구","주문수량 제한 기준","최소 주문수량(이상)","최대 주문수량(이하)","적립금","적립금 구분"
         new_row['판매가 대체문구 사용'] = 'N'
-        new_row['주문수량 제한 기준'] = '1' # Template default? 
+        new_row['주문수량 제한 기준'] = '' # Template default is empty 
         # Check template row 3: "1","1" for min/max? No, "1","1" is indices 26, 27?
         # Headers: 25: 주문수량 제한 기준, 26: 최소..., 27: 최대...
         # Template line 3: ...,"N","","","1","1","","","","N",... 
@@ -123,11 +132,21 @@ def main():
         # "이미지등록(상세)","이미지등록(목록)","이미지등록(작은목록)","이미지등록(축소)","이미지등록(추가)"
         img_filename = row['이미지파일명'].strip()
         if img_filename:
-            full_img_name = f"{img_filename}.jpg"
-            new_row['이미지등록(상세)'] = full_img_name
-            new_row['이미지등록(목록)'] = full_img_name
-            new_row['이미지등록(작은목록)'] = full_img_name
-            new_row['이미지등록(축소)'] = full_img_name
+            # Cafe24 Strict Requirement:
+            # Main product images MUST be in 'web/product/big/' (for Detail Image).
+            # The CSV must contain ONLY the filename (e.g., '144.jpg').
+            # Cafe24 will not display images linked from 'web/upload/'.
+            
+            # User instruction: Move all images from 'web/upload/saf2026/' to 'web/product/big/'
+            
+            # Append .jpg extension as source usually lacks it
+            img_full_name = f"{img_filename}.jpg"
+            
+            new_row['이미지등록(상세)'] = img_full_name
+            new_row['이미지등록(목록)'] = img_full_name
+            new_row['이미지등록(작은목록)'] = img_full_name
+            new_row['이미지등록(축소)'] = img_full_name
+            new_row['이미지등록(추가)'] = ''
             
         # "제조사","공급사","브랜드","트렌드","자체분류 코드","제조일자","출시일자","유효기간 사용여부","유효기간","원산지"
         # Template: mostly empty, "N" for valid date usage
@@ -139,7 +158,7 @@ def main():
         new_rows.append(new_row)
 
     # Write Output
-    with open(output_file, 'w', encoding='utf-8', newline='') as f:
+    with open(output_file, 'w', encoding='utf-8-sig', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=headers, quoting=csv.QUOTE_ALL)
         writer.writeheader()
         writer.writerows(new_rows)

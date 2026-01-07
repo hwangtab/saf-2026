@@ -1814,6 +1814,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     image: '110.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/198',
   },
   {
     id: '111',
@@ -1830,6 +1831,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩1,400,000',
     image: '111.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/199',
   },
   {
     id: '112',
@@ -1846,6 +1848,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩1,400,000',
     image: '112.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/200',
   },
   {
     id: '113',
@@ -1862,6 +1865,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     image: '113.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/201',
   },
   {
     id: '114',
@@ -1878,6 +1882,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩1,400,000',
     image: '114.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/202',
   },
   {
     id: '115',
@@ -1894,6 +1899,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩1,600,000',
     image: '115.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/203',
   },
   {
     id: '116',
@@ -1910,6 +1916,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     image: '116.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/204',
   },
   {
     id: '117',
@@ -1926,6 +1933,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩1,400,000',
     image: '117.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/205',
   },
   {
     id: '118',
@@ -1942,6 +1950,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩1,600,000',
     image: '118.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/206',
   },
   {
     id: '119',
@@ -1958,6 +1967,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩1,600,000',
     image: '119.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/207',
   },
   {
     id: '120',
@@ -1974,6 +1984,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩3,500,000',
     image: '120.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/208',
   },
   {
     id: '121',
@@ -1990,6 +2001,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩2,500,000',
     image: '121.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/209',
   },
   {
     id: '122',
@@ -2006,6 +2018,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩2,500,000',
     image: '122.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/210',
   },
   {
     id: '123',
@@ -2022,6 +2035,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩3,000,000',
     image: '123.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/211',
   },
   {
     id: '124',
@@ -2038,6 +2052,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩2,600,000',
     image: '124.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/212',
   },
   {
     id: '125',
@@ -2053,6 +2068,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩65,000,000',
     image: '125.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/213',
   },
   {
     id: '126',
@@ -2068,6 +2084,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩65,000,000',
     image: '126.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/214',
   },
   {
     id: '127',
@@ -2083,6 +2100,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩30,000,000',
     image: '127.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/215',
   },
   {
     id: '128',
@@ -2098,6 +2116,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩3,000,000',
     image: '128.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/216',
   },
   {
     id: '129',
@@ -2113,6 +2132,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩3,000,000',
     image: '129.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/217',
   },
   {
     id: '130',
@@ -2130,6 +2150,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩600,000',
     image: '130.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/218',
   },
   {
     id: '131',
@@ -2147,6 +2168,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩600,000',
     image: '131.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/219',
   },
   {
     id: '132',
@@ -2164,6 +2186,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩600,000',
     image: '132.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/220',
   },
   {
     id: '133',
@@ -2181,6 +2204,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩600,000',
     image: '133.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/221',
   },
   {
     id: '134',
@@ -2198,6 +2222,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩1,300,000',
     image: '134.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/222',
   },
   {
     id: '135',
@@ -2215,6 +2240,7 @@ export const artworks: Artwork[] = [
     edition: '에디션 2/5',
     price: '₩500,000',
     image: '135.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/223',
   },
   {
     id: '136',
@@ -2232,6 +2258,7 @@ export const artworks: Artwork[] = [
     edition: '에디션 3/5',
     price: '₩500,000',
     image: '136.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/224',
   },
   {
     id: '137',
@@ -2248,6 +2275,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩3,000,000',
     image: '137.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/225',
   },
   {
     id: '138',
@@ -2264,6 +2292,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     image: '138.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/226',
   },
   {
     id: '139',
@@ -2280,6 +2309,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     image: '139.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/227',
   },
   {
     id: '140',
@@ -2295,6 +2325,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩3,000,000',
     image: '140.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/228',
   },
   {
     id: '141',
@@ -2311,6 +2342,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩2,400,000',
     image: '141.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/229',
   },
   {
     id: '142',
@@ -2327,6 +2359,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '₩2,400,000',
     image: '142.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/230',
   },
   {
     id: '143',
@@ -2343,6 +2376,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '',
     image: '143.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/231',
   },
   {
     id: '144',
@@ -2359,6 +2393,7 @@ export const artworks: Artwork[] = [
     edition: '',
     price: '',
     image: '144.jpg',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/232',
   },
 ];
 
