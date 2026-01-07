@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import ExportedImage from 'next-image-export-optimizer';
 import { usePathname } from 'next/navigation';
@@ -26,13 +26,11 @@ const navigation: NavigationItem[] = [
   { name: '언론 보도', href: '/news' },
 ];
 
-const CLOSE_MENU_DELAY = 150;
-const SCROLL_UNLOCK_DELAY = 300;
-
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isScrolled = useScrolled();
   const pathname = usePathname();
+  const prevPathname = useRef(pathname);
 
   const isActive = (href: string) => {
     if (href === '/' && pathname === '/') return true;
@@ -40,48 +38,41 @@ export default function Header() {
     return false;
   };
 
-  const handleMobileLinkClick = useCallback(() => {
-    setTimeout(() => {
+  useEffect(() => {
+    if (prevPathname.current !== pathname) {
       setMobileMenuOpen(false);
-    }, CLOSE_MENU_DELAY);
-  }, []);
+      prevPathname.current = pathname;
+    }
+  }, [pathname]);
+
+  const lockScroll = () => {
+    const body = document.body;
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+    body.style.overflow = 'hidden';
+    body.style.overscrollBehavior = 'contain';
+
+    if (scrollbarWidth > 0) {
+      body.style.paddingRight = `${scrollbarWidth}px`;
+    }
+  };
+
+  const unlockScroll = () => {
+    const body = document.body;
+    body.style.overflow = '';
+    body.style.overscrollBehavior = '';
+    body.style.paddingRight = '';
+  };
 
   useEffect(() => {
-    const body = document.body;
-
     if (mobileMenuOpen) {
-      requestAnimationFrame(() => {
-        const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-        body.style.overflow = 'hidden';
-        body.style.overscrollBehavior = 'contain';
-        if (scrollbarWidth > 0) {
-          body.style.paddingRight = `${scrollbarWidth}px`;
-        }
-      });
-    } else {
-      const timer = setTimeout(() => {
-        requestAnimationFrame(() => {
-          body.style.overflow = '';
-          body.style.overscrollBehavior = '';
-          body.style.paddingRight = '';
-        });
-      }, SCROLL_UNLOCK_DELAY);
-
-      return () => clearTimeout(timer);
+      lockScroll();
     }
-
-    return () => {
-      body.style.overflow = '';
-      body.style.overscrollBehavior = '';
-      body.style.paddingRight = '';
-    };
   }, [mobileMenuOpen]);
 
   useEffect(() => {
-    if (mobileMenuOpen) {
-      handleMobileLinkClick();
-    }
-  }, [pathname, mobileMenuOpen, handleMobileLinkClick]);
+    return () => unlockScroll();
+  }, []);
 
   const isArtworkDetail = pathname.startsWith('/artworks/') && pathname !== '/artworks';
   const hasHero = HERO_PAGES.includes(pathname as (typeof HERO_PAGES)[number]) && !isArtworkDetail;
@@ -207,7 +198,7 @@ export default function Header() {
         </button>
       </nav>
 
-      <AnimatePresence>
+      <AnimatePresence onExitComplete={unlockScroll}>
         {mobileMenuOpen && (
           <>
             <m.div
@@ -236,7 +227,7 @@ export default function Header() {
                       href={item.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      onClick={handleMobileLinkClick}
+                      onClick={() => setMobileMenuOpen(false)}
                       className="block py-3 px-4 text-base rounded-lg transition-colors border-l-4 border-transparent text-charcoal hover:bg-primary/5 hover:border-primary active:bg-primary/10"
                     >
                       {item.name}
@@ -245,7 +236,6 @@ export default function Header() {
                     <Link
                       key={item.href}
                       href={item.href}
-                      onClick={handleMobileLinkClick}
                       className={clsx(
                         'block py-3 px-4 text-base rounded-lg transition-colors border-l-4',
                         isActive(item.href)
@@ -266,7 +256,7 @@ export default function Header() {
                     variant="accent"
                     external
                     className="w-full gap-1.5"
-                    onClick={handleMobileLinkClick}
+                    onClick={() => setMobileMenuOpen(false)}
                   >
                     <span className="group-hover:scale-125 transition-transform duration-300">
                       ❤️
