@@ -11,10 +11,7 @@ interface MasonryGalleryProps {
 }
 
 function MasonryGallery({ artworks, forceGrid }: MasonryGalleryProps) {
-  // Helper function to check if a value is displayable
   const isDisplayable = (value: string | undefined): value is string => Boolean(value);
-
-  // For very few items OR when forceGrid is true, use a centered grid layout instead of columns
   const useCenteredGrid = forceGrid || artworks.length <= 3;
 
   return (
@@ -38,14 +35,13 @@ function MasonryGallery({ artworks, forceGrid }: MasonryGalleryProps) {
             <div className="bg-gray-100 shadow-sm transition-shadow hover:shadow-md group rounded-sm overflow-hidden">
               <Link href={`/artworks/${artwork.id}`} className="block h-full">
                 <div className="relative w-full overflow-hidden aspect-[4/5]">
-                  {/* Shimmer placeholder - visible before image loads */}
                   <div className="absolute inset-0 shimmer-loading" />
                   <ExportedImage
                     src={`/images/artworks/${artwork.image}`}
                     alt={`${artwork.title} - ${artwork.artist}`}
                     fill
                     className="relative object-cover transform transition-transform duration-300 group-hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    sizes="(max-width: 768px) calc(100vw - 2rem), (max-width: 1024px) calc(50vw - 1.5rem), calc(33vw - 1rem)"
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 pointer-events-none" />
                   {artwork.sold && (
@@ -56,12 +52,14 @@ function MasonryGallery({ artworks, forceGrid }: MasonryGalleryProps) {
                 </div>
 
                 <div className="p-4 bg-white">
-                  <h2 className="text-lg font-bold text-charcoal font-sans group-hover:text-primary transition-colors duration-300 break-keep">
+                  <h2 className="text-lg font-bold text-charcoal font-sans group-hover:text-primary transition-colors duration-300 break-keep line-clamp-2 min-h-[3.5rem]">
                     {artwork.title}
                   </h2>
-                  <p className="text-sm text-charcoal-muted mt-1">{artwork.artist}</p>
+                  <p className="text-sm text-charcoal-muted mt-1 min-h-[1.25rem]">
+                    {artwork.artist}
+                  </p>
                   {(showMaterial || showSize) && (
-                    <p className="text-xs text-charcoal-soft mt-2 line-clamp-1">
+                    <p className="text-xs text-charcoal-soft mt-2 line-clamp-1 min-h-[1rem]">
                       {showMaterial && artwork.material}
                       {showMaterial && showSize && ' · '}
                       {showSize && artwork.size}

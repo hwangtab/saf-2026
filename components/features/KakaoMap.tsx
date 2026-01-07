@@ -25,29 +25,39 @@ export default function KakaoMap(props?: KakaoMapProps) {
   });
 
   useEffect(() => {
-    if (!hasAppKey || loading) {
-      return;
-    }
-    if (typeof window === 'undefined') {
-      return;
-    }
-    const { kakao } = window;
-    if (!kakao?.maps?.services) {
-      return;
-    }
-    const geocoder = new kakao.maps.services.Geocoder();
-    geocoder.addressSearch(
-      EXHIBITION.ADDRESS,
-      (result: Array<{ x: string; y: string }>, status: string) => {
-        if (status === kakao.maps.services.Status.OK && result?.[0]) {
-          const { x, y } = result[0];
-          setPosition({
-            lat: Number(y),
-            lng: Number(x),
-          });
+    if (!hasAppKey || loading) return;
+    if (typeof window === 'undefined') return;
+
+    let isMounted = true;
+
+    const initGeocoder = () => {
+      if (!window.kakao?.maps?.services) return;
+
+      const geocoder = new window.kakao.maps.services.Geocoder();
+      geocoder.addressSearch(
+        EXHIBITION.ADDRESS,
+        (result: Array<{ x: string; y: string }>, status: string) => {
+          if (!isMounted) return;
+
+          if (status === window.kakao.maps.services.Status.OK && result?.[0]) {
+            const { x, y } = result[0];
+            setPosition({
+              lat: Number(y),
+              lng: Number(x),
+            });
+          }
         }
-      }
-    );
+      );
+    };
+
+    const timeoutId = setTimeout(() => {
+      if (isMounted) initGeocoder();
+    }, 100);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timeoutId);
+    };
   }, [hasAppKey, loading]);
 
   if (!hasAppKey) {
