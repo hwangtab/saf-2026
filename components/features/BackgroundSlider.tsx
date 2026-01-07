@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import ExportedImage from 'next-image-export-optimizer';
 import { motion, AnimatePresence } from 'framer-motion';
