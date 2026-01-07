@@ -59,13 +59,20 @@
 /* 4. Base HTML and body styles */
 html {
   word-break: keep-all;
-  /* 한글 단어 중간 줄바꿈 방지 */
   overflow-wrap: break-word;
-  /* 긴 단어는 줄바꿈 허용 */
   font-weight: 300;
-  /* GMarketSans Light (300) 적용 */
   overflow-x: hidden;
-  /* 수평 오버플로우 방지 */
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+body {
+  background-color: #fff6dd;
+  color: #31393c;
+  line-height: 1.6;
+  font-weight: 300;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
 }
 
 body {
@@ -75,6 +82,7 @@ body {
   font-weight: 300;
   overflow-x: hidden;
   /* 수평 오버플로우 방지 */
+  overscroll-behavior-y: contain;
 }
 
 /* Scrollbar Styles */

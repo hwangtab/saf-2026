@@ -62,6 +62,7 @@ export default function Home() {
               height={320}
               className="w-96 md:w-[56rem] h-auto drop-shadow-2xl"
               priority
+              placeholder="empty"
             />
           </div>
           <h1 className="mt-12 md:mt-0 font-display text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight text-white drop-shadow-lg text-balance">
