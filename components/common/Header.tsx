@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import ExportedImage from 'next-image-export-optimizer';
 import { usePathname } from 'next/navigation';
@@ -26,6 +26,9 @@ const navigation: NavigationItem[] = [
   { name: '언론 보도', href: '/news' },
 ];
 
+const CLOSE_MENU_DELAY = 150;
+const SCROLL_UNLOCK_DELAY = 300;
+
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isScrolled = useScrolled();
@@ -37,31 +40,48 @@ export default function Header() {
     return false;
   };
 
+  const handleMobileLinkClick = useCallback(() => {
+    setTimeout(() => {
+      setMobileMenuOpen(false);
+    }, CLOSE_MENU_DELAY);
+  }, []);
+
   useEffect(() => {
+    const body = document.body;
+
     if (mobileMenuOpen) {
       requestAnimationFrame(() => {
         const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-        document.body.style.overflow = 'hidden';
-        document.body.style.overscrollBehavior = 'contain';
+        body.style.overflow = 'hidden';
+        body.style.overscrollBehavior = 'contain';
         if (scrollbarWidth > 0) {
-          document.body.style.paddingRight = `${scrollbarWidth}px`;
+          body.style.paddingRight = `${scrollbarWidth}px`;
         }
       });
     } else {
-      document.body.style.overflow = '';
-      document.body.style.overscrollBehavior = '';
-      document.body.style.paddingRight = '';
+      const timer = setTimeout(() => {
+        requestAnimationFrame(() => {
+          body.style.overflow = '';
+          body.style.overscrollBehavior = '';
+          body.style.paddingRight = '';
+        });
+      }, SCROLL_UNLOCK_DELAY);
+
+      return () => clearTimeout(timer);
     }
+
     return () => {
-      document.body.style.overflow = '';
-      document.body.style.overscrollBehavior = '';
-      document.body.style.paddingRight = '';
+      body.style.overflow = '';
+      body.style.overscrollBehavior = '';
+      body.style.paddingRight = '';
     };
   }, [mobileMenuOpen]);
 
   useEffect(() => {
-    setMobileMenuOpen(false);
-  }, [pathname]);
+    if (mobileMenuOpen) {
+      handleMobileLinkClick();
+    }
+  }, [pathname, mobileMenuOpen, handleMobileLinkClick]);
 
   const isArtworkDetail = pathname.startsWith('/artworks/') && pathname !== '/artworks';
   const hasHero = HERO_PAGES.includes(pathname as (typeof HERO_PAGES)[number]) && !isArtworkDetail;
@@ -216,7 +236,7 @@ export default function Header() {
                       href={item.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      onClick={() => setMobileMenuOpen(false)}
+                      onClick={handleMobileLinkClick}
                       className="block py-3 px-4 text-base rounded-lg transition-colors border-l-4 border-transparent text-charcoal hover:bg-primary/5 hover:border-primary active:bg-primary/10"
                     >
                       {item.name}
@@ -225,7 +245,7 @@ export default function Header() {
                     <Link
                       key={item.href}
                       href={item.href}
-                      onClick={() => setMobileMenuOpen(false)}
+                      onClick={handleMobileLinkClick}
                       className={clsx(
                         'block py-3 px-4 text-base rounded-lg transition-colors border-l-4',
                         isActive(item.href)
@@ -246,7 +266,7 @@ export default function Header() {
                     variant="accent"
                     external
                     className="w-full gap-1.5"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={handleMobileLinkClick}
                   >
                     <span className="group-hover:scale-125 transition-transform duration-300">
                       ❤️
