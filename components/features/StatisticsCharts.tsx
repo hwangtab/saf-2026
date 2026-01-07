@@ -15,23 +15,24 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { useChartDimensions } from '@/lib/hooks/useChartDimensions';
+import { CHART_COLORS } from '@/lib/chartColors';
 
 const tooltipContentStyle: CSSProperties = {
   borderRadius: '0.75rem',
-  border: '1px solid #E6EAF0',
+  border: `1px solid ${CHART_COLORS.border}`,
   boxShadow: '0 20px 45px rgba(17, 24, 39, 0.15)',
-  backgroundColor: '#FFFFFF',
+  backgroundColor: CHART_COLORS.background,
   padding: '12px 16px',
 };
 
 const tooltipLabelStyle: CSSProperties = {
-  color: '#495156',
+  color: CHART_COLORS.textMuted,
   fontWeight: 600,
   fontSize: '0.75rem',
 };
 
 const tooltipItemStyle: CSSProperties = {
-  color: '#2176FF',
+  color: CHART_COLORS.primary,
   fontWeight: 600,
   fontSize: '0.8rem',
 };
@@ -42,7 +43,7 @@ export const FirstBankAccessChart = memo(function FirstBankAccessChart() {
     { name: '제1금융권 배제', value: 84.9 },
     { name: '접근 가능', value: 15.1 },
   ];
-  const COLORS = ['#D94F45', '#2176FF'];
+  const COLORS = [CHART_COLORS.danger, CHART_COLORS.primary];
 
   return (
     <div
@@ -114,7 +115,7 @@ export const RejectionReasonsChart = memo(function RejectionReasonsChart() {
             labelStyle={tooltipLabelStyle}
             itemStyle={tooltipItemStyle}
           />
-          <Bar dataKey="count" fill="#2176FF" name="응답자 수" />
+          <Bar dataKey="count" fill={CHART_COLORS.primary} name="응답자 수" />
         </BarChart>
       </ResponsiveContainer>
       <p className="text-sm text-charcoal-muted mt-4">
@@ -155,7 +156,7 @@ export const HighInterestProductChart = memo(function HighInterestProductChart()
             labelStyle={tooltipLabelStyle}
             itemStyle={tooltipItemStyle}
           />
-          <Bar dataKey="percentage" fill="#F79824" name="이용률" />
+          <Bar dataKey="percentage" fill={CHART_COLORS.accent} name="이용률" />
         </BarChart>
       </ResponsiveContainer>
       <p className="text-sm text-charcoal-muted mt-4">
@@ -196,7 +197,7 @@ export const InterestRateDistributionChart = memo(function InterestRateDistribut
             labelStyle={tooltipLabelStyle}
             itemStyle={tooltipItemStyle}
           />
-          <Bar dataKey="count" fill="#FDCA40" name="응답자" />
+          <Bar dataKey="count" fill={CHART_COLORS.sun} name="응답자" />
         </BarChart>
       </ResponsiveContainer>
       <p className="text-sm text-charcoal-muted mt-4">
@@ -212,7 +213,7 @@ export const DebtCollectionChart = memo(function DebtCollectionChart() {
     { name: '경험함', value: 38 },
     { name: '경험 없음', value: 62 },
   ];
-  const COLORS = ['#D94F45', '#495156'];
+  const COLORS = [CHART_COLORS.danger, CHART_COLORS.charcoal];
 
   return (
     <div
@@ -289,7 +290,7 @@ export const CreativeImpactChart = memo(function CreativeImpactChart() {
             labelStyle={tooltipLabelStyle}
             itemStyle={tooltipItemStyle}
           />
-          <Bar dataKey="percentage" fill="#2176FF" name="비율" />
+          <Bar dataKey="percentage" fill={CHART_COLORS.primary} name="비율" />
         </BarChart>
       </ResponsiveContainer>
       <p className="text-sm text-charcoal-muted mt-4">

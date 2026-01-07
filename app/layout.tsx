@@ -81,9 +81,6 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko">
-      <head>
-        <meta name="theme-color" content="#2176FF" />
-      </head>
       <body className="bg-canvas-soft text-charcoal flex flex-col min-h-screen">
         <AnimationProvider>
           <a href="#main-content" className="skip-to-main">
