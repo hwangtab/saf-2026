@@ -92,7 +92,7 @@ function ArtworkCard({ artwork, variant = 'gallery', className }: ArtworkCardPro
               '\u00A0'
             )}
           </p>
-          {artwork.sold && <p className="text-sm font-semibold text-red-600 mt-1">판매완료</p>}
+
           {artwork.price && artwork.price !== '문의' && (
             <p
               className={`text-sm font-semibold mt-1 ${artwork.sold ? 'text-gray-600 line-through' : 'text-primary'}`}
