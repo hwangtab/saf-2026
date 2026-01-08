@@ -87,12 +87,16 @@ export default function ArtistPage({ params }: Props) {
   const artistName = decodeURIComponent(params.artist);
   const artworks = getAllArtworks();
 
-  // Verify artist exists
-  const hasArtist = artworks.some((a) => a.artist === artistName);
+  // Get artist's artworks
+  const artistArtworks = artworks.filter((a) => a.artist === artistName);
 
-  if (!hasArtist) {
+  if (artistArtworks.length === 0) {
     notFound();
   }
+
+  // Use the first artwork's image as the hero background
+  const representativeArtwork = artistArtworks[0];
+  const heroBackgroundImage = `/images/artworks/${representativeArtwork.image}`;
 
   const pageUrl = `${SITE_URL}/artworks/artist/${encodeURIComponent(artistName)}`;
 
@@ -101,6 +105,7 @@ export default function ArtistPage({ params }: Props) {
       <PageHero
         title={`${artistName} 작가`}
         description={`예술가들의 시선으로 바라본 우리의 현실과 희망. ${artistName} 작가의 작품을 소개합니다.`}
+        customBackgroundImage={heroBackgroundImage}
       >
         <ShareButtons
           url={pageUrl}

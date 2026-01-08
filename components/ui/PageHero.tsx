@@ -6,13 +6,20 @@ interface PageHeroProps {
   title: string;
   description?: string;
   children?: ReactNode;
+  /** Custom background image path (e.g., "/images/artworks/1.jpg") */
+  customBackgroundImage?: string;
 }
 
-export default function PageHero({ title, description, children }: PageHeroProps) {
+export default function PageHero({
+  title,
+  description,
+  children,
+  customBackgroundImage,
+}: PageHeroProps) {
   return (
     <section className="relative min-h-[60vh] flex items-center justify-center pt-12 pb-12 md:pt-20 md:pb-20 overflow-hidden bg-charcoal">
       {/* Background Image */}
-      <PageHeroBackground />
+      <PageHeroBackground customImage={customBackgroundImage} />
       {/* Dark Overlay */}
       <div className="absolute inset-0 bg-black/60 z-10" />
 

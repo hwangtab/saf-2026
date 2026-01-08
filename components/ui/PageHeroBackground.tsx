@@ -5,10 +5,18 @@ import { useEffect, useState } from 'react';
 import { m } from 'framer-motion';
 import { HERO_IMAGES } from '@/lib/constants';
 
-export default function PageHeroBackground() {
+interface PageHeroBackgroundProps {
+  /** Custom image path to use instead of random hero image */
+  customImage?: string;
+}
+
+export default function PageHeroBackground({ customImage }: PageHeroBackgroundProps) {
   const [imageIndex, setImageIndex] = useState<number | null>(null);
 
   useEffect(() => {
+    // Skip random selection if custom image is provided
+    if (customImage) return;
+
     let newIndex;
     // Get the last used index to avoid repetition
     const lastIndexStr = sessionStorage.getItem('saf_last_hero_index');
@@ -23,14 +31,19 @@ export default function PageHeroBackground() {
     // Save the new index for next time
     sessionStorage.setItem('saf_last_hero_index', newIndex.toString());
     setImageIndex(newIndex);
-  }, []);
+  }, [customImage]);
 
-  // Don't render any image until hydration is complete to prevent flash
-  if (imageIndex === null) {
-    return <div className="absolute inset-0 bg-gray-900" />;
+  // Use custom image if provided, otherwise use random hero image
+  let bgImage: string;
+  if (customImage) {
+    bgImage = customImage;
+  } else {
+    // Don't render any image until hydration is complete to prevent flash
+    if (imageIndex === null) {
+      return <div className="absolute inset-0 bg-gray-900" />;
+    }
+    bgImage = `/images/hero/${HERO_IMAGES[imageIndex].filename}`;
   }
-
-  const bgImage = `/images/hero/${HERO_IMAGES[imageIndex].filename}`;
 
   return (
     <div className="absolute inset-0">

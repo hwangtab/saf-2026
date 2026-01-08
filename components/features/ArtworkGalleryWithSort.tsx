@@ -1,7 +1,7 @@
 'use client';
 
 import { memo, useCallback } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import MasonryGallery from './MasonryGallery';
 import SortControls from './SortControls';
 import SearchBar from './SearchBar';
@@ -15,7 +15,6 @@ interface ArtworkGalleryWithSortProps {
 
 function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithSortProps) {
   const router = useRouter();
-  const pathname = usePathname();
   const {
     sortOption,
     setSortOption,
@@ -24,35 +23,23 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
     statusFilter,
     setStatusFilter,
     selectedArtist,
-    setSelectedArtist,
     filteredArtworks,
     sortedArtworks,
     uniqueArtists,
   } = useArtworkFilter(artworks, initialArtist);
 
-  // Check if we're on the artist-specific page
-  const isOnArtistPage = pathname.startsWith('/artworks/artist/');
-
-  // Handler for artist button click - toggle filter or navigate
+  // Handler for artist button click - navigate to artist page
   const handleArtistClick = useCallback(
     (artist: string) => {
-      if (isOnArtistPage) {
-        // On artist page: navigate to another artist page, or back to main if same artist
-        if (selectedArtist === artist) {
-          router.push('/artworks');
-        } else {
-          router.push(`/artworks/artist/${encodeURIComponent(artist)}`);
-        }
+      if (selectedArtist === artist) {
+        // If same artist is clicked, go back to main artworks page
+        router.push('/artworks');
       } else {
-        // On main artworks page: toggle filter as before
-        if (selectedArtist === artist) {
-          setSelectedArtist(null);
-        } else {
-          setSelectedArtist(artist);
-        }
+        // Navigate to artist's dedicated page
+        router.push(`/artworks/artist/${encodeURIComponent(artist)}`);
       }
     },
-    [isOnArtistPage, selectedArtist, setSelectedArtist, router]
+    [selectedArtist, router]
   );
 
   // 작가명순일 때만 작가 네비게이션 표시
