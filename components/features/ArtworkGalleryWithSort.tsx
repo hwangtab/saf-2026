@@ -1,6 +1,7 @@
 'use client';
 
 import { memo, useCallback } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import MasonryGallery from './MasonryGallery';
 import SortControls from './SortControls';
 import SearchBar from './SearchBar';
@@ -13,6 +14,8 @@ interface ArtworkGalleryWithSortProps {
 }
 
 function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithSortProps) {
+  const router = useRouter();
+  const pathname = usePathname();
   const {
     sortOption,
     setSortOption,
@@ -27,16 +30,29 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
     uniqueArtists,
   } = useArtworkFilter(artworks, initialArtist);
 
-  // Handler for artist button click - toggle filter
+  // Check if we're on the artist-specific page
+  const isOnArtistPage = pathname.startsWith('/artworks/artist/');
+
+  // Handler for artist button click - toggle filter or navigate
   const handleArtistClick = useCallback(
     (artist: string) => {
-      if (selectedArtist === artist) {
-        setSelectedArtist(null); // Deselect if same artist clicked
+      if (isOnArtistPage) {
+        // On artist page: navigate to another artist page, or back to main if same artist
+        if (selectedArtist === artist) {
+          router.push('/artworks');
+        } else {
+          router.push(`/artworks/artist/${encodeURIComponent(artist)}`);
+        }
       } else {
-        setSelectedArtist(artist);
+        // On main artworks page: toggle filter as before
+        if (selectedArtist === artist) {
+          setSelectedArtist(null);
+        } else {
+          setSelectedArtist(artist);
+        }
       }
     },
-    [selectedArtist, setSelectedArtist]
+    [isOnArtistPage, selectedArtist, setSelectedArtist, router]
   );
 
   // 작가명순일 때만 작가 네비게이션 표시
