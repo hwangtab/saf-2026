@@ -6,7 +6,6 @@ import { m, AnimatePresence } from 'framer-motion';
 import { ANIMATION } from '@/lib/constants';
 
 const HERO_IMAGES = [
-  { id: '11', filename: '11.jpg', alt: '2026 씨앗페 출품작' },
   { id: '1', filename: '1.jpg', alt: '2026 씨앗페 출품작' },
   { id: '2', filename: '2.jpg', alt: '2026 씨앗페 출품작' },
   { id: '3', filename: '3.jpg', alt: '2026 씨앗페 출품작' },
@@ -17,6 +16,14 @@ const HERO_IMAGES = [
   { id: '8', filename: '8.jpg', alt: '2026 씨앗페 출품작' },
   { id: '9', filename: '9.jpg', alt: '2026 씨앗페 출품작' },
   { id: '10', filename: '10.jpg', alt: '2026 씨앗페 출품작' },
+  { id: '11', filename: '11.jpg', alt: '2026 씨앗페 출품작' },
+  { id: '12', filename: '12.jpg', alt: '2026 씨앗페 출품작' },
+  { id: '13', filename: '13.jpg', alt: '2026 씨앗페 출품작' },
+  { id: '14', filename: '14.jpg', alt: '2026 씨앗페 출품작' },
+  { id: '15', filename: '15.jpg', alt: '2026 씨앗페 출품작' },
+  { id: '16', filename: '16.jpg', alt: '2026 씨앗페 출품작' },
+  { id: '17', filename: '17.jpg', alt: '2026 씨앗페 출품작' },
+  { id: '18', filename: '18.jpg', alt: '2026 씨앗페 출품작' },
 ];
 
 export default function BackgroundSlider() {
