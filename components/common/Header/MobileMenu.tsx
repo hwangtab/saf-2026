@@ -45,8 +45,6 @@ export default function MobileMenu({
               onClick={onClose}
               className="fixed inset-0 bg-black/50 lg:hidden top-[calc(4rem+env(safe-area-inset-top,0px))]"
               style={{
-                willChange: 'opacity',
-                transform: 'translateZ(0)',
                 zIndex: Z_INDEX.MOBILE_BACKDROP,
               }}
             />
@@ -61,8 +59,6 @@ export default function MobileMenu({
               className="fixed top-[calc(4rem+env(safe-area-inset-top,0px))] right-0 w-72 max-w-[85%] bg-white shadow-2xl lg:hidden overflow-y-auto pb-[env(safe-area-inset-bottom,20px)]"
               style={{
                 bottom: 0,
-                willChange: 'transform',
-                transform: 'translateZ(0)',
                 backfaceVisibility: 'hidden',
                 zIndex: Z_INDEX.MOBILE_MENU,
               }}

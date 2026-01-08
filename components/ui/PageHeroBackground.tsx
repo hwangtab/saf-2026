@@ -30,11 +30,10 @@ export default function PageHeroBackground() {
   return (
     <div className="absolute inset-0">
       <m.div
-        key={isHydrated ? bgImage : 'initial'}
-        initial={{ opacity: isHydrated ? 0 : 1, scale: 1.1 }}
-        animate={{ opacity: 1, scale: 1.0 }}
+        initial={{ opacity: 0, scale: 1.1 }}
+        animate={{ opacity: isHydrated ? 1 : 0, scale: 1.0 }}
         transition={{
-          opacity: { duration: isHydrated ? 1.2 : 0 },
+          opacity: { duration: 1.2, ease: 'easeOut' },
           scale: {
             duration: 20,
             ease: 'easeInOut',
@@ -43,7 +42,7 @@ export default function PageHeroBackground() {
           },
         }}
         className="absolute inset-0"
-        style={{ willChange: 'transform', transform: 'translateZ(0)' }}
+        style={{ willChange: 'transform' }}
       >
         <ExportedImage src={bgImage} alt="" fill className="object-cover" priority />
       </m.div>
