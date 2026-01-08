@@ -43,15 +43,31 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const imageUrl = `${SITE_URL}/images/artworks/${representativeArtwork.image}`;
   const pageUrl = `${SITE_URL}/artworks/artist/${encodeURIComponent(artistName)}`;
 
+  // Find valid profile or note from any of the artist's artworks
+  const artistProfile = artistArtworks.find((a) => a.profile)?.profile || '';
+  const artistNote = artistArtworks.find((a) => a.description)?.description || '';
+
+  const profileSnippet = artistProfile ? `${artistProfile.substring(0, 150)}... ` : '';
+  const noteSnippet = artistNote ? `${artistNote.substring(0, 150)}... ` : '';
+
+  const seoDescription =
+    `${artistName} 작가의 작품 세계를 만나보세요. ` +
+    (profileSnippet ||
+      noteSnippet ||
+      '70여 명의 예술가들이 전하는 연대와 희망의 메시지, 씨앗페 2026.');
+
+  const metaTitle = `${artistName} 작가 - 출품작 | 씨앗페 2026`;
+
   return {
-    title: `${artistName} 작가 - 출품작 | 씨앗페 2026`,
-    description: `${artistName} 작가의 작품을 포함한 100여명 작가들의 예술 작품을 만나보세요. 씨앗페 2026.`,
+    title: metaTitle,
+    description: seoDescription.substring(0, 160),
+    keywords: [artistName, '씨앗페', 'SAF 2026', '예술가', '전시회'],
     alternates: {
       canonical: pageUrl,
     },
     openGraph: {
-      title: `${artistName} 작가 - 출품작 | 씨앗페 2026`,
-      description: `${artistName} 작가의 작품세계를 만나보세요. 2026 씨앗페 출품작.`,
+      title: metaTitle,
+      description: seoDescription.substring(0, 200),
       url: pageUrl,
       images: [
         {
@@ -61,11 +77,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           alt: `${artistName} 작가의 작품 - ${representativeArtwork.title}`,
         },
       ],
+      type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${artistName} 작가 - 출품작 | 씨앗페 2026`,
-      description: `${artistName} 작가의 작품을 만나보세요.`,
+      title: metaTitle,
+      description: seoDescription.substring(0, 200),
       images: [imageUrl],
     },
   };
