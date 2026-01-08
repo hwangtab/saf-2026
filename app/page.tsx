@@ -54,7 +54,6 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center py-12 md:py-20">
         <BackgroundSlider />
-        <div className="absolute bottom-0 left-0 w-full h-24 md:h-40 bg-gradient-to-t from-canvas-soft to-transparent z-0 pointer-events-none" />
         <div className="relative z-10 container-max text-center">
           <div className="mb-12 hidden md:flex justify-center">
             <ExportedImage
