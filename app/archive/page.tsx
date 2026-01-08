@@ -13,13 +13,15 @@ const PAGE_URL = `${SITE_URL}/archive`;
 
 export const metadata: Metadata = {
   title: '아카이브 | 씨앗페 2026',
-  description: '씨앗페 2023 성과, 언론 보도, 영상 기록을 모아둔 공식 아카이브입니다.',
+  description:
+    '2023년부터 이어진 씨앗페의 여정. 캠페인 영상, 현장 스케치, 그리고 우리가 함께 만든 변화의 기록들을 만나보세요.',
   alternates: {
     canonical: PAGE_URL,
   },
   openGraph: {
     title: '아카이브 | 씨앗페 2026',
-    description: '씨앗페 캠페인의 기록과 언론 보도, 영상 아카이브를 한 곳에서 확인하세요.',
+    description:
+      '2023년부터 이어진 씨앗페의 여정. 캠페인 영상, 현장 스케치, 그리고 우리가 함께 만든 변화의 기록들을 만나보세요.',
     url: PAGE_URL,
     images: [
       {
@@ -32,8 +34,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '씨앗페 2026 아카이브',
-    description: '씨앗페 캠페인의 기록과 영상, 언론 보도를 아카이브에서 확인하세요.',
+    title: '아카이브 | 씨앗페 2026',
+    description:
+      '2023년부터 이어진 씨앗페의 여정. 캠페인 영상, 현장 스케치, 그리고 우리가 함께 만든 변화의 기록들을 만나보세요.',
     images: [OG_IMAGE.url],
   },
 };

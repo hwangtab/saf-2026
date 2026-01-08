@@ -9,16 +9,16 @@ import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL } from '@/lib/constants';
 const PAGE_URL = `${SITE_URL}/our-proof`;
 
 export const metadata: Metadata = {
-  title: '우리의 증명 | 씨앗페 2026',
+  title: '우리의 증명 | 씨앗페 2026 상호부조 리포트',
   description:
-    '예술인 상호부조 대출 305건, 누적 6억 900만원 지원. 데이터로 확인하는 상호부조 금융의 성과.',
+    '상호부조 대출 305건, 6억 900만원 지원. 연체율 0%의 기적. 예술인 금융 안전망이 실제로 작동함을 증명합니다.',
   alternates: {
     canonical: PAGE_URL,
   },
   openGraph: {
-    title: '우리의 증명 | 씨앗페 2026',
+    title: '우리의 증명 | 씨앗페 2026 상호부조 리포트',
     description:
-      '예술인 상호부조 대출 305건, 누적 6억 900만원 지원. 데이터로 확인하는 상호부조 금융의 성과.',
+      '상호부조 대출 305건, 6억 900만원 지원. 연체율 0%의 기적. 예술인 금융 안전망이 실제로 작동함을 증명합니다.',
     url: PAGE_URL,
     images: [
       {
@@ -31,9 +31,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '씨앗페 2026 상호부조 데이터',
+    title: '우리의 증명 | 씨앗페 2026 상호부조 리포트',
     description:
-      '상호부조 대출 305건, 누적 6억 900만원 지원. 예술인 금융 안전망의 실제 성과를 확인하세요.',
+      '상호부조 대출 305건, 6억 900만원 지원. 연체율 0%의 기적. 예술인 금융 안전망이 실제로 작동함을 증명합니다.',
     images: [OG_IMAGE.url],
   },
 };

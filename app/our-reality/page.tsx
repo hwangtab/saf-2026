@@ -140,16 +140,16 @@ const CreativeImpactChart = dynamic(
 );
 
 export const metadata: Metadata = {
-  title: '우리의 현실 | 씨앗페 2026',
+  title: '우리의 현실 | 씨앗페 2026: 예술인 금융 데이터',
   description:
-    '2025 예술인 금융 재난 보고서가 보여준 배제·약탈·파괴의 악순환과 씨앗페가 제시하는 상호부조 해법을 확인하세요.',
+    '제1금융권 배제율 84.9%. 예술인들이 직면한 금융 재난의 실태와 구조적 원인을 데이터로 증명합니다.',
   alternates: {
     canonical: PAGE_URL,
   },
   openGraph: {
-    title: '우리의 현실 | 씨앗페 2026',
+    title: '우리의 현실 | 씨앗페 2026: 예술인 금융 데이터',
     description:
-      '금융 사각지대에 놓인 예술인의 현실과 상호부조 대출이 필요한 이유를 데이터와 증언으로 살펴봅니다.',
+      '제1금융권 배제율 84.9%. 예술인들이 직면한 금융 재난의 실태와 구조적 원인을 데이터로 증명합니다.',
     url: PAGE_URL,
     images: [
       {
@@ -162,8 +162,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '우리의 현실 | 씨앗페 2026',
-    description: '예술인이 겪는 금융 재난의 구조와 데이터를 한눈에 확인하세요.',
+    title: '우리의 현실 | 씨앗페 2026: 예술인 금융 데이터',
+    description:
+      '제1금융권 배제율 84.9%. 예술인들이 직면한 금융 재난의 실태와 구조적 원인을 데이터로 증명합니다.',
     images: [OG_IMAGE.url],
   },
 };

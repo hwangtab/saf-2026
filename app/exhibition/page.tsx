@@ -6,19 +6,20 @@ import ShareButtons from '@/components/common/ShareButtons';
 import KakaoMap from '@/components/features/KakaoMap';
 import { EXHIBITION, EXTERNAL_LINKS, OG_IMAGE, SITE_URL } from '@/lib/constants';
 
-const EXHIBITION_PAGE_URL = `${SITE_URL}/exhibition`;
+const PAGE_URL = `${SITE_URL}/exhibition`;
 
 export const metadata: Metadata = {
   title: '전시 안내 | 씨앗페 2026',
   description:
-    '씨앗페 2026 전시 일정, 프로그램, 위치 정보를 확인하고 현장 후원과 작품 구매에 참여하세요.',
+    '100여명 예술가들의 작품이 전시되는 인사아트센터. 1월 14일부터 26일까지, 예술과 연대가 만나는 현장에 초대합니다.',
   alternates: {
-    canonical: EXHIBITION_PAGE_URL,
+    canonical: PAGE_URL,
   },
   openGraph: {
     title: '전시 안내 | 씨앗페 2026',
-    description: '씨앗페 2026 전시 정보와 현장 프로그램을 확인하고 캠페인에 함께하세요.',
-    url: EXHIBITION_PAGE_URL,
+    description:
+      '100여명 예술가들의 작품이 전시되는 인사아트센터. 1월 14일부터 26일까지, 예술과 연대가 만나는 현장에 초대합니다.',
+    url: PAGE_URL,
     images: [
       {
         url: OG_IMAGE.url,
@@ -30,14 +31,15 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '씨앗페 2026 전시 안내',
-    description: '전시 일정과 프로그램, 참여 방법을 확인하세요.',
+    title: '전시 안내 | 씨앗페 2026',
+    description:
+      '100여명 예술가들의 작품이 전시되는 인사아트센터. 1월 14일부터 26일까지, 예술과 연대가 만나는 현장에 초대합니다.',
     images: [OG_IMAGE.url],
   },
 };
 
 export default function ExhibitionPage() {
-  const canonicalUrl = EXHIBITION_PAGE_URL;
+  const canonicalUrl = PAGE_URL;
   const shareTitle = '전시 안내 | 씨앗페 2026';
   const shareDescription = '씨앗페 2026 전시 정보. 일시, 장소, 오시는 길, 공연 일정 안내.';
 

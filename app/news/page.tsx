@@ -10,13 +10,15 @@ const PAGE_URL = `${SITE_URL}/news`;
 
 export const metadata: Metadata = {
   title: '언론 보도 | 씨앗페 2026',
-  description: '뉴스아트, 아시아경제 등 주요 매체가 전하는 씨앗페 캠페인 소식을 모았습니다.',
+  description:
+    '언론이 주목한 씨앗페 2026. 주요 뉴스 보도와 칼럼을 통해 캠페인의 사회적 의미를 확인하세요.',
   alternates: {
     canonical: PAGE_URL,
   },
   openGraph: {
     title: '언론 보도 | 씨앗페 2026',
-    description: '언론 보도를 통해 씨앗페 상호부조 캠페인의 영향력과 협력 사례를 확인하세요.',
+    description:
+      '언론이 주목한 씨앗페 2026. 주요 뉴스 보도와 칼럼을 통해 캠페인의 사회적 의미를 확인하세요.',
     url: PAGE_URL,
     images: [
       {
@@ -29,8 +31,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '씨앗페 2026 언론 보도',
-    description: '씨앗페 캠페인을 다룬 최신 기사와 인터뷰를 한눈에 확인하세요.',
+    title: '언론 보도 | 씨앗페 2026',
+    description:
+      '언론이 주목한 씨앗페 2026. 주요 뉴스 보도와 칼럼을 통해 캠페인의 사회적 의미를 확인하세요.',
     images: [OG_IMAGE.url],
   },
 };
