@@ -1,6 +1,6 @@
+export const artworks: Artwork[] = [
 import { Artwork } from '@/lib/types';
 
-export const artworks: Artwork[] = [
   {
     id: '2',
     artist: '최윤정',
@@ -2359,7 +2359,7 @@ export const artworks: Artwork[] = [
     material: 'digital print',
     year: '2025',
     edition: '',
-    price: '₩900,000',
+    price: '',
     image: '143.jpg',
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/231',
   },
@@ -2376,9 +2376,77 @@ export const artworks: Artwork[] = [
     material: 'DIgital Print',
     year: '2025',
     edition: '',
-    price: '₩800,000',
+    price: '',
     image: '144.jpg',
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/232',
+  },
+  {
+    id: '145',
+    artist: '한미영',
+    title: 'Free will',
+    description: '',
+    profile: '',
+    history: '',
+    size: '72.7x53.0cm',
+    material: 'mixed media on canvas (acrylic, gold leaf, wax paint)',
+    year: '2024',
+    edition: '',
+    price: '₩600,000',
+    image: '145.jpg',
+    shopUrl: '',
+  },
+  {
+    id: '146',
+    artist: '한미영',
+    title: '연인',
+    description: '',
+    profile: '',
+    history: '',
+    size: '90.9x65.1cm',
+    material: 'mixed media on canvas (acrylic, gold leaf)',
+    year: '2024',
+    edition: '',
+    price: '₩900,000',
+    image: '146.jpg',
+    shopUrl: '',
+  },
+
+export function getAllArtworks(): Artwork[] {
+  return artworks;
+}
+
+export function getArtworkById(id: string): Artwork | undefined {
+  return artworks.find((artwork) => artwork.id === id);
+}
+  {
+    id: '145',
+    artist: '한미영',
+    title: 'Free will',
+    description: '',
+    profile: '',
+    history: '',
+    size: '72.7x53.0cm',
+    material: 'mixed media on canvas (acrylic, gold leaf, wax paint)',
+    year: '2024',
+    edition: '',
+    price: '₩600,000',
+    image: '145.jpg',
+    shopUrl: '',
+  },
+  {
+    id: '146',
+    artist: '한미영',
+    title: '연인',
+    description: '',
+    profile: '',
+    history: '',
+    size: '90.9x65.1cm',
+    material: 'mixed media on canvas (acrylic, gold leaf)',
+    year: '2024',
+    edition: '',
+    price: '₩900,000',
+    image: '146.jpg',
+    shopUrl: '',
   },
 ];
 

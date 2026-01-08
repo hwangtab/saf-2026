@@ -86,10 +86,7 @@ def main():
         # "소비자가","공급가","상품가","판매가"
         raw_price = row['가격'].replace('₩', '').replace(',', '').strip()
         
-        # Special case: Park Ji-hye's price should be 0 as per user request
-        if '박지혜' in row['이름']:
-            price = '0'
-        elif not raw_price:
+        if not raw_price:
              price = '0' # Default to 0 if empty
         else:
             price = raw_price
