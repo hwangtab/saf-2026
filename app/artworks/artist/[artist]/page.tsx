@@ -98,25 +98,13 @@ export default function ArtistPage({ params }: Props) {
   const representativeArtwork = artistArtworks[0];
   const heroBackgroundImage = `/images/artworks/${representativeArtwork.image}`;
 
-  // Description Logic: Profile > Description (Note) > Default
-  // Find valid profile or note from any of the artist's artworks (usually they are same for all)
-  const artistProfile = artistArtworks.find((a) => a.profile)?.profile;
-  const artistNote = artistArtworks.find((a) => a.description)?.description;
-
-  const rawDescription =
-    artistProfile || artistNote || `${artistName} 작가의 시선, 그 깊이를 마주하다.`;
-
-  // Truncate to 100 characters for visual balance
-  const isTruncated = rawDescription.length > 100;
-  const heroDescription = isTruncated ? `${rawDescription.substring(0, 100)}...` : rawDescription;
-
   const pageUrl = `${SITE_URL}/artworks/artist/${encodeURIComponent(artistName)}`;
 
   return (
     <main className="min-h-screen">
       <PageHero
         title={`${artistName} 작가`}
-        description={heroDescription}
+        description={`예술가들의 시선으로 바라본 우리의 현실과 희망. ${artistName} 작가의 작품을 소개합니다.`}
         customBackgroundImage={heroBackgroundImage}
       >
         <ShareButtons
