@@ -54,15 +54,27 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center py-12 md:py-20">
         <BackgroundSlider />
-        {/* Wedge Transition */}
-        <div className="absolute bottom-0 left-0 w-full leading-none z-10">
+        {/* Sawtooth Transition */}
+        <div className="absolute bottom-0 left-0 w-full leading-none z-10 h-6 md:h-10">
           <svg
-            className="w-full h-12 md:h-24 text-canvas-soft fill-current"
-            viewBox="0 0 1440 100"
-            preserveAspectRatio="none"
+            className="w-full h-full text-canvas-soft fill-current"
             xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="none"
           >
-            <polygon points="0,100 1440,100 720,0" />
+            <defs>
+              <pattern
+                id="sawtooth-pattern"
+                x="0"
+                y="0"
+                width="30"
+                height="1"
+                patternUnits="userSpaceOnUse"
+                patternContentUnits="objectBoundingBox"
+              >
+                <polygon points="0,1 0.5,0 1,1" />
+              </pattern>
+            </defs>
+            <rect x="0" y="0" width="100%" height="100%" fill="url(#sawtooth-pattern)" />
           </svg>
         </div>
         <div className="relative z-10 container-max text-center">
