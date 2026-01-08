@@ -24,14 +24,18 @@ export default function PageHeroBackground() {
     setImageIndex(Math.floor(Math.random() * HERO_IMAGES.length));
   }, []);
 
-  const bgImage = HERO_IMAGES[imageIndex ?? 0];
-  const isHydrated = imageIndex !== null;
+  // Don't render any image until hydration is complete to prevent flash
+  if (imageIndex === null) {
+    return <div className="absolute inset-0 bg-gray-900" />;
+  }
+
+  const bgImage = HERO_IMAGES[imageIndex];
 
   return (
     <div className="absolute inset-0">
       <m.div
         initial={{ opacity: 0, scale: 1.1 }}
-        animate={{ opacity: isHydrated ? 1 : 0, scale: 1.0 }}
+        animate={{ opacity: 1, scale: 1.0 }}
         transition={{
           opacity: { duration: 1.2, ease: 'easeOut' },
           scale: {
