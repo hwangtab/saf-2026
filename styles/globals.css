@@ -1,39 +1,34 @@
 @font-face {
   font-family: 'GMarketSans';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansLight.woff')
-    format('woff');
+  src: url('/fonts/GmarketSansLight.woff') format('woff');
   font-weight: 300;
   font-display: swap;
 }
 
 @font-face {
   font-family: 'GMarketSans';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff')
-    format('woff');
+  src: url('/fonts/GmarketSansMedium.woff') format('woff');
   font-weight: 500;
   font-display: swap;
 }
 
 @font-face {
   font-family: 'GMarketSans';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff')
-    format('woff');
+  src: url('/fonts/GmarketSansBold.woff') format('woff');
   font-weight: 700;
   font-display: swap;
 }
 
 @font-face {
   font-family: 'PartialSans';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2307-1@1.1/PartialSansKR-Regular.woff2')
-    format('woff2');
+  src: url('/fonts/PartialSansKR-Regular.woff2') format('woff2');
   font-weight: normal;
   font-display: swap;
 }
 
 @font-face {
   font-family: 'SchoolSafetyPoster';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2511-1@1.0/HakgyoansimPosterB.woff2')
-    format('woff2');
+  src: url('/fonts/HakgyoansimPosterB.woff2') format('woff2');
   font-weight: normal;
   font-display: swap;
 }
@@ -179,5 +174,12 @@ button:focus:not(:focus-visible) {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+@media (hover: none) {
+  /* Disable hover scale effects on touch devices to prevent sticky hover states */
+  .group:hover .group-hover\:scale-105 {
+    transform: none;
   }
 }

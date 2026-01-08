@@ -33,11 +33,23 @@ export default function BackgroundSlider() {
   const nextIndex = (currentIndex + 1) % HERO_IMAGES.length;
   const nextPhoto = HERO_IMAGES[nextIndex];
 
+  const [isMobile, setIsMobile] = useState(false);
+
   useEffect(() => {
     // 첫 렌더링 후 플래그 해제
     const timer = requestAnimationFrame(() => {
       isFirstRenderRef.current = false;
     });
+
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // Initial check
+    checkMobile();
+
+    // Debounced resize handler could be better, but simple listener is okay for this scope
+    window.addEventListener('resize', checkMobile);
 
     const interval = setInterval(() => {
       // Only transition if the tab is focused to save resources and keep sync
@@ -49,6 +61,7 @@ export default function BackgroundSlider() {
     return () => {
       cancelAnimationFrame(timer);
       clearInterval(interval);
+      window.removeEventListener('resize', checkMobile);
     };
   }, []);
 
@@ -75,7 +88,8 @@ export default function BackgroundSlider() {
             variants={{
               initial: (isFirst: boolean) => ({
                 opacity: isFirst ? 1 : 0,
-                scale: 1.05,
+                // Mobile: reduce scale effect to save GPU memory
+                scale: isMobile ? 1.0 : 1.05,
                 zIndex: 1,
               }),
               animate: {
@@ -83,16 +97,17 @@ export default function BackgroundSlider() {
                 scale: 1.0,
                 zIndex: 1,
                 transition: {
-                  opacity: { duration: 3, ease: 'easeInOut' },
-                  scale: { duration: 6, ease: 'linear' },
+                  // Faster transition on mobile for battery saving
+                  opacity: { duration: isMobile ? 1.5 : 3, ease: 'easeInOut' },
+                  scale: { duration: isMobile ? 0 : 6, ease: 'linear' },
                 },
               },
               exit: {
                 opacity: 0,
                 zIndex: 0,
                 transition: {
-                  opacity: { duration: 0, delay: 3 }, // Wait 3s then vanish instantly
-                  zIndex: { delay: 3 }, // Keep z-index until vanish
+                  opacity: { duration: 0, delay: isMobile ? 1.5 : 3 }, // Wait then vanish
+                  zIndex: { delay: isMobile ? 1.5 : 3 },
                 },
               },
             }}

@@ -124,19 +124,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ko">
       <head>
-        <link rel="preconnect" href="https://cdn.jsdelivr.net" />
         <link rel="preconnect" href="https://t1.daumcdn.net" />
         <link rel="preconnect" href="https://dapi.kakao.com" />
         <link
           rel="preload"
-          href="https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff"
+          href="/fonts/GmarketSansMedium.woff"
           as="font"
           type="font/woff"
           crossOrigin="anonymous"
         />
         <link
           rel="preload"
-          href="https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff"
+          href="/fonts/GmarketSansBold.woff"
           as="font"
           type="font/woff"
           crossOrigin="anonymous"
