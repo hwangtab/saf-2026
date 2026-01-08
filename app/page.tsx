@@ -175,7 +175,7 @@ export default function Home() {
                 size="md"
                 className="w-full md:w-auto justify-center"
               >
-                대출 신청하기 →
+                대출 신청하기
               </Button>
             </div>
           </div>
