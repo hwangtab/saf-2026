@@ -204,7 +204,7 @@ export default function NewsPage() {
         />
       </PageHero>
 
-      <Section variant="white" prevVariant="white">
+      <Section variant="sun-soft" prevVariant="white">
         <div className="container-max flex flex-col gap-8">
           <div className="max-w-3xl">
             <span className="inline-flex items-center px-3 py-1 rounded-full border border-primary text-primary text-xs font-semibold tracking-wide uppercase">
@@ -236,7 +236,7 @@ export default function NewsPage() {
         </div>
       </Section>
 
-      <Section variant="primary-surface" prevVariant="white">
+      <Section variant="primary-surface" prevVariant="sun-soft">
         <div className="container-max">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {sortedArticles.map((article) => (
