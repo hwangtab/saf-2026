@@ -180,7 +180,7 @@ export default function ArtworkDetailPage({ params }: Props) {
       artwork.history && {
         '@type': 'PropertyValue',
         name: '작가이력',
-        value: artwork.history.substring(0, 200),
+        value: artwork.history?.substring(0, 200),
       },
     ].filter(Boolean),
   };

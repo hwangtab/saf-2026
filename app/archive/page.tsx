@@ -9,7 +9,7 @@ import VideoEmbed from '@/components/features/VideoEmbed';
 import { saf2023Photos } from '@/content/saf2023-photos';
 import { saf2023Artworks } from '@/content/saf2023-artworks';
 import { videos } from '@/content/videos';
-import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL, escapeJsonLdForScript } from '@/lib/constants';
+import { OG_IMAGE, SITE_URL, escapeJsonLdForScript } from '@/lib/constants';
 
 const PAGE_URL = `${SITE_URL}/archive`;
 

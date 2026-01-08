@@ -558,7 +558,7 @@ export const artworksBatch3: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     image: '145.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/233',
     history: `이력사항
 KAIST(건설환경공학과/산업공학과) 졸업
  
@@ -581,7 +581,7 @@ KAIST(건설환경공학과/산업공학과) 졸업
     edition: '',
     price: '₩800,000',
     image: '146.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/234',
     history: `이력사항
 KAIST(건설환경공학과/산업공학과) 졸업
  
@@ -610,7 +610,7 @@ KAIST(건설환경공학과/산업공학과) 졸업
     edition: '',
     price: '₩1,800,000',
     image: '147.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/235',
     history: '',
   },
   {
@@ -631,7 +631,7 @@ KAIST(건설환경공학과/산업공학과) 졸업
     edition: '',
     price: '₩1,200,000',
     image: '148.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/236',
     history: '',
   },
   {
@@ -652,7 +652,7 @@ KAIST(건설환경공학과/산업공학과) 졸업
     edition: '',
     price: '₩1,400,000',
     image: '149.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/237',
     history: '',
   },
   {
@@ -673,7 +673,7 @@ KAIST(건설환경공학과/산업공학과) 졸업
     edition: '',
     price: '₩900,000',
     image: '150.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/238',
     history: '',
   },
   {
@@ -694,7 +694,7 @@ KAIST(건설환경공학과/산업공학과) 졸업
     edition: '',
     price: '₩2,800,000',
     image: '151.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/239',
     history: '',
   },
   {
@@ -715,7 +715,7 @@ KAIST(건설환경공학과/산업공학과) 졸업
     edition: '',
     price: '₩1,200,000',
     image: '152.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/240',
     history: '',
   },
   {
@@ -736,7 +736,7 @@ KAIST(건설환경공학과/산업공학과) 졸업
     edition: '',
     price: '₩1,500,000',
     image: '153.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/241',
     history: '',
   },
   {
@@ -757,7 +757,7 @@ KAIST(건설환경공학과/산업공학과) 졸업
     edition: '',
     price: '₩2,400,000',
     image: '154.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/242',
     history: '',
   },
   {
@@ -778,7 +778,7 @@ KAIST(건설환경공학과/산업공학과) 졸업
     edition: '',
     price: '₩2,400,000',
     image: '155.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/243',
     history: '',
   },
   {
@@ -799,7 +799,7 @@ KAIST(건설환경공학과/산업공학과) 졸업
     edition: '',
     price: '₩900,000',
     image: '156.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/244',
     history: '',
   },
   {
@@ -814,7 +814,7 @@ KAIST(건설환경공학과/산업공학과) 졸업
     edition: '',
     price: '₩2,000,000',
     image: '157.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/245',
     history: `노리갤러리 3인전(2014), 한국수채화협회전(2010~2018), 백금아 개인전(), 제주신화전(2023~25), 예술인협동조합전(2024~25) 외 다수`,
   },
   {
@@ -829,7 +829,7 @@ KAIST(건설환경공학과/산업공학과) 졸업
     edition: '',
     price: '₩900,000',
     image: '158.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/246',
     history: `제주신화전(2016), 박근혜 하야전(2017), 대구사진비엔날레(프린지), 수원국제사진축제, 제주신화 한일전(2017),화산섬국제사진제, 대한민국국제포토페스티벌, 이중초상화연작전(2019), 사라진 정원전, 마을극장 DMZ레지던시전(2020), 슬기로운살림살이전(2021), 새들은 펜데믹을 두려워 하지 않는다전(2022), 화산도전(2023), 칠실파려안전(2024), 천 개의 카메라(2025) 등 개인전•단체전•아트페어 참여 다수`,
   },
   {
@@ -844,7 +844,7 @@ KAIST(건설환경공학과/산업공학과) 졸업
     edition: '',
     price: '₩1,400,000',
     image: '159.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/247',
     history: '',
   },
   {
@@ -863,7 +863,7 @@ KAIST(건설환경공학과/산업공학과) 졸업
     edition: '',
     price: '₩2,300,000',
     image: '160.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/248',
     history: `2002 홍익대학교 회화과 학사
 2006 홍익대학교 일반대학원 회화과 석사
 
@@ -914,7 +914,7 @@ Group Exhibition
     edition: '',
     price: '₩2,300,000',
     image: '161.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/249',
     history: `2002 홍익대학교 회화과 학사
 2006 홍익대학교 일반대학원 회화과 석사
 
@@ -963,7 +963,7 @@ Group Exhibition
     edition: '',
     price: '₩3,000,000',
     image: '162.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/250',
     history: '',
   },
   {
@@ -980,7 +980,7 @@ Group Exhibition
     edition: '',
     price: '₩7,500,000',
     image: '163.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/251',
     history: '',
   },
   {
@@ -999,7 +999,7 @@ Group Exhibition
     edition: '',
     price: '₩3,500,000',
     image: '164.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/252',
     history: `개인전 (Solo Exhibitions)
 2024 GALLERIE LUT?CE PRESENTS_김치 (12/24-12/28, 코엑스, 서울)
 2023 이씨! 표류기 (2/15-3/1, 정문규미술관)
@@ -1059,7 +1059,7 @@ Group Exhibition
     edition: '',
     price: '₩3,000,000',
     image: '165.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/253',
     history: `개인전 (Solo Exhibitions)
 2024 GALLERIE LUT?CE PRESENTS_김치 (12/24-12/28, 코엑스, 서울)
 2023 이씨! 표류기 (2/15-3/1, 정문규미술관)
@@ -1119,7 +1119,7 @@ Group Exhibition
     edition: '',
     price: '₩2,000,000',
     image: '166.jpg',
-    shopUrl: '',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/254',
     history: `개인전 (Solo Exhibitions)
 2024 GALLERIE LUT?CE PRESENTS_김치 (12/24-12/28, 코엑스, 서울)
 2023 이씨! 표류기 (2/15-3/1, 정문규미술관)

@@ -11,7 +11,7 @@ export interface Artwork {
   id: string;
   artist: string;
   title: string;
-  description: string;
+  description?: string;
   profile?: string;
   history?: string;
   size: string;
