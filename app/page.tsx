@@ -193,7 +193,7 @@ export default function Home() {
               icon="❤️"
               title="후원하기"
               description="당신의 후원은 예술인들을 위한 기금이 됩니다."
-              linkText="후원하기 →"
+              linkText="후원하기"
             />
 
             <ActionCard
@@ -201,7 +201,7 @@ export default function Home() {
               icon="🎨"
               title="작품 구매"
               description="참여 예술가들의 작품을 구매하며 지원합니다."
-              linkText="출품작 보기 →"
+              linkText="출품작 보기"
             />
 
             <ActionCard
@@ -209,7 +209,7 @@ export default function Home() {
               icon="🏛️"
               title="전시 방문"
               description="인사아트센터 3층 G&J 갤러리에서 펼쳐지는 예술의 현장을 직접 방문하세요."
-              linkText="정보 보기 →"
+              linkText="정보 보기"
             />
           </div>
         </div>
