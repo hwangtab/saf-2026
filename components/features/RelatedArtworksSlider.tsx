@@ -111,7 +111,7 @@ export default function RelatedArtworksSlider({
   if (relatedArtworks.length === 0) return null;
 
   return (
-    <section className="w-full bg-gray-50 py-12 pb-24 relative">
+    <section className="w-full bg-gray-50 py-12 pb-32 md:pb-40 relative">
       <SawtoothDivider position="top" colorClass="text-gray-50" />
       <div className="container-max mb-8">
         <h2 className="text-2xl font-bold text-charcoal">씨앗페 출품작 보기</h2>
