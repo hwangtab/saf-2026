@@ -94,6 +94,11 @@ export function useArtworkFilter(artworks: Artwork[], initialArtist?: string) {
     [pathname, router, searchParams]
   );
 
+  // Sync selectedArtist with initialArtist prop changes (for artist page navigation)
+  useEffect(() => {
+    setSelectedArtist(initialArtist || null);
+  }, [initialArtist]);
+
   // Sync state changes to URL (skip if initialArtist is provided - artist page handles URL itself)
   useEffect(() => {
     // Don't sync URL if we're on a dedicated artist page (initialArtist provided)
