@@ -11,11 +11,7 @@ const config: Config = {
           strong: '#0E4ECF', // Deep Blue
           surface: '#EDF3FF', // Blue Veil
         },
-        sky: {
-          DEFAULT: '#33A1FD', // Celestial Blue
-          soft: '#CDE9FF', // Sky Mist
-          strong: '#0F7FDB', // Sky Core
-        },
+
         sun: {
           DEFAULT: '#FDCA40', // Sun Glow
           soft: '#FEE9A3', // Sun Mist
