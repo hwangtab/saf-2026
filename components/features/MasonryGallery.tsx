@@ -1,6 +1,6 @@
 'use client';
 
-import { Artwork } from '@/lib/types';
+import { Artwork } from '@/types';
 import { memo } from 'react';
 import ArtworkCard from '@/components/ui/ArtworkCard';
 

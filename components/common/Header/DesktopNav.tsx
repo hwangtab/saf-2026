@@ -2,7 +2,7 @@
 
 import Button from '@/components/ui/Button';
 import { EXTERNAL_LINKS } from '@/lib/constants';
-import type { NavigationItem } from '@/lib/types';
+import type { NavigationItem } from '@/types';
 import NavLink from './NavLink';
 
 interface DesktopNavProps {

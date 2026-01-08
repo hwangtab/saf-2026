@@ -3,7 +3,7 @@
 import { memo } from 'react';
 import Link from 'next/link';
 import ExportedImage from 'next-image-export-optimizer';
-import { Artwork } from '@/lib/types';
+import { Artwork } from '@/types';
 import { cn } from '@/lib/utils';
 
 type ArtworkCardVariant = 'gallery' | 'slider';

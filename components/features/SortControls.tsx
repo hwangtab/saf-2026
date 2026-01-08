@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { SortOption } from '@/lib/types';
+import { SortOption } from '@/types';
 import { ChevronDownIcon, CheckMarkIcon } from '@/components/ui/Icons';
 
 interface SortControlsProps {

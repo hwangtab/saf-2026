@@ -6,7 +6,7 @@ import ExportedImage from 'next-image-export-optimizer';
 import { usePathname } from 'next/navigation';
 import { HERO_PAGES, Z_INDEX } from '@/lib/constants';
 import { useScrolled } from '@/lib/hooks/useScrolled';
-import type { NavigationItem } from '@/lib/types';
+import type { NavigationItem } from '@/types';
 import clsx from 'clsx';
 
 import DesktopNav from './Header/DesktopNav';

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import ArtworkCard from '@/components/ui/ArtworkCard';
-import { Artwork } from '@/lib/types';
+import { Artwork } from '@/types';
 
 // Mock ExportedImage since it requires complex next/image mocking
 jest.mock('next-image-export-optimizer', () => ({

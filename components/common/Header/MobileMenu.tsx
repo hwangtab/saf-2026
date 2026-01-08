@@ -5,7 +5,7 @@ import { m, AnimatePresence } from 'framer-motion';
 import FocusTrap from 'focus-trap-react';
 import Button from '@/components/ui/Button';
 import { EXTERNAL_LINKS, Z_INDEX } from '@/lib/constants';
-import type { NavigationItem } from '@/lib/types';
+import type { NavigationItem } from '@/types';
 import NavLink from './NavLink';
 
 interface MobileMenuProps {

@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Artwork, SortOption } from '@/lib/types';
+import { Artwork, SortOption } from '@/types';
 import { parsePrice } from '@/lib/parsePrice';
 import { useDebounce } from './useDebounce';
 

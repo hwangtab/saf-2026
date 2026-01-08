@@ -1,7 +1,7 @@
 'use client';
 
 import { getAllArtworks } from '@/content/saf2026-artworks';
-import { Artwork } from '@/lib/types';
+import { Artwork } from '@/types';
 import { useMemo } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import AutoScroll from 'embla-carousel-auto-scroll';

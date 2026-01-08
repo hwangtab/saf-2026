@@ -4,7 +4,7 @@ import { memo, useCallback } from 'react';
 import MasonryGallery from './MasonryGallery';
 import SortControls from './SortControls';
 import SearchBar from './SearchBar';
-import { Artwork } from '@/lib/types';
+import { Artwork } from '@/types';
 import { useArtworkFilter } from '@/lib/hooks/useArtworkFilter';
 
 interface ArtworkGalleryWithSortProps {

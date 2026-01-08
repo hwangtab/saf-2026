@@ -121,7 +121,7 @@ import Button from '@/components/ui/Button';
 import { EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
 
 // 4. Types (when importing type only)
-import type { Artist } from '@/lib/types';
+import type { Artist } from '@/types';
 ```
 
 ## Component Patterns

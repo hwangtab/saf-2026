@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import clsx from 'clsx';
-import type { NavigationItem } from '@/lib/types';
+import type { NavigationItem } from '@/types';
 
 type NavLinkVariant = 'desktop' | 'mobile';
 
