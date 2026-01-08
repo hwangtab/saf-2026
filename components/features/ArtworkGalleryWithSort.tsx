@@ -9,9 +9,10 @@ import { useArtworkFilter } from '@/lib/hooks/useArtworkFilter';
 
 interface ArtworkGalleryWithSortProps {
   artworks: Artwork[];
+  initialArtist?: string;
 }
 
-function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithSortProps) {
+function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithSortProps) {
   const {
     sortOption,
     setSortOption,
@@ -24,7 +25,7 @@ function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithSortProps) {
     filteredArtworks,
     sortedArtworks,
     uniqueArtists,
-  } = useArtworkFilter(artworks);
+  } = useArtworkFilter(artworks, initialArtist);
 
   // Handler for artist button click - toggle filter
   const handleArtistClick = useCallback(

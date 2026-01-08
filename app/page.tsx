@@ -53,11 +53,11 @@ export default function Home() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center pt-12 pb-24 md:pt-20 md:pb-40">
+      <section className="relative min-h-screen flex items-center justify-center pt-12 pb-12 md:pt-20 md:pb-20">
         <BackgroundSlider />
         <SawtoothDivider position="bottom" colorClass="text-canvas-soft" />
         <div className="relative z-10 container-max text-center">
-          <div className="mb-12 hidden md:flex justify-center">
+          <div className="mb-12 translate-y-6 hidden md:flex justify-center">
             <ExportedImage
               src="/images/logo/320pxX90px_white.webp"
               alt="씨앗페 2026 로고"

@@ -43,12 +43,12 @@ function sortArtworks(artworks: Artwork[], sortOption: SortOption): Artwork[] {
   }
 }
 
-export function useArtworkFilter(artworks: Artwork[]) {
+export function useArtworkFilter(artworks: Artwork[], initialArtist?: string) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
 
-  // Initialize state from URL params
+  // Initialize state from URL params or initial prop
   const [sortOption, setSortOption] = useState<SortOption>(
     (searchParams.get('sort') as SortOption) || 'artist-asc'
   );
@@ -57,7 +57,7 @@ export function useArtworkFilter(artworks: Artwork[]) {
     (searchParams.get('status') as StatusFilter) || 'all'
   );
   const [selectedArtist, setSelectedArtist] = useState<string | null>(
-    searchParams.get('artist') || null
+    initialArtist || searchParams.get('artist') || null
   );
 
   // Debounce search query for performance (300ms delay)
