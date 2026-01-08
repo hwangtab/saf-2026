@@ -113,7 +113,7 @@ export default function RelatedArtworksSlider({
   return (
     <section className="w-full bg-gray-50 py-12 pb-24 relative">
       <SawtoothDivider position="top" colorClass="text-gray-50" />
-      <div className="container-max mb-8 pt-6 md:pt-10">
+      <div className="container-max mb-8">
         <h2 className="text-2xl font-bold text-charcoal">씨앗페 출품작 보기</h2>
         <p className="text-gray-500 mt-1">더 많은 출품작을 감상하고 예술인을 응원하세요</p>
       </div>
