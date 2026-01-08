@@ -6,6 +6,7 @@ import SectionTitle from '@/components/ui/SectionTitle';
 import ActionCard from '@/components/ui/ActionCard';
 import DynamicCounter from '@/components/features/DynamicCounter';
 import BackgroundSlider from '@/components/features/BackgroundSlider';
+import SawtoothDivider from '@/components/ui/SawtoothDivider';
 import ShareButtons from '@/components/common/ShareButtons';
 import {
   EXTERNAL_LINKS,
@@ -54,28 +55,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center py-12 md:py-20">
         <BackgroundSlider />
-        {/* Sawtooth Transition */}
-        <div className="absolute bottom-0 left-0 w-full leading-none z-10 h-6 md:h-10">
-          <svg
-            className="w-full h-full text-canvas-soft fill-current"
-            xmlns="http://www.w3.org/2000/svg"
-            preserveAspectRatio="none"
-          >
-            <defs>
-              <pattern
-                id="sawtooth-pattern"
-                x="0"
-                y="0"
-                width="40"
-                height="40"
-                patternUnits="userSpaceOnUse"
-              >
-                <polygon points="0,40 20,0 40,40" />
-              </pattern>
-            </defs>
-            <rect x="0" y="0" width="100%" height="100%" fill="url(#sawtooth-pattern)" />
-          </svg>
-        </div>
+        <SawtoothDivider position="bottom" colorClass="text-canvas-soft" />
         <div className="relative z-10 container-max text-center">
           <div className="mb-12 hidden md:flex justify-center">
             <ExportedImage
