@@ -102,7 +102,7 @@ export default function Home() {
 
       {/* Problem Section */}
       {/* Problem Section */}
-      <Section variant="sun-soft" prevVariant="canvas">
+      <Section variant="sun-soft" prevVariant="canvas-soft">
         <div className="container-max">
           <SectionTitle className="text-center mb-12">우리가 직면한 문제</SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
