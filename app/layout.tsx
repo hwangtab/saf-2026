@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Suspense } from 'react';
+import Script from 'next/script';
 import { Analytics } from '@vercel/analytics/react';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
@@ -157,6 +158,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <JsonLdScript data={websiteSchema} />
 
         <Analytics />
+        <Script
+          src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"
+          integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2txfDWp1Vid99lNi7qC62h"
+          crossOrigin="anonymous"
+          strategy="lazyOnload"
+        />
       </body>
     </html>
   );

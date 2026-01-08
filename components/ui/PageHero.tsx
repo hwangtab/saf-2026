@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { cn } from '@/lib/utils';
 import PageHeroBackground from './PageHeroBackground';
 import SawtoothDivider from './SawtoothDivider';
 
@@ -8,6 +9,7 @@ interface PageHeroProps {
   children?: ReactNode;
   /** Custom background image path (e.g., "/images/artworks/1.jpg") */
   customBackgroundImage?: string;
+  className?: string;
 }
 
 export default function PageHero({
@@ -15,9 +17,15 @@ export default function PageHero({
   description,
   children,
   customBackgroundImage,
+  className,
 }: PageHeroProps) {
   return (
-    <section className="relative min-h-[60vh] flex items-center justify-center pt-12 pb-12 md:pt-20 md:pb-20 overflow-hidden bg-charcoal">
+    <section
+      className={cn(
+        'relative min-h-[60vh] flex items-center justify-center pt-12 pb-12 md:pt-20 md:pb-20 overflow-hidden bg-charcoal',
+        className
+      )}
+    >
       {/* Background Image */}
       <PageHeroBackground customImage={customBackgroundImage} />
       {/* Dark Overlay */}

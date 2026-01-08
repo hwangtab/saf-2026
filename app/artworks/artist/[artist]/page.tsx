@@ -118,6 +118,7 @@ export default function ArtistPage({ params }: Props) {
         title={`${artistName} 작가`}
         description={heroDescription}
         customBackgroundImage={heroBackgroundImage}
+        className="min-h-[70vh]"
       >
         <ShareButtons
           url={pageUrl}
