@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import ExportedImage from 'next-image-export-optimizer';
 import SectionTitle from '@/components/ui/SectionTitle';
+import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import VideoEmbed from '@/components/features/VideoEmbed';
@@ -71,7 +72,7 @@ export default function ArchivePage() {
       </PageHero>
 
       {/* Past Events Section */}
-      <section className="py-12 md:py-20 bg-sun-soft">
+      <Section variant="sun-soft" prevVariant="white">
         <div className="container-max">
           <SectionTitle className="mb-12">🎉 2023년 행사 기록</SectionTitle>
           <div className="bg-white rounded-lg shadow-sm p-8 mb-12">
@@ -122,10 +123,10 @@ export default function ArchivePage() {
             </div>
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* SAF 2023 Artworks Section */}
-      <section className="py-12 md:py-20 bg-gray-50">
+      <Section variant="gray" prevVariant="sun-soft">
         <div className="container-max">
           <SectionTitle className="mb-12">🎨 2023년 출품작</SectionTitle>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -159,10 +160,10 @@ export default function ArchivePage() {
             ))}
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* SAF 2023 Gallery Section */}
-      <section className="py-12 md:py-20 bg-white">
+      <Section variant="white" prevVariant="gray">
         <div className="container-max">
           <SectionTitle className="mb-12">📸 씨앗페 2023 현장</SectionTitle>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -185,10 +186,10 @@ export default function ArchivePage() {
             2023년 3월 21일부터 3월 31일까지 인사동에서 펼쳐진 씨앗페 2023의 생생한 현장 모습입니다.
           </p>
         </div>
-      </section>
+      </Section>
 
       {/* Video Archive Section */}
-      <section className="py-12 md:py-20 bg-accent-soft">
+      <Section variant="accent-soft" prevVariant="white">
         <div className="container-max">
           <SectionTitle className="mb-12">📹 영상 아카이브</SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -203,10 +204,10 @@ export default function ArchivePage() {
             ))}
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* Call to Action */}
-      <section className="py-12 md:py-20 bg-primary/20">
+      <Section variant="primary-soft" prevVariant="accent-soft">
         <div className="container-max text-center">
           <SectionTitle className="mb-6">이 역사에 당신도 함께하세요</SectionTitle>
           <p className="text-lg text-charcoal-muted mb-8 max-w-2xl mx-auto text-balance">
@@ -229,7 +230,7 @@ export default function ArchivePage() {
             </a>
           </div>
         </div>
-      </section>
+      </Section>
     </>
   );
 }

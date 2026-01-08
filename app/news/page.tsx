@@ -1,6 +1,7 @@
 import { Fragment } from 'react';
 import type { Metadata } from 'next';
 import ExportedImage from 'next-image-export-optimizer';
+import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import { newsArticles } from '@/content/news';
@@ -203,7 +204,7 @@ export default function NewsPage() {
         />
       </PageHero>
 
-      <section className="py-12 md:py-16 bg-white">
+      <Section variant="white" prevVariant="white">
         <div className="container-max flex flex-col gap-8">
           <div className="max-w-3xl">
             <span className="inline-flex items-center px-3 py-1 rounded-full border border-primary text-primary text-xs font-semibold tracking-wide uppercase">
@@ -233,9 +234,9 @@ export default function NewsPage() {
             ))}
           </div>
         </div>
-      </section>
+      </Section>
 
-      <section className="py-12 md:py-20 bg-primary-surface">
+      <Section variant="primary-surface" prevVariant="white">
         <div className="container-max">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {sortedArticles.map((article) => (
@@ -300,7 +301,7 @@ export default function NewsPage() {
             ))}
           </div>
         </div>
-      </section>
+      </Section>
     </>
   );
 }

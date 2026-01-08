@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import ExportedImage from 'next-image-export-optimizer';
 import Button from '@/components/ui/Button';
+import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
 import ActionCard from '@/components/ui/ActionCard';
 import DynamicCounter from '@/components/features/DynamicCounter';
@@ -100,7 +101,8 @@ export default function Home() {
       <DynamicCounter items={counterItems} />
 
       {/* Problem Section */}
-      <section className="py-16 md:py-24 bg-sun-soft">
+      {/* Problem Section */}
+      <Section variant="sun-soft" prevVariant="canvas">
         <div className="container-max">
           <SectionTitle className="text-center mb-12">우리가 직면한 문제</SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
@@ -140,10 +142,11 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* Solution Section */}
-      <section className="py-16 md:py-24 bg-primary-surface">
+      {/* Solution Section */}
+      <Section variant="primary-surface" prevVariant="sun-soft">
         <div className="container-max">
           <SectionTitle className="text-center mb-12">우리의 해결책</SectionTitle>
           <div className="bg-white rounded-lg shadow-lg p-8 md:p-12 max-w-3xl mx-auto text-balance text-center md:text-left">
@@ -180,10 +183,11 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* Call to Action Section */}
-      <section className="py-16 md:py-24 bg-accent-soft">
+      {/* Call to Action Section */}
+      <Section variant="accent-soft" prevVariant="primary-surface">
         <div className="container-max">
           <SectionTitle className="mb-12 text-center">당신도 함께할 수 있습니다</SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
@@ -213,7 +217,7 @@ export default function Home() {
             />
           </div>
         </div>
-      </section>
+      </Section>
       {/* FAQ JSON-LD Schema for AI Optimization */}
       <script
         type="application/ld+json"

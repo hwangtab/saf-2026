@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import SectionTitle from '@/components/ui/SectionTitle';
+import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 
@@ -183,36 +184,41 @@ export default function OurReality() {
         />
       </PageHero>
 
-      {testimonialsData.map((group, groupIndex) => (
-        <section
-          key={groupIndex}
-          className={`py-12 md:py-20 ${groupIndex === 0 ? 'bg-white' : groupIndex === 1 ? 'bg-gray-50' : 'bg-canvas-soft'}`}
-        >
-          <div className="container-max">
-            <SectionTitle className="mb-12 text-center">{group.category}</SectionTitle>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {group.items.map((item, itemIndex) => (
-                <div
-                  key={itemIndex}
-                  className="bg-white p-6 rounded-lg shadow-lg border-l-8 border-primary flex flex-col justify-between"
-                >
-                  <p
-                    className="text-xl md:text-2xl text-charcoal mb-4 italic leading-relaxed"
-                    dangerouslySetInnerHTML={{ __html: `&ldquo;${item.quote}&rdquo;` }}
-                  />
-                  <div>
-                    <p className="font-semibold text-primary">{item.author}</p>
-                    {item.context && <p className="text-sm text-charcoal-muted">{item.context}</p>}
+      {testimonialsData.map((group, groupIndex) => {
+        const variants: ('white' | 'gray' | 'canvas-soft')[] = ['white', 'gray', 'canvas-soft'];
+        const currentVariant = variants[groupIndex];
+        const prevVariant = groupIndex > 0 ? variants[groupIndex - 1] : undefined;
+
+        return (
+          <Section key={groupIndex} variant={currentVariant} prevVariant={prevVariant}>
+            <div className="container-max">
+              <SectionTitle className="mb-12 text-center">{group.category}</SectionTitle>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {group.items.map((item, itemIndex) => (
+                  <div
+                    key={itemIndex}
+                    className="bg-white p-6 rounded-lg shadow-lg border-l-8 border-primary flex flex-col justify-between"
+                  >
+                    <p
+                      className="text-xl md:text-2xl text-charcoal mb-4 italic leading-relaxed"
+                      dangerouslySetInnerHTML={{ __html: `&ldquo;${item.quote}&rdquo;` }}
+                    />
+                    <div>
+                      <p className="font-semibold text-primary">{item.author}</p>
+                      {item.context && (
+                        <p className="text-sm text-charcoal-muted">{item.context}</p>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
-      ))}
+          </Section>
+        );
+      })}
 
       {/* 도입: 금융의 재정의 */}
-      <section className="py-12 md:py-20 bg-white">
+      <Section variant="white" prevVariant="canvas-soft">
         <div className="container-max">
           <div className="max-w-3xl mx-auto text-balance">
             <SectionTitle className="mb-8 text-center">예술인에게 금융은 산소호흡기</SectionTitle>
@@ -239,10 +245,10 @@ export default function OurReality() {
             </div>
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* Stage 1: 배제 (84.9%) */}
-      <section className="py-12 md:py-20 bg-primary-surface">
+      <Section variant="primary-surface" prevVariant="white">
         <div className="container-max">
           <div className="mb-12">
             <div className="text-5xl mb-4" aria-hidden="true">
@@ -284,10 +290,10 @@ export default function OurReality() {
             </div>
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* Stage 2: 약탈 (48.6%) */}
-      <section className="py-12 md:py-20 bg-accent-soft">
+      <Section variant="accent-soft" prevVariant="primary-surface">
         <div className="container-max">
           <div className="mb-12">
             <div className="text-5xl mb-4" aria-hidden="true">
@@ -323,10 +329,10 @@ export default function OurReality() {
             </div>
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* Stage 3: 파괴 (88.3%) */}
-      <section className="py-12 md:py-20 bg-red-100">
+      <Section variant="red" prevVariant="accent-soft">
         <div className="container-max">
           <div className="mb-12">
             <div className="text-5xl mb-4" aria-hidden="true">
@@ -358,10 +364,10 @@ export default function OurReality() {
             </div>
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* 진단: 사회적 재난 */}
-      <section className="py-12 md:py-20 bg-white">
+      <Section variant="white" prevVariant="red">
         <div className="container-max max-w-3xl">
           <SectionTitle className="mb-8 text-center">이것은 개인의 문제가 아닙니다</SectionTitle>
           <div className="space-y-6 text-lg text-charcoal">
@@ -381,10 +387,10 @@ export default function OurReality() {
             </p>
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* 제언: 산소호흡기가 필요하다 */}
-      <section className="py-12 md:py-20 bg-canvas-soft">
+      <Section variant="canvas-soft" prevVariant="white">
         <div className="container-max">
           <SectionTitle className="mb-8 text-center">산소호흡기가 필요하다</SectionTitle>
           <div className="space-y-6 text-lg text-charcoal mb-12 max-w-3xl mx-auto text-balance">
@@ -424,10 +430,10 @@ export default function OurReality() {
             </div>
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* Call to Action */}
-      <section className="py-12 md:py-20 bg-primary/20">
+      <Section variant="primary-surface" prevVariant="canvas-soft">
         <div className="container-max text-center">
           <SectionTitle className="mb-6">이제 행동할 시간입니다</SectionTitle>
           <p className="text-lg text-charcoal-muted mb-8 max-w-2xl mx-auto text-balance">
@@ -464,7 +470,7 @@ export default function OurReality() {
             </a>
           </p>
         </div>
-      </section>
+      </Section>
     </>
   );
 }

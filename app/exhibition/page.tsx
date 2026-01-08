@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import ExportedImage from 'next-image-export-optimizer';
 import SectionTitle from '@/components/ui/SectionTitle';
+import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import KakaoMap from '@/components/features/KakaoMap';
@@ -92,7 +93,7 @@ export default function ExhibitionPage() {
       </PageHero>
 
       {/* Exhibition Info */}
-      <section className="py-12 md:py-20 bg-primary-surface">
+      <Section variant="primary-surface" prevVariant="white">
         <div className="container-max">
           <SectionTitle className="mb-8">전시 정보</SectionTitle>
 
@@ -175,10 +176,10 @@ export default function ExhibitionPage() {
             </div>
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* Access Information */}
-      <section className="py-12 md:py-20 bg-accent-soft">
+      <Section variant="accent-soft" prevVariant="primary-surface">
         <div className="container-max">
           <SectionTitle className="mb-12">오시는 길</SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
@@ -241,10 +242,10 @@ export default function ExhibitionPage() {
             </ul>
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* Schedule Section */}
-      <section className="py-12 md:py-20 bg-gray-50">
+      <Section variant="gray" prevVariant="accent-soft">
         <div className="container-max">
           <SectionTitle className="mb-12">행사 일정</SectionTitle>
           <div className="bg-white rounded-lg shadow-lg p-8">
@@ -289,10 +290,10 @@ export default function ExhibitionPage() {
             </div>
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* Contact Section */}
-      <section className="py-12 md:py-20 bg-primary/20">
+      <Section variant="primary-soft" prevVariant="gray">
         <div className="container-max text-center">
           <SectionTitle className="mb-8">문의사항</SectionTitle>
           <div className="space-y-4">
@@ -331,7 +332,7 @@ export default function ExhibitionPage() {
             </div>
           </div>
         </div>
-      </section>
+      </Section>
     </>
   );
 }

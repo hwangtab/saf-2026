@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 import SectionTitle from '@/components/ui/SectionTitle';
+import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import TestimonialCard from '@/components/ui/TestimonialCard';
@@ -52,7 +53,7 @@ export default function OurProof() {
         />
       </PageHero>
 
-      <section className="py-12 md:py-20 bg-primary-surface">
+      <Section variant="primary-surface" prevVariant="white">
         <div className="container-max">
           <div className="max-w-3xl mx-auto text-center mb-12">
             <SectionTitle className="mb-8">
@@ -95,10 +96,10 @@ export default function OurProof() {
             </p>
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* Proof Section */}
-      <section className="py-12 md:py-20 bg-white">
+      <Section variant="white" prevVariant="primary-surface">
         <div className="container-max">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
             <div>
@@ -216,10 +217,10 @@ export default function OurProof() {
             </div>
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* Testimonials Section */}
-      <section className="py-12 md:py-20 bg-sun-soft">
+      <Section variant="sun-soft" prevVariant="white">
         <div className="container-max">
           <SectionTitle className="mb-12 text-center">예술인들의 증언</SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -253,10 +254,10 @@ export default function OurProof() {
             />
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* Statistics Comparison */}
-      <section className="py-12 md:py-20 bg-primary-surface">
+      <Section variant="primary-surface" prevVariant="sun-soft">
         <div className="container-max">
           <SectionTitle className="mb-12 text-center">기존 금융 vs 상호부조 대출</SectionTitle>
           <div className="overflow-x-auto">
@@ -298,10 +299,10 @@ export default function OurProof() {
             </table>
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* Call to Action */}
-      <section className="py-12 md:py-20 bg-primary/20">
+      <Section variant="primary-soft" prevVariant="primary-surface">
         <div className="container-max text-center">
           <h2 className="font-section font-normal text-4xl md:text-5xl mb-8">
             당신도 이 신뢰의 체계에 참여할 수 있습니다
@@ -336,7 +337,7 @@ export default function OurProof() {
             </div>
           </div>
         </div>
-      </section>
+      </Section>
     </>
   );
 }

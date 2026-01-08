@@ -1,4 +1,6 @@
 import dynamic from 'next/dynamic';
+import Section from '@/components/ui/Section';
+
 import { getAllArtworks } from '@/content/saf2026-artworks';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
@@ -53,7 +55,7 @@ export default function ArtworksPage() {
   const artworks = getAllArtworks();
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen">
       <PageHero
         title="출품작"
         description="예술가들의 시선으로 바라본 우리의 현실과 희망. 2026 씨앗페와 함께하는 작품을 소개합니다."
@@ -66,9 +68,11 @@ export default function ArtworksPage() {
       </PageHero>
 
       {/* Gallery Section */}
-      <section className="container-max pt-4 pb-12">
-        <ArtworkGalleryWithSort artworks={artworks} />
-      </section>
+      <Section variant="gray" prevVariant="white" padding="none" className="pt-4 pb-12">
+        <div className="container-max">
+          <ArtworkGalleryWithSort artworks={artworks} />
+        </div>
+      </Section>
     </main>
   );
 }
