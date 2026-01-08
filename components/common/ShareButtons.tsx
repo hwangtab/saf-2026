@@ -87,13 +87,17 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
         url={url}
         quote={title}
         hashtag="#씨앗페"
-        className="hover:opacity-80 transition-opacity"
+        className="hover:opacity-80 transition-opacity p-1.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full"
       >
         <FacebookIcon size={32} round />
       </FacebookShareButton>
 
       {/* Twitter/X */}
-      <TwitterShareButton url={url} title={title} className="hover:opacity-80 transition-opacity">
+      <TwitterShareButton
+        url={url}
+        title={title}
+        className="hover:opacity-80 transition-opacity p-1.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full"
+      >
         <TwitterIcon size={32} round />
       </TwitterShareButton>
 
@@ -102,7 +106,7 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
         onClick={handleKakaoShare}
         disabled={!kakaoReady}
         className={clsx(
-          'w-8 h-8 flex items-center justify-center transition-opacity hover:opacity-80 focus:outline-none',
+          'min-w-[44px] min-h-[44px] p-1.5 flex items-center justify-center transition-opacity hover:opacity-80 focus:outline-none rounded-full',
           !kakaoReady && 'opacity-50 cursor-not-allowed'
         )}
         title="카카오톡 공유"
@@ -121,7 +125,7 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
       <button
         onClick={handleCopyLink}
         className={clsx(
-          'w-8 h-8 flex items-center justify-center rounded-full transition-all duration-200',
+          'min-w-[44px] min-h-[44px] p-1.5 flex items-center justify-center rounded-full transition-all duration-200',
           copyStatus === 'copied' && 'bg-green-500 text-white',
           copyStatus === 'error' && 'bg-red-500 text-white',
           copyStatus === 'idle' && 'bg-gray-200 text-gray-600 hover:bg-gray-300'
@@ -136,7 +140,7 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
         }
       >
         {copyStatus === 'copied' ? (
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         ) : copyStatus === 'error' ? (

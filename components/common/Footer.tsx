@@ -98,7 +98,7 @@ export default function Footer() {
                     href={SOCIAL_LINKS.INSTAGRAM}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-gray-300 hover:text-primary transition-colors"
+                    className="text-gray-300 hover:text-primary transition-colors p-2 min-w-[44px] min-h-[44px] flex items-center justify-center -ml-2"
                     aria-label="Instagram"
                   >
                     <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -109,7 +109,7 @@ export default function Footer() {
                     href={SOCIAL_LINKS.FACEBOOK}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-gray-300 hover:text-primary transition-colors"
+                    className="text-gray-300 hover:text-primary transition-colors p-2 min-w-[44px] min-h-[44px] flex items-center justify-center"
                     aria-label="Facebook"
                   >
                     <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -120,7 +120,7 @@ export default function Footer() {
                     href={SOCIAL_LINKS.YOUTUBE}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-gray-300 hover:text-primary transition-colors"
+                    className="text-gray-300 hover:text-primary transition-colors p-2 min-w-[44px] min-h-[44px] flex items-center justify-center"
                     aria-label="YouTube"
                   >
                     <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
