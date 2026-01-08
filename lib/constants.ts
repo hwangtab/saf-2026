@@ -59,6 +59,24 @@ export const STATISTICS_DATA = [
   { label: '대출 가능 금액', value: 1000000000, unit: '원' },
 ];
 
+// Animation & Timing Constants
+export const ANIMATION = {
+  // Background slider
+  SLIDER_INTERVAL: 5000, // 5 seconds
+  SLIDER_FADE_DURATION: 1000, // 1 second
+
+  // Counter animations
+  COUNTER_DURATION: 2000, // 2 seconds
+  COUNTER_DELAY: 100, // 100ms
+
+  // General transitions
+  FADE_DURATION: 300, // 300ms
+  HOVER_DURATION: 200, // 200ms
+
+  // Debounce timings
+  SEARCH_DEBOUNCE: 300, // 300ms
+} as const;
+
 // JSON-LD Security: Escape < characters to prevent XSS
 // This is required when using dangerouslySetInnerHTML with JSON-LD data
 export function escapeJsonLdForScript(json: string): string {

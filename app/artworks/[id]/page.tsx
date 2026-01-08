@@ -65,7 +65,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       '예술인 연대',
       '미술품 구매',
       '상호부조',
-      artwork.material.split(' ')[0], // Main material e.g., 'Oil', 'Acrylic'
+      artwork.material?.split(' ')?.[0] ?? '미술품', // Main material e.g., 'Oil', 'Acrylic'
     ].filter(Boolean),
     alternates: {
       canonical: pageUrl,

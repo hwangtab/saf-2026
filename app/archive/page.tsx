@@ -4,11 +4,12 @@ import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
+import CTAButtonGroup from '@/components/common/CTAButtonGroup';
 import VideoEmbed from '@/components/features/VideoEmbed';
 import { saf2023Photos } from '@/content/saf2023-photos';
 import { saf2023Artworks } from '@/content/saf2023-artworks';
 import { videos } from '@/content/videos';
-import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL } from '@/lib/constants';
+import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL, escapeJsonLdForScript } from '@/lib/constants';
 
 const PAGE_URL = `${SITE_URL}/archive`;
 
@@ -65,7 +66,9 @@ export default function ArchivePage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }}
+        dangerouslySetInnerHTML={{
+          __html: escapeJsonLdForScript(JSON.stringify(collectionSchema)),
+        }}
       />
       <PageHero title="아카이브" description="씨앗페의 발자취와 성과, 언론 보도를 기록합니다">
         <ShareButtons url={currentUrl} title={pageTitle} description={pageDescription} />
@@ -213,22 +216,7 @@ export default function ArchivePage() {
           <p className="text-lg text-charcoal-muted mb-8 max-w-2xl mx-auto text-balance">
             씨앗페 2026의 성공은 당신의 참여와 후원으로 만들어집니다.
           </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <a
-              href={EXTERNAL_LINKS.DONATE}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center bg-accent hover:bg-accent-strong text-light font-bold px-8 py-4 rounded-lg transition-colors"
-            >
-              ❤️ 지금 후원하기
-            </a>
-            <a
-              href="/artworks"
-              className="inline-flex items-center justify-center bg-gray-900 hover:bg-gray-800 text-white font-bold px-8 py-4 rounded-lg transition-colors"
-            >
-              🎨 작품 구매하기
-            </a>
-          </div>
+          <CTAButtonGroup variant="large" className="justify-center" />
         </div>
       </Section>
     </>

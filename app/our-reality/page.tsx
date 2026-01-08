@@ -4,18 +4,14 @@ import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
+import CTAButtonGroup from '@/components/common/CTAButtonGroup';
+import { testimonials as testimonialsData } from '@/content/testimonials';
 
 import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL } from '@/lib/constants';
 
 const PAGE_URL = `${SITE_URL}/our-reality`;
 
-interface TestimonialItem {
-  quote: string;
-  author: string;
-  context?: string;
-}
-
-const testimonialsData: { category: string; items: TestimonialItem[] }[] = [
+const oldTestimonialsData = [
   {
     category: '1. 생존의 위협: "돈이 없어 치료를 포기했습니다"',
     items: [
@@ -442,22 +438,7 @@ export default function OurReality() {
             당신의 참여와 후원이 <span className="text-sun-strong font-semibold">산소호흡기</span>가
             되어 예술이 계속 숨 쉬게 합니다.
           </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <a
-              href={EXTERNAL_LINKS.DONATE}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center bg-accent hover:bg-accent-strong text-light font-bold px-8 py-4 rounded-lg transition-colors text-lg"
-            >
-              ❤️ 지금 후원하기
-            </a>
-            <a
-              href="/artworks"
-              className="inline-flex items-center justify-center bg-gray-900 hover:bg-gray-800 text-white font-bold px-8 py-4 rounded-lg transition-colors text-lg"
-            >
-              🎨 작품 구매하기
-            </a>
-          </div>
+          <CTAButtonGroup variant="large" className="justify-center" />
           <p className="text-sm text-charcoal-muted mt-6">
             2025 예술인 금융 재난 보고서 기반 |{' '}
             <a

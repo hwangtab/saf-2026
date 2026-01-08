@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import ExportedImage from 'next-image-export-optimizer';
 import { m, AnimatePresence } from 'framer-motion';
+import { ANIMATION } from '@/lib/constants';
 
 const HERO_IMAGES = [
   { id: '11', filename: '11.jpg', alt: '2026 씨앗페 출품작' },
@@ -36,7 +37,7 @@ export default function BackgroundSlider() {
       if (!document.hidden) {
         setCurrentIndex((prev) => (prev + 1) % HERO_IMAGES.length);
       }
-    }, 5000);
+    }, ANIMATION.SLIDER_INTERVAL);
 
     return () => {
       cancelAnimationFrame(timer);

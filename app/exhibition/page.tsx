@@ -1,11 +1,21 @@
 import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
 import ExportedImage from 'next-image-export-optimizer';
 import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
-import KakaoMap from '@/components/features/KakaoMap';
 import { EXHIBITION, EXTERNAL_LINKS, OG_IMAGE, SITE_URL } from '@/lib/constants';
+
+// Dynamically import KakaoMap (client-side only, reduces initial bundle)
+const KakaoMap = dynamic(() => import('@/components/features/KakaoMap'), {
+  ssr: false,
+  loading: () => (
+    <div className="min-h-[400px] animate-pulse bg-gray-100 rounded-lg flex items-center justify-center">
+      <p className="text-charcoal-muted">지도를 불러오는 중...</p>
+    </div>
+  ),
+});
 
 const PAGE_URL = `${SITE_URL}/exhibition`;
 

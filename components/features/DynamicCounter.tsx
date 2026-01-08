@@ -2,6 +2,7 @@
 
 import CountUp from 'react-countup';
 import { useInView } from 'react-intersection-observer';
+import { ANIMATION } from '@/lib/constants';
 
 interface CounterItem {
   label: string;
@@ -35,7 +36,11 @@ export default function DynamicCounter({ items }: DynamicCounterProps) {
                 <span aria-live="polite" aria-atomic="true">
                   {inView ? (
                     <>
-                      <CountUp end={item.value} duration={2} separator="," />
+                      <CountUp
+                        end={item.value}
+                        duration={ANIMATION.COUNTER_DURATION / 1000}
+                        separator=","
+                      />
                       <span className="text-lg">{item.unit}</span>
                     </>
                   ) : (

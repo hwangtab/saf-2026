@@ -66,7 +66,7 @@ function ArtworkCard({ artwork, variant = 'gallery', className }: ArtworkCardPro
             alt={`${artwork.title} - ${artwork.artist}`}
             loading="lazy"
             fill
-            className="relative object-cover transform transition-transform duration-300 group-hover:scale-105"
+            className="object-cover transform transition-transform duration-300 group-hover:scale-105"
             sizes="(max-width: 768px) calc(100vw - 2rem), (max-width: 1024px) calc(50vw - 1.5rem), calc(33vw - 1rem)"
           />
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 pointer-events-none" />
