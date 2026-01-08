@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import PageHeroBackground from './PageHeroBackground';
+import SawtoothDivider from './SawtoothDivider';
 
 interface PageHeroProps {
   title: string;
@@ -27,6 +28,7 @@ export default function PageHero({ title, description, children }: PageHeroProps
         )}
         {children && <div className="mt-8 flex justify-center">{children}</div>}
       </div>
+      <SawtoothDivider position="bottom" colorClass="text-white" />
     </section>
   );
 }
