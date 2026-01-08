@@ -30,16 +30,29 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
       }
     };
 
-    if (typeof window !== 'undefined') {
-      if (window.Kakao) {
-        initKakao();
-        return undefined;
-      } else {
-        window.addEventListener('load', initKakao);
-        return () => window.removeEventListener('load', initKakao);
-      }
+    // Check immediately
+    if (typeof window !== 'undefined' && window.Kakao) {
+      initKakao();
+      return;
     }
-    return undefined;
+
+    // Poll for Kakao SDK availability
+    const timer = setInterval(() => {
+      if (typeof window !== 'undefined' && window.Kakao) {
+        initKakao();
+        clearInterval(timer);
+      }
+    }, 500);
+
+    // Stop polling after 10 seconds
+    const timeout = setTimeout(() => {
+      clearInterval(timer);
+    }, 10000);
+
+    return () => {
+      clearInterval(timer);
+      clearTimeout(timeout);
+    };
   }, []);
 
   const handleCopyLink = async () => {
