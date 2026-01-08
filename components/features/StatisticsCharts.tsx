@@ -16,6 +16,14 @@ import {
 } from 'recharts';
 import { useChartDimensions } from '@/lib/hooks/useChartDimensions';
 import { CHART_COLORS } from '@/lib/chartColors';
+import {
+  firstBankAccessData,
+  rejectionReasonsData,
+  highInterestProductData,
+  interestRateDistributionData,
+  debtCollectionData,
+  creativeImpactData,
+} from '@/content/chart-data';
 
 const tooltipContentStyle: CSSProperties = {
   borderRadius: '0.75rem',
@@ -39,10 +47,7 @@ const tooltipItemStyle: CSSProperties = {
 
 export const FirstBankAccessChart = memo(function FirstBankAccessChart() {
   const { pieOuterRadius, pieInnerRadius } = useChartDimensions();
-  const data = [
-    { name: '제1금융권 배제', value: 84.9 },
-    { name: '접근 가능', value: 15.1 },
-  ];
+  const data = firstBankAccessData;
   const COLORS = [CHART_COLORS.danger, CHART_COLORS.primary];
 
   return (
@@ -85,13 +90,7 @@ export const FirstBankAccessChart = memo(function FirstBankAccessChart() {
 
 export const RejectionReasonsChart = memo(function RejectionReasonsChart() {
   const { yAxisWidth, tickFontSize } = useChartDimensions();
-  const data = [
-    { reason: '정기 소득 없음', count: 65 },
-    { reason: '신용등급 부족', count: 58 },
-    { reason: '담보 부족', count: 52 },
-    { reason: '고용 불안정', count: 48 },
-    { reason: '기타', count: 35 },
-  ];
+  const data = rejectionReasonsData;
 
   return (
     <div
@@ -127,12 +126,7 @@ export const RejectionReasonsChart = memo(function RejectionReasonsChart() {
 
 export const HighInterestProductChart = memo(function HighInterestProductChart() {
   const { isMobile, tickFontSize } = useChartDimensions();
-  const data = [
-    { product: '카드론', percentage: 42 },
-    { product: '현금서비스', percentage: 38 },
-    { product: '소액대출', percentage: 22 },
-    { product: '사채', percentage: 15 },
-  ];
+  const data = highInterestProductData;
 
   return (
     <div
@@ -168,13 +162,7 @@ export const HighInterestProductChart = memo(function HighInterestProductChart()
 
 export const InterestRateDistributionChart = memo(function InterestRateDistributionChart() {
   const { isMobile, tickFontSize } = useChartDimensions();
-  const data = [
-    { range: '~ 10%', count: 8 },
-    { range: '10 ~ 15%', count: 12 },
-    { range: '15 ~ 20%', count: 35 },
-    { range: '20 ~ 30%', count: 32 },
-    { range: '30% ~', count: 13 },
-  ];
+  const data = interestRateDistributionData;
 
   return (
     <div
@@ -209,10 +197,7 @@ export const InterestRateDistributionChart = memo(function InterestRateDistribut
 
 export const DebtCollectionChart = memo(function DebtCollectionChart() {
   const { pieOuterRadius, pieInnerRadius } = useChartDimensions();
-  const data = [
-    { name: '경험함', value: 38 },
-    { name: '경험 없음', value: 62 },
-  ];
+  const data = debtCollectionData;
   const COLORS = [CHART_COLORS.danger, CHART_COLORS.charcoal];
 
   return (
@@ -255,12 +240,7 @@ export const DebtCollectionChart = memo(function DebtCollectionChart() {
 
 export const CreativeImpactChart = memo(function CreativeImpactChart() {
   const { yAxisWidth, tickFontSize, isMobile } = useChartDimensions();
-  const data = [
-    { impact: '창작 중단', percentage: 45 },
-    { impact: '창작량 감소', percentage: 68 },
-    { impact: '품질 저하', percentage: 52 },
-    { impact: '활동 제한', percentage: 58 },
-  ];
+  const data = creativeImpactData;
 
   return (
     <div
