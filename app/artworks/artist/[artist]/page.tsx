@@ -52,9 +52,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const seoDescription =
     `${artistName} 작가의 작품 세계를 만나보세요. ` +
-    (profileSnippet ||
-      noteSnippet ||
-      '70여 명의 예술가들이 전하는 연대와 희망의 메시지, 씨앗페 2026.');
+    (profileSnippet || noteSnippet || '예술가들이 전하는 연대와 희망의 메시지, 씨앗페 2026.');
 
   const metaTitle = `${artistName} 작가 - 출품작 | 씨앗페 2026`;
 
