@@ -66,11 +66,11 @@ export default function Home() {
                 id="sawtooth-pattern"
                 x="0"
                 y="0"
-                width="20"
+                width="40"
                 height="40"
                 patternUnits="userSpaceOnUse"
               >
-                <polygon points="0,40 10,0 20,40" />
+                <polygon points="0,40 20,0 40,40" />
               </pattern>
             </defs>
             <rect x="0" y="0" width="100%" height="100%" fill="url(#sawtooth-pattern)" />
