@@ -121,13 +121,22 @@ export default function Header() {
     return () => unlockScroll();
   }, [unlockScroll]);
 
-  const isArtworkDetail = pathname.startsWith('/artworks/') && pathname !== '/artworks';
-  const hasHero = HERO_PAGES.includes(pathname as (typeof HERO_PAGES)[number]) && !isArtworkDetail;
+  const isArtistPage = pathname.startsWith('/artworks/artist/');
+  // 작품 상세 페이지는 제외하지만 artist 페이지는 포함하지 않음
+  const isArtworkDetail =
+    pathname.startsWith('/artworks/') && pathname !== '/artworks' && !isArtistPage;
+
+  // 작가 페이지도 Hero가 있으므로 hasHero에 포함
+  const hasHero =
+    (HERO_PAGES.includes(pathname as (typeof HERO_PAGES)[number]) && !isArtworkDetail) ||
+    isArtistPage;
 
   const getHeaderStyle = () => {
     if (isMenuVisible) {
       return 'bg-white shadow-sm border-gray-200/50';
     }
+    // 작가 페이지는 헤더가 투명해야 하므로 isArtworkDetail 조건에서 빠져야 함 (위에서 처리됨)
+    // hasHero가 true이면 투명 배경 가능 (스크롤 안 되었을 때)
     if (isArtworkDetail || isScrolled || !hasHero) {
       return 'bg-white shadow-sm border-gray-200/50';
     }
