@@ -9,7 +9,20 @@ export default function PageHeroBackground() {
   const [imageIndex, setImageIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    setImageIndex(Math.floor(Math.random() * HERO_IMAGES.length));
+    let newIndex;
+    // Get the last used index to avoid repetition
+    const lastIndexStr = sessionStorage.getItem('saf_last_hero_index');
+    const lastIndex = lastIndexStr ? parseInt(lastIndexStr, 10) : -1;
+
+    // Retry randomly until we get a different index
+    // This ensures we don't show the same background twice in a row on navigation
+    do {
+      newIndex = Math.floor(Math.random() * HERO_IMAGES.length);
+    } while (newIndex === lastIndex && HERO_IMAGES.length > 1);
+
+    // Save the new index for next time
+    sessionStorage.setItem('saf_last_hero_index', newIndex.toString());
+    setImageIndex(newIndex);
   }, []);
 
   // Don't render any image until hydration is complete to prevent flash
