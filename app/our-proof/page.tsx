@@ -302,7 +302,7 @@ export default function OurProof() {
       </Section>
 
       {/* Call to Action */}
-      <Section variant="primary-soft" prevVariant="primary-surface">
+      <Section variant="primary-soft" prevVariant="primary-surface" className="pb-24 md:pb-32">
         <div className="container-max text-center">
           <h2 className="font-section font-normal text-4xl md:text-5xl mb-8">
             당신도 이 신뢰의 체계에 참여할 수 있습니다

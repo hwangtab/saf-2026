@@ -293,7 +293,7 @@ export default function ExhibitionPage() {
       </Section>
 
       {/* Contact Section */}
-      <Section variant="primary-soft" prevVariant="gray">
+      <Section variant="primary-soft" prevVariant="gray" className="pb-24 md:pb-32">
         <div className="container-max text-center">
           <SectionTitle className="mb-8">문의사항</SectionTitle>
           <div className="space-y-4">

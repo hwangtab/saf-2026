@@ -189,7 +189,7 @@ export default function Home() {
 
       {/* Call to Action Section */}
       {/* Call to Action Section */}
-      <Section variant="accent-soft" prevVariant="primary-surface">
+      <Section variant="accent-soft" prevVariant="primary-surface" className="pb-24 md:pb-32">
         <div className="container-max">
           <SectionTitle className="mb-12 text-center">당신도 함께할 수 있습니다</SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">

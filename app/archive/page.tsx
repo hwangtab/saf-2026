@@ -207,7 +207,7 @@ export default function ArchivePage() {
       </Section>
 
       {/* Call to Action */}
-      <Section variant="primary-soft" prevVariant="accent-soft">
+      <Section variant="primary-soft" prevVariant="accent-soft" className="pb-24 md:pb-32">
         <div className="container-max text-center">
           <SectionTitle className="mb-6">이 역사에 당신도 함께하세요</SectionTitle>
           <p className="text-lg text-charcoal-muted mb-8 max-w-2xl mx-auto text-balance">

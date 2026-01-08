@@ -236,7 +236,7 @@ export default function NewsPage() {
         </div>
       </Section>
 
-      <Section variant="primary-surface" prevVariant="sun-soft">
+      <Section variant="primary-surface" prevVariant="sun-soft" className="pb-24 md:pb-32">
         <div className="container-max">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {sortedArticles.map((article) => (

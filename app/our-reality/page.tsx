@@ -433,7 +433,7 @@ export default function OurReality() {
       </Section>
 
       {/* Call to Action */}
-      <Section variant="primary-surface" prevVariant="canvas-soft">
+      <Section variant="primary-surface" prevVariant="canvas-soft" className="pb-24 md:pb-32">
         <div className="container-max text-center">
           <SectionTitle className="mb-6">이제 행동할 시간입니다</SectionTitle>
           <p className="text-lg text-charcoal-muted mb-8 max-w-2xl mx-auto text-balance">
