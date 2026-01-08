@@ -1,7 +1,7 @@
 import { getAllArtworks, getArtworkById } from '@/content/saf2026-artworks';
 import Section from '@/components/ui/Section';
 import { getArticlesByArtist } from '@/content/artist-articles';
-import ExportedImage from 'next-image-export-optimizer';
+import ArtworkImage from '@/components/features/ArtworkImage';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
@@ -225,22 +225,12 @@ export default function ArtworkDetailPage({ params }: Props) {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
             {/* Left Column: Image & CTA */}
             <div className="space-y-8">
-              <div className="relative shadow-sm">
-                <ExportedImage
-                  src={`/images/artworks/${artwork.image}`}
-                  alt={`${artwork.title} - ${artwork.artist}`}
-                  width={1000}
-                  height={1000}
-                  className="w-full h-auto object-contain max-h-[80vh]"
-                  priority
-                />
-                {/* SOLD 배지 */}
-                {artwork.sold && (
-                  <div className="absolute top-4 right-4 bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-lg shadow-lg transform rotate-3">
-                    SOLD
-                  </div>
-                )}
-              </div>
+              <ArtworkImage
+                imagePath={artwork.image}
+                title={artwork.title}
+                artist={artwork.artist}
+                sold={artwork.sold}
+              />
 
               {/* Share Section */}
               <div className="flex items-center justify-center gap-2 py-4 border-y border-gray-100">

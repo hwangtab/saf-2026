@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { Artwork, SortOption } from '@/types';
 import { parsePrice } from '@/lib/parsePrice';
 import { useDebounce } from './useDebounce';
@@ -43,13 +44,115 @@ function sortArtworks(artworks: Artwork[], sortOption: SortOption): Artwork[] {
 }
 
 export function useArtworkFilter(artworks: Artwork[]) {
-  const [sortOption, setSortOption] = useState<SortOption>('artist-asc');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
-  const [selectedArtist, setSelectedArtist] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // Initialize state from URL params
+  const [sortOption, setSortOption] = useState<SortOption>(
+    (searchParams.get('sort') as SortOption) || 'artist-asc'
+  );
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>(
+    (searchParams.get('status') as StatusFilter) || 'all'
+  );
+  const [selectedArtist, setSelectedArtist] = useState<string | null>(
+    searchParams.get('artist') || null
+  );
 
   // Debounce search query for performance (300ms delay)
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
+
+  // Function to update URL params
+  const updateUrlParams = useCallback(
+    (params: { sort?: SortOption; q?: string; status?: StatusFilter; artist?: string | null }) => {
+      const newSearchParams = new URLSearchParams(searchParams.toString());
+
+      if (params.sort) {
+        if (params.sort === 'artist-asc') newSearchParams.delete('sort');
+        else newSearchParams.set('sort', params.sort);
+      }
+
+      if (params.q !== undefined) {
+        if (!params.q) newSearchParams.delete('q');
+        else newSearchParams.set('q', params.q);
+      }
+
+      if (params.status) {
+        if (params.status === 'all') newSearchParams.delete('status');
+        else newSearchParams.set('status', params.status);
+      }
+
+      if (params.artist !== undefined) {
+        if (!params.artist) newSearchParams.delete('artist');
+        else newSearchParams.set('artist', params.artist);
+      }
+
+      // Replace URL without reloading the page
+      router.replace(`${pathname}?${newSearchParams.toString()}`, { scroll: false });
+    },
+    [pathname, router, searchParams]
+  );
+
+  // Sync state changes to URL
+  useEffect(() => {
+    const currentSort = (searchParams.get('sort') as SortOption) || 'artist-asc';
+    const currentQ = searchParams.get('q') || '';
+    const currentStatus = (searchParams.get('status') as StatusFilter) || 'all';
+    const currentArtist = searchParams.get('artist');
+
+    // Only update if state differs from URL to avoid loop/redundant updates
+    // Note: We use debouncedSearchQuery for URL update to avoid too many history entries/updates while typing
+    const paramsToUpdate: any = {};
+    let shouldUpdate = false;
+
+    if (sortOption !== currentSort) {
+      paramsToUpdate.sort = sortOption;
+      shouldUpdate = true;
+    }
+
+    if (debouncedSearchQuery !== currentQ) {
+      paramsToUpdate.q = debouncedSearchQuery;
+      shouldUpdate = true;
+    }
+
+    if (statusFilter !== currentStatus) {
+      paramsToUpdate.status = statusFilter;
+      shouldUpdate = true;
+    }
+
+    if (selectedArtist !== currentArtist) {
+      paramsToUpdate.artist = selectedArtist;
+      shouldUpdate = true;
+    }
+
+    if (shouldUpdate) {
+      updateUrlParams(paramsToUpdate);
+    }
+  }, [
+    sortOption,
+    debouncedSearchQuery,
+    statusFilter,
+    selectedArtist,
+    searchParams,
+    updateUrlParams,
+  ]);
+
+  // Handle URL changes (back/forward button)
+  useEffect(() => {
+    const urlSort = (searchParams.get('sort') as SortOption) || 'artist-asc';
+    const urlQ = searchParams.get('q') || '';
+    const urlStatus = (searchParams.get('status') as StatusFilter) || 'all';
+    const urlArtist = searchParams.get('artist') || null;
+
+    if (urlSort !== sortOption) setSortOption(urlSort);
+    // For search query, we want to update it only if it's significantly different to avoid conflict with typing
+    // But since we debounce URL updates, if URL changes externally (back button), we should accept it
+    if (urlQ !== searchQuery && urlQ !== debouncedSearchQuery) setSearchQuery(urlQ);
+    if (urlStatus !== statusFilter) setStatusFilter(urlStatus);
+    if (urlArtist !== selectedArtist) setSelectedArtist(urlArtist);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]); // Depend on searchParams to react to URL changes
 
   // 1. 필터링 (검색어 + 판매상태)
   const filteredArtworks = useMemo(() => {
