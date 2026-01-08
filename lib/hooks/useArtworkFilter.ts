@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Artwork, SortOption } from '@/lib/types';
 import { parsePrice } from '@/lib/parsePrice';
+import { useDebounce } from './useDebounce';
 
 export type StatusFilter = 'all' | 'selling' | 'sold';
 
@@ -47,6 +48,9 @@ export function useArtworkFilter(artworks: Artwork[]) {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [selectedArtist, setSelectedArtist] = useState<string | null>(null);
 
+  // Debounce search query for performance (300ms delay)
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+
   // 1. 필터링 (검색어 + 판매상태)
   const filteredArtworks = useMemo(() => {
     let result = artworks;
@@ -58,9 +62,9 @@ export function useArtworkFilter(artworks: Artwork[]) {
       result = result.filter((a) => a.sold === true);
     }
 
-    // Search Filter
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase().trim();
+    // Search Filter (uses debounced value)
+    if (debouncedSearchQuery.trim()) {
+      const query = debouncedSearchQuery.toLowerCase().trim();
       result = result.filter(
         (artwork) =>
           artwork.title.toLowerCase().includes(query) ||
@@ -75,7 +79,7 @@ export function useArtworkFilter(artworks: Artwork[]) {
     }
 
     return result;
-  }, [artworks, searchQuery, statusFilter, selectedArtist]);
+  }, [artworks, debouncedSearchQuery, statusFilter, selectedArtist]);
 
   // 2. 정렬 적용
   const sortedArtworks = useMemo(

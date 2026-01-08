@@ -52,14 +52,22 @@ describe('useArtworkFilter', () => {
   });
 
   it('should filter by search query', () => {
+    jest.useFakeTimers();
     const { result } = renderHook(() => useArtworkFilter(mockArtworks));
 
     act(() => {
       result.current.setSearchQuery('작가B');
     });
 
+    // Advance timers to account for debounce delay (300ms)
+    act(() => {
+      jest.advanceTimersByTime(300);
+    });
+
     expect(result.current.filteredArtworks).toHaveLength(1);
     expect(result.current.filteredArtworks[0].title).toBe('작품2');
+
+    jest.useRealTimers();
   });
 
   it('should filter by status (selling)', () => {

@@ -1,21 +1,17 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useReducer, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import ExportedImage from 'next-image-export-optimizer';
 import { usePathname } from 'next/navigation';
 import { HERO_PAGES } from '@/lib/constants';
 import { useScrolled } from '@/lib/hooks/useScrolled';
+import type { NavigationItem } from '@/lib/types';
 import clsx from 'clsx';
 
 import DesktopNav from './Header/DesktopNav';
 import MobileMenu from './Header/MobileMenu';
-
-type NavigationItem = {
-  name: string;
-  href: string;
-  external?: boolean;
-};
+import { MenuIcon, CloseMenuIcon } from '@/components/ui/Icons';
 
 const navigation: NavigationItem[] = [
   { name: '씨앗페 2026', href: '/' },
@@ -27,10 +23,29 @@ const navigation: NavigationItem[] = [
   { name: '언론 보도', href: '/news' },
 ];
 
+// Mobile menu state machine
+type MenuState = 'closed' | 'open' | 'closing';
+type MenuAction = { type: 'OPEN' } | { type: 'START_CLOSE' } | { type: 'FINISH_CLOSE' };
+
+function menuReducer(state: MenuState, action: MenuAction): MenuState {
+  switch (action.type) {
+    case 'OPEN':
+      return 'open';
+    case 'START_CLOSE':
+      return state === 'open' ? 'closing' : state;
+    case 'FINISH_CLOSE':
+      return state === 'closing' ? 'closed' : state;
+    default:
+      return state;
+  }
+}
+
 export default function Header() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isMobileMenuClosing, setIsMobileMenuClosing] = useState(false);
-  const isScrolled = useScrolled(10, mobileMenuOpen);
+  const [menuState, dispatch] = useReducer(menuReducer, 'closed');
+  const isMenuOpen = menuState === 'open';
+  const isMenuVisible = menuState !== 'closed';
+
+  const isScrolled = useScrolled(10, isMenuOpen);
   const pathname = usePathname();
   const prevPathname = useRef(pathname);
 
@@ -40,71 +55,70 @@ export default function Header() {
     return false;
   };
 
-  // 닫기 시작 (애니메이션 시작)
-  const startCloseMenu = () => {
-    setMobileMenuOpen(false);
-    setIsMobileMenuClosing(true);
-  };
-
-  // 닫기 완료 (애니메이션 종료)
-  const finishCloseMenu = () => {
-    setIsMobileMenuClosing(false);
-    unlockScroll();
-  };
-
-  useEffect(() => {
-    if (prevPathname.current !== pathname) {
-      if (mobileMenuOpen) {
-        startCloseMenu();
-      }
-      prevPathname.current = pathname;
-    }
-  }, [pathname, mobileMenuOpen]);
-
-  const lockScroll = () => {
+  // Define scroll functions first
+  const lockScroll = useCallback(() => {
     const body = document.body;
     const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-
     body.style.overflowY = 'hidden';
     body.style.overscrollBehavior = 'contain';
-
     if (scrollbarWidth > 0) {
       body.style.paddingRight = `${scrollbarWidth}px`;
     }
-  };
+  }, []);
 
-  const unlockScroll = () => {
+  const unlockScroll = useCallback(() => {
     const body = document.body;
     body.style.overflowY = '';
     body.style.overscrollBehavior = '';
     body.style.paddingRight = '';
-  };
+  }, []);
 
+  // Menu action callbacks
+  const openMenu = useCallback(() => dispatch({ type: 'OPEN' }), []);
+  const startCloseMenu = useCallback(() => dispatch({ type: 'START_CLOSE' }), []);
+  const finishCloseMenu = useCallback(() => {
+    dispatch({ type: 'FINISH_CLOSE' });
+    unlockScroll();
+  }, [unlockScroll]);
+
+  const toggleMenu = useCallback(() => {
+    if (isMenuOpen) {
+      startCloseMenu();
+    } else {
+      openMenu();
+    }
+  }, [isMenuOpen, startCloseMenu, openMenu]);
+
+  // Close menu on route change
+  useEffect(() => {
+    if (prevPathname.current !== pathname) {
+      if (isMenuOpen) {
+        startCloseMenu();
+      }
+      prevPathname.current = pathname;
+    }
+  }, [pathname, isMenuOpen, startCloseMenu]);
+
+  // Cleanup on unmount
   useEffect(() => {
     return () => unlockScroll();
-  }, []);
+  }, [unlockScroll]);
 
   const isArtworkDetail = pathname.startsWith('/artworks/') && pathname !== '/artworks';
   const hasHero = HERO_PAGES.includes(pathname as (typeof HERO_PAGES)[number]) && !isArtworkDetail;
 
   const getHeaderStyle = () => {
-    // 메뉴가 열려있거나 닫히는 중일 때는 흰색 배경 유지
-    if (mobileMenuOpen || isMobileMenuClosing) {
+    if (isMenuVisible) {
       return 'bg-white shadow-sm border-gray-200/50';
     }
-    if (isArtworkDetail) {
-      return 'bg-white/95 backdrop-blur-md shadow-sm border-gray-200/50';
-    }
-    if (isScrolled || !hasHero) {
+    if (isArtworkDetail || isScrolled || !hasHero) {
       return 'bg-white/95 backdrop-blur-md shadow-sm border-gray-200/50';
     }
     return 'bg-transparent border-transparent';
   };
 
   const headerStyle = getHeaderStyle();
-  // 메뉴가 열려있거나 닫히는 중일 때도 어두운 텍스트(차콜) 유지
-  const isDarkText =
-    isScrolled || mobileMenuOpen || isMobileMenuClosing || !hasHero || isArtworkDetail;
+  const isDarkText = isScrolled || isMenuVisible || !hasHero || isArtworkDetail;
   const textColor = isDarkText ? 'text-charcoal' : 'text-white';
   const logoSrc = isDarkText
     ? '/images/logo/320pxX90px.webp'
@@ -134,7 +148,7 @@ export default function Header() {
         <DesktopNav navigation={navigation} isActive={isActive} textColor={textColor} />
 
         <button
-          onClick={() => (mobileMenuOpen ? startCloseMenu() : setMobileMenuOpen(true))}
+          onClick={toggleMenu}
           className={clsx(
             'lg:hidden p-3 min-w-[44px] min-h-[44px] flex items-center justify-center',
             'transition-transform active:scale-90',
@@ -142,30 +156,14 @@ export default function Header() {
             'hover:text-primary'
           )}
           aria-label="메뉴 토글"
-          aria-expanded={mobileMenuOpen}
+          aria-expanded={isMenuOpen}
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            {mobileMenuOpen ? (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            ) : (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            )}
-          </svg>
+          {isMenuOpen ? <CloseMenuIcon /> : <MenuIcon />}
         </button>
       </nav>
 
       <MobileMenu
-        isOpen={mobileMenuOpen}
+        isOpen={isMenuOpen}
         onClose={startCloseMenu}
         navigation={navigation}
         isActive={isActive}

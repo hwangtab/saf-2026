@@ -1,12 +1,11 @@
 'use client';
 
-import Link from 'next/link';
-import ExportedImage from 'next-image-export-optimizer';
 import { getAllArtworks } from '@/content/saf2026-artworks';
 import { Artwork } from '@/lib/types';
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import AutoScroll from 'embla-carousel-auto-scroll';
+import ArtworkCard from '@/components/ui/ArtworkCard';
 
 interface RelatedArtworksProps {
   /** 현재 작품 ID (제외용, optional) */
@@ -19,10 +18,36 @@ interface RelatedArtworksProps {
 const ITEM_COUNT = 20;
 
 /**
+ * Seeded random number generator for deterministic shuffling.
+ * Uses a simple mulberry32 algorithm.
+ */
+function seededRandom(seed: number): () => number {
+  return function () {
+    let t = (seed += 0x6d2b79f5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/**
+ * Shuffle array with a seeded random number generator.
+ */
+function shuffleWithSeed<T>(array: T[], seed: number): T[] {
+  const result = [...array];
+  const random = seededRandom(seed);
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
+/**
  * 작품 슬라이더 컴포넌트
  * - Embla Carousel + Auto Scroll 플러그인
  * - 부드러운 연속 스크롤 + 터치/드래그 수동 조작
- * - Hydration Mismatch 방지를 위해 클라이언트 사이드에서만 랜덤 정렬 수행
+ * - 시드 기반 결정론적 셔플로 Hydration Mismatch 방지
  */
 export default function RelatedArtworksSlider({
   currentArtworkId,
@@ -44,9 +69,19 @@ export default function RelatedArtworksSlider({
     ]
   );
 
-  const [relatedArtworks, setRelatedArtworks] = useState<Artwork[]>([]);
+  // Create a deterministic seed from currentArtworkId
+  const seed = useMemo(() => {
+    if (!currentArtworkId) return 42; // default seed
+    let hash = 0;
+    for (let i = 0; i < currentArtworkId.length; i++) {
+      const char = currentArtworkId.charCodeAt(i);
+      hash = (hash << 5) - hash + char;
+      hash = hash & hash;
+    }
+    return Math.abs(hash);
+  }, [currentArtworkId]);
 
-  useEffect(() => {
+  const relatedArtworks = useMemo(() => {
     const allArtworks = getAllArtworks();
     const otherArtworks = currentArtworkId
       ? allArtworks.filter((a) => a.id !== currentArtworkId)
@@ -54,24 +89,22 @@ export default function RelatedArtworksSlider({
 
     let result: Artwork[] = [];
 
-    // currentArtist가 있으면 같은 작가 우선
     if (currentArtist) {
       const sameArtistWorks = otherArtworks.filter((a) => a.artist === currentArtist);
       const otherArtistWorksFiltered = otherArtworks.filter((a) => a.artist !== currentArtist);
 
-      // 랜덤 셔플
-      const shuffledOthers = otherArtistWorksFiltered.sort(() => Math.random() - 0.5);
+      // Deterministic shuffle using seed
+      const shuffledOthers = shuffleWithSeed(otherArtistWorksFiltered, seed);
 
       result = [...sameArtistWorks, ...shuffledOthers].slice(0, ITEM_COUNT);
     } else {
-      // 전체 랜덤
-      result = [...otherArtworks].sort(() => Math.random() - 0.5).slice(0, ITEM_COUNT);
+      // Deterministic shuffle using seed
+      result = shuffleWithSeed(otherArtworks, seed).slice(0, ITEM_COUNT);
     }
 
-    setRelatedArtworks(result);
-  }, [currentArtworkId, currentArtist]);
+    return result;
+  }, [currentArtworkId, currentArtist, seed]);
 
-  // 클라이언트 렌더링 전에는 아무것도 표시하지 않음 (Hydration Mismatch 방지)
   if (relatedArtworks.length === 0) return null;
 
   return (
@@ -85,41 +118,10 @@ export default function RelatedArtworksSlider({
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="flex gap-4 pl-4 sm:pl-5">
           {relatedArtworks.map((artwork) => (
-            <ArtworkCard key={artwork.id} artwork={artwork} />
+            <ArtworkCard key={artwork.id} artwork={artwork} variant="slider" />
           ))}
         </div>
       </div>
     </section>
-  );
-}
-
-function ArtworkCard({ artwork }: { artwork: Artwork }) {
-  return (
-    <Link
-      href={`/artworks/${artwork.id}`}
-      className="flex-shrink-0 w-[160px] sm:w-[180px] md:w-[200px] group"
-    >
-      <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100 shadow-sm group-hover:shadow-md transition-shadow">
-        <ExportedImage
-          src={`/images/artworks/${artwork.image}`}
-          alt={`${artwork.title} - ${artwork.artist}`}
-          fill
-          className="object-cover group-hover:scale-105 transition-transform duration-300"
-          sizes="(max-width: 640px) 160px, (max-width: 768px) 180px, 200px"
-        />
-        {artwork.sold && (
-          <div className="absolute top-2 right-2 bg-red-600 text-white px-2 py-0.5 rounded text-xs font-bold">
-            SOLD
-          </div>
-        )}
-      </div>
-      <div className="mt-3 px-1">
-        <p className="text-sm font-medium text-charcoal truncate group-hover:text-primary transition-colors">
-          {artwork.title}
-        </p>
-        <p className="text-xs text-gray-500 truncate">{artwork.artist}</p>
-        <p className="text-sm font-semibold text-charcoal mt-1">{artwork.price}</p>
-      </div>
-    </Link>
   );
 }

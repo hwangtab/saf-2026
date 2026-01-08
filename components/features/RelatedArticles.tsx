@@ -19,9 +19,9 @@ export default function RelatedArticles({ articles }: RelatedArticlesProps) {
       </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {articles.map((article, index) => (
+        {articles.map((article) => (
           <Link
-            key={index}
+            key={article.url}
             href={article.url}
             target="_blank"
             rel="noopener noreferrer"

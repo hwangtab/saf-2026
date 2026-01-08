@@ -11,7 +11,7 @@ interface KakaoMapProps {
   className?: string;
 }
 
-export default function KakaoMap(props?: KakaoMapProps) {
+export default function KakaoMap(props?: KakaoMapProps): React.JSX.Element {
   const { className } = props ?? {};
   const hasAppKey = RAW_KAKAO_APP_KEY.length > 0;
   const appKey = hasAppKey ? RAW_KAKAO_APP_KEY : FALLBACK_APP_KEY;

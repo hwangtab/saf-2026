@@ -11,9 +11,10 @@ interface ShareButtonsProps {
   description: string;
 }
 
+type CopyStatus = 'idle' | 'copied' | 'error';
+
 export default function ShareButtons({ url, title, description }: ShareButtonsProps) {
-  const [copied, setCopied] = useState(false);
-  const [copyError, setCopyError] = useState(false);
+  const [copyStatus, setCopyStatus] = useState<CopyStatus>('idle');
   const [kakaoReady, setKakaoReady] = useState(false);
 
   useEffect(() => {
@@ -44,13 +45,12 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setCopyError(false);
-      setTimeout(() => setCopied(false), 2000);
+      setCopyStatus('copied');
+      setTimeout(() => setCopyStatus('idle'), 2000);
     } catch (err) {
       console.error('Failed to copy:', err);
-      setCopyError(true);
-      setTimeout(() => setCopyError(false), 2000);
+      setCopyStatus('error');
+      setTimeout(() => setCopyStatus('idle'), 2000);
     }
   };
 
@@ -122,18 +122,24 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
         onClick={handleCopyLink}
         className={clsx(
           'w-8 h-8 flex items-center justify-center rounded-full transition-all duration-200',
-          copied && 'bg-green-500 text-white',
-          copyError && 'bg-red-500 text-white',
-          !copied && !copyError && 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+          copyStatus === 'copied' && 'bg-green-500 text-white',
+          copyStatus === 'error' && 'bg-red-500 text-white',
+          copyStatus === 'idle' && 'bg-gray-200 text-gray-600 hover:bg-gray-300'
         )}
         title="링크 복사"
-        aria-label={copied ? '링크가 복사되었습니다' : copyError ? '복사 실패' : '링크 복사하기'}
+        aria-label={
+          copyStatus === 'copied'
+            ? '링크가 복사되었습니다'
+            : copyStatus === 'error'
+              ? '복사 실패'
+              : '링크 복사하기'
+        }
       >
-        {copied ? (
+        {copyStatus === 'copied' ? (
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
-        ) : copyError ? (
+        ) : copyStatus === 'error' ? (
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"

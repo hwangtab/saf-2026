@@ -4,12 +4,7 @@ import Link from 'next/link';
 import clsx from 'clsx';
 import Button from '@/components/ui/Button';
 import { EXTERNAL_LINKS } from '@/lib/constants';
-
-type NavigationItem = {
-  name: string;
-  href: string;
-  external?: boolean;
-};
+import type { NavigationItem } from '@/lib/types';
 
 interface DesktopNavProps {
   navigation: NavigationItem[];

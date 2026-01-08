@@ -50,3 +50,9 @@ export interface PageMetadata {
 }
 
 export type SortOption = 'artist-asc' | 'title-asc' | 'price-desc' | 'price-asc';
+
+export interface NavigationItem {
+  name: string;
+  href: string;
+  external?: boolean;
+}
