@@ -24,22 +24,26 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
       if (window.Kakao && !window.Kakao.isInitialized()) {
         window.Kakao.init(KAKAO_JS_KEY);
         setKakaoReady(true);
+        return true;
       } else if (window.Kakao?.isInitialized()) {
         setKakaoReady(true);
+        return true;
       }
+      return false;
     };
 
     // Check immediately
     if (typeof window !== 'undefined' && window.Kakao) {
       initKakao();
-      return;
+      return undefined;
     }
 
     // Poll for Kakao SDK availability
     const timer = setInterval(() => {
       if (typeof window !== 'undefined' && window.Kakao) {
-        initKakao();
-        clearInterval(timer);
+        if (initKakao()) {
+          clearInterval(timer);
+        }
       }
     }, 500);
 
