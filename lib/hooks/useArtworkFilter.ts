@@ -94,8 +94,11 @@ export function useArtworkFilter(artworks: Artwork[], initialArtist?: string) {
     [pathname, router, searchParams]
   );
 
-  // Sync state changes to URL
+  // Sync state changes to URL (skip if initialArtist is provided - artist page handles URL itself)
   useEffect(() => {
+    // Don't sync URL if we're on a dedicated artist page (initialArtist provided)
+    if (initialArtist) return;
+
     const currentSort = (searchParams.get('sort') as SortOption) || 'artist-asc';
     const currentQ = searchParams.get('q') || '';
     const currentStatus = (searchParams.get('status') as StatusFilter) || 'all';
@@ -130,6 +133,7 @@ export function useArtworkFilter(artworks: Artwork[], initialArtist?: string) {
       updateUrlParams(paramsToUpdate);
     }
   }, [
+    initialArtist,
     sortOption,
     debouncedSearchQuery,
     statusFilter,
