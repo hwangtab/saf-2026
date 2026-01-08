@@ -18,13 +18,12 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
   const [kakaoReady, setKakaoReady] = useState(false);
 
   useEffect(() => {
+    const KAKAO_JS_KEY = 'e1418881150fd27ee7ce629f1dba92bf'; // Public key, domain-restricted
+
     const initKakao = () => {
       if (window.Kakao && !window.Kakao.isInitialized()) {
-        const kakaoKey = process.env.NEXT_PUBLIC_KAKAO_JS_KEY;
-        if (kakaoKey) {
-          window.Kakao.init(kakaoKey);
-          setKakaoReady(true);
-        }
+        window.Kakao.init(KAKAO_JS_KEY);
+        setKakaoReady(true);
       } else if (window.Kakao?.isInitialized()) {
         setKakaoReady(true);
       }
