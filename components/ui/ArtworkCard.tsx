@@ -93,12 +93,14 @@ function ArtworkCard({ artwork, variant = 'gallery', className }: ArtworkCardPro
             )}
           </p>
 
-          {artwork.price && artwork.price !== '문의' && (
+          {artwork.price && artwork.price !== '문의' ? (
             <p
               className={`text-sm font-semibold mt-1 ${artwork.sold ? 'text-gray-600 line-through' : 'text-primary'}`}
             >
               {artwork.price}
             </p>
+          ) : (
+            <p className="text-sm font-semibold mt-1 min-h-[1.25rem]">{'\u00A0'}</p>
           )}
         </div>
       </Link>
