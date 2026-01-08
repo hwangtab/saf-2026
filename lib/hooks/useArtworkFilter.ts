@@ -154,14 +154,17 @@ export function useArtworkFilter(artworks: Artwork[], initialArtist?: string) {
     const urlStatus = (searchParams.get('status') as StatusFilter) || 'all';
     const urlArtist = searchParams.get('artist') || null;
 
+    // Prop이 있으면 URL 파라미터보다 우선함
+    const effectiveArtist = initialArtist || urlArtist;
+
     if (urlSort !== sortOption) setSortOption(urlSort);
     // For search query, we want to update it only if it's significantly different to avoid conflict with typing
     // But since we debounce URL updates, if URL changes externally (back button), we should accept it
     if (urlQ !== searchQuery && urlQ !== debouncedSearchQuery) setSearchQuery(urlQ);
     if (urlStatus !== statusFilter) setStatusFilter(urlStatus);
-    if (urlArtist !== selectedArtist) setSelectedArtist(urlArtist);
+    if (effectiveArtist !== selectedArtist) setSelectedArtist(effectiveArtist);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]); // Depend on searchParams to react to URL changes
+  }, [searchParams, initialArtist]); // Depend on searchParams & initialArtist to react to changes
 
   // 1. 필터링 (검색어 + 판매상태)
   const filteredArtworks = useMemo(() => {
