@@ -10,7 +10,7 @@ interface PageHeroProps {
 
 export default function PageHero({ title, description, children }: PageHeroProps) {
   return (
-    <section className="relative min-h-[60vh] flex items-center justify-center py-12 md:py-20 overflow-hidden bg-charcoal">
+    <section className="relative min-h-[60vh] flex items-center justify-center pt-12 pb-24 md:pt-20 md:pb-40 overflow-hidden bg-charcoal">
       {/* Background Image */}
       <PageHeroBackground />
       {/* Dark Overlay */}

@@ -53,7 +53,7 @@ export default function Home() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center py-12 md:py-20">
+      <section className="relative min-h-screen flex items-center justify-center pt-12 pb-24 md:pt-20 md:pb-40">
         <BackgroundSlider />
         <SawtoothDivider position="bottom" colorClass="text-canvas-soft" />
         <div className="relative z-10 container-max text-center">
