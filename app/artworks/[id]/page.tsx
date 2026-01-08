@@ -1,4 +1,5 @@
 import { getAllArtworks, getArtworkById } from '@/content/saf2026-artworks';
+import Section from '@/components/ui/Section';
 import { getArticlesByArtist } from '@/content/artist-articles';
 import ExportedImage from 'next-image-export-optimizer';
 import Link from 'next/link';
@@ -202,9 +203,14 @@ export default function ArtworkDetailPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeBreadcrumbJsonLd }}
       />
-      <main className="min-h-screen bg-white pb-20 pt-[calc(4rem+env(safe-area-inset-top,0px))]">
+      <Section
+        variant="white"
+        prevVariant="canvas-soft"
+        padding="none"
+        className="min-h-screen pb-20 pt-[calc(4rem+env(safe-area-inset-top,0px))]"
+      >
         {/* Navigation Bar */}
-        <nav className="border-b sticky top-[calc(4rem+env(safe-area-inset-top,0px))] z-30 bg-white">
+        <nav className="border-b sticky top-[calc(4rem+env(safe-area-inset-top,0px))] z-30 bg-white/80 backdrop-blur-md supports-[backdrop-filter]:bg-white/50">
           <div className="container-max py-4">
             <Link
               href="/artworks"
@@ -369,7 +375,7 @@ export default function ArtworkDetailPage({ params }: Props) {
             </div>
           </div>
         </article>
-      </main>
+      </Section>
     </>
   );
 }
