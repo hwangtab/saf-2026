@@ -58,22 +58,36 @@ export default function Header() {
     [pathname]
   );
 
+  // Store scroll position for scroll lock
+  const scrollPositionRef = useRef(0);
+
   // Define scroll functions first
   const lockScroll = useCallback(() => {
     const body = document.body;
-    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-    body.style.overflowY = 'hidden';
+    const html = document.documentElement;
+    // Store current scroll position
+    scrollPositionRef.current = window.scrollY;
+    // Apply fixed positioning to prevent scroll
+    body.style.position = 'fixed';
+    body.style.top = `-${scrollPositionRef.current}px`;
+    body.style.left = '0';
+    body.style.right = '0';
     body.style.overscrollBehavior = 'contain';
-    if (scrollbarWidth > 0) {
-      body.style.paddingRight = `${scrollbarWidth}px`;
-    }
+    html.style.scrollBehavior = 'auto';
   }, []);
 
   const unlockScroll = useCallback(() => {
     const body = document.body;
-    body.style.overflowY = '';
+    const html = document.documentElement;
+    // Remove fixed positioning
+    body.style.position = '';
+    body.style.top = '';
+    body.style.left = '';
+    body.style.right = '';
     body.style.overscrollBehavior = '';
-    body.style.paddingRight = '';
+    html.style.scrollBehavior = '';
+    // Restore scroll position
+    window.scrollTo(0, scrollPositionRef.current);
   }, []);
 
   // Menu action callbacks

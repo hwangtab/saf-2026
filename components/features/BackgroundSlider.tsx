@@ -91,7 +91,6 @@ export default function BackgroundSlider() {
             initial="initial"
             animate="animate"
             exit="exit"
-            style={{ willChange: 'opacity, transform', transform: 'translateZ(0)' }}
             className="absolute inset-0"
           >
             <ExportedImage

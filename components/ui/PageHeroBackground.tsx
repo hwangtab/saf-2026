@@ -42,7 +42,6 @@ export default function PageHeroBackground() {
           },
         }}
         className="absolute inset-0"
-        style={{ willChange: 'transform' }}
       >
         <ExportedImage src={bgImage} alt="" fill className="object-cover" priority />
       </m.div>
