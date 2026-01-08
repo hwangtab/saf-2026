@@ -13,4 +13,3 @@ export function getArtworkById(id: string): Artwork | undefined {
 export function getAllArtworks(): Artwork[] {
   return artworks;
 }
-1;
