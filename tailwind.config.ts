@@ -83,7 +83,7 @@ const config: Config = {
         safe: 'max(1rem, env(safe-area-inset-bottom))',
       },
       animation: {
-        shimmer: 'shimmer 2s infinite',
+        shimmer: 'shimmer 1.5s ease-in-out infinite',
         'fade-in-up': 'fadeInUp 0.4s ease-out forwards',
       },
       keyframes: {

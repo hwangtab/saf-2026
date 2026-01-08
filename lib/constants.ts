@@ -137,3 +137,24 @@ export const Z_INDEX = {
   MODAL: 130,
   TOAST: 140,
 } as const;
+
+export const HERO_IMAGES = [
+  { id: '1', filename: '1.jpg', alt: '2026 씨앗페 출품작' },
+  { id: '2', filename: '2.jpg', alt: '2026 씨앗페 출품작' },
+  { id: '3', filename: '3.jpg', alt: '2026 씨앗페 출품작' },
+  { id: '4', filename: '4.jpg', alt: '2026 씨앗페 출품작' },
+  { id: '5', filename: '5.jpg', alt: '2026 씨앗페 출품작' },
+  { id: '6', filename: '6.jpg', alt: '2026 씨앗페 출품작' },
+  { id: '7', filename: '7.jpg', alt: '2026 씨앗페 출품작' },
+  { id: '8', filename: '8.jpg', alt: '2026 씨앗페 출품작' },
+  { id: '9', filename: '9.jpg', alt: '2026 씨앗페 출품작' },
+  { id: '10', filename: '10.jpg', alt: '2026 씨앗페 출품작' },
+  { id: '11', filename: '11.jpg', alt: '2026 씨앗페 출품작' },
+  { id: '12', filename: '12.jpg', alt: '2026 씨앗페 출품작' },
+  { id: '13', filename: '13.jpg', alt: '2026 씨앗페 출품작' },
+  { id: '14', filename: '14.jpg', alt: '2026 씨앗페 출품작' },
+  { id: '15', filename: '15.jpg', alt: '2026 씨앗페 출품작' },
+  { id: '16', filename: '16.jpg', alt: '2026 씨앗페 출품작' },
+  { id: '17', filename: '17.jpg', alt: '2026 씨앗페 출품작' },
+  { id: '18', filename: '18.jpg', alt: '2026 씨앗페 출품작' },
+] as const;
