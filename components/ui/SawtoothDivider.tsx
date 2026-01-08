@@ -36,7 +36,17 @@ export default function SawtoothDivider({
       >
         <defs>
           <pattern
-            id={`sawtooth-pattern-${colorClass?.replace(/[^a-z0-9]/gi, '')}`} // Unique ID based on color
+            id={`sawtooth-mobile-${colorClass?.replace(/[^a-z0-9]/gi, '')}`}
+            x="0"
+            y="0"
+            width="24"
+            height="24"
+            patternUnits="userSpaceOnUse"
+          >
+            <polygon points="0,24 12,0 24,24" />
+          </pattern>
+          <pattern
+            id={`sawtooth-desktop-${colorClass?.replace(/[^a-z0-9]/gi, '')}`}
             x="0"
             y="0"
             width="40"
@@ -46,12 +56,24 @@ export default function SawtoothDivider({
             <polygon points="0,40 20,0 40,40" />
           </pattern>
         </defs>
+        <style>
+          {`
+            .sawtooth-rect-${colorClass?.replace(/[^a-z0-9]/gi, '')} {
+              fill: url(#sawtooth-mobile-${colorClass?.replace(/[^a-z0-9]/gi, '')});
+            }
+            @media (min-width: 768px) {
+              .sawtooth-rect-${colorClass?.replace(/[^a-z0-9]/gi, '')} {
+                fill: url(#sawtooth-desktop-${colorClass?.replace(/[^a-z0-9]/gi, '')});
+              }
+            }
+          `}
+        </style>
         <rect
+          className={`sawtooth-rect-${colorClass?.replace(/[^a-z0-9]/gi, '')}`}
           x="0"
           y="0"
           width="100%"
           height="100%"
-          fill={`url(#sawtooth-pattern-${colorClass?.replace(/[^a-z0-9]/gi, '')})`}
         />
       </svg>
     </div>
