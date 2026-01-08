@@ -2,6 +2,25 @@ import { renderHook, act, fireEvent } from '@testing-library/react';
 import { useScrolled } from '@/lib/hooks/useScrolled';
 
 describe('useScrolled', () => {
+  beforeEach(() => {
+    // Mock requestAnimationFrame to run immediately
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb: FrameRequestCallback) => {
+      cb(0);
+      return 0;
+    });
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  const fireScroll = (y: number) => {
+    act(() => {
+      Object.defineProperty(window, 'scrollY', { value: y, writable: true });
+      fireEvent.scroll(window);
+    });
+  };
+
   it('should return false initially when not scrolled', () => {
     const { result } = renderHook(() => useScrolled());
     expect(result.current).toBe(false);
@@ -10,10 +29,7 @@ describe('useScrolled', () => {
   it('should return true when scrolled fast threshold', () => {
     const { result } = renderHook(() => useScrolled(10));
 
-    act(() => {
-      window.scrollY = 20;
-      fireEvent.scroll(window);
-    });
+    fireScroll(20);
 
     expect(result.current).toBe(true);
   });
@@ -21,29 +37,27 @@ describe('useScrolled', () => {
   it('should revert to false when scrolled back up', () => {
     const { result } = renderHook(() => useScrolled(10));
 
-    act(() => {
-      window.scrollY = 20;
-      fireEvent.scroll(window);
-    });
+    fireScroll(20);
     expect(result.current).toBe(true);
 
-    act(() => {
-      window.scrollY = 0;
-      fireEvent.scroll(window);
-    });
+    fireScroll(0);
     expect(result.current).toBe(false);
   });
 
-  it('should force return value when force state is provided', () => {
-    const { result } = renderHook(() => useScrolled(10, true)); // force true
+  it('should freeze state when disabled is true', () => {
+    const { result, rerender } = renderHook(({ disabled }) => useScrolled(10, disabled), {
+      initialProps: { disabled: false },
+    });
 
+    // Scroll down -> true
+    fireScroll(20);
     expect(result.current).toBe(true);
 
-    // Even if we scroll 0, it should stay true
-    act(() => {
-      window.scrollY = 0;
-      fireEvent.scroll(window);
-    });
+    // Disable
+    rerender({ disabled: true });
+
+    // Scroll up -> should stay true because frozen
+    fireScroll(0);
     expect(result.current).toBe(true);
   });
 });

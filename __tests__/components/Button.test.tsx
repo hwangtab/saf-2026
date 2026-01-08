@@ -6,7 +6,9 @@ describe('Button', () => {
     render(<Button>Click Me</Button>);
     const button = screen.getByRole('button', { name: /click me/i });
     expect(button).toBeInTheDocument();
-    expect(button).toHaveClass('bg-gray-100'); // Default secondary variant
+    // Default is primary
+    expect(button).toHaveClass('bg-primary');
+    expect(button).toHaveClass('text-white');
   });
 
   it('renders primary variant correctly', () => {
@@ -19,8 +21,8 @@ describe('Button', () => {
   it('renders accent variant correctly', () => {
     render(<Button variant="accent">Donate</Button>);
     const button = screen.getByRole('button', { name: /donate/i });
-    expect(button).toHaveClass('bg-red-50');
-    expect(button).toHaveClass('text-red-500');
+    expect(button).toHaveClass('bg-accent');
+    expect(button).toHaveClass('text-light');
   });
 
   it('renders as a link when href is provided', () => {
@@ -34,9 +36,11 @@ describe('Button', () => {
     render(<Button loading>Loading</Button>);
     const button = screen.getByRole('button');
     expect(button).toBeDisabled();
-    // Loading spinner should be present (though specific check depends on implementation)
-    // We can check if children are still rendered or hidden/replaced
-    expect(screen.queryByText('Loading')).not.toBeInTheDocument();
+    // Text should still be present
+    expect(screen.getByText('Loading')).toBeInTheDocument();
+    // Spinner should be present (checking by class)
+    const spinner = button.querySelector('.rounded-full');
+    expect(spinner).toBeInTheDocument();
   });
 
   it('renders with custom class names', () => {

@@ -5,7 +5,7 @@ import { Artwork } from '@/lib/types';
 // Mock ExportedImage since it requires complex next/image mocking
 jest.mock('next-image-export-optimizer', () => ({
   __esModule: true,
-  default: (props: any) => <img {...props} alt={props.alt} />,
+  default: ({ fill, ...props }: any) => <img {...props} alt={props.alt} />,
 }));
 
 const mockArtwork: Artwork = {

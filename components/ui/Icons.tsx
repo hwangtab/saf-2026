@@ -1,6 +1,6 @@
-import { memo } from 'react';
+import { memo, type SVGProps } from 'react';
 
-interface IconProps {
+interface IconProps extends SVGProps<SVGSVGElement> {
   className?: string;
   'aria-hidden'?: boolean;
 }
@@ -8,6 +8,7 @@ interface IconProps {
 export const SearchIcon = memo(function SearchIcon({
   className = 'h-5 w-5',
   'aria-hidden': ariaHidden = true,
+  ...props
 }: IconProps) {
   return (
     <svg
@@ -16,6 +17,7 @@ export const SearchIcon = memo(function SearchIcon({
       viewBox="0 0 20 20"
       fill="currentColor"
       aria-hidden={ariaHidden}
+      {...props}
     >
       <path
         fillRule="evenodd"
@@ -29,6 +31,7 @@ export const SearchIcon = memo(function SearchIcon({
 export const CloseIcon = memo(function CloseIcon({
   className = 'h-5 w-5',
   'aria-hidden': ariaHidden = true,
+  ...props
 }: IconProps) {
   return (
     <svg
@@ -37,6 +40,7 @@ export const CloseIcon = memo(function CloseIcon({
       viewBox="0 0 20 20"
       fill="currentColor"
       aria-hidden={ariaHidden}
+      {...props}
     >
       <path
         fillRule="evenodd"
@@ -50,6 +54,7 @@ export const CloseIcon = memo(function CloseIcon({
 export const CheckIcon = memo(function CheckIcon({
   className = 'w-4 h-4',
   'aria-hidden': ariaHidden = true,
+  ...props
 }: IconProps) {
   return (
     <svg
@@ -58,6 +63,7 @@ export const CheckIcon = memo(function CheckIcon({
       stroke="currentColor"
       viewBox="0 0 24 24"
       aria-hidden={ariaHidden}
+      {...props}
     >
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
     </svg>
@@ -67,6 +73,7 @@ export const CheckIcon = memo(function CheckIcon({
 export const XIcon = memo(function XIcon({
   className = 'w-4 h-4',
   'aria-hidden': ariaHidden = true,
+  ...props
 }: IconProps) {
   return (
     <svg
@@ -75,6 +82,7 @@ export const XIcon = memo(function XIcon({
       stroke="currentColor"
       viewBox="0 0 24 24"
       aria-hidden={ariaHidden}
+      {...props}
     >
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
     </svg>
@@ -84,6 +92,7 @@ export const XIcon = memo(function XIcon({
 export const LinkIcon = memo(function LinkIcon({
   className = 'w-4 h-4',
   'aria-hidden': ariaHidden = true,
+  ...props
 }: IconProps) {
   return (
     <svg
@@ -92,6 +101,7 @@ export const LinkIcon = memo(function LinkIcon({
       stroke="currentColor"
       viewBox="0 0 24 24"
       aria-hidden={ariaHidden}
+      {...props}
     >
       <path
         strokeLinecap="round"
@@ -106,6 +116,7 @@ export const LinkIcon = memo(function LinkIcon({
 export const ExternalLinkIcon = memo(function ExternalLinkIcon({
   className = 'w-4 h-4',
   'aria-hidden': ariaHidden = true,
+  ...props
 }: IconProps) {
   return (
     <svg
@@ -114,6 +125,7 @@ export const ExternalLinkIcon = memo(function ExternalLinkIcon({
       stroke="currentColor"
       viewBox="0 0 24 24"
       aria-hidden={ariaHidden}
+      {...props}
     >
       <path
         strokeLinecap="round"
@@ -128,6 +140,7 @@ export const ExternalLinkIcon = memo(function ExternalLinkIcon({
 export const MenuIcon = memo(function MenuIcon({
   className = 'w-6 h-6',
   'aria-hidden': ariaHidden = true,
+  ...props
 }: IconProps) {
   return (
     <svg
@@ -136,6 +149,7 @@ export const MenuIcon = memo(function MenuIcon({
       stroke="currentColor"
       viewBox="0 0 24 24"
       aria-hidden={ariaHidden}
+      {...props}
     >
       <path
         strokeLinecap="round"
@@ -150,6 +164,7 @@ export const MenuIcon = memo(function MenuIcon({
 export const CloseMenuIcon = memo(function CloseMenuIcon({
   className = 'w-6 h-6',
   'aria-hidden': ariaHidden = true,
+  ...props
 }: IconProps) {
   return (
     <svg
@@ -158,6 +173,7 @@ export const CloseMenuIcon = memo(function CloseMenuIcon({
       stroke="currentColor"
       viewBox="0 0 24 24"
       aria-hidden={ariaHidden}
+      {...props}
     >
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
     </svg>
@@ -167,6 +183,7 @@ export const CloseMenuIcon = memo(function CloseMenuIcon({
 export const ChevronDownIcon = memo(function ChevronDownIcon({
   className = 'w-4 h-4',
   'aria-hidden': ariaHidden = true,
+  ...props
 }: IconProps) {
   return (
     <svg
@@ -175,6 +192,7 @@ export const ChevronDownIcon = memo(function ChevronDownIcon({
       stroke="currentColor"
       viewBox="0 0 24 24"
       aria-hidden={ariaHidden}
+      {...props}
     >
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
     </svg>

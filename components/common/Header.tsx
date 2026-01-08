@@ -4,7 +4,7 @@ import { useReducer, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import ExportedImage from 'next-image-export-optimizer';
 import { usePathname } from 'next/navigation';
-import { HERO_PAGES } from '@/lib/constants';
+import { HERO_PAGES, Z_INDEX } from '@/lib/constants';
 import { useScrolled } from '@/lib/hooks/useScrolled';
 import type { NavigationItem } from '@/lib/types';
 import clsx from 'clsx';
@@ -49,11 +49,14 @@ export default function Header() {
   const pathname = usePathname();
   const prevPathname = useRef(pathname);
 
-  const isActive = (href: string) => {
-    if (href === '/' && pathname === '/') return true;
-    if (href !== '/' && pathname.startsWith(href)) return true;
-    return false;
-  };
+  const isActive = useCallback(
+    (href: string) => {
+      if (href === '/' && pathname === '/') return true;
+      if (href !== '/' && pathname.startsWith(href)) return true;
+      return false;
+    },
+    [pathname]
+  );
 
   // Define scroll functions first
   const lockScroll = useCallback(() => {
@@ -127,10 +130,11 @@ export default function Header() {
   return (
     <header
       className={clsx(
-        'fixed top-0 left-0 right-0 z-[100] border-b transition-all duration-300',
+        'fixed top-0 left-0 right-0 border-b transition-all duration-300',
         'pt-[env(safe-area-inset-top,0px)]',
         headerStyle
       )}
+      style={{ zIndex: Z_INDEX.HEADER }}
     >
       <nav className="container-max flex items-center justify-between h-16 transition-all duration-300">
         <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">

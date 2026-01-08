@@ -110,3 +110,12 @@ export const HERO_PAGES = [
 ] as const;
 
 export type HeroPage = (typeof HERO_PAGES)[number];
+
+// Z-Index layers for consistent stacking
+export const Z_INDEX = {
+  HEADER: 100,
+  MOBILE_BACKDROP: 110,
+  MOBILE_MENU: 120,
+  MODAL: 130,
+  TOAST: 140,
+} as const;
