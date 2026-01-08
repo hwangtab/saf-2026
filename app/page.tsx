@@ -146,7 +146,7 @@ export default function Home() {
       <section className="py-16 md:py-24 bg-primary-surface">
         <div className="container-max">
           <SectionTitle className="text-center mb-12">우리의 해결책</SectionTitle>
-          <div className="bg-white rounded-lg shadow-lg p-8 md:p-12 max-w-3xl mx-auto text-balance">
+          <div className="bg-white rounded-lg shadow-lg p-8 md:p-12 max-w-3xl mx-auto text-balance text-center md:text-left">
             <div className="mb-8">
               <h3 className="text-card-title text-charcoal mb-4">📈 95% 상환율의 신뢰</h3>
               <p className="text-charcoal-muted leading-relaxed mb-4">
@@ -168,7 +168,13 @@ export default function Home() {
                 신뢰할 수 있는 금융 시스템만 있으면, 얼마든지 책임감 있게 행동할 수 있다는
                 증거입니다.
               </p>
-              <Button href={EXTERNAL_LINKS.LOAN_INFO} external variant="accent" size="md">
+              <Button
+                href={EXTERNAL_LINKS.LOAN_INFO}
+                external
+                variant="accent"
+                size="md"
+                className="w-full md:w-auto justify-center"
+              >
                 대출 신청하기 →
               </Button>
             </div>
