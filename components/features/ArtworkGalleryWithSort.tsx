@@ -1,6 +1,6 @@
 'use client';
 
-import { memo } from 'react';
+import { memo, useCallback } from 'react';
 import MasonryGallery from './MasonryGallery';
 import SortControls from './SortControls';
 import SearchBar from './SearchBar';
@@ -27,13 +27,16 @@ function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithSortProps) {
   } = useArtworkFilter(artworks);
 
   // Handler for artist button click - toggle filter
-  const handleArtistClick = (artist: string) => {
-    if (selectedArtist === artist) {
-      setSelectedArtist(null); // Deselect if same artist clicked
-    } else {
-      setSelectedArtist(artist);
-    }
-  };
+  const handleArtistClick = useCallback(
+    (artist: string) => {
+      if (selectedArtist === artist) {
+        setSelectedArtist(null); // Deselect if same artist clicked
+      } else {
+        setSelectedArtist(artist);
+      }
+    },
+    [selectedArtist, setSelectedArtist]
+  );
 
   // 작가명순일 때만 작가 네비게이션 표시
   const showArtistNav = sortOption === 'artist-asc' && !searchQuery;
@@ -44,7 +47,7 @@ function ArtworkGalleryWithSort({ artworks }: ArtworkGalleryWithSortProps) {
   return (
     <div>
       {/* Controls & Nav Section (Combined Sticky) */}
-      <div className="md:sticky md:top-[calc(4rem+env(safe-area-inset-top,0px))] z-30 bg-gray-50/95 backdrop-blur-sm border-b border-gray-200/50">
+      <div className="md:sticky md:top-[calc(4rem+env(safe-area-inset-top,0px))] z-30 bg-gray-50 border-b border-gray-200/50">
         <div className="container-max">
           {/* Search & Sort Controls - Single row on desktop, stacked on mobile */}
           <div className="flex flex-col md:flex-row md:items-center gap-3 py-3">

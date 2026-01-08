@@ -129,7 +129,7 @@ export default function Header() {
       return 'bg-white shadow-sm border-gray-200/50';
     }
     if (isArtworkDetail || isScrolled || !hasHero) {
-      return 'bg-white/95 backdrop-blur-md shadow-sm border-gray-200/50';
+      return 'bg-white shadow-sm border-gray-200/50';
     }
     return 'bg-transparent border-transparent';
   };
