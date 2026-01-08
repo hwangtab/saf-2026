@@ -13,7 +13,7 @@ const buttonVariants = cva(
       variant: {
         primary: 'bg-primary hover:bg-primary-strong text-white hover:scale-[1.02] hover:shadow-lg',
         secondary: 'bg-gray-900 hover:bg-gray-800 text-white hover:scale-[1.02] hover:shadow-lg',
-        accent: 'bg-accent hover:bg-accent-strong text-charcoal hover:scale-[1.02] hover:shadow-lg',
+        accent: 'bg-accent hover:bg-accent-strong text-white hover:scale-[1.02] hover:shadow-lg',
         outline:
           'border-2 border-gray-200 hover:border-primary hover:text-primary bg-white text-gray-700 hover:bg-white hover:scale-[1.02] hover:shadow-md',
         white:
