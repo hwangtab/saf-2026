@@ -5,7 +5,8 @@ import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
-import { EXHIBITION, EXTERNAL_LINKS, OG_IMAGE, SITE_URL } from '@/lib/constants';
+import { EXHIBITION, EXTERNAL_LINKS, SITE_URL, OG_IMAGE } from '@/lib/constants';
+import { createPageMetadata } from '@/lib/seo';
 
 // Dynamically import KakaoMap (client-side only, reduces initial bundle)
 const KakaoMap = dynamic(() => import('@/components/features/KakaoMap'), {
@@ -19,35 +20,11 @@ const KakaoMap = dynamic(() => import('@/components/features/KakaoMap'), {
 
 const PAGE_URL = `${SITE_URL}/exhibition`;
 
-export const metadata: Metadata = {
-  title: '전시 안내 | 씨앗페 2026',
-  description:
-    '100여명 예술가들의 작품이 전시되는 인사아트센터. 1월 14일부터 26일까지, 예술과 연대가 만나는 현장에 초대합니다.',
-  alternates: {
-    canonical: PAGE_URL,
-  },
-  openGraph: {
-    title: '전시 안내 | 씨앗페 2026',
-    description:
-      '100여명 예술가들의 작품이 전시되는 인사아트센터. 1월 14일부터 26일까지, 예술과 연대가 만나는 현장에 초대합니다.',
-    url: PAGE_URL,
-    images: [
-      {
-        url: OG_IMAGE.url,
-        width: OG_IMAGE.width,
-        height: OG_IMAGE.height,
-        alt: OG_IMAGE.alt,
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: '전시 안내 | 씨앗페 2026',
-    description:
-      '100여명 예술가들의 작품이 전시되는 인사아트센터. 1월 14일부터 26일까지, 예술과 연대가 만나는 현장에 초대합니다.',
-    images: [OG_IMAGE.url],
-  },
-};
+export const metadata: Metadata = createPageMetadata(
+  '전시 안내',
+  '100여명 예술가들의 작품이 전시되는 인사아트센터. 1월 14일부터 26일까지, 예술과 연대가 만나는 현장에 초대합니다.',
+  '/exhibition'
+);
 
 export default function ExhibitionPage() {
   const canonicalUrl = PAGE_URL;

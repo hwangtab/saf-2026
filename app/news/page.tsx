@@ -5,39 +5,16 @@ import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import { newsArticles } from '@/content/news';
-import { OG_IMAGE, SITE_URL } from '@/lib/constants';
+import { SITE_URL } from '@/lib/constants';
+import { createPageMetadata } from '@/lib/seo';
 
 const PAGE_URL = `${SITE_URL}/news`;
 
-export const metadata: Metadata = {
-  title: '언론 보도 | 씨앗페 2026',
-  description:
-    '언론이 주목한 씨앗페 2026. 주요 뉴스 보도와 칼럼을 통해 캠페인의 사회적 의미를 확인하세요.',
-  alternates: {
-    canonical: PAGE_URL,
-  },
-  openGraph: {
-    title: '언론 보도 | 씨앗페 2026',
-    description:
-      '언론이 주목한 씨앗페 2026. 주요 뉴스 보도와 칼럼을 통해 캠페인의 사회적 의미를 확인하세요.',
-    url: PAGE_URL,
-    images: [
-      {
-        url: OG_IMAGE.url,
-        width: OG_IMAGE.width,
-        height: OG_IMAGE.height,
-        alt: OG_IMAGE.alt,
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: '언론 보도 | 씨앗페 2026',
-    description:
-      '언론이 주목한 씨앗페 2026. 주요 뉴스 보도와 칼럼을 통해 캠페인의 사회적 의미를 확인하세요.',
-    images: [OG_IMAGE.url],
-  },
-};
+export const metadata: Metadata = createPageMetadata(
+  '언론 보도',
+  '언론이 주목한 씨앗페 2026. 주요 뉴스 보도와 칼럼을 통해 캠페인의 사회적 의미를 확인하세요.',
+  '/news'
+);
 
 const canonicalUrl = PAGE_URL;
 

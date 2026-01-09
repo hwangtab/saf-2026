@@ -2,7 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import ExportedImage from 'next-image-export-optimizer';
-import { FacebookShareButton, TwitterShareButton, FacebookIcon, TwitterIcon } from 'react-share';
+import FacebookShareButton from 'react-share/lib/FacebookShareButton';
+import TwitterShareButton from 'react-share/lib/TwitterShareButton';
+import FacebookIcon from 'react-share/lib/FacebookIcon';
+import TwitterIcon from 'react-share/lib/TwitterIcon';
 import clsx from 'clsx';
 
 interface ShareButtonsProps {

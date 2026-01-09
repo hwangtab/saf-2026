@@ -5,39 +5,16 @@ import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import TestimonialCard from '@/components/ui/TestimonialCard';
-import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL } from '@/lib/constants';
+import { EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
+import { createPageMetadata } from '@/lib/seo';
 
 const PAGE_URL = `${SITE_URL}/our-proof`;
 
-export const metadata: Metadata = {
-  title: '우리의 증명 | 씨앗페 2026 상호부조 리포트',
-  description:
-    '상호부조 대출 305건, 6억 900만원 지원. 연체율 0%의 기적. 예술인 금융 안전망이 실제로 작동함을 증명합니다.',
-  alternates: {
-    canonical: PAGE_URL,
-  },
-  openGraph: {
-    title: '우리의 증명 | 씨앗페 2026 상호부조 리포트',
-    description:
-      '상호부조 대출 305건, 6억 900만원 지원. 연체율 0%의 기적. 예술인 금융 안전망이 실제로 작동함을 증명합니다.',
-    url: PAGE_URL,
-    images: [
-      {
-        url: OG_IMAGE.url,
-        width: OG_IMAGE.width,
-        height: OG_IMAGE.height,
-        alt: OG_IMAGE.alt,
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: '우리의 증명 | 씨앗페 2026 상호부조 리포트',
-    description:
-      '상호부조 대출 305건, 6억 900만원 지원. 연체율 0%의 기적. 예술인 금융 안전망이 실제로 작동함을 증명합니다.',
-    images: [OG_IMAGE.url],
-  },
-};
+export const metadata: Metadata = createPageMetadata(
+  '우리의 증명 | 씨앗페 2026 상호부조 리포트',
+  '상호부조 대출 305건, 6억 900만원 지원. 연체율 0%의 기적. 예술인 금융 안전망이 실제로 작동함을 증명합니다.',
+  '/our-proof'
+);
 
 export default function OurProof() {
   return (

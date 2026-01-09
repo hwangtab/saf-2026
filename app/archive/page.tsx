@@ -9,39 +9,16 @@ import VideoEmbed from '@/components/features/VideoEmbed';
 import { saf2023Photos } from '@/content/saf2023-photos';
 import { saf2023Artworks } from '@/content/saf2023-artworks';
 import { videos } from '@/content/videos';
-import { OG_IMAGE, SITE_URL, escapeJsonLdForScript } from '@/lib/constants';
+import { SITE_URL, escapeJsonLdForScript } from '@/lib/constants';
+import { createPageMetadata } from '@/lib/seo';
 
 const PAGE_URL = `${SITE_URL}/archive`;
 
-export const metadata: Metadata = {
-  title: '아카이브 | 씨앗페 2026',
-  description:
-    '2023년부터 이어진 씨앗페의 여정. 캠페인 영상, 현장 스케치, 그리고 우리가 함께 만든 변화의 기록들을 만나보세요.',
-  alternates: {
-    canonical: PAGE_URL,
-  },
-  openGraph: {
-    title: '아카이브 | 씨앗페 2026',
-    description:
-      '2023년부터 이어진 씨앗페의 여정. 캠페인 영상, 현장 스케치, 그리고 우리가 함께 만든 변화의 기록들을 만나보세요.',
-    url: PAGE_URL,
-    images: [
-      {
-        url: OG_IMAGE.url,
-        width: OG_IMAGE.width,
-        height: OG_IMAGE.height,
-        alt: OG_IMAGE.alt,
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: '아카이브 | 씨앗페 2026',
-    description:
-      '2023년부터 이어진 씨앗페의 여정. 캠페인 영상, 현장 스케치, 그리고 우리가 함께 만든 변화의 기록들을 만나보세요.',
-    images: [OG_IMAGE.url],
-  },
-};
+export const metadata: Metadata = createPageMetadata(
+  '아카이브',
+  '2023년부터 이어진 씨앗페의 여정. 캠페인 영상, 현장 스케치, 그리고 우리가 함께 만든 변화의 기록들을 만나보세요.',
+  '/archive'
+);
 
 export default function ArchivePage() {
   const currentUrl = PAGE_URL;

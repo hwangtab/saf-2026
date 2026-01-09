@@ -7,7 +7,8 @@ import ShareButtons from '@/components/common/ShareButtons';
 import CTAButtonGroup from '@/components/common/CTAButtonGroup';
 import { testimonials as testimonialsData } from '@/content/testimonials';
 
-import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL } from '@/lib/constants';
+import { EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
+import { createPageMetadata } from '@/lib/seo';
 
 const PAGE_URL = `${SITE_URL}/our-reality`;
 
@@ -45,35 +46,11 @@ const CreativeImpactChart = dynamic(
   { ssr: false, loading: () => <div className="h-96 bg-gray-100 rounded animate-pulse" /> }
 );
 
-export const metadata: Metadata = {
-  title: '우리의 현실 | 씨앗페 2026: 예술인 금융 데이터',
-  description:
-    '제1금융권 배제율 84.9%. 예술인들이 직면한 금융 재난의 실태와 구조적 원인을 데이터로 증명합니다.',
-  alternates: {
-    canonical: PAGE_URL,
-  },
-  openGraph: {
-    title: '우리의 현실 | 씨앗페 2026: 예술인 금융 데이터',
-    description:
-      '제1금융권 배제율 84.9%. 예술인들이 직면한 금융 재난의 실태와 구조적 원인을 데이터로 증명합니다.',
-    url: PAGE_URL,
-    images: [
-      {
-        url: OG_IMAGE.url,
-        width: OG_IMAGE.width,
-        height: OG_IMAGE.height,
-        alt: OG_IMAGE.alt,
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: '우리의 현실 | 씨앗페 2026: 예술인 금융 데이터',
-    description:
-      '제1금융권 배제율 84.9%. 예술인들이 직면한 금융 재난의 실태와 구조적 원인을 데이터로 증명합니다.',
-    images: [OG_IMAGE.url],
-  },
-};
+export const metadata: Metadata = createPageMetadata(
+  '우리의 현실',
+  '제1금융권 배제율 84.9%. 예술인들이 직면한 금융 재난의 실태와 구조적 원인을 데이터로 증명합니다.',
+  '/our-reality'
+);
 
 export default function OurReality() {
   return (

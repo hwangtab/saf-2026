@@ -4,8 +4,9 @@ import Section from '@/components/ui/Section';
 import { getAllArtworks } from '@/content/saf2026-artworks';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
-import { OG_IMAGE, SITE_URL } from '@/lib/constants';
+import { SITE_URL } from '@/lib/constants';
 import { Metadata } from 'next';
+import { createPageMetadata } from '@/lib/seo';
 
 const ArtworkGalleryWithSort = dynamic(
   () => import('@/components/features/ArtworkGalleryWithSort'),
@@ -22,34 +23,11 @@ const ArtworkGalleryWithSort = dynamic(
 
 const PAGE_URL = `${SITE_URL}/artworks`;
 
-export const metadata: Metadata = {
-  title: '출품작 | 씨앗페 2026',
-  description:
-    '씨앗페 2026에 출품된 예술가들의 작품을 만나보세요. 후원과 작품 구매로 예술인의 금융 위기 해결에 동참할 수 있습니다.',
-  alternates: {
-    canonical: PAGE_URL,
-  },
-  openGraph: {
-    title: '출품작 | 씨앗페 2026',
-    description:
-      '예술가들의 시선으로 바라본 우리의 현실과 희망. 다양한 작가들의 예술 작품을 만나보세요.',
-    url: PAGE_URL,
-    images: [
-      {
-        url: OG_IMAGE.url,
-        width: OG_IMAGE.width,
-        height: OG_IMAGE.height,
-        alt: OG_IMAGE.alt,
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: '출품작 | 씨앗페 2026',
-    description: '씨앗페 2026에 출품된 예술가들의 작품을 만나보세요.',
-    images: [OG_IMAGE.url],
-  },
-};
+export const metadata: Metadata = createPageMetadata(
+  '출품작',
+  '씨앗페 2026에 출품된 예술가들의 작품을 만나보세요. 후원과 작품 구매로 예술인의 금융 위기 해결에 동참할 수 있습니다.',
+  '/artworks'
+);
 
 export default function ArtworksPage() {
   const artworks = getAllArtworks();
