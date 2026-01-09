@@ -8,6 +8,7 @@ import CTAButtonGroup from '@/components/common/CTAButtonGroup';
 import { testimonials as testimonialsData } from '@/content/testimonials';
 
 import { EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
+import HighlightedText from '@/components/ui/HighlightedText';
 import { createPageMetadata } from '@/lib/seo';
 
 const PAGE_URL = `${SITE_URL}/our-reality`;
@@ -82,7 +83,7 @@ export default function OurReality() {
                     className="bg-white p-6 rounded-lg shadow-lg border-l-8 border-primary flex flex-col justify-between"
                   >
                     <p className="text-xl md:text-2xl text-charcoal mb-4 italic leading-relaxed before:content-['“'] after:content-['”']">
-                      {item.quote}
+                      <HighlightedText text={item.quote} />
                     </p>
                     <div>
                       <p className="font-semibold text-primary">{item.author}</p>
