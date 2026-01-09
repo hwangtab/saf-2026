@@ -1,7 +1,4 @@
-'use client';
-
 import { Artwork } from '@/types';
-import { memo } from 'react';
 import ArtworkCard from '@/components/ui/ArtworkCard';
 
 interface MasonryGalleryProps {
@@ -9,7 +6,7 @@ interface MasonryGalleryProps {
   forceGrid?: boolean;
 }
 
-function MasonryGallery({ artworks, forceGrid }: MasonryGalleryProps) {
+export default function MasonryGallery({ artworks, forceGrid }: MasonryGalleryProps) {
   const useCenteredGrid = forceGrid || artworks.length <= 3;
 
   return (
@@ -32,5 +29,3 @@ function MasonryGallery({ artworks, forceGrid }: MasonryGalleryProps) {
     </div>
   );
 }
-
-export default memo(MasonryGallery);

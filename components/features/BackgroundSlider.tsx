@@ -61,6 +61,7 @@ export default function BackgroundSlider() {
           priority={false}
           loading="eager"
           className="object-cover"
+          sizes="100vw"
         />
       </div>
       <div className="absolute inset-0 -z-10 overflow-hidden bg-gray-900">
@@ -107,6 +108,7 @@ export default function BackgroundSlider() {
               priority
               placeholder="blur"
               blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAMI/8QAIhAAAgEDBAMBAAAAAAAAAAAAAQIDAAQREiEiMQUGE0H/xAAVAQEBAAAAAAAAAAAAAAAAAAAFBv/EABsRAAICAwEAAAAAAAAAAAAAAAECAAMEESFB/9oADAMBAAIRAxEAPwCPtXtdjcXEt3FdTR+0mNVxGxRo8DBIYEEbjGR+VN4HxvkoHYyyu627RoVDMVVgRsAN/wBpSl6GK7ZzYpkB5PZ/J//Z"
+              sizes="100vw"
             />
           </m.div>
         </AnimatePresence>

@@ -2,6 +2,7 @@ import ExportedImage from 'next-image-export-optimizer';
 import { SOCIAL_LINKS, CONTACT, EXTERNAL_LINKS, EXHIBITION } from '@/lib/constants';
 import FooterSliderWrapper from '@/components/common/FooterSliderWrapper';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
+import { UI_STRINGS } from '@/lib/ui-strings';
 
 export default function Footer() {
   return (
@@ -18,7 +19,7 @@ export default function Footer() {
                 <div className="flex items-start gap-3 mb-6">
                   <ExportedImage
                     src="/images/logo/320pxX90px_feet.webp"
-                    alt="씨앗페 로고"
+                    alt={UI_STRINGS.A11Y.LOGO_ALT}
                     width={200}
                     height={56}
                     className="h-12 w-auto flex-shrink-0"
@@ -45,7 +46,7 @@ export default function Footer() {
 
               {/* Quick Links */}
               <div>
-                <h3 className="font-sans font-bold text-lg mb-4">링크</h3>
+                <h3 className="font-sans font-bold text-lg mb-4">{UI_STRINGS.FOOTER.LINKS}</h3>
                 <ul className="space-y-2 text-sm">
                   <li>
                     <a
@@ -54,7 +55,7 @@ export default function Footer() {
                       rel="noopener noreferrer"
                       className="text-gray-300 hover:text-primary transition-colors"
                     >
-                      후원하기
+                      {UI_STRINGS.NAV.DONATE}
                     </a>
                   </li>
                   <li>
@@ -64,7 +65,7 @@ export default function Footer() {
                       rel="noopener noreferrer"
                       className="text-gray-300 hover:text-primary transition-colors"
                     >
-                      온라인 갤러리
+                      {UI_STRINGS.FOOTER.ONLINE_GALLERY}
                     </a>
                   </li>
                   <li>
@@ -74,7 +75,7 @@ export default function Footer() {
                       rel="noopener noreferrer"
                       className="text-gray-300 hover:text-primary transition-colors"
                     >
-                      상호부조 대출
+                      {UI_STRINGS.FOOTER.LOAN_INFO}
                     </a>
                   </li>
                   <li>
@@ -84,7 +85,7 @@ export default function Footer() {
                       rel="noopener noreferrer"
                       className="text-gray-300 hover:text-primary transition-colors"
                     >
-                      협동조합 홈페이지
+                      {UI_STRINGS.FOOTER.COOP_HOME}
                     </a>
                   </li>
                 </ul>
@@ -92,7 +93,7 @@ export default function Footer() {
 
               {/* Social Links & Contact */}
               <div>
-                <h3 className="font-sans font-bold text-lg mb-4">팔로우</h3>
+                <h3 className="font-sans font-bold text-lg mb-4">{UI_STRINGS.FOOTER.FOLLOW}</h3>
                 <div className="flex gap-4 mb-6">
                   <a
                     href={SOCIAL_LINKS.INSTAGRAM}
@@ -129,7 +130,7 @@ export default function Footer() {
                   </a>
                 </div>
 
-                <h3 className="font-sans font-bold text-lg mb-4">문의</h3>
+                <h3 className="font-sans font-bold text-lg mb-4">{UI_STRINGS.FOOTER.CONTACT}</h3>
                 <div className="text-sm text-gray-400 space-y-1">
                   <p>{CONTACT.ORGANIZATION_NAME}</p>
                   <p>

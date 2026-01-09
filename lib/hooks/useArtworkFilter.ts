@@ -222,17 +222,28 @@ export function useArtworkFilter(artworks: Artwork[], initialArtist?: string) {
     return artists;
   }, [artworks]);
 
-  return {
-    sortOption,
-    setSortOption,
-    searchQuery,
-    setSearchQuery,
-    statusFilter,
-    setStatusFilter,
-    selectedArtist,
-    setSelectedArtist,
-    filteredArtworks,
-    sortedArtworks,
-    uniqueArtists,
-  };
+  return useMemo(
+    () => ({
+      sortOption,
+      setSortOption,
+      searchQuery,
+      setSearchQuery,
+      statusFilter,
+      setStatusFilter,
+      selectedArtist,
+      setSelectedArtist,
+      filteredArtworks,
+      sortedArtworks,
+      uniqueArtists,
+    }),
+    [
+      sortOption,
+      searchQuery,
+      statusFilter,
+      selectedArtist,
+      filteredArtworks,
+      sortedArtworks,
+      uniqueArtists,
+    ]
+  );
 }

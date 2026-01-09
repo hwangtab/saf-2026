@@ -61,7 +61,7 @@ export default function PageHeroBackground({ customImage }: PageHeroBackgroundPr
         }}
         className="absolute inset-0"
       >
-        <ExportedImage src={bgImage} alt="" fill className="object-cover" priority />
+        <ExportedImage src={bgImage} alt="" fill className="object-cover" priority sizes="100vw" />
       </m.div>
     </div>
   );

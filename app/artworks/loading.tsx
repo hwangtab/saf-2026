@@ -18,7 +18,7 @@ export default function ArtworksLoading() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(9)].map((_, i) => (
+            {[...Array(6)].map((_, i) => (
               <div key={i} className="bg-white rounded-lg shadow-sm overflow-hidden h-full">
                 <div className="aspect-[4/5] shimmer-loading" />
                 <div className="p-4 space-y-3">

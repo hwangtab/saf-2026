@@ -19,11 +19,35 @@ export const UI_STRINGS = {
     RESULT_PREFIX: '검색 결과:',
     RESULT_SUFFIX: '개',
   },
+  NAV: {
+    TOGGLE_MENU: '메뉴 토글',
+    DONATE: '후원하기',
+    BUY_ART: '작품 구매하기',
+  },
+  FOOTER: {
+    LINKS: '링크',
+    FOLLOW: '팔로우',
+    CONTACT: '문의',
+    ONLINE_GALLERY: '온라인 갤러리',
+    LOAN_INFO: '상호부조 대출',
+    COOP_HOME: '협동조합 홈페이지',
+  },
+  CTA: {
+    DONATE_NOW: '❤️ 지금 후원하기',
+    BUY_ART: '🎨 작품 구매하기',
+  },
+  ERROR: {
+    GO_HOME: '홈으로 돌아가기',
+    RETRY: '다시 시도하기',
+  },
   A11Y: {
     SORT_OPTIONS: '정렬 옵션 선택',
     FILTER_STATUS: '판매 상태 필터',
     SEARCH_LABEL: '작품 검색',
     CLEAR_SEARCH: '검색어 지우기',
     VIEW_ARTIST: '작가 작품 보기',
+    LOGO_ALT: '씨앗페 로고',
+    HOME_LINK: '씨앗페 2026 홈',
+    SHARE_KAKAO: '카카오톡으로 공유하기',
   },
 } as const;

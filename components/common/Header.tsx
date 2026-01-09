@@ -12,6 +12,7 @@ import clsx from 'clsx';
 import DesktopNav from './Header/DesktopNav';
 import MobileMenu from './Header/MobileMenu';
 import { MenuIcon, CloseMenuIcon } from '@/components/ui/Icons';
+import { UI_STRINGS } from '@/lib/ui-strings';
 
 const navigation: NavigationItem[] = [
   { name: '씨앗페 2026', href: '/' },
@@ -163,13 +164,13 @@ export default function Header() {
         <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
           <ExportedImage
             src={logoSrc}
-            alt="씨앗페 로고"
+            alt={UI_STRINGS.A11Y.LOGO_ALT}
             width={160}
             height={45}
             className="h-9 w-auto object-contain transition-all duration-300"
             priority
           />
-          <span className="sr-only">씨앗페 2026 홈</span>
+          <span className="sr-only">{UI_STRINGS.A11Y.HOME_LINK}</span>
         </Link>
 
         <DesktopNav navigation={navigation} isActive={isActive} textColor={textColor} />
@@ -182,7 +183,7 @@ export default function Header() {
             textColor,
             'hover:text-primary'
           )}
-          aria-label="메뉴 토글"
+          aria-label={UI_STRINGS.NAV.TOGGLE_MENU}
           aria-expanded={isMenuOpen}
         >
           {isMenuOpen ? <CloseMenuIcon /> : <MenuIcon />}

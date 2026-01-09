@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
+import { UI_STRINGS } from '@/lib/ui-strings';
 
 interface ErrorViewProps {
   icon: string;
@@ -17,7 +18,7 @@ export default function ErrorView({
   icon,
   title,
   message,
-  backLink = { href: '/', label: '홈으로 돌아가기' },
+  backLink = { href: '/', label: UI_STRINGS.ERROR.GO_HOME },
   error,
   reset,
 }: ErrorViewProps) {
@@ -35,7 +36,7 @@ export default function ErrorView({
         <p className="text-charcoal-muted mb-8 leading-relaxed text-balance">{message}</p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button onClick={reset} variant="primary">
-            다시 시도하기
+            {UI_STRINGS.ERROR.RETRY}
           </Button>
           <Link href={backLink.href}>
             <Button variant="outline">{backLink.label}</Button>

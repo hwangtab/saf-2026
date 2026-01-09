@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 import { EXTERNAL_LINKS } from '@/lib/constants';
+import { UI_STRINGS } from '@/lib/ui-strings';
 
 interface CTAButtonGroupProps {
   donateText?: string;
@@ -25,8 +26,8 @@ interface CTAButtonGroupProps {
  * ```
  */
 export default function CTAButtonGroup({
-  donateText = '❤️ 지금 후원하기',
-  purchaseText = '🎨 작품 구매하기',
+  donateText = UI_STRINGS.CTA.DONATE_NOW,
+  purchaseText = UI_STRINGS.CTA.BUY_ART,
   donateHref = EXTERNAL_LINKS.DONATE,
   purchaseHref = '/artworks',
   variant = 'default',
