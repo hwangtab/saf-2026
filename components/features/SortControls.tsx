@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { SortOption } from '@/types';
 import { ChevronDownIcon, CheckMarkIcon } from '@/components/ui/Icons';
+import { UI_STRINGS } from '@/lib/ui-strings';
 
 interface SortControlsProps {
   value: SortOption;
@@ -10,10 +11,10 @@ interface SortControlsProps {
 }
 
 const sortOptions: { value: SortOption; label: string; icon: string }[] = [
-  { value: 'artist-asc', label: '작가명순', icon: '👤' },
-  { value: 'title-asc', label: '작품명순', icon: '🖼️' },
-  { value: 'price-desc', label: '가격 높은순', icon: '💰↓' },
-  { value: 'price-asc', label: '가격 낮은순', icon: '💰↑' },
+  { value: 'artist-asc', label: UI_STRINGS.SORT.ARTIST_ASC, icon: '👤' },
+  { value: 'title-asc', label: UI_STRINGS.SORT.TITLE_ASC, icon: '🖼️' },
+  { value: 'price-desc', label: UI_STRINGS.SORT.PRICE_DESC, icon: '💰↓' },
+  { value: 'price-asc', label: UI_STRINGS.SORT.PRICE_ASC, icon: '💰↑' },
 ];
 
 export default function SortControls({ value, onChange }: SortControlsProps) {
@@ -91,7 +92,7 @@ export default function SortControls({ value, onChange }: SortControlsProps) {
         className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-primary hover:bg-primary/5 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50"
         aria-haspopup="listbox"
         aria-expanded={isOpen}
-        aria-label="정렬 옵션 선택"
+        aria-label={UI_STRINGS.A11Y.SORT_OPTIONS}
       >
         <span className="text-xs sm:text-sm font-medium text-charcoal whitespace-nowrap">
           {currentOption?.icon} {currentOption?.label}

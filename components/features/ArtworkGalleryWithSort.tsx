@@ -7,6 +7,7 @@ import SortControls from './SortControls';
 import SearchBar from './SearchBar';
 import { Artwork } from '@/types';
 import { useArtworkFilter } from '@/lib/hooks/useArtworkFilter';
+import { UI_STRINGS } from '@/lib/ui-strings';
 
 interface ArtworkGalleryWithSortProps {
   artworks: Artwork[];
@@ -59,7 +60,7 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
               <SearchBar
                 value={searchQuery}
                 onChange={setSearchQuery}
-                placeholder="작가명, 작품명으로 검색해보세요"
+                placeholder={UI_STRINGS.SEARCH.PLACEHOLDER_ARTWORKS}
               />
             </div>
 
@@ -67,7 +68,7 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
               {/* Status Filter Buttons */}
               <div
                 role="radiogroup"
-                aria-label="판매 상태 필터"
+                aria-label={UI_STRINGS.A11Y.FILTER_STATUS}
                 className="flex bg-white rounded-lg p-1 border border-gray-200 shadow-sm"
               >
                 <button
@@ -80,7 +81,7 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
                       : 'text-gray-600 hover:bg-gray-100'
                   }`}
                 >
-                  전체
+                  {UI_STRINGS.FILTERS.ALL}
                 </button>
                 <button
                   role="radio"
@@ -92,7 +93,7 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
                       : 'text-gray-600 hover:bg-gray-100'
                   }`}
                 >
-                  판매중
+                  {UI_STRINGS.FILTERS.SELLING}
                 </button>
                 <button
                   role="radio"
@@ -104,7 +105,7 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
                       : 'text-gray-600 hover:bg-gray-100'
                   }`}
                 >
-                  판매완료
+                  {UI_STRINGS.FILTERS.SOLD}
                 </button>
               </div>
 
@@ -120,7 +121,7 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
                   <button
                     key={artist}
                     onClick={() => handleArtistClick(artist)}
-                    aria-label={`${artist} 작가 작품 보기`}
+                    aria-label={`${artist} ${UI_STRINGS.A11Y.VIEW_ARTIST}`}
                     aria-pressed={selectedArtist === artist}
                     className={`px-2 py-1.5 text-xs sm:text-sm font-medium border rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 text-center truncate ${
                       selectedArtist === artist
@@ -141,8 +142,9 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
       {searchQuery && (
         <div className="mb-6 container-max mt-6" role="status" aria-live="polite">
           <p className="text-gray-500">
-            <span className="font-semibold text-primary">&apos;{searchQuery}&apos;</span> 검색 결과:{' '}
-            {filteredArtworks.length}개
+            <span className="font-semibold text-primary">&apos;{searchQuery}&apos;</span>{' '}
+            {UI_STRINGS.SEARCH.RESULT_PREFIX} {filteredArtworks.length}
+            {UI_STRINGS.SEARCH.RESULT_SUFFIX}
           </p>
         </div>
       )}
@@ -166,13 +168,15 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
               />
             </svg>
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">검색 결과가 없습니다</h3>
-          <p className="text-gray-500 mb-6">다른 키워드로 검색해보거나, 모든 작품을 둘러보세요.</p>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            {UI_STRINGS.SEARCH.NO_RESULTS_TITLE}
+          </h3>
+          <p className="text-gray-500 mb-6">{UI_STRINGS.SEARCH.NO_RESULTS_DESC}</p>
           <button
             onClick={() => setSearchQuery('')}
             className="px-6 py-2 bg-charcoal text-white rounded-full hover:bg-black transition-colors"
           >
-            전체 목록 보기
+            {UI_STRINGS.SEARCH.RESET_BUTTON}
           </button>
         </div>
       ) : (
