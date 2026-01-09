@@ -6,10 +6,11 @@ import BackToListButton from '@/components/features/BackToListButton';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import dynamic from 'next/dynamic';
-import { SITE_URL, createBreadcrumbSchema, BREADCRUMB_HOME, BREADCRUMBS } from '@/lib/constants';
+import { SITE_URL } from '@/lib/constants';
 import Button from '@/components/ui/Button';
 import RelatedArticles from '@/components/features/RelatedArticles';
 import ExpandableHistory from '@/components/features/ExpandableHistory';
+import { generateArtworkMetadata, generateArtworkJsonLd } from '@/lib/seo-utils';
 
 // Dynamic import for client-side ShareButtons
 const ShareButtons = dynamic(() => import('@/components/common/ShareButtons'), { ssr: false });
@@ -30,69 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  const pageUrl = `${SITE_URL}/artworks/${artwork.id}`;
-  const imageUrl = `${SITE_URL}/images/artworks/${artwork.image}`;
-
-  // 1. Create a rich, fact-filled description for AI
-  const summary = [
-    `작가: ${artwork.artist}`,
-    `작품명: ${artwork.title}`,
-    artwork.year ? `제작년도: ${artwork.year}` : '',
-    artwork.material ? `재료: ${artwork.material}` : '',
-    artwork.size ? `크기: ${artwork.size}` : '',
-  ]
-    .filter(Boolean)
-    .join(', ');
-
-  const profileSnippet = artwork.profile ? artwork.profile.substring(0, 150) : '';
-  const descSnippet = artwork.description ? artwork.description.substring(0, 150) : '';
-
-  // Priority: Custom Description > Profile > Summary
-  const seoDescription =
-    `${summary}. ` +
-    (descSnippet ? `작품 설명: ${descSnippet}... ` : '') +
-    (profileSnippet ? `작가 소개: ${profileSnippet}...` : '');
-
-  return {
-    title: `${artwork.title} - ${artwork.artist} | 씨앗페 2026`,
-    description: seoDescription.substring(0, 300), // Max for SEO
-    keywords: [
-      artwork.artist,
-      artwork.title,
-      '씨앗페',
-      '씨앗페 2026',
-      'SAF 2026',
-      '예술인 연대',
-      '미술품 구매',
-      '상호부조',
-      artwork.material?.split(' ')?.[0] ?? '미술품', // Main material e.g., 'Oil', 'Acrylic'
-    ].filter(Boolean),
-    alternates: {
-      canonical: pageUrl,
-    },
-    openGraph: {
-      title: `${artwork.title} - ${artwork.artist}`,
-      description: seoDescription.substring(0, 200),
-      url: pageUrl,
-      siteName: '씨앗페 2026',
-      images: [
-        {
-          url: imageUrl,
-          width: 1200,
-          height: 630,
-          alt: `${artwork.title} by ${artwork.artist}`,
-        },
-      ],
-      type: 'website',
-      locale: 'ko_KR',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: `${artwork.title} - ${artwork.artist}`,
-      description: seoDescription.substring(0, 200),
-      images: [imageUrl],
-    },
-  };
+  return generateArtworkMetadata(artwork);
 }
 
 // Generate static params for all artworks at build time
@@ -114,86 +53,18 @@ export default function ArtworkDetailPage({ params }: Props) {
   const numericPrice = artwork.price.replace(/[₩,원\s]/g, '');
   const isInquiry = artwork.price === '문의' || isNaN(Number(numericPrice));
 
-  // Create rich description for schema
-  const schemaDescription =
-    artwork.description || artwork.profile || `${artwork.artist}의 작품 "${artwork.title}"`;
-
   // Get related articles for this artist
   const relatedArticles = getArticlesByArtist(artwork.artist);
 
-  // Enhanced VisualArtwork + Product Schema for AI & Search Engines
-  const productSchema = {
-    '@context': 'https://schema.org',
-    '@type': ['VisualArtwork', 'Product'],
-    name: artwork.title,
-    image: {
-      '@type': 'ImageObject',
-      url: `${SITE_URL}/images/artworks/${artwork.image}`,
-      name: `${artwork.title} - ${artwork.artist}`,
-    },
-    description: schemaDescription.substring(0, 500),
-    sku: `SAF2026-${artwork.id}`,
-    creator: {
-      '@type': 'Person',
-      name: artwork.artist,
-      description: artwork.profile || undefined,
-    },
-    artMedium: artwork.material || undefined,
-    artworkSurface: artwork.material || undefined,
-    dateCreated: artwork.year || undefined,
-    width: artwork.size ? { '@type': 'Distance', name: artwork.size } : undefined,
-    height: artwork.size ? { '@type': 'Distance', name: artwork.size } : undefined,
-    offers: {
-      '@type': 'Offer',
-      url: `${SITE_URL}/artworks/${artwork.id}`,
-      priceCurrency: 'KRW',
-      price: isInquiry ? undefined : numericPrice,
-      priceValidUntil: '2026-12-31',
-      availability: artwork.sold ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock',
-      seller: {
-        '@type': 'Organization',
-        name: '한국스마트협동조합',
-        url: 'https://www.saf2026.com',
-      },
-    },
-    additionalProperty: [
-      artwork.material && {
-        '@type': 'PropertyValue',
-        name: '재료',
-        value: artwork.material,
-      },
-      artwork.size && {
-        '@type': 'PropertyValue',
-        name: '크기',
-        value: artwork.size,
-      },
-      artwork.year && {
-        '@type': 'PropertyValue',
-        name: '제작년도',
-        value: artwork.year,
-      },
-      artwork.edition && {
-        '@type': 'PropertyValue',
-        name: '에디션',
-        value: artwork.edition,
-      },
-      artwork.history && {
-        '@type': 'PropertyValue',
-        name: '작가이력',
-        value: artwork.history?.substring(0, 200),
-      },
-    ].filter(Boolean),
-  };
+  // Generate JSON-LD schemas
+  const { productSchema, breadcrumbSchema } = generateArtworkJsonLd(
+    artwork,
+    numericPrice,
+    isInquiry
+  );
 
   // Safely stringify JSON-LD to prevent XSS (escape < as \u003c)
   const safeJsonLd = JSON.stringify(productSchema).replace(/</g, '\\u003c');
-
-  // BreadcrumbList Schema
-  const breadcrumbSchema = createBreadcrumbSchema([
-    BREADCRUMB_HOME,
-    BREADCRUMBS['/artworks'],
-    { name: artwork.title, url: `${SITE_URL}/artworks/${artwork.id}` },
-  ]);
   const safeBreadcrumbJsonLd = JSON.stringify(breadcrumbSchema).replace(/</g, '\\u003c');
 
   return (

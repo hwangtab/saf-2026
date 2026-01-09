@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import ExportedImage from 'next-image-export-optimizer';
 import FacebookShareButton from 'react-share/lib/FacebookShareButton';
 import TwitterShareButton from 'react-share/lib/TwitterShareButton';
 import FacebookIcon from 'react-share/lib/FacebookIcon';
 import TwitterIcon from 'react-share/lib/TwitterIcon';
 import clsx from 'clsx';
+import { useKakaoSDK } from '@/lib/hooks/useKakaoSDK';
 
 interface ShareButtonsProps {
   url: string;
@@ -18,48 +19,7 @@ type CopyStatus = 'idle' | 'copied' | 'error';
 
 export default function ShareButtons({ url, title, description }: ShareButtonsProps) {
   const [copyStatus, setCopyStatus] = useState<CopyStatus>('idle');
-  const [kakaoReady, setKakaoReady] = useState(false);
-
-  useEffect(() => {
-    const KAKAO_JS_KEY = 'e1418881150fd27ee7ce629f1dba92bf'; // Public key, domain-restricted
-
-    const initKakao = () => {
-      if (window.Kakao && !window.Kakao.isInitialized()) {
-        window.Kakao.init(KAKAO_JS_KEY);
-        setKakaoReady(true);
-        return true;
-      } else if (window.Kakao?.isInitialized()) {
-        setKakaoReady(true);
-        return true;
-      }
-      return false;
-    };
-
-    // Check immediately
-    if (typeof window !== 'undefined' && window.Kakao) {
-      initKakao();
-      return undefined;
-    }
-
-    // Poll for Kakao SDK availability
-    const timer = setInterval(() => {
-      if (typeof window !== 'undefined' && window.Kakao) {
-        if (initKakao()) {
-          clearInterval(timer);
-        }
-      }
-    }, 500);
-
-    // Stop polling after 10 seconds
-    const timeout = setTimeout(() => {
-      clearInterval(timer);
-    }, 10000);
-
-    return () => {
-      clearInterval(timer);
-      clearTimeout(timeout);
-    };
-  }, []);
+  const { isReady: kakaoReady } = useKakaoSDK();
 
   const handleCopyLink = async () => {
     try {
@@ -74,7 +34,7 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
   };
 
   const handleKakaoShare = () => {
-    if (typeof window !== 'undefined' && window.Kakao) {
+    if (kakaoReady && window.Kakao) {
       window.Kakao.Link.sendDefault({
         objectType: 'feed',
         content: {

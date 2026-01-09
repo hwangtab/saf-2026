@@ -1,11 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Map, MapMarker, useKakaoLoader } from 'react-kakao-maps-sdk';
+import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import { EXHIBITION } from '@/lib/constants';
-
-const RAW_KAKAO_APP_KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY?.trim() ?? '';
-const FALLBACK_APP_KEY = 'invalid-kakao-app-key';
+import { useKakaoSDK } from '@/lib/hooks/useKakaoSDK';
 
 interface KakaoMapProps {
   className?: string;
@@ -13,20 +11,15 @@ interface KakaoMapProps {
 
 export default function KakaoMap(props?: KakaoMapProps): React.JSX.Element {
   const { className } = props ?? {};
-  const hasAppKey = RAW_KAKAO_APP_KEY.length > 0;
-  const appKey = hasAppKey ? RAW_KAKAO_APP_KEY : FALLBACK_APP_KEY;
-  const [loading, error] = useKakaoLoader({
-    appkey: appKey,
-    libraries: ['services'],
-  });
+  const { loading, error, hasAppKey, isReady } = useKakaoSDK();
+
   const [position, setPosition] = useState<{ lat: number; lng: number }>({
     lat: EXHIBITION.LAT,
     lng: EXHIBITION.LNG,
   });
 
   useEffect(() => {
-    if (!hasAppKey || loading) return;
-    if (typeof window === 'undefined') return;
+    if (!isReady) return;
 
     let isMounted = true;
 
@@ -50,6 +43,7 @@ export default function KakaoMap(props?: KakaoMapProps): React.JSX.Element {
       );
     };
 
+    // Small delay to ensure SDK is fully parsed
     const timeoutId = setTimeout(() => {
       if (isMounted) initGeocoder();
     }, 100);
@@ -58,7 +52,7 @@ export default function KakaoMap(props?: KakaoMapProps): React.JSX.Element {
       isMounted = false;
       clearTimeout(timeoutId);
     };
-  }, [hasAppKey, loading]);
+  }, [isReady]);
 
   if (!hasAppKey) {
     return (

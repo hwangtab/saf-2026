@@ -14,36 +14,32 @@ import { createPageMetadata } from '@/lib/seo';
 const PAGE_URL = `${SITE_URL}/our-reality`;
 
 const FirstBankAccessChart = dynamic(
-  () => import('@/components/features/StatisticsCharts').then((mod) => mod.FirstBankAccessChart),
+  () => import('@/components/features/charts/FirstBankAccessChart'),
   { ssr: false, loading: () => <div className="h-96 bg-gray-100 rounded animate-pulse" /> }
 );
 
 const RejectionReasonsChart = dynamic(
-  () => import('@/components/features/StatisticsCharts').then((mod) => mod.RejectionReasonsChart),
+  () => import('@/components/features/charts/RejectionReasonsChart'),
   { ssr: false, loading: () => <div className="h-96 bg-gray-100 rounded animate-pulse" /> }
 );
 
 const HighInterestProductChart = dynamic(
-  () =>
-    import('@/components/features/StatisticsCharts').then((mod) => mod.HighInterestProductChart),
+  () => import('@/components/features/charts/HighInterestProductChart'),
   { ssr: false, loading: () => <div className="h-96 bg-gray-100 rounded animate-pulse" /> }
 );
 
 const InterestRateDistributionChart = dynamic(
-  () =>
-    import('@/components/features/StatisticsCharts').then(
-      (mod) => mod.InterestRateDistributionChart
-    ),
+  () => import('@/components/features/charts/InterestRateDistributionChart'),
   { ssr: false, loading: () => <div className="h-96 bg-gray-100 rounded animate-pulse" /> }
 );
 
 const DebtCollectionChart = dynamic(
-  () => import('@/components/features/StatisticsCharts').then((mod) => mod.DebtCollectionChart),
+  () => import('@/components/features/charts/DebtCollectionChart'),
   { ssr: false, loading: () => <div className="h-96 bg-gray-100 rounded animate-pulse" /> }
 );
 
 const CreativeImpactChart = dynamic(
-  () => import('@/components/features/StatisticsCharts').then((mod) => mod.CreativeImpactChart),
+  () => import('@/components/features/charts/CreativeImpactChart'),
   { ssr: false, loading: () => <div className="h-96 bg-gray-100 rounded animate-pulse" /> }
 );
 
