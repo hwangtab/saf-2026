@@ -25,6 +25,13 @@ import {
   creativeImpactData,
 } from '@/content/chart-data';
 
+const ChartSkeleton = () => (
+  <div className="bg-white p-6 rounded-lg shadow-sm h-full min-h-[400px] animate-pulse">
+    <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
+    <div className="h-64 bg-gray-100 rounded"></div>
+  </div>
+);
+
 const tooltipContentStyle: CSSProperties = {
   borderRadius: '0.75rem',
   border: `1px solid ${CHART_COLORS.border}`,
@@ -46,7 +53,9 @@ const tooltipItemStyle: CSSProperties = {
 };
 
 export const FirstBankAccessChart = memo(function FirstBankAccessChart() {
-  const { pieOuterRadius, pieInnerRadius } = useChartDimensions();
+  const dimensions = useChartDimensions();
+  if (!dimensions) return <ChartSkeleton />;
+  const { pieOuterRadius, pieInnerRadius } = dimensions;
   const data = firstBankAccessData;
   const COLORS = [CHART_COLORS.danger, CHART_COLORS.primary];
 
@@ -89,7 +98,9 @@ export const FirstBankAccessChart = memo(function FirstBankAccessChart() {
 });
 
 export const RejectionReasonsChart = memo(function RejectionReasonsChart() {
-  const { yAxisWidth, tickFontSize } = useChartDimensions();
+  const dimensions = useChartDimensions();
+  if (!dimensions) return <ChartSkeleton />;
+  const { yAxisWidth, tickFontSize } = dimensions;
   const data = rejectionReasonsData;
 
   return (
@@ -125,7 +136,9 @@ export const RejectionReasonsChart = memo(function RejectionReasonsChart() {
 });
 
 export const HighInterestProductChart = memo(function HighInterestProductChart() {
-  const { isMobile, tickFontSize } = useChartDimensions();
+  const dimensions = useChartDimensions();
+  if (!dimensions) return <ChartSkeleton />;
+  const { isMobile, tickFontSize } = dimensions;
   const data = highInterestProductData;
 
   return (
@@ -161,7 +174,9 @@ export const HighInterestProductChart = memo(function HighInterestProductChart()
 });
 
 export const InterestRateDistributionChart = memo(function InterestRateDistributionChart() {
-  const { isMobile, tickFontSize } = useChartDimensions();
+  const dimensions = useChartDimensions();
+  if (!dimensions) return <ChartSkeleton />;
+  const { isMobile, tickFontSize } = dimensions;
   const data = interestRateDistributionData;
 
   return (
@@ -196,7 +211,9 @@ export const InterestRateDistributionChart = memo(function InterestRateDistribut
 });
 
 export const DebtCollectionChart = memo(function DebtCollectionChart() {
-  const { pieOuterRadius, pieInnerRadius } = useChartDimensions();
+  const dimensions = useChartDimensions();
+  if (!dimensions) return <ChartSkeleton />;
+  const { pieOuterRadius, pieInnerRadius } = dimensions;
   const data = debtCollectionData;
   const COLORS = [CHART_COLORS.danger, CHART_COLORS.charcoal];
 
@@ -239,7 +256,9 @@ export const DebtCollectionChart = memo(function DebtCollectionChart() {
 });
 
 export const CreativeImpactChart = memo(function CreativeImpactChart() {
-  const { yAxisWidth, tickFontSize, isMobile } = useChartDimensions();
+  const dimensions = useChartDimensions();
+  if (!dimensions) return <ChartSkeleton />;
+  const { yAxisWidth, tickFontSize, isMobile } = dimensions;
   const data = creativeImpactData;
 
   return (

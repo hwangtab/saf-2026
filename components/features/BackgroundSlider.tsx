@@ -13,8 +13,10 @@ export default function BackgroundSlider() {
   const nextPhoto = HERO_IMAGES[nextIndex];
 
   const [isMobile, setIsMobile] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     // 첫 렌더링 후 플래그 해제
     const timer = requestAnimationFrame(() => {
       isFirstRenderRef.current = false;
@@ -45,6 +47,8 @@ export default function BackgroundSlider() {
   }, []);
 
   const currentPhoto = HERO_IMAGES[currentIndex];
+
+  if (!isMounted) return <div className="absolute inset-0 bg-gray-900 -z-10" />;
 
   return (
     <>

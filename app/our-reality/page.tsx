@@ -104,10 +104,9 @@ export default function OurReality() {
                     key={itemIndex}
                     className="bg-white p-6 rounded-lg shadow-lg border-l-8 border-primary flex flex-col justify-between"
                   >
-                    <p
-                      className="text-xl md:text-2xl text-charcoal mb-4 italic leading-relaxed"
-                      dangerouslySetInnerHTML={{ __html: `&ldquo;${item.quote}&rdquo;` }}
-                    />
+                    <p className="text-xl md:text-2xl text-charcoal mb-4 italic leading-relaxed before:content-['“'] after:content-['”']">
+                      {item.quote}
+                    </p>
                     <div>
                       <p className="font-semibold text-primary">{item.author}</p>
                       {item.context && (

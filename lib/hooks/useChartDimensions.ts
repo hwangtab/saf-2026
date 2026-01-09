@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 
 const MOBILE_BREAKPOINT = 380;
 const DEBOUNCE_DELAY = 200;
-const DEFAULT_DESKTOP_WIDTH = 1024;
 
 export function useChartDimensions() {
   const [width, setWidth] = useState<number | null>(null);
@@ -28,7 +27,9 @@ export function useChartDimensions() {
     };
   }, []);
 
-  const currentWidth = width ?? DEFAULT_DESKTOP_WIDTH;
+  if (width === null) return null;
+
+  const currentWidth = width;
   const isMobile = currentWidth < MOBILE_BREAKPOINT;
 
   return {

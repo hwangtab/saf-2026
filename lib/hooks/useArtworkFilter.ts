@@ -111,7 +111,12 @@ export function useArtworkFilter(artworks: Artwork[], initialArtist?: string) {
 
     // Only update if state differs from URL to avoid loop/redundant updates
     // Note: We use debouncedSearchQuery for URL update to avoid too many history entries/updates while typing
-    const paramsToUpdate: any = {};
+    const paramsToUpdate: Partial<{
+      sort: SortOption;
+      q: string;
+      status: StatusFilter;
+      artist: string | null;
+    }> = {};
     let shouldUpdate = false;
 
     if (sortOption !== currentSort) {
