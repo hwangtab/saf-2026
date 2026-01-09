@@ -3,8 +3,10 @@
 import { memo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import MasonryGallery from './MasonryGallery';
-import SortControls from './SortControls';
 import SearchBar from './SearchBar';
+import FilterBar from './gallery/FilterBar';
+import ArtistNavigation from './gallery/ArtistNavigation';
+import GalleryEmptyState from './gallery/GalleryEmptyState';
 import { Artwork } from '@/types';
 import { useArtworkFilter } from '@/lib/hooks/useArtworkFilter';
 import { UI_STRINGS } from '@/lib/ui-strings';
@@ -64,76 +66,21 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
               />
             </div>
 
-            <div className="flex flex-row items-center gap-2 shrink-0 ml-auto">
-              {/* Status Filter Buttons */}
-              <div
-                role="radiogroup"
-                aria-label={UI_STRINGS.A11Y.FILTER_STATUS}
-                className="flex bg-white rounded-lg p-1 border border-gray-200 shadow-sm"
-              >
-                <button
-                  role="radio"
-                  aria-checked={statusFilter === 'all'}
-                  onClick={() => setStatusFilter('all')}
-                  className={`px-4 py-2.5 text-xs font-medium rounded-md transition-colors ${
-                    statusFilter === 'all'
-                      ? 'bg-charcoal text-white shadow-sm'
-                      : 'text-gray-600 hover:bg-gray-100'
-                  }`}
-                >
-                  {UI_STRINGS.FILTERS.ALL}
-                </button>
-                <button
-                  role="radio"
-                  aria-checked={statusFilter === 'selling'}
-                  onClick={() => setStatusFilter('selling')}
-                  className={`px-4 py-2.5 text-xs font-medium rounded-md transition-colors ${
-                    statusFilter === 'selling'
-                      ? 'bg-charcoal text-white shadow-sm'
-                      : 'text-gray-600 hover:bg-gray-100'
-                  }`}
-                >
-                  {UI_STRINGS.FILTERS.SELLING}
-                </button>
-                <button
-                  role="radio"
-                  aria-checked={statusFilter === 'sold'}
-                  onClick={() => setStatusFilter('sold')}
-                  className={`px-4 py-2.5 text-xs font-medium rounded-md transition-colors ${
-                    statusFilter === 'sold'
-                      ? 'bg-charcoal text-white shadow-sm'
-                      : 'text-gray-600 hover:bg-gray-100'
-                  }`}
-                >
-                  {UI_STRINGS.FILTERS.SOLD}
-                </button>
-              </div>
-
-              <SortControls value={sortOption} onChange={setSortOption} />
-            </div>
+            <FilterBar
+              statusFilter={statusFilter}
+              setStatusFilter={setStatusFilter}
+              sortOption={sortOption}
+              setSortOption={setSortOption}
+            />
           </div>
 
           {/* Artist Navigation - Hidden on mobile, visible on desktop */}
           {showArtistNav && (
-            <div className="hidden md:block pb-4 pt-1">
-              <div className="grid grid-cols-2 md:grid-cols-9 lg:grid-cols-11 gap-2">
-                {uniqueArtists.map((artist) => (
-                  <button
-                    key={artist}
-                    onClick={() => handleArtistClick(artist)}
-                    aria-label={`${artist} ${UI_STRINGS.A11Y.VIEW_ARTIST}`}
-                    aria-pressed={selectedArtist === artist}
-                    className={`px-2 py-1.5 text-xs sm:text-sm font-medium border rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 text-center truncate ${
-                      selectedArtist === artist
-                        ? 'bg-charcoal text-white border-charcoal'
-                        : 'bg-white border-gray-200 hover:border-primary hover:text-primary hover:bg-primary/5'
-                    }`}
-                  >
-                    {artist}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <ArtistNavigation
+              uniqueArtists={uniqueArtists}
+              selectedArtist={selectedArtist}
+              onArtistClick={handleArtistClick}
+            />
           )}
         </div>
       </div>
@@ -151,34 +98,7 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
 
       {/* No Results State */}
       {filteredArtworks.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 text-center">
-          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-            <svg
-              className="w-8 h-8 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
-            {UI_STRINGS.SEARCH.NO_RESULTS_TITLE}
-          </h3>
-          <p className="text-gray-500 mb-6">{UI_STRINGS.SEARCH.NO_RESULTS_DESC}</p>
-          <button
-            onClick={() => setSearchQuery('')}
-            className="px-6 py-2 bg-charcoal text-white rounded-full hover:bg-black transition-colors"
-          >
-            {UI_STRINGS.SEARCH.RESET_BUTTON}
-          </button>
-        </div>
+        <GalleryEmptyState onReset={() => setSearchQuery('')} />
       ) : (
         <div className={showArtistNav ? 'mt-6' : ''}>
           <MasonryGallery artworks={sortedArtworks} forceGrid={useGridLayout} />

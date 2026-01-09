@@ -13,6 +13,9 @@ const nextConfig = {
     nextImageExportOptimizer_generateAndUseBlurImages: 'true',
     nextImageExportOptimizer_remoteImageCacheTTL: '0',
   },
+  experimental: {
+    viewTransition: true,
+  },
   reactStrictMode: true,
   async headers() {
     return [
