@@ -2,7 +2,7 @@ import { getAllArtworks, getArtworkById } from '@/content/saf2026-artworks';
 import Section from '@/components/ui/Section';
 import { getArticlesByArtist } from '@/content/artist-articles';
 import ArtworkImage from '@/components/features/ArtworkImage';
-import Link from 'next/link';
+import BackToListButton from '@/components/features/BackToListButton';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import dynamic from 'next/dynamic';
@@ -212,12 +212,7 @@ export default function ArtworkDetailPage({ params }: Props) {
         {/* Navigation Bar */}
         <nav className="border-b sticky top-[calc(4rem+env(safe-area-inset-top,0px))] z-30 bg-white/80 backdrop-blur-md supports-[backdrop-filter]:bg-white/50">
           <div className="container-max py-4">
-            <Link
-              href="/artworks"
-              className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-primary transition-colors"
-            >
-              ← 목록으로 돌아가기
-            </Link>
+            <BackToListButton />
           </div>
         </nav>
 
