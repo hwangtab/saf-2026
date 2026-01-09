@@ -12,10 +12,10 @@ export default function ExhibitionLoading() {
 
       <Section variant="primary-surface" prevVariant="white">
         <div className="container-max">
-          <div className="h-8 w-48 bg-gray-200 rounded animate-pulse mb-8" />
+          <div className="h-8 w-48 rounded shimmer-loading mb-8" />
 
           <div className="mb-12">
-            <div className="aspect-[1200/1700] w-full max-w-4xl bg-gray-200 rounded-2xl animate-pulse" />
+            <div className="aspect-[1200/1700] w-full max-w-4xl rounded-2xl shimmer-loading" />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -23,18 +23,18 @@ export default function ExhibitionLoading() {
               <div className="space-y-6">
                 {[...Array(3)].map((_, i) => (
                   <div key={i} className="pl-4 border-l-4 border-gray-200">
-                    <div className="h-4 w-16 bg-gray-200 rounded mb-2" />
-                    <div className="h-6 w-48 bg-gray-100 rounded" />
+                    <div className="h-4 w-16 rounded mb-2 shimmer-loading" />
+                    <div className="h-6 w-48 rounded shimmer-loading" />
                   </div>
                 ))}
               </div>
               <div className="space-y-3 pt-8">
-                <div className="h-12 w-full bg-gray-200 rounded animate-pulse" />
-                <div className="h-12 w-full bg-gray-200 rounded animate-pulse" />
+                <div className="h-12 w-full rounded shimmer-loading" />
+                <div className="h-12 w-full rounded shimmer-loading" />
               </div>
             </div>
 
-            <div className="h-[400px] bg-gray-200 rounded-lg animate-pulse" />
+            <div className="h-[400px] rounded-lg shimmer-loading" />
           </div>
         </div>
       </Section>

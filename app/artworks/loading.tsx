@@ -13,18 +13,18 @@ export default function ArtworksLoading() {
       <Section variant="primary-surface" prevVariant="white" padding="none" className="pt-4 pb-12">
         <div className="container-max py-8 space-y-8">
           <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
-            <div className="h-10 w-full md:w-64 bg-gray-200 rounded animate-pulse" />
-            <div className="h-10 w-full md:w-48 bg-gray-200 rounded animate-pulse" />
+            <div className="h-10 w-full md:w-64 rounded shimmer-loading" />
+            <div className="h-10 w-full md:w-48 rounded shimmer-loading" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(9)].map((_, i) => (
               <div key={i} className="bg-white rounded-lg shadow-sm overflow-hidden h-full">
-                <div className="aspect-[4/5] bg-gray-200 animate-pulse" />
+                <div className="aspect-[4/5] shimmer-loading" />
                 <div className="p-4 space-y-3">
-                  <div className="h-6 w-3/4 bg-gray-100 rounded animate-pulse" />
-                  <div className="h-4 w-1/2 bg-gray-100 rounded animate-pulse" />
-                  <div className="h-4 w-full bg-gray-50 rounded animate-pulse" />
+                  <div className="h-6 w-3/4 rounded shimmer-loading" />
+                  <div className="h-4 w-1/2 rounded shimmer-loading" />
+                  <div className="h-4 w-full rounded shimmer-loading" />
                 </div>
               </div>
             ))}
