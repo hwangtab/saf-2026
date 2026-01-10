@@ -61,9 +61,11 @@ export default function Header() {
 
   // Store scroll position for scroll lock
   const scrollPositionRef = useRef(0);
+  const shouldRestoreScrollRef = useRef(true);
 
   // Define scroll functions first
   const lockScroll = useCallback(() => {
+    shouldRestoreScrollRef.current = true;
     const body = document.body;
     const html = document.documentElement;
     // Store current scroll position
@@ -87,8 +89,11 @@ export default function Header() {
     body.style.right = '';
     body.style.overscrollBehavior = '';
     html.style.scrollBehavior = '';
-    // Restore scroll position
-    window.scrollTo(0, scrollPositionRef.current);
+
+    // Restore scroll position ONLY if we shouldn't skip it (e.g. navigation)
+    if (shouldRestoreScrollRef.current) {
+      window.scrollTo(0, scrollPositionRef.current);
+    }
   }, []);
 
   // Menu action callbacks
@@ -111,6 +116,8 @@ export default function Header() {
   useEffect(() => {
     if (prevPathname.current !== pathname) {
       if (isMenuOpen) {
+        // Navigation occurred: Do NOT restore scroll
+        shouldRestoreScrollRef.current = false;
         startCloseMenu();
       }
       prevPathname.current = pathname;

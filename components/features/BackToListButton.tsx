@@ -17,7 +17,7 @@ export default function BackToListButton() {
   return (
     <button
       onClick={handleBack}
-      className="inline-flex items-center justify-center min-h-[44px] py-2 text-sm font-medium text-gray-500 hover:text-primary transition-colors"
+      className="inline-flex items-center justify-center min-h-[44px] py-2 text-sm font-medium text-gray-500 hover:text-primary active:scale-[0.98] transition-all"
     >
       ← 목록으로 돌아가기
     </button>
