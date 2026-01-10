@@ -8,7 +8,7 @@ export default function Template({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   return (
-    <AnimatePresence mode="wait" onExitComplete={() => window.scrollTo(0, 0)}>
+    <AnimatePresence mode="popLayout" onExitComplete={() => window.scrollTo(0, 0)}>
       <m.div
         key={pathname}
         initial={{ opacity: 0 }}
