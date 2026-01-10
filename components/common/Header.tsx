@@ -134,13 +134,16 @@ export default function Header() {
   return (
     <header
       className={clsx(
-        'fixed top-0 left-0 right-0 border-b transition-all duration-300',
+        'fixed top-0 left-0 right-0 border-b transition-colors duration-300',
         'pt-[env(safe-area-inset-top,0px)]',
         headerStyle
       )}
-      style={{ zIndex: Z_INDEX.HEADER }}
+      style={{
+        zIndex: Z_INDEX.HEADER,
+        willChange: 'background-color, border-color',
+      }}
     >
-      <nav className="container-max flex items-center justify-between h-16 transition-all duration-300">
+      <nav className="container-max flex items-center justify-between h-16 transition-colors duration-300">
         <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
           {/* 두 로고를 동시 렌더링하고 opacity로 전환하여 부드러운 크로스페이드 */}
           <div className="relative h-9 w-40">
