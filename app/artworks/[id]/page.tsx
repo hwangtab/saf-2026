@@ -5,15 +5,15 @@ import ArtworkImage from '@/components/features/ArtworkImage';
 import BackToListButton from '@/components/features/BackToListButton';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
-import dynamic from 'next/dynamic';
+// import dynamic from 'next/dynamic'; // Removed unused import
 import { SITE_URL } from '@/lib/constants';
 import Button from '@/components/ui/Button';
 import RelatedArticles from '@/components/features/RelatedArticles';
 import ExpandableHistory from '@/components/features/ExpandableHistory';
 import { generateArtworkMetadata, generateArtworkJsonLd } from '@/lib/seo-utils';
 
-// Dynamic import for client-side ShareButtons
-const ShareButtons = dynamic(() => import('@/components/common/ShareButtons'), { ssr: false });
+// Static import for ShareButtons (it is already a client component)
+import ShareButtons from '@/components/common/ShareButtons';
 
 interface Props {
   params: {

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import dynamic from 'next/dynamic';
+// import dynamic from 'next/dynamic'; // Removed unused import
 import ExportedImage from 'next-image-export-optimizer';
 import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
@@ -9,14 +9,7 @@ import { EXHIBITION, EXTERNAL_LINKS, SITE_URL, OG_IMAGE } from '@/lib/constants'
 import { createPageMetadata } from '@/lib/seo';
 
 // Dynamically import KakaoMap (client-side only, reduces initial bundle)
-const KakaoMap = dynamic(() => import('@/components/features/KakaoMap'), {
-  ssr: false,
-  loading: () => (
-    <div className="min-h-[400px] animate-pulse bg-gray-100 rounded-lg flex items-center justify-center">
-      <p className="text-charcoal-muted">지도를 불러오는 중...</p>
-    </div>
-  ),
-});
+import ExhibitionMapWrapper from '@/components/features/ExhibitionMapWrapper';
 
 const PAGE_URL = `${SITE_URL}/exhibition`;
 
@@ -159,7 +152,7 @@ export default function ExhibitionPage() {
 
             {/* Interactive Map */}
             <div className="h-full">
-              <KakaoMap className="min-h-[400px]" />
+              <ExhibitionMapWrapper className="min-h-[400px]" />
             </div>
           </div>
         </div>

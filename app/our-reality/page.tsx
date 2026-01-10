@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import dynamic from 'next/dynamic';
+// import dynamic from 'next/dynamic'; // Removed unused import
 import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
@@ -13,35 +13,14 @@ import { createPageMetadata } from '@/lib/seo';
 
 const PAGE_URL = `${SITE_URL}/our-reality`;
 
-const FirstBankAccessChart = dynamic(
-  () => import('@/components/features/charts/FirstBankAccessChart'),
-  { ssr: false, loading: () => <div className="h-96 bg-gray-100 rounded animate-pulse" /> }
-);
-
-const RejectionReasonsChart = dynamic(
-  () => import('@/components/features/charts/RejectionReasonsChart'),
-  { ssr: false, loading: () => <div className="h-96 bg-gray-100 rounded animate-pulse" /> }
-);
-
-const HighInterestProductChart = dynamic(
-  () => import('@/components/features/charts/HighInterestProductChart'),
-  { ssr: false, loading: () => <div className="h-96 bg-gray-100 rounded animate-pulse" /> }
-);
-
-const InterestRateDistributionChart = dynamic(
-  () => import('@/components/features/charts/InterestRateDistributionChart'),
-  { ssr: false, loading: () => <div className="h-96 bg-gray-100 rounded animate-pulse" /> }
-);
-
-const DebtCollectionChart = dynamic(
-  () => import('@/components/features/charts/DebtCollectionChart'),
-  { ssr: false, loading: () => <div className="h-96 bg-gray-100 rounded animate-pulse" /> }
-);
-
-const CreativeImpactChart = dynamic(
-  () => import('@/components/features/charts/CreativeImpactChart'),
-  { ssr: false, loading: () => <div className="h-96 bg-gray-100 rounded animate-pulse" /> }
-);
+import {
+  FirstBankAccessChart,
+  RejectionReasonsChart,
+  HighInterestProductChart,
+  InterestRateDistributionChart,
+  DebtCollectionChart,
+  CreativeImpactChart,
+} from '@/components/features/charts/DynamicCharts';
 
 export const metadata: Metadata = createPageMetadata(
   '우리의 현실',
