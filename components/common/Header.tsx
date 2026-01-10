@@ -17,7 +17,6 @@ import { MenuIcon, CloseMenuIcon } from '@/components/ui/Icons';
 import { UI_STRINGS } from '@/lib/ui-strings';
 
 const navigation: NavigationItem[] = [
-  { name: '씨앗페 2026', href: '/' },
   { name: '우리의 현실', href: '/our-reality' },
   { name: '우리의 증명', href: '/our-proof' },
   { name: '전시 안내', href: '/exhibition' },
@@ -196,7 +195,7 @@ export default function Header() {
       <MobileMenu
         isOpen={isMenuOpen}
         onClose={startCloseMenu}
-        navigation={navigation.filter((item) => item.href !== '/')}
+        navigation={navigation}
         isActive={isActive}
         onAnimationComplete={handleAnimationComplete}
         onExitComplete={finishCloseMenu}
