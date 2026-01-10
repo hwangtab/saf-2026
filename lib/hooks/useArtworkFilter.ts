@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
+import { useState, useMemo, useEffect, useCallback, useRef, useTransition } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { Artwork, SortOption } from '@/types';
 import { useDebounce } from './useDebounce';
@@ -10,6 +10,7 @@ export function useArtworkFilter(artworks: Artwork[], initialArtist?: string) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
+  const [, startTransition] = useTransition();
 
   const [sortOption, setSortOption] = useState<SortOption>(
     (searchParams.get('sort') as SortOption) || 'artist-asc'
@@ -65,9 +66,13 @@ export function useArtworkFilter(artworks: Artwork[], initialArtist?: string) {
         else newSearchParams.set('artist', params.artist);
       }
 
-      router.replace(`${pathname}?${newSearchParams.toString()}`, { scroll: false });
+      // Use startTransition to prevent Suspense fallback (loading.tsx) from showing
+      // This keeps the search input focused during URL updates
+      startTransition(() => {
+        router.replace(`${pathname}?${newSearchParams.toString()}`, { scroll: false });
+      });
     },
-    [pathname, router, searchParams]
+    [pathname, router, searchParams, startTransition]
   );
 
   useEffect(() => {
