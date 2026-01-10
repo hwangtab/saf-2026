@@ -196,7 +196,7 @@ export default function Header() {
       <MobileMenu
         isOpen={isMenuOpen}
         onClose={startCloseMenu}
-        navigation={navigation}
+        navigation={navigation.filter((item) => item.href !== '/')}
         isActive={isActive}
         onAnimationComplete={handleAnimationComplete}
         onExitComplete={finishCloseMenu}
