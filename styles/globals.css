@@ -172,4 +172,14 @@ button:focus:not(:focus-visible) {
   .group:hover .group-hover\:scale-105 {
     transform: none;
   }
+
+  /* Disable generic hover scale effects */
+  .hover\:scale-\[1\.02\]:hover {
+    transform: none;
+  }
+
+  /* Disable shadow hover effects */
+  .hover\:shadow-lg:hover {
+    box-shadow: none;
+  }
 }

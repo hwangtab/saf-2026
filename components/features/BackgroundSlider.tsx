@@ -6,16 +6,27 @@ import { m, AnimatePresence } from 'framer-motion';
 import { ANIMATION, HERO_IMAGES } from '@/lib/constants';
 
 export default function BackgroundSlider() {
+  // Use a state that can hold the shuffled array. Widen the type to simple object array to avoid readonly tuple issues.
+  const [images, setImages] = useState<
+    typeof HERO_IMAGES | { id: string; filename: string; alt: string }[]
+  >(HERO_IMAGES);
   const [currentIndex, setCurrentIndex] = useState(0);
   const isFirstRenderRef = useRef(true);
 
-  const nextIndex = (currentIndex + 1) % HERO_IMAGES.length;
-  const nextPhoto = HERO_IMAGES[nextIndex];
+  // 현재 이미지와 다음 이미지 계산 (셔플된 배열 기준)
+  const nextIndex = (currentIndex + 1) % images.length;
+  const nextPhoto = images[nextIndex];
+  const currentPhoto = images[currentIndex];
 
   const [isMobile, setIsMobile] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    // 1. 이미지 순서 섞기 (랜덤) - 클라이언트에서만 실행
+    // Create a mutable copy and sort it
+    const shuffled = [...HERO_IMAGES].sort(() => Math.random() - 0.5);
+    setImages(shuffled);
+
     setIsMounted(true);
     // 첫 렌더링 후 플래그 해제
     const timer = requestAnimationFrame(() => {
@@ -35,7 +46,7 @@ export default function BackgroundSlider() {
     const interval = setInterval(() => {
       // Only transition if the tab is focused to save resources and keep sync
       if (!document.hidden) {
-        setCurrentIndex((prev) => (prev + 1) % HERO_IMAGES.length);
+        setCurrentIndex((prev) => (prev + 1) % images.length);
       }
     }, ANIMATION.SLIDER_INTERVAL);
 
@@ -45,8 +56,6 @@ export default function BackgroundSlider() {
       window.removeEventListener('resize', checkMobile);
     };
   }, []);
-
-  const currentPhoto = HERO_IMAGES[currentIndex];
 
   if (!isMounted) return <div className="absolute inset-0 bg-gray-900 -z-10" />;
 
@@ -107,7 +116,7 @@ export default function BackgroundSlider() {
               className="object-cover"
               priority
               placeholder="blur"
-              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAMI/8QAIhAAAgEDBAMBAAAAAAAAAAAAAQIDAAQREiEiMQUGE0H/xAAVAQEBAAAAAAAAAAAAAAAAAAAFBv/EABsRAAICAwEAAAAAAAAAAAAAAAECAAMEESFB/9oADAMBAAIRAxEAPwCPtXtdjcXEt3FdTR+0mNVxGxRo8DBIYEEbjGR+VN4HxvkoHYyyu627RoVDMVVgRsAN/wBpSl6GK7ZzYpkB5PZ/J//Z"
+              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAMI/8QAIhAAAgEDBAMBAAAAAAAAAAAAAQIDAAQREiEiMQUGE0H/xAAVAQEBAAAAAAAAAAAAAAAAAAAFBv/EABsRAAICAwEAAAAAAAAAAAAAAAECAAMEESFB/9oADAMBAAIRAxAPwCPtXtdjcXEt3FdTR+0mNVxGxRo8DBIYEEbjGR+VN4HxvkoHYyyu627RoVDMVVgRsAN/wBpSl6GK7ZzYpkB5PZ/J//Z"
               sizes="100vw"
             />
           </m.div>

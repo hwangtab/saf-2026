@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 
-const MOBILE_BREAKPOINT = 380;
+const MOBILE_BREAKPOINT = 480;
 const DEBOUNCE_DELAY = 200;
 
 export function useChartDimensions() {

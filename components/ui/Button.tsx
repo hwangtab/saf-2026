@@ -21,9 +21,9 @@ const buttonVariants = cva(
         ghost: 'bg-transparent hover:bg-gray-100 text-gray-700 hover:text-primary',
       },
       size: {
-        sm: 'px-4 py-2 text-sm',
-        md: 'px-6 py-2.5 text-base',
-        lg: 'px-8 py-4 text-lg',
+        sm: 'px-4 py-2 text-sm min-h-[44px]',
+        md: 'px-6 py-2.5 text-base min-h-[44px]',
+        lg: 'px-8 py-4 text-lg min-h-[52px]',
       },
     },
     defaultVariants: {

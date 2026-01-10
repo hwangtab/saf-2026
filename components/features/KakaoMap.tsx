@@ -12,6 +12,18 @@ interface KakaoMapProps {
 export default function KakaoMap(props?: KakaoMapProps): React.JSX.Element {
   const { className } = props ?? {};
   const { loading, error, hasAppKey, isReady } = useKakaoSDK();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const [position, setPosition] = useState<{ lat: number; lng: number }>({
     lat: EXHIBITION.LAT,
@@ -94,7 +106,13 @@ export default function KakaoMap(props?: KakaoMapProps): React.JSX.Element {
 
   return (
     <div className={containerClassName}>
-      <Map center={position} style={{ width: '100%', height: '100%' }} level={3}>
+      <Map
+        center={position}
+        style={{ width: '100%', height: '100%' }}
+        level={3}
+        draggable={!isMobile}
+        zoomable={!isMobile}
+      >
         <MapMarker position={position} title="인사아트센터 3층 G&J 갤러리" />
       </Map>
     </div>
