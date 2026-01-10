@@ -17,6 +17,7 @@ const nextConfig = {
     nextImageExportOptimizer_generateAndUseBlurImages: 'true',
     nextImageExportOptimizer_remoteImageCacheTTL: '0',
   },
+  transpilePackages: ['next-image-export-optimizer'],
   experimental: {},
   reactStrictMode: true,
   async headers() {
