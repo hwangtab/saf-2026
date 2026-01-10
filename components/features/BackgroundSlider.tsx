@@ -2,10 +2,12 @@
 
 import { useState, useEffect, useRef } from 'react';
 import ExportedImage from 'next-image-export-optimizer';
-import { m, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { ANIMATION, HERO_IMAGES } from '@/lib/constants';
 
 export default function BackgroundSlider() {
+  const prefersReducedMotion = useReducedMotion();
+
   // Use a state that can hold the shuffled array. Widen the type to simple object array to avoid readonly tuple issues.
   const [images, setImages] = useState<
     typeof HERO_IMAGES | { id: string; filename: string; alt: string }[]
@@ -44,6 +46,14 @@ export default function BackgroundSlider() {
     // Debounced resize handler could be better, but simple listener is okay for this scope
     window.addEventListener('resize', checkMobile);
 
+    // prefers-reduced-motion 시 자동 슬라이드 비활성화
+    if (prefersReducedMotion) {
+      return () => {
+        cancelAnimationFrame(timer);
+        window.removeEventListener('resize', checkMobile);
+      };
+    }
+
     const interval = setInterval(() => {
       // Only transition if the tab is focused to save resources and keep sync
       if (!document.hidden) {
@@ -56,9 +66,26 @@ export default function BackgroundSlider() {
       clearInterval(interval);
       window.removeEventListener('resize', checkMobile);
     };
-  }, [images.length]);
+  }, [images.length, prefersReducedMotion]);
 
   if (!isMounted) return <div className="absolute inset-0 bg-gray-900 -z-10" />;
+
+  // prefers-reduced-motion: 정적 이미지만 표시
+  if (prefersReducedMotion) {
+    return (
+      <div className="absolute inset-0 -z-10 overflow-hidden bg-gray-900">
+        <ExportedImage
+          src={`/images/hero/${currentPhoto.filename}`}
+          alt={currentPhoto.alt}
+          fill
+          className="object-cover"
+          priority
+          sizes="100vw"
+        />
+        <div className="absolute inset-0 bg-black/60 z-10" />
+      </div>
+    );
+  }
 
   return (
     <>

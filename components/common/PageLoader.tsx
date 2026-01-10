@@ -3,7 +3,7 @@
 export default function PageLoader() {
   return (
     <div
-      className="flex items-center justify-center w-full animate-fade-in-up"
+      className="flex items-center justify-center w-full"
       style={{ minHeight: 'calc(100vh - 200px)' }}
     >
       <div className="relative w-12 h-12">

@@ -2,7 +2,7 @@
 
 import ExportedImage from 'next-image-export-optimizer';
 import { useEffect, useState, useRef } from 'react';
-import { m } from 'framer-motion';
+import { m, useReducedMotion } from 'framer-motion';
 import { HERO_IMAGES } from '@/lib/constants';
 
 interface PageHeroBackgroundProps {
@@ -11,6 +11,7 @@ interface PageHeroBackgroundProps {
 }
 
 export default function PageHeroBackground({ customImage }: PageHeroBackgroundProps) {
+  const prefersReducedMotion = useReducedMotion();
   const [imageIndex, setImageIndex] = useState<number | null>(null);
   const isFirstRenderRef = useRef(true);
 
@@ -51,6 +52,15 @@ export default function PageHeroBackground({ customImage }: PageHeroBackgroundPr
       return <div className="absolute inset-0 bg-gray-900" />;
     }
     bgImage = `/images/hero/${HERO_IMAGES[imageIndex].filename}`;
+  }
+
+  // prefers-reduced-motion: 정적 이미지만 표시 (확대 애니메이션 없음)
+  if (prefersReducedMotion) {
+    return (
+      <div className="absolute inset-0">
+        <ExportedImage src={bgImage} alt="" fill className="object-cover" priority sizes="100vw" />
+      </div>
+    );
   }
 
   return (
