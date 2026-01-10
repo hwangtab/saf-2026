@@ -9,6 +9,7 @@ export function useChartDimensions() {
   const [width, setWidth] = useState<number | null>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setWidth(window.innerWidth);
 
     let timeoutId: NodeJS.Timeout;

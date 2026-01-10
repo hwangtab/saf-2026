@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 // import dynamic from 'next/dynamic'; // Removed unused import
+import Link from 'next/link';
 import ExportedImage from 'next-image-export-optimizer';
 import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
@@ -122,12 +123,12 @@ export default function ExhibitionPage() {
                   >
                     ❤️ 후원하기
                   </a>
-                  <a
+                  <Link
                     href="/artworks"
                     className="block w-full bg-gray-900 hover:bg-gray-800 text-white font-bold px-6 py-3 rounded-lg transition-colors text-center"
                   >
                     🎨 작품 구매하기
-                  </a>
+                  </Link>
                   <div className="pt-4 text-sm text-charcoal-muted">
                     <p>
                       문의:{' '}

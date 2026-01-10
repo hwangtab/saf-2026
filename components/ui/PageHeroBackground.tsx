@@ -1,7 +1,7 @@
 'use client';
 
 import ExportedImage from 'next-image-export-optimizer';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { m, useReducedMotion } from 'framer-motion';
 import { HERO_IMAGES } from '@/lib/constants';
 
@@ -13,12 +13,12 @@ interface PageHeroBackgroundProps {
 export default function PageHeroBackground({ customImage }: PageHeroBackgroundProps) {
   const prefersReducedMotion = useReducedMotion();
   const [imageIndex, setImageIndex] = useState<number | null>(null);
-  const isFirstRenderRef = useRef(true);
+  const [isFirstRender, setIsFirstRender] = useState(true);
 
   useEffect(() => {
     // 첫 렌더링 후 플래그 해제
     const timer = requestAnimationFrame(() => {
-      isFirstRenderRef.current = false;
+      setIsFirstRender(false);
     });
 
     // Skip random selection if custom image is provided
@@ -37,6 +37,7 @@ export default function PageHeroBackground({ customImage }: PageHeroBackgroundPr
 
     // Save the new index for next time
     sessionStorage.setItem('saf_last_hero_index', newIndex.toString());
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setImageIndex(newIndex);
 
     return () => cancelAnimationFrame(timer);
@@ -66,10 +67,10 @@ export default function PageHeroBackground({ customImage }: PageHeroBackgroundPr
   return (
     <div className="absolute inset-0">
       <m.div
-        initial={{ opacity: isFirstRenderRef.current ? 1 : 0, scale: 1.1 }}
+        initial={{ opacity: isFirstRender ? 1 : 0, scale: 1.1 }}
         animate={{ opacity: 1, scale: 1.0 }}
         transition={{
-          opacity: { duration: isFirstRenderRef.current ? 0 : 1.2, ease: 'easeOut' },
+          opacity: { duration: isFirstRender ? 0 : 1.2, ease: 'easeOut' },
           scale: {
             duration: 20,
             ease: 'easeInOut',

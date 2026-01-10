@@ -34,13 +34,15 @@ export function useArtworkFilter(artworks: Artwork[], initialArtist?: string) {
     selectedArtist,
   });
 
-  stateRef.current = {
-    sortOption,
-    searchQuery,
-    debouncedSearchQuery,
-    statusFilter,
-    selectedArtist,
-  };
+  useEffect(() => {
+    stateRef.current = {
+      sortOption,
+      searchQuery,
+      debouncedSearchQuery,
+      statusFilter,
+      selectedArtist,
+    };
+  }, [sortOption, searchQuery, debouncedSearchQuery, statusFilter, selectedArtist]);
 
   const updateUrlParams = useCallback(
     (params: { sort?: SortOption; q?: string; status?: StatusFilter; artist?: string | null }) => {
@@ -76,6 +78,7 @@ export function useArtworkFilter(artworks: Artwork[], initialArtist?: string) {
   );
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSelectedArtist(initialArtist || null);
   }, [initialArtist]);
 
@@ -153,6 +156,7 @@ export function useArtworkFilter(artworks: Artwork[], initialArtist?: string) {
       selectedArtist: currentArtist,
     } = stateRef.current;
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (urlSort !== currentSort) setSortOption(urlSort);
     if (urlQ !== currentQuery && urlQ !== currentDebouncedQuery) setSearchQuery(urlQ);
     if (urlStatus !== currentStatus) setStatusFilter(urlStatus);

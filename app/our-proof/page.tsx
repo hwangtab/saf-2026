@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
@@ -305,12 +306,12 @@ export default function OurProof() {
               <p className="text-charcoal-muted mb-4 flex-grow">
                 판매 수익은 전액 기금으로 귀속됩니다. 온라인 갤러리에서 작품을 만나보세요.
               </p>
-              <a
+              <Link
                 href="/artworks"
                 className="inline-flex items-center justify-center bg-gray-900 hover:bg-gray-800 text-white font-bold px-6 py-3 rounded-lg transition-colors"
               >
                 작품 구매하기
-              </a>
+              </Link>
             </div>
           </div>
         </div>

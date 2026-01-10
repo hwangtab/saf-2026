@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import ExportedImage from 'next-image-export-optimizer';
 import { m, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { ANIMATION, HERO_IMAGES } from '@/lib/constants';
@@ -13,7 +13,7 @@ export default function BackgroundSlider() {
     typeof HERO_IMAGES | { id: string; filename: string; alt: string }[]
   >(HERO_IMAGES);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const isFirstRenderRef = useRef(true);
+  const [isFirstRender, setIsFirstRender] = useState(true);
 
   // 현재 이미지와 다음 이미지 계산 (셔플된 배열 기준)
   const nextIndex = (currentIndex + 1) % images.length;
@@ -26,14 +26,17 @@ export default function BackgroundSlider() {
   useEffect(() => {
     // 1. 이미지 순서 섞기 (랜덤) - 클라이언트에서만 실행
     const shuffled = [...HERO_IMAGES].sort(() => Math.random() - 0.5);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setImages(shuffled);
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
     // 첫 렌더링 후 플래그 해제
+    // 첫 렌더링 후 플래그 해제
     const timer = requestAnimationFrame(() => {
-      isFirstRenderRef.current = false;
+      setIsFirstRender(false);
     });
 
     const checkMobile = () => {
@@ -105,7 +108,7 @@ export default function BackgroundSlider() {
         <AnimatePresence>
           <m.div
             key={currentPhoto.id}
-            custom={isFirstRenderRef.current}
+            custom={isFirstRender}
             variants={{
               initial: (isFirst: boolean) => ({
                 opacity: isFirst ? 1 : 0,
