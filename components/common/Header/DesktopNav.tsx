@@ -26,9 +26,8 @@ export default function DesktopNav({ navigation, isActive, textColor }: DesktopN
         ))}
       </div>
       <div className="hidden lg:flex">
-        <Button href={EXTERNAL_LINKS.DONATE} variant="accent" external className="gap-1.5">
-          <span className="group-hover:scale-125 transition-transform duration-300">❤️</span>
-          <span className="pt-0.5">후원하기</span>
+        <Button href={EXTERNAL_LINKS.DONATE} variant="accent" external>
+          후원하기
         </Button>
       </div>
     </>
