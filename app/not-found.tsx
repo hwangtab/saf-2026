@@ -17,12 +17,27 @@ export default function NotFound() {
           <br />
           주소를 다시 확인하시거나 홈으로 이동해 주세요.
         </p>
-        <Link
-          href="/"
-          className="inline-flex items-center justify-center px-6 py-3 bg-primary hover:bg-primary-strong text-white font-bold rounded-lg transition-colors shadow-sm hover:shadow-md active:scale-[0.98]"
-        >
-          홈으로 이동
-        </Link>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center mb-12">
+          <Link
+            href="/"
+            className="inline-flex items-center justify-center px-6 py-3 bg-white border border-gray-200 text-gray-900 font-bold rounded-lg hover:bg-gray-50 transition-colors shadow-sm min-h-[48px]"
+          >
+            홈으로 이동
+          </Link>
+          <Link
+            href="/artworks"
+            className="inline-flex items-center justify-center px-6 py-3 bg-primary hover:bg-primary-strong text-white font-bold rounded-lg transition-colors shadow-sm hover:shadow-md min-h-[48px]"
+          >
+            🎨 작품 둘러보기
+          </Link>
+        </div>
+
+        <div className="pt-8 border-t border-gray-200/60">
+          <p className="text-sm text-gray-500 mb-2">도움이 필요하신가요?</p>
+          <a href="mailto:contact@kosmart.org" className="text-primary font-medium hover:underline">
+            contact@kosmart.org
+          </a>
+        </div>
       </div>
     </div>
   );

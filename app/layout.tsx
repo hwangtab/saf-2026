@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Suspense } from 'react';
 import Script from 'next/script';
+import PageLoader from '@/components/common/PageLoader';
 import { Analytics } from '@vercel/analytics/react';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
@@ -149,7 +150,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </a>
           <Header />
           <main id="main-content" role="main" className="flex-1">
-            <Suspense fallback={<div>로딩 중...</div>}>{children}</Suspense>
+            <Suspense fallback={<PageLoader />}>{children}</Suspense>
           </main>
           <Footer />
         </AnimationProvider>

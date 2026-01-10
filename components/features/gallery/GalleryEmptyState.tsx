@@ -26,12 +26,18 @@ export default function GalleryEmptyState({ onReset }: GalleryEmptyStateProps) {
       <h3 className="text-lg font-medium text-gray-900 mb-2">
         {UI_STRINGS.SEARCH.NO_RESULTS_TITLE}
       </h3>
-      <p className="text-gray-500 mb-6">{UI_STRINGS.SEARCH.NO_RESULTS_DESC}</p>
+      <p className="text-gray-500 mb-6 max-w-sm mx-auto">
+        {UI_STRINGS.SEARCH.NO_RESULTS_DESC}
+        <br />
+        <span className="text-sm mt-1 block text-gray-400">
+          오타가 있는지 확인하거나, 작가명으로 검색해 보세요.
+        </span>
+      </p>
       <button
         onClick={onReset}
-        className="px-6 py-2 bg-charcoal text-white rounded-full hover:bg-black transition-colors"
+        className="px-6 py-2.5 bg-charcoal text-white font-bold rounded-full hover:bg-black transition-colors shadow-sm hover:shadow-md active:scale-95"
       >
-        {UI_STRINGS.SEARCH.RESET_BUTTON}
+        전체 작품 보기
       </button>
     </div>
   );

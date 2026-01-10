@@ -35,7 +35,7 @@ export default function NavLink({
   const desktopClassName = clsx(
     desktopBaseStyles,
     isActive
-      ? ['text-primary', 'after:bg-primary']
+      ? ['text-primary font-semibold', 'after:bg-primary']
       : [textColor, 'hover:text-primary', 'after:bg-transparent hover:after:bg-primary/40']
   );
 
