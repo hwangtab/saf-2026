@@ -24,51 +24,29 @@ interface SectionProps {
   id?: string;
 }
 
-const variantStyles: Record<SectionVariant, string> = {
-  white: 'bg-white',
-  gray: 'bg-gray-50',
-  canvas: 'bg-canvas',
-  'canvas-soft': 'bg-canvas-soft',
-  primary: 'bg-primary',
-  'primary-soft': 'bg-primary-soft',
-  'primary-surface': 'bg-primary-surface',
-  accent: 'bg-accent',
-  'accent-soft': 'bg-accent-soft',
-  sun: 'bg-sun',
-  'sun-soft': 'bg-sun-soft',
-  red: 'bg-red-100',
-};
+interface VariantStyle {
+  bg: string;
+  from: string;
+  to: string;
+}
 
-// Maps variants to their "from-" gradient class
-const gradientFromStyles: Record<SectionVariant, string> = {
-  white: 'from-white',
-  gray: 'from-gray-50',
-  canvas: 'from-canvas',
-  'canvas-soft': 'from-canvas-soft',
-  primary: 'from-primary',
-  'primary-soft': 'from-primary-soft',
-  'primary-surface': 'from-primary-surface',
-  accent: 'from-accent',
-  'accent-soft': 'from-accent-soft',
-  sun: 'from-sun',
-  'sun-soft': 'from-sun-soft',
-  red: 'from-red-100',
-};
-
-// Maps variants to their "to-" gradient class
-const gradientToStyles: Record<SectionVariant, string> = {
-  white: 'to-white',
-  gray: 'to-gray-50',
-  canvas: 'to-canvas',
-  'canvas-soft': 'to-canvas-soft',
-  primary: 'to-primary',
-  'primary-soft': 'to-primary-soft',
-  'primary-surface': 'to-primary-surface',
-  accent: 'to-accent',
-  'accent-soft': 'to-accent-soft',
-  sun: 'to-sun',
-  'sun-soft': 'to-sun-soft',
-  red: 'to-red-100',
+const SECTION_STYLES: Record<SectionVariant, VariantStyle> = {
+  white: { bg: 'bg-white', from: 'from-white', to: 'to-white' },
+  gray: { bg: 'bg-gray-50', from: 'from-gray-50', to: 'to-gray-50' },
+  canvas: { bg: 'bg-canvas', from: 'from-canvas', to: 'to-canvas' },
+  'canvas-soft': { bg: 'bg-canvas-soft', from: 'from-canvas-soft', to: 'to-canvas-soft' },
+  primary: { bg: 'bg-primary', from: 'from-primary', to: 'to-primary' },
+  'primary-soft': { bg: 'bg-primary-soft', from: 'from-primary-soft', to: 'to-primary-soft' },
+  'primary-surface': {
+    bg: 'bg-primary-surface',
+    from: 'from-primary-surface',
+    to: 'to-primary-surface',
+  },
+  accent: { bg: 'bg-accent', from: 'from-accent', to: 'to-accent' },
+  'accent-soft': { bg: 'bg-accent-soft', from: 'from-accent-soft', to: 'to-accent-soft' },
+  sun: { bg: 'bg-sun', from: 'from-sun', to: 'to-sun' },
+  'sun-soft': { bg: 'bg-sun-soft', from: 'from-sun-soft', to: 'to-sun-soft' },
+  red: { bg: 'bg-red-100', from: 'from-red-100', to: 'to-red-100' },
 };
 
 export default function Section({
@@ -79,14 +57,13 @@ export default function Section({
   className,
   id,
 }: SectionProps) {
-  let backgroundClass = variantStyles[variant];
+  let backgroundClass = SECTION_STYLES[variant].bg;
 
-  // If prevVariant is provided and different from current, apply gradient
   if (prevVariant && prevVariant !== variant) {
     backgroundClass = cn(
       'bg-gradient-to-b',
-      gradientFromStyles[prevVariant],
-      gradientToStyles[variant]
+      SECTION_STYLES[prevVariant].from,
+      SECTION_STYLES[variant].to
     );
   }
 

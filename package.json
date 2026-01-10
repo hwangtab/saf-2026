@@ -49,6 +49,7 @@
     "yet-another-react-lightbox": "^3.28.0"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^16.1.1",
     "@testing-library/jest-dom": "^6.1.5",
     "@testing-library/react": "^14.1.2",
     "@testing-library/user-event": "^14.5.1",

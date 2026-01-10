@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react';
 import { useArtworkFilter } from '../../lib/hooks/useArtworkFilter';
-import { Artwork } from '../../lib/types';
+import { Artwork } from '../../types';
 
 const mockArtworks: Artwork[] = [
   {
