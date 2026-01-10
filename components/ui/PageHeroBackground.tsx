@@ -1,7 +1,7 @@
 'use client';
 
 import ExportedImage from 'next-image-export-optimizer';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { m } from 'framer-motion';
 import { HERO_IMAGES } from '@/lib/constants';
 
@@ -12,8 +12,14 @@ interface PageHeroBackgroundProps {
 
 export default function PageHeroBackground({ customImage }: PageHeroBackgroundProps) {
   const [imageIndex, setImageIndex] = useState<number | null>(null);
+  const isFirstRenderRef = useRef(true);
 
   useEffect(() => {
+    // 첫 렌더링 후 플래그 해제
+    const timer = requestAnimationFrame(() => {
+      isFirstRenderRef.current = false;
+    });
+
     // Skip random selection if custom image is provided
     if (customImage) return;
 
@@ -31,6 +37,8 @@ export default function PageHeroBackground({ customImage }: PageHeroBackgroundPr
     // Save the new index for next time
     sessionStorage.setItem('saf_last_hero_index', newIndex.toString());
     setImageIndex(newIndex);
+
+    return () => cancelAnimationFrame(timer);
   }, [customImage]);
 
   // Use custom image if provided, otherwise use random hero image
@@ -48,10 +56,10 @@ export default function PageHeroBackground({ customImage }: PageHeroBackgroundPr
   return (
     <div className="absolute inset-0">
       <m.div
-        initial={{ opacity: 0, scale: 1.1 }}
+        initial={{ opacity: isFirstRenderRef.current ? 1 : 0, scale: 1.1 }}
         animate={{ opacity: 1, scale: 1.0 }}
         transition={{
-          opacity: { duration: 1.2, ease: 'easeOut' },
+          opacity: { duration: isFirstRenderRef.current ? 0 : 1.2, ease: 'easeOut' },
           scale: {
             duration: 20,
             ease: 'easeInOut',
