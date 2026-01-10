@@ -21,14 +21,15 @@ const ArtworkGalleryWithSort = dynamic(
 );
 
 interface Props {
-  params: {
+  params: Promise<{
     artist: string;
-  };
+  }>;
 }
 
 // Generate metadata for Artist Page
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const artistName = decodeURIComponent(params.artist);
+  const { artist } = await params;
+  const artistName = decodeURIComponent(artist);
   const artworks = getAllArtworks();
   const artistArtworks = artworks.filter((a) => a.artist === artistName);
 
@@ -98,8 +99,9 @@ export async function generateStaticParams() {
   }));
 }
 
-export default function ArtistPage({ params }: Props) {
-  const artistName = decodeURIComponent(params.artist);
+export default async function ArtistPage({ params }: Props) {
+  const { artist } = await params;
+  const artistName = decodeURIComponent(artist);
   const artworks = getAllArtworks();
 
   // Get artist's artworks

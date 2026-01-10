@@ -16,14 +16,15 @@ import { generateArtworkMetadata, generateArtworkJsonLd } from '@/lib/seo-utils'
 import ShareButtons from '@/components/common/ShareButtons';
 
 interface Props {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const artwork = getArtworkById(params.id);
+  const { id } = await params;
+  const artwork = getArtworkById(id);
 
   if (!artwork) {
     return {
@@ -42,8 +43,9 @@ export async function generateStaticParams() {
   }));
 }
 
-export default function ArtworkDetailPage({ params }: Props) {
-  const artwork = getArtworkById(params.id);
+export default async function ArtworkDetailPage({ params }: Props) {
+  const { id } = await params;
+  const artwork = getArtworkById(id);
 
   if (!artwork) {
     notFound();
