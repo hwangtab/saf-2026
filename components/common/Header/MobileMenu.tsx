@@ -33,6 +33,7 @@ export default function MobileMenu({
             allowOutsideClick: true,
             escapeDeactivates: true,
             onDeactivate: onClose,
+            initialFocus: false,
           }}
         >
           <div>
