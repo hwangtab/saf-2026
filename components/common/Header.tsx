@@ -4,7 +4,7 @@ import { useReducer, useEffect, useRef, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import ExportedImage from 'next-image-export-optimizer';
 import { usePathname } from 'next/navigation';
-import type { AnimationDefinition } from 'framer-motion';
+// import type { AnimationDefinition } from 'framer-motion';
 import { HERO_PAGES, Z_INDEX } from '@/lib/constants';
 import { useScrolled } from '@/lib/hooks/useScrolled';
 import { useScrollLock } from '@/lib/hooks/useScrollLock';
@@ -67,8 +67,9 @@ export default function Header() {
   // Menu action callbacks
   const openMenu = useCallback(() => {
     shouldRestoreScrollRef.current = true;
+    lockScroll(); // 상태 변경 전에 먼저 잠금
     dispatch({ type: 'OPEN' });
-  }, []);
+  }, [lockScroll]);
   const startCloseMenu = useCallback(() => dispatch({ type: 'START_CLOSE' }), []);
   const finishCloseMenu = useCallback(() => {
     dispatch({ type: 'FINISH_CLOSE' });
@@ -76,12 +77,7 @@ export default function Header() {
   }, [unlockScroll]);
 
   // MobileMenu onAnimationComplete 콜백 메모이제이션
-  const handleAnimationComplete = useCallback(
-    (definition: AnimationDefinition) => {
-      if (definition === 'animate') lockScroll();
-    },
-    [lockScroll]
-  );
+
 
   const toggleMenu = useCallback(() => {
     if (isMenuOpen) {
@@ -197,7 +193,7 @@ export default function Header() {
         onClose={startCloseMenu}
         navigation={navigation}
         isActive={isActive}
-        onAnimationComplete={handleAnimationComplete}
+
         onExitComplete={finishCloseMenu}
       />
     </header>
