@@ -48,10 +48,9 @@ export default function PageHeroBackground({ customImage }: PageHeroBackgroundPr
   return (
     <div className="absolute inset-0">
       <m.div
-        initial={{ opacity: 0, scale: 1.1 }}
-        animate={{ opacity: 1, scale: 1.0 }}
+        initial={{ scale: 1.1 }}
+        animate={{ scale: 1.0 }}
         transition={{
-          opacity: { duration: 1.2, ease: 'easeOut' },
           scale: {
             duration: 20,
             ease: 'easeInOut',
