@@ -135,9 +135,6 @@ export default function Header() {
 
   const isDarkText = isScrolled || isMenuVisible || !hasHero || isArtworkDetail;
   const textColor = isDarkText ? 'text-charcoal' : 'text-white';
-  const logoSrc = isDarkText
-    ? '/images/logo/320pxX90px.webp'
-    : '/images/logo/320pxX90px_white.webp';
 
   return (
     <header
@@ -150,14 +147,32 @@ export default function Header() {
     >
       <nav className="container-max flex items-center justify-between h-16 transition-all duration-300">
         <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <ExportedImage
-            src={logoSrc}
-            alt={UI_STRINGS.A11Y.LOGO_ALT}
-            width={160}
-            height={45}
-            className="h-9 w-auto object-contain transition-all duration-300"
-            priority
-          />
+          {/* 두 로고를 동시 렌더링하고 opacity로 전환하여 부드러운 크로스페이드 */}
+          <div className="relative h-9 w-40">
+            <ExportedImage
+              src="/images/logo/320pxX90px.webp"
+              alt={UI_STRINGS.A11Y.LOGO_ALT}
+              width={160}
+              height={45}
+              className={clsx(
+                'absolute inset-0 h-9 w-auto object-contain transition-opacity duration-300',
+                isDarkText ? 'opacity-100' : 'opacity-0'
+              )}
+              priority
+            />
+            <ExportedImage
+              src="/images/logo/320pxX90px_white.webp"
+              alt=""
+              aria-hidden="true"
+              width={160}
+              height={45}
+              className={clsx(
+                'absolute inset-0 h-9 w-auto object-contain transition-opacity duration-300',
+                isDarkText ? 'opacity-0' : 'opacity-100'
+              )}
+              priority
+            />
+          </div>
           <span className="sr-only">{UI_STRINGS.A11Y.HOME_LINK}</span>
         </Link>
 
