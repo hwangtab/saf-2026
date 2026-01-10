@@ -1,9 +1,10 @@
 'use client';
 
-import { useReducer, useEffect, useRef, useCallback } from 'react';
+import { useReducer, useEffect, useRef, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import ExportedImage from 'next-image-export-optimizer';
 import { usePathname } from 'next/navigation';
+import type { AnimationDefinition } from 'framer-motion';
 import { HERO_PAGES, Z_INDEX } from '@/lib/constants';
 import { useScrolled } from '@/lib/hooks/useScrolled';
 import { useScrollLock } from '@/lib/hooks/useScrollLock';
@@ -75,6 +76,14 @@ export default function Header() {
     unlockScroll(shouldRestoreScrollRef.current);
   }, [unlockScroll]);
 
+  // MobileMenu onAnimationComplete 콜백 메모이제이션
+  const handleAnimationComplete = useCallback(
+    (definition: AnimationDefinition) => {
+      if (definition === 'animate') lockScroll();
+    },
+    [lockScroll]
+  );
+
   const toggleMenu = useCallback(() => {
     if (isMenuOpen) {
       startCloseMenu();
@@ -100,29 +109,30 @@ export default function Header() {
     return () => unlockScroll();
   }, [unlockScroll]);
 
-  const isArtistPage = pathname.startsWith('/artworks/artist/');
-  // 작품 상세 페이지는 제외하지만 artist 페이지는 포함하지 않음
-  const isArtworkDetail =
-    pathname.startsWith('/artworks/') && pathname !== '/artworks' && !isArtistPage;
+  // 경로 기반 파생 상태 메모이제이션
+  const { isArtworkDetail, hasHero } = useMemo(() => {
+    const artistPage = pathname.startsWith('/artworks/artist/');
+    // 작품 상세 페이지는 제외하지만 artist 페이지는 포함하지 않음
+    const artworkDetail =
+      pathname.startsWith('/artworks/') && pathname !== '/artworks' && !artistPage;
+    // 작가 페이지도 Hero가 있으므로 hasHero에 포함
+    const heroPage =
+      (HERO_PAGES.includes(pathname as (typeof HERO_PAGES)[number]) && !artworkDetail) ||
+      artistPage;
+    return { isArtworkDetail: artworkDetail, hasHero: heroPage };
+  }, [pathname]);
 
-  // 작가 페이지도 Hero가 있으므로 hasHero에 포함
-  const hasHero =
-    (HERO_PAGES.includes(pathname as (typeof HERO_PAGES)[number]) && !isArtworkDetail) ||
-    isArtistPage;
-
-  const getHeaderStyle = () => {
+  // 헤더 스타일 메모이제이션
+  const headerStyle = useMemo(() => {
     if (isMenuVisible) {
       return 'bg-white shadow-sm border-gray-200/50';
     }
-    // 작가 페이지는 헤더가 투명해야 하므로 isArtworkDetail 조건에서 빠져야 함 (위에서 처리됨)
-    // hasHero가 true이면 투명 배경 가능 (스크롤 안 되었을 때)
     if (isArtworkDetail || isScrolled || !hasHero) {
       return 'bg-white shadow-sm border-gray-200/50';
     }
     return 'bg-transparent border-transparent';
-  };
+  }, [isMenuVisible, isArtworkDetail, isScrolled, hasHero]);
 
-  const headerStyle = getHeaderStyle();
   const isDarkText = isScrolled || isMenuVisible || !hasHero || isArtworkDetail;
   const textColor = isDarkText ? 'text-charcoal' : 'text-white';
   const logoSrc = isDarkText
@@ -173,9 +183,7 @@ export default function Header() {
         onClose={startCloseMenu}
         navigation={navigation}
         isActive={isActive}
-        onAnimationComplete={(definition) => {
-          if (definition === 'animate') lockScroll();
-        }}
+        onAnimationComplete={handleAnimationComplete}
         onExitComplete={finishCloseMenu}
       />
     </header>
