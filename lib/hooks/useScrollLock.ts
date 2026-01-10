@@ -36,8 +36,11 @@ export function useScrollLock() {
     body.style.paddingRight = '';
 
     if (restore) {
+      // 이중 rAF를 사용하여 스타일 변경이 완전히 적용되고 레이아웃이 안정화된 후 스크롤 복원
       requestAnimationFrame(() => {
-        window.scrollTo(0, scrollPositionRef.current);
+        requestAnimationFrame(() => {
+          window.scrollTo(0, scrollPositionRef.current);
+        });
       });
     }
   }, []);

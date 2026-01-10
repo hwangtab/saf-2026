@@ -47,6 +47,8 @@ export default function MobileMenu({
               className="fixed inset-0 bg-black/50 lg:hidden top-[calc(4rem+env(safe-area-inset-top,0px))]"
               style={{
                 zIndex: Z_INDEX.MOBILE_BACKDROP,
+                willChange: 'opacity',
+                transform: 'translateZ(0)',
               }}
             />
 
@@ -62,6 +64,8 @@ export default function MobileMenu({
                 bottom: 0,
                 backfaceVisibility: 'hidden',
                 zIndex: Z_INDEX.MOBILE_MENU,
+                willChange: 'transform',
+                transform: 'translateZ(0)',
               }}
             >
               <div className="py-4 px-5 space-y-3">
