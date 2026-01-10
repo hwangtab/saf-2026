@@ -30,6 +30,10 @@ jest.mock('@/components/common/Header/MobileMenu', () => ({
 }));
 
 describe('Header', () => {
+  beforeAll(() => {
+    Object.defineProperty(window, 'scrollTo', { value: jest.fn(), writable: true });
+  });
+
   it('renders logo and navigation', () => {
     render(<Header />);
     expect(screen.getByAltText('씨앗페 로고')).toBeInTheDocument();

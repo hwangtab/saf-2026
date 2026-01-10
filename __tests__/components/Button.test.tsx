@@ -22,7 +22,7 @@ describe('Button', () => {
     render(<Button variant="accent">Donate</Button>);
     const button = screen.getByRole('button', { name: /donate/i });
     expect(button).toHaveClass('bg-accent');
-    expect(button).toHaveClass('text-light');
+    expect(button).toHaveClass('text-white');
   });
 
   it('renders as a link when href is provided', () => {

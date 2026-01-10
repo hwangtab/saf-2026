@@ -18,10 +18,8 @@ describe('parsePrice', () => {
 
   it('should handle empty or invalid inputs as Infinity', () => {
     expect(parsePrice('')).toBe(Infinity);
-    // @ts-ignore
-    expect(parsePrice(null)).toBe(Infinity);
-    // @ts-ignore
-    expect(parsePrice(undefined)).toBe(Infinity);
+    expect(parsePrice(null as unknown as string)).toBe(Infinity);
+    expect(parsePrice(undefined as unknown as string)).toBe(Infinity);
   });
 
   it('should handle non-numeric strings as Infinity', () => {

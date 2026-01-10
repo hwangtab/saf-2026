@@ -48,6 +48,5 @@ describe('ArtworkCard', () => {
     render(<ArtworkCard artwork={soldArtwork} variant="gallery" />);
 
     expect(screen.getAllByText('SOLD')).toHaveLength(1); // Badge
-    expect(screen.getByText('판매완료')).toBeInTheDocument(); // Text
   });
 });

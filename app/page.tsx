@@ -103,7 +103,6 @@ export default function Home() {
       <DynamicCounter items={counterItems} />
 
       {/* Problem Section */}
-      {/* Problem Section */}
       <Section variant="sun-soft" prevVariant="canvas-soft">
         <div className="container-max">
           <SectionTitle className="text-center mb-12">우리가 직면한 문제</SectionTitle>

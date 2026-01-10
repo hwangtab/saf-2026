@@ -1,54 +1,16 @@
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { Artwork, SortOption } from '@/types';
-import { parsePrice } from '@/lib/parsePrice';
 import { useDebounce } from './useDebounce';
+import { sortArtworks, extractUniqueArtists } from '@/lib/artworkUtils';
 
 export type StatusFilter = 'all' | 'selling' | 'sold';
-
-function sortArtworks(artworks: Artwork[], sortOption: SortOption): Artwork[] {
-  const sorted = [...artworks];
-
-  switch (sortOption) {
-    case 'artist-asc':
-      return sorted.sort((a, b) => a.artist.localeCompare(b.artist, 'ko-KR'));
-
-    case 'title-asc':
-      return sorted.sort((a, b) => a.title.localeCompare(b.title, 'ko-KR'));
-
-    case 'price-desc':
-      return sorted.sort((a, b) => {
-        const priceA = parsePrice(a.price);
-        const priceB = parsePrice(b.price);
-        // Infinity (문의/확인중)는 맨 뒤로
-        if (priceA === Infinity && priceB === Infinity) return 0;
-        if (priceA === Infinity) return 1;
-        if (priceB === Infinity) return -1;
-        return priceB - priceA; // 높은 가격 먼저
-      });
-
-    case 'price-asc':
-      return sorted.sort((a, b) => {
-        const priceA = parsePrice(a.price);
-        const priceB = parsePrice(b.price);
-        // Infinity (문의/확인중)는 맨 뒤로
-        if (priceA === Infinity && priceB === Infinity) return 0;
-        if (priceA === Infinity) return 1;
-        if (priceB === Infinity) return -1;
-        return priceA - priceB; // 낮은 가격 먼저
-      });
-
-    default:
-      return sorted;
-  }
-}
 
 export function useArtworkFilter(artworks: Artwork[], initialArtist?: string) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
 
-  // Initialize state from URL params or initial prop
   const [sortOption, setSortOption] = useState<SortOption>(
     (searchParams.get('sort') as SortOption) || 'artist-asc'
   );
@@ -60,10 +22,25 @@ export function useArtworkFilter(artworks: Artwork[], initialArtist?: string) {
     initialArtist || searchParams.get('artist') || null
   );
 
-  // Debounce search query for performance (300ms delay)
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
-  // Function to update URL params
+  // Keep track of latest state for URL sync to avoid dependency loops
+  const stateRef = useRef({
+    sortOption,
+    searchQuery,
+    debouncedSearchQuery,
+    statusFilter,
+    selectedArtist,
+  });
+
+  stateRef.current = {
+    sortOption,
+    searchQuery,
+    debouncedSearchQuery,
+    statusFilter,
+    selectedArtist,
+  };
+
   const updateUrlParams = useCallback(
     (params: { sort?: SortOption; q?: string; status?: StatusFilter; artist?: string | null }) => {
       const newSearchParams = new URLSearchParams(searchParams.toString());
@@ -88,20 +65,16 @@ export function useArtworkFilter(artworks: Artwork[], initialArtist?: string) {
         else newSearchParams.set('artist', params.artist);
       }
 
-      // Replace URL without reloading the page
       router.replace(`${pathname}?${newSearchParams.toString()}`, { scroll: false });
     },
     [pathname, router, searchParams]
   );
 
-  // Sync selectedArtist with initialArtist prop changes (for artist page navigation)
   useEffect(() => {
     setSelectedArtist(initialArtist || null);
   }, [initialArtist]);
 
-  // Sync state changes to URL (skip if initialArtist is provided - artist page handles URL itself)
   useEffect(() => {
-    // Don't sync URL if we're on a dedicated artist page (initialArtist provided)
     if (initialArtist) return;
 
     const currentSort = (searchParams.get('sort') as SortOption) || 'artist-asc';
@@ -109,8 +82,6 @@ export function useArtworkFilter(artworks: Artwork[], initialArtist?: string) {
     const currentStatus = (searchParams.get('status') as StatusFilter) || 'all';
     const currentArtist = searchParams.get('artist');
 
-    // Only update if state differs from URL to avoid loop/redundant updates
-    // Note: We use debouncedSearchQuery for URL update to avoid too many history entries/updates while typing
     const paramsToUpdate: Partial<{
       sort: SortOption;
       q: string;
@@ -152,37 +123,46 @@ export function useArtworkFilter(artworks: Artwork[], initialArtist?: string) {
     updateUrlParams,
   ]);
 
-  // Handle URL changes (back/forward button)
+  const prevSearchParamsStr = useRef(searchParams.toString());
+
   useEffect(() => {
+    const currentSearchParamsStr = searchParams.toString();
+
+    if (currentSearchParamsStr === prevSearchParamsStr.current && !initialArtist) {
+      return;
+    }
+    prevSearchParamsStr.current = currentSearchParamsStr;
+
     const urlSort = (searchParams.get('sort') as SortOption) || 'artist-asc';
     const urlQ = searchParams.get('q') || '';
     const urlStatus = (searchParams.get('status') as StatusFilter) || 'all';
     const urlArtist = searchParams.get('artist') || null;
 
-    // Prop이 있으면 URL 파라미터보다 우선함
     const effectiveArtist = initialArtist || urlArtist;
 
-    if (urlSort !== sortOption) setSortOption(urlSort);
-    // For search query, we want to update it only if it's significantly different to avoid conflict with typing
-    // But since we debounce URL updates, if URL changes externally (back button), we should accept it
-    if (urlQ !== searchQuery && urlQ !== debouncedSearchQuery) setSearchQuery(urlQ);
-    if (urlStatus !== statusFilter) setStatusFilter(urlStatus);
-    if (effectiveArtist !== selectedArtist) setSelectedArtist(effectiveArtist);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams, initialArtist]); // Depend on searchParams & initialArtist to react to changes
+    const {
+      sortOption: currentSort,
+      searchQuery: currentQuery,
+      debouncedSearchQuery: currentDebouncedQuery,
+      statusFilter: currentStatus,
+      selectedArtist: currentArtist,
+    } = stateRef.current;
 
-  // 1. 필터링 (검색어 + 판매상태)
+    if (urlSort !== currentSort) setSortOption(urlSort);
+    if (urlQ !== currentQuery && urlQ !== currentDebouncedQuery) setSearchQuery(urlQ);
+    if (urlStatus !== currentStatus) setStatusFilter(urlStatus);
+    if (effectiveArtist !== currentArtist) setSelectedArtist(effectiveArtist);
+  }, [searchParams, initialArtist]);
+
   const filteredArtworks = useMemo(() => {
     let result = artworks;
 
-    // Status Filter
     if (statusFilter === 'selling') {
       result = result.filter((a) => !a.sold);
     } else if (statusFilter === 'sold') {
       result = result.filter((a) => a.sold === true);
     }
 
-    // Search Filter (uses debounced value)
     if (debouncedSearchQuery.trim()) {
       const query = debouncedSearchQuery.toLowerCase().trim();
       result = result.filter(
@@ -193,7 +173,6 @@ export function useArtworkFilter(artworks: Artwork[], initialArtist?: string) {
       );
     }
 
-    // Artist Filter
     if (selectedArtist) {
       result = result.filter((a) => a.artist === selectedArtist);
     }
@@ -201,26 +180,12 @@ export function useArtworkFilter(artworks: Artwork[], initialArtist?: string) {
     return result;
   }, [artworks, debouncedSearchQuery, statusFilter, selectedArtist]);
 
-  // 2. 정렬 적용
   const sortedArtworks = useMemo(
     () => sortArtworks(filteredArtworks, sortOption),
     [filteredArtworks, sortOption]
   );
 
-  const uniqueArtists = useMemo(() => {
-    const seen = new Set<string>();
-    const artists: string[] = [];
-    const source = [...artworks].sort((a, b) => a.artist.localeCompare(b.artist, 'ko-KR'));
-
-    for (const artwork of source) {
-      if (!seen.has(artwork.artist)) {
-        seen.add(artwork.artist);
-        artists.push(artwork.artist);
-      }
-    }
-
-    return artists;
-  }, [artworks]);
+  const uniqueArtists = useMemo(() => extractUniqueArtists(artworks), [artworks]);
 
   return useMemo(
     () => ({

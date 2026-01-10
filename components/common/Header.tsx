@@ -6,6 +6,7 @@ import ExportedImage from 'next-image-export-optimizer';
 import { usePathname } from 'next/navigation';
 import { HERO_PAGES, Z_INDEX } from '@/lib/constants';
 import { useScrolled } from '@/lib/hooks/useScrolled';
+import { useScrollLock } from '@/lib/hooks/useScrollLock';
 import type { NavigationItem } from '@/types';
 import clsx from 'clsx';
 
@@ -60,48 +61,18 @@ export default function Header() {
   );
 
   // Store scroll position for scroll lock
-  const scrollPositionRef = useRef(0);
   const shouldRestoreScrollRef = useRef(true);
-
-  // Define scroll functions first
-  const lockScroll = useCallback(() => {
-    shouldRestoreScrollRef.current = true;
-    const body = document.body;
-    const html = document.documentElement;
-    // Store current scroll position
-    scrollPositionRef.current = window.scrollY;
-    // Apply fixed positioning to prevent scroll
-    body.style.position = 'fixed';
-    body.style.top = `-${scrollPositionRef.current}px`;
-    body.style.left = '0';
-    body.style.right = '0';
-    body.style.overscrollBehavior = 'contain';
-    html.style.scrollBehavior = 'auto';
-  }, []);
-
-  const unlockScroll = useCallback(() => {
-    const body = document.body;
-    const html = document.documentElement;
-    // Remove fixed positioning
-    body.style.position = '';
-    body.style.top = '';
-    body.style.left = '';
-    body.style.right = '';
-    body.style.overscrollBehavior = '';
-    html.style.scrollBehavior = '';
-
-    // Restore scroll position ONLY if we shouldn't skip it (e.g. navigation)
-    if (shouldRestoreScrollRef.current) {
-      window.scrollTo(0, scrollPositionRef.current);
-    }
-  }, []);
+  const { lockScroll, unlockScroll } = useScrollLock();
 
   // Menu action callbacks
-  const openMenu = useCallback(() => dispatch({ type: 'OPEN' }), []);
+  const openMenu = useCallback(() => {
+    shouldRestoreScrollRef.current = true;
+    dispatch({ type: 'OPEN' });
+  }, []);
   const startCloseMenu = useCallback(() => dispatch({ type: 'START_CLOSE' }), []);
   const finishCloseMenu = useCallback(() => {
     dispatch({ type: 'FINISH_CLOSE' });
-    unlockScroll();
+    unlockScroll(shouldRestoreScrollRef.current);
   }, [unlockScroll]);
 
   const toggleMenu = useCallback(() => {

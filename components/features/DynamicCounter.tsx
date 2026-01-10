@@ -24,9 +24,9 @@ export default function DynamicCounter({ items }: DynamicCounterProps) {
     <section ref={ref} className="py-12 bg-canvas-soft">
       <div className="container-max">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {items.map((item, index) => (
+          {items.map((item) => (
             <div
-              key={index}
+              key={item.label}
               className="text-center p-6 bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1"
             >
               <h3 className="font-sans font-bold text-sm font-medium text-charcoal-muted mb-2">

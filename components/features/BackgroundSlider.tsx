@@ -23,10 +23,11 @@ export default function BackgroundSlider() {
 
   useEffect(() => {
     // 1. 이미지 순서 섞기 (랜덤) - 클라이언트에서만 실행
-    // Create a mutable copy and sort it
     const shuffled = [...HERO_IMAGES].sort(() => Math.random() - 0.5);
     setImages(shuffled);
+  }, []);
 
+  useEffect(() => {
     setIsMounted(true);
     // 첫 렌더링 후 플래그 해제
     const timer = requestAnimationFrame(() => {
@@ -55,7 +56,7 @@ export default function BackgroundSlider() {
       clearInterval(interval);
       window.removeEventListener('resize', checkMobile);
     };
-  }, []);
+  }, [images.length]);
 
   if (!isMounted) return <div className="absolute inset-0 bg-gray-900 -z-10" />;
 

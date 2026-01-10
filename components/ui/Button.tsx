@@ -6,7 +6,7 @@ import { m } from 'framer-motion';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
-const buttonVariants = cva(
+export const buttonVariants = cva(
   'inline-flex items-center justify-center font-bold rounded-lg transition-all duration-300 ease-out group',
   {
     variants: {
