@@ -78,7 +78,7 @@ export default function MobileMenu({
                     href={EXTERNAL_LINKS.DONATE}
                     variant="accent"
                     external
-                    className="w-full gap-1.5"
+                    className="w-full gap-1.5 pr-1"
                     onClick={onClose}
                   >
                     <span className="group-hover:scale-125 transition-transform duration-300">
