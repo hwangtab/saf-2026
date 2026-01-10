@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import Link from 'next/link';
 import ExportedImage from 'next-image-export-optimizer';
 import { Artwork } from '@/types';
@@ -16,7 +17,7 @@ interface ArtworkCardProps {
  * - gallery: Full card for MasonryGallery with material/size info
  * - slider: Compact card for RelatedArtworksSlider
  */
-export default function ArtworkCard({ artwork, variant = 'gallery', className }: ArtworkCardProps) {
+function ArtworkCard({ artwork, variant = 'gallery', className }: ArtworkCardProps) {
   const isDisplayable = (value: string | undefined): value is string => Boolean(value);
   const showMaterial = isDisplayable(artwork.material);
   const showSize = isDisplayable(artwork.size);
@@ -105,3 +106,5 @@ export default function ArtworkCard({ artwork, variant = 'gallery', className }:
     </div>
   );
 }
+
+export default memo(ArtworkCard);
