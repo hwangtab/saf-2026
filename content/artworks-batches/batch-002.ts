@@ -96,7 +96,7 @@ export const artworksBatch2: Artwork[] = [
     size: '65x54cm',
     material: '판화지에 세리그라프\n,16도 프린팅',
     year: '2025',
-    edition: '에디션',
+    edition: '',
     price: '₩1,100,000',
     image: '63.jpg',
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/83',
