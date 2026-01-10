@@ -6,6 +6,8 @@ export function useScrollLock() {
 
   useEffect(() => {
     const checkMobile = () => {
+      // Consistent with other components (768px or 1024px depending on design)
+      // Header uses lg:hidden (1024px) for mobile menu, so we check for < 1024px
       setIsMobile(window.innerWidth < 1024);
     };
     checkMobile();
@@ -14,19 +16,21 @@ export function useScrollLock() {
   }, []);
 
   const lockScroll = useCallback(() => {
-    const body = document.body;
+    // Prevent double locking
+    if (document.body.style.overflow === 'hidden') return;
 
-    // 현재 스크롤 위치 저장
     scrollPositionRef.current = window.scrollY;
 
-    // overflow: hidden 방식 - position: fixed보다 레이아웃 재계산이 적음
-    // scrollbar-gutter: stable로 스크롤바 공간 유지하여 레이아웃 시프트 방지
-    body.style.overflow = 'hidden';
+    const body = document.body;
 
-    // 데스크탑에서만 스크롤바 공간 보정 (모바일은 오버레이 스크롤바 사용으로 불필요)
-    if (!isMobile) {
-      body.style.paddingRight = `${window.innerWidth - document.documentElement.clientWidth}px`;
+    // Only add padding if scrollbar is actually visible
+    const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+    if (scrollBarWidth > 0 && !isMobile) {
+      body.style.paddingRight = `${scrollBarWidth}px`;
     }
+
+    body.style.overflow = 'hidden';
   }, [isMobile]);
 
   const unlockScroll = useCallback((restore = true) => {
@@ -36,12 +40,17 @@ export function useScrollLock() {
     body.style.paddingRight = '';
 
     if (restore) {
-      // 이중 rAF를 사용하여 스타일 변경이 완전히 적용되고 레이아웃이 안정화된 후 스크롤 복원
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          window.scrollTo(0, scrollPositionRef.current);
-        });
-      });
+      // Only restore if we have significantly drifted (which shouldn't happen with overflow:hidden usually)
+      // or if we need to force it.
+      // Removing the double rAF and eager scrollTo which causes flickering.
+      // If overflow:hidden works correctly, the scroll position should be preserved naturally 
+      // when overflow is removed, OR it stays at 0.
+
+      // However, some mobile browsers might reset scroll on overflow change.
+      // We only restore if strict restoration is needed and current scroll is wrong.
+      if (Math.abs(window.scrollY - scrollPositionRef.current) > 1) {
+        window.scrollTo(0, scrollPositionRef.current);
+      }
     }
   }, []);
 
