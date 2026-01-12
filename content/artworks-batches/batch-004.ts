@@ -95,7 +95,7 @@ export const artworksBatch4: Artwork[] = [
     year: '2024',
     edition: '',
     price: '₩200,000',
-    image: '173.jpg',
+    image: '173.png',
     shopUrl: '',
   },
   {

@@ -103,6 +103,15 @@
   color: #333;
 }
 
+.closeButton:focus {
+  outline: none;
+}
+
+.closeButton:focus-visible {
+  outline: 2px solid var(--color-primary, #2176ff);
+  outline-offset: 2px;
+}
+
 .closeButton:active {
   background: #ddd;
 }
@@ -152,6 +161,15 @@
 .navLink:hover {
   background: #f8f8f8;
   color: var(--color-primary, #2176ff);
+}
+
+.navLink:focus {
+  outline: none;
+}
+
+.navLink:focus-visible {
+  outline: 2px solid var(--color-primary, #2176ff);
+  outline-offset: 2px;
 }
 
 .navLink:active {

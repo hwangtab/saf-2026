@@ -16,7 +16,6 @@ interface NavLinkProps {
 
 const desktopBaseStyles = [
   'relative flex items-center h-full text-sm font-medium transition-colors',
-  'focus:outline-none focus-visible:outline-none',
   'after:absolute after:bottom-3 after:left-0 after:right-0 after:h-0.5',
   'after:transition-colors',
 ];

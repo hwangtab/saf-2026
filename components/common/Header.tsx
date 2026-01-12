@@ -78,7 +78,10 @@ export default function Header() {
       }}
     >
       <nav className="container-max flex items-center justify-between h-16 transition-colors duration-300">
-        <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+        <Link
+          href="/"
+          className="flex items-center gap-2 hover:opacity-80 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded"
+        >
           <div className="relative h-9 w-40">
             <ExportedImage
               src="/images/logo/320pxX90px.webp"
@@ -114,6 +117,7 @@ export default function Header() {
           className={clsx(
             'md:hidden p-3 min-w-[44px] min-h-[44px] flex items-center justify-center',
             'transition-transform active:scale-90',
+            'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg',
             textColor,
             'hover:text-primary'
           )}
