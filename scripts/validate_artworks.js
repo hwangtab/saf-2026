@@ -1,6 +1,10 @@
 const path = require('path');
 const createJiti = require('jiti');
-const jiti = createJiti(__filename);
+const jiti = createJiti(__filename, {
+  alias: {
+    '@': path.join(__dirname, '..'),
+  },
+});
 
 const { artworks } = jiti('../content/saf2026-artworks.ts');
 

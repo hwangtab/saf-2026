@@ -16,7 +16,6 @@ import {
   STATISTICS_DATA,
   escapeJsonLdForScript,
 } from '@/lib/constants';
-import CTAButtonGroup from '@/components/common/CTAButtonGroup';
 
 export const metadata: Metadata = {
   title: '씨앗페 2026 - 예술인 금융 위기 해결 캠페인',

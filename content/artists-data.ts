@@ -2376,4 +2376,433 @@ https://youtu.be/2y-6nsIQK_M?si=bsSCmjLs3F71InC8
 
 현재  한국미술협회회원`,
   },
+  김레이시: {
+    profile: `예술은 제게 삶의 본질이자 자연스러운 흐름이었습니다. 서울여자대학교 서양화과를 졸업하고, 영국 노팅엄 트렌트 대학교와 미국 프랫 인스티튜트에서 석사과정을 마쳤습니다. 구상 작업을 통해 회화의 구조적 기반을 다진 뒤, 추상 회화로 전환하면서 내면의 균형과 존재의 본질을 선과 색으로 탐구해 왔습니다. 뉴욕, 시카고, 빈, 마이애미, 서울 등 다양한 도시에서 전시를 이어오며, 서로 다른 문화와 미적 감각이 교차하는 지점을 작업 속에 반영하고 있습니다. 예술은 제게 자신을 이해하고 타인과 연결되는 하나의 언어이며, 이를 통해 관람자 각자의 감각과 경험이 예술을 통해 직관적으로 교류될 수 있을 가능성을 모색하고 있습니다. 현재는 이러한 경험을 바탕으로 예술의 교육적 확장에도 관심을 두고, 창작과 나눔이 공존하는 예술 활동을 지속하고 있습니다.`,
+    history: `ducation
+
+2009 MFA Pratt Institute NY, USA
+2007 MA Nottingham Trent University, UK 
+2003 서울여자대학교 서양화과 학사
+
+Selected Solo Exhibitions
+
+2025 Anonymous Moments / 충주문화재단 목계나래 충주
+Anonymous Moments / 갤러리 LP 서울
+2024 This Moment / 갤러리 일호 서울
+     Fragrance of This Moment / 09 Salon 서울
+2023 Before Any Words / 갤러리코랄 서울
+Before Any Words / 갤러리스틸 안산
+     Before Any Words / 갤러리도스 서울
+2022 Before Thinking / 갤러리한옥 서울 
+Before Thinking / 사이아트스페이스 서울 
+2021 Before Mind / 갤러리 너트 서울 
+     Before Mind / CICA 김포 
+2017 Vantage Point / Lobby Gallery at 1133 Avenue of Americas Presented by ChaShaMa & Durst Organization New York, NY
+     Before Mind / ChaShaMa space at 55 Broadway New York, NY
+2015 In Between / 갤러리 피랑 헤이리 
+     In Between / 스페이스 선 플러스 서울 
+2014 In Between / 갤러리 이마주 서울 
+2012 Dialogue of Silence / Yashar Gallery Brooklyn, NY
+2011 Dialogue of Silence / Amos Eno Gallery Brooklyn, NY 
+2010 Dialogue of Silence / 팝아트팩토리 서울
+     Dialogue of Silence / Chelsea West Gallery New York, NY
+
+외 총 24회
+
+Selected Group Exhibitions
+
+2025 미술인선정작가전 / 갤러리영도씨 서울
+70th 창작협회 그룹전시 / 마루아트센터 서울
+Inspiration / 아트스퀘어갤러리 서울
+MOAF / 아트필드갤러리 서울
+  화양연화 / 스페이스 B TWO 이대서울병원 서울
+  MOAF Rising Star 24 / 아트필드갤러리 서울
+2024 Unknown Vibes Art Fair / 부띠크모나코뮤지엄 서울
+Diaf Plus / Exco Hall 대구 
+     RWA / 09 Salon 서울
+     69th 창작협회 그룹전시 / 예술의 전당 서울 
+MOAF 문래아트페어 / 아트필드갤러리 서울
+     일상이몽 / 스페이스 B TWO 이대서울병원 서울
+꿈과마주치다 / 갤러리일호 서울
+2023 청년작가 작품전시회 / KT 광화문사옥 서울 
+     서리풀 Art for Art 대상전 / 한전아트센터 서울
+68th 창작협회 그룹전시 / 예술의 전당 서울 
+아트강릉23 / 강릉아트센터 강릉
+고택아트페스타 / 소양고택 완주
+     A Long Way Around / 로이갤러리 서울
+Abstract Mind 2023 / CICA 김포
+2022 고택아트페어 / 소양고택 완주 
+     Window of The Time / 이랜드갤러리 헤이리 파주
+     67th 창작협회 그룹전시 / 예술의 전당 서울
+아트 페어 BAMA / 벡스코 부산 
+SHIM Invitational Winter 2022 Showcase / Shim on Artsy.net
+2021 호텔 아트 페어 BAMA in Grand Josun / 그랜드조선호텔 부산 
+SHIM Invitational Fall 2021 Showcase / Shim on Artsy.net
+Crossing over the virtual space / ArtHub Virtual Gallery - arthub.co.kr/vrgallery 
+66th 창작협회 그룹전시 / 예술의 전당 서울 
+2020 SHIM Invitational Summer 2020 Showcase / Shim on Artsy.net
+What Matters most / The Artist Essentials on theartistessentials.com
+Drawings in A Time of Social Distancing / LIC Arts on licartists.org/non-traditional 
+65th 창작협회 그룹전시 / 예술의 전당 서울 
+2019 Aqua Art Miami / Aqua Hotel, Presented by Shim Miami, FL
+Superfine Art Fair / Union Market Washinton D.C. 
+Creative Mosaic / Plaxall Gallery Long Island City, NY
+64th 창작협회 그룹전시 / 인사아트센터 서울 
+Shim Invitational 7 / Odetta Gallery Brooklyn, NY
+LIC Open Studios - Group Exhibition / Gallery Studio 34 LIC, NY
+2018 Holiday Small Works / Limner Gallery Hudson, NY
+     63rd 창작협회 그룹전시 / 예술의 전당 서울
+     Bushwick Open Studio 2018 / Space 776 Gallery Brooklyn, NY
+I DREAM in Blue and Green / LIC Arts Open Gallery at The Factory Long Island City, NY
+Summer Exhibition 2018 / LIC Arts Open Gallery at The Factory LIC, NY
+2017 Bushwick Invitational / Art Helix, organized by Shim Brooklyn, NY
+     62nd 창작협회 그룹전시 / 예술의 전당 서울 
+Making Connections / The Plaxall Gallery Long Island City, NY
+     The Other Art Fair / Brooklyn EXPO Center Brooklyn, NY
+     Design Art Fair / 예술의 전당 서울
+2016 Wish You Were Here15 / A.I.R Gallery Brooklyn, NY
+61st 창작협회 그룹전시 / 예술의 전당 서울 
+2015 Art Canvas Project / 갤러리 41 서울
+     Art Canvas Project / Gallerie Kunst Direkt Regensburg, Germany
+세월호참사1주기추모전시회/ 예술의 전당 안산
+     길위에 선 물건들 / 스페이스 선 플러스 서울 
+2011 You Can Have Your Void And Eat It Too / Space Two Moon Brooklyn, NY
+     AHL Foundation’s 2nd Silent Auction / The Space on White NY, NY
+     Lucid Dreaming / Tompkins Square Gallery New York, NY
+     Pop Up Art Show / Intermix Gallery The Chelsea Room in Hotel Chelsea New York, NY
+Better by The Dozen / Beacon Artist Union Beacon, NY
+In Vivid color / Euro Asian Art Center Vienna, Austria
+2010 Crossroads - Seven Acts / Amos Eno Gallery Brooklyn, NY
+     Unwind / Lana Santorelli Gallery New York, NY
+     National Juried Show Media Mix / Bancroft Gallery South Shore Art Center MA
+     National Juried Show Image Attitude Impression / Union Street Gallery Chicago, IL
+     Show some Emotion / Sixth Street Gallery Vancouver, WA
+2009 National Juried Show Unbound / The Art Center Highland Park, IL
+     National Juried Show Not Big / Logsdon 1909 Gallery Chicago, IL
+     Paint / Climate Gallery - Long Island City, NY
+National Juried Show 20/20 / Artspace MAGQ Miami, FL
+     25th Annual National Juried Exhibition New Directions / Barrett Art Center Poughkeepsie, NY
+     6th Annual International Juried Exhibition / The Shore Institute of Contemporary Arts Long Branch NJ
+2006 100+ / Bonington Building - Nottingham, UK
+Itemised / Surface Gallery - Nottingham, UK
+외 국내외 90여회
+
+Selected Publications
+
+2025 Featured Artist in Studio Visit Magazine (May)
+2023 Featured Artist on ArtView 21 Ephotoview.com (July)
+2022 Artists to Watch in 2023 in Art Continue Magazine (November)
+Lacey Kim: Studio Visit in Friend of The Artist magazine (October)
+     Featured in CICA Art Now in CICA magazine (September)
+Featured Artist in Friend of The Artist magazine (February)
+2021 Featured Artist in Boomer magazine (March)
+2020 IN STUDIO: Featured Artist on TurningArt.com (October) 
+Featured Artist on Altiba9.com Isue06 (October)
+Artist of The Month on ArtJobs.com (June)
+Featured Artist on Hyperallergic.com (April)
+2018 Featured Artist on VoyageChicago.com (June)
+2016 Featured Artist in Studio Visit Magazine (July)
+2014 Artist of The Day on Saatchi Art (May)
+Featured Artist on Saatchi Art’s Abstract Collection (February)
+2012 Artist of The Week on Visual Overture online Magazine (April)
+
+Selected Activities
+
+전시 중 작가와의 대화 및 특강 등 Artist Talks & Public engagements
+Awards and Recognitions
+
+2025 미술인선정작가공모전 선정작가
+2025 갤러리LP 신진작가공모전 선정작가
+2025 충주문화재단 목계나래 무료대관공모 선정작가
+2025 MOAF Rising Star 24 선정작가
+2024 갤러리일호 신진작가공모전 선정작가 
+2023 아트강릉23 최종22인 선정작가 
+갤러리코랄 작가공모 선정작가
+     서리풀갤러리 대상전 입선
+     갤러리도스 작가공모 선정작가
+2022 갤러리한옥 신진작가공모전 최우수상
+2021 사이아트스페이스 신진작가공모전 선정작가
+2021 갤러리 너트 신진작가공모전 선정작가
+2020 Artist of The Month in Artjobs.com
+2017 Selected Artist in ChaShaMa organization in NYC 
+2015 스페이스선플러스 신진작가공모전 선정작가
+2014 이마주갤러리 선정작가
+외 다수
+
+Public Collections
+
+One Medical Group (Cobble Hill, Brooklyn Location), 서울동부지방법원
+
+
+
+
+
+
+Selected Press and Interview
+
+May. 2025 ‘Anonymous Moments’ – 김레이시23회개인전 / 시사의창
+https://sisaissue.com/View.aspx?No=3650671 
+Feb. 2025 MOAF Rising Star 24 / ArtField Gallery 아트필드갤러리
+https://youtu.be/MD5bCU1cpM4?si=8zssMKIqcqncUGNi 
+Oct. 2024 ‘This Moment’ / Misulin 미술인
+https://www.misulin.co.kr/news/articleView.html?idxno=3196 
+June. 2023 ‘Before Any Words’ / News Culture 그 어떤 말보다 / NC 전시관
+https://www.newsculture.press/news/articleView.html?idxno=525673
+Aug. 2022 ‘Zen Painting as Oil on Canvas’ – Lacey Kim Solo Exhibition Before Thinking / HyunBul NEWS 캔버스 오일 페인팅의 禪畵 ‘생각 이 전’ / 현대불교
+http://www.hyunbulnews.com/news/articleView.html?idxno=406005 
+Aug. 2017 'Meet The Others' - Lacey Kim / The Other Art Fair
+https://www.youtube.com/watch?v=rf01ijTVQxA 
+Apr. 2015 ‘Emerging Artist Lacey Kim Solo Exhibition IN BETWEEN At Space
+Sun+’ / Voice of People 스페이스선 플러스 신진작가전’김레이시 개인전’ / 민중의소리
+http://www.vop.co.kr/A00000866430.html
+Sep. 2014 ‘Recommended Show by ART IN – Lacey Kim Solo Exhibition IN BETWEEN’ / Culture and Business Journal [아트인선정전시]갤러리이마주 김레이시 개인전 / CNB저널
+http://weekly.cnbnews.com/news/article.html?no=114046`,
+  },
+  김태균: {
+    profile: ``,
+    history: `■ 개인전
+2019 ‘각색된 영토‘, 김종영미술관 창작지원전, 김종영미술관, 서울
+2013 ‘영원한 휴가’, 서울시립미술관 신진작가 선정전, 스페이스 캔, 서울
+2011 ‘풍경의 그늘’, 독일 에힝엔 시립미술관 기획 초대전, 에힝엔, 독일
+■ 단체전
+2025 ’어제는 과거의 미래다‘전, 송원아트센터, 서울
+2023 “평화를 준수하라”전, 전태일 기념관 갤러리, 서울
+2022 ‘완충의 시간’, 경기천년길갤러리, 경기도북부청, 의정부
+2019 ‘상상의 공식’ 부산현대미술관 신소장 작품전, 부산현대미술관, 부산
+2017 ‘경계 155’전, 서울시립미술관 본관, 서울
+2016 경기유망작가 생생화화, “14개의 시선”전, 고양 아람미술관, 경기도 고양
+2015 “살롱 드 세마” 서울 시립미술관 신소장 작품전, 서울 시립미술관, 서울
+2014 “BETWEEN WAVES” 아모레 퍼시픽 미술관 기획 APMAP, 오설록 뮤지움, 제주
+2013 "사건들", 국립현대미술관 고양창작스튜디오 전시실, 경기도 고양
+2012 “바덴-뷔템베르크를 위한 60인의 작업”전, 징엔 시립미술관, 독일
+2011 “No Limits”전, 슈투트가르트 비르트샤프트 하우스, 슈투트가르트, 독일
+2010 "디 나투어 페어빈뎃", 빌링엔 슈베닝엔 시립공원, 독일
+2009 "챠트(Zart)“전, 얀 후트 기획, 갤러리 ABT ART, 슈투트가르트, 독일
+2008 "테스트 빌트“, 폴시티 건물, 슈투트가르트, 독일
+2007 "포토 섬머"전, 쿤스트 아카데미 전시실, 슈투트가르트, 독일
+2006 쿤스트 프로젝트 "포어 파트", 비어켄 발트 거리, 슈투트가르트,`,
+  },
+  박은선: {
+    profile: `박은선은 동국대학교 예술대학 서양화과를 졸업, 이태리 로마국립아카데미를 졸업하였고, 아트파크, 아트사이드, 가나인사아트센터, 가나아트스페이스, 갤러리현대윈도우, 갤러리 룩스, THE GALLERY D, 조선일보사 갤러리 One,  Cite' Internationale Des Arts갤러리(프랑스), Passages-현대예술 센터(프랑스) 등 18회의 개인전과 200회 이상의 국내외 기획전 및 단체전에 참여하였다. 
+국내외 입주작가 프로그램에 선정되어,‘D’ 국제 레지던시 프로그램(대명 스튜디오), 가나아뜰리에 입주2기, 창동미술스튜디오 입주1기, Birla Academy of Art and Culture 레지던스(인도 캘커타, 샨티니케탄), Passages(프랑스 트로아), 국제예술공동체(Cite' Internationale Des Arts) 등에 입주하여 활동하였다.`,
+    history: ``,
+  },
+  김현철: {
+    profile: `김현철 작가는 한국 전통 회화를 현대적으로 재해석하며 초상화(전신)와 산수화(진경) 분야에서 독자적 세계를 구축한 동양화가로, 서울대 대학원 졸업 후 간송미술관에서 전통 공부를 했으며 '시중재'를 호로 쓰며 현대미술 속 전통의 현재성을 추구한다. '금릉 김현철'로 불리기도 하며, 특히 쪽빛 색채와 깊은 정신성을 담은 작품, 《춘향영정》 제작 등 전통과 현대의 조화를 이루는 작업으로 주목받는다.`,
+    history: ``,
+  },
+  '장천 김성태': {
+    profile: ``,
+    history: `학력
+원광대학교 미술대학 서예과 졸업(1기)
+동국대학교 인문대학원 미술사학과 석사 졸업
+
+현 재
+(사)한국캘리그라피디자인협회 명예회장
+(사)한국미술협회 캘리그라피분과 운영위원 및 이사
+KBS아트비전 영상그래픽팀 팀장
+나사렛대학교 평생교육원 캘리그라피전문가과정 외래교수
+2022년 대한민국미술대전 캘리그라피 부문 심사위원장
+
+수상
+2015 제9회 다산(정약용)대상시상식 대상 수상(문화예술 부문), 남양주시
+
+저서
+김성태,『장천과 함께하는 붓으로 배우는 캘리그라피』, 덕주출판사, 2022
+
+개인전 / 초대전
+개인전 및 초대전 18회  / 단체전 250여 회
+2025 무우수갤러리 기획 장천 김성태 초대전 ‘나랏말글씨’, 무우수갤러리, 서울
+2024 신춘기획 장천 김성태 초대전, ‘광주의 봄’, 관선재 갤러리, 광주
+2024 “서울의 봄 in 문래” 기획초대전, 아트필드 갤러리, 서울
+2021 장천글숲 갤러리 오픈전, 부산 해운대
+2020 충무공탄신475주년.해군창설 75주년 기념 초대전, 해군진해기지사령부
+2018 광양본가 그랜드 오픈 기획초대전, 광양본가, 서울
+2018 독립운동가 어록 초대전, 독립기념관, 천안
+2016 명사시리즈Ⅳ 장천김성태 초청전 “아! 충무공”, 아산문화재단 갤러리 
+      <연장전시 : 2016 독립기념관, 비선재>
+2014 명사시리즈Ⅲ 이해인수녀의 시문전 “아이가 희망이다”, 인사동 선화랑 
+      <연장전시 : 2014 부산해운대문화회관>
+2013 명사시리즈Ⅱ 다산정약용선생 탄신 250주년 기념전 “아! 여유당”, 아라아트, 서울 
+2011 명사시리즈Ⅰ 법정스님 1주기 추모 기획초대전,토포하우스, 서울 
+
+대표 그룹전
+2025 BANK ARTFAIR IN SINGAPORE, Pan Pacific Singapore Hotel
+2025 DIAF대구국제아트페어, 대구엑스코, 대구
+2025 추사기념사업회, ‘추사는 살아있다’展, 한국미술관, 서울
+2024 한국서예의 오늘과 내일 靑龍·白鶴전, 예술의전당 서예박물관, 서울
+2024 PINK SEOUL ART FAIR, 서울신라호텔12층
+2023 제10회 부산서예비엔날레, ‘세계서화명가홍예전’, 부산
+2023 세계서예전북비엔날레 ‘작은 우주 속의 울림’ 초대전, 한국소리문화의전당, 전주
+2023 제577도 한글날 기념 ‘한글멋글씨전’, 국립한글박물관
+2023 제40회 産經國際書展, 東京都美術館, 日本
+2022 예술의전당 ‘쓰지 않는 글씨’ 기획초대전, 서울
+2021 무우수갤러리 한글기획초대전 ‘멋짓한글’, 서울
+2021 광복76주년 기념 깃발전, 서대문형무소, 서울
+2019 동경국제교류전, 우에노미술관, 일본
+2017 세계서예전북비엔날레 ‘서론 서예’ 초대전, 한국소리문화의전당, 전주
+2017 한국서예큰울림 초대전, 미술세계, 서울
+2016 세계서화아트페스티벌 초대전, 여수엑스포 전시관, 여수
+2012 외솔 최현배선생 탄생 118주년 기념 ‘도시, 한글로 물들이다’ 초대전, 외솔기념관
+2012 한중수교 20주년 기념 中國宋莊文化藝術祭 翰停畵廊 中韓書法邀請展, 北京
+2011 문자문명전, 성산아트홀, 초대전, 창원
+2011 고 정주영 명예회장 10주기 기념초대전, 현대예술관, 울산
+2010 국제현대서법가20인 초대전, 象都美術館, 中國 鄭州 
+
+휘호(제호)
+2025 화성특례시 승격 현판 휘호
+2025 화성특례시의회 승격 현판 휘호
+2024 신한금융 신년슬로건 
+2023 영화 ‘서울의 봄’ 
+2022 국립고궁박물관 ‘궁중 현판전’
+2022 아산 충무연수원 ‘나라사랑’ 현판 외 3건
+2019 YTN슬로건 
+2015 영화 <귀향(鬼鄕)> 타이틀
+2014 대한민국 청와대 및 대통령실 경호처 홍보영상 타이틀
+2014 (주)신세계 경영이념 및 핵심가치
+2012 상성리움미술관 ‘화원’ 특별전
+2010 상해 엑스포 한국기업관 홍보영상 
+2010 대한병원협회 사보 
+2010 한국수자원공사 슬로건 
+2010 의왕시 슬로건
+2009 하남시 슬로건 
+2009 국순당 이화주 외 다수 
+2009 여름 교보생명 글판 
+2007 불교중앙박물관 
+2006 경상남도 도정 슬로건 
+2006 금강산 신계사 상량문 및 편액  
+
+방송타이틀
+드라마 대하드라마 태종 이방원 / 대하드라마 장영실 / 불멸의 이순신 / 전설의 고향 / 
+일일연속극 무궁화꽃이 피었습니다 / 수목드라마 신데렐라 언니 / TV소설 내 마음의 꽃비 / 임진왜란 1592
+교양/다큐 TV쇼 진품명품 / 한국인의 밥상 / 국악한마당 / 우리말겨루기 / 명견만리 /    세상의 아침 / 영상앨범 산 / 동행 / 외 다수
+
+선정
+2013 중학교 미술교과서 교학사편 작품 <눈길> 수록
+2013 고등학교 미술교과서 천재출판사, 작가 소개
+2007 2008 한국문화예술위원회 예술창작지원작가 선정
+2005 국립현대미술관 미술은행 작품 매입작가 선정
+
+심사
+안견미술대전 / 안향선생 전국 서예·문인화 휘호대회 / 제주한글사랑서예대전
+대한민국태을서예문인화대전 / 행안부 주최 지진안전 캘리그라피 공모전
+경기도여성기·예경진대회 / 세종기념사업회 한글글꼴공모전
+방위사업청 슬로건·손글씨 공모전 / 대한민국미술대전 / 경기도미술대전
+추사휘호대회 / 단원미술대전 / 월간서예대전 / 대한민국서예대상전 
+대한민국여성미술대전 / 대한민국동양미술대전 / 대한민국서예술대전
+대한민국열린서예문인화대전 / 경인미술대전`,
+  },
+  조이락: {
+    profile: `조이락 작가는 동아대와 부산대에서 서양화를 전공하고 서양화가로 활동하다가 고려 불화 수월관음도에 매료되었다. 용인대학교 대학원에서 고려불화와 유물재현으로 석사학위를 받고 정재문화재보존연구소에서 유물재현에 참여했다. 20여년 간 고려불화 재현에 매진하면서 뉴욕과 LA 등 해외에도 고려불화의 아름다움을 알려온 그의 작품은 국립중앙박물관, 서울역사박물관, 수원시청 등 국공립 기관 등에 소장되어 있다.`,
+    history: `개인전
+
+2021 어화둥둥 아가야! 한옥갤러리 초대, 서울
+2021 꽃으로 핀 바라밀, 마하보디선원 초대, 경주
+2020 숨은꽃 님에게 가는 길, 서울
+2015 고려불화 재현전,프록시플레이스 갤러리 초대,미국 La
+2005 불교회화전, 용인대학교 박물관 등 10여회
+
+주요 초대 기획전
+
+2019 김경호+조이락 2인전 티벳하우스 초대, 미국 뉴욕
+2017 고려불화 재현전, 프러싱 타운홀, 미국 뉴욕 등 30여회
+
+현재
+
+조이락 고려불화연구소
+문화재수리기능자 모사공 7148호 보존처리공 7547
+보존처리공 7547
+무우수아카데미 강사`,
+  },
+  Salnus: {
+    profile: `Salnus는 회화와 다양한 매체를 다루는 일산 기반의 작가로, 독특한 시각과 표현으로 주목받으며 여러 전시와 프로젝트에 참여하고 있습니다. 특히 2023년 <확장하는 풍경> 전시와 2025년 라운디드플랫 오픈콜 개인전 등에서 활발한 활동을 보여주고 있으며, 과거의 에스키스, 입체와 평면, 공간을 넘나드는 작업을 선보입니다.`,
+    history: ``,
+  },
+  이채원: {
+    profile: ``,
+    history: `학력
+2021- 2024 Maryland Institute College of Art
+BFA in Painting
+summa cum laude
+개인전
+2024 Lazarus Hall Gallery, 131 W North Ave, 볼티모어, 매릴랜드 - To Be Continued
+주요 단체전
+2024 워싱턴 DC 한국 영사관, 워싱턴, DC - Summer Comes to My Hometown, Seoul
+Fox Gallery, 볼티모어, 매릴랜드 - Spotlight, Graduating Seniors in Focus
+2023 Deckers Gallery, 볼티모어, 매릴랜드 - Juried Undergraduate Exhibition
+수상경력
+교내 수상(Maryland Institute College of Art)
+2024 Distinguished International Student Award
+2023 General Fine Arts Department Recognition Award
+Juried Undergraduate Exhibition Fall 2023 Merit Award
+Presidential Scholarship
+MICA Visionary Scholarship
+2022 Foundation Department Recognition Award
+Distinguished International Student Award
+Presidential Scholarship
+MICA Visionary Scholarship
+2021 Presidential Scholarship
+MICA Visionary Scholarship`,
+  },
+  조문호: {
+    profile: ``,
+    history: `다큐멘터리 사진가.
+개인전 '전농동588번지'외 20회
+단체전 : 한국현대사진대표작전외 다수
+사진집 : '노숙인 길에서 살다'외 6권
+수상 : 동아미술제 대상외 다수`,
+  },
+  정영신: {
+    profile: `1958년 전남 함평 출생으로, 40년째 오일장을 탐구해온 기록사진가이며 소설가. 전국의 장터를 작업장 삼아 우리나라에서 열리는 6백여곳 오일장을 모두 기록한 바람의 여행자. 오일장을 고향의 텃밭처럼 그리워하며, 장에 두고 온 것을 찾아다니는 철부지 촌사람.`,
+    history: `개인전
+
+ * '장터를 지나 문화유산으로' 정영신 개인전. 2025 갤러리 브레송 
+ * ‘내한티는 요 장터허고 사람이 보약이랑께’ 정영신 장터사진전. 2025 갤러리인덱스
+ * '진안(鎭安), 그 다정한 풍경'전 /공동체박물관 계남정미소 
+  *'어머니의 땅' (2024 전주서학동사진미술관)
+  * 혼자가본 장항선 장터길 출판기념전 (2023 갤러리 인데스,인사동)
+  * 정영신의 '장날' 전 2021~2022 돈의문박물관마을 작가갤러리
+  * <어머니의 땅> 2021 인사동 나무아트
+  * <장에 가자> 2020 갤러리브레송
+  * <장터에서 백만 가지 표정을 담다>(2018.정선고드름축제장)
+  * <정영신의 한국의장터전>(2017, 전국5일장박람회)
+  * <장날>(2016, 아라아트)
+  * <장에가자프로젝트2>(2015 정선시외버스터미널 문화공간)
+  * <장에가자>(2015, 아라아트)
+  * <정영신의 장터>(2012, 덕원갤러리)
+  * <정영신의 장날설치전> 2008 정선, 만지산 서낭당터
+  * <정영신의 시골 장터>(2008, 정선아리랑제 설치전)
+
+   단체전
+
+   * 2022 기억의시간 - 담양뎐
+   * <순실뎐>(2017 나무화랑)
+   * <병신무란 하야제>(2017 아리수갤러리)
+   * <촛불역사전>(2017 광화문광장)등의
+      다수의 단체전을 열었으며,
+
+  ​저서로는
+
+  * 정든땅 그리운장터-전라남도편 ‘내한티는 요 장터허고 사람이 보약이랑께’ 2025.눈빛
+  * '시골장터에서 만난 똥강아지들' 2023.이숲
+  * '혼자 가본 장항선 장터길' 2023.눈빛
+  * '어머니의 땅' 2021.눈빛
+  * '장에 가자' (시골장터에서 문화유산으로) 2020.이숲
+   * '정영신의 장터이야기3' 2019 라모레터e북
+   * '정영신의 장터이야기2' 2019 라모레터 e북
+   * '정영신의 장터이야기1' 2019 라모레터 e북
+   * '장날' 눈빛사진가선 29 정영신사진집 2016.눈빛
+   * '정영신의 전국 5일장 순례기' 2015.눈빛
+   * '한국의 장터' 2012.눈빛아카이브
+   * '시골장터이야기' 2002.진선출판사
+
+  2013~2014년 농민신문 “정영신의 장터순례” 연재
+  2014년 교통방송 TBN "정영신의 장터 속 이야기“
+
+  현재
+
+  * 문인협회회원, 남북문학교류위원회 위원
+  * 서울문화투데이 편집위원.객원기자
+  * '정영신의 장터이야기' 서울문화투데이 연재중 ~`,
+  },
 };
