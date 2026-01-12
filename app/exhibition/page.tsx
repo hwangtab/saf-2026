@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 // import dynamic from 'next/dynamic'; // Removed unused import
-import Link from 'next/link';
 import ExportedImage from 'next-image-export-optimizer';
+import Button from '@/components/ui/Button';
 import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
@@ -115,20 +115,18 @@ export default function ExhibitionPage() {
               <div className="mt-auto space-y-3">
                 <h3 className="text-card-title mb-4">참여하기</h3>
                 <div className="space-y-3">
-                  <a
+                  <Button
                     href={EXTERNAL_LINKS.DONATE}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block w-full bg-accent hover:bg-accent-strong text-light font-bold px-6 py-3 rounded-lg transition-colors text-center"
+                    external
+                    variant="accent"
+                    className="w-full"
+                    size="md"
                   >
                     ❤️ 후원하기
-                  </a>
-                  <Link
-                    href="/artworks"
-                    className="block w-full bg-gray-900 hover:bg-gray-800 text-white font-bold px-6 py-3 rounded-lg transition-colors text-center"
-                  >
+                  </Button>
+                  <Button href="/artworks" variant="secondary" className="w-full" size="md">
                     🎨 작품 구매하기
-                  </Link>
+                  </Button>
                   <div className="pt-4 text-sm text-charcoal-muted">
                     <p>
                       문의:{' '}

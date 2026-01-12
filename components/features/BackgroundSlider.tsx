@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import ExportedImage from 'next-image-export-optimizer';
 import { m, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { ANIMATION, HERO_IMAGES } from '@/lib/constants';
+import { useIsMobile } from '@/lib/hooks/useIsMobile';
 
 export default function BackgroundSlider() {
   const prefersReducedMotion = useReducedMotion();
@@ -20,7 +21,7 @@ export default function BackgroundSlider() {
   const nextPhoto = images[nextIndex];
   const currentPhoto = images[currentIndex];
 
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useIsMobile();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -39,21 +40,10 @@ export default function BackgroundSlider() {
       setIsFirstRender(false);
     });
 
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    // Initial check
-    checkMobile();
-
-    // Debounced resize handler could be better, but simple listener is okay for this scope
-    window.addEventListener('resize', checkMobile);
-
     // prefers-reduced-motion 시 자동 슬라이드 비활성화
     if (prefersReducedMotion) {
       return () => {
         cancelAnimationFrame(timer);
-        window.removeEventListener('resize', checkMobile);
       };
     }
 
@@ -67,7 +57,6 @@ export default function BackgroundSlider() {
     return () => {
       cancelAnimationFrame(timer);
       clearInterval(interval);
-      window.removeEventListener('resize', checkMobile);
     };
   }, [images.length, prefersReducedMotion]);
 

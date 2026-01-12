@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import { EXHIBITION } from '@/lib/constants';
 import { useKakaoSDK } from '@/lib/hooks/useKakaoSDK';
+import { useIsMobile } from '@/lib/hooks/useIsMobile';
 
 interface KakaoMapProps {
   className?: string;
@@ -12,18 +13,7 @@ interface KakaoMapProps {
 export default function KakaoMap(props?: KakaoMapProps): React.JSX.Element {
   const { className } = props ?? {};
   const { loading, error, hasAppKey, isReady } = useKakaoSDK();
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  const isMobile = useIsMobile();
 
   const [position, setPosition] = useState<{ lat: number; lng: number }>({
     lat: EXHIBITION.LAT,

@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils';
 import { EXTERNAL_LINKS } from '@/lib/constants';
 import { UI_STRINGS } from '@/lib/ui-strings';
+import Button from '@/components/ui/Button';
 
 interface CTAButtonGroupProps {
   donateText?: string;
@@ -40,34 +41,16 @@ export default function CTAButtonGroup({
     className
   );
 
-  const buttonBaseClasses =
-    'inline-flex items-center justify-center font-bold rounded-lg transition-colors';
-
-  const sizeClasses = {
-    default: 'px-6 py-3 text-base',
-    large: 'px-8 py-4 text-lg',
-  };
-
-  const donateClasses = cn(
-    buttonBaseClasses,
-    sizeClasses[variant],
-    'bg-accent hover:bg-accent-strong text-light'
-  );
-
-  const purchaseClasses = cn(
-    buttonBaseClasses,
-    sizeClasses[variant],
-    'bg-gray-900 hover:bg-gray-800 text-white'
-  );
+  const buttonSize = variant === 'large' ? 'lg' : 'md';
 
   return (
     <div className={containerClasses}>
-      <a href={donateHref} target="_blank" rel="noopener noreferrer" className={donateClasses}>
+      <Button href={donateHref} external variant="accent" size={buttonSize}>
         {donateText}
-      </a>
-      <a href={purchaseHref} className={purchaseClasses}>
+      </Button>
+      <Button href={purchaseHref} variant="secondary" size={buttonSize}>
         {purchaseText}
-      </a>
+      </Button>
     </div>
   );
 }

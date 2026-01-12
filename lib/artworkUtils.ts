@@ -54,3 +54,16 @@ export function extractUniqueArtists(artworks: Artwork[]): string[] {
 
   return artists;
 }
+
+import { ARTIST_DATA } from '@/content/artists-data';
+
+export function getArtworkWithArtistData(
+  artwork: Artwork
+): Artwork & { profile: string; history: string } {
+  const artistData = ARTIST_DATA[artwork.artist] || { profile: '', history: '' };
+  return {
+    ...artwork,
+    profile: artwork.profile || artistData.profile || '',
+    history: artwork.history || artistData.history || '',
+  };
+}

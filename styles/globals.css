@@ -33,6 +33,13 @@
   font-display: swap;
 }
 
+:root {
+  --color-canvas-soft: #fff9e8;
+  --color-charcoal: #31393c;
+  --color-primary: #2176ff;
+  --color-sun: #fdca40;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -53,8 +60,8 @@ html {
 }
 
 body {
-  background-color: #fff9e8;
-  color: #31393c;
+  background-color: var(--color-canvas-soft);
+  color: var(--color-charcoal);
   line-height: 1.6;
   font-weight: 300;
   overflow-x: hidden;
@@ -80,7 +87,7 @@ body {
 
 a:focus-visible,
 button:focus-visible {
-  outline: 2px solid #2176ff;
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
@@ -93,8 +100,8 @@ button:focus:not(:focus-visible) {
   position: absolute;
   top: 0;
   left: 0;
-  background: #fdca40;
-  color: #31393c;
+  background: var(--color-sun);
+  color: var(--color-charcoal);
   padding: 8px 16px;
   text-decoration: none;
   border-radius: 0 0 4px 0;
@@ -109,7 +116,7 @@ button:focus:not(:focus-visible) {
 }
 
 .text-gradient {
-  color: #2176ff;
+  color: var(--color-primary);
 }
 
 .text-balance {

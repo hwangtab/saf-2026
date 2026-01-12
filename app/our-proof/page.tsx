@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 
+import Button from '@/components/ui/Button';
 import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
@@ -292,26 +292,18 @@ export default function OurProof() {
                 상호부조 대출 기금은 시민 후원으로 확대됩니다. 정기후원·일시후원 모두 큰 도움이
                 됩니다.
               </p>
-              <a
-                href={EXTERNAL_LINKS.DONATE}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center bg-accent hover:bg-accent-strong text-light font-bold px-6 py-3 rounded-lg transition-colors"
-              >
+              <Button href={EXTERNAL_LINKS.DONATE} external variant="accent" size="md">
                 후원하기
-              </a>
+              </Button>
             </div>
             <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-lg bg-white text-left shadow-sm">
               <h3 className="text-card-title mb-3">작품을 구매해 예술인을 응원하세요</h3>
               <p className="text-charcoal-muted mb-4 flex-grow">
                 판매 수익은 전액 기금으로 귀속됩니다. 온라인 갤러리에서 작품을 만나보세요.
               </p>
-              <Link
-                href="/artworks"
-                className="inline-flex items-center justify-center bg-gray-900 hover:bg-gray-800 text-white font-bold px-6 py-3 rounded-lg transition-colors"
-              >
+              <Button href="/artworks" variant="secondary" size="md">
                 작품 구매하기
-              </Link>
+              </Button>
             </div>
           </div>
         </div>
