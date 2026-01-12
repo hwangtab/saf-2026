@@ -264,7 +264,7 @@ export const artworksBatch4: Artwork[] = [
     material: '목판',
     year: '1984',
     edition: '',
-    price: '₩1,400,000',
+    price: '₩1,550,000',
     image: '186.jpg',
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/296',
   },
