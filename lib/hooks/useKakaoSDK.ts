@@ -1,4 +1,5 @@
 import { useKakaoLoader } from 'react-kakao-maps-sdk';
+import { useEffect, useState } from 'react';
 
 const RAW_KAKAO_MAP_KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY?.trim() ?? '';
 // Share functionality might use the same key or a different one (often same JS key)
@@ -13,6 +14,7 @@ export function useKakaoSDK() {
   // But for ShareButtons, we might need the JS key.
   // Ideally, they should be the same JavaScript Key from Kakao Developers.
   const appKey = RAW_KAKAO_MAP_KEY || RAW_KAKAO_JS_KEY || FALLBACK_KEY;
+  const jsKey = RAW_KAKAO_JS_KEY || RAW_KAKAO_MAP_KEY || FALLBACK_KEY;
   const hasAppKey = appKey !== FALLBACK_KEY;
 
   const [loading, error] = useKakaoLoader({
@@ -20,10 +22,31 @@ export function useKakaoSDK() {
     libraries: ['services', 'clusterer', 'drawing'], // Add common libraries
   });
 
+  const [isKakaoInitialized, setIsKakaoInitialized] = useState(false);
+
+  // Initialize Kakao JS SDK manually for sharing features
+  useEffect(() => {
+    if (loading || error) return;
+
+    if (hasAppKey && typeof window !== 'undefined' && window.Kakao) {
+      if (!window.Kakao.isInitialized()) {
+        try {
+          window.Kakao.init(jsKey);
+        } catch (e) {
+          console.error('Failed to initialize Kakao SDK:', e);
+        }
+      }
+      // Use setTimeout to avoid synchronous state update in effect (ESLint rule)
+      setTimeout(() => {
+        setIsKakaoInitialized(true);
+      }, 0);
+    }
+  }, [loading, error, jsKey, hasAppKey]);
+
   return {
     loading,
     error,
     hasAppKey,
-    isReady: !loading && !error && hasAppKey && typeof window !== 'undefined' && !!window.Kakao,
+    isReady: !loading && !error && hasAppKey && isKakaoInitialized,
   };
 }
