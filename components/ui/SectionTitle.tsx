@@ -16,6 +16,8 @@ export default function SectionTitle({
   as: Component = 'h2',
 }: SectionTitleProps) {
   return (
-    <Component className={`text-section-title text-balance ${className}`}>{children}</Component>
+    <Component className={`text-section-title text-balance text-center ${className}`}>
+      {children}
+    </Component>
   );
 }

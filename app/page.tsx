@@ -99,7 +99,7 @@ export default function Home() {
       {/* Problem Section */}
       <Section variant="sun-soft" prevVariant="canvas-soft">
         <div className="container-max">
-          <SectionTitle className="text-center mb-12">우리가 직면한 문제</SectionTitle>
+          <SectionTitle className="mb-12">우리가 직면한 문제</SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
             <div className="space-y-4">
               <h3 className="text-card-title text-charcoal">🚫 금융 시장의 차별</h3>
@@ -143,7 +143,7 @@ export default function Home() {
       {/* Solution Section */}
       <Section variant="primary-surface" prevVariant="sun-soft">
         <div className="container-max">
-          <SectionTitle className="text-center mb-12">우리의 해결책</SectionTitle>
+          <SectionTitle className="mb-12">우리의 해결책</SectionTitle>
           <div className="bg-white rounded-lg shadow-lg p-8 md:p-12 max-w-3xl mx-auto text-balance text-center md:text-left">
             <div className="mb-8">
               <h3 className="text-card-title text-charcoal mb-4">📈 95% 상환율의 신뢰</h3>
@@ -184,7 +184,7 @@ export default function Home() {
       {/* Call to Action Section */}
       <Section variant="accent-soft" prevVariant="primary-surface" className="pb-24 md:pb-32">
         <div className="container-max">
-          <SectionTitle className="mb-12 text-center">당신도 함께할 수 있습니다</SectionTitle>
+          <SectionTitle className="mb-12">당신도 함께할 수 있습니다</SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             <ActionCard
               href={EXTERNAL_LINKS.DONATE}

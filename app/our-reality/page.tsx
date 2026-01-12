@@ -50,7 +50,7 @@ export default function OurReality() {
         return (
           <Section key={groupIndex} variant={currentVariant} prevVariant={prevVariant}>
             <div className="container-max">
-              <SectionTitle className="mb-12 text-center">{group.category}</SectionTitle>
+              <SectionTitle className="mb-12">{group.category}</SectionTitle>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {group.items.map((item, itemIndex) => (
                   <div
@@ -78,7 +78,7 @@ export default function OurReality() {
       <Section variant="white" prevVariant="canvas-soft">
         <div className="container-max">
           <div className="max-w-3xl mx-auto text-balance">
-            <SectionTitle className="mb-8 text-center">예술인에게 금융은 산소호흡기</SectionTitle>
+            <SectionTitle className="mb-8">예술인에게 금융은 산소호흡기</SectionTitle>
             <div className="space-y-6 text-lg text-charcoal">
               <p>
                 예술인들은 정기적인 급여가 아닌, 프로젝트 기반의 불규칙한 소득을 얻습니다. 공연과
@@ -226,7 +226,7 @@ export default function OurReality() {
       {/* 진단: 사회적 재난 */}
       <Section variant="white" prevVariant="red">
         <div className="container-max max-w-3xl">
-          <SectionTitle className="mb-8 text-center">이것은 개인의 문제가 아닙니다</SectionTitle>
+          <SectionTitle className="mb-8">이것은 개인의 문제가 아닙니다</SectionTitle>
           <div className="space-y-6 text-lg text-charcoal">
             <p>
               예술인 금융 위기는 개인의 나태나 불성실의 결과가 아닙니다. 이는{' '}
@@ -249,7 +249,7 @@ export default function OurReality() {
       {/* 제언: 산소호흡기가 필요하다 */}
       <Section variant="canvas-soft" prevVariant="white">
         <div className="container-max">
-          <SectionTitle className="mb-8 text-center">산소호흡기가 필요하다</SectionTitle>
+          <SectionTitle className="mb-8">산소호흡기가 필요하다</SectionTitle>
           <div className="space-y-6 text-lg text-charcoal mb-12 max-w-3xl mx-auto text-balance">
             <p>
               예술인에게 필요한 것은 일시적인 지원금이나 복지가 아닙니다.

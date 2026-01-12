@@ -142,7 +142,7 @@ export default function OurProof() {
 
           {/* Why It Works */}
           <div className="bg-white rounded-lg shadow-lg p-8 md:p-12 max-w-3xl mx-auto mb-16">
-            <SectionTitle className="mb-8 text-center">왜 상호부조 금융이 작동할까?</SectionTitle>
+            <SectionTitle className="mb-8">왜 상호부조 금융이 작동할까?</SectionTitle>
             <div className="space-y-6">
               <div className="flex gap-4">
                 <div className="flex-shrink-0">
@@ -200,7 +200,7 @@ export default function OurProof() {
       {/* Testimonials Section */}
       <Section variant="sun-soft" prevVariant="white">
         <div className="container-max">
-          <SectionTitle className="mb-12 text-center">예술인들의 증언</SectionTitle>
+          <SectionTitle className="mb-12">예술인들의 증언</SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <TestimonialCard
               quote="급하게 병원비가 필요했는데, 어디서도 돈을 빌릴 수 없었어요. 상호부조 대출 덕분에 치료에만 집중할 수 있었습니다."
@@ -237,7 +237,7 @@ export default function OurProof() {
       {/* Statistics Comparison */}
       <Section variant="primary-surface" prevVariant="sun-soft">
         <div className="container-max">
-          <SectionTitle className="mb-12 text-center">기존 금융 vs 상호부조 대출</SectionTitle>
+          <SectionTitle className="mb-12">기존 금융 vs 상호부조 대출</SectionTitle>
           <div className="overflow-x-auto">
             <table className="w-full bg-white rounded-lg shadow-sm overflow-hidden">
               <thead className="bg-gray-100 border-b-2 border-gray-300">
