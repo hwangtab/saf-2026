@@ -30,11 +30,20 @@ export default function FullscreenMenu({
     const dialog = dialogRef.current;
     if (!dialog) return;
 
-    if (isOpen && !dialog.open) {
-      dialog.showModal(); // 최상위 레이어에 표시, 스크롤/포커스 자동 잠금
-    } else if (!isOpen && dialog.open) {
-      dialog.close();
+    if (isOpen) {
+      if (!dialog.open) dialog.showModal();
+      // 모바일 스크롤 방지
+      document.body.style.overflow = 'hidden';
+    } else {
+      if (dialog.open) dialog.close();
+      // 스크롤 복구
+      document.body.style.overflow = '';
     }
+
+    return () => {
+      // 컴포넌트 언마운트 시 항상 스크롤 복구
+      document.body.style.overflow = '';
+    };
   }, [isOpen]);
 
   // 경로 변경 시 자동 닫기
