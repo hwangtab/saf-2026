@@ -36,10 +36,10 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
     (artist: string) => {
       if (selectedArtist === artist) {
         // If same artist is clicked, go back to main artworks page
-        router.push('/artworks');
+        router.push('/artworks', { scroll: false });
       } else {
         // Navigate to artist's dedicated page
-        router.push(`/artworks/artist/${encodeURIComponent(artist)}`);
+        router.push(`/artworks/artist/${encodeURIComponent(artist)}`, { scroll: false });
       }
     },
     [selectedArtist, router]
