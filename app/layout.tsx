@@ -128,20 +128,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <link rel="preconnect" href="https://t1.daumcdn.net" />
         <link rel="preconnect" href="https://dapi.kakao.com" />
-        <link
-          rel="preload"
-          href="/fonts/GmarketSansMedium.woff"
-          as="font"
-          type="font/woff"
-          crossOrigin="anonymous"
-        />
-        <link
-          rel="preload"
-          href="/fonts/GmarketSansBold.woff"
-          as="font"
-          type="font/woff"
-          crossOrigin="anonymous"
-        />
       </head>
       <body className="bg-canvas-soft text-charcoal flex flex-col min-h-screen">
         <AnimationProvider>
