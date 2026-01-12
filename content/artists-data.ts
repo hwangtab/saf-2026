@@ -1,7 +1,4 @@
-export interface ArtistData {
-  profile: string;
-  history: string;
-}
+import { ArtistData } from '@/types';
 
 export const ARTIST_DATA: Record<string, ArtistData> = {
   강석태: {

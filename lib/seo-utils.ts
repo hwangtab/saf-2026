@@ -1,9 +1,27 @@
 import type { Metadata } from 'next';
-import { SITE_URL, createBreadcrumbSchema, BREADCRUMB_HOME, BREADCRUMBS } from '@/lib/constants';
-import { Artwork } from '@/types';
+import { SITE_URL, BREADCRUMB_HOME, BREADCRUMBS } from '@/lib/constants';
+import { createPageMetadata } from '@/lib/seo';
+import { Artwork, BreadcrumbItem } from '@/types';
+
+// JSON-LD Security: Escape < characters to prevent XSS
+export function escapeJsonLdForScript(json: string): string {
+  return json.replace(/</g, '\\u003c');
+}
+
+export function createBreadcrumbSchema(items: BreadcrumbItem[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      item: item.url,
+    })),
+  };
+}
 
 export function generateArtworkMetadata(artwork: Artwork): Metadata {
-  const pageUrl = `${SITE_URL}/artworks/${artwork.id}`;
   const imageUrl = `${SITE_URL}/images/artworks/${artwork.image}`;
 
   const summary = [
@@ -24,9 +42,15 @@ export function generateArtworkMetadata(artwork: Artwork): Metadata {
     (descSnippet ? `작품 설명: ${descSnippet}... ` : '') +
     (profileSnippet ? `작가 소개: ${profileSnippet}...` : '');
 
+  const baseMetadata = createPageMetadata(
+    `${artwork.title} - ${artwork.artist}`,
+    seoDescription.substring(0, 300),
+    `/artworks/${artwork.id}`,
+    imageUrl
+  );
+
   return {
-    title: `${artwork.title} - ${artwork.artist} | 씨앗페 2026`,
-    description: seoDescription.substring(0, 300),
+    ...baseMetadata,
     keywords: [
       artwork.artist,
       artwork.title,
@@ -38,30 +62,15 @@ export function generateArtworkMetadata(artwork: Artwork): Metadata {
       '상호부조',
       artwork.material?.split(' ')?.[0] ?? '미술품',
     ].filter(Boolean),
-    alternates: {
-      canonical: pageUrl,
-    },
     openGraph: {
-      title: `${artwork.title} - ${artwork.artist}`,
-      description: seoDescription.substring(0, 200),
-      url: pageUrl,
-      siteName: '씨앗페 2026',
-      images: [
-        {
-          url: imageUrl,
-          width: 1200,
-          height: 630,
-          alt: `${artwork.title} by ${artwork.artist}`,
-        },
-      ],
+      ...baseMetadata.openGraph,
       type: 'website',
       locale: 'ko_KR',
+      siteName: '씨앗페 2026',
     },
     twitter: {
+      ...baseMetadata.twitter,
       card: 'summary_large_image',
-      title: `${artwork.title} - ${artwork.artist}`,
-      description: seoDescription.substring(0, 200),
-      images: [imageUrl],
     },
   };
 }

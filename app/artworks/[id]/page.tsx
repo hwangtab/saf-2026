@@ -5,14 +5,13 @@ import ArtworkImage from '@/components/features/ArtworkImage';
 import BackToListButton from '@/components/features/BackToListButton';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
-// import dynamic from 'next/dynamic'; // Removed unused import
+import { parsePrice } from '@/lib/parsePrice';
+import { escapeJsonLdForScript } from '@/lib/seo-utils';
 import { SITE_URL } from '@/lib/constants';
 import Button from '@/components/ui/Button';
 import RelatedArticles from '@/components/features/RelatedArticles';
 import ExpandableHistory from '@/components/features/ExpandableHistory';
 import { generateArtworkMetadata, generateArtworkJsonLd } from '@/lib/seo-utils';
-
-// Static import for ShareButtons (it is already a client component)
 import ShareButtons from '@/components/common/ShareButtons';
 
 interface Props {
@@ -51,9 +50,10 @@ export default async function ArtworkDetailPage({ params }: Props) {
     notFound();
   }
 
-  // Extract numeric price from string like "₩4,500,000" or "문의"
-  const numericPrice = artwork.price.replace(/[₩,원\s]/g, '');
-  const isInquiry = artwork.price === '문의' || isNaN(Number(numericPrice));
+  // Extract numeric price using utility
+  const parsedPrice = parsePrice(artwork.price);
+  const isInquiry = parsedPrice === Infinity;
+  const numericPrice = isInquiry ? '0' : String(parsedPrice);
 
   // Get related articles for this artist
   const relatedArticles = getArticlesByArtist(artwork.artist);
@@ -66,8 +66,8 @@ export default async function ArtworkDetailPage({ params }: Props) {
   );
 
   // Safely stringify JSON-LD to prevent XSS (escape < as \u003c)
-  const safeJsonLd = JSON.stringify(productSchema).replace(/</g, '\\u003c');
-  const safeBreadcrumbJsonLd = JSON.stringify(breadcrumbSchema).replace(/</g, '\\u003c');
+  const safeJsonLd = escapeJsonLdForScript(JSON.stringify(productSchema));
+  const safeBreadcrumbJsonLd = escapeJsonLdForScript(JSON.stringify(breadcrumbSchema));
 
   return (
     <>

@@ -1,10 +1,4 @@
-export interface Video {
-  id: string;
-  title: string;
-  description: string;
-  youtubeId: string;
-  thumbnail?: string;
-}
+import { Video } from '@/types';
 
 export const videos: Video[] = [
   {

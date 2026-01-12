@@ -1,13 +1,4 @@
-export interface TestimonialItem {
-  quote: string;
-  author: string;
-  context?: string;
-}
-
-export interface TestimonialCategory {
-  category: string;
-  items: TestimonialItem[];
-}
+import { TestimonialCategory } from '@/types';
 
 export const testimonials: TestimonialCategory[] = [
   {

@@ -151,7 +151,7 @@
 
 .navLink:hover {
   background: #f8f8f8;
-  color: var(--color-primary, #e63946);
+  color: var(--color-primary, #2176ff);
 }
 
 .navLink:active {
@@ -159,8 +159,8 @@
 }
 
 .navLink.active {
-  color: var(--color-primary, #e63946);
-  background: rgba(230, 57, 70, 0.08);
+  color: var(--color-primary, #2176ff);
+  background: rgba(33, 118, 255, 0.08);
 }
 
 /* 푸터 - 후원 버튼 영역 */

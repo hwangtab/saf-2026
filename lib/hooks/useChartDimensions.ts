@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import { BREAKPOINTS } from '@/lib/breakpoints';
 
-const MOBILE_BREAKPOINT = 480;
+const MOBILE_BREAKPOINT = BREAKPOINTS.MOBILE_SM;
 const DEBOUNCE_DELAY = 200;
 
 export function useChartDimensions() {

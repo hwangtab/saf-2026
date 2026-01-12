@@ -77,30 +77,11 @@ export const ANIMATION = {
   SEARCH_DEBOUNCE: 300, // 300ms
 } as const;
 
-// JSON-LD Security: Escape < characters to prevent XSS
-// This is required when using dangerouslySetInnerHTML with JSON-LD data
-export function escapeJsonLdForScript(json: string): string {
-  return json.replace(/</g, '\\u003c');
-}
+import { BreadcrumbItem } from '@/types';
 
-// Breadcrumb List Schema helper
-export interface BreadcrumbItem {
-  name: string;
-  url: string;
-}
-
-export function createBreadcrumbSchema(items: BreadcrumbItem[]) {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: items.map((item, index) => ({
-      '@type': 'ListItem',
-      position: index + 1,
-      name: item.name,
-      item: item.url,
-    })),
-  };
-}
+// Re-export helpers from seo-utils for backward compatibility
+export { escapeJsonLdForScript, createBreadcrumbSchema } from '@/lib/seo-utils';
+export type { BreadcrumbItem } from '@/types';
 
 // Common breadcrumb items
 export const BREADCRUMB_HOME: BreadcrumbItem = {

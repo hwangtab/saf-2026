@@ -8,6 +8,7 @@ import DynamicCounter from '@/components/features/DynamicCounter';
 import BackgroundSlider from '@/components/features/BackgroundSlider';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
 import ShareButtons from '@/components/common/ShareButtons';
+import CTAButtonGroup from '@/components/common/CTAButtonGroup';
 import {
   EXTERNAL_LINKS,
   OG_IMAGE,
@@ -15,6 +16,7 @@ import {
   STATISTICS_DATA,
   escapeJsonLdForScript,
 } from '@/lib/constants';
+import CTAButtonGroup from '@/components/common/CTAButtonGroup';
 
 export const metadata: Metadata = {
   title: '씨앗페 2026 - 예술인 금융 위기 해결 캠페인',
@@ -78,14 +80,7 @@ export default function Home() {
             절반이 약탈적 고리대금에 노출되어 있습니다. <br className="hidden md:block" />이 문제를
             해결하기 위해 씨앗페가 시작되었습니다.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button href={EXTERNAL_LINKS.DONATE} external variant="accent" size="lg">
-              ❤️ 지금 후원하기
-            </Button>
-            <Button href="/artworks" variant="secondary" size="lg">
-              🎨 작품 구매하기
-            </Button>
-          </div>
+          <CTAButtonGroup variant="large" className="justify-center mb-12" />
           <p className="text-sm text-white/70 drop-shadow-lg mb-8">
             📌 1월 14일 인사아트센터 3층 G&J 갤러리에서 시작합니다
           </p>

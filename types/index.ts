@@ -1,19 +1,33 @@
+export type ArtistRole =
+  | 'musician'
+  | 'artist'
+  | 'performer'
+  | 'photographer'
+  | 'sculptor'
+  | 'calligrapher'
+  | 'printmaker'
+  | 'designer';
+
 export interface Artist {
   id: string;
   name: string;
-  role: 'musician' | 'artist' | 'performer';
+  role: ArtistRole;
   description?: string;
   image?: string;
   link?: string;
 }
 
-export interface Artwork {
+export interface ArtistData {
+  profile: string;
+  history: string;
+}
+
+// Base artwork data structure (from DB/Files)
+export interface BaseArtwork {
   id: string;
   artist: string;
   title: string;
   description?: string;
-  profile?: string;
-  history?: string;
   size: string;
   material: string;
   year: string;
@@ -22,6 +36,34 @@ export interface Artwork {
   image: string;
   shopUrl?: string;
   sold?: boolean;
+}
+
+// Artwork with hydrated artist data (for UI)
+export interface HydratedArtwork extends BaseArtwork {
+  profile?: string;
+  history?: string;
+}
+
+// Backward compatibility alias
+export type Artwork = HydratedArtwork;
+
+export interface Video {
+  id: string;
+  title: string;
+  description: string;
+  youtubeId: string;
+  thumbnail?: string;
+}
+
+export interface TestimonialItem {
+  quote: string;
+  author: string;
+  context?: string;
+}
+
+export interface TestimonialCategory {
+  category: string;
+  items: TestimonialItem[];
 }
 
 export interface NewsArticle {
@@ -55,4 +97,9 @@ export interface NavigationItem {
   name: string;
   href: string;
   external?: boolean;
+}
+
+export interface BreadcrumbItem {
+  name: string;
+  url: string;
 }
