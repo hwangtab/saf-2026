@@ -14,7 +14,7 @@ interface DesktopNavProps {
 export default function DesktopNav({ navigation, isActive, textColor }: DesktopNavProps) {
   return (
     <>
-      <div className="hidden lg:flex items-center gap-8 h-full">
+      <div className="hidden md:flex items-center gap-8 h-full">
         {navigation.map((item) => (
           <NavLink
             key={item.href}
@@ -25,7 +25,7 @@ export default function DesktopNav({ navigation, isActive, textColor }: DesktopN
           />
         ))}
       </div>
-      <div className="hidden lg:flex">
+      <div className="hidden md:flex">
         <Button href={EXTERNAL_LINKS.DONATE} variant="accent" external>
           후원하기
         </Button>

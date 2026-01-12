@@ -112,7 +112,7 @@ export default function Header() {
         <button
           onClick={openMenu}
           className={clsx(
-            'lg:hidden p-3 min-w-[44px] min-h-[44px] flex items-center justify-center',
+            'md:hidden p-3 min-w-[44px] min-h-[44px] flex items-center justify-center',
             'transition-transform active:scale-90',
             textColor,
             'hover:text-primary'
