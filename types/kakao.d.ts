@@ -25,11 +25,17 @@ declare global {
 interface KakaoSDK {
   init: (key: string) => void;
   isInitialized: () => boolean;
-  Link: KakaoLink;
+  Link: KakaoLink; // Deprecated but kept for backward compatibility if needed
+  Share: KakaoShare; // New API
 }
 
-// Kakao Link (Share)
+// Kakao Link (Deprecated)
 interface KakaoLink {
+  sendDefault: (options: KakaoShareOptions) => void;
+}
+
+// Kakao Share (New)
+interface KakaoShare {
   sendDefault: (options: KakaoShareOptions) => void;
 }
 

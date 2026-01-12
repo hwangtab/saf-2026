@@ -35,27 +35,32 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
 
   const handleKakaoShare = () => {
     if (kakaoReady && window.Kakao) {
-      window.Kakao.Link.sendDefault({
-        objectType: 'feed',
-        content: {
-          title: title,
-          description: description,
-          imageUrl: `${window.location.origin}/images/og-image.png`,
-          link: {
-            webUrl: url,
-            mobileWebUrl: url,
-          },
-        },
-        buttons: [
-          {
-            title: '웹사이트 방문',
+      // Use Kakao.Share (v2) instead of Kakao.Link (deprecated)
+      const shareMethod = window.Kakao.Share || window.Kakao.Link;
+
+      if (shareMethod) {
+        shareMethod.sendDefault({
+          objectType: 'feed',
+          content: {
+            title: title,
+            description: description,
+            imageUrl: `${window.location.origin}/images/og-image.png`,
             link: {
               webUrl: url,
               mobileWebUrl: url,
             },
           },
-        ],
-      });
+          buttons: [
+            {
+              title: '웹사이트 방문',
+              link: {
+                webUrl: url,
+                mobileWebUrl: url,
+              },
+            },
+          ],
+        });
+      }
     }
   };
 
