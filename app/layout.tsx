@@ -124,7 +124,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   };
 
   return (
-    <html lang="ko">
+    <html lang="ko" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://t1.daumcdn.net" />
         <link rel="preconnect" href="https://dapi.kakao.com" />
