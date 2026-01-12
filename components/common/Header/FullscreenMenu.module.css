@@ -112,8 +112,7 @@
 }
 
 .closeButton:focus-visible {
-  outline: 2px solid var(--color-primary, #2176ff);
-  outline-offset: 2px;
+  outline: none;
 }
 
 .closeButton:active {
