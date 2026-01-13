@@ -32,17 +32,42 @@ export default function FullscreenMenu({
 
     if (isOpen) {
       if (!dialog.open) dialog.showModal();
-      // 모바일 스크롤 방지
+
+      // 현재 스크롤 위치 저장
+      const scrollY = window.scrollY;
+
+      // body 스크롤 완전 차단 (iOS Safari 대응)
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
       document.body.style.overflow = 'hidden';
     } else {
       if (dialog.open) dialog.close();
-      // 스크롤 복구
+
+      // 스크롤 위치 복원
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
       document.body.style.overflow = '';
+
+      // 원래 스크롤 위치로 복원
+      window.scrollTo(0, parseInt(scrollY || '0') * -1);
     }
 
     return () => {
-      // 컴포넌트 언마운트 시 항상 스크롤 복구
+      // cleanup 시에도 동일하게 복원
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
       document.body.style.overflow = '';
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY) * -1);
+      }
     };
   }, [isOpen]);
 
