@@ -1,4 +1,4 @@
-import { Artwork } from '../saf2026-artworks';
+import { Artwork } from '@/types';
 
 export const batch005: Artwork[] = [
   {

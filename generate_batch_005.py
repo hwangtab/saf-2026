@@ -139,7 +139,7 @@ def parse_csv():
     return artworks
 
 def generate_ts(artworks):
-    ts_content = "import { Artwork } from '../saf2026-artworks';\n\n"
+    ts_content = "import { Artwork } from '@/types';\n\n"
     ts_content += "export const batch005: Artwork[] = [\n"
     
     for art in artworks:
