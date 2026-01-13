@@ -1,4 +1,4 @@
-export interface Artwork {
+export interface Saf2023Artwork {
   id: number;
   artist: string;
   title: string;
@@ -7,7 +7,7 @@ export interface Artwork {
   details?: string;
 }
 
-export const saf2023Artworks: Artwork[] = [
+export const saf2023Artworks: Saf2023Artwork[] = [
   {
     id: 1,
     artist: '김계환',

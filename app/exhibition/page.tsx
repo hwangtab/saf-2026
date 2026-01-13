@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-// import dynamic from 'next/dynamic'; // Removed unused import
 import ExportedImage from 'next-image-export-optimizer';
 import Button from '@/components/ui/Button';
 import SectionTitle from '@/components/ui/SectionTitle';
@@ -8,6 +7,7 @@ import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import { EXHIBITION, EXTERNAL_LINKS, SITE_URL, OG_IMAGE } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
+import { escapeJsonLdForScript } from '@/lib/seo-utils';
 
 // Dynamically import KakaoMap (client-side only, reduces initial bundle)
 import ExhibitionMapWrapper from '@/components/features/ExhibitionMapWrapper';
@@ -67,7 +67,7 @@ export default function ExhibitionPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(eventSchema) }}
+        dangerouslySetInnerHTML={{ __html: escapeJsonLdForScript(JSON.stringify(eventSchema)) }}
       />
       <PageHero title="전시 안내" description="씨앗페 2026을 직접 만나보세요">
         <ShareButtons url={canonicalUrl} title={shareTitle} description={shareDescription} />

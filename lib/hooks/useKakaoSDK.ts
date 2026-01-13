@@ -37,10 +37,14 @@ export function useKakaoSDK() {
         }
       }
       // Use setTimeout to avoid synchronous state update in effect (ESLint rule)
-      setTimeout(() => {
+      const timerId = setTimeout(() => {
         setIsKakaoInitialized(true);
       }, 0);
+
+      return () => clearTimeout(timerId);
     }
+
+    return undefined;
   }, [loading, error, jsKey, hasAppKey]);
 
   return {

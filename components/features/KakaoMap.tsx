@@ -40,6 +40,8 @@ export default function KakaoMap(props?: KakaoMapProps): React.JSX.Element {
               lat: Number(y),
               lng: Number(x),
             });
+          } else {
+            console.error('Kakao Geocoder failed:', status);
           }
         }
       );

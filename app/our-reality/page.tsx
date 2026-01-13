@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-// import dynamic from 'next/dynamic'; // Removed unused import
 import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
@@ -48,13 +47,13 @@ export default function OurReality() {
         const prevVariant = groupIndex > 0 ? variants[groupIndex - 1] : undefined;
 
         return (
-          <Section key={groupIndex} variant={currentVariant} prevVariant={prevVariant}>
+          <Section key={group.category} variant={currentVariant} prevVariant={prevVariant}>
             <div className="container-max">
               <SectionTitle className="mb-12">{group.category}</SectionTitle>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {group.items.map((item, itemIndex) => (
                   <div
-                    key={itemIndex}
+                    key={`${item.author}-${itemIndex}`}
                     className="bg-white p-6 rounded-lg shadow-lg border-l-8 border-primary flex flex-col justify-between"
                   >
                     <p className="text-xl md:text-2xl text-charcoal mb-4 italic leading-relaxed before:content-['“'] after:content-['”']">
