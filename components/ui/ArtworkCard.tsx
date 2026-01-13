@@ -81,15 +81,22 @@ function ArtworkCard({ artwork, variant = 'gallery', className }: ArtworkCardPro
           </h2>
           <p className="text-sm text-charcoal-muted mt-1 min-h-[1.25rem]">{artwork.artist}</p>
           <p className="text-xs text-charcoal-soft mt-2 line-clamp-1 min-h-[1rem]">
-            {showMaterial || showSize ? (
-              <>
-                {showMaterial && artwork.material}
-                {showMaterial && showSize && ' · '}
-                {showSize && artwork.size}
-              </>
-            ) : (
-              '\u00A0'
-            )}
+            {(() => {
+              const isPending = (v: string | undefined) => v === '확인 중';
+              if (isPending(artwork.material) && isPending(artwork.size)) {
+                return '상세 정보 준비 중';
+              }
+              if (showMaterial || showSize) {
+                return (
+                  <>
+                    {showMaterial && artwork.material}
+                    {showMaterial && showSize && ' · '}
+                    {showSize && artwork.size}
+                  </>
+                );
+              }
+              return '\u00A0';
+            })()}
           </p>
 
           {artwork.price && artwork.price !== '문의' ? (
