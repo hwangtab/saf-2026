@@ -450,19 +450,7 @@ export const artworksBatch1: Artwork[] = [
     image: '34.png',
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/54',
   },
-  {
-    id: '35',
-    artist: '김준권',
-    title: '섬진淸流-2',
-    description: '',
-    size: '35x55cm',
-    material: '수묵목판',
-    year: '2020',
-    edition: '',
-    price: '₩4,000,000',
-    image: '35.jpeg',
-    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/55',
-  },
+
   {
     id: '36',
     artist: '김준권',
