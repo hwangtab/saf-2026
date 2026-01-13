@@ -24,7 +24,7 @@ export default function SawtoothDivider({
     <div
       className={cn(
         'w-full leading-none z-10 h-6 md:h-10 pointer-events-none absolute left-0',
-        position === 'bottom' ? 'bottom-0' : 'top-0 -translate-y-full',
+        position === 'bottom' ? '-bottom-px' : 'top-0 -translate-y-full',
         className
       )}
       aria-hidden="true"
