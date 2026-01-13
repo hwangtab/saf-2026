@@ -159,34 +159,24 @@ export default async function ArtworkDetailPage({ params }: Props) {
 
               <div className="border-t border-b border-gray-100 py-6">
                 <div className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 items-baseline">
-                  {/* 재료, 크기, 년도 정보 통합 표시 (정보 확인 중일 경우) */}
-                  {artwork.material === '확인 중' && artwork.size === '확인 중' ? (
+                  {/* 재료 */}
+                  {artwork.material && (
                     <>
-                      <span className="text-gray-600 font-medium text-sm">상세 정보</span>
-                      <span className="text-charcoal">준비 중</span>
-                    </>
-                  ) : (
-                    <>
-                      {/* 재료 */}
-                      {artwork.material && (
-                        <>
-                          <span className="text-gray-600 font-medium text-sm">재료</span>
-                          <span className="text-charcoal">{artwork.material}</span>
-                        </>
-                      )}
-
-                      {/* 크기 */}
-                      {artwork.size && (
-                        <>
-                          <span className="text-gray-600 font-medium text-sm">크기</span>
-                          <span className="text-charcoal">{artwork.size}</span>
-                        </>
-                      )}
+                      <span className="text-gray-600 font-medium text-sm">재료</span>
+                      <span className="text-charcoal">{artwork.material}</span>
                     </>
                   )}
 
-                  {/* 년도 - 확인 중이 아닐 때만 표시하거나, 위 통합 로직과 별도로 처리 */}
-                  {artwork.year && artwork.year !== '확인 중' && (
+                  {/* 크기 */}
+                  {artwork.size && (
+                    <>
+                      <span className="text-gray-600 font-medium text-sm">크기</span>
+                      <span className="text-charcoal">{artwork.size}</span>
+                    </>
+                  )}
+
+                  {/* 년도 */}
+                  {artwork.year && (
                     <>
                       <span className="text-gray-600 font-medium text-sm">년도</span>
                       <span className="text-charcoal">{artwork.year}</span>
