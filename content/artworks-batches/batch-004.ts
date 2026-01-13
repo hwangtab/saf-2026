@@ -141,7 +141,7 @@ export const artworksBatch4: Artwork[] = [
   {
     id: '177',
     artist: '김현철',
-    title: '0442 김현철_산\n(제목이 0442까지 들어가는지 확인 필요)',
+    title: '산',
     description: '',
     size: '24x41cm',
     material: '린넨에 수묵채색',
@@ -154,7 +154,7 @@ export const artworksBatch4: Artwork[] = [
   {
     id: '178',
     artist: '김현철',
-    title: '0443 김현철_산\n(제목이 0443까지 들어가는지 확인 필요)',
+    title: '산',
     description: '',
     size: '27.5x45.5cm',
     material: '린넨에 수묵채색',
