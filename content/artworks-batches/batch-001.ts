@@ -473,7 +473,7 @@ export const artworksBatch1: Artwork[] = [
     material: '유성목판',
     year: '2023',
     edition: '',
-    price: '₩8,000,000',
+    price: '₩7,000,000',
     image: '37.jpeg',
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/57',
   },
