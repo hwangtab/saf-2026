@@ -9,17 +9,20 @@ import { useIsMobile } from '@/lib/hooks/useIsMobile';
 export default function BackgroundSlider() {
   const prefersReducedMotion = useReducedMotion();
 
-  // Use a state that can hold the shuffled array. Widen the type to simple object array to avoid readonly tuple issues.
+  // Use a state that can hold the shuffled array.
+  // Initialize with empty array to prevent hydration mismatch and ensure client-side only logic starts clean.
   const [images, setImages] = useState<
     typeof HERO_IMAGES | { id: string; filename: string; alt: string }[]
-  >(HERO_IMAGES);
+  >([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFirstRender, setIsFirstRender] = useState(true);
 
   // 현재 이미지와 다음 이미지 계산 (셔플된 배열 기준)
-  const nextIndex = (currentIndex + 1) % images.length;
-  const nextPhoto = images[nextIndex];
+  // images가 비어있을 때를 대비해 safe check
+  const nextIndex = images.length > 0 ? (currentIndex + 1) % images.length : 0;
   const currentPhoto = images[currentIndex];
+  // Next photo to preload
+  const nextPhoto = images[nextIndex];
 
   const isMobile = useIsMobile();
   const [isMounted, setIsMounted] = useState(false);
@@ -29,23 +32,18 @@ export default function BackgroundSlider() {
     const shuffled = [...HERO_IMAGES].sort(() => Math.random() - 0.5);
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setImages(shuffled);
-  }, []);
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
-    // 첫 렌더링 후 플래그 해제
+
     // 첫 렌더링 후 플래그 해제
     const timer = requestAnimationFrame(() => {
       setIsFirstRender(false);
     });
 
-    // prefers-reduced-motion 시 자동 슬라이드 비활성화
-    if (prefersReducedMotion) {
-      return () => {
-        cancelAnimationFrame(timer);
-      };
-    }
+    return () => cancelAnimationFrame(timer);
+  }, []);
+
+  useEffect(() => {
+    if (images.length === 0 || prefersReducedMotion) return;
 
     const interval = setInterval(() => {
       // Only transition if the tab is focused to save resources and keep sync
@@ -54,13 +52,11 @@ export default function BackgroundSlider() {
       }
     }, ANIMATION.SLIDER_INTERVAL);
 
-    return () => {
-      cancelAnimationFrame(timer);
-      clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, [images.length, prefersReducedMotion]);
 
-  if (!isMounted) return <div className="absolute inset-0 bg-gray-900 -z-10" />;
+  if (!isMounted || images.length === 0)
+    return <div className="absolute inset-0 bg-gray-900 -z-10" />;
 
   // prefers-reduced-motion: 정적 이미지만 표시
   if (prefersReducedMotion) {
@@ -81,20 +77,28 @@ export default function BackgroundSlider() {
 
   return (
     <>
-      {/* Preload next image using a hidden image component */}
-      <div className="invisible absolute inset-0 -z-20">
-        <ExportedImage
-          src={`/images/hero/${nextPhoto.filename}`}
-          alt=""
-          fill
-          priority={false}
-          loading="eager"
-          className="object-cover"
-          sizes="100vw"
-        />
-      </div>
+      {/* 
+        Optimization: Only preload the NEXT image.
+        We use a hidden image with loading="eager" to force the browser to download it.
+        This ensures that when the slide changes, the image is ready.
+        We do NOT render the entire list, preventing 18-20 images from loading at once.
+      */}
+      {nextPhoto && (
+        <div className="invisible absolute inset-0 -z-20" aria-hidden="true">
+          <ExportedImage
+            src={`/images/hero/${nextPhoto.filename}`}
+            alt=""
+            fill
+            priority={false}
+            loading="eager"
+            className="object-cover"
+            sizes="100vw"
+          />
+        </div>
+      )}
+
       <div className="absolute inset-0 -z-10 overflow-hidden bg-gray-900">
-        <AnimatePresence>
+        <AnimatePresence mode="popLayout">
           <m.div
             key={currentPhoto.id}
             custom={isFirstRender}
