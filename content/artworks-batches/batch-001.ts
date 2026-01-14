@@ -108,7 +108,7 @@ export const artworksBatch1: Artwork[] = [
   {
     id: '10',
     artist: '신예리',
-    title: '야형화접도 (夜螢花蝶圖 / Night Blossoms and Butterflies)',
+    title: '야형화접도(夜螢花蝶圖)',
     description: '',
     size: '24x114cm',
     material: '먹 염색한 한지 위에 분채',
@@ -121,7 +121,7 @@ export const artworksBatch1: Artwork[] = [
   {
     id: '11',
     artist: '신예리',
-    title: '책거리 (Chaekgeori)',
+    title: '책거리',
     description: '',
     size: '103.5x68.3cm',
     material: '염색한지 위에 분채',
@@ -346,7 +346,7 @@ export const artworksBatch1: Artwork[] = [
   {
     id: '1',
     artist: '신예리',
-    title: '취도(鷲圖/The Eagle)',
+    title: '취도(鷲圖)',
     description: '',
     size: '111x65cm',
     material: '염색한지 위에 분채',
