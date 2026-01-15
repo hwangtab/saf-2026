@@ -73,7 +73,7 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
         hashtag="#씨앗페"
         className="hover:opacity-80 transition-opacity p-1.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full"
       >
-        <FacebookIcon size={32} round />
+        <FacebookIcon size={32} round iconFillColor="white" />
       </FacebookShareButton>
 
       {/* Twitter/X */}
