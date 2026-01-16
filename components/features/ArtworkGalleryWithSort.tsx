@@ -48,9 +48,6 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
   // 작가명순일 때만 작가 네비게이션 표시
   const showArtistNav = sortOption === 'artist-asc' && !searchQuery;
 
-  // Use grid layout when artist is selected (few items)
-  const useGridLayout = !!selectedArtist;
-
   return (
     <div>
       {/* Controls & Nav Section (Combined Sticky) */}
@@ -101,7 +98,7 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
         <GalleryEmptyState onReset={() => setSearchQuery('')} />
       ) : (
         <div className={showArtistNav ? 'mt-6' : ''}>
-          <MasonryGallery artworks={sortedArtworks} forceGrid={useGridLayout} />
+          <MasonryGallery artworks={sortedArtworks} />
         </div>
       )}
     </div>
