@@ -44,6 +44,7 @@ const structuredData = {
           name: article.source,
         },
         description: article.description,
+        keywords: ['예술인 금융', '상호부조', '씨앗페', 'SAF', '예술인 대출'],
       },
     })),
   },

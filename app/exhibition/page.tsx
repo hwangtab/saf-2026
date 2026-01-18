@@ -28,8 +28,9 @@ export default function ExhibitionPage() {
   // JSON-LD Schema for Event
   const eventSchema = {
     '@context': 'https://schema.org',
-    '@type': 'Event',
+    '@type': 'ExhibitionEvent',
     name: '씨앗페 2026 - 예술인 금융 위기 해결 캠페인',
+    isAccessibleForFree: true,
     description: '한국 예술인들의 금융 위기를 해결하기 위한 전시 및 공연 행사',
     startDate: '2026-01-14',
     endDate: '2026-01-26',

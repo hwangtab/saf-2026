@@ -3,6 +3,7 @@ import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import { SITE_URL } from '@/lib/constants';
+import { escapeJsonLdForScript } from '@/lib/seo-utils';
 import { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
@@ -129,8 +130,23 @@ export default async function ArtistPage({ params }: Props) {
 
   const pageUrl = `${SITE_URL}/artworks/artist/${encodeURIComponent(artistName)}`;
 
+  // Person JSON-LD Schema for SEO
+  const personSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: artistName,
+    description: artistProfile || artistNote || undefined,
+    image: `${SITE_URL}/images/artworks/${representativeArtwork.image}`,
+    url: pageUrl,
+    knowsAbout: ['미술', '예술', 'Visual Arts'],
+  };
+
   return (
     <main className="min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: escapeJsonLdForScript(JSON.stringify(personSchema)) }}
+      />
       <PageHero
         title={`${artistName} 작가`}
         description={heroDescription}

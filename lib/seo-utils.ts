@@ -114,7 +114,7 @@ export function generateArtworkJsonLd(artwork: Artwork, numericPrice: string, is
         '@type': 'Offer',
         url: `${SITE_URL}/artworks/${artwork.id}`,
         priceCurrency: 'KRW',
-        price: numericPrice,
+        price: parseFloat(numericPrice) || 0,
         priceValidUntil: CAMPAIGN.END_DATE,
         availability: artwork.sold ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock',
         seller: sellerOrg,
@@ -141,8 +141,13 @@ export function generateArtworkJsonLd(artwork: Artwork, numericPrice: string, is
     artMedium: artwork.material || undefined,
     artworkSurface: artwork.material || undefined,
     dateCreated: artwork.year || undefined,
-    width: artwork.size ? { '@type': 'Distance', name: artwork.size } : undefined,
-    height: artwork.size ? { '@type': 'Distance', name: artwork.size } : undefined,
+    size: artwork.size
+      ? {
+          '@type': 'QuantitativeValue',
+          name: artwork.size,
+          description: `작품 크기: ${artwork.size}`,
+        }
+      : undefined,
     offers,
     isPartOf: {
       '@type': 'ExhibitionEvent',
