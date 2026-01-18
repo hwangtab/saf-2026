@@ -49,6 +49,17 @@ export const EXHIBITION = {
   ADDRESS: '서울시 종로구 인사동길 41-1',
   LAT: 37.573,
   LNG: 126.986,
+  ACCESS: {
+    SUBWAY: [
+      { line: '3호선 안국역', exit: '1번 출구', walk: '도보 5분' },
+      { line: '5호선 광화문역', exit: '2번 출구', walk: '도보 10분' },
+    ],
+    BUS: {
+      stop: '효자로 정류소',
+      lines: '202, 703, 721, 910 등',
+    },
+    PARKING: '인사동 주변 공영주차장 이용 (카카오맵에서 확인 가능)',
+  },
 };
 
 // Campaign dates for SEO schema

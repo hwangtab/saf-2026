@@ -83,7 +83,8 @@ export default function Home() {
           </p>
           <CTAButtonGroup variant="large" className="justify-center mb-12" />
           <p className="text-sm text-white/70 drop-shadow-lg mb-8">
-            📌 1월 14일 인사아트센터 3층 G&J 갤러리에서 시작합니다
+            <span aria-hidden="true">📌</span> {EXHIBITION.DATE} {EXHIBITION.LOCATION}에서
+            시작합니다
           </p>
           <div className="flex justify-center">
             <ShareButtons

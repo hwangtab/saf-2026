@@ -164,40 +164,43 @@ export default function ExhibitionPage() {
           <SectionTitle className="mb-12">오시는 길</SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
             <div>
-              <h3 className="text-card-title mb-4">🚇 대중교통</h3>
+              <h3 className="text-card-title mb-4">
+                <span aria-hidden="true">🚇</span> 대중교통
+              </h3>
               <div className="space-y-4 text-charcoal-muted">
                 <div>
                   <p className="font-semibold text-charcoal">지하철</p>
                   <p>
-                    3호선 안국역 1번 출구에서 도보 5분
-                    <br />
-                    5호선 광화문역 2번 출구에서 도보 10분
+                    {EXHIBITION.ACCESS.SUBWAY.map((s, i) => (
+                      <span key={s.line}>
+                        {s.line} {s.exit}에서 {s.walk}
+                        {i < EXHIBITION.ACCESS.SUBWAY.length - 1 && <br />}
+                      </span>
+                    ))}
                   </p>
                 </div>
                 <div>
                   <p className="font-semibold text-charcoal">버스</p>
                   <p>
-                    효자로 정류소 하차
+                    {EXHIBITION.ACCESS.BUS.stop} 하차
                     <br />
-                    202, 703, 721, 910 등
+                    {EXHIBITION.ACCESS.BUS.lines}
                   </p>
                 </div>
               </div>
             </div>
             <div>
-              <h3 className="text-card-title mb-4">🚗 자동차</h3>
+              <h3 className="text-card-title mb-4">
+                <span aria-hidden="true">🚗</span> 자동차
+              </h3>
               <div className="space-y-4 text-charcoal-muted">
                 <div>
                   <p className="font-semibold text-charcoal">주소</p>
-                  <p>서울시 종로구 인사동길 41-1</p>
+                  <p>{EXHIBITION.ADDRESS}</p>
                 </div>
                 <div>
                   <p className="font-semibold text-charcoal">주차</p>
-                  <p>
-                    인사동 주변 공영주차장 이용
-                    <br />
-                    (카카오맵에서 확인 가능)
-                  </p>
+                  <p>{EXHIBITION.ACCESS.PARKING}</p>
                 </div>
               </div>
             </div>
@@ -205,7 +208,9 @@ export default function ExhibitionPage() {
 
           {/* Accessibility */}
           <div className="bg-white border-2 border-blue-200 rounded-lg p-6">
-            <h3 className="text-card-title mb-3">♿ 접근성 정보</h3>
+            <h3 className="text-card-title mb-3">
+              <span aria-hidden="true">♿</span> 접근성 정보
+            </h3>
             <ul className="text-charcoal-muted space-y-2 text-sm">
               <li>✓ 장애인 휠체어 접근 가능</li>
               <li>✓ 엘리베이터 및 휠체어 화장실 보유</li>
