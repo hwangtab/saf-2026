@@ -27,14 +27,15 @@ export default function BackgroundSlider() {
   const isMobile = useIsMobile();
   const [isMounted, setIsMounted] = useState(false);
 
+  // Initialization effect - runs once on mount
+  // This pattern is intentional: we start with empty state on server to prevent hydration mismatch,
+  // then populate with shuffled images on client. This is a valid use of setState in useEffect for initialization.
   useEffect(() => {
-    // 1. 이미지 순서 섞기 (랜덤) - 클라이언트에서만 실행
     const shuffled = [...HERO_IMAGES].sort(() => Math.random() - 0.5);
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: client-only initialization to prevent hydration mismatch
     setImages(shuffled);
     setIsMounted(true);
 
-    // 첫 렌더링 후 플래그 해제
     const timer = requestAnimationFrame(() => {
       setIsFirstRender(false);
     });

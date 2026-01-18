@@ -77,8 +77,10 @@ export function useArtworkFilter(artworks: Artwork[], initialArtist?: string) {
     [pathname, router, searchParams, startTransition]
   );
 
+  // Sync selectedArtist with initialArtist prop
+  // This effect intentionally updates state based on prop changes for URL/prop synchronization
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: sync state with prop for URL navigation
     setSelectedArtist(initialArtist || null);
   }, [initialArtist]);
 
@@ -156,7 +158,8 @@ export function useArtworkFilter(artworks: Artwork[], initialArtist?: string) {
       selectedArtist: currentArtist,
     } = stateRef.current;
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+    // Sync state with URL params - intentional setState in useEffect for URL synchronization
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: bidirectional sync with URL params
     if (urlSort !== currentSort) setSortOption(urlSort);
     if (urlQ !== currentQuery && urlQ !== currentDebouncedQuery) setSearchQuery(urlQ);
     if (urlStatus !== currentStatus) setStatusFilter(urlStatus);

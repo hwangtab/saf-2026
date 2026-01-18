@@ -1,5 +1,6 @@
 import { Artwork, SortOption } from '@/types';
 import { parsePrice } from '@/lib/parsePrice';
+import { ARTIST_DATA } from '@/content/artists-data';
 
 export function sortArtworks(artworks: Artwork[], sortOption: SortOption): Artwork[] {
   const sorted = [...artworks];
@@ -54,8 +55,6 @@ export function extractUniqueArtists(artworks: Artwork[]): string[] {
 
   return artists;
 }
-
-import { ARTIST_DATA } from '@/content/artists-data';
 
 export function getArtworkWithArtistData(
   artwork: Artwork

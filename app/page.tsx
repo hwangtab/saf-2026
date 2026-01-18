@@ -142,7 +142,6 @@ export default function Home() {
       </Section>
 
       {/* Solution Section */}
-      {/* Solution Section */}
       <Section variant="primary-surface" prevVariant="sun-soft">
         <div className="container-max">
           <SectionTitle className="mb-12">우리의 해결책</SectionTitle>
@@ -182,7 +181,6 @@ export default function Home() {
         </div>
       </Section>
 
-      {/* Call to Action Section */}
       {/* Call to Action Section */}
       <Section variant="accent-soft" prevVariant="primary-surface" className="pb-24 md:pb-32">
         <div className="container-max">

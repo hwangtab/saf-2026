@@ -1,3 +1,5 @@
+import { BreadcrumbItem } from '@/types';
+
 // External Links
 export const SITE_URL = 'https://www.saf2026.com';
 export const SITE_URL_ALIAS = 'https://saf2026.com';
@@ -76,8 +78,6 @@ export const ANIMATION = {
   // Debounce timings
   SEARCH_DEBOUNCE: 300, // 300ms
 } as const;
-
-import { BreadcrumbItem } from '@/types';
 
 // Re-export helpers from seo-utils for backward compatibility
 export { escapeJsonLdForScript, createBreadcrumbSchema } from '@/lib/seo-utils';

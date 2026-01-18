@@ -8,6 +8,10 @@ export type ArtistRole =
   | 'printmaker'
   | 'designer';
 
+/**
+ * @deprecated Currently unused. Consider consolidating with ArtistData or removing.
+ * TODO: Evaluate if this interface is needed for future features.
+ */
 export interface Artist {
   id: string;
   name: string;

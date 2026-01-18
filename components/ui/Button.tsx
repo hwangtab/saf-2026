@@ -70,10 +70,6 @@ export default function Button({
       setIsLoading(true);
       try {
         await onClick();
-      } catch (error) {
-        console.error('Button click error:', error);
-        // 에러는 상위 컴포넌트에서 처리하도록 전파
-        throw error;
       } finally {
         if (isMountedRef.current) {
           setIsLoading(false);

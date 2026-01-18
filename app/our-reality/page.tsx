@@ -5,13 +5,9 @@ import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import CTAButtonGroup from '@/components/common/CTAButtonGroup';
 import { testimonials as testimonialsData } from '@/content/testimonials';
-
 import { EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
 import HighlightedText from '@/components/ui/HighlightedText';
 import { createPageMetadata } from '@/lib/seo';
-
-const PAGE_URL = `${SITE_URL}/our-reality`;
-
 import {
   FirstBankAccessChart,
   RejectionReasonsChart,
@@ -20,6 +16,8 @@ import {
   DebtCollectionChart,
   CreativeImpactChart,
 } from '@/components/features/charts/DynamicCharts';
+
+const PAGE_URL = `${SITE_URL}/our-reality`;
 
 export const metadata: Metadata = createPageMetadata(
   '우리의 현실',
