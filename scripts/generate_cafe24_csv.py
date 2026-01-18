@@ -2,165 +2,115 @@
 import csv
 import io
 
-source_file = '/Users/hwang-gyeongha/saf/docs/추가 씨앗페 작가 - 시트1.csv'
-template_file = '/Users/hwang-gyeongha/saf/docs/cafe24-products-63-109.csv'
-output_file = '/Users/hwang-gyeongha/saf/docs/cafe24-products-new.csv'
+# Input/Output filenames
+INPUT_CSV = "docs/추가 씨앗페 작가 - 시트 167-.csv"
+TEMPLATE_CSV = "docs/cafe24-products-new.csv"
+OUTPUT_CSV = "docs/cafe24-products-batch-004.csv"
+
+# Start ID
+START_ID = 167
 
 def clean_price(price_str):
     if not price_str:
-        return ""
-    return price_str.replace('₩', '').replace(',', '').strip()
+        return "0"
+    return price_str.replace("₩", "").replace(",", "").replace('"', '').strip()
 
-def create_html(row):
-    title = row['작품명']
-    artist = row['이름']
-    material = row['재료']
-    size = row['크기']
-    year = row['년도']
-    desc = row['작가노트']
-    history = row['작가 이력']
+def create_product_html(title, artist, material, size, year, profile, history):
+    # Sanitize inputs
+    profile = profile.replace('"', '&quot;') if profile else ""
+    history = history.replace('"', '&quot;') if history else ""
+    title = title.replace('"', '&quot;')
+    artist = artist.replace('"', '&quot;')
     
-    html = f"<div><h2>{title}</h2><p>{artist}</p><p>{material} | {size} | {year}</p>"
+    html = f"""<div style="font-family: 'Noto Sans KR', sans-serif; line-height: 1.8; color: #333;"><div style="margin-bottom: 30px;"><h2 style="font-size: 24px; margin-bottom: 10px;">{title}</h2><p style="font-size: 18px; color: #666; margin-bottom: 5px;">{artist}</p><p style="color: #888;">{material} | {size} | {year}</p></div><div style="margin-bottom: 30px;"><h3 style="font-size: 18px; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">작가 소개</h3><p style="white-space: pre-line;">{profile}</p></div><div style="margin-bottom: 30px;"><h3 style="font-size: 18px; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">작가 이력</h3><p style="white-space: pre-line; font-size: 14px;">{history}</p></div></div>"""
     
-    if desc:
-        # Convert newlines to <br/> for proper HTML rendering
-        formatted_desc = desc.replace('\n', '<br/>')
-        html += f"<h3>작품 설명</h3><p>{formatted_desc}</p>"
-        
-    if history:
-         formatted_history = history.replace('\n', '<br/>')
-         html += f"<h3>작가 이력</h3><p>{formatted_history}</p>"
-         
-    html += "</div>"
     return html
 
-def main():
-    # Read Template Headers
-    with open(template_file, 'r', encoding='utf-8-sig') as f:
-        reader = csv.reader(f)
-        headers = next(reader)
-        # We need to map our data to these headers
-        
-    # Read Source Data
-    with open(source_file, 'r', encoding='utf-8-sig') as f:
-        # Handle the BOM if present or just utf-8
-        reader = csv.DictReader(f)
-        source_data = list(reader)
-        
-    new_rows = []
-    start_id = 110
+# Read header from template to get field names
+with open(TEMPLATE_CSV, 'r', encoding='utf-8-sig') as f:
+    reader = csv.reader(f)
+    fieldnames = next(reader)
+
+# Prepare output file
+with open(OUTPUT_CSV, 'w', encoding='utf-8-sig', newline='') as f_out:
+    writer = csv.DictWriter(f_out, fieldnames=fieldnames, quoting=csv.QUOTE_ALL)
+    writer.writeheader()
     
-    for row in source_data:
-        # Skip empty rows if any
-        if not row['이름']:
-            continue
+    # Read input data
+    with open(INPUT_CSV, 'r', encoding='utf-8') as f_in:
+        reader = csv.reader(f_in)
+        next(reader) # Skip header
+        
+        current_id = START_ID
+        
+        for row in reader:
+            if len(row) < 5: continue
             
-        current_id = start_id
-        start_id += 1
-        
-        # Initialize a dict with empty strings for all headers
-        new_row = {h: '' for h in headers}
-        
-        # Fill in the data
-        # "상품코드","자체 상품코드","진열상태","판매상태","상품분류 번호","상품분류 신상품영역","상품분류 추천상품영역"
-        new_row['자체 상품코드'] = f"SAF2026-{current_id}"
-        new_row['진열상태'] = 'Y'
-        new_row['판매상태'] = 'Y'
-        new_row['상품분류 번호'] = '43'
-        new_row['상품분류 신상품영역'] = 'Y'
-        new_row['상품분류 추천상품영역'] = 'Y'
-        
-        # "상품명","영문 상품명","상품명(관리용)","공급사 상품명","모델명"
-        new_row['상품명'] = f"{row['작품명']} - {row['이름']}"
-        new_row['상품명(관리용)'] = f"[{current_id}] {row['이름']}"
-        
-        # "상품 요약설명","상품 간략설명","상품 상세설명"
-        new_row['상품 요약설명'] = f"{row['재료']} | {row['크기']}"
-        new_row['상품 상세설명'] = create_html(row)
-        new_row['모바일 상품 상세설명 설정'] = 'A' # Use PC description? Template has 'A'
-        
-        # "검색어설정","과세구분"
-        new_row['검색어설정'] = f"{row['이름']},씨앗페,SAF2026,미술,예술,작품"
-        new_row['과세구분'] = 'B' # Tax Free
-        
-        # "소비자가","공급가","상품가","판매가"
-        raw_price = row['가격'].replace('₩', '').replace(',', '').strip()
-        
-        if not raw_price:
-             price = '0' # Default to 0 if empty
-        else:
-            price = raw_price
+            # Map columns from source CSV
+            artist = row[0].strip()
+            title = row[2].strip()
+            material = row[3].strip()
+            size = row[4].strip()
+            year = row[5].strip()
+            price_raw = row[7].strip()
+            profile = row[8].strip() if len(row) > 8 else ""
+            history = row[10].strip() if len(row) > 10 else ""
             
-        new_row['소비자가'] = price
-        new_row['공급가'] = price
-        new_row['상품가'] = price
-        new_row['판매가'] = price
-        
-        # "판매가 대체문구 사용","판매가 대체문구","주문수량 제한 기준","최소 주문수량(이상)","최대 주문수량(이하)","적립금","적립금 구분"
-        new_row['판매가 대체문구 사용'] = 'N'
-        new_row['주문수량 제한 기준'] = '' # Template default is empty 
-        # Check template row 3: "1","1" for min/max? No, "1","1" is indices 26, 27?
-        # Headers: 25: 주문수량 제한 기준, 26: 최소..., 27: 최대...
-        # Template line 3: ...,"N","","","1","1","","","","N",... 
-        # So "주문수량 제한 기준" is empty, Min is 1, Max is 1? Or Min 1 Max empty?
-        # Let's check the template content carefully specifically for these columns.
-        # Template: "N","","","1","1","","","","N",
-        # Indices:
-        # 23: 판매가 대체문구 사용 (N)
-        # 24: 판매가 대체문구 ("")
-        # 25: 주문수량 제한 기준 ("") - Actually wait, let's look at a filled row.
-        # Row 3: "N","","","1","1"
-        # 23: N
-        # 24: ""
-        # 25: "" -> This seems to be "주문수량 제한 기준"
-        # 26: 1 -> "최소 주문수량"
-        # 27: 1 -> "최대 주문수량"
-        
-        new_row['최소 주문수량(이상)'] = '1'
-        new_row['최대 주문수량(이하)'] = '1'
-        
-        
-        # "성인인증","옵션사용","품목 구성방식","옵션 표시방식","옵션세트명","옵션입력","옵션 스타일","버튼이미지 설정","색상 설정","필수여부","품절표시 문구"
-        new_row['성인인증'] = 'N'
-        new_row['옵션사용'] = 'N'
-        new_row['품절표시 문구'] = '품절'
-        
-        # "추가입력옵션","추가입력옵션 명칭","추가입력옵션 선택/필수여부","입력글자수(자)"
-        # "이미지등록(상세)","이미지등록(목록)","이미지등록(작은목록)","이미지등록(축소)","이미지등록(추가)"
-        img_filename = row['이미지파일명'].strip()
-        if img_filename:
-            # Cafe24 Strict Requirement:
-            # Main product images MUST be in 'web/product/big/' (for Detail Image).
-            # The CSV must contain ONLY the filename (e.g., '144.jpg').
-            # Cafe24 will not display images linked from 'web/upload/'.
+            price = clean_price(price_raw)
             
-            # User instruction: Move all images from 'web/upload/saf2026/' to 'web/product/big/'
+            # Image handling
+            image_ext = "png" if current_id == 173 else "jpg"
+            image_filename = f"{current_id}.{image_ext}"
             
-            # Append .jpg extension as source usually lacks it
-            img_full_name = f"{img_filename}.jpg"
+            # Create a dictionary for the row, initialized with empty strings for all fields
+            # DictWriter fills missing fields with restval (default empty if not set, 
+            # but safer to explicitly set what we know and let others be empty/none)
+            # Actually better to create a dict with known keys.
             
-            new_row['이미지등록(상세)'] = img_full_name
-            new_row['이미지등록(목록)'] = img_full_name
-            new_row['이미지등록(작은목록)'] = img_full_name
-            new_row['이미지등록(축소)'] = img_full_name
-            new_row['이미지등록(추가)'] = ''
+            row_data = {field: "" for field in fieldnames}
             
-        # "제조사","공급사","브랜드","트렌드","자체분류 코드","제조일자","출시일자","유효기간 사용여부","유효기간","원산지"
-        # Template: mostly empty, "N" for valid date usage
-        new_row['유효기간 사용여부'] = 'N'
-        
-        # "상품부피(cm)","상품결제안내","상품배송안내","교환/반품안내","서비스문의/안내","배송정보","배송방법","국내/해외배송","배송지역","배송비 선결제 설정","배송기간","배송비 구분","배송비입력","스토어픽업 설정","상품 전체중량(kg)","HS코드","상품 구분(해외통관)","상품소재","영문 상품소재(해외통관)","옷감(해외통관)","검색엔진최적화(SEO) 검색엔진 노출 설정","검색엔진최적화(SEO) Title","검색엔진최적화(SEO) Author","검색엔진최적화(SEO) Description","검색엔진최적화(SEO) Keywords","검색엔진최적화(SEO) 상품 이미지 Alt 텍스트","개별결제수단설정","상품배송유형 코드","메모"
-        
-        # Add to list
-        new_rows.append(new_row)
+            # Populate fields corresponding to the template logic
+            row_data["자체 상품코드"] = f"SAF2026-{current_id}"
+            row_data["진열상태"] = "Y"
+            row_data["판매상태"] = "Y"
+            row_data["상품분류 번호"] = "43"
+            row_data["상품분류 신상품영역"] = "Y"
+            row_data["상품분류 추천상품영역"] = "Y"
+            row_data["상품명"] = f"{title} - {artist}"
+            row_data["상품명(관리용)"] = f"[{current_id}] {artist}"
+            row_data["상품 요약설명"] = f"{material} | {size}"
+            row_data["상품 상세설명"] = create_product_html(title, artist, material, size, year, profile, history)
+            row_data["모바일 상품 상세설명 설정"] = "A"
+            row_data["검색어설정"] = f"{artist},씨앗페,SAF2026,미술,예술,작품"
+            row_data["과세구분"] = "B"
+            row_data["소비자가"] = price
+            row_data["공급가"] = price
+            row_data["상품가"] = price
+            row_data["판매가"] = price
+            row_data["판매가 대체문구 사용"] = "N"
+            row_data["최소 주문수량(이상)"] = "1"
+            row_data["최대 주문수량(이하)"] = "1"
+            row_data["성인인증"] = "N"
+            row_data["옵션사용"] = "N"
+            row_data["필수여부"] = "N" # Assuming this maps to something logical or was present in my previous attempt? 
+            # In previous attempt index 40 was set to "N". Index 40 is "필수여부". Correct.
+            
+            row_data["품절표시 문구"] = "품절"
+            row_data["유효기간 사용여부"] = "N"
+            
+            row_data["이미지등록(상세)"] = image_filename
+            row_data["이미지등록(목록)"] = image_filename
+            row_data["이미지등록(작은목록)"] = image_filename
+            row_data["이미지등록(축소)"] = image_filename
+            
+            # "상품 구분(해외통관)" is index 77.
+            # I previously put "N" in index 73 ("배송비입력"). 
+            # I will Leave "배송비입력" empty.
+            # I will leave "유효기간 사용여부" empty (as initialized).
+            
+            writer.writerow(row_data)
+            
+            print(f"ID: {current_id} | Artist: {artist} | Title: {title}")
+            current_id += 1
 
-    # Write Output
-    with open(output_file, 'w', encoding='utf-8-sig', newline='') as f:
-        writer = csv.DictWriter(f, fieldnames=headers, quoting=csv.QUOTE_ALL)
-        writer.writeheader()
-        writer.writerows(new_rows)
-        
-    print(f"Successfully created {output_file} with {len(new_rows)} products.")
-
-if __name__ == "__main__":
-    main()
+print(f"Generated {OUTPUT_CSV} with {current_id - START_ID} items.")

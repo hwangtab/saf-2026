@@ -8,12 +8,13 @@ import Footer from '@/components/common/Footer';
 import AnimationProvider from '@/components/providers/AnimationProvider';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { OG_IMAGE, SITE_URL, SITE_URL_ALIAS, SOCIAL_LINKS, CONTACT } from '@/lib/constants';
+import { BRAND_COLORS } from '@/lib/colors';
 import '@/styles/globals.css';
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#2176FF',
+  themeColor: BRAND_COLORS.primary.DEFAULT,
   viewportFit: 'cover',
 };
 

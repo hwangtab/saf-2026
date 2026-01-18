@@ -6,6 +6,7 @@ import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import TestimonialCard from '@/components/ui/TestimonialCard';
+import StatCard from '@/components/ui/StatCard';
 import { EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
 
@@ -44,18 +45,9 @@ export default function OurProof() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <div className="bg-white p-8 rounded-lg shadow text-center border-t-4 border-primary">
-              <p className="text-4xl font-bold text-primary mb-2">354건</p>
-              <p className="text-charcoal-muted">신용 무관 대출 건수</p>
-            </div>
-            <div className="bg-white p-8 rounded-lg shadow text-center border-t-4 border-primary">
-              <p className="text-4xl font-bold text-primary mb-2">약 7억 원</p>
-              <p className="text-charcoal-muted">총 대출 규모</p>
-            </div>
-            <div className="bg-white p-8 rounded-lg shadow text-center border-t-4 border-primary">
-              <p className="text-5xl font-bold text-primary mb-2">95%</p>
-              <p className="text-charcoal-muted">상환율 (대위변제율 5.10%)</p>
-            </div>
+            <StatCard value="354건" label="신용 무관 대출 건수" variant="highlight" />
+            <StatCard value="약 7억 원" label="총 대출 규모" variant="highlight" />
+            <StatCard value="95%" label="상환율 (대위변제율 5.10%)" variant="highlight" />
           </div>
 
           <div className="mt-12 bg-white p-8 rounded-lg max-w-3xl mx-auto border-l-4 border-primary">
@@ -117,27 +109,27 @@ export default function OurProof() {
 
           {/* Success Stories */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-            <div className="bg-white p-8 rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-              <div className="text-4xl font-bold text-primary mb-4">354건</div>
-              <h3 className="text-card-title mb-2">누적 대출 실행</h3>
-              <p className="text-charcoal-muted text-sm text-balance">
-                2022년 12월부터 2025년 9월말까지 354건의 상호부조 대출이 실행되었습니다.
-              </p>
-            </div>
-            <div className="bg-white p-8 rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-              <div className="text-4xl font-bold text-primary mb-4">약 7억 원</div>
-              <h3 className="text-card-title mb-2">누적 지원 금액</h3>
-              <p className="text-charcoal-muted text-sm text-balance">
-                생활비·창작비·프로젝트 자금 등으로 총 약 7억 원이 투입되었습니다.
-              </p>
-            </div>
-            <div className="bg-white p-8 rounded-lg border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-              <div className="text-4xl font-bold text-primary mb-4">5.10%</div>
-              <h3 className="text-card-title mb-2">대위변제율</h3>
-              <p className="text-charcoal-muted text-sm text-balance">
-                총 20건, 31,080,986원이 대위변제 처리되어 전체 실행액 대비 5.10% 수준입니다.
-              </p>
-            </div>
+            <StatCard
+              value="354건"
+              label="누적 대출 실행"
+              description="2022년 12월부터 2025년 9월말까지 354건의 상호부조 대출이 실행되었습니다."
+              variant="bordered"
+              className="hover:shadow-md transition-shadow"
+            />
+            <StatCard
+              value="약 7억 원"
+              label="누적 지원 금액"
+              description="생활비·창작비·프로젝트 자금 등으로 총 약 7억 원이 투입되었습니다."
+              variant="bordered"
+              className="hover:shadow-md transition-shadow"
+            />
+            <StatCard
+              value="5.10%"
+              label="대위변제율"
+              description="총 20건, 31,080,986원이 대위변제 처리되어 전체 실행액 대비 5.10% 수준입니다."
+              variant="bordered"
+              className="hover:shadow-md transition-shadow"
+            />
           </div>
 
           {/* Why It Works */}

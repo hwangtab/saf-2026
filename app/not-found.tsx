@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import { CONTACT } from '@/lib/constants';
 
 export const metadata: Metadata = {
   title: '페이지를 찾을 수 없습니다',
@@ -34,8 +35,8 @@ export default function NotFound() {
 
         <div className="pt-8 border-t border-gray-200/60">
           <p className="text-sm text-gray-500 mb-2">도움이 필요하신가요?</p>
-          <a href="mailto:contact@kosmart.org" className="text-primary font-medium hover:underline">
-            contact@kosmart.org
+          <a href={`mailto:${CONTACT.EMAIL}`} className="text-primary font-medium hover:underline">
+            {CONTACT.EMAIL}
           </a>
         </div>
       </div>
