@@ -51,6 +51,12 @@ export const EXHIBITION = {
   LNG: 126.986,
 };
 
+// Campaign dates for SEO schema
+export const CAMPAIGN = {
+  START_DATE: '2026-01-14',
+  END_DATE: '2026-01-26',
+} as const;
+
 // Statistics Data
 export const STATISTICS_DATA = [
   { label: '제1금융권 배제율', value: 84.9, unit: '%' },

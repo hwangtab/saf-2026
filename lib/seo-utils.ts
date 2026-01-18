@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { SITE_URL, BREADCRUMB_HOME, BREADCRUMBS } from '@/lib/constants';
+import { SITE_URL, BREADCRUMB_HOME, BREADCRUMBS, CAMPAIGN, EXHIBITION } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
 import { Artwork, BreadcrumbItem } from '@/types';
 
@@ -60,8 +60,11 @@ export function generateArtworkMetadata(artwork: Artwork): Metadata {
       '예술인 연대',
       '미술품 구매',
       '상호부조',
+      '예술인 상호부조',
+      '인사아트센터',
       artwork.material?.split(' ')?.[0] ?? '미술품',
-    ].filter(Boolean),
+      artwork.year ? `${artwork.year}년 작품` : null,
+    ].filter(Boolean) as string[],
     openGraph: {
       ...baseMetadata.openGraph,
       type: 'website',
@@ -79,14 +82,54 @@ export function generateArtworkJsonLd(artwork: Artwork, numericPrice: string, is
   const schemaDescription =
     artwork.description || artwork.profile || `${artwork.artist}의 작품 "${artwork.title}"`;
 
+  // Build alternateName for image SEO
+  const imageAlternateName = [
+    `${artwork.artist} 작가의 ${artwork.title}`,
+    artwork.year,
+    artwork.material,
+  ]
+    .filter(Boolean)
+    .join(', ');
+
+  // Seller organization (reused in offers)
+  const sellerOrg = {
+    '@type': 'Organization',
+    name: '한국스마트협동조합',
+    url: 'https://www.saf2026.com',
+  };
+
+  // Build offers based on whether price is inquiry or numeric
+  const offers = isInquiry
+    ? {
+        '@type': 'Offer',
+        url: `${SITE_URL}/artworks/${artwork.id}`,
+        availability: artwork.sold ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock',
+        priceSpecification: {
+          '@type': 'PriceSpecification',
+          valueAddedTaxIncluded: true,
+        },
+        seller: sellerOrg,
+      }
+    : {
+        '@type': 'Offer',
+        url: `${SITE_URL}/artworks/${artwork.id}`,
+        priceCurrency: 'KRW',
+        price: numericPrice,
+        priceValidUntil: CAMPAIGN.END_DATE,
+        availability: artwork.sold ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock',
+        seller: sellerOrg,
+      };
+
   const productSchema = {
     '@context': 'https://schema.org',
     '@type': ['VisualArtwork', 'Product'],
     name: artwork.title,
+    inLanguage: 'ko',
     image: {
       '@type': 'ImageObject',
       url: `${SITE_URL}/images/artworks/${artwork.image}`,
       name: `${artwork.title} - ${artwork.artist}`,
+      alternateName: imageAlternateName,
     },
     description: schemaDescription.substring(0, 500),
     sku: `SAF2026-${artwork.id}`,
@@ -100,18 +143,18 @@ export function generateArtworkJsonLd(artwork: Artwork, numericPrice: string, is
     dateCreated: artwork.year || undefined,
     width: artwork.size ? { '@type': 'Distance', name: artwork.size } : undefined,
     height: artwork.size ? { '@type': 'Distance', name: artwork.size } : undefined,
-    offers: {
-      '@type': 'Offer',
-      url: `${SITE_URL}/artworks/${artwork.id}`,
-      priceCurrency: 'KRW',
-      price: isInquiry ? undefined : numericPrice,
-      priceValidUntil: '2026-12-31',
-      availability: artwork.sold ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock',
-      seller: {
-        '@type': 'Organization',
-        name: '한국스마트협동조합',
-        url: 'https://www.saf2026.com',
+    offers,
+    isPartOf: {
+      '@type': 'ExhibitionEvent',
+      name: '씨앗페 2026 - 예술인 상호부조 기금 마련 특별전',
+      startDate: CAMPAIGN.START_DATE,
+      endDate: CAMPAIGN.END_DATE,
+      location: {
+        '@type': 'Place',
+        name: EXHIBITION.LOCATION,
+        address: EXHIBITION.ADDRESS,
       },
+      organizer: sellerOrg,
     },
     additionalProperty: [
       artwork.material && {
