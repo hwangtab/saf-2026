@@ -7,6 +7,7 @@ import ShareButtons from '@/components/common/ShareButtons';
 import { newsArticles } from '@/content/news';
 import { SITE_URL } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
+import { escapeJsonLdForScript } from '@/lib/seo-utils';
 
 const PAGE_URL = `${SITE_URL}/news`;
 
@@ -171,7 +172,9 @@ export default function NewsPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        dangerouslySetInnerHTML={{
+          __html: escapeJsonLdForScript(JSON.stringify(structuredData)),
+        }}
       />
 
       <PageHero title="언론 보도" description="씨앗페 캠페인을 조명한 기사와 인터뷰를 모았습니다.">

@@ -4,8 +4,43 @@ import { Artwork, SortOption } from '@/types';
 import { useDebounce } from './useDebounce';
 import { sortArtworks, extractUniqueArtists } from '@/lib/artworkUtils';
 
+/** Status filter options for artwork gallery */
 export type StatusFilter = 'all' | 'selling' | 'sold';
 
+/**
+ * Custom hook for artwork filtering, sorting, and URL synchronization.
+ *
+ * @description
+ * This hook manages the complete state for artwork gallery filtering:
+ * - **Sorting**: By artist name, price, or year (ascending/descending)
+ * - **Search**: Full-text search with debouncing (300ms)
+ * - **Status Filter**: Show all, selling only, or sold only
+ * - **Artist Selection**: Filter by specific artist
+ *
+ * The hook also handles **bidirectional URL synchronization**:
+ * - State changes are reflected in URL query parameters
+ * - URL changes (browser back/forward) update the component state
+ *
+ * @param artworks - Array of artwork data to filter
+ * @param initialArtist - Optional initial artist filter (e.g., from dynamic route)
+ *
+ * @returns Object containing:
+ * - `filteredArtworks` - Sorted and filtered artworks array
+ * - `uniqueArtists` - List of unique artist names for navigation
+ * - State values and setters for sort, search, status, and artist
+ * - `clearFilters()` - Reset all filters to default
+ *
+ * @example
+ * ```tsx
+ * const {
+ *   filteredArtworks,
+ *   searchQuery,
+ *   setSearchQuery,
+ *   sortOption,
+ *   setSortOption,
+ * } = useArtworkFilter(artworks);
+ * ```
+ */
 export function useArtworkFilter(artworks: Artwork[], initialArtist?: string) {
   const searchParams = useSearchParams();
   const router = useRouter();
