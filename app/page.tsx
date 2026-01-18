@@ -18,16 +18,16 @@ import {
 } from '@/lib/constants';
 
 export const metadata: Metadata = {
-  title: '씨앗페 2026 - 예술인 금융 위기 해결 캠페인',
+  title: '씨앗페 2026 - 예술인 상호부조 기금 마련 특별전',
   description:
-    '씨앗페 2026은 예술인 상호부조 대출 기금 마련을 위해 후원과 작품 구매를 연결하는 캠페인입니다. 금융 사각지대에 놓인 예술인에게 안정적인 창작 환경을 선물하세요.',
+    '씨앗페 2026은 예술인 상호부조 대출 기금 마련을 위해 후원과 작품 구매를 연결하는 특별전입니다. 금융 사각지대에 놓인 예술인에게 안정적인 창작 환경을 선물하세요.',
   alternates: {
     canonical: SITE_URL,
   },
   openGraph: {
     type: 'website',
     siteName: '씨앗페 2026',
-    title: '씨앗페 2026 - 예술인 금융 위기 해결 캠페인',
+    title: '씨앗페 2026 - 예술인 상호부조 기금 마련 특별전',
     description:
       '후원과 작품 구매로 예술인 상호부조 대출 기금을 확장하고, 금융 위기 속에서도 창작이 지속되도록 힘을 보태주세요.',
     url: SITE_URL,
@@ -42,8 +42,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '씨앗페 2026 - 예술인 금융 위기 해결 캠페인',
-    description: '예술인의 금융 위기를 해결하는 상호부조 대출 캠페인, 씨앗페 2026에 함께하세요.',
+    title: '씨앗페 2026 - 예술인 상호부조 기금 마련 특별전',
+    description: '예술인 상호부조 대출 기금을 마련하는 특별전, 씨앗페 2026에 함께하세요.',
     images: [OG_IMAGE.url],
   },
 };
@@ -86,8 +86,8 @@ export default function Home() {
           <div className="flex justify-center">
             <ShareButtons
               url={SITE_URL}
-              title="씨앗페 2026 - 예술인 금융 위기 해결 캠페인"
-              description="한국 예술인의 금융 위기 해결을 위한 연대, 씨앗페 2026에 함께해주세요."
+              title="씨앗페 2026 - 예술인 상호부조 기금 마련 특별전"
+              description="한국 예술인 상호부조 기금 마련을 위한 특별전, 씨앗페 2026에 함께해주세요."
             />
           </div>
         </div>
@@ -227,7 +227,7 @@ export default function Home() {
                   name: '씨앗페 2026이란 무엇인가요?',
                   acceptedAnswer: {
                     '@type': 'Answer',
-                    text: '씨앗페 2026은 한국 예술인들의 금융 위기를 해결하기 위한 상호부조 대출 기금 마련 캠페인입니다. 후원과 작품 구매를 통해 예술인들에게 안정적인 창작 환경을 제공합니다.',
+                    text: '씨앗페 2026은 한국 예술인들의 상호부조 대출 기금 마련을 위한 특별전입니다. 후원과 작품 구매를 통해 예술인들에게 안정적인 창작 환경을 제공합니다.',
                   },
                 },
                 {

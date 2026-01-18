@@ -20,7 +20,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: '씨앗페 2026 | 예술인 금융 위기 해결 캠페인',
+    default: '씨앗페 2026 | 예술인 상호부조 기금 마련 특별전',
     template: '%s | 씨앗페 2026',
   },
   alternates: {
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     },
   },
   description:
-    '한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인. 상호부조 대출, 작품 전시, 후원에 참여하세요.',
+    '한국 예술인들의 상호부조 기금 마련을 위한 특별전. 상호부조 대출, 작품 전시, 후원에 참여하세요.',
   keywords: [
     '예술인',
     '금융',
@@ -52,9 +52,9 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'ko_KR',
     url: SITE_URL,
-    title: '씨앗페 2026 | 예술인 금융 위기 해결 캠페인',
+    title: '씨앗페 2026 | 예술인 상호부조 기금 마련 특별전',
     description:
-      '한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인. 상호부조 대출, 작품 전시, 후원에 참여하세요.',
+      '한국 예술인들의 상호부조 기금 마련을 위한 특별전. 상호부조 대출, 작품 전시, 후원에 참여하세요.',
     siteName: '씨앗페 2026',
     images: [
       {
@@ -68,7 +68,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: '씨앗페 2026',
-    description: '한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인',
+    description: '한국 예술인들의 상호부조 기금 마련을 위한 특별전',
     images: [OG_IMAGE.url],
   },
   robots: {
@@ -88,7 +88,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     name: CONTACT.ORGANIZATION_NAME,
     url: SITE_URL,
     logo: `${SITE_URL}/images/og-image2.png`,
-    description: '한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인',
+    description: '한국 예술인들의 상호부조 기금 마련을 위한 특별전',
     sameAs: [
       SOCIAL_LINKS.INSTAGRAM,
       SOCIAL_LINKS.FACEBOOK,
@@ -115,7 +115,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     name: '씨앗페 2026',
     alternateName: 'SAF 2026',
     url: SITE_URL,
-    description: '한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인',
+    description: '한국 예술인들의 상호부조 기금 마련을 위한 특별전',
     inLanguage: 'ko-KR',
     publisher: {
       '@type': 'Organization',
