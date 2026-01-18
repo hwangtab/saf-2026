@@ -14,17 +14,18 @@ interface DesktopNavProps {
 export default function DesktopNav({ navigation, isActive, textColor }: DesktopNavProps) {
   return (
     <>
-      <div className="hidden md:flex items-center gap-8 h-full">
+      <ul className="hidden md:flex items-center gap-8 h-full m-0 p-0 list-none">
         {navigation.map((item) => (
-          <NavLink
-            key={item.href}
-            item={item}
-            isActive={isActive(item.href)}
-            variant="desktop"
-            textColor={textColor}
-          />
+          <li key={item.href}>
+            <NavLink
+              item={item}
+              isActive={isActive(item.href)}
+              variant="desktop"
+              textColor={textColor}
+            />
+          </li>
         ))}
-      </div>
+      </ul>
       <div className="hidden md:flex">
         <Button href={EXTERNAL_LINKS.DONATE} variant="accent" external>
           후원하기

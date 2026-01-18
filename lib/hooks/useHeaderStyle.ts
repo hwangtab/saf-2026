@@ -1,0 +1,56 @@
+import { useState, useCallback, useMemo } from 'react';
+import { usePathname } from 'next/navigation';
+import { HERO_PAGES } from '@/lib/constants';
+import { useScrolled } from '@/lib/hooks/useScrolled';
+
+export function useHeaderStyle() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // 네이티브 <dialog>가 스크롤 잠금을 처리하므로 useScrollLock 불필요
+  const isScrolled = useScrolled(10, isMenuOpen);
+  const pathname = usePathname();
+
+  const isActive = useCallback(
+    (href: string) => {
+      if (href === '/' && pathname === '/') return true;
+      if (href !== '/' && pathname.startsWith(href)) return true;
+      return false;
+    },
+    [pathname]
+  );
+
+  const openMenu = useCallback(() => setIsMenuOpen(true), []);
+  const closeMenu = useCallback(() => setIsMenuOpen(false), []);
+
+  // 경로 기반 파생 상태 메모이제이션
+  const { isArtworkDetail, hasHero } = useMemo(() => {
+    const artistPage = pathname.startsWith('/artworks/artist/');
+    const artworkDetail =
+      pathname.startsWith('/artworks/') && pathname !== '/artworks' && !artistPage;
+    const heroPage =
+      (HERO_PAGES.includes(pathname as (typeof HERO_PAGES)[number]) && !artworkDetail) ||
+      artistPage;
+    return { isArtworkDetail: artworkDetail, hasHero: heroPage };
+  }, [pathname]);
+
+  // 헤더 스타일 메모이제이션 (메뉴가 풀스크린이므로 isMenuVisible 조건 제거)
+  const headerStyle = useMemo(() => {
+    if (isArtworkDetail || isScrolled || !hasHero) {
+      return 'bg-white shadow-sm border-gray-200/50';
+    }
+    return 'bg-transparent border-transparent';
+  }, [isArtworkDetail, isScrolled, hasHero]);
+
+  const isDarkText = isScrolled || !hasHero || isArtworkDetail;
+  const textColor = isDarkText ? 'text-charcoal' : 'text-white';
+
+  return {
+    isMenuOpen,
+    openMenu,
+    closeMenu,
+    isActive,
+    headerStyle,
+    isDarkText,
+    textColor,
+  };
+}

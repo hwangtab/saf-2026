@@ -1,5 +1,14 @@
 import type { Metadata } from 'next';
-import { SITE_URL, BREADCRUMB_HOME, BREADCRUMBS, CAMPAIGN, EXHIBITION } from '@/lib/constants';
+import {
+  SITE_URL,
+  BREADCRUMB_HOME,
+  BREADCRUMBS,
+  CAMPAIGN,
+  EXHIBITION,
+  CONTACT,
+  SOCIAL_LINKS,
+  OG_IMAGE,
+} from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
 import { Artwork, BreadcrumbItem } from '@/types';
 
@@ -199,5 +208,98 @@ export function generateArtworkJsonLd(artwork: Artwork, numericPrice: string, is
   return {
     productSchema,
     breadcrumbSchema,
+  };
+}
+
+export function generateExhibitionSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ExhibitionEvent',
+    name: '씨앗페 2026 (Seed Art Festival 2026)',
+    description:
+      '한국 예술인들의 상호부조 기금 마련을 위한 특별전. 50여 명의 작가가 참여한 회화, 조각, 사진 등 다양한 예술 작품을 만나보세요.',
+    url: SITE_URL,
+    image: [OG_IMAGE.url],
+    startDate: '2026-01-14T10:00:00+09:00',
+    endDate: '2026-01-26T19:00:00+09:00',
+    eventStatus: 'https://schema.org/EventScheduled',
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+    location: {
+      '@type': 'Place',
+      name: EXHIBITION.LOCATION,
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: EXHIBITION.ADDRESS,
+        addressLocality: '서울시',
+        addressCountry: 'KR',
+      },
+      geo: {
+        '@type': 'GeoCoordinates',
+        latitude: EXHIBITION.LAT,
+        longitude: EXHIBITION.LNG,
+      },
+    },
+    organizer: {
+      '@type': 'Organization',
+      name: CONTACT.ORGANIZATION_NAME,
+      url: SITE_URL,
+    },
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'KRW',
+      availability: 'https://schema.org/InStock',
+      url: SITE_URL,
+    },
+    performer: {
+      '@type': 'Organization',
+      name: '참여 예술가 50여 명',
+    },
+    isAccessibleForFree: true,
+  };
+}
+
+export function generateOrganizationSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: CONTACT.ORGANIZATION_NAME,
+    url: SITE_URL,
+    logo: `${SITE_URL}/images/og-image2.png`,
+    description: '한국 예술인들의 상호부조 기금 마련을 위한 특별전',
+    sameAs: [
+      SOCIAL_LINKS.INSTAGRAM,
+      SOCIAL_LINKS.FACEBOOK,
+      SOCIAL_LINKS.TWITTER,
+      SOCIAL_LINKS.YOUTUBE,
+    ],
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: CONTACT.ADDRESS,
+      addressLocality: '서울시',
+      addressCountry: 'KR',
+    },
+    contactPoint: {
+      '@type': 'ContactPoint',
+      contactType: 'Customer Service',
+      telephone: CONTACT.PHONE,
+      email: CONTACT.EMAIL,
+    },
+  };
+}
+
+export function generateWebsiteSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: '씨앗페 2026',
+    alternateName: 'SAF 2026',
+    url: SITE_URL,
+    description: '한국 예술인들의 상호부조 기금 마련을 위한 특별전',
+    inLanguage: 'ko-KR',
+    publisher: {
+      '@type': 'Organization',
+      name: CONTACT.ORGANIZATION_NAME,
+    },
   };
 }

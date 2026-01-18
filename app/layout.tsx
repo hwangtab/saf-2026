@@ -7,7 +7,8 @@ import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import AnimationProvider from '@/components/providers/AnimationProvider';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { OG_IMAGE, SITE_URL, SITE_URL_ALIAS, SOCIAL_LINKS, CONTACT } from '@/lib/constants';
+import { OG_IMAGE, SITE_URL, SITE_URL_ALIAS, CONTACT } from '@/lib/constants';
+import { generateOrganizationSchema, generateWebsiteSchema } from '@/lib/seo-utils';
 import { BRAND_COLORS } from '@/lib/colors';
 import '@/styles/globals.css';
 
@@ -91,46 +92,8 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const organizationSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: CONTACT.ORGANIZATION_NAME,
-    url: SITE_URL,
-    logo: `${SITE_URL}/images/og-image2.png`,
-    description: '한국 예술인들의 상호부조 기금 마련을 위한 특별전',
-    sameAs: [
-      SOCIAL_LINKS.INSTAGRAM,
-      SOCIAL_LINKS.FACEBOOK,
-      SOCIAL_LINKS.TWITTER,
-      SOCIAL_LINKS.YOUTUBE,
-    ],
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: CONTACT.ADDRESS,
-      addressLocality: '서울시',
-      addressCountry: 'KR',
-    },
-    contactPoint: {
-      '@type': 'ContactPoint',
-      contactType: 'Customer Service',
-      telephone: CONTACT.PHONE,
-      email: CONTACT.EMAIL,
-    },
-  };
-
-  const websiteSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    name: '씨앗페 2026',
-    alternateName: 'SAF 2026',
-    url: SITE_URL,
-    description: '한국 예술인들의 상호부조 기금 마련을 위한 특별전',
-    inLanguage: 'ko-KR',
-    publisher: {
-      '@type': 'Organization',
-      name: CONTACT.ORGANIZATION_NAME,
-    },
-  };
+  const organizationSchema = generateOrganizationSchema();
+  const websiteSchema = generateWebsiteSchema();
 
   return (
     <html lang="ko" suppressHydrationWarning>

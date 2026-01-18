@@ -4,13 +4,15 @@ import Button from '@/components/ui/Button';
 import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
-import ShareButtons from '@/components/common/ShareButtons';
-import { EXHIBITION, EXTERNAL_LINKS, SITE_URL, OG_IMAGE } from '@/lib/constants';
+import dynamic from 'next/dynamic';
+import { EXHIBITION, EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
-import { escapeJsonLdForScript } from '@/lib/seo-utils';
+import { escapeJsonLdForScript, generateExhibitionSchema } from '@/lib/seo-utils';
 
 // Dynamically import KakaoMap (client-side only, reduces initial bundle)
 import ExhibitionMapWrapper from '@/components/features/ExhibitionMapWrapper';
+
+const ShareButtons = dynamic(() => import('@/components/common/ShareButtons'));
 
 const PAGE_URL = `${SITE_URL}/exhibition`;
 
@@ -26,43 +28,7 @@ export default function ExhibitionPage() {
   const shareDescription = '씨앗페 2026 전시 정보. 일시, 장소, 오시는 길, 공연 일정 안내.';
 
   // JSON-LD Schema for Event
-  const eventSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'ExhibitionEvent',
-    name: '씨앗페 2026 - 예술인 금융 위기 해결 캠페인',
-    isAccessibleForFree: true,
-    description: '한국 예술인들의 금융 위기를 해결하기 위한 전시 및 공연 행사',
-    startDate: '2026-01-14',
-    endDate: '2026-01-26',
-    eventStatus: 'https://schema.org/EventScheduled',
-    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-    location: {
-      '@type': 'Place',
-      name: '인사아트센터 3층 G&J 갤러리',
-      address: {
-        '@type': 'PostalAddress',
-        streetAddress: '서울시 종로구 인사동',
-        addressLocality: '서울시',
-        addressRegion: '종로구',
-        postalCode: '03100',
-        addressCountry: 'KR',
-      },
-    },
-    organizer: {
-      '@type': 'Organization',
-      name: '한국스마트협동조합',
-      url: SITE_URL,
-    },
-    offers: {
-      '@type': 'Offer',
-      url: canonicalUrl,
-      price: '0',
-      priceCurrency: 'KRW',
-      availability: 'https://schema.org/InStock',
-    },
-    image: OG_IMAGE.url,
-    url: canonicalUrl,
-  };
+  const eventSchema = generateExhibitionSchema();
 
   return (
     <>

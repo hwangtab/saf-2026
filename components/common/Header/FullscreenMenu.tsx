@@ -124,16 +124,19 @@ export default function FullscreenMenu({
 
         {/* 네비게이션 */}
         <nav className={styles.nav}>
-          {navigation.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`${styles.navLink} ${isActive(item.href) ? styles.active : ''}`}
-              onClick={onClose}
-            >
-              {item.name}
-            </Link>
-          ))}
+          <ul className="flex flex-col items-center gap-6 m-0 p-0 list-none text-center">
+            {navigation.map((item) => (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className={`${styles.navLink} ${isActive(item.href) ? styles.active : ''}`}
+                  onClick={onClose}
+                >
+                  {item.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </nav>
 
         {/* 푸터 - 후원 버튼 */}
