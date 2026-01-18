@@ -14,6 +14,8 @@ import {
   OG_IMAGE,
   SITE_URL,
   STATISTICS_DATA,
+  CONTACT,
+  EXHIBITION,
   escapeJsonLdForScript,
 } from '@/lib/constants';
 
@@ -255,6 +257,57 @@ export default function Home() {
                   },
                 },
               ],
+            })
+          ),
+        }}
+      />
+      {/* ExhibitionEvent JSON-LD Schema for Google Knowledge Graph */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: escapeJsonLdForScript(
+            JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'ExhibitionEvent',
+              name: '씨앗페 2026 (Seed Art Festival 2026)',
+              description:
+                '한국 예술인들의 상호부조 기금 마련을 위한 특별전. 50여 명의 작가가 참여한 회화, 조각, 사진 등 다양한 예술 작품을 만나보세요.',
+              startDate: '2026-01-14T10:00:00+09:00',
+              endDate: '2026-01-26T19:00:00+09:00',
+              eventStatus: 'https://schema.org/EventScheduled',
+              eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+              location: {
+                '@type': 'Place',
+                name: EXHIBITION.LOCATION,
+                address: {
+                  '@type': 'PostalAddress',
+                  streetAddress: EXHIBITION.ADDRESS,
+                  addressLocality: '서울시',
+                  addressCountry: 'KR',
+                },
+                geo: {
+                  '@type': 'GeoCoordinates',
+                  latitude: EXHIBITION.LAT,
+                  longitude: EXHIBITION.LNG,
+                },
+              },
+              image: [OG_IMAGE.url],
+              organizer: {
+                '@type': 'Organization',
+                name: CONTACT.ORGANIZATION_NAME,
+                url: SITE_URL,
+              },
+              offers: {
+                '@type': 'Offer',
+                price: '0',
+                priceCurrency: 'KRW',
+                availability: 'https://schema.org/InStock',
+                url: SITE_URL,
+              },
+              performer: {
+                '@type': 'Organization',
+                name: '참여 예술가 50여 명',
+              },
             })
           ),
         }}
