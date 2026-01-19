@@ -80,20 +80,8 @@ export const STATISTICS_DATA = [
 
 // Animation & Timing Constants
 export const ANIMATION = {
-  // Background slider
   SLIDER_INTERVAL: 5000, // 5 seconds
-  SLIDER_FADE_DURATION: 1000, // 1 second
-
-  // Counter animations
   COUNTER_DURATION: 2000, // 2 seconds
-  COUNTER_DELAY: 100, // 100ms
-
-  // General transitions
-  FADE_DURATION: 300, // 300ms
-  HOVER_DURATION: 200, // 200ms
-
-  // Debounce timings
-  SEARCH_DEBOUNCE: 300, // 300ms
 } as const;
 
 // Re-export helpers from seo-utils for backward compatibility
@@ -130,10 +118,6 @@ export type HeroPage = (typeof HERO_PAGES)[number];
 // Z-Index layers for consistent stacking
 export const Z_INDEX = {
   HEADER: 100,
-  MOBILE_BACKDROP: 110,
-  MOBILE_MENU: 120,
-  MODAL: 130,
-  TOAST: 140,
 } as const;
 
 export const HERO_IMAGES = [

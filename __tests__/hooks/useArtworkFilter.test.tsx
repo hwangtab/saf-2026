@@ -2,6 +2,21 @@ import { renderHook, act } from '@testing-library/react';
 import { useArtworkFilter } from '../../lib/hooks/useArtworkFilter';
 import { Artwork } from '../../types';
 
+// Mock useTransition to immediately execute transitions
+jest.mock('react', () => ({
+  ...jest.requireActual('react'),
+  useTransition: () => [false, (fn: () => void) => fn()],
+}));
+
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+  }),
+  useSearchParams: () => new URLSearchParams(),
+  usePathname: () => '/artworks',
+}));
+
 const mockArtworks: Artwork[] = [
   {
     id: '1',
@@ -45,6 +60,15 @@ const mockArtworks: Artwork[] = [
 ];
 
 describe('useArtworkFilter', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
+  });
+
   it('should return all artworks initially', () => {
     const { result } = renderHook(() => useArtworkFilter(mockArtworks));
     expect(result.current.filteredArtworks).toHaveLength(3);
@@ -52,7 +76,6 @@ describe('useArtworkFilter', () => {
   });
 
   it('should filter by search query', () => {
-    jest.useFakeTimers();
     const { result } = renderHook(() => useArtworkFilter(mockArtworks));
 
     act(() => {
@@ -66,8 +89,6 @@ describe('useArtworkFilter', () => {
 
     expect(result.current.filteredArtworks).toHaveLength(1);
     expect(result.current.filteredArtworks[0].title).toBe('작품2');
-
-    jest.useRealTimers();
   });
 
   it('should filter by status (selling)', () => {

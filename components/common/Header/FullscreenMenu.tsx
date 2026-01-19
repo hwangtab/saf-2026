@@ -22,8 +22,19 @@ export default function FullscreenMenu({
   isActive,
 }: FullscreenMenuProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const scrollYRef = useRef(0);
   const pathname = usePathname();
   const prevPathnameRef = useRef(pathname);
+
+  // body 스크롤 잠금 해제 및 위치 복원
+  const restoreBodyScroll = () => {
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.overflow = '';
+    window.scrollTo(0, scrollYRef.current);
+  };
 
   // 메뉴 열기/닫기 - Native dialog API 사용
   useEffect(() => {
@@ -34,40 +45,21 @@ export default function FullscreenMenu({
       if (!dialog.open) dialog.showModal();
 
       // 현재 스크롤 위치 저장
-      const scrollY = window.scrollY;
+      scrollYRef.current = window.scrollY;
 
       // body 스크롤 완전 차단 (iOS Safari 대응)
       document.body.style.position = 'fixed';
-      document.body.style.top = `-${scrollY}px`;
+      document.body.style.top = `-${scrollYRef.current}px`;
       document.body.style.left = '0';
       document.body.style.right = '0';
       document.body.style.overflow = 'hidden';
     } else {
       if (dialog.open) dialog.close();
-
-      // 스크롤 위치 복원
-      const scrollY = document.body.style.top;
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.left = '';
-      document.body.style.right = '';
-      document.body.style.overflow = '';
-
-      // 원래 스크롤 위치로 복원
-      window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      restoreBodyScroll();
     }
 
     return () => {
-      // cleanup 시에도 동일하게 복원
-      const scrollY = document.body.style.top;
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.left = '';
-      document.body.style.right = '';
-      document.body.style.overflow = '';
-      if (scrollY) {
-        window.scrollTo(0, parseInt(scrollY) * -1);
-      }
+      restoreBodyScroll();
     };
   }, [isOpen]);
 

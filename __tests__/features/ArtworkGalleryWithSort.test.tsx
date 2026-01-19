@@ -6,6 +6,12 @@ const mockPush = jest.fn();
 const mockReplace = jest.fn();
 const mockSearchParams = new URLSearchParams();
 
+// Mock useTransition to immediately execute transitions
+jest.mock('react', () => ({
+  ...jest.requireActual('react'),
+  useTransition: () => [false, (fn: () => void) => fn()],
+}));
+
 jest.mock('next/navigation', () => ({
   useRouter: () => ({
     push: mockPush,
@@ -63,6 +69,12 @@ const mockArtworks: Artwork[] = [
 describe('ArtworkGalleryWithSort', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
   });
 
   it('renders correctly with default state', () => {
@@ -85,7 +97,6 @@ describe('ArtworkGalleryWithSort', () => {
   });
 
   it('filters by search query', async () => {
-    jest.useFakeTimers();
     render(<ArtworkGalleryWithSort artworks={mockArtworks} />);
 
     const searchInput = screen.getByRole('textbox', { name: /작품 검색/i });
@@ -97,12 +108,9 @@ describe('ArtworkGalleryWithSort', () => {
 
     expect(screen.getByText('Unique Piece')).toBeInTheDocument();
     expect(screen.queryByText('Artwork 1')).not.toBeInTheDocument();
-
-    jest.useRealTimers();
   });
 
   it('shows empty state when no results', async () => {
-    jest.useFakeTimers();
     render(<ArtworkGalleryWithSort artworks={mockArtworks} />);
 
     const searchInput = screen.getByRole('textbox', { name: /작품 검색/i });
@@ -114,7 +122,5 @@ describe('ArtworkGalleryWithSort', () => {
 
     expect(screen.getByText(/검색 결과가 없습니다/i)).toBeInTheDocument();
     expect(screen.queryByTestId('masonry-gallery')).not.toBeInTheDocument();
-
-    jest.useRealTimers();
   });
 });

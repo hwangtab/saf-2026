@@ -22,16 +22,16 @@ jest.mock('../../components/common/Header/DesktopNav', () => ({
   default: () => <div data-testid="desktop-nav">DesktopNav</div>,
 }));
 
-interface MobileMenuProps {
+interface FullscreenMenuProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-jest.mock('../../components/common/Header/MobileMenu', () => ({
+jest.mock('../../components/common/Header/FullscreenMenu', () => ({
   __esModule: true,
-  default: ({ isOpen, onClose }: MobileMenuProps) => (
-    <div data-testid="mobile-menu" data-open={isOpen}>
-      MobileMenu
+  default: ({ isOpen, onClose }: FullscreenMenuProps) => (
+    <div data-testid="fullscreen-menu" data-open={isOpen}>
+      FullscreenMenu
       <button onClick={onClose} data-testid="close-menu-btn">
         Close
       </button>
@@ -50,17 +50,18 @@ describe('Header', () => {
     expect(screen.getByTestId('desktop-nav')).toBeInTheDocument();
   });
 
-  it('toggles mobile menu when button is clicked', () => {
+  it('opens fullscreen menu when button is clicked and closes via close button', () => {
     render(<Header />);
-    const toggleButton = screen.getByLabelText('메뉴 토글');
-    const mobileMenu = screen.getByTestId('mobile-menu');
+    const openButton = screen.getByLabelText('메뉴 토글');
+    const fullscreenMenu = screen.getByTestId('fullscreen-menu');
 
-    expect(mobileMenu).toHaveAttribute('data-open', 'false');
+    expect(fullscreenMenu).toHaveAttribute('data-open', 'false');
 
-    fireEvent.click(toggleButton);
-    expect(mobileMenu).toHaveAttribute('data-open', 'true');
+    fireEvent.click(openButton);
+    expect(fullscreenMenu).toHaveAttribute('data-open', 'true');
 
-    fireEvent.click(toggleButton);
-    expect(mobileMenu).toHaveAttribute('data-open', 'false');
+    const closeButton = screen.getByTestId('close-menu-btn');
+    fireEvent.click(closeButton);
+    expect(fullscreenMenu).toHaveAttribute('data-open', 'false');
   });
 });
