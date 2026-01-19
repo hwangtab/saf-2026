@@ -1,15 +1,14 @@
 const fs = require('fs');
 const path = require('path');
 
-const artworksPath = path.join(__dirname, '../content/saf2026-artworks.ts');
+function formatFile(filePath, fields) {
+  if (!fs.existsSync(filePath)) {
+    console.error(`Error: ${filePath} not found`);
+    return;
+  }
 
-if (!fs.existsSync(artworksPath)) {
-  console.error('Error: content/saf2026-artworks.ts not found');
-  process.exit(1);
-}
-
-function formatArtworks() {
-  let content = fs.readFileSync(artworksPath, 'utf-8');
+  console.log(`Formatting: ${filePath}`);
+  let content = fs.readFileSync(filePath, 'utf-8');
 
   // Formatting logic:
   // 1. Normalize line endings
@@ -68,9 +67,6 @@ function formatArtworks() {
       // Check if this line looks like a header
       let isHeader = false;
       for (const h of headers) {
-        // Check exact match or starts with (e.g. "2023 개인전" is NOT a header, but "개인전" IS)
-        // "현)" or "학력" usually starts the line.
-        // Regex: ^(Header) or ^[Header] or ^<Header>
         const regex = new RegExp(`^(\\[|<)?${h}(\\]|>)?`, 'i');
         if (regex.test(line)) {
           isHeader = true;
@@ -85,19 +81,15 @@ function formatArtworks() {
       formattedLines.push(line);
     }
 
-    // Join with \n
     return formattedLines.join('\\n');
   };
 
-  // Apply to 'history', 'profile', 'description' fields
-  // Regex matches: key:\s*QUOTE(.*?)QUOTE
-  const fields = ['history', 'profile']; // description might be sensitive to formatting, but let's include if safe.
-  // User specifically asked for history. Let's stick to history and profile for now as they are long texts.
-
   fields.forEach((field) => {
+    // Regex matches: key:\s*QUOTE(.*?)QUOTE or key:\s*`([\s\S]*?)`
+    // We need to handle both template literals (backticks) and regular strings
     const regex = new RegExp(`(${field}:\\s*)(['"\`])((?:.|[\\r\\n])*?)\\2`, 'g');
+
     content = content.replace(regex, (match, prefix, quote, value) => {
-      // Unescape for processing if not backtick
       let raw = value;
       if (quote !== '\`') {
         raw = raw.replace(/\\n/g, '\n');
@@ -105,21 +97,31 @@ function formatArtworks() {
 
       const formatted = formatText(raw);
 
-      // Re-escape
       if (quote !== '\`') {
-        // If the quote used is single quote, we must escape single quotes inside?
-        // The regex match captured the wrapper quote.
-        // We should ensure the content doesn't break the quote.
-        // But simplified: we just return formatted with proper \n escapes.
-        return `${prefix}${quote}${formatted}${quote}`;
+        // Simple escape for single/double quotes if needed, though for now assuming simple content
+        return `${prefix}${quote}${formatted.replace(/\n/g, '\\n')}${quote}`;
       } else {
         return `${prefix}${quote}${formatted}${quote}`;
       }
     });
   });
 
-  fs.writeFileSync(artworksPath, content, 'utf-8');
-  console.log('✅ Artwork text formatting completed.');
+  fs.writeFileSync(filePath, content, 'utf-8');
 }
 
-formatArtworks();
+function run() {
+  // 1. Format Artists Data
+  const artistsDataPath = path.join(__dirname, '../content/artists-data.ts');
+  formatFile(artistsDataPath, ['profile', 'history']);
+
+  // 2. Format Artwork Batches
+  const batchDir = path.join(__dirname, '../content/artworks-batches');
+  if (fs.existsSync(batchDir)) {
+    const files = fs.readdirSync(batchDir).filter(f => f.endsWith('.ts'));
+    files.forEach(file => {
+      formatFile(path.join(batchDir, file), ['description']);
+    });
+  }
+}
+
+run();

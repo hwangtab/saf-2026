@@ -4,6 +4,7 @@ import { artworksBatch2 } from './artworks-batches/batch-002';
 import { artworksBatch3 } from './artworks-batches/batch-003';
 import { artworksBatch4 } from './artworks-batches/batch-004';
 import { batch005 } from './artworks-batches/batch-005';
+import { batch006 } from './artworks-batches/batch-006';
 import { getArtworkWithArtistData } from '@/lib/artworkUtils';
 
 // 모든 배치를 통합하여 export
@@ -13,6 +14,7 @@ export const artworks: Artwork[] = [
   ...artworksBatch3,
   ...artworksBatch4,
   ...batch005,
+  ...batch006,
 ].map(getArtworkWithArtistData);
 
 export function getArtworkById(id: string): Artwork | undefined {
