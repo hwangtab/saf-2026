@@ -16,7 +16,7 @@ export default function DesktopNav({ navigation, isActive, textColor }: DesktopN
     <>
       <ul className="hidden md:flex gap-8 h-full m-0 p-0 list-none self-stretch">
         {navigation.map((item) => (
-          <li key={item.href}>
+          <li key={item.href} className="h-full">
             <NavLink item={item} isActive={isActive(item.href)} textColor={textColor} />
           </li>
         ))}

@@ -36,9 +36,9 @@ export function useHeaderStyle() {
   // 헤더 스타일 메모이제이션 (메뉴가 풀스크린이므로 isMenuVisible 조건 제거)
   const headerStyle = useMemo(() => {
     if (isArtworkDetail || isScrolled || !hasHero) {
-      return 'bg-white shadow-sm border-gray-200/50';
+      return 'bg-white shadow-sm border-b border-gray-200/50';
     }
-    return 'bg-transparent border-transparent';
+    return 'bg-transparent';
   }, [isArtworkDetail, isScrolled, hasHero]);
 
   const isDarkText = isScrolled || !hasHero || isArtworkDetail;

@@ -27,7 +27,7 @@ export default function Header() {
   return (
     <header
       className={clsx(
-        'fixed top-0 left-0 right-0 border-b transition-colors duration-300',
+        'fixed top-0 left-0 right-0 transition-colors duration-300',
         'pt-[env(safe-area-inset-top,0px)]',
         headerStyle
       )}
