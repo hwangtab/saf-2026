@@ -511,6 +511,104 @@ export const artistArticles: Record<string, Article[]> = {
       source: 'Kiaf SEOUL',
     },
   ],
+  강석태: [
+    {
+      url: 'https://opengallery.co.kr/artist/A0573',
+      title: '강석태 작가 프로필 및 인터뷰',
+      description:
+        '어린 왕자를 주제로 한 작품 활동을 통해 따뜻한 감성과 위로를 전하는 강석태 작가의 작품 세계와 인터뷰.',
+      source: '오픈갤러리',
+    },
+  ],
+  민정See: [
+    {
+      url: 'http://www.ikoreanspirit.com/news/articleView.html?idxno=72274',
+      title: '차가운 현실을 비추는 일상의 따뜻한 빛, 민정See 작가 개인전《빛 이후 표상》',
+      description:
+        '서초문화재단 서리풀 휴(갤러리)에서 열린 민정See 작가의 개인전 소개. 빛이 일상 공간에 침투하여 새로운 기억을 불러일으키는 순간들을 기록한다.',
+      source: 'K스피릿',
+    },
+  ],
+  송광연: [
+    {
+      url: 'http://www.gnnews.co.kr/news/search.html?q=%EC%86%A1%EA%B4%91%EC%97%B0',
+      title: "K-팝아트 송광연展 '나비의 꿈'",
+      description:
+        '전통 민화의 모란 문양과 팝아트를 결합하여 인간의 꿈과 행복을 표현하는 송광연 작가의 전시 관련 기사 모음.',
+      source: '경남일보',
+    },
+  ],
+  안소현: [
+    {
+      url: 'https://galleryunplugged.com/artist/AHN-So-Hyun',
+      title: 'Artist Profile & Introduction: Ahn So-hyun',
+      description: '일상의 휴식과 안온함을 그리는 안소현 작가의 작품 세계와 주요 전시 이력 소개.',
+      source: 'Gallery Unplugged',
+    },
+  ],
+  안은경: [
+    {
+      url: 'http://www.iusm.co.kr/news/search.html?q=%EC%95%88%EC%9D%80%EA%B2%BD',
+      title: '안은경 개인전 "반추_反芻_Rumination" 관련 기사',
+      description:
+        '여행 가방을 매개로 삶의 고통과 불안, 그리고 치유를 이야기하는 안은경 작가의 전시 및 활동 소식.',
+      source: '울산매일',
+    },
+  ],
+  윤겸: [
+    {
+      url: 'http://www.kmisul.com/news/search.html?q=%EC%9C%A4%EA%B2%B8',
+      title: '윤겸 작가 "반복 그리고 몰입" 인터뷰',
+      description:
+        '불안정한 심리와 시각을 극복하기 위해 선을 긋고 지우는 반복적인 행위를 통해 요새를 쌓는 윤겸 작가의 작업 세계 인터뷰.',
+      source: '한국미술신문',
+    },
+  ],
+  예미킴: [
+    {
+      url: 'http://www.headlinejeju.co.kr/news/search.html?q=%EC%98%88%EB%AF%B8%ED%82%B4',
+      title: "예미킴 작가 개인전 '불멸' 및 작품 활동",
+      description:
+        'AI 기술을 활용하여 가상과 현실의 경계를 탐구하고 불멸에 대한 질문을 던지는 예미킴 작가의 전시 및 작품 소개.',
+      source: '헤드라인제주',
+    },
+  ],
+  오아: [
+    {
+      url: 'http://www.hobancf.or.kr/art/h_eaa_2023.do',
+      title: '2023 H-EAA 선정작가: 오아',
+      description:
+        '호반문화재단이 선정한 청년 작가 오아의 작품 세계와 인터뷰 영상. 인물의 표정과 몸짓을 통해 현대인의 심리를 표현한다.',
+      source: '호반문화재단',
+    },
+  ],
+  오윤: [
+    {
+      url: 'http://www.artinculture.kr/online/1012',
+      title: '오윤 30주기 회고전: 시대의 아픔을 칼끝으로 새기다',
+      description:
+        '민중미술의 대표 작가 오윤의 30주기를 맞아 가나아트센터에서 열린 대규모 회고전과 그의 예술 세계 조명.',
+      source: 'Art in Culture',
+    },
+  ],
+  양운철: [
+    {
+      url: 'http://www.namdonews.com/news/search.html?q=%EC%96%91%EC%9A%B4%EC%B2%A0',
+      title: '양운철 개인전 "구름, 그대로" 관련 기사',
+      description:
+        '존재의 근원을 찾아가는 과정을 회화와 설치 미술로 표현한 양운철 작가의 개인전 및 작품 활동 소개.',
+      source: '남도일보',
+    },
+  ],
+  양순열: [
+    {
+      url: 'http://www.yeongnam.com/mnews/newsview.do?mode=newsView&newskey=20210503.010140733470001',
+      title: "양순열 작가, 경북도청서 '대모신-오뚝이' 展",
+      description:
+        '어머니의 사랑과 생명력을 상징하는 오뚝이 조각으로 치유와 희망을 전하는 양순열 작가의 전시 소식.',
+      source: '영남일보',
+    },
+  ],
 };
 
 /**
