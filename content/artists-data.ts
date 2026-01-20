@@ -308,8 +308,18 @@ export const ARTIST_DATA: Record<string, ArtistData> = {
     history: `학력\n2021- 2024 Maryland Institute College of Art\nBFA in Painting\nsumma cum laude\n\n개인전\n2024 Lazarus Hall Gallery, 131 W North Ave, 볼티모어, 매릴랜드 - To Be Continued\n주요 단체전\n2024 워싱턴 DC 한국 영사관, 워싱턴, DC - Summer Comes to My Hometown, Seoul\nFox Gallery, 볼티모어, 매릴랜드 - Spotlight, Graduating Seniors in Focus\n2023 Deckers Gallery, 볼티모어, 매릴랜드 - Juried Undergraduate Exhibition\n\n수상경력\n교내 수상(Maryland Institute College of Art)\n2024 Distinguished International Student Award\n2023 General Fine Arts Department Recognition Award\nJuried Undergraduate Exhibition Fall 2023 Merit Award\nPresidential Scholarship\nMICA Visionary Scholarship\n2022 Foundation Department Recognition Award\nDistinguished International Student Award\nPresidential Scholarship\nMICA Visionary Scholarship\n2021 Presidential Scholarship\nMICA Visionary Scholarship`,
   },
   조문호: {
-    profile: ``,
-    history: `다큐멘터리 사진가.\n\n개인전 '전농동588번지'외 20회\n\n단체전 : 한국현대사진대표작전외 다수\n사진집 : '노숙인 길에서 살다'외 6권\n\n수상 : 동아미술제 대상외 다수`,
+    profile: `사람만 찍는 다큐멘터리 사진가다. 청량리 사창가 여인, 강원도 산골 농민, 인사동 풍류객, 장터꾼, 쪽방촌 빈민을 렌즈에 담아왔다. 찾아가 촬영한 것이 아니라 현지에서 그들과 함께 살면서 작업해왔다. 『월간사진』, 『한국사협』, 『삼성포토패밀리』 편집장으로 일했으며, 1995년부터 10년간 「한국환경사진가회」 회장을 역임하며 우리나라 자연환경 기록에도 힘썼다. 현재 동자동 쪽방촌에 살며 빈민의 삶을 기록하고 있다.`,
+    history: `<개인전>
+아시안게임(1986), 동아미술제 초대전(1987), 민주항쟁(1987), 전농동 588번지(1990), 불교상징(1994), 전통문양 초대전(1995), 동강 백성들(2001), 태풍 루사가 남긴 상처(2002), 두메산골 사람들(2004), 인사동 그 기억의 풍경(2007), 신명 설치전(2008), 산을 지우다(2008), 인사동, 봄날은 간다(2010), 장날, 그 쓸쓸한 변두리 풍경(2015), 청량리 588(2015), 사람이다(2016), 산골사람들(2018) 등
+
+<출판 및 공저>
+『청량리 588 사진집』, 『가서, 아름다웠다고 말하리라, 천상병 사진집』, 『인사동 이야기 사진집』, 『두메산골 사람들 사진집』, 『동강 백성들, 포토 에세이』, 『불교 상징 사진집』, (공저) 『우포늪』, 『동강』, 『낙동강』, 『서울환경』, 『한국불교미술대전』(전7권) 등
+
+<수상 및 선정>
+동아미술제 연작 「홍등가」 대상(1985)
+아시안게임기록사진 공모전 대상(1986)
+강원다큐멘터리 작가 선정(2002)
+『서울문화투데이』 문화대상(2018)`,
   },
   정영신: {
     profile: `1958년 전남 함평 출생으로, 40년째 오일장을 탐구해온 기록사진가이며 소설가. 전국의 장터를 작업장 삼아 우리나라에서 열리는 6백여곳 오일장을 모두 기록한 바람의 여행자. 오일장을 고향의 텃밭처럼 그리워하며, 장에 두고 온 것을 찾아다니는 철부지 촌사람.`,
