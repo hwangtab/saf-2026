@@ -96,13 +96,6 @@ export const artistArticles: Record<string, Article[]> = {
       source: '오마이뉴스',
     },
     {
-      url: 'https://inartplatform.kr/residency/view?residency=87&category=2013',
-      title: '인천아트플랫폼 입주작가',
-      description:
-        '인천아트플랫폼 2013년 입주작가로 선정된 김주호. 예술창작공간에서 작품 활동을 이어가며 지역 예술 생태계에 기여.',
-      source: '인천아트플랫폼',
-    },
-    {
       url: 'http://www.ganghwanews.co.kr/news/articleView.html?idxno=10921',
       title: '강화군 내가면 조각가 김주호, 김종영미술상 수상',
       description:
@@ -252,13 +245,6 @@ export const artistArticles: Record<string, Article[]> = {
         '갤러리도스에서 2025년 7월 23일부터 29일까지 진행되는 심모비 개인전. 생과 사, 연옥을 주제로 한 회화 작품 전시.',
       source: '서울아트가이드',
     },
-    {
-      url: 'https://brunch.co.kr/@fellas/22',
-      title: '생과 사, 연옥의 풍경 속으로 - 심모비 인터뷰',
-      description:
-        '폭스바겐 독일 본사를 거쳐 일본 도요타 그룹 인테리어 디자이너로 재직 중인 NFT아티스트. 일본 거주하며 세계 각국에서 전시. 2023년 6월 나고야에서 10번째 개인전, 통산 55번째 전시 진행.',
-      source: 'Brunch',
-    },
   ],
   심현희: [
     {
@@ -284,22 +270,8 @@ export const artistArticles: Record<string, Article[]> = {
         '흔적과 빛에 관한 이야기. 과거의 역사적 사실과 시간의 흐름에 따라 변화하는 인간의 의식과 기억의 오류를 디지털사진으로 표현. 근대문화유산을 통해 세월과 함께 희미해지는 역사의 기억을 시각화.',
       source: '김영섭사진화랑',
     },
-    {
-      url: 'https://blog.naver.com/isanacademy/221480596390',
-      title: '이수철 작가 작품 소개',
-      description:
-        '이수철 작가의 사진 작업과 작품세계를 소개하는 이산아카데미 블로그 포스팅. 작가의 작품 활동과 전시 정보.',
-      source: '이산아카데미',
-    },
   ],
   이열: [
-    {
-      url: 'https://brunch.co.kr/@6d18ba65f0a04b0/23',
-      title: '사진작가 이열 - 느린인간과 나무이야기',
-      description:
-        '파인 아트 사진 작가 이열의 느린인간 프로젝트. 사진은 카메라 프레임을 통해 실제 존재하는 사물의 일부분을 잘라내어 사진가의 의도와 생각을 담아내는 작업. 나무를 주제로 한 포토에세이.',
-      source: 'Brunch',
-    },
     {
       url: 'https://www.classicm.co.kr/news/articleView.html?idxno=5340',
       title: '나무는 느린 인간, 인간은 빠른 나무 - 이열 전시',
@@ -336,13 +308,6 @@ export const artistArticles: Record<string, Article[]> = {
       description:
         '이윤엽의 남풍리 판화통신 전시. 안성 보개면 남풍리 작업장에서 만난 이윤엽 작가. 11번째 목판화전과 아트북 "한국현대미술선-이윤엽" 출간.',
       source: '오마이뉴스',
-    },
-    {
-      url: 'https://brunch.co.kr/@todolphin/17',
-      title: '이윤엽 판화 - 단순하고 깊은',
-      description:
-        '진실처럼 단순하고 깊은 이윤엽의 판화. 대추리, 용산, 거제 조선소, 밀양, 구럼비, 4대강, 쌍용차 등 사회적 의제를 현장에서 함께하며 기록. 예술은 자기 얘기를 하는 것, 진실을 보고 싶어 하는 마음.',
-      source: 'Brunch',
     },
     {
       url: 'https://m.woodplanet.co.kr/news/view/1065608303022949',
@@ -499,13 +464,6 @@ export const artistArticles: Record<string, Article[]> = {
         '히든엠갤러리 개인전 (2024.11.07-12.05). 삶에 적극적인 반응자들이라는 주제로 풀꽃을 소재로 한 20여점 신작. 소리쟁이, 달리는 꽃, 엄마의 밭, 노래하는 개망초 시리즈. 광음향 효과를 통한 생명의 찬가.',
       source: 'Kiaf SEOUL',
     },
-    {
-      url: 'https://www.artbank.go.kr/home/art/productDetail.do?artId=190425000031453',
-      title: '최경선 작품 - 미술은행 소장',
-      description:
-        '국립현대미술관 미술은행 소장 최경선 작가 작품. 2016년 서양화 작품. 대여 가능 작품.',
-      source: '미술은행',
-    },
   ],
   최윤정: [
     {
@@ -551,288 +509,6 @@ export const artistArticles: Record<string, Article[]> = {
       description:
         '아트사이드 갤러리 개인전 (2022.06.17-07.09). 한국의 테라코타 작업을 선두에서 이끈 여성작가. 많은 미술관에 소장. 온전히 흙을 통해 자신만의 작품세계를 구축.',
       source: 'Kiaf SEOUL',
-    },
-  ],
-  라인석: [
-    {
-      url: 'https://www.jungle.co.kr/magazine/201174',
-      title: '라인석 - 사건, 그로부터',
-      description:
-        '갤러리 구피 초대전. 디지털 이미지를 인위적으로 긁어내고 잉크를 스며들게 하는 "촉각적 사진" 작업을 선보이는 라인석 작가.',
-      source: '디자인정글',
-    },
-  ],
-  박성완: [
-    {
-      url: 'http://www.namdonews.com/news/articleView.html?idxno=392389',
-      title: '박성완 - 공사현장 그림일기',
-      description:
-        '국립아시아문화전당 건립 현장을 5년간 기록한 박성완 작가. 변화하는 도시 풍경과 현장의 에너지를 담아낸 회화 연작.',
-      source: '남도일보',
-    },
-  ],
-  신건우: [
-    {
-      url: 'https://v.daum.net/v/20241018150403362',
-      title: '신건우 - 테더 (Tether)',
-      description:
-        '갤러리2 개인전. 존재와 인식의 간극, "식(蝕)"의 개념을 회화적으로 탐구하며 초현실적이고 신화적인 서사를 펼치는 신건우 작가.',
-      source: '헤럴드경제',
-    },
-  ],
-  오윤: [
-    {
-      url: 'https://www.chosun.com/site/data/html_dir/2016/06/24/2016062400057.html',
-      title: '오윤 - 검은 새 (민중미술의 전설)',
-      description:
-        '1980년대 민중미술을 대표하는 판화가 오윤. 시대의 아픔과 민중의 생명력을 강렬한 흑백 목판화로 새겨낸 "검은 새" 등 회고전.',
-      source: '조선일보',
-    },
-  ],
-  아트만두: [
-    {
-      url: 'http://www.mediaus.co.kr/news/articleView.html?idxno=10557',
-      title: '아트만두 - 세상을 풍자하는 캐리커처',
-      description:
-        '촌철살인의 풍자와 해학으로 시대를 그려내는 캐리커처 작가 아트만두. 사회적 이슈를 날카롭고 유머러스하게 포착.',
-      source: '미디어스',
-    },
-  ],
-  // Batch 3
-  류호식: [
-    {
-      url: 'http://www.clayseoul.kr/archives/artist/198',
-      title: '류호식 - Querencia, 흙으로 빚은 안식처',
-      description:
-        '종이와 흙을 결합한 페이퍼 클레이 작업. 쳇바퀴 같은 일상 속에서 나만의 안식처(케렌시아)를 찾는 현대인의 소망을 표현.',
-      source: '클레이서울',
-    },
-  ],
-  민병산: [
-    {
-      url: 'http://www.cbinews.co.kr/news/articleView.html?idxno=108502',
-      title: '민병산 - 거리의 철학자',
-      description:
-        '청주의 괴짜 화가이자 거리의 철학자 민병산. 제도권 미술 교육을 거부하고 독학으로 자신만의 예술 세계를 구축한 자유로운 영혼.',
-      source: '충북인뉴스',
-    },
-  ],
-  박불똥: [
-    {
-      url: 'http://www.kyeonggi.com/news/articleView.html?idxno=2343209',
-      title: '박불똥 - 현실을 꼬집는 포토몽타주',
-      description:
-        '1980년대 민중미술 대표 작가. 사진 오려붙이기(포토몽타주) 기법으로 자본주의와 모순된 사회 현실을 날카롭게 비판.',
-      source: '경기일보',
-    },
-  ],
-  박생광: [
-    {
-      url: 'http://www.ilyosisa.co.kr/news/article.html?no=234502',
-      title: '박생광 - 무속과 단청의 강렬한 색채',
-      description:
-        '한국 채색화의 거장 "내고 박생광". 오방색과 무속 신앙, 불교적 소재를 결합하여 한국적 정체성을 강렬하게 표현한 진채화의 대가.',
-      source: '일요시사',
-    },
-  ],
-  박은선: [
-    {
-      url: 'https://www.designhouse.co.kr/article/article_view/101/81182',
-      title: '박은선 - 대리석에 새긴 숨결',
-      description:
-        '이탈리아 카라라에서 활동하는 세계적인 조각가. 대리석의 틈을 깨고 다시 붙이는 작업을 통해 상처와 치유, 동양적 순환의 미학을 표현.',
-      source: '디자인하우스',
-    },
-  ],
-  백금아: [
-    {
-      url: 'http://www.headlinejeju.co.kr/news/articleView.html?idxno=460982',
-      title: '백금아 - 오드리 햅번과 캐리커처',
-      description:
-        '인물 캐리커처와 팝아트적 요소를 결합하여 대중적인 아이콘을 재해석하는 작가. "공주 오드리" 등 친숙하고 유쾌한 작품 세계.',
-      source: '헤드라인제주',
-    },
-  ],
-  변경희: [
-    {
-      url: 'https://www.aither.kr/294',
-      title: '변경희 - 점(Dot)으로 잇는 기억',
-      description:
-        '수만 개의 점을 찍어 이미지를 형상화하는 점묘 회화. 시간의 축적과 기억의 잔상을 캔버스 위에 섬세하게 기록.',
-      source: '에이더',
-    },
-  ],
-  서금앵: [
-    {
-      url: 'https://www.opengallery.co.kr/artist/A444',
-      title: '서금앵 - 공간에 마음을 담다',
-      description:
-        '일상의 사물과 공간을 따뜻한 색감과 질감으로 표현하는 서양화가. 평범한 정물 속에 깃든 삶의 온기와 정서를 포착.',
-      source: '오픈갤러리',
-    },
-  ],
-  // Batch 4 (REDO)
-  이지은: [
-    {
-      url: 'http://www.koreaartguide.com/news/articleView.html?idxno=186',
-      title: '이지은 - Hollowed Colors, 비움의 미학',
-      description:
-        '독일 뒤셀도르프 활동. 나무를 파내고 레진을 채우는 "Hollowed" 시리즈. 비워진 공간에서 드러나는 존재의 본질과 색채의 깊이.',
-      source: '코리아아트가이드',
-    },
-  ],
-  이채원: [
-    {
-      url: 'https://www.news1.kr/culture/exhibition-performance/5634567',
-      title: '이채원 - 모든 숨 (All That Breathes)',
-      description:
-        '디스위켄드룸 개인전. 기후 위기 시대, 자연과 비인간 존재들의 숨결을 감각적인 회화 언어로 표현하며 공존을 모색.',
-      source: '뉴스1',
-    },
-  ],
-  이현정: [
-    {
-      url: 'https://cicamuseum.com/lee-hyun-jung-kimchi-breath',
-      title: '이현정 - 김치, 숨 (Kimchi_Breath)',
-      description:
-        'CICA미술관 개인전. 한국 여성의 삶과 정체성을 "김치"의 발효 과정에 빗대어 표현. 생명의 순환과 내면의 숨결을 담은 작업.',
-      source: 'CICA미술관',
-    },
-  ],
-  이혜선: [
-    {
-      url: 'http://www.beyondpost.co.kr/view.php?ud=2023050410423984106cf2d78c68_30',
-      title: '이혜선 - Glory Moment, 삶의 파도',
-      description:
-        '바다의 역동적인 파도를 통해 삶의 희망과 환희를 노래하는 추상 회화. 강렬한 색채와 붓터치로 생의 에너지를 표현.',
-      source: '비욘드포스트',
-    },
-  ],
-  이홍원: [
-    {
-      url: 'http://www.cbinews.co.kr/news/articleView.html?idxno=137330',
-      title: '이홍원 - 꽃을 사랑한 호랭이',
-      description:
-        '민중미술 1세대 작가이자 "호랑이 화가". 해학적이고 친근한 호랑이와 자연을 통해 한국적 정서와 생명 사상을 표현.',
-      source: '충북인뉴스',
-    },
-  ],
-  장경호: [
-    {
-      url: 'http://www.misulin.co.kr/news/articleView.html?idxno=6396',
-      title: '장경호 - 묵시(默示), 형상미술의 뚝심',
-      description:
-        '1980년대 형상미술 운동을 주도한 리얼리즘 회화의 거목. 시대를 꿰뚫는 날카로운 시선과 인간 존재에 대한 깊은 성찰.',
-      source: '미술인',
-    },
-  ],
-  '장천 김성태': [
-    {
-      url: 'https://www.seoul.co.kr/news/newsView.php?id=20230628500201',
-      title: '장천 김성태 - 드라마 타이틀의 대가',
-      description:
-        'KBS "불멸의 이순신", 영화 "서울의 봄" 타이틀 서예가. 전통 서예를 현대적 디자인(캘리그라피)으로 승화시킨 문자 예술.',
-      source: '서울신문',
-    },
-  ],
-  장희진: [
-    {
-      url: 'https://www.mk.co.kr/news/culture/10540854',
-      title: '장희진 - 색(色), 삶을 사유하다',
-      description:
-        '모델링 페이스트로 만든 요철 위에 색을 입히는 독창적 기법. "In-Between" 시리즈를 통해 입체와 평면, 색과 층의 경계를 탐구.',
-      source: '매일경제',
-    },
-  ],
-  정금희: [
-    {
-      url: 'https://www.busan.com/view/busan/view.php?code=2021110818290610360',
-      title: '정금희 - 화락이토(花落以土)',
-      description:
-        '전남대 교수. 꽃이 져서 흙으로 돌아간다는 "화락이토"의 철학을 담은 사진 작업. 티베트 등 오지에서 포착한 생명 순환의 신비.',
-      source: '부산일보',
-    },
-  ],
-  정영신: [
-    {
-      url: 'https://www.hani.co.kr/arti/culture/culture_general/1028738.html',
-      title: '정영신 - 40년 오일장 유랑기',
-      description:
-        '"장돌뱅이 사진가". 전국 600여 곳의 오일장을 누비며 사라져가는 장터의 풍경과 서민들의 질박한 삶을 기록한 다큐멘터리.',
-      source: '한겨레',
-    },
-  ],
-  정재철: [
-    {
-      url: 'https://www.chosun.com/culture-life/art-gallery/2024/11/06/666KV5V64FCLFJP4G77V2CJBVE/',
-      title: '정재철 - Middle Ground, 해체된 시선',
-      description:
-        '갤러리박영 초대전. 관계 속의 "타협"을 주제로 한 추상 연작. 갈등과 화해 사이의 중간 지대를 색채와 질감으로 표현.',
-      source: '조선일보',
-    },
-  ],
-  조문호: [
-    {
-      url: 'http://photoart.co.kr/news/board_view.php?board=news&no=13840',
-      title: '조문호 - 두메산골 사람들',
-      description:
-        '강원도 정선 산골 마을 사람들의 삶을 흑백 사진으로 기록. 사라져가는 화전민 문화와 자연 속 인간의 원형을 담은 다큐멘터리.',
-      source: '포토아트',
-    },
-  ],
-  // Batch 5 (REDO)
-  천지수: [
-    {
-      url: 'https://www.incheonilbo.com/news/articleView.html?idxno=1194382',
-      title: '천지수 - 정글 도서관 (Library Fantasy)',
-      description:
-        '책과 자연(정글)이 어우러진 "정글 도서관" 연작. 이탈리아 유학파 천지수 작가가 그리는 지식과 생명의 환상적인 조화.',
-      source: '인천일보',
-    },
-  ],
-  조신욱: [
-    {
-      url: 'https://www.newsis.com/view/?id=NISX20201027_0001213032',
-      title: '조신욱 - 나만의 책가도',
-      description:
-        '전통 민화 책가도를 현대적 감각으로 재해석. 일상의 사물과 기물을 통해 작가의 내면 세계와 삶의 이야기를 담아낸 작품.',
-      source: '뉴시스',
-    },
-  ],
-  조이락: [
-    {
-      url: 'http://www.beopbo.com/news/articleView.html?idxno=315438',
-      title: '조이락 - 극락왕생, 고려불화의 재현',
-      description:
-        '고려불화의 맥을 잇는 조이락 작가. "수월관음도", "아미타내영도" 등 섬세하고 화려한 고려 불교 회화를 현대에 되살림.',
-      source: '법보신문',
-    },
-  ],
-  '칡뫼 김구': [
-    {
-      url: 'http://www.artkoreatv.com/news/articleView.html?idxno=47185',
-      title: '칡뫼 김구 - 밤 골목 이야기',
-      description:
-        '밤의 골목길을 소재로 서민들의 삶과 애환, 따뜻한 정서를 담아내는 작가. 어둠 속에서 피어나는 삶의 불빛을 그리는 화가.',
-      source: '이코리아TV',
-    },
-  ],
-  하선영: [
-    {
-      url: 'http://www.newsfreezone.co.kr/news/articleView.html?idxno=312524',
-      title: '하선영 - 4월의 산책, 봄을 그리다',
-      description:
-        '홍익대 회화과 및 프랑스 아를 국립사진학교 출신. 산책과 여행에서 마주한 자연의 변화와 계절의 감각을 섬세하게 표현.',
-      source: '뉴스프리존',
-    },
-  ],
-  한미영: [
-    {
-      url: 'https://www.chosun.com/culture-life/culture_general/2022/08/29/3Q4766574BFU5AC3J47576574E/',
-      title: '한미영 - 상상 속의 인물과 신화',
-      description:
-        '신화와 전설 속 인물을 모티브로 현대인의 욕망과 환상을 표현. 강렬한 색채 대비와 몽환적인 화풍으로 그려낸 상상의 세계.',
-      source: '조선일보',
     },
   ],
 };
