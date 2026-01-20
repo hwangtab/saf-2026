@@ -201,7 +201,7 @@ export const artworksBatch1: Artwork[] = [
   {
     id: '17',
     artist: '이호철',
-    title: '화려한재봉틀전축',
+    title: 'The great resurrection (위대한 부활)',
     description: '',
     size: '30호',
     material: 'Acrylic on canvas Acrylic on supermirror',
@@ -214,7 +214,7 @@ export const artworksBatch1: Artwork[] = [
   {
     id: '18',
     artist: '이호철',
-    title: '전축&창문빛',
+    title: 'The great resurrection (위대한 부활)',
     description: '',
     size: '',
     material: '',
@@ -227,7 +227,7 @@ export const artworksBatch1: Artwork[] = [
   {
     id: '19',
     artist: '이호철',
-    title: '바이올린소녀',
+    title: 'The great resurrection (위대한 부활)',
     description: '',
     size: '',
     material: '',
@@ -441,7 +441,7 @@ export const artworksBatch1: Artwork[] = [
   {
     id: '34',
     artist: '이호철',
-    title: '어린왕자',
+    title: 'The great resurrection (위대한 부활)',
     description: '',
     size: '',
     material: '',
