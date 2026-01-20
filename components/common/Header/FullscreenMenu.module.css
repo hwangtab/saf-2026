@@ -140,9 +140,24 @@
   /* Flex item shrinking fix */
 }
 
+/* 메뉴 리스트 - 반응형 간격 적용 */
+.menuList {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4vh;
+  /* 화면 높이에 비례한 간격 */
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-align: center;
+}
+
 .navLink {
   display: block;
-  padding: 0.75rem 2rem;
+  /* 터치 영역 확보를 위해 padding 유지하되, vh 단위 고려 */
+  padding: 1.5vh 2rem;
   font-family:
     'PartialSans',
     'GMarketSans',
@@ -150,8 +165,8 @@
     BlinkMacSystemFont,
     system-ui,
     sans-serif;
-  font-size: clamp(1.25rem, 5vh, 1.75rem);
-  /* 반응형 폰트 사이즈 */
+  /* 화면 높이에 따라 폰트 크기 조절 (최소 20px, 권장 4vh, 최대 28px) */
+  font-size: clamp(1.25rem, 4vh, 1.75rem);
   font-weight: 400;
   /* PartialSans는 Regular만 있음 */
   color: #333;

@@ -116,7 +116,7 @@ export default function FullscreenMenu({
 
         {/* 네비게이션 */}
         <nav className={styles.nav}>
-          <ul className="flex flex-col items-center gap-6 m-0 p-0 list-none text-center">
+          <ul className={styles.menuList}>
             {navigation.map((item) => (
               <li key={item.href}>
                 <Link
