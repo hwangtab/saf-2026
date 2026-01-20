@@ -76,8 +76,8 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  height: 4rem;
-  /* 64px - 메인 헤더와 동일 높이 */
+  height: max(3.5rem, 7dvh);
+  /* 최소 56px, 화면 높이의 7% - 짧은 화면에서 유연하게 축소 */
   padding: 0 1rem;
   border-bottom: 1px solid #f0f0f0;
   flex-shrink: 0;
@@ -146,8 +146,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4vh;
-  /* 화면 높이에 비례한 간격 */
+  gap: clamp(0.75rem, 3.5dvh, 2.5rem);
+  /* 최소 12px, 화면 3.5%, 최대 40px - 짧은 화면에서 촘촘하게 */
   margin: 0;
   padding: 0;
   list-style: none;
@@ -156,8 +156,8 @@
 
 .navLink {
   display: block;
-  /* 터치 영역 확보를 위해 padding 유지하되, vh 단위 고려 */
-  padding: 1.5vh 2rem;
+  /* 터치 영역 확보 - 최소 8px 상하 패딩, dvh 기반 유연 조절 */
+  padding: clamp(0.5rem, 1.5dvh, 1rem) 2rem;
   font-family:
     'PartialSans',
     'GMarketSans',
@@ -165,8 +165,8 @@
     BlinkMacSystemFont,
     system-ui,
     sans-serif;
-  /* 화면 높이에 따라 폰트 크기 조절 (최소 20px, 권장 4vh, 최대 28px) */
-  font-size: clamp(1.25rem, 4vh, 1.75rem);
+  /* 화면 높이에 따라 폰트 크기 조절 (최소 18px, 권장 3.5dvh, 최대 26px) */
+  font-size: clamp(1.125rem, 3.5dvh, 1.625rem);
   font-weight: 400;
   /* PartialSans는 Regular만 있음 */
   color: #333;
@@ -203,7 +203,8 @@
 
 /* 푸터 - 후원 버튼 영역 */
 .footer {
-  padding: 1.5rem;
+  padding: clamp(1rem, 2dvh, 1.5rem);
+  /* 최소 16px, 화면 2%, 최대 24px */
   border-top: 1px solid #f0f0f0;
   background: #fafafa;
 }
