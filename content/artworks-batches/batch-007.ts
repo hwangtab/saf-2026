@@ -13,6 +13,7 @@ export const batch007: Artwork[] = [
     price: '₩3,600,000',
     image: '248.png',
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/384',
+    sold: true,
   },
   {
     id: '249',
