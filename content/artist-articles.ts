@@ -17,6 +17,13 @@ export interface Article {
 export const artistArticles: Record<string, Article[]> = {
   신학철: [
     {
+      url: 'http://www.hakgojae.com/page/2-1-view.php?artist_num=25',
+      title: '신학철 - 학고재갤러리',
+      description:
+        '민중미술을 대표하는 신학철 작가의 작품세계와 전시 이력. 대표작 〈모내기〉, 〈한국근대사〉 등을 소개.',
+      source: '학고재갤러리',
+    },
+    {
       url: 'https://namu.wiki/w/%EC%8B%A0%ED%95%99%EC%B2%A0',
       title: '신학철 - 민중미술의 거장',
       description:
@@ -24,10 +31,39 @@ export const artistArticles: Record<string, Article[]> = {
       source: '나무위키',
     },
     {
+      url: 'https://www.mmca.go.kr/collections/collectionsDetailPage.do?wrkinfoSeqno=6062&artistnm=%EC%8B%A0%ED%95%99%EC%B2%A0',
+      title: '묵시 802 (1980)',
+      description:
+        '국립현대미술관 소장작. 신학철 작가의 1980년대 작품으로 한국 민중미술의 대표작 중 하나.',
+      source: '국립현대미술관',
+    },
+    {
       url: 'https://busanbiennale2024.com/ko/exhibition/artists/7b92ca67-f4a5-441e-9201-5ca14612e092',
       title: '2024 부산비엔날레 참여 작가',
       description: '2024 부산비엔날레에 참여한 신학철 작가의 작품과 예술세계를 소개.',
       source: '부산비엔날레',
+    },
+    {
+      url: 'https://sema.seoul.go.kr/kr/knowledge_research/collection/list?artCode1=ALL&soOrd=old&soHighlight=&kwd=KWNAME&wriName=%EC%8B%A0%ED%95%99%EC%B2%A0',
+      title: '신학철 소장품 목록',
+      description: '서울시립미술관이 소장한 신학철 작가의 작품들을 볼 수 있습니다.',
+      source: '서울시립미술관',
+    },
+  ],
+  김상구: [
+    {
+      url: 'https://www.mmca.go.kr/exhibitions/exhibitionsDetail.do?exhId=202001090001225',
+      title: '판화, 판화, 판화 - 국립현대미술관 전시',
+      description:
+        '한국 추상 목판화를 대표하는 원로 작가 김상구의 작품이 소개된 국립현대미술관 전시 (2020). 50여 년간 1,500여 점의 작품을 발표하며 한국 현대 목판화의 기틀을 마련한 중요 작가.',
+      source: '국립현대미술관',
+    },
+    {
+      url: 'https://www.daljin.com/column/12502',
+      title: '김상구 / 나무에서 나무에로',
+      description:
+        '김상구 작가의 목판화 작품세계를 다룬 미술평론. 작가의 작품이 지닌 형식적 특징과 서정성, 대중성의 조화를 분석.',
+      source: '서울아트가이드',
     },
   ],
   김주호: [
@@ -51,6 +87,20 @@ export const artistArticles: Record<string, Article[]> = {
       description:
         '테라코타, 나무, 돌, 철판 등 다양한 재료를 다루는 조각가 김주호의 작품세계. 일상의 정서를 담은 친근하고 따뜻한 조각들.',
       source: '월간미술',
+    },
+    {
+      url: 'https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0001740413',
+      title: '삶과 통하는 단비 같은 조각',
+      description:
+        '이웃 사람들이 겪는 삶의 욕망과 정서를 고스란히 담은 김주호의 조각. 일상의 생생한 풍경을 친근한 재료에 예리하면서도 따뜻한 기지로 표현.',
+      source: '오마이뉴스',
+    },
+    {
+      url: 'https://inartplatform.kr/residency/view?residency=87&category=2013',
+      title: '인천아트플랫폼 입주작가',
+      description:
+        '인천아트플랫폼 2013년 입주작가로 선정된 김주호. 예술창작공간에서 작품 활동을 이어가며 지역 예술 생태계에 기여.',
+      source: '인천아트플랫폼',
     },
     {
       url: 'http://www.ganghwanews.co.kr/news/articleView.html?idxno=10921',
@@ -83,6 +133,13 @@ export const artistArticles: Record<string, Article[]> = {
       source: '서울문화투데이',
     },
     {
+      url: 'https://www.daljin.com/display/D100155',
+      title: '2025 김준권의 국토 판각장정',
+      description:
+        '한국소리문화의전당에서 2025년 1월 17일부터 3월 30일까지 진행되는 김준권 개인전. 목판화로 표현한 우리 국토의 아름다움.',
+      source: '서울아트가이드',
+    },
+    {
       url: 'https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0002468988',
       title: '노무현 전 대통령이 사랑한 판화가 김준권',
       description:
@@ -113,6 +170,13 @@ export const artistArticles: Record<string, Article[]> = {
       source: '오마이뉴스',
     },
     {
+      url: 'http://www.sctoday.co.kr/news/articleView.html?idxno=31273',
+      title: '민중의 한이 꿈틀대는 온몸이 길이다 목판화전',
+      description:
+        '진천군립 생거판화미술관 전시. 1984년부터 2019년까지 류연복 목판화 전부를 선보임. 민중에 대한 저항의 역사와 일상적인 삶에 대한 잠언, 작은 생명에 대한 풍경을 주제로 한 작품들.',
+      source: '서울문화투데이',
+    },
+    {
       url: 'https://memory.library.kr/collection/show/220000535?ggmType=T',
       title: '류연복 아카이브 - 1980년대 소집단 미술운동',
       description:
@@ -129,11 +193,25 @@ export const artistArticles: Record<string, Article[]> = {
   ],
   류준화: [
     {
+      url: 'https://www.daljin.com/column/20773',
+      title: '여성이 바라본 여성의 현실',
+      description:
+        '현대미술포럼에 실린 류준화 작가의 여성주의 미술 작업. 여성이 바라본 여성의 현실을 작품으로 표현한 페미니즘 미술가의 시각.',
+      source: '서울아트가이드',
+    },
+    {
       url: 'https://www.nyjnews.net/19369',
       title: '소녀는 항해하면서 푸른 빛 판타지를 펼친다',
       description:
         '류준화 작가의 작품세계. "나는 치명적이다"라는 제목의 작품을 통해 소녀의 항해와 푸른 빛 판타지를 표현.',
       source: '남양주뉴스',
+    },
+    {
+      url: 'http://www.zineseminar.com/wp/issue03/interview-ipgimandtoday/',
+      title: '한국 페미니즘 행동주의 미술의 궤적과 교차점 - 입김 인터뷰',
+      description:
+        '여성미술연구회 입김 멤버 류준화, 정정엽, 곽은숙 인터뷰. 1999년 종묘공원 아방궁 프로젝트와 여성문화축제, 한국 페미니즘 미술운동의 역사와 행동주의를 이야기.',
+      source: 'zineseminar',
     },
   ],
   손은영: [
@@ -145,11 +223,57 @@ export const artistArticles: Record<string, Article[]> = {
       source: '작가 홈페이지',
     },
     {
+      url: 'http://virtualgallery.co.kr/artists/%EC%86%90%EC%9D%80%EC%98%81',
+      title: '손은영 작가 프로필 및 전시 이력',
+      description:
+        '이화여대 서양화과, 홍익대 사진디자인전공 졸업. 검은 숲(2022), 밤의 집(2020-2021), 검은 집(2019), The underground(2018) 시리즈. 제2회 FNK Photography Award 수상.',
+      source: '버추얼갤러리',
+    },
+    {
+      url: 'https://www.hani.co.kr/arti/culture/culture_general/972511.html',
+      title: '오묘한 빛과 색감…세월이 만든 도시 변두리 집들',
+      description:
+        '도시 변두리 달동네의 밤, 어둠 속에서 빛을 내며 드러나는 작은 집들. 각양각색의 생긴 꼴을 한 집들을 통해 세월이 만든 도시 변두리의 풍경을 담은 밤의 집 시리즈.',
+      source: '한겨레',
+    },
+    {
       url: 'https://artlecture.com/article/3269',
       title: '그 집에 산다 - 손은영의 집',
       description:
         '회화 같은 리터칭을 통해 완성한 프레임으로 작가의 심상에서 길어 낸 한 장면을 보여주는 작업. 집을 주제로 꾸준히 작업하는 손은영 작가의 마음의 풍경.',
       source: 'artlecture',
+    },
+  ],
+  심모비: [
+    {
+      url: 'https://www.daljin.com/?WS=21&BC=gdv&GNO=D103448',
+      title: 'SIM_Purgatory 연옥 : 회화의 윤회',
+      description:
+        '갤러리도스에서 2025년 7월 23일부터 29일까지 진행되는 심모비 개인전. 생과 사, 연옥을 주제로 한 회화 작품 전시.',
+      source: '서울아트가이드',
+    },
+    {
+      url: 'https://brunch.co.kr/@fellas/22',
+      title: '생과 사, 연옥의 풍경 속으로 - 심모비 인터뷰',
+      description:
+        '폭스바겐 독일 본사를 거쳐 일본 도요타 그룹 인테리어 디자이너로 재직 중인 NFT아티스트. 일본 거주하며 세계 각국에서 전시. 2023년 6월 나고야에서 10번째 개인전, 통산 55번째 전시 진행.',
+      source: 'Brunch',
+    },
+  ],
+  심현희: [
+    {
+      url: 'http://www.hakgojae.com/page/2-1-view.php?artist_num=63',
+      title: '심현희 작가 프로필 - 학고재갤러리',
+      description:
+        '학고재갤러리 소속 작가 심현희. 2002년, 2005년 학고재갤러리에서 개인전 개최. 꽃과 나비를 주제로 한 회화 작업.',
+      source: '학고재갤러리',
+    },
+    {
+      url: 'https://www.hani.co.kr/arti/culture/music/974137.html',
+      title: '코로나 시대, 고립의 고통을 역설로 그리다',
+      description:
+        '중견 화가 심현희(62) 신작전. 꽃과 사람의 모습을 거친 형상과 원색의 아크릴물감으로 표현. 파랑, 빨강, 하양, 노랑, 초록의 원색으로 코로나 시대 고립의 고통을 역설적으로 그림.',
+      source: '한겨레',
     },
   ],
   이수철: [
@@ -160,8 +284,22 @@ export const artistArticles: Record<string, Article[]> = {
         '흔적과 빛에 관한 이야기. 과거의 역사적 사실과 시간의 흐름에 따라 변화하는 인간의 의식과 기억의 오류를 디지털사진으로 표현. 근대문화유산을 통해 세월과 함께 희미해지는 역사의 기억을 시각화.',
       source: '김영섭사진화랑',
     },
+    {
+      url: 'https://blog.naver.com/isanacademy/221480596390',
+      title: '이수철 작가 작품 소개',
+      description:
+        '이수철 작가의 사진 작업과 작품세계를 소개하는 이산아카데미 블로그 포스팅. 작가의 작품 활동과 전시 정보.',
+      source: '이산아카데미',
+    },
   ],
   이열: [
+    {
+      url: 'https://brunch.co.kr/@6d18ba65f0a04b0/23',
+      title: '사진작가 이열 - 느린인간과 나무이야기',
+      description:
+        '파인 아트 사진 작가 이열의 느린인간 프로젝트. 사진은 카메라 프레임을 통해 실제 존재하는 사물의 일부분을 잘라내어 사진가의 의도와 생각을 담아내는 작업. 나무를 주제로 한 포토에세이.',
+      source: 'Brunch',
+    },
     {
       url: 'https://www.classicm.co.kr/news/articleView.html?idxno=5340',
       title: '나무는 느린 인간, 인간은 빠른 나무 - 이열 전시',
@@ -179,6 +317,13 @@ export const artistArticles: Record<string, Article[]> = {
       source: '경기문화재단 지지씨',
     },
     {
+      url: 'https://www.hani.co.kr/arti/culture/music/1084923.html',
+      title: '아이들이 노동자 친근하게 느끼도록 이야기 그림 그렸죠',
+      description:
+        '민중미술가 이윤엽 작가의 이야기 그림책 "시간이 조금 걸리더라도". 2008년부터 약 10년간 어린이 잡지 "고래가 그랬어"에 연재한 이야기 판화 그림을 모음.',
+      source: '한겨레',
+    },
+    {
       url: 'https://www.khan.co.kr/article/201112062116375',
       title: '김규항의 좌판 - 판화가 이윤엽',
       description:
@@ -191,6 +336,13 @@ export const artistArticles: Record<string, Article[]> = {
       description:
         '이윤엽의 남풍리 판화통신 전시. 안성 보개면 남풍리 작업장에서 만난 이윤엽 작가. 11번째 목판화전과 아트북 "한국현대미술선-이윤엽" 출간.',
       source: '오마이뉴스',
+    },
+    {
+      url: 'https://brunch.co.kr/@todolphin/17',
+      title: '이윤엽 판화 - 단순하고 깊은',
+      description:
+        '진실처럼 단순하고 깊은 이윤엽의 판화. 대추리, 용산, 거제 조선소, 밀양, 구럼비, 4대강, 쌍용차 등 사회적 의제를 현장에서 함께하며 기록. 예술은 자기 얘기를 하는 것, 진실을 보고 싶어 하는 마음.',
+      source: 'Brunch',
     },
     {
       url: 'https://m.woodplanet.co.kr/news/view/1065608303022949',
@@ -223,11 +375,25 @@ export const artistArticles: Record<string, Article[]> = {
       source: '뉴스아트',
     },
     {
+      url: 'https://koreagalleries.or.kr/exhibition/%EC%9D%B4%EC%9D%B5%ED%83%9C-everyone-pierrot/',
+      title: '이익태 : Everyone Pierrot 전시',
+      description:
+        '한국화랑협회에서 소개하는 이익태 작가 전시 "Everyone Pierrot". 피에로를 주제로 한 작품들. Big Mouth, 나 홀로 웃다, 빨간 코 마리오네트 등 전시.',
+      source: '한국화랑협회',
+    },
+    {
       url: 'https://www.yna.co.kr/view/AKR20130222076900005',
       title: '전방위 예술가 이익태 초대전 빔 플라워',
       description:
         '전방위 예술가라는 별명으로도 불리는 서양화가 이익태의 전시. 분당구 서현동 아트스페이스 아프리카나에서 개최.',
       source: '연합뉴스',
+    },
+    {
+      url: 'https://www.kgnews.co.kr/news/article.html?no=752882',
+      title: '인간에 대한 깊은 연민 - Everyone Pierrot 전시',
+      description:
+        '용인 갤러리위에서 열린 이익태 작가 전시. 59점의 피에로 주제 작품. 작가가 바라보는 사회와 우리 모습, 인간에 대한 깊은 연민을 담은 작품. 위트와 페이소스의 상징.',
+      source: '경기뉴스',
     },
   ],
   이철수: [
@@ -290,6 +456,56 @@ export const artistArticles: Record<string, Article[]> = {
         '대한민국의 민중미술가. 1940년 경성부에서 태어남. 민중미술 운동의 주요 작가로 활동.',
       source: '나무위키',
     },
+    {
+      url: 'http://www.hakgojae.com/page/2-1-view.php?artist_num=299',
+      title: '주재환 작가 프로필 - 학고재갤러리',
+      description: '학고재갤러리 소속 작가 주재환. 작가의 전시 이력과 작품세계를 소개.',
+      source: '학고재갤러리',
+    },
+    {
+      url: 'https://www.daljin.com/column/13547',
+      title: '주재환의 유쾌한 딴지걸기 - 윤범모 미술시평',
+      description:
+        '윤범모 미술평론가의 주재환 작가 작품 평론. 유쾌한 딴지걸기라는 제목으로 작가의 작품세계 분석.',
+      source: '서울아트가이드',
+    },
+    {
+      url: 'https://koreana.or.kr/koreana/na/ntt/selectNttInfo.do?nttSn=103523&bbsId=1125',
+      title: '이미지와 텍스트로 소통하다 - 주재환',
+      description:
+        '한국국제교류재단 코리아나 아트 리뷰. 주재환 작가의 이미지와 텍스트를 통한 소통 방식 분석.',
+      source: '한국국제교류재단',
+    },
+    {
+      url: 'https://www.mmca.go.kr/collections/collectionsDetailPage.do?wrkinfoSeqno=8752',
+      title: '주재환 - 아침 햇살 (1998) - 국립현대미술관 소장',
+      description:
+        '국립현대미술관 소장 주재환 작가 작품 "아침 햇살"(1998). MMCA 이건희 컬렉션 특별전: 한국미술명작.',
+      source: '국립현대미술관',
+    },
+  ],
+  최경선: [
+    {
+      url: 'https://kiaf.org/insights/44956',
+      title: 'Floating In Colors - 히든엠갤러리 3인전',
+      description:
+        '최경선, 최우, 황도유 작가 3인전. 자연을 소재로 삶의 생동, 슬픔, 치유를 화폭에 담는 최경선 작가. 마음의 유영을 표현한 작품들. 고요한 수면, 야트막하게 핀 꽃, 흔들리는 풀숲을 통해 생명의 언어를 표현.',
+      source: 'Kiaf SEOUL',
+    },
+    {
+      url: 'https://kiaf.org/insights/46664',
+      title: '소리쟁이들 - 최경선 개인전',
+      description:
+        '히든엠갤러리 개인전 (2024.11.07-12.05). 삶에 적극적인 반응자들이라는 주제로 풀꽃을 소재로 한 20여점 신작. 소리쟁이, 달리는 꽃, 엄마의 밭, 노래하는 개망초 시리즈. 광음향 효과를 통한 생명의 찬가.',
+      source: 'Kiaf SEOUL',
+    },
+    {
+      url: 'https://www.artbank.go.kr/home/art/productDetail.do?artId=190425000031453',
+      title: '최경선 작품 - 미술은행 소장',
+      description:
+        '국립현대미술관 미술은행 소장 최경선 작가 작품. 2016년 서양화 작품. 대여 가능 작품.',
+      source: '미술은행',
+    },
   ],
   최윤정: [
     {
@@ -312,6 +528,29 @@ export const artistArticles: Record<string, Article[]> = {
       description:
         'YTN INSIDE 인터뷰. 미디어의 포장 능력과 현대인의 욕망. 현재를 이야기하는 작가. 풍자와 희화화를 통한 카타르시스. 가벼워 보이는 색으로 무거운 메시지 전달.',
       source: 'YTN INSIDE',
+    },
+  ],
+  한애규: [
+    {
+      url: 'https://www.daljin.com/column/18726',
+      title: '한애규의 흙으로 빚은 삶에 대한 열망',
+      description:
+        '서울아트가이드 그외자료. 김의연 평론. 테라코타 작가 한애규의 작품세계. 흙으로 빚은 삶에 대한 열망.',
+      source: '서울아트가이드',
+    },
+    {
+      url: 'https://topclass.chosun.com/news/articleView.html?idxno=323',
+      title: '나는 여자다. 인류를 잉태하고 기르고, 집을 관장하는 주체적인 존재다',
+      description:
+        '톱클래스 우리 시대의 미술가. 한국 미술계에서 독보적인 테라코타 작가 한애규. 서울대 미대 응용미술과, 프랑스 앙굴렘 미술학교 졸업. 1980년대 후반부터 여성을 빚어내는 작업. 부조로 된 도자기판에 여성으로서 자신의 삶을 담음.',
+      source: '톱클래스',
+    },
+    {
+      url: 'https://kiaf.org/insights/14272',
+      title: 'Besides - 한애규 개인전',
+      description:
+        '아트사이드 갤러리 개인전 (2022.06.17-07.09). 한국의 테라코타 작업을 선두에서 이끈 여성작가. 많은 미술관에 소장. 온전히 흙을 통해 자신만의 작품세계를 구축.',
+      source: 'Kiaf SEOUL',
     },
   ],
 };
