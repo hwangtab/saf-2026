@@ -1,10 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 
-const batchPath = path.join(__dirname, '../content/artworks-batches/batch-006.ts');
+const batchPath = path.join(__dirname, '../content/artworks-batches/batch-007.ts');
 const artistsPath = path.join(__dirname, '../content/artists-data.ts');
 const templatePath = path.join(__dirname, '../docs/cafe24-products-218-227.csv');
-const outputPath = path.join(__dirname, '../docs/cafe24-products-228-247.csv');
+const outputPath = path.join(__dirname, '../docs/cafe24-products-248-274.csv');
 
 // Helper to parse JS object string partially
 function parseBatchFile(content) {
