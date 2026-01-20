@@ -187,7 +187,7 @@ export const batch007: Artwork[] = [
   },
   {
     id: '262',
-    artist: '정희진',
+    artist: '장희진',
     title: 'folded tint',
     description: '',
     size: '61x61cm',
