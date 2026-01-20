@@ -821,7 +821,7 @@ export const batch005: Artwork[] = [
     year: '2020',
     edition: '',
     price: '₩1,000,000',
-    image: '226.png',
+    image: '226.jpg',
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/362',
     description: ``,
     profile: `나는 전자공학을 전공한 후 한의사의 길을 걸으면서 카메라를 들었다.
