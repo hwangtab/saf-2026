@@ -12,6 +12,7 @@ export const batch007: Artwork[] = [
     edition: '',
     price: '₩3,600,000',
     image: '248.png',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/384',
   },
   {
     id: '249',
@@ -24,6 +25,7 @@ export const batch007: Artwork[] = [
     edition: '',
     price: '₩2,400,000',
     image: '249.png',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/385',
   },
   {
     id: '250',
@@ -36,6 +38,7 @@ export const batch007: Artwork[] = [
     edition: '',
     price: '₩1,800,000',
     image: '250.png',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/386',
   },
   {
     id: '251',
@@ -48,6 +51,7 @@ export const batch007: Artwork[] = [
     edition: '',
     price: '₩650,000',
     image: '251.png',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/387',
   },
   {
     id: '252',
@@ -60,6 +64,7 @@ export const batch007: Artwork[] = [
     edition: '',
     price: '₩300,000',
     image: '252.png',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/388',
   },
   {
     id: '253',
@@ -72,6 +77,7 @@ export const batch007: Artwork[] = [
     edition: '',
     price: '₩200,000',
     image: '253.png',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/389',
   },
   {
     id: '254',
@@ -84,6 +90,7 @@ export const batch007: Artwork[] = [
     edition: '',
     price: '₩100,000',
     image: '254.png',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/390',
   },
   {
     id: '255',
@@ -96,6 +103,7 @@ export const batch007: Artwork[] = [
     edition: '',
     price: '₩150,000',
     image: '255.png',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/391',
   },
   {
     id: '256',
@@ -108,6 +116,7 @@ export const batch007: Artwork[] = [
     edition: '',
     price: '₩100,000',
     image: '256.png',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/392',
   },
   {
     id: '257',
@@ -120,6 +129,7 @@ export const batch007: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     image: '257.png',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/393',
   },
   {
     id: '258',
@@ -132,6 +142,7 @@ export const batch007: Artwork[] = [
     edition: '',
     price: '₩5,000,000',
     image: '258.png',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/394',
   },
   {
     id: '259',
@@ -144,6 +155,7 @@ export const batch007: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     image: '259.png',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/395',
   },
   {
     id: '260',
@@ -156,6 +168,7 @@ export const batch007: Artwork[] = [
     edition: '',
     price: '₩5,000,000',
     image: '260.png',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/396',
   },
   {
     id: '261',
@@ -168,6 +181,7 @@ export const batch007: Artwork[] = [
     edition: '',
     price: '₩3,000,000',
     image: '261.png',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/397',
   },
   {
     id: '262',
@@ -180,6 +194,7 @@ export const batch007: Artwork[] = [
     edition: '',
     price: '₩3,000,000',
     image: '262.png',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/398',
   },
   {
     id: '263',
@@ -192,6 +207,7 @@ export const batch007: Artwork[] = [
     edition: '',
     price: '₩500,000',
     image: '263.png',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/399',
   },
   {
     id: '264',
@@ -204,6 +220,7 @@ export const batch007: Artwork[] = [
     edition: '',
     price: '₩1,000,000',
     image: '264.png',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/400',
   },
   {
     id: '265',
@@ -216,6 +233,7 @@ export const batch007: Artwork[] = [
     edition: '',
     price: '₩1,000,000',
     image: '265.png',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/401',
   },
   {
     id: '266',
@@ -228,6 +246,7 @@ export const batch007: Artwork[] = [
     edition: '',
     price: '₩200,000',
     image: '266.png',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/402',
   },
   {
     id: '267',
@@ -240,6 +259,7 @@ export const batch007: Artwork[] = [
     edition: '',
     price: '₩3,000,000',
     image: '267.png',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/403',
   },
   {
     id: '268',
@@ -252,6 +272,7 @@ export const batch007: Artwork[] = [
     edition: '',
     price: '₩300,000',
     image: '268.png',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/404',
   },
   {
     id: '269',
@@ -264,6 +285,7 @@ export const batch007: Artwork[] = [
     edition: '',
     price: '₩1,800,000',
     image: '269.png',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/405',
   },
   {
     id: '270',
@@ -276,6 +298,7 @@ export const batch007: Artwork[] = [
     edition: '',
     price: '₩300,000',
     image: '270.png',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/406',
   },
   {
     id: '271',
@@ -288,18 +311,25 @@ export const batch007: Artwork[] = [
     edition: '',
     price: '₩70,000',
     image: '271.png',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/407',
   },
   {
     id: '272',
     artist: '김남진',
     title: '누드',
-    description: `김남진(金南鎭)은 1957년 충남 공주 출생으로 고려대를 졸업했다.\n1987년 파인힐 갤러리에서 개인전 '이태원의 밤'과 1993년 바탕골예술관에서 '폴라로이드 누드'전을 가진 바 있다.\n그가 1984년부터 시도한 일련의 '이태원의 밤' 다큐먼트는 성공한 한국사진의 자생적 형식 실험의 하나로 평가받고 있다.\n이후 폴라 컬러의 이미지 전사를 이용한 누드 사진의 새로운 표현양식을 실험하였고,\n1987년부터는 김남진 사진공방을 운영하며 현대사진의 제경향과 이론 그리고 사진미학을 체계화하여 국내에 소개하고 많은 후배 사진가들을 양성하였다.\n\n전시기획자로서 서울국제사진페스티벌과 충무로사진축제를 기획•진행한 바 있으며, 현재 사진문화포럼과 갤러리 브레송의 대표로 있다.`,
+    description: `김남진(金南鎭)은 1957년 충남 공주 출생으로 고려대를 졸업했다.
+1987년 파인힐 갤러리에서 개인전 '이태원의 밤'과 1993년 바탕골예술관에서 '폴라로이드 누드'전을 가진 바 있다.
+그가 1984년부터 시도한 일련의 '이태원의 밤' 다큐먼트는 성공한 한국사진의 자생적 형식 실험의 하나로 평가받고 있다.
+이후 폴라 컬러의 이미지 전사를 이용한 누드 사진의 새로운 표현양식을 실험하였고,
+1987년부터는 김남진 사진공방을 운영하며 현대사진의 제경향과 이론 그리고 사진미학을 체계화하여 국내에 소개하고 많은 후배 사진가들을 양성하였다.
+전시기획자로서 서울국제사진페스티벌과 충무로사진축제를 기획•진행한 바 있으며, 현재 사진문화포럼과 갤러리 브레송의 대표로 있다.`,
     size: '확인 중',
     material: '1/5 프린트',
     year: '1992',
     edition: '에디션 1/5',
     price: '₩500,000',
     image: '272.png',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/408',
   },
   {
     id: '273',
@@ -312,6 +342,7 @@ export const batch007: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     image: '273.png',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/409',
   },
   {
     id: '274',
@@ -324,5 +355,6 @@ export const batch007: Artwork[] = [
     edition: '',
     price: '₩30,000',
     image: '274.png',
+    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/410',
   },
 ];
