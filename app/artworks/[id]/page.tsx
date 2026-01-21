@@ -15,6 +15,7 @@ import { generateArtworkMetadata, generateArtworkJsonLd } from '@/lib/seo-utils'
 import ShareButtons from '@/components/common/ShareButtons';
 import SupportMessage from '@/components/features/SupportMessage';
 import PurchaseGuide from '@/components/features/PurchaseGuide';
+import TrustBadges from '@/components/features/TrustBadges';
 
 interface Props {
   params: Promise<{
@@ -164,6 +165,8 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 </h1>
                 <p className="text-xl text-gray-600 font-medium">{artwork.artist}</p>
               </header>
+
+              <TrustBadges className="mb-6" />
 
               <div className="border-t border-b border-gray-100 py-6">
                 <div className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 items-baseline">
