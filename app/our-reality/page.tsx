@@ -116,7 +116,7 @@ export default function OurReality() {
           </div>
 
           {/* Description Text */}
-          <div className="max-w-3xl mb-12">
+          <div id="stage1-description" className="max-w-3xl mb-12">
             <h3 className="text-card-title mb-3">은행의 문은 왜 닫혔나?</h3>
             <ul className="space-y-3 text-charcoal">
               <li className="flex gap-3">
@@ -162,7 +162,7 @@ export default function OurReality() {
           </div>
 
           {/* Description Text */}
-          <div className="max-w-3xl mb-12">
+          <div id="stage2-description" className="max-w-3xl mb-12">
             <h3 className="text-card-title mb-3">선택이 아닌 생존</h3>
             <p className="text-charcoal mb-4 text-balance leading-relaxed">
               은행 문이 닫힌 순간, 예술인들은 곧바로 저축은행, 카드론, 대부업체로 내몰립니다.
@@ -200,7 +200,7 @@ export default function OurReality() {
           </div>
 
           {/* Description Text */}
-          <div className="max-w-3xl mb-12">
+          <div id="stage3-description" className="max-w-3xl mb-12">
             <h3 className="text-card-title mb-3">생존의 위기</h3>
             <p className="text-charcoal mb-4 text-balance leading-relaxed">
               채권추심을 경험한 예술인은 <strong>10명 중 4명(43%)</strong>입니다. 이들은 멈추지 않는

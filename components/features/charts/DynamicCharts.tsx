@@ -4,7 +4,14 @@ import dynamic from 'next/dynamic';
 import { ComponentType } from 'react';
 import { ChartErrorBoundary } from './ChartErrorBoundary';
 
-const LoadingPlaceholder = () => <div className="h-96 bg-gray-100 rounded animate-pulse" />;
+const LoadingPlaceholder = () => (
+  <div
+    className="h-96 bg-gray-100 rounded animate-pulse"
+    role="status"
+    aria-busy="true"
+    aria-label="차트를 로드하는 중입니다"
+  />
+);
 
 function withErrorBoundary<P extends object>(
   Component: ComponentType<P>,
