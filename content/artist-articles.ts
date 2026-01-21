@@ -2225,6 +2225,20 @@ export const artistArticles: Record<string, Article[]> = {
   ],
   정연수: [
     {
+      url: 'https://galleryknot.com/article/exhibition/3001/373',
+      title: '2022. 10. 20 - 10. 26ㅣ정연수 Jeong YounsooㅣKNOT EXHIBITION',
+      description:
+        '갤러리 너트에서 열린 정연수 개인전 전시 정보. 매주 새로운 전시를 업로드하는 갤러리 너트의 2022년 기획 전시.',
+      source: '갤러리 너트',
+    },
+    {
+      url: 'https://brunch.co.kr/@azza927/59',
+      title: '정연수 개인전 - 버리는 것들이 얻게 하는 것',
+      description:
+        '일상의 소소한 사물들(페트병, 설거지통 등)을 통해 버려지는 것들의 의미와 남겨야 할 것들에 대한 통찰을 담은 정연수 작가의 개인전 리뷰.',
+      source: 'Brunch',
+    },
+    {
       url: 'https://www.lullu.net/43834',
       title: "정연수 개인전 'Im'pression', 갤러리 도스 기획",
       description: "정연수 개인전 'Im’pression', 갤러리 도스 기획-문화예술의전당",
@@ -2394,10 +2408,59 @@ export const artistArticles: Record<string, Article[]> = {
   ],
   정영신: [
     {
+      url: 'https://www.khan.co.kr/article/202011052252005',
+      title: '정영신 사진가 “장터는 그리움…거기, 우리의 엄마와 할매가 있습니다”',
+      description:
+        "경향신문 인터뷰. 35년간 전국 600여개 오일장을 기록한 '장돌뱅이 사진가' 정영신의 철학. 장터는 사람들의 삶을 진열하는 창이며 그리움의 공간임을 조명.",
+      source: '경향신문',
+    },
+    {
+      url: 'https://www.hani.co.kr/arti/culture/culture_general/675304.html',
+      title: '“영동 할매·의령 아지매…장에 가면 누가 꼭 기다리는 것 같아”',
+      description:
+        '한겨레 보도. 정영신의 포토에세이집 <전국 5일장 순례기> 발간 소식. 30년 동안 전국 522개 장터를 훑으며 만난 사람들과 장터의 생명력을 기록.',
+      source: '한겨레',
+    },
+    {
+      url: 'https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0002077061',
+      title: "“'누가 아프다'면 바로 돈 추렴... 장터는 계속 됩니다”",
+      description:
+        '오마이뉴스 인터뷰. 사진전 <장에 가자>를 개최한 정영신·조문호 작가. 현대화 속에서도 사그라지지 않는 장터 공동체의 가치와 따뜻한 뒷모습 기록.',
+      source: '오마이뉴스',
+    },
+    {
+      url: 'https://www.ikoreanspirit.com/news/articleView.html?idxno=65023',
+      title: '35년 째 오일장 기록한 사진가 정영신 사진집 “어머니의 땅” 발간',
+      description:
+        'K스피릿 보도. 사진집 《어머니의 땅》 발간 및 인사동 나무아트 전시 소식. 1980년대 이후 농촌의 시대상과 어머니들의 숭고한 삶을 담아낸 작업.',
+      source: 'K스피릿',
+    },
+    {
+      url: 'https://www.kukak21.com/bbs/board.php?bo_table=news&wr_id=34401',
+      title: '정영신 작가의 ‘혼자 가 본 장항선 장터길’ 사진집',
+      description:
+        "국악신문 특별기고. 조문호 사진작가가 평하는 정영신의 '장항선 장터길'. 기차와 장터, 그리고 그 길 위에서 만난 사람들의 서사를 담은 사진집 조명.",
+      source: '국악신문',
+    },
+    {
+      url: 'https://www.misulin.co.kr/news/articleView.html?idxno=4186',
+      title: '정영신 사진가 설치전 ‘땅, 사람, 생명 - 할매야~ 오데 갔노’',
+      description:
+        '미술여행신문 보도. 시골 사람들의 인간미 넘치는 사진 30여 점을 자연 속에 설치한 독특한 전시 소식. 그리운 사람들을 소환하는 설치 미술적 시도.',
+      source: '미술여행신문',
+    },
+    {
+      url: 'https://www.rwn.co.kr/news/articleView.html?idxno=62525',
+      title: '“장터는 사람과 정이 흐르는 삶의 현장” — 정영신 사진작가 인터뷰',
+      description:
+        '농촌여성신문 인터뷰. 카메라를 꺼내기 전 할머니들과 오랜 시간 이야기를 나누며 관계를 맺는 작가만의 작업 철칙과 장터에 담긴 삶의 정 조명.',
+      source: '농촌여성신문',
+    },
+    {
       url: 'https://www.hani.co.kr/arti/culture/book/1198469.html',
       title: "“요즘 오일장은 '여자세상'…장꾼들이 기다리니 자주 가죠”",
       description:
-        '사진가이자 작가인 정영신(67))씨는 올해로 40년째 매주 한두 차례 오일장(5일 간격으로 서는 장)을 찾는다. 새벽 4시쯤 기상해 행장을 차려 서울 반포 고속버스터미널이나 기차역으로 향한다. 전남 함평에서 나 중학 시절부터 소설 창작의 꿈을',
+        '사진가이자 작가인 정영신(67)씨는 올해로 40년째 매주 한두 차례 오일장(5일 간격으로 서는 장)을 찾는다. 새벽 4시쯤 기상해 행장을 차려 서울 반포 고속버스터미널이나 기차역으로 향한다. 전남 함평에서 나 중학 시절부터 소설 창작의 꿈을',
       source: '한겨레',
     },
   ],
@@ -2461,6 +2524,36 @@ export const artistArticles: Record<string, Article[]> = {
       description:
         '갤러리박영은 11월 5일부터 11월 30일까지 서울 청담동 전시관(서울시 강남구 압구정로 416 B2, 더트리니티플레이스)에서 정재철(b. 1980~) 작가의 초대 개인전 《Middle Ground: 해체된 시선》을 개최한다...',
       source: '투데이트라이',
+    },
+  ],
+  정채희: [
+    {
+      url: 'http://www.gallerylife.co.kr/artists38.html',
+      title: '정채희 작가 프로필 — GALLERY LIFE',
+      description:
+        '서울대학교 서양화과 전공 및 중국 중앙미술학원 벽화 연수. 20년 이상 옻칠화에 매진하며 전통 기법을 현대적으로 재해석해온 정채희 작가의 이력.',
+      source: '갤러리 너머(Gallery Life)',
+    },
+    {
+      url: 'https://www.artkoreatv.com/news/articleView.html?idxno=70762',
+      title: "정채희 작가 초대전 '너머의 풍경' — 아트코리아방송",
+      description:
+        '갤러리 내일에서 열린 정채희 초대전 소식. 옻칠 고유의 깊은 색감과 조형미를 통해 기억 속 퇴적된 심상의 풍경을 담아낸 작품 세계 조명.',
+      source: '아트코리아방송',
+    },
+    {
+      url: 'https://www.artbank.go.kr/home/art/productDetail.do?artId=16830',
+      title: '정채희 작가 소장품 — 국립현대미술관 미술은행',
+      description:
+        '국립현대미술관 미술은행이 소장한 정채희 작가의 2008년 작품 정보. 옻칠과 나전 등 전통 재료를 활용한 한국화의 현대적 변용을 확인할 수 있습니다.',
+      source: '국립현대미술관 미술은행',
+    },
+    {
+      url: 'https://www.gallerynaeil.com/post/%EC%A0%95%EC%B1%84%ED%9D%AC-%EC%B4%88%EB%8C%80%EC%A0%84',
+      title: '정채희 초대전 — 갤러리 내일',
+      description:
+        '칠하고 붙이고 갈아내는 수행적 노동의 결과물인 정채희의 옻칠화. 재료의 특수성을 극복하고 예술적 사유를 담아내는 작가의 인내와 창작 과정 소개.',
+      source: '갤러리 내일',
     },
   ],
   김유진: [],
