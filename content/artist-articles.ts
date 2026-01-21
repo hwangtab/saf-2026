@@ -589,6 +589,34 @@ export const artistArticles: Record<string, Article[]> = {
         '서울 삼청동 복합문화공간 라플란드에서 열린 이열 작가 전시 "느린 인간". 오랫동안 촬영해 온 나무 사진들을 모아 책으로 펴내고 전시. 나무와 함께한 추억과 나무 곁에서 들은 이야기들을 담은 작품.',
       source: '뉴스클래식M',
     },
+    {
+      url: 'https://www.news-art.co.kr/news/article.html?no=32797',
+      title: '나무가 만든 사진작가, 20년 시간 여행의 결실을 담다',
+      description:
+        "20여 년간 나무를 주제로 작업해온 이열 사진작가의 포토 에세이 '느린 인간' 출간 소식. 인간과 자연의 관계를 성찰하는 철학적 에세이와 작품 세계 소개.",
+      source: '뉴스아트',
+    },
+    {
+      url: 'https://art.chosun.com/site/data/html_dir/2024/03/06/2024030601735.html',
+      title: '시간 상징하는 나무의 이면 엿보다… 이열 사진전',
+      description:
+        "남해유배문학관에서 열린 이열 사진전 '남해신목-시간의 기억' 소개. 조명을 통해 밤의 나무가 가진 거대한 존재감과 시간의 흔적을 포착한 작품들.",
+      source: '아트조선',
+    },
+    {
+      url: 'https://www.knnews.co.kr/news/articleView.php?idxno=1427093&gubun=photo',
+      title: '빛으로 담은, 나무의 흔적 :: 경남신문',
+      description:
+        "이열 사진가의 '남해신목-시간의 기억' 개인전 소식. 푸른 나무 시리즈부터 이어진 작가의 나무에 대한 철학적 접근과 빛을 활용한 독창적 기법 조명.",
+      source: '경남신문',
+    },
+    {
+      url: 'https://photomarketing.co.kr/%EB%82%98%EB%AC%B4-%EC%82%AC%EC%A7%84%EA%B0%80-%EC%9D%B4%EC%97%B4-%EC%9E%91%EA%B0%80-%EC%84%AC%EB%93%A4%EC%9D%98-%EB%82%98%EB%AC%B4_trees-of-the-islands-%EC%A0%84%EC%8B%9C-%EA%B0%9C/',
+      title: '나무 사진가 이열 작가, ‘섬들의 나무_Trees of the islands’ 전시 개최',
+      description:
+        '섬들의 나무를 주제로 한 이열 작가의 전시 정보. 척박한 환경 속에서도 생명력을 이어가는 나무들의 강인함과 아름다움을 빛의 예술로 표현.',
+      source: '포토마케팅',
+    },
   ],
   이윤엽: [
     {
@@ -1785,16 +1813,70 @@ export const artistArticles: Record<string, Article[]> = {
       source: '조선일보(아시아프)`',
     },
   ],
+
+  우용민: [
+    {
+      url: 'https://www.jeollailbo.com/news/articleView.html?idxno=789661',
+      title: '전북문화관광재단 16일부터 우용민 작가 초대전 ‘전북의 산하-지리은운(智異隱韻)’',
+      description:
+        '전북특별자치도문화관광재단은 수묵화가 우용민 작가를 초대해 ‘전북의 산하-지리은운’전 개최. 지리산의 사계와 운무를 수묵이라는 전통적 매체를 통해 재해석.',
+      source: '전라일보',
+    },
+    {
+      url: 'https://www.pressian.com/pages/articles/2023080211101498100',
+      title: "신안 둔장마을미술관, 우용민 초대展 '수묵으로 본 세상'",
+      description:
+        "신안 자은도 둔장마을미술관에서 열린 우용민 초대展 소식. '수묵 만화경'을 통해 본 세상의 다양한 풍경을 담은 작품들 전시.",
+      source: '프레시안',
+    },
+  ],
   윤겸: [
     {
-      url: 'https://misul.in/104/?idx=167904984&bmode=view',
-      title: '윤겸.이유지 2인전 `<Exploring Life>`',
+      url: 'https://blog.naver.com/k-auction/223218107767',
+      title: '[Artist Interview] 선으로 잇는 몽환적 세계, 윤겸 작가',
       description:
-        '안녕하세요 이유지작가입니다:) 윤겸작가와 함께 성수동에 위치한 GG2 Gallery에서 2인전 하게 되었습니다🙏🏻 각자의 다른 방식으로 안식처와 삶의 불안정성을 마주하고 탐구하며, 반복과 몰입, 수행과도 같은 작품을 통해 다듬고 전환하는 회화적 탐험가들의 이야기를 준비했습니다. 많은 관심 부탁드립니다🩵윤겸.이유지 2인전 <Exploring Life>�...',
+        'K-Auction 아티스트 인터뷰. 가느다란 선을 반복적으로 중첩시켜 생동감 있는 화면을 구성하고, 자연을 통해 스스로를 되돌아보는 윤겸 작가의 예술 세계.',
+      source: '케이옥션 블로그',
+    },
+    {
+      url: 'https://brunch.co.kr/@7pictures/186',
+      title: "'현기증 나는 풍경' 윤겸 작가",
+      description:
+        '선 긋기, 혹은 선 그리기를 통해 반복되는 노동의 조형적 변주를 탐구하는 윤겸 작가 인터뷰. 불안과 몰입을 통해 자연의 이미지를 형상화한 작품 세계 소개.',
+      source: 'Brunch',
+    },
+    {
+      url: 'https://www.kmisul.com/news/articleView.html?idxno=1771',
+      title: "윤겸 작가 '반복 그리고 몰입'",
+      description:
+        '일정한 패턴의 선을 긋는 반복적인 행위를 통해 조형적 이미지를 구축하는 윤겸 작가의 인터뷰. 작업의 키워드인 반복과 몰입(FLOW)에 대한 철학적 사유.',
+      source: '한국미술신문',
+    },
+    {
+      url: 'https://misul.in/104/?idx=167904984&bmode=view',
+      title: '윤겸·이유지 2인전 <Exploring Life>',
+      description:
+        '성수동 GG2 Gallery에서 열린 윤겸, 이유지 작가의 2인전 소식. 각자의 방식으로 안식처와 삶의 불안정성을 탐구하는 회화적 탐험가들의 이야기.',
       source: '미술인',
     },
   ],
-  이유지: [],
+
+  이유지: [
+    {
+      url: 'https://www.ibulgyo.com/news/articleView.html?idxno=423065',
+      title: '환상적인 세계에서 치유하고 희망을 찾는다',
+      description:
+        '전등사 서운갤러리 청년작가 공모에 선정된 이유지 작가의 개인전 ‘KARMADISE’ 소식. 수백 년 된 보호수에서 착안한 작품들과 치유의 메시지를 담은 회화 작업들.',
+      source: '불교신문',
+    },
+    {
+      url: 'https://www.hyunbulnews.com/news/articleView.html?idxno=417686',
+      title: '전등사 서운갤러리, 이유지 작가 ‘KARMADISE’ 展',
+      description:
+        '업(Karma)과 파라다이스(Paradise)의 합성어인 ‘KARMADISE’를 통해 삶의 순환과 치유를 표현하는 이유지 작가의 전시 리뷰 및 예술 철학 소개.',
+      source: '현대불교',
+    },
+  ],
   이광수: [
     {
       url: 'https://m.blog.naver.com/foto3570/220255907243',
