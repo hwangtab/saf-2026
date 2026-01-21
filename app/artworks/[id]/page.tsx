@@ -13,6 +13,7 @@ import RelatedArticles from '@/components/features/RelatedArticles';
 import ExpandableHistory from '@/components/features/ExpandableHistory';
 import { generateArtworkMetadata, generateArtworkJsonLd } from '@/lib/seo-utils';
 import ShareButtons from '@/components/common/ShareButtons';
+import SupportMessage from '@/components/features/SupportMessage';
 
 interface Props {
   params: Promise<{
@@ -145,6 +146,9 @@ export default async function ArtworkDetailPage({ params }: Props) {
                     <span className="text-sm font-medium">이메일 문의</span>
                   </Button>
                 </div>
+
+                {/* Campaign Support Message */}
+                <SupportMessage className="mt-8" />
               </div>
             </div>
 

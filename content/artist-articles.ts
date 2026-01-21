@@ -844,15 +844,7 @@ export const artistArticles: Record<string, Article[]> = {
       source: '서울아트가이드',
     },
   ],
-  박생광: [
-    {
-      url: 'https://www.yna.co.kr/view/AKR20190617140000005',
-      title: "'그대로 박생광'이 넓힌 채색 한국화의 지평",
-      description:
-        '(서울=연합뉴스) 정아란 기자 = 새빨간 옷을 입은 남자가 긴 원통을 든 채 먼 데를 바라본다. 초록색 구름이며, 발치의 청·록·황색 존재들이 ...',
-      source: '연합뉴스',
-    },
-  ],
+
   아트만두: [
     {
       url: 'https://www.mediaus.co.kr/news/articleView.html?idxno=239536',
@@ -1323,6 +1315,57 @@ export const artistArticles: Record<string, Article[]> = {
     },
   ],
 
+  박생광: [
+    {
+      url: 'https://namu.wiki/w/%EB%B0%95%EC%83%9D%EA%B4%91',
+      title: '박생광 - 나무위키',
+      description:
+        '나무위키 박생광 문서. "역사를 떠난 민족은 없다. 전통을 떠난 민족은 없다."라는 명언을 남긴 한국 채색화의 거장 박생광의 생애와 "무당", "모란", "토함산 해돋이", "전봉준" 등 주요 작품 세계 소개.',
+      source: '나무위키',
+    },
+    {
+      url: 'https://www.yna.co.kr/view/AKR20190617140000005',
+      title: "'그대로 박생광'이 넓힌 채색 한국화의 지평",
+      description:
+        '(서울=연합뉴스) 정아란 기자 = 새빨간 옷을 입은 남자가 긴 원통을 든 채 먼 데를 바라본다. 초록색 구름이며, 발치의 청·록·황색 존재들이 ...',
+      source: '연합뉴스',
+    },
+    {
+      url: 'https://encykorea.aks.ac.kr/Article/E0020762',
+      title: '박생광(朴生光) - 한국민족문화대백과사전',
+      description:
+        '한국민족문화대백과사전 박생광 항목. 호는 내고(乃古). 진주 출신으로 일본 유학 후 귀국하여 민족 고유의 색채와 이미지를 현대적으로 재해석한 독창적인 작품 세계를 구축한 화가.',
+      source: '한국민족문화대백과사전',
+    },
+    {
+      url: 'https://sumukbiennale.kr/sumuk/Board/3872/detailView.do',
+      title: 'K-POP과 만난 수묵, 전통 너머 세계로 흐르다 - 전남국제수묵비엔날레',
+      description:
+        '전남국제수묵비엔날레 언론보도. 전통 수묵화를 현대적으로 재해석하고 세계화하는 흐름 속에서 박생광 등 한국 화단의 거장들이 남긴 유산과 현대적 계승에 대한 고찰.',
+      source: '전남국제수묵비엔날레(무등일보)',
+    },
+    {
+      url: 'https://www.daljin.com/column/2540',
+      title: '한국 동양화 새 길 연 박생광 탄생 100주년 회고전 - 서울아트가이드',
+      description:
+        '서울아트가이드 칼럼. 미술평론가 박영택이 쓴 박생광 탄생 100주년 회고전 리뷰. 한국 채색화의 새로운 길을 연 박생광의 예술적 성취와 현대적 의미 재조명.',
+      source: '서울아트가이드',
+    },
+    {
+      url: 'https://www.joongang.co.kr/article/24001501',
+      title: "박생광의 오색찬란 '무당' 그림, 팬데믹 시대에 다시 보니 - 중앙일보",
+      description:
+        '중앙일보 기사. 팬데믹 시대에 다시 보는 박생광의 "무당" 시리즈. 강렬한 오방색과 무속적 도상을 통해 치유와 기원의 메시지를 전하는 작가의 예술 세계 조명.',
+      source: '중앙일보',
+    },
+    {
+      url: 'https://www.newsis.com/view/NISX20230321_0002234887',
+      title: '"위대한 화가 박생광·박래현 몰라봤다"…놓치지 말아야 할 작품 - 뉴시스',
+      description:
+        '뉴시스 기사. 예술의전당 한가람미술관에서 열린 "위대한 만남: 내고 박생광·우향 박래현" 2인전 리뷰. 한국화의 두 거장이 보여주는 채색화의 진수와 재평가.',
+      source: '뉴시스',
+    },
+  ],
   박성완: [
     {
       url: 'http://www.gwangjuart.com/bbs/board.php?bo_table=artist01&wr_id=111',
