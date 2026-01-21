@@ -140,6 +140,50 @@ export const artistArticles: Record<string, Article[]> = {
       source: '조선일보(아시아프)',
     },
   ],
+  김남진: [
+    {
+      url: 'https://www.hani.co.kr/arti/culture/music/870136.html',
+      title: '김남진 사진전…대자연에 인간 몸짓 합치다',
+      description:
+        '한겨레 기사. 미국 서부 사막과 협곡의 광막한 풍경 속에 인간의 몸짓을 합쳐낸 김남진 작가의 신작 사진전 소개.',
+      source: '한겨레',
+    },
+    {
+      url: 'https://www.artkoreatv.com/news/articleView.html?idxno=12554',
+      title: '사진작가 김남진 ‘이태원의 밤’ 출판기념회',
+      description:
+        '아트코리아방송 보도. 1980년대 이태원의 밤 풍경을 담은 사진집 ‘이태원의 밤’ 발간 및 출판기념회 현장 소식.',
+      source: '아트코리아방송',
+    },
+    {
+      url: 'https://anderssonbell.com/collaboration/kimnamjin.html?srsltid=AfmBOop6yd5W-iCqKno03cXfPVt2Bs29tAZU1ORkshQFXJH956PJHMrr',
+      title: 'Andersson Bell X Kim Namjin',
+      description:
+        '패션 브랜드 앤더슨벨과의 협업 프로젝트. 이태원의 밤을 기록한 사진 작업과 앤더슨벨의 감성이 결합된 콜라보레이션 에디션.',
+      source: '앤더슨벨(Andersson Bell)',
+    },
+    {
+      url: 'https://visla.kr/article/event/59579/',
+      title: '30년 만에 다시 이태원을 찾은 사진가 김남진의 ‘호모나이트쿠스’',
+      description:
+        'VISLA 매거진 인터뷰. 80년대 이태원을 기록했던 작가가 30년 만에 다시 포착한 서울의 밤과 변화된 이태원의 풍경.',
+      source: 'VISLA Magazine',
+    },
+    {
+      url: 'https://www.khan.co.kr/article/201803052125025',
+      title: '서슬 퍼런 칼처럼 내민 ‘이것이 사진가다’',
+      description:
+        '경향신문 기사. 갤러리 브레송 관장이자 사진가로서 고독하게 자신만의 길을 걷는 김남진 작가의 예술 철학 탐구.',
+      source: '경향신문',
+    },
+    {
+      url: 'http://www.kunews.ac.kr/news/articleView.html?idxno=24980',
+      title: '“갤러리는 인생을 즐기는 사진가들의 놀이터”',
+      description:
+        '고대신문 인터뷰. 사진가들을 위한 놀이터인 갤러리 브레송을 운영하는 김남진 작가의 인생과 예술적 도전에 관한 이야기.',
+      source: '고대신문',
+    },
+  ],
   김주호: [
     {
       url: 'https://www.mk.co.kr/news/culture/11457683',
@@ -1407,15 +1451,7 @@ export const artistArticles: Record<string, Article[]> = {
       source: 'YouTube',
     },
   ],
-  김남진: [
-    {
-      url: 'http://www.kunews.ac.kr/news/articleView.html?idxno=24980',
-      title: '“갤러리는 인생을 즐기는 사진가들의 놀이터”',
-      description:
-        '“사진가들에게 놀이터를 제공하는 것뿐이에요. 하하” 김남진(전기공학과 76학번) 관장은 사진가로 활동한 80년대부터 도전을 거듭하며 달려왔다. “아무것도 모르는데',
-      source: '고대신문',
-    },
-  ],
+
   안소현: [
     {
       url: 'https://jinhwon.com/68',
