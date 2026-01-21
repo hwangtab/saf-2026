@@ -9,7 +9,7 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
     {
       icon: '📦',
       label: '배송 안내',
-      text: '전국 무료배송 (전시 종료 후 3-5일 소요)',
+      text: '전국 무료배송 (전시 종료 후 3-7일 소요)',
     },
     {
       icon: '🔒',
@@ -20,11 +20,6 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
       icon: '📜',
       label: '작품 보증서',
       text: '모든 작품 진품 보증서 발급',
-    },
-    {
-      icon: '🔄',
-      label: '교환/환불',
-      text: '7일 이내 교환 및 환불 가능',
     },
   ];
 
