@@ -15,6 +15,50 @@ export interface Article {
  * 작가명을 키로 하는 관련 기사 목록
  */
 export const artistArticles: Record<string, Article[]> = {
+  강레아: [
+    {
+      url: 'https://www.hani.co.kr/arti/culture/music/989903.html',
+      title: '“암벽 비탈에 버틴 소나무에서 ‘경지에 오른 사람’ 봤죠”',
+      description:
+        '한국 최초의 여성 클라이밍 사진작가 강레아(53)씨의 개인전 ‘소나무-바위에 깃들다’. 암벽과 소나무를 통해 인간의 의지와 자연의 생명력을 포착한 작품 세계 소개.',
+      source: '한겨레',
+    },
+    {
+      url: 'https://www.joongang.co.kr/article/23639736',
+      title: '빙벽에 24시간 매달렸다···죽음 문턱서 찍은 인간의 한계',
+      description:
+        '국내 유일 여성 암벽 사진작가 강레아 인터뷰. 2000년부터 시작된 극한의 촬영 현장과 클라이머들의 찰나를 담아내는 작업 철학. 죽음의 문턱에서 배운 삶에 대한 겸손함.',
+      source: '중앙일보',
+    },
+    {
+      url: 'https://www.hankyung.com/article/2021040834771',
+      title: '연약해도 쓰러지지 않는 소나무…그분들을 찍기 위해 난, 산으로 간다',
+      description:
+        '강레아 작가가 담아낸 바위 틈 소나무의 생명력. 흙 한 줌 없는 암벽에서 뿌리 내린 소나무를 위인처럼 섬기며 촬영한 ‘소나무-바위에 깃들다’ 전시 이야기.',
+      source: '한국경제',
+    },
+    {
+      url: 'https://www.hanion.co.kr/news/articleView.html?idxno=22638',
+      title: '여성 암벽등반 사진작가 강레아 개인전',
+      description:
+        '한겨레:온에 소개된 강레아 작가의 개인전 ‘소나무-바위에 깃들다’ 리뷰. 암벽 위 소나무를 의인화하여 생명의 경이로움과 자연의 숭고함을 표현한 작품들.',
+      source: '한겨레:온',
+    },
+    {
+      url: 'https://www.routefinders.co.kr/news/articleView.html?idxno=2486',
+      title: '강레아 산사진 작가, 프랑스 그레노블에서 전시회를 열다',
+      description:
+        '프랑스 알프스 중심도시 그레노블에서 열린 강레아 작가의 초대전 ‘설악, 한국의 에크랭’. 한국의 산과 소나무를 유럽에 알리며 산악 문화 교류의 가교 역할.',
+      source: '루트파인더스',
+    },
+    {
+      url: 'https://www.joongang.co.kr/article/24026915',
+      title: '모질게 살아남은 바위 틈 소나무…절벽서 40m 오르락내리락 찍었다',
+      description:
+        '7번째 개인전 ‘산(山)에 들다’를 연 강레아 작가. 절벽을 오르내리며 촬영한 흑백의 소나무 사진들. 척박한 환경을 이겨낸 소나무를 통해 전하는 위로와 희망의 메시지.',
+      source: '중앙일보',
+    },
+  ],
   신학철: [
     {
       url: 'http://www.hakgojae.com/page/2-1-view.php?artist_num=25',
