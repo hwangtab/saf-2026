@@ -1997,15 +1997,7 @@ export const artistArticles: Record<string, Article[]> = {
       source: '제주의소리',
     },
   ],
-  이지은: [
-    {
-      url: 'https://www.artspaceat.com/category/all-products',
-      title: "'Hollowed Colors' 이지은 작가",
-      description:
-        '카테고리 설명을 입력하는 공간입니다. 카테고리 소개 및 방문자와의 소통으로 제품에 대한 흥미를 유도해보세요.',
-      source: 'Artspaceat',
-    },
-  ],
+  이지은: [],
   이현정: [
     {
       url: 'https://cicamuseum.com/lee-hyunjeong-solo-exhibition/',
@@ -2218,15 +2210,7 @@ export const artistArticles: Record<string, Article[]> = {
       source: '유튜브',
     },
   ],
-  이채원: [
-    {
-      url: 'https://www.saf2026.com/artworks/146',
-      title: '이채원 - 씨앗페 2026',
-      description:
-        '작가: 예미킴, 작품명: 우주에서, 제작년도: 2024, 재료: Mixedmedia on canvas, 크기: 24.2x24.2cm.',
-      source: '씨앗페 2026(작품명: Summer Comes to My Hometown, Seoul)`',
-    },
-  ],
+  이채원: [],
   조문호: [
     {
       url: 'https://www.youtube.com/watch?v=B9YVUw8zQDg',
