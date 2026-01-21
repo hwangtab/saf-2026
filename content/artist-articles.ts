@@ -822,6 +822,22 @@ export const artistArticles: Record<string, Article[]> = {
       source: '국립현대미술관',
     },
   ],
+  천지수: [
+    {
+      url: 'https://www.news1.kr/life-culture/performance-exhibition/5798028',
+      title: '"다채롭고 오묘한 생명의 신비 재현"…천지수 \'생명의 모양\'展',
+      description:
+        "갤러리지지향 개인전. 책을 읽고 떠오른 예술적 영감을 표현하는 '페인팅북리뷰' 작업을 통해 한강의 소설 등을 재해석한 신작 15점과 모노타입 판화 소개.",
+      source: '뉴스1',
+    },
+    {
+      url: 'https://www.incheonilbo.com/news/articleView.html?idxno=1312020',
+      title: '책이 숲이 되다⋯천지수 9th 개인전 ‘도서관 환타지(Library Fantasy)’',
+      description:
+        '지식과 생명, 책과 자연의 경계를 허무는 회화 연작. 아프리카 체류 경험이 투영된 ‘정글 도서관’ 세계관을 통해 현대 사회의 사유와 상상의 힘을 회복시키는 시각적 서사 제시.',
+      source: '인천일보',
+    },
+  ],
   최경선: [
     {
       url: 'https://kiaf.org/insights/44956',
@@ -845,6 +861,36 @@ export const artistArticles: Record<string, Article[]> = {
       source: '미술은행',
     },
   ],
+  최병수: [
+    {
+      url: 'https://www.d-art.co.kr/news/articleView.html?idxno=2144',
+      title: "[저항하는 예술 ⑧] '한열이를 살려내라' 최병수 화가 이야기",
+      description:
+        '1987년 6월 항쟁의 상징이 된 이한열 열사 걸개그림을 제작한 민중미술가 최병수의 삶과 예술. 폭력의 시대에 저항하며 민주주의를 새기는 현장미술가의 행보.',
+      source: '데일리아트',
+    },
+    {
+      url: 'https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0002730802',
+      title: '돌에 붙인 돌, 꽃을 단 삽... 이한열 걸개그림 최병수의 작품들',
+      description:
+        '여수 지역 설치미술가로 활동하며 돌, 삽 등 일상의 사물을 예술적 발상으로 전환하는 작업 세계. 다양한 직업 경험을 바탕으로 생태와 환경에 주목하는 최근의 작업들.',
+      source: '오마이뉴스',
+    },
+    {
+      url: 'https://h21.hani.co.kr/arti/photo/story/46150.html',
+      title: '역사가 예술이 될 때 최병수가 있었다',
+      description:
+        '목수에서 예술가가 된 최병수의 작품 세계. 6월 항쟁부터 반전평화 운동까지 역사의 현장을 지켜온 걸개그림과 설치 작품들의 기록.',
+      source: '한겨레21',
+    },
+    {
+      url: 'http://www.sctoday.co.kr/news/articleView.html?idxno=24082',
+      title: '[People&people]광화문광장에 철공소 차린 환경미술가 최병수',
+      description:
+        '광화문 촛불 광장에 현장 작업실을 차리고 예술적 활동을 펼친 시대의 기록. 이한열 열사 걸개그림부터 환경과 생명을 살리는 솟대 작업까지, 예술로 세상을 치유하는 작가 이야기.',
+      source: '서울문화투데이',
+    },
+  ],
   최윤정: [
     {
       url: 'https://www.chosunartgallery.com/%EB%B3%B5%EC%A0%9C-%EC%B0%A8%EC%98%81%EA%B7%9C',
@@ -866,6 +912,22 @@ export const artistArticles: Record<string, Article[]> = {
       description:
         'YTN INSIDE 인터뷰. 미디어의 포장 능력과 현대인의 욕망. 현재를 이야기하는 작가. 풍자와 희화화를 통한 카타르시스. 가벼워 보이는 색으로 무거운 메시지 전달.',
       source: 'YTN INSIDE',
+    },
+  ],
+  최연택: [
+    {
+      url: 'https://www.artbava.com/exhibits/%EC%B5%9C%EC%97%B0%ED%83%9D-%EA%B0%9C%EC%9D%B8%EC%A0%84-%EC%9A%B0%EB%A6%AC%EB%93%A4%EC%9D%98-%EC%95%88%EB%85%95',
+      title: '최연택 개인전 : 우리들의 안녕',
+      description:
+        '그림으로 읽는 ‘우리들의 안녕’최연택의 세 번째 개인전 <우리들의 안녕>의 작품들은 사실 이미지보다는 텍스트에 집중한다. 작가의 작품은 텍스트와 함께여야 의미가 살고, 자세히 들여다보아야 마음을 움직이게 하는 하나의 점이 보인다.작가는 최근 세 권의 책에 그...',
+      source: '아트바바',
+    },
+    {
+      url: 'https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0002362108',
+      title: '보이지 않는 이야기가 말을 걸어왔다, 힘들지 않았느냐고',
+      description:
+        "민족미술인협회 서울지회 '2017 조국의 산하'전을 통해 소개된 최연택 작가의 작품 세계. 보이지 않는 이야기를 통해 관객에게 말을 건네고 치유와 사유의 시간을 제공하는 예술적 시도.",
+      source: '오마이뉴스',
     },
   ],
   한애규: [
@@ -2676,6 +2738,26 @@ export const artistArticles: Record<string, Article[]> = {
       description:
         '[서울 =뉴스프리존]편완식 미술전문기자= 하선영의 그림을 보면 ‘옥상달빛’의 노래 ‘산책의 미학’ 가사가 떠올려 진다. ‘오늘 참 되는 일 없네/ 생각하며 터덜터덜/걷다 보니 어, 바람이 시원하네//아무 말도 하기 싫은/피곤한 하룰 끝내고/걷다 보니 와, 하늘 참 예쁘다//걷고 걷고',
       source: '뉴스프리존',
+    },
+    {
+      url: 'https://www.mk.co.kr/news/culture/5047403',
+      title: '[봄봄의 블루칩 작가 탐방기] 당연한 것은 아무것도 없다…작가 하선영',
+      description:
+        '일상과 자연 속에 숨겨진 생기 넘치는 존재들을 발견하고, 생명 본연의 역동적인 에너지와 오묘한 신비로움을 포착하여 캔버스에 담아내는 블루칩 작가 하선영의 작업 세계.',
+      source: '매일경제',
+    },
+    {
+      url: 'https://www.artmail.com/db/2011/20111101-Hasunyoung.htm',
+      title: '하선영 개인전 - 아트메일',
+      description: '아트메일에 기록된 하선영 작가의 전시 아카이브 및 주요 작품 활동 정보.',
+      source: '아트메일',
+    },
+    {
+      url: 'https://woodplanet.co.kr/news/view/1065544628226327',
+      title: '하선영 작가의 ‘His Garden展’',
+      description:
+        '‘His Garden’ 시리즈를 통해 자연에 순응하며 조화를 이루는 노자의 무위(無爲)를 상기시키는 작업. 3년간 포착한 자연의 변화를 12계절의 사색적 시선으로 표현한 전시.',
+      source: '우드플래닛',
     },
   ],
   정재철: [
