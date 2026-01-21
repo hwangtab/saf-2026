@@ -681,10 +681,31 @@ export const artistArticles: Record<string, Article[]> = {
   ],
   기조: [
     {
+      url: 'https://www.idaegu.co.kr/news/articleView.html?idxno=449035',
+      title: '기조 개인전 “부정적 기억 꺼내 곱씹는 과정이 제 작업”',
+      description:
+        '대구신문 인터뷰. 자화상 캐릭터인 ‘반인반수 토끼’를 통해 부정적인 기억과 내면의 갈등을 예술로 승화시키는 기조 작가의 작업 세계 소개.',
+      source: '대구신문',
+    },
+    {
+      url: 'https://www.welfarehello.com/community/hometownNews/cdeca101-8605-4fea-a20e-9bb1d0e6738d',
+      title: '달성군의 예술가를 찾아서 _ 6편 [ 기조 작가님 ]',
+      description:
+        '달천예술창작공간 입주 작가 기조 인터뷰. “두 마리의 토끼가 살고 있는 집” 시리즈와 스트레스를 캐릭터로 풀어낸 자화상 이야기.',
+      source: '웰로(WelfareHello)',
+    },
+    {
+      url: 'https://www.youtube.com/watch?v=T7fxMK5YQlM',
+      title: '[디포레스트] 달천예술창작공간 제3기 입주작가 인터뷰 | 기조(KIJO)',
+      description:
+        '달성문화재단 제작 영상 인터뷰. 기조 작가의 작업실 풍경과 작품 제작 과정, 예술에 대한 진솔한 이야기를 담은 영상 콘텐츠.',
+      source: 'YouTube',
+    },
+    {
       url: 'https://www.daeguartscenter.or.kr/mobile/content.html?md=0283&vmode=view&seq=56744',
       title: '달천예술창작공간 제3기 입주작가 프리뷰전',
       description:
-        '[대구문화예술회관 오시는길] 우.42672 대구광역시 달서구 공원순환로 대구문화예술회관 전화 : 053-430-7600, Fax : 053-430-7609',
+        '대구문화예술회관 프리뷰 전시 정보. 달천예술창작공간 입주 작가로서 선보인 기조 작가의 초기 작업과 전시 소식.',
       source: '대구문화예술회관',
     },
   ],
@@ -1320,8 +1341,29 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://www.artspacelumos.com/60',
       title: '[기억의 목소리 Ⅲ] 고현주 사진전',
       description:
-        '제주 4.3의 현장에서 올리는 아름다운 제의-고현주 사진전​“보자기에 (등을 담아) 수백 번 묶고, 풀 때마다 그들에게 이 빛이 작은 위로가 되기를 빌었다. 서글프고 아름다운 사진 속 풍경이 또한 보는 사람들을 위무하기를 바랐다.”​일출봉, 섯알오름, 다랑쉬오름, 함덕해수욕장, 정방폭포, 영궤......사진작가 고현주는 등과 바구니와 색색의 보자기들을 들고...',
+        '제주 4.3의 현장에서 올리는 아름다운 제의. 학살이 자행되었던 현장을 찾아 희생자의 수만큼 보자기로 싼 등불을 놓으며 위무하는 고현주 작가의 사진 작업.',
       source: 'ArtSpace LUMOS',
+    },
+    {
+      url: 'https://www.pressian.com/pages/articles/2022120516241262507',
+      title: '사진가 고현주를 기억하며',
+      description:
+        '소년원 아이들에게 사진을 가르치고 그들의 마음을 카메라에 담아냈던 故 고현주 사진작가의 삶과 예술 세계를 기리는 추모 평론.',
+      source: '프레시안',
+    },
+    {
+      url: 'https://www.artkoreatv.com/news/articleView.html?idxno=75423',
+      title: '‘기억의 목소리 II’ 고현주 작가의 두 번째 4·3 사진집',
+      description:
+        '고현주 작가의 두 번째 4·3 사진집 발간 소식. 제주 여성의 보따리 속 사물을 통해 제주 4·3의 아픔과 디아스포라의 기억을 섬세하게 기록.',
+      source: '아트코리아방송',
+    },
+    {
+      url: 'https://www.khan.co.kr/article/202306261538011',
+      title: '4·3을 기억하다…고현주 사진작가 유고전 평화기념관서',
+      description:
+        '제주4·3평화재단 주최 고현주 작가 유고전 ‘기억의 목소리’. 척박한 땅에서 생을 일궈온 제주 사람들의 역사와 기억을 담은 사진 38점 전시.',
+      source: '경향신문',
     },
   ],
   최연택: [
