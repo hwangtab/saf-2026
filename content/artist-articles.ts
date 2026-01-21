@@ -309,6 +309,29 @@ export const artistArticles: Record<string, Article[]> = {
       source: '오마이뉴스',
     },
   ],
+  김우주: [
+    {
+      url: 'https://www.handmk.com/news/articleView.html?idxno=20600',
+      title: '‘한국은행이 선정한 우리 시대의 젊은 작가들’展',
+      description:
+        '핸드메이커 보도. 한국은행 신진작가 공모전을 통해 선정된 김우주 작가를 포함한 6인의 젊은 작가들의 실험 정신과 개성 넘치는 작품 세계 소개.',
+      source: '핸드메이커',
+    },
+    {
+      url: 'https://www.ibulgyo.com/news/articleView.html?idxno=417101',
+      title: '신인 작가 6명이 함께 이뤄내는 ‘예술적 도약’',
+      description:
+        '불교신문 기사. 탑골미술관의 신인 작가 지원 사업인 ‘도약의 단초10’ 전시를 통해 첫 개인전과 예술적 도전을 시작하는 김우주 작가의 소식.',
+      source: '불교신문',
+    },
+    {
+      url: 'https://www.youtube.com/watch?v=isF6EJoyuwc',
+      title: "[MR Media Lab] 초실감 메타버스 XR 트윈기반 'Space Simulation'",
+      description:
+        "홍익대학교 AI 뮤지엄 전시 영상. 초실감 메타버스 XR 트윈 기반의 'Space Simulation' 전시 현장과 AI 미디어아트 작품 소개.",
+      source: 'YouTube(홍익대)',
+    },
+  ],
   김주호: [
     {
       url: 'https://www.mk.co.kr/news/culture/11457683',
@@ -914,8 +937,22 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://books.google.com/books/about/%EB%A7%A4%EC%9D%BC_%ED%8C%90%ED%99%94.html?id=JlfLswEACAAJ',
       title: '매일 판화: 처음이어도 괜찮아! - 김종환',
       description:
-        '세계 최대 eBook 상점을 둘러보고 웹, 태블릿, 휴대전화, eReader에서 독서를 시작해 보세요.',
+        '조각가이자 판화가인 김종환의 판화 입문서. 누구나 쉽고 재미있게 판화 작업을 시작할 수 있도록 돕는 실질적인 가이드와 작가의 노하우 수록.',
       source: 'Google Books',
+    },
+    {
+      url: 'http://altspaceloop.com/exhibitions/transforming-episode',
+      title: '김종환 개인전: 변신 에피소드 (Transforming Episode)',
+      description:
+        '대안공간 루프 전시 정보. 인간의 실존적 변신과 정체성 탐구를 조형적 언어로 풀어낸 김종환 작가의 개인전 상세 설명 및 평론.',
+      source: '대안공간 루프',
+    },
+    {
+      url: 'https://www.primeherald.co.kr/27090',
+      title: '김종환 작가, 예술을 통한 변신과 성찰의 기록',
+      description:
+        '프라임헤럴드 보도. 독창적인 조형미와 철학적 사유를 통해 현대인의 내면을 포착하는 김종환 작가의 작품 세계와 전시 관련 심층 기사.',
+      source: '프라임헤럴드',
     },
   ],
   라인석: [
@@ -1144,15 +1181,7 @@ export const artistArticles: Record<string, Article[]> = {
       source: '경상일보',
     },
   ],
-  김우주: [
-    {
-      url: 'https://www.youtube.com/watch?v=isF6EJoyuwc',
-      title: "[MR Media Lab] 초실감 메타버스 XR 트윈기반 'Space Simulation'",
-      description:
-        '초실감 메타버스 XR 트윈 기반 [SPACE SIMULATION] AI 미디어아트 展▶전시 날짜 : 2021년 12월 23일 - 12월 31일전시 오프닝 : 2021년 12월 23일 16시▶전시 장소 : 홍익대학교 홍문관 L층/2층 AI 뮤지엄본 작품은 작가 2명[남극: 임혁필/사...',
-      source: '홍익대학교(YouTube)`',
-    },
-  ],
+
   박소형: [
     {
       url: 'https://louisethewomen.org/news/?bmode=view&idx=167794323',
