@@ -1023,11 +1023,18 @@ export const artistArticles: Record<string, Article[]> = {
   ],
   김호성: [
     {
-      url: 'https://m.blog.naver.com/PostView.naver?blogId=gongjeon21&logNo=223507130560',
-      title: '[옥천] 김호성.김혜숙 모자전',
+      url: 'https://www.photoart.co.kr/bbs/m/mcb_data_view.php?type=mcb&ep=ep1260394525d70b6363602a&gp=all&item=md404406056648efb1e6de05',
+      title: '김호성 《blur》 Gallery Vista (서울) | 6. 15 ~ 7. 10',
       description:
-        '전시명 : [옥천] 김호성.김혜숙 모자전 유형 : 옥천 전시회 날짜 : 2024년 6월 29일~7월 20일 관람시간 : a...',
-      source: '대전공연전시(네이버 블로그)',
+        'Google Earth 프로그램을 통해 캡처한 이미지로 사진의 현장성에 대한 본질적 관념을 비틀고 가상 세계를 사진 작품으로 표현한 김호성 작가의 개인전 소식.',
+      source: 'photoart.co.kr',
+    },
+    {
+      url: 'https://blog.naver.com/saeki_pnc/223813119637?trackingCode=rss',
+      title: '김호성 작가 인터뷰 - 세기피앤씨 S매거진',
+      description:
+        '세기피앤씨 S매거진에서 진행한 극사실주의 화가 김호성 작가와의 인터뷰. 초기작부터 최근 작품까지 아우르며 외형과 진실의 경계를 탐구하는 작가의 예술 세계 소개.',
+      source: '세기피앤씨(S매거진)',
     },
   ],
   강석태: [
