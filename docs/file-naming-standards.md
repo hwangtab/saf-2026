@@ -96,10 +96,10 @@ For Korean names, use one of these approaches:
 
 ## Benefits
 
-✅ **Cross-platform compatibility**: Works on Windows, Mac, Linux, and all web servers  
-✅ **URL-friendly**: Clean, readable URLs without encoding  
-✅ **Git-friendly**: Prevents commit conflicts due to encoding differences  
-✅ **CDN-friendly**: Reduces potential issues with content delivery networks  
+✅ **Cross-platform compatibility**: Works on Windows, Mac, Linux, and all web servers
+✅ **URL-friendly**: Clean, readable URLs without encoding
+✅ **Git-friendly**: Prevents commit conflicts due to encoding differences
+✅ **CDN-friendly**: Reduces potential issues with content delivery networks
 ✅ **Developer-friendly**: Easier to type and reference in code
 
 ## When to Deviate

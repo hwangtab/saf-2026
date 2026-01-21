@@ -361,4 +361,17 @@ export const batch007: Artwork[] = [
     image: '274.png',
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/410',
   },
+  {
+    id: '275',
+    artist: '작가미상',
+    title: '오리',
+    description: '',
+    size: '18x27x11cm',
+    material: '도자',
+    year: '확인 중',
+    edition: '',
+    price: '₩300,000',
+    image: '275.png',
+    shopUrl: '확인 중',
+  },
 ];

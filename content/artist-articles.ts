@@ -642,6 +642,43 @@ export const artistArticles: Record<string, Article[]> = {
       source: '한겨레',
     },
   ],
+  고자영: [
+    {
+      url: 'https://www.aaart.co.kr/news/article.html?no=4469',
+      title: "고자영·하이경 작가가 풀어낸 '지극히 사적인' 공간들",
+      description:
+        '리나갤러리에서 열린 고자영, 하이경 작가의 2인전. 식물에서 시작되어 정원이 되고 식물원이 되는 고자영 작가의 작품 세계 소개. 일상 풍경을 통한 위로와 휴식.',
+      source: '다아트',
+    },
+    {
+      url: 'https://www.newsverse.kr/news/articleView.html?idxno=8295',
+      title: '아, 어떻게 우리가 이 여름을 기록할 것인가?- 고자영 작가',
+      description:
+        "심정택 미술 칼럼. 알베르 카뮈의 소설과 연계하여 고자영 작가의 '정원' 시리즈를 비평. 장소의 혼(Genius Loci)이 깃든 작가만의 정원 이미지와 타입폼 분석.",
+      source: '뉴스버스',
+    },
+    {
+      url: 'https://www.kgnews.co.kr/news/article.html?no=160965',
+      title: '장준석의 작가탐방<42>-고자영의 예술세계',
+      description:
+        '장준석 미술평론가의 작가 탐방. 신이 주신 자연의 모습을 판화와 그림으로 표현하는 고자영의 조형 세계. 독창적인 작가의 심성과 예술적 기질로 빚어낸 새로운 자연.',
+      source: '경기신문',
+    },
+    {
+      url: 'https://www.newscj.com/news/articleView.html?idxno=4622',
+      title: '고자영 작가, 자연과 인간이 함께하는 공간 연출',
+      description:
+        "세오갤러리에서 열린 고자영 개인전 '공중정원 Hanging Gardens in Babylon'. 바빌로니아 공중정원에서 유래한 따뜻한 정원과 식물을 소재로 한 전시.",
+      source: '천지일보',
+    },
+    {
+      url: 'https://www.economytalk.kr/news/articleView.html?idxno=147379',
+      title: "고단한 현실 속 자연 풍경, 고자영·하이경 '지극히 사적인'展",
+      description:
+        '이코노미톡뉴스 전시 소개. 일상에 지친 삶 속에서 삶의 쉼표가 되는 자연 풍경. 동양적 산수화와 물속 풍경이 공존하는 고자영 작가의 작품 세계.',
+      source: '이코노미톡뉴스',
+    },
+  ],
   기조: [
     {
       url: 'https://www.daeguartscenter.or.kr/mobile/content.html?md=0283&vmode=view&seq=56744',
@@ -720,6 +757,55 @@ export const artistArticles: Record<string, Article[]> = {
       description:
         '추계예술대학교 문화예술학 박사, [개인전] 2025 "안녕! 스타비" (태은고현갤러리, 거제), 등록작품 29점. 오픈갤러리에서 강석태 작가의 작품과 이력, 전시소식, 인터뷰 등 자세한 정보를 확인하세요.',
       source: '오픈갤러리',
+    },
+    {
+      url: 'https://urbanbreak.com/kang-seoktae/',
+      title: 'KANG SEOKTAE – 어반브레이크',
+      description:
+        '어린 왕자에서 영감을 받아 ‘별소년’을 모티브로 작업하는 강석태 작가. 어반브레이크에서 소개하는 작가의 작품 세계와 비전.',
+      source: '어반브레이크',
+    },
+    {
+      url: 'https://www.arthara.com/Artist/view/1749655',
+      title: '강석태 작가 - 아트하라',
+      description:
+        '아트하라 플랫폼에 소개된 강석태 작가의 포트폴리오. "별이 가득한 오후에" 등 장지에 먹과 채색으로 표현한 동양화 작품 감상.',
+      source: '아트하라',
+    },
+    {
+      url: 'https://www.daljin.com/column/17914',
+      title: '단짝, 어린왕자 강석태X어린어른 이흥재',
+      description:
+        '서울아트가이드 칼럼. 정영숙 문화예술학 박사가 쓴 에세이집 <삶이 계절이라면 가을쯤 왔습니다> 리뷰. 이흥재 교수의 글과 강석태 작가의 그림이 어우러진 책.',
+      source: '서울아트가이드',
+    },
+    {
+      url: 'https://segyelocalnews.com/article/1065592327225698',
+      title: '강석태 작가 “따뜻한 감성 전하고파”',
+      description:
+        '세계로컬타임즈 인터뷰. 어린 왕자를 통해 순수한 동심과 위로를 전하는 강석태 작가의 예술 철학. 잃어버린 감성을 되찾아주는 치유의 그림.',
+      source: '세계로컬타임즈',
+    },
+    {
+      url: 'http://www.a-bunker.com/exhibition/?bmode=view&idx=54321605',
+      title: '강석태 - 어린왕자에게 말을 걸다',
+      description:
+        '에이벙커(A-Bunker)에서 열린 강석태 개인전 << 어린왕자에게 말을 걸다 >> 전시 정보. 순수함을 찾아 떠나는 어린 왕자와의 대화.',
+      source: '에이벙커',
+    },
+    {
+      url: 'https://www.artkoreatv.com/news/articleView.html?idxno=59112',
+      title: '강석태 개인전 ‘내 안의 소년에게’',
+      description:
+        '아트코리아방송 전시 뉴스. 갤러리그림손에서 열린 강석태 개인전. 2002년부터 시작된 어린 왕자 시리즈와 내면의 소년에게 보내는 그림 편지.',
+      source: '아트코리아방송',
+    },
+    {
+      url: 'https://www.shinsegae.com/culture/gallery/exhibition/view.do?glrySeq=409&pg=8&pgSz=9',
+      title: '한불수교 130주년 기념 강석태-<어린왕자>展',
+      description:
+        '신세계갤러리 전시 아카이브. 생텍쥐페리의 어린 왕자를 한국적 감수성과 재료로 재해석한 강석태 작가의 특별전.',
+      source: '신세계갤러리',
     },
   ],
   김영서: [
@@ -1227,14 +1313,6 @@ export const artistArticles: Record<string, Article[]> = {
       description:
         '수원대학교 한국화과 학사, [개인전] 2023 개인의 장면 (인천 서구 공실상가 / 서구문화재단 지원), 등록작품 61점. 오픈갤러리에서 김유진 작가의 작품과 이력, 전시소식, 인터뷰 등 자세한 정보를 확인하세요.',
       source: '오픈갤러리',
-    },
-  ],
-  고자영: [
-    {
-      url: 'https://www.jungle.co.kr/exhibit/1672',
-      title: '2007 세오 1st Young Artist 고 자 영',
-      description: '세오갤러리',
-      source: '디자인정글',
     },
   ],
   고현주: [
