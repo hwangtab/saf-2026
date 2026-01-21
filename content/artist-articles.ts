@@ -184,6 +184,43 @@ export const artistArticles: Record<string, Article[]> = {
       source: '고대신문',
     },
   ],
+  김동석: [
+    {
+      url: 'https://www.sac.or.kr/site/main/show/show_view?SN=38473',
+      title: '김동석 개인전 ‘석과불식(碩果不食)’',
+      description:
+        '예술의전당 한가람미술관 전시 정보. 씨앗을 소재로 생명의 본질과 공존의 가치를 탐구하며, ‘희망’이라는 메시지를 조형화한 김동석 작가의 개인전.',
+      source: '예술의전당',
+    },
+    {
+      url: 'https://www.morningsunday.com/sub_read.html?uid=18584',
+      title: '김동석 작가, 삶의 길을 담아내는 회화 세계',
+      description:
+        '모닝선데이 보도. 씨앗과 나뭇잎 등 자연의 오브제를 통해 삶의 궤적과 생명력을 표현하는 김동석 작가의 독창적인 예술 세계 조명.',
+      source: '모닝선데이',
+    },
+    {
+      url: 'https://www.artworldnews.co.kr/news/articleView.html?idxno=3870',
+      title: '김동석 展 - 우공이산의 꿈, 초월적 조형의 미학',
+      description:
+        '아트월드뉴스 전시 리뷰. 수만 개의 씨앗 오브제를 캔버스에 붙이는 고된 작업을 통해 탄생한 김동석 작가의 숭고한 조형미와 철학적 사유.',
+      source: '아트월드뉴스',
+    },
+    {
+      url: 'https://www.youtube.com/watch?v=3rcAzwp7NIA',
+      title: "서양화가 김동석 개인전, '길...어디에도 있었다'",
+      description:
+        'YTN 뉴스 인터뷰 영상. 20년 넘게 씨앗과 나뭇잎을 소재로 생명과 길을 그려온 김동석 작가의 전시 현장과 인터뷰.',
+      source: 'YouTube(YTN)',
+    },
+    {
+      url: 'https://www.artkoreatv.com/news/articleView.html?idxno=100050',
+      title: "인사아트프라자갤러리-김동석 개인전 '점으로 부터의 성찰과 사유'",
+      description:
+        '인사동 인사아트프라자갤러리 전시. 30여 년간의 작업 세계를 정리하며 시대적 변화와 내면의 사유를 점을 통해 조형화한 김동석 작가의 개인전.',
+      source: '아트코리아방송',
+    },
+  ],
   김주호: [
     {
       url: 'https://www.mk.co.kr/news/culture/11457683',
@@ -784,15 +821,6 @@ export const artistArticles: Record<string, Article[]> = {
     },
   ],
 
-  김동석: [
-    {
-      url: 'https://www.artkoreatv.com/news/articleView.html?idxno=100050',
-      title: "인사아트프라자갤러리-김동석 개인전 '점으로 부터의 성찰과 사유'",
-      description:
-        "[아트코리아방송 = 김한정 기자] 인사동 인사아트프라자갤러리 1층 그랜드관에서 김동석 작가의 개인전 '점으러 부터의 성찰과 사유'가 11월 19일부터 24일까지 열리고 있다. 개막 당일 오전, 전시장을 찾은 김동석 작가는 자신의 30여 년 작업 세계를 다시 정리하며 시대적 변화와 내면",
-      source: '아트코리아방송',
-    },
-  ],
   김종환: [
     {
       url: 'https://books.google.com/books/about/%EB%A7%A4%EC%9D%BC_%ED%8C%90%ED%99%94.html?id=JlfLswEACAAJ',
