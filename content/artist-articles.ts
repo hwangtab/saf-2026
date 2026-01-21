@@ -221,6 +221,94 @@ export const artistArticles: Record<string, Article[]> = {
       source: '아트코리아방송',
     },
   ],
+  김레이시: [
+    {
+      url: 'https://www.artsnculture.com/news/articleView.html?idxno=6679',
+      title: '김레이시 - 화면 위에 쌓인 선과 색의 층위',
+      description:
+        '아츠앤컬쳐 기사. 화면 안팎으로 연장되는 선들과 색채의 층을 통해 존재의 순간들을 기록하는 김레이시 작가의 추상 작업 세계 소개.',
+      source: '아츠앤컬쳐',
+    },
+    {
+      url: 'https://cicamuseum.com/lacey-kim-solo-exhibition/',
+      title: 'Lacey Kim Solo Exhibition: Before Mind',
+      description:
+        'CICA 미술관 전시 정보. 선과 색의 조합을 통해 찰나의 경험과 내면의 진실을 캔버스 위에 펼쳐 보인 김레이시 작가의 개인전.',
+      source: 'CICA 미술관',
+    },
+    {
+      url: 'https://www.misulin.co.kr/news/articleView.html?idxno=3728',
+      title: '김레이시 개인전: 익명의 시간 (Anonymous Moments)',
+      description:
+        '미술여행신문 보도. 겹겹이 쌓인 선과 색채의 직관적인 제스처를 통해 자유로운 존재로서의 자신을 표현하는 김레이시 작가의 신작 전시 소식.',
+      source: '미술여행신문',
+    },
+    {
+      url: 'https://www.artbava.com/exhibits/%EA%B9%80%EB%A0%88%EC%9D%B4%EC%8B%9C-%EA%B7%B8-%EC%96%B4%EB%96%A4-%EB%A7%90%EB%B3%B4%EB%8B%A4-_-before-any-words',
+      title: '김레이시: 그 어떤 말보다 (Before Any Words)',
+      description:
+        '아트바바 전시 정보. 갤러리도스에서 열린 김레이시 작가의 개인전. 언어 이전의 순수한 감각과 선의 움직임을 통해 소통하는 작품들.',
+      source: '아트바바',
+    },
+    {
+      url: 'https://www.art-culture.co.kr/gallery_week/751',
+      title: '김레이시 개인전: This Moment 너와 내가 연결되는 순간',
+      description:
+        '문화예술신문 기사. ‘순간의 연결’이라는 주제로 캔버스 위에 선과 색을 펼쳐 보이며 존재와 존재 사이의 연결을 탐구하는 전시.',
+      source: '문화예술신문',
+    },
+    {
+      url: 'https://www.daljin.com/column/22999',
+      title: '김레이시의 예술: 숨 쉬듯 그어낸 순간',
+      description:
+        '서울아트가이드 이희수 칼럼. 김레이시 작가의 작업 과정을 숨 쉬는 듯한 행위로 분석하며, 작품에 담긴 예술적 진정성과 호흡을 평론.',
+      source: '서울아트가이드(달진)',
+    },
+    {
+      url: 'https://www.opengallery.co.kr/artist/A0202/',
+      title: '김레이시 작가 :: 오픈갤러리',
+      description:
+        '오픈갤러리 작가 프로필. 김레이시 작가의 학력(Pratt MFA 등), 주요 전시 이력(2025 Anonymous Moments) 및 등록 작품 13점에 대한 정보 제공.',
+      source: '오픈갤러리',
+    },
+  ],
+  김수오: [
+    {
+      url: 'https://www.jejunews.com/news/articleView.html?idxno=2214689',
+      title: '김수오 사진전 ‘가닿음으로’',
+      description:
+        '제주일보 보도. 한의사이자 사진가인 김수오 작가가 제주마의 사계절과 생로병사의 서사를 담아낸 첫 번째 사진전 소식.',
+      source: '제주일보',
+    },
+    {
+      url: 'https://www.news-art.co.kr/news/article.html?no=27256',
+      title: '삶과 죽음을 아우르는 ‘높은 오름’',
+      description:
+        '뉴스아트 기사. 죽은 자들을 지켜주는 듯한 구좌공설공원묘지 인근 높은 오름의 풍경을 통해 삶과 죽음의 경계를 포착한 사진 작업.',
+      source: '뉴스아트',
+    },
+    {
+      url: 'https://www.kdntv.kr/news/articleView.html?idxno=23202',
+      title: '아름다운 사람 - 사진작가 김수오',
+      description:
+        '코리아드림뉴스 인터뷰. 제주의 자연과 말을 묵묵히 기록해온 김수오 작가의 삶과 예술, 그리고 제주에 대한 깊은 애정 어린 이야기.',
+      source: '코리아드림뉴스',
+    },
+    {
+      url: 'https://s1.ihalla.com/article.php?aid=1666156431733557036',
+      title: '김수오 작가가 사진에 담은 5년여의 기록',
+      description:
+        '한라일보 기사. 사라져가는 제주의 풍광을 안타까워하며 5년간 오름과 들판을 누비며 기록해온 김수오 작가의 끈기 있는 작업 여정.',
+      source: '한라일보',
+    },
+    {
+      url: 'https://www.ohmynews.com/NWS_Web/Series/series_premium_pg.aspx?CNTN_CD=A0003077137',
+      title: '한밤중, 들판에서 목격한 제주마의 슬픈 죽음',
+      description:
+        '오마이뉴스 기사. 밤의 사진가 김수오가 포착한 어둠 속 제주의 평화로운 풍경과 그 안에서 마주한 생명의 숭고한 순간들.',
+      source: '오마이뉴스',
+    },
+  ],
   김주호: [
     {
       url: 'https://www.mk.co.kr/news/culture/11457683',
@@ -1260,15 +1348,7 @@ export const artistArticles: Record<string, Article[]> = {
       source: '용인시민신문',
     },
   ],
-  김레이시: [
-    {
-      url: 'https://www.opengallery.co.kr/artist/A0202/',
-      title: '김레이시 작가 :: 오픈갤러리',
-      description:
-        'Pratt Institute (미국) Fine Arts 석사, [개인전] 2025 Anonymous Moments (충주문화재단 목계나래 충주), 등록작품 13점. 오픈갤러리에서 김레이시 작가의 작품과 이력, 전시소식, 인터뷰 등 자세한 정보를 확인하세요.',
-      source: '오픈갤러리',
-    },
-  ],
+
   김태균: [
     {
       url: 'https://m.artgg.ggcf.kr/artists/%EA%B9%80%ED%83%9C%EA%B7%A0',
