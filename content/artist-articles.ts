@@ -1583,11 +1583,25 @@ export const artistArticles: Record<string, Article[]> = {
   ],
   류호식: [
     {
-      url: 'https://www.newsbrite.net/news/articleView.html?idxno=168927',
-      title: "서촌 TYA, 류호식 작가 개인전 'Black & Daisy' 개최",
+      url: 'https://clayseoul.kr/entry/%EB%A5%98%ED%98%B8%EC%8B%9D-%EC%95%88%EC%98%A8%ED%95%98%EA%B3%A0-%ED%8F%89%EC%95%88%ED%95%9C-%EC%A7%91-Aug-2024',
+      title: '류호식, 안온하고 평안한 집 (Aug 2024)',
       description:
-        '서촌 TYA는 11월 4일부터 17일까지 류호식 작가의 초대 개인전 를 개최한다. 류호식 작가는 2022년 5월 서촌 TYA에서 진행되었던 20인 기획전 《들여다보다》에 참여했던 작가이다.에서는 3D 프린팅 기법과 페이퍼 클레이를 통해 작품에 활용되는 소재의 다양성을 보여주고, 20인 전에서 보여주지 못했던 신작으로 공간을 채울 예정이다.초대전에 출품되는 ...',
-      source: '뉴스브라이트',
+        'Clayseoul 작가 소개. 페이퍼클레이를 사용해 안온하고 평안한 공간 Querencia를 만드는 류호식 작가. 일상의 아름다운 순간에서 영감을 얻어 마음의 눈으로 이상향을 덧그리는 작업 과정 소개.',
+      source: 'Clayseoul',
+    },
+    {
+      url: 'https://www.cerazine.co.kr/news/view.php?idx=32302&mcode=m80dbsa&page=4',
+      title: '안온하고 평안한 집, 류호식',
+      description:
+        '세라진(Cerazine) 작가 리뷰. 페이퍼클레이로 밝은 색채와 동화적 이미지를 담아내며, 삶에 위안이 되었던 순간을 상상으로 되짚어가는 류호식 작가의 작품 세계와 예술적 철학.',
+      source: '세라진(Cerazine)',
+    },
+    {
+      url: 'http://tongingallery.com/646',
+      title: '통인갤러리 <New Year My Living room> 전시',
+      description:
+        '통인갤러리 전시 정보. 공예트렌드페어 참여 신진 작가들을 조명하며 현대인의 개인 공간 리빙룸을 통해 창의적인 공간과 새로운 라이프스타일을 제시하는 전시에 류호식 작가 참여.',
+      source: '통인갤러리',
     },
   ],
 
