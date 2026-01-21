@@ -1002,6 +1002,34 @@ export const artistArticles: Record<string, Article[]> = {
         '예술인의 권익 보호 및 향상, 당사자인 예술인의 목소리를 대변, 문화예술정책에 영향력',
       source: '뉴스아트',
     },
+    {
+      url: 'https://www.artkoreatv.com/news/articleView.html?idxno=41702',
+      title: '라인석 작가의 "ContAcT" 사진전',
+      description:
+        '아트코리아방송 보도. 순수 사진부터 사진을 매체로 한 시각예술 ArtWork 작업을 넘나들며 다양하고 크리에이티브한 작업으로 호평받는 라인석 작가의 충무로 갤러리 나미브 전시 소식.',
+      source: '아트코리아방송',
+    },
+    {
+      url: 'http://gallerybresson.com/?p=20860',
+      title: '사진적 행위 - 오철민, 라인석 2인전',
+      description:
+        'Gallery Bresson 전시 정보. 사진의 본질과 사진적 행위를 탐구하는 오철민, 라인석 작가의 2인전 소개 및 전시 작품 설명.',
+      source: 'Gallery Bresson',
+    },
+    {
+      url: 'https://www.jungle.co.kr/magazine/201438',
+      title: "라인석 전, '사건 으로부터, 로부터' 개최",
+      description:
+        '정글매거진 보도. 사진을 촉각적 매체로 보고 디지털 이미지를 인위적으로 긁어내어 프린트하는 독특한 작업방식의 라인석 작가 개인전 소식. 성수동 갤러리 구피에서 touch 프로젝트 중심 전시.',
+      source: '정글매거진',
+    },
+    {
+      url: 'https://www.focus1.kr/news/articleView.html?idxno=62287',
+      title: "'사진가가 좋아하는 사진작가' 라인석 초대전 '화산섬 두툼한 사진'",
+      description:
+        'Focus1 보도. 제주시 한림읍 문화공간 살롱드100에서 열린 라인석 작가 초대전. A4 80gsm 종이에 글과 사진을 프린트한 파격적인 전시 형식으로 화산섬의 이야기를 담아낸 전시.',
+      source: 'Focus1',
+    },
   ],
   민병산: [
     {
