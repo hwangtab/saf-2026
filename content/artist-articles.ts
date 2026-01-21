@@ -264,13 +264,6 @@ export const artistArticles: Record<string, Article[]> = {
         '서울아트가이드 이희수 칼럼. 김레이시 작가의 작업 과정을 숨 쉬는 듯한 행위로 분석하며, 작품에 담긴 예술적 진정성과 호흡을 평론.',
       source: '서울아트가이드(달진)',
     },
-    {
-      url: 'https://www.opengallery.co.kr/artist/A0202/',
-      title: '김레이시 작가 :: 오픈갤러리',
-      description:
-        '오픈갤러리 작가 프로필. 김레이시 작가의 학력(Pratt MFA 등), 주요 전시 이력(2025 Anonymous Moments) 및 등록 작품 13점에 대한 정보 제공.',
-      source: '오픈갤러리',
-    },
   ],
   김수오: [
     {
@@ -330,6 +323,29 @@ export const artistArticles: Record<string, Article[]> = {
       description:
         "홍익대학교 AI 뮤지엄 전시 영상. 초실감 메타버스 XR 트윈 기반의 'Space Simulation' 전시 현장과 AI 미디어아트 작품 소개.",
       source: 'YouTube(홍익대)',
+    },
+  ],
+  김주희: [
+    {
+      url: 'https://www.saf2026.com/artworks/263',
+      title: '월정교 - 이미지 오버랩으로 표현한 기억의 순간',
+      description:
+        '씨앗페 2026 출품작 정보. 경주 월정교를 소재로 시간의 중첩과 기억의 오버랩을 회화적 언어로 풀어낸 김주희 작가의 작품 설명 및 작가 노트.',
+      source: '씨앗페 2026',
+    },
+    {
+      url: 'https://www.artsnculture.com/news/articleView.html?idxno=4796',
+      title: '김주희 - 그리움과 시간의 중첩을 담다',
+      description:
+        '아츠앤컬쳐 인터뷰. ‘그리다’라는 행위를 통해 그리운 장소와 찰나의 순간을 겹쳐 그리는 김주희 작가의 예술적 영감과 작업 철학 탐구.',
+      source: '아츠앤컬쳐',
+    },
+    {
+      url: 'https://www.artfield.co.kr/blank-8',
+      title: '작가 인터뷰 - 김주희 ‘Overlap Korea’',
+      description:
+        '아트필드 갤러리 인터뷰. 한국의 풍경을 독특한 오버랩 기법으로 재해석한 ‘Overlap Korea’ 시리즈에 담긴 의미와 작가의 작업 과정 소개.',
+      source: '아트필드 갤러리',
     },
   ],
   김주호: [
@@ -955,6 +971,29 @@ export const artistArticles: Record<string, Article[]> = {
       source: '프라임헤럴드',
     },
   ],
+  김지영: [
+    {
+      url: 'https://topclass.chosun.com/news/articleView.html?idxno=1445',
+      title: '자연주의 도예가 김지영 - 자연을 닮은 간결한 그릇',
+      description:
+        '조선일보 톱클래스 기사. 생활 속 도예를 추구하며 꽃과 풀잎, 나무 등 자연의 소재를 간결한 선과 절제된 색으로 담아내는 김지영 도예가의 작품 세계.',
+      source: '조선일보(톱클래스)',
+    },
+    {
+      url: 'http://www.bsnews.kr/news/articleView.html?idxno=78435',
+      title: '도예가 김지영 - 흙과 불로 빚은 삶의 층위',
+      description:
+        '백제신문 보도. 자연과의 교감을 통해 탄생한 도자 작품들과 일상의 소소한 행복을 흙으로 빚어내는 김지영 작가의 예술적 행보 조명.',
+      source: '백제신문(BS News)',
+    },
+    {
+      url: 'https://www.ccnnews.co.kr/news/articleView.html?idxno=395149',
+      title: '대전문화재단 차세대artiStar 김지영 도예가 개인전 ‘겹’',
+      description:
+        '충청뉴스 전시 뉴스. 시간과 감정의 축적을 주제로 한 개인전 ‘겹’을 통해 흙의 변화와 생명력을 보여주는 김지영 청년 도예가의 전시 소식.',
+      source: '충청뉴스(CCN News)',
+    },
+  ],
   라인석: [
     {
       url: 'https://www.news-art.co.kr/news/article.html?no=26326',
@@ -992,13 +1031,6 @@ export const artistArticles: Record<string, Article[]> = {
     },
   ],
   강석태: [
-    {
-      url: 'https://www.opengallery.co.kr/artist/A1368/',
-      title: '강석태 작가 :: 오픈갤러리',
-      description:
-        '추계예술대학교 문화예술학 박사, [개인전] 2025 "안녕! 스타비" (태은고현갤러리, 거제), 등록작품 29점. 오픈갤러리에서 강석태 작가의 작품과 이력, 전시소식, 인터뷰 등 자세한 정보를 확인하세요.',
-      source: '오픈갤러리',
-    },
     {
       url: 'https://urbanbreak.com/kang-seoktae/',
       title: 'KANG SEOKTAE – 어반브레이크',
@@ -1049,24 +1081,8 @@ export const artistArticles: Record<string, Article[]> = {
       source: '신세계갤러리',
     },
   ],
-  김영서: [
-    {
-      url: 'https://www.opengallery.co.kr/artist/A2131/',
-      title: '김영서 작가 :: 오픈갤러리',
-      description:
-        '홍익대학교 동양화 석사, [개인전] 2022 사라지는 것들의 아름다움 (사이아트스페이스), 등록작품 36점. 오픈갤러리에서 김영서 작가의 작품과 이력, 전시소식, 인터뷰 등 자세한 정보를 확인하세요.',
-      source: '오픈갤러리',
-    },
-  ],
-  김주희: [
-    {
-      url: 'https://www.opengallery.co.kr/artist/A0433/',
-      title: '김주희 작가 :: 오픈갤러리',
-      description:
-        '홍익대학교 회화 석사, [개인전] 2024 화양연화 (아트스페이스H), 등록작품 253점. 오픈갤러리에서 김주희 작가의 작품과 이력, 전시소식, 인터뷰 등 자세한 정보를 확인하세요.',
-      source: '오픈갤러리',
-    },
-  ],
+  김영서: [],
+
   리호: [
     {
       url: 'http://www.daljin.com/display/D089952',
@@ -1093,15 +1109,7 @@ export const artistArticles: Record<string, Article[]> = {
       source: '광주미술문화연구소',
     },
   ],
-  변경희: [
-    {
-      url: 'https://www.opengallery.co.kr/artist/A0781/',
-      title: '변경희 작가 :: 오픈갤러리',
-      description:
-        '백석예술대학교 회화 학사, [개인전] 2025 ●에서 점으로 (사이아트 스페이스(더플럭스)), 등록작품 75점. 오픈갤러리에서 변경희 작가의 작품과 이력, 전시소식, 인터뷰 등 자세한 정보를 확인하세요.',
-      source: '오픈갤러리',
-    },
-  ],
+  변경희: [],
   조이락: [
     {
       url: 'https://www.youtube.com/watch?v=8kz3o7V-89E',
@@ -1226,15 +1234,7 @@ export const artistArticles: Record<string, Article[]> = {
       source: '미술인',
     },
   ],
-  이유지: [
-    {
-      url: 'https://www.opengallery.co.kr/artist/A1988/',
-      title: '이유지 작가 :: 오픈갤러리',
-      description:
-        '수원대학교 조형예술학부 서양화과 학사, [개인전] 2025 바램이 머물고 다시 일어서는곳 (아트보다갤러리), 등록작품 44점. 오픈갤러리에서 이유지 작가의 작품과 이력, 전시소식, 인터뷰 등 자세한 정보를 확인하세요.',
-      source: '오픈갤러리',
-    },
-  ],
+  이유지: [],
   이광수: [
     {
       url: 'https://m.blog.naver.com/foto3570/220255907243',
@@ -1386,6 +1386,20 @@ export const artistArticles: Record<string, Article[]> = {
         '경기미술품활성화사업(아트경기)은 경기도 예술가의 지속적인 창작 활동과 건강한 미술시장의 발전을 위합니다',
       source: '아트경기',
     },
+    {
+      url: 'https://artnedition.com/artist/detail/kim-tae-kyun/?srsltid=AfmBOoq7yBEEvDXbqfbVX9fGV8xze7IePcAlcISLP86wRfRQYag0crM-',
+      title: '사진작가 김태균 프로필 - ‘블루’를 고집하며 바다를 담다',
+      description:
+        '아트앤에디션 작가 소개. 미국 이민 후 한국으로 돌아와 패션 사진을 거쳐 1997년부터 순수 사진 작업에 몰두하며 시시각각 변하는 바다의 파랑을 포착하는 김태균 작가의 예술 여정.',
+      source: '아트앤에디션',
+    },
+    {
+      url: 'https://ko.b-treegallery.com/%EA%B9%80%ED%83%9C%EA%B7%A0-kim-taikyun-b-1956/',
+      title: 'THE BLUE - 사진작가 김태균의 수평선과 바다 이야기',
+      description:
+        '비트리 갤러리 기획전 정보. 20여 년간 새벽 수평선 위의 하늘과 바다를 렌즈에 담아온 김태균 작가의 정체성이 투영된 ‘블루’ 시리즈와 작품에 담긴 철학적 사유 소개.',
+      source: '비트리 갤러리',
+    },
   ],
   박은선: [
     {
@@ -1441,15 +1455,7 @@ export const artistArticles: Record<string, Article[]> = {
       source: '한겨레',
     },
   ],
-  한미영: [
-    {
-      url: 'https://www.opengallery.co.kr/artist/A2060/',
-      title: '한미영 작가 :: 오픈갤러리',
-      description:
-        '단국대학교 서양화과 학사, [개인전] 2025 문래아트페어 (문래 아트필드 갤러리), 등록작품 20점. 오픈갤러리에서 한미영 작가의 작품과 이력, 전시소식, 인터뷰 등 자세한 정보를 확인하세요.',
-      source: '오픈갤러리',
-    },
-  ],
+  한미영: [],
   양순열: [
     {
       url: 'https://www.khan.co.kr/article/202209141556001',
@@ -1475,15 +1481,6 @@ export const artistArticles: Record<string, Article[]> = {
       description:
         '서촌 TYA는 11월 4일부터 17일까지 류호식 작가의 초대 개인전 를 개최한다. 류호식 작가는 2022년 5월 서촌 TYA에서 진행되었던 20인 기획전 《들여다보다》에 참여했던 작가이다.에서는 3D 프린팅 기법과 페이퍼 클레이를 통해 작품에 활용되는 소재의 다양성을 보여주고, 20인 전에서 보여주지 못했던 신작으로 공간을 채울 예정이다.초대전에 출품되는 ...',
       source: '뉴스브라이트',
-    },
-  ],
-  김지영: [
-    {
-      url: 'http://topclass.chosun.com/news/articleView.html?idxno=1445',
-      title: '자연주의 도예가 김지영',
-      description:
-        '그의 그릇은 자연을 소재로 하고 자연 속에서 탄생한다. 꽃 한 송이나 풀잎 하나, 혹은 나무 한 그루가 그릇을 가득 채우고 있다. 디테일을 생략한 간결한 선, 색도 극히 제한했다. 자신의 얼굴에 색칠을 하지 않듯 그는 자신이 만드는 그릇에도 색칠을 하지 않는다.내 그릇이 그의 생활 속으로 들어가 푸른 나무 같은 활짝 핀 꽃 같은 풀잎 같은 즐거움이 되기를올...',
-      source: '톱클래스',
     },
   ],
   김태희: [
@@ -1531,15 +1528,7 @@ export const artistArticles: Record<string, Article[]> = {
       source: '아트바바',
     },
   ],
-  김유진: [
-    {
-      url: 'https://www.opengallery.co.kr/artist/A1349/',
-      title: '김유진 작가 :: 오픈갤러리',
-      description:
-        '수원대학교 한국화과 학사, [개인전] 2023 개인의 장면 (인천 서구 공실상가 / 서구문화재단 지원), 등록작품 61점. 오픈갤러리에서 김유진 작가의 작품과 이력, 전시소식, 인터뷰 등 자세한 정보를 확인하세요.',
-      source: '오픈갤러리',
-    },
-  ],
+  김유진: [],
   고현주: [
     {
       url: 'https://www.artspacelumos.com/60',
