@@ -118,6 +118,9 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 {/* 온라인 구매 버튼 - 가격이 있고, shopUrl이 있고, 판매되지 않은 경우에만 표시 */}
                 {artwork.price && artwork.price !== '문의' && artwork.shopUrl && !artwork.sold && (
                   <>
+                    {/* Purchase Guide */}
+                    <PurchaseGuide className="mb-6" />
+
                     <Button
                       href={artwork.shopUrl}
                       variant="primary"
@@ -148,9 +151,6 @@ export default async function ArtworkDetailPage({ params }: Props) {
                     <span className="text-sm font-medium">이메일 문의</span>
                   </Button>
                 </div>
-
-                {/* Purchase Guide */}
-                <PurchaseGuide className="mt-8" />
 
                 {/* Campaign Support Message */}
                 <SupportMessage className="mt-6" />
