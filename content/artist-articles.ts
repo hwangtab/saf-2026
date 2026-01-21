@@ -2000,11 +2000,48 @@ export const artistArticles: Record<string, Article[]> = {
   이지은: [],
   이현정: [
     {
+      url: 'https://www.artbava.com/exhibits/%EC%9D%B4%ED%98%84%EC%A0%95-%EA%B0%9C%EC%9D%B8%EC%A0%84-%ED%8C%BD%EC%9D%B4%EC%9D%98-%EB%8B%AC-%EA%B9%80%EC%B9%98%EC%99%80-%EC%9E%90%ED%99%94%EC%83%81',
+      title: "이현정 개인전: '팽이의 달' 김치와 자화상",
+      description:
+        '갤러리호호에서 열린 이현정 개인전. "팽이가 돈다"라는 작가 노트와 함께 생의 에너지가 가득한 김치와 자화상을 주제로 한 작품 세계 소개.',
+      source: 'Artbava',
+    },
+    {
+      url: 'https://m.artinpost.co.kr/product/contents.html?product_no=4934&cate_no=26&display_group=1',
+      title: '작가 이현정 ‘제2회 후쿠오카 아트 어워드’ 수상',
+      description:
+        '이현정 작가가 일본 후쿠오카시 미술관에서 마련한 ‘제2회 후쿠오카 아트 어워드’를 수상했다는 소식. 괄목할 만한 활동과 앞으로의 도약에 대한 기대를 반영.',
+      source: 'Public Art',
+    },
+    {
+      url: 'https://www.hansik.or.kr/magazines/magazineDetail/245/3971?menuSn=',
+      title: '예술로 피어난 가장 익숙한 한식, 김치 — 이현정 <김치> 시리즈',
+      description:
+        '한식진흥원 매거진 기사. 이현정 작가에게 김치는 단순한 음식 이상이며, 작가가 살아온 시간과 발효의 과정을 자화상으로 풀어낸 <김치> 시리즈 소개.',
+      source: '한식 읽기 좋은 날',
+    },
+    {
+      url: 'https://www.seoulilbo.com/news/articleView.html?idxno=524357',
+      title: '‘김치같은 심장, 심장같은 김치’를 본다 — 이현정 작',
+      description:
+        "서울일보 보도. 갤러리호호에서 열린 이현정 작가의 '팽이의 달 김치와 자화상' 전시회 소식. 인체를 닮은 처연한 김치 그림들을 통해 작가의 의도를 조명.",
+      source: '서울일보',
+    },
+    {
       url: 'https://cicamuseum.com/lee-hyunjeong-solo-exhibition/',
-      title: 'LEE HYEONJEONG Solo Exhibition: 김치\_숨',
+      title: 'LEE HYEONJEONG Solo Exhibition: 김치_숨',
       description:
         '이현정 개인전 3-A Gallery, CICA Museum March 30 – April 3, 2022 2022.03.30 – 04.03',
       source: 'CICA Museum',
+    },
+  ],
+  이혜선: [
+    {
+      url: 'https://deart82.com/artist/401',
+      title: '이혜선 작가 — 디아트82 (De Art82)',
+      description:
+        '인간과 삶 사이의 공간, 고통과 슬픔을 넘어 희망으로 가는 길을 그리는 이혜선 작가. 액션 페인팅과 드리핑 기법을 사용한 ‘Glory Moment’ 시리즈 등 작품 세계 및 이력 소개.',
+      source: '디아트82',
     },
   ],
   이호철: [
