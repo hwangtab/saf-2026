@@ -1119,6 +1119,122 @@ export const artistArticles: Record<string, Article[]> = {
       source: 'The Artro',
     },
   ],
+  민정See: [
+    {
+      url: 'https://hwami.org/portfolio/minjungsee/',
+      title: '민정See - 화랑미술제 Galleries Art Fair',
+      description:
+        '화랑미술제 작가 소개. 민정See 작가의 작품 세계 "황량한 기억의 표상", "빛 이후 표상", "얇고 판판한 상" 등 시리즈 소개.',
+      source: '화랑미술제(Galleries Art Fair)',
+    },
+    {
+      url: 'https://www.mmca.go.kr/artStudio/artistDetail.do?cinArtId=201311100000856',
+      title: '민정See(김민정) | 국립현대미술관 레지던시',
+      description:
+        '국립현대미술관 레지던시 입주 작가 정보. 민정See(김민정) 작가의 프로필, 학력, 전시 이력 소개.',
+      source: '국립현대미술관(MMCA)',
+    },
+    {
+      url: 'https://www.gallerydasun.com/%EB%AF%BC%EC%A0%95see',
+      title: '민정See | 갤러리다선 Gallery Dasun',
+      description:
+        '갤러리다선 전속/소개 작가 페이지. 민정See 작가의 CV, 개인전 및 그룹전 이력, 작품 이미지 등.',
+      source: '갤러리다선',
+    },
+    {
+      url: 'https://www.artbava.com/exhibits/%EB%AF%BC%EC%A0%95see-plastic-society-%EA%B0%80%EB%83%90%EC%82%AC8%EA%B7%9C%EA%B1%B071%ED%8C%8C9%EB%83%90%EB%83%90',
+      title: '민정See : Plastic Society - 아트바바',
+      description:
+        '아트바바 전시 아카이브. 대안공간 눈에서 열린 "Plastic Society" 개인전 정보. 플라스틱을 주제로 환경과 가치관을 묻는 작가의 작업 노트와 작품 소개.',
+      source: '아트바바(Artbava)',
+    },
+    {
+      url: 'https://www.jungle.co.kr/magazine/10041',
+      title: '민정See 눈으로 바라본 플라스틱 세상 - 정글매거진',
+      description:
+        '정글매거진 디자인 매거진 기사. 플라스틱으로 대변되는 현대 사회의 일면을 포착하고 비판하는 민정See 작가의 "Plastic Society" 전시와 작품 세계 심층 인터뷰.',
+      source: '정글매거진',
+    },
+    {
+      url: 'https://www.marieclairekorea.com/culture/2025/04/galleriesartfair-minjungsee/',
+      title: '2025 화랑미술제 특별전 선정 작가 인터뷰 #민정See',
+      description:
+        "마리끌레르 선정 화랑미술제 특별전 'ZOOM IN' 참여 신진 작가 10인 인터뷰. 민정See 작가의 예술관과 작업 이야기가 담긴 기사.",
+      source: '마리끌레르 코리아(Marie Claire Korea)',
+    },
+  ],
+  박불똥: [
+    {
+      url: 'https://monthlyart.com/02-artist/special-artist-%EB%B0%95%EB%B6%88%EB%98%A5/',
+      title: 'SPECIAL ARTIST 박불똥 - 월간미술',
+      description:
+        '월간미술 스페셜 아티스트. 1980년대 민중미술의 대표 아이콘 박불똥 작가의 작품 세계와 예술 철학을 조명하는 특집 기사.',
+      source: '월간미술',
+    },
+    {
+      url: 'https://mediacityseoul.kr/ko/yesterday/participants/park-buldong',
+      title: '박불똥 - 서울미디어시티비엔날레',
+      description:
+        '서울미디어시티비엔날레 참여 작가 박불똥 소개. 작가의 주요 약력과 비엔날레 참여 정보.',
+      source: '서울미디어시티비엔날레',
+    },
+    {
+      url: 'https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0001644127',
+      title: "대통령에게 '불똥' 떨구는 사람이 있습니다 - 오마이뉴스",
+      description:
+        '오마이뉴스 기사. 관훈갤러리에서 열린 박불똥 작가의 "형이하 악" 전시 리뷰. 사진 콜라주 기법으로 시대의 모순을 풍자하는 작가의 작업 세계 소개.',
+      source: '오마이뉴스',
+    },
+    {
+      url: 'https://www.hani.co.kr/arti/area/area_general/743439.html',
+      title: '‘박’ 터지고 ‘불똥’ 튀게 ‘세월아 나오너라’ - 한겨레',
+      description:
+        '한겨레 기사. 광주 메이홀에서 열린 박불똥 작가의 신작 전시 소식. 포토 콜라주로 유명한 민중미술가 박불똥의 신작과 전시 의의 소개.',
+      source: '한겨레',
+    },
+    {
+      url: 'https://www.jungle.co.kr/magazine/8820',
+      title: '하찮은 것들의 귀환 : 박불똥 - 정글매거진',
+      description:
+        '정글매거진 기사. 트렁크갤러리 "못-쓸-것" 전시 리뷰. 주변의 하찮은 사물들을 통해 자본주의와 권력을 비판하는 박불똥 작가의 사진 작업 소개.',
+      source: '정글매거진',
+    },
+    {
+      url: 'https://photohistory.tistory.com/14602',
+      title: "세상의 근본은 변하지 않는다고 말하는 신학철 박불똥 작가의 '현대사 몽타주'",
+      description:
+        '사진은 권력이다 블로그. 금나래아트홀에서 열린 "신학철, 박불똥의 현대사 몽타주" 전시 관람기 및 작품 리뷰.',
+      source: '사진은 권력이다(Tistory)',
+    },
+    {
+      url: 'http://www.critic-al.org/?p=4182',
+      title: '홍태림_박불똥을 다시 읽기 위한 포석(布石) - 크리틱-칼',
+      description:
+        '문화비평 웹진 크리틱-칼. 미술평론가 홍태림이 쓴 박불똥 작가론. 박불똥의 작품 세계를 재해석하고 그 의미를 고찰하는 비평글.',
+      source: '크리틱-칼',
+    },
+    {
+      url: 'https://www.kyeonggi.com/article/201108310418954',
+      title: '[창작의 산실] 박불똥 민중화가 - 경기일보',
+      description:
+        '경기일보 "창작의 산실" 인터뷰. 박불똥 작가의 작업실을 방문하여 그의 예술 인생과 작업 철학을 들어본 기사.',
+      source: '경기일보',
+    },
+    {
+      url: 'http://www.critic-al.org/?p=4178',
+      title: '홍태림, 박불똥 인터뷰 - 크리틱-칼',
+      description:
+        '문화비평 웹진 크리틱-칼. 미술평론가 홍태림과 박불똥 작가의 심층 인터뷰. 작가의 육성으로 듣는 작품 세계와 예술관.',
+      source: '크리틱-칼',
+    },
+    {
+      url: 'https://www.hani.co.kr/arti/culture/culture_general/834561.html',
+      title: '민예총 이사장에 박불똥 작가',
+      description:
+        '한국민족예술단체총연합(한국민예총) 신임 이사장에 민중미술 작가인 박불똥(62)씨가 선임됐다. 한국민예총은 지난달 28일 정기총회를 열고 이사장에 박불똥, 부이사장에 미술평론가 강성원씨를 선출했다고 4일 밝혔다. 올해 설립 30돌을 맞은 한국민예총은 이날 결의문을 발표하',
+      source: '한겨레',
+    },
+  ],
   서금앵: [
     {
       url: 'http://www.daljin.com/display/D102264',
@@ -1206,15 +1322,7 @@ export const artistArticles: Record<string, Article[]> = {
       source: '서울아트가이드',
     },
   ],
-  민정See: [
-    {
-      url: 'https://www.marieclairekorea.com/culture/2025/04/galleriesartfair-minjungsee/',
-      title: '2025 화랑미술제 특별전 선정 작가 인터뷰 #민정See',
-      description:
-        '국내 최장수 아트페어인 화랑미술제가 4월 16일부터 20일까지 5일간 서울 코엑스 A&B홀에서 열립니다. 역대 최대 규모로, 168개의 유수 갤러리와 함께 엄선된 작품을 선보일 예정인데요. 그중 신진 작가 특별전 에 참여하는 10인의 작가와 함께한 인터뷰를 공개합니다.',
-      source: '마리끌레르',
-    },
-  ],
+
   박성완: [
     {
       url: 'http://www.gwangjuart.com/bbs/board.php?bo_table=artist01&wr_id=111',
@@ -1233,15 +1341,7 @@ export const artistArticles: Record<string, Article[]> = {
       source: 'BTN뉴스(YouTube)`',
     },
   ],
-  박불똥: [
-    {
-      url: 'https://www.hani.co.kr/arti/culture/culture_general/834561.html',
-      title: '민예총 이사장에 박불똥 작가',
-      description:
-        '한국민족예술단체총연합(한국민예총) 신임 이사장에 민중미술 작가인 박불똥(62)씨가 선임됐다. 한국민예총은 지난달 28일 정기총회를 열고 이사장에 박불똥, 부이사장에 미술평론가 강성원씨를 선출했다고 4일 밝혔다. 올해 설립 30돌을 맞은 한국민예총은 이날 결의문을 발표하',
-      source: '한겨레',
-    },
-  ],
+
   박지혜: [
     {
       url: 'https://homa.hongik.ac.kr/homa/0301.do?mode=view&articleNo=120639&title=%EC%8B%9C%EA%B0%81%EC%A0%81+%EB%8C%80%ED%99%94+Visual+Dialogues+%3A+between+Form+and+Essence',
