@@ -1401,6 +1401,50 @@ export const artistArticles: Record<string, Article[]> = {
       source: '비트리 갤러리',
     },
   ],
+  김태희: [
+    {
+      url: 'https://art-moado.com/90/?bmode=view&idx=10430027',
+      title: '김태희 작가 포트폴리오 및 작품 소개 - 모아도(Moado)',
+      description:
+        '예술가와 컬렉터를 잇는 플랫폼 모아도에 등록된 김태희 작가의 도예 작품 포트폴리오. 전통적인 백자의 미학을 현대적인 감각으로 재해석한 조형미를 확인할 수 있습니다.',
+      source: '모아도',
+    },
+    {
+      url: 'https://www.dbltv.com/news/articleView.html?idxno=24211',
+      title: '목포생활도자박물관, 김태희 작가 ‘청화백자, 그림이 되다’ 초대전 개최',
+      description:
+        '뉴스탑전남 보도. 파주를 중심으로 활동하며 청화백자의 현대적 변용을 탐구하는 김태희 작가의 목포생활도자박물관 특별기획전 소식 및 주요 작품 소개.',
+      source: '뉴스탑전남',
+    },
+    {
+      url: 'https://www.sfac.or.kr/artspace/artspace/sindang_writerView.do?rsdIdx=89',
+      title: '신당창작아케이드 입주작가 프로필 - 도예가 김태희',
+      description:
+        '서울문화재단 신당창작아케이드 입주 작가 정보. 백자 점토를 조각하여 회화적 평면성을 담아내는 김태희 작가의 독창적인 ‘도자조각화’ 작업과 주요 활동 이력.',
+      source: '서울문화재단',
+    },
+    {
+      url: 'https://www.cerazine.co.kr/news/view.php?idx=27033&sm=w_total&stx=%EA%B9%80%ED%83%9C%ED%9D%AC&stx2=&w_section1=&sdate=&edate=',
+      title: '전시리뷰 - 김태희 〈도자조각화〉전 (H 컨템포러리 갤러리)',
+      description:
+        '세라진(Cerazine) 평론. 백자 점토로 성형한 얇은 흙판을 한땀 한땀 조각하여 정성을 담아내는 김태희 작가의 개인전 리뷰 및 작품 세계 심층 분석.',
+      source: '세라진(Cerazine)',
+    },
+    {
+      url: 'https://www.jjan.kr/article/20120910447050',
+      title: '제8회 온고을미술대전 종합대상에 공예도자 부문 김태희씨',
+      description:
+        '전북일보 보도. 전주에서 개최된 온고을미술대전에서 ‘흑단 어문 대발’을 출품하여 공예도자 부문 종합대상을 수상한 김태희 작가의 수상 소식.',
+      source: '전북일보',
+    },
+    {
+      url: 'http://www.cerazine.co.kr/m/view.php?idx=26244',
+      title: '<파주~예술로 잇다>전',
+      description:
+        '<파주~예술로 잇다>전 6.21~9.25 파주 한향림옹기박물관 <파주-예술로 잇다>전은 파주시에서 지원하는 지역문화예술 플랫폼 육성사업의 일환으로 마련된 전시다. 이번 전시는 옹기로 대표되는 한국 전통문화에 담긴 역사와 의미, 형태, 문양 등 파주지역에 거주하는 도자, 유리, 섬유, 민화 작가 5명의 시선으로 풀어냈다.',
+      source: '세라진(Cerazine)',
+    },
+  ],
   박은선: [
     {
       url: 'https://www.iartpark.com/exhibitions/51-beyond-here/',
@@ -1417,6 +1461,34 @@ export const artistArticles: Record<string, Article[]> = {
       description:
         '현대 진경산수화와 계화: 정중동(靜中動)의 미학 최경현(천안시립미술관 관장) Ⅰ. 들어가는 말 금릉 김현...',
       source: '시중재(작가 블로그)`',
+    },
+    {
+      url: 'https://namu.wiki/w/%EA%B8%88%EB%A6%89%20%EA%B9%80%ED%98%84%EC%B2%A0(%EC%9E%91%EA%B0%80)',
+      title: '금릉 김현철(작가) - 나무위키',
+      description:
+        '전통 동양화를 전공하고 진경산수화의 맥을 잇는 금릉 김현철 작가의 생애와 예술 세계. 정선과 단원의 화풍을 현대적으로 재해석하며 초상화와 산수화에서 독보적인 영역을 구축한 이력 수록.',
+      source: '나무위키',
+    },
+    {
+      url: 'https://www.youtube.com/watch?v=k0iyVDx_t1o',
+      title: '금릉 김현철의 회화세계 - 진경(眞景)과 시중재',
+      description:
+        '진경(眞景)의 참된 의미를 찾아가는 김현철 작가의 다큐멘터리 영상. 겸재 정선의 정신을 현대적 필치로 되살려낸 작품들과 작가의 작업실 시중재에서의 고뇌와 창작 과정을 담은 영상.',
+      source: 'YouTube(신빛찍다)',
+    },
+    {
+      url: 'http://www.sctoday.co.kr/news/articleView.html?idxno=44342',
+      title: '겸재정선미술관 김현철 초대개인전 《전신(傳神)과 진경(眞景)》',
+      description:
+        '서울문화투데이 보도. 금릉 김현철 작가의 초상화와 산수화를 아우르는 초대 개인전 소식. 1부 초상화 조망 ‘전신’과 2부 산수화 조망 ‘진경’으로 나누어 선보인 전시 상세 내용.',
+      source: '서울문화투데이',
+    },
+    {
+      url: 'https://www.newsis.com/view/NISX20250220_0003072011',
+      title: '"겸재 정선 그림인 줄"... 금릉 김현철 \'금강내산도\' 깜짝',
+      description:
+        '뉴시스 보도. 겸재 정선을 오마주한 ‘금강내산도’와 한라산 영실을 주제로 한 신작 ‘영실’을 통해 한국화의 새로운 지평을 열어가는 김현철 작가의 예술적 성과 조명.',
+      source: '뉴시스',
     },
   ],
   Salnus: [
@@ -1483,15 +1555,7 @@ export const artistArticles: Record<string, Article[]> = {
       source: '뉴스브라이트',
     },
   ],
-  김태희: [
-    {
-      url: 'http://www.cerazine.co.kr/m/view.php?idx=26244',
-      title: '<파주~예술로 잇다>전',
-      description:
-        '<파주~예술로 잇다>전 6.21~9.25 파주 한향림옹기박물관 <파주-예술로 잇다>전은 파주시에서 지원하는 지역문화예술 플랫폼 육성사업의 일환으로 마련된 전시다. 이번 전시는 옹기로 대표되는 한국 전통문화에 담긴 역사와 의미, 형태, 문양 등 파주지역에 거주하는 도자, 유리, 섬유, 민화 작가 5명의 시선으로 풀어냈다. 도예작가 손창귀는 마당 한 켠에 풍 ...',
-      source: '세라진(Cerazine)',
-    },
-  ],
+
   김정원: [
     {
       url: 'https://www.artkoreatv.com/news/articleView.html?idxno=91237',
