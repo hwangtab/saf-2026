@@ -835,15 +835,6 @@ export const artistArticles: Record<string, Article[]> = {
       source: 'Kiaf SEOUL',
     },
   ],
-  오윤: [
-    {
-      url: 'http://www.daljin.com/column/22480',
-      title: '오윤 : 민중의 삶을 대변한 판화가',
-      description:
-        'copyright © 2012 KIM DALJIN ART RESEARCH AND CONSULTING. All Rights reserved 이 페이지는 서울아트가이드에서 제공됩니다. This page provided by Seoul Art Guide. 다음 브라우져 에서 최적화 되어있습니다. This page optimized for these browser...',
-      source: '서울아트가이드',
-    },
-  ],
 
   아트만두: [
     {
@@ -1617,10 +1608,11 @@ export const artistArticles: Record<string, Article[]> = {
 
   신연진: [
     {
-      url: 'https://keeptiq.com/all/?idx=816',
-      title: '신연진, Oriental Painting Series - Landscape',
-      description: '나만의 작은 그림 가게 - 1:1 그림 매칭 서비스, 소장의 경험을 더욱 특별하게',
-      source: '킵티크',
+      url: 'https://asyaaf.chosun.com/artistroom/?artist_idx=3110',
+      title: '신연진 - 아시아프(ASYAAF)',
+      description:
+        '아시아프(ASYAAF) 아티스트 룸. 잡지를 주재료로 사용하여 연출된 공간 속 화려한 이미지와 색채를 재구성하는 신연진 작가의 작품 세계와 프로필.',
+      source: '조선일보 아시아프',
     },
   ],
   신예리: [
@@ -1642,6 +1634,139 @@ export const artistArticles: Record<string, Article[]> = {
     },
   ],
 
+  양순열: [
+    {
+      url: 'https://namu.wiki/w/%EC%96%91%EC%88%9C%EC%97%B4(%EC%9E%91%EA%B0%80)',
+      title: '양순열(작가) - 나무위키',
+      description:
+        '대한민국의 미술가 양순열의 생애, 경력, 작품 활동(개인전, 단체전) 및 수상 내역 등을 상세히 다룬 나무위키 문서.',
+      source: '나무위키',
+    },
+    {
+      url: 'http://www.hakgojae.com/page/2-1-view.php?artist_num=392',
+      title: '양순열 - 학고재 갤러리',
+      description:
+        '학고재 갤러리 소속 작가 양순열의 프로필, 비평글, 주요 작품 이미지 및 전시 이력.',
+      source: '학고재 갤러리',
+    },
+    {
+      url: 'https://www.daljin.com/?WS=21&BC=gdv&GNO=D075125',
+      title: '양순열전: 玄玄 - 서울아트가이드',
+      description: '인디프레스에서 열린 양순열 개인전 "玄玄" 전시 정보 및 작가 소개.',
+      source: '서울아트가이드',
+    },
+    {
+      url: 'https://www.youtube.com/watch?v=2GAuYGFHGxc',
+      title: '[남현정 기자가 만난 문화인] 작가 양순열 - YouTube',
+      description:
+        'YouTube 영상. 남현정 기자가 만난 문화인 인터뷰 시리즈. 양순열 작가의 작품 세계와 예술 철학에 대한 심층 인터뷰.',
+      source: 'YouTube',
+    },
+    {
+      url: 'https://www.khan.co.kr/article/202209141556001',
+      title: "예술혼으로 그리고 빚은 '오똑이', 모성의 힘을 일깨우다",
+      description:
+        '오뚝이가 중진의 양순열 작가(63)에게는 모성이다. 어떤 고난과 역경에도 다시 오뚝오뚝 일어서서 자식을 품어안는 엄마의 사랑, 마음을 오뚝이에 녹여낸다. 나아가 우주 만물의 생명력 근원인 모성의 회복이야 말로 세상의 온갖 문제들을 풀 수있을 것으로 본다. “모성은 우주와 한마음이 되고 인간뿐아니라 존재하는 모든 것들과 더불어 나아갈 때 가능하다. 우리...',
+      source: '경향신문',
+    },
+  ],
+
+  예미킴: [
+    {
+      url: 'https://www.d-art.co.kr/news/articleView.html?idxno=3863',
+      title: '[강의실 밖 그림 이야기] 공생(共生), 함께 사는 세상을 꿈꾸다 - 작가 예미 킴',
+      description:
+        '데일리아트 칼럼. 정병헌 교수의 "강의실 밖 그림 이야기". 예미 킴 작가의 작품에 나타난 공생의 의미와 동화적 상상력, 환경 및 생명 존중 메시지 분석.',
+      source: '데일리아트',
+    },
+    {
+      url: 'https://www.misulin.co.kr/news/articleView.html?idxno=1466',
+      title: "[전시, 여기어때] 갤러리 다온 '예미킴' 작가 개인展 'Surreal Dreams'",
+      description:
+        '미술여행 기사. 대전 갤러리 다온에서 열린 예미킴 개인전 "Surreal Dreams" 소개. 거리 사진에 가필하고 반려동물을 합성하여 초현실적 환상 세계를 구현한 작품들.',
+      source: '미술여행신문',
+    },
+    {
+      url: 'https://www.jejunolda.com/nolda/all.htm?act=view&seq=9900',
+      title: 'Eternity – 예미킴 개인전',
+      description: '제주인놀다. 아트인 명도암에서 열린 예미킴 개인전 "Eternity" 전시 정보.',
+      source: '제주인놀다',
+    },
+    {
+      url: 'https://www.handmk.com/news/articleView.html?idxno=15749',
+      title: '빛의 벙커, 봄 풍경 포토타임 이벤트 진행',
+      description:
+        "[핸드메이커 곽혜인 기자] 복합문화예술공간 '빛의 벙커'가 청년 예술가와 협업하여 봄 콘셉트의 포토타임을 위한 새로운 인터미션 콘텐츠를 공개했다.제주 성산에 위치한 ‘빛의 벙커’는 청년 예술가 예미킴과 협업하여 새로운 포토타임 콘텐츠를 기획하고 제작함으로써 창작 예술 활동 기회 확대와 문화 교류의 장을 마련했다. 이번에 선보이는 포토타임 콘텐츠는 여행지, ...",
+      source: '핸드메이커',
+    },
+  ],
+
+  오윤: [
+    {
+      url: 'https://namu.wiki/w/%EC%98%A4%EC%9C%A4(%ED%99%94%EA%B0%80)',
+      title: '오윤(화가) - 나무위키',
+      description:
+        '80년대 민중미술을 대표하는 판화가 오윤의 생애와 "칼노래", "도깨비" 등 주요 작품 세계를 다룬 나무위키 문서.',
+      source: '나무위키',
+    },
+    {
+      url: 'https://encykorea.aks.ac.kr/Article/E0038454',
+      title: '오윤(吳潤) - 한국민족문화대백과사전',
+      description:
+        '한국민족문화대백과사전 오윤 항목. 부산 출신으로 서울대 조소과 졸업 후 목판화 작업에 주력하여 한국 민중미술 운동에 기여한 작가의 생애와 활동.',
+      source: '한국민족문화대백과사전',
+    },
+    {
+      url: 'https://www.mmca.go.kr/exhibitions/exhibitionsDetail.do?menuId=1010000000&exhId=200904050002738',
+      title: '작고 20주기 회고전 - 오윤 : 낮도깨비 신명마당',
+      description:
+        '국립현대미술관 과천관에서 열린 오윤 작고 20주기 회고전 정보. 회화, 조소, 판화, 드로잉 등 200여 점의 작품 전시.',
+      source: '국립현대미술관',
+    },
+    {
+      url: 'https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0002230328',
+      title: "'민중 미술의 전설' 오윤을 만나다 - 오마이뉴스",
+      description:
+        '오마이뉴스 기사. 오윤 30주기 회고전을 다녀온 소감과 오윤의 예술혼에 대한 에세이.',
+      source: '오마이뉴스',
+    },
+    {
+      url: 'https://www.joongang.co.kr/article/25011693',
+      title: '수다 즐긴 판화가 오윤, 단골집 빌려 3박4일 술자리도 - 중앙일보',
+      description:
+        '중앙일보 "예술가의 한끼" 시리즈. 오윤의 인간적인 면모와 술자리 에피소드, 그리고 그의 작품 세계를 조명한 기사.',
+      source: '중앙일보',
+    },
+    {
+      url: 'https://www.artkoreatv.com/news/articleView.html?idxno=95470',
+      title: '민중의 삶을 대변한 판화가 오윤 - 아트코리아방송',
+      description:
+        '아트코리아방송. 김달진 미술자료박물관장이 소개하는 오윤 작가의 삶과 예술. 민중의 삶과 애환, 신명을 표현한 판화 작업 세계.',
+      source: '아트코리아방송',
+    },
+    {
+      url: 'https://www.khan.co.kr/article/201606132047005',
+      title: '고통스러운 시대에 민중의 희망을 새긴 ‘오윤’을 돌아본다 - 경향신문',
+      description:
+        '경향신문 기사. 오윤 30주기 회고전 소식과 함께 한국 리얼리즘 미술에서 독보적인 위치를 차지하는 오윤의 작품 세계 재조명.',
+      source: '경향신문',
+    },
+    {
+      url: 'https://v.daum.net/v/20260110145113953',
+      title: '40주기 맞은 오윤 화가의 삶과 예술세계 - 광주일보',
+      description:
+        '광주일보 기사. 오윤 작가 40주기를 맞아 그의 예술을 체계적으로 정리한 평론집 발간 소식과 저자 인터뷰.',
+      source: '광주일보(다음뉴스)',
+    },
+    {
+      url: 'http://www.daljin.com/column/22480',
+      title: '오윤 : 민중의 삶을 대변한 판화가',
+      description:
+        'copyright © 2012 KIM DALJIN ART RESEARCH AND CONSULTING. All Rights reserved 이 페이지는 서울아트가이드에서 제공됩니다. This page provided by Seoul Art Guide. 다음 브라우져 에서 최적화 되어있습니다. This page optimized for these browser...',
+      source: '서울아트가이드',
+    },
+  ],
+
   양운철: [
     {
       url: 'https://www.art-culture.co.kr/magazine_art_ca/1036',
@@ -1651,15 +1776,7 @@ export const artistArticles: Record<string, Article[]> = {
       source: '아트앤컬처',
     },
   ],
-  예미킴: [
-    {
-      url: 'https://www.handmk.com/news/articleView.html?idxno=15749',
-      title: '빛의 벙커, 봄 풍경 포토타임 이벤트 진행',
-      description:
-        "[핸드메이커 곽혜인 기자] 복합문화예술공간 '빛의 벙커'가 청년 예술가와 협업하여 봄 콘셉트의 포토타임을 위한 새로운 인터미션 콘텐츠를 공개했다.제주 성산에 위치한 ‘빛의 벙커’는 청년 예술가 예미킴과 협업하여 새로운 포토타임 콘텐츠를 기획하고 제작함으로써 창작 예술 활동 기회 확대와 문화 교류의 장을 마련했다. 이번에 선보이는 포토타임 콘텐츠는 여행지, ...",
-      source: '핸드메이커',
-    },
-  ],
+
   오아: [
     {
       url: 'https://asyaaf.chosun.com/artistroom/?artist_idx=3897',
@@ -1963,15 +2080,7 @@ export const artistArticles: Record<string, Article[]> = {
     },
   ],
   한미영: [],
-  양순열: [
-    {
-      url: 'https://www.khan.co.kr/article/202209141556001',
-      title: "예술혼으로 그리고 빚은 '오똑이', 모성의 힘을 일깨우다",
-      description:
-        '오뚝이가 중진의 양순열 작가(63)에게는 모성이다. 어떤 고난과 역경에도 다시 오뚝오뚝 일어서서 자식을 품어안는 엄마의 사랑, 마음을 오뚝이에 녹여낸다. 나아가 우주 만물의 생명력 근원인 모성의 회복이야 말로 세상의 온갖 문제들을 풀 수있을 것으로 본다. “모성은 우주와 한마음이 되고 인간뿐아니라 존재하는 모든 것들과 더불어 나아갈 때 가능하다. 우리...',
-      source: '경향신문',
-    },
-  ],
+
   이문형: [
     {
       url: 'https://koreasmartcoop.cafe24.com/product/%EC%B1%85%EA%B1%B0%EB%A6%ACx%ED%82%A4%EC%8A%A4%ED%95%B4%EB%A7%81-%EC%9D%B4%EB%AC%B8%ED%98%95/85/',
