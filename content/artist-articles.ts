@@ -912,6 +912,27 @@ export const artistArticles: Record<string, Article[]> = {
   ],
   '장천 김성태': [
     {
+      url: 'https://www.ibulgyo.com/news/articleView.html?idxno=427801',
+      title: '김성태 작가 ‘나랏말글씨’전...‘한글’의 아름다움과 조형미를 전하다',
+      description:
+        "불교신문 보도. 1세대 캘리그라피 작가 장천 김성태의 개인전 소식. 드라마 '태종 이방원', 영화 '서울의 봄' 글씨 등 한글의 조형미를 극대화한 신작들.",
+      source: '불교신문',
+    },
+    {
+      url: 'https://m.mdilbo.com/detail/SexeuZ/750802',
+      title: '´서울의 봄´ 뒤에 남은 질문···장천 김성태, 광주를 찾다',
+      description:
+        '무등일보 보도. 광주을 찾아 한강 작가의 노벨상 수상을 기리며 문학 기행에 참여한 서예가 김성태 작가의 행보와 예술을 통한 연대 이야기.',
+      source: '무등일보',
+    },
+    {
+      url: 'http://geulc21.com/brush/view.html?tname=b_brush&idx=1386',
+      title: '장천 김성태 서예·캘리그라피 — 글씨 21',
+      description:
+        '서예와 캘리그라피 전문 매거진 글씨 21. 장천 김성태의 서체와 철학이 담긴 작품 포트폴리오 및 캘리그라피의 현대적 변용에 대한 심층 소개.',
+      source: '글씨 21',
+    },
+    {
       url: 'https://www.hani.co.kr/arti/culture/music/1210138.html',
       title: '한글창제 원리를 먹붓질로 표현하다',
       description:
@@ -2046,6 +2067,20 @@ export const artistArticles: Record<string, Article[]> = {
   ],
   이호철: [
     {
+      url: 'https://rhogallery.com/ko/seoul-art-fair-94-lee-ho-chul/',
+      title: '서울아트페어-이호철 — Rho Gallery',
+      description:
+        '서울아트페어에 출품된 이호철 작가의 작품 소개. 작가만의 독특한 조형 언어와 예술적 사유를 담은 작품 전시 정보.',
+      source: '노화랑(Rho Gallery)',
+    },
+    {
+      url: 'https://www.iartpark.com/exhibitions/82-the-bright-holic-time/',
+      title: '이호철 : The Bright Holic Time — ARTPARK',
+      description:
+        '세브란스아트스페이스에서 열린 이호철 개인전. 일상 사물의 극사실적 표현을 통해 실물이 만져질 듯한 착시 효과와 회화적 서정성을 선사하는 작품들.',
+      source: 'ARTPARK',
+    },
+    {
       url: 'https://m.blog.naver.com/PostView.naver?blogId=gurimdotcom_official&logNo=222598017920',
       title: "닫힘과 열림의 경계, 이호철 작가님의 '달항아리'",
       description:
@@ -2054,6 +2089,27 @@ export const artistArticles: Record<string, Article[]> = {
     },
   ],
   이홍원: [
+    {
+      url: 'https://www.artkoreatv.com/news/articleView.html?idxno=86746',
+      title: '이홍원 초대전 — 삶의 희노애락을 담은 민화적 해학',
+      description:
+        '인사아트프라자 갤러리 초대전. 밝고 따뜻한 색채와 한지를 이용해 민족 특유의 해학을 보여주는 이홍원 작가의 다채로운 변주적 표현 조명.',
+      source: '아트코리아방송',
+    },
+    {
+      url: 'https://www.jjan.kr/article/20151124566123',
+      title: '이홍원 작가 초대전, 한지에 풀어낸 해학 토종 현대미술 선보여',
+      description:
+        '전북일보 보도. 오스갤러리 등에서 열린 초대전 소식. 서구 미술을 쫓지 않고 한국적 정서가 담긴 토종 현대미술을 개척해온 작가의 예술적 고뇌와 성취.',
+      source: '전북일보',
+    },
+    {
+      url: 'https://www.nongmin.com/article/20250917500738',
+      title: '[학교의 재탄생] “알아서 놀다 가면 되는 곳, 마동리 예술마을”',
+      description:
+        '농민신문 기획 기사. 폐교를 마동예술마을로 일궈낸 이홍원 작가 이야기. 자연 속에서 예술과 삶이 공존하는 공간을 만들어가는 작가의 철학 탐방.',
+      source: '농민신문',
+    },
     {
       url: 'https://www.news-art.co.kr/news/article.html?no=26476',
       title: '이홍원 작가 - 뉴스아트',
@@ -2064,6 +2120,20 @@ export const artistArticles: Record<string, Article[]> = {
   ],
   장경호: [
     {
+      url: 'http://www.sctoday.co.kr/news/articleView.html?idxno=22920',
+      title: '민중미술 선두주자 3인 초대전 — 신학철, 장경호, 박불똥',
+      description:
+        '서울문화투데이 전시 리뷰. ‘인디프레스 서울’ 개관 전시 소식. 권력에 저항하고 시대의 아픔을 기록해온 민중미술가 장경호의 작가 정신 조명.',
+      source: '서울문화투데이',
+    },
+    {
+      url: 'https://mun6144.tistory.com/3941',
+      title: '장경호가 말하려는 ‘형상미술’의 실체 — 인사동 사람들',
+      description:
+        '이슬옹의 예술 비평. 화가 장경호가 오랜 시간 이어온 ‘한국현대 형상회화’전의 의미와 가난한 예술가로서 지켜온 형상미술의 실체 탐구.',
+      source: 'Tistory(민족사진가 문진우)',
+    },
+    {
       url: 'https://www.news-art.co.kr/news/article.html?no=26477',
       title: '장경호 작가 - 뉴스아트',
       description:
@@ -2071,16 +2141,81 @@ export const artistArticles: Record<string, Article[]> = {
       source: '뉴스아트',
     },
   ],
+  장희진: [
+    {
+      url: 'https://www.newsverse.kr/news/articleView.html?idxno=4167',
+      title: '온 몸으로 끌어안은 ‘생활 추상’(life abstract) — 장희진 작가',
+      description:
+        '뉴스버스 미술 비평. 역(逆)페인팅 기법을 통해 대상 이면의 정감과 정취를 이끌어내는 장희진의 독창적인 추상 언어와 빛의 공간에 대한 고찰.',
+      source: '뉴스버스',
+    },
+    {
+      url: 'http://www.sctoday.co.kr/news/articleView.html?idxno=39462',
+      title: '장희진 개인전 《색(色), 삶을 사유(思유)하다》',
+      description:
+        '서울문화투데이 전시 소식. 삶의 경험을 2차원 색면(色면)으로 펼쳐내는 장희진 작가의 개인전. 공예적인 질감과 감각적 색채를 결합한 새로운 추상의 경험.',
+      source: '서울문화투데이',
+    },
+    {
+      url: 'https://www.artkoreatv.com/news/articleView.html?idxno=85247',
+      title: '장희진 개인전 — 색(色), 삶을 사유(思惟)하다',
+      description:
+        '아트코리아방송 보도. 중앙대 회화과 출신으로 3차원의 시각 경험을 2차원의 망막에 투영해내는 장희진 작가의 세밀한 색채 감각과 전시 현장 조명.',
+      source: '아트코리아방송',
+    },
+    {
+      url: 'https://www.jbnews.com/news/articleView.html?idxno=1366353',
+      title: "[J갤러리] 장희진 作 'folded tint' — 중부매일",
+      description:
+        '충청권 뉴스 보도. 요철 베이스 캔버스 위에 독특하게 색을 입히는 장희진 작가만의 작업 방식과 신작 ‘folded tint’에 담긴 시각적 미학 소개.',
+      source: '중부매일',
+    },
+    {
+      url: 'https://www.kmisul.com/news/articleView.html?idxno=1803',
+      title: "장희진 展, '색(色), 삶을 사유(思惟)하다' — 한국미술신문",
+      description:
+        '한국미술신문 보도. 토포하우스에서 열린 전시 정보. 인간의 보편적 시각 경험을 추상적 색면으로 재구성하는 장희진의 깊이 있는 예술적 사유 탐구.',
+      source: '한국미술신문',
+    },
+    {
+      url: 'https://artbava.com/exhibits/%EC%9E%A5%ED%9D%AC%EC%A7%84-%EA%B0%9C%EC%9D%B8%EC%A0%84-%EC%B2%9C-%EA%B0%9C%EC%9D%98-%EC%83%89-%EC%B2%9C-%EA%B0%9C%EC%9D%98-%EA%B2%B0',
+      title: '장희진 개인전: 천 개의 색, 천 개의 결',
+      description:
+        '빛의 차원 dimension of light정현아 (이층갤러리+디아건축)장희진의 작업은 캔버스를 그만의 고유한 방식으로 만드는 것으로 시작한다. 캔버스 화면에 페이스트를 두껍게 바르고, 부분적으로 떼어내 캔버스 표면에 요철면을 만드는 것이다. 먼저 직접 만든 곡선형 자...',
+      source: '아트바바',
+    },
+  ],
   정금희: [
     {
       url: 'https://art-map.co.kr/exhibition/view.php?idx=25435',
-      title: '정금희 : 동해선-역사(驛舍), 역사(歷史)',
+      title: '정금희 : 동해선-역사(驛舎), 역사(歷史)',
       description:
         '미술관을 배달받다 데이터 분석기반 전시회 인바이트 서비스, 나만의 취향을 배달받아 보세요',
       source: '아트맵',
     },
   ],
   정서온: [
+    {
+      url: 'https://ontpia.ssartpia.kr/sub/artist_detail.html?no=122&page=9',
+      title: '아티스트 정서온 Profile & CV — ONTPIA',
+      description:
+        '한국화와 현대 회화를 아우르는 정서온 작가의 전체 전시 이력 및 포트폴리오. 장소와 정체성에 대한 작가의 시선이 담긴 주요 작품들을 확인할 수 있는 아카이브.',
+      source: 'ONTPIA',
+    },
+    {
+      url: 'https://www.imaeil.com/page/view/2024071116254876569',
+      title: '같은 듯 다른 두 작가의 향연…앞산갤러리, 정서온·김세한 작가 2인전',
+      description:
+        '매일신문 보도. 정서온의 ‘너와 나 사이’ 시리즈와 팝아트적 요소가 결합된 2인전 현장. 서로 다른 장르가 만나 충돌하고 조화를 이루는 예술적 사유 탐구.',
+      source: '매일신문',
+    },
+    {
+      url: 'https://www.dkilbo.com/news/articleView.html?idxno=464935',
+      title: "정서온 개인전 '2024 이동하는 세계' — 포항문화재단 집중지원 선정",
+      description:
+        '대경일보 보도. 인간과 장소의 관계를 고향의 기억을 바탕으로 탐구하는 정서온의 사진 및 설치 작업 전시. 작가의 여정을 예술적으로 풀어낸 ‘이동하는 세계’.',
+      source: '대경일보',
+    },
     {
       url: 'https://deart82.com/artist/421',
       title: '정서온 - De Art82',
@@ -2326,15 +2461,6 @@ export const artistArticles: Record<string, Article[]> = {
       description:
         '갤러리박영은 11월 5일부터 11월 30일까지 서울 청담동 전시관(서울시 강남구 압구정로 416 B2, 더트리니티플레이스)에서 정재철(b. 1980~) 작가의 초대 개인전 《Middle Ground: 해체된 시선》을 개최한다...',
       source: '투데이트라이',
-    },
-  ],
-  장희진: [
-    {
-      url: 'https://artbava.com/exhibits/%EC%9E%A5%ED%9D%AC%EC%A7%84-%EA%B0%9C%EC%9D%B8%EC%A0%84-%EC%B2%9C-%EA%B0%9C%EC%9D%98-%EC%83%89-%EC%B2%9C-%EA%B0%9C%EC%9D%98-%EA%B2%B0',
-      title: '장희진 개인전: 천 개의 색, 천 개의 결',
-      description:
-        '빛의 차원 dimension of light정현아 (이층갤러리+디아건축)장희진의 작업은 캔버스를 그만의 고유한 방식으로 만드는 것으로 시작한다. 캔버스 화면에 페이스트를 두껍게 바르고, 부분적으로 떼어내 캔버스 표면에 요철면을 만드는 것이다. 먼저 직접 만든 곡선형 자...',
-      source: '아트바바',
     },
   ],
   김유진: [],
