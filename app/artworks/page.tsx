@@ -7,15 +7,15 @@ import ShareButtons from '@/components/common/ShareButtons';
 import { SITE_URL } from '@/lib/constants';
 import { Metadata } from 'next';
 import { createPageMetadata } from '@/lib/seo';
+import { GallerySkeleton, SearchBarSkeleton } from '@/components/ui/Skeleton';
 
 const ArtworkGalleryWithSort = dynamic(
   () => import('@/components/features/ArtworkGalleryWithSort'),
   {
     loading: () => (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {[...Array(6)].map((_, i) => (
-          <div key={i} className="aspect-[4/5] bg-gray-200 rounded-sm animate-pulse" />
-        ))}
+      <div className="space-y-6">
+        <SearchBarSkeleton />
+        <GallerySkeleton count={6} />
       </div>
     ),
   }
