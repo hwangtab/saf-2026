@@ -110,6 +110,36 @@ export const artistArticles: Record<string, Article[]> = {
       source: '서울아트가이드',
     },
   ],
+  김규학: [
+    {
+      url: 'https://artgg.ggcf.kr/pastArtists/%EA%B9%80%EA%B7%9C%ED%95%99',
+      title: '김규학 작가 - 아트경기',
+      description:
+        '경기미술품활성화사업 아트경기 소속 작가 김규학의 전시 이력 및 주요 작품 소장처 정보. 국립현대미술관, 인천미술은행 등 주요 기관 소장 작가.',
+      source: '아트경기',
+    },
+    {
+      url: 'https://kmjart.com/untitled-15',
+      title: '김규학 작가 초대전 | KMJ ART GALLERY',
+      description:
+        '인천 KMJ아트갤러리에서 열린 김규학 작가의 전시 소식. 시골 풍경과 숲길, 고향의 기억을 세밀한 회화로 담아내는 작가의 작품들 전시.',
+      source: 'KMJ ART GALLERY',
+    },
+    {
+      url: 'https://www.incheonin.com/news/articleView.html?idxno=96055',
+      title: '김규학 작가, 풍경과 기억에 관한 회화 세계',
+      description:
+        '인천in 보도. 한적한 시골 풍경과 어린 시절의 고향 기억을 적막하면서도 따뜻한 시선으로 그려내는 김규학 작가의 회화 작업 소개.',
+      source: '인천in',
+    },
+    {
+      url: 'https://asyaaf.chosun.com/artistroom/?artist_idx=2263',
+      title: '김규학 작가 - 아시아프',
+      description:
+        '2021 아시아프(ASYAAF) 참여 작가 김규학의 작가룸. 도시의 풍경을 독특한 시각으로 재해석한 작품들을 전시.',
+      source: '조선일보(아시아프)',
+    },
+  ],
   김주호: [
     {
       url: 'https://www.mk.co.kr/news/culture/11457683',
@@ -709,14 +739,7 @@ export const artistArticles: Record<string, Article[]> = {
       source: '대구문화예술회관',
     },
   ],
-  김규학: [
-    {
-      url: 'https://asyaaf.chosun.com/artistroom/?artist_idx=2263',
-      title: '김규학 작가 - 아시아프',
-      description: '아시아프',
-      source: '조선일보(아시아프)`',
-    },
-  ],
+
   김동석: [
     {
       url: 'https://www.artkoreatv.com/news/articleView.html?idxno=100050',
