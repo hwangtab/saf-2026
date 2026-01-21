@@ -14,6 +14,7 @@ import ExpandableHistory from '@/components/features/ExpandableHistory';
 import { generateArtworkMetadata, generateArtworkJsonLd } from '@/lib/seo-utils';
 import ShareButtons from '@/components/common/ShareButtons';
 import SupportMessage from '@/components/features/SupportMessage';
+import PurchaseGuide from '@/components/features/PurchaseGuide';
 
 interface Props {
   params: Promise<{
@@ -147,8 +148,11 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   </Button>
                 </div>
 
+                {/* Purchase Guide */}
+                <PurchaseGuide className="mt-8" />
+
                 {/* Campaign Support Message */}
-                <SupportMessage className="mt-8" />
+                <SupportMessage className="mt-6" />
               </div>
             </div>
 
