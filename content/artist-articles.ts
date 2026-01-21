@@ -627,6 +627,20 @@ export const artistArticles: Record<string, Article[]> = {
       source: '경기문화재단 지지씨',
     },
     {
+      url: 'https://artsandculture.google.com/story/DgUBkMtCxPABKg?hl=ko',
+      title: '심심 / 판화 / 현장 — Google Arts & Culture',
+      description:
+        '옆집에 사는 예술가 - 18.이윤엽. 나의 작업실 변천사와 주요 예술 활동, 그리고 일상과 창작이 하나가 되는 과정을 담은 구글 아트 앤 컬처 전시.',
+      source: 'Google Arts & Culture',
+    },
+    {
+      url: 'https://monthlyart.com/03-exhibition/critic-%EC%9D%B4%EC%9C%A4%EC%97%BD-%EB%82%A8%ED%92%8D%EB%A6%AC-%ED%8C%90%ED%99%94%ED%86%B5%EC%8B%A0/',
+      title: 'CRITIC 이윤엽 남풍리 판화통신 - 월간미술',
+      description:
+        '트렁크갤러리 전시 리뷰. 1980년대 민주화운동부터 민중의 투쟁 현장을 기록해온 이윤엽의 작품 세계와 작가 정신을 다룬 비평.',
+      source: '월간미술',
+    },
+    {
       url: 'https://www.hani.co.kr/arti/culture/music/1084923.html',
       title: '아이들이 노동자 친근하게 느끼도록 이야기 그림 그렸죠',
       description:
@@ -639,6 +653,13 @@ export const artistArticles: Record<string, Article[]> = {
       description:
         '경기 안성시 보개면 시골마을 작업실에서 작업하는 이윤엽. 폐가를 8개월간 손수 매달려 살려낸 작업실. 버려진 물건들을 모아 작품으로 재탄생시키는 민중미술가.',
       source: '경향신문',
+    },
+    {
+      url: 'https://artforum.co.kr/portfolio/%EC%9D%B4%EC%9C%A4%EC%97%BD/',
+      title: '이윤엽 기획 초대전 <윤엽 展> - 아트포럼리',
+      description:
+        '대안공간 아트포럼리에서 열린 기획 초대전 정보. 노동과 현장의 목소리를 투박하지만 진실하게 담아내는 이윤엽 작가의 판화 포트폴리오.',
+      source: '아트포럼리',
     },
     {
       url: 'https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0002082451',
@@ -655,18 +676,25 @@ export const artistArticles: Record<string, Article[]> = {
       source: 'Brunch',
     },
     {
-      url: 'https://m.woodplanet.co.kr/news/view/1065608303022949',
+      url: 'https://woodplanet.co.kr/news/view/1065608303022949',
       title: '목판화가 이윤엽 - 손에 잡히는 대로 깎고 칠한다',
       description:
         '소박한 사람들을 관찰하는 이윤엽의 뜨거운 손끝. 예술과 사회를 말할 땐 차갑지만 나무를 만나면 순박한 소년이 되는 목판화가. 손에 잡히는 대로 깎고 칠하는 작업.',
       source: 'woodplanet',
     },
     {
+      url: 'https://www.kyeonggi.com/article/201107200414189',
+      title: '창작의 산실 - 판화가 이윤엽',
+      description:
+        '경기일보 보도. 평택 대추리, 용산, 지엠대우 고공 농성 등 항상 치열한 삶의 현장에서 그들의 외침을 나무판에 기록하는 작가의 작업 현장 탐방.',
+      source: '경기일보',
+    },
+    {
       url: 'https://www.youtube.com/watch?v=paAa3tT3K5M',
       title: '약자들의 투쟁을 목판에 새겼다 - 이윤엽 작가 개인전 둥질',
       description:
         '포항 스페이스298에서 열린 이윤엽 작가 개인전 "둥질" 소개 영상. 약자들의 투쟁을 목판화로 기록한 작가의 전시.',
-      source: '전국시대',
+      source: 'YouTube(전국시대)',
     },
   ],
   이익태: [
@@ -1894,13 +1922,62 @@ export const artistArticles: Record<string, Article[]> = {
         '[ABC뉴스=강현 기자] ‘북유럽’ 하면 떠오르는 단어는 단연 ‘행복’이다. 유엔 산하 자문기구의 발표에 따르면 2023년 세계에서 가장 행복한 나라는 핀란드로, 벌써 6년 연속 1위다. 덴마크는 5년 연속 2위, 스웨덴과 노르웨이도 각각 6위와 7위를 차지했다.우리는 북유럽 사람들이 행복한 이유를 그들의 복지나 휘게 등의 라이프스타일에서 찾아왔다. 그런데...',
       source: 'ABC뉴스',
     },
+    {
+      url: 'https://kpinews.kr/newsView/1065586246276471',
+      title: '이은화 작가 "욕망은 미래 위한 중요한 동기지만 과하면 재앙"',
+      description:
+        'KPI뉴스 인터뷰. 미술평론가이자 저술가인 이은화 작가가 개인전 ‘욕망의 방’을 통해 인간의 욕망에 대해 고찰하고 대중과 소통하는 인터뷰.',
+      source: 'KPI뉴스',
+    },
+    {
+      url: 'https://www.artkoreatv.com/news/articleView.html?idxno=99108',
+      title: '제12회 경남국제아트페어, 이은화 작가 개인전 ‘환대의 방: 웰컴 VIP’',
+      description:
+        '아트코리아방송 보도. 문자와 기호, 색을 통해 인간의 욕망과 심리를 탐구하는 이은화 작가의 경남국제아트페어(GIAF) 개인전 및 관객 참여형 작품 소개.',
+      source: '아트코리아방송',
+    },
+    {
+      url: 'https://seulsong.tistory.com/640',
+      title: '[이은화 인터뷰] 2019년 베니스비엔날레 총평',
+      description:
+        '뮤지엄 스토리텔러 이은화 작가와의 인터뷰. 2019년 베니스비엔날레에 대한 심도 있는 비평과 함께 미술작가 및 평론가로서의 활동 이력 조명.',
+      source: 'Tistory(오마이 김형순)',
+    },
+    {
+      url: 'https://www.snunews.com/news/articleView.html?idxno=20122',
+      title: '그림을 쓰고 미술을 말하는 이야기꾼 - 뮤지엄 스토리텔러 이은화',
+      description:
+        '대학신문 인터뷰. 미술작가, 평론가, 베스트셀러 저자로서 ‘뮤지엄 스토리텔러’라는 새로운 직업을 개척한 이은화 작가의 예술적 행보와 작업실 이야기.',
+      source: '대학신문',
+    },
   ],
   이인철: [
     {
       url: 'https://www.francezone.com/news/articleView.html?idxno=2500525',
-      title: '[파리에서만난사람] 이인철 &#34;디지털 아트로 부활한 민중미술 작가&#34;',
+      title: '[파리에서만난사람] 이인철 "디지털 아트로 부활한 민중미술 작가"',
       description:
         '파리 마레지구의 디지털 아트 갤러리 ‘아트버스(ArtVerse)’에서 한국 민중미술의 대표 작가 이인철의 첫 디지털 개인전 『HOLOÏSME : 보이지 않는 것으',
+      source: '프랑스존',
+    },
+    {
+      url: 'http://www.sctoday.co.kr/news/articleView.html?idxno=26145',
+      title: '현실을 풍자하며 조롱하는 이인철의 ‘in the paradise’',
+      description:
+        '서울문화투데이 전시 리뷰. 구조적 모순과 정치적 상황을 해학적으로 풍자하며 기계화의 야만성을 비판한 이인철 작가의 개인전 ‘in the paradise’ 소개.',
+      source: '서울문화투데이',
+    },
+    {
+      url: 'https://www.mmca.go.kr/research/archiveSpInfo.do?museum_id=00001&type=I&collect_id=1000033&item_id=2014091201348&seriesId=2015071300743&upperItemId=0&upperYn=N&lvl=1&classCd=10&archiveFlag=S',
+      title: '《이인철 판화전: 우리들의 일상》 리플릿 - 국립현대미술관 아카이브',
+      description:
+        '국립현대미술관 아카이브 소장 자료. 1990년대 우리 사회의 일상을 비판적인 시각으로 담아낸 이인철 판화전의 도록 및 리플릿 정보.',
+      source: '국립현대미술관',
+    },
+    {
+      url: 'https://www.francezone.com/news/articleView.html?idxno=2500502',
+      title: '한국 민중미술의 거장 이인철 작가, 디지털 아트로 파리 데뷔',
+      description:
+        '프랑스존 보도. 파리 아트버스 갤러리에서 개최된 『HOLOÏSME: 보이지 않는 것으로부터 보이는 것으로』 전시를 통한 이인철 작가의 디지털 아트 데뷔 소식.',
       source: '프랑스존',
     },
   ],
@@ -1911,6 +1988,13 @@ export const artistArticles: Record<string, Article[]> = {
       description:
         "(포커스1=이재정 기자) 올해로 20주년을 맞은 제주신화전에 관객들의 발길이 이어지면서 미래 비전을 위한 '인문학적 예술 방안' 모색까지 이어질지 관심이 집중되고",
       source: 'Focus1',
+    },
+    {
+      url: 'https://www.jejusori.net/news/articleView.html?idxno=318190',
+      title: '제주 사진가 이재정, 8월 한 달 서울서 개인전',
+      description:
+        '제주의소리 보도. 제주 생태 환경과 코로나 시대의 단면을 주제로 서울 올브갤러리에서 열린 사진가 이재정의 개인전 소식 및 주요 전시 테마 소개.',
+      source: '제주의소리',
     },
   ],
   이지은: [
