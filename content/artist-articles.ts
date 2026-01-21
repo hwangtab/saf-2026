@@ -1047,6 +1047,78 @@ export const artistArticles: Record<string, Article[]> = {
       source: '중앙일보',
     },
   ],
+  민정기: [
+    {
+      url: 'https://www.mmca.go.kr/collections/collectionsDetailPage.do?wrkinfoSeqno=3897',
+      title: '민정기 | 영화를 보고 만족한 K씨 | 1982 - 국립현대미술관',
+      description:
+        '국립현대미술관 소장품. 민정기 작가의 1982년 작품 "영화를 보고 만족한 K씨" 소개. MMCA 이건희 컬렉션 특별전: 한국미술명작 전시 정보.',
+      source: '국립현대미술관(MMCA)',
+    },
+    {
+      url: 'https://k-artmarket.kr/kada/kada_new/contents/KADA0101.do?schM=view&dataId=D20240322225522624631&schFld=&schStr=&page=',
+      title: '민정기 Min Joung-Ki - 원로작가 아카이브',
+      description:
+        'K-Art Market 원로작가 디지털 아카이브. 민정기 작가의 작가소개, 작가약력, 비평글, 시기별 작품해설, 작가영상 등 종합 아카이브 자료.',
+      source: 'K-Art Market 원로작가 아카이브',
+    },
+    {
+      url: 'https://memory.library.kr/collection/show/220000536?ggmType=T',
+      title: '민정기 | 경기도메모리 디지털 아카이브',
+      description:
+        '경기도메모리 아카이브. 1970년대 제3그룹과 십이월전, 1980년대 현실과 발언에서 활동한 민정기 작가의 1974-1990년 기록. 소집단 미술운동 전시 홍보물, 도록, 슬라이드 필름 등 34건의 희귀 기록 수록.',
+      source: '경기도메모리',
+    },
+    {
+      url: 'https://ggc.ggcf.kr/p/5ac3d0f868936726bd4003bb',
+      title: '풍경에 그린 그림, 민정기',
+      description:
+        '경기문화재단 지지씨 플랫폼. 민정기 작가의 풍경화 작업과 예술 세계를 조명하는 아티클.',
+      source: '경기문화재단 지지씨',
+    },
+    {
+      url: 'http://archive.mediacityseoul.kr/2014/kr/participating_artists/exhibition/min-joung-ki/',
+      title: '민정기 Min Joung-Ki - SeMA Biennale Mediacity Seoul 2014',
+      description:
+        '서울미디어시티비엔날레 2014 참여 작가 정보. 민정기 작가의 전시 작품 및 작가 소개.',
+      source: 'SeMA Biennale Mediacity Seoul',
+    },
+    {
+      url: 'https://www.news-art.co.kr/news/article.html?no=26473',
+      title: '민정기 작가 - 뉴스아트',
+      description:
+        '뉴스아트 보도. 예술인 고리대금 현실을 알리고 저금리 예술인상호부조대출 상품을 만들기 위한 씨앗페 전시에 참여한 민정기 작가 소개.',
+      source: '뉴스아트',
+    },
+    {
+      url: 'http://www.sctoday.co.kr/news/articleView.html?idxno=43067',
+      title: '양평군립미술관, 민정기 아카이브展 《놓치지 못하는 풍경》',
+      description:
+        '서울문화투데이 보도. 양평을 대표하는 원로작가 민정기의 시대별 작품을 살펴보는 아카이브 전시. 1987년부터 양평에서 산, 들, 강과 더불어 살아가는 인간의 삶을 그만의 화풍으로 기록.',
+      source: '서울문화투데이',
+    },
+    {
+      url: 'https://purme.org/board/story/2048',
+      title: '민정기 화백을 찾아서 - 캔버스에 봄이 오는 소리',
+      description:
+        '푸르메재단 스토리. 민정기 화백의 작업실 방문기. 자연과 인간의 삶을 담아내는 작가의 예술 철학과 작업 과정 소개.',
+      source: '푸르메재단',
+    },
+    {
+      url: 'https://www.youtube.com/watch?v=hWumORzXzAg',
+      title: '원로작가 디지털 아카이빙 민정기 - YouTube',
+      description:
+        '원로작가 디지털 아카이빙 영상. 근현대미술연구모임이 2021년 제작한 민정기 작가 연구 아카이브 다큐멘터리.',
+      source: 'YouTube(K-Art Market)',
+    },
+    {
+      url: 'https://www.theartro.kr/kor/features/features_view.asp?idx=4215&b_code=31e',
+      title: 'GB 특집 - 민정기, 무등산 그림으로 마음을 치유하다',
+      description:
+        'The Artro 광주비엔날레 특집. 무등산을 그리며 마음을 치유하는 민정기 작가의 예술 세계와 광주 정신의 연결고리 탐구.',
+      source: 'The Artro',
+    },
+  ],
   서금앵: [
     {
       url: 'http://www.daljin.com/display/D102264',
