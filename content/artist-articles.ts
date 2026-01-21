@@ -1229,6 +1229,15 @@ export const artistArticles: Record<string, Article[]> = {
       source: '고대신문',
     },
   ],
+  안소현: [
+    {
+      url: 'https://jinhwon.com/68',
+      title: '사진가 없는 사진 - 안소현',
+      description:
+        '아트 스페이스 풀 디렉터 안소현의 비평글. 홍진훤 개인전 《랜덤 포레스트》 전시 서문으로, 사진 이미지와 현실의 관계, 부재감의 감각을 다룬 글.',
+      source: 'jinhwon.com',
+    },
+  ],
 };
 
 /**
