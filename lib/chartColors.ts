@@ -4,7 +4,7 @@ export const CHART_COLORS = {
   primary: BRAND_COLORS.primary.DEFAULT,
   accent: BRAND_COLORS.accent.DEFAULT,
   sun: BRAND_COLORS.sun.DEFAULT,
-  danger: BRAND_COLORS.danger,
+  danger: BRAND_COLORS.danger.DEFAULT,
   charcoal: BRAND_COLORS.charcoal.DEFAULT,
   charcoalMuted: BRAND_COLORS.charcoal.muted,
   border: BRAND_COLORS.gray[100],
