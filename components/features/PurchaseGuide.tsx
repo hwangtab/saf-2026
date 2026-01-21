@@ -24,7 +24,7 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
   ];
 
   return (
-    <div className={cn('rounded-xl bg-gray-50 p-5 space-y-3', className)}>
+    <div className={cn('rounded-xl bg-gray-50 p-4 space-y-2', className)}>
       {guides.map((guide, index) => (
         <div key={index} className="flex items-start gap-3">
           <span className="text-xl leading-none mt-0.5">{guide.icon}</span>

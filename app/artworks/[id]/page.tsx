@@ -119,7 +119,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 {artwork.price && artwork.price !== '문의' && artwork.shopUrl && !artwork.sold && (
                   <>
                     {/* Purchase Guide */}
-                    <PurchaseGuide className="mb-6" />
+                    <PurchaseGuide className="mb-4" />
 
                     <Button
                       href={artwork.shopUrl}
@@ -153,7 +153,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 </div>
 
                 {/* Campaign Support Message */}
-                <SupportMessage className="mt-6" />
+                <SupportMessage className="mt-4" />
               </div>
             </div>
 

@@ -901,13 +901,27 @@ export const artistArticles: Record<string, Article[]> = {
       source: '미디어스',
     },
   ],
-  '칡뫼 김구': [
+  칡뫼김구: [
     {
       url: 'https://www.hanion.co.kr/news/articleView.html?idxno=33271',
       title: '시대의 상징이 된 화가 칡뫼김구',
       description:
-        "'A painting is a thought'죽은 정물을 모사한 서경적 스케치나 뜻도 모르고 그려놓은 난삽한 풍의 추상화가 주류무대인 한국의 지배적인 화단에서 그 리얼한 화풍으로서의 구체적 현실에 터한 한국 화가로서 차지하는 그의 위치는 각별하다 하지 않을 수 없다.이번 전시회도 그렇다 이땅은 황무지라는 것이고, 그것은 우상의 벌판과도 같다는 것이다.아니,...",
+        "'A painting is a thought' 구체적 현실에 터한 한국 화가로서 칡뫼 김구가 차지하는 각별한 위치. 분단과 황무지, 우상의 벌판을 가로지르는 리얼한 화풍과 시대적 문제의식 조명.",
       source: '한겨레:온',
+    },
+    {
+      url: 'https://www.news-art.co.kr/news/article.html?no=32850',
+      title: '칡뫼 김구의 ‘황무지, 유령의 벌판’ 전: 시대의 아픔을 직시하는 예술가의 시선',
+      description:
+        '분단 현실과 자본주의의 폐해를 ‘황무지’와 ‘유령의 벌판’으로 그려낸 개인전. 시대를 고발하고 침묵하는 진실을 드러내는 예술가의 소명을 실천하는 작품들.',
+      source: '뉴스아트',
+    },
+    {
+      url: 'http://www.sctoday.co.kr/news/articleView.html?idxno=26215',
+      title: '[전시리뷰]분단의 상처가 내면을 뚫고 나온 칡뫼김구의 ‘아프다!?’전',
+      description:
+        '임진강 접경지 유년의 기억과 분단의 역사적 통증을 붓으로 기록한 전시. 시대의 아픔을 외면하지 않고 캔버스에 투영하여 예술로 승화시킨 현장형 작가의 고백.',
+      source: '서울문화투데이',
     },
   ],
   '장천 김성태': [
@@ -2311,6 +2325,26 @@ export const artistArticles: Record<string, Article[]> = {
         '최재란 개인전 화성(華城), 묵시의 풍경 장소 : 복합문화공간 행궁재 갤러리 (수원시 팔달구 행궁로 22번길...',
       source: '사진바다(네이버 블로그)`',
     },
+    {
+      url: 'https://m.artgg.ggcf.kr/pastArtists/%EC%B5%9C%EC%9E%AC%EB%9E%80',
+      title: '아트경기 - 이전 아트경기 작가 최재란',
+      description:
+        '수원화성 등 역사적 장소와 기억의 잔상을 핀홀 사진 기법으로 포착하며, 자연과 인간, 역사와 현재가 교차하는 지점에서 숭고한 정신을 환기시키는 사진 세계.',
+      source: '아트경기',
+    },
+    {
+      url: 'https://www.koreaart21.com/news/articleView.html?idxno=2402',
+      title: '최재란 개인전 - 한국예술가협회',
+      description: '한국예술가협회에 소개된 최재란 작가의 개인전 소식과 작품 활동 보도.',
+      source: '한국예술가협회',
+    },
+    {
+      url: 'https://photomarketing.co.kr/%EC%B5%9C%EC%9E%AC%EB%9E%80-%EC%9E%91%EA%B0%80-%EA%B0%9C%EC%9D%B8%EC%A0%84-%EA%BF%88%EA%BE%B8%EB%8A%94-%EC%97%B0%EA%B0%80%E8%93%AE%E6%AD%8C-%EA%B0%9C%EC%B5%9C/',
+      title: '최재란 작가, 개인전 ‘꿈꾸는 연가(蓮歌)’ 개최',
+      description:
+        '수원 화령전에서 펼쳐진 개인전 ‘꿈꾸는 연가’ 소식. 연꽃을 통해 내면의 정서와 시간의 흐름을 핀홀 카메라의 독특한 시선으로 담아낸 작업 소개.',
+      source: '포토마케팅',
+    },
   ],
   최혜수: [
     {
@@ -2583,7 +2617,15 @@ export const artistArticles: Record<string, Article[]> = {
       source: '한겨레',
     },
   ],
-  한미영: [],
+  한미영: [
+    {
+      url: 'https://art-moado.com/Artist/?bmode=view&idx=17650381',
+      title: '한미영 작가 - 모아도 갤러리',
+      description:
+        '사회적 관계 속에서 상실해가는 인간의 본질과 내면의 신비로운 이미지를 강렬한 색채 대비로 표현하는 작가적 서사. 존재하는 이미지를 마음에서 끌어내어 캔버스에 옮기는 작업 철학 소개.',
+      source: '모아도 갤러리',
+    },
+  ],
 
   이문형: [
     {
@@ -2704,15 +2746,6 @@ export const artistArticles: Record<string, Article[]> = {
       description:
         '제주4·3평화재단 주최 고현주 작가 유고전 ‘기억의 목소리’. 척박한 땅에서 생을 일궈온 제주 사람들의 역사와 기억을 담은 사진 38점 전시.',
       source: '경향신문',
-    },
-  ],
-  최연택: [
-    {
-      url: 'https://www.artbava.com/exhibits/%EC%B5%9C%EC%97%B0%ED%83%9D-%EA%B0%9C%EC%9D%B8%EC%A0%84-%EC%9A%B0%EB%A6%AC%EB%93%A4%EC%9D%98-%EC%95%88%EB%85%95',
-      title: '최연택 개인전 : 우리들의 안녕',
-      description:
-        '그림으로 읽는 ‘우리들의 안녕’최연택의 세 번째 개인전 &lt;우리들의 안녕&gt;의 작품들은 사실 이미지보다는 텍스트에 집중한다. 작가의 작품은 텍스트와 함께여야 의미가 살고, 자세히 들여다보아야 마음을 움직이게 하는 하나의 점이 보인다.작가는 최근 세 권의 책에 그...',
-      source: '아트바바',
     },
   ],
   이동구: [
