@@ -1227,15 +1227,7 @@ export const artistArticles: Record<string, Article[]> = {
       source: '한겨레',
     },
   ],
-  서금앵: [
-    {
-      url: 'http://www.daljin.com/display/D102264',
-      title: '전시 - 서금앵展',
-      description:
-        'copyright © 2012 KIM DALJIN ART RESEARCH AND CONSULTING. All Rights reserved 이 페이지는 서울아트가이드에서 제공됩니다. This page provided by Seoul Art Guide. 다음 브라우져 에서 최적화 되어있습니다. This page optimized for these browser...',
-      source: '서울아트가이드',
-    },
-  ],
+
   김호성: [
     {
       url: 'https://www.photoart.co.kr/bbs/m/mcb_data_view.php?type=mcb&ep=ep1260394525d70b6363602a&gp=all&item=md404406056648efb1e6de05',
@@ -1366,6 +1358,226 @@ export const artistArticles: Record<string, Article[]> = {
       source: '뉴시스',
     },
   ],
+
+  박소형: [
+    {
+      url: 'https://www.sac.or.kr/site/main/show/show_view?SN=48682',
+      title: '박소형 개인전',
+      description:
+        '2023년 5월 2일부터 5월 9일까지 예술의전당 한가람디자인미술관 제3전시실에서 열린 박소형 작가의 개인전 상세 정보.',
+      source: '예술의전당',
+    },
+    {
+      url: 'https://louisethewomen.org/news/?bmode=view&idx=167794323',
+      title: '그린레시피랩 [한국 생태미술의 역사와 현재]',
+      description:
+        '🌴 루이즈더우먼의 프로젝트, #그린레시피랩(@green_recipe_lab)의 #워크랩 (Work-lab)소식을 공유합니다! 🧭《한국 생태미술의 역사와 현재》그린레시피랩 × #박윤조 미술사학자 그린레시피랩 생태미술 스터디 작가들과 박윤조 미술학자와 함께 생태미술의 현재와 한국 생태미술에 변화 과정을 논의하고 사례를 살펴봤습니다. ▪️일시: (1회차) 9...',
+      source: '루이즈더우먼',
+    },
+  ],
+
+  박수지: [
+    {
+      url: 'https://sema.seoul.go.kr/kr/support/emerging_artist/detail_info?actNo=333871',
+      title: 'SeMA - 신진미술인 박수지',
+      description:
+        '서울시립미술관의 신진미술인 지원 프로그램 소개. 박수지는 서울을 기반으로 활동하는 독립 큐레이터로, 전시기획사 에이전시 뤄뤼(AGENCY RARY)를 운영하며 현대미술의 정치적, 미학적 알레고리를 탐구한다.',
+      source: '서울시립미술관',
+    },
+    {
+      url: 'https://www.daljin.com/display/D089952',
+      title: '박수지 : 어흥전',
+      description: '서울아트가이드에 소개된 박수지 개인전 "어흥전" 전시 정보.',
+      source: '서울아트가이드',
+    },
+    {
+      url: 'http://www.critic-al.org/?p=462',
+      title: '박수지_어떤 미술 – 문화비평 웹진 크리틱-칼',
+      description:
+        '문화비평 웹진 크리틱-칼에 게재된 박수지의 "어떤 미술" 비평글. "박수지_탈주 레서피"와 "박수지_노동의 외곽, 예술의 망각" 등의 텍스트 포함.',
+      source: '크리틱-칼',
+    },
+  ],
+
+  박은선: [
+    {
+      url: 'https://www.mmca.go.kr/artStudio/artistDetail.do?cinArtId=201311100000398',
+      title: '박은선 - 국립현대미술관 레지던시',
+      description:
+        '국립현대미술관 창작스튜디오 입주작가 박은선 소개. 작가의 주요 약력, 작품 세계, 활동 정보 등을 제공.',
+      source: '국립현대미술관',
+    },
+    {
+      url: 'https://www.daljin.com/author/309',
+      title: '박은선(Park Eun Sun) - 서울아트가이드',
+      description:
+        '서울아트가이드 인물 정보 박은선. 1962년생 조각가 박은선의 학력, 개인전 및 단체전 이력, 수상 경력 등 상세 프로필.',
+      source: '서울아트가이드',
+    },
+    {
+      url: 'https://art-culture.co.kr/magazine_art/1015',
+      title: '박은선 개인전, 《Line Walking》 개최',
+      description:
+        '아트파크(ARTPARK)와 세브란스 아트스페이스에서 개최된 박은선 개인전 《Line Walking》 전시 소식. 라인 테이프와 거울, 렌티큘러 등 다양한 매체를 활용한 설치 작품 소개.',
+      source: '아트앤컬처',
+    },
+    {
+      url: 'https://www.iartpark.com/exhibitions/51-beyond-here/',
+      title: '박은선 : Beyond Here - ART PARK',
+      description:
+        '라인테이프, 미러, LED 등 다양한 매체로 실재와 환영을 넘나들며 새로운 시•공간을 창조해 온 작가 박은선(b. 1962)의 열여섯 번째 개인전 『Beyond Here』가 세브란스 아트 스페이스에서 열린다. 동국대에서 회화를 전공하고 이태리 로마 국립 아카데미를 졸업한 작가는 서울, 파리, 로마에서 다수의 개인전과 함께 이태리 싼 죠반니 보노 국제전 명예...',
+      source: 'ART PARK',
+    },
+  ],
+
+  박재동: [
+    {
+      url: 'https://namu.wiki/w/%EB%B0%95%EC%9E%AC%EB%8F%99',
+      title: '박재동 - 나무위키',
+      description:
+        '대한민국의 시사 만화가이자 애니메이터 박재동의 생애, 경력, 작품 목록 및 논란 등을 다룬 나무위키 문서.',
+      source: '나무위키',
+    },
+    {
+      url: 'https://www.hani.co.kr/arti/pjdcartoon',
+      title: '박재동 만화 뉴스 - 한겨레',
+      description: '한겨레 신문에서 연재된 "박재동 만화" 관련 뉴스 및 기사 모음.',
+      source: '한겨레',
+    },
+    {
+      url: 'https://www.hani.co.kr/arti/SERIES/271',
+      title: '박재동의 스케치 - 한겨레 연재',
+      description: '한겨레에서 연재된 "박재동의 스케치" 시리즈 기사 모음.',
+      source: '한겨레',
+    },
+  ],
+
+  서공임: [
+    {
+      url: 'https://topclass.chosun.com/news/articleView.html?idxno=4207',
+      title: '민화작가 서공임 "제가 그린 닭들이 광명의 상징 되기를"',
+      description:
+        '톱클래스 인터뷰. 닭의 해를 맞아 닭을 주제로 개인전을 연 민화작가 서공임의 이야기와 작품 세계 소개.',
+      source: '톱클래스',
+    },
+    {
+      url: 'https://www.khan.co.kr/article/202201241504011',
+      title: "[인터뷰] '민화 외길' 서공임 화백이 호랑이만 300점 넘게 그린 까닭",
+      description:
+        '경향신문 인터뷰. 임인년 호랑이 해를 맞아 <호랑이 민화전>을 연 서공임 화백 인터뷰. 호랑이 민화에 천착해온 이유와 작품 활동 비하인드 스토리.',
+      source: '경향신문',
+    },
+    {
+      url: 'https://mun6144.tistory.com/1846',
+      title: '민화작가 서공임 "등골 휘었지만 우리 민화 해외전파 보람"',
+      description:
+        '인사동 사람들(티스토리). 서공임 작가의 "신춘대길"전 전시 소식과 인터뷰. 민화의 대중화와 세계화를 위해 노력해온 작가의 소회.',
+      source: '인사동 사람들',
+    },
+    {
+      url: 'https://www.khan.co.kr/article/201403102103125',
+      title: '재밌고 유쾌한 현대민화의 봄나들이… 서공임 ‘민화에 홀리다’전',
+      description:
+        '경향신문 기사. 서공임 개인전 ‘민화에 홀리다’ 전시 리뷰. 전통 민화를 현대적으로 재해석한 작품들과 전시장 풍경 소개.',
+      source: '경향신문',
+    },
+  ],
+
+  서금앵: [
+    {
+      url: 'https://kiaf.org/insights/50640',
+      title: '서금앵展 — 키아프 서울 (Kiaf SEOUL)',
+      description: '키아프 서울(Kiaf SEOUL) 인사이트 섹션에 소개된 서금앵 작가의 전시 정보.',
+      source: 'Kiaf SEOUL',
+    },
+    {
+      url: 'https://www.sempio.com/experience/space/exhibition/view/70',
+      title: '일상을 바라보다 : 샘표 스페이스',
+      description:
+        '샘표 스페이스에서 열린 서금앵 개인전 "일상을 바라보다" 전시 소개. 일상적인 공간을 낯설게 바라보며 사유의 공간으로 이끄는 작가의 작품 세계.',
+      source: '샘표 스페이스',
+    },
+    {
+      url: 'https://meum.me/exhibition/1716',
+      title: '서금앵 개인전',
+      description: '온라인 전시 플랫폼 믐(Meum)에 등록된 서금앵 작가의 개인전 정보.',
+      source: '믐(Meum)',
+    },
+    {
+      url: 'https://www.youtube.com/watch?v=bV1oX30GHm0',
+      title: "[아름방송] '서금앵 개인전_기억의 밀도' 소개",
+      description:
+        'YouTube 영상. 아름방송 뉴스에 소개된 서금앵 개인전 "기억의 밀도" 전시 현장 및 홍예림 기자의 리포트.',
+      source: 'YouTube',
+    },
+    {
+      url: 'http://www.daljin.com/display/D102264',
+      title: '전시 - 서금앵展',
+      description:
+        'copyright © 2012 KIM DALJIN ART RESEARCH AND CONSULTING. All Rights reserved 이 페이지는 서울아트가이드에서 제공됩니다. This page provided by Seoul Art Guide. 다음 브라우져 에서 최적화 되어있습니다. This page optimized for these browser...',
+      source: '서울아트가이드',
+    },
+  ],
+
+  송광연: [
+    {
+      url: 'https://art-map.co.kr/artists/view.php?idx=14687',
+      title: '송광연 - 아트맵',
+      description:
+        '데이터 분석 기반 전시회 인바이트 서비스 아트맵의 송광연 작가 페이지. 개인전 "송광연 개인전" 정보 등.',
+      source: '아트맵',
+    },
+    {
+      url: 'https://www.dailygn.co.kr/news/articleView.html?idxno=23928',
+      title: '송광연 개인전 〈Butterfly’s Dream〉 - 데일리경남',
+      description:
+        '데일리경남 기사. PAC 갤러리 기획전 《일상, 반복을 넘어선 사유의 대상 II》의 일환으로 열린 송광연 개인전 〈Butterfly’s Dream〉 소개.',
+      source: '데일리경남',
+    },
+    {
+      url: 'https://gallery.sanchon.com/bbs/board.php?bo_table=artists&wr_id=100&page=1',
+      title: '송광연 초대전 - 갤러리 모나리자 산촌',
+      description: '갤러리 모나리자 산촌에서 열린 송광연 작가 초대전 정보.',
+      source: '갤러리 모나리자 산촌',
+    },
+    {
+      url: 'https://www.artkoreatv.com/news/articleView.html?idxno=32242',
+      title: 'POP of KOLOR - 송광연展',
+      description:
+        '아트코리아방송 기사. 송광연 작가의 "POP of KOLOR" 전시 리뷰. 팝아트적 요소와 전통 미술의 관념성을 결합하여 일상의 리얼리티를 표현한 작품 세계 조명.',
+      source: '아트코리아방송',
+    },
+    {
+      url: 'https://www.ksilbo.co.kr/news/articleView.html?idxno=636108',
+      title: "색색의 실로 수놓아 이은 '나비의 꿈'",
+      description:
+        '서양화가 송광연씨의 개인전이 세민S병원갤러리에서 16일 시작된다. 전시는 23일까지.송광연 작가는 영남대에서 서양화를 전공했고 총 9회의 개인전을 치렀고, 스페인·중국·미국 등 해외전을 비롯해 60여회의 아트페어와 단체전에 참여했다.이번 전시는 ‘나비의 꿈’이라는 주제...',
+      source: '경상일보',
+    },
+  ],
+
+  신건우: [
+    {
+      url: 'https://www.youtube.com/watch?v=EYo-bWpdQm0',
+      title: '달천예술창작공간 제4기 입주작가 | 신건우',
+      description:
+        'YouTube 영상. 달천예술창작공간 제4기 입주 작가 신건우 인터뷰 및 작품 소개 영상.',
+      source: 'YouTube',
+    },
+    {
+      url: 'https://ontpia.ssartpia.kr/sub/artist_detail.html?no=41&page=1',
+      title: '신건우 (SHIN KEONWOO) - 온트피아',
+      description: '온트피아(Ontpia) 아티스트 페이지에 소개된 신건우 작가의 프로필 및 작품 정보.',
+      source: '온트피아',
+    },
+    {
+      url: 'https://hksisaeconomy.com/mobile/article.html?no=622602',
+      title: "달천예술창작공간 결과 보고전, 신건우 작가의 '진부한 것이 새로운 것이다'",
+      description:
+        '한국시사경제, 정치, 경제, 사회, 문화, 스포츠, 연예, 라이프, 글로벌브랜드대상, 해외언론보도 등 실시간 뉴스 제공',
+      source: '한국시사경제',
+    },
+  ],
   박성완: [
     {
       url: 'http://www.gwangjuart.com/bbs/board.php?bo_table=artist01&wr_id=111',
@@ -1402,24 +1614,7 @@ export const artistArticles: Record<string, Article[]> = {
       source: '제주의소리',
     },
   ],
-  송광연: [
-    {
-      url: 'https://www.ksilbo.co.kr/news/articleView.html?idxno=636108',
-      title: "색색의 실로 수놓아 이은 '나비의 꿈'",
-      description:
-        '서양화가 송광연씨의 개인전이 세민S병원갤러리에서 16일 시작된다. 전시는 23일까지.송광연 작가는 영남대에서 서양화를 전공했고 총 9회의 개인전을 치렀고, 스페인·중국·미국 등 해외전을 비롯해 60여회의 아트페어와 단체전에 참여했다.이번 전시는 ‘나비의 꿈’이라는 주제...',
-      source: '경상일보',
-    },
-  ],
-  신건우: [
-    {
-      url: 'https://hksisaeconomy.com/mobile/article.html?no=622602',
-      title: "달천예술창작공간 결과 보고전, 신건우 작가의 '진부한 것이 새로운 것이다'",
-      description:
-        '한국시사경제, 정치, 경제, 사회, 문화, 스포츠, 연예, 라이프, 글로벌브랜드대상, 해외언론보도 등 실시간 뉴스 제공',
-      source: '한국시사경제',
-    },
-  ],
+
   신연진: [
     {
       url: 'https://keeptiq.com/all/?idx=816',
@@ -1447,15 +1642,6 @@ export const artistArticles: Record<string, Article[]> = {
     },
   ],
 
-  박소형: [
-    {
-      url: 'https://louisethewomen.org/news/?bmode=view&idx=167794323',
-      title: '그린레시피랩 [한국 생태미술의 역사와 현재]',
-      description:
-        '🌴 루이즈더우먼의 프로젝트, #그린레시피랩(@green_recipe_lab)의 #워크랩 (Work-lab)소식을 공유합니다! 🧭《한국 생태미술의 역사와 현재》그린레시피랩 × #박윤조 미술사학자 그린레시피랩 생태미술 스터디 작가들과 박윤조 미술학자와 함께 생태미술의 현재와 한국 생태미술에 변화 과정을 논의하고 사례를 살펴봤습니다. ▪️일시: (1회차) 9...',
-      source: '루이즈더우먼',
-    },
-  ],
   양운철: [
     {
       url: 'https://www.art-culture.co.kr/magazine_art_ca/1036',
@@ -1702,15 +1888,7 @@ export const artistArticles: Record<string, Article[]> = {
       source: '세라진(Cerazine)',
     },
   ],
-  박은선: [
-    {
-      url: 'https://www.iartpark.com/exhibitions/51-beyond-here/',
-      title: '박은선 : Beyond Here - ART PARK',
-      description:
-        '라인테이프, 미러, LED 등 다양한 매체로 실재와 환영을 넘나들며 새로운 시•공간을 창조해 온 작가 박은선(b. 1962)의 열여섯 번째 개인전 『Beyond Here』가 세브란스 아트 스페이스에서 열린다. 동국대에서 회화를 전공하고 이태리 로마 국립 아카데미를 졸업한 작가는 서울, 파리, 로마에서 다수의 개인전과 함께 이태리 싼 죠반니 보노 국제전 명예...',
-      source: 'ART PARK',
-    },
-  ],
+
   김현철: [
     {
       url: 'https://m.blog.naver.com/goldenhill/223746627870',
