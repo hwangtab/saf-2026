@@ -553,6 +553,682 @@ export const artistArticles: Record<string, Article[]> = {
       source: 'Kiaf SEOUL',
     },
   ],
+  오윤: [
+    {
+      url: 'http://www.daljin.com/column/22480',
+      title: '오윤 : 민중의 삶을 대변한 판화가',
+      description:
+        'copyright © 2012 KIM DALJIN ART RESEARCH AND CONSULTING. All Rights reserved 이 페이지는 서울아트가이드에서 제공됩니다. This page provided by Seoul Art Guide. 다음 브라우져 에서 최적화 되어있습니다. This page optimized for these browser...',
+      source: '서울아트가이드',
+    },
+  ],
+  박생광: [
+    {
+      url: 'https://www.yna.co.kr/view/AKR20190617140000005',
+      title: "'그대로 박생광'이 넓힌 채색 한국화의 지평",
+      description:
+        '(서울=연합뉴스) 정아란 기자 = 새빨간 옷을 입은 남자가 긴 원통을 든 채 먼 데를 바라본다. 초록색 구름이며, 발치의 청·록·황색 존재들이 ...',
+      source: '연합뉴스',
+    },
+  ],
+  아트만두: [
+    {
+      url: 'https://www.mediaus.co.kr/news/articleView.html?idxno=239536',
+      title: '아트만두가 특별한 의미를 두는 캐리커처는',
+      description:
+        '[미디어스=이영광 객원기자] 촌철살인의 풍자 캐리커처로 사랑받는 아트만두 작가가 지난 1월 라는 제목의 첫 작품집을 출간했다. 아트만두 작가가 그동안 그린 캐리커처 작품 중 120편을 선별해 맛깔난 글솜씨로 익살스러운 설명을 더했다. 국내 최초 시사 캐리커처 모음집 출간 과정에 대한 이야기를 들어보고자 지난 12일 아트만두 작가와 전화 연결했다. 다음은 아...',
+      source: '미디어스',
+    },
+  ],
+  '칡뫼 김구': [
+    {
+      url: 'https://www.hanion.co.kr/news/articleView.html?idxno=33271',
+      title: '시대의 상징이 된 화가 칡뫼김구',
+      description:
+        "'A painting is a thought'죽은 정물을 모사한 서경적 스케치나 뜻도 모르고 그려놓은 난삽한 풍의 추상화가 주류무대인 한국의 지배적인 화단에서 그 리얼한 화풍으로서의 구체적 현실에 터한 한국 화가로서 차지하는 그의 위치는 각별하다 하지 않을 수 없다.이번 전시회도 그렇다 이땅은 황무지라는 것이고, 그것은 우상의 벌판과도 같다는 것이다.아니,...",
+      source: '한겨레:온',
+    },
+  ],
+  '장천 김성태': [
+    {
+      url: 'https://www.hani.co.kr/arti/culture/music/1210138.html',
+      title: '한글창제 원리를 먹붓질로 표현하다',
+      description:
+        '전통서예를 전공하고 국내 캘리그라피(손글씨예술) 분야의 중견작가로 활동해온 장천 김성태씨가 15세기 조선 세종의 한글(훈민정음) 창제 원리를 먹 이미지로 형상화한 신작들을 선보이고 있다. 28일까지 서울 인사동 거리의 무우수갤러리에서 열리는 김씨의 기획 초대전 ‘나랏말',
+      source: '한겨레',
+    },
+  ],
+  기조: [
+    {
+      url: 'https://www.daeguartscenter.or.kr/mobile/content.html?md=0283&vmode=view&seq=56744',
+      title: '달천예술창작공간 제3기 입주작가 프리뷰전',
+      description:
+        '[대구문화예술회관 오시는길] 우.42672 대구광역시 달서구 공원순환로 대구문화예술회관 전화 : 053-430-7600, Fax : 053-430-7609',
+      source: '대구문화예술회관',
+    },
+  ],
+  김규학: [
+    {
+      url: 'https://asyaaf.chosun.com/artistroom/?artist_idx=2263',
+      title: '김규학 작가 - 아시아프',
+      description: '아시아프',
+      source: '조선일보(아시아프)`',
+    },
+  ],
+  김동석: [
+    {
+      url: 'https://www.artkoreatv.com/news/articleView.html?idxno=100050',
+      title: "인사아트프라자갤러리-김동석 개인전 '점으로 부터의 성찰과 사유'",
+      description:
+        "[아트코리아방송 = 김한정 기자] 인사동 인사아트프라자갤러리 1층 그랜드관에서 김동석 작가의 개인전 '점으러 부터의 성찰과 사유'가 11월 19일부터 24일까지 열리고 있다. 개막 당일 오전, 전시장을 찾은 김동석 작가는 자신의 30여 년 작업 세계를 다시 정리하며 시대적 변화와 내면",
+      source: '아트코리아방송',
+    },
+  ],
+  김종환: [
+    {
+      url: 'https://books.google.com/books/about/%EB%A7%A4%EC%9D%BC_%ED%8C%90%ED%99%94.html?id=JlfLswEACAAJ',
+      title: '매일 판화: 처음이어도 괜찮아! - 김종환',
+      description:
+        '세계 최대 eBook 상점을 둘러보고 웹, 태블릿, 휴대전화, eReader에서 독서를 시작해 보세요.',
+      source: 'Google Books',
+    },
+  ],
+  라인석: [
+    {
+      url: 'https://www.news-art.co.kr/news/article.html?no=26326',
+      title: '라인석 작가',
+      description:
+        '예술인의 권익 보호 및 향상, 당사자인 예술인의 목소리를 대변, 문화예술정책에 영향력',
+      source: '뉴스아트',
+    },
+  ],
+  민병산: [
+    {
+      url: 'https://www.cbinews.co.kr/news/articleView.html?idxno=124291',
+      title: '고 민병산 서예 대작 발견 김호일 전 총장 경매로 입수',
+      description:
+        "'거리의 철학자' '한국의 디오게네스'로 불렸는 청주 출신 고 민병산 선생(1928∼1988, 본명 민병익)의 본격 서예 작품이 경매를 통해 공개돼 화제가 되고 있다. 작품은 고인이 1984년 쓴 소식의 '적벽부'로 가로 138m + 세로 24cm의 족자로 특유의 흘림체(가칭 호롱불체)로 완성했다. 그동안 유품으로 나온 고인의 서예 작품 가운데 대작으로 분...",
+      source: '충북인뉴스',
+    },
+  ],
+  서금앵: [
+    {
+      url: 'http://www.daljin.com/display/D102264',
+      title: '전시 - 서금앵展',
+      description:
+        'copyright © 2012 KIM DALJIN ART RESEARCH AND CONSULTING. All Rights reserved 이 페이지는 서울아트가이드에서 제공됩니다. This page provided by Seoul Art Guide. 다음 브라우져 에서 최적화 되어있습니다. This page optimized for these browser...',
+      source: '서울아트가이드',
+    },
+  ],
+  김호성: [
+    {
+      url: 'https://m.blog.naver.com/PostView.naver?blogId=gongjeon21&logNo=223507130560',
+      title: '[옥천] 김호성.김혜숙 모자전',
+      description:
+        '전시명 : [옥천] 김호성.김혜숙 모자전 유형 : 옥천 전시회 날짜 : 2024년 6월 29일~7월 20일 관람시간 : a...',
+      source: '대전공연전시(네이버 블로그)',
+    },
+  ],
+  강석태: [
+    {
+      url: 'https://www.opengallery.co.kr/artist/A1368/',
+      title: '강석태 작가 :: 오픈갤러리',
+      description:
+        '추계예술대학교 문화예술학 박사, [개인전] 2025 "안녕! 스타비" (태은고현갤러리, 거제), 등록작품 29점. 오픈갤러리에서 강석태 작가의 작품과 이력, 전시소식, 인터뷰 등 자세한 정보를 확인하세요.',
+      source: '오픈갤러리',
+    },
+  ],
+  김영서: [
+    {
+      url: 'https://www.opengallery.co.kr/artist/A2131/',
+      title: '김영서 작가 :: 오픈갤러리',
+      description:
+        '홍익대학교 동양화 석사, [개인전] 2022 사라지는 것들의 아름다움 (사이아트스페이스), 등록작품 36점. 오픈갤러리에서 김영서 작가의 작품과 이력, 전시소식, 인터뷰 등 자세한 정보를 확인하세요.',
+      source: '오픈갤러리',
+    },
+  ],
+  김주희: [
+    {
+      url: 'https://www.opengallery.co.kr/artist/A0433/',
+      title: '김주희 작가 :: 오픈갤러리',
+      description:
+        '홍익대학교 회화 석사, [개인전] 2024 화양연화 (아트스페이스H), 등록작품 253점. 오픈갤러리에서 김주희 작가의 작품과 이력, 전시소식, 인터뷰 등 자세한 정보를 확인하세요.',
+      source: '오픈갤러리',
+    },
+  ],
+  리호: [
+    {
+      url: 'http://www.daljin.com/display/D089952',
+      title: '스며들다展',
+      description:
+        'copyright © 2012 KIM DALJIN ART RESEARCH AND CONSULTING. All Rights reserved 이 페이지는 서울아트가이드에서 제공됩니다. This page provided by Seoul Art Guide. 다음 브라우져 에서 최적화 되어있습니다. This page optimized for these browser...',
+      source: '서울아트가이드',
+    },
+  ],
+  민정See: [
+    {
+      url: 'https://www.marieclairekorea.com/culture/2025/04/galleriesartfair-minjungsee/',
+      title: '2025 화랑미술제 특별전 선정 작가 인터뷰 #민정See',
+      description:
+        '국내 최장수 아트페어인 화랑미술제가 4월 16일부터 20일까지 5일간 서울 코엑스 A&B홀에서 열립니다. 역대 최대 규모로, 168개의 유수 갤러리와 함께 엄선된 작품을 선보일 예정인데요. 그중 신진 작가 특별전 에 참여하는 10인의 작가와 함께한 인터뷰를 공개합니다.',
+      source: '마리끌레르',
+    },
+  ],
+  박성완: [
+    {
+      url: 'http://www.gwangjuart.com/bbs/board.php?bo_table=artist01&wr_id=111',
+      title: '박성완 > 우리시대의작가들/회화',
+      description: '남도아트, 광주미술, 광주작가, 남도미술의 역사, 남도미술소식',
+      source: '광주미술문화연구소',
+    },
+  ],
+  변경희: [
+    {
+      url: 'https://www.opengallery.co.kr/artist/A0781/',
+      title: '변경희 작가 :: 오픈갤러리',
+      description:
+        '백석예술대학교 회화 학사, [개인전] 2025 ●에서 점으로 (사이아트 스페이스(더플럭스)), 등록작품 75점. 오픈갤러리에서 변경희 작가의 작품과 이력, 전시소식, 인터뷰 등 자세한 정보를 확인하세요.',
+      source: '오픈갤러리',
+    },
+  ],
+  조이락: [
+    {
+      url: 'https://www.youtube.com/watch?v=8kz3o7V-89E',
+      title: '[BTN뉴스] 현대적 감수성으로 재탄생한 고려불화',
+      description:
+        '〔앵커〕고려불화를 현대적인 감수성으로 재해석하고 있는 조이락 작가가 2년 만에 개인전을 열었습니다. 그동안 어머니를 여읜 조 작가는 아미타내영도를 통해 연꽃으로 극락정토에 왕생한 어머니를 재구성했습니다. 작품을 따라가다 보면 화창한 봄날 만물에 깃든 부처님을 만나볼 수 있습니다. ...',
+      source: 'BTN뉴스(YouTube)`',
+    },
+  ],
+  박불똥: [
+    {
+      url: 'https://www.hani.co.kr/arti/culture/culture_general/834561.html',
+      title: '민예총 이사장에 박불똥 작가',
+      description:
+        '한국민족예술단체총연합(한국민예총) 신임 이사장에 민중미술 작가인 박불똥(62)씨가 선임됐다. 한국민예총은 지난달 28일 정기총회를 열고 이사장에 박불똥, 부이사장에 미술평론가 강성원씨를 선출했다고 4일 밝혔다. 올해 설립 30돌을 맞은 한국민예총은 이날 결의문을 발표하',
+      source: '한겨레',
+    },
+  ],
+  박지혜: [
+    {
+      url: 'https://homa.hongik.ac.kr/homa/0301.do?mode=view&articleNo=120639&title=%EC%8B%9C%EA%B0%81%EC%A0%81+%EB%8C%80%ED%99%94+Visual+Dialogues+%3A+between+Form+and+Essence',
+      title: '현대미술관 시각적 대화 Visual Dialogues',
+      description: 'COPYRIGHT © HONGIK UNIVERSITY. ALL RIGHTS RESERVED.',
+      source: '홍익대학교 현대미술관',
+    },
+  ],
+  백금아: [
+    {
+      url: 'https://www.jejusori.net/news/articleView.html?idxno=333400',
+      title: '제주만화작가회, 17일부터 창립 20주년 특별전',
+      description:
+        '제주만화작가회(회장 백금아)는 17일부터 30일까지 설문대여성문화센터 전시장에서 ‘창립 20주년 특별전’을 개최한다.이번 전시는 제주만화작가회의 지난 20년 역사를 기념하는 자리다. 제주만화작가회는 ‘황우럭’으로 알려진 故 양병윤 화백을 중심으로 2000년 결성한 ‘제주만화사랑회’가 전신이다. 2002년부터 현재 명칭으로 바꿨다. 그동안 다양한 전시와 함께...',
+      source: '제주의소리',
+    },
+  ],
+  송광연: [
+    {
+      url: 'https://www.ksilbo.co.kr/news/articleView.html?idxno=636108',
+      title: "색색의 실로 수놓아 이은 '나비의 꿈'",
+      description:
+        '서양화가 송광연씨의 개인전이 세민S병원갤러리에서 16일 시작된다. 전시는 23일까지.송광연 작가는 영남대에서 서양화를 전공했고 총 9회의 개인전을 치렀고, 스페인·중국·미국 등 해외전을 비롯해 60여회의 아트페어와 단체전에 참여했다.이번 전시는 ‘나비의 꿈’이라는 주제...',
+      source: '경상일보',
+    },
+  ],
+  신건우: [
+    {
+      url: 'https://hksisaeconomy.com/mobile/article.html?no=622602',
+      title: "달천예술창작공간 결과 보고전, 신건우 작가의 '진부한 것이 새로운 것이다'",
+      description:
+        '한국시사경제, 정치, 경제, 사회, 문화, 스포츠, 연예, 라이프, 글로벌브랜드대상, 해외언론보도 등 실시간 뉴스 제공',
+      source: '한국시사경제',
+    },
+  ],
+  신연진: [
+    {
+      url: 'https://keeptiq.com/all/?idx=816',
+      title: '신연진, Oriental Painting Series - Landscape',
+      description: '나만의 작은 그림 가게 - 1:1 그림 매칭 서비스, 소장의 경험을 더욱 특별하게',
+      source: '킵티크',
+    },
+  ],
+  신예리: [
+    {
+      url: 'https://www.knaart.com/1175',
+      title: '2022년 대한민국 국가 미술 특별초대전. 신예리 작가, 초대작가로 선정',
+      description:
+        '한류문화원, (사)한국언론사협회와 한류미술협회에서 주최하고 대한민국 국가미술특별초대전 운영위원회와 K스타저널',
+      source: '대한민국 국가미술원',
+    },
+  ],
+  안은경: [
+    {
+      url: 'https://www.ksilbo.co.kr/news/articleView.html?idxno=1012755',
+      title: '되돌아본 삶의 고통과 불안 가방에 담다',
+      description:
+        '여행가방을 소재로 의미를 담아 작업하는 안은경 작가의 18번째 개인전 ‘반추_反芻_Rumination’가 이달 3일부터 9일까지 중구 옥교동에 위치한 가기갤러리에서 열리고 있다. 안 작가는 삶을 살아감에 있어 누구에게나 존재하는 고통과 불안감을 주제로 한 작품 40여점을 선보이고 있다. 안 작가는 반추(어떤 일을 되풀이해 음미하거나 생각함)에서 오는 감정을...',
+      source: '경상일보',
+    },
+  ],
+  김우주: [
+    {
+      url: 'https://www.youtube.com/watch?v=isF6EJoyuwc',
+      title: "[MR Media Lab] 초실감 메타버스 XR 트윈기반 'Space Simulation'",
+      description:
+        '초실감 메타버스 XR 트윈 기반 [SPACE SIMULATION] AI 미디어아트 展▶전시 날짜 : 2021년 12월 23일 - 12월 31일전시 오프닝 : 2021년 12월 23일 16시▶전시 장소 : 홍익대학교 홍문관 L층/2층 AI 뮤지엄본 작품은 작가 2명[남극: 임혁필/사...',
+      source: '홍익대학교(YouTube)`',
+    },
+  ],
+  박소형: [
+    {
+      url: 'https://louisethewomen.org/news/?bmode=view&idx=167794323',
+      title: '그린레시피랩 [한국 생태미술의 역사와 현재]',
+      description:
+        '🌴 루이즈더우먼의 프로젝트, #그린레시피랩(@green_recipe_lab)의 #워크랩 (Work-lab)소식을 공유합니다! 🧭《한국 생태미술의 역사와 현재》그린레시피랩 × #박윤조 미술사학자 그린레시피랩 생태미술 스터디 작가들과 박윤조 미술학자와 함께 생태미술의 현재와 한국 생태미술에 변화 과정을 논의하고 사례를 살펴봤습니다. ▪️일시: (1회차) 9...',
+      source: '루이즈더우먼',
+    },
+  ],
+  양운철: [
+    {
+      url: 'https://www.art-culture.co.kr/magazine_art_ca/1036',
+      title: "양운철 개인전 <'c; stand up for yourself, ㅁ'>",
+      description:
+        '아트앤컬처- 문화예술신문 - 전시, 공연 문화·예술·교육소식 및 공모, 행사 정보제공 .',
+      source: '아트앤컬처',
+    },
+  ],
+  예미킴: [
+    {
+      url: 'https://www.handmk.com/news/articleView.html?idxno=15749',
+      title: '빛의 벙커, 봄 풍경 포토타임 이벤트 진행',
+      description:
+        "[핸드메이커 곽혜인 기자] 복합문화예술공간 '빛의 벙커'가 청년 예술가와 협업하여 봄 콘셉트의 포토타임을 위한 새로운 인터미션 콘텐츠를 공개했다.제주 성산에 위치한 ‘빛의 벙커’는 청년 예술가 예미킴과 협업하여 새로운 포토타임 콘텐츠를 기획하고 제작함으로써 창작 예술 활동 기회 확대와 문화 교류의 장을 마련했다. 이번에 선보이는 포토타임 콘텐츠는 여행지, ...",
+      source: '핸드메이커',
+    },
+  ],
+  오아: [
+    {
+      url: 'https://asyaaf.chosun.com/artistroom/?artist_idx=3897',
+      title: '오아(김성은)작가 - 아시아프',
+      description: '아시아프',
+      source: '조선일보(아시아프)`',
+    },
+  ],
+  윤겸: [
+    {
+      url: 'https://misul.in/104/?idx=167904984&bmode=view',
+      title: '윤겸.이유지 2인전 `<Exploring Life>`',
+      description:
+        '안녕하세요 이유지작가입니다:) 윤겸작가와 함께 성수동에 위치한 GG2 Gallery에서 2인전 하게 되었습니다🙏🏻 각자의 다른 방식으로 안식처와 삶의 불안정성을 마주하고 탐구하며, 반복과 몰입, 수행과도 같은 작품을 통해 다듬고 전환하는 회화적 탐험가들의 이야기를 준비했습니다. 많은 관심 부탁드립니다🩵윤겸.이유지 2인전 <Exploring Life>�...',
+      source: '미술인',
+    },
+  ],
+  이유지: [
+    {
+      url: 'https://www.opengallery.co.kr/artist/A1988/',
+      title: '이유지 작가 :: 오픈갤러리',
+      description:
+        '수원대학교 조형예술학부 서양화과 학사, [개인전] 2025 바램이 머물고 다시 일어서는곳 (아트보다갤러리), 등록작품 44점. 오픈갤러리에서 이유지 작가의 작품과 이력, 전시소식, 인터뷰 등 자세한 정보를 확인하세요.',
+      source: '오픈갤러리',
+    },
+  ],
+  이광수: [
+    {
+      url: 'https://m.blog.naver.com/foto3570/220255907243',
+      title: '『사진 인문학』 집필 출간한 사진비평가 이광수와의 인터뷰',
+      description:
+        '사진 인문학 철학이 사랑한 사진 그리고 우리 시대의 사진가들 이광수 지음 372쪽｜18,000원 ｜신국판｜반...',
+      source: '네이버 블로그(사진바다)`',
+    },
+  ],
+  이은화: [
+    {
+      url: 'https://www.abcn.kr/news/articleView.html?idxno=74796',
+      title: "이은화의 행복한 '북유럽 미술관 여행'",
+      description:
+        '[ABC뉴스=강현 기자] ‘북유럽’ 하면 떠오르는 단어는 단연 ‘행복’이다. 유엔 산하 자문기구의 발표에 따르면 2023년 세계에서 가장 행복한 나라는 핀란드로, 벌써 6년 연속 1위다. 덴마크는 5년 연속 2위, 스웨덴과 노르웨이도 각각 6위와 7위를 차지했다.우리는 북유럽 사람들이 행복한 이유를 그들의 복지나 휘게 등의 라이프스타일에서 찾아왔다. 그런데...',
+      source: 'ABC뉴스',
+    },
+  ],
+  이인철: [
+    {
+      url: 'https://www.francezone.com/news/articleView.html?idxno=2500525',
+      title: '[파리에서만난사람] 이인철 &#34;디지털 아트로 부활한 민중미술 작가&#34;',
+      description:
+        '파리 마레지구의 디지털 아트 갤러리 ‘아트버스(ArtVerse)’에서 한국 민중미술의 대표 작가 이인철의 첫 디지털 개인전 『HOLOÏSME : 보이지 않는 것으',
+      source: '프랑스존',
+    },
+  ],
+  이재정: [
+    {
+      url: 'https://www.focus1.kr/news/articleView.html?idxno=72221',
+      title: '제주신화전 20주년…&#34;인문학적 예술 방안 모색&#34;',
+      description:
+        "(포커스1=이재정 기자) 올해로 20주년을 맞은 제주신화전에 관객들의 발길이 이어지면서 미래 비전을 위한 '인문학적 예술 방안' 모색까지 이어질지 관심이 집중되고",
+      source: 'Focus1',
+    },
+  ],
+  이지은: [
+    {
+      url: 'https://www.artspaceat.com/category/all-products',
+      title: "'Hollowed Colors' 이지은 작가",
+      description:
+        '카테고리 설명을 입력하는 공간입니다. 카테고리 소개 및 방문자와의 소통으로 제품에 대한 흥미를 유도해보세요.',
+      source: 'Artspaceat',
+    },
+  ],
+  이현정: [
+    {
+      url: 'https://cicamuseum.com/lee-hyunjeong-solo-exhibition/',
+      title: 'LEE HYEONJEONG Solo Exhibition: 김치\_숨',
+      description:
+        '이현정 개인전 3-A Gallery, CICA Museum March 30 – April 3, 2022 2022.03.30 – 04.03',
+      source: 'CICA Museum',
+    },
+  ],
+  이호철: [
+    {
+      url: 'https://m.blog.naver.com/PostView.naver?blogId=gurimdotcom_official&logNo=222598017920',
+      title: "닫힘과 열림의 경계, 이호철 작가님의 '달항아리'",
+      description:
+        '닫힘과 열림의 경계에 있는 하나의 달항아리 안녕하세요, 그림닷컴 입니다. 예로부터 넉넉하고 아름다운 모...',
+      source: '그림닷컴(네이버 블로그)`',
+    },
+  ],
+  이홍원: [
+    {
+      url: 'https://www.news-art.co.kr/news/article.html?no=26476',
+      title: '이홍원 작가 - 뉴스아트',
+      description:
+        '예술인의 권익 보호 및 향상, 당사자인 예술인의 목소리를 대변, 문화예술정책에 영향력',
+      source: '뉴스아트',
+    },
+  ],
+  장경호: [
+    {
+      url: 'https://www.news-art.co.kr/news/article.html?no=26477',
+      title: '장경호 작가 - 뉴스아트',
+      description:
+        '예술인의 권익 보호 및 향상, 당사자인 예술인의 목소리를 대변, 문화예술정책에 영향력',
+      source: '뉴스아트',
+    },
+  ],
+  정금희: [
+    {
+      url: 'https://art-map.co.kr/exhibition/view.php?idx=25435',
+      title: '정금희 : 동해선-역사(驛舍), 역사(歷史)',
+      description:
+        '미술관을 배달받다 데이터 분석기반 전시회 인바이트 서비스, 나만의 취향을 배달받아 보세요',
+      source: '아트맵',
+    },
+  ],
+  정서온: [
+    {
+      url: 'https://deart82.com/artist/421',
+      title: '정서온 - De Art82',
+      description: '미술품 아카이빙, 작가소개, 기가픽셀, 미술이벤트',
+      source: '디아트82',
+    },
+  ],
+  정연수: [
+    {
+      url: 'https://www.lullu.net/43834',
+      title: "정연수 개인전 'Im'pression', 갤러리 도스 기획",
+      description: "정연수 개인전 'Im’pression', 갤러리 도스 기획-문화예술의전당",
+      source: '문화예술의전당',
+    },
+  ],
+  조신욱: [
+    {
+      url: 'https://www.newsis.com/view/NISX20201111_0001230067',
+      title: '[2020마니프-뉴시스 온라인 아트페어]조신욱 작가',
+      description:
+        "뉴시스 국내 언론 최초 미술품 유통 채널 '케이 아트파크(kartpark.net)' 론칭 마니프조직위원회와 손잡고 작가 지원 유통망 확장 30대~ 80대 작가 130명 참여 '온라인 군집 개인전' 한국화 서양화등 회화 판화 입체등 1000여점 한자리 24시간 언제 어디서든 전시 감상부터 구매 결제 가능",
+      source: '뉴시스',
+    },
+  ],
+  최재란: [
+    {
+      url: 'https://m.blog.naver.com/foto3570/222086999040',
+      title: '최재란 개인전 : 화성(華城), 묵시의 풍경',
+      description:
+        '최재란 개인전 화성(華城), 묵시의 풍경 장소 : 복합문화공간 행궁재 갤러리 (수원시 팔달구 행궁로 22번길...',
+      source: '사진바다(네이버 블로그)`',
+    },
+  ],
+  최혜수: [
+    {
+      url: 'https://www.choihyesu.com/',
+      title: '최혜수 작가 포트폴리오',
+      description:
+        'Artist statement Recovering Deposited Time and Meaning My practice begins with prolonged observation of objects that have been pushed out of the urban ecosystem or have lost their function. Everyday i...',
+      source: '작가 웹사이트',
+    },
+  ],
+  홍진희: [
+    {
+      url: 'https://www.yongin21.co.kr/news/articleView.html?idxno=83279',
+      title: '숲과 더불어 사는 삶 화폭에…홍진희 개인전',
+      description:
+        '홍진희 작가가 자연과 인간의 공존을 주제로 한 개인전 ‘더불어 숲’을 11월 13일까지 수지구 죽전동 갤러리 오르에서 연다.용인특례시 문화예술사업 공모 작가로 선정된 홍 작가는 이번 전시를 통해 기후 위기 시대 숲의 중요성과 자연과 더불어 사는 삶의 가치를 작품으로 표현했다.홍 작가는 “팬데믹 이후 기후 변화에 대한 관심이 높아지며 숲의 중요성이 더욱 강조...',
+      source: '용인시민신문',
+    },
+  ],
+  김레이시: [
+    {
+      url: 'https://www.opengallery.co.kr/artist/A0202/',
+      title: '김레이시 작가 :: 오픈갤러리',
+      description:
+        'Pratt Institute (미국) Fine Arts 석사, [개인전] 2025 Anonymous Moments (충주문화재단 목계나래 충주), 등록작품 13점. 오픈갤러리에서 김레이시 작가의 작품과 이력, 전시소식, 인터뷰 등 자세한 정보를 확인하세요.',
+      source: '오픈갤러리',
+    },
+  ],
+  김태균: [
+    {
+      url: 'https://m.artgg.ggcf.kr/artists/%EA%B9%80%ED%83%9C%EA%B7%A0',
+      title: '2025 작가 김태균 - 아트경기',
+      description:
+        '경기미술품활성화사업(아트경기)은 경기도 예술가의 지속적인 창작 활동과 건강한 미술시장의 발전을 위합니다',
+      source: '아트경기',
+    },
+  ],
+  박은선: [
+    {
+      url: 'https://www.iartpark.com/exhibitions/51-beyond-here/',
+      title: '박은선 : Beyond Here - ART PARK',
+      description:
+        '라인테이프, 미러, LED 등 다양한 매체로 실재와 환영을 넘나들며 새로운 시•공간을 창조해 온 작가 박은선(b. 1962)의 열여섯 번째 개인전 『Beyond Here』가 세브란스 아트 스페이스에서 열린다. 동국대에서 회화를 전공하고 이태리 로마 국립 아카데미를 졸업한 작가는 서울, 파리, 로마에서 다수의 개인전과 함께 이태리 싼 죠반니 보노 국제전 명예...',
+      source: 'ART PARK',
+    },
+  ],
+  김현철: [
+    {
+      url: 'https://m.blog.naver.com/goldenhill/223746627870',
+      title: '현대 진경산수화와 계화 : 정중동의 미학',
+      description:
+        '현대 진경산수화와 계화: 정중동(靜中動)의 미학 최경현(천안시립미술관 관장) Ⅰ. 들어가는 말 금릉 김현...',
+      source: '시중재(작가 블로그)`',
+    },
+  ],
+  Salnus: [
+    {
+      url: 'https://www.youtube.com/watch?v=4zdu9MZbkyg',
+      title: "Salnus 살누스 개인전 'Digging Out' 전시 현장",
+      description:
+        '2025 라운디드 플랫 5th Open Call 선정 작가 살누스의 개인전이 2025년 6월 27일부터 6월 30일까지 라운디드 플랫이 위치한 서울 종로구 인사동4길 17 건국빌딩 102-1호에서 열렸습니다. 과거와 현재, 평면과 입체, 안과 밖. 시공간을 엮고 엮어 만든 살누스의...',
+      source: '유튜브',
+    },
+  ],
+  이채원: [
+    {
+      url: 'https://www.saf2026.com/artworks/146',
+      title: '이채원 - 씨앗페 2026',
+      description:
+        '작가: 예미킴, 작품명: 우주에서, 제작년도: 2024, 재료: Mixedmedia on canvas, 크기: 24.2x24.2cm.',
+      source: '씨앗페 2026(작품명: Summer Comes to My Hometown, Seoul)`',
+    },
+  ],
+  조문호: [
+    {
+      url: 'https://www.youtube.com/watch?v=B9YVUw8zQDg',
+      title: '한국사진가론 28-청량리588 조문호편',
+      description:
+        '조문호는 80년대 "청량리588"로 널리 이름을 떨친 다큐멘터리 사진가입니다. 대낮에도 들어가기 힘들다는 속칭 청량리588로 불렸던 전농동 집창촌을 4년동안 촬영한 문제작이었습니다. 80년대 사진가 치고 조문호의 청량리588 사진을 모르는 사람이 없었습니다. 조문호의 두번째 역작은...',
+      source: 'jindongsun photoTV(YouTube)`',
+    },
+  ],
+  정영신: [
+    {
+      url: 'https://www.hani.co.kr/arti/culture/book/1198469.html',
+      title: "“요즘 오일장은 '여자세상'…장꾼들이 기다리니 자주 가죠”",
+      description:
+        '사진가이자 작가인 정영신(67))씨는 올해로 40년째 매주 한두 차례 오일장(5일 간격으로 서는 장)을 찾는다. 새벽 4시쯤 기상해 행장을 차려 서울 반포 고속버스터미널이나 기차역으로 향한다. 전남 함평에서 나 중학 시절부터 소설 창작의 꿈을',
+      source: '한겨레',
+    },
+  ],
+  한미영: [
+    {
+      url: 'https://www.opengallery.co.kr/artist/A2060/',
+      title: '한미영 작가 :: 오픈갤러리',
+      description:
+        '단국대학교 서양화과 학사, [개인전] 2025 문래아트페어 (문래 아트필드 갤러리), 등록작품 20점. 오픈갤러리에서 한미영 작가의 작품과 이력, 전시소식, 인터뷰 등 자세한 정보를 확인하세요.',
+      source: '오픈갤러리',
+    },
+  ],
+  양순열: [
+    {
+      url: 'https://www.khan.co.kr/article/202209141556001',
+      title: "예술혼으로 그리고 빚은 '오똑이', 모성의 힘을 일깨우다",
+      description:
+        '오뚝이가 중진의 양순열 작가(63)에게는 모성이다. 어떤 고난과 역경에도 다시 오뚝오뚝 일어서서 자식을 품어안는 엄마의 사랑, 마음을 오뚝이에 녹여낸다. 나아가 우주 만물의 생명력 근원인 모성의 회복이야 말로 세상의 온갖 문제들을 풀 수있을 것으로 본다. “모성은 우주와 한마음이 되고 인간뿐아니라 존재하는 모든 것들과 더불어 나아갈 때 가능하다. 우리...',
+      source: '경향신문',
+    },
+  ],
+  이문형: [
+    {
+      url: 'https://koreasmartcoop.cafe24.com/product/%EC%B1%85%EA%B1%B0%EB%A6%ACx%ED%82%A4%EC%8A%A4%ED%95%B4%EB%A7%81-%EC%9D%B4%EB%AC%B8%ED%98%95/85/',
+      title: '책거리x키스해링 - 이문형',
+      description:
+        '책거리x키스해링 - 이문형, 씨앗페 온라인 갤러리, 이문형,씨앗페,SAF2026,미술,예술,작품, 씨앗페 2026, 한지위에 수묵채색 | 60.6×40.9cm,',
+      source: '씨앗페 온라인 갤러리',
+    },
+  ],
+  류호식: [
+    {
+      url: 'https://www.newsbrite.net/news/articleView.html?idxno=168927',
+      title: "서촌 TYA, 류호식 작가 개인전 'Black & Daisy' 개최",
+      description:
+        '서촌 TYA는 11월 4일부터 17일까지 류호식 작가의 초대 개인전 를 개최한다. 류호식 작가는 2022년 5월 서촌 TYA에서 진행되었던 20인 기획전 《들여다보다》에 참여했던 작가이다.에서는 3D 프린팅 기법과 페이퍼 클레이를 통해 작품에 활용되는 소재의 다양성을 보여주고, 20인 전에서 보여주지 못했던 신작으로 공간을 채울 예정이다.초대전에 출품되는 ...',
+      source: '뉴스브라이트',
+    },
+  ],
+  김지영: [
+    {
+      url: 'http://topclass.chosun.com/news/articleView.html?idxno=1445',
+      title: '자연주의 도예가 김지영',
+      description:
+        '그의 그릇은 자연을 소재로 하고 자연 속에서 탄생한다. 꽃 한 송이나 풀잎 하나, 혹은 나무 한 그루가 그릇을 가득 채우고 있다. 디테일을 생략한 간결한 선, 색도 극히 제한했다. 자신의 얼굴에 색칠을 하지 않듯 그는 자신이 만드는 그릇에도 색칠을 하지 않는다.내 그릇이 그의 생활 속으로 들어가 푸른 나무 같은 활짝 핀 꽃 같은 풀잎 같은 즐거움이 되기를올...',
+      source: '톱클래스',
+    },
+  ],
+  김태희: [
+    {
+      url: 'http://www.cerazine.co.kr/m/view.php?idx=26244',
+      title: '<파주~예술로 잇다>전',
+      description:
+        '<파주~예술로 잇다>전 6.21~9.25 파주 한향림옹기박물관 <파주-예술로 잇다>전은 파주시에서 지원하는 지역문화예술 플랫폼 육성사업의 일환으로 마련된 전시다. 이번 전시는 옹기로 대표되는 한국 전통문화에 담긴 역사와 의미, 형태, 문양 등 파주지역에 거주하는 도자, 유리, 섬유, 민화 작가 5명의 시선으로 풀어냈다. 도예작가 손창귀는 마당 한 켠에 풍 ...',
+      source: '세라진(Cerazine)',
+    },
+  ],
+  김정원: [
+    {
+      url: 'https://www.artkoreatv.com/news/articleView.html?idxno=91237',
+      title: "김정원 개인전 'The Coral Story'",
+      description:
+        "[아트코리아방송 = 김한정 기자] 마포구 성미산로에 위치한 Gallery MoM에서는 2024년 3월 18일~5월 12일까지 김정원 개인전 'The Coral Story'가 전시될 예정이다.어릴 적 해녀였던 할머니와 함께 집 앞 바닷가에 나갈 때면, 햇빛에 반짝이는 바닷가의 영롱한 반",
+      source: '아트코리아방송',
+    },
+  ],
+  하선영: [
+    {
+      url: 'https://www.newsfreezone.co.kr/news/articleView.html?idxno=584216',
+      title: "산책길 만난 '행복의 퍼즐' 그리는 하선영 작가",
+      description:
+        '[서울 =뉴스프리존]편완식 미술전문기자= 하선영의 그림을 보면 ‘옥상달빛’의 노래 ‘산책의 미학’ 가사가 떠올려 진다. ‘오늘 참 되는 일 없네/ 생각하며 터덜터덜/걷다 보니 어, 바람이 시원하네//아무 말도 하기 싫은/피곤한 하룰 끝내고/걷다 보니 와, 하늘 참 예쁘다//걷고 걷고',
+      source: '뉴스프리존',
+    },
+  ],
+  정재철: [
+    {
+      url: 'http://m.todaytry.com/news_gisa/gisa_view.htm?gisa_category=03030000&gisa_idx=190221&date_y=2026&date_m=01',
+      title: '갤러리박영, 정재철 첫 개인전 《Middle Ground: 해체된 시선》',
+      description:
+        '갤러리박영은 11월 5일부터 11월 30일까지 서울 청담동 전시관(서울시 강남구 압구정로 416 B2, 더트리니티플레이스)에서 정재철(b. 1980~) 작가의 초대 개인전 《Middle Ground: 해체된 시선》을 개최한다...',
+      source: '투데이트라이',
+    },
+  ],
+  장희진: [
+    {
+      url: 'https://artbava.com/exhibits/%EC%9E%A5%ED%9D%AC%EC%A7%84-%EA%B0%9C%EC%9D%B8%EC%A0%84-%EC%B2%9C-%EA%B0%9C%EC%9D%98-%EC%83%89-%EC%B2%9C-%EA%B0%9C%EC%9D%98-%EA%B2%B0',
+      title: '장희진 개인전: 천 개의 색, 천 개의 결',
+      description:
+        '빛의 차원 dimension of light정현아 (이층갤러리+디아건축)장희진의 작업은 캔버스를 그만의 고유한 방식으로 만드는 것으로 시작한다. 캔버스 화면에 페이스트를 두껍게 바르고, 부분적으로 떼어내 캔버스 표면에 요철면을 만드는 것이다. 먼저 직접 만든 곡선형 자...',
+      source: '아트바바',
+    },
+  ],
+  김유진: [
+    {
+      url: 'https://www.opengallery.co.kr/artist/A1349/',
+      title: '김유진 작가 :: 오픈갤러리',
+      description:
+        '수원대학교 한국화과 학사, [개인전] 2023 개인의 장면 (인천 서구 공실상가 / 서구문화재단 지원), 등록작품 61점. 오픈갤러리에서 김유진 작가의 작품과 이력, 전시소식, 인터뷰 등 자세한 정보를 확인하세요.',
+      source: '오픈갤러리',
+    },
+  ],
+  고자영: [
+    {
+      url: 'https://www.jungle.co.kr/exhibit/1672',
+      title: '2007 세오 1st Young Artist 고 자 영',
+      description: '세오갤러리',
+      source: '디자인정글',
+    },
+  ],
+  고현주: [
+    {
+      url: 'https://www.artspacelumos.com/60',
+      title: '[기억의 목소리 Ⅲ] 고현주 사진전',
+      description:
+        '제주 4.3의 현장에서 올리는 아름다운 제의-고현주 사진전​“보자기에 (등을 담아) 수백 번 묶고, 풀 때마다 그들에게 이 빛이 작은 위로가 되기를 빌었다. 서글프고 아름다운 사진 속 풍경이 또한 보는 사람들을 위무하기를 바랐다.”​일출봉, 섯알오름, 다랑쉬오름, 함덕해수욕장, 정방폭포, 영궤......사진작가 고현주는 등과 바구니와 색색의 보자기들을 들고...',
+      source: 'ArtSpace LUMOS',
+    },
+  ],
+  최연택: [
+    {
+      url: 'https://www.artbava.com/exhibits/%EC%B5%9C%EC%97%B0%ED%83%9D-%EA%B0%9C%EC%9D%B8%EC%A0%84-%EC%9A%B0%EB%A6%AC%EB%93%A4%EC%9D%98-%EC%95%88%EB%85%95',
+      title: '최연택 개인전 : 우리들의 안녕',
+      description:
+        '그림으로 읽는 ‘우리들의 안녕’최연택의 세 번째 개인전 &lt;우리들의 안녕&gt;의 작품들은 사실 이미지보다는 텍스트에 집중한다. 작가의 작품은 텍스트와 함께여야 의미가 살고, 자세히 들여다보아야 마음을 움직이게 하는 하나의 점이 보인다.작가는 최근 세 권의 책에 그...',
+      source: '아트바바',
+    },
+  ],
+  이동구: [
+    {
+      url: 'https://www.youtube.com/watch?v=3f73apI6sIw',
+      title: '도예-101/비오는날 국그릇만들기/이동구 도예공방',
+      description:
+        'YouTube에서 마음에 드는 동영상과 음악을 감상하고, 직접 만든 콘텐츠를 업로드하여 친구, 가족뿐 아니라 전 세계 사람들과 콘텐츠를 공유할 수 있습니다.',
+      source: 'YouTube',
+    },
+  ],
+  김남진: [
+    {
+      url: 'http://www.kunews.ac.kr/news/articleView.html?idxno=24980',
+      title: '“갤러리는 인생을 즐기는 사진가들의 놀이터”',
+      description:
+        '“사진가들에게 놀이터를 제공하는 것뿐이에요. 하하” 김남진(전기공학과 76학번) 관장은 사진가로 활동한 80년대부터 도전을 거듭하며 달려왔다. “아무것도 모르는데',
+      source: '고대신문',
+    },
+  ],
 };
 
 /**

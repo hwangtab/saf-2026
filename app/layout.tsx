@@ -6,6 +6,7 @@ import { Analytics } from '@vercel/analytics/react';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import AnimationProvider from '@/components/providers/AnimationProvider';
+import ToastProvider from '@/components/providers/ToastProvider';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { OG_IMAGE, SITE_URL, SITE_URL_ALIAS, CONTACT } from '@/lib/constants';
 import { generateOrganizationSchema, generateWebsiteSchema } from '@/lib/seo-utils';
@@ -103,14 +104,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="bg-canvas-soft text-charcoal flex flex-col min-h-screen">
         <AnimationProvider>
-          <a href="#main-content" className="skip-to-main">
-            메인 콘텐츠로 이동
-          </a>
-          <Header />
-          <main id="main-content" role="main" className="flex-1">
-            <Suspense fallback={<PageLoader />}>{children}</Suspense>
-          </main>
-          <Footer />
+          <ToastProvider>
+            <a href="#main-content" className="skip-to-main">
+              메인 콘텐츠로 이동
+            </a>
+            <Header />
+            <main id="main-content" role="main" className="flex-1">
+              <Suspense fallback={<PageLoader />}>{children}</Suspense>
+            </main>
+            <Footer />
+          </ToastProvider>
         </AnimationProvider>
 
         <JsonLdScript data={organizationSchema} />

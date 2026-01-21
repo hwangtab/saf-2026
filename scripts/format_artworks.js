@@ -117,8 +117,8 @@ function run() {
   // 2. Format Artwork Batches
   const batchDir = path.join(__dirname, '../content/artworks-batches');
   if (fs.existsSync(batchDir)) {
-    const files = fs.readdirSync(batchDir).filter(f => f.endsWith('.ts'));
-    files.forEach(file => {
+    const files = fs.readdirSync(batchDir).filter((f) => f.endsWith('.ts'));
+    files.forEach((file) => {
       formatFile(path.join(batchDir, file), ['description']);
     });
   }
