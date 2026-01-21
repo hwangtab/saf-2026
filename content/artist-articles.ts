@@ -1657,6 +1657,41 @@ export const artistArticles: Record<string, Article[]> = {
   변경희: [],
   조이락: [
     {
+      url: 'https://www.ibulgyo.com/news/articleView.html?idxno=206941',
+      title: '전통방식으로 재현해낸 고려불화의 아름다움',
+      description:
+        '불교신문 보도. 서양화가에서 고려불화 재현 화가로 전향한 조이락 작가의 여정과 아트로직 스페이스 초대전 소식.',
+      source: '불교신문',
+    },
+    {
+      url: 'http://artlogicspace.com/gnuboard4/bbs/board.php?bo_table=003&wr_id=4&page=15',
+      title: '조이락 개인전 : 숨은 꽃-님에게 가는 길 — 아트로직 스페이스',
+      description:
+        '아트로직 스페이스 전시 기록. 고려불화 모사와 드로잉을 통해 만물에 깃든 부처를 표현한 조이락 작가의 개인전.',
+      source: '아트로직 스페이스',
+    },
+    {
+      url: 'https://www.news1.kr/life-culture/cultural-policy/5019972',
+      title: "고려불화의 현대적 재해석…조이락 초대전 '극락왕생'",
+      description:
+        '뉴스1 보도. 무우수갤러리에서 열린 조이락 작가 초대전. 고려불화를 계승해 현대적 감수성으로 풀어낸 아미타내영도 등 전시.',
+      source: '뉴스1',
+    },
+    {
+      url: 'https://www.beopbo.com/news/articleView.html?idxno=315400',
+      title: '조이락 작가 초대전 ‘극락왕생’…“어머니 정토왕생으로 회향되길”',
+      description:
+        '법보신문 인터뷰. 돌아가신 어머니에 대한 그리움과 발원을 담은 조이락 불화 작가 초대전. 고려불화의 맥을 잇는 작업 철학.',
+      source: '법보신문',
+    },
+    {
+      url: 'https://www.hyunbulnews.com/news/articleView.html?idxno=408843',
+      title: '대중 극락왕생 염원하며 그린 ‘극락세계’ — 조이락 초대전',
+      description:
+        "현대불교 보도. 무우수갤러리에서 개최된 조이락 작가의 '극락세계' 신작 15점 전시 정보 및 어머니의 왕생 발원 내용.",
+      source: '현대불교',
+    },
+    {
       url: 'https://www.youtube.com/watch?v=8kz3o7V-89E',
       title: '[BTN뉴스] 현대적 감수성으로 재탄생한 고려불화',
       description:
@@ -2247,6 +2282,20 @@ export const artistArticles: Record<string, Article[]> = {
   ],
   조신욱: [
     {
+      url: 'https://cicamuseum.com/cho-shin-wook-solo-exhibition/',
+      title: '조신욱의 책가도: 책가도 삶을 품다 — CICA Museum',
+      description:
+        'CICA 미술관 개인전. 전통 책가도를 현대적으로 재해석하여 일상 사물과 삶의 가치를 담아낸 조신욱 작가의 기획 전시.',
+      source: 'CICA 미술관',
+    },
+    {
+      url: 'http://filmforum.kr/gallery/exhibition/view.asp?seq=26&pagec=4&find=&searchword=',
+      title: '조신욱 개인전 — 필름포럼 갤러리',
+      description:
+        '필름포럼 갤러리 전시 정보. 백석예술대 및 인천가톨릭대 출신 조신욱 작가의 독창적 회화와 공간 구성을 보여주는 전시.',
+      source: '필름포럼',
+    },
+    {
       url: 'https://www.newsis.com/view/NISX20201111_0001230067',
       title: '[2020마니프-뉴시스 온라인 아트페어]조신욱 작가',
       description:
@@ -2398,6 +2447,76 @@ export const artistArticles: Record<string, Article[]> = {
   ],
   이채원: [],
   조문호: [
+    {
+      url: 'https://www.artbava.com/exhibits/2016-%EA%B0%A4%EB%9F%AC%EB%A6%AC-%EB%B8%8C%EB%A0%88%EC%86%A1-%EA%B8%B0%ED%9A%8D%EC%A0%84-%EC%82%AC%EC%A7%84%EC%9D%B8%EC%9D%84-%EC%B0%BE%EC%95%84%EC%84%9C12-%EC%A1%B0%EB%AC%B8%ED%98%B8%EB%A1%A0',
+      title: '2016 갤러리 브레송 기획전 사진인을 찾아서12 : 조문호론',
+      description:
+        '갤러리 브레송에서 열린 기획전 전시 정보. 인사동 사거리 등 작가의 주요 작업물을 총망라한 전시 보도.',
+      source: '아트바바',
+    },
+    {
+      url: 'https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0002268878',
+      title: "최루탄이 날아와도 '사람'을 찍었던 사진가",
+      description:
+        "오마이뉴스 인터뷰. 민주항쟁의 역사를 참여하며 기록한 조문호 작가의 삶과 예술 세계. 조문호론 '사람이다'를 주제로 한 전시 소식.",
+      source: '오마이뉴스',
+    },
+    {
+      url: 'http://thekoreajournal.com/View.aspx?No=3502421',
+      title: '[조문호 렌즈세상] 일하는 것 보다 노는 게 더 힘들다.',
+      description:
+        '더코리아저널 사진 수필. 일상의 소소한 풍경과 인연에 대한 사진가 조문호의 따뜻한 사유와 기록.',
+      source: '더코리아저널',
+    },
+    {
+      url: 'https://www.photoart.co.kr/bbs/m/mcb_data_view.php?type=mcb&ep=ep1260394525d70b6363602a&gp=all&item=md88379415460b844b42665d',
+      title: '조문호 〈사람이다〉',
+      description:
+        '사진예술 보도. 조문호 작가의 작업물을 한 장소에서 만나볼 수 있는 인사동 아라아트 개인전 전시 소식.',
+      source: '사진예술',
+    },
+    {
+      url: 'https://www.yna.co.kr/view/AKR20150223183000005',
+      title: "조문호 작가, 1980년대 촬영한 '청량리 588' 사진전",
+      description:
+        "연합뉴스 보도. 속칭 '청량리 588'로 불렸던 서울 동대문구 소재 성매매 집결지의 1980년대 모습을 담은 다큐멘터리 사진전 소식.",
+      source: '연합뉴스',
+    },
+    {
+      url: 'https://www.ilyosisa.co.kr/news/article.html?no=78221',
+      title: '80년대 사창가 공개한 사진작가 조문호',
+      description:
+        "일요시사 인터뷰. '홍등가도 윤락녀도 역사입니다.' 소외된 이들을 인간적인 시선으로 기록한 조문호 작가의 작업 철학.",
+      source: '일요시사',
+    },
+    {
+      url: 'http://www.sctoday.co.kr/news/articleView.html?idxno=21651',
+      title: '[조문호의 빼딱한 세상 바로보기] 대중화 시대의 사진에 대한 오해들',
+      description:
+        '서울문화투데이 칼럼. 사진가 조문호가 말하는 디지털 시대 사진 대중화의 오해와 전문가적 시각.',
+      source: '서울문화투데이',
+    },
+    {
+      url: 'https://www.segye.com/newsView/20150126003532',
+      title: '조문호 "사진은 못버려…미쳐야 사는 재미가 있지"',
+      description:
+        '세계일보 조명. 30년 넘게 인사동 밤거리의 낭만과 예술을 포착해온 다큐멘터리 사진가 조문호의 삶.',
+      source: '세계일보',
+    },
+    {
+      url: 'http://www.sctoday.co.kr/news/articleView.html?idxno=25859',
+      title: '조문호의 ‘산골 사람들’, 세월 지나니 역사네',
+      description:
+        '서울문화투데이 보도. 그림바위 예술발전소에서 열린 조문호의 ‘산골 사람들’ 전시 소식. 사라져가는 산골의 삶을 기록한 작업.',
+      source: '서울문화투데이',
+    },
+    {
+      url: 'https://www.chosun.com/site/data/html_dir/2015/03/02/2015030201161.html',
+      title: "[조선비디오] '빨간 조명' 속 그녀들, 청량리 588",
+      description:
+        '조선비디오 영상 아카이브. 1980년대 청량리 588의 시대상을 담은 조문호 작가의 사진과 인터뷰 기록.',
+      source: '조선일보',
+    },
     {
       url: 'https://www.youtube.com/watch?v=B9YVUw8zQDg',
       title: '한국사진가론 28-청량리588 조문호편',
