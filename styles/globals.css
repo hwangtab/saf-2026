@@ -56,7 +56,7 @@ html {
   overflow-wrap: break-word;
   font-weight: 300;
   overflow-x: hidden;
-  overscroll-behavior: none;
+  overscroll-behavior-x: none;
   -webkit-overflow-scrolling: touch;
 }
 
