@@ -21,7 +21,7 @@ export default function SupportMessage({ className }: SupportMessageProps) {
             <br />
             예술인의 창작 활동을 응원합니다
           </h3>
-          <p className="text-sm text-gray-500 font-medium break-keep opacity-80 mt-2">
+          <p className="text-sm text-gray-500 break-keep opacity-80 mt-2">
             씨앗페 2026은 예술인의 고리대금
             <br />
             문제 해결을 위한 전시입니다

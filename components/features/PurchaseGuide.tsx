@@ -30,7 +30,7 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
           <span className="text-xl leading-none mt-0.5">{guide.icon}</span>
           <div className="flex-1">
             <h4 className="text-sm font-bold text-gray-900 inline-block mr-1">{guide.label}:</h4>
-            <span className="text-sm text-gray-600 font-medium">{guide.text}</span>
+            <span className="text-sm text-gray-600">{guide.text}</span>
           </div>
         </div>
       ))}
