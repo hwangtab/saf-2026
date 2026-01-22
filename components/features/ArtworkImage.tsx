@@ -36,7 +36,7 @@ export default function ArtworkImage({ imagePath, title, artist, sold }: Artwork
           width={1000}
           height={1000}
           className="w-full h-auto object-contain max-h-[80vh] transition-transform duration-300 group-hover:scale-[1.02]"
-          priority
+          loading="eager"
         />
 
         {/* Zoom Hint Overlay */}
