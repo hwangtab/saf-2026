@@ -1,7 +1,7 @@
 'use client';
 
-import { useRef, useMemo } from 'react';
-import { useVirtualizer } from '@tanstack/react-virtual';
+import { useRef, useMemo, useState, useEffect } from 'react';
+import { useWindowVirtualizer } from '@tanstack/react-virtual';
 import { Artwork } from '@/types';
 import ArtworkCard from '@/components/ui/ArtworkCard';
 
@@ -11,6 +11,7 @@ interface VirtualizedGalleryProps {
 
 export default function VirtualizedGallery({ artworks }: VirtualizedGalleryProps) {
   const parentRef = useRef<HTMLDivElement>(null);
+  const [scrollMargin, setScrollMargin] = useState(0);
 
   // Calculate columns based on breakpoints
   const columns = useMemo(() => {
@@ -29,15 +30,23 @@ export default function VirtualizedGallery({ artworks }: VirtualizedGalleryProps
     return result;
   }, [artworks, columns]);
 
-  const virtualizer = useVirtualizer({
+  // Update scrollMargin on mount and resize
+  useEffect(() => {
+    if (parentRef.current) {
+      setScrollMargin(parentRef.current.offsetTop);
+    }
+  }, []);
+
+  // Use window virtualizer to use the main browser scrollbar
+  const virtualizer = useWindowVirtualizer({
     count: rows.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 420, // Estimated row height (4:5 aspect + padding)
-    overscan: 2, // Render 2 extra rows above/below viewport
+    estimateSize: () => 420, // Estimated row height
+    overscan: 2,
+    scrollMargin,
   });
 
   return (
-    <div ref={parentRef} className="h-[calc(100vh-200px)] overflow-auto px-4">
+    <div ref={parentRef} className="px-4">
       <div
         style={{
           height: `${virtualizer.getTotalSize()}px`,
@@ -54,7 +63,7 @@ export default function VirtualizedGallery({ artworks }: VirtualizedGalleryProps
               left: 0,
               width: '100%',
               height: `${virtualRow.size}px`,
-              transform: `translateY(${virtualRow.start}px)`,
+              transform: `translateY(${virtualRow.start - virtualizer.options.scrollMargin}px)`,
             }}
           >
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
