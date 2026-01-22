@@ -114,7 +114,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
               </div>
 
               {/* CTA Section - Moved here for better visibility */}
-              <div className="pt-4 space-y-6">
+              <div className="space-y-6">
                 {/* 온라인 구매 버튼 - 가격이 있고, shopUrl이 있고, 판매되지 않은 경우에만 표시 */}
                 {artwork.price && artwork.price !== '문의' && artwork.shopUrl && !artwork.sold && (
                   <>

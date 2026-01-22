@@ -216,7 +216,7 @@ export default function ExhibitionPage() {
                   <div className="flex-shrink-0 w-24 font-bold text-primary">1월 15-26일</div>
                   <div className="flex-1">
                     <p className="font-semibold">상설 전시</p>
-                    <p className="text-charcoal-muted text-sm">매일 11:00-20:00 전시 운영</p>
+                    <p className="text-charcoal-muted text-sm">매일 11:00-19:00 전시 운영</p>
                   </div>
                 </div>
               </div>
