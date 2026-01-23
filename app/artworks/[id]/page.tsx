@@ -83,7 +83,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
         variant="white"
         prevVariant="canvas-soft"
         padding="none"
-        className="pb-12 md:pb-20 pt-[calc(4rem+env(safe-area-inset-top,0px))]"
+        className="pb-24 md:pb-32 pt-[calc(4rem+env(safe-area-inset-top,0px))]"
       >
         {/* Navigation Bar */}
         <nav className="border-b sticky top-[calc(4rem+env(safe-area-inset-top,0px))] z-30 bg-white/80 backdrop-blur-md supports-[backdrop-filter]:bg-white/50">
