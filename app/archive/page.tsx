@@ -55,6 +55,19 @@ export default function ArchivePage() {
       <Section variant="sun-soft" prevVariant="white">
         <div className="container-max">
           <SectionTitle className="mb-12">🎉 2023년 행사 기록</SectionTitle>
+
+          {/* 2023 SAF Poster */}
+          <div className="mb-12">
+            <ExportedImage
+              src="/images/saf2023/saf2023poster.png"
+              alt="씨앗페 2023 공식 포스터"
+              width={1200}
+              height={1700}
+              className="w-full rounded-2xl shadow-xl"
+              priority
+            />
+          </div>
+
           <div className="bg-white rounded-lg shadow-sm p-8 mb-12">
             <h3 className="text-card-title mb-4">씨앗페 2023 성과</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">

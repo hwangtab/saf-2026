@@ -92,7 +92,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
           </div>
         </nav>
 
-        <article className="container-max pt-12 md:pt-20 pb-12 md:pb-20">
+        <article className="container-max pt-12 md:pt-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
             {/* Left Column: Image & CTA */}
             <div className="space-y-8">
