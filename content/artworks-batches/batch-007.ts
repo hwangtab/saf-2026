@@ -104,7 +104,7 @@ export const batch007: Artwork[] = [
     material: '도자',
     year: '확인 중',
     edition: '',
-    price: '₩150,000',
+    price: '₩300,000',
     image: '255.png',
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/391',
   },
@@ -375,5 +375,6 @@ export const batch007: Artwork[] = [
     price: '₩300,000',
     image: '275.png',
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/411',
+    sold: true,
   },
 ];
