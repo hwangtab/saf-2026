@@ -4,6 +4,7 @@ import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import { SITE_URL } from '@/lib/constants';
 import { escapeJsonLdForScript } from '@/lib/seo-utils';
+import { formatArtistName } from '@/lib/utils';
 import { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
@@ -53,10 +54,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const noteSnippet = artistNote ? `${artistNote.substring(0, 150)}... ` : '';
 
   const seoDescription =
-    `${artistName} 작가의 작품 세계를 만나보세요. ` +
+    `${formatArtistName(artistName)}의 작품 세계를 만나보세요. ` +
     (profileSnippet || noteSnippet || '예술가들이 전하는 연대와 희망의 메시지, 씨앗페 2026.');
 
-  const metaTitle = `${artistName} 작가 - 출품작 | 씨앗페 2026`;
+  const metaTitle = `${formatArtistName(artistName)} - 출품작 | 씨앗페 2026`;
 
   return {
     title: metaTitle,
@@ -74,7 +75,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           url: imageUrl,
           width: 1200,
           height: 630,
-          alt: `${artistName} 작가의 작품 - ${representativeArtwork.title}`,
+          alt: `${formatArtistName(artistName)}의 작품 - ${representativeArtwork.title}`,
         },
       ],
       type: 'website',
@@ -122,7 +123,7 @@ export default async function ArtistPage({ params }: Props) {
   const artistNote = artistArtworks.find((a) => a.description)?.description;
 
   const rawDescription =
-    artistProfile || artistNote || `${artistName} 작가의 시선, 그 깊이를 마주하다.`;
+    artistProfile || artistNote || `${formatArtistName(artistName)}의 시선, 그 깊이를 마주하다.`;
 
   // Truncate to 100 characters for visual balance
   const isTruncated = rawDescription.length > 100;
@@ -148,14 +149,14 @@ export default async function ArtistPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: escapeJsonLdForScript(JSON.stringify(personSchema)) }}
       />
       <PageHero
-        title={`${artistName} 작가`}
+        title={formatArtistName(artistName)}
         description={heroDescription}
         customBackgroundImage={heroBackgroundImage}
       >
         <ShareButtons
           url={pageUrl}
-          title={`${artistName} 작가 - 씨앗페 2026 출품작`}
-          description={`${artistName} 작가의 작품을 감상하고 예술인을 응원하세요.`}
+          title={`${formatArtistName(artistName)} - 씨앗페 2026 출품작`}
+          description={`${formatArtistName(artistName)}의 작품을 감상하고 예술인을 응원하세요.`}
         />
       </PageHero>
 

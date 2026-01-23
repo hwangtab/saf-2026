@@ -10,6 +10,7 @@ import {
   OG_IMAGE,
 } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
+import { formatArtistName } from '@/lib/utils';
 import { Artwork, BreadcrumbItem } from '@/types';
 
 // JSON-LD Security: Escape < characters to prevent XSS
@@ -93,7 +94,7 @@ export function generateArtworkJsonLd(artwork: Artwork, numericPrice: string, is
 
   // Build alternateName for image SEO
   const imageAlternateName = [
-    `${artwork.artist} 작가의 ${artwork.title}`,
+    `${formatArtistName(artwork.artist)}의 ${artwork.title}`,
     artwork.year,
     artwork.material,
   ]
