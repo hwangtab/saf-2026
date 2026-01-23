@@ -46,7 +46,7 @@ export default function ArtworksPage() {
       </PageHero>
 
       {/* Gallery Section */}
-      <Section variant="primary-surface" prevVariant="white" padding="default">
+      <Section variant="primary-surface" prevVariant="white" className="pb-24 md:pb-32">
         <div className="container-max">
           <ArtworkGalleryWithSort artworks={artworks} />
         </div>
