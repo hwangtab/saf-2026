@@ -83,7 +83,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
         variant="white"
         prevVariant="canvas-soft"
         padding="none"
-        className="min-h-screen pb-20 pt-[calc(4rem+env(safe-area-inset-top,0px))]"
+        className="min-h-screen pt-[calc(4rem+env(safe-area-inset-top,0px))]"
       >
         {/* Navigation Bar */}
         <nav className="border-b sticky top-[calc(4rem+env(safe-area-inset-top,0px))] z-30 bg-white/80 backdrop-blur-md supports-[backdrop-filter]:bg-white/50">
@@ -92,7 +92,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
           </div>
         </nav>
 
-        <article className="container-max pt-10 lg:pt-16 pb-0">
+        <article className="container-max pt-12 md:pt-20 pb-12 md:pb-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
             {/* Left Column: Image & CTA */}
             <div className="space-y-8">
