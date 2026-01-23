@@ -103,6 +103,19 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 sold={artwork.sold}
               />
 
+              {/* Mobile Header: Title, Artist, Price (Visible only on mobile) */}
+              <div className="block lg:hidden space-y-3 mt-6">
+                <h1 className="text-2xl font-bold font-sans text-charcoal break-keep text-center">
+                  {artwork.title}
+                </h1>
+                <div className="flex flex-col items-center gap-1">
+                  <p className="text-lg text-gray-600 font-medium">{artwork.artist}</p>
+                  {artwork.price && (
+                    <p className="text-xl font-bold text-charcoal">{artwork.price}</p>
+                  )}
+                </div>
+              </div>
+
               {/* Share Section */}
               <div className="flex items-center justify-center gap-2 py-4 border-y border-gray-100">
                 <span className="text-sm text-gray-500 mr-2">공유하기</span>
@@ -159,7 +172,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
 
             {/* Right Column: Info Section */}
             <div className="space-y-8">
-              <header className="mb-6 border-b border-gray-100 pb-6 lg:border-none lg:pb-0 lg:mb-0">
+              <header className="hidden lg:block mb-6 border-b border-gray-100 pb-6 lg:border-none lg:pb-0 lg:mb-0">
                 <h1 className="text-3xl md:text-4xl font-bold font-sans text-charcoal mb-2 break-keep">
                   {artwork.title}
                 </h1>
