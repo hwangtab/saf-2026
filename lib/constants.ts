@@ -22,6 +22,7 @@ export const EXTERNAL_LINKS = {
   AUDIO_GUY_STUDIO_KAKAO: 'https://place.map.kakao.com/27349395',
   KOSMART_OFFICE_MAP:
     'https://map.kakao.com/?q=%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EC%98%81%EB%93%B1%ED%8F%AC%EA%B5%AC%20%EC%96%91%EC%82%B0%EB%A1%9C%2096',
+  ORDER_STATUS: 'https://koreasmartcoop.cafe24.com/myshop/order/list.html',
 };
 
 // Social Links

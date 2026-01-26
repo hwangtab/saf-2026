@@ -2,7 +2,7 @@
 
 import type { NavigationItem } from '@/types';
 import clsx from 'clsx';
-import { Z_INDEX } from '@/lib/constants';
+import { Z_INDEX, EXTERNAL_LINKS } from '@/lib/constants';
 import { UI_STRINGS } from '@/lib/ui-strings';
 import { useHeaderStyle } from '@/lib/hooks/useHeaderStyle';
 
@@ -18,6 +18,7 @@ const navigation: NavigationItem[] = [
   { name: '출품작', href: '/artworks' },
   { name: '아카이브', href: '/archive' },
   { name: '언론 보도', href: '/news' },
+  { name: UI_STRINGS.NAV.ORDER_STATUS, href: EXTERNAL_LINKS.ORDER_STATUS, external: true },
 ];
 
 export default function Header() {

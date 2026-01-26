@@ -23,6 +23,7 @@ export const UI_STRINGS = {
     TOGGLE_MENU: '메뉴 토글',
     DONATE: '후원하기',
     BUY_ART: '작품 구매하기',
+    ORDER_STATUS: '주문/배송 조회',
   },
   FOOTER: {
     LINKS: '링크',

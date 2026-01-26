@@ -88,6 +88,16 @@ export default function Footer() {
                       {UI_STRINGS.FOOTER.COOP_HOME}
                     </a>
                   </li>
+                  <li>
+                    <a
+                      href={EXTERNAL_LINKS.ORDER_STATUS}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-300 hover:text-primary transition-colors"
+                    >
+                      {UI_STRINGS.NAV.ORDER_STATUS}
+                    </a>
+                  </li>
                 </ul>
               </div>
 
