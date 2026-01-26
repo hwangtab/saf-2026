@@ -1,4 +1,3 @@
-import dynamic from 'next/dynamic';
 import Section from '@/components/ui/Section';
 
 import { getAllArtworks } from '@/content/saf2026-artworks';
@@ -7,19 +6,8 @@ import ShareButtons from '@/components/common/ShareButtons';
 import { SITE_URL } from '@/lib/constants';
 import { Metadata } from 'next';
 import { createPageMetadata } from '@/lib/seo';
-import { GallerySkeleton, SearchBarSkeleton } from '@/components/ui/Skeleton';
 
-const ArtworkGalleryWithSort = dynamic(
-  () => import('@/components/features/ArtworkGalleryWithSort'),
-  {
-    loading: () => (
-      <div className="space-y-6">
-        <SearchBarSkeleton />
-        <GallerySkeleton count={6} />
-      </div>
-    ),
-  }
-);
+import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
 
 const PAGE_URL = `${SITE_URL}/artworks`;
 

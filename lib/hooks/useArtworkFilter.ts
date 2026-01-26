@@ -234,12 +234,20 @@ export function useArtworkFilter(artworks: Artwork[], initialArtist?: string) {
 
   const uniqueArtists = useMemo(() => extractUniqueArtists(artworks), [artworks]);
 
+  // Handle search query change - clear selected artist if search is active
+  const handleSetSearchQuery = useCallback((query: string) => {
+    setSearchQuery(query);
+    if (query.trim()) {
+      setSelectedArtist(null);
+    }
+  }, []);
+
   return useMemo(
     () => ({
       sortOption,
       setSortOption,
       searchQuery,
-      setSearchQuery,
+      setSearchQuery: handleSetSearchQuery,
       statusFilter,
       setStatusFilter,
       selectedArtist,
@@ -251,6 +259,7 @@ export function useArtworkFilter(artworks: Artwork[], initialArtist?: string) {
     [
       sortOption,
       searchQuery,
+      handleSetSearchQuery,
       statusFilter,
       selectedArtist,
       filteredArtworks,
