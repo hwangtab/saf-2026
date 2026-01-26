@@ -271,6 +271,7 @@ export const artworksBatch2: Artwork[] = [
     price: '₩1,500,000',
     image: '77.jpg',
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/97',
+    sold: true,
   },
   {
     id: '78',
@@ -508,6 +509,7 @@ export const artworksBatch2: Artwork[] = [
     price: '₩900,000',
     image: '94.jpg',
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/114',
+    sold: true,
   },
   {
     id: '95',
