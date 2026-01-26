@@ -37,7 +37,7 @@ export default function Header() {
         willChange: 'background-color, border-color',
       }}
     >
-      <nav className="container-max flex items-center justify-between h-16 transition-colors duration-300">
+      <nav className="relative container-max flex items-center justify-between h-16 transition-colors duration-300">
         <HeaderLogo isDarkText={isDarkText} />
 
         <DesktopNav navigation={navigation} isActive={isActive} textColor={textColor} />

@@ -14,7 +14,7 @@ interface DesktopNavProps {
 export default function DesktopNav({ navigation, isActive, textColor }: DesktopNavProps) {
   return (
     <>
-      <ul className="hidden md:flex gap-8 h-full m-0 p-0 list-none self-stretch">
+      <ul className="hidden md:flex absolute left-1/2 -translate-x-1/2 top-0 items-center gap-8 h-full m-0 p-0 list-none">
         {navigation.map((item) => (
           <li key={item.href} className="h-full">
             <NavLink item={item} isActive={isActive(item.href)} textColor={textColor} />

@@ -146,8 +146,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: clamp(0.75rem, 3.5dvh, 2.5rem);
-  /* 최소 12px, 화면 3.5%, 최대 40px - 짧은 화면에서 촘촘하게 */
+  gap: clamp(0.5rem, 2.5dvh, 2rem);
+  /* 최소 8px, 화면 2.5%, 최대 32px */
   margin: 0;
   padding: 0;
   list-style: none;
@@ -156,8 +156,8 @@
 
 .navLink {
   display: block;
-  /* 터치 영역 확보 - 최소 8px 상하 패딩, dvh 기반 유연 조절 */
-  padding: clamp(0.5rem, 1.5dvh, 1rem) 2rem;
+  /* 터치 영역 확보 - 최소 8px 상하 패딩 */
+  padding: clamp(0.375rem, 1.25dvh, 0.75rem) 2rem;
   font-family:
     'PartialSans',
     'GMarketSans',
