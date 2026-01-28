@@ -27,6 +27,7 @@ export interface BaseArtwork {
   image: string;
   shopUrl?: string;
   sold?: boolean;
+  hidden?: boolean;
 }
 
 // Artwork with hydrated artist data (for UI)

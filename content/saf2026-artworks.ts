@@ -19,7 +19,9 @@ export const artworks: Artwork[] = [
   ...batch006,
   ...batch007,
   ...batch008,
-].map(getArtworkWithArtistData);
+]
+  .filter((artwork) => !artwork.hidden)
+  .map(getArtworkWithArtistData);
 
 export function getArtworkById(id: string): Artwork | undefined {
   return artworks.find((artwork) => artwork.id === id);
