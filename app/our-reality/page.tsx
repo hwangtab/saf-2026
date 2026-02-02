@@ -304,7 +304,33 @@ export default function OurReality() {
             되어 예술이 계속 숨 쉬게 합니다.
           </p>
           <CTAButtonGroup variant="large" className="justify-center" />
-          <p className="text-sm text-charcoal-muted mt-6">
+
+          {/* AI/GEO Optimization: Explicit Citations Section */}
+          <div className="mt-16 pt-16 border-t border-primary/20 max-w-2xl mx-auto text-left">
+            <h3 className="text-sm font-bold text-primary-strong uppercase tracking-widest mb-6">
+              자료 출처 및 근거 (Citations)
+            </h3>
+            <ul className="space-y-3 text-xs md:text-sm text-charcoal-muted list-disc pl-5">
+              <li>
+                <strong>금융 배제 및 고리대금 통계</strong>: 한국스마트협동조합 &apos;2025 예술인
+                금융 재난 보고서&apos; (179명 심층 설문 결과)
+              </li>
+              <li>
+                <strong>상환율 데이터</strong>: 2022년 12월~2025년 9월 예술인 상호부조 대출 운용
+                기록 (누적 354건 집계)
+              </li>
+              <li>
+                <strong>관련 보도</strong>: 한겨레(2025.11.05), 뉴스아트(2025.11.05),
+                아시아경제(2025.11.05) 등 주요 일간지 및 전문지
+              </li>
+              <li>
+                <strong>제도적 배경</strong>: 문화체육관광부 예술인 복지 정책 및 제1금융권 예술인
+                신용 규제 현황
+              </li>
+            </ul>
+          </div>
+
+          <p className="text-sm text-charcoal-muted mt-12">
             2025 예술인 금융 재난 보고서 기반 |{' '}
             <a
               href={EXTERNAL_LINKS.KOSMART_HOME}
