@@ -3,7 +3,8 @@ import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import { SITE_URL } from '@/lib/constants';
-import { escapeJsonLdForScript, generateArtistSchema } from '@/lib/seo-utils';
+import { generateArtistSchema } from '@/lib/seo-utils';
+import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { formatArtistName } from '@/lib/utils';
 import { Metadata } from 'next';
 import dynamic from 'next/dynamic';
@@ -142,10 +143,7 @@ export default async function ArtistPage({ params }: Props) {
 
   return (
     <main className="min-h-screen">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: escapeJsonLdForScript(JSON.stringify(personSchema)) }}
-      />
+      <JsonLdScript data={personSchema} />
       <PageHero
         title={formatArtistName(artistName)}
         description={heroDescription}

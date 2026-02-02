@@ -7,11 +7,7 @@ import ShareButtons from '@/components/common/ShareButtons';
 import { newsArticles } from '@/content/news';
 import { SITE_URL, BREADCRUMB_HOME, BREADCRUMBS, OG_IMAGE } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
-import {
-  escapeJsonLdForScript,
-  createBreadcrumbSchema,
-  generateNewsArticleSchema,
-} from '@/lib/seo-utils';
+import { createBreadcrumbSchema, generateNewsArticleSchema } from '@/lib/seo-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 
 const PAGE_URL = `${SITE_URL}/news`;
@@ -173,12 +169,7 @@ export default function NewsPage() {
   return (
     <>
       <JsonLdScript data={breadcrumbSchema} />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: escapeJsonLdForScript(JSON.stringify(structuredData)),
-        }}
-      />
+      <JsonLdScript data={structuredData} />
 
       <PageHero title="언론 보도" description="씨앗페 캠페인을 조명한 기사와 인터뷰를 모았습니다.">
         <ShareButtons
