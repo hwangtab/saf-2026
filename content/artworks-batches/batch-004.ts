@@ -266,7 +266,7 @@ export const artworksBatch4: Artwork[] = [
     title: '지리산3',
     description: '',
     size: '22x25cm',
-    material: '목판',
+    material: '(사후판화)목판',
     year: '1984',
     edition: '',
     price: '₩1,550,000',
