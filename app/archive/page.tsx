@@ -12,7 +12,7 @@ import { videos } from '@/content/videos';
 import { SITE_URL, escapeJsonLdForScript, BREADCRUMB_HOME, BREADCRUMBS } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { createBreadcrumbSchema } from '@/lib/seo-utils';
+import { createBreadcrumbSchema, generateVideoSchema } from '@/lib/seo-utils';
 
 const PAGE_URL = `${SITE_URL}/archive`;
 
@@ -190,6 +190,10 @@ export default function ArchivePage() {
       <Section variant="accent-soft" prevVariant="white">
         <div className="container-max">
           <SectionTitle className="mb-12">📹 영상 아카이브</SectionTitle>
+          {/* VideoObject JSON-LD for each video */}
+          {videos.map((video) => (
+            <JsonLdScript key={`video-schema-${video.id}`} data={generateVideoSchema(video)} />
+          ))}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {videos.map((video) => (
               <div key={video.id} className="bg-white rounded-lg shadow-md overflow-hidden">

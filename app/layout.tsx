@@ -91,6 +91,9 @@ export const metadata: Metadata = {
       ? { 'naver-site-verification': process.env.NEXT_PUBLIC_NAVER_VERIFICATION }
       : undefined,
   },
+  other: {
+    'pinterest-rich-pin': 'true',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

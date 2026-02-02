@@ -324,3 +324,28 @@ export function generateFAQSchema(faqs: FAQItem[]) {
     })),
   };
 }
+
+export interface VideoSchemaInput {
+  title: string;
+  description: string;
+  youtubeId: string;
+  uploadDate?: string;
+}
+
+export function generateVideoSchema(video: VideoSchemaInput) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'VideoObject',
+    name: video.title,
+    description: video.description,
+    thumbnailUrl: `https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`,
+    uploadDate: video.uploadDate || '2023-03-26',
+    contentUrl: `https://www.youtube.com/watch?v=${video.youtubeId}`,
+    embedUrl: `https://www.youtube.com/embed/${video.youtubeId}`,
+    publisher: {
+      '@type': 'Organization',
+      name: '한국스마트협동조합',
+      url: SITE_URL,
+    },
+  };
+}
