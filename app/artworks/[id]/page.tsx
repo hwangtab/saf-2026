@@ -16,6 +16,8 @@ import ShareButtons from '@/components/common/ShareButtons';
 import SupportMessage from '@/components/features/SupportMessage';
 import PurchaseGuide from '@/components/features/PurchaseGuide';
 import TrustBadges from '@/components/features/TrustBadges';
+import Link from 'next/link';
+import ArtworkCard from '@/components/ui/ArtworkCard';
 
 interface Props {
   params: Promise<{
@@ -87,8 +89,30 @@ export default async function ArtworkDetailPage({ params }: Props) {
       >
         {/* Navigation Bar */}
         <nav className="border-b sticky top-[calc(4rem+env(safe-area-inset-top,0px))] z-30 bg-white/80 backdrop-blur-md supports-[backdrop-filter]:bg-white/50">
-          <div className="container-max py-4">
+          <div className="container-max py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <BackToListButton />
+
+            {/* Visual Breadcrumbs for SEO & UX */}
+            <div className="flex items-center text-xs text-gray-400 gap-2 whitespace-nowrap overflow-x-auto pb-1 md:pb-0">
+              <Link href="/" className="hover:text-primary transition-colors">
+                홈
+              </Link>
+              <span>/</span>
+              <Link href="/artworks" className="hover:text-primary transition-colors">
+                출품작
+              </Link>
+              <span>/</span>
+              <Link
+                href={`/artworks/artist/${encodeURIComponent(artwork.artist)}`}
+                className="hover:text-primary transition-colors"
+              >
+                {artwork.artist}
+              </Link>
+              <span className="hidden sm:inline">/</span>
+              <span className="hidden sm:inline text-gray-600 font-medium truncate max-w-[150px]">
+                {artwork.title}
+              </span>
+            </div>
           </div>
         </nav>
 
@@ -256,6 +280,36 @@ export default async function ArtworkDetailPage({ params }: Props) {
               <RelatedArticles articles={relatedArticles} />
             </div>
           </div>
+
+          {/* Other Works by this Artist Section */}
+          {(() => {
+            const otherWorks = getAllArtworks()
+              .filter((a) => a.artist === artwork.artist && a.id !== artwork.id)
+              .slice(0, 3);
+
+            if (otherWorks.length === 0) return null;
+
+            return (
+              <div className="mt-24 pt-24 border-t border-gray-100">
+                <div className="flex items-center justify-between mb-10">
+                  <h2 className="text-2xl font-bold text-charcoal">
+                    {artwork.artist} 작가의 다른 작품
+                  </h2>
+                  <Link
+                    href={`/artworks/artist/${encodeURIComponent(artwork.artist)}`}
+                    className="text-primary font-medium hover:underline text-sm"
+                  >
+                    전체보기 →
+                  </Link>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {otherWorks.map((other) => (
+                    <ArtworkCard key={other.id} artwork={other} variant="gallery" />
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
         </article>
       </Section>
     </>

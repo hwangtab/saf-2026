@@ -71,6 +71,10 @@ export function generateArtworkMetadata(artwork: Artwork): Metadata {
       '예술인 연대',
       '미술품 구매',
       '상호부조',
+      '원화 구매',
+      '미술품 투자',
+      '신진작가 원화',
+      '현대미술 컬렉션',
       '예술인 상호부조',
       '인사아트센터',
       artwork.material?.split(' ')?.[0] ?? '미술품',
@@ -136,6 +140,7 @@ export function generateArtworkJsonLd(artwork: Artwork, numericPrice: string, is
     '@type': ['VisualArtwork', 'Product'],
     name: artwork.title,
     inLanguage: 'ko',
+    artform: artwork.material?.toLowerCase().includes('canvas') ? 'Painting' : 'Visual Artwork',
     image: {
       '@type': 'ImageObject',
       url: `${SITE_URL}/images/artworks/${artwork.image}`,
