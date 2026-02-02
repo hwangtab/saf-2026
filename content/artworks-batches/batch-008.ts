@@ -46,6 +46,7 @@ export const batch008: Artwork[] = [
     id: '279',
     artist: '박생광',
     title: '쏘가리',
+    sold: true,
     description: '',
     size: '25x18cm',
     material: '종이에 연필',

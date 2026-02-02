@@ -196,6 +196,7 @@ export const artworksBatch4: Artwork[] = [
     id: '181',
     artist: '조이락',
     title: '복주머니(블루)',
+    sold: true,
     description: '',
     size: '30x29cm',
     material: '한지에 채색',

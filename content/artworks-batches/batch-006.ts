@@ -149,6 +149,7 @@ export const batch006: Artwork[] = [
     id: '239',
     artist: '강석태',
     title: '나의 어린 왕자',
+    sold: true,
     description: '',
     size: '45x45cm',
     material: '캔버스에 아크릴채색',

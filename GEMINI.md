@@ -1,3 +1,13 @@
+# Critical Rules (Must Follow)
+
+> [!CAUTION]
+> **Strict Read-Only Mode on Reporting Tasks**
+> When the user requests to "report", "check", or "verify" something, **DO NOT MODIFY ANY CODE** unless explicitly instructed to do so.
+>
+> - **Only** perform read operations (grep, view_file, etc.).
+> - **Only** report findings via `notify_user` or artifacts.
+> - **Never** auto-fix issues during a reporting task.
+
 # Project Overview
 
 This is the official website for the **SAF(Seed Art Festival) 2026**, a campaign aimed at resolving the financial crisis faced by Korean artists.
