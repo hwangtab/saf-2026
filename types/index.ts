@@ -45,6 +45,7 @@ export interface Video {
   description: string;
   youtubeId: string;
   thumbnail?: string;
+  transcript?: string; // AI-friendly summary or transcript
 }
 
 export interface TestimonialItem {

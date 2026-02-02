@@ -330,6 +330,7 @@ export interface VideoSchemaInput {
   description: string;
   youtubeId: string;
   uploadDate?: string;
+  transcript?: string;
 }
 
 export function generateVideoSchema(video: VideoSchemaInput) {
@@ -342,6 +343,7 @@ export function generateVideoSchema(video: VideoSchemaInput) {
     uploadDate: video.uploadDate || '2023-03-26',
     contentUrl: `https://www.youtube.com/watch?v=${video.youtubeId}`,
     embedUrl: `https://www.youtube.com/embed/${video.youtubeId}`,
+    transcript: video.transcript,
     publisher: {
       '@type': 'Organization',
       name: '한국스마트협동조합',

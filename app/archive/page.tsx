@@ -200,7 +200,20 @@ export default function ArchivePage() {
                 <VideoEmbed id={video.youtubeId} title={video.title} />
                 <div className="p-6">
                   <h3 className="font-sans font-bold text-xl mb-2">{video.title}</h3>
-                  <p className="text-charcoal-muted text-sm line-clamp-3">{video.description}</p>
+                  <p className="text-charcoal-muted text-sm mb-4 line-clamp-2">
+                    {video.description}
+                  </p>
+
+                  {video.transcript && (
+                    <div className="mt-4 p-4 bg-primary/5 rounded-lg border-l-4 border-primary/30">
+                      <h4 className="flex items-center gap-2 text-xs font-bold text-primary mb-2 uppercase tracking-wider">
+                        <span className="text-sm">🤖</span> AI Summary
+                      </h4>
+                      <p className="text-xs md:text-sm text-charcoal leading-relaxed">
+                        {video.transcript}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
