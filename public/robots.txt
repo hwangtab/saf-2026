@@ -1,0 +1,30 @@
+# SAF 2026 - Seed Art Festival
+# SEO and crawler configuration
+
+# Default rules for all crawlers
+User-agent: *
+Allow: /
+Disallow: /api/
+
+# Explicitly allow AI crawlers for visibility
+# Helping AI understand the artist financial crisis campaign
+User-agent: GPTBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+# Declare sitemap for search engines
+Sitemap: https://www.saf2026.com/sitemap.xml
+
+# Crawl delay to prevent server overload
+Crawl-delay: 1
