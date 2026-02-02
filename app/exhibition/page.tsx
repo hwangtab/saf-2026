@@ -5,9 +5,20 @@ import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import dynamic from 'next/dynamic';
-import { EXHIBITION, EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
+import { JsonLdScript } from '@/components/common/JsonLdScript';
+import {
+  BREADCRUMB_HOME,
+  BREADCRUMBS,
+  EXHIBITION,
+  EXTERNAL_LINKS,
+  SITE_URL,
+} from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
-import { escapeJsonLdForScript, generateExhibitionSchema } from '@/lib/seo-utils';
+import {
+  escapeJsonLdForScript,
+  generateExhibitionSchema,
+  createBreadcrumbSchema,
+} from '@/lib/seo-utils';
 
 // Dynamically import KakaoMap (client-side only, reduces initial bundle)
 import ExhibitionMapWrapper from '@/components/features/ExhibitionMapWrapper';
@@ -29,6 +40,7 @@ export default function ExhibitionPage() {
 
   // JSON-LD Schema for Event
   const eventSchema = generateExhibitionSchema();
+  const breadcrumbSchema = createBreadcrumbSchema([BREADCRUMB_HOME, BREADCRUMBS['/exhibition']]);
 
   return (
     <>
@@ -36,6 +48,7 @@ export default function ExhibitionPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: escapeJsonLdForScript(JSON.stringify(eventSchema)) }}
       />
+      <JsonLdScript data={breadcrumbSchema} />
       <PageHero title="전시 안내" description="씨앗페 2026을 직접 만나보세요">
         <ShareButtons url={canonicalUrl} title={shareTitle} description={shareDescription} />
       </PageHero>

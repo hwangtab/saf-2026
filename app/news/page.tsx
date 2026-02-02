@@ -5,9 +5,10 @@ import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import { newsArticles } from '@/content/news';
-import { SITE_URL } from '@/lib/constants';
+import { SITE_URL, BREADCRUMB_HOME, BREADCRUMBS } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
-import { escapeJsonLdForScript } from '@/lib/seo-utils';
+import { escapeJsonLdForScript, createBreadcrumbSchema } from '@/lib/seo-utils';
+import { JsonLdScript } from '@/components/common/JsonLdScript';
 
 const PAGE_URL = `${SITE_URL}/news`;
 
@@ -168,8 +169,11 @@ function formatDate(isoString: string) {
 }
 
 export default function NewsPage() {
+  const breadcrumbSchema = createBreadcrumbSchema([BREADCRUMB_HOME, BREADCRUMBS['/news']]);
+
   return (
     <>
+      <JsonLdScript data={breadcrumbSchema} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

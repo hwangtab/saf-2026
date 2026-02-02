@@ -9,8 +9,10 @@ import VideoEmbed from '@/components/features/VideoEmbed';
 import { saf2023Photos } from '@/content/saf2023-photos';
 import { saf2023Artworks } from '@/content/saf2023-artworks';
 import { videos } from '@/content/videos';
-import { SITE_URL, escapeJsonLdForScript } from '@/lib/constants';
+import { SITE_URL, escapeJsonLdForScript, BREADCRUMB_HOME, BREADCRUMBS } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
+import { JsonLdScript } from '@/components/common/JsonLdScript';
+import { createBreadcrumbSchema } from '@/lib/seo-utils';
 
 const PAGE_URL = `${SITE_URL}/archive`;
 
@@ -39,8 +41,11 @@ export default function ArchivePage() {
     },
   };
 
+  const breadcrumbSchema = createBreadcrumbSchema([BREADCRUMB_HOME, BREADCRUMBS['/archive']]);
+
   return (
     <>
+      <JsonLdScript data={breadcrumbSchema} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

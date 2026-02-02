@@ -7,8 +7,10 @@ import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import TestimonialCard from '@/components/ui/TestimonialCard';
 import StatCard from '@/components/ui/StatCard';
-import { EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
+import { EXTERNAL_LINKS, SITE_URL, BREADCRUMB_HOME, BREADCRUMBS } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
+import { JsonLdScript } from '@/components/common/JsonLdScript';
+import { createBreadcrumbSchema } from '@/lib/seo-utils';
 
 const PAGE_URL = `${SITE_URL}/our-proof`;
 
@@ -19,8 +21,11 @@ export const metadata: Metadata = createPageMetadata(
 );
 
 export default function OurProof() {
+  const breadcrumbSchema = createBreadcrumbSchema([BREADCRUMB_HOME, BREADCRUMBS['/our-proof']]);
+
   return (
     <>
+      <JsonLdScript data={breadcrumbSchema} />
       <PageHero
         title="우리의 증명"
         description="예술인 상호부조 대출의 실제 성과. 354건, 약 7억 원의 신뢰가 데이터로 증명되었습니다."

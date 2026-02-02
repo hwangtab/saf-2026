@@ -17,6 +17,10 @@ import {
   CreativeImpactChart,
 } from '@/components/features/charts/DynamicCharts';
 
+import { JsonLdScript } from '@/components/common/JsonLdScript';
+import { BREADCRUMB_HOME, BREADCRUMBS } from '@/lib/constants';
+import { createBreadcrumbSchema } from '@/lib/seo-utils';
+
 const PAGE_URL = `${SITE_URL}/our-reality`;
 
 export const metadata: Metadata = createPageMetadata(
@@ -26,8 +30,11 @@ export const metadata: Metadata = createPageMetadata(
 );
 
 export default function OurReality() {
+  const breadcrumbSchema = createBreadcrumbSchema([BREADCRUMB_HOME, BREADCRUMBS['/our-reality']]);
+
   return (
     <>
+      <JsonLdScript data={breadcrumbSchema} />
       <PageHero
         title="우리의 현실"
         description="2025 예술인 금융 재난 보고서가 밝혀낸 한국 예술인의 금융 위기의 구조적 현실"

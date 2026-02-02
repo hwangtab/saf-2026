@@ -52,6 +52,7 @@ export const metadata: Metadata = {
   authors: [{ name: CONTACT.ORGANIZATION_NAME }],
   icons: {
     icon: '/favicon.ico',
+    apple: '/images/logo/saf-logo.png',
   },
   openGraph: {
     type: 'website',
