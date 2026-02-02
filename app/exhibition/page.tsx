@@ -13,6 +13,7 @@ import {
   EXTERNAL_LINKS,
   SITE_URL,
 } from '@/lib/constants';
+import { exhibitionReviews } from '@/content/reviews';
 import { createPageMetadata } from '@/lib/seo';
 import {
   escapeJsonLdForScript,
@@ -256,7 +257,52 @@ export default function ExhibitionPage() {
         </div>
       </Section>
 
-      {/* Contact Section */}
+      {/* Guestbook / Review Section for SEO & Social Proof */}
+      <Section variant="white" prevVariant="gray">
+        <div className="container-max">
+          <SectionTitle className="mb-12">관람객 응원 메시지</SectionTitle>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {exhibitionReviews.map((rev) => (
+              <div
+                key={rev.id}
+                className="bg-canvas-soft p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col hover:shadow-md transition-shadow"
+              >
+                <div className="flex items-center gap-1 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <span
+                      key={i}
+                      className={i < Math.floor(rev.rating) ? 'text-sun' : 'text-gray-300'}
+                      aria-hidden="true"
+                    >
+                      ★
+                    </span>
+                  ))}
+                  <span className="sr-only">평점 {rev.rating}점</span>
+                </div>
+                <blockquote className="flex-1">
+                  <p className="text-charcoal leading-relaxed mb-6 italic before:content-['“'] after:content-['”']">
+                    {rev.comment}
+                  </p>
+                </blockquote>
+                <div className="flex items-center justify-between border-t border-gray-200 pt-4">
+                  <div>
+                    <span className="font-bold text-gray-900 block">{rev.author}</span>
+                    <span className="text-xs text-charcoal-muted">{rev.role}</span>
+                  </div>
+                  <time className="text-xs text-gray-400" dateTime={rev.date}>
+                    {rev.date}
+                  </time>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-8 text-center">
+            <p className="text-sm text-charcoal-muted">
+              현장에 비치된 방명록에서 더 많은 응원의 목소리를 확인하실 수 있습니다.
+            </p>
+          </div>
+        </div>
+      </Section>
       <Section variant="primary-soft" prevVariant="gray" className="pb-24 md:pb-32">
         <div className="container-max text-center">
           <SectionTitle className="mb-8">문의사항</SectionTitle>

@@ -12,6 +12,7 @@ import {
 import { createPageMetadata } from '@/lib/seo';
 import { formatArtistName } from '@/lib/utils';
 import { Artwork, BreadcrumbItem } from '@/types';
+import { exhibitionReviews, Review } from '@/content/reviews';
 
 // JSON-LD Security: Escape < characters to prevent XSS
 export function escapeJsonLdForScript(json: string): string {
@@ -257,6 +258,26 @@ export function generateExhibitionSchema() {
       name: '참여 예술가 50여 명',
     },
     isAccessibleForFree: true,
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: '4.9',
+      reviewCount: exhibitionReviews.length.toString(),
+      bestRating: '5',
+      worstRating: '1',
+    },
+    review: exhibitionReviews.map((rev: Review) => ({
+      '@type': 'Review',
+      author: {
+        '@type': 'Person',
+        name: rev.author,
+      },
+      reviewRating: {
+        '@type': 'Rating',
+        ratingValue: rev.rating.toString(),
+      },
+      reviewBody: rev.comment,
+      datePublished: rev.date,
+    })),
   };
 }
 
