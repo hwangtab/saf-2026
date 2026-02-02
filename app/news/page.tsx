@@ -5,9 +5,13 @@ import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import { newsArticles } from '@/content/news';
-import { SITE_URL, BREADCRUMB_HOME, BREADCRUMBS } from '@/lib/constants';
+import { SITE_URL, BREADCRUMB_HOME, BREADCRUMBS, OG_IMAGE } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
-import { escapeJsonLdForScript, createBreadcrumbSchema } from '@/lib/seo-utils';
+import {
+  escapeJsonLdForScript,
+  createBreadcrumbSchema,
+  generateNewsArticleSchema,
+} from '@/lib/seo-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 
 const PAGE_URL = `${SITE_URL}/news`;
@@ -35,19 +39,14 @@ const structuredData = {
     itemListElement: sortedArticles.map((article, index) => ({
       '@type': 'ListItem',
       position: index + 1,
-      item: {
-        '@type': 'NewsArticle',
-        headline: article.title,
+      item: generateNewsArticleSchema({
+        title: article.title,
+        description: article.description || '',
         datePublished: article.date,
-        image: article.thumbnail,
+        image: article.thumbnail || OG_IMAGE.url,
         url: article.link,
-        publisher: {
-          '@type': 'Organization',
-          name: article.source,
-        },
-        description: article.description,
-        keywords: ['예술인 금융', '상호부조', '씨앗페', 'SAF', '예술인 대출'],
-      },
+        publisherName: article.source,
+      }),
     })),
   },
 };

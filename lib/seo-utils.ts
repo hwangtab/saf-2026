@@ -349,3 +349,98 @@ export function generateVideoSchema(video: VideoSchemaInput) {
     },
   };
 }
+
+export interface NewsArticleSchemaInput {
+  title: string;
+  description: string;
+  datePublished: string;
+  image: string; // URL string
+  url: string;
+  publisherName: string;
+}
+
+export function generateNewsArticleSchema(article: NewsArticleSchemaInput) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'NewsArticle',
+    headline: article.title,
+    description: article.description,
+    image: [article.image],
+    datePublished: article.datePublished,
+    author: [
+      {
+        '@type': 'Organization',
+        name: article.publisherName,
+      },
+    ],
+    publisher: {
+      '@type': 'Organization',
+      name: article.publisherName, // Using the source as publisher for consistency with existing logic
+      url: SITE_URL,
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': article.url,
+    },
+  };
+}
+
+export function generateLocalBusinessSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ArtGallery',
+    name: '씨앗페 2026 (Seed Art Festival)',
+    image: OG_IMAGE.url,
+    '@id': SITE_URL,
+    url: SITE_URL,
+    telephone: CONTACT.PHONE,
+    email: CONTACT.EMAIL,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: EXHIBITION.ADDRESS,
+      addressLocality: '서울시',
+      addressCountry: 'KR',
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: EXHIBITION.LAT,
+      longitude: EXHIBITION.LNG,
+    },
+    openingHoursSpecification: [
+      {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+        opens: '10:00',
+        closes: '19:00',
+        validFrom: CAMPAIGN.START_DATE,
+        validThrough: CAMPAIGN.END_DATE,
+      },
+    ],
+    priceRange: 'KRW',
+  };
+}
+
+export interface ArtistSchemaInput {
+  name: string;
+  description?: string;
+  image?: string;
+  url: string;
+  jobTitle?: string;
+}
+
+export function generateArtistSchema(artist: ArtistSchemaInput) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: artist.name,
+    description: artist.description,
+    image: artist.image,
+    url: artist.url,
+    jobTitle: artist.jobTitle || 'Artist',
+    sameAs: [artist.url], // Can be expanded if artist has social links
+    mainEntityOfPage: {
+      '@type': 'ProfilePage',
+      '@id': artist.url,
+    },
+  };
+}

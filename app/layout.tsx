@@ -9,7 +9,11 @@ import AnimationProvider from '@/components/providers/AnimationProvider';
 import ToastProvider from '@/components/providers/ToastProvider';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { OG_IMAGE, SITE_URL, SITE_URL_ALIAS, CONTACT } from '@/lib/constants';
-import { generateOrganizationSchema, generateWebsiteSchema } from '@/lib/seo-utils';
+import {
+  generateOrganizationSchema,
+  generateWebsiteSchema,
+  generateLocalBusinessSchema,
+} from '@/lib/seo-utils';
 import { BRAND_COLORS } from '@/lib/colors';
 import '@/styles/globals.css';
 
@@ -21,6 +25,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  manifest: '/manifest.json',
   metadataBase: new URL(SITE_URL),
   title: {
     default: '씨앗페 2026 | 예술인 상호부조 기금 마련 특별전',
@@ -99,6 +104,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const organizationSchema = generateOrganizationSchema();
   const websiteSchema = generateWebsiteSchema();
+  const localBusinessSchema = generateLocalBusinessSchema();
 
   return (
     <html lang="ko" suppressHydrationWarning>
@@ -122,6 +128,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         <JsonLdScript data={organizationSchema} />
         <JsonLdScript data={websiteSchema} />
+        <JsonLdScript data={localBusinessSchema} />
 
         <Analytics />
         <Script

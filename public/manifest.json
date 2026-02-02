@@ -1,0 +1,26 @@
+{
+  "name": "씨앗페 2026",
+  "short_name": "씨앗페",
+  "description": "한국 예술인들의 상호부조 기금 마련을 위한 특별전",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#FF5A5F",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/images/logo/saf-logo.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/images/logo/saf-logo.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
