@@ -207,7 +207,7 @@ export default function ArchivePage() {
                   {video.transcript && (
                     <div className="mt-4 p-4 bg-primary/5 rounded-lg border-l-4 border-primary/30">
                       <h4 className="flex items-center gap-2 text-xs font-bold text-primary mb-2 uppercase tracking-wider">
-                        <span className="text-sm">🤖</span> AI Summary
+                        🎞️ 영상 기록 요약
                       </h4>
                       <p className="text-xs md:text-sm text-charcoal leading-relaxed">
                         {video.transcript}
