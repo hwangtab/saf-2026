@@ -190,8 +190,8 @@ export default function NewsPage() {
               언론이 짚어낸 예술인 금융 위기의 핵심 메시지
             </SectionTitle>
             <p className="text-base md:text-lg text-charcoal-muted leading-relaxed text-balance">
-              최근 보도에서 반복적으로 등장한 증언과 수치를 통해, 예술인이 겪는 금융 사각지대의
-              현실과 제도 개선의 절박함을 강조합니다.
+              언론이 기록한 현장의 목소리와 데이터를 통해, <br className="hidden md:block" />
+              예술인이 마주한 금융 사각지대의 현실과 상호부조의 필요성을 확인합니다.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
