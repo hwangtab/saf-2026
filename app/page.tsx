@@ -17,9 +17,10 @@ import {
   escapeJsonLdForScript,
 } from '@/lib/constants';
 import { generateExhibitionSchema, generateFAQSchema } from '@/lib/seo-utils';
-
+import { faqs } from '@/content/faq';
 const DynamicCounter = dynamic(() => import('@/components/features/DynamicCounter'));
 const ShareButtons = dynamic(() => import('@/components/common/ShareButtons'));
+const FAQList = dynamic(() => import('@/components/features/FAQList'));
 
 export const metadata: Metadata = {
   title: '씨앗페 2026 - 예술인 상호부조 기금 마련 특별전',
@@ -184,8 +185,16 @@ export default function Home() {
         </div>
       </Section>
 
+      {/* FAQ Section */}
+      <Section variant="sun-soft" prevVariant="primary-surface">
+        <div className="container-max">
+          <SectionTitle className="mb-12">자주 묻는 질문</SectionTitle>
+          <FAQList items={faqs} />
+        </div>
+      </Section>
+
       {/* Call to Action Section */}
-      <Section variant="accent-soft" prevVariant="primary-surface" className="pb-24 md:pb-32">
+      <Section variant="accent-soft" prevVariant="sun-soft" className="pb-24 md:pb-32">
         <div className="container-max">
           <SectionTitle className="mb-12">당신도 함께할 수 있습니다</SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
@@ -220,42 +229,7 @@ export default function Home() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: escapeJsonLdForScript(
-            JSON.stringify(
-              generateFAQSchema([
-                {
-                  question: '씨앗페 2026이란 무엇인가요?',
-                  answer:
-                    '씨앗페 2026은 한국 예술인들의 상호부조 대출 기금 마련을 위한 특별전입니다. 후원과 작품 구매를 통해 예술인들에게 안정적인 창작 환경을 제공합니다.',
-                },
-                {
-                  question: '후원은 어떻게 하나요?',
-                  answer:
-                    '홈페이지의 "후원하기" 버튼을 눌러 한국스마트협동조합의 상호부조 기금 조성에 참여하실 수 있습니다. 정기 후원과 일시 후원 모두 가능합니다.',
-                },
-                {
-                  question: '전시는 언제 어디서 열리나요?',
-                  answer:
-                    '씨앗페 2026 전시는 2026년 1월 14일부터 1월 26일까지 서울 인사아트센터 3층 G&J 갤러리에서 열립니다. 무료로 관람하실 수 있습니다.',
-                },
-                {
-                  question: '상호부조 대출이란 무엇인가요?',
-                  answer:
-                    '제1금융권에서 소외된 예술인들을 위해, 조성된 기금을 바탕으로 연 5%의 고정금리로 대출해주는 시스템입니다. 현재 95%의 높은 상환율을 유지하고 있습니다.',
-                },
-                {
-                  question: '씨앗페 2026의 목표 금액은 얼마인가요?',
-                  answer:
-                    '이번 캠페인을 통해 총 10억 원의 상호부조 대출 가능 기금 확보를 목표로 하고 있습니다. 여러분의 후원과 작품 구매가 이 목표를 가능하게 합니다.',
-                },
-                {
-                  question: '구매한 작품의 배송은 어떻게 이루어지나요?',
-                  answer:
-                    '전시가 종료된 후 전문 업체를 통해 안전하게 배송됩니다. 서울 및 상시 배송 지역은 전시 종료 후 1주일 내외, 그 외 지역은 협의된 일정에 따라 순차 배송됩니다.',
-                },
-              ])
-            )
-          ),
+          __html: escapeJsonLdForScript(JSON.stringify(generateFAQSchema(faqs))),
         }}
       />
       {/* ExhibitionEvent JSON-LD Schema for Google Knowledge Graph */}
