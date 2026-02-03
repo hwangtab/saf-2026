@@ -110,7 +110,7 @@ export function generateArtworkJsonLd(artwork: Artwork, numericPrice: string, is
   const sellerOrg = {
     '@type': 'Organization',
     name: '한국스마트협동조합',
-    url: 'https://www.saf2026.com',
+    url: SITE_URL,
   };
 
   // Build offers based on whether price is inquiry or numeric
