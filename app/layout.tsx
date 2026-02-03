@@ -116,7 +116,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://t1.daumcdn.net" />
         <link rel="preconnect" href="https://dapi.kakao.com" />
       </head>
-      <body className="bg-canvas-soft text-charcoal flex flex-col min-h-screen">
+      <body className="bg-canvas-soft text-charcoal flex flex-col min-h-screen font-sans antialiased">
         <AnimationProvider>
           <ToastProvider>
             <a href="#main-content" className="skip-to-main">

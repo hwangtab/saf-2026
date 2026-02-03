@@ -14,6 +14,13 @@
 
 @font-face {
   font-family: 'GMarketSans';
+  src: url('/fonts/GmarketSansMedium.woff') format('woff');
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GMarketSans';
   src: url('/fonts/GmarketSansBold.woff') format('woff');
   font-weight: 700;
   font-display: swap;
