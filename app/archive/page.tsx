@@ -16,7 +16,7 @@ export default function ArchiveHubPage() {
     <>
       <PageHero title="아카이브" description="예술인 상호부조를 위한 씨앗페의 발자취입니다." />
 
-      <Section variant="white" className="min-h-[60vh]">
+      <Section variant="white" className="min-h-[60vh] pb-24 md:pb-32">
         <div className="container-max">
           <SectionTitle className="mb-12">지난 행사 기록</SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
