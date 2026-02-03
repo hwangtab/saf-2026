@@ -147,12 +147,12 @@ export default function Home() {
           <SectionTitle className="mb-12">당신도 함께할 수 있습니다</SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             <ActionCard
-              href={EXTERNAL_LINKS.DONATE}
+              href={EXTERNAL_LINKS.JOIN_MEMBER}
               external
-              icon="❤️"
-              title="후원하기"
-              description="당신의 후원은 예술인들을 위한 기금이 됩니다."
-              linkText="후원하기"
+              icon="🤝"
+              title="조합원 가입"
+              description="한국스마트협동조합의 조합원이 되어 예술인 상호부조의 든든한 지원군이 되어주세요."
+              linkText="조합원 가입하기"
             />
 
             <ActionCard

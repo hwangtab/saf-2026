@@ -1,7 +1,7 @@
 'use client';
 
 import Button from '@/components/ui/Button';
-import { EXTERNAL_LINKS } from '@/lib/constants';
+
 import type { NavigationItem } from '@/types';
 import NavLink from './NavLink';
 
@@ -22,8 +22,8 @@ export default function DesktopNav({ navigation, isActive, textColor }: DesktopN
         ))}
       </ul>
       <div className="hidden md:flex">
-        <Button href={EXTERNAL_LINKS.DONATE} variant="accent" external>
-          후원하기
+        <Button href="/artworks" variant="accent">
+          작품 구매
         </Button>
       </div>
     </>

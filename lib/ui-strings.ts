@@ -21,8 +21,8 @@ export const UI_STRINGS = {
   },
   NAV: {
     TOGGLE_MENU: '메뉴 토글',
-    DONATE: '후원하기',
-    BUY_ART: '작품 구매하기',
+    DONATE: '조합원 가입',
+    BUY_ART: '작품 구매',
     ORDER_STATUS: '주문/배송 조회',
   },
   FOOTER: {
@@ -34,7 +34,7 @@ export const UI_STRINGS = {
     COOP_HOME: '협동조합 홈페이지',
   },
   CTA: {
-    DONATE_NOW: '❤️ 지금 후원하기',
+    DONATE_NOW: '🤝 조합원 가입하기',
     BUY_ART: '🎨 작품 구매하기',
   },
   ERROR: {

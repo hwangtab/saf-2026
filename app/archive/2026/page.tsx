@@ -104,13 +104,13 @@ export default function Archive2026Page() {
                 <h3 className="text-card-title mb-4">참여하기</h3>
                 <div className="space-y-3">
                   <Button
-                    href={EXTERNAL_LINKS.DONATE}
+                    href={EXTERNAL_LINKS.JOIN_MEMBER}
                     external
                     variant="accent"
                     className="w-full"
                     size="md"
                   >
-                    ❤️ 후원하기
+                    🤝 조합원 가입하기
                   </Button>
                   <Button href="/artworks" variant="secondary" className="w-full" size="md">
                     🎨 작품 구매하기

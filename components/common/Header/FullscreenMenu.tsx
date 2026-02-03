@@ -134,13 +134,13 @@ export default function FullscreenMenu({
         {/* 푸터 - 후원 버튼 */}
         <footer className={styles.footer}>
           <Button
-            href={EXTERNAL_LINKS.DONATE}
+            href={EXTERNAL_LINKS.JOIN_MEMBER}
             variant="accent"
             external
             className="w-full justify-center"
             onClick={onClose}
           >
-            후원하기
+            조합원 가입하기
           </Button>
         </footer>
       </div>

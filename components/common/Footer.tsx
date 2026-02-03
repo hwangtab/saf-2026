@@ -50,7 +50,7 @@ export default function Footer() {
                 <ul className="space-y-2 text-sm">
                   <li>
                     <a
-                      href={EXTERNAL_LINKS.DONATE}
+                      href={EXTERNAL_LINKS.JOIN_MEMBER}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-gray-300 hover:text-primary transition-colors"

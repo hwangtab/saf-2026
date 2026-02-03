@@ -13,7 +13,8 @@ export const OG_IMAGE = {
 } as const;
 
 export const EXTERNAL_LINKS = {
-  DONATE: 'https://www.socialfunch.org/SAF',
+  JOIN_MEMBER:
+    'https://forms.office.com/Pages/ResponsePage.aspx?id=9mV1Wuu2mEyE027O-cC0uR1bZ14IzxZDqGiMboW32uhUNEFPMzlQRjQxNE04RjNPNVFCSTZaMVFNTCQlQCN0PWcu',
   ONLINE_GALLERY: 'https://auto-graph.co.kr',
   LOAN_INFO: 'https://www.kosmart.co.kr/loan',
   KOSMART_HOME: 'https://www.kosmart.co.kr',

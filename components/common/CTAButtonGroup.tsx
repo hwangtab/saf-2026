@@ -29,7 +29,7 @@ interface CTAButtonGroupProps {
 export default function CTAButtonGroup({
   donateText = UI_STRINGS.CTA.DONATE_NOW,
   purchaseText = UI_STRINGS.CTA.BUY_ART,
-  donateHref = EXTERNAL_LINKS.DONATE,
+  donateHref = EXTERNAL_LINKS.JOIN_MEMBER,
   purchaseHref = '/artworks',
   variant = 'default',
   className,

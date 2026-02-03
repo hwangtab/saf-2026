@@ -284,13 +284,13 @@ export default function OurProof() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto text-balance">
             <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-lg bg-white text-left shadow-sm">
-              <h3 className="text-card-title mb-3">후원으로 기금에 힘을 보태주세요</h3>
+              <h3 className="text-card-title mb-3">조합원이 되어 연대해주세요</h3>
               <p className="text-charcoal-muted mb-4 flex-grow">
-                상호부조 대출 기금은 시민 후원으로 확대됩니다. 정기후원·일시후원 모두 큰 도움이
-                됩니다.
+                한국스마트협동조합의 조합원이 되어 예술인 상호부조 대출 기금 조성과 운영에 함께하실
+                수 있습니다.
               </p>
-              <Button href={EXTERNAL_LINKS.DONATE} external variant="accent" size="md">
-                후원하기
+              <Button href={EXTERNAL_LINKS.JOIN_MEMBER} external variant="accent" size="md">
+                조합원 가입하기
               </Button>
             </div>
             <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-lg bg-white text-left shadow-sm">
