@@ -226,7 +226,8 @@ export default function Archive2023Page() {
         <div className="container-max text-center">
           <SectionTitle className="mb-6">이 역사에 당신도 함께하세요</SectionTitle>
           <p className="text-lg text-charcoal-muted mb-8 max-w-2xl mx-auto text-balance">
-            씨앗페 2026의 성공은 당신의 참여와 후원으로 만들어집니다.
+            씨앗페의 역사는 당신의 참여와 연대로 이어집니다. <br className="hidden md:block" />
+            조합원 가입과 작품 구매로 예술인 상호부조의 미래를 함께 만들어주세요.
           </p>
           <CTAButtonGroup variant="large" className="justify-center" />
         </div>

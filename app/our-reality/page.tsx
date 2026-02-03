@@ -300,8 +300,8 @@ export default function OurReality() {
           <p className="text-lg text-charcoal-muted mb-8 max-w-2xl mx-auto text-balance">
             한국 예술인들의 창작 시간을 살려내는 일에 함께해주세요.
             <br />
-            당신의 참여와 후원이 <span className="text-sun-strong font-semibold">산소호흡기</span>가
-            되어 예술이 계속 숨 쉬게 합니다.
+            조합원 가입과 작품 구매가 예술이 계속 숨 쉬게 하는{' '}
+            <span className="text-sun-strong font-semibold">산소호흡기</span>가 됩니다.
           </p>
           <CTAButtonGroup variant="large" className="justify-center" />
 
