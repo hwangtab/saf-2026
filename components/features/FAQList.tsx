@@ -1,49 +1,66 @@
 'use client';
 
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { FAQItem } from '@/content/faq';
+import { ChevronDownIcon } from '@/components/ui/Icons';
+import { cn } from '@/lib/utils';
 
 interface FAQListProps {
   items: FAQItem[];
 }
 
 export default function FAQList({ items }: FAQListProps) {
-  // Optional: Add state if we want to allow only one open at a time,
-  // but standard details/summary works fine without JS for basic behavior.
-  // We'll stick to native behavior for simplicity and interaction performance,
-  // but we can add a small animation wrapper if needed.
-  // For now, let's just use standard detailed/summary with Tailwind.
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const toggleItem = (index: number) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
 
   return (
     <div className="space-y-4 max-w-3xl mx-auto">
-      {items.map((item, index) => (
-        <details
-          key={index}
-          className="group border border-gray-200 rounded-xl bg-white overflow-hidden [&_summary::-webkit-details-marker]:hidden"
-        >
-          <summary className="flex items-center justify-between gap-4 p-6 cursor-pointer font-medium text-lg text-charcoal hover:bg-gray-50 transition-colors">
-            <span>{item.question}</span>
-            <span className="text-gray-400 group-open:rotate-180 transition-transform duration-200">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
-                className="w-5 h-5"
+      {items.map((item, index) => {
+        const isOpen = openIndex === index;
+
+        return (
+          <div
+            key={index}
+            className="border border-gray-200 rounded-xl bg-white overflow-hidden transition-all duration-200 hover:border-gray-300"
+          >
+            <button
+              onClick={() => toggleItem(index)}
+              className="w-full flex items-center justify-between gap-4 p-6 text-left cursor-pointer transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset"
+              aria-expanded={isOpen}
+              aria-controls={`faq-content-${index}`}
+            >
+              <span className="font-medium text-lg text-charcoal">{item.question}</span>
+              <span
+                className={cn(
+                  'text-gray-400 transition-transform duration-300 transform',
+                  isOpen && 'rotate-180'
+                )}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                />
-              </svg>
-            </span>
-          </summary>
-          <div className="px-6 pb-6 text-charcoal-muted leading-relaxed whitespace-pre-line animate-slideDown">
-            {item.answer}
+                <ChevronDownIcon className="w-5 h-5" />
+              </span>
+            </button>
+            <AnimatePresence initial={false}>
+              {isOpen && (
+                <motion.div
+                  id={`faq-content-${index}`}
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: 'easeInOut' }}
+                >
+                  <div className="px-6 pb-6 text-charcoal-muted leading-relaxed whitespace-pre-line border-t border-gray-100 pt-4">
+                    {item.answer}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-        </details>
-      ))}
+        );
+      })}
     </div>
   );
 }
