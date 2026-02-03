@@ -11,16 +11,13 @@
 - **배포 방식**: SSG (Static Site Generation)
 - **대상 기간**: 2025년 11월 15일 ~ 12월 30일
 
-## 📋 페이지 구성
-
 | 페이지      | 경로           | 설명                          |
 | ----------- | -------------- | ----------------------------- |
 | 홈          | `/`            | 캠페인 개요, 동적 통계 카운터 |
 | 우리의 현실 | `/our-reality` | 6개 통계 그래프로 보는 현황   |
 | 우리의 증명 | `/our-proof`   | 95% 상환율 등 신뢰도 증명     |
-| 참여 예술가 | `/artists`     | 참여 뮤지션, 화가 목록        |
-| 아카이브    | `/archive`     | 2023년 행사 기록, 언론 보도   |
-| 전시 안내   | `/exhibition`  | 일시, 장소, 오시는 길         |
+| 작품 구매   | `/artworks`    | 온라인 갤러리 및 작품 상세    |
+| 아카이브    | `/archive`     | 연도별 행사 기록, 언론 보도   |
 
 ## 🛠️ 설치 및 실행
 
@@ -83,8 +80,9 @@ saf/
 │   ├── our-reality/       # 우리의 현실 페이지
 │   ├── our-proof/         # 우리의 증명 페이지
 │   ├── artists/           # 참여 예술가 페이지
-│   ├── archive/           # 아카이브 페이지
-│   └── exhibition/        # 전시 안내 페이지
+│   ├── archive/           # 아카이브 페이지 (2023, 2026)
+│   ├── artworks/          # 작품 목록 및 상세 페이지
+│   └── news/              # 언론 보도 페이지
 ├── components/
 │   ├── common/            # 레이아웃 컴포넌트 (Header, Footer)
 │   ├── features/          # 기능 컴포넌트 (차트, 애니메이션, 공유)
@@ -214,7 +212,7 @@ git push origin main
 
 ## 📞 문의
 
-- **이메일**: contact@kosmart.co.kr
+- **이메일**: contact@kosmart.org
 - **전화**: 02-764-3114
 - **담당자**: 황경하 조직국장
 - **주소**: 서울시 종로구 효자로31
@@ -227,10 +225,10 @@ git push origin main
 
 씨앗:페 2026의 성공을 위해 다양한 방식으로 참여할 수 있습니다:
 
-- 💰 [후원하기](https://www.socialfunch.org/SAF)
-- 🎨 [작품 구매](https://auto-graph.co.kr)
+- 💰 [조합원 가입](https://forms.office.com/Pages/ResponsePage.aspx?id=9mV1Wuu2mEyE027O-cC0uR1bZ14IzxZDqGiMboW32uhUNEFPMzlQRjQxNE04RjNPNVFCSTZaMVFNTCQlQCN0PWcu)
+- 🎨 [작품 구매](https://www.saf2026.com/artworks)
 - 📣 SNS에서 공유하기
-- 🏛️ [전시 방문하기](https://www.saf2026.com/exhibition)
+- 🏛️ [아카이브 보기](https://www.saf2026.com/archive)
 
 ---
 
