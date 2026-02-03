@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import type { ReactNode } from 'react';
+import { ReactNode, forwardRef } from 'react';
 
 export type SectionVariant =
   | 'white'
@@ -15,7 +15,7 @@ export type SectionVariant =
   | 'sun-soft'
   | 'red';
 
-interface SectionProps {
+export interface SectionProps {
   children: ReactNode;
   variant?: SectionVariant;
   prevVariant?: SectionVariant;
@@ -49,30 +49,29 @@ const SECTION_STYLES: Record<SectionVariant, VariantStyle> = {
   red: { bg: 'bg-red-100', from: 'from-red-100', to: 'to-red-100' },
 };
 
-export default function Section({
-  children,
-  variant = 'white',
-  prevVariant,
-  padding = 'default',
-  className,
-  id,
-}: SectionProps) {
-  let backgroundClass = SECTION_STYLES[variant].bg;
+const Section = forwardRef<HTMLElement, SectionProps>(
+  ({ children, variant = 'white', prevVariant, padding = 'default', className, id }, ref) => {
+    let backgroundClass = SECTION_STYLES[variant].bg;
 
-  if (prevVariant && prevVariant !== variant) {
-    backgroundClass = cn(
-      'bg-gradient-to-b',
-      SECTION_STYLES[prevVariant].from,
-      SECTION_STYLES[variant].to
+    if (prevVariant && prevVariant !== variant) {
+      backgroundClass = cn(
+        'bg-gradient-to-b',
+        SECTION_STYLES[prevVariant].from,
+        SECTION_STYLES[variant].to
+      );
+    }
+
+    const paddingClass =
+      padding === 'default' ? 'py-12 md:py-20' : padding === 'sm' ? 'py-8 md:py-12' : '';
+
+    return (
+      <section id={id} ref={ref} className={cn(backgroundClass, paddingClass, className)}>
+        {children}
+      </section>
     );
   }
+);
 
-  const paddingClass =
-    padding === 'default' ? 'py-12 md:py-20' : padding === 'sm' ? 'py-8 md:py-12' : '';
+Section.displayName = 'Section';
 
-  return (
-    <section id={id} className={cn(backgroundClass, paddingClass, className)}>
-      {children}
-    </section>
-  );
-}
+export default Section;

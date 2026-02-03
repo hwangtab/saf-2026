@@ -7,20 +7,23 @@ import SectionTitle from '@/components/ui/SectionTitle';
 import ActionCard from '@/components/ui/ActionCard';
 import BackgroundSlider from '@/components/features/BackgroundSlider';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
-import CTAButtonGroup from '@/components/common/CTAButtonGroup';
 import {
   EXTERNAL_LINKS,
   OG_IMAGE,
   SITE_URL,
   STATISTICS_DATA,
-  EXHIBITION,
   escapeJsonLdForScript,
 } from '@/lib/constants';
 import { generateExhibitionSchema, generateFAQSchema } from '@/lib/seo-utils';
 import { faqs } from '@/content/faq';
+import { getAllArtworks } from '@/content/saf2026-artworks';
+
 const DynamicCounter = dynamic(() => import('@/components/features/DynamicCounter'));
 const ShareButtons = dynamic(() => import('@/components/common/ShareButtons'));
 const FAQList = dynamic(() => import('@/components/features/FAQList'));
+const ArtworkHighlightSlider = dynamic(
+  () => import('@/components/features/ArtworkHighlightSlider')
+);
 
 export const metadata: Metadata = {
   title: '씨앗페 2026 - 예술인 상호부조 기금 마련 특별전',
@@ -56,6 +59,10 @@ export const metadata: Metadata = {
 export default function Home() {
   const counterItems = STATISTICS_DATA.slice(0, 3);
 
+  // Slider Logic: Show all available artworks (sold: false)
+  const allArtworks = getAllArtworks();
+  const availableArtworks = allArtworks.filter((artwork) => !artwork.sold);
+
   return (
     <>
       {/* Hero Section */}
@@ -74,36 +81,101 @@ export default function Home() {
               placeholder="empty"
             />
           </div>
-          <h1 className="mt-12 md:mt-0 font-display text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight text-white drop-shadow-lg text-balance">
-            고리대금의 벽,
-            <br className="hidden md:block" />
-            예술인의 연대로 무너뜨립니다
+          <h1
+            className="mt-12 md:mt-0 font-display text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight text-white drop-shadow-lg text-balance opacity-0 animate-fade-in-up"
+            style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}
+          >
+            온라인 전시 오픈
+            <br />
+            작품 구매 가능
           </h1>
-          <p className="text-lg md:text-xl text-white/90 mb-12 max-w-2xl mx-auto leading-relaxed drop-shadow-lg break-keep text-balance">
-            한국 예술인의 84.9%가 제1금융권에서 배제되고, <br className="hidden md:block" />
-            절반이 약탈적 고리대금에 노출되어 있습니다. <br className="hidden md:block" />이 문제를
-            해결하기 위해 씨앗페가 시작되었습니다.
+          <p
+            className="text-lg md:text-xl text-white/90 mb-12 max-w-2xl mx-auto leading-relaxed drop-shadow-lg break-keep text-balance opacity-0 animate-fade-in-up"
+            style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}
+          >
+            한국 예술인의 84.9%가 제1금융권에서 배제되고 있습니다.
+            <br className="hidden md:block" />
+            예술을 사랑하는 당신의 후원과 구매가
+            <br className="hidden md:block" />
+            예술인들의 든든한 버팀목이 됩니다.
           </p>
-          <CTAButtonGroup variant="large" className="justify-center mb-12" />
+
+          <div
+            className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12 opacity-0 animate-fade-in-up"
+            style={{ animationDelay: '0.6s', animationFillMode: 'forwards' }}
+          >
+            <Button
+              href="/artworks"
+              variant="accent"
+              size="lg"
+              className="shadow-lg min-w-[200px] justify-center text-lg"
+            >
+              작품 보러가기
+            </Button>
+            <Button
+              href="/archive"
+              variant="outline"
+              size="lg"
+              className="bg-white/10 backdrop-blur-sm border-white/50 text-white hover:bg-white hover:text-primary min-w-[160px] justify-center"
+            >
+              씨앗페 소개
+            </Button>
+          </div>
+
           <p className="text-sm text-white/70 drop-shadow-lg mb-8">
-            <span aria-hidden="true">📌</span> {EXHIBITION.DATE} {EXHIBITION.LOCATION}에서
-            시작합니다
+            <span aria-hidden="true">📌</span> 오프라인 전시는 종료되었습니다
+            <br className="md:hidden" /> (온라인 상시 관람 가능)
           </p>
           <div className="flex justify-center">
             <ShareButtons
               url={SITE_URL}
-              title="씨앗페 2026 - 예술인 상호부조 기금 마련 특별전"
-              description="한국 예술인 상호부조 기금 마련을 위한 특별전, 씨앗페 2026에 함께해주세요."
+              title="씨앗페 2026 - 온라인 전시 오픈"
+              description="한국 예술인 상호부조 기금 마련을 위한 온라인 특별전, 씨앗페 2026에 함께해주세요."
             />
           </div>
         </div>
       </section>
 
+      <ArtworkHighlightSlider artworks={availableArtworks} />
+
       {/* Statistics Counter Section */}
       <DynamicCounter items={counterItems} />
 
+      {/* Call to Action Section (Moved Up) */}
+      <Section variant="accent-soft" prevVariant="canvas-soft" className="pb-24">
+        <div className="container-max">
+          <SectionTitle className="mb-12">당신도 함께할 수 있습니다</SectionTitle>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+            <ActionCard
+              href={EXTERNAL_LINKS.DONATE}
+              external
+              icon="❤️"
+              title="후원하기"
+              description="당신의 후원은 예술인들을 위한 기금이 됩니다."
+              linkText="후원하기"
+            />
+
+            <ActionCard
+              href="/artworks"
+              icon="🎨"
+              title="작품 구매"
+              description="참여 예술가들의 작품을 구매하며 지원합니다."
+              linkText="출품작 보기"
+            />
+
+            <ActionCard
+              href="/archive"
+              icon="🏛️"
+              title="아카이브"
+              description="지난 전시의 기록과 성과를 확인해보세요."
+              linkText="기록 보기"
+            />
+          </div>
+        </div>
+      </Section>
+
       {/* Problem Section */}
-      <Section variant="sun-soft" prevVariant="canvas-soft">
+      <Section variant="sun-soft" prevVariant="accent-soft">
         <div className="container-max">
           <SectionTitle className="mb-12">우리가 직면한 문제</SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
@@ -146,7 +218,7 @@ export default function Home() {
       </Section>
 
       {/* Solution Section */}
-      <Section variant="primary-surface" prevVariant="sun-soft">
+      <Section variant="primary-surface" prevVariant="sun-soft" className="pb-32">
         <div className="container-max">
           <SectionTitle className="mb-12">우리의 해결책</SectionTitle>
           <div className="bg-white rounded-lg shadow-lg p-8 md:p-12 max-w-3xl mx-auto text-balance text-center md:text-left">
@@ -186,45 +258,13 @@ export default function Home() {
       </Section>
 
       {/* FAQ Section */}
-      <Section variant="sun-soft" prevVariant="primary-surface">
+      <Section variant="sun-soft" prevVariant="primary-surface" className="pb-24 md:pb-32">
         <div className="container-max">
           <SectionTitle className="mb-12">자주 묻는 질문</SectionTitle>
           <FAQList items={faqs} />
         </div>
       </Section>
 
-      {/* Call to Action Section */}
-      <Section variant="accent-soft" prevVariant="sun-soft" className="pb-24 md:pb-32">
-        <div className="container-max">
-          <SectionTitle className="mb-12">당신도 함께할 수 있습니다</SectionTitle>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-            <ActionCard
-              href={EXTERNAL_LINKS.DONATE}
-              external
-              icon="❤️"
-              title="후원하기"
-              description="당신의 후원은 예술인들을 위한 기금이 됩니다."
-              linkText="후원하기"
-            />
-
-            <ActionCard
-              href="/artworks"
-              icon="🎨"
-              title="작품 구매"
-              description="참여 예술가들의 작품을 구매하며 지원합니다."
-              linkText="출품작 보기"
-            />
-
-            <ActionCard
-              href="/exhibition"
-              icon="🏛️"
-              title="전시 방문"
-              description="인사아트센터 3층 G&J 갤러리에서 펼쳐지는 예술의 현장을 직접 방문하세요."
-              linkText="정보 보기"
-            />
-          </div>
-        </div>
-      </Section>
       {/* FAQ JSON-LD Schema for AI Optimization */}
       <script
         type="application/ld+json"

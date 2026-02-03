@@ -6,13 +6,7 @@ import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import dynamic from 'next/dynamic';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import {
-  BREADCRUMB_HOME,
-  BREADCRUMBS,
-  EXHIBITION,
-  EXTERNAL_LINKS,
-  SITE_URL,
-} from '@/lib/constants';
+import { BREADCRUMB_HOME, EXHIBITION, EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
 import { exhibitionReviews } from '@/content/reviews';
 import { createPageMetadata } from '@/lib/seo';
 import {
@@ -26,22 +20,26 @@ import ExhibitionMapWrapper from '@/components/features/ExhibitionMapWrapper';
 
 const ShareButtons = dynamic(() => import('@/components/common/ShareButtons'));
 
-const PAGE_URL = `${SITE_URL}/exhibition`;
+const PAGE_URL = `${SITE_URL}/archive/2026`;
 
 export const metadata: Metadata = createPageMetadata(
-  '전시 안내',
-  '100여명 예술가들의 작품이 전시되는 인사아트센터. 1월 14일부터 26일까지, 예술과 연대가 만나는 현장에 초대합니다.',
-  '/exhibition'
+  '2026 오프라인 전시 기록',
+  '인사아트센터에서 진행된 씨앗페 2026 오프라인 전시의 기록입니다.',
+  '/archive/2026'
 );
 
-export default function ExhibitionPage() {
+export default function Archive2026Page() {
   const canonicalUrl = PAGE_URL;
-  const shareTitle = '전시 안내 | 씨앗페 2026';
-  const shareDescription = '씨앗페 2026 전시 정보. 일시, 장소, 오시는 길, 공연 일정 안내.';
+  const shareTitle = '2026 오프라인 전시 기록 | 씨앗페 2026';
+  const shareDescription =
+    '씨앗페 2026 오프라인 전시의 기록. 인사아트센터에서의 뜨거웠던 연대의 현장.';
 
   // JSON-LD Schema for Event
   const eventSchema = generateExhibitionSchema();
-  const breadcrumbSchema = createBreadcrumbSchema([BREADCRUMB_HOME, BREADCRUMBS['/exhibition']]);
+  const breadcrumbSchema = createBreadcrumbSchema([
+    BREADCRUMB_HOME,
+    { name: '2026 오프라인 전시', url: '/archive/2026' },
+  ]);
 
   return (
     <>
@@ -50,14 +48,23 @@ export default function ExhibitionPage() {
         dangerouslySetInnerHTML={{ __html: escapeJsonLdForScript(JSON.stringify(eventSchema)) }}
       />
       <JsonLdScript data={breadcrumbSchema} />
-      <PageHero title="전시 안내" description="씨앗페 2026을 직접 만나보세요">
+      <PageHero title="2026 오프라인 전시" description="인사아트센터에서 진행된 12일간의 기록">
         <ShareButtons url={canonicalUrl} title={shareTitle} description={shareDescription} />
       </PageHero>
+
+      <Section variant="white" className="bg-red-50/50">
+        <div className="container-max text-center">
+          <p className="text-lg font-bold text-primary">
+            🚫 본 오프라인 전시는 2026년 1월 26일에 종료되었습니다.
+          </p>
+          <p className="text-charcoal-muted mt-2">현재는 온라인 전시 및 작품 구매만 가능합니다.</p>
+        </div>
+      </Section>
 
       {/* Exhibition Info */}
       <Section variant="primary-surface" prevVariant="white">
         <div className="container-max">
-          <SectionTitle className="mb-8">전시 정보</SectionTitle>
+          <SectionTitle className="mb-8">지난 전시 정보</SectionTitle>
 
           {/* Poster - Full Width */}
           <div className="mb-12">

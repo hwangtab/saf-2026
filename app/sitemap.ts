@@ -30,10 +30,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/exhibition`,
+      url: `${baseUrl}/archive/2026`,
       lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.95,
+      changeFrequency: 'monthly',
+      priority: 0.8,
     },
     {
       url: `${baseUrl}/artworks`,

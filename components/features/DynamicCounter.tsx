@@ -3,6 +3,7 @@
 import CountUp from 'react-countup';
 import { useInView } from 'react-intersection-observer';
 import { ANIMATION } from '@/lib/constants';
+import Section from '@/components/ui/Section';
 
 interface CounterItem {
   label: string;
@@ -21,7 +22,7 @@ export default function DynamicCounter({ items }: DynamicCounterProps) {
   });
 
   return (
-    <section ref={ref} className="py-12 bg-canvas-soft">
+    <Section ref={ref} variant="canvas-soft" padding="none" className="py-12">
       <div className="container-max">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {items.map((item) => (
@@ -52,6 +53,6 @@ export default function DynamicCounter({ items }: DynamicCounterProps) {
           ))}
         </div>
       </div>
-    </section>
+    </Section>
   );
 }

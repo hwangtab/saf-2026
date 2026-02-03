@@ -12,10 +12,9 @@ import HeaderLogo from './Header/HeaderLogo';
 import { MenuIcon } from '@/components/ui/Icons';
 
 const navigation: NavigationItem[] = [
+  { name: '출품작', href: '/artworks' },
   { name: '우리의 현실', href: '/our-reality' },
   { name: '우리의 증명', href: '/our-proof' },
-  { name: '전시 안내', href: '/exhibition' },
-  { name: '출품작', href: '/artworks' },
   { name: '아카이브', href: '/archive' },
   { name: '언론 보도', href: '/news' },
   { name: UI_STRINGS.NAV.ORDER_STATUS, href: EXTERNAL_LINKS.ORDER_STATUS, external: true },

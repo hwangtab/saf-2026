@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import RelatedArtworksSlider from '@/components/features/RelatedArtworksSlider';
 
 // 슬라이더 제외 경로 (정확히 일치하는 경로만)
-const EXCLUDE_SLIDER_PATHS = ['/artworks'];
+const EXCLUDE_SLIDER_PATHS = ['/', '/artworks'];
 
 export default function FooterSliderWrapper() {
   const pathname = usePathname();
