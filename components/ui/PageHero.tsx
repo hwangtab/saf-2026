@@ -3,6 +3,8 @@ import { cn } from '@/lib/utils';
 import PageHeroBackground from './PageHeroBackground';
 import SawtoothDivider from './SawtoothDivider';
 
+// ... (imports)
+
 interface PageHeroProps {
   title: string;
   description?: string;
@@ -10,6 +12,8 @@ interface PageHeroProps {
   /** Custom background image path (e.g., "/images/artworks/1.jpg") */
   customBackgroundImage?: string;
   className?: string;
+  /** Color class for the sawtooth divider (default: "text-white") */
+  dividerColor?: string;
 }
 
 export default function PageHero({
@@ -18,6 +22,7 @@ export default function PageHero({
   children,
   customBackgroundImage,
   className,
+  dividerColor = 'text-white',
 }: PageHeroProps) {
   return (
     <section
@@ -43,7 +48,7 @@ export default function PageHero({
         )}
         {children && <div className="mt-8 flex justify-center">{children}</div>}
       </div>
-      <SawtoothDivider position="bottom" colorClass="text-white" />
+      <SawtoothDivider position="bottom" colorClass={dividerColor} />
     </section>
   );
 }

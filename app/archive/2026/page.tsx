@@ -48,11 +48,15 @@ export default function Archive2026Page() {
         dangerouslySetInnerHTML={{ __html: escapeJsonLdForScript(JSON.stringify(eventSchema)) }}
       />
       <JsonLdScript data={breadcrumbSchema} />
-      <PageHero title="2026 오프라인 전시" description="인사아트센터에서 진행된 12일간의 기록">
+      <PageHero
+        title="2026 오프라인 전시"
+        description="인사아트센터에서 진행된 12일간의 기록"
+        dividerColor="text-red-50"
+      >
         <ShareButtons url={canonicalUrl} title={shareTitle} description={shareDescription} />
       </PageHero>
 
-      <Section variant="white" className="bg-red-50/50">
+      <Section variant="white" className="bg-red-50">
         <div className="container-max text-center">
           <p className="text-lg font-bold text-primary">
             🚫 본 오프라인 전시는 2026년 1월 26일에 종료되었습니다.

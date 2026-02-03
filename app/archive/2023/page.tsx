@@ -52,7 +52,11 @@ export default function Archive2023Page() {
           __html: escapeJsonLdForScript(JSON.stringify(collectionSchema)),
         }}
       />
-      <PageHero title="아카이브" description="씨앗페의 발자취와 성과, 언론 보도를 기록합니다">
+      <PageHero
+        title="2023 오프라인 전시"
+        description="씨앗페의 발자취와 성과, 언론 보도를 기록합니다"
+        dividerColor="text-sun-soft"
+      >
         <ShareButtons url={currentUrl} title={pageTitle} description={pageDescription} />
       </PageHero>
 
