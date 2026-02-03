@@ -2,6 +2,7 @@ import { Fragment } from 'react';
 import type { Metadata } from 'next';
 import ExportedImage from 'next-image-export-optimizer';
 import Section from '@/components/ui/Section';
+import SectionTitle from '@/components/ui/SectionTitle';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import { newsArticles } from '@/content/news';
@@ -180,15 +181,15 @@ export default function NewsPage() {
       </PageHero>
 
       <Section variant="sun-soft" prevVariant="white">
-        <div className="container-max flex flex-col gap-8">
-          <div className="max-w-3xl">
-            <span className="inline-flex items-center px-3 py-1 rounded-full border border-primary text-primary text-xs font-semibold tracking-wide uppercase">
+        <div className="container-max flex flex-col gap-12">
+          <div className="max-w-3xl mx-auto text-center">
+            <span className="inline-flex items-center px-3 py-1 rounded-full border border-primary text-primary text-xs font-semibold tracking-wide uppercase mb-4">
               Press Highlights
             </span>
-            <h2 className="mt-4 text-3xl md:text-4xl font-sans font-bold text-gray-900 leading-tight">
+            <SectionTitle className="mb-4">
               언론이 짚어낸 예술인 금융 위기의 핵심 메시지
-            </h2>
-            <p className="mt-3 text-base md:text-lg text-charcoal-muted leading-relaxed">
+            </SectionTitle>
+            <p className="text-base md:text-lg text-charcoal-muted leading-relaxed text-balance">
               최근 보도에서 반복적으로 등장한 증언과 수치를 통해, 예술인이 겪는 금융 사각지대의
               현실과 제도 개선의 절박함을 강조합니다.
             </p>
