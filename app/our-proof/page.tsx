@@ -107,7 +107,7 @@ export default function OurProof() {
               <p className="text-sm text-charcoal-muted mb-3">누적 조성된 상호부조 기금</p>
               <p className="text-4xl font-bold text-primary">77,000,000원</p>
               <p className="text-sm text-charcoal-muted mt-4">
-                작품 판매와 후원, 특별조합비로 함께 채워온 신뢰의 안전망입니다.
+                작품 판매와 조합원 가입, 특별조합비로 함께 채워온 신뢰의 안전망입니다.
               </p>
             </div>
           </div>

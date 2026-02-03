@@ -13,7 +13,7 @@ const PAGE_URL = `${SITE_URL}/artworks`;
 
 export const metadata: Metadata = createPageMetadata(
   '출품작',
-  '씨앗페 2026에 출품된 예술가들의 작품을 만나보세요. 후원과 작품 구매로 예술인의 금융 위기 해결에 동참할 수 있습니다.',
+  '씨앗페 2026에 출품된 예술가들의 작품을 만나보세요. 조합원 가입과 작품 구매로 예술인의 금융 위기 해결에 동참할 수 있습니다.',
   '/artworks'
 );
 

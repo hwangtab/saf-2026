@@ -131,7 +131,7 @@ export default function FullscreenMenu({
           </ul>
         </nav>
 
-        {/* 푸터 - 후원 버튼 */}
+        {/* 푸터 - 가입 버튼 */}
         <footer className={styles.footer}>
           <Button
             href={EXTERNAL_LINKS.JOIN_MEMBER}
