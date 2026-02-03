@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     },
   },
   description:
-    '한국 예술인들의 상호부조 기금 마련을 위한 특별전. 상호부조 대출, 작품 전시, 후원에 참여하세요.',
+    '한국 예술인들의 상호부조 기금 마련을 위한 특별전. 조합원 가입과 작품 구매로 창작의 시간을 살려내는 연대에 참여하세요.',
   keywords: [
     '씨앗페',
     '씨앗페 2026',
@@ -52,7 +52,11 @@ export const metadata: Metadata = {
     '전시회',
     '미술 전시',
     '인사아트센터',
-    'G&J 갤러리',
+    '온라인 전시',
+    '온라인 갤러리',
+    '작품 구매',
+    '예술인 연대',
+    '예술인 상생',
   ],
   authors: [{ name: CONTACT.ORGANIZATION_NAME }],
   icons: {
@@ -65,7 +69,7 @@ export const metadata: Metadata = {
     url: SITE_URL,
     title: '씨앗페 2026 | 예술인 상호부조 기금 마련 특별전',
     description:
-      '한국 예술인들의 상호부조 기금 마련을 위한 특별전. 상호부조 대출, 작품 전시, 후원에 참여하세요.',
+      '한국 예술인들의 상호부조 기금 마련을 위한 특별전. 조합원 가입과 작품 구매로 창작의 시간을 살려내는 연대에 참여하세요.',
     siteName: '씨앗페 2026',
     images: [
       {

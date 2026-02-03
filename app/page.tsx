@@ -28,7 +28,7 @@ const ArtworkHighlightSlider = dynamic(
 export const metadata: Metadata = {
   title: '씨앗페 2026 - 예술인 상호부조 기금 마련 특별전',
   description:
-    '씨앗페 2026은 예술인 상호부조 대출 기금 마련을 위해 후원과 작품 구매를 연결하는 특별전입니다. 금융 사각지대에 놓인 예술인에게 안정적인 창작 환경을 선물하세요.',
+    '씨앗페 2026은 예술인 상호부조 대출 기금 마련을 위해 조합원 가입과 작품 구매를 연결하는 온라인 특별전입니다. 금융 사각지대에 놓인 예술인에게 안정적인 창작 환경을 선물하세요.',
   alternates: {
     canonical: SITE_URL,
   },
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     siteName: '씨앗페 2026',
     title: '씨앗페 2026 - 예술인 상호부조 기금 마련 특별전',
     description:
-      '후원과 작품 구매로 예술인 상호부조 대출 기금을 확장하고, 금융 위기 속에서도 창작이 지속되도록 힘을 보태주세요.',
+      '조합원 가입과 작품 구매로 예술인 상호부조 대출 기금을 확장하고, 금융 위기 속에서도 창작이 지속되도록 온라인 전시에서 힘을 보태주세요.',
     url: SITE_URL,
     images: [
       {
