@@ -54,17 +54,15 @@ export default function ArtworkHighlightSlider({ artworks }: ArtworkHighlightSli
 
   return (
     <Section variant="canvas-soft" className="py-16 md:py-24 overflow-hidden">
-      <div className="container-max mb-10">
-        <div className="flex justify-between items-end">
-          <div>
-            <span className="text-primary font-bold text-sm tracking-wider uppercase mb-2 block">
-              Online Showcase
-            </span>
-            <SectionTitle className="mb-0 text-left">온라인 전시 하이라이트</SectionTitle>
-          </div>
+      <div className="container-max mb-12 text-center">
+        <div className="inline-flex items-center px-3 py-1 rounded-full border border-primary text-primary text-xs font-semibold tracking-wide uppercase mb-4">
+          Online Showcase
+        </div>
+        <SectionTitle className="mb-4">온라인 전시 하이라이트</SectionTitle>
+        <div className="flex justify-center">
           <Link
             href="/artworks"
-            className="text-charcoal-muted hover:text-primary transition-colors font-medium hidden sm:block"
+            className="text-charcoal-muted hover:text-primary transition-colors font-medium border-b border-charcoal-muted/20 hover:border-primary"
           >
             전체 작품 보기 &rarr;
           </Link>
@@ -86,12 +84,6 @@ export default function ArtworkHighlightSlider({ artworks }: ArtworkHighlightSli
             </div>
           ))}
         </div>
-      </div>
-
-      <div className="mt-10 text-center sm:hidden">
-        <Link href="/artworks" className="text-primary font-bold">
-          전체 작품 보기 &rarr;
-        </Link>
       </div>
     </Section>
   );
