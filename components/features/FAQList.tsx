@@ -18,7 +18,7 @@ export default function FAQList({ items }: FAQListProps) {
   };
 
   return (
-    <div className="space-y-4 max-w-3xl mx-auto">
+    <div className="space-y-4 max-w-3xl mx-auto" itemScope itemType="https://schema.org/FAQPage">
       {items.map((item, index) => {
         const isOpen = openIndex === index;
 
@@ -26,6 +26,9 @@ export default function FAQList({ items }: FAQListProps) {
           <div
             key={index}
             className="border border-gray-200 rounded-xl bg-white overflow-hidden transition-all duration-200 hover:border-gray-300"
+            itemScope
+            itemProp="mainEntity"
+            itemType="https://schema.org/Question"
           >
             <button
               onClick={() => toggleItem(index)}
@@ -33,7 +36,9 @@ export default function FAQList({ items }: FAQListProps) {
               aria-expanded={isOpen}
               aria-controls={`faq-content-${index}`}
             >
-              <span className="font-medium text-lg text-charcoal">{item.question}</span>
+              <span className="font-medium text-lg text-charcoal" itemProp="name">
+                {item.question}
+              </span>
               <span
                 className={cn(
                   'text-gray-400 transition-transform duration-300 transform',
@@ -51,8 +56,14 @@ export default function FAQList({ items }: FAQListProps) {
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  itemScope
+                  itemProp="acceptedAnswer"
+                  itemType="https://schema.org/Answer"
                 >
-                  <div className="px-6 pb-6 text-charcoal-muted leading-relaxed whitespace-pre-line border-t border-gray-100 pt-6">
+                  <div
+                    className="px-6 pb-6 text-charcoal-muted leading-relaxed whitespace-pre-line border-t border-gray-100 pt-6"
+                    itemProp="text"
+                  >
                     {item.answer}
                   </div>
                 </motion.div>

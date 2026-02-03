@@ -1,7 +1,15 @@
+import { STATISTICS_DATA } from '@/lib/constants';
+
 export interface FAQItem {
   question: string;
   answer: string;
 }
+
+const loanGoalStat = STATISTICS_DATA.find((stat) => stat.label === '대출 가능 금액');
+const loanGoal = loanGoalStat ? `${loanGoalStat.value / 100000000}억` : '10억';
+
+const repaymentRateStat = STATISTICS_DATA.find((stat) => stat.label === '상호부조 대출 상환율');
+const repaymentRate = repaymentRateStat ? `${repaymentRateStat.value}%` : '95%';
 
 export const faqs: FAQItem[] = [
   {
@@ -21,13 +29,11 @@ export const faqs: FAQItem[] = [
   },
   {
     question: '상호부조 대출이란 무엇인가요?',
-    answer:
-      '제1금융권에서 소외된 예술인들을 위해, 조성된 기금을 바탕으로 연 5%의 고정금리로 대출해주는 시스템입니다. 현재 95%의 높은 상환율을 유지하고 있습니다.',
+    answer: `제1금융권에서 소외된 예술인들을 위해, 조성된 기금을 바탕으로 연 5%의 고정금리로 대출해주는 시스템입니다. 현재 ${repaymentRate}의 높은 상환율을 유지하고 있습니다.`,
   },
   {
     question: '씨앗페 2026의 목표 금액은 얼마인가요?',
-    answer:
-      '이번 캠페인을 통해 총 10억 원의 상호부조 대출 가능 기금 확보를 목표로 하고 있습니다. 여러분의 조합원 가입과 작품 구매가 이 목표를 가능하게 합니다.',
+    answer: `이번 캠페인을 통해 총 ${loanGoal} 원의 상호부조 대출 가능 기금 확보를 목표로 하고 있습니다. 여러분의 조합원 가입과 작품 구매가 이 목표를 가능하게 합니다.`,
   },
   {
     question: '구매한 작품의 배송은 어떻게 이루어지나요?',
