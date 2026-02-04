@@ -7,6 +7,7 @@ import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import AnimationProvider from '@/components/providers/AnimationProvider';
 import ToastProvider from '@/components/providers/ToastProvider';
+import PageTransition from '@/components/common/PageTransition';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { OG_IMAGE, SITE_URL, SITE_URL_ALIAS, CONTACT } from '@/lib/constants';
 import {
@@ -124,7 +125,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </a>
             <Header />
             <main id="main-content" role="main" className="flex-1">
-              <Suspense fallback={<PageLoader />}>{children}</Suspense>
+              <PageTransition>
+                <Suspense fallback={<PageLoader />}>{children}</Suspense>
+              </PageTransition>
             </main>
             <Footer />
           </ToastProvider>
