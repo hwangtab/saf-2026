@@ -12,7 +12,7 @@ export default function SignUpPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [oauthLoading, setOauthLoading] = useState<'google' | 'kakao' | null>(null);
+  const [oauthLoading, setOauthLoading] = useState<'google' | null>(null);
 
   const supabase = createSupabaseBrowserClient();
 
@@ -43,7 +43,7 @@ export default function SignUpPage() {
     setLoading(false);
   };
 
-  const handleOAuthLogin = async (provider: 'google' | 'kakao') => {
+  const handleOAuthLogin = async (provider: 'google') => {
     setOauthLoading(provider);
     setError(null);
     const { error } = await supabase.auth.signInWithOAuth({
@@ -90,16 +90,6 @@ export default function SignUpPage() {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <div className="space-y-3">
-            <Button
-              type="button"
-              variant="white"
-              className="w-full justify-center"
-              loading={oauthLoading === 'kakao'}
-              disabled={oauthLoading !== null}
-              onClick={() => handleOAuthLogin('kakao')}
-            >
-              카카오로 계속하기
-            </Button>
             <Button
               type="button"
               variant="white"

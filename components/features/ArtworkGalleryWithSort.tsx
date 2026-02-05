@@ -59,8 +59,8 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
         onArtistClick={handleArtistClick}
       />
 
-      {/* Gallery Content - Below filter bar */}
-      <div className="mt-20">
+      {/* Gallery Content */}
+      <div className="mt-8">
         {/* Search Results Message */}
         {searchQuery && (
           <div className="mb-6 container-max" role="status" aria-live="polite">

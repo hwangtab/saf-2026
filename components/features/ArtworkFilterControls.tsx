@@ -34,8 +34,8 @@ export default function ArtworkFilterControls({
 }: ArtworkFilterControlsProps) {
   return (
     <>
-      {/* Fixed FilterBar - Stays at top below header */}
-      <div className="fixed top-[calc(4rem+env(safe-area-inset-top,0px))] left-0 right-0 z-30 bg-gray-50 border-b border-gray-200/50">
+      {/* FilterBar - Static position */}
+      <div className="bg-gray-50 border-b border-gray-200/50">
         <div className="container-max">
           <div className="flex flex-col md:flex-row md:items-center gap-3 py-3">
             <div className="flex-1 min-w-0 md:max-w-md">
@@ -55,9 +55,9 @@ export default function ArtworkFilterControls({
         </div>
       </div>
 
-      {/* Artist Navigation - Normal scroll (appears below fixed FilterBar) */}
+      {/* Artist Navigation */}
       {showArtistNav && (
-        <div className="mt-[5rem] container-max mb-4">
+        <div className="container-max my-4">
           <ArtistNavigation
             uniqueArtists={uniqueArtists}
             selectedArtist={selectedArtist}
