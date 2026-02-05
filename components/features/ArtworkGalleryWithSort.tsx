@@ -51,11 +51,11 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
 
   return (
     <div>
-      {/* Fixed Container - FilterBar with ArtistNavigation */}
-      <div className="fixed top-[calc(4rem+env(safe-area-inset-top,0px))] left-0 right-0 z-30 bg-gray-50">
+      {/* Fixed FilterBar - Always pinned below header */}
+      <div className="fixed top-[calc(4rem+env(safe-area-inset-top,0px))] left-0 right-0 z-30 bg-gray-50 border-b border-gray-200/50">
         <div className="container-max">
           {/* Search & Sort Controls - Single row on desktop, stacked on mobile */}
-          <div className="flex flex-col md:flex-row md:items-center gap-3 py-3 border-b border-gray-200/50">
+          <div className="flex flex-col md:flex-row md:items-center gap-3 py-3">
             <div className="flex-1 min-w-0 md:max-w-md">
               <SearchBar
                 value={searchQuery}
@@ -71,22 +71,22 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
               setSortOption={setSortOption}
             />
           </div>
-
-          {/* Artist Navigation - Inside fixed container */}
-          {showArtistNav && (
-            <div className="pb-4 pt-2">
-              <ArtistNavigation
-                uniqueArtists={uniqueArtists}
-                selectedArtist={selectedArtist}
-                onArtistClick={handleArtistClick}
-              />
-            </div>
-          )}
         </div>
       </div>
 
-      {/* Content below fixed FilterBar - Add top margin to prevent overlap */}
-      <div className={showArtistNav ? 'mt-[160px]' : 'mt-20'}>
+      {/* Content below fixed FilterBar */}
+      <div className="mt-20">
+        {/* Artist Navigation - Normal scroll (disappears on scroll) */}
+        {showArtistNav && (
+          <div className="container-max mb-4">
+            <ArtistNavigation
+              uniqueArtists={uniqueArtists}
+              selectedArtist={selectedArtist}
+              onArtistClick={handleArtistClick}
+            />
+          </div>
+        )}
+
         {/* Results Message */}
         {searchQuery && (
           <div className="mb-6 container-max mt-6" role="status" aria-live="polite">
