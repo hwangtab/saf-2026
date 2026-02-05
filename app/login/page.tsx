@@ -15,6 +15,12 @@ export default function LoginPage() {
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
 
+  const getOAuthRedirectUrl = () => {
+    const envUrl = process.env.NEXT_PUBLIC_SITE_URL;
+    const baseUrl = envUrl && envUrl.startsWith('http') ? envUrl : window.location.origin;
+    return `${baseUrl}/auth/callback`;
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -40,7 +46,7 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: getOAuthRedirectUrl(),
       },
     });
 

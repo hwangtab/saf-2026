@@ -1,9 +1,20 @@
 import { cache } from 'react';
-import { supabase } from './supabase';
+import { hasSupabaseConfig, supabase } from './supabase';
 import { formatPriceForDisplay } from '@/lib/utils';
+import { artworks as fallbackArtworks, getArtworkById } from '@/content/saf2026-artworks';
+import { newsArticles } from '@/content/news';
+import { faqs } from '@/content/faq';
+import { testimonials } from '@/content/testimonials';
+import { exhibitionReviews } from '@/content/reviews';
 import type { Artwork, ExhibitionReview, NewsArticle } from '@/types';
 
+const isMissingTableError = (error: any) => error?.code === '42P01';
+
 export const getSupabaseArtworks = cache(async (): Promise<Artwork[]> => {
+  if (!hasSupabaseConfig || !supabase) {
+    return fallbackArtworks;
+  }
+
   // Fetch artworks first
   const { data: artworksData, error: artworksError } = await supabase
     .from('artworks')
@@ -11,6 +22,9 @@ export const getSupabaseArtworks = cache(async (): Promise<Artwork[]> => {
     .eq('is_hidden', false);
 
   if (artworksError) {
+    if (isMissingTableError(artworksError)) {
+      return fallbackArtworks;
+    }
     console.error('Error fetching artworks from Supabase:', artworksError);
     return [];
   }
@@ -19,6 +33,9 @@ export const getSupabaseArtworks = cache(async (): Promise<Artwork[]> => {
   const { data: artistsData, error: artistsError } = await supabase.from('artists').select('*');
 
   if (artistsError) {
+    if (isMissingTableError(artistsError)) {
+      return fallbackArtworks;
+    }
     console.error('Error fetching artists from Supabase:', artistsError);
     return [];
   }
@@ -47,6 +64,10 @@ export const getSupabaseArtworks = cache(async (): Promise<Artwork[]> => {
 });
 
 export const getSupabaseArtworkById = cache(async (id: string): Promise<Artwork | null> => {
+  if (!hasSupabaseConfig || !supabase) {
+    return getArtworkById(id) || null;
+  }
+
   const { data: artwork, error: artworkError } = await supabase
     .from('artworks')
     .select('*')
@@ -54,6 +75,9 @@ export const getSupabaseArtworkById = cache(async (id: string): Promise<Artwork 
     .single();
 
   if (artworkError) {
+    if (isMissingTableError(artworkError)) {
+      return getArtworkById(id) || null;
+    }
     console.error(`Error fetching artwork ${id} from Supabase:`, artworkError);
     return null;
   }
@@ -65,6 +89,9 @@ export const getSupabaseArtworkById = cache(async (id: string): Promise<Artwork 
     .single();
 
   if (artistError) {
+    if (isMissingTableError(artistError)) {
+      return getArtworkById(id) || null;
+    }
     console.error(`Error fetching artist for artwork ${id}:`, artistError);
   }
 
@@ -93,12 +120,19 @@ export async function getSupabaseArtworksByArtist(artistName: string): Promise<A
 
 export const getSupabaseTestimonials = cache(
   async (): Promise<{ category: string; items: any[] }[]> => {
+    if (!hasSupabaseConfig || !supabase) {
+      return testimonials;
+    }
+
     const { data, error } = await supabase
       .from('testimonials')
       .select('*')
       .order('category', { ascending: true });
 
     if (error) {
+      if (isMissingTableError(error)) {
+        return testimonials;
+      }
       console.error('Error fetching testimonials from Supabase:', error);
       return [];
     }
@@ -121,12 +155,19 @@ export const getSupabaseTestimonials = cache(
 );
 
 export const getSupabaseFAQs = cache(async (): Promise<{ question: string; answer: string }[]> => {
+  if (!hasSupabaseConfig || !supabase) {
+    return faqs.map((item) => ({ question: item.question, answer: item.answer }));
+  }
+
   const { data, error } = await supabase
     .from('faq')
     .select('*')
     .order('created_at', { ascending: true });
 
   if (error) {
+    if (isMissingTableError(error)) {
+      return faqs.map((item) => ({ question: item.question, answer: item.answer }));
+    }
     console.error('Error fetching FAQs from Supabase:', error);
     return [];
   }
@@ -138,12 +179,19 @@ export const getSupabaseFAQs = cache(async (): Promise<{ question: string; answe
 });
 
 export const getSupabaseReviews = cache(async (): Promise<ExhibitionReview[]> => {
+  if (!hasSupabaseConfig || !supabase) {
+    return exhibitionReviews;
+  }
+
   const { data, error } = await supabase
     .from('reviews')
     .select('*')
     .order('date', { ascending: false });
 
   if (error) {
+    if (isMissingTableError(error)) {
+      return exhibitionReviews;
+    }
     console.error('Error fetching reviews from Supabase:', error);
     return [];
   }
@@ -162,12 +210,19 @@ export const getSupabaseReviews = cache(async (): Promise<ExhibitionReview[]> =>
 });
 
 export const getSupabaseNews = cache(async (): Promise<NewsArticle[]> => {
+  if (!hasSupabaseConfig || !supabase) {
+    return newsArticles;
+  }
+
   const { data, error } = await supabase
     .from('news')
     .select('*')
     .order('date', { ascending: false });
 
   if (error) {
+    if (isMissingTableError(error)) {
+      return newsArticles;
+    }
     console.error('Error fetching news from Supabase:', error);
     return [];
   }

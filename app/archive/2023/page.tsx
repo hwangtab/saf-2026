@@ -9,6 +9,7 @@ import VideoEmbed from '@/components/features/VideoEmbed';
 import { saf2023Photos } from '@/content/saf2023-photos';
 import { saf2023Artworks } from '@/content/saf2023-artworks';
 import { supabase } from '@/lib/supabase';
+import { videos as fallbackVideos } from '@/content/videos';
 import { SITE_URL, escapeJsonLdForScript, BREADCRUMB_HOME, BREADCRUMBS } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
@@ -23,12 +24,21 @@ export const metadata: Metadata = createPageMetadata(
 );
 
 export default async function Archive2023Page() {
-  const { data } = await supabase
-    .from('videos')
-    .select('*')
-    .order('created_at', { ascending: true });
+  const fallbackVideoRows = fallbackVideos.map((video) => ({
+    ...video,
+    youtube_id: video.youtubeId,
+  }));
 
-  const videos = data || [];
+  let videos = fallbackVideoRows;
+  if (supabase) {
+    const { data, error } = await supabase
+      .from('videos')
+      .select('*')
+      .order('created_at', { ascending: true });
+    if (!error && data) {
+      videos = data;
+    }
+  }
 
   const currentUrl = PAGE_URL;
 
