@@ -14,6 +14,24 @@ export async function approveUser(userId: string): Promise<AdminActionState> {
     await requireAdmin();
     const supabase = await createSupabaseServerClient();
 
+    const { data: application } = await supabase
+      .from('artist_applications')
+      .select('artist_name, contact, bio')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    const hasApplication =
+      !!application?.artist_name?.trim() &&
+      !!application?.contact?.trim() &&
+      !!application?.bio?.trim();
+
+    if (!hasApplication) {
+      return {
+        message: '신청 정보가 없어 승인할 수 없습니다. 작가 정보 제출 후 승인해주세요.',
+        error: true,
+      };
+    }
+
     // 1. Update Profile to active and role artist
     const { error: profileError } = await supabase
       .from('profiles')
@@ -37,12 +55,6 @@ export async function approveUser(userId: string): Promise<AdminActionState> {
         .select('name')
         .eq('id', userId)
         .single();
-
-      const { data: application } = await supabase
-        .from('artist_applications')
-        .select('artist_name, bio')
-        .eq('user_id', userId)
-        .maybeSingle();
 
       const { error: artistError } = await supabase.from('artists').insert({
         user_id: userId,
