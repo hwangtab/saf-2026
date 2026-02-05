@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { deleteArtwork } from '@/app/actions/artwork';
 import Button from '@/components/ui/Button';
 import { ExternalLinkIcon } from '@/components/ui/Icons';
+import { useRouter } from 'next/navigation';
 
 type Artwork = {
   id: string;
@@ -18,6 +19,7 @@ type Artwork = {
 
 export function ArtworkList({ artworks }: { artworks: Artwork[] }) {
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleDelete = async (id: string) => {
     if (!confirm('정말 이 작품을 삭제하시겠습니까? 복구할 수 없습니다.')) return;
@@ -28,6 +30,8 @@ export function ArtworkList({ artworks }: { artworks: Artwork[] }) {
 
     if (result.error) {
       alert(result.message);
+    } else {
+      router.refresh();
     }
   };
 

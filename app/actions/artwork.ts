@@ -13,6 +13,7 @@ export type ActionState = {
 };
 
 const MAX_IMAGES = 5;
+type SupabaseServerClient = Awaited<ReturnType<typeof createSupabaseServerClient>>;
 
 const getStoragePathFromPublicUrl = (publicUrl: string, bucket: string) => {
   try {
@@ -59,11 +60,7 @@ const validateImageUrls = (urls: string[], artistId: string) => {
   return { paths };
 };
 
-const cleanupUploads = async (
-  supabase: ReturnType<typeof createSupabaseServerClient>,
-  urls: string[],
-  artistId: string
-) => {
+const cleanupUploads = async (supabase: SupabaseServerClient, urls: string[], artistId: string) => {
   const paths = getOwnedImagePaths(urls, artistId);
   if (paths.length > 0) {
     await supabase.storage.from('artworks').remove(paths);
@@ -74,7 +71,7 @@ export async function createArtwork(
   prevState: ActionState,
   formData: FormData
 ): Promise<ActionState> {
-  let supabase: ReturnType<typeof createSupabaseServerClient> | null = null;
+  let supabase: SupabaseServerClient | null = null;
   let cleanupUrls: string[] = [];
   let artistId: string | null = null;
   try {
@@ -189,7 +186,7 @@ export async function updateArtwork(
   prevState: ActionState,
   formData: FormData
 ): Promise<ActionState> {
-  let supabase: ReturnType<typeof createSupabaseServerClient> | null = null;
+  let supabase: SupabaseServerClient | null = null;
   let cleanupUrls: string[] = [];
   let artistId: string | null = null;
   try {
