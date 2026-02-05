@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { approveUser, rejectUser, updateUserRole } from '@/app/actions/admin';
 import Button from '@/components/ui/Button';
 import { CheckIcon, XIcon } from '@/components/ui/Icons';
@@ -19,6 +20,7 @@ export function UserList({ users }: { users: Profile[] }) {
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [roleSelections, setRoleSelections] = useState<Record<string, Profile['role']>>({});
+  const router = useRouter();
 
   const normalize = (value: string) => value.toLowerCase().replace(/\s+/g, '');
   const filteredUsers = users.filter((user) => {
@@ -35,6 +37,7 @@ export function UserList({ users }: { users: Profile[] }) {
     setProcessingId(null);
 
     if (res.error) alert(res.message);
+    else router.refresh();
   };
 
   const handleReject = async (id: string) => {
@@ -45,6 +48,7 @@ export function UserList({ users }: { users: Profile[] }) {
     setProcessingId(null);
 
     if (res.error) alert(res.message);
+    else router.refresh();
   };
 
   const handleRoleChange = async (id: string, currentRole: Profile['role']) => {
@@ -61,6 +65,7 @@ export function UserList({ users }: { users: Profile[] }) {
       alert(res.message);
     } else {
       setRoleSelections((prev) => ({ ...prev, [id]: nextRole }));
+      router.refresh();
     }
   };
 

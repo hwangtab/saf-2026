@@ -91,9 +91,38 @@ export async function updateUserRole(
     }
 
     const supabase = await createSupabaseServerClient();
-    const { error } = await supabase.from('profiles').update({ role }).eq('id', userId);
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('name')
+      .eq('id', userId)
+      .single();
+
+    if (profileError) throw profileError;
+
+    const updates: { role: 'admin' | 'artist' | 'user'; status?: 'active' } = { role };
+    if (role === 'artist' || role === 'admin') {
+      updates.status = 'active';
+    }
+
+    const { error } = await supabase.from('profiles').update(updates).eq('id', userId);
 
     if (error) throw error;
+
+    if (role === 'artist') {
+      const { data: existingArtist } = await supabase
+        .from('artists')
+        .select('id')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      if (!existingArtist) {
+        const { error: artistError } = await supabase.from('artists').insert({
+          user_id: userId,
+          name_ko: profile?.name || 'New Artist',
+        });
+        if (artistError) throw artistError;
+      }
+    }
 
     revalidatePath('/admin/users');
     return { message: '권한이 변경되었습니다.', error: false };
