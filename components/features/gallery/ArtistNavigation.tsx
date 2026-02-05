@@ -1,5 +1,7 @@
 import { memo, useCallback } from 'react';
+import { motion } from 'framer-motion';
 import { UI_STRINGS } from '@/lib/ui-strings';
+import { slideDown } from '@/lib/motion-variants';
 
 interface ArtistButtonProps {
   artist: string;
@@ -34,11 +36,22 @@ interface ArtistNavigationProps {
   uniqueArtists: string[];
   selectedArtist: string | null;
   onArtistClick: (artist: string) => void;
+  isVisible: boolean;
 }
 
-function ArtistNavigation({ uniqueArtists, selectedArtist, onArtistClick }: ArtistNavigationProps) {
+function ArtistNavigation({
+  uniqueArtists,
+  selectedArtist,
+  onArtistClick,
+  isVisible,
+}: ArtistNavigationProps) {
   return (
-    <div className="hidden md:block pb-4 pt-1">
+    <motion.div
+      className="hidden md:block pb-4 pt-1 overflow-hidden"
+      initial="visible"
+      animate={isVisible ? 'visible' : 'hidden'}
+      variants={slideDown}
+    >
       <div className="grid grid-cols-2 md:grid-cols-9 lg:grid-cols-11 gap-2">
         {uniqueArtists.map((artist) => (
           <ArtistButton
@@ -49,7 +62,7 @@ function ArtistNavigation({ uniqueArtists, selectedArtist, onArtistClick }: Arti
           />
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 }
 

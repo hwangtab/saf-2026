@@ -78,3 +78,17 @@ export const DURATIONS = {
   SLIDER: 1.5,
   KEN_BURNS: 20,
 } as const;
+
+// === Slide Variants ===
+export const slideDown: Variants = {
+  visible: {
+    opacity: 1,
+    height: 'auto',
+    transition: { duration: DURATIONS.DEFAULT, ease: 'easeInOut' },
+  },
+  hidden: {
+    opacity: 0,
+    height: 0,
+    transition: { duration: DURATIONS.DEFAULT, ease: 'easeInOut' },
+  },
+};

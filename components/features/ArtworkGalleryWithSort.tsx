@@ -9,6 +9,8 @@ import ArtistNavigation from './gallery/ArtistNavigation';
 import GalleryEmptyState from './gallery/GalleryEmptyState';
 import { Artwork } from '@/types';
 import { useArtworkFilter } from '@/lib/hooks/useArtworkFilter';
+import { useScrollDirection } from '@/lib/hooks/useScrollDirection';
+import { useScrolled } from '@/lib/hooks/useScrolled';
 import { UI_STRINGS } from '@/lib/ui-strings';
 
 interface ArtworkGalleryWithSortProps {
@@ -18,6 +20,9 @@ interface ArtworkGalleryWithSortProps {
 
 function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithSortProps) {
   const router = useRouter();
+  const scrollDirection = useScrollDirection();
+  const isScrolled = useScrolled(100);
+
   const {
     sortOption,
     setSortOption,
@@ -48,6 +53,11 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
   // 작가명순일 때만 작가 네비게이션 표시
   const showArtistNav = sortOption === 'artist-asc' && !searchQuery;
 
+  // 작가 네비게이션 visible 조건:
+  // 1. 페이지 상단 근처 (100px 이내) OR
+  // 2. 스크롤 업 중
+  const isArtistNavVisible = !isScrolled || scrollDirection === 'up';
+
   return (
     <div>
       {/* Controls & Nav Section (Combined Sticky) */}
@@ -77,6 +87,7 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
               uniqueArtists={uniqueArtists}
               selectedArtist={selectedArtist}
               onArtistClick={handleArtistClick}
+              isVisible={isArtistNavVisible}
             />
           )}
         </div>
