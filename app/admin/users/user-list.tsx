@@ -19,7 +19,9 @@ type Profile = {
 export function UserList({ users }: { users: Profile[] }) {
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
-  const [roleSelections, setRoleSelections] = useState<Record<string, Profile['role']>>({});
+  const [roleSelections, setRoleSelections] = useState<
+    Record<string, { value: Profile['role']; baseRole: Profile['role'] }>
+  >({});
   const router = useRouter();
 
   const normalize = (value: string) => value.toLowerCase().replace(/\s+/g, '');
@@ -53,7 +55,8 @@ export function UserList({ users }: { users: Profile[] }) {
 
   const handleRoleChange = async (id: string, currentRole: Profile['role']) => {
     const selectedRole = roleSelections[id];
-    const nextRole = selectedRole || currentRole;
+    const nextRole =
+      selectedRole && selectedRole.baseRole === currentRole ? selectedRole.value : currentRole;
     if (nextRole === currentRole) {
       if (selectedRole) {
         setRoleSelections((prev) => {
@@ -161,11 +164,18 @@ export function UserList({ users }: { users: Profile[] }) {
                   )}
                   <div className="flex items-center gap-2">
                     <select
-                      value={roleSelections[user.id] ?? user.role}
+                      value={
+                        roleSelections[user.id]?.baseRole === user.role
+                          ? roleSelections[user.id]?.value
+                          : user.role
+                      }
                       onChange={(e) =>
                         setRoleSelections((prev) => ({
                           ...prev,
-                          [user.id]: e.target.value as Profile['role'],
+                          [user.id]: {
+                            value: e.target.value as Profile['role'],
+                            baseRole: user.role,
+                          },
                         }))
                       }
                       className="rounded-md border border-gray-300 px-2 py-1 text-xs"

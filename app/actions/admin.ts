@@ -123,8 +123,12 @@ export async function updateUserRole(
           })
           .select('id')
           .single();
-        if (artistError) throw artistError;
-        createdArtistId = createdArtist?.id || null;
+        if (artistError) {
+          // If another admin created it concurrently, ignore unique violation.
+          if (artistError.code !== '23505') throw artistError;
+        } else {
+          createdArtistId = createdArtist?.id || null;
+        }
       }
     }
 
