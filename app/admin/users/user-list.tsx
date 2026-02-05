@@ -184,16 +184,21 @@ export function UserList({ users }: { users: Profile[] }) {
                               onClick={() => handleApprove(user.id)}
                               loading={processingId === user.id}
                               disabled={!!processingId || !hasApplication}
+                              aria-disabled={!!processingId || !hasApplication}
                             >
                               <CheckIcon className="mr-1" /> 승인
                             </Button>
                           </span>
                         )}
                         {user.status === 'pending' && !hasApplicationRecord && (
-                          <span className="text-xs text-red-500 self-center">신청 정보 없음</span>
+                          <span className="text-xs text-red-500 self-center">
+                            신청 정보 없음 (승인 불가)
+                          </span>
                         )}
                         {user.status === 'pending' && hasApplicationRecord && !hasApplication && (
-                          <span className="text-xs text-red-500 self-center">신청 정보 불완전</span>
+                          <span className="text-xs text-red-500 self-center">
+                            신청 정보 불완전 (승인 불가)
+                          </span>
                         )}
                         {user.status !== 'suspended' && (
                           <Button
