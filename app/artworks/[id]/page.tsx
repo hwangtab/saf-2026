@@ -1,4 +1,4 @@
-import { getAllArtworks, getArtworkById } from '@/content/saf2026-artworks';
+import { getSupabaseArtworks, getSupabaseArtworkById } from '@/lib/supabase-data';
 import Section from '@/components/ui/Section';
 import { getArticlesByArtist } from '@/content/artist-articles';
 import ArtworkImage from '@/components/features/ArtworkImage';
@@ -28,7 +28,7 @@ interface Props {
 // Generate metadata for SEO
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const artwork = getArtworkById(id);
+  const artwork = await getSupabaseArtworkById(id);
 
   if (!artwork) {
     return {
@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 // Generate static params for all artworks at build time
 export async function generateStaticParams() {
-  const artworks = getAllArtworks();
+  const artworks = await getSupabaseArtworks();
   return artworks.map((artwork) => ({
     id: artwork.id,
   }));
@@ -49,7 +49,10 @@ export async function generateStaticParams() {
 
 export default async function ArtworkDetailPage({ params }: Props) {
   const { id } = await params;
-  const artwork = getArtworkById(id);
+  const [artwork, artworks] = await Promise.all([
+    getSupabaseArtworkById(id),
+    getSupabaseArtworks(),
+  ]);
 
   if (!artwork) {
     notFound();
@@ -73,6 +76,10 @@ export default async function ArtworkDetailPage({ params }: Props) {
   // Safely stringify JSON-LD to prevent XSS (escape < as \u003c)
   const safeJsonLd = escapeJsonLdForScript(JSON.stringify(productSchema));
   const safeBreadcrumbJsonLd = escapeJsonLdForScript(JSON.stringify(breadcrumbSchema));
+
+  const otherWorks = artworks
+    .filter((a) => a.artist === artwork.artist && a.id !== artwork.id)
+    .slice(0, 3);
 
   return (
     <>
@@ -282,34 +289,26 @@ export default async function ArtworkDetailPage({ params }: Props) {
           </div>
 
           {/* Other Works by this Artist Section */}
-          {(() => {
-            const otherWorks = getAllArtworks()
-              .filter((a) => a.artist === artwork.artist && a.id !== artwork.id)
-              .slice(0, 3);
-
-            if (otherWorks.length === 0) return null;
-
-            return (
-              <div className="mt-24 pt-24 border-t border-gray-100">
-                <div className="flex items-center justify-between mb-10">
-                  <h2 className="text-2xl font-bold text-charcoal">
-                    {artwork.artist} 작가의 다른 작품
-                  </h2>
-                  <Link
-                    href={`/artworks/artist/${encodeURIComponent(artwork.artist)}`}
-                    className="text-primary font-medium hover:underline text-sm"
-                  >
-                    전체보기 →
-                  </Link>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {otherWorks.map((other) => (
-                    <ArtworkCard key={other.id} artwork={other} variant="gallery" />
-                  ))}
-                </div>
+          {otherWorks.length > 0 ? (
+            <div className="mt-24 pt-24 border-t border-gray-100">
+              <div className="flex items-center justify-between mb-10">
+                <h2 className="text-2xl font-bold text-charcoal">
+                  {artwork.artist} 작가의 다른 작품
+                </h2>
+                <Link
+                  href={`/artworks/artist/${encodeURIComponent(artwork.artist)}`}
+                  className="text-primary font-medium hover:underline text-sm"
+                >
+                  전체보기 →
+                </Link>
               </div>
-            );
-          })()}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {otherWorks.map((other) => (
+                  <ArtworkCard key={other.id} artwork={other} variant="gallery" />
+                ))}
+              </div>
+            </div>
+          ) : null}
         </article>
       </Section>
     </>

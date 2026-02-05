@@ -1,13 +1,12 @@
 import type { MetadataRoute } from 'next';
 import { SITE_URL } from '@/lib/constants';
-import { getAllArtworks } from '@/content/saf2026-artworks';
-import { newsArticles } from '@/content/news';
+import { getSupabaseArtworks, getSupabaseNews } from '@/lib/supabase-data';
 
 export const dynamic = 'force-static';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = SITE_URL;
-  const allArtworks = getAllArtworks();
+  const [allArtworks, newsArticles] = await Promise.all([getSupabaseArtworks(), getSupabaseNews()]);
 
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [
@@ -66,7 +65,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // News detail pages
   const newsPages: MetadataRoute.Sitemap = newsArticles.map((article) => ({
     url: `${baseUrl}/news/${article.id}`,
-    lastModified: new Date(article.date),
+    lastModified: article.date ? new Date(article.date) : new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.6,
   }));

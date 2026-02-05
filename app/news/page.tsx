@@ -5,7 +5,7 @@ import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
-import { newsArticles } from '@/content/news';
+import { getSupabaseNews } from '@/lib/supabase-data';
 import { SITE_URL, BREADCRUMB_HOME, BREADCRUMBS, OG_IMAGE } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
 import { createBreadcrumbSchema, generateNewsArticleSchema } from '@/lib/seo-utils';
@@ -20,33 +20,6 @@ export const metadata: Metadata = createPageMetadata(
 );
 
 const canonicalUrl = PAGE_URL;
-
-const sortedArticles = [...newsArticles].sort((a, b) => {
-  return new Date(b.date).getTime() - new Date(a.date).getTime();
-});
-
-const structuredData = {
-  '@context': 'https://schema.org',
-  '@type': 'CollectionPage',
-  name: '씨앗페 2026 언론 보도',
-  description: '뉴스아트 등 주요 매체가 보도한 씨앗페 캠페인의 최신 기사 모음입니다.',
-  url: canonicalUrl,
-  mainEntity: {
-    '@type': 'ItemList',
-    itemListElement: sortedArticles.map((article, index) => ({
-      '@type': 'ListItem',
-      position: index + 1,
-      item: generateNewsArticleSchema({
-        title: article.title,
-        description: article.description || '',
-        datePublished: article.date,
-        image: article.thumbnail || OG_IMAGE.url,
-        url: article.link,
-        publisherName: article.source,
-      }),
-    })),
-  },
-};
 
 type HighlightQuote = {
   id: string;
@@ -164,8 +137,33 @@ function formatDate(isoString: string) {
   });
 }
 
-export default function NewsPage() {
+export default async function NewsPage() {
+  const newsArticles = await getSupabaseNews();
+
   const breadcrumbSchema = createBreadcrumbSchema([BREADCRUMB_HOME, BREADCRUMBS['/news']]);
+
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: '씨앗페 2026 언론 보도',
+    description: '뉴스아트 등 주요 매체가 보도한 씨앗페 캠페인의 최신 기사 모음입니다.',
+    url: canonicalUrl,
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: newsArticles.map((article, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        item: generateNewsArticleSchema({
+          title: article.title,
+          description: article.description || '',
+          datePublished: article.date,
+          image: article.thumbnail || OG_IMAGE.url,
+          url: article.link,
+          publisherName: article.source,
+        }),
+      })),
+    },
+  };
 
   return (
     <>
@@ -215,7 +213,7 @@ export default function NewsPage() {
       <Section variant="primary-surface" prevVariant="sun-soft" className="pb-24 md:pb-32">
         <div className="container-max">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {sortedArticles.map((article) => (
+            {newsArticles.map((article) => (
               <article
                 key={article.id}
                 className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow"

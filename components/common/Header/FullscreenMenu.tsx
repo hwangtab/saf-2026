@@ -3,6 +3,7 @@
 import { useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import AuthButtons from '@/components/auth/AuthButtons';
 import Button from '@/components/ui/Button';
 import { EXTERNAL_LINKS } from '@/lib/constants';
 import type { NavigationItem } from '@/types';
@@ -133,6 +134,7 @@ export default function FullscreenMenu({
 
         {/* 푸터 - 가입 버튼 */}
         <footer className={styles.footer}>
+          <AuthButtons layout="stacked" />
           <Button
             href={EXTERNAL_LINKS.JOIN_MEMBER}
             variant="accent"

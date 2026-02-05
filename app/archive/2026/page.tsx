@@ -7,7 +7,7 @@ import PageHero from '@/components/ui/PageHero';
 import dynamic from 'next/dynamic';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { BREADCRUMB_HOME, EXHIBITION, EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
-import { exhibitionReviews } from '@/content/reviews';
+import { getSupabaseReviews } from '@/lib/supabase-data';
 import { createPageMetadata } from '@/lib/seo';
 import {
   escapeJsonLdForScript,
@@ -28,14 +28,15 @@ export const metadata: Metadata = createPageMetadata(
   '/archive/2026'
 );
 
-export default function Archive2026Page() {
+export default async function Archive2026Page() {
+  const exhibitionReviews = await getSupabaseReviews();
   const canonicalUrl = PAGE_URL;
   const shareTitle = '2026 오프라인 전시 기록 | 씨앗페 2026';
   const shareDescription =
     '씨앗페 2026 오프라인 전시의 기록. 인사아트센터에서의 뜨거웠던 연대의 현장.';
 
   // JSON-LD Schema for Event
-  const eventSchema = generateExhibitionSchema();
+  const eventSchema = generateExhibitionSchema(exhibitionReviews);
   const breadcrumbSchema = createBreadcrumbSchema([
     BREADCRUMB_HOME,
     { name: '2026 오프라인 전시', url: '/archive/2026' },

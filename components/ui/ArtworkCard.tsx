@@ -1,13 +1,13 @@
 import { memo } from 'react';
 import Link from 'next/link';
 import ExportedImage from 'next-image-export-optimizer';
-import { Artwork } from '@/types';
-import { cn } from '@/lib/utils';
+import type { ArtworkCardData } from '@/types';
+import { cn, resolveArtworkImageUrl } from '@/lib/utils';
 
 type ArtworkCardVariant = 'gallery' | 'slider';
 
 interface ArtworkCardProps {
-  artwork: Artwork;
+  artwork: ArtworkCardData;
   variant?: ArtworkCardVariant;
   className?: string;
 }
@@ -24,9 +24,9 @@ const VARIANT_CONFIG = {
   },
 } as const;
 
-const getHref = (artwork: Artwork) => `/artworks/${artwork.id}`;
-const getImageSrc = (artwork: Artwork) => `/images/artworks/${artwork.image}`;
-const getImageAlt = (artwork: Artwork) => `${artwork.title} - ${artwork.artist}`;
+const getHref = (artwork: ArtworkCardData) => `/artworks/${artwork.id}`;
+const getImageSrc = (artwork: ArtworkCardData) => resolveArtworkImageUrl(artwork.image);
+const getImageAlt = (artwork: ArtworkCardData) => `${artwork.title} - ${artwork.artist}`;
 
 function SoldBadge({ variant }: { variant: ArtworkCardVariant }) {
   return (

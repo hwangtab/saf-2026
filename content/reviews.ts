@@ -1,13 +1,6 @@
-export interface Review {
-  id: string;
-  author: string;
-  role: string;
-  rating: number;
-  comment: string;
-  date: string;
-}
+import type { ExhibitionReview } from '@/types';
 
-export const exhibitionReviews: Review[] = [
+export const exhibitionReviews: ExhibitionReview[] = [
   {
     id: 'rev-1',
     author: '김OO',

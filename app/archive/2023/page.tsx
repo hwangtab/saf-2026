@@ -8,7 +8,7 @@ import CTAButtonGroup from '@/components/common/CTAButtonGroup';
 import VideoEmbed from '@/components/features/VideoEmbed';
 import { saf2023Photos } from '@/content/saf2023-photos';
 import { saf2023Artworks } from '@/content/saf2023-artworks';
-import { videos } from '@/content/videos';
+import { supabase } from '@/lib/supabase';
 import { SITE_URL, escapeJsonLdForScript, BREADCRUMB_HOME, BREADCRUMBS } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
@@ -22,8 +22,16 @@ export const metadata: Metadata = createPageMetadata(
   '/archive/2023'
 );
 
-export default function Archive2023Page() {
+export default async function Archive2023Page() {
+  const { data } = await supabase
+    .from('videos')
+    .select('*')
+    .order('created_at', { ascending: true });
+
+  const videos = data || [];
+
   const currentUrl = PAGE_URL;
+
   const pageTitle = '2023 아카이브 | 씨앗페 2026';
   const pageDescription = '씨앗페의 활동 기록과 성과들을 담아냅니다.';
 
@@ -196,12 +204,18 @@ export default function Archive2023Page() {
           <SectionTitle className="mb-12">📹 영상 아카이브</SectionTitle>
           {/* VideoObject JSON-LD for each video */}
           {videos.map((video) => (
-            <JsonLdScript key={`video-schema-${video.id}`} data={generateVideoSchema(video)} />
+            <JsonLdScript
+              key={`video-schema-${video.id}`}
+              data={generateVideoSchema({
+                ...video,
+                youtubeId: video.youtube_id, // Map database field to component expected field
+              })}
+            />
           ))}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {videos.map((video) => (
               <div key={video.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-                <VideoEmbed id={video.youtubeId} title={video.title} />
+                <VideoEmbed id={video.youtube_id} title={video.title} />
                 <div className="p-6">
                   <h3 className="font-sans font-bold text-xl mb-2">{video.title}</h3>
                   <p className="text-charcoal-muted text-sm mb-4 line-clamp-2">

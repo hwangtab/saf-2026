@@ -10,9 +10,8 @@ import {
   OG_IMAGE,
 } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
-import { formatArtistName } from '@/lib/utils';
-import { Artwork, BreadcrumbItem } from '@/types';
-import { exhibitionReviews, Review } from '@/content/reviews';
+import { formatArtistName, resolveArtworkImageUrl } from '@/lib/utils';
+import { Artwork, BreadcrumbItem, ExhibitionReview } from '@/types';
 
 // JSON-LD Security: Escape < characters to prevent XSS
 export function escapeJsonLdForScript(json: string): string {
@@ -33,7 +32,10 @@ export function createBreadcrumbSchema(items: BreadcrumbItem[]) {
 }
 
 export function generateArtworkMetadata(artwork: Artwork): Metadata {
-  const imageUrl = `${SITE_URL}/images/artworks/${artwork.image}`;
+  const resolvedImageUrl = resolveArtworkImageUrl(artwork.image);
+  const imageUrl = resolvedImageUrl.startsWith('http')
+    ? resolvedImageUrl
+    : `${SITE_URL}${resolvedImageUrl}`;
 
   const summary = [
     `작가: ${artwork.artist}`,
@@ -94,6 +96,7 @@ export function generateArtworkMetadata(artwork: Artwork): Metadata {
 }
 
 export function generateArtworkJsonLd(artwork: Artwork, numericPrice: string, isInquiry: boolean) {
+  const resolvedImageUrl = resolveArtworkImageUrl(artwork.image);
   const schemaDescription =
     artwork.description || artwork.profile || `${artwork.artist}의 작품 "${artwork.title}"`;
 
@@ -143,7 +146,9 @@ export function generateArtworkJsonLd(artwork: Artwork, numericPrice: string, is
     artform: artwork.material?.toLowerCase().includes('canvas') ? 'Painting' : 'Visual Artwork',
     image: {
       '@type': 'ImageObject',
-      url: `${SITE_URL}/images/artworks/${artwork.image}`,
+      url: resolvedImageUrl.startsWith('http')
+        ? resolvedImageUrl
+        : `${SITE_URL}${resolvedImageUrl}`,
       name: `${artwork.title} - ${artwork.artist}`,
       alternateName: imageAlternateName,
     },
@@ -218,7 +223,7 @@ export function generateArtworkJsonLd(artwork: Artwork, numericPrice: string, is
   };
 }
 
-export function generateExhibitionSchema() {
+export function generateExhibitionSchema(reviews: ExhibitionReview[] = []) {
   return {
     '@context': 'https://schema.org',
     '@type': 'ExhibitionEvent',
@@ -266,11 +271,11 @@ export function generateExhibitionSchema() {
     aggregateRating: {
       '@type': 'AggregateRating',
       ratingValue: '4.9',
-      reviewCount: exhibitionReviews.length.toString(),
+      reviewCount: reviews.length.toString(),
       bestRating: '5',
       worstRating: '1',
     },
-    review: exhibitionReviews.map((rev: Review) => ({
+    review: reviews.map((rev) => ({
       '@type': 'Review',
       author: {
         '@type': 'Person',

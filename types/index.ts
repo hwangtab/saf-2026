@@ -39,6 +39,17 @@ export interface HydratedArtwork extends BaseArtwork {
 // Backward compatibility alias
 export type Artwork = HydratedArtwork;
 
+export interface ArtworkCardData {
+  id: string;
+  artist: string;
+  title: string;
+  image: string;
+  price: string;
+  sold?: boolean;
+  material?: string;
+  size?: string;
+}
+
 export interface Video {
   id: string;
   title: string;
@@ -67,6 +78,15 @@ export interface NewsArticle {
   link: string;
   thumbnail?: string;
   description?: string;
+}
+
+export interface ExhibitionReview {
+  id?: string;
+  author: string;
+  role?: string;
+  rating: number;
+  comment: string;
+  date: string;
 }
 
 export interface StatisticItem {

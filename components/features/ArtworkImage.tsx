@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import ExportedImage from 'next-image-export-optimizer';
 import ArtworkLightbox from '@/components/ui/ArtworkLightbox';
+import { resolveArtworkImageUrl } from '@/lib/utils';
 
 interface ArtworkImageProps {
   imagePath: string;
@@ -14,7 +15,7 @@ interface ArtworkImageProps {
 export default function ArtworkImage({ imagePath, title, artist, sold }: ArtworkImageProps) {
   const [isOpen, setIsOpen] = useState(false);
   const alt = `${title} - ${artist}`;
-  const src = `/images/artworks/${imagePath}`;
+  const src = resolveArtworkImageUrl(imagePath);
 
   return (
     <>

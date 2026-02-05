@@ -30,3 +30,29 @@ export function formatArtistName(artistName: string, addSuffix: boolean = true):
 
   return `${artistName} 작가`;
 }
+
+export function resolveArtworkImageUrl(image: string): string {
+  if (!image) return '';
+  if (image.startsWith('http://') || image.startsWith('https://')) {
+    return image;
+  }
+  if (image.startsWith('/')) {
+    return image;
+  }
+  return `/images/artworks/${image}`;
+}
+
+export function formatPriceForDisplay(priceValue: string | number | null | undefined): string {
+  if (priceValue === null || priceValue === undefined) return '';
+  const priceStr = String(priceValue).trim();
+  if (!priceStr) return '';
+  if (priceStr === '문의' || priceStr === '확인 중') return priceStr;
+
+  const numericStr = priceStr.replace(/[^\d]/g, '');
+  if (!numericStr) return priceStr;
+
+  const numeric = Number(numericStr);
+  if (!Number.isFinite(numeric) || numeric <= 0) return '';
+
+  return `₩${numeric.toLocaleString('ko-KR')}`;
+}

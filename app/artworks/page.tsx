@@ -1,6 +1,6 @@
 import Section from '@/components/ui/Section';
 
-import { getAllArtworks } from '@/content/saf2026-artworks';
+import { getSupabaseArtworks } from '@/lib/supabase-data';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import { SITE_URL } from '@/lib/constants';
@@ -17,8 +17,8 @@ export const metadata: Metadata = createPageMetadata(
   '/artworks'
 );
 
-export default function ArtworksPage() {
-  const artworks = getAllArtworks();
+export default async function ArtworksPage() {
+  const artworks = await getSupabaseArtworks();
 
   return (
     <main className="min-h-screen">

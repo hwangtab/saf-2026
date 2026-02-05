@@ -1,5 +1,6 @@
 'use client';
 
+import AuthButtons from '@/components/auth/AuthButtons';
 import Button from '@/components/ui/Button';
 
 import type { NavigationItem } from '@/types';
@@ -21,10 +22,11 @@ export default function DesktopNav({ navigation, isActive, textColor }: DesktopN
           </li>
         ))}
       </ul>
-      <div className="hidden md:flex">
+      <div className="hidden md:flex items-center gap-3">
         <Button href="/artworks" variant="accent">
           작품 구매
         </Button>
+        <AuthButtons />
       </div>
     </>
   );

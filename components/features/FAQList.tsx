@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FAQItem } from '@/content/faq';
+import type { FAQItem } from '@/content/faq';
 import { ChevronDownIcon } from '@/components/ui/Icons';
 import { cn } from '@/lib/utils';
 

@@ -1,11 +1,11 @@
-import { getAllArtworks } from '@/content/saf2026-artworks';
+import { getSupabaseArtworks, getSupabaseArtworksByArtist } from '@/lib/supabase-data';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import { SITE_URL } from '@/lib/constants';
 import { generateArtistSchema } from '@/lib/seo-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { formatArtistName } from '@/lib/utils';
+import { formatArtistName, resolveArtworkImageUrl } from '@/lib/utils';
 import { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
@@ -33,8 +33,7 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { artist } = await params;
   const artistName = decodeURIComponent(artist);
-  const artworks = getAllArtworks();
-  const artistArtworks = artworks.filter((a) => a.artist === artistName);
+  const artistArtworks = await getSupabaseArtworksByArtist(artistName);
 
   if (artistArtworks.length === 0) {
     return {
@@ -44,7 +43,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   // Use the first artwork's image as the representative image for the artist
   const representativeArtwork = artistArtworks[0];
-  const imageUrl = `${SITE_URL}/images/artworks/${representativeArtwork.image}`;
+  const resolvedImageUrl = resolveArtworkImageUrl(representativeArtwork.image);
+  const imageUrl = resolvedImageUrl.startsWith('http')
+    ? resolvedImageUrl
+    : `${SITE_URL}${resolvedImageUrl}`;
   const pageUrl = `${SITE_URL}/artworks/artist/${encodeURIComponent(artistName)}`;
 
   // Find valid profile or note from any of the artist's artworks
@@ -92,7 +94,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 // Generate static params for all artists
 export async function generateStaticParams() {
-  const artworks = getAllArtworks();
+  const artworks = await getSupabaseArtworks();
 
   // Extract unique artist names
   const artists = Array.from(new Set(artworks.map((a) => a.artist)));
@@ -105,9 +107,7 @@ export async function generateStaticParams() {
 export default async function ArtistPage({ params }: Props) {
   const { artist } = await params;
   const artistName = decodeURIComponent(artist);
-  const artworks = getAllArtworks();
-
-  // Get artist's artworks
+  const artworks = await getSupabaseArtworks();
   const artistArtworks = artworks.filter((a) => a.artist === artistName);
 
   if (artistArtworks.length === 0) {
@@ -116,7 +116,8 @@ export default async function ArtistPage({ params }: Props) {
 
   // Use the first artwork's image as the hero background
   const representativeArtwork = artistArtworks[0];
-  const heroBackgroundImage = `/images/artworks/${representativeArtwork.image}`;
+  const resolvedImageUrl = resolveArtworkImageUrl(representativeArtwork.image);
+  const heroBackgroundImage = resolvedImageUrl;
 
   // Description Logic: Profile > Description (Note) > Default
   // Find valid profile or note from any of the artist's artworks (usually they are same for all)
@@ -136,7 +137,7 @@ export default async function ArtistPage({ params }: Props) {
   const personSchema = generateArtistSchema({
     name: artistName,
     description: artistProfile || artistNote || undefined,
-    image: `${SITE_URL}/images/artworks/${representativeArtwork.image}`,
+    image: representativeArtwork.image,
     url: pageUrl,
     jobTitle: 'Artist',
   });

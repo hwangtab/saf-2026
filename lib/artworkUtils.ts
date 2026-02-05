@@ -1,6 +1,5 @@
-import { Artwork, SortOption } from '@/types';
+import { ArtistData, Artwork, SortOption } from '@/types';
 import { parsePrice } from '@/lib/parsePrice';
-import { ARTIST_DATA } from '@/content/artists-data';
 
 export function sortArtworks(artworks: Artwork[], sortOption: SortOption): Artwork[] {
   const sorted = [...artworks];
@@ -57,12 +56,13 @@ export function extractUniqueArtists(artworks: Artwork[]): string[] {
 }
 
 export function getArtworkWithArtistData(
-  artwork: Artwork
+  artwork: Artwork,
+  artistData: Record<string, ArtistData>
 ): Artwork & { profile: string; history: string } {
-  const artistData = ARTIST_DATA[artwork.artist] || { profile: '', history: '' };
+  const artistInfo = artistData[artwork.artist] || { profile: '', history: '' };
   return {
     ...artwork,
-    profile: artwork.profile || artistData.profile || '',
-    history: artwork.history || artistData.history || '',
+    profile: artwork.profile || artistInfo.profile || '',
+    history: artwork.history || artistInfo.history || '',
   };
 }

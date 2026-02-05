@@ -1,0 +1,103 @@
+'use server';
+
+import { createSupabaseServerClient } from '@/lib/auth/server';
+import { requireAdmin } from '@/lib/auth/guards';
+import { revalidatePath } from 'next/cache';
+
+export type AdminActionState = {
+  message: string;
+  error?: boolean;
+};
+
+export async function approveUser(userId: string): Promise<AdminActionState> {
+  try {
+    await requireAdmin();
+    const supabase = await createSupabaseServerClient();
+
+    // 1. Update Profile to active and role artist
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .update({ status: 'active', role: 'artist' })
+      .eq('id', userId);
+
+    if (profileError) throw profileError;
+
+    // 2. Ensure Artist record exists
+    // Check if artist record exists
+    const { data: existingArtist } = await supabase
+      .from('artists')
+      .select('id')
+      .eq('user_id', userId)
+      .single();
+
+    if (!existingArtist) {
+      // Get profile info to populate initial artist data
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('name')
+        .eq('id', userId)
+        .single();
+
+      const { error: artistError } = await supabase.from('artists').insert({
+        user_id: userId,
+        name_ko: profile?.name || 'New Artist',
+      });
+      if (artistError) throw artistError;
+    }
+
+    revalidatePath('/admin/users');
+    return { message: '사용자가 승인되었습니다.', error: false };
+  } catch (error: any) {
+    return { message: error.message, error: true };
+  }
+}
+
+export async function rejectUser(userId: string): Promise<AdminActionState> {
+  try {
+    await requireAdmin();
+    const supabase = await createSupabaseServerClient();
+
+    // Update status to suspended or just delete?
+    // Let's set to suspended for now so we have a record, or delete if it's spam.
+    // User requested "Approve/Reject". Reject usually means denial.
+    // Let's set status to 'suspended' effectively blocking them.
+    const { error } = await supabase
+      .from('profiles')
+      .update({ status: 'suspended' })
+      .eq('id', userId);
+
+    if (error) throw error;
+
+    revalidatePath('/admin/users');
+    return { message: '사용자가 거절(차단)되었습니다.', error: false };
+  } catch (error: any) {
+    return { message: error.message, error: true };
+  }
+}
+
+export async function updateUserRole(
+  userId: string,
+  role: 'admin' | 'artist' | 'user'
+): Promise<AdminActionState> {
+  try {
+    const adminUser = await requireAdmin();
+
+    if (!['admin', 'artist', 'user'].includes(role)) {
+      return { message: '유효하지 않은 역할입니다.', error: true };
+    }
+
+    if (adminUser.id === userId && role !== 'admin') {
+      return { message: '본인의 관리자 권한은 해제할 수 없습니다.', error: true };
+    }
+
+    const supabase = await createSupabaseServerClient();
+    const { error } = await supabase.from('profiles').update({ role }).eq('id', userId);
+
+    if (error) throw error;
+
+    revalidatePath('/admin/users');
+    return { message: '권한이 변경되었습니다.', error: false };
+  } catch (error: any) {
+    return { message: error.message, error: true };
+  }
+}

@@ -15,8 +15,7 @@ import {
   escapeJsonLdForScript,
 } from '@/lib/constants';
 import { generateExhibitionSchema, generateFAQSchema } from '@/lib/seo-utils';
-import { faqs } from '@/content/faq';
-import { getAllArtworks } from '@/content/saf2026-artworks';
+import { getSupabaseArtworks, getSupabaseFAQs } from '@/lib/supabase-data';
 
 const DynamicCounter = dynamic(() => import('@/components/features/DynamicCounter'));
 const ShareButtons = dynamic(() => import('@/components/common/ShareButtons'));
@@ -56,11 +55,11 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Home() {
+export default async function Home() {
   const counterItems = STATISTICS_DATA.slice(0, 3);
 
   // Slider Logic: Show all available artworks (sold: false)
-  const allArtworks = getAllArtworks();
+  const [allArtworks, faqs] = await Promise.all([getSupabaseArtworks(), getSupabaseFAQs()]);
   const availableArtworks = allArtworks.filter((artwork) => !artwork.sold);
 
   return (

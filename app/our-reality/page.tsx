@@ -4,7 +4,7 @@ import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import CTAButtonGroup from '@/components/common/CTAButtonGroup';
-import { testimonials as testimonialsData } from '@/content/testimonials';
+import { getSupabaseTestimonials } from '@/lib/supabase-data';
 import { EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
 import HighlightedText from '@/components/ui/HighlightedText';
 import { createPageMetadata } from '@/lib/seo';
@@ -29,7 +29,8 @@ export const metadata: Metadata = createPageMetadata(
   '/our-reality'
 );
 
-export default function OurReality() {
+export default async function OurReality() {
+  const testimonialsData = await getSupabaseTestimonials();
   const breadcrumbSchema = createBreadcrumbSchema([BREADCRUMB_HOME, BREADCRUMBS['/our-reality']]);
 
   return (

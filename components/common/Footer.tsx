@@ -3,11 +3,23 @@ import { SOCIAL_LINKS, CONTACT, EXTERNAL_LINKS, EXHIBITION } from '@/lib/constan
 import FooterSliderWrapper from '@/components/common/FooterSliderWrapper';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
 import { UI_STRINGS } from '@/lib/ui-strings';
+import { getSupabaseArtworks } from '@/lib/supabase-data';
 
-export default function Footer() {
+export default async function Footer() {
+  const artworks = await getSupabaseArtworks();
+  const sliderArtworks = artworks.map((artwork) => ({
+    id: artwork.id,
+    artist: artwork.artist,
+    title: artwork.title,
+    image: artwork.image,
+    price: artwork.price,
+    sold: artwork.sold,
+    material: artwork.material,
+    size: artwork.size,
+  }));
   return (
     <>
-      <FooterSliderWrapper />
+      <FooterSliderWrapper artworks={sliderArtworks} />
       <div className="relative">
         <SawtoothDivider position="top" colorClass="text-gray-900" />
         <footer className="bg-gray-900 text-white pb-[env(safe-area-inset-bottom)]">

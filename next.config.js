@@ -4,7 +4,10 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 });
 
 const nextConfig = {
-  output: 'export',
+  // output: 'export', // Disabled to support Server Actions & Middleware
+  turbopack: {
+    root: __dirname,
+  },
   images: {
     loader: 'custom',
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],

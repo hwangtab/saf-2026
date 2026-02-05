@@ -1,7 +1,6 @@
 'use client';
 
-import { getAllArtworks } from '@/content/saf2026-artworks';
-import { Artwork } from '@/types';
+import type { ArtworkCardData } from '@/types';
 import { useMemo } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import AutoScroll from 'embla-carousel-auto-scroll';
@@ -9,6 +8,7 @@ import ArtworkCard from '@/components/ui/ArtworkCard';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
 
 interface RelatedArtworksProps {
+  artworks?: ArtworkCardData[];
   /** 현재 작품 ID (제외용, optional) */
   currentArtworkId?: string;
   /** 현재 작가명 (같은 작가 우선 표시용, optional) */
@@ -51,6 +51,7 @@ function shuffleWithSeed<T>(array: T[], seed: number): T[] {
  * - 시드 기반 결정론적 셔플로 Hydration Mismatch 방지
  */
 export default function RelatedArtworksSlider({
+  artworks = [],
   currentArtworkId,
   currentArtist,
 }: RelatedArtworksProps = {}) {
@@ -83,12 +84,11 @@ export default function RelatedArtworksSlider({
   }, [currentArtworkId]);
 
   const relatedArtworks = useMemo(() => {
-    const allArtworks = getAllArtworks();
     const otherArtworks = currentArtworkId
-      ? allArtworks.filter((a) => a.id !== currentArtworkId)
-      : allArtworks;
+      ? artworks.filter((a) => a.id !== currentArtworkId)
+      : artworks;
 
-    let result: Artwork[] = [];
+    let result: ArtworkCardData[] = [];
 
     if (currentArtist) {
       const sameArtistWorks = otherArtworks.filter((a) => a.artist === currentArtist);
@@ -104,7 +104,7 @@ export default function RelatedArtworksSlider({
     }
 
     return result;
-  }, [currentArtworkId, currentArtist, seed]);
+  }, [artworks, currentArtworkId, currentArtist, seed]);
 
   // ... (existing imports)
 
