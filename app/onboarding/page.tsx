@@ -16,6 +16,9 @@ export default async function OnboardingPage() {
   if (profile?.status === 'active') {
     redirect('/dashboard/profile');
   }
+  if (profile?.status === 'suspended') {
+    redirect('/dashboard/suspended');
+  }
 
   const { data: application } = await supabase
     .from('artist_applications')

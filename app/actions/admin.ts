@@ -24,6 +24,7 @@ export async function approveUser(userId: string): Promise<AdminActionState> {
       !!application?.artist_name?.trim() &&
       !!application?.contact?.trim() &&
       !!application?.bio?.trim();
+    const contactValue = application?.contact?.trim() || '';
 
     if (!hasApplication) {
       return {
@@ -35,13 +36,21 @@ export async function approveUser(userId: string): Promise<AdminActionState> {
     // 1. Ensure Artist record exists (before activating profile)
     const { data: existingArtist, error: artistFetchError } = await supabase
       .from('artists')
-      .select('id')
+      .select('id, contact_email')
       .eq('user_id', userId)
       .maybeSingle();
 
     if (artistFetchError) throw artistFetchError;
 
     let createdArtistId: string | null = null;
+    if (existingArtist && contactValue && !existingArtist.contact_email?.trim()) {
+      const { error: contactError } = await supabase
+        .from('artists')
+        .update({ contact_email: contactValue })
+        .eq('id', existingArtist.id);
+      if (contactError) throw contactError;
+    }
+
     if (!existingArtist) {
       // Get profile + application info to populate initial artist data
       const { data: profile } = await supabase
@@ -56,6 +65,7 @@ export async function approveUser(userId: string): Promise<AdminActionState> {
           user_id: userId,
           name_ko: application?.artist_name || profile?.name || 'New Artist',
           bio: application?.bio || null,
+          contact_email: contactValue || null,
         })
         .select('id')
         .single();
@@ -144,6 +154,8 @@ export async function updateUserRole(
       !!application?.contact?.trim() &&
       !!application?.bio?.trim();
 
+    const contactValue = application?.contact?.trim() || '';
+
     if (role === 'artist' && !hasApplication) {
       return {
         message: '신청 정보가 없어 작가로 변경할 수 없습니다.',
@@ -160,11 +172,19 @@ export async function updateUserRole(
     if (role === 'artist') {
       const { data: existingArtist, error: artistFetchError } = await supabase
         .from('artists')
-        .select('id')
+        .select('id, contact_email')
         .eq('user_id', userId)
         .maybeSingle();
 
       if (artistFetchError) throw artistFetchError;
+
+      if (existingArtist && contactValue && !existingArtist.contact_email?.trim()) {
+        const { error: contactError } = await supabase
+          .from('artists')
+          .update({ contact_email: contactValue })
+          .eq('id', existingArtist.id);
+        if (contactError) throw contactError;
+      }
 
       if (!existingArtist) {
         const { data: createdArtist, error: artistError } = await supabase
@@ -173,6 +193,7 @@ export async function updateUserRole(
             user_id: userId,
             name_ko: application?.artist_name || profile?.name || 'New Artist',
             bio: application?.bio || null,
+            contact_email: contactValue || null,
           })
           .select('id')
           .single();

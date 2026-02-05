@@ -1,9 +1,11 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { useActionState, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { createArtwork, updateArtwork, type ActionState } from '@/app/actions/artwork';
 import Button from '@/components/ui/Button';
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
+import { createSupabaseBrowserClient } from '@/lib/auth/client';
 
 type ArtworkFormProps = {
   artwork?: any; // If provided, mode is 'edit'
@@ -15,18 +17,118 @@ const initialState: ActionState = {
   error: false,
 };
 
+const createSessionId = () => {
+  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
+    return crypto.randomUUID();
+  }
+  return `${Date.now()}_${Math.random().toString(36).slice(2)}`;
+};
+
+const getStoragePathFromPublicUrl = (publicUrl: string) => {
+  try {
+    const url = new URL(publicUrl);
+    const marker = '/storage/v1/object/public/artworks/';
+    const index = url.pathname.indexOf(marker);
+    if (index === -1) return null;
+    return url.pathname.slice(index + marker.length);
+  } catch {
+    return null;
+  }
+};
+
 export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
   // If editing, we bind the ID to the update action
   const action = artwork ? updateArtwork.bind(null, artwork.id) : createArtwork;
 
+  const router = useRouter();
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [state, formAction, isPending] = useActionState(action, initialState);
   const [images, setImages] = useState<string[]>(artwork?.images || []);
   const [newUploads, setNewUploads] = useState<string[]>([]);
+  const pendingUploadsRef = useRef<string[]>([]);
+  const isSubmittingRef = useRef(false);
+  const sessionIdRef = useRef(createSessionId());
+  const pendingKey = useMemo(() => `saf_pending_artwork_uploads_${artistId}`, [artistId]);
   const cleanupUrls = state.cleanupUrls || [];
   const effectiveImages =
     cleanupUrls.length > 0 ? images.filter((url) => !cleanupUrls.includes(url)) : images;
   const effectiveNewUploads =
     cleanupUrls.length > 0 ? newUploads.filter((url) => !cleanupUrls.includes(url)) : newUploads;
+
+  const persistPending = useCallback(
+    (urls: string[]) => {
+      pendingUploadsRef.current = urls;
+      try {
+        sessionStorage.setItem(
+          pendingKey,
+          JSON.stringify({ sessionId: sessionIdRef.current, urls, updatedAt: Date.now() })
+        );
+      } catch {
+        // ignore storage errors
+      }
+    },
+    [pendingKey]
+  );
+
+  const clearPending = useCallback(() => {
+    pendingUploadsRef.current = [];
+    try {
+      sessionStorage.removeItem(pendingKey);
+    } catch {
+      // ignore storage errors
+    }
+  }, [pendingKey]);
+
+  const removeStorageObjects = useCallback(
+    async (urls: string[]) => {
+      const paths = urls
+        .map((url) => getStoragePathFromPublicUrl(url))
+        .filter((path): path is string => !!path);
+      if (paths.length === 0) return;
+      await supabase.storage.from('artworks').remove(paths);
+    },
+    [supabase]
+  );
+
+  useEffect(() => {
+    if (state.error) {
+      isSubmittingRef.current = false;
+    }
+  }, [state.error]);
+
+  useEffect(() => {
+    if (cleanupUrls.length === 0) return;
+    const next = pendingUploadsRef.current.filter((url) => !cleanupUrls.includes(url));
+    if (next.length !== pendingUploadsRef.current.length) {
+      persistPending(next);
+    }
+  }, [cleanupUrls, persistPending]);
+
+  useEffect(() => {
+    try {
+      const stored = sessionStorage.getItem(pendingKey);
+      if (stored) {
+        const parsed = JSON.parse(stored) as { sessionId?: string; urls?: string[] };
+        if (parsed?.sessionId && parsed.sessionId !== sessionIdRef.current) {
+          const urls = Array.isArray(parsed.urls) ? parsed.urls : [];
+          if (urls.length > 0) {
+            void removeStorageObjects(urls).catch(() => {});
+          }
+        }
+      }
+    } catch {
+      // ignore parse errors
+    }
+
+    persistPending(pendingUploadsRef.current);
+
+    return () => {
+      if (!isSubmittingRef.current && pendingUploadsRef.current.length > 0) {
+        void removeStorageObjects(pendingUploadsRef.current).catch(() => {});
+      }
+      clearPending();
+    };
+  }, [pendingKey, clearPending, persistPending, removeStorageObjects]);
 
   // Handling 'sold' status checkbox
   // DB stores 'status' enum, UI uses simpler checkboxes generally or logic
@@ -35,8 +137,27 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
   // User req said: "Status (Sold)" -> checkbox likely sufficient or simple select.
   // Planning doc said: "Status (Sold)".
 
+  const handleCancel = async () => {
+    try {
+      if (pendingUploadsRef.current.length > 0) {
+        await removeStorageObjects(pendingUploadsRef.current);
+      }
+    } catch {
+      // ignore cleanup errors on cancel
+    } finally {
+      clearPending();
+      router.push('/dashboard/artworks');
+    }
+  };
+
   return (
-    <form action={formAction} className="space-y-8 divide-y divide-gray-200">
+    <form
+      action={formAction}
+      onSubmit={() => {
+        isSubmittingRef.current = true;
+      }}
+      className="space-y-8 divide-y divide-gray-200"
+    >
       <div className="space-y-8 divide-y divide-gray-200">
         <div>
           <h3 className="text-lg leading-6 font-medium text-gray-900">
@@ -61,10 +182,18 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
                 value={effectiveImages}
                 onUploadComplete={(urls) => {
                   setImages(urls);
-                  setNewUploads((prev) => prev.filter((url) => urls.includes(url)));
+                  setNewUploads((prev) => {
+                    const next = prev.filter((url) => urls.includes(url));
+                    persistPending(next);
+                    return next;
+                  });
                 }}
                 onUploadDelta={(urls) =>
-                  setNewUploads((prev) => [...prev, ...urls.filter((url) => !prev.includes(url))])
+                  setNewUploads((prev) => {
+                    const next = [...prev, ...urls.filter((url) => !prev.includes(url))];
+                    persistPending(next);
+                    return next;
+                  })
                 }
               />
             </div>
@@ -253,7 +382,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
 
       <div className="pt-5">
         <div className="flex justify-end gap-3">
-          <Button href="/dashboard/artworks" variant="white">
+          <Button type="button" variant="white" onClick={handleCancel}>
             취소
           </Button>
           <Button type="submit" loading={isPending} disabled={isPending}>

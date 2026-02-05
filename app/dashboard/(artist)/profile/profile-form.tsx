@@ -114,15 +114,15 @@ export function ProfileForm({ artist, userId }: { artist: any; userId: string })
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div>
               <label htmlFor="contact_email" className="block text-sm font-medium text-gray-700">
-                연락 이메일
+                연락처
               </label>
               <input
-                type="email"
+                type="text"
                 name="contact_email"
                 id="contact_email"
                 defaultValue={artist?.contact_email || ''}
                 className="mt-1 shadow-sm focus:ring-black focus:border-black block w-full sm:text-sm border-gray-300 rounded-md"
-                placeholder="artist@example.com"
+                placeholder="이메일 또는 전화번호"
               />
             </div>
             <div>
