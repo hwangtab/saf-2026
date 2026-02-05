@@ -52,8 +52,18 @@ export function UserList({ users }: { users: Profile[] }) {
   };
 
   const handleRoleChange = async (id: string, currentRole: Profile['role']) => {
-    const nextRole = roleSelections[id] || currentRole;
-    if (nextRole === currentRole) return;
+    const selectedRole = roleSelections[id];
+    const nextRole = selectedRole || currentRole;
+    if (nextRole === currentRole) {
+      if (selectedRole) {
+        setRoleSelections((prev) => {
+          const next = { ...prev };
+          delete next[id];
+          return next;
+        });
+      }
+      return;
+    }
 
     if (!confirm(`권한을 ${currentRole} → ${nextRole}로 변경할까요?`)) return;
 
@@ -64,7 +74,11 @@ export function UserList({ users }: { users: Profile[] }) {
     if (res.error) {
       alert(res.message);
     } else {
-      setRoleSelections((prev) => ({ ...prev, [id]: nextRole }));
+      setRoleSelections((prev) => {
+        const next = { ...prev };
+        delete next[id];
+        return next;
+      });
       router.refresh();
     }
   };
@@ -147,7 +161,7 @@ export function UserList({ users }: { users: Profile[] }) {
                   )}
                   <div className="flex items-center gap-2">
                     <select
-                      value={roleSelections[user.id] || user.role}
+                      value={roleSelections[user.id] ?? user.role}
                       onChange={(e) =>
                         setRoleSelections((prev) => ({
                           ...prev,

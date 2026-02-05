@@ -104,24 +104,37 @@ export async function updateUserRole(
       updates.status = 'active';
     }
 
-    const { error } = await supabase.from('profiles').update(updates).eq('id', userId);
-
-    if (error) throw error;
-
+    let createdArtistId: string | null = null;
     if (role === 'artist') {
-      const { data: existingArtist } = await supabase
+      const { data: existingArtist, error: artistFetchError } = await supabase
         .from('artists')
         .select('id')
         .eq('user_id', userId)
         .maybeSingle();
 
+      if (artistFetchError) throw artistFetchError;
+
       if (!existingArtist) {
-        const { error: artistError } = await supabase.from('artists').insert({
-          user_id: userId,
-          name_ko: profile?.name || 'New Artist',
-        });
+        const { data: createdArtist, error: artistError } = await supabase
+          .from('artists')
+          .insert({
+            user_id: userId,
+            name_ko: profile?.name || 'New Artist',
+          })
+          .select('id')
+          .single();
         if (artistError) throw artistError;
+        createdArtistId = createdArtist?.id || null;
       }
+    }
+
+    const { error } = await supabase.from('profiles').update(updates).eq('id', userId);
+
+    if (error) {
+      if (createdArtistId) {
+        await supabase.from('artists').delete().eq('id', createdArtistId);
+      }
+      throw error;
     }
 
     revalidatePath('/admin/users');
