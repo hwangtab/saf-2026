@@ -9,8 +9,6 @@ import ArtistNavigation from './gallery/ArtistNavigation';
 import GalleryEmptyState from './gallery/GalleryEmptyState';
 import { Artwork } from '@/types';
 import { useArtworkFilter } from '@/lib/hooks/useArtworkFilter';
-import { useScrollDirection } from '@/lib/hooks/useScrollDirection';
-import { useScrolled } from '@/lib/hooks/useScrolled';
 import { UI_STRINGS } from '@/lib/ui-strings';
 
 interface ArtworkGalleryWithSortProps {
@@ -20,8 +18,6 @@ interface ArtworkGalleryWithSortProps {
 
 function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithSortProps) {
   const router = useRouter();
-  const scrollDirection = useScrollDirection();
-  const isScrolled = useScrolled(100);
 
   const {
     sortOption,
@@ -53,14 +49,20 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
   // 작가명순일 때만 작가 네비게이션 표시
   const showArtistNav = sortOption === 'artist-asc' && !searchQuery;
 
-  // 작가 네비게이션 visible 조건:
-  // 1. 페이지 상단 근처 (100px 이내) OR
-  // 2. 스크롤 업 중
-  const isArtistNavVisible = !isScrolled || scrollDirection === 'up';
-
   return (
     <div>
-      {/* Controls & Nav Section (Combined Sticky) */}
+      {/* Artist Navigation - Normal scroll (outside sticky container) */}
+      {showArtistNav && (
+        <div className="container-max mb-4">
+          <ArtistNavigation
+            uniqueArtists={uniqueArtists}
+            selectedArtist={selectedArtist}
+            onArtistClick={handleArtistClick}
+          />
+        </div>
+      )}
+
+      {/* Sticky Container - FilterBar only */}
       <div className="md:sticky md:top-[calc(4rem+env(safe-area-inset-top,0px))] z-30 bg-gray-50 border-b border-gray-200/50">
         <div className="container-max">
           {/* Search & Sort Controls - Single row on desktop, stacked on mobile */}
@@ -80,16 +82,6 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
               setSortOption={setSortOption}
             />
           </div>
-
-          {/* Artist Navigation - Hidden on mobile, visible on desktop */}
-          {showArtistNav && (
-            <ArtistNavigation
-              uniqueArtists={uniqueArtists}
-              selectedArtist={selectedArtist}
-              onArtistClick={handleArtistClick}
-              isVisible={isArtistNavVisible}
-            />
-          )}
         </div>
       </div>
 
@@ -108,9 +100,7 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
       {filteredArtworks.length === 0 ? (
         <GalleryEmptyState onReset={() => setSearchQuery('')} />
       ) : (
-        <div className={showArtistNav ? 'mt-6' : ''}>
-          <MasonryGallery artworks={sortedArtworks} />
-        </div>
+        <MasonryGallery artworks={sortedArtworks} />
       )}
     </div>
   );
