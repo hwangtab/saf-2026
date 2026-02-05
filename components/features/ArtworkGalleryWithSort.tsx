@@ -51,22 +51,11 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
 
   return (
     <div>
-      {/* Artist Navigation - Normal scroll (outside sticky container) */}
-      {showArtistNav && (
-        <div className="container-max mb-4">
-          <ArtistNavigation
-            uniqueArtists={uniqueArtists}
-            selectedArtist={selectedArtist}
-            onArtistClick={handleArtistClick}
-          />
-        </div>
-      )}
-
-      {/* Sticky Container - FilterBar only */}
-      <div className="md:sticky md:top-[calc(4rem+env(safe-area-inset-top,0px))] z-30 bg-gray-50 border-b border-gray-200/50">
+      {/* Fixed Container - FilterBar with ArtistNavigation */}
+      <div className="fixed top-[calc(4rem+env(safe-area-inset-top,0px))] left-0 right-0 z-30 bg-gray-50">
         <div className="container-max">
           {/* Search & Sort Controls - Single row on desktop, stacked on mobile */}
-          <div className="flex flex-col md:flex-row md:items-center gap-3 py-3">
+          <div className="flex flex-col md:flex-row md:items-center gap-3 py-3 border-b border-gray-200/50">
             <div className="flex-1 min-w-0 md:max-w-md">
               <SearchBar
                 value={searchQuery}
@@ -82,26 +71,40 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
               setSortOption={setSortOption}
             />
           </div>
+
+          {/* Artist Navigation - Inside fixed container */}
+          {showArtistNav && (
+            <div className="pb-4 pt-2">
+              <ArtistNavigation
+                uniqueArtists={uniqueArtists}
+                selectedArtist={selectedArtist}
+                onArtistClick={handleArtistClick}
+              />
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Results Message */}
-      {searchQuery && (
-        <div className="mb-6 container-max mt-6" role="status" aria-live="polite">
-          <p className="text-gray-500">
-            <span className="font-semibold text-primary">&apos;{searchQuery}&apos;</span>{' '}
-            {UI_STRINGS.SEARCH.RESULT_PREFIX} {filteredArtworks.length}
-            {UI_STRINGS.SEARCH.RESULT_SUFFIX}
-          </p>
-        </div>
-      )}
+      {/* Content below fixed FilterBar - Add top margin to prevent overlap */}
+      <div className={showArtistNav ? 'mt-[160px]' : 'mt-20'}>
+        {/* Results Message */}
+        {searchQuery && (
+          <div className="mb-6 container-max mt-6" role="status" aria-live="polite">
+            <p className="text-gray-500">
+              <span className="font-semibold text-primary">&apos;{searchQuery}&apos;</span>{' '}
+              {UI_STRINGS.SEARCH.RESULT_PREFIX} {filteredArtworks.length}
+              {UI_STRINGS.SEARCH.RESULT_SUFFIX}
+            </p>
+          </div>
+        )}
 
-      {/* No Results State */}
-      {filteredArtworks.length === 0 ? (
-        <GalleryEmptyState onReset={() => setSearchQuery('')} />
-      ) : (
-        <MasonryGallery artworks={sortedArtworks} />
-      )}
+        {/* No Results State */}
+        {filteredArtworks.length === 0 ? (
+          <GalleryEmptyState onReset={() => setSearchQuery('')} />
+        ) : (
+          <MasonryGallery artworks={sortedArtworks} />
+        )}
+      </div>
     </div>
   );
 }
