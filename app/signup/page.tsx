@@ -13,6 +13,7 @@ export default function SignUpPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [requiresConfirmation, setRequiresConfirmation] = useState(false);
   const [oauthLoading, setOauthLoading] = useState<'google' | null>(null);
 
   const router = useRouter();
@@ -49,6 +50,7 @@ export default function SignUpPage() {
       return;
     }
 
+    setRequiresConfirmation(true);
     setSuccess(true);
   };
 
@@ -74,9 +76,19 @@ export default function SignUpPage() {
         <div className="sm:mx-auto sm:w-full sm:max-w-md bg-white p-8 rounded-lg shadow text-center">
           <h2 className="text-2xl font-bold text-green-600 mb-4">가입 신청 완료</h2>
           <p className="text-gray-600 mb-6">
-            가입이 완료되었습니다.
-            <br />
-            로그인 후 작가 정보를 제출해주세요.
+            {requiresConfirmation ? (
+              <>
+                이메일 인증 링크가 전송되었습니다.
+                <br />
+                이메일 확인 후 로그인해주세요.
+              </>
+            ) : (
+              <>
+                가입이 완료되었습니다.
+                <br />
+                로그인 후 작가 정보를 제출해주세요.
+              </>
+            )}
           </p>
           <Button href="/login" variant="primary">
             로그인 페이지로 이동
