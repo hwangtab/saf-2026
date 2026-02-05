@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 
 export default function SignUpPage() {
@@ -14,6 +15,7 @@ export default function SignUpPage() {
   const [success, setSuccess] = useState(false);
   const [oauthLoading, setOauthLoading] = useState<'google' | null>(null);
 
+  const router = useRouter();
   const supabase = createSupabaseBrowserClient();
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -22,7 +24,7 @@ export default function SignUpPage() {
     setError(null);
 
     // 1. SignUp
-    const { error: signUpError } = await supabase.auth.signUp({
+    const { data, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -39,8 +41,15 @@ export default function SignUpPage() {
       return;
     }
 
-    setSuccess(true);
     setLoading(false);
+
+    if (data?.session) {
+      router.push('/onboarding');
+      router.refresh();
+      return;
+    }
+
+    setSuccess(true);
   };
 
   const handleOAuthLogin = async (provider: 'google') => {
@@ -65,9 +74,9 @@ export default function SignUpPage() {
         <div className="sm:mx-auto sm:w-full sm:max-w-md bg-white p-8 rounded-lg shadow text-center">
           <h2 className="text-2xl font-bold text-green-600 mb-4">가입 신청 완료</h2>
           <p className="text-gray-600 mb-6">
-            이메일 인증 링크가 전송되었습니다.
+            가입이 완료되었습니다.
             <br />
-            이메일을 확인하여 가입을 완료해주세요.
+            로그인 후 작가 정보를 제출해주세요.
           </p>
           <Button href="/login" variant="primary">
             로그인 페이지로 이동

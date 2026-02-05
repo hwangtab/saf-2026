@@ -2,6 +2,7 @@
 
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { requireAuth } from '@/lib/auth/guards';
+import { redirect } from 'next/navigation';
 
 export type OnboardingState = {
   message: string;
@@ -38,7 +39,7 @@ export async function submitArtistApplication(
 
     if (error) throw error;
 
-    return { message: '신청 정보가 저장되었습니다. 관리자 승인까지 기다려주세요.', error: false };
+    redirect('/dashboard/pending');
   } catch (error: any) {
     return { message: `신청 저장 중 오류가 발생했습니다: ${error.message}`, error: true };
   }
