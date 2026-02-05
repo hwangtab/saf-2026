@@ -17,12 +17,25 @@ export default async function UsersPage() {
     // Supabase JS order accepts simple cols.
     .order('created_at', { ascending: false });
 
+  const { data: applications } = await supabase
+    .from('artist_applications')
+    .select('user_id, artist_name, contact, bio, updated_at');
+
+  const applicationMap = new Map(
+    (applications || []).map((application: any) => [application.user_id, application])
+  );
+
   // Custom sort in JS to put pending first
-  const sortedUsers = (users || []).sort((a: any, b: any) => {
-    if (a.status === 'pending' && b.status !== 'pending') return -1;
-    if (a.status !== 'pending' && b.status === 'pending') return 1;
-    return 0; // Keep date sort
-  });
+  const sortedUsers = (users || [])
+    .sort((a: any, b: any) => {
+      if (a.status === 'pending' && b.status !== 'pending') return -1;
+      if (a.status !== 'pending' && b.status === 'pending') return 1;
+      return 0; // Keep date sort
+    })
+    .map((user: any) => ({
+      ...user,
+      application: applicationMap.get(user.id) || null,
+    }));
 
   return (
     <div className="space-y-6">

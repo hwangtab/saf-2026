@@ -31,16 +31,23 @@ export async function approveUser(userId: string): Promise<AdminActionState> {
       .single();
 
     if (!existingArtist) {
-      // Get profile info to populate initial artist data
+      // Get profile + application info to populate initial artist data
       const { data: profile } = await supabase
         .from('profiles')
         .select('name')
         .eq('id', userId)
         .single();
 
+      const { data: application } = await supabase
+        .from('artist_applications')
+        .select('artist_name, bio')
+        .eq('user_id', userId)
+        .maybeSingle();
+
       const { error: artistError } = await supabase.from('artists').insert({
         user_id: userId,
-        name_ko: profile?.name || 'New Artist',
+        name_ko: application?.artist_name || profile?.name || 'New Artist',
+        bio: application?.bio || null,
       });
       if (artistError) throw artistError;
     }
@@ -99,6 +106,12 @@ export async function updateUserRole(
 
     if (profileError) throw profileError;
 
+    const { data: application } = await supabase
+      .from('artist_applications')
+      .select('artist_name, bio')
+      .eq('user_id', userId)
+      .maybeSingle();
+
     const updates: { role: 'admin' | 'artist' | 'user'; status?: 'active' } = { role };
     if (role === 'artist' || role === 'admin') {
       updates.status = 'active';
@@ -119,7 +132,8 @@ export async function updateUserRole(
           .from('artists')
           .insert({
             user_id: userId,
-            name_ko: profile?.name || 'New Artist',
+            name_ko: application?.artist_name || profile?.name || 'New Artist',
+            bio: application?.bio || null,
           })
           .select('id')
           .single();

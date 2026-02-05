@@ -1,4 +1,5 @@
 import { SignOutButton } from '@/components/auth/SignOutButton';
+import Button from '@/components/ui/Button';
 import { requireAuth } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { redirect } from 'next/navigation';
@@ -12,6 +13,17 @@ export default async function PendingPage() {
     .select('status')
     .eq('id', user.id)
     .single();
+
+  const { data: application } = await supabase
+    .from('artist_applications')
+    .select('artist_name, contact, bio')
+    .eq('user_id', user.id)
+    .maybeSingle();
+
+  const hasApplication =
+    !!application?.artist_name?.trim() &&
+    !!application?.contact?.trim() &&
+    !!application?.bio?.trim();
 
   // If already active, go to dashboard
   if (profile?.status === 'active') {
@@ -32,6 +44,17 @@ export default async function PendingPage() {
             승인이 완료되면 서비스를 이용하실 수 있습니다.
           </p>
         </div>
+        {!hasApplication ? (
+          <div className="pt-2">
+            <Button href="/onboarding" variant="primary" className="w-full">
+              작가 정보 입력하기
+            </Button>
+          </div>
+        ) : (
+          <div className="rounded-md bg-green-50 px-4 py-3 text-sm text-green-700">
+            제출 완료: {application?.artist_name}
+          </div>
+        )}
         <div className="pt-4 border-t border-gray-100">
           <SignOutButton />
         </div>

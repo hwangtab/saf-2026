@@ -14,6 +14,12 @@ type Profile = {
   role: 'admin' | 'artist' | 'user';
   status: 'pending' | 'active' | 'suspended';
   created_at: string;
+  application?: {
+    artist_name: string;
+    contact: string;
+    bio: string;
+    updated_at: string;
+  } | null;
 };
 
 export function UserList({ users }: { users: Profile[] }) {
@@ -25,6 +31,8 @@ export function UserList({ users }: { users: Profile[] }) {
   const router = useRouter();
 
   const normalize = (value: string) => value.toLowerCase().replace(/\s+/g, '');
+  const truncate = (value: string, max = 80) =>
+    value.length > max ? `${value.slice(0, max)}…` : value;
   const filteredUsers = users.filter((user) => {
     if (!query) return true;
     const q = normalize(query);
@@ -131,6 +139,19 @@ export function UserList({ users }: { users: Profile[] }) {
                         <span className="text-gray-400 text-xs">({user.role})</span>
                       </div>
                       <p className="mt-1 text-sm text-gray-500 truncate">{user.email}</p>
+                      {user.application ? (
+                        <div className="mt-2 text-xs text-gray-500">
+                          <p>작가명: {user.application.artist_name}</p>
+                          <p>연락처: {user.application.contact}</p>
+                          <p>소개: {truncate(user.application.bio)}</p>
+                        </div>
+                      ) : (
+                        user.status === 'pending' && (
+                          <p className="mt-2 text-xs text-red-500">
+                            신청 정보가 아직 제출되지 않았습니다.
+                          </p>
+                        )
+                      )}
                     </div>
                   </div>
                 </div>

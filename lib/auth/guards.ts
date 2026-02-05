@@ -31,7 +31,21 @@ export async function requireArtistActive() {
   // Check artist role and active status
   if (!profile || profile.role !== 'artist' || profile.status !== 'active') {
     // If suspended or pending, maybe redirect to specific page
-    if (profile?.status === 'pending') redirect('/dashboard/pending');
+    if (profile?.status === 'pending') {
+      const { data: application } = await supabase
+        .from('artist_applications')
+        .select('artist_name, contact, bio')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      const hasApplication =
+        !!application?.artist_name?.trim() &&
+        !!application?.contact?.trim() &&
+        !!application?.bio?.trim();
+
+      if (!hasApplication) redirect('/onboarding');
+      redirect('/dashboard/pending');
+    }
     if (profile?.status === 'suspended') redirect('/dashboard/suspended');
 
     // Not an artist at all

@@ -1,0 +1,47 @@
+import { requireAuth } from '@/lib/auth/guards';
+import { createSupabaseServerClient } from '@/lib/auth/server';
+import { redirect } from 'next/navigation';
+import { OnboardingForm } from './onboarding-form';
+
+export default async function OnboardingPage() {
+  const user = await requireAuth();
+  const supabase = await createSupabaseServerClient();
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('status')
+    .eq('id', user.id)
+    .single();
+
+  if (profile?.status === 'active') {
+    redirect('/dashboard/profile');
+  }
+
+  const { data: application } = await supabase
+    .from('artist_applications')
+    .select('artist_name, contact, bio')
+    .eq('user_id', user.id)
+    .maybeSingle();
+
+  return (
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-2xl">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          SAF 2026
+          <br />
+          <span className="text-xl font-medium text-gray-600">작가 정보 입력</span>
+        </h2>
+        <p className="mt-4 text-center text-sm text-gray-500">
+          승인 심사를 위해 최소 정보만 제출해주세요. 제출 후에는 관리자 승인 전까지 대시보드 접근이
+          제한됩니다.
+        </p>
+      </div>
+
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-2xl">
+        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          <OnboardingForm defaultValues={application} />
+        </div>
+      </div>
+    </div>
+  );
+}
