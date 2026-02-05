@@ -135,7 +135,7 @@ export async function updateUserRole(
 
     const { data: application } = await supabase
       .from('artist_applications')
-      .select('artist_name, bio')
+      .select('artist_name, contact, bio')
       .eq('user_id', userId)
       .maybeSingle();
 
