@@ -32,22 +32,16 @@ export async function approveUser(userId: string): Promise<AdminActionState> {
       };
     }
 
-    // 1. Update Profile to active and role artist
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .update({ status: 'active', role: 'artist' })
-      .eq('id', userId);
-
-    if (profileError) throw profileError;
-
-    // 2. Ensure Artist record exists
-    // Check if artist record exists
-    const { data: existingArtist } = await supabase
+    // 1. Ensure Artist record exists (before activating profile)
+    const { data: existingArtist, error: artistFetchError } = await supabase
       .from('artists')
       .select('id')
       .eq('user_id', userId)
-      .single();
+      .maybeSingle();
 
+    if (artistFetchError) throw artistFetchError;
+
+    let createdArtistId: string | null = null;
     if (!existingArtist) {
       // Get profile + application info to populate initial artist data
       const { data: profile } = await supabase
@@ -56,12 +50,33 @@ export async function approveUser(userId: string): Promise<AdminActionState> {
         .eq('id', userId)
         .single();
 
-      const { error: artistError } = await supabase.from('artists').insert({
-        user_id: userId,
-        name_ko: application?.artist_name || profile?.name || 'New Artist',
-        bio: application?.bio || null,
-      });
-      if (artistError) throw artistError;
+      const { data: createdArtist, error: artistError } = await supabase
+        .from('artists')
+        .insert({
+          user_id: userId,
+          name_ko: application?.artist_name || profile?.name || 'New Artist',
+          bio: application?.bio || null,
+        })
+        .select('id')
+        .single();
+      if (artistError) {
+        if (artistError.code !== '23505') throw artistError;
+      } else {
+        createdArtistId = createdArtist?.id || null;
+      }
+    }
+
+    // 2. Update Profile to active and role artist
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .update({ status: 'active', role: 'artist' })
+      .eq('id', userId);
+
+    if (profileError) {
+      if (createdArtistId) {
+        await supabase.from('artists').delete().eq('id', createdArtistId);
+      }
+      throw profileError;
     }
 
     revalidatePath('/admin/users');
@@ -123,6 +138,18 @@ export async function updateUserRole(
       .select('artist_name, bio')
       .eq('user_id', userId)
       .maybeSingle();
+
+    const hasApplication =
+      !!application?.artist_name?.trim() &&
+      !!application?.contact?.trim() &&
+      !!application?.bio?.trim();
+
+    if (role === 'artist' && !hasApplication) {
+      return {
+        message: '신청 정보가 없어 작가로 변경할 수 없습니다.',
+        error: true,
+      };
+    }
 
     const updates: { role: 'admin' | 'artist' | 'user'; status?: 'active' } = { role };
     if (role === 'artist' || role === 'admin') {

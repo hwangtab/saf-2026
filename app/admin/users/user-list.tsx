@@ -106,135 +106,143 @@ export function UserList({ users }: { users: Profile[] }) {
       </div>
       <div className="bg-white shadow overflow-hidden sm:rounded-md">
         <ul role="list" className="divide-y divide-gray-200">
-          {filteredUsers.map((user) => (
-            <li key={user.id}>
-              <div className="px-4 py-4 flex items-center sm:px-6">
-                <div className="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                      {user.avatar_url ? (
-                        <img src={user.avatar_url} alt="" className="h-full w-full object-cover" />
-                      ) : (
-                        <span className="text-gray-500 font-bold">
-                          {user.name?.charAt(0) || user.email.charAt(0)}
-                        </span>
-                      )}
-                    </div>
-                    <div className="ml-4 truncate">
-                      <div className="flex items-center gap-2">
-                        <p className="font-medium text-indigo-600 truncate">
-                          {user.name || 'No Name'}
-                        </p>
-                        <span
-                          className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                            user.status === 'active'
-                              ? 'bg-green-100 text-green-800'
-                              : user.status === 'pending'
-                                ? 'bg-yellow-100 text-yellow-800'
-                                : 'bg-red-100 text-red-800'
-                          }`}
-                        >
-                          {user.status.toUpperCase()}
-                        </span>
-                        <span className="text-gray-400 text-xs">({user.role})</span>
+          {filteredUsers.map((user) => {
+            const hasApplication =
+              !!user.application?.artist_name?.trim() &&
+              !!user.application?.contact?.trim() &&
+              !!user.application?.bio?.trim();
+            const hasApplicationRecord = !!user.application;
+
+            return (
+              <li key={user.id}>
+                <div className="px-4 py-4 flex items-center sm:px-6">
+                  <div className="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between">
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                        {user.avatar_url ? (
+                          <img
+                            src={user.avatar_url}
+                            alt=""
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-gray-500 font-bold">
+                            {user.name?.charAt(0) || user.email.charAt(0)}
+                          </span>
+                        )}
                       </div>
-                      <p className="mt-1 text-sm text-gray-500 truncate">{user.email}</p>
-                      {user.application ? (
-                        <div className="mt-2 text-xs text-gray-500">
-                          <p>작가명: {user.application.artist_name}</p>
-                          <p>연락처: {user.application.contact}</p>
-                          <p>소개: {truncate(user.application.bio)}</p>
-                        </div>
-                      ) : (
-                        user.status === 'pending' && (
-                          <p className="mt-2 text-xs text-red-500">
-                            신청 정보가 아직 제출되지 않았습니다.
+                      <div className="ml-4 truncate">
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium text-indigo-600 truncate">
+                            {user.name || 'No Name'}
                           </p>
-                        )
-                      )}
+                          <span
+                            className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                              user.status === 'active'
+                                ? 'bg-green-100 text-green-800'
+                                : user.status === 'pending'
+                                  ? 'bg-yellow-100 text-yellow-800'
+                                  : 'bg-red-100 text-red-800'
+                            }`}
+                          >
+                            {user.status.toUpperCase()}
+                          </span>
+                          <span className="text-gray-400 text-xs">({user.role})</span>
+                        </div>
+                        <p className="mt-1 text-sm text-gray-500 truncate">{user.email}</p>
+                        {hasApplicationRecord ? (
+                          <div className="mt-2 text-xs text-gray-500">
+                            <p>작가명: {user.application?.artist_name || '-'}</p>
+                            <p>연락처: {user.application?.contact || '-'}</p>
+                            <p>소개: {truncate(user.application?.bio || '-')}</p>
+                          </div>
+                        ) : (
+                          user.status === 'pending' && (
+                            <p className="mt-2 text-xs text-red-500">
+                              신청 정보가 아직 제출되지 않았습니다.
+                            </p>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="ml-5 flex-shrink-0 flex gap-2">
+                    {user.role !== 'admin' && (
+                      <>
+                        {user.status !== 'active' && (
+                          <Button
+                            size="sm"
+                            className="bg-green-600 hover:bg-green-700 text-white"
+                            onClick={() => handleApprove(user.id)}
+                            loading={processingId === user.id}
+                            disabled={!!processingId || !hasApplication}
+                            title={
+                              !hasApplication
+                                ? '작가 신청 정보가 없어 승인할 수 없습니다.'
+                                : undefined
+                            }
+                          >
+                            <CheckIcon className="mr-1" /> 승인
+                          </Button>
+                        )}
+                        {user.status === 'pending' && !hasApplicationRecord && (
+                          <span className="text-xs text-red-500 self-center">신청 정보 없음</span>
+                        )}
+                        {user.status === 'pending' && hasApplicationRecord && !hasApplication && (
+                          <span className="text-xs text-red-500 self-center">신청 정보 불완전</span>
+                        )}
+                        {user.status !== 'suspended' && (
+                          <Button
+                            size="sm"
+                            variant="white"
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            onClick={() => handleReject(user.id)}
+                            loading={processingId === user.id}
+                            disabled={!!processingId}
+                          >
+                            <XIcon className="mr-1" /> 거절
+                          </Button>
+                        )}
+                      </>
+                    )}
+                    <div className="flex items-center gap-2">
+                      <select
+                        value={
+                          roleSelections[user.id]?.baseRole === user.role
+                            ? roleSelections[user.id]?.value
+                            : user.role
+                        }
+                        onChange={(e) =>
+                          setRoleSelections((prev) => ({
+                            ...prev,
+                            [user.id]: {
+                              value: e.target.value as Profile['role'],
+                              baseRole: user.role,
+                            },
+                          }))
+                        }
+                        className="rounded-md border border-gray-300 px-2 py-1 text-xs"
+                        disabled={!!processingId}
+                      >
+                        <option value="user">user</option>
+                        <option value="artist">artist</option>
+                        <option value="admin">admin</option>
+                      </select>
+                      <Button
+                        size="sm"
+                        variant="white"
+                        onClick={() => handleRoleChange(user.id, user.role)}
+                        loading={processingId === user.id}
+                        disabled={!!processingId}
+                      >
+                        권한 변경
+                      </Button>
                     </div>
                   </div>
                 </div>
-                <div className="ml-5 flex-shrink-0 flex gap-2">
-                  {user.role !== 'admin' && (
-                    <>
-                      {user.status !== 'active' &&
-                        (() => {
-                          const hasApplication =
-                            !!user.application?.artist_name?.trim() &&
-                            !!user.application?.contact?.trim() &&
-                            !!user.application?.bio?.trim();
-                          return (
-                            <Button
-                              size="sm"
-                              className="bg-green-600 hover:bg-green-700 text-white"
-                              onClick={() => handleApprove(user.id)}
-                              loading={processingId === user.id}
-                              disabled={!!processingId || !hasApplication}
-                              title={
-                                !hasApplication
-                                  ? '작가 신청 정보가 없어 승인할 수 없습니다.'
-                                  : undefined
-                              }
-                            >
-                              <CheckIcon className="mr-1" /> 승인
-                            </Button>
-                          );
-                        })()}
-                      {user.status === 'pending' && !user.application && (
-                        <span className="text-xs text-red-500 self-center">신청 정보 없음</span>
-                      )}
-                      {user.status !== 'suspended' && (
-                        <Button
-                          size="sm"
-                          variant="white"
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                          onClick={() => handleReject(user.id)}
-                          loading={processingId === user.id}
-                          disabled={!!processingId}
-                        >
-                          <XIcon className="mr-1" /> 거절
-                        </Button>
-                      )}
-                    </>
-                  )}
-                  <div className="flex items-center gap-2">
-                    <select
-                      value={
-                        roleSelections[user.id]?.baseRole === user.role
-                          ? roleSelections[user.id]?.value
-                          : user.role
-                      }
-                      onChange={(e) =>
-                        setRoleSelections((prev) => ({
-                          ...prev,
-                          [user.id]: {
-                            value: e.target.value as Profile['role'],
-                            baseRole: user.role,
-                          },
-                        }))
-                      }
-                      className="rounded-md border border-gray-300 px-2 py-1 text-xs"
-                      disabled={!!processingId}
-                    >
-                      <option value="user">user</option>
-                      <option value="artist">artist</option>
-                      <option value="admin">admin</option>
-                    </select>
-                    <Button
-                      size="sm"
-                      variant="white"
-                      onClick={() => handleRoleChange(user.id, user.role)}
-                      loading={processingId === user.id}
-                      disabled={!!processingId}
-                    >
-                      권한 변경
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </li>
-          ))}
+              </li>
+            );
+          })}
         </ul>
       </div>
     </div>
