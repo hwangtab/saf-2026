@@ -11,6 +11,9 @@ type UploadProps = {
   bucket: 'artworks' | 'profiles';
   pathPrefix: string; // e.g. user_id or artist_id
   onUploadComplete: (urls: string[]) => void;
+  onUploadDelta?: (urls: string[]) => void;
+  value?: string[];
+  onChange?: (urls: string[]) => void;
   maxFiles?: number;
   defaultImages?: string[];
 };
@@ -19,6 +22,9 @@ export function ImageUpload({
   bucket,
   pathPrefix,
   onUploadComplete,
+  onUploadDelta,
+  value,
+  onChange,
   maxFiles = 1,
   defaultImages = [],
 }: UploadProps) {
@@ -27,6 +33,16 @@ export function ImageUpload({
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const supabase = createSupabaseBrowserClient();
+  const isControlled = Array.isArray(value);
+  const currentUrls = isControlled ? (value as string[]) : previewUrls;
+
+  const applyUrls = (nextUrls: string[]) => {
+    if (!isControlled) {
+      setPreviewUrls(nextUrls);
+    }
+    onUploadComplete(nextUrls);
+    onChange?.(nextUrls);
+  };
 
   const handleFiles = async (files: File[]) => {
     if (files.length === 0) return;
@@ -35,7 +51,7 @@ export function ImageUpload({
 
     try {
       for (const file of files) {
-        if (previewUrls.length + newUrls.length >= maxFiles) break;
+        if (currentUrls.length + newUrls.length >= maxFiles) break;
 
         // 1. Optimize
         const optimizedFile = await optimizeImage(file);
@@ -61,9 +77,11 @@ export function ImageUpload({
         newUrls.push(publicUrl);
       }
 
-      const updatedUrls = [...previewUrls, ...newUrls];
-      setPreviewUrls(updatedUrls);
-      onUploadComplete(updatedUrls);
+      const updatedUrls = [...currentUrls, ...newUrls];
+      applyUrls(updatedUrls);
+      if (newUrls.length > 0) {
+        onUploadDelta?.(newUrls);
+      }
     } catch (error: any) {
       alert('이미지 업로드 실패: ' + error.message);
     } finally {
@@ -108,7 +126,7 @@ export function ImageUpload({
   };
 
   const removeImage = async (index: number) => {
-    const urlToRemove = previewUrls[index];
+    const urlToRemove = currentUrls[index];
     const path = getStoragePathFromPublicUrl(urlToRemove);
 
     if (path) {
@@ -119,15 +137,14 @@ export function ImageUpload({
       }
     }
 
-    const newUrls = previewUrls.filter((_, i) => i !== index);
-    setPreviewUrls(newUrls);
-    onUploadComplete(newUrls);
+    const newUrls = currentUrls.filter((_, i) => i !== index);
+    applyUrls(newUrls);
   };
 
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap gap-4">
-        {previewUrls.map((url, index) => (
+        {currentUrls.map((url, index) => (
           <div
             key={index}
             className="relative w-32 h-32 rounded-lg overflow-hidden border border-gray-200 group"
@@ -150,7 +167,7 @@ export function ImageUpload({
           </div>
         ))}
 
-        {previewUrls.length < maxFiles && (
+        {currentUrls.length < maxFiles && (
           <div
             onClick={() => fileInputRef.current?.click()}
             onDrop={handleDrop}

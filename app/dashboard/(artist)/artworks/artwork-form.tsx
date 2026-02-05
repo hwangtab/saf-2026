@@ -21,6 +21,12 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
 
   const [state, formAction, isPending] = useActionState(action, initialState);
   const [images, setImages] = useState<string[]>(artwork?.images || []);
+  const [newUploads, setNewUploads] = useState<string[]>([]);
+  const cleanupUrls = state.cleanupUrls || [];
+  const effectiveImages =
+    cleanupUrls.length > 0 ? images.filter((url) => !cleanupUrls.includes(url)) : images;
+  const effectiveNewUploads =
+    cleanupUrls.length > 0 ? newUploads.filter((url) => !cleanupUrls.includes(url)) : newUploads;
 
   // Handling 'sold' status checkbox
   // DB stores 'status' enum, UI uses simpler checkboxes generally or logic
@@ -40,7 +46,8 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
 
           <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
             {/* Hidden: Images JSON */}
-            <input type="hidden" name="images" value={JSON.stringify(images)} />
+            <input type="hidden" name="images" value={JSON.stringify(effectiveImages)} />
+            <input type="hidden" name="new_uploads" value={JSON.stringify(effectiveNewUploads)} />
 
             {/* Images Upload */}
             <div className="sm:col-span-6">
@@ -51,8 +58,14 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
                 bucket="artworks"
                 pathPrefix={artistId}
                 maxFiles={5}
-                defaultImages={images}
-                onUploadComplete={setImages}
+                value={effectiveImages}
+                onUploadComplete={(urls) => {
+                  setImages(urls);
+                  setNewUploads((prev) => prev.filter((url) => urls.includes(url)));
+                }}
+                onUploadDelta={(urls) =>
+                  setNewUploads((prev) => [...prev, ...urls.filter((url) => !prev.includes(url))])
+                }
               />
             </div>
 

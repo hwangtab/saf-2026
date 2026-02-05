@@ -9,7 +9,10 @@ export type ActionState = {
   message: string;
   error?: boolean;
   errors?: Record<string, string[]>;
+  cleanupUrls?: string[];
 };
+
+const MAX_IMAGES = 5;
 
 const getStoragePathFromPublicUrl = (publicUrl: string, bucket: string) => {
   try {
@@ -23,14 +26,61 @@ const getStoragePathFromPublicUrl = (publicUrl: string, bucket: string) => {
   }
 };
 
+const parseUrlList = (value: FormDataEntryValue | null, label: string) => {
+  if (!value) return { urls: [] as string[] };
+  if (typeof value !== 'string') {
+    return { urls: [] as string[], error: `${label} 형식이 올바르지 않습니다.` };
+  }
+  try {
+    const parsed = JSON.parse(value);
+    if (!Array.isArray(parsed)) {
+      return { urls: [] as string[], error: `${label} 형식이 올바르지 않습니다.` };
+    }
+    const urls = parsed.filter((item) => typeof item === 'string') as string[];
+    if (urls.length !== parsed.length) {
+      return { urls: [] as string[], error: `${label} 형식이 올바르지 않습니다.` };
+    }
+    return { urls };
+  } catch {
+    return { urls: [] as string[], error: `${label} 형식이 올바르지 않습니다.` };
+  }
+};
+
+const getOwnedImagePaths = (urls: string[], artistId: string) =>
+  urls
+    .map((url) => getStoragePathFromPublicUrl(url, 'artworks'))
+    .filter((path): path is string => !!path && path.startsWith(`${artistId}/`));
+
+const validateImageUrls = (urls: string[], artistId: string) => {
+  const paths = getOwnedImagePaths(urls, artistId);
+  if (paths.length !== urls.length) {
+    return { error: '유효하지 않은 이미지 URL이 포함되어 있습니다.' };
+  }
+  return { paths };
+};
+
+const cleanupUploads = async (
+  supabase: ReturnType<typeof createSupabaseServerClient>,
+  urls: string[],
+  artistId: string
+) => {
+  const paths = getOwnedImagePaths(urls, artistId);
+  if (paths.length > 0) {
+    await supabase.storage.from('artworks').remove(paths);
+  }
+};
+
 export async function createArtwork(
   prevState: ActionState,
   formData: FormData
 ): Promise<ActionState> {
+  let supabase: ReturnType<typeof createSupabaseServerClient> | null = null;
+  let cleanupUrls: string[] = [];
+  let artistId: string | null = null;
   try {
     void prevState;
     const user = await requireArtistActive();
-    const supabase = await createSupabaseServerClient();
+    supabase = await createSupabaseServerClient();
 
     // 1. Get Artist ID
     const { data: artist } = await supabase
@@ -40,24 +90,63 @@ export async function createArtwork(
       .single();
 
     if (!artist) throw new Error('Artist profile not found.');
+    artistId = artist.id;
 
     // 2. Extract Data
-    const title = formData.get('title') as string;
+    const title = (formData.get('title') as string) || '';
     const description = formData.get('description') as string;
     const size = formData.get('size') as string;
     const material = formData.get('material') as string;
     const year = formData.get('year') as string;
     const edition = formData.get('edition') as string;
-    const price = formData.get('price') as string;
+    const price = (formData.get('price') as string) || '';
     const rawStatus = (formData.get('status') as string) || 'available';
     const status = ['available', 'reserved', 'sold'].includes(rawStatus) ? rawStatus : 'available';
-    const imagesVal = formData.get('images') as string;
-    const images = imagesVal ? JSON.parse(imagesVal) : [];
+    const { urls: images, error: imagesError } = parseUrlList(formData.get('images'), '이미지');
+    const { urls: newUploads, error: newUploadsError } = parseUrlList(
+      formData.get('new_uploads'),
+      '신규 업로드'
+    );
     const shop_url = formData.get('shop_url') as string;
 
+    cleanupUrls = newUploads;
+
+    if (imagesError || newUploadsError) {
+      if (supabase && artistId) {
+        await cleanupUploads(supabase, cleanupUrls, artistId);
+      }
+      return {
+        message: imagesError || newUploadsError || '입력 형식이 올바르지 않습니다.',
+        error: true,
+        cleanupUrls,
+      };
+    }
+
+    if (images.length === 0 || images.length > MAX_IMAGES) {
+      if (supabase && artistId) {
+        await cleanupUploads(supabase, cleanupUrls, artistId);
+      }
+      return {
+        message: `이미지는 1~${MAX_IMAGES}장까지 등록할 수 있습니다.`,
+        error: true,
+        cleanupUrls,
+      };
+    }
+
+    const validation = validateImageUrls(images, artist.id);
+    if (validation.error) {
+      if (supabase && artistId) {
+        await cleanupUploads(supabase, cleanupUrls, artistId);
+      }
+      return { message: validation.error, error: true, cleanupUrls };
+    }
+
     // 3. Validation (Basic)
-    if (!title || !price || images.length === 0) {
-      return { message: '필수 항목(제목, 가격, 이미지)을 입력해주세요.', error: true };
+    if (!title.trim() || !price.trim()) {
+      if (supabase && artistId) {
+        await cleanupUploads(supabase, cleanupUrls, artistId);
+      }
+      return { message: '필수 항목(제목, 가격)을 입력해주세요.', error: true, cleanupUrls };
     }
 
     // 4. Insert
@@ -86,7 +175,10 @@ export async function createArtwork(
       revalidatePath(`/artworks/artist/${artistSlug}`);
     }
   } catch (error: any) {
-    return { message: error.message, error: true };
+    if (supabase && artistId && cleanupUrls.length > 0) {
+      await cleanupUploads(supabase, cleanupUrls, artistId);
+    }
+    return { message: error.message, error: true, cleanupUrls };
   }
 
   redirect('/dashboard/artworks');
@@ -97,10 +189,13 @@ export async function updateArtwork(
   prevState: ActionState,
   formData: FormData
 ): Promise<ActionState> {
+  let supabase: ReturnType<typeof createSupabaseServerClient> | null = null;
+  let cleanupUrls: string[] = [];
+  let artistId: string | null = null;
   try {
     void prevState;
     const user = await requireArtistActive();
-    const supabase = await createSupabaseServerClient();
+    supabase = await createSupabaseServerClient();
 
     const { data: artist } = await supabase
       .from('artists')
@@ -108,20 +203,63 @@ export async function updateArtwork(
       .eq('user_id', user.id)
       .single();
     if (!artist) throw new Error('Artist not found');
+    artistId = artist.id;
 
-    const title = formData.get('title') as string;
+    const title = (formData.get('title') as string) || '';
     const description = formData.get('description') as string;
     const size = formData.get('size') as string;
     const material = formData.get('material') as string;
     const year = formData.get('year') as string;
     const edition = formData.get('edition') as string;
-    const price = formData.get('price') as string;
+    const price = (formData.get('price') as string) || '';
     const rawStatus = (formData.get('status') as string) || 'available';
     const status = ['available', 'reserved', 'sold'].includes(rawStatus) ? rawStatus : 'available';
     const hidden = formData.get('hidden') === 'on';
-    const imagesVal = formData.get('images') as string;
-    const images = imagesVal ? JSON.parse(imagesVal) : [];
+    const { urls: images, error: imagesError } = parseUrlList(formData.get('images'), '이미지');
+    const { urls: newUploads, error: newUploadsError } = parseUrlList(
+      formData.get('new_uploads'),
+      '신규 업로드'
+    );
     const shop_url = formData.get('shop_url') as string;
+
+    cleanupUrls = newUploads;
+
+    if (imagesError || newUploadsError) {
+      if (supabase && artistId) {
+        await cleanupUploads(supabase, cleanupUrls, artistId);
+      }
+      return {
+        message: imagesError || newUploadsError || '입력 형식이 올바르지 않습니다.',
+        error: true,
+        cleanupUrls,
+      };
+    }
+
+    if (images.length === 0 || images.length > MAX_IMAGES) {
+      if (supabase && artistId) {
+        await cleanupUploads(supabase, cleanupUrls, artistId);
+      }
+      return {
+        message: `이미지는 1~${MAX_IMAGES}장까지 등록할 수 있습니다.`,
+        error: true,
+        cleanupUrls,
+      };
+    }
+
+    const validation = validateImageUrls(images, artist.id);
+    if (validation.error) {
+      if (supabase && artistId) {
+        await cleanupUploads(supabase, cleanupUrls, artistId);
+      }
+      return { message: validation.error, error: true, cleanupUrls };
+    }
+
+    if (!title.trim() || !price.trim()) {
+      if (supabase && artistId) {
+        await cleanupUploads(supabase, cleanupUrls, artistId);
+      }
+      return { message: '필수 항목(제목, 가격)을 입력해주세요.', error: true, cleanupUrls };
+    }
 
     const { error } = await supabase
       .from('artworks')
@@ -153,7 +291,10 @@ export async function updateArtwork(
       revalidatePath(`/artworks/artist/${artistSlug}`);
     }
   } catch (error: any) {
-    return { message: error.message, error: true };
+    if (supabase && artistId && cleanupUrls.length > 0) {
+      await cleanupUploads(supabase, cleanupUrls, artistId);
+    }
+    return { message: error.message, error: true, cleanupUrls };
   }
 
   redirect('/dashboard/artworks');
