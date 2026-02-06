@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { approveUser, rejectUser, updateUserRole } from '@/app/actions/admin';
 import Button from '@/components/ui/Button';
+import Modal from '@/components/ui/Modal';
 import { CheckIcon, XIcon } from '@/components/ui/Icons';
 
 type Profile = {
@@ -28,6 +29,7 @@ export function UserList({ users }: { users: Profile[] }) {
   const [roleSelections, setRoleSelections] = useState<
     Record<string, { value: Profile['role']; baseRole: Profile['role'] }>
   >({});
+  const [selectedUser, setSelectedUser] = useState<Profile | null>(null);
   const router = useRouter();
 
   const normalize = (value: string) => value.toLowerCase().replace(/\s+/g, '');
@@ -133,9 +135,13 @@ export function UserList({ users }: { users: Profile[] }) {
                       </div>
                       <div className="ml-4 truncate">
                         <div className="flex items-center gap-2">
-                          <p className="font-medium text-indigo-600 truncate">
+                          <button
+                            type="button"
+                            onClick={() => setSelectedUser(user)}
+                            className="font-medium text-indigo-600 truncate hover:underline text-left"
+                          >
                             {user.name || 'No Name'}
-                          </p>
+                          </button>
                           <span
                             className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
                               user.status === 'active'
@@ -254,6 +260,121 @@ export function UserList({ users }: { users: Profile[] }) {
           })}
         </ul>
       </div>
+
+      {/* User Detail Modal */}
+      <Modal isOpen={!!selectedUser} onClose={() => setSelectedUser(null)} title="사용자 상세 정보">
+        {selectedUser && (
+          <div className="space-y-6">
+            {/* User Info */}
+            <div className="flex items-center gap-4">
+              <div className="h-16 w-16 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                {selectedUser.avatar_url ? (
+                  <img
+                    src={selectedUser.avatar_url}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span className="text-gray-500 font-bold text-2xl">
+                    {selectedUser.name?.charAt(0) || selectedUser.email.charAt(0)}
+                  </span>
+                )}
+              </div>
+              <div>
+                <h4 className="text-lg font-semibold text-gray-900">
+                  {selectedUser.name || 'No Name'}
+                </h4>
+                <p className="text-sm text-gray-500">{selectedUser.email}</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <span
+                    className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                      selectedUser.status === 'active'
+                        ? 'bg-green-100 text-green-800'
+                        : selectedUser.status === 'pending'
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : 'bg-red-100 text-red-800'
+                    }`}
+                  >
+                    {selectedUser.status.toUpperCase()}
+                  </span>
+                  <span className="text-gray-400 text-xs">({selectedUser.role})</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Application Info */}
+            {selectedUser.application ? (
+              <div className="space-y-4 border-t border-gray-100 pt-4">
+                <h5 className="font-medium text-gray-900">작가 신청 정보</h5>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div>
+                    <p className="text-xs text-gray-500">작가명</p>
+                    <p className="text-sm text-gray-900">
+                      {selectedUser.application.artist_name || '-'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">연락처</p>
+                    <p className="text-sm text-gray-900">
+                      {selectedUser.application.contact || '-'}
+                    </p>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 mb-1">소개</p>
+                  <p className="text-sm text-gray-900 whitespace-pre-wrap bg-gray-50 p-3 rounded-lg">
+                    {selectedUser.application.bio || '-'}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">
+                    신청일:{' '}
+                    {new Date(selectedUser.application.updated_at).toLocaleDateString('ko-KR')}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="border-t border-gray-100 pt-4">
+                <p className="text-sm text-gray-500">작가 신청 정보가 없습니다.</p>
+              </div>
+            )}
+
+            {/* Actions */}
+            {selectedUser.role !== 'admin' && (
+              <div className="flex justify-end gap-2 border-t border-gray-100 pt-4">
+                {selectedUser.status !== 'active' && (
+                  <Button
+                    className="bg-green-600 hover:bg-green-700 text-white"
+                    onClick={() => {
+                      setSelectedUser(null);
+                      handleApprove(selectedUser.id);
+                    }}
+                    disabled={
+                      !selectedUser.application?.artist_name?.trim() ||
+                      !selectedUser.application?.contact?.trim() ||
+                      !selectedUser.application?.bio?.trim()
+                    }
+                  >
+                    <CheckIcon className="mr-1" /> 승인
+                  </Button>
+                )}
+                {selectedUser.status !== 'suspended' && (
+                  <Button
+                    variant="white"
+                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    onClick={() => {
+                      setSelectedUser(null);
+                      handleReject(selectedUser.id);
+                    }}
+                  >
+                    <XIcon className="mr-1" /> 거절
+                  </Button>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

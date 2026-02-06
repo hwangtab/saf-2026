@@ -3,6 +3,7 @@
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { requireAdmin } from '@/lib/auth/guards';
 import { revalidatePath } from 'next/cache';
+import { logAdminAction } from './admin-logs';
 
 export type AdminActionState = {
   message: string;
@@ -90,6 +91,11 @@ export async function approveUser(userId: string): Promise<AdminActionState> {
     }
 
     revalidatePath('/admin/users');
+
+    await logAdminAction('user_approved', 'user', userId, {
+      user_name: application?.artist_name || 'Unknown',
+    });
+
     return { message: '사용자가 승인되었습니다.', error: false };
   } catch (error: any) {
     return { message: error.message, error: true };
@@ -113,6 +119,9 @@ export async function rejectUser(userId: string): Promise<AdminActionState> {
     if (error) throw error;
 
     revalidatePath('/admin/users');
+
+    await logAdminAction('user_rejected', 'user', userId);
+
     return { message: '사용자가 거절(차단)되었습니다.', error: false };
   } catch (error: any) {
     return { message: error.message, error: true };
@@ -216,6 +225,12 @@ export async function updateUserRole(
     }
 
     revalidatePath('/admin/users');
+
+    await logAdminAction('user_role_changed', 'user', userId, {
+      to: role,
+      user_name: profile?.name || 'Unknown',
+    });
+
     return { message: '권한이 변경되었습니다.', error: false };
   } catch (error: any) {
     return { message: error.message, error: true };
