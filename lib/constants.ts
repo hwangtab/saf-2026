@@ -70,6 +70,24 @@ export const CAMPAIGN = {
   END_DATE: '2026-01-26',
 } as const;
 
+// Merchant policies for SEO schema (E-commerce)
+export const MERCHANT_POLICIES = {
+  RETURN: {
+    applicableCountry: 'KR',
+    returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+    merchantReturnDays: 7,
+    returnMethod: 'https://schema.org/ReturnByMail',
+    returnFees: 'https://schema.org/ReturnFeesCustomerResponsibility',
+  },
+  SHIPPING: {
+    rate: 4000,
+    currency: 'KRW',
+    country: 'KR',
+    handlingDays: { min: 1, max: 3 },
+    transitDays: { min: 1, max: 7 },
+  },
+} as const;
+
 // Statistics Data
 export const STATISTICS_DATA = [
   { label: '제1금융권 배제율', value: 84.9, unit: '%' },
