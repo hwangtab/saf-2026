@@ -1,11 +1,23 @@
 import { requireArtistActive } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
+import { redirect } from 'next/navigation';
 import { ArtworkList } from './artwork-list';
 import Button from '@/components/ui/Button';
 
 export default async function ArtworksPage() {
   const user = await requireArtistActive();
   const supabase = await createSupabaseServerClient();
+
+  // Check if user is admin and redirect to admin page
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+
+  if (profile?.role === 'admin') {
+    redirect('/admin/artworks');
+  }
 
   // Get artist id first (RLS requires it usually, or we query by artist_id found from user_id)
   const { data: artist } = await supabase
