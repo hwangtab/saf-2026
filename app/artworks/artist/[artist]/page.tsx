@@ -2,8 +2,8 @@ import { getSupabaseArtworks, getSupabaseArtworksByArtist } from '@/lib/supabase
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
-import { SITE_URL } from '@/lib/constants';
-import { generateArtistSchema } from '@/lib/seo-utils';
+import { SITE_URL, BREADCRUMB_HOME, BREADCRUMBS } from '@/lib/constants';
+import { generateArtistSchema, createBreadcrumbSchema } from '@/lib/seo-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { formatArtistName, resolveArtworkImageUrl } from '@/lib/utils';
 import { Metadata } from 'next';
@@ -142,9 +142,17 @@ export default async function ArtistPage({ params }: Props) {
     jobTitle: 'Artist',
   });
 
+  // Breadcrumb Schema: Home > Artworks > Artist Name
+  const breadcrumbSchema = createBreadcrumbSchema([
+    BREADCRUMB_HOME,
+    BREADCRUMBS['/artworks'],
+    { name: formatArtistName(artistName), url: pageUrl },
+  ]);
+
   return (
     <main className="min-h-screen">
       <JsonLdScript data={personSchema} />
+      <JsonLdScript data={breadcrumbSchema} />
       <PageHero
         title={formatArtistName(artistName)}
         description={heroDescription}

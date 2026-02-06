@@ -461,6 +461,25 @@ export interface ArtistSchemaInput {
   jobTitle?: string;
 }
 
+export function generateArtworkListSchema(artworks: Artwork[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: '씨앗페 2026 출품작',
+    description: '씨앗페 2026에 출품된 예술가들의 작품 목록',
+    numberOfItems: artworks.length,
+    itemListElement: artworks.map((artwork, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      url: `${SITE_URL}/artworks/${artwork.id}`,
+      name: artwork.title,
+      image: resolveArtworkImageUrl(artwork.image).startsWith('http')
+        ? resolveArtworkImageUrl(artwork.image)
+        : `${SITE_URL}${resolveArtworkImageUrl(artwork.image)}`,
+    })),
+  };
+}
+
 export function generateArtistSchema(artist: ArtistSchemaInput) {
   return {
     '@context': 'https://schema.org',

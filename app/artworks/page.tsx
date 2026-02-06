@@ -3,9 +3,11 @@ import Section from '@/components/ui/Section';
 import { getSupabaseArtworks } from '@/lib/supabase-data';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
-import { SITE_URL } from '@/lib/constants';
+import { SITE_URL, BREADCRUMB_HOME, BREADCRUMBS } from '@/lib/constants';
 import { Metadata } from 'next';
 import { createPageMetadata } from '@/lib/seo';
+import { JsonLdScript } from '@/components/common/JsonLdScript';
+import { createBreadcrumbSchema, generateArtworkListSchema } from '@/lib/seo-utils';
 
 import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
 
@@ -19,26 +21,32 @@ export const metadata: Metadata = createPageMetadata(
 
 export default async function ArtworksPage() {
   const artworks = await getSupabaseArtworks();
+  const breadcrumbSchema = createBreadcrumbSchema([BREADCRUMB_HOME, BREADCRUMBS['/artworks']]);
+  const itemListSchema = generateArtworkListSchema(artworks);
 
   return (
-    <main className="min-h-screen">
-      <PageHero
-        title="출품작"
-        description="예술가들의 시선으로 바라본 우리의 현실과 희망. 2026 씨앗페와 함께하는 작품을 소개합니다."
-      >
-        <ShareButtons
-          url={PAGE_URL}
-          title="출품작 - 2026 씨앗페"
-          description="2026 Seed Art Festival에 출품된 아름다운 예술 작품들을 만나보세요."
-        />
-      </PageHero>
+    <>
+      <JsonLdScript data={breadcrumbSchema} />
+      <JsonLdScript data={itemListSchema} />
+      <main className="min-h-screen">
+        <PageHero
+          title="출품작"
+          description="예술가들의 시선으로 바라본 우리의 현실과 희망. 2026 씨앗페와 함께하는 작품을 소개합니다."
+        >
+          <ShareButtons
+            url={PAGE_URL}
+            title="출품작 - 2026 씨앗페"
+            description="2026 Seed Art Festival에 출품된 아름다운 예술 작품들을 만나보세요."
+          />
+        </PageHero>
 
-      {/* Gallery Section */}
-      <Section variant="primary-surface" prevVariant="white" className="pb-24 md:pb-32">
-        <div className="container-max">
-          <ArtworkGalleryWithSort artworks={artworks} />
-        </div>
-      </Section>
-    </main>
+        {/* Gallery Section */}
+        <Section variant="primary-surface" prevVariant="white" className="pb-24 md:pb-32">
+          <div className="container-max">
+            <ArtworkGalleryWithSort artworks={artworks} />
+          </div>
+        </Section>
+      </main>
+    </>
   );
 }
