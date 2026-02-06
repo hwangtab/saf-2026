@@ -62,7 +62,7 @@ export default function LoginPage() {
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           SAF 2026
           <br />
-          <span className="text-xl font-medium text-gray-600">작가/관리자 로그인</span>
+          <span className="text-xl font-medium text-gray-600">아티스트 로그인</span>
         </h2>
       </div>
 

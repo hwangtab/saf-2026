@@ -92,7 +92,7 @@ export default function SignUpPage() {
               <>
                 가입이 완료되었습니다.
                 <br />
-                로그인 후 작가 정보를 제출해주세요.
+                로그인 후 아티스트 정보를 제출해주세요.
               </>
             )}
           </p>
@@ -110,7 +110,7 @@ export default function SignUpPage() {
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           SAF 2026
           <br />
-          <span className="text-xl font-medium text-gray-600">작가 회원가입</span>
+          <span className="text-xl font-medium text-gray-600">아티스트 회원가입</span>
         </h2>
       </div>
 
