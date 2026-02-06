@@ -18,7 +18,7 @@ export default async function DashboardPage() {
     .single();
 
   if (profile?.role === 'admin') {
-    redirect('/admin/artworks');
+    redirect('/admin/dashboard');
   }
 
   if (profile?.role === 'artist') {
