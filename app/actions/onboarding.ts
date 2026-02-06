@@ -13,8 +13,10 @@ export async function submitArtistApplication(
   prevState: OnboardingState,
   formData: FormData
 ): Promise<OnboardingState> {
+  void prevState;
+  let shouldRedirect = false;
+
   try {
-    void prevState;
     const user = await requireAuth();
     const supabase = await createSupabaseServerClient();
 
@@ -39,8 +41,14 @@ export async function submitArtistApplication(
 
     if (error) throw error;
 
-    redirect('/dashboard/pending');
+    shouldRedirect = true;
   } catch (error: any) {
     return { message: `신청 저장 중 오류가 발생했습니다: ${error.message}`, error: true };
   }
+
+  if (shouldRedirect) {
+    redirect('/dashboard/pending');
+  }
+
+  return { message: '신청이 완료되었습니다.' };
 }
