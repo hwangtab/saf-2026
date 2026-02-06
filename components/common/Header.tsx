@@ -6,6 +6,7 @@ import { Z_INDEX, EXTERNAL_LINKS } from '@/lib/constants';
 import { UI_STRINGS } from '@/lib/ui-strings';
 import { useHeaderStyle } from '@/lib/hooks/useHeaderStyle';
 
+import { usePathname } from 'next/navigation';
 import DesktopNav from './Header/DesktopNav';
 import FullscreenMenu from './Header/FullscreenMenu';
 import HeaderLogo from './Header/HeaderLogo';
@@ -21,8 +22,18 @@ const navigation: NavigationItem[] = [
 ];
 
 export default function Header() {
+  const pathname = usePathname();
   const { isMenuOpen, openMenu, closeMenu, isActive, headerStyle, isDarkText, textColor } =
     useHeaderStyle();
+
+  // Hide main header on admin and dashboard pages to prevent overlapping with specialized headers
+  if (
+    pathname?.startsWith('/admin') ||
+    pathname?.startsWith('/dashboard') ||
+    pathname?.startsWith('/onboarding')
+  ) {
+    return null;
+  }
 
   return (
     <header
