@@ -38,7 +38,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https: http:",
               "font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
-              "connect-src 'self' https://*.kakao.com https://*.daum.net https://*.daumcdn.net https://*.vercel-insights.com",
+              "connect-src 'self' https://*.kakao.com https://*.daum.net https://*.daumcdn.net https://*.vercel-insights.com https://*.supabase.co wss://*.supabase.co",
               "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://*.kakao.com",
             ].join('; '),
           },
