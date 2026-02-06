@@ -90,7 +90,7 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
 
       {/* Image Section */}
       <div className="bg-white shadow-sm rounded-lg p-6">
-        <h2 className="text-lg font-medium text-gray-900 mb-4">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
           작품 이미지
           {savingImages && <span className="ml-2 text-sm text-gray-500">저장 중...</span>}
         </h2>
@@ -106,16 +106,18 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
 
       {/* Details Section */}
       <form action={handleSubmit} className="bg-white shadow-sm rounded-lg p-6 space-y-6">
-        <h2 className="text-lg font-medium text-gray-900">작품 정보</h2>
+        <h2 className="text-lg font-semibold text-gray-900">작품 정보</h2>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">작품명 *</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              작품명 <span className="text-red-500">*</span>
+            </label>
             <input
               name="title"
               defaultValue={artwork.title}
               required
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
             />
           </div>
 
@@ -124,7 +126,7 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
             <select
               name="artist_id"
               defaultValue={artwork.artist_id || ''}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
             >
               <option value="">작가 선택...</option>
               {artists.map((artist) => (
@@ -141,7 +143,7 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
               name="price"
               defaultValue={artwork.price || ''}
               placeholder="₩1,000,000"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
             />
           </div>
 
@@ -151,7 +153,7 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
               name="size"
               defaultValue={artwork.size || ''}
               placeholder="60x45cm"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
             />
           </div>
 
@@ -161,7 +163,7 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
               name="material"
               defaultValue={artwork.material || ''}
               placeholder="Oil on canvas"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
             />
           </div>
 
@@ -171,7 +173,7 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
               name="year"
               defaultValue={artwork.year || ''}
               placeholder="2026"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
             />
           </div>
 
@@ -181,7 +183,7 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
               name="edition"
               defaultValue={artwork.edition || ''}
               placeholder="1/10"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
             />
           </div>
 
@@ -192,7 +194,7 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
               type="url"
               defaultValue={artwork.shop_url || ''}
               placeholder="https://..."
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
             />
           </div>
         </div>
@@ -203,7 +205,7 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
             name="description"
             defaultValue={artwork.description || ''}
             rows={4}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
           />
         </div>
 

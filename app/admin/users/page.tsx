@@ -40,8 +40,8 @@ export default async function UsersPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-lg font-medium text-gray-900">사용자 관리</h2>
-        <p className="mt-1 text-sm text-gray-500">신규 가입한 사용자를 승인하거나 관리합니다.</p>
+        <h1 className="text-2xl font-bold text-gray-900">사용자 관리</h1>
+        <p className="mt-2 text-sm text-gray-500">신규 가입한 사용자를 승인하거나 관리합니다.</p>
       </div>
 
       <UserList users={sortedUsers} />

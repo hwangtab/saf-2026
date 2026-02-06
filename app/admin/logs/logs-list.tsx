@@ -99,8 +99,22 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
   if (logs.length === 0) {
     return (
       <div className="space-y-4">
-        <div className="bg-white shadow-sm rounded-lg p-6 text-sm text-gray-500">
-          활동 로그가 없습니다.
+        <div className="bg-white shadow-sm rounded-lg p-8 text-center">
+          <svg
+            className="mx-auto h-12 w-12 text-gray-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
+          </svg>
+          <h3 className="mt-2 text-sm font-medium text-gray-900">활동 로그가 없습니다</h3>
+          <p className="mt-1 text-sm text-gray-500">관리자 활동이 기록되면 여기에 표시됩니다.</p>
         </div>
         <p className="text-sm text-gray-500">총 0개의 기록</p>
       </div>
@@ -113,16 +127,16 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 시간
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
                 관리자
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 활동
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 대상
               </th>
             </tr>
@@ -131,17 +145,17 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
             {logs.map((log) => {
               const link = getTargetLink(log);
               return (
-                <tr key={log.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <tr key={log.id} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {formatDate(log.created_at)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900 hidden sm:table-cell">
                     {log.admin?.name || log.admin?.email || '(알 수 없음)'}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
+                  <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">
                     {formatActionDescription(log)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {link ? (
                       <Link href={link} className="text-indigo-600 hover:underline">
                         {getTargetTypeLabel(log.target_type)}

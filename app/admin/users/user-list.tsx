@@ -102,7 +102,7 @@ export function UserList({ users }: { users: Profile[] }) {
           onChange={(e) => setQuery(e.target.value)}
           placeholder="검색: 이름/이메일"
           aria-label="사용자 검색"
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
         />
       </div>
       <div className="bg-white shadow overflow-hidden sm:rounded-md">
@@ -115,7 +115,7 @@ export function UserList({ users }: { users: Profile[] }) {
             const hasApplicationRecord = !!user.application;
 
             return (
-              <li key={user.id}>
+              <li key={user.id} className="hover:bg-gray-50 transition-colors">
                 <div className="px-4 py-4 flex items-center sm:px-6">
                   <div className="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between">
                     <div className="flex items-center">
@@ -266,7 +266,7 @@ export function UserList({ users }: { users: Profile[] }) {
                             },
                           }))
                         }
-                        className="rounded-md border border-gray-300 px-2 py-1 text-xs"
+                        className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
                         disabled={!!processingId}
                       >
                         <option value="user">user</option>
@@ -366,7 +366,7 @@ export function UserList({ users }: { users: Profile[] }) {
             {/* Application Info */}
             {selectedUser.application ? (
               <div className="space-y-4 border-t border-gray-100 pt-4">
-                <h5 className="font-medium text-gray-900">작가 신청 정보</h5>
+                <h3 className="text-lg font-semibold text-gray-900">작가 신청 정보</h3>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <p className="text-xs text-gray-500">작가명</p>

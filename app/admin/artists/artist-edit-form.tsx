@@ -83,7 +83,7 @@ export function ArtistEditForm({ artist }: ArtistEditFormProps) {
 
       {/* Profile Image Section */}
       <div className="bg-white shadow-sm rounded-lg p-6">
-        <h2 className="text-lg font-medium text-gray-900 mb-4">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
           프로필 이미지
           {savingImage && <span className="ml-2 text-sm text-gray-500">저장 중...</span>}
         </h2>
@@ -99,16 +99,18 @@ export function ArtistEditForm({ artist }: ArtistEditFormProps) {
 
       {/* Details Section */}
       <form action={handleSubmit} className="bg-white shadow-sm rounded-lg p-6 space-y-6">
-        <h2 className="text-lg font-medium text-gray-900">작가 정보</h2>
+        <h2 className="text-lg font-semibold text-gray-900">작가 정보</h2>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">작가명 (한글) *</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              작가명 (한글) <span className="text-red-500">*</span>
+            </label>
             <input
               name="name_ko"
               defaultValue={artist.name_ko || ''}
               required
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
             />
           </div>
 
@@ -117,7 +119,7 @@ export function ArtistEditForm({ artist }: ArtistEditFormProps) {
             <input
               name="name_en"
               defaultValue={artist.name_en || ''}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
             />
           </div>
 
@@ -127,7 +129,7 @@ export function ArtistEditForm({ artist }: ArtistEditFormProps) {
               name="contact_email"
               type="email"
               defaultValue={artist.contact_email || ''}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
             />
           </div>
 
@@ -137,7 +139,7 @@ export function ArtistEditForm({ artist }: ArtistEditFormProps) {
               name="instagram"
               defaultValue={artist.instagram || ''}
               placeholder="@username"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
             />
           </div>
 
@@ -148,7 +150,7 @@ export function ArtistEditForm({ artist }: ArtistEditFormProps) {
               type="url"
               defaultValue={artist.homepage || ''}
               placeholder="https://..."
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
             />
           </div>
 
@@ -161,7 +163,7 @@ export function ArtistEditForm({ artist }: ArtistEditFormProps) {
             name="bio"
             defaultValue={artist.bio || ''}
             rows={4}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
           />
         </div>
 
@@ -171,7 +173,7 @@ export function ArtistEditForm({ artist }: ArtistEditFormProps) {
             name="history"
             defaultValue={artist.history || ''}
             rows={6}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
           />
         </div>
 

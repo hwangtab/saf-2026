@@ -141,8 +141,22 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
 
   if (artworks.length === 0) {
     return (
-      <div className="bg-white shadow-sm rounded-lg p-6 text-sm text-gray-500">
-        등록된 작품이 없습니다.
+      <div className="bg-white shadow-sm rounded-lg p-8 text-center">
+        <svg
+          className="mx-auto h-12 w-12 text-gray-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.5}
+            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+          />
+        </svg>
+        <h3 className="mt-2 text-sm font-medium text-gray-900">등록된 작품이 없습니다</h3>
+        <p className="mt-1 text-sm text-gray-500">작가가 작품을 등록하면 여기에 표시됩니다.</p>
       </div>
     );
   }
@@ -151,19 +165,19 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
     <div className="space-y-4">
       {/* Filters */}
       <div className="bg-white shadow-sm rounded-lg p-4">
-        <div className="flex flex-col gap-3 md:flex-row md:items-center">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <input
             value={query}
             onChange={(e) => handleQueryChange(e.target.value)}
             placeholder="검색: 작품명/작가명"
             aria-label="작품 검색"
-            className="w-full md:flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="w-full sm:flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
           />
           <select
             value={statusFilter}
             onChange={(e) => handleStatusFilterChange(e.target.value)}
             aria-label="상태 필터"
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
           >
             <option value="all">상태 전체</option>
             <option value="available">판매 중</option>
@@ -174,7 +188,7 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
             value={visibilityFilter}
             onChange={(e) => handleVisibilityFilterChange(e.target.value)}
             aria-label="노출 필터"
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
           >
             <option value="all">노출 전체</option>
             <option value="visible">노출</option>
@@ -236,7 +250,7 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
                 }}
                 disabled={batchProcessing}
                 aria-label="상태 일괄 변경"
-                className="rounded-md border border-gray-300 px-3 py-1.5 text-sm disabled:opacity-50"
+                className="rounded-md border border-gray-300 px-3 py-2 text-sm disabled:opacity-50 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
               >
                 <option value="">상태 변경...</option>
                 <option value="available">판매 중</option>
@@ -341,7 +355,7 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
               <select
                 name="status"
                 defaultValue={artwork.status}
-                className="rounded-md border border-gray-300 px-2 py-1"
+                className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
               >
                 <option value="available">판매 중</option>
                 <option value="reserved">예약됨</option>

@@ -50,10 +50,10 @@ export default async function AdminDashboardPage() {
   const stats = await getDashboardStats();
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">대시보드</h1>
-        <p className="text-sm text-gray-500 mt-1">SAF 2026 관리자 현황을 한눈에 확인합니다.</p>
+        <p className="text-sm text-gray-500 mt-2">SAF 2026 관리자 현황을 한눈에 확인합니다.</p>
       </div>
 
       {/* 작가 현황 */}
@@ -74,7 +74,7 @@ export default async function AdminDashboardPage() {
       {/* 작품 현황 */}
       <div>
         <h2 className="text-lg font-semibold text-gray-900 mb-4">작품 현황</h2>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           <StatCard title="전체 작품" value={stats.artworks.total} href="/admin/artworks" />
           <StatCard title="판매 중" value={stats.artworks.available} />
           <StatCard title="예약됨" value={stats.artworks.reserved} />
