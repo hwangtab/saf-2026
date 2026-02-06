@@ -21,27 +21,33 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
   const [userId, setUserId] = useState<string | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
 
-  const fetchProfile = async (id: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('role, status')
-        .eq('id', id)
-        .single();
-
-      if (error) {
-        console.warn('Profile fetch error:', error.message);
-      }
-      setProfile((data as Profile) || null);
-    } catch (err) {
-      console.error('Unexpected error in fetchProfile:', err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
     let isMounted = true;
+    const controller = new AbortController();
+
+    const fetchProfile = async (id: string, signal: AbortSignal) => {
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('role, status')
+          .eq('id', id)
+          .single();
+
+        if (signal.aborted) return;
+
+        if (error) {
+          console.warn('Profile fetch error:', error.message);
+        }
+        setProfile((data as Profile) || null);
+      } catch (err: any) {
+        if (err.name === 'AbortError') return;
+        console.error('Unexpected error in fetchProfile:', err);
+      } finally {
+        if (!signal.aborted) {
+          setIsLoading(false);
+        }
+      }
+    };
 
     const init = async () => {
       try {
@@ -53,11 +59,12 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
         const id = session?.user?.id || null;
         setUserId(id);
         if (id) {
-          await fetchProfile(id);
+          await fetchProfile(id, controller.signal);
         } else {
           setIsLoading(false);
         }
-      } catch (err) {
+      } catch (err: any) {
+        if (err.name === 'AbortError') return;
         console.error('Auth check error:', err);
         setIsLoading(false);
       }
@@ -72,7 +79,7 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
       setUserId(id);
       if (id) {
         setIsLoading(true);
-        await fetchProfile(id);
+        await fetchProfile(id, controller.signal);
       } else {
         setProfile(null);
         setIsLoading(false);
@@ -81,6 +88,7 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
 
     return () => {
       isMounted = false;
+      controller.abort();
       authListener.subscription.unsubscribe();
     };
   }, [supabase]);

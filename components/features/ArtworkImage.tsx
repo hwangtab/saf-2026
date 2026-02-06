@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import ExportedImage from 'next-image-export-optimizer';
+import SafeImage from '@/components/common/SafeImage';
 import ArtworkLightbox from '@/components/ui/ArtworkLightbox';
 import { resolveArtworkImageUrl } from '@/lib/utils';
 
@@ -31,7 +31,7 @@ export default function ArtworkImage({ imagePath, title, artist, sold }: Artwork
           }
         }}
       >
-        <ExportedImage
+        <SafeImage
           src={src}
           alt={alt}
           width={1000}

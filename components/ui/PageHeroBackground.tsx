@@ -1,6 +1,6 @@
 'use client';
 
-import ExportedImage from 'next-image-export-optimizer';
+import SafeImage from '@/components/common/SafeImage';
 import { useEffect, useState } from 'react';
 import { m, useReducedMotion } from 'framer-motion';
 import { HERO_IMAGES } from '@/lib/constants';
@@ -59,7 +59,7 @@ export default function PageHeroBackground({ customImage }: PageHeroBackgroundPr
   if (prefersReducedMotion) {
     return (
       <div className="absolute inset-0">
-        <ExportedImage src={bgImage} alt="" fill className="object-cover" priority sizes="100vw" />
+        <SafeImage src={bgImage} alt="" fill className="object-cover" priority sizes="100vw" />
       </div>
     );
   }
@@ -80,7 +80,7 @@ export default function PageHeroBackground({ customImage }: PageHeroBackgroundPr
         }}
         className="absolute inset-0"
       >
-        <ExportedImage src={bgImage} alt="" fill className="object-cover" priority sizes="100vw" />
+        <SafeImage src={bgImage} alt="" fill className="object-cover" priority sizes="100vw" />
       </m.div>
     </div>
   );

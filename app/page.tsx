@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import ExportedImage from 'next-image-export-optimizer';
+import SafeImage from '@/components/common/SafeImage';
 import dynamic from 'next/dynamic';
 import Button from '@/components/ui/Button';
 import Section from '@/components/ui/Section';
@@ -70,7 +70,7 @@ export default async function Home() {
         <SawtoothDivider position="bottom" colorClass="text-canvas-soft" />
         <div className="relative z-10 container-max text-center">
           <div className="mb-12 translate-y-6 hidden md:flex justify-center">
-            <ExportedImage
+            <SafeImage
               src="/images/logo/320pxX90px_white.webp"
               alt="씨앗페 2026 로고"
               width={1120}

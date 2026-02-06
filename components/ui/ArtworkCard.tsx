@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import Link from 'next/link';
-import ExportedImage from 'next-image-export-optimizer';
+import SafeImage from '@/components/common/SafeImage';
 import type { ArtworkCardData } from '@/types';
 import { cn, resolveArtworkImageUrl } from '@/lib/utils';
 
@@ -56,7 +56,7 @@ function ArtworkCard({ artwork, variant = 'gallery', className }: ArtworkCardPro
         className={cn('flex-shrink-0 w-[160px] sm:w-[180px] md:w-[200px] group', className)}
       >
         <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100 shadow-sm group-hover:shadow-md transition-shadow">
-          <ExportedImage
+          <SafeImage
             src={getImageSrc(artwork)}
             alt={getImageAlt(artwork)}
             fill
@@ -82,7 +82,7 @@ function ArtworkCard({ artwork, variant = 'gallery', className }: ArtworkCardPro
       <Link href={getHref(artwork)} className="block h-full">
         <div className="relative w-full overflow-hidden aspect-[4/5]">
           <div className="absolute inset-0 shimmer-loading" />
-          <ExportedImage
+          <SafeImage
             src={getImageSrc(artwork)}
             alt={getImageAlt(artwork)}
             loading="lazy"

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import ExportedImage from 'next-image-export-optimizer';
+import SafeImage from '@/components/common/SafeImage';
 import { m, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { ANIMATION, HERO_IMAGES } from '@/lib/constants';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
@@ -51,7 +51,7 @@ export default function BackgroundSlider() {
   if (prefersReducedMotion) {
     return (
       <div className="absolute inset-0 -z-10 overflow-hidden bg-gray-900">
-        <ExportedImage
+        <SafeImage
           src={`/images/hero/${currentPhoto.filename}`}
           alt={currentPhoto.alt}
           fill
@@ -69,7 +69,7 @@ export default function BackgroundSlider() {
       {/* Preload next image */}
       {nextPhoto && nextPhoto.id !== currentPhoto.id && (
         <div className="invisible absolute inset-0 -z-20" aria-hidden="true">
-          <ExportedImage
+          <SafeImage
             src={`/images/hero/${nextPhoto.filename}`}
             alt=""
             fill
@@ -104,7 +104,7 @@ export default function BackgroundSlider() {
             }}
             className="absolute inset-0"
           >
-            <ExportedImage
+            <SafeImage
               src={`/images/hero/${currentPhoto.filename}`}
               alt={currentPhoto.alt}
               fill
