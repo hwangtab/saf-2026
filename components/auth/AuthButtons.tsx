@@ -21,34 +21,60 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
   const [profile, setProfile] = useState<Profile | null>(null);
 
   const fetchProfile = async (id: string) => {
-    const { data } = await supabase.from('profiles').select('role, status').eq('id', id).single();
-    setProfile((data as Profile) || null);
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('role, status')
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        console.warn('Profile fetch error:', error.message);
+      }
+      setProfile((data as Profile) || null);
+    } catch (err) {
+      console.error('Unexpected error in fetchProfile:', err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
     let isMounted = true;
 
     const init = async () => {
-      const { data } = await supabase.auth.getUser();
-      if (!isMounted) return;
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        if (!isMounted) return;
 
-      const id = data.user?.id || null;
-      setUserId(id);
-      if (id) {
-        await fetchProfile(id);
+        const id = session?.user?.id || null;
+        setUserId(id);
+        if (id) {
+          await fetchProfile(id);
+        } else {
+          setIsLoading(false);
+        }
+      } catch (err) {
+        console.error('Auth check error:', err);
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
 
     init();
 
     const { data: authListener } = supabase.auth.onAuthStateChange(async (_event, session) => {
       const id = session?.user?.id || null;
+      if (!isMounted) return;
+
       setUserId(id);
       if (id) {
+        setIsLoading(true);
         await fetchProfile(id);
       } else {
         setProfile(null);
+        setIsLoading(false);
       }
     });
 
@@ -69,7 +95,14 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
       ? `flex flex-col gap-3 w-full ${className}`
       : `flex items-center gap-3 ${className}`;
 
-  if (isLoading) return null;
+  // Loading state placeholder to prevent layout shift and handle slow profile fetch
+  if (isLoading) {
+    return (
+      <div className={wrapperClassName}>
+        <div className="h-10 w-24 bg-gray-100/50 animate-pulse rounded-full" />
+      </div>
+    );
+  }
 
   if (!userId) {
     return (
@@ -95,7 +128,8 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
     if (profile?.status === 'suspended') {
       return { href: '/dashboard/suspended', label: '계정 정지' };
     }
-    return { href: '/dashboard', label: '대시보드' };
+    // Default to main dashboard if role/status is not yet loaded or user is regular active user
+    return { href: '/dashboard', label: '마이페이지' };
   })();
 
   return (
@@ -111,8 +145,8 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
         onClick={handleSignOut}
         className={
           layout === 'stacked'
-            ? 'w-full min-h-[44px] rounded-lg border border-gray-200 text-sm font-medium text-red-600 hover:text-red-700 hover:border-red-200'
-            : 'text-sm font-medium text-red-600 hover:text-red-700'
+            ? 'w-full min-h-[44px] rounded-lg border border-gray-200 text-sm font-medium text-red-600 hover:text-red-700 hover:border-red-200 transition-colors'
+            : 'text-sm font-medium text-red-600 hover:text-red-700 transition-colors px-2'
         }
         type="button"
       >
