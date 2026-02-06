@@ -69,8 +69,22 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
     <div className="space-y-6">
       {/* Error Message */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-700">
-          {error}
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-700 flex items-center justify-between">
+          <span>{error}</span>
+          <button
+            type="button"
+            onClick={() => setError(null)}
+            className="ml-4 text-red-500 hover:text-red-700"
+            aria-label="오류 메시지 닫기"
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fillRule="evenodd"
+                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </button>
         </div>
       )}
 
@@ -96,7 +110,7 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">작품명 *</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">작품명 *</label>
             <input
               name="title"
               defaultValue={artwork.title}
@@ -106,7 +120,7 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">작가</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">작가</label>
             <select
               name="artist_id"
               defaultValue={artwork.artist_id || ''}
@@ -122,7 +136,7 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">가격</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">가격</label>
             <input
               name="price"
               defaultValue={artwork.price || ''}
@@ -132,7 +146,7 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">크기</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">크기</label>
             <input
               name="size"
               defaultValue={artwork.size || ''}
@@ -142,7 +156,7 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">재료</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">재료</label>
             <input
               name="material"
               defaultValue={artwork.material || ''}
@@ -152,7 +166,7 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">제작연도</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">제작연도</label>
             <input
               name="year"
               defaultValue={artwork.year || ''}
@@ -162,7 +176,7 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">에디션</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">에디션</label>
             <input
               name="edition"
               defaultValue={artwork.edition || ''}
@@ -172,7 +186,7 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">구매 링크</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">구매 링크</label>
             <input
               name="shop_url"
               type="url"
@@ -184,7 +198,7 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">작품 설명</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">작품 설명</label>
           <textarea
             name="description"
             defaultValue={artwork.description || ''}

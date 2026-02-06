@@ -62,8 +62,22 @@ export function ArtistEditForm({ artist }: ArtistEditFormProps) {
     <div className="space-y-6">
       {/* Error Message */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-700">
-          {error}
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-700 flex items-center justify-between">
+          <span>{error}</span>
+          <button
+            type="button"
+            onClick={() => setError(null)}
+            className="ml-4 text-red-500 hover:text-red-700"
+            aria-label="오류 메시지 닫기"
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fillRule="evenodd"
+                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </button>
         </div>
       )}
 
@@ -89,7 +103,7 @@ export function ArtistEditForm({ artist }: ArtistEditFormProps) {
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">작가명 (한글) *</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">작가명 (한글) *</label>
             <input
               name="name_ko"
               defaultValue={artist.name_ko || ''}
@@ -99,7 +113,7 @@ export function ArtistEditForm({ artist }: ArtistEditFormProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">작가명 (영문)</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">작가명 (영문)</label>
             <input
               name="name_en"
               defaultValue={artist.name_en || ''}
@@ -108,7 +122,7 @@ export function ArtistEditForm({ artist }: ArtistEditFormProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">이메일</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">이메일</label>
             <input
               name="contact_email"
               type="email"
@@ -118,7 +132,7 @@ export function ArtistEditForm({ artist }: ArtistEditFormProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Instagram</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Instagram</label>
             <input
               name="instagram"
               defaultValue={artist.instagram || ''}
@@ -128,7 +142,7 @@ export function ArtistEditForm({ artist }: ArtistEditFormProps) {
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">홈페이지</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">홈페이지</label>
             <input
               name="homepage"
               type="url"
@@ -142,7 +156,7 @@ export function ArtistEditForm({ artist }: ArtistEditFormProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">소개</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">소개</label>
           <textarea
             name="bio"
             defaultValue={artist.bio || ''}
@@ -152,7 +166,7 @@ export function ArtistEditForm({ artist }: ArtistEditFormProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">이력</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">이력</label>
           <textarea
             name="history"
             defaultValue={artist.history || ''}

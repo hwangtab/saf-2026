@@ -98,15 +98,18 @@ function getTargetLink(log: AdminLogEntry): string | null {
 export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps) {
   if (logs.length === 0) {
     return (
-      <div className="bg-white shadow-sm rounded-lg p-6 text-sm text-gray-500">
-        활동 로그가 없습니다.
+      <div className="space-y-4">
+        <div className="bg-white shadow-sm rounded-lg p-6 text-sm text-gray-500">
+          활동 로그가 없습니다.
+        </div>
+        <p className="text-sm text-gray-500">총 0개의 기록</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-4">
-      <div className="bg-white shadow-sm rounded-lg overflow-hidden">
+      <div className="bg-white shadow-sm rounded-lg overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
