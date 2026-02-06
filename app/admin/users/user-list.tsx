@@ -33,8 +33,6 @@ export function UserList({ users }: { users: Profile[] }) {
   const router = useRouter();
 
   const normalize = (value: string) => value.toLowerCase().replace(/\s+/g, '');
-  const truncate = (value: string, max = 80) =>
-    value.length > max ? `${value.slice(0, max)}…` : value;
   const filteredUsers = users.filter((user) => {
     if (!query) return true;
     const q = normalize(query);
@@ -103,6 +101,7 @@ export function UserList({ users }: { users: Profile[] }) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="검색: 이름/이메일"
+          aria-label="사용자 검색"
           className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
         />
       </div>
@@ -124,7 +123,7 @@ export function UserList({ users }: { users: Profile[] }) {
                         {user.avatar_url ? (
                           <img
                             src={user.avatar_url}
-                            alt=""
+                            alt={`${user.name || '사용자'} 프로필`}
                             className="h-full w-full object-cover"
                           />
                         ) : (
@@ -143,7 +142,7 @@ export function UserList({ users }: { users: Profile[] }) {
                             {user.name || 'No Name'}
                           </button>
                           <span
-                            className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium ${
                               user.status === 'active'
                                 ? 'bg-green-100 text-green-800'
                                 : user.status === 'pending'
@@ -151,7 +150,38 @@ export function UserList({ users }: { users: Profile[] }) {
                                   : 'bg-red-100 text-red-800'
                             }`}
                           >
-                            {user.status.toUpperCase()}
+                            {user.status === 'active' && (
+                              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                  fillRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                            )}
+                            {user.status === 'pending' && (
+                              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                  fillRule="evenodd"
+                                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                            )}
+                            {user.status === 'suspended' && (
+                              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                  fillRule="evenodd"
+                                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                            )}
+                            {user.status === 'active'
+                              ? '활성'
+                              : user.status === 'pending'
+                                ? '대기'
+                                : '정지'}
                           </span>
                           <span className="text-gray-400 text-xs">({user.role})</span>
                         </div>
@@ -160,7 +190,7 @@ export function UserList({ users }: { users: Profile[] }) {
                           <div className="mt-2 text-xs text-gray-500">
                             <p>작가명: {user.application?.artist_name || '-'}</p>
                             <p>연락처: {user.application?.contact || '-'}</p>
-                            <p>소개: {truncate(user.application?.bio || '-')}</p>
+                            <p className="line-clamp-2">소개: {user.application?.bio || '-'}</p>
                           </div>
                         ) : (
                           user.status === 'pending' && (
@@ -271,7 +301,7 @@ export function UserList({ users }: { users: Profile[] }) {
                 {selectedUser.avatar_url ? (
                   <img
                     src={selectedUser.avatar_url}
-                    alt=""
+                    alt={`${selectedUser.name || '사용자'} 프로필`}
                     className="h-full w-full object-cover"
                   />
                 ) : (
@@ -287,7 +317,7 @@ export function UserList({ users }: { users: Profile[] }) {
                 <p className="text-sm text-gray-500">{selectedUser.email}</p>
                 <div className="flex items-center gap-2 mt-1">
                   <span
-                    className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium ${
                       selectedUser.status === 'active'
                         ? 'bg-green-100 text-green-800'
                         : selectedUser.status === 'pending'
@@ -295,7 +325,38 @@ export function UserList({ users }: { users: Profile[] }) {
                           : 'bg-red-100 text-red-800'
                     }`}
                   >
-                    {selectedUser.status.toUpperCase()}
+                    {selectedUser.status === 'active' && (
+                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    )}
+                    {selectedUser.status === 'pending' && (
+                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    )}
+                    {selectedUser.status === 'suspended' && (
+                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                          fillRule="evenodd"
+                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    )}
+                    {selectedUser.status === 'active'
+                      ? '활성'
+                      : selectedUser.status === 'pending'
+                        ? '대기'
+                        : '정지'}
                   </span>
                   <span className="text-gray-400 text-xs">({selectedUser.role})</span>
                 </div>

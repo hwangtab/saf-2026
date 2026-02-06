@@ -1,6 +1,7 @@
 import { requireAdmin } from '@/lib/auth/guards';
 import Link from 'next/link';
 import { SignOutButton } from '@/components/auth/SignOutButton';
+import { AdminMobileNav } from './admin-mobile-nav';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   await requireAdmin();
@@ -10,12 +11,15 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <nav className="bg-white border-b border-gray-200 fixed w-full z-30 top-0 left-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
-            <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
+            <div className="flex items-center">
+              {/* Mobile Menu Button */}
+              <AdminMobileNav />
+              <div className="flex-shrink-0 flex items-center ml-2 sm:ml-0">
                 <Link href="/admin/users" className="text-xl font-bold text-indigo-600">
                   SAF Admin
                 </Link>
               </div>
+              {/* Desktop Navigation */}
               <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
                 <Link
                   href="/admin/dashboard"
@@ -55,7 +59,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                 </Link>
               </div>
             </div>
-            <div className="flex items-center">
+            <div className="hidden sm:flex items-center">
               <span className="text-sm text-gray-500 mr-4">관리자 모드</span>
               <SignOutButton />
             </div>
@@ -63,7 +67,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 mt-16">{children}</main>
+      <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 mt-16 pb-12">{children}</main>
     </div>
   );
 }

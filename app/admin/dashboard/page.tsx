@@ -23,7 +23,10 @@ function StatCard({
 
   if (href) {
     return (
-      <Link href={href} className="block hover:ring-2 hover:ring-indigo-500 rounded-lg">
+      <Link
+        href={href}
+        className="block hover:ring-2 hover:ring-indigo-500 hover:ring-offset-2 rounded-lg transition-shadow"
+      >
         {content}
       </Link>
     );
@@ -71,7 +74,7 @@ export default async function AdminDashboardPage() {
       {/* 작품 현황 */}
       <div>
         <h2 className="text-lg font-semibold text-gray-900 mb-4">작품 현황</h2>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
           <StatCard title="전체 작품" value={stats.artworks.total} href="/admin/artworks" />
           <StatCard title="판매 중" value={stats.artworks.available} />
           <StatCard title="예약됨" value={stats.artworks.reserved} />
@@ -83,7 +86,11 @@ export default async function AdminDashboardPage() {
         {stats.artworks.total > 0 && (
           <div className="mt-4 bg-white shadow-sm rounded-lg p-6">
             <p className="text-sm font-medium text-gray-500 mb-3">판매 현황 비율</p>
-            <div className="flex h-4 rounded-full overflow-hidden bg-gray-100">
+            <div
+              className="flex h-4 rounded-full overflow-hidden bg-gray-100"
+              role="img"
+              aria-label={`판매 현황: 판매 중 ${stats.artworks.available}점, 예약됨 ${stats.artworks.reserved}점, 판매 완료 ${stats.artworks.sold}점`}
+            >
               <div
                 className="bg-green-500"
                 style={{

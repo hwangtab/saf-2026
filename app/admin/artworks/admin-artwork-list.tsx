@@ -41,6 +41,22 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
     }
   };
 
+  // Clear selection when filters change
+  const handleStatusFilterChange = (value: string) => {
+    setStatusFilter(value);
+    setSelectedIds(new Set());
+  };
+
+  const handleVisibilityFilterChange = (value: string) => {
+    setVisibilityFilter(value);
+    setSelectedIds(new Set());
+  };
+
+  const handleQueryChange = (value: string) => {
+    setQuery(value);
+    setSelectedIds(new Set());
+  };
+
   const filtered = artworks.filter((artwork) => {
     if (statusFilter !== 'all' && artwork.status !== statusFilter) return false;
     if (visibilityFilter === 'visible' && artwork.is_hidden) return false;
@@ -138,13 +154,15 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
         <div className="flex flex-col gap-3 md:flex-row md:items-center">
           <input
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => handleQueryChange(e.target.value)}
             placeholder="검색: 작품명/작가명"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            aria-label="작품 검색"
+            className="w-full md:flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm"
           />
           <select
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
+            onChange={(e) => handleStatusFilterChange(e.target.value)}
+            aria-label="상태 필터"
             className="rounded-md border border-gray-300 px-3 py-2 text-sm"
           >
             <option value="all">상태 전체</option>
@@ -154,7 +172,8 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
           </select>
           <select
             value={visibilityFilter}
-            onChange={(e) => setVisibilityFilter(e.target.value)}
+            onChange={(e) => handleVisibilityFilterChange(e.target.value)}
+            aria-label="노출 필터"
             className="rounded-md border border-gray-300 px-3 py-2 text-sm"
           >
             <option value="all">노출 전체</option>
@@ -185,48 +204,75 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
           </div>
 
           {selectedInFiltered.length > 0 && (
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+              {batchProcessing && (
+                <span className="text-sm text-gray-500 flex items-center gap-2">
+                  <svg
+                    className="animate-spin h-4 w-4 text-indigo-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                  처리 중...
+                </span>
+              )}
               <select
                 onChange={(e) => {
                   if (e.target.value) handleBatchStatus(e.target.value);
                   e.target.value = '';
                 }}
                 disabled={batchProcessing}
-                className="rounded-md border border-gray-300 px-3 py-1.5 text-sm"
+                aria-label="상태 일괄 변경"
+                className="rounded-md border border-gray-300 px-3 py-1.5 text-sm disabled:opacity-50"
               >
                 <option value="">상태 변경...</option>
                 <option value="available">판매 중</option>
                 <option value="reserved">예약됨</option>
                 <option value="sold">판매 완료</option>
               </select>
-              <Button
-                type="button"
-                variant="secondary"
-                size="sm"
-                onClick={() => handleBatchHidden(true)}
-                disabled={batchProcessing}
-              >
-                숨김
-              </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                size="sm"
-                onClick={() => handleBatchHidden(false)}
-                disabled={batchProcessing}
-              >
-                노출
-              </Button>
-              <Button
-                type="button"
-                variant="white"
-                size="sm"
-                className="text-red-600"
-                onClick={handleBatchDelete}
-                disabled={batchProcessing}
-              >
-                삭제
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => handleBatchHidden(true)}
+                  disabled={batchProcessing}
+                >
+                  숨김
+                </Button>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => handleBatchHidden(false)}
+                  disabled={batchProcessing}
+                >
+                  노출
+                </Button>
+                <Button
+                  type="button"
+                  variant="white"
+                  size="sm"
+                  className="text-red-600"
+                  onClick={handleBatchDelete}
+                  disabled={batchProcessing}
+                >
+                  삭제
+                </Button>
+              </div>
             </div>
           )}
         </div>

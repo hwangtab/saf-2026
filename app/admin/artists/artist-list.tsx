@@ -28,8 +28,8 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
     try {
       await deleteArtist(id);
       router.refresh();
-    } catch (err: any) {
-      setError(err.message || '삭제 중 오류가 발생했습니다.');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : '삭제 중 오류가 발생했습니다.');
     } finally {
       setProcessingId(null);
     }
@@ -65,11 +65,12 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="검색: 작가명/이메일"
+          aria-label="작가 검색"
           className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
         />
       </div>
 
-      <div className="bg-white shadow-sm rounded-lg overflow-hidden">
+      <div className="bg-white shadow-sm rounded-lg overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -96,7 +97,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
                       {artist.profile_image ? (
                         <img
                           src={artist.profile_image}
-                          alt=""
+                          alt={`${artist.name_ko || '작가'} 프로필`}
                           className="h-10 w-10 rounded-full object-cover"
                         />
                       ) : (

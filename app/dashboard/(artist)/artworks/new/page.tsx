@@ -26,7 +26,7 @@ export default async function NewArtworkPage() {
     .single();
 
   if (!artist) {
-    return <div>오류: 작가 정보를 찾을 수 없습니다.</div>;
+    redirect('/login');
   }
 
   return (
