@@ -24,8 +24,14 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
   useEffect(() => {
     let isMounted = true;
     const controller = new AbortController();
+    const TIMEOUT_MS = 3000;
 
-    const fetchProfile = async (id: string, signal: AbortSignal) => {
+    const fetchProfileData = async (id: string, signal: AbortSignal) => {
+      // 타임아웃 설정: 3초 후 강제 로딩 종료
+      const timeoutId = setTimeout(() => {
+        if (isMounted) setIsLoading(false);
+      }, TIMEOUT_MS);
+
       try {
         const { data, error } = await supabase
           .from('profiles')
@@ -43,6 +49,7 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
         if (err.name === 'AbortError') return;
         console.error('Unexpected error in fetchProfile:', err);
       } finally {
+        clearTimeout(timeoutId);
         if (!signal.aborted) {
           setIsLoading(false);
         }
@@ -58,8 +65,11 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
 
         const id = session?.user?.id || null;
         setUserId(id);
+
         if (id) {
-          await fetchProfile(id, controller.signal);
+          // 세션이 확인되면 일단 로딩 종료하여 버튼 노출 (상세 상태는 백그라운드 로드)
+          setIsLoading(false);
+          await fetchProfileData(id, controller.signal);
         } else {
           setIsLoading(false);
         }
@@ -79,7 +89,7 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
       setUserId(id);
       if (id) {
         setIsLoading(true);
-        await fetchProfile(id, controller.signal);
+        await fetchProfileData(id, controller.signal);
       } else {
         setProfile(null);
         setIsLoading(false);
