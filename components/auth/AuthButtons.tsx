@@ -116,12 +116,6 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
     };
   }, [supabase, profile]); // profile is needed for the logic in onAuthStateChange
 
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    setUserId(null);
-    setProfile(null);
-  };
-
   const wrapperClassName =
     layout === 'stacked'
       ? `flex flex-col gap-3 w-full ${className}`
@@ -173,17 +167,6 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
       >
         {dashboardLink.label}
       </Button>
-      <button
-        onClick={handleSignOut}
-        className={
-          layout === 'stacked'
-            ? 'w-full min-h-[44px] rounded-lg border border-gray-200 text-sm font-medium text-red-600 hover:text-red-700 hover:border-red-200 transition-colors'
-            : 'text-sm font-medium text-red-600 hover:text-red-700 transition-colors px-2'
-        }
-        type="button"
-      >
-        로그아웃
-      </button>
     </div>
   );
 }
