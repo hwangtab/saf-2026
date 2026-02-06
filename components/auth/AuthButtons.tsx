@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import Button from '@/components/ui/Button';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
 import { UI_STRINGS } from '@/lib/ui-strings';
@@ -16,7 +16,9 @@ type AuthButtonsProps = {
 };
 
 export default function AuthButtons({ layout = 'inline', className = '' }: AuthButtonsProps) {
-  const supabase = createSupabaseBrowserClient();
+  // Memoize client to ensure it's stable across renders
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
+
   const [isLoading, setIsLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -26,8 +28,9 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
     const controller = new AbortController();
     const TIMEOUT_MS = 3000;
 
-    const fetchProfileData = async (id: string, signal: AbortSignal) => {
-      // 타임아웃 설정: 3초 후 강제 로딩 종료
+    const fetchProfileData = async (id: string, signal: AbortSignal, showLoading = false) => {
+      if (showLoading) setIsLoading(true);
+
       const timeoutId = setTimeout(() => {
         if (isMounted) setIsLoading(false);
       }, TIMEOUT_MS);
@@ -39,7 +42,7 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
           .eq('id', id)
           .single();
 
-        if (signal.aborted) return;
+        if (signal.aborted || !isMounted) return;
 
         if (error) {
           console.warn('Profile fetch error:', error.message);
@@ -50,7 +53,7 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
         console.error('Unexpected error in fetchProfile:', err);
       } finally {
         clearTimeout(timeoutId);
-        if (!signal.aborted) {
+        if (isMounted && !signal.aborted) {
           setIsLoading(false);
         }
       }
@@ -61,39 +64,49 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
         const {
           data: { session },
         } = await supabase.auth.getSession();
+
         if (!isMounted) return;
 
-        const id = session?.user?.id || null;
-        setUserId(id);
+        const currentId = session?.user?.id || null;
+        setUserId(currentId);
 
-        if (id) {
-          // 세션이 확인되면 일단 로딩 종료하여 버튼 노출 (상세 상태는 백그라운드 로드)
+        if (currentId) {
+          // 세션 확인됨 -> 즉시 버튼을 보여주기 위해 로딩 종료 (상세 프로필은 백그라운드)
           setIsLoading(false);
-          await fetchProfileData(id, controller.signal);
+          await fetchProfileData(currentId, controller.signal);
         } else {
           setIsLoading(false);
         }
       } catch (err: any) {
         if (err.name === 'AbortError') return;
-        console.error('Auth check error:', err);
-        setIsLoading(false);
+        console.error('Auth init error:', err);
+        if (isMounted) setIsLoading(false);
       }
     };
 
     init();
 
     const { data: authListener } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      const id = session?.user?.id || null;
       if (!isMounted) return;
 
-      setUserId(id);
-      if (id) {
-        setIsLoading(true);
-        await fetchProfileData(id, controller.signal);
-      } else {
-        setProfile(null);
-        setIsLoading(false);
-      }
+      const newId = session?.user?.id || null;
+
+      // 유저가 실제로 바뀐 경우에만 로딩 상태를 트리거
+      // (단순 토큰 갱신 시에는 버튼이 깜빡이지 않도록 함)
+      setUserId((prevId) => {
+        if (prevId !== newId) {
+          if (newId) {
+            fetchProfileData(newId, controller.signal, true);
+          } else {
+            setProfile(null);
+            setIsLoading(false);
+          }
+        } else if (newId && !profile) {
+          // 아이디는 같으나 프로필 정보가 없는 경우 백그라운드 재시도
+          fetchProfileData(newId, controller.signal, false);
+        }
+        return newId;
+      });
     });
 
     return () => {
@@ -101,7 +114,7 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
       controller.abort();
       authListener.subscription.unsubscribe();
     };
-  }, [supabase]);
+  }, [supabase, profile]); // profile is needed for the logic in onAuthStateChange
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
