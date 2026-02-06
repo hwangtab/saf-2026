@@ -297,7 +297,7 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
         <form
           key={artwork.id}
           action={updateAdminArtwork.bind(null, artwork.id)}
-          className="bg-white shadow-sm rounded-lg p-6 space-y-4"
+          className="bg-white shadow-sm rounded-lg p-4"
         >
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-4">
@@ -349,27 +349,26 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-6 text-sm">
-            <label className="flex items-center gap-2">
-              <span className="text-gray-600">상태</span>
-              <select
-                name="status"
-                defaultValue={artwork.status}
-                className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
-              >
-                <option value="available">판매 중</option>
-                <option value="reserved">예약됨</option>
-                <option value="sold">판매 완료</option>
-              </select>
-            </label>
-            <label className="flex items-center gap-2">
-              <input type="checkbox" name="is_hidden" defaultChecked={artwork.is_hidden} />
-              <span className="text-gray-600">숨김</span>
-            </label>
-          </div>
-
-          <div className="flex justify-end">
-            <Button type="submit" variant="secondary" disabled={batchProcessing}>
+          <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+            <div className="flex items-center gap-4 text-sm">
+              <label className="flex items-center gap-2">
+                <span className="text-gray-600">상태</span>
+                <select
+                  name="status"
+                  defaultValue={artwork.status}
+                  className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
+                >
+                  <option value="available">판매 중</option>
+                  <option value="reserved">예약됨</option>
+                  <option value="sold">판매 완료</option>
+                </select>
+              </label>
+              <label className="flex items-center gap-2">
+                <input type="checkbox" name="is_hidden" defaultChecked={artwork.is_hidden} />
+                <span className="text-gray-600">숨김</span>
+              </label>
+            </div>
+            <Button type="submit" variant="secondary" size="sm" disabled={batchProcessing}>
               저장
             </Button>
           </div>
