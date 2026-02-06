@@ -24,6 +24,7 @@ export const UI_STRINGS = {
     DONATE: '조합원 가입',
     BUY_ART: '작품 구매',
     ORDER_STATUS: '주문/배송 조회',
+    ARTIST_MENU: '아티스트 메뉴',
   },
   FOOTER: {
     LINKS: '링크',

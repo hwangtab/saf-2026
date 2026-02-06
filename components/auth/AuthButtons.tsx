@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Button from '@/components/ui/Button';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
+import { UI_STRINGS } from '@/lib/ui-strings';
 
 type Profile = {
   role: 'admin' | 'artist' | 'user';
@@ -112,7 +113,7 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
           variant="white"
           className={layout === 'stacked' ? 'w-full justify-center' : ''}
         >
-          로그인
+          {UI_STRINGS.NAV.ARTIST_MENU}
         </Button>
       </div>
     );
