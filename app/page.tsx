@@ -121,10 +121,6 @@ export default async function Home() {
             </Button>
           </div>
 
-          <p className="text-sm text-white/70 drop-shadow-lg mb-8">
-            <span aria-hidden="true">📌</span> 오프라인 전시는 종료되었습니다
-            <br className="md:hidden" /> (온라인 상시 관람 가능)
-          </p>
           <div className="flex justify-center">
             <ShareButtons
               url={SITE_URL}
