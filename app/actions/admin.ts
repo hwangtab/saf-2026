@@ -1,6 +1,6 @@
 'use server';
 
-import { createSupabaseServerClient } from '@/lib/auth/server';
+import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { requireAdmin } from '@/lib/auth/guards';
 import { revalidatePath } from 'next/cache';
 import { logAdminAction } from './admin-logs';
@@ -13,7 +13,7 @@ export type AdminActionState = {
 export async function approveUser(userId: string): Promise<AdminActionState> {
   try {
     await requireAdmin();
-    const supabase = await createSupabaseServerClient();
+    const supabase = createSupabaseAdminClient();
 
     const { data: application } = await supabase
       .from('artist_applications')
@@ -94,7 +94,7 @@ export async function approveUser(userId: string): Promise<AdminActionState> {
 export async function rejectUser(userId: string): Promise<AdminActionState> {
   try {
     await requireAdmin();
-    const supabase = await createSupabaseServerClient();
+    const supabase = createSupabaseAdminClient();
 
     // Update status to suspended or just delete?
     // Let's set to suspended for now so we have a record, or delete if it's spam.
@@ -132,7 +132,7 @@ export async function updateUserRole(
       return { message: '본인의 관리자 권한은 해제할 수 없습니다.', error: true };
     }
 
-    const supabase = await createSupabaseServerClient();
+    const supabase = createSupabaseAdminClient();
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('name')
