@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import { createFaq, updateFaq, deleteFaq } from '@/app/actions/admin-content';
 import { AdminCard } from '@/app/admin/_components/admin-ui';
@@ -15,6 +16,7 @@ type FaqItem = {
 const normalize = (value: string) => value.toLowerCase().replace(/\s+/g, '');
 
 export function FaqManager({ faqs }: { faqs: FaqItem[] }) {
+  const router = useRouter();
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
 
@@ -23,6 +25,10 @@ export function FaqManager({ faqs }: { faqs: FaqItem[] }) {
     setProcessingId(id);
     try {
       await deleteFaq(id);
+      router.refresh();
+    } catch (err: unknown) {
+      console.error('삭제 중 오류:', err);
+      alert(err instanceof Error ? err.message : '삭제 중 오류가 발생했습니다.');
     } finally {
       setProcessingId(null);
     }

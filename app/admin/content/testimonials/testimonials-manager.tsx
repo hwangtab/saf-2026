@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import {
   createTestimonial,
@@ -21,6 +22,7 @@ type TestimonialItem = {
 const normalize = (value: string) => value.toLowerCase().replace(/\s+/g, '');
 
 export function TestimonialsManager({ testimonials }: { testimonials: TestimonialItem[] }) {
+  const router = useRouter();
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
 
@@ -29,6 +31,10 @@ export function TestimonialsManager({ testimonials }: { testimonials: Testimonia
     setProcessingId(id);
     try {
       await deleteTestimonial(id);
+      router.refresh();
+    } catch (err: unknown) {
+      console.error('삭제 중 오류:', err);
+      alert(err instanceof Error ? err.message : '삭제 중 오류가 발생했습니다.');
     } finally {
       setProcessingId(null);
     }

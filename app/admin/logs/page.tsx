@@ -9,7 +9,8 @@ type Props = {
 export default async function AdminLogsPage({ searchParams }: Props) {
   await requireAdmin();
   const params = await searchParams;
-  const page = parseInt(params.page || '1', 10);
+  const pageParam = Number(params.page);
+  const page = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1;
   const limit = 50;
 
   const { logs, total } = await getAdminLogs(page, limit);
