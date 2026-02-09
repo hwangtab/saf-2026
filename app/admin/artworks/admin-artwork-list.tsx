@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   deleteAdminArtwork,
-  updateAdminArtwork,
   batchUpdateArtworkStatus,
   batchToggleHidden,
   batchDeleteArtworks,
