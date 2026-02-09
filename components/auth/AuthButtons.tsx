@@ -22,6 +22,7 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
   const [isLoading, setIsLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const userIdRef = useRef<string | null>(null);
   const profileRef = useRef<Profile | null>(null);
 
   useEffect(() => {
@@ -68,6 +69,11 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
         if (error) {
           console.warn('Profile fetch error:', error.message);
         }
+
+        if (id !== userIdRef.current) {
+          return;
+        }
+
         setProfile(isProfile(data) ? data : null);
       } catch (err: unknown) {
         if (isAbortError(err)) return;
@@ -89,6 +95,7 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
         if (!isMounted) return;
 
         const currentId = session?.user?.id || null;
+        userIdRef.current = currentId;
         setUserId(currentId);
 
         if (currentId) {
@@ -111,6 +118,7 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
       if (!isMounted) return;
 
       const newId = session?.user?.id || null;
+      userIdRef.current = newId;
 
       // 유저가 실제로 바뀐 경우에만 로딩 상태를 트리거
       // (단순 토큰 갱신 시에는 버튼이 깜빡이지 않도록 함)
@@ -119,6 +127,7 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
           if (newId) {
             fetchProfileData(newId, controller.signal, true);
           } else {
+            userIdRef.current = null;
             setProfile(null);
             setIsLoading(false);
           }

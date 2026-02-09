@@ -1,6 +1,6 @@
 import { requireArtistActive } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
-import { redirect, notFound } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { ArtworkForm } from '../../artwork-form';
 
 export default async function EditArtworkPage({ params }: { params: Promise<{ id: string }> }) {
@@ -15,7 +15,7 @@ export default async function EditArtworkPage({ params }: { params: Promise<{ id
     .single();
 
   if (!artist) {
-    redirect('/login');
+    notFound();
   }
 
   // Fetch artwork ensuring it belongs to this artist

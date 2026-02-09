@@ -1,6 +1,6 @@
 import { requireArtistActive } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
-import { redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { ArtworkForm } from '../artwork-form';
 
 export default async function NewArtworkPage() {
@@ -15,7 +15,7 @@ export default async function NewArtworkPage() {
     .single();
 
   if (!artist) {
-    redirect('/login');
+    notFound();
   }
 
   return (
