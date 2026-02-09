@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import { updateArtist, updateArtistProfileImage } from '@/app/actions/admin-artists';
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
+import { AdminCard } from '@/app/admin/_components/admin-ui';
 
 type Artist = {
   id: string;
@@ -82,7 +83,7 @@ export function ArtistEditForm({ artist }: ArtistEditFormProps) {
       )}
 
       {/* Profile Image Section */}
-      <div className="bg-white shadow-sm rounded-lg p-6">
+      <AdminCard className="p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
           프로필 이미지
           {savingImage && <span className="ml-2 text-sm text-gray-500">저장 중...</span>}
@@ -95,10 +96,13 @@ export function ArtistEditForm({ artist }: ArtistEditFormProps) {
           onUploadComplete={handleImageChange}
           maxFiles={1}
         />
-      </div>
+      </AdminCard>
 
       {/* Details Section */}
-      <form action={handleSubmit} className="bg-white shadow-sm rounded-lg p-6 space-y-6">
+      <form
+        action={handleSubmit}
+        className="space-y-6 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface)] p-6 shadow-sm"
+      >
         <h2 className="text-lg font-semibold text-gray-900">작가 정보</h2>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">

@@ -18,8 +18,8 @@ export default async function AdminLogsPage({ searchParams }: Props) {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">활동 로그</h1>
-        <p className="text-sm text-gray-500 mt-1">관리자 활동 기록을 확인합니다.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900">활동 로그</h1>
+        <p className="mt-2 text-sm text-slate-500">관리자 활동 기록을 확인합니다.</p>
       </div>
       <LogsList logs={logs} currentPage={page} totalPages={totalPages} total={total} />
     </div>

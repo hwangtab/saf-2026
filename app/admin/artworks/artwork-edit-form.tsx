@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import { updateArtworkDetails, updateArtworkImages } from '@/app/actions/admin-artworks';
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
+import { AdminCard, AdminSelect } from '@/app/admin/_components/admin-ui';
 
 type Artist = {
   id: string;
@@ -89,7 +90,7 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
       )}
 
       {/* Image Section */}
-      <div className="bg-white shadow-sm rounded-lg p-6">
+      <AdminCard className="p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
           작품 이미지
           {savingImages && <span className="ml-2 text-sm text-gray-500">저장 중...</span>}
@@ -102,10 +103,13 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
           onUploadComplete={handleImagesChange}
           maxFiles={10}
         />
-      </div>
+      </AdminCard>
 
       {/* Details Section */}
-      <form action={handleSubmit} className="bg-white shadow-sm rounded-lg p-6 space-y-6">
+      <form
+        action={handleSubmit}
+        className="space-y-6 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface)] p-6 shadow-sm"
+      >
         <h2 className="text-lg font-semibold text-gray-900">작품 정보</h2>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -123,10 +127,11 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">작가</label>
-            <select
+            <AdminSelect
               name="artist_id"
               defaultValue={artwork.artist_id || ''}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
+              className="px-3 py-2 pr-9"
+              iconClassName="right-3"
             >
               <option value="">작가 선택...</option>
               {artists.map((artist) => (
@@ -134,7 +139,7 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
                   {artist.name_ko || '(이름 없음)'}
                 </option>
               ))}
-            </select>
+            </AdminSelect>
           </div>
 
           <div>

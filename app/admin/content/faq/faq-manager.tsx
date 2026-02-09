@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Button from '@/components/ui/Button';
 import { createFaq, updateFaq, deleteFaq } from '@/app/actions/admin-content';
+import { AdminCard } from '@/app/admin/_components/admin-ui';
 
 type FaqItem = {
   id: string;
@@ -29,7 +30,7 @@ export function FaqManager({ faqs }: { faqs: FaqItem[] }) {
 
   return (
     <div className="space-y-8">
-      <section className="bg-white shadow-sm rounded-lg p-6">
+      <AdminCard className="p-6">
         <h2 className="text-lg font-medium text-gray-900">FAQ 추가</h2>
         <form action={createFaq} className="mt-4 grid grid-cols-1 gap-4">
           <input
@@ -57,17 +58,17 @@ export function FaqManager({ faqs }: { faqs: FaqItem[] }) {
             </Button>
           </div>
         </form>
-      </section>
+      </AdminCard>
 
       <section className="space-y-4">
-        <div className="bg-white shadow-sm rounded-lg p-4">
+        <AdminCard className="p-4">
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="검색: 질문/답변"
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
           />
-        </div>
+        </AdminCard>
         {faqs
           .filter((item) => {
             if (!query) return true;
@@ -78,7 +79,7 @@ export function FaqManager({ faqs }: { faqs: FaqItem[] }) {
             <form
               key={item.id}
               action={updateFaq.bind(null, item.id)}
-              className="bg-white shadow-sm rounded-lg p-6 space-y-4"
+              className="space-y-4 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface)] p-6 shadow-sm"
             >
               <div className="flex items-center justify-between gap-4">
                 <div className="text-sm text-gray-500 break-all">ID: {item.id}</div>

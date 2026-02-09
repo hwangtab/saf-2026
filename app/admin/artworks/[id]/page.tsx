@@ -32,8 +32,8 @@ export default async function AdminArtworkDetailPage({ params }: Props) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">작품 수정</h1>
-          <p className="text-sm text-gray-500 mt-2">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">작품 수정</h1>
+          <p className="mt-2 text-sm text-slate-500">
             {normalizedArtwork.artists?.name_ko || '알 수 없음'} - {artwork.title}
           </p>
         </div>

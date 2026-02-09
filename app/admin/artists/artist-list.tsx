@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { deleteArtist } from '@/app/actions/admin-artists';
+import { AdminCard, AdminCardHeader } from '@/app/admin/_components/admin-ui';
 
 type ArtistItem = {
   id: string;
@@ -74,9 +75,9 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
         </div>
       )}
 
-      <div className="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
+      <AdminCard className="overflow-hidden">
         {/* 통합 헤더 및 툴바 */}
-        <div className="p-6 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white">
+        <AdminCardHeader>
           <div className="flex items-center gap-3">
             <h2 className="text-lg font-semibold text-gray-900">작가 목록</h2>
             <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
@@ -107,7 +108,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
               className="block w-full rounded-md border-0 py-2 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 transition-shadow"
             />
           </div>
-        </div>
+        </AdminCardHeader>
 
         {/* 테이블 영역 */}
         <div className="overflow-x-auto">
@@ -225,7 +226,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
             </tbody>
           </table>
         </div>
-      </div>
+      </AdminCard>
     </div>
   );
 }

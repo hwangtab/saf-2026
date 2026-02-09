@@ -25,8 +25,8 @@ export default async function AdminArtistDetailPage({ params }: Props) {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">작가 정보 수정</h1>
-        <p className="text-sm text-gray-500 mt-2">{artist.name_ko || '(이름 없음)'}</p>
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900">작가 정보 수정</h1>
+        <p className="mt-2 text-sm text-slate-500">{artist.name_ko || '(이름 없음)'}</p>
       </div>
       <ArtistEditForm artist={artist} />
     </div>

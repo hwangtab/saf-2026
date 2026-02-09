@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Button from '@/components/ui/Button';
 import { createNews, updateNews, deleteNews } from '@/app/actions/admin-content';
+import { AdminCard } from '@/app/admin/_components/admin-ui';
 
 type NewsItem = {
   id: string;
@@ -37,7 +38,7 @@ export function NewsManager({ news }: { news: NewsItem[] }) {
 
   return (
     <div className="space-y-8">
-      <section className="bg-white shadow-sm rounded-lg p-6">
+      <AdminCard className="p-6">
         <h2 className="text-lg font-medium text-gray-900">뉴스 추가</h2>
         <form action={createNews} className="mt-4 grid grid-cols-1 gap-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -82,17 +83,17 @@ export function NewsManager({ news }: { news: NewsItem[] }) {
             </Button>
           </div>
         </form>
-      </section>
+      </AdminCard>
 
       <section className="space-y-4">
-        <div className="bg-white shadow-sm rounded-lg p-4">
+        <AdminCard className="p-4">
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="검색: 제목/출처"
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
           />
-        </div>
+        </AdminCard>
         {news
           .filter((item) => {
             if (!query) return true;
@@ -103,7 +104,7 @@ export function NewsManager({ news }: { news: NewsItem[] }) {
             <form
               key={item.id}
               action={updateNews.bind(null, item.id)}
-              className="bg-white shadow-sm rounded-lg p-6 space-y-4"
+              className="space-y-4 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface)] p-6 shadow-sm"
             >
               <div className="flex items-center justify-between gap-4">
                 <div className="text-sm text-gray-500 break-all">ID: {item.id}</div>

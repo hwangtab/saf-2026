@@ -7,15 +7,16 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   await requireAdmin();
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white border-b border-gray-200 fixed w-full z-30 top-0 left-0">
+    <div className="min-h-screen bg-[var(--admin-bg)]">
+      <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top,#e0e7ff_0%,#f8fafc_38%,#f1f5f9_100%)]" />
+      <nav className="fixed left-0 top-0 z-30 w-full border-b border-slate-200/90 bg-white/90 backdrop-blur">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               {/* Mobile Menu Button */}
               <AdminMobileNav />
               <div className="flex-shrink-0 flex items-center ml-2 sm:ml-0">
-                <Link href="/admin/users" className="text-xl font-bold text-indigo-600">
+                <Link href="/admin/users" className="text-xl font-bold text-slate-900">
                   SAF Admin
                 </Link>
               </div>
@@ -60,14 +61,18 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               </div>
             </div>
             <div className="hidden sm:flex items-center">
-              <span className="text-sm text-gray-500 mr-4">관리자 모드</span>
+              <span className="mr-4 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-600/20">
+                관리자 모드
+              </span>
               <SignOutButton />
             </div>
           </div>
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 mt-16">{children}</main>
+      <main className="mx-auto mt-16 max-w-7xl px-4 pb-16 pt-8 sm:px-6 lg:px-8 lg:pb-20">
+        {children}
+      </main>
     </div>
   );
 }

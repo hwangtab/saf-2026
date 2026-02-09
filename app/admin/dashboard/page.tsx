@@ -1,6 +1,7 @@
 import { requireAdmin } from '@/lib/auth/guards';
 import { getDashboardStats } from '@/app/actions/admin-dashboard';
 import Link from 'next/link';
+import { AdminCard, AdminCardHeader } from '@/app/admin/_components/admin-ui';
 
 function StatCard({
   title,
@@ -14,21 +15,18 @@ function StatCard({
   href?: string;
 }) {
   const content = (
-    <div className="bg-white shadow-sm rounded-lg p-6 border border-gray-200 h-full flex flex-col justify-between">
+    <AdminCard className="flex h-full flex-col justify-between p-6 transition-all duration-200">
       <div>
-        <p className="text-sm font-medium text-gray-500">{title}</p>
-        <p className="text-3xl font-bold text-gray-900 mt-2">{value}</p>
+        <p className="text-sm font-medium text-slate-500">{title}</p>
+        <p className="mt-2 text-3xl font-bold tracking-tight text-slate-900">{value}</p>
       </div>
-      {subtitle && <p className="text-sm text-gray-500 mt-1">{subtitle}</p>}
-    </div>
+      {subtitle && <p className="mt-2 text-sm text-slate-500">{subtitle}</p>}
+    </AdminCard>
   );
 
   if (href) {
     return (
-      <Link
-        href={href}
-        className="block hover:ring-2 hover:ring-indigo-500 hover:ring-offset-2 rounded-lg transition-all hover:shadow-md"
-      >
+      <Link href={href} className="block rounded-2xl hover:-translate-y-0.5 hover:shadow-md">
         {content}
       </Link>
     );
@@ -54,13 +52,13 @@ export default async function AdminDashboardPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">대시보드</h1>
-        <p className="text-sm text-gray-500 mt-2">SAF 2026 관리자 현황을 한눈에 확인합니다.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900">대시보드</h1>
+        <p className="mt-2 text-sm text-slate-500">SAF 2026 관리자 현황을 한눈에 확인합니다.</p>
       </div>
 
       {/* 작가 현황 */}
       <section>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+        <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-900">
           작가 현황
         </h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -77,7 +75,7 @@ export default async function AdminDashboardPage() {
 
       {/* 작품 현황 */}
       <section>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">작품 현황</h2>
+        <h2 className="mb-4 text-lg font-semibold text-slate-900">작품 현황</h2>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           <StatCard title="전체 작품" value={stats.artworks.total} href="/admin/artworks" />
           <StatCard title="판매 중" value={stats.artworks.available} />
@@ -88,7 +86,7 @@ export default async function AdminDashboardPage() {
 
         {/* 판매 현황 바 차트 */}
         {stats.artworks.total > 0 && (
-          <div className="mt-4 bg-white shadow-sm rounded-lg p-6 border border-gray-200">
+          <AdminCard className="mt-4 p-6">
             <div className="flex justify-between items-end mb-3">
               <p className="text-sm font-medium text-gray-900">판매 현황 비율</p>
               <span className="text-xs text-gray-500">전체 {stats.artworks.total}점 중</span>
@@ -134,23 +132,23 @@ export default async function AdminDashboardPage() {
                 판매 완료 ({stats.artworks.sold})
               </span>
             </div>
-          </div>
+          </AdminCard>
         )}
       </section>
 
       {/* 최근 활동 */}
       <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* 최근 가입 신청 */}
-        <div className="bg-white shadow-sm rounded-lg border border-gray-200 flex flex-col">
-          <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50 rounded-t-lg">
-            <h2 className="text-base font-semibold text-gray-900">최근 가입 신청</h2>
+        <AdminCard className="flex flex-col">
+          <AdminCardHeader className="rounded-t-2xl">
+            <h2 className="text-base font-semibold text-slate-900">최근 가입 신청</h2>
             <Link
               href="/admin/users"
               className="text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:underline"
             >
               전체 보기
             </Link>
-          </div>
+          </AdminCardHeader>
           <div className="p-0">
             {stats.recentApplications.length === 0 ? (
               <div className="p-8 text-center text-sm text-gray-500">
@@ -174,19 +172,19 @@ export default async function AdminDashboardPage() {
               </ul>
             )}
           </div>
-        </div>
+        </AdminCard>
 
         {/* 최근 등록된 작품 */}
-        <div className="bg-white shadow-sm rounded-lg border border-gray-200 flex flex-col">
-          <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50 rounded-t-lg">
-            <h2 className="text-base font-semibold text-gray-900">최근 등록된 작품</h2>
+        <AdminCard className="flex flex-col">
+          <AdminCardHeader className="rounded-t-2xl">
+            <h2 className="text-base font-semibold text-slate-900">최근 등록된 작품</h2>
             <Link
               href="/admin/artworks"
               className="text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:underline"
             >
               전체 보기
             </Link>
-          </div>
+          </AdminCardHeader>
           <div className="p-0">
             {stats.recentArtworks.length === 0 ? (
               <div className="p-8 text-center text-sm text-gray-500">등록된 작품이 없습니다.</div>
@@ -213,7 +211,7 @@ export default async function AdminDashboardPage() {
               </ul>
             )}
           </div>
-        </div>
+        </AdminCard>
       </section>
     </div>
   );

@@ -9,6 +9,7 @@ import {
   batchToggleHidden,
   batchDeleteArtworks,
 } from '@/app/actions/admin-artworks';
+import { AdminCard, AdminCardHeader, AdminSelect } from '@/app/admin/_components/admin-ui';
 
 type ArtworkItem = {
   id: string;
@@ -145,9 +146,9 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
+      <AdminCard className="overflow-hidden">
         {/* Header & Main Controls */}
-        <div className="p-6 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white">
+        <AdminCardHeader>
           <div className="flex items-center gap-3">
             <h2 className="text-lg font-semibold text-gray-900">작품 목록</h2>
             <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
@@ -165,34 +166,32 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
               />
             </div>
             <div className="flex gap-2">
-              <select
+              <AdminSelect
                 value={statusFilter}
                 onChange={(e) => {
                   setStatusFilter(e.target.value);
                   setSelectedIds(new Set());
                 }}
-                className="block rounded-md border-0 py-1.5 pl-3 pr-8 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
               >
                 <option value="all">모든 상태</option>
                 <option value="available">판매 중</option>
                 <option value="reserved">예약됨</option>
                 <option value="sold">판매 완료</option>
-              </select>
-              <select
+              </AdminSelect>
+              <AdminSelect
                 value={visibilityFilter}
                 onChange={(e) => {
                   setVisibilityFilter(e.target.value);
                   setSelectedIds(new Set());
                 }}
-                className="block rounded-md border-0 py-1.5 pl-3 pr-8 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
               >
                 <option value="all">모든 노출</option>
                 <option value="visible">공개</option>
                 <option value="hidden">숨김</option>
-              </select>
+              </AdminSelect>
             </div>
           </div>
-        </div>
+        </AdminCardHeader>
 
         {/* Batch Actions Toolbar (Visible only when selected) */}
         {selectedInFiltered.length > 0 && (
@@ -202,19 +201,19 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
             </span>
             <div className="h-4 w-px bg-indigo-200"></div>
             <div className="flex items-center gap-2">
-              <select
+              <AdminSelect
                 onChange={(e) => {
                   if (e.target.value) handleBatchStatus(e.target.value);
                   e.target.value = '';
                 }}
                 disabled={batchProcessing}
-                className="rounded border-gray-300 text-sm py-1"
+                className="border-indigo-200 py-1 pl-2.5 pr-7"
               >
                 <option value="">상태 변경...</option>
                 <option value="available">판매 중</option>
                 <option value="reserved">예약됨</option>
                 <option value="sold">판매 완료</option>
-              </select>
+              </AdminSelect>
               <button
                 onClick={() => handleBatchHidden(true)}
                 disabled={batchProcessing}
@@ -356,22 +355,24 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <select
+                      <AdminSelect
+                        wrapperClassName="min-w-28"
+                        iconClassName="h-3.5 w-3.5"
                         value={artwork.status}
                         onChange={(e) => handleStatusChange(artwork.id, e.target.value)}
                         disabled={processingId === artwork.id}
-                        className={`block w-full rounded-md border-0 py-1 pl-2 text-xs font-medium ring-1 ring-inset focus:ring-2 focus:ring-indigo-600 ${
+                        className={`py-1 pl-2.5 pr-7 text-xs font-semibold ${
                           artwork.status === 'available'
-                            ? 'text-green-700 ring-green-600/20 bg-green-50'
+                            ? 'border-green-200 bg-green-50 text-green-700 focus:border-green-400'
                             : artwork.status === 'reserved'
-                              ? 'text-yellow-800 ring-yellow-600/20 bg-yellow-50'
-                              : 'text-blue-700 ring-blue-600/20 bg-blue-50'
+                              ? 'border-amber-200 bg-amber-50 text-amber-700 focus:border-amber-400'
+                              : 'border-sky-200 bg-sky-50 text-sky-700 focus:border-sky-400'
                         }`}
                       >
                         <option value="available">판매 중</option>
                         <option value="reserved">예약됨</option>
                         <option value="sold">판매 완료</option>
-                      </select>
+                      </AdminSelect>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <button
@@ -409,7 +410,7 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
             </tbody>
           </table>
         </div>
-      </div>
+      </AdminCard>
     </div>
   );
 }

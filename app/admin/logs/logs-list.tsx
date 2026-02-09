@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import type { AdminLogEntry } from '@/app/actions/admin-logs';
 import Button from '@/components/ui/Button';
+import { AdminCard } from '@/app/admin/_components/admin-ui';
 
 type LogsListProps = {
   logs: AdminLogEntry[];
@@ -99,7 +100,7 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
   if (logs.length === 0) {
     return (
       <div className="space-y-4">
-        <div className="bg-white shadow-sm rounded-lg p-8 text-center">
+        <AdminCard className="p-8 text-center">
           <svg
             className="mx-auto h-12 w-12 text-gray-400"
             fill="none"
@@ -115,7 +116,7 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
           </svg>
           <h3 className="mt-2 text-sm font-medium text-gray-900">활동 로그가 없습니다</h3>
           <p className="mt-1 text-sm text-gray-500">관리자 활동이 기록되면 여기에 표시됩니다.</p>
-        </div>
+        </AdminCard>
         <p className="text-sm text-gray-500">총 0개의 기록</p>
       </div>
     );
@@ -123,7 +124,7 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
 
   return (
     <div className="space-y-4">
-      <div className="bg-white shadow-sm rounded-lg overflow-x-auto">
+      <AdminCard className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -169,7 +170,7 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
             })}
           </tbody>
         </table>
-      </div>
+      </AdminCard>
 
       {/* Pagination */}
       <div className="flex items-center justify-between">

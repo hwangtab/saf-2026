@@ -46,6 +46,11 @@
   --color-charcoal: #31393c;
   --color-primary: #2176ff;
   --color-sun: #fdca40;
+  --admin-bg: #f4f7fc;
+  --admin-surface: #ffffff;
+  --admin-surface-muted: #f8fafc;
+  --admin-border: #dbe4ef;
+  --admin-border-soft: #e6edf5;
 }
 
 @tailwind base;

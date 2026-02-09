@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { approveUser, rejectUser, updateUserRole } from '@/app/actions/admin';
 import Modal from '@/components/ui/Modal';
+import { AdminCard, AdminCardHeader, AdminSelect } from '@/app/admin/_components/admin-ui';
 
 type Profile = {
   id: string;
@@ -63,9 +64,9 @@ export function UserList({ users }: { users: Profile[] }) {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
+      <AdminCard className="overflow-hidden">
         {/* Header & Search */}
-        <div className="p-6 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white">
+        <AdminCardHeader>
           <div className="flex items-center gap-3">
             <h2 className="text-lg font-semibold text-gray-900">사용자 목록</h2>
             <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
@@ -90,7 +91,7 @@ export function UserList({ users }: { users: Profile[] }) {
               className="block w-full rounded-md border-0 py-2 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
           </div>
-        </div>
+        </AdminCardHeader>
 
         {/* Table */}
         <div className="overflow-x-auto">
@@ -182,16 +183,18 @@ export function UserList({ users }: { users: Profile[] }) {
                               ? '대기'
                               : '정지'}
                         </span>
-                        <select
+                        <AdminSelect
+                          wrapperClassName="mt-1 w-28"
+                          className="py-1 pl-2 pr-7 text-xs font-medium"
+                          iconClassName="h-3.5 w-3.5"
                           value={user.role}
                           onChange={(e) => handleRoleChange(user.id, e.target.value)}
                           disabled={processingId === user.id}
-                          className="mt-1 block w-24 rounded-md border-0 py-1 pl-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-xs sm:leading-6"
                         >
                           <option value="user">User</option>
                           <option value="artist">Artist</option>
                           <option value="admin">Admin</option>
-                        </select>
+                        </AdminSelect>
                       </div>
                     </td>
                     <td className="hidden lg:table-cell px-6 py-4">
@@ -242,7 +245,7 @@ export function UserList({ users }: { users: Profile[] }) {
             </tbody>
           </table>
         </div>
-      </div>
+      </AdminCard>
 
       {/* Modal remains mostly the same, just keeping the import */}
       <Modal isOpen={!!selectedUser} onClose={() => setSelectedUser(null)} title="사용자 상세 정보">

@@ -22,7 +22,7 @@ export function AdminMobileNav() {
       {/* Hamburger Button */}
       <button
         type="button"
-        className="sm:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100"
+        className="inline-flex items-center justify-center rounded-md p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700 sm:hidden"
         onClick={() => setIsOpen(true)}
         aria-label="메뉴 열기"
         aria-expanded={isOpen}
@@ -40,7 +40,7 @@ export function AdminMobileNav() {
       {/* Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 sm:hidden"
+          className="fixed inset-0 z-40 bg-slate-950/35 backdrop-blur-[1px] sm:hidden"
           onClick={() => setIsOpen(false)}
           aria-hidden="true"
         />
@@ -55,11 +55,11 @@ export function AdminMobileNav() {
         aria-modal="true"
         aria-label="관리자 메뉴"
       >
-        <div className="flex items-center justify-between p-4 border-b">
-          <span className="text-lg font-bold text-indigo-600">SAF Admin</span>
+        <div className="flex items-center justify-between border-b border-slate-100 p-4">
+          <span className="text-lg font-bold text-slate-900">SAF Admin</span>
           <button
             type="button"
-            className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100"
+            className="rounded-md p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
             onClick={() => setIsOpen(false)}
             aria-label="메뉴 닫기"
           >
@@ -73,17 +73,17 @@ export function AdminMobileNav() {
             </svg>
           </button>
         </div>
-        <nav className="p-4 space-y-1">
+        <nav className="space-y-1 p-4">
           {navItems.map((item) => {
             const isActive = pathname.startsWith(item.href);
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`block px-3 py-2 rounded-md text-base font-medium ${
+                className={`block rounded-md px-3 py-2 text-base font-medium transition-colors ${
                   isActive
-                    ? 'bg-indigo-50 text-indigo-700'
-                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                    ? 'bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-600/20'
+                    : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
                 }`}
                 onClick={() => setIsOpen(false)}
               >
