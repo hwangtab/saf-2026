@@ -4,9 +4,21 @@ import { notFound } from 'next/navigation';
 import { ArtworkList } from './artwork-list';
 import Button from '@/components/ui/Button';
 
-export default async function ArtworksPage() {
+type ArtworksPageProps = {
+  searchParams?: {
+    result?: string;
+  };
+};
+
+export default async function ArtworksPage({ searchParams }: ArtworksPageProps) {
   const user = await requireArtistActive();
   const supabase = await createSupabaseServerClient();
+  const flashMessage =
+    searchParams?.result === 'updated'
+      ? '작품이 수정되었습니다.'
+      : searchParams?.result === 'created'
+        ? '작품이 등록되었습니다.'
+        : null;
 
   // Get artist id first (RLS requires it usually, or we query by artist_id found from user_id)
   const { data: artist } = await supabase
@@ -40,7 +52,7 @@ export default async function ArtworksPage() {
         </Button>
       </div>
 
-      <ArtworkList artworks={artworks || []} />
+      <ArtworkList artworks={artworks || []} flashMessage={flashMessage} />
     </div>
   );
 }

@@ -178,7 +178,7 @@ export async function createArtwork(
     return { message: error.message, error: true, cleanupUrls };
   }
 
-  redirect('/dashboard/artworks');
+  redirect('/dashboard/artworks?result=created');
 }
 
 export async function updateArtwork(
@@ -294,7 +294,7 @@ export async function updateArtwork(
     return { message: error.message, error: true, cleanupUrls };
   }
 
-  redirect('/dashboard/artworks');
+  redirect('/dashboard/artworks?result=updated');
 }
 
 export async function deleteArtwork(id: string): Promise<ActionState> {

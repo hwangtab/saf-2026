@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button';
 import { updateArtworkDetails, updateArtworkImages } from '@/app/actions/admin-artworks';
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
 import { AdminCard, AdminSelect } from '@/app/admin/_components/admin-ui';
+import { useToast } from '@/lib/hooks/useToast';
 
 type Artist = {
   id: string;
@@ -34,6 +35,7 @@ type ArtworkEditFormProps = {
 
 export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
   const router = useRouter();
+  const toast = useToast();
   const [saving, setSaving] = useState(false);
   const [savingImages, setSavingImages] = useState(false);
   const [images, setImages] = useState<string[]>(artwork.images || []);
@@ -44,9 +46,12 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
     setSaving(true);
     try {
       await updateArtworkDetails(artwork.id, formData);
+      toast.success('작품 정보가 저장되었습니다.');
       router.refresh();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : '저장 중 오류가 발생했습니다.');
+      const message = err instanceof Error ? err.message : '저장 중 오류가 발생했습니다.';
+      setError(message);
+      toast.error(message);
     } finally {
       setSaving(false);
     }
@@ -58,9 +63,12 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
     setSavingImages(true);
     try {
       await updateArtworkImages(artwork.id, newImages);
+      toast.success('작품 이미지가 저장되었습니다.');
       router.refresh();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : '이미지 저장 중 오류가 발생했습니다.');
+      const message = err instanceof Error ? err.message : '이미지 저장 중 오류가 발생했습니다.';
+      setError(message);
+      toast.error(message);
     } finally {
       setSavingImages(false);
     }

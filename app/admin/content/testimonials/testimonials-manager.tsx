@@ -9,6 +9,7 @@ import {
   deleteTestimonial,
 } from '@/app/actions/admin-content';
 import { AdminCard } from '@/app/admin/_components/admin-ui';
+import { useToast } from '@/lib/hooks/useToast';
 
 type TestimonialItem = {
   id: string;
@@ -23,6 +24,7 @@ const normalize = (value: string) => value.toLowerCase().replace(/\s+/g, '');
 
 export function TestimonialsManager({ testimonials }: { testimonials: TestimonialItem[] }) {
   const router = useRouter();
+  const toast = useToast();
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
 
@@ -31,10 +33,11 @@ export function TestimonialsManager({ testimonials }: { testimonials: Testimonia
     setProcessingId(id);
     try {
       await deleteTestimonial(id);
+      toast.success('추천사를 삭제했습니다.');
       router.refresh();
     } catch (err: unknown) {
       console.error('삭제 중 오류:', err);
-      alert(err instanceof Error ? err.message : '삭제 중 오류가 발생했습니다.');
+      toast.error(err instanceof Error ? err.message : '삭제 중 오류가 발생했습니다.');
     } finally {
       setProcessingId(null);
     }

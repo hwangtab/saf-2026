@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { approveUser, rejectUser, updateUserRole } from '@/app/actions/admin';
 import Modal from '@/components/ui/Modal';
 import { AdminCard, AdminCardHeader, AdminSelect } from '@/app/admin/_components/admin-ui';
+import { useToast } from '@/lib/hooks/useToast';
 
 type Profile = {
   id: string;
@@ -27,6 +28,7 @@ export function UserList({ users }: { users: Profile[] }) {
   const [query, setQuery] = useState('');
   const [selectedUser, setSelectedUser] = useState<Profile | null>(null);
   const router = useRouter();
+  const toast = useToast();
 
   const normalize = (value: string) => value.toLowerCase().replace(/\s+/g, '');
   const filteredUsers = users.filter((user) => {
@@ -40,8 +42,12 @@ export function UserList({ users }: { users: Profile[] }) {
     setProcessingId(id);
     const res = await approveUser(id);
     setProcessingId(null);
-    if (res.error) alert(res.message);
-    else router.refresh();
+    if (res.error) {
+      toast.error(res.message);
+    } else {
+      toast.success('사용자를 승인했습니다.');
+      router.refresh();
+    }
   };
 
   const handleReject = async (id: string) => {
@@ -49,8 +55,12 @@ export function UserList({ users }: { users: Profile[] }) {
     setProcessingId(id);
     const res = await rejectUser(id);
     setProcessingId(null);
-    if (res.error) alert(res.message);
-    else router.refresh();
+    if (res.error) {
+      toast.error(res.message);
+    } else {
+      toast.success('사용자 상태를 변경했습니다.');
+      router.refresh();
+    }
   };
 
   const handleRoleChange = async (id: string, newRole: string) => {
@@ -58,8 +68,12 @@ export function UserList({ users }: { users: Profile[] }) {
     setProcessingId(id);
     const res = await updateUserRole(id, newRole as Profile['role']);
     setProcessingId(null);
-    if (res.error) alert(res.message);
-    else router.refresh();
+    if (res.error) {
+      toast.error(res.message);
+    } else {
+      toast.success(`권한을 ${newRole}로 변경했습니다.`);
+      router.refresh();
+    }
   };
 
   return (

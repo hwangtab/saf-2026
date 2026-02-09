@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { deleteArtwork } from '@/app/actions/artwork';
 import Button from '@/components/ui/Button';
 import { ExternalLinkIcon } from '@/components/ui/Icons';
 import { useRouter } from 'next/navigation';
+import { useToast } from '@/lib/hooks/useToast';
 
 type Artwork = {
   id: string;
@@ -17,9 +18,22 @@ type Artwork = {
   created_at: string;
 };
 
-export function ArtworkList({ artworks }: { artworks: Artwork[] }) {
+export function ArtworkList({
+  artworks,
+  flashMessage,
+}: {
+  artworks: Artwork[];
+  flashMessage?: string | null;
+}) {
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const router = useRouter();
+  const toast = useToast();
+
+  useEffect(() => {
+    if (!flashMessage) return;
+    toast.success(flashMessage);
+    router.replace('/dashboard/artworks');
+  }, [flashMessage, router, toast]);
 
   const handleDelete = async (id: string) => {
     if (!confirm('정말 이 작품을 삭제하시겠습니까? 복구할 수 없습니다.')) return;
@@ -29,8 +43,9 @@ export function ArtworkList({ artworks }: { artworks: Artwork[] }) {
     setIsDeleting(null);
 
     if (result.error) {
-      alert(result.message);
+      toast.error(result.message);
     } else {
+      toast.success('작품이 삭제되었습니다.');
       router.refresh();
     }
   };

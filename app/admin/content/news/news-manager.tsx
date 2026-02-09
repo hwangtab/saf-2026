@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import { createNews, updateNews, deleteNews } from '@/app/actions/admin-content';
 import { AdminCard } from '@/app/admin/_components/admin-ui';
+import { useToast } from '@/lib/hooks/useToast';
 
 type NewsItem = {
   id: string;
@@ -25,6 +26,7 @@ const normalize = (value: string) => value.toLowerCase().replace(/\s+/g, '');
 
 export function NewsManager({ news }: { news: NewsItem[] }) {
   const router = useRouter();
+  const toast = useToast();
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
 
@@ -33,10 +35,11 @@ export function NewsManager({ news }: { news: NewsItem[] }) {
     setProcessingId(id);
     try {
       await deleteNews(id);
+      toast.success('뉴스를 삭제했습니다.');
       router.refresh();
     } catch (err: unknown) {
       console.error('삭제 중 오류:', err);
-      alert(err instanceof Error ? err.message : '삭제 중 오류가 발생했습니다.');
+      toast.error(err instanceof Error ? err.message : '삭제 중 오류가 발생했습니다.');
     } finally {
       setProcessingId(null);
     }
