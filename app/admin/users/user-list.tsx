@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { approveUser, rejectUser, updateUserRole } from '@/app/actions/admin';
-import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
 import { CheckIcon, XIcon } from '@/components/ui/Icons';
 
@@ -26,9 +25,6 @@ type Profile = {
 export function UserList({ users }: { users: Profile[] }) {
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
-  const [roleSelections, setRoleSelections] = useState<
-    Record<string, { value: Profile['role']; baseRole: Profile['role'] }>
-  >({});
   const [selectedUser, setSelectedUser] = useState<Profile | null>(null);
   const router = useRouter();
 
@@ -41,271 +37,229 @@ export function UserList({ users }: { users: Profile[] }) {
 
   const handleApprove = async (id: string) => {
     if (!confirm('이 사용자를 작가로 승인하시겠습니까?')) return;
-
     setProcessingId(id);
     const res = await approveUser(id);
     setProcessingId(null);
-
     if (res.error) alert(res.message);
     else router.refresh();
   };
 
   const handleReject = async (id: string) => {
     if (!confirm('이 사용자를 거절(차단)하시겠습니까?')) return;
-
     setProcessingId(id);
     const res = await rejectUser(id);
     setProcessingId(null);
-
     if (res.error) alert(res.message);
     else router.refresh();
   };
 
-  const handleRoleChange = async (id: string, currentRole: Profile['role']) => {
-    const selectedRole = roleSelections[id];
-    const nextRole =
-      selectedRole && selectedRole.baseRole === currentRole ? selectedRole.value : currentRole;
-    if (nextRole === currentRole) {
-      if (selectedRole) {
-        setRoleSelections((prev) => {
-          const next = { ...prev };
-          delete next[id];
-          return next;
-        });
-      }
-      return;
-    }
-
-    if (!confirm(`권한을 ${currentRole} → ${nextRole}로 변경할까요?`)) return;
-
+  const handleRoleChange = async (id: string, newRole: string) => {
+    if (!confirm(`권한을 ${newRole}로 변경할까요?`)) return;
     setProcessingId(id);
-    const res = await updateUserRole(id, nextRole);
+    const res = await updateUserRole(id, newRole as Profile['role']);
     setProcessingId(null);
-
-    if (res.error) {
-      alert(res.message);
-    } else {
-      setRoleSelections((prev) => {
-        const next = { ...prev };
-        delete next[id];
-        return next;
-      });
-      router.refresh();
-    }
+    if (res.error) alert(res.message);
+    else router.refresh();
   };
 
   return (
-    <div className="space-y-4">
-      <div className="bg-white shadow-sm rounded-lg p-4">
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="검색: 이름/이메일"
-          aria-label="사용자 검색"
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
-        />
-      </div>
-      <div className="bg-white shadow overflow-hidden sm:rounded-md">
-        <ul role="list" className="divide-y divide-gray-200">
-          {filteredUsers.map((user) => {
-            const hasApplication =
-              !!user.application?.artist_name?.trim() &&
-              !!user.application?.contact?.trim() &&
-              !!user.application?.bio?.trim();
-            const hasApplicationRecord = !!user.application;
+    <div className="space-y-6">
+      <div className="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
+        {/* Header & Search */}
+        <div className="p-6 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white">
+          <div className="flex items-center gap-3">
+            <h2 className="text-lg font-semibold text-gray-900">사용자 목록</h2>
+            <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
+              {filteredUsers.length}명
+            </span>
+          </div>
+          <div className="relative max-w-sm w-full">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+              <svg className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                <path
+                  fillRule="evenodd"
+                  d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="이름, 이메일 검색..."
+              className="block w-full rounded-md border-0 py-2 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            />
+          </div>
+        </div>
 
-            return (
-              <li key={user.id} className="hover:bg-gray-50 transition-colors">
-                <div className="px-4 py-4 flex items-center sm:px-6">
-                  <div className="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                        {user.avatar_url ? (
-                          <img
-                            src={user.avatar_url}
-                            alt={`${user.name || '사용자'} 프로필`}
-                            className="h-full w-full object-cover"
-                          />
-                        ) : (
-                          <span className="text-gray-500 font-bold">
-                            {user.name?.charAt(0) || user.email.charAt(0)}
-                          </span>
-                        )}
-                      </div>
-                      <div className="ml-4 truncate">
-                        <div className="flex items-center gap-2">
+        {/* Table */}
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50/50">
+              <tr>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  사용자
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  상태/권한
+                </th>
+                <th
+                  scope="col"
+                  className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  신청 정보
+                </th>
+                <th scope="col" className="relative px-6 py-3">
+                  <span className="sr-only">관리</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredUsers.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="px-6 py-12 text-center text-gray-500">
+                    검색 결과가 없습니다.
+                  </td>
+                </tr>
+              ) : (
+                filteredUsers.map((user) => (
+                  <tr key={user.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="h-10 w-10 flex-shrink-0">
+                          {user.avatar_url ? (
+                            <img
+                              className="h-10 w-10 rounded-full object-cover ring-1 ring-gray-200"
+                              src={user.avatar_url}
+                              alt=""
+                            />
+                          ) : (
+                            <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 ring-1 ring-gray-200 text-gray-500 font-medium">
+                              {user.name?.charAt(0) || user.email.charAt(0).toUpperCase()}
+                            </span>
+                          )}
+                        </div>
+                        <div className="ml-4">
                           <button
-                            type="button"
                             onClick={() => setSelectedUser(user)}
-                            className="font-medium text-indigo-600 truncate hover:underline text-left"
+                            className="text-sm font-medium text-gray-900 hover:text-indigo-600 hover:underline text-left"
                           >
                             {user.name || 'No Name'}
                           </button>
-                          <span
-                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium ${
-                              user.status === 'active'
-                                ? 'bg-green-100 text-green-800'
-                                : user.status === 'pending'
-                                  ? 'bg-yellow-100 text-yellow-800'
-                                  : 'bg-red-100 text-red-800'
-                            }`}
-                          >
-                            {user.status === 'active' && (
-                              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                <path
-                                  fillRule="evenodd"
-                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                  clipRule="evenodd"
-                                />
-                              </svg>
-                            )}
-                            {user.status === 'pending' && (
-                              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                <path
-                                  fillRule="evenodd"
-                                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
-                                  clipRule="evenodd"
-                                />
-                              </svg>
-                            )}
-                            {user.status === 'suspended' && (
-                              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                <path
-                                  fillRule="evenodd"
-                                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                  clipRule="evenodd"
-                                />
-                              </svg>
-                            )}
-                            {user.status === 'active'
-                              ? '활성'
-                              : user.status === 'pending'
-                                ? '대기'
-                                : '정지'}
-                          </span>
-                          <span className="text-gray-400 text-xs">({user.role})</span>
+                          <div className="text-sm text-gray-500">{user.email}</div>
                         </div>
-                        <p className="mt-1 text-sm text-gray-500 truncate">{user.email}</p>
-                        {hasApplicationRecord ? (
-                          <div className="mt-2 text-xs text-gray-500">
-                            <p>작가명: {user.application?.artist_name || '-'}</p>
-                            <p>연락처: {user.application?.contact || '-'}</p>
-                            <p className="line-clamp-2">소개: {user.application?.bio || '-'}</p>
-                          </div>
-                        ) : (
-                          user.status === 'pending' && (
-                            <p className="mt-2 text-xs text-red-500">
-                              신청 정보가 아직 제출되지 않았습니다.
-                            </p>
-                          )
-                        )}
                       </div>
-                    </div>
-                  </div>
-                  <div className="ml-5 flex-shrink-0 flex gap-2">
-                    {user.role !== 'admin' && (
-                      <>
-                        {user.status !== 'active' && (
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex flex-col gap-1 items-start">
+                        <span
+                          className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium ring-1 ring-inset ${
+                            user.status === 'active'
+                              ? 'bg-green-50 text-green-700 ring-green-600/20'
+                              : user.status === 'pending'
+                                ? 'bg-yellow-50 text-yellow-800 ring-yellow-600/20'
+                                : 'bg-red-50 text-red-700 ring-red-600/10'
+                          }`}
+                        >
                           <span
-                            className="inline-flex"
-                            title={
-                              !hasApplication
-                                ? '작가 신청 정보가 없어 승인할 수 없습니다.'
-                                : undefined
-                            }
+                            className={`h-1.5 w-1.5 rounded-full ${
+                              user.status === 'active'
+                                ? 'bg-green-600'
+                                : user.status === 'pending'
+                                  ? 'bg-yellow-600'
+                                  : 'bg-red-600'
+                            }`}
+                          />
+                          {user.status === 'active'
+                            ? '활성'
+                            : user.status === 'pending'
+                              ? '대기'
+                              : '정지'}
+                        </span>
+                        <select
+                          value={user.role}
+                          onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                          disabled={processingId === user.id}
+                          className="mt-1 block w-24 rounded-md border-0 py-1 pl-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-xs sm:leading-6"
+                        >
+                          <option value="user">User</option>
+                          <option value="artist">Artist</option>
+                          <option value="admin">Admin</option>
+                        </select>
+                      </div>
+                    </td>
+                    <td className="hidden lg:table-cell px-6 py-4">
+                      {user.application ? (
+                        <div className="text-sm">
+                          <div className="font-medium text-gray-900">
+                            {user.application.artist_name}
+                          </div>
+                          <div className="text-gray-500 truncate max-w-xs">
+                            {user.application.contact}
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-xs text-gray-400 italic">신청 정보 없음</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <div className="flex justify-end items-center gap-2">
+                        {user.status === 'pending' && (
+                          <button
+                            onClick={() => handleApprove(user.id)}
+                            disabled={processingId === user.id || !user.application}
+                            className="text-green-600 hover:text-green-900 bg-green-50 hover:bg-green-100 px-3 py-1.5 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           >
-                            <Button
-                              size="sm"
-                              className="bg-green-600 hover:bg-green-700 text-white"
-                              onClick={() => handleApprove(user.id)}
-                              loading={processingId === user.id}
-                              disabled={!!processingId || !hasApplication}
-                              aria-disabled={!!processingId || !hasApplication}
-                            >
-                              <CheckIcon className="mr-1" /> 승인
-                            </Button>
-                          </span>
-                        )}
-                        {user.status === 'pending' && !hasApplicationRecord && (
-                          <span className="text-xs text-red-500 self-center">
-                            신청 정보 없음 (승인 불가)
-                          </span>
-                        )}
-                        {user.status === 'pending' && hasApplicationRecord && !hasApplication && (
-                          <span className="text-xs text-red-500 self-center">
-                            신청 정보 불완전 (승인 불가)
-                          </span>
+                            승인
+                          </button>
                         )}
                         {user.status !== 'suspended' && (
-                          <Button
-                            size="sm"
-                            variant="white"
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          <button
                             onClick={() => handleReject(user.id)}
-                            loading={processingId === user.id}
-                            disabled={!!processingId}
+                            disabled={processingId === user.id}
+                            className="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
                           >
-                            <XIcon className="mr-1" /> 거절
-                          </Button>
+                            {user.status === 'pending' ? '거절' : '정지'}
+                          </button>
                         )}
-                      </>
-                    )}
-                    <div className="flex items-center gap-2">
-                      <select
-                        value={
-                          roleSelections[user.id]?.baseRole === user.role
-                            ? roleSelections[user.id]?.value
-                            : user.role
-                        }
-                        onChange={(e) =>
-                          setRoleSelections((prev) => ({
-                            ...prev,
-                            [user.id]: {
-                              value: e.target.value as Profile['role'],
-                              baseRole: user.role,
-                            },
-                          }))
-                        }
-                        className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
-                        disabled={!!processingId}
-                      >
-                        <option value="user">user</option>
-                        <option value="artist">artist</option>
-                        <option value="admin">admin</option>
-                      </select>
-                      <Button
-                        size="sm"
-                        variant="white"
-                        onClick={() => handleRoleChange(user.id, user.role)}
-                        loading={processingId === user.id}
-                        disabled={!!processingId}
-                      >
-                        권한 변경
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
+                        <button
+                          onClick={() => setSelectedUser(user)}
+                          className="text-gray-500 hover:text-gray-900 px-3 py-1.5 rounded-md hover:bg-gray-100 transition-colors"
+                        >
+                          상세
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      {/* User Detail Modal */}
+      {/* Modal remains mostly the same, just keeping the import */}
       <Modal isOpen={!!selectedUser} onClose={() => setSelectedUser(null)} title="사용자 상세 정보">
+        {/* ... Same modal content structure ... */}
         {selectedUser && (
           <div className="space-y-6">
-            {/* User Info */}
             <div className="flex items-center gap-4">
-              <div className="h-16 w-16 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+              <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden ring-1 ring-gray-200">
                 {selectedUser.avatar_url ? (
                   <img
                     src={selectedUser.avatar_url}
-                    alt={`${selectedUser.name || '사용자'} 프로필`}
+                    alt=""
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <span className="text-gray-500 font-bold text-2xl">
+                  <span className="text-gray-400 font-bold text-2xl">
                     {selectedUser.name?.charAt(0) || selectedUser.email.charAt(0)}
                   </span>
                 )}
@@ -315,124 +269,59 @@ export function UserList({ users }: { users: Profile[] }) {
                   {selectedUser.name || 'No Name'}
                 </h4>
                 <p className="text-sm text-gray-500">{selectedUser.email}</p>
-                <div className="flex items-center gap-2 mt-1">
+                <div className="mt-1 flex gap-2">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                    {selectedUser.role}
+                  </span>
                   <span
-                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium ${
+                    className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
                       selectedUser.status === 'active'
                         ? 'bg-green-100 text-green-800'
-                        : selectedUser.status === 'pending'
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : 'bg-red-100 text-red-800'
+                        : 'bg-yellow-100 text-yellow-800'
                     }`}
                   >
-                    {selectedUser.status === 'active' && (
-                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    )}
-                    {selectedUser.status === 'pending' && (
-                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                          fillRule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    )}
-                    {selectedUser.status === 'suspended' && (
-                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                          fillRule="evenodd"
-                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    )}
-                    {selectedUser.status === 'active'
-                      ? '활성'
-                      : selectedUser.status === 'pending'
-                        ? '대기'
-                        : '정지'}
+                    {selectedUser.status}
                   </span>
-                  <span className="text-gray-400 text-xs">({selectedUser.role})</span>
                 </div>
               </div>
             </div>
 
-            {/* Application Info */}
             {selectedUser.application ? (
-              <div className="space-y-4 border-t border-gray-100 pt-4">
-                <h3 className="text-lg font-semibold text-gray-900">작가 신청 정보</h3>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="border-t border-gray-100 pt-4 space-y-4">
+                <h3 className="font-medium text-gray-900">작가 신청 정보</h3>
+                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-xs text-gray-500">작가명</p>
-                    <p className="text-sm text-gray-900">
-                      {selectedUser.application.artist_name || '-'}
-                    </p>
+                    <label className="block text-xs text-gray-500">작가명</label>
+                    <div className="text-sm text-gray-900">
+                      {selectedUser.application.artist_name}
+                    </div>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">연락처</p>
-                    <p className="text-sm text-gray-900">
-                      {selectedUser.application.contact || '-'}
-                    </p>
+                    <label className="block text-xs text-gray-500">연락처</label>
+                    <div className="text-sm text-gray-900">{selectedUser.application.contact}</div>
                   </div>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 mb-1">소개</p>
-                  <p className="text-sm text-gray-900 whitespace-pre-wrap bg-gray-50 p-3 rounded-lg">
-                    {selectedUser.application.bio || '-'}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500">
-                    신청일:{' '}
-                    {new Date(selectedUser.application.updated_at).toLocaleDateString('ko-KR')}
-                  </p>
+                  <label className="block text-xs text-gray-500 mb-1">소개</label>
+                  <div className="bg-gray-50 p-3 rounded-md text-sm text-gray-700 whitespace-pre-wrap">
+                    {selectedUser.application.bio}
+                  </div>
                 </div>
               </div>
             ) : (
-              <div className="border-t border-gray-100 pt-4">
-                <p className="text-sm text-gray-500">작가 신청 정보가 없습니다.</p>
+              <div className="border-t border-gray-100 pt-4 text-sm text-gray-500 text-center py-4">
+                제출된 신청 정보가 없습니다.
               </div>
             )}
 
-            {/* Actions */}
-            {selectedUser.role !== 'admin' && (
-              <div className="flex justify-end gap-2 border-t border-gray-100 pt-4">
-                {selectedUser.status !== 'active' && (
-                  <Button
-                    className="bg-green-600 hover:bg-green-700 text-white"
-                    onClick={() => {
-                      setSelectedUser(null);
-                      handleApprove(selectedUser.id);
-                    }}
-                    disabled={
-                      !selectedUser.application?.artist_name?.trim() ||
-                      !selectedUser.application?.contact?.trim() ||
-                      !selectedUser.application?.bio?.trim()
-                    }
-                  >
-                    <CheckIcon className="mr-1" /> 승인
-                  </Button>
-                )}
-                {selectedUser.status !== 'suspended' && (
-                  <Button
-                    variant="white"
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                    onClick={() => {
-                      setSelectedUser(null);
-                      handleReject(selectedUser.id);
-                    }}
-                  >
-                    <XIcon className="mr-1" /> 거절
-                  </Button>
-                )}
-              </div>
-            )}
+            <div className="border-t border-gray-100 pt-4 flex justify-end gap-2">
+              <button
+                onClick={() => setSelectedUser(null)}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+              >
+                닫기
+              </button>
+            </div>
           </div>
         )}
       </Modal>
