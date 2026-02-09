@@ -16,7 +16,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               {/* Mobile Menu Button */}
               <AdminMobileNav />
               <div className="flex-shrink-0 flex items-center ml-2 sm:ml-0">
-                <Link href="/admin/users" className="text-xl font-bold text-slate-900">
+                <Link href="/admin/dashboard" className="text-xl font-bold text-slate-900">
                   SAF Admin
                 </Link>
               </div>

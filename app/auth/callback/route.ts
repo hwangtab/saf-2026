@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
           .single();
 
         if (profile?.role === 'admin') {
-          return NextResponse.redirect(`${origin}/admin/artworks`);
+          return NextResponse.redirect(`${origin}/admin/dashboard`);
         }
 
         if (profile?.role === 'artist') {

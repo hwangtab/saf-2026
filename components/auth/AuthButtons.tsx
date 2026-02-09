@@ -146,7 +146,7 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
 
   const dashboardLink = (() => {
     if (profile?.role === 'admin') {
-      return { href: '/admin/users', label: '관리자' };
+      return { href: '/admin/dashboard', label: UI_STRINGS.NAV.ARTIST_MENU };
     }
     if (profile?.status === 'pending') {
       return { href: '/dashboard/pending', label: '승인 대기' };
