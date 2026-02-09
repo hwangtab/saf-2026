@@ -107,7 +107,10 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
 
       {/* Details Section */}
       <form
-        action={handleSubmit}
+        onSubmit={(e) => {
+          e.preventDefault();
+          void handleSubmit(new FormData(e.currentTarget));
+        }}
         className="space-y-6 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface)] p-6 shadow-sm"
       >
         <h2 className="text-lg font-semibold text-gray-900">작품 정보</h2>
