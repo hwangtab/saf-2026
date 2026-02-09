@@ -25,6 +25,7 @@ export const UI_STRINGS = {
     BUY_ART: '작품 구매',
     ORDER_STATUS: '주문/배송 조회',
     ARTIST_MENU: '아티스트 메뉴',
+    ADMIN_DASHBOARD: '관리자 대시보드',
   },
   FOOTER: {
     LINKS: '링크',

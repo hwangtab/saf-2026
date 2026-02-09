@@ -99,9 +99,8 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
         setUserId(currentId);
 
         if (currentId) {
-          // 세션 확인됨 -> 즉시 버튼을 보여주기 위해 로딩 종료 (상세 프로필은 백그라운드)
-          setIsLoading(false);
-          await fetchProfileData(currentId, controller.signal);
+          // 세션 확인됨 -> 프로필 데이터 로드 (로딩 상태 유지)
+          await fetchProfileData(currentId, controller.signal, true);
         } else {
           setIsLoading(false);
         }
@@ -176,7 +175,7 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
 
   const dashboardLink = (() => {
     if (profile?.role === 'admin') {
-      return { href: '/admin/dashboard', label: UI_STRINGS.NAV.ARTIST_MENU };
+      return { href: '/admin/dashboard', label: UI_STRINGS.NAV.ADMIN_DASHBOARD };
     }
     if (profile?.status === 'pending') {
       return { href: '/dashboard/pending', label: '승인 대기' };

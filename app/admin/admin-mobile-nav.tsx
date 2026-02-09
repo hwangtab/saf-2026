@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { SignOutButton } from '@/components/auth/SignOutButton';
 
 const navItems = [
   { href: '/admin/dashboard', label: '대시보드' },
@@ -100,24 +101,29 @@ export function AdminMobileNav() {
               </svg>
             </button>
           </div>
-          <div className="space-y-1 p-4">
-            {navItems.map((item) => {
-              const isActive = pathname.startsWith(item.href);
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`block rounded-md px-3 py-2 text-base font-medium transition-colors ${
-                    isActive
-                      ? 'bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-600/20'
-                      : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
-                  }`}
-                  onClick={() => setIsOpen(false)}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
+          <div className="flex flex-col h-full">
+            <div className="space-y-1 p-4 flex-1">
+              {navItems.map((item) => {
+                const isActive = pathname.startsWith(item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`block rounded-md px-3 py-2 text-base font-medium transition-colors ${
+                      isActive
+                        ? 'bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-600/20'
+                        : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+                    }`}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
+            <div className="border-t border-slate-100 p-4 flex justify-center">
+              <SignOutButton />
+            </div>
           </div>
         </nav>
       )}
