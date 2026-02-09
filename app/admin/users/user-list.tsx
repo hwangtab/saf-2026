@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { approveUser, rejectUser, updateUserRole } from '@/app/actions/admin';
 import Modal from '@/components/ui/Modal';
-import { CheckIcon, XIcon } from '@/components/ui/Icons';
 
 type Profile = {
   id: string;
