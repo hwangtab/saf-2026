@@ -87,12 +87,20 @@ export function TestimonialsManager({ testimonials }: { testimonials: Testimonia
 
       <section className="space-y-4">
         <AdminCard className="p-4">
+          <label htmlFor="search-testimonials" className="sr-only">
+            추천사 검색
+          </label>
           <input
+            id="search-testimonials"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="검색: 카테고리/작성자/내용"
+            aria-describedby="search-testimonials-description"
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
           />
+          <span id="search-testimonials-description" className="sr-only">
+            추천사 카테고리, 작성자 또는 내용으로 검색할 수 있습니다.
+          </span>
         </AdminCard>
         {testimonials
           .filter((item) => {

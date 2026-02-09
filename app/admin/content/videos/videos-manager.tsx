@@ -82,12 +82,20 @@ export function VideosManager({ videos }: { videos: VideoItem[] }) {
 
       <section className="space-y-4">
         <AdminCard className="p-4">
+          <label htmlFor="search-videos" className="sr-only">
+            영상 검색
+          </label>
           <input
+            id="search-videos"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="검색: 제목/유튜브 ID"
+            aria-describedby="search-videos-description"
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
           />
+          <span id="search-videos-description" className="sr-only">
+            영상 제목 또는 유튜브 ID로 검색할 수 있습니다.
+          </span>
         </AdminCard>
         {videos
           .filter((item) => {

@@ -2,6 +2,28 @@ import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { UserList } from './user-list';
 
+type ArtistApplication = {
+  user_id: string;
+  artist_name: string;
+  contact: string;
+  bio: string;
+  updated_at: string;
+};
+
+type ProfileRow = {
+  id: string;
+  email: string;
+  name: string;
+  avatar_url: string | null;
+  role: 'admin' | 'artist' | 'user';
+  status: 'pending' | 'active' | 'suspended';
+  created_at: string;
+};
+
+type ProfileWithApplication = ProfileRow & {
+  application: ArtistApplication | null;
+};
+
 export default async function UsersPage() {
   await requireAdmin();
   const supabase = await createSupabaseServerClient();
@@ -22,17 +44,17 @@ export default async function UsersPage() {
     .select('user_id, artist_name, contact, bio, updated_at');
 
   const applicationMap = new Map(
-    (applications || []).map((application: any) => [application.user_id, application])
+    (applications || []).map((application: ArtistApplication) => [application.user_id, application])
   );
 
   // Custom sort in JS to put pending first
-  const sortedUsers = (users || [])
-    .sort((a: any, b: any) => {
+  const sortedUsers: ProfileWithApplication[] = (users || [])
+    .sort((a: ProfileRow, b: ProfileRow) => {
       if (a.status === 'pending' && b.status !== 'pending') return -1;
       if (a.status !== 'pending' && b.status === 'pending') return 1;
       return 0; // Keep date sort
     })
-    .map((user: any) => ({
+    .map((user: ProfileRow) => ({
       ...user,
       application: applicationMap.get(user.id) || null,
     }));

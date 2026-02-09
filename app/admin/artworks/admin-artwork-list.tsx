@@ -158,12 +158,20 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
 
           <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
             <div className="relative max-w-xs w-full">
+              <label htmlFor="search-artworks" className="sr-only">
+                작품 검색
+              </label>
               <input
+                id="search-artworks"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="작품명, 작가명 검색..."
+                aria-describedby="search-artworks-description"
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
+              <span id="search-artworks-description" className="sr-only">
+                작품명 또는 작가명으로 검색할 수 있습니다. 현재 {filtered.length}개가 표시됩니다.
+              </span>
             </div>
             <div className="flex gap-2">
               <AdminSelect

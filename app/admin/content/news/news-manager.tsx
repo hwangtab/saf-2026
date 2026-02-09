@@ -93,12 +93,20 @@ export function NewsManager({ news }: { news: NewsItem[] }) {
 
       <section className="space-y-4">
         <AdminCard className="p-4">
+          <label htmlFor="search-news" className="sr-only">
+            뉴스 검색
+          </label>
           <input
+            id="search-news"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="검색: 제목/출처"
+            aria-describedby="search-news-description"
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
           />
+          <span id="search-news-description" className="sr-only">
+            뉴스 제목 또는 출처로 검색할 수 있습니다.
+          </span>
         </AdminCard>
         {news
           .filter((item) => {

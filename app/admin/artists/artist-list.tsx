@@ -86,6 +86,9 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
           </div>
 
           <div className="relative max-w-sm w-full">
+            <label htmlFor="search-artists" className="sr-only">
+              작가 검색
+            </label>
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <svg
                 className="h-5 w-5 text-gray-400"
@@ -101,12 +104,17 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
               </svg>
             </div>
             <input
+              id="search-artists"
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="이름, 이메일 검색..."
+              aria-describedby="search-artists-description"
               className="block w-full rounded-md border-0 py-2 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 transition-shadow"
             />
+            <span id="search-artists-description" className="sr-only">
+              작가 이름 또는 이메일로 검색할 수 있습니다. 현재 {filtered.length}명이 표시됩니다.
+            </span>
           </div>
         </AdminCardHeader>
 

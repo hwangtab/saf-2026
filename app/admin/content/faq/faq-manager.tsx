@@ -68,12 +68,20 @@ export function FaqManager({ faqs }: { faqs: FaqItem[] }) {
 
       <section className="space-y-4">
         <AdminCard className="p-4">
+          <label htmlFor="search-faqs" className="sr-only">
+            FAQ 검색
+          </label>
           <input
+            id="search-faqs"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="검색: 질문/답변"
+            aria-describedby="search-faqs-description"
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
           />
+          <span id="search-faqs-description" className="sr-only">
+            FAQ 질문 또는 답변으로 검색할 수 있습니다.
+          </span>
         </AdminCard>
         {faqs
           .filter((item) => {

@@ -74,6 +74,9 @@ export function UserList({ users }: { users: Profile[] }) {
             </span>
           </div>
           <div className="relative max-w-sm w-full">
+            <label htmlFor="search-users" className="sr-only">
+              사용자 검색
+            </label>
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <svg className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
                 <path
@@ -84,12 +87,18 @@ export function UserList({ users }: { users: Profile[] }) {
               </svg>
             </div>
             <input
+              id="search-users"
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="이름, 이메일 검색..."
+              aria-describedby="search-users-description"
               className="block w-full rounded-md border-0 py-2 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
+            <span id="search-users-description" className="sr-only">
+              이름 또는 이메일로 사용자를 검색할 수 있습니다. 현재 {filteredUsers.length}명이
+              표시됩니다.
+            </span>
           </div>
         </AdminCardHeader>
 
