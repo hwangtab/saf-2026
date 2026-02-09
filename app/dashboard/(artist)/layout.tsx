@@ -4,7 +4,7 @@ import { SignOutButton } from '@/components/auth/SignOutButton';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   // Guard: Protects all dashboard routes
-  // Checks if user is logged in AND is an active artist (or admin)
+  // Checks if user is logged in AND is an active artist
   const user = await requireArtistActive();
 
   return (

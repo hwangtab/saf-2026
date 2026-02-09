@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Button from '@/components/ui/Button';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
 import { UI_STRINGS } from '@/lib/ui-strings';
@@ -22,6 +22,27 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
   const [isLoading, setIsLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const profileRef = useRef<Profile | null>(null);
+
+  useEffect(() => {
+    profileRef.current = profile;
+  }, [profile]);
+
+  const isProfile = (value: unknown): value is Profile => {
+    if (!value || typeof value !== 'object') return false;
+    const candidate = value as Record<string, unknown>;
+
+    return (
+      (candidate.role === 'admin' || candidate.role === 'artist' || candidate.role === 'user') &&
+      (candidate.status === 'pending' ||
+        candidate.status === 'active' ||
+        candidate.status === 'suspended')
+    );
+  };
+
+  const isAbortError = (error: unknown): error is Error => {
+    return error instanceof Error && error.name === 'AbortError';
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -47,9 +68,9 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
         if (error) {
           console.warn('Profile fetch error:', error.message);
         }
-        setProfile((data as Profile) || null);
-      } catch (err: any) {
-        if (err.name === 'AbortError') return;
+        setProfile(isProfile(data) ? data : null);
+      } catch (err: unknown) {
+        if (isAbortError(err)) return;
         console.error('Unexpected error in fetchProfile:', err);
       } finally {
         clearTimeout(timeoutId);
@@ -77,8 +98,8 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
         } else {
           setIsLoading(false);
         }
-      } catch (err: any) {
-        if (err.name === 'AbortError') return;
+      } catch (err: unknown) {
+        if (isAbortError(err)) return;
         console.error('Auth init error:', err);
         if (isMounted) setIsLoading(false);
       }
@@ -101,7 +122,7 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
             setProfile(null);
             setIsLoading(false);
           }
-        } else if (newId && !profile) {
+        } else if (newId && !profileRef.current) {
           // 아이디는 같으나 프로필 정보가 없는 경우 백그라운드 재시도
           fetchProfileData(newId, controller.signal, false);
         }
@@ -114,7 +135,7 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
       controller.abort();
       authListener.subscription.unsubscribe();
     };
-  }, [supabase, profile]); // profile is needed for the logic in onAuthStateChange
+  }, [supabase]);
 
   const wrapperClassName =
     layout === 'stacked'

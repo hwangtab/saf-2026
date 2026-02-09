@@ -8,17 +8,6 @@ export default async function ArtworksPage() {
   const user = await requireArtistActive();
   const supabase = await createSupabaseServerClient();
 
-  // Check if user is admin and redirect to admin page
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single();
-
-  if (profile?.role === 'admin') {
-    redirect('/admin/artworks');
-  }
-
   // Get artist id first (RLS requires it usually, or we query by artist_id found from user_id)
   const { data: artist } = await supabase
     .from('artists')

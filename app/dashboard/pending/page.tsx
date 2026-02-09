@@ -10,9 +10,21 @@ export default async function PendingPage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('status')
+    .select('role, status')
     .eq('id', user.id)
     .single();
+
+  if (profile?.role === 'admin') {
+    redirect('/admin/dashboard');
+  }
+
+  if (profile?.role !== 'artist') {
+    redirect('/');
+  }
+
+  if (profile.status === 'suspended') {
+    redirect('/dashboard/suspended');
+  }
 
   const { data: application } = await supabase
     .from('artist_applications')
@@ -25,7 +37,7 @@ export default async function PendingPage() {
     !!application?.contact?.trim() &&
     !!application?.bio?.trim();
 
-  // If already active, go to dashboard
+  // If already active, go to artist dashboard
   if (profile?.status === 'active') {
     redirect('/dashboard/artworks');
   }

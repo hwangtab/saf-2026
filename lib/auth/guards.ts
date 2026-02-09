@@ -25,8 +25,10 @@ export async function requireArtistActive() {
     .eq('id', user.id)
     .single();
 
-  // Admin bypass
-  if (profile?.role === 'admin') return user;
+  // Admin should stay in admin surface
+  if (profile?.role === 'admin') {
+    redirect('/admin/dashboard');
+  }
 
   // Check artist role and active status
   if (!profile || profile.role !== 'artist' || profile.status !== 'active') {

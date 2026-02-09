@@ -7,17 +7,6 @@ export default async function NewArtworkPage() {
   const user = await requireArtistActive();
   const supabase = await createSupabaseServerClient();
 
-  // Check if user is admin and redirect to admin page
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single();
-
-  if (profile?.role === 'admin') {
-    redirect('/admin/artworks');
-  }
-
   // Need Artist ID for uploads path mainly
   const { data: artist } = await supabase
     .from('artists')
