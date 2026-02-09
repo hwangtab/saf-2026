@@ -21,18 +21,7 @@ export async function approveUser(userId: string): Promise<AdminActionState> {
       .eq('user_id', userId)
       .maybeSingle();
 
-    const hasApplication =
-      !!application?.artist_name?.trim() &&
-      !!application?.contact?.trim() &&
-      !!application?.bio?.trim();
     const contactValue = application?.contact?.trim() || '';
-
-    if (!hasApplication) {
-      return {
-        message: '신청 정보가 없어 승인할 수 없습니다. 작가 정보 제출 후 승인해주세요.',
-        error: true,
-      };
-    }
 
     // 1. Ensure Artist record exists (before activating profile)
     const { data: existingArtist, error: artistFetchError } = await supabase
@@ -152,24 +141,24 @@ export async function updateUserRole(
 
     if (profileError) throw profileError;
 
-    const { data: application } = await supabase
-      .from('artist_applications')
-      .select('artist_name, contact, bio')
-      .eq('user_id', userId)
-      .maybeSingle();
+    let application: {
+      artist_name: string | null;
+      contact: string | null;
+      bio: string | null;
+    } | null = null;
 
-    const hasApplication =
-      !!application?.artist_name?.trim() &&
-      !!application?.contact?.trim() &&
-      !!application?.bio?.trim();
+    if (role === 'artist') {
+      const { data: applicationData, error: applicationError } = await supabase
+        .from('artist_applications')
+        .select('artist_name, contact, bio')
+        .eq('user_id', userId)
+        .maybeSingle();
 
-    const contactValue = application?.contact?.trim() || '';
-
-    if (role === 'artist' && !hasApplication) {
-      return {
-        message: '신청 정보가 없어 작가로 변경할 수 없습니다.',
-        error: true,
-      };
+      // Admin can promote users to artist without application data.
+      // If lookup fails or no row exists, fall back to profile-based defaults.
+      if (!applicationError) {
+        application = applicationData;
+      }
     }
 
     const updates: { role: 'admin' | 'artist' | 'user'; status?: 'active' } = { role };
@@ -179,6 +168,7 @@ export async function updateUserRole(
 
     let createdArtistId: string | null = null;
     if (role === 'artist') {
+      const contactValue = application?.contact?.trim() || '';
       const { data: existingArtist, error: artistFetchError } = await supabase
         .from('artists')
         .select('id, contact_email')
