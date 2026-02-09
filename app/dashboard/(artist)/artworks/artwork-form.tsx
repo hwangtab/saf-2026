@@ -339,7 +339,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
             </div>
 
             {/* Options */}
-            <div className="sm:col-span-6 border-t border-gray-200 pt-4 flex flex-wrap gap-6">
+            <div className="sm:col-span-6 border-t border-gray-200 pt-6 flex flex-wrap gap-6">
               <div className="flex items-center gap-3">
                 <label htmlFor="status" className="text-sm font-medium text-gray-700">
                   판매 상태
@@ -348,7 +348,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
                   id="status"
                   name="status"
                   defaultValue={artwork?.status || 'available'}
-                  className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+                  className="h-11 rounded-md border border-gray-300 px-3 text-sm"
                 >
                   <option value="available">판매 중</option>
                   <option value="reserved">예약됨</option>

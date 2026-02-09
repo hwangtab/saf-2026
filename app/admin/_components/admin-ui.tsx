@@ -43,7 +43,7 @@ export function AdminSelect({
     <div className={cn('relative', wrapperClassName)}>
       <select
         className={cn(
-          'block w-full appearance-none rounded-md border border-[var(--admin-border)] bg-white py-1.5 pl-3 pr-8 text-sm text-slate-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 disabled:cursor-not-allowed disabled:opacity-50',
+          'block h-10 w-full appearance-none rounded-md border border-[var(--admin-border)] bg-white px-3 pr-9 text-sm text-slate-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 disabled:cursor-not-allowed disabled:opacity-50',
           className
         )}
         {...props}
@@ -55,7 +55,7 @@ export function AdminSelect({
         viewBox="0 0 20 20"
         fill="none"
         className={cn(
-          'pointer-events-none absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500',
+          'pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500',
           iconClassName
         )}
       >

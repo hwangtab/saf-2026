@@ -156,8 +156,8 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
             </span>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-            <div className="relative max-w-xs w-full">
+          <div className="grid w-full gap-3 sm:w-auto sm:grid-cols-[minmax(260px,1fr)_auto] sm:items-end">
+            <div className="relative w-full sm:min-w-[320px]">
               <label htmlFor="search-artworks" className="sr-only">
                 작품 검색
               </label>
@@ -167,19 +167,20 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="작품명, 작가명 검색..."
                 aria-describedby="search-artworks-description"
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="block h-10 w-full rounded-md border-0 pl-10 pr-3 text-sm text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
               />
               <span id="search-artworks-description" className="sr-only">
                 작품명 또는 작가명으로 검색할 수 있습니다. 현재 {filtered.length}개가 표시됩니다.
               </span>
             </div>
-            <div className="flex gap-2">
+            <div className="grid grid-cols-2 gap-3 sm:flex sm:justify-end">
               <AdminSelect
                 value={statusFilter}
                 onChange={(e) => {
                   setStatusFilter(e.target.value);
                   setSelectedIds(new Set());
                 }}
+                wrapperClassName="min-w-[120px]"
               >
                 <option value="all">모든 상태</option>
                 <option value="available">판매 중</option>
@@ -192,6 +193,7 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
                   setVisibilityFilter(e.target.value);
                   setSelectedIds(new Set());
                 }}
+                wrapperClassName="min-w-[120px]"
               >
                 <option value="all">모든 노출</option>
                 <option value="visible">공개</option>
@@ -203,7 +205,7 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
 
         {/* Batch Actions Toolbar (Visible only when selected) */}
         {selectedInFiltered.length > 0 && (
-          <div className="bg-indigo-50 px-6 py-3 flex flex-wrap items-center gap-4 border-b border-indigo-100 animate-fade-in">
+          <div className="flex flex-wrap items-center gap-4 border-b border-indigo-100 bg-indigo-50 px-6 py-4 animate-fade-in">
             <span className="text-sm font-medium text-indigo-900">
               {selectedInFiltered.length}개 선택됨
             </span>
@@ -215,7 +217,7 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
                   e.target.value = '';
                 }}
                 disabled={batchProcessing}
-                className="border-indigo-200 py-1 pl-2.5 pr-7"
+                className="border-indigo-200"
               >
                 <option value="">상태 변경...</option>
                 <option value="available">판매 중</option>
@@ -225,21 +227,21 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
               <button
                 onClick={() => handleBatchHidden(true)}
                 disabled={batchProcessing}
-                className="px-3 py-1 bg-white border border-gray-300 rounded text-sm hover:bg-gray-50 text-gray-700"
+                className="h-10 rounded border border-gray-300 bg-white px-3 text-sm text-gray-700 hover:bg-gray-50"
               >
                 숨김
               </button>
               <button
                 onClick={() => handleBatchHidden(false)}
                 disabled={batchProcessing}
-                className="px-3 py-1 bg-white border border-gray-300 rounded text-sm hover:bg-gray-50 text-gray-700"
+                className="h-10 rounded border border-gray-300 bg-white px-3 text-sm text-gray-700 hover:bg-gray-50"
               >
                 노출
               </button>
               <button
                 onClick={handleBatchDelete}
                 disabled={batchProcessing}
-                className="px-3 py-1 bg-white border border-red-300 rounded text-sm hover:bg-red-50 text-red-600"
+                className="h-10 rounded border border-red-300 bg-white px-3 text-sm text-red-600 hover:bg-red-50"
               >
                 삭제
               </button>

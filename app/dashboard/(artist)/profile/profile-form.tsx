@@ -14,6 +14,10 @@ const initialState: ActionState = {
 export function ProfileForm({ artist, userId }: { artist: any; userId: string }) {
   const [state, formAction, isPending] = useActionState(updateArtistProfile, initialState);
   const [profileImage, setProfileImage] = useState<string>(artist?.profile_image || '');
+  const inputClassName =
+    'block h-11 w-full rounded-md border-gray-300 px-3 text-sm shadow-sm focus:border-black focus:ring-black';
+  const textareaClassName =
+    'block w-full rounded-md border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-black focus:ring-black';
 
   const handleImageUpload = (urls: string[]) => {
     if (urls.length > 0) {
@@ -41,7 +45,7 @@ export function ProfileForm({ artist, userId }: { artist: any; userId: string })
               id="name_ko"
               required
               defaultValue={artist?.name_ko || ''}
-              className="shadow-sm focus:ring-black focus:border-black block w-full sm:text-sm border-gray-300 rounded-md"
+              className={inputClassName}
             />
           </div>
         </div>
@@ -57,7 +61,7 @@ export function ProfileForm({ artist, userId }: { artist: any; userId: string })
               name="name_en"
               id="name_en"
               defaultValue={artist?.name_en || ''}
-              className="shadow-sm focus:ring-black focus:border-black block w-full sm:text-sm border-gray-300 rounded-md"
+              className={inputClassName}
             />
           </div>
         </div>
@@ -85,7 +89,7 @@ export function ProfileForm({ artist, userId }: { artist: any; userId: string })
               name="bio"
               rows={4}
               defaultValue={artist?.bio || ''}
-              className="shadow-sm focus:ring-black focus:border-black block w-full sm:text-sm border-gray-300 rounded-md"
+              className={textareaClassName}
               placeholder="자신을 소개하는 짧은 글을 작성해주세요."
             />
           </div>
@@ -102,7 +106,7 @@ export function ProfileForm({ artist, userId }: { artist: any; userId: string })
               name="history"
               rows={8}
               defaultValue={artist?.history || ''}
-              className="shadow-sm focus:ring-black focus:border-black block w-full sm:text-sm border-gray-300 rounded-md font-mono"
+              className={`${textareaClassName} font-mono`}
               placeholder={'2024 개인전 (서울)\n2023 단체전 (부산)'}
             />
           </div>
@@ -121,7 +125,7 @@ export function ProfileForm({ artist, userId }: { artist: any; userId: string })
                 name="contact_email"
                 id="contact_email"
                 defaultValue={artist?.contact_email || ''}
-                className="mt-1 shadow-sm focus:ring-black focus:border-black block w-full sm:text-sm border-gray-300 rounded-md"
+                className={`mt-1 ${inputClassName}`}
                 placeholder="이메일 또는 전화번호"
               />
             </div>
@@ -134,7 +138,7 @@ export function ProfileForm({ artist, userId }: { artist: any; userId: string })
                 name="instagram"
                 id="instagram"
                 defaultValue={artist?.instagram || ''}
-                className="mt-1 shadow-sm focus:ring-black focus:border-black block w-full sm:text-sm border-gray-300 rounded-md"
+                className={`mt-1 ${inputClassName}`}
                 placeholder="https://instagram.com/..."
               />
             </div>
@@ -147,7 +151,7 @@ export function ProfileForm({ artist, userId }: { artist: any; userId: string })
                 name="homepage"
                 id="homepage"
                 defaultValue={artist?.homepage || ''}
-                className="mt-1 shadow-sm focus:ring-black focus:border-black block w-full sm:text-sm border-gray-300 rounded-md"
+                className={`mt-1 ${inputClassName}`}
                 placeholder="https://..."
               />
             </div>

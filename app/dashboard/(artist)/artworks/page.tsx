@@ -39,7 +39,7 @@ export default async function ArtworksPage({ searchParams }: ArtworksPageProps) 
     .order('created_at', { ascending: false });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-medium text-gray-900">작품 관리</h2>

@@ -82,7 +82,7 @@ export function ArtworkList({
       <ul role="list" className="divide-y divide-gray-200">
         {artworks.map((artwork) => (
           <li key={artwork.id}>
-            <div className="px-4 py-4 flex items-center sm:px-6">
+            <div className="flex items-center px-4 py-5 sm:px-6">
               <div className="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between">
                 <div className="flex items-center">
                   <div className="flex-shrink-0 h-16 w-16 rounded-md overflow-hidden bg-gray-100">
@@ -131,7 +131,7 @@ export function ArtworkList({
                 <Link
                   href={`/artworks/${artwork.id}`}
                   target="_blank"
-                  className="p-2 text-gray-400 hover:text-gray-500"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-md text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-500"
                   title="미리보기"
                 >
                   <ExternalLinkIcon />
