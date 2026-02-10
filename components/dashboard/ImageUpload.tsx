@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import ArtworkLightbox from '@/components/ui/ArtworkLightbox';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
 import { optimizeImage } from '@/lib/client/image-optimization';
 // Assuming Icons are imported as Lucide/Heroicons or from the Icons component
@@ -31,6 +32,8 @@ export function ImageUpload({
   const [uploading, setUploading] = useState(false);
   const [previewUrls, setPreviewUrls] = useState<string[]>(defaultImages);
   const [isDragging, setIsDragging] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxData, setLightboxData] = useState<{ src: string; alt: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const supabase = createSupabaseBrowserClient();
   const isControlled = Array.isArray(value);
@@ -141,6 +144,11 @@ export function ImageUpload({
     applyUrls(newUrls);
   };
 
+  const handleImageClick = (src: string, alt: string) => {
+    setLightboxData({ src, alt });
+    setLightboxOpen(true);
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap gap-4">
@@ -149,10 +157,24 @@ export function ImageUpload({
             key={index}
             className="relative w-32 h-32 rounded-lg overflow-hidden border border-gray-200 group"
           >
-            <img src={url} alt="Preview" className="w-full h-full object-cover" />
+            <div
+              className="cursor-zoom-in h-full w-full"
+              onClick={() => handleImageClick(url, `Preview ${index + 1}`)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleImageClick(url, `Preview ${index + 1}`);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-label="이미지 확대하기"
+            >
+              <img src={url} alt="Preview" className="w-full h-full object-cover" />
+            </div>
             <button
               onClick={() => removeImage(index)}
-              className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+              className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10"
               type="button"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -213,6 +235,15 @@ export function ImageUpload({
       />
 
       <p className="text-xs text-gray-500">* 최대 {maxFiles}장, 장당 2560px 자동 최적화 (WebP)</p>
+
+      {lightboxData && (
+        <ArtworkLightbox
+          open={lightboxOpen}
+          close={() => setLightboxOpen(false)}
+          src={lightboxData.src}
+          alt={lightboxData.alt}
+        />
+      )}
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import ArtworkLightbox from '@/components/ui/ArtworkLightbox';
 import {
   deleteAdminArtwork,
   batchUpdateArtworkStatus,
@@ -30,6 +31,8 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
   const [statusFilter, setStatusFilter] = useState('all');
   const [visibilityFilter, setVisibilityFilter] = useState('all');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxData, setLightboxData] = useState<{ src: string; alt: string } | null>(null);
 
   // -- Filters --
   const filtered = artworks.filter((artwork) => {
@@ -114,6 +117,11 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
     } finally {
       setProcessingId(null);
     }
+  };
+
+  const handleImageClick = (src: string, alt: string) => {
+    setLightboxData({ src, alt });
+    setLightboxOpen(true);
   };
 
   const handleBatchStatus = async (status: string) => {
@@ -354,7 +362,25 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center">
-                        <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-md bg-gray-100 border border-gray-200">
+                        <div
+                          className={`h-12 w-12 flex-shrink-0 overflow-hidden rounded-md bg-gray-100 border border-gray-200 ${
+                            artwork.images?.[0] ? 'cursor-zoom-in' : ''
+                          }`}
+                          onClick={() => {
+                            if (artwork.images?.[0]) {
+                              handleImageClick(artwork.images[0], artwork.title);
+                            }
+                          }}
+                          onKeyDown={(e) => {
+                            if ((e.key === 'Enter' || e.key === ' ') && artwork.images?.[0]) {
+                              e.preventDefault();
+                              handleImageClick(artwork.images[0], artwork.title);
+                            }
+                          }}
+                          role={artwork.images?.[0] ? 'button' : undefined}
+                          tabIndex={artwork.images?.[0] ? 0 : undefined}
+                          aria-label={artwork.images?.[0] ? '이미지 확대하기' : undefined}
+                        >
                           {artwork.images?.[0] ? (
                             <img
                               className="h-full w-full object-cover"
@@ -449,6 +475,15 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
           </table>
         </div>
       </AdminCard>
+
+      {lightboxData && (
+        <ArtworkLightbox
+          open={lightboxOpen}
+          close={() => setLightboxOpen(false)}
+          src={lightboxData.src}
+          alt={lightboxData.alt}
+        />
+      )}
     </div>
   );
 }
