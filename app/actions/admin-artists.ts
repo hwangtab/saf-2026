@@ -2,13 +2,13 @@
 
 import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
-import { createSupabaseAdminClient } from '@/lib/auth/server';
+import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 import { logAdminAction } from './admin-logs';
 import { getString, getStoragePathFromPublicUrl } from '@/lib/utils/form-helpers';
 
 export async function getArtistsWithArtworkCount() {
   await requireAdmin();
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseAdminOrServerClient();
 
   const { data: artists, error } = await supabase
     .from('artists')
@@ -25,7 +25,7 @@ export async function getArtistsWithArtworkCount() {
 
 export async function getArtistById(id: string) {
   await requireAdmin();
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseAdminOrServerClient();
 
   const { data, error } = await supabase.from('artists').select('*').eq('id', id).single();
 
@@ -35,7 +35,7 @@ export async function getArtistById(id: string) {
 
 export async function updateArtist(id: string, formData: FormData) {
   await requireAdmin();
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseAdminOrServerClient();
 
   const name_ko = getString(formData, 'name_ko');
   const name_en = getString(formData, 'name_en');
@@ -77,7 +77,7 @@ export async function updateArtist(id: string, formData: FormData) {
 
 export async function updateArtistProfileImage(id: string, profileImage: string | null) {
   await requireAdmin();
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseAdminOrServerClient();
 
   const { error } = await supabase
     .from('artists')
@@ -97,7 +97,7 @@ export async function updateArtistProfileImage(id: string, profileImage: string 
 
 export async function deleteArtist(id: string) {
   await requireAdmin();
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseAdminOrServerClient();
 
   // Get artist info for cleanup
   const { data: artist } = await supabase

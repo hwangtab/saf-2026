@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
-import { createSupabaseAdminClient } from '@/lib/auth/server';
+import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 
 const getString = (formData: FormData, key: string) => {
   const value = formData.get(key);
@@ -18,7 +18,7 @@ const getNumber = (formData: FormData, key: string, fallback = 0) => {
 
 export async function createNews(formData: FormData) {
   await requireAdmin();
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseAdminOrServerClient();
 
   const id = getString(formData, 'id') || crypto.randomUUID();
   const title = getString(formData, 'title');
@@ -46,7 +46,7 @@ export async function createNews(formData: FormData) {
 
 export async function updateNews(id: string, formData: FormData) {
   await requireAdmin();
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseAdminOrServerClient();
 
   const title = getString(formData, 'title');
   const source = getString(formData, 'source');
@@ -75,7 +75,7 @@ export async function updateNews(id: string, formData: FormData) {
 
 export async function deleteNews(id: string) {
   await requireAdmin();
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseAdminOrServerClient();
 
   const { error } = await supabase.from('news').delete().eq('id', id);
   if (error) throw error;
@@ -86,7 +86,7 @@ export async function deleteNews(id: string) {
 
 export async function createFaq(formData: FormData) {
   await requireAdmin();
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseAdminOrServerClient();
 
   const question = getString(formData, 'question');
   const answer = getString(formData, 'answer');
@@ -105,7 +105,7 @@ export async function createFaq(formData: FormData) {
 
 export async function updateFaq(id: string, formData: FormData) {
   await requireAdmin();
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseAdminOrServerClient();
 
   const question = getString(formData, 'question');
   const answer = getString(formData, 'answer');
@@ -127,7 +127,7 @@ export async function updateFaq(id: string, formData: FormData) {
 
 export async function deleteFaq(id: string) {
   await requireAdmin();
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseAdminOrServerClient();
 
   const { error } = await supabase.from('faq').delete().eq('id', id);
   if (error) throw error;
@@ -137,7 +137,7 @@ export async function deleteFaq(id: string) {
 
 export async function createTestimonial(formData: FormData) {
   await requireAdmin();
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseAdminOrServerClient();
 
   const category = getString(formData, 'category');
   const quote = getString(formData, 'quote');
@@ -160,7 +160,7 @@ export async function createTestimonial(formData: FormData) {
 
 export async function updateTestimonial(id: string, formData: FormData) {
   await requireAdmin();
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseAdminOrServerClient();
 
   const category = getString(formData, 'category');
   const quote = getString(formData, 'quote');
@@ -186,7 +186,7 @@ export async function updateTestimonial(id: string, formData: FormData) {
 
 export async function deleteTestimonial(id: string) {
   await requireAdmin();
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseAdminOrServerClient();
 
   const { error } = await supabase.from('testimonials').delete().eq('id', id);
   if (error) throw error;
@@ -196,7 +196,7 @@ export async function deleteTestimonial(id: string) {
 
 export async function createVideo(formData: FormData) {
   await requireAdmin();
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseAdminOrServerClient();
 
   const youtube_id = getString(formData, 'youtube_id');
   const id = getString(formData, 'id') || youtube_id || crypto.randomUUID();
@@ -219,7 +219,7 @@ export async function createVideo(formData: FormData) {
 
 export async function updateVideo(id: string, formData: FormData) {
   await requireAdmin();
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseAdminOrServerClient();
 
   const youtube_id = getString(formData, 'youtube_id');
   const title = getString(formData, 'title');
@@ -243,7 +243,7 @@ export async function updateVideo(id: string, formData: FormData) {
 
 export async function deleteVideo(id: string) {
   await requireAdmin();
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseAdminOrServerClient();
 
   const { error } = await supabase.from('videos').delete().eq('id', id);
   if (error) throw error;

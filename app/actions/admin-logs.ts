@@ -1,7 +1,7 @@
 'use server';
 
 import { requireAdmin } from '@/lib/auth/guards';
-import { createSupabaseAdminClient } from '@/lib/auth/server';
+import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 
 export type AdminLogEntry = {
   id: string;
@@ -24,7 +24,7 @@ export async function logAdminAction(
   details?: Record<string, unknown>
 ) {
   const user = await requireAdmin();
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseAdminOrServerClient();
 
   const { error } = await supabase.from('admin_logs').insert({
     admin_id: user.id,
@@ -44,7 +44,7 @@ export async function getAdminLogs(
   limit = 50
 ): Promise<{ logs: AdminLogEntry[]; total: number }> {
   await requireAdmin();
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseAdminOrServerClient();
 
   const offset = (page - 1) * limit;
 

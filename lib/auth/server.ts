@@ -13,6 +13,14 @@ export function createSupabaseAdminClient() {
   );
 }
 
+export async function createSupabaseAdminOrServerClient() {
+  if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return createSupabaseAdminClient();
+  }
+
+  return createSupabaseServerClient();
+}
+
 export async function createSupabaseServerClient() {
   const cookieStore = await cookies();
 

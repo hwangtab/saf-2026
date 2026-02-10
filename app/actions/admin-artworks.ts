@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
-import { createSupabaseAdminClient } from '@/lib/auth/server';
+import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 import { logAdminAction } from './admin-logs';
 import {
   getString,
@@ -12,7 +12,7 @@ import {
 
 export async function updateAdminArtwork(id: string, formData: FormData) {
   await requireAdmin();
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseAdminOrServerClient();
 
   const rawStatus = String(formData.get('status') || 'available');
   const status = ['available', 'reserved', 'sold'].includes(rawStatus) ? rawStatus : 'available';
@@ -50,7 +50,7 @@ export async function updateAdminArtwork(id: string, formData: FormData) {
 
 export async function deleteAdminArtwork(id: string) {
   await requireAdmin();
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseAdminOrServerClient();
 
   const { data: artwork } = await supabase
     .from('artworks')
@@ -89,7 +89,7 @@ export async function deleteAdminArtwork(id: string) {
 
 export async function getArtworkById(id: string) {
   await requireAdmin();
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseAdminOrServerClient();
 
   const { data, error } = await supabase
     .from('artworks')
@@ -103,7 +103,7 @@ export async function getArtworkById(id: string) {
 
 export async function getAllArtists() {
   await requireAdmin();
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseAdminOrServerClient();
 
   const { data, error } = await supabase.from('artists').select('id, name_ko').order('name_ko');
 
@@ -113,7 +113,7 @@ export async function getAllArtists() {
 
 export async function updateArtworkDetails(id: string, formData: FormData) {
   await requireAdmin();
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseAdminOrServerClient();
 
   const title = getString(formData, 'title');
   const description = getString(formData, 'description');
@@ -184,7 +184,7 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
 
 export async function updateArtworkImages(id: string, images: string[]) {
   await requireAdmin();
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseAdminOrServerClient();
 
   const { error } = await supabase
     .from('artworks')
@@ -214,7 +214,7 @@ export async function batchUpdateArtworkStatus(ids: string[], status: string) {
   if (ids.length === 0) return { success: true, count: 0 };
   validateBatchSize(ids);
   await requireAdmin();
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseAdminOrServerClient();
 
   if (!['available', 'reserved', 'sold'].includes(status)) {
     throw new Error('Invalid status');
@@ -243,7 +243,7 @@ export async function batchToggleHidden(ids: string[], isHidden: boolean) {
   if (ids.length === 0) return { success: true, count: 0 };
   validateBatchSize(ids);
   await requireAdmin();
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseAdminOrServerClient();
 
   const { error } = await supabase
     .from('artworks')
@@ -268,7 +268,7 @@ export async function batchDeleteArtworks(ids: string[]) {
   if (ids.length === 0) return { success: true, count: 0 };
   validateBatchSize(ids);
   await requireAdmin();
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseAdminOrServerClient();
 
   // Get all artworks for cleanup
   const { data: artworks } = await supabase.from('artworks').select('id, images').in('id', ids);
