@@ -1,7 +1,7 @@
 'use server';
 
 import { requireAdmin } from '@/lib/auth/guards';
-import { createSupabaseServerClient } from '@/lib/auth/server';
+import { createSupabaseAdminClient } from '@/lib/auth/server';
 
 export type DashboardStats = {
   artists: {
@@ -33,7 +33,7 @@ export type DashboardStats = {
 
 export async function getDashboardStats(): Promise<DashboardStats> {
   await requireAdmin();
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAdminClient();
 
   // Artist stats - use COUNT queries for performance
   const [artistsResult, pendingResult, suspendedResult] = await Promise.all([
