@@ -1,0 +1,11 @@
+{
+  "active_plan": "/Users/hwang-gyeongha/saf/.sisyphus/plans/admin-image-zoom.md",
+  "started_at": "2026-02-10T07:21:03.760Z",
+  "session_ids": ["ses_3bf5d2c1affewRrLfkufLPc5r3"],
+  "plan_name": "admin-image-zoom",
+  "agent": "atlas",
+  "status": "complete_with_manual_qa_pending",
+  "completed_at": "2026-02-10T07:33:46Z",
+  "automated_work": "100%",
+  "manual_qa_required": true
+}

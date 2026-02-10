@@ -6,16 +6,18 @@ import ArtworkLightbox from '@/components/ui/ArtworkLightbox';
 import { resolveArtworkImageUrl } from '@/lib/utils';
 
 interface ArtworkImageProps {
-  imagePath: string;
+  images: string[];
   title: string;
   artist: string;
   sold?: boolean;
 }
 
-export default function ArtworkImage({ imagePath, title, artist, sold }: ArtworkImageProps) {
+export default function ArtworkImage({ images, title, artist, sold }: ArtworkImageProps) {
   const [isOpen, setIsOpen] = useState(false);
   const alt = `${title} - ${artist}`;
-  const src = resolveArtworkImageUrl(imagePath);
+  const firstImage = images?.[0] || '';
+  const src = resolveArtworkImageUrl(firstImage);
+  const resolvedImages = (images || []).map((img) => resolveArtworkImageUrl(img));
 
   return (
     <>
@@ -69,7 +71,13 @@ export default function ArtworkImage({ imagePath, title, artist, sold }: Artwork
         )}
       </div>
 
-      <ArtworkLightbox open={isOpen} close={() => setIsOpen(false)} src={src} alt={alt} />
+      <ArtworkLightbox
+        open={isOpen}
+        close={() => setIsOpen(false)}
+        images={resolvedImages}
+        initialIndex={0}
+        alt={alt}
+      />
     </>
   );
 }

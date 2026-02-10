@@ -128,7 +128,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
             {/* Left Column: Image & CTA */}
             <div className="space-y-8">
               <ArtworkImage
-                imagePath={artwork.image}
+                images={artwork.images}
                 title={artwork.title}
                 artist={artwork.artist}
                 sold={artwork.sold}

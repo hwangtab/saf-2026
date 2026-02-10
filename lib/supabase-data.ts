@@ -54,7 +54,7 @@ export const getSupabaseArtworks = cache(async (): Promise<Artwork[]> => {
       year: item.year || '',
       edition: item.edition || '',
       price: formatPriceForDisplay(item.price),
-      image: item.images?.[0] || '',
+      images: item.images || [],
       shopUrl: item.shop_url || '',
       sold: item.status === 'sold' || item.status === 'reserved',
       profile: artist?.profile || artist?.bio || '', // Support both bio and profile fields
@@ -105,7 +105,7 @@ export const getSupabaseArtworkById = cache(async (id: string): Promise<Artwork 
     year: artwork.year || '',
     edition: artwork.edition || '',
     price: formatPriceForDisplay(artwork.price),
-    image: artwork.images?.[0] || '',
+    images: artwork.images || [],
     shopUrl: artwork.shop_url || '',
     sold: artwork.status === 'sold' || artwork.status === 'reserved',
     profile: artist?.profile || artist?.bio || '',

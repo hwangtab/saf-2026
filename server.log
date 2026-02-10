@@ -1,0 +1,180 @@
+
+> saf-2026@1.0.0 dev
+> next dev
+
+▲ Next.js 16.1.1 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://172.30.1.15:3000
+- Environments: .env.local
+
+✓ Starting...
+✓ Ready in 3.2s
+○ Compiling /artworks ...
+ GET /artworks 200 in 18.2s (compile: 7.4s, proxy.ts: 853ms, render: 9.9s)
+⚠ Cross origin request detected from 127.0.0.1 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+ GET /artworks 200 in 15.1s (compile: 61ms, proxy.ts: 119ms, render: 14.9s)
+ GET /artworks 200 in 12.2s (compile: 104ms, proxy.ts: 210ms, render: 11.9s)
+○ Compiling /artworks/[id] ...
+ GET /artworks/56c2c3f3-d237-4556-aca7-b64b3d4fcea3 200 in 21.2s (compile: 17.9s, proxy.ts: 164ms, generate-params: 6.0s, render: 3.1s)
+✓ Finished filesystem cache database compaction in 13.8s
+⨯ Error: Image with src "" has "placeholder='blur'" property but is missing the "blurDataURL" property.
+        Possible solutions:
+          - Add a "blurDataURL" property, the contents should be a small Data URL to represent the image
+          - Change the "src" property to a static import with one of the supported file types: jpeg,png,webp,avif (animated images not supported)
+          - Remove the "placeholder" property, effectively no blur effect
+        Read more: https://nextjs.org/docs/messages/placeholder-blur-data-url
+    at ignore-listed frames {
+  digest: '4244872434@E371'
+}
+ GET /artworks/56c2c3f3-d237-4556-aca7-b64b3d4fcea3 200 in 7.1s (compile: 136ms, proxy.ts: 175ms, generate-params: 17ms, render: 6.7s)
+ HEAD /artworks 200 in 3.7s (compile: 251ms, proxy.ts: 309ms, render: 3.1s)
+○ Compiling /admin/test-artworks ...
+ HEAD /admin/test-artworks 200 in 9.3s (compile: 6.6s, proxy.ts: 136ms, render: 2.6s)
+ GET /admin/test-artworks 200 in 5.6s (compile: 210ms, proxy.ts: 162ms, render: 5.2s)
+ GET /artworks 200 in 7.4s (compile: 27ms, proxy.ts: 15ms, render: 7.4s)
+○ Compiling /login ...
+⨯ Error: Image with src "" has "placeholder='blur'" property but is missing the "blurDataURL" property.
+        Possible solutions:
+          - Add a "blurDataURL" property, the contents should be a small Data URL to represent the image
+          - Change the "src" property to a static import with one of the supported file types: jpeg,png,webp,avif (animated images not supported)
+          - Remove the "placeholder" property, effectively no blur effect
+        Read more: https://nextjs.org/docs/messages/placeholder-blur-data-url
+    at ignore-listed frames {
+  digest: '4244872434@E371'
+}
+ GET /login 200 in 11.0s (compile: 5.3s, proxy.ts: 162ms, render: 5.6s)
+✓ Finished writing to filesystem cache in 11.6s
+ GET /artworks/56c2c3f3-d237-4556-aca7-b64b3d4fcea3 200 in 19.6s (compile: 89ms, proxy.ts: 66ms, generate-params: 40ms, render: 19.5s)
+✓ Finished filesystem cache database compaction in 19.0s
+✓ Finished writing to filesystem cache in 14.7s
+✓ Compiled in 4.1s
+✓ Compiled in 456ms
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /login 200 in 11.8s (compile: 2.6s, proxy.ts: 506ms, render: 8.8s)
+ GET /login 200 in 5.5s (compile: 82ms, proxy.ts: 152ms, render: 5.3s)
+ GET /login 200 in 2.6s (compile: 216ms, proxy.ts: 243ms, render: 2.2s)
+ GET /login 200 in 831ms (compile: 71ms, proxy.ts: 103ms, render: 656ms)
+⨯ TypeError: Cannot read properties of undefined (reading '0')
+    at getImageSrc (components/ui/ArtworkCard.tsx:28:88)
+    at ArtworkCard (components/ui/ArtworkCard.tsx:60:18)
+  26 |
+  27 | const getHref = (artwork: ArtworkCardData) => `/artworks/${artwork.id}`;
+> 28 | const getImageSrc = (artwork: ArtworkCardData) => resolveArtworkImageUrl(artwork.images[0]);
+     |                                                                                        ^
+  29 | const getImageAlt = (artwork: ArtworkCardData) => `${artwork.title} - ${artwork.artist}`;
+  30 |
+  31 | function SoldBadge({ variant }: { variant: ArtworkCardVariant }) { {
+  digest: '968699212'
+}
+ GET /admin/test-artworks 500 in 23.7s (compile: 955ms, proxy.ts: 453ms, render: 22.3s)
+✓ Compiled in 1183ms
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+⨯ TypeError: Cannot read properties of undefined (reading '0')
+    at getImageSrc (components/ui/ArtworkCard.tsx:28:88)
+    at ArtworkCard (components/ui/ArtworkCard.tsx:60:18)
+  26 |
+  27 | const getHref = (artwork: ArtworkCardData) => `/artworks/${artwork.id}`;
+> 28 | const getImageSrc = (artwork: ArtworkCardData) => resolveArtworkImageUrl(artwork.images[0]);
+     |                                                                                        ^
+  29 | const getImageAlt = (artwork: ArtworkCardData) => `${artwork.title} - ${artwork.artist}`;
+  30 |
+  31 | function SoldBadge({ variant }: { variant: ArtworkCardVariant }) { {
+  digest: '968699212'
+}
+ GET /admin/test-artworks 500 in 15.1s (compile: 2.5s, proxy.ts: 265ms, render: 12.3s)
+⨯ TypeError: Cannot read properties of undefined (reading '0')
+    at <unknown> (lib/seo-utils.ts:767:51)
+    at Array.map (<anonymous>)
+    at generateArtworkListSchema (lib/seo-utils.ts:762:31)
+    at ArtworksPage (app/artworks/page.tsx:25:51)
+  765 |       url: `${SITE_URL}/artworks/${artwork.id}`,
+  766 |       name: artwork.title,
+> 767 |       image: resolveArtworkImageUrl(artwork.images[0]).startsWith('http')
+      |                                                   ^
+  768 |         ? resolveArtworkImageUrl(artwork.images[0])
+  769 |         : `${SITE_URL}${resolveArtworkImageUrl(artwork.images[0])}`,
+  770 |     })), {
+  digest: '4169964599'
+}
+ GET /artworks 200 in 12.7s (compile: 1442ms, proxy.ts: 249ms, render: 11.0s)
+⨯ TypeError: Cannot read properties of undefined (reading '0')
+    at <unknown> (lib/seo-utils.ts:767:51)
+    at Array.map (<anonymous>)
+    at generateArtworkListSchema (lib/seo-utils.ts:762:31)
+    at ArtworksPage (app/artworks/page.tsx:25:51)
+  765 |       url: `${SITE_URL}/artworks/${artwork.id}`,
+  766 |       name: artwork.title,
+> 767 |       image: resolveArtworkImageUrl(artwork.images[0]).startsWith('http')
+      |                                                   ^
+  768 |         ? resolveArtworkImageUrl(artwork.images[0])
+  769 |         : `${SITE_URL}${resolveArtworkImageUrl(artwork.images[0])}`,
+  770 |     })), {
+  digest: '4169964599'
+}
+ GET /artworks 200 in 5.2s (compile: 192ms, proxy.ts: 194ms, render: 4.8s)
+✓ Compiled in 2.5s
+⨯ TypeError: Cannot read properties of undefined (reading '0')
+    at <unknown> (components/common/Footer.tsx:14:26)
+    at Array.map (<anonymous>)
+    at Footer (components/common/Footer.tsx:10:35)
+  12 |     artist: artwork.artist,
+  13 |     title: artwork.title,
+> 14 |     image: artwork.images[0] || '',
+     |                          ^
+  15 |     price: artwork.price,
+  16 |     sold: artwork.sold,
+  17 |     material: artwork.material, {
+  digest: '3733181262'
+}
+ GET /admin/test-artworks 500 in 8.9s (compile: 2.9s, proxy.ts: 233ms, render: 5.8s)
+✓ Compiled in 16s
+✓ Compiled in 59.3s
+✓ Finished filesystem cache database compaction in 14.4s
+○ Compiling /_not-found/page ...
+Error fetching artworks from Supabase: {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '\n' +
+    'Caused by: ConnectTimeoutError: Connect Timeout Error (attempted addresses: 104.18.38.10:443, 172.64.149.246:443) (UND_ERR_CONNECT_TIMEOUT)\n' +
+    'ConnectTimeoutError: Connect Timeout Error (attempted addresses: 104.18.38.10:443, 172.64.149.246:443)\n' +
+    '    at onConnectTimeout (node:internal/deps/undici/undici:2331:28)\n' +
+    '    at node:internal/deps/undici/undici:2283:50\n' +
+    '    at Immediate._onImmediate (node:internal/deps/undici/undici:2315:13)\n' +
+    '    at process.processImmediate (node:internal/timers:483:21)\n' +
+    '    at process.callbackTrampoline (node:internal/async_hooks:130:17)',
+  hint: '',
+  code: ''
+}
+Error fetching artworks from Supabase: {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '\n' +
+    'Caused by: ConnectTimeoutError: Connect Timeout Error (attempted addresses: 104.18.38.10:443, 172.64.149.246:443) (UND_ERR_CONNECT_TIMEOUT)\n' +
+    'ConnectTimeoutError: Connect Timeout Error (attempted addresses: 104.18.38.10:443, 172.64.149.246:443)\n' +
+    '    at onConnectTimeout (node:internal/deps/undici/undici:2331:28)\n' +
+    '    at node:internal/deps/undici/undici:2283:50\n' +
+    '    at Immediate._onImmediate (node:internal/deps/undici/undici:2315:13)\n' +
+    '    at process.processImmediate (node:internal/timers:483:21)\n' +
+    '    at process.callbackTrampoline (node:internal/async_hooks:130:17)',
+  hint: '',
+  code: ''
+}
+ GET /admin/test-artworks 404 in 3.7min (compile: 98s, proxy.ts: 36.6s, render: 88s)
+✓ Compiled in 198.6s
+○ Compiling /admin/test-artworks ...
+ GET /artworks 200 in 34.0s (compile: 12.2s, proxy.ts: 13.4s, render: 8.4s)
+ HEAD /admin/test-artworks 200 in 2.3min (compile: 61s, proxy.ts: 20.1s, render: 59s)
+✓ Compiled in 6.3s
+✓ Finished writing to filesystem cache in 10.9s
+Error fetching artworks from Supabase: {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '\n' +
+    'Caused by: Error: read ECONNRESET (ECONNRESET)\n' +
+    'Error: read ECONNRESET\n' +
+    '    at TLSWrap.onStreamRead (node:internal/stream_base_commons:218:20)\n' +
+    '    at TLSWrap.callbackTrampoline (node:internal/async_hooks:130:17)',
+  hint: '',
+  code: ''
+}

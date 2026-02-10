@@ -1,11 +1,8 @@
-import { requireAdmin } from '@/lib/auth/guards';
 import Link from 'next/link';
 import { SignOutButton } from '@/components/auth/SignOutButton';
 import { AdminMobileNav } from './admin-mobile-nav';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  await requireAdmin();
-
   return (
     <div className="min-h-screen bg-[var(--admin-bg)]">
       <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top,#e0e7ff_0%,#f8fafc_38%,#f1f5f9_100%)]" />

@@ -25,7 +25,7 @@ const VARIANT_CONFIG = {
 } as const;
 
 const getHref = (artwork: ArtworkCardData) => `/artworks/${artwork.id}`;
-const getImageSrc = (artwork: ArtworkCardData) => resolveArtworkImageUrl(artwork.image);
+const getImageSrc = (artwork: ArtworkCardData) => resolveArtworkImageUrl(artwork.images[0]);
 const getImageAlt = (artwork: ArtworkCardData) => `${artwork.title} - ${artwork.artist}`;
 
 function SoldBadge({ variant }: { variant: ArtworkCardVariant }) {

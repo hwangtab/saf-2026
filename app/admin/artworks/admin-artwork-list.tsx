@@ -32,7 +32,11 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
   const [visibilityFilter, setVisibilityFilter] = useState('all');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [lightboxData, setLightboxData] = useState<{ src: string; alt: string } | null>(null);
+  const [lightboxData, setLightboxData] = useState<{
+    images: string[];
+    initialIndex: number;
+    alt: string;
+  } | null>(null);
 
   // -- Filters --
   const filtered = artworks.filter((artwork) => {
@@ -119,8 +123,12 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
     }
   };
 
-  const handleImageClick = (src: string, alt: string) => {
-    setLightboxData({ src, alt });
+  const handleImageClick = (images: string[], title: string) => {
+    setLightboxData({
+      images: images || [],
+      initialIndex: 0,
+      alt: title,
+    });
     setLightboxOpen(true);
   };
 
@@ -368,13 +376,13 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
                           }`}
                           onClick={() => {
                             if (artwork.images?.[0]) {
-                              handleImageClick(artwork.images[0], artwork.title);
+                              handleImageClick(artwork.images || [], artwork.title);
                             }
                           }}
                           onKeyDown={(e) => {
                             if ((e.key === 'Enter' || e.key === ' ') && artwork.images?.[0]) {
                               e.preventDefault();
-                              handleImageClick(artwork.images[0], artwork.title);
+                              handleImageClick(artwork.images || [], artwork.title);
                             }
                           }}
                           role={artwork.images?.[0] ? 'button' : undefined}
@@ -480,7 +488,8 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
         <ArtworkLightbox
           open={lightboxOpen}
           close={() => setLightboxOpen(false)}
-          src={lightboxData.src}
+          images={lightboxData.images}
+          initialIndex={lightboxData.initialIndex}
           alt={lightboxData.alt}
         />
       )}

@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   // Use the first artwork's image as the representative image for the artist
   const representativeArtwork = artistArtworks[0];
-  const resolvedImageUrl = resolveArtworkImageUrl(representativeArtwork.image);
+  const resolvedImageUrl = resolveArtworkImageUrl(representativeArtwork.images[0]);
   const imageUrl = resolvedImageUrl.startsWith('http')
     ? resolvedImageUrl
     : `${SITE_URL}${resolvedImageUrl}`;
@@ -116,7 +116,7 @@ export default async function ArtistPage({ params }: Props) {
 
   // Use the first artwork's image as the hero background
   const representativeArtwork = artistArtworks[0];
-  const resolvedImageUrl = resolveArtworkImageUrl(representativeArtwork.image);
+  const resolvedImageUrl = resolveArtworkImageUrl(representativeArtwork.images[0]);
   const heroBackgroundImage = resolvedImageUrl;
 
   // Description Logic: Profile > Description (Note) > Default
@@ -137,7 +137,7 @@ export default async function ArtistPage({ params }: Props) {
   const personSchema = generateArtistSchema({
     name: artistName,
     description: artistProfile || artistNote || undefined,
-    image: representativeArtwork.image,
+    image: representativeArtwork.images[0],
     url: pageUrl,
     jobTitle: 'Artist',
   });

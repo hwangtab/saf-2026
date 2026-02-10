@@ -24,7 +24,7 @@ export interface BaseArtwork {
   year: string;
   edition: string;
   price: string;
-  image: string;
+  images: string[];
   shopUrl?: string;
   sold?: boolean;
   hidden?: boolean;
@@ -43,7 +43,7 @@ export interface ArtworkCardData {
   id: string;
   artist: string;
   title: string;
-  image: string;
+  images: string[];
   price: string;
   sold?: boolean;
   material?: string;

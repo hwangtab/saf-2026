@@ -34,7 +34,7 @@ export function createBreadcrumbSchema(items: BreadcrumbItem[]) {
 }
 
 export function generateArtworkMetadata(artwork: Artwork): Metadata {
-  const resolvedImageUrl = resolveArtworkImageUrl(artwork.image);
+  const resolvedImageUrl = resolveArtworkImageUrl(artwork.images[0]);
   const imageUrl = resolvedImageUrl.startsWith('http')
     ? resolvedImageUrl
     : `${SITE_URL}${resolvedImageUrl}`;
@@ -102,7 +102,7 @@ export function generateArtworkMetadata(artwork: Artwork): Metadata {
 }
 
 export function generateArtworkJsonLd(artwork: Artwork, numericPrice: string, isInquiry: boolean) {
-  const resolvedImageUrl = resolveArtworkImageUrl(artwork.image);
+  const resolvedImageUrl = resolveArtworkImageUrl(artwork.images[0]);
   const schemaDescription =
     artwork.description || artwork.profile || `${artwork.artist}의 작품 "${artwork.title}"`;
 
@@ -764,9 +764,9 @@ export function generateArtworkListSchema(artworks: Artwork[]) {
       position: index + 1,
       url: `${SITE_URL}/artworks/${artwork.id}`,
       name: artwork.title,
-      image: resolveArtworkImageUrl(artwork.image).startsWith('http')
-        ? resolveArtworkImageUrl(artwork.image)
-        : `${SITE_URL}${resolveArtworkImageUrl(artwork.image)}`,
+      image: resolveArtworkImageUrl(artwork.images[0]).startsWith('http')
+        ? resolveArtworkImageUrl(artwork.images[0])
+        : `${SITE_URL}${resolveArtworkImageUrl(artwork.images[0])}`,
     })),
   };
 }

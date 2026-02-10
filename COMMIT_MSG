@@ -1,0 +1,36 @@
+feat(ui): upgrade lightbox to multi-image gallery with navigation
+
+Implement multi-image gallery support across all pages (public and admin)
+to allow users to browse multiple artwork images with arrow key navigation.
+
+BREAKING CHANGE: Artwork type changed from `image: string` to `images: string[]`
+
+**Core Changes:**
+- Upgrade ArtworkLightbox component to support image arrays
+- Enable conditional navigation buttons (show only if multiple images)
+- Add initialIndex support for opening at specific image
+
+**Type Updates:**
+- Update BaseArtwork.image → images: string[]
+- Update ArtworkCardData.image → images: string[]
+- Cascade changes across 23 files
+
+**Public Pages:**
+- ArtworkImage: Pass full image array to lightbox
+- Artwork detail page: Support multi-image display
+
+**Admin Pages:**
+- Admin list: Click thumbnail opens gallery at first image
+- Admin edit: Click preview opens gallery at clicked index
+
+**Features:**
+- Arrow key navigation (← / →)
+- On-screen next/prev buttons
+- Image counter display (e.g., "2 / 5")
+- Zoom functionality preserved
+- Backward compatible lightbox API
+
+**Verification:**
+- TypeScript: 0 errors
+- ESLint: 0 new errors
+- Build: Successful

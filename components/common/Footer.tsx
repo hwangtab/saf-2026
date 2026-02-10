@@ -11,7 +11,7 @@ export default async function Footer() {
     id: artwork.id,
     artist: artwork.artist,
     title: artwork.title,
-    image: artwork.image,
+    images: artwork.images || [],
     price: artwork.price,
     sold: artwork.sold,
     material: artwork.material,

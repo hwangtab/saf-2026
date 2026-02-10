@@ -248,8 +248,8 @@ async function migrateArtistsAndArtworks() {
       }
     }
 
-    const localImagePath = `public/images/artworks/${artwork.image}`;
-    const storagePath = `${artistId}/${artwork.image}`;
+    const localImagePath = `public/images/artworks/${artwork.images[0]}`;
+    const storagePath = `${artistId}/${artwork.images[0]}`;
     const publicUrl = await uploadImage(localImagePath, 'artworks', storagePath);
     const price =
       artwork.price !== undefined && artwork.price !== null ? String(artwork.price) : '';

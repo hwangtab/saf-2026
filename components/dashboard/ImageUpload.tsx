@@ -33,7 +33,11 @@ export function ImageUpload({
   const [previewUrls, setPreviewUrls] = useState<string[]>(defaultImages);
   const [isDragging, setIsDragging] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [lightboxData, setLightboxData] = useState<{ src: string; alt: string } | null>(null);
+  const [lightboxData, setLightboxData] = useState<{
+    images: string[];
+    initialIndex: number;
+    alt: string;
+  } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const supabase = createSupabaseBrowserClient();
   const isControlled = Array.isArray(value);
@@ -144,8 +148,12 @@ export function ImageUpload({
     applyUrls(newUrls);
   };
 
-  const handleImageClick = (src: string, alt: string) => {
-    setLightboxData({ src, alt });
+  const handleImageClick = (index: number) => {
+    setLightboxData({
+      images: currentUrls,
+      initialIndex: index,
+      alt: `이미지 ${index + 1}`,
+    });
     setLightboxOpen(true);
   };
 
@@ -159,11 +167,11 @@ export function ImageUpload({
           >
             <div
               className="absolute inset-0 cursor-zoom-in z-0"
-              onClick={() => handleImageClick(url, `Preview ${index + 1}`)}
+              onClick={() => handleImageClick(index)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  handleImageClick(url, `Preview ${index + 1}`);
+                  handleImageClick(index);
                 }
               }}
               role="button"
@@ -240,7 +248,8 @@ export function ImageUpload({
         <ArtworkLightbox
           open={lightboxOpen}
           close={() => setLightboxOpen(false)}
-          src={lightboxData.src}
+          images={lightboxData.images}
+          initialIndex={lightboxData.initialIndex}
           alt={lightboxData.alt}
         />
       )}
