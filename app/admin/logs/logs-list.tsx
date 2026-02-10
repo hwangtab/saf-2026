@@ -20,6 +20,8 @@ function formatActionDescription(log: AdminLogEntry): string {
       return `사용자 승인: ${details?.user_name || log.target_id}`;
     case 'user_rejected':
       return `사용자 거절: ${details?.user_name || log.target_id}`;
+    case 'user_reactivated':
+      return `사용자 재활성화: ${details?.user_name || log.target_id}`;
     case 'user_role_changed':
       return `권한 변경: ${details?.user_name || ''} → ${details?.to}`;
     case 'artwork_updated':

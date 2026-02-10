@@ -117,6 +117,25 @@ export async function rejectUser(userId: string): Promise<AdminActionState> {
   }
 }
 
+export async function reactivateUser(userId: string): Promise<AdminActionState> {
+  try {
+    await requireAdmin();
+    const supabase = await createSupabaseAdminOrServerClient();
+
+    const { error } = await supabase.from('profiles').update({ status: 'active' }).eq('id', userId);
+
+    if (error) throw error;
+
+    revalidatePath('/admin/users');
+
+    await logAdminAction('user_reactivated', 'user', userId);
+
+    return { message: '사용자가 다시 활성화되었습니다.', error: false };
+  } catch (error: any) {
+    return { message: error.message, error: true };
+  }
+}
+
 export async function updateUserRole(
   userId: string,
   role: 'admin' | 'artist' | 'user'

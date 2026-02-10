@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { approveUser, rejectUser, updateUserRole } from '@/app/actions/admin';
+import { approveUser, reactivateUser, rejectUser, updateUserRole } from '@/app/actions/admin';
 import Modal from '@/components/ui/Modal';
 import { AdminCard, AdminCardHeader, AdminSelect } from '@/app/admin/_components/admin-ui';
 import { useToast } from '@/lib/hooks/useToast';
@@ -27,11 +27,16 @@ export function UserList({ users }: { users: Profile[] }) {
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [selectedUser, setSelectedUser] = useState<Profile | null>(null);
+  const [localUsers, setLocalUsers] = useState<Profile[]>(users);
   const router = useRouter();
   const toast = useToast();
 
+  useEffect(() => {
+    setLocalUsers(users);
+  }, [users]);
+
   const normalize = (value: string) => value.toLowerCase().replace(/\s+/g, '');
-  const filteredUsers = users.filter((user) => {
+  const filteredUsers = localUsers.filter((user) => {
     if (!query) return true;
     const q = normalize(query);
     return normalize(user.name || '').includes(q) || normalize(user.email || '').includes(q);
@@ -45,6 +50,9 @@ export function UserList({ users }: { users: Profile[] }) {
     if (res.error) {
       toast.error(res.message);
     } else {
+      setLocalUsers((prev) =>
+        prev.map((user) => (user.id === id ? { ...user, status: 'active', role: 'artist' } : user))
+      );
       toast.success('사용자를 승인했습니다.');
       router.refresh();
     }
@@ -58,6 +66,9 @@ export function UserList({ users }: { users: Profile[] }) {
     if (res.error) {
       toast.error(res.message);
     } else {
+      setLocalUsers((prev) =>
+        prev.map((user) => (user.id === id ? { ...user, status: 'suspended' } : user))
+      );
       toast.success('사용자 상태를 변경했습니다.');
       router.refresh();
     }
@@ -71,7 +82,34 @@ export function UserList({ users }: { users: Profile[] }) {
     if (res.error) {
       toast.error(res.message);
     } else {
+      setLocalUsers((prev) =>
+        prev.map((user) =>
+          user.id === id
+            ? {
+                ...user,
+                role: newRole as Profile['role'],
+                status: newRole === 'admin' || newRole === 'artist' ? 'active' : user.status,
+              }
+            : user
+        )
+      );
       toast.success(`권한을 ${newRole}로 변경했습니다.`);
+      router.refresh();
+    }
+  };
+
+  const handleReactivate = async (id: string) => {
+    if (!confirm('이 사용자를 다시 활성화하시겠습니까?')) return;
+    setProcessingId(id);
+    const res = await reactivateUser(id);
+    setProcessingId(null);
+    if (res.error) {
+      toast.error(res.message);
+    } else {
+      setLocalUsers((prev) =>
+        prev.map((user) => (user.id === id ? { ...user, status: 'active' } : user))
+      );
+      toast.success('사용자를 다시 활성화했습니다.');
       router.refresh();
     }
   };
@@ -252,6 +290,15 @@ export function UserList({ users }: { users: Profile[] }) {
                             className="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
                           >
                             {user.status === 'pending' ? '거절' : '정지'}
+                          </button>
+                        )}
+                        {user.status === 'suspended' && (
+                          <button
+                            onClick={() => handleReactivate(user.id)}
+                            disabled={processingId === user.id}
+                            className="text-blue-700 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
+                          >
+                            재활성화
                           </button>
                         )}
                         <button
