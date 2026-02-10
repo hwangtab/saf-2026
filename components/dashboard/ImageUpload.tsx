@@ -158,7 +158,7 @@ export function ImageUpload({
             className="relative w-32 h-32 rounded-lg overflow-hidden border border-gray-200 group"
           >
             <div
-              className="cursor-zoom-in h-full w-full"
+              className="absolute inset-0 cursor-zoom-in z-0"
               onClick={() => handleImageClick(url, `Preview ${index + 1}`)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
