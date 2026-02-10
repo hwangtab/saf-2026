@@ -10,6 +10,7 @@ import {
   batchDeleteArtworks,
 } from '@/app/actions/admin-artworks';
 import { AdminCard, AdminCardHeader, AdminSelect } from '@/app/admin/_components/admin-ui';
+import { useToast } from '@/lib/hooks/useToast';
 
 type ArtworkItem = {
   id: string;
@@ -22,6 +23,7 @@ type ArtworkItem = {
 
 export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
   const router = useRouter();
+  const toast = useToast();
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [batchProcessing, setBatchProcessing] = useState(false);
   const [query, setQuery] = useState('');
@@ -66,7 +68,10 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
     setProcessingId(id);
     try {
       await deleteAdminArtwork(id);
+      toast.success('작품을 삭제했습니다.');
       router.refresh();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : '작품 삭제 중 오류가 발생했습니다.');
     } finally {
       setProcessingId(null);
     }
@@ -87,7 +92,10 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
     // Simplified: Just use batch for single item for now to avoid FormData complexity here.
     try {
       await batchUpdateArtworkStatus([id], newStatus);
+      toast.success('작품 상태를 변경했습니다.');
       router.refresh();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : '상태 변경 중 오류가 발생했습니다.');
     } finally {
       setProcessingId(null);
     }
@@ -97,7 +105,12 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
     setProcessingId(id);
     try {
       await batchToggleHidden([id], !currentHidden);
+      toast.success(currentHidden ? '작품을 공개 처리했습니다.' : '작품을 숨김 처리했습니다.');
       router.refresh();
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : '공개 상태 변경 중 오류가 발생했습니다.'
+      );
     } finally {
       setProcessingId(null);
     }
@@ -110,7 +123,12 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
     try {
       await batchUpdateArtworkStatus(selectedInFiltered, status);
       setSelectedIds(new Set());
+      toast.success('선택한 작품 상태를 변경했습니다.');
       router.refresh();
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : '일괄 상태 변경 중 오류가 발생했습니다.'
+      );
     } finally {
       setBatchProcessing(false);
     }
@@ -125,7 +143,14 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
     try {
       await batchToggleHidden(selectedInFiltered, isHidden);
       setSelectedIds(new Set());
+      toast.success(
+        isHidden ? '선택한 작품을 숨김 처리했습니다.' : '선택한 작품을 공개 처리했습니다.'
+      );
       router.refresh();
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : '일괄 공개 상태 변경 중 오류가 발생했습니다.'
+      );
     } finally {
       setBatchProcessing(false);
     }
@@ -138,7 +163,10 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
     try {
       await batchDeleteArtworks(selectedInFiltered);
       setSelectedIds(new Set());
+      toast.success('선택한 작품을 삭제했습니다.');
       router.refresh();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : '일괄 삭제 중 오류가 발생했습니다.');
     } finally {
       setBatchProcessing(false);
     }
