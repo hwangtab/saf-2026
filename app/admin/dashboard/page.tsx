@@ -35,8 +35,12 @@ function StatCard({
   return content;
 }
 
-function formatDate(dateString: string) {
+function formatDate(dateString: string | null | undefined) {
+  if (!dateString) return '-';
+
   const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return '-';
+
   return date.toLocaleDateString('ko-KR', {
     month: 'short',
     day: 'numeric',
