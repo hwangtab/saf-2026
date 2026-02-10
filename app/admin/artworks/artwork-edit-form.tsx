@@ -107,7 +107,6 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
           bucket="artworks"
           pathPrefix={`admin-artwork-${artwork.id}`}
           value={images}
-          onChange={handleImagesChange}
           onUploadComplete={handleImagesChange}
           maxFiles={10}
         />

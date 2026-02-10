@@ -100,7 +100,6 @@ export function ArtistEditForm({ artist }: ArtistEditFormProps) {
           bucket="profiles"
           pathPrefix={`admin-artist-${artist.id}`}
           value={profileImage}
-          onChange={handleImageChange}
           onUploadComplete={handleImageChange}
           maxFiles={1}
         />
