@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { deleteArtwork } from '@/app/actions/artwork';
 import Button from '@/components/ui/Button';
 import { ExternalLinkIcon } from '@/components/ui/Icons';
+import { formatPriceForDisplay } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/lib/hooks/useToast';
 
@@ -127,7 +128,7 @@ export function ArtworkList({
                       )}
                     </div>
                     <div className="mt-1 flex text-sm text-gray-500">
-                      <p className="truncate mr-4">{artwork.price}</p>
+                      <p className="truncate mr-4">{formatPriceForDisplay(artwork.price)}</p>
                       <p>
                         {artwork.status === 'sold' ? (
                           <span className="text-red-500 font-medium">판매 완료</span>
