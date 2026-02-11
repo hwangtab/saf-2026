@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import { createNews, updateNews, deleteNews } from '@/app/actions/admin-content';
@@ -27,10 +27,15 @@ const normalize = (value: string) => value.toLowerCase().replace(/\s+/g, '');
 export function NewsManager({ news }: { news: NewsItem[] }) {
   const router = useRouter();
   const toast = useToast();
+  const [optimisticNews, setOptimisticNews] = useState(news);
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
+
+  useEffect(() => {
+    setOptimisticNews(news);
+  }, [news]);
 
   const handleCreate = async (formData: FormData) => {
     setCreating(true);
@@ -46,12 +51,38 @@ export function NewsManager({ news }: { news: NewsItem[] }) {
   };
 
   const handleUpdate = async (id: string, formData: FormData) => {
+    const previousNews = [...optimisticNews];
+
+    const title = formData.get('title') as string;
+    const source = formData.get('source') as string;
+    const date = formData.get('date') as string;
+    const link = formData.get('link') as string;
+    const thumbnail = formData.get('thumbnail') as string;
+    const description = formData.get('description') as string;
+
+    setOptimisticNews((prev) =>
+      prev.map((n) =>
+        n.id === id
+          ? {
+              ...n,
+              title,
+              source,
+              date,
+              link,
+              thumbnail,
+              description,
+            }
+          : n
+      )
+    );
     setSavingId(id);
+
     try {
       await updateNews(id, formData);
       toast.success('뉴스를 저장했습니다.');
       router.refresh();
     } catch (err: unknown) {
+      setOptimisticNews(previousNews);
       toast.error(err instanceof Error ? err.message : '저장 중 오류가 발생했습니다.');
     } finally {
       setSavingId(null);
@@ -60,13 +91,18 @@ export function NewsManager({ news }: { news: NewsItem[] }) {
 
   const handleDelete = async (id: string) => {
     if (!confirm('이 뉴스를 삭제하시겠습니까?')) return;
+
+    const previousNews = [...optimisticNews];
+    setOptimisticNews((prev) => prev.filter((n) => n.id !== id));
     setProcessingId(id);
+
     try {
       await deleteNews(id);
       toast.success('뉴스를 삭제했습니다.');
       router.refresh();
     } catch (err: unknown) {
       console.error('삭제 중 오류:', err);
+      setOptimisticNews(previousNews);
       toast.error(err instanceof Error ? err.message : '삭제 중 오류가 발생했습니다.');
     } finally {
       setProcessingId(null);
@@ -145,7 +181,7 @@ export function NewsManager({ news }: { news: NewsItem[] }) {
             뉴스 제목 또는 출처로 검색할 수 있습니다.
           </span>
         </AdminCard>
-        {news
+        {optimisticNews
           .filter((item) => {
             if (!query) return true;
             const q = normalize(query);

@@ -26,8 +26,13 @@ export function ArtworkList({
   flashMessage?: string | null;
 }) {
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const [optimisticArtworks, setOptimisticArtworks] = useState(artworks);
   const router = useRouter();
   const toast = useToast();
+
+  useEffect(() => {
+    setOptimisticArtworks(artworks);
+  }, [artworks]);
 
   useEffect(() => {
     if (!flashMessage) return;
@@ -38,19 +43,28 @@ export function ArtworkList({
   const handleDelete = async (id: string) => {
     if (!confirm('정말 이 작품을 삭제하시겠습니까? 복구할 수 없습니다.')) return;
 
+    setOptimisticArtworks((prev) => prev.filter((a) => a.id !== id));
     setIsDeleting(id);
-    const result = await deleteArtwork(id);
-    setIsDeleting(null);
 
-    if (result.error) {
-      toast.error(result.message);
-    } else {
-      toast.success('작품이 삭제되었습니다.');
-      router.refresh();
+    try {
+      const result = await deleteArtwork(id);
+
+      if (result.error) {
+        setOptimisticArtworks(artworks);
+        toast.error(result.message);
+      } else {
+        toast.success('작품이 삭제되었습니다.');
+        router.refresh();
+      }
+    } catch (error) {
+      setOptimisticArtworks(artworks);
+      toast.error('삭제 중 오류가 발생했습니다.');
+    } finally {
+      setIsDeleting(null);
     }
   };
 
-  if (artworks.length === 0) {
+  if (optimisticArtworks.length === 0) {
     return (
       <div className="text-center py-12">
         <svg
@@ -80,7 +94,7 @@ export function ArtworkList({
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-md">
       <ul role="list" className="divide-y divide-gray-200">
-        {artworks.map((artwork) => (
+        {optimisticArtworks.map((artwork) => (
           <li key={artwork.id}>
             <div className="flex items-center px-4 py-5 sm:px-6">
               <div className="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between">

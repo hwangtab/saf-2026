@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import { createVideo, updateVideo, deleteVideo } from '@/app/actions/admin-content';
@@ -21,10 +21,15 @@ const normalize = (value: string) => value.toLowerCase().replace(/\s+/g, '');
 export function VideosManager({ videos }: { videos: VideoItem[] }) {
   const router = useRouter();
   const toast = useToast();
+  const [optimisticVideos, setOptimisticVideos] = useState(videos);
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
+
+  useEffect(() => {
+    setOptimisticVideos(videos);
+  }, [videos]);
 
   const handleCreate = async (formData: FormData) => {
     setCreating(true);
@@ -40,12 +45,36 @@ export function VideosManager({ videos }: { videos: VideoItem[] }) {
   };
 
   const handleUpdate = async (id: string, formData: FormData) => {
+    const previousVideos = [...optimisticVideos];
+
+    const title = formData.get('title') as string;
+    const youtube_id = formData.get('youtube_id') as string;
+    const description = formData.get('description') as string;
+    const thumbnail = formData.get('thumbnail') as string;
+    const transcript = formData.get('transcript') as string;
+
+    setOptimisticVideos((prev) =>
+      prev.map((v) =>
+        v.id === id
+          ? {
+              ...v,
+              title,
+              youtube_id,
+              description,
+              thumbnail,
+              transcript,
+            }
+          : v
+      )
+    );
     setSavingId(id);
+
     try {
       await updateVideo(id, formData);
       toast.success('영상을 저장했습니다.');
       router.refresh();
     } catch (err: unknown) {
+      setOptimisticVideos(previousVideos);
       toast.error(err instanceof Error ? err.message : '저장 중 오류가 발생했습니다.');
     } finally {
       setSavingId(null);
@@ -54,13 +83,18 @@ export function VideosManager({ videos }: { videos: VideoItem[] }) {
 
   const handleDelete = async (id: string) => {
     if (!confirm('이 영상을 삭제하시겠습니까?')) return;
+
+    const previousVideos = [...optimisticVideos];
+    setOptimisticVideos((prev) => prev.filter((v) => v.id !== id));
     setProcessingId(id);
+
     try {
       await deleteVideo(id);
       toast.success('영상을 삭제했습니다.');
       router.refresh();
     } catch (err: unknown) {
       console.error('삭제 중 오류:', err);
+      setOptimisticVideos(previousVideos);
       toast.error(err instanceof Error ? err.message : '삭제 중 오류가 발생했습니다.');
     } finally {
       setProcessingId(null);
@@ -134,7 +168,7 @@ export function VideosManager({ videos }: { videos: VideoItem[] }) {
             영상 제목 또는 유튜브 ID로 검색할 수 있습니다.
           </span>
         </AdminCard>
-        {videos
+        {optimisticVideos
           .filter((item) => {
             if (!query) return true;
             const q = normalize(query);

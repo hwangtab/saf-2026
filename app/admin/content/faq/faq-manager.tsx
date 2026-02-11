@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import { createFaq, updateFaq, deleteFaq } from '@/app/actions/admin-content';
@@ -23,6 +23,11 @@ export function FaqManager({ faqs }: { faqs: FaqItem[] }) {
   const [creating, setCreating] = useState(false);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
+  const [optimisticFaqs, setOptimisticFaqs] = useState(faqs);
+
+  useEffect(() => {
+    setOptimisticFaqs(faqs);
+  }, [faqs]);
 
   const handleCreate = async (formData: FormData) => {
     setCreating(true);
@@ -38,12 +43,23 @@ export function FaqManager({ faqs }: { faqs: FaqItem[] }) {
   };
 
   const handleUpdate = async (id: string, formData: FormData) => {
+    const originalFaqs = [...optimisticFaqs];
+    const question = formData.get('question') as string;
+    const answer = formData.get('answer') as string;
+    const displayOrder = Number(formData.get('display_order'));
+
+    setOptimisticFaqs((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, question, answer, display_order: displayOrder } : item
+      )
+    );
     setSavingId(id);
     try {
       await updateFaq(id, formData);
       toast.success('FAQ를 저장했습니다.');
       router.refresh();
     } catch (err: unknown) {
+      setOptimisticFaqs(originalFaqs);
       toast.error(err instanceof Error ? err.message : '저장 중 오류가 발생했습니다.');
     } finally {
       setSavingId(null);
@@ -52,12 +68,15 @@ export function FaqManager({ faqs }: { faqs: FaqItem[] }) {
 
   const handleDelete = async (id: string) => {
     if (!confirm('이 FAQ를 삭제하시겠습니까?')) return;
+    const originalFaqs = [...optimisticFaqs];
+    setOptimisticFaqs((prev) => prev.filter((item) => item.id !== id));
     setProcessingId(id);
     try {
       await deleteFaq(id);
       toast.success('FAQ를 삭제했습니다.');
       router.refresh();
     } catch (err: unknown) {
+      setOptimisticFaqs(originalFaqs);
       console.error('삭제 중 오류:', err);
       toast.error(err instanceof Error ? err.message : '삭제 중 오류가 발생했습니다.');
     } finally {
@@ -120,7 +139,7 @@ export function FaqManager({ faqs }: { faqs: FaqItem[] }) {
             FAQ 질문 또는 답변으로 검색할 수 있습니다.
           </span>
         </AdminCard>
-        {faqs
+        {optimisticFaqs
           .filter((item) => {
             if (!query) return true;
             const q = normalize(query);

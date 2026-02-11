@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { deleteArtist } from '@/app/actions/admin-artists';
@@ -17,25 +17,34 @@ type ArtistItem = {
 
 export function ArtistList({ artists }: { artists: ArtistItem[] }) {
   const router = useRouter();
+  const [optimisticArtists, setOptimisticArtists] = useState(artists);
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    setOptimisticArtists(artists);
+  }, [artists]);
+
   const handleDelete = async (id: string) => {
     if (!confirm('이 작가를 삭제하시겠습니까? 연결된 작품이 있으면 삭제할 수 없습니다.')) return;
+
+    setOptimisticArtists((prev) => prev.filter((a) => a.id !== id));
     setProcessingId(id);
     setError(null);
+
     try {
       await deleteArtist(id);
       router.refresh();
     } catch (err: unknown) {
+      setOptimisticArtists(artists);
       setError(err instanceof Error ? err.message : '삭제 중 오류가 발생했습니다.');
     } finally {
       setProcessingId(null);
     }
   };
 
-  const filtered = artists.filter((artist) => {
+  const filtered = optimisticArtists.filter((artist) => {
     if (!query) return true;
     const q = query.toLowerCase().replace(/\s+/g, '');
     const nameKo = (artist.name_ko || '').toLowerCase().replace(/\s+/g, '');

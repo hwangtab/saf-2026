@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import {
@@ -29,6 +29,11 @@ export function TestimonialsManager({ testimonials }: { testimonials: Testimonia
   const [creating, setCreating] = useState(false);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
+  const [optimisticTestimonials, setOptimisticTestimonials] = useState(testimonials);
+
+  useEffect(() => {
+    setOptimisticTestimonials(testimonials);
+  }, [testimonials]);
 
   const handleCreate = async (formData: FormData) => {
     setCreating(true);
@@ -44,12 +49,27 @@ export function TestimonialsManager({ testimonials }: { testimonials: Testimonia
   };
 
   const handleUpdate = async (id: string, formData: FormData) => {
+    const originalTestimonials = [...optimisticTestimonials];
+    const category = formData.get('category') as string;
+    const author = formData.get('author') as string;
+    const quote = formData.get('quote') as string;
+    const context = formData.get('context') as string;
+    const displayOrder = Number(formData.get('display_order'));
+
+    setOptimisticTestimonials((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? { ...item, category, author, quote, context, display_order: displayOrder }
+          : item
+      )
+    );
     setSavingId(id);
     try {
       await updateTestimonial(id, formData);
       toast.success('추천사를 저장했습니다.');
       router.refresh();
     } catch (err: unknown) {
+      setOptimisticTestimonials(originalTestimonials);
       toast.error(err instanceof Error ? err.message : '저장 중 오류가 발생했습니다.');
     } finally {
       setSavingId(null);
@@ -58,12 +78,15 @@ export function TestimonialsManager({ testimonials }: { testimonials: Testimonia
 
   const handleDelete = async (id: string) => {
     if (!confirm('이 추천사를 삭제하시겠습니까?')) return;
+    const originalTestimonials = [...optimisticTestimonials];
+    setOptimisticTestimonials((prev) => prev.filter((item) => item.id !== id));
     setProcessingId(id);
     try {
       await deleteTestimonial(id);
       toast.success('추천사를 삭제했습니다.');
       router.refresh();
     } catch (err: unknown) {
+      setOptimisticTestimonials(originalTestimonials);
       console.error('삭제 중 오류:', err);
       toast.error(err instanceof Error ? err.message : '삭제 중 오류가 발생했습니다.');
     } finally {
@@ -139,7 +162,7 @@ export function TestimonialsManager({ testimonials }: { testimonials: Testimonia
             추천사 카테고리, 작성자 또는 내용으로 검색할 수 있습니다.
           </span>
         </AdminCard>
-        {testimonials
+        {optimisticTestimonials
           .filter((item) => {
             if (!query) return true;
             const q = normalize(query);
