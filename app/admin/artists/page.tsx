@@ -1,9 +1,7 @@
-import { requireAdmin } from '@/lib/auth/guards';
 import { getArtistsWithArtworkCount } from '@/app/actions/admin-artists';
 import { ArtistList } from './artist-list';
 
 export default async function AdminArtistsPage() {
-  await requireAdmin();
   const artists = await getArtistsWithArtworkCount();
 
   return (
