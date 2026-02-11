@@ -324,7 +324,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
             {/* Description */}
             <div className="sm:col-span-6">
               <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                작품 설명 (노트)
+                작가 노트
               </label>
               <div className="mt-1">
                 <textarea
@@ -333,7 +333,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
                   rows={5}
                   defaultValue={artwork?.description || ''}
                   className="shadow-sm focus:ring-black focus:border-black block w-full sm:text-sm border-gray-300 rounded-md"
-                  placeholder="작품에 대한 간단한 설명을 적어주세요."
+                  placeholder="작품에 담긴 의도나 작가 노트를 적어주세요."
                 />
               </div>
             </div>

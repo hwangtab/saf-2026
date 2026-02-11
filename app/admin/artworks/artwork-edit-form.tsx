@@ -215,7 +215,7 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">작품 설명</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">작가 노트</label>
           <textarea
             name="description"
             defaultValue={artwork.description || ''}
