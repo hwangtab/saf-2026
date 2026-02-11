@@ -40,6 +40,8 @@ export function TrendLineChart({ data }: TrendLineChartProps) {
     });
   }
 
+  const hasTrendData = filledData.some((item) => item.newArtists > 0 || item.newArtworks > 0);
+
   return (
     <AdminCard className="flex h-full flex-col p-6">
       <h3 className="mb-4 text-lg font-semibold text-slate-900">신규 가입 및 작품 등록 추이</h3>
@@ -59,6 +61,7 @@ export function TrendLineChart({ data }: TrendLineChartProps) {
               tickLine={false}
               axisLine={false}
               allowDecimals={false}
+              domain={[0, 'dataMax + 1']}
             />
             <Tooltip
               contentStyle={{
@@ -89,6 +92,13 @@ export function TrendLineChart({ data }: TrendLineChartProps) {
             />
           </LineChart>
         </ResponsiveContainer>
+        {!hasTrendData && (
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <p className="rounded-full bg-white/90 px-3 py-1 text-xs text-slate-500">
+              최근 30일 신규 데이터가 없습니다.
+            </p>
+          </div>
+        )}
       </div>
     </AdminCard>
   );

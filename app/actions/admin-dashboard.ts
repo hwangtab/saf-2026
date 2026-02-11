@@ -120,11 +120,15 @@ export async function getDashboardStats(): Promise<DashboardStats> {
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
   const thirtyDaysAgoIso = thirtyDaysAgo.toISOString();
 
-  const { data: recentProfiles } = await supabase
+  const { data: recentProfilesRaw } = await supabase
     .from('profiles')
-    .select('created_at')
+    .select('created_at, role, status')
     .gte('created_at', thirtyDaysAgoIso)
-    .eq('role', 'artist');
+    .neq('role', 'admin');
+
+  const recentProfiles = (recentProfilesRaw || [])
+    .filter((profile) => profile.created_at)
+    .map((profile) => ({ created_at: profile.created_at as string }));
 
   const recentArtworksForTrends = (allArtworks || []).filter(
     (a) => a.created_at >= thirtyDaysAgoIso
