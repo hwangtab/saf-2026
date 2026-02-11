@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import ArtworkLightbox from '@/components/ui/ArtworkLightbox';
 import {
   deleteAdminArtwork,
@@ -23,7 +22,6 @@ type ArtworkItem = {
 };
 
 export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
-  const router = useRouter();
   const toast = useToast();
   const [optimisticArtworks, setOptimisticArtworks] = useState(artworks);
 
@@ -85,7 +83,6 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
     try {
       await deleteAdminArtwork(id);
       toast.success('작품을 삭제했습니다.');
-      router.refresh();
     } catch (error) {
       setOptimisticArtworks(artworks);
       toast.error(error instanceof Error ? error.message : '작품 삭제 중 오류가 발생했습니다.');
@@ -105,7 +102,6 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
     try {
       await batchUpdateArtworkStatus([id], newStatus);
       toast.success('작품 상태를 변경했습니다.');
-      router.refresh();
     } catch (error) {
       setOptimisticArtworks(artworks);
       toast.error(error instanceof Error ? error.message : '상태 변경 중 오류가 발생했습니다.');
@@ -124,7 +120,6 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
     try {
       await batchToggleHidden([id], !currentHidden);
       toast.success(currentHidden ? '작품을 공개 처리했습니다.' : '작품을 숨김 처리했습니다.');
-      router.refresh();
     } catch (error) {
       setOptimisticArtworks(artworks);
       toast.error(
@@ -158,7 +153,6 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
       await batchUpdateArtworkStatus(selectedInFiltered, status);
       setSelectedIds(new Set());
       toast.success('선택한 작품 상태를 변경했습니다.');
-      router.refresh();
     } catch (error) {
       setOptimisticArtworks(artworks);
       toast.error(
@@ -187,7 +181,6 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
       toast.success(
         isHidden ? '선택한 작품을 숨김 처리했습니다.' : '선택한 작품을 공개 처리했습니다.'
       );
-      router.refresh();
     } catch (error) {
       setOptimisticArtworks(artworks);
       toast.error(
@@ -210,7 +203,6 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
       await batchDeleteArtworks(selectedInFiltered);
       setSelectedIds(new Set());
       toast.success('선택한 작품을 삭제했습니다.');
-      router.refresh();
     } catch (error) {
       setOptimisticArtworks(artworks);
       toast.error(error instanceof Error ? error.message : '일괄 삭제 중 오류가 발생했습니다.');

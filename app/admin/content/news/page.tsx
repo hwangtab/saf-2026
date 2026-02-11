@@ -8,7 +8,7 @@ export default async function NewsPage() {
 
   const { data: news } = await supabase
     .from('news')
-    .select('*')
+    .select('id, title, source, date, link, thumbnail, description')
     .order('date', { ascending: false });
 
   return <NewsManager news={news || []} />;

@@ -31,7 +31,7 @@ export default async function UsersPage() {
   // Fetch all profiles, ordered by pending first, then created_at desc
   const { data: users } = await supabase
     .from('profiles')
-    .select('*')
+    .select('id, email, name, avatar_url, role, status, created_at')
     .order('status', { ascending: false }) // pending (p) > suspended (s) > active (a) ... simplistic, maybe specific logic better
     // 'pending' > 'active' > 'suspended' sorting is tricky with simple string sort.
     // Let's just sort by created_at desc for now, or filter client side if needed.

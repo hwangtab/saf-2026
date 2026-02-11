@@ -21,9 +21,10 @@ export async function logAdminAction(
   action: string,
   targetType?: string,
   targetId?: string,
-  details?: Record<string, unknown>
+  details?: Record<string, unknown>,
+  adminId?: string
 ) {
-  const user = await requireAdmin();
+  const user = adminId ? { id: adminId } : await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
 
   const { error } = await supabase.from('admin_logs').insert({

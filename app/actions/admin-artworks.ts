@@ -10,46 +10,8 @@ import {
   validateBatchSize,
 } from '@/lib/utils/form-helpers';
 
-export async function updateAdminArtwork(id: string, formData: FormData) {
-  await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
-
-  const rawStatus = String(formData.get('status') || 'available');
-  const status = ['available', 'reserved', 'sold'].includes(rawStatus) ? rawStatus : 'available';
-  const is_hidden = formData.get('is_hidden') === 'on';
-
-  const { data: artwork, error: fetchError } = await supabase
-    .from('artworks')
-    .select('id, artist_id')
-    .eq('id', id)
-    .single();
-
-  if (fetchError) throw fetchError;
-
-  const { error } = await supabase
-    .from('artworks')
-    .update({ status, is_hidden, updated_at: new Date().toISOString() })
-    .eq('id', id);
-
-  if (error) throw error;
-
-  revalidatePath('/artworks');
-  revalidatePath('/');
-  revalidatePath(`/artworks/${id}`);
-  if (artwork?.artist_id) {
-    const { data: artist } = await supabase
-      .from('artists')
-      .select('name_ko')
-      .eq('id', artwork.artist_id)
-      .single();
-    if (artist?.name_ko) {
-      revalidatePath(`/artworks/artist/${encodeURIComponent(artist.name_ko)}`);
-    }
-  }
-}
-
 export async function deleteAdminArtwork(id: string) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
 
   const { data: artwork } = await supabase
@@ -82,9 +44,15 @@ export async function deleteAdminArtwork(id: string) {
     }
   }
 
-  await logAdminAction('artwork_deleted', 'artwork', id, {
-    title: artwork?.title || 'Unknown',
-  });
+  await logAdminAction(
+    'artwork_deleted',
+    'artwork',
+    id,
+    {
+      title: artwork?.title || 'Unknown',
+    },
+    admin.id
+  );
 }
 
 export async function getArtworkById(id: string) {
@@ -112,7 +80,7 @@ export async function getAllArtists() {
 }
 
 export async function updateArtworkDetails(id: string, formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
 
   const title = getString(formData, 'title');
@@ -177,13 +145,13 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
     }
   }
 
-  await logAdminAction('artwork_updated', 'artwork', id, { title });
+  await logAdminAction('artwork_updated', 'artwork', id, { title }, admin.id);
 
   return { success: true };
 }
 
 export async function createAdminArtwork(formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
 
   const title = getString(formData, 'title');
@@ -233,13 +201,13 @@ export async function createAdminArtwork(formData: FormData) {
     revalidatePath(`/artworks/artist/${encodeURIComponent(artist.name_ko)}`);
   }
 
-  await logAdminAction('artwork_created', 'artwork', artwork.id, { title });
+  await logAdminAction('artwork_created', 'artwork', artwork.id, { title }, admin.id);
 
   return { success: true, id: artwork.id };
 }
 
 export async function updateArtworkImages(id: string, images: string[]) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
 
   const { error } = await supabase
@@ -258,9 +226,15 @@ export async function updateArtworkImages(id: string, images: string[]) {
   revalidatePath('/admin/artworks');
   revalidatePath(`/admin/artworks/${id}`);
 
-  await logAdminAction('artwork_images_updated', 'artwork', id, {
-    image_count: images.length,
-  });
+  await logAdminAction(
+    'artwork_images_updated',
+    'artwork',
+    id,
+    {
+      image_count: images.length,
+    },
+    admin.id
+  );
 
   return { success: true };
 }
@@ -269,7 +243,7 @@ export async function updateArtworkImages(id: string, images: string[]) {
 export async function batchUpdateArtworkStatus(ids: string[], status: string) {
   if (ids.length === 0) return { success: true, count: 0 };
   validateBatchSize(ids);
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
 
   if (!['available', 'reserved', 'sold'].includes(status)) {
@@ -287,10 +261,16 @@ export async function batchUpdateArtworkStatus(ids: string[], status: string) {
   revalidatePath('/');
   revalidatePath('/admin/artworks');
 
-  await logAdminAction('batch_artwork_status', 'artwork', ids.join(','), {
-    count: ids.length,
-    status,
-  });
+  await logAdminAction(
+    'batch_artwork_status',
+    'artwork',
+    ids.join(','),
+    {
+      count: ids.length,
+      status,
+    },
+    admin.id
+  );
 
   return { success: true, count: ids.length };
 }
@@ -298,7 +278,7 @@ export async function batchUpdateArtworkStatus(ids: string[], status: string) {
 export async function batchToggleHidden(ids: string[], isHidden: boolean) {
   if (ids.length === 0) return { success: true, count: 0 };
   validateBatchSize(ids);
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
 
   const { error } = await supabase
@@ -312,10 +292,16 @@ export async function batchToggleHidden(ids: string[], isHidden: boolean) {
   revalidatePath('/');
   revalidatePath('/admin/artworks');
 
-  await logAdminAction('batch_artwork_visibility', 'artwork', ids.join(','), {
-    count: ids.length,
-    hidden: isHidden,
-  });
+  await logAdminAction(
+    'batch_artwork_visibility',
+    'artwork',
+    ids.join(','),
+    {
+      count: ids.length,
+      hidden: isHidden,
+    },
+    admin.id
+  );
 
   return { success: true, count: ids.length };
 }
@@ -323,7 +309,7 @@ export async function batchToggleHidden(ids: string[], isHidden: boolean) {
 export async function batchDeleteArtworks(ids: string[]) {
   if (ids.length === 0) return { success: true, count: 0 };
   validateBatchSize(ids);
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
 
   // Get all artworks for cleanup
@@ -346,9 +332,15 @@ export async function batchDeleteArtworks(ids: string[]) {
   revalidatePath('/');
   revalidatePath('/admin/artworks');
 
-  await logAdminAction('batch_artwork_deleted', 'artwork', ids.join(','), {
-    count: ids.length,
-  });
+  await logAdminAction(
+    'batch_artwork_deleted',
+    'artwork',
+    ids.join(','),
+    {
+      count: ids.length,
+    },
+    admin.id
+  );
 
   return { success: true, count: ids.length };
 }

@@ -8,7 +8,7 @@ export default async function TestimonialsPage() {
 
   const { data: testimonials } = await supabase
     .from('testimonials')
-    .select('*')
+    .select('id, category, quote, author, context, display_order')
     .order('category', { ascending: true })
     .order('display_order', { ascending: true });
 

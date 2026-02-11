@@ -8,7 +8,7 @@ export default async function VideosPage() {
 
   const { data: videos } = await supabase
     .from('videos')
-    .select('*')
+    .select('id, title, description, youtube_id, thumbnail, transcript')
     .order('created_at', { ascending: false });
 
   return <VideosManager videos={videos || []} />;

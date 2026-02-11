@@ -34,7 +34,7 @@ export async function getArtistById(id: string) {
 }
 
 export async function updateArtist(id: string, formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
 
   const name_ko = getString(formData, 'name_ko');
@@ -70,7 +70,7 @@ export async function updateArtist(id: string, formData: FormData) {
     revalidatePath(`/artworks/artist/${encodeURIComponent(name_ko)}`);
   }
 
-  await logAdminAction('artist_updated', 'artist', id, { name: name_ko });
+  await logAdminAction('artist_updated', 'artist', id, { name: name_ko }, admin.id);
 
   return { success: true };
 }
@@ -96,7 +96,7 @@ export async function updateArtistProfileImage(id: string, profileImage: string 
 }
 
 export async function deleteArtist(id: string) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
 
   // Get artist info for cleanup
@@ -135,13 +135,19 @@ export async function deleteArtist(id: string) {
     revalidatePath(`/artworks/artist/${encodeURIComponent(artist.name_ko)}`);
   }
 
-  await logAdminAction('artist_deleted', 'artist', id, { name: artist?.name_ko || 'Unknown' });
+  await logAdminAction(
+    'artist_deleted',
+    'artist',
+    id,
+    { name: artist?.name_ko || 'Unknown' },
+    admin.id
+  );
 
   return { success: true };
 }
 
 export async function createAdminArtist(formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
 
   const name_ko = getString(formData, 'name_ko');
@@ -170,7 +176,7 @@ export async function createAdminArtist(formData: FormData) {
 
   revalidatePath('/admin/artists');
 
-  await logAdminAction('artist_created', 'artist', data.id, { name: name_ko });
+  await logAdminAction('artist_created', 'artist', data.id, { name: name_ko }, admin.id);
 
   return { success: true, id: data.id };
 }

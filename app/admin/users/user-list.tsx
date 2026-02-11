@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { approveUser, reactivateUser, rejectUser, updateUserRole } from '@/app/actions/admin';
 import Modal from '@/components/ui/Modal';
 import { AdminCard, AdminCardHeader, AdminSelect } from '@/app/admin/_components/admin-ui';
@@ -28,7 +27,6 @@ export function UserList({ users }: { users: Profile[] }) {
   const [query, setQuery] = useState('');
   const [selectedUser, setSelectedUser] = useState<Profile | null>(null);
   const [localUsers, setLocalUsers] = useState<Profile[]>(users);
-  const router = useRouter();
   const toast = useToast();
 
   useEffect(() => {
@@ -54,7 +52,6 @@ export function UserList({ users }: { users: Profile[] }) {
         prev.map((user) => (user.id === id ? { ...user, status: 'active', role: 'artist' } : user))
       );
       toast.success('사용자를 승인했습니다.');
-      router.refresh();
     }
   };
 
@@ -70,7 +67,6 @@ export function UserList({ users }: { users: Profile[] }) {
         prev.map((user) => (user.id === id ? { ...user, status: 'suspended' } : user))
       );
       toast.success('사용자 상태를 변경했습니다.');
-      router.refresh();
     }
   };
 
@@ -94,7 +90,6 @@ export function UserList({ users }: { users: Profile[] }) {
         )
       );
       toast.success(`권한을 ${newRole}로 변경했습니다.`);
-      router.refresh();
     }
   };
 
@@ -110,7 +105,6 @@ export function UserList({ users }: { users: Profile[] }) {
         prev.map((user) => (user.id === id ? { ...user, status: 'active' } : user))
       );
       toast.success('사용자를 다시 활성화했습니다.');
-      router.refresh();
     }
   };
 

@@ -80,7 +80,6 @@ export function NewsManager({ news }: { news: NewsItem[] }) {
     try {
       await updateNews(id, formData);
       toast.success('뉴스를 저장했습니다.');
-      router.refresh();
     } catch (err: unknown) {
       setOptimisticNews(previousNews);
       toast.error(err instanceof Error ? err.message : '저장 중 오류가 발생했습니다.');
@@ -99,7 +98,6 @@ export function NewsManager({ news }: { news: NewsItem[] }) {
     try {
       await deleteNews(id);
       toast.success('뉴스를 삭제했습니다.');
-      router.refresh();
     } catch (err: unknown) {
       console.error('삭제 중 오류:', err);
       setOptimisticNews(previousNews);

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { deleteArtist } from '@/app/actions/admin-artists';
 import { AdminCard, AdminCardHeader } from '@/app/admin/_components/admin-ui';
 
@@ -16,7 +15,6 @@ type ArtistItem = {
 };
 
 export function ArtistList({ artists }: { artists: ArtistItem[] }) {
-  const router = useRouter();
   const [optimisticArtists, setOptimisticArtists] = useState(artists);
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
@@ -35,7 +33,6 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
 
     try {
       await deleteArtist(id);
-      router.refresh();
     } catch (err: unknown) {
       setOptimisticArtists(artists);
       setError(err instanceof Error ? err.message : '삭제 중 오류가 발생했습니다.');
