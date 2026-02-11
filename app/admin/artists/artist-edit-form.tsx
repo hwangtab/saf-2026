@@ -26,9 +26,10 @@ type Artist = {
 
 type ArtistEditFormProps = {
   artist?: Partial<Artist>;
+  returnTo?: string;
 };
 
-export function ArtistEditForm({ artist = {} }: ArtistEditFormProps) {
+export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
   const router = useRouter();
   const toast = useToast();
   const [saving, setSaving] = useState(false);
@@ -51,8 +52,14 @@ export function ArtistEditForm({ artist = {} }: ArtistEditFormProps) {
       } else {
         const result = await createAdminArtist(formData);
         if (result.success && result.id) {
-          toast.success('작가가 생성되었습니다. 프로필 이미지를 등록해주세요.');
-          router.push(`/admin/artists/${result.id}`);
+          if (returnTo) {
+            toast.success('작가가 생성되었습니다. 작품 등록 화면으로 돌아갑니다.');
+            const separator = returnTo.includes('?') ? '&' : '?';
+            router.push(`${returnTo}${separator}artist_id=${result.id}`);
+          } else {
+            toast.success('작가가 생성되었습니다. 프로필 이미지를 등록해주세요.');
+            router.push(`/admin/artists/${result.id}`);
+          }
         }
       }
     } catch (err: unknown) {

@@ -36,9 +36,10 @@ type Artwork = {
 type ArtworkEditFormProps = {
   artwork?: Partial<Artwork>;
   artists: Artist[];
+  initialArtistId?: string;
 };
 
-export function ArtworkEditForm({ artwork = {}, artists }: ArtworkEditFormProps) {
+export function ArtworkEditForm({ artwork = {}, artists, initialArtistId }: ArtworkEditFormProps) {
   const router = useRouter();
   const toast = useToast();
   const [saving, setSaving] = useState(false);
@@ -165,8 +166,7 @@ export function ArtworkEditForm({ artwork = {}, artists }: ArtworkEditFormProps)
                 작가 <span className="text-red-500">*</span>
               </label>
               <Link
-                href="/admin/artists/new"
-                target="_blank"
+                href="/admin/artists/new?returnTo=%2Fadmin%2Fartworks%2Fnew"
                 className="text-xs text-blue-600 hover:text-blue-800 hover:underline"
               >
                 + 새 작가 등록
@@ -174,7 +174,7 @@ export function ArtworkEditForm({ artwork = {}, artists }: ArtworkEditFormProps)
             </div>
             <AdminSelect
               name="artist_id"
-              defaultValue={artwork.artist_id || ''}
+              defaultValue={artwork.artist_id || initialArtistId || ''}
               className="px-3 py-2 pr-9"
               iconClassName="right-3"
               required

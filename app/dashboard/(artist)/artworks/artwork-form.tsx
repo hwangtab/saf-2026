@@ -237,23 +237,6 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
               <p className="mt-1 text-xs text-gray-500">통화를 제외한 숫자 또는 ₩ 포함 텍스트</p>
             </div>
 
-            {/* Shop URL */}
-            <div className="sm:col-span-4">
-              <label htmlFor="shop_url" className="block text-sm font-medium text-gray-700">
-                구매 링크 (선택)
-              </label>
-              <div className="mt-1">
-                <input
-                  type="text"
-                  name="shop_url"
-                  id="shop_url"
-                  defaultValue={artwork?.shop_url || ''}
-                  placeholder="https://..."
-                  className="shadow-sm focus:ring-black focus:border-black block w-full sm:text-sm border-gray-300 rounded-md"
-                />
-              </div>
-            </div>
-
             {/* Size */}
             <div className="sm:col-span-2">
               <label htmlFor="size" className="block text-sm font-medium text-gray-700">

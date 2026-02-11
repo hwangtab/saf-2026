@@ -104,7 +104,6 @@ export async function createArtwork(
       formData.get('new_uploads'),
       '신규 업로드'
     );
-    const shop_url = formData.get('shop_url') as string;
 
     cleanupUrls = newUploads;
 
@@ -159,7 +158,7 @@ export async function createArtwork(
       status,
       images,
       is_hidden: false,
-      shop_url,
+      shop_url: null,
     });
 
     if (error) throw error;
@@ -217,7 +216,6 @@ export async function updateArtwork(
       formData.get('new_uploads'),
       '신규 업로드'
     );
-    const shop_url = formData.get('shop_url') as string;
 
     cleanupUrls = newUploads;
 
@@ -271,7 +269,7 @@ export async function updateArtwork(
         status,
         is_hidden: hidden,
         images,
-        shop_url,
+        shop_url: null,
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)
