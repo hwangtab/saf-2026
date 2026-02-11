@@ -1,0 +1,95 @@
+'use client';
+
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
+import { AdminCard } from './admin-ui';
+import { DashboardStats } from '@/app/actions/admin-dashboard';
+
+type TrendLineChartProps = {
+  data: DashboardStats['trends'];
+};
+
+export function TrendLineChart({ data }: TrendLineChartProps) {
+  const filledData = [];
+
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const dateKey = d.toISOString().split('T')[0];
+
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const displayDate = `${month}.${day}`;
+
+    const newArtists = data.dailyArtists.find((item) => item.date === dateKey)?.count || 0;
+    const newArtworks = data.dailyArtworks.find((item) => item.date === dateKey)?.count || 0;
+
+    filledData.push({
+      date: displayDate,
+      fullDate: dateKey,
+      newArtists,
+      newArtworks,
+    });
+  }
+
+  return (
+    <AdminCard className="flex h-full flex-col p-6">
+      <h3 className="mb-4 text-lg font-semibold text-slate-900">신규 가입 및 작품 등록 추이</h3>
+      <div className="flex-1 min-h-[300px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={filledData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+            <XAxis
+              dataKey="date"
+              tick={{ fontSize: 12, fill: '#64748b' }}
+              tickLine={false}
+              axisLine={false}
+              padding={{ left: 10, right: 10 }}
+            />
+            <YAxis
+              tick={{ fontSize: 12, fill: '#64748b' }}
+              tickLine={false}
+              axisLine={false}
+              allowDecimals={false}
+            />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: 'white',
+                borderRadius: '8px',
+                border: '1px solid #e2e8f0',
+                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+              }}
+            />
+            <Legend verticalAlign="top" align="right" height={36} iconType="circle" />
+            <Line
+              name="신규 작가"
+              type="monotone"
+              dataKey="newArtists"
+              stroke="#e63946"
+              strokeWidth={2}
+              dot={false}
+              activeDot={{ r: 6 }}
+            />
+            <Line
+              name="신규 작품"
+              type="monotone"
+              dataKey="newArtworks"
+              stroke="#a8dadc"
+              strokeWidth={2}
+              dot={false}
+              activeDot={{ r: 6 }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </AdminCard>
+  );
+}

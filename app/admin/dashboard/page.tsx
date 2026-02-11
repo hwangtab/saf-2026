@@ -2,6 +2,10 @@ import { requireAdmin } from '@/lib/auth/guards';
 import { getDashboardStats } from '@/app/actions/admin-dashboard';
 import Link from 'next/link';
 import { AdminCard, AdminCardHeader } from '@/app/admin/_components/admin-ui';
+import { RevenueCard } from '@/app/admin/_components/RevenueCard';
+import { StatusDonutChart } from '@/app/admin/_components/StatusDonutChart';
+import { MaterialBarChart } from '@/app/admin/_components/MaterialBarChart';
+import { TrendLineChart } from '@/app/admin/_components/TrendLineChart';
 
 function StatCard({
   title,
@@ -60,88 +64,47 @@ export default async function AdminDashboardPage() {
         <p className="mt-2 text-sm text-slate-500">SAF 2026 관리자 현황을 한눈에 확인합니다.</p>
       </div>
 
-      {/* 작가 현황 */}
-      <section>
-        <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-900">
-          작가 현황
-        </h2>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <StatCard title="전체 작가" value={stats.artists.total} href="/admin/artists" />
-          <StatCard
-            title="승인 대기"
-            value={stats.artists.pending}
-            subtitle={stats.artists.pending > 0 ? '확인 필요' : '없음'}
-            href="/admin/users"
-          />
-          <StatCard title="정지된 계정" value={stats.artists.suspended} href="/admin/users" />
-        </div>
-      </section>
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard title="총 작가" value={stats.artists.total} href="/admin/artists" />
+        <StatCard
+          title="승인 대기"
+          value={stats.artists.pending}
+          subtitle={stats.artists.pending > 0 ? '확인 필요' : '없음'}
+          href="/admin/users"
+        />
+        <StatCard title="총 작품" value={stats.artworks.total} href="/admin/artworks" />
+        <StatCard title="숨김 처리" value={stats.artworks.hidden} />
+      </div>
 
-      {/* 작품 현황 */}
-      <section>
-        <h2 className="mb-4 text-lg font-semibold text-slate-900">작품 현황</h2>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          <StatCard title="전체 작품" value={stats.artworks.total} href="/admin/artworks" />
-          <StatCard title="판매 중" value={stats.artworks.available} />
-          <StatCard title="예약됨" value={stats.artworks.reserved} />
-          <StatCard title="판매 완료" value={stats.artworks.sold} />
-          <StatCard title="숨김 처리" value={stats.artworks.hidden} />
-        </div>
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-8">
+        <RevenueCard
+          title="총 매출"
+          value={stats.revenue.totalRevenue}
+          subtitle={`판매 완료: ${stats.revenue.soldCount}개`}
+        />
+        <RevenueCard
+          title="재고 가치"
+          value={stats.revenue.inventoryValue}
+          subtitle="판매 중 작품의 총 가격"
+        />
+        <RevenueCard
+          title="평균 판매가"
+          value={stats.revenue.averagePrice}
+          subtitle="판매 완료 작품 기준"
+        />
+      </div>
 
-        {/* 판매 현황 바 차트 */}
-        {stats.artworks.total > 0 && (
-          <AdminCard className="mt-4 p-6">
-            <div className="flex justify-between items-end mb-3">
-              <p className="text-sm font-medium text-gray-900">판매 현황 비율</p>
-              <span className="text-xs text-gray-500">전체 {stats.artworks.total}점 중</span>
-            </div>
-            <div
-              className="flex h-4 rounded-full overflow-hidden bg-gray-100"
-              role="img"
-              aria-label={`판매 현황: 판매 중 ${stats.artworks.available}점, 예약됨 ${stats.artworks.reserved}점, 판매 완료 ${stats.artworks.sold}점`}
-            >
-              <div
-                className="bg-green-500"
-                style={{
-                  width: `${(stats.artworks.available / stats.artworks.total) * 100}%`,
-                }}
-                title={`판매 중: ${stats.artworks.available}점`}
-              />
-              <div
-                className="bg-yellow-500"
-                style={{
-                  width: `${(stats.artworks.reserved / stats.artworks.total) * 100}%`,
-                }}
-                title={`예약됨: ${stats.artworks.reserved}점`}
-              />
-              <div
-                className="bg-blue-500"
-                style={{
-                  width: `${(stats.artworks.sold / stats.artworks.total) * 100}%`,
-                }}
-                title={`판매 완료: ${stats.artworks.sold}점`}
-              />
-            </div>
-            <div className="flex gap-6 mt-3 text-xs text-gray-600 justify-end">
-              <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 bg-green-500 rounded-full" />
-                판매 중 ({stats.artworks.available})
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 bg-yellow-500 rounded-full" />
-                예약됨 ({stats.artworks.reserved})
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 bg-blue-500 rounded-full" />
-                판매 완료 ({stats.artworks.sold})
-              </span>
-            </div>
-          </AdminCard>
-        )}
-      </section>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 mt-8">
+        <StatusDonutChart data={stats.artworks} />
+        <MaterialBarChart data={stats.materialDistribution} />
+      </div>
+
+      <div className="mt-8">
+        <TrendLineChart data={stats.trends} />
+      </div>
 
       {/* 최근 활동 */}
-      <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <section className="grid grid-cols-1 gap-6 lg:grid-cols-2 mt-8">
         {/* 최근 가입 신청 */}
         <AdminCard className="flex flex-col">
           <AdminCardHeader className="rounded-t-2xl">
