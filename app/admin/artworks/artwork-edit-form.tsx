@@ -3,7 +3,11 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
-import { updateArtworkDetails, updateArtworkImages } from '@/app/actions/admin-artworks';
+import {
+  updateArtworkDetails,
+  updateArtworkImages,
+  createAdminArtwork,
+} from '@/app/actions/admin-artworks';
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
 import { AdminCard, AdminSelect } from '@/app/admin/_components/admin-ui';
 import { useToast } from '@/lib/hooks/useToast';
@@ -29,11 +33,11 @@ type Artwork = {
 };
 
 type ArtworkEditFormProps = {
-  artwork: Artwork;
+  artwork?: Partial<Artwork>;
   artists: Artist[];
 };
 
-export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
+export function ArtworkEditForm({ artwork = {}, artists }: ArtworkEditFormProps) {
   const router = useRouter();
   const toast = useToast();
   const [saving, setSaving] = useState(false);
@@ -41,13 +45,23 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
   const [images, setImages] = useState<string[]>(artwork.images || []);
   const [error, setError] = useState<string | null>(null);
 
+  const isEditing = !!artwork.id;
+
   const handleSubmit = async (formData: FormData) => {
     setError(null);
     setSaving(true);
     try {
-      await updateArtworkDetails(artwork.id, formData);
-      toast.success('작품 정보가 저장되었습니다.');
-      router.refresh();
+      if (isEditing && artwork.id) {
+        await updateArtworkDetails(artwork.id, formData);
+        toast.success('작품 정보가 저장되었습니다.');
+        router.refresh();
+      } else {
+        const result = await createAdminArtwork(formData);
+        if (result.success && result.id) {
+          toast.success('작품이 생성되었습니다. 이미지를 등록해주세요.');
+          router.push(`/admin/artworks/${result.id}`);
+        }
+      }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : '저장 중 오류가 발생했습니다.';
       setError(message);
@@ -58,6 +72,7 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
   };
 
   const handleImagesChange = async (newImages: string[]) => {
+    if (!artwork.id) return;
     setImages(newImages);
     setError(null);
     setSavingImages(true);
@@ -97,20 +112,26 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
         </div>
       )}
 
-      {/* Image Section */}
-      <AdminCard className="p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
-          작품 이미지
-          {savingImages && <span className="ml-2 text-sm text-gray-500">저장 중...</span>}
-        </h2>
-        <ImageUpload
-          bucket="artworks"
-          pathPrefix={`admin-artwork-${artwork.id}`}
-          value={images}
-          onUploadComplete={handleImagesChange}
-          maxFiles={10}
-        />
-      </AdminCard>
+      {/* Image Section - Only visible when editing */}
+      {isEditing && artwork.id ? (
+        <AdminCard className="p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            작품 이미지
+            {savingImages && <span className="ml-2 text-sm text-gray-500">저장 중...</span>}
+          </h2>
+          <ImageUpload
+            bucket="artworks"
+            pathPrefix={`admin-artwork-${artwork.id}`}
+            value={images}
+            onUploadComplete={handleImagesChange}
+            maxFiles={10}
+          />
+        </AdminCard>
+      ) : (
+        <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800">
+          이미지 등록은 작품 정보를 먼저 저장한 후에 가능합니다.
+        </div>
+      )}
 
       {/* Details Section */}
       <form
@@ -120,7 +141,9 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
         }}
         className="space-y-6 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface)] p-6 shadow-sm"
       >
-        <h2 className="text-lg font-semibold text-gray-900">작품 정보</h2>
+        <h2 className="text-lg font-semibold text-gray-900">
+          {isEditing ? '작품 정보 수정' : '새 작품 등록'}
+        </h2>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
@@ -136,12 +159,15 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">작가</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              작가 <span className="text-red-500">*</span>
+            </label>
             <AdminSelect
               name="artist_id"
               defaultValue={artwork.artist_id || ''}
               className="px-3 py-2 pr-9"
               iconClassName="right-3"
+              required
             >
               <option value="">작가 선택...</option>
               {artists.map((artist) => (
@@ -229,7 +255,7 @@ export function ArtworkEditForm({ artwork, artists }: ArtworkEditFormProps) {
             목록으로
           </Button>
           <Button type="submit" variant="primary" loading={saving}>
-            저장
+            {isEditing ? '저장' : '등록'}
           </Button>
         </div>
       </form>

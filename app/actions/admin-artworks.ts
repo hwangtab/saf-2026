@@ -182,6 +182,62 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
   return { success: true };
 }
 
+export async function createAdminArtwork(formData: FormData) {
+  await requireAdmin();
+  const supabase = await createSupabaseAdminOrServerClient();
+
+  const title = getString(formData, 'title');
+  const description = getString(formData, 'description');
+  const size = getString(formData, 'size');
+  const material = getString(formData, 'material');
+  const year = getString(formData, 'year');
+  const edition = getString(formData, 'edition');
+  const price = getString(formData, 'price');
+  const shop_url = getString(formData, 'shop_url');
+  const artist_id = getString(formData, 'artist_id');
+
+  if (!title) throw new Error('작품명을 입력해주세요.');
+  if (!artist_id) throw new Error('작가를 선택해주세요.');
+
+  const { data: artwork, error } = await supabase
+    .from('artworks')
+    .insert({
+      title,
+      description,
+      size,
+      material,
+      year,
+      edition,
+      price,
+      shop_url,
+      artist_id,
+      status: 'available',
+      is_hidden: false,
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  revalidatePath('/artworks');
+  revalidatePath('/');
+  revalidatePath('/admin/artworks');
+
+  const { data: artist } = await supabase
+    .from('artists')
+    .select('name_ko')
+    .eq('id', artist_id)
+    .single();
+
+  if (artist?.name_ko) {
+    revalidatePath(`/artworks/artist/${encodeURIComponent(artist.name_ko)}`);
+  }
+
+  await logAdminAction('artwork_created', 'artwork', artwork.id, { title });
+
+  return { success: true, id: artwork.id };
+}
+
 export async function updateArtworkImages(id: string, images: string[]) {
   await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
