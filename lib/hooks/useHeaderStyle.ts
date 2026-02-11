@@ -9,14 +9,15 @@ export function useHeaderStyle() {
   // 네이티브 <dialog>가 스크롤 잠금을 처리하므로 useScrollLock 불필요
   const isScrolled = useScrolled(10, isMenuOpen);
   const pathname = usePathname();
+  const currentPath = pathname || (typeof window !== 'undefined' ? window.location.pathname : '');
 
   const isActive = useCallback(
     (href: string) => {
-      if (href === '/' && pathname === '/') return true;
-      if (href !== '/' && pathname.startsWith(href)) return true;
+      if (href === '/' && currentPath === '/') return true;
+      if (href !== '/' && currentPath.startsWith(href)) return true;
       return false;
     },
-    [pathname]
+    [currentPath]
   );
 
   const openMenu = useCallback(() => setIsMenuOpen(true), []);
@@ -24,14 +25,14 @@ export function useHeaderStyle() {
 
   // 경로 기반 파생 상태 메모이제이션
   const { isArtworkDetail, hasHero } = useMemo(() => {
-    const artistPage = pathname.startsWith('/artworks/artist/');
+    const artistPage = currentPath.startsWith('/artworks/artist/');
     const artworkDetail =
-      pathname.startsWith('/artworks/') && pathname !== '/artworks' && !artistPage;
+      currentPath.startsWith('/artworks/') && currentPath !== '/artworks' && !artistPage;
     const heroPage =
-      (HERO_PAGES.includes(pathname as (typeof HERO_PAGES)[number]) && !artworkDetail) ||
+      (HERO_PAGES.includes(currentPath as (typeof HERO_PAGES)[number]) && !artworkDetail) ||
       artistPage;
     return { isArtworkDetail: artworkDetail, hasHero: heroPage };
-  }, [pathname]);
+  }, [currentPath]);
 
   // 헤더 스타일 메모이제이션 (메뉴가 풀스크린이므로 isMenuVisible 조건 제거)
   const headerStyle = useMemo(() => {
