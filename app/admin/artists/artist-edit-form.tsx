@@ -55,7 +55,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
           if (returnTo) {
             toast.success('작가가 생성되었습니다. 작품 등록 화면으로 돌아갑니다.');
             const separator = returnTo.includes('?') ? '&' : '?';
-            router.push(`${returnTo}${separator}artist_id=${result.id}`);
+            router.push(`${returnTo}${separator}artist_id=${result.id}&artist_created=1`);
           } else {
             toast.success('작가가 생성되었습니다. 프로필 이미지를 등록해주세요.');
             router.push(`/admin/artists/${result.id}`);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
@@ -37,9 +37,15 @@ type ArtworkEditFormProps = {
   artwork?: Partial<Artwork>;
   artists: Artist[];
   initialArtistId?: string;
+  artistJustCreated?: boolean;
 };
 
-export function ArtworkEditForm({ artwork = {}, artists, initialArtistId }: ArtworkEditFormProps) {
+export function ArtworkEditForm({
+  artwork = {},
+  artists,
+  initialArtistId,
+  artistJustCreated = false,
+}: ArtworkEditFormProps) {
   const router = useRouter();
   const toast = useToast();
   const [saving, setSaving] = useState(false);
@@ -48,6 +54,19 @@ export function ArtworkEditForm({ artwork = {}, artists, initialArtistId }: Artw
   const [error, setError] = useState<string | null>(null);
 
   const isEditing = !!artwork.id;
+  const initialSelectedArtistId = artwork.artist_id || initialArtistId || '';
+  const [selectedArtistId, setSelectedArtistId] = useState(initialSelectedArtistId);
+  const [artistQuery, setArtistQuery] = useState('');
+
+  useEffect(() => {
+    setSelectedArtistId(initialSelectedArtistId);
+  }, [initialSelectedArtistId]);
+
+  const filteredArtists = useMemo(() => {
+    const q = artistQuery.trim().toLowerCase();
+    if (!q) return artists;
+    return artists.filter((artist) => (artist.name_ko || '').toLowerCase().includes(q));
+  }, [artists, artistQuery]);
 
   const handleSubmit = async (formData: FormData) => {
     setError(null);
@@ -114,6 +133,12 @@ export function ArtworkEditForm({ artwork = {}, artists, initialArtistId }: Artw
         </div>
       )}
 
+      {artistJustCreated && !isEditing && (
+        <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-800">
+          새 작가가 등록되었습니다. 아래에서 바로 선택해 작품 등록을 이어서 진행하세요.
+        </div>
+      )}
+
       {/* Image Section - Only visible when editing */}
       {isEditing && artwork.id ? (
         <AdminCard className="p-6">
@@ -172,20 +197,33 @@ export function ArtworkEditForm({ artwork = {}, artists, initialArtistId }: Artw
                 + 새 작가 등록
               </Link>
             </div>
+            <input
+              type="text"
+              value={artistQuery}
+              onChange={(e) => setArtistQuery(e.target.value)}
+              placeholder="작가명 검색..."
+              className="mb-2 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
+            />
             <AdminSelect
               name="artist_id"
-              defaultValue={artwork.artist_id || initialArtistId || ''}
-              className="px-3 py-2 pr-9"
+              value={selectedArtistId}
+              onChange={(e) => setSelectedArtistId(e.target.value)}
+              className={
+                artistJustCreated
+                  ? 'border-green-300 bg-green-50 px-3 py-2 pr-9 text-green-900'
+                  : 'px-3 py-2 pr-9'
+              }
               iconClassName="right-3"
               required
             >
               <option value="">작가 선택...</option>
-              {artists.map((artist) => (
+              {filteredArtists.map((artist) => (
                 <option key={artist.id} value={artist.id}>
                   {artist.name_ko || '(이름 없음)'}
                 </option>
               ))}
             </AdminSelect>
+            <p className="mt-1 text-xs text-gray-500">검색 결과 {filteredArtists.length}명</p>
           </div>
 
           <div>
