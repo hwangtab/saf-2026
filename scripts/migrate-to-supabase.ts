@@ -98,6 +98,14 @@ async function migrateFAQ() {
 
 async function migrateTestimonials() {
   console.log('Migrating Testimonials...');
+
+  // Clear existing testimonials to avoid duplicates
+  const { error: clearError } = await supabase
+    .from('testimonials')
+    .delete()
+    .neq('id', '00000000-0000-0000-0000-000000000000');
+  if (clearError) console.error('Error clearing testimonials:', clearError);
+
   let count = 0;
   for (const group of testimonials) {
     const { error } = await supabase.from('testimonials').insert(
