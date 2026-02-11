@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import {
   updateArtworkDetails,
@@ -159,9 +160,18 @@ export function ArtworkEditForm({ artwork = {}, artists }: ArtworkEditFormProps)
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              작가 <span className="text-red-500">*</span>
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-gray-700">
+                작가 <span className="text-red-500">*</span>
+              </label>
+              <Link
+                href="/admin/artists/new"
+                target="_blank"
+                className="text-xs text-blue-600 hover:text-blue-800 hover:underline"
+              >
+                + 새 작가 등록
+              </Link>
+            </div>
             <AdminSelect
               name="artist_id"
               defaultValue={artwork.artist_id || ''}

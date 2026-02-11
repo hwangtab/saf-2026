@@ -139,3 +139,38 @@ export async function deleteArtist(id: string) {
 
   return { success: true };
 }
+
+export async function createAdminArtist(formData: FormData) {
+  await requireAdmin();
+  const supabase = await createSupabaseAdminOrServerClient();
+
+  const name_ko = getString(formData, 'name_ko');
+  const name_en = getString(formData, 'name_en');
+  const bio = getString(formData, 'bio');
+  const history = getString(formData, 'history');
+  const contact_email = getString(formData, 'contact_email');
+  const instagram = getString(formData, 'instagram');
+  const homepage = getString(formData, 'homepage');
+
+  const { data, error } = await supabase
+    .from('artists')
+    .insert({
+      name_ko,
+      name_en,
+      bio,
+      history,
+      contact_email: contact_email || null,
+      instagram: instagram || null,
+      homepage: homepage || null,
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  revalidatePath('/admin/artists');
+
+  await logAdminAction('artist_created', 'artist', data.id, { name: name_ko });
+
+  return { success: true, id: data.id };
+}

@@ -3,7 +3,11 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
-import { updateArtist, updateArtistProfileImage } from '@/app/actions/admin-artists';
+import {
+  updateArtist,
+  updateArtistProfileImage,
+  createAdminArtist,
+} from '@/app/actions/admin-artists';
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
 import { AdminCard } from '@/app/admin/_components/admin-ui';
 import { useToast } from '@/lib/hooks/useToast';
@@ -21,10 +25,10 @@ type Artist = {
 };
 
 type ArtistEditFormProps = {
-  artist: Artist;
+  artist?: Partial<Artist>;
 };
 
-export function ArtistEditForm({ artist }: ArtistEditFormProps) {
+export function ArtistEditForm({ artist = {} }: ArtistEditFormProps) {
   const router = useRouter();
   const toast = useToast();
   const [saving, setSaving] = useState(false);
@@ -34,13 +38,23 @@ export function ArtistEditForm({ artist }: ArtistEditFormProps) {
   );
   const [error, setError] = useState<string | null>(null);
 
+  const isEditing = !!artist.id;
+
   const handleSubmit = async (formData: FormData) => {
     setError(null);
     setSaving(true);
     try {
-      await updateArtist(artist.id, formData);
-      toast.success('작가 정보가 저장되었습니다.');
-      router.refresh();
+      if (isEditing && artist.id) {
+        await updateArtist(artist.id, formData);
+        toast.success('작가 정보가 저장되었습니다.');
+        router.refresh();
+      } else {
+        const result = await createAdminArtist(formData);
+        if (result.success && result.id) {
+          toast.success('작가가 생성되었습니다. 프로필 이미지를 등록해주세요.');
+          router.push(`/admin/artists/${result.id}`);
+        }
+      }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : '저장 중 오류가 발생했습니다.';
       setError(message);
@@ -51,6 +65,7 @@ export function ArtistEditForm({ artist }: ArtistEditFormProps) {
   };
 
   const handleImageChange = async (newImages: string[]) => {
+    if (!artist.id) return;
     setProfileImage(newImages);
     setError(null);
     setSavingImage(true);
@@ -91,19 +106,25 @@ export function ArtistEditForm({ artist }: ArtistEditFormProps) {
       )}
 
       {/* Profile Image Section */}
-      <AdminCard className="p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
-          프로필 이미지
-          {savingImage && <span className="ml-2 text-sm text-gray-500">저장 중...</span>}
-        </h2>
-        <ImageUpload
-          bucket="profiles"
-          pathPrefix={`admin-artist-${artist.id}`}
-          value={profileImage}
-          onUploadComplete={handleImageChange}
-          maxFiles={1}
-        />
-      </AdminCard>
+      {isEditing && artist.id ? (
+        <AdminCard className="p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            프로필 이미지
+            {savingImage && <span className="ml-2 text-sm text-gray-500">저장 중...</span>}
+          </h2>
+          <ImageUpload
+            bucket="profiles"
+            pathPrefix={`admin-artist-${artist.id}`}
+            value={profileImage}
+            onUploadComplete={handleImageChange}
+            maxFiles={1}
+          />
+        </AdminCard>
+      ) : (
+        <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800">
+          이미지 등록은 작가 정보를 먼저 저장한 후에 가능합니다.
+        </div>
+      )}
 
       {/* Details Section */}
       <form
@@ -113,7 +134,9 @@ export function ArtistEditForm({ artist }: ArtistEditFormProps) {
         }}
         className="space-y-6 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface)] p-6 shadow-sm"
       >
-        <h2 className="text-lg font-semibold text-gray-900">작가 정보</h2>
+        <h2 className="text-lg font-semibold text-gray-900">
+          {isEditing ? '작가 정보 수정' : '새 작가 등록'}
+        </h2>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
