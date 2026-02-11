@@ -41,7 +41,10 @@ export function UserList({ users }: { users: Profile[] }) {
   });
 
   const handleApprove = async (id: string) => {
-    if (!confirm('이 사용자를 작가로 승인하시겠습니까?')) return;
+    if (
+      !confirm('이 사용자를 작가 계정으로 승인하시겠습니까?\n승인 시 역할이 Artist로 변경됩니다.')
+    )
+      return;
     setProcessingId(id);
     const res = await approveUser(id);
     setProcessingId(null);
@@ -51,12 +54,12 @@ export function UserList({ users }: { users: Profile[] }) {
       setLocalUsers((prev) =>
         prev.map((user) => (user.id === id ? { ...user, status: 'active', role: 'artist' } : user))
       );
-      toast.success('사용자를 승인했습니다.');
+      toast.success('작가 계정으로 승인했습니다.');
     }
   };
 
   const handleReject = async (id: string) => {
-    if (!confirm('이 사용자를 거절(차단)하시겠습니까?')) return;
+    if (!confirm('이 신청을 거절하고 계정을 정지하시겠습니까?')) return;
     setProcessingId(id);
     const res = await rejectUser(id);
     setProcessingId(null);
@@ -66,7 +69,7 @@ export function UserList({ users }: { users: Profile[] }) {
       setLocalUsers((prev) =>
         prev.map((user) => (user.id === id ? { ...user, status: 'suspended' } : user))
       );
-      toast.success('사용자 상태를 변경했습니다.');
+      toast.success('신청을 거절하고 계정을 정지했습니다.');
     }
   };
 
@@ -250,6 +253,9 @@ export function UserList({ users }: { users: Profile[] }) {
                           <option value="artist">Artist</option>
                           <option value="admin">Admin</option>
                         </AdminSelect>
+                        {user.status === 'pending' && (
+                          <span className="text-[11px] text-amber-700">작가 신청 검토 대기</span>
+                        )}
                       </div>
                     </td>
                     <td className="hidden lg:table-cell px-6 py-4">
@@ -272,9 +278,19 @@ export function UserList({ users }: { users: Profile[] }) {
                           <button
                             onClick={() => handleApprove(user.id)}
                             disabled={processingId === user.id || !user.application}
+                            title={
+                              !user.application
+                                ? '작가 신청서가 없어 승인할 수 없습니다.'
+                                : undefined
+                            }
+                            aria-label={
+                              !user.application
+                                ? '작가 신청서 없음 - 승인 불가'
+                                : '작가 계정으로 승인'
+                            }
                             className="text-green-600 hover:text-green-900 bg-green-50 hover:bg-green-100 px-3 py-1.5 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           >
-                            승인
+                            작가 승인
                           </button>
                         )}
                         {user.status !== 'suspended' && (
@@ -283,7 +299,7 @@ export function UserList({ users }: { users: Profile[] }) {
                             disabled={processingId === user.id}
                             className="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
                           >
-                            {user.status === 'pending' ? '거절' : '정지'}
+                            {user.status === 'pending' ? '신청 거절' : '계정 정지'}
                           </button>
                         )}
                         {user.status === 'suspended' && (
