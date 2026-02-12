@@ -1,5 +1,6 @@
 import { requireAdmin } from '@/lib/auth/guards';
 import { getDashboardStats, type DashboardPeriodKey } from '@/app/actions/admin-dashboard';
+import { connection } from 'next/server';
 import Link from 'next/link';
 import {
   AdminCard,
@@ -73,6 +74,8 @@ type Props = {
   }>;
 };
 
+export const dynamic = 'force-dynamic';
+
 function formatDate(dateString: string | null | undefined) {
   if (!dateString) return '-';
 
@@ -88,6 +91,7 @@ function formatDate(dateString: string | null | undefined) {
 }
 
 export default async function AdminDashboardPage({ searchParams }: Props) {
+  await connection();
   await requireAdmin();
   const params = await searchParams;
   const periodParam = params.period;
@@ -201,28 +205,11 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 mt-8">
-        <div className="lg:col-span-2">
-          <RevenueTrendChart
-            data={stats.revenue.timeSeries}
-            periodLabel={`${stats.period.startDate} ~ ${stats.period.endDate}`}
-          />
-        </div>
-        <AdminCard className="p-6">
-          <h3 className="text-lg font-semibold text-slate-900">지표 기준</h3>
-          <ul className="mt-3 space-y-2 text-sm text-slate-600">
-            <li>등록 작가: artists 테이블 전체(계정 미연결 포함)</li>
-            <li>신청 대기: pending 상태이면서 신청서를 제출한 계정</li>
-            <li>숨김 작품: artworks.is_hidden = true 인 작품</li>
-            <li>기간 매출: 판매완료 작품의 판매가 합계(판매시점 기준)</li>
-            <li>평균판매가: 기간 매출 / 기간 판매작품 수</li>
-          </ul>
-          <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
-            누적 매출: {KRW_FORMATTER.format(stats.revenue.lifetime.totalRevenue)}
-            <br />
-            누적 평균판매가: {KRW_FORMATTER.format(stats.revenue.lifetime.averagePrice)}
-          </div>
-        </AdminCard>
+      <div className="mt-8">
+        <RevenueTrendChart
+          data={stats.revenue.timeSeries}
+          periodLabel={`${stats.period.startDate} ~ ${stats.period.endDate}`}
+        />
       </div>
 
       <AdminCard className="overflow-hidden">
