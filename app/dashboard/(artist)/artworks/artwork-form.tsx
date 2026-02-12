@@ -331,7 +331,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
                   id="status"
                   name="status"
                   defaultValue={artwork?.status || 'available'}
-                  className="h-11 rounded-md border border-gray-300 px-3 text-sm"
+                  className="h-11 rounded-md border border-gray-300 px-3 text-sm shadow-sm focus:border-black focus:ring-black"
                 >
                   <option value="available">판매 중</option>
                   <option value="reserved">예약됨</option>

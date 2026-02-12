@@ -4,9 +4,7 @@ import { useState, useRef } from 'react';
 import ArtworkLightbox from '@/components/ui/ArtworkLightbox';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
 import { optimizeImage } from '@/lib/client/image-optimization';
-// Assuming Icons are imported as Lucide/Heroicons or from the Icons component
-// Using a simple fallback svg if Icons not easily importable in one line, but user has Icons.tsx
-// Let's assume standard Lucide names or similar from Icons.tsx if available, or just SVGs for now for portability.
+import { useToast } from '@/lib/hooks/useToast';
 
 type UploadProps = {
   bucket: 'artworks' | 'profiles';
@@ -40,6 +38,7 @@ export function ImageUpload({
   } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const supabase = createSupabaseBrowserClient();
+  const toast = useToast();
   const isControlled = Array.isArray(value);
   const currentUrls = isControlled ? (value as string[]) : previewUrls;
 
@@ -90,7 +89,7 @@ export function ImageUpload({
         onUploadDelta?.(newUrls);
       }
     } catch (error: any) {
-      alert('이미지 업로드 실패: ' + error.message);
+      toast.error('이미지 업로드 실패: ' + error.message);
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -139,7 +138,7 @@ export function ImageUpload({
     if (path) {
       const { error } = await supabase.storage.from(bucket).remove([path]);
       if (error) {
-        alert('이미지 삭제 실패: ' + error.message);
+        toast.error('이미지 삭제 실패: ' + error.message);
         return;
       }
     }
@@ -205,12 +204,12 @@ export function ImageUpload({
             onDragLeave={handleDragLeave}
             className={`w-32 h-32 border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer transition-colors ${
               isDragging
-                ? 'border-blue-500 bg-blue-50'
-                : 'border-gray-300 hover:border-blue-500 hover:bg-blue-50'
+                ? 'border-primary bg-primary/5'
+                : 'border-gray-300 hover:border-primary hover:bg-primary/5'
             }`}
           >
             {uploading ? (
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
             ) : (
               <>
                 <svg
