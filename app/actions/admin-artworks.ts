@@ -225,6 +225,12 @@ export async function updateArtworkImages(id: string, images: string[]) {
   const admin = await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
 
+  const { data: beforeArtwork } = await supabase
+    .from('artworks')
+    .select('id, images, updated_at')
+    .eq('id', id)
+    .single();
+
   const { error } = await supabase
     .from('artworks')
     .update({
@@ -234,6 +240,12 @@ export async function updateArtworkImages(id: string, images: string[]) {
     .eq('id', id);
 
   if (error) throw error;
+
+  const { data: afterArtwork } = await supabase
+    .from('artworks')
+    .select('id, images, updated_at')
+    .eq('id', id)
+    .single();
 
   revalidatePath('/artworks');
   revalidatePath('/');
@@ -248,7 +260,13 @@ export async function updateArtworkImages(id: string, images: string[]) {
     {
       image_count: images.length,
     },
-    admin.id
+    admin.id,
+    {
+      summary: `작품 이미지 변경: ${id}`,
+      beforeSnapshot: beforeArtwork || null,
+      afterSnapshot: afterArtwork || null,
+      reversible: true,
+    }
   );
 
   return { success: true };
@@ -265,12 +283,22 @@ export async function batchUpdateArtworkStatus(ids: string[], status: string) {
     throw new Error('Invalid status');
   }
 
+  const { data: beforeArtworks } = await supabase
+    .from('artworks')
+    .select('id, status, updated_at')
+    .in('id', ids);
+
   const { error } = await supabase
     .from('artworks')
     .update({ status, updated_at: new Date().toISOString() })
     .in('id', ids);
 
   if (error) throw error;
+
+  const { data: afterArtworks } = await supabase
+    .from('artworks')
+    .select('id, status, updated_at')
+    .in('id', ids);
 
   revalidatePath('/artworks');
   revalidatePath('/');
@@ -284,7 +312,13 @@ export async function batchUpdateArtworkStatus(ids: string[], status: string) {
       count: ids.length,
       status,
     },
-    admin.id
+    admin.id,
+    {
+      summary: `작품 상태 일괄 변경: ${ids.length}건 → ${status}`,
+      beforeSnapshot: { items: beforeArtworks || [] },
+      afterSnapshot: { items: afterArtworks || [] },
+      reversible: true,
+    }
   );
 
   return { success: true, count: ids.length };
@@ -296,12 +330,22 @@ export async function batchToggleHidden(ids: string[], isHidden: boolean) {
   const admin = await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
 
+  const { data: beforeArtworks } = await supabase
+    .from('artworks')
+    .select('id, is_hidden, updated_at')
+    .in('id', ids);
+
   const { error } = await supabase
     .from('artworks')
     .update({ is_hidden: isHidden, updated_at: new Date().toISOString() })
     .in('id', ids);
 
   if (error) throw error;
+
+  const { data: afterArtworks } = await supabase
+    .from('artworks')
+    .select('id, is_hidden, updated_at')
+    .in('id', ids);
 
   revalidatePath('/artworks');
   revalidatePath('/');
@@ -315,7 +359,13 @@ export async function batchToggleHidden(ids: string[], isHidden: boolean) {
       count: ids.length,
       hidden: isHidden,
     },
-    admin.id
+    admin.id,
+    {
+      summary: `작품 숨김 일괄 변경: ${ids.length}건`,
+      beforeSnapshot: { items: beforeArtworks || [] },
+      afterSnapshot: { items: afterArtworks || [] },
+      reversible: true,
+    }
   );
 
   return { success: true, count: ids.length };

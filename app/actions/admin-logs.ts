@@ -96,6 +96,66 @@ type LegacyAdminLogEntry = {
   } | null;
 };
 
+const ARTWORK_REVERT_KEYS = [
+  'title',
+  'description',
+  'size',
+  'material',
+  'year',
+  'edition',
+  'price',
+  'status',
+  'is_hidden',
+  'images',
+  'shop_url',
+  'artist_id',
+] as const;
+
+const ARTIST_REVERT_KEYS = [
+  'name_ko',
+  'name_en',
+  'bio',
+  'history',
+  'profile_image',
+  'contact_email',
+  'instagram',
+  'homepage',
+] as const;
+
+function asSnapshotObject(value: unknown): Record<string, unknown> | null {
+  if (!value || Array.isArray(value) || typeof value !== 'object') return null;
+  return value as Record<string, unknown>;
+}
+
+function asSnapshotList(value: unknown): Record<string, unknown>[] | null {
+  if (Array.isArray(value)) {
+    return value.filter(
+      (item): item is Record<string, unknown> => !!item && typeof item === 'object'
+    );
+  }
+
+  const objectValue = asSnapshotObject(value);
+  if (!objectValue) return null;
+
+  const items = objectValue.items;
+  if (!Array.isArray(items)) return null;
+
+  return items.filter(
+    (item): item is Record<string, unknown> => !!item && typeof item === 'object'
+  );
+}
+
+function buildPatch(snapshot: Record<string, unknown>, keys: readonly string[]) {
+  const patch: Record<string, unknown> = {};
+  for (const key of keys) {
+    if (key in snapshot) {
+      patch[key] = snapshot[key];
+    }
+  }
+  patch.updated_at = new Date().toISOString();
+  return patch;
+}
+
 async function enrichActivityLogActors(logs: ActivityLogEntry[]): Promise<ActivityLogEntry[]> {
   if (logs.length === 0) return logs;
 
@@ -394,39 +454,74 @@ export async function revertActivityLog(logId: string, reason: string) {
   }
 
   if (log.target_type === 'artwork') {
-    const { data: current } = await supabase
-      .from('artworks')
-      .select('updated_at')
-      .eq('id', log.target_id)
-      .single();
+    const beforeList = asSnapshotList(log.before_snapshot);
+    const afterList = asSnapshotList(log.after_snapshot);
 
-    const afterUpdatedAt = (log.after_snapshot as { updated_at?: string } | null)?.updated_at;
-    if (afterUpdatedAt && current?.updated_at && current.updated_at !== afterUpdatedAt) {
-      throw new Error('현재 데이터가 추가로 변경되어 복구를 중단합니다.');
+    if (beforeList && beforeList.length > 0) {
+      const targetIds = beforeList
+        .map((item) => (typeof item.id === 'string' ? item.id : null))
+        .filter((id): id is string => !!id);
+
+      if (targetIds.length === 0) {
+        throw new Error('복구 대상 작품 정보를 찾을 수 없습니다.');
+      }
+
+      const { data: currentRows } = await supabase
+        .from('artworks')
+        .select('id, updated_at')
+        .in('id', targetIds);
+
+      const currentMap = new Map((currentRows || []).map((row) => [row.id, row.updated_at]));
+      const afterMap = new Map(
+        (afterList || [])
+          .map((item) => {
+            const id = typeof item.id === 'string' ? item.id : null;
+            const updatedAt = typeof item.updated_at === 'string' ? item.updated_at : null;
+            return id && updatedAt ? [id, updatedAt] : null;
+          })
+          .filter((pair): pair is [string, string] => !!pair)
+      );
+
+      for (const id of targetIds) {
+        const afterUpdatedAt = afterMap.get(id);
+        const currentUpdatedAt = currentMap.get(id);
+        if (afterUpdatedAt && currentUpdatedAt && currentUpdatedAt !== afterUpdatedAt) {
+          throw new Error('현재 데이터가 추가로 변경되어 복구를 중단합니다.');
+        }
+      }
+
+      for (const snapshot of beforeList) {
+        const id = typeof snapshot.id === 'string' ? snapshot.id : null;
+        if (!id) continue;
+
+        const patch = buildPatch(snapshot, ARTWORK_REVERT_KEYS);
+        const { error: revertError } = await supabase.from('artworks').update(patch).eq('id', id);
+        if (revertError) throw revertError;
+      }
+    } else {
+      const { data: current } = await supabase
+        .from('artworks')
+        .select('updated_at')
+        .eq('id', log.target_id)
+        .single();
+
+      const afterUpdatedAt = (log.after_snapshot as { updated_at?: string } | null)?.updated_at;
+      if (afterUpdatedAt && current?.updated_at && current.updated_at !== afterUpdatedAt) {
+        throw new Error('현재 데이터가 추가로 변경되어 복구를 중단합니다.');
+      }
+
+      const snapshot = asSnapshotObject(log.before_snapshot);
+      if (!snapshot) {
+        throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
+      }
+
+      const patch = buildPatch(snapshot, ARTWORK_REVERT_KEYS);
+      const { error: revertError } = await supabase
+        .from('artworks')
+        .update(patch)
+        .eq('id', log.target_id);
+      if (revertError) throw revertError;
     }
-
-    const snapshot = log.before_snapshot as Record<string, unknown>;
-    const patch: Record<string, unknown> = {
-      title: snapshot.title,
-      description: snapshot.description,
-      size: snapshot.size,
-      material: snapshot.material,
-      year: snapshot.year,
-      edition: snapshot.edition,
-      price: snapshot.price,
-      status: snapshot.status,
-      is_hidden: snapshot.is_hidden,
-      images: snapshot.images,
-      shop_url: snapshot.shop_url,
-      artist_id: snapshot.artist_id,
-      updated_at: new Date().toISOString(),
-    };
-
-    const { error: revertError } = await supabase
-      .from('artworks')
-      .update(patch)
-      .eq('id', log.target_id);
-    if (revertError) throw revertError;
   } else if (log.target_type === 'artist') {
     const { data: current } = await supabase
       .from('artists')
@@ -439,18 +534,11 @@ export async function revertActivityLog(logId: string, reason: string) {
       throw new Error('현재 데이터가 추가로 변경되어 복구를 중단합니다.');
     }
 
-    const snapshot = log.before_snapshot as Record<string, unknown>;
-    const patch: Record<string, unknown> = {
-      name_ko: snapshot.name_ko,
-      name_en: snapshot.name_en,
-      bio: snapshot.bio,
-      history: snapshot.history,
-      profile_image: snapshot.profile_image,
-      contact_email: snapshot.contact_email,
-      instagram: snapshot.instagram,
-      homepage: snapshot.homepage,
-      updated_at: new Date().toISOString(),
-    };
+    const snapshot = asSnapshotObject(log.before_snapshot);
+    if (!snapshot) {
+      throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
+    }
+    const patch = buildPatch(snapshot, ARTIST_REVERT_KEYS);
 
     const { error: revertError } = await supabase
       .from('artists')
