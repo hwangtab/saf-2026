@@ -9,12 +9,35 @@ type RevenueCardProps = {
   trend?: { value: number; isPositive: boolean };
 };
 
+function formatKoreanAmount(value: number) {
+  const amount = Math.max(0, Math.round(value));
+  if (amount === 0) return '0원';
+
+  const eok = Math.floor(amount / 100000000);
+  const man = Math.floor((amount % 100000000) / 10000);
+  const won = amount % 10000;
+  const parts: string[] = [];
+
+  if (eok > 0) {
+    parts.push(`${new Intl.NumberFormat('ko-KR').format(eok)}억`);
+  }
+  if (man > 0) {
+    parts.push(`${new Intl.NumberFormat('ko-KR').format(man)}만`);
+  }
+  if (won > 0) {
+    parts.push(`${new Intl.NumberFormat('ko-KR').format(won)}`);
+  }
+
+  return `${parts.join(' ')}원`;
+}
+
 export function RevenueCard({ title, value, subtitle, trend }: RevenueCardProps) {
   const formatted = new Intl.NumberFormat('ko-KR', {
     style: 'currency',
     currency: 'KRW',
     maximumFractionDigits: 0,
   }).format(value);
+  const koreanFormatted = formatKoreanAmount(value);
 
   const trendValue =
     trend && Number.isInteger(Math.abs(trend.value))
@@ -27,7 +50,10 @@ export function RevenueCard({ title, value, subtitle, trend }: RevenueCardProps)
     <AdminCard className="flex h-full flex-col justify-between p-6">
       <div>
         <p className="text-sm font-medium text-slate-500">{title}</p>
-        <p className="mt-2 text-3xl font-bold tracking-tight text-slate-900">{formatted}</p>
+        <p className="mt-2 whitespace-nowrap text-[clamp(2rem,6vw,3rem)] font-bold leading-none tracking-tight text-slate-900 tabular-nums">
+          {formatted}
+        </p>
+        <p className="mt-1 text-xs font-medium text-slate-500">{koreanFormatted}</p>
       </div>
       {subtitle && <p className="mt-2 text-sm text-slate-500">{subtitle}</p>}
       {trend && (
