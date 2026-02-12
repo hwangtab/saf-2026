@@ -169,8 +169,12 @@ function isLikelyUuid(value: string) {
 function formatIdentifier(value: string) {
   if (!value) return '-';
   if (value.includes(',')) return '다중 대상';
-  if (isLikelyUuid(value)) return `식별 ID ${value.slice(0, 8)}...`;
+  if (isLikelyUuid(value)) return `${value.slice(0, 8)}...`;
   return value;
+}
+
+function formatIdentifierLabel(value: string) {
+  return `식별 ID ${formatIdentifier(value)}`;
 }
 
 function getSnapshotDisplayName(snapshot: Record<string, unknown> | null): string | null {
@@ -203,7 +207,8 @@ function getLogTargetDisplayName(log: ActivityLogEntry): string {
   if (fromSnapshot) return fromSnapshot;
 
   if (log.target_id.includes(',')) return `총 ${log.target_id.split(',').length}개 대상`;
-  if (isLikelyUuid(log.target_id)) return `이름 정보 없음 (${formatIdentifier(log.target_id)})`;
+  if (isLikelyUuid(log.target_id))
+    return `이름 정보 없음 (${formatIdentifierLabel(log.target_id)})`;
   return log.target_id;
 }
 
@@ -545,10 +550,10 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                               <div className="border-b border-slate-200 px-3 py-2 text-xs font-medium text-slate-600">
                                 대상:{' '}
                                 {item.itemLabel ||
-                                  `이름 정보 없음 (${formatIdentifier(item.itemId)})`}
+                                  `이름 정보 없음 (${formatIdentifierLabel(item.itemId)})`}
                                 {item.itemLabel ? (
                                   <span className="ml-2 text-slate-500">
-                                    (ID: {formatIdentifier(item.itemId)})
+                                    (식별 ID: {formatIdentifier(item.itemId)})
                                   </span>
                                 ) : null}
                               </div>
