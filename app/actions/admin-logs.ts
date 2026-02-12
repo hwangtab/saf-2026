@@ -96,6 +96,71 @@ type LegacyAdminLogEntry = {
   } | null;
 };
 
+async function enrichActivityLogActors(logs: ActivityLogEntry[]): Promise<ActivityLogEntry[]> {
+  if (logs.length === 0) return logs;
+
+  const unresolvedLogs = logs.filter(
+    (log) =>
+      !log.actor_name &&
+      !log.actor_email &&
+      (log.actor_role === 'admin' || log.actor_role === 'artist')
+  );
+
+  if (unresolvedLogs.length === 0) return logs;
+
+  const actorIds = Array.from(new Set(unresolvedLogs.map((log) => log.actor_id).filter(Boolean)));
+  if (actorIds.length === 0) return logs;
+
+  const supabase = await createSupabaseAdminOrServerClient();
+  const { data: profiles } = await supabase
+    .from('profiles')
+    .select('id, name, email')
+    .in('id', actorIds);
+
+  const artistIds = Array.from(
+    new Set(unresolvedLogs.filter((log) => log.actor_role === 'artist').map((log) => log.actor_id))
+  );
+
+  const profileMap = new Map((profiles || []).map((profile) => [profile.id, profile]));
+  const artistNameByUserId = new Map<string, string>();
+
+  if (artistIds.length > 0) {
+    const { data: artists } = await supabase
+      .from('artists')
+      .select('user_id, name_ko')
+      .in('user_id', artistIds);
+
+    for (const artist of artists || []) {
+      if (artist.user_id && artist.name_ko) {
+        artistNameByUserId.set(artist.user_id, artist.name_ko);
+      }
+    }
+  }
+
+  return logs.map((log) => {
+    if (log.actor_name || log.actor_email) return log;
+    if (log.actor_role !== 'admin' && log.actor_role !== 'artist') return log;
+
+    const profile = profileMap.get(log.actor_id);
+    if (!profile && log.actor_role !== 'artist') return log;
+
+    const actorName =
+      log.actor_role === 'artist'
+        ? artistNameByUserId.get(log.actor_id) || profile?.name || null
+        : profile?.name || null;
+
+    const actorEmail = profile?.email || null;
+
+    if (!actorName && !actorEmail) return log;
+
+    return {
+      ...log,
+      actor_name: actorName,
+      actor_email: actorEmail,
+    };
+  });
+}
+
 async function writeActivityLog(params: {
   actor: ActorInfo;
   action: string;
@@ -288,7 +353,10 @@ export async function getActivityLogs(filters: ActivityLogFilters = {}) {
     throw error;
   }
 
-  return { logs: (data || []) as ActivityLogEntry[], total: count || 0 };
+  const logs = (data || []) as ActivityLogEntry[];
+  const enrichedLogs = await enrichActivityLogActors(logs);
+
+  return { logs: enrichedLogs, total: count || 0 };
 }
 
 export async function getAdminLogs(
@@ -301,6 +369,7 @@ export async function getAdminLogs(
 export async function revertActivityLog(logId: string, reason: string) {
   const admin = await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
+  const actor = await resolveActorIdentity(admin.id, 'admin');
 
   const { data: log, error: logError } = await supabase
     .from('activity_logs')
@@ -405,7 +474,7 @@ export async function revertActivityLog(logId: string, reason: string) {
   if (markError) throw markError;
 
   await writeActivityLog({
-    actor: { id: admin.id, role: 'admin' },
+    actor: { id: admin.id, role: 'admin', name: actor.name, email: actor.email },
     action: 'revert_executed',
     targetType: log.target_type,
     targetId: log.target_id,

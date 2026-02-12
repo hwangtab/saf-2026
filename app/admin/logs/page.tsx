@@ -61,6 +61,17 @@ export default async function AdminLogsPage({ searchParams }: Props) {
     reversibleOnly: params.reversible === '1',
   });
   const totalPages = Math.ceil(total / limit);
+  const activeFilterCount = [
+    params.q,
+    params.actor_role && params.actor_role !== 'all' ? params.actor_role : undefined,
+    params.action,
+    params.target_type,
+    params.from,
+    params.to,
+    params.reversible === '1' ? 'reversible' : undefined,
+  ].filter(Boolean).length;
+  const fieldClass =
+    'rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200';
 
   return (
     <div className="space-y-6">
@@ -70,87 +81,108 @@ export default async function AdminLogsPage({ searchParams }: Props) {
           관리자/아티스트 활동 기록을 조회하고 필요한 경우 복구를 실행합니다.
         </p>
       </div>
-      <form className="grid grid-cols-1 gap-3 rounded-xl border border-slate-200 bg-white p-4 sm:grid-cols-2 lg:grid-cols-4">
-        <input
-          name="q"
-          defaultValue={params.q || ''}
-          placeholder="이름, 이메일, 대상, 액션 검색"
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
-        />
-        <select
-          name="actor_role"
-          defaultValue={params.actor_role || 'all'}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
-        >
-          <option value="all">전체 행위자</option>
-          <option value="admin">관리자</option>
-          <option value="artist">아티스트</option>
-        </select>
-        <select
-          name="action"
-          defaultValue={params.action || ''}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
-        >
-          {ACTION_FILTER_OPTIONS.map((option) => (
-            <option key={option.value || 'all'} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-        <select
-          name="target_type"
-          defaultValue={params.target_type || ''}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
-        >
-          <option value="">전체 대상</option>
-          <option value="artwork">작품</option>
-          <option value="artist">작가</option>
-          <option value="user">사용자</option>
-          <option value="news">뉴스</option>
-          <option value="faq">FAQ</option>
-          <option value="video">영상</option>
-          <option value="testimonial">추천사</option>
-        </select>
-        <label className="flex flex-col gap-1 text-sm text-gray-700">
-          시작일시
-          <input
-            name="from"
-            type="datetime-local"
-            defaultValue={params.from || ''}
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm"
-          />
-        </label>
-        <label className="flex flex-col gap-1 text-sm text-gray-700">
-          종료일시
-          <input
-            name="to"
-            type="datetime-local"
-            defaultValue={params.to || ''}
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm"
-          />
-        </label>
-        <label className="flex items-center gap-2 rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700">
-          <input
-            type="checkbox"
-            name="reversible"
-            value="1"
-            defaultChecked={params.reversible === '1'}
-          />
-          복구 가능 로그만 보기
-        </label>
-        <div className="flex items-center gap-2">
-          <button
-            type="submit"
-            className="inline-flex items-center rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white hover:bg-gray-800"
-          >
-            검색
-          </button>
-          <a
-            href="/admin/logs"
-            className="inline-flex items-center rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-          >
-            초기화
-          </a>
+      <form className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <input type="hidden" name="page" value="1" />
+        <div className="flex flex-col gap-2 border-b border-slate-200 bg-slate-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-sm font-semibold text-slate-900">검색/필터</h2>
+            <p className="text-xs text-slate-500">조건을 조합해 원하는 로그만 빠르게 확인하세요.</p>
+          </div>
+          <span className="inline-flex w-fit items-center rounded-full bg-white px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-slate-200">
+            적용된 필터 {activeFilterCount}개
+          </span>
+        </div>
+        <div className="grid grid-cols-1 gap-3 p-4 md:grid-cols-2 xl:grid-cols-4">
+          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+            검색어
+            <input
+              name="q"
+              defaultValue={params.q || ''}
+              placeholder="이름, 이메일, 대상, 활동"
+              className={fieldClass}
+            />
+          </label>
+          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+            행위자
+            <select
+              name="actor_role"
+              defaultValue={params.actor_role || 'all'}
+              className={fieldClass}
+            >
+              <option value="all">전체 행위자</option>
+              <option value="admin">관리자</option>
+              <option value="artist">아티스트</option>
+            </select>
+          </label>
+          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+            활동 종류
+            <select name="action" defaultValue={params.action || ''} className={fieldClass}>
+              {ACTION_FILTER_OPTIONS.map((option) => (
+                <option key={option.value || 'all'} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+            대상
+            <select
+              name="target_type"
+              defaultValue={params.target_type || ''}
+              className={fieldClass}
+            >
+              <option value="">전체 대상</option>
+              <option value="artwork">작품</option>
+              <option value="artist">작가</option>
+              <option value="user">사용자</option>
+              <option value="news">뉴스</option>
+              <option value="faq">FAQ</option>
+              <option value="video">영상</option>
+              <option value="testimonial">추천사</option>
+            </select>
+          </label>
+          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+            시작일시
+            <input
+              name="from"
+              type="datetime-local"
+              defaultValue={params.from || ''}
+              className={fieldClass}
+            />
+          </label>
+          <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+            종료일시
+            <input
+              name="to"
+              type="datetime-local"
+              defaultValue={params.to || ''}
+              className={fieldClass}
+            />
+          </label>
+          <label className="flex items-center gap-2 rounded-md border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-700 md:col-span-2 xl:col-span-1">
+            <input
+              type="checkbox"
+              name="reversible"
+              value="1"
+              defaultChecked={params.reversible === '1'}
+              className="h-4 w-4 rounded border-slate-300"
+            />
+            복구 가능한 로그만 보기
+          </label>
+          <div className="flex items-center justify-end gap-2 md:col-span-2 xl:col-span-1">
+            <a
+              href="/admin/logs"
+              className="inline-flex items-center rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            >
+              초기화
+            </a>
+            <button
+              type="submit"
+              className="inline-flex items-center rounded-md bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800"
+            >
+              필터 적용
+            </button>
+          </div>
         </div>
       </form>
       <LogsList logs={logs} currentPage={page} totalPages={totalPages} total={total} />
