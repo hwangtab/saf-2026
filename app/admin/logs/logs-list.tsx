@@ -1,5 +1,6 @@
 'use client';
 
+import { Fragment, useState } from 'react';
 import Link from 'next/link';
 import { revertActivityLog, type ActivityLogEntry } from '@/app/actions/admin-logs';
 import Button from '@/components/ui/Button';
@@ -138,9 +139,152 @@ function getTargetLink(log: ActivityLogEntry): string | null {
   }
 }
 
+type DiffRow = {
+  field: string;
+  before: unknown;
+  after: unknown;
+};
+
+type DiffItem = {
+  itemId: string;
+  changes: DiffRow[];
+};
+
+const FIELD_LABELS: Record<string, string> = {
+  title: '제목',
+  description: '작품 소개',
+  size: '크기',
+  material: '재료',
+  year: '연도',
+  edition: '에디션',
+  price: '가격',
+  status: '판매상태',
+  is_hidden: '숨김',
+  images: '이미지',
+  shop_url: '구매 링크',
+  artist_id: '작가',
+  name_ko: '이름(한글)',
+  name_en: '이름(영문)',
+  bio: '작가 소개',
+  history: '작가 이력',
+  profile_image: '프로필 이미지',
+  contact_email: '연락 이메일',
+  instagram: '인스타그램',
+  homepage: '홈페이지',
+};
+
+function toObject(value: unknown): Record<string, unknown> | null {
+  if (!value || Array.isArray(value) || typeof value !== 'object') return null;
+  return value as Record<string, unknown>;
+}
+
+function toObjectList(value: unknown): Record<string, unknown>[] | null {
+  if (Array.isArray(value)) {
+    return value.filter(
+      (item): item is Record<string, unknown> => !!item && typeof item === 'object'
+    );
+  }
+
+  const objectValue = toObject(value);
+  if (!objectValue) return null;
+  if (!Array.isArray(objectValue.items)) return null;
+
+  return objectValue.items.filter(
+    (item): item is Record<string, unknown> => !!item && typeof item === 'object'
+  );
+}
+
+function valueEquals(a: unknown, b: unknown) {
+  return JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
+}
+
+function getFieldLabel(key: string) {
+  return FIELD_LABELS[key] || key;
+}
+
+function getDiffRows(
+  beforeObj: Record<string, unknown>,
+  afterObj: Record<string, unknown>
+): DiffRow[] {
+  const keys = Array.from(new Set([...Object.keys(beforeObj), ...Object.keys(afterObj)]));
+
+  return keys
+    .filter((key) => key !== 'updated_at')
+    .filter((key) => !valueEquals(beforeObj[key], afterObj[key]))
+    .map((key) => ({
+      field: key,
+      before: beforeObj[key],
+      after: afterObj[key],
+    }));
+}
+
+function getDiffItems(log: ActivityLogEntry): DiffItem[] {
+  const beforeList = toObjectList(log.before_snapshot);
+  const afterList = toObjectList(log.after_snapshot);
+
+  if (beforeList && afterList) {
+    const beforeMap = new Map(
+      beforeList
+        .map((item) => {
+          const id = typeof item.id === 'string' ? item.id : null;
+          return id ? [id, item] : null;
+        })
+        .filter((entry): entry is [string, Record<string, unknown>] => !!entry)
+    );
+    const afterMap = new Map(
+      afterList
+        .map((item) => {
+          const id = typeof item.id === 'string' ? item.id : null;
+          return id ? [id, item] : null;
+        })
+        .filter((entry): entry is [string, Record<string, unknown>] => !!entry)
+    );
+
+    return Array.from(beforeMap.entries())
+      .map(([id, beforeObj]) => {
+        const afterObj = afterMap.get(id);
+        if (!afterObj) return null;
+        const changes = getDiffRows(beforeObj, afterObj);
+        if (changes.length === 0) return null;
+        return { itemId: id, changes };
+      })
+      .filter((item): item is DiffItem => !!item);
+  }
+
+  const beforeObj = toObject(log.before_snapshot);
+  const afterObj = toObject(log.after_snapshot);
+  if (!beforeObj || !afterObj) return [];
+
+  const changes = getDiffRows(beforeObj, afterObj);
+  if (changes.length === 0) return [];
+
+  return [{ itemId: log.target_id, changes }];
+}
+
+function formatDiffValue(value: unknown): string {
+  if (value === null || value === undefined || value === '') return '-';
+  if (typeof value === 'boolean') return value ? '예' : '아니오';
+  if (typeof value === 'number') return String(value);
+  if (Array.isArray(value)) {
+    if (value.length === 0) return '[]';
+    if (value.every((item) => typeof item === 'string')) {
+      return `${value.length}개 (${value.slice(0, 2).join(', ')}${value.length > 2 ? '...' : ''})`;
+    }
+    return `${value.length}개 항목`;
+  }
+  if (typeof value === 'object') {
+    const text = JSON.stringify(value);
+    return text.length > 120 ? `${text.slice(0, 120)}...` : text;
+  }
+
+  const text = String(value);
+  return text.length > 120 ? `${text.slice(0, 120)}...` : text;
+}
+
 export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps) {
   const router = useRouter();
   const toast = useToast();
+  const [expandedLogId, setExpandedLogId] = useState<string | null>(null);
 
   const handleRevert = async (logId: string) => {
     const reason = prompt('복구 사유를 입력해주세요.');
@@ -211,46 +355,121 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
           <tbody className="bg-white divide-y divide-gray-200">
             {logs.map((log) => {
               const link = getTargetLink(log);
+              const diffItems = getDiffItems(log);
+              const totalDiffCount = diffItems.reduce((sum, item) => sum + item.changes.length, 0);
+              const canShowDiff = totalDiffCount > 0;
+              const isExpanded = expandedLogId === log.id;
+
               return (
-                <tr key={log.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {formatDate(log.created_at)}
-                  </td>
-                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900 hidden sm:table-cell">
-                    {getActorDisplay(log)}
-                    <span className="ml-2 rounded bg-gray-100 px-1.5 py-0.5 text-[10px] text-gray-600">
-                      {getActorRoleLabel(log.actor_role)}
-                    </span>
-                  </td>
-                  <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">
-                    {formatActionDescription(log)}
-                  </td>
-                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {link ? (
-                      <Link href={link} className="text-indigo-600 hover:underline">
-                        {getTargetTypeLabel(log.target_type)}
-                      </Link>
-                    ) : (
-                      getTargetTypeLabel(log.target_type)
-                    )}
-                  </td>
-                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-right text-sm">
-                    {log.reversible && !log.reverted_at ? (
-                      <button
-                        onClick={() => handleRevert(log.id)}
-                        className="rounded-md border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800 hover:bg-amber-100"
-                      >
-                        복구
-                      </button>
-                    ) : log.reverted_at ? (
-                      <span className="text-xs text-green-700">복구됨</span>
-                    ) : (
-                      <span className="text-xs text-gray-400" title="복구 대상이 아닌 활동입니다.">
-                        복구 불가
+                <Fragment key={log.id}>
+                  <tr className="hover:bg-gray-50 transition-colors">
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {formatDate(log.created_at)}
+                    </td>
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900 hidden sm:table-cell">
+                      {getActorDisplay(log)}
+                      <span className="ml-2 rounded bg-gray-100 px-1.5 py-0.5 text-[10px] text-gray-600">
+                        {getActorRoleLabel(log.actor_role)}
                       </span>
-                    )}
-                  </td>
-                </tr>
+                    </td>
+                    <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span>{formatActionDescription(log)}</span>
+                        {canShowDiff && (
+                          <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-medium text-blue-700">
+                            변경 {totalDiffCount}건
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {link ? (
+                        <Link href={link} className="text-indigo-600 hover:underline">
+                          {getTargetTypeLabel(log.target_type)}
+                        </Link>
+                      ) : (
+                        getTargetTypeLabel(log.target_type)
+                      )}
+                    </td>
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-right text-sm">
+                      <div className="flex justify-end gap-2">
+                        {canShowDiff && (
+                          <button
+                            onClick={() => setExpandedLogId(isExpanded ? null : log.id)}
+                            className="rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50"
+                          >
+                            {isExpanded ? '변경 닫기' : '변경 보기'}
+                          </button>
+                        )}
+                        {log.reversible && !log.reverted_at ? (
+                          <button
+                            onClick={() => handleRevert(log.id)}
+                            className="rounded-md border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800 hover:bg-amber-100"
+                          >
+                            복구
+                          </button>
+                        ) : log.reverted_at ? (
+                          <span className="text-xs text-green-700">복구됨</span>
+                        ) : (
+                          <span
+                            className="text-xs text-gray-400"
+                            title="복구 대상이 아닌 활동입니다."
+                          >
+                            복구 불가
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                  {isExpanded && canShowDiff && (
+                    <tr className="bg-slate-50">
+                      <td colSpan={5} className="px-4 sm:px-6 py-4">
+                        <div className="space-y-3">
+                          <div className="text-xs font-semibold text-slate-700">변경 상세 비교</div>
+                          {diffItems.map((item) => (
+                            <div
+                              key={item.itemId}
+                              className="rounded-md border border-slate-200 bg-white"
+                            >
+                              <div className="border-b border-slate-200 px-3 py-2 text-xs font-medium text-slate-600">
+                                대상 ID: {item.itemId}
+                              </div>
+                              <div className="overflow-x-auto">
+                                <table className="min-w-full text-xs">
+                                  <thead className="bg-slate-50 text-slate-500">
+                                    <tr>
+                                      <th className="px-3 py-2 text-left font-medium">필드</th>
+                                      <th className="px-3 py-2 text-left font-medium">이전 값</th>
+                                      <th className="px-3 py-2 text-left font-medium">변경 값</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {item.changes.map((change) => (
+                                      <tr
+                                        key={`${item.itemId}-${change.field}`}
+                                        className="border-t border-slate-100"
+                                      >
+                                        <td className="px-3 py-2 text-slate-700">
+                                          {getFieldLabel(change.field)}
+                                        </td>
+                                        <td className="px-3 py-2 text-rose-700 whitespace-pre-wrap break-all">
+                                          {formatDiffValue(change.before)}
+                                        </td>
+                                        <td className="px-3 py-2 text-emerald-700 whitespace-pre-wrap break-all">
+                                          {formatDiffValue(change.after)}
+                                        </td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </Fragment>
               );
             })}
           </tbody>
