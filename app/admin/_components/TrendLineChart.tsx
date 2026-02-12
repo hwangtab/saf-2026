@@ -18,27 +18,32 @@ type TrendLineChartProps = {
 };
 
 export function TrendLineChart({ data }: TrendLineChartProps) {
-  const filledData = [];
+  const merged = new Map<string, { newArtists: number; newArtworks: number }>();
 
-  for (let i = 29; i >= 0; i--) {
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    const dateKey = d.toISOString().split('T')[0];
+  data.dailyArtists.forEach((item) => {
+    const current = merged.get(item.date) || { newArtists: 0, newArtworks: 0 };
+    merged.set(item.date, { ...current, newArtists: item.count });
+  });
 
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    const displayDate = `${month}.${day}`;
+  data.dailyArtworks.forEach((item) => {
+    const current = merged.get(item.date) || { newArtists: 0, newArtworks: 0 };
+    merged.set(item.date, { ...current, newArtworks: item.count });
+  });
 
-    const newArtists = data.dailyArtists.find((item) => item.date === dateKey)?.count || 0;
-    const newArtworks = data.dailyArtworks.find((item) => item.date === dateKey)?.count || 0;
-
-    filledData.push({
-      date: displayDate,
-      fullDate: dateKey,
-      newArtists,
-      newArtworks,
+  const filledData = Array.from(merged.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .slice(-31)
+    .map(([dateKey, counts]) => {
+      const d = new Date(dateKey);
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return {
+        date: `${month}.${day}`,
+        fullDate: dateKey,
+        newArtists: counts.newArtists,
+        newArtworks: counts.newArtworks,
+      };
     });
-  }
 
   const hasTrendData = filledData.some((item) => item.newArtists > 0 || item.newArtworks > 0);
 
