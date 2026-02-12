@@ -1,4 +1,3 @@
-import { requireAdmin } from '@/lib/auth/guards';
 import { getDashboardStats, type DashboardPeriodKey } from '@/app/actions/admin-dashboard';
 import { connection } from 'next/server';
 import Link from 'next/link';
@@ -90,9 +89,30 @@ function formatDate(dateString: string | null | undefined) {
   });
 }
 
+function formatShortDate(dateString: string | null | undefined) {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return '';
+
+  return date.toLocaleDateString('ko-KR', {
+    month: '2-digit',
+    day: '2-digit',
+  });
+}
+
+function formatComparedTo(comparedTo: string | null) {
+  if (!comparedTo) return '전체 기간은 비교 구간 없음';
+
+  const [startRaw, endRaw] = comparedTo.split(' ~ ');
+  const start = formatShortDate(startRaw);
+  const end = formatShortDate(endRaw);
+
+  if (!start || !end) return `비교 기간: ${comparedTo}`;
+  return `비교 기간: ${start} ~ ${end}`;
+}
+
 export default async function AdminDashboardPage({ searchParams }: Props) {
   await connection();
-  await requireAdmin();
   const params = await searchParams;
   const periodParam = params.period;
   const selectedPeriod: DashboardPeriodKey =
@@ -187,11 +207,7 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
         <RevenueCard
           title={`${stats.period.label} 평균판매가`}
           value={stats.revenue.period.averagePrice}
-          subtitle={
-            stats.period.comparedTo
-              ? `비교 기간: ${stats.period.comparedTo}`
-              : '전체 기간은 비교 구간 없음'
-          }
+          subtitle={formatComparedTo(stats.period.comparedTo)}
         />
         <RevenueCard
           title="누적 총 매출"
