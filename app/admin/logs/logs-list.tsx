@@ -169,7 +169,7 @@ function isLikelyUuid(value: string) {
 function formatIdentifier(value: string) {
   if (!value) return '-';
   if (value.includes(',')) return '다중 대상';
-  if (isLikelyUuid(value)) return `${value.slice(0, 8)}...`;
+  if (isLikelyUuid(value)) return `식별 ID ${value.slice(0, 8)}...`;
   return value;
 }
 
@@ -185,6 +185,10 @@ function getSnapshotDisplayName(snapshot: Record<string, unknown> | null): strin
 
 function getLogTargetDisplayName(log: ActivityLogEntry): string {
   const details = log.metadata as Record<string, unknown> | null;
+  const targetNameFromMetadata =
+    details && typeof details.target_name === 'string' ? details.target_name : null;
+  if (targetNameFromMetadata) return targetNameFromMetadata;
+
   const fromDetails =
     (typeof details?.title === 'string' && details.title) ||
     (typeof details?.name === 'string' && details.name) ||
@@ -199,12 +203,26 @@ function getLogTargetDisplayName(log: ActivityLogEntry): string {
   if (fromSnapshot) return fromSnapshot;
 
   if (log.target_id.includes(',')) return `총 ${log.target_id.split(',').length}개 대상`;
-  return formatIdentifier(log.target_id);
+  if (isLikelyUuid(log.target_id)) return `이름 정보 없음 (${formatIdentifier(log.target_id)})`;
+  return log.target_id;
 }
 
 function formatStatus(value: unknown): string | null {
   if (typeof value !== 'string') return null;
   return STATUS_LABELS[value] || value;
+}
+
+function getTargetNameMap(log: ActivityLogEntry): Map<string, string> {
+  const details = log.metadata as Record<string, unknown> | null;
+  const raw = details?.target_names;
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return new Map();
+
+  const entries = Object.entries(raw).filter(
+    (entry): entry is [string, string] =>
+      typeof entry[0] === 'string' && typeof entry[1] === 'string'
+  );
+
+  return new Map(entries);
 }
 
 const FIELD_LABELS: Record<string, string> = {
@@ -278,6 +296,7 @@ function getDiffRows(
 function getDiffItems(log: ActivityLogEntry): DiffItem[] {
   const beforeList = toObjectList(log.before_snapshot);
   const afterList = toObjectList(log.after_snapshot);
+  const targetNameMap = getTargetNameMap(log);
 
   if (beforeList && afterList) {
     const beforeMap = new Map(
@@ -305,7 +324,11 @@ function getDiffItems(log: ActivityLogEntry): DiffItem[] {
         if (changes.length === 0) return null;
         return {
           itemId: id,
-          itemLabel: getSnapshotDisplayName(afterObj) || getSnapshotDisplayName(beforeObj),
+          itemLabel:
+            getSnapshotDisplayName(afterObj) ||
+            getSnapshotDisplayName(beforeObj) ||
+            targetNameMap.get(id) ||
+            null,
           changes,
         };
       })
@@ -322,7 +345,11 @@ function getDiffItems(log: ActivityLogEntry): DiffItem[] {
   return [
     {
       itemId: log.target_id,
-      itemLabel: getSnapshotDisplayName(afterObj) || getSnapshotDisplayName(beforeObj),
+      itemLabel:
+        getSnapshotDisplayName(afterObj) ||
+        getSnapshotDisplayName(beforeObj) ||
+        targetNameMap.get(log.target_id) ||
+        null,
       changes,
     },
   ];
@@ -516,7 +543,9 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                               className="rounded-md border border-slate-200 bg-white"
                             >
                               <div className="border-b border-slate-200 px-3 py-2 text-xs font-medium text-slate-600">
-                                대상: {item.itemLabel || formatIdentifier(item.itemId)}
+                                대상:{' '}
+                                {item.itemLabel ||
+                                  `이름 정보 없음 (${formatIdentifier(item.itemId)})`}
                                 {item.itemLabel ? (
                                   <span className="ml-2 text-slate-500">
                                     (ID: {formatIdentifier(item.itemId)})
@@ -527,7 +556,7 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                                 <table className="min-w-full text-xs">
                                   <thead className="bg-slate-50 text-slate-500">
                                     <tr>
-                                      <th className="px-3 py-2 text-left font-medium">필드</th>
+                                      <th className="px-3 py-2 text-left font-medium">변경 내용</th>
                                       <th className="px-3 py-2 text-left font-medium">이전 값</th>
                                       <th className="px-3 py-2 text-left font-medium">변경 값</th>
                                     </tr>

@@ -3,7 +3,7 @@ import { getActivityLogs } from '@/app/actions/admin-logs';
 import { LogsList } from './logs-list';
 
 const ACTION_FILTER_OPTIONS = [
-  { value: '', label: '전체 액션' },
+  { value: '', label: '전체 활동' },
   { value: 'user_approved', label: '사용자 승인' },
   { value: 'user_rejected', label: '사용자 거절' },
   { value: 'user_reactivated', label: '사용자 재활성화' },
@@ -115,7 +115,7 @@ export default async function AdminLogsPage({ searchParams }: Props) {
             </select>
           </label>
           <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
-            활동 종류
+            활동 유형
             <select name="action" defaultValue={params.action || ''} className={fieldClass}>
               {ACTION_FILTER_OPTIONS.map((option) => (
                 <option key={option.value || 'all'} value={option.value}>

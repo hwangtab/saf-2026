@@ -221,6 +221,102 @@ async function enrichActivityLogActors(logs: ActivityLogEntry[]): Promise<Activi
   });
 }
 
+function parseTargetIds(log: ActivityLogEntry): string[] {
+  const ids = new Set<string>();
+
+  if (log.target_id) {
+    for (const id of log.target_id
+      .split(',')
+      .map((value) => value.trim())
+      .filter(Boolean)) {
+      ids.add(id);
+    }
+  }
+
+  const collectFromSnapshot = (snapshot: Record<string, unknown> | null) => {
+    if (!snapshot) return;
+    const items = snapshot.items;
+    if (!Array.isArray(items)) return;
+
+    for (const item of items) {
+      if (!item || typeof item !== 'object') continue;
+      const itemId = (item as Record<string, unknown>).id;
+      if (typeof itemId === 'string' && itemId) {
+        ids.add(itemId);
+      }
+    }
+  };
+
+  collectFromSnapshot(log.before_snapshot);
+  collectFromSnapshot(log.after_snapshot);
+
+  return Array.from(ids);
+}
+
+async function enrichActivityLogTargets(logs: ActivityLogEntry[]): Promise<ActivityLogEntry[]> {
+  if (logs.length === 0) return logs;
+
+  const artworkIds = new Set<string>();
+  const artistIds = new Set<string>();
+
+  for (const log of logs) {
+    const ids = parseTargetIds(log);
+    if (ids.length === 0) continue;
+
+    if (log.target_type === 'artwork') {
+      ids.forEach((id) => artworkIds.add(id));
+    }
+    if (log.target_type === 'artist') {
+      ids.forEach((id) => artistIds.add(id));
+    }
+  }
+
+  if (artworkIds.size === 0 && artistIds.size === 0) return logs;
+
+  const supabase = await createSupabaseAdminOrServerClient();
+
+  const [artworkResult, artistResult] = await Promise.all([
+    artworkIds.size > 0
+      ? supabase.from('artworks').select('id, title').in('id', Array.from(artworkIds))
+      : Promise.resolve({ data: [] as { id: string; title: string | null }[] }),
+    artistIds.size > 0
+      ? supabase.from('artists').select('id, name_ko').in('id', Array.from(artistIds))
+      : Promise.resolve({ data: [] as { id: string; name_ko: string | null }[] }),
+  ]);
+
+  const artworkNameById = new Map((artworkResult.data || []).map((item) => [item.id, item.title]));
+  const artistNameById = new Map((artistResult.data || []).map((item) => [item.id, item.name_ko]));
+
+  return logs.map((log) => {
+    if (log.target_type !== 'artwork' && log.target_type !== 'artist') return log;
+
+    const ids = parseTargetIds(log);
+    if (ids.length === 0) return log;
+
+    const targetNames: Record<string, string> = {};
+    for (const id of ids) {
+      const name =
+        log.target_type === 'artwork'
+          ? artworkNameById.get(id) || null
+          : artistNameById.get(id) || null;
+      if (name) targetNames[id] = name;
+    }
+
+    if (Object.keys(targetNames).length === 0) return log;
+
+    const targetName = log.target_id.includes(',') ? null : targetNames[log.target_id] || null;
+
+    return {
+      ...log,
+      metadata: {
+        ...(log.metadata || {}),
+        target_name: targetName,
+        target_names: targetNames,
+      },
+    };
+  });
+}
+
 async function writeActivityLog(params: {
   actor: ActorInfo;
   action: string;
@@ -414,9 +510,10 @@ export async function getActivityLogs(filters: ActivityLogFilters = {}) {
   }
 
   const logs = (data || []) as ActivityLogEntry[];
-  const enrichedLogs = await enrichActivityLogActors(logs);
+  const actorEnrichedLogs = await enrichActivityLogActors(logs);
+  const targetEnrichedLogs = await enrichActivityLogTargets(actorEnrichedLogs);
 
-  return { logs: enrichedLogs, total: count || 0 };
+  return { logs: targetEnrichedLogs, total: count || 0 };
 }
 
 export async function getAdminLogs(
