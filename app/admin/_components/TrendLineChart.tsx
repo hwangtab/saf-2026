@@ -22,12 +22,12 @@ export function TrendLineChart({ data }: TrendLineChartProps) {
 
   data.dailyArtists.forEach((item) => {
     const current = merged.get(item.date) || { newArtists: 0, newArtworks: 0 };
-    merged.set(item.date, { ...current, newArtists: item.count });
+    merged.set(item.date, { ...current, newArtists: Number(item.count) || 0 });
   });
 
   data.dailyArtworks.forEach((item) => {
     const current = merged.get(item.date) || { newArtists: 0, newArtworks: 0 };
-    merged.set(item.date, { ...current, newArtworks: item.count });
+    merged.set(item.date, { ...current, newArtworks: Number(item.count) || 0 });
   });
 
   const filledData = Array.from(merged.entries())
@@ -50,7 +50,7 @@ export function TrendLineChart({ data }: TrendLineChartProps) {
   return (
     <AdminCard className="flex h-full flex-col p-6">
       <h3 className="mb-4 text-lg font-semibold text-slate-900">신규 가입 및 작품 등록 추이</h3>
-      <div className="flex-1 min-h-[300px]">
+      <div className="relative h-[320px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={filledData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
@@ -83,7 +83,7 @@ export function TrendLineChart({ data }: TrendLineChartProps) {
               dataKey="newArtists"
               stroke="#e63946"
               strokeWidth={2}
-              dot={false}
+              dot={{ r: 2 }}
               activeDot={{ r: 6 }}
             />
             <Line
@@ -92,7 +92,7 @@ export function TrendLineChart({ data }: TrendLineChartProps) {
               dataKey="newArtworks"
               stroke="#a8dadc"
               strokeWidth={2}
-              dot={false}
+              dot={{ r: 2 }}
               activeDot={{ r: 6 }}
             />
           </LineChart>
