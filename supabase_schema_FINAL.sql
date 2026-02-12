@@ -74,6 +74,7 @@ create table public.artworks (
   edition text,
   price integer default 0,
   status artwork_status default 'available'::artwork_status,
+  sold_at timestamptz,
   is_hidden boolean default false,
   images text[] default array[]::text[],
   shop_url text,

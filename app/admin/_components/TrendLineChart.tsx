@@ -49,7 +49,9 @@ export function TrendLineChart({ data }: TrendLineChartProps) {
 
   return (
     <AdminCard className="flex h-full flex-col p-6">
-      <h3 className="mb-4 text-lg font-semibold text-slate-900">신규 가입 및 작품 등록 추이</h3>
+      <h3 className="mb-4 text-lg font-semibold text-slate-900">
+        신규 작가 등록 및 작품 등록 추이
+      </h3>
       <div className="relative h-[320px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={filledData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
@@ -78,7 +80,7 @@ export function TrendLineChart({ data }: TrendLineChartProps) {
             />
             <Legend verticalAlign="top" align="right" height={36} iconType="circle" />
             <Line
-              name="신규 작가"
+              name="신규 등록 작가"
               type="monotone"
               dataKey="newArtists"
               stroke="#e63946"

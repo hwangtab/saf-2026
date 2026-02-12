@@ -96,7 +96,7 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
   const { data: oldArtwork } = await supabase
     .from('artworks')
     .select(
-      'id, title, artist_id, description, size, material, year, edition, price, status, images, is_hidden, shop_url, updated_at'
+      'id, title, artist_id, description, size, material, year, edition, price, status, sold_at, images, is_hidden, shop_url, updated_at'
     )
     .eq('id', id)
     .single();
@@ -122,7 +122,7 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
   const { data: newArtwork } = await supabase
     .from('artworks')
     .select(
-      'id, title, artist_id, description, size, material, year, edition, price, status, images, is_hidden, shop_url, updated_at'
+      'id, title, artist_id, description, size, material, year, edition, price, status, sold_at, images, is_hidden, shop_url, updated_at'
     )
     .eq('id', id)
     .single();
@@ -285,19 +285,24 @@ export async function batchUpdateArtworkStatus(ids: string[], status: string) {
 
   const { data: beforeArtworks } = await supabase
     .from('artworks')
-    .select('id, status, updated_at')
+    .select('id, status, sold_at, updated_at')
     .in('id', ids);
 
+  const nowIso = new Date().toISOString();
   const { error } = await supabase
     .from('artworks')
-    .update({ status, updated_at: new Date().toISOString() })
+    .update({
+      status,
+      sold_at: status === 'sold' ? nowIso : null,
+      updated_at: nowIso,
+    })
     .in('id', ids);
 
   if (error) throw error;
 
   const { data: afterArtworks } = await supabase
     .from('artworks')
-    .select('id, status, updated_at')
+    .select('id, status, sold_at, updated_at')
     .in('id', ids);
 
   revalidatePath('/artworks');

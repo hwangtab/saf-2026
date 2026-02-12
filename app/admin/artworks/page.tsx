@@ -8,9 +8,18 @@ import {
   AdminPageTitle,
 } from '@/app/admin/_components/admin-ui';
 
-export default async function AdminArtworksPage() {
+type Props = {
+  searchParams: Promise<{
+    status?: string;
+    visibility?: string;
+    q?: string;
+  }>;
+};
+
+export default async function AdminArtworksPage({ searchParams }: Props) {
   await requireAdmin();
   const supabase = await createSupabaseServerClient();
+  const params = await searchParams;
 
   const { data: artworks } = await supabase
     .from('artworks')
@@ -33,7 +42,14 @@ export default async function AdminArtworksPage() {
           작품 등록
         </Button>
       </div>
-      <AdminArtworkList artworks={normalizedArtworks} />
+      <AdminArtworkList
+        artworks={normalizedArtworks}
+        initialFilters={{
+          status: params.status,
+          visibility: params.visibility,
+          q: params.q,
+        }}
+      />
     </div>
   );
 }

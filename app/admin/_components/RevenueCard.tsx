@@ -16,6 +16,13 @@ export function RevenueCard({ title, value, subtitle, trend }: RevenueCardProps)
     maximumFractionDigits: 0,
   }).format(value);
 
+  const trendValue =
+    trend && Number.isInteger(Math.abs(trend.value))
+      ? String(Math.abs(trend.value))
+      : trend
+        ? Math.abs(trend.value).toFixed(1)
+        : null;
+
   return (
     <AdminCard className="flex h-full flex-col justify-between p-6">
       <div>
@@ -26,9 +33,9 @@ export function RevenueCard({ title, value, subtitle, trend }: RevenueCardProps)
       {trend && (
         <div className="mt-4 flex items-center text-sm">
           <span className={trend.isPositive ? 'text-green-600' : 'text-red-600'}>
-            {trend.isPositive ? '▲' : '▼'} {Math.abs(trend.value)}%
+            {trend.isPositive ? '▲' : '▼'} {trendValue}%
           </span>
-          <span className="ml-2 text-slate-500">지난달 대비</span>
+          <span className="ml-2 text-slate-500">직전 동일 기간 대비</span>
         </div>
       )}
     </AdminCard>

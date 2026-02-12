@@ -54,6 +54,7 @@ create table public.artworks (
   edition text,
   price text default '₩0', -- Maintaining string format from local files
   status public.artwork_status default 'available',
+  sold_at timestamptz,
   is_hidden boolean default false,
   images text[] default '{}',
   shop_url text,

@@ -28,9 +28,41 @@ type ArtworkItem = {
   artists: { name_ko: string | null } | null;
 };
 
-export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
+type StatusFilter = 'all' | 'available' | 'reserved' | 'sold';
+type VisibilityFilter = 'all' | 'visible' | 'hidden';
+
+type InitialArtworkFilters = {
+  status?: string;
+  visibility?: string;
+  q?: string;
+};
+
+function normalizeStatusFilter(value: string | undefined): StatusFilter {
+  if (value === 'available' || value === 'reserved' || value === 'sold') return value;
+  return 'all';
+}
+
+function normalizeVisibilityFilter(value: string | undefined): VisibilityFilter {
+  if (value === 'visible' || value === 'hidden') return value;
+  return 'all';
+}
+
+function normalizeQuery(value: string | undefined): string {
+  return (value || '').trim();
+}
+
+export function AdminArtworkList({
+  artworks,
+  initialFilters,
+}: {
+  artworks: ArtworkItem[];
+  initialFilters?: InitialArtworkFilters;
+}) {
   const toast = useToast();
   const [optimisticArtworks, setOptimisticArtworks] = useState(artworks);
+  const initialStatusFilter = normalizeStatusFilter(initialFilters?.status);
+  const initialVisibilityFilter = normalizeVisibilityFilter(initialFilters?.visibility);
+  const initialQuery = normalizeQuery(initialFilters?.q);
 
   useEffect(() => {
     setOptimisticArtworks(artworks);
@@ -38,9 +70,10 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
 
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [batchProcessing, setBatchProcessing] = useState(false);
-  const [query, setQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [visibilityFilter, setVisibilityFilter] = useState('all');
+  const [query, setQuery] = useState(initialQuery);
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>(initialStatusFilter);
+  const [visibilityFilter, setVisibilityFilter] =
+    useState<VisibilityFilter>(initialVisibilityFilter);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxData, setLightboxData] = useState<{
@@ -48,6 +81,13 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
     initialIndex: number;
     alt: string;
   } | null>(null);
+
+  useEffect(() => {
+    setQuery(initialQuery);
+    setStatusFilter(initialStatusFilter);
+    setVisibilityFilter(initialVisibilityFilter);
+    setSelectedIds(new Set());
+  }, [initialQuery, initialStatusFilter, initialVisibilityFilter]);
 
   // -- Filters --
   const filtered = optimisticArtworks.filter((artwork) => {
@@ -249,7 +289,7 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
               <AdminSelect
                 value={statusFilter}
                 onChange={(e) => {
-                  setStatusFilter(e.target.value);
+                  setStatusFilter(normalizeStatusFilter(e.target.value));
                   setSelectedIds(new Set());
                 }}
                 wrapperClassName="min-w-[120px]"
@@ -262,7 +302,7 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
               <AdminSelect
                 value={visibilityFilter}
                 onChange={(e) => {
-                  setVisibilityFilter(e.target.value);
+                  setVisibilityFilter(normalizeVisibilityFilter(e.target.value));
                   setSelectedIds(new Set());
                 }}
                 wrapperClassName="min-w-[120px]"

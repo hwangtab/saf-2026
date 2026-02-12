@@ -10,16 +10,17 @@ type StatusDonutChartProps = {
 
 export function StatusDonutChart({ data }: StatusDonutChartProps) {
   const chartData = [
-    { name: '판매 중', value: data.available, color: '#10b981' },
-    { name: '예약됨', value: data.reserved, color: '#f59e0b' },
-    { name: '판매 완료', value: data.sold, color: '#3b82f6' },
+    { name: '판매 중(공개)', value: data.statusVisible.available, color: '#10b981' },
+    { name: '예약됨(공개)', value: data.statusVisible.reserved, color: '#f59e0b' },
+    { name: '판매 완료(공개)', value: data.statusVisible.sold, color: '#3b82f6' },
+    { name: '숨김 작품', value: data.hidden, color: '#94a3b8' },
   ].filter((item) => item.value > 0);
 
   const total = data.total;
 
   return (
     <AdminCard className="flex h-full flex-col p-6">
-      <h3 className="mb-4 text-lg font-semibold text-slate-900">작품 상태 분포</h3>
+      <h3 className="mb-4 text-lg font-semibold text-slate-900">작품 공개/상태 분포</h3>
       <div className="relative flex-1 min-h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
