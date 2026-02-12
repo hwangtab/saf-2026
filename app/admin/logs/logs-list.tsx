@@ -28,14 +28,20 @@ function formatActionDescription(log: ActivityLogEntry): string {
       return `권한 변경: ${details?.user_name || ''} → ${details?.to}`;
     case 'artwork_updated':
       return `작품 수정: ${details?.title || log.target_id}`;
+    case 'artwork_created':
+      return `작품 등록: ${details?.title || log.target_id}`;
     case 'artwork_deleted':
       return `작품 삭제: ${details?.title || log.target_id}`;
     case 'artwork_images_updated':
       return `작품 이미지 변경`;
     case 'artist_updated':
       return `작가 정보 수정: ${details?.name || log.target_id}`;
+    case 'artist_created':
+      return `작가 등록: ${details?.name || log.target_id}`;
     case 'artist_deleted':
       return `작가 삭제: ${details?.name || log.target_id}`;
+    case 'artist_profile_updated':
+      return `아티스트 프로필 수정: ${details?.name || log.target_id}`;
     case 'artist_artwork_created':
       return `아티스트 작품 등록: ${details?.title || log.target_id}`;
     case 'artist_artwork_updated':
@@ -59,6 +65,26 @@ function formatActionDescription(log: ActivityLogEntry): string {
     default:
       return log.action;
   }
+}
+
+function getActorRoleLabel(role: ActivityLogEntry['actor_role']) {
+  switch (role) {
+    case 'admin':
+      return '관리자';
+    case 'artist':
+      return '아티스트';
+    case 'system':
+      return '시스템';
+    default:
+      return role;
+  }
+}
+
+function getActorDisplay(log: ActivityLogEntry) {
+  if (log.actor_name) return log.actor_name;
+  if (log.actor_email) return log.actor_email;
+  if (log.actor_id) return `${getActorRoleLabel(log.actor_role)} #${log.actor_id.slice(0, 8)}`;
+  return '(알 수 없음)';
 }
 
 function formatDate(dateString: string | null | undefined) {
@@ -150,7 +176,9 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
             />
           </svg>
           <h3 className="mt-2 text-sm font-medium text-gray-900">활동 로그가 없습니다</h3>
-          <p className="mt-1 text-sm text-gray-500">관리자 활동이 기록되면 여기에 표시됩니다.</p>
+          <p className="mt-1 text-sm text-gray-500">
+            관리자/아티스트 활동이 기록되면 여기에 표시됩니다.
+          </p>
         </AdminCard>
         <p className="text-sm text-gray-500">총 0개의 기록</p>
       </div>
@@ -167,7 +195,7 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                 시간
               </th>
               <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
-                관리자
+                행위자
               </th>
               <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 활동
@@ -189,9 +217,9 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                     {formatDate(log.created_at)}
                   </td>
                   <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900 hidden sm:table-cell">
-                    {log.actor_name || log.actor_email || '(알 수 없음)'}
+                    {getActorDisplay(log)}
                     <span className="ml-2 rounded bg-gray-100 px-1.5 py-0.5 text-[10px] text-gray-600">
-                      {log.actor_role}
+                      {getActorRoleLabel(log.actor_role)}
                     </span>
                   </td>
                   <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">
@@ -217,7 +245,9 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                     ) : log.reverted_at ? (
                       <span className="text-xs text-green-700">복구됨</span>
                     ) : (
-                      <span className="text-xs text-gray-400">-</span>
+                      <span className="text-xs text-gray-400" title="복구 대상이 아닌 활동입니다.">
+                        복구 불가
+                      </span>
                     )}
                   </td>
                 </tr>

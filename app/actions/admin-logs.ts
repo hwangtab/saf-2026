@@ -38,6 +38,38 @@ type ActorInfo = {
   email?: string | null;
 };
 
+async function resolveActorIdentity(
+  actorId: string,
+  role: 'admin' | 'artist',
+  fallbackEmail?: string | null
+): Promise<{ name: string | null; email: string | null }> {
+  const supabase = await createSupabaseAdminOrServerClient();
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('name, email')
+    .eq('id', actorId)
+    .maybeSingle();
+
+  if (role === 'artist') {
+    const { data: artist } = await supabase
+      .from('artists')
+      .select('name_ko')
+      .eq('user_id', actorId)
+      .maybeSingle();
+
+    return {
+      name: artist?.name_ko || profile?.name || null,
+      email: profile?.email || fallbackEmail || null,
+    };
+  }
+
+  return {
+    name: profile?.name || null,
+    email: profile?.email || fallbackEmail || null,
+  };
+}
+
 type ActivityLogFilters = {
   page?: number;
   limit?: number;
@@ -104,6 +136,7 @@ export async function logAdminAction(
 ) {
   const user = adminId ? { id: adminId } : await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
+  const actor = await resolveActorIdentity(user.id, 'admin');
 
   const { error: legacyError } = await supabase.from('admin_logs').insert({
     admin_id: user.id,
@@ -118,7 +151,7 @@ export async function logAdminAction(
   }
 
   await writeActivityLog({
-    actor: { id: user.id, role: 'admin' },
+    actor: { id: user.id, role: 'admin', name: actor.name, email: actor.email },
     action,
     targetType: targetType || 'unknown',
     targetId: targetId || 'unknown',
@@ -143,11 +176,14 @@ export async function logArtistAction(
     return;
   }
 
+  const actor = await resolveActorIdentity(user.id, 'artist', user.email || null);
+
   await writeActivityLog({
     actor: {
       id: user.id,
       role: 'artist',
-      email: user.email || null,
+      name: actor.name,
+      email: actor.email,
     },
     action,
     targetType,

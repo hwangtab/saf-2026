@@ -3,6 +3,7 @@
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { requireArtistActive } from '@/lib/auth/guards';
 import { revalidatePath } from 'next/cache';
+import { logArtistAction } from './admin-logs';
 
 export type ActionState = {
   message: string;
@@ -20,7 +21,9 @@ export async function updateArtistProfile(
 
     const { data: existingArtist } = await supabase
       .from('artists')
-      .select('name_ko')
+      .select(
+        'id, name_ko, name_en, bio, history, profile_image, contact_email, instagram, homepage, updated_at'
+      )
       .eq('user_id', user.id)
       .single();
 
@@ -49,6 +52,29 @@ export async function updateArtistProfile(
       .eq('user_id', user.id);
 
     if (error) throw error;
+
+    const { data: updatedArtist } = await supabase
+      .from('artists')
+      .select(
+        'id, name_ko, name_en, bio, history, profile_image, contact_email, instagram, homepage, updated_at'
+      )
+      .eq('user_id', user.id)
+      .single();
+
+    if (updatedArtist) {
+      await logArtistAction(
+        'artist_profile_updated',
+        'artist',
+        updatedArtist.id,
+        { name: updatedArtist.name_ko || '이름 없음' },
+        {
+          summary: `아티스트 프로필 수정: ${updatedArtist.name_ko || updatedArtist.id}`,
+          beforeSnapshot: existingArtist || null,
+          afterSnapshot: updatedArtist,
+          reversible: true,
+        }
+      );
+    }
 
     revalidatePath('/dashboard/profile');
     revalidatePath('/artworks');
