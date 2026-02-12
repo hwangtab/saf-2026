@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { revertActivityLog, type ActivityLogEntry } from '@/app/actions/admin-logs';
 import Button from '@/components/ui/Button';
 import { AdminCard } from '@/app/admin/_components/admin-ui';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/lib/hooks/useToast';
 
 type LogsListProps = {
@@ -43,6 +43,8 @@ function formatActionDescription(log: ActivityLogEntry): string {
       return `작가 삭제: ${details?.name || log.target_id}`;
     case 'artist_profile_updated':
       return `아티스트 프로필 수정: ${details?.name || log.target_id}`;
+    case 'artist_profile_image_updated':
+      return `아티스트 프로필 이미지 변경: ${details?.name || log.target_id}`;
     case 'artist_artwork_created':
       return `아티스트 작품 등록: ${details?.title || log.target_id}`;
     case 'artist_artwork_updated':
@@ -64,7 +66,7 @@ function formatActionDescription(log: ActivityLogEntry): string {
     case 'batch_artwork_deleted':
       return `일괄 삭제: ${details?.count}건`;
     default:
-      return log.action;
+      return `정의되지 않은 활동 (${log.action})`;
   }
 }
 
@@ -239,6 +241,7 @@ const FIELD_LABELS: Record<string, string> = {
   edition: '에디션',
   price: '가격',
   status: '판매상태',
+  sold_at: '판매 완료 시점',
   is_hidden: '숨김',
   images: '이미지',
   shop_url: '구매 링크',
@@ -360,6 +363,34 @@ function getDiffItems(log: ActivityLogEntry): DiffItem[] {
   ];
 }
 
+function getSnapshotIdWarnings(log: ActivityLogEntry): {
+  missingInAfter: string[];
+  addedInAfter: string[];
+} {
+  const beforeList = toObjectList(log.before_snapshot);
+  const afterList = toObjectList(log.after_snapshot);
+
+  if (!beforeList || !afterList) {
+    return { missingInAfter: [], addedInAfter: [] };
+  }
+
+  const beforeIds = new Set(
+    beforeList
+      .map((item) => (typeof item.id === 'string' ? item.id : null))
+      .filter((id): id is string => !!id)
+  );
+  const afterIds = new Set(
+    afterList
+      .map((item) => (typeof item.id === 'string' ? item.id : null))
+      .filter((id): id is string => !!id)
+  );
+
+  const missingInAfter = Array.from(beforeIds).filter((id) => !afterIds.has(id));
+  const addedInAfter = Array.from(afterIds).filter((id) => !beforeIds.has(id));
+
+  return { missingInAfter, addedInAfter };
+}
+
 function formatDiffValue(value: unknown, field: string): string {
   if (value === null || value === undefined || value === '') return '-';
 
@@ -392,8 +423,15 @@ function formatDiffValue(value: unknown, field: string): string {
 
 export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const toast = useToast();
   const [expandedLogId, setExpandedLogId] = useState<string | null>(null);
+
+  const getPageHref = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', String(page));
+    return `/admin/logs?${params.toString()}`;
+  };
 
   const handleRevert = async (logId: string) => {
     const reason = prompt('복구 사유를 입력해주세요.');
@@ -469,6 +507,7 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
               const canShowDiff = totalDiffCount > 0;
               const isExpanded = expandedLogId === log.id;
               const targetDisplayName = getLogTargetDisplayName(log);
+              const snapshotWarnings = getSnapshotIdWarnings(log);
 
               return (
                 <Fragment key={log.id}>
@@ -521,6 +560,7 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                           <button
                             onClick={() => handleRevert(log.id)}
                             className="rounded-md border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800 hover:bg-amber-100"
+                            title="작품/작가 수정 로그에서만 복구할 수 있으며, 이후 추가 변경이 있으면 복구가 중단됩니다."
                           >
                             복구
                           </button>
@@ -542,6 +582,23 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                       <td colSpan={5} className="px-4 sm:px-6 py-4">
                         <div className="space-y-3">
                           <div className="text-xs font-semibold text-slate-700">변경 상세 비교</div>
+                          {(snapshotWarnings.missingInAfter.length > 0 ||
+                            snapshotWarnings.addedInAfter.length > 0) && (
+                            <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+                              {snapshotWarnings.missingInAfter.length > 0 && (
+                                <div>
+                                  변경 후 스냅샷에서 누락된 대상:{' '}
+                                  {snapshotWarnings.missingInAfter.length}개
+                                </div>
+                              )}
+                              {snapshotWarnings.addedInAfter.length > 0 && (
+                                <div>
+                                  변경 후 스냅샷에 새로 포함된 대상:{' '}
+                                  {snapshotWarnings.addedInAfter.length}개
+                                </div>
+                              )}
+                            </div>
+                          )}
                           {diffItems.map((item) => (
                             <div
                               key={item.itemId}
@@ -606,12 +663,12 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
         </p>
         <div className="flex gap-2">
           {currentPage > 1 && (
-            <Button variant="white" href={`/admin/logs?page=${currentPage - 1}`}>
+            <Button variant="white" href={getPageHref(currentPage - 1)}>
               이전
             </Button>
           )}
           {currentPage < totalPages && (
-            <Button variant="white" href={`/admin/logs?page=${currentPage + 1}`}>
+            <Button variant="white" href={getPageHref(currentPage + 1)}>
               다음
             </Button>
           )}

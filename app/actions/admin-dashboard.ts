@@ -3,24 +3,102 @@
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 
+export type DashboardPeriodKey = '7d' | '30d' | '90d' | '365d' | 'all';
+
+type RevenueBucketGranularity = 'day' | 'week' | 'month';
+
+const DASHBOARD_PERIOD_OPTIONS: Array<{ key: DashboardPeriodKey; label: string }> = [
+  { key: '7d', label: '최근 7일' },
+  { key: '30d', label: '최근 30일' },
+  { key: '90d', label: '최근 90일' },
+  { key: '365d', label: '최근 1년' },
+  { key: 'all', label: '전체 기간' },
+];
+
+const PERIOD_DAY_WINDOWS: Record<Exclude<DashboardPeriodKey, 'all'>, number> = {
+  '7d': 7,
+  '30d': 30,
+  '90d': 90,
+  '365d': 365,
+};
+
+const PERIOD_LABEL_MAP: Record<DashboardPeriodKey, string> = {
+  '7d': '최근 7일',
+  '30d': '최근 30일',
+  '90d': '최근 90일',
+  '365d': '최근 1년',
+  all: '전체 기간',
+};
+
+type SoldRecord = {
+  soldDate: Date;
+  price: number;
+};
+
+type ArtworkMetricRow = {
+  price: unknown;
+  status: string | null;
+  material: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  sold_at?: string | null;
+  is_hidden: boolean | null;
+};
+
 export type DashboardStats = {
+  period: {
+    key: DashboardPeriodKey;
+    label: string;
+    startDate: string;
+    endDate: string;
+    comparedTo: string | null;
+    bucket: RevenueBucketGranularity;
+  };
   artists: {
-    total: number;
-    pending: number;
-    suspended: number;
+    totalRegistered: number;
+    linkedAccounts: number;
+    unlinkedAccounts: number;
+    pendingApplications: number;
+    suspendedAccounts: number;
   };
   artworks: {
     total: number;
-    available: number;
-    reserved: number;
-    sold: number;
+    visible: number;
     hidden: number;
+    statusVisible: {
+      available: number;
+      reserved: number;
+      sold: number;
+    };
+    statusTotal: {
+      available: number;
+      reserved: number;
+      sold: number;
+    };
   };
   revenue: {
-    totalRevenue: number;
-    inventoryValue: number;
-    soldCount: number;
-    averagePrice: number;
+    lifetime: {
+      totalRevenue: number;
+      inventoryValue: number;
+      soldCount: number;
+      averagePrice: number;
+    };
+    period: {
+      totalRevenue: number;
+      soldCount: number;
+      averagePrice: number;
+      previousRevenue: number;
+      changeRatePct: number | null;
+    };
+    timeSeries: Array<{
+      bucketKey: string;
+      label: string;
+      startDate: string;
+      endDate: string;
+      revenue: number;
+      soldCount: number;
+      averagePrice: number;
+    }>;
   };
   materialDistribution: Array<{
     material: string;
@@ -34,6 +112,7 @@ export type DashboardStats = {
     id: string;
     name: string;
     email: string;
+    contact: string;
     created_at: string;
     status: string;
   }>;
@@ -45,159 +124,582 @@ export type DashboardStats = {
   }>;
 };
 
-export async function getDashboardStats(): Promise<DashboardStats> {
+function isDashboardPeriodKey(value: string): value is DashboardPeriodKey {
+  return DASHBOARD_PERIOD_OPTIONS.some((option) => option.key === value);
+}
+
+function parsePrice(price: unknown): number {
+  if (typeof price === 'number' && Number.isFinite(price)) {
+    return Math.max(0, Math.round(price));
+  }
+
+  if (typeof price === 'string') {
+    const numeric = Number(price.replace(/[^\d.-]/g, ''));
+    if (Number.isFinite(numeric)) {
+      return Math.max(0, Math.round(numeric));
+    }
+  }
+
+  return 0;
+}
+
+function toValidDate(value: string | null | undefined): Date | null {
+  if (!value) return null;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  return date;
+}
+
+function startOfDay(date: Date): Date {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function startOfWeek(date: Date): Date {
+  const d = startOfDay(date);
+  const day = d.getDay();
+  const diff = (day + 6) % 7;
+  d.setDate(d.getDate() - diff);
+  return d;
+}
+
+function startOfMonth(date: Date): Date {
+  const d = startOfDay(date);
+  d.setDate(1);
+  return d;
+}
+
+function addDays(date: Date, days: number): Date {
+  const d = new Date(date);
+  d.setDate(d.getDate() + days);
+  return d;
+}
+
+function addMonths(date: Date, months: number): Date {
+  const d = new Date(date);
+  d.setMonth(d.getMonth() + months);
+  return d;
+}
+
+function toDateKey(date: Date): string {
+  return date.toISOString().split('T')[0];
+}
+
+function getBucketGranularity(period: DashboardPeriodKey): RevenueBucketGranularity {
+  if (period === '90d') return 'week';
+  if (period === '365d' || period === 'all') return 'month';
+  return 'day';
+}
+
+function getBucketStart(date: Date, granularity: RevenueBucketGranularity): Date {
+  if (granularity === 'month') return startOfMonth(date);
+  if (granularity === 'week') return startOfWeek(date);
+  return startOfDay(date);
+}
+
+function addBucket(date: Date, granularity: RevenueBucketGranularity): Date {
+  if (granularity === 'month') return addMonths(date, 1);
+  if (granularity === 'week') return addDays(date, 7);
+  return addDays(date, 1);
+}
+
+function getBucketEnd(date: Date, granularity: RevenueBucketGranularity): Date {
+  if (granularity === 'day') return startOfDay(date);
+  if (granularity === 'week') return addDays(startOfDay(date), 6);
+
+  const monthStart = startOfMonth(date);
+  const nextMonthStart = addMonths(monthStart, 1);
+  return addDays(nextMonthStart, -1);
+}
+
+function getBucketKey(date: Date, granularity: RevenueBucketGranularity): string {
+  if (granularity === 'month') {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    return `${year}-${month}`;
+  }
+
+  if (granularity === 'week') {
+    return `W-${toDateKey(startOfWeek(date))}`;
+  }
+
+  return toDateKey(startOfDay(date));
+}
+
+function formatBucketLabel(date: Date, granularity: RevenueBucketGranularity): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  if (granularity === 'month') {
+    return `${year}.${month}`;
+  }
+
+  if (granularity === 'week') {
+    return `${month}.${day} 주간`;
+  }
+
+  return `${month}.${day}`;
+}
+
+function sumRevenue(records: SoldRecord[]): number {
+  return records.reduce((sum, record) => sum + record.price, 0);
+}
+
+function resolveSoldDate(artwork: ArtworkMetricRow): Date | null {
+  const soldAt = toValidDate(artwork.sold_at ?? null);
+  if (soldAt) return soldAt;
+
+  if (artwork.status === 'sold') {
+    return toValidDate(artwork.updated_at) || toValidDate(artwork.created_at);
+  }
+
+  return null;
+}
+
+function getPeriodStart(period: DashboardPeriodKey, now: Date, soldRecords: SoldRecord[]): Date {
+  if (period === 'all') {
+    if (soldRecords.length === 0) {
+      return startOfMonth(addMonths(now, -11));
+    }
+
+    const oldest = soldRecords.reduce(
+      (minDate, record) => (record.soldDate < minDate ? record.soldDate : minDate),
+      soldRecords[0].soldDate
+    );
+
+    return startOfMonth(oldest);
+  }
+
+  const days = PERIOD_DAY_WINDOWS[period];
+  return startOfDay(addDays(now, -(days - 1)));
+}
+
+function groupByDate(
+  items: Array<{ created_at: string }>,
+  startDate: Date,
+  endDate: Date
+): Array<{ date: string; count: number }> {
+  const dateMap = new Map<string, number>();
+  const start = startOfDay(startDate);
+  const end = startOfDay(endDate);
+
+  for (let cursor = new Date(start); cursor <= end; cursor = addDays(cursor, 1)) {
+    dateMap.set(toDateKey(cursor), 0);
+  }
+
+  items.forEach((item) => {
+    const createdAt = toValidDate(item.created_at);
+    if (!createdAt) return;
+    const key = toDateKey(startOfDay(createdAt));
+    if (!dateMap.has(key)) return;
+    dateMap.set(key, (dateMap.get(key) || 0) + 1);
+  });
+
+  return Array.from(dateMap.entries()).map(([date, count]) => ({ date, count }));
+}
+
+function buildRevenueTimeSeries(
+  records: SoldRecord[],
+  startDate: Date,
+  endDate: Date,
+  granularity: RevenueBucketGranularity
+): DashboardStats['revenue']['timeSeries'] {
+  const seriesMap = new Map<
+    string,
+    {
+      bucketKey: string;
+      label: string;
+      startDate: string;
+      endDate: string;
+      revenue: number;
+      soldCount: number;
+      averagePrice: number;
+    }
+  >();
+
+  const normalizedStart = getBucketStart(startDate, granularity);
+  const normalizedEnd = startOfDay(endDate);
+
+  for (
+    let cursor = new Date(normalizedStart);
+    cursor <= normalizedEnd;
+    cursor = addBucket(cursor, granularity)
+  ) {
+    const bucketStart = getBucketStart(cursor, granularity);
+    const bucketEnd = getBucketEnd(bucketStart, granularity);
+    const clampedEnd = bucketEnd > normalizedEnd ? normalizedEnd : bucketEnd;
+    const bucketKey = getBucketKey(bucketStart, granularity);
+
+    seriesMap.set(bucketKey, {
+      bucketKey,
+      label: formatBucketLabel(bucketStart, granularity),
+      startDate: toDateKey(bucketStart),
+      endDate: toDateKey(clampedEnd),
+      revenue: 0,
+      soldCount: 0,
+      averagePrice: 0,
+    });
+  }
+
+  records.forEach((record) => {
+    const bucketStart = getBucketStart(record.soldDate, granularity);
+    const bucketKey = getBucketKey(bucketStart, granularity);
+    const bucket = seriesMap.get(bucketKey);
+    if (!bucket) return;
+    bucket.revenue += record.price;
+    bucket.soldCount += 1;
+  });
+
+  return Array.from(seriesMap.values())
+    .sort((a, b) => a.startDate.localeCompare(b.startDate))
+    .map((bucket) => ({
+      ...bucket,
+      averagePrice: bucket.soldCount > 0 ? Math.round(bucket.revenue / bucket.soldCount) : 0,
+    }));
+}
+
+export async function getDashboardStats(
+  period: DashboardPeriodKey = '30d'
+): Promise<DashboardStats> {
   await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
+  const now = new Date();
+  const periodKey: DashboardPeriodKey = isDashboardPeriodKey(period) ? period : '30d';
 
-  // Artist stats - use COUNT queries for performance
-  const [artistsResult, pendingResult, suspendedResult] = await Promise.all([
-    supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'artist'),
-    supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
-    supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('status', 'suspended'),
+  const [
+    totalArtistsResult,
+    linkedArtistsResult,
+    suspendedArtistAccountsResult,
+    pendingProfilesResult,
+    totalArtworksResult,
+    hiddenArtworksResult,
+    visibleArtworksResult,
+    availableVisibleResult,
+    reservedVisibleResult,
+    soldVisibleResult,
+    availableTotalResult,
+    reservedTotalResult,
+    soldTotalResult,
+  ] = await Promise.all([
+    supabase.from('artists').select('id', { count: 'exact', head: true }),
+    supabase
+      .from('artists')
+      .select('id', { count: 'exact', head: true })
+      .not('user_id', 'is', null),
+    supabase
+      .from('profiles')
+      .select('id', { count: 'exact', head: true })
+      .eq('role', 'artist')
+      .eq('status', 'suspended'),
+    supabase.from('profiles').select('id').eq('status', 'pending'),
+    supabase.from('artworks').select('id', { count: 'exact', head: true }),
+    supabase.from('artworks').select('id', { count: 'exact', head: true }).eq('is_hidden', true),
+    supabase.from('artworks').select('id', { count: 'exact', head: true }).eq('is_hidden', false),
+    supabase
+      .from('artworks')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'available')
+      .eq('is_hidden', false),
+    supabase
+      .from('artworks')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'reserved')
+      .eq('is_hidden', false),
+    supabase
+      .from('artworks')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'sold')
+      .eq('is_hidden', false),
+    supabase
+      .from('artworks')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'available'),
+    supabase.from('artworks').select('id', { count: 'exact', head: true }).eq('status', 'reserved'),
+    supabase.from('artworks').select('id', { count: 'exact', head: true }).eq('status', 'sold'),
   ]);
 
-  // Artwork stats - use COUNT queries for performance
-  const [totalArtworksResult, availableResult, reservedResult, soldResult, hiddenResult] =
-    await Promise.all([
-      supabase.from('artworks').select('*', { count: 'exact', head: true }),
+  const initialCountErrors = [
+    totalArtistsResult.error,
+    linkedArtistsResult.error,
+    suspendedArtistAccountsResult.error,
+    totalArtworksResult.error,
+    hiddenArtworksResult.error,
+    visibleArtworksResult.error,
+    availableVisibleResult.error,
+    reservedVisibleResult.error,
+    soldVisibleResult.error,
+    availableTotalResult.error,
+    reservedTotalResult.error,
+    soldTotalResult.error,
+  ].filter((error): error is NonNullable<typeof error> => !!error);
+
+  if (initialCountErrors.length > 0) {
+    throw initialCountErrors[0];
+  }
+
+  if (pendingProfilesResult.error) throw pendingProfilesResult.error;
+  const pendingProfileIds = (pendingProfilesResult.data || [])
+    .map((profile) => profile.id)
+    .filter((id): id is string => typeof id === 'string');
+
+  let pendingApplicationsCount = 0;
+  let recentPendingApplicationsRaw: Array<{
+    user_id: string;
+    artist_name: string | null;
+    contact: string | null;
+    created_at: string;
+  }> = [];
+
+  if (pendingProfileIds.length > 0) {
+    const [pendingApplicationCountResult, recentPendingApplicationsResult] = await Promise.all([
       supabase
-        .from('artworks')
-        .select('*', { count: 'exact', head: true })
-        .eq('status', 'available')
-        .eq('is_hidden', false),
+        .from('artist_applications')
+        .select('user_id', { count: 'exact', head: true })
+        .in('user_id', pendingProfileIds),
       supabase
-        .from('artworks')
-        .select('*', { count: 'exact', head: true })
-        .eq('status', 'reserved'),
-      supabase.from('artworks').select('*', { count: 'exact', head: true }).eq('status', 'sold'),
-      supabase.from('artworks').select('*', { count: 'exact', head: true }).eq('is_hidden', true),
+        .from('artist_applications')
+        .select('user_id, artist_name, contact, created_at')
+        .in('user_id', pendingProfileIds)
+        .order('created_at', { ascending: false })
+        .limit(5),
     ]);
 
-  // Recent applications
-  const { data: recentApps } = await supabase
-    .from('profiles')
-    .select('id, name, email, created_at, status')
-    .eq('status', 'pending')
-    .order('created_at', { ascending: false })
-    .limit(5);
+    if (pendingApplicationCountResult.error) throw pendingApplicationCountResult.error;
+    if (recentPendingApplicationsResult.error) throw recentPendingApplicationsResult.error;
 
-  // Recent artworks
-  const { data: recentArtworks } = await supabase
+    pendingApplicationsCount = pendingApplicationCountResult.count || 0;
+    recentPendingApplicationsRaw = (recentPendingApplicationsResult.data || []).map((item) => ({
+      user_id: item.user_id,
+      artist_name: item.artist_name,
+      contact: item.contact,
+      created_at: item.created_at,
+    }));
+  }
+
+  const recentApplicationUserIds = recentPendingApplicationsRaw.map((item) => item.user_id);
+  let recentApplicationProfiles: Array<{
+    id: string;
+    name: string | null;
+    email: string | null;
+    status: string | null;
+  }> = [];
+
+  if (recentApplicationUserIds.length > 0) {
+    const { data: profilesData, error: profilesError } = await supabase
+      .from('profiles')
+      .select('id, name, email, status')
+      .in('id', recentApplicationUserIds);
+
+    if (profilesError) throw profilesError;
+    recentApplicationProfiles = profilesData || [];
+  }
+
+  const profileMap = new Map(recentApplicationProfiles.map((profile) => [profile.id, profile]));
+
+  const { data: recentArtworksRaw, error: recentArtworksError } = await supabase
     .from('artworks')
     .select('id, title, created_at, artists(name_ko)')
     .order('created_at', { ascending: false })
     .limit(5);
 
-  const { data: allArtworks } = await supabase
+  if (recentArtworksError) throw recentArtworksError;
+
+  let allArtworks: ArtworkMetricRow[] = [];
+  const artworksWithSoldAt = await supabase
     .from('artworks')
-    .select('price, status, material, created_at');
+    .select('price, status, material, created_at, updated_at, sold_at, is_hidden');
 
-  const parsePrice = (price: string | null): number => {
-    if (!price) return 0;
-    return parseInt(price.replace(/[^\d]/g, ''), 10) || 0;
-  };
+  if (artworksWithSoldAt.error) {
+    const shouldFallback = artworksWithSoldAt.error.message.toLowerCase().includes('sold_at');
+    if (!shouldFallback) {
+      throw artworksWithSoldAt.error;
+    }
 
-  const soldArtworks = (allArtworks || []).filter((a) => a.status === 'sold');
-  const availableArtworks = (allArtworks || []).filter(
-    (a) => a.status === 'available' || a.status === 'reserved'
+    const artworksFallback = await supabase
+      .from('artworks')
+      .select('price, status, material, created_at, updated_at, is_hidden');
+
+    if (artworksFallback.error) throw artworksFallback.error;
+    allArtworks = (artworksFallback.data || []) as ArtworkMetricRow[];
+  } else {
+    allArtworks = (artworksWithSoldAt.data || []) as ArtworkMetricRow[];
+  }
+
+  const soldRecords = allArtworks
+    .filter((artwork) => artwork.status === 'sold')
+    .map((artwork) => {
+      const soldDate = resolveSoldDate(artwork);
+      if (!soldDate) return null;
+      return {
+        soldDate,
+        price: parsePrice(artwork.price),
+      };
+    })
+    .filter((item): item is SoldRecord => !!item);
+
+  const visibleInventoryRecords = allArtworks.filter(
+    (artwork) =>
+      !artwork.is_hidden && (artwork.status === 'available' || artwork.status === 'reserved')
   );
 
-  const totalRevenue = soldArtworks.reduce((sum, a) => sum + parsePrice(a.price), 0);
-  const inventoryValue = availableArtworks.reduce((sum, a) => sum + parsePrice(a.price), 0);
-  const averagePrice = soldArtworks.length > 0 ? Math.round(totalRevenue / soldArtworks.length) : 0;
+  const lifetimeRevenue = sumRevenue(soldRecords);
+  const lifetimeSoldCount = soldRecords.length;
+  const lifetimeAveragePrice =
+    lifetimeSoldCount > 0 ? Math.round(lifetimeRevenue / lifetimeSoldCount) : 0;
+  const inventoryValue = visibleInventoryRecords.reduce(
+    (sum, artwork) => sum + parsePrice(artwork.price),
+    0
+  );
+
+  const periodStart = getPeriodStart(periodKey, now, soldRecords);
+  const periodEnd = now;
+  const bucket = getBucketGranularity(periodKey);
+
+  const periodRecords = soldRecords.filter(
+    (record) => record.soldDate >= periodStart && record.soldDate <= periodEnd
+  );
+  const periodRevenue = sumRevenue(periodRecords);
+  const periodSoldCount = periodRecords.length;
+  const periodAveragePrice = periodSoldCount > 0 ? Math.round(periodRevenue / periodSoldCount) : 0;
+
+  let previousRevenue = 0;
+  let comparedTo: string | null = null;
+
+  if (periodKey !== 'all') {
+    const periodDays = PERIOD_DAY_WINDOWS[periodKey];
+    const previousStart = addDays(periodStart, -periodDays);
+    const previousEnd = addDays(periodStart, -1);
+
+    const previousPeriodRecords = soldRecords.filter(
+      (record) => record.soldDate >= previousStart && record.soldDate <= previousEnd
+    );
+
+    previousRevenue = sumRevenue(previousPeriodRecords);
+    comparedTo = `${toDateKey(previousStart)} ~ ${toDateKey(previousEnd)}`;
+  }
+
+  const changeRatePct =
+    periodKey === 'all'
+      ? null
+      : previousRevenue > 0
+        ? Number((((periodRevenue - previousRevenue) / previousRevenue) * 100).toFixed(1))
+        : periodRevenue === 0
+          ? 0
+          : null;
+
+  const timeSeries = buildRevenueTimeSeries(periodRecords, periodStart, periodEnd, bucket);
 
   const materialMap = new Map<string, number>();
-  (allArtworks || []).forEach((a) => {
-    const material = a.material || '미분류';
+  allArtworks.forEach((artwork) => {
+    const material = artwork.material || '미분류';
     materialMap.set(material, (materialMap.get(material) || 0) + 1);
   });
+
   const materialDistribution = Array.from(materialMap.entries())
     .map(([material, count]) => ({ material, count }))
     .sort((a, b) => b.count - a.count)
     .slice(0, 10);
 
-  const thirtyDaysAgo = new Date();
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  const thirtyDaysAgo = addDays(startOfDay(now), -30);
   const thirtyDaysAgoIso = thirtyDaysAgo.toISOString();
 
-  const { data: recentProfilesRaw } = await supabase
-    .from('profiles')
-    .select('created_at, role, status')
-    .gte('created_at', thirtyDaysAgoIso)
-    .neq('role', 'admin');
+  const { data: recentArtistsRaw, error: recentArtistsError } = await supabase
+    .from('artists')
+    .select('created_at')
+    .gte('created_at', thirtyDaysAgoIso);
 
-  const recentProfiles = (recentProfilesRaw || [])
-    .filter((profile) => profile.created_at)
-    .map((profile) => ({ created_at: profile.created_at as string }));
+  if (recentArtistsError) throw recentArtistsError;
 
-  const recentArtworksForTrends = (allArtworks || []).filter(
-    (a) => a.created_at >= thirtyDaysAgoIso
-  );
+  const recentArtistsForTrend = (recentArtistsRaw || [])
+    .map((artist) => artist.created_at)
+    .filter((createdAt): createdAt is string => typeof createdAt === 'string')
+    .map((createdAt) => ({ created_at: createdAt }));
 
-  const groupByDate = (items: { created_at: string }[]) => {
-    const dateMap = new Map<string, number>();
+  const recentArtworksForTrend = allArtworks
+    .map((artwork) => artwork.created_at)
+    .filter((createdAt): createdAt is string => typeof createdAt === 'string')
+    .filter((createdAt) => createdAt >= thirtyDaysAgoIso)
+    .map((createdAt) => ({ created_at: createdAt }));
 
-    // Initialize map with 0 for last 30 days
-    for (let i = 0; i <= 30; i++) {
-      const d = new Date(thirtyDaysAgo);
-      d.setDate(d.getDate() + i);
-      const dateStr = d.toISOString().split('T')[0];
-      const todayStr = new Date().toISOString().split('T')[0];
-
-      if (dateStr <= todayStr) {
-        dateMap.set(dateStr, 0);
-      }
-    }
-
-    items.forEach((item) => {
-      const date = item.created_at.split('T')[0];
-      if (dateMap.has(date)) {
-        dateMap.set(date, (dateMap.get(date) || 0) + 1);
-      }
-    });
-
-    return Array.from(dateMap.entries())
-      .map(([date, count]) => ({ date, count }))
-      .sort((a, b) => a.date.localeCompare(b.date));
-  };
-
-  const dailyArtists = groupByDate(recentProfiles || []);
-  const dailyArtworks = groupByDate(recentArtworksForTrends || []);
+  const dailyArtists = groupByDate(recentArtistsForTrend, thirtyDaysAgo, now);
+  const dailyArtworks = groupByDate(recentArtworksForTrend, thirtyDaysAgo, now);
 
   return {
+    period: {
+      key: periodKey,
+      label: PERIOD_LABEL_MAP[periodKey],
+      startDate: toDateKey(periodStart),
+      endDate: toDateKey(periodEnd),
+      comparedTo,
+      bucket,
+    },
     artists: {
-      total: artistsResult.count || 0,
-      pending: pendingResult.count || 0,
-      suspended: suspendedResult.count || 0,
+      totalRegistered: totalArtistsResult.count || 0,
+      linkedAccounts: linkedArtistsResult.count || 0,
+      unlinkedAccounts: Math.max(
+        0,
+        (totalArtistsResult.count || 0) - (linkedArtistsResult.count || 0)
+      ),
+      pendingApplications: pendingApplicationsCount,
+      suspendedAccounts: suspendedArtistAccountsResult.count || 0,
     },
     artworks: {
       total: totalArtworksResult.count || 0,
-      available: availableResult.count || 0,
-      reserved: reservedResult.count || 0,
-      sold: soldResult.count || 0,
-      hidden: hiddenResult.count || 0,
+      visible: visibleArtworksResult.count || 0,
+      hidden: hiddenArtworksResult.count || 0,
+      statusVisible: {
+        available: availableVisibleResult.count || 0,
+        reserved: reservedVisibleResult.count || 0,
+        sold: soldVisibleResult.count || 0,
+      },
+      statusTotal: {
+        available: availableTotalResult.count || 0,
+        reserved: reservedTotalResult.count || 0,
+        sold: soldTotalResult.count || 0,
+      },
     },
     revenue: {
-      totalRevenue,
-      inventoryValue,
-      soldCount: soldArtworks.length,
-      averagePrice,
+      lifetime: {
+        totalRevenue: lifetimeRevenue,
+        inventoryValue,
+        soldCount: lifetimeSoldCount,
+        averagePrice: lifetimeAveragePrice,
+      },
+      period: {
+        totalRevenue: periodRevenue,
+        soldCount: periodSoldCount,
+        averagePrice: periodAveragePrice,
+        previousRevenue,
+        changeRatePct,
+      },
+      timeSeries,
     },
     materialDistribution,
     trends: {
       dailyArtists,
       dailyArtworks,
     },
-    recentApplications: (recentApps || []).map((app) => ({
-      id: app.id,
-      name: app.name || '(이름 없음)',
-      email: app.email || '',
-      created_at: app.created_at,
-      status: app.status,
-    })),
-    recentArtworks: (recentArtworks || []).map((artwork) => {
-      const artistsArray = artwork.artists as unknown as { name_ko: string | null }[] | null;
-      const artistName = artistsArray?.[0]?.name_ko || '알 수 없음';
+    recentApplications: recentPendingApplicationsRaw.map((application) => {
+      const profile = profileMap.get(application.user_id);
+      return {
+        id: application.user_id,
+        name: application.artist_name || profile?.name || '(이름 없음)',
+        email: profile?.email || '',
+        contact: application.contact || '',
+        created_at: application.created_at,
+        status: profile?.status || 'pending',
+      };
+    }),
+    recentArtworks: (recentArtworksRaw || []).map((artwork) => {
+      const artistsValue = artwork.artists as
+        | { name_ko: string | null }
+        | Array<{ name_ko: string | null }>
+        | null;
+      const artistName = Array.isArray(artistsValue)
+        ? artistsValue[0]?.name_ko || '알 수 없음'
+        : artistsValue?.name_ko || '알 수 없음';
       return {
         id: artwork.id,
         title: artwork.title,

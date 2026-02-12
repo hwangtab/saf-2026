@@ -97,8 +97,14 @@ export async function updateArtist(id: string, formData: FormData) {
 }
 
 export async function updateArtistProfileImage(id: string, profileImage: string | null) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
+
+  const { data: oldArtist } = await supabase
+    .from('artists')
+    .select('id, name_ko, profile_image, updated_at')
+    .eq('id', id)
+    .single();
 
   const { error } = await supabase
     .from('artists')
@@ -110,8 +116,28 @@ export async function updateArtistProfileImage(id: string, profileImage: string 
 
   if (error) throw error;
 
+  const { data: newArtist } = await supabase
+    .from('artists')
+    .select('id, name_ko, profile_image, updated_at')
+    .eq('id', id)
+    .single();
+
   revalidatePath('/admin/artists');
   revalidatePath(`/admin/artists/${id}`);
+
+  await logAdminAction(
+    'artist_profile_image_updated',
+    'artist',
+    id,
+    { name: newArtist?.name_ko || oldArtist?.name_ko || id },
+    admin.id,
+    {
+      summary: `작가 프로필 이미지 변경: ${newArtist?.name_ko || oldArtist?.name_ko || id}`,
+      beforeSnapshot: oldArtist || null,
+      afterSnapshot: newArtist || null,
+      reversible: true,
+    }
+  );
 
   return { success: true };
 }

@@ -327,24 +327,31 @@ async function writeActivityLog(params: {
 }) {
   const supabase = await createSupabaseAdminOrServerClient();
 
-  const { error } = await supabase.from('activity_logs').insert({
-    actor_id: params.actor.id,
-    actor_role: params.actor.role,
-    actor_name: params.actor.name || null,
-    actor_email: params.actor.email || null,
-    action: params.action,
-    target_type: params.targetType,
-    target_id: params.targetId,
-    summary: params.options?.summary || null,
-    metadata: params.metadata || null,
-    before_snapshot: params.options?.beforeSnapshot || null,
-    after_snapshot: params.options?.afterSnapshot || null,
-    reversible: params.options?.reversible || false,
-  });
+  const { data, error } = await supabase
+    .from('activity_logs')
+    .insert({
+      actor_id: params.actor.id,
+      actor_role: params.actor.role,
+      actor_name: params.actor.name || null,
+      actor_email: params.actor.email || null,
+      action: params.action,
+      target_type: params.targetType,
+      target_id: params.targetId,
+      summary: params.options?.summary || null,
+      metadata: params.metadata || null,
+      before_snapshot: params.options?.beforeSnapshot || null,
+      after_snapshot: params.options?.afterSnapshot || null,
+      reversible: params.options?.reversible || false,
+    })
+    .select('id')
+    .single();
 
   if (error) {
     console.error('Failed to write activity log:', error);
+    return null;
   }
+
+  return data?.id || null;
 }
 
 export async function logAdminAction(
@@ -425,7 +432,7 @@ async function getLegacyAdminLogs(
 
   const { data: logs, error } = await supabase
     .from('admin_logs')
-    .select('*, profiles!admin_logs_admin_id_fkey(name, email)')
+    .select('*, admin:profiles!admin_logs_admin_id_fkey(name, email)')
     .order('created_at', { ascending: false })
     .range(offset, offset + limit - 1);
 
@@ -568,6 +575,10 @@ export async function revertActivityLog(logId: string, reason: string) {
         .select('id, updated_at')
         .in('id', targetIds);
 
+      if (!currentRows || currentRows.length !== targetIds.length) {
+        throw new Error('복구 대상 작품 중 일부를 찾을 수 없어 복구를 중단합니다.');
+      }
+
       const currentMap = new Map((currentRows || []).map((row) => [row.id, row.updated_at]));
       const afterMap = new Map(
         (afterList || [])
@@ -582,18 +593,52 @@ export async function revertActivityLog(logId: string, reason: string) {
       for (const id of targetIds) {
         const afterUpdatedAt = afterMap.get(id);
         const currentUpdatedAt = currentMap.get(id);
+        if (!currentUpdatedAt) {
+          throw new Error('복구 대상 작품 중 일부를 찾을 수 없어 복구를 중단합니다.');
+        }
         if (afterUpdatedAt && currentUpdatedAt && currentUpdatedAt !== afterUpdatedAt) {
           throw new Error('현재 데이터가 추가로 변경되어 복구를 중단합니다.');
         }
       }
 
-      for (const snapshot of beforeList) {
-        const id = typeof snapshot.id === 'string' ? snapshot.id : null;
-        if (!id) continue;
+      const { data: rollbackRows } = await supabase
+        .from('artworks')
+        .select(
+          'id, title, description, size, material, year, edition, price, status, is_hidden, images, shop_url, artist_id, updated_at'
+        )
+        .in('id', targetIds);
+      const rollbackMap = new Map((rollbackRows || []).map((row) => [row.id, row]));
 
-        const patch = buildPatch(snapshot, ARTWORK_REVERT_KEYS);
-        const { error: revertError } = await supabase.from('artworks').update(patch).eq('id', id);
-        if (revertError) throw revertError;
+      const appliedIds: string[] = [];
+
+      try {
+        for (const snapshot of beforeList) {
+          const id = typeof snapshot.id === 'string' ? snapshot.id : null;
+          if (!id) continue;
+
+          const patch = buildPatch(snapshot, ARTWORK_REVERT_KEYS);
+          const { data: updatedRows, error: revertError } = await supabase
+            .from('artworks')
+            .update(patch)
+            .eq('id', id)
+            .select('id');
+          if (revertError) throw revertError;
+          if (!updatedRows || updatedRows.length !== 1) {
+            throw new Error('복구 적용 중 일부 작품의 반영 결과를 확인하지 못했습니다.');
+          }
+          appliedIds.push(id);
+        }
+      } catch (error) {
+        for (const appliedId of appliedIds.reverse()) {
+          const rollbackSnapshot = rollbackMap.get(appliedId);
+          if (!rollbackSnapshot) continue;
+          const rollbackPatch = buildPatch(
+            rollbackSnapshot as Record<string, unknown>,
+            ARTWORK_REVERT_KEYS
+          );
+          await supabase.from('artworks').update(rollbackPatch).eq('id', appliedId);
+        }
+        throw error;
       }
     } else {
       const { data: current } = await supabase
@@ -613,11 +658,15 @@ export async function revertActivityLog(logId: string, reason: string) {
       }
 
       const patch = buildPatch(snapshot, ARTWORK_REVERT_KEYS);
-      const { error: revertError } = await supabase
+      const { data: updatedRows, error: revertError } = await supabase
         .from('artworks')
         .update(patch)
-        .eq('id', log.target_id);
+        .eq('id', log.target_id)
+        .select('id');
       if (revertError) throw revertError;
+      if (!updatedRows || updatedRows.length !== 1) {
+        throw new Error('복구 대상 작품을 찾을 수 없어 복구를 중단합니다.');
+      }
     }
   } else if (log.target_type === 'artist') {
     const { data: current } = await supabase
@@ -637,28 +686,37 @@ export async function revertActivityLog(logId: string, reason: string) {
     }
     const patch = buildPatch(snapshot, ARTIST_REVERT_KEYS);
 
-    const { error: revertError } = await supabase
+    const { data: updatedRows, error: revertError } = await supabase
       .from('artists')
       .update(patch)
-      .eq('id', log.target_id);
+      .eq('id', log.target_id)
+      .select('id');
     if (revertError) throw revertError;
+    if (!updatedRows || updatedRows.length !== 1) {
+      throw new Error('복구 대상 작가를 찾을 수 없어 복구를 중단합니다.');
+    }
   } else {
     throw new Error('현재는 작품/작가 수정 로그만 복구할 수 있습니다.');
   }
 
   const now = new Date().toISOString();
-  const { error: markError } = await supabase
+  const { data: markedRows, error: markError } = await supabase
     .from('activity_logs')
     .update({
       reverted_by: admin.id,
       reverted_at: now,
       revert_reason: reason,
     })
-    .eq('id', log.id);
+    .eq('id', log.id)
+    .is('reverted_at', null)
+    .select('id');
 
   if (markError) throw markError;
+  if (!markedRows || markedRows.length !== 1) {
+    throw new Error('복구 상태 기록에 실패했습니다. 다시 시도해주세요.');
+  }
 
-  await writeActivityLog({
+  const revertLogId = await writeActivityLog({
     actor: { id: admin.id, role: 'admin', name: actor.name, email: actor.email },
     action: 'revert_executed',
     targetType: log.target_type,
@@ -672,6 +730,10 @@ export async function revertActivityLog(logId: string, reason: string) {
       reversible: false,
     },
   });
+
+  if (revertLogId) {
+    await supabase.from('activity_logs').update({ reverted_log_id: revertLogId }).eq('id', log.id);
+  }
 
   return { success: true };
 }
