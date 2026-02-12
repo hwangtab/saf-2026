@@ -3,6 +3,12 @@ import { createSupabaseServerClient } from '@/lib/auth/server';
 import { notFound } from 'next/navigation';
 import { ArtworkList } from './artwork-list';
 import Button from '@/components/ui/Button';
+import {
+  AdminBadge,
+  AdminPageDescription,
+  AdminPageHeader,
+  AdminPageTitle,
+} from '@/app/admin/_components/admin-ui';
 
 type ArtworksPageProps = {
   searchParams?: {
@@ -40,14 +46,17 @@ export default async function ArtworksPage({ searchParams }: ArtworksPageProps) 
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-lg font-medium text-gray-900">작품 관리</h2>
-          <p className="mt-1 text-sm text-gray-500">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <AdminPageHeader>
+          <div className="flex items-center gap-2">
+            <AdminPageTitle>작품 관리</AdminPageTitle>
+            <AdminBadge tone="info">내 작품</AdminBadge>
+          </div>
+          <AdminPageDescription>
             총 {artworks?.length || 0}개의 작품이 등록되어 있습니다.
-          </p>
-        </div>
-        <Button href="/dashboard/artworks/new" variant="primary">
+          </AdminPageDescription>
+        </AdminPageHeader>
+        <Button href="/dashboard/artworks/new" variant="primary" className="w-full sm:w-auto">
           작품 등록
         </Button>
       </div>

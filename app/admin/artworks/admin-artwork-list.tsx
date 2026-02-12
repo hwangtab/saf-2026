@@ -9,7 +9,14 @@ import {
   batchToggleHidden,
   batchDeleteArtworks,
 } from '@/app/actions/admin-artworks';
-import { AdminCard, AdminCardHeader, AdminSelect } from '@/app/admin/_components/admin-ui';
+import {
+  AdminBadge,
+  AdminCard,
+  AdminCardHeader,
+  AdminEmptyState,
+  AdminInput,
+  AdminSelect,
+} from '@/app/admin/_components/admin-ui';
 import { useToast } from '@/lib/hooks/useToast';
 
 type ArtworkItem = {
@@ -218,9 +225,7 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
         <AdminCardHeader>
           <div className="flex items-center gap-3">
             <h2 className="text-lg font-semibold text-gray-900">작품 목록</h2>
-            <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
-              {filtered.length}개
-            </span>
+            <AdminBadge tone="info">{filtered.length}개</AdminBadge>
           </div>
 
           <div className="grid w-full gap-3 sm:w-auto sm:grid-cols-[minmax(260px,1fr)_auto] sm:items-end">
@@ -228,13 +233,13 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
               <label htmlFor="search-artworks" className="sr-only">
                 작품 검색
               </label>
-              <input
+              <AdminInput
                 id="search-artworks"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="작품명, 작가명 검색..."
                 aria-describedby="search-artworks-description"
-                className="block h-10 w-full rounded-md border-0 pl-10 pr-3 text-sm text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+                className="h-10 border-0 pl-10 pr-3"
               />
               <span id="search-artworks-description" className="sr-only">
                 작품명 또는 작가명으로 검색할 수 있습니다. 현재 {filtered.length}개가 표시됩니다.
@@ -358,23 +363,8 @@ export function AdminArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
             <tbody className="bg-white divide-y divide-gray-200">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
-                    <div className="flex flex-col items-center">
-                      <svg
-                        className="h-10 w-10 text-gray-300 mb-2"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={1.5}
-                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                        />
-                      </svg>
-                      <p>검색된 작품이 없습니다.</p>
-                    </div>
+                  <td colSpan={5} className="px-6 py-0">
+                    <AdminEmptyState title="검색된 작품이 없습니다" />
                   </td>
                 </tr>
               ) : (

@@ -6,6 +6,12 @@ import { createArtwork, updateArtwork, type ActionState } from '@/app/actions/ar
 import Button from '@/components/ui/Button';
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
+import {
+  AdminFieldLabel,
+  AdminInput,
+  AdminSelect,
+  AdminTextarea,
+} from '@/app/admin/_components/admin-ui';
 
 type ArtworkFormProps = {
   artwork?: any; // If provided, mode is 'edit'
@@ -150,6 +156,8 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
     }
   };
 
+  const inputClassName = 'mt-1';
+
   return (
     <form
       action={formAction}
@@ -160,10 +168,10 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
     >
       <div className="space-y-8 divide-y divide-gray-200">
         <div>
-          <h3 className="text-lg leading-6 font-medium text-gray-900">
+          <h3 className="text-lg leading-6 font-semibold text-slate-900">
             {artwork ? '작품 수정' : '새 작품 등록'}
           </h3>
-          <p className="mt-1 text-sm text-gray-500">작품의 상세 정보를 입력해주세요.</p>
+          <p className="mt-1 text-sm text-slate-500">작품의 상세 정보를 입력해주세요.</p>
 
           <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
             {/* Hidden: Images JSON */}
@@ -172,9 +180,9 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
 
             {/* Images Upload */}
             <div className="sm:col-span-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <AdminFieldLabel>
                 작품 이미지 (최대 5장) <span className="text-red-500">*</span>
-              </label>
+              </AdminFieldLabel>
               <ImageUpload
                 bucket="artworks"
                 pathPrefix={artistId}
@@ -200,143 +208,121 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
 
             {/* Title */}
             <div className="sm:col-span-4">
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+              <AdminFieldLabel htmlFor="title">
                 작품명 <span className="text-red-500">*</span>
-              </label>
-              <div className="mt-1">
-                <input
-                  type="text"
-                  name="title"
-                  id="title"
-                  required
-                  defaultValue={artwork?.title || ''}
-                  className="shadow-sm focus:ring-black focus:border-black block w-full sm:text-sm border-gray-300 rounded-md"
-                />
-              </div>
+              </AdminFieldLabel>
+              <AdminInput
+                type="text"
+                name="title"
+                id="title"
+                required
+                defaultValue={artwork?.title || ''}
+                className={inputClassName}
+              />
             </div>
 
             {/* Price */}
             <div className="sm:col-span-2">
-              <label htmlFor="price" className="block text-sm font-medium text-gray-700">
+              <AdminFieldLabel htmlFor="price">
                 가격 (₩) <span className="text-red-500">*</span>
-              </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
+              </AdminFieldLabel>
+              <div className="relative mt-1 rounded-md shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <span className="text-gray-500 sm:text-sm">₩</span>
+                  <span className="text-sm text-slate-500">₩</span>
                 </div>
-                <input
+                <AdminInput
                   type="text"
                   name="price"
                   id="price"
                   required
                   defaultValue={artwork?.price || ''}
                   placeholder="2,000,000"
-                  className="focus:ring-black focus:border-black block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md"
+                  className="pl-7 pr-12"
                 />
               </div>
-              <p className="mt-1 text-xs text-gray-500">통화를 제외한 숫자 또는 ₩ 포함 텍스트</p>
+              <p className="mt-1 text-xs text-slate-500">통화를 제외한 숫자 또는 ₩ 포함 텍스트</p>
             </div>
 
             {/* Size */}
             <div className="sm:col-span-2">
-              <label htmlFor="size" className="block text-sm font-medium text-gray-700">
-                크기
-              </label>
-              <div className="mt-1">
-                <input
-                  type="text"
-                  name="size"
-                  id="size"
-                  defaultValue={artwork?.size || ''}
-                  placeholder="50x50cm"
-                  className="shadow-sm focus:ring-black focus:border-black block w-full sm:text-sm border-gray-300 rounded-md"
-                />
-              </div>
+              <AdminFieldLabel htmlFor="size">크기</AdminFieldLabel>
+              <AdminInput
+                type="text"
+                name="size"
+                id="size"
+                defaultValue={artwork?.size || ''}
+                placeholder="50x50cm"
+                className={inputClassName}
+              />
             </div>
 
             {/* Material */}
             <div className="sm:col-span-2">
-              <label htmlFor="material" className="block text-sm font-medium text-gray-700">
-                재료
-              </label>
-              <div className="mt-1">
-                <input
-                  type="text"
-                  name="material"
-                  id="material"
-                  defaultValue={artwork?.material || ''}
-                  placeholder="Oil on canvas"
-                  className="shadow-sm focus:ring-black focus:border-black block w-full sm:text-sm border-gray-300 rounded-md"
-                />
-              </div>
+              <AdminFieldLabel htmlFor="material">재료</AdminFieldLabel>
+              <AdminInput
+                type="text"
+                name="material"
+                id="material"
+                defaultValue={artwork?.material || ''}
+                placeholder="Oil on canvas"
+                className={inputClassName}
+              />
             </div>
 
             {/* Year */}
             <div className="sm:col-span-1">
-              <label htmlFor="year" className="block text-sm font-medium text-gray-700">
-                제작년도
-              </label>
-              <div className="mt-1">
-                <input
-                  type="text"
-                  name="year"
-                  id="year"
-                  defaultValue={artwork?.year || new Date().getFullYear().toString()}
-                  className="shadow-sm focus:ring-black focus:border-black block w-full sm:text-sm border-gray-300 rounded-md"
-                />
-              </div>
+              <AdminFieldLabel htmlFor="year">제작년도</AdminFieldLabel>
+              <AdminInput
+                type="text"
+                name="year"
+                id="year"
+                defaultValue={artwork?.year || new Date().getFullYear().toString()}
+                className={inputClassName}
+              />
             </div>
 
             {/* Edition */}
             <div className="sm:col-span-1">
-              <label htmlFor="edition" className="block text-sm font-medium text-gray-700">
-                에디션
-              </label>
-              <div className="mt-1">
-                <input
-                  type="text"
-                  name="edition"
-                  id="edition"
-                  defaultValue={artwork?.edition || ''}
-                  placeholder="1/10"
-                  className="shadow-sm focus:ring-black focus:border-black block w-full sm:text-sm border-gray-300 rounded-md"
-                />
-              </div>
+              <AdminFieldLabel htmlFor="edition">에디션</AdminFieldLabel>
+              <AdminInput
+                type="text"
+                name="edition"
+                id="edition"
+                defaultValue={artwork?.edition || ''}
+                placeholder="1/10"
+                className={inputClassName}
+              />
             </div>
 
             {/* Description */}
             <div className="sm:col-span-6">
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                작가 노트
-              </label>
-              <div className="mt-1">
-                <textarea
-                  id="description"
-                  name="description"
-                  rows={5}
-                  defaultValue={artwork?.description || ''}
-                  className="shadow-sm focus:ring-black focus:border-black block w-full sm:text-sm border-gray-300 rounded-md"
-                  placeholder="작품에 담긴 의도나 작가 노트를 적어주세요."
-                />
-              </div>
+              <AdminFieldLabel htmlFor="description">작가 노트</AdminFieldLabel>
+              <AdminTextarea
+                id="description"
+                name="description"
+                rows={5}
+                defaultValue={artwork?.description || ''}
+                className={inputClassName}
+                placeholder="작품에 담긴 의도나 작가 노트를 적어주세요."
+              />
             </div>
 
             {/* Options */}
             <div className="sm:col-span-6 border-t border-gray-200 pt-6 flex flex-wrap gap-6">
               <div className="flex items-center gap-3">
-                <label htmlFor="status" className="text-sm font-medium text-gray-700">
+                <AdminFieldLabel htmlFor="status" className="mb-0">
                   판매 상태
-                </label>
-                <select
+                </AdminFieldLabel>
+                <AdminSelect
                   id="status"
                   name="status"
                   defaultValue={artwork?.status || 'available'}
-                  className="h-11 rounded-md border border-gray-300 px-3 text-sm shadow-sm focus:border-black focus:ring-black"
+                  className="min-w-36"
                 >
                   <option value="available">판매 중</option>
                   <option value="reserved">예약됨</option>
                   <option value="sold">판매 완료</option>
-                </select>
+                </AdminSelect>
               </div>
 
               {artwork && (
@@ -347,14 +333,14 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
                       name="hidden"
                       type="checkbox"
                       defaultChecked={artwork?.is_hidden}
-                      className="focus:ring-black h-4 w-4 text-black border-gray-300 rounded"
+                      className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
                     />
                   </div>
                   <div className="ml-3 text-sm">
-                    <label htmlFor="hidden" className="font-medium text-gray-700">
+                    <label htmlFor="hidden" className="font-medium text-slate-700">
                       숨김 (Hidden)
                     </label>
-                    <p className="text-gray-500">갤러리 리스트에서 숨깁니다.</p>
+                    <p className="text-slate-500">갤러리 리스트에서 숨깁니다.</p>
                   </div>
                 </div>
               )}
@@ -372,7 +358,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
             {artwork ? '수정 사항 저장' : '작품 등록하기'}
           </Button>
         </div>
-        {state.error && <p className="text-red-500 text-sm mt-2 text-right">{state.message}</p>}
+        {state.error && <p className="mt-2 text-right text-sm text-rose-600">{state.message}</p>}
       </div>
     </form>
   );

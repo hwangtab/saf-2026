@@ -2,6 +2,7 @@ import { requireArtistActive } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { notFound } from 'next/navigation';
 import { ArtworkForm } from '../../artwork-form';
+import { AdminCard } from '@/app/admin/_components/admin-ui';
 
 export default async function EditArtworkPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -31,8 +32,8 @@ export default async function EditArtworkPage({ params }: { params: Promise<{ id
   }
 
   return (
-    <div className="max-w-3xl mx-auto bg-white shadow-sm sm:rounded-lg p-6 sm:p-8">
+    <AdminCard className="mx-auto max-w-4xl p-6 sm:p-8">
       <ArtworkForm artwork={artwork} artistId={artist.id} />
-    </div>
+    </AdminCard>
   );
 }

@@ -3,7 +3,14 @@
 import { useEffect, useState } from 'react';
 import { reactivateUser, rejectUser, updateUserRole } from '@/app/actions/admin';
 import Modal from '@/components/ui/Modal';
-import { AdminCard, AdminCardHeader, AdminSelect } from '@/app/admin/_components/admin-ui';
+import {
+  AdminBadge,
+  AdminCard,
+  AdminCardHeader,
+  AdminEmptyState,
+  AdminInput,
+  AdminSelect,
+} from '@/app/admin/_components/admin-ui';
 import { useToast } from '@/lib/hooks/useToast';
 
 type Profile = {
@@ -100,9 +107,7 @@ export function UserList({ users }: { users: Profile[] }) {
         <AdminCardHeader>
           <div className="flex items-center gap-3">
             <h2 className="text-lg font-semibold text-gray-900">사용자 목록</h2>
-            <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
-              {filteredUsers.length}명
-            </span>
+            <AdminBadge tone="info">{filteredUsers.length}명</AdminBadge>
           </div>
           <div className="relative max-w-sm w-full">
             <label htmlFor="search-users" className="sr-only">
@@ -117,14 +122,14 @@ export function UserList({ users }: { users: Profile[] }) {
                 />
               </svg>
             </div>
-            <input
+            <AdminInput
               id="search-users"
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="이름, 이메일 검색..."
               aria-describedby="search-users-description"
-              className="block w-full rounded-md border-0 py-2 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              className="h-10 border-0 py-2 pl-10"
             />
             <span id="search-users-description" className="sr-only">
               이름 또는 이메일로 사용자를 검색할 수 있습니다. 현재 {filteredUsers.length}명이
@@ -164,8 +169,11 @@ export function UserList({ users }: { users: Profile[] }) {
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredUsers.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-6 py-12 text-center text-gray-500">
-                    검색 결과가 없습니다.
+                  <td colSpan={4} className="px-6 py-0">
+                    <AdminEmptyState
+                      title="검색 결과가 없습니다"
+                      description="다른 검색어로 다시 시도해보세요."
+                    />
                   </td>
                 </tr>
               ) : (

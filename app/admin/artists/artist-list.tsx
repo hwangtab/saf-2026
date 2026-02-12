@@ -3,7 +3,13 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { deleteArtist } from '@/app/actions/admin-artists';
-import { AdminCard, AdminCardHeader } from '@/app/admin/_components/admin-ui';
+import {
+  AdminBadge,
+  AdminCard,
+  AdminCardHeader,
+  AdminEmptyState,
+  AdminInput,
+} from '@/app/admin/_components/admin-ui';
 
 type ArtistItem = {
   id: string;
@@ -86,9 +92,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
         <AdminCardHeader>
           <div className="flex items-center gap-3">
             <h2 className="text-lg font-semibold text-gray-900">작가 목록</h2>
-            <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
-              {filtered.length}명
-            </span>
+            <AdminBadge tone="info">{filtered.length}명</AdminBadge>
           </div>
 
           <div className="relative max-w-sm w-full">
@@ -109,14 +113,14 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
                 />
               </svg>
             </div>
-            <input
+            <AdminInput
               id="search-artists"
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="이름, 이메일 검색..."
               aria-describedby="search-artists-description"
-              className="block w-full rounded-md border-0 py-2 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 transition-shadow"
+              className="h-10 border-0 py-2 pl-10"
             />
             <span id="search-artists-description" className="sr-only">
               작가 이름 또는 이메일로 검색할 수 있습니다. 현재 {filtered.length}명이 표시됩니다.
@@ -155,22 +159,11 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
             <tbody className="bg-white divide-y divide-gray-200">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-6 py-12 text-center">
-                    <svg
-                      className="mx-auto h-12 w-12 text-gray-300"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                      />
-                    </svg>
-                    <h3 className="mt-2 text-sm font-medium text-gray-900">검색 결과가 없습니다</h3>
-                    <p className="mt-1 text-sm text-gray-500">다른 검색어로 시도해보세요.</p>
+                  <td colSpan={4} className="px-6 py-0">
+                    <AdminEmptyState
+                      title="검색 결과가 없습니다"
+                      description="다른 검색어로 시도해보세요."
+                    />
                   </td>
                 </tr>
               ) : (

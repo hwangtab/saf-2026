@@ -1,6 +1,11 @@
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { UserList } from './user-list';
+import {
+  AdminPageDescription,
+  AdminPageHeader,
+  AdminPageTitle,
+} from '@/app/admin/_components/admin-ui';
 
 type ArtistApplication = {
   user_id: string;
@@ -62,8 +67,10 @@ export default async function UsersPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">사용자 관리</h1>
-        <p className="mt-2 text-sm text-slate-500">신규 가입한 사용자를 승인하거나 관리합니다.</p>
+        <AdminPageHeader>
+          <AdminPageTitle>사용자 관리</AdminPageTitle>
+          <AdminPageDescription>신규 가입한 사용자를 승인하거나 관리합니다.</AdminPageDescription>
+        </AdminPageHeader>
       </div>
 
       <UserList users={sortedUsers} />

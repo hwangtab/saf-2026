@@ -5,6 +5,7 @@ import { updateArtistProfile, type ActionState } from '@/app/actions/profile';
 import Button from '@/components/ui/Button';
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
 import { CheckMarkIcon } from '@/components/ui/Icons';
+import { AdminFieldLabel, AdminInput, AdminTextarea } from '@/app/admin/_components/admin-ui';
 
 const initialState: ActionState = {
   message: '',
@@ -14,10 +15,6 @@ const initialState: ActionState = {
 export function ProfileForm({ artist, userId }: { artist: any; userId: string }) {
   const [state, formAction, isPending] = useActionState(updateArtistProfile, initialState);
   const [profileImage, setProfileImage] = useState<string>(artist?.profile_image || '');
-  const inputClassName =
-    'block h-11 w-full rounded-md border-gray-300 px-3 text-sm shadow-sm focus:border-black focus:ring-black';
-  const textareaClassName =
-    'block w-full rounded-md border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-black focus:ring-black';
 
   const handleImageUpload = (urls: string[]) => {
     if (urls.length > 0) {
@@ -35,40 +32,36 @@ export function ProfileForm({ artist, userId }: { artist: any; userId: string })
       <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
         {/* Name KO */}
         <div className="sm:col-span-3">
-          <label htmlFor="name_ko" className="block text-sm font-medium text-gray-700">
+          <AdminFieldLabel htmlFor="name_ko">
             작가명 (한글) <span className="text-red-500">*</span>
-          </label>
+          </AdminFieldLabel>
           <div className="mt-1">
-            <input
+            <AdminInput
               type="text"
               name="name_ko"
               id="name_ko"
               required
               defaultValue={artist?.name_ko || ''}
-              className={inputClassName}
             />
           </div>
         </div>
 
         {/* Name EN */}
         <div className="sm:col-span-3">
-          <label htmlFor="name_en" className="block text-sm font-medium text-gray-700">
-            작가명 (영문)
-          </label>
+          <AdminFieldLabel htmlFor="name_en">작가명 (영문)</AdminFieldLabel>
           <div className="mt-1">
-            <input
+            <AdminInput
               type="text"
               name="name_en"
               id="name_en"
               defaultValue={artist?.name_en || ''}
-              className={inputClassName}
             />
           </div>
         </div>
 
         {/* Profile Image */}
         <div className="sm:col-span-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">프로필 이미지</label>
+          <AdminFieldLabel>프로필 이미지</AdminFieldLabel>
           <ImageUpload
             bucket="profiles"
             pathPrefix={userId} // User can only upload to their own folder due to RLS
@@ -80,16 +73,13 @@ export function ProfileForm({ artist, userId }: { artist: any; userId: string })
 
         {/* Bio */}
         <div className="sm:col-span-6">
-          <label htmlFor="bio" className="block text-sm font-medium text-gray-700">
-            작가 소개 (Bio)
-          </label>
+          <AdminFieldLabel htmlFor="bio">작가 소개 (Bio)</AdminFieldLabel>
           <div className="mt-1">
-            <textarea
+            <AdminTextarea
               id="bio"
               name="bio"
               rows={4}
               defaultValue={artist?.bio || ''}
-              className={textareaClassName}
               placeholder="자신을 소개하는 짧은 글을 작성해주세요."
             />
           </div>
@@ -97,16 +87,14 @@ export function ProfileForm({ artist, userId }: { artist: any; userId: string })
 
         {/* History */}
         <div className="sm:col-span-6">
-          <label htmlFor="history" className="block text-sm font-medium text-gray-700">
-            약력 / 전시 이력
-          </label>
+          <AdminFieldLabel htmlFor="history">약력 / 전시 이력</AdminFieldLabel>
           <div className="mt-1">
-            <textarea
+            <AdminTextarea
               id="history"
               name="history"
               rows={8}
               defaultValue={artist?.history || ''}
-              className={`${textareaClassName} font-mono`}
+              className="font-mono"
               placeholder={'2024 개인전 (서울)\n2023 단체전 (부산)'}
             />
           </div>
@@ -117,41 +105,35 @@ export function ProfileForm({ artist, userId }: { artist: any; userId: string })
           <h4 className="text-sm font-semibold text-gray-900 mb-3">연락처/링크</h4>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div>
-              <label htmlFor="contact_email" className="block text-sm font-medium text-gray-700">
-                연락처
-              </label>
-              <input
+              <AdminFieldLabel htmlFor="contact_email">연락처</AdminFieldLabel>
+              <AdminInput
                 type="text"
                 name="contact_email"
                 id="contact_email"
                 defaultValue={artist?.contact_email || ''}
-                className={`mt-1 ${inputClassName}`}
+                className="mt-1"
                 placeholder="이메일 또는 전화번호"
               />
             </div>
             <div>
-              <label htmlFor="instagram" className="block text-sm font-medium text-gray-700">
-                인스타그램
-              </label>
-              <input
+              <AdminFieldLabel htmlFor="instagram">인스타그램</AdminFieldLabel>
+              <AdminInput
                 type="text"
                 name="instagram"
                 id="instagram"
                 defaultValue={artist?.instagram || ''}
-                className={`mt-1 ${inputClassName}`}
+                className="mt-1"
                 placeholder="https://instagram.com/..."
               />
             </div>
             <div>
-              <label htmlFor="homepage" className="block text-sm font-medium text-gray-700">
-                홈페이지
-              </label>
-              <input
+              <AdminFieldLabel htmlFor="homepage">홈페이지</AdminFieldLabel>
+              <AdminInput
                 type="text"
                 name="homepage"
                 id="homepage"
                 defaultValue={artist?.homepage || ''}
-                className={`mt-1 ${inputClassName}`}
+                className="mt-1"
                 placeholder="https://..."
               />
             </div>

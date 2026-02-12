@@ -1,7 +1,13 @@
 import { requireAdmin } from '@/lib/auth/guards';
 import { getDashboardStats } from '@/app/actions/admin-dashboard';
 import Link from 'next/link';
-import { AdminCard, AdminCardHeader } from '@/app/admin/_components/admin-ui';
+import {
+  AdminCard,
+  AdminCardHeader,
+  AdminPageDescription,
+  AdminPageHeader,
+  AdminPageTitle,
+} from '@/app/admin/_components/admin-ui';
 import { RevenueCard } from '@/app/admin/_components/RevenueCard';
 import { StatusDonutChart } from '@/app/admin/_components/StatusDonutChart';
 import { MaterialBarChart } from '@/app/admin/_components/MaterialBarChart';
@@ -59,10 +65,10 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">대시보드</h1>
-        <p className="mt-2 text-sm text-slate-500">SAF 2026 관리자 현황을 한눈에 확인합니다.</p>
-      </div>
+      <AdminPageHeader>
+        <AdminPageTitle>대시보드</AdminPageTitle>
+        <AdminPageDescription>SAF 2026 관리자 현황을 한눈에 확인합니다.</AdminPageDescription>
+      </AdminPageHeader>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard title="총 작가" value={stats.artists.total} href="/admin/artists" />

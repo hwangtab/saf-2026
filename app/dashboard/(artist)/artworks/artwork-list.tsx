@@ -8,6 +8,7 @@ import { ExternalLinkIcon } from '@/components/ui/Icons';
 import { formatPriceForDisplay } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/lib/hooks/useToast';
+import { AdminBadge, AdminCard, AdminEmptyState } from '@/app/admin/_components/admin-ui';
 
 type Artwork = {
   id: string;
@@ -67,40 +68,26 @@ export function ArtworkList({
 
   if (optimisticArtworks.length === 0) {
     return (
-      <div className="text-center py-12">
-        <svg
-          className="mx-auto h-12 w-12 text-gray-400"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+      <AdminCard>
+        <AdminEmptyState
+          title="등록된 작품이 없습니다"
+          description="새로운 작품을 등록하여 포트폴리오를 완성해보세요."
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-          />
-        </svg>
-        <h3 className="mt-2 text-sm font-medium text-gray-900">등록된 작품이 없습니다</h3>
-        <p className="mt-1 text-sm text-gray-500">
-          새로운 작품을 등록하여 포트폴리오를 완성해보세요.
-        </p>
-        <div className="mt-6">
           <Button href="/dashboard/artworks/new">첫 작품 등록하기</Button>
-        </div>
-      </div>
+        </AdminEmptyState>
+      </AdminCard>
     );
   }
 
   return (
-    <div className="bg-white shadow overflow-hidden sm:rounded-md">
-      <ul role="list" className="divide-y divide-gray-200">
+    <AdminCard className="overflow-hidden">
+      <ul role="list" className="divide-y divide-[var(--admin-border-soft)]">
         {optimisticArtworks.map((artwork) => (
           <li key={artwork.id}>
-            <div className="flex items-center px-4 py-5 sm:px-6">
+            <div className="flex flex-col gap-4 px-4 py-5 sm:px-6 lg:flex-row lg:items-center">
               <div className="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between">
                 <div className="flex items-center">
-                  <div className="flex-shrink-0 h-16 w-16 rounded-md overflow-hidden bg-gray-100">
+                  <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-[var(--admin-border)] bg-slate-100">
                     {artwork.images?.[0] ? (
                       <img
                         className="h-full w-full object-cover"
@@ -108,7 +95,7 @@ export function ArtworkList({
                         alt={artwork.title}
                       />
                     ) : (
-                      <div className="h-full w-full flex items-center justify-center text-gray-400 text-xs">
+                      <div className="flex h-full w-full items-center justify-center text-xs text-slate-400">
                         No Image
                       </div>
                     )}
@@ -117,36 +104,32 @@ export function ArtworkList({
                     <div className="flex items-center gap-2">
                       <Link
                         href={`/dashboard/artworks/${artwork.id}/edit`}
-                        className="font-medium text-primary truncate hover:underline"
+                        className="truncate text-sm font-semibold text-slate-900 hover:text-indigo-700 hover:underline"
                       >
                         {artwork.title}
                       </Link>
-                      {artwork.is_hidden && (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
-                          숨김
-                        </span>
-                      )}
+                      {artwork.is_hidden && <AdminBadge>숨김</AdminBadge>}
                     </div>
-                    <div className="mt-1 flex text-sm text-gray-500">
-                      <p className="truncate mr-4">{formatPriceForDisplay(artwork.price)}</p>
+                    <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-slate-500">
+                      <p className="truncate">{formatPriceForDisplay(artwork.price)}</p>
                       <p>
                         {artwork.status === 'sold' ? (
-                          <span className="text-red-500 font-medium">판매 완료</span>
+                          <span className="font-medium text-rose-600">판매 완료</span>
                         ) : artwork.status === 'reserved' ? (
-                          <span className="text-amber-600 font-medium">예약됨</span>
+                          <span className="font-medium text-amber-600">예약됨</span>
                         ) : (
-                          <span className="text-green-600">판매 중</span>
+                          <span className="font-medium text-emerald-600">판매 중</span>
                         )}
                       </p>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="ml-5 flex-shrink-0 flex gap-2">
+              <div className="flex flex-shrink-0 items-center gap-2 lg:ml-5">
                 <Link
                   href={`/artworks/${artwork.id}`}
                   target="_blank"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-md text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-500"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-md text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700"
                   title="미리보기"
                 >
                   <ExternalLinkIcon />
@@ -157,7 +140,7 @@ export function ArtworkList({
                 <Button
                   variant="white"
                   size="sm"
-                  className="text-red-600 hover:text-red-700 hover:border-red-200"
+                  className="text-rose-600 hover:border-rose-200 hover:text-rose-700"
                   onClick={() => handleDelete(artwork.id)}
                   loading={isDeleting === artwork.id}
                   disabled={!!isDeleting}
@@ -169,6 +152,6 @@ export function ArtworkList({
           </li>
         ))}
       </ul>
-    </div>
+    </AdminCard>
   );
 }
