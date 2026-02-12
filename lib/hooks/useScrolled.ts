@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 export function useScrolled(threshold = 10, disabled = false) {
   const [isScrolled, setIsScrolled] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     if (disabled) return;
@@ -27,7 +29,7 @@ export function useScrolled(threshold = 10, disabled = false) {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [threshold, disabled]);
+  }, [threshold, disabled, pathname]);
 
   return isScrolled;
 }

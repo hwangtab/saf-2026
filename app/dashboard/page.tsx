@@ -33,6 +33,5 @@ export default async function DashboardPage() {
     }
   }
 
-  // Default fallback for general users or missing profiles
-  redirect('/');
+  redirect('/onboarding');
 }

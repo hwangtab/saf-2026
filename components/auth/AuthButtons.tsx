@@ -48,21 +48,16 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
   useEffect(() => {
     let isMounted = true;
     const controller = new AbortController();
-    const TIMEOUT_MS = 3000;
 
     const fetchProfileData = async (id: string, signal: AbortSignal, showLoading = false) => {
       if (showLoading) setIsLoading(true);
-
-      const timeoutId = setTimeout(() => {
-        if (isMounted) setIsLoading(false);
-      }, TIMEOUT_MS);
 
       try {
         const { data, error } = await supabase
           .from('profiles')
           .select('role, status')
           .eq('id', id)
-          .single();
+          .maybeSingle();
 
         if (signal.aborted || !isMounted) return;
 
@@ -79,7 +74,6 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
         if (isAbortError(err)) return;
         console.error('Unexpected error in fetchProfile:', err);
       } finally {
-        clearTimeout(timeoutId);
         if (isMounted && !signal.aborted) {
           setIsLoading(false);
         }
@@ -177,25 +171,40 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
     if (profile?.role === 'admin') {
       return { href: '/admin/dashboard', label: UI_STRINGS.NAV.ADMIN_DASHBOARD };
     }
+    if (profile?.role === 'artist' && profile.status === 'active') {
+      return { href: '/dashboard/artworks', label: '마이페이지' };
+    }
     if (profile?.status === 'pending') {
       return { href: '/dashboard/pending', label: '승인 대기' };
     }
     if (profile?.status === 'suspended') {
       return { href: '/dashboard/suspended', label: '계정 정지' };
     }
-    // Default to main dashboard if role/status is not yet loaded or user is regular active user
-    return { href: '/dashboard', label: '마이페이지' };
+    if (profile?.role === 'user') {
+      return { href: '/onboarding', label: '작가 등록' };
+    }
+    return null;
   })();
 
   return (
     <div className={wrapperClassName}>
-      <Button
-        href={dashboardLink.href}
-        variant="white"
-        className={layout === 'stacked' ? 'w-full justify-center' : ''}
-      >
-        {dashboardLink.label}
-      </Button>
+      {dashboardLink ? (
+        <Button
+          href={dashboardLink.href}
+          variant="white"
+          className={layout === 'stacked' ? 'w-full justify-center' : ''}
+        >
+          {dashboardLink.label}
+        </Button>
+      ) : (
+        <Button
+          variant="white"
+          disabled
+          className={layout === 'stacked' ? 'w-full justify-center' : ''}
+        >
+          계정 확인 중...
+        </Button>
+      )}
     </div>
   );
 }

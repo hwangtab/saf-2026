@@ -50,8 +50,7 @@ export async function requireArtistActive() {
     }
     if (profile?.status === 'suspended') redirect('/dashboard/suspended');
 
-    // Not an artist at all
-    redirect('/');
+    redirect('/onboarding');
   }
 
   return user;
