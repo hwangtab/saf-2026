@@ -58,7 +58,7 @@ function formatActionDescription(log: ActivityLogEntry): string {
     case 'content_deleted':
       return `콘텐츠 삭제: ${log.target_type} - ${log.target_id}`;
     case 'batch_artwork_status':
-      return `일괄 상태 변경: ${details?.count}건 → ${details?.status}`;
+      return `일괄 상태 변경: ${details?.count}건 → ${formatStatus(details?.status) || details?.status}`;
     case 'batch_artwork_visibility':
       return `일괄 숨김 변경: ${details?.count}건`;
     case 'batch_artwork_deleted':
@@ -127,6 +127,10 @@ function getTargetTypeLabel(type: string | null) {
 function getTargetLink(log: ActivityLogEntry): string | null {
   if (!log.target_id) return null;
 
+  if (log.target_id.includes(',')) {
+    return log.target_type === 'artwork' ? '/admin/artworks' : null;
+  }
+
   switch (log.target_type) {
     case 'user':
       return '/admin/users';
@@ -147,8 +151,61 @@ type DiffRow = {
 
 type DiffItem = {
   itemId: string;
+  itemLabel: string | null;
   changes: DiffRow[];
 };
+
+const STATUS_LABELS: Record<string, string> = {
+  available: '판매 가능',
+  reserved: '예약중',
+  sold: '판매 완료',
+  hidden: '숨김',
+};
+
+function isLikelyUuid(value: string) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+}
+
+function formatIdentifier(value: string) {
+  if (!value) return '-';
+  if (value.includes(',')) return '다중 대상';
+  if (isLikelyUuid(value)) return `${value.slice(0, 8)}...`;
+  return value;
+}
+
+function getSnapshotDisplayName(snapshot: Record<string, unknown> | null): string | null {
+  if (!snapshot) return null;
+
+  const title = typeof snapshot.title === 'string' ? snapshot.title : null;
+  const nameKo = typeof snapshot.name_ko === 'string' ? snapshot.name_ko : null;
+  const name = typeof snapshot.name === 'string' ? snapshot.name : null;
+
+  return title || nameKo || name || null;
+}
+
+function getLogTargetDisplayName(log: ActivityLogEntry): string {
+  const details = log.metadata as Record<string, unknown> | null;
+  const fromDetails =
+    (typeof details?.title === 'string' && details.title) ||
+    (typeof details?.name === 'string' && details.name) ||
+    (typeof details?.user_name === 'string' && details.user_name) ||
+    null;
+
+  if (fromDetails) return fromDetails;
+
+  const afterObj = toObject(log.after_snapshot);
+  const beforeObj = toObject(log.before_snapshot);
+  const fromSnapshot = getSnapshotDisplayName(afterObj) || getSnapshotDisplayName(beforeObj);
+  if (fromSnapshot) return fromSnapshot;
+
+  if (log.target_id.includes(',')) return `총 ${log.target_id.split(',').length}개 대상`;
+  return formatIdentifier(log.target_id);
+}
+
+function formatStatus(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  return STATUS_LABELS[value] || value;
+}
 
 const FIELD_LABELS: Record<string, string> = {
   title: '제목',
@@ -246,7 +303,11 @@ function getDiffItems(log: ActivityLogEntry): DiffItem[] {
         if (!afterObj) return null;
         const changes = getDiffRows(beforeObj, afterObj);
         if (changes.length === 0) return null;
-        return { itemId: id, changes };
+        return {
+          itemId: id,
+          itemLabel: getSnapshotDisplayName(afterObj) || getSnapshotDisplayName(beforeObj),
+          changes,
+        };
       })
       .filter((item): item is DiffItem => !!item);
   }
@@ -258,11 +319,27 @@ function getDiffItems(log: ActivityLogEntry): DiffItem[] {
   const changes = getDiffRows(beforeObj, afterObj);
   if (changes.length === 0) return [];
 
-  return [{ itemId: log.target_id, changes }];
+  return [
+    {
+      itemId: log.target_id,
+      itemLabel: getSnapshotDisplayName(afterObj) || getSnapshotDisplayName(beforeObj),
+      changes,
+    },
+  ];
 }
 
-function formatDiffValue(value: unknown): string {
+function formatDiffValue(value: unknown, field: string): string {
   if (value === null || value === undefined || value === '') return '-';
+
+  if (field === 'status') {
+    const statusText = formatStatus(value);
+    if (statusText) return statusText;
+  }
+
+  if (field.endsWith('_id') && typeof value === 'string') {
+    return formatIdentifier(value);
+  }
+
   if (typeof value === 'boolean') return value ? '예' : '아니오';
   if (typeof value === 'number') return String(value);
   if (Array.isArray(value)) {
@@ -359,6 +436,7 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
               const totalDiffCount = diffItems.reduce((sum, item) => sum + item.changes.length, 0);
               const canShowDiff = totalDiffCount > 0;
               const isExpanded = expandedLogId === log.id;
+              const targetDisplayName = getLogTargetDisplayName(log);
 
               return (
                 <Fragment key={log.id}>
@@ -384,11 +462,17 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                     </td>
                     <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {link ? (
-                        <Link href={link} className="text-indigo-600 hover:underline">
-                          {getTargetTypeLabel(log.target_type)}
-                        </Link>
+                        <div className="space-y-0.5">
+                          <Link href={link} className="text-indigo-600 hover:underline">
+                            {getTargetTypeLabel(log.target_type)}
+                          </Link>
+                          <div className="text-xs text-slate-600">{targetDisplayName}</div>
+                        </div>
                       ) : (
-                        getTargetTypeLabel(log.target_type)
+                        <div className="space-y-0.5">
+                          <div>{getTargetTypeLabel(log.target_type)}</div>
+                          <div className="text-xs text-slate-600">{targetDisplayName}</div>
+                        </div>
                       )}
                     </td>
                     <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-right text-sm">
@@ -432,7 +516,12 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                               className="rounded-md border border-slate-200 bg-white"
                             >
                               <div className="border-b border-slate-200 px-3 py-2 text-xs font-medium text-slate-600">
-                                대상 ID: {item.itemId}
+                                대상: {item.itemLabel || formatIdentifier(item.itemId)}
+                                {item.itemLabel ? (
+                                  <span className="ml-2 text-slate-500">
+                                    (ID: {formatIdentifier(item.itemId)})
+                                  </span>
+                                ) : null}
                               </div>
                               <div className="overflow-x-auto">
                                 <table className="min-w-full text-xs">
@@ -453,10 +542,10 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                                           {getFieldLabel(change.field)}
                                         </td>
                                         <td className="px-3 py-2 text-rose-700 whitespace-pre-wrap break-all">
-                                          {formatDiffValue(change.before)}
+                                          {formatDiffValue(change.before, change.field)}
                                         </td>
                                         <td className="px-3 py-2 text-emerald-700 whitespace-pre-wrap break-all">
-                                          {formatDiffValue(change.after)}
+                                          {formatDiffValue(change.after, change.field)}
                                         </td>
                                       </tr>
                                     ))}
