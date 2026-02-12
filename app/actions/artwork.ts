@@ -4,6 +4,7 @@ import { createSupabaseServerClient } from '@/lib/auth/server';
 import { requireArtistActive } from '@/lib/auth/guards';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { logArtistAction } from './admin-logs';
 
 export type ActionState = {
   message: string;
@@ -145,23 +146,40 @@ export async function createArtwork(
       return { message: '필수 항목(제목, 가격)을 입력해주세요.', error: true, cleanupUrls };
     }
 
-    // 4. Insert
-    const { error } = await supabase.from('artworks').insert({
-      artist_id: artist.id,
-      title,
-      description,
-      size,
-      material,
-      year,
-      edition,
-      price, // Stored as text (formatted) or number string based on schema. Schema allows text default '₩0'
-      status,
-      images,
-      is_hidden: false,
-      shop_url: null,
-    });
+    const { data: insertedArtwork, error } = await supabase
+      .from('artworks')
+      .insert({
+        artist_id: artist.id,
+        title,
+        description,
+        size,
+        material,
+        year,
+        edition,
+        price,
+        status,
+        images,
+        is_hidden: false,
+        shop_url: null,
+      })
+      .select(
+        'id, title, artist_id, description, size, material, year, edition, price, status, images, is_hidden, shop_url, updated_at'
+      )
+      .single();
 
     if (error) throw error;
+
+    await logArtistAction(
+      'artist_artwork_created',
+      'artwork',
+      insertedArtwork.id,
+      { title: insertedArtwork.title },
+      {
+        summary: `작품 등록: ${insertedArtwork.title}`,
+        afterSnapshot: insertedArtwork,
+        reversible: false,
+      }
+    );
 
     const artistSlug = artist.name_ko ? encodeURIComponent(artist.name_ko) : null;
     revalidatePath('/dashboard/artworks');
@@ -256,6 +274,15 @@ export async function updateArtwork(
       return { message: '필수 항목(제목, 가격)을 입력해주세요.', error: true, cleanupUrls };
     }
 
+    const { data: beforeArtwork } = await supabase
+      .from('artworks')
+      .select(
+        'id, title, artist_id, description, size, material, year, edition, price, status, images, is_hidden, shop_url, updated_at'
+      )
+      .eq('id', id)
+      .eq('artist_id', artist.id)
+      .single();
+
     const { error } = await supabase
       .from('artworks')
       .update({
@@ -276,6 +303,28 @@ export async function updateArtwork(
       .eq('artist_id', artist.id); // Security check via query addition, though RLS handles it too
 
     if (error) throw error;
+
+    const { data: afterArtwork } = await supabase
+      .from('artworks')
+      .select(
+        'id, title, artist_id, description, size, material, year, edition, price, status, images, is_hidden, shop_url, updated_at'
+      )
+      .eq('id', id)
+      .eq('artist_id', artist.id)
+      .single();
+
+    await logArtistAction(
+      'artist_artwork_updated',
+      'artwork',
+      id,
+      { title },
+      {
+        summary: `작품 수정: ${title}`,
+        beforeSnapshot: beforeArtwork || null,
+        afterSnapshot: afterArtwork || null,
+        reversible: true,
+      }
+    );
 
     const artistSlug = artist.name_ko ? encodeURIComponent(artist.name_ko) : null;
     revalidatePath('/dashboard/artworks');
@@ -302,7 +351,9 @@ export async function deleteArtwork(id: string): Promise<ActionState> {
 
     const { data: artwork } = await supabase
       .from('artworks')
-      .select('images, artist_id')
+      .select(
+        'id, title, images, artist_id, description, size, material, year, edition, price, status, is_hidden, shop_url, updated_at'
+      )
       .eq('id', id)
       .single();
 
@@ -334,6 +385,21 @@ export async function deleteArtwork(id: string): Promise<ActionState> {
     revalidatePath('/dashboard/artworks');
     revalidatePath('/artworks');
     revalidatePath('/');
+
+    if (artwork) {
+      await logArtistAction(
+        'artist_artwork_deleted',
+        'artwork',
+        id,
+        { title: artwork.title || id },
+        {
+          summary: `작품 삭제: ${artwork.title || id}`,
+          beforeSnapshot: artwork,
+          reversible: false,
+        }
+      );
+    }
+
     return { message: '작품이 삭제되었습니다.', error: false };
   } catch (error: any) {
     return { message: '삭제 실패: ' + error.message, error: true };

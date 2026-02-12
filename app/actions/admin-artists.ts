@@ -46,6 +46,14 @@ export async function updateArtist(id: string, formData: FormData) {
   const instagram = getString(formData, 'instagram');
   const homepage = getString(formData, 'homepage');
 
+  const { data: oldArtist } = await supabase
+    .from('artists')
+    .select(
+      'id, name_ko, name_en, bio, history, profile_image, contact_email, instagram, homepage, updated_at'
+    )
+    .eq('id', id)
+    .single();
+
   const { error } = await supabase
     .from('artists')
     .update({
@@ -63,6 +71,14 @@ export async function updateArtist(id: string, formData: FormData) {
 
   if (error) throw error;
 
+  const { data: newArtist } = await supabase
+    .from('artists')
+    .select(
+      'id, name_ko, name_en, bio, history, profile_image, contact_email, instagram, homepage, updated_at'
+    )
+    .eq('id', id)
+    .single();
+
   revalidatePath('/artworks');
   revalidatePath('/admin/artists');
   revalidatePath(`/admin/artists/${id}`);
@@ -70,7 +86,12 @@ export async function updateArtist(id: string, formData: FormData) {
     revalidatePath(`/artworks/artist/${encodeURIComponent(name_ko)}`);
   }
 
-  await logAdminAction('artist_updated', 'artist', id, { name: name_ko }, admin.id);
+  await logAdminAction('artist_updated', 'artist', id, { name: name_ko }, admin.id, {
+    summary: `작가 수정: ${name_ko || id}`,
+    beforeSnapshot: oldArtist || null,
+    afterSnapshot: newArtist || null,
+    reversible: true,
+  });
 
   return { success: true };
 }

@@ -95,7 +95,9 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
 
   const { data: oldArtwork } = await supabase
     .from('artworks')
-    .select('artist_id')
+    .select(
+      'id, title, artist_id, description, size, material, year, edition, price, status, images, is_hidden, shop_url, updated_at'
+    )
     .eq('id', id)
     .single();
 
@@ -116,6 +118,14 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
     .eq('id', id);
 
   if (error) throw error;
+
+  const { data: newArtwork } = await supabase
+    .from('artworks')
+    .select(
+      'id, title, artist_id, description, size, material, year, edition, price, status, images, is_hidden, shop_url, updated_at'
+    )
+    .eq('id', id)
+    .single();
 
   revalidatePath('/artworks');
   revalidatePath('/');
@@ -145,7 +155,12 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
     }
   }
 
-  await logAdminAction('artwork_updated', 'artwork', id, { title }, admin.id);
+  await logAdminAction('artwork_updated', 'artwork', id, { title }, admin.id, {
+    summary: `작품 수정: ${title}`,
+    beforeSnapshot: oldArtwork || null,
+    afterSnapshot: newArtwork || null,
+    reversible: true,
+  });
 
   return { success: true };
 }

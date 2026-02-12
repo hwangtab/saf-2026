@@ -1,9 +1,18 @@
 import { requireAdmin } from '@/lib/auth/guards';
-import { getAdminLogs } from '@/app/actions/admin-logs';
+import { getActivityLogs } from '@/app/actions/admin-logs';
 import { LogsList } from './logs-list';
 
 type Props = {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{
+    page?: string;
+    q?: string;
+    actor_role?: string;
+    action?: string;
+    target_type?: string;
+    from?: string;
+    to?: string;
+    reversible?: string;
+  }>;
 };
 
 export default async function AdminLogsPage({ searchParams }: Props) {
@@ -13,15 +22,100 @@ export default async function AdminLogsPage({ searchParams }: Props) {
   const page = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1;
   const limit = 50;
 
-  const { logs, total } = await getAdminLogs(page, limit);
+  const { logs, total } = await getActivityLogs({
+    page,
+    limit,
+    q: params.q,
+    actorRole:
+      params.actor_role === 'admin' || params.actor_role === 'artist' ? params.actor_role : 'all',
+    action: params.action,
+    targetType: params.target_type,
+    from: params.from,
+    to: params.to,
+    reversibleOnly: params.reversible === '1',
+  });
   const totalPages = Math.ceil(total / limit);
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-slate-900">활동 로그</h1>
-        <p className="mt-2 text-sm text-slate-500">관리자 활동 기록을 확인합니다.</p>
+        <p className="mt-2 text-sm text-slate-500">
+          관리자/아티스트 활동 기록을 조회하고 필요한 경우 복구를 실행합니다.
+        </p>
       </div>
+      <form className="grid grid-cols-1 gap-3 rounded-xl border border-slate-200 bg-white p-4 sm:grid-cols-2 lg:grid-cols-4">
+        <input
+          name="q"
+          defaultValue={params.q || ''}
+          placeholder="이름, 이메일, 대상, 액션 검색"
+          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+        />
+        <select
+          name="actor_role"
+          defaultValue={params.actor_role || 'all'}
+          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+        >
+          <option value="all">전체 행위자</option>
+          <option value="admin">관리자</option>
+          <option value="artist">아티스트</option>
+        </select>
+        <input
+          name="action"
+          defaultValue={params.action || ''}
+          placeholder="액션 코드 (예: artwork_updated)"
+          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+        />
+        <select
+          name="target_type"
+          defaultValue={params.target_type || ''}
+          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+        >
+          <option value="">전체 대상</option>
+          <option value="artwork">작품</option>
+          <option value="artist">작가</option>
+          <option value="user">사용자</option>
+          <option value="news">뉴스</option>
+          <option value="faq">FAQ</option>
+          <option value="video">영상</option>
+          <option value="testimonial">추천사</option>
+        </select>
+        <input
+          name="from"
+          type="datetime-local"
+          defaultValue={params.from || ''}
+          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+        />
+        <input
+          name="to"
+          type="datetime-local"
+          defaultValue={params.to || ''}
+          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+        />
+        <label className="flex items-center gap-2 rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700">
+          <input
+            type="checkbox"
+            name="reversible"
+            value="1"
+            defaultChecked={params.reversible === '1'}
+          />
+          복구 가능 로그만 보기
+        </label>
+        <div className="flex items-center gap-2">
+          <button
+            type="submit"
+            className="inline-flex items-center rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white hover:bg-gray-800"
+          >
+            검색
+          </button>
+          <a
+            href="/admin/logs"
+            className="inline-flex items-center rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
+            초기화
+          </a>
+        </div>
+      </form>
       <LogsList logs={logs} currentPage={page} totalPages={totalPages} total={total} />
     </div>
   );
