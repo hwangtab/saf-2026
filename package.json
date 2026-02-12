@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "type-check": "tsc --noEmit",
+    "type-check": "next typegen && tsc --noEmit",
     "format-artworks": "node scripts/format_artworks.js",
     "validate-artworks": "node scripts/validate_artworks.js",
     "test": "jest",
