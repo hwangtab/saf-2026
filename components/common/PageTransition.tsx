@@ -13,6 +13,11 @@ import { useContext, useMemo } from 'react';
  */
 export default function PageTransition({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const isProtectedSurface = pathname?.startsWith('/admin') || pathname?.startsWith('/dashboard');
+
+  if (isProtectedSurface) {
+    return <>{children}</>;
+  }
 
   return (
     <AnimatePresence mode="wait">

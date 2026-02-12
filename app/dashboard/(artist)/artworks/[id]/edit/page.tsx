@@ -1,13 +1,18 @@
-import { requireArtistActive } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { ArtworkForm } from '../../artwork-form';
 import { AdminCard } from '@/app/admin/_components/admin-ui';
 
 export default async function EditArtworkPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const user = await requireArtistActive();
   const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect('/login');
+  }
 
   const { data: artist } = await supabase
     .from('artists')

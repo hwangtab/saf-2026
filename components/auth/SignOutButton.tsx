@@ -28,6 +28,7 @@ export function SignOutButton() {
       toast.success('로그아웃되었습니다.');
       setIsSigningOut(false);
       router.replace('/');
+      router.refresh();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : '로그아웃 중 오류가 발생했습니다.');
       setIsSigningOut(false);

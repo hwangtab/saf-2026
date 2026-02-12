@@ -16,14 +16,25 @@ export async function requireAuth() {
 }
 
 export async function requireArtistActive() {
-  const user = await requireAuth();
   const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
 
-  const { data: profile } = await supabase
+  if (authError || !user) {
+    redirect('/login');
+  }
+
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('role, status')
     .eq('id', user.id)
-    .single();
+    .maybeSingle();
+
+  if (profileError) {
+    throw new Error('계정 정보를 확인하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+  }
 
   // Admin should stay in admin surface
   if (profile?.role === 'admin') {
@@ -57,14 +68,25 @@ export async function requireArtistActive() {
 }
 
 export async function requireAdmin() {
-  const user = await requireAuth();
   const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
 
-  const { data: profile } = await supabase
+  if (authError || !user) {
+    redirect('/login');
+  }
+
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('role')
     .eq('id', user.id)
-    .single();
+    .maybeSingle();
+
+  if (profileError) {
+    throw new Error('관리자 권한을 확인하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+  }
 
   if (!profile || profile.role !== 'admin') {
     redirect('/');

@@ -1,5 +1,5 @@
-import { requireArtistActive } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
+import { redirect } from 'next/navigation';
 import { ProfileForm } from './profile-form';
 import {
   AdminCard,
@@ -9,8 +9,14 @@ import {
 } from '@/app/admin/_components/admin-ui';
 
 export default async function ProfilePage() {
-  const user = await requireArtistActive();
   const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect('/login');
+  }
 
   // Fetch existing artist data
   const { data: artist } = await supabase

@@ -1,6 +1,5 @@
-import { requireArtistActive } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { ArtworkList } from './artwork-list';
 import Button from '@/components/ui/Button';
 import {
@@ -17,8 +16,13 @@ type ArtworksPageProps = {
 };
 
 export default async function ArtworksPage({ searchParams }: ArtworksPageProps) {
-  const user = await requireArtistActive();
   const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    redirect('/login');
+  }
   const flashMessage =
     searchParams?.result === 'updated'
       ? '작품이 수정되었습니다.'
