@@ -38,6 +38,13 @@ export function RevenueCard({ title, value, subtitle, trend }: RevenueCardProps)
     maximumFractionDigits: 0,
   }).format(value);
   const koreanFormatted = formatKoreanAmount(value);
+  const digitCount = formatted.replace(/[^\d]/g, '').length;
+  const valueSizeClass =
+    digitCount >= 10
+      ? 'text-[clamp(1.7rem,3.2vw,2.9rem)]'
+      : digitCount >= 8
+        ? 'text-[clamp(1.9rem,4vw,3rem)]'
+        : 'text-[clamp(2rem,6vw,3rem)]';
 
   const trendValue =
     trend && Number.isInteger(Math.abs(trend.value))
@@ -50,7 +57,9 @@ export function RevenueCard({ title, value, subtitle, trend }: RevenueCardProps)
     <AdminCard className="flex h-full flex-col justify-between p-6">
       <div>
         <p className="text-sm font-medium text-slate-500">{title}</p>
-        <p className="mt-2 whitespace-nowrap text-[clamp(2rem,6vw,3rem)] font-bold leading-none tracking-tight text-slate-900 tabular-nums">
+        <p
+          className={`mt-2 max-w-full overflow-hidden whitespace-nowrap font-bold leading-none tracking-tight text-slate-900 tabular-nums ${valueSizeClass}`}
+        >
           {formatted}
         </p>
         <p className="mt-1 text-xs font-medium text-slate-500">{koreanFormatted}</p>
