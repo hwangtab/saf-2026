@@ -14,6 +14,7 @@ import { MaterialBarChart } from '@/app/admin/_components/MaterialBarChart';
 import { TrendLineChart } from '@/app/admin/_components/TrendLineChart';
 import { RevenueTrendChart } from '@/app/admin/_components/RevenueTrendChart';
 import { DashboardPeriodPreference } from '@/app/admin/_components/DashboardPeriodPreference';
+import { DashboardPeriodTabs } from '@/app/admin/_components/DashboardPeriodTabs';
 
 const KRW_FORMATTER = new Intl.NumberFormat('ko-KR', {
   style: 'currency',
@@ -150,24 +151,7 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
             조회 구간: {stats.period.startDate} ~ {stats.period.endDate}
           </p>
         </AdminPageHeader>
-        <div className="flex flex-wrap gap-2">
-          {DASHBOARD_PERIOD_OPTIONS.map((option) => {
-            const isActive = option.key === selectedPeriod;
-            return (
-              <Link
-                key={option.key}
-                href={`/admin/dashboard?period=${option.key}`}
-                className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
-                  isActive
-                    ? 'border-indigo-600 bg-indigo-50 text-indigo-700'
-                    : 'border-slate-300 bg-white text-slate-600 hover:border-slate-400 hover:text-slate-800'
-                }`}
-              >
-                {option.label}
-              </Link>
-            );
-          })}
-        </div>
+        <DashboardPeriodTabs selectedPeriod={selectedPeriod} options={DASHBOARD_PERIOD_OPTIONS} />
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">

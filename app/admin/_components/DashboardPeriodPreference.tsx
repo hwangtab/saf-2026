@@ -33,6 +33,7 @@ export function DashboardPeriodPreference({ selectedPeriod }: DashboardPeriodPre
     const nextParams = new URLSearchParams(searchParamsString);
     nextParams.set('period', savedPeriod);
     router.replace(`${pathname}?${nextParams.toString()}`, { scroll: false });
+    router.refresh();
   }, [hasPeriodInQuery, pathname, router, searchParamsString, selectedPeriod]);
 
   return null;
