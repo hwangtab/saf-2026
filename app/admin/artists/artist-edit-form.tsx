@@ -65,7 +65,15 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
   const [nameKo, setNameKo] = useState(artist.name_ko || '');
   const [showErrors, setShowErrors] = useState(false);
 
+  // Normalize profiles: if it comes as array, take first or null
+  const linkedProfile = Array.isArray(artist.profiles)
+    ? artist.profiles[0] || null
+    : artist.profiles || null;
+
   const isEditing = !!artist.id;
+
+  // Debug logging
+  console.log('ArtistEditForm Render:', { artist, isEditing, linkedProfile });
 
   const handleSubmit = async (formData: FormData) => {
     setError(null);
@@ -228,13 +236,13 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
               {isLinking && <span className="ml-2 text-sm text-gray-500">처리 중...</span>}
             </h2>
 
-            {artist.profiles ? (
+            {linkedProfile ? (
               <div className="space-y-4">
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-green-900">{artist.profiles.name}</p>
-                      <p className="text-sm text-green-700">{artist.profiles.email}</p>
+                      <p className="text-sm font-medium text-green-900">{linkedProfile.name}</p>
+                      <p className="text-sm text-green-700">{linkedProfile.email}</p>
                     </div>
                     <Button
                       type="button"
