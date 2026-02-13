@@ -12,24 +12,12 @@ import {
 import { RevenueCard } from '@/app/admin/_components/RevenueCard';
 import { DashboardPeriodPreference } from '@/app/admin/_components/DashboardPeriodPreference';
 import { DashboardPeriodTabs } from '@/app/admin/_components/DashboardPeriodTabs';
-import nextDynamic from 'next/dynamic';
-
-const StatusDonutChart = nextDynamic(
-  () => import('@/app/admin/_components/StatusDonutChart').then((mod) => mod.StatusDonutChart),
-  { ssr: false }
-);
-const MaterialBarChart = nextDynamic(
-  () => import('@/app/admin/_components/MaterialBarChart').then((mod) => mod.MaterialBarChart),
-  { ssr: false }
-);
-const TrendLineChart = nextDynamic(
-  () => import('@/app/admin/_components/TrendLineChart').then((mod) => mod.TrendLineChart),
-  { ssr: false }
-);
-const RevenueTrendChart = nextDynamic(
-  () => import('@/app/admin/_components/RevenueTrendChart').then((mod) => mod.RevenueTrendChart),
-  { ssr: false }
-);
+import {
+  StatusDonutChart,
+  MaterialBarChart,
+  TrendLineChart,
+  RevenueTrendChart,
+} from '@/app/admin/_components/Charts';
 
 const KRW_FORMATTER = new Intl.NumberFormat('ko-KR', {
   style: 'currency',
