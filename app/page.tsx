@@ -107,7 +107,7 @@ export default async function Home() {
               href="/artworks"
               variant="accent"
               size="lg"
-              className="shadow-lg min-w-[200px] justify-center text-lg"
+              className="w-full sm:w-auto shadow-lg min-w-[200px] justify-center text-lg"
             >
               작품 보러가기
             </Button>
@@ -115,7 +115,7 @@ export default async function Home() {
               href="/archive"
               variant="outline"
               size="lg"
-              className="bg-white/10 backdrop-blur-sm border-white/50 text-white hover:bg-white hover:text-primary min-w-[160px] justify-center"
+              className="w-full sm:w-auto bg-white/10 backdrop-blur-sm border-white/50 text-white hover:bg-white hover:text-primary min-w-[160px] justify-center"
             >
               씨앗페 소개
             </Button>
