@@ -24,6 +24,8 @@ const ACTION_FILTER_OPTIONS = [
   { value: 'artist_created', label: '작가 등록(관리자)' },
   { value: 'artist_updated', label: '작가 수정(관리자)' },
   { value: 'artist_deleted', label: '작가 삭제(관리자)' },
+  { value: 'artist_linked_to_user', label: '작가-사용자 계정 연결(관리자)' },
+  { value: 'artist_unlinked_from_user', label: '작가-사용자 계정 연결 해제(관리자)' },
   { value: 'artist_profile_updated', label: '프로필 수정(아티스트)' },
   { value: 'artist_artwork_created', label: '작품 등록(아티스트)' },
   { value: 'artist_artwork_updated', label: '작품 수정(아티스트)' },

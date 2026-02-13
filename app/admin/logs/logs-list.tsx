@@ -42,6 +42,10 @@ function formatActionDescription(log: ActivityLogEntry): string {
       return `작가 등록: ${details?.name || log.target_id}`;
     case 'artist_deleted':
       return `작가 삭제: ${details?.name || log.target_id}`;
+    case 'artist_linked_to_user':
+      return `작가 계정 연결: ${details?.artist_name || log.target_id}`;
+    case 'artist_unlinked_from_user':
+      return `작가 계정 연결 해제: ${details?.artist_name || log.target_id}`;
     case 'artist_profile_updated':
       return `아티스트 프로필 수정: ${details?.name || log.target_id}`;
     case 'artist_profile_image_updated':
