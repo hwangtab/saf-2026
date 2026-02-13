@@ -2,7 +2,7 @@ import { memo } from 'react';
 import Link from 'next/link';
 import SafeImage from '@/components/common/SafeImage';
 import type { ArtworkCardData } from '@/types';
-import { cn, resolveArtworkImageUrl } from '@/lib/utils';
+import { cn, resolveOptimizedArtworkImageUrl } from '@/lib/utils';
 
 type ArtworkCardVariant = 'gallery' | 'slider';
 
@@ -25,7 +25,12 @@ const VARIANT_CONFIG = {
 } as const;
 
 const getHref = (artwork: ArtworkCardData) => `/artworks/${artwork.id}`;
-const getImageSrc = (artwork: ArtworkCardData) => resolveArtworkImageUrl(artwork.images[0]);
+const getImageSrc = (artwork: ArtworkCardData, variant: ArtworkCardVariant) =>
+  resolveOptimizedArtworkImageUrl(artwork.images[0], {
+    width: variant === 'slider' ? 400 : 960,
+    quality: 75,
+    format: 'webp',
+  });
 const getImageAlt = (artwork: ArtworkCardData) => `${artwork.title} - ${artwork.artist}`;
 
 function SoldBadge({ variant }: { variant: ArtworkCardVariant }) {
@@ -57,7 +62,7 @@ function ArtworkCard({ artwork, variant = 'gallery', className }: ArtworkCardPro
       >
         <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100 shadow-sm group-hover:shadow-md transition-shadow">
           <SafeImage
-            src={getImageSrc(artwork)}
+            src={getImageSrc(artwork, variant)}
             alt={getImageAlt(artwork)}
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -83,7 +88,7 @@ function ArtworkCard({ artwork, variant = 'gallery', className }: ArtworkCardPro
         <div className="relative w-full overflow-hidden aspect-[4/5]">
           <div className="absolute inset-0 shimmer-loading" />
           <SafeImage
-            src={getImageSrc(artwork)}
+            src={getImageSrc(artwork, variant)}
             alt={getImageAlt(artwork)}
             loading="lazy"
             fill

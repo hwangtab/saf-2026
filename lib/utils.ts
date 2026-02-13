@@ -42,6 +42,68 @@ export function resolveArtworkImageUrl(image: string): string {
   return `/images/artworks/${image}`;
 }
 
+type SupabaseImageResizeMode = 'cover' | 'contain' | 'fill';
+
+export interface SupabaseImageTransformOptions {
+  width?: number;
+  height?: number;
+  quality?: number;
+  format?: 'origin' | 'webp' | 'avif';
+  resize?: SupabaseImageResizeMode;
+}
+
+const SUPABASE_OBJECT_PUBLIC_PATH = '/storage/v1/object/public/';
+const SUPABASE_RENDER_PUBLIC_PATH = '/storage/v1/render/image/public/';
+
+const toPositiveInteger = (value: number | undefined): number | null => {
+  if (!Number.isFinite(value)) return null;
+  const rounded = Math.round(value as number);
+  return rounded > 0 ? rounded : null;
+};
+
+export function resolveOptimizedArtworkImageUrl(
+  image: string,
+  options: SupabaseImageTransformOptions = {}
+): string {
+  const resolved = resolveArtworkImageUrl(image);
+  if (!resolved.startsWith('http://') && !resolved.startsWith('https://')) {
+    return resolved;
+  }
+
+  let parsed: URL;
+  try {
+    parsed = new URL(resolved);
+  } catch {
+    return resolved;
+  }
+
+  const hasObjectPath = parsed.pathname.includes(SUPABASE_OBJECT_PUBLIC_PATH);
+  const hasRenderPath = parsed.pathname.includes(SUPABASE_RENDER_PUBLIC_PATH);
+
+  if (!hasObjectPath && !hasRenderPath) {
+    return resolved;
+  }
+
+  if (hasObjectPath) {
+    parsed.pathname = parsed.pathname.replace(
+      SUPABASE_OBJECT_PUBLIC_PATH,
+      SUPABASE_RENDER_PUBLIC_PATH
+    );
+  }
+
+  const width = toPositiveInteger(options.width);
+  const height = toPositiveInteger(options.height);
+  const quality = toPositiveInteger(options.quality);
+
+  if (width) parsed.searchParams.set('width', String(width));
+  if (height) parsed.searchParams.set('height', String(height));
+  if (quality) parsed.searchParams.set('quality', String(quality));
+  if (options.resize) parsed.searchParams.set('resize', options.resize);
+  if (options.format) parsed.searchParams.set('format', options.format);
+
+  return parsed.toString();
+}
+
 export function formatPriceForDisplay(priceValue: string | number | null | undefined): string {
   if (priceValue === null || priceValue === undefined) return '';
   const priceStr = String(priceValue).trim();
