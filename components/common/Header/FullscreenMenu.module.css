@@ -203,6 +203,9 @@
 
 /* 푸터 - 후원 버튼 영역 */
 .footer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
   padding: clamp(1rem, 2dvh, 1.5rem);
   /* 최소 16px, 화면 2%, 최대 24px */
   border-top: 1px solid #f0f0f0;
