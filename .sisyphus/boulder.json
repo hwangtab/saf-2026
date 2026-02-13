@@ -1,10 +1,6 @@
 {
-  "active_plan": ".sisyphus/plans/monthly-revenue.md",
-  "started_at": "2026-02-13T01:24:27.896Z",
-  "session_ids": ["ses_3ab73b468ffeJz4nHos0WV9ZMv"],
-  "plan_name": "monthly-revenue",
-  "status": "complete",
-  "completed_at": "2026-02-13T01:52:00Z",
-  "tasks_completed": "23/23",
-  "automated_verification": "passed"
+  "active_plan": ".sisyphus/plans/add-exhibitor-role.md",
+  "started_at": "2026-02-13T02:56:15.649Z",
+  "session_ids": ["ses_3ab19a41dffeNSyDfZJArgKyNs"],
+  "plan_name": "add-exhibitor-role"
 }
