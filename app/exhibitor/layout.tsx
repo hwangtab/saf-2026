@@ -1,50 +1,42 @@
 import Link from 'next/link';
 import { requireExhibitor } from '@/lib/auth/guards';
 import { SignOutButton } from '@/components/auth/SignOutButton';
+import { AdminBadge } from '@/app/admin/_components/admin-ui';
+import ExhibitorNav from './exhibitor-nav';
 
 export default async function ExhibitorLayout({ children }: { children: React.ReactNode }) {
   const user = await requireExhibitor();
 
   return (
-    <div className="flex min-h-screen flex-col md:flex-row bg-canvas">
-      <aside className="w-full md:w-64 bg-white border-r border-stone-200 flex-shrink-0">
-        <div className="p-6 border-b border-stone-100">
-          <Link href="/exhibitor" className="text-xl font-bold text-primary">
-            SAF Exhibitor
-          </Link>
-          <div className="mt-2 text-sm text-stone-500 truncate">{user.email}</div>
-        </div>
+    <div className="min-h-screen bg-[var(--admin-bg)]">
+      <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top,#e0e7ff_0%,#f8fafc_38%,#f1f5f9_100%)]" />
+      <nav className="fixed left-0 top-0 z-30 w-full border-b border-slate-200/90 bg-white/90 backdrop-blur">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 justify-between">
+            <div className="flex items-center">
+              <div className="flex shrink-0 items-center">
+                <Link href="/exhibitor" className="text-xl font-bold text-slate-900">
+                  SAF Exhibitor
+                </Link>
+              </div>
+              <ExhibitorNav />
+            </div>
 
-        <nav className="flex-1 p-4 space-y-1">
-          <Link
-            href="/exhibitor"
-            className="flex items-center px-4 py-3 text-stone-700 hover:bg-stone-50 rounded-lg transition-colors font-medium"
-          >
-            대시보드
-          </Link>
-          <Link
-            href="/exhibitor/artists"
-            className="flex items-center px-4 py-3 text-stone-700 hover:bg-stone-50 rounded-lg transition-colors font-medium"
-          >
-            작가 관리
-          </Link>
-          <Link
-            href="/exhibitor/artworks"
-            className="flex items-center px-4 py-3 text-stone-700 hover:bg-stone-50 rounded-lg transition-colors font-medium"
-          >
-            작품 관리
-          </Link>
-        </nav>
-
-        <div className="p-4 border-t border-stone-100">
-          <div className="px-4 py-2">
-            <SignOutButton />
+            <div className="flex items-center gap-2 sm:gap-3">
+              <AdminBadge tone="warning" className="hidden sm:inline-flex">
+                전시 파트너 모드
+              </AdminBadge>
+              <span className="hidden max-w-[220px] truncate text-sm text-slate-500 sm:inline">
+                {user.email}
+              </span>
+              <SignOutButton />
+            </div>
           </div>
         </div>
-      </aside>
+      </nav>
 
-      <main className="flex-1 p-6 md:p-10 overflow-y-auto">
-        <div className="max-w-5xl mx-auto">{children}</div>
+      <main className="mx-auto mt-16 max-w-7xl px-4 pb-10 pt-8 sm:px-6 lg:px-8 lg:pb-14">
+        {children}
       </main>
     </div>
   );

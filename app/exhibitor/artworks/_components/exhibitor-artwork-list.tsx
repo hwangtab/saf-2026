@@ -73,11 +73,31 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
             <h2 className="text-lg font-semibold text-gray-900">등록된 작품</h2>
             <AdminBadge tone="info">{filtered.length}개</AdminBadge>
           </div>
-          <div className="w-full sm:w-72">
+
+          <div className="relative max-w-sm w-full">
+            <label htmlFor="search-artworks" className="sr-only">
+              작품 검색
+            </label>
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+              <svg
+                className="h-5 w-5 text-gray-400"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
             <AdminInput
+              id="search-artworks"
               placeholder="작품명 또는 작가명 검색..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              className="h-10 border-0 py-2 pl-10"
             />
           </div>
         </AdminCardHeader>
@@ -163,28 +183,28 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-500">{artwork.price || '-'}</td>
                     <td className="px-6 py-4">
-                      <span
-                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                      <AdminBadge
+                        tone={
                           artwork.status === 'available'
-                            ? 'bg-green-100 text-green-800'
+                            ? 'success'
                             : artwork.status === 'reserved'
-                              ? 'bg-yellow-100 text-yellow-800'
-                              : 'bg-gray-100 text-gray-800'
-                        }`}
+                              ? 'warning'
+                              : 'default'
+                        }
                       >
                         {artwork.status === 'available'
                           ? '판매 중'
                           : artwork.status === 'reserved'
                             ? '예약됨'
                             : '판매 완료'}
-                      </span>
+                      </AdminBadge>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end gap-2">
                         <button
                           onClick={() => handleDelete(artwork.id)}
                           disabled={isDeleting === artwork.id}
-                          className="text-red-600 hover:text-red-900 disabled:opacity-50"
+                          className="rounded-md px-3 py-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
                         >
                           {isDeleting === artwork.id ? '삭제 중...' : '삭제'}
                         </button>

@@ -10,6 +10,7 @@ import {
 } from '@/app/actions/exhibitor-artists';
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
 import { useToast } from '@/lib/hooks/useToast';
+import { AdminCard } from '@/app/admin/_components/admin-ui';
 
 type Artist = {
   id: string;
@@ -111,7 +112,7 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
       )}
 
       {isEditing && artist.id ? (
-        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+        <AdminCard className="p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
             프로필 이미지 (선택)
             {savingImage && <span className="ml-2 text-sm text-gray-500">저장 중...</span>}
@@ -123,7 +124,7 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
             onUploadComplete={handleImageChange}
             maxFiles={1}
           />
-        </div>
+        </AdminCard>
       ) : (
         <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800">
           프로필 이미지는 선택 사항이며, 작가 정보를 먼저 저장한 뒤 필요할 때 등록할 수 있습니다.
@@ -135,7 +136,7 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
           e.preventDefault();
           void handleSubmit(new FormData(e.currentTarget));
         }}
-        className="space-y-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
+        className="space-y-6 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface)] p-6 shadow-sm"
       >
         <h2 className="text-lg font-semibold text-gray-900">
           {isEditing ? '작가 정보 수정' : '새 작가 등록'}

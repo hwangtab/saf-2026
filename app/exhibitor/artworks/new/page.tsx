@@ -7,7 +7,7 @@ import {
 } from '@/app/admin/_components/admin-ui';
 
 export const metadata = {
-  title: '새 작품 등록 | Exhibitor Dashboard',
+  title: '새 작품 등록 | 씨앗페 2026',
 };
 
 export default async function NewExhibitorArtworkPage() {

@@ -5,16 +5,17 @@ import { useEffect, useState } from 'react';
 import type { ArtworkCardData } from '@/types';
 import RelatedArtworksSlider from '@/components/features/RelatedArtworksSlider';
 
-// 슬라이더 제외 경로 (정확히 일치하는 경로만) - 홈(/)과 작품 목록(/artworks)에서는 표시하지 않음
 const EXCLUDE_SLIDER_PATHS = ['/', '/artworks'];
+const EXCLUDE_SLIDER_PREFIXES = ['/admin', '/dashboard', '/exhibitor', '/onboarding'];
 
 export default function FooterSlider() {
   const pathname = usePathname();
   const [artworks, setArtworks] = useState<ArtworkCardData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // /artworks 목록 페이지만 제외, /artworks/[id] 상세 페이지는 표시
-  const showSlider = !EXCLUDE_SLIDER_PATHS.includes(pathname);
+  const showSlider =
+    !EXCLUDE_SLIDER_PATHS.includes(pathname) &&
+    !EXCLUDE_SLIDER_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 
   useEffect(() => {
     if (!showSlider) return;

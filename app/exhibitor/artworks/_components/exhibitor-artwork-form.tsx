@@ -100,9 +100,9 @@ export function ExhibitorArtworkForm({ artwork = {}, artists }: ExhibitorArtwork
     <div className="space-y-6">
       {currentArtworkId ? (
         <AdminCard className="p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <h2 className="mb-4 text-lg font-semibold text-slate-900">
             작품 이미지
-            {savingImages && <span className="ml-2 text-sm text-gray-500">저장 중...</span>}
+            {savingImages && <span className="ml-2 text-sm text-slate-500">저장 중...</span>}
           </h2>
           <ImageUpload
             bucket="artworks"
@@ -141,12 +141,12 @@ export function ExhibitorArtworkForm({ artwork = {}, artists }: ExhibitorArtwork
             <AdminFieldLabel>
               작가 <span className="text-red-500">*</span>
             </AdminFieldLabel>
-            <input
+            <AdminInput
               type="text"
               value={artistQuery}
               onChange={(e) => setArtistQuery(e.target.value)}
               placeholder="작가명 검색..."
-              className="mb-2 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
+              className="mb-2"
             />
             <AdminSelect
               name="artist_id"

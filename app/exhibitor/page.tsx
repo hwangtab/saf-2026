@@ -1,6 +1,12 @@
 import { requireExhibitor } from '@/lib/auth/guards';
 import { getSupabaseArtistsByOwner } from '@/lib/supabase-data';
 import { supabase } from '@/lib/supabase';
+import {
+  AdminCard,
+  AdminPageDescription,
+  AdminPageHeader,
+  AdminPageTitle,
+} from '@/app/admin/_components/admin-ui';
 
 export default async function ExhibitorDashboard() {
   const user = await requireExhibitor();
@@ -19,23 +25,22 @@ export default async function ExhibitorDashboard() {
   }
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold text-stone-800 mb-8">대시보드</h1>
+    <div className="space-y-8">
+      <AdminPageHeader>
+        <AdminPageTitle>대시보드</AdminPageTitle>
+        <AdminPageDescription>현재 계정에서 관리 중인 작가와 작품 현황입니다.</AdminPageDescription>
+      </AdminPageHeader>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white p-6 rounded-xl border border-stone-200 shadow-sm">
-          <h2 className="text-sm font-medium text-stone-500 uppercase tracking-wide">
-            관리 중인 작가
-          </h2>
-          <p className="mt-2 text-4xl font-bold text-primary">{artists.length}</p>
-        </div>
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <AdminCard className="p-6">
+          <h2 className="text-sm font-medium text-slate-500">관리 중인 작가</h2>
+          <p className="mt-2 text-4xl font-bold tracking-tight text-slate-900">{artists.length}</p>
+        </AdminCard>
 
-        <div className="bg-white p-6 rounded-xl border border-stone-200 shadow-sm">
-          <h2 className="text-sm font-medium text-stone-500 uppercase tracking-wide">
-            등록된 작품
-          </h2>
-          <p className="mt-2 text-4xl font-bold text-accent">{artworkCount}</p>
-        </div>
+        <AdminCard className="p-6">
+          <h2 className="text-sm font-medium text-slate-500">등록된 작품</h2>
+          <p className="mt-2 text-4xl font-bold tracking-tight text-slate-900">{artworkCount}</p>
+        </AdminCard>
       </div>
     </div>
   );
