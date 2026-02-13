@@ -121,7 +121,7 @@
   - [ ] `types/index.ts` contains `'exhibitor'`
   - [ ] `types/index.ts` contains `owner_id`
 
-- [ ] 3. Implement Auth Guard for Exhibitor
+- [x] 3. Implement Auth Guard for Exhibitor
 
   **What to do**:
   - Update `lib/auth/guards.ts`:

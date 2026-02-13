@@ -26,3 +26,9 @@ Starting work on add-exhibitor-role plan.
 - UserRole: updated
 - owner_id added to ArtistData: yes
 - Type check: pass
+
+## 2026-02-13 12:26:39 Task 3: Auth Guard
+
+- requireExhibitor function: implemented
+- Pattern: followed existing guards
+- Type check: pass
