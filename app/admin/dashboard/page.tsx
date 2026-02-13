@@ -1,5 +1,4 @@
 import { getDashboardStats, type DashboardPeriodKey } from '@/app/actions/admin-dashboard';
-import { connection } from 'next/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -150,7 +149,6 @@ function formatComparedTo(comparedTo: string | null) {
 }
 
 export default async function AdminDashboardPage({ searchParams }: Props) {
-  await connection();
   const params = await searchParams;
   const currentYear = new Date().getFullYear();
   const dashboardPeriodOptions = buildDashboardPeriodOptions(currentYear);
@@ -164,7 +162,14 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
     redirect(`/admin/dashboard?period=${selectedPeriod}`);
   }
 
-  const stats = await getDashboardStats(selectedPeriod);
+  let stats;
+  try {
+    stats = await getDashboardStats(selectedPeriod);
+  } catch (error) {
+    console.error('Dashboard Stats Error:', error);
+    // Fallback or rethrow based on strategy. For now rethrow to show error page but with log.
+    throw error;
+  }
   const isYearOverYear = stats.period.key.startsWith('year_');
   const previousRevenueLabel = isYearOverYear ? '작년 매출' : '이전 기간 매출';
   const growthRateLabel = isYearOverYear ? '성장률 (YoY)' : '성장률 (이전 기간 대비)';
