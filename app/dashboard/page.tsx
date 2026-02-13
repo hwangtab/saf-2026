@@ -26,6 +26,10 @@ export default async function DashboardPage() {
     redirect('/admin/dashboard');
   }
 
+  if (profile?.role === 'exhibitor') {
+    redirect('/exhibitor');
+  }
+
   if (profile?.role === 'artist') {
     if (profile.status === 'active') {
       redirect('/dashboard/artworks');

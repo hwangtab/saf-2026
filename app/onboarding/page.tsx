@@ -9,14 +9,22 @@ export default async function OnboardingPage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('status')
+    .select('role, status')
     .eq('id', user.id)
     .single();
 
-  if (profile?.status === 'active') {
+  if (profile?.role === 'admin') {
+    redirect('/admin/dashboard');
+  }
+
+  if (profile?.role === 'exhibitor') {
+    redirect('/exhibitor');
+  }
+
+  if (profile?.role === 'artist' && profile?.status === 'active') {
     redirect('/dashboard/profile');
   }
-  if (profile?.status === 'suspended') {
+  if (profile?.role === 'artist' && profile?.status === 'suspended') {
     redirect('/dashboard/suspended');
   }
 

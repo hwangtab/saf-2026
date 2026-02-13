@@ -30,6 +30,10 @@ export async function GET(request: NextRequest) {
           return NextResponse.redirect(`${origin}/admin/dashboard`);
         }
 
+        if (profile?.role === 'exhibitor') {
+          return NextResponse.redirect(`${origin}/exhibitor`);
+        }
+
         if (profile?.role === 'artist') {
           if (profile.status === 'active') {
             return NextResponse.redirect(`${origin}/dashboard/artworks`);

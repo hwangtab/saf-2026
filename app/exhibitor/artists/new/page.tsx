@@ -1,9 +1,6 @@
-import { requireExhibitor } from '@/lib/auth/guards';
 import { ArtistForm } from '../_components/artist-form';
 
 export default async function NewArtistPage() {
-  await requireExhibitor();
-
   return (
     <div className="space-y-6">
       <div>

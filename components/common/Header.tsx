@@ -30,6 +30,7 @@ export default function Header() {
   if (
     pathname?.startsWith('/admin') ||
     pathname?.startsWith('/dashboard') ||
+    pathname?.startsWith('/exhibitor') ||
     pathname?.startsWith('/onboarding')
   ) {
     return null;

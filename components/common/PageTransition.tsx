@@ -13,7 +13,10 @@ import { useContext, useMemo } from 'react';
  */
 export default function PageTransition({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isProtectedSurface = pathname?.startsWith('/admin') || pathname?.startsWith('/dashboard');
+  const isProtectedSurface =
+    pathname?.startsWith('/admin') ||
+    pathname?.startsWith('/dashboard') ||
+    pathname?.startsWith('/exhibitor');
 
   if (isProtectedSurface) {
     return <>{children}</>;
