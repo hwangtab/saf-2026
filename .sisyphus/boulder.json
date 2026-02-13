@@ -2,5 +2,9 @@
   "active_plan": ".sisyphus/plans/add-exhibitor-role.md",
   "started_at": "2026-02-13T02:56:15.649Z",
   "session_ids": ["ses_3ab19a41dffeNSyDfZJArgKyNs"],
-  "plan_name": "add-exhibitor-role"
+  "plan_name": "add-exhibitor-role",
+  "status": "complete",
+  "completed_at": "2026-02-13T12:55:00Z",
+  "tasks_completed": "7/7",
+  "automated_verification": "passed"
 }

@@ -207,7 +207,7 @@
 
 ### Final Checklist
 
-- [ ] SQL migration file created
-- [ ] Types updated with `exhibitor`
-- [ ] Auth guard `requireExhibitor` implemented
-- [ ] Data fetching for owned artists implemented
+- [x] SQL migration file created
+- [x] Types updated with `exhibitor`
+- [x] Auth guard `requireExhibitor` implemented
+- [x] Data fetching for owned artists implemented
