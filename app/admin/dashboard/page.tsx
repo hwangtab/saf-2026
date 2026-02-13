@@ -24,12 +24,16 @@ const KRW_FORMATTER = new Intl.NumberFormat('ko-KR', {
 
 const NUMBER_FORMATTER = new Intl.NumberFormat('ko-KR');
 
+const currentYear = new Date().getFullYear();
 const DASHBOARD_PERIOD_OPTIONS: Array<{ key: DashboardPeriodKey; label: string }> = [
   { key: '7d', label: '최근 7일' },
   { key: '30d', label: '최근 30일' },
   { key: '90d', label: '최근 90일' },
   { key: '365d', label: '최근 1년' },
   { key: 'all', label: '전체 기간' },
+  { key: `year_${currentYear}` as DashboardPeriodKey, label: `${currentYear}년` },
+  { key: `year_${currentYear - 1}` as DashboardPeriodKey, label: `${currentYear - 1}년` },
+  { key: `year_${currentYear - 2}` as DashboardPeriodKey, label: `${currentYear - 2}년` },
 ];
 
 function isDashboardPeriodKey(value: string): value is DashboardPeriodKey {
@@ -237,6 +241,8 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
                 <tr>
                   <th className="px-4 py-3 text-left">구간</th>
                   <th className="px-4 py-3 text-right">매출</th>
+                  <th className="px-4 py-3 text-right">작년 매출</th>
+                  <th className="px-4 py-3 text-right">성장률 (YoY)</th>
                   <th className="px-4 py-3 text-right">판매 수</th>
                   <th className="px-4 py-3 text-right">평균판매가</th>
                 </tr>
@@ -249,6 +255,22 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
                     </td>
                     <td className="px-4 py-3 text-right font-medium text-slate-900">
                       {KRW_FORMATTER.format(bucket.revenue)}
+                    </td>
+                    <td className="px-4 py-3 text-right text-slate-500">
+                      {KRW_FORMATTER.format(bucket.previousRevenue)}
+                    </td>
+                    <td
+                      className={`px-4 py-3 text-right font-medium ${
+                        bucket.growthRate === null
+                          ? 'text-slate-500'
+                          : bucket.growthRate >= 0
+                            ? 'text-green-600'
+                            : 'text-red-600'
+                      }`}
+                    >
+                      {bucket.growthRate === null
+                        ? 'N/A'
+                        : `${bucket.growthRate >= 0 ? '+' : ''}${bucket.growthRate.toFixed(1)}%`}
                     </td>
                     <td className="px-4 py-3 text-right text-slate-700">
                       {NUMBER_FORMATTER.format(bucket.soldCount)}개

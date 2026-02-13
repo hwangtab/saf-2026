@@ -48,11 +48,11 @@ Enable admins to view and compare monthly revenue performance across specific ca
 
 ### Concrete Deliverables
 
-- [ ] Updated `app/actions/admin-dashboard.ts` supporting `year_YYYY` period keys.
-- [ ] Enhanced `DashboardStats` type with `previousRevenue` and `growthRate` per month.
-- [ ] Updated `app/admin/dashboard/page.tsx` with dynamic year tabs.
-- [ ] Updated `RevenueTrendChart` visualizing selected year's trend.
-- [ ] Updated Table view showing explicit months and YoY growth.
+- [x] Updated `app/actions/admin-dashboard.ts` supporting `year_YYYY` period keys.
+- [x] Enhanced `DashboardStats` type with `previousRevenue` and `growthRate` per month.
+- [x] Updated `app/admin/dashboard/page.tsx` with dynamic year tabs.
+- [x] Updated `RevenueTrendChart` visualizing selected year's trend.
+- [x] Updated Table view showing explicit months and YoY growth.
 
 ### Definition of Done
 
@@ -63,9 +63,9 @@ Enable admins to view and compare monthly revenue performance across specific ca
 
 ### Must Have
 
-- [ ] Last 3 years in selector (dynamic based on current year).
-- [ ] YoY Growth calculation: `((current - previous) / previous) * 100`.
-- [ ] "N/A" display for undefined growth (prev = 0).
+- [x] Last 3 years in selector (dynamic based on current year).
+- [x] YoY Growth calculation: `((current - previous) / previous) * 100`.
+- [x] "N/A" display for undefined growth (prev = 0).
 
 ### Must NOT Have (Guardrails)
 
@@ -187,7 +187,7 @@ Wave 2 (Frontend):
   - Verify `previousRevenue` is 0 if no prev data.
   - Verify `growthRate` calculation.
 
-- [ ] 2. Update Admin Dashboard UI (Selector, Table, Chart)
+- [x] 2. Update Admin Dashboard UI (Selector, Table, Chart)
 
   **What to do**:
   - Update `DASHBOARD_PERIOD_OPTIONS` in `page.tsx` (or move to shared const) to include dynamic years (Current Year, Last Year, 2 Years Ago).

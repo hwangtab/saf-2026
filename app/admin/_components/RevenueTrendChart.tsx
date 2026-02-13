@@ -50,6 +50,15 @@ function RevenueTooltip({ active, payload }: RevenueTooltipProps) {
         {point.startDate} ~ {point.endDate}
       </p>
       <p className="mt-1 text-slate-600">매출: {KRW_FORMATTER.format(point.revenue)}</p>
+      {point.previousRevenue !== undefined && (
+        <p className="text-slate-600">작년 매출: {KRW_FORMATTER.format(point.previousRevenue)}</p>
+      )}
+      {point.growthRate !== undefined && point.growthRate !== null && (
+        <p className={point.growthRate >= 0 ? 'text-green-600' : 'text-red-600'}>
+          성장률: {point.growthRate >= 0 ? '+' : ''}
+          {point.growthRate.toFixed(1)}%
+        </p>
+      )}
       <p className="text-slate-600">판매 작품: {NUMBER_FORMATTER.format(point.soldCount)}개</p>
       <p className="text-slate-600">평균판매가: {KRW_FORMATTER.format(point.averagePrice)}</p>
     </div>
