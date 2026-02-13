@@ -56,10 +56,10 @@ Enable admins to view and compare monthly revenue performance across specific ca
 
 ### Definition of Done
 
-- [ ] Admin can select "2025", "2024" from tabs.
-- [ ] Selecting a year shows Jan-Dec breakdown in table.
-- [ ] Table shows "Revenue", "Prev Year Revenue", "YoY Growth", "Sold Count", "Avg Price".
-- [ ] Chart displays data for the selected calendar year.
+- [x] Admin can select "2025", "2024" from tabs.
+- [x] Selecting a year shows Jan-Dec breakdown in table.
+- [x] Table shows "Revenue", "Prev Year Revenue", "YoY Growth", "Sold Count", "Avg Price".
+- [x] Chart displays data for the selected calendar year.
 
 ### Must Have
 
@@ -69,11 +69,11 @@ Enable admins to view and compare monthly revenue performance across specific ca
 
 ### Must NOT Have (Guardrails)
 
-- [ ] No export to CSV/Excel.
-- [ ] No new API endpoints (extend existing action).
-- [ ] No filtering by product/category.
-- [ ] No "All Time" aggregation view for this specific feature.
-- [ ] No clickable drill-down in table.
+- [x] No export to CSV/Excel.
+- [x] No new API endpoints (extend existing action).
+- [x] No filtering by product/category.
+- [x] No "All Time" aggregation view for this specific feature.
+- [x] No clickable drill-down in table.
 
 ---
 
@@ -177,10 +177,10 @@ Wave 2 (Frontend):
   - `app/actions/admin-dashboard.ts:buildRevenueTimeSeries` - Bucket logic.
 
   **Acceptance Criteria**:
-  - [ ] `getDashboardStats('year_2025')` returns 12 monthly buckets.
-  - [ ] Each bucket has `previousRevenue` populated from 2024 data (if exists).
-  - [ ] `growthRate` is calculated correctly (null if prev=0).
-  - [ ] Existing periods ('30d') still work without regression.
+  - [x] `getDashboardStats('year_2025')` returns 12 monthly buckets.
+  - [x] Each bucket has `previousRevenue` populated from 2024 data (if exists).
+  - [x] `growthRate` is calculated correctly (null if prev=0).
+  - [x] Existing periods ('30d') still work without regression.
 
   **Agent-Executed QA Scenarios**:
   - Verify API response structure for 'year_2025'.
@@ -213,10 +213,10 @@ Wave 2 (Frontend):
   - `app/admin/_components/DashboardPeriodTabs.tsx` - Tabs.
 
   **Acceptance Criteria**:
-  - [ ] Year tabs (e.g., 2026, 2025, 2024) are visible and clickable.
-  - [ ] Table shows "Prev Revenue" and "Growth" columns when year is selected.
-  - [ ] "N/A" displayed for null growth rate.
-  - [ ] Chart renders 12 months for selected year.
+  - [x] Year tabs (e.g., 2026, 2025, 2024) are visible and clickable.
+  - [x] Table shows "Prev Revenue" and "Growth" columns when year is selected.
+  - [x] "N/A" displayed for null growth rate.
+  - [x] Chart renders 12 months for selected year.
 
   **Agent-Executed QA Scenarios**:
   - Verify Table columns presence.
@@ -229,7 +229,7 @@ Wave 2 (Frontend):
 
 ### Final Checklist
 
-- [ ] Can select "2025" and see Jan-Dec revenue.
-- [ ] Table shows YoY growth percentages.
-- [ ] "N/A" appears for months with 0 previous revenue.
-- [ ] Existing "Last 30 Days" view still works perfectly.
+- [x] Can select "2025" and see Jan-Dec revenue.
+- [x] Table shows YoY growth percentages.
+- [x] "N/A" appears for months with 0 previous revenue.
+- [x] Existing "Last 30 Days" view still works perfectly.
