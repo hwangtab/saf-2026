@@ -40,6 +40,20 @@ type ArtistEditFormProps = {
   returnTo?: string;
 };
 
+// Helper to mask email for privacy
+function maskEmail(email: string | null) {
+  if (!email) return '';
+  const [local, domain] = email.split('@');
+  if (!local || !domain) return email;
+
+  // Show first 2 chars (or less if short), mask the rest of local part
+  const visibleLength = Math.min(2, Math.floor(local.length / 2));
+  const maskedLocal =
+    local.substring(0, visibleLength) + '*'.repeat(Math.max(0, local.length - visibleLength));
+
+  return `${maskedLocal}@${domain}`;
+}
+
 export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
   const router = useRouter();
   const toast = useToast();
@@ -272,7 +286,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-green-900">{linkedProfile.name}</p>
-                      <p className="text-sm text-green-700">{linkedProfile.email}</p>
+                      <p className="text-sm text-green-700">{maskEmail(linkedProfile.email)}</p>
                     </div>
                     <Button
                       type="button"
@@ -321,7 +335,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
                       >
                         <div className="min-w-0">
                           <p className="text-sm font-medium text-slate-900 truncate">{user.name}</p>
-                          <p className="text-xs text-slate-500 truncate">{user.email}</p>
+                          <p className="text-xs text-slate-500 truncate">{maskEmail(user.email)}</p>
                         </div>
                         <Button
                           type="button"
@@ -371,7 +385,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
           selectedUserForLink
             ? `'${selectedUserForLink.name}' 사용자를 이 작가 프로필에 연결하시겠습니까?\n\n` +
               `수행되는 작업:\n` +
-              `1. 작가 프로필에 사용자 계정 ID(${selectedUserForLink.email})를 등록합니다.\n` +
+              `1. 작가 프로필에 사용자 계정 ID(${maskEmail(selectedUserForLink.email)})를 등록합니다.\n` +
               `2. 해당 사용자의 권한을 'Artist'로 변경합니다.\n` +
               `3. 해당 사용자의 계정 상태를 'Active'로 변경합니다.`
             : ''
