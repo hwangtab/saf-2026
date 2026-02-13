@@ -33,10 +33,10 @@ function buildDashboardPeriodOptions(
     { key: '30d', label: '최근 30일' },
     { key: '90d', label: '최근 90일' },
     { key: '365d', label: '최근 1년' },
-    { key: 'all', label: '전체 기간' },
     { key: `year_${currentYear}` as DashboardPeriodKey, label: `${currentYear}년` },
     { key: `year_${currentYear - 1}` as DashboardPeriodKey, label: `${currentYear - 1}년` },
     { key: `year_${currentYear - 2}` as DashboardPeriodKey, label: `${currentYear - 2}년` },
+    { key: 'all', label: '전체 기간' },
   ];
 }
 
