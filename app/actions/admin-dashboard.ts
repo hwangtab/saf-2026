@@ -450,11 +450,11 @@ function buildRevenueTimeSeries(
     });
 }
 
-async function computeDashboardStats(period: DashboardPeriodKey = '30d'): Promise<DashboardStats> {
+async function computeDashboardStats(period: DashboardPeriodKey = '7d'): Promise<DashboardStats> {
   const supabase = await createSupabaseAdminOrServerClient();
   const now = new Date();
   const periodKey: DashboardPeriodKey =
-    isDashboardPeriodKey(period) || isAllowedYearPeriod(period, now) ? period : '30d';
+    isDashboardPeriodKey(period) || isAllowedYearPeriod(period, now) ? period : '7d';
 
   const [
     totalArtistsResult,
@@ -837,7 +837,7 @@ async function computeDashboardStats(period: DashboardPeriodKey = '30d'): Promis
 }
 
 export async function getDashboardStats(
-  period: DashboardPeriodKey = '30d'
+  period: DashboardPeriodKey = '7d'
 ): Promise<DashboardStats> {
   await requireAdmin();
   return computeDashboardStats(period);
