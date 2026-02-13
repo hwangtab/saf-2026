@@ -169,8 +169,20 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
     stats = await getDashboardStats(selectedPeriod);
   } catch (error) {
     console.error('Dashboard Stats Error:', error);
-    // Fallback or rethrow based on strategy. For now rethrow to show error page but with log.
-    throw error;
+    return (
+      <div className="p-8">
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+          <h2 className="text-lg font-semibold text-red-800">대시보드 로딩 오류</h2>
+          <p className="mt-2 text-sm text-red-600">
+            데이터를 불러오는 중 문제가 발생했습니다. (Error:{' '}
+            {error instanceof Error ? error.message : String(error)})
+          </p>
+          <pre className="mt-4 overflow-auto rounded bg-red-100 p-4 text-xs">
+            {JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}
+          </pre>
+        </div>
+      </div>
+    );
   }
   const isYearOverYear = stats.period.key.startsWith('year_');
   const previousRevenueLabel = isYearOverYear ? '작년 매출' : '이전 기간 매출';

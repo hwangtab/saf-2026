@@ -68,7 +68,7 @@ export function useKakaoShareSDK() {
 
     const script = document.createElement('script');
     script.src = 'https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js';
-    script.integrity = 'sha384-TiCUE00h649Pfg779juy6Wt6GNau90fB44K9LYLYi76V4G6Gzbw2P7fGqfX4n4W6';
+    script.integrity = 'sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4';
     script.crossOrigin = 'anonymous';
     script.async = true;
 
