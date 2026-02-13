@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 import { logAdminAction } from './admin-logs';
-import { getString, getStoragePathsForRemoval, validateBatchSize } from '@/lib/utils/form-helpers';
+import { getString, validateBatchSize } from '@/lib/utils/form-helpers';
 
 export async function deleteAdminArtwork(id: string) {
   const admin = await requireAdmin();
@@ -12,18 +12,14 @@ export async function deleteAdminArtwork(id: string) {
 
   const { data: artwork } = await supabase
     .from('artworks')
-    .select('title, images, artist_id')
+    .select(
+      'id, title, description, size, material, year, edition, price, status, sold_at, is_hidden, images, shop_url, artist_id, created_at, updated_at'
+    )
     .eq('id', id)
     .single();
 
   const { error } = await supabase.from('artworks').delete().eq('id', id);
   if (error) throw error;
-
-  const paths = getStoragePathsForRemoval(artwork?.images || [], 'artworks');
-
-  if (paths.length > 0) {
-    await supabase.storage.from('artworks').remove(paths);
-  }
 
   revalidatePath('/artworks');
   revalidatePath('/');
@@ -44,8 +40,15 @@ export async function deleteAdminArtwork(id: string) {
     id,
     {
       title: artwork?.title || 'Unknown',
+      storage_cleanup_deferred: true,
     },
-    admin.id
+    admin.id,
+    {
+      summary: `작품 삭제: ${artwork?.title || id}`,
+      beforeSnapshot: artwork || null,
+      afterSnapshot: null,
+      reversible: true,
+    }
   );
 }
 
@@ -376,21 +379,16 @@ export async function batchDeleteArtworks(ids: string[]) {
   const admin = await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
 
-  // Get all artworks for cleanup
-  const { data: artworks } = await supabase.from('artworks').select('id, images').in('id', ids);
+  // Keep full snapshots so deleted rows can be restored from activity logs.
+  const { data: artworks } = await supabase
+    .from('artworks')
+    .select(
+      'id, title, description, size, material, year, edition, price, status, sold_at, is_hidden, images, shop_url, artist_id, created_at, updated_at'
+    )
+    .in('id', ids);
 
   const { error } = await supabase.from('artworks').delete().in('id', ids);
   if (error) throw error;
-
-  // Clean up images from storage
-  const paths = getStoragePathsForRemoval(
-    (artworks || []).flatMap((artwork: any) => artwork.images || []),
-    'artworks'
-  );
-
-  if (paths.length > 0) {
-    await supabase.storage.from('artworks').remove(paths);
-  }
 
   revalidatePath('/artworks');
   revalidatePath('/');
@@ -402,8 +400,15 @@ export async function batchDeleteArtworks(ids: string[]) {
     ids.join(','),
     {
       count: ids.length,
+      storage_cleanup_deferred: true,
     },
-    admin.id
+    admin.id,
+    {
+      summary: `작품 일괄 삭제: ${ids.length}건`,
+      beforeSnapshot: { items: artworks || [] },
+      afterSnapshot: null,
+      reversible: true,
+    }
   );
 
   return { success: true, count: ids.length };

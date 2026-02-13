@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 import { logAdminAction } from './admin-logs';
-import { getString, getStoragePathFromPublicUrl } from '@/lib/utils/form-helpers';
+import { getString } from '@/lib/utils/form-helpers';
 
 function normalizeEmail(value: string | null | undefined): string | null {
   const trimmed = (value || '').trim();
@@ -199,10 +199,12 @@ export async function deleteArtist(id: string) {
   const admin = await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
 
-  // Get artist info for cleanup
+  // Keep full snapshot so deleted row can be restored from activity logs.
   const { data: artist } = await supabase
     .from('artists')
-    .select('profile_image, name_ko')
+    .select(
+      'id, user_id, owner_id, name_ko, name_en, bio, history, profile_image, contact_phone, contact_email, instagram, homepage, created_at, updated_at'
+    )
     .eq('id', id)
     .single();
 
@@ -221,14 +223,6 @@ export async function deleteArtist(id: string) {
   const { error } = await supabase.from('artists').delete().eq('id', id);
   if (error) throw error;
 
-  // Clean up profile image from storage
-  if (artist?.profile_image) {
-    const path = getStoragePathFromPublicUrl(artist.profile_image, 'profiles');
-    if (path) {
-      await supabase.storage.from('profiles').remove([path]);
-    }
-  }
-
   revalidatePath('/artworks');
   revalidatePath('/admin/artists');
   if (artist?.name_ko) {
@@ -239,8 +233,17 @@ export async function deleteArtist(id: string) {
     'artist_deleted',
     'artist',
     id,
-    { name: artist?.name_ko || 'Unknown' },
-    admin.id
+    {
+      name: artist?.name_ko || 'Unknown',
+      storage_cleanup_deferred: true,
+    },
+    admin.id,
+    {
+      summary: `작가 삭제: ${artist?.name_ko || id}`,
+      beforeSnapshot: artist || null,
+      afterSnapshot: null,
+      reversible: true,
+    }
   );
 
   return { success: true };

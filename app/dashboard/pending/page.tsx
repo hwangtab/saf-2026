@@ -15,7 +15,7 @@ export default async function PendingPage() {
     .single();
 
   if (profile?.role === 'admin') {
-    redirect('/admin/dashboard?period=7d');
+    redirect('/admin/dashboard');
   }
 
   if (profile?.role !== 'artist') {

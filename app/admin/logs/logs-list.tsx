@@ -26,8 +26,11 @@ function formatActionDescription(log: ActivityLogEntry): string {
       return `사용자 거절: ${details?.user_name || log.target_id}`;
     case 'user_reactivated':
       return `사용자 재활성화: ${details?.user_name || log.target_id}`;
-    case 'user_role_changed':
-      return `권한 변경: ${details?.user_name || ''} → ${details?.to}`;
+    case 'user_role_changed': {
+      const from = typeof details?.from === 'string' ? details.from : null;
+      const to = typeof details?.to === 'string' ? details.to : null;
+      return `권한 변경: ${details?.user_name || log.target_id}${from ? ` (${from} → ${to || '-'})` : ` → ${to || '-'}`}`;
+    }
     case 'artwork_updated':
       return `작품 수정: ${details?.title || log.target_id}`;
     case 'artwork_created':
@@ -58,6 +61,8 @@ function formatActionDescription(log: ActivityLogEntry): string {
       return `아티스트 작품 삭제: ${details?.title || log.target_id}`;
     case 'revert_executed':
       return `복구 실행: 로그 ${details?.reverted_log_id || '-'}`;
+    case 'trash_purged':
+      return `휴지통 영구 삭제: 로그 ${details?.purged_log_id || '-'}`;
     case 'content_created':
       return `콘텐츠 생성: ${log.target_type} - ${details?.title || log.target_id}`;
     case 'content_updated':
@@ -599,7 +604,7 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                           <button
                             onClick={() => setRevertTargetId(log.id)}
                             className="rounded-md border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800 hover:bg-amber-100"
-                            title="작품/작가 수정 로그에서만 복구할 수 있으며, 이후 추가 변경이 있으면 복구가 중단됩니다."
+                            title="삭제/수정/권한 변경 로그를 복구할 수 있으며, 이후 추가 변경이 있으면 복구가 중단될 수 있습니다."
                           >
                             복구
                           </button>

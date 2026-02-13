@@ -159,7 +159,7 @@ export async function promoteUserToArtistWithLink({
   artistId,
 }: PromoteUserToArtistParams): Promise<AdminActionState> {
   try {
-    await requireAdmin();
+    const adminUser = await requireAdmin();
     const supabase = await createSupabaseAdminOrServerClient();
 
     if (!userId) {
@@ -172,7 +172,7 @@ export async function promoteUserToArtistWithLink({
 
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('id, name, email')
+      .select('id, name, email, role, status, updated_at')
       .eq('id', userId)
       .single();
 
@@ -354,10 +354,38 @@ export async function promoteUserToArtistWithLink({
       revalidatePath(`/admin/artists/${linkedArtistId}`);
     }
 
-    await logAdminAction('user_role_changed', 'user', userId, {
-      to: 'artist',
-      user_name: profileName,
-    });
+    const { data: updatedProfile, error: updatedProfileError } = await supabase
+      .from('profiles')
+      .select('id, role, status, updated_at')
+      .eq('id', userId)
+      .single();
+
+    if (updatedProfileError) throw updatedProfileError;
+
+    await logAdminAction(
+      'user_role_changed',
+      'user',
+      userId,
+      {
+        from: profile?.role || null,
+        to: 'artist',
+        user_name: profileName,
+      },
+      adminUser.id,
+      {
+        summary: `${profileName} 권한 변경: ${profile?.role || 'unknown'} → artist`,
+        beforeSnapshot: profile
+          ? {
+              id: profile.id,
+              role: profile.role,
+              status: profile.status,
+              updated_at: profile.updated_at,
+            }
+          : null,
+        afterSnapshot: updatedProfile || null,
+        reversible: true,
+      }
+    );
 
     if (linkedArtistId) {
       await logAdminAction('artist_linked_to_user', 'artist', linkedArtistId, {
@@ -390,8 +418,16 @@ export async function promoteUserToArtistWithLink({
 
 export async function approveUser(userId: string): Promise<AdminActionState> {
   try {
-    await requireAdmin();
+    const adminUser = await requireAdmin();
     const supabase = await createSupabaseAdminOrServerClient();
+
+    const { data: beforeProfile, error: beforeProfileError } = await supabase
+      .from('profiles')
+      .select('id, name, email, role, status, updated_at')
+      .eq('id', userId)
+      .single();
+
+    if (beforeProfileError) throw beforeProfileError;
 
     const { data: application } = await supabase
       .from('artist_applications')
@@ -412,21 +448,14 @@ export async function approveUser(userId: string): Promise<AdminActionState> {
 
     let createdArtistId: string | null = null;
     if (!existingArtist) {
-      // Get profile + application info to populate initial artist data
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('name, email')
-        .eq('id', userId)
-        .single();
-
-      const fallbackEmail = normalizeEmail(profile?.email || null);
+      const fallbackEmail = normalizeEmail(beforeProfile?.email || null);
       const candidateEmail = parsedContact.contactEmail || fallbackEmail;
 
       const { data: createdArtist, error: artistError } = await supabase
         .from('artists')
         .insert({
           user_id: userId,
-          name_ko: application?.artist_name || profile?.name || 'New Artist',
+          name_ko: application?.artist_name || beforeProfile?.name || 'New Artist',
           bio: application?.bio || null,
           contact_phone: parsedContact.contactPhone || null,
           contact_email: candidateEmail || null,
@@ -439,12 +468,7 @@ export async function approveUser(userId: string): Promise<AdminActionState> {
         createdArtistId = createdArtist?.id || null;
       }
     } else {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('email')
-        .eq('id', userId)
-        .maybeSingle();
-      const fallbackEmail = normalizeEmail(profile?.email || null);
+      const fallbackEmail = normalizeEmail(beforeProfile?.email || null);
       const candidateEmail = parsedContact.contactEmail || fallbackEmail;
       const artistContactPatch: { contact_phone?: string; contact_email?: string } = {};
 
@@ -464,10 +488,12 @@ export async function approveUser(userId: string): Promise<AdminActionState> {
     }
 
     // 2. Update Profile to active and role artist
-    const { error: profileError } = await supabase
+    const { data: afterProfile, error: profileError } = await supabase
       .from('profiles')
       .update({ status: 'active', role: 'artist' })
-      .eq('id', userId);
+      .eq('id', userId)
+      .select('id, role, status, updated_at')
+      .single();
 
     if (profileError) {
       if (createdArtistId) {
@@ -478,9 +504,30 @@ export async function approveUser(userId: string): Promise<AdminActionState> {
 
     revalidatePath('/admin/users');
 
-    await logAdminAction('user_approved', 'user', userId, {
-      user_name: application?.artist_name || 'Unknown',
-    });
+    await logAdminAction(
+      'user_approved',
+      'user',
+      userId,
+      {
+        from: beforeProfile?.role || null,
+        to: 'artist',
+        user_name: application?.artist_name || beforeProfile?.name || 'Unknown',
+      },
+      adminUser.id,
+      {
+        summary: `사용자 승인: ${application?.artist_name || beforeProfile?.name || userId}`,
+        beforeSnapshot: beforeProfile
+          ? {
+              id: beforeProfile.id,
+              role: beforeProfile.role,
+              status: beforeProfile.status,
+              updated_at: beforeProfile.updated_at,
+            }
+          : null,
+        afterSnapshot: afterProfile || null,
+        reversible: true,
+      }
+    );
 
     return { message: '사용자가 승인되었습니다.', error: false };
   } catch (error: any) {
@@ -490,23 +537,54 @@ export async function approveUser(userId: string): Promise<AdminActionState> {
 
 export async function rejectUser(userId: string): Promise<AdminActionState> {
   try {
-    await requireAdmin();
+    const adminUser = await requireAdmin();
     const supabase = await createSupabaseAdminOrServerClient();
+
+    const { data: beforeProfile, error: beforeProfileError } = await supabase
+      .from('profiles')
+      .select('id, name, role, status, updated_at')
+      .eq('id', userId)
+      .single();
+
+    if (beforeProfileError) throw beforeProfileError;
 
     // Update status to suspended or just delete?
     // Let's set to suspended for now so we have a record, or delete if it's spam.
     // User requested "Approve/Reject". Reject usually means denial.
     // Let's set status to 'suspended' effectively blocking them.
-    const { error } = await supabase
+    const { data: afterProfile, error } = await supabase
       .from('profiles')
       .update({ status: 'suspended' })
-      .eq('id', userId);
+      .eq('id', userId)
+      .select('id, role, status, updated_at')
+      .single();
 
     if (error) throw error;
 
     revalidatePath('/admin/users');
 
-    await logAdminAction('user_rejected', 'user', userId);
+    await logAdminAction(
+      'user_rejected',
+      'user',
+      userId,
+      {
+        user_name: beforeProfile?.name || userId,
+      },
+      adminUser.id,
+      {
+        summary: `사용자 거절: ${beforeProfile?.name || userId}`,
+        beforeSnapshot: beforeProfile
+          ? {
+              id: beforeProfile.id,
+              role: beforeProfile.role,
+              status: beforeProfile.status,
+              updated_at: beforeProfile.updated_at,
+            }
+          : null,
+        afterSnapshot: afterProfile || null,
+        reversible: true,
+      }
+    );
 
     return { message: '사용자가 거절(차단)되었습니다.', error: false };
   } catch (error: any) {
@@ -516,16 +594,50 @@ export async function rejectUser(userId: string): Promise<AdminActionState> {
 
 export async function reactivateUser(userId: string): Promise<AdminActionState> {
   try {
-    await requireAdmin();
+    const adminUser = await requireAdmin();
     const supabase = await createSupabaseAdminOrServerClient();
 
-    const { error } = await supabase.from('profiles').update({ status: 'active' }).eq('id', userId);
+    const { data: beforeProfile, error: beforeProfileError } = await supabase
+      .from('profiles')
+      .select('id, name, role, status, updated_at')
+      .eq('id', userId)
+      .single();
+
+    if (beforeProfileError) throw beforeProfileError;
+
+    const { data: afterProfile, error } = await supabase
+      .from('profiles')
+      .update({ status: 'active' })
+      .eq('id', userId)
+      .select('id, role, status, updated_at')
+      .single();
 
     if (error) throw error;
 
     revalidatePath('/admin/users');
 
-    await logAdminAction('user_reactivated', 'user', userId);
+    await logAdminAction(
+      'user_reactivated',
+      'user',
+      userId,
+      {
+        user_name: beforeProfile?.name || userId,
+      },
+      adminUser.id,
+      {
+        summary: `사용자 재활성화: ${beforeProfile?.name || userId}`,
+        beforeSnapshot: beforeProfile
+          ? {
+              id: beforeProfile.id,
+              role: beforeProfile.role,
+              status: beforeProfile.status,
+              updated_at: beforeProfile.updated_at,
+            }
+          : null,
+        afterSnapshot: afterProfile || null,
+        reversible: true,
+      }
+    );
 
     return { message: '사용자가 다시 활성화되었습니다.', error: false };
   } catch (error: any) {
@@ -551,7 +663,7 @@ export async function updateUserRole(
     const supabase = await createSupabaseAdminOrServerClient();
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('name, email')
+      .select('id, name, email, role, status, updated_at')
       .eq('id', userId)
       .single();
 
@@ -638,7 +750,12 @@ export async function updateUserRole(
       }
     }
 
-    const { error } = await supabase.from('profiles').update(updates).eq('id', userId);
+    const { data: updatedProfile, error } = await supabase
+      .from('profiles')
+      .update(updates)
+      .eq('id', userId)
+      .select('id, role, status, updated_at')
+      .single();
 
     if (error) {
       if (createdArtistId) {
@@ -649,10 +766,30 @@ export async function updateUserRole(
 
     revalidatePath('/admin/users');
 
-    await logAdminAction('user_role_changed', 'user', userId, {
-      to: role,
-      user_name: profile?.name || 'Unknown',
-    });
+    await logAdminAction(
+      'user_role_changed',
+      'user',
+      userId,
+      {
+        from: profile?.role || null,
+        to: role,
+        user_name: profile?.name || 'Unknown',
+      },
+      adminUser.id,
+      {
+        summary: `권한 변경: ${profile?.name || userId} (${profile?.role || 'unknown'} → ${role})`,
+        beforeSnapshot: profile
+          ? {
+              id: profile.id,
+              role: profile.role,
+              status: profile.status,
+              updated_at: profile.updated_at,
+            }
+          : null,
+        afterSnapshot: updatedProfile || null,
+        reversible: true,
+      }
+    );
 
     return { message: '권한이 변경되었습니다.', error: false };
   } catch (error: any) {

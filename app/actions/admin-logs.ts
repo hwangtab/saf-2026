@@ -1,7 +1,9 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient, createSupabaseServerClient } from '@/lib/auth/server';
+import { getStoragePathFromPublicUrl, getStoragePathsForRemoval } from '@/lib/utils/form-helpers';
 
 export type ActivityLogEntry = {
   id: string;
@@ -21,6 +23,10 @@ export type ActivityLogEntry = {
   reverted_at: string | null;
   revert_reason: string | null;
   reverted_log_id: string | null;
+  trash_expires_at: string | null;
+  purged_at: string | null;
+  purged_by: string | null;
+  purge_note: string | null;
   created_at: string;
 };
 
@@ -105,13 +111,35 @@ const ARTWORK_REVERT_KEYS = [
   'edition',
   'price',
   'status',
+  'sold_at',
   'is_hidden',
   'images',
   'shop_url',
   'artist_id',
 ] as const;
 
+const ARTWORK_RESTORE_KEYS = [
+  'id',
+  'artist_id',
+  'title',
+  'description',
+  'size',
+  'material',
+  'year',
+  'edition',
+  'price',
+  'status',
+  'sold_at',
+  'is_hidden',
+  'images',
+  'shop_url',
+  'created_at',
+  'updated_at',
+] as const;
+
 const ARTIST_REVERT_KEYS = [
+  'user_id',
+  'owner_id',
   'name_ko',
   'name_en',
   'bio',
@@ -122,6 +150,40 @@ const ARTIST_REVERT_KEYS = [
   'instagram',
   'homepage',
 ] as const;
+
+const ARTIST_RESTORE_KEYS = [
+  'id',
+  'user_id',
+  'owner_id',
+  'name_ko',
+  'name_en',
+  'bio',
+  'history',
+  'profile_image',
+  'contact_phone',
+  'contact_email',
+  'instagram',
+  'homepage',
+  'created_at',
+  'updated_at',
+] as const;
+
+const USER_REVERT_KEYS = ['role', 'status'] as const;
+
+const ARTWORK_DELETION_ACTIONS = new Set([
+  'artwork_deleted',
+  'artist_artwork_deleted',
+  'batch_artwork_deleted',
+]);
+const ARTIST_DELETION_ACTIONS = new Set(['artist_deleted']);
+const TRASH_RETENTION_DAYS = 30;
+const TRASHABLE_DELETE_ACTIONS = new Set([
+  'artwork_deleted',
+  'artist_deleted',
+  'artist_artwork_deleted',
+  'batch_artwork_deleted',
+]);
+const TRASHABLE_DELETE_ACTION_LIST = Array.from(TRASHABLE_DELETE_ACTIONS);
 
 function asSnapshotObject(value: unknown): Record<string, unknown> | null {
   if (!value || Array.isArray(value) || typeof value !== 'object') return null;
@@ -155,6 +217,117 @@ function buildPatch(snapshot: Record<string, unknown>, keys: readonly string[]) 
   }
   patch.updated_at = new Date().toISOString();
   return patch;
+}
+
+function buildInsertPayload(snapshot: Record<string, unknown>, keys: readonly string[]) {
+  const payload: Record<string, unknown> = {};
+  for (const key of keys) {
+    if (key in snapshot) {
+      payload[key] = snapshot[key];
+    }
+  }
+  return payload;
+}
+
+function isTrashableDeleteAction(action: string) {
+  return TRASHABLE_DELETE_ACTIONS.has(action);
+}
+
+function computeTrashExpiryAt(
+  action: string,
+  beforeSnapshot?: Record<string, unknown> | null,
+  afterSnapshot?: Record<string, unknown> | null
+): string | null {
+  if (!isTrashableDeleteAction(action)) return null;
+  if (!beforeSnapshot || afterSnapshot) return null;
+
+  const expires = new Date();
+  expires.setDate(expires.getDate() + TRASH_RETENTION_DAYS);
+  return expires.toISOString();
+}
+
+function collectArtworkImageUrlsFromSnapshot(snapshot: Record<string, unknown> | null): string[] {
+  if (!snapshot) return [];
+
+  const urls: string[] = [];
+  const pushUrlsFromItem = (item: Record<string, unknown>) => {
+    const images = item.images;
+    if (!Array.isArray(images)) return;
+    for (const image of images) {
+      if (typeof image === 'string' && image) {
+        urls.push(image);
+      }
+    }
+  };
+
+  const list = asSnapshotList(snapshot);
+  if (list && list.length > 0) {
+    for (const item of list) {
+      pushUrlsFromItem(item);
+    }
+    return urls;
+  }
+
+  pushUrlsFromItem(snapshot);
+  return urls;
+}
+
+function collectStorageCleanupPaths(log: ActivityLogEntry) {
+  const beforeSnapshot = asSnapshotObject(log.before_snapshot);
+  const metadata = asSnapshotObject(log.metadata);
+  const shouldCleanupStorage = metadata?.storage_cleanup_deferred === true;
+
+  if (!shouldCleanupStorage || !beforeSnapshot) {
+    return { artworkPaths: [] as string[], profilePaths: [] as string[] };
+  }
+
+  if (log.target_type === 'artwork') {
+    const imageUrls = collectArtworkImageUrlsFromSnapshot(beforeSnapshot);
+    const artworkPaths = getStoragePathsForRemoval(imageUrls, 'artworks');
+    return { artworkPaths, profilePaths: [] as string[] };
+  }
+
+  if (log.target_type === 'artist') {
+    const profileImage = beforeSnapshot.profile_image;
+    if (typeof profileImage !== 'string' || !profileImage) {
+      return { artworkPaths: [] as string[], profilePaths: [] as string[] };
+    }
+    const profilePath = getStoragePathFromPublicUrl(profileImage, 'profiles');
+    return {
+      artworkPaths: [] as string[],
+      profilePaths: profilePath ? [profilePath] : [],
+    };
+  }
+
+  return { artworkPaths: [] as string[], profilePaths: [] as string[] };
+}
+
+async function removeStoragePaths(
+  supabase: Awaited<ReturnType<typeof createSupabaseAdminOrServerClient>>,
+  bucket: 'artworks' | 'profiles',
+  paths: string[]
+) {
+  if (paths.length === 0) return { removed: 0, failed: 0 };
+
+  const CHUNK_SIZE = 100;
+  let removed = 0;
+  let failed = 0;
+
+  for (let i = 0; i < paths.length; i += CHUNK_SIZE) {
+    const chunk = paths.slice(i, i + CHUNK_SIZE);
+    const { data, error } = await supabase.storage.from(bucket).remove(chunk);
+
+    if (error) {
+      failed += chunk.length;
+      continue;
+    }
+
+    const removedCount = Array.isArray(data) ? data.length : 0;
+    removed += removedCount;
+    failed += Math.max(0, chunk.length - removedCount);
+  }
+
+  return { removed, failed };
 }
 
 async function enrichActivityLogActors(logs: ActivityLogEntry[]): Promise<ActivityLogEntry[]> {
@@ -327,6 +500,11 @@ async function writeActivityLog(params: {
   options?: LogOptions;
 }) {
   const supabase = await createSupabaseAdminOrServerClient();
+  const trashExpiresAt = computeTrashExpiryAt(
+    params.action,
+    params.options?.beforeSnapshot || null,
+    params.options?.afterSnapshot || null
+  );
 
   const { data, error } = await supabase
     .from('activity_logs')
@@ -343,6 +521,7 @@ async function writeActivityLog(params: {
       before_snapshot: params.options?.beforeSnapshot || null,
       after_snapshot: params.options?.afterSnapshot || null,
       reversible: params.options?.reversible || false,
+      trash_expires_at: trashExpiresAt,
     })
     .select('id')
     .single();
@@ -457,6 +636,10 @@ async function getLegacyAdminLogs(
     reverted_at: null,
     revert_reason: null,
     reverted_log_id: null,
+    trash_expires_at: null,
+    purged_at: null,
+    purged_by: null,
+    purge_note: null,
     created_at: log.created_at,
   }));
 
@@ -531,6 +714,168 @@ export async function getAdminLogs(
   return getActivityLogs({ page, limit });
 }
 
+type TrashLogFilters = {
+  page?: number;
+  limit?: number;
+  q?: string;
+  targetType?: 'artwork' | 'artist' | 'all';
+  state?: 'active' | 'expired' | 'all';
+};
+
+export async function getTrashLogs(filters: TrashLogFilters = {}) {
+  await requireAdmin();
+  const supabase = await createSupabaseAdminOrServerClient();
+
+  const page = filters.page && filters.page > 0 ? filters.page : 1;
+  const limit = filters.limit && filters.limit > 0 ? Math.min(filters.limit, 100) : 30;
+  const offset = (page - 1) * limit;
+  const nowIso = new Date().toISOString();
+
+  let query = supabase.from('activity_logs').select('*', { count: 'exact' });
+  query = query.in('action', TRASHABLE_DELETE_ACTION_LIST);
+  query = query.is('after_snapshot', null);
+  query = query.not('before_snapshot', 'is', null);
+  query = query.is('purged_at', null);
+  query = query.is('reverted_at', null);
+
+  if (filters.targetType && filters.targetType !== 'all') {
+    query = query.eq('target_type', filters.targetType);
+  }
+
+  if (filters.state === 'active') {
+    query = query.gte('trash_expires_at', nowIso);
+  } else if (filters.state === 'expired') {
+    query = query.lt('trash_expires_at', nowIso);
+  }
+
+  if (filters.q) {
+    const q = filters.q.trim();
+    if (q) {
+      query = query.or(
+        `summary.ilike.%${q}%,target_id.ilike.%${q}%,action.ilike.%${q}%,actor_name.ilike.%${q}%,actor_email.ilike.%${q}%`
+      );
+    }
+  }
+
+  const { data, error, count } = await query
+    .order('created_at', { ascending: false })
+    .range(offset, offset + limit - 1);
+
+  if (error) throw error;
+
+  const logs = (data || []) as ActivityLogEntry[];
+  const actorEnrichedLogs = await enrichActivityLogActors(logs);
+  const targetEnrichedLogs = await enrichActivityLogTargets(actorEnrichedLogs);
+
+  return { logs: targetEnrichedLogs, total: count || 0 };
+}
+
+export async function purgeActivityTrashLog(logId: string, reason: string) {
+  const admin = await requireAdmin();
+  const supabase = await createSupabaseAdminOrServerClient();
+  const actor = await resolveActorIdentity(admin.id, 'admin');
+
+  const { data: log, error: logError } = await supabase
+    .from('activity_logs')
+    .select('*')
+    .eq('id', logId)
+    .single();
+
+  if (logError || !log) {
+    throw new Error('영구 삭제할 로그를 찾을 수 없습니다.');
+  }
+
+  if (!isTrashableDeleteAction(log.action)) {
+    throw new Error('휴지통 영구 삭제 대상이 아닙니다.');
+  }
+
+  if (log.reverted_at) {
+    throw new Error('이미 복구된 항목은 영구 삭제할 수 없습니다.');
+  }
+
+  if (log.purged_at) {
+    throw new Error('이미 영구 삭제된 항목입니다.');
+  }
+
+  const storagePaths = collectStorageCleanupPaths(log as ActivityLogEntry);
+  const [artworkResult, profileResult] = await Promise.all([
+    removeStoragePaths(supabase, 'artworks', storagePaths.artworkPaths),
+    removeStoragePaths(supabase, 'profiles', storagePaths.profilePaths),
+  ]);
+
+  const nowIso = new Date().toISOString();
+  const previousMetadata = asSnapshotObject(log.metadata) || {};
+  const nextMetadata = {
+    ...previousMetadata,
+    storage_cleanup_deferred: false,
+    storage_cleanup_completed_at: nowIso,
+    storage_cleanup: {
+      artwork_removed: artworkResult.removed,
+      artwork_failed: artworkResult.failed,
+      profile_removed: profileResult.removed,
+      profile_failed: profileResult.failed,
+    },
+  };
+
+  const { data: markedRows, error: markError } = await supabase
+    .from('activity_logs')
+    .update({
+      reversible: false,
+      before_snapshot: null,
+      after_snapshot: null,
+      purged_at: nowIso,
+      purged_by: admin.id,
+      purge_note: reason || null,
+      metadata: nextMetadata,
+    })
+    .eq('id', log.id)
+    .is('purged_at', null)
+    .select('id');
+
+  if (markError) throw markError;
+  if (!markedRows || markedRows.length !== 1) {
+    throw new Error('영구 삭제 상태 기록에 실패했습니다. 다시 시도해 주세요.');
+  }
+
+  await writeActivityLog({
+    actor: { id: admin.id, role: 'admin', name: actor.name, email: actor.email },
+    action: 'trash_purged',
+    targetType: log.target_type,
+    targetId: log.target_id,
+    metadata: {
+      purged_log_id: log.id,
+      reason,
+      artwork_removed: artworkResult.removed,
+      artwork_failed: artworkResult.failed,
+      profile_removed: profileResult.removed,
+      profile_failed: profileResult.failed,
+    },
+    options: {
+      summary: `휴지통 영구 삭제: ${log.target_type} ${log.target_id}`,
+      reversible: false,
+    },
+  });
+
+  if (log.target_type === 'artwork') {
+    revalidatePath('/artworks');
+    revalidatePath('/');
+    revalidatePath('/admin/artworks');
+  }
+  if (log.target_type === 'artist') {
+    revalidatePath('/artworks');
+    revalidatePath('/admin/artists');
+  }
+  revalidatePath('/admin/trash');
+  revalidatePath('/admin/logs');
+
+  return {
+    success: true,
+    artworkRemoved: artworkResult.removed,
+    profileRemoved: profileResult.removed,
+    failed: artworkResult.failed + profileResult.failed,
+  };
+}
+
 export async function revertActivityLog(logId: string, reason: string) {
   const admin = await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
@@ -550,8 +895,19 @@ export async function revertActivityLog(logId: string, reason: string) {
     throw new Error('해당 로그는 복구를 지원하지 않습니다.');
   }
 
+  if (log.purged_at) {
+    throw new Error('보관 기간 만료로 영구 삭제된 로그입니다.');
+  }
+
   if (log.reverted_at) {
     throw new Error('이미 복구가 완료된 로그입니다.');
+  }
+
+  if (log.trash_expires_at) {
+    const expiresAt = new Date(log.trash_expires_at);
+    if (!Number.isNaN(expiresAt.getTime()) && expiresAt.getTime() < Date.now()) {
+      throw new Error('보관 기간(30일)이 만료되어 복구할 수 없습니다.');
+    }
   }
 
   if (!log.before_snapshot) {
@@ -559,10 +915,86 @@ export async function revertActivityLog(logId: string, reason: string) {
   }
 
   if (log.target_type === 'artwork') {
+    const isDeletionLog = ARTWORK_DELETION_ACTIONS.has(log.action);
     const beforeList = asSnapshotList(log.before_snapshot);
     const afterList = asSnapshotList(log.after_snapshot);
 
-    if (beforeList && beforeList.length > 0) {
+    if (isDeletionLog) {
+      const listToRestore = beforeList && beforeList.length > 0 ? beforeList : null;
+      if (listToRestore) {
+        const restoreRows = listToRestore.map((snapshot) =>
+          buildInsertPayload(snapshot, ARTWORK_RESTORE_KEYS)
+        );
+        const restoreIds = restoreRows
+          .map((row) => (typeof row.id === 'string' ? row.id : null))
+          .filter((id): id is string => !!id);
+
+        if (restoreIds.length !== restoreRows.length) {
+          throw new Error('복구할 작품 식별 정보가 일부 누락되어 복구를 중단합니다.');
+        }
+
+        for (const row of restoreRows) {
+          if (typeof row.artist_id !== 'string' || !row.artist_id) {
+            throw new Error('복구할 작품의 작가 정보가 없어 복구를 중단합니다.');
+          }
+          if (typeof row.title !== 'string' || !row.title) {
+            throw new Error('복구할 작품의 제목 정보가 없어 복구를 중단합니다.');
+          }
+        }
+
+        const { data: existingRows } = await supabase
+          .from('artworks')
+          .select('id')
+          .in('id', restoreIds);
+        if ((existingRows || []).length > 0) {
+          throw new Error('이미 존재하는 작품이 포함되어 복구를 중단합니다.');
+        }
+
+        const { data: insertedRows, error: restoreError } = await supabase
+          .from('artworks')
+          .insert(restoreRows)
+          .select('id');
+        if (restoreError) throw restoreError;
+        if (!insertedRows || insertedRows.length !== restoreRows.length) {
+          throw new Error('복구 적용 중 일부 작품의 반영 결과를 확인하지 못했습니다.');
+        }
+      } else {
+        const snapshot = asSnapshotObject(log.before_snapshot);
+        if (!snapshot) {
+          throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
+        }
+
+        const payload = buildInsertPayload(snapshot, ARTWORK_RESTORE_KEYS);
+        const snapshotId = typeof payload.id === 'string' ? payload.id : log.target_id;
+        payload.id = snapshotId;
+
+        if (typeof payload.artist_id !== 'string' || !payload.artist_id) {
+          throw new Error('복구할 작품의 작가 정보가 없어 복구를 중단합니다.');
+        }
+        if (typeof payload.title !== 'string' || !payload.title) {
+          throw new Error('복구할 작품의 제목 정보가 없어 복구를 중단합니다.');
+        }
+
+        const { data: existingArtwork } = await supabase
+          .from('artworks')
+          .select('id')
+          .eq('id', snapshotId)
+          .maybeSingle();
+        if (existingArtwork) {
+          throw new Error('이미 동일한 작품이 존재하여 복구를 중단합니다.');
+        }
+
+        const { data: insertedRow, error: restoreError } = await supabase
+          .from('artworks')
+          .insert(payload)
+          .select('id')
+          .single();
+        if (restoreError) throw restoreError;
+        if (!insertedRow?.id) {
+          throw new Error('복구 대상 작품을 생성하지 못했습니다.');
+        }
+      }
+    } else if (beforeList && beforeList.length > 0) {
       const targetIds = beforeList
         .map((item) => (typeof item.id === 'string' ? item.id : null))
         .filter((id): id is string => !!id);
@@ -605,7 +1037,7 @@ export async function revertActivityLog(logId: string, reason: string) {
       const { data: rollbackRows } = await supabase
         .from('artworks')
         .select(
-          'id, title, description, size, material, year, edition, price, status, is_hidden, images, shop_url, artist_id, updated_at'
+          'id, title, description, size, material, year, edition, price, status, sold_at, is_hidden, images, shop_url, artist_id, updated_at'
         )
         .in('id', targetIds);
       const rollbackMap = new Map((rollbackRows || []).map((row) => [row.id, row]));
@@ -670,34 +1102,119 @@ export async function revertActivityLog(logId: string, reason: string) {
       }
     }
   } else if (log.target_type === 'artist') {
+    const isDeletionLog = ARTIST_DELETION_ACTIONS.has(log.action);
+
+    if (isDeletionLog) {
+      const snapshot = asSnapshotObject(log.before_snapshot);
+      if (!snapshot) {
+        throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
+      }
+
+      const payload = buildInsertPayload(snapshot, ARTIST_RESTORE_KEYS);
+      const snapshotId = typeof payload.id === 'string' ? payload.id : log.target_id;
+      payload.id = snapshotId;
+
+      if (typeof payload.name_ko !== 'string' || !payload.name_ko) {
+        throw new Error('복구할 작가의 필수 정보가 누락되어 복구를 중단합니다.');
+      }
+
+      const { data: currentArtist } = await supabase
+        .from('artists')
+        .select('id')
+        .eq('id', snapshotId)
+        .maybeSingle();
+      if (currentArtist) {
+        throw new Error('이미 동일한 작가가 존재하여 복구를 중단합니다.');
+      }
+
+      const { data: insertedArtist, error: restoreError } = await supabase
+        .from('artists')
+        .insert(payload)
+        .select('id')
+        .single();
+      if (restoreError) throw restoreError;
+      if (!insertedArtist?.id) {
+        throw new Error('복구 대상 작가를 생성하지 못했습니다.');
+      }
+    } else {
+      const { data: current } = await supabase
+        .from('artists')
+        .select('updated_at')
+        .eq('id', log.target_id)
+        .single();
+
+      const afterUpdatedAt = (log.after_snapshot as { updated_at?: string } | null)?.updated_at;
+      if (afterUpdatedAt && current?.updated_at && current.updated_at !== afterUpdatedAt) {
+        throw new Error('현재 데이터가 추가로 변경되어 복구를 중단합니다.');
+      }
+
+      const snapshot = asSnapshotObject(log.before_snapshot);
+      if (!snapshot) {
+        throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
+      }
+      const patch = buildPatch(snapshot, ARTIST_REVERT_KEYS);
+
+      const { data: updatedRows, error: revertError } = await supabase
+        .from('artists')
+        .update(patch)
+        .eq('id', log.target_id)
+        .select('id');
+      if (revertError) throw revertError;
+      if (!updatedRows || updatedRows.length !== 1) {
+        throw new Error('복구 대상 작가를 찾을 수 없어 복구를 중단합니다.');
+      }
+    }
+  } else if (log.target_type === 'user') {
     const { data: current } = await supabase
-      .from('artists')
+      .from('profiles')
       .select('updated_at')
       .eq('id', log.target_id)
       .single();
 
     const afterUpdatedAt = (log.after_snapshot as { updated_at?: string } | null)?.updated_at;
     if (afterUpdatedAt && current?.updated_at && current.updated_at !== afterUpdatedAt) {
-      throw new Error('현재 데이터가 추가로 변경되어 복구를 중단합니다.');
+      throw new Error('현재 사용자 정보가 추가로 변경되어 복구를 중단합니다.');
     }
 
     const snapshot = asSnapshotObject(log.before_snapshot);
     if (!snapshot) {
       throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
     }
-    const patch = buildPatch(snapshot, ARTIST_REVERT_KEYS);
+    const patch = buildPatch(snapshot, USER_REVERT_KEYS);
 
     const { data: updatedRows, error: revertError } = await supabase
-      .from('artists')
+      .from('profiles')
       .update(patch)
       .eq('id', log.target_id)
       .select('id');
     if (revertError) throw revertError;
     if (!updatedRows || updatedRows.length !== 1) {
-      throw new Error('복구 대상 작가를 찾을 수 없어 복구를 중단합니다.');
+      throw new Error('복구 대상 사용자를 찾을 수 없어 복구를 중단합니다.');
     }
   } else {
-    throw new Error('현재는 작품/작가 수정 로그만 복구할 수 있습니다.');
+    throw new Error('현재는 작품/작가/사용자 로그만 복구할 수 있습니다.');
+  }
+
+  if (log.target_type === 'artwork') {
+    revalidatePath('/artworks');
+    revalidatePath('/');
+    revalidatePath('/admin/artworks');
+    if (!log.target_id.includes(',')) {
+      revalidatePath(`/artworks/${log.target_id}`);
+      revalidatePath(`/admin/artworks/${log.target_id}`);
+    }
+  }
+
+  if (log.target_type === 'artist') {
+    revalidatePath('/artworks');
+    revalidatePath('/admin/artists');
+    if (!log.target_id.includes(',')) {
+      revalidatePath(`/admin/artists/${log.target_id}`);
+    }
+  }
+
+  if (log.target_type === 'user') {
+    revalidatePath('/admin/users');
   }
 
   const now = new Date().toISOString();

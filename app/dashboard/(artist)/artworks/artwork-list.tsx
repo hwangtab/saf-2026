@@ -43,7 +43,8 @@ export function ArtworkList({
   }, [flashMessage, router, toast]);
 
   const handleDelete = async (id: string) => {
-    if (!confirm('정말 이 작품을 삭제하시겠습니까? 복구할 수 없습니다.')) return;
+    if (!confirm('정말 이 작품을 삭제하시겠습니까? 관리자 활동 로그에서 복구할 수 있습니다.'))
+      return;
 
     setOptimisticArtworks((prev) => prev.filter((a) => a.id !== id));
     setIsDeleting(id);

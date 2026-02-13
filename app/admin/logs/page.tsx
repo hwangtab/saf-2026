@@ -36,6 +36,7 @@ const ACTION_FILTER_OPTIONS = [
   { value: 'content_created', label: '콘텐츠 생성' },
   { value: 'content_updated', label: '콘텐츠 수정' },
   { value: 'content_deleted', label: '콘텐츠 삭제' },
+  { value: 'trash_purged', label: '휴지통 영구 삭제' },
   { value: 'revert_executed', label: '복구 실행' },
 ] as const;
 

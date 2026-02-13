@@ -4,6 +4,12 @@
   "framework": "nextjs",
   "installCommand": "npm install",
   "devCommand": "npm run dev",
+  "crons": [
+    {
+      "path": "/api/internal/purge-trash",
+      "schedule": "0 4 * * *"
+    }
+  ],
   "git": {
     "deploymentEnabled": {
       "main": true

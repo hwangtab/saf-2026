@@ -49,7 +49,7 @@ export default function LoginPage() {
           .maybeSingle();
 
         if (profile?.role === 'admin') {
-          nextPath = '/admin/dashboard?period=7d';
+          nextPath = '/admin/dashboard';
         } else if (profile?.role === 'exhibitor') {
           nextPath = '/exhibitor';
         } else if (profile?.role === 'artist') {

@@ -344,7 +344,7 @@ export async function deleteArtwork(id: string): Promise<ActionState> {
     const { data: artwork } = await supabase
       .from('artworks')
       .select(
-        'id, title, images, artist_id, description, size, material, year, edition, price, status, is_hidden, shop_url, updated_at'
+        'id, title, images, artist_id, description, size, material, year, edition, price, status, sold_at, is_hidden, shop_url, created_at, updated_at'
       )
       .eq('id', id)
       .single();
@@ -353,12 +353,6 @@ export async function deleteArtwork(id: string): Promise<ActionState> {
     const { error } = await supabase.from('artworks').delete().eq('id', id);
 
     if (error) throw error;
-
-    const paths = getStoragePathsForRemoval(artwork?.images || [], 'artworks');
-
-    if (paths.length > 0) {
-      await supabase.storage.from('artworks').remove(paths);
-    }
 
     if (artwork?.artist_id) {
       const { data: artist } = await supabase
@@ -385,7 +379,8 @@ export async function deleteArtwork(id: string): Promise<ActionState> {
         {
           summary: `작품 삭제: ${artwork.title || id}`,
           beforeSnapshot: artwork,
-          reversible: false,
+          afterSnapshot: null,
+          reversible: true,
         }
       );
     }
