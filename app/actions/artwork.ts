@@ -5,6 +5,7 @@ import { requireArtistActive } from '@/lib/auth/guards';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { logArtistAction } from './admin-logs';
+import { getStoragePathFromPublicUrl, getStoragePathsForRemoval } from '@/lib/utils/form-helpers';
 
 export type ActionState = {
   message: string;
@@ -15,18 +16,6 @@ export type ActionState = {
 
 const MAX_IMAGES = 5;
 type SupabaseServerClient = Awaited<ReturnType<typeof createSupabaseServerClient>>;
-
-const getStoragePathFromPublicUrl = (publicUrl: string, bucket: string) => {
-  try {
-    const url = new URL(publicUrl);
-    const marker = `/storage/v1/object/public/${bucket}/`;
-    const index = url.pathname.indexOf(marker);
-    if (index === -1) return null;
-    return url.pathname.slice(index + marker.length);
-  } catch {
-    return null;
-  }
-};
 
 const parseUrlList = (value: FormDataEntryValue | null, label: string) => {
   if (!value) return { urls: [] as string[] };
@@ -48,13 +37,16 @@ const parseUrlList = (value: FormDataEntryValue | null, label: string) => {
   }
 };
 
-const getOwnedImagePaths = (urls: string[], artistId: string) =>
+const getOwnedCanonicalImagePaths = (urls: string[], artistId: string) =>
   urls
     .map((url) => getStoragePathFromPublicUrl(url, 'artworks'))
     .filter((path): path is string => !!path && path.startsWith(`${artistId}/`));
 
+const getOwnedCleanupPaths = (urls: string[], artistId: string) =>
+  getStoragePathsForRemoval(urls, 'artworks').filter((path) => path.startsWith(`${artistId}/`));
+
 const validateImageUrls = (urls: string[], artistId: string) => {
-  const paths = getOwnedImagePaths(urls, artistId);
+  const paths = getOwnedCanonicalImagePaths(urls, artistId);
   if (paths.length !== urls.length) {
     return { error: '유효하지 않은 이미지 URL이 포함되어 있습니다.' };
   }
@@ -62,7 +54,7 @@ const validateImageUrls = (urls: string[], artistId: string) => {
 };
 
 const cleanupUploads = async (supabase: SupabaseServerClient, urls: string[], artistId: string) => {
-  const paths = getOwnedImagePaths(urls, artistId);
+  const paths = getOwnedCleanupPaths(urls, artistId);
   if (paths.length > 0) {
     await supabase.storage.from('artworks').remove(paths);
   }
@@ -362,9 +354,7 @@ export async function deleteArtwork(id: string): Promise<ActionState> {
 
     if (error) throw error;
 
-    const paths = (artwork?.images || [])
-      .map((url: string) => getStoragePathFromPublicUrl(url, 'artworks'))
-      .filter((path: string | null): path is string => !!path);
+    const paths = getStoragePathsForRemoval(artwork?.images || [], 'artworks');
 
     if (paths.length > 0) {
       await supabase.storage.from('artworks').remove(paths);

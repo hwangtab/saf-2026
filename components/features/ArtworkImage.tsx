@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import SafeImage from '@/components/common/SafeImage';
 import ArtworkLightbox from '@/components/ui/ArtworkLightbox';
-import { resolveArtworkImageUrl, resolveOptimizedArtworkImageUrl } from '@/lib/utils';
+import { resolveArtworkImageUrl, resolveArtworkImageUrlForPreset } from '@/lib/utils';
 
 interface ArtworkImageProps {
   images: string[];
@@ -16,11 +16,7 @@ export default function ArtworkImage({ images, title, artist, sold }: ArtworkIma
   const [isOpen, setIsOpen] = useState(false);
   const alt = `${title} - ${artist}`;
   const firstImage = images?.[0] || '';
-  const src = resolveOptimizedArtworkImageUrl(firstImage, {
-    width: 1600,
-    quality: 80,
-    format: 'webp',
-  });
+  const src = resolveArtworkImageUrlForPreset(firstImage, 'detail');
   const resolvedImages = (images || []).map((img) => resolveArtworkImageUrl(img));
 
   return (

@@ -39,3 +39,13 @@ Starting work on add-exhibitor-role plan.
 - Pattern: followed existing data functions
 - Uses cache wrapper: yes
 - Type check: pass
+
+## [2026-02-13] Task 5: Exhibitor Dashboard Layout
+
+- Created app/exhibitor/layout.tsx: yes
+- Created app/exhibitor/page.tsx: yes
+- Auth guard applied: requireExhibitor
+- Navigation: Home, Artists, Artworks
+- Stats displayed: Total Artists, Total Artworks
+- Build: success
+- Issue observed: `column artists.profile does not exist` error in logs during build (inherited from lib/supabase-data.ts)

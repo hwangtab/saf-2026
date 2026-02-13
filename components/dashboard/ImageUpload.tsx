@@ -3,8 +3,9 @@
 import { useState, useRef } from 'react';
 import ArtworkLightbox from '@/components/ui/ArtworkLightbox';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
-import { optimizeImage } from '@/lib/client/image-optimization';
+import { generateArtworkImageVariants, optimizeImage } from '@/lib/client/image-optimization';
 import { useToast } from '@/lib/hooks/useToast';
+import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
 
 type UploadProps = {
   bucket: 'artworks' | 'profiles';
@@ -15,6 +16,16 @@ type UploadProps = {
   onChange?: (urls: string[]) => void;
   maxFiles?: number;
   defaultImages?: string[];
+};
+
+const ARTWORK_VARIANT_SUFFIX_REGEX = /__(thumb|card|detail|hero|original)\.webp$/i;
+const ARTWORK_VARIANTS = ['thumb', 'card', 'detail', 'hero', 'original'] as const;
+
+const expandArtworkVariantPaths = (path: string): string[] => {
+  const match = path.match(ARTWORK_VARIANT_SUFFIX_REGEX);
+  if (!match) return [path];
+  const prefix = path.replace(ARTWORK_VARIANT_SUFFIX_REGEX, '');
+  return ARTWORK_VARIANTS.map((variant) => `${prefix}__${variant}.webp`);
 };
 
 export function ImageUpload({
@@ -54,15 +65,48 @@ export function ImageUpload({
     if (files.length === 0) return;
     setUploading(true);
     const newUrls: string[] = [];
+    const cleanupCandidateUrls: string[] = [];
+    const uploadedPaths: string[] = [];
 
     try {
       for (const file of files) {
         if (currentUrls.length + newUrls.length >= maxFiles) break;
 
-        // 1. Optimize
-        const optimizedFile = await optimizeImage(file);
+        if (bucket === 'artworks') {
+          const variants = await generateArtworkImageVariants(file);
+          const baseName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}`;
+          let canonicalUrl: string | null = null;
 
-        // 2. Upload
+          for (const variant of variants) {
+            const filePath = `${pathPrefix}/${baseName}__${variant.variant}.webp`;
+            const { error: uploadError } = await supabase.storage
+              .from(bucket)
+              .upload(filePath, variant.file);
+
+            if (uploadError) {
+              throw uploadError;
+            }
+
+            uploadedPaths.push(filePath);
+
+            const {
+              data: { publicUrl },
+            } = supabase.storage.from(bucket).getPublicUrl(filePath);
+            cleanupCandidateUrls.push(publicUrl);
+
+            if (variant.variant === 'original') {
+              canonicalUrl = publicUrl;
+            }
+          }
+
+          if (!canonicalUrl) {
+            throw new Error('원본 이미지 URL 생성 실패');
+          }
+          newUrls.push(canonicalUrl);
+          continue;
+        }
+
+        const optimizedFile = await optimizeImage(file);
         const fileExt = optimizedFile.name.split('.').pop();
         const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
         const filePath = `${pathPrefix}/${fileName}`;
@@ -75,20 +119,25 @@ export function ImageUpload({
           throw uploadError;
         }
 
-        // 3. Get Public URL
+        uploadedPaths.push(filePath);
+
         const {
           data: { publicUrl },
         } = supabase.storage.from(bucket).getPublicUrl(filePath);
 
         newUrls.push(publicUrl);
+        cleanupCandidateUrls.push(publicUrl);
       }
 
       const updatedUrls = [...currentUrls, ...newUrls];
       applyUrls(updatedUrls);
-      if (newUrls.length > 0) {
-        onUploadDelta?.(newUrls);
+      if (cleanupCandidateUrls.length > 0) {
+        onUploadDelta?.(cleanupCandidateUrls);
       }
     } catch (error: any) {
+      if (uploadedPaths.length > 0) {
+        await supabase.storage.from(bucket).remove(uploadedPaths);
+      }
       toast.error('이미지 업로드 실패: ' + error.message);
     } finally {
       setUploading(false);
@@ -136,7 +185,8 @@ export function ImageUpload({
     const path = getStoragePathFromPublicUrl(urlToRemove);
 
     if (path) {
-      const { error } = await supabase.storage.from(bucket).remove([path]);
+      const removalPaths = bucket === 'artworks' ? expandArtworkVariantPaths(path) : [path];
+      const { error } = await supabase.storage.from(bucket).remove(removalPaths);
       if (error) {
         toast.error('이미지 삭제 실패: ' + error.message);
         return;
@@ -159,42 +209,46 @@ export function ImageUpload({
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap gap-4">
-        {currentUrls.map((url, index) => (
-          <div
-            key={index}
-            className="relative w-32 h-32 rounded-lg overflow-hidden border border-gray-200 group"
-          >
+        {currentUrls.map((url, index) => {
+          const previewSrc =
+            bucket === 'artworks' ? resolveArtworkImageUrlForPreset(url, 'slider') : url;
+          return (
             <div
-              className="absolute inset-0 cursor-zoom-in z-0"
-              onClick={() => handleImageClick(index)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  handleImageClick(index);
-                }
-              }}
-              role="button"
-              tabIndex={0}
-              aria-label="이미지 확대하기"
+              key={index}
+              className="relative w-32 h-32 rounded-lg overflow-hidden border border-gray-200 group"
             >
-              <img src={url} alt="Preview" className="w-full h-full object-cover" />
+              <div
+                className="absolute inset-0 cursor-zoom-in z-0"
+                onClick={() => handleImageClick(index)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleImageClick(index);
+                  }
+                }}
+                role="button"
+                tabIndex={0}
+                aria-label="이미지 확대하기"
+              >
+                <img src={previewSrc} alt="Preview" className="w-full h-full object-cover" />
+              </div>
+              <button
+                onClick={() => removeImage(index)}
+                className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                type="button"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
             </div>
-            <button
-              onClick={() => removeImage(index)}
-              className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10"
-              type="button"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-          </div>
-        ))}
+          );
+        })}
 
         {currentUrls.length < maxFiles && (
           <div
@@ -241,7 +295,9 @@ export function ImageUpload({
         multiple={maxFiles > 1}
       />
 
-      <p className="text-xs text-gray-500">* 최대 {maxFiles}장, 장당 2560px 자동 최적화 (WebP)</p>
+      <p className="text-xs text-gray-500">
+        * 최대 {maxFiles}장, 업로드 시 자동 최적화 (WebP, 작품 이미지는 다중 해상도 생성)
+      </p>
 
       {lightboxData && (
         <ArtworkLightbox

@@ -42,6 +42,85 @@ export function resolveArtworkImageUrl(image: string): string {
   return `/images/artworks/${image}`;
 }
 
+export const ARTWORK_IMAGE_VARIANTS = ['thumb', 'card', 'detail', 'hero', 'original'] as const;
+export type ArtworkImageVariant = (typeof ARTWORK_IMAGE_VARIANTS)[number];
+export type ArtworkImagePreset = 'slider' | 'card' | 'detail' | 'hero' | 'original';
+
+const ARTWORK_VARIANT_FILENAME_REGEX =
+  /__(thumb|card|detail|hero|original)\.(webp|jpg|jpeg|png|avif)$/i;
+const ARTWORK_STORAGE_MARKERS = [
+  '/storage/v1/object/public/artworks/',
+  '/storage/v1/render/image/public/artworks/',
+];
+
+const PRESET_TO_VARIANT: Record<ArtworkImagePreset, ArtworkImageVariant> = {
+  slider: 'thumb',
+  card: 'card',
+  detail: 'detail',
+  hero: 'hero',
+  original: 'original',
+};
+
+export function resolveArtworkVariantUrl(image: string, variant: ArtworkImageVariant): string {
+  const resolved = resolveArtworkImageUrl(image);
+  if (!resolved.startsWith('http://') && !resolved.startsWith('https://')) {
+    return resolved;
+  }
+
+  let parsed: URL;
+  try {
+    parsed = new URL(resolved);
+  } catch {
+    return resolved;
+  }
+
+  const isArtworkStorageUrl = ARTWORK_STORAGE_MARKERS.some((marker) =>
+    parsed.pathname.includes(marker)
+  );
+  if (!isArtworkStorageUrl) {
+    return resolved;
+  }
+
+  const fileName = parsed.pathname.split('/').pop() || '';
+  if (!ARTWORK_VARIANT_FILENAME_REGEX.test(fileName)) {
+    return resolved; // Legacy single-file uploads keep original URL
+  }
+
+  parsed.pathname = parsed.pathname.replace(ARTWORK_VARIANT_FILENAME_REGEX, `__${variant}.$2`);
+  return parsed.toString();
+}
+
+export function resolveArtworkImageUrlForPreset(
+  image: string,
+  preset: ArtworkImagePreset = 'original'
+): string {
+  const variant = PRESET_TO_VARIANT[preset];
+  return resolveArtworkVariantUrl(image, variant);
+}
+
+export function getArtworkImageFamilyKey(imageUrl: string): string {
+  const resolved = resolveArtworkImageUrl(imageUrl);
+  if (!resolved.startsWith('http://') && !resolved.startsWith('https://')) {
+    return resolved;
+  }
+
+  try {
+    const parsed = new URL(resolved);
+    const isArtworkStorageUrl = ARTWORK_STORAGE_MARKERS.some((marker) =>
+      parsed.pathname.includes(marker)
+    );
+
+    if (!isArtworkStorageUrl) {
+      return `${parsed.origin}${parsed.pathname}`;
+    }
+
+    const familyPath = parsed.pathname.replace(ARTWORK_VARIANT_FILENAME_REGEX, '');
+    return `${parsed.origin}${familyPath}`;
+  } catch {
+    return resolved;
+  }
+}
+
 type SupabaseImageResizeMode = 'cover' | 'contain' | 'fill';
 
 export interface SupabaseImageTransformOptions {
@@ -139,6 +218,11 @@ export function resolveSupabaseOriginalPublicUrl(url: string): string {
   parsed.searchParams.delete('resize');
 
   return parsed.toString();
+}
+
+export function resolveArtworkImageFallbackUrl(url: string): string {
+  const originalVariantUrl = resolveArtworkVariantUrl(url, 'original');
+  return resolveSupabaseOriginalPublicUrl(originalVariantUrl);
 }
 
 export function formatPriceForDisplay(priceValue: string | number | null | undefined): string {

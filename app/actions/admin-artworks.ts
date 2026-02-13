@@ -4,11 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 import { logAdminAction } from './admin-logs';
-import {
-  getString,
-  getStoragePathFromPublicUrl,
-  validateBatchSize,
-} from '@/lib/utils/form-helpers';
+import { getString, getStoragePathsForRemoval, validateBatchSize } from '@/lib/utils/form-helpers';
 
 export async function deleteAdminArtwork(id: string) {
   const admin = await requireAdmin();
@@ -23,9 +19,7 @@ export async function deleteAdminArtwork(id: string) {
   const { error } = await supabase.from('artworks').delete().eq('id', id);
   if (error) throw error;
 
-  const paths = (artwork?.images || [])
-    .map((url: string) => getStoragePathFromPublicUrl(url, 'artworks'))
-    .filter((path: string | null): path is string => !!path);
+  const paths = getStoragePathsForRemoval(artwork?.images || [], 'artworks');
 
   if (paths.length > 0) {
     await supabase.storage.from('artworks').remove(paths);
@@ -389,10 +383,10 @@ export async function batchDeleteArtworks(ids: string[]) {
   if (error) throw error;
 
   // Clean up images from storage
-  const paths = (artworks || [])
-    .flatMap((artwork: any) => artwork.images || [])
-    .map((url: string) => getStoragePathFromPublicUrl(url, 'artworks'))
-    .filter((path: string | null): path is string => !!path);
+  const paths = getStoragePathsForRemoval(
+    (artworks || []).flatMap((artwork: any) => artwork.images || []),
+    'artworks'
+  );
 
   if (paths.length > 0) {
     await supabase.storage.from('artworks').remove(paths);

@@ -6,6 +6,7 @@ import { createArtwork, updateArtwork, type ActionState } from '@/app/actions/ar
 import Button from '@/components/ui/Button';
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
+import { getArtworkImageFamilyKey } from '@/lib/utils';
 import {
   AdminFieldLabel,
   AdminInput,
@@ -22,6 +23,8 @@ const initialState: ActionState = {
   message: '',
   error: false,
 };
+
+const ARTWORK_VARIANT_SUFFIX_REGEX = /__(thumb|card|detail|hero|original)\.webp$/i;
 
 const createSessionId = () => {
   if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
@@ -42,6 +45,15 @@ const getStoragePathFromPublicUrl = (publicUrl: string) => {
   }
 };
 
+const expandArtworkVariantPaths = (path: string): string[] => {
+  const match = path.match(ARTWORK_VARIANT_SUFFIX_REGEX);
+  if (!match) return [path];
+  const prefix = path.replace(ARTWORK_VARIANT_SUFFIX_REGEX, '');
+  return ['thumb', 'card', 'detail', 'hero', 'original'].map(
+    (variant) => `${prefix}__${variant}.webp`
+  );
+};
+
 export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
   // If editing, we bind the ID to the update action
   const action = artwork ? updateArtwork.bind(null, artwork.id) : createArtwork;
@@ -55,7 +67,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
   const isSubmittingRef = useRef(false);
   const sessionIdRef = useRef(createSessionId());
   const pendingKey = useMemo(() => `saf_pending_artwork_uploads_${artistId}`, [artistId]);
-  const cleanupUrls = state.cleanupUrls || [];
+  const cleanupUrls = useMemo(() => state.cleanupUrls ?? [], [state.cleanupUrls]);
   const effectiveImages =
     cleanupUrls.length > 0 ? images.filter((url) => !cleanupUrls.includes(url)) : images;
   const effectiveNewUploads =
@@ -89,9 +101,11 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
     async (urls: string[]) => {
       const paths = urls
         .map((url) => getStoragePathFromPublicUrl(url))
-        .filter((path): path is string => !!path);
-      if (paths.length === 0) return;
-      await supabase.storage.from('artworks').remove(paths);
+        .filter((path): path is string => !!path)
+        .flatMap((path) => expandArtworkVariantPaths(path));
+      const uniquePaths = Array.from(new Set(paths));
+      if (uniquePaths.length === 0) return;
+      await supabase.storage.from('artworks').remove(uniquePaths);
     },
     [supabase]
   );
@@ -191,7 +205,12 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
                 onUploadComplete={(urls) => {
                   setImages(urls);
                   setNewUploads((prev) => {
-                    const next = prev.filter((url) => urls.includes(url));
+                    const remainingFamilies = new Set(
+                      urls.map((url) => getArtworkImageFamilyKey(url))
+                    );
+                    const next = prev.filter((url) =>
+                      remainingFamilies.has(getArtworkImageFamilyKey(url))
+                    );
                     persistPending(next);
                     return next;
                   });

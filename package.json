@@ -14,7 +14,10 @@
     "validate-artworks": "node scripts/validate_artworks.js",
     "test": "jest",
     "test:watch": "jest --watch",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "backup:artwork-images": "node scripts/backup-artwork-images.js",
+    "backfill:artwork-images:dry": "node scripts/backfill-artwork-image-variants.js",
+    "backfill:artwork-images:apply": "node scripts/backfill-artwork-image-variants.js --apply"
   },
   "lint-staged": {
     "*.{ts,tsx}": [

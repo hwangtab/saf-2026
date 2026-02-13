@@ -4,7 +4,7 @@ import SafeImage from '@/components/common/SafeImage';
 import { useEffect, useState } from 'react';
 import { m, useReducedMotion } from 'framer-motion';
 import { HERO_IMAGES } from '@/lib/constants';
-import { resolveOptimizedArtworkImageUrl } from '@/lib/utils';
+import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
 
 interface PageHeroBackgroundProps {
   /** Custom image path to use instead of random hero image */
@@ -47,11 +47,7 @@ export default function PageHeroBackground({ customImage }: PageHeroBackgroundPr
   // Use custom image if provided, otherwise use random hero image
   let bgImage: string;
   if (customImage) {
-    bgImage = resolveOptimizedArtworkImageUrl(customImage, {
-      width: 1920,
-      quality: 75,
-      format: 'webp',
-    });
+    bgImage = resolveArtworkImageUrlForPreset(customImage, 'hero');
   } else {
     // Don't render any image until hydration is complete to prevent flash
     if (imageIndex === null) {

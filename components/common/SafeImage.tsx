@@ -3,7 +3,7 @@
 import ExportedImage from 'next-image-export-optimizer';
 import Image from 'next/image';
 import { useEffect, useState, type ComponentProps } from 'react';
-import { resolveSupabaseOriginalPublicUrl } from '@/lib/utils';
+import { resolveArtworkImageFallbackUrl } from '@/lib/utils';
 
 type SafeImageProps = ComponentProps<typeof ExportedImage>;
 const passthroughLoader = ({ src }: { src: string }) => src;
@@ -28,7 +28,7 @@ function RemoteSafeImage({
       unoptimized={props.unoptimized ?? true}
       onError={(event) => {
         onError?.(event);
-        const fallbackSrc = resolveSupabaseOriginalPublicUrl(currentSrc);
+        const fallbackSrc = resolveArtworkImageFallbackUrl(currentSrc);
         if (fallbackSrc !== currentSrc) {
           setCurrentSrc(fallbackSrc);
         }

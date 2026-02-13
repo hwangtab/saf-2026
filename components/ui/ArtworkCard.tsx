@@ -2,7 +2,7 @@ import { memo } from 'react';
 import Link from 'next/link';
 import SafeImage from '@/components/common/SafeImage';
 import type { ArtworkCardData } from '@/types';
-import { cn, resolveOptimizedArtworkImageUrl } from '@/lib/utils';
+import { cn, resolveArtworkImageUrlForPreset } from '@/lib/utils';
 
 type ArtworkCardVariant = 'gallery' | 'slider';
 
@@ -26,11 +26,7 @@ const VARIANT_CONFIG = {
 
 const getHref = (artwork: ArtworkCardData) => `/artworks/${artwork.id}`;
 const getImageSrc = (artwork: ArtworkCardData, variant: ArtworkCardVariant) =>
-  resolveOptimizedArtworkImageUrl(artwork.images[0], {
-    width: variant === 'slider' ? 400 : 960,
-    quality: 75,
-    format: 'webp',
-  });
+  resolveArtworkImageUrlForPreset(artwork.images[0], variant === 'slider' ? 'slider' : 'card');
 const getImageAlt = (artwork: ArtworkCardData) => `${artwork.title} - ${artwork.artist}`;
 
 function SoldBadge({ variant }: { variant: ArtworkCardVariant }) {

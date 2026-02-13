@@ -32,6 +32,26 @@ export const getStoragePathFromPublicUrl = (publicUrl: string, bucket: string): 
   }
 };
 
+const ARTWORK_VARIANT_SUFFIX_REGEX = /__(thumb|card|detail|hero|original)\.webp$/i;
+
+export const expandArtworkVariantPaths = (path: string): string[] => {
+  const match = path.match(ARTWORK_VARIANT_SUFFIX_REGEX);
+  if (!match) return [path];
+  const prefix = path.replace(ARTWORK_VARIANT_SUFFIX_REGEX, '');
+  return ['thumb', 'card', 'detail', 'hero', 'original'].map(
+    (variant) => `${prefix}__${variant}.webp`
+  );
+};
+
+export const getStoragePathsForRemoval = (urls: string[], bucket: string): string[] => {
+  const paths = urls
+    .map((url) => getStoragePathFromPublicUrl(url, bucket))
+    .filter((path): path is string => !!path)
+    .flatMap((path) => (bucket === 'artworks' ? expandArtworkVariantPaths(path) : [path]));
+
+  return Array.from(new Set(paths));
+};
+
 /**
  * Batch operation constants
  */
