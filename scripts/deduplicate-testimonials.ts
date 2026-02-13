@@ -115,10 +115,6 @@ async function deduplicate() {
     const quote = normalizeText(item.quote);
     const key = `${author}|${quote}`;
 
-    if (key === '|') {
-      continue;
-    }
-
     if (seen.has(key)) {
       toDelete.push(item.id);
     } else {

@@ -1,5 +1,6 @@
 import { getDashboardStats, type DashboardPeriodKey } from '@/app/actions/admin-dashboard';
 import { connection } from 'next/server';
+import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import {
   AdminCard,
@@ -143,6 +144,10 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
     periodParam && isDashboardPeriodKey(periodParam, currentYear, dashboardPeriodOptions)
       ? periodParam
       : '30d';
+
+  if (periodParam && periodParam !== selectedPeriod) {
+    redirect(`/admin/dashboard?period=${selectedPeriod}`);
+  }
 
   const stats = await getDashboardStats(selectedPeriod);
   const isYearOverYear = stats.period.key.startsWith('year_');

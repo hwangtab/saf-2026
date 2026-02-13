@@ -29,12 +29,21 @@ export function DashboardPeriodPreference({ selectedPeriod }: DashboardPeriodPre
   const searchParams = useSearchParams();
   const searchParamsString = searchParams.toString();
   const hasPeriodInQuery = searchParams.has('period');
+  const periodInQuery = searchParams.get('period');
 
   useEffect(() => {
+    if (hasPeriodInQuery && periodInQuery !== selectedPeriod) {
+      const nextParams = new URLSearchParams(searchParamsString);
+      nextParams.set('period', selectedPeriod);
+      router.replace(`${pathname}?${nextParams.toString()}`, { scroll: false });
+      router.refresh();
+      return;
+    }
+
     if (!hasPeriodInQuery) return;
     if (!isValidPeriod(selectedPeriod)) return;
     localStorage.setItem(STORAGE_KEY, selectedPeriod);
-  }, [hasPeriodInQuery, selectedPeriod]);
+  }, [hasPeriodInQuery, pathname, periodInQuery, router, searchParamsString, selectedPeriod]);
 
   useEffect(() => {
     if (hasPeriodInQuery) return;

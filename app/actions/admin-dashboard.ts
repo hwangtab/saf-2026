@@ -738,7 +738,10 @@ export async function getDashboardStats(
   const recentArtworksForTrend = allArtworks
     .map((artwork) => artwork.created_at)
     .filter((createdAt): createdAt is string => typeof createdAt === 'string')
-    .filter((createdAt) => createdAt >= thirtyDaysAgoIso)
+    .filter((createdAt) => {
+      const createdDate = toValidDate(createdAt);
+      return !!createdDate && createdDate >= thirtyDaysAgo;
+    })
     .map((createdAt) => ({ created_at: createdAt }));
 
   const dailyArtists = groupByDate(recentArtistsForTrend, thirtyDaysAgo, now);
