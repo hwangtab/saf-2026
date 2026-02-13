@@ -9,6 +9,14 @@ type RevenueCardProps = {
   trend?: { value: number; isPositive: boolean };
 };
 
+const KRW_FORMATTER = new Intl.NumberFormat('ko-KR', {
+  style: 'currency',
+  currency: 'KRW',
+  maximumFractionDigits: 0,
+});
+
+const KO_NUMBER_FORMATTER = new Intl.NumberFormat('ko-KR');
+
 function formatKoreanAmount(value: number) {
   const amount = Math.max(0, Math.round(value));
   if (amount === 0) return '0원';
@@ -19,32 +27,39 @@ function formatKoreanAmount(value: number) {
   const parts: string[] = [];
 
   if (eok > 0) {
-    parts.push(`${new Intl.NumberFormat('ko-KR').format(eok)}억`);
+    parts.push(`${KO_NUMBER_FORMATTER.format(eok)}억`);
   }
   if (man > 0) {
-    parts.push(`${new Intl.NumberFormat('ko-KR').format(man)}만`);
+    parts.push(`${KO_NUMBER_FORMATTER.format(man)}만`);
   }
   if (won > 0) {
-    parts.push(`${new Intl.NumberFormat('ko-KR').format(won)}`);
+    parts.push(`${KO_NUMBER_FORMATTER.format(won)}`);
   }
 
   return `${parts.join(' ')}원`;
 }
 
 export function RevenueCard({ title, value, subtitle, trend }: RevenueCardProps) {
-  const formatted = new Intl.NumberFormat('ko-KR', {
-    style: 'currency',
-    currency: 'KRW',
-    maximumFractionDigits: 0,
-  }).format(value);
+  const formatted = KRW_FORMATTER.format(value);
   const koreanFormatted = formatKoreanAmount(value);
   const digitCount = formatted.replace(/[^\d]/g, '').length;
+  const useKoreanPrimary = digitCount >= 12;
+  const primaryValue = useKoreanPrimary ? koreanFormatted : formatted;
+  const secondaryValue = useKoreanPrimary ? formatted : koreanFormatted;
+
   const valueSizeClass =
-    digitCount >= 10
-      ? 'text-[clamp(1.7rem,3.2vw,2.9rem)]'
-      : digitCount >= 8
-        ? 'text-[clamp(1.9rem,4vw,3rem)]'
-        : 'text-[clamp(2rem,6vw,3rem)]';
+    primaryValue.length >= 14
+      ? 'text-[clamp(1.35rem,2.3vw,2.25rem)]'
+      : primaryValue.length >= 11
+        ? 'text-[clamp(1.5rem,2.7vw,2.5rem)]'
+        : primaryValue.length >= 8
+          ? 'text-[clamp(1.7rem,3.2vw,2.75rem)]'
+          : 'text-[clamp(1.9rem,4vw,3rem)]';
+
+  const subtitleTextSizeClass = secondaryValue.length >= 16 ? 'text-[11px] sm:text-xs' : 'text-xs';
+
+  const valueWrapClass =
+    primaryValue.length >= 14 ? 'whitespace-normal break-words' : 'whitespace-nowrap';
 
   const trendValue =
     trend && Number.isInteger(Math.abs(trend.value))
@@ -54,15 +69,17 @@ export function RevenueCard({ title, value, subtitle, trend }: RevenueCardProps)
         : null;
 
   return (
-    <AdminCard className="flex h-full flex-col justify-between p-6">
-      <div>
+    <AdminCard className="flex h-full min-w-0 flex-col justify-between p-6">
+      <div className="min-w-0">
         <p className="text-sm font-medium text-slate-500">{title}</p>
         <p
-          className={`mt-2 max-w-full overflow-hidden whitespace-nowrap font-bold leading-none tracking-tight text-slate-900 tabular-nums ${valueSizeClass}`}
+          className={`mt-2 min-w-0 max-w-full font-bold leading-[1.05] tracking-tight text-slate-900 tabular-nums ${valueSizeClass} ${valueWrapClass}`}
         >
-          {formatted}
+          {primaryValue}
         </p>
-        <p className="mt-1 text-xs font-medium text-slate-500">{koreanFormatted}</p>
+        <p className={`mt-1 font-medium text-slate-500 ${subtitleTextSizeClass}`}>
+          {secondaryValue}
+        </p>
       </div>
       {subtitle && <p className="mt-2 text-sm text-slate-500">{subtitle}</p>}
       {trend && (

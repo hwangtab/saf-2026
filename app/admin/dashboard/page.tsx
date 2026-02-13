@@ -181,7 +181,7 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mt-8">
+      <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
         <RevenueCard
           title={`${stats.period.label} 매출`}
           value={stats.revenue.period.totalRevenue}
