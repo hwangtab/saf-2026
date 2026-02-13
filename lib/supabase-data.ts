@@ -59,7 +59,8 @@ export const getSupabaseArtworks = cache(async (): Promise<Artwork[]> => {
       return fallbackArtworks;
     }
     console.error('Error fetching artists from Supabase:', artistsError);
-    return [];
+    // Keep artwork cards visible even if artist join fails.
+    return (artworksData || []).map((item: any) => mapArtworkRow(item));
   }
 
   const artistMap = new Map((artistsData || []).map((a: any) => [a.id, a]));
