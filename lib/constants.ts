@@ -41,6 +41,7 @@ export const CONTACT = {
   ORGANIZATION_NAME: '한국스마트협동조합',
   PERSON_NAME: '황경하 조직국장',
   ADDRESS: '서울특별시 영등포구 양산로 96 A213호',
+  POSTAL_CODE: '07264',
 };
 
 // Exhibition Info
@@ -49,6 +50,7 @@ export const EXHIBITION = {
   DATE: '2026년 1월 14일 - 2026년 1월 26일',
   LOCATION: '인사아트센터 3층 G&J 갤러리',
   ADDRESS: '서울시 종로구 인사동길 41-1',
+  POSTAL_CODE: '03145',
   LAT: 37.573,
   LNG: 126.986,
   ACCESS: {

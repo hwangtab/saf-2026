@@ -313,6 +313,8 @@ export function generateArtworkJsonLd(artwork: Artwork, numericPrice: string, is
 }
 
 export function generateExhibitionSchema(reviews: ExhibitionReview[] = []) {
+  const hasReviews = reviews.length > 0;
+
   return {
     '@context': 'https://schema.org',
     '@type': 'ExhibitionEvent',
@@ -331,6 +333,7 @@ export function generateExhibitionSchema(reviews: ExhibitionReview[] = []) {
       address: {
         '@type': 'PostalAddress',
         streetAddress: EXHIBITION.ADDRESS,
+        postalCode: EXHIBITION.POSTAL_CODE,
         addressLocality: '서울시',
         addressCountry: 'KR',
       },
@@ -357,26 +360,28 @@ export function generateExhibitionSchema(reviews: ExhibitionReview[] = []) {
       name: '참여 예술가 50여 명',
     },
     isAccessibleForFree: true,
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.9',
-      reviewCount: reviews.length.toString(),
-      bestRating: '5',
-      worstRating: '1',
-    },
-    review: reviews.map((rev) => ({
-      '@type': 'Review',
-      author: {
-        '@type': 'Person',
-        name: rev.author,
+    ...(hasReviews && {
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: '4.9',
+        reviewCount: reviews.length.toString(),
+        bestRating: '5',
+        worstRating: '1',
       },
-      reviewRating: {
-        '@type': 'Rating',
-        ratingValue: rev.rating.toString(),
-      },
-      reviewBody: rev.comment,
-      datePublished: rev.date,
-    })),
+      review: reviews.map((rev) => ({
+        '@type': 'Review',
+        author: {
+          '@type': 'Person',
+          name: rev.author,
+        },
+        reviewRating: {
+          '@type': 'Rating',
+          ratingValue: rev.rating.toString(),
+        },
+        reviewBody: rev.comment,
+        datePublished: rev.date,
+      })),
+    }),
   };
 }
 
@@ -397,6 +402,7 @@ export function generateOrganizationSchema() {
     address: {
       '@type': 'PostalAddress',
       streetAddress: CONTACT.ADDRESS,
+      postalCode: CONTACT.POSTAL_CODE,
       addressLocality: '서울시',
       addressCountry: 'KR',
     },
@@ -537,6 +543,7 @@ export function generateLocalBusinessSchema() {
     address: {
       '@type': 'PostalAddress',
       streetAddress: EXHIBITION.ADDRESS,
+      postalCode: EXHIBITION.POSTAL_CODE,
       addressLocality: '서울시',
       addressCountry: 'KR',
     },
