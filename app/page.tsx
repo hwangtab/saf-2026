@@ -7,16 +7,11 @@ import SectionTitle from '@/components/ui/SectionTitle';
 import ActionCard from '@/components/ui/ActionCard';
 import BackgroundSlider from '@/components/features/BackgroundSlider';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
-import {
-  EXTERNAL_LINKS,
-  OG_IMAGE,
-  SITE_URL,
-  STATISTICS_DATA,
-  escapeJsonLdForScript,
-} from '@/lib/constants';
+import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL, STATISTICS_DATA } from '@/lib/constants';
 import { generateExhibitionSchema, generateFAQSchema } from '@/lib/seo-utils';
 import { shuffleArray } from '@/lib/utils';
 import { getSupabaseArtworks, getSupabaseFAQs } from '@/lib/supabase-data';
+import { JsonLdScript } from '@/components/common/JsonLdScript';
 
 const DynamicCounter = dynamic(() => import('@/components/features/DynamicCounter'));
 const ShareButtons = dynamic(() => import('@/components/common/ShareButtons'));
@@ -265,20 +260,10 @@ export default async function Home() {
         </div>
       </Section>
 
-      {/* FAQ JSON-LD Schema for AI Optimization */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: escapeJsonLdForScript(JSON.stringify(generateFAQSchema(faqs))),
-        }}
-      />
-      {/* ExhibitionEvent JSON-LD Schema for Google Knowledge Graph */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: escapeJsonLdForScript(JSON.stringify(generateExhibitionSchema())),
-        }}
-      />
+      {/* FAQ JSON-LD Schema using Component */}
+      <JsonLdScript data={generateFAQSchema(faqs)} />
+      {/* ExhibitionEvent JSON-LD Schema using Component */}
+      <JsonLdScript data={generateExhibitionSchema()} />
     </>
   );
 }

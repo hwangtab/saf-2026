@@ -6,12 +6,16 @@ import BackToListButton from '@/components/features/BackToListButton';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { parsePrice } from '@/lib/parsePrice';
-import { escapeJsonLdForScript } from '@/lib/seo-utils';
 import { SITE_URL } from '@/lib/constants';
 import Button from '@/components/ui/Button';
 import RelatedArticles from '@/components/features/RelatedArticles';
 import ExpandableHistory from '@/components/features/ExpandableHistory';
-import { generateArtworkMetadata, generateArtworkJsonLd } from '@/lib/seo-utils';
+import {
+  generateArtworkMetadata,
+  generateArtworkJsonLd,
+  generateSpeakableSchema,
+} from '@/lib/seo-utils';
+import { JsonLdScript } from '@/components/common/JsonLdScript';
 import ShareButtons from '@/components/common/ShareButtons';
 import SupportMessage from '@/components/features/SupportMessage';
 import PurchaseGuide from '@/components/features/PurchaseGuide';
@@ -73,9 +77,12 @@ export default async function ArtworkDetailPage({ params }: Props) {
     isInquiry
   );
 
-  // Safely stringify JSON-LD to prevent XSS (escape < as \u003c)
-  const safeJsonLd = escapeJsonLdForScript(JSON.stringify(productSchema));
-  const safeBreadcrumbJsonLd = escapeJsonLdForScript(JSON.stringify(breadcrumbSchema));
+  const speakableSchema = generateSpeakableSchema([
+    '#artwork-title',
+    '#artist-name',
+    '#artist-profile',
+    '#artist-note',
+  ]);
 
   const otherWorks = artworks
     .filter((a) => a.artist === artwork.artist && a.id !== artwork.id)
@@ -83,11 +90,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd }} />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeBreadcrumbJsonLd }}
-      />
+      <JsonLdScript data={[productSchema, breadcrumbSchema, speakableSchema]} />
       <Section
         variant="white"
         prevVariant="canvas-soft"
@@ -136,11 +139,16 @@ export default async function ArtworkDetailPage({ params }: Props) {
 
               {/* Mobile Header: Title, Artist, Price (Visible only on mobile) */}
               <div className="block lg:hidden space-y-3 mt-6">
-                <h1 className="text-2xl font-bold font-sans text-charcoal break-keep text-center">
+                <h1
+                  id="artwork-title-mobile"
+                  className="text-2xl font-bold font-sans text-charcoal break-keep text-center"
+                >
                   {artwork.title}
                 </h1>
                 <div className="flex flex-col items-center gap-1">
-                  <p className="text-lg text-gray-600 font-medium">{artwork.artist}</p>
+                  <p id="artist-name-mobile" className="text-lg text-gray-600 font-medium">
+                    {artwork.artist}
+                  </p>
                   {artwork.price && (
                     <p className="text-xl font-bold text-charcoal">{artwork.price}</p>
                   )}
@@ -204,10 +212,15 @@ export default async function ArtworkDetailPage({ params }: Props) {
             {/* Right Column: Info Section */}
             <div className="space-y-8">
               <header className="hidden lg:block mb-6 border-b border-gray-100 pb-6 lg:border-none lg:pb-0 lg:mb-0">
-                <h1 className="text-3xl md:text-4xl font-bold font-sans text-charcoal mb-2 break-keep">
+                <h1
+                  id="artwork-title"
+                  className="text-3xl md:text-4xl font-bold font-sans text-charcoal mb-2 break-keep"
+                >
                   {artwork.title}
                 </h1>
-                <p className="text-xl text-gray-600 font-medium">{artwork.artist}</p>
+                <p id="artist-name" className="text-xl text-gray-600 font-medium">
+                  {artwork.artist}
+                </p>
               </header>
 
               <TrustBadges className="mb-6" />
@@ -262,7 +275,10 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">
                     작가 소개
                   </h3>
-                  <p className="text-gray-700 leading-relaxed text-sm whitespace-pre-line">
+                  <p
+                    id="artist-profile"
+                    className="text-gray-700 leading-relaxed text-sm whitespace-pre-line"
+                  >
                     {artwork.profile}
                   </p>
                 </div>
@@ -274,7 +290,10 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">
                     작가 노트
                   </h3>
-                  <p className="text-gray-700 leading-relaxed text-sm whitespace-pre-line">
+                  <p
+                    id="artist-note"
+                    className="text-gray-700 leading-relaxed text-sm whitespace-pre-line"
+                  >
                     {artwork.description}
                   </p>
                 </div>

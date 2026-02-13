@@ -1,7 +1,7 @@
 import { escapeJsonLdForScript } from '@/lib/constants';
 
 interface JsonLdScriptProps {
-  data: Record<string, unknown>;
+  data: Record<string, unknown> | Record<string, unknown>[];
 }
 
 export function JsonLdScript({ data }: JsonLdScriptProps) {

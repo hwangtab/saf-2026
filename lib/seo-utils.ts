@@ -494,16 +494,33 @@ export function generateNewsArticleSchema(article: NewsArticleSchemaInput) {
         '@type': 'Organization',
         name: article.publisherName,
       },
+      {
+        '@type': 'Organization',
+        name: CONTACT.ORGANIZATION_NAME,
+        url: SITE_URL,
+      },
     ],
     publisher: {
       '@type': 'Organization',
-      name: article.publisherName, // Using the source as publisher for consistency with existing logic
+      name: article.publisherName,
       url: SITE_URL,
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': article.url,
     },
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['h1', 'article h3', 'article p'],
+    },
+  };
+}
+
+export function generateSpeakableSchema(cssSelectors: string[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'SpeakableSpecification',
+    cssSelector: cssSelectors,
   };
 }
 

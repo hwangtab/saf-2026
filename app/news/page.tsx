@@ -8,7 +8,11 @@ import ShareButtons from '@/components/common/ShareButtons';
 import { getSupabaseNews } from '@/lib/supabase-data';
 import { SITE_URL, BREADCRUMB_HOME, BREADCRUMBS, OG_IMAGE } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
-import { createBreadcrumbSchema, generateNewsArticleSchema } from '@/lib/seo-utils';
+import {
+  createBreadcrumbSchema,
+  generateNewsArticleSchema,
+  generateSpeakableSchema,
+} from '@/lib/seo-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 
 const PAGE_URL = `${SITE_URL}/news`;
@@ -165,12 +169,21 @@ export default async function NewsPage() {
     },
   };
 
+  const speakableSchema = generateSpeakableSchema([
+    '#news-hero-description',
+    '#press-highlights-title',
+    '#press-highlights-desc',
+  ]);
+
   return (
     <>
-      <JsonLdScript data={breadcrumbSchema} />
-      <JsonLdScript data={structuredData} />
+      <JsonLdScript data={[breadcrumbSchema, structuredData, speakableSchema]} />
 
-      <PageHero title="언론 보도" description="씨앗페 캠페인을 조명한 기사와 인터뷰를 모았습니다.">
+      <PageHero
+        title="언론 보도"
+        description="씨앗페 캠페인을 조명한 기사와 인터뷰를 모았습니다."
+        descriptionId="news-hero-description"
+      >
         <ShareButtons
           url={canonicalUrl}
           title="언론 보도 | 씨앗페 2026"
@@ -184,10 +197,13 @@ export default async function NewsPage() {
             <span className="inline-flex items-center px-3 py-1 rounded-full border border-primary text-primary text-xs font-semibold tracking-wide uppercase mb-4">
               Press Highlights
             </span>
-            <SectionTitle className="mb-4">
+            <SectionTitle id="press-highlights-title" className="mb-4">
               언론이 짚어낸 예술인 금융 위기의 핵심 메시지
             </SectionTitle>
-            <p className="text-base md:text-lg text-charcoal-muted leading-relaxed text-balance">
+            <p
+              id="press-highlights-desc"
+              className="text-base md:text-lg text-charcoal-muted leading-relaxed text-balance"
+            >
               언론이 기록한 현장의 목소리와 데이터를 통해, <br className="hidden md:block" />
               예술인이 마주한 금융 사각지대의 현실과 상호부조의 필요성을 확인합니다.
             </p>

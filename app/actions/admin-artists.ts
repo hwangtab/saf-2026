@@ -34,7 +34,14 @@ export async function getArtistById(id: string) {
     .single();
 
   if (error) throw error;
-  return data;
+
+  // Transform profiles array to single object or null if it comes as an array
+  const artist = {
+    ...data,
+    profiles: Array.isArray(data.profiles) ? data.profiles[0] || null : data.profiles,
+  };
+
+  return artist;
 }
 
 export async function updateArtist(id: string, formData: FormData) {

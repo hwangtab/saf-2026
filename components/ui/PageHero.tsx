@@ -14,6 +14,8 @@ interface PageHeroProps {
   className?: string;
   /** Color class for the sawtooth divider (default: "text-white") */
   dividerColor?: string;
+  id?: string;
+  descriptionId?: string;
 }
 
 export default function PageHero({
@@ -23,6 +25,8 @@ export default function PageHero({
   customBackgroundImage,
   className,
   dividerColor = 'text-white',
+  id,
+  descriptionId,
 }: PageHeroProps) {
   return (
     <section
@@ -38,11 +42,17 @@ export default function PageHero({
 
       {/* Content */}
       <div className="relative z-10 container-max text-center w-full">
-        <h1 className="font-display text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight text-white drop-shadow-lg break-keep text-balance">
+        <h1
+          id={id}
+          className="font-display text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight text-white drop-shadow-lg break-keep text-balance"
+        >
           {title}
         </h1>
         {description && (
-          <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed drop-shadow-lg text-balance">
+          <p
+            id={descriptionId}
+            className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed drop-shadow-lg text-balance"
+          >
             {description}
           </p>
         )}
