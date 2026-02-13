@@ -43,23 +43,22 @@ export function RevenueCard({ title, value, subtitle, trend }: RevenueCardProps)
   const formatted = KRW_FORMATTER.format(value);
   const koreanFormatted = formatKoreanAmount(value);
   const digitCount = formatted.replace(/[^\d]/g, '').length;
-  const useKoreanPrimary = digitCount >= 12;
+  const useKoreanPrimary = digitCount >= 10;
   const primaryValue = useKoreanPrimary ? koreanFormatted : formatted;
   const secondaryValue = useKoreanPrimary ? formatted : koreanFormatted;
 
   const valueSizeClass =
     primaryValue.length >= 14
-      ? 'text-[clamp(1.35rem,2.3vw,2.25rem)]'
+      ? 'text-[clamp(1.3rem,2.1vw,2rem)]'
       : primaryValue.length >= 11
-        ? 'text-[clamp(1.5rem,2.7vw,2.5rem)]'
+        ? 'text-[clamp(1.45rem,2.4vw,2.2rem)]'
         : primaryValue.length >= 8
-          ? 'text-[clamp(1.7rem,3.2vw,2.75rem)]'
-          : 'text-[clamp(1.9rem,4vw,3rem)]';
+          ? 'text-[clamp(1.55rem,2.8vw,2.5rem)]'
+          : 'text-[clamp(1.7rem,3.2vw,2.8rem)]';
 
   const subtitleTextSizeClass = secondaryValue.length >= 16 ? 'text-[11px] sm:text-xs' : 'text-xs';
 
-  const valueWrapClass =
-    primaryValue.length >= 14 ? 'whitespace-normal break-words' : 'whitespace-nowrap';
+  const valueWrapClass = 'whitespace-nowrap overflow-hidden text-ellipsis';
 
   const trendValue =
     trend && Number.isInteger(Math.abs(trend.value))
@@ -74,6 +73,7 @@ export function RevenueCard({ title, value, subtitle, trend }: RevenueCardProps)
         <p className="text-sm font-medium text-slate-500">{title}</p>
         <p
           className={`mt-2 min-w-0 max-w-full font-bold leading-[1.05] tracking-tight text-slate-900 tabular-nums ${valueSizeClass} ${valueWrapClass}`}
+          title={primaryValue}
         >
           {primaryValue}
         </p>
