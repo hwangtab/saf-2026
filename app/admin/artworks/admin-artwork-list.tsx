@@ -620,12 +620,14 @@ export function AdminArtworkList({
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end gap-2">
-                        <Link
+                        <Button
                           href={`/admin/artworks/${artwork.id}`}
-                          className="text-gray-500 hover:text-indigo-600 px-2 py-1 rounded hover:bg-indigo-50"
+                          variant="white"
+                          size="sm"
+                          className="px-2 text-gray-500 hover:bg-indigo-50 hover:text-indigo-600"
                         >
                           편집
-                        </Link>
+                        </Button>
                         <Button
                           variant="white"
                           size="sm"
