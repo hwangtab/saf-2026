@@ -1,19 +1,20 @@
-import { type NextRequest } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 import { updateSession } from '@/lib/auth/middleware';
 
 export async function proxy(request: NextRequest) {
+  if (request.nextUrl.pathname === '/admin') {
+    return NextResponse.redirect(new URL('/admin/dashboard', request.url));
+  }
+
   return await updateSession(request);
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - images (public images)
-     */
-    '/((?!_next/static|_next/image|favicon.ico|manifest.json|site.webmanifest|images|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/admin/:path*',
+    '/dashboard/:path*',
+    '/exhibitor/:path*',
+    '/onboarding/:path*',
+    '/auth/:path*',
   ],
 };

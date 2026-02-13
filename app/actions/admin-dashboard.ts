@@ -2,6 +2,7 @@
 
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
+import { unstable_cache } from 'next/cache';
 
 export type DashboardPeriodKey = '7d' | '30d' | '90d' | '365d' | 'all' | `year_${number}`;
 type FixedDashboardPeriodKey = Exclude<DashboardPeriodKey, 'all' | `year_${number}`>;
@@ -450,10 +451,7 @@ function buildRevenueTimeSeries(
     });
 }
 
-export async function getDashboardStats(
-  period: DashboardPeriodKey = '30d'
-): Promise<DashboardStats> {
-  await requireAdmin();
+async function computeDashboardStats(period: DashboardPeriodKey = '30d'): Promise<DashboardStats> {
   const supabase = await createSupabaseAdminOrServerClient();
   const now = new Date();
   const periodKey: DashboardPeriodKey =
@@ -837,4 +835,20 @@ export async function getDashboardStats(
       };
     }),
   };
+}
+
+const getCachedDashboardStats = unstable_cache(
+  async (period: DashboardPeriodKey) => computeDashboardStats(period),
+  ['admin-dashboard-stats'],
+  {
+    revalidate: 30,
+    tags: ['admin-dashboard'],
+  }
+);
+
+export async function getDashboardStats(
+  period: DashboardPeriodKey = '30d'
+): Promise<DashboardStats> {
+  await requireAdmin();
+  return getCachedDashboardStats(period);
 }

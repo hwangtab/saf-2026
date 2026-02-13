@@ -35,7 +35,48 @@ export default function LoginPage() {
       setError(error.message);
       setLoading(false);
     } else {
-      router.push('/dashboard');
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      let nextPath = '/dashboard';
+
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role, status')
+          .eq('id', user.id)
+          .maybeSingle();
+
+        if (profile?.role === 'admin') {
+          nextPath = '/admin/dashboard';
+        } else if (profile?.role === 'exhibitor') {
+          nextPath = '/exhibitor';
+        } else if (profile?.role === 'artist') {
+          if (profile.status === 'active') {
+            nextPath = '/dashboard/artworks';
+          } else if (profile.status === 'suspended') {
+            nextPath = '/dashboard/suspended';
+          } else if (profile.status === 'pending') {
+            const { data: application } = await supabase
+              .from('artist_applications')
+              .select('artist_name, contact, bio')
+              .eq('user_id', user.id)
+              .maybeSingle();
+
+            const hasApplication =
+              !!application?.artist_name?.trim() &&
+              !!application?.contact?.trim() &&
+              !!application?.bio?.trim();
+
+            nextPath = hasApplication ? '/dashboard/pending' : '/onboarding';
+          }
+        } else if (profile?.role === 'user') {
+          nextPath = '/onboarding';
+        }
+      }
+
+      router.push(nextPath);
       router.refresh();
     }
   };
