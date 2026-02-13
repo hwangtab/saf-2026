@@ -96,8 +96,8 @@ async function deduplicate() {
     if (aTime !== null && bTime !== null) {
       return aTime - bTime;
     }
-    if (aTime === null && bTime !== null) return -1;
-    if (aTime !== null && bTime === null) return 1;
+    if (aTime === null && bTime !== null) return 1;
+    if (aTime !== null && bTime === null) return -1;
     return String(a.id ?? '').localeCompare(String(b.id ?? ''));
   });
 

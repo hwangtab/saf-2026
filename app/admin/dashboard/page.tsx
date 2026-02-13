@@ -24,20 +24,27 @@ const KRW_FORMATTER = new Intl.NumberFormat('ko-KR', {
 
 const NUMBER_FORMATTER = new Intl.NumberFormat('ko-KR');
 
-const currentYear = new Date().getFullYear();
-const DASHBOARD_PERIOD_OPTIONS: Array<{ key: DashboardPeriodKey; label: string }> = [
-  { key: '7d', label: '최근 7일' },
-  { key: '30d', label: '최근 30일' },
-  { key: '90d', label: '최근 90일' },
-  { key: '365d', label: '최근 1년' },
-  { key: 'all', label: '전체 기간' },
-  { key: `year_${currentYear}` as DashboardPeriodKey, label: `${currentYear}년` },
-  { key: `year_${currentYear - 1}` as DashboardPeriodKey, label: `${currentYear - 1}년` },
-  { key: `year_${currentYear - 2}` as DashboardPeriodKey, label: `${currentYear - 2}년` },
-];
+function buildDashboardPeriodOptions(
+  currentYear: number
+): Array<{ key: DashboardPeriodKey; label: string }> {
+  return [
+    { key: '7d', label: '최근 7일' },
+    { key: '30d', label: '최근 30일' },
+    { key: '90d', label: '최근 90일' },
+    { key: '365d', label: '최근 1년' },
+    { key: 'all', label: '전체 기간' },
+    { key: `year_${currentYear}` as DashboardPeriodKey, label: `${currentYear}년` },
+    { key: `year_${currentYear - 1}` as DashboardPeriodKey, label: `${currentYear - 1}년` },
+    { key: `year_${currentYear - 2}` as DashboardPeriodKey, label: `${currentYear - 2}년` },
+  ];
+}
 
-function isDashboardPeriodKey(value: string): value is DashboardPeriodKey {
-  if (DASHBOARD_PERIOD_OPTIONS.some((option) => option.key === value)) {
+function isDashboardPeriodKey(
+  value: string,
+  currentYear: number,
+  options: Array<{ key: DashboardPeriodKey; label: string }>
+): value is DashboardPeriodKey {
+  if (options.some((option) => option.key === value)) {
     return true;
   }
 
@@ -129,9 +136,13 @@ function formatComparedTo(comparedTo: string | null) {
 export default async function AdminDashboardPage({ searchParams }: Props) {
   await connection();
   const params = await searchParams;
+  const currentYear = new Date().getFullYear();
+  const dashboardPeriodOptions = buildDashboardPeriodOptions(currentYear);
   const periodParam = params.period;
   const selectedPeriod: DashboardPeriodKey =
-    periodParam && isDashboardPeriodKey(periodParam) ? periodParam : '30d';
+    periodParam && isDashboardPeriodKey(periodParam, currentYear, dashboardPeriodOptions)
+      ? periodParam
+      : '30d';
 
   const stats = await getDashboardStats(selectedPeriod);
   const isYearOverYear = stats.period.key.startsWith('year_');
@@ -168,7 +179,7 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
             조회 구간: {stats.period.startDate} ~ {stats.period.endDate}
           </p>
         </AdminPageHeader>
-        <DashboardPeriodTabs selectedPeriod={selectedPeriod} options={DASHBOARD_PERIOD_OPTIONS} />
+        <DashboardPeriodTabs selectedPeriod={selectedPeriod} options={dashboardPeriodOptions} />
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
