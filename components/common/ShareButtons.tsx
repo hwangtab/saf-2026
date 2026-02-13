@@ -7,7 +7,7 @@ import TwitterShareButton from 'react-share/lib/TwitterShareButton';
 import FacebookIcon from 'react-share/lib/FacebookIcon';
 import TwitterIcon from 'react-share/lib/TwitterIcon';
 import clsx from 'clsx';
-import { useKakaoSDK } from '@/lib/hooks/useKakaoSDK';
+import { useKakaoShareSDK } from '@/lib/hooks/useKakaoSDK';
 
 interface ShareButtonsProps {
   url: string;
@@ -19,7 +19,7 @@ type CopyStatus = 'idle' | 'copied' | 'error';
 
 export default function ShareButtons({ url, title, description }: ShareButtonsProps) {
   const [copyStatus, setCopyStatus] = useState<CopyStatus>('idle');
-  const { isReady: kakaoReady } = useKakaoSDK();
+  const { isReady: kakaoReady } = useKakaoShareSDK();
 
   const handleCopyLink = async () => {
     try {

@@ -2,8 +2,12 @@
 
 import { useState } from 'react';
 import SafeImage from '@/components/common/SafeImage';
-import ArtworkLightbox from '@/components/ui/ArtworkLightbox';
+import dynamic from 'next/dynamic';
 import { resolveArtworkImageUrl, resolveArtworkImageUrlForPreset } from '@/lib/utils';
+
+const ArtworkLightbox = dynamic(() => import('@/components/ui/ArtworkLightbox'), {
+  ssr: false,
+});
 
 interface ArtworkImageProps {
   images: string[];
@@ -71,13 +75,15 @@ export default function ArtworkImage({ images, title, artist, sold }: ArtworkIma
         )}
       </div>
 
-      <ArtworkLightbox
-        open={isOpen}
-        close={() => setIsOpen(false)}
-        images={resolvedImages}
-        initialIndex={0}
-        alt={alt}
-      />
+      {isOpen && (
+        <ArtworkLightbox
+          open={isOpen}
+          close={() => setIsOpen(false)}
+          images={resolvedImages}
+          initialIndex={0}
+          alt={alt}
+        />
+      )}
     </>
   );
 }

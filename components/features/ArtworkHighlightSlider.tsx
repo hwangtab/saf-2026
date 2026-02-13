@@ -16,9 +16,6 @@ interface ArtworkHighlightSliderProps {
 export default function ArtworkHighlightSlider({ artworks }: ArtworkHighlightSliderProps) {
   const [mounted, setMounted] = useState(false);
 
-  // Randomize and limit for the slider to ensure variety
-  const [displayArtworks, setDisplayArtworks] = useState<Artwork[]>([]);
-
   const [emblaRef] = useEmblaCarousel(
     {
       loop: true,
@@ -37,14 +34,9 @@ export default function ArtworkHighlightSlider({ artworks }: ArtworkHighlightSli
 
   useEffect(() => {
     setMounted(true);
-    // Shuffle all available artworks and take a good number for the slider
-    const shuffled = [...artworks].sort(() => 0.5 - Math.random());
-    // Doubling the array can help with smoother infinite loop if items are few,
-    // but with many artworks, we just take enough to feel "endless"
-    setDisplayArtworks(shuffled.slice(0, 30));
-  }, [artworks]);
+  }, []);
 
-  if (!mounted || displayArtworks.length === 0) {
+  if (!mounted || artworks.length === 0) {
     return (
       <Section variant="white" className="py-12 bg-canvas-soft/30">
         <div className="container-max h-[300px] animate-pulse bg-gray-100 rounded-xl" />
@@ -71,7 +63,7 @@ export default function ArtworkHighlightSlider({ artworks }: ArtworkHighlightSli
 
       <div className="embla" ref={emblaRef}>
         <div className="embla__container flex gap-6 px-4 md:px-8">
-          {displayArtworks.map((artwork) => (
+          {artworks.map((artwork) => (
             <div
               key={`${artwork.id}-slider`}
               className="embla__slide flex-[0_0_220px] sm:flex-[0_0_260px] md:flex-[0_0_300px]"

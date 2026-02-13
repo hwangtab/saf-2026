@@ -12,7 +12,7 @@ const mockArtwork: Artwork = {
   id: '123',
   title: 'Test Artwork',
   artist: 'Test Artist',
-  image: 'test.jpg',
+  images: ['test.jpg'],
   price: '₩1,000,000',
   sold: false,
   description: 'Test Description',

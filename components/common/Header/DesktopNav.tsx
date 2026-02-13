@@ -1,10 +1,15 @@
 'use client';
 
-import AuthButtons from '@/components/auth/AuthButtons';
+import dynamic from 'next/dynamic';
 import Button from '@/components/ui/Button';
 
 import type { NavigationItem } from '@/types';
 import NavLink from './NavLink';
+
+const AuthButtons = dynamic(() => import('@/components/auth/AuthButtons'), {
+  ssr: false,
+  loading: () => <div className="h-10 w-24 bg-gray-100/50 animate-pulse rounded-full" />,
+});
 
 interface DesktopNavProps {
   navigation: NavigationItem[];

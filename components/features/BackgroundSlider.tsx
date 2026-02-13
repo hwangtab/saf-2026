@@ -74,7 +74,7 @@ export default function BackgroundSlider() {
             alt=""
             fill
             priority={false}
-            loading="eager"
+            loading="lazy"
             className="object-cover"
             sizes="100vw"
           />

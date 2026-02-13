@@ -60,7 +60,7 @@ export default function PageHeroBackground({ customImage }: PageHeroBackgroundPr
   if (prefersReducedMotion) {
     return (
       <div className="absolute inset-0">
-        <SafeImage src={bgImage} alt="" fill className="object-cover" priority sizes="100vw" />
+        <SafeImage src={bgImage} alt="" fill className="object-cover" sizes="100vw" />
       </div>
     );
   }

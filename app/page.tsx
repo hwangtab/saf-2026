@@ -15,6 +15,7 @@ import {
   escapeJsonLdForScript,
 } from '@/lib/constants';
 import { generateExhibitionSchema, generateFAQSchema } from '@/lib/seo-utils';
+import { shuffleArray } from '@/lib/utils';
 import { getSupabaseArtworks, getSupabaseFAQs } from '@/lib/supabase-data';
 
 const DynamicCounter = dynamic(() => import('@/components/features/DynamicCounter'));
@@ -61,6 +62,10 @@ export default async function Home() {
   // Slider Logic: Show all available artworks (sold: false)
   const [allArtworks, faqs] = await Promise.all([getSupabaseArtworks(), getSupabaseFAQs()]);
   const availableArtworks = allArtworks.filter((artwork) => !artwork.sold);
+
+  // 서버 측에서 30개만 샘플링하여 라이브러리/데이터 전송량 최적화
+
+  const sliderArtworks = shuffleArray(availableArtworks).slice(0, 30);
 
   return (
     <>
@@ -125,13 +130,13 @@ export default async function Home() {
             <ShareButtons
               url={SITE_URL}
               title="씨앗페 2026 - 온라인 전시 오픈"
-              description="한국 예술인 상호부조 기금 마련을 위한 온라인 특별전, 씨앗페 2026에 함께해주세요."
+              description="한국 예술인 상호부조 기금 마련을 위한 온라인 특별전, 씨앗페 2026에 함께하세요."
             />
           </div>
         </div>
       </section>
 
-      <ArtworkHighlightSlider artworks={availableArtworks} />
+      <ArtworkHighlightSlider artworks={sliderArtworks} />
 
       {/* Statistics Counter Section */}
       <DynamicCounter items={counterItems} />

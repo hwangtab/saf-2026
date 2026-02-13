@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from 'next';
 import { Suspense } from 'react';
-import Script from 'next/script';
 import PageLoader from '@/components/common/PageLoader';
 import { Analytics } from '@vercel/analytics/react';
 import Header from '@/components/common/Header';
@@ -113,10 +112,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html lang="ko" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://t1.daumcdn.net" />
-        <link rel="preconnect" href="https://dapi.kakao.com" />
-      </head>
+      <head></head>
       <body className="bg-canvas-soft text-charcoal flex flex-col min-h-screen font-sans antialiased">
         <AnimationProvider>
           <ToastProvider>
@@ -138,10 +134,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <JsonLdScript data={localBusinessSchema} />
 
         <Analytics />
-        <Script
-          src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"
-          strategy="afterInteractive"
-        />
       </body>
     </html>
   );

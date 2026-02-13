@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import { EXHIBITION } from '@/lib/constants';
-import { useKakaoSDK } from '@/lib/hooks/useKakaoSDK';
+import { useKakaoMapSDK } from '@/lib/hooks/useKakaoSDK';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
 
 interface KakaoMapProps {
@@ -12,7 +12,7 @@ interface KakaoMapProps {
 
 export default function KakaoMap(props?: KakaoMapProps): React.JSX.Element {
   const { className } = props ?? {};
-  const { loading, error, hasAppKey, isReady } = useKakaoSDK();
+  const { loading, error, hasAppKey, isReady } = useKakaoMapSDK();
   const isMobile = useIsMobile();
 
   const [position, setPosition] = useState<{ lat: number; lng: number }>({

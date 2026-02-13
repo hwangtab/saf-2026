@@ -5,6 +5,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function shuffleArray<T>(array: T[]): T[] {
+  return [...array].sort(() => 0.5 - Math.random());
+}
+
 /**
  * Formats artist name for display by appending '작가' suffix.
  * Special case: '작가미상' (unknown artist) is displayed as-is without suffix.

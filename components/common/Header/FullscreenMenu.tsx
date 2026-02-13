@@ -3,11 +3,16 @@
 import { useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import AuthButtons from '@/components/auth/AuthButtons';
+import dynamic from 'next/dynamic';
 import Button from '@/components/ui/Button';
 import { EXTERNAL_LINKS } from '@/lib/constants';
 import type { NavigationItem } from '@/types';
 import styles from './FullscreenMenu.module.css';
+
+const AuthButtons = dynamic(() => import('@/components/auth/AuthButtons'), {
+  ssr: false,
+  loading: () => <div className="h-10 w-24 bg-gray-100/50 animate-pulse rounded-full" />,
+});
 
 interface FullscreenMenuProps {
   isOpen: boolean;

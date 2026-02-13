@@ -1,25 +1,13 @@
 import ExportedImage from 'next-image-export-optimizer';
 import { SOCIAL_LINKS, CONTACT, EXTERNAL_LINKS, EXHIBITION } from '@/lib/constants';
-import FooterSliderWrapper from '@/components/common/FooterSliderWrapper';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
 import { UI_STRINGS } from '@/lib/ui-strings';
-import { getSupabaseArtworks } from '@/lib/supabase-data';
+import FooterSlider from '@/components/common/FooterSlider';
 
-export default async function Footer() {
-  const artworks = await getSupabaseArtworks();
-  const sliderArtworks = artworks.map((artwork) => ({
-    id: artwork.id,
-    artist: artwork.artist,
-    title: artwork.title,
-    images: artwork.images || [],
-    price: artwork.price,
-    sold: artwork.sold,
-    material: artwork.material,
-    size: artwork.size,
-  }));
+export default function Footer() {
   return (
     <>
-      <FooterSliderWrapper artworks={sliderArtworks} />
+      <FooterSlider />
       <div className="relative">
         <SawtoothDivider position="top" colorClass="text-gray-900" />
         <footer className="bg-gray-900 text-white pb-[env(safe-area-inset-bottom)]">

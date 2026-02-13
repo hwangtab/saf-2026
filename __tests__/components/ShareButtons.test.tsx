@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ShareButtons from '../../components/common/ShareButtons';
 
 jest.mock('../../lib/hooks/useKakaoSDK', () => ({
-  useKakaoSDK: jest.fn(() => ({ isReady: true })),
+  useKakaoShareSDK: jest.fn(() => ({ isReady: true })),
 }));
 
 jest.mock('next-image-export-optimizer', () => ({
