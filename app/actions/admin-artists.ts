@@ -27,7 +27,11 @@ export async function getArtistById(id: string) {
   await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
 
-  const { data, error } = await supabase.from('artists').select('*').eq('id', id).single();
+  const { data, error } = await supabase
+    .from('artists')
+    .select('*, profiles(id, name, email)')
+    .eq('id', id)
+    .single();
 
   if (error) throw error;
   return data;
@@ -226,4 +230,109 @@ export async function createAdminArtist(formData: FormData) {
   await logAdminAction('artist_created', 'artist', data.id, { name: name_ko }, admin.id);
 
   return { success: true, id: data.id };
+}
+
+export async function searchUsersByName(query: string) {
+  await requireAdmin();
+  const supabase = await createSupabaseAdminOrServerClient();
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('id, name, email, avatar_url, role, status')
+    .or(`name.ilike.%${query}%,email.ilike.%${query}%`)
+    .limit(10);
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function linkArtistToUser(artistId: string, userId: string) {
+  const admin = await requireAdmin();
+  const supabase = await createSupabaseAdminOrServerClient();
+
+  // Check if user is already linked to another artist
+  const { data: existingArtist, error: checkError } = await supabase
+    .from('artists')
+    .select('id, name_ko')
+    .eq('user_id', userId)
+    .maybeSingle();
+
+  if (checkError) throw checkError;
+  if (existingArtist) {
+    throw new Error(`이 사용자는 이미 다른 작가('${existingArtist.name_ko}')와 연결되어 있습니다.`);
+  }
+
+  // Get artist info for logging
+  const { data: artist } = await supabase
+    .from('artists')
+    .select('name_ko')
+    .eq('id', artistId)
+    .single();
+
+  // Update artist linkage
+  const { error: linkError } = await supabase
+    .from('artists')
+    .update({ user_id: userId })
+    .eq('id', artistId);
+
+  if (linkError) throw linkError;
+
+  // Ensure user is active and has artist role
+  const { error: profileError } = await supabase
+    .from('profiles')
+    .update({ role: 'artist', status: 'active' })
+    .eq('id', userId);
+
+  if (profileError) throw profileError;
+
+  revalidatePath('/admin/artists');
+  revalidatePath(`/admin/artists/${artistId}`);
+
+  await logAdminAction(
+    'artist_linked_to_user',
+    'artist',
+    artistId,
+    {
+      artist_name: artist?.name_ko,
+      user_id: userId,
+    },
+    admin.id
+  );
+
+  return { success: true };
+}
+
+export async function unlinkArtistFromUser(artistId: string) {
+  const admin = await requireAdmin();
+  const supabase = await createSupabaseAdminOrServerClient();
+
+  // Get artist info for logging
+  const { data: artist } = await supabase
+    .from('artists')
+    .select('name_ko, user_id')
+    .eq('id', artistId)
+    .single();
+
+  const { error: unlinkError } = await supabase
+    .from('artists')
+    .update({ user_id: null })
+    .eq('id', artistId);
+
+  if (unlinkError) throw unlinkError;
+
+  revalidatePath('/admin/artists');
+  revalidatePath(`/admin/artists/${artistId}`);
+
+  await logAdminAction(
+    'artist_unlinked_from_user',
+    'artist',
+    artistId,
+    {
+      artist_name: artist?.name_ko,
+      user_id: artist?.user_id,
+    },
+    admin.id
+  );
+
+  return { success: true };
 }

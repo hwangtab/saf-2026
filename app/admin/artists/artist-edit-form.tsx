@@ -7,6 +7,9 @@ import {
   updateArtist,
   updateArtistProfileImage,
   createAdminArtist,
+  searchUsersByName,
+  linkArtistToUser,
+  unlinkArtistFromUser,
 } from '@/app/actions/admin-artists';
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
 import { AdminCard } from '@/app/admin/_components/admin-ui';
@@ -22,6 +25,12 @@ type Artist = {
   contact_email: string | null;
   instagram: string | null;
   homepage: string | null;
+  user_id: string | null;
+  profiles: {
+    id: string;
+    name: string;
+    email: string;
+  } | null;
 };
 
 type ArtistEditFormProps = {
@@ -38,6 +47,12 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
     artist.profile_image ? [artist.profile_image] : []
   );
   const [error, setError] = useState<string | null>(null);
+
+  // User connection state
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [isLinking, setIsLinking] = useState(false);
 
   const isEditing = !!artist.id;
 
@@ -89,6 +104,72 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
     }
   };
 
+  const handleSearchUsers = async (q: string) => {
+    setSearchQuery(q);
+    if (q.length < 2) {
+      setSearchResults([]);
+      return;
+    }
+    setIsSearching(true);
+    try {
+      const results = await searchUsersByName(q);
+      setSearchResults(results);
+    } catch (err) {
+      console.error('Search failed:', err);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleLinkUser = async (user: any) => {
+    if (!artist.id) return;
+
+    const confirmMessage =
+      `'${user.name}' 사용자를 이 작가 프로필에 연결하시겠습니까?\n\n` +
+      `수행되는 작업:\n` +
+      `1. 작가 프로필에 사용자 계정 ID(${user.email})를 등록합니다.\n` +
+      `2. 해당 사용자의 권한을 'Artist'로 변경합니다.\n` +
+      `3. 해당 사용자의 계정 상태를 'Active'로 변경합니다.\n\n` +
+      `계속하시겠습니까?`;
+
+    if (!confirm(confirmMessage)) return;
+
+    setIsLinking(true);
+    setError(null);
+    try {
+      const result = await linkArtistToUser(artist.id, user.id);
+      if (result.success) {
+        toast.success(`${user.name} 사용자가 작가 계정으로 연결되었습니다.`);
+        setSearchQuery('');
+        setSearchResults([]);
+        router.refresh();
+      }
+    } catch (err: any) {
+      setError(err.message);
+      toast.error(err.message);
+    } finally {
+      setIsLinking(false);
+    }
+  };
+
+  const handleUnlinkUser = async () => {
+    if (!artist.id || !confirm('사용자 계정 연결을 해제하시겠습니까?')) return;
+    setIsLinking(true);
+    setError(null);
+    try {
+      const result = await unlinkArtistFromUser(artist.id);
+      if (result.success) {
+        toast.success('사용자 계정 연결이 해제되었습니다.');
+        router.refresh();
+      }
+    } catch (err: any) {
+      setError(err.message);
+      toast.error(err.message);
+    } finally {
+      setIsLinking(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Error Message */}
@@ -114,22 +195,113 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
 
       {/* Profile Image Section */}
       {isEditing && artist.id ? (
-        <AdminCard className="p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            프로필 이미지 (선택)
-            {savingImage && <span className="ml-2 text-sm text-gray-500">저장 중...</span>}
-          </h2>
-          <ImageUpload
-            bucket="profiles"
-            pathPrefix={`admin-artist-${artist.id}`}
-            value={profileImage}
-            onUploadComplete={handleImageChange}
-            maxFiles={1}
-          />
-        </AdminCard>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <AdminCard className="p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              프로필 이미지 (선택)
+              {savingImage && <span className="ml-2 text-sm text-gray-500">저장 중...</span>}
+            </h2>
+            <ImageUpload
+              bucket="profiles"
+              pathPrefix={`admin-artist-${artist.id}`}
+              value={profileImage}
+              onUploadComplete={handleImageChange}
+              maxFiles={1}
+            />
+          </AdminCard>
+
+          <AdminCard className="p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              사용자 계정 연결
+              {isLinking && <span className="ml-2 text-sm text-gray-500">처리 중...</span>}
+            </h2>
+
+            {artist.profiles ? (
+              <div className="space-y-4">
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-green-900">{artist.profiles.name}</p>
+                      <p className="text-sm text-green-700">{artist.profiles.email}</p>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="white"
+                      size="sm"
+                      onClick={handleUnlinkUser}
+                      disabled={isLinking}
+                      className="text-red-600 hover:text-red-700 border-red-200"
+                    >
+                      연결 해제
+                    </Button>
+                  </div>
+                </div>
+                <p className="text-xs text-slate-500">
+                  이 작가 프로필은 현재 위 사용자 계정과 연결되어 있습니다. 해당 사용자는 작가
+                  대시보드를 사용할 수 있습니다.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="relative">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    사용자 검색 (이름 또는 이메일)
+                  </label>
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => handleSearchUsers(e.target.value)}
+                    placeholder="연결할 사용자 검색..."
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
+                    disabled={isLinking}
+                  />
+                  {isSearching && (
+                    <div className="absolute right-3 top-[38px]">
+                      <div className="animate-spin h-4 w-4 border-2 border-indigo-500 border-t-transparent rounded-full"></div>
+                    </div>
+                  )}
+                </div>
+
+                {searchResults.length > 0 && (
+                  <div className="border border-slate-200 rounded-lg divide-y divide-slate-100 max-h-48 overflow-y-auto bg-white shadow-sm">
+                    {searchResults.map((user) => (
+                      <div
+                        key={user.id}
+                        className="p-3 flex items-center justify-between hover:bg-slate-50 transition-colors"
+                      >
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-slate-900 truncate">{user.name}</p>
+                          <p className="text-xs text-slate-500 truncate">{user.email}</p>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="primary"
+                          size="sm"
+                          onClick={() => handleLinkUser(user)}
+                          disabled={isLinking}
+                        >
+                          연결
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {searchQuery.length >= 2 && !isSearching && searchResults.length === 0 && (
+                  <p className="text-sm text-slate-500 italic">검색 결과가 없습니다.</p>
+                )}
+
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  사용자의 이름을 검색하여 이 작가 프로필과 연결하세요. <br />
+                  연결된 사용자는 해당 작가 권한으로 로그인하여 작품을 관리할 수 있습니다.
+                </p>
+              </div>
+            )}
+          </AdminCard>
+        </div>
       ) : (
         <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800">
-          프로필 이미지는 선택 사항이며, 작가 정보를 먼저 저장한 뒤 필요할 때 등록할 수 있습니다.
+          프로필 이미지 및 사용자 연동은 작가 정보를 먼저 저장한 뒤 진행할 수 있습니다.
         </div>
       )}
 
