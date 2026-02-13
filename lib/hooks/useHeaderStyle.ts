@@ -3,13 +3,21 @@ import { usePathname } from 'next/navigation';
 import { HERO_PAGES } from '@/lib/constants';
 import { useScrolled } from '@/lib/hooks/useScrolled';
 
+function normalizePath(path: string): string {
+  if (!path) return '/';
+  const withoutTrailingSlash = path.replace(/\/+$/, '');
+  return withoutTrailingSlash === '' ? '/' : withoutTrailingSlash;
+}
+
 export function useHeaderStyle() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // 네이티브 <dialog>가 스크롤 잠금을 처리하므로 useScrollLock 불필요
   const isScrolled = useScrolled(10, isMenuOpen);
   const pathname = usePathname();
-  const currentPath = pathname || (typeof window !== 'undefined' ? window.location.pathname : '');
+  const currentPath = normalizePath(
+    pathname || (typeof window !== 'undefined' ? window.location.pathname : '/')
+  );
 
   const isActive = useCallback(
     (href: string) => {
