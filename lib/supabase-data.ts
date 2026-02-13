@@ -11,7 +11,7 @@ import type { Artwork, ExhibitionReview, NewsArticle } from '@/types';
 const isMissingTableError = (error: any) => error?.code === '42P01';
 const ARTWORK_SELECT_COLUMNS =
   'id, artist_id, title, description, size, material, year, edition, price, images, shop_url, status';
-const ARTIST_SELECT_COLUMNS = 'id, name_ko, profile, bio, history';
+const ARTIST_SELECT_COLUMNS = 'id, name_ko, bio, history';
 
 const mapArtworkRow = (item: any, artist?: any): Artwork => ({
   id: item.id,

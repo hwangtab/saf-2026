@@ -169,7 +169,7 @@
   - [ ] `/exhibitor` route accessible only to exhibitors
   - [ ] Shows basic dashboard structure
 
-- [ ] 6. Implement "My Artists" Management UI
+- [x] 6. Implement "My Artists" Management UI
 
   **What to do**:
   - Create `app/exhibitor/artists/page.tsx`.
