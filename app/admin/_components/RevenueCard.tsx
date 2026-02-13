@@ -43,17 +43,17 @@ export function RevenueCard({ title, value, subtitle, trend }: RevenueCardProps)
   const formatted = KRW_FORMATTER.format(value);
   const koreanFormatted = formatKoreanAmount(value);
   const digitCount = formatted.replace(/[^\d]/g, '').length;
-  const useKoreanPrimary = digitCount >= 10;
+  const useKoreanPrimary = digitCount >= 12;
   const primaryValue = useKoreanPrimary ? koreanFormatted : formatted;
   const secondaryValue = useKoreanPrimary ? formatted : koreanFormatted;
 
   const valueSizeClass =
     primaryValue.length >= 14
-      ? 'text-[clamp(1.3rem,2.1vw,2rem)]'
+      ? 'text-[clamp(1.1rem,1.6vw,1.7rem)]'
       : primaryValue.length >= 11
-        ? 'text-[clamp(1.45rem,2.4vw,2.2rem)]'
+        ? 'text-[clamp(1.25rem,2vw,2rem)]'
         : primaryValue.length >= 8
-          ? 'text-[clamp(1.55rem,2.8vw,2.5rem)]'
+          ? 'text-[clamp(1.5rem,2.6vw,2.4rem)]'
           : 'text-[clamp(1.7rem,3.2vw,2.8rem)]';
 
   const subtitleTextSizeClass = secondaryValue.length >= 16 ? 'text-[11px] sm:text-xs' : 'text-xs';
