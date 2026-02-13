@@ -35,6 +35,23 @@ function sanitizeIlikeQuery(query: string) {
     .replace(/\s+/g, ' ');
 }
 
+function isMissingContactPhoneColumnError(error: unknown) {
+  if (!error || typeof error !== 'object') return false;
+
+  const candidate = error as {
+    code?: string;
+    message?: string;
+    details?: string;
+    hint?: string;
+  };
+
+  const merged = `${candidate.message || ''} ${candidate.details || ''} ${candidate.hint || ''}`
+    .toLowerCase()
+    .trim();
+
+  return candidate.code === '42703' && merged.includes('contact_phone');
+}
+
 function normalizeEmail(value: string | null | undefined): string | null {
   const trimmed = (value || '').trim();
   if (!trimmed) return null;
@@ -67,15 +84,36 @@ export async function searchUnlinkedArtists(query: string): Promise<UnlinkedArti
   const normalizedQuery = sanitizeIlikeQuery(query);
   if (normalizedQuery.length < 2) return [];
 
-  const { data, error } = await supabase
-    .from('artists')
-    .select('id, name_ko, name_en, contact_phone, contact_email, updated_at, artworks(count)')
-    .is('user_id', null)
-    .or(
-      `name_ko.ilike.%${normalizedQuery}%,name_en.ilike.%${normalizedQuery}%,contact_phone.ilike.%${normalizedQuery}%,contact_email.ilike.%${normalizedQuery}%`
-    )
-    .order('updated_at', { ascending: false })
-    .limit(20);
+  const runSearch = async (withPhoneField: boolean) => {
+    if (withPhoneField) {
+      return supabase
+        .from('artists')
+        .select('id, name_ko, name_en, contact_phone, contact_email, updated_at, artworks(count)')
+        .is('user_id', null)
+        .or(
+          `name_ko.ilike.%${normalizedQuery}%,name_en.ilike.%${normalizedQuery}%,contact_phone.ilike.%${normalizedQuery}%,contact_email.ilike.%${normalizedQuery}%`
+        )
+        .order('updated_at', { ascending: false })
+        .limit(20);
+    }
+
+    return supabase
+      .from('artists')
+      .select('id, name_ko, name_en, contact_email, updated_at, artworks(count)')
+      .is('user_id', null)
+      .or(
+        `name_ko.ilike.%${normalizedQuery}%,name_en.ilike.%${normalizedQuery}%,contact_email.ilike.%${normalizedQuery}%`
+      )
+      .order('updated_at', { ascending: false })
+      .limit(20);
+  };
+
+  let { data, error } = await runSearch(true);
+  if (error && isMissingContactPhoneColumnError(error)) {
+    const fallback = await runSearch(false);
+    data = fallback.data;
+    error = fallback.error;
+  }
 
   if (error) throw error;
 
@@ -83,7 +121,7 @@ export async function searchUnlinkedArtists(query: string): Promise<UnlinkedArti
     id: string;
     name_ko: string | null;
     name_en: string | null;
-    contact_phone: string | null;
+    contact_phone?: string | null;
     contact_email: string | null;
     updated_at: string | null;
     artworks?: Array<{ count: number | null }> | null;
