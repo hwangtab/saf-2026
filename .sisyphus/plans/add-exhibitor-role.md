@@ -106,7 +106,7 @@
   - [ ] SQL content written correctly
   - [ ] `supabase db push` executed successfully (exit code 0)
 
-- [ ] 2. Update Type Definitions
+- [x] 2. Update Type Definitions
 
   **What to do**:
   - Update `types/index.ts`:

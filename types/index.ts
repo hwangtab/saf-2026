@@ -1,3 +1,5 @@
+export type UserRole = 'admin' | 'artist' | 'user' | 'exhibitor';
+
 export type ArtistRole =
   | 'musician'
   | 'artist'
@@ -11,6 +13,7 @@ export type ArtistRole =
 export interface ArtistData {
   profile: string;
   history: string;
+  owner_id?: string;
 }
 
 // Base artwork data structure (from DB/Files)

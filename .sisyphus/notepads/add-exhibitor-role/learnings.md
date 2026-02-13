@@ -12,3 +12,17 @@ Starting work on add-exhibitor-role plan.
   - Added `ALTER TYPE user_role ADD VALUE IF NOT EXISTS 'exhibitor'` to handle the enum type which was missing the 'exhibitor' role.
   - Used `role::text` in the check constraint for compatibility.
   - Supabase CLI successfully pushed the migration to the remote database.
+
+## [2026-02-13 12:23:21] Task 2: Type Definitions
+
+- Added UserRole type: created
+- Added owner_id to ArtistData: success
+- Type check: pass
+
+## [2026-02-13
+
+## [2026-02-13 12:24:03] Task 2: Type Definitions
+
+- UserRole: updated
+- owner_id added to ArtistData: yes
+- Type check: pass
