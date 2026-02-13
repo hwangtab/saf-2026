@@ -30,6 +30,8 @@ const PERIOD_LABEL_MAP: Record<DashboardPeriodKey, string> = {
   all: '전체 기간',
 };
 
+const MAX_REVENUE_BUCKETS_FOR_ALL = 60;
+
 type SoldRecord = {
   soldDate: Date;
   price: number;
@@ -99,6 +101,12 @@ export type DashboardStats = {
       soldCount: number;
       averagePrice: number;
     }>;
+    timeSeriesMeta: {
+      totalBuckets: number;
+      displayedBuckets: number;
+      truncated: boolean;
+      maxBuckets: number | null;
+    };
   };
   materialDistribution: Array<{
     material: string;
@@ -589,7 +597,12 @@ export async function getDashboardStats(
           ? 0
           : null;
 
-  const timeSeries = buildRevenueTimeSeries(periodRecords, periodStart, periodEnd, bucket);
+  const fullTimeSeries = buildRevenueTimeSeries(periodRecords, periodStart, periodEnd, bucket);
+  const shouldTruncateForAll =
+    periodKey === 'all' && fullTimeSeries.length > MAX_REVENUE_BUCKETS_FOR_ALL;
+  const timeSeries = shouldTruncateForAll
+    ? fullTimeSeries.slice(-MAX_REVENUE_BUCKETS_FOR_ALL)
+    : fullTimeSeries;
 
   const materialMap = new Map<string, number>();
   allArtworks.forEach((artwork) => {
@@ -675,6 +688,12 @@ export async function getDashboardStats(
         changeRatePct,
       },
       timeSeries,
+      timeSeriesMeta: {
+        totalBuckets: fullTimeSeries.length,
+        displayedBuckets: timeSeries.length,
+        truncated: shouldTruncateForAll,
+        maxBuckets: shouldTruncateForAll ? MAX_REVENUE_BUCKETS_FOR_ALL : null,
+      },
     },
     materialDistribution,
     trends: {

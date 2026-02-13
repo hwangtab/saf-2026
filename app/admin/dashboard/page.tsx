@@ -216,9 +216,16 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
         <AdminCardHeader className="rounded-t-2xl">
           <h2 className="text-base font-semibold text-slate-900">기간별 매출 상세</h2>
           <span className="text-sm text-slate-500">
-            총 {NUMBER_FORMATTER.format(stats.revenue.timeSeries.length)}개 구간
+            총 {NUMBER_FORMATTER.format(stats.revenue.timeSeriesMeta.totalBuckets)}개 구간
           </span>
         </AdminCardHeader>
+        {stats.revenue.timeSeriesMeta.truncated ? (
+          <div className="border-b border-amber-200 bg-amber-50 px-4 py-2 text-xs text-amber-800">
+            전체 기간은 최근{' '}
+            {NUMBER_FORMATTER.format(stats.revenue.timeSeriesMeta.displayedBuckets)}개 구간만 표시
+            중입니다.
+          </div>
+        ) : null}
         <div className="max-h-[380px] overflow-auto">
           {stats.revenue.timeSeries.length === 0 ? (
             <div className="p-8 text-center text-sm text-slate-500">
