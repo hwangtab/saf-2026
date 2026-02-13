@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { reactivateUser, rejectUser, updateUserRole } from '@/app/actions/admin';
 import Modal from '@/components/ui/Modal';
+import Button from '@/components/ui/Button';
 import {
   AdminBadge,
   AdminCard,
@@ -301,29 +302,35 @@ export function UserList({ users }: { users: Profile[] }) {
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end items-center gap-2">
                         {user.status !== 'suspended' && (
-                          <button
+                          <Button
+                            variant="white"
+                            size="sm"
                             onClick={() => setRejectConfirmId(user.id)}
                             disabled={processingId === user.id}
-                            className="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
+                            className="text-red-600 hover:text-red-900 hover:bg-red-50 disabled:opacity-50"
                           >
                             {user.status === 'pending' ? '신청 거절' : '계정 정지'}
-                          </button>
+                          </Button>
                         )}
                         {user.status === 'suspended' && (
-                          <button
+                          <Button
+                            variant="white"
+                            size="sm"
                             onClick={() => setReactivateConfirmId(user.id)}
                             disabled={processingId === user.id}
-                            className="text-blue-700 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
+                            className="text-blue-700 hover:text-blue-900 hover:bg-blue-50 disabled:opacity-50"
                           >
                             재활성화
-                          </button>
+                          </Button>
                         )}
-                        <button
+                        <Button
+                          variant="white"
+                          size="sm"
                           onClick={() => setSelectedUser(user)}
-                          className="text-gray-500 hover:text-gray-900 px-3 py-1.5 rounded-md hover:bg-gray-100 transition-colors"
+                          className="text-gray-500 hover:text-gray-900 hover:bg-gray-100"
                         >
                           상세
-                        </button>
+                        </Button>
                       </div>
                     </td>
                   </tr>
@@ -404,12 +411,9 @@ export function UserList({ users }: { users: Profile[] }) {
             )}
 
             <div className="border-t border-gray-100 pt-4 flex justify-end gap-2">
-              <button
-                onClick={() => setSelectedUser(null)}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
-              >
+              <Button variant="white" onClick={() => setSelectedUser(null)}>
                 닫기
-              </button>
+              </Button>
             </div>
           </div>
         )}

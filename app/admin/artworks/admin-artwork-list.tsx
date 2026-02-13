@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import ArtworkLightbox from '@/components/ui/ArtworkLightbox';
+import Button from '@/components/ui/Button';
 import {
   deleteAdminArtwork,
   batchUpdateArtworkStatus,
@@ -352,27 +353,28 @@ export function AdminArtworkList({
                 <option value="reserved">예약됨</option>
                 <option value="sold">판매 완료</option>
               </AdminSelect>
-              <button
+              <Button
+                variant="white"
                 onClick={() => setBatchHiddenConfirm(true)}
                 disabled={batchProcessing}
-                className="h-10 rounded border border-gray-300 bg-white px-3 text-sm text-gray-700 hover:bg-gray-50"
               >
                 숨김
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="white"
                 onClick={() => setBatchHiddenConfirm(false)}
                 disabled={batchProcessing}
-                className="h-10 rounded border border-gray-300 bg-white px-3 text-sm text-gray-700 hover:bg-gray-50"
               >
                 노출
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="white"
                 onClick={() => setShowBatchDeleteConfirm(true)}
                 disabled={batchProcessing}
-                className="h-10 rounded border border-red-300 bg-white px-3 text-sm text-red-600 hover:bg-red-50"
+                className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
               >
                 삭제
-              </button>
+              </Button>
             </div>
             {batchProcessing && (
               <span className="text-xs text-indigo-600 animate-pulse">처리 중...</span>
@@ -536,13 +538,15 @@ export function AdminArtworkList({
                         >
                           편집
                         </Link>
-                        <button
+                        <Button
+                          variant="white"
+                          size="sm"
                           onClick={() => setDeleteConfirm({ id: artwork.id, title: artwork.title })}
                           disabled={processingId === artwork.id}
-                          className="text-gray-400 hover:text-red-600 px-2 py-1 rounded hover:bg-red-50 disabled:opacity-50"
+                          className="text-gray-400 hover:text-red-600 hover:bg-red-50 px-2"
                         >
                           삭제
-                        </button>
+                        </Button>
                       </div>
                     </td>
                   </tr>
