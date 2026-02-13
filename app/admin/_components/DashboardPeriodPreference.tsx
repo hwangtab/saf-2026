@@ -8,7 +8,15 @@ const VALID_PERIODS = new Set(['7d', '30d', '90d', '365d', 'all']);
 const YEAR_PERIOD_REGEX = /^year_\d{4}$/;
 
 function isValidPeriod(value: string): boolean {
-  return VALID_PERIODS.has(value) || YEAR_PERIOD_REGEX.test(value);
+  if (VALID_PERIODS.has(value)) return true;
+  if (!YEAR_PERIOD_REGEX.test(value)) return false;
+
+  const match = /^year_(\d{4})$/.exec(value);
+  if (!match) return false;
+
+  const year = Number(match[1]);
+  const currentYear = new Date().getFullYear();
+  return year >= currentYear - 2 && year <= currentYear;
 }
 
 type DashboardPeriodPreferenceProps = {

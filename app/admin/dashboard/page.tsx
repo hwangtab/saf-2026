@@ -37,9 +37,17 @@ const DASHBOARD_PERIOD_OPTIONS: Array<{ key: DashboardPeriodKey; label: string }
 ];
 
 function isDashboardPeriodKey(value: string): value is DashboardPeriodKey {
-  return (
-    DASHBOARD_PERIOD_OPTIONS.some((option) => option.key === value) || /^year_\d{4}$/.test(value)
-  );
+  if (DASHBOARD_PERIOD_OPTIONS.some((option) => option.key === value)) {
+    return true;
+  }
+
+  const match = /^year_(\d{4})$/.exec(value);
+  if (!match) {
+    return false;
+  }
+
+  const year = Number(match[1]);
+  return year >= currentYear - 2 && year <= currentYear;
 }
 
 function StatCard({

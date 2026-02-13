@@ -136,9 +136,7 @@ export type DashboardStats = {
 };
 
 function isDashboardPeriodKey(value: string): value is DashboardPeriodKey {
-  return (
-    DASHBOARD_PERIOD_OPTIONS.some((option) => option.key === value) || /^year_\d{4}$/.test(value)
-  );
+  return DASHBOARD_PERIOD_OPTIONS.some((option) => option.key === value);
 }
 
 function parsePrice(price: unknown): number {
@@ -207,8 +205,27 @@ function addYearsClamped(date: Date, years: number): Date {
   return d;
 }
 
+function extractYearPeriod(value: string): number | null {
+  const match = /^year_(\d{4})$/.exec(value);
+  if (!match) return null;
+
+  const year = Number(match[1]);
+  return Number.isFinite(year) ? year : null;
+}
+
+function isAllowedYearPeriod(value: string, now: Date): boolean {
+  const year = extractYearPeriod(value);
+  if (year === null) return false;
+
+  const currentYear = now.getFullYear();
+  return year >= currentYear - 2 && year <= currentYear;
+}
+
 function toDateKey(date: Date): string {
-  return date.toISOString().split('T')[0];
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
 
 function getBucketGranularity(period: DashboardPeriodKey): RevenueBucketGranularity {
@@ -308,7 +325,9 @@ function getPeriodStart(period: DashboardPeriodKey, now: Date, soldRecords: Sold
 
 function getPeriodEnd(period: DashboardPeriodKey, now: Date): Date {
   if (period.startsWith('year_')) {
-    const year = parseInt(period.replace('year_', ''), 10);
+    const year = extractYearPeriod(period);
+    if (year === null) return now;
+    if (year === now.getFullYear()) return now;
     return new Date(year, 11, 31, 23, 59, 59, 999);
   }
   return now;
@@ -437,7 +456,8 @@ export async function getDashboardStats(
   await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
   const now = new Date();
-  const periodKey: DashboardPeriodKey = isDashboardPeriodKey(period) ? period : '30d';
+  const periodKey: DashboardPeriodKey =
+    isDashboardPeriodKey(period) || isAllowedYearPeriod(period, now) ? period : '30d';
 
   const [
     totalArtistsResult,
@@ -641,9 +661,8 @@ export async function getDashboardStats(
   let mapPreviousRecordDate: ((date: Date) => Date) | undefined;
 
   if (periodKey.startsWith('year_')) {
-    const year = parseInt(periodKey.replace('year_', ''), 10);
-    const prevYearStart = new Date(year - 1, 0, 1);
-    const prevYearEnd = new Date(year - 1, 11, 31, 23, 59, 59, 999);
+    const prevYearStart = addYearsClamped(periodStart, -1);
+    const prevYearEnd = addYearsClamped(periodEnd, -1);
 
     previousPeriodRecords = soldRecords.filter(
       (record) => record.soldDate >= prevYearStart && record.soldDate <= prevYearEnd

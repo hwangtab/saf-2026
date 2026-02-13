@@ -30,6 +30,12 @@ function normalizeText(value: string | null): string {
   return value.trim().replace(/\s+/g, ' ').toLowerCase();
 }
 
+function getCreatedTimestamp(value: string | null): number | null {
+  if (!value) return null;
+  const timestamp = new Date(value).getTime();
+  return Number.isFinite(timestamp) ? timestamp : null;
+}
+
 async function fetchAllTestimonials(): Promise<TestimonialRow[]> {
   const all: TestimonialRow[] = [];
   let from = 0;
@@ -84,11 +90,14 @@ async function deduplicate() {
   console.log(`📊 Total testimonials found: ${testimonials.length}`);
 
   const sortedTestimonials = [...testimonials].sort((a, b) => {
-    if (a.created_at && b.created_at) {
-      return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+    const aTime = getCreatedTimestamp(a.created_at);
+    const bTime = getCreatedTimestamp(b.created_at);
+
+    if (aTime !== null && bTime !== null) {
+      return aTime - bTime;
     }
-    if (!a.created_at && b.created_at) return -1;
-    if (a.created_at && !b.created_at) return 1;
+    if (aTime === null && bTime !== null) return -1;
+    if (aTime !== null && bTime === null) return 1;
     return String(a.id ?? '').localeCompare(String(b.id ?? ''));
   });
 
