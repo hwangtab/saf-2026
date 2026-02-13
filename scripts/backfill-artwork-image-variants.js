@@ -32,6 +32,8 @@ const STORAGE_MARKERS = [
   '/storage/v1/render/image/public/artworks/',
 ];
 const VARIANT_SUFFIX_REGEX = /__(thumb|card|detail|hero|original)\.(webp|jpg|jpeg|png|avif)$/i;
+const TRAILING_VARIANT_TOKEN_REGEX = /__(thumb|card|detail|hero|original)$/i;
+const FILE_EXTENSION_REGEX = /\.[^/.]+$/;
 
 const parseArgs = () => {
   const args = process.argv.slice(2);
@@ -102,16 +104,25 @@ const toPublicUrl = (pathInBucket) => {
   return publicUrl;
 };
 
-const replaceExtensionWithOriginalSuffix = (storagePath) => {
-  const extRegex = /\.[^/.]+$/;
-  const withoutExt = extRegex.test(storagePath) ? storagePath.replace(extRegex, '') : storagePath;
-  return `${withoutExt}__original.webp`;
+const normalizeVariantBasePath = (storagePath) => {
+  const withoutExt = FILE_EXTENSION_REGEX.test(storagePath)
+    ? storagePath.replace(FILE_EXTENSION_REGEX, '')
+    : storagePath;
+  let base = withoutExt;
+  while (TRAILING_VARIANT_TOKEN_REGEX.test(base)) {
+    base = base.replace(TRAILING_VARIANT_TOKEN_REGEX, '');
+  }
+  return base;
+};
+
+const toCanonicalOriginalVariantPath = (storagePath) => {
+  const base = normalizeVariantBasePath(storagePath);
+  return `${base}__original.webp`;
 };
 
 const buildVariantPath = (storagePath, variant) => {
-  const extRegex = /\.[^/.]+$/;
-  const withoutExt = extRegex.test(storagePath) ? storagePath.replace(extRegex, '') : storagePath;
-  return `${withoutExt}__${variant}.webp`;
+  const base = normalizeVariantBasePath(storagePath);
+  return `${base}__${variant}.webp`;
 };
 
 const isAlreadyVariantPath = (storagePath) => VARIANT_SUFFIX_REGEX.test(storagePath.split('/').pop() || '');
@@ -174,7 +185,7 @@ async function generateVariantBuffers(sourceBuffer) {
 }
 
 async function convertOneImage(storagePath, options) {
-  const originalVariantPath = replaceExtensionWithOriginalSuffix(storagePath);
+  const originalVariantPath = toCanonicalOriginalVariantPath(storagePath);
 
   if (isAlreadyVariantPath(storagePath)) {
     return { canonicalPath: originalVariantPath, converted: false, skipped: true };
@@ -322,4 +333,3 @@ main().catch((error) => {
   console.error('백필 실행 실패:', error.message || error);
   process.exit(1);
 });
-
