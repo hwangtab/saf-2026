@@ -10,6 +10,251 @@ export type AdminActionState = {
   error?: boolean;
 };
 
+export type UnlinkedArtistSearchItem = {
+  id: string;
+  name_ko: string | null;
+  name_en: string | null;
+  contact_email: string | null;
+  updated_at: string | null;
+  artwork_count: number;
+};
+
+type PromoteArtistMode = 'link_existing' | 'create_and_link' | 'role_only';
+
+type PromoteUserToArtistParams = {
+  userId: string;
+  mode: PromoteArtistMode;
+  artistId?: string;
+};
+
+function sanitizeIlikeQuery(query: string) {
+  return query
+    .trim()
+    .replace(/[%(),]/g, ' ')
+    .replace(/\s+/g, ' ');
+}
+
+export async function searchUnlinkedArtists(query: string): Promise<UnlinkedArtistSearchItem[]> {
+  await requireAdmin();
+  const supabase = await createSupabaseAdminOrServerClient();
+
+  const normalizedQuery = sanitizeIlikeQuery(query);
+  if (normalizedQuery.length < 2) return [];
+
+  const { data, error } = await supabase
+    .from('artists')
+    .select('id, name_ko, name_en, contact_email, updated_at, artworks(count)')
+    .is('user_id', null)
+    .or(
+      `name_ko.ilike.%${normalizedQuery}%,name_en.ilike.%${normalizedQuery}%,contact_email.ilike.%${normalizedQuery}%`
+    )
+    .order('updated_at', { ascending: false })
+    .limit(20);
+
+  if (error) throw error;
+
+  type ArtistSearchRow = {
+    id: string;
+    name_ko: string | null;
+    name_en: string | null;
+    contact_email: string | null;
+    updated_at: string | null;
+    artworks?: Array<{ count: number | null }> | null;
+  };
+
+  return ((data || []) as ArtistSearchRow[]).map((artist) => ({
+    id: artist.id,
+    name_ko: artist.name_ko || null,
+    name_en: artist.name_en || null,
+    contact_email: artist.contact_email || null,
+    updated_at: artist.updated_at || null,
+    artwork_count: artist.artworks?.[0]?.count || 0,
+  }));
+}
+
+export async function promoteUserToArtistWithLink({
+  userId,
+  mode,
+  artistId,
+}: PromoteUserToArtistParams): Promise<AdminActionState> {
+  try {
+    await requireAdmin();
+    const supabase = await createSupabaseAdminOrServerClient();
+
+    if (!userId) {
+      return { message: '사용자 ID가 필요합니다.', error: true };
+    }
+
+    if (!['link_existing', 'create_and_link', 'role_only'].includes(mode)) {
+      return { message: '유효하지 않은 처리 모드입니다.', error: true };
+    }
+
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('id, name')
+      .eq('id', userId)
+      .single();
+
+    if (profileError) throw profileError;
+
+    const { data: application } = await supabase
+      .from('artist_applications')
+      .select('artist_name, contact, bio')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    const contactValue = application?.contact?.trim() || '';
+    const profileName = profile?.name || 'Unknown';
+    let linkedArtistId: string | null = null;
+    let linkedArtistName: string | null = null;
+    let createdArtistId: string | null = null;
+
+    if (mode === 'link_existing') {
+      if (!artistId) {
+        return { message: '연결할 작가를 선택해 주세요.', error: true };
+      }
+
+      const { data: sameUserArtist, error: sameUserArtistError } = await supabase
+        .from('artists')
+        .select('id')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      if (sameUserArtistError) throw sameUserArtistError;
+      if (sameUserArtist && sameUserArtist.id !== artistId) {
+        return { message: '이 사용자는 이미 다른 작가와 연결되어 있습니다.', error: true };
+      }
+
+      const { data: updatedRows, error: updateArtistError } = await supabase
+        .from('artists')
+        .update({ user_id: userId })
+        .eq('id', artistId)
+        .is('user_id', null)
+        .select('id, name_ko');
+
+      if (updateArtistError) throw updateArtistError;
+
+      if ((updatedRows || []).length === 0) {
+        const { data: currentArtist, error: currentArtistError } = await supabase
+          .from('artists')
+          .select('id, name_ko, user_id')
+          .eq('id', artistId)
+          .single();
+        if (currentArtistError) throw currentArtistError;
+        if (currentArtist.user_id !== userId) {
+          return {
+            message: '선택한 작가는 이미 연결되었습니다. 목록을 새로고침 후 다시 시도해 주세요.',
+            error: true,
+          };
+        }
+        linkedArtistId = currentArtist.id;
+        linkedArtistName = currentArtist.name_ko || null;
+      } else {
+        linkedArtistId = updatedRows?.[0]?.id || null;
+        linkedArtistName = updatedRows?.[0]?.name_ko || null;
+      }
+    }
+
+    if (mode === 'create_and_link') {
+      const { data: existingArtist, error: existingArtistError } = await supabase
+        .from('artists')
+        .select('id, name_ko, contact_email')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      if (existingArtistError) throw existingArtistError;
+
+      if (existingArtist) {
+        linkedArtistId = existingArtist.id;
+        linkedArtistName = existingArtist.name_ko || null;
+        if (contactValue && !existingArtist.contact_email?.trim()) {
+          const { error: updateContactError } = await supabase
+            .from('artists')
+            .update({ contact_email: contactValue })
+            .eq('id', existingArtist.id);
+          if (updateContactError) throw updateContactError;
+        }
+      } else {
+        const { data: insertedArtist, error: insertedArtistError } = await supabase
+          .from('artists')
+          .insert({
+            user_id: userId,
+            name_ko: application?.artist_name || profileName,
+            bio: application?.bio || null,
+            contact_email: contactValue || null,
+          })
+          .select('id, name_ko')
+          .single();
+
+        if (insertedArtistError) {
+          if (insertedArtistError.code !== '23505') throw insertedArtistError;
+
+          const { data: conflictArtist, error: conflictArtistError } = await supabase
+            .from('artists')
+            .select('id, name_ko')
+            .eq('user_id', userId)
+            .single();
+          if (conflictArtistError) throw conflictArtistError;
+          linkedArtistId = conflictArtist.id;
+          linkedArtistName = conflictArtist.name_ko || null;
+        } else {
+          createdArtistId = insertedArtist.id;
+          linkedArtistId = insertedArtist.id;
+          linkedArtistName = insertedArtist.name_ko || null;
+        }
+      }
+    }
+
+    const { error: updateProfileError } = await supabase
+      .from('profiles')
+      .update({ role: 'artist', status: 'active' })
+      .eq('id', userId);
+
+    if (updateProfileError) {
+      if (createdArtistId) {
+        await supabase.from('artists').delete().eq('id', createdArtistId);
+      }
+      throw updateProfileError;
+    }
+
+    revalidatePath('/admin/users');
+    revalidatePath('/admin/artists');
+    if (linkedArtistId) {
+      revalidatePath(`/admin/artists/${linkedArtistId}`);
+    }
+
+    await logAdminAction('user_role_changed', 'user', userId, {
+      to: 'artist',
+      user_name: profileName,
+    });
+
+    if (linkedArtistId) {
+      await logAdminAction('artist_linked_to_user', 'artist', linkedArtistId, {
+        artist_name: linkedArtistName || linkedArtistId,
+        user_id: userId,
+      });
+    }
+
+    if (mode === 'link_existing' && linkedArtistName) {
+      return {
+        message: `${profileName} 사용자를 '${linkedArtistName}' 작가와 연결하고 승인했습니다.`,
+        error: false,
+      };
+    }
+
+    if (mode === 'create_and_link') {
+      return {
+        message: `${profileName} 사용자를 작가로 승인하고 프로필을 연결했습니다.`,
+        error: false,
+      };
+    }
+
+    return { message: `${profileName} 사용자의 권한을 artist로 변경했습니다.`, error: false };
+  } catch (error: any) {
+    return { message: error.message, error: true };
+  }
+}
+
 export async function approveUser(userId: string): Promise<AdminActionState> {
   try {
     await requireAdmin();

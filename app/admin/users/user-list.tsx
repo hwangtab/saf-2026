@@ -1,7 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { reactivateUser, rejectUser, updateUserRole } from '@/app/actions/admin';
+import {
+  promoteUserToArtistWithLink,
+  reactivateUser,
+  rejectUser,
+  searchUnlinkedArtists,
+  updateUserRole,
+} from '@/app/actions/admin';
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
 import {
@@ -32,6 +38,21 @@ type Profile = {
   } | null;
 };
 
+type UnlinkedArtistOption = {
+  id: string;
+  name_ko: string | null;
+  name_en: string | null;
+  contact_email: string | null;
+  updated_at: string | null;
+  artwork_count: number;
+};
+
+type ArtistPromoteContext = {
+  user: Profile;
+  selectedArtistId: string | null;
+  mode: 'link_existing' | 'create_and_link' | 'role_only';
+};
+
 export function UserList({ users }: { users: Profile[] }) {
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
@@ -45,10 +66,82 @@ export function UserList({ users }: { users: Profile[] }) {
   const [roleChangeConfirm, setRoleChangeConfirm] = useState<{ id: string; role: string } | null>(
     null
   );
+  const [artistPromoteContext, setArtistPromoteContext] = useState<ArtistPromoteContext | null>(
+    null
+  );
+  const [artistSearchQuery, setArtistSearchQuery] = useState('');
+  const [debouncedArtistSearchQuery, setDebouncedArtistSearchQuery] = useState('');
+  const [artistOptions, setArtistOptions] = useState<UnlinkedArtistOption[]>([]);
+  const [isSearchingArtists, setIsSearchingArtists] = useState(false);
+  const [artistSearchError, setArtistSearchError] = useState<string | null>(null);
+  const [isArtistSearchSlow, setIsArtistSearchSlow] = useState(false);
 
   useEffect(() => {
     setLocalUsers(users);
   }, [users]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedArtistSearchQuery(artistSearchQuery.trim());
+    }, 250);
+
+    return () => clearTimeout(timer);
+  }, [artistSearchQuery]);
+
+  useEffect(() => {
+    if (!artistPromoteContext) return;
+
+    const keyword =
+      debouncedArtistSearchQuery ||
+      artistPromoteContext.user.application?.artist_name ||
+      artistPromoteContext.user.name ||
+      '';
+
+    if (keyword.trim().length < 2) {
+      setArtistOptions([]);
+      setArtistSearchError(null);
+      setIsSearchingArtists(false);
+      setIsArtistSearchSlow(false);
+      return;
+    }
+
+    let cancelled = false;
+    let slowTimer: ReturnType<typeof setTimeout> | null = null;
+    setIsSearchingArtists(true);
+    setArtistSearchError(null);
+    setIsArtistSearchSlow(false);
+    slowTimer = setTimeout(() => {
+      if (!cancelled) setIsArtistSearchSlow(true);
+    }, 1200);
+
+    const run = async () => {
+      try {
+        const items = await searchUnlinkedArtists(keyword);
+        if (!cancelled) {
+          setArtistOptions(items);
+          setArtistSearchError(null);
+        }
+      } catch (err: unknown) {
+        if (!cancelled) {
+          setArtistOptions([]);
+          setArtistSearchError('미연결 작가 검색에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+        }
+      } finally {
+        if (!cancelled) {
+          if (slowTimer) clearTimeout(slowTimer);
+          setIsSearchingArtists(false);
+          setIsArtistSearchSlow(false);
+        }
+      }
+    };
+
+    void run();
+
+    return () => {
+      cancelled = true;
+      if (slowTimer) clearTimeout(slowTimer);
+    };
+  }, [artistPromoteContext, debouncedArtistSearchQuery]);
 
   const normalize = (value: string) => value.toLowerCase().replace(/\s+/g, '');
   const filteredUsers = localUsers.filter((user) => {
@@ -102,6 +195,70 @@ export function UserList({ users }: { users: Profile[] }) {
     }
   };
 
+  const openArtistPromoteModal = (user: Profile) => {
+    const initialKeyword = user.application?.artist_name || user.name || '';
+    setArtistPromoteContext({
+      user,
+      selectedArtistId: null,
+      mode: 'link_existing',
+    });
+    setArtistSearchQuery(initialKeyword);
+    setDebouncedArtistSearchQuery(initialKeyword.trim());
+    setArtistOptions([]);
+    setArtistSearchError(null);
+    setIsSearchingArtists(false);
+    setIsArtistSearchSlow(false);
+  };
+
+  const closeArtistPromoteModal = () => {
+    setArtistPromoteContext(null);
+    setArtistSearchQuery('');
+    setDebouncedArtistSearchQuery('');
+    setArtistOptions([]);
+    setArtistSearchError(null);
+    setIsSearchingArtists(false);
+    setIsArtistSearchSlow(false);
+  };
+
+  const handlePromoteToArtist = async () => {
+    if (!artistPromoteContext) return;
+    const { user, mode, selectedArtistId } = artistPromoteContext;
+
+    if (mode === 'link_existing' && !selectedArtistId) {
+      toast.error('연결할 미연결 작가를 선택해 주세요.');
+      return;
+    }
+
+    setProcessingId(user.id);
+
+    const res = await promoteUserToArtistWithLink({
+      userId: user.id,
+      mode,
+      artistId: mode === 'link_existing' ? selectedArtistId || undefined : undefined,
+    });
+
+    setProcessingId(null);
+
+    if (res.error) {
+      toast.error(res.message);
+      return;
+    }
+
+    setLocalUsers((prev) =>
+      prev.map((item) =>
+        item.id === user.id
+          ? {
+              ...item,
+              role: 'artist',
+              status: 'active',
+            }
+          : item
+      )
+    );
+    closeArtistPromoteModal();
+    toast.success(res.message);
+  };
+
   const handleReactivate = async () => {
     if (!reactivateConfirmId) return;
     const id = reactivateConfirmId;
@@ -118,6 +275,14 @@ export function UserList({ users }: { users: Profile[] }) {
       toast.success('사용자를 다시 활성화했습니다.');
     }
   };
+
+  const selectedArtistOption = artistPromoteContext?.selectedArtistId
+    ? artistOptions.find((item) => item.id === artistPromoteContext.selectedArtistId) || null
+    : null;
+
+  const roleChangeTargetUser = roleChangeConfirm
+    ? localUsers.find((user) => user.id === roleChangeConfirm.id) || null
+    : null;
 
   return (
     <div className="space-y-6">
@@ -268,9 +433,15 @@ export function UserList({ users }: { users: Profile[] }) {
                           className="py-1 pl-2 pr-7 text-xs font-medium"
                           iconClassName="h-3.5 w-3.5"
                           value={user.role}
-                          onChange={(e) =>
-                            setRoleChangeConfirm({ id: user.id, role: e.target.value })
-                          }
+                          onChange={(e) => {
+                            const nextRole = e.target.value as Profile['role'];
+                            if (nextRole === user.role) return;
+                            if (nextRole === 'artist') {
+                              openArtistPromoteModal(user);
+                              return;
+                            }
+                            setRoleChangeConfirm({ id: user.id, role: nextRole });
+                          }}
                           disabled={processingId === user.id}
                         >
                           <option value="user">User</option>
@@ -419,6 +590,218 @@ export function UserList({ users }: { users: Profile[] }) {
         )}
       </Modal>
 
+      <Modal
+        isOpen={!!artistPromoteContext}
+        onClose={closeArtistPromoteModal}
+        title="Artist 권한 부여 및 작가 연결"
+        className="max-w-3xl"
+      >
+        {artistPromoteContext && (
+          <div className="space-y-5">
+            <div className="rounded-lg border border-indigo-100 bg-indigo-50/50 p-4">
+              <p className="text-sm text-indigo-900 font-medium">
+                대상 사용자: {artistPromoteContext.user.name || '이름 없음'} (
+                {artistPromoteContext.user.email})
+              </p>
+              <p className="text-xs text-indigo-700 mt-1">
+                신청 작가명:{' '}
+                {artistPromoteContext.user.application?.artist_name || '제출된 작가명이 없습니다.'}
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-slate-900">처리 방식 선택</p>
+              <div className="grid gap-2 md:grid-cols-3">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setArtistPromoteContext((prev) =>
+                      prev ? { ...prev, mode: 'link_existing' } : prev
+                    )
+                  }
+                  className={`rounded-lg border px-3 py-2 text-left text-sm transition-colors ${
+                    artistPromoteContext.mode === 'link_existing'
+                      ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
+                      : 'border-slate-200 hover:bg-slate-50'
+                  }`}
+                >
+                  미연결 작가 선택
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setArtistPromoteContext((prev) =>
+                      prev ? { ...prev, mode: 'create_and_link' } : prev
+                    )
+                  }
+                  className={`rounded-lg border px-3 py-2 text-left text-sm transition-colors ${
+                    artistPromoteContext.mode === 'create_and_link'
+                      ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
+                      : 'border-slate-200 hover:bg-slate-50'
+                  }`}
+                >
+                  새 작가 생성 후 연결
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setArtistPromoteContext((prev) =>
+                      prev ? { ...prev, mode: 'role_only' } : prev
+                    )
+                  }
+                  className={`rounded-lg border px-3 py-2 text-left text-sm transition-colors ${
+                    artistPromoteContext.mode === 'role_only'
+                      ? 'border-amber-500 bg-amber-50 text-amber-700'
+                      : 'border-slate-200 hover:bg-slate-50'
+                  }`}
+                >
+                  권한만 변경
+                </button>
+              </div>
+            </div>
+
+            {artistPromoteContext.mode === 'link_existing' && (
+              <div className="space-y-3 rounded-xl border border-slate-200 p-4">
+                <label className="block text-sm font-medium text-slate-700">미연결 작가 검색</label>
+                <div className="relative">
+                  <AdminInput
+                    value={artistSearchQuery}
+                    onChange={(e) => setArtistSearchQuery(e.target.value)}
+                    placeholder="작가명(한/영) 또는 이메일 검색..."
+                    className="pr-10"
+                    disabled={processingId === artistPromoteContext.user.id}
+                  />
+                  {isSearchingArtists && (
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2">
+                      <span className="animate-spin h-4 w-4 border-2 border-indigo-500 border-t-transparent rounded-full inline-block" />
+                    </span>
+                  )}
+                </div>
+
+                <div aria-live="polite" className="min-h-[1.25rem] text-xs">
+                  {artistSearchQuery.trim().length < 2 && (
+                    <p className="text-slate-500">
+                      두 글자 이상 입력하면 미연결 작가를 검색합니다.
+                    </p>
+                  )}
+                  {artistSearchQuery.trim().length >= 2 && isSearchingArtists && (
+                    <p className="text-indigo-600">미연결 작가를 검색 중입니다...</p>
+                  )}
+                  {isArtistSearchSlow && (
+                    <p className="text-amber-600">
+                      검색이 평소보다 오래 걸리고 있습니다. 잠시만 기다려 주세요.
+                    </p>
+                  )}
+                  {artistSearchError && <p className="text-rose-600">{artistSearchError}</p>}
+                </div>
+
+                <div className="max-h-56 overflow-y-auto rounded-lg border border-slate-200 divide-y divide-slate-100">
+                  {artistOptions.length === 0 && !isSearchingArtists ? (
+                    <div className="px-3 py-6 text-sm text-slate-500 text-center">
+                      {artistSearchQuery.trim().length < 2
+                        ? '검색어를 입력해 주세요.'
+                        : '검색 결과가 없습니다.'}
+                    </div>
+                  ) : (
+                    artistOptions.map((artist) => {
+                      const isSelected = artistPromoteContext.selectedArtistId === artist.id;
+                      const isRecommended =
+                        !!artistPromoteContext.user.application?.artist_name &&
+                        artist.name_ko?.includes(artistPromoteContext.user.application.artist_name);
+
+                      return (
+                        <button
+                          type="button"
+                          key={artist.id}
+                          onClick={() =>
+                            setArtistPromoteContext((prev) =>
+                              prev ? { ...prev, selectedArtistId: artist.id } : prev
+                            )
+                          }
+                          className={`w-full px-3 py-3 text-left transition-colors ${
+                            isSelected ? 'bg-indigo-50' : 'hover:bg-slate-50'
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0">
+                              <p className="text-sm font-medium text-slate-900 truncate">
+                                {artist.name_ko || '이름 없음'}
+                              </p>
+                              <p className="text-xs text-slate-500 truncate">
+                                {artist.name_en || '-'} · {artist.contact_email || '이메일 없음'}
+                              </p>
+                              <p className="text-xs text-slate-500 mt-1">
+                                {artist.artwork_count} 작품
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {isRecommended && (
+                                <span className="rounded-md bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700 ring-1 ring-emerald-600/20">
+                                  추천
+                                </span>
+                              )}
+                              {isSelected && (
+                                <span className="rounded-md bg-indigo-100 px-2 py-0.5 text-[11px] font-medium text-indigo-700">
+                                  선택됨
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+            )}
+
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
+              <p className="font-medium text-slate-900 mb-2">실행 요약</p>
+              <ul className="space-y-1 list-disc pl-5">
+                <li>사용자 상태를 `active`로 변경합니다.</li>
+                <li>사용자 권한을 `artist`로 변경합니다.</li>
+                {artistPromoteContext.mode === 'link_existing' && (
+                  <li>
+                    선택 작가와 연결:
+                    {selectedArtistOption
+                      ? ` ${selectedArtistOption.name_ko || selectedArtistOption.id}`
+                      : ' (선택 필요)'}
+                  </li>
+                )}
+                {artistPromoteContext.mode === 'create_and_link' && (
+                  <li>신청 정보를 기준으로 작가 프로필을 생성하고 사용자와 연결합니다.</li>
+                )}
+                {artistPromoteContext.mode === 'role_only' && (
+                  <li className="text-amber-700">작가 프로필 연결 없이 권한만 변경됩니다.</li>
+                )}
+              </ul>
+            </div>
+
+            <div className="flex justify-end gap-2">
+              <Button variant="white" onClick={closeArtistPromoteModal}>
+                취소
+              </Button>
+              <Button
+                variant="primary"
+                onClick={handlePromoteToArtist}
+                loading={processingId === artistPromoteContext.user.id}
+                disabled={
+                  processingId === artistPromoteContext.user.id ||
+                  (artistPromoteContext.mode === 'link_existing' &&
+                    !artistPromoteContext.selectedArtistId)
+                }
+              >
+                {artistPromoteContext.mode === 'link_existing'
+                  ? '연결하고 승인'
+                  : artistPromoteContext.mode === 'create_and_link'
+                    ? '생성 후 승인'
+                    : '권한만 변경'}
+              </Button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
       {/* Confirmation Modals */}
       <AdminConfirmModal
         isOpen={!!rejectConfirmId}
@@ -436,7 +819,7 @@ export function UserList({ users }: { users: Profile[] }) {
         onClose={() => setRoleChangeConfirm(null)}
         onConfirm={handleRoleChange}
         title="권한 변경 확인"
-        description={`사용자의 권한을 '${roleChangeConfirm?.role}'(으)로 변경하시겠습니까?\nArtist 이상의 권한 부여 시 계정이 자동으로 활성화됩니다.`}
+        description={`${roleChangeTargetUser?.name || roleChangeTargetUser?.email || '선택한 사용자'}의 권한을 '${roleChangeConfirm?.role}'(으)로 변경하시겠습니까?\nArtist 이상의 권한 부여 시 계정이 자동으로 활성화됩니다.`}
         confirmText="권한 변경"
         variant="warning"
         isLoading={!!processingId}
