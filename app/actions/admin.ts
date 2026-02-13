@@ -138,12 +138,12 @@ export async function reactivateUser(userId: string): Promise<AdminActionState> 
 
 export async function updateUserRole(
   userId: string,
-  role: 'admin' | 'artist' | 'user'
+  role: 'admin' | 'artist' | 'user' | 'exhibitor'
 ): Promise<AdminActionState> {
   try {
     const adminUser = await requireAdmin();
 
-    if (!['admin', 'artist', 'user'].includes(role)) {
+    if (!['admin', 'artist', 'user', 'exhibitor'].includes(role)) {
       return { message: '유효하지 않은 역할입니다.', error: true };
     }
 
@@ -180,8 +180,10 @@ export async function updateUserRole(
       }
     }
 
-    const updates: { role: 'admin' | 'artist' | 'user'; status?: 'active' } = { role };
-    if (role === 'artist' || role === 'admin') {
+    const updates: { role: 'admin' | 'artist' | 'user' | 'exhibitor'; status?: 'active' } = {
+      role,
+    };
+    if (role === 'artist' || role === 'admin' || role === 'exhibitor') {
       updates.status = 'active';
     }
 

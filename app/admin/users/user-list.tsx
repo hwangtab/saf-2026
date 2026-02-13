@@ -18,7 +18,7 @@ type Profile = {
   email: string;
   name: string;
   avatar_url: string | null;
-  role: 'admin' | 'artist' | 'user';
+  role: 'admin' | 'artist' | 'user' | 'exhibitor';
   status: 'pending' | 'active' | 'suspended';
   created_at: string;
   application?: {
@@ -76,7 +76,10 @@ export function UserList({ users }: { users: Profile[] }) {
             ? {
                 ...user,
                 role: newRole as Profile['role'],
-                status: newRole === 'admin' || newRole === 'artist' ? 'active' : user.status,
+                status:
+                  newRole === 'admin' || newRole === 'artist' || newRole === 'exhibitor'
+                    ? 'active'
+                    : user.status,
               }
             : user
         )
@@ -241,6 +244,7 @@ export function UserList({ users }: { users: Profile[] }) {
                         >
                           <option value="user">User</option>
                           <option value="artist">Artist</option>
+                          <option value="exhibitor">Exhibitor</option>
                           <option value="admin">Admin</option>
                         </AdminSelect>
                         {user.status === 'pending' && (

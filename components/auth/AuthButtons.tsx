@@ -6,7 +6,7 @@ import { createSupabaseBrowserClient } from '@/lib/auth/client';
 import { UI_STRINGS } from '@/lib/ui-strings';
 
 type Profile = {
-  role: 'admin' | 'artist' | 'user';
+  role: 'admin' | 'artist' | 'user' | 'exhibitor';
   status: 'pending' | 'active' | 'suspended';
 };
 
@@ -34,7 +34,10 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
     const candidate = value as Record<string, unknown>;
 
     return (
-      (candidate.role === 'admin' || candidate.role === 'artist' || candidate.role === 'user') &&
+      (candidate.role === 'admin' ||
+        candidate.role === 'artist' ||
+        candidate.role === 'user' ||
+        candidate.role === 'exhibitor') &&
       (candidate.status === 'pending' ||
         candidate.status === 'active' ||
         candidate.status === 'suspended')
@@ -173,6 +176,9 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
     }
     if (profile?.role === 'artist' && profile.status === 'active') {
       return { href: '/dashboard/artworks', label: '마이페이지' };
+    }
+    if (profile?.role === 'exhibitor') {
+      return { href: '/exhibitor', label: '출품자 대시보드' };
     }
     if (profile?.status === 'pending') {
       return { href: '/dashboard/pending', label: '승인 대기' };

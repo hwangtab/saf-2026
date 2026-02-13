@@ -20,7 +20,7 @@ type ProfileRow = {
   email: string;
   name: string;
   avatar_url: string | null;
-  role: 'admin' | 'artist' | 'user';
+  role: 'admin' | 'artist' | 'user' | 'exhibitor';
   status: 'pending' | 'active' | 'suspended';
   created_at: string;
 };
