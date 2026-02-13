@@ -3,7 +3,7 @@
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 
-export type DashboardPeriodKey = '7d' | '30d' | '90d' | '365d' | 'all';
+export type DashboardPeriodKey = '7d' | '30d' | '90d' | '365d' | 'all' | `year_${number}`;
 
 type RevenueBucketGranularity = 'day' | 'week' | 'month';
 
@@ -100,6 +100,8 @@ export type DashboardStats = {
       revenue: number;
       soldCount: number;
       averagePrice: number;
+      previousRevenue: number;
+      growthRate: number | null;
     }>;
     timeSeriesMeta: {
       totalBuckets: number;
@@ -133,7 +135,9 @@ export type DashboardStats = {
 };
 
 function isDashboardPeriodKey(value: string): value is DashboardPeriodKey {
-  return DASHBOARD_PERIOD_OPTIONS.some((option) => option.key === value);
+  return (
+    DASHBOARD_PERIOD_OPTIONS.some((option) => option.key === value) || /^year_\d{4}$/.test(value)
+  );
 }
 
 function parsePrice(price: unknown): number {
@@ -196,7 +200,7 @@ function toDateKey(date: Date): string {
 
 function getBucketGranularity(period: DashboardPeriodKey): RevenueBucketGranularity {
   if (period === '90d') return 'week';
-  if (period === '365d' || period === 'all') return 'month';
+  if (period === '365d' || period === 'all' || period.startsWith('year_')) return 'month';
   return 'day';
 }
 
@@ -267,6 +271,11 @@ function resolveSoldDate(artwork: ArtworkMetricRow): Date | null {
 }
 
 function getPeriodStart(period: DashboardPeriodKey, now: Date, soldRecords: SoldRecord[]): Date {
+  if (period.startsWith('year_')) {
+    const year = parseInt(period.replace('year_', ''), 10);
+    return new Date(year, 0, 1);
+  }
+
   if (period === 'all') {
     if (soldRecords.length === 0) {
       return startOfMonth(addMonths(now, -11));
@@ -280,8 +289,16 @@ function getPeriodStart(period: DashboardPeriodKey, now: Date, soldRecords: Sold
     return startOfMonth(oldest);
   }
 
-  const days = PERIOD_DAY_WINDOWS[period];
+  const days = PERIOD_DAY_WINDOWS[period as Exclude<DashboardPeriodKey, 'all' | `year_${number}`>];
   return startOfDay(addDays(now, -(days - 1)));
+}
+
+function getPeriodEnd(period: DashboardPeriodKey, now: Date): Date {
+  if (period.startsWith('year_')) {
+    const year = parseInt(period.replace('year_', ''), 10);
+    return new Date(year, 11, 31, 23, 59, 59, 999);
+  }
+  return now;
 }
 
 function groupByDate(
@@ -312,7 +329,8 @@ function buildRevenueTimeSeries(
   records: SoldRecord[],
   startDate: Date,
   endDate: Date,
-  granularity: RevenueBucketGranularity
+  granularity: RevenueBucketGranularity,
+  previousPeriodRecords: SoldRecord[] = []
 ): DashboardStats['revenue']['timeSeries'] {
   const seriesMap = new Map<
     string,
@@ -324,6 +342,8 @@ function buildRevenueTimeSeries(
       revenue: number;
       soldCount: number;
       averagePrice: number;
+      previousRevenue: number;
+      growthRate: number | null;
     }
   >();
 
@@ -348,6 +368,8 @@ function buildRevenueTimeSeries(
       revenue: 0,
       soldCount: 0,
       averagePrice: 0,
+      previousRevenue: 0,
+      growthRate: null,
     });
   }
 
@@ -360,12 +382,38 @@ function buildRevenueTimeSeries(
     bucket.soldCount += 1;
   });
 
+  previousPeriodRecords.forEach((record) => {
+    const recordDate = new Date(record.soldDate);
+    const yearDiff = startDate.getFullYear() - recordDate.getFullYear();
+    const mappedDate = new Date(recordDate);
+    mappedDate.setFullYear(recordDate.getFullYear() + yearDiff);
+
+    const bucketStart = getBucketStart(mappedDate, granularity);
+    const bucketKey = getBucketKey(bucketStart, granularity);
+    const bucket = seriesMap.get(bucketKey);
+    if (!bucket) return;
+    bucket.previousRevenue += record.price;
+  });
+
   return Array.from(seriesMap.values())
     .sort((a, b) => a.startDate.localeCompare(b.startDate))
-    .map((bucket) => ({
-      ...bucket,
-      averagePrice: bucket.soldCount > 0 ? Math.round(bucket.revenue / bucket.soldCount) : 0,
-    }));
+    .map((bucket) => {
+      const averagePrice = bucket.soldCount > 0 ? Math.round(bucket.revenue / bucket.soldCount) : 0;
+      const growthRate =
+        bucket.previousRevenue === 0
+          ? null
+          : Number(
+              (((bucket.revenue - bucket.previousRevenue) / bucket.previousRevenue) * 100).toFixed(
+                1
+              )
+            );
+
+      return {
+        ...bucket,
+        averagePrice,
+        growthRate,
+      };
+    });
 }
 
 export async function getDashboardStats(
@@ -562,7 +610,7 @@ export async function getDashboardStats(
   );
 
   const periodStart = getPeriodStart(periodKey, now, soldRecords);
-  const periodEnd = now;
+  const periodEnd = getPeriodEnd(periodKey, now);
   const bucket = getBucketGranularity(periodKey);
 
   const periodRecords = soldRecords.filter(
@@ -574,13 +622,25 @@ export async function getDashboardStats(
 
   let previousRevenue = 0;
   let comparedTo: string | null = null;
+  let previousPeriodRecords: SoldRecord[] = [];
 
-  if (periodKey !== 'all') {
-    const periodDays = PERIOD_DAY_WINDOWS[periodKey];
+  if (periodKey.startsWith('year_')) {
+    const year = parseInt(periodKey.replace('year_', ''), 10);
+    const prevYearStart = new Date(year - 1, 0, 1);
+    const prevYearEnd = new Date(year - 1, 11, 31, 23, 59, 59, 999);
+
+    previousPeriodRecords = soldRecords.filter(
+      (record) => record.soldDate >= prevYearStart && record.soldDate <= prevYearEnd
+    );
+    previousRevenue = sumRevenue(previousPeriodRecords);
+    comparedTo = `${toDateKey(prevYearStart)} ~ ${toDateKey(prevYearEnd)}`;
+  } else if (periodKey !== 'all') {
+    const periodDays =
+      PERIOD_DAY_WINDOWS[periodKey as Exclude<DashboardPeriodKey, 'all' | `year_${number}`>];
     const previousStart = addDays(periodStart, -periodDays);
     const previousEnd = addDays(periodStart, -1);
 
-    const previousPeriodRecords = soldRecords.filter(
+    previousPeriodRecords = soldRecords.filter(
       (record) => record.soldDate >= previousStart && record.soldDate <= previousEnd
     );
 
@@ -597,7 +657,13 @@ export async function getDashboardStats(
           ? 0
           : null;
 
-  const fullTimeSeries = buildRevenueTimeSeries(periodRecords, periodStart, periodEnd, bucket);
+  const fullTimeSeries = buildRevenueTimeSeries(
+    periodRecords,
+    periodStart,
+    periodEnd,
+    bucket,
+    previousPeriodRecords
+  );
   const shouldTruncateForAll =
     periodKey === 'all' && fullTimeSeries.length > MAX_REVENUE_BUCKETS_FOR_ALL;
   const timeSeries = shouldTruncateForAll
@@ -642,7 +708,9 @@ export async function getDashboardStats(
   return {
     period: {
       key: periodKey,
-      label: PERIOD_LABEL_MAP[periodKey],
+      label: periodKey.startsWith('year_')
+        ? `${periodKey.replace('year_', '')}년`
+        : PERIOD_LABEL_MAP[periodKey as Exclude<DashboardPeriodKey, `year_${number}`>],
       startDate: toDateKey(periodStart),
       endDate: toDateKey(periodEnd),
       comparedTo,

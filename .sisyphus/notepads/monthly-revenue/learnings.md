@@ -1,0 +1,4 @@
+- Implemented support for 'year_YYYY' periods in admin dashboard stats.
+- Added YoY comparison logic to revenue time series by mapping previous period records to current period buckets.
+- Used template literal types for 'year\_${number}' to provide better type safety for period keys.
+- Handled edge cases like leap years (indirectly through Date object) and division by zero in growth rate calculations.
