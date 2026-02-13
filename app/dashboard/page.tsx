@@ -23,7 +23,7 @@ export default async function DashboardPage() {
   }
 
   if (profile?.role === 'admin') {
-    redirect('/admin/dashboard');
+    redirect('/admin/dashboard?period=7d');
   }
 
   if (profile?.role === 'exhibitor') {

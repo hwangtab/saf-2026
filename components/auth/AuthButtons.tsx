@@ -172,7 +172,7 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
 
   const dashboardLink = (() => {
     if (profile?.role === 'admin') {
-      return { href: '/admin/dashboard', label: UI_STRINGS.NAV.ADMIN_DASHBOARD };
+      return { href: '/admin/dashboard?period=7d', label: UI_STRINGS.NAV.ADMIN_DASHBOARD };
     }
     if (profile?.role === 'artist' && profile.status === 'active') {
       return { href: '/dashboard/artworks', label: '마이페이지' };

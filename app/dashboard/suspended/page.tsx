@@ -14,7 +14,7 @@ export default async function SuspendedPage() {
     .single();
 
   if (profile?.role === 'admin') {
-    redirect('/admin/dashboard');
+    redirect('/admin/dashboard?period=7d');
   }
 
   if (profile?.role !== 'artist') {

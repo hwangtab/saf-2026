@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
         }
 
         if (profile?.role === 'admin') {
-          return NextResponse.redirect(`${origin}/admin/dashboard`);
+          return NextResponse.redirect(`${origin}/admin/dashboard?period=7d`);
         }
 
         if (profile?.role === 'exhibitor') {

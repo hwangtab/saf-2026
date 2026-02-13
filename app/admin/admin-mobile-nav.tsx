@@ -6,12 +6,13 @@ import { usePathname } from 'next/navigation';
 import { SignOutButton } from '@/components/auth/SignOutButton';
 
 const navItems = [
-  { href: '/admin/dashboard', label: '대시보드' },
+  { href: '/admin/dashboard?period=7d', label: '대시보드' },
   { href: '/admin/users', label: '사용자 관리' },
   { href: '/admin/content', label: '콘텐츠 관리' },
   { href: '/admin/artists', label: '작가 관리' },
   { href: '/admin/artworks', label: '작품 관리' },
   { href: '/admin/logs', label: '활동 로그' },
+  { href: '/admin/trash', label: '휴지통' },
 ];
 
 export function AdminMobileNav() {

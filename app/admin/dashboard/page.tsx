@@ -155,6 +155,11 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
   const currentYear = new Date().getFullYear();
   const dashboardPeriodOptions = buildDashboardPeriodOptions(currentYear);
   const periodParam = params.period;
+
+  if (!periodParam) {
+    redirect('/admin/dashboard?period=7d');
+  }
+
   const selectedPeriod: DashboardPeriodKey =
     periodParam && isDashboardPeriodKey(periodParam, currentYear, dashboardPeriodOptions)
       ? periodParam

@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
 
 export default function AdminIndexPage() {
-  redirect('/admin/dashboard');
+  redirect('/admin/dashboard?period=7d');
 }

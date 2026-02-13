@@ -14,7 +14,7 @@ export default async function OnboardingPage() {
     .single();
 
   if (profile?.role === 'admin') {
-    redirect('/admin/dashboard');
+    redirect('/admin/dashboard?period=7d');
   }
 
   if (profile?.role === 'exhibitor') {
