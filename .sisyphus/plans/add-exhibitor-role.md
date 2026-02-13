@@ -185,7 +185,7 @@
   - [ ] List of artists displayed
   - [ ] Can add a new artist (which gets `owner_id` set automatically)
 
-- [ ] 7. Implement "My Artworks" Management UI
+- [x] 7. Implement "My Artworks" Management UI
 
   **What to do**:
   - Create `app/exhibitor/artworks/page.tsx`.

@@ -72,3 +72,15 @@
 - Created `app/exhibitor/artists/_components/artist-form.tsx` with profile image upload
 - Updated `app/actions/exhibitor-artists.ts` with full CRUD operations enforcing `owner_id`
 - Verified build success
+
+## [2026-02-13] Task 7: My Artworks UI
+
+- Files created:
+  - `app/exhibitor/artworks/page.tsx` (List view)
+  - `app/exhibitor/artworks/new/page.tsx` (Create view)
+  - `app/exhibitor/artworks/_components/exhibitor-artwork-list.tsx`
+  - `app/exhibitor/artworks/_components/exhibitor-artwork-form.tsx`
+  - `app/actions/exhibitor-artworks.ts`
+- Artist Selector: Implemented in `ExhibitorArtworkForm` using `AdminSelect`.
+- Ownership verification: Implemented in `createExhibitorArtwork` and `updateExhibitorArtwork` actions using `requireExhibitor` and `owner_id` checks.
+- Build: Success
