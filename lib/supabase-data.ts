@@ -264,3 +264,24 @@ export const getSupabaseNews = cache(async (): Promise<NewsArticle[]> => {
     description: item.description || '',
   }));
 });
+
+export const getSupabaseArtistsByOwner = cache(async (ownerId: string): Promise<any[]> => {
+  if (!hasSupabaseConfig || !supabase) {
+    return [];
+  }
+
+  const { data, error } = await supabase
+    .from('artists')
+    .select(ARTIST_SELECT_COLUMNS)
+    .eq('owner_id', ownerId);
+
+  if (error) {
+    if (isMissingTableError(error)) {
+      return [];
+    }
+    console.error(`Error fetching artists for owner ${ownerId}:`, error);
+    return [];
+  }
+
+  return data || [];
+});

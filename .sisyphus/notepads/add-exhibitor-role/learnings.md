@@ -32,3 +32,10 @@ Starting work on add-exhibitor-role plan.
 - requireExhibitor function: implemented
 - Pattern: followed existing guards
 - Type check: pass
+
+## [2026-02-13] Task 4: Data Fetching
+
+- getSupabaseArtistsByOwner function: implemented
+- Pattern: followed existing data functions
+- Uses cache wrapper: yes
+- Type check: pass

@@ -137,7 +137,7 @@
   - [ ] `requireExhibitor` function exported
   - [ ] Redirects correctly based on role
 
-- [ ] 4. Add Data Fetching Logic for Owned Artists
+- [x] 4. Add Data Fetching Logic for Owned Artists
 
   **What to do**:
   - Update `lib/supabase-data.ts`:
