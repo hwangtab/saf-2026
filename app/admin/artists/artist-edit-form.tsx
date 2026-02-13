@@ -40,6 +40,12 @@ type ArtistEditFormProps = {
   returnTo?: string;
 };
 
+type UserSearchResult = {
+  id: string;
+  name: string | null;
+  email: string | null;
+};
+
 // Helper to mask email for privacy
 function maskEmail(email: string | null) {
   if (!email) return '';
@@ -66,14 +72,16 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
 
   // User connection state
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchResults, setSearchResults] = useState<UserSearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
+  const [isSearchSlow, setIsSearchSlow] = useState(false);
   const [isLinking, setIsLinking] = useState(false);
 
   // Confirmation Modals
   const [showLinkConfirm, setShowLinkConfirm] = useState(false);
   const [showUnlinkConfirm, setShowUnlinkConfirm] = useState(false);
-  const [selectedUserForLink, setSelectedUserForLink] = useState<any>(null);
+  const [selectedUserForLink, setSelectedUserForLink] = useState<UserSearchResult | null>(null);
 
   // Form Field States
   const [nameKo, setNameKo] = useState(artist.name_ko || '');
@@ -105,24 +113,40 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
   useEffect(() => {
     if (debouncedQuery.length < 2) {
       setSearchResults([]);
+      setSearchError(null);
+      setIsSearchSlow(false);
       setIsSearching(false);
       return;
     }
 
     let isCancelled = false;
+    let slowSearchTimer: ReturnType<typeof setTimeout> | null = null;
+
     setIsSearching(true);
+    setSearchError(null);
+    setIsSearchSlow(false);
+    slowSearchTimer = setTimeout(() => {
+      if (!isCancelled) setIsSearchSlow(true);
+    }, 1200);
 
     const fetchUsers = async () => {
       try {
         const results = await searchUsersByName(debouncedQuery);
         if (!isCancelled) {
           setSearchResults(results);
+          setSearchError(null);
         }
       } catch (err) {
         console.error('Search failed:', err);
+        if (!isCancelled) {
+          setSearchResults([]);
+          setSearchError('검색 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+        }
       } finally {
         if (!isCancelled) {
+          if (slowSearchTimer) clearTimeout(slowSearchTimer);
           setIsSearching(false);
+          setIsSearchSlow(false);
         }
       }
     };
@@ -131,6 +155,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
 
     return () => {
       isCancelled = true;
+      if (slowSearchTimer) clearTimeout(slowSearchTimer);
     };
   }, [debouncedQuery]);
 
@@ -326,6 +351,24 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
                   )}
                 </div>
 
+                <div aria-live="polite" className="min-h-[1.25rem]">
+                  {searchQuery.length === 1 && (
+                    <p className="text-xs text-slate-500">두 글자 이상 입력하면 검색됩니다.</p>
+                  )}
+                  {searchQuery.length >= 2 && searchQuery !== debouncedQuery && (
+                    <p className="text-xs text-slate-500">입력 반영 중...</p>
+                  )}
+                  {searchQuery.length >= 2 && isSearching && (
+                    <p className="text-xs text-indigo-600">사용자 계정을 검색 중입니다...</p>
+                  )}
+                  {isSearchSlow && (
+                    <p className="text-xs text-amber-600">
+                      검색이 평소보다 오래 걸리고 있습니다. 잠시만 기다려주세요.
+                    </p>
+                  )}
+                  {searchError && <p className="text-xs text-red-600">{searchError}</p>}
+                </div>
+
                 {searchResults.length > 0 && (
                   <div className="border border-slate-200 rounded-lg divide-y divide-slate-100 max-h-48 overflow-y-auto bg-white shadow-sm">
                     {searchResults.map((user) => (
@@ -355,7 +398,9 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
                 )}
 
                 {searchQuery.length >= 2 && !isSearching && searchResults.length === 0 && (
-                  <p className="text-sm text-slate-500 italic">검색 결과가 없습니다.</p>
+                  <p className="text-sm text-slate-500 italic">
+                    {searchError ? '검색에 실패했습니다.' : '검색 결과가 없습니다.'}
+                  </p>
                 )}
 
                 <p className="text-xs text-slate-500 leading-relaxed">

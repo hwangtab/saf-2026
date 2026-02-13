@@ -19,6 +19,7 @@ type ArtistItem = {
   name_en: string | null;
   profile_image: string | null;
   contact_email: string | null;
+  user_id: string | null;
   artwork_count: number;
 };
 
@@ -167,6 +168,12 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
+                  계정 연결
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   작품 수
                 </th>
                 <th scope="col" className="relative px-6 py-3">
@@ -177,7 +184,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
             <tbody className="bg-white divide-y divide-gray-200">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-6 py-0">
+                  <td colSpan={5} className="px-6 py-0">
                     <AdminEmptyState
                       title="검색 결과가 없습니다"
                       description="다른 검색어로 시도해보세요."
@@ -220,6 +227,17 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">
                       {artist.contact_email || <span className="text-gray-300">-</span>}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {artist.user_id ? (
+                        <span className="inline-flex items-center rounded-md bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
+                          연결됨
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center rounded-md bg-amber-50 px-2 py-1 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-600/20">
+                          미연결
+                        </span>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
