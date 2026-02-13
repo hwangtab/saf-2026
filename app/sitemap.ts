@@ -1,12 +1,12 @@
 import type { MetadataRoute } from 'next';
 import { SITE_URL } from '@/lib/constants';
-import { getSupabaseArtworks, getSupabaseNews } from '@/lib/supabase-data';
+import { getSupabaseArtworks } from '@/lib/supabase-data';
 
 export const dynamic = 'force-static';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = SITE_URL;
-  const [allArtworks, newsArticles] = await Promise.all([getSupabaseArtworks(), getSupabaseNews()]);
+  const allArtworks = await getSupabaseArtworks();
 
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [
@@ -62,14 +62,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  // News detail pages
-  const newsPages: MetadataRoute.Sitemap = newsArticles.map((article) => ({
-    url: `${baseUrl}/news/${article.id}`,
-    lastModified: article.date ? new Date(article.date) : new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.6,
-  }));
-
   // Artist pages (unique artists from artworks)
   const uniqueArtists = [...new Set(allArtworks.map((a) => a.artist))];
   const artistPages: MetadataRoute.Sitemap = uniqueArtists.map((artist) => ({
@@ -79,5 +71,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.65,
   }));
 
-  return [...staticPages, ...artworkPages, ...newsPages, ...artistPages];
+  return [...staticPages, ...artworkPages, ...artistPages];
 }
