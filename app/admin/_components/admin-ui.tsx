@@ -88,13 +88,19 @@ export function AdminTextarea({
 
 type AdminBadgeProps = HTMLAttributes<HTMLSpanElement> & {
   tone?: 'default' | 'info' | 'success' | 'warning' | 'danger';
+  description?: string;
 };
 
-export function AdminBadge({ className, tone = 'default', ...props }: AdminBadgeProps) {
+export function AdminBadge({
+  className,
+  tone = 'default',
+  description,
+  ...props
+}: AdminBadgeProps) {
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset',
+        'inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset relative group cursor-help',
         tone === 'default' && 'bg-slate-100 text-slate-700 ring-slate-200',
         tone === 'info' && 'bg-indigo-50 text-indigo-700 ring-indigo-600/20',
         tone === 'success' && 'bg-emerald-50 text-emerald-700 ring-emerald-600/20',
@@ -103,7 +109,15 @@ export function AdminBadge({ className, tone = 'default', ...props }: AdminBadge
         className
       )}
       {...props}
-    />
+    >
+      {props.children}
+      {description && (
+        <span className="invisible group-hover:visible absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-[10px] sm:text-xs font-normal text-white bg-slate-800 rounded shadow-lg whitespace-nowrap z-50">
+          {description}
+          <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800" />
+        </span>
+      )}
+    </span>
   );
 }
 
@@ -184,6 +198,35 @@ export function AdminSelect({
           strokeLinejoin="round"
         />
       </svg>
+    </div>
+  );
+}
+export function AdminHelp({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={cn('relative group inline-flex ml-1.5 align-middle', className)}>
+      <svg
+        className="w-4 h-4 text-slate-400 cursor-help hover:text-indigo-500 transition-colors"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
+      <div className="invisible group-hover:visible absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2.5 text-[11px] leading-relaxed text-white bg-slate-800 rounded-lg shadow-xl z-50 pointer-events-none">
+        {children}
+        <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800" />
+      </div>
     </div>
   );
 }

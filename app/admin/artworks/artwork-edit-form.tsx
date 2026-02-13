@@ -12,6 +12,7 @@ import {
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
 import { AdminCard, AdminSelect } from '@/app/admin/_components/admin-ui';
 import { useToast } from '@/lib/hooks/useToast';
+import { cn } from '@/lib/utils';
 
 type Artist = {
   id: string;
@@ -58,6 +59,24 @@ export function ArtworkEditForm({
   const [selectedArtistId, setSelectedArtistId] = useState(initialSelectedArtistId);
   const [artistQuery, setArtistQuery] = useState('');
 
+  // Form Field States for Validation & Formatting
+  const [price, setPrice] = useState(artwork.price || '');
+  const [title, setTitle] = useState(artwork.title || '');
+  const [showErrors, setShowErrors] = useState(false);
+
+  const formatPrice = (val: string) => {
+    // 숫자만 추출
+    const numericValue = val.replace(/[^0-9]/g, '');
+    if (!numericValue) return '';
+    // 한국 원화 형식 포맷
+    return `₩${Number(numericValue).toLocaleString('ko-KR')}`;
+  };
+
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPrice(e.target.value);
+    setPrice(formatted);
+  };
+
   useEffect(() => {
     setSelectedArtistId(initialSelectedArtistId);
   }, [initialSelectedArtistId]);
@@ -70,6 +89,14 @@ export function ArtworkEditForm({
 
   const handleSubmit = async (formData: FormData) => {
     setError(null);
+    setShowErrors(true);
+
+    // Validation
+    if (!title.trim() || !selectedArtistId) {
+      toast.error('필수 정보를 입력해주세요.');
+      return;
+    }
+
     setSaving(true);
     try {
       if (isEditing && artwork.id) {
@@ -179,10 +206,17 @@ export function ArtworkEditForm({
             </label>
             <input
               name="title"
-              defaultValue={artwork.title}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
               required
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
+              className={cn(
+                'w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors',
+                showErrors && !title.trim() ? 'border-red-500 bg-red-50' : 'border-gray-300'
+              )}
             />
+            {showErrors && !title.trim() && (
+              <p className="mt-1 text-xs text-red-600">작품명을 입력해주세요.</p>
+            )}
           </div>
 
           <div>
@@ -208,11 +242,11 @@ export function ArtworkEditForm({
               name="artist_id"
               value={selectedArtistId}
               onChange={(e) => setSelectedArtistId(e.target.value)}
-              className={
-                artistJustCreated
-                  ? 'border-green-300 bg-green-50 px-3 py-2 pr-9 text-green-900'
-                  : 'px-3 py-2 pr-9'
-              }
+              className={cn(
+                'px-3 py-2 pr-9',
+                artistJustCreated && 'border-green-300 bg-green-50 text-green-900',
+                showErrors && !selectedArtistId && 'border-red-500 bg-red-50'
+              )}
               iconClassName="right-3"
               required
             >
@@ -223,14 +257,19 @@ export function ArtworkEditForm({
                 </option>
               ))}
             </AdminSelect>
-            <p className="mt-1 text-xs text-gray-500">검색 결과 {filteredArtists.length}명</p>
+            {showErrors && !selectedArtistId ? (
+              <p className="mt-1 text-xs text-red-600">작가를 선택해주세요.</p>
+            ) : (
+              <p className="mt-1 text-xs text-gray-500">검색 결과 {filteredArtists.length}명</p>
+            )}
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">가격</label>
             <input
               name="price"
-              defaultValue={artwork.price || ''}
+              value={price}
+              onChange={handlePriceChange}
               placeholder="₩1,000,000"
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
             />

@@ -10,6 +10,8 @@ import {
   AdminEmptyState,
   AdminInput,
 } from '@/app/admin/_components/admin-ui';
+import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
+import Button from '@/components/ui/Button';
 
 type ArtistItem = {
   id: string;
@@ -30,8 +32,12 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
     setOptimisticArtists(artists);
   }, [artists]);
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('이 작가를 삭제하시겠습니까? 연결된 작품이 있으면 삭제할 수 없습니다.')) return;
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+
+  const handleDelete = async () => {
+    if (!deleteTargetId) return;
+    const id = deleteTargetId;
+    setDeleteTargetId(null);
 
     setOptimisticArtists((prev) => prev.filter((a) => a.id !== id));
     setProcessingId(id);
@@ -39,6 +45,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
 
     try {
       await deleteArtist(id);
+      setError(null);
     } catch (err: unknown) {
       setOptimisticArtists(artists);
       setError(err instanceof Error ? err.message : '삭제 중 오류가 발생했습니다.');
@@ -86,6 +93,17 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
           </button>
         </div>
       )}
+
+      {/* Confirmation Modal */}
+      <AdminConfirmModal
+        isOpen={!!deleteTargetId}
+        onClose={() => setDeleteTargetId(null)}
+        onConfirm={handleDelete}
+        title="작가 삭제 확인"
+        description="이 작가를 삭제하시겠습니까? 연결된 작품이 있으면 삭제할 수 없습니다."
+        confirmText="삭제하기"
+        variant="danger"
+      />
 
       <AdminCard className="overflow-hidden">
         {/* 통합 헤더 및 툴바 */}
@@ -216,15 +234,17 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
                         >
                           편집
                         </Link>
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(artist.id)}
-                          className="text-gray-400 hover:text-red-600 px-3 py-1.5 rounded-md hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        <Button
+                          variant="white"
+                          size="sm"
+                          className="text-gray-400 hover:text-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                          onClick={() => setDeleteTargetId(artist.id)}
+                          loading={processingId === artist.id}
                           disabled={processingId !== null}
                           aria-label={`${artist.name_ko} 작가 삭제`}
                         >
-                          {processingId === artist.id ? '...' : '삭제'}
-                        </button>
+                          삭제
+                        </Button>
                       </div>
                     </td>
                   </tr>

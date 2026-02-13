@@ -9,6 +9,7 @@ import {
   deleteTestimonial,
 } from '@/app/actions/admin-content';
 import { AdminCard } from '@/app/admin/_components/admin-ui';
+import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import { useToast } from '@/lib/hooks/useToast';
 
 type TestimonialItem = {
@@ -30,6 +31,7 @@ export function TestimonialsManager({ testimonials }: { testimonials: Testimonia
   const [savingId, setSavingId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [optimisticTestimonials, setOptimisticTestimonials] = useState(testimonials);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   useEffect(() => {
     setOptimisticTestimonials(testimonials);
@@ -75,8 +77,10 @@ export function TestimonialsManager({ testimonials }: { testimonials: Testimonia
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('이 추천사를 삭제하시겠습니까?')) return;
+  const handleDelete = async () => {
+    if (!deleteTargetId) return;
+    const id = deleteTargetId;
+    setDeleteTargetId(null);
     const originalTestimonials = [...optimisticTestimonials];
     setOptimisticTestimonials((prev) => prev.filter((item) => item.id !== id));
     setProcessingId(id);
@@ -143,6 +147,16 @@ export function TestimonialsManager({ testimonials }: { testimonials: Testimonia
         </form>
       </AdminCard>
 
+      <AdminConfirmModal
+        isOpen={!!deleteTargetId}
+        onClose={() => setDeleteTargetId(null)}
+        onConfirm={handleDelete}
+        title="추천사 삭제 확인"
+        description="이 추천사를 삭제하시겠습니까?"
+        confirmText="삭제하기"
+        variant="danger"
+      />
+
       <section className="space-y-4">
         <AdminCard className="p-4">
           <label htmlFor="search-testimonials" className="sr-only">
@@ -185,7 +199,7 @@ export function TestimonialsManager({ testimonials }: { testimonials: Testimonia
                   type="button"
                   variant="white"
                   className="text-red-600"
-                  onClick={() => handleDelete(item.id)}
+                  onClick={() => setDeleteTargetId(item.id)}
                   loading={processingId === item.id}
                   disabled={processingId !== null || creating || savingId !== null}
                 >

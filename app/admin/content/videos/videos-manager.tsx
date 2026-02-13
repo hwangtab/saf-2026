@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import { createVideo, updateVideo, deleteVideo } from '@/app/actions/admin-content';
 import { AdminCard } from '@/app/admin/_components/admin-ui';
+import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import { useToast } from '@/lib/hooks/useToast';
 
 type VideoItem = {
@@ -26,6 +27,7 @@ export function VideosManager({ videos }: { videos: VideoItem[] }) {
   const [creating, setCreating] = useState(false);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   useEffect(() => {
     setOptimisticVideos(videos);
@@ -80,8 +82,10 @@ export function VideosManager({ videos }: { videos: VideoItem[] }) {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('이 영상을 삭제하시겠습니까?')) return;
+  const handleDelete = async () => {
+    if (!deleteTargetId) return;
+    const id = deleteTargetId;
+    setDeleteTargetId(null);
 
     const previousVideos = [...optimisticVideos];
     setOptimisticVideos((prev) => prev.filter((v) => v.id !== id));
@@ -149,6 +153,16 @@ export function VideosManager({ videos }: { videos: VideoItem[] }) {
         </form>
       </AdminCard>
 
+      <AdminConfirmModal
+        isOpen={!!deleteTargetId}
+        onClose={() => setDeleteTargetId(null)}
+        onConfirm={handleDelete}
+        title="영상 삭제 확인"
+        description="이 영상을 삭제하시겠습니까?"
+        confirmText="삭제하기"
+        variant="danger"
+      />
+
       <section className="space-y-4">
         <AdminCard className="p-4">
           <label htmlFor="search-videos" className="sr-only">
@@ -187,7 +201,7 @@ export function VideosManager({ videos }: { videos: VideoItem[] }) {
                   type="button"
                   variant="white"
                   className="text-red-600"
-                  onClick={() => handleDelete(item.id)}
+                  onClick={() => setDeleteTargetId(item.id)}
                   loading={processingId === item.id}
                   disabled={processingId !== null || creating || savingId !== null}
                 >

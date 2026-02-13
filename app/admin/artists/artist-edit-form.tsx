@@ -13,7 +13,9 @@ import {
 } from '@/app/actions/admin-artists';
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
 import { AdminCard } from '@/app/admin/_components/admin-ui';
+import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import { useToast } from '@/lib/hooks/useToast';
+import { cn } from '@/lib/utils';
 
 type Artist = {
   id: string;
@@ -54,10 +56,26 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
   const [isSearching, setIsSearching] = useState(false);
   const [isLinking, setIsLinking] = useState(false);
 
+  // Confirmation Modals
+  const [showLinkConfirm, setShowLinkConfirm] = useState(false);
+  const [showUnlinkConfirm, setShowUnlinkConfirm] = useState(false);
+  const [selectedUserForLink, setSelectedUserForLink] = useState<any>(null);
+
+  // Form Field States
+  const [nameKo, setNameKo] = useState(artist.name_ko || '');
+  const [showErrors, setShowErrors] = useState(false);
+
   const isEditing = !!artist.id;
 
   const handleSubmit = async (formData: FormData) => {
     setError(null);
+    setShowErrors(true);
+
+    if (!nameKo.trim()) {
+      toast.error('필수 정보를 입력해주세요.');
+      return;
+    }
+
     setSaving(true);
     try {
       if (isEditing && artist.id) {
@@ -120,28 +138,21 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
       setIsSearching(false);
     }
   };
+  // end handleSearchUsers
 
-  const handleLinkUser = async (user: any) => {
-    if (!artist.id) return;
-
-    const confirmMessage =
-      `'${user.name}' 사용자를 이 작가 프로필에 연결하시겠습니까?\n\n` +
-      `수행되는 작업:\n` +
-      `1. 작가 프로필에 사용자 계정 ID(${user.email})를 등록합니다.\n` +
-      `2. 해당 사용자의 권한을 'Artist'로 변경합니다.\n` +
-      `3. 해당 사용자의 계정 상태를 'Active'로 변경합니다.\n\n` +
-      `계속하시겠습니까?`;
-
-    if (!confirm(confirmMessage)) return;
+  const handleLinkUser = async () => {
+    if (!artist.id || !selectedUserForLink) return;
 
     setIsLinking(true);
     setError(null);
     try {
-      const result = await linkArtistToUser(artist.id, user.id);
+      const result = await linkArtistToUser(artist.id, selectedUserForLink.id);
       if (result.success) {
-        toast.success(`${user.name} 사용자가 작가 계정으로 연결되었습니다.`);
+        toast.success(`${selectedUserForLink.name} 사용자가 작가 계정으로 연결되었습니다.`);
         setSearchQuery('');
         setSearchResults([]);
+        setShowLinkConfirm(false);
+        setSelectedUserForLink(null);
         router.refresh();
       }
     } catch (err: any) {
@@ -153,13 +164,14 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
   };
 
   const handleUnlinkUser = async () => {
-    if (!artist.id || !confirm('사용자 계정 연결을 해제하시겠습니까?')) return;
+    if (!artist.id) return;
     setIsLinking(true);
     setError(null);
     try {
       const result = await unlinkArtistFromUser(artist.id);
       if (result.success) {
         toast.success('사용자 계정 연결이 해제되었습니다.');
+        setShowUnlinkConfirm(false);
         router.refresh();
       }
     } catch (err: any) {
@@ -228,7 +240,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
                       type="button"
                       variant="white"
                       size="sm"
-                      onClick={handleUnlinkUser}
+                      onClick={() => setShowUnlinkConfirm(true)}
                       disabled={isLinking}
                       className="text-red-600 hover:text-red-700 border-red-200"
                     >
@@ -277,7 +289,10 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
                           type="button"
                           variant="primary"
                           size="sm"
-                          onClick={() => handleLinkUser(user)}
+                          onClick={() => {
+                            setSelectedUserForLink(user);
+                            setShowLinkConfirm(true);
+                          }}
                           disabled={isLinking}
                         >
                           연결
@@ -305,6 +320,37 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
         </div>
       )}
 
+      {/* Confirmation Modals */}
+      <AdminConfirmModal
+        isOpen={showLinkConfirm}
+        onClose={() => setShowLinkConfirm(false)}
+        onConfirm={handleLinkUser}
+        title="사용자 계정 연결 확인"
+        confirmText="연결하기"
+        variant="warning"
+        isLoading={isLinking}
+        description={
+          selectedUserForLink
+            ? `'${selectedUserForLink.name}' 사용자를 이 작가 프로필에 연결하시겠습니까?\n\n` +
+              `수행되는 작업:\n` +
+              `1. 작가 프로필에 사용자 계정 ID(${selectedUserForLink.email})를 등록합니다.\n` +
+              `2. 해당 사용자의 권한을 'Artist'로 변경합니다.\n` +
+              `3. 해당 사용자의 계정 상태를 'Active'로 변경합니다.`
+            : ''
+        }
+      />
+
+      <AdminConfirmModal
+        isOpen={showUnlinkConfirm}
+        onClose={() => setShowUnlinkConfirm(false)}
+        onConfirm={handleUnlinkUser}
+        title="계정 연결 해제"
+        description="이 작가 프로필과 사용자 계정의 연결을 해제하시겠습니까?\n해제하더라도 사용자의 계정 권한은 유지됩니다."
+        confirmText="연결 해제"
+        variant="danger"
+        isLoading={isLinking}
+      />
+
       {/* Details Section */}
       <form
         onSubmit={(e) => {
@@ -324,10 +370,17 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
             </label>
             <input
               name="name_ko"
-              defaultValue={artist.name_ko || ''}
+              value={nameKo}
+              onChange={(e) => setNameKo(e.target.value)}
               required
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
+              className={cn(
+                'w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-colors',
+                showErrors && !nameKo.trim() ? 'border-red-500 bg-red-50' : 'border-gray-300'
+              )}
             />
+            {showErrors && !nameKo.trim() && (
+              <p className="mt-1 text-xs text-red-600">작가 이름을 입력해주세요.</p>
+            )}
           </div>
 
           <div>

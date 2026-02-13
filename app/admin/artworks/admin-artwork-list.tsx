@@ -16,7 +16,9 @@ import {
   AdminEmptyState,
   AdminInput,
   AdminSelect,
+  AdminHelp,
 } from '@/app/admin/_components/admin-ui';
+import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import { useToast } from '@/lib/hooks/useToast';
 
 type ArtworkItem = {
@@ -82,6 +84,12 @@ export function AdminArtworkList({
     alt: string;
   } | null>(null);
 
+  // Confirmation Modals State
+  const [deleteConfirm, setDeleteConfirm] = useState<{ id: string; title: string } | null>(null);
+  const [showBatchDeleteConfirm, setShowBatchDeleteConfirm] = useState(false);
+  const [batchStatusConfirm, setBatchStatusConfirm] = useState<string | null>(null);
+  const [batchHiddenConfirm, setBatchHiddenConfirm] = useState<boolean | null>(null);
+
   useEffect(() => {
     setQuery(initialQuery);
     setStatusFilter(initialStatusFilter);
@@ -121,8 +129,9 @@ export function AdminArtworkList({
     setSelectedIds(next);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('이 작품을 삭제하시겠습니까?')) return;
+  const handleDelete = async () => {
+    if (!deleteConfirm) return;
+    const { id } = deleteConfirm;
     setProcessingId(id);
 
     setOptimisticArtworks((prev) => prev.filter((item) => item.id !== id));
@@ -130,6 +139,7 @@ export function AdminArtworkList({
     try {
       await deleteAdminArtwork(id);
       toast.success('작품을 삭제했습니다.');
+      setDeleteConfirm(null);
     } catch (error) {
       setOptimisticArtworks(artworks);
       toast.error(error instanceof Error ? error.message : '작품 삭제 중 오류가 발생했습니다.');
@@ -186,9 +196,9 @@ export function AdminArtworkList({
     setLightboxOpen(true);
   };
 
-  const handleBatchStatus = async (status: string) => {
-    if (selectedInFiltered.length === 0) return;
-    if (!confirm(`선택한 ${selectedInFiltered.length}개 작품의 상태를 변경하시겠습니까?`)) return;
+  const handleBatchStatus = async () => {
+    if (selectedInFiltered.length === 0 || !batchStatusConfirm) return;
+    const status = batchStatusConfirm;
     setBatchProcessing(true);
 
     const targets = new Set(selectedInFiltered);
@@ -199,6 +209,7 @@ export function AdminArtworkList({
     try {
       await batchUpdateArtworkStatus(selectedInFiltered, status);
       setSelectedIds(new Set());
+      setBatchStatusConfirm(null);
       toast.success('선택한 작품 상태를 변경했습니다.');
     } catch (error) {
       setOptimisticArtworks(artworks);
@@ -210,11 +221,9 @@ export function AdminArtworkList({
     }
   };
 
-  const handleBatchHidden = async (isHidden: boolean) => {
-    if (selectedInFiltered.length === 0) return;
-    const action = isHidden ? '숨김' : '노출';
-    if (!confirm(`선택한 ${selectedInFiltered.length}개 작품을 ${action} 처리하시겠습니까?`))
-      return;
+  const handleBatchHidden = async () => {
+    if (selectedInFiltered.length === 0 || batchHiddenConfirm === null) return;
+    const isHidden = batchHiddenConfirm;
     setBatchProcessing(true);
 
     const targets = new Set(selectedInFiltered);
@@ -225,6 +234,7 @@ export function AdminArtworkList({
     try {
       await batchToggleHidden(selectedInFiltered, isHidden);
       setSelectedIds(new Set());
+      setBatchHiddenConfirm(null);
       toast.success(
         isHidden ? '선택한 작품을 숨김 처리했습니다.' : '선택한 작품을 공개 처리했습니다.'
       );
@@ -240,7 +250,6 @@ export function AdminArtworkList({
 
   const handleBatchDelete = async () => {
     if (selectedInFiltered.length === 0) return;
-    if (!confirm(`선택한 ${selectedInFiltered.length}개 작품을 삭제하시겠습니까?`)) return;
     setBatchProcessing(true);
 
     const targets = new Set(selectedInFiltered);
@@ -249,6 +258,7 @@ export function AdminArtworkList({
     try {
       await batchDeleteArtworks(selectedInFiltered);
       setSelectedIds(new Set());
+      setShowBatchDeleteConfirm(false);
       toast.success('선택한 작품을 삭제했습니다.');
     } catch (error) {
       setOptimisticArtworks(artworks);
@@ -264,7 +274,13 @@ export function AdminArtworkList({
         {/* Header & Main Controls */}
         <AdminCardHeader>
           <div className="flex items-center gap-3">
-            <h2 className="text-lg font-semibold text-gray-900">작품 목록</h2>
+            <h2 className="text-lg font-semibold text-gray-900">
+              작품 목록
+              <AdminHelp>
+                전체 작품을 관리합니다. 판매 상태와 공개 여부를 변경하거나 작품 상세 정보를 편집할
+                수 있습니다.
+              </AdminHelp>
+            </h2>
             <AdminBadge tone="info">{filtered.length}개</AdminBadge>
           </div>
 
@@ -325,7 +341,7 @@ export function AdminArtworkList({
             <div className="flex items-center gap-2">
               <AdminSelect
                 onChange={(e) => {
-                  if (e.target.value) handleBatchStatus(e.target.value);
+                  if (e.target.value) setBatchStatusConfirm(e.target.value);
                   e.target.value = '';
                 }}
                 disabled={batchProcessing}
@@ -337,21 +353,21 @@ export function AdminArtworkList({
                 <option value="sold">판매 완료</option>
               </AdminSelect>
               <button
-                onClick={() => handleBatchHidden(true)}
+                onClick={() => setBatchHiddenConfirm(true)}
                 disabled={batchProcessing}
                 className="h-10 rounded border border-gray-300 bg-white px-3 text-sm text-gray-700 hover:bg-gray-50"
               >
                 숨김
               </button>
               <button
-                onClick={() => handleBatchHidden(false)}
+                onClick={() => setBatchHiddenConfirm(false)}
                 disabled={batchProcessing}
                 className="h-10 rounded border border-gray-300 bg-white px-3 text-sm text-gray-700 hover:bg-gray-50"
               >
                 노출
               </button>
               <button
-                onClick={handleBatchDelete}
+                onClick={() => setShowBatchDeleteConfirm(true)}
                 disabled={batchProcessing}
                 className="h-10 rounded border border-red-300 bg-white px-3 text-sm text-red-600 hover:bg-red-50"
               >
@@ -521,7 +537,7 @@ export function AdminArtworkList({
                           편집
                         </Link>
                         <button
-                          onClick={() => handleDelete(artwork.id)}
+                          onClick={() => setDeleteConfirm({ id: artwork.id, title: artwork.title })}
                           disabled={processingId === artwork.id}
                           className="text-gray-400 hover:text-red-600 px-2 py-1 rounded hover:bg-red-50 disabled:opacity-50"
                         >
@@ -546,6 +562,59 @@ export function AdminArtworkList({
           alt={lightboxData.alt}
         />
       )}
+
+      {/* Confirmation Modals */}
+      <AdminConfirmModal
+        isOpen={!!deleteConfirm}
+        onClose={() => setDeleteConfirm(null)}
+        onConfirm={handleDelete}
+        title="작품 삭제 확인"
+        description={`'${deleteConfirm?.title}' 작품을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없으며 모든 데이터가 영구 삭제됩니다.`}
+        confirmText="삭제하기"
+        variant="danger"
+        isLoading={!!processingId}
+      />
+
+      <AdminConfirmModal
+        isOpen={showBatchDeleteConfirm}
+        onClose={() => setShowBatchDeleteConfirm(false)}
+        onConfirm={handleBatchDelete}
+        title="선택 작품 일괄 삭제"
+        description={`선택한 ${selectedInFiltered.length}개의 작품을 모두 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`}
+        confirmText={`${selectedInFiltered.length}개 작품 삭제`}
+        variant="danger"
+        isLoading={batchProcessing}
+      />
+
+      <AdminConfirmModal
+        isOpen={!!batchStatusConfirm}
+        onClose={() => setBatchStatusConfirm(null)}
+        onConfirm={handleBatchStatus}
+        title="일괄 상태 변경"
+        description={`선택한 ${selectedInFiltered.length}개 작품의 상태를 '${
+          batchStatusConfirm === 'available'
+            ? '판매 중'
+            : batchStatusConfirm === 'reserved'
+              ? '예약됨'
+              : '판매 완료'
+        }'(으)로 변경하시겠습니까?`}
+        confirmText="상태 변경"
+        variant="warning"
+        isLoading={batchProcessing}
+      />
+
+      <AdminConfirmModal
+        isOpen={batchHiddenConfirm !== null}
+        onClose={() => setBatchHiddenConfirm(null)}
+        onConfirm={handleBatchHidden}
+        title={batchHiddenConfirm ? '일괄 숨김 처리' : '일괄 공개 처리'}
+        description={`선택한 ${selectedInFiltered.length}개 작품을 모두 ${
+          batchHiddenConfirm ? '숨김' : '공개'
+        } 처리하시겠습니까?`}
+        confirmText={batchHiddenConfirm ? '숨김 처리' : '공개 처리'}
+        variant="info"
+        isLoading={batchProcessing}
+      />
     </div>
   );
 }

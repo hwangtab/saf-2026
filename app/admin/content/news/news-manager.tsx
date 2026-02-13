@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import { createNews, updateNews, deleteNews } from '@/app/actions/admin-content';
 import { AdminCard } from '@/app/admin/_components/admin-ui';
+import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import { useToast } from '@/lib/hooks/useToast';
 
 type NewsItem = {
@@ -32,6 +33,7 @@ export function NewsManager({ news }: { news: NewsItem[] }) {
   const [creating, setCreating] = useState(false);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   useEffect(() => {
     setOptimisticNews(news);
@@ -88,8 +90,10 @@ export function NewsManager({ news }: { news: NewsItem[] }) {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('이 뉴스를 삭제하시겠습니까?')) return;
+  const handleDelete = async () => {
+    if (!deleteTargetId) return;
+    const id = deleteTargetId;
+    setDeleteTargetId(null);
 
     const previousNews = [...optimisticNews];
     setOptimisticNews((prev) => prev.filter((n) => n.id !== id));
@@ -162,6 +166,16 @@ export function NewsManager({ news }: { news: NewsItem[] }) {
         </form>
       </AdminCard>
 
+      <AdminConfirmModal
+        isOpen={!!deleteTargetId}
+        onClose={() => setDeleteTargetId(null)}
+        onConfirm={handleDelete}
+        title="뉴스 삭제 확인"
+        description="이 뉴스를 삭제하시겠습니까?"
+        confirmText="삭제하기"
+        variant="danger"
+      />
+
       <section className="space-y-4">
         <AdminCard className="p-4">
           <label htmlFor="search-news" className="sr-only">
@@ -200,7 +214,7 @@ export function NewsManager({ news }: { news: NewsItem[] }) {
                   type="button"
                   variant="white"
                   className="text-red-600"
-                  onClick={() => handleDelete(item.id)}
+                  onClick={() => setDeleteTargetId(item.id)}
                   loading={processingId === item.id}
                   disabled={processingId !== null || creating || savingId !== null}
                 >

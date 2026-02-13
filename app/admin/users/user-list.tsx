@@ -10,7 +10,9 @@ import {
   AdminEmptyState,
   AdminInput,
   AdminSelect,
+  AdminHelp,
 } from '@/app/admin/_components/admin-ui';
+import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import { useToast } from '@/lib/hooks/useToast';
 
 type Profile = {
@@ -36,6 +38,13 @@ export function UserList({ users }: { users: Profile[] }) {
   const [localUsers, setLocalUsers] = useState<Profile[]>(users);
   const toast = useToast();
 
+  // Confirmation Modals State
+  const [rejectConfirmId, setRejectConfirmId] = useState<string | null>(null);
+  const [reactivateConfirmId, setReactivateConfirmId] = useState<string | null>(null);
+  const [roleChangeConfirm, setRoleChangeConfirm] = useState<{ id: string; role: string } | null>(
+    null
+  );
+
   useEffect(() => {
     setLocalUsers(users);
   }, [users]);
@@ -47,8 +56,9 @@ export function UserList({ users }: { users: Profile[] }) {
     return normalize(user.name || '').includes(q) || normalize(user.email || '').includes(q);
   });
 
-  const handleReject = async (id: string) => {
-    if (!confirm('이 신청을 거절하고 계정을 정지하시겠습니까?')) return;
+  const handleReject = async () => {
+    if (!rejectConfirmId) return;
+    const id = rejectConfirmId;
     setProcessingId(id);
     const res = await rejectUser(id);
     setProcessingId(null);
@@ -58,12 +68,14 @@ export function UserList({ users }: { users: Profile[] }) {
       setLocalUsers((prev) =>
         prev.map((user) => (user.id === id ? { ...user, status: 'suspended' } : user))
       );
+      setRejectConfirmId(null);
       toast.success('신청을 거절하고 계정을 정지했습니다.');
     }
   };
 
-  const handleRoleChange = async (id: string, newRole: string) => {
-    if (!confirm(`권한을 ${newRole}로 변경할까요?`)) return;
+  const handleRoleChange = async () => {
+    if (!roleChangeConfirm) return;
+    const { id, role: newRole } = roleChangeConfirm;
     setProcessingId(id);
     const res = await updateUserRole(id, newRole as Profile['role']);
     setProcessingId(null);
@@ -84,12 +96,14 @@ export function UserList({ users }: { users: Profile[] }) {
             : user
         )
       );
+      setRoleChangeConfirm(null);
       toast.success(`권한을 ${newRole}로 변경했습니다.`);
     }
   };
 
-  const handleReactivate = async (id: string) => {
-    if (!confirm('이 사용자를 다시 활성화하시겠습니까?')) return;
+  const handleReactivate = async () => {
+    if (!reactivateConfirmId) return;
+    const id = reactivateConfirmId;
     setProcessingId(id);
     const res = await reactivateUser(id);
     setProcessingId(null);
@@ -99,6 +113,7 @@ export function UserList({ users }: { users: Profile[] }) {
       setLocalUsers((prev) =>
         prev.map((user) => (user.id === id ? { ...user, status: 'active' } : user))
       );
+      setReactivateConfirmId(null);
       toast.success('사용자를 다시 활성화했습니다.');
     }
   };
@@ -109,7 +124,12 @@ export function UserList({ users }: { users: Profile[] }) {
         {/* Header & Search */}
         <AdminCardHeader>
           <div className="flex items-center gap-3">
-            <h2 className="text-lg font-semibold text-gray-900">사용자 목록</h2>
+            <h2 className="text-lg font-semibold text-gray-900">
+              사용자 목록
+              <AdminHelp>
+                가입된 사용자의 권한을 관리하고 신청을 승인하거나 차단할 수 있습니다.
+              </AdminHelp>
+            </h2>
             <AdminBadge tone="info">{filteredUsers.length}명</AdminBadge>
           </div>
           <div className="relative max-w-sm w-full">
@@ -211,7 +231,7 @@ export function UserList({ users }: { users: Profile[] }) {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex flex-col gap-1 items-start">
                         <span
-                          className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium ring-1 ring-inset ${
+                          className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium ring-1 ring-inset relative group cursor-help ${
                             user.status === 'active'
                               ? 'bg-green-50 text-green-700 ring-green-600/20'
                               : user.status === 'pending'
@@ -233,13 +253,23 @@ export function UserList({ users }: { users: Profile[] }) {
                             : user.status === 'pending'
                               ? '대기'
                               : '정지'}
+                          <span className="invisible group-hover:visible absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-32 px-2 py-1 text-[10px] font-normal text-white bg-slate-800 rounded shadow-lg text-center z-50">
+                            {user.status === 'active'
+                              ? '로그인 및 모든 기능 이용 가능'
+                              : user.status === 'pending'
+                                ? '작가 신청 대기 중인 상태'
+                                : '로그인이 차단된 사용자'}
+                            <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800" />
+                          </span>
                         </span>
                         <AdminSelect
                           wrapperClassName="mt-1 w-28"
                           className="py-1 pl-2 pr-7 text-xs font-medium"
                           iconClassName="h-3.5 w-3.5"
                           value={user.role}
-                          onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                          onChange={(e) =>
+                            setRoleChangeConfirm({ id: user.id, role: e.target.value })
+                          }
                           disabled={processingId === user.id}
                         >
                           <option value="user">User</option>
@@ -272,7 +302,7 @@ export function UserList({ users }: { users: Profile[] }) {
                       <div className="flex justify-end items-center gap-2">
                         {user.status !== 'suspended' && (
                           <button
-                            onClick={() => handleReject(user.id)}
+                            onClick={() => setRejectConfirmId(user.id)}
                             disabled={processingId === user.id}
                             className="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
                           >
@@ -281,7 +311,7 @@ export function UserList({ users }: { users: Profile[] }) {
                         )}
                         {user.status === 'suspended' && (
                           <button
-                            onClick={() => handleReactivate(user.id)}
+                            onClick={() => setReactivateConfirmId(user.id)}
                             disabled={processingId === user.id}
                             className="text-blue-700 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
                           >
@@ -384,6 +414,40 @@ export function UserList({ users }: { users: Profile[] }) {
           </div>
         )}
       </Modal>
+
+      {/* Confirmation Modals */}
+      <AdminConfirmModal
+        isOpen={!!rejectConfirmId}
+        onClose={() => setRejectConfirmId(null)}
+        onConfirm={handleReject}
+        title="신청 거절 및 계정 정지"
+        description="이 사용자의 신청을 거절하고 계정을 정지하시겠습니까?\n정지된 사용자는 로그인이 불가능해집니다."
+        confirmText="거절 및 정지"
+        variant="danger"
+        isLoading={!!processingId}
+      />
+
+      <AdminConfirmModal
+        isOpen={!!roleChangeConfirm}
+        onClose={() => setRoleChangeConfirm(null)}
+        onConfirm={handleRoleChange}
+        title="권한 변경 확인"
+        description={`사용자의 권한을 '${roleChangeConfirm?.role}'(으)로 변경하시겠습니까?\nArtist 이상의 권한 부여 시 계정이 자동으로 활성화됩니다.`}
+        confirmText="권한 변경"
+        variant="warning"
+        isLoading={!!processingId}
+      />
+
+      <AdminConfirmModal
+        isOpen={!!reactivateConfirmId}
+        onClose={() => setReactivateConfirmId(null)}
+        onConfirm={handleReactivate}
+        title="계정 재활성화"
+        description="이 사용자의 계정을 다시 활성화하시겠습니까?"
+        confirmText="재활성화"
+        variant="info"
+        isLoading={!!processingId}
+      />
     </div>
   );
 }

@@ -8,6 +8,7 @@ import {
   AdminPageDescription,
   AdminPageHeader,
   AdminPageTitle,
+  AdminHelp,
 } from '@/app/admin/_components/admin-ui';
 import { RevenueCard } from '@/app/admin/_components/RevenueCard';
 import { StatusDonutChart } from '@/app/admin/_components/StatusDonutChart';
@@ -72,7 +73,21 @@ function StatCard({
   const content = (
     <AdminCard className="flex h-full flex-col justify-between p-6 transition-all duration-200">
       <div>
-        <p className="text-sm font-medium text-slate-500">{title}</p>
+        <div className="flex items-center gap-1">
+          <p className="text-sm font-medium text-slate-500">{title}</p>
+          {title === '연결된 아티스트 계정' && (
+            <AdminHelp>
+              전체 작가 프로필 중 실제 사용자 계정과 연결된 수입니다. 연결된 작가만 작품을 직접
+              관리할 수 있습니다.
+            </AdminHelp>
+          )}
+          {title === '숨김 작품' && (
+            <AdminHelp>
+              현재 &apos;공개 안 함&apos;으로 설정되어 사용자 웹사이트에 노출되지 않는 작품의
+              수입니다.
+            </AdminHelp>
+          )}
+        </div>
         <p className="mt-2 text-3xl font-bold tracking-tight text-slate-900">{value}</p>
       </div>
       {subtitle && <p className="mt-2 text-sm text-slate-500">{subtitle}</p>}
@@ -176,7 +191,13 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
 
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <AdminPageHeader>
-          <AdminPageTitle>대시보드</AdminPageTitle>
+          <AdminPageTitle>
+            대시보드
+            <AdminHelp>
+              SAF 2026의 전체 현황을 요약하여 보여줍니다. 상단의 기간 탭을 선택하여 특정 기간의
+              지표를 조회할 수 있습니다.
+            </AdminHelp>
+          </AdminPageTitle>
           <AdminPageDescription>
             SAF 2026 관리자 현황과 매출 지표를 기간별로 확인합니다.
           </AdminPageDescription>

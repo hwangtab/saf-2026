@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import { createFaq, updateFaq, deleteFaq } from '@/app/actions/admin-content';
 import { AdminCard } from '@/app/admin/_components/admin-ui';
+import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import { useToast } from '@/lib/hooks/useToast';
 
 type FaqItem = {
@@ -24,6 +25,7 @@ export function FaqManager({ faqs }: { faqs: FaqItem[] }) {
   const [savingId, setSavingId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [optimisticFaqs, setOptimisticFaqs] = useState(faqs);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   useEffect(() => {
     setOptimisticFaqs(faqs);
@@ -65,8 +67,10 @@ export function FaqManager({ faqs }: { faqs: FaqItem[] }) {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('이 FAQ를 삭제하시겠습니까?')) return;
+  const handleDelete = async () => {
+    if (!deleteTargetId) return;
+    const id = deleteTargetId;
+    setDeleteTargetId(null);
     const originalFaqs = [...optimisticFaqs];
     setOptimisticFaqs((prev) => prev.filter((item) => item.id !== id));
     setProcessingId(id);
@@ -120,6 +124,16 @@ export function FaqManager({ faqs }: { faqs: FaqItem[] }) {
         </form>
       </AdminCard>
 
+      <AdminConfirmModal
+        isOpen={!!deleteTargetId}
+        onClose={() => setDeleteTargetId(null)}
+        onConfirm={handleDelete}
+        title="FAQ 삭제 확인"
+        description="이 FAQ를 삭제하시겠습니까?"
+        confirmText="삭제하기"
+        variant="danger"
+      />
+
       <section className="space-y-4">
         <AdminCard className="p-4">
           <label htmlFor="search-faqs" className="sr-only">
@@ -158,7 +172,7 @@ export function FaqManager({ faqs }: { faqs: FaqItem[] }) {
                   type="button"
                   variant="white"
                   className="text-red-600"
-                  onClick={() => handleDelete(item.id)}
+                  onClick={() => setDeleteTargetId(item.id)}
                   loading={processingId === item.id}
                   disabled={processingId !== null || creating || savingId !== null}
                 >
