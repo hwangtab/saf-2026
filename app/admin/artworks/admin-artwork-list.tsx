@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import ArtworkLightbox from '@/components/ui/ArtworkLightbox';
 import Button from '@/components/ui/Button';
@@ -33,6 +33,8 @@ type ArtworkItem = {
 
 type StatusFilter = 'all' | 'available' | 'reserved' | 'sold';
 type VisibilityFilter = 'all' | 'visible' | 'hidden';
+type SortKey = 'artwork_info' | 'status' | 'visibility';
+type SortDirection = 'asc' | 'desc';
 
 type InitialArtworkFilters = {
   status?: string;
@@ -77,6 +79,8 @@ export function AdminArtworkList({
   const [statusFilter, setStatusFilter] = useState<StatusFilter>(initialStatusFilter);
   const [visibilityFilter, setVisibilityFilter] =
     useState<VisibilityFilter>(initialVisibilityFilter);
+  const [sortKey, setSortKey] = useState<SortKey>('artwork_info');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxData, setLightboxData] = useState<{
@@ -99,20 +103,78 @@ export function AdminArtworkList({
   }, [initialQuery, initialStatusFilter, initialVisibilityFilter]);
 
   // -- Filters --
-  const filtered = optimisticArtworks.filter((artwork) => {
-    if (statusFilter !== 'all' && artwork.status !== statusFilter) return false;
-    if (visibilityFilter === 'visible' && artwork.is_hidden) return false;
-    if (visibilityFilter === 'hidden' && !artwork.is_hidden) return false;
-    if (!query) return true;
-    const q = query.toLowerCase().replace(/\s+/g, '');
-    const title = artwork.title.toLowerCase().replace(/\s+/g, '');
-    const artist = (artwork.artists?.name_ko || '').toLowerCase().replace(/\s+/g, '');
-    return title.includes(q) || artist.includes(q);
-  });
+  const filtered = useMemo(() => {
+    return optimisticArtworks.filter((artwork) => {
+      if (statusFilter !== 'all' && artwork.status !== statusFilter) return false;
+      if (visibilityFilter === 'visible' && artwork.is_hidden) return false;
+      if (visibilityFilter === 'hidden' && !artwork.is_hidden) return false;
+      if (!query) return true;
+      const q = query.toLowerCase().replace(/\s+/g, '');
+      const title = artwork.title.toLowerCase().replace(/\s+/g, '');
+      const artist = (artwork.artists?.name_ko || '').toLowerCase().replace(/\s+/g, '');
+      return title.includes(q) || artist.includes(q);
+    });
+  }, [optimisticArtworks, query, statusFilter, visibilityFilter]);
+
+  const sortedArtworks = useMemo(() => {
+    const sorted = [...filtered];
+    const statusRank: Record<ArtworkItem['status'], number> = {
+      available: 0,
+      reserved: 1,
+      sold: 2,
+      hidden: 3,
+    };
+
+    const compareArtworkInfo = (a: ArtworkItem, b: ArtworkItem) => {
+      const titleCompare = a.title.localeCompare(b.title, 'ko');
+      if (titleCompare !== 0) return titleCompare;
+      const artistA = a.artists?.name_ko || '';
+      const artistB = b.artists?.name_ko || '';
+      return artistA.localeCompare(artistB, 'ko');
+    };
+
+    sorted.sort((a, b) => {
+      let result = 0;
+      if (sortKey === 'artwork_info') {
+        result = compareArtworkInfo(a, b);
+      } else if (sortKey === 'status') {
+        result = statusRank[a.status] - statusRank[b.status];
+      } else {
+        result = Number(a.is_hidden) - Number(b.is_hidden);
+      }
+
+      if (result === 0) {
+        result = compareArtworkInfo(a, b);
+      }
+
+      return sortDirection === 'asc' ? result : -result;
+    });
+
+    return sorted;
+  }, [filtered, sortDirection, sortKey]);
 
   const filteredIds = new Set(filtered.map((a) => a.id));
   const selectedInFiltered = [...selectedIds].filter((id) => filteredIds.has(id));
   const allFilteredSelected = filtered.length > 0 && selectedInFiltered.length === filtered.length;
+
+  const handleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+      return;
+    }
+    setSortKey(key);
+    setSortDirection('asc');
+  };
+
+  const getSortArrow = (key: SortKey) => {
+    if (sortKey !== key) return '↕';
+    return sortDirection === 'asc' ? '↑' : '↓';
+  };
+
+  const getSortAriaLabel = (label: string, key: SortKey) => {
+    if (sortKey !== key) return `${label} 오름차순 정렬`;
+    return sortDirection === 'asc' ? `${label} 내림차순 정렬` : `${label} 오름차순 정렬`;
+  };
 
   // -- Handlers --
   const toggleSelectAll = () => {
@@ -399,19 +461,45 @@ export function AdminArtworkList({
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  작품 정보
+                  <button
+                    type="button"
+                    onClick={() => handleSort('artwork_info')}
+                    className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
+                    aria-label={getSortAriaLabel('작품 정보', 'artwork_info')}
+                  >
+                    작품 정보
+                    <span className="text-[11px] text-gray-400">
+                      {getSortArrow('artwork_info')}
+                    </span>
+                  </button>
                 </th>
                 <th
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  상태
+                  <button
+                    type="button"
+                    onClick={() => handleSort('status')}
+                    className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
+                    aria-label={getSortAriaLabel('상태', 'status')}
+                  >
+                    상태
+                    <span className="text-[11px] text-gray-400">{getSortArrow('status')}</span>
+                  </button>
                 </th>
                 <th
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  공개 여부
+                  <button
+                    type="button"
+                    onClick={() => handleSort('visibility')}
+                    className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
+                    aria-label={getSortAriaLabel('공개 여부', 'visibility')}
+                  >
+                    공개 여부
+                    <span className="text-[11px] text-gray-400">{getSortArrow('visibility')}</span>
+                  </button>
                 </th>
                 <th scope="col" className="relative px-6 py-3">
                   <span className="sr-only">관리</span>
@@ -426,7 +514,7 @@ export function AdminArtworkList({
                   </td>
                 </tr>
               ) : (
-                filtered.map((artwork) => (
+                sortedArtworks.map((artwork) => (
                   <tr
                     key={artwork.id}
                     className={`hover:bg-gray-50 transition-colors ${selectedIds.has(artwork.id) ? 'bg-indigo-50/30' : ''}`}
@@ -573,7 +661,7 @@ export function AdminArtworkList({
         onClose={() => setDeleteConfirm(null)}
         onConfirm={handleDelete}
         title="작품 삭제 확인"
-        description={`'${deleteConfirm?.title}' 작품을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없으며 모든 데이터가 영구 삭제됩니다.`}
+        description={`'${deleteConfirm?.title}' 작품을 삭제하시겠습니까?\n삭제 후 관리자 활동 로그에서 복구할 수 있습니다.`}
         confirmText="삭제하기"
         variant="danger"
         isLoading={!!processingId}
@@ -584,7 +672,7 @@ export function AdminArtworkList({
         onClose={() => setShowBatchDeleteConfirm(false)}
         onConfirm={handleBatchDelete}
         title="선택 작품 일괄 삭제"
-        description={`선택한 ${selectedInFiltered.length}개의 작품을 모두 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`}
+        description={`선택한 ${selectedInFiltered.length}개의 작품을 모두 삭제하시겠습니까?\n삭제 후 관리자 활동 로그에서 복구할 수 있습니다.`}
         confirmText={`${selectedInFiltered.length}개 작품 삭제`}
         variant="danger"
         isLoading={batchProcessing}

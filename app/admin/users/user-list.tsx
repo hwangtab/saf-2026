@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   promoteUserToArtistWithLink,
   reactivateUser,
@@ -54,6 +54,9 @@ type ArtistPromoteContext = {
   mode: 'link_existing' | 'create_and_link' | 'role_only';
 };
 
+type UserSortKey = 'user' | 'status_role' | 'application';
+type SortDirection = 'asc' | 'desc';
+
 export function UserList({ users }: { users: Profile[] }) {
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
@@ -76,6 +79,8 @@ export function UserList({ users }: { users: Profile[] }) {
   const [isSearchingArtists, setIsSearchingArtists] = useState(false);
   const [artistSearchError, setArtistSearchError] = useState<string | null>(null);
   const [isArtistSearchSlow, setIsArtistSearchSlow] = useState(false);
+  const [sortKey, setSortKey] = useState<UserSortKey>('user');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
 
   useEffect(() => {
     setLocalUsers(users);
@@ -145,11 +150,91 @@ export function UserList({ users }: { users: Profile[] }) {
   }, [artistPromoteContext, debouncedArtistSearchQuery]);
 
   const normalize = (value: string) => value.toLowerCase().replace(/\s+/g, '');
-  const filteredUsers = localUsers.filter((user) => {
-    if (!query) return true;
-    const q = normalize(query);
-    return normalize(user.name || '').includes(q) || normalize(user.email || '').includes(q);
-  });
+  const filteredUsers = useMemo(() => {
+    return localUsers.filter((user) => {
+      if (!query) return true;
+      const q = normalize(query);
+      return normalize(user.name || '').includes(q) || normalize(user.email || '').includes(q);
+    });
+  }, [localUsers, query]);
+
+  const sortedUsers = useMemo(() => {
+    const sorted = [...filteredUsers];
+    const statusRank: Record<Profile['status'], number> = {
+      pending: 0,
+      active: 1,
+      suspended: 2,
+    };
+    const roleRank: Record<Profile['role'], number> = {
+      user: 0,
+      artist: 1,
+      exhibitor: 2,
+      admin: 3,
+    };
+
+    const compareByUser = (a: Profile, b: Profile) => {
+      const aName = (a.name || '').trim();
+      const bName = (b.name || '').trim();
+      const nameCompare = aName.localeCompare(bName, 'ko');
+      if (nameCompare !== 0) return nameCompare;
+      return a.email.localeCompare(b.email, 'en');
+    };
+
+    const compareByApplication = (a: Profile, b: Profile) => {
+      const hasA = Number(Boolean(a.application));
+      const hasB = Number(Boolean(b.application));
+      if (hasA !== hasB) return hasA - hasB;
+
+      const artistNameA = (a.application?.artist_name || '').trim();
+      const artistNameB = (b.application?.artist_name || '').trim();
+      const artistNameCompare = artistNameA.localeCompare(artistNameB, 'ko');
+      if (artistNameCompare !== 0) return artistNameCompare;
+
+      const updatedAtA = a.application?.updated_at || '';
+      const updatedAtB = b.application?.updated_at || '';
+      return updatedAtA.localeCompare(updatedAtB);
+    };
+
+    sorted.sort((a, b) => {
+      let result = 0;
+
+      if (sortKey === 'user') {
+        result = compareByUser(a, b);
+      } else if (sortKey === 'status_role') {
+        const statusCompare = statusRank[a.status] - statusRank[b.status];
+        result = statusCompare !== 0 ? statusCompare : roleRank[a.role] - roleRank[b.role];
+      } else {
+        result = compareByApplication(a, b);
+      }
+
+      if (result === 0) {
+        result = compareByUser(a, b);
+      }
+
+      return sortDirection === 'asc' ? result : -result;
+    });
+
+    return sorted;
+  }, [filteredUsers, sortDirection, sortKey]);
+
+  const handleSort = (key: UserSortKey) => {
+    if (sortKey === key) {
+      setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+      return;
+    }
+    setSortKey(key);
+    setSortDirection('asc');
+  };
+
+  const getSortArrow = (key: UserSortKey) => {
+    if (sortKey !== key) return '↕';
+    return sortDirection === 'asc' ? '↑' : '↓';
+  };
+
+  const getSortAriaLabel = (label: string, key: UserSortKey) => {
+    if (sortKey !== key) return `${label} 오름차순 정렬`;
+    return sortDirection === 'asc' ? `${label} 내림차순 정렬` : `${label} 오름차순 정렬`;
+  };
 
   const handleReject = async () => {
     if (!rejectConfirmId) return;
@@ -337,19 +422,43 @@ export function UserList({ users }: { users: Profile[] }) {
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  사용자
+                  <button
+                    type="button"
+                    onClick={() => handleSort('user')}
+                    className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
+                    aria-label={getSortAriaLabel('사용자', 'user')}
+                  >
+                    사용자
+                    <span className="text-[11px] text-gray-400">{getSortArrow('user')}</span>
+                  </button>
                 </th>
                 <th
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  상태/권한
+                  <button
+                    type="button"
+                    onClick={() => handleSort('status_role')}
+                    className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
+                    aria-label={getSortAriaLabel('상태/권한', 'status_role')}
+                  >
+                    상태/권한
+                    <span className="text-[11px] text-gray-400">{getSortArrow('status_role')}</span>
+                  </button>
                 </th>
                 <th
                   scope="col"
                   className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  신청 정보
+                  <button
+                    type="button"
+                    onClick={() => handleSort('application')}
+                    className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
+                    aria-label={getSortAriaLabel('신청 정보', 'application')}
+                  >
+                    신청 정보
+                    <span className="text-[11px] text-gray-400">{getSortArrow('application')}</span>
+                  </button>
                 </th>
                 <th scope="col" className="relative px-6 py-3">
                   <span className="sr-only">관리</span>
@@ -357,7 +466,7 @@ export function UserList({ users }: { users: Profile[] }) {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredUsers.length === 0 ? (
+              {sortedUsers.length === 0 ? (
                 <tr>
                   <td colSpan={4} className="px-6 py-0">
                     <AdminEmptyState
@@ -367,7 +476,7 @@ export function UserList({ users }: { users: Profile[] }) {
                   </td>
                 </tr>
               ) : (
-                filteredUsers.map((user) => (
+                sortedUsers.map((user) => (
                   <tr key={user.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
