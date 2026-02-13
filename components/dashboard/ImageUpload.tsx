@@ -6,6 +6,7 @@ import { createSupabaseBrowserClient } from '@/lib/auth/client';
 import { generateArtworkImageVariants, optimizeImage } from '@/lib/client/image-optimization';
 import { useToast } from '@/lib/hooks/useToast';
 import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
+import SafeImage from '@/components/common/SafeImage';
 
 type UploadProps = {
   bucket: 'artworks' | 'profiles';
@@ -230,7 +231,13 @@ export function ImageUpload({
                 tabIndex={0}
                 aria-label="이미지 확대하기"
               >
-                <img src={previewSrc} alt="Preview" className="w-full h-full object-cover" />
+                <SafeImage
+                  src={previewSrc}
+                  alt="Preview"
+                  fill
+                  className="object-cover"
+                  sizes="128px"
+                />
               </div>
               <button
                 onClick={() => removeImage(index)}
