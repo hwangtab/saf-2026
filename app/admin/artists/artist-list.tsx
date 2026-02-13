@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { deleteArtist } from '@/app/actions/admin-artists';
 import {
@@ -24,11 +24,16 @@ type ArtistItem = {
   artwork_count: number;
 };
 
+type SortKey = 'artist_info' | 'account_link' | 'artwork_count';
+type SortDirection = 'asc' | 'desc';
+
 export function ArtistList({ artists }: { artists: ArtistItem[] }) {
   const [optimisticArtists, setOptimisticArtists] = useState(artists);
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [sortKey, setSortKey] = useState<SortKey>('artist_info');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
 
   useEffect(() => {
     setOptimisticArtists(artists);
@@ -56,15 +61,73 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
     }
   };
 
-  const filtered = optimisticArtists.filter((artist) => {
-    if (!query) return true;
-    const q = query.toLowerCase().replace(/\s+/g, '');
-    const nameKo = (artist.name_ko || '').toLowerCase().replace(/\s+/g, '');
-    const nameEn = (artist.name_en || '').toLowerCase().replace(/\s+/g, '');
-    const phone = (artist.contact_phone || '').toLowerCase().replace(/\s+/g, '');
-    const email = (artist.contact_email || '').toLowerCase().replace(/\s+/g, '');
-    return nameKo.includes(q) || nameEn.includes(q) || phone.includes(q) || email.includes(q);
-  });
+  const filtered = useMemo(() => {
+    return optimisticArtists.filter((artist) => {
+      if (!query) return true;
+      const q = query.toLowerCase().replace(/\s+/g, '');
+      const nameKo = (artist.name_ko || '').toLowerCase().replace(/\s+/g, '');
+      const nameEn = (artist.name_en || '').toLowerCase().replace(/\s+/g, '');
+      const phone = (artist.contact_phone || '').toLowerCase().replace(/\s+/g, '');
+      const email = (artist.contact_email || '').toLowerCase().replace(/\s+/g, '');
+      return nameKo.includes(q) || nameEn.includes(q) || phone.includes(q) || email.includes(q);
+    });
+  }, [optimisticArtists, query]);
+
+  const sortedArtists = useMemo(() => {
+    const sorted = [...filtered];
+
+    const compareByArtistInfo = (a: ArtistItem, b: ArtistItem) => {
+      const aNameKo = (a.name_ko || '').trim().toLowerCase();
+      const bNameKo = (b.name_ko || '').trim().toLowerCase();
+      const koCompare = aNameKo.localeCompare(bNameKo, 'ko');
+      if (koCompare !== 0) return koCompare;
+
+      const aNameEn = (a.name_en || '').trim().toLowerCase();
+      const bNameEn = (b.name_en || '').trim().toLowerCase();
+      return aNameEn.localeCompare(bNameEn, 'en');
+    };
+
+    sorted.sort((a, b) => {
+      let result = 0;
+
+      if (sortKey === 'artist_info') {
+        result = compareByArtistInfo(a, b);
+      } else if (sortKey === 'account_link') {
+        result = Number(Boolean(a.user_id)) - Number(Boolean(b.user_id));
+      } else {
+        result = a.artwork_count - b.artwork_count;
+      }
+
+      if (result === 0) {
+        result = compareByArtistInfo(a, b);
+      }
+
+      return sortDirection === 'asc' ? result : -result;
+    });
+
+    return sorted;
+  }, [filtered, sortDirection, sortKey]);
+
+  const handleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+      return;
+    }
+    setSortKey(key);
+    setSortDirection('asc');
+  };
+
+  const getSortArrow = (key: SortKey) => {
+    if (sortKey !== key) return '↕';
+    return sortDirection === 'asc' ? '↑' : '↓';
+  };
+
+  const getSortAriaLabel = (label: string, key: SortKey) => {
+    if (sortKey !== key) {
+      return `${label} 오름차순 정렬`;
+    }
+    return sortDirection === 'asc' ? `${label} 내림차순 정렬` : `${label} 오름차순 정렬`;
+  };
 
   return (
     <div className="space-y-6">
@@ -159,7 +222,15 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  작가 정보
+                  <button
+                    type="button"
+                    onClick={() => handleSort('artist_info')}
+                    className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
+                    aria-label={getSortAriaLabel('작가 정보', 'artist_info')}
+                  >
+                    작가 정보
+                    <span className="text-[11px] text-gray-400">{getSortArrow('artist_info')}</span>
+                  </button>
                 </th>
                 <th
                   scope="col"
@@ -177,13 +248,33 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  계정 연결
+                  <button
+                    type="button"
+                    onClick={() => handleSort('account_link')}
+                    className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
+                    aria-label={getSortAriaLabel('계정 연결', 'account_link')}
+                  >
+                    계정 연결
+                    <span className="text-[11px] text-gray-400">
+                      {getSortArrow('account_link')}
+                    </span>
+                  </button>
                 </th>
                 <th
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  작품 수
+                  <button
+                    type="button"
+                    onClick={() => handleSort('artwork_count')}
+                    className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
+                    aria-label={getSortAriaLabel('작품 수', 'artwork_count')}
+                  >
+                    작품 수
+                    <span className="text-[11px] text-gray-400">
+                      {getSortArrow('artwork_count')}
+                    </span>
+                  </button>
                 </th>
                 <th scope="col" className="relative px-6 py-3">
                   <span className="sr-only">관리</span>
@@ -191,7 +282,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filtered.length === 0 ? (
+              {sortedArtists.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-0">
                     <AdminEmptyState
@@ -201,7 +292,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
                   </td>
                 </tr>
               ) : (
-                filtered.map((artist) => (
+                sortedArtists.map((artist) => (
                   <tr key={artist.id} className="hover:bg-gray-50 transition-colors group">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
