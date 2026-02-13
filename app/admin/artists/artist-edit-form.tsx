@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import {
@@ -72,8 +72,53 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
 
   const isEditing = !!artist.id;
 
-  // Debug logging
-  console.log('ArtistEditForm Render:', { artist, isEditing, linkedProfile });
+  // Debug logging - Removed
+  // console.log('ArtistEditForm Render:', { artist, isEditing, linkedProfile });
+
+  // Debounced search effect
+  const [debouncedQuery, setDebouncedQuery] = useState('');
+
+  // Debounce input
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Perform search when debounced query changes
+  useEffect(() => {
+    if (debouncedQuery.length < 2) {
+      setSearchResults([]);
+      setIsSearching(false);
+      return;
+    }
+
+    let isCancelled = false;
+    setIsSearching(true);
+
+    const fetchUsers = async () => {
+      try {
+        const results = await searchUsersByName(debouncedQuery);
+        if (!isCancelled) {
+          setSearchResults(results);
+        }
+      } catch (err) {
+        console.error('Search failed:', err);
+      } finally {
+        if (!isCancelled) {
+          setIsSearching(false);
+        }
+      }
+    };
+
+    void fetchUsers();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [debouncedQuery]);
 
   const handleSubmit = async (formData: FormData) => {
     setError(null);
@@ -130,23 +175,8 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
     }
   };
 
-  const handleSearchUsers = async (q: string) => {
-    setSearchQuery(q);
-    if (q.length < 2) {
-      setSearchResults([]);
-      return;
-    }
-    setIsSearching(true);
-    try {
-      const results = await searchUsersByName(q);
-      setSearchResults(results);
-    } catch (err) {
-      console.error('Search failed:', err);
-    } finally {
-      setIsSearching(false);
-    }
-  };
-  // end handleSearchUsers
+  // handleSearchUsers is no longer needed as we use useEffect,
+  // but we keep the input onChange handler simple
 
   const handleLinkUser = async () => {
     if (!artist.id || !selectedUserForLink) return;
@@ -270,7 +300,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
                   <input
                     type="text"
                     value={searchQuery}
-                    onChange={(e) => handleSearchUsers(e.target.value)}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="연결할 사용자 검색..."
                     className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
                     disabled={isLinking}
