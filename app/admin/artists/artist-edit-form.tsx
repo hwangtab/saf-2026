@@ -24,6 +24,7 @@ type Artist = {
   bio: string | null;
   history: string | null;
   profile_image: string | null;
+  contact_phone: string | null;
   contact_email: string | null;
   instagram: string | null;
   homepage: string | null;
@@ -432,7 +433,8 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
               `수행되는 작업:\n` +
               `1. 작가 프로필에 사용자 계정 ID(${maskEmail(selectedUserForLink.email)})를 등록합니다.\n` +
               `2. 해당 사용자의 권한을 'Artist'로 변경합니다.\n` +
-              `3. 해당 사용자의 계정 상태를 'Active'로 변경합니다.`
+              `3. 해당 사용자의 계정 상태를 'Active'로 변경합니다.\n` +
+              `4. 작가 연락처가 비어 있으면 사용자/신청 정보로 전화번호·이메일을 자동 채웁니다.`
             : ''
         }
       />
@@ -485,6 +487,17 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
             <input
               name="name_en"
               defaultValue={artist.name_en || ''}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">연락처(전화번호)</label>
+            <input
+              name="contact_phone"
+              type="tel"
+              defaultValue={artist.contact_phone || ''}
+              placeholder="010-1234-5678"
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
             />
           </div>

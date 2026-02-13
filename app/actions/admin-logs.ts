@@ -117,6 +117,7 @@ const ARTIST_REVERT_KEYS = [
   'bio',
   'history',
   'profile_image',
+  'contact_phone',
   'contact_email',
   'instagram',
   'homepage',

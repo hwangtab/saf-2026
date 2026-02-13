@@ -256,6 +256,7 @@ const FIELD_LABELS: Record<string, string> = {
   bio: '작가 소개',
   history: '작가 이력',
   profile_image: '프로필 이미지',
+  contact_phone: '연락 전화번호',
   contact_email: '연락 이메일',
   instagram: '인스타그램',
   homepage: '홈페이지',

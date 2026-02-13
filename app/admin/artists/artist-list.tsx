@@ -18,6 +18,7 @@ type ArtistItem = {
   name_ko: string | null;
   name_en: string | null;
   profile_image: string | null;
+  contact_phone: string | null;
   contact_email: string | null;
   user_id: string | null;
   artwork_count: number;
@@ -60,8 +61,9 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
     const q = query.toLowerCase().replace(/\s+/g, '');
     const nameKo = (artist.name_ko || '').toLowerCase().replace(/\s+/g, '');
     const nameEn = (artist.name_en || '').toLowerCase().replace(/\s+/g, '');
+    const phone = (artist.contact_phone || '').toLowerCase().replace(/\s+/g, '');
     const email = (artist.contact_email || '').toLowerCase().replace(/\s+/g, '');
-    return nameKo.includes(q) || nameEn.includes(q) || email.includes(q);
+    return nameKo.includes(q) || nameEn.includes(q) || phone.includes(q) || email.includes(q);
   });
 
   return (
@@ -137,12 +139,13 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="이름, 이메일 검색..."
+              placeholder="이름, 전화번호, 이메일 검색..."
               aria-describedby="search-artists-description"
               className="h-10 border-0 py-2 pl-10"
             />
             <span id="search-artists-description" className="sr-only">
-              작가 이름 또는 이메일로 검색할 수 있습니다. 현재 {filtered.length}명이 표시됩니다.
+              작가 이름, 전화번호 또는 이메일로 검색할 수 있습니다. 현재 {filtered.length}명이
+              표시됩니다.
             </span>
           </div>
         </AdminCardHeader>
@@ -162,7 +165,13 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
                   scope="col"
                   className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  연락처
+                  전화번호
+                </th>
+                <th
+                  scope="col"
+                  className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  이메일
                 </th>
                 <th
                   scope="col"
@@ -184,7 +193,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
             <tbody className="bg-white divide-y divide-gray-200">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-0">
+                  <td colSpan={6} className="px-6 py-0">
                     <AdminEmptyState
                       title="검색 결과가 없습니다"
                       description="다른 검색어로 시도해보세요."
@@ -226,6 +235,9 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">
+                      {artist.contact_phone || <span className="text-gray-300">-</span>}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell">
                       {artist.contact_email || <span className="text-gray-300">-</span>}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

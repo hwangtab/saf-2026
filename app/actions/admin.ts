@@ -14,6 +14,7 @@ export type UnlinkedArtistSearchItem = {
   id: string;
   name_ko: string | null;
   name_en: string | null;
+  contact_phone: string | null;
   contact_email: string | null;
   updated_at: string | null;
   artwork_count: number;
@@ -34,6 +35,31 @@ function sanitizeIlikeQuery(query: string) {
     .replace(/\s+/g, ' ');
 }
 
+function normalizeEmail(value: string | null | undefined): string | null {
+  const trimmed = (value || '').trim();
+  if (!trimmed) return null;
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailPattern.test(trimmed) ? trimmed : null;
+}
+
+function normalizePhone(value: string | null | undefined): string | null {
+  const trimmed = (value || '').trim();
+  if (!trimmed) return null;
+  const phonePattern = /^\+?[0-9()\-\s]{7,20}$/;
+  return phonePattern.test(trimmed) ? trimmed : null;
+}
+
+function parseApplicationContact(contact: string | null | undefined) {
+  const trimmed = (contact || '').trim();
+  if (!trimmed) {
+    return { contactEmail: null, contactPhone: null };
+  }
+  return {
+    contactEmail: normalizeEmail(trimmed),
+    contactPhone: normalizePhone(trimmed),
+  };
+}
+
 export async function searchUnlinkedArtists(query: string): Promise<UnlinkedArtistSearchItem[]> {
   await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
@@ -43,10 +69,10 @@ export async function searchUnlinkedArtists(query: string): Promise<UnlinkedArti
 
   const { data, error } = await supabase
     .from('artists')
-    .select('id, name_ko, name_en, contact_email, updated_at, artworks(count)')
+    .select('id, name_ko, name_en, contact_phone, contact_email, updated_at, artworks(count)')
     .is('user_id', null)
     .or(
-      `name_ko.ilike.%${normalizedQuery}%,name_en.ilike.%${normalizedQuery}%,contact_email.ilike.%${normalizedQuery}%`
+      `name_ko.ilike.%${normalizedQuery}%,name_en.ilike.%${normalizedQuery}%,contact_phone.ilike.%${normalizedQuery}%,contact_email.ilike.%${normalizedQuery}%`
     )
     .order('updated_at', { ascending: false })
     .limit(20);
@@ -57,6 +83,7 @@ export async function searchUnlinkedArtists(query: string): Promise<UnlinkedArti
     id: string;
     name_ko: string | null;
     name_en: string | null;
+    contact_phone: string | null;
     contact_email: string | null;
     updated_at: string | null;
     artworks?: Array<{ count: number | null }> | null;
@@ -66,6 +93,7 @@ export async function searchUnlinkedArtists(query: string): Promise<UnlinkedArti
     id: artist.id,
     name_ko: artist.name_ko || null,
     name_en: artist.name_en || null,
+    contact_phone: artist.contact_phone || null,
     contact_email: artist.contact_email || null,
     updated_at: artist.updated_at || null,
     artwork_count: artist.artworks?.[0]?.count || 0,
@@ -91,7 +119,7 @@ export async function promoteUserToArtistWithLink({
 
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('id, name')
+      .select('id, name, email')
       .eq('id', userId)
       .single();
 
@@ -103,11 +131,16 @@ export async function promoteUserToArtistWithLink({
       .eq('user_id', userId)
       .maybeSingle();
 
-    const contactValue = application?.contact?.trim() || '';
+    const parsedContact = parseApplicationContact(application?.contact || null);
+    const fallbackEmail = normalizeEmail(profile?.email || null);
+    const candidateEmail = parsedContact.contactEmail || fallbackEmail;
+    const candidatePhone = parsedContact.contactPhone;
     const profileName = profile?.name || 'Unknown';
     let linkedArtistId: string | null = null;
     let linkedArtistName: string | null = null;
     let createdArtistId: string | null = null;
+    let phoneAutofilled = false;
+    let emailAutofilled = false;
 
     if (mode === 'link_existing') {
       if (!artistId) {
@@ -130,14 +163,14 @@ export async function promoteUserToArtistWithLink({
         .update({ user_id: userId })
         .eq('id', artistId)
         .is('user_id', null)
-        .select('id, name_ko');
+        .select('id, name_ko, contact_phone, contact_email');
 
       if (updateArtistError) throw updateArtistError;
 
       if ((updatedRows || []).length === 0) {
         const { data: currentArtist, error: currentArtistError } = await supabase
           .from('artists')
-          .select('id, name_ko, user_id')
+          .select('id, name_ko, user_id, contact_phone, contact_email')
           .eq('id', artistId)
           .single();
         if (currentArtistError) throw currentArtistError;
@@ -149,16 +182,49 @@ export async function promoteUserToArtistWithLink({
         }
         linkedArtistId = currentArtist.id;
         linkedArtistName = currentArtist.name_ko || null;
+        const artistContactPatch: { contact_phone?: string; contact_email?: string } = {};
+        if (!currentArtist.contact_phone?.trim() && candidatePhone) {
+          artistContactPatch.contact_phone = candidatePhone;
+        }
+        if (!currentArtist.contact_email?.trim() && candidateEmail) {
+          artistContactPatch.contact_email = candidateEmail;
+        }
+        if (Object.keys(artistContactPatch).length > 0) {
+          const { error: artistContactError } = await supabase
+            .from('artists')
+            .update(artistContactPatch)
+            .eq('id', currentArtist.id);
+          if (artistContactError) throw artistContactError;
+          phoneAutofilled = Boolean(artistContactPatch.contact_phone);
+          emailAutofilled = Boolean(artistContactPatch.contact_email);
+        }
       } else {
         linkedArtistId = updatedRows?.[0]?.id || null;
         linkedArtistName = updatedRows?.[0]?.name_ko || null;
+        const linkedArtist = updatedRows?.[0];
+        const artistContactPatch: { contact_phone?: string; contact_email?: string } = {};
+        if (linkedArtist && !linkedArtist.contact_phone?.trim() && candidatePhone) {
+          artistContactPatch.contact_phone = candidatePhone;
+        }
+        if (linkedArtist && !linkedArtist.contact_email?.trim() && candidateEmail) {
+          artistContactPatch.contact_email = candidateEmail;
+        }
+        if (linkedArtist && Object.keys(artistContactPatch).length > 0) {
+          const { error: artistContactError } = await supabase
+            .from('artists')
+            .update(artistContactPatch)
+            .eq('id', linkedArtist.id);
+          if (artistContactError) throw artistContactError;
+          phoneAutofilled = Boolean(artistContactPatch.contact_phone);
+          emailAutofilled = Boolean(artistContactPatch.contact_email);
+        }
       }
     }
 
     if (mode === 'create_and_link') {
       const { data: existingArtist, error: existingArtistError } = await supabase
         .from('artists')
-        .select('id, name_ko, contact_email')
+        .select('id, name_ko, contact_phone, contact_email')
         .eq('user_id', userId)
         .maybeSingle();
 
@@ -167,12 +233,21 @@ export async function promoteUserToArtistWithLink({
       if (existingArtist) {
         linkedArtistId = existingArtist.id;
         linkedArtistName = existingArtist.name_ko || null;
-        if (contactValue && !existingArtist.contact_email?.trim()) {
+        const artistContactPatch: { contact_phone?: string; contact_email?: string } = {};
+        if (!existingArtist.contact_phone?.trim() && candidatePhone) {
+          artistContactPatch.contact_phone = candidatePhone;
+        }
+        if (!existingArtist.contact_email?.trim() && candidateEmail) {
+          artistContactPatch.contact_email = candidateEmail;
+        }
+        if (Object.keys(artistContactPatch).length > 0) {
           const { error: updateContactError } = await supabase
             .from('artists')
-            .update({ contact_email: contactValue })
+            .update(artistContactPatch)
             .eq('id', existingArtist.id);
           if (updateContactError) throw updateContactError;
+          phoneAutofilled = Boolean(artistContactPatch.contact_phone);
+          emailAutofilled = Boolean(artistContactPatch.contact_email);
         }
       } else {
         const { data: insertedArtist, error: insertedArtistError } = await supabase
@@ -181,7 +256,8 @@ export async function promoteUserToArtistWithLink({
             user_id: userId,
             name_ko: application?.artist_name || profileName,
             bio: application?.bio || null,
-            contact_email: contactValue || null,
+            contact_phone: candidatePhone || null,
+            contact_email: candidateEmail || null,
           })
           .select('id, name_ko')
           .single();
@@ -201,6 +277,8 @@ export async function promoteUserToArtistWithLink({
           createdArtistId = insertedArtist.id;
           linkedArtistId = insertedArtist.id;
           linkedArtistName = insertedArtist.name_ko || null;
+          phoneAutofilled = Boolean(candidatePhone);
+          emailAutofilled = Boolean(candidateEmail);
         }
       }
     }
@@ -232,6 +310,8 @@ export async function promoteUserToArtistWithLink({
       await logAdminAction('artist_linked_to_user', 'artist', linkedArtistId, {
         artist_name: linkedArtistName || linkedArtistId,
         user_id: userId,
+        phone_autofilled: phoneAutofilled,
+        email_autofilled: emailAutofilled,
       });
     }
 
@@ -266,33 +346,28 @@ export async function approveUser(userId: string): Promise<AdminActionState> {
       .eq('user_id', userId)
       .maybeSingle();
 
-    const contactValue = application?.contact?.trim() || '';
+    const parsedContact = parseApplicationContact(application?.contact || null);
 
     // 1. Ensure Artist record exists (before activating profile)
     const { data: existingArtist, error: artistFetchError } = await supabase
       .from('artists')
-      .select('id, contact_email')
+      .select('id, contact_phone, contact_email')
       .eq('user_id', userId)
       .maybeSingle();
 
     if (artistFetchError) throw artistFetchError;
 
     let createdArtistId: string | null = null;
-    if (existingArtist && contactValue && !existingArtist.contact_email?.trim()) {
-      const { error: contactError } = await supabase
-        .from('artists')
-        .update({ contact_email: contactValue })
-        .eq('id', existingArtist.id);
-      if (contactError) throw contactError;
-    }
-
     if (!existingArtist) {
       // Get profile + application info to populate initial artist data
       const { data: profile } = await supabase
         .from('profiles')
-        .select('name')
+        .select('name, email')
         .eq('id', userId)
         .single();
+
+      const fallbackEmail = normalizeEmail(profile?.email || null);
+      const candidateEmail = parsedContact.contactEmail || fallbackEmail;
 
       const { data: createdArtist, error: artistError } = await supabase
         .from('artists')
@@ -300,7 +375,8 @@ export async function approveUser(userId: string): Promise<AdminActionState> {
           user_id: userId,
           name_ko: application?.artist_name || profile?.name || 'New Artist',
           bio: application?.bio || null,
-          contact_email: contactValue || null,
+          contact_phone: parsedContact.contactPhone || null,
+          contact_email: candidateEmail || null,
         })
         .select('id')
         .single();
@@ -308,6 +384,29 @@ export async function approveUser(userId: string): Promise<AdminActionState> {
         if (artistError.code !== '23505') throw artistError;
       } else {
         createdArtistId = createdArtist?.id || null;
+      }
+    } else {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('id', userId)
+        .maybeSingle();
+      const fallbackEmail = normalizeEmail(profile?.email || null);
+      const candidateEmail = parsedContact.contactEmail || fallbackEmail;
+      const artistContactPatch: { contact_phone?: string; contact_email?: string } = {};
+
+      if (!existingArtist.contact_phone?.trim() && parsedContact.contactPhone) {
+        artistContactPatch.contact_phone = parsedContact.contactPhone;
+      }
+      if (!existingArtist.contact_email?.trim() && candidateEmail) {
+        artistContactPatch.contact_email = candidateEmail;
+      }
+      if (Object.keys(artistContactPatch).length > 0) {
+        const { error: contactError } = await supabase
+          .from('artists')
+          .update(artistContactPatch)
+          .eq('id', existingArtist.id);
+        if (contactError) throw contactError;
       }
     }
 
@@ -399,7 +498,7 @@ export async function updateUserRole(
     const supabase = await createSupabaseAdminOrServerClient();
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('name')
+      .select('name, email')
       .eq('id', userId)
       .single();
 
@@ -434,19 +533,33 @@ export async function updateUserRole(
 
     let createdArtistId: string | null = null;
     if (role === 'artist') {
-      const contactValue = application?.contact?.trim() || '';
+      const parsedContact = parseApplicationContact(application?.contact || null);
+      const fallbackEmail = normalizeEmail(profile?.email || null);
+      const candidateEmail = parsedContact.contactEmail || fallbackEmail;
       const { data: existingArtist, error: artistFetchError } = await supabase
         .from('artists')
-        .select('id, contact_email')
+        .select('id, contact_phone, contact_email')
         .eq('user_id', userId)
         .maybeSingle();
 
       if (artistFetchError) throw artistFetchError;
 
-      if (existingArtist && contactValue && !existingArtist.contact_email?.trim()) {
+      if (
+        existingArtist &&
+        ((!existingArtist.contact_phone?.trim() && parsedContact.contactPhone) ||
+          (!existingArtist.contact_email?.trim() && candidateEmail))
+      ) {
+        const artistContactPatch: { contact_phone?: string; contact_email?: string } = {};
+        if (!existingArtist.contact_phone?.trim() && parsedContact.contactPhone) {
+          artistContactPatch.contact_phone = parsedContact.contactPhone;
+        }
+        if (!existingArtist.contact_email?.trim() && candidateEmail) {
+          artistContactPatch.contact_email = candidateEmail;
+        }
+
         const { error: contactError } = await supabase
           .from('artists')
-          .update({ contact_email: contactValue })
+          .update(artistContactPatch)
           .eq('id', existingArtist.id);
         if (contactError) throw contactError;
       }
@@ -458,7 +571,8 @@ export async function updateUserRole(
             user_id: userId,
             name_ko: application?.artist_name || profile?.name || 'New Artist',
             bio: application?.bio || null,
-            contact_email: contactValue || null,
+            contact_phone: parsedContact.contactPhone || null,
+            contact_email: candidateEmail || null,
           })
           .select('id')
           .single();

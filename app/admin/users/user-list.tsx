@@ -42,6 +42,7 @@ type UnlinkedArtistOption = {
   id: string;
   name_ko: string | null;
   name_en: string | null;
+  contact_phone: string | null;
   contact_email: string | null;
   updated_at: string | null;
   artwork_count: number;
@@ -728,7 +729,8 @@ export function UserList({ users }: { users: Profile[] }) {
                                 {artist.name_ko || '이름 없음'}
                               </p>
                               <p className="text-xs text-slate-500 truncate">
-                                {artist.name_en || '-'} · {artist.contact_email || '이메일 없음'}
+                                {artist.name_en || '-'} · {artist.contact_phone || '전화번호 없음'}{' '}
+                                · {artist.contact_email || '이메일 없음'}
                               </p>
                               <p className="text-xs text-slate-500 mt-1">
                                 {artist.artwork_count} 작품
@@ -760,6 +762,9 @@ export function UserList({ users }: { users: Profile[] }) {
               <ul className="space-y-1 list-disc pl-5">
                 <li>사용자 상태를 `active`로 변경합니다.</li>
                 <li>사용자 권한을 `artist`로 변경합니다.</li>
+                <li>
+                  작가 연락처가 비어 있으면 사용자/신청 정보로 전화번호·이메일을 자동 채웁니다.
+                </li>
                 {artistPromoteContext.mode === 'link_existing' && (
                   <li>
                     선택 작가와 연결:

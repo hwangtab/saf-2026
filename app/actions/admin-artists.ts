@@ -6,6 +6,31 @@ import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 import { logAdminAction } from './admin-logs';
 import { getString, getStoragePathFromPublicUrl } from '@/lib/utils/form-helpers';
 
+function normalizeEmail(value: string | null | undefined): string | null {
+  const trimmed = (value || '').trim();
+  if (!trimmed) return null;
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailPattern.test(trimmed) ? trimmed : null;
+}
+
+function normalizePhone(value: string | null | undefined): string | null {
+  const trimmed = (value || '').trim();
+  if (!trimmed) return null;
+  const phonePattern = /^\+?[0-9()\-\s]{7,20}$/;
+  return phonePattern.test(trimmed) ? trimmed : null;
+}
+
+function parseApplicationContact(contact: string | null | undefined) {
+  const trimmed = (contact || '').trim();
+  if (!trimmed) {
+    return { contactEmail: null, contactPhone: null };
+  }
+  return {
+    contactEmail: normalizeEmail(trimmed),
+    contactPhone: normalizePhone(trimmed),
+  };
+}
+
 export async function getArtistsWithArtworkCount() {
   await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
@@ -53,6 +78,7 @@ export async function updateArtist(id: string, formData: FormData) {
   const bio = getString(formData, 'bio');
   const history = getString(formData, 'history');
   const profile_image = getString(formData, 'profile_image');
+  const contact_phone = getString(formData, 'contact_phone');
   const contact_email = getString(formData, 'contact_email');
   const instagram = getString(formData, 'instagram');
   const homepage = getString(formData, 'homepage');
@@ -60,7 +86,7 @@ export async function updateArtist(id: string, formData: FormData) {
   const { data: oldArtist } = await supabase
     .from('artists')
     .select(
-      'id, name_ko, name_en, bio, history, profile_image, contact_email, instagram, homepage, updated_at'
+      'id, name_ko, name_en, bio, history, profile_image, contact_phone, contact_email, instagram, homepage, updated_at'
     )
     .eq('id', id)
     .single();
@@ -73,6 +99,7 @@ export async function updateArtist(id: string, formData: FormData) {
       bio,
       history,
       profile_image: profile_image || null,
+      contact_phone: contact_phone || null,
       contact_email: contact_email || null,
       instagram: instagram || null,
       homepage: homepage || null,
@@ -85,7 +112,7 @@ export async function updateArtist(id: string, formData: FormData) {
   const { data: newArtist } = await supabase
     .from('artists')
     .select(
-      'id, name_ko, name_en, bio, history, profile_image, contact_email, instagram, homepage, updated_at'
+      'id, name_ko, name_en, bio, history, profile_image, contact_phone, contact_email, instagram, homepage, updated_at'
     )
     .eq('id', id)
     .single();
@@ -212,6 +239,7 @@ export async function createAdminArtist(formData: FormData) {
   const name_en = getString(formData, 'name_en');
   const bio = getString(formData, 'bio');
   const history = getString(formData, 'history');
+  const contact_phone = getString(formData, 'contact_phone');
   const contact_email = getString(formData, 'contact_email');
   const instagram = getString(formData, 'instagram');
   const homepage = getString(formData, 'homepage');
@@ -223,6 +251,7 @@ export async function createAdminArtist(formData: FormData) {
       name_en,
       bio,
       history,
+      contact_phone: contact_phone || null,
       contact_email: contact_email || null,
       instagram: instagram || null,
       homepage: homepage || null,
@@ -272,9 +301,14 @@ export async function linkArtistToUser(artistId: string, userId: string) {
   // Get artist info for logging
   const { data: artist } = await supabase
     .from('artists')
-    .select('name_ko')
+    .select('name_ko, contact_phone, contact_email')
     .eq('id', artistId)
     .single();
+
+  const [{ data: profile }, { data: application }] = await Promise.all([
+    supabase.from('profiles').select('email').eq('id', userId).maybeSingle(),
+    supabase.from('artist_applications').select('contact').eq('user_id', userId).maybeSingle(),
+  ]);
 
   // Update artist linkage
   const { error: linkError } = await supabase
@@ -292,6 +326,27 @@ export async function linkArtistToUser(artistId: string, userId: string) {
 
   if (profileError) throw profileError;
 
+  const parsedContact = parseApplicationContact(application?.contact || null);
+  const fallbackEmail = normalizeEmail(profile?.email || null);
+  const nextContactEmail = parsedContact.contactEmail || fallbackEmail;
+  const nextContactPhone = parsedContact.contactPhone;
+  const artistContactPatch: { contact_email?: string; contact_phone?: string } = {};
+
+  if (!artist?.contact_email?.trim() && nextContactEmail) {
+    artistContactPatch.contact_email = nextContactEmail;
+  }
+  if (!artist?.contact_phone?.trim() && nextContactPhone) {
+    artistContactPatch.contact_phone = nextContactPhone;
+  }
+
+  if (Object.keys(artistContactPatch).length > 0) {
+    const { error: contactPatchError } = await supabase
+      .from('artists')
+      .update(artistContactPatch)
+      .eq('id', artistId);
+    if (contactPatchError) throw contactPatchError;
+  }
+
   revalidatePath('/admin/artists');
   revalidatePath(`/admin/artists/${artistId}`);
 
@@ -302,6 +357,8 @@ export async function linkArtistToUser(artistId: string, userId: string) {
     {
       artist_name: artist?.name_ko,
       user_id: userId,
+      phone_autofilled: Boolean(artistContactPatch.contact_phone),
+      email_autofilled: Boolean(artistContactPatch.contact_email),
     },
     admin.id
   );
