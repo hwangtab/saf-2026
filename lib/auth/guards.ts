@@ -1,7 +1,8 @@
 import { createSupabaseServerClient } from './server';
 import { redirect } from 'next/navigation';
+import { cache } from 'react';
 
-export async function requireAuth() {
+const getAuthUserContext = cache(async () => {
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
@@ -12,20 +13,11 @@ export async function requireAuth() {
     redirect('/login');
   }
 
-  return user;
-}
+  return { supabase, user };
+});
 
-export async function requireArtistActive() {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
-  if (authError || !user) {
-    redirect('/login');
-  }
-
+const getCurrentProfile = cache(async () => {
+  const { supabase, user } = await getAuthUserContext();
   const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('role, status')
@@ -35,6 +27,17 @@ export async function requireArtistActive() {
   if (profileError) {
     throw new Error('계정 정보를 확인하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
   }
+
+  return { supabase, user, profile };
+});
+
+export async function requireAuth() {
+  const { user } = await getAuthUserContext();
+  return user;
+}
+
+export async function requireArtistActive() {
+  const { supabase, user, profile } = await getCurrentProfile();
 
   // Admin should stay in admin surface
   if (profile?.role === 'admin') {
@@ -68,25 +71,7 @@ export async function requireArtistActive() {
 }
 
 export async function requireAdmin() {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
-  if (authError || !user) {
-    redirect('/login');
-  }
-
-  const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .maybeSingle();
-
-  if (profileError) {
-    throw new Error('관리자 권한을 확인하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-  }
+  const { user, profile } = await getCurrentProfile();
 
   if (!profile || profile.role !== 'admin') {
     redirect('/');
@@ -96,25 +81,7 @@ export async function requireAdmin() {
 }
 
 export async function requireExhibitor() {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
-  if (authError || !user) {
-    redirect('/login');
-  }
-
-  const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .maybeSingle();
-
-  if (profileError) {
-    throw new Error('계정 정보를 확인하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-  }
+  const { user, profile } = await getCurrentProfile();
 
   if (!profile || profile.role !== 'exhibitor') {
     redirect('/');

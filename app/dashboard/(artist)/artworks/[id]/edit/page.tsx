@@ -1,28 +1,13 @@
 import { createSupabaseServerClient } from '@/lib/auth/server';
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
+import { getArtistDashboardContext } from '@/lib/auth/dashboard-context';
 import { ArtworkForm } from '../../artwork-form';
 import { AdminCard } from '@/app/admin/_components/admin-ui';
 
 export default async function EditArtworkPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const { artist } = await getArtistDashboardContext();
   const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect('/login');
-  }
-
-  const { data: artist } = await supabase
-    .from('artists')
-    .select('id')
-    .eq('user_id', user.id)
-    .single();
-
-  if (!artist) {
-    notFound();
-  }
 
   // Fetch artwork ensuring it belongs to this artist
   const { data: artwork } = await supabase

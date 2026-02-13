@@ -1,5 +1,4 @@
-import { createSupabaseServerClient } from '@/lib/auth/server';
-import { redirect } from 'next/navigation';
+import { getArtistDashboardContext } from '@/lib/auth/dashboard-context';
 import { ProfileForm } from './profile-form';
 import {
   AdminCard,
@@ -9,21 +8,7 @@ import {
 } from '@/app/admin/_components/admin-ui';
 
 export default async function ProfilePage() {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect('/login');
-  }
-
-  // Fetch existing artist data
-  const { data: artist } = await supabase
-    .from('artists')
-    .select('*')
-    .eq('user_id', user.id)
-    .single();
+  const { artist, user } = await getArtistDashboardContext();
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">

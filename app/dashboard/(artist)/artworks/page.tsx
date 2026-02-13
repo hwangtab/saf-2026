@@ -1,5 +1,5 @@
 import { createSupabaseServerClient } from '@/lib/auth/server';
-import { notFound, redirect } from 'next/navigation';
+import { getArtistDashboardContext } from '@/lib/auth/dashboard-context';
 import { ArtworkList } from './artwork-list';
 import Button from '@/components/ui/Button';
 import {
@@ -16,30 +16,15 @@ type ArtworksPageProps = {
 };
 
 export default async function ArtworksPage({ searchParams }: ArtworksPageProps) {
+  const { artist } = await getArtistDashboardContext();
   const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    redirect('/login');
-  }
+
   const flashMessage =
     searchParams?.result === 'updated'
       ? '작품이 수정되었습니다.'
       : searchParams?.result === 'created'
         ? '작품이 등록되었습니다.'
         : null;
-
-  // Get artist id first (RLS requires it usually, or we query by artist_id found from user_id)
-  const { data: artist } = await supabase
-    .from('artists')
-    .select('id')
-    .eq('user_id', user.id)
-    .single();
-
-  if (!artist) {
-    notFound();
-  }
 
   // Fetch artworks
   const { data: artworks } = await supabase
