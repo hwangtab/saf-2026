@@ -152,7 +152,7 @@
   - [ ] Function `getSupabaseArtistsByOwner` exists
   - [ ] Returns list of artists owned by the user
 
-- [ ] 5. Create Exhibitor Dashboard Layout
+- [x] 5. Create Exhibitor Dashboard Layout
 
   **What to do**:
   - Create `app/exhibitor/layout.tsx`:
