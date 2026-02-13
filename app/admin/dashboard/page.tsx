@@ -37,7 +37,9 @@ const DASHBOARD_PERIOD_OPTIONS: Array<{ key: DashboardPeriodKey; label: string }
 ];
 
 function isDashboardPeriodKey(value: string): value is DashboardPeriodKey {
-  return DASHBOARD_PERIOD_OPTIONS.some((option) => option.key === value);
+  return (
+    DASHBOARD_PERIOD_OPTIONS.some((option) => option.key === value) || /^year_\d{4}$/.test(value)
+  );
 }
 
 function StatCard({
@@ -124,6 +126,9 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
     periodParam && isDashboardPeriodKey(periodParam) ? periodParam : '30d';
 
   const stats = await getDashboardStats(selectedPeriod);
+  const isYearOverYear = stats.period.key.startsWith('year_');
+  const previousRevenueLabel = isYearOverYear ? '작년 매출' : '이전 기간 매출';
+  const growthRateLabel = isYearOverYear ? '성장률 (YoY)' : '성장률 (이전 기간 대비)';
 
   const linkedRate =
     stats.artists.totalRegistered > 0
@@ -213,6 +218,8 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
         <RevenueTrendChart
           data={stats.revenue.timeSeries}
           periodLabel={`${stats.period.startDate} ~ ${stats.period.endDate}`}
+          previousRevenueLabel={previousRevenueLabel}
+          growthRateLabel={growthRateLabel}
         />
       </div>
 
@@ -241,8 +248,8 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
                 <tr>
                   <th className="px-4 py-3 text-left">구간</th>
                   <th className="px-4 py-3 text-right">매출</th>
-                  <th className="px-4 py-3 text-right">작년 매출</th>
-                  <th className="px-4 py-3 text-right">성장률 (YoY)</th>
+                  <th className="px-4 py-3 text-right">{previousRevenueLabel}</th>
+                  <th className="px-4 py-3 text-right">{growthRateLabel}</th>
                   <th className="px-4 py-3 text-right">판매 수</th>
                   <th className="px-4 py-3 text-right">평균판매가</th>
                 </tr>

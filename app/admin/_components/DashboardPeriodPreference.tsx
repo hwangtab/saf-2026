@@ -5,6 +5,11 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 const STORAGE_KEY = 'admin_dashboard_period';
 const VALID_PERIODS = new Set(['7d', '30d', '90d', '365d', 'all']);
+const YEAR_PERIOD_REGEX = /^year_\d{4}$/;
+
+function isValidPeriod(value: string): boolean {
+  return VALID_PERIODS.has(value) || YEAR_PERIOD_REGEX.test(value);
+}
 
 type DashboardPeriodPreferenceProps = {
   selectedPeriod: string;
@@ -19,7 +24,7 @@ export function DashboardPeriodPreference({ selectedPeriod }: DashboardPeriodPre
 
   useEffect(() => {
     if (!hasPeriodInQuery) return;
-    if (!VALID_PERIODS.has(selectedPeriod)) return;
+    if (!isValidPeriod(selectedPeriod)) return;
     localStorage.setItem(STORAGE_KEY, selectedPeriod);
   }, [hasPeriodInQuery, selectedPeriod]);
 
@@ -27,7 +32,7 @@ export function DashboardPeriodPreference({ selectedPeriod }: DashboardPeriodPre
     if (hasPeriodInQuery) return;
 
     const savedPeriod = localStorage.getItem(STORAGE_KEY);
-    if (!savedPeriod || !VALID_PERIODS.has(savedPeriod)) return;
+    if (!savedPeriod || !isValidPeriod(savedPeriod)) return;
     if (savedPeriod === selectedPeriod) return;
 
     const nextParams = new URLSearchParams(searchParamsString);

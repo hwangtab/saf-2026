@@ -30,16 +30,25 @@ const NUMBER_FORMATTER = new Intl.NumberFormat('ko-KR');
 type RevenueTrendChartProps = {
   data: DashboardStats['revenue']['timeSeries'];
   periodLabel: string;
+  previousRevenueLabel?: string;
+  growthRateLabel?: string;
 };
 
 type RevenueTooltipProps = {
   active?: boolean;
+  previousRevenueLabel: string;
+  growthRateLabel: string;
   payload?: Array<{
     payload: DashboardStats['revenue']['timeSeries'][number];
   }>;
 };
 
-function RevenueTooltip({ active, payload }: RevenueTooltipProps) {
+function RevenueTooltip({
+  active,
+  payload,
+  previousRevenueLabel,
+  growthRateLabel,
+}: RevenueTooltipProps) {
   if (!active || !payload || payload.length === 0) return null;
   const point = payload[0]?.payload;
   if (!point) return null;
@@ -50,22 +59,35 @@ function RevenueTooltip({ active, payload }: RevenueTooltipProps) {
         {point.startDate} ~ {point.endDate}
       </p>
       <p className="mt-1 text-slate-600">매출: {KRW_FORMATTER.format(point.revenue)}</p>
-      {point.previousRevenue !== undefined && (
-        <p className="text-slate-600">작년 매출: {KRW_FORMATTER.format(point.previousRevenue)}</p>
-      )}
-      {point.growthRate !== undefined && point.growthRate !== null && (
-        <p className={point.growthRate >= 0 ? 'text-green-600' : 'text-red-600'}>
-          성장률: {point.growthRate >= 0 ? '+' : ''}
-          {point.growthRate.toFixed(1)}%
-        </p>
-      )}
+      <p className="text-slate-600">
+        {previousRevenueLabel}: {KRW_FORMATTER.format(point.previousRevenue)}
+      </p>
+      <p
+        className={
+          point.growthRate === null
+            ? 'text-slate-500'
+            : point.growthRate >= 0
+              ? 'text-green-600'
+              : 'text-red-600'
+        }
+      >
+        {growthRateLabel}:{' '}
+        {point.growthRate === null
+          ? 'N/A'
+          : `${point.growthRate >= 0 ? '+' : ''}${point.growthRate.toFixed(1)}%`}
+      </p>
       <p className="text-slate-600">판매 작품: {NUMBER_FORMATTER.format(point.soldCount)}개</p>
       <p className="text-slate-600">평균판매가: {KRW_FORMATTER.format(point.averagePrice)}</p>
     </div>
   );
 }
 
-export function RevenueTrendChart({ data, periodLabel }: RevenueTrendChartProps) {
+export function RevenueTrendChart({
+  data,
+  periodLabel,
+  previousRevenueLabel = '이전 기간 매출',
+  growthRateLabel = '성장률',
+}: RevenueTrendChartProps) {
   const hasData = data.some((item) => item.revenue > 0 || item.soldCount > 0);
 
   return (
@@ -97,7 +119,14 @@ export function RevenueTrendChart({ data, periodLabel }: RevenueTrendChartProps)
               axisLine={false}
               tickFormatter={(value) => COMPACT_KRW_FORMATTER.format(value)}
             />
-            <Tooltip content={<RevenueTooltip />} />
+            <Tooltip
+              content={
+                <RevenueTooltip
+                  previousRevenueLabel={previousRevenueLabel}
+                  growthRateLabel={growthRateLabel}
+                />
+              }
+            />
             <Legend verticalAlign="top" align="right" height={30} iconType="circle" />
             <Area
               yAxisId="left"

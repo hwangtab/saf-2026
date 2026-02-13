@@ -4,6 +4,7 @@ import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 
 export type DashboardPeriodKey = '7d' | '30d' | '90d' | '365d' | 'all' | `year_${number}`;
+type FixedDashboardPeriodKey = Exclude<DashboardPeriodKey, 'all' | `year_${number}`>;
 
 type RevenueBucketGranularity = 'day' | 'week' | 'month';
 
@@ -15,14 +16,14 @@ const DASHBOARD_PERIOD_OPTIONS: Array<{ key: DashboardPeriodKey; label: string }
   { key: 'all', label: '전체 기간' },
 ];
 
-const PERIOD_DAY_WINDOWS: Record<Exclude<DashboardPeriodKey, 'all'>, number> = {
+const PERIOD_DAY_WINDOWS: Record<FixedDashboardPeriodKey, number> = {
   '7d': 7,
   '30d': 30,
   '90d': 90,
   '365d': 365,
 };
 
-const PERIOD_LABEL_MAP: Record<DashboardPeriodKey, string> = {
+const PERIOD_LABEL_MAP: Record<FixedDashboardPeriodKey | 'all', string> = {
   '7d': '최근 7일',
   '30d': '최근 30일',
   '90d': '최근 90일',
@@ -194,6 +195,18 @@ function addMonths(date: Date, months: number): Date {
   return d;
 }
 
+function addYearsClamped(date: Date, years: number): Date {
+  const d = new Date(date);
+  const originalMonth = d.getMonth();
+  d.setFullYear(d.getFullYear() + years);
+
+  if (d.getMonth() !== originalMonth) {
+    d.setMonth(originalMonth + 1, 0);
+  }
+
+  return d;
+}
+
 function toDateKey(date: Date): string {
   return date.toISOString().split('T')[0];
 }
@@ -289,7 +302,7 @@ function getPeriodStart(period: DashboardPeriodKey, now: Date, soldRecords: Sold
     return startOfMonth(oldest);
   }
 
-  const days = PERIOD_DAY_WINDOWS[period as Exclude<DashboardPeriodKey, 'all' | `year_${number}`>];
+  const days = PERIOD_DAY_WINDOWS[period as FixedDashboardPeriodKey];
   return startOfDay(addDays(now, -(days - 1)));
 }
 
@@ -330,7 +343,8 @@ function buildRevenueTimeSeries(
   startDate: Date,
   endDate: Date,
   granularity: RevenueBucketGranularity,
-  previousPeriodRecords: SoldRecord[] = []
+  previousPeriodRecords: SoldRecord[] = [],
+  mapPreviousRecordDate?: (date: Date) => Date
 ): DashboardStats['revenue']['timeSeries'] {
   const seriesMap = new Map<
     string,
@@ -383,10 +397,11 @@ function buildRevenueTimeSeries(
   });
 
   previousPeriodRecords.forEach((record) => {
-    const recordDate = new Date(record.soldDate);
-    const yearDiff = startDate.getFullYear() - recordDate.getFullYear();
-    const mappedDate = new Date(recordDate);
-    mappedDate.setFullYear(recordDate.getFullYear() + yearDiff);
+    const mappedDate = mapPreviousRecordDate
+      ? mapPreviousRecordDate(record.soldDate)
+      : new Date(record.soldDate);
+
+    if (Number.isNaN(mappedDate.getTime())) return;
 
     const bucketStart = getBucketStart(mappedDate, granularity);
     const bucketKey = getBucketKey(bucketStart, granularity);
@@ -623,6 +638,7 @@ export async function getDashboardStats(
   let previousRevenue = 0;
   let comparedTo: string | null = null;
   let previousPeriodRecords: SoldRecord[] = [];
+  let mapPreviousRecordDate: ((date: Date) => Date) | undefined;
 
   if (periodKey.startsWith('year_')) {
     const year = parseInt(periodKey.replace('year_', ''), 10);
@@ -634,9 +650,11 @@ export async function getDashboardStats(
     );
     previousRevenue = sumRevenue(previousPeriodRecords);
     comparedTo = `${toDateKey(prevYearStart)} ~ ${toDateKey(prevYearEnd)}`;
+    mapPreviousRecordDate = (date) => {
+      return addYearsClamped(date, 1);
+    };
   } else if (periodKey !== 'all') {
-    const periodDays =
-      PERIOD_DAY_WINDOWS[periodKey as Exclude<DashboardPeriodKey, 'all' | `year_${number}`>];
+    const periodDays = PERIOD_DAY_WINDOWS[periodKey as FixedDashboardPeriodKey];
     const previousStart = addDays(periodStart, -periodDays);
     const previousEnd = addDays(periodStart, -1);
 
@@ -646,6 +664,7 @@ export async function getDashboardStats(
 
     previousRevenue = sumRevenue(previousPeriodRecords);
     comparedTo = `${toDateKey(previousStart)} ~ ${toDateKey(previousEnd)}`;
+    mapPreviousRecordDate = (date) => addDays(date, periodDays);
   }
 
   const changeRatePct =
@@ -662,7 +681,8 @@ export async function getDashboardStats(
     periodStart,
     periodEnd,
     bucket,
-    previousPeriodRecords
+    previousPeriodRecords,
+    mapPreviousRecordDate
   );
   const shouldTruncateForAll =
     periodKey === 'all' && fullTimeSeries.length > MAX_REVENUE_BUCKETS_FOR_ALL;
@@ -710,7 +730,7 @@ export async function getDashboardStats(
       key: periodKey,
       label: periodKey.startsWith('year_')
         ? `${periodKey.replace('year_', '')}년`
-        : PERIOD_LABEL_MAP[periodKey as Exclude<DashboardPeriodKey, `year_${number}`>],
+        : PERIOD_LABEL_MAP[periodKey as FixedDashboardPeriodKey | 'all'],
       startDate: toDateKey(periodStart),
       endDate: toDateKey(periodEnd),
       comparedTo,
