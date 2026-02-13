@@ -1,3 +1,5 @@
+'use client';
+
 import { Fragment, useState } from 'react';
 import Link from 'next/link';
 import { revertActivityLog, type ActivityLogEntry } from '@/app/actions/admin-logs';
