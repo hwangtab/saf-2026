@@ -39,6 +39,9 @@ export interface HydratedArtwork extends BaseArtwork {
 // Backward compatibility alias
 export type Artwork = HydratedArtwork;
 
+// Lightweight artwork shape for gallery/list UIs
+export type ArtworkListItem = Omit<HydratedArtwork, 'profile' | 'history'>;
+
 export interface ArtworkCardData {
   id: string;
   artist: string;

@@ -54,6 +54,8 @@ export interface SupabaseImageTransformOptions {
 
 const SUPABASE_OBJECT_PUBLIC_PATH = '/storage/v1/object/public/';
 const SUPABASE_RENDER_PUBLIC_PATH = '/storage/v1/render/image/public/';
+const ENABLE_SUPABASE_RENDER_TRANSFORM =
+  process.env.NEXT_PUBLIC_SUPABASE_RENDER_TRANSFORM === 'true';
 
 const toPositiveInteger = (value: number | undefined): number | null => {
   if (!Number.isFinite(value)) return null;
@@ -84,7 +86,13 @@ export function resolveOptimizedArtworkImageUrl(
     return resolved;
   }
 
-  if (hasObjectPath) {
+  // Supabase render endpoint can return 401 depending on project settings/plan.
+  // Keep object/public as default and only opt-in to render via env flag.
+  if (!ENABLE_SUPABASE_RENDER_TRANSFORM && hasObjectPath) {
+    return resolved;
+  }
+
+  if (hasObjectPath && ENABLE_SUPABASE_RENDER_TRANSFORM) {
     parsed.pathname = parsed.pathname.replace(
       SUPABASE_OBJECT_PUBLIC_PATH,
       SUPABASE_RENDER_PUBLIC_PATH
@@ -100,6 +108,35 @@ export function resolveOptimizedArtworkImageUrl(
   if (quality) parsed.searchParams.set('quality', String(quality));
   if (options.resize) parsed.searchParams.set('resize', options.resize);
   if (options.format) parsed.searchParams.set('format', options.format);
+
+  return parsed.toString();
+}
+
+export function resolveSupabaseOriginalPublicUrl(url: string): string {
+  if (!url) return url;
+
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return url;
+  }
+
+  if (!parsed.pathname.includes(SUPABASE_RENDER_PUBLIC_PATH)) {
+    return url;
+  }
+
+  parsed.pathname = parsed.pathname.replace(
+    SUPABASE_RENDER_PUBLIC_PATH,
+    SUPABASE_OBJECT_PUBLIC_PATH
+  );
+
+  // Remove transform-specific params for object/public endpoint fallback.
+  parsed.searchParams.delete('width');
+  parsed.searchParams.delete('height');
+  parsed.searchParams.delete('quality');
+  parsed.searchParams.delete('format');
+  parsed.searchParams.delete('resize');
 
   return parsed.toString();
 }

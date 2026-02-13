@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useCallback, useRef, useTransition } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-import { Artwork, SortOption } from '@/types';
+import { ArtworkListItem, SortOption } from '@/types';
 import { useDebounce } from './useDebounce';
 import { sortArtworks, extractUniqueArtists } from '@/lib/artworkUtils';
 
@@ -41,7 +41,7 @@ export type StatusFilter = 'all' | 'selling' | 'sold';
  * } = useArtworkFilter(artworks);
  * ```
  */
-export function useArtworkFilter(artworks: Artwork[], initialArtist?: string) {
+export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: string) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();

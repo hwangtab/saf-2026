@@ -1,7 +1,12 @@
 import { ArtistData, Artwork, SortOption } from '@/types';
 import { parsePrice } from '@/lib/parsePrice';
 
-export function sortArtworks(artworks: Artwork[], sortOption: SortOption): Artwork[] {
+type SortableArtwork = Pick<Artwork, 'artist' | 'title' | 'price'>;
+
+export function sortArtworks<T extends SortableArtwork>(
+  artworks: T[],
+  sortOption: SortOption
+): T[] {
   const sorted = [...artworks];
 
   switch (sortOption) {
@@ -40,7 +45,7 @@ export function sortArtworks(artworks: Artwork[], sortOption: SortOption): Artwo
   }
 }
 
-export function extractUniqueArtists(artworks: Artwork[]): string[] {
+export function extractUniqueArtists<T extends Pick<Artwork, 'artist'>>(artworks: T[]): string[] {
   const seen = new Set<string>();
   const artists: string[] = [];
   const source = [...artworks].sort((a, b) => a.artist.localeCompare(b.artist, 'ko-KR'));

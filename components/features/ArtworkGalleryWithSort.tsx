@@ -7,12 +7,12 @@ import SearchBar from './SearchBar';
 import FilterBar from './gallery/FilterBar';
 import ArtistNavigation from './gallery/ArtistNavigation';
 import GalleryEmptyState from './gallery/GalleryEmptyState';
-import { Artwork } from '@/types';
+import { ArtworkListItem } from '@/types';
 import { useArtworkFilter } from '@/lib/hooks/useArtworkFilter';
 import { UI_STRINGS } from '@/lib/ui-strings';
 
 interface ArtworkGalleryWithSortProps {
-  artworks: Artwork[];
+  artworks: ArtworkListItem[];
   initialArtist?: string;
 }
 

@@ -9,6 +9,26 @@ import { exhibitionReviews } from '@/content/reviews';
 import type { Artwork, ExhibitionReview, NewsArticle } from '@/types';
 
 const isMissingTableError = (error: any) => error?.code === '42P01';
+const ARTWORK_SELECT_COLUMNS =
+  'id, artist_id, title, description, size, material, year, edition, price, images, shop_url, status';
+const ARTIST_SELECT_COLUMNS = 'id, name_ko, profile, bio, history';
+
+const mapArtworkRow = (item: any, artist?: any): Artwork => ({
+  id: item.id,
+  artist: artist?.name_ko || 'Unknown Artist',
+  title: item.title,
+  description: item.description || '',
+  size: item.size || '',
+  material: item.material || '',
+  year: item.year || '',
+  edition: item.edition || '',
+  price: formatPriceForDisplay(item.price),
+  images: item.images || [],
+  shopUrl: item.shop_url || '',
+  sold: item.status === 'sold' || item.status === 'reserved',
+  profile: artist?.profile || artist?.bio || '', // Support both bio and profile fields
+  history: artist?.history || '',
+});
 
 export const getSupabaseArtworks = cache(async (): Promise<Artwork[]> => {
   if (!hasSupabaseConfig || !supabase) {
@@ -18,7 +38,7 @@ export const getSupabaseArtworks = cache(async (): Promise<Artwork[]> => {
   // Fetch artworks first
   const { data: artworksData, error: artworksError } = await supabase
     .from('artworks')
-    .select('*')
+    .select(ARTWORK_SELECT_COLUMNS)
     .eq('is_hidden', false);
 
   if (artworksError) {
@@ -30,7 +50,9 @@ export const getSupabaseArtworks = cache(async (): Promise<Artwork[]> => {
   }
 
   // Fetch all artists to join in JS
-  const { data: artistsData, error: artistsError } = await supabase.from('artists').select('*');
+  const { data: artistsData, error: artistsError } = await supabase
+    .from('artists')
+    .select(ARTIST_SELECT_COLUMNS);
 
   if (artistsError) {
     if (isMissingTableError(artistsError)) {
@@ -42,25 +64,9 @@ export const getSupabaseArtworks = cache(async (): Promise<Artwork[]> => {
 
   const artistMap = new Map((artistsData || []).map((a: any) => [a.id, a]));
 
-  return (artworksData || []).map((item: any) => {
-    const artist = artistMap.get(item.artist_id);
-    return {
-      id: item.id,
-      artist: artist?.name_ko || 'Unknown Artist',
-      title: item.title,
-      description: item.description || '',
-      size: item.size || '',
-      material: item.material || '',
-      year: item.year || '',
-      edition: item.edition || '',
-      price: formatPriceForDisplay(item.price),
-      images: item.images || [],
-      shopUrl: item.shop_url || '',
-      sold: item.status === 'sold' || item.status === 'reserved',
-      profile: artist?.profile || artist?.bio || '', // Support both bio and profile fields
-      history: artist?.history || '',
-    };
-  });
+  return (artworksData || []).map((item: any) =>
+    mapArtworkRow(item, artistMap.get(item.artist_id))
+  );
 });
 
 export const getSupabaseArtworkById = cache(async (id: string): Promise<Artwork | null> => {
@@ -70,7 +76,7 @@ export const getSupabaseArtworkById = cache(async (id: string): Promise<Artwork 
 
   const { data: artwork, error: artworkError } = await supabase
     .from('artworks')
-    .select('*')
+    .select(ARTWORK_SELECT_COLUMNS)
     .eq('id', id)
     .single();
 
@@ -84,7 +90,7 @@ export const getSupabaseArtworkById = cache(async (id: string): Promise<Artwork 
 
   const { data: artist, error: artistError } = await supabase
     .from('artists')
-    .select('*')
+    .select(ARTIST_SELECT_COLUMNS)
     .eq('id', artwork.artist_id)
     .single();
 
@@ -95,28 +101,49 @@ export const getSupabaseArtworkById = cache(async (id: string): Promise<Artwork 
     console.error(`Error fetching artist for artwork ${id}:`, artistError);
   }
 
-  return {
-    id: artwork.id,
-    artist: artist?.name_ko || 'Unknown Artist',
-    title: artwork.title,
-    description: artwork.description || '',
-    size: artwork.size || '',
-    material: artwork.material || '',
-    year: artwork.year || '',
-    edition: artwork.edition || '',
-    price: formatPriceForDisplay(artwork.price),
-    images: artwork.images || [],
-    shopUrl: artwork.shop_url || '',
-    sold: artwork.status === 'sold' || artwork.status === 'reserved',
-    profile: artist?.profile || artist?.bio || '',
-    history: artist?.history || '',
-  };
+  return mapArtworkRow(artwork, artist);
 });
 
-export async function getSupabaseArtworksByArtist(artistName: string): Promise<Artwork[]> {
-  const artworks = await getSupabaseArtworks();
-  return artworks.filter((a) => a.artist === artistName);
-}
+export const getSupabaseArtworksByArtist = cache(async (artistName: string): Promise<Artwork[]> => {
+  if (!hasSupabaseConfig || !supabase) {
+    return fallbackArtworks.filter((a) => a.artist === artistName);
+  }
+
+  const { data: artist, error: artistError } = await supabase
+    .from('artists')
+    .select(ARTIST_SELECT_COLUMNS)
+    .eq('name_ko', artistName)
+    .limit(1)
+    .maybeSingle();
+
+  if (artistError) {
+    if (isMissingTableError(artistError)) {
+      return fallbackArtworks.filter((a) => a.artist === artistName);
+    }
+    console.error(`Error fetching artist ${artistName} from Supabase:`, artistError);
+    return [];
+  }
+
+  if (!artist) {
+    return [];
+  }
+
+  const { data: artworksData, error: artworksError } = await supabase
+    .from('artworks')
+    .select(ARTWORK_SELECT_COLUMNS)
+    .eq('artist_id', artist.id)
+    .eq('is_hidden', false);
+
+  if (artworksError) {
+    if (isMissingTableError(artworksError)) {
+      return fallbackArtworks.filter((a) => a.artist === artistName);
+    }
+    console.error(`Error fetching artworks for artist ${artistName}:`, artworksError);
+    return [];
+  }
+
+  return (artworksData || []).map((item: any) => mapArtworkRow(item, artist));
+});
 
 export const getSupabaseTestimonials = cache(
   async (): Promise<{ category: string; items: any[] }[]> => {

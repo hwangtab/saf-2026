@@ -8,6 +8,7 @@ import { Metadata } from 'next';
 import { createPageMetadata } from '@/lib/seo';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema, generateArtworkListSchema } from '@/lib/seo-utils';
+import type { Artwork, ArtworkListItem } from '@/types';
 
 import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
 
@@ -21,6 +22,9 @@ export const metadata: Metadata = createPageMetadata(
 
 export default async function ArtworksPage() {
   const artworks = await getSupabaseArtworks();
+  const listArtworks: ArtworkListItem[] = artworks.map(
+    ({ profile: _profile, history: _history, ...rest }: Artwork) => rest
+  );
   const breadcrumbSchema = createBreadcrumbSchema([BREADCRUMB_HOME, BREADCRUMBS['/artworks']]);
   const itemListSchema = generateArtworkListSchema(artworks);
 
@@ -43,7 +47,7 @@ export default async function ArtworksPage() {
         {/* Gallery Section */}
         <Section variant="primary-surface" prevVariant="white" className="pb-24 md:pb-32">
           <div className="container-max">
-            <ArtworkGalleryWithSort artworks={artworks} />
+            <ArtworkGalleryWithSort artworks={listArtworks} />
           </div>
         </Section>
       </main>

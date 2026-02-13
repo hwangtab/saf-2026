@@ -1,9 +1,9 @@
 import { memo } from 'react';
-import { Artwork } from '@/types';
+import { ArtworkListItem } from '@/types';
 import ArtworkCard from '@/components/ui/ArtworkCard';
 
 interface MasonryGalleryProps {
-  artworks: Artwork[];
+  artworks: ArtworkListItem[];
 }
 
 function MasonryGallery({ artworks }: MasonryGalleryProps) {

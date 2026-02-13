@@ -9,6 +9,7 @@ import { formatArtistName, resolveArtworkImageUrl } from '@/lib/utils';
 import { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
+import type { Artwork, ArtworkListItem } from '@/types';
 
 const ArtworkGalleryWithSort = dynamic(
   () => import('@/components/features/ArtworkGalleryWithSort'),
@@ -107,8 +108,10 @@ export async function generateStaticParams() {
 export default async function ArtistPage({ params }: Props) {
   const { artist } = await params;
   const artistName = decodeURIComponent(artist);
-  const artworks = await getSupabaseArtworks();
-  const artistArtworks = artworks.filter((a) => a.artist === artistName);
+  const artistArtworks = await getSupabaseArtworksByArtist(artistName);
+  const listArtworks: ArtworkListItem[] = artistArtworks.map(
+    ({ profile: _profile, history: _history, ...rest }: Artwork) => rest
+  );
 
   if (artistArtworks.length === 0) {
     notFound();
@@ -168,7 +171,7 @@ export default async function ArtistPage({ params }: Props) {
       {/* Gallery Section */}
       <Section variant="primary-surface" prevVariant="white" className="pb-24 md:pb-32">
         <div className="container-max">
-          <ArtworkGalleryWithSort artworks={artworks} initialArtist={artistName} />
+          <ArtworkGalleryWithSort artworks={listArtworks} initialArtist={artistName} />
         </div>
       </Section>
     </main>
