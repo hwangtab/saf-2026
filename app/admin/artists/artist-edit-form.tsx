@@ -57,7 +57,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
             const separator = returnTo.includes('?') ? '&' : '?';
             router.push(`${returnTo}${separator}artist_id=${result.id}&artist_created=1`);
           } else {
-            toast.success('작가가 생성되었습니다. 프로필 이미지를 등록해주세요.');
+            toast.success('작가가 생성되었습니다. 프로필 이미지는 필요 시 등록할 수 있습니다.');
             router.push(`/admin/artists/${result.id}`);
           }
         }
@@ -116,7 +116,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
       {isEditing && artist.id ? (
         <AdminCard className="p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            프로필 이미지
+            프로필 이미지 (선택)
             {savingImage && <span className="ml-2 text-sm text-gray-500">저장 중...</span>}
           </h2>
           <ImageUpload
@@ -129,7 +129,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
         </AdminCard>
       ) : (
         <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800">
-          이미지 등록은 작가 정보를 먼저 저장한 후에 가능합니다.
+          프로필 이미지는 선택 사항이며, 작가 정보를 먼저 저장한 뒤 필요할 때 등록할 수 있습니다.
         </div>
       )}
 

@@ -61,7 +61,7 @@ export function ProfileForm({ artist, userId }: { artist: any; userId: string })
 
         {/* Profile Image */}
         <div className="sm:col-span-6">
-          <AdminFieldLabel>프로필 이미지</AdminFieldLabel>
+          <AdminFieldLabel>프로필 이미지 (선택)</AdminFieldLabel>
           <ImageUpload
             bucket="profiles"
             pathPrefix={userId} // User can only upload to their own folder due to RLS
@@ -69,6 +69,9 @@ export function ProfileForm({ artist, userId }: { artist: any; userId: string })
             defaultImages={artist?.profile_image ? [artist.profile_image] : []}
             onUploadComplete={handleImageUpload}
           />
+          <p className="mt-2 text-sm text-gray-500">
+            프로필 이미지는 선택 사항입니다. 업로드하지 않아도 프로필 저장과 작가 활동이 가능합니다.
+          </p>
         </div>
 
         {/* Bio */}
