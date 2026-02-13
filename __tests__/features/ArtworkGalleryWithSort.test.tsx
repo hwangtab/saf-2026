@@ -73,7 +73,9 @@ describe('ArtworkGalleryWithSort', () => {
   });
 
   afterEach(() => {
-    jest.runOnlyPendingTimers();
+    act(() => {
+      jest.runOnlyPendingTimers();
+    });
     jest.useRealTimers();
   });
 
@@ -81,7 +83,7 @@ describe('ArtworkGalleryWithSort', () => {
     render(<ArtworkGalleryWithSort artworks={mockArtworks} />);
 
     expect(screen.getByRole('textbox', { name: /작품 검색/i })).toBeInTheDocument();
-    expect(screen.getByRole('radiogroup', { name: /판매 상태 필터/i })).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: /판매 상태 필터/i })).toBeInTheDocument();
     expect(screen.getByText('Artwork 1')).toBeInTheDocument();
     expect(screen.getByText('Artwork 2')).toBeInTheDocument();
   });

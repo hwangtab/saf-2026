@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getSupabaseArtworks } from '@/lib/supabase-data';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 300;
 
 export async function GET() {
   try {
@@ -17,7 +17,11 @@ export async function GET() {
       sold: artwork.sold,
     }));
 
-    return NextResponse.json(minimizedArtworks);
+    return NextResponse.json(minimizedArtworks, {
+      headers: {
+        'Cache-Control': 's-maxage=300, stale-while-revalidate=86400',
+      },
+    });
   } catch (error) {
     console.error('API Error fetching artworks:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

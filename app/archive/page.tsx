@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import ExportedImage from 'next-image-export-optimizer';
+import Link from 'next/link';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
 import PageHero from '@/components/ui/PageHero';
@@ -21,7 +22,7 @@ export default function ArchiveHubPage() {
           <SectionTitle className="mb-12">지난 행사 기록</SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
             {/* 2026 Archive Card */}
-            <a href="/archive/2026" className="group block">
+            <Link href="/archive/2026" className="group block">
               <div className="bg-canvas-soft rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
                 <div className="relative aspect-[4/3] w-full overflow-hidden">
                   <ExportedImage
@@ -46,10 +47,10 @@ export default function ArchiveHubPage() {
                   </span>
                 </div>
               </div>
-            </a>
+            </Link>
 
             {/* 2023 Archive Card */}
-            <a href="/archive/2023" className="group block">
+            <Link href="/archive/2023" className="group block">
               <div className="bg-canvas-soft rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
                 <div className="relative aspect-[4/3] w-full overflow-hidden">
                   <ExportedImage
@@ -74,7 +75,7 @@ export default function ArchiveHubPage() {
                   </span>
                 </div>
               </div>
-            </a>
+            </Link>
           </div>
         </div>
       </Section>

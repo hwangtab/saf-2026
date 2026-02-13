@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect } from 'react';
-import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import { UI_STRINGS } from '@/lib/ui-strings';
 
@@ -38,9 +37,9 @@ export default function ErrorView({
           <Button onClick={reset} variant="primary">
             {UI_STRINGS.ERROR.RETRY}
           </Button>
-          <Link href={backLink.href}>
-            <Button variant="outline">{backLink.label}</Button>
-          </Link>
+          <Button href={backLink.href} variant="outline">
+            {backLink.label}
+          </Button>
         </div>
       </div>
     </div>

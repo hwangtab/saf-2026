@@ -29,17 +29,21 @@ export default function FullscreenMenu({
 }: FullscreenMenuProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const scrollYRef = useRef(0);
+  const isBodyLockedRef = useRef(false);
   const pathname = usePathname();
   const prevPathnameRef = useRef(pathname);
 
   // body 스크롤 잠금 해제 및 위치 복원
   const restoreBodyScroll = () => {
+    if (!isBodyLockedRef.current) return;
+
     document.body.style.position = '';
     document.body.style.top = '';
     document.body.style.left = '';
     document.body.style.right = '';
     document.body.style.overflow = '';
     window.scrollTo(0, scrollYRef.current);
+    isBodyLockedRef.current = false;
   };
 
   // 메뉴 열기/닫기 - Native dialog API 사용
@@ -59,6 +63,7 @@ export default function FullscreenMenu({
       document.body.style.left = '0';
       document.body.style.right = '0';
       document.body.style.overflow = 'hidden';
+      isBodyLockedRef.current = true;
     } else {
       if (dialog.open) dialog.close();
       restoreBodyScroll();

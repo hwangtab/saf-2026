@@ -86,6 +86,18 @@ export default function Button({
 
   const styles = cn(buttonVariants({ variant, size }), interactiveClasses, className);
 
+  const handleLinkClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (isDisabled) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+
+    if (onClick) {
+      void handleClick();
+    }
+  };
+
   const content = (
     <>
       {(loading || isLoading) && (
@@ -109,6 +121,8 @@ export default function Button({
           target="_blank"
           rel="noopener noreferrer"
           aria-disabled={isDisabled}
+          tabIndex={isDisabled ? -1 : undefined}
+          onClick={handleLinkClick}
         >
           {content}
         </a>
@@ -116,7 +130,13 @@ export default function Button({
     }
 
     return (
-      <Link href={href} className={styles} aria-disabled={isDisabled}>
+      <Link
+        href={href}
+        className={styles}
+        aria-disabled={isDisabled}
+        tabIndex={isDisabled ? -1 : undefined}
+        onClick={handleLinkClick}
+      >
         {content}
       </Link>
     );

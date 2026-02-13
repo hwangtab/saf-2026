@@ -314,6 +314,17 @@ export function generateArtworkJsonLd(artwork: Artwork, numericPrice: string, is
 
 export function generateExhibitionSchema(reviews: ExhibitionReview[] = []) {
   const hasReviews = reviews.length > 0;
+  const startDate = '2026-01-14T10:00:00+09:00';
+  const endDate = '2026-01-26T19:00:00+09:00';
+  const now = Date.now();
+  const startTimestamp = Date.parse(startDate);
+  const endTimestamp = Date.parse(endDate);
+  const eventStatus =
+    now > endTimestamp
+      ? 'https://schema.org/EventCompleted'
+      : now >= startTimestamp
+        ? 'https://schema.org/EventInProgress'
+        : 'https://schema.org/EventScheduled';
 
   return {
     '@context': 'https://schema.org',
@@ -323,9 +334,9 @@ export function generateExhibitionSchema(reviews: ExhibitionReview[] = []) {
       '한국 예술인들의 상호부조 기금 마련을 위한 특별전. 50여 명의 작가가 참여한 회화, 조각, 사진 등 다양한 예술 작품을 만나보세요.',
     url: SITE_URL,
     image: [OG_IMAGE.url],
-    startDate: '2026-01-14T10:00:00+09:00',
-    endDate: '2026-01-26T19:00:00+09:00',
-    eventStatus: 'https://schema.org/EventScheduled',
+    startDate,
+    endDate,
+    eventStatus,
     eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
     location: {
       '@type': 'Place',
