@@ -66,14 +66,29 @@ function normalizePhone(value: string | null | undefined): string | null {
   return phonePattern.test(trimmed) ? trimmed : null;
 }
 
+function extractEmailFromText(value: string): string | null {
+  const emailMatch = value.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
+  return normalizeEmail(emailMatch?.[0] || null);
+}
+
+function extractPhoneFromText(value: string): string | null {
+  const sanitized = value.replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, ' ');
+  const phoneMatch = sanitized.match(/(?:\+?\d[\d\s()-]{5,}\d)/);
+  return normalizePhone(phoneMatch?.[0] || null);
+}
+
 function parseApplicationContact(contact: string | null | undefined) {
   const trimmed = (contact || '').trim();
   if (!trimmed) {
     return { contactEmail: null, contactPhone: null };
   }
+
+  const parsedEmail = extractEmailFromText(trimmed) || normalizeEmail(trimmed);
+  const parsedPhone = extractPhoneFromText(trimmed) || normalizePhone(trimmed);
+
   return {
-    contactEmail: normalizeEmail(trimmed),
-    contactPhone: normalizePhone(trimmed),
+    contactEmail: parsedEmail,
+    contactPhone: parsedPhone,
   };
 }
 

@@ -608,6 +608,10 @@ export function UserList({ users }: { users: Profile[] }) {
                 신청 작가명:{' '}
                 {artistPromoteContext.user.application?.artist_name || '제출된 작가명이 없습니다.'}
               </p>
+              <p className="text-xs text-indigo-700 mt-1">
+                신청 연락처:{' '}
+                {artistPromoteContext.user.application?.contact || '제출된 연락처가 없습니다.'}
+              </p>
             </div>
 
             <div className="space-y-2">
