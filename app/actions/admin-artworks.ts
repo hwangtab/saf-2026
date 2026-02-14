@@ -286,16 +286,44 @@ export async function batchUpdateArtworkStatus(ids: string[], status: string) {
     .in('id', ids);
 
   const nowIso = new Date().toISOString();
-  const { error } = await supabase
-    .from('artworks')
-    .update({
-      status,
-      sold_at: status === 'sold' ? nowIso : null,
-      updated_at: nowIso,
-    })
-    .in('id', ids);
+  if (status === 'sold') {
+    const { error: statusOnlyError } = await supabase
+      .from('artworks')
+      .update({
+        status,
+        updated_at: nowIso,
+      })
+      .in('id', ids);
 
-  if (error) throw error;
+    if (statusOnlyError) throw statusOnlyError;
+
+    const idsMissingSoldAt = (beforeArtworks || [])
+      .filter((artwork) => !artwork.sold_at)
+      .map((artwork) => artwork.id);
+
+    if (idsMissingSoldAt.length > 0) {
+      const { error: soldAtError } = await supabase
+        .from('artworks')
+        .update({
+          sold_at: nowIso,
+          updated_at: nowIso,
+        })
+        .in('id', idsMissingSoldAt);
+
+      if (soldAtError) throw soldAtError;
+    }
+  } else {
+    const { error } = await supabase
+      .from('artworks')
+      .update({
+        status,
+        sold_at: null,
+        updated_at: nowIso,
+      })
+      .in('id', ids);
+
+    if (error) throw error;
+  }
 
   const { data: afterArtworks } = await supabase
     .from('artworks')

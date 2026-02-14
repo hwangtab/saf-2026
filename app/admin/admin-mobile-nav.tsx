@@ -7,6 +7,7 @@ import { SignOutButton } from '@/components/auth/SignOutButton';
 
 const navItems = [
   { href: '/admin/dashboard', label: '대시보드' },
+  { href: '/admin/revenue', label: '매출 현황' },
   { href: '/admin/users', label: '사용자 관리' },
   { href: '/admin/content', label: '콘텐츠 관리' },
   { href: '/admin/artists', label: '작가 관리' },
