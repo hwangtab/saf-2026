@@ -21,20 +21,30 @@ const navigation: NavigationItem[] = [
   { name: UI_STRINGS.NAV.ORDER_STATUS, href: EXTERNAL_LINKS.ORDER_STATUS, external: true },
 ];
 
+function shouldHideHeader(pathname: string | null): boolean {
+  if (!pathname) return false;
+  return (
+    pathname.startsWith('/admin') ||
+    pathname.startsWith('/dashboard') ||
+    pathname.startsWith('/exhibitor') ||
+    pathname.startsWith('/onboarding')
+  );
+}
+
 export default function Header() {
   const pathname = usePathname();
-  const { isMenuOpen, openMenu, closeMenu, isActive, headerStyle, isDarkText, textColor } =
-    useHeaderStyle();
 
   // Hide main header on admin and dashboard pages to prevent overlapping with specialized headers
-  if (
-    pathname?.startsWith('/admin') ||
-    pathname?.startsWith('/dashboard') ||
-    pathname?.startsWith('/exhibitor') ||
-    pathname?.startsWith('/onboarding')
-  ) {
+  if (shouldHideHeader(pathname)) {
     return null;
   }
+
+  return <PublicHeader />;
+}
+
+function PublicHeader() {
+  const { isMenuOpen, openMenu, closeMenu, isActive, headerStyle, isDarkText, textColor } =
+    useHeaderStyle();
 
   return (
     <header
