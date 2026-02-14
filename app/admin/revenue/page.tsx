@@ -1,4 +1,3 @@
-import nextDynamic from 'next/dynamic';
 import Link from 'next/link';
 import { getRevenueAnalytics } from '@/app/actions/admin-revenue';
 import {
@@ -10,14 +9,7 @@ import {
 } from '@/app/admin/_components/admin-ui';
 import { RevenueCard } from '@/app/admin/_components/RevenueCard';
 import { RevenueFilterBar } from '@/app/admin/revenue/_components/RevenueFilterBar';
-
-const MonthlyRevenueChart = nextDynamic(
-  () =>
-    import('@/app/admin/revenue/_components/MonthlyRevenueChart').then(
-      (mod) => mod.MonthlyRevenueChart
-    ),
-  { ssr: false }
-);
+import { MonthlyRevenueChart } from '@/app/admin/revenue/_components/RevenueCharts';
 
 const KRW_FORMATTER = new Intl.NumberFormat('ko-KR', {
   style: 'currency',
