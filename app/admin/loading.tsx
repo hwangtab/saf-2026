@@ -9,7 +9,7 @@ export default function AdminLoading() {
         </div>
       </div>
 
-      <div className="mx-auto mt-16 max-w-7xl space-y-6 px-4 pb-10 pt-8 sm:px-6 lg:px-8 lg:pb-14">
+      <div className="mx-auto mt-16 max-w-7xl space-y-6 px-4 pb-16 pt-8 sm:px-6 lg:px-8 lg:pb-24">
         <div className="space-y-3">
           <div className="h-8 w-36 animate-pulse rounded bg-slate-200" />
           <div className="h-4 w-64 animate-pulse rounded bg-slate-100" />

@@ -35,7 +35,7 @@ export default async function ExhibitorLayout({ children }: { children: React.Re
         </div>
       </nav>
 
-      <main className="mx-auto mt-16 max-w-7xl px-4 pb-10 pt-8 sm:px-6 lg:px-8 lg:pb-14">
+      <main className="mx-auto mt-16 max-w-7xl px-4 pb-16 pt-8 sm:px-6 lg:px-8 lg:pb-24">
         {children}
       </main>
     </div>
