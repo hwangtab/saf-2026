@@ -5,14 +5,24 @@ import {
   AdminPageTitle,
 } from '@/app/admin/_components/admin-ui';
 
-export default async function NewArtistPage() {
+type NewArtistPageProps = {
+  searchParams?: {
+    returnTo?: string | string[];
+  };
+};
+
+export default async function NewArtistPage({ searchParams }: NewArtistPageProps) {
+  const returnTo = Array.isArray(searchParams?.returnTo)
+    ? searchParams?.returnTo[0]
+    : searchParams?.returnTo;
+
   return (
     <div className="space-y-6">
       <AdminPageHeader>
         <AdminPageTitle>새 작가 등록</AdminPageTitle>
         <AdminPageDescription>새로운 작가 정보를 입력하고 등록합니다.</AdminPageDescription>
       </AdminPageHeader>
-      <ArtistForm />
+      <ArtistForm returnTo={returnTo} />
     </div>
   );
 }

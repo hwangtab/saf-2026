@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
 import { useToast } from '@/lib/hooks/useToast';
@@ -40,9 +41,16 @@ type Artwork = {
 type ExhibitorArtworkFormProps = {
   artwork?: Partial<Artwork>;
   artists: Artist[];
+  initialArtistId?: string;
+  artistJustCreated?: boolean;
 };
 
-export function ExhibitorArtworkForm({ artwork = {}, artists }: ExhibitorArtworkFormProps) {
+export function ExhibitorArtworkForm({
+  artwork = {},
+  artists,
+  initialArtistId,
+  artistJustCreated = false,
+}: ExhibitorArtworkFormProps) {
   const router = useRouter();
   const toast = useToast();
   const [saving, setSaving] = useState(false);
@@ -50,6 +58,12 @@ export function ExhibitorArtworkForm({ artwork = {}, artists }: ExhibitorArtwork
   const [currentArtworkId, setCurrentArtworkId] = useState<string | undefined>(artwork.id);
   const [images, setImages] = useState<string[]>(artwork.images || []);
   const [artistQuery, setArtistQuery] = useState('');
+  const initialSelectedArtistId = artwork.artist_id || initialArtistId || '';
+  const [selectedArtistId, setSelectedArtistId] = useState(initialSelectedArtistId);
+
+  useEffect(() => {
+    setSelectedArtistId(initialSelectedArtistId);
+  }, [initialSelectedArtistId]);
 
   const filteredArtists = useMemo(() => {
     const q = artistQuery.trim().toLowerCase();
@@ -118,6 +132,12 @@ export function ExhibitorArtworkForm({ artwork = {}, artists }: ExhibitorArtwork
         </div>
       )}
 
+      {artistJustCreated && !currentArtworkId && (
+        <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-800">
+          새 작가가 등록되었습니다. 아래에서 바로 선택해 작품 등록을 이어서 진행하세요.
+        </div>
+      )}
+
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -138,9 +158,17 @@ export function ExhibitorArtworkForm({ artwork = {}, artists }: ExhibitorArtwork
           </div>
 
           <div>
-            <AdminFieldLabel>
-              작가 <span className="text-red-500">*</span>
-            </AdminFieldLabel>
+            <div className="mb-2 flex items-center justify-between">
+              <AdminFieldLabel className="mb-0">
+                작가 <span className="text-red-500">*</span>
+              </AdminFieldLabel>
+              <Link
+                href="/exhibitor/artists/new?returnTo=%2Fexhibitor%2Fartworks%2Fnew"
+                className="text-xs text-blue-600 hover:text-blue-800 hover:underline"
+              >
+                + 새 작가 등록
+              </Link>
+            </div>
             <AdminInput
               type="text"
               value={artistQuery}
@@ -150,7 +178,8 @@ export function ExhibitorArtworkForm({ artwork = {}, artists }: ExhibitorArtwork
             />
             <AdminSelect
               name="artist_id"
-              defaultValue={artwork.artist_id || ''}
+              value={selectedArtistId}
+              onChange={(e) => setSelectedArtistId(e.target.value)}
               required
               className="w-full"
             >
