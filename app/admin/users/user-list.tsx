@@ -34,6 +34,7 @@ type Profile = {
     artist_name: string;
     contact: string;
     bio: string;
+    referrer: string | null;
     updated_at: string;
   } | null;
 };
@@ -677,6 +678,14 @@ export function UserList({ users }: { users: Profile[] }) {
                     <label className="block text-xs text-gray-500">연락처</label>
                     <div className="text-sm text-gray-900">{selectedUser.application.contact}</div>
                   </div>
+                  {selectedUser.application.referrer && (
+                    <div className="col-span-2">
+                      <label className="block text-xs text-gray-500">추천인</label>
+                      <div className="text-sm text-gray-900">
+                        {selectedUser.application.referrer}
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label className="block text-xs text-gray-500 mb-1">소개</label>

@@ -14,6 +14,7 @@ type OnboardingDefaults = {
   artist_name?: string | null;
   contact?: string | null;
   bio?: string | null;
+  referrer?: string | null;
 } | null;
 
 export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDefaults }) {
@@ -68,6 +69,22 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
             defaultValue={defaultValues?.bio || ''}
             className="shadow-sm focus:ring-black focus:border-black block w-full sm:text-sm border-gray-300 rounded-md"
             placeholder="간단한 소개를 입력해주세요."
+          />
+        </div>
+      </div>
+
+      <div>
+        <label htmlFor="referrer" className="block text-sm font-medium text-gray-700">
+          추천인 <span className="text-gray-400 font-normal">(선택)</span>
+        </label>
+        <div className="mt-1">
+          <input
+            id="referrer"
+            name="referrer"
+            type="text"
+            defaultValue={defaultValues?.referrer || ''}
+            className="shadow-sm focus:ring-black focus:border-black block w-full sm:text-sm border-gray-300 rounded-md"
+            placeholder="추천인 이름 또는 연락처"
           />
         </div>
       </div>

@@ -23,6 +23,7 @@ export async function submitArtistApplication(
     const artistName = (formData.get('artist_name') as string | null)?.trim() || '';
     const contact = (formData.get('contact') as string | null)?.trim() || '';
     const bio = (formData.get('bio') as string | null)?.trim() || '';
+    const referrer = (formData.get('referrer') as string | null)?.trim() || null;
 
     if (!artistName || !contact || !bio) {
       return { message: '모든 항목을 입력해주세요.', error: true };
@@ -34,6 +35,7 @@ export async function submitArtistApplication(
         artist_name: artistName,
         contact,
         bio,
+        referrer,
         updated_at: new Date().toISOString(),
       },
       { onConflict: 'user_id' }

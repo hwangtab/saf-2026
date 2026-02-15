@@ -30,7 +30,7 @@ export default async function OnboardingPage() {
 
   const { data: application } = await supabase
     .from('artist_applications')
-    .select('artist_name, contact, bio')
+    .select('artist_name, contact, bio, referrer')
     .eq('user_id', user.id)
     .maybeSingle();
 

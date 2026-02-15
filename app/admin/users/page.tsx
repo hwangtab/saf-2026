@@ -12,6 +12,7 @@ type ArtistApplication = {
   artist_name: string;
   contact: string;
   bio: string;
+  referrer: string | null;
   updated_at: string;
 };
 
@@ -46,7 +47,7 @@ export default async function UsersPage() {
 
   const { data: applications } = await supabase
     .from('artist_applications')
-    .select('user_id, artist_name, contact, bio, updated_at');
+    .select('user_id, artist_name, contact, bio, referrer, updated_at');
 
   const applicationMap = new Map(
     (applications || []).map((application: ArtistApplication) => [application.user_id, application])
