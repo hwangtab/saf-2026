@@ -105,20 +105,9 @@ export function ArtistList({
     }
   };
 
-  const filtered = useMemo(() => {
-    return optimisticArtists.filter((artist) => {
-      if (!query) return true;
-      const q = query.toLowerCase().replace(/\s+/g, '');
-      const nameKo = (artist.name_ko || '').toLowerCase().replace(/\s+/g, '');
-      const nameEn = (artist.name_en || '').toLowerCase().replace(/\s+/g, '');
-      const phone = (artist.contact_phone || '').toLowerCase().replace(/\s+/g, '');
-      const email = (artist.contact_email || '').toLowerCase().replace(/\s+/g, '');
-      return nameKo.includes(q) || nameEn.includes(q) || phone.includes(q) || email.includes(q);
-    });
-  }, [optimisticArtists, query]);
-
+  // 서버에서 이미 검색/필터링됨 - 클라이언트에서는 정렬만 수행
   const sortedArtists = useMemo(() => {
-    const sorted = [...filtered];
+    const sorted = [...optimisticArtists];
 
     const compareByArtistInfo = (a: ArtistItem, b: ArtistItem) => {
       const aNameKo = (a.name_ko || '').trim().toLowerCase();
@@ -150,7 +139,7 @@ export function ArtistList({
     });
 
     return sorted;
-  }, [filtered, sortDirection, sortKey]);
+  }, [optimisticArtists, sortDirection, sortKey]);
 
   const handleSort = (key: SortKey) => {
     if (sortKey === key) {
@@ -220,7 +209,9 @@ export function ArtistList({
         <AdminCardHeader>
           <div className="flex items-center gap-3">
             <h2 className="text-lg font-semibold text-gray-900">작가 목록</h2>
-            <AdminBadge tone="info">{pagination?.totalItems || filtered.length}명</AdminBadge>
+            <AdminBadge tone="info">
+              {pagination?.totalItems || optimisticArtists.length}명
+            </AdminBadge>
           </div>
 
           <div className="grid w-full gap-3 sm:w-auto sm:grid-cols-[minmax(200px,1fr)_auto] sm:items-end">
@@ -259,7 +250,7 @@ export function ArtistList({
               />
               <span id="search-artists-description" className="sr-only">
                 작가 이름, 전화번호 또는 이메일로 검색할 수 있습니다. 현재{' '}
-                {pagination?.totalItems || filtered.length}명이 표시됩니다.
+                {pagination?.totalItems || optimisticArtists.length}명이 표시됩니다.
               </span>
             </div>
             <div className="flex justify-end">

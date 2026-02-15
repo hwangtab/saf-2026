@@ -194,17 +194,9 @@ export function UserList({
     };
   }, [artistPromoteContext, debouncedArtistSearchQuery]);
 
-  const normalize = (value: string) => value.toLowerCase().replace(/\s+/g, '');
-  const filteredUsers = useMemo(() => {
-    return localUsers.filter((user) => {
-      if (!query) return true;
-      const q = normalize(query);
-      return normalize(user.name || '').includes(q) || normalize(user.email || '').includes(q);
-    });
-  }, [localUsers, query]);
-
+  // 서버에서 이미 검색/필터링됨 - 클라이언트에서는 정렬만 수행
   const sortedUsers = useMemo(() => {
-    const sorted = [...filteredUsers];
+    const sorted = [...localUsers];
     const statusRank: Record<Profile['status'], number> = {
       pending: 0,
       active: 1,
@@ -260,7 +252,7 @@ export function UserList({
     });
 
     return sorted;
-  }, [filteredUsers, sortDirection, sortKey]);
+  }, [localUsers, sortDirection, sortKey]);
 
   const handleSort = (key: UserSortKey) => {
     if (sortKey === key) {
@@ -427,7 +419,7 @@ export function UserList({
                 가입된 사용자의 권한을 관리하고 신청을 승인하거나 차단할 수 있습니다.
               </AdminHelp>
             </h2>
-            <AdminBadge tone="info">{pagination?.totalItems || filteredUsers.length}명</AdminBadge>
+            <AdminBadge tone="info">{pagination?.totalItems || localUsers.length}명</AdminBadge>
           </div>
 
           <div className="grid w-full gap-3 sm:w-auto sm:grid-cols-[minmax(200px,1fr)_auto] sm:items-end">
@@ -461,7 +453,7 @@ export function UserList({
               />
               <span id="search-users-description" className="sr-only">
                 이름 또는 이메일로 사용자를 검색할 수 있습니다. 현재{' '}
-                {pagination?.totalItems || filteredUsers.length}명이 표시됩니다.
+                {pagination?.totalItems || localUsers.length}명이 표시됩니다.
               </span>
             </div>
             <div className="grid grid-cols-2 gap-3 sm:flex sm:justify-end">
