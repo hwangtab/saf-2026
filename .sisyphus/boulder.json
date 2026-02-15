@@ -1,10 +1,10 @@
 {
-  "active_plan": ".sisyphus/plans/add-exhibitor-role.md",
-  "started_at": "2026-02-13T02:56:15.649Z",
-  "session_ids": ["ses_3ab19a41dffeNSyDfZJArgKyNs"],
-  "plan_name": "add-exhibitor-role",
+  "active_plan": ".sisyphus/plans/edition-migration.md",
+  "started_at": "2026-02-15T03:56:04Z",
+  "session_ids": ["ses_current"],
+  "plan_name": "edition-migration",
   "status": "complete",
-  "completed_at": "2026-02-13T12:55:00Z",
-  "tasks_completed": "7/7",
+  "completed_at": "2026-02-15T04:45:00Z",
+  "tasks_completed": "6/6",
   "automated_verification": "passed"
 }

@@ -18,6 +18,7 @@ import {
   AdminTextarea,
   AdminFieldLabel,
 } from '@/app/admin/_components/admin-ui';
+import { EditionType } from '@/types';
 
 type Artist = {
   id: string;
@@ -32,6 +33,8 @@ type Artwork = {
   material: string | null;
   year: string | null;
   edition: string | null;
+  edition_type: EditionType | null;
+  edition_limit: number | null;
   price: string | null;
   shop_url: string | null;
   artist_id: string | null;
@@ -60,6 +63,8 @@ export function ExhibitorArtworkForm({
   const [artistQuery, setArtistQuery] = useState('');
   const initialSelectedArtistId = artwork.artist_id || initialArtistId || '';
   const [selectedArtistId, setSelectedArtistId] = useState(initialSelectedArtistId);
+  const [editionType, setEditionType] = useState<EditionType>(artwork.edition_type || 'unique');
+  const [editionLimit, setEditionLimit] = useState<number | ''>(artwork.edition_limit || '');
 
   useEffect(() => {
     setSelectedArtistId(initialSelectedArtistId);
@@ -224,9 +229,48 @@ export function ExhibitorArtworkForm({
           </div>
 
           <div>
-            <AdminFieldLabel>에디션</AdminFieldLabel>
+            <AdminFieldLabel>에디션 (선택)</AdminFieldLabel>
             <AdminInput name="edition" defaultValue={artwork.edition || ''} placeholder="1/10" />
           </div>
+
+          <div>
+            <AdminFieldLabel>
+              에디션 유형 <span className="text-red-500">*</span>
+            </AdminFieldLabel>
+            <AdminSelect
+              name="edition_type"
+              value={editionType}
+              onChange={(e) => {
+                setEditionType(e.target.value as EditionType);
+                if (e.target.value !== 'limited') {
+                  setEditionLimit('');
+                }
+              }}
+              required
+              className="w-full"
+            >
+              <option value="unique">Unique (1점)</option>
+              <option value="limited">Limited (한정판)</option>
+              <option value="open">Open (무제한)</option>
+            </AdminSelect>
+          </div>
+
+          {editionType === 'limited' && (
+            <div>
+              <AdminFieldLabel>
+                에디션 수량 <span className="text-red-500">*</span>
+              </AdminFieldLabel>
+              <AdminInput
+                type="number"
+                name="edition_limit"
+                value={editionLimit}
+                onChange={(e) => setEditionLimit(e.target.value ? parseInt(e.target.value) : '')}
+                min="1"
+                placeholder="예: 50"
+                required
+              />
+            </div>
+          )}
 
           <div>
             <AdminFieldLabel>구매 링크</AdminFieldLabel>

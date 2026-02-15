@@ -52,6 +52,9 @@ export async function createExhibitorArtwork(formData: FormData) {
   const material = getString(formData, 'material');
   const year = getString(formData, 'year');
   const edition = getString(formData, 'edition');
+  const edition_type = getString(formData, 'edition_type') || 'unique';
+  const edition_limit_str = getString(formData, 'edition_limit');
+  const edition_limit = edition_limit_str ? parseInt(edition_limit_str) : null;
   const price = getString(formData, 'price');
   const shop_url = getString(formData, 'shop_url');
   const artist_id = getString(formData, 'artist_id');
@@ -59,6 +62,9 @@ export async function createExhibitorArtwork(formData: FormData) {
   if (!title) throw new Error('작품명을 입력해주세요.');
   if (!artist_id) throw new Error('작가를 선택해주세요.');
   if (!price) throw new Error('가격을 입력해주세요.');
+  if (edition_type === 'limited' && !edition_limit) {
+    throw new Error('한정판은 에디션 수량을 입력해주세요.');
+  }
 
   const { data: artist, error: artistError } = await supabase
     .from('artists')
@@ -80,6 +86,8 @@ export async function createExhibitorArtwork(formData: FormData) {
       material,
       year,
       edition,
+      edition_type,
+      edition_limit,
       price,
       shop_url,
       artist_id,
@@ -109,6 +117,9 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
   const material = getString(formData, 'material');
   const year = getString(formData, 'year');
   const edition = getString(formData, 'edition');
+  const edition_type = getString(formData, 'edition_type') || 'unique';
+  const edition_limit_str = getString(formData, 'edition_limit');
+  const edition_limit = edition_limit_str ? parseInt(edition_limit_str) : null;
   const price = getString(formData, 'price');
   const shop_url = getString(formData, 'shop_url');
   const artist_id = getString(formData, 'artist_id');
@@ -137,6 +148,10 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
     }
   }
 
+  if (edition_type === 'limited' && !edition_limit) {
+    throw new Error('한정판은 에디션 수량을 입력해주세요.');
+  }
+
   const { error } = await supabase
 
     .from('artworks')
@@ -147,6 +162,8 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
       material,
       year,
       edition,
+      edition_type,
+      edition_limit,
       price,
       shop_url,
       artist_id: artist_id || existingArtwork.artist_id,

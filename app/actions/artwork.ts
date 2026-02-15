@@ -89,6 +89,9 @@ export async function createArtwork(
     const material = formData.get('material') as string;
     const year = formData.get('year') as string;
     const edition = formData.get('edition') as string;
+    const edition_type = (formData.get('edition_type') as string) || 'unique';
+    const edition_limit_str = formData.get('edition_limit') as string;
+    const edition_limit = edition_limit_str ? parseInt(edition_limit_str) : null;
     const price = (formData.get('price') as string) || '';
     const rawStatus = (formData.get('status') as string) || 'available';
     const status = ['available', 'reserved', 'sold'].includes(rawStatus) ? rawStatus : 'available';
@@ -138,6 +141,13 @@ export async function createArtwork(
       return { message: '필수 항목(제목, 가격)을 입력해주세요.', error: true, cleanupUrls };
     }
 
+    if (edition_type === 'limited' && !edition_limit) {
+      if (supabase && artistId) {
+        await cleanupUploads(supabase, cleanupUrls, artistId);
+      }
+      return { message: '한정판은 에디션 수량을 입력해주세요.', error: true, cleanupUrls };
+    }
+
     const { data: insertedArtwork, error } = await supabase
       .from('artworks')
       .insert({
@@ -148,6 +158,8 @@ export async function createArtwork(
         material,
         year,
         edition,
+        edition_type,
+        edition_limit,
         price,
         status,
         images,
@@ -217,6 +229,9 @@ export async function updateArtwork(
     const material = formData.get('material') as string;
     const year = formData.get('year') as string;
     const edition = formData.get('edition') as string;
+    const edition_type = (formData.get('edition_type') as string) || 'unique';
+    const edition_limit_str = formData.get('edition_limit') as string;
+    const edition_limit = edition_limit_str ? parseInt(edition_limit_str) : null;
     const price = (formData.get('price') as string) || '';
     const rawStatus = (formData.get('status') as string) || 'available';
     const status = ['available', 'reserved', 'sold'].includes(rawStatus) ? rawStatus : 'available';
@@ -266,6 +281,13 @@ export async function updateArtwork(
       return { message: '필수 항목(제목, 가격)을 입력해주세요.', error: true, cleanupUrls };
     }
 
+    if (edition_type === 'limited' && !edition_limit) {
+      if (supabase && artistId) {
+        await cleanupUploads(supabase, cleanupUrls, artistId);
+      }
+      return { message: '한정판은 에디션 수량을 입력해주세요.', error: true, cleanupUrls };
+    }
+
     const { data: beforeArtwork } = await supabase
       .from('artworks')
       .select(
@@ -284,6 +306,8 @@ export async function updateArtwork(
         material,
         year,
         edition,
+        edition_type,
+        edition_limit,
         price,
         status,
         is_hidden: hidden,

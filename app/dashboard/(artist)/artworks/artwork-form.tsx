@@ -13,6 +13,7 @@ import {
   AdminSelect,
   AdminTextarea,
 } from '@/app/admin/_components/admin-ui';
+import { EditionType } from '@/types';
 
 type ArtworkFormProps = {
   artwork?: any; // If provided, mode is 'edit'
@@ -66,6 +67,8 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
   const pendingUploadsRef = useRef<string[]>([]);
   const isSubmittingRef = useRef(false);
   const sessionIdRef = useRef(createSessionId());
+  const [editionType, setEditionType] = useState<EditionType>(artwork?.edition_type || 'unique');
+  const [editionLimit, setEditionLimit] = useState<number | ''>(artwork?.edition_limit || '');
   const pendingKey = useMemo(() => `saf_pending_artwork_uploads_${artistId}`, [artistId]);
   const cleanupUrls = useMemo(() => state.cleanupUrls ?? [], [state.cleanupUrls]);
   const effectiveImages =
@@ -302,7 +305,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
 
             {/* Edition */}
             <div className="sm:col-span-1">
-              <AdminFieldLabel htmlFor="edition">에디션</AdminFieldLabel>
+              <AdminFieldLabel htmlFor="edition">에디션 (선택)</AdminFieldLabel>
               <AdminInput
                 type="text"
                 name="edition"
@@ -312,6 +315,50 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
                 className={inputClassName}
               />
             </div>
+
+            {/* Edition Type */}
+            <div className="sm:col-span-2">
+              <AdminFieldLabel htmlFor="edition_type">
+                에디션 유형 <span className="text-red-500">*</span>
+              </AdminFieldLabel>
+              <AdminSelect
+                id="edition_type"
+                name="edition_type"
+                value={editionType}
+                onChange={(e) => {
+                  setEditionType(e.target.value as EditionType);
+                  if (e.target.value !== 'limited') {
+                    setEditionLimit('');
+                  }
+                }}
+                className={inputClassName}
+                required
+              >
+                <option value="unique">Unique (1점)</option>
+                <option value="limited">Limited (한정판)</option>
+                <option value="open">Open (무제한)</option>
+              </AdminSelect>
+            </div>
+
+            {/* Edition Limit */}
+            {editionType === 'limited' && (
+              <div className="sm:col-span-2">
+                <AdminFieldLabel htmlFor="edition_limit">
+                  에디션 수량 <span className="text-red-500">*</span>
+                </AdminFieldLabel>
+                <AdminInput
+                  type="number"
+                  name="edition_limit"
+                  id="edition_limit"
+                  value={editionLimit}
+                  onChange={(e) => setEditionLimit(e.target.value ? parseInt(e.target.value) : '')}
+                  min="1"
+                  required
+                  placeholder="예: 50"
+                  className={inputClassName}
+                />
+              </div>
+            )}
 
             {/* Description */}
             <div className="sm:col-span-6">
