@@ -46,10 +46,25 @@ export default async function AdminArtworksPage({ searchParams }: Props) {
     query = query.eq('is_hidden', true);
   }
 
-  // 검색어 필터
+  // 검색어 필터 (작품 제목 + 작가명)
   if (params.q && params.q.trim()) {
     const searchTerm = params.q.trim();
-    query = query.or(`title.ilike.%${searchTerm}%`);
+
+    // 작가명으로 검색하여 매칭되는 artist_id 찾기
+    const { data: matchedArtists } = await supabase
+      .from('artists')
+      .select('id')
+      .ilike('name_ko', `%${searchTerm}%`);
+
+    const artistIds = (matchedArtists || []).map((a: { id: string }) => a.id);
+
+    if (artistIds.length > 0) {
+      // 작품 제목 OR 작가 ID로 검색
+      query = query.or(`title.ilike.%${searchTerm}%,artist_id.in.(${artistIds.join(',')})`);
+    } else {
+      // 작가 매칭이 없으면 제목만 검색
+      query = query.ilike('title', `%${searchTerm}%`);
+    }
   }
 
   // 정렬 및 페이지네이션
