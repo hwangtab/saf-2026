@@ -16,6 +16,8 @@ export interface ArtistData {
   owner_id?: string;
 }
 
+export type EditionType = 'unique' | 'limited' | 'open';
+
 // Base artwork data structure (from DB/Files)
 export interface BaseArtwork {
   id: string;
@@ -26,11 +28,24 @@ export interface BaseArtwork {
   material: string;
   year: string;
   edition: string;
+  edition_type?: EditionType;
+  edition_limit?: number | null;
   price: string;
   images: string[];
   shopUrl?: string;
   sold?: boolean;
   hidden?: boolean;
+}
+
+export interface ArtworkSale {
+  id: string;
+  artwork_id: string;
+  sale_price: number; // Integer (KRW)
+  sold_at: string; // ISO timestamp
+  quantity: number;
+  buyer_name?: string | null;
+  note?: string | null;
+  created_at?: string;
 }
 
 // Artwork with hydrated artist data (for UI)
