@@ -144,10 +144,8 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
       .order('created_at', { ascending: false })
       .limit(5),
     supabase
-      .from('artworks')
-      .select('price')
-      .eq('status', 'sold')
-      .not('sold_at', 'is', null)
+      .from('artwork_sales')
+      .select('sale_price, quantity')
       .gte('sold_at', monthBoundary.startIso)
       .lt('sold_at', monthBoundary.endIso),
   ]);
@@ -215,10 +213,15 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
 
   const profileMap = new Map(recentApplicationProfiles.map((profile) => [profile.id, profile]));
 
-  const currentMonthSoldRows = (currentMonthSoldRowsResult.data || []).map((row) =>
-    parsePrice(row.price)
+  const currentMonthSalesRows = currentMonthSoldRowsResult.data || [];
+  const currentMonthRevenue = currentMonthSalesRows.reduce(
+    (sum, row) => sum + parsePrice(row.sale_price) * (row.quantity || 1),
+    0
   );
-  const currentMonthRevenue = currentMonthSoldRows.reduce((sum, price) => sum + price, 0);
+  const currentMonthSoldCount = currentMonthSalesRows.reduce(
+    (sum, row) => sum + (row.quantity || 1),
+    0
+  );
 
   return {
     artists: {
@@ -238,7 +241,7 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
     revenue: {
       currentMonthLabel: monthBoundary.currentMonthLabel,
       currentMonthRevenue,
-      currentMonthSoldCount: currentMonthSoldRows.length,
+      currentMonthSoldCount,
     },
     recentApplications: recentPendingApplicationsRaw.map((application) => {
       const profile = profileMap.get(application.user_id);
