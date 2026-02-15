@@ -22,6 +22,7 @@ import {
   AdminHelp,
 } from '@/app/admin/_components/admin-ui';
 import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
+import { useDebounce } from '@/lib/hooks/useDebounce';
 import { useToast } from '@/lib/hooks/useToast';
 
 type Profile = {
@@ -87,6 +88,7 @@ export function UserList({
 
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [query, setQuery] = useState(initialFilters?.q || '');
+  const debouncedQuery = useDebounce(query, 300);
   const [selectedUser, setSelectedUser] = useState<Profile | null>(null);
   const [localUsers, setLocalUsers] = useState<Profile[]>(users);
 
@@ -115,6 +117,15 @@ export function UserList({
   useEffect(() => {
     setQuery(initialFilters?.q || '');
   }, [initialFilters?.q]);
+
+  // 실시간 검색: debounced query가 변경되면 자동 검색
+  useEffect(() => {
+    const initialQ = initialFilters?.q || '';
+    if (debouncedQuery !== initialQ) {
+      updateFilters({ q: debouncedQuery || undefined });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedQuery]);
 
   // URL 기반 필터 변경 함수
   const updateFilters = (newParams: Record<string, string | undefined>) => {

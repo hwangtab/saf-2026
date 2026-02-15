@@ -22,6 +22,7 @@ import {
   AdminHelp,
 } from '@/app/admin/_components/admin-ui';
 import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
+import { useDebounce } from '@/lib/hooks/useDebounce';
 import { useToast } from '@/lib/hooks/useToast';
 
 type ArtworkItem = {
@@ -88,6 +89,7 @@ export function AdminArtworkList({
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [batchProcessing, setBatchProcessing] = useState(false);
   const [query, setQuery] = useState(initialQuery);
+  const debouncedQuery = useDebounce(query, 300);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>(initialStatusFilter);
   const [visibilityFilter, setVisibilityFilter] =
     useState<VisibilityFilter>(initialVisibilityFilter);
@@ -113,6 +115,14 @@ export function AdminArtworkList({
     setVisibilityFilter(initialVisibilityFilter);
     setSelectedIds(new Set());
   }, [initialQuery, initialStatusFilter, initialVisibilityFilter]);
+
+  // 실시간 검색: debounced query가 변경되면 자동 검색
+  useEffect(() => {
+    if (debouncedQuery !== initialQuery) {
+      updateFilters({ q: debouncedQuery || undefined });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedQuery]);
 
   // URL 기반 필터 변경 함수
   const updateFilters = (newParams: Record<string, string | undefined>) => {

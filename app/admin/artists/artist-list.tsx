@@ -15,6 +15,7 @@ import {
 import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import Button from '@/components/ui/Button';
 import { Pagination } from '@/components/ui/Pagination';
+import { useDebounce } from '@/lib/hooks/useDebounce';
 
 type ArtistItem = {
   id: string;
@@ -56,6 +57,7 @@ export function ArtistList({
   const [optimisticArtists, setOptimisticArtists] = useState(artists);
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [query, setQuery] = useState(initialFilters?.q || '');
+  const debouncedQuery = useDebounce(query, 300);
   const [error, setError] = useState<string | null>(null);
   const [sortKey, setSortKey] = useState<SortKey>('artist_info');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
@@ -67,6 +69,15 @@ export function ArtistList({
   useEffect(() => {
     setQuery(initialFilters?.q || '');
   }, [initialFilters?.q]);
+
+  // 실시간 검색: debounced query가 변경되면 자동 검색
+  useEffect(() => {
+    const initialQ = initialFilters?.q || '';
+    if (debouncedQuery !== initialQ) {
+      updateFilters({ q: debouncedQuery || undefined });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedQuery]);
 
   // URL 기반 필터 변경 함수
   const updateFilters = (newParams: Record<string, string | undefined>) => {
