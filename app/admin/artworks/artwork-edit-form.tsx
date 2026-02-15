@@ -13,6 +13,7 @@ import { ImageUpload } from '@/components/dashboard/ImageUpload';
 import { AdminCard, AdminSelect } from '@/app/admin/_components/admin-ui';
 import { useToast } from '@/lib/hooks/useToast';
 import { cn } from '@/lib/utils';
+import { EditionType } from '@/types';
 
 type Artist = {
   id: string;
@@ -27,6 +28,8 @@ type Artwork = {
   material: string | null;
   year: string | null;
   edition: string | null;
+  edition_type: EditionType | null;
+  edition_limit: number | null;
   price: string | null;
   shop_url: string | null;
   artist_id: string | null;
@@ -62,6 +65,8 @@ export function ArtworkEditForm({
   // Form Field States for Validation & Formatting
   const [price, setPrice] = useState(artwork.price || '');
   const [title, setTitle] = useState(artwork.title || '');
+  const [editionType, setEditionType] = useState<EditionType>(artwork.edition_type || 'unique');
+  const [editionLimit, setEditionLimit] = useState<number | ''>(artwork.edition_limit || '');
   const [showErrors, setShowErrors] = useState(false);
 
   const formatPrice = (val: string) => {
@@ -94,6 +99,11 @@ export function ArtworkEditForm({
     // Validation
     if (!title.trim() || !selectedArtistId) {
       toast.error('필수 정보를 입력해주세요.');
+      return;
+    }
+
+    if (editionType === 'limited' && !editionLimit) {
+      toast.error('한정판은 에디션 수량을 입력해주세요.');
       return;
     }
 
@@ -314,6 +324,52 @@ export function ArtworkEditForm({
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
             />
           </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              에디션 유형 <span className="text-red-500">*</span>
+            </label>
+            <select
+              name="edition_type"
+              value={editionType}
+              onChange={(e) => {
+                setEditionType(e.target.value as EditionType);
+                if (e.target.value !== 'limited') {
+                  setEditionLimit('');
+                }
+              }}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
+            >
+              <option value="unique">Unique (1점)</option>
+              <option value="limited">Limited (한정판)</option>
+              <option value="open">Open (무제한)</option>
+            </select>
+          </div>
+
+          {editionType === 'limited' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                에디션 수량 <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="number"
+                name="edition_limit"
+                value={editionLimit}
+                onChange={(e) => setEditionLimit(e.target.value ? parseInt(e.target.value) : '')}
+                min="1"
+                placeholder="예: 50"
+                className={cn(
+                  'w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none',
+                  showErrors && editionType === 'limited' && !editionLimit
+                    ? 'border-red-500 bg-red-50'
+                    : 'border-gray-300'
+                )}
+              />
+              {showErrors && editionType === 'limited' && !editionLimit && (
+                <p className="mt-1 text-xs text-red-600">한정판은 수량을 입력해주세요.</p>
+              )}
+            </div>
+          )}
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">구매 링크</label>

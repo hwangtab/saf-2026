@@ -13,7 +13,7 @@ export async function deleteAdminArtwork(id: string) {
   const { data: artwork } = await supabase
     .from('artworks')
     .select(
-      'id, title, description, size, material, year, edition, price, status, sold_at, is_hidden, images, shop_url, artist_id, created_at, updated_at'
+      'id, title, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, is_hidden, images, shop_url, artist_id, created_at, updated_at'
     )
     .eq('id', id)
     .single();
@@ -86,6 +86,10 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
   const material = getString(formData, 'material');
   const year = getString(formData, 'year');
   const edition = getString(formData, 'edition');
+  const edition_type = getString(formData, 'edition_type') || 'unique';
+  const edition_limit_raw = getString(formData, 'edition_limit');
+  const edition_limit =
+    edition_type === 'limited' && edition_limit_raw ? parseInt(edition_limit_raw, 10) : null;
   const price = getString(formData, 'price');
   const shop_url = getString(formData, 'shop_url');
   const artist_id = getString(formData, 'artist_id');
@@ -93,7 +97,7 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
   const { data: oldArtwork } = await supabase
     .from('artworks')
     .select(
-      'id, title, artist_id, description, size, material, year, edition, price, status, sold_at, images, is_hidden, shop_url, updated_at'
+      'id, title, artist_id, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, images, is_hidden, shop_url, updated_at'
     )
     .eq('id', id)
     .single();
@@ -107,6 +111,8 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
       material,
       year,
       edition,
+      edition_type,
+      edition_limit,
       price,
       shop_url,
       artist_id: artist_id || null,
@@ -119,7 +125,7 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
   const { data: newArtwork } = await supabase
     .from('artworks')
     .select(
-      'id, title, artist_id, description, size, material, year, edition, price, status, sold_at, images, is_hidden, shop_url, updated_at'
+      'id, title, artist_id, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, images, is_hidden, shop_url, updated_at'
     )
     .eq('id', id)
     .single();
@@ -172,6 +178,10 @@ export async function createAdminArtwork(formData: FormData) {
   const material = getString(formData, 'material');
   const year = getString(formData, 'year');
   const edition = getString(formData, 'edition');
+  const edition_type = getString(formData, 'edition_type') || 'unique';
+  const edition_limit_raw = getString(formData, 'edition_limit');
+  const edition_limit =
+    edition_type === 'limited' && edition_limit_raw ? parseInt(edition_limit_raw, 10) : null;
   const price = getString(formData, 'price');
   const shop_url = getString(formData, 'shop_url');
   const artist_id = getString(formData, 'artist_id');
@@ -188,6 +198,8 @@ export async function createAdminArtwork(formData: FormData) {
       material,
       year,
       edition,
+      edition_type,
+      edition_limit,
       price,
       shop_url,
       artist_id,
@@ -411,7 +423,7 @@ export async function batchDeleteArtworks(ids: string[]) {
   const { data: artworks } = await supabase
     .from('artworks')
     .select(
-      'id, title, description, size, material, year, edition, price, status, sold_at, is_hidden, images, shop_url, artist_id, created_at, updated_at'
+      'id, title, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, is_hidden, images, shop_url, artist_id, created_at, updated_at'
     )
     .in('id', ids);
 
