@@ -8,7 +8,7 @@ import { getStoragePathFromPublicUrl, getStoragePathsForRemoval } from '@/lib/ut
 export type ActivityLogEntry = {
   id: string;
   actor_id: string;
-  actor_role: 'admin' | 'artist' | 'system';
+  actor_role: 'admin' | 'artist' | 'system' | 'exhibitor';
   actor_name: string | null;
   actor_email: string | null;
   action: string;
@@ -39,14 +39,14 @@ type LogOptions = {
 
 type ActorInfo = {
   id: string;
-  role: 'admin' | 'artist' | 'system';
+  role: 'admin' | 'artist' | 'system' | 'exhibitor';
   name?: string | null;
   email?: string | null;
 };
 
 async function resolveActorIdentity(
   actorId: string,
-  role: 'admin' | 'artist',
+  role: 'admin' | 'artist' | 'exhibitor',
   fallbackEmail?: string | null
 ): Promise<{ name: string | null; email: string | null }> {
   const supabase = await createSupabaseAdminOrServerClient();
@@ -590,6 +590,39 @@ export async function logArtistAction(
     actor: {
       id: user.id,
       role: 'artist',
+      name: actor.name,
+      email: actor.email,
+    },
+    action,
+    targetType,
+    targetId,
+    metadata: details,
+    options,
+  });
+}
+
+export async function logExhibitorAction(
+  action: string,
+  targetType: string,
+  targetId: string,
+  details?: Record<string, unknown>,
+  options?: LogOptions
+) {
+  const supabaseServer = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabaseServer.auth.getUser();
+
+  if (!user) {
+    return;
+  }
+
+  const actor = await resolveActorIdentity(user.id, 'exhibitor', user.email || null);
+
+  await writeActivityLog({
+    actor: {
+      id: user.id,
+      role: 'exhibitor',
       name: actor.name,
       email: actor.email,
     },

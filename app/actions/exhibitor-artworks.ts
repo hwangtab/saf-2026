@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { requireExhibitor } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 import { getString, getStoragePathsForRemoval } from '@/lib/utils/form-helpers';
+import { logExhibitorAction } from './admin-logs';
 
 export async function getExhibitorArtworks() {
   const user = await requireExhibitor();
@@ -99,6 +100,11 @@ export async function createExhibitorArtwork(formData: FormData) {
 
   if (error) throw error;
 
+  await logExhibitorAction('artwork_created', 'artwork', artwork.id, {
+    title,
+    artist: artist.name_ko,
+  });
+
   revalidatePath('/exhibitor/artworks');
   if (artist.name_ko) {
     revalidatePath(`/artworks/artist/${encodeURIComponent(artist.name_ko)}`);
@@ -153,7 +159,6 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
   }
 
   const { error } = await supabase
-
     .from('artworks')
     .update({
       title,
@@ -173,6 +178,8 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
 
   if (error) throw error;
 
+  await logExhibitorAction('artwork_updated', 'artwork', id, { title });
+
   revalidatePath('/exhibitor/artworks');
   revalidatePath(`/exhibitor/artworks/${id}`);
   revalidatePath('/artworks');
@@ -186,7 +193,7 @@ export async function updateExhibitorArtworkImages(id: string, images: string[])
 
   const { data: existingArtwork, error: fetchError } = await supabase
     .from('artworks')
-    .select('id, artists!inner(owner_id)')
+    .select('id, title, artists!inner(owner_id)')
     .eq('id', id)
     .eq('artists.owner_id', user.id)
     .single();
@@ -196,7 +203,6 @@ export async function updateExhibitorArtworkImages(id: string, images: string[])
   }
 
   const { error } = await supabase
-
     .from('artworks')
     .update({
       images,
@@ -205,6 +211,11 @@ export async function updateExhibitorArtworkImages(id: string, images: string[])
     .eq('id', id);
 
   if (error) throw error;
+
+  await logExhibitorAction('artwork_images_updated', 'artwork', id, {
+    title: existingArtwork.title,
+    imageCount: images.length,
+  });
 
   revalidatePath('/exhibitor/artworks');
   revalidatePath(`/exhibitor/artworks/${id}`);
@@ -230,6 +241,11 @@ export async function deleteExhibitorArtwork(id: string) {
 
   const { error } = await supabase.from('artworks').delete().eq('id', id);
   if (error) throw error;
+
+  await logExhibitorAction('artwork_deleted', 'artwork', id, {
+    title: artwork.title,
+    artist: (artwork.artists as any)?.name_ko,
+  });
 
   const paths = getStoragePathsForRemoval(artwork.images || [], 'artworks');
   if (paths.length > 0) {

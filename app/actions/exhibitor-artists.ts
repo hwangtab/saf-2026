@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { requireExhibitor } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 import { getString, getStoragePathFromPublicUrl } from '@/lib/utils/form-helpers';
+import { logExhibitorAction } from './admin-logs';
 
 export async function getExhibitorArtists() {
   const user = await requireExhibitor();
@@ -69,6 +70,8 @@ export async function createExhibitorArtist(formData: FormData) {
 
   if (error) throw error;
 
+  await logExhibitorAction('artist_created', 'artist', data.id, { name: name_ko });
+
   revalidatePath('/exhibitor/artists');
 
   return { success: true, id: data.id };
@@ -117,6 +120,8 @@ export async function updateExhibitorArtist(id: string, formData: FormData) {
 
   if (error) throw error;
 
+  await logExhibitorAction('artist_updated', 'artist', id, { name: name_ko });
+
   revalidatePath('/exhibitor/artists');
   revalidatePath(`/exhibitor/artists/${id}`);
   if (name_ko) {
@@ -133,7 +138,7 @@ export async function updateExhibitorArtistProfileImage(id: string, profileImage
   // Verify ownership
   const { data: existingArtist, error: fetchError } = await supabase
     .from('artists')
-    .select('id')
+    .select('id, name_ko')
     .eq('id', id)
     .eq('owner_id', user.id)
     .single();
@@ -152,6 +157,10 @@ export async function updateExhibitorArtistProfileImage(id: string, profileImage
     .eq('owner_id', user.id);
 
   if (error) throw error;
+
+  await logExhibitorAction('artist_profile_image_updated', 'artist', id, {
+    name: existingArtist.name_ko,
+  });
 
   revalidatePath('/exhibitor/artists');
   revalidatePath(`/exhibitor/artists/${id}`);
@@ -186,6 +195,8 @@ export async function deleteExhibitorArtist(id: string) {
   const { error } = await supabase.from('artists').delete().eq('id', id).eq('owner_id', user.id);
 
   if (error) throw error;
+
+  await logExhibitorAction('artist_deleted', 'artist', id, { name: artist.name_ko });
 
   if (artist.profile_image) {
     const path = getStoragePathFromPublicUrl(artist.profile_image, 'profiles');

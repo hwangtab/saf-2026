@@ -3,6 +3,7 @@
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { requireAuth } from '@/lib/auth/guards';
 import { redirect } from 'next/navigation';
+import { logArtistAction } from './admin-logs';
 
 export type OnboardingState = {
   message: string;
@@ -42,6 +43,10 @@ export async function submitArtistApplication(
     );
 
     if (error) throw error;
+
+    await logArtistAction('artist_application_submitted', 'artist_application', user.id, {
+      artist_name: artistName,
+    });
 
     shouldRedirect = true;
   } catch (error: any) {
