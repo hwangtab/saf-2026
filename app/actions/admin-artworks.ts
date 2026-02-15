@@ -366,6 +366,102 @@ export async function batchUpdateArtworkStatus(ids: string[], status: string) {
   return { success: true, count: ids.length };
 }
 
+export async function getArtworkSales(artworkId: string) {
+  await requireAdmin();
+  const supabase = await createSupabaseAdminOrServerClient();
+
+  const { data, error } = await supabase
+    .from('artwork_sales')
+    .select('*')
+    .eq('artwork_id', artworkId)
+    .order('sold_at', { ascending: false });
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function recordArtworkSale(formData: FormData) {
+  const admin = await requireAdmin();
+  const supabase = await createSupabaseAdminOrServerClient();
+
+  const artworkId = getString(formData, 'artwork_id');
+  const salePriceRaw = getString(formData, 'sale_price');
+  const quantityRaw = getString(formData, 'quantity') || '1';
+  const buyerName = getString(formData, 'buyer_name');
+  const note = getString(formData, 'note');
+  const soldAt = getString(formData, 'sold_at') || new Date().toISOString();
+
+  if (!artworkId || !salePriceRaw) {
+    throw new Error('필수 정보가 누락되었습니다.');
+  }
+
+  const salePrice = parseInt(salePriceRaw, 10);
+  const quantity = parseInt(quantityRaw, 10);
+
+  if (isNaN(salePrice) || isNaN(quantity) || quantity < 1) {
+    throw new Error('유효하지 않은 가격 또는 수량입니다.');
+  }
+
+  const { data: artwork } = await supabase
+    .from('artworks')
+    .select('id, title, edition_type, edition_limit')
+    .eq('id', artworkId)
+    .single();
+
+  if (!artwork) throw new Error('작품을 찾을 수 없습니다.');
+
+  if (artwork.edition_type === 'limited' && artwork.edition_limit) {
+    const { data: sales } = await supabase
+      .from('artwork_sales')
+      .select('quantity')
+      .eq('artwork_id', artworkId);
+
+    const currentSold = sales?.reduce((sum, sale) => sum + (sale.quantity || 1), 0) || 0;
+
+    if (currentSold + quantity > artwork.edition_limit) {
+      throw new Error(
+        `에디션 수량을 초과할 수 없습니다. (현재: ${currentSold}, 제한: ${artwork.edition_limit}, 추가시도: ${quantity})`
+      );
+    }
+  }
+
+  const { error } = await supabase.from('artwork_sales').insert({
+    artwork_id: artworkId,
+    sale_price: salePrice,
+    quantity,
+    buyer_name: buyerName,
+    note,
+    sold_at: soldAt,
+  });
+
+  if (error) throw error;
+
+  revalidatePath('/artworks');
+  revalidatePath('/');
+  revalidatePath('/admin/artworks');
+  revalidatePath(`/admin/artworks/${artworkId}`);
+
+  await logAdminAction(
+    'artwork_sold',
+    'artwork',
+    artworkId,
+    {
+      sale_price: salePrice,
+      quantity,
+      buyer_name: buyerName,
+    },
+    admin.id,
+    {
+      summary: `작품 판매 기록: ${artwork.title} (${quantity}점)`,
+      beforeSnapshot: null,
+      afterSnapshot: null,
+      reversible: true,
+    }
+  );
+
+  return { success: true };
+}
+
 export async function batchToggleHidden(ids: string[], isHidden: boolean) {
   if (ids.length === 0) return { success: true, count: 0 };
   validateBatchSize(ids);

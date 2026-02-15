@@ -1,6 +1,7 @@
 import { requireAdmin } from '@/lib/auth/guards';
-import { getArtworkById, getAllArtists } from '@/app/actions/admin-artworks';
+import { getArtworkById, getAllArtists, getArtworkSales } from '@/app/actions/admin-artworks';
 import { ArtworkEditForm } from '../artwork-edit-form';
+import { SalesHistory } from './sales-history';
 import { notFound } from 'next/navigation';
 
 type Props = {
@@ -13,8 +14,13 @@ export default async function AdminArtworkDetailPage({ params }: Props) {
 
   let artwork;
   let artists;
+  let sales;
   try {
-    [artwork, artists] = await Promise.all([getArtworkById(id), getAllArtists()]);
+    [artwork, artists, sales] = await Promise.all([
+      getArtworkById(id),
+      getAllArtists(),
+      getArtworkSales(id),
+    ]);
   } catch {
     notFound();
   }
@@ -39,6 +45,15 @@ export default async function AdminArtworkDetailPage({ params }: Props) {
         </div>
       </div>
       <ArtworkEditForm artwork={normalizedArtwork} artists={artists} />
+
+      <div className="border-t border-gray-200 pt-6">
+        <SalesHistory
+          artworkId={id}
+          editionType={artwork.edition_type || 'unique'}
+          editionLimit={artwork.edition_limit}
+          sales={sales}
+        />
+      </div>
     </div>
   );
 }

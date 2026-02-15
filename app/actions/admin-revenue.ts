@@ -17,20 +17,24 @@ export type RevenueQueryInput = {
   month?: string | null;
 };
 
-type RevenueRecordRow = {
+type SalesRecordRow = {
   id: string;
-  title: string;
-  artist_id: string | null;
-  price: unknown;
+  artwork_id: string;
+  sale_price: number;
+  quantity: number;
   sold_at: string;
-  artists:
-    | {
-        name_ko: string | null;
-      }
-    | Array<{
-        name_ko: string | null;
-      }>
-    | null;
+  artworks: {
+    title: string;
+    artist_id: string | null;
+    artists:
+      | {
+          name_ko: string | null;
+        }
+      | Array<{
+          name_ko: string | null;
+        }>
+      | null;
+  } | null;
 };
 
 type MonthlyAccumulator = {
@@ -124,21 +128,6 @@ export type RevenueAnalytics = {
   };
 };
 
-function parsePrice(price: unknown): number {
-  if (typeof price === 'number' && Number.isFinite(price)) {
-    return Math.max(0, Math.round(price));
-  }
-
-  if (typeof price === 'string') {
-    const numeric = Number(price.replace(/[^\d.-]/g, ''));
-    if (Number.isFinite(numeric)) {
-      return Math.max(0, Math.round(numeric));
-    }
-  }
-
-  return 0;
-}
-
 function getKstDateParts(date: Date): { year: number; month: number; day: number } {
   const parts = KST_PARTS_FORMATTER.formatToParts(date);
   const year = Number(parts.find((part) => part.type === 'year')?.value);
@@ -214,26 +203,18 @@ export async function getRevenueAnalyticsForAuthorizedUser(
 
   const [firstSoldResult, latestSoldResult, soldWithoutSoldAtResult] = await Promise.all([
     supabase
-      .from('artworks')
+      .from('artwork_sales')
       .select('sold_at')
-      .eq('status', 'sold')
-      .not('sold_at', 'is', null)
       .order('sold_at', { ascending: true })
       .limit(1)
       .maybeSingle(),
     supabase
-      .from('artworks')
+      .from('artwork_sales')
       .select('sold_at')
-      .eq('status', 'sold')
-      .not('sold_at', 'is', null)
       .order('sold_at', { ascending: false })
       .limit(1)
       .maybeSingle(),
-    supabase
-      .from('artworks')
-      .select('id', { count: 'exact', head: true })
-      .eq('status', 'sold')
-      .is('sold_at', null),
+    supabase.from('artwork_sales').select('id', { count: 'exact', head: true }).is('sold_at', null),
   ]);
 
   if (firstSoldResult.error) throw firstSoldResult.error;
@@ -256,10 +237,23 @@ export async function getRevenueAnalyticsForAuthorizedUser(
   const rangeEndIso = getYearStartUtcIso(selectedYear + 1);
 
   const { data: soldRows, error: soldRowsError } = await supabase
-    .from('artworks')
-    .select('id, title, artist_id, price, sold_at, artists(name_ko)')
-    .eq('status', 'sold')
-    .not('sold_at', 'is', null)
+    .from('artwork_sales')
+    .select(
+      `
+      id,
+      artwork_id,
+      sale_price,
+      quantity,
+      sold_at,
+      artworks!inner (
+        title,
+        artist_id,
+        artists (
+          name_ko
+        )
+      )
+    `
+    )
     .gte('sold_at', rangeStartIso)
     .lt('sold_at', rangeEndIso)
     .order('sold_at', { ascending: true });
@@ -271,22 +265,23 @@ export async function getRevenueAnalyticsForAuthorizedUser(
   const focusArtistMap = new Map<string, RankedArtist>();
   const focusEntries: RevenueEntry[] = [];
 
-  for (const row of (soldRows || []) as RevenueRecordRow[]) {
+  for (const row of (soldRows || []) as unknown as SalesRecordRow[]) {
     const soldDate = new Date(row.sold_at);
     if (Number.isNaN(soldDate.getTime())) continue;
 
     const { year, month, day } = getKstDateParts(soldDate);
-    const price = parsePrice(row.price);
+    // Use sale_price directly (integer)
+    const price = row.sale_price * row.quantity;
     const monthIndex = month - 1;
 
     if (monthIndex < 0 || monthIndex > 11) continue;
 
     if (year === selectedYear) {
       currentYearMonthly[monthIndex].revenue += price;
-      currentYearMonthly[monthIndex].soldCount += 1;
+      currentYearMonthly[monthIndex].soldCount += row.quantity;
     } else if (year === selectedYear - 1) {
       previousYearMonthly[monthIndex].revenue += price;
-      previousYearMonthly[monthIndex].soldCount += 1;
+      previousYearMonthly[monthIndex].soldCount += row.quantity;
     }
 
     const isInFocusPeriod =
@@ -296,14 +291,15 @@ export async function getRevenueAnalyticsForAuthorizedUser(
 
     if (!isInFocusPeriod) continue;
 
-    const artistValue = row.artists;
+    const artistValue = row.artworks?.artists;
     const artistName = Array.isArray(artistValue)
       ? artistValue[0]?.name_ko || '알 수 없음'
       : artistValue?.name_ko || '알 수 없음';
-    const artistKey = row.artist_id || `unknown:${artistName}`;
+    const artistId = row.artworks?.artist_id || null;
+    const artistKey = artistId || `unknown:${artistName}`;
 
     const currentArtist = focusArtistMap.get(artistKey) || {
-      artistId: row.artist_id,
+      artistId,
       artistName,
       revenue: 0,
       soldCount: 0,
@@ -312,13 +308,13 @@ export async function getRevenueAnalyticsForAuthorizedUser(
     focusArtistMap.set(artistKey, {
       ...currentArtist,
       revenue: currentArtist.revenue + price,
-      soldCount: currentArtist.soldCount + 1,
+      soldCount: currentArtist.soldCount + row.quantity,
     });
 
     focusEntries.push({
-      artworkId: row.id,
-      title: row.title,
-      artistId: row.artist_id,
+      artworkId: row.artwork_id,
+      title: row.artworks?.title || 'Unknown',
+      artistId,
       artistName,
       soldAtUtc: row.sold_at,
       soldAtKstDate: `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
