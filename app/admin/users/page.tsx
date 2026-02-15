@@ -7,6 +7,8 @@ import {
   AdminPageTitle,
 } from '@/app/admin/_components/admin-ui';
 
+const ITEMS_PER_PAGE = 20;
+
 type ArtistApplication = {
   user_id: string;
   artist_name: string;
@@ -30,20 +32,53 @@ type ProfileWithApplication = ProfileRow & {
   application: ArtistApplication | null;
 };
 
-export default async function UsersPage() {
+type Props = {
+  searchParams: Promise<{
+    role?: string;
+    status?: string;
+    q?: string;
+    page?: string;
+  }>;
+};
+
+export default async function UsersPage({ searchParams }: Props) {
   await requireAdmin();
   const supabase = await createSupabaseServerClient();
+  const params = await searchParams;
 
-  // Fetch all profiles, ordered by pending first, then created_at desc
-  const { data: users } = await supabase
+  // 페이지 파싱
+  const pageParam = Number(params.page);
+  const page = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1;
+  const offset = (page - 1) * ITEMS_PER_PAGE;
+
+  // 기본 쿼리 빌더
+  let query = supabase
     .from('profiles')
-    .select('id, email, name, avatar_url, role, status, created_at')
-    .order('status', { ascending: false }) // pending (p) > suspended (s) > active (a) ... simplistic, maybe specific logic better
-    // 'pending' > 'active' > 'suspended' sorting is tricky with simple string sort.
-    // Let's just sort by created_at desc for now, or filter client side if needed.
-    // Ideally: Order by case status when 'pending' then 1 else 2 end.
-    // Supabase JS order accepts simple cols.
-    .order('created_at', { ascending: false });
+    .select('id, email, name, avatar_url, role, status, created_at', { count: 'exact' });
+
+  // 역할 필터
+  if (params.role && ['admin', 'artist', 'user', 'exhibitor'].includes(params.role)) {
+    query = query.eq('role', params.role);
+  }
+
+  // 상태 필터
+  if (params.status && ['pending', 'active', 'suspended'].includes(params.status)) {
+    query = query.eq('status', params.status);
+  }
+
+  // 검색어 필터
+  if (params.q && params.q.trim()) {
+    const searchTerm = params.q.trim();
+    query = query.or(`name.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%`);
+  }
+
+  // 정렬 및 페이지네이션
+  const { data: users, count } = await query
+    .order('created_at', { ascending: false })
+    .range(offset, offset + ITEMS_PER_PAGE - 1);
+
+  const totalItems = count || 0;
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
 
   const { data: applications } = await supabase
     .from('artist_applications')
@@ -74,7 +109,19 @@ export default async function UsersPage() {
         </AdminPageHeader>
       </div>
 
-      <UserList users={sortedUsers} />
+      <UserList
+        users={sortedUsers}
+        initialFilters={{
+          role: params.role,
+          status: params.status,
+          q: params.q,
+        }}
+        pagination={{
+          currentPage: page,
+          totalPages,
+          totalItems,
+        }}
+      />
     </div>
   );
 }

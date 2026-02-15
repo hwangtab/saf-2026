@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { deleteArtist } from '@/app/actions/admin-artists';
 import {
   AdminBadge,
@@ -9,9 +10,11 @@ import {
   AdminCardHeader,
   AdminEmptyState,
   AdminInput,
+  AdminSelect,
 } from '@/app/admin/_components/admin-ui';
 import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import Button from '@/components/ui/Button';
+import { Pagination } from '@/components/ui/Pagination';
 
 type ArtistItem = {
   id: string;
@@ -27,10 +30,32 @@ type ArtistItem = {
 type SortKey = 'artist_info' | 'account_link' | 'artwork_count';
 type SortDirection = 'asc' | 'desc';
 
-export function ArtistList({ artists }: { artists: ArtistItem[] }) {
+type InitialFilters = {
+  q?: string;
+  linked?: string;
+};
+
+type PaginationInfo = {
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+};
+
+export function ArtistList({
+  artists,
+  initialFilters,
+  pagination,
+}: {
+  artists: ArtistItem[];
+  initialFilters?: InitialFilters;
+  pagination?: PaginationInfo;
+}) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [optimisticArtists, setOptimisticArtists] = useState(artists);
   const [processingId, setProcessingId] = useState<string | null>(null);
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(initialFilters?.q || '');
   const [error, setError] = useState<string | null>(null);
   const [sortKey, setSortKey] = useState<SortKey>('artist_info');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
@@ -38,6 +63,25 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
   useEffect(() => {
     setOptimisticArtists(artists);
   }, [artists]);
+
+  useEffect(() => {
+    setQuery(initialFilters?.q || '');
+  }, [initialFilters?.q]);
+
+  // URL 기반 필터 변경 함수
+  const updateFilters = (newParams: Record<string, string | undefined>) => {
+    const params = new URLSearchParams(searchParams.toString());
+    // 필터 변경 시 페이지를 1로 리셋
+    params.set('page', '1');
+    Object.entries(newParams).forEach(([key, value]) => {
+      if (value && value !== 'all') {
+        params.set(key, value);
+      } else {
+        params.delete(key);
+      }
+    });
+    router.push(`/admin/artists?${params.toString()}`);
+  };
 
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
@@ -176,40 +220,59 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
         <AdminCardHeader>
           <div className="flex items-center gap-3">
             <h2 className="text-lg font-semibold text-gray-900">작가 목록</h2>
-            <AdminBadge tone="info">{filtered.length}명</AdminBadge>
+            <AdminBadge tone="info">{pagination?.totalItems || filtered.length}명</AdminBadge>
           </div>
 
-          <div className="relative max-w-sm w-full">
-            <label htmlFor="search-artists" className="sr-only">
-              작가 검색
-            </label>
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-              <svg
-                className="h-5 w-5 text-gray-400"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                  clipRule="evenodd"
-                />
-              </svg>
+          <div className="grid w-full gap-3 sm:w-auto sm:grid-cols-[minmax(200px,1fr)_auto] sm:items-end">
+            <div className="relative w-full sm:min-w-[260px]">
+              <label htmlFor="search-artists" className="sr-only">
+                작가 검색
+              </label>
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <svg
+                  className="h-5 w-5 text-gray-400"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+              <AdminInput
+                id="search-artists"
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    updateFilters({ q: query || undefined });
+                  }
+                }}
+                placeholder="이름, 전화번호, 이메일 검색... (Enter)"
+                aria-describedby="search-artists-description"
+                className="h-10 border-0 py-2 pl-10"
+              />
+              <span id="search-artists-description" className="sr-only">
+                작가 이름, 전화번호 또는 이메일로 검색할 수 있습니다. 현재{' '}
+                {pagination?.totalItems || filtered.length}명이 표시됩니다.
+              </span>
             </div>
-            <AdminInput
-              id="search-artists"
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="이름, 전화번호, 이메일 검색..."
-              aria-describedby="search-artists-description"
-              className="h-10 border-0 py-2 pl-10"
-            />
-            <span id="search-artists-description" className="sr-only">
-              작가 이름, 전화번호 또는 이메일로 검색할 수 있습니다. 현재 {filtered.length}명이
-              표시됩니다.
-            </span>
+            <div className="flex justify-end">
+              <AdminSelect
+                value={initialFilters?.linked || 'all'}
+                onChange={(e) => updateFilters({ linked: e.target.value })}
+                wrapperClassName="min-w-[120px]"
+              >
+                <option value="all">모든 계정</option>
+                <option value="linked">연결됨</option>
+                <option value="unlinked">미연결</option>
+              </AdminSelect>
+            </div>
           </div>
         </AdminCardHeader>
 
@@ -375,6 +438,17 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
           </table>
         </div>
       </AdminCard>
+
+      {/* Pagination */}
+      {pagination && pagination.totalPages > 1 && (
+        <Pagination
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          totalItems={pagination.totalItems}
+          baseUrl="/admin/artists"
+          itemName="작가"
+        />
+      )}
     </div>
   );
 }

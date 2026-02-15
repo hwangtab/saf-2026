@@ -63,6 +63,62 @@ export async function getArtistsWithArtworkCount() {
   }));
 }
 
+type GetArtistsPaginatedParams = {
+  page?: number;
+  limit?: number;
+  q?: string;
+  linked?: 'all' | 'linked' | 'unlinked';
+};
+
+export async function getArtistsPaginated(params: GetArtistsPaginatedParams = {}) {
+  await requireAdmin();
+  const supabase = await createSupabaseAdminOrServerClient();
+
+  const page = params.page || 1;
+  const limit = params.limit || 25;
+  const offset = (page - 1) * limit;
+
+  let query = supabase.from('artists').select('*, artworks(count)', { count: 'exact' });
+
+  // 검색어 필터
+  if (params.q && params.q.trim()) {
+    const searchTerm = params.q.trim();
+    query = query.or(
+      `name_ko.ilike.%${searchTerm}%,name_en.ilike.%${searchTerm}%,contact_email.ilike.%${searchTerm}%,contact_phone.ilike.%${searchTerm}%`
+    );
+  }
+
+  // 계정 연결 필터
+  if (params.linked === 'linked') {
+    query = query.not('user_id', 'is', null);
+  } else if (params.linked === 'unlinked') {
+    query = query.is('user_id', null);
+  }
+
+  const {
+    data: artists,
+    count,
+    error,
+  } = await query.order('name_ko').range(offset, offset + limit - 1);
+
+  if (error) throw error;
+
+  const totalItems = count || 0;
+  const totalPages = Math.ceil(totalItems / limit);
+
+  return {
+    artists: (artists || []).map((artist: any) => ({
+      ...artist,
+      artwork_count: artist.artworks?.[0]?.count || 0,
+    })),
+    pagination: {
+      currentPage: page,
+      totalPages,
+      totalItems,
+    },
+  };
+}
+
 export async function getArtistById(id: string) {
   await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();

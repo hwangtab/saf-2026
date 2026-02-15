@@ -8,11 +8,14 @@ import {
   AdminPageTitle,
 } from '@/app/admin/_components/admin-ui';
 
+const ITEMS_PER_PAGE = 25;
+
 type Props = {
   searchParams: Promise<{
     status?: string;
     visibility?: string;
     q?: string;
+    page?: string;
   }>;
 };
 
@@ -21,10 +24,41 @@ export default async function AdminArtworksPage({ searchParams }: Props) {
   const supabase = await createSupabaseServerClient();
   const params = await searchParams;
 
-  const { data: artworks } = await supabase
+  // 페이지 파싱
+  const pageParam = Number(params.page);
+  const page = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1;
+  const offset = (page - 1) * ITEMS_PER_PAGE;
+
+  // 기본 쿼리 빌더
+  let query = supabase
     .from('artworks')
-    .select('id, title, status, is_hidden, images, artists(name_ko)')
-    .order('created_at', { ascending: false });
+    .select('id, title, status, is_hidden, images, artists(name_ko)', { count: 'exact' });
+
+  // 상태 필터
+  if (params.status && ['available', 'reserved', 'sold'].includes(params.status)) {
+    query = query.eq('status', params.status);
+  }
+
+  // 공개 여부 필터
+  if (params.visibility === 'visible') {
+    query = query.eq('is_hidden', false);
+  } else if (params.visibility === 'hidden') {
+    query = query.eq('is_hidden', true);
+  }
+
+  // 검색어 필터
+  if (params.q && params.q.trim()) {
+    const searchTerm = params.q.trim();
+    query = query.or(`title.ilike.%${searchTerm}%`);
+  }
+
+  // 정렬 및 페이지네이션
+  const { data: artworks, count } = await query
+    .order('created_at', { ascending: false })
+    .range(offset, offset + ITEMS_PER_PAGE - 1);
+
+  const totalItems = count || 0;
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
 
   const normalizedArtworks = (artworks || []).map((artwork: any) => ({
     ...artwork,
@@ -48,6 +82,11 @@ export default async function AdminArtworksPage({ searchParams }: Props) {
           status: params.status,
           visibility: params.visibility,
           q: params.q,
+        }}
+        pagination={{
+          currentPage: page,
+          totalPages,
+          totalItems,
         }}
       />
     </div>

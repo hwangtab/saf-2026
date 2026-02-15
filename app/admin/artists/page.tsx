@@ -1,4 +1,4 @@
-import { getArtistsWithArtworkCount } from '@/app/actions/admin-artists';
+import { getArtistsPaginated } from '@/app/actions/admin-artists';
 import { ArtistList } from './artist-list';
 import Button from '@/components/ui/Button';
 import {
@@ -7,8 +7,27 @@ import {
   AdminPageTitle,
 } from '@/app/admin/_components/admin-ui';
 
-export default async function AdminArtistsPage() {
-  const artists = await getArtistsWithArtworkCount();
+type Props = {
+  searchParams: Promise<{
+    q?: string;
+    linked?: string;
+    page?: string;
+  }>;
+};
+
+export default async function AdminArtistsPage({ searchParams }: Props) {
+  const params = await searchParams;
+
+  const pageParam = Number(params.page);
+  const page = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1;
+
+  const linked = params.linked === 'linked' || params.linked === 'unlinked' ? params.linked : 'all';
+
+  const { artists, pagination } = await getArtistsPaginated({
+    page,
+    q: params.q,
+    linked,
+  });
 
   return (
     <div className="space-y-6">
@@ -21,7 +40,14 @@ export default async function AdminArtistsPage() {
           작가 등록
         </Button>
       </div>
-      <ArtistList artists={artists} />
+      <ArtistList
+        artists={artists}
+        initialFilters={{
+          q: params.q,
+          linked,
+        }}
+        pagination={pagination}
+      />
     </div>
   );
 }

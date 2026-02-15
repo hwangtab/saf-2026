@@ -2,8 +2,10 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import ArtworkLightbox from '@/components/ui/ArtworkLightbox';
 import Button from '@/components/ui/Button';
+import { Pagination } from '@/components/ui/Pagination';
 import {
   deleteAdminArtwork,
   batchUpdateArtworkStatus,
@@ -42,6 +44,12 @@ type InitialArtworkFilters = {
   q?: string;
 };
 
+type PaginationInfo = {
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+};
+
 function normalizeStatusFilter(value: string | undefined): StatusFilter {
   if (value === 'available' || value === 'reserved' || value === 'sold') return value;
   return 'all';
@@ -59,11 +67,15 @@ function normalizeQuery(value: string | undefined): string {
 export function AdminArtworkList({
   artworks,
   initialFilters,
+  pagination,
 }: {
   artworks: ArtworkItem[];
   initialFilters?: InitialArtworkFilters;
+  pagination?: PaginationInfo;
 }) {
   const toast = useToast();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [optimisticArtworks, setOptimisticArtworks] = useState(artworks);
   const initialStatusFilter = normalizeStatusFilter(initialFilters?.status);
   const initialVisibilityFilter = normalizeVisibilityFilter(initialFilters?.visibility);
@@ -102,22 +114,24 @@ export function AdminArtworkList({
     setSelectedIds(new Set());
   }, [initialQuery, initialStatusFilter, initialVisibilityFilter]);
 
-  // -- Filters --
-  const filtered = useMemo(() => {
-    return optimisticArtworks.filter((artwork) => {
-      if (statusFilter !== 'all' && artwork.status !== statusFilter) return false;
-      if (visibilityFilter === 'visible' && artwork.is_hidden) return false;
-      if (visibilityFilter === 'hidden' && !artwork.is_hidden) return false;
-      if (!query) return true;
-      const q = query.toLowerCase().replace(/\s+/g, '');
-      const title = artwork.title.toLowerCase().replace(/\s+/g, '');
-      const artist = (artwork.artists?.name_ko || '').toLowerCase().replace(/\s+/g, '');
-      return title.includes(q) || artist.includes(q);
+  // URL 기반 필터 변경 함수
+  const updateFilters = (newParams: Record<string, string | undefined>) => {
+    const params = new URLSearchParams(searchParams.toString());
+    // 필터 변경 시 페이지를 1로 리셋
+    params.set('page', '1');
+    Object.entries(newParams).forEach(([key, value]) => {
+      if (value && value !== 'all') {
+        params.set(key, value);
+      } else {
+        params.delete(key);
+      }
     });
-  }, [optimisticArtworks, query, statusFilter, visibilityFilter]);
+    router.push(`/admin/artworks?${params.toString()}`);
+  };
 
+  // 서버에서 이미 필터링/페이지네이션됨 - 클라이언트에서는 정렬만 수행
   const sortedArtworks = useMemo(() => {
-    const sorted = [...filtered];
+    const sorted = [...optimisticArtworks];
     const statusRank: Record<ArtworkItem['status'], number> = {
       available: 0,
       reserved: 1,
@@ -151,11 +165,12 @@ export function AdminArtworkList({
     });
 
     return sorted;
-  }, [filtered, sortDirection, sortKey]);
+  }, [optimisticArtworks, sortDirection, sortKey]);
 
-  const filteredIds = new Set(filtered.map((a) => a.id));
-  const selectedInFiltered = [...selectedIds].filter((id) => filteredIds.has(id));
-  const allFilteredSelected = filtered.length > 0 && selectedInFiltered.length === filtered.length;
+  const artworkIds = new Set(optimisticArtworks.map((a) => a.id));
+  const selectedInFiltered = [...selectedIds].filter((id) => artworkIds.has(id));
+  const allFilteredSelected =
+    optimisticArtworks.length > 0 && selectedInFiltered.length === optimisticArtworks.length;
 
   const handleSort = (key: SortKey) => {
     if (sortKey === key) {
@@ -179,9 +194,9 @@ export function AdminArtworkList({
   // -- Handlers --
   const toggleSelectAll = () => {
     if (allFilteredSelected) {
-      setSelectedIds(new Set([...selectedIds].filter((id) => !filteredIds.has(id))));
+      setSelectedIds(new Set([...selectedIds].filter((id) => !artworkIds.has(id))));
     } else {
-      setSelectedIds(new Set([...selectedIds, ...filtered.map((a) => a.id)]));
+      setSelectedIds(new Set([...selectedIds, ...optimisticArtworks.map((a) => a.id)]));
     }
   };
 
@@ -344,7 +359,9 @@ export function AdminArtworkList({
                 수 있습니다.
               </AdminHelp>
             </h2>
-            <AdminBadge tone="info">{filtered.length}개</AdminBadge>
+            <AdminBadge tone="info">
+              {pagination?.totalItems || optimisticArtworks.length}개
+            </AdminBadge>
           </div>
 
           <div className="grid w-full gap-3 sm:w-auto sm:grid-cols-[minmax(260px,1fr)_auto] sm:items-end">
@@ -356,20 +373,26 @@ export function AdminArtworkList({
                 id="search-artworks"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="작품명, 작가명 검색..."
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    updateFilters({ q: query || undefined });
+                  }
+                }}
+                placeholder="작품명, 작가명 검색... (Enter)"
                 aria-describedby="search-artworks-description"
                 className="h-10 border-0 pl-10 pr-3"
               />
               <span id="search-artworks-description" className="sr-only">
-                작품명 또는 작가명으로 검색할 수 있습니다. 현재 {filtered.length}개가 표시됩니다.
+                작품명 또는 작가명으로 검색할 수 있습니다. 현재{' '}
+                {pagination?.totalItems || optimisticArtworks.length}개가 표시됩니다.
               </span>
             </div>
             <div className="grid grid-cols-2 gap-3 sm:flex sm:justify-end">
               <AdminSelect
                 value={statusFilter}
                 onChange={(e) => {
-                  setStatusFilter(normalizeStatusFilter(e.target.value));
-                  setSelectedIds(new Set());
+                  updateFilters({ status: e.target.value });
                 }}
                 wrapperClassName="min-w-[120px]"
               >
@@ -381,8 +404,7 @@ export function AdminArtworkList({
               <AdminSelect
                 value={visibilityFilter}
                 onChange={(e) => {
-                  setVisibilityFilter(normalizeVisibilityFilter(e.target.value));
-                  setSelectedIds(new Set());
+                  updateFilters({ visibility: e.target.value });
                 }}
                 wrapperClassName="min-w-[120px]"
               >
@@ -507,7 +529,7 @@ export function AdminArtworkList({
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filtered.length === 0 ? (
+              {optimisticArtworks.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-0">
                     <AdminEmptyState title="검색된 작품이 없습니다" />
@@ -646,6 +668,17 @@ export function AdminArtworkList({
           </table>
         </div>
       </AdminCard>
+
+      {/* Pagination */}
+      {pagination && pagination.totalPages > 1 && (
+        <Pagination
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          totalItems={pagination.totalItems}
+          baseUrl="/admin/artworks"
+          itemName="작품"
+        />
+      )}
 
       {lightboxData && (
         <ArtworkLightbox
