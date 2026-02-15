@@ -92,7 +92,6 @@ async function main() {
 
   // 2. 작가 목록 조회
   const { data: artists } = await supabase.from('artists').select('id, name_ko');
-  const artistMap = new Map(artists?.map((a) => [a.name_ko, a.id]) || []);
 
   // 3. 작품 목록 조회
   const { data: artworks } = await supabase.from('artworks').select('id, title, artist_id, price');
