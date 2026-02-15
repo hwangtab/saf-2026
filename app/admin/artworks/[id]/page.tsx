@@ -52,6 +52,7 @@ export default async function AdminArtworkDetailPage({ params }: Props) {
           editionType={artwork.edition_type || 'unique'}
           editionLimit={artwork.edition_limit}
           sales={sales}
+          artworkPrice={artwork.price}
         />
       </div>
     </div>

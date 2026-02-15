@@ -13,9 +13,23 @@ type SalesHistoryProps = {
   editionType: string;
   editionLimit: number | null;
   sales: ArtworkSale[];
+  artworkPrice: string | null;
 };
 
-export function SalesHistory({ artworkId, editionType, editionLimit, sales }: SalesHistoryProps) {
+// 가격 문자열을 숫자로 파싱
+function parsePriceString(priceStr: string | null): number {
+  if (!priceStr) return 0;
+  const numericStr = priceStr.replace(/[^0-9]/g, '');
+  return parseInt(numericStr, 10) || 0;
+}
+
+export function SalesHistory({
+  artworkId,
+  editionType,
+  editionLimit,
+  sales,
+  artworkPrice,
+}: SalesHistoryProps) {
   const router = useRouter();
   const toast = useToast();
   const [isRecording, setIsRecording] = useState(false);
@@ -28,7 +42,11 @@ export function SalesHistory({ artworkId, editionType, editionLimit, sales }: Sa
   const percent =
     editionType === 'limited' && editionLimit ? Math.min((totalSold / editionLimit) * 100, 100) : 0;
 
-  const [salePrice, setSalePrice] = useState('');
+  // 정가를 포맷된 문자열로 변환
+  const originalPrice = parsePriceString(artworkPrice);
+  const formattedOriginalPrice = originalPrice > 0 ? originalPrice.toLocaleString('ko-KR') : '';
+
+  const [salePrice, setSalePrice] = useState(formattedOriginalPrice);
   const [quantity, setQuantity] = useState(1);
   const [buyerName, setBuyerName] = useState('');
   const [note, setNote] = useState('');
@@ -89,7 +107,13 @@ export function SalesHistory({ artworkId, editionType, editionLimit, sales }: Sa
           <Button
             size="sm"
             variant="outline"
-            onClick={() => setIsFormOpen(!isFormOpen)}
+            onClick={() => {
+              if (!isFormOpen) {
+                // 폼 열 때 정가로 초기화
+                setSalePrice(formattedOriginalPrice);
+              }
+              setIsFormOpen(!isFormOpen);
+            }}
             disabled={isRecording}
           >
             {isFormOpen ? '취소' : '+ 판매 기록'}
@@ -135,15 +159,33 @@ export function SalesHistory({ artworkId, editionType, editionLimit, sales }: Sa
           <h3 className="mb-4 text-sm font-medium text-gray-900">새 판매 기록</h3>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="mb-1 block text-xs font-medium text-gray-500">
-                판매 금액 (KRW) <span className="text-red-500">*</span>
-              </label>
-              <input
-                value={salePrice}
-                onChange={handlePriceChange}
-                placeholder="1,000,000"
-                className="w-full rounded border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none"
-              />
+              <div className="mb-1 flex items-center justify-between">
+                <label className="block text-xs font-medium text-gray-500">
+                  판매 금액 (KRW) <span className="text-red-500">*</span>
+                </label>
+                {originalPrice > 0 && (
+                  <span className="text-xs text-gray-400">
+                    정가: ₩{originalPrice.toLocaleString()}
+                  </span>
+                )}
+              </div>
+              <div className="flex gap-2">
+                <input
+                  value={salePrice}
+                  onChange={handlePriceChange}
+                  placeholder="1,000,000"
+                  className="flex-1 rounded border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none"
+                />
+                {originalPrice > 0 && salePrice !== formattedOriginalPrice && (
+                  <button
+                    type="button"
+                    onClick={() => setSalePrice(formattedOriginalPrice)}
+                    className="whitespace-nowrap rounded border border-gray-300 bg-white px-2 py-1 text-xs text-gray-600 hover:bg-gray-50"
+                  >
+                    정가로
+                  </button>
+                )}
+              </div>
             </div>
             <div>
               <label className="mb-1 block text-xs font-medium text-gray-500">판매 일자</label>
