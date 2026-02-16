@@ -41,12 +41,17 @@ const parseArgs = () => {
     apply: false,
     limit: null,
     artworkId: null,
+    checkMissing: false,
   };
 
   for (let i = 0; i < args.length; i += 1) {
     const arg = args[i];
     if (arg === '--apply') {
       options.apply = true;
+      continue;
+    }
+    if (arg === '--check-missing') {
+      options.checkMissing = true;
       continue;
     }
     if (arg === '--limit') {
@@ -127,6 +132,24 @@ const buildVariantPath = (storagePath, variant) => {
 
 const isAlreadyVariantPath = (storagePath) => VARIANT_SUFFIX_REGEX.test(storagePath.split('/').pop() || '');
 
+const checkAllVariantsExist = async (storagePath) => {
+  const basePath = normalizeVariantBasePath(storagePath);
+  const missingVariants = [];
+
+  for (const spec of VARIANTS) {
+    const variantPath = `${basePath}__${spec.variant}.webp`;
+    const { data, error } = await supabase.storage
+      .from(ARTWORK_BUCKET)
+      .createSignedUrl(variantPath, 1); // 1 second - just checking existence
+
+    if (error || !data) {
+      missingVariants.push(spec.variant);
+    }
+  }
+
+  return { allExist: missingVariants.length === 0, missingVariants };
+};
+
 async function fetchArtworks({ limit, artworkId }) {
   if (artworkId) {
     const { data, error } = await supabase
@@ -187,8 +210,19 @@ async function generateVariantBuffers(sourceBuffer) {
 async function convertOneImage(storagePath, options) {
   const originalVariantPath = toCanonicalOriginalVariantPath(storagePath);
 
+  // If it already has a variant suffix
   if (isAlreadyVariantPath(storagePath)) {
-    return { canonicalPath: originalVariantPath, converted: false, skipped: true };
+    // Check if all variants exist when --check-missing is enabled
+    if (options.checkMissing) {
+      const { allExist, missingVariants } = await checkAllVariantsExist(storagePath);
+      if (allExist) {
+        return { canonicalPath: originalVariantPath, converted: false, skipped: true };
+      }
+      console.log(`  [!] Missing variants for ${storagePath}: ${missingVariants.join(', ')}`);
+      // Continue to regenerate all variants
+    } else {
+      return { canonicalPath: originalVariantPath, converted: false, skipped: true };
+    }
   }
 
   if (!options.apply) {
@@ -307,7 +341,7 @@ async function main() {
   }
 
   console.log('--- summary ---');
-  console.log(`mode=${options.apply ? 'apply' : 'dry-run'}`);
+  console.log(`mode=${options.apply ? 'apply' : 'dry-run'}${options.checkMissing ? ' (check-missing)' : ''}`);
   console.log(`artworks_total=${artworks.length}`);
   console.log(`artworks_updated=${updatedArtworks}`);
   console.log(`images_processed=${processedImages}`);
