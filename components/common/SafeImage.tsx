@@ -23,7 +23,11 @@ const VARIANT_WIDTHS: Record<string, number> = {
 };
 
 function isArtworkStorageUrl(url: string): boolean {
-  return url.includes(ARTWORK_STORAGE_MARKER) && ARTWORK_VARIANT_SUFFIX_REGEX.test(url);
+  return url.includes(ARTWORK_STORAGE_MARKER);
+}
+
+function hasVariantSuffix(url: string): boolean {
+  return ARTWORK_VARIANT_SUFFIX_REGEX.test(url);
 }
 
 function generateArtworkSrcSet(src: string): string {
@@ -43,17 +47,19 @@ function RemoteSafeImage({
   const { alt, onError, ...restProps } = props;
 
   const isArtwork = useMemo(() => isArtworkStorageUrl(src), [src]);
+  const hasVariants = useMemo(() => hasVariantSuffix(src), [src]);
   const srcSet = useMemo(
-    () => (isArtwork ? generateArtworkSrcSet(src) : undefined),
-    [src, isArtwork]
+    () => (isArtwork && hasVariants ? generateArtworkSrcSet(src) : undefined),
+    [src, isArtwork, hasVariants]
   );
 
   useEffect(() => {
     setCurrentSrc(src);
   }, [src]);
 
-  // For artwork images with pre-generated variants, use native img with srcSet
-  if (isArtwork && srcSet) {
+  // For artwork images, use native img to avoid hydration issues
+  // srcSet is only available for images with pre-generated variants
+  if (isArtwork) {
     // Extract only the props we need, ignore Next.js Image specific props
     const { fill, width, height, className, loading, priority, style } = restProps;
 
@@ -75,7 +81,7 @@ function RemoteSafeImage({
         <img
           src={currentSrc}
           srcSet={srcSet}
-          sizes={effectiveSizes}
+          sizes={srcSet ? effectiveSizes : undefined}
           alt={alt || ''}
           className={className}
           loading={priority ? 'eager' : (loading as 'lazy' | 'eager') || 'lazy'}
@@ -97,7 +103,7 @@ function RemoteSafeImage({
       <img
         src={currentSrc}
         srcSet={srcSet}
-        sizes={effectiveSizes}
+        sizes={srcSet ? effectiveSizes : undefined}
         alt={alt || ''}
         width={typeof width === 'number' ? width : undefined}
         height={typeof height === 'number' ? height : undefined}
