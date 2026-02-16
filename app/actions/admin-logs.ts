@@ -202,7 +202,9 @@ const ARTWORK_DELETION_ACTIONS = new Set([
   'artist_artwork_deleted',
   'batch_artwork_deleted',
 ]);
+const ARTWORK_CREATION_ACTIONS = new Set(['artwork_created', 'artist_artwork_created']);
 const ARTIST_DELETION_ACTIONS = new Set(['artist_deleted']);
+const ARTIST_CREATION_ACTIONS = new Set(['artist_created']);
 const TRASH_RETENTION_DAYS = 30;
 const TRASHABLE_DELETE_ACTIONS = new Set([
   'artwork_deleted',
@@ -970,12 +972,19 @@ export async function revertActivityLog(logId: string, reason: string) {
     }
   }
 
-  if (!log.before_snapshot) {
+  // For creation actions, we use after_snapshot to identify what to delete
+  const isCreationAction =
+    ARTWORK_CREATION_ACTIONS.has(log.action) ||
+    ARTIST_CREATION_ACTIONS.has(log.action) ||
+    log.action === 'artist_application_submitted';
+
+  if (!log.before_snapshot && !isCreationAction) {
     throw new Error('복구 스냅샷 정보가 없습니다.');
   }
 
   if (log.target_type === 'artwork') {
     const isDeletionLog = ARTWORK_DELETION_ACTIONS.has(log.action);
+    const isCreationLog = ARTWORK_CREATION_ACTIONS.has(log.action);
     const beforeList = asSnapshotList(log.before_snapshot);
     const afterList = asSnapshotList(log.after_snapshot);
 
@@ -1054,6 +1063,27 @@ export async function revertActivityLog(logId: string, reason: string) {
           throw new Error('복구 대상 작품을 생성하지 못했습니다.');
         }
       }
+    } else if (isCreationLog) {
+      // Revert creation by deleting the created artwork
+      const afterSnapshot = asSnapshotObject(log.after_snapshot);
+      const artworkId = afterSnapshot?.id || log.target_id;
+
+      if (typeof artworkId !== 'string') {
+        throw new Error('삭제할 작품 ID를 찾을 수 없습니다.');
+      }
+
+      const { data: existingArtwork } = await supabase
+        .from('artworks')
+        .select('id')
+        .eq('id', artworkId)
+        .maybeSingle();
+
+      if (!existingArtwork) {
+        throw new Error('삭제할 작품이 존재하지 않습니다. (이미 삭제됨)');
+      }
+
+      const { error: deleteError } = await supabase.from('artworks').delete().eq('id', artworkId);
+      if (deleteError) throw deleteError;
     } else if (beforeList && beforeList.length > 0) {
       const targetIds = beforeList
         .map((item) => (typeof item.id === 'string' ? item.id : null))
@@ -1163,8 +1193,42 @@ export async function revertActivityLog(logId: string, reason: string) {
     }
   } else if (log.target_type === 'artist') {
     const isDeletionLog = ARTIST_DELETION_ACTIONS.has(log.action);
+    const isCreationLog = ARTIST_CREATION_ACTIONS.has(log.action);
 
-    if (isDeletionLog) {
+    if (isCreationLog) {
+      // Revert creation by deleting the created artist
+      const afterSnapshot = asSnapshotObject(log.after_snapshot);
+      const artistId = afterSnapshot?.id || log.target_id;
+
+      if (typeof artistId !== 'string') {
+        throw new Error('삭제할 작가 ID를 찾을 수 없습니다.');
+      }
+
+      // Check if artist has any artworks
+      const { count: artworkCount } = await supabase
+        .from('artworks')
+        .select('id', { count: 'exact', head: true })
+        .eq('artist_id', artistId);
+
+      if (artworkCount && artworkCount > 0) {
+        throw new Error(
+          `작가에게 ${artworkCount}개의 작품이 등록되어 있어 삭제할 수 없습니다. 먼저 작품을 삭제해 주세요.`
+        );
+      }
+
+      const { data: existingArtist } = await supabase
+        .from('artists')
+        .select('id')
+        .eq('id', artistId)
+        .maybeSingle();
+
+      if (!existingArtist) {
+        throw new Error('삭제할 작가가 존재하지 않습니다. (이미 삭제됨)');
+      }
+
+      const { error: deleteError } = await supabase.from('artists').delete().eq('id', artistId);
+      if (deleteError) throw deleteError;
+    } else if (isDeletionLog) {
       const snapshot = asSnapshotObject(log.before_snapshot);
       if (!snapshot) {
         throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
@@ -1387,8 +1451,27 @@ export async function revertActivityLog(logId: string, reason: string) {
         .eq('id', log.target_id);
       if (revertError) throw revertError;
     }
+  } else if (log.target_type === 'artist_application') {
+    // Revert application submission by deleting the application
+    const { data: existingApplication } = await supabase
+      .from('artist_applications')
+      .select('user_id')
+      .eq('user_id', log.target_id)
+      .maybeSingle();
+
+    if (!existingApplication) {
+      throw new Error('삭제할 신청서가 존재하지 않습니다. (이미 삭제됨)');
+    }
+
+    const { error: deleteError } = await supabase
+      .from('artist_applications')
+      .delete()
+      .eq('user_id', log.target_id);
+    if (deleteError) throw deleteError;
   } else {
-    throw new Error('현재는 작품/작가/사용자/뉴스/FAQ/증언/비디오 로그만 복구할 수 있습니다.');
+    throw new Error(
+      '현재는 작품/작가/사용자/뉴스/FAQ/증언/비디오/신청서 로그만 복구할 수 있습니다.'
+    );
   }
 
   if (log.target_type === 'artwork') {
@@ -1432,6 +1515,10 @@ export async function revertActivityLog(logId: string, reason: string) {
   if (log.target_type === 'video') {
     revalidatePath('/our-proof');
     revalidatePath('/admin/content/videos');
+  }
+
+  if (log.target_type === 'artist_application') {
+    revalidatePath('/admin/users');
   }
 
   const now = new Date().toISOString();

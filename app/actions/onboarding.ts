@@ -44,9 +44,25 @@ export async function submitArtistApplication(
 
     if (error) throw error;
 
-    await logArtistAction('artist_application_submitted', 'artist_application', user.id, {
-      artist_name: artistName,
-    });
+    // Fetch the application for snapshot
+    const { data: application } = await supabase
+      .from('artist_applications')
+      .select('*')
+      .eq('user_id', user.id)
+      .single();
+
+    await logArtistAction(
+      'artist_application_submitted',
+      'artist_application',
+      user.id,
+      {
+        artist_name: artistName,
+      },
+      {
+        afterSnapshot: application,
+        reversible: true,
+      }
+    );
 
     shouldRedirect = true;
   } catch (error: any) {

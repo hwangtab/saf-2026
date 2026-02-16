@@ -337,7 +337,10 @@ export async function createAdminArtist(formData: FormData) {
 
   revalidatePath('/admin/artists');
 
-  await logAdminAction('artist_created', 'artist', data.id, { name: name_ko }, admin.id);
+  await logAdminAction('artist_created', 'artist', data.id, { name: name_ko }, admin.id, {
+    afterSnapshot: data,
+    reversible: true,
+  });
 
   return { success: true, id: data.id };
 }
@@ -372,10 +375,10 @@ export async function linkArtistToUser(artistId: string, userId: string) {
     throw new Error(`이 사용자는 이미 다른 작가('${existingArtist.name_ko}')와 연결되어 있습니다.`);
   }
 
-  // Get artist info for logging
-  const { data: artist } = await supabase
+  // Get full artist info for snapshot (before linking)
+  const { data: oldArtist } = await supabase
     .from('artists')
-    .select('name_ko, contact_phone, contact_email')
+    .select('*')
     .eq('id', artistId)
     .single();
 
@@ -406,10 +409,10 @@ export async function linkArtistToUser(artistId: string, userId: string) {
   const nextContactPhone = parsedContact.contactPhone;
   const artistContactPatch: { contact_email?: string; contact_phone?: string } = {};
 
-  if (!artist?.contact_email?.trim() && nextContactEmail) {
+  if (!oldArtist?.contact_email?.trim() && nextContactEmail) {
     artistContactPatch.contact_email = nextContactEmail;
   }
-  if (!artist?.contact_phone?.trim() && nextContactPhone) {
+  if (!oldArtist?.contact_phone?.trim() && nextContactPhone) {
     artistContactPatch.contact_phone = nextContactPhone;
   }
 
@@ -421,6 +424,13 @@ export async function linkArtistToUser(artistId: string, userId: string) {
     if (contactPatchError) throw contactPatchError;
   }
 
+  // Get artist state after all updates
+  const { data: newArtist } = await supabase
+    .from('artists')
+    .select('*')
+    .eq('id', artistId)
+    .single();
+
   revalidatePath('/admin/artists');
   revalidatePath(`/admin/artists/${artistId}`);
 
@@ -429,12 +439,17 @@ export async function linkArtistToUser(artistId: string, userId: string) {
     'artist',
     artistId,
     {
-      artist_name: artist?.name_ko,
+      artist_name: oldArtist?.name_ko,
       user_id: userId,
       phone_autofilled: Boolean(artistContactPatch.contact_phone),
       email_autofilled: Boolean(artistContactPatch.contact_email),
     },
-    admin.id
+    admin.id,
+    {
+      beforeSnapshot: oldArtist,
+      afterSnapshot: newArtist,
+      reversible: true,
+    }
   );
 
   return { success: true };
@@ -444,10 +459,10 @@ export async function unlinkArtistFromUser(artistId: string) {
   const admin = await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
 
-  // Get artist info for logging
-  const { data: artist } = await supabase
+  // Get full artist info for snapshot (before unlinking)
+  const { data: oldArtist } = await supabase
     .from('artists')
-    .select('name_ko, user_id')
+    .select('*')
     .eq('id', artistId)
     .single();
 
@@ -458,6 +473,13 @@ export async function unlinkArtistFromUser(artistId: string) {
 
   if (unlinkError) throw unlinkError;
 
+  // Get artist state after unlink
+  const { data: newArtist } = await supabase
+    .from('artists')
+    .select('*')
+    .eq('id', artistId)
+    .single();
+
   revalidatePath('/admin/artists');
   revalidatePath(`/admin/artists/${artistId}`);
 
@@ -466,10 +488,15 @@ export async function unlinkArtistFromUser(artistId: string) {
     'artist',
     artistId,
     {
-      artist_name: artist?.name_ko,
-      user_id: artist?.user_id,
+      artist_name: oldArtist?.name_ko,
+      user_id: oldArtist?.user_id,
     },
-    admin.id
+    admin.id,
+    {
+      beforeSnapshot: oldArtist,
+      afterSnapshot: newArtist,
+      reversible: true,
+    }
   );
 
   return { success: true };

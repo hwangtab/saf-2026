@@ -181,7 +181,7 @@ export async function createArtwork(
       {
         summary: `작품 등록: ${insertedArtwork.title}`,
         afterSnapshot: insertedArtwork,
-        reversible: false,
+        reversible: true,
       }
     );
 

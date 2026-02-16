@@ -225,7 +225,10 @@ export async function createAdminArtwork(formData: FormData) {
     revalidatePath(`/artworks/artist/${encodeURIComponent(artist.name_ko)}`);
   }
 
-  await logAdminAction('artwork_created', 'artwork', artwork.id, { title }, admin.id);
+  await logAdminAction('artwork_created', 'artwork', artwork.id, { title }, admin.id, {
+    afterSnapshot: artwork,
+    reversible: true,
+  });
 
   return { success: true, id: artwork.id };
 }

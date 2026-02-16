@@ -388,12 +388,30 @@ export async function promoteUserToArtistWithLink({
     );
 
     if (linkedArtistId) {
-      await logAdminAction('artist_linked_to_user', 'artist', linkedArtistId, {
-        artist_name: linkedArtistName || linkedArtistId,
-        user_id: userId,
-        phone_autofilled: phoneAutofilled,
-        email_autofilled: emailAutofilled,
-      });
+      // Fetch current artist state for snapshot
+      const { data: linkedArtistSnapshot } = await supabase
+        .from('artists')
+        .select('*')
+        .eq('id', linkedArtistId)
+        .single();
+
+      await logAdminAction(
+        'artist_linked_to_user',
+        'artist',
+        linkedArtistId,
+        {
+          artist_name: linkedArtistName || linkedArtistId,
+          user_id: userId,
+          phone_autofilled: phoneAutofilled,
+          email_autofilled: emailAutofilled,
+        },
+        adminUser.id,
+        {
+          beforeSnapshot: linkedArtistSnapshot ? { ...linkedArtistSnapshot, user_id: null } : null,
+          afterSnapshot: linkedArtistSnapshot,
+          reversible: true,
+        }
+      );
     }
 
     if (mode === 'link_existing' && linkedArtistName) {
