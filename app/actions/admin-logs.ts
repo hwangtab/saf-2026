@@ -170,6 +170,33 @@ const ARTIST_RESTORE_KEYS = [
 
 const USER_REVERT_KEYS = ['role', 'status'] as const;
 
+const NEWS_REVERT_KEYS = ['title', 'source', 'date', 'link', 'thumbnail', 'description'] as const;
+const FAQ_REVERT_KEYS = ['question', 'answer', 'display_order'] as const;
+const TESTIMONIAL_REVERT_KEYS = [
+  'category',
+  'quote',
+  'author',
+  'context',
+  'display_order',
+] as const;
+const VIDEO_REVERT_KEYS = [
+  'title',
+  'description',
+  'youtube_id',
+  'thumbnail',
+  'transcript',
+] as const;
+
+const NEWS_RESTORE_KEYS = ['id', ...NEWS_REVERT_KEYS] as const;
+const FAQ_RESTORE_KEYS = ['id', ...FAQ_REVERT_KEYS] as const;
+const TESTIMONIAL_RESTORE_KEYS = ['id', ...TESTIMONIAL_REVERT_KEYS] as const;
+const VIDEO_RESTORE_KEYS = ['id', ...VIDEO_REVERT_KEYS] as const;
+
+const NEWS_DELETION_ACTIONS = new Set(['news_deleted']);
+const FAQ_DELETION_ACTIONS = new Set(['faq_deleted']);
+const TESTIMONIAL_DELETION_ACTIONS = new Set(['testimonial_deleted']);
+const VIDEO_DELETION_ACTIONS = new Set(['video_deleted']);
+
 const ARTWORK_DELETION_ACTIONS = new Set([
   'artwork_deleted',
   'artist_artwork_deleted',
@@ -1224,8 +1251,144 @@ export async function revertActivityLog(logId: string, reason: string) {
     if (!updatedRows || updatedRows.length !== 1) {
       throw new Error('복구 대상 사용자를 찾을 수 없어 복구를 중단합니다.');
     }
+  } else if (log.target_type === 'news') {
+    const isDeletionLog = NEWS_DELETION_ACTIONS.has(log.action);
+
+    if (isDeletionLog) {
+      const snapshot = asSnapshotObject(log.before_snapshot);
+      if (!snapshot) {
+        throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
+      }
+      const payload = buildInsertPayload(snapshot, NEWS_RESTORE_KEYS);
+      payload.id = typeof payload.id === 'string' ? payload.id : log.target_id;
+
+      const { data: existing } = await supabase
+        .from('news')
+        .select('id')
+        .eq('id', payload.id)
+        .maybeSingle();
+      if (existing) {
+        throw new Error('이미 동일한 뉴스가 존재하여 복구를 중단합니다.');
+      }
+
+      const { error: restoreError } = await supabase.from('news').insert(payload);
+      if (restoreError) throw restoreError;
+    } else {
+      const snapshot = asSnapshotObject(log.before_snapshot);
+      if (!snapshot) {
+        throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
+      }
+      const patch = buildPatch(snapshot, NEWS_REVERT_KEYS);
+      const { error: revertError } = await supabase
+        .from('news')
+        .update(patch)
+        .eq('id', log.target_id);
+      if (revertError) throw revertError;
+    }
+  } else if (log.target_type === 'faq') {
+    const isDeletionLog = FAQ_DELETION_ACTIONS.has(log.action);
+
+    if (isDeletionLog) {
+      const snapshot = asSnapshotObject(log.before_snapshot);
+      if (!snapshot) {
+        throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
+      }
+      const payload = buildInsertPayload(snapshot, FAQ_RESTORE_KEYS);
+      payload.id = typeof payload.id === 'string' ? payload.id : log.target_id;
+
+      const { data: existing } = await supabase
+        .from('faq')
+        .select('id')
+        .eq('id', payload.id)
+        .maybeSingle();
+      if (existing) {
+        throw new Error('이미 동일한 FAQ가 존재하여 복구를 중단합니다.');
+      }
+
+      const { error: restoreError } = await supabase.from('faq').insert(payload);
+      if (restoreError) throw restoreError;
+    } else {
+      const snapshot = asSnapshotObject(log.before_snapshot);
+      if (!snapshot) {
+        throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
+      }
+      const patch = buildPatch(snapshot, FAQ_REVERT_KEYS);
+      const { error: revertError } = await supabase
+        .from('faq')
+        .update(patch)
+        .eq('id', log.target_id);
+      if (revertError) throw revertError;
+    }
+  } else if (log.target_type === 'testimonial') {
+    const isDeletionLog = TESTIMONIAL_DELETION_ACTIONS.has(log.action);
+
+    if (isDeletionLog) {
+      const snapshot = asSnapshotObject(log.before_snapshot);
+      if (!snapshot) {
+        throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
+      }
+      const payload = buildInsertPayload(snapshot, TESTIMONIAL_RESTORE_KEYS);
+      payload.id = typeof payload.id === 'string' ? payload.id : log.target_id;
+
+      const { data: existing } = await supabase
+        .from('testimonials')
+        .select('id')
+        .eq('id', payload.id)
+        .maybeSingle();
+      if (existing) {
+        throw new Error('이미 동일한 증언이 존재하여 복구를 중단합니다.');
+      }
+
+      const { error: restoreError } = await supabase.from('testimonials').insert(payload);
+      if (restoreError) throw restoreError;
+    } else {
+      const snapshot = asSnapshotObject(log.before_snapshot);
+      if (!snapshot) {
+        throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
+      }
+      const patch = buildPatch(snapshot, TESTIMONIAL_REVERT_KEYS);
+      const { error: revertError } = await supabase
+        .from('testimonials')
+        .update(patch)
+        .eq('id', log.target_id);
+      if (revertError) throw revertError;
+    }
+  } else if (log.target_type === 'video') {
+    const isDeletionLog = VIDEO_DELETION_ACTIONS.has(log.action);
+
+    if (isDeletionLog) {
+      const snapshot = asSnapshotObject(log.before_snapshot);
+      if (!snapshot) {
+        throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
+      }
+      const payload = buildInsertPayload(snapshot, VIDEO_RESTORE_KEYS);
+      payload.id = typeof payload.id === 'string' ? payload.id : log.target_id;
+
+      const { data: existing } = await supabase
+        .from('videos')
+        .select('id')
+        .eq('id', payload.id)
+        .maybeSingle();
+      if (existing) {
+        throw new Error('이미 동일한 비디오가 존재하여 복구를 중단합니다.');
+      }
+
+      const { error: restoreError } = await supabase.from('videos').insert(payload);
+      if (restoreError) throw restoreError;
+    } else {
+      const snapshot = asSnapshotObject(log.before_snapshot);
+      if (!snapshot) {
+        throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
+      }
+      const patch = buildPatch(snapshot, VIDEO_REVERT_KEYS);
+      const { error: revertError } = await supabase
+        .from('videos')
+        .update(patch)
+        .eq('id', log.target_id);
+      if (revertError) throw revertError;
+    }
   } else {
-    throw new Error('현재는 작품/작가/사용자 로그만 복구할 수 있습니다.');
+    throw new Error('현재는 작품/작가/사용자/뉴스/FAQ/증언/비디오 로그만 복구할 수 있습니다.');
   }
 
   if (log.target_type === 'artwork') {
@@ -1248,6 +1411,27 @@ export async function revertActivityLog(logId: string, reason: string) {
 
   if (log.target_type === 'user') {
     revalidatePath('/admin/users');
+  }
+
+  if (log.target_type === 'news') {
+    revalidatePath('/news');
+    revalidatePath('/admin/content/news');
+    revalidatePath('/sitemap.xml');
+  }
+
+  if (log.target_type === 'faq') {
+    revalidatePath('/');
+    revalidatePath('/admin/content/faq');
+  }
+
+  if (log.target_type === 'testimonial') {
+    revalidatePath('/our-reality');
+    revalidatePath('/admin/content/testimonials');
+  }
+
+  if (log.target_type === 'video') {
+    revalidatePath('/our-proof');
+    revalidatePath('/admin/content/videos');
   }
 
   const now = new Date().toISOString();

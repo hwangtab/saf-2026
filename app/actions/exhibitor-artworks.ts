@@ -100,10 +100,18 @@ export async function createExhibitorArtwork(formData: FormData) {
 
   if (error) throw error;
 
-  await logExhibitorAction('artwork_created', 'artwork', artwork.id, {
-    title,
-    artist: artist.name_ko,
-  });
+  await logExhibitorAction(
+    'artwork_created',
+    'artwork',
+    artwork.id,
+    {
+      title,
+      artist: artist.name_ko,
+    },
+    {
+      afterSnapshot: artwork,
+    }
+  );
 
   revalidatePath('/exhibitor/artworks');
   if (artist.name_ko) {
@@ -130,26 +138,27 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
   const shop_url = getString(formData, 'shop_url');
   const artist_id = getString(formData, 'artist_id');
 
-  const { data: existingArtwork, error: fetchError } = await supabase
+  // Fetch full existing artwork for snapshot
+  const { data: oldArtwork, error: fetchError } = await supabase
     .from('artworks')
-    .select('id, artist_id, artists!inner(owner_id)')
+    .select('*, artists!inner(owner_id)')
     .eq('id', id)
     .eq('artists.owner_id', user.id)
     .single();
 
-  if (fetchError || !existingArtwork) {
+  if (fetchError || !oldArtwork) {
     throw new Error('작품을 수정할 권한이 없습니다.');
   }
 
-  if (artist_id && artist_id !== existingArtwork.artist_id) {
-    const { data: newArtist } = await supabase
+  if (artist_id && artist_id !== oldArtwork.artist_id) {
+    const { data: newArtistCheck } = await supabase
       .from('artists')
       .select('id')
       .eq('id', artist_id)
       .eq('owner_id', user.id)
       .single();
 
-    if (!newArtist) {
+    if (!newArtistCheck) {
       throw new Error('선택한 작가에 대한 권한이 없습니다.');
     }
   }
@@ -158,7 +167,7 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
     throw new Error('한정판은 에디션 수량을 입력해주세요.');
   }
 
-  const { error } = await supabase
+  const { data: newArtwork, error } = await supabase
     .from('artworks')
     .update({
       title,
@@ -171,14 +180,26 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
       edition_limit,
       price,
       shop_url,
-      artist_id: artist_id || existingArtwork.artist_id,
+      artist_id: artist_id || oldArtwork.artist_id,
       updated_at: new Date().toISOString(),
     })
-    .eq('id', id);
+    .eq('id', id)
+    .select()
+    .single();
 
   if (error) throw error;
 
-  await logExhibitorAction('artwork_updated', 'artwork', id, { title });
+  await logExhibitorAction(
+    'artwork_updated',
+    'artwork',
+    id,
+    { title },
+    {
+      beforeSnapshot: oldArtwork,
+      afterSnapshot: newArtwork,
+      reversible: true,
+    }
+  );
 
   revalidatePath('/exhibitor/artworks');
   revalidatePath(`/exhibitor/artworks/${id}`);
@@ -191,31 +212,44 @@ export async function updateExhibitorArtworkImages(id: string, images: string[])
   const user = await requireExhibitor();
   const supabase = await createSupabaseAdminOrServerClient();
 
-  const { data: existingArtwork, error: fetchError } = await supabase
+  // Fetch full existing artwork for snapshot
+  const { data: oldArtwork, error: fetchError } = await supabase
     .from('artworks')
-    .select('id, title, artists!inner(owner_id)')
+    .select('*, artists!inner(owner_id)')
     .eq('id', id)
     .eq('artists.owner_id', user.id)
     .single();
 
-  if (fetchError || !existingArtwork) {
+  if (fetchError || !oldArtwork) {
     throw new Error('작품을 수정할 권한이 없습니다.');
   }
 
-  const { error } = await supabase
+  const { data: newArtwork, error } = await supabase
     .from('artworks')
     .update({
       images,
       updated_at: new Date().toISOString(),
     })
-    .eq('id', id);
+    .eq('id', id)
+    .select()
+    .single();
 
   if (error) throw error;
 
-  await logExhibitorAction('artwork_images_updated', 'artwork', id, {
-    title: existingArtwork.title,
-    imageCount: images.length,
-  });
+  await logExhibitorAction(
+    'artwork_images_updated',
+    'artwork',
+    id,
+    {
+      title: oldArtwork.title,
+      imageCount: images.length,
+    },
+    {
+      beforeSnapshot: oldArtwork,
+      afterSnapshot: newArtwork,
+      reversible: true,
+    }
+  );
 
   revalidatePath('/exhibitor/artworks');
   revalidatePath(`/exhibitor/artworks/${id}`);
@@ -228,9 +262,10 @@ export async function deleteExhibitorArtwork(id: string) {
   const user = await requireExhibitor();
   const supabase = await createSupabaseAdminOrServerClient();
 
+  // Fetch full artwork for snapshot
   const { data: artwork, error: fetchError } = await supabase
     .from('artworks')
-    .select('title, images, artist_id, artists!inner(owner_id, name_ko)')
+    .select('*, artists!inner(owner_id, name_ko)')
     .eq('id', id)
     .eq('artists.owner_id', user.id)
     .single();
@@ -242,10 +277,20 @@ export async function deleteExhibitorArtwork(id: string) {
   const { error } = await supabase.from('artworks').delete().eq('id', id);
   if (error) throw error;
 
-  await logExhibitorAction('artwork_deleted', 'artwork', id, {
-    title: artwork.title,
-    artist: (artwork.artists as any)?.name_ko,
-  });
+  await logExhibitorAction(
+    'artwork_deleted',
+    'artwork',
+    id,
+    {
+      title: artwork.title,
+      artist: (artwork.artists as any)?.name_ko,
+    },
+    {
+      beforeSnapshot: artwork,
+      afterSnapshot: null,
+      reversible: true,
+    }
+  );
 
   const paths = getStoragePathsForRemoval(artwork.images || [], 'artworks');
   if (paths.length > 0) {

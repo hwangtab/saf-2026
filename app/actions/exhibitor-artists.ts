@@ -70,7 +70,15 @@ export async function createExhibitorArtist(formData: FormData) {
 
   if (error) throw error;
 
-  await logExhibitorAction('artist_created', 'artist', data.id, { name: name_ko });
+  await logExhibitorAction(
+    'artist_created',
+    'artist',
+    data.id,
+    { name: name_ko },
+    {
+      afterSnapshot: data,
+    }
+  );
 
   revalidatePath('/exhibitor/artists');
 
@@ -81,15 +89,15 @@ export async function updateExhibitorArtist(id: string, formData: FormData) {
   const user = await requireExhibitor();
   const supabase = await createSupabaseAdminOrServerClient();
 
-  // Verify ownership
-  const { data: existingArtist, error: fetchError } = await supabase
+  // Fetch existing artist for snapshot
+  const { data: oldArtist, error: fetchError } = await supabase
     .from('artists')
-    .select('id')
+    .select('*')
     .eq('id', id)
     .eq('owner_id', user.id)
     .single();
 
-  if (fetchError || !existingArtist) {
+  if (fetchError || !oldArtist) {
     throw new Error('You do not have permission to update this artist.');
   }
 
@@ -102,7 +110,7 @@ export async function updateExhibitorArtist(id: string, formData: FormData) {
   const instagram = getString(formData, 'instagram');
   const homepage = getString(formData, 'homepage');
 
-  const { error } = await supabase
+  const { data: newArtist, error } = await supabase
     .from('artists')
     .update({
       name_ko,
@@ -116,11 +124,23 @@ export async function updateExhibitorArtist(id: string, formData: FormData) {
       updated_at: new Date().toISOString(),
     })
     .eq('id', id)
-    .eq('owner_id', user.id);
+    .eq('owner_id', user.id)
+    .select()
+    .single();
 
   if (error) throw error;
 
-  await logExhibitorAction('artist_updated', 'artist', id, { name: name_ko });
+  await logExhibitorAction(
+    'artist_updated',
+    'artist',
+    id,
+    { name: name_ko },
+    {
+      beforeSnapshot: oldArtist,
+      afterSnapshot: newArtist,
+      reversible: true,
+    }
+  );
 
   revalidatePath('/exhibitor/artists');
   revalidatePath(`/exhibitor/artists/${id}`);
@@ -135,32 +155,44 @@ export async function updateExhibitorArtistProfileImage(id: string, profileImage
   const user = await requireExhibitor();
   const supabase = await createSupabaseAdminOrServerClient();
 
-  // Verify ownership
-  const { data: existingArtist, error: fetchError } = await supabase
+  // Fetch existing artist for snapshot
+  const { data: oldArtist, error: fetchError } = await supabase
     .from('artists')
-    .select('id, name_ko')
+    .select('*')
     .eq('id', id)
     .eq('owner_id', user.id)
     .single();
 
-  if (fetchError || !existingArtist) {
+  if (fetchError || !oldArtist) {
     throw new Error('You do not have permission to update this artist.');
   }
 
-  const { error } = await supabase
+  const { data: newArtist, error } = await supabase
     .from('artists')
     .update({
       profile_image: profileImage,
       updated_at: new Date().toISOString(),
     })
     .eq('id', id)
-    .eq('owner_id', user.id);
+    .eq('owner_id', user.id)
+    .select()
+    .single();
 
   if (error) throw error;
 
-  await logExhibitorAction('artist_profile_image_updated', 'artist', id, {
-    name: existingArtist.name_ko,
-  });
+  await logExhibitorAction(
+    'artist_profile_image_updated',
+    'artist',
+    id,
+    {
+      name: oldArtist.name_ko,
+    },
+    {
+      beforeSnapshot: oldArtist,
+      afterSnapshot: newArtist,
+      reversible: true,
+    }
+  );
 
   revalidatePath('/exhibitor/artists');
   revalidatePath(`/exhibitor/artists/${id}`);
@@ -172,9 +204,10 @@ export async function deleteExhibitorArtist(id: string) {
   const user = await requireExhibitor();
   const supabase = await createSupabaseAdminOrServerClient();
 
+  // Fetch full artist data for snapshot
   const { data: artist, error: fetchError } = await supabase
     .from('artists')
-    .select('id, profile_image, name_ko')
+    .select('*')
     .eq('id', id)
     .eq('owner_id', user.id)
     .single();
@@ -196,7 +229,17 @@ export async function deleteExhibitorArtist(id: string) {
 
   if (error) throw error;
 
-  await logExhibitorAction('artist_deleted', 'artist', id, { name: artist.name_ko });
+  await logExhibitorAction(
+    'artist_deleted',
+    'artist',
+    id,
+    { name: artist.name_ko },
+    {
+      beforeSnapshot: artist,
+      afterSnapshot: null,
+      reversible: true,
+    }
+  );
 
   if (artist.profile_image) {
     const path = getStoragePathFromPublicUrl(artist.profile_image, 'profiles');
