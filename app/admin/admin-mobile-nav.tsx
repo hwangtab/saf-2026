@@ -53,7 +53,7 @@ export function AdminMobileNav() {
       {/* Hamburger Button */}
       <button
         type="button"
-        className="inline-flex items-center justify-center rounded-md p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700 sm:hidden"
+        className="inline-flex items-center justify-center rounded-md p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700"
         onClick={() => setIsOpen(true)}
         aria-label="메뉴 열기"
         aria-expanded={isOpen}
@@ -76,7 +76,7 @@ export function AdminMobileNav() {
           <>
             {/* Overlay */}
             <div
-              className="fixed inset-0 z-40 bg-slate-950/35 backdrop-blur-[1px] sm:hidden"
+              className="fixed inset-0 z-40 bg-slate-950/35 backdrop-blur-[1px] xl:hidden"
               onClick={() => setIsOpen(false)}
               aria-hidden="true"
             />
@@ -84,7 +84,7 @@ export function AdminMobileNav() {
             {/* Slide-out Drawer */}
             <nav
               id="mobile-nav-drawer"
-              className="fixed top-0 left-0 h-full w-64 bg-white z-50 transform transition-transform duration-300 ease-in-out sm:hidden translate-x-0"
+              className="fixed top-0 left-0 h-full w-64 bg-white z-50 transform transition-transform duration-300 ease-in-out xl:hidden translate-x-0"
               role="dialog"
               aria-modal="true"
               aria-label="관리자 메뉴"
