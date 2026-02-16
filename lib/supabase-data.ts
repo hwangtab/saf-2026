@@ -35,39 +35,27 @@ export const getSupabaseArtworks = cache(async (): Promise<Artwork[]> => {
     return fallbackArtworks;
   }
 
-  // Fetch artworks first
-  const { data: artworksData, error: artworksError } = await supabase
+  // Fetch artworks with artist data in a single query
+  const { data, error } = await supabase
     .from('artworks')
-    .select(ARTWORK_SELECT_COLUMNS)
-    .eq('is_hidden', false);
+    .select(
+      `
+      ${ARTWORK_SELECT_COLUMNS},
+      artists (${ARTIST_SELECT_COLUMNS})
+    `
+    )
+    .eq('is_hidden', false)
+    .order('created_at', { ascending: false });
 
-  if (artworksError) {
-    if (isMissingTableError(artworksError)) {
+  if (error) {
+    if (isMissingTableError(error)) {
       return fallbackArtworks;
     }
-    console.error('Error fetching artworks from Supabase:', artworksError);
+    console.error('Error fetching artworks from Supabase:', error);
     return [];
   }
 
-  // Fetch all artists to join in JS
-  const { data: artistsData, error: artistsError } = await supabase
-    .from('artists')
-    .select(ARTIST_SELECT_COLUMNS);
-
-  if (artistsError) {
-    if (isMissingTableError(artistsError)) {
-      return fallbackArtworks;
-    }
-    console.error('Error fetching artists from Supabase:', artistsError);
-    // Keep artwork cards visible even if artist join fails.
-    return (artworksData || []).map((item: any) => mapArtworkRow(item));
-  }
-
-  const artistMap = new Map((artistsData || []).map((a: any) => [a.id, a]));
-
-  return (artworksData || []).map((item: any) =>
-    mapArtworkRow(item, artistMap.get(item.artist_id))
-  );
+  return (data || []).map((item: any) => mapArtworkRow(item, item.artists));
 });
 
 export const getSupabaseArtworkById = cache(async (id: string): Promise<Artwork | null> => {
@@ -75,34 +63,28 @@ export const getSupabaseArtworkById = cache(async (id: string): Promise<Artwork 
     return getArtworkById(id) || null;
   }
 
-  const { data: artwork, error: artworkError } = await supabase
+  const { data: artwork, error } = await supabase
     .from('artworks')
-    .select(ARTWORK_SELECT_COLUMNS)
+    .select(
+      `
+      ${ARTWORK_SELECT_COLUMNS},
+      artists (${ARTIST_SELECT_COLUMNS})
+    `
+    )
     .eq('id', id)
-    .single();
+    .maybeSingle();
 
-  if (artworkError) {
-    if (isMissingTableError(artworkError)) {
+  if (error) {
+    if (isMissingTableError(error)) {
       return getArtworkById(id) || null;
     }
-    console.error(`Error fetching artwork ${id} from Supabase:`, artworkError);
+    console.error(`Error fetching artwork ${id} from Supabase:`, error);
     return null;
   }
 
-  const { data: artist, error: artistError } = await supabase
-    .from('artists')
-    .select(ARTIST_SELECT_COLUMNS)
-    .eq('id', artwork.artist_id)
-    .single();
+  if (!artwork) return null;
 
-  if (artistError) {
-    if (isMissingTableError(artistError)) {
-      return getArtworkById(id) || null;
-    }
-    console.error(`Error fetching artist for artwork ${id}:`, artistError);
-  }
-
-  return mapArtworkRow(artwork, artist);
+  return mapArtworkRow(artwork, artwork.artists);
 });
 
 export const getSupabaseArtworksByArtist = cache(async (artistName: string): Promise<Artwork[]> => {
@@ -110,40 +92,35 @@ export const getSupabaseArtworksByArtist = cache(async (artistName: string): Pro
     return fallbackArtworks.filter((a) => a.artist === artistName);
   }
 
-  const { data: artist, error: artistError } = await supabase
-    .from('artists')
-    .select(ARTIST_SELECT_COLUMNS)
-    .eq('name_ko', artistName)
-    .limit(1)
-    .maybeSingle();
+  // First, find the artist to get their ID (optimized to select only needed fields)
+  // distinct join is not directly supported in this way for filtering by parent field without inner join
+  // But we can use !inner to filter artworks by artist name directly if we wanted,
+  // but keeping it simple: Find artist -> Find artworks
 
-  if (artistError) {
-    if (isMissingTableError(artistError)) {
-      return fallbackArtworks.filter((a) => a.artist === artistName);
-    }
-    console.error(`Error fetching artist ${artistName} from Supabase:`, artistError);
-    return [];
-  }
+  // Actually, we can do it in one query if we query artworks and filter by artists.name_ko
+  // But usage of !inner on foreign table is required.
 
-  if (!artist) {
-    return [];
-  }
-
-  const { data: artworksData, error: artworksError } = await supabase
+  const { data, error } = await supabase
     .from('artworks')
-    .select(ARTWORK_SELECT_COLUMNS)
-    .eq('artist_id', artist.id)
-    .eq('is_hidden', false);
+    .select(
+      `
+      ${ARTWORK_SELECT_COLUMNS},
+      artists!inner (${ARTIST_SELECT_COLUMNS})
+    `
+    )
+    .eq('artists.name_ko', artistName)
+    .eq('is_hidden', false)
+    .order('created_at', { ascending: false });
 
-  if (artworksError) {
-    if (isMissingTableError(artworksError)) {
+  if (error) {
+    if (isMissingTableError(error)) {
       return fallbackArtworks.filter((a) => a.artist === artistName);
     }
-    console.error(`Error fetching artworks for artist ${artistName}:`, artworksError);
+    console.error(`Error fetching artworks for artist ${artistName}:`, error);
     return [];
   }
 
-  return (artworksData || []).map((item: any) => mapArtworkRow(item, artist));
+  return (data || []).map((item: any) => mapArtworkRow(item, item.artists));
 });
 
 export const getSupabaseTestimonials = cache(

@@ -5,9 +5,11 @@ import Button from '@/components/ui/Button';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
 import { UI_STRINGS } from '@/lib/ui-strings';
 
+import { UserRole, UserStatus } from '@/types/database.types';
+
 type Profile = {
-  role: 'admin' | 'artist' | 'user' | 'exhibitor';
-  status: 'pending' | 'active' | 'suspended';
+  role: UserRole;
+  status: UserStatus;
 };
 
 type AuthButtonsProps = {
@@ -33,14 +35,12 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
     if (!value || typeof value !== 'object') return false;
     const candidate = value as Record<string, unknown>;
 
+    const validRoles: UserRole[] = ['admin', 'artist', 'user', 'exhibitor'];
+    const validStatuses: UserStatus[] = ['pending', 'active', 'suspended'];
+
     return (
-      (candidate.role === 'admin' ||
-        candidate.role === 'artist' ||
-        candidate.role === 'user' ||
-        candidate.role === 'exhibitor') &&
-      (candidate.status === 'pending' ||
-        candidate.status === 'active' ||
-        candidate.status === 'suspended')
+      validRoles.includes(candidate.role as UserRole) &&
+      validStatuses.includes(candidate.status as UserStatus)
     );
   };
 

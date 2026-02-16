@@ -10,74 +10,27 @@ import {
   updateUserRole,
 } from '@/app/actions/admin';
 import Modal from '@/components/ui/Modal';
-import Button from '@/components/ui/Button';
+import Button from '@/components/ui/Button'; // Import Button for ArtistPromoteModal
 import { Pagination } from '@/components/ui/Pagination';
-import {
-  AdminBadge,
-  AdminCard,
-  AdminCardHeader,
-  AdminEmptyState,
-  AdminInput,
-  AdminSelect,
-  AdminHelp,
-} from '@/app/admin/_components/admin-ui';
+import { AdminCard, AdminInput } from '@/app/admin/_components/admin-ui'; // Import AdminInput for ArtistPromoteModal
 import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import { useDebounce } from '@/lib/hooks/useDebounce';
 import { useToast } from '@/lib/hooks/useToast';
-
-type Profile = {
-  id: string;
-  email: string;
-  name: string;
-  avatar_url: string | null;
-  role: 'admin' | 'artist' | 'user' | 'exhibitor';
-  status: 'pending' | 'active' | 'suspended';
-  created_at: string;
-  application?: {
-    artist_name: string;
-    contact: string;
-    bio: string;
-    referrer: string | null;
-    updated_at: string;
-  } | null;
-  exhibitorApplication?: {
-    representative_name: string;
-    contact: string;
-    bio: string;
-    referrer: string | null;
-    updated_at: string;
-  } | null;
-};
-
-type UnlinkedArtistOption = {
-  id: string;
-  name_ko: string | null;
-  name_en: string | null;
-  contact_phone: string | null;
-  contact_email: string | null;
-  updated_at: string | null;
-  artwork_count: number;
-};
+import {
+  Profile,
+  UnlinkedArtistOption,
+  UserSortKey,
+  SortDirection,
+  InitialFilters,
+  PaginationInfo,
+} from '@/types/admin';
+import { UserFilters } from './_components/UserFilters';
+import { UserTable } from './_components/UserTable';
 
 type ArtistPromoteContext = {
   user: Profile;
   selectedArtistId: string | null;
   mode: 'link_existing' | 'create_and_link' | 'role_only';
-};
-
-type UserSortKey = 'user' | 'status_role' | 'application';
-type SortDirection = 'asc' | 'desc';
-
-type InitialFilters = {
-  role?: string;
-  status?: string;
-  q?: string;
-};
-
-type PaginationInfo = {
-  currentPage: number;
-  totalPages: number;
-  totalItems: number;
 };
 
 export function UserList({
@@ -281,61 +234,6 @@ export function UserList({
     setSortDirection('asc');
   };
 
-  const getSortArrow = (key: UserSortKey) => {
-    if (sortKey !== key) return '↕';
-    return sortDirection === 'asc' ? '↑' : '↓';
-  };
-
-  const getSortAriaLabel = (label: string, key: UserSortKey) => {
-    if (sortKey !== key) return `${label} 오름차순 정렬`;
-    return sortDirection === 'asc' ? `${label} 내림차순 정렬` : `${label} 오름차순 정렬`;
-  };
-
-  const handleReject = async () => {
-    if (!rejectConfirmId) return;
-    const id = rejectConfirmId;
-    setProcessingId(id);
-    const res = await rejectUser(id);
-    setProcessingId(null);
-    if (res.error) {
-      toast.error(res.message);
-    } else {
-      setLocalUsers((prev) =>
-        prev.map((user) => (user.id === id ? { ...user, status: 'suspended' } : user))
-      );
-      setRejectConfirmId(null);
-      toast.success('신청을 거절하고 계정을 정지했습니다.');
-    }
-  };
-
-  const handleRoleChange = async () => {
-    if (!roleChangeConfirm) return;
-    const { id, role: newRole } = roleChangeConfirm;
-    setProcessingId(id);
-    const res = await updateUserRole(id, newRole as Profile['role']);
-    setProcessingId(null);
-    if (res.error) {
-      toast.error(res.message);
-    } else {
-      setLocalUsers((prev) =>
-        prev.map((user) =>
-          user.id === id
-            ? {
-                ...user,
-                role: newRole as Profile['role'],
-                status:
-                  newRole === 'admin' || newRole === 'artist' || newRole === 'exhibitor'
-                    ? 'active'
-                    : user.status,
-              }
-            : user
-        )
-      );
-      setRoleChangeConfirm(null);
-      toast.success(`권한을 ${newRole}로 변경했습니다.`);
-    }
-  };
-
   const openArtistPromoteModal = (user: Profile) => {
     const initialKeyword = user.application?.artist_name || user.name || '';
     setArtistPromoteContext({
@@ -400,7 +298,41 @@ export function UserList({
     toast.success(res.message);
   };
 
-  const handleReactivate = async () => {
+  const handleRejectRequest = (id: string) => {
+    setRejectConfirmId(id);
+  };
+
+  const handleReactivateRequest = (id: string) => {
+    setReactivateConfirmId(id);
+  };
+
+  const handleRoleChangeRequest = (user: Profile, newRole: string) => {
+    if (newRole === user.role) return;
+    if (newRole === 'artist') {
+      openArtistPromoteModal(user);
+      return;
+    }
+    setRoleChangeConfirm({ id: user.id, role: newRole });
+  };
+
+  const executeReject = async () => {
+    if (!rejectConfirmId) return;
+    const id = rejectConfirmId;
+    setProcessingId(id);
+    const res = await rejectUser(id);
+    setProcessingId(null);
+    if (res.error) {
+      toast.error(res.message);
+    } else {
+      setLocalUsers((prev) =>
+        prev.map((user) => (user.id === id ? { ...user, status: 'suspended' } : user))
+      );
+      setRejectConfirmId(null);
+      toast.success('신청을 거절하고 계정을 정지했습니다.');
+    }
+  };
+
+  const executeReactivate = async () => {
     if (!reactivateConfirmId) return;
     const id = reactivateConfirmId;
     setProcessingId(id);
@@ -417,6 +349,34 @@ export function UserList({
     }
   };
 
+  const executeRoleChange = async () => {
+    if (!roleChangeConfirm) return;
+    const { id, role: newRole } = roleChangeConfirm;
+    setProcessingId(id);
+    const res = await updateUserRole(id, newRole as Profile['role']);
+    setProcessingId(null);
+    if (res.error) {
+      toast.error(res.message);
+    } else {
+      setLocalUsers((prev) =>
+        prev.map((user) =>
+          user.id === id
+            ? {
+                ...user,
+                role: newRole as Profile['role'],
+                status:
+                  newRole === 'admin' || newRole === 'artist' || newRole === 'exhibitor'
+                    ? 'active'
+                    : user.status,
+              }
+            : user
+        )
+      );
+      setRoleChangeConfirm(null);
+      toast.success(`권한을 ${newRole}로 변경했습니다.`);
+    }
+  };
+
   const selectedArtistOption = artistPromoteContext?.selectedArtistId
     ? artistOptions.find((item) => item.id === artistPromoteContext.selectedArtistId) || null
     : null;
@@ -425,288 +385,37 @@ export function UserList({
     ? localUsers.find((user) => user.id === roleChangeConfirm.id) || null
     : null;
 
+  const rejectTargetUser = rejectConfirmId
+    ? localUsers.find((user) => user.id === rejectConfirmId) || null
+    : null;
+
+  const reactivateTargetUser = reactivateConfirmId
+    ? localUsers.find((user) => user.id === reactivateConfirmId) || null
+    : null;
+
   return (
     <div className="space-y-6">
       <AdminCard className="overflow-hidden">
-        {/* Header & Search */}
-        <AdminCardHeader>
-          <div className="flex items-center gap-3">
-            <h2 className="text-lg font-semibold text-gray-900">
-              사용자 목록
-              <AdminHelp>
-                가입된 사용자의 권한을 관리하고 신청을 승인하거나 차단할 수 있습니다.
-              </AdminHelp>
-            </h2>
-            <AdminBadge tone="info">{pagination?.totalItems || localUsers.length}명</AdminBadge>
-          </div>
+        <UserFilters
+          query={query}
+          totalItems={pagination?.totalItems || localUsers.length}
+          initialFilters={initialFilters}
+          onQueryChange={setQuery}
+          onQuerySubmit={() => updateFilters({ q: query || undefined })}
+          onFilterChange={updateFilters}
+        />
 
-          <div className="grid w-full gap-3 sm:w-auto sm:grid-cols-[minmax(200px,1fr)_auto] sm:items-end">
-            <div className="relative w-full sm:min-w-[260px]">
-              <label htmlFor="search-users" className="sr-only">
-                사용자 검색
-              </label>
-              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                <svg className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path
-                    fillRule="evenodd"
-                    d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
-              <AdminInput
-                id="search-users"
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    updateFilters({ q: query || undefined });
-                  }
-                }}
-                placeholder="이름, 이메일 검색... (Enter)"
-                aria-describedby="search-users-description"
-                className="h-10 border-0 py-2 pl-10"
-              />
-              <span id="search-users-description" className="sr-only">
-                이름 또는 이메일로 사용자를 검색할 수 있습니다. 현재{' '}
-                {pagination?.totalItems || localUsers.length}명이 표시됩니다.
-              </span>
-            </div>
-            <div className="grid grid-cols-2 gap-3 sm:flex sm:justify-end">
-              <AdminSelect
-                value={initialFilters?.role || 'all'}
-                onChange={(e) => updateFilters({ role: e.target.value })}
-                wrapperClassName="min-w-[100px]"
-              >
-                <option value="all">모든 권한</option>
-                <option value="user">User</option>
-                <option value="artist">Artist</option>
-                <option value="exhibitor">Exhibitor</option>
-                <option value="admin">Admin</option>
-              </AdminSelect>
-              <AdminSelect
-                value={initialFilters?.status || 'all'}
-                onChange={(e) => updateFilters({ status: e.target.value })}
-                wrapperClassName="min-w-[100px]"
-              >
-                <option value="all">모든 상태</option>
-                <option value="pending">대기</option>
-                <option value="active">활성</option>
-                <option value="suspended">정지</option>
-              </AdminSelect>
-            </div>
-          </div>
-        </AdminCardHeader>
-
-        {/* Table */}
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50/50">
-              <tr>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  <button
-                    type="button"
-                    onClick={() => handleSort('user')}
-                    className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
-                    aria-label={getSortAriaLabel('사용자', 'user')}
-                  >
-                    사용자
-                    <span className="text-[11px] text-gray-400">{getSortArrow('user')}</span>
-                  </button>
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  <button
-                    type="button"
-                    onClick={() => handleSort('status_role')}
-                    className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
-                    aria-label={getSortAriaLabel('상태/권한', 'status_role')}
-                  >
-                    상태/권한
-                    <span className="text-[11px] text-gray-400">{getSortArrow('status_role')}</span>
-                  </button>
-                </th>
-                <th
-                  scope="col"
-                  className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  <button
-                    type="button"
-                    onClick={() => handleSort('application')}
-                    className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
-                    aria-label={getSortAriaLabel('신청 정보', 'application')}
-                  >
-                    신청 정보
-                    <span className="text-[11px] text-gray-400">{getSortArrow('application')}</span>
-                  </button>
-                </th>
-                <th scope="col" className="relative px-6 py-3">
-                  <span className="sr-only">관리</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {sortedUsers.length === 0 ? (
-                <tr>
-                  <td colSpan={4} className="px-6 py-0">
-                    <AdminEmptyState
-                      title="검색 결과가 없습니다"
-                      description="다른 검색어로 다시 시도해보세요."
-                    />
-                  </td>
-                </tr>
-              ) : (
-                sortedUsers.map((user) => (
-                  <tr key={user.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="h-10 w-10 flex-shrink-0">
-                          {user.avatar_url ? (
-                            <img
-                              className="h-10 w-10 rounded-full object-cover ring-1 ring-gray-200"
-                              src={user.avatar_url}
-                              alt=""
-                            />
-                          ) : (
-                            <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 ring-1 ring-gray-200 text-gray-500 font-medium">
-                              {user.name?.charAt(0) || user.email.charAt(0).toUpperCase()}
-                            </span>
-                          )}
-                        </div>
-                        <div className="ml-4">
-                          <button
-                            onClick={() => setSelectedUser(user)}
-                            className="text-sm font-medium text-gray-900 hover:text-indigo-600 hover:underline text-left"
-                          >
-                            {user.name || 'No Name'}
-                          </button>
-                          <div className="text-sm text-gray-500">{user.email}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex flex-col gap-1 items-start">
-                        <span
-                          className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium ring-1 ring-inset relative group cursor-help ${
-                            user.status === 'active'
-                              ? 'bg-green-50 text-green-700 ring-green-600/20'
-                              : user.status === 'pending'
-                                ? 'bg-yellow-50 text-yellow-800 ring-yellow-600/20'
-                                : 'bg-red-50 text-red-700 ring-red-600/10'
-                          }`}
-                        >
-                          <span
-                            className={`h-1.5 w-1.5 rounded-full ${
-                              user.status === 'active'
-                                ? 'bg-green-600'
-                                : user.status === 'pending'
-                                  ? 'bg-yellow-600'
-                                  : 'bg-red-600'
-                            }`}
-                          />
-                          {user.status === 'active'
-                            ? '활성'
-                            : user.status === 'pending'
-                              ? '대기'
-                              : '정지'}
-                          <span className="invisible group-hover:visible absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-32 px-2 py-1 text-[10px] font-normal text-white bg-slate-800 rounded shadow-lg text-center z-50">
-                            {user.status === 'active'
-                              ? '로그인 및 모든 기능 이용 가능'
-                              : user.status === 'pending'
-                                ? '작가 신청 대기 중인 상태'
-                                : '로그인이 차단된 사용자'}
-                            <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800" />
-                          </span>
-                        </span>
-                        <AdminSelect
-                          wrapperClassName="mt-1 w-28"
-                          className="py-1 pl-2 pr-7 text-xs font-medium"
-                          iconClassName="h-3.5 w-3.5"
-                          value={user.role}
-                          onChange={(e) => {
-                            const nextRole = e.target.value as Profile['role'];
-                            if (nextRole === user.role) return;
-                            if (nextRole === 'artist') {
-                              openArtistPromoteModal(user);
-                              return;
-                            }
-                            setRoleChangeConfirm({ id: user.id, role: nextRole });
-                          }}
-                          disabled={processingId === user.id}
-                        >
-                          <option value="user">User</option>
-                          <option value="artist">Artist</option>
-                          <option value="exhibitor">Exhibitor</option>
-                          <option value="admin">Admin</option>
-                        </AdminSelect>
-                        {user.status === 'pending' && (
-                          <span className="text-[11px] text-amber-700">
-                            권한을 Artist로 변경하면 승인됩니다.
-                          </span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="hidden lg:table-cell px-6 py-4">
-                      {user.application ? (
-                        <div className="text-sm">
-                          <div className="font-medium text-gray-900">
-                            {user.application.artist_name}
-                          </div>
-                          <div className="text-gray-500 truncate max-w-xs">
-                            {user.application.contact}
-                          </div>
-                        </div>
-                      ) : (
-                        <span className="text-xs text-gray-400 italic">신청 정보 없음</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <div className="flex justify-end items-center gap-2">
-                        {user.status !== 'suspended' && (
-                          <Button
-                            variant="white"
-                            size="sm"
-                            onClick={() => setRejectConfirmId(user.id)}
-                            disabled={processingId === user.id}
-                            className="text-red-600 hover:text-red-900 hover:bg-red-50 disabled:opacity-50"
-                          >
-                            {user.status === 'pending' ? '신청 거절' : '계정 정지'}
-                          </Button>
-                        )}
-                        {user.status === 'suspended' && (
-                          <Button
-                            variant="white"
-                            size="sm"
-                            onClick={() => setReactivateConfirmId(user.id)}
-                            disabled={processingId === user.id}
-                            className="text-blue-700 hover:text-blue-900 hover:bg-blue-50 disabled:opacity-50"
-                          >
-                            재활성화
-                          </Button>
-                        )}
-                        <Button
-                          variant="white"
-                          size="sm"
-                          onClick={() => setSelectedUser(user)}
-                          className="text-gray-500 hover:text-gray-900 hover:bg-gray-100"
-                        >
-                          상세
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+        <UserTable
+          users={sortedUsers}
+          sortKey={sortKey}
+          sortDirection={sortDirection}
+          onSort={handleSort}
+          onSelectUser={setSelectedUser}
+          onReject={handleRejectRequest}
+          onReactivate={handleReactivateRequest}
+          onRoleChange={handleRoleChangeRequest}
+          processingId={processingId}
+        />
       </AdminCard>
 
       {/* Pagination */}
@@ -720,9 +429,8 @@ export function UserList({
         />
       )}
 
-      {/* Modal remains mostly the same, just keeping the import */}
+      {/* User Details Modal */}
       <Modal isOpen={!!selectedUser} onClose={() => setSelectedUser(null)} title="사용자 상세 정보">
-        {/* ... Same modal content structure ... */}
         {selectedUser && (
           <div className="space-y-6">
             <div className="flex items-center gap-4">
@@ -824,8 +532,8 @@ export function UserList({
                 </div>
               </div>
             ) : (
-              <div className="border-t border-gray-100 pt-4 text-sm text-gray-500 text-center py-4">
-                제출된 신청 정보가 없습니다.
+              <div className="border-t border-gray-100 pt-4 text-center py-4">
+                <span className="text-sm text-gray-500">신청 정보가 없습니다.</span>
               </div>
             )}
 
@@ -838,6 +546,7 @@ export function UserList({
         )}
       </Modal>
 
+      {/* Artist Promote Modal */}
       <Modal
         isOpen={!!artistPromoteContext}
         onClose={closeArtistPromoteModal}
@@ -1050,47 +759,57 @@ export function UserList({
                 {artistPromoteContext.mode === 'link_existing'
                   ? '연결하고 승인'
                   : artistPromoteContext.mode === 'create_and_link'
-                    ? '생성 후 승인'
-                    : '권한만 변경'}
+                    ? '생성하고 승인'
+                    : '승인'}
               </Button>
             </div>
           </div>
         )}
       </Modal>
 
-      {/* Confirmation Modals */}
-      <AdminConfirmModal
-        isOpen={!!rejectConfirmId}
-        onClose={() => setRejectConfirmId(null)}
-        onConfirm={handleReject}
-        title="신청 거절 및 계정 정지"
-        description="이 사용자의 신청을 거절하고 계정을 정지하시겠습니까?\n정지된 사용자는 로그인이 불가능해집니다."
-        confirmText="거절 및 정지"
-        variant="danger"
-        isLoading={!!processingId}
-      />
+      {/* Reject Confirmation */}
+      {rejectTargetUser && (
+        <AdminConfirmModal
+          isOpen={!!rejectTargetUser}
+          onClose={() => setRejectConfirmId(null)}
+          onConfirm={executeReject}
+          title="계정 거절/정지 확인"
+          description={`${rejectTargetUser.name} (${rejectTargetUser.email}) 님의 ${
+            rejectTargetUser.status === 'pending' ? '가입 신청을 거절' : '계정을 정지'
+          }하시겠습니까?`}
+          confirmText={rejectTargetUser.status === 'pending' ? '거절하기' : '정지하기'}
+          variant="danger"
+          isLoading={processingId === rejectTargetUser.id}
+        />
+      )}
 
-      <AdminConfirmModal
-        isOpen={!!roleChangeConfirm}
-        onClose={() => setRoleChangeConfirm(null)}
-        onConfirm={handleRoleChange}
-        title="권한 변경 확인"
-        description={`${roleChangeTargetUser?.name || roleChangeTargetUser?.email || '선택한 사용자'}의 권한을 '${roleChangeConfirm?.role}'(으)로 변경하시겠습니까?\nArtist 이상의 권한 부여 시 계정이 자동으로 활성화됩니다.`}
-        confirmText="권한 변경"
-        variant="warning"
-        isLoading={!!processingId}
-      />
+      {/* Reactivate Confirmation */}
+      {reactivateTargetUser && (
+        <AdminConfirmModal
+          isOpen={!!reactivateTargetUser}
+          onClose={() => setReactivateConfirmId(null)}
+          onConfirm={executeReactivate}
+          title="계정 재활성화 확인"
+          description={`${reactivateTargetUser.name} (${reactivateTargetUser.email}) 님의 계정을 다시 활성화하시겠습니까?`}
+          confirmText="재활성화"
+          variant="info"
+          isLoading={processingId === reactivateTargetUser.id}
+        />
+      )}
 
-      <AdminConfirmModal
-        isOpen={!!reactivateConfirmId}
-        onClose={() => setReactivateConfirmId(null)}
-        onConfirm={handleReactivate}
-        title="계정 재활성화"
-        description="이 사용자의 계정을 다시 활성화하시겠습니까?"
-        confirmText="재활성화"
-        variant="info"
-        isLoading={!!processingId}
-      />
+      {/* Role Change Confirmation */}
+      {roleChangeTargetUser && roleChangeConfirm && (
+        <AdminConfirmModal
+          isOpen={!!roleChangeTargetUser}
+          onClose={() => setRoleChangeConfirm(null)}
+          onConfirm={executeRoleChange}
+          title="권한 변경 확인"
+          description={`${roleChangeTargetUser.name} 님의 권한을 ${roleChangeTargetUser.role}에서 ${roleChangeConfirm.role}로 변경하시겠습니까?`}
+          confirmText="변경하기"
+          variant="warning"
+          isLoading={processingId === roleChangeTargetUser.id}
+        />
+      )}
     </div>
   );
 }

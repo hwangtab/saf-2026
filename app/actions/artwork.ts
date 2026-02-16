@@ -5,7 +5,13 @@ import { requireArtistActive } from '@/lib/auth/guards';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { logArtistAction } from './admin-logs';
-import { getStoragePathFromPublicUrl, getStoragePathsForRemoval } from '@/lib/utils/form-helpers';
+import {
+  MAX_IMAGES,
+  parseUrlList,
+  validateImageUrls,
+  cleanupUploads,
+  validateArtworkData,
+} from '@/lib/actions/artwork-validation';
 
 export type ActionState = {
   message: string;
@@ -14,51 +20,7 @@ export type ActionState = {
   cleanupUrls?: string[];
 };
 
-const MAX_IMAGES = 5;
 type SupabaseServerClient = Awaited<ReturnType<typeof createSupabaseServerClient>>;
-
-const parseUrlList = (value: FormDataEntryValue | null, label: string) => {
-  if (!value) return { urls: [] as string[] };
-  if (typeof value !== 'string') {
-    return { urls: [] as string[], error: `${label} 형식이 올바르지 않습니다.` };
-  }
-  try {
-    const parsed = JSON.parse(value);
-    if (!Array.isArray(parsed)) {
-      return { urls: [] as string[], error: `${label} 형식이 올바르지 않습니다.` };
-    }
-    const urls = parsed.filter((item) => typeof item === 'string') as string[];
-    if (urls.length !== parsed.length) {
-      return { urls: [] as string[], error: `${label} 형식이 올바르지 않습니다.` };
-    }
-    return { urls };
-  } catch {
-    return { urls: [] as string[], error: `${label} 형식이 올바르지 않습니다.` };
-  }
-};
-
-const getOwnedCanonicalImagePaths = (urls: string[], artistId: string) =>
-  urls
-    .map((url) => getStoragePathFromPublicUrl(url, 'artworks'))
-    .filter((path): path is string => !!path && path.startsWith(`${artistId}/`));
-
-const getOwnedCleanupPaths = (urls: string[], artistId: string) =>
-  getStoragePathsForRemoval(urls, 'artworks').filter((path) => path.startsWith(`${artistId}/`));
-
-const validateImageUrls = (urls: string[], artistId: string) => {
-  const paths = getOwnedCanonicalImagePaths(urls, artistId);
-  if (paths.length !== urls.length) {
-    return { error: '유효하지 않은 이미지 URL이 포함되어 있습니다.' };
-  }
-  return { paths };
-};
-
-const cleanupUploads = async (supabase: SupabaseServerClient, urls: string[], artistId: string) => {
-  const paths = getOwnedCleanupPaths(urls, artistId);
-  if (paths.length > 0) {
-    await supabase.storage.from('artworks').remove(paths);
-  }
-};
 
 export async function createArtwork(
   prevState: ActionState,
@@ -125,27 +87,21 @@ export async function createArtwork(
       };
     }
 
-    const validation = validateImageUrls(images, artist.id);
-    if (validation.error) {
+    const validationResult = validateImageUrls(images, artist.id);
+    if (validationResult.error) {
       if (supabase && artistId) {
         await cleanupUploads(supabase, cleanupUrls, artistId);
       }
-      return { message: validation.error, error: true, cleanupUrls };
+      return { message: validationResult.error, error: true, cleanupUrls };
     }
 
     // 3. Validation (Basic)
-    if (!title.trim() || !price.trim()) {
+    const dataValidation = validateArtworkData(formData);
+    if (dataValidation.error) {
       if (supabase && artistId) {
         await cleanupUploads(supabase, cleanupUrls, artistId);
       }
-      return { message: '필수 항목(제목, 가격)을 입력해주세요.', error: true, cleanupUrls };
-    }
-
-    if (edition_type === 'limited' && !edition_limit) {
-      if (supabase && artistId) {
-        await cleanupUploads(supabase, cleanupUrls, artistId);
-      }
-      return { message: '한정판은 에디션 수량을 입력해주세요.', error: true, cleanupUrls };
+      return { message: dataValidation.error, error: true, cleanupUrls };
     }
 
     const { data: insertedArtwork, error } = await supabase
@@ -266,26 +222,20 @@ export async function updateArtwork(
       };
     }
 
-    const validation = validateImageUrls(images, artist.id);
-    if (validation.error) {
+    const validationResult = validateImageUrls(images, artist.id);
+    if (validationResult.error) {
       if (supabase && artistId) {
         await cleanupUploads(supabase, cleanupUrls, artistId);
       }
-      return { message: validation.error, error: true, cleanupUrls };
+      return { message: validationResult.error, error: true, cleanupUrls };
     }
 
-    if (!title.trim() || !price.trim()) {
+    const dataValidation = validateArtworkData(formData);
+    if (dataValidation.error) {
       if (supabase && artistId) {
         await cleanupUploads(supabase, cleanupUrls, artistId);
       }
-      return { message: '필수 항목(제목, 가격)을 입력해주세요.', error: true, cleanupUrls };
-    }
-
-    if (edition_type === 'limited' && !edition_limit) {
-      if (supabase && artistId) {
-        await cleanupUploads(supabase, cleanupUrls, artistId);
-      }
-      return { message: '한정판은 에디션 수량을 입력해주세요.', error: true, cleanupUrls };
+      return { message: dataValidation.error, error: true, cleanupUrls };
     }
 
     const { data: beforeArtwork } = await supabase

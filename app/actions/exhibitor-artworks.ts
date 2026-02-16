@@ -5,6 +5,7 @@ import { requireExhibitor } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 import { getString, getStoragePathsForRemoval } from '@/lib/utils/form-helpers';
 import { logExhibitorAction } from './admin-logs';
+import { validateArtworkData } from '@/lib/actions/artwork-validation';
 
 export async function getExhibitorArtworks() {
   const user = await requireExhibitor();
@@ -47,6 +48,12 @@ export async function createExhibitorArtwork(formData: FormData) {
   const user = await requireExhibitor();
   const supabase = await createSupabaseAdminOrServerClient();
 
+  // Validate Data
+  const validation = validateArtworkData(formData);
+  if (validation.error) {
+    throw new Error(validation.error);
+  }
+
   const title = getString(formData, 'title');
   const description = getString(formData, 'description');
   const size = getString(formData, 'size');
@@ -60,12 +67,7 @@ export async function createExhibitorArtwork(formData: FormData) {
   const shop_url = getString(formData, 'shop_url');
   const artist_id = getString(formData, 'artist_id');
 
-  if (!title) throw new Error('작품명을 입력해주세요.');
   if (!artist_id) throw new Error('작가를 선택해주세요.');
-  if (!price) throw new Error('가격을 입력해주세요.');
-  if (edition_type === 'limited' && !edition_limit) {
-    throw new Error('한정판은 에디션 수량을 입력해주세요.');
-  }
 
   const { data: artist, error: artistError } = await supabase
     .from('artists')
@@ -126,6 +128,12 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
   const user = await requireExhibitor();
   const supabase = await createSupabaseAdminOrServerClient();
 
+  // Validate Data
+  const validation = validateArtworkData(formData);
+  if (validation.error) {
+    throw new Error(validation.error);
+  }
+
   const title = getString(formData, 'title');
   const description = getString(formData, 'description');
   const size = getString(formData, 'size');
@@ -162,10 +170,6 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
     if (!newArtistCheck) {
       throw new Error('선택한 작가에 대한 권한이 없습니다.');
     }
-  }
-
-  if (edition_type === 'limited' && !edition_limit) {
-    throw new Error('한정판은 에디션 수량을 입력해주세요.');
   }
 
   const { data: newArtwork, error } = await supabase

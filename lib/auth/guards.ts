@@ -1,6 +1,7 @@
 import { createSupabaseServerClient } from './server';
 import { redirect } from 'next/navigation';
 import { cache } from 'react';
+import { UserRole, UserStatus } from '@/types/database.types';
 
 const getAuthUserContext = cache(async () => {
   const supabase = await createSupabaseServerClient();
@@ -28,7 +29,11 @@ const getCurrentProfile = cache(async () => {
     throw new Error('계정 정보를 확인하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
   }
 
-  return { supabase, user, profile };
+  // Cast retrieved data to typed object if needed, though supabase-js infers types if generated.
+  // Here we explicitly type the result structure we expect for logic consistency.
+  const typedProfile = profile as { role: UserRole; status: UserStatus } | null;
+
+  return { supabase, user, profile: typedProfile };
 });
 
 export async function requireAuth() {

@@ -4,6 +4,7 @@ import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 import { requireAdmin } from '@/lib/auth/guards';
 import { revalidatePath } from 'next/cache';
 import { logAdminAction } from './admin-logs';
+import { UserRole } from '@/types/database.types';
 
 export type AdminActionState = {
   message: string;
@@ -663,10 +664,7 @@ export async function reactivateUser(userId: string): Promise<AdminActionState> 
   }
 }
 
-export async function updateUserRole(
-  userId: string,
-  role: 'admin' | 'artist' | 'user' | 'exhibitor'
-): Promise<AdminActionState> {
+export async function updateUserRole(userId: string, role: UserRole): Promise<AdminActionState> {
   try {
     const adminUser = await requireAdmin();
 
@@ -708,7 +706,7 @@ export async function updateUserRole(
     }
 
     const updates: {
-      role: 'admin' | 'artist' | 'user' | 'exhibitor';
+      role: UserRole;
       status?: 'active' | 'pending';
     } = {
       role,

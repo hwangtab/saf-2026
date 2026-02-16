@@ -1,6 +1,7 @@
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { UserList } from './user-list';
+import { UserRole, UserStatus } from '@/types/database.types';
 import {
   AdminPageDescription,
   AdminPageHeader,
@@ -32,8 +33,8 @@ type ProfileRow = {
   email: string;
   name: string;
   avatar_url: string | null;
-  role: 'admin' | 'artist' | 'user' | 'exhibitor';
-  status: 'pending' | 'active' | 'suspended';
+  role: UserRole;
+  status: UserStatus;
   created_at: string;
 };
 
@@ -67,12 +68,14 @@ export default async function UsersPage({ searchParams }: Props) {
     .select('id, email, name, avatar_url, role, status, created_at', { count: 'exact' });
 
   // 역할 필터
-  if (params.role && ['admin', 'artist', 'user', 'exhibitor'].includes(params.role)) {
+  const validRoles: UserRole[] = ['admin', 'artist', 'user', 'exhibitor'];
+  if (params.role && validRoles.includes(params.role as UserRole)) {
     query = query.eq('role', params.role);
   }
 
   // 상태 필터
-  if (params.status && ['pending', 'active', 'suspended'].includes(params.status)) {
+  const validStatuses: UserStatus[] = ['pending', 'active', 'suspended'];
+  if (params.status && validStatuses.includes(params.status as UserStatus)) {
     query = query.eq('status', params.status);
   }
 

@@ -1,4 +1,6 @@
-export type UserRole = 'admin' | 'artist' | 'user' | 'exhibitor';
+import { UserRole } from './database.types';
+
+export type { UserRole };
 
 export type ArtistRole =
   | 'musician'
