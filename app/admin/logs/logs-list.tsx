@@ -63,6 +63,22 @@ function formatActionDescription(log: ActivityLogEntry): string {
       return `아티스트 신청서 제출: ${details?.artist_name || log.target_id}`;
     case 'exhibitor_application_submitted':
       return `출품자 신청서 제출: ${details?.representative_name || log.target_id}`;
+    case 'exhibitor_artist_created':
+      return `출품자 작가 등록: ${details?.name || log.target_id}`;
+    case 'exhibitor_artist_updated':
+      return `출품자 작가 수정: ${details?.name || log.target_id}`;
+    case 'exhibitor_artist_profile_image_updated':
+      return `출품자 작가 프로필 이미지 변경: ${details?.name || log.target_id}`;
+    case 'exhibitor_artist_deleted':
+      return `출품자 작가 삭제: ${details?.name || log.target_id}`;
+    case 'exhibitor_artwork_created':
+      return `출품자 작품 등록: ${details?.title || log.target_id}`;
+    case 'exhibitor_artwork_updated':
+      return `출품자 작품 수정: ${details?.title || log.target_id}`;
+    case 'exhibitor_artwork_images_updated':
+      return `출품자 작품 이미지 변경: ${details?.title || log.target_id}`;
+    case 'exhibitor_artwork_deleted':
+      return `출품자 작품 삭제: ${details?.title || log.target_id}`;
     case 'revert_executed':
       return `복구 실행: 로그 ${details?.reverted_log_id || '-'}`;
     case 'trash_purged':

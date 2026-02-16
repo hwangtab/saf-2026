@@ -71,7 +71,7 @@ export async function createExhibitorArtist(formData: FormData) {
   if (error) throw error;
 
   await logExhibitorAction(
-    'artist_created',
+    'exhibitor_artist_created',
     'artist',
     data.id,
     { name: name_ko },
@@ -132,7 +132,7 @@ export async function updateExhibitorArtist(id: string, formData: FormData) {
   if (error) throw error;
 
   await logExhibitorAction(
-    'artist_updated',
+    'exhibitor_artist_updated',
     'artist',
     id,
     { name: name_ko },
@@ -182,7 +182,7 @@ export async function updateExhibitorArtistProfileImage(id: string, profileImage
   if (error) throw error;
 
   await logExhibitorAction(
-    'artist_profile_image_updated',
+    'exhibitor_artist_profile_image_updated',
     'artist',
     id,
     {
@@ -231,7 +231,7 @@ export async function deleteExhibitorArtist(id: string) {
   if (error) throw error;
 
   await logExhibitorAction(
-    'artist_deleted',
+    'exhibitor_artist_deleted',
     'artist',
     id,
     { name: artist.name_ko },

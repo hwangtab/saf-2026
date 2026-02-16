@@ -101,7 +101,7 @@ export async function createExhibitorArtwork(formData: FormData) {
   if (error) throw error;
 
   await logExhibitorAction(
-    'artwork_created',
+    'exhibitor_artwork_created',
     'artwork',
     artwork.id,
     {
@@ -191,7 +191,7 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
   if (error) throw error;
 
   await logExhibitorAction(
-    'artwork_updated',
+    'exhibitor_artwork_updated',
     'artwork',
     id,
     { title },
@@ -238,7 +238,7 @@ export async function updateExhibitorArtworkImages(id: string, images: string[])
   if (error) throw error;
 
   await logExhibitorAction(
-    'artwork_images_updated',
+    'exhibitor_artwork_images_updated',
     'artwork',
     id,
     {
@@ -279,7 +279,7 @@ export async function deleteExhibitorArtwork(id: string) {
   if (error) throw error;
 
   await logExhibitorAction(
-    'artwork_deleted',
+    'exhibitor_artwork_deleted',
     'artwork',
     id,
     {
