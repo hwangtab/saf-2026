@@ -108,6 +108,8 @@ function getActorRoleLabel(role: ActivityLogEntry['actor_role']) {
       return '관리자';
     case 'artist':
       return '아티스트';
+    case 'exhibitor':
+      return '출품자';
     case 'system':
       return '시스템';
     default:

@@ -26,6 +26,7 @@ const ACTION_FILTER_OPTIONS = [
   { value: 'artist_deleted', label: '작가 삭제(관리자)' },
   { value: 'artist_linked_to_user', label: '작가-사용자 계정 연결(관리자)' },
   { value: 'artist_unlinked_from_user', label: '작가-사용자 계정 연결 해제(관리자)' },
+  { value: 'artist_profile_image_updated', label: '작가 프로필 이미지 변경' },
   { value: 'artist_profile_updated', label: '프로필 수정(아티스트)' },
   { value: 'artist_artwork_created', label: '작품 등록(아티스트)' },
   { value: 'artist_artwork_updated', label: '작품 수정(아티스트)' },
@@ -76,7 +77,11 @@ export default async function AdminLogsPage({ searchParams }: Props) {
     limit,
     q: params.q,
     actorRole:
-      params.actor_role === 'admin' || params.actor_role === 'artist' ? params.actor_role : 'all',
+      params.actor_role === 'admin' ||
+      params.actor_role === 'artist' ||
+      params.actor_role === 'exhibitor'
+        ? params.actor_role
+        : 'all',
     action: params.action,
     targetType: params.target_type,
     from: params.from,
@@ -136,6 +141,7 @@ export default async function AdminLogsPage({ searchParams }: Props) {
                 <option value="all">전체 행위자</option>
                 <option value="admin">관리자</option>
                 <option value="artist">아티스트</option>
+                <option value="exhibitor">출품자</option>
               </AdminSelect>
             </label>
             <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">

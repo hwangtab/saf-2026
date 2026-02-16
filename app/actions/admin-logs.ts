@@ -80,7 +80,7 @@ type ActivityLogFilters = {
   page?: number;
   limit?: number;
   q?: string;
-  actorRole?: 'admin' | 'artist' | 'all';
+  actorRole?: 'admin' | 'artist' | 'exhibitor' | 'all';
   action?: string;
   targetType?: string;
   from?: string;
