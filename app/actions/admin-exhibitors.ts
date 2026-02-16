@@ -33,21 +33,21 @@ export async function getExhibitors(filters?: {
     .from('profiles')
     .select(
       `
-      id,
-      email,
-      name,
-      role,
-      status,
-      created_at,
-      application:exhibitor_applications(
-        representative_name,
-        contact,
-        bio,
-        referrer,
+        id,
+        email,
+        name,
+        role,
+        status,
         created_at,
-        updated_at
-      )
-    `
+        application:exhibitor_applications!left(
+          representative_name,
+          contact,
+          bio,
+          referrer,
+          created_at,
+          updated_at
+        )
+      `
     )
     .eq('role', 'exhibitor')
     .order('created_at', { ascending: false });

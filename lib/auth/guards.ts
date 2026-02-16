@@ -80,7 +80,11 @@ export async function requireAdmin() {
   return user;
 }
 
-// Helper to check exhibitor role only (for onboarding/pending pages)
+/**
+ * Checks if the user has the 'exhibitor' role.
+ * Does NOT check for 'active' status.
+ * Used for onboarding and pending pages where inactive exhibitors need access.
+ */
 export async function requireExhibitorRole() {
   const { profile, user } = await getCurrentProfile();
 
@@ -95,6 +99,11 @@ export async function requireExhibitorRole() {
   return { user, profile, isAdmin: false };
 }
 
+/**
+ * Enforces strict access control for exhibitor dashboard.
+ * Requires both 'exhibitor' role AND 'active' status.
+ * Redirects to onboarding or pending pages if status is not active.
+ */
 export async function requireExhibitor() {
   const { supabase, user, profile } = await getCurrentProfile();
 
