@@ -42,6 +42,7 @@ export default function ArtworkImage({ images, title, artist, sold }: ArtworkIma
           alt={alt}
           width={1000}
           height={1000}
+          sizes="(max-width: 1024px) 100vw, 50vw"
           className="w-full h-auto object-contain max-h-[80vh] transition-transform duration-300 group-hover:scale-[1.02]"
           loading="eager"
         />
