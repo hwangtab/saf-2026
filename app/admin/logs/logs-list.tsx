@@ -59,6 +59,8 @@ function formatActionDescription(log: ActivityLogEntry): string {
       return `아티스트 작품 수정: ${details?.title || log.target_id}`;
     case 'artist_artwork_deleted':
       return `아티스트 작품 삭제: ${details?.title || log.target_id}`;
+    case 'artist_application_submitted':
+      return `아티스트 신청서 제출: ${details?.artist_name || log.target_id}`;
     case 'revert_executed':
       return `복구 실행: 로그 ${details?.reverted_log_id || '-'}`;
     case 'trash_purged':
@@ -69,6 +71,26 @@ function formatActionDescription(log: ActivityLogEntry): string {
       return `콘텐츠 수정: ${log.target_type} - ${details?.title || log.target_id}`;
     case 'content_deleted':
       return `콘텐츠 삭제: ${log.target_type} - ${log.target_id}`;
+    case 'news_created':
+      return `뉴스 생성: ${details?.title || log.target_id}`;
+    case 'news_updated':
+      return `뉴스 수정: ${details?.title || log.target_id}`;
+    case 'news_deleted':
+      return `뉴스 삭제: ${details?.title || log.target_id}`;
+    case 'faq_created':
+      return `FAQ 생성: ${details?.question || log.target_id}`;
+    case 'faq_updated':
+      return `FAQ 수정: ${details?.question || log.target_id}`;
+    case 'faq_deleted':
+      return `FAQ 삭제: ${details?.question || log.target_id}`;
+    case 'video_created':
+      return `영상 생성: ${details?.title || log.target_id}`;
+    case 'video_updated':
+      return `영상 수정: ${details?.title || log.target_id}`;
+    case 'video_deleted':
+      return `영상 삭제: ${details?.title || log.target_id}`;
+    case 'testimonial_updated':
+      return `추천사 수정: ${details?.author || log.target_id}`;
     case 'batch_artwork_status':
       return `일괄 상태 변경: ${details?.count}건 → ${formatStatus(details?.status) || details?.status}`;
     case 'batch_artwork_visibility':
