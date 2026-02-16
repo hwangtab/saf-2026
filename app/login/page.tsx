@@ -51,7 +51,23 @@ export default function LoginPage() {
         if (profile?.role === 'admin') {
           nextPath = '/admin/dashboard';
         } else if (profile?.role === 'exhibitor') {
-          nextPath = '/exhibitor';
+          if (profile.status === 'active') {
+            nextPath = '/exhibitor';
+          } else {
+            // Check application for pending users
+            const { data: application } = await supabase
+              .from('exhibitor_applications')
+              .select('representative_name, contact, bio')
+              .eq('user_id', user.id)
+              .maybeSingle();
+
+            const hasApplication =
+              !!application?.representative_name?.trim() &&
+              !!application?.contact?.trim() &&
+              !!application?.bio?.trim();
+
+            nextPath = hasApplication ? '/exhibitor/pending' : '/exhibitor/onboarding';
+          }
         } else if (profile?.role === 'artist') {
           if (profile.status === 'active') {
             nextPath = '/dashboard/artworks';

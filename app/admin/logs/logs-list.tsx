@@ -61,6 +61,8 @@ function formatActionDescription(log: ActivityLogEntry): string {
       return `아티스트 작품 삭제: ${details?.title || log.target_id}`;
     case 'artist_application_submitted':
       return `아티스트 신청서 제출: ${details?.artist_name || log.target_id}`;
+    case 'exhibitor_application_submitted':
+      return `출품자 신청서 제출: ${details?.representative_name || log.target_id}`;
     case 'revert_executed':
       return `복구 실행: 로그 ${details?.reverted_log_id || '-'}`;
     case 'trash_purged':

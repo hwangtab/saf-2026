@@ -32,6 +32,7 @@ const ACTION_FILTER_OPTIONS = [
   { value: 'artist_artwork_updated', label: '작품 수정(아티스트)' },
   { value: 'artist_artwork_deleted', label: '작품 삭제(아티스트)' },
   { value: 'artist_application_submitted', label: '아티스트 신청서 제출' },
+  { value: 'exhibitor_application_submitted', label: '출품자 신청서 제출' },
   { value: 'batch_artwork_status', label: '작품 판매상태 일괄 변경' },
   { value: 'batch_artwork_visibility', label: '작품 숨김 일괄 변경' },
   { value: 'batch_artwork_deleted', label: '작품 일괄 삭제' },

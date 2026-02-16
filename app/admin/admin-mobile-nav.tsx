@@ -12,6 +12,7 @@ const navItems = [
   { href: '/admin/users', label: '사용자 관리' },
   { href: '/admin/content', label: '콘텐츠 관리' },
   { href: '/admin/artists', label: '작가 관리' },
+  { href: '/admin/exhibitors', label: '출품자 관리' },
   { href: '/admin/artworks', label: '작품 관리' },
   { href: '/admin/logs', label: '활동 로그' },
   { href: '/admin/trash', label: '휴지통' },

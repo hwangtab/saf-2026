@@ -707,11 +707,18 @@ export async function updateUserRole(
       }
     }
 
-    const updates: { role: 'admin' | 'artist' | 'user' | 'exhibitor'; status?: 'active' } = {
+    const updates: {
+      role: 'admin' | 'artist' | 'user' | 'exhibitor';
+      status?: 'active' | 'pending';
+    } = {
       role,
     };
-    if (role === 'artist' || role === 'admin' || role === 'exhibitor') {
+    // Admin and artist get 'active' status immediately
+    // Exhibitor gets 'pending' status and must complete onboarding
+    if (role === 'artist' || role === 'admin') {
       updates.status = 'active';
+    } else if (role === 'exhibitor') {
+      updates.status = 'pending';
     }
 
     let createdArtistId: string | null = null;

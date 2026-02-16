@@ -18,6 +18,15 @@ type ArtistApplication = {
   updated_at: string;
 };
 
+type ExhibitorApplication = {
+  user_id: string;
+  representative_name: string;
+  contact: string;
+  bio: string;
+  referrer: string | null;
+  updated_at: string;
+};
+
 type ProfileRow = {
   id: string;
   email: string;
@@ -30,6 +39,7 @@ type ProfileRow = {
 
 type ProfileWithApplication = ProfileRow & {
   application: ArtistApplication | null;
+  exhibitorApplication: ExhibitorApplication | null;
 };
 
 type Props = {
@@ -80,12 +90,22 @@ export default async function UsersPage({ searchParams }: Props) {
   const totalItems = count || 0;
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
 
-  const { data: applications } = await supabase
+  // Fetch artist applications
+  const { data: artistApplications } = await supabase
     .from('artist_applications')
     .select('user_id, artist_name, contact, bio, referrer, updated_at');
 
-  const applicationMap = new Map(
-    (applications || []).map((application: ArtistApplication) => [application.user_id, application])
+  const artistApplicationMap = new Map(
+    (artistApplications || []).map((app: ArtistApplication) => [app.user_id, app])
+  );
+
+  // Fetch exhibitor applications
+  const { data: exhibitorApplications } = await supabase
+    .from('exhibitor_applications')
+    .select('user_id, representative_name, contact, bio, referrer, updated_at');
+
+  const exhibitorApplicationMap = new Map(
+    (exhibitorApplications || []).map((app: ExhibitorApplication) => [app.user_id, app])
   );
 
   // Custom sort in JS to put pending first
@@ -97,7 +117,8 @@ export default async function UsersPage({ searchParams }: Props) {
     })
     .map((user: ProfileRow) => ({
       ...user,
-      application: applicationMap.get(user.id) || null,
+      application: artistApplicationMap.get(user.id) || null,
+      exhibitorApplication: exhibitorApplicationMap.get(user.id) || null,
     }));
 
   return (

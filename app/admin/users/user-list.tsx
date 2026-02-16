@@ -40,6 +40,13 @@ type Profile = {
     referrer: string | null;
     updated_at: string;
   } | null;
+  exhibitorApplication?: {
+    representative_name: string;
+    contact: string;
+    bio: string;
+    referrer: string | null;
+    updated_at: string;
+  } | null;
 };
 
 type UnlinkedArtistOption = {
@@ -781,6 +788,38 @@ export function UserList({
                   <label className="block text-xs text-gray-500 mb-1">소개</label>
                   <div className="bg-gray-50 p-3 rounded-md text-sm text-gray-700 whitespace-pre-wrap">
                     {selectedUser.application.bio}
+                  </div>
+                </div>
+              </div>
+            ) : selectedUser.exhibitorApplication ? (
+              <div className="border-t border-gray-100 pt-4 space-y-4">
+                <h3 className="font-medium text-gray-900">출품자 신청 정보</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs text-gray-500">대표명</label>
+                    <div className="text-sm text-gray-900">
+                      {selectedUser.exhibitorApplication.representative_name}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-500">연락처</label>
+                    <div className="text-sm text-gray-900">
+                      {selectedUser.exhibitorApplication.contact}
+                    </div>
+                  </div>
+                  {selectedUser.exhibitorApplication.referrer && (
+                    <div className="col-span-2">
+                      <label className="block text-xs text-gray-500">추천인</label>
+                      <div className="text-sm text-gray-900">
+                        {selectedUser.exhibitorApplication.referrer}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">소개</label>
+                  <div className="bg-gray-50 p-3 rounded-md text-sm text-gray-700 whitespace-pre-wrap">
+                    {selectedUser.exhibitorApplication.bio}
                   </div>
                 </div>
               </div>

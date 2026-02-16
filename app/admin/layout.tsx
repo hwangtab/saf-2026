@@ -58,6 +58,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                   작품 관리
                 </Link>
                 <Link
+                  href="/admin/exhibitors"
+                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                >
+                  출품자 관리
+                </Link>
+                <Link
                   href="/admin/logs"
                   className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
                 >

@@ -80,11 +80,53 @@ export async function requireAdmin() {
   return user;
 }
 
-export async function requireExhibitor() {
-  const { user, profile } = await getCurrentProfile();
+// Helper to check exhibitor role only (for onboarding/pending pages)
+export async function requireExhibitorRole() {
+  const { profile, user } = await getCurrentProfile();
+
+  if (profile?.role === 'admin') {
+    return { user, profile, isAdmin: true };
+  }
 
   if (!profile || profile.role !== 'exhibitor') {
     redirect('/');
+  }
+
+  return { user, profile, isAdmin: false };
+}
+
+export async function requireExhibitor() {
+  const { supabase, user, profile } = await getCurrentProfile();
+
+  // Admin should stay in admin surface
+  if (profile?.role === 'admin') {
+    redirect('/admin/dashboard');
+  }
+
+  if (!profile || profile.role !== 'exhibitor') {
+    redirect('/');
+  }
+
+  // Check exhibitor status - similar to artist flow
+  if (profile.status !== 'active') {
+    if (profile.status === 'pending') {
+      const { data: application } = await supabase
+        .from('exhibitor_applications')
+        .select('representative_name, contact, bio')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      const hasApplication =
+        !!application?.representative_name?.trim() &&
+        !!application?.contact?.trim() &&
+        !!application?.bio?.trim();
+
+      if (!hasApplication) redirect('/exhibitor/onboarding');
+      redirect('/exhibitor/pending');
+    }
+    if (profile.status === 'suspended') redirect('/exhibitor/pending');
+
+    redirect('/exhibitor/onboarding');
   }
 
   return user;
