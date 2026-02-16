@@ -110,6 +110,7 @@ export async function createExhibitorArtwork(formData: FormData) {
     },
     {
       afterSnapshot: artwork,
+      reversible: true,
     }
   );
 

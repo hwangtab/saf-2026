@@ -77,6 +77,7 @@ export async function createExhibitorArtist(formData: FormData) {
     { name: name_ko },
     {
       afterSnapshot: data,
+      reversible: true,
     }
   );
 
