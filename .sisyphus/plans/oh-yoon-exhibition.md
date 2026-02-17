@@ -148,7 +148,7 @@ Parallel Speedup: ~50%
     Evidence: .sisyphus/evidence/task-1-route-check.txt
   ```
 
-- [ ] 2. **Implement Data Filtering Logic**
+- [x] 2. **Implement Data Filtering Logic**
      **What to do**:
   - In `app/special/oh-yoon/page.tsx` (or a utility), import `artworks` from `content/saf2026-artworks.ts`.
   - Filter `artworks` where `artist === '오윤'`.
