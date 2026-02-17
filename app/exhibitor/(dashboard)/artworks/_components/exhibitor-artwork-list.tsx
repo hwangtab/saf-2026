@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import ArtworkLightbox from '@/components/ui/ArtworkLightbox';
+import SafeImage from '@/components/common/SafeImage';
 import { deleteExhibitorArtwork } from '@/app/actions/exhibitor-artworks';
 import { useToast } from '@/lib/hooks/useToast';
+import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
 import {
   AdminBadge,
   AdminCard,
@@ -43,9 +44,13 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
   });
 
   const handleImageClick = (images: string[], title: string) => {
-    if (!images.length) return;
+    const normalizedImages = (images || []).map((image) =>
+      resolveArtworkImageUrlForPreset(image, 'detail')
+    );
+    if (!normalizedImages.length) return;
+
     setLightboxData({
-      images,
+      images: normalizedImages,
       initialIndex: 0,
       alt: title,
     });
@@ -140,7 +145,7 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
                     <td className="px-6 py-4">
                       <div className="flex items-center">
                         <div
-                          className={`h-12 w-12 flex-shrink-0 overflow-hidden rounded-md bg-gray-100 border border-gray-200 ${
+                          className={`relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-md bg-gray-100 border border-gray-200 ${
                             artwork.images?.[0] ? 'cursor-pointer hover:opacity-80' : ''
                           }`}
                           onClick={() =>
@@ -148,12 +153,12 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
                           }
                         >
                           {artwork.images?.[0] ? (
-                            <Image
-                              src={artwork.images[0]}
+                            <SafeImage
+                              src={resolveArtworkImageUrlForPreset(artwork.images[0], 'slider')}
                               alt={artwork.title}
-                              width={48}
-                              height={48}
-                              className="h-full w-full object-cover"
+                              fill
+                              sizes="48px"
+                              className="object-cover"
                             />
                           ) : (
                             <div className="flex h-full w-full items-center justify-center text-gray-300">

@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { deleteArtwork } from '@/app/actions/artwork';
 import Button from '@/components/ui/Button';
+import SafeImage from '@/components/common/SafeImage';
 import { ExternalLinkIcon } from '@/components/ui/Icons';
-import { formatPriceForDisplay } from '@/lib/utils';
+import { formatPriceForDisplay, resolveArtworkImageUrlForPreset } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/lib/hooks/useToast';
 import { AdminBadge, AdminCard, AdminEmptyState } from '@/app/admin/_components/admin-ui';
@@ -88,12 +89,14 @@ export function ArtworkList({
             <div className="flex flex-col gap-4 px-4 py-5 sm:px-6 lg:flex-row lg:items-center">
               <div className="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between">
                 <div className="flex items-center">
-                  <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-[var(--admin-border)] bg-slate-100">
+                  <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-[var(--admin-border)] bg-slate-100">
                     {artwork.images?.[0] ? (
-                      <img
-                        className="h-full w-full object-cover"
-                        src={artwork.images[0]}
+                      <SafeImage
+                        className="object-cover"
+                        src={resolveArtworkImageUrlForPreset(artwork.images[0], 'slider')}
                         alt={artwork.title}
+                        fill
+                        sizes="64px"
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center text-xs text-slate-400">

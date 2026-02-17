@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import ArtworkLightbox from '@/components/ui/ArtworkLightbox';
+import SafeImage from '@/components/common/SafeImage';
 import Button from '@/components/ui/Button';
 import {
   deleteAdminArtwork,
@@ -22,6 +23,7 @@ import {
 } from '@/app/admin/_components/admin-ui';
 import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import { useToast } from '@/lib/hooks/useToast';
+import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
 
 type ArtworkItem = {
   id: string;
@@ -303,8 +305,12 @@ export function AdminArtworkList({
   };
 
   const handleImageClick = (images: string[], title: string) => {
+    const normalizedImages = (images || []).map((image) =>
+      resolveArtworkImageUrlForPreset(image, 'detail')
+    );
+
     setLightboxData({
-      images: images || [],
+      images: normalizedImages,
       initialIndex: 0,
       alt: title,
     });
@@ -586,7 +592,7 @@ export function AdminArtworkList({
                     <td className="px-6 py-4">
                       <div className="flex items-center">
                         <div
-                          className={`h-12 w-12 flex-shrink-0 overflow-hidden rounded-md bg-gray-100 border border-gray-200 ${
+                          className={`relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-md bg-gray-100 border border-gray-200 ${
                             artwork.images?.[0] ? 'cursor-zoom-in' : ''
                           }`}
                           onClick={() => {
@@ -605,10 +611,12 @@ export function AdminArtworkList({
                           aria-label={artwork.images?.[0] ? '이미지 확대하기' : undefined}
                         >
                           {artwork.images?.[0] ? (
-                            <img
-                              className="h-full w-full object-cover"
-                              src={artwork.images[0]}
+                            <SafeImage
+                              className="object-cover"
+                              src={resolveArtworkImageUrlForPreset(artwork.images[0], 'slider')}
                               alt=""
+                              fill
+                              sizes="48px"
                             />
                           ) : (
                             <div className="flex h-full w-full items-center justify-center text-gray-300">
