@@ -144,10 +144,10 @@ export default async function OurReality() {
 
           {/* Chart Grid */}
           <div className="grid md:grid-cols-2 gap-12 items-start mb-16">
-            <div className="h-96">
+            <div className="h-[420px] md:h-96">
               <RejectionReasonsChart />
             </div>
-            <div className="h-96">
+            <div className="h-[420px] md:h-96">
               <FirstBankAccessChart />
             </div>
           </div>
@@ -183,10 +183,10 @@ export default async function OurReality() {
 
           {/* Chart Grid */}
           <div className="grid md:grid-cols-2 gap-12 items-start mb-16">
-            <div className="h-96">
+            <div className="h-[420px] md:h-96">
               <InterestRateDistributionChart />
             </div>
-            <div className="h-96">
+            <div className="h-[420px] md:h-96">
               <HighInterestProductChart />
             </div>
           </div>
@@ -218,10 +218,10 @@ export default async function OurReality() {
 
           {/* Chart Grid */}
           <div className="grid md:grid-cols-2 gap-12 items-start mb-16">
-            <div className="h-96">
+            <div className="h-[420px] md:h-96">
               <CreativeImpactChart />
             </div>
-            <div className="h-96">
+            <div className="h-[420px] md:h-96">
               <DebtCollectionChart />
             </div>
           </div>

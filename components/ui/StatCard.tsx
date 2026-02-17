@@ -16,7 +16,7 @@ export default function StatCard({
   className,
 }: StatCardProps) {
   const baseStyles =
-    'text-center p-6 bg-white rounded-lg flex flex-col justify-center items-center';
+    'text-center p-6 bg-white rounded-lg flex flex-col justify-center items-center transition-all duration-300 hover:-translate-y-1 hover:shadow-xl';
   const variantStyles = {
     default: 'shadow-sm',
     highlight: 'border-t-4 border-primary shadow',

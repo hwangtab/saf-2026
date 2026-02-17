@@ -54,9 +54,12 @@ function ArtworkCard({ artwork, variant = 'gallery', className }: ArtworkCardPro
     return (
       <Link
         href={getHref(artwork)}
-        className={cn('flex-shrink-0 w-[160px] sm:w-[180px] md:w-[200px] group', className)}
+        className={cn(
+          'flex-shrink-0 w-[160px] sm:w-[180px] md:w-[200px] group transition-all duration-300 hover:-translate-y-1',
+          className
+        )}
       >
-        <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100 shadow-sm group-hover:shadow-md transition-shadow">
+        <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100 shadow-sm group-hover:shadow-xl transition-all duration-300">
           <SafeImage
             src={getImageSrc(artwork, variant)}
             alt={getImageAlt(artwork)}
@@ -79,7 +82,7 @@ function ArtworkCard({ artwork, variant = 'gallery', className }: ArtworkCardPro
 
   // Gallery variant (default)
   return (
-    <div className="bg-gray-100 shadow-sm transition-shadow hover:shadow-md group rounded-lg overflow-hidden">
+    <div className="bg-gray-100 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl group rounded-lg overflow-hidden">
       <Link href={getHref(artwork)} className="block h-full">
         <div className="relative w-full overflow-hidden aspect-[4/5]">
           <div className="absolute inset-0 shimmer-loading" />

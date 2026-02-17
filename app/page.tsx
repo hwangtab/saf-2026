@@ -67,6 +67,7 @@ export default async function Home() {
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center pt-12 pb-12 md:pt-20 md:pb-20">
         <BackgroundSlider />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-black/35 pointer-events-none" />
         <SawtoothDivider position="bottom" colorClass="text-canvas-soft" />
         <div className="relative z-10 container-max text-center">
           <div className="mb-12 translate-y-6 hidden md:flex justify-center">

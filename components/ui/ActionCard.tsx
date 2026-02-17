@@ -18,7 +18,7 @@ export default function ActionCard({
   linkText,
 }: ActionCardProps) {
   return (
-    <div className="group relative flex flex-col h-full p-8 bg-white border-2 border-gray-300 rounded-lg shadow-sm hover:border-primary hover:shadow-xl transition-all duration-300 overflow-hidden">
+    <div className="group relative flex flex-col h-full p-8 bg-white border-2 border-gray-300 rounded-lg shadow-sm hover:-translate-y-1 hover:border-primary hover:shadow-xl transition-all duration-300 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
       <div className="relative z-10 flex flex-col h-full items-center md:items-start text-center md:text-left">
