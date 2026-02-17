@@ -13,6 +13,8 @@ import { generateExhibitionSchema, generateFAQSchema } from '@/lib/seo-utils';
 import { getSupabaseHomepageArtworks, getSupabaseFAQs } from '@/lib/supabase-data';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 
+export const revalidate = 300;
+
 const DynamicCounter = dynamic(() => import('@/components/features/DynamicCounter'), {
   loading: () => (
     <div className="w-full h-[180px] rounded-xl bg-canvas animate-pulse" aria-hidden="true" />
@@ -34,7 +36,7 @@ const ArtworkHighlightSlider = dynamic(
     loading: () => (
       <Section variant="canvas-soft" className="py-16 md:py-24 overflow-hidden">
         <div
-          className="container-max h-[320px] animate-pulse rounded-xl bg-white/70"
+          className="container-max h-[300px] animate-pulse rounded-xl bg-white/70"
           aria-hidden="true"
         />
       </Section>
@@ -306,7 +308,7 @@ async function HomeFAQSection() {
   return (
     <>
       <FAQList items={faqs} />
-      <JsonLdScript data={generateFAQSchema(faqs)} />
+      {faqs.length > 0 && <JsonLdScript data={generateFAQSchema(faqs)} />}
     </>
   );
 }
@@ -316,7 +318,7 @@ function HomeDataSectionsFallback() {
     <>
       <Section variant="canvas-soft" className="py-16 md:py-24 overflow-hidden">
         <div
-          className="container-max h-[320px] animate-pulse rounded-xl bg-white/70"
+          className="container-max h-[300px] animate-pulse rounded-xl bg-white/70"
           aria-hidden="true"
         />
       </Section>
