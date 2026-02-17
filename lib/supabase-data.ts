@@ -114,7 +114,9 @@ export const getSupabaseArtworkById = cache(async (id: string): Promise<Artwork 
     return null;
   }
 
-  if (!artwork) return null;
+  if (!artwork) {
+    return getArtworkById(id) || null;
+  }
 
   return mapArtworkRow(artwork, artwork.artists);
 });

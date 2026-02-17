@@ -42,8 +42,6 @@ const OhYoonMasonryGallery = memo(function OhYoonMasonryGallery({
                     variant="gallery"
                     className="!bg-transparent !shadow-none !rounded-none"
                   />
-                  {/* Dark overlay that lifts on hover */}
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500 pointer-events-none" />
                 </div>
               </div>
             </div>

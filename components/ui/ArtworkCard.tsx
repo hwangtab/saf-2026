@@ -91,7 +91,12 @@ function ArtworkCard({ artwork, variant = 'gallery', className }: ArtworkCardPro
 
   // Gallery variant (default)
   return (
-    <div className="bg-gray-100 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl group rounded-lg overflow-hidden">
+    <div
+      className={cn(
+        'bg-gray-100 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl group rounded-lg overflow-hidden',
+        className
+      )}
+    >
       <Link href={getHref(artwork)} className="block h-full">
         <div className="relative w-full overflow-hidden aspect-[4/5]">
           <div className="absolute inset-0 shimmer-loading" />
