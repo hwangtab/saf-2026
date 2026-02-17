@@ -88,7 +88,36 @@ export default function LoginPage() {
             nextPath = hasApplication ? '/dashboard/pending' : '/onboarding';
           }
         } else if (profile?.role === 'user') {
-          nextPath = '/onboarding';
+          const [{ data: exhibitorApplication }, { data: artistApplication }] = await Promise.all([
+            supabase
+              .from('exhibitor_applications')
+              .select('representative_name, contact, bio')
+              .eq('user_id', user.id)
+              .maybeSingle(),
+            supabase
+              .from('artist_applications')
+              .select('artist_name, contact, bio')
+              .eq('user_id', user.id)
+              .maybeSingle(),
+          ]);
+
+          const hasExhibitorApplication =
+            !!exhibitorApplication?.representative_name?.trim() &&
+            !!exhibitorApplication?.contact?.trim() &&
+            !!exhibitorApplication?.bio?.trim();
+
+          const hasArtistApplication =
+            !!artistApplication?.artist_name?.trim() &&
+            !!artistApplication?.contact?.trim() &&
+            !!artistApplication?.bio?.trim();
+
+          if (hasExhibitorApplication) {
+            nextPath = '/exhibitor/pending';
+          } else if (hasArtistApplication) {
+            nextPath = '/dashboard/pending';
+          } else {
+            nextPath = '/onboarding';
+          }
         }
       }
 

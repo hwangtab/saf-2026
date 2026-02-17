@@ -1,5 +1,4 @@
 import { SignOutButton } from '@/components/auth/SignOutButton';
-import Button from '@/components/ui/Button';
 import { requireAuth } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { redirect } from 'next/navigation';
@@ -18,12 +17,11 @@ export default async function ExhibitorPendingPage() {
     redirect('/admin/dashboard');
   }
 
-  if (profile?.role !== 'exhibitor') {
+  if (!profile || (profile.role !== 'exhibitor' && profile.role !== 'user')) {
     redirect('/');
   }
 
-  // If already active, go to exhibitor dashboard
-  if (profile?.status === 'active') {
+  if (profile.role === 'exhibitor' && profile.status === 'active') {
     redirect('/exhibitor');
   }
 
@@ -37,6 +35,10 @@ export default async function ExhibitorPendingPage() {
     !!application?.representative_name?.trim() &&
     !!application?.contact?.trim() &&
     !!application?.bio?.trim();
+
+  if (!hasApplication) {
+    redirect('/exhibitor/onboarding');
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4 sm:px-6 lg:px-8">
@@ -52,17 +54,9 @@ export default async function ExhibitorPendingPage() {
             승인이 완료되면 서비스를 이용하실 수 있습니다.
           </p>
         </div>
-        {!hasApplication ? (
-          <div className="pt-2">
-            <Button href="/exhibitor/onboarding" variant="primary" className="w-full">
-              출품자 정보 입력하기
-            </Button>
-          </div>
-        ) : (
-          <div className="rounded-md bg-green-50 px-4 py-3 text-sm text-green-700">
-            제출 완료: {application?.representative_name}
-          </div>
-        )}
+        <div className="rounded-md bg-green-50 px-4 py-3 text-sm text-green-700">
+          제출 완료: {application?.representative_name}
+        </div>
         <div className="pt-4 border-t border-gray-100">
           <SignOutButton />
         </div>

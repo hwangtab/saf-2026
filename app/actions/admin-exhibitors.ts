@@ -9,7 +9,7 @@ export type Exhibitor = {
   id: string; // profile id
   email: string;
   name: string | null;
-  role: 'exhibitor';
+  role: 'user' | 'exhibitor';
   status: 'active' | 'pending' | 'suspended' | 'deleted';
   created_at: string;
   application?: {
@@ -29,68 +29,69 @@ export async function getExhibitors(filters?: {
   await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
 
+  const { data: applications, error: appError } = await supabase
+    .from('exhibitor_applications')
+    .select('user_id, representative_name, contact, bio, referrer, created_at, updated_at');
+
+  if (appError) {
+    console.error('Error fetching exhibitor applications:', appError);
+    if (appError.code === '42501') {
+      throw new Error('출품자 신청서 조회 권한이 없습니다. Supabase 테이블 권한을 확인해주세요.');
+    }
+    throw new Error('출품자 신청서를 불러오는 중 오류가 발생했습니다.');
+  }
+
+  const applicantIds = (applications || []).map((application) => application.user_id);
+
   let query = supabase
     .from('profiles')
-    .select(
-      `
-        id,
-        email,
-        name,
-        role,
-        status,
-        created_at,
-        application:exhibitor_applications(
-          representative_name,
-          contact,
-          bio,
-          referrer,
-          created_at,
-          updated_at
-        )
-      `
-    )
-    .eq('role', 'exhibitor')
+    .select('id, email, name, role, status, created_at')
     .order('created_at', { ascending: false });
+
+  if (applicantIds.length > 0) {
+    query = query.or(`role.eq.exhibitor,id.in.(${applicantIds.join(',')})`);
+  } else {
+    query = query.eq('role', 'exhibitor');
+  }
 
   if (filters?.status) {
     query = query.eq('status', filters.status);
   }
 
   if (filters?.query) {
-    // Search by email, name, or representative_name
     query = query.or(`email.ilike.%${filters.query}%,name.ilike.%${filters.query}%`);
-    // Note: Searching representative_name in joined table is trickier with simple OR,
-    // usually requires separate query or embedding.
-    // For simplicity, search email/name on profile first.
-    // To search application fields, we might need a different approach if critical.
   }
 
-  const { data, error } = await query;
+  const { data: profiles, error } = await query;
 
   if (error) {
     console.error('Error fetching exhibitors:', error);
-    // exhibitor_applications 테이블 누락 오류 시 빈 배열 반환 (42P01 = undefined_table)
-    if (error.code === '42P01' || error.message?.includes('exhibitor_applications')) {
-      console.warn('exhibitor_applications 테이블이 없습니다. 마이그레이션을 적용해주세요.');
-      return [];
+    if (
+      error.code === '42501' &&
+      (error.message?.includes('profiles') || error.message?.includes('permission denied'))
+    ) {
+      throw new Error('출품자 목록 조회 권한이 없습니다. Supabase 테이블 권한을 확인해주세요.');
     }
     throw new Error('출품자 목록을 불러오는 중 오류가 발생했습니다.');
   }
 
-  // Transform data to match Exhibitor type
-  const exhibitors: Exhibitor[] = data.map((profile: any) => ({
-    id: profile.id,
-    email: profile.email,
-    name: profile.name,
-    role: profile.role,
-    status: profile.status,
-    created_at: profile.created_at,
-    application: profile.application
-      ? Array.isArray(profile.application)
-        ? profile.application[0]
-        : profile.application
-      : null,
-  }));
+  const applicationMap = new Map(
+    (applications || []).map((application) => [application.user_id, application])
+  );
+
+  const exhibitors: Exhibitor[] = (profiles || []).map((profile) => {
+    const application = applicationMap.get(profile.id);
+
+    return {
+      id: profile.id,
+      email: profile.email,
+      name: profile.name,
+      role: profile.role,
+      status: profile.status,
+      created_at: profile.created_at,
+      application: application || null,
+    };
+  });
 
   // If query filter exists, we might want to filter in-memory for application fields if DB query didn't cover it
   if (filters?.query) {
@@ -99,6 +100,7 @@ export async function getExhibitors(filters?: {
       (e) =>
         e.email.toLowerCase().includes(q) ||
         (e.name && e.name.toLowerCase().includes(q)) ||
+        (e.application && e.application.contact.toLowerCase().includes(q)) ||
         (e.application && e.application.representative_name.toLowerCase().includes(q))
     );
   }
@@ -116,19 +118,44 @@ export async function approveExhibitor(userId: string) {
     .eq('id', userId)
     .single();
 
-  if (!profile || profile.role !== 'exhibitor') {
+  if (!profile || (profile.role !== 'user' && profile.role !== 'exhibitor')) {
     throw new Error('유효하지 않은 출품자입니다.');
   }
 
-  const { error } = await supabase.from('profiles').update({ status: 'active' }).eq('id', userId);
+  const { data: application } = await supabase
+    .from('exhibitor_applications')
+    .select('representative_name, contact, bio')
+    .eq('user_id', userId)
+    .maybeSingle();
+
+  const hasApplication =
+    !!application?.representative_name?.trim() &&
+    !!application?.contact?.trim() &&
+    !!application?.bio?.trim();
+
+  if (!hasApplication) {
+    throw new Error('출품자 신청서가 제출되지 않아 승인할 수 없습니다.');
+  }
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({ role: 'exhibitor', status: 'active' })
+    .eq('id', userId);
 
   if (error) {
     throw new Error('승인 처리 중 오류가 발생했습니다.');
   }
 
-  await logAdminAction('approve_exhibitor', 'user', userId, { status: 'active' }, admin.id);
+  await logAdminAction(
+    'approve_exhibitor',
+    'user',
+    userId,
+    { role: 'exhibitor', status: 'active' },
+    admin.id
+  );
 
   revalidatePath('/admin/exhibitors');
+  revalidatePath('/admin/users');
   return { success: true };
 }
 
@@ -148,5 +175,6 @@ export async function suspendExhibitor(userId: string) {
   await logAdminAction('suspend_exhibitor', 'user', userId, { status: 'suspended' }, admin.id);
 
   revalidatePath('/admin/exhibitors');
+  revalidatePath('/admin/users');
   return { success: true };
 }

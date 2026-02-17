@@ -21,15 +21,22 @@ export async function submitExhibitorApplication(
     const user = await requireAuth();
     const supabase = await createSupabaseServerClient();
 
-    // Verify user is an exhibitor
     const { data: profile } = await supabase
       .from('profiles')
-      .select('role')
+      .select('role, status')
       .eq('id', user.id)
       .single();
 
-    if (profile?.role !== 'exhibitor') {
+    if (!profile || profile.role === 'admin') {
       return { message: '출품자 권한이 없습니다.', error: true };
+    }
+
+    if (profile.role === 'artist' && profile.status === 'active') {
+      return {
+        message:
+          '활성 작가 계정에서는 출품자 신청이 불가능합니다. 관리자에게 역할 전환을 요청해주세요.',
+        error: true,
+      };
     }
 
     const representativeName = (formData.get('representative_name') as string | null)?.trim() || '';
@@ -54,6 +61,15 @@ export async function submitExhibitorApplication(
     );
 
     if (error) throw error;
+
+    if (profile.role !== 'exhibitor' || profile.status !== 'pending') {
+      const { error: profileUpdateError } = await supabase
+        .from('profiles')
+        .update({ status: 'pending' })
+        .eq('id', user.id);
+
+      if (profileUpdateError) throw profileUpdateError;
+    }
 
     // Fetch the application for snapshot
     const { data: application } = await supabase

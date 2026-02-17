@@ -2,6 +2,7 @@ import { requireAuth } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { redirect } from 'next/navigation';
 import { OnboardingForm } from './onboarding-form';
+import Button from '@/components/ui/Button';
 
 export default async function OnboardingPage() {
   const user = await requireAuth();
@@ -18,7 +19,10 @@ export default async function OnboardingPage() {
   }
 
   if (profile?.role === 'exhibitor') {
-    redirect('/exhibitor');
+    if (profile.status === 'active') {
+      redirect('/exhibitor');
+    }
+    redirect('/exhibitor/pending');
   }
 
   if (profile?.role === 'artist' && profile?.status === 'active') {
@@ -34,6 +38,21 @@ export default async function OnboardingPage() {
     .eq('user_id', user.id)
     .maybeSingle();
 
+  const { data: exhibitorApplication } = await supabase
+    .from('exhibitor_applications')
+    .select('representative_name, contact, bio')
+    .eq('user_id', user.id)
+    .maybeSingle();
+
+  const hasExhibitorApplication =
+    !!exhibitorApplication?.representative_name?.trim() &&
+    !!exhibitorApplication?.contact?.trim() &&
+    !!exhibitorApplication?.bio?.trim();
+
+  if (profile?.role === 'user' && hasExhibitorApplication) {
+    redirect('/exhibitor/pending');
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-2xl">
@@ -46,6 +65,11 @@ export default async function OnboardingPage() {
           승인 심사를 위해 최소 정보만 제출해주세요. 제출 후에는 관리자 승인 전까지 대시보드 접근이
           제한됩니다.
         </p>
+        <div className="mt-5 flex justify-center">
+          <Button href="/exhibitor/onboarding" variant="white" size="sm">
+            출품자로 신청하기
+          </Button>
+        </div>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-2xl">

@@ -13,19 +13,15 @@ export default async function ExhibitorOnboardingPage() {
     .eq('id', user.id)
     .single();
 
-  // Only exhibitors can access this page
-  if (profile?.role !== 'exhibitor') {
-    if (profile?.role === 'admin') {
-      redirect('/admin/dashboard');
-    }
-    if (profile?.role === 'artist') {
-      redirect('/dashboard');
-    }
-    redirect('/');
+  if (profile?.role === 'admin') {
+    redirect('/admin/dashboard');
   }
 
-  // If already active, redirect to exhibitor dashboard
-  if (profile?.status === 'active') {
+  if (profile?.role === 'artist' && profile?.status === 'active') {
+    redirect('/dashboard');
+  }
+
+  if (profile?.role === 'exhibitor' && profile?.status === 'active') {
     redirect('/exhibitor');
   }
 

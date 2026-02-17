@@ -31,7 +31,24 @@ export async function GET(request: NextRequest) {
         }
 
         if (profile?.role === 'exhibitor') {
-          return NextResponse.redirect(`${origin}/exhibitor`);
+          if (profile.status === 'active') {
+            return NextResponse.redirect(`${origin}/exhibitor`);
+          }
+
+          const { data: application } = await supabase
+            .from('exhibitor_applications')
+            .select('representative_name, contact, bio')
+            .eq('user_id', user.id)
+            .maybeSingle();
+
+          const hasApplication =
+            !!application?.representative_name?.trim() &&
+            !!application?.contact?.trim() &&
+            !!application?.bio?.trim();
+
+          return NextResponse.redirect(
+            hasApplication ? `${origin}/exhibitor/pending` : `${origin}/exhibitor/onboarding`
+          );
         }
 
         if (profile?.role === 'artist') {
@@ -57,6 +74,41 @@ export async function GET(request: NextRequest) {
           if (profile.status === 'suspended') {
             return NextResponse.redirect(`${origin}/dashboard/suspended`);
           }
+        }
+
+        if (profile?.role === 'user') {
+          const [{ data: exhibitorApplication }, { data: artistApplication }] = await Promise.all([
+            supabase
+              .from('exhibitor_applications')
+              .select('representative_name, contact, bio')
+              .eq('user_id', user.id)
+              .maybeSingle(),
+            supabase
+              .from('artist_applications')
+              .select('artist_name, contact, bio')
+              .eq('user_id', user.id)
+              .maybeSingle(),
+          ]);
+
+          const hasExhibitorApplication =
+            !!exhibitorApplication?.representative_name?.trim() &&
+            !!exhibitorApplication?.contact?.trim() &&
+            !!exhibitorApplication?.bio?.trim();
+
+          const hasArtistApplication =
+            !!artistApplication?.artist_name?.trim() &&
+            !!artistApplication?.contact?.trim() &&
+            !!artistApplication?.bio?.trim();
+
+          if (hasExhibitorApplication) {
+            return NextResponse.redirect(`${origin}/exhibitor/pending`);
+          }
+
+          if (hasArtistApplication) {
+            return NextResponse.redirect(`${origin}/dashboard/pending`);
+          }
+
+          return NextResponse.redirect(`${origin}/onboarding`);
         }
       }
     }

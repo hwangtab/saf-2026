@@ -103,7 +103,7 @@ export function ExhibitorList({ initialExhibitors }: { initialExhibitors: Exhibi
                 scope="col"
                 className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
               >
-                대표명 / 이메일
+                신청자 / 이메일
               </th>
               <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                 상태
@@ -126,7 +126,7 @@ export function ExhibitorList({ initialExhibitors }: { initialExhibitors: Exhibi
             {initialExhibitors.length === 0 ? (
               <tr>
                 <td colSpan={6} className="py-10 text-center text-sm text-gray-500">
-                  출품자가 없습니다.
+                  출품자 신청 내역이 없습니다.
                 </td>
               </tr>
             ) : (

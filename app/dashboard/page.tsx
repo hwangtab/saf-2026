@@ -57,5 +57,38 @@ export default async function DashboardPage() {
     }
   }
 
+  if (profile?.role === 'user') {
+    const [{ data: exhibitorApplication }, { data: artistApplication }] = await Promise.all([
+      supabase
+        .from('exhibitor_applications')
+        .select('representative_name, contact, bio')
+        .eq('user_id', user.id)
+        .maybeSingle(),
+      supabase
+        .from('artist_applications')
+        .select('artist_name, contact, bio')
+        .eq('user_id', user.id)
+        .maybeSingle(),
+    ]);
+
+    const hasExhibitorApplication =
+      !!exhibitorApplication?.representative_name?.trim() &&
+      !!exhibitorApplication?.contact?.trim() &&
+      !!exhibitorApplication?.bio?.trim();
+
+    const hasArtistApplication =
+      !!artistApplication?.artist_name?.trim() &&
+      !!artistApplication?.contact?.trim() &&
+      !!artistApplication?.bio?.trim();
+
+    if (hasExhibitorApplication) {
+      redirect('/exhibitor/pending');
+    }
+
+    if (hasArtistApplication) {
+      redirect('/dashboard/pending');
+    }
+  }
+
   redirect('/onboarding');
 }
