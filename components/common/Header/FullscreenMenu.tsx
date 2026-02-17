@@ -58,10 +58,12 @@ export default function FullscreenMenu({
       scrollYRef.current = window.scrollY;
 
       // body 스크롤 완전 차단 (iOS Safari 대응)
+      // position: fixed를 사용하면 스크롤 위치가 0으로 튀는 문제를 방지하기 위해 top을 설정
       document.body.style.position = 'fixed';
       document.body.style.top = `-${scrollYRef.current}px`;
       document.body.style.left = '0';
       document.body.style.right = '0';
+      document.body.style.width = '100%'; // width 추가로 레이아웃 흔들림 방지
       document.body.style.overflow = 'hidden';
       isBodyLockedRef.current = true;
     } else {
