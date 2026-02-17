@@ -1,6 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import { cn } from '@/lib/utils';
 import Button from '@/components/ui/Button';
 
 import type { NavigationItem } from '@/types';
@@ -28,7 +29,7 @@ export default function DesktopNav({ navigation, isActive, textColor }: DesktopN
 
               {/* Dropdown Menu */}
               {item.items && item.items.length > 0 && (
-                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 translate-y-2 invisible group-hover:opacity-100 group-hover:translate-y-0 group-hover:visible transition-all duration-200 min-w-[260px] z-50">
+                <div className="absolute top-full left-0 pt-2 opacity-0 translate-y-2 invisible group-hover:opacity-100 group-hover:translate-y-0 group-hover:visible transition-all duration-200 min-w-[240px] z-50">
                   <div className="bg-white rounded-lg shadow-xl border border-gray-100 p-2 overflow-hidden">
                     <ul className="flex flex-col gap-1">
                       {item.items.map((subItem) => (
@@ -54,18 +55,19 @@ export default function DesktopNav({ navigation, isActive, textColor }: DesktopN
         <Button
           href="https://koreasmartcoop.cafe24.com/myshop/order/list.html"
           external
-          variant="ghost"
+          variant="outline"
           size="sm"
-          className={
+          className={cn(
+            'min-h-[36px] px-4 font-bold transition-all duration-300',
             textColor === 'text-white'
-              ? 'text-white/80 hover:text-white hover:bg-white/10'
-              : 'text-charcoal-muted hover:text-primary hover:bg-gray-50'
-          }
+              ? 'bg-transparent border-white/50 text-white hover:bg-white hover:text-charcoal'
+              : 'bg-white border-gray-200 text-charcoal'
+          )}
         >
           주문조회
         </Button>
 
-        <Button href="/artworks" variant="accent" size="sm">
+        <Button href="/artworks" variant="accent" size="sm" className="min-h-[36px] px-4">
           작품 구매
         </Button>
         <AuthButtons />
