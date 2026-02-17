@@ -8,6 +8,7 @@ interface UserTableProps {
   sortDirection: SortDirection;
   onSort: (key: UserSortKey) => void;
   onSelectUser: (user: Profile) => void;
+  onApprove: (id: string) => void;
   onReject: (id: string) => void;
   onReactivate: (id: string) => void;
   onRoleChange: (user: Profile, newRole: string) => void;
@@ -20,6 +21,7 @@ export function UserTable({
   sortDirection,
   onSort,
   onSelectUser,
+  onApprove,
   onReject,
   onReactivate,
   onRoleChange,
@@ -175,7 +177,9 @@ export function UserTable({
                     </AdminSelect>
                     {user.status === 'pending' && (
                       <span className="text-[11px] text-amber-700">
-                        권한을 Artist로 변경하면 승인됩니다.
+                        {user.role === 'exhibitor'
+                          ? '출품자 관리는 출품자 관리 메뉴에서 승인됩니다.'
+                          : '권한을 Artist로 변경하면 승인됩니다.'}
                       </span>
                     )}
                   </div>
@@ -190,12 +194,31 @@ export function UserTable({
                         {user.application.contact}
                       </div>
                     </div>
+                  ) : user.exhibitorApplication ? (
+                    <div className="text-sm">
+                      <div className="font-medium text-gray-900">
+                        {user.exhibitorApplication.representative_name}
+                      </div>
+                      <div className="text-gray-500 truncate max-w-xs">
+                        {user.exhibitorApplication.contact}
+                      </div>
+                    </div>
                   ) : (
                     <span className="text-xs text-gray-400 italic">신청 정보 없음</span>
                   )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <div className="flex justify-end items-center gap-2">
+                    {user.status === 'pending' && user.role !== 'admin' && (
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={() => onApprove(user.id)}
+                        disabled={processingId === user.id}
+                      >
+                        승인
+                      </Button>
+                    )}
                     {user.status !== 'suspended' && (
                       <Button
                         variant="white"

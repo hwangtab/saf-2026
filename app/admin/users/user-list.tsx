@@ -3,12 +3,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
+  approveUser,
   promoteUserToArtistWithLink,
   reactivateUser,
   rejectUser,
   searchUnlinkedArtists,
   updateUserRole,
 } from '@/app/actions/admin';
+import { approveExhibitor } from '@/app/actions/admin-exhibitors';
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button'; // Import Button for ArtistPromoteModal
 import { Pagination } from '@/components/ui/Pagination';
@@ -54,6 +56,7 @@ export function UserList({
 
   // Confirmation Modals State
   const [rejectConfirmId, setRejectConfirmId] = useState<string | null>(null);
+  const [approveConfirmId, setApproveConfirmId] = useState<string | null>(null);
   const [reactivateConfirmId, setReactivateConfirmId] = useState<string | null>(null);
   const [roleChangeConfirm, setRoleChangeConfirm] = useState<{ id: string; role: string } | null>(
     null
@@ -302,6 +305,10 @@ export function UserList({
     setRejectConfirmId(id);
   };
 
+  const handleApproveRequest = (id: string) => {
+    setApproveConfirmId(id);
+  };
+
   const handleReactivateRequest = (id: string) => {
     setReactivateConfirmId(id);
   };
@@ -330,6 +337,56 @@ export function UserList({
       setRejectConfirmId(null);
       toast.success('신청을 거절하고 계정을 정지했습니다.');
     }
+  };
+
+  const executeApprove = async () => {
+    if (!approveConfirmId) return;
+
+    const targetUser = localUsers.find((user) => user.id === approveConfirmId);
+    if (!targetUser) {
+      setApproveConfirmId(null);
+      return;
+    }
+
+    setProcessingId(approveConfirmId);
+
+    if (targetUser.exhibitorApplication) {
+      try {
+        await approveExhibitor(approveConfirmId);
+      } catch (error: unknown) {
+        setProcessingId(null);
+        const message =
+          error instanceof Error ? error.message : '출품자 승인 중 오류가 발생했습니다.';
+        toast.error(message);
+        return;
+      }
+
+      setLocalUsers((prev) =>
+        prev.map((user) =>
+          user.id === approveConfirmId ? { ...user, role: 'exhibitor', status: 'active' } : user
+        )
+      );
+      setProcessingId(null);
+      setApproveConfirmId(null);
+      toast.success('출품자 신청을 승인했습니다.');
+      return;
+    }
+
+    const result = await approveUser(approveConfirmId);
+    setProcessingId(null);
+
+    if (result.error) {
+      toast.error(result.message);
+      return;
+    }
+
+    setLocalUsers((prev) =>
+      prev.map((user) =>
+        user.id === approveConfirmId ? { ...user, role: 'artist', status: 'active' } : user
+      )
+    );
+    setApproveConfirmId(null);
+    toast.success('작가 신청을 승인했습니다.');
   };
 
   const executeReactivate = async () => {
@@ -365,9 +422,11 @@ export function UserList({
                 ...user,
                 role: newRole as Profile['role'],
                 status:
-                  newRole === 'admin' || newRole === 'artist' || newRole === 'exhibitor'
+                  newRole === 'admin' || newRole === 'artist'
                     ? 'active'
-                    : user.status,
+                    : newRole === 'exhibitor'
+                      ? 'pending'
+                      : user.status,
               }
             : user
         )
@@ -383,6 +442,10 @@ export function UserList({
 
   const roleChangeTargetUser = roleChangeConfirm
     ? localUsers.find((user) => user.id === roleChangeConfirm.id) || null
+    : null;
+
+  const approveTargetUser = approveConfirmId
+    ? localUsers.find((user) => user.id === approveConfirmId) || null
     : null;
 
   const rejectTargetUser = rejectConfirmId
@@ -411,6 +474,7 @@ export function UserList({
           sortDirection={sortDirection}
           onSort={handleSort}
           onSelectUser={setSelectedUser}
+          onApprove={handleApproveRequest}
           onReject={handleRejectRequest}
           onReactivate={handleReactivateRequest}
           onRoleChange={handleRoleChangeRequest}
@@ -766,6 +830,19 @@ export function UserList({
           </div>
         )}
       </Modal>
+
+      {approveTargetUser && (
+        <AdminConfirmModal
+          isOpen={!!approveTargetUser}
+          onClose={() => setApproveConfirmId(null)}
+          onConfirm={executeApprove}
+          title="신청 승인 확인"
+          description={`${approveTargetUser.name} (${approveTargetUser.email}) 님의 신청을 승인하시겠습니까?`}
+          confirmText="승인하기"
+          variant="info"
+          isLoading={processingId === approveTargetUser.id}
+        />
+      )}
 
       {/* Reject Confirmation */}
       {rejectTargetUser && (

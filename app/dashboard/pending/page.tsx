@@ -1,5 +1,4 @@
 import { SignOutButton } from '@/components/auth/SignOutButton';
-import Button from '@/components/ui/Button';
 import { requireAuth } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { redirect } from 'next/navigation';
@@ -18,11 +17,11 @@ export default async function PendingPage() {
     redirect('/admin/dashboard');
   }
 
-  if (profile?.role !== 'artist') {
+  if (!profile || (profile.role !== 'artist' && profile.role !== 'user')) {
     redirect('/');
   }
 
-  if (profile.status === 'suspended') {
+  if (profile.role === 'artist' && profile.status === 'suspended') {
     redirect('/dashboard/suspended');
   }
 
@@ -37,9 +36,12 @@ export default async function PendingPage() {
     !!application?.contact?.trim() &&
     !!application?.bio?.trim();
 
-  // If already active, go to artist dashboard
-  if (profile?.status === 'active') {
+  if (profile.role === 'artist' && profile.status === 'active') {
     redirect('/dashboard/artworks');
+  }
+
+  if (!hasApplication) {
+    redirect('/onboarding');
   }
 
   return (
@@ -56,17 +58,9 @@ export default async function PendingPage() {
             승인이 완료되면 서비스를 이용하실 수 있습니다.
           </p>
         </div>
-        {!hasApplication ? (
-          <div className="pt-2">
-            <Button href="/onboarding" variant="primary" className="w-full">
-              작가 정보 입력하기
-            </Button>
-          </div>
-        ) : (
-          <div className="rounded-md bg-green-50 px-4 py-3 text-sm text-green-700">
-            제출 완료: {application?.artist_name}
-          </div>
-        )}
+        <div className="rounded-md bg-green-50 px-4 py-3 text-sm text-green-700">
+          제출 완료: {application?.artist_name}
+        </div>
         <div className="pt-4 border-t border-gray-100">
           <SignOutButton />
         </div>
