@@ -308,9 +308,11 @@ export function AdminArtworkList({
     const normalizedImages = (images || []).map((image) =>
       resolveArtworkImageUrlForPreset(image, 'detail')
     );
+    const validImages = normalizedImages.filter((image) => image.trim().length > 0);
+    if (validImages.length === 0) return;
 
     setLightboxData({
-      images: normalizedImages,
+      images: validImages,
       initialIndex: 0,
       alt: title,
     });

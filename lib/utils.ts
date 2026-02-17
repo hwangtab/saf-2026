@@ -37,13 +37,15 @@ export function formatArtistName(artistName: string, addSuffix: boolean = true):
 
 export function resolveArtworkImageUrl(image: string): string {
   if (!image) return '';
-  if (image.startsWith('http://') || image.startsWith('https://')) {
-    return image;
+  const normalizedImage = image.trim();
+  if (!normalizedImage) return '';
+  if (normalizedImage.startsWith('http://') || normalizedImage.startsWith('https://')) {
+    return normalizedImage;
   }
-  if (image.startsWith('/')) {
-    return image;
+  if (normalizedImage.startsWith('/')) {
+    return normalizedImage;
   }
-  return `/images/artworks/${image}`;
+  return `/images/artworks/${normalizedImage}`;
 }
 
 export const ARTWORK_IMAGE_VARIANTS = ['thumb', 'card', 'detail', 'hero', 'original'] as const;

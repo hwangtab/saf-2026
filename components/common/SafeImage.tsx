@@ -11,8 +11,12 @@ import {
 
 type SafeImageProps = ComponentProps<typeof ExportedImage>;
 
-const ARTWORK_STORAGE_MARKER = '/storage/v1/object/public/artworks/';
-const ARTWORK_VARIANT_SUFFIX_REGEX = /__(thumb|card|detail|hero|original)\.(webp|jpg|jpeg|png)$/i;
+const ARTWORK_STORAGE_MARKERS = [
+  '/storage/v1/object/public/artworks/',
+  '/storage/v1/render/image/public/artworks/',
+] as const;
+const ARTWORK_VARIANT_SUFFIX_REGEX =
+  /__(thumb|card|detail|hero|original)\.(webp|jpg|jpeg|png|avif)$/i;
 
 const VARIANT_WIDTHS: Record<string, number> = {
   thumb: 400,
@@ -23,7 +27,7 @@ const VARIANT_WIDTHS: Record<string, number> = {
 };
 
 function isArtworkStorageUrl(url: string): boolean {
-  return url.includes(ARTWORK_STORAGE_MARKER);
+  return ARTWORK_STORAGE_MARKERS.some((marker) => url.includes(marker));
 }
 
 function hasVariantSuffix(url: string): boolean {
