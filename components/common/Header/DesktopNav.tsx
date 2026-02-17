@@ -28,7 +28,7 @@ export default function DesktopNav({ navigation, isActive, textColor }: DesktopN
 
               {/* Dropdown Menu */}
               {item.items && item.items.length > 0 && (
-                <div className="absolute top-full left-0 pt-2 opacity-0 translate-y-2 invisible group-hover:opacity-100 group-hover:translate-y-0 group-hover:visible transition-all duration-200 min-w-[240px] z-50">
+                <div className="absolute top-full left-0 pt-2 opacity-0 translate-y-2 invisible group-hover:opacity-100 group-hover:translate-y-0 group-hover:visible transition-all duration-200 min-w-[240px] z-50 before:absolute before:h-4 before:w-full before:-top-4 before:left-0 before:content-['']">
                   <div className="bg-white rounded-lg shadow-xl border border-gray-100 p-2 overflow-hidden">
                     <ul className="flex flex-col gap-1">
                       {item.items.map((subItem) => (

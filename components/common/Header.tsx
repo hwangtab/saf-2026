@@ -9,7 +9,7 @@ import { usePathname } from 'next/navigation';
 import DesktopNav from './Header/DesktopNav';
 import FullscreenMenu from './Header/FullscreenMenu';
 import HeaderLogo from './Header/HeaderLogo';
-import { MenuIcon } from '@/components/ui/Icons';
+import MenuToggleIcon from '@/components/ui/MenuToggleIcon';
 
 import { MAIN_NAVIGATION } from '@/lib/menus';
 
@@ -67,7 +67,7 @@ function PublicHeader() {
           aria-label={UI_STRINGS.NAV.TOGGLE_MENU}
           aria-expanded={isMenuOpen}
         >
-          <MenuIcon />
+          <MenuToggleIcon isOpen={isMenuOpen} />
         </button>
       </nav>
 

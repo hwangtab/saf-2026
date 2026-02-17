@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import Button from '@/components/ui/Button';
+import MenuToggleIcon from '@/components/ui/MenuToggleIcon';
 import { EXTERNAL_LINKS } from '@/lib/constants';
 import type { NavigationItem } from '@/types';
 import styles from './FullscreenMenu.module.css';
@@ -109,20 +110,7 @@ export default function FullscreenMenu({
         {/* 헤더 - 닫기 버튼 */}
         <header className={styles.header}>
           <button onClick={onClose} className={styles.closeButton} aria-label="메뉴 닫기">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
+            <MenuToggleIcon isOpen={true} />
             <span>닫기</span>
           </button>
         </header>
