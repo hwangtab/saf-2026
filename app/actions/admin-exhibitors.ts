@@ -39,7 +39,7 @@ export async function getExhibitors(filters?: {
         role,
         status,
         created_at,
-        application:exhibitor_applications!left(
+        application:exhibitor_applications(
           representative_name,
           contact,
           bio,
@@ -69,6 +69,11 @@ export async function getExhibitors(filters?: {
 
   if (error) {
     console.error('Error fetching exhibitors:', error);
+    // exhibitor_applications 테이블 누락 오류 시 빈 배열 반환 (42P01 = undefined_table)
+    if (error.code === '42P01' || error.message?.includes('exhibitor_applications')) {
+      console.warn('exhibitor_applications 테이블이 없습니다. 마이그레이션을 적용해주세요.');
+      return [];
+    }
     throw new Error('출품자 목록을 불러오는 중 오류가 발생했습니다.');
   }
 
