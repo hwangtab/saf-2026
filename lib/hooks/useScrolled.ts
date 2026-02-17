@@ -4,10 +4,7 @@ import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 
 export function useScrolled(threshold = 10, disabled = false) {
-  const [isScrolled, setIsScrolled] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    return window.scrollY > threshold;
-  });
+  const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {

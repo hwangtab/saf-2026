@@ -51,6 +51,7 @@
   --admin-surface-muted: #f8fafc;
   --admin-border: #dbe4ef;
   --admin-border-soft: #e6edf5;
+  --font-display: 'PartialSans', 'GMarketSans', sans-serif;
 }
 
 @tailwind base;

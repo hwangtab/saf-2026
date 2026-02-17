@@ -16,6 +16,7 @@ export default function BackgroundSlider() {
   // State to hold the shuffled rest of the images
   const [shuffledRest, setShuffledRest] = useState<(typeof HERO_IMAGES)[number][]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
 
   // Combine fixed first image with shuffled rest
   const images = useMemo(() => {
@@ -35,7 +36,7 @@ export default function BackgroundSlider() {
 
   useEffect(() => {
     // Don't start interval if reduced motion is preferred
-    if (prefersReducedMotion) return;
+    if (prefersReducedMotion || isPaused) return;
 
     const interval = setInterval(() => {
       // Only transition if the tab is focused
@@ -45,7 +46,7 @@ export default function BackgroundSlider() {
     }, ANIMATION.SLIDER_INTERVAL);
 
     return () => clearInterval(interval);
-  }, [images.length, prefersReducedMotion]);
+  }, [images.length, prefersReducedMotion, isPaused]);
 
   // Render static image for reduced motion
   if (prefersReducedMotion) {
@@ -116,6 +117,17 @@ export default function BackgroundSlider() {
           </m.div>
         </AnimatePresence>
         <div className="absolute inset-0 bg-black/60 z-10" />
+        {images.length > 1 && (
+          <button
+            type="button"
+            onClick={() => setIsPaused((prev) => !prev)}
+            className="absolute bottom-4 right-4 z-20 rounded-md bg-black/45 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm hover:bg-black/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+            aria-pressed={isPaused}
+            aria-label={isPaused ? '배경 슬라이드 재생' : '배경 슬라이드 일시정지'}
+          >
+            {isPaused ? '재생' : '일시정지'}
+          </button>
+        )}
       </div>
     </>
   );

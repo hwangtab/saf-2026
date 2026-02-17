@@ -32,11 +32,13 @@ export function useHeaderStyle() {
   // 경로 기반 파생 상태 메모이제이션
   const { isArtworkDetail, hasHero } = useMemo(() => {
     const artistPage = currentPath.startsWith('/artworks/artist/');
+    const specialHeroPage = currentPath === '/special/oh-yoon';
     const artworkDetail =
       currentPath.startsWith('/artworks/') && currentPath !== '/artworks' && !artistPage;
     const heroPage =
       (HERO_PAGES.includes(currentPath as (typeof HERO_PAGES)[number]) && !artworkDetail) ||
-      artistPage;
+      artistPage ||
+      specialHeroPage;
     return { isArtworkDetail: artworkDetail, hasHero: heroPage };
   }, [currentPath]);
 

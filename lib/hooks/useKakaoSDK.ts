@@ -57,8 +57,13 @@ export function useKakaoShareSDK() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (window.Kakao) {
-      if (!window.Kakao.isInitialized()) {
-        window.Kakao.init(jsKey);
+      if (hasAppKey && !window.Kakao.isInitialized()) {
+        try {
+          window.Kakao.init(jsKey);
+        } catch (e) {
+          console.error('Failed to initialize Kakao Share SDK:', e);
+          return;
+        }
       }
       const timerId = setTimeout(() => {
         setIsLoaded(true);
@@ -73,8 +78,14 @@ export function useKakaoShareSDK() {
     script.async = true;
 
     script.onload = () => {
-      if (window.Kakao && !window.Kakao.isInitialized()) {
-        window.Kakao.init(jsKey);
+      if (window.Kakao && hasAppKey && !window.Kakao.isInitialized()) {
+        try {
+          window.Kakao.init(jsKey);
+        } catch (e) {
+          console.error('Failed to initialize Kakao Share SDK:', e);
+          setError(new Error('Failed to initialize Kakao Share SDK'));
+          return;
+        }
       }
       setIsLoaded(true);
     };

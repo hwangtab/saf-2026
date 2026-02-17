@@ -15,8 +15,9 @@ interface ArtworkHighlightSliderProps {
 
 export default function ArtworkHighlightSlider({ artworks }: ArtworkHighlightSliderProps) {
   const [mounted, setMounted] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
 
-  const [emblaRef] = useEmblaCarousel(
+  const [emblaRef, emblaApi] = useEmblaCarousel(
     {
       loop: true,
       align: 'start',
@@ -36,6 +37,20 @@ export default function ArtworkHighlightSlider({ artworks }: ArtworkHighlightSli
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (!emblaApi) return;
+
+    const plugins = emblaApi.plugins();
+    if (!('autoScroll' in plugins)) return;
+
+    const autoScroll = plugins.autoScroll;
+    if (isPaused) {
+      autoScroll.stop();
+      return;
+    }
+    autoScroll.play();
+  }, [emblaApi, isPaused]);
+
   if (!mounted || artworks.length === 0) {
     return (
       <Section variant="white" className="py-12 bg-canvas-soft/30">
@@ -46,7 +61,7 @@ export default function ArtworkHighlightSlider({ artworks }: ArtworkHighlightSli
 
   return (
     <Section variant="canvas-soft" className="py-16 md:py-24 overflow-hidden">
-      <div className="container-max mb-12 text-center">
+      <div className="container-max mb-12 text-center relative">
         <div className="inline-flex items-center px-3 py-1 rounded-full border border-primary text-primary text-xs font-semibold tracking-wide uppercase mb-4">
           Online Showcase
         </div>
@@ -59,6 +74,15 @@ export default function ArtworkHighlightSlider({ artworks }: ArtworkHighlightSli
             전체 작품 보기 &rarr;
           </Link>
         </div>
+        <button
+          type="button"
+          onClick={() => setIsPaused((prev) => !prev)}
+          className="absolute right-0 top-0 rounded-md border border-charcoal/20 bg-white/80 px-3 py-1.5 text-xs font-medium text-charcoal hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          aria-pressed={isPaused}
+          aria-label={isPaused ? '작품 슬라이더 재생' : '작품 슬라이더 일시정지'}
+        >
+          {isPaused ? '재생' : '일시정지'}
+        </button>
       </div>
 
       <div className="embla" ref={emblaRef}>
