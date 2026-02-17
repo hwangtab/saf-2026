@@ -7,6 +7,7 @@ import Button from '@/components/ui/Button';
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
 import { getArtworkImageFamilyKey } from '@/lib/utils';
+import { expandArtworkVariantPaths, getStoragePathFromPublicUrl } from '@/lib/utils/form-helpers';
 import {
   AdminFieldLabel,
   AdminInput,
@@ -25,34 +26,11 @@ const initialState: ActionState = {
   error: false,
 };
 
-const ARTWORK_VARIANT_SUFFIX_REGEX = /__(thumb|card|detail|hero|original)\.webp$/i;
-
 const createSessionId = () => {
   if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
     return crypto.randomUUID();
   }
   return `${Date.now()}_${Math.random().toString(36).slice(2)}`;
-};
-
-const getStoragePathFromPublicUrl = (publicUrl: string) => {
-  try {
-    const url = new URL(publicUrl);
-    const marker = '/storage/v1/object/public/artworks/';
-    const index = url.pathname.indexOf(marker);
-    if (index === -1) return null;
-    return url.pathname.slice(index + marker.length);
-  } catch {
-    return null;
-  }
-};
-
-const expandArtworkVariantPaths = (path: string): string[] => {
-  const match = path.match(ARTWORK_VARIANT_SUFFIX_REGEX);
-  if (!match) return [path];
-  const prefix = path.replace(ARTWORK_VARIANT_SUFFIX_REGEX, '');
-  return ['thumb', 'card', 'detail', 'hero', 'original'].map(
-    (variant) => `${prefix}__${variant}.webp`
-  );
 };
 
 export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
@@ -103,7 +81,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
   const removeStorageObjects = useCallback(
     async (urls: string[]) => {
       const paths = urls
-        .map((url) => getStoragePathFromPublicUrl(url))
+        .map((url) => getStoragePathFromPublicUrl(url, 'artworks'))
         .filter((path): path is string => !!path)
         .flatMap((path) => expandArtworkVariantPaths(path));
       const uniquePaths = Array.from(new Set(paths));

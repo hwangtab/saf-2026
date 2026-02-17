@@ -1,38 +1,21 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import SafeImage from '@/components/common/SafeImage';
 import { m, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { ANIMATION, HERO_IMAGES } from '@/lib/constants';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
 
-// SSR-safe: The first image is always fixed to ensure consistency between server and client
-const FIRST_IMAGE = HERO_IMAGES[0];
-
 export default function BackgroundSlider() {
   const prefersReducedMotion = useReducedMotion();
   const isMobile = useIsMobile();
-
-  // State to hold the shuffled rest of the images
-  const [shuffledRest, setShuffledRest] = useState<(typeof HERO_IMAGES)[number][]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-
-  // Combine fixed first image with shuffled rest
-  const images = useMemo(() => {
-    return [FIRST_IMAGE, ...shuffledRest];
-  }, [shuffledRest]);
+  const images = HERO_IMAGES;
 
   const currentPhoto = images[currentIndex];
   const nextIndex = (currentIndex + 1) % images.length;
   const nextPhoto = images[nextIndex];
-
-  // Client-side only shuffle for the rest of images
-  useEffect(() => {
-    const rest = HERO_IMAGES.slice(1).sort(() => Math.random() - 0.5);
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: client-side only shuffle to prevent hydration mismatch
-    setShuffledRest(rest);
-  }, []);
 
   useEffect(() => {
     // Don't start interval if reduced motion is preferred

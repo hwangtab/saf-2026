@@ -5,10 +5,13 @@ import type { ArtworkCardData } from '@/types';
 import { cn, resolveArtworkImageUrlForPreset } from '@/lib/utils';
 
 type ArtworkCardVariant = 'gallery' | 'slider';
+type ArtworkCardTheme = 'light' | 'dark';
 
 interface ArtworkCardProps {
   artwork: ArtworkCardData;
   variant?: ArtworkCardVariant;
+  theme?: ArtworkCardTheme;
+  returnTo?: string;
   className?: string;
 }
 
@@ -24,7 +27,11 @@ const VARIANT_CONFIG = {
   },
 } as const;
 
-const getHref = (artwork: ArtworkCardData) => `/artworks/${artwork.id}`;
+const getHref = (artwork: ArtworkCardData, returnTo?: string) => {
+  const base = `/artworks/${artwork.id}`;
+  if (!returnTo) return base;
+  return `${base}?returnTo=${encodeURIComponent(returnTo)}`;
+};
 const ARTWORK_PLACEHOLDER_IMAGE = '/images/og-image.png';
 
 const getSafeTitle = (artwork: ArtworkCardData) => artwork.title?.trim() || '무제';
@@ -53,7 +60,13 @@ function SoldBadge({ variant }: { variant: ArtworkCardVariant }) {
  * - gallery: Full card for MasonryGallery with material/size info
  * - slider: Compact card for RelatedArtworksSlider
  */
-function ArtworkCard({ artwork, variant = 'gallery', className }: ArtworkCardProps) {
+function ArtworkCard({
+  artwork,
+  variant = 'gallery',
+  theme = 'light',
+  returnTo,
+  className,
+}: ArtworkCardProps) {
   const config = VARIANT_CONFIG[variant];
   const isDisplayable = (value: string | undefined): value is string => Boolean(value);
   const showMaterial = isDisplayable(artwork.material);
@@ -62,7 +75,7 @@ function ArtworkCard({ artwork, variant = 'gallery', className }: ArtworkCardPro
   if (variant === 'slider') {
     return (
       <Link
-        href={getHref(artwork)}
+        href={getHref(artwork, returnTo)}
         className={cn(
           'flex-shrink-0 w-[160px] sm:w-[180px] md:w-[200px] group transition-all duration-300 hover:-translate-y-1',
           className
@@ -97,7 +110,7 @@ function ArtworkCard({ artwork, variant = 'gallery', className }: ArtworkCardPro
         className
       )}
     >
-      <Link href={getHref(artwork)} className="block h-full">
+      <Link href={getHref(artwork, returnTo)} className="block h-full">
         <div className="relative w-full overflow-hidden aspect-[4/5]">
           <div className="absolute inset-0 shimmer-loading" />
           <SafeImage
@@ -112,14 +125,31 @@ function ArtworkCard({ artwork, variant = 'gallery', className }: ArtworkCardPro
           {artwork.sold && <SoldBadge variant="gallery" />}
         </div>
 
-        <div className="p-4 bg-white">
-          <h2 className="text-lg font-bold text-charcoal font-sans group-hover:text-primary transition-colors duration-300 break-keep line-clamp-2 min-h-[3.5rem]">
+        <div className={cn('p-4', theme === 'dark' ? 'bg-[#1f2527]' : 'bg-white')}>
+          <h2
+            className={cn(
+              'text-lg font-bold font-sans transition-colors duration-300 break-keep line-clamp-2 min-h-[3.5rem]',
+              theme === 'dark'
+                ? 'text-white group-hover:text-brand-sun'
+                : 'text-charcoal group-hover:text-primary'
+            )}
+          >
             {getSafeTitle(artwork)}
           </h2>
-          <p className="text-sm text-charcoal-muted mt-1 min-h-[1.25rem]">
+          <p
+            className={cn(
+              'text-sm mt-1 min-h-[1.25rem]',
+              theme === 'dark' ? 'text-white/75' : 'text-charcoal-muted'
+            )}
+          >
             {getSafeArtist(artwork)}
           </p>
-          <p className="text-xs text-charcoal-soft mt-2 line-clamp-1 min-h-[1rem]">
+          <p
+            className={cn(
+              'text-xs mt-2 line-clamp-1 min-h-[1rem]',
+              theme === 'dark' ? 'text-white/55' : 'text-charcoal-soft'
+            )}
+          >
             {(() => {
               const isPending = (v: string | undefined) => v === '확인 중';
               if (isPending(artwork.material) && isPending(artwork.size)) {
@@ -140,7 +170,16 @@ function ArtworkCard({ artwork, variant = 'gallery', className }: ArtworkCardPro
 
           {artwork.price && artwork.price !== '문의' ? (
             <p
-              className={`text-sm font-semibold mt-1 ${artwork.sold ? 'text-gray-600 line-through' : 'text-primary'}`}
+              className={cn(
+                'text-sm font-semibold mt-1',
+                artwork.sold
+                  ? theme === 'dark'
+                    ? 'text-white/50 line-through'
+                    : 'text-gray-600 line-through'
+                  : theme === 'dark'
+                    ? 'text-brand-sun'
+                    : 'text-primary'
+              )}
             >
               {artwork.price}
             </p>

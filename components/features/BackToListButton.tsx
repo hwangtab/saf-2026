@@ -2,7 +2,11 @@
 
 import { useRouter } from 'next/navigation';
 
-export default function BackToListButton() {
+interface BackToListButtonProps {
+  fallbackHref?: string;
+}
+
+export default function BackToListButton({ fallbackHref = '/artworks' }: BackToListButtonProps) {
   const router = useRouter();
 
   const handleBack = () => {
@@ -10,7 +14,7 @@ export default function BackToListButton() {
     if (typeof window !== 'undefined' && window.history.length > 1) {
       router.back();
     } else {
-      router.push('/artworks');
+      router.push(fallbackHref);
     }
   };
 

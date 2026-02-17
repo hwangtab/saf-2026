@@ -40,6 +40,8 @@ const OhYoonMasonryGallery = memo(function OhYoonMasonryGallery({
                   <ArtworkCard
                     artwork={artwork}
                     variant="gallery"
+                    theme="dark"
+                    returnTo="/special/oh-yoon"
                     className="!bg-transparent !shadow-none !rounded-none"
                   />
                 </div>

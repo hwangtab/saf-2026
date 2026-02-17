@@ -129,18 +129,24 @@ export default function RelatedArtworksSlider({
   return (
     <section className="w-full bg-gray-50 py-12 pb-20 relative">
       <SawtoothDivider position="top" colorClass="text-gray-50" />
-      <div className="container-max mb-8 relative">
-        <h2 className="text-2xl font-bold text-charcoal">씨앗페 출품작 보기</h2>
-        <p className="text-gray-500 mt-1">더 많은 출품작을 감상하고 예술인을 응원하세요</p>
-        <button
-          type="button"
-          onClick={() => setIsPaused((prev) => !prev)}
-          className="absolute right-0 top-0 rounded-md border border-charcoal/20 bg-white px-3 py-1.5 text-xs font-medium text-charcoal hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-          aria-pressed={isPaused}
-          aria-label={isPaused ? '관련 작품 슬라이더 재생' : '관련 작품 슬라이더 일시정지'}
-        >
-          {isPaused ? '재생' : '일시정지'}
-        </button>
+      <div className="container-max mb-8">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-charcoal">씨앗페 출품작 보기</h2>
+            <p className="text-gray-500 mt-1">더 많은 출품작을 감상하고 예술인을 응원하세요</p>
+          </div>
+          <div className="self-start sm:self-auto">
+            <button
+              type="button"
+              onClick={() => setIsPaused((prev) => !prev)}
+              className="rounded-md border border-charcoal/20 bg-white px-3 py-1.5 text-xs font-medium text-charcoal hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              aria-pressed={isPaused}
+              aria-label={isPaused ? '관련 작품 슬라이더 재생' : '관련 작품 슬라이더 일시정지'}
+            >
+              {isPaused ? '재생' : '일시정지'}
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Embla 슬라이더 */}

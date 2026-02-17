@@ -27,6 +27,9 @@ interface Props {
   params: Promise<{
     id: string;
   }>;
+  searchParams: Promise<{
+    returnTo?: string;
+  }>;
 }
 
 // Generate metadata for SEO
@@ -51,8 +54,12 @@ export async function generateStaticParams() {
   }));
 }
 
-export default async function ArtworkDetailPage({ params }: Props) {
+export default async function ArtworkDetailPage({ params, searchParams }: Props) {
   const { id } = await params;
+  const { returnTo } = await searchParams;
+  const normalizedReturnTo = returnTo === '/special/oh-yoon' ? returnTo : undefined;
+  const listHref = normalizedReturnTo ?? '/artworks';
+  const listLabel = normalizedReturnTo ? '오윤 특별전' : '출품작';
   const [artwork, artworks] = await Promise.all([
     getSupabaseArtworkById(id),
     getSupabaseArtworks(),
@@ -100,7 +107,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
         {/* Navigation Bar */}
         <nav className="border-b sticky top-[calc(4rem+env(safe-area-inset-top,0px))] z-30 bg-white/80 backdrop-blur-md supports-[backdrop-filter]:bg-white/50">
           <div className="container-max py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <BackToListButton />
+            <BackToListButton fallbackHref={listHref} />
 
             {/* Visual Breadcrumbs for SEO & UX */}
             <div className="flex items-center text-xs text-gray-400 gap-2 whitespace-nowrap overflow-x-auto pb-1 md:pb-0">
@@ -108,8 +115,8 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 홈
               </Link>
               <span>/</span>
-              <Link href="/artworks" className="hover:text-primary transition-colors">
-                출품작
+              <Link href={listHref} className="hover:text-primary transition-colors">
+                {listLabel}
               </Link>
               <span>/</span>
               <Link

@@ -23,10 +23,19 @@ export const getNumber = (formData: FormData, key: string, fallback = 0): number
 export const getStoragePathFromPublicUrl = (publicUrl: string, bucket: string): string | null => {
   try {
     const url = new URL(publicUrl);
-    const marker = `/storage/v1/object/public/${bucket}/`;
-    const index = url.pathname.indexOf(marker);
-    if (index === -1) return null;
-    return url.pathname.slice(index + marker.length);
+    const markers = [
+      `/storage/v1/object/public/${bucket}/`,
+      `/storage/v1/render/image/public/${bucket}/`,
+    ];
+
+    for (const marker of markers) {
+      const index = url.pathname.indexOf(marker);
+      if (index !== -1) {
+        return url.pathname.slice(index + marker.length);
+      }
+    }
+
+    return null;
   } catch {
     return null;
   }
