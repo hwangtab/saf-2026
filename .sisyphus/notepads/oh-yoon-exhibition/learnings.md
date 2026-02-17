@@ -24,3 +24,9 @@
 - Imported and utilized `MasonryGallery` from `components/features/MasonryGallery`.
 - Verified component accepts `artworks` prop of type `ArtworkListItem[]` and renders correctly.
 - Replaced placeholder with actual gallery implementation, ensuring proper spacing (`py-12`).
+
+## 2026-02-17 Final QA & SEO
+
+- Verified viewport and OG metadata in `app/layout.tsx`. Metadata is correctly configured with `SITE_URL` and `BRAND_COLORS`.
+- Conducted accessibility audit via grep for `alt` text on images. Project uses `SafeImage` wrapper which ensures `alt` attributes are passed to `ExportedImage` or `next/image`.
+- Cleaned up development verification scripts before final delivery.

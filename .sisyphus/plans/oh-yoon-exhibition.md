@@ -247,7 +247,7 @@ Parallel Speedup: ~50%
     Evidence: .sisyphus/evidence/task-5-style-check.txt
   ```
 
-- [ ] 6. **Final QA & SEO**
+- [x] 6. **Final QA & SEO**
      **What to do**:
   - Verify Viewport meta tag.
   - Check Open Graph tags.
