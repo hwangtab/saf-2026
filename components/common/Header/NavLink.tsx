@@ -12,7 +12,7 @@ interface NavLinkProps {
   isSubItem?: boolean;
 }
 
-const baseStyles = 'relative flex items-center transition-colors';
+const baseStyles = 'relative flex transition-colors';
 
 export default function NavLink({
   item,
@@ -25,16 +25,18 @@ export default function NavLink({
     baseStyles,
     isSubItem
       ? [
-        'w-full text-sm py-2 px-3 rounded-md hover:bg-gray-50',
-        isActive ? 'text-primary font-semibold bg-gray-50' : 'text-charcoal-muted hover:text-primary',
-      ]
+          'w-full text-sm py-2 px-3 rounded-md hover:bg-gray-50 items-start text-left',
+          isActive
+            ? 'text-primary font-semibold bg-gray-50'
+            : 'text-charcoal-muted hover:text-primary',
+        ]
       : [
-        'h-full text-sm font-medium',
-        'after:absolute after:bottom-3 after:left-0 after:right-0 after:h-0.5 after:transition-colors',
-        isActive
-          ? ['text-primary font-semibold', 'after:bg-primary']
-          : [textColor, 'hover:text-primary', 'after:bg-transparent hover:after:bg-primary/40'],
-      ],
+          'h-full text-sm font-medium items-center',
+          'after:absolute after:bottom-3 after:left-0 after:right-0 after:h-0.5 after:transition-colors',
+          isActive
+            ? ['text-primary font-semibold', 'after:bg-primary']
+            : [textColor, 'hover:text-primary', 'after:bg-transparent hover:after:bg-primary/40'],
+        ],
     textColor.includes('flex flex-col') ? textColor : '' // Allow passing custom classes via textColor prop safely
   );
 
@@ -49,7 +51,9 @@ export default function NavLink({
       >
         <span className="block">{item.name}</span>
         {isSubItem && item.description && (
-          <span className="block text-xs text-gray-400 font-normal mt-0.5">{item.description}</span>
+          <span className="block text-xs text-gray-400 font-normal mt-0.5 whitespace-normal">
+            {item.description}
+          </span>
         )}
       </a>
     );
@@ -59,7 +63,9 @@ export default function NavLink({
     <Link href={item.href} onClick={onClick} className={className}>
       <span className="block">{item.name}</span>
       {isSubItem && item.description && (
-        <span className="block text-xs text-gray-400 font-normal mt-0.5">{item.description}</span>
+        <span className="block text-xs text-gray-400 font-normal mt-0.5 whitespace-normal">
+          {item.description}
+        </span>
       )}
     </Link>
   );

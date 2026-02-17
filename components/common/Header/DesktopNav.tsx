@@ -28,7 +28,7 @@ export default function DesktopNav({ navigation, isActive, textColor }: DesktopN
 
               {/* Dropdown Menu */}
               {item.items && item.items.length > 0 && (
-                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 translate-y-2 invisible group-hover:opacity-100 group-hover:translate-y-0 group-hover:visible transition-all duration-200 min-w-[200px] z-50">
+                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 translate-y-2 invisible group-hover:opacity-100 group-hover:translate-y-0 group-hover:visible transition-all duration-200 min-w-[260px] z-50">
                   <div className="bg-white rounded-lg shadow-xl border border-gray-100 p-2 overflow-hidden">
                     <ul className="flex flex-col gap-1">
                       {item.items.map((subItem) => (
@@ -36,7 +36,7 @@ export default function DesktopNav({ navigation, isActive, textColor }: DesktopN
                           <NavLink
                             item={subItem}
                             isActive={isActive(subItem.href)}
-                            textColor="text-charcoal hover:bg-gray-50 flex flex-col items-start p-3 rounded-md transition-colors"
+                            textColor="text-charcoal hover:bg-gray-50 flex flex-col items-start text-left p-3 rounded-md transition-colors"
                             isSubItem
                           />
                         </li>
@@ -49,17 +49,22 @@ export default function DesktopNav({ navigation, isActive, textColor }: DesktopN
           </li>
         ))}
       </ul>
-      <div className="hidden md:flex items-center gap-4">
+      <div className="hidden md:flex items-center gap-2">
         {/* Utility Menu (Order Status) */}
         <Button
           href="https://koreasmartcoop.cafe24.com/myshop/order/list.html"
           external
-          variant="outline"
+          variant="ghost"
           size="sm"
-          className={textColor === 'text-white' ? 'border-white/30 text-white hover:bg-white/10' : 'border-gray-200 text-charcoal hover:bg-gray-50'}
+          className={
+            textColor === 'text-white'
+              ? 'text-white/80 hover:text-white hover:bg-white/10'
+              : 'text-charcoal-muted hover:text-primary hover:bg-gray-50'
+          }
         >
           주문조회
         </Button>
+
         <Button href="/artworks" variant="accent" size="sm">
           작품 구매
         </Button>
