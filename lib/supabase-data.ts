@@ -58,6 +58,41 @@ export const getSupabaseArtworks = cache(async (): Promise<Artwork[]> => {
   return (data || []).map((item: any) => mapArtworkRow(item, item.artists));
 });
 
+const HOMEPAGE_ARTWORK_FETCH_SIZE = 120;
+
+export const getSupabaseHomepageArtworks = cache(async (limit = 30): Promise<Artwork[]> => {
+  if (!hasSupabaseConfig || !supabase) {
+    const availableFallback = fallbackArtworks.filter((artwork) => !artwork.sold);
+    return availableFallback.slice(0, limit);
+  }
+
+  const { data, error } = await supabase
+    .from('artworks')
+    .select(
+      `
+      ${ARTWORK_SELECT_COLUMNS},
+      artists (${ARTIST_SELECT_COLUMNS})
+    `
+    )
+    .eq('is_hidden', false)
+    .order('created_at', { ascending: false })
+    .limit(HOMEPAGE_ARTWORK_FETCH_SIZE);
+
+  if (error) {
+    if (isMissingTableError(error)) {
+      const availableFallback = fallbackArtworks.filter((artwork) => !artwork.sold);
+      return availableFallback.slice(0, limit);
+    }
+    console.error('Error fetching homepage artworks from Supabase:', error);
+    return [];
+  }
+
+  return (data || [])
+    .map((item: any) => mapArtworkRow(item, item.artists))
+    .filter((artwork) => !artwork.sold)
+    .slice(0, limit);
+});
+
 export const getSupabaseArtworkById = cache(async (id: string): Promise<Artwork | null> => {
   if (!hasSupabaseConfig || !supabase) {
     return getArtworkById(id) || null;

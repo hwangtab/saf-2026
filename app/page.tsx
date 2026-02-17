@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import SafeImage from '@/components/common/SafeImage';
 import dynamic from 'next/dynamic';
+import { Suspense } from 'react';
 import Button from '@/components/ui/Button';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
@@ -9,15 +10,36 @@ import BackgroundSlider from '@/components/features/BackgroundSlider';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
 import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL, STATISTICS_DATA } from '@/lib/constants';
 import { generateExhibitionSchema, generateFAQSchema } from '@/lib/seo-utils';
-import { shuffleArray } from '@/lib/utils';
-import { getSupabaseArtworks, getSupabaseFAQs } from '@/lib/supabase-data';
+import { getSupabaseHomepageArtworks, getSupabaseFAQs } from '@/lib/supabase-data';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 
-const DynamicCounter = dynamic(() => import('@/components/features/DynamicCounter'));
-const ShareButtons = dynamic(() => import('@/components/common/ShareButtons'));
-const FAQList = dynamic(() => import('@/components/features/FAQList'));
+const DynamicCounter = dynamic(() => import('@/components/features/DynamicCounter'), {
+  loading: () => (
+    <div className="w-full h-[180px] rounded-xl bg-canvas animate-pulse" aria-hidden="true" />
+  ),
+});
+const ShareButtons = dynamic(() => import('@/components/common/ShareButtons'), {
+  loading: () => (
+    <div className="w-[220px] h-10 rounded-md bg-white/20 animate-pulse" aria-hidden="true" />
+  ),
+});
+const FAQList = dynamic(() => import('@/components/features/FAQList'), {
+  loading: () => (
+    <div className="w-full h-[280px] rounded-xl bg-white/60 animate-pulse" aria-hidden="true" />
+  ),
+});
 const ArtworkHighlightSlider = dynamic(
-  () => import('@/components/features/ArtworkHighlightSlider')
+  () => import('@/components/features/ArtworkHighlightSlider'),
+  {
+    loading: () => (
+      <Section variant="canvas-soft" className="py-16 md:py-24 overflow-hidden">
+        <div
+          className="container-max h-[320px] animate-pulse rounded-xl bg-white/70"
+          aria-hidden="true"
+        />
+      </Section>
+    ),
+  }
 );
 
 export const metadata: Metadata = {
@@ -51,16 +73,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function Home() {
+export default function Home() {
   const counterItems = STATISTICS_DATA.slice(0, 3);
-
-  // Slider Logic: Show all available artworks (sold: false)
-  const [allArtworks, faqs] = await Promise.all([getSupabaseArtworks(), getSupabaseFAQs()]);
-  const availableArtworks = allArtworks.filter((artwork) => !artwork.sold);
-
-  // 서버 측에서 30개만 샘플링하여 라이브러리/데이터 전송량 최적화
-
-  const sliderArtworks = shuffleArray(availableArtworks).slice(0, 30);
 
   return (
     <>
@@ -132,10 +146,9 @@ export default async function Home() {
         </div>
       </section>
 
-      <ArtworkHighlightSlider artworks={sliderArtworks} />
-
-      {/* Statistics Counter Section */}
-      <DynamicCounter items={counterItems} />
+      <Suspense fallback={<HomeDataSectionsFallback />}>
+        <HomeDataSections counterItems={counterItems} />
+      </Suspense>
 
       {/* Call to Action Section (Moved Up) */}
       <Section variant="accent-soft" prevVariant="canvas-soft" className="pb-24">
@@ -257,14 +270,59 @@ export default async function Home() {
       <Section variant="sun-soft" prevVariant="primary-surface" className="pb-24 md:pb-32">
         <div className="container-max">
           <SectionTitle className="mb-12">자주 묻는 질문</SectionTitle>
-          <FAQList items={faqs} />
+          <Suspense
+            fallback={
+              <div
+                className="w-full h-[280px] rounded-xl bg-white/60 animate-pulse"
+                aria-hidden="true"
+              />
+            }
+          >
+            <HomeFAQSection />
+          </Suspense>
         </div>
       </Section>
 
-      {/* FAQ JSON-LD Schema using Component */}
-      <JsonLdScript data={generateFAQSchema(faqs)} />
       {/* ExhibitionEvent JSON-LD Schema using Component */}
       <JsonLdScript data={generateExhibitionSchema()} />
+    </>
+  );
+}
+
+async function HomeDataSections({ counterItems }: { counterItems: typeof STATISTICS_DATA }) {
+  const sliderArtworks = await getSupabaseHomepageArtworks(30);
+
+  return (
+    <>
+      <ArtworkHighlightSlider artworks={sliderArtworks} />
+      <DynamicCounter items={counterItems} />
+    </>
+  );
+}
+
+async function HomeFAQSection() {
+  const faqs = await getSupabaseFAQs();
+
+  return (
+    <>
+      <FAQList items={faqs} />
+      <JsonLdScript data={generateFAQSchema(faqs)} />
+    </>
+  );
+}
+
+function HomeDataSectionsFallback() {
+  return (
+    <>
+      <Section variant="canvas-soft" className="py-16 md:py-24 overflow-hidden">
+        <div
+          className="container-max h-[320px] animate-pulse rounded-xl bg-white/70"
+          aria-hidden="true"
+        />
+      </Section>
+      <div className="container-max py-8">
+        <div className="w-full h-[180px] rounded-xl bg-canvas animate-pulse" aria-hidden="true" />
+      </div>
     </>
   );
 }

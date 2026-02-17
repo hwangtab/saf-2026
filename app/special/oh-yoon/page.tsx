@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { artworks } from '@/content/saf2026-artworks';
-// import OhYoonGallery from '@/components/special/OhYoonGallery'; // Deprecated
 import OhYoonMasonryGallery from '@/components/special/OhYoonMasonryGallery';
 import { OG_IMAGE, SITE_URL } from '@/lib/constants';
 
@@ -20,6 +19,8 @@ const isOhYoonArtist = (artist: string): boolean => {
 
   return OH_YOON_ARTIST_KEYS.has(normalized) || compact === '오윤' || compact === 'ohyoon';
 };
+
+const OH_YOON_ARTWORKS = artworks.filter((artwork) => isOhYoonArtist(artwork.artist));
 
 export const metadata: Metadata = {
   title: '오윤 40주기 특별전: Oh Yoon 40th Anniversary Special Exhibition',
@@ -52,8 +53,7 @@ export const metadata: Metadata = {
 };
 
 export default function OhYoonPage() {
-  const ohYoonArtworks = artworks.filter((a) => isOhYoonArtist(a.artist));
-  const artworkCountLabel = new Intl.NumberFormat('ko-KR').format(ohYoonArtworks.length);
+  const artworkCountLabel = new Intl.NumberFormat('ko-KR').format(OH_YOON_ARTWORKS.length);
 
   return (
     <div className="w-full bg-canvas-soft min-h-screen font-sans">
@@ -214,8 +214,8 @@ export default function OhYoonPage() {
 
         {/* Gallery Grid */}
         <div className="max-w-[1440px] mx-auto px-4">
-          {ohYoonArtworks.length > 0 ? (
-            <OhYoonMasonryGallery artworks={ohYoonArtworks} />
+          {OH_YOON_ARTWORKS.length > 0 ? (
+            <OhYoonMasonryGallery artworks={OH_YOON_ARTWORKS} />
           ) : (
             <section className="py-24 text-center">
               <div className="inline-block rounded-xl border border-white/10 bg-white/5 p-12 backdrop-blur-sm">
