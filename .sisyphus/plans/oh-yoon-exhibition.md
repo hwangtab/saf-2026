@@ -198,7 +198,7 @@ Parallel Speedup: ~50%
     Evidence: .sisyphus/evidence/task-3-content-check.txt
   ```
 
-- [ ] 4. **Integrate Masonry Gallery**
+- [x] 4. **Integrate Masonry Gallery**
      **What to do**:
   - Import `MasonryGallery` from `components/features/MasonryGallery`.
   - Pass the filtered Oh Yoon artworks to it.
@@ -223,7 +223,7 @@ Parallel Speedup: ~50%
     Evidence: .sisyphus/evidence/task-4-gallery-check.txt
   ```
 
-- [ ] 5. **Apply Minjung Art Aesthetic**
+- [x] 5. **Apply Minjung Art Aesthetic**
      **What to do**:
   - Style the page background (e.g., `bg-amber-50` or texture).
   - Add bold, rough borders to images or sections.
