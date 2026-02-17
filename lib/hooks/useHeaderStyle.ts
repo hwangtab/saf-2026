@@ -15,9 +15,7 @@ export function useHeaderStyle() {
   // 네이티브 <dialog>가 스크롤 잠금을 처리하므로 useScrollLock 불필요
   const isScrolled = useScrolled(10, isMenuOpen);
   const pathname = usePathname();
-  const currentPath = normalizePath(
-    pathname || (typeof window !== 'undefined' ? window.location.pathname : '/')
-  );
+  const currentPath = normalizePath(pathname || '/');
 
   const isActive = useCallback(
     (href: string) => {
