@@ -125,6 +125,19 @@ export function UserTable({
                         {user.name || 'No Name'}
                       </button>
                       <div className="text-sm text-gray-500">{user.email}</div>
+                      {(user.application || user.exhibitorApplication) && (
+                        <div className="mt-1">
+                          <span
+                            className={`inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-medium ring-1 ring-inset ${
+                              user.exhibitorApplication
+                                ? 'bg-indigo-50 text-indigo-700 ring-indigo-600/20'
+                                : 'bg-emerald-50 text-emerald-700 ring-emerald-600/20'
+                            }`}
+                          >
+                            {user.exhibitorApplication ? '출품자 신청' : '작가 신청'}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </td>
@@ -177,9 +190,7 @@ export function UserTable({
                     </AdminSelect>
                     {user.status === 'pending' && (
                       <span className="text-[11px] text-amber-700">
-                        {user.role === 'exhibitor'
-                          ? '출품자 관리는 출품자 관리 메뉴에서 승인됩니다.'
-                          : '권한을 Artist로 변경하면 승인됩니다.'}
+                        심사 큐에서 승인/거절합니다.
                       </span>
                     )}
                   </div>

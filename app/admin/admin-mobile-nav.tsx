@@ -12,7 +12,7 @@ const navItems = [
   { href: '/admin/users', label: '사용자 관리' },
   { href: '/admin/content', label: '콘텐츠 관리' },
   { href: '/admin/artists', label: '작가 관리' },
-  { href: '/admin/exhibitors', label: '출품자 관리' },
+  { href: '/admin/users?status=pending', label: '심사 큐' },
   { href: '/admin/artworks', label: '작품 관리' },
   { href: '/admin/logs', label: '활동 로그' },
   { href: '/admin/trash', label: '휴지통' },
@@ -110,7 +110,8 @@ export function AdminMobileNav() {
               <div className="flex flex-col h-full">
                 <div className="space-y-1 p-4 flex-1">
                   {navItems.map((item) => {
-                    const isActive = pathname.startsWith(item.href);
+                    const targetPath = item.href.split('?')[0];
+                    const isActive = pathname.startsWith(targetPath);
                     return (
                       <Link
                         key={item.href}

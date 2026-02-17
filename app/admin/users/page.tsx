@@ -46,6 +46,7 @@ type Props = {
     role?: string;
     status?: string;
     q?: string;
+    applicant?: string;
   }>;
 };
 
@@ -97,8 +98,7 @@ export default async function UsersPage({ searchParams }: Props) {
     (exhibitorApplications || []).map((app: ExhibitorApplication) => [app.user_id, app])
   );
 
-  // Custom sort in JS to put pending first
-  const sortedUsers: ProfileWithApplication[] = (users || [])
+  const usersWithApplications: ProfileWithApplication[] = (users || [])
     .sort((a: ProfileRow, b: ProfileRow) => {
       if (a.status === 'pending' && b.status !== 'pending') return -1;
       if (a.status !== 'pending' && b.status === 'pending') return 1;
@@ -110,12 +110,27 @@ export default async function UsersPage({ searchParams }: Props) {
       exhibitorApplication: exhibitorApplicationMap.get(user.id) || null,
     }));
 
+  const applicantFilter = params.applicant;
+  const sortedUsers = usersWithApplications.filter((user) => {
+    if (applicantFilter === 'artist') {
+      return Boolean(user.application);
+    }
+
+    if (applicantFilter === 'exhibitor') {
+      return Boolean(user.exhibitorApplication);
+    }
+
+    return true;
+  });
+
   return (
     <div className="space-y-6">
       <div>
         <AdminPageHeader>
-          <AdminPageTitle>사용자 관리</AdminPageTitle>
-          <AdminPageDescription>신규 가입한 사용자를 승인하거나 관리합니다.</AdminPageDescription>
+          <AdminPageTitle>심사 큐</AdminPageTitle>
+          <AdminPageDescription>
+            작가·출품자 신청 심사와 사용자 상태 관리를 통합합니다.
+          </AdminPageDescription>
         </AdminPageHeader>
       </div>
 
@@ -125,6 +140,7 @@ export default async function UsersPage({ searchParams }: Props) {
           role: params.role,
           status: params.status,
           q: params.q,
+          applicant: params.applicant,
         }}
       />
     </div>

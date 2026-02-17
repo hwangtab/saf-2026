@@ -41,4 +41,5 @@ export type InitialFilters = {
   role?: string;
   status?: string;
   q?: string;
+  applicant?: string;
 };

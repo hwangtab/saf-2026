@@ -1,35 +1,23 @@
-import { Suspense } from 'react';
-import { getExhibitors } from '@/app/actions/admin-exhibitors';
-import { ExhibitorList } from './exhibitor-list';
+import { redirect } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminExhibitorsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; status?: 'active' | 'pending' | 'suspended' }>;
+  searchParams: Promise<Record<string, string | undefined>>;
 }) {
   const params = await searchParams;
-  const exhibitors = await getExhibitors({
-    query: params.q,
-    status: params.status,
+
+  const nextParams = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (!value) return;
+    const trimmed = value.trim();
+    if (!trimmed) return;
+    nextParams.set(key, trimmed);
   });
+  nextParams.set('status', params.status || 'pending');
+  nextParams.set('applicant', 'exhibitor');
 
-  return (
-    <div className="space-y-6">
-      <div className="sm:flex sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">출품자 관리</h1>
-          <p className="mt-2 text-sm text-gray-700">출품자 신청 승인 및 상태를 관리합니다.</p>
-        </div>
-        <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">{/* Action buttons if needed */}</div>
-      </div>
-
-      <div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
-        <Suspense fallback={<div>Loading...</div>}>
-          <ExhibitorList initialExhibitors={exhibitors} />
-        </Suspense>
-      </div>
-    </div>
-  );
+  redirect(`/admin/users?${nextParams.toString()}`);
 }

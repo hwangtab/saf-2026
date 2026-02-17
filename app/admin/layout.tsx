@@ -60,10 +60,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                   작품 관리
                 </Link>
                 <Link
-                  href="/admin/exhibitors"
+                  href="/admin/users?status=pending"
                   className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium whitespace-nowrap"
                 >
-                  출품자 관리
+                  심사 큐
                 </Link>
                 <Link
                   href="/admin/logs"

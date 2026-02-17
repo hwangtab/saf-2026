@@ -28,10 +28,8 @@ export function UserFilters({
     <AdminCardHeader>
       <div className="flex items-center gap-3">
         <h2 className="text-lg font-semibold text-gray-900">
-          사용자 목록
-          <AdminHelp>
-            가입된 사용자의 권한을 관리하고 신청을 승인하거나 차단할 수 있습니다.
-          </AdminHelp>
+          심사 큐
+          <AdminHelp>작가/출품자 신청을 한 곳에서 승인·거절하고 계정 상태를 관리합니다.</AdminHelp>
         </h2>
         <AdminBadge tone="info">{totalItems}명</AdminBadge>
       </div>
@@ -69,7 +67,16 @@ export function UserFilters({
             이름 또는 이메일로 사용자를 검색할 수 있습니다. 현재 {totalItems}명이 표시됩니다.
           </span>
         </div>
-        <div className="grid grid-cols-2 gap-3 sm:flex sm:justify-end">
+        <div className="grid grid-cols-2 gap-3 sm:flex sm:justify-end lg:grid-cols-3">
+          <AdminSelect
+            value={initialFilters?.applicant || 'all'}
+            onChange={(e) => onFilterChange({ applicant: e.target.value })}
+            wrapperClassName="min-w-[120px]"
+          >
+            <option value="all">모든 신청유형</option>
+            <option value="artist">작가 신청</option>
+            <option value="exhibitor">출품자 신청</option>
+          </AdminSelect>
           <AdminSelect
             value={initialFilters?.role || 'all'}
             onChange={(e) => onFilterChange({ role: e.target.value })}
