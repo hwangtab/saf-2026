@@ -18,3 +18,9 @@
 - Implemented filtering logic in `app/special/oh-yoon/page.tsx` using `artworks.filter((a) => a.artist === '오윤')`.
 - Added temporary count display in UI for verification.
 - Verified that `npm run type-check` passes.
+
+## 2026-02-17: Masonry Gallery Integration
+
+- Imported and utilized `MasonryGallery` from `components/features/MasonryGallery`.
+- Verified component accepts `artworks` prop of type `ArtworkListItem[]` and renders correctly.
+- Replaced placeholder with actual gallery implementation, ensuring proper spacing (`py-12`).

@@ -173,7 +173,7 @@ Parallel Speedup: ~50%
     Evidence: .sisyphus/evidence/task-2-data-count.txt
   ```
 
-- [ ] 3. **Build Content Sections (Hero & Bio)**
+- [x] 3. **Build Content Sections (Hero & Bio)**
      **What to do**:
   - Create sections for "Introduction", "Themes", and "Quotes" based on the draft.
   - Use `SectionTitle` component if suitable, or create custom headers with `font-poster` (if available) or bold serif.
