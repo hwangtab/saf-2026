@@ -129,16 +129,66 @@ export default function FullscreenMenu({
         <nav className={styles.nav}>
           <ul className={styles.menuList}>
             {navigation.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className={`${styles.navLink} ${isActive(item.href) ? styles.active : ''}`}
-                  onClick={onClose}
-                >
-                  {item.name}
-                </Link>
+              <li key={item.name} className="flex flex-col">
+                {item.items && item.items.length > 0 ? (
+                  <details className="group">
+                    <summary className={`${styles.navLink} list-none cursor-pointer flex items-center justify-between`}>
+                      {item.name}
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="transition-transform duration-200 group-open:rotate-180"
+                      >
+                        <path d="m6 9 6 6 6-6" />
+                      </svg>
+                    </summary>
+                    <ul className="mt-2 pl-4 space-y-2 border-l-2 border-gray-100 ml-2">
+                      {item.items.map((subItem) => (
+                        <li key={subItem.href}>
+                          <Link
+                            href={subItem.href}
+                            className={`block py-2 text-lg text-charcoal-muted hover:text-primary ${isActive(subItem.href) ? 'text-primary font-semibold' : ''}`}
+                            onClick={onClose}
+                          >
+                            {subItem.name}
+                            {subItem.description && (
+                              <span className="block text-xs text-gray-400 font-normal mt-0.5">{subItem.description}</span>
+                            )}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </details>
+                ) : (
+                  <Link
+                    href={item.href}
+                    className={`${styles.navLink} ${isActive(item.href) ? styles.active : ''}`}
+                    onClick={onClose}
+                  >
+                    {item.name}
+                  </Link>
+                )}
               </li>
             ))}
+            {/* Utility Menu in Mobile */}
+            <li className="mt-4 pt-4 border-t border-gray-100">
+              <a
+                href={EXTERNAL_LINKS.ORDER_STATUS}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`${styles.navLink} text-base! text-charcoal-muted!`}
+                onClick={onClose}
+              >
+                주문조회
+              </a>
+            </li>
           </ul>
         </nav>
 

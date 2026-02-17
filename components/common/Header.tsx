@@ -1,8 +1,7 @@
 'use client';
 
-import type { NavigationItem } from '@/types';
 import clsx from 'clsx';
-import { Z_INDEX, EXTERNAL_LINKS } from '@/lib/constants';
+import { Z_INDEX } from '@/lib/constants';
 import { UI_STRINGS } from '@/lib/ui-strings';
 import { useHeaderStyle } from '@/lib/hooks/useHeaderStyle';
 
@@ -12,14 +11,7 @@ import FullscreenMenu from './Header/FullscreenMenu';
 import HeaderLogo from './Header/HeaderLogo';
 import { MenuIcon } from '@/components/ui/Icons';
 
-const navigation: NavigationItem[] = [
-  { name: '출품작', href: '/artworks' },
-  { name: '우리의 현실', href: '/our-reality' },
-  { name: '우리의 증명', href: '/our-proof' },
-  { name: '아카이브', href: '/archive' },
-  { name: '언론 보도', href: '/news' },
-  { name: UI_STRINGS.NAV.ORDER_STATUS, href: EXTERNAL_LINKS.ORDER_STATUS, external: true },
-];
+import { MAIN_NAVIGATION } from '@/lib/menus';
 
 function shouldHideHeader(pathname: string | null): boolean {
   if (!pathname) return false;
@@ -61,7 +53,7 @@ function PublicHeader() {
       <nav className="relative container-max flex items-center justify-between h-16 transition-colors duration-300">
         <HeaderLogo isDarkText={isDarkText} />
 
-        <DesktopNav navigation={navigation} isActive={isActive} textColor={textColor} />
+        <DesktopNav navigation={MAIN_NAVIGATION} isActive={isActive} textColor={textColor} />
 
         <button
           onClick={openMenu}
@@ -83,7 +75,7 @@ function PublicHeader() {
       <FullscreenMenu
         isOpen={isMenuOpen}
         onClose={closeMenu}
-        navigation={navigation}
+        navigation={MAIN_NAVIGATION}
         isActive={isActive}
       />
     </header>

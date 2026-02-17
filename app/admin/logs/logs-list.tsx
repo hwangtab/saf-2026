@@ -237,8 +237,11 @@ function getSnapshotDisplayName(snapshot: Record<string, unknown> | null): strin
   const title = typeof snapshot.title === 'string' ? snapshot.title : null;
   const nameKo = typeof snapshot.name_ko === 'string' ? snapshot.name_ko : null;
   const name = typeof snapshot.name === 'string' ? snapshot.name : null;
+  const artistName = typeof snapshot.artist_name === 'string' ? snapshot.artist_name : null;
+  const representativeName =
+    typeof snapshot.representative_name === 'string' ? snapshot.representative_name : null;
 
-  return title || nameKo || name || null;
+  return title || nameKo || name || artistName || representativeName || null;
 }
 
 function getLogTargetDisplayName(log: ActivityLogEntry): string {
@@ -251,6 +254,8 @@ function getLogTargetDisplayName(log: ActivityLogEntry): string {
     (typeof details?.title === 'string' && details.title) ||
     (typeof details?.name === 'string' && details.name) ||
     (typeof details?.user_name === 'string' && details.user_name) ||
+    (typeof details?.artist_name === 'string' && details.artist_name) ||
+    (typeof details?.representative_name === 'string' && details.representative_name) ||
     null;
 
   if (fromDetails) return fromDetails;
@@ -307,6 +312,7 @@ const FIELD_LABELS: Record<string, string> = {
   contact_email: '연락 이메일',
   instagram: '인스타그램',
   homepage: '홈페이지',
+  role: '권한',
 };
 
 function toObject(value: unknown): Record<string, unknown> | null {
@@ -334,7 +340,10 @@ function valueEquals(a: unknown, b: unknown) {
   return JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
 }
 
-function getFieldLabel(key: string) {
+function getFieldLabel(key: string, targetType?: string | null) {
+  if (key === 'status') {
+    return targetType === 'artwork' ? '판매상태' : '상태';
+  }
   return FIELD_LABELS[key] || key;
 }
 
@@ -716,7 +725,7 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                                         className="border-t border-slate-100"
                                       >
                                         <td className="px-3 py-2 text-slate-700">
-                                          {getFieldLabel(change.field)}
+                                          {getFieldLabel(change.field, log.target_type)}
                                         </td>
                                         <td className="px-3 py-2 text-rose-700 whitespace-pre-wrap break-all">
                                           {formatDiffValue(change.before, change.field)}

@@ -461,6 +461,8 @@ async function enrichActivityLogTargets(logs: ActivityLogEntry[]): Promise<Activ
 
   const artworkIds = new Set<string>();
   const artistIds = new Set<string>();
+  const applicationIds = new Set<string>();
+  const exhibitorApplicationIds = new Set<string>();
 
   for (const log of logs) {
     const ids = parseTargetIds(log);
@@ -472,36 +474,69 @@ async function enrichActivityLogTargets(logs: ActivityLogEntry[]): Promise<Activ
     if (log.target_type === 'artist') {
       ids.forEach((id) => artistIds.add(id));
     }
+    if (log.target_type === 'artist_application') {
+      ids.forEach((id) => applicationIds.add(id));
+    }
+    if (log.target_type === 'exhibitor_application') {
+      ids.forEach((id) => exhibitorApplicationIds.add(id));
+    }
   }
 
   if (artworkIds.size === 0 && artistIds.size === 0) return logs;
 
   const supabase = await createSupabaseAdminOrServerClient();
 
-  const [artworkResult, artistResult] = await Promise.all([
+  const [artworkResult, artistResult, applicationResult, exhibitorAppResult] = await Promise.all([
     artworkIds.size > 0
       ? supabase.from('artworks').select('id, title').in('id', Array.from(artworkIds))
       : Promise.resolve({ data: [] as { id: string; title: string | null }[] }),
     artistIds.size > 0
       ? supabase.from('artists').select('id, name_ko').in('id', Array.from(artistIds))
       : Promise.resolve({ data: [] as { id: string; name_ko: string | null }[] }),
+    applicationIds.size > 0
+      ? supabase
+          .from('artist_applications')
+          .select('user_id, artist_name')
+          .in('user_id', Array.from(applicationIds))
+      : Promise.resolve({ data: [] as { user_id: string; artist_name: string | null }[] }),
+    exhibitorApplicationIds.size > 0
+      ? supabase
+          .from('exhibitor_applications')
+          .select('user_id, representative_name')
+          .in('user_id', Array.from(exhibitorApplicationIds))
+      : Promise.resolve({ data: [] as { user_id: string; representative_name: string | null }[] }),
   ]);
 
   const artworkNameById = new Map((artworkResult.data || []).map((item) => [item.id, item.title]));
   const artistNameById = new Map((artistResult.data || []).map((item) => [item.id, item.name_ko]));
+  const applicationNameById = new Map(
+    (applicationResult.data || []).map((item) => [item.user_id, item.artist_name])
+  );
+  const exhibitorAppNameById = new Map(
+    (exhibitorAppResult.data || []).map((item) => [item.user_id, item.representative_name])
+  );
 
   return logs.map((log) => {
-    if (log.target_type !== 'artwork' && log.target_type !== 'artist') return log;
+    if (
+      log.target_type !== 'artwork' &&
+      log.target_type !== 'artist' &&
+      log.target_type !== 'artist_application' &&
+      log.target_type !== 'exhibitor_application'
+    )
+      return log;
 
     const ids = parseTargetIds(log);
     if (ids.length === 0) return log;
 
     const targetNames: Record<string, string> = {};
     for (const id of ids) {
-      const name =
-        log.target_type === 'artwork'
-          ? artworkNameById.get(id) || null
-          : artistNameById.get(id) || null;
+      let name: string | null = null;
+      if (log.target_type === 'artwork') name = artworkNameById.get(id) || null;
+      else if (log.target_type === 'artist') name = artistNameById.get(id) || null;
+      else if (log.target_type === 'artist_application') name = applicationNameById.get(id) || null;
+      else if (log.target_type === 'exhibitor_application')
+        name = exhibitorAppNameById.get(id) || null;
+
       if (name) targetNames[id] = name;
     }
 

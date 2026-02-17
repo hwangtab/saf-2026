@@ -133,6 +133,8 @@ export interface NavigationItem {
   name: string;
   href: string;
   external?: boolean;
+  items?: NavigationItem[];
+  description?: string;
 }
 
 export interface BreadcrumbItem {
