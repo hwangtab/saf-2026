@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { artworks } from '@/content/saf2026-artworks';
-import OhYoonGallery from '@/components/special/OhYoonGallery';
+// import OhYoonGallery from '@/components/special/OhYoonGallery'; // Deprecated
+import OhYoonMasonryGallery from '@/components/special/OhYoonMasonryGallery';
 import { OG_IMAGE, SITE_URL } from '@/lib/constants';
 
 const OH_YOON_ARTIST_KEYS = new Set(['오윤', 'oh yoon', 'ohyoon', 'o yoon', 'o-yoon']);
@@ -185,57 +186,57 @@ export default function OhYoonPage() {
             </ul>
           </div>
         </div>
+      </div>
 
-        {/* Gallery Section Header */}
-        <div className="mb-16 border-b-4 border-double border-charcoal/20 pb-8 flex flex-col md:flex-row justify-between items-end gap-6">
+      {/* Gallery Section - The 40th Archive Theme */}
+      <div className="relative py-20 bg-[#2a3032] text-white">
+        {/* Section Header */}
+        <div className="max-w-[1440px] mx-auto px-4 mb-16 flex flex-col md:flex-row justify-between items-end gap-6 border-b border-white/20 pb-8">
           <div className="relative">
-            <h2 className="text-4xl md:text-5xl font-normal mb-4 text-charcoal font-display text-balance">
+            <h2 className="text-4xl md:text-5xl font-normal mb-4 text-white font-display text-balance">
               전시 작품
             </h2>
-            <div className="absolute -left-4 -top-4 text-6xl text-brand-orange/10 font-normal -z-10 font-display">
-              Artworks
+            <div className="absolute -left-4 -top-6 text-[80px] text-white/5 font-normal -z-10 font-display select-none">
+              ARCHIVE
             </div>
-            <p className="text-base sm:text-lg text-charcoal/80 font-medium">
-              총{' '}
-              <span className="text-brand-orange-strong font-bold text-xl">
-                {artworkCountLabel}
-              </span>
+            <p className="text-base sm:text-lg text-white/70 font-medium">
+              총 <span className="text-brand-orange font-bold text-xl">{artworkCountLabel}</span>
               점의 판화가 전시되어 있습니다.
             </p>
-            <p className="mt-2 text-sm sm:text-base text-charcoal/70">
-              작품 카드를 눌러 상세 페이지에서 구매를 진행할 수 있습니다.
-            </p>
           </div>
-          <div className="flex gap-2">
-            <div className="w-3 h-3 bg-charcoal rounded-full" />
-            <div className="w-3 h-3 bg-brand-orange rounded-full" />
-            <div className="w-3 h-3 bg-brand-sun rounded-full" />
+          <div className="flex flex-col items-end gap-1">
+            <span className="text-xs text-white/40 uppercase tracking-widest">
+              Oh Yoon 40th Anniversary
+            </span>
+            <span className="text-sm text-white/60">작품을 클릭하여 상세 정보를 확인하세요</span>
           </div>
         </div>
 
-        {ohYoonArtworks.length > 0 ? (
-          <div className="py-12">
-            <OhYoonGallery artworks={ohYoonArtworks} />
-          </div>
-        ) : (
-          <section className="py-12" aria-live="polite" aria-label="오윤 특별전 작품 준비 상태">
-            <div className="rounded-xl border-4 border-double border-charcoal/20 bg-white p-8 md:p-10 text-center">
-              <h3 className="text-2xl font-bold text-charcoal text-balance">
-                작품 데이터 준비 중입니다
-              </h3>
-              <p className="mt-3 text-charcoal/80 text-balance">
-                현재 오윤 특별전 작품 정보를 정리하고 있습니다. 전체 출품작에서 먼저 감상하실 수
-                있습니다.
-              </p>
-              <Link
-                href="/artworks"
-                className="mt-6 inline-flex items-center rounded-md border-2 border-charcoal px-5 py-2.5 font-semibold text-charcoal hover:bg-charcoal hover:text-white transition-colors"
-              >
-                전체 작품 보러 가기
-              </Link>
-            </div>
-          </section>
-        )}
+        {/* Gallery Grid */}
+        <div className="max-w-[1440px] mx-auto px-4">
+          {ohYoonArtworks.length > 0 ? (
+            <OhYoonMasonryGallery artworks={ohYoonArtworks} />
+          ) : (
+            <section className="py-24 text-center">
+              <div className="inline-block rounded-xl border border-white/10 bg-white/5 p-12 backdrop-blur-sm">
+                <h3 className="text-2xl font-bold text-white text-balance mb-4">
+                  작품 데이터 준비 중입니다
+                </h3>
+                <p className="text-white/60 text-balance mb-8">
+                  현재 오윤 특별전 작품 정보를 정리하고 있습니다.
+                  <br />
+                  전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                </p>
+                <Link
+                  href="/artworks"
+                  className="inline-flex items-center justify-center px-6 py-3 border border-white/30 rounded text-white hover:bg-white hover:text-[#2a3032] transition-colors font-medium"
+                >
+                  전체 작품 보러 가기
+                </Link>
+              </div>
+            </section>
+          )}
+        </div>
       </div>
     </div>
   );
