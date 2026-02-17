@@ -30,22 +30,16 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                   대시보드
                 </Link>
                 <Link
-                  href="/admin/revenue"
+                  href="/admin/users?status=pending"
                   className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium whitespace-nowrap"
                 >
-                  매출 현황
+                  심사 큐
                 </Link>
                 <Link
                   href="/admin/users"
                   className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium whitespace-nowrap"
                 >
                   사용자 관리
-                </Link>
-                <Link
-                  href="/admin/content"
-                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium whitespace-nowrap"
-                >
-                  콘텐츠 관리
                 </Link>
                 <Link
                   href="/admin/artists"
@@ -60,10 +54,16 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                   작품 관리
                 </Link>
                 <Link
-                  href="/admin/users?status=pending"
+                  href="/admin/content"
                   className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium whitespace-nowrap"
                 >
-                  심사 큐
+                  콘텐츠 관리
+                </Link>
+                <Link
+                  href="/admin/revenue"
+                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium whitespace-nowrap"
+                >
+                  매출 현황
                 </Link>
                 <Link
                   href="/admin/logs"
