@@ -159,7 +159,7 @@ Critical Path: Task 1 → Task 3 → Task 4
     Evidence: .sisyphus/evidence/task-2-component-check.txt
   ```
 
-- [ ] 3. **Refactor Page Typography & Integrate Gallery**
+- [x] 3. **Refactor Page Typography & Integrate Gallery**
      **What to do**:
   - Modify `app/special/oh-yoon/page.tsx`.
   - Remove all `font-serif` classes.

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { artworks } from '@/content/saf2026-artworks';
-import MasonryGallery from '@/components/features/MasonryGallery';
+import OhYoonGallery from '@/components/special/OhYoonGallery';
 import { OG_IMAGE, SITE_URL } from '@/lib/constants';
 
 const OH_YOON_ARTIST_KEYS = new Set(['오윤', 'oh yoon', 'ohyoon', 'o yoon', 'o-yoon']);
@@ -55,7 +55,7 @@ export default function OhYoonPage() {
   const artworkCountLabel = new Intl.NumberFormat('ko-KR').format(ohYoonArtworks.length);
 
   return (
-    <div className="w-full bg-canvas-soft min-h-screen font-serif">
+    <div className="w-full bg-canvas-soft min-h-screen font-sans">
       {/* Hero Section */}
       <section className="relative w-full py-20 md:py-32 px-4 overflow-hidden border-b-8 border-double border-charcoal/20 bg-canvas">
         <div className="max-w-4xl mx-auto text-center relative z-10">
@@ -66,7 +66,7 @@ export default function OhYoonPage() {
             <div className="absolute inset-0 border-4 border-brand-orange transform rotate-2 translate-x-1 translate-y-1 -z-0 opacity-60" />
           </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black mb-8 md:mb-10 leading-tight text-charcoal tracking-tighter break-keep drop-shadow-sm">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black mb-8 md:mb-10 leading-tight text-charcoal tracking-tighter break-keep drop-shadow-sm font-display">
             40년 만에 돌아온
             <br />
             <span className="relative inline-block px-2">
@@ -96,10 +96,10 @@ export default function OhYoonPage() {
         {/* Quote Section */}
         <div className="mb-24 flex justify-center">
           <blockquote className="relative p-8 sm:p-10 md:p-16 text-center max-w-4xl border-4 border-charcoal bg-white shadow-[8px_8px_0px_0px_rgba(49,57,60,0.1)]">
-            <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-brand-orange flex items-center justify-center rounded-full text-white font-serif text-3xl font-bold">
+            <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-brand-orange flex items-center justify-center rounded-full text-white font-display text-3xl font-bold">
               &ldquo;
             </div>
-            <p className="text-2xl sm:text-3xl md:text-5xl font-bold text-charcoal leading-relaxed break-keep pt-4">
+            <p className="text-2xl sm:text-3xl md:text-5xl font-bold text-charcoal leading-relaxed break-keep pt-4 font-display">
               미술은 많은 사람이
               <br className="md:hidden" /> 나누어야 한다
             </p>
@@ -114,7 +114,7 @@ export default function OhYoonPage() {
         {/* Bio / Narrative Section */}
         <div className="grid md:grid-cols-2 gap-12 md:gap-24 mb-32 items-start">
           <div className="space-y-8">
-            <h2 className="text-4xl font-bold border-l-[12px] border-charcoal pl-6 py-2 leading-tight">
+            <h2 className="text-4xl font-bold border-l-[12px] border-charcoal pl-6 py-2 leading-tight font-display">
               시대의 아픔을
               <br />
               <span className="text-brand-orange-strong">희망으로 새기다</span>
@@ -135,7 +135,7 @@ export default function OhYoonPage() {
           </div>
 
           <div className="bg-white p-8 md:p-12 border-4 border-charcoal shadow-[8px_8px_0px_0px_rgba(247,152,36,0.3)]">
-            <h3 className="text-2xl font-bold text-charcoal mb-8 flex items-center gap-3 border-b-2 border-charcoal pb-4">
+            <h3 className="text-2xl font-bold text-charcoal mb-8 flex items-center gap-3 border-b-2 border-charcoal pb-4 font-display">
               <span className="w-4 h-4 bg-brand-orange rotate-45" />
               주요 테마
             </h3>
@@ -189,8 +189,10 @@ export default function OhYoonPage() {
         {/* Gallery Section Header */}
         <div className="mb-16 border-b-4 border-double border-charcoal/20 pb-8 flex flex-col md:flex-row justify-between items-end gap-6">
           <div className="relative">
-            <h2 className="text-4xl md:text-5xl font-black mb-4 text-charcoal">전시 작품</h2>
-            <div className="absolute -left-4 -top-4 text-6xl text-brand-orange/10 font-black -z-10">
+            <h2 className="text-4xl md:text-5xl font-black mb-4 text-charcoal font-display">
+              전시 작품
+            </h2>
+            <div className="absolute -left-4 -top-4 text-6xl text-brand-orange/10 font-black -z-10 font-display">
               Artworks
             </div>
             <p className="text-base sm:text-lg text-charcoal/80 font-medium">
@@ -213,7 +215,7 @@ export default function OhYoonPage() {
 
         {ohYoonArtworks.length > 0 ? (
           <div className="py-12">
-            <MasonryGallery artworks={ohYoonArtworks} />
+            <OhYoonGallery artworks={ohYoonArtworks} />
           </div>
         ) : (
           <section className="py-12" aria-live="polite" aria-label="오윤 특별전 작품 준비 상태">
