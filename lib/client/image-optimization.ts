@@ -54,6 +54,9 @@ const loadImage = (file: File): Promise<HTMLImageElement> =>
     img.src = url;
   });
 
+/**
+ * Renders an image to WebP format with specified dimensions.
+ */
 const renderToWebpFile = (
   img: HTMLImageElement,
   outputName: string,
@@ -73,6 +76,7 @@ const renderToWebpFile = (
     }
 
     ctx.drawImage(img, 0, 0, width, height);
+
     canvas.toBlob(
       (blob) => {
         if (!blob) {
@@ -110,7 +114,7 @@ export async function optimizeImage(file: File): Promise<File> {
 
 /**
  * Generates multiple WebP variants for artwork delivery.
- * Output names are placeholders; final storage paths are decided at upload time.
+ * Processes sequentially to avoid memory issues with large images.
  */
 export async function generateArtworkImageVariants(file: File): Promise<VariantOutput[]> {
   if (!file.type.startsWith('image/')) {
@@ -120,17 +124,19 @@ export async function generateArtworkImageVariants(file: File): Promise<VariantO
   try {
     const img = await loadImage(file);
     const baseName = file.name.replace(/\.[^/.]+$/, '');
-    const outputs = await Promise.all(
-      ARTWORK_VARIANT_SPECS.map(async ({ variant, maxSize, quality }) => {
-        const optimized = await renderToWebpFile(
-          img,
-          `${baseName}__${variant}.webp`,
-          maxSize,
-          quality
-        );
-        return { variant, file: optimized };
-      })
-    );
+    const outputs: VariantOutput[] = [];
+
+    // Process variants sequentially (not in parallel) to avoid memory issues
+    for (const { variant, maxSize, quality } of ARTWORK_VARIANT_SPECS) {
+      const optimized = await renderToWebpFile(
+        img,
+        `${baseName}__${variant}.webp`,
+        maxSize,
+        quality
+      );
+      outputs.push({ variant, file: optimized });
+    }
+
     return outputs;
   } catch {
     const fallback = await optimizeImage(file);
