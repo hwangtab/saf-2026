@@ -111,7 +111,7 @@ export const getSupabaseArtworkById = cache(async (id: string): Promise<Artwork 
       return getArtworkById(id) || null;
     }
     console.error(`Error fetching artwork ${id} from Supabase:`, error);
-    return null;
+    return getArtworkById(id) || null;
   }
 
   if (!artwork) {

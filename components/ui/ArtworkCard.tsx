@@ -121,7 +121,14 @@ function ArtworkCard({
             className="object-cover transform transition-transform duration-300 group-hover:scale-105"
             sizes={config.imageSizes}
           />
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 pointer-events-none" />
+          <div
+            className={cn(
+              'absolute inset-0 transition-colors duration-300 pointer-events-none',
+              theme === 'dark'
+                ? 'bg-black/0 group-hover:bg-black/0'
+                : 'bg-black/0 group-hover:bg-black/20'
+            )}
+          />
           {artwork.sold && <SoldBadge variant="gallery" />}
         </div>
 
