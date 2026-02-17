@@ -25,9 +25,18 @@ const VARIANT_CONFIG = {
 } as const;
 
 const getHref = (artwork: ArtworkCardData) => `/artworks/${artwork.id}`;
+const ARTWORK_PLACEHOLDER_IMAGE = '/images/og-image.png';
+
+const getSafeTitle = (artwork: ArtworkCardData) => artwork.title?.trim() || '무제';
+const getSafeArtist = (artwork: ArtworkCardData) => artwork.artist?.trim() || '작가 미상';
+
 const getImageSrc = (artwork: ArtworkCardData, variant: ArtworkCardVariant) =>
-  resolveArtworkImageUrlForPreset(artwork.images[0], variant === 'slider' ? 'slider' : 'card');
-const getImageAlt = (artwork: ArtworkCardData) => `${artwork.title} - ${artwork.artist}`;
+  resolveArtworkImageUrlForPreset(
+    artwork.images?.[0] || ARTWORK_PLACEHOLDER_IMAGE,
+    variant === 'slider' ? 'slider' : 'card'
+  );
+const getImageAlt = (artwork: ArtworkCardData) =>
+  `${getSafeTitle(artwork)} - ${getSafeArtist(artwork)}`;
 
 function SoldBadge({ variant }: { variant: ArtworkCardVariant }) {
   return (
@@ -71,9 +80,9 @@ function ArtworkCard({ artwork, variant = 'gallery', className }: ArtworkCardPro
         </div>
         <div className="mt-3 px-1">
           <p className="text-sm font-medium text-charcoal truncate group-hover:text-primary transition-colors">
-            {artwork.title}
+            {getSafeTitle(artwork)}
           </p>
-          <p className="text-xs text-gray-500 truncate">{artwork.artist}</p>
+          <p className="text-xs text-gray-500 truncate">{getSafeArtist(artwork)}</p>
           <p className="text-sm font-semibold text-charcoal mt-1">{artwork.price}</p>
         </div>
       </Link>
@@ -100,9 +109,11 @@ function ArtworkCard({ artwork, variant = 'gallery', className }: ArtworkCardPro
 
         <div className="p-4 bg-white">
           <h2 className="text-lg font-bold text-charcoal font-sans group-hover:text-primary transition-colors duration-300 break-keep line-clamp-2 min-h-[3.5rem]">
-            {artwork.title}
+            {getSafeTitle(artwork)}
           </h2>
-          <p className="text-sm text-charcoal-muted mt-1 min-h-[1.25rem]">{artwork.artist}</p>
+          <p className="text-sm text-charcoal-muted mt-1 min-h-[1.25rem]">
+            {getSafeArtist(artwork)}
+          </p>
           <p className="text-xs text-charcoal-soft mt-2 line-clamp-1 min-h-[1rem]">
             {(() => {
               const isPending = (v: string | undefined) => v === '확인 중';
