@@ -22,10 +22,7 @@ export function AdminMobileNav() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const isReviewQueueMode =
-    searchParams.get('status') === 'pending' ||
-    searchParams.get('applicant') === 'artist' ||
-    searchParams.get('applicant') === 'exhibitor';
+  const isReviewQueueMode = pathname === '/admin/users' && searchParams.get('status') === 'pending';
 
   // Handle ESC key to close drawer
   useEffect(() => {
@@ -128,6 +125,7 @@ export function AdminMobileNav() {
                       <Link
                         key={item.href}
                         href={item.href}
+                        aria-current={isActive ? 'page' : undefined}
                         className={`block rounded-md px-3 py-2 text-base font-medium transition-colors ${
                           isActive
                             ? 'bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-600/20'

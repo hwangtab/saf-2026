@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import ArtworkLightbox from '@/components/ui/ArtworkLightbox';
 import Button from '@/components/ui/Button';
 import {
@@ -64,6 +65,9 @@ export function AdminArtworkList({
   initialFilters?: InitialArtworkFilters;
 }) {
   const toast = useToast();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [optimisticArtworks, setOptimisticArtworks] = useState(artworks);
   const initialStatusFilter = normalizeStatusFilter(initialFilters?.status);
   const initialVisibilityFilter = normalizeVisibilityFilter(initialFilters?.visibility);
@@ -101,6 +105,54 @@ export function AdminArtworkList({
     setVisibilityFilter(initialVisibilityFilter);
     setSelectedIds(new Set());
   }, [initialQuery, initialStatusFilter, initialVisibilityFilter]);
+
+  const updateFilterParams = useCallback(
+    (updates: { q?: string; status?: StatusFilter; visibility?: VisibilityFilter }) => {
+      const params = new URLSearchParams(searchParams.toString());
+
+      if ('q' in updates) {
+        const q = updates.q?.trim();
+        if (q) {
+          params.set('q', q);
+        } else {
+          params.delete('q');
+        }
+      }
+
+      if ('status' in updates) {
+        const status = updates.status;
+        if (status && status !== 'all') {
+          params.set('status', status);
+        } else {
+          params.delete('status');
+        }
+      }
+
+      if ('visibility' in updates) {
+        const visibility = updates.visibility;
+        if (visibility && visibility !== 'all') {
+          params.set('visibility', visibility);
+        } else {
+          params.delete('visibility');
+        }
+      }
+
+      const nextQuery = params.toString();
+      router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname);
+    },
+    [pathname, router, searchParams]
+  );
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const normalizedQuery = query.trim();
+      if (normalizedQuery !== initialQuery) {
+        updateFilterParams({ q: normalizedQuery || undefined });
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [initialQuery, query, updateFilterParams]);
 
   // -- Filters --
   const filtered = useMemo(() => {
@@ -368,7 +420,9 @@ export function AdminArtworkList({
               <AdminSelect
                 value={statusFilter}
                 onChange={(e) => {
-                  setStatusFilter(normalizeStatusFilter(e.target.value));
+                  const nextStatus = normalizeStatusFilter(e.target.value);
+                  setStatusFilter(nextStatus);
+                  updateFilterParams({ status: nextStatus });
                   setSelectedIds(new Set());
                 }}
                 wrapperClassName="min-w-[120px]"
@@ -381,7 +435,9 @@ export function AdminArtworkList({
               <AdminSelect
                 value={visibilityFilter}
                 onChange={(e) => {
-                  setVisibilityFilter(normalizeVisibilityFilter(e.target.value));
+                  const nextVisibility = normalizeVisibilityFilter(e.target.value);
+                  setVisibilityFilter(nextVisibility);
+                  updateFilterParams({ visibility: nextVisibility });
                   setSelectedIds(new Set());
                 }}
                 wrapperClassName="min-w-[120px]"

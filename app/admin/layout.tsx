@@ -2,6 +2,7 @@ import { requireAdmin } from '@/lib/auth/guards';
 import Link from 'next/link';
 import { SignOutButton } from '@/components/auth/SignOutButton';
 import { AdminMobileNav } from './admin-mobile-nav';
+import { AdminDesktopNav } from './admin-desktop-nav';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   await requireAdmin();
@@ -21,63 +22,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                   SAF Admin
                 </Link>
               </div>
-              {/* Desktop Navigation - Show on 2xl screens only, tight spacing */}
-              <div className="hidden 2xl:ml-6 2xl:flex 2xl:space-x-6">
-                <Link
-                  href="/admin/dashboard"
-                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium whitespace-nowrap"
-                >
-                  대시보드
-                </Link>
-                <Link
-                  href="/admin/users?status=pending"
-                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium whitespace-nowrap"
-                >
-                  심사 큐
-                </Link>
-                <Link
-                  href="/admin/users"
-                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium whitespace-nowrap"
-                >
-                  사용자 관리
-                </Link>
-                <Link
-                  href="/admin/artists"
-                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium whitespace-nowrap"
-                >
-                  작가 관리
-                </Link>
-                <Link
-                  href="/admin/artworks"
-                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium whitespace-nowrap"
-                >
-                  작품 관리
-                </Link>
-                <Link
-                  href="/admin/content"
-                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium whitespace-nowrap"
-                >
-                  콘텐츠 관리
-                </Link>
-                <Link
-                  href="/admin/revenue"
-                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium whitespace-nowrap"
-                >
-                  매출 현황
-                </Link>
-                <Link
-                  href="/admin/logs"
-                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium whitespace-nowrap"
-                >
-                  활동 로그
-                </Link>
-                <Link
-                  href="/admin/trash"
-                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium whitespace-nowrap"
-                >
-                  휴지통
-                </Link>
-              </div>
+              <AdminDesktopNav />
             </div>
             <div className="hidden sm:flex items-center ml-4">
               <span className="mr-4 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-600/20 whitespace-nowrap">

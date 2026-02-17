@@ -58,8 +58,7 @@ export default async function UsersPage({ searchParams }: Props) {
     params.applicant === 'artist' || params.applicant === 'exhibitor'
       ? params.applicant
       : undefined;
-  const isReviewQueueMode =
-    params.status === 'pending' || applicantFilter === 'artist' || applicantFilter === 'exhibitor';
+  const isReviewQueueMode = params.status === 'pending';
 
   // 기본 쿼리 빌더
   let query = supabase
@@ -156,7 +155,7 @@ export default async function UsersPage({ searchParams }: Props) {
           role: params.role,
           status: params.status,
           q: params.q,
-          applicant: params.applicant,
+          applicant: applicantFilter,
         }}
       />
     </div>

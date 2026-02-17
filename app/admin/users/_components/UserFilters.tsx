@@ -11,6 +11,7 @@ interface UserFiltersProps {
   query: string;
   totalItems: number;
   initialFilters?: InitialFilters;
+  filterNotice?: string | null;
   onQueryChange: (query: string) => void;
   onQuerySubmit: () => void;
   onFilterChange: (updates: Partial<InitialFilters>) => void;
@@ -20,14 +21,12 @@ export function UserFilters({
   query,
   totalItems,
   initialFilters,
+  filterNotice,
   onQueryChange,
   onQuerySubmit,
   onFilterChange,
 }: UserFiltersProps) {
-  const isReviewQueueMode =
-    initialFilters?.status === 'pending' ||
-    initialFilters?.applicant === 'artist' ||
-    initialFilters?.applicant === 'exhibitor';
+  const isReviewQueueMode = initialFilters?.status === 'pending';
 
   return (
     <AdminCardHeader>
@@ -41,6 +40,7 @@ export function UserFilters({
           </AdminHelp>
         </h2>
         <AdminBadge tone="info">{totalItems}명</AdminBadge>
+        {filterNotice && <AdminBadge tone="warning">{filterNotice}</AdminBadge>}
       </div>
 
       <div className="grid w-full gap-3 sm:w-auto sm:grid-cols-[minmax(200px,1fr)_auto] sm:items-end">

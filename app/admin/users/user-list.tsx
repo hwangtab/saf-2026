@@ -46,6 +46,7 @@ export function UserList({
 
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [query, setQuery] = useState(initialFilters?.q || '');
+  const [filterNotice, setFilterNotice] = useState<string | null>(null);
   const debouncedQuery = useDebounce(query, 300);
   const [selectedUser, setSelectedUser] = useState<Profile | null>(null);
   const [localUsers, setLocalUsers] = useState<Profile[]>(users);
@@ -90,6 +91,7 @@ export function UserList({
   const updateFilters = (newParams: Record<string, string | undefined>) => {
     const params = new URLSearchParams(searchParams.toString());
     params.delete('page');
+
     Object.entries(newParams).forEach(([key, value]) => {
       if (value && value !== 'all') {
         params.set(key, value);
@@ -97,6 +99,26 @@ export function UserList({
         params.delete(key);
       }
     });
+
+    const applicant = params.get('applicant');
+    const role = params.get('role');
+    const hasApplicant = applicant === 'artist' || applicant === 'exhibitor';
+    const hasRole =
+      role === 'user' || role === 'artist' || role === 'exhibitor' || role === 'admin';
+
+    const incompatibleArtist =
+      hasApplicant && applicant === 'artist' && hasRole && role === 'exhibitor';
+    const incompatibleExhibitor =
+      hasApplicant && applicant === 'exhibitor' && hasRole && role === 'artist';
+
+    if (incompatibleArtist || incompatibleExhibitor) {
+      params.delete('role');
+      setFilterNotice('신청유형과 충돌하는 권한 필터를 자동 해제했습니다.');
+      toast.info('필터 충돌을 방지하기 위해 권한 필터를 자동 해제했습니다.');
+    } else {
+      setFilterNotice(null);
+    }
+
     router.push(`/admin/users?${params.toString()}`);
   };
 
@@ -458,6 +480,7 @@ export function UserList({
           query={query}
           totalItems={localUsers.length}
           initialFilters={initialFilters}
+          filterNotice={filterNotice}
           onQueryChange={setQuery}
           onQuerySubmit={() => updateFilters({ q: query || undefined })}
           onFilterChange={updateFilters}
