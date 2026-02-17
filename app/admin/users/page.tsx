@@ -54,6 +54,12 @@ export default async function UsersPage({ searchParams }: Props) {
   await requireAdmin();
   const supabase = await createSupabaseServerClient();
   const params = await searchParams;
+  const applicantFilter =
+    params.applicant === 'artist' || params.applicant === 'exhibitor'
+      ? params.applicant
+      : undefined;
+  const isReviewQueueMode =
+    params.status === 'pending' || applicantFilter === 'artist' || applicantFilter === 'exhibitor';
 
   // 기본 쿼리 빌더
   let query = supabase
@@ -62,8 +68,17 @@ export default async function UsersPage({ searchParams }: Props) {
 
   // 역할 필터
   const validRoles: UserRole[] = ['admin', 'artist', 'user', 'exhibitor'];
-  if (params.role && validRoles.includes(params.role as UserRole)) {
-    query = query.eq('role', params.role);
+  const requestedRole =
+    params.role && validRoles.includes(params.role as UserRole) ? (params.role as UserRole) : null;
+  const isRoleCompatibleWithApplicant =
+    !requestedRole ||
+    !applicantFilter ||
+    (applicantFilter === 'artist' && (requestedRole === 'user' || requestedRole === 'artist')) ||
+    (applicantFilter === 'exhibitor' &&
+      (requestedRole === 'user' || requestedRole === 'exhibitor'));
+
+  if (requestedRole && isRoleCompatibleWithApplicant) {
+    query = query.eq('role', requestedRole);
   }
 
   // 상태 필터
@@ -110,7 +125,6 @@ export default async function UsersPage({ searchParams }: Props) {
       exhibitorApplication: exhibitorApplicationMap.get(user.id) || null,
     }));
 
-  const applicantFilter = params.applicant;
   const sortedUsers = usersWithApplications.filter((user) => {
     if (applicantFilter === 'artist') {
       return Boolean(user.application);
@@ -127,9 +141,11 @@ export default async function UsersPage({ searchParams }: Props) {
     <div className="space-y-6">
       <div>
         <AdminPageHeader>
-          <AdminPageTitle>심사 큐</AdminPageTitle>
+          <AdminPageTitle>{isReviewQueueMode ? '심사 큐' : '사용자 관리'}</AdminPageTitle>
           <AdminPageDescription>
-            작가·출품자 신청 심사와 사용자 상태 관리를 통합합니다.
+            {isReviewQueueMode
+              ? '작가·출품자 신청 심사와 사용자 상태 관리를 통합합니다.'
+              : '가입된 사용자 권한과 계정 상태를 관리합니다.'}
           </AdminPageDescription>
         </AdminPageHeader>
       </div>

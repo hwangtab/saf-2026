@@ -24,12 +24,21 @@ export function UserFilters({
   onQuerySubmit,
   onFilterChange,
 }: UserFiltersProps) {
+  const isReviewQueueMode =
+    initialFilters?.status === 'pending' ||
+    initialFilters?.applicant === 'artist' ||
+    initialFilters?.applicant === 'exhibitor';
+
   return (
     <AdminCardHeader>
       <div className="flex items-center gap-3">
         <h2 className="text-lg font-semibold text-gray-900">
-          심사 큐
-          <AdminHelp>작가/출품자 신청을 한 곳에서 승인·거절하고 계정 상태를 관리합니다.</AdminHelp>
+          {isReviewQueueMode ? '심사 큐' : '사용자 목록'}
+          <AdminHelp>
+            {isReviewQueueMode
+              ? '작가/출품자 신청을 한 곳에서 승인·거절하고 계정 상태를 관리합니다.'
+              : '가입된 사용자의 권한과 상태를 조회하고 관리합니다.'}
+          </AdminHelp>
         </h2>
         <AdminBadge tone="info">{totalItems}명</AdminBadge>
       </div>
@@ -59,7 +68,7 @@ export function UserFilters({
                 onQuerySubmit();
               }
             }}
-            placeholder="이름, 이메일 검색... (Enter)"
+            placeholder="이름, 이메일 검색..."
             aria-describedby="search-users-description"
             className="h-10 border-0 py-2 pl-10"
           />
@@ -70,7 +79,7 @@ export function UserFilters({
         <div className="grid grid-cols-2 gap-3 sm:flex sm:justify-end lg:grid-cols-3">
           <AdminSelect
             value={initialFilters?.applicant || 'all'}
-            onChange={(e) => onFilterChange({ applicant: e.target.value })}
+            onChange={(e) => onFilterChange({ applicant: e.target.value, role: 'all' })}
             wrapperClassName="min-w-[120px]"
           >
             <option value="all">모든 신청유형</option>

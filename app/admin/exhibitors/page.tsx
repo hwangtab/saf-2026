@@ -14,9 +14,13 @@ export default async function AdminExhibitorsPage({
     if (!value) return;
     const trimmed = value.trim();
     if (!trimmed) return;
-    nextParams.set(key, trimmed);
+    if (key === 'status' || key === 'q') {
+      nextParams.set(key, trimmed);
+    }
   });
-  nextParams.set('status', params.status || 'pending');
+  if (!nextParams.has('status') && !nextParams.has('q')) {
+    nextParams.set('status', 'pending');
+  }
   nextParams.set('applicant', 'exhibitor');
 
   redirect(`/admin/users?${nextParams.toString()}`);
