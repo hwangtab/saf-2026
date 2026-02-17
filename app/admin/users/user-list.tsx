@@ -13,7 +13,6 @@ import {
 import { approveExhibitor } from '@/app/actions/admin-exhibitors';
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button'; // Import Button for ArtistPromoteModal
-import { Pagination } from '@/components/ui/Pagination';
 import { AdminCard, AdminInput } from '@/app/admin/_components/admin-ui'; // Import AdminInput for ArtistPromoteModal
 import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import { useDebounce } from '@/lib/hooks/useDebounce';
@@ -24,7 +23,6 @@ import {
   UserSortKey,
   SortDirection,
   InitialFilters,
-  PaginationInfo,
 } from '@/types/admin';
 import { UserFilters } from './_components/UserFilters';
 import { UserTable } from './_components/UserTable';
@@ -38,11 +36,9 @@ type ArtistPromoteContext = {
 export function UserList({
   users,
   initialFilters,
-  pagination,
 }: {
   users: Profile[];
   initialFilters?: InitialFilters;
-  pagination?: PaginationInfo;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -93,8 +89,7 @@ export function UserList({
   // URL 기반 필터 변경 함수
   const updateFilters = (newParams: Record<string, string | undefined>) => {
     const params = new URLSearchParams(searchParams.toString());
-    // 필터 변경 시 페이지를 1로 리셋
-    params.set('page', '1');
+    params.delete('page');
     Object.entries(newParams).forEach(([key, value]) => {
       if (value && value !== 'all') {
         params.set(key, value);
@@ -461,7 +456,7 @@ export function UserList({
       <AdminCard className="overflow-hidden">
         <UserFilters
           query={query}
-          totalItems={pagination?.totalItems || localUsers.length}
+          totalItems={localUsers.length}
           initialFilters={initialFilters}
           onQueryChange={setQuery}
           onQuerySubmit={() => updateFilters({ q: query || undefined })}
@@ -481,17 +476,6 @@ export function UserList({
           processingId={processingId}
         />
       </AdminCard>
-
-      {/* Pagination */}
-      {pagination && pagination.totalPages > 1 && (
-        <Pagination
-          currentPage={pagination.currentPage}
-          totalPages={pagination.totalPages}
-          totalItems={pagination.totalItems}
-          baseUrl="/admin/users"
-          itemName="사용자"
-        />
-      )}
 
       {/* User Details Modal */}
       <Modal isOpen={!!selectedUser} onClose={() => setSelectedUser(null)} title="사용자 상세 정보">

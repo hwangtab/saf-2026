@@ -42,9 +42,3 @@ export type InitialFilters = {
   status?: string;
   q?: string;
 };
-
-export type PaginationInfo = {
-  currentPage: number;
-  totalPages: number;
-  totalItems: number;
-};

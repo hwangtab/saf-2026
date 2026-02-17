@@ -8,8 +8,6 @@ import {
   AdminPageTitle,
 } from '@/app/admin/_components/admin-ui';
 
-const ITEMS_PER_PAGE = 20;
-
 type ArtistApplication = {
   user_id: string;
   artist_name: string;
@@ -48,7 +46,6 @@ type Props = {
     role?: string;
     status?: string;
     q?: string;
-    page?: string;
   }>;
 };
 
@@ -56,11 +53,6 @@ export default async function UsersPage({ searchParams }: Props) {
   await requireAdmin();
   const supabase = await createSupabaseServerClient();
   const params = await searchParams;
-
-  // 페이지 파싱
-  const pageParam = Number(params.page);
-  const page = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1;
-  const offset = (page - 1) * ITEMS_PER_PAGE;
 
   // 기본 쿼리 빌더
   let query = supabase
@@ -85,13 +77,7 @@ export default async function UsersPage({ searchParams }: Props) {
     query = query.or(`name.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%`);
   }
 
-  // 정렬 및 페이지네이션
-  const { data: users, count } = await query
-    .order('created_at', { ascending: false })
-    .range(offset, offset + ITEMS_PER_PAGE - 1);
-
-  const totalItems = count || 0;
-  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+  const { data: users } = await query.order('created_at', { ascending: false });
 
   // Fetch artist applications
   const { data: artistApplications } = await supabase
@@ -139,11 +125,6 @@ export default async function UsersPage({ searchParams }: Props) {
           role: params.role,
           status: params.status,
           q: params.q,
-        }}
-        pagination={{
-          currentPage: page,
-          totalPages,
-          totalItems,
         }}
       />
     </div>
