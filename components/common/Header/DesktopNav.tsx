@@ -1,7 +1,6 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { cn } from '@/lib/utils';
 import Button from '@/components/ui/Button';
 
 import type { NavigationItem } from '@/types';
@@ -55,22 +54,18 @@ export default function DesktopNav({ navigation, isActive, textColor }: DesktopN
         <Button
           href="https://koreasmartcoop.cafe24.com/myshop/order/list.html"
           external
-          variant="outline"
-          size="sm"
-          className={cn(
-            'min-h-[36px] px-4 font-bold transition-all duration-300',
-            textColor === 'text-white'
-              ? 'bg-transparent border-white/50 text-white hover:bg-white hover:text-charcoal'
-              : 'bg-white border-gray-200 text-charcoal'
-          )}
+          variant={textColor === 'text-white' ? 'outline-white' : 'outline'}
+          size="xs"
+          className="font-bold transition-all duration-300"
         >
           주문조회
         </Button>
 
-        <Button href="/artworks" variant="accent" size="sm" className="min-h-[36px] px-4">
+        <Button href="/artworks" variant="accent" size="xs">
           작품 구매
         </Button>
-        <AuthButtons />
+
+        <AuthButtons size="xs" variant={textColor === 'text-white' ? 'white' : 'white'} />
       </div>
     </>
   );

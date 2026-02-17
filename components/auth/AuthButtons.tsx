@@ -15,9 +15,24 @@ type Profile = {
 type AuthButtonsProps = {
   layout?: 'inline' | 'stacked';
   className?: string;
+  variant?:
+    | 'primary'
+    | 'secondary'
+    | 'accent'
+    | 'outline'
+    | 'outline-white'
+    | 'white'
+    | 'ghost'
+    | 'ghost-white';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
 };
 
-export default function AuthButtons({ layout = 'inline', className = '' }: AuthButtonsProps) {
+export default function AuthButtons({
+  layout = 'inline',
+  className = '',
+  variant = 'white',
+  size = 'md',
+}: AuthButtonsProps) {
   // Memoize client to ensure it's stable across renders
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
@@ -151,7 +166,9 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
   if (isLoading) {
     return (
       <div className={wrapperClassName}>
-        <div className="h-10 w-24 bg-gray-100/50 animate-pulse rounded-full" />
+        <div
+          className={`bg-gray-100/50 animate-pulse rounded-full ${size === 'xs' ? 'h-9 w-20' : 'h-10 w-24'}`}
+        />
       </div>
     );
   }
@@ -161,7 +178,8 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
       <div className={wrapperClassName}>
         <Button
           href="/login"
-          variant="white"
+          variant={variant}
+          size={size}
           className={layout === 'stacked' ? 'w-full justify-center' : ''}
         >
           {UI_STRINGS.NAV.ARTIST_MENU}
@@ -197,14 +215,16 @@ export default function AuthButtons({ layout = 'inline', className = '' }: AuthB
       {dashboardLink ? (
         <Button
           href={dashboardLink.href}
-          variant="white"
+          variant={variant}
+          size={size}
           className={layout === 'stacked' ? 'w-full justify-center' : ''}
         >
           {dashboardLink.label}
         </Button>
       ) : (
         <Button
-          variant="white"
+          variant={variant}
+          size={size}
           disabled
           className={layout === 'stacked' ? 'w-full justify-center' : ''}
         >

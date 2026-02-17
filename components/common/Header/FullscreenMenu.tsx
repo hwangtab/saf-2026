@@ -132,8 +132,10 @@ export default function FullscreenMenu({
               <li key={item.name} className="flex flex-col">
                 {item.items && item.items.length > 0 ? (
                   <details className="group">
-                    <summary className={`${styles.navLink} list-none cursor-pointer flex items-center justify-between`}>
-                      {item.name}
+                    <summary
+                      className={`${styles.navLink} list-none cursor-pointer flex items-center justify-center relative w-full`}
+                    >
+                      <span className="text-center">{item.name}</span>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="20"
@@ -144,22 +146,24 @@ export default function FullscreenMenu({
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        className="transition-transform duration-200 group-open:rotate-180"
+                        className="transition-transform duration-200 group-open:rotate-180 absolute right-0 top-1/2 -translate-y-1/2 text-gray-400"
                       >
                         <path d="m6 9 6 6 6-6" />
                       </svg>
                     </summary>
-                    <ul className="mt-2 pl-4 space-y-2 border-l-2 border-gray-100 ml-2">
+                    <ul className="mt-4 space-y-3">
                       {item.items.map((subItem) => (
-                        <li key={subItem.href}>
+                        <li key={subItem.href} className="text-center">
                           <Link
                             href={subItem.href}
-                            className={`block py-2 text-lg text-charcoal-muted hover:text-primary ${isActive(subItem.href) ? 'text-primary font-semibold' : ''}`}
+                            className={`block py-1 text-lg text-charcoal-muted hover:text-primary ${isActive(subItem.href) ? 'text-primary font-semibold' : ''}`}
                             onClick={onClose}
                           >
                             {subItem.name}
                             {subItem.description && (
-                              <span className="block text-xs text-gray-400 font-normal mt-0.5">{subItem.description}</span>
+                              <span className="block text-xs text-gray-400 font-normal mt-1">
+                                {subItem.description}
+                              </span>
                             )}
                           </Link>
                         </li>
