@@ -11,23 +11,8 @@ function normalizePath(path: string): string {
 
 export function useHeaderStyle() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  // 네이티브 <dialog>가 스크롤 잠금을 처리하므로 useScrollLock 불필요
-  const isScrolled = useScrolled(10, isMenuOpen);
   const pathname = usePathname();
   const currentPath = normalizePath(pathname || '/');
-
-  const isActive = useCallback(
-    (href: string) => {
-      if (href === '/' && currentPath === '/') return true;
-      if (href !== '/' && currentPath.startsWith(href)) return true;
-      return false;
-    },
-    [currentPath]
-  );
-
-  const openMenu = useCallback(() => setIsMenuOpen(true), []);
-  const closeMenu = useCallback(() => setIsMenuOpen(false), []);
 
   // 경로 기반 파생 상태 메모이제이션
   const { isArtworkDetail, hasHero } = useMemo(() => {
@@ -41,6 +26,24 @@ export function useHeaderStyle() {
       specialHeroPage;
     return { isArtworkDetail: artworkDetail, hasHero: heroPage };
   }, [currentPath]);
+
+  // 네이티브 <dialog>가 스크롤 잠금을 처리하므로 useScrollLock 불필요
+  const isScrolled = useScrolled(10, isMenuOpen, {
+    optimisticTopOnPathChange: hasHero,
+    settleDelayMs: 120,
+  });
+
+  const isActive = useCallback(
+    (href: string) => {
+      if (href === '/' && currentPath === '/') return true;
+      if (href !== '/' && currentPath.startsWith(href)) return true;
+      return false;
+    },
+    [currentPath]
+  );
+
+  const openMenu = useCallback(() => setIsMenuOpen(true), []);
+  const closeMenu = useCallback(() => setIsMenuOpen(false), []);
 
   // 헤더 스타일 메모이제이션 (메뉴가 풀스크린이므로 isMenuVisible 조건 제거)
   const headerStyle = useMemo(() => {
