@@ -17,6 +17,9 @@ function useHeroAtTop(currentPath: string, hasHero: boolean, disabled: boolean):
   useEffect(() => {
     if (!hasHero || disabled) return undefined;
 
+    let ticking = false;
+    let settleTimer: ReturnType<typeof setTimeout> | null = null;
+
     const publish = (nextValue: boolean) => {
       setHeroVisibilityByPath((prev) => {
         if (prev[currentPath] === nextValue) {
@@ -29,45 +32,54 @@ function useHeroAtTop(currentPath: string, hasHero: boolean, disabled: boolean):
       });
     };
 
-    const evaluateByScroll = () => {
+    const getSentinel = () => document.querySelector<HTMLElement>('[data-hero-sentinel="true"]');
+
+    const evaluate = () => {
+      const sentinel = getSentinel();
+      if (sentinel) {
+        publish(sentinel.getBoundingClientRect().top >= -10);
+        return;
+      }
       publish(window.scrollY <= 10);
     };
 
-    const sentinel = document.querySelector<HTMLElement>('[data-hero-sentinel="true"]');
-    let observer: IntersectionObserver | null = null;
-    let rafId: number | null = null;
+    const handleScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        window.requestAnimationFrame(() => {
+          evaluate();
+          ticking = false;
+        });
+      }
+    };
 
-    if (sentinel) {
-      observer = new IntersectionObserver(
-        (entries) => {
-          const entry = entries[0];
-          publish(Boolean(entry?.isIntersecting));
-        },
-        {
-          root: null,
-          threshold: 0,
-          rootMargin: '-64px 0px 0px 0px',
-        }
-      );
-      observer.observe(sentinel);
-    } else {
-      window.addEventListener('scroll', evaluateByScroll, { passive: true });
-      window.addEventListener('resize', evaluateByScroll);
-      window.addEventListener('pageshow', evaluateByScroll);
-      window.addEventListener('popstate', evaluateByScroll);
-      rafId = window.requestAnimationFrame(evaluateByScroll);
-    }
+    const mutationObserver = new MutationObserver(() => {
+      evaluate();
+    });
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', evaluate);
+    window.addEventListener('pageshow', evaluate);
+    window.addEventListener('popstate', evaluate);
+
+    mutationObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['data-hero-sentinel'],
+    });
+
+    window.requestAnimationFrame(evaluate);
+    settleTimer = setTimeout(evaluate, 120);
 
     return () => {
-      observer?.disconnect();
-      if (!sentinel) {
-        window.removeEventListener('scroll', evaluateByScroll);
-        window.removeEventListener('resize', evaluateByScroll);
-        window.removeEventListener('pageshow', evaluateByScroll);
-        window.removeEventListener('popstate', evaluateByScroll);
-      }
-      if (rafId !== null) {
-        window.cancelAnimationFrame(rafId);
+      mutationObserver.disconnect();
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', evaluate);
+      window.removeEventListener('pageshow', evaluate);
+      window.removeEventListener('popstate', evaluate);
+      if (settleTimer) {
+        clearTimeout(settleTimer);
       }
     };
   }, [currentPath, hasHero, disabled]);

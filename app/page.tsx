@@ -82,6 +82,11 @@ export default function Home() {
     <>
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center pt-12 pb-12 md:pt-20 md:pb-20">
+        <div
+          data-hero-sentinel="true"
+          aria-hidden="true"
+          className="absolute top-0 left-0 h-px w-px"
+        />
         <BackgroundSlider />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-black/35 pointer-events-none" />
         <SawtoothDivider position="bottom" colorClass="text-canvas-soft" />
