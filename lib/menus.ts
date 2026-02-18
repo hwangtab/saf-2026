@@ -50,9 +50,9 @@ export const MAIN_NAVIGATION: NavigationItem[] = [
         description: '씨앗페 전체 작품 목록 보기',
       },
       {
-        name: '오윤 특별전',
+        name: '오윤 40주기 특별전',
         href: '/special/oh-yoon',
-        description: '40주기 민중미술 거장 특별전',
+        description: '한국을 대표하는 민중미술 거장의 40주기 특별전',
       },
     ],
   },
