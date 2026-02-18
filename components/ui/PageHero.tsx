@@ -58,7 +58,7 @@ export default function PageHero({
         )}
         {children && <div className="mt-8 flex justify-center">{children}</div>}
       </div>
-      <SawtoothDivider position="bottom" colorClass={dividerColor} />
+      <SawtoothDivider position="bottom" colorClass={dividerColor} className="bottom-0" />
     </section>
   );
 }

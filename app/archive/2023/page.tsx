@@ -75,6 +75,7 @@ export default async function Archive2023Page() {
         title="2023 오프라인 전시"
         description="씨앗페의 발자취와 성과, 언론 보도를 기록합니다"
         dividerColor="text-sun-soft"
+        className="py-24 md:py-32"
       >
         <ShareButtons url={currentUrl} title={pageTitle} description={pageDescription} />
       </PageHero>
