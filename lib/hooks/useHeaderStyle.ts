@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
 import { HERO_PAGES } from '@/lib/constants';
 import { useScrolled } from '@/lib/hooks/useScrolled';
@@ -7,6 +7,72 @@ function normalizePath(path: string): string {
   if (!path) return '/';
   const withoutTrailingSlash = path.replace(/\/+$/, '');
   return withoutTrailingSlash === '' ? '/' : withoutTrailingSlash;
+}
+
+function useHeroAtTop(currentPath: string, hasHero: boolean, disabled: boolean): boolean {
+  const [heroVisibilityByPath, setHeroVisibilityByPath] = useState<Record<string, boolean>>({});
+
+  const heroAtTop = hasHero ? (heroVisibilityByPath[currentPath] ?? true) : false;
+
+  useEffect(() => {
+    if (!hasHero || disabled) return undefined;
+
+    const publish = (nextValue: boolean) => {
+      setHeroVisibilityByPath((prev) => {
+        if (prev[currentPath] === nextValue) {
+          return prev;
+        }
+        return {
+          ...prev,
+          [currentPath]: nextValue,
+        };
+      });
+    };
+
+    const evaluateByScroll = () => {
+      publish(window.scrollY <= 10);
+    };
+
+    const sentinel = document.querySelector<HTMLElement>('[data-hero-sentinel="true"]');
+    let observer: IntersectionObserver | null = null;
+    let rafId: number | null = null;
+
+    if (sentinel) {
+      observer = new IntersectionObserver(
+        (entries) => {
+          const entry = entries[0];
+          publish(Boolean(entry?.isIntersecting));
+        },
+        {
+          root: null,
+          threshold: 0,
+          rootMargin: '-64px 0px 0px 0px',
+        }
+      );
+      observer.observe(sentinel);
+    } else {
+      window.addEventListener('scroll', evaluateByScroll, { passive: true });
+      window.addEventListener('resize', evaluateByScroll);
+      window.addEventListener('pageshow', evaluateByScroll);
+      window.addEventListener('popstate', evaluateByScroll);
+      rafId = window.requestAnimationFrame(evaluateByScroll);
+    }
+
+    return () => {
+      observer?.disconnect();
+      if (!sentinel) {
+        window.removeEventListener('scroll', evaluateByScroll);
+        window.removeEventListener('resize', evaluateByScroll);
+        window.removeEventListener('pageshow', evaluateByScroll);
+        window.removeEventListener('popstate', evaluateByScroll);
+      }
+      if (rafId !== null) {
+        window.cancelAnimationFrame(rafId);
+      }
+    };
+  }, [currentPath, hasHero, disabled]);
+
+  return heroAtTop;
 }
 
 export function useHeaderStyle() {
@@ -28,10 +94,8 @@ export function useHeaderStyle() {
   }, [currentPath]);
 
   // 네이티브 <dialog>가 스크롤 잠금을 처리하므로 useScrollLock 불필요
-  const isScrolled = useScrolled(10, isMenuOpen, {
-    optimisticTopOnPathChange: hasHero,
-    settleDelayMs: 120,
-  });
+  const isScrolled = useScrolled(10, isMenuOpen);
+  const isHeroAtTop = useHeroAtTop(currentPath, hasHero, isMenuOpen);
 
   const isActive = useCallback(
     (href: string) => {
@@ -47,13 +111,15 @@ export function useHeaderStyle() {
 
   // 헤더 스타일 메모이제이션 (메뉴가 풀스크린이므로 isMenuVisible 조건 제거)
   const headerStyle = useMemo(() => {
-    if (isArtworkDetail || isScrolled || !hasHero) {
+    if (isArtworkDetail || !hasHero) {
       return 'bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200/50';
     }
-    return 'bg-transparent';
-  }, [isArtworkDetail, isScrolled, hasHero]);
+    return isHeroAtTop
+      ? 'bg-transparent'
+      : 'bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200/50';
+  }, [isArtworkDetail, hasHero, isHeroAtTop]);
 
-  const isDarkText = isScrolled || !hasHero || isArtworkDetail;
+  const isDarkText = !hasHero || isArtworkDetail || !isHeroAtTop || isScrolled;
   const textColor = isDarkText ? 'text-charcoal' : 'text-white';
 
   return {

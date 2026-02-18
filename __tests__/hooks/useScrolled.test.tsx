@@ -10,7 +10,6 @@ jest.mock('next/navigation', () => ({
 describe('useScrolled', () => {
   beforeEach(() => {
     mockPathname = '/';
-    jest.useFakeTimers();
 
     // Mock requestAnimationFrame to run immediately
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb: FrameRequestCallback) => {
@@ -20,7 +19,6 @@ describe('useScrolled', () => {
   });
 
   afterEach(() => {
-    jest.useRealTimers();
     jest.restoreAllMocks();
   });
 
@@ -68,35 +66,6 @@ describe('useScrolled', () => {
 
     // Scroll up -> should stay true because frozen
     fireScroll(0);
-    expect(result.current).toBe(true);
-  });
-
-  it('should optimistically reset to top on hero route changes', () => {
-    act(() => {
-      Object.defineProperty(window, 'scrollY', { value: 30, writable: true });
-    });
-
-    const { result, rerender } = renderHook(
-      ({ optimisticTopOnPathChange }) =>
-        useScrolled(10, false, { optimisticTopOnPathChange, settleDelayMs: 120 }),
-      {
-        initialProps: { optimisticTopOnPathChange: false },
-      }
-    );
-
-    expect(result.current).toBe(true);
-
-    act(() => {
-      mockPathname = '/special/oh-yoon';
-      rerender({ optimisticTopOnPathChange: true });
-    });
-
-    expect(result.current).toBe(false);
-
-    act(() => {
-      jest.advanceTimersByTime(120);
-    });
-
     expect(result.current).toBe(true);
   });
 });

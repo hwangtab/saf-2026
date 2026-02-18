@@ -31,11 +31,12 @@ export default function FullscreenMenu({
   const dialogRef = useRef<HTMLDialogElement>(null);
   const scrollYRef = useRef(0);
   const isBodyLockedRef = useRef(false);
+  const skipRestoreScrollRef = useRef(false);
   const pathname = usePathname();
   const prevPathnameRef = useRef(pathname);
 
   // body 스크롤 잠금 해제 및 위치 복원
-  const restoreBodyScroll = () => {
+  const restoreBodyScroll = (restorePosition = true) => {
     if (!isBodyLockedRef.current) return;
 
     document.body.style.position = '';
@@ -43,7 +44,9 @@ export default function FullscreenMenu({
     document.body.style.left = '';
     document.body.style.right = '';
     document.body.style.overflow = '';
-    window.scrollTo(0, scrollYRef.current);
+    if (restorePosition) {
+      window.scrollTo(0, scrollYRef.current);
+    }
     isBodyLockedRef.current = false;
   };
 
@@ -69,7 +72,8 @@ export default function FullscreenMenu({
       isBodyLockedRef.current = true;
     } else {
       if (dialog.open) dialog.close();
-      restoreBodyScroll();
+      restoreBodyScroll(!skipRestoreScrollRef.current);
+      skipRestoreScrollRef.current = false;
     }
 
     return () => {
@@ -80,6 +84,7 @@ export default function FullscreenMenu({
   // 경로 변경 시 자동 닫기
   useEffect(() => {
     if (prevPathnameRef.current !== pathname && isOpen) {
+      skipRestoreScrollRef.current = true;
       onClose();
     }
     prevPathnameRef.current = pathname;

@@ -59,6 +59,11 @@ export default function OhYoonPage() {
     <div className="w-full bg-canvas-soft min-h-screen font-sans">
       {/* Hero Section */}
       <section className="relative w-full py-20 md:py-32 px-4 overflow-hidden border-b-8 border-double border-charcoal/20 bg-canvas">
+        <div
+          data-hero-sentinel="true"
+          aria-hidden="true"
+          className="absolute top-0 left-0 h-px w-px"
+        />
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <div className="inline-block relative mb-8">
             <span className="relative z-10 inline-block px-6 py-3 border-4 border-charcoal bg-white text-charcoal font-bold text-lg tracking-widest transform -rotate-1 shadow-[4px_4px_0px_0px_rgba(49,57,60,0.2)]">

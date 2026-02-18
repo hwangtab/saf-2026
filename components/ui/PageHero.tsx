@@ -35,6 +35,11 @@ export default function PageHero({
         className
       )}
     >
+      <div
+        data-hero-sentinel="true"
+        aria-hidden="true"
+        className="absolute top-0 left-0 h-px w-px"
+      />
       {/* Background Image */}
       <PageHeroBackground customImage={customBackgroundImage} />
       {/* Dark Overlay */}
