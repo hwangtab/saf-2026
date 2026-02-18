@@ -18,6 +18,8 @@
     "backup:artwork-images": "node scripts/backup-artwork-images.js",
     "backfill:artwork-images:dry": "node scripts/backfill-artwork-image-variants.js",
     "backfill:artwork-images:apply": "node scripts/backfill-artwork-image-variants.js --apply",
+    "cleanup:artwork-variants:dry": "node scripts/cleanup-artwork-variants.js",
+    "cleanup:artwork-variants:apply": "node scripts/cleanup-artwork-variants.js --apply",
     "trash:purge:expired:dry": "node scripts/purge-expired-trash.js --dry-run",
     "trash:purge:expired": "node scripts/purge-expired-trash.js"
   },

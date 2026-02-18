@@ -1,22 +1,3 @@
-import type { ArtworkImageVariant } from '@/lib/utils';
-
-type VariantOutput = {
-  variant: ArtworkImageVariant;
-  file: File;
-};
-
-const ARTWORK_VARIANT_SPECS: Array<{
-  variant: ArtworkImageVariant;
-  maxSize: number;
-  quality: number;
-}> = [
-  { variant: 'thumb', maxSize: 400, quality: 0.72 },
-  { variant: 'card', maxSize: 960, quality: 0.75 },
-  { variant: 'detail', maxSize: 1600, quality: 0.8 },
-  { variant: 'hero', maxSize: 1920, quality: 0.8 },
-  { variant: 'original', maxSize: 2560, quality: 0.82 },
-];
-
 const getResizedDimensions = (
   originalWidth: number,
   originalHeight: number,
@@ -112,34 +93,13 @@ export async function optimizeImage(file: File): Promise<File> {
   }
 }
 
-/**
- * Generates multiple WebP variants for artwork delivery.
- * Processes sequentially to avoid memory issues with large images.
- */
-export async function generateArtworkImageVariants(file: File): Promise<VariantOutput[]> {
+export async function optimizeArtworkImage(file: File): Promise<File> {
   if (!file.type.startsWith('image/')) {
-    return [{ variant: 'original', file }];
+    throw new Error('이미지 파일만 업로드할 수 있습니다.');
   }
 
-  try {
-    const img = await loadImage(file);
-    const baseName = file.name.replace(/\.[^/.]+$/, '');
-    const outputs: VariantOutput[] = [];
+  const img = await loadImage(file);
+  const baseName = file.name.replace(/\.[^/.]+$/, '');
 
-    // Process variants sequentially (not in parallel) to avoid memory issues
-    for (const { variant, maxSize, quality } of ARTWORK_VARIANT_SPECS) {
-      const optimized = await renderToWebpFile(
-        img,
-        `${baseName}__${variant}.webp`,
-        maxSize,
-        quality
-      );
-      outputs.push({ variant, file: optimized });
-    }
-
-    return outputs;
-  } catch {
-    const fallback = await optimizeImage(file);
-    return [{ variant: 'original', file: fallback }];
-  }
+  return await renderToWebpFile(img, `${baseName}.webp`, 2560, 0.82);
 }

@@ -4,9 +4,9 @@ import ExportedImage from 'next-image-export-optimizer';
 import Image from 'next/image';
 import { useEffect, useState, useMemo, type ComponentProps } from 'react';
 import {
+  ARTWORK_TRANSFORM_PRESETS,
   resolveArtworkImageFallbackUrl,
-  resolveArtworkVariantUrl,
-  ARTWORK_IMAGE_VARIANTS,
+  resolveOptimizedArtworkImageUrl,
 } from '@/lib/utils';
 
 type SafeImageProps = ComponentProps<typeof ExportedImage>;
@@ -15,29 +15,21 @@ const ARTWORK_STORAGE_MARKERS = [
   '/storage/v1/object/public/artworks/',
   '/storage/v1/render/image/public/artworks/',
 ] as const;
-const ARTWORK_VARIANT_SUFFIX_REGEX =
-  /__(thumb|card|detail|hero|original)\.(webp|jpg|jpeg|png|avif)$/i;
-
-const VARIANT_WIDTHS: Record<string, number> = {
-  thumb: 400,
-  card: 960,
-  detail: 1600,
-  hero: 1920,
-  original: 2560,
-};
+const TRANSFORM_WIDTHS = [
+  ARTWORK_TRANSFORM_PRESETS.slider.width,
+  ARTWORK_TRANSFORM_PRESETS.card.width,
+  ARTWORK_TRANSFORM_PRESETS.detail.width,
+  ARTWORK_TRANSFORM_PRESETS.hero.width,
+] as const;
 
 function isArtworkStorageUrl(url: string): boolean {
   return ARTWORK_STORAGE_MARKERS.some((marker) => url.includes(marker));
 }
 
-function hasVariantSuffix(url: string): boolean {
-  return ARTWORK_VARIANT_SUFFIX_REGEX.test(url);
-}
-
 function generateArtworkSrcSet(src: string): string {
-  return ARTWORK_IMAGE_VARIANTS.map((variant) => {
-    const variantUrl = resolveArtworkVariantUrl(src, variant);
-    const width = VARIANT_WIDTHS[variant];
+  return TRANSFORM_WIDTHS.map((width) => {
+    const quality = width <= 960 ? 75 : 80;
+    const variantUrl = resolveOptimizedArtworkImageUrl(src, { width, quality });
     return `${variantUrl} ${width}w`;
   }).join(', ');
 }
@@ -51,10 +43,9 @@ function RemoteSafeImage({
   const { alt, onError, ...restProps } = props;
 
   const isArtwork = useMemo(() => isArtworkStorageUrl(src), [src]);
-  const hasVariants = useMemo(() => hasVariantSuffix(src), [src]);
   const srcSet = useMemo(
-    () => (isArtwork && hasVariants ? generateArtworkSrcSet(src) : undefined),
-    [src, isArtwork, hasVariants]
+    () => (isArtwork ? generateArtworkSrcSet(src) : undefined),
+    [src, isArtwork]
   );
 
   useEffect(() => {
@@ -62,7 +53,6 @@ function RemoteSafeImage({
   }, [src]);
 
   // For artwork images, use native img to avoid hydration issues
-  // srcSet is only available for images with pre-generated variants
   if (isArtwork) {
     // Extract only the props we need, ignore Next.js Image specific props
     const { fill, width, height, className, loading, priority, style } = restProps;

@@ -7,7 +7,7 @@ import Button from '@/components/ui/Button';
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
 import { getArtworkImageFamilyKey } from '@/lib/utils';
-import { expandArtworkVariantPaths, getStoragePathFromPublicUrl } from '@/lib/utils/form-helpers';
+import { getStoragePathsForRemoval } from '@/lib/utils/form-helpers';
 import {
   AdminFieldLabel,
   AdminInput,
@@ -80,11 +80,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
 
   const removeStorageObjects = useCallback(
     async (urls: string[]) => {
-      const paths = urls
-        .map((url) => getStoragePathFromPublicUrl(url, 'artworks'))
-        .filter((path): path is string => !!path)
-        .flatMap((path) => expandArtworkVariantPaths(path));
-      const uniquePaths = Array.from(new Set(paths));
+      const uniquePaths = getStoragePathsForRemoval(urls, 'artworks');
       if (uniquePaths.length === 0) return;
       await supabase.storage.from('artworks').remove(uniquePaths);
     },

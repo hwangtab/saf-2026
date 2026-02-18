@@ -34,21 +34,34 @@ function asObjectList(value: unknown): Record<string, unknown>[] | null {
 function getStoragePathFromPublicUrl(publicUrl: string, bucket: string): string | null {
   try {
     const url = new URL(publicUrl);
-    const marker = `/storage/v1/object/public/${bucket}/`;
-    const index = url.pathname.indexOf(marker);
-    if (index === -1) return null;
-    return url.pathname.slice(index + marker.length);
+    const markers = [
+      `/storage/v1/object/public/${bucket}/`,
+      `/storage/v1/render/image/public/${bucket}/`,
+    ];
+
+    for (const marker of markers) {
+      const index = url.pathname.indexOf(marker);
+      if (index !== -1) {
+        return url.pathname.slice(index + marker.length);
+      }
+    }
+
+    return null;
   } catch {
     return null;
   }
 }
 
 function expandArtworkVariantPaths(pathValue: string): string[] {
-  const match = pathValue.match(/__(thumb|card|detail|hero|original)\.webp$/i);
+  const match = pathValue.match(/__(thumb|card|detail|hero|original)\.(webp|jpg|jpeg|png|avif)$/i);
   if (!match) return [pathValue];
-  const prefix = pathValue.replace(/__(thumb|card|detail|hero|original)\.webp$/i, '');
+  const prefix = pathValue.replace(
+    /__(thumb|card|detail|hero|original)\.(webp|jpg|jpeg|png|avif)$/i,
+    ''
+  );
+  const ext = (match[2] || 'webp').toLowerCase();
   return ['thumb', 'card', 'detail', 'hero', 'original'].map(
-    (variant) => `${prefix}__${variant}.webp`
+    (variant) => `${prefix}__${variant}.${ext}`
   );
 }
 

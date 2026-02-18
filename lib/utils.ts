@@ -52,6 +52,14 @@ export const ARTWORK_IMAGE_VARIANTS = ['thumb', 'card', 'detail', 'hero', 'origi
 export type ArtworkImageVariant = (typeof ARTWORK_IMAGE_VARIANTS)[number];
 export type ArtworkImagePreset = 'slider' | 'card' | 'detail' | 'hero' | 'original';
 
+export const ARTWORK_TRANSFORM_PRESETS = {
+  slider: { width: 400, quality: 75 },
+  card: { width: 960, quality: 75 },
+  detail: { width: 1600, quality: 80 },
+  hero: { width: 1920, quality: 80 },
+  original: {},
+} as const;
+
 const ARTWORK_VARIANT_FILENAME_REGEX =
   /__(thumb|card|detail|hero|original)\.(webp|jpg|jpeg|png|avif)$/i;
 const ARTWORK_STORAGE_MARKERS = [
@@ -101,6 +109,19 @@ export function resolveArtworkImageUrlForPreset(
   preset: ArtworkImagePreset = 'original'
 ): string {
   const variant = PRESET_TO_VARIANT[preset];
+
+  if (preset === 'original') {
+    return resolveArtworkVariantUrl(image, variant);
+  }
+
+  const transformPreset = ARTWORK_TRANSFORM_PRESETS[preset];
+  const optimized = resolveOptimizedArtworkImageUrl(image, transformPreset);
+  const resolved = resolveArtworkImageUrl(image);
+
+  if (optimized !== resolved) {
+    return optimized;
+  }
+
   return resolveArtworkVariantUrl(image, variant);
 }
 
@@ -148,6 +169,9 @@ const toPositiveInteger = (value: number | undefined): number | null => {
   return rounded > 0 ? rounded : null;
 };
 
+const clamp = (value: number, min: number, max: number): number =>
+  Math.min(Math.max(value, min), max);
+
 export function resolveOptimizedArtworkImageUrl(
   image: string,
   options: SupabaseImageTransformOptions = {}
@@ -184,9 +208,13 @@ export function resolveOptimizedArtworkImageUrl(
     );
   }
 
-  const width = toPositiveInteger(options.width);
-  const height = toPositiveInteger(options.height);
-  const quality = toPositiveInteger(options.quality);
+  const widthValue = toPositiveInteger(options.width);
+  const heightValue = toPositiveInteger(options.height);
+  const qualityValue = toPositiveInteger(options.quality);
+
+  const width = widthValue ? clamp(widthValue, 1, 2500) : null;
+  const height = heightValue ? clamp(heightValue, 1, 2500) : null;
+  const quality = qualityValue ? clamp(qualityValue, 20, 100) : null;
 
   if (width) parsed.searchParams.set('width', String(width));
   if (height) parsed.searchParams.set('height', String(height));

@@ -41,14 +41,16 @@ export const getStoragePathFromPublicUrl = (publicUrl: string, bucket: string): 
   }
 };
 
-const ARTWORK_VARIANT_SUFFIX_REGEX = /__(thumb|card|detail|hero|original)\.webp$/i;
+const ARTWORK_VARIANT_SUFFIX_REGEX =
+  /__(thumb|card|detail|hero|original)\.(webp|jpg|jpeg|png|avif)$/i;
 
 export const expandArtworkVariantPaths = (path: string): string[] => {
   const match = path.match(ARTWORK_VARIANT_SUFFIX_REGEX);
   if (!match) return [path];
   const prefix = path.replace(ARTWORK_VARIANT_SUFFIX_REGEX, '');
+  const ext = match[2] || 'webp';
   return ['thumb', 'card', 'detail', 'hero', 'original'].map(
-    (variant) => `${prefix}__${variant}.webp`
+    (variant) => `${prefix}__${variant}.${ext.toLowerCase()}`
   );
 };
 
