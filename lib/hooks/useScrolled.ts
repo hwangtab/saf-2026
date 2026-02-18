@@ -32,9 +32,13 @@ export function useScrolled(threshold = 10, disabled = false) {
     window.addEventListener('resize', syncScrolled);
     syncScrolled();
 
+    // Double check after a short delay to handle potential hydration/scroll restoration timing issues
+    const timer = setTimeout(syncScrolled, 100);
+
     window.requestAnimationFrame(syncScrolled);
 
     return () => {
+      clearTimeout(timer);
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('pageshow', syncScrolled);
       window.removeEventListener('resize', syncScrolled);
