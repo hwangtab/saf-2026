@@ -167,7 +167,7 @@ export default function Footer() {
             <div className="border-t border-gray-700 pt-8">
               {/* Copyright */}
               <div className="text-center text-sm text-gray-400">
-                <p>© {new Date().getFullYear()} 씨앗페. All rights reserved.</p>
+                <p>© 2026 씨앗페. All rights reserved.</p>
               </div>
             </div>
           </div>
