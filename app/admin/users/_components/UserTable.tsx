@@ -1,6 +1,6 @@
-import Image from 'next/image';
 import { Profile, UserSortKey, SortDirection } from '@/types/admin';
 import Button from '@/components/ui/Button';
+import SafeAvatarImage from '@/components/common/SafeAvatarImage';
 import { AdminEmptyState, AdminSelect } from '@/app/admin/_components/admin-ui';
 
 interface UserTableProps {
@@ -107,13 +107,12 @@ export function UserTable({
                   <div className="flex items-center">
                     <div className="h-10 w-10 flex-shrink-0">
                       {user.avatar_url ? (
-                        <Image
+                        <SafeAvatarImage
                           className="h-10 w-10 rounded-full object-cover ring-1 ring-gray-200"
                           src={user.avatar_url}
                           alt=""
                           width={40}
                           height={40}
-                          unoptimized
                         />
                       ) : (
                         <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 ring-1 ring-gray-200 text-gray-500 font-medium">

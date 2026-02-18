@@ -11,9 +11,17 @@ import {
   MERCHANT_POLICIES,
 } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
-import { formatArtistName, resolveArtworkImageUrl } from '@/lib/utils';
+import { formatArtistName, resolveOptimizedArtworkImageUrl } from '@/lib/utils';
 import { getArtformForSchema, getMediumKeywords, classifyArtworkMedium } from '@/lib/art-taxonomy';
 import { Artwork, BreadcrumbItem, ExhibitionReview } from '@/types';
+
+function resolveSeoArtworkImageUrl(image: string): string {
+  return resolveOptimizedArtworkImageUrl(image, {
+    width: 1200,
+    quality: 80,
+    resize: 'contain',
+  });
+}
 
 // JSON-LD Security: Escape < characters to prevent XSS
 export function escapeJsonLdForScript(json: string): string {
@@ -34,7 +42,7 @@ export function createBreadcrumbSchema(items: BreadcrumbItem[]) {
 }
 
 export function generateArtworkMetadata(artwork: Artwork): Metadata {
-  const resolvedImageUrl = resolveArtworkImageUrl(artwork.images[0]);
+  const resolvedImageUrl = resolveSeoArtworkImageUrl(artwork.images[0]);
   const imageUrl = resolvedImageUrl.startsWith('http')
     ? resolvedImageUrl
     : `${SITE_URL}${resolvedImageUrl}`;
@@ -102,7 +110,7 @@ export function generateArtworkMetadata(artwork: Artwork): Metadata {
 }
 
 export function generateArtworkJsonLd(artwork: Artwork, numericPrice: string, isInquiry: boolean) {
-  const resolvedImageUrl = resolveArtworkImageUrl(artwork.images[0]);
+  const resolvedImageUrl = resolveSeoArtworkImageUrl(artwork.images[0]);
   const schemaDescription =
     artwork.description || artwork.profile || `${artwork.artist}의 작품 "${artwork.title}"`;
 
@@ -799,9 +807,9 @@ export function generateArtworkListSchema(artworks: Artwork[]) {
       position: index + 1,
       url: `${SITE_URL}/artworks/${artwork.id}`,
       name: artwork.title,
-      image: resolveArtworkImageUrl(artwork.images[0]).startsWith('http')
-        ? resolveArtworkImageUrl(artwork.images[0])
-        : `${SITE_URL}${resolveArtworkImageUrl(artwork.images[0])}`,
+      image: resolveSeoArtworkImageUrl(artwork.images[0]).startsWith('http')
+        ? resolveSeoArtworkImageUrl(artwork.images[0])
+        : `${SITE_URL}${resolveSeoArtworkImageUrl(artwork.images[0])}`,
     })),
   };
 }

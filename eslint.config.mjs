@@ -16,7 +16,7 @@ const config = [
     },
   },
   {
-    files: ['components/common/SafeImage.tsx'],
+    files: ['components/common/SafeImage.tsx', 'components/common/SafeAvatarImage.tsx'],
     rules: {
       '@next/next/no-img-element': 'off',
     },

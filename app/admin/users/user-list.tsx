@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   approveUser,
@@ -18,6 +17,7 @@ import { AdminCard, AdminInput } from '@/app/admin/_components/admin-ui'; // Imp
 import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import { useDebounce } from '@/lib/hooks/useDebounce';
 import { useToast } from '@/lib/hooks/useToast';
+import SafeAvatarImage from '@/components/common/SafeAvatarImage';
 import {
   Profile,
   UnlinkedArtistOption,
@@ -508,13 +508,12 @@ export function UserList({
             <div className="flex items-center gap-4">
               <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden ring-1 ring-gray-200">
                 {selectedUser.avatar_url ? (
-                  <Image
+                  <SafeAvatarImage
                     src={selectedUser.avatar_url}
                     alt=""
                     className="h-full w-full object-cover"
                     width={64}
                     height={64}
-                    unoptimized
                   />
                 ) : (
                   <span className="text-gray-400 font-bold text-2xl">

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import ExportedImage from 'next-image-export-optimizer';
+import SafeImage from '@/components/common/SafeImage';
 import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
@@ -156,7 +157,7 @@ export default async function Archive2023Page() {
                 className="bg-white rounded-lg shadow-md overflow-hidden group flex flex-col"
               >
                 <div className="relative aspect-square w-full overflow-hidden">
-                  <ExportedImage
+                  <SafeImage
                     src={artwork.imageUrl}
                     alt={`${artwork.artist} - ${artwork.title}`}
                     fill

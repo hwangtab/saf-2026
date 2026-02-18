@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { deleteArtist } from '@/app/actions/admin-artists';
+import SafeAvatarImage from '@/components/common/SafeAvatarImage';
 import {
   AdminBadge,
   AdminCard,
@@ -299,13 +299,12 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
                       <div className="flex items-center">
                         <div className="h-10 w-10 flex-shrink-0">
                           {artist.profile_image ? (
-                            <Image
+                            <SafeAvatarImage
                               className="h-10 w-10 rounded-full object-cover ring-1 ring-gray-200"
                               src={artist.profile_image}
                               alt=""
                               width={40}
                               height={40}
-                              unoptimized
                             />
                           ) : (
                             <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 ring-1 ring-gray-200">
