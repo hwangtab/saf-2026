@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   approveUser,
@@ -507,10 +508,13 @@ export function UserList({
             <div className="flex items-center gap-4">
               <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden ring-1 ring-gray-200">
                 {selectedUser.avatar_url ? (
-                  <img
+                  <Image
                     src={selectedUser.avatar_url}
                     alt=""
                     className="h-full w-full object-cover"
+                    width={64}
+                    height={64}
+                    unoptimized
                   />
                 ) : (
                   <span className="text-gray-400 font-bold text-2xl">

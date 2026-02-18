@@ -16,6 +16,12 @@ const config = [
     },
   },
   {
+    files: ['components/common/SafeImage.tsx'],
+    rules: {
+      '@next/next/no-img-element': 'off',
+    },
+  },
+  {
     // Test files can use <img> instead of next/image
     files: ['__tests__/**/*'],
     rules: {
@@ -23,7 +29,7 @@ const config = [
     },
   },
   {
-    ignores: ['scripts/*'],
+    ignores: ['scripts/*', 'coverage/**'],
   },
 ];
 

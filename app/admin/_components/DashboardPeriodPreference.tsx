@@ -23,7 +23,7 @@ export function DashboardPeriodPreference({ selectedPeriod }: DashboardPeriodPre
       router.refresh();
       return;
     }
-  }, [hasPeriodInQuery, pathname, router, searchParamsString, selectedPeriod]);
+  }, [hasPeriodInQuery, pathname, periodInQuery, router, searchParamsString, selectedPeriod]);
 
   return null;
 }
