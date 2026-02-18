@@ -32,15 +32,27 @@ function useHeroAtTop(currentPath: string, hasHero: boolean, disabled: boolean):
       });
     };
 
-    const getSentinel = () => document.querySelector<HTMLElement>('[data-hero-sentinel="true"]');
+    const getSentinel = () => {
+      const routeContainers = Array.from(
+        document.querySelectorAll<HTMLElement>('[data-route-path]')
+      );
+      const activeRouteContainer = routeContainers.find(
+        (container) => container.dataset.routePath === currentPath
+      );
+
+      if (activeRouteContainer) {
+        return activeRouteContainer.querySelector<HTMLElement>('[data-hero-sentinel="true"]');
+      }
+
+      return null;
+    };
 
     const evaluate = () => {
       const sentinel = getSentinel();
-      if (sentinel) {
-        publish(sentinel.getBoundingClientRect().top >= -10);
+      if (!sentinel) {
         return;
       }
-      publish(window.scrollY <= 10);
+      publish(sentinel.getBoundingClientRect().top >= -10);
     };
 
     const handleScroll = () => {
@@ -57,16 +69,20 @@ function useHeroAtTop(currentPath: string, hasHero: boolean, disabled: boolean):
       evaluate();
     });
 
+    publish(true);
+
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', evaluate);
     window.addEventListener('pageshow', evaluate);
     window.addEventListener('popstate', evaluate);
 
-    mutationObserver.observe(document.body, {
+    const mainRoot = document.getElementById('main-content') || document.body;
+
+    mutationObserver.observe(mainRoot, {
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ['data-hero-sentinel'],
+      attributeFilter: ['data-hero-sentinel', 'data-route-path'],
     });
 
     window.requestAnimationFrame(evaluate);
