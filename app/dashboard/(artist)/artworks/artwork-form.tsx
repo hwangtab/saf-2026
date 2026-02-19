@@ -6,7 +6,6 @@ import { createArtwork, updateArtwork, type ActionState } from '@/app/actions/ar
 import Button from '@/components/ui/Button';
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
-import { getArtworkImageFamilyKey } from '@/lib/utils';
 import { getStoragePathsForRemoval } from '@/lib/utils/form-helpers';
 import {
   AdminFieldLabel,
@@ -181,16 +180,6 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
                 value={effectiveImages}
                 onUploadComplete={(urls) => {
                   setImages(urls);
-                  setNewUploads((prev) => {
-                    const remainingFamilies = new Set(
-                      urls.map((url) => getArtworkImageFamilyKey(url))
-                    );
-                    const next = prev.filter((url) =>
-                      remainingFamilies.has(getArtworkImageFamilyKey(url))
-                    );
-                    persistPending(next);
-                    return next;
-                  });
                 }}
                 onUploadDelta={(urls) =>
                   setNewUploads((prev) => {

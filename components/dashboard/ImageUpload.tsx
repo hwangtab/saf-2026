@@ -17,6 +17,7 @@ type UploadProps = {
   onChange?: (urls: string[]) => void;
   maxFiles?: number;
   defaultImages?: string[];
+  deleteOnRemove?: boolean;
 };
 
 const UPLOAD_MAX_RETRIES = 2;
@@ -31,6 +32,7 @@ export function ImageUpload({
   onChange,
   maxFiles = 1,
   defaultImages = [],
+  deleteOnRemove,
 }: UploadProps) {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<string | null>(null);
@@ -47,6 +49,7 @@ export function ImageUpload({
   const toast = useToast();
   const isControlled = Array.isArray(value);
   const currentUrls = isControlled ? (value as string[]) : previewUrls;
+  const shouldDeleteOnRemove = deleteOnRemove ?? bucket !== 'artworks';
 
   // Upload with retry logic and exponential backoff
   const uploadWithRetry = async (
@@ -197,7 +200,7 @@ export function ImageUpload({
     const urlToRemove = currentUrls[index];
     const path = getStoragePathFromPublicUrl(urlToRemove);
 
-    if (path) {
+    if (shouldDeleteOnRemove && path) {
       const removalPaths = [path];
       const { error } = await supabase.storage.from(bucket).remove(removalPaths);
       if (error) {

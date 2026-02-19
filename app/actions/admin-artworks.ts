@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 import { logAdminAction } from './admin-logs';
-import { getString, validateBatchSize } from '@/lib/utils/form-helpers';
+import { getString, getStoragePathsForRemoval, validateBatchSize } from '@/lib/utils/form-helpers';
 
 export async function deleteAdminArtwork(id: string) {
   const admin = await requireAdmin();
@@ -252,6 +252,20 @@ export async function updateArtworkImages(id: string, images: string[]) {
     .eq('id', id);
 
   if (error) throw error;
+
+  const previousImages = Array.isArray(beforeArtwork?.images)
+    ? beforeArtwork.images.filter(
+        (image): image is string => typeof image === 'string' && image.length > 0
+      )
+    : [];
+  const removedUrls = previousImages.filter((url) => !images.includes(url));
+  const removalPaths = getStoragePathsForRemoval(removedUrls, 'artworks');
+  if (removalPaths.length > 0) {
+    const { error: removeError } = await supabase.storage.from('artworks').remove(removalPaths);
+    if (removeError) {
+      console.error('[updateArtworkImages] orphan cleanup failed:', removeError.message);
+    }
+  }
 
   const { data: afterArtwork } = await supabase
     .from('artworks')

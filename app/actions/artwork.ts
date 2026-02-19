@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation';
 import { logArtistAction } from './admin-logs';
 import {
   MAX_IMAGES,
+  getOwnedCleanupPaths,
   parseUrlList,
   validateImageUrls,
   cleanupUploads,
@@ -128,6 +129,11 @@ export async function createArtwork(
       .single();
 
     if (error) throw error;
+
+    const unusedUploadUrls = newUploads.filter((url) => !images.includes(url));
+    if (unusedUploadUrls.length > 0) {
+      await cleanupUploads(supabase, unusedUploadUrls, artist.id);
+    }
 
     await logArtistAction(
       'artist_artwork_created',
@@ -269,6 +275,25 @@ export async function updateArtwork(
       .eq('artist_id', artist.id); // Security check via query addition, though RLS handles it too
 
     if (error) throw error;
+
+    const unusedUploadUrls = newUploads.filter((url) => !images.includes(url));
+    if (unusedUploadUrls.length > 0) {
+      await cleanupUploads(supabase, unusedUploadUrls, artist.id);
+    }
+
+    const previousImages = Array.isArray(beforeArtwork?.images)
+      ? beforeArtwork.images.filter(
+          (image): image is string => typeof image === 'string' && image.length > 0
+        )
+      : [];
+    const removedUrls = previousImages.filter((url) => !images.includes(url));
+    const removalPaths = getOwnedCleanupPaths(removedUrls, artist.id);
+    if (removalPaths.length > 0) {
+      const { error: removeError } = await supabase.storage.from('artworks').remove(removalPaths);
+      if (removeError) {
+        console.error('[updateArtwork] orphan cleanup failed:', removeError.message);
+      }
+    }
 
     const { data: afterArtwork } = await supabase
       .from('artworks')

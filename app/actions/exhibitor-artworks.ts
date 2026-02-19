@@ -241,6 +241,23 @@ export async function updateExhibitorArtworkImages(id: string, images: string[])
 
   if (error) throw error;
 
+  const previousImages = Array.isArray(oldArtwork.images)
+    ? oldArtwork.images.filter(
+        (image: unknown): image is string => typeof image === 'string' && image.length > 0
+      )
+    : [];
+  const removedUrls = previousImages.filter((url: string) => !images.includes(url));
+  const allowedPrefixes = [`${oldArtwork.artist_id}/`, `exhibitor-artwork-${id}/`];
+  const removalPaths = getStoragePathsForRemoval(removedUrls, 'artworks').filter((path) =>
+    allowedPrefixes.some((prefix) => path.startsWith(prefix))
+  );
+  if (removalPaths.length > 0) {
+    const { error: removeError } = await supabase.storage.from('artworks').remove(removalPaths);
+    if (removeError) {
+      console.error('[updateExhibitorArtworkImages] orphan cleanup failed:', removeError.message);
+    }
+  }
+
   await logExhibitorAction(
     'exhibitor_artwork_images_updated',
     'artwork',
