@@ -54,14 +54,21 @@ export function useHeaderStyle() {
   }, [isArtworkDetail, hasHero, isScrolled]);
 
   /* DEBUG: Check header state variables */
-  console.log('[HeaderDebug]', {
-    pathname,
-    currentPath,
-    hasHero,
-    isArtworkDetail,
-    isScrolled,
-    headerStyle,
-  });
+  console.log(
+    '[HeaderDebug]',
+    JSON.stringify(
+      {
+        pathname,
+        currentPath,
+        hasHero,
+        isArtworkDetail,
+        isScrolled,
+        headerStyle,
+      },
+      null,
+      2
+    )
+  );
 
   const isDarkText = !hasHero || isArtworkDetail || isScrolled;
   const textColor = isDarkText ? 'text-charcoal' : 'text-white';
