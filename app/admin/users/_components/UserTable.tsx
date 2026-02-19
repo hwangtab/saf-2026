@@ -1,3 +1,5 @@
+'use client';
+
 import { Profile, UserSortKey, SortDirection } from '@/types/admin';
 import Button from '@/components/ui/Button';
 import SafeAvatarImage from '@/components/common/SafeAvatarImage';

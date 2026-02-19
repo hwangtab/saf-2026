@@ -1,6 +1,6 @@
 import { getArtistsWithArtworkCount } from '@/app/actions/admin-artists';
 import { ArtistList } from './artist-list';
-import Button from '@/components/ui/Button';
+import LinkButton from '@/components/ui/LinkButton';
 import {
   AdminPageDescription,
   AdminPageHeader,
@@ -17,9 +17,9 @@ export default async function AdminArtistsPage() {
           <AdminPageTitle>작가 관리</AdminPageTitle>
           <AdminPageDescription>등록된 작가 정보를 관리합니다.</AdminPageDescription>
         </AdminPageHeader>
-        <Button href="/admin/artists/new" className="w-full sm:w-auto">
+        <LinkButton href="/admin/artists/new" className="w-full sm:w-auto">
           작가 등록
-        </Button>
+        </LinkButton>
       </div>
       <ArtistList artists={artists} />
     </div>

@@ -7,7 +7,7 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { parsePrice } from '@/lib/parsePrice';
 import { SITE_URL } from '@/lib/constants';
-import Button from '@/components/ui/Button';
+import LinkButton from '@/components/ui/LinkButton';
 import RelatedArticles from '@/components/features/RelatedArticles';
 import ExpandableHistory from '@/components/features/ExpandableHistory';
 import {
@@ -180,7 +180,7 @@ export default async function ArtworkDetailPage({ params, searchParams }: Props)
                     {/* Purchase Guide */}
                     <PurchaseGuide className="mb-4" />
 
-                    <Button
+                    <LinkButton
                       href={artwork.shopUrl}
                       variant="primary"
                       size="lg"
@@ -188,7 +188,7 @@ export default async function ArtworkDetailPage({ params, searchParams }: Props)
                       className="w-full text-lg gap-3 rounded-xl"
                     >
                       온라인 구매
-                    </Button>
+                    </LinkButton>
 
                     {/* 구분선 */}
                     <div className="flex items-center gap-4">
@@ -253,7 +253,7 @@ export default async function ArtworkDetailPage({ params, searchParams }: Props)
 
                 {/* 연락처 옵션 */}
                 <div className="grid grid-cols-2 gap-4">
-                  <Button
+                  <LinkButton
                     href="tel:02-764-3114"
                     variant="accent"
                     leadingIcon="📞"
@@ -261,8 +261,8 @@ export default async function ArtworkDetailPage({ params, searchParams }: Props)
                     iconClassName="grayscale group-hover:grayscale-0 transition-all"
                   >
                     <span className="text-sm font-bold text-center">02-764-3114</span>
-                  </Button>
-                  <Button
+                  </LinkButton>
+                  <LinkButton
                     href="mailto:contact@kosmart.org"
                     variant="accent"
                     leadingIcon="✉️"
@@ -270,7 +270,7 @@ export default async function ArtworkDetailPage({ params, searchParams }: Props)
                     iconClassName="grayscale group-hover:grayscale-0 transition-all"
                   >
                     <span className="text-sm font-bold text-center">이메일 문의</span>
-                  </Button>
+                  </LinkButton>
                 </div>
 
                 {/* Campaign Support Message */}

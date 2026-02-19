@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import Button from '@/components/ui/Button';
+import LinkButton from '@/components/ui/LinkButton';
 import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
@@ -289,18 +289,18 @@ export default function OurProof() {
                 한국스마트협동조합의 조합원이 되어 예술인 상호부조 대출 기금 조성과 운영에 함께하실
                 수 있습니다.
               </p>
-              <Button href={EXTERNAL_LINKS.JOIN_MEMBER} external variant="accent" size="md">
+              <LinkButton href={EXTERNAL_LINKS.JOIN_MEMBER} external variant="accent" size="md">
                 조합원 가입하기
-              </Button>
+              </LinkButton>
             </div>
             <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-lg bg-white text-left shadow-sm">
               <h3 className="text-card-title mb-3">작품을 구매해 예술인을 응원하세요</h3>
               <p className="text-charcoal-muted mb-4 flex-grow">
                 판매 수익은 전액 기금으로 귀속됩니다. 온라인 갤러리에서 작품을 만나보세요.
               </p>
-              <Button href="/artworks" variant="secondary" size="md">
+              <LinkButton href="/artworks" variant="secondary" size="md">
                 작품 구매하기
-              </Button>
+              </LinkButton>
             </div>
           </div>
         </div>

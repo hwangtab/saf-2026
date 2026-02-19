@@ -1,103 +1,105 @@
-# 버튼 시스템 리팩토링 구현 계획서
+# 서버/클라이언트 경계 최적화(버튼 분리) 구현 계획서
 
 ## 1) 목표
 
-반복적으로 발생하는 "이모티콘 + 텍스트 버튼의 시각적 중심 어긋남" 문제를
-버튼 공통 컴포넌트에서 해결하여, 페이지별 수동 보정(`absolute left-*`)을 제거한다.
+Vercel 배포 기준으로 서버 페이지의 불필요한 클라이언트 번들 포함을 줄이기 위해,
+버튼 시스템을 `링크 전용(서버 친화)`과 `액션 전용(클라이언트)`으로 분리한다.
 
-추가 목표:
+핵심 목표:
 
-- 버튼 API를 통해 아이콘 정렬 정책을 일관되게 적용
-- 기존 사용처(다수)와의 하위 호환 유지
-- 불필요한 대규모 UI 변경 없이 점진 리팩토링
+- 링크용 버튼은 서버 컴포넌트에서 안전하게 사용
+- `loading`/`onClick`이 필요한 버튼만 클라이언트 컴포넌트 사용
+- 기존 디자인/스타일/아이콘 정렬 API는 유지
 
 ## 2) 범위
 
 ### 포함
 
-- `components/ui/Button.tsx` API 확장
-- 아이콘/텍스트 정렬 레이아웃을 `Button` 내부로 흡수
-- 현재 수동 보정 적용된 페이지를 신규 API로 마이그레이션
-  - `app/artworks/[id]/page.tsx`
-  - `app/archive/2026/page.tsx`
-  - `app/not-found.tsx`
+- 버튼 공통 스타일/타입을 별도 모듈로 분리
+- 신규 `LinkButton`(서버 컴포넌트) 도입
+- 기존 `Button`(클라이언트 컴포넌트)은 액션 중심으로 유지
+- 서버 컴포넌트의 링크형 버튼 사용처를 `LinkButton`으로 전환
 
 ### 제외
 
-- 전체 디자인 리뉴얼
-- 버튼 스타일 토큰 전면 재정의
-- 링크/버튼 완전 분리(대규모 구조 변경)는 이번 단계에서 보류
+- 전체 버튼 컴포넌트 네이밍 대규모 변경
+- 전 페이지 UI 재설계
+- 전역 레이아웃 구조 개편(헤더/트랜지션 분리)는 이번 단계에서 보류
 
 ## 3) 현재 문제 요약
 
-1. 버튼의 `justify-center`는 "전체 콘텐츠(아이콘+텍스트)"를 기준으로 중앙 정렬됨
-2. 텍스트 중심 정렬이 필요한 화면에서 각 페이지가 자체 해법(`relative/absolute`)을 구현
-3. 같은 문제를 여러 페이지에서 반복 수정해야 해 유지보수 비용 증가
+1. 현재 `Button`이 클라이언트 컴포넌트라 서버 페이지에서 링크용으로만 써도 클라이언트 경계가 생김
+2. 서버 페이지 다수가 `href` 버튼만 사용 중
+3. 구조적으로 최적화 여지가 명확하지만 전면 리팩토링은 과도함
 
 ## 4) 설계 방향
 
-## 4.1 `Button` API 확장
+## 4.1 모듈 분리
 
-추가 Props(안):
+- `components/ui/button-base.ts` (서버/클라이언트 공용)
+  - `buttonVariants`
+  - `ButtonSize`, `IconLayout`, 아이콘 offset 맵
 
-- `leadingIcon?: React.ReactNode`
-- `iconLayout?: 'inline' | 'fixed-left'` (기본값 `inline`)
-- `iconClassName?: string`
+## 4.2 컴포넌트 역할
 
-동작:
+- `components/ui/Button.tsx` (클라이언트)
+  - `onClick`, `loading`, 상태 관리 담당
 
-- `inline`: 기존처럼 아이콘과 텍스트를 한 줄 플렉스로 배치
-- `fixed-left`: 버튼 내부에서 아이콘을 좌측 고정 배치하고 텍스트를 버튼 중앙에 배치
-
-## 4.2 하위 호환
-
-- `leadingIcon` 미사용 시 기존 렌더링과 동일
-- 기존 `children`만 전달하는 사용처는 코드 수정 불필요
-
-## 4.3 접근성
-
-- 장식용 아이콘은 `aria-hidden="true"` 처리
-- 텍스트 레이블은 `children`으로 유지해 스크린리더 텍스트 보존
+- `components/ui/LinkButton.tsx` (서버)
+  - `href` 이동 전용
+  - `leadingIcon`, `iconLayout`, `iconClassName` 지원
+  - `disabled` 시 링크 대신 비활성 `span` 렌더링
 
 ## 5) 구현 단계
 
-1. `Button.tsx`에 아이콘 정렬 API 추가
-2. `fixed-left` 내부 레이아웃 구현(중앙 텍스트 + 좌측 고정 아이콘)
-3. 기존 수동 보정 3개 페이지를 신규 API로 교체
-4. 페이지별 불필요한 `absolute` 클래스 제거
-5. 린트/타입 검사 및 시각 확인
+1. `button-base.ts` 생성 후 `Button.tsx` 리팩토링
+2. `LinkButton.tsx` 신규 추가
+3. 서버 컴포넌트 링크형 버튼 사용처 전환
+   - `app/page.tsx`
+   - `app/archive/2026/page.tsx`
+   - `app/artworks/[id]/page.tsx`
+   - `app/our-proof/page.tsx`
+   - `app/onboarding/page.tsx`
+   - `app/admin/artists/page.tsx`
+   - `app/admin/artworks/page.tsx`
+   - `app/dashboard/(artist)/artworks/page.tsx`
+   - `app/exhibitor/(dashboard)/artists/page.tsx`
+   - `app/exhibitor/(dashboard)/artworks/page.tsx`
+   - `components/common/CTAButtonGroup.tsx`
+   - `components/ui/ActionCard.tsx`
+4. 회귀 검사(린트/타입)
 
 ## 6) 검증 계획
 
-- `npx eslint app/not-found.tsx`
-- `npx eslint app/archive/2026/page.tsx`
-- `npx eslint 'app/artworks/[id]/page.tsx'`
+- `npx eslint components/ui/button-base.ts`
+- `npx eslint components/ui/LinkButton.tsx`
 - `npx eslint components/ui/Button.tsx`
+- 전환한 주요 파일들 eslint 검사
 - `npm run type-check`
 
-UI 확인 항목:
+검증 포인트:
 
-1. 아이콘 유무와 관계없이 텍스트가 버튼의 시각적 중심에 위치
-2. hover/active/disabled/loading 동작 회귀 없음
-3. 모바일/데스크톱에서 동일 정렬 유지
+1. 링크 버튼 스타일/아이콘 정렬 기존과 동일
+2. `loading` 버튼 동작 회귀 없음
+3. 서버 페이지에서 `Button` import가 감소했는지 확인
 
 ## 7) 리스크 및 대응
 
-- 리스크: 아이콘 좌측 고정 여백이 버튼 size별로 어색할 수 있음
-  - 대응: `size`별 좌측 offset 분기 또는 CSS 변수화
+- 리스크: `disabled` 링크 동작 차이
+  - 대응: 서버 컴포넌트에서 `disabled`는 비클릭 `span` 렌더링으로 명시적 처리
 
-- 리스크: 기존 `children`가 복합 노드일 때 중앙 정렬이 의도와 다를 수 있음
-  - 대응: `iconLayout='fixed-left'`를 opt-in으로 제한
+- 리스크: 아이콘 정렬 회귀
+  - 대응: 기존 offset 맵 재사용 + 대상 페이지 육안 점검
 
 ## 8) 완료 기준 (Definition of Done)
 
-1. 수동 보정 코드(`absolute left-*`)가 3개 대상 페이지에서 제거됨
-2. `Button` API만으로 동일한 UI 결과 재현 가능
+1. `LinkButton` 도입 완료
+2. 서버 링크형 버튼 사용처 전환 완료
 3. lint/type-check 통과
-4. 변경 요약을 `walkthrough.md`에 기록
+4. `walkthrough.md`에 변경 요약 반영
 
 ---
 
-승인 요청:
+승인 상태:
 
-- 위 계획대로 EXECUTION(실제 코드 수정) 진행하겠습니다.
+- 사용자 요청(“시작하자/네”)에 따라 본 계획으로 바로 EXECUTION 진행

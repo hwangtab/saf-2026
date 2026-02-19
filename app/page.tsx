@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import SafeImage from '@/components/common/SafeImage';
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
-import Button from '@/components/ui/Button';
+import LinkButton from '@/components/ui/LinkButton';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
 import ActionCard from '@/components/ui/ActionCard';
@@ -125,22 +125,22 @@ export default function Home() {
             className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12 opacity-0 animate-fade-in-up"
             style={{ animationDelay: '0.6s', animationFillMode: 'forwards' }}
           >
-            <Button
+            <LinkButton
               href="/artworks"
               variant="accent"
               size="lg"
               className="w-full sm:w-auto shadow-lg min-w-[200px] justify-center text-lg"
             >
               작품 보러가기
-            </Button>
-            <Button
+            </LinkButton>
+            <LinkButton
               href="/archive"
               variant="outline"
               size="lg"
               className="w-full sm:w-auto bg-white/10 backdrop-blur-sm border-white/50 text-white hover:bg-white hover:text-primary min-w-[160px] justify-center"
             >
               씨앗페 소개
-            </Button>
+            </LinkButton>
           </div>
 
           <div className="flex justify-center">
@@ -259,7 +259,7 @@ export default function Home() {
                 신뢰할 수 있는 금융 시스템만 있으면, 얼마든지 책임감 있게 행동할 수 있다는
                 증거입니다.
               </p>
-              <Button
+              <LinkButton
                 href={EXTERNAL_LINKS.LOAN_INFO}
                 external
                 variant="accent"
@@ -267,7 +267,7 @@ export default function Home() {
                 className="w-full md:w-auto justify-center"
               >
                 대출 신청하기
-              </Button>
+              </LinkButton>
             </div>
           </div>
         </div>

@@ -1,7 +1,7 @@
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { AdminArtworkList } from './admin-artwork-list';
-import Button from '@/components/ui/Button';
+import LinkButton from '@/components/ui/LinkButton';
 import {
   AdminPageDescription,
   AdminPageHeader,
@@ -38,9 +38,9 @@ export default async function AdminArtworksPage({ searchParams }: Props) {
           <AdminPageTitle>작품 관리</AdminPageTitle>
           <AdminPageDescription>등록된 작품 정보를 관리합니다.</AdminPageDescription>
         </AdminPageHeader>
-        <Button href="/admin/artworks/new" className="w-full sm:w-auto">
+        <LinkButton href="/admin/artworks/new" className="w-full sm:w-auto">
           작품 등록
-        </Button>
+        </LinkButton>
       </div>
       <AdminArtworkList
         artworks={normalizedArtworks}

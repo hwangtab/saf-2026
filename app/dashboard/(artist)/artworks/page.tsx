@@ -1,7 +1,7 @@
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { getArtistDashboardContext } from '@/lib/auth/dashboard-context';
 import { ArtworkList } from './artwork-list';
-import Button from '@/components/ui/Button';
+import LinkButton from '@/components/ui/LinkButton';
 import {
   AdminBadge,
   AdminPageDescription,
@@ -45,9 +45,9 @@ export default async function ArtworksPage({ searchParams }: ArtworksPageProps) 
             총 {artworks?.length || 0}개의 작품이 등록되어 있습니다.
           </AdminPageDescription>
         </AdminPageHeader>
-        <Button href="/dashboard/artworks/new" variant="primary" className="w-full sm:w-auto">
+        <LinkButton href="/dashboard/artworks/new" variant="primary" className="w-full sm:w-auto">
           작품 등록
-        </Button>
+        </LinkButton>
       </div>
 
       <ArtworkList artworks={artworks || []} flashMessage={flashMessage} />

@@ -1,4 +1,4 @@
-import Button from '@/components/ui/Button';
+import LinkButton from '@/components/ui/LinkButton';
 
 interface ActionCardProps {
   href: string;
@@ -30,14 +30,14 @@ export default function ActionCard({
         <p className="text-charcoal-muted mb-6 leading-relaxed flex-grow">{description}</p>
 
         <div className="mt-auto w-full md:w-auto">
-          <Button
+          <LinkButton
             href={href}
             external={external}
             variant="primary"
             className="w-full md:w-auto inline-flex justify-center"
           >
             {linkText}
-          </Button>
+          </LinkButton>
         </div>
       </div>
     </div>

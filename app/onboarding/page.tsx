@@ -2,7 +2,7 @@ import { requireAuth } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { redirect } from 'next/navigation';
 import { OnboardingForm } from './onboarding-form';
-import Button from '@/components/ui/Button';
+import LinkButton from '@/components/ui/LinkButton';
 
 export default async function OnboardingPage() {
   const user = await requireAuth();
@@ -66,9 +66,9 @@ export default async function OnboardingPage() {
           제한됩니다.
         </p>
         <div className="mt-5 flex justify-center">
-          <Button href="/exhibitor/onboarding" variant="white" size="sm">
+          <LinkButton href="/exhibitor/onboarding" variant="white" size="sm">
             출품자로 신청하기
-          </Button>
+          </LinkButton>
         </div>
       </div>
 

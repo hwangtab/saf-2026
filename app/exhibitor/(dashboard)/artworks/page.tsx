@@ -1,6 +1,6 @@
 import { getExhibitorArtworks } from '@/app/actions/exhibitor-artworks';
 import { ExhibitorArtworkList } from './_components/exhibitor-artwork-list';
-import Button from '@/components/ui/Button';
+import LinkButton from '@/components/ui/LinkButton';
 import {
   AdminBadge,
   AdminPageDescription,
@@ -25,9 +25,9 @@ export default async function ExhibitorArtworksPage() {
           </div>
           <AdminPageDescription>보유한 작가의 작품을 등록하고 관리합니다.</AdminPageDescription>
         </AdminPageHeader>
-        <Button href="/exhibitor/artworks/new" className="w-full sm:w-auto">
+        <LinkButton href="/exhibitor/artworks/new" className="w-full sm:w-auto">
           작품 등록
-        </Button>
+        </LinkButton>
       </div>
       <ExhibitorArtworkList artworks={artworks} />
     </div>

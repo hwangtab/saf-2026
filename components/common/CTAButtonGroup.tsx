@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import { EXTERNAL_LINKS } from '@/lib/constants';
 import { UI_STRINGS } from '@/lib/ui-strings';
-import Button from '@/components/ui/Button';
+import LinkButton from '@/components/ui/LinkButton';
 
 interface CTAButtonGroupProps {
   donateText?: string;
@@ -45,12 +45,12 @@ export default function CTAButtonGroup({
 
   return (
     <div className={containerClasses}>
-      <Button href={donateHref} external variant="accent" size={buttonSize}>
+      <LinkButton href={donateHref} external variant="accent" size={buttonSize}>
         {donateText}
-      </Button>
-      <Button href={purchaseHref} variant="secondary" size={buttonSize}>
+      </LinkButton>
+      <LinkButton href={purchaseHref} variant="secondary" size={buttonSize}>
         {purchaseText}
-      </Button>
+      </LinkButton>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import ExportedImage from 'next-image-export-optimizer';
-import Button from '@/components/ui/Button';
+import LinkButton from '@/components/ui/LinkButton';
 import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
@@ -108,7 +108,7 @@ export default async function Archive2026Page() {
               <div className="mt-auto space-y-3">
                 <h3 className="text-card-title mb-4">참여하기</h3>
                 <div className="space-y-3">
-                  <Button
+                  <LinkButton
                     href={EXTERNAL_LINKS.JOIN_MEMBER}
                     external
                     variant="accent"
@@ -118,8 +118,8 @@ export default async function Archive2026Page() {
                     iconLayout="fixed-left"
                   >
                     조합원 가입하기
-                  </Button>
-                  <Button
+                  </LinkButton>
+                  <LinkButton
                     href="/artworks"
                     variant="secondary"
                     className="w-full"
@@ -128,7 +128,7 @@ export default async function Archive2026Page() {
                     iconLayout="fixed-left"
                   >
                     작품 구매하기
-                  </Button>
+                  </LinkButton>
                   <div className="pt-4 text-sm text-charcoal-muted">
                     <p>
                       문의:{' '}
