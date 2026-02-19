@@ -1,7 +1,10 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo, useEffect, useLayoutEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { HERO_PAGES } from '@/lib/constants';
-import { useScrolled } from '@/lib/hooks/useScrolled';
+
+const HEADER_SOLID_STYLE = 'bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200/50';
+
+type HeaderMode = 'transparent' | 'solid' | 'overlay';
 
 function normalizePath(path: string): string {
   if (!path) return '/';
@@ -15,7 +18,7 @@ export function useHeaderStyle() {
   const currentPath = normalizePath(pathname || '/');
 
   // 경로 기반 파생 상태 메모이제이션
-  const { isArtworkDetail, hasHero } = useMemo(() => {
+  const { isArtworkDetail, prefersHeroLayout } = useMemo(() => {
     const artistPage = currentPath.startsWith('/artworks/artist/');
     const specialHeroPage = currentPath === '/special/oh-yoon';
     const artworkDetail =
@@ -24,26 +27,95 @@ export function useHeaderStyle() {
       (HERO_PAGES.includes(currentPath as (typeof HERO_PAGES)[number]) && !artworkDetail) ||
       artistPage ||
       specialHeroPage;
-    return { isArtworkDetail: artworkDetail, hasHero: heroPage };
+    return { isArtworkDetail: artworkDetail, prefersHeroLayout: heroPage };
   }, [currentPath]);
 
-  // 네이티브 <dialog>가 스크롤 잠금을 처리하므로 useScrollLock 불필요
-  const isScrolled = useScrolled(50, isMenuOpen);
+  const [heroAtTop, setHeroAtTop] = useState(false);
+  const [resolvedPath, setResolvedPath] = useState<string | null>(null);
+
+  useLayoutEffect(() => {
+    if (isArtworkDetail) {
+      return undefined;
+    }
+
+    let mounted = true;
+    let attempts = 0;
+    let frameId = 0;
+    let observer: IntersectionObserver | null = null;
+    let cleanupListeners: (() => void) | null = null;
+
+    const selectRouteRoot = () => {
+      if (!pathname) return document;
+      const escapedPath = pathname.replace(/"/g, '\\"');
+      const routeRoot = document.querySelector(`[data-route-path="${escapedPath}"]`);
+      return routeRoot ?? document;
+    };
+
+    const selectSentinel = () =>
+      selectRouteRoot().querySelector<HTMLElement>('[data-hero-sentinel="true"]');
+
+    const updateFromRect = (target: HTMLElement) => {
+      const next = target.getBoundingClientRect().top >= -1;
+      setHeroAtTop((prev) => (prev !== next ? next : prev));
+    };
+
+    const attach = () => {
+      const sentinel = selectSentinel();
+
+      if (!mounted) return;
+
+      if (!sentinel) {
+        attempts += 1;
+        if (attempts <= 12) {
+          frameId = window.requestAnimationFrame(attach);
+          return;
+        }
+        setResolvedPath(pathname || null);
+        setHeroAtTop(false);
+        return;
+      }
+
+      setResolvedPath(pathname || null);
+      updateFromRect(sentinel);
+
+      observer = new IntersectionObserver(
+        (entries) => {
+          const [entry] = entries;
+          if (!entry) return;
+          setHeroAtTop(entry.isIntersecting);
+        },
+        { threshold: [0, 1] }
+      );
+      observer.observe(sentinel);
+
+      const sync = () => updateFromRect(sentinel);
+      window.addEventListener('pageshow', sync);
+      window.addEventListener('resize', sync);
+
+      cleanupListeners = () => {
+        window.removeEventListener('pageshow', sync);
+        window.removeEventListener('resize', sync);
+      };
+    };
+
+    attach();
+
+    return () => {
+      mounted = false;
+      if (frameId) {
+        window.cancelAnimationFrame(frameId);
+      }
+      observer?.disconnect();
+      cleanupListeners?.();
+    };
+  }, [pathname, isArtworkDetail]);
+
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
-
-  const [isTransitioning, setIsTransitioning] = useState(false);
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsTransitioning(true);
-    const timer = setTimeout(() => setIsTransitioning(false), 500);
-    return () => clearTimeout(timer);
-  }, [pathname]);
 
   const isActive = useCallback(
     (href: string) => {
@@ -56,25 +128,19 @@ export function useHeaderStyle() {
 
   const openMenu = useCallback(() => setIsMenuOpen(true), []);
   const closeMenu = useCallback(() => setIsMenuOpen(false), []);
+  const observerReady = resolvedPath === (pathname || null);
 
-  // 헤더 스타일 메모이제이션 (메뉴가 풀스크린이므로 isMenuVisible 조건 제거)
-  // 모든 히어로 페이지의 히어로 섹션은 페이지 상단에 위치하므로 isScrolled만으로 판단 가능
-  const headerStyle = useMemo(() => {
-    if (isArtworkDetail || !hasHero) {
-      return 'bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200/50';
-    }
+  const headerMode: HeaderMode = useMemo(() => {
+    if (isMenuOpen) return 'overlay';
+    if (isArtworkDetail) return 'solid';
+    if (!mounted) return prefersHeroLayout ? 'transparent' : 'solid';
+    if (!observerReady && prefersHeroLayout) return 'transparent';
+    return heroAtTop ? 'transparent' : 'solid';
+  }, [heroAtTop, isArtworkDetail, isMenuOpen, mounted, observerReady, prefersHeroLayout]);
 
-    // 마운트 전(SSR/초기 렌더링)이거나, 페이지 전환 중이거나, 스크롤되지 않았으면 투명하게 처리
-    // 이는 서버 사이드 렌더링 시 초기 상태를 '투명'으로 강제하여 하이드레이션 불일치를 방지하고,
-    // 페이지 전환 시 스크롤 복원 등으로 인한 깜빡임을 방지함
-    if (!mounted || isTransitioning || !isScrolled) {
-      return 'bg-transparent';
-    }
+  const headerStyle = headerMode === 'transparent' ? 'bg-transparent' : HEADER_SOLID_STYLE;
 
-    return 'bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200/50';
-  }, [isArtworkDetail, hasHero, isScrolled, mounted, isTransitioning]);
-
-  const isDarkText = !hasHero || isArtworkDetail || isScrolled;
+  const isDarkText = headerMode !== 'transparent';
   const textColor = isDarkText ? 'text-charcoal' : 'text-white';
 
   return {
