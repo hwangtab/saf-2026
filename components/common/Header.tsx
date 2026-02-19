@@ -1,33 +1,22 @@
 'use client';
 
-import clsx from 'clsx';
-import { Z_INDEX } from '@/lib/constants';
-import { UI_STRINGS } from '@/lib/ui-strings';
-import { useHeaderStyle } from '@/lib/hooks/useHeaderStyle';
-
 import { usePathname } from 'next/navigation';
+import clsx from 'clsx';
 import DesktopNav from './Header/DesktopNav';
 import FullscreenMenu from './Header/FullscreenMenu';
 import HeaderLogo from './Header/HeaderLogo';
 import MenuToggleIcon from '@/components/ui/MenuToggleIcon';
-
+import { Z_INDEX } from '@/lib/constants';
+import { UI_STRINGS } from '@/lib/ui-strings';
+import { useHeaderStyle } from '@/lib/hooks/useHeaderStyle';
+import { shouldHidePublicHeader } from '@/lib/path-rules';
 import { MAIN_NAVIGATION } from '@/lib/menus';
-
-function shouldHideHeader(pathname: string | null): boolean {
-  if (!pathname) return false;
-  return (
-    pathname.startsWith('/admin') ||
-    pathname.startsWith('/dashboard') ||
-    pathname.startsWith('/exhibitor') ||
-    pathname.startsWith('/onboarding')
-  );
-}
 
 export default function Header() {
   const pathname = usePathname();
 
   // Hide main header on admin and dashboard pages to prevent overlapping with specialized headers
-  if (shouldHideHeader(pathname)) {
+  if (shouldHidePublicHeader(pathname)) {
     return null;
   }
 

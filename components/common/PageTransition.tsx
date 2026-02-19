@@ -1,7 +1,8 @@
 'use client';
 
-import { AnimatePresence, m } from 'framer-motion';
 import { usePathname } from 'next/navigation';
+import { AnimatePresence, m } from 'framer-motion';
+import { isProtectedSurfacePath } from '@/lib/path-rules';
 
 /**
  * 페이지 전환 애니메이션을 처리하는 컴포넌트
@@ -11,10 +12,7 @@ import { usePathname } from 'next/navigation';
  */
 export default function PageTransition({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isProtectedSurface =
-    pathname?.startsWith('/admin') ||
-    pathname?.startsWith('/dashboard') ||
-    pathname?.startsWith('/exhibitor');
+  const isProtectedSurface = isProtectedSurfacePath(pathname);
 
   if (isProtectedSurface) {
     return <>{children}</>;

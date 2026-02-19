@@ -2,11 +2,10 @@
 
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import type { ArtworkCardData } from '@/types';
 import RelatedArtworksSlider from '@/components/features/RelatedArtworksSlider';
+import { shouldShowFooterSlider } from '@/lib/path-rules';
+import type { ArtworkCardData } from '@/types';
 
-const EXCLUDE_SLIDER_PATHS = ['/', '/artworks'];
-const EXCLUDE_SLIDER_PREFIXES = ['/admin', '/dashboard', '/exhibitor', '/onboarding'];
 const FOOTER_SLIDER_CACHE_TTL_MS = 5 * 60 * 1000;
 
 let cachedArtworks: ArtworkCardData[] | null = null;
@@ -17,9 +16,7 @@ export default function FooterSlider() {
   const [artworks, setArtworks] = useState<ArtworkCardData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const showSlider =
-    !EXCLUDE_SLIDER_PATHS.includes(pathname) &&
-    !EXCLUDE_SLIDER_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+  const showSlider = shouldShowFooterSlider(pathname);
 
   useEffect(() => {
     if (!showSlider) return;

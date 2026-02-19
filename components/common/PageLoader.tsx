@@ -1,13 +1,11 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { isProtectedSurfacePath } from '@/lib/path-rules';
 
 export default function PageLoader() {
   const pathname = usePathname();
-  const isProtectedSurface =
-    pathname?.startsWith('/admin') ||
-    pathname?.startsWith('/dashboard') ||
-    pathname?.startsWith('/exhibitor');
+  const isProtectedSurface = isProtectedSurfacePath(pathname);
 
   return (
     <div

@@ -47,7 +47,10 @@ export function useHeaderStyle() {
     const selectRouteRoot = () => {
       if (!pathname) return document as ParentNode;
       const escapedPath = pathname.replace(/"/g, '\\"');
-      return document.querySelector(`[data-route-path="${escapedPath}"]`) as ParentNode | null;
+      return (
+        (document.querySelector(`[data-route-path="${escapedPath}"]`) as ParentNode | null) ??
+        document
+      );
     };
 
     const selectSentinel = () =>
@@ -140,13 +143,16 @@ export function useHeaderStyle() {
 
   const openMenu = useCallback(() => setIsMenuOpen(true), []);
   const closeMenu = useCallback(() => setIsMenuOpen(false), []);
-  const observerReady = observedPath === (pathname || null);
+  // `usePathname()` can be temporarily null during initial hydration.
+  // In that case, treat observer as not-ready so hero pages stay transparent first.
+  const observerReady = Boolean(pathname) && observedPath === pathname;
 
   const headerMode: HeaderMode = useMemo(() => {
     if (isMenuOpen) return 'overlay';
     if (isArtworkDetail) return 'solid';
-    if (!mounted) return prefersHeroLayout ? 'transparent' : 'solid';
-    if (!observerReady && prefersHeroLayout) return 'transparent';
+    if (!prefersHeroLayout) return 'solid';
+    if (!mounted) return 'transparent';
+    if (!observerReady) return 'transparent';
     return heroAtTop ? 'transparent' : 'solid';
   }, [heroAtTop, isArtworkDetail, isMenuOpen, mounted, observerReady, prefersHeroLayout]);
 

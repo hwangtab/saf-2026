@@ -103,3 +103,61 @@ Vercel 배포 기준으로 서버 페이지의 불필요한 클라이언트 번�
 승인 상태:
 
 - 사용자 요청(“시작하자/네”)에 따라 본 계획으로 바로 EXECUTION 진행
+
+---
+
+# 헤더 투명도 블라인드 스팟 대응 계획서
+
+## 1) 목표
+
+초기 진입/페이지 전환 시 헤더가 의도와 다르게 불투명(또는 투명)하게 보일 수 있는
+블라인드 스팟을 제거하고, 경로 기반 UI 규칙의 재발 리스크를 줄인다.
+
+핵심 목표:
+
+- 비히어로 페이지에서 헤더가 상태 전이에 영향을 받지 않도록 고정
+- hero sentinel 탐색 실패 시에도 안전하게 동작
+- 헤더/전환/로더/푸터의 경로 판정 규칙을 공통화
+
+## 2) 범위
+
+### 포함
+
+- `useHeaderStyle`의 헤더 모드 결정 로직 보강
+- `data-route-path` 루트 탐색 실패 시 sentinel 탐색 fallback 추가
+- 경로 판정 유틸 신설 및 사용처 교체
+  - `Header`
+  - `PageTransition`
+  - `PageLoader`
+  - `FooterSlider`
+
+### 제외
+
+- 헤더 디자인 변경
+- 라우팅 구조 변경
+- 전면 애니메이션 정책 개편
+
+## 3) 구현 단계
+
+1. `lib/path-rules.ts` 생성 (경로 규칙 단일화)
+2. 헤더 모드 로직에서 비히어로 경로를 명시적으로 `solid` 처리
+3. sentinel 루트 탐색을 `document` fallback으로 보강
+4. 관련 컴포넌트 규칙 유틸로 치환
+5. lint/type-check 및 경계 검사 수행
+
+## 4) 검증 계획
+
+- `npx eslint lib/path-rules.ts lib/hooks/useHeaderStyle.ts components/common/Header.tsx components/common/PageTransition.tsx components/common/PageLoader.tsx components/common/FooterSlider.tsx`
+- `npm run type-check`
+- `npm run lint`
+
+## 5) 완료 기준 (Definition of Done)
+
+1. 비히어로 페이지 헤더가 항상 `solid`로 안정 동작
+2. hero sentinel 탐색 경로가 route wrapper 유무와 무관하게 동작
+3. 중복 경로 판정 로직 제거
+4. 검증 명령 전부 통과
+
+승인 상태:
+
+- 사용자 요청(“네 해주세요”)에 따라 본 계획으로 EXECUTION 진행

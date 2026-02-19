@@ -82,3 +82,30 @@
 - `npm run check:server-button-imports` 통과
 - `npm run lint` 통과 (경계 검사 포함)
 - `npm run type-check` 통과
+
+## 헤더 투명도 블라인드 스팟 개선
+
+- `lib/hooks/useHeaderStyle.ts`
+  - 비히어로 페이지에서 헤더 모드를 항상 `solid`로 확정하도록 분기 보강
+    - 기존에는 이전 페이지의 `heroAtTop` 상태가 남아 투명 상태가 전이될 여지가 있었음
+  - `data-route-path` 루트 탐색 실패 시 `document`로 fallback하도록 변경
+    - route wrapper 탐색 실패로 sentinel을 못 찾는 경우를 방어
+
+- `lib/path-rules.ts` (신규)
+  - 공통 경로 판정 유틸 추가
+    - `isProtectedSurfacePath`
+    - `shouldHidePublicHeader`
+    - `shouldShowFooterSlider`
+
+- 경로 판정 유틸 적용
+  - `components/common/Header.tsx`
+  - `components/common/PageTransition.tsx`
+  - `components/common/PageLoader.tsx`
+  - `components/common/FooterSlider.tsx`
+  - 각 파일의 하드코딩 prefix/except 규칙을 제거하고 공통 유틸로 통일
+
+## 헤더 이슈 검증 결과
+
+- `npx eslint lib/path-rules.ts lib/hooks/useHeaderStyle.ts components/common/Header.tsx components/common/PageTransition.tsx components/common/PageLoader.tsx components/common/FooterSlider.tsx` 통과
+- `npm run type-check` 통과
+- `npm run lint` 통과
