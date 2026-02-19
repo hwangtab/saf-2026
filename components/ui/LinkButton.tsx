@@ -19,8 +19,35 @@ interface LinkButtonProps extends ButtonStyleProps {
   className?: string;
 }
 
-function shouldUseAnchor(href: string): boolean {
-  return /^(https?:\/\/|mailto:|tel:)/.test(href);
+function toInternalHref(href: string): string | null {
+  // Relative paths, hash links, and query-only links should use Next.js Link.
+  if (/^(\/|#|\?|\.\/|\.\.\/)/.test(href)) {
+    return href;
+  }
+
+  if (/^(mailto:|tel:)/.test(href)) {
+    return null;
+  }
+
+  if (!/^https?:\/\//.test(href)) {
+    return null;
+  }
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  if (!siteUrl) {
+    return null;
+  }
+
+  try {
+    const targetUrl = new URL(href);
+    const siteOrigin = new URL(siteUrl).origin;
+    if (targetUrl.origin !== siteOrigin) {
+      return null;
+    }
+    return `${targetUrl.pathname}${targetUrl.search}${targetUrl.hash}`;
+  } catch {
+    return null;
+  }
 }
 
 export default function LinkButton({
@@ -35,6 +62,7 @@ export default function LinkButton({
   iconClassName = '',
   className = '',
 }: LinkButtonProps) {
+  const internalHref = toInternalHref(href);
   const resolvedSize = (size ?? 'md') as ButtonSize;
   const hasLeadingIcon = Boolean(leadingIcon);
   const isFixedLeftLayout = iconLayout === 'fixed-left' && hasLeadingIcon;
@@ -78,7 +106,7 @@ export default function LinkButton({
     );
   }
 
-  if (external || shouldUseAnchor(href)) {
+  if (external || !internalHref) {
     return (
       <a
         href={href}
@@ -92,7 +120,7 @@ export default function LinkButton({
   }
 
   return (
-    <Link href={href} className={styles}>
+    <Link href={internalHref} className={styles}>
       {content}
     </Link>
   );

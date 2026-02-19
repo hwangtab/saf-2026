@@ -62,3 +62,23 @@
 
 - `app` 영역에서 `Button` import 사용처는 모두 클라이언트 컴포넌트로 정리됨
 - 서버 컴포넌트의 링크 버튼은 `LinkButton`으로 전환 완료
+
+## 잔여 이슈 개선
+
+- `components/ui/LinkButton.tsx`
+  - 동일 오리진 절대 URL(`https://...`)을 내부 경로로 변환해 `next/link`를 사용하도록 개선
+  - `mailto:`/`tel:`/외부 오리진 URL만 `<a>`로 유지
+
+- `scripts/check-server-button-imports.js` 신규 추가
+  - 서버 컴포넌트(`'use client'` 미선언)에서 `@/components/ui/Button` import를 자동 검사
+  - 위반 시 실패(exit 1)하도록 구현
+
+- `package.json`
+  - `check:server-button-imports` 스크립트 추가
+  - `lint`에 서버/클라이언트 버튼 경계 검사 포함
+
+## 잔여 이슈 검증 결과
+
+- `npm run check:server-button-imports` 통과
+- `npm run lint` 통과 (경계 검사 포함)
+- `npm run type-check` 통과
