@@ -1,0 +1,2618 @@
+{
+  "createdAt": "2026-02-18T04:22:34.209Z",
+  "projectRef": "vqejnuntjnxzpgwfndtv",
+  "count": 290,
+  "rows": [
+    {
+      "id": "0124709a-e046-4603-adc6-ad82e98538de",
+      "title": "빛 이후 표상",
+      "artist_id": "00e8c684-70bf-4b62-bd2e-d4d53500decf",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/00e8c684-70bf-4b62-bd2e-d4d53500decf/124__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:40:30.857+00:00"
+    },
+    {
+      "id": "014cf76d-8b9c-41dd-a335-febf48a9d8a4",
+      "title": "포옹",
+      "artist_id": "55041f23-203e-4699-97dd-8c00f76c9a8b",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/55041f23-203e-4699-97dd-8c00f76c9a8b/220__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:40:31.051+00:00"
+    },
+    {
+      "id": "0169e066-9557-4129-a61f-4d369066dca8",
+      "title": "용감한 바람",
+      "artist_id": "ffbc6fbd-4c92-422d-84f4-752b0f521ad8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ffbc6fbd-4c92-422d-84f4-752b0f521ad8/112__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:40:31.255+00:00"
+    },
+    {
+      "id": "023274db-7d8a-4886-99b8-3399b0ae5eef",
+      "title": "복주머니(핑크)",
+      "artist_id": "ac0e10eb-6966-435e-86db-aaaa5410523e",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ac0e10eb-6966-435e-86db-aaaa5410523e/182__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:40:31.441+00:00"
+    },
+    {
+      "id": "02fb7d96-72b9-488c-9d97-8c69278616b5",
+      "title": "어린 왕자의 별",
+      "artist_id": "ad5f81de-e946-4883-b8c0-59e7756fb8a8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/242__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:40:31.625+00:00"
+    },
+    {
+      "id": "03f75942-fcfa-4ab8-aeed-b735a02bebe1",
+      "title": "기억・속도・정보의 교차",
+      "artist_id": "d3358ece-79e1-4081-a16b-233fa5c2b7d1",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/d3358ece-79e1-4081-a16b-233fa5c2b7d1/143__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:19:22.33+00:00"
+    },
+    {
+      "id": "0427c48e-0b9c-4408-99a9-bae911dd9791",
+      "title": "The great resurrection (위대한 부활)",
+      "artist_id": "e9ef236c-00e6-4fb6-9e9e-dcf4942524c0",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e9ef236c-00e6-4fb6-9e9e-dcf4942524c0/18__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:19:25.031+00:00"
+    },
+    {
+      "id": "068d38d7-06f6-485e-a93b-4e6541f4bc1a",
+      "title": "공간에 마음을 놓다",
+      "artist_id": "499b6329-7e86-4ed1-8bfb-34e5cc003ccd",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/499b6329-7e86-4ed1-8bfb-34e5cc003ccd/98__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:19:31.316+00:00"
+    },
+    {
+      "id": "06b76f49-9e49-478a-8f53-8051f31503f8",
+      "title": "콩밭메는 할머니2",
+      "artist_id": "411a33be-9297-4c47-b4f4-e5c84e79e6d9",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/238__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:19:33.828+00:00"
+    },
+    {
+      "id": "099a6bc7-bd7c-4712-92fc-d2c95a9ad64c",
+      "title": "녹색발",
+      "artist_id": "1549a33f-5d05-4321-866c-49f81f250621",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/1549a33f-5d05-4321-866c-49f81f250621/260__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:19:36.08+00:00"
+    },
+    {
+      "id": "09c52096-0b93-4983-824a-3de19fc517d3",
+      "title": "Hollowed yellow 04",
+      "artist_id": "c3a30f14-11d2-443f-9f5f-32914fb1e01f",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c3a30f14-11d2-443f-9f5f-32914fb1e01f/117__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:19:38.17+00:00"
+    },
+    {
+      "id": "0b89cdc0-c1ed-4631-b6cd-ed6600552e7f",
+      "title": "이 해 너 해",
+      "artist_id": "df6c8003-2ff7-4eda-a928-934b2675599c",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/df6c8003-2ff7-4eda-a928-934b2675599c/179__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:19:42.519+00:00"
+    },
+    {
+      "id": "0d8e82e0-b268-4159-9f15-aaf68ddfa5fe",
+      "title": "밤골목길 ㅡ에덴하우스",
+      "artist_id": "f56aaf17-615f-47eb-b693-4cf9f8cfd6be",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f56aaf17-615f-47eb-b693-4cf9f8cfd6be/105__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:19:45.949+00:00"
+    },
+    {
+      "id": "0e60e54b-9bb1-4715-8927-87d84f14d194",
+      "title": "노무현",
+      "artist_id": "3a7840c4-eb4d-48fb-bf45-7bb55e62a091",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3a7840c4-eb4d-48fb-bf45-7bb55e62a091/201__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:19:48.723+00:00"
+    },
+    {
+      "id": "0fa23930-184b-4516-9f10-a454864457a7",
+      "title": "쏘가리",
+      "artist_id": "c8839e5b-46a9-490d-a142-74f6d2b99be7",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/279__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:19:51.216+00:00"
+    },
+    {
+      "id": "0fe38606-1618-4151-b1eb-e6943fa2ce0e",
+      "title": "Serenity Fortress 평온의 요새",
+      "artist_id": "03b086e7-a380-4d5d-bfe7-ed43d6b974e9",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/tuefvwzqat_1771080933306__original.webp"
+      ],
+      "updated_at": "2026-02-15T18:16:24.143+00:00"
+    },
+    {
+      "id": "0ffd5444-2de1-4a2a-bf98-9d27f90226a8",
+      "title": "쿼크의 시간#111",
+      "artist_id": "cfb9572a-72da-46ff-8082-ccb4e01e698d",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/cfb9572a-72da-46ff-8082-ccb4e01e698d/57__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:19:55.15+00:00"
+    },
+    {
+      "id": "100e14e5-5934-4d9c-942e-3ae74d20f7f1",
+      "title": "추수",
+      "artist_id": "55041f23-203e-4699-97dd-8c00f76c9a8b",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/55041f23-203e-4699-97dd-8c00f76c9a8b/221__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:20:01.957+00:00"
+    },
+    {
+      "id": "10db2d8a-2a10-4a01-a1bd-8ab79641b496",
+      "title": "한국현대사-민주주의 만세(5.18)",
+      "artist_id": "f901940b-d628-4322-bf3c-5a6f760edc55",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/23__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:20:04.564+00:00"
+    },
+    {
+      "id": "1152da81-737c-4d8e-867c-f4ac1720747e",
+      "title": "비상탈출-3",
+      "artist_id": "f901940b-d628-4322-bf3c-5a6f760edc55",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/209__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:20:06.769+00:00"
+    },
+    {
+      "id": "117befb2-bc03-4e46-81e5-e21769127824",
+      "title": "무제",
+      "artist_id": "a8f538c9-bf9a-45cc-bf8b-f25a99d8f3fe",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a8f538c9-bf9a-45cc-bf8b-f25a99d8f3fe/198__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:20:10.065+00:00"
+    },
+    {
+      "id": "1350256c-5137-4a99-afcc-043e4c72287b",
+      "title": "팔엽일화",
+      "artist_id": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/211__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:20:13.023+00:00"
+    },
+    {
+      "id": "135433b7-5187-4d24-bdd7-8e13df3eb6fb",
+      "title": "Happy Tea time",
+      "artist_id": "ad5f81de-e946-4883-b8c0-59e7756fb8a8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/emoitdc8jwf_1770990952577__original.webp"
+      ],
+      "updated_at": "2026-02-13T13:56:57.298873+00:00"
+    },
+    {
+      "id": "139d6191-e984-45ef-9afe-7250e882f257",
+      "title": "꽃을 사랑한 호랭이",
+      "artist_id": "721b01c5-36de-4db2-af35-a9f0d6eabc2c",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/721b01c5-36de-4db2-af35-a9f0d6eabc2c/128__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:20:15.476+00:00"
+    },
+    {
+      "id": "153e2b0a-90f1-4550-992c-ea28b70da648",
+      "title": "무슨일 있어?",
+      "artist_id": "411a33be-9297-4c47-b4f4-e5c84e79e6d9",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/235__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:20:17.634+00:00"
+    },
+    {
+      "id": "157f7f81-bb9a-487a-8ea6-8e56cfb11ca1",
+      "title": "책거리x앙리 마티스",
+      "artist_id": "855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0/245__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:20:21.425+00:00"
+    },
+    {
+      "id": "1691f9b2-07b0-4a06-99f2-f8cda16bdd4e",
+      "title": "마음의 형태 #2",
+      "artist_id": "52b7dcc4-7c74-49b7-8869-9d71e1fedaa1",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/52b7dcc4-7c74-49b7-8869-9d71e1fedaa1/131__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:20:25.885+00:00"
+    },
+    {
+      "id": "1797d8a7-e641-4690-a255-39d5afd1f323",
+      "title": "정글 도서관의 카바리",
+      "artist_id": "e5ebf46f-6ac9-49e9-8e70-3134b57faa3b",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/194__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:20:30.263+00:00"
+    },
+    {
+      "id": "1a16c258-878d-429a-b72c-cc1d3e7dcfb1",
+      "title": "밤골목길ㅡ눈길",
+      "artist_id": "f56aaf17-615f-47eb-b693-4cf9f8cfd6be",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f56aaf17-615f-47eb-b693-4cf9f8cfd6be/103__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:20:34.443+00:00"
+    },
+    {
+      "id": "1a78a9ee-d77a-46cb-96de-ff403c403a95",
+      "title": "Dispersing 3",
+      "artist_id": "6573a229-2349-4360-b1ee-e73006d988a2",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/172__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:20:39.603+00:00"
+    },
+    {
+      "id": "1c838352-1da7-4a9a-8858-9b7cf1e2b580",
+      "title": "동대문",
+      "artist_id": "dedcad53-cd2c-4dba-aae7-e35a526f82c1",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dedcad53-cd2c-4dba-aae7-e35a526f82c1/137__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:20:43.029+00:00"
+    },
+    {
+      "id": "1cb51984-cc53-49e2-bf93-1eb4e00f780a",
+      "title": "춤2",
+      "artist_id": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/215__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:20:45.339+00:00"
+    },
+    {
+      "id": "1cd52feb-8306-458f-95d0-0948d03d8978",
+      "title": "서툰 생각",
+      "artist_id": "d3e4275b-5baa-4e4d-810a-4051fb142d63",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/d3e4275b-5baa-4e4d-810a-4051fb142d63/78__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:20:49.644+00:00"
+    },
+    {
+      "id": "1d56ce6e-4d8b-45a8-adce-c0347fe8c1f8",
+      "title": "가족 family",
+      "artist_id": "e5ebf46f-6ac9-49e9-8e70-3134b57faa3b",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/251__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:20:53.138+00:00"
+    },
+    {
+      "id": "1d745628-f772-4fef-8776-4a20429f102f",
+      "title": "바람과 빛-60",
+      "artist_id": "87c030a1-5bd1-41da-aa6c-39890a4ca624",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/87c030a1-5bd1-41da-aa6c-39890a4ca624/94__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:20:56.96+00:00"
+    },
+    {
+      "id": "2005703e-6a1d-4e40-a501-1821eaa8e4aa",
+      "title": "The Artificial NO. 1",
+      "artist_id": "c0198814-7009-4393-a3c2-b9c7211ee5c7",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c0198814-7009-4393-a3c2-b9c7211ee5c7/140__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:21:02.065+00:00"
+    },
+    {
+      "id": "218e22c6-2288-4d1f-a7b3-67004dcbff2b",
+      "title": "소화 : 消化, 消火, 燒火",
+      "artist_id": "e490e987-1f44-4190-8e18-d86623f110cf",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e490e987-1f44-4190-8e18-d86623f110cf/187__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:21:07.453+00:00"
+    },
+    {
+      "id": "2201db20-454b-45b2-8913-3f42dcb5e3f3",
+      "title": "꿈의 안식처 Dream heaven",
+      "artist_id": "03b086e7-a380-4d5d-bfe7-ed43d6b974e9",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/76__original.webp"
+      ],
+      "updated_at": "2026-02-15T09:04:00.445+00:00"
+    },
+    {
+      "id": "2384bb76-3f7c-4a62-bf20-37f4c4a5a434",
+      "title": "책거리x쿠사마야요이",
+      "artist_id": "855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0/246__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:21:15.216+00:00"
+    },
+    {
+      "id": "23b25077-0ecc-41e1-856a-01f5633a1306",
+      "title": "한국현대사 꿈길에서",
+      "artist_id": "f901940b-d628-4322-bf3c-5a6f760edc55",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/126__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:21:18.452+00:00"
+    },
+    {
+      "id": "25057998-50a4-45aa-a341-3f4fbd87621a",
+      "title": "붉은말",
+      "artist_id": "f56aaf17-615f-47eb-b693-4cf9f8cfd6be",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f56aaf17-615f-47eb-b693-4cf9f8cfd6be/106__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:21:22.332+00:00"
+    },
+    {
+      "id": "253a3793-af5b-41f0-adc5-cf9faa275d43",
+      "title": "The great resurrection (위대한 부활)",
+      "artist_id": "e9ef236c-00e6-4fb6-9e9e-dcf4942524c0",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e9ef236c-00e6-4fb6-9e9e-dcf4942524c0/34__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:21:24.734+00:00"
+    },
+    {
+      "id": "25c45839-7f6d-4cdd-b4a4-bea3fb85d70e",
+      "title": "병오마 1",
+      "artist_id": "c0a3be68-25f6-4f5f-909e-14e05a46a300",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c0a3be68-25f6-4f5f-909e-14e05a46a300/196__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:21:29.423+00:00"
+    },
+    {
+      "id": "26f7e23c-ba7b-45ab-b8bc-91ce6e7c6d05",
+      "title": "Hollowed blue 02",
+      "artist_id": "c3a30f14-11d2-443f-9f5f-32914fb1e01f",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c3a30f14-11d2-443f-9f5f-32914fb1e01f/116__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:21:31.524+00:00"
+    },
+    {
+      "id": "27190886-c247-4b01-8d23-ce1219b0d03d",
+      "title": "연탄집게",
+      "artist_id": "f901940b-d628-4322-bf3c-5a6f760edc55",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/203__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:21:33.648+00:00"
+    },
+    {
+      "id": "27576935-7a11-4ed0-b83f-7a158b79169e",
+      "title": "취도(鷲圖)",
+      "artist_id": "86a6f7ca-48c2-41e4-97ca-95632a4b5848",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/86a6f7ca-48c2-41e4-97ca-95632a4b5848/1__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:21:41.904+00:00"
+    },
+    {
+      "id": "2d8348ce-3fdf-4d26-b364-053a9baa4595",
+      "title": "9407 SIM_Visibility",
+      "artist_id": "bfcb5ff5-e1b9-474a-b37d-7c3aa344fa28",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/bfcb5ff5-e1b9-474a-b37d-7c3aa344fa28/pvnthqu3z6_1770991227778__original.webp"
+      ],
+      "updated_at": "2026-02-13T14:03:33.706003+00:00"
+    },
+    {
+      "id": "2e2a2883-88fe-4eb3-b86a-4a0d77740ff9",
+      "title": "Hope 013",
+      "artist_id": "00bb8541-b810-4ddd-892a-b3ac2da87c85",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/00bb8541-b810-4ddd-892a-b3ac2da87c85/259__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:21:44.455+00:00"
+    },
+    {
+      "id": "2e300692-6c50-4b1a-8129-b6a0e19be18f",
+      "title": "Middle ground",
+      "artist_id": "4efdaed3-3ba2-443e-b68c-3cbbf203dd55",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4efdaed3-3ba2-443e-b68c-3cbbf203dd55/261__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:21:47.685+00:00"
+    },
+    {
+      "id": "2ff3f924-aa9e-4639-8d24-fa37f3ea3b62",
+      "title": " 이 꽃을 전해주려고 다시 왔어.",
+      "artist_id": "ad5f81de-e946-4883-b8c0-59e7756fb8a8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/wj4qncvhw5g_1770991412361__original.webp"
+      ],
+      "updated_at": "2026-02-13T14:05:06.344883+00:00"
+    },
+    {
+      "id": "312f285e-1319-4244-8f35-e9148b1f423a",
+      "title": "초상",
+      "artist_id": "d4fa70bf-57b6-4b7b-a78f-917c95b9581f",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/d4fa70bf-57b6-4b7b-a78f-917c95b9581f/75__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:21:50.578+00:00"
+    },
+    {
+      "id": "32269dad-1197-4fc7-8fcd-1516ac07259e",
+      "title": "책거리x살바도르 달리",
+      "artist_id": "855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0/247__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:21:55.059+00:00"
+    },
+    {
+      "id": "34244640-a01f-48cb-b391-a3e8d2403073",
+      "title": "기억의 목소리",
+      "artist_id": "9d561b47-f0b0-440e-b947-46c312ac101e",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/9d561b47-f0b0-440e-b947-46c312ac101e/268__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:21:57.497+00:00"
+    },
+    {
+      "id": "35768cdf-430c-4145-9be9-36170eb5e87c",
+      "title": "No 895",
+      "artist_id": "0c01b57a-260b-4c95-8a10-42515e24572c",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/0c01b57a-260b-4c95-8a10-42515e24572c/45__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:22:00.251+00:00"
+    },
+    {
+      "id": "35fa72f0-db32-4e33-885d-7b5f09481ac4",
+      "title": "유채빛 봄날 \nA canola-colored spring day",
+      "artist_id": "03b086e7-a380-4d5d-bfe7-ed43d6b974e9",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/77__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:22:04.952+00:00"
+    },
+    {
+      "id": "368ff4de-1eb1-49d7-a56f-40ab3439b2c1",
+      "title": "내맘도 몰라주고",
+      "artist_id": "3823359c-041c-46f0-8a8f-6f553be814f0",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3823359c-041c-46f0-8a8f-6f553be814f0/113__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:22:08.406+00:00"
+    },
+    {
+      "id": "36cad3b5-9a79-4a76-9b68-f6fb9dd5fe0d",
+      "title": "내 손끝에 은하수",
+      "artist_id": "6013c2fb-9efb-4695-855f-18c892c9bbe6",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6013c2fb-9efb-4695-855f-18c892c9bbe6/44__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:22:11.674+00:00"
+    },
+    {
+      "id": "36d9023f-5620-4e62-828b-b5c21404ce5b",
+      "title": "사소한 일상",
+      "artist_id": "5604d50f-d2d6-45db-ad21-e4cae91a803d",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/5604d50f-d2d6-45db-ad21-e4cae91a803d/41__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:22:22.813+00:00"
+    },
+    {
+      "id": "36fd0ca5-1cb3-4c2b-a78b-0f900775ebf6",
+      "title": "프린세스 오드리",
+      "artist_id": "2b614fe3-b563-4057-b265-c022aac31b33",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/2b614fe3-b563-4057-b265-c022aac31b33/157__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:22:31.44+00:00"
+    },
+    {
+      "id": "3703561d-b7e2-4fe2-93f0-17814f09bb2f",
+      "title": "튼튼한 감나무",
+      "artist_id": "411a33be-9297-4c47-b4f4-e5c84e79e6d9",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/47__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:22:36.111+00:00"
+    },
+    {
+      "id": "37a5d5c8-5565-441f-9dba-d9fda120059f",
+      "title": "한국현대사 꿈길에서",
+      "artist_id": "f901940b-d628-4322-bf3c-5a6f760edc55",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/127__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:22:39.981+00:00"
+    },
+    {
+      "id": "38babfb7-1893-4ac0-9f90-1e658646d489",
+      "title": "Glory_moment#+33",
+      "artist_id": "dfdcff31-caf8-4697-9be8-eabb556971c2",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dfdcff31-caf8-4697-9be8-eabb556971c2/163__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:22:44.319+00:00"
+    },
+    {
+      "id": "3a1259c3-8af5-4805-844f-b392cf31b13e",
+      "title": "순 돋는 나무",
+      "artist_id": "3adda803-0141-4358-8fa1-0298123f2090",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3adda803-0141-4358-8fa1-0298123f2090/253__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:22:46.782+00:00"
+    },
+    {
+      "id": "3aaf48d4-3825-4077-9e33-2a7e2f8f4263",
+      "title": "황금꽃",
+      "artist_id": "ac0e10eb-6966-435e-86db-aaaa5410523e",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ac0e10eb-6966-435e-86db-aaaa5410523e/184__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:22:54.638+00:00"
+    },
+    {
+      "id": "3ad15b57-6013-4c08-9ce3-7b2bffbf88ee",
+      "title": "책거리",
+      "artist_id": "86a6f7ca-48c2-41e4-97ca-95632a4b5848",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/86a6f7ca-48c2-41e4-97ca-95632a4b5848/11__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:22:58.522+00:00"
+    },
+    {
+      "id": "3b4b4b74-da03-4fb0-ac5e-fbb45d8c758b",
+      "title": "reflection8 부엌 pm5h47m",
+      "artist_id": "6b86987f-041b-4e01-99a6-adc3bd7e5972",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6b86987f-041b-4e01-99a6-adc3bd7e5972/160__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:23:02.466+00:00"
+    },
+    {
+      "id": "3baa0744-2f3d-441d-828f-d7e554757393",
+      "title": "WildFlower Collage 26",
+      "artist_id": "48b9cea1-9667-4d7c-94b2-778824d0fb8f",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/48b9cea1-9667-4d7c-94b2-778824d0fb8f/119__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:23:05.997+00:00"
+    },
+    {
+      "id": "3be45c1d-bfa2-4a1a-aca7-bc7de5d95462",
+      "title": "Returning around 2",
+      "artist_id": "6573a229-2349-4360-b1ee-e73006d988a2",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/167__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:23:11.608+00:00"
+    },
+    {
+      "id": "3c0fcf82-e04a-4ad7-90ec-caa61c563029",
+      "title": "영웅",
+      "artist_id": "14b69635-17e4-4350-b6a9-868a7ca4bdd9",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/14b69635-17e4-4350-b6a9-868a7ca4bdd9/222__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:23:14.265+00:00"
+    },
+    {
+      "id": "3d606533-c5ed-4fe5-8112-8fd56bcf8767",
+      "title": "꿈의 안식처 Dream heaven",
+      "artist_id": "03b086e7-a380-4d5d-bfe7-ed43d6b974e9",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/280__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:23:18.505+00:00"
+    },
+    {
+      "id": "3f992cc3-41d7-477c-b70f-eb298df20a1a",
+      "title": "야형화접도(夜螢花蝶圖)",
+      "artist_id": "86a6f7ca-48c2-41e4-97ca-95632a4b5848",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/86a6f7ca-48c2-41e4-97ca-95632a4b5848/10__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:23:21.44+00:00"
+    },
+    {
+      "id": "40e8ff52-aaae-455a-b5d9-57964b3b390c",
+      "title": "이동식 정원 69-사라지는 3",
+      "artist_id": "3052cddc-f6b3-436d-9c47-f458629337a4",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3052cddc-f6b3-436d-9c47-f458629337a4/267__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:23:24.111+00:00"
+    },
+    {
+      "id": "413ad425-7259-45cb-a10b-ad95afa8b202",
+      "title": "새로운 날",
+      "artist_id": "411a33be-9297-4c47-b4f4-e5c84e79e6d9",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/237__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:23:26.526+00:00"
+    },
+    {
+      "id": "4214b2f3-79da-452a-a4a1-c47acdd8c38e",
+      "title": "대인시장놀",
+      "artist_id": "39b1802a-e627-4286-8b20-c5571998a0b1",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/39b1802a-e627-4286-8b20-c5571998a0b1/102__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:23:31.568+00:00"
+    },
+    {
+      "id": "43adb6a1-c3ac-4500-b579-b88749f76741",
+      "title": "y&b drawing",
+      "artist_id": "d3358ece-79e1-4081-a16b-233fa5c2b7d1",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/d3358ece-79e1-4081-a16b-233fa5c2b7d1/144__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:23:34.829+00:00"
+    },
+    {
+      "id": "450621e6-522b-44db-8519-efb2c0b58519",
+      "title": "신혼의 李씨",
+      "artist_id": "8a61d84b-2a64-456b-991b-56015adee17d",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/8a61d84b-2a64-456b-991b-56015adee17d/85__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:23:38.621+00:00"
+    },
+    {
+      "id": "456d9988-1076-461e-b5a1-d49c8d9e5edd",
+      "title": "수닭-화려한 외출",
+      "artist_id": "721b01c5-36de-4db2-af35-a9f0d6eabc2c",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/721b01c5-36de-4db2-af35-a9f0d6eabc2c/129__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:23:41.164+00:00"
+    },
+    {
+      "id": "456db762-d4e9-46ce-a756-f0481716eb58",
+      "title": "Returning around 4",
+      "artist_id": "6573a229-2349-4360-b1ee-e73006d988a2",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/168__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:23:46.822+00:00"
+    },
+    {
+      "id": "45adc0b7-56b0-4a40-919c-7acd090df223",
+      "title": "멸(滅)",
+      "artist_id": "1b4a67e4-f946-4f83-b65e-0bace3e526a5",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/1b4a67e4-f946-4f83-b65e-0bace3e526a5/270__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:23:49.374+00:00"
+    },
+    {
+      "id": "45dac49b-e8f2-4aea-8b86-8452dba853c0",
+      "title": "무호도",
+      "artist_id": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/153__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:23:51.872+00:00"
+    },
+    {
+      "id": "468d93ea-9f8b-4810-a9c3-f32d75b19cfa",
+      "title": "북한산을 거닐다-2",
+      "artist_id": "3554d61a-06f8-4f10-af73-43373923a5be",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3554d61a-06f8-4f10-af73-43373923a5be/46__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:23:55.069+00:00"
+    },
+    {
+      "id": "476e8830-3f39-41eb-bdbe-db8ce6ce45ae",
+      "title": "Scattered lights 3",
+      "artist_id": "6573a229-2349-4360-b1ee-e73006d988a2",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/171__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:24:04.055+00:00"
+    },
+    {
+      "id": "4796ea94-cf25-4738-96e1-4d010868984d",
+      "title": "연인",
+      "artist_id": "b4e7aea8-5d97-47ff-ab3d-d1c3a96525af",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/b4e7aea8-5d97-47ff-ab3d-d1c3a96525af/228__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:24:07.838+00:00"
+    },
+    {
+      "id": "4a78be2f-01b1-4db2-956e-32b11df89177",
+      "title": "징2",
+      "artist_id": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/152__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:24:10.162+00:00"
+    },
+    {
+      "id": "4ad4b66b-21da-45c2-a0ca-36c36cf7714d",
+      "title": "나를 안는다",
+      "artist_id": "411a33be-9297-4c47-b4f4-e5c84e79e6d9",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/50__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:24:15.201+00:00"
+    },
+    {
+      "id": "4c4ae4ed-fefe-469f-9f9f-9a2c11e93e64",
+      "title": "풀",
+      "artist_id": "5f7e2a47-eeba-451e-8c79-828965cff26b",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/5f7e2a47-eeba-451e-8c79-828965cff26b/269__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:24:17.867+00:00"
+    },
+    {
+      "id": "4c5afcb5-eb94-4f51-a64b-fc554ed1e242",
+      "title": "남북회담장에서",
+      "artist_id": "f901940b-d628-4322-bf3c-5a6f760edc55",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/206__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:24:20.162+00:00"
+    },
+    {
+      "id": "4c920878-32dd-4727-ab03-6eda996597d5",
+      "title": "칼노래",
+      "artist_id": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/151__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:24:22.925+00:00"
+    },
+    {
+      "id": "4e58bb8f-d078-40ef-8bdc-ba63d9d71a1e",
+      "title": "Naturance",
+      "artist_id": "e9f5787d-da31-446d-90e6-d36ad22c517b",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e9f5787d-da31-446d-90e6-d36ad22c517b/252__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:24:25.351+00:00"
+    },
+    {
+      "id": "4e79fec8-0e91-455a-8009-778f49a50989",
+      "title": "내가 사는 도시-1",
+      "artist_id": "f901940b-d628-4322-bf3c-5a6f760edc55",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/207__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:24:27.66+00:00"
+    },
+    {
+      "id": "5069be49-792f-43b4-8169-89073badc0c9",
+      "title": "Time to lose",
+      "artist_id": "becc22c3-f436-45ca-8697-08653d12a64a",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/becc22c3-f436-45ca-8697-08653d12a64a/136__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:24:30.102+00:00"
+    },
+    {
+      "id": "509f8d28-42f9-401c-a2dd-b3bfc65473aa",
+      "title": "매화",
+      "artist_id": "df6c8003-2ff7-4eda-a928-934b2675599c",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/df6c8003-2ff7-4eda-a928-934b2675599c/180__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:24:34.877+00:00"
+    },
+    {
+      "id": "5100cb0e-fecf-4f3a-8297-7cc3dc9ac323",
+      "title": "Ottogi Chrome Rainbow (blue top)",
+      "artist_id": "a8d68dcb-f8c5-4e40-9705-b2bb95f18190",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a8d68dcb-f8c5-4e40-9705-b2bb95f18190/231__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:24:37.782+00:00"
+    },
+    {
+      "id": "51db7e2f-a14d-41cc-a375-64f35062ecc4",
+      "title": "손 모은 사람",
+      "artist_id": "0ddf36d2-5171-48f5-8402-c9ab188e4b3f",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/0ddf36d2-5171-48f5-8402-c9ab188e4b3f/256__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:24:40.61+00:00"
+    },
+    {
+      "id": "5226af92-98f8-4dfd-9663-5ac1bb6a8fe5",
+      "title": "무제",
+      "artist_id": "f901940b-d628-4322-bf3c-5a6f760edc55",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/22__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:24:43.159+00:00"
+    },
+    {
+      "id": "536f693e-ef7d-487a-86f9-5dc986220001",
+      "title": "남녁땅뱃노래",
+      "artist_id": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/155__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:24:46.694+00:00"
+    },
+    {
+      "id": "53f0d943-9039-416c-9dd0-1215618e36b8",
+      "title": "월정교",
+      "artist_id": "dedcad53-cd2c-4dba-aae7-e35a526f82c1",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dedcad53-cd2c-4dba-aae7-e35a526f82c1/263__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:24:50.575+00:00"
+    },
+    {
+      "id": "545ab766-49cf-4278-9291-a285428bd454",
+      "title": "꽃",
+      "artist_id": "3a7840c4-eb4d-48fb-bf45-7bb55e62a091",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3a7840c4-eb4d-48fb-bf45-7bb55e62a091/200__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:24:54.079+00:00"
+    },
+    {
+      "id": "5533165a-9e1d-4de6-a5ea-a09bae7a12ed",
+      "title": "한국현대사 유체이탈",
+      "artist_id": "f901940b-d628-4322-bf3c-5a6f760edc55",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/208__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:24:56.836+00:00"
+    },
+    {
+      "id": "55d2ee2e-da21-4262-b432-5a6d8e00fdb5",
+      "title": "무지개 사냥꾼",
+      "artist_id": "ffbc6fbd-4c92-422d-84f4-752b0f521ad8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ffbc6fbd-4c92-422d-84f4-752b0f521ad8/111__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:24:59.666+00:00"
+    },
+    {
+      "id": "562e965e-599c-41de-88c2-1cf4c0133684",
+      "title": "The great resurrection (위대한 부활)",
+      "artist_id": "e9ef236c-00e6-4fb6-9e9e-dcf4942524c0",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e9ef236c-00e6-4fb6-9e9e-dcf4942524c0/17__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:25:02.237+00:00"
+    },
+    {
+      "id": "56c2c3f3-d237-4556-aca7-b64b3d4fcea3",
+      "title": "#01_S1707SP",
+      "artist_id": "fe690edb-c9d1-411e-a690-6edb90acc276",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/fe690edb-c9d1-411e-a690-6edb90acc276/202__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:25:06.722+00:00"
+    },
+    {
+      "id": "56e4fd50-32a1-4c4f-a845-547819c3088e",
+      "title": "무지개숲의 여우",
+      "artist_id": "ad5f81de-e946-4883-b8c0-59e7756fb8a8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/81__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:25:11.402+00:00"
+    },
+    {
+      "id": "581eaec2-9a24-4b18-96a6-ee92c1979120",
+      "title": "백두산 천지 아침",
+      "artist_id": "c8839e5b-46a9-490d-a142-74f6d2b99be7",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/273__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:25:14.322+00:00"
+    },
+    {
+      "id": "586fa73b-105e-4a6f-a61e-a41fe4b36f55",
+      "title": "옻사과",
+      "artist_id": "38df043c-af80-41c8-8c1b-a065c8218cf1",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/38df043c-af80-41c8-8c1b-a065c8218cf1/192__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:25:19.168+00:00"
+    },
+    {
+      "id": "590d234c-b461-454f-a641-fc14aa3db06c",
+      "title": "Authentic City",
+      "artist_id": "5aabb63d-31c8-4418-a6af-3a8736f07e68",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/5aabb63d-31c8-4418-a6af-3a8736f07e68/8__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:25:21.564+00:00"
+    },
+    {
+      "id": "5ba180ae-9c15-4582-92d4-9f1df522e11f",
+      "title": "책장 사이의 세계-봄",
+      "artist_id": "e5ebf46f-6ac9-49e9-8e70-3134b57faa3b",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/195__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:25:26.054+00:00"
+    },
+    {
+      "id": "5c0d0283-a32e-4969-aa08-d43c055e17cc",
+      "title": "사과",
+      "artist_id": "11507750-e624-432a-9fc2-249561633e75",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/11507750-e624-432a-9fc2-249561633e75/271__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:25:28.437+00:00"
+    },
+    {
+      "id": "5c76728c-bcf4-4640-831c-a817fabe8e50",
+      "title": "속리산 돌거북",
+      "artist_id": "55041f23-203e-4699-97dd-8c00f76c9a8b",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/55041f23-203e-4699-97dd-8c00f76c9a8b/218__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:25:32.363+00:00"
+    },
+    {
+      "id": "5c928a21-bf5e-4eeb-97b6-96a0e7209896",
+      "title": "다른 세계와의 교감",
+      "artist_id": "e5ebf46f-6ac9-49e9-8e70-3134b57faa3b",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/248__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:25:35.401+00:00"
+    },
+    {
+      "id": "5f784768-957d-4c7b-8d32-8c4a5366f032",
+      "title": "TOGETHER",
+      "artist_id": "bfdac0f4-d6fc-4224-b2bb-c8c61a172cc6",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/bfdac0f4-d6fc-4224-b2bb-c8c61a172cc6/89__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:25:39.695+00:00"
+    },
+    {
+      "id": "618357b4-b410-472d-8ba5-e0cf3189380e",
+      "title": "형님",
+      "artist_id": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/216__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:25:42.205+00:00"
+    },
+    {
+      "id": "61f4fbbd-fab3-4b92-8ce3-5644de45ec43",
+      "title": "KINDRED LIGHTS",
+      "artist_id": "bfdac0f4-d6fc-4224-b2bb-c8c61a172cc6",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/bfdac0f4-d6fc-4224-b2bb-c8c61a172cc6/86__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:25:48.223+00:00"
+    },
+    {
+      "id": "61fed40f-76b1-4f12-89bc-5fa8dba4c46d",
+      "title": "한국현대사 dna",
+      "artist_id": "f901940b-d628-4322-bf3c-5a6f760edc55",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/125__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:25:51.127+00:00"
+    },
+    {
+      "id": "620ed3ea-9d04-41d6-b726-44dfbf59130c",
+      "title": "Eternal blue 영원한 블루",
+      "artist_id": "03b086e7-a380-4d5d-bfe7-ed43d6b974e9",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/sswjrr41ig_1771081224755__original.webp"
+      ],
+      "updated_at": "2026-02-14T15:53:52.759+00:00"
+    },
+    {
+      "id": "6237e18c-73a5-42d3-9d6e-984a677e47c9",
+      "title": "염원의 빛이 뿌리내린 쉼터",
+      "artist_id": "130afdb8-1f02-45ce-89db-e7d15522d2b9",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/130afdb8-1f02-45ce-89db-e7d15522d2b9/115__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:25:56.288+00:00"
+    },
+    {
+      "id": "63112135-5741-4c83-956a-6de28bdf2a1f",
+      "title": "김치2025-2",
+      "artist_id": "63f6b252-12f8-4ad8-8c41-f9cdc2b6e280",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/63f6b252-12f8-4ad8-8c41-f9cdc2b6e280/164__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:26:06.069+00:00"
+    },
+    {
+      "id": "63c01624-d447-43c1-a480-d21b6c01a0ad",
+      "title": "서울타워로부터",
+      "artist_id": "4ea509fd-7f19-4420-8ed3-0c84836685dd",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4ea509fd-7f19-4420-8ed3-0c84836685dd/15__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:26:12.17+00:00"
+    },
+    {
+      "id": "63c4549b-5074-46f4-8e1b-06ee7823d88c",
+      "title": "별들과 녹색 바오밥",
+      "artist_id": "438e60e0-0d0f-4ed2-a5cc-a3c0a0756329",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/438e60e0-0d0f-4ed2-a5cc-a3c0a0756329/61__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:26:16.801+00:00"
+    },
+    {
+      "id": "64870b7f-96f4-470a-859c-ff714369c6c2",
+      "title": "Inviting",
+      "artist_id": "becc22c3-f436-45ca-8697-08653d12a64a",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/becc22c3-f436-45ca-8697-08653d12a64a/135__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:26:19.795+00:00"
+    },
+    {
+      "id": "658a3544-e7ce-481d-a280-38f549115e5e",
+      "title": "수하석상",
+      "artist_id": "31950760-2c0f-43b7-8b42-39a8a5b8f992",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/31950760-2c0f-43b7-8b42-39a8a5b8f992/258__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:26:21.939+00:00"
+    },
+    {
+      "id": "65e01339-5588-4640-ac05-c5fe1d065b1b",
+      "title": "Window",
+      "artist_id": "db69d4d4-9d77-4fa2-b455-4072750161d2",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/db69d4d4-9d77-4fa2-b455-4072750161d2/176__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:26:26.482+00:00"
+    },
+    {
+      "id": "66448b9f-0500-4c58-beba-e4ac1f336f87",
+      "title": "구름을 타고 오다.",
+      "artist_id": "ad5f81de-e946-4883-b8c0-59e7756fb8a8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/wgafi02i94l_1770991081278__original.webp"
+      ],
+      "updated_at": "2026-02-13T14:00:38.105757+00:00"
+    },
+    {
+      "id": "66bc86ea-7a65-48ea-9579-698eabd0087e",
+      "title": "빛을 머금은 쉼터",
+      "artist_id": "130afdb8-1f02-45ce-89db-e7d15522d2b9",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/130afdb8-1f02-45ce-89db-e7d15522d2b9/114__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:26:31.566+00:00"
+    },
+    {
+      "id": "68034a61-ec7a-479f-a92a-ed4f447e7632",
+      "title": "9408 SIM_Visibility",
+      "artist_id": "bfcb5ff5-e1b9-474a-b37d-7c3aa344fa28",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/bfcb5ff5-e1b9-474a-b37d-7c3aa344fa28/20__original.webp"
+      ],
+      "updated_at": "2026-02-13T06:34:18.339+00:00"
+    },
+    {
+      "id": "68efd41b-3bbe-4975-b823-2aad69b5390a",
+      "title": "비상탈출-1",
+      "artist_id": "f901940b-d628-4322-bf3c-5a6f760edc55",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/205__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:26:38.26+00:00"
+    },
+    {
+      "id": "68f3e907-1ef3-4f42-81ca-e871f710e79e",
+      "title": "Mango tree_Sawani",
+      "artist_id": "438e60e0-0d0f-4ed2-a5cc-a3c0a0756329",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/438e60e0-0d0f-4ed2-a5cc-a3c0a0756329/59__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:26:42.234+00:00"
+    },
+    {
+      "id": "69d60b05-a619-4cbd-ad0d-25869a17282d",
+      "title": "1988 마이산 중턱에서",
+      "artist_id": "c49fd4b9-67ce-4f0c-a1d7-ae527a1372a5",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c49fd4b9-67ce-4f0c-a1d7-ae527a1372a5/191__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:26:45.846+00:00"
+    },
+    {
+      "id": "6a17d8b9-1a2b-4398-92cf-05a18d48a46a",
+      "title": "마음의 형태 #1",
+      "artist_id": "52b7dcc4-7c74-49b7-8869-9d71e1fedaa1",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/52b7dcc4-7c74-49b7-8869-9d71e1fedaa1/130__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:26:50.362+00:00"
+    },
+    {
+      "id": "6a47a8a2-764a-4da9-8d9c-217b05536662",
+      "title": "귀향",
+      "artist_id": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/212__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:26:52.794+00:00"
+    },
+    {
+      "id": "6b224b3d-2768-4c04-bd6c-6a2588c4e52d",
+      "title": "눈밭02",
+      "artist_id": "516fb33d-ce72-458a-bc17-f6003c089247",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/516fb33d-ce72-458a-bc17-f6003c089247/69__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:26:57.068+00:00"
+    },
+    {
+      "id": "6e6469d0-5f42-454b-83a0-3d42417bf55d",
+      "title": "지옥의 문",
+      "artist_id": "444c0311-8135-4426-b57d-e60947156a34",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/444c0311-8135-4426-b57d-e60947156a34/185__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:26:59.652+00:00"
+    },
+    {
+      "id": "6fe87498-7494-4f9b-b6bd-be729c5c136d",
+      "title": "화락이토花落以土 #16",
+      "artist_id": "35871f59-bb25-4348-b025-afae048d8a1e",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/35871f59-bb25-4348-b025-afae048d8a1e/139__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:27:02.883+00:00"
+    },
+    {
+      "id": "70071eb5-218d-4bb7-b9b4-1e8a54848d37",
+      "title": "우주에서",
+      "artist_id": "b1c90901-f58d-431f-8d89-268d7f9ec06d",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/b1c90901-f58d-431f-8d89-268d7f9ec06d/146__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:27:07.346+00:00"
+    },
+    {
+      "id": "7100de56-3670-4fe7-ac83-6cc554f436cf",
+      "title": "Butterfly's Dream",
+      "artist_id": "da3aa1e2-53cc-41ca-ad91-b31d42d89a63",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/da3aa1e2-53cc-41ca-ad91-b31d42d89a63/93__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:27:13.128+00:00"
+    },
+    {
+      "id": "72348e68-6335-4e24-b1db-0198190b116e",
+      "title": "산처럼",
+      "artist_id": "4c71ed18-bbba-4068-97b8-52124b8e4a20",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4c71ed18-bbba-4068-97b8-52124b8e4a20/36__original.webp"
+      ],
+      "updated_at": "2026-02-13T05:06:32.493+00:00"
+    },
+    {
+      "id": "72d0fa08-dd9d-4c31-838b-45f9c9556abf",
+      "title": "각진 병",
+      "artist_id": "2d078e74-10dd-42ee-9d24-f239067e7fa6",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/2d078e74-10dd-42ee-9d24-f239067e7fa6/255__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:27:18.683+00:00"
+    },
+    {
+      "id": "734ed0f3-1f9f-41bd-b0a1-70a09417f6c1",
+      "title": "서툰 여행",
+      "artist_id": "d3e4275b-5baa-4e4d-810a-4051fb142d63",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/d3e4275b-5baa-4e4d-810a-4051fb142d63/79__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:27:23.915+00:00"
+    },
+    {
+      "id": "73985bc5-b671-4ede-a35a-9fd5696e415d",
+      "title": "푸른 소나무",
+      "artist_id": "4c71ed18-bbba-4068-97b8-52124b8e4a20",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4c71ed18-bbba-4068-97b8-52124b8e4a20/37__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:27:27.077+00:00"
+    },
+    {
+      "id": "74824081-63a0-4b76-9de6-a57d865c110e",
+      "title": "춘무인추무의",
+      "artist_id": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/210__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:27:30.359+00:00"
+    },
+    {
+      "id": "748e2696-3e4b-4714-9b44-7ec28499416f",
+      "title": "오름의아침",
+      "artist_id": "009ba12d-9545-4000-9d09-9be319c14f2d",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/009ba12d-9545-4000-9d09-9be319c14f2d/224__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:27:33.388+00:00"
+    },
+    {
+      "id": "74dee266-4d74-49b9-a4b8-39da16850963",
+      "title": "Ornament #3-1",
+      "artist_id": "fa1cffe8-2c0c-4e68-ad9b-5a1ba7abf348",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/fa1cffe8-2c0c-4e68-ad9b-5a1ba7abf348/c5k40oyljs4_1771324133694__original.webp"
+      ],
+      "updated_at": "2026-02-17T10:39:55.262107+00:00"
+    },
+    {
+      "id": "755d62e3-0f82-4fed-a14f-e96f16854354",
+      "title": "LION KING",
+      "artist_id": "bfdac0f4-d6fc-4224-b2bb-c8c61a172cc6",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/bfdac0f4-d6fc-4224-b2bb-c8c61a172cc6/87__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:27:37.438+00:00"
+    },
+    {
+      "id": "75f0d3e9-f2c6-4651-8439-a4dbd081a5d5",
+      "title": "아프리카 커피의 기억",
+      "artist_id": "e5ebf46f-6ac9-49e9-8e70-3134b57faa3b",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/250__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:27:40.408+00:00"
+    },
+    {
+      "id": "760c97d0-b2c9-4382-b21c-def0baa0ec5a",
+      "title": "Ottogi Earthy Rainbow Matte",
+      "artist_id": "a8d68dcb-f8c5-4e40-9705-b2bb95f18190",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a8d68dcb-f8c5-4e40-9705-b2bb95f18190/233__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:27:42.742+00:00"
+    },
+    {
+      "id": "7623bfa5-e44e-4b58-8ce8-a0b6786ba510",
+      "title": "화락이토花落以土 #15",
+      "artist_id": "35871f59-bb25-4348-b025-afae048d8a1e",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/35871f59-bb25-4348-b025-afae048d8a1e/138__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:27:45.315+00:00"
+    },
+    {
+      "id": "77e62473-f813-4a36-9231-11173f9cb645",
+      "title": "책거리x키스해링",
+      "artist_id": "855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0/65__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:27:49.888+00:00"
+    },
+    {
+      "id": "784a4579-6698-4fa5-adfb-76d2ddf2b7c9",
+      "title": "겨울항구",
+      "artist_id": "1c74a7af-81c9-4c80-aeb7-9f6ee8900aad",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/1c74a7af-81c9-4c80-aeb7-9f6ee8900aad/276__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:27:53.698+00:00"
+    },
+    {
+      "id": "784d8d3d-f77c-4180-8179-7593435a2d6c",
+      "title": "바람과 빛-62",
+      "artist_id": "87c030a1-5bd1-41da-aa6c-39890a4ca624",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/87c030a1-5bd1-41da-aa6c-39890a4ca624/95__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:27:57.73+00:00"
+    },
+    {
+      "id": "78a23a7a-d48b-4871-9a55-04f002de16ed",
+      "title": "2003 양산 영축산",
+      "artist_id": "e9259d3d-7910-4e5f-a7c0-5e17df05b29c",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e9259d3d-7910-4e5f-a7c0-5e17df05b29c/189__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:28:00.926+00:00"
+    },
+    {
+      "id": "7afe8a97-3df7-4488-9802-e4a73eb934e2",
+      "title": "달을 든 여인",
+      "artist_id": "309e02b1-1c58-4090-a9ea-355745623075",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/309e02b1-1c58-4090-a9ea-355745623075/40__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:28:04.11+00:00"
+    },
+    {
+      "id": "7b724018-6f43-4830-a13b-d00a255e54c9",
+      "title": "놀이터 (Playground) n'3",
+      "artist_id": "dba02a90-674e-4aa6-b8a7-bbf4e3c904e3",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dba02a90-674e-4aa6-b8a7-bbf4e3c904e3/91__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:28:12.752+00:00"
+    },
+    {
+      "id": "7d271e0f-61f4-4222-9152-c2a06d62766e",
+      "title": "金씨",
+      "artist_id": "8a61d84b-2a64-456b-991b-56015adee17d",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/8a61d84b-2a64-456b-991b-56015adee17d/84__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:28:18.2+00:00"
+    },
+    {
+      "id": "7d93201f-1397-4b76-91e6-a504ac2edf36",
+      "title": "검은새",
+      "artist_id": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/148__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:28:21.086+00:00"
+    },
+    {
+      "id": "7dc5b71a-7385-4554-ab63-a5d0cb052eab",
+      "title": "Ottogi – Pink DB Matte",
+      "artist_id": "a8d68dcb-f8c5-4e40-9705-b2bb95f18190",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a8d68dcb-f8c5-4e40-9705-b2bb95f18190/193__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:28:24.754+00:00"
+    },
+    {
+      "id": "7eeb41ec-d45d-46ff-8aa8-106d1ce32344",
+      "title": "9406 SIM_Visibility",
+      "artist_id": "bfcb5ff5-e1b9-474a-b37d-7c3aa344fa28",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/bfcb5ff5-e1b9-474a-b37d-7c3aa344fa28/090jwsq07pwe_1770991182286__original.webp"
+      ],
+      "updated_at": "2026-02-13T13:59:58.024275+00:00"
+    },
+    {
+      "id": "7f154b6f-a158-49ef-877f-618f9da166c1",
+      "title": "봄의소리1",
+      "artist_id": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/149__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:28:27.022+00:00"
+    },
+    {
+      "id": "7fd66a18-1fef-4d55-bdca-892667f2b0e7",
+      "title": "무제",
+      "artist_id": "5aabb63d-31c8-4418-a6af-3a8736f07e68",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/5aabb63d-31c8-4418-a6af-3a8736f07e68/7__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:28:29.537+00:00"
+    },
+    {
+      "id": "80b30579-77e9-4f06-a385-0cd2e90f5ffd",
+      "title": "LEGO TECHNIC 42110",
+      "artist_id": "694ba882-2df5-4483-97fd-f3078070ad5d",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/694ba882-2df5-4483-97fd-f3078070ad5d/100__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:28:38.642+00:00"
+    },
+    {
+      "id": "8194e308-0284-4844-9500-b135e261e023",
+      "title": "정글의 대화",
+      "artist_id": "e5ebf46f-6ac9-49e9-8e70-3134b57faa3b",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/249__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:28:41.773+00:00"
+    },
+    {
+      "id": "844d9a04-779f-4a9e-832e-77b70fcfbf0b",
+      "title": "행복한 나날 2020",
+      "artist_id": "411a33be-9297-4c47-b4f4-e5c84e79e6d9",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/49__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:28:46.025+00:00"
+    },
+    {
+      "id": "86518a19-e6cb-412e-8ed8-ef655e7bc7fc",
+      "title": "배가 있는 책가도",
+      "artist_id": "24950b2e-34d5-4b27-8a14-8b1d690f6fb8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/24950b2e-34d5-4b27-8a14-8b1d690f6fb8/142__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:28:50.558+00:00"
+    },
+    {
+      "id": "86b50d54-dce7-4309-953e-2fb69d608f62",
+      "title": "Serenity Fortress 평온의 요새",
+      "artist_id": "03b086e7-a380-4d5d-bfe7-ed43d6b974e9",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/y2xbs590dh_1771080775630__original.webp"
+      ],
+      "updated_at": "2026-02-15T18:16:46.286+00:00"
+    },
+    {
+      "id": "86d67a1a-d757-41d7-8f26-2291e88cbc42",
+      "title": "폭발의 다음",
+      "artist_id": "ba5234c4-51b3-405b-9e06-db2b2ed184df",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ba5234c4-51b3-405b-9e06-db2b2ed184df/266__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:28:52.994+00:00"
+    },
+    {
+      "id": "86f110c6-8b71-4367-ab76-fab1ef27f158",
+      "title": "Glory_moment#+30",
+      "artist_id": "dfdcff31-caf8-4697-9be8-eabb556971c2",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dfdcff31-caf8-4697-9be8-eabb556971c2/162__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:28:59.19+00:00"
+    },
+    {
+      "id": "89e0d9f4-0aad-419c-ac2e-6027f1531f81",
+      "title": "날마다",
+      "artist_id": "51544be4-4285-4abc-a3c4-db5416248094",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/51544be4-4285-4abc-a3c4-db5416248094/43__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:29:03.044+00:00"
+    },
+    {
+      "id": "8b9ed190-216b-4693-87e2-6c2622421ee8",
+      "title": "무제",
+      "artist_id": "309e02b1-1c58-4090-a9ea-355745623075",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/309e02b1-1c58-4090-a9ea-355745623075/257__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:29:05.708+00:00"
+    },
+    {
+      "id": "8c190eec-02b4-4514-abe8-c9f408ce2301",
+      "title": "나의 어린 왕자",
+      "artist_id": "ad5f81de-e946-4883-b8c0-59e7756fb8a8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/239__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:29:09.893+00:00"
+    },
+    {
+      "id": "8d19de26-77a7-4f1e-8026-6925f2a6864c",
+      "title": "너에게로 가는 바람",
+      "artist_id": "ad5f81de-e946-4883-b8c0-59e7756fb8a8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/243__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:29:14.666+00:00"
+    },
+    {
+      "id": "8e886432-b2d1-4745-b674-bc44989cb59e",
+      "title": "Authentic City",
+      "artist_id": "5aabb63d-31c8-4418-a6af-3a8736f07e68",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/5aabb63d-31c8-4418-a6af-3a8736f07e68/9__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:29:17.167+00:00"
+    },
+    {
+      "id": "901c56cd-cbae-4b3a-9302-afa2169879f2",
+      "title": "쿼크의 시간#113",
+      "artist_id": "cfb9572a-72da-46ff-8082-ccb4e01e698d",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/cfb9572a-72da-46ff-8082-ccb4e01e698d/58__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:29:20.045+00:00"
+    },
+    {
+      "id": "905da9c0-28f8-416d-aff0-8526d4fdb343",
+      "title": "나의 어린왕자",
+      "artist_id": "ad5f81de-e946-4883-b8c0-59e7756fb8a8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/80__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:29:25.337+00:00"
+    },
+    {
+      "id": "90abb8b3-61f7-4cd0-a681-4db28a1c18ea",
+      "title": "영웅",
+      "artist_id": "14b69635-17e4-4350-b6a9-868a7ca4bdd9",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/14b69635-17e4-4350-b6a9-868a7ca4bdd9/223__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:29:27.825+00:00"
+    },
+    {
+      "id": "91a78fd6-ed6d-4c36-856c-e5f3c00f691c",
+      "title": "Ottogi_Mother Ya-ho",
+      "artist_id": "a8d68dcb-f8c5-4e40-9705-b2bb95f18190",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a8d68dcb-f8c5-4e40-9705-b2bb95f18190/234__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:29:31.266+00:00"
+    },
+    {
+      "id": "9238f8fc-0a7b-4bc3-adca-7916a23fffe5",
+      "title": "제주 섭지코지",
+      "artist_id": "dedcad53-cd2c-4dba-aae7-e35a526f82c1",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dedcad53-cd2c-4dba-aae7-e35a526f82c1/264__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:29:33.781+00:00"
+    },
+    {
+      "id": "9383bd4e-7a71-47d2-bfd8-68f8771ef72a",
+      "title": "잎파리",
+      "artist_id": "3adda803-0141-4358-8fa1-0298123f2090",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3adda803-0141-4358-8fa1-0298123f2090/254__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:29:36.026+00:00"
+    },
+    {
+      "id": "94637fa3-503d-4cf6-83da-067c20c54035",
+      "title": "노무현(작품 다섯 점)",
+      "artist_id": "3a7840c4-eb4d-48fb-bf45-7bb55e62a091",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3a7840c4-eb4d-48fb-bf45-7bb55e62a091/199__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:29:38.949+00:00"
+    },
+    {
+      "id": "9480b35c-d32b-4b1c-a609-0f18b878b3ec",
+      "title": "붉은닭",
+      "artist_id": "3554d61a-06f8-4f10-af73-43373923a5be",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3554d61a-06f8-4f10-af73-43373923a5be/108__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:29:41.978+00:00"
+    },
+    {
+      "id": "94f6cf59-54ad-421e-9e2f-30a78d46cfeb",
+      "title": "자은도 면전리 팽나무",
+      "artist_id": "438e60e0-0d0f-4ed2-a5cc-a3c0a0756329",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/438e60e0-0d0f-4ed2-a5cc-a3c0a0756329/62__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:29:46.89+00:00"
+    },
+    {
+      "id": "951c0751-1e28-446e-9786-4dfd7ced92e8",
+      "title": "소리꾼1",
+      "artist_id": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/214__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:29:49.402+00:00"
+    },
+    {
+      "id": "963d5427-cdb1-45b4-9e13-e79cf2519235",
+      "title": "별소년의 행복여행",
+      "artist_id": "ad5f81de-e946-4883-b8c0-59e7756fb8a8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/z2rhab71l2_1770991303804__original.webp"
+      ],
+      "updated_at": "2026-02-13T14:03:06.930312+00:00"
+    },
+    {
+      "id": "966a55bd-94db-4cf3-ba1a-dabf1a766750",
+      "title": "Double Existence & Space",
+      "artist_id": "db69d4d4-9d77-4fa2-b455-4072750161d2",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/db69d4d4-9d77-4fa2-b455-4072750161d2/175__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:29:53.466+00:00"
+    },
+    {
+      "id": "978696e8-6ac0-400e-a0b2-e07ab02d498f",
+      "title": "고군분투",
+      "artist_id": "17106ddc-fb29-4d46-8fe5-24f9189c8ee6",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/17106ddc-fb29-4d46-8fe5-24f9189c8ee6/120__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:29:58.225+00:00"
+    },
+    {
+      "id": "9a0d790e-53aa-4f97-9b89-1643f68f3bc9",
+      "title": "Eternal blue 영원한 블루",
+      "artist_id": "03b086e7-a380-4d5d-bfe7-ed43d6b974e9",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/dyju6xts0c9_1771080509431__original.webp"
+      ],
+      "updated_at": "2026-02-14T14:59:49.201+00:00"
+    },
+    {
+      "id": "9a3a01da-405b-49ab-9b51-57c97d3ba7be",
+      "title": "Botanical Garden, 식물정원",
+      "artist_id": "bbc87551-b093-4847-9559-fe44bf4b1295",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/bbc87551-b093-4847-9559-fe44bf4b1295/66__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:30:03.311+00:00"
+    },
+    {
+      "id": "9a840eb4-49e4-4171-9041-67193ccb2afc",
+      "title": "Revealed Di, 그 죽음이 드러나다",
+      "artist_id": "bbc87551-b093-4847-9559-fe44bf4b1295",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/bbc87551-b093-4847-9559-fe44bf4b1295/67__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:30:07.794+00:00"
+    },
+    {
+      "id": "9ac6db07-f334-4898-9189-00218aefe537",
+      "title": "Over the Dream-2",
+      "artist_id": "32b69bdb-3baa-4318-96b5-4b8bd6741a29",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/32b69bdb-3baa-4318-96b5-4b8bd6741a29/33__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:30:11.215+00:00"
+    },
+    {
+      "id": "9b8f5e40-6e36-4dae-a30d-c4cc2c05e21e",
+      "title": "김치2024-3",
+      "artist_id": "63f6b252-12f8-4ad8-8c41-f9cdc2b6e280",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/63f6b252-12f8-4ad8-8c41-f9cdc2b6e280/165__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:30:14.736+00:00"
+    },
+    {
+      "id": "9c8ead1a-b5f1-4ae5-998b-84e10175d1ba",
+      "title": "Returning around 5",
+      "artist_id": "6573a229-2349-4360-b1ee-e73006d988a2",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/169__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:30:21.115+00:00"
+    },
+    {
+      "id": "9e54df22-7441-4ce2-9fbc-dabf34d2d96d",
+      "title": "너와 나 사이 #1\n Between you and me",
+      "artist_id": "52b7dcc4-7c74-49b7-8869-9d71e1fedaa1",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/52b7dcc4-7c74-49b7-8869-9d71e1fedaa1/132__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:30:24.624+00:00"
+    },
+    {
+      "id": "9ff1d220-e89b-435d-9af0-9cc6db71ded5",
+      "title": "c ; 작은 하늘",
+      "artist_id": "f0371146-7b75-49f4-9fb1-20a3a21d701a",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f0371146-7b75-49f4-9fb1-20a3a21d701a/72__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:30:28.523+00:00"
+    },
+    {
+      "id": "a13d7b07-23c6-4e49-9fee-0b15cd15f7e2",
+      "title": "2006 정선 기우산",
+      "artist_id": "e9259d3d-7910-4e5f-a7c0-5e17df05b29c",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e9259d3d-7910-4e5f-a7c0-5e17df05b29c/188__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:30:32.545+00:00"
+    },
+    {
+      "id": "a18346ab-379f-4a33-8cb2-4b37159372da",
+      "title": "보리술잔",
+      "artist_id": "11507750-e624-432a-9fc2-249561633e75",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/11507750-e624-432a-9fc2-249561633e75/274__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:30:36.346+00:00"
+    },
+    {
+      "id": "a29f1d49-5f61-489c-ab91-ff904b549d0d",
+      "title": "밤골목길 ㅡ귀가",
+      "artist_id": "f56aaf17-615f-47eb-b693-4cf9f8cfd6be",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f56aaf17-615f-47eb-b693-4cf9f8cfd6be/104__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:30:40.023+00:00"
+    },
+    {
+      "id": "a4c9601a-a42c-408c-b07f-02d75802bf49",
+      "title": "回1",
+      "artist_id": "269077db-441d-48ca-8690-5c8d37803384",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/269077db-441d-48ca-8690-5c8d37803384/5__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:30:42.716+00:00"
+    },
+    {
+      "id": "a5a5eb3a-b493-484c-b9bb-d86b22dc6f1e",
+      "title": "함께하는 시간",
+      "artist_id": "ad5f81de-e946-4883-b8c0-59e7756fb8a8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/240__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:30:46.806+00:00"
+    },
+    {
+      "id": "a5ac151f-a1fb-4e66-936e-50909f6532e6",
+      "title": "두상연구",
+      "artist_id": "3fc4005a-f793-4bb6-bad8-acb1b4c8cdc9",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3fc4005a-f793-4bb6-bad8-acb1b4c8cdc9/30__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:30:50.726+00:00"
+    },
+    {
+      "id": "a5b4a644-34b0-4dbe-a085-9d350e401c86",
+      "title": "포르코 당신은 어디있나요?-1",
+      "artist_id": "32b69bdb-3baa-4318-96b5-4b8bd6741a29",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/32b69bdb-3baa-4318-96b5-4b8bd6741a29/4__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:30:52.912+00:00"
+    },
+    {
+      "id": "a7722918-03c1-4c5a-9c56-e772500a4ca9",
+      "title": "回2",
+      "artist_id": "269077db-441d-48ca-8690-5c8d37803384",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/269077db-441d-48ca-8690-5c8d37803384/6__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:30:55.487+00:00"
+    },
+    {
+      "id": "a9f94f40-51b1-4a01-a129-acf07c1ba2fe",
+      "title": "피리부는 코난",
+      "artist_id": "855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0/64__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:31:00.476+00:00"
+    },
+    {
+      "id": "aa35786b-c7e9-4b62-9a1f-993213a6813c",
+      "title": "face #02-홍범도",
+      "artist_id": "dcdc982f-31b3-4a14-b375-32afa3866319",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dcdc982f-31b3-4a14-b375-32afa3866319/2__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:31:03.33+00:00"
+    },
+    {
+      "id": "aa919279-9df7-4433-acf6-c33a4ac8173d",
+      "title": "Blue Moon-3",
+      "artist_id": "4c71ed18-bbba-4068-97b8-52124b8e4a20",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4c71ed18-bbba-4068-97b8-52124b8e4a20/39__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:31:07.062+00:00"
+    },
+    {
+      "id": "aae7bd11-4c86-4f0d-bfd9-c3c918b3cfa1",
+      "title": "복주머니(블루)",
+      "artist_id": "ac0e10eb-6966-435e-86db-aaaa5410523e",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ac0e10eb-6966-435e-86db-aaaa5410523e/181__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:31:10.991+00:00"
+    },
+    {
+      "id": "ab5a71c4-71d3-4805-b145-044e0affc717",
+      "title": "양귀비",
+      "artist_id": "ac0e10eb-6966-435e-86db-aaaa5410523e",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ac0e10eb-6966-435e-86db-aaaa5410523e/183__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:31:21.882+00:00"
+    },
+    {
+      "id": "ab859f7f-bab1-480c-a5dd-975ca179d6bb",
+      "title": "놀이터 (Playground) n'2",
+      "artist_id": "dba02a90-674e-4aa6-b8a7-bbf4e3c904e3",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dba02a90-674e-4aa6-b8a7-bbf4e3c904e3/90__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:31:26.882+00:00"
+    },
+    {
+      "id": "abb19931-13f5-4a08-a95e-a71d1408bf89",
+      "title": "기억의 표상",
+      "artist_id": "00e8c684-70bf-4b62-bd2e-d4d53500decf",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/00e8c684-70bf-4b62-bd2e-d4d53500decf/123__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:31:29.737+00:00"
+    },
+    {
+      "id": "ac85d08e-9172-48a1-8c61-df915dc35f32",
+      "title": "붉은 봄 매화",
+      "artist_id": "411a33be-9297-4c47-b4f4-e5c84e79e6d9",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/51__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:31:34.451+00:00"
+    },
+    {
+      "id": "ac9a36d3-9446-4e47-95b9-53351ab059d6",
+      "title": "기억의 푸른 바오밥",
+      "artist_id": "438e60e0-0d0f-4ed2-a5cc-a3c0a0756329",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/438e60e0-0d0f-4ed2-a5cc-a3c0a0756329/278__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:31:38.589+00:00"
+    },
+    {
+      "id": "ad2bc9f4-0628-4b7d-92a3-feb8430d46d3",
+      "title": "Scattered lights 2",
+      "artist_id": "6573a229-2349-4360-b1ee-e73006d988a2",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/170__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:31:43.331+00:00"
+    },
+    {
+      "id": "ad7729be-c04e-43ab-9f51-42aa8716e3a6",
+      "title": "겨울중산간",
+      "artist_id": "009ba12d-9545-4000-9d09-9be319c14f2d",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/009ba12d-9545-4000-9d09-9be319c14f2d/226__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:31:46.449+00:00"
+    },
+    {
+      "id": "aed976f7-a28b-4486-9311-5059d54f8a50",
+      "title": "9409 SIM_Visibility",
+      "artist_id": "bfcb5ff5-e1b9-474a-b37d-7c3aa344fa28",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/bfcb5ff5-e1b9-474a-b37d-7c3aa344fa28/21__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:31:50.123+00:00"
+    },
+    {
+      "id": "af11fd28-6551-41ca-9e50-1f7a2622bc07",
+      "title": "테스트",
+      "artist_id": "b38a289f-64da-499b-b14e-7330aa1d9b69",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/b38a289f-64da-499b-b14e-7330aa1d9b69/mpmaj85v4m_1770711028830__original.webp",
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/b38a289f-64da-499b-b14e-7330aa1d9b69/dxlrobj0u9j_1770788747851__original.webp"
+      ],
+      "updated_at": "2026-02-15T17:57:34.562+00:00"
+    },
+    {
+      "id": "af8cc2dc-89f0-4752-9b22-9607f0e1daaa",
+      "title": "머물고 싶은 순간",
+      "artist_id": "308f58bc-b732-4731-b62c-e94db7399ae0",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/308f58bc-b732-4731-b62c-e94db7399ae0/110__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:31:59.849+00:00"
+    },
+    {
+      "id": "b127f01e-c25e-4155-a752-140928fb9888",
+      "title": "우공이산-1910",
+      "artist_id": "1b0f67b3-4b09-4236-83ba-9e436646f0a7",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/1b0f67b3-4b09-4236-83ba-9e436646f0a7/71__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:32:05.653+00:00"
+    },
+    {
+      "id": "b1c30bb0-04ab-4155-8286-05a06f359161",
+      "title": "서후리에서 - 벼베기",
+      "artist_id": "55041f23-203e-4699-97dd-8c00f76c9a8b",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/55041f23-203e-4699-97dd-8c00f76c9a8b/219__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:32:09.823+00:00"
+    },
+    {
+      "id": "b2adf877-87a3-4f7d-8591-038af1695981",
+      "title": "테스트 2",
+      "artist_id": "b38a289f-64da-499b-b14e-7330aa1d9b69",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/b38a289f-64da-499b-b14e-7330aa1d9b69/ac79wj3mcf7_1771179267683__original.webp"
+      ],
+      "updated_at": "2026-02-15T18:14:40.223265+00:00"
+    },
+    {
+      "id": "b3838f14-0601-4e2a-a502-4b099ecd50ad",
+      "title": "낮도깨비",
+      "artist_id": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/154__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:32:12.185+00:00"
+    },
+    {
+      "id": "b841051e-ac7f-4b6e-b782-63b18a5196dd",
+      "title": "Eternal blue 영원한 블루",
+      "artist_id": "03b086e7-a380-4d5d-bfe7-ed43d6b974e9",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/2yxzug3k0a8_1771080647595__original.webp"
+      ],
+      "updated_at": "2026-02-14T15:00:01.759+00:00"
+    },
+    {
+      "id": "b844edb0-22f5-44d7-8770-95390103fbb6",
+      "title": "빛 머물다-3",
+      "artist_id": "499b6329-7e86-4ed1-8bfb-34e5cc003ccd",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/499b6329-7e86-4ed1-8bfb-34e5cc003ccd/99__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:32:15.418+00:00"
+    },
+    {
+      "id": "b8a497d3-862d-4d98-81d9-dfec5e0bdb7d",
+      "title": "석양",
+      "artist_id": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/156__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:32:19.795+00:00"
+    },
+    {
+      "id": "b9b11c28-6667-4b7c-a703-578e903216db",
+      "title": "Beam Letter",
+      "artist_id": "04f45299-6f93-4734-8e40-b76cb8701ff8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/04f45299-6f93-4734-8e40-b76cb8701ff8/26__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:32:23.082+00:00"
+    },
+    {
+      "id": "bb0f9ddd-69dc-47da-82b1-c8e0227eceda",
+      "title": "The great resurrection (위대한 부활)",
+      "artist_id": "e9ef236c-00e6-4fb6-9e9e-dcf4942524c0",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e9ef236c-00e6-4fb6-9e9e-dcf4942524c0/19__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:32:25.357+00:00"
+    },
+    {
+      "id": "bb889667-25ad-4a36-88d0-e6017d60fdf3",
+      "title": "형태놀이 #15",
+      "artist_id": "52b7dcc4-7c74-49b7-8869-9d71e1fedaa1",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/52b7dcc4-7c74-49b7-8869-9d71e1fedaa1/134__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:32:28.004+00:00"
+    },
+    {
+      "id": "bd235ad6-58ae-499b-af0e-548531a99930",
+      "title": "산",
+      "artist_id": "3b78b2d4-66fe-4343-97b8-1f0ab53de219",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3b78b2d4-66fe-4343-97b8-1f0ab53de219/177__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:32:31.767+00:00"
+    },
+    {
+      "id": "bde0aff9-bb2e-495f-89ea-734879211fe4",
+      "title": "책거리x크리스마스",
+      "artist_id": "855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0/244__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:32:37.451+00:00"
+    },
+    {
+      "id": "be10bfa8-6d81-405d-95c6-ed691b9bb12a",
+      "title": "한국현대사-유월항쟁도(1988)",
+      "artist_id": "f901940b-d628-4322-bf3c-5a6f760edc55",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/24__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:32:40.074+00:00"
+    },
+    {
+      "id": "c22a62fc-500d-44d7-8fe0-ddd871b14fa8",
+      "title": "북한산 2025",
+      "artist_id": "411a33be-9297-4c47-b4f4-e5c84e79e6d9",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/48__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:32:44.997+00:00"
+    },
+    {
+      "id": "c4c8af72-33fa-44b1-a7e1-a41d872e226f",
+      "title": "TROPICAL FOREST",
+      "artist_id": "bfdac0f4-d6fc-4224-b2bb-c8c61a172cc6",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/bfdac0f4-d6fc-4224-b2bb-c8c61a172cc6/88__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:32:51.477+00:00"
+    },
+    {
+      "id": "c4cbc0b3-2bb4-4d17-81f7-8ad043bc4b96",
+      "title": "그곳",
+      "artist_id": "4921234e-c8c8-429b-ab19-514a1d13ef29",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4921234e-c8c8-429b-ab19-514a1d13ef29/56__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:32:55.492+00:00"
+    },
+    {
+      "id": "c4f86413-17db-4de8-b5cd-3e874e26b02d",
+      "title": "우공이산-1907",
+      "artist_id": "1b0f67b3-4b09-4236-83ba-9e436646f0a7",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/1b0f67b3-4b09-4236-83ba-9e436646f0a7/70__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:33:01.379+00:00"
+    },
+    {
+      "id": "c555ed5c-5b9c-4d8f-a60d-c9ff5c972ef9",
+      "title": "고래의 꿈",
+      "artist_id": "b1c90901-f58d-431f-8d89-268d7f9ec06d",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/b1c90901-f58d-431f-8d89-268d7f9ec06d/145__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:33:06.598+00:00"
+    },
+    {
+      "id": "c64166d7-a9a0-4cf2-b31c-0403ac24394d",
+      "title": "Ornament #3",
+      "artist_id": "fa1cffe8-2c0c-4e68-ad9b-5a1ba7abf348",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/fa1cffe8-2c0c-4e68-ad9b-5a1ba7abf348/trxxdjr5kbg_1771321220411__original.webp"
+      ],
+      "updated_at": "2026-02-17T10:40:25.03+00:00"
+    },
+    {
+      "id": "c6700348-d7ad-4ea7-8b9a-ef93c4f6f718",
+      "title": "1988 전남 강진",
+      "artist_id": "c49fd4b9-67ce-4f0c-a1d7-ae527a1372a5",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c49fd4b9-67ce-4f0c-a1d7-ae527a1372a5/190__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:33:10.78+00:00"
+    },
+    {
+      "id": "c7df550c-81cf-4eba-be1e-89511755f9a7",
+      "title": "김치2023-2",
+      "artist_id": "63f6b252-12f8-4ad8-8c41-f9cdc2b6e280",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/63f6b252-12f8-4ad8-8c41-f9cdc2b6e280/166__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:33:16.716+00:00"
+    },
+    {
+      "id": "c824ae45-a2e1-4b52-b319-72234162e3db",
+      "title": "점33-2",
+      "artist_id": "a46923c8-94b3-4a92-8430-f9752a2da896",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a46923c8-94b3-4a92-8430-f9752a2da896/97__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:33:21.266+00:00"
+    },
+    {
+      "id": "c8d573de-cd85-4ada-a6b7-b5af4db692ff",
+      "title": "좋은소식",
+      "artist_id": "411a33be-9297-4c47-b4f4-e5c84e79e6d9",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/236__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:33:23.631+00:00"
+    },
+    {
+      "id": "c9f7f708-e5b4-4c26-9258-f00dcdf03cb9",
+      "title": "부드러운 바람이 불던 날",
+      "artist_id": "ad5f81de-e946-4883-b8c0-59e7756fb8a8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/82__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:33:28.501+00:00"
+    },
+    {
+      "id": "cc5b2da0-8894-4bb6-84e7-42096bd2cbfd",
+      "title": "그곳",
+      "artist_id": "4921234e-c8c8-429b-ab19-514a1d13ef29",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4921234e-c8c8-429b-ab19-514a1d13ef29/55__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:33:33.02+00:00"
+    },
+    {
+      "id": "d00c7fb7-480d-4fe4-8ca2-9fefcdb80bcd",
+      "title": "어린왕자가 머물던 풍경_제주 일기",
+      "artist_id": "ad5f81de-e946-4883-b8c0-59e7756fb8a8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/83__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:33:38.651+00:00"
+    },
+    {
+      "id": "d0188743-0eb3-4c07-97e1-8021163a0d63",
+      "title": "봄의소리2",
+      "artist_id": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/150__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:33:41.091+00:00"
+    },
+    {
+      "id": "d17d1423-20f7-4bf6-9611-89a3688280f8",
+      "title": "지리산2",
+      "artist_id": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/147__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:33:45.431+00:00"
+    },
+    {
+      "id": "d196f797-8d43-434d-9b76-d561dab443a7",
+      "title": "Blue night-4",
+      "artist_id": "4c71ed18-bbba-4068-97b8-52124b8e4a20",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4c71ed18-bbba-4068-97b8-52124b8e4a20/38__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:33:49.037+00:00"
+    },
+    {
+      "id": "d1b7f81a-a6c4-453f-8c84-93c9bb788ee9",
+      "title": "민들레 촛불",
+      "artist_id": "3554d61a-06f8-4f10-af73-43373923a5be",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3554d61a-06f8-4f10-af73-43373923a5be/107__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:33:53.398+00:00"
+    },
+    {
+      "id": "d1c0b144-e83b-4fe7-aa50-5968d9f239c3",
+      "title": "Eternal blue 영원한 블루",
+      "artist_id": "03b086e7-a380-4d5d-bfe7-ed43d6b974e9",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/2ltxqs9gm5y_1771081117899__original.webp"
+      ],
+      "updated_at": "2026-02-14T15:00:15.587+00:00"
+    },
+    {
+      "id": "d1d0509c-abad-4c17-906a-56fdc4b41909",
+      "title": "숨겨진 감정",
+      "artist_id": "17106ddc-fb29-4d46-8fe5-24f9189c8ee6",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/17106ddc-fb29-4d46-8fe5-24f9189c8ee6/121__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:33:58.323+00:00"
+    },
+    {
+      "id": "d203c34b-ddb2-4ead-83f9-ff9ec5096ca9",
+      "title": "지성",
+      "artist_id": "f901940b-d628-4322-bf3c-5a6f760edc55",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/204__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:34:00.456+00:00"
+    },
+    {
+      "id": "d4519b9c-3a2c-4440-b3a5-bb39acfac343",
+      "title": "Butterfly's Dream",
+      "artist_id": "da3aa1e2-53cc-41ca-ad91-b31d42d89a63",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/da3aa1e2-53cc-41ca-ad91-b31d42d89a63/92__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:34:05.681+00:00"
+    },
+    {
+      "id": "d558896c-8642-41ef-9b89-3a5082e3ca89",
+      "title": "연상호 감독",
+      "artist_id": "d4fa70bf-57b6-4b7b-a78f-917c95b9581f",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/d4fa70bf-57b6-4b7b-a78f-917c95b9581f/74__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:34:10.036+00:00"
+    },
+    {
+      "id": "d55b88e7-aa32-41ce-b414-e14b8973f41a",
+      "title": "겨울한라산",
+      "artist_id": "009ba12d-9545-4000-9d09-9be319c14f2d",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/009ba12d-9545-4000-9d09-9be319c14f2d/225__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:34:12.996+00:00"
+    },
+    {
+      "id": "d6fccebb-8d71-451e-8f59-82c4b302c9bf",
+      "title": "Ottogi Chrome Rainbow (purple top)",
+      "artist_id": "a8d68dcb-f8c5-4e40-9705-b2bb95f18190",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a8d68dcb-f8c5-4e40-9705-b2bb95f18190/230__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:34:16.384+00:00"
+    },
+    {
+      "id": "d790b787-0d7d-4a51-aad0-e44b3352e86f",
+      "title": "병오마 2",
+      "artist_id": "c0a3be68-25f6-4f5f-909e-14e05a46a300",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c0a3be68-25f6-4f5f-909e-14e05a46a300/227__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:34:22.011+00:00"
+    },
+    {
+      "id": "daad93f8-a53f-4710-aa5e-93101be8e8ba",
+      "title": "빛이 지나간 자리3 pm7h1m",
+      "artist_id": "6b86987f-041b-4e01-99a6-adc3bd7e5972",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6b86987f-041b-4e01-99a6-adc3bd7e5972/161__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:34:27.558+00:00"
+    },
+    {
+      "id": "db1a3a19-2297-4c5b-ac00-610065d5283a",
+      "title": "해월 연구",
+      "artist_id": "9429728f-1e50-4052-9e13-ddda465cf710",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/9429728f-1e50-4052-9e13-ddda465cf710/63__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:34:31.53+00:00"
+    },
+    {
+      "id": "db1d7b02-60e2-4e23-b893-10eb68da15c7",
+      "title": "사랑만들기",
+      "artist_id": "6013c2fb-9efb-4695-855f-18c892c9bbe6",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6013c2fb-9efb-4695-855f-18c892c9bbe6/265__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:34:34.333+00:00"
+    },
+    {
+      "id": "dc0b88c9-0334-4cf6-ac66-b470cfbb9367",
+      "title": "언제나 내 곁에",
+      "artist_id": "ad5f81de-e946-4883-b8c0-59e7756fb8a8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/241__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:34:38.719+00:00"
+    },
+    {
+      "id": "dd00d7af-db41-4e8d-91f3-5d684df5dff3",
+      "title": "그림움이 물들면",
+      "artist_id": "a0b1f445-0b68-46d4-9f12-8c2bfa7d9b24",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a0b1f445-0b68-46d4-9f12-8c2bfa7d9b24/217__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:34:44.116+00:00"
+    },
+    {
+      "id": "dd6e9178-a2be-412a-bf1d-60043ccdb1ea",
+      "title": "손 모은 사람",
+      "artist_id": "0ddf36d2-5171-48f5-8402-c9ab188e4b3f",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/0ddf36d2-5171-48f5-8402-c9ab188e4b3f/277__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:34:47.618+00:00"
+    },
+    {
+      "id": "dddeb6fe-f4f1-418b-8a40-cbe59dd5b16a",
+      "title": "folded tint",
+      "artist_id": "a4ad1ceb-f987-4c57-b682-0c308aff16d0",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a4ad1ceb-f987-4c57-b682-0c308aff16d0/262__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:34:51.215+00:00"
+    },
+    {
+      "id": "df390087-78c2-453f-a663-3cfc5bf428b1",
+      "title": "Moonlight Mangrove_Tokuo",
+      "artist_id": "438e60e0-0d0f-4ed2-a5cc-a3c0a0756329",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/438e60e0-0d0f-4ed2-a5cc-a3c0a0756329/60__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:34:55.511+00:00"
+    },
+    {
+      "id": "dfa3dc93-a590-4e6f-9d16-c4002eb15af3",
+      "title": "책의 무게",
+      "artist_id": "1549a33f-5d05-4321-866c-49f81f250621",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/1549a33f-5d05-4321-866c-49f81f250621/42__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:35:00.356+00:00"
+    },
+    {
+      "id": "e02e6689-748b-447e-b915-dd3f10a9aa36",
+      "title": "pop kids #96",
+      "artist_id": "dcdc982f-31b3-4a14-b375-32afa3866319",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dcdc982f-31b3-4a14-b375-32afa3866319/3__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:35:02.91+00:00"
+    },
+    {
+      "id": "e0ddcc88-fb94-4d5d-aabb-f81c94ead967",
+      "title": "누드",
+      "artist_id": "52701ac8-6f38-465d-b6cb-229dcc454e4b",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/52701ac8-6f38-465d-b6cb-229dcc454e4b/272__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:35:05.374+00:00"
+    },
+    {
+      "id": "e0fac99d-26b6-46a2-8098-c3e9382ab9e8",
+      "title": "시지프스의 연인",
+      "artist_id": "04f45299-6f93-4734-8e40-b76cb8701ff8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/04f45299-6f93-4734-8e40-b76cb8701ff8/27__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:35:08.632+00:00"
+    },
+    {
+      "id": "e18ee877-f28b-43ca-97d9-fd772d356041",
+      "title": "People and Blue",
+      "artist_id": "a46923c8-94b3-4a92-8430-f9752a2da896",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a46923c8-94b3-4a92-8430-f9752a2da896/96__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:35:13.724+00:00"
+    },
+    {
+      "id": "e26e5ab8-dc57-452b-9ed1-13edff47e58d",
+      "title": "곡선운동의 궤적으로부터 롯데월드타워 230817",
+      "artist_id": "4ea509fd-7f19-4420-8ed3-0c84836685dd",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4ea509fd-7f19-4420-8ed3-0c84836685dd/14__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:35:15.823+00:00"
+    },
+    {
+      "id": "e455f086-1e14-40cd-983c-0030dee9798c",
+      "title": "오봉을 바라보다",
+      "artist_id": "3554d61a-06f8-4f10-af73-43373923a5be",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3554d61a-06f8-4f10-af73-43373923a5be/109__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:35:20.312+00:00"
+    },
+    {
+      "id": "e637bb45-e888-443b-8f2e-8911c79d9ba7",
+      "title": "대지",
+      "artist_id": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/213__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:35:22.716+00:00"
+    },
+    {
+      "id": "e814543b-276c-444b-bfa0-21eeb8eb15dd",
+      "title": "山",
+      "artist_id": "04f45299-6f93-4734-8e40-b76cb8701ff8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/04f45299-6f93-4734-8e40-b76cb8701ff8/25__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:35:25.25+00:00"
+    },
+    {
+      "id": "e876bdc0-ba9d-4d94-a627-211f2cc35a2f",
+      "title": "WildFlower Collage 25",
+      "artist_id": "48b9cea1-9667-4d7c-94b2-778824d0fb8f",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/48b9cea1-9667-4d7c-94b2-778824d0fb8f/118__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:35:29.676+00:00"
+    },
+    {
+      "id": "ea5176a1-ac9b-40a4-9385-7f5ca3bc700c",
+      "title": "이중초상화(A double portrait) #1",
+      "artist_id": "76cf64c7-121d-4eb8-b010-8246c11a2f68",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/76cf64c7-121d-4eb8-b010-8246c11a2f68/158__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:35:33.137+00:00"
+    },
+    {
+      "id": "eb3d0060-238f-494a-bb63-0432c8fda7c4",
+      "title": "무문관 50장(연작판화)",
+      "artist_id": "5f1c4d25-f6de-4f4a-b9f3-a82430e2d824",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/5f1c4d25-f6de-4f4a-b9f3-a82430e2d824/32__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:35:35.491+00:00"
+    },
+    {
+      "id": "ec78c03b-9e16-46a2-af71-7e28ac12da60",
+      "title": "지리산3",
+      "artist_id": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/186__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:35:37.734+00:00"
+    },
+    {
+      "id": "f1270e2e-b3f2-41af-9527-896a6e84157c",
+      "title": "Ottogi Earthy Rainbow",
+      "artist_id": "a8d68dcb-f8c5-4e40-9705-b2bb95f18190",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a8d68dcb-f8c5-4e40-9705-b2bb95f18190/232__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:35:40.384+00:00"
+    },
+    {
+      "id": "f191466f-e6aa-4b91-a2d3-ef0a6c270c02",
+      "title": "탈방",
+      "artist_id": "24950b2e-34d5-4b27-8a14-8b1d690f6fb8",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/24950b2e-34d5-4b27-8a14-8b1d690f6fb8/141__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:35:46.932+00:00"
+    },
+    {
+      "id": "f209b012-a72e-4ae9-ad71-2475f39e1e69",
+      "title": "두상연구-거인의 초상",
+      "artist_id": "3fc4005a-f793-4bb6-bad8-acb1b4c8cdc9",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3fc4005a-f793-4bb6-bad8-acb1b4c8cdc9/31__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:35:50.921+00:00"
+    },
+    {
+      "id": "f27c5035-5f1b-424a-9704-f75e0bb1296f",
+      "title": "바람 불어도",
+      "artist_id": "17106ddc-fb29-4d46-8fe5-24f9189c8ee6",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/17106ddc-fb29-4d46-8fe5-24f9189c8ee6/122__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:35:55.874+00:00"
+    },
+    {
+      "id": "f311208c-8002-4dbe-aeb4-58dcc4b2b0b6",
+      "title": "산",
+      "artist_id": "3b78b2d4-66fe-4343-97b8-1f0ab53de219",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3b78b2d4-66fe-4343-97b8-1f0ab53de219/178__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:36:00.143+00:00"
+    },
+    {
+      "id": "f4ad6271-5dbe-4184-b77c-753998d4b4f6",
+      "title": "언덕위의 집",
+      "artist_id": "0aea8f22-3c00-4f4a-8f88-338fe69d1bb2",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/0aea8f22-3c00-4f4a-8f88-338fe69d1bb2/13__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:36:02.64+00:00"
+    },
+    {
+      "id": "f5c45d1a-e192-4dfd-81fb-5f62a12930f8",
+      "title": "눈밭01",
+      "artist_id": "516fb33d-ce72-458a-bc17-f6003c089247",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/516fb33d-ce72-458a-bc17-f6003c089247/68__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:36:06.577+00:00"
+    },
+    {
+      "id": "f5f65a98-2516-4904-9917-7392b1e47d13",
+      "title": "Free will",
+      "artist_id": "b4e7aea8-5d97-47ff-ab3d-d1c3a96525af",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/b4e7aea8-5d97-47ff-ab3d-d1c3a96525af/229__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:36:11.189+00:00"
+    },
+    {
+      "id": "f6cc0d47-8dda-430a-b7c9-2d4c7c6397d1",
+      "title": "오리",
+      "artist_id": "7abe1f77-c8db-4b07-8ffa-c0d91e26b480",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/7abe1f77-c8db-4b07-8ffa-c0d91e26b480/275__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:36:13.717+00:00"
+    },
+    {
+      "id": "f996174c-1a9d-43cd-832c-95e9c34651f1",
+      "title": "두상연구 - 가르마가 있는 두상1",
+      "artist_id": "3fc4005a-f793-4bb6-bad8-acb1b4c8cdc9",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3fc4005a-f793-4bb6-bad8-acb1b4c8cdc9/29__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:36:17.535+00:00"
+    },
+    {
+      "id": "f9d78319-2132-4097-8214-6d3dea73e318",
+      "title": "무제",
+      "artist_id": "a8f538c9-bf9a-45cc-bf8b-f25a99d8f3fe",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a8f538c9-bf9a-45cc-bf8b-f25a99d8f3fe/197__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:36:20.374+00:00"
+    },
+    {
+      "id": "fa19fcb9-0629-440c-93a9-a5508b1b9e02",
+      "title": "너와 나 사이 #2\n Between you and me",
+      "artist_id": "52b7dcc4-7c74-49b7-8869-9d71e1fedaa1",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/52b7dcc4-7c74-49b7-8869-9d71e1fedaa1/133__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:36:23.917+00:00"
+    },
+    {
+      "id": "fa6ad0d3-8974-4e6f-bd72-a33e2989ff82",
+      "title": "wishlist",
+      "artist_id": "694ba882-2df5-4483-97fd-f3078070ad5d",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/694ba882-2df5-4483-97fd-f3078070ad5d/101__original.webp"
+      ],
+      "updated_at": "2026-02-13T05:53:10.212+00:00"
+    },
+    {
+      "id": "faba9864-0b11-4c53-b635-a2ab67f08df5",
+      "title": "The Houses at Night,2021, #81",
+      "artist_id": "0aea8f22-3c00-4f4a-8f88-338fe69d1bb2",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/0aea8f22-3c00-4f4a-8f88-338fe69d1bb2/12__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:36:30.311+00:00"
+    },
+    {
+      "id": "fc75c24a-3c41-4271-af1e-16df75bbef08",
+      "title": "염원의 안식처  ",
+      "artist_id": "130afdb8-1f02-45ce-89db-e7d15522d2b9",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/130afdb8-1f02-45ce-89db-e7d15522d2b9/y9bdodpdge_1771040084426__original.webp"
+      ],
+      "updated_at": "2026-02-14T03:34:55.826+00:00"
+    },
+    {
+      "id": "fc9605ca-6dcc-4aaa-8cab-b792045eba46",
+      "title": "휘어진 세계로부터_모나미볼펜 1",
+      "artist_id": "4ea509fd-7f19-4420-8ed3-0c84836685dd",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4ea509fd-7f19-4420-8ed3-0c84836685dd/16__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:36:32.426+00:00"
+    },
+    {
+      "id": "fd177b22-072d-4750-a7e7-732b1628e094",
+      "title": "귀찮아...",
+      "artist_id": "47501893-6f94-4a08-8586-a2a34edc8ded",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/47501893-6f94-4a08-8586-a2a34edc8ded/28__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:36:34.955+00:00"
+    },
+    {
+      "id": "fec0748e-58e3-4672-aa75-9b353289c73c",
+      "title": "The Stare",
+      "artist_id": "75c78d81-768d-4bd2-b323-67a4f9792719",
+      "images": [
+        "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/75c78d81-768d-4bd2-b323-67a4f9792719/159__original.webp"
+      ],
+      "updated_at": "2026-02-13T03:36:39.307+00:00"
+    }
+  ]
+}
