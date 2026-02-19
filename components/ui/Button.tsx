@@ -6,6 +6,16 @@ import { m } from 'framer-motion';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
+type ButtonSize = 'xs' | 'sm' | 'md' | 'lg';
+type IconLayout = 'inline' | 'fixed-left';
+
+const FIXED_LEFT_ICON_OFFSET: Record<ButtonSize, string> = {
+  xs: 'left-3',
+  sm: 'left-4',
+  md: 'left-6',
+  lg: 'left-8',
+};
+
 export const buttonVariants = cva(
   'inline-flex items-center justify-center font-bold rounded-lg transition-all duration-300 ease-out group',
   {
@@ -44,6 +54,9 @@ interface ButtonProps extends VariantProps<typeof buttonVariants> {
   external?: boolean;
   loading?: boolean;
   disabled?: boolean;
+  leadingIcon?: React.ReactNode;
+  iconLayout?: IconLayout;
+  iconClassName?: string;
   className?: string;
   type?: 'button' | 'submit' | 'reset';
 }
@@ -57,6 +70,9 @@ export default function Button({
   external = false,
   loading = false,
   disabled = false,
+  leadingIcon,
+  iconLayout = 'inline',
+  iconClassName = '',
   className = '',
   type = 'button',
 }: ButtonProps) {
@@ -88,7 +104,18 @@ export default function Button({
     ? 'opacity-50 cursor-not-allowed transform-none'
     : 'active:scale-[0.98] cursor-pointer';
 
-  const styles = cn(buttonVariants({ variant, size }), interactiveClasses, className);
+  const resolvedSize = (size ?? 'md') as ButtonSize;
+  const isBusy = loading || isLoading;
+  const hasLeadingIcon = Boolean(leadingIcon);
+  const isFixedLeftLayout = iconLayout === 'fixed-left' && (hasLeadingIcon || isBusy);
+  const iconOffsetClass = FIXED_LEFT_ICON_OFFSET[resolvedSize];
+
+  const styles = cn(
+    buttonVariants({ variant, size }),
+    interactiveClasses,
+    isFixedLeftLayout && 'relative',
+    className
+  );
 
   const handleLinkClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     if (isDisabled) {
@@ -104,13 +131,31 @@ export default function Button({
 
   const content = (
     <>
-      {(loading || isLoading) && (
+      {isBusy && (
         <m.div
-          className="mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full"
+          className={cn(
+            'h-4 w-4 border-2 border-white border-t-transparent rounded-full',
+            isFixedLeftLayout
+              ? `absolute ${iconOffsetClass} top-1/2 -translate-y-1/2 pointer-events-none`
+              : 'mr-2'
+          )}
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
           aria-hidden="true"
         />
+      )}
+      {hasLeadingIcon && !isBusy && (
+        <span
+          aria-hidden="true"
+          className={cn(
+            isFixedLeftLayout
+              ? `absolute ${iconOffsetClass} top-1/2 -translate-y-1/2 pointer-events-none`
+              : 'mr-2 inline-flex items-center',
+            iconClassName
+          )}
+        >
+          {leadingIcon}
+        </span>
       )}
       {children}
     </>

@@ -27,12 +27,13 @@ export default function NotFound() {
           </Link>
           <Link
             href="/artworks"
-            className="inline-flex items-center justify-center relative px-6 py-3 bg-primary hover:bg-primary-strong text-white font-bold rounded-lg transition-colors shadow-sm hover:shadow-md min-h-[48px]"
+            className="inline-grid grid-cols-[1.25rem_auto_1.25rem] items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-strong text-white font-bold rounded-lg transition-colors shadow-sm hover:shadow-md min-h-[48px]"
           >
-            <span aria-hidden="true" className="absolute left-6">
+            <span aria-hidden="true">🎨</span>
+            <span>작품 둘러보기</span>
+            <span aria-hidden="true" className="invisible">
               🎨
             </span>
-            <span className="text-center">작품 둘러보기</span>
           </Link>
         </div>
 

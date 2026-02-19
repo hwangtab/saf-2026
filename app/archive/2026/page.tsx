@@ -112,24 +112,22 @@ export default async function Archive2026Page() {
                     href={EXTERNAL_LINKS.JOIN_MEMBER}
                     external
                     variant="accent"
-                    className="w-full relative"
+                    className="w-full"
                     size="md"
+                    leadingIcon="🤝"
+                    iconLayout="fixed-left"
                   >
-                    <span aria-hidden="true" className="absolute left-8">
-                      🤝
-                    </span>
-                    <span className="text-center">조합원 가입하기</span>
+                    조합원 가입하기
                   </Button>
                   <Button
                     href="/artworks"
                     variant="secondary"
-                    className="w-full relative"
+                    className="w-full"
                     size="md"
+                    leadingIcon="🎨"
+                    iconLayout="fixed-left"
                   >
-                    <span aria-hidden="true" className="absolute left-8">
-                      🎨
-                    </span>
-                    <span className="text-center">작품 구매하기</span>
+                    작품 구매하기
                   </Button>
                   <div className="pt-4 text-sm text-charcoal-muted">
                     <p>
