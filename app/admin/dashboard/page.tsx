@@ -237,10 +237,10 @@ export default async function AdminDashboardPage() {
           <AdminCardHeader className="rounded-t-2xl">
             <h2 className="text-base font-semibold text-slate-900">최근 등록된 작품</h2>
             <Link
-              href="/admin/artworks"
+              href="/admin/artworks?sort=recent"
               className="text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:underline"
             >
-              전체 보기
+              최근 등록순으로 보기
             </Link>
           </AdminCardHeader>
           <div className="p-0">

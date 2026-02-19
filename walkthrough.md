@@ -130,3 +130,85 @@
 
 - `npm run lint` 통과
 - `npm run type-check` 통과
+
+---
+
+## 최근 등록 검수 큐 개선
+
+### 1) 대시보드 동선 수정
+
+- `/Users/hwang-gyeongha/saf/app/admin/dashboard/page.tsx`
+  - 최근 작품 섹션 제목을 `최근 작가 직접 등록 작품`으로 변경
+  - CTA를 `최근 등록 검수하기`로 변경
+  - 링크를 `/admin/artworks?queue=artist-recent`로 연결
+  - 빈 상태 문구를 검수 맥락에 맞게 조정
+
+### 2) 최근 작품 데이터 기준 개선
+
+- `/Users/hwang-gyeongha/saf/app/actions/admin-dashboard-overview.ts`
+  - 최근 작품 산출 시 `activity_logs.action = artist_artwork_created` 로그를 우선 사용
+  - 로그 기준 5개가 부족할 경우, `artists.user_id`가 연결된 작품 최신순으로 보강
+  - 결과적으로 대시보드 최근 카드가 “작가 직접 등록” 의도에 맞도록 정렬
+
+### 3) 작품 목록 검수 큐 모드 추가
+
+- `/Users/hwang-gyeongha/saf/app/admin/artworks/page.tsx`
+  - `queue` 검색 파라미터 추가 (`queue=artist-recent`)
+  - 큐 모드일 때:
+    - `artists.user_id`가 연결된 작품만 조회
+    - 페이지 타이틀/설명 문구를 검수 큐 문맥으로 전환
+    - 우측 액션 버튼을 `일반 작품 목록` 복귀 버튼으로 전환
+  - 기본 모드에서는 기존 작품 관리 동작 유지
+
+### 4) 검수 큐 UI/정렬 보강
+
+- `/Users/hwang-gyeongha/saf/app/admin/artworks/admin-artwork-list.tsx`
+  - `reviewMode`(`artist-recent`) 지원 추가
+  - 큐 모드에서 기본 정렬을 `등록일 내림차순`으로 초기화
+  - 상단에 `검수 큐` 배지 + 안내 문구 + `일반 목록으로 이동` 버튼 추가
+  - 테이블에 `등록일` 컬럼 및 정렬 추가
+  - 빈 상태 `colSpan`을 컬럼 수에 맞게 조정
+
+## 검증 결과
+
+- `npm run lint` 통과
+- `npm run type-check` 통과
+
+---
+
+## 최근 등록 정렬 필터 전환 (방향 변경)
+
+사용자 피드백(검수 큐 불필요, 최근 등록 작품 전체 확인 필요)에 따라 기존 검수 큐 접근을 단순 정렬 필터 방식으로 전환했습니다.
+
+### 1) 대시보드 CTA 단순화
+
+- `/Users/hwang-gyeongha/saf/app/admin/dashboard/page.tsx`
+  - 카드 제목을 `최근 등록된 작품`으로 정리
+  - CTA를 `최근 등록순으로 보기`로 변경
+  - 링크를 `/admin/artworks?sort=recent`로 변경
+
+### 2) 대시보드 최근 작품 데이터 기준 복원
+
+- `/Users/hwang-gyeongha/saf/app/actions/admin-dashboard-overview.ts`
+  - 최근 작품 소스를 다시 전체 작품 최신 등록 5건으로 복원
+  - `artist_artwork_created` 로그 우선 로직 제거
+
+### 3) 작품 관리 페이지 라우팅 단순화
+
+- `/Users/hwang-gyeongha/saf/app/admin/artworks/page.tsx`
+  - `queue` 파라미터 및 전용 모드 제거
+  - `sort` 파라미터(`recent`, `oldest`)를 초기 필터로 전달
+  - 기본 진입은 기존과 동일하게 전체 작품 관리
+
+### 4) 작품 목록 정렬 필터 추가
+
+- `/Users/hwang-gyeongha/saf/app/admin/artworks/admin-artwork-list.tsx`
+  - 정렬 필터 추가: `기본 정렬`, `최근 등록순`, `오래된 등록순`
+  - URL `sort` 쿼리와 양방향 동기화
+  - 기존 컬럼 헤더 정렬과 함께 사용 가능하도록 상태 매핑 처리
+  - 검수 큐 배지/안내/복귀 버튼 등 전용 UI 제거
+
+## 검증 결과
+
+- `npm run lint` 통과
+- `npm run type-check` 통과

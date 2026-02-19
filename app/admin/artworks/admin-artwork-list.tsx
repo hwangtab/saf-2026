@@ -31,18 +31,21 @@ type ArtworkItem = {
   status: 'available' | 'reserved' | 'sold' | 'hidden';
   is_hidden: boolean;
   images: string[] | null;
+  created_at: string | null;
   artists: { name_ko: string | null } | null;
 };
 
 type StatusFilter = 'all' | 'available' | 'reserved' | 'sold';
 type VisibilityFilter = 'all' | 'visible' | 'hidden';
-type SortKey = 'artwork_info' | 'status' | 'visibility';
+type SortKey = 'artwork_info' | 'status' | 'visibility' | 'created_at';
 type SortDirection = 'asc' | 'desc';
+type SortFilter = 'default' | 'recent' | 'oldest';
 
 type InitialArtworkFilters = {
   status?: string;
   visibility?: string;
   q?: string;
+  sort?: string;
 };
 
 function normalizeStatusFilter(value: string | undefined): StatusFilter {
@@ -57,6 +60,45 @@ function normalizeVisibilityFilter(value: string | undefined): VisibilityFilter 
 
 function normalizeQuery(value: string | undefined): string {
   return (value || '').trim();
+}
+
+function normalizeSortFilter(value: string | undefined): SortFilter {
+  if (value === 'recent' || value === 'oldest') return value;
+  return 'default';
+}
+
+function getSortStateFromFilter(sortFilter: SortFilter): {
+  key: SortKey;
+  direction: SortDirection;
+} {
+  if (sortFilter === 'recent') {
+    return { key: 'created_at', direction: 'desc' };
+  }
+
+  if (sortFilter === 'oldest') {
+    return { key: 'created_at', direction: 'asc' };
+  }
+
+  return { key: 'artwork_info', direction: 'asc' };
+}
+
+function mapSortStateToFilter(sortKey: SortKey, sortDirection: SortDirection): SortFilter {
+  if (sortKey !== 'created_at') return 'default';
+  return sortDirection === 'desc' ? 'recent' : 'oldest';
+}
+
+function formatDate(dateString: string | null | undefined) {
+  if (!dateString) return '-';
+
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return '-';
+
+  return date.toLocaleDateString('ko-KR', {
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 }
 
 export function AdminArtworkList({
@@ -74,6 +116,8 @@ export function AdminArtworkList({
   const initialStatusFilter = normalizeStatusFilter(initialFilters?.status);
   const initialVisibilityFilter = normalizeVisibilityFilter(initialFilters?.visibility);
   const initialQuery = normalizeQuery(initialFilters?.q);
+  const initialSortFilter = normalizeSortFilter(initialFilters?.sort);
+  const initialSortState = getSortStateFromFilter(initialSortFilter);
 
   useEffect(() => {
     setOptimisticArtworks(artworks);
@@ -85,8 +129,9 @@ export function AdminArtworkList({
   const [statusFilter, setStatusFilter] = useState<StatusFilter>(initialStatusFilter);
   const [visibilityFilter, setVisibilityFilter] =
     useState<VisibilityFilter>(initialVisibilityFilter);
-  const [sortKey, setSortKey] = useState<SortKey>('artwork_info');
-  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+  const [sortFilter, setSortFilter] = useState<SortFilter>(initialSortFilter);
+  const [sortKey, setSortKey] = useState<SortKey>(initialSortState.key);
+  const [sortDirection, setSortDirection] = useState<SortDirection>(initialSortState.direction);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxData, setLightboxData] = useState<{
@@ -105,11 +150,20 @@ export function AdminArtworkList({
     setQuery(initialQuery);
     setStatusFilter(initialStatusFilter);
     setVisibilityFilter(initialVisibilityFilter);
+    setSortFilter(initialSortFilter);
+    const nextSortState = getSortStateFromFilter(initialSortFilter);
+    setSortKey(nextSortState.key);
+    setSortDirection(nextSortState.direction);
     setSelectedIds(new Set());
-  }, [initialQuery, initialStatusFilter, initialVisibilityFilter]);
+  }, [initialQuery, initialStatusFilter, initialVisibilityFilter, initialSortFilter]);
 
   const updateFilterParams = useCallback(
-    (updates: { q?: string; status?: StatusFilter; visibility?: VisibilityFilter }) => {
+    (updates: {
+      q?: string;
+      status?: StatusFilter;
+      visibility?: VisibilityFilter;
+      sort?: SortFilter;
+    }) => {
       const params = new URLSearchParams(searchParams.toString());
 
       if ('q' in updates) {
@@ -136,6 +190,15 @@ export function AdminArtworkList({
           params.set('visibility', visibility);
         } else {
           params.delete('visibility');
+        }
+      }
+
+      if ('sort' in updates) {
+        const sort = updates.sort;
+        if (sort && sort !== 'default') {
+          params.set('sort', sort);
+        } else {
+          params.delete('sort');
         }
       }
 
@@ -187,12 +250,20 @@ export function AdminArtworkList({
       return artistA.localeCompare(artistB, 'ko');
     };
 
+    const compareCreatedAt = (a: ArtworkItem, b: ArtworkItem) => {
+      const aTime = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const bTime = b.created_at ? new Date(b.created_at).getTime() : 0;
+      return aTime - bTime;
+    };
+
     sorted.sort((a, b) => {
       let result = 0;
       if (sortKey === 'artwork_info') {
         result = compareArtworkInfo(a, b);
       } else if (sortKey === 'status') {
         result = statusRank[a.status] - statusRank[b.status];
+      } else if (sortKey === 'created_at') {
+        result = compareCreatedAt(a, b);
       } else {
         result = Number(a.is_hidden) - Number(b.is_hidden);
       }
@@ -213,11 +284,19 @@ export function AdminArtworkList({
 
   const handleSort = (key: SortKey) => {
     if (sortKey === key) {
-      setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+      const nextDirection: SortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+      setSortDirection(nextDirection);
+      const nextSortFilter = mapSortStateToFilter(key, nextDirection);
+      setSortFilter(nextSortFilter);
+      updateFilterParams({ sort: nextSortFilter });
       return;
     }
+    const nextDirection: SortDirection = key === 'created_at' ? 'desc' : 'asc';
     setSortKey(key);
-    setSortDirection('asc');
+    setSortDirection(nextDirection);
+    const nextSortFilter = mapSortStateToFilter(key, nextDirection);
+    setSortFilter(nextSortFilter);
+    updateFilterParams({ sort: nextSortFilter });
   };
 
   const getSortArrow = (key: SortKey) => {
@@ -424,7 +503,7 @@ export function AdminArtworkList({
                 작품명 또는 작가명으로 검색할 수 있습니다. 현재 {filtered.length}개가 표시됩니다.
               </span>
             </div>
-            <div className="grid grid-cols-2 gap-3 sm:flex sm:justify-end">
+            <div className="grid grid-cols-3 gap-3 sm:flex sm:justify-end">
               <AdminSelect
                 value={statusFilter}
                 onChange={(e) => {
@@ -453,6 +532,23 @@ export function AdminArtworkList({
                 <option value="all">모든 노출</option>
                 <option value="visible">공개</option>
                 <option value="hidden">숨김</option>
+              </AdminSelect>
+              <AdminSelect
+                value={sortFilter}
+                onChange={(e) => {
+                  const nextSort = normalizeSortFilter(e.target.value);
+                  setSortFilter(nextSort);
+                  const nextSortState = getSortStateFromFilter(nextSort);
+                  setSortKey(nextSortState.key);
+                  setSortDirection(nextSortState.direction);
+                  updateFilterParams({ sort: nextSort });
+                  setSelectedIds(new Set());
+                }}
+                wrapperClassName="min-w-[140px]"
+              >
+                <option value="default">기본 정렬</option>
+                <option value="recent">최근 등록순</option>
+                <option value="oldest">오래된 등록순</option>
               </AdminSelect>
             </div>
           </div>
@@ -557,6 +653,20 @@ export function AdminArtworkList({
                 >
                   <button
                     type="button"
+                    onClick={() => handleSort('created_at')}
+                    className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
+                    aria-label={getSortAriaLabel('등록일', 'created_at')}
+                  >
+                    등록일
+                    <span className="text-[11px] text-gray-400">{getSortArrow('created_at')}</span>
+                  </button>
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  <button
+                    type="button"
                     onClick={() => handleSort('visibility')}
                     className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
                     aria-label={getSortAriaLabel('공개 여부', 'visibility')}
@@ -573,7 +683,7 @@ export function AdminArtworkList({
             <tbody className="bg-white divide-y divide-gray-200">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-0">
+                  <td colSpan={6} className="px-6 py-0">
                     <AdminEmptyState title="검색된 작품이 없습니다" />
                   </td>
                 </tr>
@@ -670,6 +780,11 @@ export function AdminArtworkList({
                         <option value="reserved">예약됨</option>
                         <option value="sold">판매 완료</option>
                       </AdminSelect>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="text-sm text-gray-500">
+                        {formatDate(artwork.created_at)}
+                      </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <button

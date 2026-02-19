@@ -13,6 +13,7 @@ type Props = {
     status?: string;
     visibility?: string;
     q?: string;
+    sort?: string;
   }>;
 };
 
@@ -23,7 +24,7 @@ export default async function AdminArtworksPage({ searchParams }: Props) {
 
   const { data: artworks } = await supabase
     .from('artworks')
-    .select('id, title, status, is_hidden, images, artists(name_ko)')
+    .select('id, title, status, is_hidden, images, created_at, artists(name_ko)')
     .order('created_at', { ascending: false });
 
   const normalizedArtworks = (artworks || []).map((artwork: any) => ({
@@ -48,6 +49,7 @@ export default async function AdminArtworksPage({ searchParams }: Props) {
           status: params.status,
           visibility: params.visibility,
           q: params.q,
+          sort: params.sort,
         }}
       />
     </div>
