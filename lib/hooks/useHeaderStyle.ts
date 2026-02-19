@@ -53,6 +53,16 @@ export function useHeaderStyle() {
       : 'bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200/50';
   }, [isArtworkDetail, hasHero, isScrolled]);
 
+  /* DEBUG: Check header state variables */
+  console.log('[HeaderDebug]', {
+    pathname,
+    currentPath,
+    hasHero,
+    isArtworkDetail,
+    isScrolled,
+    headerStyle,
+  });
+
   const isDarkText = !hasHero || isArtworkDetail || isScrolled;
   const textColor = isDarkText ? 'text-charcoal' : 'text-white';
 
