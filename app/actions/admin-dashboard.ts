@@ -481,7 +481,13 @@ async function computeDashboardStats(period: DashboardPeriodKey = '7d'): Promise
       .select('id', { count: 'exact', head: true })
       .eq('role', 'artist')
       .eq('status', 'suspended'),
-    supabase.from('profiles').select('id').eq('status', 'pending'),
+    supabase
+      .from('profiles')
+      .select('id, name, email, status, created_at', { count: 'exact' })
+      .in('role', ['user', 'artist'])
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false })
+      .limit(5),
     supabase.from('artworks').select('id', { count: 'exact', head: true }),
     supabase.from('artworks').select('id', { count: 'exact', head: true }).eq('is_hidden', true),
     supabase.from('artworks').select('id', { count: 'exact', head: true }).eq('is_hidden', false),
@@ -528,11 +534,18 @@ async function computeDashboardStats(period: DashboardPeriodKey = '7d'): Promise
   }
 
   if (pendingProfilesResult.error) throw pendingProfilesResult.error;
-  const pendingProfileIds = (pendingProfilesResult.data || [])
+  const pendingProfiles = (pendingProfilesResult.data || []) as Array<{
+    id: string;
+    name: string | null;
+    email: string | null;
+    status: string | null;
+    created_at: string;
+  }>;
+  const pendingProfileIds = pendingProfiles
     .map((profile) => profile.id)
     .filter((id): id is string => typeof id === 'string');
 
-  let pendingApplicationsCount = 0;
+  const pendingApplicationsCount = pendingProfilesResult.count || 0;
   let recentPendingApplicationsRaw: Array<{
     user_id: string;
     artist_name: string | null;
@@ -541,24 +554,15 @@ async function computeDashboardStats(period: DashboardPeriodKey = '7d'): Promise
   }> = [];
 
   if (pendingProfileIds.length > 0) {
-    const [pendingApplicationCountResult, recentPendingApplicationsResult] = await Promise.all([
-      supabase
-        .from('artist_applications')
-        .select('user_id', { count: 'exact', head: true })
-        .in('user_id', pendingProfileIds),
-      supabase
+    const { data: recentPendingApplicationsData, error: recentPendingApplicationsError } =
+      await supabase
         .from('artist_applications')
         .select('user_id, artist_name, contact, created_at')
-        .in('user_id', pendingProfileIds)
-        .order('created_at', { ascending: false })
-        .limit(5),
-    ]);
+        .in('user_id', pendingProfileIds);
 
-    if (pendingApplicationCountResult.error) throw pendingApplicationCountResult.error;
-    if (recentPendingApplicationsResult.error) throw recentPendingApplicationsResult.error;
+    if (recentPendingApplicationsError) throw recentPendingApplicationsError;
 
-    pendingApplicationsCount = pendingApplicationCountResult.count || 0;
-    recentPendingApplicationsRaw = (recentPendingApplicationsResult.data || []).map((item) => ({
+    recentPendingApplicationsRaw = (recentPendingApplicationsData || []).map((item) => ({
       user_id: item.user_id,
       artist_name: item.artist_name,
       contact: item.contact,
@@ -566,25 +570,9 @@ async function computeDashboardStats(period: DashboardPeriodKey = '7d'): Promise
     }));
   }
 
-  const recentApplicationUserIds = recentPendingApplicationsRaw.map((item) => item.user_id);
-  let recentApplicationProfiles: Array<{
-    id: string;
-    name: string | null;
-    email: string | null;
-    status: string | null;
-  }> = [];
-
-  if (recentApplicationUserIds.length > 0) {
-    const { data: profilesData, error: profilesError } = await supabase
-      .from('profiles')
-      .select('id, name, email, status')
-      .in('id', recentApplicationUserIds);
-
-    if (profilesError) throw profilesError;
-    recentApplicationProfiles = profilesData || [];
-  }
-
-  const profileMap = new Map(recentApplicationProfiles.map((profile) => [profile.id, profile]));
+  const pendingApplicationMap = new Map(
+    recentPendingApplicationsRaw.map((application) => [application.user_id, application])
+  );
 
   const { data: recentArtworksRaw, error: recentArtworksError } = await supabase
     .from('artworks')
@@ -807,15 +795,15 @@ async function computeDashboardStats(period: DashboardPeriodKey = '7d'): Promise
       dailyArtists,
       dailyArtworks,
     },
-    recentApplications: recentPendingApplicationsRaw.map((application) => {
-      const profile = profileMap.get(application.user_id);
+    recentApplications: pendingProfiles.map((profile) => {
+      const application = pendingApplicationMap.get(profile.id);
       return {
-        id: application.user_id,
-        name: application.artist_name || profile?.name || '(이름 없음)',
-        email: profile?.email || '',
-        contact: application.contact || '',
-        created_at: application.created_at,
-        status: profile?.status || 'pending',
+        id: profile.id,
+        name: application?.artist_name || profile.name || '(이름 없음)',
+        email: profile.email || '',
+        contact: application?.contact || '',
+        created_at: application?.created_at || profile.created_at,
+        status: profile.status || 'pending',
       };
     }),
     recentArtworks: (recentArtworksRaw || []).map((artwork) => {

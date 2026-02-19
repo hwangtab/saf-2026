@@ -16,11 +16,12 @@ type PendingApplicationRow = {
   created_at: string;
 };
 
-type RecentApplicationProfileRow = {
+type RecentPendingProfileRow = {
   id: string;
   name: string | null;
   email: string | null;
   status: string | null;
+  created_at: string;
 };
 
 type RecentArtworkRow = {
@@ -122,7 +123,8 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
   const [
     totalArtistsResult,
     linkedArtistsResult,
-    pendingProfilesResult,
+    pendingProfilesCountResult,
+    recentPendingProfilesResult,
     totalArtworksResult,
     soldArtworksResult,
     hiddenArtworksResult,
@@ -134,7 +136,18 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
       .from('artists')
       .select('id', { count: 'exact', head: true })
       .not('user_id', 'is', null),
-    supabase.from('profiles').select('id').eq('role', 'artist').eq('status', 'pending'),
+    supabase
+      .from('profiles')
+      .select('id', { count: 'exact', head: true })
+      .in('role', ['user', 'artist'])
+      .eq('status', 'pending'),
+    supabase
+      .from('profiles')
+      .select('id, name, email, status, created_at')
+      .in('role', ['user', 'artist'])
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false })
+      .limit(5),
     supabase.from('artworks').select('id', { count: 'exact', head: true }),
     supabase.from('artworks').select('id', { count: 'exact', head: true }).eq('status', 'sold'),
     supabase.from('artworks').select('id', { count: 'exact', head: true }).eq('is_hidden', true),
@@ -153,7 +166,8 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
   const baseErrors = [
     totalArtistsResult.error,
     linkedArtistsResult.error,
-    pendingProfilesResult.error,
+    pendingProfilesCountResult.error,
+    recentPendingProfilesResult.error,
     totalArtworksResult.error,
     soldArtworksResult.error,
     hiddenArtworksResult.error,
@@ -165,32 +179,21 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
     throw baseErrors[0];
   }
 
-  const pendingProfileIds = (pendingProfilesResult.data || [])
-    .map((profile) => profile.id)
-    .filter((id): id is string => typeof id === 'string');
+  const pendingApplicationsCount = pendingProfilesCountResult.count || 0;
 
-  let pendingApplicationsCount = 0;
+  const recentPendingProfiles = (recentPendingProfilesResult.data ||
+    []) as RecentPendingProfileRow[];
+  const recentPendingProfileIds = recentPendingProfiles.map((profile) => profile.id);
   let recentPendingApplicationsRaw: PendingApplicationRow[] = [];
 
-  if (pendingProfileIds.length > 0) {
-    const [pendingApplicationCountResult, recentPendingApplicationsResult] = await Promise.all([
-      supabase
-        .from('artist_applications')
-        .select('user_id', { count: 'exact', head: true })
-        .in('user_id', pendingProfileIds),
-      supabase
-        .from('artist_applications')
-        .select('user_id, artist_name, contact, created_at')
-        .in('user_id', pendingProfileIds)
-        .order('created_at', { ascending: false })
-        .limit(5),
-    ]);
+  if (recentPendingProfileIds.length > 0) {
+    const { data: pendingApplicationRows, error: pendingApplicationRowsError } = await supabase
+      .from('artist_applications')
+      .select('user_id, artist_name, contact, created_at')
+      .in('user_id', recentPendingProfileIds);
 
-    if (pendingApplicationCountResult.error) throw pendingApplicationCountResult.error;
-    if (recentPendingApplicationsResult.error) throw recentPendingApplicationsResult.error;
-
-    pendingApplicationsCount = pendingApplicationCountResult.count || 0;
-    recentPendingApplicationsRaw = (recentPendingApplicationsResult.data || []).map((item) => ({
+    if (pendingApplicationRowsError) throw pendingApplicationRowsError;
+    recentPendingApplicationsRaw = (pendingApplicationRows || []).map((item) => ({
       user_id: item.user_id,
       artist_name: item.artist_name,
       contact: item.contact,
@@ -198,20 +201,9 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
     }));
   }
 
-  const recentApplicationUserIds = recentPendingApplicationsRaw.map((item) => item.user_id);
-  let recentApplicationProfiles: RecentApplicationProfileRow[] = [];
-
-  if (recentApplicationUserIds.length > 0) {
-    const { data: profileRows, error: profileRowsError } = await supabase
-      .from('profiles')
-      .select('id, name, email, status')
-      .in('id', recentApplicationUserIds);
-
-    if (profileRowsError) throw profileRowsError;
-    recentApplicationProfiles = profileRows || [];
-  }
-
-  const profileMap = new Map(recentApplicationProfiles.map((profile) => [profile.id, profile]));
+  const pendingApplicationMap = new Map(
+    recentPendingApplicationsRaw.map((application) => [application.user_id, application])
+  );
 
   const currentMonthSalesRows = currentMonthSoldRowsResult.data || [];
   const currentMonthRevenue = currentMonthSalesRows.reduce(
@@ -243,15 +235,15 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
       currentMonthRevenue,
       currentMonthSoldCount,
     },
-    recentApplications: recentPendingApplicationsRaw.map((application) => {
-      const profile = profileMap.get(application.user_id);
+    recentApplications: recentPendingProfiles.map((profile) => {
+      const application = pendingApplicationMap.get(profile.id);
       return {
-        id: application.user_id,
-        name: application.artist_name || profile?.name || '(이름 없음)',
-        email: profile?.email || '',
-        contact: application.contact || '',
-        created_at: application.created_at,
-        status: profile?.status || 'pending',
+        id: profile.id,
+        name: application?.artist_name || profile.name || '(이름 없음)',
+        email: profile.email || '',
+        contact: application?.contact || '',
+        created_at: application?.created_at || profile.created_at,
+        status: profile.status || 'pending',
       };
     }),
     recentArtworks: ((recentArtworksResult.data || []) as RecentArtworkRow[]).map((artwork) => {
