@@ -202,11 +202,13 @@ export default async function ArtworkDetailPage({ params, searchParams }: Props)
                 {/* 구매 링크가 없는 경우 - 안내 문구 표시 */}
                 {artwork.price && artwork.price !== '문의' && !artwork.shopUrl && !artwork.sold && (
                   <>
-                    {/* 1. 배송/결제 안내 (일반적인 정보) - 상단 분리 */}
-                    <PurchaseGuide className="mb-6 bg-transparent p-0" />
+                    {/* 1. 배송/결제 안내 (일반적인 정보) - 상단 분리 */
+                    /* 디자인 통일을 위해 bg-transparent 제거하여 회색 박스 형태 복구 */}
+                    <PurchaseGuide className="mb-6" />
 
-                    {/* 2. 구매 문의 CTA 섹션 */}
-                    <div className="bg-gray-50 rounded-xl p-6 mb-6 text-center border border-gray-100">
+                    {/* 2. 구매 문의 CTA 섹션 */
+                    /* 위쪽 PurchaseGuide(회색)와 구분되도록 배경을 흰색으로 변경하고 테두리 강조 */}
+                    <div className="bg-white rounded-xl p-6 mb-6 text-center border border-gray-200 shadow-sm">
                       <h3 className="text-lg font-bold text-charcoal mb-4">
                         작품 구매를 원하시나요?
                       </h3>
