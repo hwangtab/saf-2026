@@ -199,6 +199,24 @@ export default async function ArtworkDetailPage({ params, searchParams }: Props)
                   </>
                 )}
 
+                {/* 구매 링크가 없는 경우 - 안내 문구 표시 */}
+                {artwork.price && artwork.price !== '문의' && !artwork.shopUrl && !artwork.sold && (
+                  <>
+                    {/* Purchase Guide in Gray Box */}
+                    <div className="bg-gray-50 rounded-xl p-4 mb-4">
+                      <PurchaseGuide className="bg-transparent p-0 mb-4" />
+                      <div className="text-center border-t border-gray-200 pt-4">
+                        <h3 className="text-lg font-bold text-gray-900 mb-1">작품구매 문의하기</h3>
+                        <p className="text-sm text-gray-500">
+                          온라인 결제 페이지가 준비 중입니다.
+                          <br />
+                          아래 연락처로 문의해주시면 안내해 드리겠습니다.
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                )}
+
                 {/* 연락처 옵션 */}
                 <div className="grid grid-cols-2 gap-4">
                   <Button href="tel:02-764-3114" variant="white" className="gap-2 group">
