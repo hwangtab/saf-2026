@@ -109,6 +109,8 @@ const ARTWORK_REVERT_KEYS = [
   'material',
   'year',
   'edition',
+  'edition_type',
+  'edition_limit',
   'price',
   'status',
   'sold_at',
@@ -127,6 +129,8 @@ const ARTWORK_RESTORE_KEYS = [
   'material',
   'year',
   'edition',
+  'edition_type',
+  'edition_limit',
   'price',
   'status',
   'sold_at',
@@ -973,624 +977,680 @@ export async function purgeActivityTrashLog(logId: string, reason: string) {
   };
 }
 
-export async function revertActivityLog(logId: string, reason: string) {
-  const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
-  const actor = await resolveActorIdentity(admin.id, 'admin');
+export async function revertActivityLog(
+  logId: string,
+  reason: string
+): Promise<{ success: boolean; message?: string }> {
+  try {
+    const admin = await requireAdmin();
+    const supabase = await createSupabaseAdminOrServerClient();
+    const actor = await resolveActorIdentity(admin.id, 'admin');
 
-  const { data: log, error: logError } = await supabase
-    .from('activity_logs')
-    .select('*')
-    .eq('id', logId)
-    .single();
+    const { data: log, error: logError } = await supabase
+      .from('activity_logs')
+      .select('*')
+      .eq('id', logId)
+      .single();
 
-  if (logError || !log) {
-    throw new Error('복구할 로그를 찾을 수 없습니다.');
-  }
-
-  if (!log.reversible) {
-    throw new Error('해당 로그는 복구를 지원하지 않습니다.');
-  }
-
-  if (log.purged_at) {
-    throw new Error('보관 기간 만료로 영구 삭제된 로그입니다.');
-  }
-
-  if (log.reverted_at) {
-    throw new Error('이미 복구가 완료된 로그입니다.');
-  }
-
-  if (log.trash_expires_at) {
-    const expiresAt = new Date(log.trash_expires_at);
-    if (!Number.isNaN(expiresAt.getTime()) && expiresAt.getTime() < Date.now()) {
-      throw new Error('보관 기간(30일)이 만료되어 복구할 수 없습니다.');
+    if (logError || !log) {
+      throw new Error('복구할 로그를 찾을 수 없습니다.');
     }
-  }
 
-  // For creation actions, we use after_snapshot to identify what to delete
-  const isCreationAction =
-    ARTWORK_CREATION_ACTIONS.has(log.action) ||
-    ARTIST_CREATION_ACTIONS.has(log.action) ||
-    log.action === 'artist_application_submitted';
+    if (!log.reversible) {
+      throw new Error('해당 로그는 복구를 지원하지 않습니다.');
+    }
 
-  if (!log.before_snapshot && !isCreationAction) {
-    throw new Error('복구 스냅샷 정보가 없습니다.');
-  }
+    if (log.purged_at) {
+      throw new Error('보관 기간 만료로 영구 삭제된 로그입니다.');
+    }
 
-  if (log.target_type === 'artwork') {
-    const isDeletionLog = ARTWORK_DELETION_ACTIONS.has(log.action);
-    const isCreationLog = ARTWORK_CREATION_ACTIONS.has(log.action);
-    const beforeList = asSnapshotList(log.before_snapshot);
-    const afterList = asSnapshotList(log.after_snapshot);
+    if (log.reverted_at) {
+      throw new Error('이미 복구가 완료된 로그입니다.');
+    }
 
-    if (isDeletionLog) {
-      const listToRestore = beforeList && beforeList.length > 0 ? beforeList : null;
-      if (listToRestore) {
-        const restoreRows = listToRestore.map((snapshot) =>
-          buildInsertPayload(snapshot, ARTWORK_RESTORE_KEYS)
-        );
-        const restoreIds = restoreRows
-          .map((row) => (typeof row.id === 'string' ? row.id : null))
-          .filter((id): id is string => !!id);
+    if (log.trash_expires_at) {
+      const expiresAt = new Date(log.trash_expires_at);
+      if (!Number.isNaN(expiresAt.getTime()) && expiresAt.getTime() < Date.now()) {
+        throw new Error('보관 기간(30일)이 만료되어 복구할 수 없습니다.');
+      }
+    }
 
-        if (restoreIds.length !== restoreRows.length) {
-          throw new Error('복구할 작품 식별 정보가 일부 누락되어 복구를 중단합니다.');
-        }
+    // For creation actions, we use after_snapshot to identify what to delete
+    const isCreationAction =
+      ARTWORK_CREATION_ACTIONS.has(log.action) ||
+      ARTIST_CREATION_ACTIONS.has(log.action) ||
+      log.action === 'artist_application_submitted';
 
-        for (const row of restoreRows) {
-          if (typeof row.artist_id !== 'string' || !row.artist_id) {
+    if (!log.before_snapshot && !isCreationAction) {
+      throw new Error('복구 스냅샷 정보가 없습니다.');
+    }
+
+    if (log.target_type === 'artwork') {
+      const isDeletionLog = ARTWORK_DELETION_ACTIONS.has(log.action);
+      const isCreationLog = ARTWORK_CREATION_ACTIONS.has(log.action);
+      const beforeList = asSnapshotList(log.before_snapshot);
+      const afterList = asSnapshotList(log.after_snapshot);
+
+      if (isDeletionLog) {
+        const listToRestore = beforeList && beforeList.length > 0 ? beforeList : null;
+        if (listToRestore) {
+          const restoreRows = listToRestore.map((snapshot) =>
+            buildInsertPayload(snapshot, ARTWORK_RESTORE_KEYS)
+          );
+          const restoreIds = restoreRows
+            .map((row) => (typeof row.id === 'string' ? row.id : null))
+            .filter((id): id is string => !!id);
+
+          if (restoreIds.length !== restoreRows.length) {
+            throw new Error('복구할 작품 식별 정보가 일부 누락되어 복구를 중단합니다.');
+          }
+
+          for (const row of restoreRows) {
+            if (typeof row.artist_id !== 'string' || !row.artist_id) {
+              throw new Error('복구할 작품의 작가 정보가 없어 복구를 중단합니다.');
+            }
+            if (typeof row.title !== 'string' || !row.title) {
+              throw new Error('복구할 작품의 제목 정보가 없어 복구를 중단합니다.');
+            }
+          }
+
+          const restoreArtistIds = Array.from(
+            new Set(
+              restoreRows
+                .map((row) => (typeof row.artist_id === 'string' ? row.artist_id : null))
+                .filter((artistId): artistId is string => !!artistId)
+            )
+          );
+          if (restoreArtistIds.length > 0) {
+            const { data: existingArtists } = await supabase
+              .from('artists')
+              .select('id')
+              .in('id', restoreArtistIds);
+            const existingArtistIdSet = new Set((existingArtists || []).map((artist) => artist.id));
+            const missingArtistCount = restoreArtistIds.filter(
+              (artistId) => !existingArtistIdSet.has(artistId)
+            ).length;
+
+            if (missingArtistCount > 0) {
+              throw new Error(
+                '복구할 작품과 연결된 작가 정보가 없어 복구를 중단합니다. 먼저 작가를 복구해주세요.'
+              );
+            }
+          }
+
+          const { data: existingRows } = await supabase
+            .from('artworks')
+            .select('id')
+            .in('id', restoreIds);
+          if ((existingRows || []).length > 0) {
+            throw new Error('이미 존재하는 작품이 포함되어 복구를 중단합니다.');
+          }
+
+          const { data: insertedRows, error: restoreError } = await supabase
+            .from('artworks')
+            .insert(restoreRows)
+            .select('id');
+          if (restoreError) throw restoreError;
+          if (!insertedRows || insertedRows.length !== restoreRows.length) {
+            throw new Error('복구 적용 중 일부 작품의 반영 결과를 확인하지 못했습니다.');
+          }
+        } else {
+          const snapshot = asSnapshotObject(log.before_snapshot);
+          if (!snapshot) {
+            throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
+          }
+
+          const payload = buildInsertPayload(snapshot, ARTWORK_RESTORE_KEYS);
+          const snapshotId = typeof payload.id === 'string' ? payload.id : log.target_id;
+          payload.id = snapshotId;
+
+          if (typeof payload.artist_id !== 'string' || !payload.artist_id) {
             throw new Error('복구할 작품의 작가 정보가 없어 복구를 중단합니다.');
           }
-          if (typeof row.title !== 'string' || !row.title) {
+          if (typeof payload.title !== 'string' || !payload.title) {
             throw new Error('복구할 작품의 제목 정보가 없어 복구를 중단합니다.');
           }
-        }
 
-        const { data: existingRows } = await supabase
-          .from('artworks')
-          .select('id')
-          .in('id', restoreIds);
-        if ((existingRows || []).length > 0) {
-          throw new Error('이미 존재하는 작품이 포함되어 복구를 중단합니다.');
-        }
+          const { data: existingArtist } = await supabase
+            .from('artists')
+            .select('id')
+            .eq('id', payload.artist_id)
+            .maybeSingle();
+          if (!existingArtist) {
+            throw new Error(
+              '복구할 작품과 연결된 작가 정보가 없어 복구를 중단합니다. 먼저 작가를 복구해주세요.'
+            );
+          }
 
-        const { data: insertedRows, error: restoreError } = await supabase
-          .from('artworks')
-          .insert(restoreRows)
-          .select('id');
-        if (restoreError) throw restoreError;
-        if (!insertedRows || insertedRows.length !== restoreRows.length) {
-          throw new Error('복구 적용 중 일부 작품의 반영 결과를 확인하지 못했습니다.');
-        }
-      } else {
-        const snapshot = asSnapshotObject(log.before_snapshot);
-        if (!snapshot) {
-          throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
-        }
+          const { data: existingArtwork } = await supabase
+            .from('artworks')
+            .select('id')
+            .eq('id', snapshotId)
+            .maybeSingle();
+          if (existingArtwork) {
+            throw new Error('이미 동일한 작품이 존재하여 복구를 중단합니다.');
+          }
 
-        const payload = buildInsertPayload(snapshot, ARTWORK_RESTORE_KEYS);
-        const snapshotId = typeof payload.id === 'string' ? payload.id : log.target_id;
-        payload.id = snapshotId;
-
-        if (typeof payload.artist_id !== 'string' || !payload.artist_id) {
-          throw new Error('복구할 작품의 작가 정보가 없어 복구를 중단합니다.');
+          const { data: insertedRow, error: restoreError } = await supabase
+            .from('artworks')
+            .insert(payload)
+            .select('id')
+            .single();
+          if (restoreError) throw restoreError;
+          if (!insertedRow?.id) {
+            throw new Error('복구 대상 작품을 생성하지 못했습니다.');
+          }
         }
-        if (typeof payload.title !== 'string' || !payload.title) {
-          throw new Error('복구할 작품의 제목 정보가 없어 복구를 중단합니다.');
+      } else if (isCreationLog) {
+        // Revert creation by deleting the created artwork
+        const afterSnapshot = asSnapshotObject(log.after_snapshot);
+        const artworkId = afterSnapshot?.id || log.target_id;
+
+        if (typeof artworkId !== 'string') {
+          throw new Error('삭제할 작품 ID를 찾을 수 없습니다.');
         }
 
         const { data: existingArtwork } = await supabase
           .from('artworks')
           .select('id')
-          .eq('id', snapshotId)
+          .eq('id', artworkId)
           .maybeSingle();
-        if (existingArtwork) {
-          throw new Error('이미 동일한 작품이 존재하여 복구를 중단합니다.');
+
+        if (!existingArtwork) {
+          throw new Error('삭제할 작품이 존재하지 않습니다. (이미 삭제됨)');
         }
 
-        const { data: insertedRow, error: restoreError } = await supabase
+        const { error: deleteError } = await supabase.from('artworks').delete().eq('id', artworkId);
+        if (deleteError) throw deleteError;
+      } else if (beforeList && beforeList.length > 0) {
+        const targetIds = beforeList
+          .map((item) => (typeof item.id === 'string' ? item.id : null))
+          .filter((id): id is string => !!id);
+
+        if (targetIds.length === 0) {
+          throw new Error('복구 대상 작품 정보를 찾을 수 없습니다.');
+        }
+
+        const { data: currentRows } = await supabase
           .from('artworks')
+          .select('id, updated_at')
+          .in('id', targetIds);
+
+        if (!currentRows || currentRows.length !== targetIds.length) {
+          throw new Error('복구 대상 작품 중 일부를 찾을 수 없어 복구를 중단합니다.');
+        }
+
+        const currentMap = new Map((currentRows || []).map((row) => [row.id, row.updated_at]));
+        const afterMap = new Map(
+          (afterList || [])
+            .map((item) => {
+              const id = typeof item.id === 'string' ? item.id : null;
+              const updatedAt = typeof item.updated_at === 'string' ? item.updated_at : null;
+              return id && updatedAt ? [id, updatedAt] : null;
+            })
+            .filter((pair): pair is [string, string] => !!pair)
+        );
+
+        for (const id of targetIds) {
+          const afterUpdatedAt = afterMap.get(id);
+          const currentUpdatedAt = currentMap.get(id);
+          if (!currentUpdatedAt) {
+            throw new Error('복구 대상 작품 중 일부를 찾을 수 없어 복구를 중단합니다.');
+          }
+          if (afterUpdatedAt && currentUpdatedAt && currentUpdatedAt !== afterUpdatedAt) {
+            throw new Error('현재 데이터가 추가로 변경되어 복구를 중단합니다.');
+          }
+        }
+
+        const { data: rollbackRows } = await supabase
+          .from('artworks')
+          .select(
+            'id, title, description, size, material, year, edition, price, status, sold_at, is_hidden, images, shop_url, artist_id, updated_at'
+          )
+          .in('id', targetIds);
+        const rollbackMap = new Map((rollbackRows || []).map((row) => [row.id, row]));
+
+        const appliedIds: string[] = [];
+
+        try {
+          for (const snapshot of beforeList) {
+            const id = typeof snapshot.id === 'string' ? snapshot.id : null;
+            if (!id) continue;
+
+            const patch = buildPatch(snapshot, ARTWORK_REVERT_KEYS);
+            const { data: updatedRows, error: revertError } = await supabase
+              .from('artworks')
+              .update(patch)
+              .eq('id', id)
+              .select('id');
+            if (revertError) throw revertError;
+            if (!updatedRows || updatedRows.length !== 1) {
+              throw new Error('복구 적용 중 일부 작품의 반영 결과를 확인하지 못했습니다.');
+            }
+            appliedIds.push(id);
+          }
+        } catch (error) {
+          for (const appliedId of appliedIds.reverse()) {
+            const rollbackSnapshot = rollbackMap.get(appliedId);
+            if (!rollbackSnapshot) continue;
+            const rollbackPatch = buildPatch(
+              rollbackSnapshot as Record<string, unknown>,
+              ARTWORK_REVERT_KEYS
+            );
+            await supabase.from('artworks').update(rollbackPatch).eq('id', appliedId);
+          }
+          throw error;
+        }
+      } else {
+        const { data: current } = await supabase
+          .from('artworks')
+          .select('updated_at')
+          .eq('id', log.target_id)
+          .single();
+
+        const afterUpdatedAt = (log.after_snapshot as { updated_at?: string } | null)?.updated_at;
+        const allowUpdatedAtMismatchForImageRestore =
+          log.action === 'artwork_images_updated' ||
+          log.action === 'exhibitor_artwork_images_updated';
+
+        if (
+          afterUpdatedAt &&
+          current?.updated_at &&
+          current.updated_at !== afterUpdatedAt &&
+          !allowUpdatedAtMismatchForImageRestore
+        ) {
+          throw new Error('현재 데이터가 추가로 변경되어 복구를 중단합니다.');
+        }
+
+        const snapshot = asSnapshotObject(log.before_snapshot);
+        if (!snapshot) {
+          throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
+        }
+
+        const patch = buildPatch(snapshot, ARTWORK_REVERT_KEYS);
+        const { data: updatedRows, error: revertError } = await supabase
+          .from('artworks')
+          .update(patch)
+          .eq('id', log.target_id)
+          .select('id');
+        if (revertError) throw revertError;
+        if (!updatedRows || updatedRows.length !== 1) {
+          throw new Error('복구 대상 작품을 찾을 수 없어 복구를 중단합니다.');
+        }
+      }
+    } else if (log.target_type === 'artist') {
+      const isDeletionLog = ARTIST_DELETION_ACTIONS.has(log.action);
+      const isCreationLog = ARTIST_CREATION_ACTIONS.has(log.action);
+
+      if (isCreationLog) {
+        // Revert creation by deleting the created artist
+        const afterSnapshot = asSnapshotObject(log.after_snapshot);
+        const artistId = afterSnapshot?.id || log.target_id;
+
+        if (typeof artistId !== 'string') {
+          throw new Error('삭제할 작가 ID를 찾을 수 없습니다.');
+        }
+
+        // Check if artist has any artworks
+        const { count: artworkCount } = await supabase
+          .from('artworks')
+          .select('id', { count: 'exact', head: true })
+          .eq('artist_id', artistId);
+
+        if (artworkCount && artworkCount > 0) {
+          throw new Error(
+            `작가에게 ${artworkCount}개의 작품이 등록되어 있어 삭제할 수 없습니다. 먼저 작품을 삭제해 주세요.`
+          );
+        }
+
+        const { data: existingArtist } = await supabase
+          .from('artists')
+          .select('id')
+          .eq('id', artistId)
+          .maybeSingle();
+
+        if (!existingArtist) {
+          throw new Error('삭제할 작가가 존재하지 않습니다. (이미 삭제됨)');
+        }
+
+        const { error: deleteError } = await supabase.from('artists').delete().eq('id', artistId);
+        if (deleteError) throw deleteError;
+      } else if (isDeletionLog) {
+        const snapshot = asSnapshotObject(log.before_snapshot);
+        if (!snapshot) {
+          throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
+        }
+
+        const payload = buildInsertPayload(snapshot, ARTIST_RESTORE_KEYS);
+        const snapshotId = typeof payload.id === 'string' ? payload.id : log.target_id;
+        payload.id = snapshotId;
+
+        if (typeof payload.name_ko !== 'string' || !payload.name_ko) {
+          throw new Error('복구할 작가의 필수 정보가 누락되어 복구를 중단합니다.');
+        }
+
+        const { data: currentArtist } = await supabase
+          .from('artists')
+          .select('id')
+          .eq('id', snapshotId)
+          .maybeSingle();
+        if (currentArtist) {
+          throw new Error('이미 동일한 작가가 존재하여 복구를 중단합니다.');
+        }
+
+        const { data: insertedArtist, error: restoreError } = await supabase
+          .from('artists')
           .insert(payload)
           .select('id')
           .single();
         if (restoreError) throw restoreError;
-        if (!insertedRow?.id) {
-          throw new Error('복구 대상 작품을 생성하지 못했습니다.');
+        if (!insertedArtist?.id) {
+          throw new Error('복구 대상 작가를 생성하지 못했습니다.');
         }
-      }
-    } else if (isCreationLog) {
-      // Revert creation by deleting the created artwork
-      const afterSnapshot = asSnapshotObject(log.after_snapshot);
-      const artworkId = afterSnapshot?.id || log.target_id;
+      } else {
+        const { data: current } = await supabase
+          .from('artists')
+          .select('updated_at')
+          .eq('id', log.target_id)
+          .single();
 
-      if (typeof artworkId !== 'string') {
-        throw new Error('삭제할 작품 ID를 찾을 수 없습니다.');
-      }
-
-      const { data: existingArtwork } = await supabase
-        .from('artworks')
-        .select('id')
-        .eq('id', artworkId)
-        .maybeSingle();
-
-      if (!existingArtwork) {
-        throw new Error('삭제할 작품이 존재하지 않습니다. (이미 삭제됨)');
-      }
-
-      const { error: deleteError } = await supabase.from('artworks').delete().eq('id', artworkId);
-      if (deleteError) throw deleteError;
-    } else if (beforeList && beforeList.length > 0) {
-      const targetIds = beforeList
-        .map((item) => (typeof item.id === 'string' ? item.id : null))
-        .filter((id): id is string => !!id);
-
-      if (targetIds.length === 0) {
-        throw new Error('복구 대상 작품 정보를 찾을 수 없습니다.');
-      }
-
-      const { data: currentRows } = await supabase
-        .from('artworks')
-        .select('id, updated_at')
-        .in('id', targetIds);
-
-      if (!currentRows || currentRows.length !== targetIds.length) {
-        throw new Error('복구 대상 작품 중 일부를 찾을 수 없어 복구를 중단합니다.');
-      }
-
-      const currentMap = new Map((currentRows || []).map((row) => [row.id, row.updated_at]));
-      const afterMap = new Map(
-        (afterList || [])
-          .map((item) => {
-            const id = typeof item.id === 'string' ? item.id : null;
-            const updatedAt = typeof item.updated_at === 'string' ? item.updated_at : null;
-            return id && updatedAt ? [id, updatedAt] : null;
-          })
-          .filter((pair): pair is [string, string] => !!pair)
-      );
-
-      for (const id of targetIds) {
-        const afterUpdatedAt = afterMap.get(id);
-        const currentUpdatedAt = currentMap.get(id);
-        if (!currentUpdatedAt) {
-          throw new Error('복구 대상 작품 중 일부를 찾을 수 없어 복구를 중단합니다.');
-        }
-        if (afterUpdatedAt && currentUpdatedAt && currentUpdatedAt !== afterUpdatedAt) {
+        const afterUpdatedAt = (log.after_snapshot as { updated_at?: string } | null)?.updated_at;
+        if (afterUpdatedAt && current?.updated_at && current.updated_at !== afterUpdatedAt) {
           throw new Error('현재 데이터가 추가로 변경되어 복구를 중단합니다.');
         }
-      }
 
-      const { data: rollbackRows } = await supabase
-        .from('artworks')
-        .select(
-          'id, title, description, size, material, year, edition, price, status, sold_at, is_hidden, images, shop_url, artist_id, updated_at'
-        )
-        .in('id', targetIds);
-      const rollbackMap = new Map((rollbackRows || []).map((row) => [row.id, row]));
-
-      const appliedIds: string[] = [];
-
-      try {
-        for (const snapshot of beforeList) {
-          const id = typeof snapshot.id === 'string' ? snapshot.id : null;
-          if (!id) continue;
-
-          const patch = buildPatch(snapshot, ARTWORK_REVERT_KEYS);
-          const { data: updatedRows, error: revertError } = await supabase
-            .from('artworks')
-            .update(patch)
-            .eq('id', id)
-            .select('id');
-          if (revertError) throw revertError;
-          if (!updatedRows || updatedRows.length !== 1) {
-            throw new Error('복구 적용 중 일부 작품의 반영 결과를 확인하지 못했습니다.');
-          }
-          appliedIds.push(id);
+        const snapshot = asSnapshotObject(log.before_snapshot);
+        if (!snapshot) {
+          throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
         }
-      } catch (error) {
-        for (const appliedId of appliedIds.reverse()) {
-          const rollbackSnapshot = rollbackMap.get(appliedId);
-          if (!rollbackSnapshot) continue;
-          const rollbackPatch = buildPatch(
-            rollbackSnapshot as Record<string, unknown>,
-            ARTWORK_REVERT_KEYS
-          );
-          await supabase.from('artworks').update(rollbackPatch).eq('id', appliedId);
+        const patch = buildPatch(snapshot, ARTIST_REVERT_KEYS);
+
+        const { data: updatedRows, error: revertError } = await supabase
+          .from('artists')
+          .update(patch)
+          .eq('id', log.target_id)
+          .select('id');
+        if (revertError) throw revertError;
+        if (!updatedRows || updatedRows.length !== 1) {
+          throw new Error('복구 대상 작가를 찾을 수 없어 복구를 중단합니다.');
         }
-        throw error;
       }
-    } else {
+    } else if (log.target_type === 'user') {
       const { data: current } = await supabase
-        .from('artworks')
+        .from('profiles')
         .select('updated_at')
         .eq('id', log.target_id)
         .single();
 
       const afterUpdatedAt = (log.after_snapshot as { updated_at?: string } | null)?.updated_at;
       if (afterUpdatedAt && current?.updated_at && current.updated_at !== afterUpdatedAt) {
-        throw new Error('현재 데이터가 추가로 변경되어 복구를 중단합니다.');
+        throw new Error('현재 사용자 정보가 추가로 변경되어 복구를 중단합니다.');
       }
 
       const snapshot = asSnapshotObject(log.before_snapshot);
       if (!snapshot) {
         throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
       }
+      const patch = buildPatch(snapshot, USER_REVERT_KEYS);
 
-      const patch = buildPatch(snapshot, ARTWORK_REVERT_KEYS);
       const { data: updatedRows, error: revertError } = await supabase
-        .from('artworks')
+        .from('profiles')
         .update(patch)
         .eq('id', log.target_id)
         .select('id');
       if (revertError) throw revertError;
       if (!updatedRows || updatedRows.length !== 1) {
-        throw new Error('복구 대상 작품을 찾을 수 없어 복구를 중단합니다.');
+        throw new Error('복구 대상 사용자를 찾을 수 없어 복구를 중단합니다.');
       }
-    }
-  } else if (log.target_type === 'artist') {
-    const isDeletionLog = ARTIST_DELETION_ACTIONS.has(log.action);
-    const isCreationLog = ARTIST_CREATION_ACTIONS.has(log.action);
+    } else if (log.target_type === 'news') {
+      const isDeletionLog = NEWS_DELETION_ACTIONS.has(log.action);
 
-    if (isCreationLog) {
-      // Revert creation by deleting the created artist
-      const afterSnapshot = asSnapshotObject(log.after_snapshot);
-      const artistId = afterSnapshot?.id || log.target_id;
+      if (isDeletionLog) {
+        const snapshot = asSnapshotObject(log.before_snapshot);
+        if (!snapshot) {
+          throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
+        }
+        const payload = buildInsertPayload(snapshot, NEWS_RESTORE_KEYS);
+        payload.id = typeof payload.id === 'string' ? payload.id : log.target_id;
 
-      if (typeof artistId !== 'string') {
-        throw new Error('삭제할 작가 ID를 찾을 수 없습니다.');
+        const { data: existing } = await supabase
+          .from('news')
+          .select('id')
+          .eq('id', payload.id)
+          .maybeSingle();
+        if (existing) {
+          throw new Error('이미 동일한 뉴스가 존재하여 복구를 중단합니다.');
+        }
+
+        const { error: restoreError } = await supabase.from('news').insert(payload);
+        if (restoreError) throw restoreError;
+      } else {
+        const snapshot = asSnapshotObject(log.before_snapshot);
+        if (!snapshot) {
+          throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
+        }
+        const patch = buildPatch(snapshot, NEWS_REVERT_KEYS);
+        const { error: revertError } = await supabase
+          .from('news')
+          .update(patch)
+          .eq('id', log.target_id);
+        if (revertError) throw revertError;
       }
+    } else if (log.target_type === 'faq') {
+      const isDeletionLog = FAQ_DELETION_ACTIONS.has(log.action);
 
-      // Check if artist has any artworks
-      const { count: artworkCount } = await supabase
-        .from('artworks')
-        .select('id', { count: 'exact', head: true })
-        .eq('artist_id', artistId);
+      if (isDeletionLog) {
+        const snapshot = asSnapshotObject(log.before_snapshot);
+        if (!snapshot) {
+          throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
+        }
+        const payload = buildInsertPayload(snapshot, FAQ_RESTORE_KEYS);
+        payload.id = typeof payload.id === 'string' ? payload.id : log.target_id;
 
-      if (artworkCount && artworkCount > 0) {
-        throw new Error(
-          `작가에게 ${artworkCount}개의 작품이 등록되어 있어 삭제할 수 없습니다. 먼저 작품을 삭제해 주세요.`
-        );
+        const { data: existing } = await supabase
+          .from('faq')
+          .select('id')
+          .eq('id', payload.id)
+          .maybeSingle();
+        if (existing) {
+          throw new Error('이미 동일한 FAQ가 존재하여 복구를 중단합니다.');
+        }
+
+        const { error: restoreError } = await supabase.from('faq').insert(payload);
+        if (restoreError) throw restoreError;
+      } else {
+        const snapshot = asSnapshotObject(log.before_snapshot);
+        if (!snapshot) {
+          throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
+        }
+        const patch = buildPatch(snapshot, FAQ_REVERT_KEYS);
+        const { error: revertError } = await supabase
+          .from('faq')
+          .update(patch)
+          .eq('id', log.target_id);
+        if (revertError) throw revertError;
       }
+    } else if (log.target_type === 'testimonial') {
+      const isDeletionLog = TESTIMONIAL_DELETION_ACTIONS.has(log.action);
 
-      const { data: existingArtist } = await supabase
-        .from('artists')
-        .select('id')
-        .eq('id', artistId)
+      if (isDeletionLog) {
+        const snapshot = asSnapshotObject(log.before_snapshot);
+        if (!snapshot) {
+          throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
+        }
+        const payload = buildInsertPayload(snapshot, TESTIMONIAL_RESTORE_KEYS);
+        payload.id = typeof payload.id === 'string' ? payload.id : log.target_id;
+
+        const { data: existing } = await supabase
+          .from('testimonials')
+          .select('id')
+          .eq('id', payload.id)
+          .maybeSingle();
+        if (existing) {
+          throw new Error('이미 동일한 증언이 존재하여 복구를 중단합니다.');
+        }
+
+        const { error: restoreError } = await supabase.from('testimonials').insert(payload);
+        if (restoreError) throw restoreError;
+      } else {
+        const snapshot = asSnapshotObject(log.before_snapshot);
+        if (!snapshot) {
+          throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
+        }
+        const patch = buildPatch(snapshot, TESTIMONIAL_REVERT_KEYS);
+        const { error: revertError } = await supabase
+          .from('testimonials')
+          .update(patch)
+          .eq('id', log.target_id);
+        if (revertError) throw revertError;
+      }
+    } else if (log.target_type === 'video') {
+      const isDeletionLog = VIDEO_DELETION_ACTIONS.has(log.action);
+
+      if (isDeletionLog) {
+        const snapshot = asSnapshotObject(log.before_snapshot);
+        if (!snapshot) {
+          throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
+        }
+        const payload = buildInsertPayload(snapshot, VIDEO_RESTORE_KEYS);
+        payload.id = typeof payload.id === 'string' ? payload.id : log.target_id;
+
+        const { data: existing } = await supabase
+          .from('videos')
+          .select('id')
+          .eq('id', payload.id)
+          .maybeSingle();
+        if (existing) {
+          throw new Error('이미 동일한 비디오가 존재하여 복구를 중단합니다.');
+        }
+
+        const { error: restoreError } = await supabase.from('videos').insert(payload);
+        if (restoreError) throw restoreError;
+      } else {
+        const snapshot = asSnapshotObject(log.before_snapshot);
+        if (!snapshot) {
+          throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
+        }
+        const patch = buildPatch(snapshot, VIDEO_REVERT_KEYS);
+        const { error: revertError } = await supabase
+          .from('videos')
+          .update(patch)
+          .eq('id', log.target_id);
+        if (revertError) throw revertError;
+      }
+    } else if (log.target_type === 'artist_application') {
+      // Revert application submission by deleting the application
+      const { data: existingApplication } = await supabase
+        .from('artist_applications')
+        .select('user_id')
+        .eq('user_id', log.target_id)
         .maybeSingle();
 
-      if (!existingArtist) {
-        throw new Error('삭제할 작가가 존재하지 않습니다. (이미 삭제됨)');
+      if (!existingApplication) {
+        throw new Error('삭제할 신청서가 존재하지 않습니다. (이미 삭제됨)');
       }
 
-      const { error: deleteError } = await supabase.from('artists').delete().eq('id', artistId);
+      const { error: deleteError } = await supabase
+        .from('artist_applications')
+        .delete()
+        .eq('user_id', log.target_id);
       if (deleteError) throw deleteError;
-    } else if (isDeletionLog) {
-      const snapshot = asSnapshotObject(log.before_snapshot);
-      if (!snapshot) {
-        throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
-      }
-
-      const payload = buildInsertPayload(snapshot, ARTIST_RESTORE_KEYS);
-      const snapshotId = typeof payload.id === 'string' ? payload.id : log.target_id;
-      payload.id = snapshotId;
-
-      if (typeof payload.name_ko !== 'string' || !payload.name_ko) {
-        throw new Error('복구할 작가의 필수 정보가 누락되어 복구를 중단합니다.');
-      }
-
-      const { data: currentArtist } = await supabase
-        .from('artists')
-        .select('id')
-        .eq('id', snapshotId)
-        .maybeSingle();
-      if (currentArtist) {
-        throw new Error('이미 동일한 작가가 존재하여 복구를 중단합니다.');
-      }
-
-      const { data: insertedArtist, error: restoreError } = await supabase
-        .from('artists')
-        .insert(payload)
-        .select('id')
-        .single();
-      if (restoreError) throw restoreError;
-      if (!insertedArtist?.id) {
-        throw new Error('복구 대상 작가를 생성하지 못했습니다.');
-      }
     } else {
-      const { data: current } = await supabase
-        .from('artists')
-        .select('updated_at')
-        .eq('id', log.target_id)
-        .single();
-
-      const afterUpdatedAt = (log.after_snapshot as { updated_at?: string } | null)?.updated_at;
-      if (afterUpdatedAt && current?.updated_at && current.updated_at !== afterUpdatedAt) {
-        throw new Error('현재 데이터가 추가로 변경되어 복구를 중단합니다.');
-      }
-
-      const snapshot = asSnapshotObject(log.before_snapshot);
-      if (!snapshot) {
-        throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
-      }
-      const patch = buildPatch(snapshot, ARTIST_REVERT_KEYS);
-
-      const { data: updatedRows, error: revertError } = await supabase
-        .from('artists')
-        .update(patch)
-        .eq('id', log.target_id)
-        .select('id');
-      if (revertError) throw revertError;
-      if (!updatedRows || updatedRows.length !== 1) {
-        throw new Error('복구 대상 작가를 찾을 수 없어 복구를 중단합니다.');
-      }
-    }
-  } else if (log.target_type === 'user') {
-    const { data: current } = await supabase
-      .from('profiles')
-      .select('updated_at')
-      .eq('id', log.target_id)
-      .single();
-
-    const afterUpdatedAt = (log.after_snapshot as { updated_at?: string } | null)?.updated_at;
-    if (afterUpdatedAt && current?.updated_at && current.updated_at !== afterUpdatedAt) {
-      throw new Error('현재 사용자 정보가 추가로 변경되어 복구를 중단합니다.');
+      throw new Error(
+        '현재는 작품/작가/사용자/뉴스/FAQ/증언/비디오/신청서 로그만 복구할 수 있습니다.'
+      );
     }
 
-    const snapshot = asSnapshotObject(log.before_snapshot);
-    if (!snapshot) {
-      throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
+    if (log.target_type === 'artwork') {
+      revalidatePath('/artworks');
+      revalidatePath('/');
+      revalidatePath('/admin/artworks');
+      if (!log.target_id.includes(',')) {
+        revalidatePath(`/artworks/${log.target_id}`);
+        revalidatePath(`/admin/artworks/${log.target_id}`);
+      }
     }
-    const patch = buildPatch(snapshot, USER_REVERT_KEYS);
 
-    const { data: updatedRows, error: revertError } = await supabase
-      .from('profiles')
-      .update(patch)
-      .eq('id', log.target_id)
+    if (log.target_type === 'artist') {
+      revalidatePath('/artworks');
+      revalidatePath('/admin/artists');
+      if (!log.target_id.includes(',')) {
+        revalidatePath(`/admin/artists/${log.target_id}`);
+      }
+    }
+
+    if (log.target_type === 'user') {
+      revalidatePath('/admin/users');
+    }
+
+    if (log.target_type === 'news') {
+      revalidatePath('/news');
+      revalidatePath('/admin/content/news');
+      revalidatePath('/sitemap.xml');
+    }
+
+    if (log.target_type === 'faq') {
+      revalidatePath('/');
+      revalidatePath('/admin/content/faq');
+    }
+
+    if (log.target_type === 'testimonial') {
+      revalidatePath('/our-reality');
+      revalidatePath('/admin/content/testimonials');
+    }
+
+    if (log.target_type === 'video') {
+      revalidatePath('/our-proof');
+      revalidatePath('/admin/content/videos');
+    }
+
+    if (log.target_type === 'artist_application') {
+      revalidatePath('/admin/users');
+    }
+
+    const now = new Date().toISOString();
+    const { data: markedRows, error: markError } = await supabase
+      .from('activity_logs')
+      .update({
+        reverted_by: admin.id,
+        reverted_at: now,
+        revert_reason: reason,
+      })
+      .eq('id', log.id)
+      .is('reverted_at', null)
       .select('id');
-    if (revertError) throw revertError;
-    if (!updatedRows || updatedRows.length !== 1) {
-      throw new Error('복구 대상 사용자를 찾을 수 없어 복구를 중단합니다.');
-    }
-  } else if (log.target_type === 'news') {
-    const isDeletionLog = NEWS_DELETION_ACTIONS.has(log.action);
 
-    if (isDeletionLog) {
-      const snapshot = asSnapshotObject(log.before_snapshot);
-      if (!snapshot) {
-        throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
-      }
-      const payload = buildInsertPayload(snapshot, NEWS_RESTORE_KEYS);
-      payload.id = typeof payload.id === 'string' ? payload.id : log.target_id;
-
-      const { data: existing } = await supabase
-        .from('news')
-        .select('id')
-        .eq('id', payload.id)
-        .maybeSingle();
-      if (existing) {
-        throw new Error('이미 동일한 뉴스가 존재하여 복구를 중단합니다.');
-      }
-
-      const { error: restoreError } = await supabase.from('news').insert(payload);
-      if (restoreError) throw restoreError;
-    } else {
-      const snapshot = asSnapshotObject(log.before_snapshot);
-      if (!snapshot) {
-        throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
-      }
-      const patch = buildPatch(snapshot, NEWS_REVERT_KEYS);
-      const { error: revertError } = await supabase
-        .from('news')
-        .update(patch)
-        .eq('id', log.target_id);
-      if (revertError) throw revertError;
-    }
-  } else if (log.target_type === 'faq') {
-    const isDeletionLog = FAQ_DELETION_ACTIONS.has(log.action);
-
-    if (isDeletionLog) {
-      const snapshot = asSnapshotObject(log.before_snapshot);
-      if (!snapshot) {
-        throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
-      }
-      const payload = buildInsertPayload(snapshot, FAQ_RESTORE_KEYS);
-      payload.id = typeof payload.id === 'string' ? payload.id : log.target_id;
-
-      const { data: existing } = await supabase
-        .from('faq')
-        .select('id')
-        .eq('id', payload.id)
-        .maybeSingle();
-      if (existing) {
-        throw new Error('이미 동일한 FAQ가 존재하여 복구를 중단합니다.');
-      }
-
-      const { error: restoreError } = await supabase.from('faq').insert(payload);
-      if (restoreError) throw restoreError;
-    } else {
-      const snapshot = asSnapshotObject(log.before_snapshot);
-      if (!snapshot) {
-        throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
-      }
-      const patch = buildPatch(snapshot, FAQ_REVERT_KEYS);
-      const { error: revertError } = await supabase
-        .from('faq')
-        .update(patch)
-        .eq('id', log.target_id);
-      if (revertError) throw revertError;
-    }
-  } else if (log.target_type === 'testimonial') {
-    const isDeletionLog = TESTIMONIAL_DELETION_ACTIONS.has(log.action);
-
-    if (isDeletionLog) {
-      const snapshot = asSnapshotObject(log.before_snapshot);
-      if (!snapshot) {
-        throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
-      }
-      const payload = buildInsertPayload(snapshot, TESTIMONIAL_RESTORE_KEYS);
-      payload.id = typeof payload.id === 'string' ? payload.id : log.target_id;
-
-      const { data: existing } = await supabase
-        .from('testimonials')
-        .select('id')
-        .eq('id', payload.id)
-        .maybeSingle();
-      if (existing) {
-        throw new Error('이미 동일한 증언이 존재하여 복구를 중단합니다.');
-      }
-
-      const { error: restoreError } = await supabase.from('testimonials').insert(payload);
-      if (restoreError) throw restoreError;
-    } else {
-      const snapshot = asSnapshotObject(log.before_snapshot);
-      if (!snapshot) {
-        throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
-      }
-      const patch = buildPatch(snapshot, TESTIMONIAL_REVERT_KEYS);
-      const { error: revertError } = await supabase
-        .from('testimonials')
-        .update(patch)
-        .eq('id', log.target_id);
-      if (revertError) throw revertError;
-    }
-  } else if (log.target_type === 'video') {
-    const isDeletionLog = VIDEO_DELETION_ACTIONS.has(log.action);
-
-    if (isDeletionLog) {
-      const snapshot = asSnapshotObject(log.before_snapshot);
-      if (!snapshot) {
-        throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
-      }
-      const payload = buildInsertPayload(snapshot, VIDEO_RESTORE_KEYS);
-      payload.id = typeof payload.id === 'string' ? payload.id : log.target_id;
-
-      const { data: existing } = await supabase
-        .from('videos')
-        .select('id')
-        .eq('id', payload.id)
-        .maybeSingle();
-      if (existing) {
-        throw new Error('이미 동일한 비디오가 존재하여 복구를 중단합니다.');
-      }
-
-      const { error: restoreError } = await supabase.from('videos').insert(payload);
-      if (restoreError) throw restoreError;
-    } else {
-      const snapshot = asSnapshotObject(log.before_snapshot);
-      if (!snapshot) {
-        throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
-      }
-      const patch = buildPatch(snapshot, VIDEO_REVERT_KEYS);
-      const { error: revertError } = await supabase
-        .from('videos')
-        .update(patch)
-        .eq('id', log.target_id);
-      if (revertError) throw revertError;
-    }
-  } else if (log.target_type === 'artist_application') {
-    // Revert application submission by deleting the application
-    const { data: existingApplication } = await supabase
-      .from('artist_applications')
-      .select('user_id')
-      .eq('user_id', log.target_id)
-      .maybeSingle();
-
-    if (!existingApplication) {
-      throw new Error('삭제할 신청서가 존재하지 않습니다. (이미 삭제됨)');
+    if (markError) throw markError;
+    if (!markedRows || markedRows.length !== 1) {
+      throw new Error('복구 상태 기록에 실패했습니다. 다시 시도해주세요.');
     }
 
-    const { error: deleteError } = await supabase
-      .from('artist_applications')
-      .delete()
-      .eq('user_id', log.target_id);
-    if (deleteError) throw deleteError;
-  } else {
-    throw new Error(
-      '현재는 작품/작가/사용자/뉴스/FAQ/증언/비디오/신청서 로그만 복구할 수 있습니다.'
-    );
-  }
+    const revertLogId = await writeActivityLog({
+      actor: { id: admin.id, role: 'admin', name: actor.name, email: actor.email },
+      action: 'revert_executed',
+      targetType: log.target_type,
+      targetId: log.target_id,
+      metadata: {
+        reverted_log_id: log.id,
+        reason,
+      },
+      options: {
+        summary: '활동 로그 기반 복구 실행',
+        reversible: false,
+      },
+    });
 
-  if (log.target_type === 'artwork') {
-    revalidatePath('/artworks');
-    revalidatePath('/');
-    revalidatePath('/admin/artworks');
-    if (!log.target_id.includes(',')) {
-      revalidatePath(`/artworks/${log.target_id}`);
-      revalidatePath(`/admin/artworks/${log.target_id}`);
+    if (revertLogId) {
+      await supabase
+        .from('activity_logs')
+        .update({ reverted_log_id: revertLogId })
+        .eq('id', log.id);
     }
+
+    return { success: true };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : '복구 중 오류가 발생했습니다.';
+    console.error('[revertActivityLog] failed:', error);
+    return { success: false, message };
   }
-
-  if (log.target_type === 'artist') {
-    revalidatePath('/artworks');
-    revalidatePath('/admin/artists');
-    if (!log.target_id.includes(',')) {
-      revalidatePath(`/admin/artists/${log.target_id}`);
-    }
-  }
-
-  if (log.target_type === 'user') {
-    revalidatePath('/admin/users');
-  }
-
-  if (log.target_type === 'news') {
-    revalidatePath('/news');
-    revalidatePath('/admin/content/news');
-    revalidatePath('/sitemap.xml');
-  }
-
-  if (log.target_type === 'faq') {
-    revalidatePath('/');
-    revalidatePath('/admin/content/faq');
-  }
-
-  if (log.target_type === 'testimonial') {
-    revalidatePath('/our-reality');
-    revalidatePath('/admin/content/testimonials');
-  }
-
-  if (log.target_type === 'video') {
-    revalidatePath('/our-proof');
-    revalidatePath('/admin/content/videos');
-  }
-
-  if (log.target_type === 'artist_application') {
-    revalidatePath('/admin/users');
-  }
-
-  const now = new Date().toISOString();
-  const { data: markedRows, error: markError } = await supabase
-    .from('activity_logs')
-    .update({
-      reverted_by: admin.id,
-      reverted_at: now,
-      revert_reason: reason,
-    })
-    .eq('id', log.id)
-    .is('reverted_at', null)
-    .select('id');
-
-  if (markError) throw markError;
-  if (!markedRows || markedRows.length !== 1) {
-    throw new Error('복구 상태 기록에 실패했습니다. 다시 시도해주세요.');
-  }
-
-  const revertLogId = await writeActivityLog({
-    actor: { id: admin.id, role: 'admin', name: actor.name, email: actor.email },
-    action: 'revert_executed',
-    targetType: log.target_type,
-    targetId: log.target_id,
-    metadata: {
-      reverted_log_id: log.id,
-      reason,
-    },
-    options: {
-      summary: '활동 로그 기반 복구 실행',
-      reversible: false,
-    },
-  });
-
-  if (revertLogId) {
-    await supabase.from('activity_logs').update({ reverted_log_id: revertLogId }).eq('id', log.id);
-  }
-
-  return { success: true };
 }

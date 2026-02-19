@@ -507,7 +507,11 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
     setRevertReason('');
 
     try {
-      await revertActivityLog(logId, reason);
+      const result = await revertActivityLog(logId, reason);
+      if (!result.success) {
+        toast.error(result.message || '복구 중 오류가 발생했습니다.');
+        return;
+      }
       toast.success('복구가 완료되었습니다.');
       router.refresh();
     } catch (error) {

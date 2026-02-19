@@ -89,7 +89,11 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
 
     setIsRestoring(true);
     try {
-      await revertActivityLog(logId, reason);
+      const result = await revertActivityLog(logId, reason);
+      if (!result.success) {
+        toast.error(result.message || '복원 중 오류가 발생했습니다.');
+        return;
+      }
       toast.success('휴지통 항목을 복원했습니다.');
       setRestoreTargetId(null);
       setRestoreReason('');
