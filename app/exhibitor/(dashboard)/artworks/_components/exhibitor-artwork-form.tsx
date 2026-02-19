@@ -125,7 +125,7 @@ export function ExhibitorArtworkForm({
           </h2>
           <ImageUpload
             bucket="artworks"
-            pathPrefix={`exhibitor-artwork-${currentArtworkId}`}
+            pathPrefix={selectedArtistId || `exhibitor-artwork-${currentArtworkId}`}
             value={images}
             onUploadComplete={handleImagesChange}
             maxFiles={10}

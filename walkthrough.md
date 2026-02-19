@@ -109,3 +109,24 @@
 - `npx eslint lib/path-rules.ts lib/hooks/useHeaderStyle.ts components/common/Header.tsx components/common/PageTransition.tsx components/common/PageLoader.tsx components/common/FooterSlider.tsx` 통과
 - `npm run type-check` 통과
 - `npm run lint` 통과
+
+## 이미지 업로드 장애 수정
+
+- `next.config.js`
+  - CSP `img-src`에 `blob:` 추가
+  - 업로드 전 클라이언트 이미지 최적화(`URL.createObjectURL`) 단계가 차단되지 않도록 조정
+
+- `app/exhibitor/(dashboard)/artworks/_components/exhibitor-artwork-form.tsx`
+  - 출품자 작품 업로드 `pathPrefix`를 `selectedArtistId` 우선으로 변경
+  - Storage 정책의 artist-id 폴더 규칙과 경로 정렬
+
+- `supabase/migrations/20260219183000_allow_exhibitor_artwork_storage.sql` (신규)
+  - `artworks` 버킷의 insert/update/delete 정책을 재정의
+  - 기존 active artist/admin 허용은 유지
+  - active exhibitor + `artists.owner_id = auth.uid()` 조건을 추가해 출품자 업로드 허용
+  - `storage.foldername(storage.objects.name)` 기준으로 폴더 prefix 검증
+
+## 이미지 업로드 수정 검증 결과
+
+- `npm run lint` 통과
+- `npm run type-check` 통과

@@ -1,163 +1,51 @@
-# 서버/클라이언트 경계 최적화(버튼 분리) 구현 계획서
+# 이미지 업로드 장애 수정 계획서
 
 ## 1) 목표
 
-Vercel 배포 기준으로 서버 페이지의 불필요한 클라이언트 번들 포함을 줄이기 위해,
-버튼 시스템을 `링크 전용(서버 친화)`과 `액션 전용(클라이언트)`으로 분리한다.
+- 아티스트/출품자 작품 등록 화면에서 이미지 업로드가 정상 동작하도록 복구한다.
+- 브라우저 CSP 차단(`blob:`)으로 발생하는 클라이언트 단계 실패를 해소한다.
+- 출품자 계정의 Storage 업로드 권한/경로 불일치를 해결한다.
 
-핵심 목표:
+## 2) 확인된 원인
 
-- 링크용 버튼은 서버 컴포넌트에서 안전하게 사용
-- `loading`/`onClick`이 필요한 버튼만 클라이언트 컴포넌트 사용
-- 기존 디자인/스타일/아이콘 정렬 API는 유지
+1. `img-src` CSP에 `blob:`이 없어, 업로드 전 이미지 최적화 단계(`URL.createObjectURL`)가 차단됨.
+2. 출품자 작품 업로드 경로가 `exhibitor-artwork-{artworkId}`인데, `artworks` 버킷 정책은 기본적으로 아티스트 경로 규칙(artist id 폴더) 중심이라 권한 불일치가 발생함.
 
-## 2) 범위
-
-### 포함
-
-- 버튼 공통 스타일/타입을 별도 모듈로 분리
-- 신규 `LinkButton`(서버 컴포넌트) 도입
-- 기존 `Button`(클라이언트 컴포넌트)은 액션 중심으로 유지
-- 서버 컴포넌트의 링크형 버튼 사용처를 `LinkButton`으로 전환
-
-### 제외
-
-- 전체 버튼 컴포넌트 네이밍 대규모 변경
-- 전 페이지 UI 재설계
-- 전역 레이아웃 구조 개편(헤더/트랜지션 분리)는 이번 단계에서 보류
-
-## 3) 현재 문제 요약
-
-1. 현재 `Button`이 클라이언트 컴포넌트라 서버 페이지에서 링크용으로만 써도 클라이언트 경계가 생김
-2. 서버 페이지 다수가 `href` 버튼만 사용 중
-3. 구조적으로 최적화 여지가 명확하지만 전면 리팩토링은 과도함
-
-## 4) 설계 방향
-
-## 4.1 모듈 분리
-
-- `components/ui/button-base.ts` (서버/클라이언트 공용)
-  - `buttonVariants`
-  - `ButtonSize`, `IconLayout`, 아이콘 offset 맵
-
-## 4.2 컴포넌트 역할
-
-- `components/ui/Button.tsx` (클라이언트)
-  - `onClick`, `loading`, 상태 관리 담당
-
-- `components/ui/LinkButton.tsx` (서버)
-  - `href` 이동 전용
-  - `leadingIcon`, `iconLayout`, `iconClassName` 지원
-  - `disabled` 시 링크 대신 비활성 `span` 렌더링
-
-## 5) 구현 단계
-
-1. `button-base.ts` 생성 후 `Button.tsx` 리팩토링
-2. `LinkButton.tsx` 신규 추가
-3. 서버 컴포넌트 링크형 버튼 사용처 전환
-   - `app/page.tsx`
-   - `app/archive/2026/page.tsx`
-   - `app/artworks/[id]/page.tsx`
-   - `app/our-proof/page.tsx`
-   - `app/onboarding/page.tsx`
-   - `app/admin/artists/page.tsx`
-   - `app/admin/artworks/page.tsx`
-   - `app/dashboard/(artist)/artworks/page.tsx`
-   - `app/exhibitor/(dashboard)/artists/page.tsx`
-   - `app/exhibitor/(dashboard)/artworks/page.tsx`
-   - `components/common/CTAButtonGroup.tsx`
-   - `components/ui/ActionCard.tsx`
-4. 회귀 검사(린트/타입)
-
-## 6) 검증 계획
-
-- `npx eslint components/ui/button-base.ts`
-- `npx eslint components/ui/LinkButton.tsx`
-- `npx eslint components/ui/Button.tsx`
-- 전환한 주요 파일들 eslint 검사
-- `npm run type-check`
-
-검증 포인트:
-
-1. 링크 버튼 스타일/아이콘 정렬 기존과 동일
-2. `loading` 버튼 동작 회귀 없음
-3. 서버 페이지에서 `Button` import가 감소했는지 확인
-
-## 7) 리스크 및 대응
-
-- 리스크: `disabled` 링크 동작 차이
-  - 대응: 서버 컴포넌트에서 `disabled`는 비클릭 `span` 렌더링으로 명시적 처리
-
-- 리스크: 아이콘 정렬 회귀
-  - 대응: 기존 offset 맵 재사용 + 대상 페이지 육안 점검
-
-## 8) 완료 기준 (Definition of Done)
-
-1. `LinkButton` 도입 완료
-2. 서버 링크형 버튼 사용처 전환 완료
-3. lint/type-check 통과
-4. `walkthrough.md`에 변경 요약 반영
-
----
-
-승인 상태:
-
-- 사용자 요청(“시작하자/네”)에 따라 본 계획으로 바로 EXECUTION 진행
-
----
-
-# 헤더 투명도 블라인드 스팟 대응 계획서
-
-## 1) 목표
-
-초기 진입/페이지 전환 시 헤더가 의도와 다르게 불투명(또는 투명)하게 보일 수 있는
-블라인드 스팟을 제거하고, 경로 기반 UI 규칙의 재발 리스크를 줄인다.
-
-핵심 목표:
-
-- 비히어로 페이지에서 헤더가 상태 전이에 영향을 받지 않도록 고정
-- hero sentinel 탐색 실패 시에도 안전하게 동작
-- 헤더/전환/로더/푸터의 경로 판정 규칙을 공통화
-
-## 2) 범위
+## 3) 구현 범위
 
 ### 포함
 
-- `useHeaderStyle`의 헤더 모드 결정 로직 보강
-- `data-route-path` 루트 탐색 실패 시 sentinel 탐색 fallback 추가
-- 경로 판정 유틸 신설 및 사용처 교체
-  - `Header`
-  - `PageTransition`
-  - `PageLoader`
-  - `FooterSlider`
+- `next.config.js` CSP의 `img-src`에 `blob:` 추가
+- 출품자 작품 폼의 업로드 경로를 아티스트 ID 기반으로 정렬
+- Supabase migration 추가: `artworks` Storage 정책에 `exhibitor(active)` + `artists.owner_id` 기반 권한 허용
+- lint/type-check 수행
 
 ### 제외
 
-- 헤더 디자인 변경
-- 라우팅 구조 변경
-- 전면 애니메이션 정책 개편
+- Vercel Analytics 설정 자체 변경
+- 기존 업로드 파일의 대규모 경로 마이그레이션
 
-## 3) 구현 단계
+## 4) 구현 단계
 
-1. `lib/path-rules.ts` 생성 (경로 규칙 단일화)
-2. 헤더 모드 로직에서 비히어로 경로를 명시적으로 `solid` 처리
-3. sentinel 루트 탐색을 `document` fallback으로 보강
-4. 관련 컴포넌트 규칙 유틸로 치환
-5. lint/type-check 및 경계 검사 수행
+1. CSP 수정
+2. 출품자 작품 업로드 경로 수정
+3. Storage policy migration 추가
+4. 정적 점검 및 타입 점검 실행
+5. `walkthrough.md`에 결과 기록
 
-## 4) 검증 계획
+## 5) 검증 계획
 
-- `npx eslint lib/path-rules.ts lib/hooks/useHeaderStyle.ts components/common/Header.tsx components/common/PageTransition.tsx components/common/PageLoader.tsx components/common/FooterSlider.tsx`
-- `npm run type-check`
 - `npm run lint`
+- `npm run type-check`
+- (가능 시) 출품자/아티스트 작품 수정 화면에서 이미지 1장 업로드 수동 확인
 
-## 5) 완료 기준 (Definition of Done)
+## 6) 완료 기준 (Definition of Done)
 
-1. 비히어로 페이지 헤더가 항상 `solid`로 안정 동작
-2. hero sentinel 탐색 경로가 route wrapper 유무와 무관하게 동작
-3. 중복 경로 판정 로직 제거
-4. 검증 명령 전부 통과
+1. `blob:` CSP 차단 콘솔 에러가 사라진다.
+2. 아티스트 계정으로 작품 이미지 업로드가 성공한다.
+3. 출품자 계정으로 본인 소유 작가의 작품 이미지 업로드가 성공한다.
+4. lint/type-check가 통과한다.
 
-승인 상태:
+## 승인 상태
 
-- 사용자 요청(“네 해주세요”)에 따라 본 계획으로 EXECUTION 진행
+- 사용자 응답(“응”)에 따라 본 계획으로 즉시 실행.
