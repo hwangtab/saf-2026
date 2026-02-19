@@ -9,8 +9,21 @@ type HeaderMode = 'transparent' | 'solid' | 'overlay';
 
 function normalizePath(path: string): string {
   if (!path) return '/';
-  const withoutTrailingSlash = path.replace(/\/+$/, '');
-  return withoutTrailingSlash === '' ? '/' : withoutTrailingSlash;
+  let normalized = path.trim();
+
+  normalized = normalized.replace(/\/+$/, '');
+
+  if (normalized === '' || normalized === '/index' || normalized === '/index.html') {
+    return '/';
+  }
+
+  if (normalized.endsWith('/index')) {
+    normalized = normalized.slice(0, -'/index'.length);
+  } else if (normalized.endsWith('/index.html')) {
+    normalized = normalized.slice(0, -'/index.html'.length);
+  }
+
+  return normalized === '' ? '/' : normalized;
 }
 
 export function useHeaderStyle() {

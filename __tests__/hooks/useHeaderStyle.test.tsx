@@ -39,6 +39,14 @@ describe('useHeaderStyle', () => {
     expect(result.current.isDarkText).toBe(false);
   });
 
+  it('treats /index path as hero route and keeps header transparent at top', () => {
+    mockPathname = '/index';
+    const { result } = renderHook(() => useHeaderStyle());
+
+    expect(result.current.headerStyle).toBe('bg-transparent');
+    expect(result.current.isDarkText).toBe(false);
+  });
+
   it('switches to solid when scrolled down on hero route', () => {
     const { result } = renderHook(() => useHeaderStyle());
 
