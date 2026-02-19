@@ -3,6 +3,8 @@ import { usePathname } from 'next/navigation';
 import { HERO_PAGES } from '@/lib/constants';
 
 const HEADER_SOLID_STYLE = 'bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200/50';
+const HERO_SENTINEL_TOP_EPSILON = -8;
+const HERO_SENTINEL_ROOT_MARGIN = '8px 0px 0px 0px';
 
 type HeaderMode = 'transparent' | 'solid' | 'overlay';
 
@@ -30,7 +32,8 @@ export function useHeaderStyle() {
     return { isArtworkDetail: artworkDetail, prefersHeroLayout: heroPage };
   }, [currentPath]);
 
-  const [heroAtTop, setHeroAtTop] = useState(false);
+  // Start from transparent for hero pages and let observer downgrade to solid when needed.
+  const [heroAtTop, setHeroAtTop] = useState(true);
   const [observedPath, setObservedPath] = useState<string | null>(null);
 
   useLayoutEffect(() => {
@@ -57,7 +60,7 @@ export function useHeaderStyle() {
       selectRouteRoot()?.querySelector<HTMLElement>('[data-hero-sentinel="true"]') ?? null;
 
     const updateFromRect = (target: HTMLElement) => {
-      const next = target.getBoundingClientRect().top >= -1;
+      const next = target.getBoundingClientRect().top >= HERO_SENTINEL_TOP_EPSILON;
       setHeroAtTop((prev) => (prev !== next ? next : prev));
     };
 
@@ -85,7 +88,7 @@ export function useHeaderStyle() {
           if (!entry) return;
           setHeroAtTop(entry.isIntersecting);
         },
-        { threshold: [0, 1] }
+        { threshold: [0, 1], rootMargin: HERO_SENTINEL_ROOT_MARGIN }
       );
       observer.observe(sentinel);
 

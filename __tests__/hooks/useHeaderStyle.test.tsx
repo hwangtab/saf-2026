@@ -113,6 +113,18 @@ describe('useHeaderStyle', () => {
     expect(observers).toHaveLength(1);
   });
 
+  it('keeps header transparent when sentinel is slightly above top', () => {
+    document.body.innerHTML =
+      '<div data-route-path="/"><div data-hero-sentinel="true" aria-hidden="true"></div></div>';
+    setSentinelRect(-2);
+
+    const { result } = renderHook(() => useHeaderStyle());
+
+    expect(result.current.headerStyle).toBe('bg-transparent');
+    expect(result.current.isDarkText).toBe(false);
+    expect(observers).toHaveLength(1);
+  });
+
   it('switches to solid when sentinel leaves viewport', () => {
     document.body.innerHTML =
       '<div data-route-path="/"><div data-hero-sentinel="true" aria-hidden="true"></div></div>';
