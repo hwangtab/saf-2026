@@ -13,7 +13,14 @@ type ObserverRecord = {
   disconnect: jest.Mock;
 };
 
+type MutationRecord = {
+  callback: MutationCallback;
+  observe: jest.Mock;
+  disconnect: jest.Mock;
+};
+
 const observers: ObserverRecord[] = [];
+const mutationObservers: MutationRecord[] = [];
 
 class MockIntersectionObserver {
   readonly callback: IntersectionObserverCallback;
@@ -26,6 +33,21 @@ class MockIntersectionObserver {
   }
 
   unobserve() {}
+  takeRecords() {
+    return [];
+  }
+}
+
+class MockMutationObserver {
+  readonly callback: MutationCallback;
+  readonly observe = jest.fn();
+  readonly disconnect = jest.fn();
+
+  constructor(callback: MutationCallback) {
+    this.callback = callback;
+    mutationObservers.push({ callback, observe: this.observe, disconnect: this.disconnect });
+  }
+
   takeRecords() {
     return [];
   }
@@ -55,6 +77,7 @@ describe('useHeaderStyle', () => {
   beforeEach(() => {
     mockPathname = '/';
     observers.length = 0;
+    mutationObservers.length = 0;
     document.body.innerHTML = '';
 
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb: FrameRequestCallback) => {
@@ -65,6 +88,11 @@ describe('useHeaderStyle', () => {
     Object.defineProperty(window, 'IntersectionObserver', {
       writable: true,
       value: MockIntersectionObserver,
+    });
+
+    Object.defineProperty(window, 'MutationObserver', {
+      writable: true,
+      value: MockMutationObserver,
     });
   });
 
@@ -126,5 +154,31 @@ describe('useHeaderStyle', () => {
 
     expect(result.current.headerStyle).toContain('bg-white/80');
     expect(result.current.isDarkText).toBe(true);
+  });
+
+  it('stays transparent while waiting for delayed sentinel mount', () => {
+    document.body.innerHTML =
+      '<main id="main-content"><div data-route-path="/"><div /></div></main>';
+
+    const { result } = renderHook(() => useHeaderStyle());
+
+    expect(result.current.headerStyle).toBe('bg-transparent');
+    expect(result.current.isDarkText).toBe(false);
+    expect(observers).toHaveLength(0);
+
+    const routeRoot = document.querySelector<HTMLElement>('[data-route-path="/"]');
+    routeRoot?.insertAdjacentHTML(
+      'afterbegin',
+      '<div data-hero-sentinel="true" aria-hidden="true"></div>'
+    );
+    setSentinelRect(0);
+
+    act(() => {
+      mutationObservers[0]?.callback([], {} as MutationObserver);
+    });
+
+    expect(observers).toHaveLength(1);
+    expect(result.current.headerStyle).toBe('bg-transparent');
+    expect(result.current.isDarkText).toBe(false);
   });
 });

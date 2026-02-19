@@ -31,28 +31,27 @@ export function useHeaderStyle() {
   }, [currentPath]);
 
   const [heroAtTop, setHeroAtTop] = useState(false);
-  const [resolvedPath, setResolvedPath] = useState<string | null>(null);
+  const [observedPath, setObservedPath] = useState<string | null>(null);
 
   useLayoutEffect(() => {
-    if (isArtworkDetail) {
+    if (isArtworkDetail || !prefersHeroLayout) {
       return undefined;
     }
 
     let mounted = true;
-    let attempts = 0;
-    let frameId = 0;
     let observer: IntersectionObserver | null = null;
+    let mutationObserver: MutationObserver | null = null;
+    let observedSentinel: HTMLElement | null = null;
     let cleanupListeners: (() => void) | null = null;
 
     const selectRouteRoot = () => {
-      if (!pathname) return document;
+      if (!pathname) return document as ParentNode;
       const escapedPath = pathname.replace(/"/g, '\\"');
-      const routeRoot = document.querySelector(`[data-route-path="${escapedPath}"]`);
-      return routeRoot ?? document;
+      return document.querySelector(`[data-route-path="${escapedPath}"]`) as ParentNode | null;
     };
 
     const selectSentinel = () =>
-      selectRouteRoot().querySelector<HTMLElement>('[data-hero-sentinel="true"]');
+      selectRouteRoot()?.querySelector<HTMLElement>('[data-hero-sentinel="true"]') ?? null;
 
     const updateFromRect = (target: HTMLElement) => {
       const next = target.getBoundingClientRect().top >= -1;
@@ -62,21 +61,20 @@ export function useHeaderStyle() {
     const attach = () => {
       const sentinel = selectSentinel();
 
-      if (!mounted) return;
-
-      if (!sentinel) {
-        attempts += 1;
-        if (attempts <= 12) {
-          frameId = window.requestAnimationFrame(attach);
-          return;
-        }
-        setResolvedPath(pathname || null);
-        setHeroAtTop(false);
-        return;
+      if (!mounted || !sentinel) {
+        return false;
       }
 
-      setResolvedPath(pathname || null);
+      if (observedSentinel === sentinel) {
+        updateFromRect(sentinel);
+        return true;
+      }
+
+      observedSentinel = sentinel;
+      setObservedPath(pathname || null);
       updateFromRect(sentinel);
+
+      observer?.disconnect();
 
       observer = new IntersectionObserver(
         (entries) => {
@@ -96,19 +94,33 @@ export function useHeaderStyle() {
         window.removeEventListener('pageshow', sync);
         window.removeEventListener('resize', sync);
       };
+
+      return true;
     };
 
-    attach();
+    if (!attach()) {
+      const observeTarget =
+        (document.getElementById('main-content') as ParentNode | null) ?? document.body;
+
+      mutationObserver = new MutationObserver(() => {
+        if (attach()) {
+          mutationObserver?.disconnect();
+        }
+      });
+
+      mutationObserver.observe(observeTarget, {
+        childList: true,
+        subtree: true,
+      });
+    }
 
     return () => {
       mounted = false;
-      if (frameId) {
-        window.cancelAnimationFrame(frameId);
-      }
       observer?.disconnect();
+      mutationObserver?.disconnect();
       cleanupListeners?.();
     };
-  }, [pathname, isArtworkDetail]);
+  }, [pathname, isArtworkDetail, prefersHeroLayout]);
 
   const [mounted, setMounted] = useState(false);
 
@@ -128,7 +140,7 @@ export function useHeaderStyle() {
 
   const openMenu = useCallback(() => setIsMenuOpen(true), []);
   const closeMenu = useCallback(() => setIsMenuOpen(false), []);
-  const observerReady = resolvedPath === (pathname || null);
+  const observerReady = observedPath === (pathname || null);
 
   const headerMode: HeaderMode = useMemo(() => {
     if (isMenuOpen) return 'overlay';
