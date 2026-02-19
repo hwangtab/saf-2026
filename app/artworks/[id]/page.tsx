@@ -253,17 +253,27 @@ export default async function ArtworkDetailPage({ params, searchParams }: Props)
 
                 {/* 연락처 옵션 */}
                 <div className="grid grid-cols-2 gap-4">
-                  <Button href="tel:02-764-3114" variant="accent" className="gap-2 group">
-                    <span className="grayscale group-hover:grayscale-0 transition-all">📞</span>
-                    <span className="text-sm font-bold">02-764-3114</span>
+                  <Button href="tel:02-764-3114" variant="accent" className="group relative">
+                    <span
+                      aria-hidden="true"
+                      className="absolute left-8 grayscale group-hover:grayscale-0 transition-all"
+                    >
+                      📞
+                    </span>
+                    <span className="text-sm font-bold text-center">02-764-3114</span>
                   </Button>
                   <Button
                     href="mailto:contact@kosmart.org"
                     variant="accent"
-                    className="gap-2 group"
+                    className="group relative"
                   >
-                    <span className="grayscale group-hover:grayscale-0 transition-all">✉️</span>
-                    <span className="text-sm font-bold">이메일 문의</span>
+                    <span
+                      aria-hidden="true"
+                      className="absolute left-8 grayscale group-hover:grayscale-0 transition-all"
+                    >
+                      ✉️
+                    </span>
+                    <span className="text-sm font-bold text-center">이메일 문의</span>
                   </Button>
                 </div>
 
