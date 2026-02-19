@@ -202,17 +202,49 @@ export default async function ArtworkDetailPage({ params, searchParams }: Props)
                 {/* 구매 링크가 없는 경우 - 안내 문구 표시 */}
                 {artwork.price && artwork.price !== '문의' && !artwork.shopUrl && !artwork.sold && (
                   <>
-                    {/* Purchase Guide in Gray Box */}
-                    <div className="bg-gray-50 rounded-xl p-4 mb-4">
-                      <PurchaseGuide className="bg-transparent p-0 mb-4" />
-                      <div className="text-center border-t border-gray-200 pt-4">
-                        <h3 className="text-lg font-bold text-gray-900 mb-1">작품구매 문의하기</h3>
-                        <p className="text-sm text-gray-500">
-                          온라인 결제 페이지가 준비 중입니다.
-                          <br />
-                          아래 연락처로 문의해주시면 안내해 드리겠습니다.
-                        </p>
+                    {/* 1. 배송/결제 안내 (일반적인 정보) - 상단 분리 */}
+                    <PurchaseGuide className="mb-6 bg-transparent p-0" />
+
+                    {/* 2. 구매 문의 CTA 섹션 */}
+                    <div className="bg-gray-50 rounded-xl p-6 mb-6 text-center border border-gray-100">
+                      <h3 className="text-lg font-bold text-charcoal mb-4">
+                        작품 구매를 원하시나요?
+                      </h3>
+
+                      {/* 구매 절차 시각화 */}
+                      <div className="flex justify-center items-center gap-2 text-xs text-gray-500 mb-6">
+                        <div className="flex flex-col items-center gap-2">
+                          <span className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center font-bold text-primary shadow-sm">
+                            1
+                          </span>
+                          <span>구매 문의</span>
+                        </div>
+                        <div className="w-12 h-px bg-gray-300 mb-4"></div>
+                        <div className="flex flex-col items-center gap-2">
+                          <span className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center font-bold text-gray-400 shadow-sm">
+                            2
+                          </span>
+                          <span>결제 안내</span>
+                        </div>
+                        <div className="w-12 h-px bg-gray-300 mb-4"></div>
+                        <div className="flex flex-col items-center gap-2">
+                          <span className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center font-bold text-gray-400 shadow-sm">
+                            3
+                          </span>
+                          <span>작품 배송</span>
+                        </div>
                       </div>
+
+                      <p className="text-sm text-gray-600 mb-0 word-keep leading-relaxed">
+                        현재 온라인 결제 시스템 연동 준비 중입니다.
+                        <br />
+                        <span className="font-semibold text-charcoal">아래 연락처</span>로
+                        문의주시면
+                        <br />
+                        담당자가{' '}
+                        <span className="text-primary font-medium">구매 절차 및 배송 일정</span>을
+                        상세히 안내해 드립니다.
+                      </p>
                     </div>
                   </>
                 )}
