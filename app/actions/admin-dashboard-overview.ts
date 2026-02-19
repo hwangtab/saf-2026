@@ -16,10 +16,18 @@ type PendingApplicationRow = {
   created_at: string;
 };
 
+type PendingExhibitorApplicationRow = {
+  user_id: string;
+  representative_name: string | null;
+  contact: string | null;
+  created_at: string;
+};
+
 type RecentPendingProfileRow = {
   id: string;
   name: string | null;
   email: string | null;
+  role: string | null;
   status: string | null;
   created_at: string;
 };
@@ -139,12 +147,12 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
     supabase
       .from('profiles')
       .select('id', { count: 'exact', head: true })
-      .in('role', ['user', 'artist'])
+      .neq('role', 'admin')
       .eq('status', 'pending'),
     supabase
       .from('profiles')
-      .select('id, name, email, status, created_at')
-      .in('role', ['user', 'artist'])
+      .select('id, name, email, role, status, created_at')
+      .neq('role', 'admin')
       .eq('status', 'pending')
       .order('created_at', { ascending: false })
       .limit(5),
@@ -185,24 +193,47 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
     []) as RecentPendingProfileRow[];
   const recentPendingProfileIds = recentPendingProfiles.map((profile) => profile.id);
   let recentPendingApplicationsRaw: PendingApplicationRow[] = [];
+  let recentPendingExhibitorApplicationsRaw: PendingExhibitorApplicationRow[] = [];
 
   if (recentPendingProfileIds.length > 0) {
-    const { data: pendingApplicationRows, error: pendingApplicationRowsError } = await supabase
-      .from('artist_applications')
-      .select('user_id, artist_name, contact, created_at')
-      .in('user_id', recentPendingProfileIds);
+    const [pendingApplicationRowsResult, pendingExhibitorApplicationRowsResult] = await Promise.all(
+      [
+        supabase
+          .from('artist_applications')
+          .select('user_id, artist_name, contact, created_at')
+          .in('user_id', recentPendingProfileIds),
+        supabase
+          .from('exhibitor_applications')
+          .select('user_id, representative_name, contact, created_at')
+          .in('user_id', recentPendingProfileIds),
+      ]
+    );
 
-    if (pendingApplicationRowsError) throw pendingApplicationRowsError;
-    recentPendingApplicationsRaw = (pendingApplicationRows || []).map((item) => ({
+    if (pendingApplicationRowsResult.error) throw pendingApplicationRowsResult.error;
+    if (pendingExhibitorApplicationRowsResult.error)
+      throw pendingExhibitorApplicationRowsResult.error;
+
+    recentPendingApplicationsRaw = (pendingApplicationRowsResult.data || []).map((item) => ({
       user_id: item.user_id,
       artist_name: item.artist_name,
       contact: item.contact,
       created_at: item.created_at,
     }));
+    recentPendingExhibitorApplicationsRaw = (pendingExhibitorApplicationRowsResult.data || []).map(
+      (item) => ({
+        user_id: item.user_id,
+        representative_name: item.representative_name,
+        contact: item.contact,
+        created_at: item.created_at,
+      })
+    );
   }
 
-  const pendingApplicationMap = new Map(
+  const pendingArtistApplicationMap = new Map(
     recentPendingApplicationsRaw.map((application) => [application.user_id, application])
+  );
+  const pendingExhibitorApplicationMap = new Map(
+    recentPendingExhibitorApplicationsRaw.map((application) => [application.user_id, application])
   );
 
   const currentMonthSalesRows = currentMonthSoldRowsResult.data || [];
@@ -236,10 +267,20 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
       currentMonthSoldCount,
     },
     recentApplications: recentPendingProfiles.map((profile) => {
-      const application = pendingApplicationMap.get(profile.id);
+      const artistApplication = pendingArtistApplicationMap.get(profile.id);
+      const exhibitorApplication = pendingExhibitorApplicationMap.get(profile.id);
+      const application =
+        profile.role === 'exhibitor'
+          ? exhibitorApplication || artistApplication
+          : artistApplication || exhibitorApplication;
+      const applicantName =
+        application && 'representative_name' in application
+          ? application.representative_name
+          : application?.artist_name;
+
       return {
         id: profile.id,
-        name: application?.artist_name || profile.name || '(이름 없음)',
+        name: applicantName || profile.name || '(이름 없음)',
         email: profile.email || '',
         contact: application?.contact || '',
         created_at: application?.created_at || profile.created_at,

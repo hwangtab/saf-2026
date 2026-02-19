@@ -146,7 +146,7 @@ export default async function AdminDashboardPage() {
           title="아티스트 신청 대기"
           valueText={NUMBER_FORMATTER.format(stats.artists.pendingApplications)}
           subtitle={stats.artists.pendingApplications > 0 ? '확인 필요' : '대기 없음'}
-          href="/admin/users"
+          href="/admin/users?status=pending"
         />
         <StatCard
           title="등록 작품(전체)"
@@ -200,7 +200,7 @@ export default async function AdminDashboardPage() {
           <AdminCardHeader className="rounded-t-2xl">
             <h2 className="text-base font-semibold text-slate-900">최근 가입 신청</h2>
             <Link
-              href="/admin/users"
+              href="/admin/users?status=pending"
               className="text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:underline"
             >
               전체 보기
