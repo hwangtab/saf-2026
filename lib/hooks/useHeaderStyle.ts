@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
 import { HERO_PAGES } from '@/lib/constants';
 import { useScrolled } from '@/lib/hooks/useScrolled';
@@ -7,100 +7,6 @@ function normalizePath(path: string): string {
   if (!path) return '/';
   const withoutTrailingSlash = path.replace(/\/+$/, '');
   return withoutTrailingSlash === '' ? '/' : withoutTrailingSlash;
-}
-
-function useHeroAtTop(currentPath: string, hasHero: boolean, disabled: boolean): boolean {
-  const [heroVisibilityByPath, setHeroVisibilityByPath] = useState<Record<string, boolean>>({});
-
-  const heroAtTop = hasHero ? (heroVisibilityByPath[currentPath] ?? true) : false;
-
-  useEffect(() => {
-    if (!hasHero || disabled) return undefined;
-
-    let ticking = false;
-    let settleTimer: ReturnType<typeof setTimeout> | null = null;
-
-    const publish = (nextValue: boolean) => {
-      setHeroVisibilityByPath((prev) => {
-        if (prev[currentPath] === nextValue) {
-          return prev;
-        }
-        return {
-          ...prev,
-          [currentPath]: nextValue,
-        };
-      });
-    };
-
-    const getSentinel = () => {
-      const routeContainers = Array.from(
-        document.querySelectorAll<HTMLElement>('[data-route-path]')
-      );
-      const activeRouteContainer = routeContainers.find(
-        (container) => container.dataset.routePath === currentPath
-      );
-
-      if (activeRouteContainer) {
-        return activeRouteContainer.querySelector<HTMLElement>('[data-hero-sentinel="true"]');
-      }
-
-      return null;
-    };
-
-    const evaluate = () => {
-      const sentinel = getSentinel();
-      if (!sentinel) {
-        return;
-      }
-      publish(sentinel.getBoundingClientRect().top >= -10);
-    };
-
-    const handleScroll = () => {
-      if (!ticking) {
-        ticking = true;
-        window.requestAnimationFrame(() => {
-          evaluate();
-          ticking = false;
-        });
-      }
-    };
-
-    const mutationObserver = new MutationObserver(() => {
-      evaluate();
-    });
-
-    publish(true);
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', evaluate);
-    window.addEventListener('pageshow', evaluate);
-    window.addEventListener('popstate', evaluate);
-
-    const mainRoot = document.getElementById('main-content') || document.body;
-
-    mutationObserver.observe(mainRoot, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ['data-hero-sentinel', 'data-route-path'],
-    });
-
-    window.requestAnimationFrame(evaluate);
-    settleTimer = setTimeout(evaluate, 120);
-
-    return () => {
-      mutationObserver.disconnect();
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', evaluate);
-      window.removeEventListener('pageshow', evaluate);
-      window.removeEventListener('popstate', evaluate);
-      if (settleTimer) {
-        clearTimeout(settleTimer);
-      }
-    };
-  }, [currentPath, hasHero, disabled]);
-
-  return heroAtTop;
 }
 
 export function useHeaderStyle() {
@@ -123,7 +29,6 @@ export function useHeaderStyle() {
 
   // 네이티브 <dialog>가 스크롤 잠금을 처리하므로 useScrollLock 불필요
   const isScrolled = useScrolled(10, isMenuOpen);
-  const isHeroAtTop = useHeroAtTop(currentPath, hasHero, isMenuOpen);
 
   const isActive = useCallback(
     (href: string) => {
@@ -138,16 +43,17 @@ export function useHeaderStyle() {
   const closeMenu = useCallback(() => setIsMenuOpen(false), []);
 
   // 헤더 스타일 메모이제이션 (메뉴가 풀스크린이므로 isMenuVisible 조건 제거)
+  // 모든 히어로 페이지의 히어로 섹션은 페이지 상단에 위치하므로 isScrolled만으로 판단 가능
   const headerStyle = useMemo(() => {
     if (isArtworkDetail || !hasHero) {
       return 'bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200/50';
     }
-    return isHeroAtTop
+    return !isScrolled
       ? 'bg-transparent'
       : 'bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200/50';
-  }, [isArtworkDetail, hasHero, isHeroAtTop]);
+  }, [isArtworkDetail, hasHero, isScrolled]);
 
-  const isDarkText = !hasHero || isArtworkDetail || !isHeroAtTop || isScrolled;
+  const isDarkText = !hasHero || isArtworkDetail || isScrolled;
   const textColor = isDarkText ? 'text-charcoal' : 'text-white';
 
   return {
