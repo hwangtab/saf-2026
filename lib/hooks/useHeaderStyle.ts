@@ -1,10 +1,9 @@
-import { useState, useCallback, useMemo, useEffect, useLayoutEffect } from 'react';
+import { useState, useCallback, useMemo, useLayoutEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { HERO_PAGES } from '@/lib/constants';
 
 const HEADER_SOLID_STYLE = 'bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200/50';
-const HERO_SENTINEL_TOP_EPSILON = -8;
-const HERO_SENTINEL_ROOT_MARGIN = '8px 0px 0px 0px';
+const HERO_SCROLL_TOP_THRESHOLD = 8;
 
 type HeaderMode = 'transparent' | 'solid' | 'overlay';
 
@@ -32,108 +31,41 @@ export function useHeaderStyle() {
     return { isArtworkDetail: artworkDetail, prefersHeroLayout: heroPage };
   }, [currentPath]);
 
-  // Start from transparent for hero pages and let observer downgrade to solid when needed.
+  // Hero routes should render transparent at top by default.
   const [heroAtTop, setHeroAtTop] = useState(true);
-  const [observedPath, setObservedPath] = useState<string | null>(null);
 
   useLayoutEffect(() => {
     if (isArtworkDetail || !prefersHeroLayout) {
       return undefined;
     }
 
-    let mounted = true;
-    let observer: IntersectionObserver | null = null;
-    let mutationObserver: MutationObserver | null = null;
-    let observedSentinel: HTMLElement | null = null;
-    let cleanupListeners: (() => void) | null = null;
+    let rafId = 0;
 
-    const selectRouteRoot = () => {
-      if (!pathname) return document as ParentNode;
-      const escapedPath = pathname.replace(/"/g, '\\"');
-      return (
-        (document.querySelector(`[data-route-path="${escapedPath}"]`) as ParentNode | null) ??
-        document
-      );
-    };
-
-    const selectSentinel = () =>
-      selectRouteRoot()?.querySelector<HTMLElement>('[data-hero-sentinel="true"]') ?? null;
-
-    const updateFromRect = (target: HTMLElement) => {
-      const next = target.getBoundingClientRect().top >= HERO_SENTINEL_TOP_EPSILON;
+    const updateFromScroll = () => {
+      const next = window.scrollY <= HERO_SCROLL_TOP_THRESHOLD;
       setHeroAtTop((prev) => (prev !== next ? next : prev));
+      rafId = 0;
     };
 
-    const attach = () => {
-      const sentinel = selectSentinel();
-
-      if (!mounted || !sentinel) {
-        return false;
-      }
-
-      if (observedSentinel === sentinel) {
-        updateFromRect(sentinel);
-        return true;
-      }
-
-      observedSentinel = sentinel;
-      setObservedPath(pathname || null);
-      updateFromRect(sentinel);
-
-      observer?.disconnect();
-
-      observer = new IntersectionObserver(
-        (entries) => {
-          const [entry] = entries;
-          if (!entry) return;
-          setHeroAtTop(entry.isIntersecting);
-        },
-        { threshold: [0, 1], rootMargin: HERO_SENTINEL_ROOT_MARGIN }
-      );
-      observer.observe(sentinel);
-
-      const sync = () => updateFromRect(sentinel);
-      window.addEventListener('pageshow', sync);
-      window.addEventListener('resize', sync);
-
-      cleanupListeners = () => {
-        window.removeEventListener('pageshow', sync);
-        window.removeEventListener('resize', sync);
-      };
-
-      return true;
+    const requestSync = () => {
+      if (rafId) return;
+      rafId = window.requestAnimationFrame(updateFromScroll);
     };
 
-    if (!attach()) {
-      const observeTarget =
-        (document.getElementById('main-content') as ParentNode | null) ?? document.body;
-
-      mutationObserver = new MutationObserver(() => {
-        if (attach()) {
-          mutationObserver?.disconnect();
-        }
-      });
-
-      mutationObserver.observe(observeTarget, {
-        childList: true,
-        subtree: true,
-      });
-    }
+    updateFromScroll();
+    window.addEventListener('scroll', requestSync, { passive: true });
+    window.addEventListener('resize', requestSync);
+    window.addEventListener('pageshow', requestSync);
 
     return () => {
-      mounted = false;
-      observer?.disconnect();
-      mutationObserver?.disconnect();
-      cleanupListeners?.();
+      if (rafId) {
+        window.cancelAnimationFrame(rafId);
+      }
+      window.removeEventListener('scroll', requestSync);
+      window.removeEventListener('resize', requestSync);
+      window.removeEventListener('pageshow', requestSync);
     };
   }, [pathname, isArtworkDetail, prefersHeroLayout]);
-
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setMounted(true);
-  }, []);
 
   const isActive = useCallback(
     (href: string) => {
@@ -146,18 +78,13 @@ export function useHeaderStyle() {
 
   const openMenu = useCallback(() => setIsMenuOpen(true), []);
   const closeMenu = useCallback(() => setIsMenuOpen(false), []);
-  // `usePathname()` can be temporarily null during initial hydration.
-  // In that case, treat observer as not-ready so hero pages stay transparent first.
-  const observerReady = Boolean(pathname) && observedPath === pathname;
 
   const headerMode: HeaderMode = useMemo(() => {
     if (isMenuOpen) return 'overlay';
     if (isArtworkDetail) return 'solid';
     if (!prefersHeroLayout) return 'solid';
-    if (!mounted) return 'transparent';
-    if (!observerReady) return 'transparent';
     return heroAtTop ? 'transparent' : 'solid';
-  }, [heroAtTop, isArtworkDetail, isMenuOpen, mounted, observerReady, prefersHeroLayout]);
+  }, [heroAtTop, isArtworkDetail, isMenuOpen, prefersHeroLayout]);
 
   const headerStyle = headerMode === 'transparent' ? 'bg-transparent' : HEADER_SOLID_STYLE;
 

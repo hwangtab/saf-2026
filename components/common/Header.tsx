@@ -30,7 +30,7 @@ function PublicHeader() {
   return (
     <header
       className={clsx(
-        'fixed top-0 left-0 right-0 transition-colors duration-300',
+        'fixed top-0 left-0 right-0 transition-[border-color,backdrop-filter] duration-200',
         'pt-[env(safe-area-inset-top,0px)]',
         headerStyle
       )}
@@ -39,7 +39,7 @@ function PublicHeader() {
         willChange: 'background-color, border-color',
       }}
     >
-      <nav className="relative container-max flex items-center justify-between h-16 transition-colors duration-300">
+      <nav className="relative container-max flex items-center justify-between h-16">
         <HeaderLogo isDarkText={isDarkText} />
 
         <DesktopNav navigation={MAIN_NAVIGATION} isActive={isActive} textColor={textColor} />
