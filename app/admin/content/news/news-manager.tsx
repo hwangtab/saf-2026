@@ -7,6 +7,7 @@ import { createNews, updateNews, deleteNews } from '@/app/actions/admin-content'
 import { AdminCard } from '@/app/admin/_components/admin-ui';
 import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import { useToast } from '@/lib/hooks/useToast';
+import { matchesAnySearch } from '@/lib/search-utils';
 
 type NewsItem = {
   id: string;
@@ -22,8 +23,6 @@ const formatDateInput = (value: string | null) => {
   if (!value) return '';
   return value.toString().slice(0, 10);
 };
-
-const normalize = (value: string) => value.toLowerCase().replace(/\s+/g, '');
 
 export function NewsManager({ news }: { news: NewsItem[] }) {
   const router = useRouter();
@@ -195,9 +194,8 @@ export function NewsManager({ news }: { news: NewsItem[] }) {
         </AdminCard>
         {optimisticNews
           .filter((item) => {
-            if (!query) return true;
-            const q = normalize(query);
-            return normalize(item.title).includes(q) || normalize(item.source || '').includes(q);
+            if (!query.trim()) return true;
+            return matchesAnySearch(query, [item.title, item.source]);
           })
           .map((item) => (
             <form

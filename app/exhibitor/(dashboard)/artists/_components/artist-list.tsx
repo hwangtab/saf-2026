@@ -11,6 +11,7 @@ import {
   AdminEmptyState,
   AdminInput,
 } from '@/app/admin/_components/admin-ui';
+import { matchesAnySearch } from '@/lib/search-utils';
 
 type ArtistItem = {
   id: string;
@@ -49,12 +50,8 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
   };
 
   const filtered = optimisticArtists.filter((artist) => {
-    if (!query) return true;
-    const q = query.toLowerCase().replace(/\s+/g, '');
-    const nameKo = (artist.name_ko || '').toLowerCase().replace(/\s+/g, '');
-    const nameEn = (artist.name_en || '').toLowerCase().replace(/\s+/g, '');
-    const email = (artist.contact_email || '').toLowerCase().replace(/\s+/g, '');
-    return nameKo.includes(q) || nameEn.includes(q) || email.includes(q);
+    if (!query.trim()) return true;
+    return matchesAnySearch(query, [artist.name_ko, artist.name_en, artist.contact_email]);
   });
 
   return (

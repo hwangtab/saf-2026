@@ -7,6 +7,7 @@ import { createVideo, updateVideo, deleteVideo } from '@/app/actions/admin-conte
 import { AdminCard } from '@/app/admin/_components/admin-ui';
 import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import { useToast } from '@/lib/hooks/useToast';
+import { matchesAnySearch } from '@/lib/search-utils';
 
 type VideoItem = {
   id: string;
@@ -16,8 +17,6 @@ type VideoItem = {
   thumbnail: string | null;
   transcript: string | null;
 };
-
-const normalize = (value: string) => value.toLowerCase().replace(/\s+/g, '');
 
 export function VideosManager({ videos }: { videos: VideoItem[] }) {
   const router = useRouter();
@@ -182,9 +181,8 @@ export function VideosManager({ videos }: { videos: VideoItem[] }) {
         </AdminCard>
         {optimisticVideos
           .filter((item) => {
-            if (!query) return true;
-            const q = normalize(query);
-            return normalize(item.title).includes(q) || normalize(item.youtube_id).includes(q);
+            if (!query.trim()) return true;
+            return matchesAnySearch(query, [item.title, item.youtube_id]);
           })
           .map((item) => (
             <form

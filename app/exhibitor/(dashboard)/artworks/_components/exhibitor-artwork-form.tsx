@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
 import { useToast } from '@/lib/hooks/useToast';
+import { matchesSearchText } from '@/lib/search-utils';
 import {
   createExhibitorArtwork,
   updateExhibitorArtwork,
@@ -71,9 +72,9 @@ export function ExhibitorArtworkForm({
   }, [initialSelectedArtistId]);
 
   const filteredArtists = useMemo(() => {
-    const q = artistQuery.trim().toLowerCase();
-    if (!q) return artists;
-    return artists.filter((artist) => (artist.name_ko || '').toLowerCase().includes(q));
+    const normalizedQuery = artistQuery.trim();
+    if (!normalizedQuery) return artists;
+    return artists.filter((artist) => matchesSearchText(artist.name_ko, normalizedQuery));
   }, [artists, artistQuery]);
 
   const handleSubmit = async (formData: FormData) => {

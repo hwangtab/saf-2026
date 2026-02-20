@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
+import { hasHangulJamo, matchesAnySearch } from '@/lib/search-utils';
 import { logAdminAction } from './admin-logs';
 import { getString } from '@/lib/utils/form-helpers';
 
@@ -348,11 +349,27 @@ export async function createAdminArtist(formData: FormData) {
 export async function searchUsersByName(query: string) {
   await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
+  const normalizedQuery = query.trim();
+  if (normalizedQuery.length < 2) return [];
+
+  if (hasHangulJamo(normalizedQuery)) {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id, name, email, avatar_url, role, status')
+      .order('created_at', { ascending: false })
+      .limit(200);
+
+    if (error) throw error;
+
+    return (data || [])
+      .filter((item) => matchesAnySearch(normalizedQuery, [item.name, item.email]))
+      .slice(0, 10);
+  }
 
   const { data, error } = await supabase
     .from('profiles')
     .select('id, name, email, avatar_url, role, status')
-    .or(`name.ilike.%${query}%,email.ilike.%${query}%`)
+    .or(`name.ilike.%${normalizedQuery}%,email.ilike.%${normalizedQuery}%`)
     .limit(10);
 
   if (error) throw error;

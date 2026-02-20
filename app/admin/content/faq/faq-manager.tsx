@@ -7,6 +7,7 @@ import { createFaq, updateFaq, deleteFaq } from '@/app/actions/admin-content';
 import { AdminCard } from '@/app/admin/_components/admin-ui';
 import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import { useToast } from '@/lib/hooks/useToast';
+import { matchesAnySearch } from '@/lib/search-utils';
 
 type FaqItem = {
   id: string;
@@ -14,8 +15,6 @@ type FaqItem = {
   answer: string;
   display_order: number | null;
 };
-
-const normalize = (value: string) => value.toLowerCase().replace(/\s+/g, '');
 
 export function FaqManager({ faqs }: { faqs: FaqItem[] }) {
   const router = useRouter();
@@ -153,9 +152,8 @@ export function FaqManager({ faqs }: { faqs: FaqItem[] }) {
         </AdminCard>
         {optimisticFaqs
           .filter((item) => {
-            if (!query) return true;
-            const q = normalize(query);
-            return normalize(item.question).includes(q) || normalize(item.answer).includes(q);
+            if (!query.trim()) return true;
+            return matchesAnySearch(query, [item.question, item.answer]);
           })
           .map((item) => (
             <form

@@ -2,6 +2,7 @@
 
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 import { requireAdmin } from '@/lib/auth/guards';
+import { hasHangulJamo, matchesAnySearch } from '@/lib/search-utils';
 import { revalidatePath } from 'next/cache';
 import { logAdminAction } from './admin-logs';
 import { UserRole } from '@/types/database.types';
@@ -97,31 +98,41 @@ export async function searchUnlinkedArtists(query: string): Promise<UnlinkedArti
   await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
 
-  const normalizedQuery = sanitizeIlikeQuery(query);
+  const rawQuery = query.trim();
+  const normalizedQuery = sanitizeIlikeQuery(rawQuery);
   if (normalizedQuery.length < 2) return [];
+  const hasJamo = hasHangulJamo(rawQuery);
 
   const runSearch = async (withPhoneField: boolean) => {
     if (withPhoneField) {
-      return supabase
+      let builder = supabase
         .from('artists')
         .select('id, name_ko, name_en, contact_phone, contact_email, updated_at, artworks(count)')
         .is('user_id', null)
-        .or(
+        .order('updated_at', { ascending: false });
+
+      if (!hasJamo) {
+        builder = builder.or(
           `name_ko.ilike.%${normalizedQuery}%,name_en.ilike.%${normalizedQuery}%,contact_phone.ilike.%${normalizedQuery}%,contact_email.ilike.%${normalizedQuery}%`
-        )
-        .order('updated_at', { ascending: false })
-        .limit(20);
+        );
+      }
+
+      return builder.limit(hasJamo ? 300 : 20);
     }
 
-    return supabase
+    let builder = supabase
       .from('artists')
       .select('id, name_ko, name_en, contact_email, updated_at, artworks(count)')
       .is('user_id', null)
-      .or(
+      .order('updated_at', { ascending: false });
+
+    if (!hasJamo) {
+      builder = builder.or(
         `name_ko.ilike.%${normalizedQuery}%,name_en.ilike.%${normalizedQuery}%,contact_email.ilike.%${normalizedQuery}%`
-      )
-      .order('updated_at', { ascending: false })
-      .limit(20);
+      );
+    }
+
+    return builder.limit(hasJamo ? 300 : 20);
   };
 
   let { data, error } = await runSearch(true);
@@ -143,7 +154,21 @@ export async function searchUnlinkedArtists(query: string): Promise<UnlinkedArti
     artworks?: Array<{ count: number | null }> | null;
   };
 
-  return ((data || []) as ArtistSearchRow[]).map((artist) => ({
+  const normalizedRows = (data || []) as ArtistSearchRow[];
+  const filteredRows = hasJamo
+    ? normalizedRows
+        .filter((artist) =>
+          matchesAnySearch(rawQuery, [
+            artist.name_ko,
+            artist.name_en,
+            artist.contact_phone,
+            artist.contact_email,
+          ])
+        )
+        .slice(0, 20)
+    : normalizedRows;
+
+  return filteredRows.map((artist) => ({
     id: artist.id,
     name_ko: artist.name_ko || null,
     name_en: artist.name_en || null,

@@ -5,6 +5,7 @@ import ArtworkLightbox from '@/components/ui/ArtworkLightbox';
 import SafeImage from '@/components/common/SafeImage';
 import { deleteExhibitorArtwork } from '@/app/actions/exhibitor-artworks';
 import { useToast } from '@/lib/hooks/useToast';
+import { matchesAnySearch } from '@/lib/search-utils';
 import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
 import {
   AdminBadge,
@@ -36,11 +37,8 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
 
   const filtered = artworks.filter((artwork) => {
-    if (!query) return true;
-    const q = query.toLowerCase();
-    const title = artwork.title.toLowerCase();
-    const artist = (artwork.artists?.name_ko || '').toLowerCase();
-    return title.includes(q) || artist.includes(q);
+    if (!query.trim()) return true;
+    return matchesAnySearch(query, [artwork.title, artwork.artists?.name_ko]);
   });
 
   const handleImageClick = (images: string[], title: string) => {

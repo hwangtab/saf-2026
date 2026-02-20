@@ -13,6 +13,7 @@ import {
 } from '@/app/admin/_components/admin-ui';
 import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import Button from '@/components/ui/Button';
+import { matchesAnySearch } from '@/lib/search-utils';
 
 type ArtistItem = {
   id: string;
@@ -64,13 +65,13 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
 
   const filtered = useMemo(() => {
     return optimisticArtists.filter((artist) => {
-      if (!query) return true;
-      const q = query.toLowerCase().replace(/\s+/g, '');
-      const nameKo = (artist.name_ko || '').toLowerCase().replace(/\s+/g, '');
-      const nameEn = (artist.name_en || '').toLowerCase().replace(/\s+/g, '');
-      const phone = (artist.contact_phone || '').toLowerCase().replace(/\s+/g, '');
-      const email = (artist.contact_email || '').toLowerCase().replace(/\s+/g, '');
-      return nameKo.includes(q) || nameEn.includes(q) || phone.includes(q) || email.includes(q);
+      if (!query.trim()) return true;
+      return matchesAnySearch(query, [
+        artist.name_ko,
+        artist.name_en,
+        artist.contact_phone,
+        artist.contact_email,
+      ]);
     });
   }, [optimisticArtists, query]);
 

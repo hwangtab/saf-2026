@@ -12,6 +12,7 @@ import {
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
 import { AdminCard, AdminSelect } from '@/app/admin/_components/admin-ui';
 import { useToast } from '@/lib/hooks/useToast';
+import { matchesSearchText } from '@/lib/search-utils';
 import { cn } from '@/lib/utils';
 import { EditionType } from '@/types';
 
@@ -87,9 +88,9 @@ export function ArtworkEditForm({
   }, [initialSelectedArtistId]);
 
   const filteredArtists = useMemo(() => {
-    const q = artistQuery.trim().toLowerCase();
-    if (!q) return artists;
-    return artists.filter((artist) => (artist.name_ko || '').toLowerCase().includes(q));
+    const normalizedQuery = artistQuery.trim();
+    if (!normalizedQuery) return artists;
+    return artists.filter((artist) => matchesSearchText(artist.name_ko, normalizedQuery));
   }, [artists, artistQuery]);
 
   const handleSubmit = async (formData: FormData) => {

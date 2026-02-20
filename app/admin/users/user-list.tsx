@@ -17,6 +17,7 @@ import { AdminCard, AdminInput } from '@/app/admin/_components/admin-ui'; // Imp
 import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import { useDebounce } from '@/lib/hooks/useDebounce';
 import { useToast } from '@/lib/hooks/useToast';
+import { matchesAnySearch } from '@/lib/search-utils';
 import SafeAvatarImage from '@/components/common/SafeAvatarImage';
 import {
   Profile,
@@ -234,9 +235,18 @@ export function UserList({
     };
   }, [artistPromoteContext, debouncedArtistSearchQuery]);
 
-  // 서버에서 이미 검색/필터링됨 - 클라이언트에서는 정렬만 수행
+  const filteredUsers = useMemo(() => {
+    const normalizedQuery = normalizeQuery(query);
+    if (!normalizedQuery) return localUsers;
+
+    return localUsers.filter((user) =>
+      matchesAnySearch(normalizedQuery, [user.name, user.email, user.application?.artist_name])
+    );
+  }, [localUsers, query]);
+
+  // 검색 결과 기준으로 정렬 수행
   const sortedUsers = useMemo(() => {
-    const sorted = [...localUsers];
+    const sorted = [...filteredUsers];
     const statusRank: Record<Profile['status'], number> = {
       pending: 0,
       active: 1,
@@ -292,7 +302,7 @@ export function UserList({
     });
 
     return sorted;
-  }, [localUsers, sortDirection, sortKey]);
+  }, [filteredUsers, sortDirection, sortKey]);
 
   const handleSort = (key: UserSortKey) => {
     if (sortKey === key) {
@@ -527,7 +537,7 @@ export function UserList({
       <AdminCard className="overflow-hidden">
         <UserFilters
           query={query}
-          totalItems={localUsers.length}
+          totalItems={sortedUsers.length}
           initialFilters={initialFilters}
           filterNotice={filterNotice}
           onQueryChange={setQuery}

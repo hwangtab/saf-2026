@@ -23,6 +23,7 @@ import {
 } from '@/app/admin/_components/admin-ui';
 import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import { useToast } from '@/lib/hooks/useToast';
+import { matchesAnySearch } from '@/lib/search-utils';
 import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
 
 type ArtworkItem = {
@@ -229,11 +230,8 @@ export function AdminArtworkList({
       if (statusFilter !== 'all' && artwork.status !== statusFilter) return false;
       if (visibilityFilter === 'visible' && artwork.is_hidden) return false;
       if (visibilityFilter === 'hidden' && !artwork.is_hidden) return false;
-      if (!query) return true;
-      const q = query.toLowerCase().replace(/\s+/g, '');
-      const title = artwork.title.toLowerCase().replace(/\s+/g, '');
-      const artist = (artwork.artists?.name_ko || '').toLowerCase().replace(/\s+/g, '');
-      return title.includes(q) || artist.includes(q);
+      if (!query.trim()) return true;
+      return matchesAnySearch(query, [artwork.title, artwork.artists?.name_ko]);
     });
   }, [optimisticArtworks, query, statusFilter, visibilityFilter]);
 

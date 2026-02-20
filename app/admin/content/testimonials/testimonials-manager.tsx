@@ -11,6 +11,7 @@ import {
 import { AdminCard } from '@/app/admin/_components/admin-ui';
 import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import { useToast } from '@/lib/hooks/useToast';
+import { matchesAnySearch } from '@/lib/search-utils';
 
 type TestimonialItem = {
   id: string;
@@ -20,8 +21,6 @@ type TestimonialItem = {
   context: string | null;
   display_order: number | null;
 };
-
-const normalize = (value: string) => value.toLowerCase().replace(/\s+/g, '');
 
 export function TestimonialsManager({ testimonials }: { testimonials: TestimonialItem[] }) {
   const router = useRouter();
@@ -176,13 +175,8 @@ export function TestimonialsManager({ testimonials }: { testimonials: Testimonia
         </AdminCard>
         {optimisticTestimonials
           .filter((item) => {
-            if (!query) return true;
-            const q = normalize(query);
-            return (
-              normalize(item.category).includes(q) ||
-              normalize(item.author).includes(q) ||
-              normalize(item.quote).includes(q)
-            );
+            if (!query.trim()) return true;
+            return matchesAnySearch(query, [item.category, item.author, item.quote]);
           })
           .map((item) => (
             <form

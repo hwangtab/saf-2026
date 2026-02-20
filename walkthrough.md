@@ -176,6 +176,49 @@
 
 ---
 
+## 검색 UX 개선 (초성 혼합 입력 대응)
+
+`오ㅇ`처럼 한글 초성 혼합 입력 시 결과가 사라지는 문제를 공통 검색 유틸로 정리해 주요 검색 필터 전반에 적용했습니다.
+
+### 1) 공통 검색 유틸 추가
+
+- `/Users/hwang-gyeongha/saf/lib/search-utils.ts` (신규)
+  - 공백 제거/소문자 정규화
+  - 한글 초성 매칭 (`ㄱ-ㅎ`)
+  - 종성 없는 음절의 부분 매칭 (`유`가 `윤`에 매칭)
+  - `matchesSearchText`, `matchesAnySearch`, `hasHangulJamo` 제공
+
+### 2) 검색 필터 적용 화면
+
+- `/Users/hwang-gyeongha/saf/app/admin/artworks/admin-artwork-list.tsx`
+- `/Users/hwang-gyeongha/saf/app/admin/artists/artist-list.tsx`
+- `/Users/hwang-gyeongha/saf/app/admin/users/user-list.tsx`
+- `/Users/hwang-gyeongha/saf/app/admin/artworks/artwork-edit-form.tsx`
+- `/Users/hwang-gyeongha/saf/app/exhibitor/(dashboard)/artworks/_components/exhibitor-artwork-list.tsx`
+- `/Users/hwang-gyeongha/saf/app/exhibitor/(dashboard)/artworks/_components/exhibitor-artwork-form.tsx`
+- `/Users/hwang-gyeongha/saf/app/exhibitor/(dashboard)/artists/_components/artist-list.tsx`
+- `/Users/hwang-gyeongha/saf/app/admin/content/news/news-manager.tsx`
+- `/Users/hwang-gyeongha/saf/app/admin/content/faq/faq-manager.tsx`
+- `/Users/hwang-gyeongha/saf/app/admin/content/videos/videos-manager.tsx`
+- `/Users/hwang-gyeongha/saf/app/admin/content/testimonials/testimonials-manager.tsx`
+
+### 3) 서버 검색 보강 (초성 입력 대응)
+
+- `/Users/hwang-gyeongha/saf/app/admin/users/page.tsx`
+  - `q`에 자모가 포함되면 서버 `ilike`를 생략하고 클라이언트 보강 필터로 처리
+- `/Users/hwang-gyeongha/saf/app/actions/admin-artists.ts`
+  - `searchUsersByName`에서 자모 입력 시 넓게 조회 후 공통 유틸로 2차 필터
+- `/Users/hwang-gyeongha/saf/app/actions/admin.ts`
+  - `searchUnlinkedArtists`에서 자모 입력 시 넓게 조회 후 공통 유틸로 2차 필터
+
+### 검증 결과
+
+- `npx eslint ...` (변경 파일 대상) 통과
+- `npm run type-check` 통과
+- `npm run build` 통과
+
+---
+
 ## 관리자 사용자 검색/필터 안정화 (admin/users)
 
 `/admin/users`에서 검색 입력 튕김 및 필터 병합 충돌 가능성을 줄이기 위해 URL 동기화 경로를 정리했습니다.
