@@ -178,21 +178,26 @@ async function requestWithVariants(
   payload: JsonRecord
 ): Promise<unknown> {
   const client = createCafe24AdminApiClient();
-  const variants: JsonRecord[] = [payload, { product: payload }, { request: payload }];
-  let lastError: Error | null = null;
+  const variants: Array<{ name: string; body: JsonRecord }> = [
+    { name: 'request', body: { request: payload } },
+    { name: 'product', body: { product: payload } },
+    { name: 'plain', body: payload },
+  ];
+  const errors: string[] = [];
 
-  for (const body of variants) {
+  for (const variant of variants) {
     try {
       return await client.request(path, {
         method,
-        body: JSON.stringify(body),
+        body: JSON.stringify(variant.body),
       });
     } catch (error) {
-      lastError = error instanceof Error ? error : new Error(String(error));
+      const message = error instanceof Error ? error.message : String(error);
+      errors.push(`${variant.name}: ${message}`);
     }
   }
 
-  throw lastError || new Error('Cafe24 요청 실패');
+  throw new Error(`Cafe24 요청 실패: ${errors.join(' | ')}`);
 }
 
 async function upsertCafe24Product(
