@@ -1,6 +1,7 @@
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { AdminArtworkList } from './admin-artwork-list';
+import { Cafe24MissingLinkSyncButton } from './cafe24-missing-link-sync-button';
 import LinkButton from '@/components/ui/LinkButton';
 import {
   AdminPageDescription,
@@ -39,9 +40,12 @@ export default async function AdminArtworksPage({ searchParams }: Props) {
           <AdminPageTitle>작품 관리</AdminPageTitle>
           <AdminPageDescription>등록된 작품 정보를 관리합니다.</AdminPageDescription>
         </AdminPageHeader>
-        <LinkButton href="/admin/artworks/new" className="w-full sm:w-auto">
-          작품 등록
-        </LinkButton>
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+          <Cafe24MissingLinkSyncButton />
+          <LinkButton href="/admin/artworks/new" className="w-full sm:w-auto">
+            작품 등록
+          </LinkButton>
+        </div>
       </div>
       <AdminArtworkList
         artworks={normalizedArtworks}
