@@ -463,6 +463,12 @@ export async function syncArtworkToCafe24(artworkId: string): Promise<SyncResult
     const imageUrl = pickImageUrl(artwork.images);
     let warningMessage: string | null = null;
 
+    const mustHaveCategory = config.mallId === 'koreasmartcoop';
+    if (!categoryNo && mustHaveCategory) {
+      throw new Error(
+        '상품 카테고리 연결에 실패했습니다. CAFE24_DEFAULT_CATEGORY_NO 및 카테고리 권한 설정을 확인하세요.'
+      );
+    }
     if (!categoryNo) {
       warningMessage = mergeWarnings(
         warningMessage,
