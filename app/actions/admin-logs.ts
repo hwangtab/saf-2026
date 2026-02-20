@@ -629,6 +629,97 @@ async function enrichActivityLogTargets(logs: ActivityLogEntry[]): Promise<Activ
   });
 }
 
+function getTargetNameFromMetadata(metadata: Record<string, unknown> | null): string | null {
+  if (!metadata) return null;
+
+  const targetName = typeof metadata.target_name === 'string' ? metadata.target_name : null;
+  if (targetName) return targetName;
+
+  const title = typeof metadata.title === 'string' ? metadata.title : null;
+  const name = typeof metadata.name === 'string' ? metadata.name : null;
+  const userName = typeof metadata.user_name === 'string' ? metadata.user_name : null;
+  const artistName = typeof metadata.artist_name === 'string' ? metadata.artist_name : null;
+  const representativeName =
+    typeof metadata.representative_name === 'string' ? metadata.representative_name : null;
+
+  return title || name || userName || artistName || representativeName || null;
+}
+
+async function enrichTrashPurgedTargetNames(logs: ActivityLogEntry[]): Promise<ActivityLogEntry[]> {
+  const trashLogs = logs.filter((log) => log.action === 'trash_purged');
+  if (trashLogs.length === 0) return logs;
+
+  const unresolved = trashLogs.filter((log) => {
+    const metadata = asSnapshotObject(log.metadata);
+    return !getTargetNameFromMetadata(metadata);
+  });
+  if (unresolved.length === 0) return logs;
+
+  const purgedLogIds = Array.from(
+    new Set(
+      unresolved
+        .map((log) => {
+          const metadata = asSnapshotObject(log.metadata);
+          return metadata && typeof metadata.purged_log_id === 'string'
+            ? metadata.purged_log_id
+            : null;
+        })
+        .filter((value): value is string => !!value)
+    )
+  );
+  if (purgedLogIds.length === 0) return logs;
+
+  const supabase = await createSupabaseAdminOrServerClient();
+  const { data: sourceLogs } = await supabase
+    .from('activity_logs')
+    .select('id, target_id, metadata')
+    .in('id', purgedLogIds);
+
+  const sourceMetadataById = new Map<string, Record<string, unknown>>();
+  for (const row of sourceLogs || []) {
+    const metadata = asSnapshotObject(row.metadata);
+    if (metadata) {
+      sourceMetadataById.set(row.id, metadata);
+    }
+  }
+
+  return logs.map((log) => {
+    if (log.action !== 'trash_purged') return log;
+
+    const currentMetadata = asSnapshotObject(log.metadata) || {};
+    if (getTargetNameFromMetadata(currentMetadata)) return log;
+
+    const purgedLogId =
+      typeof currentMetadata.purged_log_id === 'string' ? currentMetadata.purged_log_id : null;
+    if (!purgedLogId) return log;
+
+    const sourceMetadata = sourceMetadataById.get(purgedLogId);
+    if (!sourceMetadata) return log;
+
+    const resolvedName = getTargetNameFromMetadata(sourceMetadata);
+    const sourceTargetNamesRaw = sourceMetadata.target_names;
+    const sourceTargetNames =
+      sourceTargetNamesRaw &&
+      typeof sourceTargetNamesRaw === 'object' &&
+      !Array.isArray(sourceTargetNamesRaw)
+        ? (sourceTargetNamesRaw as Record<string, unknown>)
+        : null;
+
+    const mergedMetadata: Record<string, unknown> = { ...currentMetadata };
+    if (resolvedName) {
+      mergedMetadata.target_name = resolvedName;
+    }
+    if (sourceTargetNames) {
+      mergedMetadata.target_names = sourceTargetNames;
+    }
+
+    return {
+      ...log,
+      metadata: mergedMetadata,
+    };
+  });
+}
+
 async function writeActivityLog(params: {
   actor: ActorInfo;
   action: string;
@@ -874,8 +965,9 @@ export async function getActivityLogs(filters: ActivityLogFilters = {}) {
   const logs = (data || []) as ActivityLogEntry[];
   const actorEnrichedLogs = await enrichActivityLogActors(logs);
   const targetEnrichedLogs = await enrichActivityLogTargets(actorEnrichedLogs);
+  const trashNameEnrichedLogs = await enrichTrashPurgedTargetNames(targetEnrichedLogs);
 
-  return { logs: targetEnrichedLogs, total: count || 0 };
+  return { logs: trashNameEnrichedLogs, total: count || 0 };
 }
 
 export async function getAdminLogs(

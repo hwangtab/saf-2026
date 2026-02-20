@@ -81,8 +81,26 @@ function formatActionDescription(log: ActivityLogEntry): string {
       return `출품자 작품 삭제: ${details?.title || log.target_id}`;
     case 'revert_executed':
       return `복구 실행: 로그 ${details?.reverted_log_id || '-'}`;
-    case 'trash_purged':
-      return `휴지통 영구 삭제: 로그 ${details?.purged_log_id || '-'}`;
+    case 'trash_purged': {
+      const purgedLogId = typeof details?.purged_log_id === 'string' ? details.purged_log_id : '-';
+      const targetNamesRaw =
+        details?.target_names &&
+        typeof details.target_names === 'object' &&
+        !Array.isArray(details.target_names)
+          ? (details.target_names as Record<string, unknown>)
+          : null;
+      const mappedTargetName =
+        targetNamesRaw && typeof targetNamesRaw[log.target_id] === 'string'
+          ? (targetNamesRaw[log.target_id] as string)
+          : null;
+      const targetName =
+        (typeof details?.target_name === 'string' && details.target_name) ||
+        mappedTargetName ||
+        (typeof details?.title === 'string' && details.title) ||
+        (typeof details?.name === 'string' && details.name) ||
+        null;
+      return `휴지통 영구 삭제: ${targetName || getLogTargetDisplayName(log)} (로그 ${purgedLogId})`;
+    }
     case 'content_created':
       return `콘텐츠 생성: ${log.target_type} - ${details?.title || log.target_id}`;
     case 'content_updated':

@@ -408,3 +408,99 @@
 
 - `npm run lint` 통과
 - `npm run type-check` 통과
+
+---
+
+## 검색 UX 재수정: `오ㅇ` 입력 중 결과 소실 보완
+
+### 1) 공통 검색 유틸 보강
+
+- `/Users/hwang-gyeongha/saf/lib/search-utils.ts`
+  - 조합형 종성 입력 분해 로직 추가
+    - 예: `옹` 입력 시 내부 후보에 `오ㅇ`를 추가
+  - `matchesSearchText`가 단일 쿼리 대신 후보 쿼리 집합(원본 + 분해)을 순회하도록 확장
+  - `hasComposedTrailingConsonantQuery` export 추가
+
+### 2) 서버 검색 분기 동기화
+
+- `/Users/hwang-gyeongha/saf/app/admin/users/page.tsx`
+  - 서버 `ilike` 적용 조건에 `hasComposedTrailingConsonantQuery`를 추가해,
+    조합형 종성 입력은 클라이언트 보강 필터 경로로 일관 처리
+
+- `/Users/hwang-gyeongha/saf/app/actions/admin-artists.ts`
+  - `searchUsersByName`에서 조합형 종성 입력도 확장 조회 + `matchesAnySearch` 후처리 경로로 통일
+
+- `/Users/hwang-gyeongha/saf/app/actions/admin.ts`
+  - `searchUnlinkedArtists`에서도 동일 조건(`requiresClientFilter`)으로 분기 통일
+
+### 3) 테스트 추가
+
+- `/Users/hwang-gyeongha/saf/__tests__/lib/search-utils.test.ts` (신규)
+  - `오ㅇ` 입력으로 `오윤` 매칭
+  - `옹`(IME 조합 상태) 입력으로 `오윤` 매칭
+  - 과도 확장 방지 케이스(`오하나` + `옹` 미매칭)
+
+### 4) 검증 결과
+
+- `npm test -- __tests__/lib/search-utils.test.ts` 통과
+- `npm run lint` 통과
+- `npm run type-check` 통과
+- `npm run build` 통과
+
+---
+
+## 휴지통 영구삭제 로그 대상명 표시 개선
+
+### 1) 수동 영구삭제 로그에 대상명 보존
+
+- `/Users/hwang-gyeongha/saf/app/actions/admin-logs.ts`
+  - 영구삭제 직전 원본 삭제 로그(`metadata`, `before_snapshot`)에서 대상명을 추출하는 헬퍼 추가
+  - `trash_purged` 로그 작성 시 `metadata.target_name`, `metadata.target_names`를 함께 저장
+  - summary도 대상명 우선으로 기록하도록 개선
+
+### 2) 자동 만료 정리(CRON API) 로그 포맷 동기화
+
+- `/Users/hwang-gyeongha/saf/app/api/internal/purge-trash/route.ts`
+  - 자동 정리 경로에서도 동일 대상명 추출 로직 추가
+  - `trash_purged` 메타데이터에 `target_name/target_names` 저장
+  - summary에 대상명 우선 반영
+
+### 3) 배치 스크립트 경로 동기화
+
+- `/Users/hwang-gyeongha/saf/scripts/purge-expired-trash.js`
+  - 자동 정리 스크립트(`node scripts/purge-expired-trash.js`)도 동일 로직 적용
+  - 수동 실행/서버 라우트 실행 간 로그 형태 일관화
+
+### 4) 관리자 로그 액션 문구 개선
+
+- `/Users/hwang-gyeongha/saf/app/admin/logs/logs-list.tsx`
+  - `trash_purged` 표시를 `휴지통 영구 삭제: {대상명} (로그 {purged_log_id})` 형태로 변경
+  - 대상명이 있으면 UUID fallback 문구 대신 이름이 액션 텍스트에 직접 노출되도록 개선
+
+### 5) 검증 결과
+
+- `npm run lint` 통과
+- `npm run type-check` 통과
+
+---
+
+## 휴지통 영구삭제 로그 후속 보완 (구버전 로그 역보강)
+
+### 1) 구버전 `trash_purged` 로그 이름 복원
+
+- `/Users/hwang-gyeongha/saf/app/actions/admin-logs.ts`
+  - `enrichTrashPurgedTargetNames` 추가
+  - `trash_purged` 로그 중 `target_name`이 없는 경우 `metadata.purged_log_id`로 원본 삭제 로그를 조회해
+    `metadata.title/name/...` 값을 현재 로그의 `target_name`으로 보강
+  - 기존 `getActivityLogs` 반환 경로에 보강 단계를 추가
+
+### 2) 액션 문구 fallback 보강
+
+- `/Users/hwang-gyeongha/saf/app/admin/logs/logs-list.tsx`
+  - `trash_purged` 문구 생성 시 `metadata.target_names[log.target_id]`도 fallback 후보로 사용
+
+### 3) 검증 결과
+
+- `npm run lint` 통과
+- `npm run type-check` 통과
+- `npm run build` 통과 (정적 번들에서 구문구 `휴지통 영구 삭제: 로그 ...` 미검출)

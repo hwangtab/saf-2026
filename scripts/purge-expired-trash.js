@@ -55,6 +55,72 @@ function asObjectList(value) {
   return objectValue.items.filter((item) => item && typeof item === 'object');
 }
 
+function getSnapshotDisplayName(snapshot) {
+  if (!snapshot || typeof snapshot !== 'object') return null;
+
+  const title = typeof snapshot.title === 'string' ? snapshot.title : null;
+  const nameKo = typeof snapshot.name_ko === 'string' ? snapshot.name_ko : null;
+  const name = typeof snapshot.name === 'string' ? snapshot.name : null;
+  const artistName = typeof snapshot.artist_name === 'string' ? snapshot.artist_name : null;
+  const representativeName =
+    typeof snapshot.representative_name === 'string' ? snapshot.representative_name : null;
+
+  return title || nameKo || name || artistName || representativeName || null;
+}
+
+function extractTrashPurgeTargetNames(log) {
+  const metadata = asObject(log.metadata) || {};
+  const targetNames = new Map();
+
+  const metadataTargetNames = metadata.target_names;
+  if (
+    metadataTargetNames &&
+    typeof metadataTargetNames === 'object' &&
+    !Array.isArray(metadataTargetNames)
+  ) {
+    for (const [id, value] of Object.entries(metadataTargetNames)) {
+      if (typeof id === 'string' && typeof value === 'string' && id && value) {
+        targetNames.set(id, value);
+      }
+    }
+  }
+
+  const beforeList = asObjectList(log.before_snapshot);
+  if (beforeList && beforeList.length > 0) {
+    for (const item of beforeList) {
+      const itemId = typeof item.id === 'string' ? item.id : null;
+      const itemName = getSnapshotDisplayName(item);
+      if (itemId && itemName) {
+        targetNames.set(itemId, itemName);
+      }
+    }
+  } else {
+    const beforeSnapshot = asObject(log.before_snapshot);
+    const snapshotId =
+      beforeSnapshot && typeof beforeSnapshot.id === 'string' ? beforeSnapshot.id : null;
+    const snapshotName = getSnapshotDisplayName(beforeSnapshot);
+    if (snapshotId && snapshotName) {
+      targetNames.set(snapshotId, snapshotName);
+    }
+  }
+
+  const metadataTargetName = typeof metadata.target_name === 'string' ? metadata.target_name : null;
+  if (!log.target_id.includes(',') && metadataTargetName && !targetNames.has(log.target_id)) {
+    targetNames.set(log.target_id, metadataTargetName);
+  }
+
+  const targetName = log.target_id.includes(',')
+    ? null
+    : targetNames.get(log.target_id) ||
+      metadataTargetName ||
+      getSnapshotDisplayName(asObject(log.before_snapshot));
+
+  return {
+    targetName: targetName || null,
+    targetNames: targetNames.size > 0 ? Object.fromEntries(targetNames) : null,
+  };
+}
+
 function getStoragePathFromPublicUrl(publicUrl, bucket) {
   try {
     const url = new URL(publicUrl);
@@ -177,6 +243,7 @@ async function fetchExpiredTrashLogs(maxRows) {
 async function markPurged(log, reason, cleanup) {
   const nowIso = new Date().toISOString();
   const previousMetadata = asObject(log.metadata) || {};
+  const purgeTargetInfo = extractTrashPurgeTargetNames(log);
   const nextMetadata = {
     ...previousMetadata,
     storage_cleanup_deferred: false,
@@ -218,7 +285,7 @@ async function markPurged(log, reason, cleanup) {
     action: 'trash_purged',
     target_type: log.target_type,
     target_id: log.target_id,
-    summary: `휴지통 만료 자동 정리: ${log.target_type} ${log.target_id}`,
+    summary: `휴지통 만료 자동 정리: ${log.target_type} ${purgeTargetInfo.targetName || log.target_id}`,
     metadata: {
       purged_log_id: log.id,
       reason,
@@ -227,6 +294,8 @@ async function markPurged(log, reason, cleanup) {
       artwork_failed: cleanup.artwork.failed,
       profile_removed: cleanup.profile.removed,
       profile_failed: cleanup.profile.failed,
+      ...(purgeTargetInfo.targetName ? { target_name: purgeTargetInfo.targetName } : {}),
+      ...(purgeTargetInfo.targetNames ? { target_names: purgeTargetInfo.targetNames } : {}),
     },
     before_snapshot: null,
     after_snapshot: null,

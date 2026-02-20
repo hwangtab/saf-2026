@@ -337,3 +337,100 @@
 
 - 승인 완료 (사용자 요청: “개선하고 빌드 테스트 후 푸시”)
 - 실행 완료 (공통 검색 유틸 + 필터 전역 반영 + 빌드 통과)
+
+---
+
+# 휴지통 영구삭제 로그 대상명 누락 개선 계획서
+
+## 1) 목표
+
+- `trash_purged` 로그에서 대상명이 `이름 정보 없음 (식별 ID ...)`로 보이는 케이스를 줄인다.
+- 수동 영구삭제/자동 만료 정리 모두에서 대상 식별 정보를 일관되게 남긴다.
+- 관리자 로그 화면의 액션 문구를 대상 중심으로 개선한다.
+
+## 2) 확인된 원인
+
+1. 영구삭제 시 원본 삭제 로그의 `before_snapshot`/`after_snapshot`를 `null`로 비우면서, 새 `trash_purged` 로그에는 `target_name`이 저장되지 않는다.
+2. 대상 레코드가 이미 실제 테이블에서 삭제된 상태라 `enrichActivityLogTargets` 재조회로는 이름을 복원할 수 없다.
+3. 결과적으로 로그 목록 UI가 UUID 기반 fallback(`이름 정보 없음...`)으로 내려간다.
+
+## 3) 구현 범위
+
+### 포함
+
+- `app/actions/admin-logs.ts`
+  - 영구삭제 직전 원본 로그(`metadata`, `before_snapshot`)에서 대상명/대상명맵 추출
+  - `trash_purged` 메타데이터에 `target_name`, `target_names` 저장
+- `app/api/internal/purge-trash/route.ts`
+  - 자동 만료 정리 경로에도 동일 메타데이터 저장 로직 반영
+- `scripts/purge-expired-trash.js`
+  - 운영 스크립트 경로에도 동일 메타데이터 저장 로직 반영
+- `app/admin/logs/logs-list.tsx`
+  - `trash_purged` 액션 표시 문구를 `대상명 + 로그ID` 형태로 개선
+
+### 제외
+
+- 과거에 이미 생성된 `trash_purged` 로그의 백필 마이그레이션
+- 휴지통 외 다른 액션의 문구 전면 개편
+
+## 4) 구현 단계
+
+1. 공통 대상명 추출 헬퍼를 각 경로(server action / cron route / script)에 추가
+2. 수동/자동 영구삭제 로그 메타데이터에 대상명 저장 반영
+3. 로그 목록 액션 문구 개선
+4. `npm run lint`, `npm run type-check` 검증
+5. `walkthrough.md` 결과 기록
+
+## 5) 완료 기준 (Definition of Done)
+
+1. 신규 생성되는 `trash_purged` 로그에서 대상 컬럼이 UUID fallback 대신 실제 제목/이름을 표시한다.
+2. 자동 정리(CRON) 경로에서도 동일하게 대상명이 남는다.
+3. lint/type-check가 통과한다.
+
+## 승인 상태
+
+- 사용자 승인 대기
+
+---
+
+# 검색 UX 재수정 계획서 (오ㅇ IME 조합 입력 누락 보완)
+
+## 1) 배경
+
+- 기존 개선 이후에도 `오ㅇ` 입력 구간에서 결과가 사라지는 케이스가 재현됨.
+- 원인: IME 조합 중 `오ㅇ`이 `옹`(종성 포함 완성형)으로 입력될 때, 일부 경로에서 이를 초성 혼합 의도로 해석하지 못함.
+
+## 2) 수정 목표
+
+- `옹` 입력 상태에서도 `오ㅇ` 의도 검색을 병행해 `오윤` 같은 결과가 유지되도록 개선
+- 클라이언트/서버 검색 분기 로직을 동일 기준으로 정렬해 페이지별 편차 제거
+
+## 3) 구현 항목
+
+1. `lib/search-utils.ts`
+
+- 종성 포함 마지막 음절의 분해 쿼리 생성(예: `옹` → `오ㅇ`)
+- `matchesSearchText`에서 원본 쿼리 + 분해 쿼리 후보를 모두 검사
+- 서버 분기에서 재사용할 감지 함수(`hasComposedTrailingConsonantQuery`) 추가
+
+2. 서버 필터 보강
+
+- `/admin/users` 서버 `ilike` 우회 조건에 조합형 종성 입력 감지 추가
+- `searchUsersByName` / `searchUnlinkedArtists`에도 동일 조건 반영
+
+3. 회귀 테스트 추가
+
+- `__tests__/lib/search-utils.test.ts` 신설
+- `오ㅇ`, `옹`, `오윤` 케이스 검증
+
+## 4) 검증 계획
+
+- `npm test -- __tests__/lib/search-utils.test.ts`
+- `npm run lint`
+- `npm run type-check`
+- `npm run build`
+
+## 승인 상태
+
+- 승인 완료 (사용자 피드백: “이거 개선 안되었다.” 이후 즉시 재수정 요청)
+- 실행 완료 (IME 조합 입력 보완 + 검증 통과)
