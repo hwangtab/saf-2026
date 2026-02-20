@@ -1,3 +1,4 @@
+import sharp from 'sharp';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { createCafe24AdminApiClient, getCafe24Config } from './client';
 
@@ -29,6 +30,8 @@ type SyncResult = {
   productNo?: number;
   reason?: string;
 };
+
+const SUPPORTED_CAFE24_IMAGE_EXTENSIONS = new Set(['jpg', 'jpeg', 'png', 'gif']);
 
 function stripHtml(value: string): string {
   return value
@@ -116,6 +119,10 @@ function pickImageUrl(images: string[] | null): string | null {
   return first || null;
 }
 
+function mergeWarnings(current: string | null, next: string): string {
+  return current ? `${current} | ${next}` : next;
+}
+
 function extractProductNo(value: unknown): number | null {
   const stack: unknown[] = [value];
   while (stack.length > 0) {
@@ -158,6 +165,67 @@ function extractImagePath(value: unknown): string | null {
       stack.push(val);
     }
   }
+  return null;
+}
+
+function extractCategoryNo(value: unknown): number | null {
+  const stack: unknown[] = [value];
+  while (stack.length > 0) {
+    const current = stack.pop();
+    if (!current || typeof current !== 'object') continue;
+    if (Array.isArray(current)) {
+      for (const child of current) stack.push(child);
+      continue;
+    }
+    const obj = current as JsonRecord;
+    const categoryNo = obj.category_no;
+    if (typeof categoryNo === 'number' && Number.isFinite(categoryNo)) {
+      return Math.floor(categoryNo);
+    }
+    if (typeof categoryNo === 'string' && /^\d+$/.test(categoryNo)) {
+      return Number(categoryNo);
+    }
+    for (const val of Object.values(obj)) {
+      stack.push(val);
+    }
+  }
+  return null;
+}
+
+function normalizeCafe24ImagePath(path: string): string {
+  const marker = '/web/upload/';
+  if (path.startsWith(marker)) {
+    return path;
+  }
+
+  if (/^https?:\/\//i.test(path)) {
+    try {
+      const pathname = new URL(path).pathname;
+      const markerIndex = pathname.indexOf(marker);
+      if (markerIndex >= 0) {
+        return pathname.slice(markerIndex);
+      }
+    } catch {
+      // ignore URL parse errors and fallback to string scan below
+    }
+  }
+
+  const markerIndex = path.indexOf(marker);
+  if (markerIndex >= 0) {
+    return path.slice(markerIndex);
+  }
+
+  throw new Error(`Cafe24 이미지 경로 변환 실패: ${path}`);
+}
+
+function inferImageExtension(url: string, contentType: string | null): string | null {
+  const fromUrl = url.match(/\.([a-zA-Z0-9]+)(?:$|\?)/)?.[1]?.toLowerCase();
+  if (fromUrl) return fromUrl;
+  if (!contentType) return null;
+  if (contentType.includes('jpeg')) return 'jpg';
+  if (contentType.includes('png')) return 'png';
+  if (contentType.includes('gif')) return 'gif';
+  if (contentType.includes('webp')) return 'webp';
   return null;
 }
 
@@ -261,26 +329,80 @@ async function fetchImageAsBase64(url: string): Promise<string> {
   if (!response.ok) {
     throw new Error(`이미지 다운로드 실패(status=${response.status})`);
   }
-  const arrayBuffer = await response.arrayBuffer();
-  return Buffer.from(arrayBuffer).toString('base64');
+  const sourceBuffer = Buffer.from(await response.arrayBuffer());
+  const extension = inferImageExtension(url, response.headers.get('content-type'));
+
+  if (extension && SUPPORTED_CAFE24_IMAGE_EXTENSIONS.has(extension) && extension !== 'webp') {
+    return sourceBuffer.toString('base64');
+  }
+
+  const convertedBuffer = await sharp(sourceBuffer).jpeg({ quality: 90 }).toBuffer();
+  return convertedBuffer.toString('base64');
+}
+
+async function ensureProductCategory(
+  productNo: number,
+  categoryNo: number | null
+): Promise<number | null> {
+  const client = createCafe24AdminApiClient();
+
+  if (categoryNo) {
+    try {
+      await client.request(`/categories/${categoryNo}/products`, {
+        method: 'POST',
+        body: JSON.stringify({
+          request: {
+            product_no: [productNo],
+            display_group: 1,
+          },
+        }),
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (!message.includes('same product in the category')) {
+        throw new Error(`카테고리 연결 실패: ${message}`);
+      }
+    }
+  }
+
+  try {
+    const productResponse = await client.request(`/products/${productNo}`, { method: 'GET' });
+    return extractCategoryNo(productResponse) || categoryNo;
+  } catch {
+    return categoryNo;
+  }
 }
 
 async function attachProductImage(productNo: number, imageUrl: string): Promise<void> {
+  const client = createCafe24AdminApiClient();
   const imageBase64 = await fetchImageAsBase64(imageUrl);
-  const uploadResponse = await requestWithVariants('/products/images', 'POST', {
-    image: imageBase64,
+  const uploadResponse = await client.request('/products/images', {
+    method: 'POST',
+    body: JSON.stringify({
+      requests: [
+        {
+          image: imageBase64,
+        },
+      ],
+    }),
   });
-  const imagePath = extractImagePath(uploadResponse);
-  if (!imagePath) {
+  const uploadedPath = extractImagePath(uploadResponse);
+  if (!uploadedPath) {
     throw new Error('Cafe24 이미지 업로드 응답에서 path를 찾을 수 없습니다.');
   }
+  const imagePath = normalizeCafe24ImagePath(uploadedPath);
 
-  await requestWithVariants(`/products/${productNo}/images`, 'POST', {
-    image_upload_type: 'A',
-    detail_image: imagePath,
-    list_image: imagePath,
-    tiny_image: imagePath,
-    small_image: imagePath,
+  await client.request(`/products/${productNo}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      request: {
+        image_upload_type: 'A',
+        detail_image: imagePath,
+        list_image: imagePath,
+        tiny_image: imagePath,
+        small_image: imagePath,
+      },
+    }),
   });
 }
 
@@ -337,18 +459,29 @@ export async function syncArtworkToCafe24(artworkId: string): Promise<SyncResult
 
   try {
     const productNo = await upsertCafe24Product(artwork, customCode);
+    const categoryNo = await ensureProductCategory(productNo, config.defaultCategoryNo);
     const imageUrl = pickImageUrl(artwork.images);
     let warningMessage: string | null = null;
+
+    if (!categoryNo) {
+      warningMessage = mergeWarnings(
+        warningMessage,
+        '상품 카테고리가 지정되지 않았습니다. CAFE24_DEFAULT_CATEGORY_NO 설정을 확인하세요.'
+      );
+    }
 
     if (imageUrl) {
       try {
         await attachProductImage(productNo, imageUrl);
       } catch (error) {
-        warningMessage = error instanceof Error ? error.message : String(error);
+        warningMessage = mergeWarnings(
+          warningMessage,
+          error instanceof Error ? error.message : String(error)
+        );
       }
     }
 
-    const shopUrl = buildProductUrl(config.mallId, productNo, config.defaultCategoryNo);
+    const shopUrl = buildProductUrl(config.mallId, productNo, categoryNo);
     await markSyncState(artworkId, {
       cafe24_sync_status: warningMessage ? 'synced_with_warning' : 'synced',
       cafe24_sync_error: warningMessage,
