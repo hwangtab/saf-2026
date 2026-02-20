@@ -122,7 +122,19 @@ export function resolveArtworkImageUrlForPreset(
     return optimized;
   }
 
-  return resolveArtworkVariantUrl(image, variant);
+  const variantUrl = resolveArtworkVariantUrl(image, variant);
+
+  // When render/image transform is disabled, remote artwork variant files (e.g. __detail)
+  // may not exist yet. Keep the original URL to avoid one-time 4xx + fallback flicker.
+  const isRemoteArtwork =
+    (resolved.startsWith('http://') || resolved.startsWith('https://')) &&
+    ARTWORK_STORAGE_MARKERS.some((marker) => resolved.includes(marker));
+
+  if (isRemoteArtwork && variantUrl !== resolved) {
+    return resolved;
+  }
+
+  return variantUrl;
 }
 
 export function getArtworkImageFamilyKey(imageUrl: string): string {

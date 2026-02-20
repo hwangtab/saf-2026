@@ -26,12 +26,19 @@ function isArtworkStorageUrl(url: string): boolean {
   return ARTWORK_STORAGE_MARKERS.some((marker) => url.includes(marker));
 }
 
-function generateArtworkSrcSet(src: string): string {
-  return TRANSFORM_WIDTHS.map((width) => {
+function generateArtworkSrcSet(src: string): string | undefined {
+  const candidates = TRANSFORM_WIDTHS.map((width) => {
     const quality = width <= 960 ? 75 : 80;
     const variantUrl = resolveOptimizedArtworkImageUrl(src, { width, quality });
-    return `${variantUrl} ${width}w`;
-  }).join(', ');
+    return { variantUrl, width };
+  });
+
+  const uniqueUrlCount = new Set(candidates.map((candidate) => candidate.variantUrl)).size;
+  if (uniqueUrlCount <= 1) {
+    return undefined;
+  }
+
+  return candidates.map((candidate) => `${candidate.variantUrl} ${candidate.width}w`).join(', ');
 }
 
 function RemoteSafeImage({
