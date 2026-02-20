@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import type { FAQItem } from '@/content/faq';
 import { ChevronDownIcon } from '@/components/ui/Icons';
 import { cn } from '@/lib/utils';
@@ -12,6 +12,7 @@ interface FAQListProps {
 
 export default function FAQList({ items }: FAQListProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const prefersReducedMotion = useReducedMotion();
 
   const toggleItem = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -43,21 +44,31 @@ export default function FAQList({ items }: FAQListProps) {
                 <ChevronDownIcon className="w-5 h-5" />
               </span>
             </button>
-            <AnimatePresence initial={false}>
-              {isOpen && (
-                <motion.div
-                  id={`faq-content-${index}`}
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.3, ease: 'easeInOut' }}
-                >
+            {prefersReducedMotion ? (
+              isOpen ? (
+                <div id={`faq-content-${index}`}>
                   <div className="px-6 pb-6 text-charcoal-muted leading-relaxed whitespace-pre-line border-t border-gray-100 pt-6">
                     {item.answer}
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                </div>
+              ) : null
+            ) : (
+              <AnimatePresence initial={false}>
+                {isOpen && (
+                  <m.div
+                    id={`faq-content-${index}`}
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  >
+                    <div className="px-6 pb-6 text-charcoal-muted leading-relaxed whitespace-pre-line border-t border-gray-100 pt-6">
+                      {item.answer}
+                    </div>
+                  </m.div>
+                )}
+              </AnimatePresence>
+            )}
           </div>
         );
       })}

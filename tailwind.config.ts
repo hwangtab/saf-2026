@@ -98,7 +98,9 @@ const config: Config = {
       },
       animation: {
         shimmer: 'shimmer 1.5s ease-in-out infinite',
+        'fade-in': 'fadeIn 0.2s ease-out forwards',
         'fade-in-up': 'fadeInUp 0.4s ease-out forwards',
+        'zoom-in-95': 'zoomIn95 0.2s ease-out forwards',
         stamp: 'stampIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
       },
       keyframes: {
@@ -106,9 +108,17 @@ const config: Config = {
           '0%': { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
         },
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
         fadeInUp: {
           '0%': { opacity: '0', transform: 'translateY(20px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        zoomIn95: {
+          '0%': { opacity: '0', transform: 'scale(0.95)' },
+          '100%': { opacity: '1', transform: 'scale(1)' },
         },
         stampIn: {
           '0%': { opacity: '0', transform: 'scale(1.05)' },

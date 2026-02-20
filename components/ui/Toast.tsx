@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useCallback } from 'react';
-import { m, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
@@ -41,6 +41,7 @@ const ICON_STYLES: Record<ToastType, string> = {
 
 function Toast({ toast, onDismiss }: ToastProps) {
   const { id, type, message, duration = 4000 } = toast;
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     if (duration <= 0) return;
@@ -63,11 +64,11 @@ function Toast({ toast, onDismiss }: ToastProps) {
 
   return (
     <m.div
-      layout
-      initial={{ opacity: 0, y: -20, scale: 0.95 }}
+      layout={!prefersReducedMotion}
+      initial={prefersReducedMotion ? false : { opacity: 0, y: -20, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -20, scale: 0.95 }}
-      transition={{ duration: 0.2, ease: 'easeOut' }}
+      exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -20, scale: 0.95 }}
+      transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.2, ease: 'easeOut' }}
       role="alert"
       aria-live="polite"
       tabIndex={0}
@@ -125,12 +126,14 @@ interface ToastContainerProps {
 }
 
 export function ToastContainer({ toasts, onDismiss }: ToastContainerProps) {
+  const prefersReducedMotion = useReducedMotion();
+
   return (
     <div
       className="fixed top-4 right-4 z-[9999] flex flex-col gap-2"
       style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
     >
-      <AnimatePresence mode="popLayout">
+      <AnimatePresence mode={prefersReducedMotion ? 'sync' : 'popLayout'}>
         {toasts.map((toast) => (
           <Toast key={toast.id} toast={toast} onDismiss={onDismiss} />
         ))}

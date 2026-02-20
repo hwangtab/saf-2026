@@ -558,7 +558,7 @@ export function AdminArtworkList({
 
         {/* Batch Actions Toolbar (Visible only when selected) */}
         {selectedInFiltered.length > 0 && (
-          <div className="flex flex-wrap items-center gap-4 border-b border-indigo-100 bg-indigo-50 px-6 py-4 animate-fade-in">
+          <div className="flex flex-wrap items-center gap-4 border-b border-indigo-100 bg-indigo-50 px-6 py-4">
             <span className="text-sm font-medium text-indigo-900">
               {selectedInFiltered.length}개 선택됨
             </span>

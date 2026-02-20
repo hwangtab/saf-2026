@@ -57,7 +57,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
   return (
     <div className="space-y-6">
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg text-sm flex items-center justify-between animate-fade-in">
+        <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg text-sm flex items-center justify-between">
           <div className="flex items-center gap-2">
             <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
               <path
