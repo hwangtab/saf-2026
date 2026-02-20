@@ -48,7 +48,7 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
       if (isEditing && artist.id) {
         await updateExhibitorArtist(artist.id, formData);
         toast.success('작가 정보가 저장되었습니다.');
-        router.refresh();
+        router.push('/exhibitor/artists');
       } else {
         const result = await createExhibitorArtist(formData);
         if (result.success && result.id) {

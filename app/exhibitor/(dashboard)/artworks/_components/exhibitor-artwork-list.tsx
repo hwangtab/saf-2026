@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import ArtworkLightbox from '@/components/ui/ArtworkLightbox';
 import SafeImage from '@/components/common/SafeImage';
 import { deleteExhibitorArtwork } from '@/app/actions/exhibitor-artworks';
@@ -204,6 +205,12 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end gap-2">
+                        <Link
+                          href={`/exhibitor/artworks/${artwork.id}`}
+                          className="rounded-md px-3 py-1.5 text-gray-500 transition-colors hover:bg-indigo-50 hover:text-indigo-600"
+                        >
+                          편집
+                        </Link>
                         <button
                           onClick={() => handleDelete(artwork.id)}
                           disabled={isDeleting === artwork.id}

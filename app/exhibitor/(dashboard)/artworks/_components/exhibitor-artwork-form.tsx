@@ -59,9 +59,9 @@ export function ExhibitorArtworkForm({
   const toast = useToast();
   const [saving, setSaving] = useState(false);
   const [savingImages, setSavingImages] = useState(false);
-  const [currentArtworkId, setCurrentArtworkId] = useState<string | undefined>(artwork.id);
   const [images, setImages] = useState<string[]>(artwork.images || []);
   const [artistQuery, setArtistQuery] = useState('');
+  const isEditing = !!artwork.id;
   const initialSelectedArtistId = artwork.artist_id || initialArtistId || '';
   const [selectedArtistId, setSelectedArtistId] = useState(initialSelectedArtistId);
   const [editionType, setEditionType] = useState<EditionType>(artwork.edition_type || 'unique');
@@ -80,16 +80,15 @@ export function ExhibitorArtworkForm({
   const handleSubmit = async (formData: FormData) => {
     setSaving(true);
     try {
-      if (currentArtworkId) {
-        await updateExhibitorArtwork(currentArtworkId, formData);
+      if (isEditing && artwork.id) {
+        await updateExhibitorArtwork(artwork.id, formData);
         toast.success('작품 정보가 저장되었습니다.');
-        router.refresh();
+        router.push('/exhibitor/artworks');
       } else {
         const result = await createExhibitorArtwork(formData);
         if (result.success && result.id) {
-          setCurrentArtworkId(result.id);
-          toast.success('작품이 생성되었습니다. 이미지를 등록해주세요.');
-          router.refresh();
+          toast.success('작품이 생성되었습니다.');
+          router.push('/exhibitor/artworks');
         }
       }
     } catch (err: unknown) {
@@ -101,11 +100,11 @@ export function ExhibitorArtworkForm({
   };
 
   const handleImagesChange = async (newImages: string[]) => {
-    if (!currentArtworkId) return;
+    if (!artwork.id) return;
     setImages(newImages);
     setSavingImages(true);
     try {
-      await updateExhibitorArtworkImages(currentArtworkId, newImages);
+      await updateExhibitorArtworkImages(artwork.id, newImages);
       toast.success('작품 이미지가 저장되었습니다.');
       router.refresh();
     } catch (err: unknown) {
@@ -118,7 +117,7 @@ export function ExhibitorArtworkForm({
 
   return (
     <div className="space-y-6">
-      {currentArtworkId ? (
+      {isEditing && artwork.id ? (
         <AdminCard className="p-6">
           <h2 className="mb-4 text-lg font-semibold text-slate-900">
             작품 이미지
@@ -126,7 +125,7 @@ export function ExhibitorArtworkForm({
           </h2>
           <ImageUpload
             bucket="artworks"
-            pathPrefix={selectedArtistId || `exhibitor-artwork-${currentArtworkId}`}
+            pathPrefix={selectedArtistId || `exhibitor-artwork-${artwork.id}`}
             value={images}
             onUploadComplete={handleImagesChange}
             maxFiles={10}
@@ -138,7 +137,7 @@ export function ExhibitorArtworkForm({
         </div>
       )}
 
-      {artistJustCreated && !currentArtworkId && (
+      {artistJustCreated && !isEditing && (
         <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-800">
           새 작가가 등록되었습니다. 아래에서 바로 선택해 작품 등록을 이어서 진행하세요.
         </div>
@@ -152,7 +151,7 @@ export function ExhibitorArtworkForm({
         className="space-y-6 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface)] p-6 shadow-sm"
       >
         <h2 className="text-lg font-semibold text-gray-900">
-          {currentArtworkId ? '작품 정보 수정' : '새 작품 등록'}
+          {isEditing ? '작품 정보 수정' : '새 작품 등록'}
         </h2>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -294,7 +293,7 @@ export function ExhibitorArtworkForm({
             목록으로
           </Button>
           <Button type="submit" variant="primary" loading={saving}>
-            {currentArtworkId ? '저장' : '등록'}
+            {isEditing ? '저장' : '등록'}
           </Button>
         </div>
       </form>

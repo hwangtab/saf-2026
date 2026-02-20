@@ -174,7 +174,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
       if (isEditing && artist.id) {
         await updateArtist(artist.id, formData);
         toast.success('작가 정보가 저장되었습니다.');
-        router.refresh();
+        router.push('/admin/artists');
       } else {
         const result = await createAdminArtist(formData);
         if (result.success && result.id) {
@@ -183,8 +183,8 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
             const separator = returnTo.includes('?') ? '&' : '?';
             router.push(`${returnTo}${separator}artist_id=${result.id}&artist_created=1`);
           } else {
-            toast.success('작가가 생성되었습니다. 프로필 이미지는 필요 시 등록할 수 있습니다.');
-            router.push(`/admin/artists/${result.id}`);
+            toast.success('작가가 생성되었습니다.');
+            router.push('/admin/artists');
           }
         }
       }

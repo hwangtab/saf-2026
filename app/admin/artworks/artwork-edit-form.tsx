@@ -113,12 +113,12 @@ export function ArtworkEditForm({
       if (isEditing && artwork.id) {
         await updateArtworkDetails(artwork.id, formData);
         toast.success('작품 정보가 저장되었습니다.');
-        router.refresh();
+        router.push('/admin/artworks');
       } else {
         const result = await createAdminArtwork(formData);
         if (result.success && result.id) {
-          toast.success('작품이 생성되었습니다. 이미지를 등록해주세요.');
-          router.push(`/admin/artworks/${result.id}`);
+          toast.success('작품이 생성되었습니다.');
+          router.push('/admin/artworks');
         }
       }
     } catch (err: unknown) {
