@@ -50,11 +50,88 @@ function getTargetLink(log: ActivityLogEntry): string | null {
   return null;
 }
 
+function toObject(value: unknown): Record<string, unknown> | null {
+  if (!value || Array.isArray(value) || typeof value !== 'object') return null;
+  return value as Record<string, unknown>;
+}
+
+function toObjectList(value: unknown): Record<string, unknown>[] | null {
+  if (Array.isArray(value)) {
+    return value.filter(
+      (item): item is Record<string, unknown> => !!item && typeof item === 'object'
+    );
+  }
+
+  const objectValue = toObject(value);
+  if (!objectValue) return null;
+  if (!Array.isArray(objectValue.items)) return null;
+
+  return objectValue.items.filter(
+    (item): item is Record<string, unknown> => !!item && typeof item === 'object'
+  );
+}
+
+function getSnapshotDisplayName(snapshot: Record<string, unknown> | null): string | null {
+  if (!snapshot) return null;
+
+  const title = typeof snapshot.title === 'string' ? snapshot.title : null;
+  const nameKo = typeof snapshot.name_ko === 'string' ? snapshot.name_ko : null;
+  const name = typeof snapshot.name === 'string' ? snapshot.name : null;
+  const artistName = typeof snapshot.artist_name === 'string' ? snapshot.artist_name : null;
+  const representativeName =
+    typeof snapshot.representative_name === 'string' ? snapshot.representative_name : null;
+
+  return title || nameKo || name || artistName || representativeName || null;
+}
+
 function getTargetDisplayName(log: ActivityLogEntry) {
   const details = log.metadata as Record<string, unknown> | null;
+  const targetName = typeof details?.target_name === 'string' ? details.target_name : null;
+  if (targetName) return targetName;
+
+  const targetNamesRaw =
+    details?.target_names &&
+    typeof details.target_names === 'object' &&
+    !Array.isArray(details.target_names)
+      ? (details.target_names as Record<string, unknown>)
+      : null;
+  const mappedTargetName =
+    targetNamesRaw && typeof targetNamesRaw[log.target_id] === 'string'
+      ? (targetNamesRaw[log.target_id] as string)
+      : null;
+  if (mappedTargetName) return mappedTargetName;
+
   const title = typeof details?.title === 'string' ? details.title : null;
   const name = typeof details?.name === 'string' ? details.name : null;
-  return title || name || log.target_id;
+  if (title || name) return title || name;
+
+  const beforeList = toObjectList(log.before_snapshot);
+  if (beforeList && beforeList.length > 0) {
+    const exactMatch =
+      beforeList.find((item) => typeof item.id === 'string' && item.id === log.target_id) || null;
+    const exactName = getSnapshotDisplayName(exactMatch);
+    if (exactName) return exactName;
+
+    if (beforeList.length === 1) {
+      const singleName = getSnapshotDisplayName(beforeList[0]);
+      if (singleName) return singleName;
+    }
+
+    const namedItems = beforeList
+      .map((item) => getSnapshotDisplayName(item))
+      .filter((value): value is string => !!value);
+    if (namedItems.length > 0) {
+      return namedItems.length > 1
+        ? `${namedItems[0]} 외 ${namedItems.length - 1}건`
+        : namedItems[0];
+    }
+  }
+
+  const beforeSnapshot = toObject(log.before_snapshot);
+  const snapshotName = getSnapshotDisplayName(beforeSnapshot);
+  if (snapshotName) return snapshotName;
+
+  return log.target_id;
 }
 
 function getDaysLeft(expiresAt: string | null) {
