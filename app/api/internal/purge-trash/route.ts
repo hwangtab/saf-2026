@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { purgeCafe24ProductsFromTrashEntry } from '@/lib/integrations/cafe24/trash-purge';
 
 export const runtime = 'nodejs';
 
@@ -29,6 +30,76 @@ function asObjectList(value: unknown): Record<string, unknown>[] | null {
   return items.filter(
     (item): item is Record<string, unknown> => !!item && typeof item === 'object'
   );
+}
+
+function getSnapshotDisplayName(snapshot: Record<string, unknown> | null): string | null {
+  if (!snapshot) return null;
+
+  const title = typeof snapshot.title === 'string' ? snapshot.title : null;
+  const nameKo = typeof snapshot.name_ko === 'string' ? snapshot.name_ko : null;
+  const name = typeof snapshot.name === 'string' ? snapshot.name : null;
+  const artistName = typeof snapshot.artist_name === 'string' ? snapshot.artist_name : null;
+  const representativeName =
+    typeof snapshot.representative_name === 'string' ? snapshot.representative_name : null;
+
+  return title || nameKo || name || artistName || representativeName || null;
+}
+
+function extractTrashPurgeTargetNames(log: {
+  target_id: string;
+  metadata: unknown;
+  before_snapshot: unknown;
+}) {
+  const metadata = asObject(log.metadata) || {};
+  const targetNames = new Map<string, string>();
+
+  const metadataTargetNames = metadata.target_names;
+  if (
+    metadataTargetNames &&
+    typeof metadataTargetNames === 'object' &&
+    !Array.isArray(metadataTargetNames)
+  ) {
+    for (const [id, value] of Object.entries(metadataTargetNames)) {
+      if (typeof id === 'string' && typeof value === 'string' && id && value) {
+        targetNames.set(id, value);
+      }
+    }
+  }
+
+  const beforeList = asObjectList(log.before_snapshot);
+  if (beforeList && beforeList.length > 0) {
+    for (const item of beforeList) {
+      const itemId = typeof item.id === 'string' ? item.id : null;
+      const itemName = getSnapshotDisplayName(item);
+      if (itemId && itemName) {
+        targetNames.set(itemId, itemName);
+      }
+    }
+  } else {
+    const beforeSnapshot = asObject(log.before_snapshot);
+    const snapshotId =
+      beforeSnapshot && typeof beforeSnapshot.id === 'string' ? beforeSnapshot.id : null;
+    const snapshotName = getSnapshotDisplayName(beforeSnapshot);
+    if (snapshotId && snapshotName) {
+      targetNames.set(snapshotId, snapshotName);
+    }
+  }
+
+  const metadataTargetName = typeof metadata.target_name === 'string' ? metadata.target_name : null;
+  if (!log.target_id.includes(',') && metadataTargetName && !targetNames.has(log.target_id)) {
+    targetNames.set(log.target_id, metadataTargetName);
+  }
+
+  const targetName = log.target_id.includes(',')
+    ? null
+    : targetNames.get(log.target_id) ||
+      metadataTargetName ||
+      getSnapshotDisplayName(asObject(log.before_snapshot));
+
+  return {
+    targetName: targetName || null,
+    targetNames: targetNames.size > 0 ? Object.fromEntries(targetNames) : null,
+  };
 }
 
 function getStoragePathFromPublicUrl(publicUrl: string, bucket: string): string | null {
@@ -172,15 +243,26 @@ export async function GET(request: NextRequest) {
   let failed = 0;
   let removedArtwork = 0;
   let removedProfile = 0;
+  let removedCafe24 = 0;
+  let missingCafe24 = 0;
 
   for (const log of logs || []) {
     try {
       const metadata = asObject(log.metadata) || {};
       const beforeSnapshot = asObject(log.before_snapshot);
       const shouldCleanupStorage = metadata.storage_cleanup_deferred === true;
+      const purgeTargetInfo = extractTrashPurgeTargetNames(log);
 
       let artworkCleanup = { removed: 0, failed: 0 };
       let profileCleanup = { removed: 0, failed: 0 };
+      let cafe24Cleanup = {
+        deleted: 0,
+        missing: 0,
+        failed: 0,
+        skipped: false,
+        productNos: [] as number[],
+        errors: [] as string[],
+      };
 
       if (shouldCleanupStorage && beforeSnapshot) {
         if (log.target_type === 'artwork') {
@@ -189,6 +271,16 @@ export async function GET(request: NextRequest) {
         } else if (log.target_type === 'artist') {
           const profilePaths = collectProfilePaths(beforeSnapshot);
           profileCleanup = await removeStoragePaths(supabase, 'profiles', profilePaths);
+        }
+      }
+
+      if (log.target_type === 'artwork' && beforeSnapshot) {
+        cafe24Cleanup = await purgeCafe24ProductsFromTrashEntry({
+          targetType: log.target_type,
+          beforeSnapshot: log.before_snapshot,
+        });
+        if (cafe24Cleanup.failed > 0) {
+          throw new Error(`Cafe24 purge failed: ${cafe24Cleanup.errors.join(' | ')}`);
         }
       }
 
@@ -202,6 +294,13 @@ export async function GET(request: NextRequest) {
           artwork_failed: artworkCleanup.failed,
           profile_removed: profileCleanup.removed,
           profile_failed: profileCleanup.failed,
+        },
+        cafe24_cleanup: {
+          product_nos: cafe24Cleanup.productNos,
+          deleted: cafe24Cleanup.deleted,
+          missing: cafe24Cleanup.missing,
+          failed: cafe24Cleanup.failed,
+          skipped: cafe24Cleanup.skipped,
         },
       };
 
@@ -233,7 +332,7 @@ export async function GET(request: NextRequest) {
         action: 'trash_purged',
         target_type: log.target_type,
         target_id: log.target_id,
-        summary: `휴지통 만료 자동 정리: ${log.target_type} ${log.target_id}`,
+        summary: `휴지통 만료 자동 정리: ${log.target_type} ${purgeTargetInfo.targetName || log.target_id}`,
         metadata: {
           purged_log_id: log.id,
           reason: '보관기간 30일 만료 자동 정리',
@@ -242,6 +341,13 @@ export async function GET(request: NextRequest) {
           artwork_failed: artworkCleanup.failed,
           profile_removed: profileCleanup.removed,
           profile_failed: profileCleanup.failed,
+          cafe24_product_nos: cafe24Cleanup.productNos,
+          cafe24_deleted: cafe24Cleanup.deleted,
+          cafe24_missing: cafe24Cleanup.missing,
+          cafe24_failed: cafe24Cleanup.failed,
+          cafe24_skipped: cafe24Cleanup.skipped,
+          ...(purgeTargetInfo.targetName ? { target_name: purgeTargetInfo.targetName } : {}),
+          ...(purgeTargetInfo.targetNames ? { target_names: purgeTargetInfo.targetNames } : {}),
         },
         before_snapshot: null,
         after_snapshot: null,
@@ -255,6 +361,8 @@ export async function GET(request: NextRequest) {
       success += 1;
       removedArtwork += artworkCleanup.removed;
       removedProfile += profileCleanup.removed;
+      removedCafe24 += cafe24Cleanup.deleted;
+      missingCafe24 += cafe24Cleanup.missing;
     } catch {
       failed += 1;
     }
@@ -266,5 +374,7 @@ export async function GET(request: NextRequest) {
     failed,
     removedArtwork,
     removedProfile,
+    removedCafe24,
+    missingCafe24,
   });
 }

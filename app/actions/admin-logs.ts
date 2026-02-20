@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient, createSupabaseServerClient } from '@/lib/auth/server';
+import { purgeCafe24ProductsFromTrashEntry } from '@/lib/integrations/cafe24/trash-purge';
 import { getStoragePathFromPublicUrl, getStoragePathsForRemoval } from '@/lib/utils/form-helpers';
 
 export type ActivityLogEntry = {
@@ -460,6 +461,75 @@ function parseTargetIds(log: ActivityLogEntry): string[] {
   return Array.from(ids);
 }
 
+function getSnapshotDisplayName(snapshot: Record<string, unknown> | null): string | null {
+  if (!snapshot) return null;
+
+  const title = typeof snapshot.title === 'string' ? snapshot.title : null;
+  const nameKo = typeof snapshot.name_ko === 'string' ? snapshot.name_ko : null;
+  const name = typeof snapshot.name === 'string' ? snapshot.name : null;
+  const artistName = typeof snapshot.artist_name === 'string' ? snapshot.artist_name : null;
+  const representativeName =
+    typeof snapshot.representative_name === 'string' ? snapshot.representative_name : null;
+
+  return title || nameKo || name || artistName || representativeName || null;
+}
+
+function extractTrashPurgeTargetNames(log: ActivityLogEntry): {
+  targetName: string | null;
+  targetNames: Record<string, string> | null;
+} {
+  const metadata = asSnapshotObject(log.metadata) || {};
+  const targetNames = new Map<string, string>();
+
+  const metadataTargetNames = metadata.target_names;
+  if (
+    metadataTargetNames &&
+    typeof metadataTargetNames === 'object' &&
+    !Array.isArray(metadataTargetNames)
+  ) {
+    for (const [id, value] of Object.entries(metadataTargetNames)) {
+      if (typeof id === 'string' && typeof value === 'string' && id && value) {
+        targetNames.set(id, value);
+      }
+    }
+  }
+
+  const beforeList = asSnapshotList(log.before_snapshot);
+  if (beforeList && beforeList.length > 0) {
+    for (const item of beforeList) {
+      const itemId = typeof item.id === 'string' ? item.id : null;
+      const itemName = getSnapshotDisplayName(item);
+      if (itemId && itemName) {
+        targetNames.set(itemId, itemName);
+      }
+    }
+  } else {
+    const beforeSnapshot = asSnapshotObject(log.before_snapshot);
+    const snapshotId =
+      beforeSnapshot && typeof beforeSnapshot.id === 'string' ? beforeSnapshot.id : null;
+    const snapshotName = getSnapshotDisplayName(beforeSnapshot);
+    if (snapshotId && snapshotName) {
+      targetNames.set(snapshotId, snapshotName);
+    }
+  }
+
+  const metadataTargetName = typeof metadata.target_name === 'string' ? metadata.target_name : null;
+  if (!log.target_id.includes(',') && metadataTargetName && !targetNames.has(log.target_id)) {
+    targetNames.set(log.target_id, metadataTargetName);
+  }
+
+  const targetName = log.target_id.includes(',')
+    ? null
+    : targetNames.get(log.target_id) ||
+      metadataTargetName ||
+      getSnapshotDisplayName(asSnapshotObject(log.before_snapshot));
+
+  return {
+    targetName: targetName || null,
+    targetNames: targetNames.size > 0 ? Object.fromEntries(targetNames) : null,
+  };
+}
+
 async function enrichActivityLogTargets(logs: ActivityLogEntry[]): Promise<ActivityLogEntry[]> {
   if (logs.length === 0) return logs;
 
@@ -898,11 +968,22 @@ export async function purgeActivityTrashLog(logId: string, reason: string) {
     throw new Error('이미 영구 삭제된 항목입니다.');
   }
 
-  const storagePaths = collectStorageCleanupPaths(log as ActivityLogEntry);
+  const sourceLog = log as ActivityLogEntry;
+  const storagePaths = collectStorageCleanupPaths(sourceLog);
+  const purgeTargetInfo = extractTrashPurgeTargetNames(sourceLog);
+
   const [artworkResult, profileResult] = await Promise.all([
     removeStoragePaths(supabase, 'artworks', storagePaths.artworkPaths),
     removeStoragePaths(supabase, 'profiles', storagePaths.profilePaths),
   ]);
+  const cafe24Result = await purgeCafe24ProductsFromTrashEntry({
+    targetType: sourceLog.target_type,
+    beforeSnapshot: sourceLog.before_snapshot,
+  });
+
+  if (cafe24Result.failed > 0) {
+    throw new Error(`카페24 상품 영구 삭제 실패: ${cafe24Result.errors.join(' | ')}`);
+  }
 
   const nowIso = new Date().toISOString();
   const previousMetadata = asSnapshotObject(log.metadata) || {};
@@ -915,6 +996,13 @@ export async function purgeActivityTrashLog(logId: string, reason: string) {
       artwork_failed: artworkResult.failed,
       profile_removed: profileResult.removed,
       profile_failed: profileResult.failed,
+    },
+    cafe24_cleanup: {
+      product_nos: cafe24Result.productNos,
+      deleted: cafe24Result.deleted,
+      missing: cafe24Result.missing,
+      failed: cafe24Result.failed,
+      skipped: cafe24Result.skipped,
     },
   };
 
@@ -938,21 +1026,34 @@ export async function purgeActivityTrashLog(logId: string, reason: string) {
     throw new Error('영구 삭제 상태 기록에 실패했습니다. 다시 시도해 주세요.');
   }
 
+  const purgeLogMetadata: Record<string, unknown> = {
+    purged_log_id: log.id,
+    reason,
+    artwork_removed: artworkResult.removed,
+    artwork_failed: artworkResult.failed,
+    profile_removed: profileResult.removed,
+    profile_failed: profileResult.failed,
+    cafe24_product_nos: cafe24Result.productNos,
+    cafe24_deleted: cafe24Result.deleted,
+    cafe24_missing: cafe24Result.missing,
+    cafe24_failed: cafe24Result.failed,
+    cafe24_skipped: cafe24Result.skipped,
+  };
+  if (purgeTargetInfo.targetName) {
+    purgeLogMetadata.target_name = purgeTargetInfo.targetName;
+  }
+  if (purgeTargetInfo.targetNames) {
+    purgeLogMetadata.target_names = purgeTargetInfo.targetNames;
+  }
+
   await writeActivityLog({
     actor: { id: admin.id, role: 'admin', name: actor.name, email: actor.email },
     action: 'trash_purged',
     targetType: log.target_type,
     targetId: log.target_id,
-    metadata: {
-      purged_log_id: log.id,
-      reason,
-      artwork_removed: artworkResult.removed,
-      artwork_failed: artworkResult.failed,
-      profile_removed: profileResult.removed,
-      profile_failed: profileResult.failed,
-    },
+    metadata: purgeLogMetadata,
     options: {
-      summary: `휴지통 영구 삭제: ${log.target_type} ${log.target_id}`,
+      summary: `휴지통 영구 삭제: ${log.target_type} ${purgeTargetInfo.targetName || log.target_id}`,
       reversible: false,
     },
   });
@@ -973,6 +1074,8 @@ export async function purgeActivityTrashLog(logId: string, reason: string) {
     success: true,
     artworkRemoved: artworkResult.removed,
     profileRemoved: profileResult.removed,
+    cafe24Deleted: cafe24Result.deleted,
+    cafe24Missing: cafe24Result.missing,
     failed: artworkResult.failed + profileResult.failed,
   };
 }
