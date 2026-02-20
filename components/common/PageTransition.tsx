@@ -1,14 +1,12 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { AnimatePresence, m } from 'framer-motion';
 import { isProtectedSurfacePath } from '@/lib/path-rules';
 
 /**
- * 페이지 전환 애니메이션을 처리하는 컴포넌트
- * - AnimatePresence: 컴포넌트가 언마운트될 때 exit 애니메이션을 실행
- * - mode="wait": 이전 페이지의 exit 애니메이션이 끝난 후 새 페이지의 enter 애니메이션 시작
- * - FrozenRouter: exit 애니메이션 중 라우터 컨텍스트를 고정하여 이전 페이지 내용을 유지
+ * 페이지 전환 래퍼 컴포넌트.
+ * 전역 opacity 페이드가 페이지 전체의 번쩍임(화이트 플래시)을 유발할 수 있어
+ * 퍼블릭 화면에서는 애니메이션 없이 그대로 렌더링한다.
  */
 export default function PageTransition({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -19,18 +17,8 @@ export default function PageTransition({ children }: { children: React.ReactNode
   }
 
   return (
-    <AnimatePresence mode="wait">
-      <m.div
-        key={pathname}
-        data-route-path={pathname || ''}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.3, ease: 'easeInOut' }}
-        className="w-full h-full"
-      >
-        {children}
-      </m.div>
-    </AnimatePresence>
+    <div key={pathname} data-route-path={pathname || ''} className="w-full h-full">
+      {children}
+    </div>
   );
 }
