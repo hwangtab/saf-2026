@@ -25,10 +25,16 @@ function getSafeReturnTo(request: NextRequest): string {
   return decoded;
 }
 
-function withResultParam(basePath: string, status: 'connected' | 'error', message?: string): URL {
+function withResultParam(
+  basePath: string,
+  status: 'connected' | 'error',
+  message?: string,
+  traceId?: string
+): URL {
   const resultUrl = new URL(basePath, 'https://dummy.local');
   resultUrl.searchParams.set('cafe24', status);
   if (message) resultUrl.searchParams.set('reason', message);
+  if (traceId) resultUrl.searchParams.set('trace_id', traceId);
   return resultUrl;
 }
 
@@ -48,12 +54,18 @@ export async function GET(request: NextRequest) {
   const returnTo = getSafeReturnTo(request);
 
   const oauthError = request.nextUrl.searchParams.get('error');
+  const oauthTraceId = request.nextUrl.searchParams.get('trace_id');
   if (oauthError) {
     const redirectUrl = new URL(
-      withResultParam(returnTo, 'error', oauthError).pathname,
+      withResultParam(returnTo, 'error', oauthError, oauthTraceId ?? undefined).pathname,
       request.url
     );
-    redirectUrl.search = withResultParam(returnTo, 'error', oauthError).search;
+    redirectUrl.search = withResultParam(
+      returnTo,
+      'error',
+      oauthError,
+      oauthTraceId ?? undefined
+    ).search;
     const response = NextResponse.redirect(redirectUrl);
     clearOAuthCookies(response);
     return response;
@@ -99,6 +111,7 @@ export async function GET(request: NextRequest) {
     const tokenJson = (await tokenRes.json()) as Partial<Cafe24TokenResponse> & {
       error?: string;
       error_description?: string;
+      trace_id?: string;
     };
     const accessToken = tokenJson.access_token?.trim();
     const refreshToken = tokenJson.refresh_token?.trim();
@@ -108,8 +121,12 @@ export async function GET(request: NextRequest) {
         tokenJson.error ||
         tokenJson.error_description ||
         `token_exchange_failed_${tokenRes.status}`;
-      const redirectUrl = new URL(withResultParam(returnTo, 'error', reason).pathname, request.url);
-      redirectUrl.search = withResultParam(returnTo, 'error', reason).search;
+      const traceId = tokenJson.trace_id?.trim() || undefined;
+      const redirectUrl = new URL(
+        withResultParam(returnTo, 'error', reason, traceId).pathname,
+        request.url
+      );
+      redirectUrl.search = withResultParam(returnTo, 'error', reason, traceId).search;
       const response = NextResponse.redirect(redirectUrl);
       clearOAuthCookies(response);
       return response;
