@@ -108,6 +108,10 @@ function buildCustomProductCode(artworkId: string): string {
 }
 
 function buildProductUrl(mallId: string, productNo: number, categoryNo: number | null): string {
+  if (mallId === 'koreasmartcoop') {
+    return `https://${mallId}.cafe24.com/surl/O/${productNo}`;
+  }
+
   const base = `https://${mallId}.cafe24.com/product/detail.html?product_no=${productNo}`;
   if (!categoryNo) return `${base}&display_group=1`;
   return `${base}&cate_no=${categoryNo}&display_group=1`;

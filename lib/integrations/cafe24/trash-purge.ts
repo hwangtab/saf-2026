@@ -57,6 +57,11 @@ function extractProductNoFromShopUrl(value: unknown): number | null {
     return Number(match[1]);
   }
 
+  const surlMatch = raw.match(/\/surl\/[A-Za-z]\/(\d+)(?:[/?#]|$)/);
+  if (surlMatch?.[1]) {
+    return Number(surlMatch[1]);
+  }
+
   return null;
 }
 
