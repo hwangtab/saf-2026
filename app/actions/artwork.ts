@@ -2,6 +2,7 @@
 
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { requireArtistActive } from '@/lib/auth/guards';
+import { triggerCafe24ArtworkSync } from '@/lib/integrations/cafe24/sync-artwork';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { logArtistAction } from './admin-logs';
@@ -154,6 +155,8 @@ export async function createArtwork(
     if (artistSlug) {
       revalidatePath(`/artworks/artist/${artistSlug}`);
     }
+
+    await triggerCafe24ArtworkSync(insertedArtwork.id);
   } catch (error: any) {
     if (supabase && artistId && cleanupUrls.length > 0) {
       await cleanupUploads(supabase, cleanupUrls, artistId);
@@ -268,7 +271,6 @@ export async function updateArtwork(
         status,
         is_hidden: hidden,
         images,
-        shop_url: null,
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)
@@ -325,6 +327,8 @@ export async function updateArtwork(
     if (artistSlug) {
       revalidatePath(`/artworks/artist/${artistSlug}`);
     }
+
+    await triggerCafe24ArtworkSync(id);
   } catch (error: any) {
     if (supabase && artistId && cleanupUrls.length > 0) {
       await cleanupUploads(supabase, cleanupUrls, artistId);

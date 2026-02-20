@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { requireExhibitor } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
+import { triggerCafe24ArtworkSync } from '@/lib/integrations/cafe24/sync-artwork';
 import { getString, getStoragePathsForRemoval } from '@/lib/utils/form-helpers';
 import { logExhibitorAction } from './admin-logs';
 import { validateArtworkData } from '@/lib/actions/artwork-validation';
@@ -121,6 +122,8 @@ export async function createExhibitorArtwork(formData: FormData) {
     revalidatePath(`/artworks/artist/${encodeURIComponent(artist.name_ko)}`);
   }
 
+  await triggerCafe24ArtworkSync(artwork.id);
+
   return { success: true, id: artwork.id };
 }
 
@@ -210,6 +213,8 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
   revalidatePath(`/exhibitor/artworks/${id}`);
   revalidatePath('/artworks');
 
+  await triggerCafe24ArtworkSync(id);
+
   return { success: true };
 }
 
@@ -276,6 +281,8 @@ export async function updateExhibitorArtworkImages(id: string, images: string[])
   revalidatePath('/exhibitor/artworks');
   revalidatePath(`/exhibitor/artworks/${id}`);
   revalidatePath('/artworks');
+
+  await triggerCafe24ArtworkSync(id);
 
   return { success: true };
 }

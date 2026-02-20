@@ -1,0 +1,32 @@
+{
+  "input": {
+    "input_glob": "docs/cafe24-products-*.csv",
+    "csv_files": [
+      "docs/cafe24-products-192-217.csv",
+      "docs/cafe24-products-218-227.csv",
+      "docs/cafe24-products-228-247.csv",
+      "docs/cafe24-products-248-274.csv",
+      "docs/cafe24-products-276-279.csv",
+      "docs/cafe24-products-63-109.csv",
+      "docs/cafe24-products-batch-004.csv",
+      "docs/cafe24-products-new.csv"
+    ],
+    "image_dir": "public/images/artworks",
+    "output_dir": "docs/cafe24-mapping"
+  },
+  "counts": {
+    "raw_rows": 181,
+    "deduplicated_rows": 181,
+    "duplicate_code_rows": 0,
+    "empty_custom_code_rows": 0,
+    "image_manifest_rows": 724,
+    "missing_image_rows": 0,
+    "ready_for_api_rows": 181,
+    "fallback_image_resolutions": 208
+  },
+  "quality": {
+    "header_mismatch_files": [],
+    "missing_required_columns": {},
+    "empty_custom_code_rows": []
+  }
+}

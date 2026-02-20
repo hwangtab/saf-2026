@@ -176,6 +176,139 @@
 
 ---
 
+## Cafe24 OAuth 라우트 구현
+
+### 변경 파일
+
+- `/Users/hwang-gyeongha/saf/app/api/integrations/cafe24/authorize/route.ts` (신규)
+  - CSRF 방지용 `state` 생성
+  - `state`/`return_to`를 HttpOnly 쿠키로 저장
+  - Cafe24 인가 URL로 리다이렉트
+- `/Users/hwang-gyeongha/saf/app/api/integrations/cafe24/callback/route.ts` (신규)
+  - `code`/`state` 검증
+  - Cafe24 토큰 엔드포인트로 교환 요청
+  - Access/Refresh 토큰을 HttpOnly 쿠키로 저장
+  - 성공 시 `?cafe24=connected`, 실패 시 `?cafe24=error&reason=...`로 리다이렉트
+- `/Users/hwang-gyeongha/saf/.env.local.example`
+  - `CAFE24_MALL_ID`, `CAFE24_CLIENT_ID`, `CAFE24_CLIENT_SECRET`, `CAFE24_REDIRECT_URI`, `CAFE24_SCOPE` 예시 추가
+- `/Users/hwang-gyeongha/saf/docs/cafe24-oauth-integration.md` (신규)
+  - 실제 접속 URL/설정 순서/현재 구현 상태 정리
+
+### 사용 방법
+
+1. `.env.local`에 Cafe24 OAuth 값 설정
+2. 카페24 앱 Redirect URI에 `https://saf2026.com/api/integrations/cafe24/callback` 등록
+3. 브라우저에서 `/api/integrations/cafe24/authorize?return_to=/admin/artworks` 접속
+4. 승인 후 `return_to` 경로로 복귀하며 상태 파라미터 확인
+
+### 검증 결과
+
+- `npm run lint` 통과
+- `npm run type-check` 통과
+
+---
+
+## Cafe24 자동 동기화 2단계 구현
+
+### 1) DB 스키마 확장
+
+- `/Users/hwang-gyeongha/saf/supabase/migrations/20260220213000_add_cafe24_integration.sql` (신규)
+  - `public.cafe24_tokens` 테이블 추가
+  - `artworks` 테이블에 동기화 메타 컬럼 추가
+    - `cafe24_product_no`
+    - `cafe24_custom_product_code`
+    - `cafe24_sync_status`
+    - `cafe24_sync_error`
+    - `cafe24_synced_at`
+
+### 2) Cafe24 API 클라이언트/토큰 갱신
+
+- `/Users/hwang-gyeongha/saf/lib/integrations/cafe24/client.ts` (신규)
+  - 환경변수 기반 설정 로딩
+  - 토큰 영구 저장(`persistCafe24Token`)
+  - Access Token 만료 시 Refresh Token 자동 갱신
+  - Admin API 호출 클라이언트(`Cafe24AdminApiClient`)
+
+### 3) 작품 자동 동기화 로직
+
+- `/Users/hwang-gyeongha/saf/lib/integrations/cafe24/sync-artwork.ts` (신규)
+  - 작품 데이터 → Cafe24 상품 payload 변환
+  - 상품 생성/수정 자동 처리
+  - 대표 이미지 URL 다운로드 후 Cafe24 이미지 업로드/연결 시도
+  - 성공 시 `shop_url`, `cafe24_product_no` 자동 반영
+  - 실패 시 `cafe24_sync_status`, `cafe24_sync_error` 기록
+
+### 4) OAuth callback 영구 저장 연동
+
+- `/Users/hwang-gyeongha/saf/app/api/integrations/cafe24/callback/route.ts`
+  - 토큰 교환 성공 시 `public.cafe24_tokens` upsert 추가
+
+### 5) 작품 액션 연동
+
+- `/Users/hwang-gyeongha/saf/app/actions/artwork.ts`
+  - 작가 작품 생성/수정 후 `triggerCafe24ArtworkSync` 실행
+  - 수정 시 `shop_url` 강제 초기화 제거(기존 값 보존 후 동기화 결과 반영)
+- `/Users/hwang-gyeongha/saf/app/actions/admin-artworks.ts`
+  - 관리자 생성/수정/이미지 변경 후 자동 동기화 실행
+- `/Users/hwang-gyeongha/saf/app/actions/exhibitor-artworks.ts`
+  - 출품자 생성/수정/이미지 변경 후 자동 동기화 실행
+
+### 6) 문서/환경변수 업데이트
+
+- `/Users/hwang-gyeongha/saf/.env.local.example`
+  - `CAFE24_DEFAULT_CATEGORY_NO` 예시 추가
+- `/Users/hwang-gyeongha/saf/docs/cafe24-oauth-integration.md`
+  - 토큰 DB 저장/자동 갱신/작품 자동 동기화 반영
+
+### 검증 결과
+
+- `npm run lint` 통과
+- `npm run type-check` 통과
+
+---
+
+## Cafe24 초기 매핑 자동화 1차 실행
+
+### 변경 파일
+
+- `/Users/hwang-gyeongha/saf/scripts/cafe24/build_initial_mapping.py` (신규)
+  - `docs/cafe24-products-*.csv` 병합/중복 제거
+  - `custom_product_code(SAF2026-xxx)` 기준 매핑 테이블 생성
+  - 이미지 컬럼(`상세/목록/작은목록/축소`)의 실제 로컬 파일 해석(fallback 포함)
+  - API 준비 여부(`ready_for_api`) 계산
+- `/Users/hwang-gyeongha/saf/scripts/cafe24/README.md` (신규)
+  - 실행 명령, 산출물, 다음 단계 운영 가이드 문서화
+- `/Users/hwang-gyeongha/saf/package.json`
+  - `cafe24:build-mapping` 스크립트 추가
+
+### 실행 결과
+
+- 실행 명령: `npm run cafe24:build-mapping`
+- 입력 CSV 파일: 8개
+- 처리 행 수: `181` (중복 제거 후 동일 `181`)
+- `ready_for_api=Y`: `181`
+- 누락 이미지: `0`
+- fallback 해석: `208`건
+  - 빈 이미지 참조를 ID 기반으로 자동 보정: `188`건 (`SAF2026-63 -> 63.jpg` 등)
+  - 확장자 불일치 자동 보정: `20`건 (`173.png -> 173.jpg`, `226.png -> 226.jpg` 등)
+
+### 산출물
+
+- `/Users/hwang-gyeongha/saf/docs/cafe24-mapping/master-products.csv`
+- `/Users/hwang-gyeongha/saf/docs/cafe24-mapping/initial-mapping.csv`
+- `/Users/hwang-gyeongha/saf/docs/cafe24-mapping/image-manifest.csv`
+- `/Users/hwang-gyeongha/saf/docs/cafe24-mapping/missing-images.csv`
+- `/Users/hwang-gyeongha/saf/docs/cafe24-mapping/duplicate-codes.csv`
+- `/Users/hwang-gyeongha/saf/docs/cafe24-mapping/summary.json`
+
+### 참고
+
+- 현재는 “초기 매핑/이미지 준비” 단계만 구현.
+- 다음 단계로 Cafe24 API 연동(`products` 생성/수정, `product_no` 및 `shop_url` 자동 반영)과
+  등록 폼의 `shop_url` 수동 입력 제거가 남아 있음.
+
+---
+
 ## 최근 등록 정렬 필터 전환 (방향 변경)
 
 사용자 피드백(검수 큐 불필요, 최근 등록 작품 전체 확인 필요)에 따라 기존 검수 큐 접근을 단순 정렬 필터 방식으로 전환했습니다.

@@ -125,3 +125,101 @@
 ## 승인 상태
 
 - 사용자 요청(“최근 등록순 필터를 만들고 그 페이지로 연결”)에 따라 본 계획으로 즉시 실행.
+
+---
+
+# Cafe24 초기 매핑/자동 동기화 전환 계획서
+
+## 1) 목표
+
+- 기존 `docs/cafe24-products-*.csv`를 단일 기준 데이터로 병합해 초기 매핑 테이블을 만든다.
+- 이미지 참조 오류를 사전에 정리할 수 있는 `image-manifest`를 생성해 API 업로드 준비를 끝낸다.
+- 이후 단계에서 작품 등록 시 `shop_url` 수동 입력을 제거할 수 있도록 멱등 키(`custom_product_code`) 중심 구조를 확정한다.
+
+## 2) 구현 범위
+
+### 포함
+
+- CSV 병합/중복제거/필수값 검증 자동화 스크립트 추가
+- 이미지 경로 정합성 검사 및 확장자 fallback 매니페스트 생성
+- 실행 산출물(`master-products`, `initial-mapping`, `missing-images`, `summary`) 자동 생성
+- 운영 문서(`scripts/cafe24/README.md`) 추가
+
+### 제외
+
+- Cafe24 OAuth 토큰 발급/갱신 자동화 코드
+- Admin/Artist/Exhibitor 폼의 `shop_url` UI 제거
+- Supabase 스키마 확장(`cafe24_product_no`, sync status 등)
+
+## 3) 구현 단계
+
+1. `scripts/cafe24/build_initial_mapping.py` 작성
+2. `package.json`에 실행 스크립트(`cafe24:build-mapping`) 등록
+3. 스크립트 실행 후 `docs/cafe24-mapping/*` 산출물 생성
+4. 누락 이미지/필수값 누락 건수 확인
+5. 결과를 기반으로 API 연동 2단계 설계로 이관
+
+## 4) 검증 계획
+
+- `npm run cafe24:build-mapping`
+- 산출물 확인:
+  - `docs/cafe24-mapping/summary.json`
+  - `docs/cafe24-mapping/missing-images.csv`
+  - `docs/cafe24-mapping/initial-mapping.csv`
+
+## 5) 완료 기준 (Definition of Done)
+
+1. CSV 전수(현재 패턴 매칭 파일) 병합 결과가 생성된다.
+2. 각 작품별 API 준비 상태(`ready_for_api`)가 계산된다.
+3. 이미지 누락/확장자 불일치가 `missing-images.csv`로 분리된다.
+4. 동일 절차를 팀원이 재실행할 수 있는 문서/명령이 제공된다.
+
+## 승인 상태
+
+- 사용자 응답(“네 해봅시다.”)에 따라 본 계획으로 즉시 실행.
+
+---
+
+# Cafe24 자동 동기화 2단계 계획서 (토큰 영구저장 + 등록 자동 생성)
+
+## 1) 목표
+
+- OAuth 콜백에서 획득한 토큰을 DB에 영구 저장하고 만료 시 자동 갱신한다.
+- 작품 등록/수정 시 Cafe24 상품을 자동 생성/갱신하여 `shop_url`을 자동 반영한다.
+- 이미지 URL이 있을 경우 Cafe24 상품 이미지 업로드까지 자동 시도한다.
+
+## 2) 구현 범위
+
+### 포함
+
+- `cafe24_tokens` 테이블 및 작품 동기화 메타 컬럼 마이그레이션
+- OAuth 콜백의 토큰 DB 저장 로직 추가
+- Cafe24 API 클라이언트(Access Token 자동 refresh 포함) 추가
+- 작품 액션(artist/exhibitor/admin)에서 동기화 트리거 연동
+
+### 제외
+
+- 기존 작품 전체 재동기화 배치 작업
+- 웹훅 소비(주문 상태 역동기화)
+- 동기화 실패 재시도 큐(백그라운드 잡)
+
+## 3) 구현 단계
+
+1. DB 스키마 확장 마이그레이션 추가
+2. Cafe24 클라이언트/토큰 저장/토큰 갱신 유틸 작성
+3. OAuth callback에서 토큰 영구 저장 연결
+4. 작품 생성/수정/이미지변경 액션에 자동 동기화 연결
+5. lint/type-check 검증 및 운영 문서 업데이트
+
+## 4) 검증 계획
+
+- `npm run lint`
+- `npm run type-check`
+- OAuth 연결 후 작품 1건 생성 시:
+  - `artworks.shop_url` 자동 채움
+  - `artworks.cafe24_product_no` 채움
+  - 실패 시 `artworks.cafe24_sync_error` 기록 확인
+
+## 승인 상태
+
+- 사용자 요청(“이거 해줘”)에 따라 본 계획으로 즉시 실행.

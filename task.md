@@ -32,3 +32,36 @@
 - [x] `npm run lint` 통과
 - [x] `npm run type-check` 통과
 - [x] `walkthrough.md` 업데이트
+
+---
+
+# Cafe24 초기 매핑 자동화 체크리스트
+
+- [x] `scripts/cafe24/build_initial_mapping.py` 추가
+- [x] `scripts/cafe24/README.md` 작성
+- [x] `package.json`에 `cafe24:build-mapping` 스크립트 등록
+- [x] `npm run cafe24:build-mapping` 실행 및 산출물 검증
+- [x] `walkthrough.md`에 결과/잔여 과제 기록
+
+---
+
+# Cafe24 OAuth 콜백 라우트 체크리스트
+
+- [x] `/api/integrations/cafe24/authorize` 라우트 추가
+- [x] `/api/integrations/cafe24/callback` 라우트 추가
+- [x] `.env.local.example`에 Cafe24 OAuth 환경변수 예시 추가
+- [x] `docs/cafe24-oauth-integration.md` 사용 가이드 추가
+- [x] `npm run lint` 통과
+- [x] `npm run type-check` 통과
+
+---
+
+# Cafe24 자동 동기화 2단계 체크리스트
+
+- [x] `public.cafe24_tokens` + 작품 동기화 메타 컬럼 마이그레이션 추가
+- [x] Cafe24 API 클라이언트(토큰 refresh 포함) 구현
+- [x] OAuth callback에서 토큰 DB 영구 저장 연동
+- [x] 작품 등록/수정/이미지변경 액션에 Cafe24 자동 동기화 트리거 연결
+- [x] `artworks` 동기화 상태(`cafe24_sync_status`, `cafe24_sync_error`) 기록 처리
+- [x] `npm run lint` 통과
+- [x] `npm run type-check` 통과

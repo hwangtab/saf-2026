@@ -22,7 +22,8 @@
     "cleanup:artwork-variants:dry": "node scripts/cleanup-artwork-variants.js",
     "cleanup:artwork-variants:apply": "node scripts/cleanup-artwork-variants.js --apply",
     "trash:purge:expired:dry": "node scripts/purge-expired-trash.js --dry-run",
-    "trash:purge:expired": "node scripts/purge-expired-trash.js"
+    "trash:purge:expired": "node scripts/purge-expired-trash.js",
+    "cafe24:build-mapping": "python3 scripts/cafe24/build_initial_mapping.py"
   },
   "lint-staged": {
     "*.{ts,tsx}": [

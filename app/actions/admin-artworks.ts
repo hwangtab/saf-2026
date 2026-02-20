@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
+import { triggerCafe24ArtworkSync } from '@/lib/integrations/cafe24/sync-artwork';
 import { logAdminAction } from './admin-logs';
 import { getString, getStoragePathsForRemoval, validateBatchSize } from '@/lib/utils/form-helpers';
 
@@ -165,6 +166,8 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
     reversible: true,
   });
 
+  await triggerCafe24ArtworkSync(id);
+
   return { success: true };
 }
 
@@ -230,6 +233,8 @@ export async function createAdminArtwork(formData: FormData) {
     reversible: true,
   });
 
+  await triggerCafe24ArtworkSync(artwork.id);
+
   return { success: true, id: artwork.id };
 }
 
@@ -294,6 +299,8 @@ export async function updateArtworkImages(id: string, images: string[]) {
       reversible: true,
     }
   );
+
+  await triggerCafe24ArtworkSync(id);
 
   return { success: true };
 }
