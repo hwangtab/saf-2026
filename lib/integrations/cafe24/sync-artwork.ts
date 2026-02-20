@@ -221,7 +221,7 @@ async function upsertCafe24Product(
     summary_description: summary,
     simple_description: summary,
     description: buildDescription(artwork),
-    product_tag: tagParts.join(','),
+    product_tag: tagParts,
     add_category_no: config.defaultCategoryNo
       ? [
           {
