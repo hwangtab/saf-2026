@@ -176,6 +176,26 @@
 
 ---
 
+## 관리자 사용자 검색/필터 안정화 (admin/users)
+
+`/admin/users`에서 검색 입력 튕김 및 필터 병합 충돌 가능성을 줄이기 위해 URL 동기화 경로를 정리했습니다.
+
+### 변경 파일
+
+- `/Users/hwang-gyeongha/saf/app/admin/users/user-list.tsx`
+  - `useSearchParams` 기반 URL 조합을 제거하고, `window.location.search` 기준으로 현재 URL을 직접 병합
+  - `router.push`를 `router.replace(..., { scroll: false })`로 변경해 불필요한 히스토리 누적 완화
+  - `pendingQueryRef`/`latestQueryRef`를 도입해 서버 응답 지연 시 `setQuery(initialFilters.q)`가 입력값을 덮어쓰는 현상 방지
+  - 디바운스 검색 비교 기준을 `initialFilters.q`에서 "현재 URL의 q"로 변경
+  - 필터 변경 시 현재 입력 중인 `query`를 함께 반영해 필터 병합 일관성 유지
+
+### 검증 결과
+
+- `npx eslint app/admin/users/user-list.tsx` 통과
+- `npm run type-check` 통과
+
+---
+
 ## Cafe24 OAuth 라우트 구현
 
 ### 변경 파일

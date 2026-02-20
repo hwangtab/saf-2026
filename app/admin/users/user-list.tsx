@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   approveUser,
   promoteUserToArtistWithLink,
@@ -34,6 +34,10 @@ type ArtistPromoteContext = {
   mode: 'link_existing' | 'create_and_link' | 'role_only';
 };
 
+function normalizeQuery(value: string | null | undefined) {
+  return (value || '').trim();
+}
+
 export function UserList({
   users,
   initialFilters,
@@ -41,12 +45,12 @@ export function UserList({
   users: Profile[];
   initialFilters?: InitialFilters;
 }) {
+  const pathname = usePathname();
   const router = useRouter();
-  const searchParams = useSearchParams();
   const toast = useToast();
 
   const [processingId, setProcessingId] = useState<string | null>(null);
-  const [query, setQuery] = useState(initialFilters?.q || '');
+  const [query, setQuery] = useState(normalizeQuery(initialFilters?.q));
   const [filterNotice, setFilterNotice] = useState<string | null>(null);
   const debouncedQuery = useDebounce(query, 300);
   const [selectedUser, setSelectedUser] = useState<Profile | null>(null);
@@ -70,58 +74,102 @@ export function UserList({
   const [isArtistSearchSlow, setIsArtistSearchSlow] = useState(false);
   const [sortKey, setSortKey] = useState<UserSortKey>('user');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+  const pendingQueryRef = useRef<string | null>(null);
+  const latestQueryRef = useRef(query);
 
   useEffect(() => {
     setLocalUsers(users);
   }, [users]);
 
   useEffect(() => {
-    setQuery(initialFilters?.q || '');
+    latestQueryRef.current = query;
+  }, [query]);
+
+  useEffect(() => {
+    const nextInitialQuery = normalizeQuery(initialFilters?.q);
+    const pendingQuery = pendingQueryRef.current;
+
+    if (pendingQuery !== null) {
+      if (nextInitialQuery !== pendingQuery) return;
+      if (normalizeQuery(latestQueryRef.current) !== pendingQuery) return;
+      pendingQueryRef.current = null;
+    }
+
+    if (normalizeQuery(latestQueryRef.current) !== nextInitialQuery) {
+      setQuery(nextInitialQuery);
+    }
   }, [initialFilters?.q]);
+
+  // URL 기반 필터 변경 함수
+  const updateFilters = useCallback(
+    (
+      newParams: Record<string, string | undefined>,
+      options?: {
+        trackQuery?: boolean;
+      }
+    ) => {
+      if (typeof window === 'undefined') return;
+
+      const params = new URLSearchParams(window.location.search);
+      params.delete('page');
+
+      Object.entries(newParams).forEach(([key, value]) => {
+        if (value && value !== 'all') {
+          params.set(key, value);
+        } else {
+          params.delete(key);
+        }
+      });
+
+      const applicant = params.get('applicant');
+      const role = params.get('role');
+      const hasApplicant = applicant === 'artist' || applicant === 'exhibitor';
+      const hasRole =
+        role === 'user' || role === 'artist' || role === 'exhibitor' || role === 'admin';
+
+      const incompatibleArtist =
+        hasApplicant && applicant === 'artist' && hasRole && role === 'exhibitor';
+      const incompatibleExhibitor =
+        hasApplicant && applicant === 'exhibitor' && hasRole && role === 'artist';
+
+      if (incompatibleArtist || incompatibleExhibitor) {
+        params.delete('role');
+        setFilterNotice('신청유형과 충돌하는 권한 필터를 자동 해제했습니다.');
+        toast.info('필터 충돌을 방지하기 위해 권한 필터를 자동 해제했습니다.');
+      } else {
+        setFilterNotice(null);
+      }
+
+      const nextQueryValue = normalizeQuery(params.get('q'));
+      if (options?.trackQuery) {
+        pendingQueryRef.current = nextQueryValue;
+      }
+
+      const nextQueryString = params.toString();
+      const nextUrl = nextQueryString ? `${pathname}?${nextQueryString}` : pathname;
+      const currentUrl = `${window.location.pathname}${window.location.search}`;
+
+      if (currentUrl === nextUrl) {
+        if (options?.trackQuery && pendingQueryRef.current === nextQueryValue) {
+          pendingQueryRef.current = null;
+        }
+        return;
+      }
+
+      router.replace(nextUrl, { scroll: false });
+    },
+    [pathname, router, toast]
+  );
 
   // 실시간 검색: debounced query가 변경되면 자동 검색
   useEffect(() => {
-    const initialQ = initialFilters?.q || '';
-    if (debouncedQuery !== initialQ) {
-      updateFilters({ q: debouncedQuery || undefined });
+    if (typeof window === 'undefined') return;
+    const currentQueryInUrl = normalizeQuery(new URLSearchParams(window.location.search).get('q'));
+    const normalizedDebouncedQuery = normalizeQuery(debouncedQuery);
+    if (normalizedDebouncedQuery !== currentQueryInUrl) {
+      updateFilters({ q: normalizedDebouncedQuery || undefined }, { trackQuery: true });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedQuery]);
-
-  // URL 기반 필터 변경 함수
-  const updateFilters = (newParams: Record<string, string | undefined>) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.delete('page');
-
-    Object.entries(newParams).forEach(([key, value]) => {
-      if (value && value !== 'all') {
-        params.set(key, value);
-      } else {
-        params.delete(key);
-      }
-    });
-
-    const applicant = params.get('applicant');
-    const role = params.get('role');
-    const hasApplicant = applicant === 'artist' || applicant === 'exhibitor';
-    const hasRole =
-      role === 'user' || role === 'artist' || role === 'exhibitor' || role === 'admin';
-
-    const incompatibleArtist =
-      hasApplicant && applicant === 'artist' && hasRole && role === 'exhibitor';
-    const incompatibleExhibitor =
-      hasApplicant && applicant === 'exhibitor' && hasRole && role === 'artist';
-
-    if (incompatibleArtist || incompatibleExhibitor) {
-      params.delete('role');
-      setFilterNotice('신청유형과 충돌하는 권한 필터를 자동 해제했습니다.');
-      toast.info('필터 충돌을 방지하기 위해 권한 필터를 자동 해제했습니다.');
-    } else {
-      setFilterNotice(null);
-    }
-
-    router.push(`/admin/users?${params.toString()}`);
-  };
+  }, [debouncedQuery, updateFilters]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -483,8 +531,10 @@ export function UserList({
           initialFilters={initialFilters}
           filterNotice={filterNotice}
           onQueryChange={setQuery}
-          onQuerySubmit={() => updateFilters({ q: query || undefined })}
-          onFilterChange={updateFilters}
+          onQuerySubmit={() => updateFilters({ q: query || undefined }, { trackQuery: true })}
+          onFilterChange={(updates) =>
+            updateFilters({ ...updates, q: query || undefined }, { trackQuery: true })
+          }
         />
 
         <UserTable

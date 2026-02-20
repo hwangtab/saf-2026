@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import ArtworkLightbox from '@/components/ui/ArtworkLightbox';
 import SafeImage from '@/components/common/SafeImage';
 import Button from '@/components/ui/Button';
@@ -109,9 +109,7 @@ export function AdminArtworkList({
   initialFilters?: InitialArtworkFilters;
 }) {
   const toast = useToast();
-  const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [optimisticArtworks, setOptimisticArtworks] = useState(artworks);
   const initialStatusFilter = normalizeStatusFilter(initialFilters?.status);
   const initialVisibilityFilter = normalizeVisibilityFilter(initialFilters?.visibility);
@@ -164,7 +162,8 @@ export function AdminArtworkList({
       visibility?: VisibilityFilter;
       sort?: SortFilter;
     }) => {
-      const params = new URLSearchParams(searchParams.toString());
+      if (typeof window === 'undefined') return;
+      const params = new URLSearchParams(window.location.search);
 
       if ('q' in updates) {
         const q = updates.q?.trim();
@@ -203,21 +202,26 @@ export function AdminArtworkList({
       }
 
       const nextQuery = params.toString();
-      router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname);
+      const nextUrl = nextQuery ? `${pathname}?${nextQuery}` : pathname;
+      window.history.replaceState(window.history.state, '', nextUrl);
     },
-    [pathname, router, searchParams]
+    [pathname]
   );
 
   useEffect(() => {
     const timer = setTimeout(() => {
       const normalizedQuery = query.trim();
-      if (normalizedQuery !== initialQuery) {
+      if (typeof window === 'undefined') return;
+      const currentQuery = normalizeQuery(
+        new URLSearchParams(window.location.search).get('q') || undefined
+      );
+      if (normalizedQuery !== currentQuery) {
         updateFilterParams({ q: normalizedQuery || undefined });
       }
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [initialQuery, query, updateFilterParams]);
+  }, [query, updateFilterParams]);
 
   // -- Filters --
   const filtered = useMemo(() => {

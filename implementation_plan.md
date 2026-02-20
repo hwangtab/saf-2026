@@ -223,3 +223,62 @@
 ## 승인 상태
 
 - 사용자 요청(“이거 해줘”)에 따라 본 계획으로 즉시 실행.
+
+---
+
+# 관리자 사용자 검색/필터 안정화 계획서 (admin/users)
+
+## 1) 목표
+
+- 관리자 사용자 관리 페이지에서 검색어 입력 중 값이 튕기거나 이전 값으로 되돌아가는 현상을 제거한다.
+- 검색/필터 변경 시 URL 동기화 과정에서 다른 필터가 덮어써지는 레이스 컨디션을 제거한다.
+- 작품 관리 페이지에 적용한 안정화 방식과 동일한 원칙으로 동작 일관성을 맞춘다.
+
+## 2) 확인된 원인
+
+1. `debouncedQuery` 변경 시 `router.push`가 반복 호출되어 서버 재렌더가 잦게 발생함.
+2. `updateFilters`가 `useSearchParams()` 스냅샷을 기준으로 URL을 조합해, 연속 입력/필터 변경 시 stale 값으로 다음 URL을 만들 수 있음.
+3. 서버에서 돌아온 `initialFilters.q`를 `setQuery`로 재주입하는 흐름이 입력 중인 로컬 값을 덮어쓸 수 있음.
+
+## 3) 구현 범위
+
+### 포함
+
+- `app/admin/users/user-list.tsx`의 검색/필터 URL 동기화 로직을 `window.location.search` 기준으로 재작성
+- 검색 디바운스 동기화 비교 기준을 `initialFilters.q`가 아닌 현재 URL `q`로 변경
+- 자동 검색 동작은 히스토리 누적 없이 URL 반영되도록 정리 (`replaceState` 또는 동등 동작)
+- Enter 제출/필터 드롭다운 변경 시에도 동일한 URL 병합 규칙 사용
+
+### 제외
+
+- 서버 쿼리(`app/admin/users/page.tsx`)의 검색 조건/정렬 정책 변경
+- 사용자 테이블 렌더링/권한 변경 기능 수정
+- 다른 페이지(`logs`, `trash`, `revenue`)의 UX 정책 변경
+
+## 4) 구현 단계
+
+1. `app/admin/users/user-list.tsx`에서 URL 갱신 유틸을 단일 함수로 정리
+2. 검색 디바운스 effect를 현재 URL 기준 비교로 변경하여 튕김 방지
+3. 필터 변경(`applicant/role/status`)과 검색 제출이 동일한 URL 병합 함수를 사용하도록 통합
+4. 필요 시 `useSearchParams` 의존 제거/축소로 stale 파라미터 경로 차단
+5. 정적 검증 실행 (`eslint`, `type-check`)
+
+## 5) 검증 계획
+
+- 기능 점검
+  - 사용자 관리에서 검색어 연속 입력 시 값이 되돌아가지 않는지 확인
+  - 검색 중 `status/role/applicant` 변경 시 다른 필터가 사라지지 않는지 확인
+  - Enter 제출 후에도 입력값/필터가 유지되는지 확인
+- 명령 검증
+  - `npx eslint app/admin/users/user-list.tsx`
+  - `npm run type-check`
+
+## 6) 리스크 및 롤백
+
+- 리스크: URL 동기화 방식 변경으로 브라우저 뒤로가기 동작 체감이 일부 달라질 수 있음
+- 롤백: `app/admin/users/user-list.tsx`의 URL 동기화 부분만 이전 `router.push + searchParams` 방식으로 되돌림
+
+## 승인 상태
+
+- 승인 완료 (사용자 응답: “승인”)
+- 실행 완료 (admin/users 안정화 반영)
