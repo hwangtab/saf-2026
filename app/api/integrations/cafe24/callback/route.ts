@@ -38,9 +38,29 @@ function withResultParam(
   return resultUrl;
 }
 
-function clearOAuthCookies(response: NextResponse) {
-  response.cookies.set({ name: STATE_COOKIE_NAME, value: '', path: '/', maxAge: 0 });
-  response.cookies.set({ name: RETURN_TO_COOKIE_NAME, value: '', path: '/', maxAge: 0 });
+function getCookieDomain(request: NextRequest): string | undefined {
+  const host = request.nextUrl.hostname.toLowerCase();
+  if (host === 'saf2026.com' || host === 'www.saf2026.com') {
+    return 'saf2026.com';
+  }
+  return undefined;
+}
+
+function clearOAuthCookies(response: NextResponse, cookieDomain?: string) {
+  response.cookies.set({
+    name: STATE_COOKIE_NAME,
+    value: '',
+    path: '/',
+    maxAge: 0,
+    ...(cookieDomain ? { domain: cookieDomain } : {}),
+  });
+  response.cookies.set({
+    name: RETURN_TO_COOKIE_NAME,
+    value: '',
+    path: '/',
+    maxAge: 0,
+    ...(cookieDomain ? { domain: cookieDomain } : {}),
+  });
 }
 
 export async function GET(request: NextRequest) {
@@ -52,6 +72,7 @@ export async function GET(request: NextRequest) {
   }
 
   const returnTo = getSafeReturnTo(request);
+  const cookieDomain = getCookieDomain(request);
 
   const oauthError = request.nextUrl.searchParams.get('error');
   const oauthTraceId = request.nextUrl.searchParams.get('trace_id');
@@ -67,7 +88,7 @@ export async function GET(request: NextRequest) {
       oauthTraceId ?? undefined
     ).search;
     const response = NextResponse.redirect(redirectUrl);
-    clearOAuthCookies(response);
+    clearOAuthCookies(response, cookieDomain);
     return response;
   }
 
@@ -82,7 +103,7 @@ export async function GET(request: NextRequest) {
     );
     redirectUrl.search = withResultParam(returnTo, 'error', 'invalid_state').search;
     const response = NextResponse.redirect(redirectUrl);
-    clearOAuthCookies(response);
+    clearOAuthCookies(response, cookieDomain);
     return response;
   }
 
@@ -128,7 +149,7 @@ export async function GET(request: NextRequest) {
       );
       redirectUrl.search = withResultParam(returnTo, 'error', reason, traceId).search;
       const response = NextResponse.redirect(redirectUrl);
-      clearOAuthCookies(response);
+      clearOAuthCookies(response, cookieDomain);
       return response;
     }
 
@@ -158,6 +179,7 @@ export async function GET(request: NextRequest) {
       sameSite: 'lax',
       path: '/',
       maxAge: accessTtl,
+      ...(cookieDomain ? { domain: cookieDomain } : {}),
     });
     response.cookies.set({
       name: REFRESH_TOKEN_COOKIE_NAME,
@@ -167,8 +189,9 @@ export async function GET(request: NextRequest) {
       sameSite: 'lax',
       path: '/',
       maxAge: 60 * 60 * 24 * 14,
+      ...(cookieDomain ? { domain: cookieDomain } : {}),
     });
-    clearOAuthCookies(response);
+    clearOAuthCookies(response, cookieDomain);
 
     return response;
   } catch (error) {
@@ -176,7 +199,7 @@ export async function GET(request: NextRequest) {
     const redirectUrl = new URL(withResultParam(returnTo, 'error', message).pathname, request.url);
     redirectUrl.search = withResultParam(returnTo, 'error', message).search;
     const response = NextResponse.redirect(redirectUrl);
-    clearOAuthCookies(response);
+    clearOAuthCookies(response, cookieDomain);
     return response;
   }
 }

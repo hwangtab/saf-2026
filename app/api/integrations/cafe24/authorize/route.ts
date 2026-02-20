@@ -22,6 +22,14 @@ function normalizeReturnTo(input: string | null): string {
   return input;
 }
 
+function getCookieDomain(request: NextRequest): string | undefined {
+  const host = request.nextUrl.hostname.toLowerCase();
+  if (host === 'saf2026.com' || host === 'www.saf2026.com') {
+    return 'saf2026.com';
+  }
+  return undefined;
+}
+
 export async function GET(request: NextRequest) {
   try {
     const isAdmin = await hasActiveAdminSession();
@@ -37,6 +45,7 @@ export async function GET(request: NextRequest) {
     const scope = process.env.CAFE24_SCOPE?.trim() || 'mall.read_product,mall.write_product';
     const state = crypto.randomBytes(24).toString('hex');
     const returnTo = normalizeReturnTo(request.nextUrl.searchParams.get('return_to'));
+    const cookieDomain = getCookieDomain(request);
 
     const authorizeUrl = new URL(`https://${mallId}.cafe24api.com/api/v2/oauth/authorize`);
     authorizeUrl.searchParams.set('response_type', 'code');
@@ -54,6 +63,7 @@ export async function GET(request: NextRequest) {
       sameSite: 'lax',
       path: '/',
       maxAge: 60 * 10,
+      ...(cookieDomain ? { domain: cookieDomain } : {}),
     });
     response.cookies.set({
       name: RETURN_TO_COOKIE_NAME,
@@ -63,6 +73,7 @@ export async function GET(request: NextRequest) {
       sameSite: 'lax',
       path: '/',
       maxAge: 60 * 10,
+      ...(cookieDomain ? { domain: cookieDomain } : {}),
     });
 
     return response;
