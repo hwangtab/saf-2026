@@ -2,7 +2,7 @@ import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { UserList } from './user-list';
 import { UserRole, UserStatus } from '@/types/database.types';
-import { hasHangulJamo } from '@/lib/search-utils';
+import { hasComposedTrailingConsonantQuery, hasHangulJamo } from '@/lib/search-utils';
 import {
   AdminPageDescription,
   AdminPageHeader,
@@ -88,7 +88,12 @@ export default async function UsersPage({ searchParams }: Props) {
   }
 
   // 검색어 필터: 초성/자모 입력은 클라이언트 보강 필터로 처리
-  if (params.q && params.q.trim() && !hasHangulJamo(params.q)) {
+  if (
+    params.q &&
+    params.q.trim() &&
+    !hasHangulJamo(params.q) &&
+    !hasComposedTrailingConsonantQuery(params.q)
+  ) {
     const searchTerm = params.q.trim();
     query = query.or(`name.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%`);
   }

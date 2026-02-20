@@ -2,7 +2,11 @@
 
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 import { requireAdmin } from '@/lib/auth/guards';
-import { hasHangulJamo, matchesAnySearch } from '@/lib/search-utils';
+import {
+  hasComposedTrailingConsonantQuery,
+  hasHangulJamo,
+  matchesAnySearch,
+} from '@/lib/search-utils';
 import { revalidatePath } from 'next/cache';
 import { logAdminAction } from './admin-logs';
 import { UserRole } from '@/types/database.types';
@@ -101,7 +105,8 @@ export async function searchUnlinkedArtists(query: string): Promise<UnlinkedArti
   const rawQuery = query.trim();
   const normalizedQuery = sanitizeIlikeQuery(rawQuery);
   if (normalizedQuery.length < 2) return [];
-  const hasJamo = hasHangulJamo(rawQuery);
+  const requiresClientFilter =
+    hasHangulJamo(rawQuery) || hasComposedTrailingConsonantQuery(rawQuery);
 
   const runSearch = async (withPhoneField: boolean) => {
     if (withPhoneField) {
@@ -111,13 +116,13 @@ export async function searchUnlinkedArtists(query: string): Promise<UnlinkedArti
         .is('user_id', null)
         .order('updated_at', { ascending: false });
 
-      if (!hasJamo) {
+      if (!requiresClientFilter) {
         builder = builder.or(
           `name_ko.ilike.%${normalizedQuery}%,name_en.ilike.%${normalizedQuery}%,contact_phone.ilike.%${normalizedQuery}%,contact_email.ilike.%${normalizedQuery}%`
         );
       }
 
-      return builder.limit(hasJamo ? 300 : 20);
+      return builder.limit(requiresClientFilter ? 300 : 20);
     }
 
     let builder = supabase
@@ -126,13 +131,13 @@ export async function searchUnlinkedArtists(query: string): Promise<UnlinkedArti
       .is('user_id', null)
       .order('updated_at', { ascending: false });
 
-    if (!hasJamo) {
+    if (!requiresClientFilter) {
       builder = builder.or(
         `name_ko.ilike.%${normalizedQuery}%,name_en.ilike.%${normalizedQuery}%,contact_email.ilike.%${normalizedQuery}%`
       );
     }
 
-    return builder.limit(hasJamo ? 300 : 20);
+    return builder.limit(requiresClientFilter ? 300 : 20);
   };
 
   let { data, error } = await runSearch(true);
@@ -155,7 +160,7 @@ export async function searchUnlinkedArtists(query: string): Promise<UnlinkedArti
   };
 
   const normalizedRows = (data || []) as ArtistSearchRow[];
-  const filteredRows = hasJamo
+  const filteredRows = requiresClientFilter
     ? normalizedRows
         .filter((artist) =>
           matchesAnySearch(rawQuery, [

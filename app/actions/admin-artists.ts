@@ -3,7 +3,11 @@
 import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
-import { hasHangulJamo, matchesAnySearch } from '@/lib/search-utils';
+import {
+  hasComposedTrailingConsonantQuery,
+  hasHangulJamo,
+  matchesAnySearch,
+} from '@/lib/search-utils';
 import { logAdminAction } from './admin-logs';
 import { getString } from '@/lib/utils/form-helpers';
 
@@ -352,7 +356,7 @@ export async function searchUsersByName(query: string) {
   const normalizedQuery = query.trim();
   if (normalizedQuery.length < 2) return [];
 
-  if (hasHangulJamo(normalizedQuery)) {
+  if (hasHangulJamo(normalizedQuery) || hasComposedTrailingConsonantQuery(normalizedQuery)) {
     const { data, error } = await supabase
       .from('profiles')
       .select('id, name, email, avatar_url, role, status')

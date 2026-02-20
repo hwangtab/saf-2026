@@ -25,6 +25,37 @@ const CHOSEONG_LIST = [
   'ㅎ',
 ] as const;
 
+const JONGSEONG_COMPAT_LIST = [
+  '',
+  'ㄱ',
+  'ㄲ',
+  'ㄳ',
+  'ㄴ',
+  'ㄵ',
+  'ㄶ',
+  'ㄷ',
+  'ㄹ',
+  'ㄺ',
+  'ㄻ',
+  'ㄼ',
+  'ㄽ',
+  'ㄾ',
+  'ㄿ',
+  'ㅀ',
+  'ㅁ',
+  'ㅂ',
+  'ㅄ',
+  'ㅅ',
+  'ㅆ',
+  'ㅇ',
+  'ㅈ',
+  'ㅊ',
+  'ㅋ',
+  'ㅌ',
+  'ㅍ',
+  'ㅎ',
+] as const;
+
 type HangulSyllableParts = {
   choseongIndex: number;
   jungseongIndex: number;
@@ -49,6 +80,18 @@ function isCompatConsonant(char: string): boolean {
   return /[ㄱ-ㅎ]/.test(char);
 }
 
+function composeHangulSyllable(
+  choseongIndex: number,
+  jungseongIndex: number,
+  jongseongIndex: number
+): string {
+  const code =
+    HANGUL_SYLLABLE_BASE +
+    (choseongIndex * HANGUL_JUNGSEONG_COUNT + jungseongIndex) * HANGUL_JONGSEONG_COUNT +
+    jongseongIndex;
+  return String.fromCharCode(code);
+}
+
 function getHangulSyllableParts(char: string): HangulSyllableParts | null {
   if (!isHangulSyllable(char)) return null;
   const code = char.charCodeAt(0) - HANGUL_SYLLABLE_BASE;
@@ -63,6 +106,43 @@ function getHangulSyllableParts(char: string): HangulSyllableParts | null {
     jungseongIndex,
     jongseongIndex,
   };
+}
+
+function getTrailingConsonantExpandedQuery(query: string): string | null {
+  if (!query) return null;
+  const lastChar = query[query.length - 1];
+  if (!lastChar) return null;
+
+  const parts = getHangulSyllableParts(lastChar);
+  if (!parts || parts.jongseongIndex === 0) return null;
+
+  const trailingConsonant = JONGSEONG_COMPAT_LIST[parts.jongseongIndex];
+  if (!trailingConsonant) return null;
+
+  const withoutJongseong = composeHangulSyllable(parts.choseongIndex, parts.jungseongIndex, 0);
+  return `${query.slice(0, -1)}${withoutJongseong}${trailingConsonant}`;
+}
+
+export function hasComposedTrailingConsonantQuery(value: string | null | undefined): boolean {
+  const normalized = normalizeSearchText(value);
+  if (!normalized || hasHangulJamo(normalized)) return false;
+  return Boolean(getTrailingConsonantExpandedQuery(normalized));
+}
+
+function getSearchQueryCandidates(query: string | null | undefined): string[] {
+  const normalizedQuery = normalizeSearchText(query);
+  if (!normalizedQuery) return [];
+
+  const candidates = new Set([normalizedQuery]);
+
+  if (!hasHangulJamo(normalizedQuery)) {
+    const expandedQuery = getTrailingConsonantExpandedQuery(normalizedQuery);
+    if (expandedQuery && expandedQuery !== normalizedQuery) {
+      candidates.add(expandedQuery);
+    }
+  }
+
+  return Array.from(candidates);
 }
 
 function charMatches(queryChar: string, targetChar: string): boolean {
@@ -112,14 +192,16 @@ export function matchesSearchText(
   source: string | null | undefined,
   query: string | null | undefined
 ): boolean {
-  const normalizedQuery = normalizeSearchText(query);
-  if (!normalizedQuery) return true;
+  const queryCandidates = getSearchQueryCandidates(query);
+  if (queryCandidates.length === 0) return true;
 
   const normalizedSource = normalizeSearchText(source);
   if (!normalizedSource) return false;
 
-  if (normalizedSource.includes(normalizedQuery)) return true;
-  return includesHangulPattern(normalizedSource, normalizedQuery);
+  return queryCandidates.some((queryCandidate) => {
+    if (normalizedSource.includes(queryCandidate)) return true;
+    return includesHangulPattern(normalizedSource, queryCandidate);
+  });
 }
 
 export function matchesAnySearch(
