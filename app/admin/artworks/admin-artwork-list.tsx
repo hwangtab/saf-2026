@@ -65,7 +65,7 @@ function normalizeQuery(value: string | undefined): string {
 
 function normalizeSortFilter(value: string | undefined): SortFilter {
   if (value === 'recent' || value === 'oldest') return value;
-  return 'default';
+  return 'recent';
 }
 
 function getSortStateFromFilter(sortFilter: SortFilter): {
