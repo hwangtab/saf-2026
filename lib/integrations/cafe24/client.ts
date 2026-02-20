@@ -2,6 +2,7 @@ import { createSupabaseAdminClient } from '@/lib/auth/server';
 
 const DEFAULT_SCOPE = 'mall.read_product,mall.write_product';
 const ACCESS_TOKEN_REFRESH_BUFFER_SECONDS = 90;
+const KOREASMARTCOOP_FALLBACK_CATEGORY_NO = 43;
 
 type JsonRecord = Record<string, unknown>;
 
@@ -42,6 +43,18 @@ function parseCategoryNo(raw: string | undefined): number | null {
   return Math.floor(parsed);
 }
 
+function resolveDefaultCategoryNo(mallId: string, raw: string | undefined): number | null {
+  const parsed = parseCategoryNo(raw);
+  if (parsed) return parsed;
+
+  // SAF 운영몰은 작품이 반드시 카테고리 43에 매핑되어야 상세 URL이 안정적으로 동작한다.
+  if (mallId === 'koreasmartcoop') {
+    return KOREASMARTCOOP_FALLBACK_CATEGORY_NO;
+  }
+
+  return null;
+}
+
 export function getCafe24Config(): Cafe24Config | null {
   const mallId = process.env.CAFE24_MALL_ID?.trim();
   const clientId = process.env.CAFE24_CLIENT_ID?.trim();
@@ -58,7 +71,7 @@ export function getCafe24Config(): Cafe24Config | null {
     clientSecret,
     redirectUri,
     scope: process.env.CAFE24_SCOPE?.trim() || DEFAULT_SCOPE,
-    defaultCategoryNo: parseCategoryNo(process.env.CAFE24_DEFAULT_CATEGORY_NO),
+    defaultCategoryNo: resolveDefaultCategoryNo(mallId, process.env.CAFE24_DEFAULT_CATEGORY_NO),
   };
 }
 
