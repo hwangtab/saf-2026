@@ -25,6 +25,23 @@ function getSafeReturnTo(request: NextRequest): string {
   return decoded;
 }
 
+function getRawQueryParam(request: NextRequest, key: string): string | null {
+  const query = request.nextUrl.search.startsWith('?')
+    ? request.nextUrl.search.slice(1)
+    : request.nextUrl.search;
+  if (!query) return null;
+
+  for (const pair of query.split('&')) {
+    if (!pair) continue;
+    const [rawKey, ...rawValueParts] = pair.split('=');
+    if (rawKey !== key) continue;
+    const rawValue = rawValueParts.join('=');
+    return decodeURIComponent(rawValue.replace(/\+/g, '%2B'));
+  }
+
+  return null;
+}
+
 function withResultParam(
   basePath: string,
   status: 'connected' | 'error',
@@ -101,7 +118,7 @@ export async function GET(request: NextRequest) {
     return response;
   }
 
-  const code = request.nextUrl.searchParams.get('code');
+  const code = getRawQueryParam(request, 'code') ?? request.nextUrl.searchParams.get('code');
   const state = request.nextUrl.searchParams.get('state');
   const stateCookie = request.cookies.get(STATE_COOKIE_NAME)?.value;
 
