@@ -179,16 +179,18 @@ async function refreshAccessToken(
   refreshToken: string
 ): Promise<Cafe24TokenResponse> {
   const tokenEndpoint = `https://${config.mallId}.cafe24api.com/api/v2/oauth/token`;
+  const basicAuth = Buffer.from(`${config.clientId}:${config.clientSecret}`).toString('base64');
   const form = new URLSearchParams({
     grant_type: 'refresh_token',
     refresh_token: refreshToken,
-    client_id: config.clientId,
-    client_secret: config.clientSecret,
   });
 
   const response = await fetch(tokenEndpoint, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Authorization: `Basic ${basicAuth}`,
+    },
     body: form.toString(),
     cache: 'no-store',
   });

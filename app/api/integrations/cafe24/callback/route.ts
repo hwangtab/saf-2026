@@ -144,19 +144,21 @@ export async function GET(request: NextRequest) {
     const clientId = getRequiredEnv('CAFE24_CLIENT_ID');
     const clientSecret = getRequiredEnv('CAFE24_CLIENT_SECRET');
     const redirectUri = getRequiredEnv('CAFE24_REDIRECT_URI');
+    const basicAuth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
 
     const tokenEndpoint = `https://${mallId}.cafe24api.com/api/v2/oauth/token`;
     const payload = new URLSearchParams({
       grant_type: 'authorization_code',
       code,
       redirect_uri: redirectUri,
-      client_id: clientId,
-      client_secret: clientSecret,
     });
 
     const tokenRes = await fetch(tokenEndpoint, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Basic ${basicAuth}`,
+      },
       body: payload.toString(),
       cache: 'no-store',
     });
