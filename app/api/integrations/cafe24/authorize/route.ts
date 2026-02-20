@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { hasActiveAdminSession } from '@/lib/integrations/cafe24/admin-session';
+import { getCafe24Config } from '@/lib/integrations/cafe24/client';
 
 export const runtime = 'nodejs';
 
@@ -56,11 +57,14 @@ export async function GET(request: NextRequest) {
     authorizeUrl.searchParams.set('scope', scope);
 
     if (debug) {
+      const resolvedConfig = getCafe24Config();
       return NextResponse.json({
         mall_id: mallId,
         client_id: clientId,
         redirect_uri: redirectUri,
         scope,
+        default_category_no_raw: process.env.CAFE24_DEFAULT_CATEGORY_NO?.trim() || null,
+        default_category_no_resolved: resolvedConfig?.defaultCategoryNo ?? null,
         authorize_base: `https://${mallId}.cafe24api.com/api/v2/oauth/authorize`,
       });
     }
