@@ -29,12 +29,14 @@ function withResultParam(
   basePath: string,
   status: 'connected' | 'error',
   message?: string,
-  traceId?: string
+  traceId?: string,
+  stage?: 'authorize' | 'token' | 'callback' | 'state'
 ): URL {
   const resultUrl = new URL(basePath, 'https://dummy.local');
   resultUrl.searchParams.set('cafe24', status);
   if (message) resultUrl.searchParams.set('reason', message);
   if (traceId) resultUrl.searchParams.set('trace_id', traceId);
+  if (stage) resultUrl.searchParams.set('stage', stage);
   return resultUrl;
 }
 
@@ -78,14 +80,21 @@ export async function GET(request: NextRequest) {
   const oauthTraceId = request.nextUrl.searchParams.get('trace_id');
   if (oauthError) {
     const redirectUrl = new URL(
-      withResultParam(returnTo, 'error', oauthError, oauthTraceId ?? undefined).pathname,
+      withResultParam(
+        returnTo,
+        'error',
+        oauthError,
+        oauthTraceId ?? undefined,
+        'authorize'
+      ).pathname,
       request.url
     );
     redirectUrl.search = withResultParam(
       returnTo,
       'error',
       oauthError,
-      oauthTraceId ?? undefined
+      oauthTraceId ?? undefined,
+      'authorize'
     ).search;
     const response = NextResponse.redirect(redirectUrl);
     clearOAuthCookies(response, cookieDomain);
@@ -101,7 +110,13 @@ export async function GET(request: NextRequest) {
       withResultParam(returnTo, 'error', 'invalid_state').pathname,
       request.url
     );
-    redirectUrl.search = withResultParam(returnTo, 'error', 'invalid_state').search;
+    redirectUrl.search = withResultParam(
+      returnTo,
+      'error',
+      'invalid_state',
+      undefined,
+      'state'
+    ).search;
     const response = NextResponse.redirect(redirectUrl);
     clearOAuthCookies(response, cookieDomain);
     return response;
@@ -144,10 +159,10 @@ export async function GET(request: NextRequest) {
         `token_exchange_failed_${tokenRes.status}`;
       const traceId = tokenJson.trace_id?.trim() || undefined;
       const redirectUrl = new URL(
-        withResultParam(returnTo, 'error', reason, traceId).pathname,
+        withResultParam(returnTo, 'error', reason, traceId, 'token').pathname,
         request.url
       );
-      redirectUrl.search = withResultParam(returnTo, 'error', reason, traceId).search;
+      redirectUrl.search = withResultParam(returnTo, 'error', reason, traceId, 'token').search;
       const response = NextResponse.redirect(redirectUrl);
       clearOAuthCookies(response, cookieDomain);
       return response;
@@ -196,8 +211,11 @@ export async function GET(request: NextRequest) {
     return response;
   } catch (error) {
     const message = error instanceof Error ? error.message : 'callback_failed';
-    const redirectUrl = new URL(withResultParam(returnTo, 'error', message).pathname, request.url);
-    redirectUrl.search = withResultParam(returnTo, 'error', message).search;
+    const redirectUrl = new URL(
+      withResultParam(returnTo, 'error', message, undefined, 'callback').pathname,
+      request.url
+    );
+    redirectUrl.search = withResultParam(returnTo, 'error', message, undefined, 'callback').search;
     const response = NextResponse.redirect(redirectUrl);
     clearOAuthCookies(response, cookieDomain);
     return response;
