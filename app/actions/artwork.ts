@@ -2,7 +2,8 @@
 
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { requireArtistActive } from '@/lib/auth/guards';
-import { triggerCafe24ArtworkSync } from '@/lib/integrations/cafe24/sync-artwork';
+import { syncArtworkToCafe24 } from '@/lib/integrations/cafe24/sync-artwork';
+import { purgeCafe24ProductsFromTrashEntry } from '@/lib/integrations/cafe24/trash-purge';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { logArtistAction } from './admin-logs';
@@ -24,6 +25,29 @@ export type ActionState = {
 
 type SupabaseServerClient = Awaited<ReturnType<typeof createSupabaseServerClient>>;
 
+type Cafe24RedirectState = 'synced' | 'warning' | 'failed' | 'pending_auth';
+
+function resolveCafe24RedirectState(syncResult: Awaited<ReturnType<typeof syncArtworkToCafe24>>) {
+  if (syncResult.ok) {
+    return syncResult.reason ? 'warning' : 'synced';
+  }
+
+  const reason = syncResult.reason || '';
+  if (reason.includes('OAuth 연결')) {
+    return 'pending_auth';
+  }
+
+  return 'failed';
+}
+
+function buildRedirectPath(result: 'created' | 'updated', cafe24: Cafe24RedirectState) {
+  const params = new URLSearchParams({
+    result,
+    cafe24,
+  });
+  return `/dashboard/artworks?${params.toString()}`;
+}
+
 export async function createArtwork(
   prevState: ActionState,
   formData: FormData
@@ -31,6 +55,7 @@ export async function createArtwork(
   let supabase: SupabaseServerClient | null = null;
   let cleanupUrls: string[] = [];
   let artistId: string | null = null;
+  let redirectPath = buildRedirectPath('created', 'synced');
   try {
     void prevState;
     const user = await requireArtistActive();
@@ -156,7 +181,8 @@ export async function createArtwork(
       revalidatePath(`/artworks/artist/${artistSlug}`);
     }
 
-    await triggerCafe24ArtworkSync(insertedArtwork.id);
+    const syncResult = await syncArtworkToCafe24(insertedArtwork.id);
+    redirectPath = buildRedirectPath('created', resolveCafe24RedirectState(syncResult));
   } catch (error: any) {
     if (supabase && artistId && cleanupUrls.length > 0) {
       await cleanupUploads(supabase, cleanupUrls, artistId);
@@ -164,7 +190,7 @@ export async function createArtwork(
     return { message: error.message, error: true, cleanupUrls };
   }
 
-  redirect('/dashboard/artworks?result=created');
+  redirect(redirectPath);
 }
 
 export async function updateArtwork(
@@ -175,6 +201,7 @@ export async function updateArtwork(
   let supabase: SupabaseServerClient | null = null;
   let cleanupUrls: string[] = [];
   let artistId: string | null = null;
+  let redirectPath = buildRedirectPath('updated', 'synced');
   try {
     void prevState;
     const user = await requireArtistActive();
@@ -328,7 +355,8 @@ export async function updateArtwork(
       revalidatePath(`/artworks/artist/${artistSlug}`);
     }
 
-    await triggerCafe24ArtworkSync(id);
+    const syncResult = await syncArtworkToCafe24(id);
+    redirectPath = buildRedirectPath('updated', resolveCafe24RedirectState(syncResult));
   } catch (error: any) {
     if (supabase && artistId && cleanupUrls.length > 0) {
       await cleanupUploads(supabase, cleanupUrls, artistId);
@@ -336,7 +364,7 @@ export async function updateArtwork(
     return { message: error.message, error: true, cleanupUrls };
   }
 
-  redirect('/dashboard/artworks?result=updated');
+  redirect(redirectPath);
 }
 
 export async function deleteArtwork(id: string): Promise<ActionState> {
@@ -347,10 +375,21 @@ export async function deleteArtwork(id: string): Promise<ActionState> {
     const { data: artwork } = await supabase
       .from('artworks')
       .select(
-        'id, title, images, artist_id, description, size, material, year, edition, price, status, sold_at, is_hidden, shop_url, created_at, updated_at'
+        'id, title, images, artist_id, description, size, material, year, edition, price, status, sold_at, is_hidden, shop_url, cafe24_product_no, created_at, updated_at'
       )
       .eq('id', id)
       .single();
+
+    if (artwork) {
+      const cafe24Cleanup = await purgeCafe24ProductsFromTrashEntry({
+        targetType: 'artwork',
+        beforeSnapshot: artwork,
+      });
+
+      if (cafe24Cleanup.failed > 0) {
+        throw new Error(`카페24 상품 삭제 실패: ${cafe24Cleanup.errors.join(' | ')}`);
+      }
+    }
 
     // RLS will ensure they only delete their own
     const { error } = await supabase.from('artworks').delete().eq('id', id);

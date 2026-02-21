@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient, createSupabaseServerClient } from '@/lib/auth/server';
 import { purgeCafe24ProductsFromTrashEntry } from '@/lib/integrations/cafe24/trash-purge';
+import { syncArtworkToCafe24 } from '@/lib/integrations/cafe24/sync-artwork';
 import { getStoragePathFromPublicUrl, getStoragePathsForRemoval } from '@/lib/utils/form-helpers';
 
 export type ActivityLogEntry = {
@@ -118,6 +119,11 @@ const ARTWORK_REVERT_KEYS = [
   'is_hidden',
   'images',
   'shop_url',
+  'cafe24_product_no',
+  'cafe24_custom_product_code',
+  'cafe24_sync_status',
+  'cafe24_sync_error',
+  'cafe24_synced_at',
   'artist_id',
 ] as const;
 
@@ -138,6 +144,11 @@ const ARTWORK_RESTORE_KEYS = [
   'is_hidden',
   'images',
   'shop_url',
+  'cafe24_product_no',
+  'cafe24_custom_product_code',
+  'cafe24_sync_status',
+  'cafe24_sync_error',
+  'cafe24_synced_at',
   'created_at',
   'updated_at',
 ] as const;
@@ -261,6 +272,23 @@ function buildInsertPayload(snapshot: Record<string, unknown>, keys: readonly st
     }
   }
   return payload;
+}
+
+async function syncArtworksAfterRevert(artworkIds: string[]): Promise<void> {
+  const uniqueIds = Array.from(new Set(artworkIds.filter((id) => typeof id === 'string' && id)));
+  if (uniqueIds.length === 0) return;
+
+  const failed: string[] = [];
+  for (const artworkId of uniqueIds) {
+    const syncResult = await syncArtworkToCafe24(artworkId);
+    if (!syncResult.ok) {
+      failed.push(`${artworkId}: ${syncResult.reason || 'unknown'}`);
+    }
+  }
+
+  if (failed.length > 0) {
+    throw new Error(`복구 후 카페24 동기화 실패: ${failed.join(' | ')}`);
+  }
 }
 
 function isTrashableDeleteAction(action: string) {
@@ -1225,6 +1253,7 @@ export async function revertActivityLog(
       const isCreationLog = ARTWORK_CREATION_ACTIONS.has(log.action);
       const beforeList = asSnapshotList(log.before_snapshot);
       const afterList = asSnapshotList(log.after_snapshot);
+      const artworkIdsToSync = new Set<string>();
 
       if (isDeletionLog) {
         const listToRestore = beforeList && beforeList.length > 0 ? beforeList : null;
@@ -1289,6 +1318,9 @@ export async function revertActivityLog(
           if (!insertedRows || insertedRows.length !== restoreRows.length) {
             throw new Error('복구 적용 중 일부 작품의 반영 결과를 확인하지 못했습니다.');
           }
+          for (const id of restoreIds) {
+            artworkIdsToSync.add(id);
+          }
         } else {
           const snapshot = asSnapshotObject(log.before_snapshot);
           if (!snapshot) {
@@ -1335,6 +1367,7 @@ export async function revertActivityLog(
           if (!insertedRow?.id) {
             throw new Error('복구 대상 작품을 생성하지 못했습니다.');
           }
+          artworkIdsToSync.add(snapshotId);
         }
       } else if (isCreationLog) {
         // Revert creation by deleting the created artwork
@@ -1347,12 +1380,20 @@ export async function revertActivityLog(
 
         const { data: existingArtwork } = await supabase
           .from('artworks')
-          .select('id')
+          .select('id, cafe24_product_no, shop_url')
           .eq('id', artworkId)
           .maybeSingle();
 
         if (!existingArtwork) {
           throw new Error('삭제할 작품이 존재하지 않습니다. (이미 삭제됨)');
+        }
+
+        const cafe24Cleanup = await purgeCafe24ProductsFromTrashEntry({
+          targetType: 'artwork',
+          beforeSnapshot: existingArtwork,
+        });
+        if (cafe24Cleanup.failed > 0) {
+          throw new Error(`카페24 상품 삭제 실패: ${cafe24Cleanup.errors.join(' | ')}`);
         }
 
         const { error: deleteError } = await supabase.from('artworks').delete().eq('id', artworkId);
@@ -1400,7 +1441,7 @@ export async function revertActivityLog(
         const { data: rollbackRows } = await supabase
           .from('artworks')
           .select(
-            'id, title, description, size, material, year, edition, price, status, sold_at, is_hidden, images, shop_url, artist_id, updated_at'
+            'id, title, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, is_hidden, images, shop_url, cafe24_product_no, cafe24_custom_product_code, cafe24_sync_status, cafe24_sync_error, cafe24_synced_at, artist_id, updated_at'
           )
           .in('id', targetIds);
         const rollbackMap = new Map((rollbackRows || []).map((row) => [row.id, row]));
@@ -1423,6 +1464,7 @@ export async function revertActivityLog(
               throw new Error('복구 적용 중 일부 작품의 반영 결과를 확인하지 못했습니다.');
             }
             appliedIds.push(id);
+            artworkIdsToSync.add(id);
           }
         } catch (error) {
           for (const appliedId of appliedIds.reverse()) {
@@ -1472,6 +1514,11 @@ export async function revertActivityLog(
         if (!updatedRows || updatedRows.length !== 1) {
           throw new Error('복구 대상 작품을 찾을 수 없어 복구를 중단합니다.');
         }
+        artworkIdsToSync.add(log.target_id);
+      }
+
+      if (artworkIdsToSync.size > 0) {
+        await syncArtworksAfterRevert(Array.from(artworkIdsToSync));
       }
     } else if (log.target_type === 'artist') {
       const isDeletionLog = ARTIST_DELETION_ACTIONS.has(log.action);

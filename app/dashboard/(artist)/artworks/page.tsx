@@ -12,6 +12,7 @@ import {
 type ArtworksPageProps = {
   searchParams?: {
     result?: string;
+    cafe24?: string;
   };
 };
 
@@ -19,12 +20,27 @@ export default async function ArtworksPage({ searchParams }: ArtworksPageProps) 
   const { artist } = await getArtistDashboardContext();
   const supabase = await createSupabaseServerClient();
 
-  const flashMessage =
+  const baseMessage =
     searchParams?.result === 'updated'
       ? '작품이 수정되었습니다.'
       : searchParams?.result === 'created'
         ? '작품이 등록되었습니다.'
         : null;
+  const cafe24State = searchParams?.cafe24;
+
+  let flashMessage = baseMessage;
+  let flashType: 'success' | 'warning' | 'error' | null = baseMessage ? 'success' : null;
+
+  if (baseMessage && cafe24State === 'warning') {
+    flashType = 'warning';
+    flashMessage = `${baseMessage} 카페24 동기화는 완료됐지만 일부 항목을 확인해 주세요.`;
+  } else if (baseMessage && cafe24State === 'failed') {
+    flashType = 'warning';
+    flashMessage = `${baseMessage} 카페24 동기화에 실패해 온라인 구매 링크를 확인해 주세요.`;
+  } else if (baseMessage && cafe24State === 'pending_auth') {
+    flashType = 'warning';
+    flashMessage = `${baseMessage} 카페24 인증이 필요해 구매 링크가 생성되지 않았습니다.`;
+  }
 
   // Fetch artworks
   const { data: artworks } = await supabase
@@ -50,7 +66,7 @@ export default async function ArtworksPage({ searchParams }: ArtworksPageProps) 
         </LinkButton>
       </div>
 
-      <ArtworkList artworks={artworks || []} flashMessage={flashMessage} />
+      <ArtworkList artworks={artworks || []} flashMessage={flashMessage} flashType={flashType} />
     </div>
   );
 }

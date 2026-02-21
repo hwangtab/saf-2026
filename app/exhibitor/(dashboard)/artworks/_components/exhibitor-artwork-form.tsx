@@ -37,9 +37,13 @@ type Artwork = {
   edition_type: EditionType | null;
   edition_limit: number | null;
   price: string | null;
-  shop_url: string | null;
   artist_id: string | null;
   images: string[] | null;
+};
+
+type Cafe24SyncFeedback = {
+  status: 'synced' | 'warning' | 'failed' | 'pending_auth';
+  reason: string | null;
 };
 
 type ExhibitorArtworkFormProps = {
@@ -77,17 +81,38 @@ export function ExhibitorArtworkForm({
     return artists.filter((artist) => matchesSearchText(artist.name_ko, normalizedQuery));
   }, [artists, artistQuery]);
 
+  const notifyCafe24SyncResult = (sync: Cafe24SyncFeedback, actionLabel: string) => {
+    if (sync.status === 'synced') {
+      toast.success(`작품 ${actionLabel} 및 카페24 동기화가 완료되었습니다.`);
+      return;
+    }
+
+    if (sync.status === 'pending_auth') {
+      toast.warning(`작품 ${actionLabel}은 완료됐지만 카페24 인증이 필요합니다.`);
+      return;
+    }
+
+    if (sync.status === 'failed') {
+      toast.warning(`작품 ${actionLabel}은 완료됐지만 카페24 동기화에 실패했습니다.`);
+      return;
+    }
+
+    toast.warning(`작품 ${actionLabel}은 완료됐지만 카페24 동기화 경고가 있습니다.`);
+  };
+
   const handleSubmit = async (formData: FormData) => {
     setSaving(true);
     try {
       if (isEditing && artwork.id) {
-        await updateExhibitorArtwork(artwork.id, formData);
-        toast.success('작품 정보가 저장되었습니다.');
+        const result = await updateExhibitorArtwork(artwork.id, formData);
+        if (result.success) {
+          notifyCafe24SyncResult(result.cafe24, '저장');
+        }
         router.push('/exhibitor/artworks');
       } else {
         const result = await createExhibitorArtwork(formData);
         if (result.success && result.id) {
-          toast.success('작품이 생성되었습니다.');
+          notifyCafe24SyncResult(result.cafe24, '등록');
           router.push('/exhibitor/artworks');
         }
       }
@@ -104,8 +129,10 @@ export function ExhibitorArtworkForm({
     setImages(newImages);
     setSavingImages(true);
     try {
-      await updateExhibitorArtworkImages(artwork.id, newImages);
-      toast.success('작품 이미지가 저장되었습니다.');
+      const result = await updateExhibitorArtworkImages(artwork.id, newImages);
+      if (result.success) {
+        notifyCafe24SyncResult(result.cafe24, '이미지 저장');
+      }
       router.refresh();
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : '이미지 저장 중 오류가 발생했습니다.';
@@ -271,16 +298,6 @@ export function ExhibitorArtworkForm({
               />
             </div>
           )}
-
-          <div>
-            <AdminFieldLabel>구매 링크</AdminFieldLabel>
-            <AdminInput
-              name="shop_url"
-              type="url"
-              defaultValue={artwork.shop_url || ''}
-              placeholder="https://..."
-            />
-          </div>
         </div>
 
         <div>

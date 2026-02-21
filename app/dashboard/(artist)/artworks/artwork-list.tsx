@@ -24,9 +24,11 @@ type Artwork = {
 export function ArtworkList({
   artworks,
   flashMessage,
+  flashType = 'success',
 }: {
   artworks: Artwork[];
   flashMessage?: string | null;
+  flashType?: 'success' | 'warning' | 'error' | null;
 }) {
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [optimisticArtworks, setOptimisticArtworks] = useState(artworks);
@@ -39,9 +41,15 @@ export function ArtworkList({
 
   useEffect(() => {
     if (!flashMessage) return;
-    toast.success(flashMessage);
+    if (flashType === 'warning') {
+      toast.warning(flashMessage);
+    } else if (flashType === 'error') {
+      toast.error(flashMessage);
+    } else {
+      toast.success(flashMessage);
+    }
     router.replace('/dashboard/artworks');
-  }, [flashMessage, router, toast]);
+  }, [flashMessage, flashType, router, toast]);
 
   const handleDelete = async (id: string) => {
     if (!confirm('정말 이 작품을 삭제하시겠습니까? 관리자 활동 로그에서 복구할 수 있습니다.'))

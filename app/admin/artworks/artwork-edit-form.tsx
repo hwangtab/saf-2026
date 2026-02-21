@@ -32,7 +32,6 @@ type Artwork = {
   edition_type: EditionType | null;
   edition_limit: number | null;
   price: string | null;
-  shop_url: string | null;
   artist_id: string | null;
   images: string[] | null;
   artists: Artist | null;
@@ -371,17 +370,6 @@ export function ArtworkEditForm({
               )}
             </div>
           )}
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">구매 링크</label>
-            <input
-              name="shop_url"
-              type="url"
-              defaultValue={artwork.shop_url || ''}
-              placeholder="https://..."
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
-            />
-          </div>
         </div>
 
         <div>

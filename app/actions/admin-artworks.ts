@@ -95,7 +95,6 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
   const edition_limit =
     edition_type === 'limited' && edition_limit_raw ? parseInt(edition_limit_raw, 10) : null;
   const price = getString(formData, 'price');
-  const shop_url = getString(formData, 'shop_url');
   const artist_id = getString(formData, 'artist_id');
 
   const { data: oldArtwork } = await supabase
@@ -118,7 +117,6 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
       edition_type,
       edition_limit,
       price,
-      shop_url,
       artist_id: artist_id || null,
       updated_at: new Date().toISOString(),
     })
@@ -189,7 +187,6 @@ export async function createAdminArtwork(formData: FormData) {
   const edition_limit =
     edition_type === 'limited' && edition_limit_raw ? parseInt(edition_limit_raw, 10) : null;
   const price = getString(formData, 'price');
-  const shop_url = getString(formData, 'shop_url');
   const artist_id = getString(formData, 'artist_id');
 
   if (!title) throw new Error('작품명을 입력해주세요.');
@@ -207,7 +204,7 @@ export async function createAdminArtwork(formData: FormData) {
       edition_type,
       edition_limit,
       price,
-      shop_url,
+      shop_url: null,
       artist_id,
       status: 'available',
       is_hidden: false,
@@ -328,7 +325,9 @@ export async function syncMissingArtworkPurchaseLinks(): Promise<MissingPurchase
   const { data: targets, error } = await supabase
     .from('artworks')
     .select('id, title')
-    .or('shop_url.is.null,shop_url.eq.')
+    .or(
+      'shop_url.is.null,shop_url.eq.,cafe24_product_no.is.null,cafe24_sync_status.in.(failed,pending_auth)'
+    )
     .order('created_at', { ascending: false });
 
   if (error) {

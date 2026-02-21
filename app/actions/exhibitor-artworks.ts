@@ -3,10 +3,40 @@
 import { revalidatePath } from 'next/cache';
 import { requireExhibitor } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
-import { triggerCafe24ArtworkSync } from '@/lib/integrations/cafe24/sync-artwork';
+import { syncArtworkToCafe24 } from '@/lib/integrations/cafe24/sync-artwork';
+import { purgeCafe24ProductsFromTrashEntry } from '@/lib/integrations/cafe24/trash-purge';
 import { getString, getStoragePathsForRemoval } from '@/lib/utils/form-helpers';
 import { logExhibitorAction } from './admin-logs';
 import { validateArtworkData } from '@/lib/actions/artwork-validation';
+
+type Cafe24SyncFeedback = {
+  status: 'synced' | 'warning' | 'failed' | 'pending_auth';
+  reason: string | null;
+};
+
+function toCafe24SyncFeedback(
+  result: Awaited<ReturnType<typeof syncArtworkToCafe24>>
+): Cafe24SyncFeedback {
+  if (result.ok) {
+    return {
+      status: result.reason ? 'warning' : 'synced',
+      reason: result.reason || null,
+    };
+  }
+
+  const reason = result.reason || null;
+  if (reason?.includes('OAuth 연결')) {
+    return {
+      status: 'pending_auth',
+      reason,
+    };
+  }
+
+  return {
+    status: 'failed',
+    reason,
+  };
+}
 
 export async function getExhibitorArtworks() {
   const user = await requireExhibitor();
@@ -65,7 +95,6 @@ export async function createExhibitorArtwork(formData: FormData) {
   const edition_limit_str = getString(formData, 'edition_limit');
   const edition_limit = edition_limit_str ? parseInt(edition_limit_str) : null;
   const price = getString(formData, 'price');
-  const shop_url = getString(formData, 'shop_url');
   const artist_id = getString(formData, 'artist_id');
 
   if (!artist_id) throw new Error('작가를 선택해주세요.');
@@ -93,10 +122,10 @@ export async function createExhibitorArtwork(formData: FormData) {
       edition_type,
       edition_limit,
       price,
-      shop_url,
       artist_id,
       status: 'available',
       is_hidden: false,
+      shop_url: null,
     })
     .select()
     .single();
@@ -122,9 +151,13 @@ export async function createExhibitorArtwork(formData: FormData) {
     revalidatePath(`/artworks/artist/${encodeURIComponent(artist.name_ko)}`);
   }
 
-  await triggerCafe24ArtworkSync(artwork.id);
+  const syncResult = await syncArtworkToCafe24(artwork.id);
 
-  return { success: true, id: artwork.id };
+  return {
+    success: true,
+    id: artwork.id,
+    cafe24: toCafe24SyncFeedback(syncResult),
+  };
 }
 
 export async function updateExhibitorArtwork(id: string, formData: FormData) {
@@ -147,7 +180,6 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
   const edition_limit_str = getString(formData, 'edition_limit');
   const edition_limit = edition_limit_str ? parseInt(edition_limit_str) : null;
   const price = getString(formData, 'price');
-  const shop_url = getString(formData, 'shop_url');
   const artist_id = getString(formData, 'artist_id');
 
   // Fetch full existing artwork for snapshot
@@ -187,7 +219,6 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
       edition_type,
       edition_limit,
       price,
-      shop_url,
       artist_id: artist_id || oldArtwork.artist_id,
       updated_at: new Date().toISOString(),
     })
@@ -213,9 +244,12 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
   revalidatePath(`/exhibitor/artworks/${id}`);
   revalidatePath('/artworks');
 
-  await triggerCafe24ArtworkSync(id);
+  const syncResult = await syncArtworkToCafe24(id);
 
-  return { success: true };
+  return {
+    success: true,
+    cafe24: toCafe24SyncFeedback(syncResult),
+  };
 }
 
 export async function updateExhibitorArtworkImages(id: string, images: string[]) {
@@ -282,9 +316,12 @@ export async function updateExhibitorArtworkImages(id: string, images: string[])
   revalidatePath(`/exhibitor/artworks/${id}`);
   revalidatePath('/artworks');
 
-  await triggerCafe24ArtworkSync(id);
+  const syncResult = await syncArtworkToCafe24(id);
 
-  return { success: true };
+  return {
+    success: true,
+    cafe24: toCafe24SyncFeedback(syncResult),
+  };
 }
 
 export async function deleteExhibitorArtwork(id: string) {
@@ -301,6 +338,15 @@ export async function deleteExhibitorArtwork(id: string) {
 
   if (fetchError || !artwork) {
     throw new Error('작품을 삭제할 권한이 없습니다.');
+  }
+
+  const cafe24Cleanup = await purgeCafe24ProductsFromTrashEntry({
+    targetType: 'artwork',
+    beforeSnapshot: artwork,
+  });
+
+  if (cafe24Cleanup.failed > 0) {
+    throw new Error(`카페24 상품 삭제 실패: ${cafe24Cleanup.errors.join(' | ')}`);
   }
 
   const { error } = await supabase.from('artworks').delete().eq('id', id);

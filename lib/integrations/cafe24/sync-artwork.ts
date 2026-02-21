@@ -489,6 +489,11 @@ export async function syncArtworkToCafe24(artworkId: string): Promise<SyncResult
           error instanceof Error ? error.message : String(error)
         );
       }
+    } else {
+      warningMessage = mergeWarnings(
+        warningMessage,
+        '대표 이미지가 없어 카페24 이미지 업로드를 건너뛰었습니다.'
+      );
     }
 
     const shopUrl = buildProductUrl(config.mallId, productNo, categoryNo);
@@ -505,10 +510,12 @@ export async function syncArtworkToCafe24(artworkId: string): Promise<SyncResult
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     const pendingAuth = message.includes('OAuth 연결');
+    const fallbackShopUrl = artwork.cafe24_product_no ? artwork.shop_url : null;
     await markSyncState(artworkId, {
       cafe24_sync_status: pendingAuth ? 'pending_auth' : 'failed',
       cafe24_sync_error: message,
       cafe24_custom_product_code: customCode,
+      shop_url: fallbackShopUrl,
     });
     return { ok: false, reason: message };
   }
