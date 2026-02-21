@@ -14,6 +14,8 @@ type SyncArtworkRecord = {
   edition: string | null;
   price: string | null;
   images: string[] | null;
+  status: 'available' | 'reserved' | 'sold' | string | null;
+  is_hidden: boolean | null;
   shop_url: string | null;
   cafe24_product_no: number | null;
   cafe24_custom_product_code: string | null;
@@ -244,6 +246,17 @@ function compactObject<T extends JsonRecord>(value: T): T {
   return next as T;
 }
 
+function isMissingProductError(message: string): boolean {
+  const normalized = message.toLowerCase();
+  return (
+    normalized.includes('does not exist') ||
+    normalized.includes('not found') ||
+    normalized.includes('invalid product') ||
+    normalized.includes('invalid product_no') ||
+    normalized.includes('존재하지')
+  );
+}
+
 async function requestWithVariants(
   path: string,
   method: 'POST' | 'PUT',
@@ -287,10 +300,12 @@ async function upsertCafe24Product(
     .join(' | ');
   const price = parsePrice(artwork.price);
   const tagParts = [artistName, '씨앗페', 'SAF2026', '미술', '예술', '작품'];
+  const isVisible = !artwork.is_hidden;
+  const isAvailableForSale = isVisible && artwork.status === 'available';
 
   const payload = compactObject({
-    display: 'T',
-    selling: 'T',
+    display: isVisible ? 'T' : 'F',
+    selling: isAvailableForSale ? 'T' : 'F',
     custom_product_code: customProductCode,
     product_name: `${artwork.title} - ${artistName}`.trim(),
     supply_price: price.amount,
@@ -311,13 +326,20 @@ async function upsertCafe24Product(
   });
 
   if (artwork.cafe24_product_no) {
-    const response = await requestWithVariants(
-      `/products/${artwork.cafe24_product_no}`,
-      'PUT',
-      payload
-    );
-    const resolved = extractProductNo(response);
-    return resolved || artwork.cafe24_product_no;
+    try {
+      const response = await requestWithVariants(
+        `/products/${artwork.cafe24_product_no}`,
+        'PUT',
+        payload
+      );
+      const resolved = extractProductNo(response);
+      return resolved || artwork.cafe24_product_no;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (!isMissingProductError(message)) {
+        throw error;
+      }
+    }
   }
 
   const response = await requestWithVariants('/products', 'POST', payload);
@@ -443,7 +465,7 @@ export async function syncArtworkToCafe24(artworkId: string): Promise<SyncResult
   const { data, error } = await supabase
     .from('artworks')
     .select(
-      'id, title, description, size, material, year, edition, price, images, shop_url, cafe24_product_no, cafe24_custom_product_code, artists(name_ko, bio, history)'
+      'id, title, description, size, material, year, edition, price, images, status, is_hidden, shop_url, cafe24_product_no, cafe24_custom_product_code, artists(name_ko, bio, history)'
     )
     .eq('id', artworkId)
     .single();
@@ -461,8 +483,11 @@ export async function syncArtworkToCafe24(artworkId: string): Promise<SyncResult
     cafe24_custom_product_code: customCode,
   });
 
+  let latestProductNo: number | null = artwork.cafe24_product_no ?? null;
+
   try {
     const productNo = await upsertCafe24Product(artwork, customCode);
+    latestProductNo = productNo;
     const categoryNo = await ensureProductCategory(productNo, config.defaultCategoryNo);
     const imageUrl = pickImageUrl(artwork.images);
     let warningMessage: string | null = null;
@@ -510,10 +535,15 @@ export async function syncArtworkToCafe24(artworkId: string): Promise<SyncResult
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     const pendingAuth = message.includes('OAuth 연결');
-    const fallbackShopUrl = artwork.cafe24_product_no ? artwork.shop_url : null;
+    const fallbackProductNo = latestProductNo;
+    const fallbackShopUrl =
+      fallbackProductNo && artwork.cafe24_product_no === fallbackProductNo
+        ? artwork.shop_url
+        : null;
     await markSyncState(artworkId, {
       cafe24_sync_status: pendingAuth ? 'pending_auth' : 'failed',
       cafe24_sync_error: message,
+      cafe24_product_no: fallbackProductNo,
       cafe24_custom_product_code: customCode,
       shop_url: fallbackShopUrl,
     });

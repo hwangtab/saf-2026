@@ -1254,6 +1254,7 @@ export async function revertActivityLog(
       const beforeList = asSnapshotList(log.before_snapshot);
       const afterList = asSnapshotList(log.after_snapshot);
       const artworkIdsToSync = new Set<string>();
+      let rollbackAfterSyncFailure: (() => Promise<void>) | null = null;
 
       if (isDeletionLog) {
         const listToRestore = beforeList && beforeList.length > 0 ? beforeList : null;
@@ -1318,6 +1319,24 @@ export async function revertActivityLog(
           if (!insertedRows || insertedRows.length !== restoreRows.length) {
             throw new Error('복구 적용 중 일부 작품의 반영 결과를 확인하지 못했습니다.');
           }
+          rollbackAfterSyncFailure = async () => {
+            const { data: createdRows } = await supabase
+              .from('artworks')
+              .select('id, cafe24_product_no, shop_url')
+              .in('id', restoreIds);
+
+            for (const row of createdRows || []) {
+              const cafe24Cleanup = await purgeCafe24ProductsFromTrashEntry({
+                targetType: 'artwork',
+                beforeSnapshot: row,
+              });
+              if (cafe24Cleanup.failed > 0) {
+                throw new Error(`카페24 상품 롤백 삭제 실패: ${cafe24Cleanup.errors.join(' | ')}`);
+              }
+            }
+
+            await supabase.from('artworks').delete().in('id', restoreIds);
+          };
           for (const id of restoreIds) {
             artworkIdsToSync.add(id);
           }
@@ -1367,6 +1386,25 @@ export async function revertActivityLog(
           if (!insertedRow?.id) {
             throw new Error('복구 대상 작품을 생성하지 못했습니다.');
           }
+          rollbackAfterSyncFailure = async () => {
+            const { data: createdRow } = await supabase
+              .from('artworks')
+              .select('id, cafe24_product_no, shop_url')
+              .eq('id', snapshotId)
+              .maybeSingle();
+
+            if (createdRow) {
+              const cafe24Cleanup = await purgeCafe24ProductsFromTrashEntry({
+                targetType: 'artwork',
+                beforeSnapshot: createdRow,
+              });
+              if (cafe24Cleanup.failed > 0) {
+                throw new Error(`카페24 상품 롤백 삭제 실패: ${cafe24Cleanup.errors.join(' | ')}`);
+              }
+            }
+
+            await supabase.from('artworks').delete().eq('id', snapshotId);
+          };
           artworkIdsToSync.add(snapshotId);
         }
       } else if (isCreationLog) {
@@ -1478,10 +1516,23 @@ export async function revertActivityLog(
           }
           throw error;
         }
+        rollbackAfterSyncFailure = async () => {
+          for (const id of targetIds) {
+            const rollbackSnapshot = rollbackMap.get(id);
+            if (!rollbackSnapshot) continue;
+            const rollbackPatch = buildPatch(
+              rollbackSnapshot as Record<string, unknown>,
+              ARTWORK_REVERT_KEYS
+            );
+            await supabase.from('artworks').update(rollbackPatch).eq('id', id);
+          }
+        };
       } else {
-        const { data: current } = await supabase
+        const { data: currentArtwork } = await supabase
           .from('artworks')
-          .select('updated_at')
+          .select(
+            'id, title, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, is_hidden, images, shop_url, cafe24_product_no, cafe24_custom_product_code, cafe24_sync_status, cafe24_sync_error, cafe24_synced_at, artist_id, updated_at'
+          )
           .eq('id', log.target_id)
           .single();
 
@@ -1492,8 +1543,8 @@ export async function revertActivityLog(
 
         if (
           afterUpdatedAt &&
-          current?.updated_at &&
-          current.updated_at !== afterUpdatedAt &&
+          currentArtwork?.updated_at &&
+          currentArtwork.updated_at !== afterUpdatedAt &&
           !allowUpdatedAtMismatchForImageRestore
         ) {
           throw new Error('현재 데이터가 추가로 변경되어 복구를 중단합니다.');
@@ -1514,11 +1565,36 @@ export async function revertActivityLog(
         if (!updatedRows || updatedRows.length !== 1) {
           throw new Error('복구 대상 작품을 찾을 수 없어 복구를 중단합니다.');
         }
+        rollbackAfterSyncFailure = async () => {
+          if (!currentArtwork) return;
+          const rollbackPatch = buildPatch(
+            currentArtwork as unknown as Record<string, unknown>,
+            ARTWORK_REVERT_KEYS
+          );
+          await supabase.from('artworks').update(rollbackPatch).eq('id', log.target_id);
+        };
         artworkIdsToSync.add(log.target_id);
       }
 
       if (artworkIdsToSync.size > 0) {
-        await syncArtworksAfterRevert(Array.from(artworkIdsToSync));
+        try {
+          await syncArtworksAfterRevert(Array.from(artworkIdsToSync));
+        } catch (syncError) {
+          if (rollbackAfterSyncFailure) {
+            try {
+              await rollbackAfterSyncFailure();
+            } catch (rollbackError) {
+              const syncMessage =
+                syncError instanceof Error ? syncError.message : String(syncError);
+              const rollbackMessage =
+                rollbackError instanceof Error ? rollbackError.message : String(rollbackError);
+              throw new Error(
+                `복구 후 카페24 동기화 실패 및 DB 롤백 실패: ${syncMessage} | rollback: ${rollbackMessage}`
+              );
+            }
+          }
+          throw syncError;
+        }
       }
     } else if (log.target_type === 'artist') {
       const isDeletionLog = ARTIST_DELETION_ACTIONS.has(log.action);

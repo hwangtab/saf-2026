@@ -3,12 +3,56 @@
 import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
-import {
-  syncArtworkToCafe24,
-  triggerCafe24ArtworkSync,
-} from '@/lib/integrations/cafe24/sync-artwork';
+import { syncArtworkToCafe24 } from '@/lib/integrations/cafe24/sync-artwork';
+import { purgeCafe24ProductsFromTrashEntry } from '@/lib/integrations/cafe24/trash-purge';
 import { logAdminAction } from './admin-logs';
 import { getString, getStoragePathsForRemoval, validateBatchSize } from '@/lib/utils/form-helpers';
+
+type Cafe24SyncFeedback = {
+  status: 'synced' | 'warning' | 'failed' | 'pending_auth';
+  reason: string | null;
+};
+
+function toCafe24SyncFeedback(
+  result: Awaited<ReturnType<typeof syncArtworkToCafe24>>
+): Cafe24SyncFeedback {
+  if (result.ok) {
+    return {
+      status: result.reason ? 'warning' : 'synced',
+      reason: result.reason || null,
+    };
+  }
+
+  const reason = result.reason || null;
+  if (reason?.includes('OAuth 연결')) {
+    return {
+      status: 'pending_auth',
+      reason,
+    };
+  }
+
+  return {
+    status: 'failed',
+    reason,
+  };
+}
+
+async function syncCafe24OrThrow(ids: string[]): Promise<void> {
+  const uniqueIds = Array.from(new Set(ids.filter((id) => typeof id === 'string' && id)));
+  if (uniqueIds.length === 0) return;
+
+  const errors: string[] = [];
+  for (const id of uniqueIds) {
+    const result = await syncArtworkToCafe24(id);
+    if (!result.ok) {
+      errors.push(`${id}: ${result.reason || '알 수 없는 오류'}`);
+    }
+  }
+
+  if (errors.length > 0) {
+    throw new Error(`카페24 동기화 실패: ${errors.join(' | ')}`);
+  }
+}
 
 export async function deleteAdminArtwork(id: string) {
   const admin = await requireAdmin();
@@ -17,10 +61,20 @@ export async function deleteAdminArtwork(id: string) {
   const { data: artwork } = await supabase
     .from('artworks')
     .select(
-      'id, title, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, is_hidden, images, shop_url, artist_id, created_at, updated_at'
+      'id, title, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, is_hidden, images, shop_url, cafe24_product_no, artist_id, created_at, updated_at'
     )
     .eq('id', id)
     .single();
+
+  if (artwork) {
+    const cafe24Cleanup = await purgeCafe24ProductsFromTrashEntry({
+      targetType: 'artwork',
+      beforeSnapshot: artwork,
+    });
+    if (cafe24Cleanup.failed > 0) {
+      throw new Error(`카페24 상품 삭제 실패: ${cafe24Cleanup.errors.join(' | ')}`);
+    }
+  }
 
   const { error } = await supabase.from('artworks').delete().eq('id', id);
   if (error) throw error;
@@ -167,9 +221,9 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
     reversible: true,
   });
 
-  await triggerCafe24ArtworkSync(id);
+  const syncResult = await syncArtworkToCafe24(id);
 
-  return { success: true };
+  return { success: true, cafe24: toCafe24SyncFeedback(syncResult) };
 }
 
 export async function createAdminArtwork(formData: FormData) {
@@ -233,9 +287,9 @@ export async function createAdminArtwork(formData: FormData) {
     reversible: true,
   });
 
-  await triggerCafe24ArtworkSync(artwork.id);
+  const syncResult = await syncArtworkToCafe24(artwork.id);
 
-  return { success: true, id: artwork.id };
+  return { success: true, id: artwork.id, cafe24: toCafe24SyncFeedback(syncResult) };
 }
 
 export async function updateArtworkImages(id: string, images: string[]) {
@@ -300,9 +354,9 @@ export async function updateArtworkImages(id: string, images: string[]) {
     }
   );
 
-  await triggerCafe24ArtworkSync(id);
+  const syncResult = await syncArtworkToCafe24(id);
 
-  return { success: true };
+  return { success: true, cafe24: toCafe24SyncFeedback(syncResult) };
 }
 
 type MissingPurchaseLinkSyncError = {
@@ -478,6 +532,8 @@ export async function batchUpdateArtworkStatus(ids: string[], status: string) {
     }
   );
 
+  await syncCafe24OrThrow(ids);
+
   return { success: true, count: ids.length };
 }
 
@@ -621,6 +677,8 @@ export async function batchToggleHidden(ids: string[], isHidden: boolean) {
     }
   );
 
+  await syncCafe24OrThrow(ids);
+
   return { success: true, count: ids.length };
 }
 
@@ -634,9 +692,21 @@ export async function batchDeleteArtworks(ids: string[]) {
   const { data: artworks } = await supabase
     .from('artworks')
     .select(
-      'id, title, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, is_hidden, images, shop_url, artist_id, created_at, updated_at'
+      'id, title, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, is_hidden, images, shop_url, cafe24_product_no, artist_id, created_at, updated_at'
     )
     .in('id', ids);
+
+  for (const artwork of artworks || []) {
+    const cafe24Cleanup = await purgeCafe24ProductsFromTrashEntry({
+      targetType: 'artwork',
+      beforeSnapshot: artwork,
+    });
+    if (cafe24Cleanup.failed > 0) {
+      throw new Error(
+        `카페24 상품 삭제 실패(작품 ${artwork.id}): ${cafe24Cleanup.errors.join(' | ')}`
+      );
+    }
+  }
 
   const { error } = await supabase.from('artworks').delete().in('id', ids);
   if (error) throw error;
