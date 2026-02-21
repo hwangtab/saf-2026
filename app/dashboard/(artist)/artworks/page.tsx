@@ -29,20 +29,22 @@ export default async function ArtworksPage({ searchParams }: ArtworksPageProps) 
         : null;
   const cafe24State = searchParams?.cafe24;
   const cafe24Reason = searchParams?.cafe24_reason?.trim() || null;
-  const cafe24ReasonSuffix = cafe24Reason ? ` (사유: ${cafe24Reason})` : '';
+  const isMissingImageWarning = cafe24Reason?.includes('대표 이미지가 없어') || false;
 
   let flashMessage = baseMessage;
   let flashType: 'success' | 'warning' | 'error' | null = baseMessage ? 'success' : null;
 
   if (baseMessage && cafe24State === 'warning') {
     flashType = 'warning';
-    flashMessage = `${baseMessage} 카페24 동기화는 완료됐지만 일부 항목을 확인해 주세요.${cafe24ReasonSuffix}`;
+    flashMessage = isMissingImageWarning
+      ? `${baseMessage} 온라인 구매 페이지에 노출할 이미지를 업로드해 주세요.`
+      : `${baseMessage} 일부 판매 정보 반영이 진행 중입니다.`;
   } else if (baseMessage && cafe24State === 'failed') {
     flashType = 'warning';
-    flashMessage = `${baseMessage} 카페24 동기화에 실패해 온라인 구매 링크를 확인해 주세요.${cafe24ReasonSuffix}`;
+    flashMessage = `${baseMessage} 온라인 구매 정보 반영이 지연되고 있습니다. 잠시 후 다시 확인해 주세요.`;
   } else if (baseMessage && cafe24State === 'pending_auth') {
     flashType = 'warning';
-    flashMessage = `${baseMessage} 카페24 인증이 필요해 구매 링크가 생성되지 않았습니다.${cafe24ReasonSuffix}`;
+    flashMessage = `${baseMessage} 온라인 구매 정보 반영이 지연되고 있습니다.`;
   }
 
   // Fetch artworks

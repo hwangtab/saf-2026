@@ -98,24 +98,26 @@ export function ArtworkEditForm({
   }, [artists, artistQuery]);
 
   const notifyCafe24SyncResult = (sync: Cafe24SyncFeedback, actionLabel: string) => {
-    const reasonText = sync.reason ? ` (${sync.reason})` : '';
-
     if (sync.status === 'synced') {
-      toast.success(`작품 ${actionLabel} 및 카페24 동기화가 완료되었습니다.`);
+      toast.success(`작품 ${actionLabel}이 완료되었습니다.`);
       return;
     }
 
     if (sync.status === 'pending_auth') {
-      toast.warning(`작품 ${actionLabel}은 완료됐지만 카페24 인증이 필요합니다.${reasonText}`);
+      toast.warning(
+        `작품 ${actionLabel}은 완료되었습니다. 온라인 구매 정보 반영이 지연될 수 있습니다.`
+      );
       return;
     }
 
     if (sync.status === 'failed') {
-      toast.warning(`작품 ${actionLabel}은 완료됐지만 카페24 동기화에 실패했습니다.${reasonText}`);
+      toast.warning(
+        `작품 ${actionLabel}은 완료되었습니다. 온라인 구매 정보 반영이 지연되고 있습니다.`
+      );
       return;
     }
 
-    toast.warning(`작품 ${actionLabel}은 완료됐지만 카페24 동기화 경고가 있습니다.${reasonText}`);
+    toast.warning(`작품 ${actionLabel}은 완료되었습니다. 온라인 구매 정보 반영을 계속 진행합니다.`);
   };
 
   const handleSubmit = async (formData: FormData) => {
@@ -150,7 +152,7 @@ export function ArtworkEditForm({
 
           if (missingImageWarning) {
             toast.warning(
-              '작품 등록은 완료되었습니다. 카페24 대표 이미지 반영을 위해 지금 작품 이미지를 업로드해 주세요.'
+              '작품 등록은 완료되었습니다. 온라인 구매 페이지에 노출할 이미지를 지금 업로드해 주세요.'
             );
             router.push(`/admin/artworks/${result.id}`);
             return;
