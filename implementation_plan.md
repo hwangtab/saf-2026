@@ -434,3 +434,28 @@
 
 - 승인 완료 (사용자 피드백: “이거 개선 안되었다.” 이후 즉시 재수정 요청)
 - 실행 완료 (IME 조합 입력 보완 + 검증 통과)
+
+---
+
+# 메인 하이라이트 작품 노출 랜덤화 계획서
+
+## 1) 목표
+
+- 메인 히어로 아래 `온라인 전시 하이라이트` 작품 노출을 최신 등록순 고정에서 랜덤 노출로 전환한다.
+- 서버에서 셔플하여 SSR/ISR 렌더 안정성은 유지한다.
+
+## 2) 구현 범위
+
+- `/Users/hwang-gyeongha/saf/lib/supabase-data.ts`
+  - `getSupabaseHomepageArtworks`의 `created_at desc + limit` 고정 정렬 제거
+  - 판매 가능 작품 풀(`is_hidden=false`, `status!=sold/reserved`) 조회 후 서버 셔플 + 상위 `limit` 반환
+  - Supabase 미연결/테이블 미존재 fallback 경로도 동일하게 랜덤 반환
+
+## 3) 검증 계획
+
+- `npm run lint`
+- `npm run type-check`
+
+## 승인 상태
+
+- 승인 완료 (사용자 요청: “1번으로 해주세요”)

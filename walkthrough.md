@@ -504,3 +504,23 @@
 - `npm run lint` 통과
 - `npm run type-check` 통과
 - `npm run build` 통과 (정적 번들에서 구문구 `휴지통 영구 삭제: 로그 ...` 미검출)
+
+---
+
+## 메인 하이라이트 작품 노출 랜덤화
+
+### 1) 변경 파일
+
+- `/Users/hwang-gyeongha/saf/lib/supabase-data.ts`
+
+### 2) 핵심 변경
+
+- `getSupabaseHomepageArtworks(limit=30)`에서 최신순 고정 정렬(`created_at desc`)을 제거했습니다.
+- 판매 가능 작품 풀(`is_hidden=false`, `status!=sold`, `status!=reserved`)을 조회한 뒤,
+  서버에서 Fisher-Yates 방식으로 셔플하고 `limit`만큼 잘라 반환하도록 변경했습니다.
+- Supabase 미연결/테이블 없음 fallback 경로도 동일하게 랜덤 반환하도록 맞췄습니다.
+
+### 3) 기대 효과
+
+- 메인 `온라인 전시 하이라이트`가 최신 등록 편향 없이 다양한 작품을 노출합니다.
+- 랜덤 로직이 서버에 있어 클라이언트 하이드레이션 불일치 없이 안정적으로 동작합니다.

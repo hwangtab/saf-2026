@@ -13,6 +13,15 @@ const ARTWORK_SELECT_COLUMNS =
   'id, artist_id, title, description, size, material, year, edition, price, images, shop_url, status';
 const ARTIST_SELECT_COLUMNS = 'id, name_ko, bio, history';
 
+function pickRandomItems<T>(items: T[], limit: number): T[] {
+  const shuffled = [...items];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled.slice(0, limit);
+}
+
 const mapArtworkRow = (item: any, artist?: any): Artwork => ({
   id: item.id,
   artist: artist?.name_ko || 'Unknown Artist',
@@ -61,7 +70,7 @@ export const getSupabaseArtworks = cache(async (): Promise<Artwork[]> => {
 export const getSupabaseHomepageArtworks = cache(async (limit = 30): Promise<Artwork[]> => {
   if (!hasSupabaseConfig || !supabase) {
     const availableFallback = fallbackArtworks.filter((artwork) => !artwork.sold);
-    return availableFallback.slice(0, limit);
+    return pickRandomItems(availableFallback, limit);
   }
 
   const { data, error } = await supabase
@@ -74,20 +83,19 @@ export const getSupabaseHomepageArtworks = cache(async (limit = 30): Promise<Art
     )
     .eq('is_hidden', false)
     .neq('status', 'sold')
-    .neq('status', 'reserved')
-    .order('created_at', { ascending: false })
-    .limit(limit);
+    .neq('status', 'reserved');
 
   if (error) {
     if (isMissingTableError(error)) {
       const availableFallback = fallbackArtworks.filter((artwork) => !artwork.sold);
-      return availableFallback.slice(0, limit);
+      return pickRandomItems(availableFallback, limit);
     }
     console.error('Error fetching homepage artworks from Supabase:', error);
     return [];
   }
 
-  return (data || []).map((item: any) => mapArtworkRow(item, item.artists));
+  const mapped = (data || []).map((item: any) => mapArtworkRow(item, item.artists));
+  return pickRandomItems(mapped, limit);
 });
 
 export const getSupabaseArtworkById = cache(async (id: string): Promise<Artwork | null> => {
