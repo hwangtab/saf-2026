@@ -40,11 +40,26 @@ function resolveCafe24RedirectState(syncResult: Awaited<ReturnType<typeof syncAr
   return 'failed';
 }
 
-function buildRedirectPath(result: 'created' | 'updated', cafe24: Cafe24RedirectState) {
+function normalizeCafe24ReasonForRedirect(reason?: string): string | null {
+  if (!reason) return null;
+  const normalized = reason.trim();
+  if (!normalized) return null;
+  return normalized.length > 200 ? `${normalized.slice(0, 200)}...` : normalized;
+}
+
+function buildRedirectPath(
+  result: 'created' | 'updated',
+  cafe24: Cafe24RedirectState,
+  reason?: string
+) {
   const params = new URLSearchParams({
     result,
     cafe24,
   });
+  const reasonForRedirect = normalizeCafe24ReasonForRedirect(reason);
+  if (reasonForRedirect) {
+    params.set('cafe24_reason', reasonForRedirect);
+  }
   return `/dashboard/artworks?${params.toString()}`;
 }
 
@@ -182,7 +197,11 @@ export async function createArtwork(
     }
 
     const syncResult = await syncArtworkToCafe24(insertedArtwork.id);
-    redirectPath = buildRedirectPath('created', resolveCafe24RedirectState(syncResult));
+    redirectPath = buildRedirectPath(
+      'created',
+      resolveCafe24RedirectState(syncResult),
+      syncResult.reason
+    );
   } catch (error: any) {
     if (supabase && artistId && cleanupUrls.length > 0) {
       await cleanupUploads(supabase, cleanupUrls, artistId);
@@ -356,7 +375,11 @@ export async function updateArtwork(
     }
 
     const syncResult = await syncArtworkToCafe24(id);
-    redirectPath = buildRedirectPath('updated', resolveCafe24RedirectState(syncResult));
+    redirectPath = buildRedirectPath(
+      'updated',
+      resolveCafe24RedirectState(syncResult),
+      syncResult.reason
+    );
   } catch (error: any) {
     if (supabase && artistId && cleanupUrls.length > 0) {
       await cleanupUploads(supabase, cleanupUrls, artistId);

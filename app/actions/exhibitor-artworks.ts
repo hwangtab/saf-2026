@@ -5,7 +5,11 @@ import { requireExhibitor } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 import { syncArtworkToCafe24 } from '@/lib/integrations/cafe24/sync-artwork';
 import { purgeCafe24ProductsFromTrashEntry } from '@/lib/integrations/cafe24/trash-purge';
-import { getString, getStoragePathsForRemoval } from '@/lib/utils/form-helpers';
+import {
+  getStoragePathFromPublicUrl,
+  getString,
+  getStoragePathsForRemoval,
+} from '@/lib/utils/form-helpers';
 import { logExhibitorAction } from './admin-logs';
 import { validateArtworkData } from '@/lib/actions/artwork-validation';
 
@@ -13,6 +17,49 @@ type Cafe24SyncFeedback = {
   status: 'synced' | 'warning' | 'failed' | 'pending_auth';
   reason: string | null;
 };
+
+const MAX_EXHIBITOR_IMAGES = 10;
+
+function getAllowedArtworkImagePrefixes(artistId: string, artworkId: string): string[] {
+  return [`${artistId}/`, `exhibitor-artwork-${artworkId}/`];
+}
+
+function validateExhibitorArtworkImages(
+  images: string[],
+  allowedPrefixes: string[]
+): { normalizedImages: string[] } {
+  if (!Array.isArray(images)) {
+    throw new Error('이미지 형식이 올바르지 않습니다.');
+  }
+
+  const normalizedImages = images
+    .filter((image): image is string => typeof image === 'string')
+    .map((image) => image.trim())
+    .filter((image) => image.length > 0);
+
+  if (normalizedImages.length !== images.length) {
+    throw new Error('이미지 형식이 올바르지 않습니다.');
+  }
+
+  if (normalizedImages.length === 0 || normalizedImages.length > MAX_EXHIBITOR_IMAGES) {
+    throw new Error(`이미지는 1~${MAX_EXHIBITOR_IMAGES}장까지 등록할 수 있습니다.`);
+  }
+
+  const paths = normalizedImages.map((image) => getStoragePathFromPublicUrl(image, 'artworks'));
+  if (paths.some((path) => !path)) {
+    throw new Error('유효하지 않은 이미지 URL이 포함되어 있습니다.');
+  }
+
+  const resolvedPaths = paths as string[];
+  const unauthorizedPath = resolvedPaths.find(
+    (path) => !allowedPrefixes.some((prefix) => path.startsWith(prefix))
+  );
+  if (unauthorizedPath) {
+    throw new Error('허용되지 않은 이미지 경로가 포함되어 있습니다.');
+  }
+
+  return { normalizedImages };
+}
 
 function toCafe24SyncFeedback(
   result: Awaited<ReturnType<typeof syncArtworkToCafe24>>
@@ -193,6 +240,9 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
   if (fetchError || !oldArtwork) {
     throw new Error('작품을 수정할 권한이 없습니다.');
   }
+  if (!oldArtwork.artist_id) {
+    throw new Error('작품 작가 정보를 찾을 수 없습니다.');
+  }
 
   if (artist_id && artist_id !== oldArtwork.artist_id) {
     const { data: newArtistCheck } = await supabase
@@ -267,11 +317,17 @@ export async function updateExhibitorArtworkImages(id: string, images: string[])
   if (fetchError || !oldArtwork) {
     throw new Error('작품을 수정할 권한이 없습니다.');
   }
+  if (!oldArtwork.artist_id) {
+    throw new Error('작품 작가 정보를 찾을 수 없습니다.');
+  }
+
+  const allowedPrefixes = getAllowedArtworkImagePrefixes(oldArtwork.artist_id, id);
+  const { normalizedImages } = validateExhibitorArtworkImages(images, allowedPrefixes);
 
   const { data: newArtwork, error } = await supabase
     .from('artworks')
     .update({
-      images,
+      images: normalizedImages,
       updated_at: new Date().toISOString(),
     })
     .eq('id', id)
@@ -285,8 +341,7 @@ export async function updateExhibitorArtworkImages(id: string, images: string[])
         (image: unknown): image is string => typeof image === 'string' && image.length > 0
       )
     : [];
-  const removedUrls = previousImages.filter((url: string) => !images.includes(url));
-  const allowedPrefixes = [`${oldArtwork.artist_id}/`, `exhibitor-artwork-${id}/`];
+  const removedUrls = previousImages.filter((url: string) => !normalizedImages.includes(url));
   const removalPaths = getStoragePathsForRemoval(removedUrls, 'artworks').filter((path) =>
     allowedPrefixes.some((prefix) => path.startsWith(prefix))
   );
@@ -303,7 +358,7 @@ export async function updateExhibitorArtworkImages(id: string, images: string[])
     id,
     {
       title: oldArtwork.title,
-      imageCount: images.length,
+      imageCount: normalizedImages.length,
     },
     {
       beforeSnapshot: oldArtwork,
@@ -339,6 +394,9 @@ export async function deleteExhibitorArtwork(id: string) {
   if (fetchError || !artwork) {
     throw new Error('작품을 삭제할 권한이 없습니다.');
   }
+  if (!artwork.artist_id) {
+    throw new Error('작품 작가 정보를 찾을 수 없습니다.');
+  }
 
   const cafe24Cleanup = await purgeCafe24ProductsFromTrashEntry({
     targetType: 'artwork',
@@ -367,7 +425,10 @@ export async function deleteExhibitorArtwork(id: string) {
     }
   );
 
-  const paths = getStoragePathsForRemoval(artwork.images || [], 'artworks');
+  const allowedPrefixes = getAllowedArtworkImagePrefixes(artwork.artist_id, id);
+  const paths = getStoragePathsForRemoval(artwork.images || [], 'artworks').filter((path) =>
+    allowedPrefixes.some((prefix) => path.startsWith(prefix))
+  );
   if (paths.length > 0) {
     await supabase.storage.from('artworks').remove(paths);
   }

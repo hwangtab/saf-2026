@@ -98,22 +98,24 @@ export function ArtworkEditForm({
   }, [artists, artistQuery]);
 
   const notifyCafe24SyncResult = (sync: Cafe24SyncFeedback, actionLabel: string) => {
+    const reasonText = sync.reason ? ` (${sync.reason})` : '';
+
     if (sync.status === 'synced') {
       toast.success(`작품 ${actionLabel} 및 카페24 동기화가 완료되었습니다.`);
       return;
     }
 
     if (sync.status === 'pending_auth') {
-      toast.warning(`작품 ${actionLabel}은 완료됐지만 카페24 인증이 필요합니다.`);
+      toast.warning(`작품 ${actionLabel}은 완료됐지만 카페24 인증이 필요합니다.${reasonText}`);
       return;
     }
 
     if (sync.status === 'failed') {
-      toast.warning(`작품 ${actionLabel}은 완료됐지만 카페24 동기화에 실패했습니다.`);
+      toast.warning(`작품 ${actionLabel}은 완료됐지만 카페24 동기화에 실패했습니다.${reasonText}`);
       return;
     }
 
-    toast.warning(`작품 ${actionLabel}은 완료됐지만 카페24 동기화 경고가 있습니다.`);
+    toast.warning(`작품 ${actionLabel}은 완료됐지만 카페24 동기화 경고가 있습니다.${reasonText}`);
   };
 
   const handleSubmit = async (formData: FormData) => {
@@ -142,6 +144,18 @@ export function ArtworkEditForm({
       } else {
         const result = await createAdminArtwork(formData);
         if (result.success && result.id) {
+          const missingImageWarning =
+            result.cafe24.status === 'warning' &&
+            (result.cafe24.reason || '').includes('대표 이미지가 없어');
+
+          if (missingImageWarning) {
+            toast.warning(
+              '작품 등록은 완료되었습니다. 카페24 대표 이미지 반영을 위해 지금 작품 이미지를 업로드해 주세요.'
+            );
+            router.push(`/admin/artworks/${result.id}`);
+            return;
+          }
+
           notifyCafe24SyncResult(result.cafe24, '등록');
           router.push('/admin/artworks');
         }

@@ -138,6 +138,24 @@ function formatActionDescription(log: ActivityLogEntry): string {
   }
 }
 
+function getActionReason(log: ActivityLogEntry): { label: string; value: string } | null {
+  const details = log.metadata as Record<string, unknown> | null;
+  const metadataReason = typeof details?.reason === 'string' ? details.reason.trim() : '';
+  const revertReason = typeof log.revert_reason === 'string' ? log.revert_reason.trim() : '';
+  const purgeNote = typeof log.purge_note === 'string' ? log.purge_note.trim() : '';
+
+  if (revertReason) return { label: '복구 사유', value: revertReason };
+  if (purgeNote) return { label: '영구 삭제 사유', value: purgeNote };
+
+  if (metadataReason) {
+    if (log.action === 'revert_executed') return { label: '복구 사유', value: metadataReason };
+    if (log.action === 'trash_purged') return { label: '영구 삭제 사유', value: metadataReason };
+    return { label: '사유', value: metadataReason };
+  }
+
+  return null;
+}
+
 function getActorRoleLabel(role: ActivityLogEntry['actor_role']) {
   switch (role) {
     case 'admin':
@@ -625,6 +643,7 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
               const isExpanded = expandedLogId === log.id;
               const targetDisplayName = getLogTargetDisplayName(log);
               const snapshotWarnings = getSnapshotIdWarnings(log);
+              const actionReason = getActionReason(log);
 
               return (
                 <Fragment key={log.id}>
@@ -639,13 +658,20 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                       </span>
                     </td>
                     <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span>{formatActionDescription(log)}</span>
-                        {canShowDiff && (
-                          <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-medium text-blue-700">
-                            변경 {totalDiffCount}건
-                          </span>
-                        )}
+                      <div className="space-y-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span>{formatActionDescription(log)}</span>
+                          {canShowDiff && (
+                            <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-medium text-blue-700">
+                              변경 {totalDiffCount}건
+                            </span>
+                          )}
+                        </div>
+                        {actionReason ? (
+                          <p className="text-xs text-slate-500 break-all">
+                            {actionReason.label}: {actionReason.value}
+                          </p>
+                        ) : null}
                       </div>
                     </td>
                     <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">

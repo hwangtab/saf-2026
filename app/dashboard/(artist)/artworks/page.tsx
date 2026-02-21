@@ -13,6 +13,7 @@ type ArtworksPageProps = {
   searchParams?: {
     result?: string;
     cafe24?: string;
+    cafe24_reason?: string;
   };
 };
 
@@ -27,19 +28,21 @@ export default async function ArtworksPage({ searchParams }: ArtworksPageProps) 
         ? '작품이 등록되었습니다.'
         : null;
   const cafe24State = searchParams?.cafe24;
+  const cafe24Reason = searchParams?.cafe24_reason?.trim() || null;
+  const cafe24ReasonSuffix = cafe24Reason ? ` (사유: ${cafe24Reason})` : '';
 
   let flashMessage = baseMessage;
   let flashType: 'success' | 'warning' | 'error' | null = baseMessage ? 'success' : null;
 
   if (baseMessage && cafe24State === 'warning') {
     flashType = 'warning';
-    flashMessage = `${baseMessage} 카페24 동기화는 완료됐지만 일부 항목을 확인해 주세요.`;
+    flashMessage = `${baseMessage} 카페24 동기화는 완료됐지만 일부 항목을 확인해 주세요.${cafe24ReasonSuffix}`;
   } else if (baseMessage && cafe24State === 'failed') {
     flashType = 'warning';
-    flashMessage = `${baseMessage} 카페24 동기화에 실패해 온라인 구매 링크를 확인해 주세요.`;
+    flashMessage = `${baseMessage} 카페24 동기화에 실패해 온라인 구매 링크를 확인해 주세요.${cafe24ReasonSuffix}`;
   } else if (baseMessage && cafe24State === 'pending_auth') {
     flashType = 'warning';
-    flashMessage = `${baseMessage} 카페24 인증이 필요해 구매 링크가 생성되지 않았습니다.`;
+    flashMessage = `${baseMessage} 카페24 인증이 필요해 구매 링크가 생성되지 않았습니다.${cafe24ReasonSuffix}`;
   }
 
   // Fetch artworks
