@@ -13,6 +13,8 @@ type Cafe24SyncFeedback = {
   reason: string | null;
 };
 
+const CAFE24_SYNC_CONCURRENCY = 6;
+
 function toCafe24SyncFeedback(
   result: Awaited<ReturnType<typeof syncArtworkToCafe24>>
 ): Cafe24SyncFeedback {
@@ -37,20 +39,52 @@ function toCafe24SyncFeedback(
   };
 }
 
-async function syncCafe24OrThrow(ids: string[]): Promise<void> {
-  const uniqueIds = Array.from(new Set(ids.filter((id) => typeof id === 'string' && id)));
-  if (uniqueIds.length === 0) return;
+type Cafe24BatchSyncResult = {
+  succeeded: number;
+  failed: number;
+  errors: string[];
+};
 
-  const errors: string[] = [];
-  for (const id of uniqueIds) {
-    const result = await syncArtworkToCafe24(id);
-    if (!result.ok) {
-      errors.push(`${id}: ${result.reason || '알 수 없는 오류'}`);
-    }
+async function syncCafe24Batch(ids: string[]): Promise<Cafe24BatchSyncResult> {
+  const uniqueIds = Array.from(new Set(ids.filter((id) => typeof id === 'string' && id)));
+  if (uniqueIds.length === 0) {
+    return { succeeded: 0, failed: 0, errors: [] };
   }
 
-  if (errors.length > 0) {
-    throw new Error(`카페24 동기화 실패: ${errors.join(' | ')}`);
+  let cursor = 0;
+  let succeeded = 0;
+  const errors: string[] = [];
+
+  const worker = async () => {
+    while (true) {
+      const index = cursor;
+      cursor += 1;
+      if (index >= uniqueIds.length) return;
+
+      const id = uniqueIds[index];
+      const result = await syncArtworkToCafe24(id);
+      if (result.ok) {
+        succeeded += 1;
+      } else {
+        errors.push(`${id}: ${result.reason || '알 수 없는 오류'}`);
+      }
+    }
+  };
+
+  const workerCount = Math.min(CAFE24_SYNC_CONCURRENCY, uniqueIds.length);
+  await Promise.all(Array.from({ length: workerCount }, () => worker()));
+
+  return {
+    succeeded,
+    failed: errors.length,
+    errors,
+  };
+}
+
+async function syncCafe24OrThrow(ids: string[]): Promise<void> {
+  const batchResult = await syncCafe24Batch(ids);
+  if (batchResult.failed > 0) {
+    throw new Error(`카페24 동기화 실패: ${batchResult.errors.join(' | ')}`);
   }
 }
 
@@ -630,7 +664,12 @@ export async function recordArtworkSale(formData: FormData) {
     }
   );
 
-  return { success: true };
+  const syncResult = await syncArtworkToCafe24(artworkId);
+
+  return {
+    success: true,
+    cafe24: toCafe24SyncFeedback(syncResult),
+  };
 }
 
 export async function batchToggleHidden(ids: string[], isHidden: boolean) {
@@ -696,15 +735,27 @@ export async function batchDeleteArtworks(ids: string[]) {
     )
     .in('id', ids);
 
+  const purgedArtworkIds: string[] = [];
   for (const artwork of artworks || []) {
     const cafe24Cleanup = await purgeCafe24ProductsFromTrashEntry({
       targetType: 'artwork',
       beforeSnapshot: artwork,
     });
     if (cafe24Cleanup.failed > 0) {
+      const rollback = await syncCafe24Batch(purgedArtworkIds);
+      if (rollback.failed > 0) {
+        throw new Error(
+          `카페24 상품 삭제 실패(작품 ${artwork.id}): ${cafe24Cleanup.errors.join(
+            ' | '
+          )} | 롤백 실패: ${rollback.errors.join(' | ')}`
+        );
+      }
       throw new Error(
         `카페24 상품 삭제 실패(작품 ${artwork.id}): ${cafe24Cleanup.errors.join(' | ')}`
       );
+    }
+    if (cafe24Cleanup.deleted > 0 && typeof artwork.id === 'string' && artwork.id) {
+      purgedArtworkIds.push(artwork.id);
     }
   }
 

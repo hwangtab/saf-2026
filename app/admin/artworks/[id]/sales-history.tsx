@@ -83,7 +83,15 @@ export function SalesHistory({
 
       const result = await recordArtworkSale(formData);
       if (result.success) {
-        toast.success('판매가 기록되었습니다.');
+        if (result.cafe24.status === 'synced') {
+          toast.success('판매가 기록되었고 카페24 동기화도 완료되었습니다.');
+        } else if (result.cafe24.status === 'pending_auth') {
+          toast.warning('판매 기록은 저장됐지만 카페24 인증이 필요합니다.');
+        } else if (result.cafe24.status === 'failed') {
+          toast.warning('판매 기록은 저장됐지만 카페24 동기화에 실패했습니다.');
+        } else {
+          toast.warning('판매 기록은 저장됐지만 카페24 동기화 경고가 있습니다.');
+        }
         setIsFormOpen(false);
         setSalePrice('');
         setQuantity(1);
