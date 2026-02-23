@@ -93,6 +93,37 @@ describe('useArtworkFilter', () => {
     expect(result.current.filteredArtworks[0].title).toBe('작품2');
   });
 
+  it('should support choseong search query', () => {
+    const artworksWithChoseong: Artwork[] = [
+      ...mockArtworks,
+      {
+        id: '4',
+        artist: '오윤',
+        title: '오월 판화',
+        price: '₩70,000',
+        sold: false,
+        description: '목판화',
+        size: '',
+        material: '',
+        year: '',
+        edition: '',
+        image: '',
+      },
+    ];
+    const { result } = renderHook(() => useArtworkFilter(artworksWithChoseong));
+
+    act(() => {
+      result.current.setSearchQuery('오ㅇ');
+    });
+
+    act(() => {
+      jest.advanceTimersByTime(300);
+    });
+
+    expect(result.current.filteredArtworks).toHaveLength(1);
+    expect(result.current.filteredArtworks[0].artist).toBe('오윤');
+  });
+
   it('should filter by status (selling)', () => {
     const { result } = renderHook(() => useArtworkFilter(mockArtworks));
 

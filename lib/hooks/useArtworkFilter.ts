@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useCallback, useRef, useTransition } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { ArtworkListItem, SortOption } from '@/types';
+import { matchesAnySearch } from '@/lib/search-utils';
 import { useDebounce } from './useDebounce';
 import { sortArtworks, extractUniqueArtists } from '@/lib/artworkUtils';
 
@@ -211,12 +212,9 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
     }
 
     if (debouncedSearchQuery.trim()) {
-      const query = debouncedSearchQuery.toLowerCase().trim();
-      result = result.filter(
-        (artwork) =>
-          artwork.title.toLowerCase().includes(query) ||
-          artwork.artist.toLowerCase().includes(query) ||
-          artwork.description?.toLowerCase().includes(query)
+      const query = debouncedSearchQuery.trim();
+      result = result.filter((artwork) =>
+        matchesAnySearch(query, [artwork.title, artwork.artist, artwork.description])
       );
     }
 
