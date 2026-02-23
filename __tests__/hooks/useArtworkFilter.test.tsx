@@ -2,6 +2,9 @@ import { renderHook, act } from '@testing-library/react';
 import { useArtworkFilter } from '../../lib/hooks/useArtworkFilter';
 import { Artwork } from '../../types';
 
+const mockPush = jest.fn();
+const mockReplace = jest.fn();
+
 // Mock useTransition to immediately execute transitions
 jest.mock('react', () => ({
   ...jest.requireActual('react'),
@@ -10,8 +13,8 @@ jest.mock('react', () => ({
 
 jest.mock('next/navigation', () => ({
   useRouter: () => ({
-    push: jest.fn(),
-    replace: jest.fn(),
+    push: mockPush,
+    replace: mockReplace,
   }),
   useSearchParams: () => new URLSearchParams(),
   usePathname: () => '/artworks',
@@ -61,6 +64,7 @@ const mockArtworks: Artwork[] = [
 
 describe('useArtworkFilter', () => {
   beforeEach(() => {
+    jest.clearAllMocks();
     jest.useFakeTimers();
   });
 
@@ -122,6 +126,34 @@ describe('useArtworkFilter', () => {
 
     expect(result.current.filteredArtworks).toHaveLength(1);
     expect(result.current.filteredArtworks[0].artist).toBe('오윤');
+  });
+
+  it('should sync search query with history API without router navigation', () => {
+    const replaceStateSpy = jest.spyOn(window.history, 'replaceState');
+    const { result } = renderHook(() => useArtworkFilter(mockArtworks));
+
+    act(() => {
+      result.current.setSearchQuery('오ㅇ');
+    });
+
+    act(() => {
+      jest.advanceTimersByTime(300);
+    });
+
+    expect(replaceStateSpy).toHaveBeenCalled();
+    expect(mockReplace).not.toHaveBeenCalled();
+
+    replaceStateSpy.mockRestore();
+  });
+
+  it('should keep using router navigation for non-search filters', () => {
+    const { result } = renderHook(() => useArtworkFilter(mockArtworks));
+
+    act(() => {
+      result.current.setStatusFilter('sold');
+    });
+
+    expect(mockReplace).toHaveBeenCalled();
   });
 
   it('should filter by status (selling)', () => {

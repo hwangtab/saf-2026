@@ -104,10 +104,27 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
         else newSearchParams.set('artist', params.artist);
       }
 
+      const nextSearch = newSearchParams.toString();
+      const currentSearch = searchParams.toString();
+      if (nextSearch === currentSearch) return;
+
+      const nextUrl = nextSearch ? `${pathname}?${nextSearch}` : pathname;
+      const isSearchOnlyUpdate =
+        params.q !== undefined &&
+        params.sort === undefined &&
+        params.status === undefined &&
+        params.artist === undefined;
+
+      // Keep input focus stable while typing by avoiding App Router navigation for query-only updates.
+      if (isSearchOnlyUpdate && typeof window !== 'undefined') {
+        window.history.replaceState(window.history.state, '', nextUrl);
+        return;
+      }
+
       // Use startTransition to prevent Suspense fallback (loading.tsx) from showing
-      // This keeps the search input focused during URL updates
+      // This keeps interactions responsive during URL updates
       startTransition(() => {
-        router.replace(`${pathname}?${newSearchParams.toString()}`, { scroll: false });
+        router.replace(nextUrl, { scroll: false });
       });
     },
     [pathname, router, searchParams, startTransition]
