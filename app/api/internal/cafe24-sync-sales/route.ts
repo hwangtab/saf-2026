@@ -23,8 +23,8 @@ export async function GET(request: NextRequest) {
       forceWindowToIso,
     });
 
-    // Cafe24 주문 동기화로 판매 상태가 바뀌면 공개 목록/상세 캐시를 즉시 갱신한다.
-    if (result.ok && result.inserted > 0) {
+    // 판매 동기화가 성공하면 공개 목록/상세 캐시를 재검증해 상세/목록 상태 불일치를 방지한다.
+    if (result.ok) {
       revalidatePath('/');
       revalidatePath('/artworks');
       revalidatePath('/artworks/[id]', 'page');
