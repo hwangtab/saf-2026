@@ -15,7 +15,12 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const result = await syncCafe24SalesFromOrders();
+    const forceWindowFromIso = request.nextUrl.searchParams.get('from');
+    const forceWindowToIso = request.nextUrl.searchParams.get('to');
+    const result = await syncCafe24SalesFromOrders({
+      forceWindowFromIso,
+      forceWindowToIso,
+    });
     return NextResponse.json(result, {
       status: result.ok ? 200 : 500,
     });

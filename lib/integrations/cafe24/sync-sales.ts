@@ -1,5 +1,6 @@
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { createCafe24AdminApiClient, getCafe24Config } from './client';
+import { syncArtworkToCafe24 } from './sync-artwork';
 
 const CAFE24_SYNC_NOTE = 'Cafe24 주문 자동 동기화';
 const DEFAULT_ORDER_PAGE_LIMIT = 100;
@@ -7,6 +8,75 @@ const MAX_ORDER_PAGES = 40;
 const DEFAULT_CURSOR_OVERLAP_MINUTES = 180;
 const EXISTING_CODE_CHUNK_SIZE = 400;
 const INSERT_CHUNK_SIZE = 200;
+const PRODUCT_NO_BACKFILL_CHUNK_SIZE = 40;
+const MAX_CAFE24_LOCK_SYNC_CONCURRENCY = 4;
+
+const STATUS_FIELD_CANDIDATES = [
+  'order_status',
+  'order_status_text',
+  'order_status_code',
+  'order_state',
+  'order_state_text',
+  'shipping_status',
+  'shipping_status_text',
+  'shipping_status_code',
+  'delivery_status',
+  'delivery_status_text',
+  'delivery_status_code',
+  'payment_status',
+  'payment_state',
+  'pay_status',
+  'paid',
+  'status',
+  'status_text',
+  'status_code',
+  'item_status',
+  'item_status_text',
+  'item_status_code',
+  'fulfillment_status',
+] as const;
+
+const SALE_RECOGNIZED_STATUS_KEYWORDS = [
+  '입금전',
+  '입금대기',
+  '미입금',
+  '결제대기',
+  '주문완료',
+  '상품준비',
+  '배송준비',
+  '배송중',
+  '배송완료',
+  '출고완료',
+  '구매확정',
+  'processing',
+  'preparing',
+  'ready',
+  'shipped',
+  'delivered',
+  'completed',
+  'pendingpayment',
+  'awaitingpayment',
+  'unpaid',
+] as const;
+
+const SALE_EXCLUDED_STATUS_KEYWORDS = [
+  '취소',
+  '주문취소',
+  '환불',
+  '반품',
+  '교환',
+  'cancel',
+  'cancelled',
+  'canceled',
+  'refund',
+  'return',
+  'returned',
+  'exchange',
+  'void',
+  'chargeback',
+  'failed',
+  'failure',
+] as const;
 
 type JsonRecord = Record<string, unknown>;
 
@@ -64,6 +134,27 @@ type InsertResult = {
   errors: string[];
 };
 
+type ProductNoBackfillResult = {
+  updated: number;
+  failed: number;
+};
+
+type ArtworkProductMapResult = {
+  mapping: Map<number, string>;
+  backfill: ProductNoBackfillResult;
+};
+
+type SoldOutLockResult = {
+  synced: number;
+  failed: number;
+  errors: string[];
+};
+
+export type Cafe24SalesSyncOptions = {
+  forceWindowFromIso?: string | null;
+  forceWindowToIso?: string | null;
+};
+
 export type Cafe24SalesSyncResult = {
   ok: boolean;
   mallId: string;
@@ -80,6 +171,10 @@ export type Cafe24SalesSyncResult = {
   skippedNoArtworkMapping: number;
   skippedOutsideWindow: number;
   failedOrders: number;
+  backfilledProductNos: number;
+  backfillProductNoFailures: number;
+  soldOutLockedSynced: number;
+  soldOutLockFailed: number;
   errors: string[];
   reason?: string;
 };
@@ -90,6 +185,13 @@ const KST_DATE_FORMATTER = new Intl.DateTimeFormat('en-CA', {
   month: '2-digit',
   day: '2-digit',
 });
+
+const NORMALIZED_SALE_RECOGNIZED_KEYWORDS = SALE_RECOGNIZED_STATUS_KEYWORDS.map((keyword) =>
+  normalizeStatusToken(keyword)
+);
+const NORMALIZED_SALE_EXCLUDED_KEYWORDS = SALE_EXCLUDED_STATUS_KEYWORDS.map((keyword) =>
+  normalizeStatusToken(keyword)
+);
 
 function asRecord(value: unknown): JsonRecord | null {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
@@ -147,9 +249,7 @@ function parseBooleanFlag(raw: unknown): boolean | null {
   ) {
     return true;
   }
-  if (
-    ['f', 'false', 'n', 'no', 'unpaid', 'cancel', 'cancelled', 'canceled', '0'].includes(normalized)
-  ) {
+  if (['f', 'false', 'n', 'no', 'cancel', 'cancelled', 'canceled', '0'].includes(normalized)) {
     return false;
   }
   return null;
@@ -251,6 +351,97 @@ function isUniqueViolation(error: unknown): boolean {
   return message.toLowerCase().includes('duplicate key');
 }
 
+function extractProductNoFromShopUrl(shopUrl: string | null): number | null {
+  if (!shopUrl || typeof shopUrl !== 'string') return null;
+
+  const surlMatch = shopUrl.match(/\/surl\/O\/(\d+)/i);
+  if (surlMatch?.[1]) {
+    const parsed = Number.parseInt(surlMatch[1], 10);
+    if (Number.isFinite(parsed) && parsed > 0) {
+      return parsed;
+    }
+  }
+
+  const productNoMatch = shopUrl.match(/[?&]product_no=(\d+)/i);
+  if (productNoMatch?.[1]) {
+    const parsed = Number.parseInt(productNoMatch[1], 10);
+    if (Number.isFinite(parsed) && parsed > 0) {
+      return parsed;
+    }
+  }
+
+  return null;
+}
+
+function normalizeStatusToken(value: string): string {
+  return value.toLowerCase().replace(/[\s_-]+/g, '');
+}
+
+function collectStatusValues(record: JsonRecord): string[] {
+  const collected: string[] = [];
+
+  for (const key of STATUS_FIELD_CANDIDATES) {
+    const raw = record[key];
+    if (raw === null || raw === undefined) continue;
+
+    if (typeof raw === 'string' && raw.trim()) {
+      collected.push(raw.trim());
+      continue;
+    }
+
+    if (typeof raw === 'number' && Number.isFinite(raw)) {
+      collected.push(String(raw));
+      continue;
+    }
+
+    if (typeof raw === 'boolean') {
+      collected.push(raw ? 'true' : 'false');
+      continue;
+    }
+
+    const nested = asRecord(raw);
+    if (!nested) continue;
+
+    for (const nestedKey of ['code', 'name', 'status', 'value', 'text']) {
+      const nestedValue = nested[nestedKey];
+      if (typeof nestedValue === 'string' && nestedValue.trim()) {
+        collected.push(nestedValue.trim());
+      } else if (typeof nestedValue === 'number' && Number.isFinite(nestedValue)) {
+        collected.push(String(nestedValue));
+      }
+    }
+  }
+
+  return collected;
+}
+
+function containsStatusKeyword(normalizedValues: string[], normalizedKeywords: string[]): boolean {
+  return normalizedValues.some((value) =>
+    normalizedKeywords.some((keyword) => value.includes(keyword))
+  );
+}
+
+function isOrderConsideredSold(order: OrderContext, items: JsonRecord[]): boolean {
+  const statusValues: string[] = [...collectStatusValues(order.raw)];
+  for (const item of items) {
+    statusValues.push(...collectStatusValues(item));
+  }
+
+  const normalizedStatusValues = statusValues
+    .map((value) => normalizeStatusToken(value))
+    .filter((value) => value.length > 0);
+
+  if (containsStatusKeyword(normalizedStatusValues, NORMALIZED_SALE_EXCLUDED_KEYWORDS)) {
+    return false;
+  }
+
+  if (containsStatusKeyword(normalizedStatusValues, NORMALIZED_SALE_RECOGNIZED_KEYWORDS)) {
+    return true;
+  }
+
+  return order.paid;
+}
+
 function resolveInitialCutoff(nowIso: string): string {
   const envRaw = process.env.CAFE24_SALES_SYNC_CUTOFF_AT?.trim();
   if (!envRaw) return nowIso;
@@ -264,6 +455,12 @@ function resolveCursorOverlapMinutes(): number {
   const parsed = Number.parseInt(raw, 10);
   if (!Number.isFinite(parsed) || parsed < 0) return DEFAULT_CURSOR_OVERLAP_MINUTES;
   return Math.min(parsed, 24 * 60);
+}
+
+function resolveNextCursorIso(previousIso: string | null, candidateMs: number): string {
+  const previousMs = isoToMs(previousIso) || 0;
+  const nextMs = Math.max(previousMs, candidateMs);
+  return new Date(nextMs).toISOString();
 }
 
 async function ensureSyncState(mallId: string, initialCutoffIso: string): Promise<SyncStateRow> {
@@ -421,6 +618,14 @@ function buildOrderItemContext(
     sale_price: salePrice,
     sold_at: soldAt,
     product_name: pickString(item, ['product_name', 'item_name']),
+    order_status: pickString(item, ['order_status', 'order_status_text', 'order_status_code']),
+    shipping_status: pickString(item, [
+      'shipping_status',
+      'shipping_status_text',
+      'delivery_status',
+      'delivery_status_text',
+    ]),
+    payment_status: pickString(item, ['payment_status', 'payment_state', 'paid']),
   };
 
   return {
@@ -490,8 +695,8 @@ async function fetchOrdersPage(
   const tried: string[] = [];
   const variants = uniqueStable<string | null>([
     input.preferredDateType,
-    'pay_date',
     'order_date',
+    'pay_date',
     null,
   ]);
 
@@ -533,32 +738,92 @@ async function fetchOrderItems(
   );
 }
 
-async function loadArtworkMapByProductNo(): Promise<Map<number, string>> {
+async function backfillArtworkProductNos(
+  rows: Array<{ id: string; productNo: number }>
+): Promise<ProductNoBackfillResult> {
+  const supabase = createSupabaseAdminClient();
+  const patches = uniqueStable(rows.map((row) => `${row.id}:${row.productNo}`)).map((pair) => {
+    const [id, productNoRaw] = pair.split(':');
+    return { id, productNo: Number.parseInt(productNoRaw, 10) };
+  });
+
+  if (patches.length === 0) {
+    return { updated: 0, failed: 0 };
+  }
+
+  let updated = 0;
+  let failed = 0;
+
+  for (const batch of chunk(patches, PRODUCT_NO_BACKFILL_CHUNK_SIZE)) {
+    const settled = await Promise.all(
+      batch.map(async (patch) => {
+        const { error } = await supabase
+          .from('artworks')
+          .update({
+            cafe24_product_no: patch.productNo,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', patch.id)
+          .is('cafe24_product_no', null);
+
+        return { ok: !error, error };
+      })
+    );
+
+    for (const result of settled) {
+      if (result.ok) {
+        updated += 1;
+      } else {
+        failed += 1;
+      }
+    }
+  }
+
+  return { updated, failed };
+}
+
+async function loadArtworkMapByProductNo(): Promise<ArtworkProductMapResult> {
   const supabase = createSupabaseAdminClient();
   const { data, error } = await supabase
     .from('artworks')
-    .select('id, cafe24_product_no')
-    .not('cafe24_product_no', 'is', null);
+    .select('id, cafe24_product_no, shop_url')
+    .not('shop_url', 'is', null);
 
   if (error) {
     throw new Error(`작품 매핑 조회 실패: ${error.message}`);
   }
 
   const mapping = new Map<number, string>();
+  const backfillCandidates: Array<{ id: string; productNo: number }> = [];
+
   for (const row of (data || []) as Array<{
     id: string;
     cafe24_product_no: number | string | null;
+    shop_url: string | null;
   }>) {
-    const productNo =
+    const productNoFromColumn =
       typeof row.cafe24_product_no === 'number'
         ? Math.trunc(row.cafe24_product_no)
         : parseInteger(row.cafe24_product_no);
-    if (!productNo || productNo <= 0) continue;
-    if (!mapping.has(productNo)) {
-      mapping.set(productNo, row.id);
+    const productNoFromShopUrl = extractProductNoFromShopUrl(row.shop_url);
+    const resolvedProductNo = productNoFromColumn || productNoFromShopUrl;
+
+    if (!resolvedProductNo || resolvedProductNo <= 0) continue;
+    if (!mapping.has(resolvedProductNo)) {
+      mapping.set(resolvedProductNo, row.id);
+    }
+
+    if (!productNoFromColumn && productNoFromShopUrl) {
+      backfillCandidates.push({ id: row.id, productNo: productNoFromShopUrl });
     }
   }
-  return mapping;
+
+  const backfill = await backfillArtworkProductNos(backfillCandidates);
+
+  return {
+    mapping,
+    backfill,
+  };
 }
 
 async function filterExistingOrderItemCodes(rows: PreparedSaleRow[]): Promise<{
@@ -640,7 +905,78 @@ async function insertPreparedSales(rows: PreparedSaleRow[]): Promise<InsertResul
   };
 }
 
-export async function syncCafe24SalesFromOrders(): Promise<Cafe24SalesSyncResult> {
+async function lockSoldOutArtworksOnCafe24(artworkIds: string[]): Promise<SoldOutLockResult> {
+  const uniqueArtworkIds = uniqueStable(artworkIds.filter((id) => typeof id === 'string' && id));
+  if (uniqueArtworkIds.length === 0) {
+    return {
+      synced: 0,
+      failed: 0,
+      errors: [],
+    };
+  }
+
+  const supabase = createSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from('artworks')
+    .select('id, edition_type, status')
+    .in('id', uniqueArtworkIds);
+
+  if (error) {
+    return {
+      synced: 0,
+      failed: uniqueArtworkIds.length,
+      errors: [`판매잠금 대상 조회 실패: ${error.message}`],
+    };
+  }
+
+  const targets = (
+    (data || []) as Array<{ id: string; edition_type: string | null; status: string | null }>
+  )
+    .filter((row) => row.status === 'sold')
+    .filter((row) => row.edition_type === 'unique' || row.edition_type === 'limited')
+    .map((row) => row.id);
+
+  if (targets.length === 0) {
+    return {
+      synced: 0,
+      failed: 0,
+      errors: [],
+    };
+  }
+
+  let synced = 0;
+  const errors: string[] = [];
+  let cursor = 0;
+
+  const worker = async () => {
+    while (true) {
+      const index = cursor;
+      cursor += 1;
+      if (index >= targets.length) return;
+
+      const artworkId = targets[index];
+      const result = await syncArtworkToCafe24(artworkId);
+      if (result.ok) {
+        synced += 1;
+      } else {
+        errors.push(`${artworkId}: ${result.reason || '알 수 없는 오류'}`);
+      }
+    }
+  };
+
+  const workerCount = Math.min(MAX_CAFE24_LOCK_SYNC_CONCURRENCY, targets.length);
+  await Promise.all(Array.from({ length: workerCount }, () => worker()));
+
+  return {
+    synced,
+    failed: errors.length,
+    errors,
+  };
+}
+
+export async function syncCafe24SalesFromOrders(
+  options: Cafe24SalesSyncOptions = {}
+): Promise<Cafe24SalesSyncResult> {
   const config = getCafe24Config();
   const nowIso = new Date().toISOString();
 
@@ -661,6 +997,10 @@ export async function syncCafe24SalesFromOrders(): Promise<Cafe24SalesSyncResult
       skippedNoArtworkMapping: 0,
       skippedOutsideWindow: 0,
       failedOrders: 0,
+      backfilledProductNos: 0,
+      backfillProductNoFailures: 0,
+      soldOutLockedSynced: 0,
+      soldOutLockFailed: 0,
       errors: [],
       reason: 'Cafe24 환경변수가 설정되지 않았습니다.',
     };
@@ -673,8 +1013,15 @@ export async function syncCafe24SalesFromOrders(): Promise<Cafe24SalesSyncResult
 
   const cutoffMs = isoToMs(state.cutoff_paid_at) || Date.parse(initialCutoff);
   const baseCursorMs = isoToMs(state.last_synced_paid_at) || cutoffMs;
-  const windowFromMs = Math.max(cutoffMs, baseCursorMs - overlapMinutes * 60 * 1000);
-  const windowToMs = Date.parse(nowIso);
+  const defaultWindowFromMs = Math.max(cutoffMs, baseCursorMs - overlapMinutes * 60 * 1000);
+
+  const forcedWindowFromMs = isoToMs(normalizeToIso(options.forceWindowFromIso || null));
+  const forcedWindowToMs = isoToMs(normalizeToIso(options.forceWindowToIso || null));
+
+  const windowToMs = forcedWindowToMs ?? Date.parse(nowIso);
+  const candidateFromMs = forcedWindowFromMs ?? defaultWindowFromMs;
+  const windowFromMs = Math.min(candidateFromMs, windowToMs);
+
   const windowFromIso = new Date(windowFromMs).toISOString();
   const windowToIso = new Date(windowToMs).toISOString();
 
@@ -685,7 +1032,7 @@ export async function syncCafe24SalesFromOrders(): Promise<Cafe24SalesSyncResult
 
   if (windowFromMs >= windowToMs) {
     await updateSyncState(mallId, {
-      last_synced_paid_at: windowToIso,
+      last_synced_paid_at: resolveNextCursorIso(state.last_synced_paid_at, windowToMs),
       last_sync_completed_at: new Date().toISOString(),
       last_error: null,
     });
@@ -705,6 +1052,10 @@ export async function syncCafe24SalesFromOrders(): Promise<Cafe24SalesSyncResult
       skippedNoArtworkMapping: 0,
       skippedOutsideWindow: 0,
       failedOrders: 0,
+      backfilledProductNos: 0,
+      backfillProductNoFailures: 0,
+      soldOutLockedSynced: 0,
+      soldOutLockFailed: 0,
       errors: [],
     };
   }
@@ -721,13 +1072,21 @@ export async function syncCafe24SalesFromOrders(): Promise<Cafe24SalesSyncResult
   let duplicateSkipped = 0;
   let inserted = 0;
   let dateTypeUsed: string | null = null;
+  let backfilledProductNos = 0;
+  let backfillProductNoFailures = 0;
+  let soldOutLockedSynced = 0;
+  let soldOutLockFailed = 0;
 
   try {
     const client = createCafe24AdminApiClient();
-    const [orderResult, artworkByProductNo] = await Promise.all([
+    const [orderResult, artworkMapResult] = await Promise.all([
       fetchOrdersInRange(client, windowFromIso, windowToIso),
       loadArtworkMapByProductNo(),
     ]);
+
+    const artworkByProductNo = artworkMapResult.mapping;
+    backfilledProductNos = artworkMapResult.backfill.updated;
+    backfillProductNoFailures = artworkMapResult.backfill.failed;
 
     ordersFetched = orderResult.orders.length;
     dateTypeUsed = orderResult.dateType;
@@ -743,14 +1102,15 @@ export async function syncCafe24SalesFromOrders(): Promise<Cafe24SalesSyncResult
         continue;
       }
 
-      if (!order.paid) {
-        continue;
-      }
-      ordersPaid += 1;
-
       try {
         const items = await fetchOrderItems(client, order.orderId);
         orderItemsFetched += items.length;
+
+        if (!isOrderConsideredSold(order, items)) {
+          continue;
+        }
+
+        ordersPaid += 1;
 
         items.forEach((item, index) => {
           const itemContext = buildOrderItemContext(order, item, index);
@@ -807,9 +1167,19 @@ export async function syncCafe24SalesFromOrders(): Promise<Cafe24SalesSyncResult
       errors.push(...insertResult.errors);
     }
 
+    const affectedArtworkIds = uniqueStable(dedupedByDb.filtered.map((row) => row.artwork_id));
+    const lockResult = await lockSoldOutArtworksOnCafe24(affectedArtworkIds);
+    soldOutLockedSynced = lockResult.synced;
+    soldOutLockFailed = lockResult.failed;
+    if (lockResult.failed > 0) {
+      errors.push(...lockResult.errors);
+    }
+
     const syncSucceeded = errors.length === 0;
     await updateSyncState(mallId, {
-      last_synced_paid_at: syncSucceeded ? windowToIso : state.last_synced_paid_at,
+      last_synced_paid_at: syncSucceeded
+        ? resolveNextCursorIso(state.last_synced_paid_at, windowToMs)
+        : state.last_synced_paid_at,
       last_sync_completed_at: new Date().toISOString(),
       last_error: syncSucceeded ? null : errors.join(' | ').slice(0, 2000),
     });
@@ -830,6 +1200,10 @@ export async function syncCafe24SalesFromOrders(): Promise<Cafe24SalesSyncResult
       skippedNoArtworkMapping,
       skippedOutsideWindow,
       failedOrders,
+      backfilledProductNos,
+      backfillProductNoFailures,
+      soldOutLockedSynced,
+      soldOutLockFailed,
       errors,
       reason: syncSucceeded ? undefined : '일부 주문 동기화에 실패했습니다.',
     };
@@ -856,6 +1230,10 @@ export async function syncCafe24SalesFromOrders(): Promise<Cafe24SalesSyncResult
       skippedNoArtworkMapping,
       skippedOutsideWindow,
       failedOrders,
+      backfilledProductNos,
+      backfillProductNoFailures,
+      soldOutLockedSynced,
+      soldOutLockFailed,
       errors: [...errors, message],
       reason: message,
     };
