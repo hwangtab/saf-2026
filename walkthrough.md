@@ -560,3 +560,35 @@
 - `npm run lint` 통과
 - `npm run type-check` 통과
 - `npm test -- phone.test.ts --runInBand` 통과
+
+---
+
+## 관리자 작품 데이터 일괄 다운로드 기능 추가
+
+### 변경 파일
+
+- `/Users/hwang-gyeongha/saf/app/admin/artworks/page.tsx`
+  - 헤더 액션 영역에 `전체 작품 데이터 다운받기` 버튼 추가
+  - 버튼 위치: 기존 `작품 등록` 버튼 옆(관리 화면 패턴 유지)
+- `/Users/hwang-gyeongha/saf/app/admin/artworks/export/route.ts` (신규)
+  - 관리자 권한 검증 후 전체 작품 CSV 다운로드 API 구현
+  - `artworks + artists` 조인으로 작품/작가 확장 정보 포함
+  - 이미지 파일 자체 대신 `대표 이미지 URL`, `전체 이미지 URL 목록`, `이미지 개수` 제공
+  - 다운로드 실행 시 활동 로그(`artworks_exported`) 기록
+- `/Users/hwang-gyeongha/saf/implementation_plan.md`
+  - 본 작업 기준 계획서로 갱신
+
+### CSV 포함 정보
+
+- 작품/작가 식별: 작품ID, 작가ID, 작가명(한/영), 작품명
+- 작품 핵심: 작품 설명, 재료, 년도, 가격, 사이즈
+- 판매/노출: 상태, 노출 여부, 판매일시
+- 에디션: 표기, 타입, 수량 제한
+- 이미지: 대표 이미지 URL, 전체 이미지 URL 목록, 이미지 개수
+- 외부 연동: 구매 링크, Cafe24 상품번호
+- 운영 메타: 등록일시, 수정일시
+
+### 참고 사항
+
+- CSV는 텍스트 기반 포맷이므로 이미지 파일(binary) 자체를 포함할 수 없음
+- 이미지 원본 다운로드가 필요하면 ZIP 묶음 다운로드 기능을 별도 구현해야 함

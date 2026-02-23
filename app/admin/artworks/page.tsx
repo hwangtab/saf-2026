@@ -42,6 +42,9 @@ export default async function AdminArtworksPage({ searchParams }: Props) {
         </AdminPageHeader>
         <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
           <Cafe24MissingLinkSyncButton />
+          <LinkButton href="/admin/artworks/export" variant="white" className="w-full sm:w-auto">
+            전체 작품 데이터 다운받기
+          </LinkButton>
           <LinkButton href="/admin/artworks/new" className="w-full sm:w-auto">
             작품 등록
           </LinkButton>
