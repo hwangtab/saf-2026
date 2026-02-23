@@ -222,9 +222,17 @@ function parsePositiveInteger(raw: unknown, fallback: number): number {
 }
 
 function parseMoney(raw: unknown): number | null {
-  const parsed = parseInteger(raw);
-  if (parsed === null) return null;
-  return parsed < 0 ? 0 : parsed;
+  if (typeof raw === 'number' && Number.isFinite(raw)) {
+    return raw < 0 ? 0 : Math.round(raw);
+  }
+
+  if (typeof raw !== 'string') return null;
+  const cleaned = raw.trim().replace(/[^0-9.-]/g, '');
+  if (!cleaned) return null;
+
+  const parsed = Number(cleaned);
+  if (!Number.isFinite(parsed)) return null;
+  return parsed < 0 ? 0 : Math.round(parsed);
 }
 
 function pickString(record: JsonRecord, keys: string[]): string | null {
