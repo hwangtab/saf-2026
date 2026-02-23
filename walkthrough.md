@@ -592,3 +592,24 @@
 
 - CSV는 텍스트 기반 포맷이므로 이미지 파일(binary) 자체를 포함할 수 없음
 - 이미지 원본 다운로드가 필요하면 ZIP 묶음 다운로드 기능을 별도 구현해야 함
+
+---
+
+## 활동 로그 내보내기 액션 라벨 누락 수정
+
+### 변경 파일
+
+- `/Users/hwang-gyeongha/saf/app/admin/logs/logs-list.tsx`
+  - `artworks_exported` 액션 설명 추가 (`작품 데이터 다운로드`)
+  - `artist_contacts_exported` 액션 설명 추가 (`작가 연락처 다운로드`)
+  - `target_id = all`인 경우 대상 링크를 개별 상세(`/all`)가 아닌 목록 페이지로 보정
+    - 작품: `/admin/artworks`
+    - 작가: `/admin/artists`
+    - 사용자: `/admin/users`
+- `/Users/hwang-gyeongha/saf/app/admin/logs/page.tsx`
+  - 활동 유형 필터 옵션에 두 export 액션 추가
+
+### 검증 결과
+
+- `npm run lint` 통과
+- `npm run type-check` 통과

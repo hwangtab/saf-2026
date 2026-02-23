@@ -133,6 +133,10 @@ function formatActionDescription(log: ActivityLogEntry): string {
       return `일괄 숨김 변경: ${details?.count}건`;
     case 'batch_artwork_deleted':
       return `일괄 삭제: ${details?.count}건`;
+    case 'artworks_exported':
+      return `작품 데이터 다운로드: ${details?.total_count || '-'}건`;
+    case 'artist_contacts_exported':
+      return `작가 연락처 다운로드: ${details?.total_count || '-'}명`;
     default:
       return `정의되지 않은 활동 (${log.action})`;
   }
@@ -216,6 +220,13 @@ function getTargetTypeLabel(type: string | null) {
 
 function getTargetLink(log: ActivityLogEntry): string | null {
   if (!log.target_id) return null;
+
+  if (log.target_id === 'all') {
+    if (log.target_type === 'artwork') return '/admin/artworks';
+    if (log.target_type === 'artist') return '/admin/artists';
+    if (log.target_type === 'user') return '/admin/users';
+    return null;
+  }
 
   if (log.target_id.includes(',')) {
     return log.target_type === 'artwork' ? '/admin/artworks' : null;

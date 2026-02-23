@@ -42,6 +42,8 @@ const ACTION_FILTER_OPTIONS = [
   { value: 'batch_artwork_status', label: '작품 판매상태 일괄 변경' },
   { value: 'batch_artwork_visibility', label: '작품 숨김 일괄 변경' },
   { value: 'batch_artwork_deleted', label: '작품 일괄 삭제' },
+  { value: 'artworks_exported', label: '작품 데이터 다운로드' },
+  { value: 'artist_contacts_exported', label: '작가 연락처 다운로드' },
   { value: 'content_created', label: '콘텐츠 생성' },
   { value: 'content_updated', label: '콘텐츠 수정' },
   { value: 'content_deleted', label: '콘텐츠 삭제' },
