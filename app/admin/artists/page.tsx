@@ -17,9 +17,14 @@ export default async function AdminArtistsPage() {
           <AdminPageTitle>작가 관리</AdminPageTitle>
           <AdminPageDescription>등록된 작가 정보를 관리합니다.</AdminPageDescription>
         </AdminPageHeader>
-        <LinkButton href="/admin/artists/new" className="w-full sm:w-auto">
-          작가 등록
-        </LinkButton>
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+          <LinkButton href="/admin/artists/export" variant="white" className="w-full sm:w-auto">
+            전체 연락처 다운받기
+          </LinkButton>
+          <LinkButton href="/admin/artists/new" className="w-full sm:w-auto">
+            작가 등록
+          </LinkButton>
+        </div>
       </div>
       <ArtistList artists={artists} />
     </div>

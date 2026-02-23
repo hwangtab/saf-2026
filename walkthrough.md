@@ -524,3 +524,39 @@
 
 - 메인 `온라인 전시 하이라이트`가 최신 등록 편향 없이 다양한 작품을 노출합니다.
 - 랜덤 로직이 서버에 있어 클라이언트 하이드레이션 불일치 없이 안정적으로 동작합니다.
+
+---
+
+## 관리자 작가 연락처 일괄 다운로드 기능 추가
+
+### 변경 파일
+
+- `/Users/hwang-gyeongha/saf/app/admin/artists/page.tsx`
+  - 헤더 액션 영역을 2버튼으로 구성
+  - `작가 등록` 버튼 옆에 `전체 연락처 다운받기` 버튼 추가
+- `/Users/hwang-gyeongha/saf/app/admin/artists/export/route.ts` (신규)
+  - 관리자 권한 검증 후 전체 작가 연락처 CSV 다운로드 API 구현
+  - `artists + profiles + artist_applications` 결합으로 확장 컬럼 제공
+  - 전화번호 없는 행도 빈 값으로 포함
+  - 다운로드 시 활동 로그(`artist_contacts_exported`) 기록
+- `/Users/hwang-gyeongha/saf/lib/utils/phone.ts` (신규)
+  - 한국 전화번호 하이픈 정규화 유틸 구현
+  - `+82`, `0082` 입력도 국내 포맷으로 변환
+- `/Users/hwang-gyeongha/saf/__tests__/lib/phone.test.ts` (신규)
+  - 전화번호 정규화 단위 테스트 추가
+- `/Users/hwang-gyeongha/saf/implementation_plan.md`
+  - 본 작업 기준 계획서로 갱신
+
+### CSV 포함 정보
+
+- 작가 기본 정보: 이름(한/영), 전화번호, 이메일, 인스타그램, 홈페이지
+- 등록 정보: 작가 소개/이력, 생성일/수정일
+- 연결 계정 정보: 사용자 ID/이름/이메일/권한/상태
+- 신청 정보: 신청 작가명, 신청 연락처 원문, 신청 소개, 추천인, 신청 생성/수정일
+- 운영 정보: 작품 수, 계정 연결 여부
+
+### 검증 결과
+
+- `npm run lint` 통과
+- `npm run type-check` 통과
+- `npm test -- phone.test.ts --runInBand` 통과
