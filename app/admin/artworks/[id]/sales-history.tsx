@@ -23,6 +23,14 @@ function parsePriceString(priceStr: string | null): number {
   return parseInt(numericStr, 10) || 0;
 }
 
+function normalizeSaleSource(source: ArtworkSale['source']): 'manual' | 'cafe24' {
+  return source === 'cafe24' ? 'cafe24' : 'manual';
+}
+
+function getSaleSourceLabel(source: ArtworkSale['source']): string {
+  return normalizeSaleSource(source) === 'cafe24' ? '온라인 (cafe24)' : '오프라인 (manual)';
+}
+
 export function SalesHistory({
   artworkId,
   editionType,
@@ -256,6 +264,9 @@ export function SalesHistory({
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 구매자
               </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                채널
+              </th>
               <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
                 수량
               </th>
@@ -270,7 +281,7 @@ export function SalesHistory({
           <tbody className="divide-y divide-gray-200 bg-white">
             {sales.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-sm text-gray-500">
+                <td colSpan={6} className="px-4 py-8 text-center text-sm text-gray-500">
                   판매 기록이 없습니다.
                 </td>
               </tr>
@@ -287,6 +298,18 @@ export function SalesHistory({
                         {sale.note}
                       </span>
                     )}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-gray-600">
+                    <span
+                      className={cn(
+                        'inline-flex rounded-full px-2 py-0.5 text-xs font-medium',
+                        normalizeSaleSource(sale.source) === 'cafe24'
+                          ? 'bg-orange-100 text-orange-700'
+                          : 'bg-emerald-100 text-emerald-700'
+                      )}
+                    >
+                      {getSaleSourceLabel(sale.source)}
+                    </span>
                   </td>
                   <td className="px-4 py-3 text-sm text-gray-900 text-right">
                     {sale.quantity.toLocaleString()}

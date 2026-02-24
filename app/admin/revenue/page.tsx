@@ -38,6 +38,11 @@ function getChangeRateClass(changeRate: number | null) {
   return changeRate >= 0 ? 'text-green-600' : 'text-red-600';
 }
 
+function formatShare(value: number | null) {
+  if (value === null) return 'N/A';
+  return `${value.toFixed(1)}%`;
+}
+
 export default async function AdminRevenuePage({ searchParams }: Props) {
   const params = await searchParams;
 
@@ -76,17 +81,20 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
     analytics.filter.selectedMonth === 'all' ? 'all' : String(analytics.filter.selectedMonth);
   const accountingExportHref = `/admin/revenue/export?year=${analytics.filter.selectedYear}&month=${selectedMonthToken}&format=accounting`;
   const reportExportHref = `/admin/revenue/export?year=${analytics.filter.selectedYear}&month=${selectedMonthToken}&format=report`;
+  const sourceSummary = analytics.summaryBySource;
+  const channelSummary = analytics.summaryByChannel;
 
   return (
     <div className="space-y-8">
       <AdminPageHeader>
         <AdminPageTitle>매출 현황</AdminPageTitle>
         <AdminPageDescription>
-          회계 기준: <strong>status = sold</strong> 이고 <strong>sold_at 존재</strong>하는 건만
-          인식매출로 집계합니다 (KST).
+          회계 기준: <strong>artwork_sales</strong>에서 <strong>sold_at이 존재</strong>하는
+          판매기록만 인식매출로 집계합니다 (KST).
         </AdminPageDescription>
         <p className="text-xs text-slate-500">
-          집계 시간대: {analytics.filter.timezone} · 조회 연도: {analytics.filter.selectedYear}년
+          집계 시간대: {analytics.filter.timezone} · 조회 연도: {analytics.filter.selectedYear}년 ·
+          소스 분해: manual(오프라인), cafe24(온라인)
         </p>
       </AdminPageHeader>
 
@@ -114,7 +122,7 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
         <AdminCard className="border-amber-200 bg-amber-50 p-4">
           <p className="text-sm font-semibold text-amber-900">데이터 점검 필요</p>
           <p className="mt-1 text-sm text-amber-800">
-            status는 sold지만 sold_at이 비어 있는 작품이{' '}
+            artwork_sales 중 sold_at이 비어 있는 기록이{' '}
             {NUMBER_FORMATTER.format(analytics.dataQuality.soldWithoutSoldAtCount)}건 있습니다. 현재
             인식매출 집계에서는 제외됩니다.
           </p>
@@ -129,23 +137,47 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
           trend={summaryTrend}
         />
         <RevenueCard
+          title={`${analytics.summary.periodLabel} 오프라인 매출`}
+          value={channelSummary.offline.revenue}
+          subtitle={`manual 판매: ${NUMBER_FORMATTER.format(channelSummary.offline.soldCount)}점`}
+        />
+        <RevenueCard
+          title={`${analytics.summary.periodLabel} 온라인 매출`}
+          value={channelSummary.online.revenue}
+          subtitle={`cafe24 판매: ${NUMBER_FORMATTER.format(channelSummary.online.soldCount)}점`}
+        />
+        <RevenueCard
           title={`${analytics.summary.periodLabel} 평균단가`}
           value={analytics.summary.averagePrice}
           subtitle={`비교 기준: ${analytics.summary.comparedToLabel} 동기`}
         />
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
         <RevenueCard
           title={`${analytics.filter.selectedYear}년 누계 인식매출 (YTD)`}
           value={analytics.yearly.totalRevenue}
           subtitle={`누적 판매수량: ${NUMBER_FORMATTER.format(analytics.yearly.soldCount)}점`}
         />
+        <RevenueCard
+          title="비교 기준 인식매출"
+          value={analytics.summary.comparedToRevenue}
+          subtitle={`${analytics.summary.comparedToLabel} 기준`}
+        />
         <AdminCard className="flex h-full flex-col justify-between p-6">
           <div>
-            <p className="text-sm font-medium text-slate-500">비교 기준 인식매출</p>
+            <p className="text-sm font-medium text-slate-500">온라인 매출 비중</p>
             <p className="mt-2 text-2xl font-bold tracking-tight text-slate-900">
-              {KRW_FORMATTER.format(analytics.summary.comparedToRevenue)}
+              {formatShare(channelSummary.onlineRevenueSharePct)}
             </p>
           </div>
-          <p className="mt-2 text-sm text-slate-500">{analytics.summary.comparedToLabel} 기준</p>
+          <p className="mt-2 text-sm text-slate-500">
+            수량 비중: {formatShare(channelSummary.onlineSoldSharePct)}
+          </p>
+          <p className="mt-1 text-xs text-slate-500">
+            source 분해 · manual {KRW_FORMATTER.format(sourceSummary.manual.revenue)} / cafe24{' '}
+            {KRW_FORMATTER.format(sourceSummary.cafe24.revenue)}
+          </p>
         </AdminCard>
       </div>
 
@@ -193,6 +225,10 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
               <tr>
                 <th className="px-4 py-3 text-left">월</th>
                 <th className="px-4 py-3 text-right">당월 인식매출</th>
+                <th className="px-4 py-3 text-right">오프라인 매출</th>
+                <th className="px-4 py-3 text-right">온라인 매출</th>
+                <th className="px-4 py-3 text-right">오프라인 수량</th>
+                <th className="px-4 py-3 text-right">온라인 수량</th>
                 <th className="px-4 py-3 text-right">판매수량</th>
                 <th className="px-4 py-3 text-right">평균단가</th>
                 <th className="px-4 py-3 text-right">전월 매출</th>
@@ -213,6 +249,18 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
                     <td className="px-4 py-3 font-medium text-slate-800">{month.label}</td>
                     <td className="px-4 py-3 text-right font-medium text-slate-900">
                       {KRW_FORMATTER.format(month.revenue)}
+                    </td>
+                    <td className="px-4 py-3 text-right text-slate-700">
+                      {KRW_FORMATTER.format(month.offlineRevenue)}
+                    </td>
+                    <td className="px-4 py-3 text-right text-slate-700">
+                      {KRW_FORMATTER.format(month.onlineRevenue)}
+                    </td>
+                    <td className="px-4 py-3 text-right text-slate-700">
+                      {NUMBER_FORMATTER.format(month.offlineSoldCount)}점
+                    </td>
+                    <td className="px-4 py-3 text-right text-slate-700">
+                      {NUMBER_FORMATTER.format(month.onlineSoldCount)}점
                     </td>
                     <td className="px-4 py-3 text-right text-slate-700">
                       {NUMBER_FORMATTER.format(month.soldCount)}점

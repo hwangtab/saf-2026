@@ -45,8 +45,11 @@ export interface ArtworkSale {
   sale_price: number; // Integer (KRW)
   sold_at: string; // ISO timestamp
   quantity: number;
+  source?: 'manual' | 'cafe24' | null;
   buyer_name?: string | null;
   note?: string | null;
+  external_order_id?: string | null;
+  external_order_item_code?: string | null;
   created_at?: string;
 }
 

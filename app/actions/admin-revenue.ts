@@ -17,12 +17,24 @@ export type RevenueQueryInput = {
   month?: string | null;
 };
 
+export type RevenueSource = 'manual' | 'cafe24';
+export type RevenueChannel = 'offline' | 'online';
+
+type SalesAggregate = {
+  revenue: number;
+  soldCount: number;
+};
+
+type SourceBreakdown = Record<RevenueSource, SalesAggregate>;
+type ChannelBreakdown = Record<RevenueChannel, SalesAggregate>;
+
 type SalesRecordRow = {
   id: string;
   artwork_id: string;
   sale_price: number;
   quantity: number;
   sold_at: string;
+  source: string | null;
   artworks: {
     title: string;
     artist_id: string | null;
@@ -65,6 +77,8 @@ type RevenueEntry = {
   soldAtUtc: string;
   soldAtKstDate: string;
   revenue: number;
+  source: RevenueSource;
+  channel: RevenueChannel;
 };
 
 export type RevenueMonthlyRow = {
@@ -78,6 +92,14 @@ export type RevenueMonthlyRow = {
   momChangeRatePct: number | null;
   yoyChangeRatePct: number | null;
   cumulativeRevenue: number;
+  manualRevenue: number;
+  cafe24Revenue: number;
+  manualSoldCount: number;
+  cafe24SoldCount: number;
+  offlineRevenue: number;
+  onlineRevenue: number;
+  offlineSoldCount: number;
+  onlineSoldCount: number;
 };
 
 export type RevenueAnalytics = {
@@ -95,6 +117,11 @@ export type RevenueAnalytics = {
     comparedToLabel: string;
     comparedToRevenue: number;
     changeRatePct: number | null;
+  };
+  summaryBySource: SourceBreakdown;
+  summaryByChannel: ChannelBreakdown & {
+    onlineRevenueSharePct: number | null;
+    onlineSoldSharePct: number | null;
   };
   focusMonth: {
     month: number;
@@ -119,6 +146,10 @@ export type RevenueAnalytics = {
     revenue: number;
     soldCount: number;
     averagePrice: number;
+    offlineRevenue: number;
+    onlineRevenue: number;
+    offlineSoldCount: number;
+    onlineSoldCount: number;
   }>;
   topArtists: RankedArtist[];
   topArtworks: RankedArtwork[];
@@ -179,11 +210,54 @@ function calcChangeRate(current: number, previous: number): number | null {
   return Number((((current - previous) / previous) * 100).toFixed(1));
 }
 
+function calcShare(part: number, total: number): number | null {
+  if (total <= 0) return null;
+  return Number(((part / total) * 100).toFixed(1));
+}
+
+function createSalesAggregate(): SalesAggregate {
+  return {
+    revenue: 0,
+    soldCount: 0,
+  };
+}
+
 function createMonthlyAccumulator(): MonthlyAccumulator[] {
   return Array.from({ length: 12 }, () => ({
     revenue: 0,
     soldCount: 0,
   }));
+}
+
+function createSourceBreakdown(): SourceBreakdown {
+  return {
+    manual: createSalesAggregate(),
+    cafe24: createSalesAggregate(),
+  };
+}
+
+function createChannelBreakdown(): ChannelBreakdown {
+  return {
+    offline: createSalesAggregate(),
+    online: createSalesAggregate(),
+  };
+}
+
+function createMonthlySourceBreakdown(): SourceBreakdown[] {
+  return Array.from({ length: 12 }, () => createSourceBreakdown());
+}
+
+function normalizeRevenueSource(source: string | null | undefined): RevenueSource {
+  return source === 'cafe24' ? 'cafe24' : 'manual';
+}
+
+function mapSourceToChannel(source: RevenueSource): RevenueChannel {
+  return source === 'cafe24' ? 'online' : 'offline';
+}
+
+function addToAggregate(target: SalesAggregate, revenue: number, soldCount: number) {
+  target.revenue += revenue;
+  target.soldCount += soldCount;
 }
 
 export async function getRevenueAnalytics(
@@ -245,6 +319,7 @@ export async function getRevenueAnalyticsForAuthorizedUser(
       sale_price,
       quantity,
       sold_at,
+      source,
       artworks!inner (
         title,
         artist_id,
@@ -262,15 +337,19 @@ export async function getRevenueAnalyticsForAuthorizedUser(
 
   const currentYearMonthly = createMonthlyAccumulator();
   const previousYearMonthly = createMonthlyAccumulator();
+  const currentYearMonthlyBySource = createMonthlySourceBreakdown();
   const focusArtistMap = new Map<string, RankedArtist>();
   const focusEntries: RevenueEntry[] = [];
+  const focusSourceBreakdown = createSourceBreakdown();
+  const focusChannelBreakdown = createChannelBreakdown();
 
   for (const row of (soldRows || []) as unknown as SalesRecordRow[]) {
     const soldDate = new Date(row.sold_at);
     if (Number.isNaN(soldDate.getTime())) continue;
 
     const { year, month, day } = getKstDateParts(soldDate);
-    // Use sale_price directly (integer)
+    const source = normalizeRevenueSource(row.source);
+    const channel = mapSourceToChannel(source);
     const price = row.sale_price * row.quantity;
     const monthIndex = month - 1;
 
@@ -279,6 +358,7 @@ export async function getRevenueAnalyticsForAuthorizedUser(
     if (year === selectedYear) {
       currentYearMonthly[monthIndex].revenue += price;
       currentYearMonthly[monthIndex].soldCount += row.quantity;
+      addToAggregate(currentYearMonthlyBySource[monthIndex][source], price, row.quantity);
     } else if (year === selectedYear - 1) {
       previousYearMonthly[monthIndex].revenue += price;
       previousYearMonthly[monthIndex].soldCount += row.quantity;
@@ -290,6 +370,9 @@ export async function getRevenueAnalyticsForAuthorizedUser(
         : year === selectedYear && month === selectedMonth;
 
     if (!isInFocusPeriod) continue;
+
+    addToAggregate(focusSourceBreakdown[source], price, row.quantity);
+    addToAggregate(focusChannelBreakdown[channel], price, row.quantity);
 
     const artistValue = row.artworks?.artists;
     const artistName = Array.isArray(artistValue)
@@ -319,6 +402,8 @@ export async function getRevenueAnalyticsForAuthorizedUser(
       soldAtUtc: row.sold_at,
       soldAtKstDate: `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
       revenue: price,
+      source,
+      channel,
     });
   }
 
@@ -333,6 +418,10 @@ export async function getRevenueAnalyticsForAuthorizedUser(
       month === 1 ? previousYearMonthly[11].revenue : currentYearMonthly[index - 1].revenue;
     const averagePrice =
       current.soldCount > 0 ? Math.round(current.revenue / current.soldCount) : 0;
+    const manualRevenue = currentYearMonthlyBySource[index].manual.revenue;
+    const manualSoldCount = currentYearMonthlyBySource[index].manual.soldCount;
+    const cafe24Revenue = currentYearMonthlyBySource[index].cafe24.revenue;
+    const cafe24SoldCount = currentYearMonthlyBySource[index].cafe24.soldCount;
 
     cumulativeRevenue += current.revenue;
 
@@ -347,6 +436,14 @@ export async function getRevenueAnalyticsForAuthorizedUser(
       momChangeRatePct: calcChangeRate(current.revenue, previousMonthRevenue),
       yoyChangeRatePct: calcChangeRate(current.revenue, previousYear.revenue),
       cumulativeRevenue,
+      manualRevenue,
+      cafe24Revenue,
+      manualSoldCount,
+      cafe24SoldCount,
+      offlineRevenue: manualRevenue,
+      onlineRevenue: cafe24Revenue,
+      offlineSoldCount: manualSoldCount,
+      onlineSoldCount: cafe24SoldCount,
     });
   }
 
@@ -432,6 +529,12 @@ export async function getRevenueAnalyticsForAuthorizedUser(
       availableYears,
     },
     summary,
+    summaryBySource: focusSourceBreakdown,
+    summaryByChannel: {
+      ...focusChannelBreakdown,
+      onlineRevenueSharePct: calcShare(focusChannelBreakdown.online.revenue, summary.totalRevenue),
+      onlineSoldSharePct: calcShare(focusChannelBreakdown.online.soldCount, summary.soldCount),
+    },
     focusMonth,
     yearly: {
       totalRevenue: yearTotalRevenue,
@@ -446,6 +549,10 @@ export async function getRevenueAnalyticsForAuthorizedUser(
       revenue: month.revenue,
       soldCount: month.soldCount,
       averagePrice: month.averagePrice,
+      offlineRevenue: month.offlineRevenue,
+      onlineRevenue: month.onlineRevenue,
+      offlineSoldCount: month.offlineSoldCount,
+      onlineSoldCount: month.onlineSoldCount,
     })),
     topArtists,
     topArtworks,

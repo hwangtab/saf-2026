@@ -42,11 +42,16 @@ function RevenueTooltip({ active, payload }: RevenueTooltipProps) {
   if (!active || !payload || payload.length === 0) return null;
   const point = payload[0]?.payload;
   if (!point) return null;
+  const onlineShare =
+    point.revenue > 0 ? `${((point.onlineRevenue / point.revenue) * 100).toFixed(1)}%` : '0%';
 
   return (
     <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs shadow-sm">
       <p className="font-semibold text-slate-800">{point.label}</p>
-      <p className="mt-1 text-slate-600">인식매출: {KRW_FORMATTER.format(point.revenue)}</p>
+      <p className="mt-1 text-slate-600">총 인식매출: {KRW_FORMATTER.format(point.revenue)}</p>
+      <p className="text-slate-600">오프라인: {KRW_FORMATTER.format(point.offlineRevenue)}</p>
+      <p className="text-slate-600">온라인: {KRW_FORMATTER.format(point.onlineRevenue)}</p>
+      <p className="text-slate-600">온라인 비중: {onlineShare}</p>
       <p className="text-slate-600">판매수량: {NUMBER_FORMATTER.format(point.soldCount)}점</p>
       <p className="text-slate-600">평균단가: {KRW_FORMATTER.format(point.averagePrice)}</p>
     </div>
@@ -58,8 +63,10 @@ export function MonthlyRevenueChart({ data }: MonthlyRevenueChartProps) {
 
   return (
     <AdminCard className="flex h-full flex-col p-6">
-      <h3 className="text-lg font-semibold text-slate-900">월별 인식매출/판매수량 추이</h3>
-      <p className="mt-1 text-xs text-slate-500">KST 기준 월 단위 집계</p>
+      <h3 className="text-lg font-semibold text-slate-900">월별 오프라인/온라인 매출 추이</h3>
+      <p className="mt-1 text-xs text-slate-500">
+        KST 기준 월 단위 집계 · source 기준(manual=오프라인, cafe24=온라인)
+      </p>
       <div className="relative mt-4 h-[340px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={data} margin={{ top: 10, right: 18, left: 10, bottom: 8 }}>
@@ -89,11 +96,21 @@ export function MonthlyRevenueChart({ data }: MonthlyRevenueChartProps) {
             <Legend verticalAlign="top" align="right" height={30} iconType="circle" />
             <Bar
               yAxisId="left"
-              dataKey="revenue"
-              name="인식매출"
-              fill="#2563eb"
+              dataKey="offlineRevenue"
+              name="오프라인 매출"
+              fill="#0f766e"
               radius={[5, 5, 0, 0]}
               maxBarSize={28}
+              stackId="revenue"
+            />
+            <Bar
+              yAxisId="left"
+              dataKey="onlineRevenue"
+              name="온라인 매출"
+              fill="#ea580c"
+              radius={[5, 5, 0, 0]}
+              maxBarSize={28}
+              stackId="revenue"
             />
             <Line
               yAxisId="right"
