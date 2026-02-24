@@ -149,7 +149,6 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
         <RevenueCard
           title={`${analytics.summary.periodLabel} 평균단가`}
           value={analytics.summary.averagePrice}
-          subtitle={`비교 기준: ${analytics.summary.comparedToLabel} 동기`}
         />
       </div>
 
