@@ -12,6 +12,8 @@ type SyncArtworkRecord = {
   material: string | null;
   year: string | null;
   edition: string | null;
+  edition_type: 'unique' | 'limited' | 'open' | string | null;
+  edition_limit: number | null;
   price: string | null;
   images: string[] | null;
   status: 'available' | 'reserved' | 'sold' | string | null;
@@ -31,6 +33,12 @@ type SyncResult = {
   shopUrl?: string;
   productNo?: number;
   reason?: string;
+};
+
+type InventorySyncPolicy = {
+  mode: 'managed' | 'unmanaged';
+  quantity: number | null;
+  selling: boolean;
 };
 
 const SUPPORTED_CAFE24_IMAGE_EXTENSIONS = new Set(['jpg', 'jpeg', 'png', 'gif']);
@@ -59,6 +67,62 @@ function parsePrice(priceRaw: string | null): { amount: number; inquiry: boolean
     return { amount: 0, inquiry: true };
   }
   return { amount: Math.floor(numeric), inquiry: false };
+}
+
+function toPositiveInteger(value: unknown): number | null {
+  if (typeof value === 'number' && Number.isFinite(value) && value > 0) {
+    return Math.floor(value);
+  }
+  if (typeof value === 'string') {
+    const parsed = Number.parseInt(value.trim(), 10);
+    if (Number.isFinite(parsed) && parsed > 0) {
+      return parsed;
+    }
+  }
+  return null;
+}
+
+function normalizeEditionType(
+  value: SyncArtworkRecord['edition_type']
+): 'unique' | 'limited' | 'open' {
+  if (value === 'limited' || value === 'open') {
+    return value;
+  }
+  return 'unique';
+}
+
+function buildInventorySyncPolicy(
+  artwork: SyncArtworkRecord,
+  soldQuantity: number
+): InventorySyncPolicy {
+  const isVisible = !artwork.is_hidden;
+  const isAvailableStatus = artwork.status === 'available';
+  const editionType = normalizeEditionType(artwork.edition_type);
+
+  if (editionType === 'open') {
+    return {
+      mode: 'unmanaged',
+      quantity: null,
+      selling: isVisible && isAvailableStatus,
+    };
+  }
+
+  const editionLimit = editionType === 'unique' ? 1 : toPositiveInteger(artwork.edition_limit);
+  if (!editionLimit) {
+    throw new Error('에디션 한정 수량이 올바르지 않습니다. edition_limit 값을 확인하세요.');
+  }
+
+  const safeSoldQuantity = Number.isFinite(soldQuantity)
+    ? Math.max(0, Math.floor(soldQuantity))
+    : 0;
+  const remainingQuantity =
+    artwork.status === 'sold' ? 0 : Math.max(editionLimit - safeSoldQuantity, 0);
+
+  return {
+    mode: 'managed',
+    quantity: remainingQuantity,
+    selling: isVisible && isAvailableStatus && remainingQuantity > 0,
+  };
 }
 
 function normalizeForSummary(value: string | null): string {
@@ -260,14 +324,14 @@ function isMissingProductError(message: string): boolean {
 async function requestWithVariants(
   path: string,
   method: 'POST' | 'PUT',
-  payload: JsonRecord
+  payload: JsonRecord,
+  wrapperKeys: string[] = ['request', 'product']
 ): Promise<unknown> {
   const client = createCafe24AdminApiClient();
-  const variants: Array<{ name: string; body: JsonRecord }> = [
-    { name: 'request', body: { request: payload } },
-    { name: 'product', body: { product: payload } },
-    { name: 'plain', body: payload },
-  ];
+  const variants = Array.from(new Set([...wrapperKeys, 'plain'])).map((variant) => ({
+    name: variant,
+    body: variant === 'plain' ? payload : ({ [variant]: payload } as JsonRecord),
+  }));
   const errors: string[] = [];
 
   for (const variant of variants) {
@@ -285,9 +349,93 @@ async function requestWithVariants(
   throw new Error(`Cafe24 요청 실패: ${errors.join(' | ')}`);
 }
 
+function extractVariantCodes(value: unknown): string[] {
+  const codes = new Set<string>();
+  const stack: unknown[] = [value];
+
+  while (stack.length > 0) {
+    const current = stack.pop();
+    if (!current || typeof current !== 'object') continue;
+
+    if (Array.isArray(current)) {
+      for (const child of current) {
+        stack.push(child);
+      }
+      continue;
+    }
+
+    const obj = current as JsonRecord;
+    const rawCode = obj.variant_code;
+    if (typeof rawCode === 'string' && rawCode.trim()) {
+      codes.add(rawCode.trim());
+    }
+
+    for (const child of Object.values(obj)) {
+      stack.push(child);
+    }
+  }
+
+  return Array.from(codes);
+}
+
+async function syncCafe24Inventory(productNo: number, policy: InventorySyncPolicy): Promise<void> {
+  const client = createCafe24AdminApiClient();
+  const variantResponse = await client.request(`/products/${productNo}/variants`, {
+    method: 'GET',
+  });
+  const variantCodes = extractVariantCodes(variantResponse);
+
+  if (variantCodes.length === 0) {
+    throw new Error('카페24 상품 옵션(variant) 정보를 찾을 수 없습니다.');
+  }
+
+  if (variantCodes.length > 1) {
+    throw new Error(
+      `카페24 옵션 상품(${variantCodes.length}개 variant)은 자동 재고 동기화 대상이 아닙니다.`
+    );
+  }
+
+  const [variantCode] = variantCodes;
+  const payload =
+    policy.mode === 'managed'
+      ? compactObject({
+          use_inventory: 'T',
+          important_inventory: 'A',
+          inventory_control_type: 'A',
+          display_soldout: 'T',
+          quantity: policy.quantity ?? 0,
+        })
+      : compactObject({
+          use_inventory: 'F',
+          display_soldout: 'F',
+        });
+
+  await requestWithVariants(
+    `/products/${productNo}/variants/${encodeURIComponent(variantCode)}/inventories`,
+    'PUT',
+    payload,
+    ['request', 'inventory', 'inventories', 'variant']
+  );
+}
+
+async function fetchArtworkSoldQuantity(artworkId: string): Promise<number> {
+  const supabase = createSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from('artwork_sales')
+    .select('quantity')
+    .eq('artwork_id', artworkId);
+
+  if (error) {
+    throw new Error(`판매 수량 조회 실패: ${error.message}`);
+  }
+
+  return (data || []).reduce((sum, row) => sum + (row.quantity || 0), 0);
+}
+
 async function upsertCafe24Product(
   artwork: SyncArtworkRecord,
-  customProductCode: string
+  customProductCode: string,
+  selling: boolean
 ): Promise<number> {
   const config = getCafe24Config();
   if (!config) {
@@ -301,11 +449,10 @@ async function upsertCafe24Product(
   const price = parsePrice(artwork.price);
   const tagParts = [artistName, '씨앗페', 'SAF2026', '미술', '예술', '작품'];
   const isVisible = !artwork.is_hidden;
-  const isAvailableForSale = isVisible && artwork.status === 'available';
 
   const payload = compactObject({
     display: isVisible ? 'T' : 'F',
-    selling: isAvailableForSale ? 'T' : 'F',
+    selling: selling ? 'T' : 'F',
     custom_product_code: customProductCode,
     product_name: `${artwork.title} - ${artistName}`.trim(),
     supply_price: price.amount,
@@ -465,7 +612,7 @@ export async function syncArtworkToCafe24(artworkId: string): Promise<SyncResult
   const { data, error } = await supabase
     .from('artworks')
     .select(
-      'id, title, description, size, material, year, edition, price, images, status, is_hidden, shop_url, cafe24_product_no, cafe24_custom_product_code, artists(name_ko, bio, history)'
+      'id, title, description, size, material, year, edition, edition_type, edition_limit, price, images, status, is_hidden, shop_url, cafe24_product_no, cafe24_custom_product_code, artists(name_ko, bio, history)'
     )
     .eq('id', artworkId)
     .single();
@@ -476,6 +623,8 @@ export async function syncArtworkToCafe24(artworkId: string): Promise<SyncResult
 
   const artwork = data as unknown as SyncArtworkRecord;
   const customCode = artwork.cafe24_custom_product_code || buildCustomProductCode(artwork.id);
+  const soldQuantity = await fetchArtworkSoldQuantity(artworkId);
+  const inventoryPolicy = buildInventorySyncPolicy(artwork, soldQuantity);
 
   await markSyncState(artworkId, {
     cafe24_sync_status: 'syncing',
@@ -486,9 +635,10 @@ export async function syncArtworkToCafe24(artworkId: string): Promise<SyncResult
   let latestProductNo: number | null = artwork.cafe24_product_no ?? null;
 
   try {
-    const productNo = await upsertCafe24Product(artwork, customCode);
+    const productNo = await upsertCafe24Product(artwork, customCode, inventoryPolicy.selling);
     latestProductNo = productNo;
     const categoryNo = await ensureProductCategory(productNo, config.defaultCategoryNo);
+    await syncCafe24Inventory(productNo, inventoryPolicy);
     const imageUrl = pickImageUrl(artwork.images);
     let warningMessage: string | null = null;
 
