@@ -42,6 +42,30 @@ type InventorySyncPolicy = {
 };
 
 const SUPPORTED_CAFE24_IMAGE_EXTENSIONS = new Set(['jpg', 'jpeg', 'png', 'gif']);
+const DEFAULT_IMAGE_FETCH_TIMEOUT_MS = 12_000;
+const DEFAULT_IMAGE_FETCH_RETRIES = 1;
+
+function wait(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function resolveImageFetchTimeoutMs(): number {
+  const raw = process.env.CAFE24_IMAGE_FETCH_TIMEOUT_MS?.trim();
+  const parsed = raw ? Number.parseInt(raw, 10) : NaN;
+  if (!Number.isFinite(parsed) || parsed <= 0) return DEFAULT_IMAGE_FETCH_TIMEOUT_MS;
+  return Math.max(3_000, parsed);
+}
+
+function resolveImageFetchRetries(): number {
+  const raw = process.env.CAFE24_IMAGE_FETCH_RETRIES?.trim();
+  const parsed = raw ? Number.parseInt(raw, 10) : NaN;
+  if (!Number.isFinite(parsed) || parsed < 0) return DEFAULT_IMAGE_FETCH_RETRIES;
+  return Math.min(3, parsed);
+}
+
+function isRetryableImageStatus(status: number): boolean {
+  return status === 408 || status === 429 || status >= 500;
+}
 
 function stripHtml(value: string): string {
   return value
@@ -435,7 +459,8 @@ async function fetchArtworkSoldQuantity(artworkId: string): Promise<number> {
 async function upsertCafe24Product(
   artwork: SyncArtworkRecord,
   customProductCode: string,
-  selling: boolean
+  selling: boolean,
+  priceAmount: number
 ): Promise<number> {
   const config = getCafe24Config();
   if (!config) {
@@ -446,7 +471,6 @@ async function upsertCafe24Product(
   const summary = [normalizeForSummary(artwork.material), normalizeForSummary(artwork.size)]
     .filter(Boolean)
     .join(' | ');
-  const price = parsePrice(artwork.price);
   const tagParts = [artistName, '씨앗페', 'SAF2026', '미술', '예술', '작품'];
   const isVisible = !artwork.is_hidden;
 
@@ -455,8 +479,8 @@ async function upsertCafe24Product(
     selling: selling ? 'T' : 'F',
     custom_product_code: customProductCode,
     product_name: `${artwork.title} - ${artistName}`.trim(),
-    supply_price: price.amount,
-    price: price.amount,
+    supply_price: priceAmount,
+    price: priceAmount,
     summary_description: summary,
     simple_description: summary,
     description: buildDescription(artwork),
@@ -498,19 +522,54 @@ async function upsertCafe24Product(
 }
 
 async function fetchImageAsBase64(url: string): Promise<string> {
-  const response = await fetch(url, { cache: 'no-store' });
-  if (!response.ok) {
-    throw new Error(`이미지 다운로드 실패(status=${response.status})`);
-  }
-  const sourceBuffer = Buffer.from(await response.arrayBuffer());
-  const extension = inferImageExtension(url, response.headers.get('content-type'));
+  const timeoutMs = resolveImageFetchTimeoutMs();
+  const maxRetries = resolveImageFetchRetries();
+  let lastError: Error | null = null;
 
-  if (extension && SUPPORTED_CAFE24_IMAGE_EXTENSIONS.has(extension) && extension !== 'webp') {
-    return sourceBuffer.toString('base64');
+  for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const response = await fetch(url, { cache: 'no-store', signal: controller.signal });
+      if (!response.ok) {
+        const message = `이미지 다운로드 실패(status=${response.status})`;
+        if (attempt < maxRetries && isRetryableImageStatus(response.status)) {
+          await wait(250 * 2 ** attempt);
+          continue;
+        }
+        throw new Error(message);
+      }
+
+      const sourceBuffer = Buffer.from(await response.arrayBuffer());
+      const extension = inferImageExtension(url, response.headers.get('content-type'));
+
+      if (extension && SUPPORTED_CAFE24_IMAGE_EXTENSIONS.has(extension) && extension !== 'webp') {
+        return sourceBuffer.toString('base64');
+      }
+
+      const convertedBuffer = await sharp(sourceBuffer).jpeg({ quality: 90 }).toBuffer();
+      return convertedBuffer.toString('base64');
+    } catch (error) {
+      const timeoutError = error instanceof Error && error.name === 'AbortError';
+      const message =
+        error instanceof Error
+          ? error.message
+          : '이미지 다운로드 중 알 수 없는 오류가 발생했습니다.';
+      const statusMatch = /status=(\d{3})/.exec(message);
+      const statusCode = statusMatch ? Number.parseInt(statusMatch[1], 10) : null;
+      const retryable = timeoutError || (statusCode !== null && isRetryableImageStatus(statusCode));
+      lastError = new Error(timeoutError ? `이미지 다운로드 타임아웃(${timeoutMs}ms)` : message);
+      if (attempt < maxRetries && retryable) {
+        await wait(250 * 2 ** attempt);
+        continue;
+      }
+    } finally {
+      clearTimeout(timeout);
+    }
   }
 
-  const convertedBuffer = await sharp(sourceBuffer).jpeg({ quality: 90 }).toBuffer();
-  return convertedBuffer.toString('base64');
+  throw lastError || new Error('이미지 다운로드 실패');
 }
 
 async function ensureProductCategory(
@@ -635,12 +694,28 @@ export async function syncArtworkToCafe24(artworkId: string): Promise<SyncResult
   try {
     const soldQuantity = await fetchArtworkSoldQuantity(artworkId);
     const inventoryPolicy = buildInventorySyncPolicy(artwork, soldQuantity);
-    const productNo = await upsertCafe24Product(artwork, customCode, inventoryPolicy.selling);
+    const priceInfo = parsePrice(artwork.price);
+    const priceReadyToSell = !priceInfo.inquiry && priceInfo.amount > 0;
+    const effectiveSelling = inventoryPolicy.selling && priceReadyToSell;
+    let warningMessage: string | null = null;
+
+    if (inventoryPolicy.selling && !priceReadyToSell) {
+      warningMessage = mergeWarnings(
+        warningMessage,
+        '가격 미확정 상태(문의/미입력)라 카페24 판매를 비활성화했습니다.'
+      );
+    }
+
+    const productNo = await upsertCafe24Product(
+      artwork,
+      customCode,
+      effectiveSelling,
+      priceInfo.amount
+    );
     latestProductNo = productNo;
     const categoryNo = await ensureProductCategory(productNo, config.defaultCategoryNo);
     await syncCafe24Inventory(productNo, inventoryPolicy);
     const imageUrl = pickImageUrl(artwork.images);
-    let warningMessage: string | null = null;
 
     const mustHaveCategory = config.mallId === 'koreasmartcoop';
     if (!categoryNo && mustHaveCategory) {

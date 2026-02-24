@@ -363,7 +363,9 @@ export async function GET(request: NextRequest) {
       removedProfile += profileCleanup.removed;
       removedCafe24 += cafe24Cleanup.deleted;
       missingCafe24 += cafe24Cleanup.missing;
-    } catch {
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`[purge-trash] log=${log.id} failed: ${message}`);
       failed += 1;
     }
   }

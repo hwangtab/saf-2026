@@ -121,6 +121,7 @@ type OrderItemContext = {
   salePrice: number;
   soldAt: string;
   soldAtMs: number;
+  filterAnchorMs: number | null;
   payload: JsonRecord;
 };
 
@@ -491,6 +492,14 @@ function resolveCursorOverlapMinutes(): number {
   return Math.min(parsed, 24 * 60);
 }
 
+function resolveMaxOrderPages(): number {
+  const raw = process.env.CAFE24_SALES_MAX_ORDER_PAGES?.trim();
+  if (!raw) return MAX_ORDER_PAGES;
+  const parsed = Number.parseInt(raw, 10);
+  if (!Number.isFinite(parsed) || parsed <= 0) return MAX_ORDER_PAGES;
+  return Math.min(200, parsed);
+}
+
 function resolveNextCursorIso(previousIso: string | null, candidateMs: number): string {
   const previousMs = isoToMs(previousIso) || 0;
   const nextMs = Math.max(previousMs, candidateMs);
@@ -703,8 +712,13 @@ function buildOrderItemContext(
     orderContext.paidAt ||
     orderContext.orderedAt ||
     new Date().toISOString();
+  const filterAnchorIso =
+    normalizeToIso(pickString(item, ['paid_date', 'pay_date', 'payment_date', 'updated_date'])) ||
+    orderContext.paidAt ||
+    null;
   const soldAtMs = isoToMs(soldAt);
   if (!soldAtMs) return null;
+  const filterAnchorMs = isoToMs(filterAnchorIso);
 
   const orderItemCode = resolveOrderItemCode(orderContext.orderId, item);
   const payload: JsonRecord = {
@@ -732,6 +746,7 @@ function buildOrderItemContext(
     salePrice,
     soldAt,
     soldAtMs,
+    filterAnchorMs,
     payload,
   };
 }
@@ -740,15 +755,17 @@ async function fetchOrdersInRange(
   client: ReturnType<typeof createCafe24AdminApiClient>,
   windowFromIso: string,
   windowToIso: string
-): Promise<{ orders: JsonRecord[]; dateType: string | null }> {
+): Promise<{ orders: JsonRecord[]; dateType: string | null; maxPageLimitHit: boolean }> {
   const startDate = toKstDateString(windowFromIso);
   const endDate = toKstDateString(windowToIso);
   const pageLimit = DEFAULT_ORDER_PAGE_LIMIT;
+  const maxPages = resolveMaxOrderPages();
   const allOrders: JsonRecord[] = [];
   let offset = 0;
   let selectedDateType: string | null = null;
+  let maxPageLimitHit = false;
 
-  for (let page = 0; page < MAX_ORDER_PAGES; page += 1) {
+  for (let page = 0; page < maxPages; page += 1) {
     const pageResult = await fetchOrdersPage(client, {
       startDate,
       endDate,
@@ -770,12 +787,17 @@ async function fetchOrdersInRange(
 
     allOrders.push(...rows);
     if (rows.length < pageLimit) break;
+    if (page === maxPages - 1) {
+      maxPageLimitHit = true;
+      break;
+    }
     offset += pageLimit;
   }
 
   return {
     orders: allOrders,
     dateType: selectedDateType,
+    maxPageLimitHit,
   };
 }
 
@@ -1231,6 +1253,11 @@ export async function syncCafe24SalesFromOrders(
 
     ordersFetched = orderResult.orders.length;
     dateTypeUsed = orderResult.dateType;
+    if (orderResult.maxPageLimitHit) {
+      blockingErrors.push(
+        `주문 조회 페이지 상한에 도달했습니다. CAFE24_SALES_MAX_ORDER_PAGES(현재=${resolveMaxOrderPages()})를 점검하세요.`
+      );
+    }
 
     const preparedRows: PreparedSaleRow[] = [];
     const localDedup = new Set<string>();
@@ -1258,7 +1285,15 @@ export async function syncCafe24SalesFromOrders(
             return;
           }
 
-          if (itemContext.soldAtMs < windowFromMs || itemContext.soldAtMs > windowToMs + 60_000) {
+          if (itemContext.filterAnchorMs !== null) {
+            if (
+              itemContext.filterAnchorMs < windowFromMs ||
+              itemContext.filterAnchorMs > windowToMs + 60_000
+            ) {
+              skippedOutsideWindow += 1;
+              return;
+            }
+          } else if (itemContext.soldAtMs > windowToMs + 60_000) {
             skippedOutsideWindow += 1;
             return;
           }

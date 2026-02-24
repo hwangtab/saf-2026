@@ -3,6 +3,9 @@ import { createSupabaseAdminClient } from '@/lib/auth/server';
 const DEFAULT_SCOPE = 'mall.read_product,mall.write_product';
 const ACCESS_TOKEN_REFRESH_BUFFER_SECONDS = 90;
 const KOREASMARTCOOP_FALLBACK_CATEGORY_NO = 43;
+const DEFAULT_HTTP_TIMEOUT_MS = 15_000;
+const DEFAULT_HTTP_MAX_RETRIES = 2;
+const RETRYABLE_HTTP_STATUS = new Set([408, 425, 429, 500, 502, 503, 504]);
 
 type JsonRecord = Record<string, unknown>;
 
@@ -35,6 +38,95 @@ type Cafe24TokenRow = {
   expires_at: string;
   raw_response: JsonRecord;
 };
+
+function wait(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function computeRetryDelayMs(attempt: number): number {
+  // 250ms, 500ms, 1000ms ... capped
+  return Math.min(4_000, 250 * 2 ** attempt);
+}
+
+function parsePositiveInt(raw: string | undefined, fallback: number): number {
+  if (!raw) return fallback;
+  const parsed = Number.parseInt(raw.trim(), 10);
+  if (!Number.isFinite(parsed) || parsed < 0) return fallback;
+  return parsed;
+}
+
+function resolveHttpTimeoutMs(): number {
+  return Math.max(
+    3_000,
+    parsePositiveInt(process.env.CAFE24_HTTP_TIMEOUT_MS, DEFAULT_HTTP_TIMEOUT_MS)
+  );
+}
+
+function resolveHttpMaxRetries(): number {
+  const parsed = parsePositiveInt(process.env.CAFE24_HTTP_MAX_RETRIES, DEFAULT_HTTP_MAX_RETRIES);
+  return Math.min(5, parsed);
+}
+
+function isRetryableHttpStatus(status: number): boolean {
+  return RETRYABLE_HTTP_STATUS.has(status);
+}
+
+function isRetryableNetworkError(error: unknown): boolean {
+  if (!(error instanceof Error)) return false;
+  if (error.name === 'AbortError') return true;
+  const message = error.message.toLowerCase();
+  return (
+    message.includes('timed out') ||
+    message.includes('timeout') ||
+    message.includes('fetch failed') ||
+    message.includes('network') ||
+    message.includes('socket') ||
+    message.includes('ecconn') ||
+    message.includes('econn')
+  );
+}
+
+async function fetchWithTimeout(
+  input: string,
+  init: RequestInit,
+  timeoutMs: number
+): Promise<Response> {
+  const controller = new AbortController();
+  const parentSignal = init.signal;
+  let timeoutTriggered = false;
+  let abortListener: (() => void) | null = null;
+
+  const timeout = setTimeout(() => {
+    timeoutTriggered = true;
+    controller.abort();
+  }, timeoutMs);
+
+  if (parentSignal) {
+    if (parentSignal.aborted) {
+      controller.abort();
+    } else {
+      abortListener = () => controller.abort();
+      parentSignal.addEventListener('abort', abortListener, { once: true });
+    }
+  }
+
+  try {
+    return await fetch(input, {
+      ...init,
+      signal: controller.signal,
+    });
+  } catch (error) {
+    if (timeoutTriggered) {
+      throw new Error(`Cafe24 API 요청 타임아웃(${timeoutMs}ms)`);
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeout);
+    if (parentSignal && abortListener) {
+      parentSignal.removeEventListener('abort', abortListener);
+    }
+  }
+}
 
 function parseCategoryNo(raw: string | undefined): number | null {
   if (!raw) return null;
@@ -198,26 +290,51 @@ async function refreshAccessToken(
     refresh_token: refreshToken,
   });
 
-  const response = await fetch(tokenEndpoint, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      Authorization: `Basic ${basicAuth}`,
-    },
-    body: form.toString(),
-    cache: 'no-store',
-  });
-  const payload = (await parseJsonResponse(response)) as unknown;
+  const maxRetries = resolveHttpMaxRetries();
+  const timeoutMs = resolveHttpTimeoutMs();
+  let lastMessage = 'Cafe24 토큰 리프레시 요청에 실패했습니다.';
 
-  if (!response.ok || !payload || typeof payload !== 'object') {
-    throw new Error(parseErrorMessage(payload, response.status));
+  for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
+    try {
+      const response = await fetchWithTimeout(
+        tokenEndpoint,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Authorization: `Basic ${basicAuth}`,
+          },
+          body: form.toString(),
+          cache: 'no-store',
+        },
+        timeoutMs
+      );
+      const payload = (await parseJsonResponse(response)) as unknown;
+
+      if (!response.ok || !payload || typeof payload !== 'object') {
+        lastMessage = parseErrorMessage(payload, response.status);
+        if (attempt < maxRetries && isRetryableHttpStatus(response.status)) {
+          await wait(computeRetryDelayMs(attempt));
+          continue;
+        }
+        throw new Error(lastMessage);
+      }
+
+      const token = payload as Cafe24TokenResponse;
+      if (!token.access_token || !token.refresh_token) {
+        throw new Error('Cafe24 리프레시 응답에 access_token/refresh_token이 없습니다.');
+      }
+      return token;
+    } catch (error) {
+      if (attempt < maxRetries && isRetryableNetworkError(error)) {
+        await wait(computeRetryDelayMs(attempt));
+        continue;
+      }
+      throw error;
+    }
   }
 
-  const token = payload as Cafe24TokenResponse;
-  if (!token.access_token || !token.refresh_token) {
-    throw new Error('Cafe24 리프레시 응답에 access_token/refresh_token이 없습니다.');
-  }
-  return token;
+  throw new Error(lastMessage);
 }
 
 function isTokenFresh(expiresAt: string): boolean {
@@ -244,9 +361,18 @@ export async function getCafe24AccessToken(forceRefresh = false): Promise<string
     return tokenRow.access_token;
   }
 
-  const refreshed = await refreshAccessToken(config, tokenRow.refresh_token);
-  await saveTokenRow(config, refreshed);
-  return refreshed.access_token;
+  try {
+    const refreshed = await refreshAccessToken(config, tokenRow.refresh_token);
+    await saveTokenRow(config, refreshed);
+    return refreshed.access_token;
+  } catch (refreshError) {
+    // 동시 요청에서 다른 워커가 먼저 토큰 갱신을 완료한 경우를 허용한다.
+    const reloaded = await loadTokenRow(config);
+    if (reloaded && isTokenFresh(reloaded.expires_at)) {
+      return reloaded.access_token;
+    }
+    throw refreshError;
+  }
 }
 
 export class Cafe24AdminApiClient {
@@ -275,22 +401,47 @@ export class Cafe24AdminApiClient {
       headers.set('Content-Type', 'application/json');
     }
 
-    const response = await fetch(url, {
-      ...init,
-      headers,
-      cache: 'no-store',
-    });
-    const payload = await parseJsonResponse(response);
+    const timeoutMs = resolveHttpTimeoutMs();
+    const maxRetries = resolveHttpMaxRetries();
+    let lastMessage = 'Cafe24 API 요청에 실패했습니다.';
 
-    if (response.status === 401 && !retried) {
-      return this.requestWithAuth(path, init, true);
+    for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
+      try {
+        const response = await fetchWithTimeout(
+          url,
+          {
+            ...init,
+            headers,
+            cache: 'no-store',
+          },
+          timeoutMs
+        );
+        const payload = await parseJsonResponse(response);
+
+        if (response.status === 401 && !retried) {
+          return this.requestWithAuth(path, init, true);
+        }
+
+        if (!response.ok) {
+          lastMessage = parseErrorMessage(payload, response.status);
+          if (attempt < maxRetries && isRetryableHttpStatus(response.status)) {
+            await wait(computeRetryDelayMs(attempt));
+            continue;
+          }
+          throw new Error(lastMessage);
+        }
+
+        return payload;
+      } catch (error) {
+        if (attempt < maxRetries && isRetryableNetworkError(error)) {
+          await wait(computeRetryDelayMs(attempt));
+          continue;
+        }
+        throw error;
+      }
     }
 
-    if (!response.ok) {
-      throw new Error(parseErrorMessage(payload, response.status));
-    }
-
-    return payload;
+    throw new Error(lastMessage);
   }
 }
 

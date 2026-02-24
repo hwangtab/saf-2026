@@ -135,6 +135,10 @@ function formatActionDescription(log: ActivityLogEntry): string {
       return `일괄 삭제: ${details?.count}건`;
     case 'batch_cafe24_missing_shop_url_sync':
       return `구매링크 누락 동기화: 성공 ${details?.succeeded || 0}건 / 실패 ${details?.failed || 0}건`;
+    case 'cafe24_sales_sync_warning':
+      return `Cafe24 판매 동기화 경고: ${details?.reason || '일부 항목 확인 필요'}`;
+    case 'cafe24_sales_sync_failed':
+      return `Cafe24 판매 동기화 실패: ${details?.reason || '원인 확인 필요'}`;
     case 'artwork_sold':
       return `판매 기록 등록: ${details?.quantity || 1}점`;
     case 'approve_exhibitor':

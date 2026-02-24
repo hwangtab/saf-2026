@@ -1,8 +1,54 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { syncCafe24SalesFromOrders } from '@/lib/integrations/cafe24/sync-sales';
+import { createSupabaseAdminClient } from '@/lib/auth/server';
+import {
+  syncCafe24SalesFromOrders,
+  type Cafe24SalesSyncResult,
+} from '@/lib/integrations/cafe24/sync-sales';
 
 export const runtime = 'nodejs';
+const SYSTEM_ACTOR_ID = '00000000-0000-0000-0000-000000000000';
+
+async function logSyncIssue(result: Cafe24SalesSyncResult, level: 'warning' | 'failed') {
+  try {
+    const supabase = createSupabaseAdminClient();
+    const action = level === 'failed' ? 'cafe24_sales_sync_failed' : 'cafe24_sales_sync_warning';
+    const summary =
+      level === 'failed'
+        ? `Cafe24 판매 동기화 실패: ${result.reason || '오류'}`
+        : `Cafe24 판매 동기화 경고: ${result.errors.length}건`;
+
+    await supabase.from('activity_logs').insert({
+      actor_id: SYSTEM_ACTOR_ID,
+      actor_role: 'system',
+      actor_name: 'Cafe24 Sales Sync Job',
+      actor_email: null,
+      action,
+      target_type: 'artwork',
+      target_id: result.mallId || 'unknown',
+      summary,
+      metadata: {
+        mall_id: result.mallId,
+        window_from: result.windowFrom,
+        window_to: result.windowTo,
+        orders_fetched: result.ordersFetched,
+        order_items_fetched: result.orderItemsFetched,
+        inserted: result.inserted,
+        duplicate_skipped: result.duplicateSkipped,
+        failed_orders: result.failedOrders,
+        sold_out_lock_failed: result.soldOutLockFailed,
+        reason: result.reason || null,
+        errors: result.errors.slice(0, 30),
+      },
+      before_snapshot: null,
+      after_snapshot: null,
+      reversible: false,
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(`[cafe24-sync-sales] activity log write failed: ${message}`);
+  }
+}
 
 export async function GET(request: NextRequest) {
   const cronSecret = process.env.CRON_SECRET;
@@ -29,6 +75,12 @@ export async function GET(request: NextRequest) {
       revalidatePath('/artworks');
       revalidatePath('/artworks/[id]', 'page');
       revalidatePath('/artworks/artist/[artist]', 'page');
+    }
+
+    if (!result.ok) {
+      await logSyncIssue(result, 'failed');
+    } else if (result.errors.length > 0) {
+      await logSyncIssue(result, 'warning');
     }
 
     return NextResponse.json(result, {

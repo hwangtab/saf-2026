@@ -14,6 +14,7 @@ type Cafe24SyncFeedback = {
 };
 
 const CAFE24_SYNC_CONCURRENCY = 6;
+const CAFE24_MISSING_LINK_SYNC_CONCURRENCY = 4;
 
 function toCafe24SyncFeedback(
   result: Awaited<ReturnType<typeof syncArtworkToCafe24>>
@@ -439,29 +440,40 @@ export async function syncMissingArtworkPurchaseLinks(): Promise<MissingPurchase
 
   let succeeded = 0;
   const errors: MissingPurchaseLinkSyncError[] = [];
+  let cursor = 0;
 
-  for (const row of rows) {
-    try {
-      const result = await syncArtworkToCafe24(row.id);
-      if (result.ok) {
-        succeeded += 1;
-        continue;
+  const worker = async () => {
+    while (true) {
+      const index = cursor;
+      cursor += 1;
+      if (index >= rows.length) return;
+
+      const row = rows[index];
+      try {
+        const result = await syncArtworkToCafe24(row.id);
+        if (result.ok) {
+          succeeded += 1;
+          continue;
+        }
+
+        errors.push({
+          id: row.id,
+          title: row.title || '(제목 없음)',
+          reason: result.reason || '알 수 없는 오류',
+        });
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        errors.push({
+          id: row.id,
+          title: row.title || '(제목 없음)',
+          reason: message,
+        });
       }
-
-      errors.push({
-        id: row.id,
-        title: row.title || '(제목 없음)',
-        reason: result.reason || '알 수 없는 오류',
-      });
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      errors.push({
-        id: row.id,
-        title: row.title || '(제목 없음)',
-        reason: message,
-      });
     }
-  }
+  };
+
+  const workerCount = Math.min(CAFE24_MISSING_LINK_SYNC_CONCURRENCY, rows.length);
+  await Promise.all(Array.from({ length: workerCount }, () => worker()));
 
   const failed = errors.length;
 

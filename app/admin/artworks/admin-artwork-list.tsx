@@ -33,6 +33,8 @@ type ArtworkItem = {
   is_hidden: boolean;
   images: string[] | null;
   created_at: string | null;
+  cafe24_sync_status: string | null;
+  cafe24_sync_error: string | null;
   artists: { name_ko: string | null } | null;
 };
 
@@ -760,6 +762,30 @@ export function AdminArtworkList({
                           <div className="text-sm text-gray-500">
                             {artwork.artists?.name_ko || '작가 미상'}
                           </div>
+                          {(artwork.cafe24_sync_status === 'failed' ||
+                            artwork.cafe24_sync_status === 'pending_auth' ||
+                            artwork.cafe24_sync_status === 'synced_with_warning' ||
+                            artwork.cafe24_sync_status === 'syncing') && (
+                            <div
+                              className={`mt-1 text-xs ${
+                                artwork.cafe24_sync_status === 'failed'
+                                  ? 'text-red-600'
+                                  : artwork.cafe24_sync_status === 'pending_auth'
+                                    ? 'text-amber-600'
+                                    : artwork.cafe24_sync_status === 'syncing'
+                                      ? 'text-blue-600'
+                                      : 'text-amber-600'
+                              }`}
+                              title={artwork.cafe24_sync_error || ''}
+                            >
+                              {artwork.cafe24_sync_status === 'failed' && '구매연동 오류'}
+                              {artwork.cafe24_sync_status === 'pending_auth' &&
+                                '구매연동 재승인 필요'}
+                              {artwork.cafe24_sync_status === 'synced_with_warning' &&
+                                '구매연동 경고'}
+                              {artwork.cafe24_sync_status === 'syncing' && '구매연동 진행 중'}
+                            </div>
+                          )}
                         </div>
                       </div>
                     </td>
