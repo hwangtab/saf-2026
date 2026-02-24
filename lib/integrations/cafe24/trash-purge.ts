@@ -11,6 +11,14 @@ export type Cafe24ProductPurgeResult = {
   errors: string[];
 };
 
+function isProductionRuntime(): boolean {
+  const vercelEnv = (process.env.VERCEL_ENV || '').trim().toLowerCase();
+  if (vercelEnv) {
+    return vercelEnv === 'production';
+  }
+  return (process.env.NODE_ENV || '').trim().toLowerCase() === 'production';
+}
+
 function asObject(value: unknown): JsonRecord | null {
   if (!value || Array.isArray(value) || typeof value !== 'object') return null;
   return value as JsonRecord;
@@ -120,8 +128,16 @@ export async function purgeCafe24ProductsFromTrashEntry(input: {
     return { ...emptyResult, productNos };
   }
 
-  // Cafe24 설정이 없는 환경에서는 휴지통 정리 자체는 계속 진행하도록 스킵 처리한다.
+  // 운영 환경에서 Cafe24 설정 누락 시 영구삭제를 진행하면 복구 불가한 정합성 문제를 만들 수 있다.
   if (!getCafe24Config()) {
+    if (isProductionRuntime()) {
+      return {
+        ...emptyResult,
+        productNos,
+        failed: productNos.length,
+        errors: ['Cafe24 환경변수 누락으로 상품 정리를 수행할 수 없습니다.'],
+      };
+    }
     return { ...emptyResult, productNos, skipped: true };
   }
 

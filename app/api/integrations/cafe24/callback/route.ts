@@ -20,7 +20,12 @@ function getRequiredEnv(name: string): string {
 function getSafeReturnTo(request: NextRequest): string {
   const encoded = request.cookies.get(RETURN_TO_COOKIE_NAME)?.value;
   if (!encoded) return '/admin/artworks';
-  const decoded = decodeURIComponent(encoded);
+  let decoded: string;
+  try {
+    decoded = decodeURIComponent(encoded);
+  } catch {
+    return '/admin/artworks';
+  }
   if (!decoded.startsWith('/') || decoded.startsWith('//')) return '/admin/artworks';
   return decoded;
 }
@@ -36,7 +41,11 @@ function getRawQueryParam(request: NextRequest, key: string): string | null {
     const [rawKey, ...rawValueParts] = pair.split('=');
     if (rawKey !== key) continue;
     const rawValue = rawValueParts.join('=');
-    return decodeURIComponent(rawValue.replace(/\+/g, '%2B'));
+    try {
+      return decodeURIComponent(rawValue.replace(/\+/g, '%2B'));
+    } catch {
+      return null;
+    }
   }
 
   return null;

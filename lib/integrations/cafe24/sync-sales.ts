@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { createCafe24AdminApiClient, getCafe24Config } from './client';
 import { syncArtworkToCafe24 } from './sync-artwork';
@@ -143,6 +144,7 @@ type ProductNoBackfillResult = {
 type ArtworkProductMapResult = {
   mapping: Map<number, string>;
   backfill: ProductNoBackfillResult;
+  duplicateProductNos: number[];
 };
 
 type SoldOutLockResult = {
@@ -311,6 +313,20 @@ function chunk<T>(values: T[], size: number): T[][] {
     result.push(values.slice(i, i + size));
   }
   return result;
+}
+
+function stableStringify(value: unknown): string {
+  if (value === null || typeof value !== 'object') {
+    return JSON.stringify(value);
+  }
+
+  if (Array.isArray(value)) {
+    return `[${value.map((item) => stableStringify(item)).join(',')}]`;
+  }
+
+  const obj = value as JsonRecord;
+  const keys = Object.keys(obj).sort();
+  return `{${keys.map((key) => `${JSON.stringify(key)}:${stableStringify(obj[key])}`).join(',')}}`;
 }
 
 function extractArrayByKeyCandidates(
@@ -509,22 +525,55 @@ async function ensureSyncState(mallId: string, initialCutoffIso: string): Promis
   return data as SyncStateRow;
 }
 
-async function updateSyncState(
+async function beginSyncRun(
   mallId: string,
-  patch: Partial<Omit<SyncStateRow, 'mall_id' | 'created_at'>>
-): Promise<void> {
+  previousStartedAt: string | null,
+  runStartedAt: string
+): Promise<boolean> {
   const supabase = createSupabaseAdminClient();
-  const { error } = await supabase
+  const nowIso = new Date().toISOString();
+  let query = supabase
+    .from('cafe24_sales_sync_state')
+    .update({
+      last_sync_started_at: runStartedAt,
+      last_error: null,
+      updated_at: nowIso,
+    })
+    .eq('mall_id', mallId);
+
+  query = previousStartedAt
+    ? query.eq('last_sync_started_at', previousStartedAt)
+    : query.is('last_sync_started_at', null);
+
+  const { data, error } = await query.select('mall_id');
+  if (error) {
+    throw new Error(`Cafe24 판매 동기화 시작 잠금 실패: ${error.message}`);
+  }
+
+  return Array.isArray(data) && data.length === 1;
+}
+
+async function updateSyncStateForRun(
+  mallId: string,
+  runStartedAt: string,
+  patch: Partial<Omit<SyncStateRow, 'mall_id' | 'created_at'>>
+): Promise<boolean> {
+  const supabase = createSupabaseAdminClient();
+  const { data, error } = await supabase
     .from('cafe24_sales_sync_state')
     .update({
       ...patch,
       updated_at: new Date().toISOString(),
     })
-    .eq('mall_id', mallId);
+    .eq('mall_id', mallId)
+    .eq('last_sync_started_at', runStartedAt)
+    .select('mall_id');
 
   if (error) {
     throw new Error(`Cafe24 판매 동기화 상태 업데이트 실패: ${error.message}`);
   }
+
+  return Array.isArray(data) && data.length === 1;
 }
 
 function buildOrderContext(order: JsonRecord): OrderContext | null {
@@ -557,16 +606,31 @@ function buildOrderContext(order: JsonRecord): OrderContext | null {
   };
 }
 
-function resolveOrderItemCode(orderId: string, item: JsonRecord, index: number): string {
+function resolveOrderItemCode(orderId: string, item: JsonRecord): string {
   const explicit =
-    pickString(item, ['order_item_code', 'item_code', 'order_product_code', 'product_code']) ||
-    null;
+    pickString(item, [
+      'order_item_code',
+      'item_code',
+      'order_product_code',
+      'product_code',
+      'order_item_no',
+      'line_item_id',
+    ]) || null;
   if (explicit) return explicit;
 
-  const fallbackProduct = parseInteger(item.product_no) ?? parseInteger(item.item_no) ?? 0;
-  const fallbackVariant =
-    pickString(item, ['variant_code', 'option_code', 'option_value', 'option_name']) || 'base';
-  return `${orderId}:${fallbackProduct}:${fallbackVariant}:${index}`;
+  const fallbackSeed: JsonRecord = {
+    product_no: parseInteger(item.product_no) ?? parseInteger(item.item_no),
+    variant_code: pickString(item, ['variant_code', 'option_code']),
+    option_value: pickString(item, ['option_value', 'option_name']),
+    product_name: pickString(item, ['product_name', 'item_name']),
+    quantity: parseInteger(item.quantity ?? item.product_quantity ?? item.amount),
+    payment_amount: parseMoney(item.payment_amount),
+    order_item_price: parseMoney(item.order_item_price),
+    total_price: parseMoney(item.total_price),
+  };
+
+  const digest = crypto.createHash('sha1').update(stableStringify(fallbackSeed)).digest('hex');
+  return `${orderId}:${digest.slice(0, 16)}`;
 }
 
 function resolveOrderItemPrice(
@@ -618,7 +682,6 @@ function resolveOrderItemPrice(
 function buildOrderItemContext(
   orderContext: OrderContext,
   item: JsonRecord,
-  index: number,
   orderItemCount: number
 ): OrderItemContext | null {
   const productNo = parseInteger(item.product_no) ?? parseInteger(item.item_no);
@@ -643,7 +706,7 @@ function buildOrderItemContext(
   const soldAtMs = isoToMs(soldAt);
   if (!soldAtMs) return null;
 
-  const orderItemCode = resolveOrderItemCode(orderContext.orderId, item, index);
+  const orderItemCode = resolveOrderItemCode(orderContext.orderId, item);
   const payload: JsonRecord = {
     order_id: orderContext.orderId,
     order_item_code: orderItemCode,
@@ -828,6 +891,7 @@ async function loadArtworkMapByProductNo(): Promise<ArtworkProductMapResult> {
   }
 
   const mapping = new Map<number, string>();
+  const duplicateProductNos = new Set<number>();
   const backfillCandidates: Array<{ id: string; productNo: number }> = [];
 
   for (const row of (data || []) as Array<{
@@ -843,8 +907,11 @@ async function loadArtworkMapByProductNo(): Promise<ArtworkProductMapResult> {
     const resolvedProductNo = productNoFromColumn || productNoFromShopUrl;
 
     if (!resolvedProductNo || resolvedProductNo <= 0) continue;
-    if (!mapping.has(resolvedProductNo)) {
+    const existingArtworkId = mapping.get(resolvedProductNo);
+    if (!existingArtworkId) {
       mapping.set(resolvedProductNo, row.id);
+    } else if (existingArtworkId !== row.id) {
+      duplicateProductNos.add(resolvedProductNo);
     }
 
     if (!productNoFromColumn && productNoFromShopUrl) {
@@ -853,10 +920,14 @@ async function loadArtworkMapByProductNo(): Promise<ArtworkProductMapResult> {
   }
 
   const backfill = await backfillArtworkProductNos(backfillCandidates);
+  for (const duplicateProductNo of duplicateProductNos) {
+    mapping.delete(duplicateProductNo);
+  }
 
   return {
     mapping,
     backfill,
+    duplicateProductNos: Array.from(duplicateProductNos).sort((a, b) => a - b),
   };
 }
 
@@ -1058,18 +1129,10 @@ export async function syncCafe24SalesFromOrders(
 
   const windowFromIso = new Date(windowFromMs).toISOString();
   const windowToIso = new Date(windowToMs).toISOString();
+  const runStartedAt = nowIso;
+  const lockAcquired = await beginSyncRun(mallId, state.last_sync_started_at, runStartedAt);
 
-  await updateSyncState(mallId, {
-    last_sync_started_at: nowIso,
-    last_error: null,
-  });
-
-  if (windowFromMs >= windowToMs) {
-    await updateSyncState(mallId, {
-      last_synced_paid_at: resolveNextCursorIso(state.last_synced_paid_at, windowToMs),
-      last_sync_completed_at: new Date().toISOString(),
-      last_error: null,
-    });
+  if (!lockAcquired) {
     return {
       ok: true,
       mallId,
@@ -1091,6 +1154,41 @@ export async function syncCafe24SalesFromOrders(
       soldOutLockedSynced: 0,
       soldOutLockFailed: 0,
       errors: [],
+      reason: '이미 실행 중인 Cafe24 판매 동기화 작업이 있어 이번 실행을 건너뛰었습니다.',
+    };
+  }
+
+  if (windowFromMs >= windowToMs) {
+    const stateUpdated = await updateSyncStateForRun(mallId, runStartedAt, {
+      last_synced_paid_at: resolveNextCursorIso(state.last_synced_paid_at, windowToMs),
+      last_sync_completed_at: new Date().toISOString(),
+      last_error: null,
+    });
+    const warnings = stateUpdated
+      ? []
+      : ['동기화 상태 저장 경쟁이 감지되어 커서 업데이트를 건너뛰었습니다.'];
+    return {
+      ok: true,
+      mallId,
+      windowFrom: windowFromIso,
+      windowTo: windowToIso,
+      dateType: null,
+      ordersFetched: 0,
+      ordersPaid: 0,
+      orderItemsFetched: 0,
+      mappedItems: 0,
+      inserted: 0,
+      duplicateSkipped: 0,
+      skippedNoProductNo: 0,
+      skippedNoArtworkMapping: 0,
+      skippedOutsideWindow: 0,
+      failedOrders: 0,
+      backfilledProductNos: 0,
+      backfillProductNoFailures: 0,
+      soldOutLockedSynced: 0,
+      soldOutLockFailed: 0,
+      errors: warnings,
+      reason: warnings.length > 0 ? '일부 경고가 있습니다.' : undefined,
     };
   }
 
@@ -1122,6 +1220,14 @@ export async function syncCafe24SalesFromOrders(
     const artworkByProductNo = artworkMapResult.mapping;
     backfilledProductNos = artworkMapResult.backfill.updated;
     backfillProductNoFailures = artworkMapResult.backfill.failed;
+    if (artworkMapResult.duplicateProductNos.length > 0) {
+      const sample = artworkMapResult.duplicateProductNos.slice(0, 10).join(', ');
+      const suffix =
+        artworkMapResult.duplicateProductNos.length > 10
+          ? ` 외 ${artworkMapResult.duplicateProductNos.length - 10}건`
+          : '';
+      blockingErrors.push(`중복 product_no 매핑 감지: ${sample}${suffix}`);
+    }
 
     ordersFetched = orderResult.orders.length;
     dateTypeUsed = orderResult.dateType;
@@ -1140,13 +1246,13 @@ export async function syncCafe24SalesFromOrders(
         const items = await fetchOrderItems(client, order.orderId);
         orderItemsFetched += items.length;
         let hasSoldItemInOrder = false;
-        items.forEach((item, index) => {
+        items.forEach((item) => {
           if (!isItemConsideredSold(order, item)) {
             return;
           }
           hasSoldItemInOrder = true;
 
-          const itemContext = buildOrderItemContext(order, item, index, items.length);
+          const itemContext = buildOrderItemContext(order, item, items.length);
           if (!itemContext) {
             skippedNoProductNo += 1;
             return;
@@ -1216,14 +1322,16 @@ export async function syncCafe24SalesFromOrders(
     }
 
     const syncSucceeded = blockingErrors.length === 0;
-    const allErrors = [...blockingErrors, ...warningErrors];
-    await updateSyncState(mallId, {
+    const stateUpdated = await updateSyncStateForRun(mallId, runStartedAt, {
       last_synced_paid_at: syncSucceeded
         ? resolveNextCursorIso(state.last_synced_paid_at, windowToMs)
         : state.last_synced_paid_at,
       last_sync_completed_at: new Date().toISOString(),
       last_error: syncSucceeded ? null : blockingErrors.join(' | ').slice(0, 2000),
     });
+    if (!stateUpdated) {
+      warningErrors.push('동기화 상태 저장 경쟁이 감지되어 커서 업데이트를 건너뛰었습니다.');
+    }
 
     return {
       ok: syncSucceeded,
@@ -1245,7 +1353,7 @@ export async function syncCafe24SalesFromOrders(
       backfillProductNoFailures,
       soldOutLockedSynced,
       soldOutLockFailed,
-      errors: allErrors,
+      errors: [...blockingErrors, ...warningErrors],
       reason: syncSucceeded
         ? warningErrors.length > 0
           ? '일부 경고가 있습니다.'
@@ -1254,10 +1362,20 @@ export async function syncCafe24SalesFromOrders(
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    await updateSyncState(mallId, {
-      last_sync_completed_at: new Date().toISOString(),
-      last_error: message.slice(0, 2000),
-    });
+    const fallbackErrors: string[] = [];
+    try {
+      const updated = await updateSyncStateForRun(mallId, runStartedAt, {
+        last_sync_completed_at: new Date().toISOString(),
+        last_error: message.slice(0, 2000),
+      });
+      if (!updated) {
+        fallbackErrors.push('동기화 상태 저장 경쟁이 감지되어 실패 상태 반영을 건너뛰었습니다.');
+      }
+    } catch (stateUpdateError) {
+      const stateUpdateMessage =
+        stateUpdateError instanceof Error ? stateUpdateError.message : String(stateUpdateError);
+      fallbackErrors.push(`실패 상태 기록 저장 실패: ${stateUpdateMessage}`);
+    }
 
     return {
       ok: false,
@@ -1279,7 +1397,7 @@ export async function syncCafe24SalesFromOrders(
       backfillProductNoFailures,
       soldOutLockedSynced,
       soldOutLockFailed,
-      errors: [...blockingErrors, ...warningErrors, message],
+      errors: [...blockingErrors, ...warningErrors, message, ...fallbackErrors],
       reason: message,
     };
   }
