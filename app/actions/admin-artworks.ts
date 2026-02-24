@@ -406,13 +406,6 @@ type MissingPurchaseLinkSyncResult = {
   errors: MissingPurchaseLinkSyncError[];
 };
 
-type EditionInventorySyncResult = {
-  total: number;
-  succeeded: number;
-  failed: number;
-  errors: MissingPurchaseLinkSyncError[];
-};
-
 export async function syncMissingArtworkPurchaseLinks(): Promise<MissingPurchaseLinkSyncResult> {
   const admin = await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
@@ -474,81 +467,6 @@ export async function syncMissingArtworkPurchaseLinks(): Promise<MissingPurchase
     admin.id,
     {
       summary: `구매 링크 누락 작품 동기화: ${succeeded}/${rows.length} 성공`,
-      afterSnapshot: {
-        succeeded,
-        failed,
-        errors,
-      },
-      reversible: false,
-    }
-  );
-
-  return {
-    total: rows.length,
-    succeeded,
-    failed,
-    errors,
-  };
-}
-
-export async function syncCafe24EditionInventories(): Promise<EditionInventorySyncResult> {
-  const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
-
-  const { data: targets, error } = await supabase
-    .from('artworks')
-    .select('id, title')
-    .order('created_at', { ascending: false });
-
-  if (error) {
-    throw new Error(`에디션 재고 동기화 대상 조회 실패: ${error.message}`);
-  }
-
-  const rows = targets || [];
-  if (rows.length === 0) {
-    return {
-      total: 0,
-      succeeded: 0,
-      failed: 0,
-      errors: [],
-    };
-  }
-
-  let succeeded = 0;
-  const errors: MissingPurchaseLinkSyncError[] = [];
-
-  for (const row of rows) {
-    const result = await syncArtworkToCafe24(row.id);
-    if (result.ok) {
-      succeeded += 1;
-      continue;
-    }
-
-    errors.push({
-      id: row.id,
-      title: row.title || '(제목 없음)',
-      reason: result.reason || '알 수 없는 오류',
-    });
-  }
-
-  const failed = errors.length;
-
-  revalidatePath('/admin/artworks');
-  revalidatePath('/artworks');
-  revalidatePath('/');
-
-  await logAdminAction(
-    'batch_cafe24_edition_inventory_sync',
-    'artwork',
-    rows.map((row) => row.id).join(','),
-    {
-      total: rows.length,
-      succeeded,
-      failed,
-    },
-    admin.id,
-    {
-      summary: `에디션 재고 동기화: ${succeeded}/${rows.length} 성공`,
       afterSnapshot: {
         succeeded,
         failed,
