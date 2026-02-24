@@ -107,6 +107,7 @@ type PreparedSaleRow = {
 type OrderContext = {
   orderId: string;
   paidAt: string | null;
+  orderedAt: string | null;
   buyerName: string | null;
   paid: boolean;
   raw: JsonRecord;
@@ -429,21 +430,30 @@ function containsStatusKeyword(normalizedValues: string[], normalizedKeywords: s
   );
 }
 
-function isOrderConsideredSold(order: OrderContext, items: JsonRecord[]): boolean {
-  const statusValues: string[] = [...collectStatusValues(order.raw)];
-  for (const item of items) {
-    statusValues.push(...collectStatusValues(item));
-  }
-
-  const normalizedStatusValues = statusValues
+function isItemConsideredSold(order: OrderContext, item: JsonRecord): boolean {
+  const orderStatusValues = collectStatusValues(order.raw)
+    .map((value) => normalizeStatusToken(value))
+    .filter((value) => value.length > 0);
+  const itemStatusValues = collectStatusValues(item)
     .map((value) => normalizeStatusToken(value))
     .filter((value) => value.length > 0);
 
-  if (containsStatusKeyword(normalizedStatusValues, NORMALIZED_SALE_EXCLUDED_KEYWORDS)) {
+  if (containsStatusKeyword(itemStatusValues, NORMALIZED_SALE_EXCLUDED_KEYWORDS)) {
     return false;
   }
 
-  if (containsStatusKeyword(normalizedStatusValues, NORMALIZED_SALE_RECOGNIZED_KEYWORDS)) {
+  if (containsStatusKeyword(itemStatusValues, NORMALIZED_SALE_RECOGNIZED_KEYWORDS)) {
+    return true;
+  }
+
+  if (
+    itemStatusValues.length === 0 &&
+    containsStatusKeyword(orderStatusValues, NORMALIZED_SALE_EXCLUDED_KEYWORDS)
+  ) {
+    return false;
+  }
+
+  if (containsStatusKeyword(orderStatusValues, NORMALIZED_SALE_RECOGNIZED_KEYWORDS)) {
     return true;
   }
 
@@ -523,14 +533,11 @@ function buildOrderContext(order: JsonRecord): OrderContext | null {
 
   const paidAt =
     normalizeToIso(
-      pickString(order, [
-        'paid_date',
-        'pay_date',
-        'payment_date',
-        'first_payment_date',
-        'order_date',
-        'ordered_date',
-      ])
+      pickString(order, ['paid_date', 'pay_date', 'payment_date', 'first_payment_date'])
+    ) || null;
+  const orderedAt =
+    normalizeToIso(
+      pickString(order, ['order_date', 'ordered_date', 'register_date', 'created_date'])
     ) || null;
 
   const paidFlag = parseBooleanFlag(
@@ -543,6 +550,7 @@ function buildOrderContext(order: JsonRecord): OrderContext | null {
   return {
     orderId,
     paidAt,
+    orderedAt,
     buyerName: pickString(order, ['buyer_name', 'order_name', 'member_name', 'receiver_name']),
     paid: paidFlag ?? !!paidAt,
     raw: order,
@@ -561,7 +569,12 @@ function resolveOrderItemCode(orderId: string, item: JsonRecord, index: number):
   return `${orderId}:${fallbackProduct}:${fallbackVariant}:${index}`;
 }
 
-function resolveOrderItemPrice(item: JsonRecord, order: JsonRecord, quantity: number): number {
+function resolveOrderItemPrice(
+  item: JsonRecord,
+  order: JsonRecord,
+  quantity: number,
+  orderItemCount: number
+): number {
   const unitCandidates = [
     'product_price',
     'sale_price',
@@ -579,13 +592,24 @@ function resolveOrderItemPrice(item: JsonRecord, order: JsonRecord, quantity: nu
     parseMoney(item.payment_amount),
     parseMoney(item.order_item_price),
     parseMoney(item.total_price),
-    parseMoney(order.payment_amount),
-    parseMoney(order.order_price_amount),
   ];
   for (const total of totalCandidates) {
     if (total === null) continue;
     if (quantity <= 1) return total;
     return Math.max(0, Math.round(total / quantity));
+  }
+
+  if (orderItemCount === 1) {
+    const orderLevelTotals = [
+      parseMoney(order.payment_amount),
+      parseMoney(order.order_price_amount),
+      parseMoney(order.total_price),
+    ];
+    for (const total of orderLevelTotals) {
+      if (total === null) continue;
+      if (quantity <= 1) return total;
+      return Math.max(0, Math.round(total / quantity));
+    }
   }
 
   return 0;
@@ -594,13 +618,14 @@ function resolveOrderItemPrice(item: JsonRecord, order: JsonRecord, quantity: nu
 function buildOrderItemContext(
   orderContext: OrderContext,
   item: JsonRecord,
-  index: number
+  index: number,
+  orderItemCount: number
 ): OrderItemContext | null {
   const productNo = parseInteger(item.product_no) ?? parseInteger(item.item_no);
   if (!productNo || productNo <= 0) return null;
 
   const quantity = parsePositiveInteger(item.quantity ?? item.product_quantity ?? item.amount, 1);
-  const salePrice = resolveOrderItemPrice(item, orderContext.raw, quantity);
+  const salePrice = resolveOrderItemPrice(item, orderContext.raw, quantity, orderItemCount);
   const soldAt =
     normalizeToIso(
       pickString(item, [
@@ -613,6 +638,7 @@ function buildOrderItemContext(
       ])
     ) ||
     orderContext.paidAt ||
+    orderContext.orderedAt ||
     new Date().toISOString();
   const soldAtMs = isoToMs(soldAt);
   if (!soldAtMs) return null;
@@ -795,7 +821,7 @@ async function loadArtworkMapByProductNo(): Promise<ArtworkProductMapResult> {
   const { data, error } = await supabase
     .from('artworks')
     .select('id, cafe24_product_no, shop_url')
-    .not('shop_url', 'is', null);
+    .or('cafe24_product_no.not.is.null,shop_url.not.is.null');
 
   if (error) {
     throw new Error(`작품 매핑 조회 실패: ${error.message}`);
@@ -1068,7 +1094,8 @@ export async function syncCafe24SalesFromOrders(
     };
   }
 
-  const errors: string[] = [];
+  const blockingErrors: string[] = [];
+  const warningErrors: string[] = [];
   let ordersFetched = 0;
   let ordersPaid = 0;
   let orderItemsFetched = 0;
@@ -1105,23 +1132,21 @@ export async function syncCafe24SalesFromOrders(
     for (const orderRaw of orderResult.orders) {
       const order = buildOrderContext(orderRaw);
       if (!order) {
-        failedOrders += 1;
-        errors.push('order_id가 없는 주문을 건너뛰었습니다.');
+        warningErrors.push('order_id가 없는 주문을 건너뛰었습니다.');
         continue;
       }
 
       try {
         const items = await fetchOrderItems(client, order.orderId);
         orderItemsFetched += items.length;
-
-        if (!isOrderConsideredSold(order, items)) {
-          continue;
-        }
-
-        ordersPaid += 1;
-
+        let hasSoldItemInOrder = false;
         items.forEach((item, index) => {
-          const itemContext = buildOrderItemContext(order, item, index);
+          if (!isItemConsideredSold(order, item)) {
+            return;
+          }
+          hasSoldItemInOrder = true;
+
+          const itemContext = buildOrderItemContext(order, item, index, items.length);
           if (!itemContext) {
             skippedNoProductNo += 1;
             return;
@@ -1158,10 +1183,14 @@ export async function syncCafe24SalesFromOrders(
             external_payload: itemContext.payload,
           });
         });
+
+        if (hasSoldItemInOrder) {
+          ordersPaid += 1;
+        }
       } catch (error) {
         failedOrders += 1;
         const message = error instanceof Error ? error.message : String(error);
-        errors.push(`주문 ${order.orderId} 아이템 조회 실패: ${message}`);
+        blockingErrors.push(`주문 ${order.orderId} 아이템 조회 실패: ${message}`);
       }
     }
 
@@ -1172,7 +1201,7 @@ export async function syncCafe24SalesFromOrders(
     inserted = insertResult.inserted;
     duplicateSkipped += insertResult.duplicateSkipped;
     if (insertResult.failed > 0) {
-      errors.push(...insertResult.errors);
+      blockingErrors.push(...insertResult.errors);
     }
 
     const affectedArtworkIds = uniqueStable(dedupedByDb.filtered.map((row) => row.artwork_id));
@@ -1180,16 +1209,20 @@ export async function syncCafe24SalesFromOrders(
     soldOutLockedSynced = lockResult.synced;
     soldOutLockFailed = lockResult.failed;
     if (lockResult.failed > 0) {
-      errors.push(...lockResult.errors);
+      warningErrors.push(...lockResult.errors);
+    }
+    if (backfillProductNoFailures > 0) {
+      warningErrors.push(`product_no 백필 실패: ${backfillProductNoFailures}건`);
     }
 
-    const syncSucceeded = errors.length === 0;
+    const syncSucceeded = blockingErrors.length === 0;
+    const allErrors = [...blockingErrors, ...warningErrors];
     await updateSyncState(mallId, {
       last_synced_paid_at: syncSucceeded
         ? resolveNextCursorIso(state.last_synced_paid_at, windowToMs)
         : state.last_synced_paid_at,
       last_sync_completed_at: new Date().toISOString(),
-      last_error: syncSucceeded ? null : errors.join(' | ').slice(0, 2000),
+      last_error: syncSucceeded ? null : blockingErrors.join(' | ').slice(0, 2000),
     });
 
     return {
@@ -1212,8 +1245,12 @@ export async function syncCafe24SalesFromOrders(
       backfillProductNoFailures,
       soldOutLockedSynced,
       soldOutLockFailed,
-      errors,
-      reason: syncSucceeded ? undefined : '일부 주문 동기화에 실패했습니다.',
+      errors: allErrors,
+      reason: syncSucceeded
+        ? warningErrors.length > 0
+          ? '일부 경고가 있습니다.'
+          : undefined
+        : '일부 주문 동기화에 실패했습니다.',
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
@@ -1242,7 +1279,7 @@ export async function syncCafe24SalesFromOrders(
       backfillProductNoFailures,
       soldOutLockedSynced,
       soldOutLockFailed,
-      errors: [...errors, message],
+      errors: [...blockingErrors, ...warningErrors, message],
       reason: message,
     };
   }

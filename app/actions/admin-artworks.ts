@@ -62,11 +62,16 @@ async function syncCafe24Batch(ids: string[]): Promise<Cafe24BatchSyncResult> {
       if (index >= uniqueIds.length) return;
 
       const id = uniqueIds[index];
-      const result = await syncArtworkToCafe24(id);
-      if (result.ok) {
-        succeeded += 1;
-      } else {
-        errors.push(`${id}: ${result.reason || '알 수 없는 오류'}`);
+      try {
+        const result = await syncArtworkToCafe24(id);
+        if (result.ok) {
+          succeeded += 1;
+        } else {
+          errors.push(`${id}: ${result.reason || '알 수 없는 오류'}`);
+        }
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        errors.push(`${id}: ${message}`);
       }
     }
   };
@@ -436,17 +441,26 @@ export async function syncMissingArtworkPurchaseLinks(): Promise<MissingPurchase
   const errors: MissingPurchaseLinkSyncError[] = [];
 
   for (const row of rows) {
-    const result = await syncArtworkToCafe24(row.id);
-    if (result.ok) {
-      succeeded += 1;
-      continue;
-    }
+    try {
+      const result = await syncArtworkToCafe24(row.id);
+      if (result.ok) {
+        succeeded += 1;
+        continue;
+      }
 
-    errors.push({
-      id: row.id,
-      title: row.title || '(제목 없음)',
-      reason: result.reason || '알 수 없는 오류',
-    });
+      errors.push({
+        id: row.id,
+        title: row.title || '(제목 없음)',
+        reason: result.reason || '알 수 없는 오류',
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      errors.push({
+        id: row.id,
+        title: row.title || '(제목 없음)',
+        reason: message,
+      });
+    }
   }
 
   const failed = errors.length;

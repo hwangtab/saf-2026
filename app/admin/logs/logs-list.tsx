@@ -133,6 +133,18 @@ function formatActionDescription(log: ActivityLogEntry): string {
       return `일괄 숨김 변경: ${details?.count}건`;
     case 'batch_artwork_deleted':
       return `일괄 삭제: ${details?.count}건`;
+    case 'batch_cafe24_missing_shop_url_sync':
+      return `구매링크 누락 동기화: 성공 ${details?.succeeded || 0}건 / 실패 ${details?.failed || 0}건`;
+    case 'artwork_sold':
+      return `판매 기록 등록: ${details?.quantity || 1}점`;
+    case 'approve_exhibitor':
+      return `출품자 승인: ${details?.user_name || log.target_id}`;
+    case 'suspend_exhibitor':
+      return `출품자 정지: ${details?.user_name || log.target_id}`;
+    case 'testimonial_created':
+      return `추천사 생성: ${details?.author || log.target_id}`;
+    case 'testimonial_deleted':
+      return `추천사 삭제: ${details?.author || log.target_id}`;
     case 'artworks_exported':
       return `작품 데이터 다운로드: ${details?.total_count || '-'}건`;
     case 'artist_contacts_exported':

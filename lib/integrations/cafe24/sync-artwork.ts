@@ -623,8 +623,6 @@ export async function syncArtworkToCafe24(artworkId: string): Promise<SyncResult
 
   const artwork = data as unknown as SyncArtworkRecord;
   const customCode = artwork.cafe24_custom_product_code || buildCustomProductCode(artwork.id);
-  const soldQuantity = await fetchArtworkSoldQuantity(artworkId);
-  const inventoryPolicy = buildInventorySyncPolicy(artwork, soldQuantity);
 
   await markSyncState(artworkId, {
     cafe24_sync_status: 'syncing',
@@ -635,6 +633,8 @@ export async function syncArtworkToCafe24(artworkId: string): Promise<SyncResult
   let latestProductNo: number | null = artwork.cafe24_product_no ?? null;
 
   try {
+    const soldQuantity = await fetchArtworkSoldQuantity(artworkId);
+    const inventoryPolicy = buildInventorySyncPolicy(artwork, soldQuantity);
     const productNo = await upsertCafe24Product(artwork, customCode, inventoryPolicy.selling);
     latestProductNo = productNo;
     const categoryNo = await ensureProductCategory(productNo, config.defaultCategoryNo);
