@@ -11,6 +11,8 @@ const EXISTING_CODE_CHUNK_SIZE = 400;
 const INSERT_CHUNK_SIZE = 200;
 const PRODUCT_NO_BACKFILL_CHUNK_SIZE = 40;
 const MAX_CAFE24_LOCK_SYNC_CONCURRENCY = 4;
+const DEFAULT_MANUAL_MIRROR_PURGE_WINDOW_HOURS = 72;
+const DEFAULT_MANUAL_MIRROR_IMPORT_DATE = '2026-02-15';
 
 const STATUS_FIELD_CANDIDATES = [
   'order_status',
@@ -154,6 +156,11 @@ type SoldOutLockResult = {
   errors: string[];
 };
 
+type ManualMirrorPurgeResult = {
+  purged: number;
+  errors: string[];
+};
+
 export type Cafe24SalesSyncOptions = {
   forceWindowFromIso?: string | null;
   forceWindowToIso?: string | null;
@@ -177,6 +184,7 @@ export type Cafe24SalesSyncResult = {
   failedOrders: number;
   backfilledProductNos: number;
   backfillProductNoFailures: number;
+  manualMirrorPurged: number;
   soldOutLockedSynced: number;
   soldOutLockFailed: number;
   errors: string[];
@@ -498,6 +506,20 @@ function resolveMaxOrderPages(): number {
   const parsed = Number.parseInt(raw, 10);
   if (!Number.isFinite(parsed) || parsed <= 0) return MAX_ORDER_PAGES;
   return Math.min(200, parsed);
+}
+
+function resolveManualMirrorPurgeWindowHours(): number {
+  const raw = process.env.CAFE24_MANUAL_MIRROR_PURGE_WINDOW_HOURS?.trim();
+  if (!raw) return DEFAULT_MANUAL_MIRROR_PURGE_WINDOW_HOURS;
+  const parsed = Number.parseInt(raw, 10);
+  if (!Number.isFinite(parsed) || parsed <= 0) return DEFAULT_MANUAL_MIRROR_PURGE_WINDOW_HOURS;
+  return Math.min(parsed, 24 * 14);
+}
+
+function resolveManualMirrorImportDateToken(): string {
+  const raw = process.env.CAFE24_MANUAL_MIRROR_IMPORT_DATE?.trim();
+  if (!raw) return DEFAULT_MANUAL_MIRROR_IMPORT_DATE;
+  return /^\d{4}-\d{2}-\d{2}$/.test(raw) ? raw : DEFAULT_MANUAL_MIRROR_IMPORT_DATE;
 }
 
 function resolveNextCursorIso(previousIso: string | null, candidateMs: number): string {
@@ -989,6 +1011,112 @@ async function filterExistingOrderItemCodes(rows: PreparedSaleRow[]): Promise<{
   };
 }
 
+async function purgeHistoricalManualMirrors(
+  rows: PreparedSaleRow[]
+): Promise<ManualMirrorPurgeResult> {
+  if (rows.length === 0) {
+    return {
+      purged: 0,
+      errors: [],
+    };
+  }
+
+  const supabase = createSupabaseAdminClient();
+  const artworkIds = uniqueStable(rows.map((row) => row.artwork_id));
+  const importDateToken = resolveManualMirrorImportDateToken();
+  const windowMs = resolveManualMirrorPurgeWindowHours() * 60 * 60 * 1000;
+
+  const { data, error } = await supabase
+    .from('artwork_sales')
+    .select(
+      'id, artwork_id, sale_price, quantity, sold_at, created_at, buyer_name, note, source, external_order_id, external_order_item_code'
+    )
+    .in('artwork_id', artworkIds)
+    .neq('source', 'cafe24')
+    .is('external_order_item_code', null);
+
+  if (error) {
+    return {
+      purged: 0,
+      errors: [`수동 판매 중복후보 조회 실패: ${error.message}`],
+    };
+  }
+
+  const candidates = (data || []).filter((row) => {
+    if (typeof row.created_at !== 'string' || !row.created_at.startsWith(importDateToken)) {
+      return false;
+    }
+    if (typeof row.buyer_name === 'string' && row.buyer_name.trim()) {
+      return false;
+    }
+    const note = typeof row.note === 'string' ? row.note.trim() : '';
+    if (note && !note.startsWith('2026 씨앗페 판매')) {
+      return false;
+    }
+    return true;
+  }) as Array<{
+    id: string;
+    artwork_id: string;
+    sale_price: number | null;
+    quantity: number | null;
+    sold_at: string | null;
+  }>;
+
+  if (candidates.length === 0) {
+    return {
+      purged: 0,
+      errors: [],
+    };
+  }
+
+  const usedCandidateIds = new Set<string>();
+  const purgeIds: string[] = [];
+  for (const row of rows) {
+    const soldAtMs = isoToMs(row.sold_at);
+    if (soldAtMs === null) continue;
+    const matches = candidates
+      .filter((candidate) => {
+        if (usedCandidateIds.has(candidate.id)) return false;
+        if (candidate.artwork_id !== row.artwork_id) return false;
+        if ((candidate.sale_price || 0) !== row.sale_price) return false;
+        if ((candidate.quantity || 1) !== row.quantity) return false;
+        const candidateSoldAtMs = isoToMs(candidate.sold_at);
+        if (candidateSoldAtMs === null) return false;
+        return Math.abs(candidateSoldAtMs - soldAtMs) <= windowMs;
+      })
+      .sort((a, b) => {
+        const aDiff = Math.abs((isoToMs(a.sold_at) || 0) - soldAtMs);
+        const bDiff = Math.abs((isoToMs(b.sold_at) || 0) - soldAtMs);
+        return aDiff - bDiff;
+      });
+
+    const picked = matches[0];
+    if (!picked) continue;
+    usedCandidateIds.add(picked.id);
+    purgeIds.push(picked.id);
+  }
+
+  if (purgeIds.length === 0) {
+    return {
+      purged: 0,
+      errors: [],
+    };
+  }
+
+  const { error: deleteError } = await supabase.from('artwork_sales').delete().in('id', purgeIds);
+  if (deleteError) {
+    return {
+      purged: 0,
+      errors: [`수동 판매 중복 정리 실패: ${deleteError.message}`],
+    };
+  }
+
+  return {
+    purged: purgeIds.length,
+    errors: [],
+  };
+}
+
 async function insertPreparedSales(rows: PreparedSaleRow[]): Promise<InsertResult> {
   const supabase = createSupabaseAdminClient();
   let inserted = 0;
@@ -1126,6 +1254,7 @@ export async function syncCafe24SalesFromOrders(
       failedOrders: 0,
       backfilledProductNos: 0,
       backfillProductNoFailures: 0,
+      manualMirrorPurged: 0,
       soldOutLockedSynced: 0,
       soldOutLockFailed: 0,
       errors: [],
@@ -1173,6 +1302,7 @@ export async function syncCafe24SalesFromOrders(
       failedOrders: 0,
       backfilledProductNos: 0,
       backfillProductNoFailures: 0,
+      manualMirrorPurged: 0,
       soldOutLockedSynced: 0,
       soldOutLockFailed: 0,
       errors: [],
@@ -1207,6 +1337,7 @@ export async function syncCafe24SalesFromOrders(
       failedOrders: 0,
       backfilledProductNos: 0,
       backfillProductNoFailures: 0,
+      manualMirrorPurged: 0,
       soldOutLockedSynced: 0,
       soldOutLockFailed: 0,
       errors: warnings,
@@ -1229,6 +1360,7 @@ export async function syncCafe24SalesFromOrders(
   let dateTypeUsed: string | null = null;
   let backfilledProductNos = 0;
   let backfillProductNoFailures = 0;
+  let manualMirrorPurged = 0;
   let soldOutLockedSynced = 0;
   let soldOutLockFailed = 0;
 
@@ -1345,6 +1477,17 @@ export async function syncCafe24SalesFromOrders(
       blockingErrors.push(...insertResult.errors);
     }
 
+    if (insertResult.failed === 0 && dedupedByDb.filtered.length > 0) {
+      const purgeResult = await purgeHistoricalManualMirrors(dedupedByDb.filtered);
+      manualMirrorPurged = purgeResult.purged;
+      if (purgeResult.purged > 0) {
+        warningErrors.push(`Cafe24 중복 수동판매 정리: ${purgeResult.purged}건`);
+      }
+      if (purgeResult.errors.length > 0) {
+        warningErrors.push(...purgeResult.errors);
+      }
+    }
+
     const affectedArtworkIds = uniqueStable(dedupedByDb.filtered.map((row) => row.artwork_id));
     const lockResult = await lockSoldOutArtworksOnCafe24(affectedArtworkIds);
     soldOutLockedSynced = lockResult.synced;
@@ -1386,6 +1529,7 @@ export async function syncCafe24SalesFromOrders(
       failedOrders,
       backfilledProductNos,
       backfillProductNoFailures,
+      manualMirrorPurged,
       soldOutLockedSynced,
       soldOutLockFailed,
       errors: [...blockingErrors, ...warningErrors],
@@ -1430,6 +1574,7 @@ export async function syncCafe24SalesFromOrders(
       failedOrders,
       backfilledProductNos,
       backfillProductNoFailures,
+      manualMirrorPurged,
       soldOutLockedSynced,
       soldOutLockFailed,
       errors: [...blockingErrors, ...warningErrors, message, ...fallbackErrors],

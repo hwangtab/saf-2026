@@ -21,6 +21,10 @@
     "backfill:artwork-images:apply": "node scripts/backfill-artwork-image-variants.js --apply",
     "cleanup:artwork-variants:dry": "node scripts/cleanup-artwork-variants.js",
     "cleanup:artwork-variants:apply": "node scripts/cleanup-artwork-variants.js --apply",
+    "sales:reconcile-cafe24-mirrors:dry": "node scripts/reconcile-cafe24-manual-mirrors.js --verbose",
+    "sales:reconcile-cafe24-mirrors": "node scripts/reconcile-cafe24-manual-mirrors.js --apply --verbose",
+    "sales:rebuild-source:dry": "node scripts/rebuild-sales-source-from-csv.js --verbose",
+    "sales:rebuild-source": "node scripts/rebuild-sales-source-from-csv.js --apply --verbose",
     "trash:purge:expired:dry": "node scripts/purge-expired-trash.js --dry-run",
     "trash:purge:expired": "node scripts/purge-expired-trash.js",
     "cafe24:build-mapping": "python3 scripts/cafe24/build_initial_mapping.py"
