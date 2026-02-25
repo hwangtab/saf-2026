@@ -34,6 +34,7 @@ async function logSyncIssue(result: Cafe24SalesSyncResult, level: 'warning' | 'f
         orders_fetched: result.ordersFetched,
         order_items_fetched: result.orderItemsFetched,
         inserted: result.inserted,
+        voided: result.voided,
         duplicate_skipped: result.duplicateSkipped,
         manual_mirror_purged: result.manualMirrorPurged,
         failed_orders: result.failedOrders,
