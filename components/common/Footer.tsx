@@ -30,7 +30,7 @@ export default function Footer() {
                   한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인입니다.
                 </p>
                 <p className="text-sm text-gray-400">
-                  온라인 전시 및 구매 안내는 우측 링크와 고객문의를 통해 확인하실 수 있습니다.
+                  온라인 전시 및 구매 안내는 링크 메뉴와 고객문의를 통해 확인하실 수 있습니다.
                 </p>
               </div>
 
@@ -132,7 +132,14 @@ export default function Footer() {
 
                 <h3 className="font-sans font-bold text-lg mb-4">{UI_STRINGS.FOOTER.CONTACT}</h3>
                 <div className="text-sm text-gray-400 space-y-1">
-                  <p>{CONTACT.PERSON_NAME}</p>
+                  <p>
+                    <a
+                      href={`tel:${CONTACT.PHONE.replace(/-/g, '')}`}
+                      className="hover:text-primary transition-colors link-underline-offset"
+                    >
+                      {CONTACT.PHONE}
+                    </a>
+                  </p>
                   <p>
                     <a
                       href={`mailto:${CONTACT.EMAIL}`}
@@ -154,13 +161,7 @@ export default function Footer() {
                 </p>
                 <p>
                   주소: {CONTACT.ADDRESS} ({CONTACT.POSTAL_CODE}) | 통신판매신고번호:{' '}
-                  {CONTACT.MAIL_ORDER_REPORT_NUMBER} | 전화번호:{' '}
-                  <a
-                    href={`tel:${CONTACT.PHONE.replace(/-/g, '')}`}
-                    className="hover:text-primary transition-colors link-underline-offset"
-                  >
-                    {CONTACT.PHONE}
-                  </a>
+                  {CONTACT.MAIL_ORDER_REPORT_NUMBER}
                 </p>
               </div>
               {/* Copyright */}
