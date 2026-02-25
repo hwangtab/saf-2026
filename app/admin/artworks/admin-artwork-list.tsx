@@ -541,8 +541,8 @@ export function AdminArtworkList({
       <AdminCard className="overflow-hidden">
         {isTruncated && (
           <div className="border-b border-amber-200 bg-amber-50 px-6 py-3 text-sm text-amber-800">
-            작품 데이터가 많아 최근 {maxRows}건만 불러왔습니다. 검색/필터 또는 데이터 내보내기로
-            전체 확인이 가능합니다.
+            작품 데이터가 많아 최근 {maxRows}건만 불러왔습니다. 오래된 작품 확인은{' '}
+            <span className="font-medium">전체 작품 데이터 다운받기</span>를 이용해 주세요.
           </div>
         )}
         {/* Header & Main Controls */}
