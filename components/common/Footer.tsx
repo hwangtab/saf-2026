@@ -165,6 +165,16 @@ export default function Footer() {
 
             {/* Divider */}
             <div className="border-t border-gray-700 pt-8">
+              <div className="text-center text-xs text-gray-400 leading-6 mb-4">
+                <p>
+                  상호명: {CONTACT.ORGANIZATION_NAME} | 대표자명: {CONTACT.REPRESENTATIVE_NAME} |
+                  사업자등록번호: {CONTACT.BUSINESS_REGISTRATION_NUMBER}
+                </p>
+                <p>
+                  주소: {CONTACT.ADDRESS} ({CONTACT.POSTAL_CODE}) | 통신판매신고번호:{' '}
+                  {CONTACT.MAIL_ORDER_REPORT_NUMBER} | 전화번호: {CONTACT.PHONE}
+                </p>
+              </div>
               {/* Copyright */}
               <div className="text-center text-sm text-gray-400">
                 <p>© 2026 씨앗페. All rights reserved.</p>

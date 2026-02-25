@@ -39,9 +39,12 @@ export const CONTACT = {
   EMAIL: 'contact@kosmart.org',
   PHONE: '02-764-3114',
   ORGANIZATION_NAME: '한국스마트협동조합',
+  REPRESENTATIVE_NAME: '서인형',
+  BUSINESS_REGISTRATION_NUMBER: '385-86-01622',
+  MAIL_ORDER_REPORT_NUMBER: '제2021-서울은평-0715호',
   PERSON_NAME: '황경하 조직국장',
-  ADDRESS: '서울특별시 영등포구 양산로 96 A213호',
-  POSTAL_CODE: '07264',
+  ADDRESS: '서울특별시 은평구 통일로 68길 4, 302호 (불광동)',
+  POSTAL_CODE: '03358',
 };
 
 // Exhibition Info
