@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import Modal from '@/components/ui/Modal';
+import { CONTACT } from '@/lib/constants';
 
 interface PurchaseGuideProps {
   className?: string;
@@ -25,11 +26,24 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
       icon: '🔒',
       label: '안전 결제',
       text: 'SSL 보안 결제 시스템',
+      action: {
+        label: '자세히 보기',
+        onClick: () => setIsModalOpen(true),
+      },
     },
     {
       icon: '📜',
       label: '작품 보증서',
       text: '모든 작품 진품 보증서 발급',
+    },
+    {
+      icon: '↩️',
+      label: '취소/환불',
+      text: '수령 후 7일 이내 청약철회 가능',
+      action: {
+        label: '자세히 보기',
+        onClick: () => setIsModalOpen(true),
+      },
     },
   ];
 
@@ -60,10 +74,34 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title="배송 및 설치 안내"
+        title="구매 및 이용 안내"
         className="max-w-3xl"
       >
         <div className="space-y-8 text-sm md:text-base">
+          <section className="space-y-3">
+            <h4 className="font-bold text-lg text-charcoal">🧾 서비스 내용 및 이용 안내</h4>
+            <div className="bg-gray-50 p-4 rounded-lg space-y-2 text-gray-700">
+              <p>
+                본 상품은 등록된 작품 상세정보 기준의 실물 작품 1점을 제공합니다. 구매 후{' '}
+                <span className="font-semibold">결제 확인 → 작품 상태 최종 검수 → 발송</span> 순으로
+                진행됩니다.
+              </p>
+              <p className="text-gray-600">
+                문의: {CONTACT.PHONE} / {CONTACT.EMAIL} (평일 10:00~18:00)
+              </p>
+            </div>
+          </section>
+
+          <section className="space-y-3">
+            <h4 className="font-bold text-lg text-charcoal">💳 결제 안내</h4>
+            <div className="bg-gray-50 p-4 rounded-lg space-y-2 text-gray-700">
+              <p>카페24 보안결제(SSL) 시스템을 통해 안전하게 결제가 처리됩니다.</p>
+              <p className="text-gray-600">
+                결제수단별 승인 시점에 따라 주문 확정 시점이 달라질 수 있습니다.
+              </p>
+            </div>
+          </section>
+
           {/* 기본 배송 안내 */}
           <section className="space-y-3">
             <h4 className="font-bold text-lg text-charcoal">📦 택배 배송 안내</h4>
@@ -162,6 +200,25 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
               </li>
               <li>경상, 호남, 제주 등 도서산간 지역은 7일 이상 소요될 수 있습니다.</li>
               <li>품목에 따라 약 14일의 별도 제작 기간이 발생할 수 있습니다.</li>
+            </ul>
+          </section>
+
+          <section className="space-y-3 pt-4 border-t border-gray-100">
+            <h4 className="font-bold text-lg text-charcoal">↩️ 취소 · 교환 · 환불 정책</h4>
+            <ul className="list-disc pl-5 space-y-1 text-gray-600">
+              <li>
+                단순변심 청약철회는 <span className="font-semibold">수령 후 7일 이내</span>{' '}
+                가능합니다.
+              </li>
+              <li>작품 하자/오배송은 판매자 부담으로 교환 또는 환불 처리됩니다.</li>
+              <li>
+                단순변심 반품 배송비는 구매자 부담이며, 반품 확인 후{' '}
+                <span className="font-semibold">3영업일 이내</span> 원결제수단으로 환불됩니다.
+              </li>
+              <li>
+                작품 훼손, 가치 훼손, 주문제작 착수 시에는 관련 법령에 따라 청약철회가 제한될 수
+                있습니다.
+              </li>
             </ul>
           </section>
         </div>
