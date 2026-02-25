@@ -1,5 +1,5 @@
 import ExportedImage from 'next-image-export-optimizer';
-import { SOCIAL_LINKS, CONTACT, EXTERNAL_LINKS, EXHIBITION } from '@/lib/constants';
+import { SOCIAL_LINKS, CONTACT, EXTERNAL_LINKS } from '@/lib/constants';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
 import { UI_STRINGS } from '@/lib/ui-strings';
 import FooterSlider from '@/components/common/FooterSlider';
@@ -29,19 +29,9 @@ export default function Footer() {
                 <p className="text-gray-300 text-sm mb-4">
                   한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인입니다.
                 </p>
-                <div className="text-sm text-gray-400 space-y-1">
-                  <p>
-                    <a
-                      href={EXTERNAL_LINKS.INSA_GALLERY_KAKAO}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:text-primary transition-colors link-underline-offset"
-                    >
-                      {EXHIBITION.LOCATION} <br className="hidden md:inline" />({EXHIBITION.ADDRESS}
-                      )
-                    </a>
-                  </p>
-                </div>
+                <p className="text-sm text-gray-400">
+                  온라인 전시 및 구매 안내는 우측 링크와 고객문의를 통해 확인하실 수 있습니다.
+                </p>
               </div>
 
               {/* Quick Links */}
@@ -142,15 +132,7 @@ export default function Footer() {
 
                 <h3 className="font-sans font-bold text-lg mb-4">{UI_STRINGS.FOOTER.CONTACT}</h3>
                 <div className="text-sm text-gray-400 space-y-1">
-                  <p>{CONTACT.ORGANIZATION_NAME}</p>
-                  <p>
-                    <a
-                      href={`tel:${CONTACT.PHONE.replace(/-/g, '')}`}
-                      className="hover:text-primary transition-colors link-underline-offset"
-                    >
-                      {CONTACT.PHONE}
-                    </a>
-                  </p>
+                  <p>{CONTACT.PERSON_NAME}</p>
                   <p>
                     <a
                       href={`mailto:${CONTACT.EMAIL}`}
@@ -172,7 +154,13 @@ export default function Footer() {
                 </p>
                 <p>
                   주소: {CONTACT.ADDRESS} ({CONTACT.POSTAL_CODE}) | 통신판매신고번호:{' '}
-                  {CONTACT.MAIL_ORDER_REPORT_NUMBER} | 전화번호: {CONTACT.PHONE}
+                  {CONTACT.MAIL_ORDER_REPORT_NUMBER} | 전화번호:{' '}
+                  <a
+                    href={`tel:${CONTACT.PHONE.replace(/-/g, '')}`}
+                    className="hover:text-primary transition-colors link-underline-offset"
+                  >
+                    {CONTACT.PHONE}
+                  </a>
                 </p>
               </div>
               {/* Copyright */}
