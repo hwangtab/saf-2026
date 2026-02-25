@@ -208,23 +208,32 @@ async function parseJsonResponse(response: Response): Promise<unknown> {
   }
 }
 
-export async function persistCafe24Token(payload: Cafe24TokenResponse): Promise<void> {
+export async function persistCafe24Token(
+  payload: Cafe24TokenResponse,
+  options?: { mallId?: string }
+): Promise<void> {
   const config = getCafe24Config();
-  if (!config) {
+  const resolvedMallId = options?.mallId?.trim();
+
+  if (!config && !resolvedMallId) {
     throw new Error('Cafe24 환경변수가 설정되지 않았습니다.');
   }
 
   const supabase = createSupabaseAdminClient();
   const expiresAt = resolveExpiresAt(payload);
   const expiresIn = Number(payload.expires_in || 0);
+  const mallId = resolvedMallId || config?.mallId;
+  if (!mallId) {
+    throw new Error('Cafe24 mall_id를 확인할 수 없습니다.');
+  }
 
   const { error } = await supabase.from('cafe24_tokens').upsert(
     {
-      mall_id: config.mallId,
+      mall_id: mallId,
       access_token: payload.access_token,
       refresh_token: payload.refresh_token,
       token_type: payload.token_type || null,
-      scope: payload.scope || config.scope,
+      scope: payload.scope || config?.scope || DEFAULT_SCOPE,
       expires_in: Number.isFinite(expiresIn) && expiresIn > 0 ? expiresIn : null,
       expires_at: expiresAt,
       raw_response: payload,
