@@ -35,7 +35,8 @@ const MAX_REVENUE_BUCKETS_FOR_ALL = 60;
 
 type SoldRecord = {
   soldDate: Date;
-  price: number;
+  revenue: number;
+  quantity: number;
 };
 
 type ArtworkMetricRow = {
@@ -46,6 +47,12 @@ type ArtworkMetricRow = {
   updated_at: string | null;
   sold_at?: string | null;
   is_hidden: boolean | null;
+};
+
+type SalesMetricRow = {
+  sale_price: unknown;
+  quantity: number | null;
+  sold_at: string | null;
 };
 
 export type DashboardStats = {
@@ -286,18 +293,11 @@ function formatBucketLabel(date: Date, granularity: RevenueBucketGranularity): s
 }
 
 function sumRevenue(records: SoldRecord[]): number {
-  return records.reduce((sum, record) => sum + record.price, 0);
+  return records.reduce((sum, record) => sum + record.revenue, 0);
 }
 
-function resolveSoldDate(artwork: ArtworkMetricRow): Date | null {
-  const soldAt = toValidDate(artwork.sold_at ?? null);
-  if (soldAt) return soldAt;
-
-  if (artwork.status === 'sold') {
-    return toValidDate(artwork.updated_at) || toValidDate(artwork.created_at);
-  }
-
-  return null;
+function sumSoldCount(records: SoldRecord[]): number {
+  return records.reduce((sum, record) => sum + record.quantity, 0);
 }
 
 function getPeriodStart(period: DashboardPeriodKey, now: Date, soldRecords: SoldRecord[]): Date {
@@ -411,8 +411,8 @@ function buildRevenueTimeSeries(
     const bucketKey = getBucketKey(bucketStart, granularity);
     const bucket = seriesMap.get(bucketKey);
     if (!bucket) return;
-    bucket.revenue += record.price;
-    bucket.soldCount += 1;
+    bucket.revenue += record.revenue;
+    bucket.soldCount += record.quantity;
   });
 
   previousPeriodRecords.forEach((record) => {
@@ -426,7 +426,7 @@ function buildRevenueTimeSeries(
     const bucketKey = getBucketKey(bucketStart, granularity);
     const bucket = seriesMap.get(bucketKey);
     if (!bucket) return;
-    bucket.previousRevenue += record.price;
+    bucket.previousRevenue += record.revenue;
   });
 
   return Array.from(seriesMap.values())
@@ -603,14 +603,33 @@ async function computeDashboardStats(period: DashboardPeriodKey = '7d'): Promise
     allArtworks = (artworksWithSoldAt.data || []) as ArtworkMetricRow[];
   }
 
-  const soldRecords = allArtworks
-    .filter((artwork) => artwork.status === 'sold')
-    .map((artwork) => {
-      const soldDate = resolveSoldDate(artwork);
+  let { data: salesRows, error: salesRowsError } = await supabase
+    .from('artwork_sales')
+    .select('sale_price, quantity, sold_at')
+    .not('sold_at', 'is', null)
+    .is('voided_at', null);
+
+  if (salesRowsError && salesRowsError.message.includes('voided_at')) {
+    ({ data: salesRows, error: salesRowsError } = await supabase
+      .from('artwork_sales')
+      .select('sale_price, quantity, sold_at')
+      .not('sold_at', 'is', null));
+  }
+
+  if (salesRowsError) throw salesRowsError;
+
+  const soldRecords = ((salesRows || []) as SalesMetricRow[])
+    .map((row) => {
+      const soldDate = toValidDate(row.sold_at);
       if (!soldDate) return null;
+      const quantity =
+        typeof row.quantity === 'number' && Number.isFinite(row.quantity) && row.quantity > 0
+          ? Math.floor(row.quantity)
+          : 1;
       return {
         soldDate,
-        price: parsePrice(artwork.price),
+        quantity,
+        revenue: parsePrice(row.sale_price) * quantity,
       };
     })
     .filter((item): item is SoldRecord => !!item);
@@ -621,7 +640,7 @@ async function computeDashboardStats(period: DashboardPeriodKey = '7d'): Promise
   );
 
   const lifetimeRevenue = sumRevenue(soldRecords);
-  const lifetimeSoldCount = soldRecords.length;
+  const lifetimeSoldCount = sumSoldCount(soldRecords);
   const lifetimeAveragePrice =
     lifetimeSoldCount > 0 ? Math.round(lifetimeRevenue / lifetimeSoldCount) : 0;
   const inventoryValue = visibleInventoryRecords.reduce(
@@ -637,7 +656,7 @@ async function computeDashboardStats(period: DashboardPeriodKey = '7d'): Promise
     (record) => record.soldDate >= periodStart && record.soldDate <= periodEnd
   );
   const periodRevenue = sumRevenue(periodRecords);
-  const periodSoldCount = periodRecords.length;
+  const periodSoldCount = sumSoldCount(periodRecords);
   const periodAveragePrice = periodSoldCount > 0 ? Math.round(periodRevenue / periodSoldCount) : 0;
 
   let previousRevenue = 0;

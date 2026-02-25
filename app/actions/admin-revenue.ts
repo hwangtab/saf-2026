@@ -275,21 +275,46 @@ export async function getRevenueAnalyticsForAuthorizedUser(
   const now = new Date();
   const currentKstYear = getKstCurrentYear(now);
 
-  const [firstSoldResult, latestSoldResult, soldWithoutSoldAtResult] = await Promise.all([
-    supabase
+  let firstSoldResult = await supabase
+    .from('artwork_sales')
+    .select('sold_at')
+    .not('sold_at', 'is', null)
+    .is('voided_at', null)
+    .order('sold_at', { ascending: true })
+    .limit(1)
+    .maybeSingle();
+  if (firstSoldResult.error && firstSoldResult.error.message.includes('voided_at')) {
+    firstSoldResult = await supabase
       .from('artwork_sales')
       .select('sold_at')
+      .not('sold_at', 'is', null)
       .order('sold_at', { ascending: true })
       .limit(1)
-      .maybeSingle(),
-    supabase
+      .maybeSingle();
+  }
+
+  let latestSoldResult = await supabase
+    .from('artwork_sales')
+    .select('sold_at')
+    .not('sold_at', 'is', null)
+    .is('voided_at', null)
+    .order('sold_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (latestSoldResult.error && latestSoldResult.error.message.includes('voided_at')) {
+    latestSoldResult = await supabase
       .from('artwork_sales')
       .select('sold_at')
+      .not('sold_at', 'is', null)
       .order('sold_at', { ascending: false })
       .limit(1)
-      .maybeSingle(),
-    supabase.from('artwork_sales').select('id', { count: 'exact', head: true }).is('sold_at', null),
-  ]);
+      .maybeSingle();
+  }
+
+  const soldWithoutSoldAtResult = await supabase
+    .from('artwork_sales')
+    .select('id', { count: 'exact', head: true })
+    .is('sold_at', null);
 
   if (firstSoldResult.error) throw firstSoldResult.error;
   if (latestSoldResult.error) throw latestSoldResult.error;
@@ -310,7 +335,7 @@ export async function getRevenueAnalyticsForAuthorizedUser(
   const rangeStartIso = getYearStartUtcIso(selectedYear - 1);
   const rangeEndIso = getYearStartUtcIso(selectedYear + 1);
 
-  const { data: soldRows, error: soldRowsError } = await supabase
+  let soldRowsResult = await supabase
     .from('artwork_sales')
     .select(
       `
@@ -331,7 +356,35 @@ export async function getRevenueAnalyticsForAuthorizedUser(
     )
     .gte('sold_at', rangeStartIso)
     .lt('sold_at', rangeEndIso)
+    .is('voided_at', null)
     .order('sold_at', { ascending: true });
+
+  if (soldRowsResult.error && soldRowsResult.error.message.includes('voided_at')) {
+    soldRowsResult = await supabase
+      .from('artwork_sales')
+      .select(
+        `
+        id,
+        artwork_id,
+        sale_price,
+        quantity,
+        sold_at,
+        source,
+        artworks!inner (
+          title,
+          artist_id,
+          artists (
+            name_ko
+          )
+        )
+      `
+      )
+      .gte('sold_at', rangeStartIso)
+      .lt('sold_at', rangeEndIso)
+      .order('sold_at', { ascending: true });
+  }
+
+  const { data: soldRows, error: soldRowsError } = soldRowsResult;
 
   if (soldRowsError) throw soldRowsError;
 

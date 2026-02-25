@@ -168,8 +168,13 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
       .from('artwork_sales')
       .select('sale_price, quantity')
       .gte('sold_at', monthBoundary.startIso)
-      .lt('sold_at', monthBoundary.endIso),
+      .lt('sold_at', monthBoundary.endIso)
+      .is('voided_at', null),
   ]);
+
+  const currentMonthSalesVoidColumnMissing =
+    !!currentMonthSoldRowsResult.error &&
+    currentMonthSoldRowsResult.error.message.includes('voided_at');
 
   const baseErrors = [
     totalArtistsResult.error,
@@ -180,7 +185,7 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
     soldArtworksResult.error,
     hiddenArtworksResult.error,
     recentArtworksResult.error,
-    currentMonthSoldRowsResult.error,
+    currentMonthSalesVoidColumnMissing ? null : currentMonthSoldRowsResult.error,
   ].filter((error): error is NonNullable<typeof error> => !!error);
 
   if (baseErrors.length > 0) {
@@ -236,7 +241,19 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
     recentPendingExhibitorApplicationsRaw.map((application) => [application.user_id, application])
   );
 
-  const currentMonthSalesRows = currentMonthSoldRowsResult.data || [];
+  let currentMonthSalesRows = currentMonthSoldRowsResult.data || [];
+  if (
+    currentMonthSoldRowsResult.error &&
+    currentMonthSoldRowsResult.error.message.includes('voided_at')
+  ) {
+    const fallback = await supabase
+      .from('artwork_sales')
+      .select('sale_price, quantity')
+      .gte('sold_at', monthBoundary.startIso)
+      .lt('sold_at', monthBoundary.endIso);
+    if (fallback.error) throw fallback.error;
+    currentMonthSalesRows = fallback.data || [];
+  }
   const currentMonthRevenue = currentMonthSalesRows.reduce(
     (sum, row) => sum + parsePrice(row.sale_price) * (row.quantity || 1),
     0
