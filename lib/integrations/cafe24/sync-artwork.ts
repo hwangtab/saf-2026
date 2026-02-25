@@ -1,5 +1,6 @@
 import sharp from 'sharp';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
+import { CONTACT } from '@/lib/constants';
 import { createCafe24AdminApiClient, getCafe24Config } from './client';
 
 type JsonRecord = Record<string, unknown>;
@@ -154,6 +155,49 @@ function normalizeForSummary(value: string | null): string {
   return stripHtml(value).trim();
 }
 
+function buildEditionDisclosure(artwork: SyncArtworkRecord): string {
+  const edition = normalizeForSummary(artwork.edition);
+  if (edition) return edition;
+
+  const editionType = normalizeEditionType(artwork.edition_type);
+  if (editionType === 'unique') return '원화 1/1';
+  if (editionType === 'limited') {
+    const limit = toPositiveInteger(artwork.edition_limit);
+    if (limit) return `리미티드 에디션 (${limit}점)`;
+    return '리미티드 에디션';
+  }
+  return '오픈 에디션';
+}
+
+function buildPolicySummaryLine(): string {
+  return '구매 안내 요약: 결제 확인 후 평균 3~4영업일 내 발송 / 수령 후 7일 이내 청약철회 가능';
+}
+
+function buildPolicySections(artwork: SyncArtworkRecord): string[] {
+  const artistName = artwork.artists?.name_ko || '작가';
+  const title = artwork.title || '작품';
+  const material = normalizeForSummary(artwork.material) || '확인 중';
+  const size = normalizeForSummary(artwork.size) || '확인 중';
+  const year = normalizeForSummary(artwork.year) || '확인 중';
+  const editionDisclosure = buildEditionDisclosure(artwork);
+  const contactEmail = CONTACT.EMAIL || 'contact@kosmart.org';
+  const contactPhone = CONTACT.PHONE || '02-764-3114';
+
+  return [
+    '<hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 24px 0 18px;" />',
+    '<h3 style="font-size: 16px; margin: 18px 0 8px;">서비스 내용</h3>',
+    `<p style="white-space: pre-line; margin: 0;">${escapeHtml(`본 상품은 ${artistName}의 ${title} 작품 1점입니다.\n- 규격: ${size}\n- 재료/기법: ${material}\n- 제작연도: ${year}\n- 에디션: ${editionDisclosure}\n- 구성: 작품 본품 1점 (액자 포함 여부는 상품 이미지 또는 문의를 통해 확인)`)}</p>`,
+    '<h3 style="font-size: 16px; margin: 18px 0 8px;">제공기간 및 배송 안내</h3>',
+    '<p style="white-space: pre-line; margin: 0;">결제 확인 후 평균 3~4영업일 이내 발송됩니다.\n도서산간/대형·파손위험 작품은 전문 운송으로 전환될 수 있으며 추가 기간이 소요될 수 있습니다.</p>',
+    '<h3 style="font-size: 16px; margin: 18px 0 8px;">이용안내</h3>',
+    `<p style="white-space: pre-line; margin: 0;">주문 완료 → 결제 확인 → 작품 상태 최종 검수 → 발송(운송장 안내) 순으로 진행됩니다.\n수령 후 이상 발견 시 24시간 이내 고객센터로 접수해 주세요.\n문의: ${contactPhone} / ${contactEmail}</p>`,
+    '<h3 style="font-size: 16px; margin: 18px 0 8px;">취소·교환·환불 정책</h3>',
+    '<p style="white-space: pre-line; margin: 0;">단순변심에 의한 청약철회는 수령 후 7일 이내 가능합니다.\n작품 하자/오배송은 판매자 부담으로 교환 또는 환불 처리됩니다.\n단순변심 반품 배송비는 구매자 부담이며, 반품 확인 후 3영업일 이내 원결제수단으로 환불됩니다.</p>',
+    '<h3 style="font-size: 16px; margin: 18px 0 8px;">청약철회 제한 사유</h3>',
+    '<p style="white-space: pre-line; margin: 0;">소비자 책임 사유로 작품이 훼손된 경우, 포장 훼손 등으로 상품 가치가 현저히 감소한 경우, 주문제작 상품으로 제작이 시작된 경우에는 청약철회가 제한될 수 있습니다. (전자상거래법 관련 규정에 따름)</p>',
+  ];
+}
+
 function buildDescription(artwork: SyncArtworkRecord): string {
   const artistName = artwork.artists?.name_ko || '작가';
   const title = artwork.title || '';
@@ -176,6 +220,9 @@ function buildDescription(artwork: SyncArtworkRecord): string {
   if (metaParts) {
     sections.push(`<p style="margin: 0 0 20px; color: #777;">${escapeHtml(metaParts)}</p>`);
   }
+  sections.push(
+    `<p style="margin: 0 0 16px; color: #4b5563; font-size: 13px;">${escapeHtml(buildPolicySummaryLine())}</p>`
+  );
   if (description) {
     sections.push('<h3 style="font-size: 16px; margin: 18px 0 8px;">작품 설명</h3>');
     sections.push(`<p style="white-space: pre-line;">${escapeHtml(description)}</p>`);
@@ -188,6 +235,7 @@ function buildDescription(artwork: SyncArtworkRecord): string {
     sections.push('<h3 style="font-size: 16px; margin: 18px 0 8px;">작가 이력</h3>');
     sections.push(`<p style="white-space: pre-line;">${escapeHtml(history)}</p>`);
   }
+  sections.push(...buildPolicySections(artwork));
   sections.push('</div>');
   return sections.join('');
 }
@@ -444,10 +492,18 @@ async function syncCafe24Inventory(productNo: number, policy: InventorySyncPolic
 
 async function fetchArtworkSoldQuantity(artworkId: string): Promise<number> {
   const supabase = createSupabaseAdminClient();
-  const { data, error } = await supabase
+  let { data, error } = await supabase
     .from('artwork_sales')
     .select('quantity')
-    .eq('artwork_id', artworkId);
+    .eq('artwork_id', artworkId)
+    .is('voided_at', null);
+
+  if (error && error.message.includes('voided_at')) {
+    ({ data, error } = await supabase
+      .from('artwork_sales')
+      .select('quantity')
+      .eq('artwork_id', artworkId));
+  }
 
   if (error) {
     throw new Error(`판매 수량 조회 실패: ${error.message}`);

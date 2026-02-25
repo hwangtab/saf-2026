@@ -28,6 +28,15 @@ const TAX_TYPE = 'B'; // 면세 (예술품)
 const ORIGIN = '국산';
 const IMAGE_BASE_URL = '//ecimg.cafe24img.com/pg1248b38284644098/koreasmartcoop/saf2026/';
 
+const POLICY_PAYMENT_INFO =
+  '결제는 카페24 보안결제 시스템을 통해 처리됩니다. 무통장입금/카드결제 등 결제수단별 승인 시점에 따라 주문이 확정됩니다.';
+const POLICY_SHIPPING_INFO =
+  '결제 확인 후 평균 3~4영업일 이내 발송됩니다. 도서산간/대형·파손위험 작품은 전문 운송으로 전환될 수 있으며 추가 기간이 소요될 수 있습니다.';
+const POLICY_EXCHANGE_RETURN_INFO =
+  '단순변심에 의한 청약철회는 수령 후 7일 이내 가능합니다. 단순변심 반품 배송비는 구매자 부담이며, 하자/오배송은 판매자 부담으로 처리됩니다. 반품 확인 후 3영업일 이내 원결제수단으로 환불됩니다. 단, 작품 훼손/가치 훼손/주문제작 착수 시 청약철회가 제한될 수 있습니다.';
+const POLICY_SERVICE_INFO =
+  '주문 완료 → 결제 확인 → 작품 상태 최종 검수 → 발송(운송장 안내) 순으로 진행됩니다. 수령 후 이상 발견 시 24시간 이내 contact@kosmart.org / 02-764-3114로 문의 바랍니다.';
+
 // Cafe24 CSV 헤더 (86개 컬럼)
 const headers = [
   '상품코드',
@@ -153,6 +162,7 @@ function classifyGenre(material) {
 
 // Generate HTML description
 function generateHtmlDescription(artwork) {
+  const editionInfo = artwork.edition && artwork.edition !== '원본' ? artwork.edition : '원화 1/1';
   let html =
     '<div style="font-family: \'Noto Sans KR\', sans-serif; line-height: 1.8; color: #333;">';
 
@@ -192,6 +202,14 @@ function generateHtmlDescription(artwork) {
     html += `<p style="white-space: pre-line; font-size: 14px;">${artwork.history.replace(/\\n/g, '<br>')}</p>`;
     html += '</div>';
   }
+
+  html += '<hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 24px 0 18px;" />';
+  html += '<h3 style="font-size: 18px; margin: 0 0 10px;">서비스 내용</h3>';
+  html += `<p style="white-space: pre-line; margin: 0 0 14px;">본 상품은 ${artwork.artist}의 ${artwork.title} 작품 1점입니다.\n- 규격: ${artwork.size || '확인 중'}\n- 재료/기법: ${artwork.material || '확인 중'}\n- 제작연도: ${artwork.year || '확인 중'}\n- 에디션: ${editionInfo}\n- 구성: 작품 본품 1점 (액자 포함 여부는 상품 이미지 또는 문의를 통해 확인)</p>`;
+  html += '<h3 style="font-size: 18px; margin: 16px 0 10px;">제공기간 및 이용안내</h3>';
+  html += `<p style="white-space: pre-line; margin: 0 0 14px;">${POLICY_SHIPPING_INFO}\n${POLICY_SERVICE_INFO}</p>`;
+  html += '<h3 style="font-size: 18px; margin: 16px 0 10px;">취소·교환·환불 정책</h3>';
+  html += `<p style="white-space: pre-line; margin: 0;">${POLICY_EXCHANGE_RETURN_INFO}</p>`;
 
   html += '</div>';
   return html;
@@ -286,10 +304,10 @@ const rows = artworksArray.map((artwork, index) => {
     '', // 유효기간
     '', // 원산지 (비워둠 - 숫자코드만 가능)
     '', // 상품부피
-    '', // 상품결제안내
-    '', // 상품배송안내
-    '', // 교환/반품안내
-    '', // 서비스문의/안내
+    POLICY_PAYMENT_INFO, // 상품결제안내
+    POLICY_SHIPPING_INFO, // 상품배송안내
+    POLICY_EXCHANGE_RETURN_INFO, // 교환/반품안내
+    POLICY_SERVICE_INFO, // 서비스문의/안내
     '', // 배송정보 (비워둠)
     '', // 배송방법 (비워둠)
     '', // 국내/해외배송
