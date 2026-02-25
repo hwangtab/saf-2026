@@ -13,6 +13,9 @@ const PRODUCT_NO_BACKFILL_CHUNK_SIZE = 40;
 const MAX_CAFE24_LOCK_SYNC_CONCURRENCY = 4;
 const DEFAULT_MANUAL_MIRROR_PURGE_WINDOW_HOURS = 72;
 const DEFAULT_MANUAL_MIRROR_IMPORT_DATE = '2026-02-15';
+const DEFAULT_FAILED_ORDER_RETRY_LIMIT = 30;
+const FAILED_ORDER_UPSERT_CHUNK_SIZE = 100;
+const VOID_REASON_MAX_LENGTH = 250;
 
 const STATUS_FIELD_CANDIDATES = [
   'order_status',
@@ -87,6 +90,7 @@ type SyncStateRow = {
   mall_id: string;
   cutoff_paid_at: string;
   last_synced_paid_at: string | null;
+  last_synced_void_at: string | null;
   last_sync_started_at: string | null;
   last_sync_completed_at: string | null;
   last_error: string | null;
@@ -102,9 +106,16 @@ type PreparedSaleRow = {
   note: string;
   sold_at: string;
   source: 'cafe24';
+  source_detail: 'cafe24_api';
   external_order_id: string;
   external_order_item_code: string;
   external_payload: JsonRecord;
+};
+
+type FailedOrderQueueRow = {
+  mall_id: string;
+  order_id: string;
+  retry_count: number;
 };
 
 type OrderContext = {
@@ -161,6 +172,20 @@ type ManualMirrorPurgeResult = {
   errors: string[];
 };
 
+type VoidedSaleResult = {
+  voided: number;
+  affectedArtworkIds: string[];
+  errors: string[];
+};
+
+type VoidCandidateRow = {
+  orderId: string | null;
+  orderItemCode: string | null;
+  reason: string;
+  payload: JsonRecord;
+  voidedAt: string;
+};
+
 export type Cafe24SalesSyncOptions = {
   forceWindowFromIso?: string | null;
   forceWindowToIso?: string | null;
@@ -177,6 +202,7 @@ export type Cafe24SalesSyncResult = {
   orderItemsFetched: number;
   mappedItems: number;
   inserted: number;
+  voided: number;
   duplicateSkipped: number;
   skippedNoProductNo: number;
   skippedNoArtworkMapping: number;
@@ -522,10 +548,65 @@ function resolveManualMirrorImportDateToken(): string {
   return /^\d{4}-\d{2}-\d{2}$/.test(raw) ? raw : DEFAULT_MANUAL_MIRROR_IMPORT_DATE;
 }
 
+function resolveFailedOrderRetryLimit(): number {
+  const raw = process.env.CAFE24_FAILED_ORDER_RETRY_LIMIT?.trim();
+  if (!raw) return DEFAULT_FAILED_ORDER_RETRY_LIMIT;
+  const parsed = Number.parseInt(raw, 10);
+  if (!Number.isFinite(parsed) || parsed <= 0) return DEFAULT_FAILED_ORDER_RETRY_LIMIT;
+  return Math.min(parsed, 200);
+}
+
+function trimVoidReason(reason: string): string {
+  if (!reason) return '취소/환불 상태';
+  return reason.length > VOID_REASON_MAX_LENGTH
+    ? `${reason.slice(0, VOID_REASON_MAX_LENGTH)}...`
+    : reason;
+}
+
 function resolveNextCursorIso(previousIso: string | null, candidateMs: number): string {
   const previousMs = isoToMs(previousIso) || 0;
   const nextMs = Math.max(previousMs, candidateMs);
   return new Date(nextMs).toISOString();
+}
+
+function resolvePaidCursorAfterRun(input: {
+  previousIso: string | null;
+  windowToMs: number;
+  ordersFetched: number;
+  failedOrders: number;
+  maxSuccessfulAnchorMs: number | null;
+}): string | null {
+  const { previousIso, windowToMs, ordersFetched, failedOrders, maxSuccessfulAnchorMs } = input;
+
+  if (failedOrders > 0) {
+    if (maxSuccessfulAnchorMs === null) {
+      return previousIso;
+    }
+    return resolveNextCursorIso(previousIso, Math.min(maxSuccessfulAnchorMs, windowToMs));
+  }
+
+  if (ordersFetched === 0 && maxSuccessfulAnchorMs === null) {
+    return resolveNextCursorIso(previousIso, windowToMs);
+  }
+
+  if (maxSuccessfulAnchorMs !== null) {
+    return resolveNextCursorIso(previousIso, Math.min(maxSuccessfulAnchorMs, windowToMs));
+  }
+
+  return resolveNextCursorIso(previousIso, windowToMs);
+}
+
+function buildVoidReasonFromRemote(kind: 'cancellation' | 'refund', payload: JsonRecord): string {
+  const reason =
+    pickString(payload, [
+      'reason',
+      'reason_text',
+      'reason_type',
+      'status',
+      'refund_status',
+      'cancel_status',
+    ]) || '취소/환불 상태';
+  return trimVoidReason(`${kind}:${reason}`);
 }
 
 async function ensureSyncState(mallId: string, initialCutoffIso: string): Promise<SyncStateRow> {
@@ -544,7 +625,7 @@ async function ensureSyncState(mallId: string, initialCutoffIso: string): Promis
   const { data, error } = await supabase
     .from('cafe24_sales_sync_state')
     .select(
-      'mall_id, cutoff_paid_at, last_synced_paid_at, last_sync_started_at, last_sync_completed_at, last_error, created_at, updated_at'
+      'mall_id, cutoff_paid_at, last_synced_paid_at, last_synced_void_at, last_sync_started_at, last_sync_completed_at, last_error, created_at, updated_at'
     )
     .eq('mall_id', mallId)
     .single();
@@ -605,6 +686,102 @@ async function updateSyncStateForRun(
   }
 
   return Array.isArray(data) && data.length === 1;
+}
+
+async function listQueuedFailedOrders(
+  mallId: string,
+  limit: number
+): Promise<FailedOrderQueueRow[]> {
+  const supabase = createSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from('cafe24_sales_sync_failed_orders')
+    .select('mall_id, order_id, retry_count')
+    .eq('mall_id', mallId)
+    .is('resolved_at', null)
+    .order('last_failed_at', { ascending: true })
+    .limit(limit);
+
+  if (error) {
+    throw new Error(`실패주문 큐 조회 실패: ${error.message}`);
+  }
+
+  return (data || []) as FailedOrderQueueRow[];
+}
+
+async function queueFailedOrders(
+  mallId: string,
+  rows: Array<{ orderId: string; message: string }>
+): Promise<string[]> {
+  if (rows.length === 0) return [];
+
+  const supabase = createSupabaseAdminClient();
+  const orderIds = uniqueStable(rows.map((row) => row.orderId).filter((id) => !!id));
+  const { data: existing, error: existingError } = await supabase
+    .from('cafe24_sales_sync_failed_orders')
+    .select('order_id, retry_count')
+    .eq('mall_id', mallId)
+    .in('order_id', orderIds);
+
+  if (existingError) {
+    return [`실패주문 큐 기존건 조회 실패: ${existingError.message}`];
+  }
+
+  const retryMap = new Map<string, number>();
+  for (const row of existing || []) {
+    const retryCount = typeof row.retry_count === 'number' ? row.retry_count : 0;
+    retryMap.set(row.order_id, retryCount);
+  }
+
+  const nowIso = new Date().toISOString();
+  const payload = rows.map((row) => ({
+    mall_id: mallId,
+    order_id: row.orderId,
+    retry_count: Math.max(1, (retryMap.get(row.orderId) || 0) + 1),
+    last_error: row.message,
+    last_failed_at: nowIso,
+    resolved_at: null,
+    updated_at: nowIso,
+    metadata: {
+      source: 'cafe24_sync_sales',
+      order_id: row.orderId,
+    },
+  }));
+
+  const errors: string[] = [];
+  for (const batch of chunk(payload, FAILED_ORDER_UPSERT_CHUNK_SIZE)) {
+    const { error } = await supabase
+      .from('cafe24_sales_sync_failed_orders')
+      .upsert(batch, { onConflict: 'mall_id,order_id' });
+    if (error) {
+      errors.push(`실패주문 큐 적재 실패: ${error.message}`);
+    }
+  }
+
+  return errors;
+}
+
+async function resolveQueuedFailedOrders(mallId: string, orderIds: string[]): Promise<string[]> {
+  const uniqueOrderIds = uniqueStable(
+    orderIds.filter((orderId) => typeof orderId === 'string' && orderId)
+  );
+  if (uniqueOrderIds.length === 0) return [];
+
+  const supabase = createSupabaseAdminClient();
+  const { error } = await supabase
+    .from('cafe24_sales_sync_failed_orders')
+    .update({
+      resolved_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .eq('mall_id', mallId)
+    .in('order_id', uniqueOrderIds)
+    .is('resolved_at', null);
+
+  if (error) {
+    return [`실패주문 큐 resolve 실패: ${error.message}`];
+  }
+
+  return [];
 }
 
 function buildOrderContext(order: JsonRecord): OrderContext | null {
@@ -879,6 +1056,95 @@ async function fetchOrderItems(
   );
 }
 
+async function fetchVoidEventsFromEndpoint(
+  client: ReturnType<typeof createCafe24AdminApiClient>,
+  endpoint: '/refunds' | '/cancellation',
+  windowFromIso: string,
+  windowToIso: string
+): Promise<{ rows: VoidCandidateRow[]; maxPageLimitHit: boolean }> {
+  const startDate = toKstDateString(windowFromIso);
+  const endDate = toKstDateString(windowToIso);
+  const pageLimit = DEFAULT_ORDER_PAGE_LIMIT;
+  const maxPages = resolveMaxOrderPages();
+
+  const rows: VoidCandidateRow[] = [];
+  let offset = 0;
+  let maxPageLimitHit = false;
+
+  for (let page = 0; page < maxPages; page += 1) {
+    const query = new URLSearchParams({
+      start_date: startDate,
+      end_date: endDate,
+      limit: String(pageLimit),
+      offset: String(offset),
+    });
+    const payload = await client.request(`${endpoint}?${query.toString()}`, {
+      method: 'GET',
+    });
+
+    const records = extractArrayByKeyCandidates(
+      payload,
+      endpoint === '/refunds'
+        ? ['refunds', 'refund_list', 'data']
+        : ['cancellations', 'cancellation', 'cancel_list', 'data'],
+      ['order_id', 'order_no', 'order_item_code', 'item_code']
+    );
+
+    if (records.length === 0) break;
+
+    for (const record of records) {
+      const orderId = pickString(record, ['order_id', 'order_no']);
+      const orderItemCode =
+        pickString(record, [
+          'order_item_code',
+          'item_code',
+          'order_product_code',
+          'product_code',
+        ]) || null;
+      const voidedAt =
+        normalizeToIso(
+          pickString(record, [
+            'refund_date',
+            'cancel_date',
+            'updated_date',
+            'modified_date',
+            'created_date',
+            'created_at',
+          ])
+        ) || windowToIso;
+
+      if (!orderId && !orderItemCode) continue;
+
+      rows.push({
+        orderId,
+        orderItemCode,
+        reason: buildVoidReasonFromRemote(
+          endpoint === '/refunds' ? 'refund' : 'cancellation',
+          record
+        ),
+        payload: {
+          endpoint,
+          ...record,
+        },
+        voidedAt,
+      });
+    }
+
+    if (records.length < pageLimit) break;
+    if (page === maxPages - 1) {
+      maxPageLimitHit = true;
+      break;
+    }
+
+    offset += pageLimit;
+  }
+
+  return {
+    rows,
+    maxPageLimitHit,
+  };
+}
+
 async function backfillArtworkProductNos(
   rows: Array<{ id: string; productNo: number }>
 ): Promise<ProductNoBackfillResult> {
@@ -978,36 +1244,111 @@ async function loadArtworkMapByProductNo(): Promise<ArtworkProductMapResult> {
 async function filterExistingOrderItemCodes(rows: PreparedSaleRow[]): Promise<{
   filtered: PreparedSaleRow[];
   duplicateSkipped: number;
+  restored: number;
+  restoredArtworkIds: string[];
+  errors: string[];
 }> {
   const supabase = createSupabaseAdminClient();
   const codes = uniqueStable(rows.map((row) => row.external_order_item_code).filter(Boolean));
   if (codes.length === 0) {
-    return { filtered: rows, duplicateSkipped: 0 };
+    return { filtered: rows, duplicateSkipped: 0, restored: 0, restoredArtworkIds: [], errors: [] };
   }
 
-  const existing = new Set<string>();
+  const existingByCode = new Map<
+    string,
+    {
+      id: string;
+      artwork_id: string;
+      voided_at: string | null;
+    }
+  >();
   for (const codeChunk of chunk(codes, EXISTING_CODE_CHUNK_SIZE)) {
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from('artwork_sales')
-      .select('external_order_item_code')
+      .select('id, artwork_id, external_order_item_code, voided_at')
       .eq('source', 'cafe24')
       .in('external_order_item_code', codeChunk);
+
+    if (error && error.message.includes('voided_at')) {
+      const fallback = await supabase
+        .from('artwork_sales')
+        .select('id, artwork_id, external_order_item_code')
+        .eq('source', 'cafe24')
+        .in('external_order_item_code', codeChunk);
+      data = (fallback.data || []).map((row) => ({ ...row, voided_at: null }));
+      error = fallback.error;
+    }
 
     if (error) {
       throw new Error(`기존 동기화 코드 조회 실패: ${error.message}`);
     }
 
-    for (const row of (data || []) as Array<{ external_order_item_code: string | null }>) {
+    for (const row of (data || []) as Array<{
+      id: string;
+      artwork_id: string;
+      external_order_item_code: string | null;
+      voided_at: string | null;
+    }>) {
       if (typeof row.external_order_item_code === 'string' && row.external_order_item_code) {
-        existing.add(row.external_order_item_code);
+        existingByCode.set(row.external_order_item_code, {
+          id: row.id,
+          artwork_id: row.artwork_id,
+          voided_at: row.voided_at,
+        });
       }
     }
   }
 
-  const filtered = rows.filter((row) => !existing.has(row.external_order_item_code));
+  let duplicateSkipped = 0;
+  let restored = 0;
+  const errors: string[] = [];
+  const restoredArtworkIds = new Set<string>();
+  const filtered: PreparedSaleRow[] = [];
+
+  for (const row of rows) {
+    const existing = existingByCode.get(row.external_order_item_code);
+    if (!existing) {
+      filtered.push(row);
+      continue;
+    }
+
+    if (!existing.voided_at) {
+      duplicateSkipped += 1;
+      continue;
+    }
+
+    const { error } = await supabase
+      .from('artwork_sales')
+      .update({
+        artwork_id: row.artwork_id,
+        sale_price: row.sale_price,
+        quantity: row.quantity,
+        buyer_name: row.buyer_name,
+        note: row.note,
+        sold_at: row.sold_at,
+        source_detail: row.source_detail,
+        external_order_id: row.external_order_id,
+        external_payload: row.external_payload,
+        voided_at: null,
+        void_reason: null,
+      })
+      .eq('id', existing.id);
+
+    if (error) {
+      errors.push(`void 해제 실패(${row.external_order_item_code}): ${error.message}`);
+      continue;
+    }
+
+    restored += 1;
+    restoredArtworkIds.add(row.artwork_id);
+  }
+
   return {
     filtered,
-    duplicateSkipped: rows.length - filtered.length,
+    duplicateSkipped,
+    restored,
+    restoredArtworkIds: Array.from(restoredArtworkIds),
+    errors,
   };
 }
 
@@ -1115,6 +1456,276 @@ async function purgeHistoricalManualMirrors(
     purged: purgeIds.length,
     errors: [],
   };
+}
+
+function buildVoidReason(order: OrderContext, item: JsonRecord): string {
+  const itemStatus = collectStatusValues(item).slice(0, 3).join(',') || '-';
+  const orderStatus = collectStatusValues(order.raw).slice(0, 3).join(',') || '-';
+  return trimVoidReason(`취소/환불 상태(item=${itemStatus}, order=${orderStatus})`);
+}
+
+async function voidCanceledCafe24Sales(rows: VoidCandidateRow[]): Promise<VoidedSaleResult> {
+  if (rows.length === 0) {
+    return {
+      voided: 0,
+      affectedArtworkIds: [],
+      errors: [],
+    };
+  }
+
+  const supabase = createSupabaseAdminClient();
+  const uniqueByCode = new Map<
+    string,
+    {
+      orderId: string | null;
+      reason: string;
+      payload: JsonRecord;
+      voidedAt: string;
+    }
+  >();
+  const uniqueByOrderId = new Map<
+    string,
+    {
+      reason: string;
+      payload: JsonRecord;
+      voidedAt: string;
+    }
+  >();
+
+  for (const row of rows) {
+    if (!row.orderId && !row.orderItemCode) continue;
+
+    if (row.orderItemCode && !uniqueByCode.has(row.orderItemCode)) {
+      uniqueByCode.set(row.orderItemCode, {
+        orderId: row.orderId,
+        reason: trimVoidReason(row.reason),
+        payload: row.payload,
+        voidedAt: row.voidedAt,
+      });
+    }
+
+    if (row.orderId && !uniqueByOrderId.has(row.orderId)) {
+      uniqueByOrderId.set(row.orderId, {
+        reason: trimVoidReason(row.reason),
+        payload: row.payload,
+        voidedAt: row.voidedAt,
+      });
+    }
+  }
+
+  const codes = Array.from(uniqueByCode.keys());
+  const orderIds = Array.from(uniqueByOrderId.keys());
+  if (codes.length === 0 && orderIds.length === 0) {
+    return {
+      voided: 0,
+      affectedArtworkIds: [],
+      errors: [],
+    };
+  }
+
+  const existing: Array<{
+    id: string;
+    artwork_id: string;
+    external_order_id: string | null;
+    external_order_item_code: string | null;
+    voided_at: string | null;
+  }> = [];
+
+  if (codes.length > 0) {
+    for (const codeChunk of chunk(codes, EXISTING_CODE_CHUNK_SIZE)) {
+      const { data, error } = await supabase
+        .from('artwork_sales')
+        .select('id, artwork_id, external_order_id, external_order_item_code, voided_at')
+        .eq('source', 'cafe24')
+        .in('external_order_item_code', codeChunk);
+
+      if (error) {
+        return {
+          voided: 0,
+          affectedArtworkIds: [],
+          errors: [`취소/환불 대상 조회 실패: ${error.message}`],
+        };
+      }
+
+      existing.push(
+        ...((data || []) as Array<{
+          id: string;
+          artwork_id: string;
+          external_order_id: string | null;
+          external_order_item_code: string | null;
+          voided_at: string | null;
+        }>)
+      );
+    }
+  }
+
+  if (orderIds.length > 0) {
+    for (const orderIdChunk of chunk(orderIds, EXISTING_CODE_CHUNK_SIZE)) {
+      const { data, error } = await supabase
+        .from('artwork_sales')
+        .select('id, artwork_id, external_order_id, external_order_item_code, voided_at')
+        .eq('source', 'cafe24')
+        .in('external_order_id', orderIdChunk);
+
+      if (error) {
+        return {
+          voided: 0,
+          affectedArtworkIds: [],
+          errors: [`취소/환불 대상(order_id) 조회 실패: ${error.message}`],
+        };
+      }
+
+      existing.push(
+        ...((data || []) as Array<{
+          id: string;
+          artwork_id: string;
+          external_order_id: string | null;
+          external_order_item_code: string | null;
+          voided_at: string | null;
+        }>)
+      );
+    }
+  }
+
+  let voided = 0;
+  const affectedArtworkIds = new Set<string>();
+  const errors: string[] = [];
+
+  const visitedSaleIds = new Set<string>();
+
+  for (const saleRow of existing) {
+    if (visitedSaleIds.has(saleRow.id)) continue;
+    visitedSaleIds.add(saleRow.id);
+    if (saleRow.voided_at) continue;
+
+    const targetByCode = saleRow.external_order_item_code
+      ? uniqueByCode.get(saleRow.external_order_item_code)
+      : null;
+    const targetByOrderId = saleRow.external_order_id
+      ? uniqueByOrderId.get(saleRow.external_order_id)
+      : null;
+    const target = targetByCode || targetByOrderId;
+
+    if (!target) continue;
+
+    const { error } = await supabase
+      .from('artwork_sales')
+      .update({
+        voided_at: target.voidedAt,
+        void_reason: target.reason,
+        external_payload: target.payload,
+      })
+      .eq('id', saleRow.id);
+
+    if (error) {
+      errors.push(
+        `취소/환불 반영 실패(${saleRow.external_order_item_code || saleRow.external_order_id || saleRow.id}): ${error.message}`
+      );
+      continue;
+    }
+
+    voided += 1;
+    affectedArtworkIds.add(saleRow.artwork_id);
+  }
+
+  return {
+    voided,
+    affectedArtworkIds: Array.from(affectedArtworkIds),
+    errors,
+  };
+}
+
+async function refreshArtworkStatusesFromSales(artworkIds: string[]): Promise<string[]> {
+  const uniqueArtworkIds = uniqueStable(artworkIds.filter((id) => typeof id === 'string' && id));
+  if (uniqueArtworkIds.length === 0) return [];
+
+  const supabase = createSupabaseAdminClient();
+
+  const { data: artworks, error: artworkError } = await supabase
+    .from('artworks')
+    .select('id, status, sold_at, edition_type, edition_limit')
+    .in('id', uniqueArtworkIds);
+  if (artworkError) {
+    return [`작품 상태 재계산 대상 조회 실패: ${artworkError.message}`];
+  }
+
+  let { data: salesRows, error: salesError } = await supabase
+    .from('artwork_sales')
+    .select('artwork_id, quantity')
+    .in('artwork_id', uniqueArtworkIds)
+    .not('sold_at', 'is', null)
+    .is('voided_at', null);
+  if (salesError && salesError.message.includes('voided_at')) {
+    ({ data: salesRows, error: salesError } = await supabase
+      .from('artwork_sales')
+      .select('artwork_id, quantity')
+      .in('artwork_id', uniqueArtworkIds)
+      .not('sold_at', 'is', null));
+  }
+  if (salesError) {
+    return [`작품 상태 재계산 판매조회 실패: ${salesError.message}`];
+  }
+
+  const soldQuantityByArtwork = new Map<string, number>();
+  for (const row of salesRows || []) {
+    const artworkId = row.artwork_id;
+    if (!artworkId) continue;
+    const qty =
+      typeof row.quantity === 'number' && Number.isFinite(row.quantity) ? row.quantity : 1;
+    soldQuantityByArtwork.set(
+      artworkId,
+      (soldQuantityByArtwork.get(artworkId) || 0) + Math.max(1, qty)
+    );
+  }
+
+  const errors: string[] = [];
+  for (const artwork of (artworks || []) as Array<{
+    id: string;
+    status: string | null;
+    sold_at: string | null;
+    edition_type: string | null;
+    edition_limit: number | null;
+  }>) {
+    const soldQuantity = soldQuantityByArtwork.get(artwork.id) || 0;
+    const editionType = artwork.edition_type || 'unique';
+    const isSold =
+      editionType === 'unique'
+        ? soldQuantity >= 1
+        : editionType === 'limited' && !!artwork.edition_limit
+          ? soldQuantity >= artwork.edition_limit
+          : false;
+
+    if (isSold && artwork.status !== 'sold') {
+      const { error } = await supabase
+        .from('artworks')
+        .update({
+          status: 'sold',
+          sold_at: artwork.sold_at || new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', artwork.id);
+      if (error) {
+        errors.push(`작품 상태 sold 반영 실패(${artwork.id}): ${error.message}`);
+      }
+      continue;
+    }
+
+    if (!isSold && artwork.status === 'sold') {
+      const { error } = await supabase
+        .from('artworks')
+        .update({
+          status: 'available',
+          sold_at: null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', artwork.id);
+      if (error) {
+        errors.push(`작품 상태 available 복원 실패(${artwork.id}): ${error.message}`);
+      }
+    }
+  }
+
+  return errors;
 }
 
 async function insertPreparedSales(rows: PreparedSaleRow[]): Promise<InsertResult> {
@@ -1247,6 +1858,7 @@ export async function syncCafe24SalesFromOrders(
       orderItemsFetched: 0,
       mappedItems: 0,
       inserted: 0,
+      voided: 0,
       duplicateSkipped: 0,
       skippedNoProductNo: 0,
       skippedNoArtworkMapping: 0,
@@ -1295,6 +1907,7 @@ export async function syncCafe24SalesFromOrders(
       orderItemsFetched: 0,
       mappedItems: 0,
       inserted: 0,
+      voided: 0,
       duplicateSkipped: 0,
       skippedNoProductNo: 0,
       skippedNoArtworkMapping: 0,
@@ -1313,6 +1926,10 @@ export async function syncCafe24SalesFromOrders(
   if (windowFromMs >= windowToMs) {
     const stateUpdated = await updateSyncStateForRun(mallId, runStartedAt, {
       last_synced_paid_at: resolveNextCursorIso(state.last_synced_paid_at, windowToMs),
+      last_synced_void_at: resolveNextCursorIso(
+        state.last_synced_void_at || state.last_synced_paid_at,
+        windowToMs
+      ),
       last_sync_completed_at: new Date().toISOString(),
       last_error: null,
     });
@@ -1330,6 +1947,7 @@ export async function syncCafe24SalesFromOrders(
       orderItemsFetched: 0,
       mappedItems: 0,
       inserted: 0,
+      voided: 0,
       duplicateSkipped: 0,
       skippedNoProductNo: 0,
       skippedNoArtworkMapping: 0,
@@ -1357,14 +1975,40 @@ export async function syncCafe24SalesFromOrders(
   let failedOrders = 0;
   let duplicateSkipped = 0;
   let inserted = 0;
+  let voided = 0;
   let dateTypeUsed: string | null = null;
   let backfilledProductNos = 0;
   let backfillProductNoFailures = 0;
   let manualMirrorPurged = 0;
   let soldOutLockedSynced = 0;
   let soldOutLockFailed = 0;
+  let maxSuccessfulAnchorMs: number | null = null;
+  let voidEndpointMaxAnchorMs: number | null = null;
+  let voidEndpointFetchFailed = false;
+
+  const trackSuccessfulAnchor = (anchorMs: number | null) => {
+    if (anchorMs === null || !Number.isFinite(anchorMs)) return;
+    const bounded = Math.min(anchorMs, windowToMs);
+    maxSuccessfulAnchorMs =
+      maxSuccessfulAnchorMs === null ? bounded : Math.max(maxSuccessfulAnchorMs, bounded);
+  };
+
+  const trackVoidEndpointAnchor = (anchorMs: number | null) => {
+    if (anchorMs === null || !Number.isFinite(anchorMs)) return;
+    const bounded = Math.min(anchorMs, windowToMs);
+    voidEndpointMaxAnchorMs =
+      voidEndpointMaxAnchorMs === null ? bounded : Math.max(voidEndpointMaxAnchorMs, bounded);
+  };
 
   try {
+    let queuedFailedOrders: FailedOrderQueueRow[] = [];
+    try {
+      queuedFailedOrders = await listQueuedFailedOrders(mallId, resolveFailedOrderRetryLimit());
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      warningErrors.push(message);
+    }
+
     const client = createCafe24AdminApiClient();
     const [orderResult, artworkMapResult] = await Promise.all([
       fetchOrdersInRange(client, windowFromIso, windowToIso),
@@ -1391,10 +2035,68 @@ export async function syncCafe24SalesFromOrders(
       );
     }
 
+    const queuedOrderIdSet = new Set(queuedFailedOrders.map((row) => row.order_id));
+    const ordersById = new Map<string, JsonRecord>();
+    for (const orderRaw of orderResult.orders) {
+      const order = buildOrderContext(orderRaw);
+      if (!order) continue;
+      if (!ordersById.has(order.orderId)) {
+        ordersById.set(order.orderId, orderRaw);
+      }
+    }
+    for (const queued of queuedFailedOrders) {
+      if (!ordersById.has(queued.order_id)) {
+        ordersById.set(queued.order_id, {
+          order_id: queued.order_id,
+          paid: 'true',
+        });
+      }
+    }
+    if (ordersById.size > orderResult.orders.length) {
+      warningErrors.push(
+        `실패주문 재시도 대상 ${ordersById.size - orderResult.orders.length}건을 추가 처리합니다.`
+      );
+    }
+
+    try {
+      const [refundEvents, cancellationEvents] = await Promise.all([
+        fetchVoidEventsFromEndpoint(client, '/refunds', windowFromIso, windowToIso),
+        fetchVoidEventsFromEndpoint(client, '/cancellation', windowFromIso, windowToIso),
+      ]);
+
+      if (refundEvents.maxPageLimitHit || cancellationEvents.maxPageLimitHit) {
+        warningErrors.push(
+          `환불/취소 조회 페이지 상한에 도달했습니다. CAFE24_SALES_MAX_ORDER_PAGES(현재=${resolveMaxOrderPages()})를 점검하세요.`
+        );
+      }
+
+      const endpointRows = [...refundEvents.rows, ...cancellationEvents.rows];
+      for (const row of endpointRows) {
+        trackVoidEndpointAnchor(isoToMs(row.voidedAt));
+        if (!row.orderId) continue;
+        if (ordersById.has(row.orderId)) continue;
+        ordersById.set(row.orderId, {
+          order_id: row.orderId,
+          paid: 'true',
+        });
+      }
+
+      if (endpointRows.length > 0) {
+        warningErrors.push(`환불/취소 역동기화 대상 ${endpointRows.length}건을 감지했습니다.`);
+      }
+    } catch (error) {
+      voidEndpointFetchFailed = true;
+      const message = error instanceof Error ? error.message : String(error);
+      warningErrors.push(`환불/취소 역동기화 조회 실패: ${message}`);
+    }
+
     const preparedRows: PreparedSaleRow[] = [];
     const localDedup = new Set<string>();
+    const failedOrderQueueCandidates: Array<{ orderId: string; message: string }> = [];
+    const resolvedQueuedOrderIds: string[] = [];
+    const voidCandidates: VoidCandidateRow[] = [];
 
-    for (const orderRaw of orderResult.orders) {
+    for (const orderRaw of ordersById.values()) {
       const order = buildOrderContext(orderRaw);
       if (!order) {
         warningErrors.push('order_id가 없는 주문을 건너뛰었습니다.');
@@ -1404,9 +2106,29 @@ export async function syncCafe24SalesFromOrders(
       try {
         const items = await fetchOrderItems(client, order.orderId);
         orderItemsFetched += items.length;
+        trackSuccessfulAnchor(isoToMs(order.paidAt || order.orderedAt));
         let hasSoldItemInOrder = false;
         items.forEach((item) => {
-          if (!isItemConsideredSold(order, item)) {
+          const isSoldItem = isItemConsideredSold(order, item);
+
+          if (!isSoldItem) {
+            const resolvedVoidedAt =
+              normalizeToIso(
+                pickString(item, ['updated_date', 'cancel_date', 'refund_date', 'order_date'])
+              ) || new Date().toISOString();
+
+            voidCandidates.push({
+              orderId: order.orderId,
+              orderItemCode: resolveOrderItemCode(order.orderId, item),
+              reason: buildVoidReason(order, item),
+              payload: {
+                order_id: order.orderId,
+                order_status: collectStatusValues(order.raw),
+                item_status: collectStatusValues(item),
+              },
+              voidedAt: resolvedVoidedAt,
+            });
+            trackSuccessfulAnchor(isoToMs(resolvedVoidedAt));
             return;
           }
           hasSoldItemInOrder = true;
@@ -1416,6 +2138,8 @@ export async function syncCafe24SalesFromOrders(
             skippedNoProductNo += 1;
             return;
           }
+
+          trackSuccessfulAnchor(itemContext.filterAnchorMs ?? itemContext.soldAtMs);
 
           if (itemContext.filterAnchorMs !== null) {
             if (
@@ -1451,6 +2175,7 @@ export async function syncCafe24SalesFromOrders(
             note: CAFE24_SYNC_NOTE,
             sold_at: itemContext.soldAt,
             source: 'cafe24',
+            source_detail: 'cafe24_api',
             external_order_id: order.orderId,
             external_order_item_code: itemContext.orderItemCode,
             external_payload: itemContext.payload,
@@ -1460,21 +2185,47 @@ export async function syncCafe24SalesFromOrders(
         if (hasSoldItemInOrder) {
           ordersPaid += 1;
         }
+        if (queuedOrderIdSet.has(order.orderId)) {
+          resolvedQueuedOrderIds.push(order.orderId);
+        }
       } catch (error) {
         failedOrders += 1;
         const message = error instanceof Error ? error.message : String(error);
-        blockingErrors.push(`주문 ${order.orderId} 아이템 조회 실패: ${message}`);
+        warningErrors.push(`주문 ${order.orderId} 아이템 조회 실패(재시도 큐 적재): ${message}`);
+        failedOrderQueueCandidates.push({ orderId: order.orderId, message });
+      }
+    }
+
+    if (failedOrderQueueCandidates.length > 0) {
+      const queueErrors = await queueFailedOrders(mallId, failedOrderQueueCandidates);
+      if (queueErrors.length > 0) {
+        blockingErrors.push(...queueErrors);
+      }
+    }
+    if (resolvedQueuedOrderIds.length > 0) {
+      const resolveErrors = await resolveQueuedFailedOrders(mallId, resolvedQueuedOrderIds);
+      if (resolveErrors.length > 0) {
+        warningErrors.push(...resolveErrors);
       }
     }
 
     const dedupedByDb = await filterExistingOrderItemCodes(preparedRows);
     duplicateSkipped += dedupedByDb.duplicateSkipped;
+    if (dedupedByDb.errors.length > 0) {
+      warningErrors.push(...dedupedByDb.errors);
+    }
 
     const insertResult = await insertPreparedSales(dedupedByDb.filtered);
     inserted = insertResult.inserted;
     duplicateSkipped += insertResult.duplicateSkipped;
     if (insertResult.failed > 0) {
       blockingErrors.push(...insertResult.errors);
+    }
+
+    const voidResult = await voidCanceledCafe24Sales(voidCandidates);
+    voided = voidResult.voided;
+    if (voidResult.errors.length > 0) {
+      warningErrors.push(...voidResult.errors);
     }
 
     if (insertResult.failed === 0 && dedupedByDb.filtered.length > 0) {
@@ -1488,7 +2239,15 @@ export async function syncCafe24SalesFromOrders(
       }
     }
 
-    const affectedArtworkIds = uniqueStable(dedupedByDb.filtered.map((row) => row.artwork_id));
+    const affectedArtworkIds = uniqueStable([
+      ...dedupedByDb.filtered.map((row) => row.artwork_id),
+      ...dedupedByDb.restoredArtworkIds,
+      ...voidResult.affectedArtworkIds,
+    ]);
+    const refreshStatusErrors = await refreshArtworkStatusesFromSales(affectedArtworkIds);
+    if (refreshStatusErrors.length > 0) {
+      warningErrors.push(...refreshStatusErrors);
+    }
     const lockResult = await lockSoldOutArtworksOnCafe24(affectedArtworkIds);
     soldOutLockedSynced = lockResult.synced;
     soldOutLockFailed = lockResult.failed;
@@ -1500,10 +2259,27 @@ export async function syncCafe24SalesFromOrders(
     }
 
     const syncSucceeded = blockingErrors.length === 0;
+    const nextPaidCursorIso = syncSucceeded
+      ? resolvePaidCursorAfterRun({
+          previousIso: state.last_synced_paid_at,
+          windowToMs,
+          ordersFetched,
+          failedOrders,
+          maxSuccessfulAnchorMs,
+        })
+      : state.last_synced_paid_at;
+    const nextVoidCursorIso = syncSucceeded
+      ? voidEndpointFetchFailed
+        ? state.last_synced_void_at
+        : resolveNextCursorIso(
+            state.last_synced_void_at || state.last_synced_paid_at,
+            voidEndpointMaxAnchorMs ?? windowToMs
+          )
+      : state.last_synced_void_at;
+
     const stateUpdated = await updateSyncStateForRun(mallId, runStartedAt, {
-      last_synced_paid_at: syncSucceeded
-        ? resolveNextCursorIso(state.last_synced_paid_at, windowToMs)
-        : state.last_synced_paid_at,
+      last_synced_paid_at: nextPaidCursorIso,
+      last_synced_void_at: nextVoidCursorIso,
       last_sync_completed_at: new Date().toISOString(),
       last_error: syncSucceeded ? null : blockingErrors.join(' | ').slice(0, 2000),
     });
@@ -1522,6 +2298,7 @@ export async function syncCafe24SalesFromOrders(
       orderItemsFetched,
       mappedItems,
       inserted,
+      voided,
       duplicateSkipped,
       skippedNoProductNo,
       skippedNoArtworkMapping,
@@ -1567,6 +2344,7 @@ export async function syncCafe24SalesFromOrders(
       orderItemsFetched,
       mappedItems,
       inserted,
+      voided,
       duplicateSkipped,
       skippedNoProductNo,
       skippedNoArtworkMapping,

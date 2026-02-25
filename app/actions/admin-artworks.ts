@@ -43,17 +43,29 @@ function toCafe24SyncFeedback(
 type Cafe24BatchSyncResult = {
   succeeded: number;
   failed: number;
+  succeededIds: string[];
+  failedIds: string[];
+  errors: string[];
+};
+
+type BatchArtworkMutationResult = {
+  success: boolean;
+  partial: boolean;
+  count: number;
+  succeededIds: string[];
+  failedIds: string[];
   errors: string[];
 };
 
 async function syncCafe24Batch(ids: string[]): Promise<Cafe24BatchSyncResult> {
   const uniqueIds = Array.from(new Set(ids.filter((id) => typeof id === 'string' && id)));
   if (uniqueIds.length === 0) {
-    return { succeeded: 0, failed: 0, errors: [] };
+    return { succeeded: 0, failed: 0, succeededIds: [], failedIds: [], errors: [] };
   }
 
   let cursor = 0;
-  let succeeded = 0;
+  const succeededIds: string[] = [];
+  const failedIds: string[] = [];
   const errors: string[] = [];
 
   const worker = async () => {
@@ -66,12 +78,14 @@ async function syncCafe24Batch(ids: string[]): Promise<Cafe24BatchSyncResult> {
       try {
         const result = await syncArtworkToCafe24(id);
         if (result.ok) {
-          succeeded += 1;
+          succeededIds.push(id);
         } else {
+          failedIds.push(id);
           errors.push(`${id}: ${result.reason || '알 수 없는 오류'}`);
         }
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
+        failedIds.push(id);
         errors.push(`${id}: ${message}`);
       }
     }
@@ -81,17 +95,12 @@ async function syncCafe24Batch(ids: string[]): Promise<Cafe24BatchSyncResult> {
   await Promise.all(Array.from({ length: workerCount }, () => worker()));
 
   return {
-    succeeded,
-    failed: errors.length,
+    succeeded: succeededIds.length,
+    failed: failedIds.length,
+    succeededIds,
+    failedIds,
     errors,
   };
-}
-
-async function syncCafe24OrThrow(ids: string[]): Promise<void> {
-  const batchResult = await syncCafe24Batch(ids);
-  if (batchResult.failed > 0) {
-    throw new Error(`카페24 동기화 실패: ${batchResult.errors.join(' | ')}`);
-  }
 }
 
 export async function deleteAdminArtwork(id: string) {
@@ -512,7 +521,16 @@ export async function syncMissingArtworkPurchaseLinks(): Promise<MissingPurchase
 
 // Batch operations
 export async function batchUpdateArtworkStatus(ids: string[], status: string) {
-  if (ids.length === 0) return { success: true, count: 0 };
+  if (ids.length === 0) {
+    return {
+      success: true,
+      partial: false,
+      count: 0,
+      succeededIds: [],
+      failedIds: [],
+      errors: [],
+    } satisfies BatchArtworkMutationResult;
+  }
   validateBatchSize(ids);
   const admin = await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
@@ -571,6 +589,49 @@ export async function batchUpdateArtworkStatus(ids: string[], status: string) {
     .select('id, status, sold_at, updated_at')
     .in('id', ids);
 
+  const syncBatchResult = await syncCafe24Batch(ids);
+  if (syncBatchResult.failed > 0) {
+    const beforeMap = new Map((beforeArtworks || []).map((artwork) => [artwork.id, artwork]));
+    const rollbackErrors: string[] = [];
+
+    for (const failedId of syncBatchResult.failedIds) {
+      const before = beforeMap.get(failedId);
+      if (!before) continue;
+      const { error } = await supabase
+        .from('artworks')
+        .update({
+          status: before.status,
+          sold_at: before.sold_at,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', failedId);
+      if (error) {
+        rollbackErrors.push(`${failedId}: ${error.message}`);
+      }
+    }
+
+    revalidatePath('/artworks');
+    revalidatePath('/');
+    revalidatePath('/admin/artworks');
+
+    if (rollbackErrors.length > 0) {
+      throw new Error(
+        `카페24 동기화 실패 후 롤백 실패: ${rollbackErrors.join(' | ')} | sync: ${syncBatchResult.errors.join(
+          ' | '
+        )}`
+      );
+    }
+
+    return {
+      success: false,
+      partial: true,
+      count: syncBatchResult.succeededIds.length,
+      succeededIds: syncBatchResult.succeededIds,
+      failedIds: syncBatchResult.failedIds,
+      errors: syncBatchResult.errors,
+    } satisfies BatchArtworkMutationResult;
+  }
+
   revalidatePath('/artworks');
   revalidatePath('/');
   revalidatePath('/admin/artworks');
@@ -592,9 +653,14 @@ export async function batchUpdateArtworkStatus(ids: string[], status: string) {
     }
   );
 
-  await syncCafe24OrThrow(ids);
-
-  return { success: true, count: ids.length };
+  return {
+    success: true,
+    partial: false,
+    count: ids.length,
+    succeededIds: ids,
+    failedIds: [],
+    errors: [],
+  } satisfies BatchArtworkMutationResult;
 }
 
 export async function getArtworkSales(artworkId: string) {
@@ -642,10 +708,19 @@ export async function recordArtworkSale(formData: FormData) {
   if (!artwork) throw new Error('작품을 찾을 수 없습니다.');
 
   if (artwork.edition_type === 'limited' && artwork.edition_limit) {
-    const { data: sales } = await supabase
+    let { data: sales, error: salesError } = await supabase
       .from('artwork_sales')
       .select('quantity')
-      .eq('artwork_id', artworkId);
+      .eq('artwork_id', artworkId)
+      .is('voided_at', null);
+
+    if (salesError && salesError.message.includes('voided_at')) {
+      ({ data: sales, error: salesError } = await supabase
+        .from('artwork_sales')
+        .select('quantity')
+        .eq('artwork_id', artworkId));
+    }
+    if (salesError) throw salesError;
 
     const currentSold = sales?.reduce((sum, sale) => sum + (sale.quantity || 1), 0) || 0;
 
@@ -699,7 +774,16 @@ export async function recordArtworkSale(formData: FormData) {
 }
 
 export async function batchToggleHidden(ids: string[], isHidden: boolean) {
-  if (ids.length === 0) return { success: true, count: 0 };
+  if (ids.length === 0) {
+    return {
+      success: true,
+      partial: false,
+      count: 0,
+      succeededIds: [],
+      failedIds: [],
+      errors: [],
+    } satisfies BatchArtworkMutationResult;
+  }
   validateBatchSize(ids);
   const admin = await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
@@ -720,6 +804,48 @@ export async function batchToggleHidden(ids: string[], isHidden: boolean) {
     .from('artworks')
     .select('id, is_hidden, updated_at')
     .in('id', ids);
+
+  const syncBatchResult = await syncCafe24Batch(ids);
+  if (syncBatchResult.failed > 0) {
+    const beforeMap = new Map((beforeArtworks || []).map((artwork) => [artwork.id, artwork]));
+    const rollbackErrors: string[] = [];
+
+    for (const failedId of syncBatchResult.failedIds) {
+      const before = beforeMap.get(failedId);
+      if (!before) continue;
+      const { error: rollbackError } = await supabase
+        .from('artworks')
+        .update({
+          is_hidden: before.is_hidden,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', failedId);
+      if (rollbackError) {
+        rollbackErrors.push(`${failedId}: ${rollbackError.message}`);
+      }
+    }
+
+    revalidatePath('/artworks');
+    revalidatePath('/');
+    revalidatePath('/admin/artworks');
+
+    if (rollbackErrors.length > 0) {
+      throw new Error(
+        `카페24 동기화 실패 후 롤백 실패: ${rollbackErrors.join(' | ')} | sync: ${syncBatchResult.errors.join(
+          ' | '
+        )}`
+      );
+    }
+
+    return {
+      success: false,
+      partial: true,
+      count: syncBatchResult.succeededIds.length,
+      succeededIds: syncBatchResult.succeededIds,
+      failedIds: syncBatchResult.failedIds,
+      errors: syncBatchResult.errors,
+    } satisfies BatchArtworkMutationResult;
+  }
 
   revalidatePath('/artworks');
   revalidatePath('/');
@@ -742,9 +868,14 @@ export async function batchToggleHidden(ids: string[], isHidden: boolean) {
     }
   );
 
-  await syncCafe24OrThrow(ids);
-
-  return { success: true, count: ids.length };
+  return {
+    success: true,
+    partial: false,
+    count: ids.length,
+    succeededIds: ids,
+    failedIds: [],
+    errors: [],
+  } satisfies BatchArtworkMutationResult;
 }
 
 export async function batchDeleteArtworks(ids: string[]) {

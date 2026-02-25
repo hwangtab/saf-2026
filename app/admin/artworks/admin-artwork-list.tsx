@@ -106,9 +106,13 @@ function formatDate(dateString: string | null | undefined) {
 
 export function AdminArtworkList({
   artworks,
+  isTruncated = false,
+  maxRows = 0,
   initialFilters,
 }: {
   artworks: ArtworkItem[];
+  isTruncated?: boolean;
+  maxRows?: number;
   initialFilters?: InitialArtworkFilters;
 }) {
   const toast = useToast();
@@ -357,7 +361,17 @@ export function AdminArtworkList({
     );
 
     try {
-      await batchUpdateArtworkStatus([id], newStatus);
+      const result = await batchUpdateArtworkStatus([id], newStatus);
+      if (!result.success) {
+        const source = artworks.find((item) => item.id === id);
+        if (source) {
+          setOptimisticArtworks((prev) =>
+            prev.map((item) => (item.id === id ? { ...item, status: source.status } : item))
+          );
+        }
+        toast.error(result.errors[0] || '카페24 동기화에 실패해 상태 변경이 일부 롤백되었습니다.');
+        return;
+      }
       toast.success('작품 상태를 변경했습니다.');
     } catch (error) {
       setOptimisticArtworks(artworks);
@@ -375,7 +389,19 @@ export function AdminArtworkList({
     );
 
     try {
-      await batchToggleHidden([id], !currentHidden);
+      const result = await batchToggleHidden([id], !currentHidden);
+      if (!result.success) {
+        const source = artworks.find((item) => item.id === id);
+        if (source) {
+          setOptimisticArtworks((prev) =>
+            prev.map((item) => (item.id === id ? { ...item, is_hidden: source.is_hidden } : item))
+          );
+        }
+        toast.error(
+          result.errors[0] || '카페24 동기화에 실패해 공개 상태 변경이 일부 롤백되었습니다.'
+        );
+        return;
+      }
       toast.success(currentHidden ? '작품을 공개 처리했습니다.' : '작품을 숨김 처리했습니다.');
     } catch (error) {
       setOptimisticArtworks(artworks);
@@ -413,7 +439,25 @@ export function AdminArtworkList({
     );
 
     try {
-      await batchUpdateArtworkStatus(selectedInFiltered, status);
+      const result = await batchUpdateArtworkStatus(selectedInFiltered, status);
+      if (!result.success) {
+        const failedIdSet = new Set(result.failedIds);
+        const sourceMap = new Map(artworks.map((item) => [item.id, item]));
+        setOptimisticArtworks((prev) =>
+          prev.map((item) => {
+            if (!failedIdSet.has(item.id)) return item;
+            const source = sourceMap.get(item.id);
+            return source ? { ...item, status: source.status } : item;
+          })
+        );
+        setSelectedIds(new Set(result.failedIds));
+        setBatchStatusConfirm(null);
+        toast.warning(
+          `부분 성공: ${result.succeededIds.length}건 성공, ${result.failedIds.length}건 롤백되었습니다.`
+        );
+        return;
+      }
+
       setSelectedIds(new Set());
       setBatchStatusConfirm(null);
       toast.success('선택한 작품 상태를 변경했습니다.');
@@ -438,7 +482,25 @@ export function AdminArtworkList({
     );
 
     try {
-      await batchToggleHidden(selectedInFiltered, isHidden);
+      const result = await batchToggleHidden(selectedInFiltered, isHidden);
+      if (!result.success) {
+        const failedIdSet = new Set(result.failedIds);
+        const sourceMap = new Map(artworks.map((item) => [item.id, item]));
+        setOptimisticArtworks((prev) =>
+          prev.map((item) => {
+            if (!failedIdSet.has(item.id)) return item;
+            const source = sourceMap.get(item.id);
+            return source ? { ...item, is_hidden: source.is_hidden } : item;
+          })
+        );
+        setSelectedIds(new Set(result.failedIds));
+        setBatchHiddenConfirm(null);
+        toast.warning(
+          `부분 성공: ${result.succeededIds.length}건 성공, ${result.failedIds.length}건 롤백되었습니다.`
+        );
+        return;
+      }
+
       setSelectedIds(new Set());
       setBatchHiddenConfirm(null);
       toast.success(
@@ -477,6 +539,12 @@ export function AdminArtworkList({
   return (
     <div className="space-y-6">
       <AdminCard className="overflow-hidden">
+        {isTruncated && (
+          <div className="border-b border-amber-200 bg-amber-50 px-6 py-3 text-sm text-amber-800">
+            작품 데이터가 많아 최근 {maxRows}건만 불러왔습니다. 검색/필터 또는 데이터 내보내기로
+            전체 확인이 가능합니다.
+          </div>
+        )}
         {/* Header & Main Controls */}
         <AdminCardHeader>
           <div className="flex items-center gap-3">
