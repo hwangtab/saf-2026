@@ -260,6 +260,23 @@ function addToAggregate(target: SalesAggregate, revenue: number, soldCount: numb
   target.soldCount += soldCount;
 }
 
+function isMissingVoidedAtColumnError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') return false;
+
+  const candidate = error as {
+    code?: string;
+    message?: string;
+    details?: string;
+    hint?: string;
+  };
+
+  const merged = `${candidate.message || ''} ${candidate.details || ''} ${candidate.hint || ''}`
+    .toLowerCase()
+    .trim();
+
+  return candidate.code === '42703' && merged.includes('voided_at');
+}
+
 export async function getRevenueAnalytics(
   input: RevenueQueryInput = {}
 ): Promise<RevenueAnalytics> {
@@ -283,7 +300,7 @@ export async function getRevenueAnalyticsForAuthorizedUser(
     .order('sold_at', { ascending: true })
     .limit(1)
     .maybeSingle();
-  if (firstSoldResult.error && firstSoldResult.error.message.includes('voided_at')) {
+  if (firstSoldResult.error && isMissingVoidedAtColumnError(firstSoldResult.error)) {
     firstSoldResult = await supabase
       .from('artwork_sales')
       .select('sold_at')
@@ -301,7 +318,7 @@ export async function getRevenueAnalyticsForAuthorizedUser(
     .order('sold_at', { ascending: false })
     .limit(1)
     .maybeSingle();
-  if (latestSoldResult.error && latestSoldResult.error.message.includes('voided_at')) {
+  if (latestSoldResult.error && isMissingVoidedAtColumnError(latestSoldResult.error)) {
     latestSoldResult = await supabase
       .from('artwork_sales')
       .select('sold_at')
@@ -359,7 +376,7 @@ export async function getRevenueAnalyticsForAuthorizedUser(
     .is('voided_at', null)
     .order('sold_at', { ascending: true });
 
-  if (soldRowsResult.error && soldRowsResult.error.message.includes('voided_at')) {
+  if (soldRowsResult.error && isMissingVoidedAtColumnError(soldRowsResult.error)) {
     soldRowsResult = await supabase
       .from('artwork_sales')
       .select(

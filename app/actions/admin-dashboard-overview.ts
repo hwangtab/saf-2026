@@ -121,6 +121,23 @@ function getKstMonthBoundaryIso(now: Date) {
   };
 }
 
+function isMissingVoidedAtColumnError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') return false;
+
+  const candidate = error as {
+    code?: string;
+    message?: string;
+    details?: string;
+    hint?: string;
+  };
+
+  const merged = `${candidate.message || ''} ${candidate.details || ''} ${candidate.hint || ''}`
+    .toLowerCase()
+    .trim();
+
+  return candidate.code === '42703' && merged.includes('voided_at');
+}
+
 export async function getDashboardOverviewStats(): Promise<DashboardOverviewStats> {
   await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
@@ -172,9 +189,9 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
       .is('voided_at', null),
   ]);
 
-  const currentMonthSalesVoidColumnMissing =
-    !!currentMonthSoldRowsResult.error &&
-    currentMonthSoldRowsResult.error.message.includes('voided_at');
+  const currentMonthSalesVoidColumnMissing = isMissingVoidedAtColumnError(
+    currentMonthSoldRowsResult.error
+  );
 
   const baseErrors = [
     totalArtistsResult.error,
@@ -242,10 +259,7 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
   );
 
   let currentMonthSalesRows = currentMonthSoldRowsResult.data || [];
-  if (
-    currentMonthSoldRowsResult.error &&
-    currentMonthSoldRowsResult.error.message.includes('voided_at')
-  ) {
+  if (currentMonthSoldRowsResult.error && currentMonthSalesVoidColumnMissing) {
     const fallback = await supabase
       .from('artwork_sales')
       .select('sale_price, quantity')

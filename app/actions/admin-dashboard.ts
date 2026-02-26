@@ -161,6 +161,23 @@ function parsePrice(price: unknown): number {
   return 0;
 }
 
+function isMissingVoidedAtColumnError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') return false;
+
+  const candidate = error as {
+    code?: string;
+    message?: string;
+    details?: string;
+    hint?: string;
+  };
+
+  const merged = `${candidate.message || ''} ${candidate.details || ''} ${candidate.hint || ''}`
+    .toLowerCase()
+    .trim();
+
+  return candidate.code === '42703' && merged.includes('voided_at');
+}
+
 function toValidDate(value: string | null | undefined): Date | null {
   if (!value) return null;
   const date = new Date(value);
@@ -609,7 +626,7 @@ async function computeDashboardStats(period: DashboardPeriodKey = '7d'): Promise
     .not('sold_at', 'is', null)
     .is('voided_at', null);
 
-  if (salesRowsError && salesRowsError.message.includes('voided_at')) {
+  if (salesRowsError && isMissingVoidedAtColumnError(salesRowsError)) {
     ({ data: salesRows, error: salesRowsError } = await supabase
       .from('artwork_sales')
       .select('sale_price, quantity, sold_at')

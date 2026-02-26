@@ -16,6 +16,23 @@ type Cafe24SyncFeedback = {
 const CAFE24_SYNC_CONCURRENCY = 6;
 const CAFE24_MISSING_LINK_SYNC_CONCURRENCY = 4;
 
+function isMissingVoidedAtColumnError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') return false;
+
+  const candidate = error as {
+    code?: string;
+    message?: string;
+    details?: string;
+    hint?: string;
+  };
+
+  const merged = `${candidate.message || ''} ${candidate.details || ''} ${candidate.hint || ''}`
+    .toLowerCase()
+    .trim();
+
+  return candidate.code === '42703' && merged.includes('voided_at');
+}
+
 function toCafe24SyncFeedback(
   result: Awaited<ReturnType<typeof syncArtworkToCafe24>>
 ): Cafe24SyncFeedback {
@@ -667,11 +684,20 @@ export async function getArtworkSales(artworkId: string) {
   await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
 
-  const { data, error } = await supabase
+  let { data, error } = await supabase
     .from('artwork_sales')
     .select('*')
     .eq('artwork_id', artworkId)
+    .is('voided_at', null)
     .order('sold_at', { ascending: false });
+
+  if (error && isMissingVoidedAtColumnError(error)) {
+    ({ data, error } = await supabase
+      .from('artwork_sales')
+      .select('*')
+      .eq('artwork_id', artworkId)
+      .order('sold_at', { ascending: false }));
+  }
 
   if (error) throw error;
   return data || [];
@@ -714,7 +740,7 @@ export async function recordArtworkSale(formData: FormData) {
       .eq('artwork_id', artworkId)
       .is('voided_at', null);
 
-    if (salesError && salesError.message.includes('voided_at')) {
+    if (salesError && isMissingVoidedAtColumnError(salesError)) {
       ({ data: sales, error: salesError } = await supabase
         .from('artwork_sales')
         .select('quantity')
