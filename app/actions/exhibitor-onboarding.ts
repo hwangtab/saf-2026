@@ -2,8 +2,10 @@
 
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { requireAuth } from '@/lib/auth/guards';
+import { EXHIBITOR_APPLICATION_TERMS_VERSION } from '@/lib/constants';
 import { redirect } from 'next/navigation';
 import { logExhibitorAction } from './admin-logs';
+import { getRequestMetadata } from './request-metadata';
 
 export type ExhibitorOnboardingState = {
   message: string;
@@ -43,10 +45,25 @@ export async function submitExhibitorApplication(
     const contact = (formData.get('contact') as string | null)?.trim() || '';
     const bio = (formData.get('bio') as string | null)?.trim() || '';
     const referrer = (formData.get('referrer') as string | null)?.trim() || null;
+    const termsAccepted = formData.get('terms_accepted') === 'on';
+    const termsVersion = (formData.get('terms_version') as string | null)?.trim() || '';
 
     if (!representativeName || !contact || !bio) {
       return { message: '모든 필수 항목을 입력해주세요.', error: true };
     }
+
+    if (!termsAccepted) {
+      return { message: '출품자 이용약관 동의가 필요합니다.', error: true };
+    }
+
+    if (termsVersion !== EXHIBITOR_APPLICATION_TERMS_VERSION) {
+      return {
+        message: '최신 출품자 이용약관 확인 후 다시 동의해주세요.',
+        error: true,
+      };
+    }
+
+    const requestMetadata = await getRequestMetadata();
 
     const { error } = await supabase.from('exhibitor_applications').upsert(
       {
@@ -55,6 +72,10 @@ export async function submitExhibitorApplication(
         contact,
         bio,
         referrer,
+        terms_version: termsVersion,
+        terms_accepted_at: new Date().toISOString(),
+        terms_accepted_ip: requestMetadata.ip,
+        terms_accepted_user_agent: requestMetadata.userAgent,
         updated_at: new Date().toISOString(),
       },
       { onConflict: 'user_id' }

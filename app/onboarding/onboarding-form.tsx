@@ -1,9 +1,11 @@
 'use client';
 
 import { useActionState } from 'react';
+import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import { submitArtistApplication, type OnboardingState } from '@/app/actions/onboarding';
 import { CheckMarkIcon } from '@/components/ui/Icons';
+import { ARTIST_APPLICATION_TERMS_VERSION } from '@/lib/constants';
 
 const initialState: OnboardingState = {
   message: '',
@@ -86,6 +88,36 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
             className="shadow-sm focus:ring-black focus:border-black block w-full sm:text-sm border-gray-300 rounded-md"
             placeholder="추천인 이름 또는 연락처"
           />
+        </div>
+      </div>
+
+      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+        <input type="hidden" name="terms_version" value={ARTIST_APPLICATION_TERMS_VERSION} />
+        <div className="flex items-start gap-3">
+          <input
+            id="terms_accepted"
+            name="terms_accepted"
+            type="checkbox"
+            required
+            className="mt-1 h-4 w-4 rounded border-gray-300 text-black focus:ring-black"
+          />
+          <div className="text-sm">
+            <label htmlFor="terms_accepted" className="font-medium text-gray-700">
+              아티스트 이용약관 및 개인정보처리방침에 동의합니다.{' '}
+              <span className="text-red-500">*</span>
+            </label>
+            <p className="mt-1 text-gray-500">
+              제출 전에{' '}
+              <Link href="/terms/artist" className="underline underline-offset-2">
+                아티스트 이용약관
+              </Link>{' '}
+              과{' '}
+              <Link href="/privacy" className="underline underline-offset-2">
+                개인정보처리방침
+              </Link>
+              을 확인해주세요.
+            </p>
+          </div>
         </div>
       </div>
 

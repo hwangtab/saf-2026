@@ -47,6 +47,9 @@ export const CONTACT = {
   POSTAL_CODE: '03358',
 };
 
+export const ARTIST_APPLICATION_TERMS_VERSION = 'artist-terms-v1-2026-02-26';
+export const EXHIBITOR_APPLICATION_TERMS_VERSION = 'exhibitor-terms-v1-2026-02-26';
+
 // Exhibition Info
 export const EXHIBITION = {
   NAME: '씨앗페(SAF) 2026',
@@ -124,6 +127,8 @@ export const BREADCRUMBS: Record<string, BreadcrumbItem> = {
   '/our-proof': { name: '우리의 증명', url: `${SITE_URL}/our-proof` },
   '/privacy': { name: '개인정보처리방침', url: `${SITE_URL}/privacy` },
   '/terms': { name: '이용약관', url: `${SITE_URL}/terms` },
+  '/terms/artist': { name: '아티스트 이용약관', url: `${SITE_URL}/terms/artist` },
+  '/terms/exhibitor': { name: '출품자 이용약관', url: `${SITE_URL}/terms/exhibitor` },
   '/archive/2023': { name: '2023 아카이브', url: `${SITE_URL}/archive/2023` },
   '/archive/2026': { name: '2026 아카이브', url: `${SITE_URL}/archive/2026` },
   '/artworks': { name: '출품작', url: `${SITE_URL}/artworks` },

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import PageHero from '@/components/ui/PageHero';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
@@ -32,6 +33,25 @@ export default function TermsPage() {
             <p className="text-sm text-charcoal-muted mb-6">시행일: 2026년 2월 26일</p>
 
             <div className="space-y-10 text-charcoal">
+              <section>
+                <SectionTitle className="mb-4">역할별 약관</SectionTitle>
+                <p className="text-charcoal-muted leading-7">
+                  가입 신청 시에는 아래 역할별 약관 동의가 추가로 필요합니다.
+                </p>
+                <ul className="mt-3 list-disc pl-5 space-y-2 text-charcoal-muted">
+                  <li>
+                    <Link href="/terms/artist" className="hover:underline">
+                      아티스트 이용약관 보기
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/terms/exhibitor" className="hover:underline">
+                      출품자 이용약관 보기
+                    </Link>
+                  </li>
+                </ul>
+              </section>
+
               <section>
                 <SectionTitle className="mb-4">1. 목적</SectionTitle>
                 <p className="text-charcoal-muted leading-7">
