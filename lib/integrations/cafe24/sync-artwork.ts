@@ -173,6 +173,28 @@ function buildPolicySummaryLine(): string {
   return '구매 안내 요약: 결제 확인 후 평균 3~4영업일 내 발송 / 수령 후 7일 이내 청약철회 가능';
 }
 
+function buildPaymentInfoText(): string {
+  return '결제는 카페24 보안결제 시스템을 통해 처리됩니다. 무통장입금/카드결제 등 결제수단별 승인 시점에 따라 주문이 확정됩니다.';
+}
+
+function buildShippingInfoText(): string {
+  return '결제 확인 후 평균 3~4영업일 이내 발송됩니다. 도서산간/대형·파손위험 작품은 전문 운송으로 전환될 수 있으며 추가 기간이 소요될 수 있습니다.';
+}
+
+function buildExchangeInfoText(): string {
+  const receiver = CONTACT.ORGANIZATION_NAME || '한국스마트협동조합';
+  const phone = CONTACT.PHONE || '02-764-3114';
+  const zipcode = CONTACT.POSTAL_CODE || '03358';
+  const address = CONTACT.ADDRESS || '서울특별시 은평구 통일로 68길 4, 302호 (불광동)';
+  return `교환/반품처: ${receiver} / ${phone} / ${address} (${zipcode})\n단순변심 청약철회는 수령 후 7일 이내 가능하며 반품 배송비는 구매자 부담입니다. 하자/오배송은 판매자 부담으로 교환 또는 환불 처리됩니다.`;
+}
+
+function buildServiceInfoText(): string {
+  const email = CONTACT.EMAIL || 'contact@kosmart.org';
+  const phone = CONTACT.PHONE || '02-764-3114';
+  return `주문 완료 → 결제 확인 → 작품 상태 최종 검수 → 발송(운송장 안내) 순으로 진행됩니다. 수령 후 이상 발견 시 24시간 이내 ${phone} / ${email}로 문의 바랍니다.`;
+}
+
 function buildPolicySections(artwork: SyncArtworkRecord): string[] {
   const artistName = artwork.artists?.name_ko || '작가';
   const title = artwork.title || '작품';
@@ -529,6 +551,10 @@ async function upsertCafe24Product(
     .join(' | ');
   const tagParts = [artistName, '씨앗페', 'SAF2026', '미술', '예술', '작품'];
   const isVisible = !artwork.is_hidden;
+  const paymentInfo = buildPaymentInfoText();
+  const shippingInfo = buildShippingInfoText();
+  const exchangeInfo = buildExchangeInfoText();
+  const serviceInfo = buildServiceInfoText();
 
   const payload = compactObject({
     display: isVisible ? 'T' : 'F',
@@ -540,6 +566,14 @@ async function upsertCafe24Product(
     summary_description: summary,
     simple_description: summary,
     description: buildDescription(artwork),
+    payment_info_by_product: 'T',
+    payment_info: paymentInfo,
+    shipping_info_by_product: 'T',
+    shipping_info: shippingInfo,
+    exchange_info_by_product: 'T',
+    exchange_info: exchangeInfo,
+    service_info_by_product: 'T',
+    service_info: serviceInfo,
     product_tag: tagParts,
     add_category_no: config.defaultCategoryNo
       ? [
