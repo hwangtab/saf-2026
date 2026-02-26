@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import ExportedImage from 'next-image-export-optimizer';
 import { SOCIAL_LINKS, CONTACT, EXTERNAL_LINKS } from '@/lib/constants';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
@@ -163,6 +164,23 @@ export default function Footer() {
                   주소: {CONTACT.ADDRESS} ({CONTACT.POSTAL_CODE}) | 통신판매신고번호:{' '}
                   {CONTACT.MAIL_ORDER_REPORT_NUMBER}
                 </p>
+              </div>
+              <div className="mb-4 flex items-center justify-center gap-2 text-sm text-gray-300">
+                <Link
+                  href="/privacy"
+                  className="hover:text-primary transition-colors link-underline-offset"
+                >
+                  {UI_STRINGS.FOOTER.PRIVACY_POLICY}
+                </Link>
+                <span className="text-gray-500" aria-hidden="true">
+                  |
+                </span>
+                <Link
+                  href="/terms"
+                  className="hover:text-primary transition-colors link-underline-offset"
+                >
+                  {UI_STRINGS.FOOTER.TERMS_OF_SERVICE}
+                </Link>
               </div>
               {/* Copyright */}
               <div className="text-center text-sm text-gray-400">

@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic';
 import Button from '@/components/ui/Button';
 import MenuToggleIcon from '@/components/ui/MenuToggleIcon';
 import { EXTERNAL_LINKS } from '@/lib/constants';
+import { UI_STRINGS } from '@/lib/ui-strings';
 import type { NavigationItem } from '@/types';
 import styles from './FullscreenMenu.module.css';
 
@@ -193,6 +194,21 @@ export default function FullscreenMenu({
 
         {/* 푸터 - 가입 버튼 */}
         <footer className={styles.footer}>
+          <div className="mb-4 flex items-center justify-center gap-2 text-sm text-charcoal-muted">
+            <Link
+              href="/privacy"
+              className="hover:text-primary transition-colors"
+              onClick={onClose}
+            >
+              {UI_STRINGS.FOOTER.PRIVACY_POLICY}
+            </Link>
+            <span className="text-gray-400" aria-hidden="true">
+              |
+            </span>
+            <Link href="/terms" className="hover:text-primary transition-colors" onClick={onClose}>
+              {UI_STRINGS.FOOTER.TERMS_OF_SERVICE}
+            </Link>
+          </div>
           <AuthButtons layout="stacked" />
           <Button
             href={EXTERNAL_LINKS.JOIN_MEMBER}

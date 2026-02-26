@@ -34,6 +34,8 @@ export const UI_STRINGS = {
     ONLINE_GALLERY: '온라인 갤러리',
     LOAN_INFO: '상호부조 대출',
     COOP_HOME: '협동조합 홈페이지',
+    PRIVACY_POLICY: '개인정보처리방침',
+    TERMS_OF_SERVICE: '이용약관',
   },
   CTA: {
     DONATE_NOW: '🤝 조합원 가입하기',

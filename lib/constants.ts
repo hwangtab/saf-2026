@@ -122,6 +122,8 @@ export const BREADCRUMB_HOME: BreadcrumbItem = {
 export const BREADCRUMBS: Record<string, BreadcrumbItem> = {
   '/our-reality': { name: '우리의 현실', url: `${SITE_URL}/our-reality` },
   '/our-proof': { name: '우리의 증명', url: `${SITE_URL}/our-proof` },
+  '/privacy': { name: '개인정보처리방침', url: `${SITE_URL}/privacy` },
+  '/terms': { name: '이용약관', url: `${SITE_URL}/terms` },
   '/archive/2023': { name: '2023 아카이브', url: `${SITE_URL}/archive/2023` },
   '/archive/2026': { name: '2026 아카이브', url: `${SITE_URL}/archive/2026` },
   '/artworks': { name: '출품작', url: `${SITE_URL}/artworks` },
