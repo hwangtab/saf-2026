@@ -253,6 +253,16 @@ function parseInteger(raw: unknown): number | null {
   return parsed;
 }
 
+function isCafe24NoApiFoundError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') return false;
+
+  const candidate = error as {
+    message?: string;
+  };
+
+  return candidate.message?.toLowerCase().includes('no api found') ?? false;
+}
+
 function parsePositiveInteger(raw: unknown, fallback: number): number {
   const parsed = parseInteger(raw);
   if (!parsed || parsed <= 0) return fallback;
@@ -2058,36 +2068,62 @@ export async function syncCafe24SalesFromOrders(
       );
     }
 
+    let refundEvents: { rows: VoidCandidateRow[]; maxPageLimitHit: boolean } = {
+      rows: [],
+      maxPageLimitHit: false,
+    };
+    let cancellationEvents: { rows: VoidCandidateRow[]; maxPageLimitHit: boolean } = {
+      rows: [],
+      maxPageLimitHit: false,
+    };
+
     try {
-      const [refundEvents, cancellationEvents] = await Promise.all([
-        fetchVoidEventsFromEndpoint(client, '/refunds', windowFromIso, windowToIso),
-        fetchVoidEventsFromEndpoint(client, '/cancellation', windowFromIso, windowToIso),
-      ]);
-
-      if (refundEvents.maxPageLimitHit || cancellationEvents.maxPageLimitHit) {
-        warningErrors.push(
-          `환불/취소 조회 페이지 상한에 도달했습니다. CAFE24_SALES_MAX_ORDER_PAGES(현재=${resolveMaxOrderPages()})를 점검하세요.`
-        );
-      }
-
-      const endpointRows = [...refundEvents.rows, ...cancellationEvents.rows];
-      for (const row of endpointRows) {
-        trackVoidEndpointAnchor(isoToMs(row.voidedAt));
-        if (!row.orderId) continue;
-        if (ordersById.has(row.orderId)) continue;
-        ordersById.set(row.orderId, {
-          order_id: row.orderId,
-          paid: 'true',
-        });
-      }
-
-      if (endpointRows.length > 0) {
-        warningErrors.push(`환불/취소 역동기화 대상 ${endpointRows.length}건을 감지했습니다.`);
-      }
+      refundEvents = await fetchVoidEventsFromEndpoint(
+        client,
+        '/refunds',
+        windowFromIso,
+        windowToIso
+      );
     } catch (error) {
       voidEndpointFetchFailed = true;
       const message = error instanceof Error ? error.message : String(error);
-      warningErrors.push(`환불/취소 역동기화 조회 실패: ${message}`);
+      warningErrors.push(`환불 역동기화 조회 실패: ${message}`);
+    }
+
+    try {
+      cancellationEvents = await fetchVoidEventsFromEndpoint(
+        client,
+        '/cancellation',
+        windowFromIso,
+        windowToIso
+      );
+    } catch (error) {
+      if (!isCafe24NoApiFoundError(error)) {
+        voidEndpointFetchFailed = true;
+        const message = error instanceof Error ? error.message : String(error);
+        warningErrors.push(`취소 역동기화 조회 실패: ${message}`);
+      }
+    }
+
+    if (refundEvents.maxPageLimitHit || cancellationEvents.maxPageLimitHit) {
+      warningErrors.push(
+        `환불/취소 조회 페이지 상한에 도달했습니다. CAFE24_SALES_MAX_ORDER_PAGES(현재=${resolveMaxOrderPages()})를 점검하세요.`
+      );
+    }
+
+    const endpointRows = [...refundEvents.rows, ...cancellationEvents.rows];
+    for (const row of endpointRows) {
+      trackVoidEndpointAnchor(isoToMs(row.voidedAt));
+      if (!row.orderId) continue;
+      if (ordersById.has(row.orderId)) continue;
+      ordersById.set(row.orderId, {
+        order_id: row.orderId,
+        paid: 'true',
+      });
+    }
+
+    if (endpointRows.length > 0) {
+      warningErrors.push(`환불/취소 역동기화 대상 ${endpointRows.length}건을 감지했습니다.`);
     }
 
     const preparedRows: PreparedSaleRow[] = [];
