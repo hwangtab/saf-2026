@@ -42,6 +42,13 @@ type InventorySyncPolicy = {
   selling: boolean;
 };
 
+type Cafe24PolicyTexts = {
+  paymentInfo: string;
+  shippingInfo: string;
+  exchangeInfo: string;
+  serviceInfo: string;
+};
+
 const SUPPORTED_CAFE24_IMAGE_EXTENSIONS = new Set(['jpg', 'jpeg', 'png', 'gif']);
 const DEFAULT_IMAGE_FETCH_TIMEOUT_MS = 12_000;
 const DEFAULT_IMAGE_FETCH_RETRIES = 1;
@@ -195,6 +202,15 @@ function buildServiceInfoText(): string {
   return `주문 완료 → 결제 확인 → 작품 상태 최종 검수 → 발송(운송장 안내) 순으로 진행됩니다. 수령 후 이상 발견 시 24시간 이내 ${phone} / ${email}로 문의 바랍니다.`;
 }
 
+function buildCafe24PolicyTexts(): Cafe24PolicyTexts {
+  return {
+    paymentInfo: buildPaymentInfoText(),
+    shippingInfo: buildShippingInfoText(),
+    exchangeInfo: buildExchangeInfoText(),
+    serviceInfo: buildServiceInfoText(),
+  };
+}
+
 function buildPolicySections(artwork: SyncArtworkRecord): string[] {
   const artistName = artwork.artists?.name_ko || '작가';
   const title = artwork.title || '작품';
@@ -285,6 +301,132 @@ function pickImageUrl(images: string[] | null): string | null {
 
 function mergeWarnings(current: string | null, next: string): string {
   return current ? `${current} | ${next}` : next;
+}
+
+function normalizeTextForComparison(value: string): string {
+  return value.replace(/\s+/g, ' ').trim();
+}
+
+function extractValueByKey(value: unknown, key: string): unknown {
+  const stack: unknown[] = [value];
+  while (stack.length > 0) {
+    const current = stack.pop();
+    if (!current || typeof current !== 'object') continue;
+    if (Array.isArray(current)) {
+      for (const child of current) stack.push(child);
+      continue;
+    }
+
+    const obj = current as JsonRecord;
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      return obj[key];
+    }
+    for (const child of Object.values(obj)) {
+      stack.push(child);
+    }
+  }
+  return undefined;
+}
+
+function readStringField(value: unknown, key: string): string | null {
+  const extracted = extractValueByKey(value, key);
+  return typeof extracted === 'string' ? extracted.trim() : null;
+}
+
+function isMissingVoidedAtColumnError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') return false;
+  const candidate = error as {
+    code?: string;
+    message?: string;
+    details?: string;
+    hint?: string;
+  };
+  const merged = `${candidate.message || ''} ${candidate.details || ''} ${candidate.hint || ''}`
+    .toLowerCase()
+    .trim();
+  return candidate.code === '42703' && merged.includes('voided_at');
+}
+
+async function verifyCafe24PolicyFieldPersistence(
+  productNo: number,
+  policyTexts: Cafe24PolicyTexts
+): Promise<string[]> {
+  const client = createCafe24AdminApiClient();
+
+  let productResponse: unknown;
+  try {
+    productResponse = await client.request(`/products/${productNo}`, { method: 'GET' });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return [`정책 필드 저장 검증 호출 실패: ${message}`];
+  }
+
+  const warnings: string[] = [];
+  const byProductFields = [
+    { key: 'payment_info_by_product', label: '결제정보 개별설정값' },
+    { key: 'shipping_info_by_product', label: '배송정보 개별설정값' },
+    { key: 'exchange_info_by_product', label: '교환/반품정보 개별설정값' },
+    { key: 'service_info_by_product', label: '서비스정보 개별설정값' },
+  ];
+
+  for (const field of byProductFields) {
+    const value = readStringField(productResponse, field.key);
+    if (value !== 'T') {
+      warnings.push(`${field.label}이 'T'로 저장되지 않았습니다.`);
+    }
+  }
+
+  const policyChecks = [
+    {
+      key: 'payment_info',
+      label: '결제정보',
+      expected: policyTexts.paymentInfo,
+      requiredSnippets: ['카페24 보안결제 시스템'],
+    },
+    {
+      key: 'shipping_info',
+      label: '배송정보',
+      expected: policyTexts.shippingInfo,
+      requiredSnippets: ['평균 3~4영업일'],
+    },
+    {
+      key: 'exchange_info',
+      label: '교환/반품정보',
+      expected: policyTexts.exchangeInfo,
+      requiredSnippets: ['교환/반품처'],
+    },
+    {
+      key: 'service_info',
+      label: '서비스정보',
+      expected: policyTexts.serviceInfo,
+      requiredSnippets: ['주문 완료'],
+    },
+  ];
+
+  for (const policyCheck of policyChecks) {
+    const actual = readStringField(productResponse, policyCheck.key);
+    if (!actual) {
+      warnings.push(`${policyCheck.label} 저장값이 비어 있습니다.`);
+      continue;
+    }
+
+    const normalizedActual = normalizeTextForComparison(actual);
+    const normalizedExpected = normalizeTextForComparison(policyCheck.expected);
+
+    const hasRequiredSnippets = policyCheck.requiredSnippets.every((snippet) =>
+      normalizedActual.includes(normalizeTextForComparison(snippet))
+    );
+    if (!hasRequiredSnippets) {
+      warnings.push(`${policyCheck.label} 저장값에 필수 안내 문구가 누락되었습니다.`);
+      continue;
+    }
+
+    if (!normalizedActual.includes(normalizedExpected.slice(0, 20))) {
+      warnings.push(`${policyCheck.label} 저장값이 요청 본문과 다를 수 있습니다.`);
+    }
+  }
+
+  return warnings;
 }
 
 function extractProductNo(value: unknown): number | null {
@@ -520,7 +662,7 @@ async function fetchArtworkSoldQuantity(artworkId: string): Promise<number> {
     .eq('artwork_id', artworkId)
     .is('voided_at', null);
 
-  if (error && error.message.includes('voided_at')) {
+  if (error && isMissingVoidedAtColumnError(error)) {
     ({ data, error } = await supabase
       .from('artwork_sales')
       .select('quantity')
@@ -538,7 +680,8 @@ async function upsertCafe24Product(
   artwork: SyncArtworkRecord,
   customProductCode: string,
   selling: boolean,
-  priceAmount: number
+  priceAmount: number,
+  policyTexts: Cafe24PolicyTexts
 ): Promise<number> {
   const config = getCafe24Config();
   if (!config) {
@@ -551,10 +694,6 @@ async function upsertCafe24Product(
     .join(' | ');
   const tagParts = [artistName, '씨앗페', 'SAF2026', '미술', '예술', '작품'];
   const isVisible = !artwork.is_hidden;
-  const paymentInfo = buildPaymentInfoText();
-  const shippingInfo = buildShippingInfoText();
-  const exchangeInfo = buildExchangeInfoText();
-  const serviceInfo = buildServiceInfoText();
 
   const payload = compactObject({
     display: isVisible ? 'T' : 'F',
@@ -567,13 +706,13 @@ async function upsertCafe24Product(
     simple_description: summary,
     description: buildDescription(artwork),
     payment_info_by_product: 'T',
-    payment_info: paymentInfo,
+    payment_info: policyTexts.paymentInfo,
     shipping_info_by_product: 'T',
-    shipping_info: shippingInfo,
+    shipping_info: policyTexts.shippingInfo,
     exchange_info_by_product: 'T',
-    exchange_info: exchangeInfo,
+    exchange_info: policyTexts.exchangeInfo,
     service_info_by_product: 'T',
-    service_info: serviceInfo,
+    service_info: policyTexts.serviceInfo,
     product_tag: tagParts,
     add_category_no: config.defaultCategoryNo
       ? [
@@ -785,6 +924,7 @@ export async function syncArtworkToCafe24(artworkId: string): Promise<SyncResult
     const soldQuantity = await fetchArtworkSoldQuantity(artworkId);
     const inventoryPolicy = buildInventorySyncPolicy(artwork, soldQuantity);
     const priceInfo = parsePrice(artwork.price);
+    const policyTexts = buildCafe24PolicyTexts();
     const priceReadyToSell = !priceInfo.inquiry && priceInfo.amount > 0;
     const effectiveSelling = inventoryPolicy.selling && priceReadyToSell;
     let warningMessage: string | null = null;
@@ -800,7 +940,8 @@ export async function syncArtworkToCafe24(artworkId: string): Promise<SyncResult
       artwork,
       customCode,
       effectiveSelling,
-      priceInfo.amount
+      priceInfo.amount,
+      policyTexts
     );
     latestProductNo = productNo;
     const categoryNo = await ensureProductCategory(productNo, config.defaultCategoryNo);
@@ -834,6 +975,11 @@ export async function syncArtworkToCafe24(artworkId: string): Promise<SyncResult
         warningMessage,
         '대표 이미지가 없어 카페24 이미지 업로드를 건너뛰었습니다.'
       );
+    }
+
+    const policyWarnings = await verifyCafe24PolicyFieldPersistence(productNo, policyTexts);
+    for (const policyWarning of policyWarnings) {
+      warningMessage = mergeWarnings(warningMessage, policyWarning);
     }
 
     const shopUrl = buildProductUrl(config.mallId, productNo, categoryNo);
