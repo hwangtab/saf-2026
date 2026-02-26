@@ -43,16 +43,22 @@ function getCookieDomain(request: NextRequest): string | undefined {
   return undefined;
 }
 
-function parseRawQueryParams(request: NextRequest): Record<string, string> {
+type RawQueryPair = {
+  raw: string;
+  key: string;
+  value: string;
+};
+
+function parseRawQueryPairs(request: NextRequest): RawQueryPair[] {
   const raw = request.nextUrl.search.startsWith('?')
     ? request.nextUrl.search.slice(1)
     : request.nextUrl.search;
-  const out: Record<string, string> = {};
+  const out: RawQueryPair[] = [];
   if (!raw) return out;
 
-  for (const pair of raw.split('&')) {
-    if (!pair) continue;
-    const [rawKey, ...rawValueParts] = pair.split('=');
+  for (const rawPair of raw.split('&')) {
+    if (!rawPair) continue;
+    const [rawKey, ...rawValueParts] = rawPair.split('=');
     if (!rawKey) continue;
     const rawValue = rawValueParts.join('=');
 
@@ -66,10 +72,65 @@ function parseRawQueryParams(request: NextRequest): Record<string, string> {
     }
 
     if (!key) continue;
-    out[key] = value;
+    out.push({
+      raw: rawPair,
+      key,
+      value,
+    });
   }
 
   return out;
+}
+
+function getRawQueryValue(pairs: RawQueryPair[], targetKey: string): string | null {
+  for (const pair of pairs) {
+    if (pair.key === targetKey) {
+      return pair.value;
+    }
+  }
+  return null;
+}
+
+function decodeQueryValue(rawValue: string): string | null {
+  try {
+    return decodeURIComponent(rawValue.replace(/\+/g, '%20'));
+  } catch {
+    return null;
+  }
+}
+
+function extractRawHmacFromSearch(search: string): string | null {
+  const raw = search.startsWith('?') ? search.slice(1) : search;
+  if (!raw) return null;
+
+  for (const rawPair of raw.split('&')) {
+    if (!rawPair) continue;
+    const [rawKey, ...rawValueParts] = rawPair.split('=');
+    if (!rawKey) continue;
+    const key = decodeQueryValue(rawKey);
+    if (key !== 'hmac') continue;
+    return rawValueParts.join('=');
+  }
+
+  return null;
+}
+
+function stripHmacFromSearch(search: string): string | null {
+  const raw = search.startsWith('?') ? search.slice(1) : search;
+  if (!raw) return null;
+
+  const kept: string[] = [];
+  for (const rawPair of raw.split('&')) {
+    if (!rawPair) continue;
+    const [rawKey] = rawPair.split('=');
+    if (!rawKey) continue;
+    const key = decodeQueryValue(rawKey);
+    if (key === 'hmac') continue;
+    kept.push(rawPair);
+  }
+
+  if (kept.length === 0) return null;
+  return kept.join('&');
 }
 
 function normalizeTimestampSeconds(raw: string | null | undefined): number | null {
@@ -106,17 +167,104 @@ function safeEqualHex(leftHex: string, rightHex: string): boolean {
   }
 }
 
+function normalizeBase64(input: string): string | null {
+  const withPlus = input.trim().replace(/ /g, '+');
+  if (!withPlus) return null;
+  const compact = withPlus.replace(/[\r\n\t]/g, '');
+  const remainder = compact.length % 4;
+  const padded = remainder === 0 ? compact : `${compact}${'='.repeat(4 - remainder)}`;
+  try {
+    const decoded = Buffer.from(padded, 'base64');
+    if (decoded.length === 0) return null;
+    return decoded.toString('base64').replace(/=+$/g, '');
+  } catch {
+    return null;
+  }
+}
+
+function safeEqualBase64(leftBase64: string, rightBase64: string): boolean {
+  const left = normalizeBase64(leftBase64);
+  const right = normalizeBase64(rightBase64);
+  if (!left || !right) return false;
+  if (left.length !== right.length) return false;
+  try {
+    return crypto.timingSafeEqual(Buffer.from(left, 'utf8'), Buffer.from(right, 'utf8'));
+  } catch {
+    return false;
+  }
+}
+
+function toFormUrlEncoded(value: string): string {
+  return encodeURIComponent(value).replace(/%20/g, '+');
+}
+
+function sortAscii(values: string[]): string[] {
+  return values.sort((a, b) => (a === b ? 0 : a < b ? -1 : 1));
+}
+
 function verifyLaunchHmac(
-  params: Record<string, string>,
+  rawSearch: string,
+  pairs: RawQueryPair[],
   providedHmac: string,
   clientSecret: string
 ): boolean {
-  const keys = Object.keys(params)
-    .filter((key) => key !== 'hmac')
-    .sort((a, b) => a.localeCompare(b));
-  const message = keys.map((key) => `${key}=${encodeURIComponent(params[key] || '')}`).join('&');
-  const computed = crypto.createHmac('sha256', clientSecret).update(message).digest('hex');
-  return safeEqualHex(computed, providedHmac.toLowerCase());
+  const filtered = pairs.filter((pair) => pair.key !== 'hmac');
+  if (filtered.length === 0) return false;
+
+  const rawMessage = stripHmacFromSearch(rawSearch);
+
+  const asRecord = new Map<string, string>();
+  for (const pair of filtered) {
+    asRecord.set(pair.key, pair.value);
+  }
+
+  const sortedKeys = sortAscii(Array.from(asRecord.keys()));
+  const canonicalRfc3986 = sortedKeys
+    .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(asRecord.get(key) || '')}`)
+    .join('&');
+  const canonicalForm = sortedKeys
+    .map((key) => `${toFormUrlEncoded(key)}=${toFormUrlEncoded(asRecord.get(key) || '')}`)
+    .join('&');
+
+  const orderedRfc3986 = filtered
+    .map((pair) => `${encodeURIComponent(pair.key)}=${encodeURIComponent(pair.value)}`)
+    .join('&');
+  const orderedForm = filtered
+    .map((pair) => `${toFormUrlEncoded(pair.key)}=${toFormUrlEncoded(pair.value)}`)
+    .join('&');
+
+  const rawSpaceNormalized = rawMessage ? rawMessage.replace(/\+/g, '%20') : null;
+  const rawPlusNormalized = rawMessage ? rawMessage.replace(/%20/g, '+') : null;
+  const messages = Array.from(
+    new Set(
+      [
+        rawMessage,
+        rawSpaceNormalized,
+        rawPlusNormalized,
+        canonicalRfc3986,
+        canonicalForm,
+        orderedRfc3986,
+        orderedForm,
+      ].filter((value): value is string => Boolean(value))
+    )
+  );
+
+  for (const message of messages) {
+    const computedHex = crypto.createHmac('sha256', clientSecret).update(message).digest('hex');
+    if (safeEqualHex(computedHex, providedHmac.toLowerCase())) {
+      return true;
+    }
+
+    const computedBase64 = crypto
+      .createHmac('sha256', clientSecret)
+      .update(message)
+      .digest('base64');
+    if (safeEqualBase64(computedBase64, providedHmac)) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 function buildLaunchRequestFingerprint(input: {
@@ -124,7 +272,7 @@ function buildLaunchRequestFingerprint(input: {
   timestamp: string;
   hmac: string;
 }): string {
-  const source = `${input.mallId}|${input.timestamp}|${input.hmac.toLowerCase()}`;
+  const source = `${input.mallId}|${input.timestamp}|${input.hmac}`;
   return crypto.createHash('sha256').update(source).digest('hex');
 }
 
@@ -153,12 +301,19 @@ async function persistOAuthContext(context: LaunchContext): Promise<'ok' | 'repl
 
 export async function GET(request: NextRequest) {
   try {
-    const rawQuery = parseRawQueryParams(request);
+    const rawQueryPairs = parseRawQueryPairs(request);
     const queryMallId =
-      request.nextUrl.searchParams.get('mall_id')?.trim() || rawQuery.mall_id?.trim();
-    const timestampRaw = request.nextUrl.searchParams.get('timestamp') || rawQuery.timestamp;
+      request.nextUrl.searchParams.get('mall_id')?.trim() ||
+      getRawQueryValue(rawQueryPairs, 'mall_id')?.trim();
+    const timestampRaw =
+      request.nextUrl.searchParams.get('timestamp') || getRawQueryValue(rawQueryPairs, 'timestamp');
+    const rawHmacFromSearch = extractRawHmacFromSearch(request.nextUrl.search);
+    const decodedRawHmac = rawHmacFromSearch ? decodeQueryValue(rawHmacFromSearch)?.trim() : null;
     const providedHmac =
-      request.nextUrl.searchParams.get('hmac')?.trim() || rawQuery.hmac?.trim() || null;
+      decodedRawHmac ||
+      request.nextUrl.searchParams.get('hmac')?.trim() ||
+      getRawQueryValue(rawQueryPairs, 'hmac')?.trim() ||
+      null;
     const isCafe24Launch = Boolean(queryMallId && timestampRaw && providedHmac);
 
     if (!isCafe24Launch) {
@@ -189,7 +344,9 @@ export async function GET(request: NextRequest) {
       if (!timestampSeconds || !isTimestampWithinReplayWindow(timestampSeconds)) {
         return NextResponse.json({ error: 'timestamp_expired' }, { status: 400 });
       }
-      if (!verifyLaunchHmac(rawQuery, providedHmac || '', clientSecret)) {
+      if (
+        !verifyLaunchHmac(request.nextUrl.search, rawQueryPairs, providedHmac || '', clientSecret)
+      ) {
         return NextResponse.json({ error: 'hmac_mismatch' }, { status: 403 });
       }
     }
