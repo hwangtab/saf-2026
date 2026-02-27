@@ -38,10 +38,6 @@ export async function GET(request: NextRequest) {
         }
 
         if (profile?.role === 'exhibitor') {
-          if (profile.status === 'active') {
-            return NextResponse.redirect(`${origin}/exhibitor`);
-          }
-
           const { data: application } = await supabase
             .from('exhibitor_applications')
             .select('representative_name, contact, bio, terms_version, terms_accepted_at')
@@ -50,6 +46,25 @@ export async function GET(request: NextRequest) {
 
           const hasApplication = hasExhibitorApplication(application);
           const needsTermsConsent = needsExhibitorTermsConsent(application);
+
+          if (profile.status === 'suspended') {
+            return NextResponse.redirect(`${origin}/exhibitor/suspended`);
+          }
+
+          if (profile.status === 'active') {
+            return NextResponse.redirect(
+              hasApplication
+                ? `${origin}${
+                    needsTermsConsent
+                      ? buildTermsConsentPath({
+                          nextPath: '/exhibitor',
+                          needsExhibitorConsent: true,
+                        })
+                      : '/exhibitor'
+                  }`
+                : `${origin}/exhibitor/onboarding?recover=1`
+            );
+          }
 
           return NextResponse.redirect(
             hasApplication
@@ -66,19 +81,31 @@ export async function GET(request: NextRequest) {
         }
 
         if (profile?.role === 'artist') {
+          const { data: application } = await supabase
+            .from('artist_applications')
+            .select('artist_name, contact, bio, terms_version, terms_accepted_at')
+            .eq('user_id', user.id)
+            .maybeSingle();
+
+          const hasApplication = hasArtistApplication(application);
+          const needsTermsConsent = needsArtistTermsConsent(application);
+
           if (profile.status === 'active') {
-            return NextResponse.redirect(`${origin}/dashboard/artworks`);
+            return NextResponse.redirect(
+              hasApplication
+                ? `${origin}${
+                    needsTermsConsent
+                      ? buildTermsConsentPath({
+                          nextPath: '/dashboard/artworks',
+                          needsArtistConsent: true,
+                        })
+                      : '/dashboard/artworks'
+                  }`
+                : `${origin}/onboarding?recover=1`
+            );
           }
+
           if (profile.status === 'pending') {
-            const { data: application } = await supabase
-              .from('artist_applications')
-              .select('artist_name, contact, bio, terms_version, terms_accepted_at')
-              .eq('user_id', user.id)
-              .maybeSingle();
-
-            const hasApplication = hasArtistApplication(application);
-            const needsTermsConsent = needsArtistTermsConsent(application);
-
             return NextResponse.redirect(
               hasApplication
                 ? `${origin}${

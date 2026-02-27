@@ -58,19 +58,27 @@ export default function LoginPage() {
         if (profile?.role === 'admin') {
           nextPath = '/admin/dashboard';
         } else if (profile?.role === 'exhibitor') {
-          if (profile.status === 'active') {
-            nextPath = '/exhibitor';
+          const { data: application } = await supabase
+            .from('exhibitor_applications')
+            .select('representative_name, contact, bio, terms_version, terms_accepted_at')
+            .eq('user_id', user.id)
+            .maybeSingle();
+
+          const hasApplication = hasExhibitorApplication(application);
+          const needsTermsConsent = needsExhibitorTermsConsent(application);
+
+          if (profile.status === 'suspended') {
+            nextPath = '/exhibitor/suspended';
+          } else if (profile.status === 'active') {
+            nextPath = hasApplication
+              ? needsTermsConsent
+                ? buildTermsConsentPath({
+                    nextPath: '/exhibitor',
+                    needsExhibitorConsent: true,
+                  })
+                : '/exhibitor'
+              : '/exhibitor/onboarding?recover=1';
           } else {
-            // Check application for pending users
-            const { data: application } = await supabase
-              .from('exhibitor_applications')
-              .select('representative_name, contact, bio, terms_version, terms_accepted_at')
-              .eq('user_id', user.id)
-              .maybeSingle();
-
-            const hasApplication = hasExhibitorApplication(application);
-            const needsTermsConsent = needsExhibitorTermsConsent(application);
-
             nextPath = hasApplication
               ? needsTermsConsent
                 ? buildTermsConsentPath({
@@ -81,20 +89,27 @@ export default function LoginPage() {
               : '/exhibitor/onboarding';
           }
         } else if (profile?.role === 'artist') {
+          const { data: application } = await supabase
+            .from('artist_applications')
+            .select('artist_name, contact, bio, terms_version, terms_accepted_at')
+            .eq('user_id', user.id)
+            .maybeSingle();
+
+          const hasApplication = hasArtistApplication(application);
+          const needsTermsConsent = needsArtistTermsConsent(application);
+
           if (profile.status === 'active') {
-            nextPath = '/dashboard/artworks';
+            nextPath = hasApplication
+              ? needsTermsConsent
+                ? buildTermsConsentPath({
+                    nextPath: '/dashboard/artworks',
+                    needsArtistConsent: true,
+                  })
+                : '/dashboard/artworks'
+              : '/onboarding?recover=1';
           } else if (profile.status === 'suspended') {
             nextPath = '/dashboard/suspended';
           } else if (profile.status === 'pending') {
-            const { data: application } = await supabase
-              .from('artist_applications')
-              .select('artist_name, contact, bio, terms_version, terms_accepted_at')
-              .eq('user_id', user.id)
-              .maybeSingle();
-
-            const hasApplication = hasArtistApplication(application);
-            const needsTermsConsent = needsArtistTermsConsent(application);
-
             nextPath = hasApplication
               ? needsTermsConsent
                 ? buildTermsConsentPath({

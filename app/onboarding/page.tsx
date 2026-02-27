@@ -4,8 +4,14 @@ import { redirect } from 'next/navigation';
 import { OnboardingForm } from './onboarding-form';
 import LinkButton from '@/components/ui/LinkButton';
 
-export default async function OnboardingPage() {
+export default async function OnboardingPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ recover?: string }>;
+}) {
   const user = await requireAuth();
+  const params = await searchParams;
+  const isRecoveryFlow = params.recover === '1';
   const supabase = await createSupabaseServerClient();
 
   const { data: profile } = await supabase
@@ -20,13 +26,18 @@ export default async function OnboardingPage() {
 
   if (profile?.role === 'exhibitor') {
     if (profile.status === 'active') {
-      redirect('/exhibitor');
+      redirect(isRecoveryFlow ? '/exhibitor/onboarding?recover=1' : '/exhibitor');
+    }
+    if (profile.status === 'suspended') {
+      redirect('/exhibitor/suspended');
     }
     redirect('/exhibitor/pending');
   }
 
   if (profile?.role === 'artist' && profile?.status === 'active') {
-    redirect('/dashboard/profile');
+    if (!isRecoveryFlow) {
+      redirect('/dashboard/profile');
+    }
   }
   if (profile?.role === 'artist' && profile?.status === 'suspended') {
     redirect('/dashboard/suspended');

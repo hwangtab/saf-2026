@@ -27,6 +27,7 @@ export function sanitizeInternalPath(nextPath: string | null | undefined, fallba
   const trimmed = nextPath.trim();
   if (!trimmed.startsWith('/')) return fallback;
   if (trimmed.startsWith('//')) return fallback;
+  if (trimmed.startsWith('/terms-consent')) return fallback;
   return trimmed;
 }
 
@@ -117,15 +118,21 @@ export function resolvePostLoginPath(input: {
   }
 
   if (input.role === 'exhibitor') {
-    return input.status === 'active'
-      ? '/exhibitor'
-      : input.hasExhibitorApplication
-        ? '/exhibitor/pending'
-        : '/exhibitor/onboarding';
+    if (input.status === 'active') {
+      return input.hasExhibitorApplication ? '/exhibitor' : '/exhibitor/onboarding?recover=1';
+    }
+
+    if (input.status === 'suspended') {
+      return '/exhibitor/suspended';
+    }
+
+    return input.hasExhibitorApplication ? '/exhibitor/pending' : '/exhibitor/onboarding';
   }
 
   if (input.role === 'artist') {
-    if (input.status === 'active') return '/dashboard/artworks';
+    if (input.status === 'active') {
+      return input.hasArtistApplication ? '/dashboard/artworks' : '/onboarding?recover=1';
+    }
     if (input.status === 'suspended') return '/dashboard/suspended';
     return input.hasArtistApplication ? '/dashboard/pending' : '/onboarding';
   }

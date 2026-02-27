@@ -3,8 +3,14 @@ import { createSupabaseServerClient } from '@/lib/auth/server';
 import { redirect } from 'next/navigation';
 import { ExhibitorOnboardingForm } from './exhibitor-onboarding-form';
 
-export default async function ExhibitorOnboardingPage() {
+export default async function ExhibitorOnboardingPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ recover?: string }>;
+}) {
   const user = await requireAuth();
+  const params = await searchParams;
+  const isRecoveryFlow = params.recover === '1';
   const supabase = await createSupabaseServerClient();
 
   const { data: profile } = await supabase
@@ -22,7 +28,13 @@ export default async function ExhibitorOnboardingPage() {
   }
 
   if (profile?.role === 'exhibitor' && profile?.status === 'active') {
-    redirect('/exhibitor');
+    if (!isRecoveryFlow) {
+      redirect('/exhibitor');
+    }
+  }
+
+  if (profile?.role === 'exhibitor' && profile?.status === 'suspended') {
+    redirect('/exhibitor/suspended');
   }
 
   // Fetch existing application if any

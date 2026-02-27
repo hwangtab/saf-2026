@@ -30,6 +30,10 @@ export default async function ExhibitorPendingPage() {
     redirect('/exhibitor');
   }
 
+  if (profile.role === 'exhibitor' && profile.status === 'suspended') {
+    redirect('/exhibitor/suspended');
+  }
+
   const { data: application } = await supabase
     .from('exhibitor_applications')
     .select('representative_name, contact, bio, terms_version, terms_accepted_at')

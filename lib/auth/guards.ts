@@ -63,6 +63,12 @@ export async function requireArtistActive() {
       .eq('user_id', user.id)
       .maybeSingle();
 
+    const hasApplication = hasArtistApplication(application);
+
+    if (profile.status === 'active' && !hasApplication) {
+      redirect('/onboarding?recover=1');
+    }
+
     if (needsArtistTermsConsent(application)) {
       redirect(
         buildTermsConsentPath({
@@ -148,6 +154,12 @@ export async function requireExhibitor() {
     .eq('user_id', user.id)
     .maybeSingle();
 
+  const hasApplication = hasExhibitorApplication(application);
+
+  if (profile.status === 'active' && !hasApplication) {
+    redirect('/exhibitor/onboarding?recover=1');
+  }
+
   if (needsExhibitorTermsConsent(application)) {
     redirect(
       buildTermsConsentPath({
@@ -160,12 +172,10 @@ export async function requireExhibitor() {
   // Check exhibitor status - similar to artist flow
   if (profile.status !== 'active') {
     if (profile.status === 'pending') {
-      const hasApplication = hasExhibitorApplication(application);
-
       if (!hasApplication) redirect('/exhibitor/onboarding');
       redirect('/exhibitor/pending');
     }
-    if (profile.status === 'suspended') redirect('/exhibitor/pending');
+    if (profile.status === 'suspended') redirect('/exhibitor/suspended');
 
     redirect('/exhibitor/onboarding');
   }

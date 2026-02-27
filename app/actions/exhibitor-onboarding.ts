@@ -83,7 +83,10 @@ export async function submitExhibitorApplication(
 
     if (error) throw error;
 
-    if (profile.role !== 'exhibitor' || profile.status !== 'pending') {
+    if (
+      profile.role !== 'exhibitor' ||
+      (profile.status !== 'pending' && profile.status !== 'active')
+    ) {
       const { error: profileUpdateError } = await supabase
         .from('profiles')
         .update({ status: 'pending' })
