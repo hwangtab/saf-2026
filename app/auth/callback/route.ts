@@ -1,5 +1,12 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/auth/server';
+import {
+  buildTermsConsentPath,
+  hasArtistApplication,
+  hasExhibitorApplication,
+  needsArtistTermsConsent,
+  needsExhibitorTermsConsent,
+} from '@/lib/auth/terms-consent';
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
@@ -37,17 +44,24 @@ export async function GET(request: NextRequest) {
 
           const { data: application } = await supabase
             .from('exhibitor_applications')
-            .select('representative_name, contact, bio')
+            .select('representative_name, contact, bio, terms_version, terms_accepted_at')
             .eq('user_id', user.id)
             .maybeSingle();
 
-          const hasApplication =
-            !!application?.representative_name?.trim() &&
-            !!application?.contact?.trim() &&
-            !!application?.bio?.trim();
+          const hasApplication = hasExhibitorApplication(application);
+          const needsTermsConsent = needsExhibitorTermsConsent(application);
 
           return NextResponse.redirect(
-            hasApplication ? `${origin}/exhibitor/pending` : `${origin}/exhibitor/onboarding`
+            hasApplication
+              ? `${origin}${
+                  needsTermsConsent
+                    ? buildTermsConsentPath({
+                        nextPath: '/exhibitor/pending',
+                        needsExhibitorConsent: true,
+                      })
+                    : '/exhibitor/pending'
+                }`
+              : `${origin}/exhibitor/onboarding`
           );
         }
 
@@ -58,17 +72,24 @@ export async function GET(request: NextRequest) {
           if (profile.status === 'pending') {
             const { data: application } = await supabase
               .from('artist_applications')
-              .select('artist_name, contact, bio')
+              .select('artist_name, contact, bio, terms_version, terms_accepted_at')
               .eq('user_id', user.id)
               .maybeSingle();
 
-            const hasApplication =
-              !!application?.artist_name?.trim() &&
-              !!application?.contact?.trim() &&
-              !!application?.bio?.trim();
+            const hasApplication = hasArtistApplication(application);
+            const needsTermsConsent = needsArtistTermsConsent(application);
 
             return NextResponse.redirect(
-              hasApplication ? `${origin}/dashboard/pending` : `${origin}/onboarding`
+              hasApplication
+                ? `${origin}${
+                    needsTermsConsent
+                      ? buildTermsConsentPath({
+                          nextPath: '/dashboard/pending',
+                          needsArtistConsent: true,
+                        })
+                      : '/dashboard/pending'
+                  }`
+                : `${origin}/onboarding`
             );
           }
           if (profile.status === 'suspended') {
@@ -80,32 +101,45 @@ export async function GET(request: NextRequest) {
           const [{ data: exhibitorApplication }, { data: artistApplication }] = await Promise.all([
             supabase
               .from('exhibitor_applications')
-              .select('representative_name, contact, bio')
+              .select('representative_name, contact, bio, terms_version, terms_accepted_at')
               .eq('user_id', user.id)
               .maybeSingle(),
             supabase
               .from('artist_applications')
-              .select('artist_name, contact, bio')
+              .select('artist_name, contact, bio, terms_version, terms_accepted_at')
               .eq('user_id', user.id)
               .maybeSingle(),
           ]);
 
-          const hasExhibitorApplication =
-            !!exhibitorApplication?.representative_name?.trim() &&
-            !!exhibitorApplication?.contact?.trim() &&
-            !!exhibitorApplication?.bio?.trim();
+          const hasExhibitorApplicationData = hasExhibitorApplication(exhibitorApplication);
+          const hasArtistApplicationData = hasArtistApplication(artistApplication);
+          const needsExhibitorConsent = needsExhibitorTermsConsent(exhibitorApplication);
+          const needsArtistConsent = needsArtistTermsConsent(artistApplication);
 
-          const hasArtistApplication =
-            !!artistApplication?.artist_name?.trim() &&
-            !!artistApplication?.contact?.trim() &&
-            !!artistApplication?.bio?.trim();
-
-          if (hasExhibitorApplication) {
-            return NextResponse.redirect(`${origin}/exhibitor/pending`);
+          if (hasExhibitorApplicationData) {
+            return NextResponse.redirect(
+              `${origin}${
+                needsExhibitorConsent
+                  ? buildTermsConsentPath({
+                      nextPath: '/exhibitor/pending',
+                      needsExhibitorConsent: true,
+                    })
+                  : '/exhibitor/pending'
+              }`
+            );
           }
 
-          if (hasArtistApplication) {
-            return NextResponse.redirect(`${origin}/dashboard/pending`);
+          if (hasArtistApplicationData) {
+            return NextResponse.redirect(
+              `${origin}${
+                needsArtistConsent
+                  ? buildTermsConsentPath({
+                      nextPath: '/dashboard/pending',
+                      needsArtistConsent: true,
+                    })
+                  : '/dashboard/pending'
+              }`
+            );
           }
 
           return NextResponse.redirect(`${origin}/onboarding`);

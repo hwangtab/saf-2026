@@ -2,6 +2,13 @@
 
 import { useState } from 'react';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
+import {
+  buildTermsConsentPath,
+  hasArtistApplication,
+  hasExhibitorApplication,
+  needsArtistTermsConsent,
+  needsExhibitorTermsConsent,
+} from '@/lib/auth/terms-consent';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
@@ -57,16 +64,21 @@ export default function LoginPage() {
             // Check application for pending users
             const { data: application } = await supabase
               .from('exhibitor_applications')
-              .select('representative_name, contact, bio')
+              .select('representative_name, contact, bio, terms_version, terms_accepted_at')
               .eq('user_id', user.id)
               .maybeSingle();
 
-            const hasApplication =
-              !!application?.representative_name?.trim() &&
-              !!application?.contact?.trim() &&
-              !!application?.bio?.trim();
+            const hasApplication = hasExhibitorApplication(application);
+            const needsTermsConsent = needsExhibitorTermsConsent(application);
 
-            nextPath = hasApplication ? '/exhibitor/pending' : '/exhibitor/onboarding';
+            nextPath = hasApplication
+              ? needsTermsConsent
+                ? buildTermsConsentPath({
+                    nextPath: '/exhibitor/pending',
+                    needsExhibitorConsent: true,
+                  })
+                : '/exhibitor/pending'
+              : '/exhibitor/onboarding';
           }
         } else if (profile?.role === 'artist') {
           if (profile.status === 'active') {
@@ -76,45 +88,55 @@ export default function LoginPage() {
           } else if (profile.status === 'pending') {
             const { data: application } = await supabase
               .from('artist_applications')
-              .select('artist_name, contact, bio')
+              .select('artist_name, contact, bio, terms_version, terms_accepted_at')
               .eq('user_id', user.id)
               .maybeSingle();
 
-            const hasApplication =
-              !!application?.artist_name?.trim() &&
-              !!application?.contact?.trim() &&
-              !!application?.bio?.trim();
+            const hasApplication = hasArtistApplication(application);
+            const needsTermsConsent = needsArtistTermsConsent(application);
 
-            nextPath = hasApplication ? '/dashboard/pending' : '/onboarding';
+            nextPath = hasApplication
+              ? needsTermsConsent
+                ? buildTermsConsentPath({
+                    nextPath: '/dashboard/pending',
+                    needsArtistConsent: true,
+                  })
+                : '/dashboard/pending'
+              : '/onboarding';
           }
         } else if (profile?.role === 'user') {
           const [{ data: exhibitorApplication }, { data: artistApplication }] = await Promise.all([
             supabase
               .from('exhibitor_applications')
-              .select('representative_name, contact, bio')
+              .select('representative_name, contact, bio, terms_version, terms_accepted_at')
               .eq('user_id', user.id)
               .maybeSingle(),
             supabase
               .from('artist_applications')
-              .select('artist_name, contact, bio')
+              .select('artist_name, contact, bio, terms_version, terms_accepted_at')
               .eq('user_id', user.id)
               .maybeSingle(),
           ]);
 
-          const hasExhibitorApplication =
-            !!exhibitorApplication?.representative_name?.trim() &&
-            !!exhibitorApplication?.contact?.trim() &&
-            !!exhibitorApplication?.bio?.trim();
+          const hasExhibitorApplicationData = hasExhibitorApplication(exhibitorApplication);
+          const hasArtistApplicationData = hasArtistApplication(artistApplication);
+          const needsExhibitorConsent = needsExhibitorTermsConsent(exhibitorApplication);
+          const needsArtistConsent = needsArtistTermsConsent(artistApplication);
 
-          const hasArtistApplication =
-            !!artistApplication?.artist_name?.trim() &&
-            !!artistApplication?.contact?.trim() &&
-            !!artistApplication?.bio?.trim();
-
-          if (hasExhibitorApplication) {
-            nextPath = '/exhibitor/pending';
-          } else if (hasArtistApplication) {
-            nextPath = '/dashboard/pending';
+          if (hasExhibitorApplicationData) {
+            nextPath = needsExhibitorConsent
+              ? buildTermsConsentPath({
+                  nextPath: '/exhibitor/pending',
+                  needsExhibitorConsent: true,
+                })
+              : '/exhibitor/pending';
+          } else if (hasArtistApplicationData) {
+            nextPath = needsArtistConsent
+              ? buildTermsConsentPath({
+                  nextPath: '/dashboard/pending',
+                  needsArtistConsent: true,
+                })
+              : '/dashboard/pending';
           } else {
             nextPath = '/onboarding';
           }

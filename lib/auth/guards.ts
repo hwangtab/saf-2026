@@ -2,6 +2,13 @@ import { createSupabaseServerClient } from './server';
 import { redirect } from 'next/navigation';
 import { cache } from 'react';
 import { UserRole, UserStatus } from '@/types/database.types';
+import {
+  buildTermsConsentPath,
+  hasArtistApplication,
+  hasExhibitorApplication,
+  needsArtistTermsConsent,
+  needsExhibitorTermsConsent,
+} from './terms-consent';
 
 const getAuthUserContext = cache(async () => {
   const supabase = await createSupabaseServerClient();
@@ -49,20 +56,34 @@ export async function requireArtistActive() {
     redirect('/admin/dashboard');
   }
 
+  if (profile?.role === 'artist') {
+    const { data: application } = await supabase
+      .from('artist_applications')
+      .select('artist_name, contact, bio, terms_version, terms_accepted_at')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    if (needsArtistTermsConsent(application)) {
+      redirect(
+        buildTermsConsentPath({
+          nextPath: profile.status === 'active' ? '/dashboard/artworks' : '/dashboard/pending',
+          needsArtistConsent: true,
+        })
+      );
+    }
+  }
+
   // Check artist role and active status
   if (!profile || profile.role !== 'artist' || profile.status !== 'active') {
     // If suspended or pending, maybe redirect to specific page
     if (profile?.status === 'pending') {
       const { data: application } = await supabase
         .from('artist_applications')
-        .select('artist_name, contact, bio')
+        .select('artist_name, contact, bio, terms_version, terms_accepted_at')
         .eq('user_id', user.id)
         .maybeSingle();
 
-      const hasApplication =
-        !!application?.artist_name?.trim() &&
-        !!application?.contact?.trim() &&
-        !!application?.bio?.trim();
+      const hasApplication = hasArtistApplication(application);
 
       if (!hasApplication) redirect('/onboarding');
       redirect('/dashboard/pending');
@@ -121,19 +142,25 @@ export async function requireExhibitor() {
     redirect('/');
   }
 
+  const { data: application } = await supabase
+    .from('exhibitor_applications')
+    .select('representative_name, contact, bio, terms_version, terms_accepted_at')
+    .eq('user_id', user.id)
+    .maybeSingle();
+
+  if (needsExhibitorTermsConsent(application)) {
+    redirect(
+      buildTermsConsentPath({
+        nextPath: profile.status === 'active' ? '/exhibitor' : '/exhibitor/pending',
+        needsExhibitorConsent: true,
+      })
+    );
+  }
+
   // Check exhibitor status - similar to artist flow
   if (profile.status !== 'active') {
     if (profile.status === 'pending') {
-      const { data: application } = await supabase
-        .from('exhibitor_applications')
-        .select('representative_name, contact, bio')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      const hasApplication =
-        !!application?.representative_name?.trim() &&
-        !!application?.contact?.trim() &&
-        !!application?.bio?.trim();
+      const hasApplication = hasExhibitorApplication(application);
 
       if (!hasApplication) redirect('/exhibitor/onboarding');
       redirect('/exhibitor/pending');

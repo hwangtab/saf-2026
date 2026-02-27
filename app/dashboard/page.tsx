@@ -1,5 +1,12 @@
 import { redirect } from 'next/navigation';
 import { createSupabaseServerClient } from '@/lib/auth/server';
+import {
+  buildTermsConsentPath,
+  hasArtistApplication,
+  hasExhibitorApplication,
+  needsArtistTermsConsent,
+  needsExhibitorTermsConsent,
+} from '@/lib/auth/terms-consent';
 
 export default async function DashboardPage() {
   const supabase = await createSupabaseServerClient();
@@ -37,7 +44,7 @@ export default async function DashboardPage() {
     if (profile.status === 'pending') {
       const { data: application, error: applicationError } = await supabase
         .from('artist_applications')
-        .select('artist_name, contact, bio')
+        .select('artist_name, contact, bio, terms_version, terms_accepted_at')
         .eq('user_id', user.id)
         .maybeSingle();
 
@@ -45,12 +52,19 @@ export default async function DashboardPage() {
         throw new Error('신청 상태를 확인하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
       }
 
-      const hasApplication =
-        !!application?.artist_name?.trim() &&
-        !!application?.contact?.trim() &&
-        !!application?.bio?.trim();
+      const hasApplication = hasArtistApplication(application);
+      const needsTermsConsent = needsArtistTermsConsent(application);
 
-      redirect(hasApplication ? '/dashboard/pending' : '/onboarding');
+      redirect(
+        hasApplication
+          ? needsTermsConsent
+            ? buildTermsConsentPath({
+                nextPath: '/dashboard/pending',
+                needsArtistConsent: true,
+              })
+            : '/dashboard/pending'
+          : '/onboarding'
+      );
     }
     if (profile.status === 'suspended') {
       redirect('/dashboard/suspended');
@@ -61,32 +75,41 @@ export default async function DashboardPage() {
     const [{ data: exhibitorApplication }, { data: artistApplication }] = await Promise.all([
       supabase
         .from('exhibitor_applications')
-        .select('representative_name, contact, bio')
+        .select('representative_name, contact, bio, terms_version, terms_accepted_at')
         .eq('user_id', user.id)
         .maybeSingle(),
       supabase
         .from('artist_applications')
-        .select('artist_name, contact, bio')
+        .select('artist_name, contact, bio, terms_version, terms_accepted_at')
         .eq('user_id', user.id)
         .maybeSingle(),
     ]);
 
-    const hasExhibitorApplication =
-      !!exhibitorApplication?.representative_name?.trim() &&
-      !!exhibitorApplication?.contact?.trim() &&
-      !!exhibitorApplication?.bio?.trim();
+    const hasExhibitorApplicationData = hasExhibitorApplication(exhibitorApplication);
+    const hasArtistApplicationData = hasArtistApplication(artistApplication);
+    const needsExhibitorConsent = needsExhibitorTermsConsent(exhibitorApplication);
+    const needsArtistConsent = needsArtistTermsConsent(artistApplication);
 
-    const hasArtistApplication =
-      !!artistApplication?.artist_name?.trim() &&
-      !!artistApplication?.contact?.trim() &&
-      !!artistApplication?.bio?.trim();
-
-    if (hasExhibitorApplication) {
-      redirect('/exhibitor/pending');
+    if (hasExhibitorApplicationData) {
+      redirect(
+        needsExhibitorConsent
+          ? buildTermsConsentPath({
+              nextPath: '/exhibitor/pending',
+              needsExhibitorConsent: true,
+            })
+          : '/exhibitor/pending'
+      );
     }
 
-    if (hasArtistApplication) {
-      redirect('/dashboard/pending');
+    if (hasArtistApplicationData) {
+      redirect(
+        needsArtistConsent
+          ? buildTermsConsentPath({
+              nextPath: '/dashboard/pending',
+              needsArtistConsent: true,
+            })
+          : '/dashboard/pending'
+      );
     }
   }
 
