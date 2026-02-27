@@ -24,7 +24,7 @@ export default async function ExhibitorOnboardingPage({
   }
 
   if (profile?.role === 'artist' && profile?.status === 'active') {
-    redirect('/dashboard');
+    redirect('/onboarding?recover=1');
   }
 
   if (profile?.role === 'exhibitor' && profile?.status === 'active') {
@@ -44,17 +44,23 @@ export default async function ExhibitorOnboardingPage({
     .eq('user_id', user.id)
     .maybeSingle();
 
+  const isExhibitorRecovery =
+    isRecoveryFlow && profile?.role === 'exhibitor' && profile?.status === 'active';
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center pt-12 pb-16 lg:pb-24 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-2xl">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           SAF 2026
           <br />
-          <span className="text-xl font-medium text-gray-600">출품자 정보 입력</span>
+          <span className="text-xl font-medium text-gray-600">
+            {isExhibitorRecovery ? '출품자 정보 복구' : '출품자 정보 입력'}
+          </span>
         </h2>
         <p className="mt-4 text-center text-sm text-gray-500">
-          승인 심사를 위해 정보를 제출해주세요. 제출 후에는 관리자 승인 전까지 출품자 대시보드
-          접근이 제한됩니다.
+          {isExhibitorRecovery
+            ? '기존 출품자 계정의 신청서 정보가 누락되어 복구가 필요합니다. 정보 저장 후 바로 출품자 대시보드로 이동합니다.'
+            : '승인 심사를 위해 정보를 제출해주세요. 제출 후에는 관리자 승인 전까지 출품자 대시보드 접근이 제한됩니다.'}
         </p>
       </div>
 

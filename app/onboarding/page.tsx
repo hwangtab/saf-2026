@@ -64,23 +64,31 @@ export default async function OnboardingPage({
     redirect('/exhibitor/pending');
   }
 
+  const isArtistRecovery =
+    isRecoveryFlow && profile?.role === 'artist' && profile?.status === 'active';
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-2xl">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           SAF 2026
           <br />
-          <span className="text-xl font-medium text-gray-600">작가 정보 입력</span>
+          <span className="text-xl font-medium text-gray-600">
+            {isArtistRecovery ? '작가 정보 복구' : '작가 정보 입력'}
+          </span>
         </h2>
         <p className="mt-4 text-center text-sm text-gray-500">
-          승인 심사를 위해 최소 정보만 제출해주세요. 제출 후에는 관리자 승인 전까지 대시보드 접근이
-          제한됩니다.
+          {isArtistRecovery
+            ? '기존 작가 계정의 신청서 정보가 누락되어 복구가 필요합니다. 정보 저장 후 바로 작가 대시보드로 이동합니다.'
+            : '승인 심사를 위해 최소 정보만 제출해주세요. 제출 후에는 관리자 승인 전까지 대시보드 접근이 제한됩니다.'}
         </p>
-        <div className="mt-5 flex justify-center">
-          <LinkButton href="/exhibitor/onboarding" variant="white" size="sm">
-            출품자로 신청하기
-          </LinkButton>
-        </div>
+        {!isArtistRecovery && (
+          <div className="mt-5 flex justify-center">
+            <LinkButton href="/exhibitor/onboarding" variant="white" size="sm">
+              출품자로 신청하기
+            </LinkButton>
+          </div>
+        )}
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-2xl">

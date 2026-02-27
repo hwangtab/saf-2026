@@ -17,7 +17,7 @@ export async function submitExhibitorApplication(
   formData: FormData
 ): Promise<ExhibitorOnboardingState> {
   void prevState;
-  let shouldRedirect = false;
+  let redirectPath: string | null = null;
 
   try {
     const user = await requireAuth();
@@ -115,14 +115,17 @@ export async function submitExhibitorApplication(
       }
     );
 
-    shouldRedirect = true;
+    redirectPath =
+      profile.role === 'exhibitor' && profile.status === 'active'
+        ? '/exhibitor'
+        : '/exhibitor/pending';
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : '알 수 없는 오류';
     return { message: `신청 저장 중 오류가 발생했습니다: ${message}`, error: true };
   }
 
-  if (shouldRedirect) {
-    redirect('/exhibitor/pending');
+  if (redirectPath) {
+    redirect(redirectPath);
   }
 
   return { message: '신청이 완료되었습니다.' };

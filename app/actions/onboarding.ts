@@ -17,11 +17,16 @@ export async function submitArtistApplication(
   formData: FormData
 ): Promise<OnboardingState> {
   void prevState;
-  let shouldRedirect = false;
+  let redirectPath: string | null = null;
 
   try {
     const user = await requireAuth();
     const supabase = await createSupabaseServerClient();
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role, status')
+      .eq('id', user.id)
+      .maybeSingle();
 
     const artistName = (formData.get('artist_name') as string | null)?.trim() || '';
     const contact = (formData.get('contact') as string | null)?.trim() || '';
@@ -85,13 +90,16 @@ export async function submitArtistApplication(
       }
     );
 
-    shouldRedirect = true;
+    redirectPath =
+      profile?.role === 'artist' && profile.status === 'active'
+        ? '/dashboard/artworks'
+        : '/dashboard/pending';
   } catch (error: any) {
     return { message: `신청 저장 중 오류가 발생했습니다: ${error.message}`, error: true };
   }
 
-  if (shouldRedirect) {
-    redirect('/dashboard/pending');
+  if (redirectPath) {
+    redirect(redirectPath);
   }
 
   return { message: '신청이 완료되었습니다.' };
