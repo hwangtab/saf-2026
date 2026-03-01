@@ -23,6 +23,8 @@
     "cleanup:artwork-variants:apply": "node scripts/cleanup-artwork-variants.js --apply",
     "sales:reconcile-cafe24-mirrors:dry": "node scripts/reconcile-cafe24-manual-mirrors.js --verbose",
     "sales:reconcile-cafe24-mirrors": "node scripts/reconcile-cafe24-manual-mirrors.js --apply --verbose",
+    "sales:dedupe-legacy-csv:dry": "node scripts/deduplicate-legacy-csv-sales.js --verbose",
+    "sales:dedupe-legacy-csv": "node scripts/deduplicate-legacy-csv-sales.js --apply --verbose",
     "sales:reconcile-legacy-codes:dry": "node scripts/reconcile-legacy-cafe24-order-item-codes.js --verbose",
     "sales:reconcile-legacy-codes": "node scripts/reconcile-legacy-cafe24-order-item-codes.js --apply --verbose",
     "sales:rebuild-source:dry": "node scripts/rebuild-sales-source-from-csv.js --verbose",
