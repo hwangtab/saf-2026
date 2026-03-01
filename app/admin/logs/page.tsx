@@ -1,6 +1,7 @@
 import { requireAdmin } from '@/lib/auth/guards';
 import { getActivityLogs } from '@/app/actions/admin-logs';
 import { LogsList } from './logs-list';
+import { Cafe24SyncLogCleanupButton } from './cafe24-sync-log-cleanup-button';
 import {
   AdminBadge,
   AdminCard,
@@ -57,6 +58,8 @@ const ACTION_FILTER_OPTIONS = [
   { value: 'video_updated', label: '영상 수정' },
   { value: 'video_deleted', label: '영상 삭제' },
   { value: 'testimonial_updated', label: '추천사 수정' },
+  { value: 'cafe24_sales_sync_warning', label: 'Cafe24 판매 동기화 경고' },
+  { value: 'cafe24_sales_sync_failed', label: 'Cafe24 판매 동기화 실패' },
   { value: 'trash_purged', label: '휴지통 영구 삭제' },
   { value: 'revert_executed', label: '복구 실행' },
 ] as const;
@@ -86,11 +89,14 @@ export default async function AdminLogsPage({ searchParams }: Props) {
     limit,
     q: params.q,
     actorRole:
+      params.actor_role === 'human' ||
       params.actor_role === 'admin' ||
       params.actor_role === 'artist' ||
-      params.actor_role === 'exhibitor'
+      params.actor_role === 'exhibitor' ||
+      params.actor_role === 'system' ||
+      params.actor_role === 'all'
         ? params.actor_role
-        : 'all',
+        : 'human',
     action: params.action,
     targetType: params.target_type,
     from: params.from,
@@ -100,7 +106,7 @@ export default async function AdminLogsPage({ searchParams }: Props) {
   const totalPages = Math.ceil(total / limit);
   const activeFilterCount = [
     params.q,
-    params.actor_role && params.actor_role !== 'all' ? params.actor_role : undefined,
+    params.actor_role && params.actor_role !== 'human' ? params.actor_role : undefined,
     params.action,
     params.target_type,
     params.from,
@@ -126,9 +132,12 @@ export default async function AdminLogsPage({ searchParams }: Props) {
                 조건을 조합해 원하는 로그만 빠르게 확인하세요.
               </p>
             </div>
-            <AdminBadge className="bg-white text-slate-700 ring-slate-200">
-              적용된 필터 {activeFilterCount}개
-            </AdminBadge>
+            <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
+              <AdminBadge className="bg-white text-slate-700 ring-slate-200">
+                적용된 필터 {activeFilterCount}개
+              </AdminBadge>
+              <Cafe24SyncLogCleanupButton />
+            </div>
           </div>
           <div className="grid grid-cols-1 gap-3 p-4 md:grid-cols-2 xl:grid-cols-4">
             <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
@@ -144,13 +153,15 @@ export default async function AdminLogsPage({ searchParams }: Props) {
               행위자
               <AdminSelect
                 name="actor_role"
-                defaultValue={params.actor_role || 'all'}
+                defaultValue={params.actor_role || 'human'}
                 className="h-10"
               >
-                <option value="all">전체 행위자</option>
+                <option value="human">운영 사용자만</option>
                 <option value="admin">관리자</option>
                 <option value="artist">아티스트</option>
                 <option value="exhibitor">출품자</option>
+                <option value="system">시스템</option>
+                <option value="all">전체 행위자</option>
               </AdminSelect>
             </label>
             <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">

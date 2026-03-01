@@ -16,6 +16,23 @@ type LogsListProps = {
   total: number;
 };
 
+function getCafe24SyncIssueText(details: Record<string, unknown> | null, fallback: string): string {
+  const primaryError =
+    typeof details?.primary_error === 'string' ? details.primary_error.trim() : '';
+  if (primaryError) return primaryError;
+
+  const firstError =
+    Array.isArray(details?.errors) && typeof details.errors[0] === 'string'
+      ? details.errors[0].trim()
+      : '';
+  if (firstError) return firstError;
+
+  const reason = typeof details?.reason === 'string' ? details.reason.trim() : '';
+  if (reason) return reason;
+
+  return fallback;
+}
+
 function formatActionDescription(log: ActivityLogEntry): string {
   const details = log.metadata as Record<string, unknown> | null;
 
@@ -136,9 +153,9 @@ function formatActionDescription(log: ActivityLogEntry): string {
     case 'batch_cafe24_missing_shop_url_sync':
       return `구매링크 누락 동기화: 성공 ${details?.succeeded || 0}건 / 실패 ${details?.failed || 0}건`;
     case 'cafe24_sales_sync_warning':
-      return `Cafe24 판매 동기화 경고: ${details?.reason || '일부 항목 확인 필요'}`;
+      return `Cafe24 판매 동기화 경고: ${getCafe24SyncIssueText(details, '일부 항목 확인 필요')}`;
     case 'cafe24_sales_sync_failed':
-      return `Cafe24 판매 동기화 실패: ${details?.reason || '원인 확인 필요'}`;
+      return `Cafe24 판매 동기화 실패: ${getCafe24SyncIssueText(details, '원인 확인 필요')}`;
     case 'artwork_sold':
       return `판매 기록 등록: ${details?.quantity || 1}점`;
     case 'approve_exhibitor':

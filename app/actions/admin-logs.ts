@@ -82,7 +82,7 @@ type ActivityLogFilters = {
   page?: number;
   limit?: number;
   q?: string;
-  actorRole?: 'admin' | 'artist' | 'exhibitor' | 'all';
+  actorRole?: 'admin' | 'artist' | 'exhibitor' | 'system' | 'human' | 'all';
   action?: string;
   targetType?: string;
   from?: string;
@@ -936,6 +936,58 @@ async function getLegacyAdminLogs(
   return { logs: mapped, total: count || 0 };
 }
 
+const CAFE24_SYNC_ACTIVITY_ACTIONS = ['cafe24_sales_sync_warning', 'cafe24_sales_sync_failed'];
+const CAFE24_SYNC_ACTIVITY_WINDOW_MS = 6 * 60 * 60 * 1000;
+const ACTIVITY_LOG_DELETE_CHUNK_SIZE = 200;
+
+function normalizeCafe24SyncIssueText(value: string): string {
+  return value
+    .trim()
+    .replace(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z/g, '<timestamp>')
+    .replace(
+      /\b[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\b/gi,
+      '<uuid>'
+    )
+    .replace(/\b\d+\b/g, '#');
+}
+
+function buildCafe24SyncActivityFingerprint(
+  log: Pick<ActivityLogEntry, 'action' | 'target_id' | 'summary' | 'metadata'>
+): string {
+  const metadata =
+    log.metadata && typeof log.metadata === 'object' && !Array.isArray(log.metadata)
+      ? log.metadata
+      : null;
+  const storedFingerprint =
+    metadata && typeof metadata.fingerprint === 'string' ? metadata.fingerprint.trim() : '';
+  if (storedFingerprint) return storedFingerprint;
+
+  const primaryError =
+    metadata && typeof metadata.primary_error === 'string' ? metadata.primary_error.trim() : '';
+  const firstError =
+    metadata &&
+    Array.isArray(metadata.errors) &&
+    typeof metadata.errors[0] === 'string' &&
+    metadata.errors[0].trim()
+      ? metadata.errors[0].trim()
+      : '';
+  const reason = metadata && typeof metadata.reason === 'string' ? metadata.reason.trim() : '';
+  const summary = typeof log.summary === 'string' ? log.summary.trim() : '';
+  const issueText = primaryError || firstError || reason || summary || log.action;
+
+  return JSON.stringify({
+    action: log.action,
+    targetId: log.target_id,
+    issue: normalizeCafe24SyncIssueText(issueText),
+  });
+}
+
+type CleanupCafe24SyncLogsResult = {
+  scanned: number;
+  deleted: number;
+  kept: number;
+};
+
 export async function getActivityLogs(filters: ActivityLogFilters = {}) {
   await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
@@ -946,7 +998,9 @@ export async function getActivityLogs(filters: ActivityLogFilters = {}) {
 
   let query = supabase.from('activity_logs').select('*', { count: 'exact' });
 
-  if (filters.actorRole && filters.actorRole !== 'all') {
+  if (filters.actorRole === 'human') {
+    query = query.in('actor_role', ['admin', 'artist', 'exhibitor']);
+  } else if (filters.actorRole && filters.actorRole !== 'all') {
     query = query.eq('actor_role', filters.actorRole);
   }
   if (filters.action) {
@@ -996,6 +1050,77 @@ export async function getActivityLogs(filters: ActivityLogFilters = {}) {
   const trashNameEnrichedLogs = await enrichTrashPurgedTargetNames(targetEnrichedLogs);
 
   return { logs: trashNameEnrichedLogs, total: count || 0 };
+}
+
+export async function cleanupCafe24SyncLogs(): Promise<CleanupCafe24SyncLogsResult> {
+  await requireAdmin();
+  const supabase = await createSupabaseAdminOrServerClient();
+
+  const relevantLogs: ActivityLogEntry[] = [];
+  let offset = 0;
+  const pageSize = 1000;
+
+  while (true) {
+    const { data, error } = await supabase
+      .from('activity_logs')
+      .select(
+        'id, actor_id, actor_role, actor_name, actor_email, action, target_type, target_id, summary, metadata, before_snapshot, after_snapshot, reversible, reverted_by, reverted_at, revert_reason, reverted_log_id, trash_expires_at, purged_at, purged_by, purge_note, created_at'
+      )
+      .eq('actor_role', 'system')
+      .eq('actor_name', 'Cafe24 Sales Sync Job')
+      .in('action', CAFE24_SYNC_ACTIVITY_ACTIONS)
+      .order('created_at', { ascending: false })
+      .range(offset, offset + pageSize - 1);
+
+    if (error) {
+      throw new Error(`Cafe24 시스템 로그 조회 실패: ${error.message}`);
+    }
+
+    const rows = (data || []) as ActivityLogEntry[];
+    relevantLogs.push(...rows);
+
+    if (rows.length < pageSize) {
+      break;
+    }
+
+    offset += pageSize;
+  }
+
+  const seenKeys = new Set<string>();
+  const duplicateIds: string[] = [];
+
+  for (const log of relevantLogs) {
+    const createdAtMs = Date.parse(log.created_at);
+    if (!Number.isFinite(createdAtMs)) continue;
+
+    const bucketStart = Math.floor(createdAtMs / CAFE24_SYNC_ACTIVITY_WINDOW_MS);
+    const fingerprint = buildCafe24SyncActivityFingerprint(log);
+    const dedupeKey = [log.action, log.target_id, bucketStart, fingerprint].join(':');
+
+    if (seenKeys.has(dedupeKey)) {
+      duplicateIds.push(log.id);
+      continue;
+    }
+
+    seenKeys.add(dedupeKey);
+  }
+
+  for (let index = 0; index < duplicateIds.length; index += ACTIVITY_LOG_DELETE_CHUNK_SIZE) {
+    const chunk = duplicateIds.slice(index, index + ACTIVITY_LOG_DELETE_CHUNK_SIZE);
+    const { error } = await supabase.from('activity_logs').delete().in('id', chunk);
+
+    if (error) {
+      throw new Error(`Cafe24 시스템 로그 삭제 실패: ${error.message}`);
+    }
+  }
+
+  revalidatePath('/admin/logs');
+
+  return {
+    scanned: relevantLogs.length,
+    deleted: duplicateIds.length,
+    kept: relevantLogs.length - duplicateIds.length,
+  };
 }
 
 export async function getAdminLogs(
