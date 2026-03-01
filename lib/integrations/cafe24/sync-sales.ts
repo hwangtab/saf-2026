@@ -213,6 +213,8 @@ export type Cafe24SalesSyncResult = {
   manualMirrorPurged: number;
   soldOutLockedSynced: number;
   soldOutLockFailed: number;
+  warnings: string[];
+  notices: string[];
   errors: string[];
   reason?: string;
 };
@@ -1879,7 +1881,9 @@ export async function syncCafe24SalesFromOrders(
       manualMirrorPurged: 0,
       soldOutLockedSynced: 0,
       soldOutLockFailed: 0,
-      errors: [],
+      warnings: [],
+      notices: [],
+      errors: ['Cafe24 환경변수가 설정되지 않았습니다.'],
       reason: 'Cafe24 환경변수가 설정되지 않았습니다.',
     };
   }
@@ -1928,6 +1932,8 @@ export async function syncCafe24SalesFromOrders(
       manualMirrorPurged: 0,
       soldOutLockedSynced: 0,
       soldOutLockFailed: 0,
+      warnings: [],
+      notices: ['이미 실행 중인 Cafe24 판매 동기화 작업이 있어 이번 실행을 건너뛰었습니다.'],
       errors: [],
       reason: '이미 실행 중인 Cafe24 판매 동기화 작업이 있어 이번 실행을 건너뛰었습니다.',
     };
@@ -1968,13 +1974,16 @@ export async function syncCafe24SalesFromOrders(
       manualMirrorPurged: 0,
       soldOutLockedSynced: 0,
       soldOutLockFailed: 0,
-      errors: warnings,
+      warnings,
+      notices: [],
+      errors: [],
       reason: warnings.length > 0 ? '일부 경고가 있습니다.' : undefined,
     };
   }
 
   const blockingErrors: string[] = [];
   const warningErrors: string[] = [];
+  const notices: string[] = [];
   let ordersFetched = 0;
   let ordersPaid = 0;
   let orderItemsFetched = 0;
@@ -2063,7 +2072,7 @@ export async function syncCafe24SalesFromOrders(
       }
     }
     if (ordersById.size > orderResult.orders.length) {
-      warningErrors.push(
+      notices.push(
         `실패주문 재시도 대상 ${ordersById.size - orderResult.orders.length}건을 추가 처리합니다.`
       );
     }
@@ -2123,7 +2132,7 @@ export async function syncCafe24SalesFromOrders(
     }
 
     if (endpointRows.length > 0) {
-      warningErrors.push(`환불/취소 역동기화 대상 ${endpointRows.length}건을 감지했습니다.`);
+      notices.push(`환불/취소 역동기화 대상 ${endpointRows.length}건을 감지했습니다.`);
     }
 
     const preparedRows: PreparedSaleRow[] = [];
@@ -2268,7 +2277,7 @@ export async function syncCafe24SalesFromOrders(
       const purgeResult = await purgeHistoricalManualMirrors(dedupedByDb.filtered);
       manualMirrorPurged = purgeResult.purged;
       if (purgeResult.purged > 0) {
-        warningErrors.push(`Cafe24 중복 수동판매 정리: ${purgeResult.purged}건`);
+        notices.push(`Cafe24 중복 수동판매 정리: ${purgeResult.purged}건`);
       }
       if (purgeResult.errors.length > 0) {
         warningErrors.push(...purgeResult.errors);
@@ -2345,7 +2354,9 @@ export async function syncCafe24SalesFromOrders(
       manualMirrorPurged,
       soldOutLockedSynced,
       soldOutLockFailed,
-      errors: [...blockingErrors, ...warningErrors],
+      warnings: warningErrors,
+      notices,
+      errors: blockingErrors,
       reason: syncSucceeded
         ? warningErrors.length > 0
           ? '일부 경고가 있습니다.'
@@ -2391,7 +2402,9 @@ export async function syncCafe24SalesFromOrders(
       manualMirrorPurged,
       soldOutLockedSynced,
       soldOutLockFailed,
-      errors: [...blockingErrors, ...warningErrors, message, ...fallbackErrors],
+      warnings: warningErrors,
+      notices,
+      errors: [...blockingErrors, message, ...fallbackErrors],
       reason: message,
     };
   }

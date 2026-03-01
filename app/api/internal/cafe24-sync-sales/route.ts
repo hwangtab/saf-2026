@@ -23,7 +23,9 @@ function normalizeSyncIssueText(value: string): string {
 }
 
 function getSyncIssueMessages(result: Cafe24SalesSyncResult): string[] {
-  return result.errors
+  const sourceMessages = result.ok ? result.warnings : [...result.errors, ...result.warnings];
+
+  return sourceMessages
     .map((error) => error.trim())
     .filter((error) => error.length > 0)
     .slice(0, MAX_SYNC_ISSUE_ERRORS);
@@ -129,6 +131,8 @@ async function logSyncIssue(result: Cafe24SalesSyncResult, level: 'warning' | 'f
         manual_mirror_purged: result.manualMirrorPurged,
         failed_orders: result.failedOrders,
         sold_out_lock_failed: result.soldOutLockFailed,
+        warnings: result.warnings,
+        notices: result.notices,
         reason: result.reason || null,
         primary_error: primaryIssue,
         errors: issueMessages,
@@ -224,7 +228,7 @@ export async function GET(request: NextRequest) {
 
     if (!result.ok) {
       await logSyncIssue(result, 'failed');
-    } else if (result.errors.length > 0) {
+    } else if (result.warnings.length > 0) {
       await logSyncIssue(result, 'warning');
     }
 
