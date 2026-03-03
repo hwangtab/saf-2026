@@ -558,7 +558,7 @@ export async function batchUpdateArtworkStatus(ids: string[], status: string) {
 
   const { data: beforeArtworks } = await supabase
     .from('artworks')
-    .select('id, status, sold_at, updated_at')
+    .select('id, title, status, sold_at, updated_at')
     .in('id', ids);
 
   const nowIso = new Date().toISOString();
@@ -603,7 +603,7 @@ export async function batchUpdateArtworkStatus(ids: string[], status: string) {
 
   const { data: afterArtworks } = await supabase
     .from('artworks')
-    .select('id, status, sold_at, updated_at')
+    .select('id, title, status, sold_at, updated_at')
     .in('id', ids);
 
   const syncBatchResult = await syncCafe24Batch(ids);
@@ -660,6 +660,9 @@ export async function batchUpdateArtworkStatus(ids: string[], status: string) {
     {
       count: ids.length,
       status,
+      target_names: Object.fromEntries(
+        (beforeArtworks || []).filter((a) => a.title).map((a) => [a.id, a.title])
+      ),
     },
     admin.id,
     {
@@ -816,7 +819,7 @@ export async function batchToggleHidden(ids: string[], isHidden: boolean) {
 
   const { data: beforeArtworks } = await supabase
     .from('artworks')
-    .select('id, is_hidden, updated_at')
+    .select('id, title, is_hidden, updated_at')
     .in('id', ids);
 
   const { error } = await supabase
@@ -828,7 +831,7 @@ export async function batchToggleHidden(ids: string[], isHidden: boolean) {
 
   const { data: afterArtworks } = await supabase
     .from('artworks')
-    .select('id, is_hidden, updated_at')
+    .select('id, title, is_hidden, updated_at')
     .in('id', ids);
 
   const syncBatchResult = await syncCafe24Batch(ids);
@@ -884,6 +887,9 @@ export async function batchToggleHidden(ids: string[], isHidden: boolean) {
     {
       count: ids.length,
       hidden: isHidden,
+      target_names: Object.fromEntries(
+        (beforeArtworks || []).filter((a) => a.title).map((a) => [a.id, a.title])
+      ),
     },
     admin.id,
     {
