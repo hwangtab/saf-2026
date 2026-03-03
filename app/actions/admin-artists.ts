@@ -261,19 +261,17 @@ export async function deleteArtist(id: string) {
   const supabase = await createSupabaseAdminOrServerClient();
 
   // Keep full snapshot so deleted row can be restored from activity logs.
-  const { data: artist } = await supabase
-    .from('artists')
-    .select(
-      'id, user_id, owner_id, name_ko, name_en, bio, history, profile_image, contact_phone, contact_email, instagram, homepage, created_at, updated_at'
-    )
-    .eq('id', id)
-    .single();
-
-  // Check for artworks
-  const { count } = await supabase
-    .from('artworks')
-    .select('id', { count: 'exact', head: true })
-    .eq('artist_id', id);
+  // Fetch artist data and artwork count in parallel (independent queries).
+  const [{ data: artist }, { count }] = await Promise.all([
+    supabase
+      .from('artists')
+      .select(
+        'id, user_id, owner_id, name_ko, name_en, bio, history, profile_image, contact_phone, contact_email, instagram, homepage, created_at, updated_at'
+      )
+      .eq('id', id)
+      .single(),
+    supabase.from('artworks').select('id', { count: 'exact', head: true }).eq('artist_id', id),
+  ]);
 
   if (count && count > 0) {
     throw new Error(

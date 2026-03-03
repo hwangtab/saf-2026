@@ -13,11 +13,15 @@ export default async function ExhibitorOnboardingPage({
   const isRecoveryFlow = params.recover === '1';
   const supabase = await createSupabaseServerClient();
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role, status')
-    .eq('id', user.id)
-    .single();
+  // Fetch profile and existing application in parallel (both need only user.id).
+  const [{ data: profile }, { data: application }] = await Promise.all([
+    supabase.from('profiles').select('role, status').eq('id', user.id).single(),
+    supabase
+      .from('exhibitor_applications')
+      .select('representative_name, contact, bio, referrer')
+      .eq('user_id', user.id)
+      .maybeSingle(),
+  ]);
 
   if (profile?.role === 'admin') {
     redirect('/admin/dashboard');
@@ -36,13 +40,6 @@ export default async function ExhibitorOnboardingPage({
   if (profile?.role === 'exhibitor' && profile?.status === 'suspended') {
     redirect('/exhibitor/suspended');
   }
-
-  // Fetch existing application if any
-  const { data: application } = await supabase
-    .from('exhibitor_applications')
-    .select('representative_name, contact, bio, referrer')
-    .eq('user_id', user.id)
-    .maybeSingle();
 
   const isExhibitorRecovery =
     isRecoveryFlow && profile?.role === 'exhibitor' && profile?.status === 'active';

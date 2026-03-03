@@ -16,10 +16,11 @@ import {
   DebtCollectionChart,
   CreativeImpactChart,
 } from '@/components/features/charts/DynamicCharts';
-
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { BREADCRUMB_HOME, BREADCRUMBS } from '@/lib/constants';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
+
+export const revalidate = 300;
 
 const PAGE_URL = `${SITE_URL}/our-reality`;
 
