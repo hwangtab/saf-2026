@@ -6,9 +6,61 @@ import { newsArticles } from '@/content/news';
 import { faqs } from '@/content/faq';
 import { testimonials } from '@/content/testimonials';
 import { exhibitionReviews } from '@/content/reviews';
-import type { Artwork, ExhibitionReview, NewsArticle } from '@/types';
+import type { Artwork, ExhibitionReview, NewsArticle, TestimonialCategory } from '@/types';
 
-const isMissingTableError = (error: any) => error?.code === '42P01';
+type ArtworkRow = {
+  id: string;
+  artist_id: string | null;
+  title: string;
+  description: string | null;
+  size: string | null;
+  material: string | null;
+  year: string | null;
+  edition: string | null;
+  price: string | null;
+  images: string[] | null;
+  shop_url: string | null;
+  status: string | null;
+};
+
+type ArtistRow = {
+  id: string;
+  name_ko: string | null;
+  bio: string | null;
+  profile?: string | null;
+  history: string | null;
+};
+
+type TestimonialRow = {
+  category: string;
+  quote: string;
+  author: string;
+  context: string | null;
+};
+
+type ReviewRow = {
+  id: string;
+  author: string;
+  role: string | null;
+  rating: number | string;
+  comment: string;
+  date: string;
+};
+
+type NewsRow = {
+  id: string;
+  title: string;
+  source: string | null;
+  date: string;
+  link: string | null;
+  thumbnail: string | null;
+  description: string | null;
+};
+
+function isMissingTableError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') return false;
+  return (error as { code?: string }).code === '42P01';
+}
 const ARTWORK_SELECT_COLUMNS =
   'id, artist_id, title, description, size, material, year, edition, price, images, shop_url, status';
 const ARTIST_SELECT_COLUMNS = 'id, name_ko, bio, history';
@@ -22,7 +74,7 @@ function pickRandomItems<T>(items: T[], limit: number): T[] {
   return shuffled.slice(0, limit);
 }
 
-const mapArtworkRow = (item: any, artist?: any): Artwork => ({
+const mapArtworkRow = (item: ArtworkRow, artist?: ArtistRow | null): Artwork => ({
   id: item.id,
   artist: artist?.name_ko || 'Unknown Artist',
   title: item.title,
@@ -64,7 +116,9 @@ export const getSupabaseArtworks = cache(async (): Promise<Artwork[]> => {
     return [];
   }
 
-  return (data || []).map((item: any) => mapArtworkRow(item, item.artists));
+  return (data || []).map((item) =>
+    mapArtworkRow(item as ArtworkRow, item.artists as unknown as ArtistRow | null)
+  );
 });
 
 export const getSupabaseHomepageArtworks = cache(async (limit = 30): Promise<Artwork[]> => {
@@ -83,7 +137,8 @@ export const getSupabaseHomepageArtworks = cache(async (limit = 30): Promise<Art
     )
     .eq('is_hidden', false)
     .neq('status', 'sold')
-    .neq('status', 'reserved');
+    .neq('status', 'reserved')
+    .limit(limit * 3);
 
   if (error) {
     if (isMissingTableError(error)) {
@@ -94,7 +149,9 @@ export const getSupabaseHomepageArtworks = cache(async (limit = 30): Promise<Art
     return [];
   }
 
-  const mapped = (data || []).map((item: any) => mapArtworkRow(item, item.artists));
+  const mapped = (data || []).map((item) =>
+    mapArtworkRow(item as ArtworkRow, item.artists as unknown as ArtistRow | null)
+  );
   return pickRandomItems(mapped, limit);
 });
 
@@ -126,7 +183,7 @@ export const getSupabaseArtworkById = cache(async (id: string): Promise<Artwork 
     return getArtworkById(id) || null;
   }
 
-  return mapArtworkRow(artwork, artwork.artists);
+  return mapArtworkRow(artwork as ArtworkRow, artwork.artists as unknown as ArtistRow | null);
 });
 
 export const getSupabaseArtworksByArtist = cache(async (artistName: string): Promise<Artwork[]> => {
@@ -162,44 +219,45 @@ export const getSupabaseArtworksByArtist = cache(async (artistName: string): Pro
     return [];
   }
 
-  return (data || []).map((item: any) => mapArtworkRow(item, item.artists));
+  return (data || []).map((item) =>
+    mapArtworkRow(item as ArtworkRow, item.artists as unknown as ArtistRow | null)
+  );
 });
 
-export const getSupabaseTestimonials = cache(
-  async (): Promise<{ category: string; items: any[] }[]> => {
-    if (!hasSupabaseConfig || !supabase) {
+export const getSupabaseTestimonials = cache(async (): Promise<TestimonialCategory[]> => {
+  if (!hasSupabaseConfig || !supabase) {
+    return testimonials;
+  }
+
+  const { data, error } = await supabase
+    .from('testimonials')
+    .select('*')
+    .order('category', { ascending: true });
+
+  if (error) {
+    if (isMissingTableError(error)) {
       return testimonials;
     }
-
-    const { data, error } = await supabase
-      .from('testimonials')
-      .select('*')
-      .order('category', { ascending: true });
-
-    if (error) {
-      if (isMissingTableError(error)) {
-        return testimonials;
-      }
-      console.error('Error fetching testimonials from Supabase:', error);
-      return [];
-    }
-
-    // Group by category
-    const grouped = (data || []).reduce((acc: any, item: any) => {
-      if (!acc[item.category]) {
-        acc[item.category] = { category: item.category, items: [] };
-      }
-      acc[item.category].items.push({
-        quote: item.quote,
-        author: item.author,
-        context: item.context || '',
-      });
-      return acc;
-    }, {});
-
-    return Object.values(grouped);
+    console.error('Error fetching testimonials from Supabase:', error);
+    return [];
   }
-);
+
+  // Group by category
+  const grouped = (data || []).reduce<Record<string, TestimonialCategory>>((acc, item) => {
+    const row = item as TestimonialRow;
+    if (!acc[row.category]) {
+      acc[row.category] = { category: row.category, items: [] };
+    }
+    acc[row.category].items.push({
+      quote: row.quote,
+      author: row.author,
+      context: row.context || '',
+    });
+    return acc;
+  }, {});
+
+  return Object.values(grouped);
+});
 
 export const getSupabaseFAQs = cache(async (): Promise<{ question: string; answer: string }[]> => {
   if (!hasSupabaseConfig || !supabase) {
@@ -219,10 +277,10 @@ export const getSupabaseFAQs = cache(async (): Promise<{ question: string; answe
     return faqs.map((item) => ({ question: item.question, answer: item.answer }));
   }
 
-  return (data || []).map((item: any) => ({
-    question: item.question,
-    answer: item.answer,
-  }));
+  return (data || []).map((item) => {
+    const row = item as { question: string; answer: string };
+    return { question: row.question, answer: row.answer };
+  });
 });
 
 export const getSupabaseReviews = cache(async (): Promise<ExhibitionReview[]> => {
@@ -243,15 +301,17 @@ export const getSupabaseReviews = cache(async (): Promise<ExhibitionReview[]> =>
     return [];
   }
 
-  return (data || []).map((item: any) => {
-    const parsedRating = typeof item.rating === 'number' ? item.rating : parseFloat(item.rating);
+  return (data || []).map((item) => {
+    const row = item as ReviewRow;
+    const parsedRating =
+      typeof row.rating === 'number' ? row.rating : parseFloat(String(row.rating));
     return {
-      id: item.id,
-      author: item.author,
-      role: item.role || '',
+      id: row.id,
+      author: row.author,
+      role: row.role || '',
       rating: Number.isFinite(parsedRating) ? parsedRating : 0,
-      comment: item.comment,
-      date: item.date,
+      comment: row.comment,
+      date: row.date,
     };
   });
 });
@@ -274,18 +334,21 @@ export const getSupabaseNews = cache(async (): Promise<NewsArticle[]> => {
     return [];
   }
 
-  return (data || []).map((item: any) => ({
-    id: item.id,
-    title: item.title,
-    source: item.source || '',
-    date: item.date,
-    link: item.link || '',
-    thumbnail: item.thumbnail || '',
-    description: item.description || '',
-  }));
+  return (data || []).map((item) => {
+    const row = item as NewsRow;
+    return {
+      id: row.id,
+      title: row.title,
+      source: row.source || '',
+      date: row.date,
+      link: row.link || '',
+      thumbnail: row.thumbnail || '',
+      description: row.description || '',
+    };
+  });
 });
 
-export const getSupabaseArtistsByOwner = cache(async (ownerId: string): Promise<any[]> => {
+export const getSupabaseArtistsByOwner = cache(async (ownerId: string): Promise<ArtistRow[]> => {
   if (!hasSupabaseConfig || !supabase) {
     return [];
   }

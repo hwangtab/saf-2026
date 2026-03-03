@@ -56,13 +56,14 @@ export const requireArtistActive = cache(async function requireArtistActive() {
     redirect('/admin/dashboard');
   }
 
-  if (profile?.role === 'artist') {
-    const { data: application } = await supabase
-      .from('artist_applications')
-      .select('artist_name, contact, bio, terms_version, terms_accepted_at')
-      .eq('user_id', user.id)
-      .maybeSingle();
+  // Fetch application once and reuse below
+  const { data: application } = await supabase
+    .from('artist_applications')
+    .select('artist_name, contact, bio, terms_version, terms_accepted_at')
+    .eq('user_id', user.id)
+    .maybeSingle();
 
+  if (profile?.role === 'artist') {
     const hasApplication = hasArtistApplication(application);
 
     if (profile.status === 'active' && !hasApplication) {
@@ -83,14 +84,7 @@ export const requireArtistActive = cache(async function requireArtistActive() {
   if (!profile || profile.role !== 'artist' || profile.status !== 'active') {
     // If suspended or pending, maybe redirect to specific page
     if (profile?.status === 'pending') {
-      const { data: application } = await supabase
-        .from('artist_applications')
-        .select('artist_name, contact, bio, terms_version, terms_accepted_at')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
       const hasApplication = hasArtistApplication(application);
-
       if (!hasApplication) redirect('/onboarding');
       redirect('/dashboard/pending');
     }

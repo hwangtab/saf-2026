@@ -4,18 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 import { logAdminAction } from './admin-logs';
-
-const getString = (formData: FormData, key: string) => {
-  const value = formData.get(key);
-  return value ? String(value).trim() : '';
-};
-
-const getNumber = (formData: FormData, key: string, fallback = 0) => {
-  const raw = formData.get(key);
-  if (raw === null || raw === undefined || raw === '') return fallback;
-  const num = Number(raw);
-  return Number.isFinite(num) ? num : fallback;
-};
+import { getString, getNumber } from '@/lib/utils/form-helpers';
 
 export async function createNews(formData: FormData) {
   const admin = await requireAdmin();

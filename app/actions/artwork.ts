@@ -15,6 +15,8 @@ import {
   cleanupUploads,
   validateArtworkData,
 } from '@/lib/actions/artwork-validation';
+import { getString } from '@/lib/utils/form-helpers';
+import { getActionErrorMessage } from '@/lib/utils/action-error';
 
 export type ActionState = {
   message: string;
@@ -87,17 +89,17 @@ export async function createArtwork(
     artistId = artist.id;
 
     // 2. Extract Data
-    const title = (formData.get('title') as string) || '';
-    const description = formData.get('description') as string;
-    const size = formData.get('size') as string;
-    const material = formData.get('material') as string;
-    const year = formData.get('year') as string;
-    const edition = formData.get('edition') as string;
-    const edition_type = (formData.get('edition_type') as string) || 'unique';
-    const edition_limit_str = formData.get('edition_limit') as string;
-    const edition_limit = edition_limit_str ? parseInt(edition_limit_str) : null;
-    const price = (formData.get('price') as string) || '';
-    const rawStatus = (formData.get('status') as string) || 'available';
+    const title = getString(formData, 'title');
+    const description = getString(formData, 'description');
+    const size = getString(formData, 'size');
+    const material = getString(formData, 'material');
+    const year = getString(formData, 'year');
+    const edition = getString(formData, 'edition');
+    const edition_type = getString(formData, 'edition_type') || 'unique';
+    const edition_limit_str = getString(formData, 'edition_limit');
+    const edition_limit = edition_limit_str ? parseInt(edition_limit_str, 10) : null;
+    const price = getString(formData, 'price');
+    const rawStatus = getString(formData, 'status') || 'available';
     const status = ['available', 'reserved', 'sold'].includes(rawStatus) ? rawStatus : 'available';
     const { urls: images, error: imagesError } = parseUrlList(formData.get('images'), '이미지');
     const { urls: newUploads, error: newUploadsError } = parseUrlList(
@@ -202,11 +204,15 @@ export async function createArtwork(
       resolveCafe24RedirectState(syncResult),
       syncResult.reason
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (supabase && artistId && cleanupUrls.length > 0) {
       await cleanupUploads(supabase, cleanupUrls, artistId);
     }
-    return { message: error.message, error: true, cleanupUrls };
+    return {
+      message: getActionErrorMessage(error, '작품 등록 중 오류가 발생했습니다.'),
+      error: true,
+      cleanupUrls,
+    };
   }
 
   redirect(redirectPath);
@@ -234,17 +240,17 @@ export async function updateArtwork(
     if (!artist) throw new Error('Artist not found');
     artistId = artist.id;
 
-    const title = (formData.get('title') as string) || '';
-    const description = formData.get('description') as string;
-    const size = formData.get('size') as string;
-    const material = formData.get('material') as string;
-    const year = formData.get('year') as string;
-    const edition = formData.get('edition') as string;
-    const edition_type = (formData.get('edition_type') as string) || 'unique';
-    const edition_limit_str = formData.get('edition_limit') as string;
-    const edition_limit = edition_limit_str ? parseInt(edition_limit_str) : null;
-    const price = (formData.get('price') as string) || '';
-    const rawStatus = (formData.get('status') as string) || 'available';
+    const title = getString(formData, 'title');
+    const description = getString(formData, 'description');
+    const size = getString(formData, 'size');
+    const material = getString(formData, 'material');
+    const year = getString(formData, 'year');
+    const edition = getString(formData, 'edition');
+    const edition_type = getString(formData, 'edition_type') || 'unique';
+    const edition_limit_str = getString(formData, 'edition_limit');
+    const edition_limit = edition_limit_str ? parseInt(edition_limit_str, 10) : null;
+    const price = getString(formData, 'price');
+    const rawStatus = getString(formData, 'status') || 'available';
     const status = ['available', 'reserved', 'sold'].includes(rawStatus) ? rawStatus : 'available';
     const hidden = formData.get('hidden') === 'on';
     const { urls: images, error: imagesError } = parseUrlList(formData.get('images'), '이미지');
@@ -380,11 +386,15 @@ export async function updateArtwork(
       resolveCafe24RedirectState(syncResult),
       syncResult.reason
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (supabase && artistId && cleanupUrls.length > 0) {
       await cleanupUploads(supabase, cleanupUrls, artistId);
     }
-    return { message: error.message, error: true, cleanupUrls };
+    return {
+      message: getActionErrorMessage(error, '작품 수정 중 오류가 발생했습니다.'),
+      error: true,
+      cleanupUrls,
+    };
   }
 
   redirect(redirectPath);
@@ -392,8 +402,18 @@ export async function updateArtwork(
 
 export async function deleteArtwork(id: string): Promise<ActionState> {
   try {
-    await requireArtistActive();
+    const user = await requireArtistActive();
     const supabase = await createSupabaseServerClient();
+
+    const { data: artist } = await supabase
+      .from('artists')
+      .select('id')
+      .eq('user_id', user.id)
+      .single();
+
+    if (!artist) {
+      return { message: '아티스트 프로필을 찾을 수 없습니다.', error: true };
+    }
 
     const { data: artwork } = await supabase
       .from('artworks')
@@ -401,6 +421,7 @@ export async function deleteArtwork(id: string): Promise<ActionState> {
         'id, title, images, artist_id, description, size, material, year, edition, price, status, sold_at, is_hidden, shop_url, cafe24_product_no, created_at, updated_at'
       )
       .eq('id', id)
+      .eq('artist_id', artist.id)
       .single();
 
     if (artwork) {
@@ -414,8 +435,11 @@ export async function deleteArtwork(id: string): Promise<ActionState> {
       }
     }
 
-    // RLS will ensure they only delete their own
-    const { error } = await supabase.from('artworks').delete().eq('id', id);
+    const { error } = await supabase
+      .from('artworks')
+      .delete()
+      .eq('id', id)
+      .eq('artist_id', artist.id);
 
     if (error) throw error;
 
@@ -451,7 +475,10 @@ export async function deleteArtwork(id: string): Promise<ActionState> {
     }
 
     return { message: '작품이 삭제되었습니다.', error: false };
-  } catch (error: any) {
-    return { message: '삭제 실패: ' + error.message, error: true };
+  } catch (error: unknown) {
+    return {
+      message: getActionErrorMessage(error, '작품 삭제 중 오류가 발생했습니다.'),
+      error: true,
+    };
   }
 }

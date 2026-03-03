@@ -97,7 +97,7 @@ export async function getExhibitorArtworks() {
 
   if (error) throw error;
 
-  return (artworks || []).map((artwork: any) => ({
+  return (artworks || []).map((artwork) => ({
     ...artwork,
     artists: artwork.artists || null,
   }));
@@ -140,7 +140,7 @@ export async function createExhibitorArtwork(formData: FormData) {
   const edition = getString(formData, 'edition');
   const edition_type = getString(formData, 'edition_type') || 'unique';
   const edition_limit_str = getString(formData, 'edition_limit');
-  const edition_limit = edition_limit_str ? parseInt(edition_limit_str) : null;
+  const edition_limit = edition_limit_str ? parseInt(edition_limit_str, 10) : null;
   const price = getString(formData, 'price');
   const artist_id = getString(formData, 'artist_id');
 
@@ -225,7 +225,7 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
   const edition = getString(formData, 'edition');
   const edition_type = getString(formData, 'edition_type') || 'unique';
   const edition_limit_str = getString(formData, 'edition_limit');
-  const edition_limit = edition_limit_str ? parseInt(edition_limit_str) : null;
+  const edition_limit = edition_limit_str ? parseInt(edition_limit_str, 10) : null;
   const price = getString(formData, 'price');
   const artist_id = getString(formData, 'artist_id');
 
@@ -410,13 +410,16 @@ export async function deleteExhibitorArtwork(id: string) {
   const { error } = await supabase.from('artworks').delete().eq('id', id);
   if (error) throw error;
 
+  type ArtistJoin = { name_ko: string | null; owner_id: string | null };
+  const artworkArtist = artwork.artists as ArtistJoin | null;
+
   await logExhibitorAction(
     'exhibitor_artwork_deleted',
     'artwork',
     id,
     {
       title: artwork.title,
-      artist: (artwork.artists as any)?.name_ko,
+      artist: artworkArtist?.name_ko,
     },
     {
       beforeSnapshot: artwork,
@@ -434,8 +437,8 @@ export async function deleteExhibitorArtwork(id: string) {
   }
 
   revalidatePath('/exhibitor/artworks');
-  if (artwork.artists && (artwork.artists as any).name_ko) {
-    revalidatePath(`/artworks/artist/${encodeURIComponent((artwork.artists as any).name_ko)}`);
+  if (artworkArtist?.name_ko) {
+    revalidatePath(`/artworks/artist/${encodeURIComponent(artworkArtist.name_ko)}`);
   }
 
   return { success: true };

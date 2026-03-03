@@ -6,6 +6,7 @@ import { ARTIST_APPLICATION_TERMS_VERSION } from '@/lib/constants';
 import { redirect } from 'next/navigation';
 import { logArtistAction } from './admin-logs';
 import { getRequestMetadata } from './request-metadata';
+import { getActionErrorMessage } from '@/lib/utils/action-error';
 
 export type OnboardingState = {
   message: string;
@@ -94,8 +95,11 @@ export async function submitArtistApplication(
       profile?.role === 'artist' && profile.status === 'active'
         ? '/dashboard/artworks'
         : '/dashboard/pending';
-  } catch (error: any) {
-    return { message: `신청 저장 중 오류가 발생했습니다: ${error.message}`, error: true };
+  } catch (error: unknown) {
+    return {
+      message: getActionErrorMessage(error, '신청 저장 중 오류가 발생했습니다.'),
+      error: true,
+    };
   }
 
   if (redirectPath) {

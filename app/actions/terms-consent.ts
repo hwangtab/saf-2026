@@ -113,7 +113,7 @@ export async function submitTermsConsent(
       .eq('user_id', user.id);
 
     if (error) {
-      return { message: `약관 동의 저장 중 오류가 발생했습니다: ${error.message}`, error: true };
+      return { message: '약관 동의 저장 중 오류가 발생했습니다.', error: true };
     }
   }
 
@@ -130,7 +130,7 @@ export async function submitTermsConsent(
       .eq('user_id', user.id);
 
     if (error) {
-      return { message: `약관 동의 저장 중 오류가 발생했습니다: ${error.message}`, error: true };
+      return { message: '약관 동의 저장 중 오류가 발생했습니다.', error: true };
     }
   }
 

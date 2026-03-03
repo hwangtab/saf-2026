@@ -120,7 +120,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               메인 콘텐츠로 이동
             </a>
             <Header />
-            <main id="main-content" role="main" className="flex-1">
+            <main id="main-content" className="flex-1">
               <PageTransition>
                 <Suspense fallback={<PageLoader />}>{children}</Suspense>
               </PageTransition>

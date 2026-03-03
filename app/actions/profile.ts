@@ -4,6 +4,7 @@ import { createSupabaseServerClient } from '@/lib/auth/server';
 import { requireArtistActive } from '@/lib/auth/guards';
 import { revalidatePath } from 'next/cache';
 import { logArtistAction } from './admin-logs';
+import { getActionErrorMessage } from '@/lib/utils/action-error';
 
 export type ActionState = {
   message: string;
@@ -90,10 +91,10 @@ export async function updateArtistProfile(
     }
 
     return { message: '프로필이 성공적으로 수정되었습니다.', error: false };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Profile Update Error:', error);
     return {
-      message: '프로필 수정 중 오류가 발생했습니다: ' + error.message,
+      message: getActionErrorMessage(error, '프로필 수정 중 오류가 발생했습니다.'),
       error: true,
     };
   }

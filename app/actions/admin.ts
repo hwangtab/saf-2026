@@ -2,6 +2,7 @@
 
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 import { requireAdmin } from '@/lib/auth/guards';
+import { getActionErrorMessage } from '@/lib/utils/action-error';
 import {
   hasComposedTrailingConsonantQuery,
   hasHangulJamo,
@@ -37,6 +38,8 @@ type PromoteUserToArtistParams = {
 function sanitizeIlikeQuery(query: string) {
   return query
     .trim()
+    .replace(/_/g, '\\_')
+    .replace(/'/g, "''")
     .replace(/[%(),]/g, ' ')
     .replace(/\s+/g, ' ');
 }
@@ -460,8 +463,11 @@ export async function promoteUserToArtistWithLink({
     }
 
     return { message: `${profileName} 사용자의 권한을 artist로 변경했습니다.`, error: false };
-  } catch (error: any) {
-    return { message: error.message, error: true };
+  } catch (error: unknown) {
+    return {
+      message: getActionErrorMessage(error, '사용자 처리 중 오류가 발생했습니다.'),
+      error: true,
+    };
   }
 }
 
@@ -579,8 +585,11 @@ export async function approveUser(userId: string): Promise<AdminActionState> {
     );
 
     return { message: '사용자가 승인되었습니다.', error: false };
-  } catch (error: any) {
-    return { message: error.message, error: true };
+  } catch (error: unknown) {
+    return {
+      message: getActionErrorMessage(error, '사용자 승인 중 오류가 발생했습니다.'),
+      error: true,
+    };
   }
 }
 
@@ -636,8 +645,11 @@ export async function rejectUser(userId: string): Promise<AdminActionState> {
     );
 
     return { message: '사용자가 거절(차단)되었습니다.', error: false };
-  } catch (error: any) {
-    return { message: error.message, error: true };
+  } catch (error: unknown) {
+    return {
+      message: getActionErrorMessage(error, '사용자 거절 중 오류가 발생했습니다.'),
+      error: true,
+    };
   }
 }
 
@@ -689,8 +701,11 @@ export async function reactivateUser(userId: string): Promise<AdminActionState> 
     );
 
     return { message: '사용자가 다시 활성화되었습니다.', error: false };
-  } catch (error: any) {
-    return { message: error.message, error: true };
+  } catch (error: unknown) {
+    return {
+      message: getActionErrorMessage(error, '사용자 재활성화 중 오류가 발생했습니다.'),
+      error: true,
+    };
   }
 }
 
@@ -845,7 +860,10 @@ export async function updateUserRole(userId: string, role: UserRole): Promise<Ad
     );
 
     return { message: '권한이 변경되었습니다.', error: false };
-  } catch (error: any) {
-    return { message: error.message, error: true };
+  } catch (error: unknown) {
+    return {
+      message: getActionErrorMessage(error, '권한 변경 중 오류가 발생했습니다.'),
+      error: true,
+    };
   }
 }
