@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useOptimistic, useState, useTransition } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { deleteExhibitorArtist } from '@/app/actions/exhibitor-artists';
 import SafeAvatarImage from '@/components/common/SafeAvatarImage';
 import {
@@ -23,30 +24,32 @@ type ArtistItem = {
 };
 
 export function ArtistList({ artists }: { artists: ArtistItem[] }) {
-  const [optimisticArtists, setOptimisticArtists] = useState(artists);
+  const [, startTransition] = useTransition();
+  const [optimisticArtists, removeOptimistic] = useOptimistic(
+    artists,
+    (state, idToRemove: string) => state.filter((a) => a.id !== idToRemove)
+  );
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    setOptimisticArtists(artists);
-  }, [artists]);
+  const router = useRouter();
 
   const handleDelete = async (id: string) => {
     if (!confirm('이 작가를 삭제하시겠습니까? 연결된 작품이 있으면 삭제할 수 없습니다.')) return;
 
-    setOptimisticArtists((prev) => prev.filter((a) => a.id !== id));
     setProcessingId(id);
     setError(null);
-
-    try {
-      await deleteExhibitorArtist(id);
-    } catch (err: unknown) {
-      setOptimisticArtists(artists);
-      setError(err instanceof Error ? err.message : '삭제 중 오류가 발생했습니다.');
-    } finally {
-      setProcessingId(null);
-    }
+    startTransition(async () => {
+      removeOptimistic(id);
+      try {
+        await deleteExhibitorArtist(id);
+        router.refresh();
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : '삭제 중 오류가 발생했습니다.');
+      } finally {
+        setProcessingId(null);
+      }
+    });
   };
 
   const filtered = optimisticArtists.filter((artist) => {

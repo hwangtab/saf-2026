@@ -48,7 +48,7 @@ export async function requireAuth() {
   return user;
 }
 
-export async function requireArtistActive() {
+export const requireArtistActive = cache(async function requireArtistActive() {
   const { supabase, user, profile } = await getCurrentProfile();
 
   // Admin should stay in admin surface
@@ -100,7 +100,7 @@ export async function requireArtistActive() {
   }
 
   return user;
-}
+});
 
 export async function requireAdmin() {
   const { user, profile } = await getCurrentProfile();
@@ -136,7 +136,7 @@ export async function requireExhibitorRole() {
  * Requires both 'exhibitor' role AND 'active' status.
  * Redirects to onboarding or pending pages if status is not active.
  */
-export async function requireExhibitor() {
+export const requireExhibitor = cache(async function requireExhibitor() {
   const { supabase, user, profile } = await getCurrentProfile();
 
   // Admin should stay in admin surface
@@ -181,4 +181,4 @@ export async function requireExhibitor() {
   }
 
   return user;
-}
+});

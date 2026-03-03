@@ -1,12 +1,14 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import ArtworkLightbox from '@/components/ui/ArtworkLightbox';
+import dynamic from 'next/dynamic';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
 import { optimizeArtworkImage, optimizeImage } from '@/lib/client/image-optimization';
 import { useToast } from '@/lib/hooks/useToast';
 import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
 import SafeImage from '@/components/common/SafeImage';
+
+const ArtworkLightbox = dynamic(() => import('@/components/ui/ArtworkLightbox'), { ssr: false });
 
 type UploadProps = {
   bucket: 'artworks' | 'profiles';

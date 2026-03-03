@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useOptimistic, useState, useTransition } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { deleteArtist } from '@/app/actions/admin-artists';
 import SafeAvatarImage from '@/components/common/SafeAvatarImage';
 import {
@@ -30,16 +31,17 @@ type SortKey = 'artist_info' | 'account_link' | 'artwork_count';
 type SortDirection = 'asc' | 'desc';
 
 export function ArtistList({ artists }: { artists: ArtistItem[] }) {
-  const [optimisticArtists, setOptimisticArtists] = useState(artists);
+  const [, startTransition] = useTransition();
+  const [optimisticArtists, removeOptimistic] = useOptimistic(
+    artists,
+    (state, idToRemove: string) => state.filter((a) => a.id !== idToRemove)
+  );
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [sortKey, setSortKey] = useState<SortKey>('artist_info');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
-
-  useEffect(() => {
-    setOptimisticArtists(artists);
-  }, [artists]);
+  const router = useRouter();
 
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
@@ -48,19 +50,20 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
     const id = deleteTargetId;
     setDeleteTargetId(null);
 
-    setOptimisticArtists((prev) => prev.filter((a) => a.id !== id));
     setProcessingId(id);
     setError(null);
-
-    try {
-      await deleteArtist(id);
-      setError(null);
-    } catch (err: unknown) {
-      setOptimisticArtists(artists);
-      setError(err instanceof Error ? err.message : '삭제 중 오류가 발생했습니다.');
-    } finally {
-      setProcessingId(null);
-    }
+    startTransition(async () => {
+      removeOptimistic(id);
+      try {
+        await deleteArtist(id);
+        setError(null);
+        router.refresh();
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : '삭제 중 오류가 발생했습니다.');
+      } finally {
+        setProcessingId(null);
+      }
+    });
   };
 
   const filtered = useMemo(() => {

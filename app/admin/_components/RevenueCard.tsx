@@ -1,5 +1,3 @@
-'use client';
-
 import { AdminCard } from './admin-ui';
 
 type RevenueCardProps = {

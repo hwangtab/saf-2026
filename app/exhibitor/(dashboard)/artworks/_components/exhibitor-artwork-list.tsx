@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import ArtworkLightbox from '@/components/ui/ArtworkLightbox';
+import dynamic from 'next/dynamic';
 import SafeImage from '@/components/common/SafeImage';
 import { deleteExhibitorArtwork } from '@/app/actions/exhibitor-artworks';
 import { useToast } from '@/lib/hooks/useToast';
@@ -15,6 +15,8 @@ import {
   AdminEmptyState,
   AdminInput,
 } from '@/app/admin/_components/admin-ui';
+
+const ArtworkLightbox = dynamic(() => import('@/components/ui/ArtworkLightbox'), { ssr: false });
 
 type ArtworkItem = {
   id: string;

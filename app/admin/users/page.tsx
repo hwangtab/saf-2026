@@ -100,19 +100,27 @@ export default async function UsersPage({ searchParams }: Props) {
 
   const { data: users } = await query.order('created_at', { ascending: false });
 
-  // Fetch artist applications
-  const { data: artistApplications } = await supabase
-    .from('artist_applications')
-    .select('user_id, artist_name, contact, bio, referrer, updated_at');
+  const userIds = (users || []).map((u: ProfileRow) => u.id);
+
+  // Fetch only applications for the users in the current result set
+  const [{ data: artistApplications }, { data: exhibitorApplications }] = await Promise.all([
+    userIds.length > 0
+      ? supabase
+          .from('artist_applications')
+          .select('user_id, artist_name, contact, bio, referrer, updated_at')
+          .in('user_id', userIds)
+      : { data: [] },
+    userIds.length > 0
+      ? supabase
+          .from('exhibitor_applications')
+          .select('user_id, representative_name, contact, bio, referrer, updated_at')
+          .in('user_id', userIds)
+      : { data: [] },
+  ]);
 
   const artistApplicationMap = new Map(
     (artistApplications || []).map((app: ArtistApplication) => [app.user_id, app])
   );
-
-  // Fetch exhibitor applications
-  const { data: exhibitorApplications } = await supabase
-    .from('exhibitor_applications')
-    .select('user_id, representative_name, contact, bio, referrer, updated_at');
 
   const exhibitorApplicationMap = new Map(
     (exhibitorApplications || []).map((app: ExhibitorApplication) => [app.user_id, app])

@@ -2,18 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
-
-const navItems = [
-  { href: '/admin/dashboard', label: '대시보드' },
-  { href: '/admin/users?status=pending', label: '심사 큐' },
-  { href: '/admin/users', label: '사용자 관리' },
-  { href: '/admin/artists', label: '작가 관리' },
-  { href: '/admin/artworks', label: '작품 관리' },
-  { href: '/admin/content', label: '콘텐츠 관리' },
-  { href: '/admin/revenue', label: '매출 현황' },
-  { href: '/admin/logs', label: '활동 로그' },
-  { href: '/admin/trash', label: '휴지통' },
-];
+import { adminNavItems } from './_components/admin-nav-items';
 
 export function AdminDesktopNav() {
   const pathname = usePathname();
@@ -22,7 +11,7 @@ export function AdminDesktopNav() {
 
   return (
     <div className="hidden 2xl:ml-6 2xl:flex 2xl:space-x-6">
-      {navItems.map((item) => {
+      {adminNavItems.map((item) => {
         const targetPath = item.href.split('?')[0];
         const isReviewQueueItem = item.href.includes('status=pending');
         const isUsersItem = item.href === '/admin/users';

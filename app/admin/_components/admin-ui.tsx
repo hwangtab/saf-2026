@@ -1,9 +1,8 @@
-'use client';
-
 import type {
   HTMLAttributes,
   InputHTMLAttributes,
   LabelHTMLAttributes,
+  ReactNode,
   SelectHTMLAttributes,
   TextareaHTMLAttributes,
 } from 'react';
@@ -201,13 +200,7 @@ export function AdminSelect({
     </div>
   );
 }
-export function AdminHelp({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
+export function AdminHelp({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <div className={cn('relative group inline-flex ml-1.5 align-middle', className)}>
       <svg

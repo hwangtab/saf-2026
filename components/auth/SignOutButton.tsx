@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/lib/hooks/useToast';
@@ -8,7 +8,7 @@ import { useToast } from '@/lib/hooks/useToast';
 export function SignOutButton() {
   const [isSigningOut, setIsSigningOut] = useState(false);
   const router = useRouter();
-  const supabase = createSupabaseBrowserClient();
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const toast = useToast();
 
   const handleSignOut = async () => {

@@ -50,7 +50,7 @@ export default async function ArtworksPage({ searchParams }: ArtworksPageProps) 
   // Fetch artworks
   const { data: artworks } = await supabase
     .from('artworks')
-    .select('*')
+    .select('id, title, images, price, status, is_hidden, created_at')
     .eq('artist_id', artist.id)
     .order('created_at', { ascending: false });
 

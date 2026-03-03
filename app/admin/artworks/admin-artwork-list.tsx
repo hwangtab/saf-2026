@@ -1,9 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
-import ArtworkLightbox from '@/components/ui/ArtworkLightbox';
 import SafeImage from '@/components/common/SafeImage';
 import Button from '@/components/ui/Button';
 import {
@@ -25,6 +25,8 @@ import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import { useToast } from '@/lib/hooks/useToast';
 import { matchesAnySearch } from '@/lib/search-utils';
 import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
+
+const ArtworkLightbox = dynamic(() => import('@/components/ui/ArtworkLightbox'), { ssr: false });
 
 type ArtworkItem = {
   id: string;
@@ -117,16 +119,18 @@ export function AdminArtworkList({
 }) {
   const toast = useToast();
   const pathname = usePathname();
+  const artworksRef = useRef(artworks);
+  artworksRef.current = artworks;
   const [optimisticArtworks, setOptimisticArtworks] = useState(artworks);
+
+  useEffect(() => {
+    setOptimisticArtworks(artworks);
+  }, [artworks]);
   const initialStatusFilter = normalizeStatusFilter(initialFilters?.status);
   const initialVisibilityFilter = normalizeVisibilityFilter(initialFilters?.visibility);
   const initialQuery = normalizeQuery(initialFilters?.q);
   const initialSortFilter = normalizeSortFilter(initialFilters?.sort);
   const initialSortState = getSortStateFromFilter(initialSortFilter);
-
-  useEffect(() => {
-    setOptimisticArtworks(artworks);
-  }, [artworks]);
 
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [batchProcessing, setBatchProcessing] = useState(false);
@@ -345,7 +349,7 @@ export function AdminArtworkList({
       toast.success('작품을 삭제했습니다.');
       setDeleteConfirm(null);
     } catch (error) {
-      setOptimisticArtworks(artworks);
+      setOptimisticArtworks(artworksRef.current);
       toast.error(error instanceof Error ? error.message : '작품 삭제 중 오류가 발생했습니다.');
     } finally {
       setProcessingId(null);
@@ -363,7 +367,7 @@ export function AdminArtworkList({
     try {
       const result = await batchUpdateArtworkStatus([id], newStatus);
       if (!result.success) {
-        const source = artworks.find((item) => item.id === id);
+        const source = artworksRef.current.find((item) => item.id === id);
         if (source) {
           setOptimisticArtworks((prev) =>
             prev.map((item) => (item.id === id ? { ...item, status: source.status } : item))
@@ -374,7 +378,7 @@ export function AdminArtworkList({
       }
       toast.success('작품 상태를 변경했습니다.');
     } catch (error) {
-      setOptimisticArtworks(artworks);
+      setOptimisticArtworks(artworksRef.current);
       toast.error(error instanceof Error ? error.message : '상태 변경 중 오류가 발생했습니다.');
     } finally {
       setProcessingId(null);
@@ -391,7 +395,7 @@ export function AdminArtworkList({
     try {
       const result = await batchToggleHidden([id], !currentHidden);
       if (!result.success) {
-        const source = artworks.find((item) => item.id === id);
+        const source = artworksRef.current.find((item) => item.id === id);
         if (source) {
           setOptimisticArtworks((prev) =>
             prev.map((item) => (item.id === id ? { ...item, is_hidden: source.is_hidden } : item))
@@ -404,7 +408,7 @@ export function AdminArtworkList({
       }
       toast.success(currentHidden ? '작품을 공개 처리했습니다.' : '작품을 숨김 처리했습니다.');
     } catch (error) {
-      setOptimisticArtworks(artworks);
+      setOptimisticArtworks(artworksRef.current);
       toast.error(
         error instanceof Error ? error.message : '공개 상태 변경 중 오류가 발생했습니다.'
       );
@@ -442,7 +446,7 @@ export function AdminArtworkList({
       const result = await batchUpdateArtworkStatus(selectedInFiltered, status);
       if (!result.success) {
         const failedIdSet = new Set(result.failedIds);
-        const sourceMap = new Map(artworks.map((item) => [item.id, item]));
+        const sourceMap = new Map(artworksRef.current.map((item) => [item.id, item]));
         setOptimisticArtworks((prev) =>
           prev.map((item) => {
             if (!failedIdSet.has(item.id)) return item;
@@ -462,7 +466,7 @@ export function AdminArtworkList({
       setBatchStatusConfirm(null);
       toast.success('선택한 작품 상태를 변경했습니다.');
     } catch (error) {
-      setOptimisticArtworks(artworks);
+      setOptimisticArtworks(artworksRef.current);
       toast.error(
         error instanceof Error ? error.message : '일괄 상태 변경 중 오류가 발생했습니다.'
       );
@@ -485,7 +489,7 @@ export function AdminArtworkList({
       const result = await batchToggleHidden(selectedInFiltered, isHidden);
       if (!result.success) {
         const failedIdSet = new Set(result.failedIds);
-        const sourceMap = new Map(artworks.map((item) => [item.id, item]));
+        const sourceMap = new Map(artworksRef.current.map((item) => [item.id, item]));
         setOptimisticArtworks((prev) =>
           prev.map((item) => {
             if (!failedIdSet.has(item.id)) return item;
@@ -507,7 +511,7 @@ export function AdminArtworkList({
         isHidden ? '선택한 작품을 숨김 처리했습니다.' : '선택한 작품을 공개 처리했습니다.'
       );
     } catch (error) {
-      setOptimisticArtworks(artworks);
+      setOptimisticArtworks(artworksRef.current);
       toast.error(
         error instanceof Error ? error.message : '일괄 공개 상태 변경 중 오류가 발생했습니다.'
       );
@@ -529,7 +533,7 @@ export function AdminArtworkList({
       setShowBatchDeleteConfirm(false);
       toast.success('선택한 작품을 삭제했습니다.');
     } catch (error) {
-      setOptimisticArtworks(artworks);
+      setOptimisticArtworks(artworksRef.current);
       toast.error(error instanceof Error ? error.message : '일괄 삭제 중 오류가 발생했습니다.');
     } finally {
       setBatchProcessing(false);

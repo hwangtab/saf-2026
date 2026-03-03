@@ -1,6 +1,4 @@
-import { requireExhibitor } from '@/lib/auth/guards';
-import { getSupabaseArtistsByOwner } from '@/lib/supabase-data';
-import { supabase } from '@/lib/supabase';
+import { getExhibitorArtists } from '@/app/actions/exhibitor-artists';
 import {
   AdminCard,
   AdminPageDescription,
@@ -9,20 +7,8 @@ import {
 } from '@/app/admin/_components/admin-ui';
 
 export default async function ExhibitorDashboard() {
-  const user = await requireExhibitor();
-  const artists = await getSupabaseArtistsByOwner(user.id);
-
-  let artworkCount = 0;
-  if (artists.length > 0 && supabase) {
-    const artistIds = artists.map((a: any) => a.id);
-    const { count } = await supabase
-      .from('artworks')
-      .select('*', { count: 'exact', head: true })
-      .in('artist_id', artistIds)
-      .eq('is_hidden', false);
-
-    artworkCount = count || 0;
-  }
+  const artists = await getExhibitorArtists();
+  const artworkCount = artists.reduce((sum: number, a: any) => sum + (a.artwork_count || 0), 0);
 
   return (
     <div className="space-y-8">

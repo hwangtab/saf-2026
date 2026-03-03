@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useOptimistic, useState, useTransition } from 'react';
 import Link from 'next/link';
 import { deleteArtwork } from '@/app/actions/artwork';
 import Button from '@/components/ui/Button';
@@ -31,13 +31,13 @@ export function ArtworkList({
   flashType?: 'success' | 'warning' | 'error' | null;
 }) {
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
-  const [optimisticArtworks, setOptimisticArtworks] = useState(artworks);
+  const [, startTransition] = useTransition();
+  const [optimisticArtworks, removeOptimistic] = useOptimistic(
+    artworks,
+    (state, idToRemove: string) => state.filter((a) => a.id !== idToRemove)
+  );
   const router = useRouter();
   const toast = useToast();
-
-  useEffect(() => {
-    setOptimisticArtworks(artworks);
-  }, [artworks]);
 
   useEffect(() => {
     if (!flashMessage) return;
@@ -55,25 +55,23 @@ export function ArtworkList({
     if (!confirm('정말 이 작품을 삭제하시겠습니까? 관리자 활동 로그에서 복구할 수 있습니다.'))
       return;
 
-    setOptimisticArtworks((prev) => prev.filter((a) => a.id !== id));
     setIsDeleting(id);
-
-    try {
-      const result = await deleteArtwork(id);
-
-      if (result.error) {
-        setOptimisticArtworks(artworks);
-        toast.error(result.message);
-      } else {
-        toast.success('작품이 삭제되었습니다.');
-        router.refresh();
+    startTransition(async () => {
+      removeOptimistic(id);
+      try {
+        const result = await deleteArtwork(id);
+        if (result.error) {
+          toast.error(result.message);
+        } else {
+          toast.success('작품이 삭제되었습니다.');
+          router.refresh();
+        }
+      } catch {
+        toast.error('삭제 중 오류가 발생했습니다.');
+      } finally {
+        setIsDeleting(null);
       }
-    } catch (error) {
-      setOptimisticArtworks(artworks);
-      toast.error('삭제 중 오류가 발생했습니다.');
-    } finally {
-      setIsDeleting(null);
-    }
+    });
   };
 
   if (optimisticArtworks.length === 0) {
