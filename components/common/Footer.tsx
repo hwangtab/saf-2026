@@ -1,9 +1,11 @@
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import ExportedImage from 'next-image-export-optimizer';
 import { SOCIAL_LINKS, CONTACT, EXTERNAL_LINKS } from '@/lib/constants';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
 import { UI_STRINGS } from '@/lib/ui-strings';
-import FooterSlider from '@/components/common/FooterSlider';
+
+const FooterSlider = dynamic(() => import('@/components/common/FooterSlider'), { ssr: false });
 
 export default function Footer() {
   return (

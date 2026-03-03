@@ -16,6 +16,8 @@ import { createPageMetadata } from '@/lib/seo';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema, generateVideoSchema } from '@/lib/seo-utils';
 
+export const revalidate = 3600;
+
 const PAGE_URL = `${SITE_URL}/archive/2023`;
 
 export const metadata: Metadata = createPageMetadata(

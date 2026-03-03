@@ -15,6 +15,8 @@ import {
 } from '@/lib/seo-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 
+export const revalidate = 300;
+
 const PAGE_URL = `${SITE_URL}/news`;
 
 export const metadata: Metadata = createPageMetadata(

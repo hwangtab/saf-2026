@@ -1,9 +1,9 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import clsx from 'clsx';
 import DesktopNav from './Header/DesktopNav';
-import FullscreenMenu from './Header/FullscreenMenu';
 import HeaderLogo from './Header/HeaderLogo';
 import MenuToggleIcon from '@/components/ui/MenuToggleIcon';
 import { Z_INDEX } from '@/lib/constants';
@@ -11,6 +11,8 @@ import { UI_STRINGS } from '@/lib/ui-strings';
 import { useHeaderStyle } from '@/lib/hooks/useHeaderStyle';
 import { shouldHidePublicHeader } from '@/lib/path-rules';
 import { MAIN_NAVIGATION } from '@/lib/menus';
+
+const FullscreenMenu = dynamic(() => import('./Header/FullscreenMenu'), { ssr: false });
 
 export default function Header() {
   const pathname = usePathname();

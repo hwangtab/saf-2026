@@ -43,17 +43,18 @@ export default async function OnboardingPage({
     redirect('/dashboard/suspended');
   }
 
-  const { data: application } = await supabase
-    .from('artist_applications')
-    .select('artist_name, contact, bio, referrer')
-    .eq('user_id', user.id)
-    .maybeSingle();
-
-  const { data: exhibitorApplication } = await supabase
-    .from('exhibitor_applications')
-    .select('representative_name, contact, bio')
-    .eq('user_id', user.id)
-    .maybeSingle();
+  const [{ data: application }, { data: exhibitorApplication }] = await Promise.all([
+    supabase
+      .from('artist_applications')
+      .select('artist_name, contact, bio, referrer')
+      .eq('user_id', user.id)
+      .maybeSingle(),
+    supabase
+      .from('exhibitor_applications')
+      .select('representative_name, contact, bio')
+      .eq('user_id', user.id)
+      .maybeSingle(),
+  ]);
 
   const hasExhibitorApplication =
     !!exhibitorApplication?.representative_name?.trim() &&

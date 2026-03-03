@@ -284,6 +284,30 @@ export async function getRevenueAnalytics(
   return getRevenueAnalyticsForAuthorizedUser(input);
 }
 
+async function fetchBoundarySoldDate(
+  supabase: Awaited<ReturnType<typeof createSupabaseAdminOrServerClient>>,
+  ascending: boolean
+) {
+  let result = await supabase
+    .from('artwork_sales')
+    .select('sold_at')
+    .not('sold_at', 'is', null)
+    .is('voided_at', null)
+    .order('sold_at', { ascending })
+    .limit(1)
+    .maybeSingle();
+  if (result.error && isMissingVoidedAtColumnError(result.error)) {
+    result = await supabase
+      .from('artwork_sales')
+      .select('sold_at')
+      .not('sold_at', 'is', null)
+      .order('sold_at', { ascending })
+      .limit(1)
+      .maybeSingle();
+  }
+  return result;
+}
+
 export async function getRevenueAnalyticsForAuthorizedUser(
   input: RevenueQueryInput = {}
 ): Promise<RevenueAnalytics> {
@@ -292,46 +316,11 @@ export async function getRevenueAnalyticsForAuthorizedUser(
   const now = new Date();
   const currentKstYear = getKstCurrentYear(now);
 
-  let firstSoldResult = await supabase
-    .from('artwork_sales')
-    .select('sold_at')
-    .not('sold_at', 'is', null)
-    .is('voided_at', null)
-    .order('sold_at', { ascending: true })
-    .limit(1)
-    .maybeSingle();
-  if (firstSoldResult.error && isMissingVoidedAtColumnError(firstSoldResult.error)) {
-    firstSoldResult = await supabase
-      .from('artwork_sales')
-      .select('sold_at')
-      .not('sold_at', 'is', null)
-      .order('sold_at', { ascending: true })
-      .limit(1)
-      .maybeSingle();
-  }
-
-  let latestSoldResult = await supabase
-    .from('artwork_sales')
-    .select('sold_at')
-    .not('sold_at', 'is', null)
-    .is('voided_at', null)
-    .order('sold_at', { ascending: false })
-    .limit(1)
-    .maybeSingle();
-  if (latestSoldResult.error && isMissingVoidedAtColumnError(latestSoldResult.error)) {
-    latestSoldResult = await supabase
-      .from('artwork_sales')
-      .select('sold_at')
-      .not('sold_at', 'is', null)
-      .order('sold_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
-  }
-
-  const soldWithoutSoldAtResult = await supabase
-    .from('artwork_sales')
-    .select('id', { count: 'exact', head: true })
-    .is('sold_at', null);
+  const [firstSoldResult, latestSoldResult, soldWithoutSoldAtResult] = await Promise.all([
+    fetchBoundarySoldDate(supabase, true),
+    fetchBoundarySoldDate(supabase, false),
+    supabase.from('artwork_sales').select('id', { count: 'exact', head: true }).is('sold_at', null),
+  ]);
 
   if (firstSoldResult.error) throw firstSoldResult.error;
   if (latestSoldResult.error) throw latestSoldResult.error;

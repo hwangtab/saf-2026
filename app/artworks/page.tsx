@@ -1,8 +1,8 @@
+import dynamic from 'next/dynamic';
 import Section from '@/components/ui/Section';
 
 import { getSupabaseArtworks } from '@/lib/supabase-data';
 import PageHero from '@/components/ui/PageHero';
-import ShareButtons from '@/components/common/ShareButtons';
 import { SITE_URL, BREADCRUMB_HOME, BREADCRUMBS } from '@/lib/constants';
 import { Metadata } from 'next';
 import { createPageMetadata } from '@/lib/seo';
@@ -10,7 +10,22 @@ import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema, generateArtworkListSchema } from '@/lib/seo-utils';
 import type { Artwork, ArtworkListItem } from '@/types';
 
-import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
+const ShareButtons = dynamic(() => import('@/components/common/ShareButtons'), { ssr: false });
+const ArtworkGalleryWithSort = dynamic(
+  () => import('@/components/features/ArtworkGalleryWithSort'),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[...Array(6)].map((_, i) => (
+          <div key={i} className="aspect-[4/5] bg-gray-200 rounded-sm animate-pulse" />
+        ))}
+      </div>
+    ),
+  }
+);
+
+export const revalidate = 300;
 
 const PAGE_URL = `${SITE_URL}/artworks`;
 

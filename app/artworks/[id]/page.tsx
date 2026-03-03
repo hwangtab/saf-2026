@@ -1,4 +1,9 @@
-import { getSupabaseArtworks, getSupabaseArtworkById } from '@/lib/supabase-data';
+import dynamic from 'next/dynamic';
+import {
+  getSupabaseArtworks,
+  getSupabaseArtworksByArtist,
+  getSupabaseArtworkById,
+} from '@/lib/supabase-data';
 import Section from '@/components/ui/Section';
 import { getArticlesByArtist } from '@/content/artist-articles';
 import ArtworkImage from '@/components/features/ArtworkImage';
@@ -16,12 +21,13 @@ import {
   generateSpeakableSchema,
 } from '@/lib/seo-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import ShareButtons from '@/components/common/ShareButtons';
 import SupportMessage from '@/components/features/SupportMessage';
-import PurchaseGuide from '@/components/features/PurchaseGuide';
 import TrustBadges from '@/components/features/TrustBadges';
 import Link from 'next/link';
 import ArtworkCard from '@/components/ui/ArtworkCard';
+
+const ShareButtons = dynamic(() => import('@/components/common/ShareButtons'), { ssr: false });
+const PurchaseGuide = dynamic(() => import('@/components/features/PurchaseGuide'));
 
 interface Props {
   params: Promise<{
@@ -60,14 +66,14 @@ export default async function ArtworkDetailPage({ params, searchParams }: Props)
   const normalizedReturnTo = returnTo === '/special/oh-yoon' ? returnTo : undefined;
   const listHref = normalizedReturnTo ?? '/artworks';
   const listLabel = normalizedReturnTo ? '오윤 특별전' : '출품작';
-  const [artwork, artworks] = await Promise.all([
-    getSupabaseArtworkById(id),
-    getSupabaseArtworks(),
-  ]);
+  const artwork = await getSupabaseArtworkById(id);
 
   if (!artwork) {
     notFound();
   }
+
+  const artistArtworks = await getSupabaseArtworksByArtist(artwork.artist);
+  const otherWorks = artistArtworks.filter((a) => a.id !== artwork.id).slice(0, 3);
 
   // Extract numeric price using utility
   const parsedPrice = parsePrice(artwork.price);
@@ -90,10 +96,6 @@ export default async function ArtworkDetailPage({ params, searchParams }: Props)
     '#artist-profile',
     '#artist-note',
   ]);
-
-  const otherWorks = artworks
-    .filter((a) => a.artist === artwork.artist && a.id !== artwork.id)
-    .slice(0, 3);
 
   return (
     <>
