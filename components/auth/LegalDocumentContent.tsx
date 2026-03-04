@@ -10,8 +10,16 @@ export function LegalDocumentContent({ document }: LegalDocumentContentProps) {
       <header className="space-y-1 border-b border-gray-200 pb-3">
         <h3 className="text-sm font-semibold text-gray-900">{document.title}</h3>
         <p className="text-gray-500">시행일: {document.effectiveDate}</p>
-        {document.version && <p className="text-gray-500">약관 버전: {document.version}</p>}
+        {document.version && <p className="text-gray-500">버전: {document.version}</p>}
       </header>
+
+      {document.preamble && (
+        <div className="space-y-2 rounded-md bg-gray-50 p-3 text-gray-600">
+          {document.preamble.map((line) => (
+            <p key={line}>{line}</p>
+          ))}
+        </div>
+      )}
 
       {document.sections.map((section) => (
         <section key={section.title} className="space-y-2">
@@ -26,6 +34,18 @@ export function LegalDocumentContent({ document }: LegalDocumentContentProps) {
               ))}
             </ul>
           )}
+          {section.subsections?.map((sub, idx) => (
+            <div key={idx} className="pl-4">
+              <p>{sub.text}</p>
+              {sub.bullets && (
+                <ul className="list-disc space-y-1 pl-4">
+                  {sub.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))}
         </section>
       ))}
     </article>

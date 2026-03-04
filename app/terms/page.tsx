@@ -41,12 +41,12 @@ export default function TermsPage() {
                 <ul className="mt-3 list-disc pl-5 space-y-2 text-charcoal-muted">
                   <li>
                     <Link href="/terms/artist" className="hover:underline">
-                      아티스트 이용약관 보기
+                      아티스트 계약서 보기
                     </Link>
                   </li>
                   <li>
                     <Link href="/terms/exhibitor" className="hover:underline">
-                      출품자 이용약관 보기
+                      출품자 계약서 보기
                     </Link>
                   </li>
                 </ul>

@@ -95,19 +95,19 @@ export async function submitTermsConsent(
   const exhibitorTermsReadComplete = formData.get('exhibitor_terms_read_complete') === '1';
 
   if (needsArtistConsent && !artistAgreed) {
-    return { message: '아티스트 이용약관 동의가 필요합니다.', error: true };
+    return { message: '전시·판매위탁 계약서 동의가 필요합니다.', error: true };
   }
 
   if (needsArtistConsent && !artistTermsReadComplete) {
-    return { message: '아티스트 이용약관 전문을 끝까지 확인해주세요.', error: true };
+    return { message: '전시·판매위탁 계약서 전문을 끝까지 확인해주세요.', error: true };
   }
 
   if (needsExhibitorConsent && !exhibitorAgreed) {
-    return { message: '출품자 이용약관 동의가 필요합니다.', error: true };
+    return { message: '출품자 전시위탁 계약서 동의가 필요합니다.', error: true };
   }
 
   if (needsExhibitorConsent && !exhibitorTermsReadComplete) {
-    return { message: '출품자 이용약관 전문을 끝까지 확인해주세요.', error: true };
+    return { message: '출품자 전시위탁 계약서 전문을 끝까지 확인해주세요.', error: true };
   }
 
   const requestMetadata = await getRequestMetadata();
@@ -156,7 +156,7 @@ export async function submitTermsConsent(
   const failed = results.filter((r) => r.error);
   if (failed.length > 0) {
     const targets = failed.map((f) => f.target).join(', ');
-    return { message: `${targets} 약관 동의 저장 중 오류가 발생했습니다.`, error: true };
+    return { message: `${targets} 계약서 동의 저장 중 오류가 발생했습니다.`, error: true };
   }
 
   redirect(nextPath);

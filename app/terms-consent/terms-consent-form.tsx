@@ -97,11 +97,11 @@ export function TermsConsentForm({
       {needsArtistConsent && (
         <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
           <p id="artist-terms-heading" className="mb-2 text-xs font-semibold text-gray-700">
-            아티스트 이용약관 전문
+            전시·판매위탁 계약서 전문
           </p>
           <div
             ref={artistTermsContainerRef}
-            className="mb-3 max-h-52 overflow-y-auto rounded-md border border-gray-200 bg-white p-3"
+            className="mb-3 max-h-80 overflow-y-auto rounded-md border border-gray-200 bg-white p-3"
             onScroll={handleArtistTermsScroll}
             tabIndex={0}
             role="region"
@@ -126,12 +126,12 @@ export function TermsConsentForm({
             />
             <div className="text-sm">
               <label htmlFor="agree_artist" className="font-medium text-gray-700">
-                아티스트 이용약관에 동의합니다. <span className="text-red-500">*</span>
+                전시·판매위탁 계약서에 동의합니다. <span className="text-red-500">*</span>
               </label>
               <p className="mt-1 text-gray-500">전체 문서를 읽어야 체크할 수 있습니다.</p>
               <p className="mt-1 text-xs text-gray-400">
                 <Link href="/terms/artist" className="underline underline-offset-2">
-                  원문 페이지 보기
+                  계약서 원문 보기
                 </Link>
               </p>
             </div>
@@ -142,11 +142,11 @@ export function TermsConsentForm({
       {needsExhibitorConsent && (
         <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
           <p id="exhibitor-terms-heading" className="mb-2 text-xs font-semibold text-gray-700">
-            출품자 이용약관 전문
+            출품자 전시위탁 계약서 전문
           </p>
           <div
             ref={exhibitorTermsContainerRef}
-            className="mb-3 max-h-52 overflow-y-auto rounded-md border border-gray-200 bg-white p-3"
+            className="mb-3 max-h-80 overflow-y-auto rounded-md border border-gray-200 bg-white p-3"
             onScroll={handleExhibitorTermsScroll}
             tabIndex={0}
             role="region"
@@ -171,12 +171,12 @@ export function TermsConsentForm({
             />
             <div className="text-sm">
               <label htmlFor="agree_exhibitor" className="font-medium text-gray-700">
-                출품자 이용약관에 동의합니다. <span className="text-red-500">*</span>
+                출품자 전시위탁 계약서에 동의합니다. <span className="text-red-500">*</span>
               </label>
               <p className="mt-1 text-gray-500">전체 문서를 읽어야 체크할 수 있습니다.</p>
               <p className="mt-1 text-xs text-gray-400">
                 <Link href="/terms/exhibitor" className="underline underline-offset-2">
-                  원문 페이지 보기
+                  계약서 원문 보기
                 </Link>
               </p>
             </div>

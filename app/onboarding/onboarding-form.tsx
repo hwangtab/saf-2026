@@ -147,17 +147,17 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
         <input type="hidden" name="privacy_read_complete" value={hasReadPrivacy ? '1' : '0'} />
 
         <p className="mb-3 text-sm text-gray-600">
-          아래 약관 전문과 개인정보처리방침을 끝까지 읽으면 동의 체크가 활성화됩니다.
+          아래 계약서 전문과 개인정보처리방침을 끝까지 읽으면 동의 체크가 활성화됩니다.
         </p>
 
         <div className="space-y-3">
           <div>
             <p id="artist-terms-heading" className="mb-2 text-xs font-semibold text-gray-700">
-              아티스트 이용약관 전문
+              전시·판매위탁 계약서 전문
             </p>
             <div
               ref={termsContainerRef}
-              className="max-h-56 overflow-y-auto rounded-md border border-gray-200 bg-white p-3"
+              className="max-h-80 overflow-y-auto rounded-md border border-gray-200 bg-white p-3"
               onScroll={handleTermsScroll}
               tabIndex={0}
               role="region"
@@ -176,7 +176,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
             </p>
             <div
               ref={privacyContainerRef}
-              className="max-h-56 overflow-y-auto rounded-md border border-gray-200 bg-white p-3"
+              className="max-h-80 overflow-y-auto rounded-md border border-gray-200 bg-white p-3"
               onScroll={handlePrivacyScroll}
               tabIndex={0}
               role="region"
@@ -203,14 +203,14 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
           />
           <div className="text-sm">
             <label htmlFor="terms_accepted" className="font-medium text-gray-700">
-              아티스트 이용약관 및 개인정보처리방침에 동의합니다.{' '}
+              전시·판매위탁 계약서 및 개인정보처리방침에 동의합니다.{' '}
               <span className="text-red-500">*</span>
             </label>
             <p className="mt-1 text-gray-500">전체 문서를 읽어야 체크할 수 있습니다.</p>
             <p className="mt-1 text-xs text-gray-400">
-              원문 페이지:{' '}
+              계약서 원문:{' '}
               <Link href="/terms/artist" className="underline underline-offset-2">
-                아티스트 이용약관
+                전시·판매위탁 계약서
               </Link>{' '}
               /{' '}
               <Link href="/privacy" className="underline underline-offset-2">

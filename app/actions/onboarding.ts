@@ -43,16 +43,16 @@ export async function submitArtistApplication(
     }
 
     if (!termsAccepted) {
-      return { message: '아티스트 이용약관 동의가 필요합니다.', error: true };
+      return { message: '전시·판매위탁 계약서 동의가 필요합니다.', error: true };
     }
 
     if (!termsReadComplete || !privacyReadComplete) {
-      return { message: '약관과 개인정보처리방침을 끝까지 확인해주세요.', error: true };
+      return { message: '계약서와 개인정보처리방침을 끝까지 확인해주세요.', error: true };
     }
 
     if (termsVersion !== ARTIST_APPLICATION_TERMS_VERSION) {
       return {
-        message: '최신 아티스트 이용약관 확인 후 다시 동의해주세요.',
+        message: '최신 전시·판매위탁 계약서 확인 후 다시 동의해주세요.',
         error: true,
       };
     }
