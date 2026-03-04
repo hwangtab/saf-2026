@@ -850,7 +850,6 @@ export function generateCampaignSchema() {
       name: CONTACT.ORGANIZATION_NAME,
       url: SITE_URL,
     },
-    duration: `${CAMPAIGN.START_DATE}/${CAMPAIGN.END_DATE}`,
     isAccessibleForFree: false,
     audience: {
       '@type': 'Audience',

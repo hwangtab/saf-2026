@@ -13,7 +13,7 @@ function validateArtworks() {
   const warnings = [];
 
   const rules = {
-    required: ['id', 'artist', 'title', 'image'],
+    required: ['id', 'artist', 'title', 'images'],
 
     size: (value, id) => {
       if (value === '') return null;
@@ -69,7 +69,9 @@ function validateArtworks() {
 
   artworks.forEach((artwork) => {
     rules.required.forEach((field) => {
-      if (!artwork[field]) {
+      const value = artwork[field];
+      const missing = Array.isArray(value) ? value.length === 0 : !value;
+      if (missing) {
         errors.push(`ID ${artwork.id || '?'}: 필수 필드 '${field}' 누락`);
       }
     });

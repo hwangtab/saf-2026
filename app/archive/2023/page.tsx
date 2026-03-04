@@ -62,7 +62,11 @@ export default async function Archive2023Page() {
     },
   };
 
-  const breadcrumbSchema = createBreadcrumbSchema([BREADCRUMB_HOME, BREADCRUMBS['/archive']]);
+  const breadcrumbSchema = createBreadcrumbSchema([
+    BREADCRUMB_HOME,
+    BREADCRUMBS['/archive'],
+    BREADCRUMBS['/archive/2023'],
+  ]);
 
   return (
     <>

@@ -5,6 +5,9 @@ import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
 import PageHero from '@/components/ui/PageHero';
 import { createPageMetadata } from '@/lib/seo';
+import { createBreadcrumbSchema } from '@/lib/seo-utils';
+import { JsonLdScript } from '@/components/common/JsonLdScript';
+import { BREADCRUMB_HOME, BREADCRUMBS } from '@/lib/constants';
 
 export const metadata: Metadata = createPageMetadata(
   '아카이브',
@@ -13,8 +16,10 @@ export const metadata: Metadata = createPageMetadata(
 );
 
 export default function ArchiveHubPage() {
+  const breadcrumbSchema = createBreadcrumbSchema([BREADCRUMB_HOME, BREADCRUMBS['/archive']]);
   return (
     <>
+      <JsonLdScript data={breadcrumbSchema} />
       <PageHero title="아카이브" description="예술인 상호부조를 위한 씨앗페의 발자취입니다." />
 
       <Section variant="white" className="min-h-[60vh] pb-24 md:pb-32">

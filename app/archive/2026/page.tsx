@@ -6,7 +6,13 @@ import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import dynamic from 'next/dynamic';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { BREADCRUMB_HOME, EXHIBITION, EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
+import {
+  BREADCRUMB_HOME,
+  BREADCRUMBS,
+  EXHIBITION,
+  EXTERNAL_LINKS,
+  SITE_URL,
+} from '@/lib/constants';
 import { getSupabaseReviews } from '@/lib/supabase-data';
 import { createPageMetadata } from '@/lib/seo';
 import {
@@ -39,7 +45,8 @@ export default async function Archive2026Page() {
   const eventSchema = generateExhibitionSchema(exhibitionReviews);
   const breadcrumbSchema = createBreadcrumbSchema([
     BREADCRUMB_HOME,
-    { name: '2026 오프라인 전시', url: '/archive/2026' },
+    BREADCRUMBS['/archive'],
+    BREADCRUMBS['/archive/2026'],
   ]);
 
   return (
