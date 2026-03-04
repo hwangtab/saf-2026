@@ -23,7 +23,11 @@ export const metadata: Metadata = createPageMetadata(
 );
 
 export default function ExhibitorTermsPage() {
-  const breadcrumbSchema = createBreadcrumbSchema([BREADCRUMB_HOME, BREADCRUMBS[PAGE_PATH]]);
+  const breadcrumbSchema = createBreadcrumbSchema([
+    BREADCRUMB_HOME,
+    BREADCRUMBS['/terms'],
+    BREADCRUMBS[PAGE_PATH],
+  ]);
 
   return (
     <>

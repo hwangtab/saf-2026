@@ -134,6 +134,7 @@ export const BREADCRUMBS: Record<string, BreadcrumbItem> = {
   '/artworks': { name: '출품작', url: `${SITE_URL}/artworks` },
   '/archive': { name: '아카이브', url: `${SITE_URL}/archive` },
   '/news': { name: '언론 보도', url: `${SITE_URL}/news` },
+  '/special/oh-yoon': { name: '오윤 특별전', url: `${SITE_URL}/special/oh-yoon` },
 } as const;
 
 export const HERO_PAGES = [

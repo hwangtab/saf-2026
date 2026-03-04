@@ -242,11 +242,7 @@ export function generateArtworkJsonLd(artwork: Artwork, numericPrice: string, is
     artworkSurface: artwork.material || undefined,
     dateCreated: artwork.year || undefined,
     size: artwork.size
-      ? {
-          '@type': 'QuantitativeValue',
-          name: artwork.size,
-          description: `작품 크기: ${artwork.size}`,
-        }
+      ? { '@type': 'QuantitativeValue', value: artwork.size, unitText: 'dimensions' }
       : undefined,
     offers,
     isPartOf: {
@@ -382,10 +378,12 @@ export function generateExhibitionSchema(reviews: ExhibitionReview[] = []) {
     ...(hasReviews && {
       aggregateRating: {
         '@type': 'AggregateRating',
-        ratingValue: '4.9',
-        reviewCount: reviews.length.toString(),
-        bestRating: '5',
-        worstRating: '1',
+        ratingValue: Number(
+          (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+        ),
+        reviewCount: reviews.length,
+        bestRating: 5,
+        worstRating: 1,
       },
       review: reviews.map((rev) => ({
         '@type': 'Review',
@@ -519,16 +517,11 @@ export function generateNewsArticleSchema(article: NewsArticleSchemaInput) {
         '@type': 'Organization',
         name: article.publisherName,
       },
-      {
-        '@type': 'Organization',
-        name: CONTACT.ORGANIZATION_NAME,
-        url: SITE_URL,
-      },
     ],
     publisher: {
       '@type': 'Organization',
       name: article.publisherName,
-      url: SITE_URL,
+      url: article.url,
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
@@ -820,7 +813,12 @@ export function generateArtistSchema(artist: ArtistSchemaInput) {
     '@type': 'Person',
     name: artist.name,
     description: artist.description,
-    image: artist.image,
+    image: artist.image
+      ? (() => {
+          const resolved = resolveSeoArtworkImageUrl(artist.image!);
+          return resolved.startsWith('http') ? resolved : `${SITE_URL}${resolved}`;
+        })()
+      : undefined,
     url: artist.url,
     jobTitle: artist.jobTitle || 'Artist',
     sameAs: [artist.url], // Can be expanded if artist has social links

@@ -15,7 +15,7 @@ import { createBreadcrumbSchema } from '@/lib/seo-utils';
 const PAGE_URL = `${SITE_URL}/our-proof`;
 
 export const metadata: Metadata = createPageMetadata(
-  '우리의 증명 | 씨앗페 2026 상호부조 리포트',
+  '우리의 증명',
   '상호부조 대출 305건, 6억 900만원 지원. 연체율 0%의 기적. 예술인 금융 안전망이 실제로 작동함을 증명합니다.',
   '/our-proof'
 );
