@@ -1,8 +1,8 @@
 const PROTECTED_SURFACE_PREFIXES = ['/admin', '/dashboard', '/exhibitor'] as const;
-const HEADER_HIDDEN_PREFIXES = [...PROTECTED_SURFACE_PREFIXES, '/onboarding'] as const;
+const PORTAL_SURFACE_PREFIXES = [...PROTECTED_SURFACE_PREFIXES, '/onboarding'] as const;
 const FOOTER_SLIDER_EXCLUDE_PATHS = new Set(['/', '/artworks', '/privacy', '/terms']);
 const FOOTER_SLIDER_EXCLUDE_PREFIXES = [
-  ...HEADER_HIDDEN_PREFIXES,
+  ...PORTAL_SURFACE_PREFIXES,
   '/artworks/',
   '/special/',
   '/privacy/',
@@ -16,10 +16,6 @@ function hasPrefix(pathname: string | null | undefined, prefixes: readonly strin
 
 export function isProtectedSurfacePath(pathname: string | null | undefined): boolean {
   return hasPrefix(pathname, PROTECTED_SURFACE_PREFIXES);
-}
-
-export function shouldHidePublicHeader(pathname: string | null | undefined): boolean {
-  return hasPrefix(pathname, HEADER_HIDDEN_PREFIXES);
 }
 
 export function shouldShowFooterSlider(pathname: string | null | undefined): boolean {

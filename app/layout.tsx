@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Analytics } from '@vercel/analytics/react';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import AppShell from '@/components/layout/AppShell';
 import { OG_IMAGE, SITE_URL, SITE_URL_ALIAS, CONTACT } from '@/lib/constants';
 import {
   generateOrganizationSchema,
@@ -108,7 +107,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ko" suppressHydrationWarning>
       <head></head>
       <body className="bg-canvas-soft text-charcoal flex flex-col min-h-screen font-sans antialiased">
-        <AppShell>{children}</AppShell>
+        {children}
 
         <JsonLdScript data={organizationSchema} />
         <JsonLdScript data={websiteSchema} />

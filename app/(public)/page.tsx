@@ -9,7 +9,11 @@ import ActionCard from '@/components/ui/ActionCard';
 import BackgroundSlider from '@/components/features/BackgroundSlider';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
 import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL, STATISTICS_DATA } from '@/lib/constants';
-import { generateExhibitionSchema, generateFAQSchema } from '@/lib/seo-utils';
+import {
+  generateExhibitionSchema,
+  generateFAQSchema,
+  generateCampaignSchema,
+} from '@/lib/seo-utils';
 import { getSupabaseHomepageArtworks, getSupabaseFAQs } from '@/lib/supabase-data';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 
@@ -292,6 +296,8 @@ export default function Home() {
 
       {/* ExhibitionEvent JSON-LD Schema using Component */}
       <JsonLdScript data={generateExhibitionSchema()} />
+      {/* FundingScheme JSON-LD for campaign Rich Results */}
+      <JsonLdScript data={generateCampaignSchema()} />
     </>
   );
 }
