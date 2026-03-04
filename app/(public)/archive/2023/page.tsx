@@ -87,7 +87,7 @@ export default async function Archive2023Page() {
       </PageHero>
 
       {/* Past Events Section */}
-      <Section variant="sun-soft" prevVariant="white">
+      <Section variant="sun-soft">
         <div className="container-max">
           <SectionTitle className="mb-12">🎉 2023년 행사 기록</SectionTitle>
 
