@@ -1,4 +1,8 @@
+import { Metadata } from 'next';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+
 import {
   getSupabaseArtworks,
   getSupabaseArtworksByArtist,
@@ -8,8 +12,6 @@ import Section from '@/components/ui/Section';
 import { getArticlesByArtist } from '@/content/artist-articles';
 import ArtworkImage from '@/components/features/ArtworkImage';
 import BackToListButton from '@/components/features/BackToListButton';
-import { notFound } from 'next/navigation';
-import { Metadata } from 'next';
 import { parsePrice } from '@/lib/parsePrice';
 import { SITE_URL } from '@/lib/constants';
 import LinkButton from '@/components/ui/LinkButton';
@@ -23,10 +25,9 @@ import {
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import SupportMessage from '@/components/features/SupportMessage';
 import TrustBadges from '@/components/features/TrustBadges';
-import Link from 'next/link';
+import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import ArtworkCard from '@/components/ui/ArtworkCard';
 
-const ShareButtons = dynamic(() => import('@/components/common/ShareButtons'), { ssr: false });
 const PurchaseGuide = dynamic(() => import('@/components/features/PurchaseGuide'));
 
 interface Props {
@@ -167,7 +168,7 @@ export default async function ArtworkDetailPage({ params, searchParams }: Props)
               {/* Share Section */}
               <div className="flex items-center justify-center gap-2 py-4 border-y border-gray-100">
                 <span className="text-sm text-gray-500 mr-2">공유하기</span>
-                <ShareButtons
+                <ShareButtonsWrapper
                   url={`${SITE_URL}/artworks/${artwork.id}`}
                   title={`${artwork.title} - ${artwork.artist} | 씨앗페 2026 출품작`}
                   description={`${artwork.artist}의 작품 "${artwork.title}"을 감상하고 예술인을 응원하세요.`}

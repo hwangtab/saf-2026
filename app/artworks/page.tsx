@@ -1,29 +1,15 @@
-import dynamic from 'next/dynamic';
-import Section from '@/components/ui/Section';
-
-import { getSupabaseArtworks } from '@/lib/supabase-data';
-import PageHero from '@/components/ui/PageHero';
-import { SITE_URL, BREADCRUMB_HOME, BREADCRUMBS } from '@/lib/constants';
 import { Metadata } from 'next';
-import { createPageMetadata } from '@/lib/seo';
-import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { createBreadcrumbSchema, generateArtworkListSchema } from '@/lib/seo-utils';
-import type { Artwork, ArtworkListItem } from '@/types';
 
-const ShareButtons = dynamic(() => import('@/components/common/ShareButtons'), { ssr: false });
-const ArtworkGalleryWithSort = dynamic(
-  () => import('@/components/features/ArtworkGalleryWithSort'),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {[...Array(6)].map((_, i) => (
-          <div key={i} className="aspect-[4/5] bg-gray-200 rounded-sm animate-pulse" />
-        ))}
-      </div>
-    ),
-  }
-);
+import Section from '@/components/ui/Section';
+import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
+import PageHero from '@/components/ui/PageHero';
+import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
+import { JsonLdScript } from '@/components/common/JsonLdScript';
+import { SITE_URL, BREADCRUMB_HOME, BREADCRUMBS } from '@/lib/constants';
+import { createPageMetadata } from '@/lib/seo';
+import { createBreadcrumbSchema, generateArtworkListSchema } from '@/lib/seo-utils';
+import { getSupabaseArtworks } from '@/lib/supabase-data';
+import type { Artwork, ArtworkListItem } from '@/types';
 
 export const revalidate = 300;
 
@@ -52,7 +38,7 @@ export default async function ArtworksPage() {
           title="출품작"
           description="예술가들의 시선으로 바라본 우리의 현실과 희망. 2026 씨앗페와 함께하는 작품을 소개합니다."
         >
-          <ShareButtons
+          <ShareButtonsWrapper
             url={PAGE_URL}
             title="출품작 - 2026 씨앗페"
             description="2026 Seed Art Festival에 출품된 아름다운 예술 작품들을 만나보세요."

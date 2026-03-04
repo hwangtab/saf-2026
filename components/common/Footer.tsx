@@ -1,16 +1,14 @@
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
 import ExportedImage from 'next-image-export-optimizer';
 import { SOCIAL_LINKS, CONTACT, EXTERNAL_LINKS } from '@/lib/constants';
+import FooterSliderWrapper from '@/components/common/FooterSliderWrapper';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
 import { UI_STRINGS } from '@/lib/ui-strings';
-
-const FooterSlider = dynamic(() => import('@/components/common/FooterSlider'), { ssr: false });
 
 export default function Footer() {
   return (
     <>
-      <FooterSlider />
+      <FooterSliderWrapper />
       <div className="relative">
         <SawtoothDivider position="top" colorClass="text-gray-900" />
         <footer className="bg-gray-900 text-white pb-[env(safe-area-inset-bottom)]">
