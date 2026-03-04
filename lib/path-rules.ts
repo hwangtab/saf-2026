@@ -1,13 +1,7 @@
 const PROTECTED_SURFACE_PREFIXES = ['/admin', '/dashboard', '/exhibitor'] as const;
 const PORTAL_SURFACE_PREFIXES = [...PROTECTED_SURFACE_PREFIXES, '/onboarding'] as const;
-const FOOTER_SLIDER_EXCLUDE_PATHS = new Set(['/', '/artworks', '/privacy', '/terms']);
-const FOOTER_SLIDER_EXCLUDE_PREFIXES = [
-  ...PORTAL_SURFACE_PREFIXES,
-  '/artworks/',
-  '/special/',
-  '/privacy/',
-  '/terms/',
-] as const;
+const FOOTER_SLIDER_EXCLUDE_PATHS = new Set(['/', '/artworks']);
+const FOOTER_SLIDER_EXCLUDE_PREFIXES = PORTAL_SURFACE_PREFIXES;
 
 function hasPrefix(pathname: string | null | undefined, prefixes: readonly string[]): boolean {
   if (!pathname) return false;
