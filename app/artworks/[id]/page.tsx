@@ -11,7 +11,7 @@ import {
 import Section from '@/components/ui/Section';
 import { getArticlesByArtist } from '@/content/artist-articles';
 import ArtworkImage from '@/components/features/ArtworkImage';
-import BackToListButton from '@/components/features/BackToListButton';
+import ArtworkDetailNav from '@/components/features/ArtworkDetailNav';
 import { parsePrice } from '@/lib/parsePrice';
 import { SITE_URL } from '@/lib/constants';
 import LinkButton from '@/components/ui/LinkButton';
@@ -34,10 +34,9 @@ interface Props {
   params: Promise<{
     id: string;
   }>;
-  searchParams: Promise<{
-    returnTo?: string;
-  }>;
 }
+
+export const revalidate = 300;
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -61,12 +60,8 @@ export async function generateStaticParams() {
   }));
 }
 
-export default async function ArtworkDetailPage({ params, searchParams }: Props) {
+export default async function ArtworkDetailPage({ params }: Props) {
   const { id } = await params;
-  const { returnTo } = await searchParams;
-  const normalizedReturnTo = returnTo === '/special/oh-yoon' ? returnTo : undefined;
-  const listHref = normalizedReturnTo ?? '/artworks';
-  const listLabel = normalizedReturnTo ? '오윤 특별전' : '출품작';
   const artwork = await getSupabaseArtworkById(id);
 
   if (!artwork) {
@@ -107,34 +102,7 @@ export default async function ArtworkDetailPage({ params, searchParams }: Props)
         padding="none"
         className="pb-24 md:pb-32 pt-[calc(4rem+env(safe-area-inset-top,0px))]"
       >
-        {/* Navigation Bar */}
-        <nav className="border-b sticky top-[calc(4rem+env(safe-area-inset-top,0px))] z-30 bg-white/80 backdrop-blur-md supports-[backdrop-filter]:bg-white/50">
-          <div className="container-max py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <BackToListButton fallbackHref={listHref} />
-
-            {/* Visual Breadcrumbs for SEO & UX */}
-            <div className="flex items-center text-xs text-gray-400 gap-2 whitespace-nowrap overflow-x-auto pb-1 md:pb-0">
-              <Link href="/" className="hover:text-primary transition-colors">
-                홈
-              </Link>
-              <span>/</span>
-              <Link href={listHref} className="hover:text-primary transition-colors">
-                {listLabel}
-              </Link>
-              <span>/</span>
-              <Link
-                href={`/artworks/artist/${encodeURIComponent(artwork.artist)}`}
-                className="hover:text-primary transition-colors"
-              >
-                {artwork.artist}
-              </Link>
-              <span className="hidden sm:inline">/</span>
-              <span className="hidden sm:inline text-gray-600 font-medium truncate max-w-[150px]">
-                {artwork.title}
-              </span>
-            </div>
-          </div>
-        </nav>
+        <ArtworkDetailNav artist={artwork.artist} title={artwork.title} />
 
         <article className="container-max pt-12 md:pt-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">

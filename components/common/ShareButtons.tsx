@@ -19,7 +19,14 @@ type CopyStatus = 'idle' | 'copied' | 'error';
 
 export default function ShareButtons({ url, title, description }: ShareButtonsProps) {
   const [copyStatus, setCopyStatus] = useState<CopyStatus>('idle');
-  const { isReady: kakaoReady } = useKakaoShareSDK();
+  const [kakaoStatusMessage, setKakaoStatusMessage] = useState('');
+  const {
+    isReady: kakaoReady,
+    loading: kakaoLoading,
+    error: kakaoError,
+    hasAppKey,
+    ensureLoaded,
+  } = useKakaoShareSDK();
 
   const handleCopyLink = async () => {
     try {
@@ -33,39 +40,64 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
     }
   };
 
-  const handleKakaoShare = () => {
-    if (kakaoReady && window.Kakao) {
-      // Use Kakao.Share (v2) instead of Kakao.Link (deprecated)
-      const shareMethod = window.Kakao.Share || window.Kakao.Link;
+  const handleKakaoShare = async () => {
+    if (!hasAppKey || kakaoLoading) {
+      if (!hasAppKey) {
+        setKakaoStatusMessage('카카오 공유를 사용할 수 없습니다.');
+      }
+      return;
+    }
 
-      if (shareMethod) {
-        shareMethod.sendDefault({
-          objectType: 'feed',
-          content: {
-            title: title,
-            description: description,
-            imageUrl: `${window.location.origin}/images/og-image.png`,
+    setKakaoStatusMessage('');
+
+    if (!kakaoReady) {
+      const loaded = await ensureLoaded();
+      if (!loaded) {
+        console.error('Failed to prepare Kakao Share SDK', kakaoError);
+        setKakaoStatusMessage('카카오 공유 준비에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+        return;
+      }
+    }
+
+    if (!window.Kakao) {
+      setKakaoStatusMessage('카카오 공유 준비에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+      return;
+    }
+
+    // Use Kakao.Share (v2) instead of Kakao.Link (deprecated)
+    const shareMethod = window.Kakao.Share || window.Kakao.Link;
+
+    if (shareMethod) {
+      shareMethod.sendDefault({
+        objectType: 'feed',
+        content: {
+          title: title,
+          description: description,
+          imageUrl: `${window.location.origin}/images/og-image.png`,
+          link: {
+            webUrl: url,
+            mobileWebUrl: url,
+          },
+        },
+        buttons: [
+          {
+            title: '웹사이트 방문',
             link: {
               webUrl: url,
               mobileWebUrl: url,
             },
           },
-          buttons: [
-            {
-              title: '웹사이트 방문',
-              link: {
-                webUrl: url,
-                mobileWebUrl: url,
-              },
-            },
-          ],
-        });
-      }
+        ],
+      });
     }
   };
 
   return (
     <div className="flex items-center gap-2">
+      <span className="sr-only" aria-live="polite">
+        {kakaoStatusMessage}
+      </span>
+
       {/* Facebook */}
       <FacebookShareButton
         url={url}
@@ -88,12 +120,12 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
       {/* Kakao Talk */}
       <button
         onClick={handleKakaoShare}
-        disabled={!kakaoReady}
+        disabled={!hasAppKey || kakaoLoading}
         className={clsx(
           'min-w-[44px] min-h-[44px] p-1.5 flex items-center justify-center transition-opacity hover:opacity-80 focus:outline-none rounded-full',
-          !kakaoReady && 'opacity-50 cursor-not-allowed'
+          (!hasAppKey || kakaoLoading) && 'opacity-50 cursor-not-allowed'
         )}
-        title="카카오톡 공유"
+        title={hasAppKey ? '카카오톡 공유' : '카카오 키 설정 필요'}
         aria-label="카카오톡으로 공유하기"
       >
         <ExportedImage

@@ -6,7 +6,7 @@ import RelatedArtworksSlider from '@/components/features/RelatedArtworksSlider';
 import { shouldShowFooterSlider } from '@/lib/path-rules';
 import type { ArtworkCardData } from '@/types';
 
-const FOOTER_SLIDER_CACHE_TTL_MS = 5 * 60 * 1000;
+const FOOTER_SLIDER_CACHE_TTL_MS = 60 * 1000;
 
 let cachedArtworks: ArtworkCardData[] | null = null;
 let cachedAt = 0;
@@ -32,7 +32,7 @@ export default function FooterSlider() {
     const fetchArtworks = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch('/api/artworks');
+        const response = await fetch('/api/artworks', { cache: 'no-store' });
         if (response.ok) {
           const data = await response.json();
           if (cancelled) return;

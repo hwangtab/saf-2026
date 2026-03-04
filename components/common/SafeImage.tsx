@@ -2,6 +2,7 @@
 
 import ExportedImage from 'next-image-export-optimizer';
 import Image from 'next/image';
+import type { ImageProps } from 'next/image';
 import { useEffect, useState, useMemo, type ComponentProps } from 'react';
 import {
   ARTWORK_TRANSFORM_PRESETS,
@@ -41,11 +42,21 @@ function generateArtworkSrcSet(src: string): string | undefined {
   return candidates.map((candidate) => `${candidate.variantUrl} ${candidate.width}w`).join(', ');
 }
 
-function RemoteSafeImage({
+function optimizedRemoteLoader({
   src,
-  sizes,
-  ...props
-}: { src: string } & Omit<ComponentProps<typeof Image>, 'src'>) {
+  width,
+  quality,
+}: {
+  src: string;
+  width: number;
+  quality?: number;
+}): string {
+  const encodedSrc = encodeURIComponent(src);
+  const targetQuality = quality ?? 75;
+  return `/_next/image?url=${encodedSrc}&w=${width}&q=${targetQuality}`;
+}
+
+function RemoteSafeImage({ src, sizes, ...props }: { src: string } & Omit<ImageProps, 'src'>) {
   const [currentSrc, setCurrentSrc] = useState(src);
   const { alt, onError, ...restProps } = props;
 
@@ -117,15 +128,13 @@ function RemoteSafeImage({
     );
   }
 
-  // For non-artwork remote images, use next/image with passthrough
   return (
     <Image
       {...restProps}
       src={currentSrc}
       alt={alt || ''}
-      sizes={sizes}
-      loader={({ src }) => src}
-      unoptimized
+      sizes={sizes || (restProps.fill ? '100vw' : sizes)}
+      loader={optimizedRemoteLoader}
       onError={(event) => {
         onError?.(event);
         const fallbackSrc = resolveArtworkImageFallbackUrl(currentSrc);
@@ -137,18 +146,12 @@ function RemoteSafeImage({
   );
 }
 
-/**
- * A wrapper for ExportedImage that handles both local and remote images.
- * - Local images: Uses next-image-export-optimizer
- * - Remote artwork images: Uses native img with srcSet for pre-generated variants
- * - Other remote images: Uses next/image with unoptimized passthrough
- */
 export default function SafeImage({ src, ...props }: SafeImageProps) {
   const isRemote =
     typeof src === 'string' && (src.startsWith('http://') || src.startsWith('https://'));
 
   if (isRemote && typeof src === 'string') {
-    const remoteProps = props as Omit<ComponentProps<typeof Image>, 'src'>;
+    const remoteProps = props as Omit<ImageProps, 'src'>;
     return <RemoteSafeImage src={src} {...remoteProps} />;
   }
 

@@ -1,4 +1,5 @@
 import { cache } from 'react';
+import { unstable_cache } from 'next/cache';
 import { hasSupabaseConfig, supabase } from './supabase';
 import { formatPriceForDisplay } from '@/lib/utils';
 import { artworks as fallbackArtworks, getArtworkById } from '@/content/saf2026-artworks';
@@ -64,6 +65,7 @@ function isMissingTableError(error: unknown): boolean {
 const ARTWORK_SELECT_COLUMNS =
   'id, artist_id, title, description, size, material, year, edition, price, images, shop_url, status';
 const ARTIST_SELECT_COLUMNS = 'id, name_ko, bio, history';
+const ARTWORK_DATA_REVALIDATE_SECONDS = 300;
 
 function pickRandomItems<T>(items: T[], limit: number): T[] {
   const shuffled = [...items];
@@ -91,7 +93,7 @@ const mapArtworkRow = (item: ArtworkRow, artist?: ArtistRow | null): Artwork => 
   history: artist?.history || '',
 });
 
-export const getSupabaseArtworks = cache(async (): Promise<Artwork[]> => {
+const getSupabaseArtworksUncached = async (): Promise<Artwork[]> => {
   if (!hasSupabaseConfig || !supabase) {
     return fallbackArtworks;
   }
@@ -119,7 +121,20 @@ export const getSupabaseArtworks = cache(async (): Promise<Artwork[]> => {
   return (data || []).map((item) =>
     mapArtworkRow(item as ArtworkRow, item.artists as unknown as ArtistRow | null)
   );
-});
+};
+
+const getSupabaseArtworksCached = unstable_cache(
+  async () => getSupabaseArtworksUncached(),
+  ['supabase-artworks'],
+  {
+    revalidate: ARTWORK_DATA_REVALIDATE_SECONDS,
+    tags: ['artworks'],
+  }
+);
+
+export const getSupabaseArtworks = cache(
+  async (): Promise<Artwork[]> => getSupabaseArtworksCached()
+);
 
 export const getSupabaseHomepageArtworks = cache(async (limit = 30): Promise<Artwork[]> => {
   if (!hasSupabaseConfig || !supabase) {
@@ -155,7 +170,7 @@ export const getSupabaseHomepageArtworks = cache(async (limit = 30): Promise<Art
   return pickRandomItems(mapped, limit);
 });
 
-export const getSupabaseArtworkById = cache(async (id: string): Promise<Artwork | null> => {
+const getSupabaseArtworkByIdUncached = async (id: string): Promise<Artwork | null> => {
   if (!hasSupabaseConfig || !supabase) {
     return getArtworkById(id) || null;
   }
@@ -184,9 +199,22 @@ export const getSupabaseArtworkById = cache(async (id: string): Promise<Artwork 
   }
 
   return mapArtworkRow(artwork as ArtworkRow, artwork.artists as unknown as ArtistRow | null);
-});
+};
 
-export const getSupabaseArtworksByArtist = cache(async (artistName: string): Promise<Artwork[]> => {
+const getSupabaseArtworkByIdCached = unstable_cache(
+  async (id: string) => getSupabaseArtworkByIdUncached(id),
+  ['supabase-artwork-by-id'],
+  {
+    revalidate: ARTWORK_DATA_REVALIDATE_SECONDS,
+    tags: ['artworks'],
+  }
+);
+
+export const getSupabaseArtworkById = cache(
+  async (id: string): Promise<Artwork | null> => getSupabaseArtworkByIdCached(id)
+);
+
+const getSupabaseArtworksByArtistUncached = async (artistName: string): Promise<Artwork[]> => {
   if (!hasSupabaseConfig || !supabase) {
     return fallbackArtworks.filter((a) => a.artist === artistName);
   }
@@ -222,7 +250,20 @@ export const getSupabaseArtworksByArtist = cache(async (artistName: string): Pro
   return (data || []).map((item) =>
     mapArtworkRow(item as ArtworkRow, item.artists as unknown as ArtistRow | null)
   );
-});
+};
+
+const getSupabaseArtworksByArtistCached = unstable_cache(
+  async (artistName: string) => getSupabaseArtworksByArtistUncached(artistName),
+  ['supabase-artworks-by-artist'],
+  {
+    revalidate: ARTWORK_DATA_REVALIDATE_SECONDS,
+    tags: ['artworks'],
+  }
+);
+
+export const getSupabaseArtworksByArtist = cache(
+  async (artistName: string): Promise<Artwork[]> => getSupabaseArtworksByArtistCached(artistName)
+);
 
 export const getSupabaseTestimonials = cache(async (): Promise<TestimonialCategory[]> => {
   if (!hasSupabaseConfig || !supabase) {

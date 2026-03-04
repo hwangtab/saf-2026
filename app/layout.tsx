@@ -1,13 +1,7 @@
 import type { Metadata, Viewport } from 'next';
-import { Suspense } from 'react';
-import PageLoader from '@/components/common/PageLoader';
 import { Analytics } from '@vercel/analytics/react';
-import Header from '@/components/common/Header';
-import Footer from '@/components/common/Footer';
-import AnimationProvider from '@/components/providers/AnimationProvider';
-import ToastProvider from '@/components/providers/ToastProvider';
-import PageTransition from '@/components/common/PageTransition';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
+import AppShell from '@/components/layout/AppShell';
 import { OG_IMAGE, SITE_URL, SITE_URL_ALIAS, CONTACT } from '@/lib/constants';
 import {
   generateOrganizationSchema,
@@ -114,20 +108,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ko" suppressHydrationWarning>
       <head></head>
       <body className="bg-canvas-soft text-charcoal flex flex-col min-h-screen font-sans antialiased">
-        <AnimationProvider>
-          <ToastProvider>
-            <a href="#main-content" className="skip-to-main">
-              메인 콘텐츠로 이동
-            </a>
-            <Header />
-            <main id="main-content" className="flex-1">
-              <PageTransition>
-                <Suspense fallback={<PageLoader />}>{children}</Suspense>
-              </PageTransition>
-            </main>
-            <Footer />
-          </ToastProvider>
-        </AnimationProvider>
+        <AppShell>{children}</AppShell>
 
         <JsonLdScript data={organizationSchema} />
         <JsonLdScript data={websiteSchema} />

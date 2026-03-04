@@ -11,6 +11,7 @@ export default function BackgroundSlider() {
   const isMobile = useIsMobile();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [isMotionStarted, setIsMotionStarted] = useState(false);
   const images = HERO_IMAGES;
 
   const currentPhoto = images[currentIndex];
@@ -18,8 +19,22 @@ export default function BackgroundSlider() {
   const nextPhoto = images[nextIndex];
 
   useEffect(() => {
+    if (prefersReducedMotion) {
+      return;
+    }
+
+    const timeoutId = setTimeout(() => {
+      setIsMotionStarted(true);
+    }, 1200);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [prefersReducedMotion]);
+
+  useEffect(() => {
     // Don't start interval if reduced motion is preferred
-    if (prefersReducedMotion || isPaused) return;
+    if (prefersReducedMotion || !isMotionStarted || isPaused) return;
 
     const interval = setInterval(() => {
       // Only transition if the tab is focused
@@ -29,10 +44,9 @@ export default function BackgroundSlider() {
     }, ANIMATION.SLIDER_INTERVAL);
 
     return () => clearInterval(interval);
-  }, [images.length, prefersReducedMotion, isPaused]);
+  }, [images.length, prefersReducedMotion, isMotionStarted, isPaused]);
 
-  // Render static image for reduced motion
-  if (prefersReducedMotion) {
+  if (prefersReducedMotion || !isMotionStarted) {
     return (
       <div className="absolute inset-0 -z-10 overflow-hidden bg-gray-900">
         <SafeImage

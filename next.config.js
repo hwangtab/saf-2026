@@ -23,6 +23,16 @@ const nextConfig = {
         hostname: '*.supabase.co',
         pathname: '/storage/v1/render/image/public/**',
       },
+      { protocol: 'https', hostname: 'mmagimg.speedgabia.com' },
+      { protocol: 'https', hostname: 'cdn.ndnnews.co.kr' },
+      { protocol: 'https', hostname: 'cdn.ebn.co.kr' },
+      { protocol: 'https', hostname: 'cphoto.asiae.co.kr' },
+      { protocol: 'https', hostname: 'www.news-art.co.kr' },
+      { protocol: 'https', hostname: 'flexible.img.hani.co.kr' },
+      { protocol: 'https', hostname: 'cdn.ggoverallnews.co.kr' },
+      { protocol: 'https', hostname: 'cdn.socialimpactnews.net' },
+      { protocol: 'https', hostname: 'cdn.abcn.kr' },
+      { protocol: 'https', hostname: 'cdn.eroun.net' },
     ],
   },
   env: {
@@ -47,8 +57,8 @@ const nextConfig = {
             value: [
               "default-src 'self'",
               // 'unsafe-eval' is required by Kakao Map SDK which uses eval() internally.
-            // Removing it breaks map rendering. Track: https://devtalk.kakao.com
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://developers.kakao.com https://dapi.kakao.com https://t1.daumcdn.net https://map.daumcdn.net https://t1.kakaocdn.net https://*.vercel-insights.com",
+              // Removing it breaks map rendering. Track: https://devtalk.kakao.com
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://developers.kakao.com https://dapi.kakao.com https://t1.daumcdn.net https://map.daumcdn.net https://t1.kakaocdn.net https://*.vercel-insights.com",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https: http:",
               "font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
