@@ -136,10 +136,9 @@ export const getSupabaseArtworks = cache(
   async (): Promise<Artwork[]> => getSupabaseArtworksCached()
 );
 
-export const getSupabaseHomepageArtworks = cache(async (limit = 30): Promise<Artwork[]> => {
+const getSupabaseHomepageArtworkCandidatesUncached = async (limit: number): Promise<Artwork[]> => {
   if (!hasSupabaseConfig || !supabase) {
-    const availableFallback = fallbackArtworks.filter((artwork) => !artwork.sold);
-    return pickRandomItems(availableFallback, limit);
+    return fallbackArtworks.filter((artwork) => !artwork.sold);
   }
 
   const { data, error } = await supabase
@@ -157,18 +156,30 @@ export const getSupabaseHomepageArtworks = cache(async (limit = 30): Promise<Art
 
   if (error) {
     if (isMissingTableError(error)) {
-      const availableFallback = fallbackArtworks.filter((artwork) => !artwork.sold);
-      return pickRandomItems(availableFallback, limit);
+      return fallbackArtworks.filter((artwork) => !artwork.sold);
     }
     console.error('Error fetching homepage artworks from Supabase:', error);
     return [];
   }
 
-  const mapped = (data || []).map((item) =>
+  return (data || []).map((item) =>
     mapArtworkRow(item as ArtworkRow, item.artists as unknown as ArtistRow | null)
   );
-  return pickRandomItems(mapped, limit);
-});
+};
+
+const getSupabaseHomepageArtworksCached = unstable_cache(
+  async (limit: number) => getSupabaseHomepageArtworkCandidatesUncached(limit),
+  ['supabase-homepage-artworks'],
+  {
+    revalidate: ARTWORK_DATA_REVALIDATE_SECONDS,
+    tags: ['artworks'],
+  }
+);
+
+export const getSupabaseHomepageArtworks = cache(
+  async (limit = 30): Promise<Artwork[]> =>
+    pickRandomItems(await getSupabaseHomepageArtworksCached(limit), limit)
+);
 
 const getSupabaseArtworkByIdUncached = async (id: string): Promise<Artwork | null> => {
   if (!hasSupabaseConfig || !supabase) {
