@@ -1,14 +1,19 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
+import { LegalDocumentContent } from '@/components/auth/LegalDocumentContent';
 import {
   submitExhibitorApplication,
   type ExhibitorOnboardingState,
 } from '@/app/actions/exhibitor-onboarding';
 import { CheckMarkIcon } from '@/components/ui/Icons';
 import { EXHIBITOR_APPLICATION_TERMS_VERSION } from '@/lib/constants';
+import {
+  EXHIBITOR_APPLICATION_TERMS_DOCUMENT,
+  PRIVACY_POLICY_DOCUMENT,
+} from '@/lib/legal-documents';
 
 const initialState: ExhibitorOnboardingState = {
   message: '',
@@ -24,6 +29,54 @@ type OnboardingDefaults = {
 
 export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: OnboardingDefaults }) {
   const [state, formAction, isPending] = useActionState(submitExhibitorApplication, initialState);
+  const [hasReadTerms, setHasReadTerms] = useState(false);
+  const [hasReadPrivacy, setHasReadPrivacy] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const termsContainerRef = useRef<HTMLDivElement>(null);
+  const privacyContainerRef = useRef<HTMLDivElement>(null);
+
+  const canEnableAgreement = hasReadTerms && hasReadPrivacy;
+  const canSubmit = canEnableAgreement && termsAccepted && !isPending;
+
+  const handleTermsScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    if (hasReadTerms) return;
+    const target = event.currentTarget;
+    const reachedBottom = target.scrollTop + target.clientHeight >= target.scrollHeight - 12;
+    if (reachedBottom) {
+      setHasReadTerms(true);
+    }
+  };
+
+  const handlePrivacyScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    if (hasReadPrivacy) return;
+    const target = event.currentTarget;
+    const reachedBottom = target.scrollTop + target.clientHeight >= target.scrollHeight - 12;
+    if (reachedBottom) {
+      setHasReadPrivacy(true);
+    }
+  };
+
+  useEffect(() => {
+    const checkScrollableState = () => {
+      if (
+        termsContainerRef.current &&
+        termsContainerRef.current.scrollHeight <= termsContainerRef.current.clientHeight + 1
+      ) {
+        setHasReadTerms(true);
+      }
+
+      if (
+        privacyContainerRef.current &&
+        privacyContainerRef.current.scrollHeight <= privacyContainerRef.current.clientHeight + 1
+      ) {
+        setHasReadPrivacy(true);
+      }
+    };
+
+    checkScrollableState();
+    window.addEventListener('resize', checkScrollableState);
+    return () => window.removeEventListener('resize', checkScrollableState);
+  }, []);
 
   return (
     <form action={formAction} className="space-y-6">
@@ -96,12 +149,62 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
 
       <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
         <input type="hidden" name="terms_version" value={EXHIBITOR_APPLICATION_TERMS_VERSION} />
-        <div className="flex items-start gap-3">
+        <input type="hidden" name="terms_read_complete" value={hasReadTerms ? '1' : '0'} />
+        <input type="hidden" name="privacy_read_complete" value={hasReadPrivacy ? '1' : '0'} />
+
+        <p className="mb-3 text-sm text-gray-600">
+          아래 약관 전문과 개인정보처리방침을 끝까지 읽으면 동의 체크가 활성화됩니다.
+        </p>
+
+        <div className="space-y-3">
+          <div>
+            <p id="exhibitor-terms-heading" className="mb-2 text-xs font-semibold text-gray-700">
+              출품자 이용약관 전문
+            </p>
+            <div
+              ref={termsContainerRef}
+              className="max-h-56 overflow-y-auto rounded-md border border-gray-200 bg-white p-3"
+              onScroll={handleTermsScroll}
+              tabIndex={0}
+              role="region"
+              aria-labelledby="exhibitor-terms-heading"
+            >
+              <LegalDocumentContent document={EXHIBITOR_APPLICATION_TERMS_DOCUMENT} />
+            </div>
+            {!hasReadTerms && (
+              <p className="mt-1 text-xs text-amber-700">문서 하단까지 스크롤해주세요.</p>
+            )}
+          </div>
+
+          <div>
+            <p id="privacy-policy-heading" className="mb-2 text-xs font-semibold text-gray-700">
+              개인정보처리방침 전문
+            </p>
+            <div
+              ref={privacyContainerRef}
+              className="max-h-56 overflow-y-auto rounded-md border border-gray-200 bg-white p-3"
+              onScroll={handlePrivacyScroll}
+              tabIndex={0}
+              role="region"
+              aria-labelledby="privacy-policy-heading"
+            >
+              <LegalDocumentContent document={PRIVACY_POLICY_DOCUMENT} />
+            </div>
+            {!hasReadPrivacy && (
+              <p className="mt-1 text-xs text-amber-700">문서 하단까지 스크롤해주세요.</p>
+            )}
+          </div>
+        </div>
+
+        <div className="mt-4 flex items-start gap-3">
           <input
             id="terms_accepted"
             name="terms_accepted"
             type="checkbox"
             required
+            checked={termsAccepted}
+            onChange={(event) => setTermsAccepted(event.target.checked)}
+            disabled={!canEnableAgreement}
             className="mt-1 h-4 w-4 rounded border-gray-300 text-black focus:ring-black"
           />
           <div className="text-sm">
@@ -109,16 +212,16 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
               출품자 이용약관 및 개인정보처리방침에 동의합니다.{' '}
               <span className="text-red-500">*</span>
             </label>
-            <p className="mt-1 text-gray-500">
-              제출 전에{' '}
+            <p className="mt-1 text-gray-500">전체 문서를 읽어야 체크할 수 있습니다.</p>
+            <p className="mt-1 text-xs text-gray-400">
+              원문 페이지:{' '}
               <Link href="/terms/exhibitor" className="underline underline-offset-2">
                 출품자 이용약관
               </Link>{' '}
-              과{' '}
+              /{' '}
               <Link href="/privacy" className="underline underline-offset-2">
                 개인정보처리방침
               </Link>
-              을 확인해주세요.
             </p>
           </div>
         </div>
@@ -133,7 +236,7 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
               제출 완료
             </p>
           )}
-          <Button type="submit" loading={isPending} disabled={isPending} variant="secondary">
+          <Button type="submit" loading={isPending} disabled={!canSubmit} variant="secondary">
             제출하기
           </Button>
         </div>

@@ -1,9 +1,15 @@
 'use client';
 
 import Link from 'next/link';
-import { useActionState } from 'react';
+import { useActionState, useEffect, useRef, useState } from 'react';
 import Button from '@/components/ui/Button';
+import { LegalDocumentContent } from '@/components/auth/LegalDocumentContent';
 import { submitTermsConsent, type TermsConsentState } from '@/app/actions/terms-consent';
+import {
+  ARTIST_APPLICATION_TERMS_DOCUMENT,
+  EXHIBITOR_APPLICATION_TERMS_DOCUMENT,
+  PRIVACY_POLICY_DOCUMENT,
+} from '@/lib/legal-documents';
 
 const initialState: TermsConsentState = {
   message: '',
@@ -22,28 +28,130 @@ export function TermsConsentForm({
   needsExhibitorConsent,
 }: TermsConsentFormProps) {
   const [state, formAction, isPending] = useActionState(submitTermsConsent, initialState);
+  const [hasReadArtistTerms, setHasReadArtistTerms] = useState(false);
+  const [hasReadExhibitorTerms, setHasReadExhibitorTerms] = useState(false);
+  const [hasReadPrivacy, setHasReadPrivacy] = useState(false);
+  const [artistAgreed, setArtistAgreed] = useState(false);
+  const [exhibitorAgreed, setExhibitorAgreed] = useState(false);
+  const artistTermsContainerRef = useRef<HTMLDivElement>(null);
+  const exhibitorTermsContainerRef = useRef<HTMLDivElement>(null);
+  const privacyContainerRef = useRef<HTMLDivElement>(null);
+
+  const artistReady = !needsArtistConsent || (hasReadArtistTerms && artistAgreed);
+  const exhibitorReady = !needsExhibitorConsent || (hasReadExhibitorTerms && exhibitorAgreed);
+  const canSubmit = hasReadPrivacy && artistReady && exhibitorReady && !isPending;
+
+  const handleArtistTermsScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    if (hasReadArtistTerms) return;
+    const target = event.currentTarget;
+    const reachedBottom = target.scrollTop + target.clientHeight >= target.scrollHeight - 12;
+    if (reachedBottom) {
+      setHasReadArtistTerms(true);
+    }
+  };
+
+  const handleExhibitorTermsScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    if (hasReadExhibitorTerms) return;
+    const target = event.currentTarget;
+    const reachedBottom = target.scrollTop + target.clientHeight >= target.scrollHeight - 12;
+    if (reachedBottom) {
+      setHasReadExhibitorTerms(true);
+    }
+  };
+
+  const handlePrivacyScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    if (hasReadPrivacy) return;
+    const target = event.currentTarget;
+    const reachedBottom = target.scrollTop + target.clientHeight >= target.scrollHeight - 12;
+    if (reachedBottom) {
+      setHasReadPrivacy(true);
+    }
+  };
+
+  useEffect(() => {
+    const checkScrollableState = () => {
+      if (
+        artistTermsContainerRef.current &&
+        artistTermsContainerRef.current.scrollHeight <=
+          artistTermsContainerRef.current.clientHeight + 1
+      ) {
+        setHasReadArtistTerms(true);
+      }
+
+      if (
+        exhibitorTermsContainerRef.current &&
+        exhibitorTermsContainerRef.current.scrollHeight <=
+          exhibitorTermsContainerRef.current.clientHeight + 1
+      ) {
+        setHasReadExhibitorTerms(true);
+      }
+
+      if (
+        privacyContainerRef.current &&
+        privacyContainerRef.current.scrollHeight <= privacyContainerRef.current.clientHeight + 1
+      ) {
+        setHasReadPrivacy(true);
+      }
+    };
+
+    checkScrollableState();
+    window.addEventListener('resize', checkScrollableState);
+    return () => window.removeEventListener('resize', checkScrollableState);
+  }, []);
 
   return (
     <form action={formAction} className="space-y-5">
       <input type="hidden" name="next_path" value={nextPath} />
+      <input
+        type="hidden"
+        name="artist_terms_read_complete"
+        value={hasReadArtistTerms ? '1' : '0'}
+      />
+      <input
+        type="hidden"
+        name="exhibitor_terms_read_complete"
+        value={hasReadExhibitorTerms ? '1' : '0'}
+      />
+      <input type="hidden" name="privacy_read_complete" value={hasReadPrivacy ? '1' : '0'} />
 
       {needsArtistConsent && (
         <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+          <p id="artist-terms-heading" className="mb-2 text-xs font-semibold text-gray-700">
+            아티스트 이용약관 전문
+          </p>
+          <div
+            ref={artistTermsContainerRef}
+            className="mb-3 max-h-52 overflow-y-auto rounded-md border border-gray-200 bg-white p-3"
+            onScroll={handleArtistTermsScroll}
+            tabIndex={0}
+            role="region"
+            aria-labelledby="artist-terms-heading"
+          >
+            <LegalDocumentContent document={ARTIST_APPLICATION_TERMS_DOCUMENT} />
+          </div>
+          {!hasReadArtistTerms && (
+            <p className="mb-3 text-xs text-amber-700">문서 하단까지 스크롤해주세요.</p>
+          )}
+
           <div className="flex items-start gap-3">
             <input
               id="agree_artist"
               name="agree_artist"
               type="checkbox"
               required
+              checked={artistAgreed}
+              onChange={(event) => setArtistAgreed(event.target.checked)}
+              disabled={!hasReadArtistTerms}
               className="mt-1 h-4 w-4 rounded border-gray-300 text-black focus:ring-black"
             />
             <div className="text-sm">
               <label htmlFor="agree_artist" className="font-medium text-gray-700">
                 아티스트 이용약관에 동의합니다. <span className="text-red-500">*</span>
               </label>
-              <p className="mt-1 text-gray-500">
+              <p className="mt-1 text-gray-500">전체 문서를 읽어야 체크할 수 있습니다.</p>
+              <p className="mt-1 text-xs text-gray-400">
                 <Link href="/terms/artist" className="underline underline-offset-2">
-                  약관 보기
+                  원문 페이지 보기
                 </Link>
               </p>
             </div>
@@ -53,21 +161,42 @@ export function TermsConsentForm({
 
       {needsExhibitorConsent && (
         <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+          <p id="exhibitor-terms-heading" className="mb-2 text-xs font-semibold text-gray-700">
+            출품자 이용약관 전문
+          </p>
+          <div
+            ref={exhibitorTermsContainerRef}
+            className="mb-3 max-h-52 overflow-y-auto rounded-md border border-gray-200 bg-white p-3"
+            onScroll={handleExhibitorTermsScroll}
+            tabIndex={0}
+            role="region"
+            aria-labelledby="exhibitor-terms-heading"
+          >
+            <LegalDocumentContent document={EXHIBITOR_APPLICATION_TERMS_DOCUMENT} />
+          </div>
+          {!hasReadExhibitorTerms && (
+            <p className="mb-3 text-xs text-amber-700">문서 하단까지 스크롤해주세요.</p>
+          )}
+
           <div className="flex items-start gap-3">
             <input
               id="agree_exhibitor"
               name="agree_exhibitor"
               type="checkbox"
               required
+              checked={exhibitorAgreed}
+              onChange={(event) => setExhibitorAgreed(event.target.checked)}
+              disabled={!hasReadExhibitorTerms}
               className="mt-1 h-4 w-4 rounded border-gray-300 text-black focus:ring-black"
             />
             <div className="text-sm">
               <label htmlFor="agree_exhibitor" className="font-medium text-gray-700">
                 출품자 이용약관에 동의합니다. <span className="text-red-500">*</span>
               </label>
-              <p className="mt-1 text-gray-500">
+              <p className="mt-1 text-gray-500">전체 문서를 읽어야 체크할 수 있습니다.</p>
+              <p className="mt-1 text-xs text-gray-400">
                 <Link href="/terms/exhibitor" className="underline underline-offset-2">
-                  약관 보기
+                  원문 페이지 보기
                 </Link>
               </p>
             </div>
@@ -76,16 +205,32 @@ export function TermsConsentForm({
       )}
 
       <div className="rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-600">
-        개인정보 처리 기준은{' '}
-        <Link href="/privacy" className="underline underline-offset-2">
-          개인정보처리방침
-        </Link>
-        에서 확인할 수 있습니다.
+        <p id="privacy-policy-heading" className="mb-2 text-xs font-semibold text-gray-700">
+          개인정보처리방침 전문
+        </p>
+        <div
+          ref={privacyContainerRef}
+          className="max-h-52 overflow-y-auto rounded-md border border-gray-200 bg-white p-3"
+          onScroll={handlePrivacyScroll}
+          tabIndex={0}
+          role="region"
+          aria-labelledby="privacy-policy-heading"
+        >
+          <LegalDocumentContent document={PRIVACY_POLICY_DOCUMENT} />
+        </div>
+        {!hasReadPrivacy && (
+          <p className="mt-2 text-xs text-amber-700">개인정보처리방침 하단까지 스크롤해주세요.</p>
+        )}
+        <p className="mt-2 text-xs text-gray-400">
+          <Link href="/privacy" className="underline underline-offset-2">
+            원문 페이지 보기
+          </Link>
+        </p>
       </div>
 
       <div className="flex items-center justify-between gap-3 border-t border-gray-100 pt-4">
         {state.error && <p className="text-sm text-red-600">{state.message}</p>}
-        <Button type="submit" loading={isPending} disabled={isPending} variant="secondary">
+        <Button type="submit" loading={isPending} disabled={!canSubmit} variant="secondary">
           동의하고 계속하기
         </Button>
       </div>
