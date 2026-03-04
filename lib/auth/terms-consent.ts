@@ -28,6 +28,8 @@ export function sanitizeInternalPath(nextPath: string | null | undefined, fallba
   if (!trimmed.startsWith('/')) return fallback;
   if (trimmed.startsWith('//')) return fallback;
   if (trimmed.startsWith('/terms-consent')) return fallback;
+  // 백슬래시와 제어 문자 차단 (open redirect 방지)
+  if (/[\\<>\s]/.test(trimmed.slice(1))) return fallback;
   return trimmed;
 }
 

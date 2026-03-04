@@ -27,20 +27,27 @@ export default async function TermsConsentPage({
   const requestedNextPath = sanitizeInternalPath(params.next, '/onboarding');
   const supabase = await createSupabaseServerClient();
 
-  const [{ data: profile }, { data: artistApplication }, { data: exhibitorApplication }] =
-    await Promise.all([
-      supabase.from('profiles').select('role, status').eq('id', user.id).maybeSingle(),
-      supabase
-        .from('artist_applications')
-        .select('artist_name, contact, bio, terms_version, terms_accepted_at')
-        .eq('user_id', user.id)
-        .maybeSingle(),
-      supabase
-        .from('exhibitor_applications')
-        .select('representative_name, contact, bio, terms_version, terms_accepted_at')
-        .eq('user_id', user.id)
-        .maybeSingle(),
-    ]);
+  const [profileResult, artistResult, exhibitorResult] = await Promise.all([
+    supabase.from('profiles').select('role, status').eq('id', user.id).maybeSingle(),
+    supabase
+      .from('artist_applications')
+      .select('artist_name, contact, bio, terms_version, terms_accepted_at')
+      .eq('user_id', user.id)
+      .maybeSingle(),
+    supabase
+      .from('exhibitor_applications')
+      .select('representative_name, contact, bio, terms_version, terms_accepted_at')
+      .eq('user_id', user.id)
+      .maybeSingle(),
+  ]);
+
+  if (profileResult.error) {
+    throw new Error('계정 정보를 확인하는 중 오류가 발생했습니다.');
+  }
+
+  const profile = profileResult.data;
+  const artistApplication = artistResult.data;
+  const exhibitorApplication = exhibitorResult.data;
 
   if (profile?.role === 'admin') {
     redirect('/admin/dashboard');

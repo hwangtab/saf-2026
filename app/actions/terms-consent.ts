@@ -110,38 +110,49 @@ export async function submitTermsConsent(
   const acceptedAt = new Date().toISOString();
   const supabase = await createSupabaseServerClient();
 
-  if (needsArtistConsent && hasArtistApplication(status.artistApplication)) {
-    const { error } = await supabase
-      .from('artist_applications')
-      .update({
-        terms_version: ARTIST_APPLICATION_TERMS_VERSION,
-        terms_accepted_at: acceptedAt,
-        terms_accepted_ip: requestMetadata.ip,
-        terms_accepted_user_agent: requestMetadata.userAgent,
-        updated_at: acceptedAt,
-      })
-      .eq('user_id', user.id);
+  const updates: Promise<{ target: string; error: unknown }>[] = [];
 
-    if (error) {
-      return { message: '약관 동의 저장 중 오류가 발생했습니다.', error: true };
-    }
+  if (needsArtistConsent && hasArtistApplication(status.artistApplication)) {
+    updates.push(
+      (async () => {
+        const { error } = await supabase
+          .from('artist_applications')
+          .update({
+            terms_version: ARTIST_APPLICATION_TERMS_VERSION,
+            terms_accepted_at: acceptedAt,
+            terms_accepted_ip: requestMetadata.ip,
+            terms_accepted_user_agent: requestMetadata.userAgent,
+            updated_at: acceptedAt,
+          })
+          .eq('user_id', user.id);
+        return { target: '아티스트', error };
+      })()
+    );
   }
 
   if (needsExhibitorConsent && hasExhibitorApplication(status.exhibitorApplication)) {
-    const { error } = await supabase
-      .from('exhibitor_applications')
-      .update({
-        terms_version: EXHIBITOR_APPLICATION_TERMS_VERSION,
-        terms_accepted_at: acceptedAt,
-        terms_accepted_ip: requestMetadata.ip,
-        terms_accepted_user_agent: requestMetadata.userAgent,
-        updated_at: acceptedAt,
-      })
-      .eq('user_id', user.id);
+    updates.push(
+      (async () => {
+        const { error } = await supabase
+          .from('exhibitor_applications')
+          .update({
+            terms_version: EXHIBITOR_APPLICATION_TERMS_VERSION,
+            terms_accepted_at: acceptedAt,
+            terms_accepted_ip: requestMetadata.ip,
+            terms_accepted_user_agent: requestMetadata.userAgent,
+            updated_at: acceptedAt,
+          })
+          .eq('user_id', user.id);
+        return { target: '출품자', error };
+      })()
+    );
+  }
 
-    if (error) {
-      return { message: '약관 동의 저장 중 오류가 발생했습니다.', error: true };
-    }
+  const results = await Promise.all(updates);
+  const failed = results.filter((r) => r.error);
+  if (failed.length > 0) {
+    const targets = failed.map((f) => f.target).join(', ');
+    return { message: `${targets} 약관 동의 저장 중 오류가 발생했습니다.`, error: true };
   }
 
   redirect(nextPath);

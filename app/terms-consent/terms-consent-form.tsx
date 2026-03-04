@@ -93,7 +93,6 @@ export function TermsConsentForm({
         name="exhibitor_terms_read_complete"
         value={hasReadExhibitorTerms ? '1' : '0'}
       />
-      <input type="hidden" name="privacy_read_complete" value="1" />
 
       {needsArtistConsent && (
         <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
