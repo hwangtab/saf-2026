@@ -8,7 +8,6 @@ import { submitTermsConsent, type TermsConsentState } from '@/app/actions/terms-
 import {
   ARTIST_APPLICATION_TERMS_DOCUMENT,
   EXHIBITOR_APPLICATION_TERMS_DOCUMENT,
-  PRIVACY_POLICY_DOCUMENT,
 } from '@/lib/legal-documents';
 
 const initialState: TermsConsentState = {
@@ -30,16 +29,14 @@ export function TermsConsentForm({
   const [state, formAction, isPending] = useActionState(submitTermsConsent, initialState);
   const [hasReadArtistTerms, setHasReadArtistTerms] = useState(false);
   const [hasReadExhibitorTerms, setHasReadExhibitorTerms] = useState(false);
-  const [hasReadPrivacy, setHasReadPrivacy] = useState(false);
   const [artistAgreed, setArtistAgreed] = useState(false);
   const [exhibitorAgreed, setExhibitorAgreed] = useState(false);
   const artistTermsContainerRef = useRef<HTMLDivElement>(null);
   const exhibitorTermsContainerRef = useRef<HTMLDivElement>(null);
-  const privacyContainerRef = useRef<HTMLDivElement>(null);
 
   const artistReady = !needsArtistConsent || (hasReadArtistTerms && artistAgreed);
   const exhibitorReady = !needsExhibitorConsent || (hasReadExhibitorTerms && exhibitorAgreed);
-  const canSubmit = hasReadPrivacy && artistReady && exhibitorReady && !isPending;
+  const canSubmit = artistReady && exhibitorReady && !isPending;
 
   const handleArtistTermsScroll = (event: React.UIEvent<HTMLDivElement>) => {
     if (hasReadArtistTerms) return;
@@ -59,15 +56,6 @@ export function TermsConsentForm({
     }
   };
 
-  const handlePrivacyScroll = (event: React.UIEvent<HTMLDivElement>) => {
-    if (hasReadPrivacy) return;
-    const target = event.currentTarget;
-    const reachedBottom = target.scrollTop + target.clientHeight >= target.scrollHeight - 12;
-    if (reachedBottom) {
-      setHasReadPrivacy(true);
-    }
-  };
-
   useEffect(() => {
     const checkScrollableState = () => {
       if (
@@ -84,13 +72,6 @@ export function TermsConsentForm({
           exhibitorTermsContainerRef.current.clientHeight + 1
       ) {
         setHasReadExhibitorTerms(true);
-      }
-
-      if (
-        privacyContainerRef.current &&
-        privacyContainerRef.current.scrollHeight <= privacyContainerRef.current.clientHeight + 1
-      ) {
-        setHasReadPrivacy(true);
       }
     };
 
@@ -112,7 +93,7 @@ export function TermsConsentForm({
         name="exhibitor_terms_read_complete"
         value={hasReadExhibitorTerms ? '1' : '0'}
       />
-      <input type="hidden" name="privacy_read_complete" value={hasReadPrivacy ? '1' : '0'} />
+      <input type="hidden" name="privacy_read_complete" value="1" />
 
       {needsArtistConsent && (
         <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
@@ -204,26 +185,19 @@ export function TermsConsentForm({
         </div>
       )}
 
-      <div className="rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-600">
-        <p id="privacy-policy-heading" className="mb-2 text-xs font-semibold text-gray-700">
-          개인정보처리방침 전문
+      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-600">
+        <p className="text-xs font-semibold text-gray-700">개인정보처리방침</p>
+        <p className="mt-1 text-xs text-gray-500">
+          아래 링크에서 개인정보처리방침 전문을 확인하실 수 있습니다.
         </p>
-        <div
-          ref={privacyContainerRef}
-          className="max-h-52 overflow-y-auto rounded-md border border-gray-200 bg-white p-3"
-          onScroll={handlePrivacyScroll}
-          tabIndex={0}
-          role="region"
-          aria-labelledby="privacy-policy-heading"
-        >
-          <LegalDocumentContent document={PRIVACY_POLICY_DOCUMENT} />
-        </div>
-        {!hasReadPrivacy && (
-          <p className="mt-2 text-xs text-amber-700">개인정보처리방침 하단까지 스크롤해주세요.</p>
-        )}
         <p className="mt-2 text-xs text-gray-400">
-          <Link href="/privacy" className="underline underline-offset-2">
-            원문 페이지 보기
+          <Link
+            href="/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2"
+          >
+            개인정보처리방침 전문 보기 (새 창)
           </Link>
         </p>
       </div>

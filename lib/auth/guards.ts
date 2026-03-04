@@ -64,6 +64,8 @@ export const requireArtistActive = cache(async function requireArtistActive() {
     .maybeSingle();
 
   if (profile?.role === 'artist') {
+    if (profile.status === 'suspended') redirect('/dashboard/suspended');
+
     const hasApplication = hasArtistApplication(application);
 
     if (profile.status === 'active' && !hasApplication) {
@@ -154,6 +156,8 @@ export const requireExhibitor = cache(async function requireExhibitor() {
     redirect('/exhibitor/onboarding?recover=1');
   }
 
+  if (profile.status === 'suspended') redirect('/exhibitor/suspended');
+
   if (needsExhibitorTermsConsent(application)) {
     redirect(
       buildTermsConsentPath({
@@ -169,7 +173,6 @@ export const requireExhibitor = cache(async function requireExhibitor() {
       if (!hasApplication) redirect('/exhibitor/onboarding');
       redirect('/exhibitor/pending');
     }
-    if (profile.status === 'suspended') redirect('/exhibitor/suspended');
 
     redirect('/exhibitor/onboarding');
   }

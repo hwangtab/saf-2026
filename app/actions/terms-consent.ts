@@ -89,11 +89,6 @@ export async function submitTermsConsent(
   const exhibitorAgreed = formData.get('agree_exhibitor') === 'on';
   const artistTermsReadComplete = formData.get('artist_terms_read_complete') === '1';
   const exhibitorTermsReadComplete = formData.get('exhibitor_terms_read_complete') === '1';
-  const privacyReadComplete = formData.get('privacy_read_complete') === '1';
-
-  if ((needsArtistConsent || needsExhibitorConsent) && !privacyReadComplete) {
-    return { message: '개인정보처리방침을 끝까지 확인해주세요.', error: true };
-  }
 
   if (needsArtistConsent && !artistAgreed) {
     return { message: '아티스트 이용약관 동의가 필요합니다.', error: true };
