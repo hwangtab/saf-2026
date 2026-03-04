@@ -34,9 +34,9 @@ export default function TermsPage() {
 
             <div className="space-y-10 text-charcoal">
               <section>
-                <SectionTitle className="mb-4">역할별 약관</SectionTitle>
+                <SectionTitle className="mb-4">역할별 계약서</SectionTitle>
                 <p className="text-charcoal-muted leading-7">
-                  가입 신청 시에는 아래 역할별 약관 동의가 추가로 필요합니다.
+                  가입 신청 시에는 아래 역할별 계약서 동의가 추가로 필요합니다.
                 </p>
                 <ul className="mt-3 list-disc pl-5 space-y-2 text-charcoal-muted">
                   <li>
