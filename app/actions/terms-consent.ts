@@ -33,26 +33,30 @@ type ConsentStatus = {
 
 async function loadConsentStatus(userId: string): Promise<ConsentStatus> {
   const supabase = await createSupabaseServerClient();
-  const [{ data: profile }, { data: artistApplication }, { data: exhibitorApplication }] =
-    await Promise.all([
-      supabase.from('profiles').select('role, status').eq('id', userId).maybeSingle(),
-      supabase
-        .from('artist_applications')
-        .select('artist_name, contact, bio, terms_version, terms_accepted_at')
-        .eq('user_id', userId)
-        .maybeSingle(),
-      supabase
-        .from('exhibitor_applications')
-        .select('representative_name, contact, bio, terms_version, terms_accepted_at')
-        .eq('user_id', userId)
-        .maybeSingle(),
-    ]);
+  const [profileResult, artistResult, exhibitorResult] = await Promise.all([
+    supabase.from('profiles').select('role, status').eq('id', userId).maybeSingle(),
+    supabase
+      .from('artist_applications')
+      .select('artist_name, contact, bio, terms_version, terms_accepted_at')
+      .eq('user_id', userId)
+      .maybeSingle(),
+    supabase
+      .from('exhibitor_applications')
+      .select('representative_name, contact, bio, terms_version, terms_accepted_at')
+      .eq('user_id', userId)
+      .maybeSingle(),
+  ]);
 
+  if (profileResult.error) {
+    throw new Error('계정 정보를 확인하는 중 오류가 발생했습니다.');
+  }
+
+  const profile = profileResult.data;
   return {
     profileRole: (profile?.role as ConsentStatus['profileRole']) || null,
     profileStatus: (profile?.status as ConsentStatus['profileStatus']) || null,
-    artistApplication,
-    exhibitorApplication,
+    artistApplication: artistResult.data,
+    exhibitorApplication: exhibitorResult.data,
   };
 }
 

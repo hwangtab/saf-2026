@@ -45,6 +45,10 @@ export default async function TermsConsentPage({
     throw new Error('계정 정보를 확인하는 중 오류가 발생했습니다.');
   }
 
+  if (artistResult.error || exhibitorResult.error) {
+    throw new Error('신청 정보를 확인하는 중 오류가 발생했습니다.');
+  }
+
   const profile = profileResult.data;
   const artistApplication = artistResult.data;
   const exhibitorApplication = exhibitorResult.data;
