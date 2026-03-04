@@ -3,7 +3,7 @@ import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtons from '@/components/common/ShareButtons';
 import { SITE_URL, BREADCRUMB_HOME, BREADCRUMBS } from '@/lib/constants';
-import { generateArtistSchema, createBreadcrumbSchema } from '@/lib/seo-utils';
+import { generateEnhancedArtistSchema, createBreadcrumbSchema } from '@/lib/seo-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { formatArtistName, resolveArtworkImageUrl } from '@/lib/utils';
 import { Metadata } from 'next';
@@ -136,13 +136,20 @@ export default async function ArtistPage({ params }: Props) {
 
   const pageUrl = `${SITE_URL}/artworks/artist/${encodeURIComponent(artistName)}`;
 
-  // Person JSON-LD Schema for SEO
-  const personSchema = generateArtistSchema({
+  // Person JSON-LD Schema for SEO (enhanced with credentials, expertise, work samples)
+  const artistHistory = artistArtworks.find((a) => a.history)?.history;
+  const personSchema = generateEnhancedArtistSchema({
     name: artistName,
     description: artistProfile || artistNote || undefined,
     image: representativeArtwork.images[0],
     url: pageUrl,
     jobTitle: 'Artist',
+    history: artistHistory,
+    artworks: artistArtworks.map((a) => ({
+      id: a.id,
+      title: a.title,
+      image: a.images[0],
+    })),
   });
 
   // Breadcrumb Schema: Home > Artworks > Artist Name

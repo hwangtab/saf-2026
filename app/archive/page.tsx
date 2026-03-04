@@ -11,7 +11,7 @@ import { BREADCRUMB_HOME, BREADCRUMBS } from '@/lib/constants';
 
 export const metadata: Metadata = createPageMetadata(
   '아카이브',
-  '씨앗페의 여정과 기록을 만나보세요.',
+  '2023년 첫 번째 전시부터 2026년 캠페인까지, 예술인 상호부조를 위한 씨앗페(SAF)의 여정과 기록을 만나보세요. 120여 명의 예술가가 함께한 연대의 발자취를 아카이브에서 확인하세요.',
   '/archive'
 );
 

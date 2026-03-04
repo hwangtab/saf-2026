@@ -93,7 +93,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Dynamic artwork detail pages
   const artworkPages: MetadataRoute.Sitemap = allArtworks.map((artwork) => ({
     url: `${baseUrl}/artworks/${artwork.id}`,
-    lastModified: new Date('2025-12-26'),
+    lastModified: new Date(),
     changeFrequency: 'monthly' as const,
     priority: 0.7,
   }));
@@ -102,7 +102,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const uniqueArtists = [...new Set(allArtworks.map((a) => a.artist))];
   const artistPages: MetadataRoute.Sitemap = uniqueArtists.map((artist) => ({
     url: `${baseUrl}/artworks/artist/${encodeURIComponent(artist)}`,
-    lastModified: new Date('2025-12-26'),
+    lastModified: new Date(),
     changeFrequency: 'monthly' as const,
     priority: 0.65,
   }));
