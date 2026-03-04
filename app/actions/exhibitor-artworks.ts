@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { requireExhibitor } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 import { syncArtworkToCafe24 } from '@/lib/integrations/cafe24/sync-artwork';
@@ -293,6 +293,8 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
   revalidatePath('/exhibitor/artworks');
   revalidatePath(`/exhibitor/artworks/${id}`);
   revalidatePath('/artworks');
+  revalidatePath('/api/artworks');
+  revalidateTag('artworks', 'max');
 
   const syncResult = await syncArtworkToCafe24(id);
 
@@ -370,6 +372,8 @@ export async function updateExhibitorArtworkImages(id: string, images: string[])
   revalidatePath('/exhibitor/artworks');
   revalidatePath(`/exhibitor/artworks/${id}`);
   revalidatePath('/artworks');
+  revalidatePath('/api/artworks');
+  revalidateTag('artworks', 'max');
 
   const syncResult = await syncArtworkToCafe24(id);
 

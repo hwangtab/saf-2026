@@ -4,7 +4,7 @@ import { createSupabaseServerClient } from '@/lib/auth/server';
 import { requireArtistActive } from '@/lib/auth/guards';
 import { syncArtworkToCafe24 } from '@/lib/integrations/cafe24/sync-artwork';
 import { purgeCafe24ProductsFromTrashEntry } from '@/lib/integrations/cafe24/trash-purge';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { logArtistAction } from './admin-logs';
 import {
@@ -193,6 +193,8 @@ export async function createArtwork(
     const artistSlug = artist.name_ko ? encodeURIComponent(artist.name_ko) : null;
     revalidatePath('/dashboard/artworks');
     revalidatePath('/artworks');
+    revalidatePath('/api/artworks');
+    revalidateTag('artworks', 'max');
     revalidatePath('/');
     if (artistSlug) {
       revalidatePath(`/artworks/artist/${artistSlug}`);
@@ -374,6 +376,8 @@ export async function updateArtwork(
     const artistSlug = artist.name_ko ? encodeURIComponent(artist.name_ko) : null;
     revalidatePath('/dashboard/artworks');
     revalidatePath('/artworks');
+    revalidatePath('/api/artworks');
+    revalidateTag('artworks', 'max');
     revalidatePath('/');
     revalidatePath(`/artworks/${id}`);
     if (artistSlug) {
@@ -457,6 +461,8 @@ export async function deleteArtwork(id: string): Promise<ActionState> {
 
     revalidatePath('/dashboard/artworks');
     revalidatePath('/artworks');
+    revalidatePath('/api/artworks');
+    revalidateTag('artworks', 'max');
     revalidatePath('/');
 
     if (artwork) {

@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 import {
@@ -194,6 +194,8 @@ export async function updateArtist(id: string, formData: FormData) {
     .single();
 
   revalidatePath('/artworks');
+  revalidatePath('/api/artworks');
+  revalidateTag('artworks', 'max');
   revalidatePath('/admin/artists');
   revalidatePath(`/admin/artists/${id}`);
   if (name_ko) {
@@ -283,6 +285,8 @@ export async function deleteArtist(id: string) {
   if (error) throw error;
 
   revalidatePath('/artworks');
+  revalidatePath('/api/artworks');
+  revalidateTag('artworks', 'max');
   revalidatePath('/admin/artists');
   if (artist?.name_ko) {
     revalidatePath(`/artworks/artist/${encodeURIComponent(artist.name_ko)}`);

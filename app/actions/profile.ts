@@ -2,7 +2,7 @@
 
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { requireArtistActive } from '@/lib/auth/guards';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { logArtistAction } from './admin-logs';
 import { getActionErrorMessage } from '@/lib/utils/action-error';
 
@@ -79,6 +79,8 @@ export async function updateArtistProfile(
 
     revalidatePath('/dashboard/profile');
     revalidatePath('/artworks');
+    revalidatePath('/api/artworks');
+    revalidateTag('artworks', 'max');
     revalidatePath('/');
 
     const previousName = existingArtist?.name_ko;

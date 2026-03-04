@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 import { syncArtworkToCafe24 } from '@/lib/integrations/cafe24/sync-artwork';
@@ -146,6 +146,8 @@ export async function deleteAdminArtwork(id: string) {
   if (error) throw error;
 
   revalidatePath('/artworks');
+  revalidatePath('/api/artworks');
+  revalidateTag('artworks', 'max');
   revalidatePath('/');
   if (artwork?.artist_id) {
     const { data: artist } = await supabase
@@ -253,6 +255,8 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
     .single();
 
   revalidatePath('/artworks');
+  revalidatePath('/api/artworks');
+  revalidateTag('artworks', 'max');
   revalidatePath('/');
   revalidatePath(`/artworks/${id}`);
   revalidatePath('/admin/artworks');
@@ -335,6 +339,8 @@ export async function createAdminArtwork(formData: FormData) {
   if (error) throw error;
 
   revalidatePath('/artworks');
+  revalidatePath('/api/artworks');
+  revalidateTag('artworks', 'max');
   revalidatePath('/');
   revalidatePath('/admin/artworks');
 
@@ -399,6 +405,8 @@ export async function updateArtworkImages(id: string, images: string[]) {
     .single();
 
   revalidatePath('/artworks');
+  revalidatePath('/api/artworks');
+  revalidateTag('artworks', 'max');
   revalidatePath('/');
   revalidatePath(`/artworks/${id}`);
   revalidatePath('/admin/artworks');
@@ -505,6 +513,8 @@ export async function syncMissingArtworkPurchaseLinks(): Promise<MissingPurchase
 
   revalidatePath('/admin/artworks');
   revalidatePath('/artworks');
+  revalidatePath('/api/artworks');
+  revalidateTag('artworks', 'max');
   revalidatePath('/');
 
   await logAdminAction(
@@ -628,6 +638,8 @@ export async function batchUpdateArtworkStatus(ids: string[], status: string) {
     }
 
     revalidatePath('/artworks');
+    revalidatePath('/api/artworks');
+    revalidateTag('artworks', 'max');
     revalidatePath('/');
     revalidatePath('/admin/artworks');
 
@@ -650,6 +662,8 @@ export async function batchUpdateArtworkStatus(ids: string[], status: string) {
   }
 
   revalidatePath('/artworks');
+  revalidatePath('/api/artworks');
+  revalidateTag('artworks', 'max');
   revalidatePath('/');
   revalidatePath('/admin/artworks');
 
@@ -772,6 +786,8 @@ export async function recordArtworkSale(formData: FormData) {
   if (error) throw error;
 
   revalidatePath('/artworks');
+  revalidatePath('/api/artworks');
+  revalidateTag('artworks', 'max');
   revalidatePath('/');
   revalidatePath('/admin/artworks');
   revalidatePath(`/admin/artworks/${artworkId}`);
@@ -855,6 +871,8 @@ export async function batchToggleHidden(ids: string[], isHidden: boolean) {
     }
 
     revalidatePath('/artworks');
+    revalidatePath('/api/artworks');
+    revalidateTag('artworks', 'max');
     revalidatePath('/');
     revalidatePath('/admin/artworks');
 
@@ -877,6 +895,8 @@ export async function batchToggleHidden(ids: string[], isHidden: boolean) {
   }
 
   revalidatePath('/artworks');
+  revalidatePath('/api/artworks');
+  revalidateTag('artworks', 'max');
   revalidatePath('/');
   revalidatePath('/admin/artworks');
 
@@ -952,6 +972,8 @@ export async function batchDeleteArtworks(ids: string[]) {
   if (error) throw error;
 
   revalidatePath('/artworks');
+  revalidatePath('/api/artworks');
+  revalidateTag('artworks', 'max');
   revalidatePath('/');
   revalidatePath('/admin/artworks');
 

@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient, createSupabaseServerClient } from '@/lib/auth/server';
 import { purgeCafe24ProductsFromTrashEntry } from '@/lib/integrations/cafe24/trash-purge';
@@ -1305,11 +1305,15 @@ export async function purgeActivityTrashLog(logId: string, reason: string) {
 
   if (log.target_type === 'artwork') {
     revalidatePath('/artworks');
+    revalidatePath('/api/artworks');
+    revalidateTag('artworks', 'max');
     revalidatePath('/');
     revalidatePath('/admin/artworks');
   }
   if (log.target_type === 'artist') {
     revalidatePath('/artworks');
+    revalidatePath('/api/artworks');
+    revalidateTag('artworks', 'max');
     revalidatePath('/admin/artists');
   }
   revalidatePath('/admin/trash');
@@ -2006,6 +2010,8 @@ export async function revertActivityLog(
 
     if (log.target_type === 'artwork') {
       revalidatePath('/artworks');
+      revalidatePath('/api/artworks');
+      revalidateTag('artworks', 'max');
       revalidatePath('/');
       revalidatePath('/admin/artworks');
       if (!log.target_id.includes(',')) {
@@ -2016,6 +2022,8 @@ export async function revertActivityLog(
 
     if (log.target_type === 'artist') {
       revalidatePath('/artworks');
+      revalidatePath('/api/artworks');
+      revalidateTag('artworks', 'max');
       revalidatePath('/admin/artists');
       if (!log.target_id.includes(',')) {
         revalidatePath(`/admin/artists/${log.target_id}`);
