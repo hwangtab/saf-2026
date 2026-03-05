@@ -1,4 +1,4 @@
-import { CONTACT } from '@/lib/constants';
+import { CONTACT, SITE_URL } from '@/lib/constants';
 
 export type LegalDocumentSubSection = {
   text: string;
@@ -186,7 +186,7 @@ export const TERMS_OF_SERVICE_DOCUMENT: LegalDocument = {
       title: '제15조 (개인정보 보호)',
       paragraphs: [
         '조합은 이용자의 개인정보를 「개인정보 보호법」 등 관련 법령에 따라 보호합니다.',
-        '개인정보의 수집·이용·제공·파기 등에 관한 세부 사항은 별도의 개인정보처리방침(https://saf2026.com/privacy)에서 정합니다.',
+        `개인정보의 수집·이용·제공·파기 등에 관한 세부 사항은 별도의 개인정보처리방침(${SITE_URL}/privacy)에서 정합니다.`,
       ],
     },
     {
@@ -232,7 +232,7 @@ export const TERMS_OF_SERVICE_DOCUMENT: LegalDocument = {
       title: '제21조 (준거법 및 관할 법원)',
       paragraphs: [
         '본 약관의 해석 및 조합과 이용자 간의 분쟁에 대하여는 대한민국 법률을 적용합니다.',
-        '서비스 이용과 관련하여 조합과 이용자 간에 발생한 분쟁에 관한 소송은 서울중앙지방법원을 제1심 전속관할법원으로 합니다.',
+        '서비스 이용과 관련하여 조합과 이용자 간에 발생한 분쟁에 관한 소송은 조합의 주소지를 관할하는 법원을 전속 관할로 합니다.',
       ],
     },
     {
@@ -242,8 +242,8 @@ export const TERMS_OF_SERVICE_DOCUMENT: LegalDocument = {
         '역할별 계약서가 본 약관과 상충하는 경우, 역할별 계약서가 우선 적용됩니다.',
       ],
       bullets: [
-        '아티스트 계약서: https://saf2026.com/terms/artist',
-        '출품자 계약서: https://saf2026.com/terms/exhibitor',
+        `아티스트 계약서: ${SITE_URL}/terms/artist`,
+        `출품자 계약서: ${SITE_URL}/terms/exhibitor`,
       ],
     },
     {
@@ -264,8 +264,8 @@ export const TERMS_OF_SERVICE_DOCUMENT: LegalDocument = {
 
 export const ARTIST_APPLICATION_TERMS_DOCUMENT: LegalDocument = {
   title: '온라인전시 및 판매위탁 계약서',
-  effectiveDate: '2026년 3월 4일',
-  version: '2026-03-04',
+  effectiveDate: '2026년 3월 5일',
+  version: 'artist-contract-v2-2026-03-05',
   preamble: [
     '한국스마트협동조합(이하 "갤러리" 또는 "을")과 본 계약에 동의하는 작가(이하 "갑")는 아래와 같이 온라인전시 및 판매위탁 계약을 체결합니다.',
     '본 계약은 전자적 방식으로 체결되며, 작가가 온라인 신청 과정에서 동의 버튼을 클릭하는 행위는 본 계약서에 서명하는 것과 동일한 법적 효력을 가집니다.',
@@ -280,7 +280,7 @@ export const ARTIST_APPLICATION_TERMS_DOCUMENT: LegalDocument = {
     {
       title: '제2조 (계약 기간)',
       paragraphs: [
-        '본 계약의 유효 기간은 계약 체결일로부터 씨앗페(SAF) 2026 행사 종료일(2026년 1월 26일)까지로 합니다.',
+        '본 계약의 유효 기간은 계약 체결일로부터 1년으로 합니다.',
         '계약 기간 만료 30일 전까지 어느 일방이 서면(전자메일 포함)으로 해지 의사를 통보하지 않는 경우, 동일한 조건으로 1년씩 자동 연장됩니다.',
       ],
     },
@@ -467,12 +467,16 @@ export const ARTIST_APPLICATION_TERMS_DOCUMENT: LegalDocument = {
       ],
     },
   ],
+  appendix: [
+    '부칙 제1조(시행일): 본 계약서는 2026년 3월 5일부터 시행합니다.',
+    '부칙 제2조(경과조치): 본 계약서 시행 이전에 체결된 계약에도 본 계약서가 적용됩니다.',
+  ],
 };
 
 export const EXHIBITOR_APPLICATION_TERMS_DOCUMENT: LegalDocument = {
   title: '출품자 전시위탁 계약서',
-  effectiveDate: '2026년 3월 4일',
-  version: '2026-03-04',
+  effectiveDate: '2026년 3월 5일',
+  version: 'exhibitor-contract-v2-2026-03-05',
   preamble: [
     '한국스마트협동조합(이하 "씨앗페" 또는 "을")과 본 계약에 동의하는 출품자(갤러리, 기획자, 단체 등, 이하 "갑")는 아래와 같이 출품자 전시위탁 계약을 체결합니다.',
     '본 계약은 전자적 방식으로 체결되며, 출품자가 온라인 신청 과정에서 동의 버튼을 클릭하는 행위는 본 계약서에 서명하는 것과 동일한 법적 효력을 가집니다.',
@@ -487,7 +491,7 @@ export const EXHIBITOR_APPLICATION_TERMS_DOCUMENT: LegalDocument = {
     {
       title: '제2조 (계약 기간)',
       paragraphs: [
-        '본 계약의 유효 기간은 계약 체결일로부터 씨앗페(SAF) 2026 행사 종료일(2026년 1월 26일)까지로 합니다.',
+        '본 계약의 유효 기간은 계약 체결일로부터 1년으로 합니다.',
         '계약 기간 만료 30일 전까지 어느 일방이 서면(전자메일 포함)으로 해지 의사를 통보하지 않는 경우, 동일한 조건으로 1년씩 자동 연장됩니다.',
       ],
     },
@@ -672,6 +676,10 @@ export const EXHIBITOR_APPLICATION_TERMS_DOCUMENT: LegalDocument = {
         '신규 작가/작품 추가 또는 기존 정보 수정 시에는 플랫폼을 통해 변경하며, 변경 즉시 본 계약의 별지1에 반영된 것으로 봅니다.',
       ],
     },
+  ],
+  appendix: [
+    '부칙 제1조(시행일): 본 계약서는 2026년 3월 5일부터 시행합니다.',
+    '부칙 제2조(경과조치): 본 계약서 시행 이전에 체결된 계약에도 본 계약서가 적용됩니다.',
   ],
 };
 

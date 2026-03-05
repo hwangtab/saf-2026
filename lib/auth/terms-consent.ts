@@ -1,6 +1,7 @@
 import {
   ARTIST_APPLICATION_TERMS_VERSION,
   EXHIBITOR_APPLICATION_TERMS_VERSION,
+  PRIVACY_POLICY_VERSION,
 } from '@/lib/constants';
 import type { UserRole, UserStatus } from '@/types/database.types';
 
@@ -12,6 +13,8 @@ export type ArtistApplicationTermsRecord = {
   bio?: NullableText;
   terms_version?: NullableText;
   terms_accepted_at?: NullableText;
+  privacy_version?: NullableText;
+  privacy_accepted_at?: NullableText;
 };
 
 export type ExhibitorApplicationTermsRecord = {
@@ -20,6 +23,8 @@ export type ExhibitorApplicationTermsRecord = {
   bio?: NullableText;
   terms_version?: NullableText;
   terms_accepted_at?: NullableText;
+  privacy_version?: NullableText;
+  privacy_accepted_at?: NullableText;
 };
 
 export function sanitizeInternalPath(nextPath: string | null | undefined, fallback = '/'): string {
@@ -89,10 +94,22 @@ export function needsExhibitorTermsConsent(
   );
 }
 
+export function needsPrivacyConsent(
+  application: ArtistApplicationTermsRecord | ExhibitorApplicationTermsRecord | null | undefined
+): boolean {
+  if (!application) return false;
+  return !hasAcceptedCurrentTerms(
+    application?.privacy_version,
+    application?.privacy_accepted_at,
+    PRIVACY_POLICY_VERSION
+  );
+}
+
 export function buildTermsConsentPath(input: {
   nextPath: string;
   needsArtistConsent?: boolean;
   needsExhibitorConsent?: boolean;
+  needsPrivacyConsent?: boolean;
 }): string {
   const params = new URLSearchParams({
     next: sanitizeInternalPath(input.nextPath, '/'),
@@ -104,6 +121,10 @@ export function buildTermsConsentPath(input: {
 
   if (input.needsExhibitorConsent) {
     params.set('exhibitor', '1');
+  }
+
+  if (input.needsPrivacyConsent) {
+    params.set('privacy', '1');
   }
 
   return `/terms-consent?${params.toString()}`;

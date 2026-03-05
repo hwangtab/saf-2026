@@ -7,6 +7,7 @@ import {
   hasExhibitorApplication,
   needsArtistTermsConsent,
   needsExhibitorTermsConsent,
+  needsPrivacyConsent,
   resolvePostLoginPath,
   sanitizeInternalPath,
 } from '@/lib/auth/terms-consent';
@@ -31,12 +32,16 @@ export default async function TermsConsentPage({
     supabase.from('profiles').select('role, status').eq('id', user.id).maybeSingle(),
     supabase
       .from('artist_applications')
-      .select('artist_name, contact, bio, terms_version, terms_accepted_at')
+      .select(
+        'artist_name, contact, bio, terms_version, terms_accepted_at, privacy_version, privacy_accepted_at'
+      )
       .eq('user_id', user.id)
       .maybeSingle(),
     supabase
       .from('exhibitor_applications')
-      .select('representative_name, contact, bio, terms_version, terms_accepted_at')
+      .select(
+        'representative_name, contact, bio, terms_version, terms_accepted_at, privacy_version, privacy_accepted_at'
+      )
       .eq('user_id', user.id)
       .maybeSingle(),
   ]);
@@ -59,10 +64,12 @@ export default async function TermsConsentPage({
 
   const needsArtistConsent = needsArtistTermsConsent(artistApplication);
   const needsExhibitorConsent = needsExhibitorTermsConsent(exhibitorApplication);
+  const needsPrivacy =
+    needsPrivacyConsent(artistApplication) || needsPrivacyConsent(exhibitorApplication);
   const hasArtist = hasArtistApplication(artistApplication);
   const hasExhibitor = hasExhibitorApplication(exhibitorApplication);
 
-  if (!needsArtistConsent && !needsExhibitorConsent) {
+  if (!needsArtistConsent && !needsExhibitorConsent && !needsPrivacy) {
     redirect(
       resolvePostLoginPath({
         role: profile?.role,
@@ -87,17 +94,23 @@ export default async function TermsConsentPage({
     nextPath,
     needsArtistConsent,
     needsExhibitorConsent,
+    needsPrivacyConsent: needsPrivacy,
   });
+
+  const headingText =
+    needsArtistConsent || needsExhibitorConsent
+      ? '계약 재동의가 필요합니다'
+      : '개인정보처리방침 재동의가 필요합니다';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-8">
       <div className="w-full max-w-lg rounded-2xl border border-gray-200 bg-white p-6 shadow-2xl md:p-8">
         <div className="flex items-start justify-between gap-4">
-          <h1 className="text-2xl font-bold text-gray-900">계약 재동의가 필요합니다</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{headingText}</h1>
           <SignOutButton />
         </div>
         <p className="mt-3 text-sm leading-6 text-gray-600">
-          계약서 내용이 업데이트되었습니다. 역할별 계약서를 한 번 더 확인해주세요. 동의 후 기존
+          문서 내용이 업데이트되었습니다. 변경된 내용을 확인하고 다시 동의해주세요. 동의 후 기존
           화면으로 자동 이동합니다.
         </p>
         <p className="mt-2 text-xs text-gray-400">요청 경로: {routeForDisplay}</p>
@@ -107,6 +120,7 @@ export default async function TermsConsentPage({
             nextPath={nextPath}
             needsArtistConsent={needsArtistConsent}
             needsExhibitorConsent={needsExhibitorConsent}
+            needsPrivacyConsent={needsPrivacy}
           />
         </div>
       </div>

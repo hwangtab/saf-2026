@@ -2,7 +2,7 @@
 
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { requireAuth } from '@/lib/auth/guards';
-import { ARTIST_APPLICATION_TERMS_VERSION } from '@/lib/constants';
+import { ARTIST_APPLICATION_TERMS_VERSION, PRIVACY_POLICY_VERSION } from '@/lib/constants';
 import { redirect } from 'next/navigation';
 import { logArtistAction } from './admin-logs';
 import { getRequestMetadata } from './request-metadata';
@@ -58,6 +58,7 @@ export async function submitArtistApplication(
 
     const requestMetadata = await getRequestMetadata();
 
+    const now = new Date().toISOString();
     const { error } = await supabase.from('artist_applications').upsert(
       {
         user_id: user.id,
@@ -66,10 +67,12 @@ export async function submitArtistApplication(
         bio,
         referrer,
         terms_version: termsVersion,
-        terms_accepted_at: new Date().toISOString(),
+        terms_accepted_at: now,
         terms_accepted_ip: requestMetadata.ip,
         terms_accepted_user_agent: requestMetadata.userAgent,
-        updated_at: new Date().toISOString(),
+        privacy_version: PRIVACY_POLICY_VERSION,
+        privacy_accepted_at: now,
+        updated_at: now,
       },
       { onConflict: 'user_id' }
     );

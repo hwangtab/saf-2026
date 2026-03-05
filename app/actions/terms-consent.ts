@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import {
   ARTIST_APPLICATION_TERMS_VERSION,
   EXHIBITOR_APPLICATION_TERMS_VERSION,
+  PRIVACY_POLICY_VERSION,
 } from '@/lib/constants';
 import { requireAuth } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
@@ -12,6 +13,7 @@ import {
   hasExhibitorApplication,
   needsArtistTermsConsent,
   needsExhibitorTermsConsent,
+  needsPrivacyConsent,
   resolvePostLoginPath,
   sanitizeInternalPath,
   type ArtistApplicationTermsRecord,
@@ -37,12 +39,16 @@ async function loadConsentStatus(userId: string): Promise<ConsentStatus> {
     supabase.from('profiles').select('role, status').eq('id', userId).maybeSingle(),
     supabase
       .from('artist_applications')
-      .select('artist_name, contact, bio, terms_version, terms_accepted_at')
+      .select(
+        'artist_name, contact, bio, terms_version, terms_accepted_at, privacy_version, privacy_accepted_at'
+      )
       .eq('user_id', userId)
       .maybeSingle(),
     supabase
       .from('exhibitor_applications')
-      .select('representative_name, contact, bio, terms_version, terms_accepted_at')
+      .select(
+        'representative_name, contact, bio, terms_version, terms_accepted_at, privacy_version, privacy_accepted_at'
+      )
       .eq('user_id', userId)
       .maybeSingle(),
   ]);
@@ -77,8 +83,11 @@ export async function submitTermsConsent(
 
   const needsArtistConsent = needsArtistTermsConsent(status.artistApplication);
   const needsExhibitorConsent = needsExhibitorTermsConsent(status.exhibitorApplication);
+  const needsPrivacy =
+    needsPrivacyConsent(status.artistApplication) ||
+    needsPrivacyConsent(status.exhibitorApplication);
 
-  if (!needsArtistConsent && !needsExhibitorConsent) {
+  if (!needsArtistConsent && !needsExhibitorConsent && !needsPrivacy) {
     redirect(
       resolvePostLoginPath({
         role: status.profileRole,
@@ -91,8 +100,10 @@ export async function submitTermsConsent(
 
   const artistAgreed = formData.get('agree_artist') === 'on';
   const exhibitorAgreed = formData.get('agree_exhibitor') === 'on';
+  const privacyAgreed = formData.get('agree_privacy') === 'on';
   const artistTermsReadComplete = formData.get('artist_terms_read_complete') === '1';
   const exhibitorTermsReadComplete = formData.get('exhibitor_terms_read_complete') === '1';
+  const privacyReadComplete = formData.get('privacy_read_complete') === '1';
 
   if (needsArtistConsent && !artistAgreed) {
     return { message: '전시·판매위탁 계약서 동의가 필요합니다.', error: true };
@@ -108,6 +119,14 @@ export async function submitTermsConsent(
 
   if (needsExhibitorConsent && !exhibitorTermsReadComplete) {
     return { message: '출품자 전시위탁 계약서 전문을 끝까지 확인해주세요.', error: true };
+  }
+
+  if (needsPrivacy && !privacyAgreed) {
+    return { message: '개인정보처리방침 동의가 필요합니다.', error: true };
+  }
+
+  if (needsPrivacy && !privacyReadComplete) {
+    return { message: '개인정보처리방침 전문을 끝까지 확인해주세요.', error: true };
   }
 
   const requestMetadata = await getRequestMetadata();
@@ -150,6 +169,40 @@ export async function submitTermsConsent(
         return { target: '출품자', error };
       })()
     );
+  }
+
+  if (needsPrivacy) {
+    if (hasArtistApplication(status.artistApplication)) {
+      updates.push(
+        (async () => {
+          const { error } = await supabase
+            .from('artist_applications')
+            .update({
+              privacy_version: PRIVACY_POLICY_VERSION,
+              privacy_accepted_at: acceptedAt,
+              updated_at: acceptedAt,
+            })
+            .eq('user_id', user.id);
+          return { target: '아티스트 개인정보', error };
+        })()
+      );
+    }
+
+    if (hasExhibitorApplication(status.exhibitorApplication)) {
+      updates.push(
+        (async () => {
+          const { error } = await supabase
+            .from('exhibitor_applications')
+            .update({
+              privacy_version: PRIVACY_POLICY_VERSION,
+              privacy_accepted_at: acceptedAt,
+              updated_at: acceptedAt,
+            })
+            .eq('user_id', user.id);
+          return { target: '출품자 개인정보', error };
+        })()
+      );
+    }
   }
 
   const results = await Promise.all(updates);

@@ -47,9 +47,10 @@ export const CONTACT = {
   POSTAL_CODE: '03358',
 };
 
-export const ARTIST_APPLICATION_TERMS_VERSION = 'artist-contract-v2-2026-03-04';
-export const EXHIBITOR_APPLICATION_TERMS_VERSION = 'exhibitor-contract-v2-2026-03-04';
+export const ARTIST_APPLICATION_TERMS_VERSION = 'artist-contract-v3-2026-03-05';
+export const EXHIBITOR_APPLICATION_TERMS_VERSION = 'exhibitor-contract-v3-2026-03-05';
 export const PRIVACY_POLICY_VERSION = 'privacy-v2-2026-03-05';
+export const TERMS_OF_SERVICE_VERSION = 'terms-v1-2026-03-05';
 
 // Exhibition Info
 export const EXHIBITION = {

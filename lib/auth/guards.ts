@@ -8,6 +8,7 @@ import {
   hasExhibitorApplication,
   needsArtistTermsConsent,
   needsExhibitorTermsConsent,
+  needsPrivacyConsent,
 } from './terms-consent';
 
 const getAuthUserContext = cache(async () => {
@@ -59,7 +60,9 @@ export const requireArtistActive = cache(async function requireArtistActive() {
   // Fetch application once and reuse below
   const { data: application } = await supabase
     .from('artist_applications')
-    .select('artist_name, contact, bio, terms_version, terms_accepted_at')
+    .select(
+      'artist_name, contact, bio, terms_version, terms_accepted_at, privacy_version, privacy_accepted_at'
+    )
     .eq('user_id', user.id)
     .maybeSingle();
 
@@ -72,11 +75,14 @@ export const requireArtistActive = cache(async function requireArtistActive() {
       redirect('/onboarding?recover=1');
     }
 
-    if (needsArtistTermsConsent(application)) {
+    const needsTerms = needsArtistTermsConsent(application);
+    const needsPrivacy = needsPrivacyConsent(application);
+    if (needsTerms || needsPrivacy) {
       redirect(
         buildTermsConsentPath({
           nextPath: profile.status === 'active' ? '/dashboard/artworks' : '/dashboard/pending',
-          needsArtistConsent: true,
+          needsArtistConsent: needsTerms,
+          needsPrivacyConsent: needsPrivacy,
         })
       );
     }
@@ -146,7 +152,9 @@ export const requireExhibitor = cache(async function requireExhibitor() {
 
   const { data: application } = await supabase
     .from('exhibitor_applications')
-    .select('representative_name, contact, bio, terms_version, terms_accepted_at')
+    .select(
+      'representative_name, contact, bio, terms_version, terms_accepted_at, privacy_version, privacy_accepted_at'
+    )
     .eq('user_id', user.id)
     .maybeSingle();
 
@@ -158,11 +166,14 @@ export const requireExhibitor = cache(async function requireExhibitor() {
 
   if (profile.status === 'suspended') redirect('/exhibitor/suspended');
 
-  if (needsExhibitorTermsConsent(application)) {
+  const needsTerms = needsExhibitorTermsConsent(application);
+  const needsPrivacy = needsPrivacyConsent(application);
+  if (needsTerms || needsPrivacy) {
     redirect(
       buildTermsConsentPath({
         nextPath: profile.status === 'active' ? '/exhibitor' : '/exhibitor/pending',
-        needsExhibitorConsent: true,
+        needsExhibitorConsent: needsTerms,
+        needsPrivacyConsent: needsPrivacy,
       })
     );
   }
