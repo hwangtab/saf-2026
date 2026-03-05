@@ -1,31 +1,11 @@
 'use server';
 
-import { revalidatePath, revalidateTag } from 'next/cache';
+import { revalidatePath } from 'next/cache';
 import { requireExhibitor } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
+import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { getString, getStoragePathFromPublicUrl } from '@/lib/utils/form-helpers';
 import { logExhibitorAction } from './admin-logs';
-
-function revalidatePublicArtworkSurfaces(artistNames: Array<string | null | undefined>) {
-  revalidatePath('/');
-  revalidatePath('/artworks');
-  revalidatePath('/api/artworks');
-
-  const uniqueArtistNames = Array.from(
-    new Set(
-      artistNames
-        .filter((name): name is string => typeof name === 'string')
-        .map((name) => name.trim())
-        .filter((name) => name.length > 0)
-    )
-  );
-
-  uniqueArtistNames.forEach((name) => {
-    revalidatePath(`/artworks/artist/${encodeURIComponent(name)}`);
-  });
-
-  revalidateTag('artworks', 'max');
-}
 
 export async function getExhibitorArtists() {
   const user = await requireExhibitor();

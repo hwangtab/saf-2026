@@ -11,6 +11,16 @@ const SYSTEM_ACTOR_ID = '00000000-0000-0000-0000-000000000000';
 const SYNC_ISSUE_DEDUP_WINDOW_HOURS = 6;
 const MAX_SYNC_ISSUE_ERRORS = 30;
 
+function hasArtworkMutation(result: Cafe24SalesSyncResult): boolean {
+  return (
+    result.inserted > 0 ||
+    result.voided > 0 ||
+    result.backfilledProductNos > 0 ||
+    result.manualMirrorPurged > 0 ||
+    result.soldOutLockedSynced > 0
+  );
+}
+
 function normalizeSyncIssueText(value: string): string {
   return value
     .trim()
@@ -218,8 +228,7 @@ export async function GET(request: NextRequest) {
       forceWindowToIso,
     });
 
-    // 판매 동기화가 성공하면 공개 목록/상세 캐시를 재검증해 상세/목록 상태 불일치를 방지한다.
-    if (result.ok) {
+    if (hasArtworkMutation(result)) {
       revalidatePath('/');
       revalidatePath('/artworks');
       revalidatePath('/artworks/[id]', 'page');
