@@ -9,6 +9,8 @@ import {
 import { requireAuth } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import {
+  ARTIST_APPLICATION_CONSENT_SELECT,
+  EXHIBITOR_APPLICATION_CONSENT_SELECT,
   hasArtistApplication,
   hasExhibitorApplication,
   needsArtistTermsConsent,
@@ -39,16 +41,12 @@ async function loadConsentStatus(userId: string): Promise<ConsentStatus> {
     supabase.from('profiles').select('role, status').eq('id', userId).maybeSingle(),
     supabase
       .from('artist_applications')
-      .select(
-        'artist_name, contact, bio, terms_version, terms_accepted_at, privacy_version, privacy_accepted_at'
-      )
+      .select(ARTIST_APPLICATION_CONSENT_SELECT)
       .eq('user_id', userId)
       .maybeSingle(),
     supabase
       .from('exhibitor_applications')
-      .select(
-        'representative_name, contact, bio, terms_version, terms_accepted_at, privacy_version, privacy_accepted_at'
-      )
+      .select(EXHIBITOR_APPLICATION_CONSENT_SELECT)
       .eq('user_id', userId)
       .maybeSingle(),
   ]);
@@ -135,74 +133,53 @@ export async function submitTermsConsent(
 
   const updates: Promise<{ target: string; error: unknown }>[] = [];
 
-  if (needsArtistConsent && hasArtistApplication(status.artistApplication)) {
+  if (hasArtistApplication(status.artistApplication) && (needsArtistConsent || needsPrivacy)) {
     updates.push(
       (async () => {
+        const updateData: Record<string, string | null> = { updated_at: acceptedAt };
+        if (needsArtistConsent) {
+          updateData.terms_version = ARTIST_APPLICATION_TERMS_VERSION;
+          updateData.terms_accepted_at = acceptedAt;
+          updateData.terms_accepted_ip = requestMetadata.ip;
+          updateData.terms_accepted_user_agent = requestMetadata.userAgent;
+        }
+        if (needsPrivacy) {
+          updateData.privacy_version = PRIVACY_POLICY_VERSION;
+          updateData.privacy_accepted_at = acceptedAt;
+        }
         const { error } = await supabase
           .from('artist_applications')
-          .update({
-            terms_version: ARTIST_APPLICATION_TERMS_VERSION,
-            terms_accepted_at: acceptedAt,
-            terms_accepted_ip: requestMetadata.ip,
-            terms_accepted_user_agent: requestMetadata.userAgent,
-            updated_at: acceptedAt,
-          })
+          .update(updateData)
           .eq('user_id', user.id);
         return { target: '아티스트', error };
       })()
     );
   }
 
-  if (needsExhibitorConsent && hasExhibitorApplication(status.exhibitorApplication)) {
+  if (
+    hasExhibitorApplication(status.exhibitorApplication) &&
+    (needsExhibitorConsent || needsPrivacy)
+  ) {
     updates.push(
       (async () => {
+        const updateData: Record<string, string | null> = { updated_at: acceptedAt };
+        if (needsExhibitorConsent) {
+          updateData.terms_version = EXHIBITOR_APPLICATION_TERMS_VERSION;
+          updateData.terms_accepted_at = acceptedAt;
+          updateData.terms_accepted_ip = requestMetadata.ip;
+          updateData.terms_accepted_user_agent = requestMetadata.userAgent;
+        }
+        if (needsPrivacy) {
+          updateData.privacy_version = PRIVACY_POLICY_VERSION;
+          updateData.privacy_accepted_at = acceptedAt;
+        }
         const { error } = await supabase
           .from('exhibitor_applications')
-          .update({
-            terms_version: EXHIBITOR_APPLICATION_TERMS_VERSION,
-            terms_accepted_at: acceptedAt,
-            terms_accepted_ip: requestMetadata.ip,
-            terms_accepted_user_agent: requestMetadata.userAgent,
-            updated_at: acceptedAt,
-          })
+          .update(updateData)
           .eq('user_id', user.id);
         return { target: '출품자', error };
       })()
     );
-  }
-
-  if (needsPrivacy) {
-    if (hasArtistApplication(status.artistApplication)) {
-      updates.push(
-        (async () => {
-          const { error } = await supabase
-            .from('artist_applications')
-            .update({
-              privacy_version: PRIVACY_POLICY_VERSION,
-              privacy_accepted_at: acceptedAt,
-              updated_at: acceptedAt,
-            })
-            .eq('user_id', user.id);
-          return { target: '아티스트 개인정보', error };
-        })()
-      );
-    }
-
-    if (hasExhibitorApplication(status.exhibitorApplication)) {
-      updates.push(
-        (async () => {
-          const { error } = await supabase
-            .from('exhibitor_applications')
-            .update({
-              privacy_version: PRIVACY_POLICY_VERSION,
-              privacy_accepted_at: acceptedAt,
-              updated_at: acceptedAt,
-            })
-            .eq('user_id', user.id);
-          return { target: '출품자 개인정보', error };
-        })()
-      );
-    }
   }
 
   const results = await Promise.all(updates);

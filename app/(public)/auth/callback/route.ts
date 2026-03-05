@@ -1,11 +1,14 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import {
+  ARTIST_APPLICATION_CONSENT_SELECT,
+  EXHIBITOR_APPLICATION_CONSENT_SELECT,
   buildTermsConsentPath,
   hasArtistApplication,
   hasExhibitorApplication,
   needsArtistTermsConsent,
   needsExhibitorTermsConsent,
+  needsPrivacyConsent,
 } from '@/lib/auth/terms-consent';
 
 export async function GET(request: NextRequest) {
@@ -40,12 +43,13 @@ export async function GET(request: NextRequest) {
         if (profile?.role === 'exhibitor') {
           const { data: application } = await supabase
             .from('exhibitor_applications')
-            .select('representative_name, contact, bio, terms_version, terms_accepted_at')
+            .select(EXHIBITOR_APPLICATION_CONSENT_SELECT)
             .eq('user_id', user.id)
             .maybeSingle();
 
           const hasApplication = hasExhibitorApplication(application);
           const needsTermsConsent = needsExhibitorTermsConsent(application);
+          const needsPrivacy = needsPrivacyConsent(application);
 
           if (profile.status === 'suspended') {
             return NextResponse.redirect(`${origin}/exhibitor/suspended`);
@@ -55,10 +59,11 @@ export async function GET(request: NextRequest) {
             return NextResponse.redirect(
               hasApplication
                 ? `${origin}${
-                    needsTermsConsent
+                    needsTermsConsent || needsPrivacy
                       ? buildTermsConsentPath({
                           nextPath: '/exhibitor',
-                          needsExhibitorConsent: true,
+                          needsExhibitorConsent: needsTermsConsent,
+                          needsPrivacyConsent: needsPrivacy,
                         })
                       : '/exhibitor'
                   }`
@@ -69,10 +74,11 @@ export async function GET(request: NextRequest) {
           return NextResponse.redirect(
             hasApplication
               ? `${origin}${
-                  needsTermsConsent
+                  needsTermsConsent || needsPrivacy
                     ? buildTermsConsentPath({
                         nextPath: '/exhibitor/pending',
-                        needsExhibitorConsent: true,
+                        needsExhibitorConsent: needsTermsConsent,
+                        needsPrivacyConsent: needsPrivacy,
                       })
                     : '/exhibitor/pending'
                 }`
@@ -83,21 +89,23 @@ export async function GET(request: NextRequest) {
         if (profile?.role === 'artist') {
           const { data: application } = await supabase
             .from('artist_applications')
-            .select('artist_name, contact, bio, terms_version, terms_accepted_at')
+            .select(ARTIST_APPLICATION_CONSENT_SELECT)
             .eq('user_id', user.id)
             .maybeSingle();
 
           const hasApplication = hasArtistApplication(application);
           const needsTermsConsent = needsArtistTermsConsent(application);
+          const needsPrivacy = needsPrivacyConsent(application);
 
           if (profile.status === 'active') {
             return NextResponse.redirect(
               hasApplication
                 ? `${origin}${
-                    needsTermsConsent
+                    needsTermsConsent || needsPrivacy
                       ? buildTermsConsentPath({
                           nextPath: '/dashboard/artworks',
-                          needsArtistConsent: true,
+                          needsArtistConsent: needsTermsConsent,
+                          needsPrivacyConsent: needsPrivacy,
                         })
                       : '/dashboard/artworks'
                   }`
@@ -109,10 +117,11 @@ export async function GET(request: NextRequest) {
             return NextResponse.redirect(
               hasApplication
                 ? `${origin}${
-                    needsTermsConsent
+                    needsTermsConsent || needsPrivacy
                       ? buildTermsConsentPath({
                           nextPath: '/dashboard/pending',
-                          needsArtistConsent: true,
+                          needsArtistConsent: needsTermsConsent,
+                          needsPrivacyConsent: needsPrivacy,
                         })
                       : '/dashboard/pending'
                   }`
@@ -128,28 +137,29 @@ export async function GET(request: NextRequest) {
           const [{ data: exhibitorApplication }, { data: artistApplication }] = await Promise.all([
             supabase
               .from('exhibitor_applications')
-              .select('representative_name, contact, bio, terms_version, terms_accepted_at')
+              .select(EXHIBITOR_APPLICATION_CONSENT_SELECT)
               .eq('user_id', user.id)
               .maybeSingle(),
             supabase
               .from('artist_applications')
-              .select('artist_name, contact, bio, terms_version, terms_accepted_at')
+              .select(ARTIST_APPLICATION_CONSENT_SELECT)
               .eq('user_id', user.id)
               .maybeSingle(),
           ]);
 
           const hasExhibitorApplicationData = hasExhibitorApplication(exhibitorApplication);
           const hasArtistApplicationData = hasArtistApplication(artistApplication);
-          const needsExhibitorConsent = needsExhibitorTermsConsent(exhibitorApplication);
-          const needsArtistConsent = needsArtistTermsConsent(artistApplication);
 
           if (hasExhibitorApplicationData) {
+            const needsExhibitorConsent = needsExhibitorTermsConsent(exhibitorApplication);
+            const needsExhibitorPrivacy = needsPrivacyConsent(exhibitorApplication);
             return NextResponse.redirect(
               `${origin}${
-                needsExhibitorConsent
+                needsExhibitorConsent || needsExhibitorPrivacy
                   ? buildTermsConsentPath({
                       nextPath: '/exhibitor/pending',
-                      needsExhibitorConsent: true,
+                      needsExhibitorConsent,
+                      needsPrivacyConsent: needsExhibitorPrivacy,
                     })
                   : '/exhibitor/pending'
               }`
@@ -157,12 +167,15 @@ export async function GET(request: NextRequest) {
           }
 
           if (hasArtistApplicationData) {
+            const needsArtistConsent = needsArtistTermsConsent(artistApplication);
+            const needsArtistPrivacy = needsPrivacyConsent(artistApplication);
             return NextResponse.redirect(
               `${origin}${
-                needsArtistConsent
+                needsArtistConsent || needsArtistPrivacy
                   ? buildTermsConsentPath({
                       nextPath: '/dashboard/pending',
-                      needsArtistConsent: true,
+                      needsArtistConsent,
+                      needsPrivacyConsent: needsArtistPrivacy,
                     })
                   : '/dashboard/pending'
               }`

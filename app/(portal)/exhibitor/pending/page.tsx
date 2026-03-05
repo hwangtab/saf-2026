@@ -1,9 +1,11 @@
 import { SignOutButton } from '@/components/auth/SignOutButton';
 import { requireAuth } from '@/lib/auth/guards';
 import {
+  EXHIBITOR_APPLICATION_CONSENT_SELECT,
   buildTermsConsentPath,
   hasExhibitorApplication,
   needsExhibitorTermsConsent,
+  needsPrivacyConsent,
 } from '@/lib/auth/terms-consent';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { redirect } from 'next/navigation';
@@ -36,17 +38,20 @@ export default async function ExhibitorPendingPage() {
 
   const { data: application } = await supabase
     .from('exhibitor_applications')
-    .select('representative_name, contact, bio, terms_version, terms_accepted_at')
+    .select(EXHIBITOR_APPLICATION_CONSENT_SELECT)
     .eq('user_id', user.id)
     .maybeSingle();
 
   const hasApplication = hasExhibitorApplication(application);
+  const needsTermsConsent = needsExhibitorTermsConsent(application);
+  const needsPrivacy = needsPrivacyConsent(application);
 
-  if (needsExhibitorTermsConsent(application)) {
+  if (needsTermsConsent || needsPrivacy) {
     redirect(
       buildTermsConsentPath({
         nextPath: '/exhibitor/pending',
-        needsExhibitorConsent: true,
+        needsExhibitorConsent: needsTermsConsent,
+        needsPrivacyConsent: needsPrivacy,
       })
     );
   }

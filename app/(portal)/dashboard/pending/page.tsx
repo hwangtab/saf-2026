@@ -1,9 +1,11 @@
 import { SignOutButton } from '@/components/auth/SignOutButton';
 import { requireAuth } from '@/lib/auth/guards';
 import {
+  ARTIST_APPLICATION_CONSENT_SELECT,
   buildTermsConsentPath,
   hasArtistApplication,
   needsArtistTermsConsent,
+  needsPrivacyConsent,
 } from '@/lib/auth/terms-consent';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { redirect } from 'next/navigation';
@@ -32,17 +34,20 @@ export default async function PendingPage() {
 
   const { data: application } = await supabase
     .from('artist_applications')
-    .select('artist_name, contact, bio, terms_version, terms_accepted_at')
+    .select(ARTIST_APPLICATION_CONSENT_SELECT)
     .eq('user_id', user.id)
     .maybeSingle();
 
   const hasApplication = hasArtistApplication(application);
+  const needsTermsConsent = needsArtistTermsConsent(application);
+  const needsPrivacy = needsPrivacyConsent(application);
 
-  if (needsArtistTermsConsent(application)) {
+  if (needsTermsConsent || needsPrivacy) {
     redirect(
       buildTermsConsentPath({
         nextPath: '/dashboard/pending',
-        needsArtistConsent: true,
+        needsArtistConsent: needsTermsConsent,
+        needsPrivacyConsent: needsPrivacy,
       })
     );
   }

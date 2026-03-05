@@ -74,8 +74,63 @@ export default function ArtistTermsPage() {
                       ))}
                     </ul>
                   )}
+                  {section.subsections?.map((sub, idx) => (
+                    <div key={idx} className="mt-2 pl-4">
+                      <p className="mb-1 font-medium text-charcoal-muted">{sub.text}</p>
+                      {sub.bullets && (
+                        <ul className="list-disc space-y-1 pl-5 leading-7 text-charcoal-muted">
+                          {sub.bullets.map((bullet) => (
+                            <li key={bullet}>{bullet}</li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  ))}
+                  {section.table && (
+                    <div className="mt-2 overflow-x-auto">
+                      <table className="min-w-full border border-gray-200 text-sm">
+                        <thead className="bg-canvas-soft">
+                          <tr>
+                            {section.table.headers.map((header) => (
+                              <th
+                                key={header}
+                                className="border border-gray-200 px-3 py-2 text-left font-semibold text-charcoal"
+                              >
+                                {header}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {section.table.rows.map((row, rowIdx) => (
+                            <tr key={rowIdx} className="even:bg-canvas-soft">
+                              {row.map((cell, cellIdx) => (
+                                <td
+                                  key={cellIdx}
+                                  className="border border-gray-200 px-3 py-2 leading-6 text-charcoal-muted"
+                                >
+                                  {cell}
+                                </td>
+                              ))}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </section>
               ))}
+
+              {doc.appendix && (
+                <section>
+                  <SectionTitle className="mb-4">부칙</SectionTitle>
+                  {doc.appendix.map((line) => (
+                    <p key={line} className="mb-2 leading-7 text-charcoal-muted last:mb-0">
+                      {line}
+                    </p>
+                  ))}
+                </section>
+              )}
 
               <section>
                 <SectionTitle className="mb-4">문의처</SectionTitle>

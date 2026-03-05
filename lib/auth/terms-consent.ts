@@ -5,6 +5,12 @@ import {
 } from '@/lib/constants';
 import type { UserRole, UserStatus } from '@/types/database.types';
 
+export const ARTIST_APPLICATION_CONSENT_SELECT =
+  'artist_name, contact, bio, terms_version, terms_accepted_at, privacy_version, privacy_accepted_at' as const;
+
+export const EXHIBITOR_APPLICATION_CONSENT_SELECT =
+  'representative_name, contact, bio, terms_version, terms_accepted_at, privacy_version, privacy_accepted_at' as const;
+
 type NullableText = string | null | undefined;
 
 export type ArtistApplicationTermsRecord = {

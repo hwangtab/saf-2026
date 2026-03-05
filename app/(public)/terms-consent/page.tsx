@@ -2,6 +2,8 @@ import { redirect } from 'next/navigation';
 import { requireAuth } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import {
+  ARTIST_APPLICATION_CONSENT_SELECT,
+  EXHIBITOR_APPLICATION_CONSENT_SELECT,
   buildTermsConsentPath,
   hasArtistApplication,
   hasExhibitorApplication,
@@ -32,16 +34,12 @@ export default async function TermsConsentPage({
     supabase.from('profiles').select('role, status').eq('id', user.id).maybeSingle(),
     supabase
       .from('artist_applications')
-      .select(
-        'artist_name, contact, bio, terms_version, terms_accepted_at, privacy_version, privacy_accepted_at'
-      )
+      .select(ARTIST_APPLICATION_CONSENT_SELECT)
       .eq('user_id', user.id)
       .maybeSingle(),
     supabase
       .from('exhibitor_applications')
-      .select(
-        'representative_name, contact, bio, terms_version, terms_accepted_at, privacy_version, privacy_accepted_at'
-      )
+      .select(EXHIBITOR_APPLICATION_CONSENT_SELECT)
       .eq('user_id', user.id)
       .maybeSingle(),
   ]);

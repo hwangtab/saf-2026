@@ -1,11 +1,14 @@
 import { redirect } from 'next/navigation';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import {
+  ARTIST_APPLICATION_CONSENT_SELECT,
+  EXHIBITOR_APPLICATION_CONSENT_SELECT,
   buildTermsConsentPath,
   hasArtistApplication,
   hasExhibitorApplication,
   needsArtistTermsConsent,
   needsExhibitorTermsConsent,
+  needsPrivacyConsent,
 } from '@/lib/auth/terms-consent';
 
 export default async function DashboardPage() {
@@ -36,12 +39,13 @@ export default async function DashboardPage() {
   if (profile?.role === 'exhibitor') {
     const { data: exhibitorApplication } = await supabase
       .from('exhibitor_applications')
-      .select('representative_name, contact, bio, terms_version, terms_accepted_at')
+      .select(EXHIBITOR_APPLICATION_CONSENT_SELECT)
       .eq('user_id', user.id)
       .maybeSingle();
 
     const hasExhibitorApplicationData = hasExhibitorApplication(exhibitorApplication);
     const needsExhibitorConsent = needsExhibitorTermsConsent(exhibitorApplication);
+    const needsExhibitorPrivacy = needsPrivacyConsent(exhibitorApplication);
 
     if (profile.status === 'suspended') {
       redirect('/exhibitor/suspended');
@@ -50,10 +54,11 @@ export default async function DashboardPage() {
     if (profile.status === 'active') {
       redirect(
         hasExhibitorApplicationData
-          ? needsExhibitorConsent
+          ? needsExhibitorConsent || needsExhibitorPrivacy
             ? buildTermsConsentPath({
                 nextPath: '/exhibitor',
-                needsExhibitorConsent: true,
+                needsExhibitorConsent: needsExhibitorConsent,
+                needsPrivacyConsent: needsExhibitorPrivacy,
               })
             : '/exhibitor'
           : '/exhibitor/onboarding?recover=1'
@@ -62,10 +67,11 @@ export default async function DashboardPage() {
 
     redirect(
       hasExhibitorApplicationData
-        ? needsExhibitorConsent
+        ? needsExhibitorConsent || needsExhibitorPrivacy
           ? buildTermsConsentPath({
               nextPath: '/exhibitor/pending',
-              needsExhibitorConsent: true,
+              needsExhibitorConsent: needsExhibitorConsent,
+              needsPrivacyConsent: needsExhibitorPrivacy,
             })
           : '/exhibitor/pending'
         : '/exhibitor/onboarding'
@@ -75,7 +81,7 @@ export default async function DashboardPage() {
   if (profile?.role === 'artist') {
     const { data: application, error: applicationError } = await supabase
       .from('artist_applications')
-      .select('artist_name, contact, bio, terms_version, terms_accepted_at')
+      .select(ARTIST_APPLICATION_CONSENT_SELECT)
       .eq('user_id', user.id)
       .maybeSingle();
 
@@ -85,14 +91,16 @@ export default async function DashboardPage() {
 
     const hasApplication = hasArtistApplication(application);
     const needsTermsConsent = needsArtistTermsConsent(application);
+    const needsArtistPrivacy = needsPrivacyConsent(application);
 
     if (profile.status === 'active') {
       redirect(
         hasApplication
-          ? needsTermsConsent
+          ? needsTermsConsent || needsArtistPrivacy
             ? buildTermsConsentPath({
                 nextPath: '/dashboard/artworks',
-                needsArtistConsent: true,
+                needsArtistConsent: needsTermsConsent,
+                needsPrivacyConsent: needsArtistPrivacy,
               })
             : '/dashboard/artworks'
           : '/onboarding?recover=1'
@@ -102,10 +110,11 @@ export default async function DashboardPage() {
     if (profile.status === 'pending') {
       redirect(
         hasApplication
-          ? needsTermsConsent
+          ? needsTermsConsent || needsArtistPrivacy
             ? buildTermsConsentPath({
                 nextPath: '/dashboard/pending',
-                needsArtistConsent: true,
+                needsArtistConsent: needsTermsConsent,
+                needsPrivacyConsent: needsArtistPrivacy,
               })
             : '/dashboard/pending'
           : '/onboarding'
@@ -120,38 +129,42 @@ export default async function DashboardPage() {
     const [{ data: exhibitorApplication }, { data: artistApplication }] = await Promise.all([
       supabase
         .from('exhibitor_applications')
-        .select('representative_name, contact, bio, terms_version, terms_accepted_at')
+        .select(EXHIBITOR_APPLICATION_CONSENT_SELECT)
         .eq('user_id', user.id)
         .maybeSingle(),
       supabase
         .from('artist_applications')
-        .select('artist_name, contact, bio, terms_version, terms_accepted_at')
+        .select(ARTIST_APPLICATION_CONSENT_SELECT)
         .eq('user_id', user.id)
         .maybeSingle(),
     ]);
 
     const hasExhibitorApplicationData = hasExhibitorApplication(exhibitorApplication);
     const hasArtistApplicationData = hasArtistApplication(artistApplication);
-    const needsExhibitorConsent = needsExhibitorTermsConsent(exhibitorApplication);
-    const needsArtistConsent = needsArtistTermsConsent(artistApplication);
 
     if (hasExhibitorApplicationData) {
+      const needsExhibitorConsent = needsExhibitorTermsConsent(exhibitorApplication);
+      const needsExhibitorPrivacy = needsPrivacyConsent(exhibitorApplication);
       redirect(
-        needsExhibitorConsent
+        needsExhibitorConsent || needsExhibitorPrivacy
           ? buildTermsConsentPath({
               nextPath: '/exhibitor/pending',
-              needsExhibitorConsent: true,
+              needsExhibitorConsent: needsExhibitorConsent,
+              needsPrivacyConsent: needsExhibitorPrivacy,
             })
           : '/exhibitor/pending'
       );
     }
 
     if (hasArtistApplicationData) {
+      const needsArtistConsent = needsArtistTermsConsent(artistApplication);
+      const needsArtistPrivacy = needsPrivacyConsent(artistApplication);
       redirect(
-        needsArtistConsent
+        needsArtistConsent || needsArtistPrivacy
           ? buildTermsConsentPath({
               nextPath: '/dashboard/pending',
-              needsArtistConsent: true,
+              needsArtistConsent: needsArtistConsent,
+              needsPrivacyConsent: needsArtistPrivacy,
             })
           : '/dashboard/pending'
       );

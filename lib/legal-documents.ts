@@ -265,7 +265,7 @@ export const TERMS_OF_SERVICE_DOCUMENT: LegalDocument = {
 export const ARTIST_APPLICATION_TERMS_DOCUMENT: LegalDocument = {
   title: '온라인전시 및 판매위탁 계약서',
   effectiveDate: '2026년 3월 5일',
-  version: 'artist-contract-v2-2026-03-05',
+  version: 'artist-contract-v3-2026-03-05',
   preamble: [
     '한국스마트협동조합(이하 "갤러리" 또는 "을")과 본 계약에 동의하는 작가(이하 "갑")는 아래와 같이 온라인전시 및 판매위탁 계약을 체결합니다.',
     '본 계약은 전자적 방식으로 체결되며, 작가가 온라인 신청 과정에서 동의 버튼을 클릭하는 행위는 본 계약서에 서명하는 것과 동일한 법적 효력을 가집니다.',
@@ -476,7 +476,7 @@ export const ARTIST_APPLICATION_TERMS_DOCUMENT: LegalDocument = {
 export const EXHIBITOR_APPLICATION_TERMS_DOCUMENT: LegalDocument = {
   title: '출품자 전시위탁 계약서',
   effectiveDate: '2026년 3월 5일',
-  version: 'exhibitor-contract-v2-2026-03-05',
+  version: 'exhibitor-contract-v3-2026-03-05',
   preamble: [
     '한국스마트협동조합(이하 "씨앗페" 또는 "을")과 본 계약에 동의하는 출품자(갤러리, 기획자, 단체 등, 이하 "갑")는 아래와 같이 출품자 전시위탁 계약을 체결합니다.',
     '본 계약은 전자적 방식으로 체결되며, 출품자가 온라인 신청 과정에서 동의 버튼을 클릭하는 행위는 본 계약서에 서명하는 것과 동일한 법적 효력을 가집니다.',

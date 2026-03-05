@@ -3,11 +3,14 @@
 import { useState } from 'react';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
 import {
+  ARTIST_APPLICATION_CONSENT_SELECT,
+  EXHIBITOR_APPLICATION_CONSENT_SELECT,
   buildTermsConsentPath,
   hasArtistApplication,
   hasExhibitorApplication,
   needsArtistTermsConsent,
   needsExhibitorTermsConsent,
+  needsPrivacyConsent,
 } from '@/lib/auth/terms-consent';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -60,30 +63,33 @@ export default function LoginPage() {
         } else if (profile?.role === 'exhibitor') {
           const { data: application } = await supabase
             .from('exhibitor_applications')
-            .select('representative_name, contact, bio, terms_version, terms_accepted_at')
+            .select(EXHIBITOR_APPLICATION_CONSENT_SELECT)
             .eq('user_id', user.id)
             .maybeSingle();
 
           const hasApplication = hasExhibitorApplication(application);
           const needsTermsConsent = needsExhibitorTermsConsent(application);
+          const needsPrivacy = needsPrivacyConsent(application);
 
           if (profile.status === 'suspended') {
             nextPath = '/exhibitor/suspended';
           } else if (profile.status === 'active') {
             nextPath = hasApplication
-              ? needsTermsConsent
+              ? needsTermsConsent || needsPrivacy
                 ? buildTermsConsentPath({
                     nextPath: '/exhibitor',
-                    needsExhibitorConsent: true,
+                    needsExhibitorConsent: needsTermsConsent,
+                    needsPrivacyConsent: needsPrivacy,
                   })
                 : '/exhibitor'
               : '/exhibitor/onboarding?recover=1';
           } else {
             nextPath = hasApplication
-              ? needsTermsConsent
+              ? needsTermsConsent || needsPrivacy
                 ? buildTermsConsentPath({
                     nextPath: '/exhibitor/pending',
-                    needsExhibitorConsent: true,
+                    needsExhibitorConsent: needsTermsConsent,
+                    needsPrivacyConsent: needsPrivacy,
                   })
                 : '/exhibitor/pending'
               : '/exhibitor/onboarding';
@@ -91,19 +97,21 @@ export default function LoginPage() {
         } else if (profile?.role === 'artist') {
           const { data: application } = await supabase
             .from('artist_applications')
-            .select('artist_name, contact, bio, terms_version, terms_accepted_at')
+            .select(ARTIST_APPLICATION_CONSENT_SELECT)
             .eq('user_id', user.id)
             .maybeSingle();
 
           const hasApplication = hasArtistApplication(application);
           const needsTermsConsent = needsArtistTermsConsent(application);
+          const needsPrivacy = needsPrivacyConsent(application);
 
           if (profile.status === 'active') {
             nextPath = hasApplication
-              ? needsTermsConsent
+              ? needsTermsConsent || needsPrivacy
                 ? buildTermsConsentPath({
                     nextPath: '/dashboard/artworks',
-                    needsArtistConsent: true,
+                    needsArtistConsent: needsTermsConsent,
+                    needsPrivacyConsent: needsPrivacy,
                   })
                 : '/dashboard/artworks'
               : '/onboarding?recover=1';
@@ -111,10 +119,11 @@ export default function LoginPage() {
             nextPath = '/dashboard/suspended';
           } else if (profile.status === 'pending') {
             nextPath = hasApplication
-              ? needsTermsConsent
+              ? needsTermsConsent || needsPrivacy
                 ? buildTermsConsentPath({
                     nextPath: '/dashboard/pending',
-                    needsArtistConsent: true,
+                    needsArtistConsent: needsTermsConsent,
+                    needsPrivacyConsent: needsPrivacy,
                   })
                 : '/dashboard/pending'
               : '/onboarding';
@@ -123,35 +132,41 @@ export default function LoginPage() {
           const [{ data: exhibitorApplication }, { data: artistApplication }] = await Promise.all([
             supabase
               .from('exhibitor_applications')
-              .select('representative_name, contact, bio, terms_version, terms_accepted_at')
+              .select(EXHIBITOR_APPLICATION_CONSENT_SELECT)
               .eq('user_id', user.id)
               .maybeSingle(),
             supabase
               .from('artist_applications')
-              .select('artist_name, contact, bio, terms_version, terms_accepted_at')
+              .select(ARTIST_APPLICATION_CONSENT_SELECT)
               .eq('user_id', user.id)
               .maybeSingle(),
           ]);
 
           const hasExhibitorApplicationData = hasExhibitorApplication(exhibitorApplication);
           const hasArtistApplicationData = hasArtistApplication(artistApplication);
-          const needsExhibitorConsent = needsExhibitorTermsConsent(exhibitorApplication);
-          const needsArtistConsent = needsArtistTermsConsent(artistApplication);
 
           if (hasExhibitorApplicationData) {
-            nextPath = needsExhibitorConsent
-              ? buildTermsConsentPath({
-                  nextPath: '/exhibitor/pending',
-                  needsExhibitorConsent: true,
-                })
-              : '/exhibitor/pending';
+            const needsExhibitorConsent = needsExhibitorTermsConsent(exhibitorApplication);
+            const needsExhibitorPrivacy = needsPrivacyConsent(exhibitorApplication);
+            nextPath =
+              needsExhibitorConsent || needsExhibitorPrivacy
+                ? buildTermsConsentPath({
+                    nextPath: '/exhibitor/pending',
+                    needsExhibitorConsent,
+                    needsPrivacyConsent: needsExhibitorPrivacy,
+                  })
+                : '/exhibitor/pending';
           } else if (hasArtistApplicationData) {
-            nextPath = needsArtistConsent
-              ? buildTermsConsentPath({
-                  nextPath: '/dashboard/pending',
-                  needsArtistConsent: true,
-                })
-              : '/dashboard/pending';
+            const needsArtistConsent = needsArtistTermsConsent(artistApplication);
+            const needsArtistPrivacy = needsPrivacyConsent(artistApplication);
+            nextPath =
+              needsArtistConsent || needsArtistPrivacy
+                ? buildTermsConsentPath({
+                    nextPath: '/dashboard/pending',
+                    needsArtistConsent,
+                    needsPrivacyConsent: needsArtistPrivacy,
+                  })
+                : '/dashboard/pending';
           } else {
             nextPath = '/onboarding';
           }

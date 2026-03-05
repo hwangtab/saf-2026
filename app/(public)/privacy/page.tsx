@@ -3,7 +3,13 @@ import PageHero from '@/components/ui/PageHero';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { CONTACT, SITE_URL, BREADCRUMB_HOME, BREADCRUMBS } from '@/lib/constants';
+import {
+  CONTACT,
+  SITE_URL,
+  BREADCRUMB_HOME,
+  BREADCRUMBS,
+  PRIVACY_POLICY_VERSION,
+} from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { PRIVACY_POLICY_DOCUMENT } from '@/lib/legal-documents';
@@ -33,7 +39,7 @@ export default function PrivacyPolicyPage() {
         <div className="container-max">
           <div className="mx-auto max-w-4xl rounded-2xl border border-gray-200 bg-white p-6 shadow-sm md:p-10">
             <p className="mb-1 text-sm text-charcoal-muted">시행일: {doc.effectiveDate}</p>
-            <p className="mb-8 text-sm text-charcoal-muted">버전: {doc.version}</p>
+            <p className="mb-8 text-sm text-charcoal-muted">버전: {PRIVACY_POLICY_VERSION}</p>
 
             {doc.preamble && (
               <div className="mb-10 rounded-lg bg-canvas-soft p-5 text-sm leading-7 text-charcoal-muted">

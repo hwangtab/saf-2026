@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation';
 import { cache } from 'react';
 import { UserRole, UserStatus } from '@/types/database.types';
 import {
+  ARTIST_APPLICATION_CONSENT_SELECT,
+  EXHIBITOR_APPLICATION_CONSENT_SELECT,
   buildTermsConsentPath,
   hasArtistApplication,
   hasExhibitorApplication,
@@ -60,9 +62,7 @@ export const requireArtistActive = cache(async function requireArtistActive() {
   // Fetch application once and reuse below
   const { data: application } = await supabase
     .from('artist_applications')
-    .select(
-      'artist_name, contact, bio, terms_version, terms_accepted_at, privacy_version, privacy_accepted_at'
-    )
+    .select(ARTIST_APPLICATION_CONSENT_SELECT)
     .eq('user_id', user.id)
     .maybeSingle();
 
@@ -152,9 +152,7 @@ export const requireExhibitor = cache(async function requireExhibitor() {
 
   const { data: application } = await supabase
     .from('exhibitor_applications')
-    .select(
-      'representative_name, contact, bio, terms_version, terms_accepted_at, privacy_version, privacy_accepted_at'
-    )
+    .select(EXHIBITOR_APPLICATION_CONSENT_SELECT)
     .eq('user_id', user.id)
     .maybeSingle();
 
