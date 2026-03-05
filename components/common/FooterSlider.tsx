@@ -6,11 +6,6 @@ import RelatedArtworksSlider from '@/components/features/RelatedArtworksSlider';
 import { shouldShowFooterSlider } from '@/lib/path-rules';
 import type { ArtworkCardData } from '@/types';
 
-const FOOTER_SLIDER_CACHE_TTL_MS = 60 * 1000;
-
-let cachedArtworks: ArtworkCardData[] | null = null;
-let cachedAt = 0;
-
 export default function FooterSlider() {
   const pathname = usePathname();
   const [artworks, setArtworks] = useState<ArtworkCardData[]>([]);
@@ -21,12 +16,6 @@ export default function FooterSlider() {
   useEffect(() => {
     if (!showSlider) return;
 
-    const now = Date.now();
-    if (cachedArtworks && now - cachedAt < FOOTER_SLIDER_CACHE_TTL_MS) {
-      setArtworks(cachedArtworks);
-      return;
-    }
-
     let cancelled = false;
 
     const fetchArtworks = async () => {
@@ -36,8 +25,6 @@ export default function FooterSlider() {
         if (response.ok) {
           const data = await response.json();
           if (cancelled) return;
-          cachedArtworks = data;
-          cachedAt = Date.now();
           setArtworks(data);
         }
       } catch (error) {
@@ -54,7 +41,7 @@ export default function FooterSlider() {
     return () => {
       cancelled = true;
     };
-  }, [showSlider]);
+  }, [showSlider, pathname]);
 
   if (!showSlider || artworks.length === 0) return null;
 
