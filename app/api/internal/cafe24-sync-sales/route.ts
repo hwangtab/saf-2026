@@ -14,8 +14,8 @@ const MAX_SYNC_ISSUE_ERRORS = 30;
 function hasArtworkMutation(result: Cafe24SalesSyncResult): boolean {
   return (
     result.inserted > 0 ||
+    result.restored > 0 ||
     result.voided > 0 ||
-    result.backfilledProductNos > 0 ||
     result.manualMirrorPurged > 0 ||
     result.soldOutLockedSynced > 0
   );
@@ -136,6 +136,7 @@ async function logSyncIssue(result: Cafe24SalesSyncResult, level: 'warning' | 'f
         orders_fetched: result.ordersFetched,
         order_items_fetched: result.orderItemsFetched,
         inserted: result.inserted,
+        restored: result.restored,
         voided: result.voided,
         duplicate_skipped: result.duplicateSkipped,
         manual_mirror_purged: result.manualMirrorPurged,

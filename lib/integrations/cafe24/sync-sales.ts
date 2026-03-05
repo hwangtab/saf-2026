@@ -202,6 +202,7 @@ export type Cafe24SalesSyncResult = {
   orderItemsFetched: number;
   mappedItems: number;
   inserted: number;
+  restored: number;
   voided: number;
   duplicateSkipped: number;
   skippedNoProductNo: number;
@@ -1870,6 +1871,7 @@ export async function syncCafe24SalesFromOrders(
       orderItemsFetched: 0,
       mappedItems: 0,
       inserted: 0,
+      restored: 0,
       voided: 0,
       duplicateSkipped: 0,
       skippedNoProductNo: 0,
@@ -1921,6 +1923,7 @@ export async function syncCafe24SalesFromOrders(
       orderItemsFetched: 0,
       mappedItems: 0,
       inserted: 0,
+      restored: 0,
       voided: 0,
       duplicateSkipped: 0,
       skippedNoProductNo: 0,
@@ -1963,6 +1966,7 @@ export async function syncCafe24SalesFromOrders(
       orderItemsFetched: 0,
       mappedItems: 0,
       inserted: 0,
+      restored: 0,
       voided: 0,
       duplicateSkipped: 0,
       skippedNoProductNo: 0,
@@ -1994,6 +1998,7 @@ export async function syncCafe24SalesFromOrders(
   let failedOrders = 0;
   let duplicateSkipped = 0;
   let inserted = 0;
+  let restored = 0;
   let voided = 0;
   let dateTypeUsed: string | null = null;
   let backfilledProductNos = 0;
@@ -2256,6 +2261,7 @@ export async function syncCafe24SalesFromOrders(
 
     const dedupedByDb = await filterExistingOrderItemCodes(preparedRows);
     duplicateSkipped += dedupedByDb.duplicateSkipped;
+    restored = dedupedByDb.restored;
     if (dedupedByDb.errors.length > 0) {
       warningErrors.push(...dedupedByDb.errors);
     }
@@ -2343,6 +2349,7 @@ export async function syncCafe24SalesFromOrders(
       orderItemsFetched,
       mappedItems,
       inserted,
+      restored,
       voided,
       duplicateSkipped,
       skippedNoProductNo,
@@ -2391,6 +2398,7 @@ export async function syncCafe24SalesFromOrders(
       orderItemsFetched,
       mappedItems,
       inserted,
+      restored,
       voided,
       duplicateSkipped,
       skippedNoProductNo,
