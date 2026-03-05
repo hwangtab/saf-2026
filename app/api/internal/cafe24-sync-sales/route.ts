@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import {
   syncCafe24SalesFromOrders,
@@ -224,6 +224,8 @@ export async function GET(request: NextRequest) {
       revalidatePath('/artworks');
       revalidatePath('/artworks/[id]', 'page');
       revalidatePath('/artworks/artist/[artist]', 'page');
+      revalidatePath('/api/artworks');
+      revalidateTag('artworks', 'max');
     }
 
     if (!result.ok) {

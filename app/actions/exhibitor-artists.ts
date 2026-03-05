@@ -1,10 +1,31 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { requireExhibitor } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 import { getString, getStoragePathFromPublicUrl } from '@/lib/utils/form-helpers';
 import { logExhibitorAction } from './admin-logs';
+
+function revalidatePublicArtworkSurfaces(artistNames: Array<string | null | undefined>) {
+  revalidatePath('/');
+  revalidatePath('/artworks');
+  revalidatePath('/api/artworks');
+
+  const uniqueArtistNames = Array.from(
+    new Set(
+      artistNames
+        .filter((name): name is string => typeof name === 'string')
+        .map((name) => name.trim())
+        .filter((name) => name.length > 0)
+    )
+  );
+
+  uniqueArtistNames.forEach((name) => {
+    revalidatePath(`/artworks/artist/${encodeURIComponent(name)}`);
+  });
+
+  revalidateTag('artworks', 'max');
+}
 
 export async function getExhibitorArtists() {
   const user = await requireExhibitor();
@@ -82,6 +103,7 @@ export async function createExhibitorArtist(formData: FormData) {
   );
 
   revalidatePath('/exhibitor/artists');
+  revalidatePublicArtworkSurfaces([name_ko]);
 
   return { success: true, id: data.id };
 }
@@ -145,9 +167,7 @@ export async function updateExhibitorArtist(id: string, formData: FormData) {
 
   revalidatePath('/exhibitor/artists');
   revalidatePath(`/exhibitor/artists/${id}`);
-  if (name_ko) {
-    revalidatePath(`/artworks/artist/${encodeURIComponent(name_ko)}`);
-  }
+  revalidatePublicArtworkSurfaces([oldArtist.name_ko, name_ko]);
 
   return { success: true };
 }
@@ -197,6 +217,7 @@ export async function updateExhibitorArtistProfileImage(id: string, profileImage
 
   revalidatePath('/exhibitor/artists');
   revalidatePath(`/exhibitor/artists/${id}`);
+  revalidatePublicArtworkSurfaces([oldArtist.name_ko, newArtist.name_ko]);
 
   return { success: true };
 }
@@ -250,9 +271,7 @@ export async function deleteExhibitorArtist(id: string) {
   }
 
   revalidatePath('/exhibitor/artists');
-  if (artist.name_ko) {
-    revalidatePath(`/artworks/artist/${encodeURIComponent(artist.name_ko)}`);
-  }
+  revalidatePublicArtworkSurfaces([artist.name_ko]);
 
   return { success: true };
 }
