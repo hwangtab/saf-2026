@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
-import ShareButtons from '@/components/common/ShareButtons';
+import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import CTAButtonGroup from '@/components/common/CTAButtonGroup';
 import { getSupabaseTestimonials } from '@/lib/supabase-data';
 import { EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
@@ -41,7 +41,7 @@ export default async function OurReality() {
         title="우리의 현실"
         description="2025 예술인 금융 재난 보고서가 밝혀낸 한국 예술인의 금융 위기의 구조적 현실"
       >
-        <ShareButtons
+        <ShareButtonsWrapper
           url={PAGE_URL}
           title="우리의 현실 - 씨앗페 2026"
           description="예술인이 겪는 금융 재난의 구조와 데이터를 확인하세요."

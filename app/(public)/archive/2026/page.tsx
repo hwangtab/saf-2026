@@ -4,7 +4,7 @@ import LinkButton from '@/components/ui/LinkButton';
 import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
-import dynamic from 'next/dynamic';
+import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import {
   BREADCRUMB_HOME,
@@ -23,8 +23,6 @@ import {
 
 // Dynamically import KakaoMap (client-side only, reduces initial bundle)
 import ExhibitionMapWrapper from '@/components/features/ExhibitionMapWrapper';
-
-const ShareButtons = dynamic(() => import('@/components/common/ShareButtons'));
 
 const PAGE_URL = `${SITE_URL}/archive/2026`;
 
@@ -61,7 +59,7 @@ export default async function Archive2026Page() {
         description="인사아트센터에서 진행된 12일간의 기록"
         dividerColor="text-red-50"
       >
-        <ShareButtons url={canonicalUrl} title={shareTitle} description={shareDescription} />
+        <ShareButtonsWrapper url={canonicalUrl} title={shareTitle} description={shareDescription} />
       </PageHero>
 
       <Section variant="white" className="bg-red-50">

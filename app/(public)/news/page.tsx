@@ -4,7 +4,7 @@ import SafeImage from '@/components/common/SafeImage';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
 import PageHero from '@/components/ui/PageHero';
-import ShareButtons from '@/components/common/ShareButtons';
+import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { getSupabaseNews } from '@/lib/supabase-data';
 import { SITE_URL, BREADCRUMB_HOME, BREADCRUMBS, OG_IMAGE } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
@@ -186,7 +186,7 @@ export default async function NewsPage() {
         description="씨앗페 캠페인을 조명한 기사와 인터뷰를 모았습니다."
         descriptionId="news-hero-description"
       >
-        <ShareButtons
+        <ShareButtonsWrapper
           url={canonicalUrl}
           title="언론 보도 | 씨앗페 2026"
           description="씨앗페 캠페인을 다룬 언론 보도를 한 눈에 확인해보세요."

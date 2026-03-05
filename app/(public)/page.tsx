@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import SafeImage from '@/components/common/SafeImage';
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
+import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import LinkButton from '@/components/ui/LinkButton';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
@@ -22,11 +23,6 @@ export const revalidate = 300;
 const DynamicCounter = dynamic(() => import('@/components/features/DynamicCounter'), {
   loading: () => (
     <div className="w-full h-[180px] rounded-xl bg-canvas animate-pulse" aria-hidden="true" />
-  ),
-});
-const ShareButtons = dynamic(() => import('@/components/common/ShareButtons'), {
-  loading: () => (
-    <div className="w-[220px] h-10 rounded-md bg-white/20 animate-pulse" aria-hidden="true" />
   ),
 });
 const FAQList = dynamic(() => import('@/components/features/FAQList'), {
@@ -148,7 +144,7 @@ export default function Home() {
           </div>
 
           <div className="flex justify-center">
-            <ShareButtons
+            <ShareButtonsWrapper
               url={SITE_URL}
               title="씨앗페 2026 - 온라인 전시 오픈"
               description="한국 예술인 상호부조 기금 마련을 위한 온라인 특별전, 씨앗페 2026에 함께하세요."

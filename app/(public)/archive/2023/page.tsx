@@ -4,7 +4,7 @@ import SafeImage from '@/components/common/SafeImage';
 import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
-import ShareButtons from '@/components/common/ShareButtons';
+import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import CTAButtonGroup from '@/components/common/CTAButtonGroup';
 import VideoEmbed from '@/components/features/VideoEmbed';
 import { saf2023Photos } from '@/content/saf2023-photos';
@@ -83,7 +83,7 @@ export default async function Archive2023Page() {
         dividerColor="text-sun-soft"
         className="py-24 md:py-32"
       >
-        <ShareButtons url={currentUrl} title={pageTitle} description={pageDescription} />
+        <ShareButtonsWrapper url={currentUrl} title={pageTitle} description={pageDescription} />
       </PageHero>
 
       {/* Past Events Section */}

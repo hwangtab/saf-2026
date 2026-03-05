@@ -1,7 +1,7 @@
 import { getSupabaseArtworks, getSupabaseArtworksByArtist } from '@/lib/supabase-data';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
-import ShareButtons from '@/components/common/ShareButtons';
+import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { SITE_URL, BREADCRUMB_HOME, BREADCRUMBS } from '@/lib/constants';
 import { generateEnhancedArtistSchema, createBreadcrumbSchema } from '@/lib/seo-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
@@ -168,7 +168,7 @@ export default async function ArtistPage({ params }: Props) {
         description={heroDescription}
         customBackgroundImage={heroBackgroundImage}
       >
-        <ShareButtons
+        <ShareButtonsWrapper
           url={pageUrl}
           title={`${formatArtistName(artistName)} - 씨앗페 2026 출품작`}
           description={`${formatArtistName(artistName)}의 작품을 감상하고 예술인을 응원하세요.`}
