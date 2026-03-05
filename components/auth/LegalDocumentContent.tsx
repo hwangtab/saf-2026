@@ -46,8 +46,51 @@ export function LegalDocumentContent({ document }: LegalDocumentContentProps) {
               )}
             </div>
           ))}
+          {section.table && (
+            <div className="overflow-x-auto">
+              <table className="min-w-full border border-gray-200 text-xs">
+                <thead className="bg-gray-50">
+                  <tr>
+                    {section.table.headers.map((header) => (
+                      <th
+                        key={header}
+                        className="border border-gray-200 px-2 py-1.5 text-left font-semibold text-gray-700"
+                      >
+                        {header}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {section.table.rows.map((row, rowIdx) => (
+                    <tr key={rowIdx} className="even:bg-gray-50">
+                      {row.map((cell, cellIdx) => (
+                        <td
+                          key={cellIdx}
+                          className="border border-gray-200 px-2 py-1.5 text-gray-600"
+                        >
+                          {cell}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </section>
       ))}
+
+      {document.appendix && (
+        <section className="space-y-1 border-t border-gray-200 pt-3">
+          <h4 className="font-semibold text-gray-900">부칙</h4>
+          {document.appendix.map((line) => (
+            <p key={line} className="text-gray-600">
+              {line}
+            </p>
+          ))}
+        </section>
+      )}
     </article>
   );
 }
