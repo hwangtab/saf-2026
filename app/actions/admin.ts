@@ -3,6 +3,7 @@
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 import { requireAdmin } from '@/lib/auth/guards';
 import { getActionErrorMessage } from '@/lib/utils/action-error';
+import { sanitizeIlikeQuery } from '@/lib/utils/query';
 import {
   hasComposedTrailingConsonantQuery,
   hasHangulJamo,
@@ -34,15 +35,6 @@ type PromoteUserToArtistParams = {
   mode: PromoteArtistMode;
   artistId?: string;
 };
-
-function sanitizeIlikeQuery(query: string) {
-  return query
-    .trim()
-    .replace(/_/g, '\\_')
-    .replace(/'/g, "''")
-    .replace(/[%(),]/g, ' ')
-    .replace(/\s+/g, ' ');
-}
 
 function isMissingContactPhoneColumnError(error: unknown) {
   if (!error || typeof error !== 'object') return false;

@@ -10,6 +10,7 @@ import {
 } from '@/lib/search-utils';
 import { logAdminAction } from './admin-logs';
 import { getString } from '@/lib/utils/form-helpers';
+import { sanitizeIlikeQuery } from '@/lib/utils/query';
 
 function normalizeEmail(value: string | null | undefined): string | null {
   const trimmed = (value || '').trim();
@@ -87,7 +88,7 @@ export async function getArtistsPaginated(params: GetArtistsPaginatedParams = {}
 
   // 검색어 필터
   if (params.q && params.q.trim()) {
-    const searchTerm = params.q.trim();
+    const searchTerm = sanitizeIlikeQuery(params.q);
     query = query.or(
       `name_ko.ilike.%${searchTerm}%,name_en.ilike.%${searchTerm}%,contact_email.ilike.%${searchTerm}%,contact_phone.ilike.%${searchTerm}%`
     );
@@ -372,10 +373,11 @@ export async function searchUsersByName(query: string) {
       .slice(0, 10);
   }
 
+  const sanitizedQuery = sanitizeIlikeQuery(normalizedQuery);
   const { data, error } = await supabase
     .from('profiles')
     .select('id, name, email, avatar_url, role, status')
-    .or(`name.ilike.%${normalizedQuery}%,email.ilike.%${normalizedQuery}%`)
+    .or(`name.ilike.%${sanitizedQuery}%,email.ilike.%${sanitizedQuery}%`)
     .limit(10);
 
   if (error) throw error;

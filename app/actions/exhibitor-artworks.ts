@@ -140,7 +140,8 @@ export async function createExhibitorArtwork(formData: FormData) {
   const edition = getString(formData, 'edition');
   const edition_type = getString(formData, 'edition_type') || 'unique';
   const edition_limit_str = getString(formData, 'edition_limit');
-  const edition_limit = edition_limit_str ? parseInt(edition_limit_str, 10) : null;
+  const edition_limit =
+    edition_type === 'limited' && edition_limit_str ? Number(edition_limit_str) : null;
   const price = getString(formData, 'price');
   const artist_id = getString(formData, 'artist_id');
 
@@ -225,7 +226,8 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
   const edition = getString(formData, 'edition');
   const edition_type = getString(formData, 'edition_type') || 'unique';
   const edition_limit_str = getString(formData, 'edition_limit');
-  const edition_limit = edition_limit_str ? parseInt(edition_limit_str, 10) : null;
+  const edition_limit =
+    edition_type === 'limited' && edition_limit_str ? Number(edition_limit_str) : null;
   const price = getString(formData, 'price');
   const artist_id = getString(formData, 'artist_id');
 

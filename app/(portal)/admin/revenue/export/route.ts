@@ -5,6 +5,7 @@ import {
   type RevenueAnalytics,
   type RevenueMonthlyRow,
 } from '@/app/actions/admin-revenue';
+import { csvSafeCell } from '@/lib/utils/csv';
 
 const CSV_DATE_FORMATTER = new Intl.DateTimeFormat('sv-SE', {
   timeZone: 'Asia/Seoul',
@@ -23,16 +24,6 @@ const CSV_DATE_TIME_FORMATTER = new Intl.DateTimeFormat('sv-SE', {
   second: '2-digit',
   hour12: false,
 });
-
-function csvEscape(value: string | number | null | undefined): string {
-  if (value === null || value === undefined) return '';
-  const raw = String(value);
-  const escaped = raw.replace(/"/g, '""');
-  if (/[",\n\r]/.test(escaped)) {
-    return `"${escaped}"`;
-  }
-  return escaped;
-}
 
 function formatRate(value: number | null): string {
   if (value === null) return '';
@@ -118,7 +109,7 @@ function buildReportCsv(analytics: RevenueAnalytics): string {
     ]),
   ];
 
-  const body = rows.map((row) => row.map((cell) => csvEscape(cell)).join(',')).join('\r\n');
+  const body = rows.map((row) => row.map((cell) => csvSafeCell(cell)).join(',')).join('\r\n');
   return `\uFEFF${body}`;
 }
 
@@ -177,7 +168,7 @@ function buildAccountingTemplateCsv(analytics: RevenueAnalytics): string {
     ]);
   });
 
-  const body = rows.map((row) => row.map((cell) => csvEscape(cell)).join(',')).join('\r\n');
+  const body = rows.map((row) => row.map((cell) => csvSafeCell(cell)).join(',')).join('\r\n');
   return `\uFEFF${body}`;
 }
 

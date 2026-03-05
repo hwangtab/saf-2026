@@ -1,6 +1,7 @@
 import { logAdminAction } from '@/app/actions/admin-logs';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { formatKoreanPhoneNumber } from '@/lib/utils/phone';
+import { csvSafeCell } from '@/lib/utils/csv';
 
 type ArtistRow = {
   id: string;
@@ -40,16 +41,6 @@ type ParsedApplicationContact = {
   extractedEmail: string;
   extractedPhone: string;
 };
-
-function csvEscape(value: string | number | null | undefined): string {
-  if (value === null || value === undefined) return '';
-  const raw = String(value);
-  const escaped = raw.replace(/"/g, '""');
-  if (/[",\n\r]/.test(escaped)) {
-    return `"${escaped}"`;
-  }
-  return escaped;
-}
 
 function extractEmailFromText(value: string | null | undefined): string {
   const source = (value || '').trim();
@@ -224,7 +215,7 @@ export async function GET() {
 
   const csvBody =
     '\uFEFF' +
-    [header, ...rows].map((row) => row.map((cell) => csvEscape(cell)).join(',')).join('\r\n');
+    [header, ...rows].map((row) => row.map((cell) => csvSafeCell(cell)).join(',')).join('\r\n');
 
   const withPhoneCount = rows.filter((row) => String(row[3] || '').trim().length > 0).length;
   const withoutPhoneCount = rows.length - withPhoneCount;

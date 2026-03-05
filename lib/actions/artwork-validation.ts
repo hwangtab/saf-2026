@@ -60,19 +60,43 @@ export const cleanupUploads = async (
   }
 };
 
+export function validateSaleInput(salePriceRaw: string, quantityRaw: string): string | null {
+  const salePrice = Number(salePriceRaw);
+  const quantity = Number(quantityRaw);
+  if (
+    isNaN(salePrice) ||
+    salePrice < 0 ||
+    !Number.isInteger(salePrice) ||
+    isNaN(quantity) ||
+    !Number.isInteger(quantity) ||
+    quantity < 1
+  ) {
+    return '유효하지 않은 가격 또는 수량입니다.';
+  }
+  return null;
+}
+
 export const validateArtworkData = (formData: FormData) => {
   const title = (formData.get('title') as string) || '';
   const price = (formData.get('price') as string) || '';
   const edition_type = (formData.get('edition_type') as string) || 'unique';
   const edition_limit_str = formData.get('edition_limit') as string;
-  const edition_limit = edition_limit_str ? parseInt(edition_limit_str) : null;
 
   if (!title.trim() || !price.trim()) {
     return { error: '필수 항목(제목, 가격)을 입력해주세요.' };
   }
 
-  if (edition_type === 'limited' && !edition_limit) {
-    return { error: '한정판은 에디션 수량을 입력해주세요.' };
+  if (edition_type === 'limited') {
+    if (!edition_limit_str || edition_limit_str.trim() === '') {
+      return { error: '한정판은 에디션 수량을 입력해주세요.' };
+    }
+    const n = Number(edition_limit_str);
+    if (!Number.isInteger(n) || n <= 0) {
+      return { error: '에디션 수량은 1 이상의 정수여야 합니다.' };
+    }
+    if (n > 10000) {
+      return { error: '에디션 수량은 10,000을 초과할 수 없습니다.' };
+    }
   }
 
   return { success: true };

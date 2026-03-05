@@ -6,6 +6,7 @@ import { createSupabaseAdminOrServerClient, createSupabaseServerClient } from '@
 import { purgeCafe24ProductsFromTrashEntry } from '@/lib/integrations/cafe24/trash-purge';
 import { syncArtworkToCafe24 } from '@/lib/integrations/cafe24/sync-artwork';
 import { getStoragePathFromPublicUrl, getStoragePathsForRemoval } from '@/lib/utils/form-helpers';
+import { sanitizeIlikeQuery } from '@/lib/utils/query';
 
 export type ActivityLogEntry = {
   id: string;
@@ -1025,7 +1026,7 @@ export async function getActivityLogs(filters: ActivityLogFilters = {}) {
     }
   }
   if (filters.q) {
-    const q = filters.q.trim();
+    const q = sanitizeIlikeQuery(filters.q);
     if (q) {
       query = query.or(
         `summary.ilike.%${q}%,actor_name.ilike.%${q}%,actor_email.ilike.%${q}%,target_id.ilike.%${q}%,action.ilike.%${q}%`
@@ -1165,7 +1166,7 @@ export async function getTrashLogs(filters: TrashLogFilters = {}) {
   }
 
   if (filters.q) {
-    const q = filters.q.trim();
+    const q = sanitizeIlikeQuery(filters.q);
     if (q) {
       query = query.or(
         `summary.ilike.%${q}%,target_id.ilike.%${q}%,action.ilike.%${q}%,actor_name.ilike.%${q}%,actor_email.ilike.%${q}%`

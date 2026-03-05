@@ -7,6 +7,7 @@ import { syncArtworkToCafe24 } from '@/lib/integrations/cafe24/sync-artwork';
 import { purgeCafe24ProductsFromTrashEntry } from '@/lib/integrations/cafe24/trash-purge';
 import { logAdminAction } from './admin-logs';
 import { getString, getStoragePathsForRemoval, validateBatchSize } from '@/lib/utils/form-helpers';
+import { validateArtworkData, validateSaleInput } from '@/lib/actions/artwork-validation';
 
 type Cafe24SyncFeedback = {
   status: 'synced' | 'warning' | 'failed' | 'pending_auth';
@@ -206,6 +207,9 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
   const admin = await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
 
+  const dataValidation = validateArtworkData(formData);
+  if (dataValidation.error) throw new Error(dataValidation.error);
+
   const title = getString(formData, 'title');
   const description = getString(formData, 'description');
   const size = getString(formData, 'size');
@@ -215,7 +219,7 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
   const edition_type = getString(formData, 'edition_type') || 'unique';
   const edition_limit_raw = getString(formData, 'edition_limit');
   const edition_limit =
-    edition_type === 'limited' && edition_limit_raw ? parseInt(edition_limit_raw, 10) : null;
+    edition_type === 'limited' && edition_limit_raw ? Number(edition_limit_raw) : null;
   const price = getString(formData, 'price');
   const artist_id = getString(formData, 'artist_id');
 
@@ -300,6 +304,9 @@ export async function createAdminArtwork(formData: FormData) {
   const admin = await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
 
+  const dataValidation = validateArtworkData(formData);
+  if (dataValidation.error) throw new Error(dataValidation.error);
+
   const title = getString(formData, 'title');
   const description = getString(formData, 'description');
   const size = getString(formData, 'size');
@@ -309,11 +316,10 @@ export async function createAdminArtwork(formData: FormData) {
   const edition_type = getString(formData, 'edition_type') || 'unique';
   const edition_limit_raw = getString(formData, 'edition_limit');
   const edition_limit =
-    edition_type === 'limited' && edition_limit_raw ? parseInt(edition_limit_raw, 10) : null;
+    edition_type === 'limited' && edition_limit_raw ? Number(edition_limit_raw) : null;
   const price = getString(formData, 'price');
   const artist_id = getString(formData, 'artist_id');
 
-  if (!title) throw new Error('작품명을 입력해주세요.');
   if (!artist_id) throw new Error('작가를 선택해주세요.');
 
   const { data: artwork, error } = await supabase
@@ -735,12 +741,11 @@ export async function recordArtworkSale(formData: FormData) {
     throw new Error('필수 정보가 누락되었습니다.');
   }
 
-  const salePrice = parseInt(salePriceRaw, 10);
-  const quantity = parseInt(quantityRaw, 10);
+  const validationError = validateSaleInput(salePriceRaw, quantityRaw || '1');
+  if (validationError) throw new Error(validationError);
 
-  if (isNaN(salePrice) || isNaN(quantity) || quantity < 1) {
-    throw new Error('유효하지 않은 가격 또는 수량입니다.');
-  }
+  const salePrice = Number(salePriceRaw);
+  const quantity = Number(quantityRaw);
 
   const { data: artwork } = await supabase
     .from('artworks')

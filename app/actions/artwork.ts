@@ -97,7 +97,8 @@ export async function createArtwork(
     const edition = getString(formData, 'edition');
     const edition_type = getString(formData, 'edition_type') || 'unique';
     const edition_limit_str = getString(formData, 'edition_limit');
-    const edition_limit = edition_limit_str ? parseInt(edition_limit_str, 10) : null;
+    const edition_limit =
+      edition_type === 'limited' && edition_limit_str ? Number(edition_limit_str) : null;
     const price = getString(formData, 'price');
     const rawStatus = getString(formData, 'status') || 'available';
     const status = ['available', 'reserved', 'sold'].includes(rawStatus) ? rawStatus : 'available';
@@ -250,7 +251,8 @@ export async function updateArtwork(
     const edition = getString(formData, 'edition');
     const edition_type = getString(formData, 'edition_type') || 'unique';
     const edition_limit_str = getString(formData, 'edition_limit');
-    const edition_limit = edition_limit_str ? parseInt(edition_limit_str, 10) : null;
+    const edition_limit =
+      edition_type === 'limited' && edition_limit_str ? Number(edition_limit_str) : null;
     const price = getString(formData, 'price');
     const rawStatus = getString(formData, 'status') || 'available';
     const status = ['available', 'reserved', 'sold'].includes(rawStatus) ? rawStatus : 'available';

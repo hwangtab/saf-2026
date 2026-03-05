@@ -1,5 +1,6 @@
 import { logAdminAction } from '@/app/actions/admin-logs';
 import { createSupabaseServerClient } from '@/lib/auth/server';
+import { csvSafeCell } from '@/lib/utils/csv';
 
 type ArtworkArtistRow = {
   name_ko: string | null;
@@ -28,16 +29,6 @@ type ArtworkRow = {
   updated_at: string | null;
   artists: ArtworkArtistRow | ArtworkArtistRow[] | null;
 };
-
-function csvEscape(value: string | number | null | undefined): string {
-  if (value === null || value === undefined) return '';
-  const raw = String(value);
-  const escaped = raw.replace(/"/g, '""');
-  if (/[",\n\r]/.test(escaped)) {
-    return `"${escaped}"`;
-  }
-  return escaped;
-}
 
 function normalizeArtist(artist: ArtworkArtistRow | ArtworkArtistRow[] | null): ArtworkArtistRow {
   if (!artist) {
@@ -157,7 +148,7 @@ export async function GET() {
 
   const csvBody =
     '\uFEFF' +
-    [header, ...rows].map((row) => row.map((cell) => csvEscape(cell)).join(',')).join('\r\n');
+    [header, ...rows].map((row) => row.map((cell) => csvSafeCell(cell)).join(',')).join('\r\n');
 
   const hiddenCount = artworkRows.filter((artwork) => Boolean(artwork.is_hidden)).length;
 

@@ -4,6 +4,7 @@ import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 import { revalidatePath } from 'next/cache';
 import { logAdminAction } from './admin-logs';
+import { sanitizeIlikeQuery } from '@/lib/utils/query';
 
 export type Exhibitor = {
   id: string; // profile id
@@ -59,7 +60,8 @@ export async function getExhibitors(filters?: {
   }
 
   if (filters?.query) {
-    query = query.or(`email.ilike.%${filters.query}%,name.ilike.%${filters.query}%`);
+    const q = sanitizeIlikeQuery(filters.query);
+    query = query.or(`email.ilike.%${q}%,name.ilike.%${q}%`);
   }
 
   const { data: profiles, error } = await query;
