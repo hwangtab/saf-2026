@@ -6,6 +6,7 @@ import {
   hasExhibitorApplication,
   needsExhibitorTermsConsent,
   needsPrivacyConsent,
+  needsTosConsent,
 } from '@/lib/auth/terms-consent';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { redirect } from 'next/navigation';
@@ -45,13 +46,15 @@ export default async function ExhibitorPendingPage() {
   const hasApplication = hasExhibitorApplication(application);
   const needsTermsConsent = needsExhibitorTermsConsent(application);
   const needsPrivacy = needsPrivacyConsent(application);
+  const needsTos = needsTosConsent(application);
 
-  if (needsTermsConsent || needsPrivacy) {
+  if (needsTermsConsent || needsPrivacy || needsTos) {
     redirect(
       buildTermsConsentPath({
         nextPath: '/exhibitor/pending',
         needsExhibitorConsent: needsTermsConsent,
         needsPrivacyConsent: needsPrivacy,
+        needsTosConsent: needsTos,
       })
     );
   }

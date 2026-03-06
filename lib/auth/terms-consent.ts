@@ -2,14 +2,15 @@ import {
   ARTIST_APPLICATION_TERMS_VERSION,
   EXHIBITOR_APPLICATION_TERMS_VERSION,
   PRIVACY_POLICY_VERSION,
+  TERMS_OF_SERVICE_VERSION,
 } from '@/lib/constants';
 import type { UserRole, UserStatus } from '@/types/database.types';
 
 export const ARTIST_APPLICATION_CONSENT_SELECT =
-  'artist_name, contact, bio, terms_version, terms_accepted_at, privacy_version, privacy_accepted_at' as const;
+  'artist_name, contact, bio, terms_version, terms_accepted_at, privacy_version, privacy_accepted_at, tos_version, tos_accepted_at' as const;
 
 export const EXHIBITOR_APPLICATION_CONSENT_SELECT =
-  'representative_name, contact, bio, terms_version, terms_accepted_at, privacy_version, privacy_accepted_at' as const;
+  'representative_name, contact, bio, terms_version, terms_accepted_at, privacy_version, privacy_accepted_at, tos_version, tos_accepted_at' as const;
 
 type NullableText = string | null | undefined;
 
@@ -21,6 +22,8 @@ export type ArtistApplicationTermsRecord = {
   terms_accepted_at?: NullableText;
   privacy_version?: NullableText;
   privacy_accepted_at?: NullableText;
+  tos_version?: NullableText;
+  tos_accepted_at?: NullableText;
 };
 
 export type ExhibitorApplicationTermsRecord = {
@@ -31,6 +34,8 @@ export type ExhibitorApplicationTermsRecord = {
   terms_accepted_at?: NullableText;
   privacy_version?: NullableText;
   privacy_accepted_at?: NullableText;
+  tos_version?: NullableText;
+  tos_accepted_at?: NullableText;
 };
 
 export function sanitizeInternalPath(nextPath: string | null | undefined, fallback = '/'): string {
@@ -111,11 +116,35 @@ export function needsPrivacyConsent(
   );
 }
 
+export function needsTosConsent(
+  application: ArtistApplicationTermsRecord | ExhibitorApplicationTermsRecord | null | undefined
+): boolean {
+  if (!application) return false;
+  return !hasAcceptedCurrentTerms(
+    application?.tos_version,
+    application?.tos_accepted_at,
+    TERMS_OF_SERVICE_VERSION
+  );
+}
+
+export function hasAllRequiredConsents(
+  application: ArtistApplicationTermsRecord | ExhibitorApplicationTermsRecord | null | undefined,
+  role: 'artist' | 'exhibitor'
+): boolean {
+  if (!application) return false;
+  const termsOk =
+    role === 'artist'
+      ? !needsArtistTermsConsent(application as ArtistApplicationTermsRecord)
+      : !needsExhibitorTermsConsent(application as ExhibitorApplicationTermsRecord);
+  return termsOk && !needsPrivacyConsent(application) && !needsTosConsent(application);
+}
+
 export function buildTermsConsentPath(input: {
   nextPath: string;
   needsArtistConsent?: boolean;
   needsExhibitorConsent?: boolean;
   needsPrivacyConsent?: boolean;
+  needsTosConsent?: boolean;
 }): string {
   const params = new URLSearchParams({
     next: sanitizeInternalPath(input.nextPath, '/'),
@@ -131,6 +160,10 @@ export function buildTermsConsentPath(input: {
 
   if (input.needsPrivacyConsent) {
     params.set('privacy', '1');
+  }
+
+  if (input.needsTosConsent) {
+    params.set('tos', '1');
   }
 
   return `/terms-consent?${params.toString()}`;

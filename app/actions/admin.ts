@@ -12,6 +12,7 @@ import {
 import { revalidatePath } from 'next/cache';
 import { logAdminAction } from './admin-logs';
 import { UserRole } from '@/types/database.types';
+import { hasAllRequiredConsents } from '@/lib/auth/terms-consent';
 
 export type AdminActionState = {
   message: string;
@@ -206,9 +207,15 @@ export async function promoteUserToArtistWithLink({
 
     const { data: application } = await supabase
       .from('artist_applications')
-      .select('artist_name, contact, bio')
+      .select(
+        'artist_name, contact, bio, terms_version, terms_accepted_at, privacy_version, privacy_accepted_at, tos_version, tos_accepted_at'
+      )
       .eq('user_id', userId)
       .maybeSingle();
+
+    if (application && !hasAllRequiredConsents(application, 'artist')) {
+      return { message: '동의가 완료되지 않은 사용자입니다.', error: true };
+    }
 
     const parsedContact = parseApplicationContact(application?.contact || null);
     const fallbackEmail = normalizeEmail(profile?.email || null);
@@ -478,9 +485,29 @@ export async function approveUser(userId: string): Promise<AdminActionState> {
 
     const { data: application } = await supabase
       .from('artist_applications')
-      .select('artist_name, contact, bio')
+      .select(
+        'artist_name, contact, bio, terms_version, terms_accepted_at, privacy_version, privacy_accepted_at, tos_version, tos_accepted_at'
+      )
       .eq('user_id', userId)
       .maybeSingle();
+
+    if (
+      !application?.artist_name?.trim() ||
+      !application?.contact?.trim() ||
+      !application?.bio?.trim()
+    ) {
+      return {
+        message: '아티스트 신청서가 제출되지 않아 승인할 수 없습니다.',
+        error: true,
+      };
+    }
+
+    if (!hasAllRequiredConsents(application, 'artist')) {
+      return {
+        message: '동의가 완료되지 않은 사용자입니다.',
+        error: true,
+      };
+    }
 
     const parsedContact = parseApplicationContact(application?.contact || null);
 
@@ -658,6 +685,8 @@ export async function reactivateUser(userId: string): Promise<AdminActionState> 
 
     if (beforeProfileError) throw beforeProfileError;
 
+    // 동의 guard 없음: 재활성화는 정지 해제일 뿐, 새 권한 부여가 아님.
+    // 동의 미완 사용자도 재활성화 후 로그인 시 /terms-consent로 리디렉트되어 자연 동의 수집됨.
     const { data: afterProfile, error } = await supabase
       .from('profiles')
       .update({ status: 'active' })
@@ -726,12 +755,20 @@ export async function updateUserRole(userId: string, role: UserRole): Promise<Ad
       artist_name: string | null;
       contact: string | null;
       bio: string | null;
+      terms_version?: string | null;
+      terms_accepted_at?: string | null;
+      privacy_version?: string | null;
+      privacy_accepted_at?: string | null;
+      tos_version?: string | null;
+      tos_accepted_at?: string | null;
     } | null = null;
 
     if (role === 'artist') {
       const { data: applicationData, error: applicationError } = await supabase
         .from('artist_applications')
-        .select('artist_name, contact, bio')
+        .select(
+          'artist_name, contact, bio, terms_version, terms_accepted_at, privacy_version, privacy_accepted_at, tos_version, tos_accepted_at'
+        )
         .eq('user_id', userId)
         .maybeSingle();
 
@@ -739,6 +776,26 @@ export async function updateUserRole(userId: string, role: UserRole): Promise<Ad
       // If lookup fails or no row exists, fall back to profile-based defaults.
       if (!applicationError) {
         application = applicationData;
+      }
+
+      if (application && !hasAllRequiredConsents(application, 'artist')) {
+        return { message: '동의가 완료되지 않은 사용자입니다.', error: true };
+      }
+    } else if (role === 'exhibitor') {
+      const { data: exhibitorApp, error: exhibitorAppError } = await supabase
+        .from('exhibitor_applications')
+        .select(
+          'representative_name, contact, bio, terms_version, terms_accepted_at, privacy_version, privacy_accepted_at, tos_version, tos_accepted_at'
+        )
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      if (
+        !exhibitorAppError &&
+        exhibitorApp &&
+        !hasAllRequiredConsents(exhibitorApp, 'exhibitor')
+      ) {
+        return { message: '동의가 완료되지 않은 사용자입니다.', error: true };
       }
     }
 

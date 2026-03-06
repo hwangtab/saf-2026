@@ -5,6 +5,7 @@ import {
   ARTIST_APPLICATION_TERMS_VERSION,
   EXHIBITOR_APPLICATION_TERMS_VERSION,
   PRIVACY_POLICY_VERSION,
+  TERMS_OF_SERVICE_VERSION,
 } from '@/lib/constants';
 import { requireAuth } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
@@ -16,6 +17,7 @@ import {
   needsArtistTermsConsent,
   needsExhibitorTermsConsent,
   needsPrivacyConsent,
+  needsTosConsent,
   resolvePostLoginPath,
   sanitizeInternalPath,
   type ArtistApplicationTermsRecord,
@@ -84,8 +86,10 @@ export async function submitTermsConsent(
   const needsPrivacy =
     needsPrivacyConsent(status.artistApplication) ||
     needsPrivacyConsent(status.exhibitorApplication);
+  const needsTos =
+    needsTosConsent(status.artistApplication) || needsTosConsent(status.exhibitorApplication);
 
-  if (!needsArtistConsent && !needsExhibitorConsent && !needsPrivacy) {
+  if (!needsArtistConsent && !needsExhibitorConsent && !needsPrivacy && !needsTos) {
     redirect(
       resolvePostLoginPath({
         role: status.profileRole,
@@ -99,9 +103,11 @@ export async function submitTermsConsent(
   const artistAgreed = formData.get('agree_artist') === 'on';
   const exhibitorAgreed = formData.get('agree_exhibitor') === 'on';
   const privacyAgreed = formData.get('agree_privacy') === 'on';
+  const tosAgreed = formData.get('agree_tos') === 'on';
   const artistTermsReadComplete = formData.get('artist_terms_read_complete') === '1';
   const exhibitorTermsReadComplete = formData.get('exhibitor_terms_read_complete') === '1';
   const privacyReadComplete = formData.get('privacy_read_complete') === '1';
+  const tosReadComplete = formData.get('tos_read_complete') === '1';
 
   if (needsArtistConsent && !artistAgreed) {
     return { message: '전시·판매위탁 계약서 동의가 필요합니다.', error: true };
@@ -127,13 +133,24 @@ export async function submitTermsConsent(
     return { message: '개인정보처리방침 전문을 끝까지 확인해주세요.', error: true };
   }
 
+  if (needsTos && !tosAgreed) {
+    return { message: '이용약관 동의가 필요합니다.', error: true };
+  }
+
+  if (needsTos && !tosReadComplete) {
+    return { message: '이용약관 전문을 끝까지 확인해주세요.', error: true };
+  }
+
   const requestMetadata = await getRequestMetadata();
   const acceptedAt = new Date().toISOString();
   const supabase = await createSupabaseServerClient();
 
   const updates: Promise<{ target: string; error: unknown }>[] = [];
 
-  if (hasArtistApplication(status.artistApplication) && (needsArtistConsent || needsPrivacy)) {
+  if (
+    hasArtistApplication(status.artistApplication) &&
+    (needsArtistConsent || needsPrivacy || needsTos)
+  ) {
     updates.push(
       (async () => {
         const updateData: Record<string, string | null> = { updated_at: acceptedAt };
@@ -147,6 +164,10 @@ export async function submitTermsConsent(
           updateData.privacy_version = PRIVACY_POLICY_VERSION;
           updateData.privacy_accepted_at = acceptedAt;
         }
+        if (needsTos) {
+          updateData.tos_version = TERMS_OF_SERVICE_VERSION;
+          updateData.tos_accepted_at = acceptedAt;
+        }
         const { error } = await supabase
           .from('artist_applications')
           .update(updateData)
@@ -158,7 +179,7 @@ export async function submitTermsConsent(
 
   if (
     hasExhibitorApplication(status.exhibitorApplication) &&
-    (needsExhibitorConsent || needsPrivacy)
+    (needsExhibitorConsent || needsPrivacy || needsTos)
   ) {
     updates.push(
       (async () => {
@@ -172,6 +193,10 @@ export async function submitTermsConsent(
         if (needsPrivacy) {
           updateData.privacy_version = PRIVACY_POLICY_VERSION;
           updateData.privacy_accepted_at = acceptedAt;
+        }
+        if (needsTos) {
+          updateData.tos_version = TERMS_OF_SERVICE_VERSION;
+          updateData.tos_accepted_at = acceptedAt;
         }
         const { error } = await supabase
           .from('exhibitor_applications')

@@ -2,7 +2,11 @@
 
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { requireAuth } from '@/lib/auth/guards';
-import { EXHIBITOR_APPLICATION_TERMS_VERSION, PRIVACY_POLICY_VERSION } from '@/lib/constants';
+import {
+  EXHIBITOR_APPLICATION_TERMS_VERSION,
+  PRIVACY_POLICY_VERSION,
+  TERMS_OF_SERVICE_VERSION,
+} from '@/lib/constants';
 import { redirect } from 'next/navigation';
 import { logExhibitorAction } from './admin-logs';
 import { getRequestMetadata } from './request-metadata';
@@ -84,6 +88,8 @@ export async function submitExhibitorApplication(
         terms_accepted_user_agent: requestMetadata.userAgent,
         privacy_version: PRIVACY_POLICY_VERSION,
         privacy_accepted_at: now,
+        tos_version: TERMS_OF_SERVICE_VERSION,
+        tos_accepted_at: now,
         updated_at: now,
       },
       { onConflict: 'user_id' }

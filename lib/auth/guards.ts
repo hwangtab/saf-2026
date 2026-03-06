@@ -11,6 +11,7 @@ import {
   needsArtistTermsConsent,
   needsExhibitorTermsConsent,
   needsPrivacyConsent,
+  needsTosConsent,
 } from './terms-consent';
 
 const getAuthUserContext = cache(async () => {
@@ -77,12 +78,14 @@ export const requireArtistActive = cache(async function requireArtistActive() {
 
     const needsTerms = needsArtistTermsConsent(application);
     const needsPrivacy = needsPrivacyConsent(application);
-    if (needsTerms || needsPrivacy) {
+    const needsTos = needsTosConsent(application);
+    if (needsTerms || needsPrivacy || needsTos) {
       redirect(
         buildTermsConsentPath({
           nextPath: profile.status === 'active' ? '/dashboard/artworks' : '/dashboard/pending',
           needsArtistConsent: needsTerms,
           needsPrivacyConsent: needsPrivacy,
+          needsTosConsent: needsTos,
         })
       );
     }
@@ -166,12 +169,14 @@ export const requireExhibitor = cache(async function requireExhibitor() {
 
   const needsTerms = needsExhibitorTermsConsent(application);
   const needsPrivacy = needsPrivacyConsent(application);
-  if (needsTerms || needsPrivacy) {
+  const needsTos = needsTosConsent(application);
+  if (needsTerms || needsPrivacy || needsTos) {
     redirect(
       buildTermsConsentPath({
         nextPath: profile.status === 'active' ? '/exhibitor' : '/exhibitor/pending',
         needsExhibitorConsent: needsTerms,
         needsPrivacyConsent: needsPrivacy,
+        needsTosConsent: needsTos,
       })
     );
   }

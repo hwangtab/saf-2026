@@ -7,7 +7,11 @@ import { LegalDocumentContent } from '@/components/auth/LegalDocumentContent';
 import { submitArtistApplication, type OnboardingState } from '@/app/actions/onboarding';
 import { CheckMarkIcon } from '@/components/ui/Icons';
 import { ARTIST_APPLICATION_TERMS_VERSION } from '@/lib/constants';
-import { ARTIST_APPLICATION_TERMS_DOCUMENT, PRIVACY_POLICY_DOCUMENT } from '@/lib/legal-documents';
+import {
+  ARTIST_APPLICATION_TERMS_DOCUMENT,
+  PRIVACY_POLICY_DOCUMENT,
+  TERMS_OF_SERVICE_DOCUMENT,
+} from '@/lib/legal-documents';
 
 const initialState: OnboardingState = {
   message: '',
@@ -147,6 +151,20 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
           </div>
 
           <div>
+            <p id="tos-heading" className="mb-2 text-xs font-semibold text-gray-700">
+              이용약관 전문
+            </p>
+            <div
+              className="max-h-80 overflow-y-auto rounded-md border border-gray-200 bg-white p-3"
+              tabIndex={0}
+              role="region"
+              aria-labelledby="tos-heading"
+            >
+              <LegalDocumentContent document={TERMS_OF_SERVICE_DOCUMENT} />
+            </div>
+          </div>
+
+          <div>
             <p id="privacy-policy-heading" className="mb-2 text-xs font-semibold text-gray-700">
               개인정보처리방침 전문
             </p>
@@ -174,7 +192,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
           />
           <div className="text-sm">
             <label htmlFor="terms_accepted" className="font-medium text-gray-700">
-              전시·판매위탁 계약서 및 개인정보처리방침에 동의합니다.{' '}
+              전시·판매위탁 계약서, 이용약관 및 개인정보처리방침에 동의합니다.{' '}
               <span className="text-red-500">*</span>
             </label>
             <p className="mt-1 text-gray-500">계약서 전문을 읽어야 체크할 수 있습니다.</p>
@@ -182,6 +200,10 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
               계약서 원문:{' '}
               <Link href="/terms/artist" className="underline underline-offset-2">
                 전시·판매위탁 계약서
+              </Link>{' '}
+              /{' '}
+              <Link href="/terms" className="underline underline-offset-2">
+                이용약관
               </Link>{' '}
               /{' '}
               <Link href="/privacy" className="underline underline-offset-2">

@@ -10,6 +10,7 @@ import {
   needsArtistTermsConsent,
   needsExhibitorTermsConsent,
   needsPrivacyConsent,
+  needsTosConsent,
   resolvePostLoginPath,
   sanitizeInternalPath,
 } from '@/lib/auth/terms-consent';
@@ -64,10 +65,11 @@ export default async function TermsConsentPage({
   const needsExhibitorConsent = needsExhibitorTermsConsent(exhibitorApplication);
   const needsPrivacy =
     needsPrivacyConsent(artistApplication) || needsPrivacyConsent(exhibitorApplication);
+  const needsTos = needsTosConsent(artistApplication) || needsTosConsent(exhibitorApplication);
   const hasArtist = hasArtistApplication(artistApplication);
   const hasExhibitor = hasExhibitorApplication(exhibitorApplication);
 
-  if (!needsArtistConsent && !needsExhibitorConsent && !needsPrivacy) {
+  if (!needsArtistConsent && !needsExhibitorConsent && !needsPrivacy && !needsTos) {
     redirect(
       resolvePostLoginPath({
         role: profile?.role,
@@ -93,10 +95,11 @@ export default async function TermsConsentPage({
     needsArtistConsent,
     needsExhibitorConsent,
     needsPrivacyConsent: needsPrivacy,
+    needsTosConsent: needsTos,
   });
 
   const headingText =
-    needsArtistConsent || needsExhibitorConsent
+    needsArtistConsent || needsExhibitorConsent || needsTos
       ? '계약 재동의가 필요합니다'
       : '개인정보처리방침 재동의가 필요합니다';
 
@@ -119,6 +122,7 @@ export default async function TermsConsentPage({
             needsArtistConsent={needsArtistConsent}
             needsExhibitorConsent={needsExhibitorConsent}
             needsPrivacyConsent={needsPrivacy}
+            needsTosConsent={needsTos}
           />
         </div>
       </div>

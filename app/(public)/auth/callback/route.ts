@@ -9,6 +9,7 @@ import {
   needsArtistTermsConsent,
   needsExhibitorTermsConsent,
   needsPrivacyConsent,
+  needsTosConsent,
 } from '@/lib/auth/terms-consent';
 
 export async function GET(request: NextRequest) {
@@ -50,6 +51,7 @@ export async function GET(request: NextRequest) {
           const hasApplication = hasExhibitorApplication(application);
           const needsTermsConsent = needsExhibitorTermsConsent(application);
           const needsPrivacy = needsPrivacyConsent(application);
+          const needsTos = needsTosConsent(application);
 
           if (profile.status === 'suspended') {
             return NextResponse.redirect(`${origin}/exhibitor/suspended`);
@@ -59,11 +61,12 @@ export async function GET(request: NextRequest) {
             return NextResponse.redirect(
               hasApplication
                 ? `${origin}${
-                    needsTermsConsent || needsPrivacy
+                    needsTermsConsent || needsPrivacy || needsTos
                       ? buildTermsConsentPath({
                           nextPath: '/exhibitor',
                           needsExhibitorConsent: needsTermsConsent,
                           needsPrivacyConsent: needsPrivacy,
+                          needsTosConsent: needsTos,
                         })
                       : '/exhibitor'
                   }`
@@ -74,11 +77,12 @@ export async function GET(request: NextRequest) {
           return NextResponse.redirect(
             hasApplication
               ? `${origin}${
-                  needsTermsConsent || needsPrivacy
+                  needsTermsConsent || needsPrivacy || needsTos
                     ? buildTermsConsentPath({
                         nextPath: '/exhibitor/pending',
                         needsExhibitorConsent: needsTermsConsent,
                         needsPrivacyConsent: needsPrivacy,
+                        needsTosConsent: needsTos,
                       })
                     : '/exhibitor/pending'
                 }`
@@ -96,16 +100,18 @@ export async function GET(request: NextRequest) {
           const hasApplication = hasArtistApplication(application);
           const needsTermsConsent = needsArtistTermsConsent(application);
           const needsPrivacy = needsPrivacyConsent(application);
+          const needsTos = needsTosConsent(application);
 
           if (profile.status === 'active') {
             return NextResponse.redirect(
               hasApplication
                 ? `${origin}${
-                    needsTermsConsent || needsPrivacy
+                    needsTermsConsent || needsPrivacy || needsTos
                       ? buildTermsConsentPath({
                           nextPath: '/dashboard/artworks',
                           needsArtistConsent: needsTermsConsent,
                           needsPrivacyConsent: needsPrivacy,
+                          needsTosConsent: needsTos,
                         })
                       : '/dashboard/artworks'
                   }`
@@ -117,11 +123,12 @@ export async function GET(request: NextRequest) {
             return NextResponse.redirect(
               hasApplication
                 ? `${origin}${
-                    needsTermsConsent || needsPrivacy
+                    needsTermsConsent || needsPrivacy || needsTos
                       ? buildTermsConsentPath({
                           nextPath: '/dashboard/pending',
                           needsArtistConsent: needsTermsConsent,
                           needsPrivacyConsent: needsPrivacy,
+                          needsTosConsent: needsTos,
                         })
                       : '/dashboard/pending'
                   }`
@@ -153,13 +160,15 @@ export async function GET(request: NextRequest) {
           if (hasExhibitorApplicationData) {
             const needsExhibitorConsent = needsExhibitorTermsConsent(exhibitorApplication);
             const needsExhibitorPrivacy = needsPrivacyConsent(exhibitorApplication);
+            const needsExhibitorTos = needsTosConsent(exhibitorApplication);
             return NextResponse.redirect(
               `${origin}${
-                needsExhibitorConsent || needsExhibitorPrivacy
+                needsExhibitorConsent || needsExhibitorPrivacy || needsExhibitorTos
                   ? buildTermsConsentPath({
                       nextPath: '/exhibitor/pending',
                       needsExhibitorConsent,
                       needsPrivacyConsent: needsExhibitorPrivacy,
+                      needsTosConsent: needsExhibitorTos,
                     })
                   : '/exhibitor/pending'
               }`
@@ -169,13 +178,15 @@ export async function GET(request: NextRequest) {
           if (hasArtistApplicationData) {
             const needsArtistConsent = needsArtistTermsConsent(artistApplication);
             const needsArtistPrivacy = needsPrivacyConsent(artistApplication);
+            const needsArtistTos = needsTosConsent(artistApplication);
             return NextResponse.redirect(
               `${origin}${
-                needsArtistConsent || needsArtistPrivacy
+                needsArtistConsent || needsArtistPrivacy || needsArtistTos
                   ? buildTermsConsentPath({
                       nextPath: '/dashboard/pending',
                       needsArtistConsent,
                       needsPrivacyConsent: needsArtistPrivacy,
+                      needsTosConsent: needsArtistTos,
                     })
                   : '/dashboard/pending'
               }`

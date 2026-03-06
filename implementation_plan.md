@@ -1,53 +1,112 @@
-# 관리자 작품 데이터 일괄 다운로드 기능 구현 계획서
+# Cafe24 판매/매출 블라인드스팟 개선 실행 계획
 
-## 1) 목표
+## 1) 목적
 
-- 관리자 작품 관리 화면에서 작품 데이터를 한 번에 전체 다운로드할 수 있게 한다.
-- CSV로 `작가명, 작품명, 이미지, 재료, 년도, 가격`을 포함한 확장 정보를 제공한다.
-- 이미지 파일 원본은 CSV에 담을 수 없으므로 이미지 URL 형태로 제공한다.
+운영 중 재발한 핵심 리스크(중복 삽입, 커서 정지, 취소/환불 미반영, 배치 부분성공 불일치)를 제거하고,
+`artwork_sales` 기반 집계/재고/판매상태를 일관되게 유지한다.
 
-## 2) 확정 요구사항
+## 2) 우선순위(치명 → 높음 → 중간)
 
-1. 다운로드 범위는 `전체 작품`만 지원한다.
-2. 작품 관리 페이지에서 버튼으로 바로 다운로드할 수 있어야 한다.
-3. 필수 컬럼은 `작가, 작품명, 이미지, 재료, 년도, 가격`을 포함한다.
-4. 이미지 파일 자체가 아니라 URL로 제공한다는 점을 명확히 유지한다.
+### 치명
 
-## 3) 구현 범위
+1. CSV 재구축 스크립트 재실행 시 중복 삽입 방지(멱등성)
+2. Cafe24 주문 일부 실패 시 전체 커서 정지 방지
 
-### 포함
+### 높음
 
-- `app/admin/artworks/export/route.ts` 신규 추가 (관리자 전용 CSV 다운로드)
-- `app/admin/artworks/page.tsx` 헤더 액션에 다운로드 버튼 추가
-- `artworks + artists` 조인으로 확장 컬럼 CSV 구성
-- 다운로드 실행 시 관리자 활동 로그 기록
+3. 취소/환불 주문의 역동기화(void 처리) 반영
+4. 관리자 배치 상태/숨김 변경 시 실패 ID DB 롤백
 
-### 제외
+### 중간
 
-- 이미지 바이너리(zip) 일괄 다운로드
-- 필터별/검색결과별 부분 다운로드
-- 엑셀(xlsx) 별도 포맷
+5. legacy cafe24(외부 주문키 없는 이관분) 추적성 강화
+6. CSV no_match(alias) 운영 가드 강화
 
-## 4) 구현 단계
+## 3) 구현 상세
 
-1. 관리자 권한 검증 포함 export 라우트 구현
-2. CSV 컬럼 설계 및 이미지 URL 컬럼 구성
-3. 작품 관리 헤더 영역에 다운로드 버튼 배치
-4. 활동 로그 기록 추가
-5. lint/type-check 검증 수행
+### 3-1) 치명-1: CSV 멱등성
+
+- 대상: `scripts/rebuild-sales-source-from-csv.js`
+- DB 컬럼 추가
+  - `artwork_sales.import_batch_id text`
+  - `artwork_sales.import_row_no integer`
+  - unique constraint: `(import_batch_id, import_row_no)`
+- 스크립트 변경
+  - `--apply` 실행 시 `--import-id` 필수
+  - insert → upsert(`onConflict: import_batch_id,import_row_no`)
+  - 동일 import-id 재실행 시 0 변경 보장
+
+### 3-2) 치명-2: 실패주문 큐 + 커서 전진
+
+- 대상: `lib/integrations/cafe24/sync-sales.ts`
+- DB 테이블 추가
+  - `cafe24_sales_sync_failed_orders` (mall_id, order_id PK, retry_count, last_error, resolved_at)
+- 로직 변경
+  - 주문 단위 실패는 큐에 적재(경고)하고 전체 실패로 승격하지 않음
+  - 다음 동기화에서 실패주문 우선 재시도
+  - 구조적 실패가 아니면 커서(`last_synced_paid_at`) 전진
+
+### 3-3) 높음-1: 취소/환불 역동기화
+
+- DB 컬럼 추가
+  - `artwork_sales.voided_at timestamptz`
+  - `artwork_sales.void_reason text`
+- 동기화 로직
+  - 취소/환불 상태 아이템 발견 시 기존 cafe24 판매 레코드 void 처리
+  - void 대상 작품은 상태/재고 재계산 수행
+- 집계 반영
+  - 매출/대시보드 집계에서 `voided_at IS NULL`만 포함
+
+### 3-4) 높음-2: 배치 변경 롤백
+
+- 대상: `app/actions/admin-artworks.ts`
+- 변경
+  - 배치 status/hidden 변경 후 Cafe24 sync 실행
+  - 실패한 ID만 before snapshot 기준 즉시 롤백
+  - 성공/실패 ID를 분리한 오류 메시지 반환
+
+### 3-5) 중간-1: legacy cafe24 추적 강화
+
+- `artwork_sales.source_detail` 컬럼 추가
+  - 값: `manual`, `manual_csv`, `cafe24_api`, `legacy_csv`
+- 백필
+  - `source='cafe24' AND external_order_item_code IS NULL` → `legacy_csv`
+  - API 동기화 insert는 `cafe24_api` 지정
+  - CSV 이관 insert는 `manual_csv/legacy_csv` 지정
+
+### 3-6) 중간-2: CSV 매칭 가드
+
+- 대상: `scripts/rebuild-sales-source-from-csv.js`
+- 변경
+  - alias 매핑 외부 파일화(운영 수정 가능)
+  - `--strict` 모드에서 unresolved 존재 시 apply 차단
+
+## 4) 마이그레이션 계획
+
+- 신규 SQL 1개로 일괄 반영:
+  - `artwork_sales` 확장(import/void/source_detail)
+  - unique/check/index 추가
+  - 실패주문 큐 테이블 생성
+  - legacy source_detail 백필
 
 ## 5) 검증 계획
 
-- 관리자 로그인 상태에서 `/admin/artworks/export` 다운로드 성공 확인
-- 비관리자/비로그인 접근 시 401/403 확인
-- CSV에 필수 컬럼(작가/작품명/이미지/재료/년도/가격) 포함 확인
-- 이미지 URL 컬럼이 정상 채워지는지 확인
-- `npm run lint`
-- `npm run type-check`
+1. `sales:rebuild-source:dry` 후 같은 import-id 2회 적용 시 건수/매출 불변
+2. Cafe24 sync에서 주문 1건 강제 실패 시:
+   - 전체 작업은 완료(경고)
+   - failed_orders 큐 적재
+   - 커서 전진 확인
+3. 취소/환불 케이스에서:
+   - 해당 row `voided_at` 설정
+   - 매출 집계 즉시 감소
+4. 배치 status/hidden 변경에서 일부 실패 시:
+   - 실패 ID만 원복
+   - 성공 ID만 유지
+5. `npm run lint`, `npm run type-check` 통과
 
-## 6) 완료 기준 (Definition of Done)
+## 6) 완료 기준
 
-1. 작품 관리 페이지에 전체 다운로드 버튼이 노출된다.
-2. 전체 작품 행이 CSV로 다운로드된다.
-3. 요청된 핵심 컬럼과 확장 정보가 포함된다.
-4. 정적 점검(lint/type-check)이 통과한다.
+- 동일 CSV 재적용으로 매출 뻥튀기가 재발하지 않는다.
+- 주문 일부 실패가 있어도 동기화 파이프라인이 멈추지 않는다.
+- 취소/환불이 매출/판매상태/재고에 반영된다.
+- 배치 조작에서 DB와 Cafe24 상태 불일치가 남지 않는다.

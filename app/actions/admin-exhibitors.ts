@@ -5,6 +5,7 @@ import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 import { revalidatePath } from 'next/cache';
 import { logAdminAction } from './admin-logs';
 import { sanitizeIlikeQuery } from '@/lib/utils/query';
+import { hasAllRequiredConsents } from '@/lib/auth/terms-consent';
 
 export type Exhibitor = {
   id: string; // profile id
@@ -126,7 +127,9 @@ export async function approveExhibitor(userId: string) {
 
   const { data: application } = await supabase
     .from('exhibitor_applications')
-    .select('representative_name, contact, bio')
+    .select(
+      'representative_name, contact, bio, terms_version, terms_accepted_at, privacy_version, privacy_accepted_at, tos_version, tos_accepted_at'
+    )
     .eq('user_id', userId)
     .maybeSingle();
 
@@ -137,6 +140,10 @@ export async function approveExhibitor(userId: string) {
 
   if (!hasApplication) {
     throw new Error('출품자 신청서가 제출되지 않아 승인할 수 없습니다.');
+  }
+
+  if (!hasAllRequiredConsents(application, 'exhibitor')) {
+    throw new Error('동의가 완료되지 않은 사용자입니다.');
   }
 
   const { error } = await supabase

@@ -9,6 +9,7 @@ import {
   needsArtistTermsConsent,
   needsExhibitorTermsConsent,
   needsPrivacyConsent,
+  needsTosConsent,
 } from '@/lib/auth/terms-consent';
 
 export default async function DashboardPage() {
@@ -46,6 +47,7 @@ export default async function DashboardPage() {
     const hasExhibitorApplicationData = hasExhibitorApplication(exhibitorApplication);
     const needsExhibitorConsent = needsExhibitorTermsConsent(exhibitorApplication);
     const needsExhibitorPrivacy = needsPrivacyConsent(exhibitorApplication);
+    const needsExhibitorTos = needsTosConsent(exhibitorApplication);
 
     if (profile.status === 'suspended') {
       redirect('/exhibitor/suspended');
@@ -54,11 +56,12 @@ export default async function DashboardPage() {
     if (profile.status === 'active') {
       redirect(
         hasExhibitorApplicationData
-          ? needsExhibitorConsent || needsExhibitorPrivacy
+          ? needsExhibitorConsent || needsExhibitorPrivacy || needsExhibitorTos
             ? buildTermsConsentPath({
                 nextPath: '/exhibitor',
                 needsExhibitorConsent: needsExhibitorConsent,
                 needsPrivacyConsent: needsExhibitorPrivacy,
+                needsTosConsent: needsExhibitorTos,
               })
             : '/exhibitor'
           : '/exhibitor/onboarding?recover=1'
@@ -67,11 +70,12 @@ export default async function DashboardPage() {
 
     redirect(
       hasExhibitorApplicationData
-        ? needsExhibitorConsent || needsExhibitorPrivacy
+        ? needsExhibitorConsent || needsExhibitorPrivacy || needsExhibitorTos
           ? buildTermsConsentPath({
               nextPath: '/exhibitor/pending',
               needsExhibitorConsent: needsExhibitorConsent,
               needsPrivacyConsent: needsExhibitorPrivacy,
+              needsTosConsent: needsExhibitorTos,
             })
           : '/exhibitor/pending'
         : '/exhibitor/onboarding'
@@ -92,15 +96,17 @@ export default async function DashboardPage() {
     const hasApplication = hasArtistApplication(application);
     const needsTermsConsent = needsArtistTermsConsent(application);
     const needsArtistPrivacy = needsPrivacyConsent(application);
+    const needsArtistTos = needsTosConsent(application);
 
     if (profile.status === 'active') {
       redirect(
         hasApplication
-          ? needsTermsConsent || needsArtistPrivacy
+          ? needsTermsConsent || needsArtistPrivacy || needsArtistTos
             ? buildTermsConsentPath({
                 nextPath: '/dashboard/artworks',
                 needsArtistConsent: needsTermsConsent,
                 needsPrivacyConsent: needsArtistPrivacy,
+                needsTosConsent: needsArtistTos,
               })
             : '/dashboard/artworks'
           : '/onboarding?recover=1'
@@ -110,11 +116,12 @@ export default async function DashboardPage() {
     if (profile.status === 'pending') {
       redirect(
         hasApplication
-          ? needsTermsConsent || needsArtistPrivacy
+          ? needsTermsConsent || needsArtistPrivacy || needsArtistTos
             ? buildTermsConsentPath({
                 nextPath: '/dashboard/pending',
                 needsArtistConsent: needsTermsConsent,
                 needsPrivacyConsent: needsArtistPrivacy,
+                needsTosConsent: needsArtistTos,
               })
             : '/dashboard/pending'
           : '/onboarding'
@@ -145,12 +152,14 @@ export default async function DashboardPage() {
     if (hasExhibitorApplicationData) {
       const needsExhibitorConsent = needsExhibitorTermsConsent(exhibitorApplication);
       const needsExhibitorPrivacy = needsPrivacyConsent(exhibitorApplication);
+      const needsExhibitorTos = needsTosConsent(exhibitorApplication);
       redirect(
-        needsExhibitorConsent || needsExhibitorPrivacy
+        needsExhibitorConsent || needsExhibitorPrivacy || needsExhibitorTos
           ? buildTermsConsentPath({
               nextPath: '/exhibitor/pending',
               needsExhibitorConsent: needsExhibitorConsent,
               needsPrivacyConsent: needsExhibitorPrivacy,
+              needsTosConsent: needsExhibitorTos,
             })
           : '/exhibitor/pending'
       );
@@ -159,12 +168,14 @@ export default async function DashboardPage() {
     if (hasArtistApplicationData) {
       const needsArtistConsent = needsArtistTermsConsent(artistApplication);
       const needsArtistPrivacy = needsPrivacyConsent(artistApplication);
+      const needsArtistTos = needsTosConsent(artistApplication);
       redirect(
-        needsArtistConsent || needsArtistPrivacy
+        needsArtistConsent || needsArtistPrivacy || needsArtistTos
           ? buildTermsConsentPath({
               nextPath: '/dashboard/pending',
               needsArtistConsent: needsArtistConsent,
               needsPrivacyConsent: needsArtistPrivacy,
+              needsTosConsent: needsArtistTos,
             })
           : '/dashboard/pending'
       );
