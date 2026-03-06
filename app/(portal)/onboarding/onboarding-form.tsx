@@ -1,9 +1,10 @@
 'use client';
 
-import { useActionState, useEffect, useRef, useState } from 'react';
+import { useActionState, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import { LegalDocumentContent } from '@/components/auth/LegalDocumentContent';
+import { IncompleteItemsModal, type IncompleteItem } from '@/components/ui/IncompleteItemsModal';
 import { submitArtistApplication, type OnboardingState } from '@/app/actions/onboarding';
 import { CheckMarkIcon } from '@/components/ui/Icons';
 import { ARTIST_APPLICATION_TERMS_VERSION } from '@/lib/constants';
@@ -28,10 +29,89 @@ type OnboardingDefaults = {
 export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDefaults }) {
   const [state, formAction, isPending] = useActionState(submitArtistApplication, initialState);
   const [hasReadTerms, setHasReadTerms] = useState(false);
+  const [hasReadTos, setHasReadTos] = useState(false);
+  const [hasReadPrivacy, setHasReadPrivacy] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [isIncompleteModalOpen, setIsIncompleteModalOpen] = useState(false);
   const termsContainerRef = useRef<HTMLDivElement>(null);
+  const tosContainerRef = useRef<HTMLDivElement>(null);
+  const privacyContainerRef = useRef<HTMLDivElement>(null);
+  const submitTriggerRef = useRef<HTMLElement | null>(null);
 
-  const canSubmit = hasReadTerms && termsAccepted && !isPending;
+  const canSubmit = hasReadTerms && hasReadTos && hasReadPrivacy && termsAccepted;
+  const incompleteItems = useMemo(() => {
+    const items: IncompleteItem[] = [];
+
+    if (!hasReadTerms) {
+      items.push({
+        label: '전시·판매위탁 계약서',
+        reason: '문서 하단까지 스크롤해주세요.',
+        targetId: 'artist-contract-section',
+      });
+    }
+
+    if (!hasReadTos) {
+      items.push({
+        label: '이용약관',
+        reason: '문서 하단까지 스크롤해주세요.',
+        targetId: 'artist-tos-section',
+      });
+    }
+
+    if (!hasReadPrivacy) {
+      items.push({
+        label: '개인정보처리방침',
+        reason: '문서 하단까지 스크롤해주세요.',
+        targetId: 'artist-privacy-section',
+      });
+    }
+
+    if (hasReadTerms && hasReadTos && hasReadPrivacy && !termsAccepted) {
+      items.push({
+        label: '약관/방침 동의',
+        reason: '동의 체크박스를 선택해주세요.',
+        targetId: 'artist-agreement-section',
+      });
+    }
+
+    return items;
+  }, [hasReadPrivacy, hasReadTerms, hasReadTos, termsAccepted]);
+
+  const handleCloseIncompleteModal = () => {
+    setIsIncompleteModalOpen(false);
+    const trigger = submitTriggerRef.current;
+    if (trigger) {
+      window.requestAnimationFrame(() => trigger.focus());
+    }
+  };
+
+  const handleSelectIncompleteItem = (item: IncompleteItem) => {
+    setIsIncompleteModalOpen(false);
+    if (!item.targetId) return;
+
+    const section = document.getElementById(item.targetId);
+    if (!section) return;
+
+    section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    window.requestAnimationFrame(() => {
+      const focusTarget =
+        section.querySelector<HTMLElement>('[role="region"]') ??
+        section.querySelector<HTMLElement>('input[type="checkbox"]:not([disabled])') ??
+        section.querySelector<HTMLElement>(
+          'input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+      focusTarget?.focus();
+    });
+  };
+
+  const handleSubmitAttempt = (event: React.FormEvent<HTMLFormElement>) => {
+    if (isPending || canSubmit) return;
+    event.preventDefault();
+    submitTriggerRef.current =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    setIsIncompleteModalOpen(true);
+  };
 
   const handleTermsScroll = (event: React.UIEvent<HTMLDivElement>) => {
     if (hasReadTerms) return;
@@ -39,6 +119,24 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
     const reachedBottom = target.scrollTop + target.clientHeight >= target.scrollHeight - 12;
     if (reachedBottom) {
       setHasReadTerms(true);
+    }
+  };
+
+  const handleTosScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    if (hasReadTos) return;
+    const target = event.currentTarget;
+    const reachedBottom = target.scrollTop + target.clientHeight >= target.scrollHeight - 12;
+    if (reachedBottom) {
+      setHasReadTos(true);
+    }
+  };
+
+  const handlePrivacyScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    if (hasReadPrivacy) return;
+    const target = event.currentTarget;
+    const reachedBottom = target.scrollTop + target.clientHeight >= target.scrollHeight - 12;
+    if (reachedBottom) {
+      setHasReadPrivacy(true);
     }
   };
 
@@ -50,6 +148,20 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
       ) {
         setHasReadTerms(true);
       }
+
+      if (
+        tosContainerRef.current &&
+        tosContainerRef.current.scrollHeight <= tosContainerRef.current.clientHeight + 1
+      ) {
+        setHasReadTos(true);
+      }
+
+      if (
+        privacyContainerRef.current &&
+        privacyContainerRef.current.scrollHeight <= privacyContainerRef.current.clientHeight + 1
+      ) {
+        setHasReadPrivacy(true);
+      }
     };
 
     checkScrollableState();
@@ -58,7 +170,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
   }, []);
 
   return (
-    <form action={formAction} className="space-y-6">
+    <form action={formAction} className="space-y-6" onSubmit={handleSubmitAttempt}>
       <div>
         <label htmlFor="artist_name" className="block text-sm font-medium text-gray-700">
           작가명 <span className="text-red-500">*</span>
@@ -126,18 +238,23 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
         </div>
       </div>
 
-      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+      <div
+        id="artist-onboarding-consent-section"
+        className="rounded-lg border border-gray-200 bg-gray-50 p-4"
+      >
         <input type="hidden" name="terms_version" value={ARTIST_APPLICATION_TERMS_VERSION} />
         <input type="hidden" name="terms_read_complete" value={hasReadTerms ? '1' : '0'} />
+        <input type="hidden" name="tos_read_complete" value={hasReadTos ? '1' : '0'} />
+        <input type="hidden" name="privacy_read_complete" value={hasReadPrivacy ? '1' : '0'} />
 
         <div className="space-y-3">
-          <div>
+          <div id="artist-contract-section">
             <p id="artist-terms-heading" className="mb-2 text-xs font-semibold text-gray-700">
               전시·판매위탁 계약서 전문
             </p>
             <div
               ref={termsContainerRef}
-              className="max-h-80 overflow-y-auto rounded-md border border-gray-200 bg-white p-3"
+              className="max-h-[52vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[65vh]"
               onScroll={handleTermsScroll}
               tabIndex={0}
               role="region"
@@ -150,44 +267,53 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
             )}
           </div>
 
-          <div>
+          <div id="artist-tos-section">
             <p id="tos-heading" className="mb-2 text-xs font-semibold text-gray-700">
               이용약관 전문
             </p>
             <div
-              className="max-h-80 overflow-y-auto rounded-md border border-gray-200 bg-white p-3"
+              ref={tosContainerRef}
+              className="max-h-[52vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[65vh]"
+              onScroll={handleTosScroll}
               tabIndex={0}
               role="region"
               aria-labelledby="tos-heading"
             >
               <LegalDocumentContent document={TERMS_OF_SERVICE_DOCUMENT} />
             </div>
+            {!hasReadTos && (
+              <p className="mt-1 text-xs text-amber-700">문서 하단까지 스크롤해주세요.</p>
+            )}
           </div>
 
-          <div>
+          <div id="artist-privacy-section">
             <p id="privacy-policy-heading" className="mb-2 text-xs font-semibold text-gray-700">
               개인정보처리방침 전문
             </p>
             <div
-              className="max-h-80 overflow-y-auto rounded-md border border-gray-200 bg-white p-3"
+              ref={privacyContainerRef}
+              className="max-h-[52vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[65vh]"
+              onScroll={handlePrivacyScroll}
               tabIndex={0}
               role="region"
               aria-labelledby="privacy-policy-heading"
             >
               <LegalDocumentContent document={PRIVACY_POLICY_DOCUMENT} />
             </div>
+            {!hasReadPrivacy && (
+              <p className="mt-1 text-xs text-amber-700">문서 하단까지 스크롤해주세요.</p>
+            )}
           </div>
         </div>
 
-        <div className="mt-4 flex items-start gap-3">
+        <div id="artist-agreement-section" className="mt-4 flex items-start gap-3">
           <input
             id="terms_accepted"
             name="terms_accepted"
             type="checkbox"
-            required
             checked={termsAccepted}
             onChange={(event) => setTermsAccepted(event.target.checked)}
-            disabled={!hasReadTerms}
+            disabled={!(hasReadTerms && hasReadTos && hasReadPrivacy)}
             className="mt-1 h-4 w-4 rounded border-gray-300 text-black focus:ring-black"
           />
           <div className="text-sm">
@@ -223,11 +349,19 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
               제출 완료
             </p>
           )}
-          <Button type="submit" loading={isPending} disabled={!canSubmit} variant="secondary">
+          <Button type="submit" loading={isPending} disabled={isPending} variant="secondary">
             제출하기
           </Button>
         </div>
       </div>
+      <IncompleteItemsModal
+        isOpen={isIncompleteModalOpen}
+        onClose={handleCloseIncompleteModal}
+        title="아직 완료되지 않은 항목이 있어요"
+        description="아래 항목을 완료하면 제출할 수 있습니다."
+        items={incompleteItems}
+        onSelectItem={handleSelectIncompleteItem}
+      />
     </form>
   );
 }

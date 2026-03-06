@@ -1,10 +1,17 @@
 'use client';
 
 import Link from 'next/link';
-import { useActionState, useEffect, useRef, useState } from 'react';
+import { useActionState, useEffect, useMemo, useRef, useState } from 'react';
 import Button from '@/components/ui/Button';
 import { LegalDocumentContent } from '@/components/auth/LegalDocumentContent';
+import { IncompleteItemsModal, type IncompleteItem } from '@/components/ui/IncompleteItemsModal';
 import { submitTermsConsent, type TermsConsentState } from '@/app/actions/terms-consent';
+import {
+  ARTIST_APPLICATION_TERMS_VERSION,
+  EXHIBITOR_APPLICATION_TERMS_VERSION,
+  PRIVACY_POLICY_VERSION,
+  TERMS_OF_SERVICE_VERSION,
+} from '@/lib/constants';
 import {
   ARTIST_APPLICATION_TERMS_DOCUMENT,
   EXHIBITOR_APPLICATION_TERMS_DOCUMENT,
@@ -41,16 +48,137 @@ export function TermsConsentForm({
   const [exhibitorAgreed, setExhibitorAgreed] = useState(false);
   const [privacyAgreed, setPrivacyAgreed] = useState(false);
   const [tosAgreed, setTosAgreed] = useState(false);
+  const [isIncompleteModalOpen, setIsIncompleteModalOpen] = useState(false);
   const artistTermsContainerRef = useRef<HTMLDivElement>(null);
   const exhibitorTermsContainerRef = useRef<HTMLDivElement>(null);
   const privacyContainerRef = useRef<HTMLDivElement>(null);
   const tosContainerRef = useRef<HTMLDivElement>(null);
+  const submitTriggerRef = useRef<HTMLElement | null>(null);
 
   const artistReady = !needsArtistConsent || (hasReadArtistTerms && artistAgreed);
   const exhibitorReady = !needsExhibitorConsent || (hasReadExhibitorTerms && exhibitorAgreed);
   const privacyReady = !needsPrivacyConsent || (hasReadPrivacy && privacyAgreed);
   const tosReady = !needsTosConsent || (hasReadTos && tosAgreed);
-  const canSubmit = artistReady && exhibitorReady && privacyReady && tosReady && !isPending;
+  const canSubmit = artistReady && exhibitorReady && privacyReady && tosReady;
+
+  const incompleteItems = useMemo(() => {
+    const items: IncompleteItem[] = [];
+
+    if (needsArtistConsent) {
+      if (!hasReadArtistTerms) {
+        items.push({
+          label: '전시·판매위탁 계약서',
+          reason: '문서 하단까지 스크롤해주세요.',
+          targetId: 'artist-consent-section',
+        });
+      } else if (!artistAgreed) {
+        items.push({
+          label: '전시·판매위탁 계약서',
+          reason: '동의 체크박스를 선택해주세요.',
+          targetId: 'artist-consent-section',
+        });
+      }
+    }
+
+    if (needsExhibitorConsent) {
+      if (!hasReadExhibitorTerms) {
+        items.push({
+          label: '출품자 전시위탁 계약서',
+          reason: '문서 하단까지 스크롤해주세요.',
+          targetId: 'exhibitor-consent-section',
+        });
+      } else if (!exhibitorAgreed) {
+        items.push({
+          label: '출품자 전시위탁 계약서',
+          reason: '동의 체크박스를 선택해주세요.',
+          targetId: 'exhibitor-consent-section',
+        });
+      }
+    }
+
+    if (needsPrivacyConsent) {
+      if (!hasReadPrivacy) {
+        items.push({
+          label: '개인정보처리방침',
+          reason: '문서 하단까지 스크롤해주세요.',
+          targetId: 'privacy-consent-section',
+        });
+      } else if (!privacyAgreed) {
+        items.push({
+          label: '개인정보처리방침',
+          reason: '동의 체크박스를 선택해주세요.',
+          targetId: 'privacy-consent-section',
+        });
+      }
+    }
+
+    if (needsTosConsent) {
+      if (!hasReadTos) {
+        items.push({
+          label: '이용약관',
+          reason: '문서 하단까지 스크롤해주세요.',
+          targetId: 'tos-consent-section',
+        });
+      } else if (!tosAgreed) {
+        items.push({
+          label: '이용약관',
+          reason: '동의 체크박스를 선택해주세요.',
+          targetId: 'tos-consent-section',
+        });
+      }
+    }
+
+    return items;
+  }, [
+    artistAgreed,
+    exhibitorAgreed,
+    hasReadArtistTerms,
+    hasReadExhibitorTerms,
+    hasReadPrivacy,
+    hasReadTos,
+    needsArtistConsent,
+    needsExhibitorConsent,
+    needsPrivacyConsent,
+    needsTosConsent,
+    privacyAgreed,
+    tosAgreed,
+  ]);
+
+  const handleCloseIncompleteModal = () => {
+    setIsIncompleteModalOpen(false);
+    const trigger = submitTriggerRef.current;
+    if (trigger) {
+      window.requestAnimationFrame(() => trigger.focus());
+    }
+  };
+
+  const handleSelectIncompleteItem = (item: IncompleteItem) => {
+    setIsIncompleteModalOpen(false);
+    if (!item.targetId) return;
+
+    const section = document.getElementById(item.targetId);
+    if (!section) return;
+
+    section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    window.requestAnimationFrame(() => {
+      const focusTarget =
+        section.querySelector<HTMLElement>('[role="region"]') ??
+        section.querySelector<HTMLElement>('input[type="checkbox"]:not([disabled])') ??
+        section.querySelector<HTMLElement>(
+          'input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+      focusTarget?.focus();
+    });
+  };
+
+  const handleSubmitAttempt = (event: React.FormEvent<HTMLFormElement>) => {
+    if (isPending || canSubmit) return;
+    event.preventDefault();
+    submitTriggerRef.current =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    setIsIncompleteModalOpen(true);
+  };
 
   const handleArtistTermsScroll = (event: React.UIEvent<HTMLDivElement>) => {
     if (hasReadArtistTerms) return;
@@ -127,7 +255,7 @@ export function TermsConsentForm({
   }, []);
 
   return (
-    <form action={formAction} className="space-y-5">
+    <form action={formAction} className="space-y-5" onSubmit={handleSubmitAttempt}>
       <input type="hidden" name="next_path" value={nextPath} />
       <input
         type="hidden"
@@ -139,17 +267,28 @@ export function TermsConsentForm({
         name="exhibitor_terms_read_complete"
         value={hasReadExhibitorTerms ? '1' : '0'}
       />
+      <input type="hidden" name="artist_terms_version" value={ARTIST_APPLICATION_TERMS_VERSION} />
+      <input
+        type="hidden"
+        name="exhibitor_terms_version"
+        value={EXHIBITOR_APPLICATION_TERMS_VERSION}
+      />
       <input type="hidden" name="privacy_read_complete" value={hasReadPrivacy ? '1' : '0'} />
+      <input type="hidden" name="privacy_version" value={PRIVACY_POLICY_VERSION} />
       <input type="hidden" name="tos_read_complete" value={hasReadTos ? '1' : '0'} />
+      <input type="hidden" name="tos_version" value={TERMS_OF_SERVICE_VERSION} />
 
       {needsArtistConsent && (
-        <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+        <div
+          id="artist-consent-section"
+          className="rounded-lg border border-gray-200 bg-gray-50 p-4"
+        >
           <p id="artist-terms-heading" className="mb-2 text-xs font-semibold text-gray-700">
             전시·판매위탁 계약서 전문
           </p>
           <div
             ref={artistTermsContainerRef}
-            className="mb-3 max-h-80 overflow-y-auto rounded-md border border-gray-200 bg-white p-3"
+            className="mb-3 max-h-[52vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[65vh]"
             onScroll={handleArtistTermsScroll}
             tabIndex={0}
             role="region"
@@ -166,7 +305,6 @@ export function TermsConsentForm({
               id="agree_artist"
               name="agree_artist"
               type="checkbox"
-              required
               checked={artistAgreed}
               onChange={(event) => setArtistAgreed(event.target.checked)}
               disabled={!hasReadArtistTerms}
@@ -188,13 +326,16 @@ export function TermsConsentForm({
       )}
 
       {needsExhibitorConsent && (
-        <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+        <div
+          id="exhibitor-consent-section"
+          className="rounded-lg border border-gray-200 bg-gray-50 p-4"
+        >
           <p id="exhibitor-terms-heading" className="mb-2 text-xs font-semibold text-gray-700">
             출품자 전시위탁 계약서 전문
           </p>
           <div
             ref={exhibitorTermsContainerRef}
-            className="mb-3 max-h-80 overflow-y-auto rounded-md border border-gray-200 bg-white p-3"
+            className="mb-3 max-h-[52vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[65vh]"
             onScroll={handleExhibitorTermsScroll}
             tabIndex={0}
             role="region"
@@ -211,7 +352,6 @@ export function TermsConsentForm({
               id="agree_exhibitor"
               name="agree_exhibitor"
               type="checkbox"
-              required
               checked={exhibitorAgreed}
               onChange={(event) => setExhibitorAgreed(event.target.checked)}
               disabled={!hasReadExhibitorTerms}
@@ -233,13 +373,16 @@ export function TermsConsentForm({
       )}
 
       {needsPrivacyConsent ? (
-        <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+        <div
+          id="privacy-consent-section"
+          className="rounded-lg border border-gray-200 bg-gray-50 p-4"
+        >
           <p id="privacy-heading" className="mb-2 text-xs font-semibold text-gray-700">
             개인정보처리방침 전문
           </p>
           <div
             ref={privacyContainerRef}
-            className="mb-3 max-h-80 overflow-y-auto rounded-md border border-gray-200 bg-white p-3"
+            className="mb-3 max-h-[52vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[65vh]"
             onScroll={handlePrivacyScroll}
             tabIndex={0}
             role="region"
@@ -256,7 +399,6 @@ export function TermsConsentForm({
               id="agree_privacy"
               name="agree_privacy"
               type="checkbox"
-              required
               checked={privacyAgreed}
               onChange={(event) => setPrivacyAgreed(event.target.checked)}
               disabled={!hasReadPrivacy}
@@ -295,13 +437,13 @@ export function TermsConsentForm({
       )}
 
       {needsTosConsent && (
-        <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+        <div id="tos-consent-section" className="rounded-lg border border-gray-200 bg-gray-50 p-4">
           <p id="tos-heading" className="mb-2 text-xs font-semibold text-gray-700">
             이용약관 전문
           </p>
           <div
             ref={tosContainerRef}
-            className="mb-3 max-h-80 overflow-y-auto rounded-md border border-gray-200 bg-white p-3"
+            className="mb-3 max-h-[52vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[65vh]"
             onScroll={handleTosScroll}
             tabIndex={0}
             role="region"
@@ -318,7 +460,6 @@ export function TermsConsentForm({
               id="agree_tos"
               name="agree_tos"
               type="checkbox"
-              required
               checked={tosAgreed}
               onChange={(event) => setTosAgreed(event.target.checked)}
               disabled={!hasReadTos}
@@ -341,10 +482,18 @@ export function TermsConsentForm({
 
       <div className="flex items-center justify-between gap-3 border-t border-gray-100 pt-4">
         {state.error && <p className="text-sm text-red-600">{state.message}</p>}
-        <Button type="submit" loading={isPending} disabled={!canSubmit} variant="secondary">
+        <Button type="submit" loading={isPending} disabled={isPending} variant="secondary">
           동의하고 계속하기
         </Button>
       </div>
+      <IncompleteItemsModal
+        isOpen={isIncompleteModalOpen}
+        onClose={handleCloseIncompleteModal}
+        title="아직 완료되지 않은 항목이 있어요"
+        description="아래 항목을 완료하면 계속 진행할 수 있습니다."
+        items={incompleteItems}
+        onSelectItem={handleSelectIncompleteItem}
+      />
     </form>
   );
 }

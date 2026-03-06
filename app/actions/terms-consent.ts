@@ -108,6 +108,11 @@ export async function submitTermsConsent(
   const exhibitorTermsReadComplete = formData.get('exhibitor_terms_read_complete') === '1';
   const privacyReadComplete = formData.get('privacy_read_complete') === '1';
   const tosReadComplete = formData.get('tos_read_complete') === '1';
+  const artistTermsVersion = (formData.get('artist_terms_version') as string | null)?.trim() || '';
+  const exhibitorTermsVersion =
+    (formData.get('exhibitor_terms_version') as string | null)?.trim() || '';
+  const privacyVersion = (formData.get('privacy_version') as string | null)?.trim() || '';
+  const tosVersion = (formData.get('tos_version') as string | null)?.trim() || '';
 
   if (needsArtistConsent && !artistAgreed) {
     return { message: '전시·판매위탁 계약서 동의가 필요합니다.', error: true };
@@ -115,6 +120,13 @@ export async function submitTermsConsent(
 
   if (needsArtistConsent && !artistTermsReadComplete) {
     return { message: '전시·판매위탁 계약서 전문을 끝까지 확인해주세요.', error: true };
+  }
+
+  if (needsArtistConsent && artistTermsVersion !== ARTIST_APPLICATION_TERMS_VERSION) {
+    return {
+      message: '최신 전시·판매위탁 계약서 확인 후 다시 동의해주세요.',
+      error: true,
+    };
   }
 
   if (needsExhibitorConsent && !exhibitorAgreed) {
@@ -125,6 +137,13 @@ export async function submitTermsConsent(
     return { message: '출품자 전시위탁 계약서 전문을 끝까지 확인해주세요.', error: true };
   }
 
+  if (needsExhibitorConsent && exhibitorTermsVersion !== EXHIBITOR_APPLICATION_TERMS_VERSION) {
+    return {
+      message: '최신 출품자 전시위탁 계약서 확인 후 다시 동의해주세요.',
+      error: true,
+    };
+  }
+
   if (needsPrivacy && !privacyAgreed) {
     return { message: '개인정보처리방침 동의가 필요합니다.', error: true };
   }
@@ -133,12 +152,26 @@ export async function submitTermsConsent(
     return { message: '개인정보처리방침 전문을 끝까지 확인해주세요.', error: true };
   }
 
+  if (needsPrivacy && privacyVersion !== PRIVACY_POLICY_VERSION) {
+    return {
+      message: '최신 개인정보처리방침 확인 후 다시 동의해주세요.',
+      error: true,
+    };
+  }
+
   if (needsTos && !tosAgreed) {
     return { message: '이용약관 동의가 필요합니다.', error: true };
   }
 
   if (needsTos && !tosReadComplete) {
     return { message: '이용약관 전문을 끝까지 확인해주세요.', error: true };
+  }
+
+  if (needsTos && tosVersion !== TERMS_OF_SERVICE_VERSION) {
+    return {
+      message: '최신 이용약관 확인 후 다시 동의해주세요.',
+      error: true,
+    };
   }
 
   const requestMetadata = await getRequestMetadata();
