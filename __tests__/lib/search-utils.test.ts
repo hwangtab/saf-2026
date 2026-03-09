@@ -17,6 +17,16 @@ describe('search-utils', () => {
     it('원래 완성 음절 검색도 유지된다', () => {
       expect(matchesSearchText('옹기', '옹')).toBe(true);
     });
+
+    it('NFD 형태의 한글도 NFC 검색어와 매칭된다', () => {
+      const nfdName = '천지수'.normalize('NFD');
+      expect(matchesSearchText(nfdName, '천지수')).toBe(true);
+    });
+
+    it('NFD 검색어도 NFC 형태의 한글과 매칭된다', () => {
+      const nfdQuery = '천지수'.normalize('NFD');
+      expect(matchesSearchText('천지수', nfdQuery)).toBe(true);
+    });
   });
 
   describe('hasComposedTrailingConsonantQuery', () => {

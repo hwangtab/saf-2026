@@ -30,6 +30,11 @@ describe('sanitizeIlikeQuery', () => {
     expect(sanitizeIlikeQuery('홍길동')).toBe('홍길동');
   });
 
+  it('normalizes decomposed Korean input to NFC', () => {
+    const nfd = '천지수'.normalize('NFD');
+    expect(sanitizeIlikeQuery(nfd)).toBe('천지수');
+  });
+
   it('handles empty string', () => {
     expect(sanitizeIlikeQuery('')).toBe('');
   });
