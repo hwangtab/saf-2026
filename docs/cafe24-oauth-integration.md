@@ -9,7 +9,7 @@ CAFE24_MALL_ID=koreasmartcoop
 CAFE24_CLIENT_ID=...
 CAFE24_CLIENT_SECRET=...
 CAFE24_REDIRECT_URI=https://saf2026.com/api/integrations/cafe24/callback
-CAFE24_SCOPE=mall.read_product,mall.write_product
+CAFE24_SCOPE=mall.read_product,mall.write_product,mall.read_order
 CAFE24_DEFAULT_CATEGORY_NO=43
 ```
 
@@ -17,7 +17,7 @@ CAFE24_DEFAULT_CATEGORY_NO=43
 
 - Redirect URI(s)에 다음 주소를 등록해야 합니다.
   - `https://saf2026.com/api/integrations/cafe24/callback`
-- Scope는 최소 `mall.read_product`, `mall.write_product`를 포함해야 합니다.
+- Scope는 최소 `mall.read_product`, `mall.write_product`, `mall.read_order`를 포함해야 합니다.
 
 ## 3) OAuth 시작 URL
 
