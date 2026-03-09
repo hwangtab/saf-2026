@@ -127,6 +127,29 @@ export function needsTosConsent(
   );
 }
 
+export function resolveArtistReconsentRequirements(
+  application: ArtistApplicationTermsRecord | null | undefined
+): {
+  needsArtistConsent: boolean;
+  needsTosConsent: boolean;
+} {
+  if (!hasArtistApplication(application)) {
+    return {
+      needsArtistConsent: false,
+      needsTosConsent: false,
+    };
+  }
+
+  const needsContract = needsArtistTermsConsent(application);
+  const needsTos = needsTosConsent(application);
+  const needsBundle = needsContract || needsTos;
+
+  return {
+    needsArtistConsent: needsBundle,
+    needsTosConsent: needsBundle,
+  };
+}
+
 export function hasAllRequiredConsents(
   application: ArtistApplicationTermsRecord | ExhibitorApplicationTermsRecord | null | undefined,
   role: 'artist' | 'exhibitor'
