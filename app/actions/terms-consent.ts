@@ -14,10 +14,10 @@ import {
   EXHIBITOR_APPLICATION_CONSENT_SELECT,
   hasArtistApplication,
   hasExhibitorApplication,
-  needsArtistTermsConsent,
   needsExhibitorTermsConsent,
   needsPrivacyConsent,
   needsTosConsent,
+  resolveArtistReconsentRequirements,
   resolvePostLoginPath,
   sanitizeInternalPath,
   type ArtistApplicationTermsRecord,
@@ -81,13 +81,14 @@ export async function submitTermsConsent(
     redirect('/admin/dashboard');
   }
 
-  const needsArtistConsent = needsArtistTermsConsent(status.artistApplication);
+  const artistReconsent = resolveArtistReconsentRequirements(status.artistApplication);
+  const needsArtistConsent = artistReconsent.needsArtistConsent;
   const needsExhibitorConsent = needsExhibitorTermsConsent(status.exhibitorApplication);
-  const needsPrivacy =
-    needsPrivacyConsent(status.artistApplication) ||
-    needsPrivacyConsent(status.exhibitorApplication);
-  const needsTos =
-    needsTosConsent(status.artistApplication) || needsTosConsent(status.exhibitorApplication);
+  const needsArtistTos = artistReconsent.needsTosConsent;
+  const needsExhibitorPrivacy = needsPrivacyConsent(status.exhibitorApplication);
+  const needsExhibitorTos = needsTosConsent(status.exhibitorApplication);
+  const needsPrivacy = needsExhibitorPrivacy;
+  const needsTos = needsArtistTos || needsExhibitorTos;
 
   if (!needsArtistConsent && !needsExhibitorConsent && !needsPrivacy && !needsTos) {
     redirect(
@@ -170,10 +171,7 @@ export async function submitTermsConsent(
 
   const updates: Promise<{ target: string; error: unknown }>[] = [];
 
-  if (
-    hasArtistApplication(status.artistApplication) &&
-    (needsArtistConsent || needsPrivacy || needsTos)
-  ) {
+  if (hasArtistApplication(status.artistApplication) && (needsArtistConsent || needsArtistTos)) {
     updates.push(
       (async () => {
         const updateData: Record<string, string | null> = { updated_at: acceptedAt };
@@ -183,11 +181,7 @@ export async function submitTermsConsent(
           updateData.terms_accepted_ip = requestMetadata.ip;
           updateData.terms_accepted_user_agent = requestMetadata.userAgent;
         }
-        if (needsPrivacy) {
-          updateData.privacy_version = PRIVACY_POLICY_VERSION;
-          updateData.privacy_accepted_at = acceptedAt;
-        }
-        if (needsTos) {
+        if (needsArtistTos) {
           updateData.tos_version = TERMS_OF_SERVICE_VERSION;
           updateData.tos_accepted_at = acceptedAt;
         }
@@ -202,7 +196,7 @@ export async function submitTermsConsent(
 
   if (
     hasExhibitorApplication(status.exhibitorApplication) &&
-    (needsExhibitorConsent || needsPrivacy || needsTos)
+    (needsExhibitorConsent || needsExhibitorPrivacy || needsExhibitorTos)
   ) {
     updates.push(
       (async () => {
@@ -213,11 +207,11 @@ export async function submitTermsConsent(
           updateData.terms_accepted_ip = requestMetadata.ip;
           updateData.terms_accepted_user_agent = requestMetadata.userAgent;
         }
-        if (needsPrivacy) {
+        if (needsExhibitorPrivacy) {
           updateData.privacy_version = PRIVACY_POLICY_VERSION;
           updateData.privacy_accepted_at = acceptedAt;
         }
-        if (needsTos) {
+        if (needsExhibitorTos) {
           updateData.tos_version = TERMS_OF_SERVICE_VERSION;
           updateData.tos_accepted_at = acceptedAt;
         }

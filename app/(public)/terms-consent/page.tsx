@@ -7,10 +7,10 @@ import {
   buildTermsConsentPath,
   hasArtistApplication,
   hasExhibitorApplication,
-  needsArtistTermsConsent,
   needsExhibitorTermsConsent,
   needsPrivacyConsent,
   needsTosConsent,
+  resolveArtistReconsentRequirements,
   resolvePostLoginPath,
   sanitizeInternalPath,
 } from '@/lib/auth/terms-consent';
@@ -61,11 +61,11 @@ export default async function TermsConsentPage({
     redirect('/admin/dashboard');
   }
 
-  const needsArtistConsent = needsArtistTermsConsent(artistApplication);
+  const artistReconsent = resolveArtistReconsentRequirements(artistApplication);
+  const needsArtistConsent = artistReconsent.needsArtistConsent;
   const needsExhibitorConsent = needsExhibitorTermsConsent(exhibitorApplication);
-  const needsPrivacy =
-    needsPrivacyConsent(artistApplication) || needsPrivacyConsent(exhibitorApplication);
-  const needsTos = needsTosConsent(artistApplication) || needsTosConsent(exhibitorApplication);
+  const needsPrivacy = needsPrivacyConsent(exhibitorApplication);
+  const needsTos = artistReconsent.needsTosConsent || needsTosConsent(exhibitorApplication);
   const hasArtist = hasArtistApplication(artistApplication);
   const hasExhibitor = hasExhibitorApplication(exhibitorApplication);
 
