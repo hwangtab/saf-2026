@@ -264,8 +264,8 @@ export const TERMS_OF_SERVICE_DOCUMENT: LegalDocument = {
 
 export const ARTIST_APPLICATION_TERMS_DOCUMENT: LegalDocument = {
   title: '온라인전시 및 판매위탁 계약서',
-  effectiveDate: '2026년 3월 5일',
-  version: 'artist-contract-v3-2026-03-05',
+  effectiveDate: '2026년 3월 9일',
+  version: 'artist-contract-v4-2026-03-09',
   preamble: [
     '한국스마트협동조합(이하 "갤러리" 또는 "을")과 본 계약에 동의하는 작가(이하 "갑")는 아래와 같이 온라인전시 및 판매위탁 계약을 체결합니다.',
     '본 계약은 전자적 방식으로 체결되며, 작가가 온라인 신청 과정에서 동의 버튼을 클릭하는 행위는 본 계약서에 서명하는 것과 동일한 법적 효력을 가집니다.',
@@ -303,7 +303,7 @@ export const ARTIST_APPLICATION_TERMS_DOCUMENT: LegalDocument = {
     {
       title: '제5조 (수익 분배)',
       paragraphs: [
-        '작품 판매 대금은 판매가 기준으로 갑 70%, 을 30%로 분배합니다.',
+        '작품 판매 대금은 판매가 기준으로 갑 50%, 을 50%로 분배합니다.',
         '단, 결제 수수료·배송비·포장비 등 실비는 공제 후 정산합니다.',
         '을은 매월 말일 기준으로 익월 15일 이내에 정산 내역을 갑에게 제공하고, 대금을 지급합니다.',
         '갑이 지정한 계좌 정보가 변경된 경우에는 즉시 을에게 통보하여야 합니다.',
@@ -468,7 +468,7 @@ export const ARTIST_APPLICATION_TERMS_DOCUMENT: LegalDocument = {
     },
   ],
   appendix: [
-    '부칙 제1조(시행일): 본 계약서는 2026년 3월 5일부터 시행합니다.',
+    '부칙 제1조(시행일): 본 계약서는 2026년 3월 9일부터 시행합니다.',
     '부칙 제2조(경과조치): 본 계약서 시행 이전에 체결된 계약에도 본 계약서가 적용됩니다.',
   ],
 };
