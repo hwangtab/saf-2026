@@ -8,9 +8,9 @@ import {
   buildTermsConsentPath,
   hasArtistApplication,
   hasExhibitorApplication,
-  needsArtistTermsConsent,
   needsExhibitorTermsConsent,
   needsPrivacyConsent,
+  resolveArtistReconsentRequirements,
 } from '@/lib/auth/terms-consent';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -102,16 +102,15 @@ export default function LoginPage() {
             .maybeSingle();
 
           const hasApplication = hasArtistApplication(application);
-          const needsTermsConsent = needsArtistTermsConsent(application);
-          const needsPrivacy = needsPrivacyConsent(application);
+          const artistReconsent = resolveArtistReconsentRequirements(application);
 
           if (profile.status === 'active') {
             nextPath = hasApplication
-              ? needsTermsConsent || needsPrivacy
+              ? artistReconsent.needsArtistConsent || artistReconsent.needsTosConsent
                 ? buildTermsConsentPath({
                     nextPath: '/dashboard/artworks',
-                    needsArtistConsent: needsTermsConsent,
-                    needsPrivacyConsent: needsPrivacy,
+                    needsArtistConsent: artistReconsent.needsArtistConsent,
+                    needsTosConsent: artistReconsent.needsTosConsent,
                   })
                 : '/dashboard/artworks'
               : '/onboarding?recover=1';
@@ -119,11 +118,11 @@ export default function LoginPage() {
             nextPath = '/dashboard/suspended';
           } else if (profile.status === 'pending') {
             nextPath = hasApplication
-              ? needsTermsConsent || needsPrivacy
+              ? artistReconsent.needsArtistConsent || artistReconsent.needsTosConsent
                 ? buildTermsConsentPath({
                     nextPath: '/dashboard/pending',
-                    needsArtistConsent: needsTermsConsent,
-                    needsPrivacyConsent: needsPrivacy,
+                    needsArtistConsent: artistReconsent.needsArtistConsent,
+                    needsTosConsent: artistReconsent.needsTosConsent,
                   })
                 : '/dashboard/pending'
               : '/onboarding';
@@ -157,14 +156,13 @@ export default function LoginPage() {
                   })
                 : '/exhibitor/pending';
           } else if (hasArtistApplicationData) {
-            const needsArtistConsent = needsArtistTermsConsent(artistApplication);
-            const needsArtistPrivacy = needsPrivacyConsent(artistApplication);
+            const artistReconsent = resolveArtistReconsentRequirements(artistApplication);
             nextPath =
-              needsArtistConsent || needsArtistPrivacy
+              artistReconsent.needsArtistConsent || artistReconsent.needsTosConsent
                 ? buildTermsConsentPath({
                     nextPath: '/dashboard/pending',
-                    needsArtistConsent,
-                    needsPrivacyConsent: needsArtistPrivacy,
+                    needsArtistConsent: artistReconsent.needsArtistConsent,
+                    needsTosConsent: artistReconsent.needsTosConsent,
                   })
                 : '/dashboard/pending';
           } else {

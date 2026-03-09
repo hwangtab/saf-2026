@@ -6,10 +6,10 @@ import {
   buildTermsConsentPath,
   hasArtistApplication,
   hasExhibitorApplication,
-  needsArtistTermsConsent,
   needsExhibitorTermsConsent,
   needsPrivacyConsent,
   needsTosConsent,
+  resolveArtistReconsentRequirements,
 } from '@/lib/auth/terms-consent';
 
 export default async function DashboardPage() {
@@ -94,19 +94,16 @@ export default async function DashboardPage() {
     }
 
     const hasApplication = hasArtistApplication(application);
-    const needsTermsConsent = needsArtistTermsConsent(application);
-    const needsArtistPrivacy = needsPrivacyConsent(application);
-    const needsArtistTos = needsTosConsent(application);
+    const artistReconsent = resolveArtistReconsentRequirements(application);
 
     if (profile.status === 'active') {
       redirect(
         hasApplication
-          ? needsTermsConsent || needsArtistPrivacy || needsArtistTos
+          ? artistReconsent.needsArtistConsent || artistReconsent.needsTosConsent
             ? buildTermsConsentPath({
                 nextPath: '/dashboard/artworks',
-                needsArtistConsent: needsTermsConsent,
-                needsPrivacyConsent: needsArtistPrivacy,
-                needsTosConsent: needsArtistTos,
+                needsArtistConsent: artistReconsent.needsArtistConsent,
+                needsTosConsent: artistReconsent.needsTosConsent,
               })
             : '/dashboard/artworks'
           : '/onboarding?recover=1'
@@ -116,12 +113,11 @@ export default async function DashboardPage() {
     if (profile.status === 'pending') {
       redirect(
         hasApplication
-          ? needsTermsConsent || needsArtistPrivacy || needsArtistTos
+          ? artistReconsent.needsArtistConsent || artistReconsent.needsTosConsent
             ? buildTermsConsentPath({
                 nextPath: '/dashboard/pending',
-                needsArtistConsent: needsTermsConsent,
-                needsPrivacyConsent: needsArtistPrivacy,
-                needsTosConsent: needsArtistTos,
+                needsArtistConsent: artistReconsent.needsArtistConsent,
+                needsTosConsent: artistReconsent.needsTosConsent,
               })
             : '/dashboard/pending'
           : '/onboarding'
@@ -166,16 +162,13 @@ export default async function DashboardPage() {
     }
 
     if (hasArtistApplicationData) {
-      const needsArtistConsent = needsArtistTermsConsent(artistApplication);
-      const needsArtistPrivacy = needsPrivacyConsent(artistApplication);
-      const needsArtistTos = needsTosConsent(artistApplication);
+      const artistReconsent = resolveArtistReconsentRequirements(artistApplication);
       redirect(
-        needsArtistConsent || needsArtistPrivacy || needsArtistTos
+        artistReconsent.needsArtistConsent || artistReconsent.needsTosConsent
           ? buildTermsConsentPath({
               nextPath: '/dashboard/pending',
-              needsArtistConsent: needsArtistConsent,
-              needsPrivacyConsent: needsArtistPrivacy,
-              needsTosConsent: needsArtistTos,
+              needsArtistConsent: artistReconsent.needsArtistConsent,
+              needsTosConsent: artistReconsent.needsTosConsent,
             })
           : '/dashboard/pending'
       );

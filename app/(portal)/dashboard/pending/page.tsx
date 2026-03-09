@@ -4,9 +4,7 @@ import {
   ARTIST_APPLICATION_CONSENT_SELECT,
   buildTermsConsentPath,
   hasArtistApplication,
-  needsArtistTermsConsent,
-  needsPrivacyConsent,
-  needsTosConsent,
+  resolveArtistReconsentRequirements,
 } from '@/lib/auth/terms-consent';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { redirect } from 'next/navigation';
@@ -40,17 +38,14 @@ export default async function PendingPage() {
     .maybeSingle();
 
   const hasApplication = hasArtistApplication(application);
-  const needsTermsConsent = needsArtistTermsConsent(application);
-  const needsPrivacy = needsPrivacyConsent(application);
-  const needsTos = needsTosConsent(application);
+  const artistReconsent = resolveArtistReconsentRequirements(application);
 
-  if (needsTermsConsent || needsPrivacy || needsTos) {
+  if (artistReconsent.needsArtistConsent || artistReconsent.needsTosConsent) {
     redirect(
       buildTermsConsentPath({
         nextPath: '/dashboard/pending',
-        needsArtistConsent: needsTermsConsent,
-        needsPrivacyConsent: needsPrivacy,
-        needsTosConsent: needsTos,
+        needsArtistConsent: artistReconsent.needsArtistConsent,
+        needsTosConsent: artistReconsent.needsTosConsent,
       })
     );
   }

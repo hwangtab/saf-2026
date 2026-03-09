@@ -6,10 +6,10 @@ import {
   buildTermsConsentPath,
   hasArtistApplication,
   hasExhibitorApplication,
-  needsArtistTermsConsent,
   needsExhibitorTermsConsent,
   needsPrivacyConsent,
   needsTosConsent,
+  resolveArtistReconsentRequirements,
 } from '@/lib/auth/terms-consent';
 
 export async function GET(request: NextRequest) {
@@ -98,20 +98,17 @@ export async function GET(request: NextRequest) {
             .maybeSingle();
 
           const hasApplication = hasArtistApplication(application);
-          const needsTermsConsent = needsArtistTermsConsent(application);
-          const needsPrivacy = needsPrivacyConsent(application);
-          const needsTos = needsTosConsent(application);
+          const artistReconsent = resolveArtistReconsentRequirements(application);
 
           if (profile.status === 'active') {
             return NextResponse.redirect(
               hasApplication
                 ? `${origin}${
-                    needsTermsConsent || needsPrivacy || needsTos
+                    artistReconsent.needsArtistConsent || artistReconsent.needsTosConsent
                       ? buildTermsConsentPath({
                           nextPath: '/dashboard/artworks',
-                          needsArtistConsent: needsTermsConsent,
-                          needsPrivacyConsent: needsPrivacy,
-                          needsTosConsent: needsTos,
+                          needsArtistConsent: artistReconsent.needsArtistConsent,
+                          needsTosConsent: artistReconsent.needsTosConsent,
                         })
                       : '/dashboard/artworks'
                   }`
@@ -123,12 +120,11 @@ export async function GET(request: NextRequest) {
             return NextResponse.redirect(
               hasApplication
                 ? `${origin}${
-                    needsTermsConsent || needsPrivacy || needsTos
+                    artistReconsent.needsArtistConsent || artistReconsent.needsTosConsent
                       ? buildTermsConsentPath({
                           nextPath: '/dashboard/pending',
-                          needsArtistConsent: needsTermsConsent,
-                          needsPrivacyConsent: needsPrivacy,
-                          needsTosConsent: needsTos,
+                          needsArtistConsent: artistReconsent.needsArtistConsent,
+                          needsTosConsent: artistReconsent.needsTosConsent,
                         })
                       : '/dashboard/pending'
                   }`
@@ -176,17 +172,14 @@ export async function GET(request: NextRequest) {
           }
 
           if (hasArtistApplicationData) {
-            const needsArtistConsent = needsArtistTermsConsent(artistApplication);
-            const needsArtistPrivacy = needsPrivacyConsent(artistApplication);
-            const needsArtistTos = needsTosConsent(artistApplication);
+            const artistReconsent = resolveArtistReconsentRequirements(artistApplication);
             return NextResponse.redirect(
               `${origin}${
-                needsArtistConsent || needsArtistPrivacy || needsArtistTos
+                artistReconsent.needsArtistConsent || artistReconsent.needsTosConsent
                   ? buildTermsConsentPath({
                       nextPath: '/dashboard/pending',
-                      needsArtistConsent,
-                      needsPrivacyConsent: needsArtistPrivacy,
-                      needsTosConsent: needsArtistTos,
+                      needsArtistConsent: artistReconsent.needsArtistConsent,
+                      needsTosConsent: artistReconsent.needsTosConsent,
                     })
                   : '/dashboard/pending'
               }`

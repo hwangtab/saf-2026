@@ -8,10 +8,10 @@ import {
   buildTermsConsentPath,
   hasArtistApplication,
   hasExhibitorApplication,
-  needsArtistTermsConsent,
   needsExhibitorTermsConsent,
   needsPrivacyConsent,
   needsTosConsent,
+  resolveArtistReconsentRequirements,
 } from './terms-consent';
 
 const getAuthUserContext = cache(async () => {
@@ -76,16 +76,13 @@ export const requireArtistActive = cache(async function requireArtistActive() {
       redirect('/onboarding?recover=1');
     }
 
-    const needsTerms = needsArtistTermsConsent(application);
-    const needsPrivacy = needsPrivacyConsent(application);
-    const needsTos = needsTosConsent(application);
-    if (needsTerms || needsPrivacy || needsTos) {
+    const artistReconsent = resolveArtistReconsentRequirements(application);
+    if (artistReconsent.needsArtistConsent || artistReconsent.needsTosConsent) {
       redirect(
         buildTermsConsentPath({
           nextPath: profile.status === 'active' ? '/dashboard/artworks' : '/dashboard/pending',
-          needsArtistConsent: needsTerms,
-          needsPrivacyConsent: needsPrivacy,
-          needsTosConsent: needsTos,
+          needsArtistConsent: artistReconsent.needsArtistConsent,
+          needsTosConsent: artistReconsent.needsTosConsent,
         })
       );
     }
