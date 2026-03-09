@@ -25,6 +25,7 @@ export interface BaseArtwork {
   id: string;
   artist: string;
   title: string;
+  admin_product_name?: string | null;
   description?: string;
   size: string;
   material: string;

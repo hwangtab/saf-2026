@@ -8,6 +8,7 @@ type JsonRecord = Record<string, unknown>;
 type SyncArtworkRecord = {
   id: string;
   title: string;
+  admin_product_name: string | null;
   description: string | null;
   size: string | null;
   material: string | null;
@@ -695,11 +696,16 @@ async function upsertCafe24Product(
   const tagParts = [artistName, '씨앗페', 'SAF2026', '미술', '예술', '작품'];
   const isVisible = !artwork.is_hidden;
 
+  const internalName = artwork.admin_product_name
+    ? `[${artwork.id}] ${artistName} - ${artwork.admin_product_name}`
+    : `[${artwork.id}] ${artistName}`;
+
   const payload = compactObject({
     display: isVisible ? 'T' : 'F',
     selling: selling ? 'T' : 'F',
     custom_product_code: customProductCode,
     product_name: `${artwork.title} - ${artistName}`.trim(),
+    internal_product_name: internalName,
     supply_price: priceAmount,
     price: priceAmount,
     summary_description: summary,
@@ -900,7 +906,7 @@ export async function syncArtworkToCafe24(artworkId: string): Promise<SyncResult
   const { data, error } = await supabase
     .from('artworks')
     .select(
-      'id, title, description, size, material, year, edition, edition_type, edition_limit, price, images, status, is_hidden, shop_url, cafe24_product_no, cafe24_custom_product_code, artists(name_ko, bio, history)'
+      'id, title, admin_product_name, description, size, material, year, edition, edition_type, edition_limit, price, images, status, is_hidden, shop_url, cafe24_product_no, cafe24_custom_product_code, artists(name_ko, bio, history)'
     )
     .eq('id', artworkId)
     .single();

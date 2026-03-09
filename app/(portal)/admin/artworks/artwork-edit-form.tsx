@@ -24,6 +24,7 @@ type Artist = {
 type Artwork = {
   id: string;
   title: string;
+  admin_product_name: string | null;
   description: string | null;
   size: string | null;
   material: string | null;
@@ -271,6 +272,19 @@ export function ArtworkEditForm({
             {showErrors && !title.trim() && (
               <p className="mt-1 text-xs text-red-600">작품명을 입력해주세요.</p>
             )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">상품명(관리용)</label>
+            <input
+              name="admin_product_name"
+              defaultValue={artwork.admin_product_name || ''}
+              placeholder="예: 연작 1, 파란배경"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
+            />
+            <p className="mt-1 text-xs text-gray-500">
+              관리자·카페24에서만 보이며, 동명 작품 구분에 사용됩니다.
+            </p>
           </div>
 
           <div>

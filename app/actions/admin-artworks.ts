@@ -211,6 +211,7 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
   if (dataValidation.error) throw new Error(dataValidation.error);
 
   const title = getString(formData, 'title');
+  const admin_product_name = getString(formData, 'admin_product_name') || null;
   const description = getString(formData, 'description');
   const size = getString(formData, 'size');
   const material = getString(formData, 'material');
@@ -226,7 +227,7 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
   const { data: oldArtwork } = await supabase
     .from('artworks')
     .select(
-      'id, title, artist_id, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, images, is_hidden, shop_url, updated_at'
+      'id, title, admin_product_name, artist_id, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, images, is_hidden, shop_url, updated_at'
     )
     .eq('id', id)
     .single();
@@ -235,6 +236,7 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
     .from('artworks')
     .update({
       title,
+      admin_product_name,
       description,
       size,
       material,
@@ -253,7 +255,7 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
   const { data: newArtwork } = await supabase
     .from('artworks')
     .select(
-      'id, title, artist_id, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, images, is_hidden, shop_url, updated_at'
+      'id, title, admin_product_name, artist_id, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, images, is_hidden, shop_url, updated_at'
     )
     .eq('id', id)
     .single();
@@ -308,6 +310,7 @@ export async function createAdminArtwork(formData: FormData) {
   if (dataValidation.error) throw new Error(dataValidation.error);
 
   const title = getString(formData, 'title');
+  const admin_product_name = getString(formData, 'admin_product_name') || null;
   const description = getString(formData, 'description');
   const size = getString(formData, 'size');
   const material = getString(formData, 'material');
@@ -326,6 +329,7 @@ export async function createAdminArtwork(formData: FormData) {
     .from('artworks')
     .insert({
       title,
+      admin_product_name,
       description,
       size,
       material,

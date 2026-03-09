@@ -31,6 +31,7 @@ const ArtworkLightbox = dynamic(() => import('@/components/ui/ArtworkLightbox'),
 type ArtworkItem = {
   id: string;
   title: string;
+  admin_product_name?: string | null;
   status: 'available' | 'reserved' | 'sold' | 'hidden';
   is_hidden: boolean;
   images: string[] | null;
@@ -241,7 +242,11 @@ export function AdminArtworkList({
       if (visibilityFilter === 'visible' && artwork.is_hidden) return false;
       if (visibilityFilter === 'hidden' && !artwork.is_hidden) return false;
       if (!query.trim()) return true;
-      return matchesAnySearch(query, [artwork.title, artwork.artists?.name_ko]);
+      return matchesAnySearch(query, [
+        artwork.title,
+        artwork.artists?.name_ko,
+        artwork.admin_product_name,
+      ]);
     });
   }, [optimisticArtworks, query, statusFilter, visibilityFilter]);
 
@@ -830,6 +835,11 @@ export function AdminArtworkList({
                             className="font-medium text-gray-900 hover:text-indigo-600 hover:underline"
                           >
                             {artwork.title}
+                            {artwork.admin_product_name && (
+                              <span className="ml-1.5 text-xs font-normal text-indigo-600">
+                                [{artwork.admin_product_name}]
+                              </span>
+                            )}
                           </Link>
                           <div className="text-sm text-gray-500">
                             {artwork.artists?.name_ko || '작가 미상'}
