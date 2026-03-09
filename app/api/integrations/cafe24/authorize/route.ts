@@ -328,7 +328,8 @@ export async function GET(request: NextRequest) {
     const mallId = isCafe24Launch ? queryMallId : getRequiredEnv('CAFE24_MALL_ID');
     const clientId = getRequiredEnv('CAFE24_CLIENT_ID');
     const redirectUri = getRequiredEnv('CAFE24_REDIRECT_URI');
-    const scope = process.env.CAFE24_SCOPE?.trim() || 'mall.read_product,mall.write_product';
+    const scope =
+      process.env.CAFE24_SCOPE?.trim() || 'mall.read_product,mall.write_product,mall.read_order';
     const debug = request.nextUrl.searchParams.get('debug') === '1';
     const state = crypto.randomBytes(24).toString('hex');
     const returnTo = normalizeReturnTo(request.nextUrl.searchParams.get('return_to'));

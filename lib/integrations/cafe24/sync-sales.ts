@@ -84,6 +84,19 @@ const SALE_EXCLUDED_STATUS_KEYWORDS = [
   'failure',
 ] as const;
 
+const ORDER_BUYER_FIELD_CANDIDATES = [
+  'buyer_name',
+  'order_name',
+  'member_name',
+  'receiver_name',
+] as const;
+
+const ORDER_ITEM_BUYER_FIELD_CANDIDATES = [
+  ...ORDER_BUYER_FIELD_CANDIDATES,
+  'recipient_name',
+  'recipient',
+] as const;
+
 type JsonRecord = Record<string, unknown>;
 
 type SyncStateRow = {
@@ -286,7 +299,7 @@ function parseMoney(raw: unknown): number | null {
   return parsed < 0 ? 0 : Math.round(parsed);
 }
 
-function pickString(record: JsonRecord, keys: string[]): string | null {
+function pickString(record: JsonRecord, keys: readonly string[]): string | null {
   for (const key of keys) {
     const value = record[key];
     if (typeof value === 'string' && value.trim()) {
@@ -821,7 +834,7 @@ function buildOrderContext(order: JsonRecord): OrderContext | null {
     orderId,
     paidAt,
     orderedAt,
-    buyerName: pickString(order, ['buyer_name', 'order_name', 'member_name', 'receiver_name']),
+    buyerName: pickString(order, ORDER_BUYER_FIELD_CANDIDATES),
     paid: paidFlag ?? !!paidAt,
     raw: order,
   };
@@ -1067,6 +1080,37 @@ async function fetchOrderItems(
     ['items', 'order_items', 'data'],
     ['order_item_code', 'item_code', 'product_no']
   );
+}
+
+function extractOrderRecord(payload: unknown): JsonRecord | null {
+  const direct = asRecord(payload);
+  if (direct) {
+    if (pickString(direct, ['order_id', 'order_no'])) return direct;
+
+    for (const key of ['order', 'data', 'result']) {
+      const nested = asRecord(direct[key]);
+      if (nested && pickString(nested, ['order_id', 'order_no'])) {
+        return nested;
+      }
+    }
+  }
+
+  const rows = extractArrayByKeyCandidates(
+    payload,
+    ['orders', 'order_list', 'data'],
+    ['order_id', 'order_no']
+  );
+  return rows[0] || null;
+}
+
+async function fetchOrderDetail(
+  client: ReturnType<typeof createCafe24AdminApiClient>,
+  orderId: string
+): Promise<JsonRecord | null> {
+  const payload = await client.request(`/orders/${encodeURIComponent(orderId)}`, {
+    method: 'GET',
+  });
+  return extractOrderRecord(payload);
 }
 
 async function fetchVoidEventsFromEndpoint(
@@ -2147,18 +2191,38 @@ export async function syncCafe24SalesFromOrders(
     const voidCandidates: VoidCandidateRow[] = [];
 
     for (const orderRaw of ordersById.values()) {
-      const order = buildOrderContext(orderRaw);
+      let order = buildOrderContext(orderRaw);
       if (!order) {
         warningErrors.push('order_id가 없는 주문을 건너뛰었습니다.');
         continue;
+      }
+
+      if (!order.buyerName) {
+        try {
+          const detailedOrder = await fetchOrderDetail(client, order.orderId);
+          if (detailedOrder) {
+            const hydratedOrder = buildOrderContext({ ...order.raw, ...detailedOrder });
+            if (hydratedOrder) {
+              order = hydratedOrder;
+            }
+          }
+        } catch (error) {
+          const message = error instanceof Error ? error.message : String(error);
+          warningErrors.push(`주문 ${order.orderId} 상세조회 실패(구매자명 보강 생략): ${message}`);
+        }
       }
 
       try {
         const items = await fetchOrderItems(client, order.orderId);
         orderItemsFetched += items.length;
         trackSuccessfulAnchor(isoToMs(order.paidAt || order.orderedAt));
+        let resolvedBuyerName = order.buyerName;
         let hasSoldItemInOrder = false;
         items.forEach((item) => {
+          if (!resolvedBuyerName) {
+            resolvedBuyerName = pickString(item, ORDER_ITEM_BUYER_FIELD_CANDIDATES);
+          }
+
           const isSoldItem = isItemConsideredSold(order, item);
 
           if (!isSoldItem) {
@@ -2221,7 +2285,7 @@ export async function syncCafe24SalesFromOrders(
             artwork_id: artworkId,
             sale_price: itemContext.salePrice,
             quantity: itemContext.quantity,
-            buyer_name: order.buyerName,
+            buyer_name: resolvedBuyerName,
             note: CAFE24_SYNC_NOTE,
             sold_at: itemContext.soldAt,
             source: 'cafe24',

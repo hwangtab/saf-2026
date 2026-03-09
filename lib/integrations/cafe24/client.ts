@@ -1,6 +1,6 @@
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 
-const DEFAULT_SCOPE = 'mall.read_product,mall.write_product';
+const DEFAULT_SCOPE = 'mall.read_product,mall.write_product,mall.read_order';
 const ACCESS_TOKEN_REFRESH_BUFFER_SECONDS = 90;
 const KOREASMARTCOOP_FALLBACK_CATEGORY_NO = 43;
 const DEFAULT_HTTP_TIMEOUT_MS = 15_000;
