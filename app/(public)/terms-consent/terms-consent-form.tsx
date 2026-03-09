@@ -150,13 +150,18 @@ export function TermsConsentForm({
       section.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
       window.requestAnimationFrame(() => {
+        // 스크롤 컨테이너([role="region"])는 focus 대상에서 제외
+        // — focus 시 브라우저가 자동 스크롤하여 내용이 빈 공간으로 밀림
         const focusTarget =
-          section.querySelector<HTMLElement>('[role="region"]') ??
           section.querySelector<HTMLElement>('input[type="checkbox"]:not([disabled])') ??
           section.querySelector<HTMLElement>(
-            'input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+            'input:not([type="hidden"]):not([disabled]), textarea:not([disabled])'
           );
-        focusTarget?.focus();
+        if (focusTarget) {
+          focusTarget.focus({ preventScroll: true });
+        }
+        // 안전장치: focus 후에도 내부 스크롤 리셋
+        if (scrollContainer) scrollContainer.scrollTop = 0;
       });
     }, 100);
   };
