@@ -84,7 +84,7 @@ export default function Modal({ isOpen, onClose, title, children, className }: M
   if (!mounted || !isOpen) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
       <div className="absolute inset-0" onClick={onClose} aria-hidden="true" />
       <div
         ref={modalRef}

@@ -136,20 +136,25 @@ export function TermsConsentForm({
     setIsIncompleteModalOpen(false);
     if (!item.targetId) return;
 
-    const section = document.getElementById(item.targetId);
-    if (!section) return;
+    const targetId = item.targetId;
 
-    section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // 모달 언마운트 + body overflow 복원 후 스크롤
+    setTimeout(() => {
+      const section = document.getElementById(targetId);
+      if (!section) return;
 
-    window.requestAnimationFrame(() => {
-      const focusTarget =
-        section.querySelector<HTMLElement>('[role="region"]') ??
-        section.querySelector<HTMLElement>('input[type="checkbox"]:not([disabled])') ??
-        section.querySelector<HTMLElement>(
-          'input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-        );
-      focusTarget?.focus();
-    });
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      window.requestAnimationFrame(() => {
+        const focusTarget =
+          section.querySelector<HTMLElement>('[role="region"]') ??
+          section.querySelector<HTMLElement>('input[type="checkbox"]:not([disabled])') ??
+          section.querySelector<HTMLElement>(
+            'input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          );
+        focusTarget?.focus();
+      });
+    }, 100);
   };
 
   const handleSubmitAttempt = (event: React.FormEvent<HTMLFormElement>) => {
