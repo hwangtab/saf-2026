@@ -8,6 +8,7 @@
  */
 export function sanitizeIlikeQuery(query: string): string {
   return query
+    .normalize('NFC')
     .trim()
     .replace(/_/g, '\\_')
     .replace(/'/g, "''")

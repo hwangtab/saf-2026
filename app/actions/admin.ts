@@ -7,6 +7,7 @@ import { sanitizeIlikeQuery } from '@/lib/utils/query';
 import {
   hasComposedTrailingConsonantQuery,
   hasHangulJamo,
+  hasHangulSyllable,
   matchesAnySearch,
 } from '@/lib/search-utils';
 import { revalidatePath } from 'next/cache';
@@ -98,11 +99,13 @@ export async function searchUnlinkedArtists(query: string): Promise<UnlinkedArti
   await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
 
-  const rawQuery = query.trim();
+  const rawQuery = query.trim().normalize('NFC');
   const normalizedQuery = sanitizeIlikeQuery(rawQuery);
   if (normalizedQuery.length < 2) return [];
   const requiresClientFilter =
-    hasHangulJamo(rawQuery) || hasComposedTrailingConsonantQuery(rawQuery);
+    hasHangulSyllable(rawQuery) ||
+    hasHangulJamo(rawQuery) ||
+    hasComposedTrailingConsonantQuery(rawQuery);
 
   const runSearch = async (withPhoneField: boolean) => {
     if (withPhoneField) {

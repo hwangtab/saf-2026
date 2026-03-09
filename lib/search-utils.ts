@@ -63,11 +63,15 @@ type HangulSyllableParts = {
 };
 
 export function normalizeSearchText(value: string | null | undefined): string {
-  return (value || '').toLowerCase().replace(/\s+/g, '');
+  return (value || '').normalize('NFC').toLowerCase().replace(/\s+/g, '');
 }
 
 export function hasHangulJamo(value: string | null | undefined): boolean {
   return /[ㄱ-ㅎㅏ-ㅣ]/.test(value || '');
+}
+
+export function hasHangulSyllable(value: string | null | undefined): boolean {
+  return /[가-힣]/.test((value || '').normalize('NFC'));
 }
 
 function isHangulSyllable(char: string): boolean {

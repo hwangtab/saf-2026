@@ -6,6 +6,7 @@ import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 import {
   hasComposedTrailingConsonantQuery,
   hasHangulJamo,
+  hasHangulSyllable,
   matchesAnySearch,
 } from '@/lib/search-utils';
 import { logAdminAction } from './admin-logs';
@@ -356,10 +357,14 @@ export async function createAdminArtist(formData: FormData) {
 export async function searchUsersByName(query: string) {
   await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
-  const normalizedQuery = query.trim();
+  const normalizedQuery = query.trim().normalize('NFC');
   if (normalizedQuery.length < 2) return [];
 
-  if (hasHangulJamo(normalizedQuery) || hasComposedTrailingConsonantQuery(normalizedQuery)) {
+  if (
+    hasHangulSyllable(normalizedQuery) ||
+    hasHangulJamo(normalizedQuery) ||
+    hasComposedTrailingConsonantQuery(normalizedQuery)
+  ) {
     const { data, error } = await supabase
       .from('profiles')
       .select('id, name, email, avatar_url, role, status')
