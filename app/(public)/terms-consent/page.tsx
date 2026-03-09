@@ -61,13 +61,25 @@ export default async function TermsConsentPage({
     redirect('/admin/dashboard');
   }
 
-  const artistReconsent = resolveArtistReconsentRequirements(artistApplication);
-  const needsArtistConsent = artistReconsent.needsArtistConsent;
-  const needsExhibitorConsent = needsExhibitorTermsConsent(exhibitorApplication);
-  const needsPrivacy = needsPrivacyConsent(exhibitorApplication);
-  const needsTos = artistReconsent.needsTosConsent || needsTosConsent(exhibitorApplication);
   const hasArtist = hasArtistApplication(artistApplication);
   const hasExhibitor = hasExhibitorApplication(exhibitorApplication);
+
+  // 단일 역할 시스템: 현재 역할에 해당하는 계약서만 표시
+  // role='user'(미승인)이면 출품자 신청 우선 (로그인 콜백과 동일한 우선순위)
+  const isArtistRole = profile?.role === 'artist';
+  const isExhibitorRole = profile?.role === 'exhibitor';
+  const showArtist = isArtistRole || (!isExhibitorRole && !hasExhibitor && hasArtist);
+  const showExhibitor = isExhibitorRole || (!isArtistRole && hasExhibitor);
+
+  const artistReconsent = resolveArtistReconsentRequirements(artistApplication);
+  const needsArtistConsent = showArtist ? artistReconsent.needsArtistConsent : false;
+  const needsExhibitorConsent = showExhibitor
+    ? needsExhibitorTermsConsent(exhibitorApplication)
+    : false;
+  const needsPrivacy = needsPrivacyConsent(exhibitorApplication);
+  const needsTos =
+    (showArtist ? artistReconsent.needsTosConsent : false) ||
+    (showExhibitor ? needsTosConsent(exhibitorApplication) : false);
 
   if (!needsArtistConsent && !needsExhibitorConsent && !needsPrivacy && !needsTos) {
     redirect(
