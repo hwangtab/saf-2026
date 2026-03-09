@@ -143,6 +143,10 @@ export function TermsConsentForm({
       const section = document.getElementById(targetId);
       if (!section) return;
 
+      // 계약서 내부 스크롤을 맨 위로 리셋
+      const scrollContainer = section.querySelector<HTMLElement>('[role="region"]');
+      if (scrollContainer) scrollContainer.scrollTop = 0;
+
       section.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
       window.requestAnimationFrame(() => {
