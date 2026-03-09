@@ -234,7 +234,7 @@ export function TermsConsentForm({
           </p>
           <div
             ref={artistTermsContainerRef}
-            className="mb-3 max-h-[52vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[65vh]"
+            className="mb-3 max-h-[60vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[70vh]"
             onScroll={handleArtistTermsScroll}
             tabIndex={0}
             role="region"
@@ -281,7 +281,7 @@ export function TermsConsentForm({
           </p>
           <div
             ref={exhibitorTermsContainerRef}
-            className="mb-3 max-h-[52vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[65vh]"
+            className="mb-3 max-h-[60vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[70vh]"
             onScroll={handleExhibitorTermsScroll}
             tabIndex={0}
             role="region"
@@ -327,7 +327,7 @@ export function TermsConsentForm({
             개인정보처리방침 전문
           </p>
           <div
-            className="mb-3 max-h-[52vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[65vh]"
+            className="mb-3 max-h-[60vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[70vh]"
             tabIndex={0}
             role="region"
             aria-labelledby="privacy-heading"
@@ -381,7 +381,7 @@ export function TermsConsentForm({
             이용약관 전문
           </p>
           <div
-            className="mb-3 max-h-[52vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[65vh]"
+            className="mb-3 max-h-[60vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[70vh]"
             tabIndex={0}
             role="region"
             aria-labelledby="tos-heading"

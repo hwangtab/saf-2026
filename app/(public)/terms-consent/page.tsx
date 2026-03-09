@@ -104,27 +104,27 @@ export default async function TermsConsentPage({
       : '개인정보처리방침 재동의가 필요합니다';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-8">
-      <div className="w-full max-w-lg rounded-2xl border border-gray-200 bg-white p-6 shadow-2xl md:p-8">
-        <div className="flex items-start justify-between gap-4">
-          <h1 className="text-2xl font-bold text-gray-900">{headingText}</h1>
+    <div className="min-h-screen bg-gray-50 px-4 py-12">
+      <div className="mx-auto max-w-2xl">
+        <div className="mb-8 flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">{headingText}</h1>
+            <p className="mt-3 text-sm leading-6 text-gray-600">
+              문서 내용이 업데이트되었습니다. 변경된 내용을 확인하고 다시 동의해주세요. 동의 후 기존
+              화면으로 자동 이동합니다.
+            </p>
+            <p className="mt-2 text-xs text-gray-400">요청 경로: {routeForDisplay}</p>
+          </div>
           <SignOutButton />
         </div>
-        <p className="mt-3 text-sm leading-6 text-gray-600">
-          문서 내용이 업데이트되었습니다. 변경된 내용을 확인하고 다시 동의해주세요. 동의 후 기존
-          화면으로 자동 이동합니다.
-        </p>
-        <p className="mt-2 text-xs text-gray-400">요청 경로: {routeForDisplay}</p>
 
-        <div className="mt-6">
-          <TermsConsentForm
-            nextPath={nextPath}
-            needsArtistConsent={needsArtistConsent}
-            needsExhibitorConsent={needsExhibitorConsent}
-            needsPrivacyConsent={needsPrivacy}
-            needsTosConsent={needsTos}
-          />
-        </div>
+        <TermsConsentForm
+          nextPath={nextPath}
+          needsArtistConsent={needsArtistConsent}
+          needsExhibitorConsent={needsExhibitorConsent}
+          needsPrivacyConsent={needsPrivacy}
+          needsTosConsent={needsTos}
+        />
       </div>
     </div>
   );
