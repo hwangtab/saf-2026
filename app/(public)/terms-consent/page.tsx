@@ -104,7 +104,7 @@ export default async function TermsConsentPage({
       : '개인정보처리방침 재동의가 필요합니다';
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-12">
+    <div className="min-h-screen bg-gray-50 px-4 pt-24 pb-12">
       <div className="mx-auto max-w-2xl">
         <div className="mb-8 flex items-start justify-between gap-4">
           <div>
