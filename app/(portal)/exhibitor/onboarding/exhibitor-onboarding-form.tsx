@@ -32,16 +32,12 @@ type OnboardingDefaults = {
 export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: OnboardingDefaults }) {
   const [state, formAction, isPending] = useActionState(submitExhibitorApplication, initialState);
   const [hasReadTerms, setHasReadTerms] = useState(false);
-  const [hasReadTos, setHasReadTos] = useState(false);
-  const [hasReadPrivacy, setHasReadPrivacy] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [isIncompleteModalOpen, setIsIncompleteModalOpen] = useState(false);
   const termsContainerRef = useRef<HTMLDivElement>(null);
-  const tosContainerRef = useRef<HTMLDivElement>(null);
-  const privacyContainerRef = useRef<HTMLDivElement>(null);
   const submitTriggerRef = useRef<HTMLElement | null>(null);
 
-  const canSubmit = hasReadTerms && hasReadTos && hasReadPrivacy && termsAccepted;
+  const canSubmit = hasReadTerms && termsAccepted;
   const incompleteItems = useMemo(() => {
     const items: IncompleteItem[] = [];
 
@@ -53,23 +49,7 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
       });
     }
 
-    if (!hasReadTos) {
-      items.push({
-        label: '이용약관',
-        reason: '문서 하단까지 스크롤해주세요.',
-        targetId: 'exhibitor-tos-section',
-      });
-    }
-
-    if (!hasReadPrivacy) {
-      items.push({
-        label: '개인정보처리방침',
-        reason: '문서 하단까지 스크롤해주세요.',
-        targetId: 'exhibitor-privacy-section',
-      });
-    }
-
-    if (hasReadTerms && hasReadTos && hasReadPrivacy && !termsAccepted) {
+    if (hasReadTerms && !termsAccepted) {
       items.push({
         label: '약관/방침 동의',
         reason: '동의 체크박스를 선택해주세요.',
@@ -78,7 +58,7 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
     }
 
     return items;
-  }, [hasReadPrivacy, hasReadTerms, hasReadTos, termsAccepted]);
+  }, [hasReadTerms, termsAccepted]);
 
   const handleCloseIncompleteModal = () => {
     setIsIncompleteModalOpen(false);
@@ -125,24 +105,6 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
     }
   };
 
-  const handleTosScroll = (event: React.UIEvent<HTMLDivElement>) => {
-    if (hasReadTos) return;
-    const target = event.currentTarget;
-    const reachedBottom = target.scrollTop + target.clientHeight >= target.scrollHeight - 12;
-    if (reachedBottom) {
-      setHasReadTos(true);
-    }
-  };
-
-  const handlePrivacyScroll = (event: React.UIEvent<HTMLDivElement>) => {
-    if (hasReadPrivacy) return;
-    const target = event.currentTarget;
-    const reachedBottom = target.scrollTop + target.clientHeight >= target.scrollHeight - 12;
-    if (reachedBottom) {
-      setHasReadPrivacy(true);
-    }
-  };
-
   useEffect(() => {
     const checkScrollableState = () => {
       if (
@@ -150,20 +112,6 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
         termsContainerRef.current.scrollHeight <= termsContainerRef.current.clientHeight + 1
       ) {
         setHasReadTerms(true);
-      }
-
-      if (
-        tosContainerRef.current &&
-        tosContainerRef.current.scrollHeight <= tosContainerRef.current.clientHeight + 1
-      ) {
-        setHasReadTos(true);
-      }
-
-      if (
-        privacyContainerRef.current &&
-        privacyContainerRef.current.scrollHeight <= privacyContainerRef.current.clientHeight + 1
-      ) {
-        setHasReadPrivacy(true);
       }
     };
 
@@ -247,8 +195,6 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
       >
         <input type="hidden" name="terms_version" value={EXHIBITOR_APPLICATION_TERMS_VERSION} />
         <input type="hidden" name="terms_read_complete" value={hasReadTerms ? '1' : '0'} />
-        <input type="hidden" name="tos_read_complete" value={hasReadTos ? '1' : '0'} />
-        <input type="hidden" name="privacy_read_complete" value={hasReadPrivacy ? '1' : '0'} />
 
         <div className="space-y-3">
           <div id="exhibitor-contract-section">
@@ -275,18 +221,13 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
               이용약관 전문
             </p>
             <div
-              ref={tosContainerRef}
               className="max-h-[52vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[65vh]"
-              onScroll={handleTosScroll}
               tabIndex={0}
               role="region"
               aria-labelledby="tos-heading"
             >
               <LegalDocumentContent document={TERMS_OF_SERVICE_DOCUMENT} />
             </div>
-            {!hasReadTos && (
-              <p className="mt-1 text-xs text-amber-700">문서 하단까지 스크롤해주세요.</p>
-            )}
           </div>
 
           <div id="exhibitor-privacy-section">
@@ -294,18 +235,13 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
               개인정보처리방침 전문
             </p>
             <div
-              ref={privacyContainerRef}
               className="max-h-[52vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[65vh]"
-              onScroll={handlePrivacyScroll}
               tabIndex={0}
               role="region"
               aria-labelledby="privacy-policy-heading"
             >
               <LegalDocumentContent document={PRIVACY_POLICY_DOCUMENT} />
             </div>
-            {!hasReadPrivacy && (
-              <p className="mt-1 text-xs text-amber-700">문서 하단까지 스크롤해주세요.</p>
-            )}
           </div>
         </div>
 
@@ -316,7 +252,7 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
             type="checkbox"
             checked={termsAccepted}
             onChange={(event) => setTermsAccepted(event.target.checked)}
-            disabled={!(hasReadTerms && hasReadTos && hasReadPrivacy)}
+            disabled={!hasReadTerms}
             className="mt-1 h-4 w-4 rounded border-gray-300 text-black focus:ring-black"
           />
           <div className="text-sm">

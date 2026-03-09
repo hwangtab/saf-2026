@@ -40,8 +40,6 @@ export async function submitArtistApplication(
     const termsAccepted = formData.get('terms_accepted') === 'on';
     const termsVersion = (formData.get('terms_version') as string | null)?.trim() || '';
     const termsReadComplete = formData.get('terms_read_complete') === '1';
-    const tosReadComplete = formData.get('tos_read_complete') === '1';
-    const privacyReadComplete = formData.get('privacy_read_complete') === '1';
 
     if (!artistName || !contact || !bio) {
       return { message: '모든 항목을 입력해주세요.', error: true };
@@ -53,14 +51,6 @@ export async function submitArtistApplication(
 
     if (!termsReadComplete) {
       return { message: '계약서 전문을 끝까지 확인해주세요.', error: true };
-    }
-
-    if (!tosReadComplete) {
-      return { message: '이용약관 전문을 끝까지 확인해주세요.', error: true };
-    }
-
-    if (!privacyReadComplete) {
-      return { message: '개인정보처리방침 전문을 끝까지 확인해주세요.', error: true };
     }
 
     if (termsVersion !== ARTIST_APPLICATION_TERMS_VERSION) {

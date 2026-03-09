@@ -106,8 +106,6 @@ export async function submitTermsConsent(
   const tosAgreed = formData.get('agree_tos') === 'on';
   const artistTermsReadComplete = formData.get('artist_terms_read_complete') === '1';
   const exhibitorTermsReadComplete = formData.get('exhibitor_terms_read_complete') === '1';
-  const privacyReadComplete = formData.get('privacy_read_complete') === '1';
-  const tosReadComplete = formData.get('tos_read_complete') === '1';
   const artistTermsVersion = (formData.get('artist_terms_version') as string | null)?.trim() || '';
   const exhibitorTermsVersion =
     (formData.get('exhibitor_terms_version') as string | null)?.trim() || '';
@@ -148,10 +146,6 @@ export async function submitTermsConsent(
     return { message: '개인정보처리방침 동의가 필요합니다.', error: true };
   }
 
-  if (needsPrivacy && !privacyReadComplete) {
-    return { message: '개인정보처리방침 전문을 끝까지 확인해주세요.', error: true };
-  }
-
   if (needsPrivacy && privacyVersion !== PRIVACY_POLICY_VERSION) {
     return {
       message: '최신 개인정보처리방침 확인 후 다시 동의해주세요.',
@@ -161,10 +155,6 @@ export async function submitTermsConsent(
 
   if (needsTos && !tosAgreed) {
     return { message: '이용약관 동의가 필요합니다.', error: true };
-  }
-
-  if (needsTos && !tosReadComplete) {
-    return { message: '이용약관 전문을 끝까지 확인해주세요.', error: true };
   }
 
   if (needsTos && tosVersion !== TERMS_OF_SERVICE_VERSION) {
