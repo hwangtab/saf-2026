@@ -57,14 +57,11 @@ export async function POST(request: NextRequest) {
 
   const raw = await request.text();
 
-  // 인증: x-vercel-signature (HMAC-SHA1) 또는 Bearer token
+  // 인증: x-vercel-signature (HMAC-SHA1) 서명 검증
+  // Vercel Drain 등록 시 검증 요청에는 서명이 없으므로 허용
   const signature = request.headers.get('x-vercel-signature');
-  const authHeader = request.headers.get('authorization');
-  const isSignatureValid = verifySignature(raw, signature, drainSecret);
-  const isBearerValid = authHeader === `Bearer ${drainSecret}`;
-
-  if (!isSignatureValid && !isBearerValid) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (signature && !verifySignature(raw, signature, drainSecret)) {
+    return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
   }
 
   let events: VercelDrainEvent[];
