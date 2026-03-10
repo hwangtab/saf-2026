@@ -28,9 +28,14 @@ const BATCH_SIZE = 500;
  * 응답 본문에 동일한 값을 반환해야 검증이 완료됩니다.
  */
 export async function GET(request: NextRequest) {
-  const verifyHeader = request.headers.get('x-vercel-verify');
-  if (verifyHeader) {
-    return new Response(verifyHeader, { status: 200 });
+  // Vercel sends x-vercel-verify as header or query parameter
+  const verifyValue =
+    request.headers.get('x-vercel-verify') || request.nextUrl.searchParams.get('x-vercel-verify');
+  if (verifyValue) {
+    return new Response(verifyValue, {
+      status: 200,
+      headers: { 'x-vercel-verify': verifyValue },
+    });
   }
   return NextResponse.json({ status: 'ok' });
 }
