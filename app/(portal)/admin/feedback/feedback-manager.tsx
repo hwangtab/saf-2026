@@ -55,18 +55,19 @@ function Badge({ className, children }: { className: string; children: React.Rea
   );
 }
 
-export function FeedbackManager({ feedback }: { feedback: Feedback[] }) {
+export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedback[] }) {
   const router = useRouter();
   const toast = useToast();
+  const [localFeedback, setLocalFeedback] = useState(initialFeedback);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<FeedbackStatus | 'all'>('all');
   const [categoryFilter, setCategoryFilter] = useState<FeedbackCategory | 'all'>('all');
   const [adminNote, setAdminNote] = useState('');
   const [saving, setSaving] = useState(false);
 
-  const selected = feedback.find((f) => f.id === selectedId);
+  const selected = localFeedback.find((f) => f.id === selectedId);
 
-  const filtered = feedback.filter((f) => {
+  const filtered = localFeedback.filter((f) => {
     if (statusFilter !== 'all' && f.status !== statusFilter) return false;
     if (categoryFilter !== 'all' && f.category !== categoryFilter) return false;
     return true;
@@ -85,12 +86,49 @@ export function FeedbackManager({ feedback }: { feedback: Feedback[] }) {
       if (result.error) {
         toast.error(result.error);
       } else {
+        setLocalFeedback((prev) =>
+          prev.map((f) =>
+            f.id === selectedId
+              ? {
+                  ...f,
+                  status: newStatus,
+                  admin_note: adminNote.trim() || null,
+                  resolved_at:
+                    newStatus === 'resolved' || newStatus === 'closed'
+                      ? new Date().toISOString()
+                      : null,
+                }
+              : f
+          )
+        );
         toast.success('상태가 변경되었습니다.');
-        setSelectedId(null);
         router.refresh();
       }
     } catch {
       toast.error('상태 변경 중 오류가 발생했습니다.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSaveNote = async () => {
+    if (!selectedId || !selected) return;
+    setSaving(true);
+    try {
+      const result = await updateFeedbackStatus(selectedId, selected.status, adminNote);
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        setLocalFeedback((prev) =>
+          prev.map((f) =>
+            f.id === selectedId ? { ...f, admin_note: adminNote.trim() || null } : f
+          )
+        );
+        toast.success('메모가 저장되었습니다.');
+        router.refresh();
+      }
+    } catch {
+      toast.error('메모 저장 중 오류가 발생했습니다.');
     } finally {
       setSaving(false);
     }
@@ -231,6 +269,16 @@ export function FeedbackManager({ feedback }: { feedback: Feedback[] }) {
                 placeholder="내부 메모를 남겨주세요 (사용자에게 표시되지 않음)"
                 className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
               />
+              <div className="mt-1.5 flex justify-end">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  disabled={saving || adminNote === (selected.admin_note || '')}
+                  onClick={handleSaveNote}
+                >
+                  메모 저장
+                </Button>
+              </div>
             </div>
 
             <div className="flex flex-wrap gap-2">

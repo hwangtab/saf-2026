@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { SignOutButton } from '@/components/auth/SignOutButton';
-import { adminNavItems } from './_components/admin-nav-items';
+import { adminNavGroups } from './_components/admin-nav-items';
 
 export function AdminMobileNav() {
   const [isOpen, setIsOpen] = useState(false);
@@ -99,33 +99,40 @@ export function AdminMobileNav() {
                 </button>
               </div>
               <div className="flex flex-col h-full">
-                <div className="space-y-1 p-4 flex-1">
-                  {adminNavItems.map((item) => {
-                    const targetPath = item.href.split('?')[0];
-                    const isReviewQueueItem = item.href.includes('status=pending');
-                    const isUsersItem = item.href === '/admin/users';
+                <div className="p-4 flex-1 space-y-3">
+                  {adminNavGroups.map((group, gi) => (
+                    <div key={gi}>
+                      {gi > 0 && <div className="mb-3 border-t border-slate-100" />}
+                      <div className="space-y-1">
+                        {group.items.map((item) => {
+                          const targetPath = item.href.split('?')[0];
+                          const isReviewQueueItem = item.href.includes('status=pending');
+                          const isUsersItem = item.href === '/admin/users';
 
-                    const isActive = isReviewQueueItem
-                      ? pathname === '/admin/users' && isReviewQueueMode
-                      : isUsersItem
-                        ? pathname === '/admin/users' && !isReviewQueueMode
-                        : pathname.startsWith(targetPath);
-                    return (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        aria-current={isActive ? 'page' : undefined}
-                        className={`block rounded-md px-3 py-2 text-base font-medium transition-colors ${
-                          isActive
-                            ? 'bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-600/20'
-                            : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
-                        }`}
-                        onClick={() => setIsOpen(false)}
-                      >
-                        {item.label}
-                      </Link>
-                    );
-                  })}
+                          const isActive = isReviewQueueItem
+                            ? pathname === '/admin/users' && isReviewQueueMode
+                            : isUsersItem
+                              ? pathname === '/admin/users' && !isReviewQueueMode
+                              : pathname.startsWith(targetPath);
+                          return (
+                            <Link
+                              key={item.href}
+                              href={item.href}
+                              aria-current={isActive ? 'page' : undefined}
+                              className={`block rounded-md px-3 py-2 text-base font-medium transition-colors ${
+                                isActive
+                                  ? 'bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-600/20'
+                                  : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+                              }`}
+                              onClick={() => setIsOpen(false)}
+                            >
+                              {item.label}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
                 </div>
                 <div className="border-t border-slate-100 p-4 flex justify-center">
                   <SignOutButton />
