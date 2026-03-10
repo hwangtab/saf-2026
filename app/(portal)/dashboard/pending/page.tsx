@@ -1,4 +1,5 @@
 import { SignOutButton } from '@/components/auth/SignOutButton';
+import FeedbackButton from '@/components/feedback/FeedbackButton';
 import { requireAuth } from '@/lib/auth/guards';
 import {
   ARTIST_APPLICATION_CONSENT_SELECT,
@@ -79,6 +80,7 @@ export default async function PendingPage() {
           <SignOutButton />
         </div>
       </div>
+      <FeedbackButton />
     </div>
   );
 }

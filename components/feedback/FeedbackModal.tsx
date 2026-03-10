@@ -27,6 +27,11 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
+  const handleClose = () => {
+    setError(null);
+    onClose();
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -41,12 +46,12 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
       }
       toast.success('소중한 의견이 전달되었습니다. 감사합니다!');
       formRef.current?.reset();
-      onClose();
+      handleClose();
     });
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="의견 보내기" className="max-w-lg">
+    <Modal isOpen={isOpen} onClose={handleClose} title="의견 보내기" className="max-w-lg">
       <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label
@@ -112,7 +117,7 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
         )}
 
         <div className="flex justify-end gap-2 pt-2">
-          <Button type="button" variant="secondary" onClick={onClose} disabled={isPending}>
+          <Button type="button" variant="secondary" onClick={handleClose} disabled={isPending}>
             취소
           </Button>
           <Button type="submit" disabled={isPending}>

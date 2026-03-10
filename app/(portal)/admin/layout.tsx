@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { SignOutButton } from '@/components/auth/SignOutButton';
 import { AdminMobileNav } from './admin-mobile-nav';
 import { AdminDesktopNav } from './admin-desktop-nav';
+import FeedbackButton from '@/components/feedback/FeedbackButton';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   await requireAdmin();
@@ -39,6 +40,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <main className="mx-auto mt-16 max-w-7xl px-4 pb-16 pt-8 sm:px-6 lg:px-8 lg:pb-24">
         {children}
       </main>
+      <FeedbackButton />
     </div>
   );
 }
