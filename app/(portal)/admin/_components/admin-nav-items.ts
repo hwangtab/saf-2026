@@ -15,6 +15,7 @@ export const adminNavGroups: AdminNavGroup[] = [
       { href: '/admin/artworks', label: '작품 관리' },
       { href: '/admin/content', label: '콘텐츠 관리' },
       { href: '/admin/revenue', label: '매출 현황' },
+      { href: '/admin/analytics', label: '사이트 분석' },
     ],
   },
   {
