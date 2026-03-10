@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useActionState, useEffect, useMemo, useRef, useState } from 'react';
+import { type RefObject, useActionState, useEffect, useMemo, useRef, useState } from 'react';
 import Button from '@/components/ui/Button';
 import { LegalDocumentContent } from '@/components/auth/LegalDocumentContent';
 import { IncompleteItemsModal, type IncompleteItem } from '@/components/ui/IncompleteItemsModal';
@@ -174,6 +174,10 @@ export function TermsConsentForm({
     setIsIncompleteModalOpen(true);
   };
 
+  const nudgeScroll = (containerRef: RefObject<HTMLDivElement | null>) => {
+    containerRef.current?.scrollBy({ top: 80, behavior: 'smooth' });
+  };
+
   const handleArtistTermsScroll = (event: React.UIEvent<HTMLDivElement>) => {
     if (hasReadArtistTerms) return;
     const target = event.currentTarget;
@@ -246,21 +250,41 @@ export function TermsConsentForm({
           <p id="artist-terms-heading" className="mb-2 text-xs font-semibold text-gray-700">
             전시·판매위탁 계약서 전문
           </p>
-          <div
-            ref={artistTermsContainerRef}
-            className="mb-3 max-h-[60vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[70vh]"
-            onScroll={handleArtistTermsScroll}
-            tabIndex={0}
-            role="region"
-            aria-labelledby="artist-terms-heading"
-          >
-            <LegalDocumentContent document={ARTIST_APPLICATION_TERMS_DOCUMENT} />
+          <div className="relative">
+            <div
+              ref={artistTermsContainerRef}
+              className="mb-3 max-h-[60vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[70vh]"
+              onScroll={handleArtistTermsScroll}
+              tabIndex={0}
+              role="region"
+              aria-labelledby="artist-terms-heading"
+            >
+              <LegalDocumentContent document={ARTIST_APPLICATION_TERMS_DOCUMENT} />
+            </div>
+            {!hasReadArtistTerms && (
+              <div className="pointer-events-none absolute bottom-3 left-0 right-0 flex flex-col items-center">
+                <div className="absolute inset-x-0 bottom-0 h-16 rounded-b-md bg-gradient-to-t from-white via-white/80 to-transparent" />
+                <span className="relative animate-bounce rounded-full bg-gray-900 px-3 py-1 text-xs font-medium text-white shadow">
+                  아래로 스크롤하세요 ↓
+                </span>
+              </div>
+            )}
           </div>
           {!hasReadArtistTerms && (
-            <p className="mb-3 text-xs text-amber-700">문서 하단까지 스크롤해주세요.</p>
+            <div className="mb-3 flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2">
+              <span className="text-sm text-amber-600">↓</span>
+              <p className="text-xs font-medium text-amber-800">
+                문서 하단까지 스크롤하면 동의 항목이 활성화됩니다.
+              </p>
+            </div>
           )}
 
-          <div className="flex items-start gap-3">
+          <div
+            className="flex items-start gap-3"
+            onClick={!hasReadArtistTerms ? () => nudgeScroll(artistTermsContainerRef) : undefined}
+            role={!hasReadArtistTerms ? 'button' : undefined}
+            tabIndex={!hasReadArtistTerms ? 0 : undefined}
+          >
             <input
               id="agree_artist"
               name="agree_artist"
@@ -274,7 +298,11 @@ export function TermsConsentForm({
               <label htmlFor="agree_artist" className="font-medium text-gray-700">
                 전시·판매위탁 계약서에 동의합니다. <span className="text-red-500">*</span>
               </label>
-              <p className="mt-1 text-gray-500">전체 문서를 읽어야 체크할 수 있습니다.</p>
+              <p className="mt-1 text-gray-500">
+                {hasReadArtistTerms
+                  ? '전체 문서를 읽어야 체크할 수 있습니다.'
+                  : '위 문서를 끝까지 스크롤해주세요.'}
+              </p>
               <p className="mt-1 text-xs text-gray-400">
                 <Link href="/terms/artist" className="underline underline-offset-2">
                   계약서 원문 보기
@@ -293,21 +321,43 @@ export function TermsConsentForm({
           <p id="exhibitor-terms-heading" className="mb-2 text-xs font-semibold text-gray-700">
             출품자 전시위탁 계약서 전문
           </p>
-          <div
-            ref={exhibitorTermsContainerRef}
-            className="mb-3 max-h-[60vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[70vh]"
-            onScroll={handleExhibitorTermsScroll}
-            tabIndex={0}
-            role="region"
-            aria-labelledby="exhibitor-terms-heading"
-          >
-            <LegalDocumentContent document={EXHIBITOR_APPLICATION_TERMS_DOCUMENT} />
+          <div className="relative">
+            <div
+              ref={exhibitorTermsContainerRef}
+              className="mb-3 max-h-[60vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[70vh]"
+              onScroll={handleExhibitorTermsScroll}
+              tabIndex={0}
+              role="region"
+              aria-labelledby="exhibitor-terms-heading"
+            >
+              <LegalDocumentContent document={EXHIBITOR_APPLICATION_TERMS_DOCUMENT} />
+            </div>
+            {!hasReadExhibitorTerms && (
+              <div className="pointer-events-none absolute bottom-3 left-0 right-0 flex flex-col items-center">
+                <div className="absolute inset-x-0 bottom-0 h-16 rounded-b-md bg-gradient-to-t from-white via-white/80 to-transparent" />
+                <span className="relative animate-bounce rounded-full bg-gray-900 px-3 py-1 text-xs font-medium text-white shadow">
+                  아래로 스크롤하세요 ↓
+                </span>
+              </div>
+            )}
           </div>
           {!hasReadExhibitorTerms && (
-            <p className="mb-3 text-xs text-amber-700">문서 하단까지 스크롤해주세요.</p>
+            <div className="mb-3 flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2">
+              <span className="text-sm text-amber-600">↓</span>
+              <p className="text-xs font-medium text-amber-800">
+                문서 하단까지 스크롤하면 동의 항목이 활성화됩니다.
+              </p>
+            </div>
           )}
 
-          <div className="flex items-start gap-3">
+          <div
+            className="flex items-start gap-3"
+            onClick={
+              !hasReadExhibitorTerms ? () => nudgeScroll(exhibitorTermsContainerRef) : undefined
+            }
+            role={!hasReadExhibitorTerms ? 'button' : undefined}
+            tabIndex={!hasReadExhibitorTerms ? 0 : undefined}
+          >
             <input
               id="agree_exhibitor"
               name="agree_exhibitor"
@@ -321,7 +371,11 @@ export function TermsConsentForm({
               <label htmlFor="agree_exhibitor" className="font-medium text-gray-700">
                 출품자 전시위탁 계약서에 동의합니다. <span className="text-red-500">*</span>
               </label>
-              <p className="mt-1 text-gray-500">전체 문서를 읽어야 체크할 수 있습니다.</p>
+              <p className="mt-1 text-gray-500">
+                {hasReadExhibitorTerms
+                  ? '전체 문서를 읽어야 체크할 수 있습니다.'
+                  : '위 문서를 끝까지 스크롤해주세요.'}
+              </p>
               <p className="mt-1 text-xs text-gray-400">
                 <Link href="/terms/exhibitor" className="underline underline-offset-2">
                   계약서 원문 보기
