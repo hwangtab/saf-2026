@@ -27,14 +27,12 @@ const BATCH_SIZE = 500;
  * Vercel이 `x-vercel-verify` 헤더를 포함한 GET 요청을 보내고,
  * 응답 본문에 동일한 값을 반환해야 검증이 완료됩니다.
  */
-export async function GET(request: NextRequest) {
-  // Vercel sends x-vercel-verify as header or query parameter
-  const verifyValue =
-    request.headers.get('x-vercel-verify') || request.nextUrl.searchParams.get('x-vercel-verify');
-  if (verifyValue) {
-    return new Response(verifyValue, {
+export async function GET() {
+  const verifyToken = process.env.VERCEL_DRAIN_VERIFY;
+  if (verifyToken) {
+    return new Response(verifyToken, {
       status: 200,
-      headers: { 'x-vercel-verify': verifyValue },
+      headers: { 'x-vercel-verify': verifyToken },
     });
   }
   return NextResponse.json({ status: 'ok' });
