@@ -2,6 +2,7 @@ import { requireAuth } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { redirect } from 'next/navigation';
 import { OnboardingForm } from './onboarding-form';
+import { SignOutButton } from '@/components/auth/SignOutButton';
 import Link from 'next/link';
 
 export default async function OnboardingPage({
@@ -77,7 +78,10 @@ export default async function OnboardingPage({
   // 역할 미선택 시 선택 화면 표시 (복구 모드 제외)
   if (!isRecoveryFlow && role !== 'artist') {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="relative min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="absolute top-4 right-4">
+          <SignOutButton />
+        </div>
         <div className="sm:mx-auto sm:w-full sm:max-w-xl">
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">SAF 2026</h2>
           <p className="mt-2 text-center text-lg font-medium text-gray-600">신청 유형 선택</p>
@@ -114,7 +118,10 @@ export default async function OnboardingPage({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="relative min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="absolute top-4 right-4">
+        <SignOutButton />
+      </div>
       <div className="sm:mx-auto sm:w-full sm:max-w-2xl">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           SAF 2026
