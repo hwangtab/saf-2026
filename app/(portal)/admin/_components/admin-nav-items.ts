@@ -6,6 +6,7 @@ export const adminNavItems = [
   { href: '/admin/artworks', label: '작품 관리' },
   { href: '/admin/content', label: '콘텐츠 관리' },
   { href: '/admin/revenue', label: '매출 현황' },
+  { href: '/admin/feedback', label: '피드백' },
   { href: '/admin/logs', label: '활동 로그' },
   { href: '/admin/trash', label: '휴지통' },
 ] as const;

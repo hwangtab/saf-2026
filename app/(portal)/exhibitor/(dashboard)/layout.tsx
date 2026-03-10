@@ -3,6 +3,7 @@ import { requireExhibitor } from '@/lib/auth/guards';
 import { SignOutButton } from '@/components/auth/SignOutButton';
 import { AdminBadge } from '@/app/admin/_components/admin-ui';
 import ExhibitorNav from './exhibitor-nav';
+import FeedbackButton from '@/components/feedback/FeedbackButton';
 
 export default async function ExhibitorLayout({ children }: { children: React.ReactNode }) {
   const user = await requireExhibitor();
@@ -38,6 +39,7 @@ export default async function ExhibitorLayout({ children }: { children: React.Re
       <main className="mx-auto mt-16 max-w-7xl px-4 pb-16 pt-8 sm:px-6 lg:px-8 lg:pb-24">
         {children}
       </main>
+      <FeedbackButton />
     </div>
   );
 }

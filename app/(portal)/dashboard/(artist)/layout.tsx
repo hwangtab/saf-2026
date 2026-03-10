@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { SignOutButton } from '@/components/auth/SignOutButton';
 import DashboardNav from './dashboard-nav';
 import { AdminBadge } from '@/app/admin/_components/admin-ui';
+import FeedbackButton from '@/components/feedback/FeedbackButton';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   // Guard: Protects all dashboard routes
@@ -37,6 +38,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       <main className="mx-auto mt-16 max-w-7xl px-4 pb-16 pt-8 sm:px-6 lg:px-8 lg:pb-24">
         {children}
       </main>
+      <FeedbackButton />
     </div>
   );
 }

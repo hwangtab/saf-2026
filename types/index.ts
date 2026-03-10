@@ -145,3 +145,20 @@ export interface BreadcrumbItem {
   name: string;
   url: string;
 }
+
+export type FeedbackCategory = 'bug' | 'improvement' | 'question' | 'other';
+export type FeedbackStatus = 'open' | 'reviewing' | 'resolved' | 'closed';
+
+export interface Feedback {
+  id: string;
+  user_id: string;
+  category: FeedbackCategory;
+  page_url: string | null;
+  title: string;
+  description: string;
+  status: FeedbackStatus;
+  admin_note: string | null;
+  created_at: string;
+  resolved_at: string | null;
+  user_email?: string;
+}
