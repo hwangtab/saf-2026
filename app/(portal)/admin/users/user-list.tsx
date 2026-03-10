@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import {
   approveUser,
   promoteUserToArtistWithLink,
+  searchLinkedArtistsByName,
   reactivateUser,
   rejectUser,
   searchUnlinkedArtists,
@@ -73,6 +74,15 @@ export function UserList({
   const [isSearchingArtists, setIsSearchingArtists] = useState(false);
   const [artistSearchError, setArtistSearchError] = useState<string | null>(null);
   const [isArtistSearchSlow, setIsArtistSearchSlow] = useState(false);
+  const [linkedNameConflicts, setLinkedNameConflicts] = useState<
+    Array<{
+      artist_id: string;
+      linked_user_id: string;
+      linked_user_name: string | null;
+      linked_user_email: string | null;
+    }>
+  >([]);
+  const [linkedNameConflictError, setLinkedNameConflictError] = useState<string | null>(null);
   const [sortKey, setSortKey] = useState<UserSortKey>('user');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const pendingQueryRef = useRef<string | null>(null);
@@ -235,6 +245,50 @@ export function UserList({
     };
   }, [artistPromoteContext, debouncedArtistSearchQuery]);
 
+  useEffect(() => {
+    if (!artistPromoteContext || artistPromoteContext.mode !== 'link_existing') {
+      setLinkedNameConflicts([]);
+      setLinkedNameConflictError(null);
+      return;
+    }
+
+    const candidateName =
+      artistPromoteContext.user.application?.artist_name?.trim() ||
+      artistPromoteContext.user.name?.trim() ||
+      '';
+
+    if (candidateName.length < 2) {
+      setLinkedNameConflicts([]);
+      setLinkedNameConflictError(null);
+      return;
+    }
+
+    let cancelled = false;
+
+    const run = async () => {
+      try {
+        const conflicts = await searchLinkedArtistsByName(candidateName);
+        if (!cancelled) {
+          setLinkedNameConflicts(
+            conflicts.filter((item) => item.linked_user_id !== artistPromoteContext.user.id)
+          );
+          setLinkedNameConflictError(null);
+        }
+      } catch (error: unknown) {
+        if (!cancelled) {
+          setLinkedNameConflicts([]);
+          setLinkedNameConflictError('동명이인 연결 여부 확인에 실패했습니다.');
+        }
+      }
+    };
+
+    void run();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [artistPromoteContext]);
+
   const filteredUsers = useMemo(() => {
     const normalizedQuery = normalizeQuery(query);
     if (!normalizedQuery) return localUsers;
@@ -336,6 +390,8 @@ export function UserList({
     setArtistSearchError(null);
     setIsSearchingArtists(false);
     setIsArtistSearchSlow(false);
+    setLinkedNameConflicts([]);
+    setLinkedNameConflictError(null);
   };
 
   const handlePromoteToArtist = async () => {
@@ -774,6 +830,20 @@ export function UserList({
                 </div>
 
                 <div aria-live="polite" className="min-h-[1.25rem] text-xs">
+                  {linkedNameConflicts.length > 0 && (
+                    <p className="rounded-md border border-amber-200 bg-amber-50 px-2 py-1 text-amber-700">
+                      이미 연결된 동명이인 작가가 {linkedNameConflicts.length}명 있습니다.{' '}
+                      {linkedNameConflicts
+                        .map(
+                          (item) =>
+                            item.linked_user_name || item.linked_user_email || item.linked_user_id
+                        )
+                        .join(', ')}
+                    </p>
+                  )}
+                  {linkedNameConflictError && (
+                    <p className="text-amber-700">{linkedNameConflictError}</p>
+                  )}
                   {artistSearchQuery.trim().length < 2 && (
                     <p className="text-slate-500">
                       두 글자 이상 입력하면 미연결 작가를 검색합니다.

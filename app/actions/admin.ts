@@ -30,6 +30,14 @@ export type UnlinkedArtistSearchItem = {
   artwork_count: number;
 };
 
+export type LinkedArtistNameConflictItem = {
+  artist_id: string;
+  artist_name: string | null;
+  linked_user_id: string;
+  linked_user_name: string | null;
+  linked_user_email: string | null;
+};
+
 type PromoteArtistMode = 'link_existing' | 'create_and_link' | 'role_only';
 
 type PromoteUserToArtistParams = {
@@ -181,6 +189,68 @@ export async function searchUnlinkedArtists(query: string): Promise<UnlinkedArti
     updated_at: artist.updated_at || null,
     artwork_count: artist.artworks?.[0]?.count || 0,
   }));
+}
+
+export async function searchLinkedArtistsByName(
+  name: string
+): Promise<LinkedArtistNameConflictItem[]> {
+  await requireAdmin();
+  const supabase = await createSupabaseAdminOrServerClient();
+
+  const normalizedName = name.trim().normalize('NFC');
+  if (normalizedName.length < 2) return [];
+
+  const { data: artistRows, error: artistError } = await supabase
+    .from('artists')
+    .select('id, name_ko, user_id')
+    .eq('name_ko', normalizedName)
+    .not('user_id', 'is', null)
+    .order('updated_at', { ascending: false })
+    .limit(10);
+
+  if (artistError) throw artistError;
+
+  type LinkedArtistRow = {
+    id: string;
+    name_ko: string | null;
+    user_id: string;
+  };
+
+  const linkedArtists = (
+    (artistRows || []) as Array<{ id: string; name_ko: string | null; user_id: string | null }>
+  ).filter((artist): artist is LinkedArtistRow => Boolean(artist.user_id));
+
+  if (linkedArtists.length === 0) return [];
+
+  const linkedUserIds = Array.from(new Set(linkedArtists.map((artist) => artist.user_id)));
+  const { data: profileRows, error: profileError } = await supabase
+    .from('profiles')
+    .select('id, name, email')
+    .in('id', linkedUserIds);
+
+  if (profileError) throw profileError;
+
+  const profileById = new Map(
+    (profileRows || []).map((profile) => [
+      profile.id,
+      {
+        name: profile.name || null,
+        email: profile.email || null,
+      },
+    ])
+  );
+
+  return linkedArtists.map((artist) => {
+    const linkedProfile = profileById.get(artist.user_id);
+
+    return {
+      artist_id: artist.id,
+      artist_name: artist.name_ko || null,
+      linked_user_id: artist.user_id,
+      linked_user_name: linkedProfile?.name || null,
+      linked_user_email: linkedProfile?.email || null,
+    };
+  });
 }
 
 export async function promoteUserToArtistWithLink({
