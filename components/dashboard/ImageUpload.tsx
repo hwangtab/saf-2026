@@ -142,11 +142,11 @@ export function ImageUpload({
       if (cleanupCandidateUrls.length > 0) {
         onUploadDelta?.(cleanupCandidateUrls);
       }
-    } catch (error: any) {
+    } catch {
       if (uploadedPaths.length > 0) {
         await supabase.storage.from(bucket).remove(uploadedPaths);
       }
-      toast.error('이미지 업로드 실패: ' + error.message);
+      toast.error('이미지 업로드에 실패했습니다. 잠시 후 다시 시도해주세요.');
     } finally {
       setUploading(false);
       setUploadProgress(null);
@@ -206,7 +206,7 @@ export function ImageUpload({
       const removalPaths = [path];
       const { error } = await supabase.storage.from(bucket).remove(removalPaths);
       if (error) {
-        toast.error('이미지 삭제 실패: ' + error.message);
+        toast.error('이미지 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.');
         return;
       }
     }

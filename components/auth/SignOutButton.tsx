@@ -20,7 +20,7 @@ export function SignOutButton() {
       const { error } = await supabase.auth.signOut({ scope: 'local' });
 
       if (error) {
-        toast.error(`로그아웃 중 오류가 발생했습니다: ${error.message}`);
+        toast.error('로그아웃 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
         setIsSigningOut(false);
         return;
       }
@@ -30,7 +30,7 @@ export function SignOutButton() {
       router.replace('/');
       router.refresh();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : '로그아웃 중 오류가 발생했습니다.');
+      toast.error('로그아웃 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
       setIsSigningOut(false);
     }
   };

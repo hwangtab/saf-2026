@@ -163,10 +163,9 @@ export function ArtworkEditForm({
           router.push('/admin/artworks');
         }
       }
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : '저장 중 오류가 발생했습니다.';
-      setError(message);
-      toast.error(message);
+    } catch {
+      setError('저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      toast.error('저장 중 오류가 발생했습니다.');
     } finally {
       setSaving(false);
     }
@@ -183,10 +182,9 @@ export function ArtworkEditForm({
         notifyCafe24SyncResult(result.cafe24, '이미지 저장');
       }
       router.refresh();
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : '이미지 저장 중 오류가 발생했습니다.';
-      setError(message);
-      toast.error(message);
+    } catch {
+      setError('이미지 저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      toast.error('이미지 저장 중 오류가 발생했습니다.');
     } finally {
       setSavingImages(false);
     }

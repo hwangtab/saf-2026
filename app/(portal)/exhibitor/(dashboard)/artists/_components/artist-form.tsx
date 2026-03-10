@@ -62,10 +62,9 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
           }
         }
       }
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : '저장 중 오류가 발생했습니다.';
-      setError(message);
-      toast.error(message);
+    } catch {
+      setError('저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      toast.error('저장 중 오류가 발생했습니다.');
     } finally {
       setSaving(false);
     }
@@ -80,10 +79,9 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
       await updateExhibitorArtistProfileImage(artist.id, newImages[0] || null);
       toast.success('프로필 이미지가 저장되었습니다.');
       router.refresh();
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : '이미지 저장 중 오류가 발생했습니다.';
-      setError(message);
-      toast.error(message);
+    } catch {
+      setError('이미지 저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      toast.error('이미지 저장 중 오류가 발생했습니다.');
     } finally {
       setSavingImage(false);
     }

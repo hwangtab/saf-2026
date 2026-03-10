@@ -43,7 +43,11 @@ export default function SignUpPage() {
     });
 
     if (signUpError) {
-      setError(signUpError.message);
+      setError(
+        signUpError.message === 'User already registered'
+          ? '이미 등록된 이메일입니다. 로그인을 시도해주세요.'
+          : '회원가입 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'
+      );
       setLoading(false);
       return;
     }
@@ -71,7 +75,7 @@ export default function SignUpPage() {
     });
 
     if (error) {
-      setError(error.message);
+      setError('소셜 로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
       setOauthLoading(null);
     }
   };

@@ -39,10 +39,8 @@ export function Cafe24MissingLinkSyncButton() {
       }
 
       router.refresh();
-    } catch (error: unknown) {
-      const message =
-        error instanceof Error ? error.message : '일괄 동기화 중 오류가 발생했습니다.';
-      toast.error(message);
+    } catch {
+      toast.error('일괄 동기화 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
     } finally {
       setSyncing(false);
     }

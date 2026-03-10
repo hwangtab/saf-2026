@@ -42,7 +42,11 @@ export default function LoginPage() {
     });
 
     if (error) {
-      setError(error.message);
+      setError(
+        error.message === 'Invalid login credentials'
+          ? '이메일 또는 비밀번호가 올바르지 않습니다.'
+          : '로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'
+      );
       setLoading(false);
     } else {
       const {
@@ -187,7 +191,7 @@ export default function LoginPage() {
     });
 
     if (error) {
-      setError(error.message);
+      setError('소셜 로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
       setOauthLoading(null);
     }
   };

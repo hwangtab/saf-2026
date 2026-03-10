@@ -59,7 +59,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
         setError(null);
         router.refresh();
       } catch (err: unknown) {
-        setError(err instanceof Error ? err.message : '삭제 중 오류가 발생했습니다.');
+        setError('삭제 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
       } finally {
         setProcessingId(null);
       }
