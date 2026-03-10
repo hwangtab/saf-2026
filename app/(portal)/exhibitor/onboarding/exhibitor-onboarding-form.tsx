@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useEffect, useMemo, useRef, useState } from 'react';
+import { type RefObject, useActionState, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import { LegalDocumentContent } from '@/components/auth/LegalDocumentContent';
@@ -94,6 +94,10 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
     submitTriggerRef.current =
       document.activeElement instanceof HTMLElement ? document.activeElement : null;
     setIsIncompleteModalOpen(true);
+  };
+
+  const nudgeScroll = (containerRef: RefObject<HTMLDivElement | null>) => {
+    containerRef.current?.scrollBy({ top: 80, behavior: 'smooth' });
   };
 
   const handleTermsScroll = (event: React.UIEvent<HTMLDivElement>) => {
@@ -201,18 +205,33 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
             <p id="exhibitor-terms-heading" className="mb-2 text-xs font-semibold text-gray-700">
               출품자 전시위탁 계약서 전문
             </p>
-            <div
-              ref={termsContainerRef}
-              className="max-h-[52vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[65vh]"
-              onScroll={handleTermsScroll}
-              tabIndex={0}
-              role="region"
-              aria-labelledby="exhibitor-terms-heading"
-            >
-              <LegalDocumentContent document={EXHIBITOR_APPLICATION_TERMS_DOCUMENT} />
+            <div className="relative">
+              <div
+                ref={termsContainerRef}
+                className="max-h-[52vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[65vh]"
+                onScroll={handleTermsScroll}
+                tabIndex={0}
+                role="region"
+                aria-labelledby="exhibitor-terms-heading"
+              >
+                <LegalDocumentContent document={EXHIBITOR_APPLICATION_TERMS_DOCUMENT} />
+              </div>
+              {!hasReadTerms && (
+                <div className="pointer-events-none absolute bottom-0 left-0 right-0 flex flex-col items-center">
+                  <div className="absolute inset-x-0 bottom-0 h-16 rounded-b-md bg-gradient-to-t from-white via-white/80 to-transparent" />
+                  <span className="relative animate-bounce rounded-full bg-gray-900 px-3 py-1 text-xs font-medium text-white shadow">
+                    아래로 스크롤하세요 ↓
+                  </span>
+                </div>
+              )}
             </div>
             {!hasReadTerms && (
-              <p className="mt-1 text-xs text-amber-700">문서 하단까지 스크롤해주세요.</p>
+              <div className="mt-1 flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2">
+                <span className="text-sm text-amber-600">↓</span>
+                <p className="text-xs font-medium text-amber-800">
+                  문서 하단까지 스크롤하면 동의 항목이 활성화됩니다.
+                </p>
+              </div>
             )}
           </div>
 
@@ -245,7 +264,13 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
           </div>
         </div>
 
-        <div id="exhibitor-agreement-section" className="mt-4 flex items-start gap-3">
+        <div
+          id="exhibitor-agreement-section"
+          className="mt-4 flex items-start gap-3"
+          onClick={!hasReadTerms ? () => nudgeScroll(termsContainerRef) : undefined}
+          role={!hasReadTerms ? 'button' : undefined}
+          tabIndex={!hasReadTerms ? 0 : undefined}
+        >
           <input
             id="terms_accepted"
             name="terms_accepted"
@@ -260,7 +285,11 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
               출품자 전시위탁 계약서, 이용약관 및 개인정보처리방침에 동의합니다.{' '}
               <span className="text-red-500">*</span>
             </label>
-            <p className="mt-1 text-gray-500">계약서 전문을 읽어야 체크할 수 있습니다.</p>
+            <p className="mt-1 text-gray-500">
+              {hasReadTerms
+                ? '계약서 전문을 읽어야 체크할 수 있습니다.'
+                : '위 계약서를 끝까지 스크롤해주세요.'}
+            </p>
             <p className="mt-1 text-xs text-gray-400">
               계약서 원문:{' '}
               <Link href="/terms/exhibitor" className="underline underline-offset-2">
