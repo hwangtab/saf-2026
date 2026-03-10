@@ -87,6 +87,20 @@ export function UserTable({
                 <span className="text-[11px] text-gray-400">{getSortArrow('application')}</span>
               </button>
             </th>
+            <th
+              scope="col"
+              className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              <button
+                type="button"
+                onClick={() => onSort('created_at')}
+                className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
+                aria-label={getSortAriaLabel('가입일', 'created_at')}
+              >
+                가입일
+                <span className="text-[11px] text-gray-400">{getSortArrow('created_at')}</span>
+              </button>
+            </th>
             <th scope="col" className="relative px-6 py-3">
               <span className="sr-only">관리</span>
             </th>
@@ -95,7 +109,7 @@ export function UserTable({
         <tbody className="bg-white divide-y divide-gray-200">
           {users.length === 0 ? (
             <tr>
-              <td colSpan={4} className="px-6 py-0">
+              <td colSpan={5} className="px-6 py-0">
                 <AdminEmptyState
                   title="검색 결과가 없습니다"
                   description="다른 검색어로 다시 시도해보세요."
@@ -222,6 +236,15 @@ export function UserTable({
                   ) : (
                     <span className="text-xs text-gray-400 italic">신청 정보 없음</span>
                   )}
+                </td>
+                <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {user.created_at
+                    ? new Date(user.created_at).toLocaleDateString('ko-KR', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })
+                    : '-'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <div className="flex justify-end items-center gap-2">

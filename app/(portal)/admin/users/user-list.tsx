@@ -344,8 +344,10 @@ export function UserList({
       } else if (sortKey === 'status_role') {
         const statusCompare = statusRank[a.status] - statusRank[b.status];
         result = statusCompare !== 0 ? statusCompare : roleRank[a.role] - roleRank[b.role];
-      } else {
+      } else if (sortKey === 'application') {
         result = compareByApplication(a, b);
+      } else if (sortKey === 'created_at') {
+        result = (a.created_at || '').localeCompare(b.created_at || '');
       }
 
       if (result === 0) {
@@ -364,7 +366,7 @@ export function UserList({
       return;
     }
     setSortKey(key);
-    setSortDirection('asc');
+    setSortDirection(key === 'created_at' ? 'desc' : 'asc');
   };
 
   const openArtistPromoteModal = (user: Profile) => {

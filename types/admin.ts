@@ -34,7 +34,7 @@ export type UnlinkedArtistOption = {
   artwork_count: number;
 };
 
-export type UserSortKey = 'user' | 'status_role' | 'application';
+export type UserSortKey = 'user' | 'status_role' | 'application' | 'created_at';
 export type SortDirection = 'asc' | 'desc';
 
 export type InitialFilters = {
