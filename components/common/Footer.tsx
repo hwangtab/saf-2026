@@ -1,11 +1,17 @@
-import Link from 'next/link';
+'use client';
+
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import ExportedImage from 'next-image-export-optimizer';
 import { SOCIAL_LINKS, CONTACT, EXTERNAL_LINKS } from '@/lib/constants';
 import FooterSliderWrapper from '@/components/common/FooterSliderWrapper';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
-import { UI_STRINGS } from '@/lib/ui-strings';
 
 export default function Footer() {
+  const t = useTranslations('footer');
+  const tNav = useTranslations('nav');
+  const tA11y = useTranslations('a11y');
+
   return (
     <>
       <FooterSliderWrapper />
@@ -20,24 +26,20 @@ export default function Footer() {
                 <div className="flex items-start gap-3 mb-6">
                   <ExportedImage
                     src="/images/logo/320pxX90px_feet.webp"
-                    alt={UI_STRINGS.A11Y.LOGO_ALT}
+                    alt={tA11y('logoAlt')}
                     width={200}
                     height={56}
                     className="h-12 w-auto flex-shrink-0"
                   />
                   <span className="sr-only">씨앗페 2026</span>
                 </div>
-                <p className="text-gray-300 text-sm mb-4">
-                  한국 예술인들의 금융 위기를 해결하기 위한 상호부조 캠페인입니다.
-                </p>
-                <p className="text-sm text-gray-400">
-                  온라인 전시 및 구매 안내는 링크 메뉴와 고객문의를 통해 확인하실 수 있습니다.
-                </p>
+                <p className="text-gray-300 text-sm mb-4">{t('description')}</p>
+                <p className="text-sm text-gray-400">{t('guide')}</p>
               </div>
 
               {/* Quick Links */}
               <div>
-                <h3 className="font-sans font-bold text-lg mb-4">{UI_STRINGS.FOOTER.LINKS}</h3>
+                <h3 className="font-sans font-bold text-lg mb-4">{t('links')}</h3>
                 <ul className="space-y-2 text-sm">
                   <li>
                     <a
@@ -46,7 +48,7 @@ export default function Footer() {
                       rel="noopener noreferrer"
                       className="text-gray-300 hover:text-primary transition-colors"
                     >
-                      {UI_STRINGS.NAV.DONATE}
+                      {tNav('donate')}
                     </a>
                   </li>
                   <li>
@@ -56,7 +58,7 @@ export default function Footer() {
                       rel="noopener noreferrer"
                       className="text-gray-300 hover:text-primary transition-colors"
                     >
-                      {UI_STRINGS.FOOTER.ONLINE_GALLERY}
+                      {t('onlineGallery')}
                     </a>
                   </li>
                   <li>
@@ -66,7 +68,7 @@ export default function Footer() {
                       rel="noopener noreferrer"
                       className="text-gray-300 hover:text-primary transition-colors"
                     >
-                      {UI_STRINGS.FOOTER.LOAN_INFO}
+                      {t('loanInfo')}
                     </a>
                   </li>
                   <li>
@@ -76,7 +78,7 @@ export default function Footer() {
                       rel="noopener noreferrer"
                       className="text-gray-300 hover:text-primary transition-colors"
                     >
-                      {UI_STRINGS.FOOTER.COOP_HOME}
+                      {t('coopHome')}
                     </a>
                   </li>
                   <li>
@@ -86,7 +88,7 @@ export default function Footer() {
                       rel="noopener noreferrer"
                       className="text-gray-300 hover:text-primary transition-colors"
                     >
-                      {UI_STRINGS.NAV.ORDER_STATUS}
+                      {tNav('orderStatus')}
                     </a>
                   </li>
                 </ul>
@@ -94,7 +96,7 @@ export default function Footer() {
 
               {/* Social Links & Contact */}
               <div>
-                <h3 className="font-sans font-bold text-lg mb-4">{UI_STRINGS.FOOTER.FOLLOW}</h3>
+                <h3 className="font-sans font-bold text-lg mb-4">{t('follow')}</h3>
                 <div className="flex gap-4 mb-6">
                   <a
                     href={SOCIAL_LINKS.INSTAGRAM}
@@ -131,7 +133,7 @@ export default function Footer() {
                   </a>
                 </div>
 
-                <h3 className="font-sans font-bold text-lg mb-4">{UI_STRINGS.FOOTER.CONTACT}</h3>
+                <h3 className="font-sans font-bold text-lg mb-4">{t('contact')}</h3>
                 <div className="text-sm text-gray-400 space-y-1">
                   <p>
                     <a
@@ -157,12 +159,18 @@ export default function Footer() {
             <div className="border-t border-gray-700 pt-8">
               <div className="text-center text-xs text-gray-400 leading-6 mb-4">
                 <p>
-                  상호명: {CONTACT.ORGANIZATION_NAME} | 대표자명: {CONTACT.REPRESENTATIVE_NAME} |
-                  사업자등록번호: {CONTACT.BUSINESS_REGISTRATION_NUMBER}
+                  {t('businessInfo', {
+                    org: CONTACT.ORGANIZATION_NAME,
+                    rep: CONTACT.REPRESENTATIVE_NAME,
+                    bizNo: CONTACT.BUSINESS_REGISTRATION_NUMBER,
+                  })}
                 </p>
                 <p>
-                  주소: {CONTACT.ADDRESS} ({CONTACT.POSTAL_CODE}) | 통신판매신고번호:{' '}
-                  {CONTACT.MAIL_ORDER_REPORT_NUMBER}
+                  {t('addressInfo', {
+                    address: CONTACT.ADDRESS,
+                    postalCode: CONTACT.POSTAL_CODE,
+                    mailOrder: CONTACT.MAIL_ORDER_REPORT_NUMBER,
+                  })}
                 </p>
               </div>
               <div className="mb-4 flex items-center justify-center gap-2 text-sm text-gray-300">
@@ -170,7 +178,7 @@ export default function Footer() {
                   href="/privacy"
                   className="hover:text-primary transition-colors link-underline-offset"
                 >
-                  {UI_STRINGS.FOOTER.PRIVACY_POLICY}
+                  {t('privacyPolicy')}
                 </Link>
                 <span className="text-gray-500" aria-hidden="true">
                   |
@@ -179,12 +187,12 @@ export default function Footer() {
                   href="/terms"
                   className="hover:text-primary transition-colors link-underline-offset"
                 >
-                  {UI_STRINGS.FOOTER.TERMS_OF_SERVICE}
+                  {t('termsOfService')}
                 </Link>
               </div>
               {/* Copyright */}
               <div className="text-center text-sm text-gray-400">
-                <p>© 2026 씨앗페. All rights reserved.</p>
+                <p>{t('copyright')}</p>
               </div>
             </div>
           </div>

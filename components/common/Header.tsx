@@ -2,13 +2,14 @@
 
 import dynamic from 'next/dynamic';
 import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
 import DesktopNav from './Header/DesktopNav';
 import HeaderLogo from './Header/HeaderLogo';
+import LanguageSwitcher from './LanguageSwitcher';
 import MenuToggleIcon from '@/components/ui/MenuToggleIcon';
 import { Z_INDEX } from '@/lib/constants';
-import { UI_STRINGS } from '@/lib/ui-strings';
 import { useHeaderStyle } from '@/lib/hooks/useHeaderStyle';
-import { MAIN_NAVIGATION } from '@/lib/menus';
+import { useLocalizedNavigation } from '@/lib/hooks/useLocalizedNavigation';
 
 const FullscreenMenu = dynamic(() => import('./Header/FullscreenMenu'), { ssr: false });
 
@@ -17,8 +18,10 @@ export default function Header() {
 }
 
 function PublicHeader() {
+  const t = useTranslations('nav');
   const { isMenuOpen, openMenu, closeMenu, isActive, headerStyle, isDarkText, textColor } =
     useHeaderStyle();
+  const navigation = useLocalizedNavigation();
 
   return (
     <header
@@ -35,29 +38,32 @@ function PublicHeader() {
       <nav className="relative container-max flex items-center justify-between h-16">
         <HeaderLogo isDarkText={isDarkText} />
 
-        <DesktopNav navigation={MAIN_NAVIGATION} isActive={isActive} textColor={textColor} />
+        <DesktopNav navigation={navigation} isActive={isActive} textColor={textColor} />
 
-        <button
-          onClick={openMenu}
-          className={clsx(
-            'md:hidden p-3 min-w-[44px] min-h-[44px] flex items-center justify-center',
-            'transition-transform active:scale-90',
-            'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg',
-            textColor,
-            'hover:text-primary'
-          )}
-          aria-label={UI_STRINGS.NAV.TOGGLE_MENU}
-          aria-expanded={isMenuOpen}
-        >
-          <MenuToggleIcon isOpen={isMenuOpen} />
-        </button>
+        <div className="flex items-center gap-1">
+          <LanguageSwitcher className={clsx('hidden md:flex', textColor)} />
+          <button
+            onClick={openMenu}
+            className={clsx(
+              'md:hidden p-3 min-w-[44px] min-h-[44px] flex items-center justify-center',
+              'transition-transform active:scale-90',
+              'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg',
+              textColor,
+              'hover:text-primary'
+            )}
+            aria-label={t('toggleMenu')}
+            aria-expanded={isMenuOpen}
+          >
+            <MenuToggleIcon isOpen={isMenuOpen} />
+          </button>
+        </div>
       </nav>
 
-      {/* 풀스크린 메뉴 - 네이티브 dialog 사용 */}
+      {/* Fullscreen menu */}
       <FullscreenMenu
         isOpen={isMenuOpen}
         onClose={closeMenu}
-        navigation={MAIN_NAVIGATION}
+        navigation={navigation}
         isActive={isActive}
       />
     </header>

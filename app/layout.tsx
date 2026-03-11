@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from 'next';
+import { getLocale } from 'next-intl/server';
 import { Analytics } from '@vercel/analytics/react';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { OG_IMAGE, SITE_URL, SITE_URL_ALIAS, CONTACT } from '@/lib/constants';
+import { OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
 import {
   generateOrganizationSchema,
   generateWebsiteSchema,
@@ -28,7 +29,8 @@ export const metadata: Metadata = {
     canonical: SITE_URL,
     languages: {
       'ko-KR': SITE_URL,
-      'x-default': SITE_URL_ALIAS,
+      'en-US': `${SITE_URL}/en`,
+      'x-default': SITE_URL,
     },
   },
   description:
@@ -98,13 +100,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const locale = await getLocale();
   const organizationSchema = generateOrganizationSchema();
   const websiteSchema = generateWebsiteSchema();
   const localBusinessSchema = generateLocalBusinessSchema();
 
   return (
-    <html lang="ko" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <head></head>
       <body className="bg-canvas-soft text-charcoal flex flex-col min-h-screen font-sans antialiased">
         {children}

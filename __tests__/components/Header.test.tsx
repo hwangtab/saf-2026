@@ -5,6 +5,25 @@ jest.mock('next/navigation', () => ({
   usePathname: () => '/',
 }));
 
+jest.mock('next-intl', () => ({
+  useTranslations: () => (key: string) => key,
+  useLocale: () => 'ko',
+}));
+
+jest.mock('../../i18n/navigation', () => ({
+  usePathname: () => '/',
+  useRouter: () => ({ replace: jest.fn() }),
+  Link: ({ children, ...props }: any) => <a {...props}>{children}</a>,
+}));
+
+jest.mock('../../lib/hooks/useLocalizedNavigation', () => ({
+  useLocalizedNavigation: () => [
+    { name: '소개', href: '#', items: [] },
+    { name: '아카이브', href: '/archive', items: [] },
+    { name: '전시 작품', href: '/artworks', items: [] },
+  ],
+}));
+
 interface ImageProps {
   fill?: boolean;
   priority?: boolean;
@@ -52,7 +71,7 @@ describe('Header', () => {
 
   it('opens fullscreen menu when button is clicked and closes via close button', () => {
     render(<Header />);
-    const openButton = screen.getByLabelText('메뉴 토글');
+    const openButton = screen.getByLabelText('toggleMenu');
     const fullscreenMenu = screen.getByTestId('fullscreen-menu');
 
     expect(fullscreenMenu).toHaveAttribute('data-open', 'false');

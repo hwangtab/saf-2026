@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { requireAdmin } from '@/lib/auth/guards';
 import { getActivityLogs } from '@/app/actions/admin-logs';
 import { LogsList } from './logs-list';
@@ -220,12 +221,12 @@ export default async function AdminLogsPage({ searchParams }: Props) {
               복구 가능한 로그만 보기
             </label>
             <div className="flex items-center justify-end gap-2 md:col-span-2 xl:col-span-1">
-              <a
+              <Link
                 href="/admin/logs"
                 className="inline-flex items-center rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
               >
                 초기화
-              </a>
+              </Link>
               <button
                 type="submit"
                 className="inline-flex items-center rounded-md bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800"
