@@ -1,7 +1,18 @@
+import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 
 export const runtime = 'nodejs';
+
+function verifySignature(body: string, signature: string | null, secret: string): boolean {
+  if (!signature) return false;
+  const expected = crypto.createHmac('sha1', secret).update(body).digest('hex');
+  try {
+    return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
+  } catch {
+    return false;
+  }
+}
 
 type VercelDrainEvent = {
   schema: string;
@@ -40,6 +51,15 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   const raw = await request.text();
+
+  // HMAC-SHA1 서명 검증
+  const secret = process.env.VERCEL_DRAIN_SECRET;
+  if (secret) {
+    const signature = request.headers.get('x-vercel-signature');
+    if (!verifySignature(raw, signature, secret)) {
+      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+    }
+  }
 
   let events: VercelDrainEvent[];
   try {
