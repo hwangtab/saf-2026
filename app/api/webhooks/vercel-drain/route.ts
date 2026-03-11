@@ -56,9 +56,16 @@ export async function POST(request: NextRequest) {
   const secret = process.env.VERCEL_DRAIN_SECRET;
   if (secret) {
     const signature = request.headers.get('x-vercel-signature');
+    const expected = crypto.createHmac('sha1', secret).update(raw).digest('hex');
+    console.log('[vercel-drain] signature received:', signature);
+    console.log('[vercel-drain] signature expected:', expected);
+    console.log('[vercel-drain] secret length:', secret.length);
+    console.log('[vercel-drain] body length:', raw.length);
     if (!verifySignature(raw, signature, secret)) {
       return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
     }
+  } else {
+    console.log('[vercel-drain] No VERCEL_DRAIN_SECRET set, skipping verification');
   }
 
   let events: VercelDrainEvent[];
