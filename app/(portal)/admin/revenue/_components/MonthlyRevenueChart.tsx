@@ -64,9 +64,7 @@ export function MonthlyRevenueChart({ data }: MonthlyRevenueChartProps) {
   return (
     <AdminCard className="flex h-full flex-col p-6">
       <h3 className="text-lg font-semibold text-slate-900">월별 오프라인/온라인 매출 추이</h3>
-      <p className="mt-1 text-xs text-slate-500">
-        KST 기준 월 단위 집계 · source 기준(manual=오프라인, cafe24=온라인)
-      </p>
+      <p className="mt-1 text-xs text-slate-500">KST 기준 월 단위 집계</p>
       <div className="relative mt-4 h-[340px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={data} margin={{ top: 10, right: 18, left: 10, bottom: 8 }}>

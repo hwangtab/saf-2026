@@ -28,7 +28,7 @@ function normalizeSaleSource(source: ArtworkSale['source']): 'manual' | 'cafe24'
 }
 
 function getSaleSourceLabel(source: ArtworkSale['source']): string {
-  return normalizeSaleSource(source) === 'cafe24' ? '온라인 (cafe24)' : '오프라인 (manual)';
+  return normalizeSaleSource(source) === 'cafe24' ? '온라인' : '오프라인';
 }
 
 export function SalesHistory({

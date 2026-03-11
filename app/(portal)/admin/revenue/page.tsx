@@ -85,13 +85,9 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
       <AdminPageHeader>
         <AdminPageTitle>매출 현황</AdminPageTitle>
         <AdminPageDescription>
-          회계 기준: <strong>artwork_sales</strong>에서 <strong>sold_at이 존재</strong>하는
-          판매기록만 인식매출로 집계합니다 (KST).
+          판매 완료일이 확인된 기록만 인식매출로 집계합니다 (KST 기준).
         </AdminPageDescription>
-        <p className="text-xs text-slate-500">
-          집계 시간대: {analytics.filter.timezone} · 조회 연도: {analytics.filter.selectedYear}년 ·
-          소스 분해: manual(오프라인), cafe24(온라인)
-        </p>
+        <p className="text-xs text-slate-500">조회 연도: {analytics.filter.selectedYear}년</p>
       </AdminPageHeader>
 
       <RevenueFilterBar
@@ -118,7 +114,7 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
         <AdminCard className="border-amber-200 bg-amber-50 p-4">
           <p className="text-sm font-semibold text-amber-900">데이터 점검 필요</p>
           <p className="mt-1 text-sm text-amber-800">
-            artwork_sales 중 sold_at이 비어 있는 기록이{' '}
+            판매 완료일이 누락된 기록이{' '}
             {NUMBER_FORMATTER.format(analytics.dataQuality.soldWithoutSoldAtCount)}건 있습니다. 현재
             인식매출 집계에서는 제외됩니다.
           </p>
@@ -135,12 +131,12 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
         <RevenueCard
           title={`${analytics.summary.periodLabel} 오프라인 매출`}
           value={channelSummary.offline.revenue}
-          subtitle={`manual 판매: ${NUMBER_FORMATTER.format(channelSummary.offline.soldCount)}점`}
+          subtitle={`오프라인 판매: ${NUMBER_FORMATTER.format(channelSummary.offline.soldCount)}점`}
         />
         <RevenueCard
           title={`${analytics.summary.periodLabel} 온라인 매출`}
           value={channelSummary.online.revenue}
-          subtitle={`cafe24 판매: ${NUMBER_FORMATTER.format(channelSummary.online.soldCount)}점`}
+          subtitle={`온라인 판매: ${NUMBER_FORMATTER.format(channelSummary.online.soldCount)}점`}
         />
         <RevenueCard
           title={`${analytics.summary.periodLabel} 평균단가`}
@@ -170,7 +166,7 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
             수량 비중: {formatShare(channelSummary.onlineSoldSharePct)}
           </p>
           <p className="mt-1 text-xs text-slate-500">
-            source 분해 · manual {KRW_FORMATTER.format(sourceSummary.manual.revenue)} / cafe24{' '}
+            오프라인 {KRW_FORMATTER.format(sourceSummary.manual.revenue)} / 온라인{' '}
             {KRW_FORMATTER.format(sourceSummary.cafe24.revenue)}
           </p>
         </AdminCard>
