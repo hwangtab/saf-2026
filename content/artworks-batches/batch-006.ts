@@ -11,7 +11,9 @@ export const batch006: Artwork[] = [
     year: '2024',
     edition: '',
     price: '₩800,000',
-    images: ['228.jpeg'],
+    images: [
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/b4e7aea8-5d97-47ff-ab3d-d1c3a96525af/228__original.webp',
+    ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/364',
   },
   {
@@ -24,7 +26,9 @@ export const batch006: Artwork[] = [
     year: '2024',
     edition: '',
     price: '₩550,000',
-    images: ['229.jpeg'],
+    images: [
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/b4e7aea8-5d97-47ff-ab3d-d1c3a96525af/229__original.webp',
+    ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/365',
   },
   {
@@ -37,7 +41,9 @@ export const batch006: Artwork[] = [
     year: '2022',
     edition: '',
     price: '₩35,000,000',
-    images: ['230.jpg'],
+    images: [
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a8d68dcb-f8c5-4e40-9705-b2bb95f18190/230__original.webp',
+    ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/366',
   },
   {
@@ -50,7 +56,9 @@ export const batch006: Artwork[] = [
     year: '2022',
     edition: '',
     price: '₩35,000,000',
-    images: ['231.jpg'],
+    images: [
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a8d68dcb-f8c5-4e40-9705-b2bb95f18190/231__original.webp',
+    ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/367',
   },
   {
@@ -63,7 +71,9 @@ export const batch006: Artwork[] = [
     year: '2021',
     edition: '',
     price: '₩18,500,000',
-    images: ['232.png'],
+    images: [
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a8d68dcb-f8c5-4e40-9705-b2bb95f18190/232__original.webp',
+    ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/368',
   },
   {
@@ -76,7 +86,9 @@ export const batch006: Artwork[] = [
     year: '2021',
     edition: '',
     price: '₩12,600,000',
-    images: ['233.png'],
+    images: [
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a8d68dcb-f8c5-4e40-9705-b2bb95f18190/233__original.webp',
+    ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/369',
     sold: true,
   },
@@ -90,7 +102,9 @@ export const batch006: Artwork[] = [
     year: '2014',
     edition: '',
     price: '₩25,000,000',
-    images: ['234.jpeg'],
+    images: [
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a8d68dcb-f8c5-4e40-9705-b2bb95f18190/234__original.webp',
+    ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/370',
   },
   {
@@ -103,7 +117,9 @@ export const batch006: Artwork[] = [
     year: '2022',
     edition: '',
     price: '₩200,000',
-    images: ['235.jpeg'],
+    images: [
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/235__original.webp',
+    ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/371',
   },
   {
@@ -116,7 +132,9 @@ export const batch006: Artwork[] = [
     year: '2025',
     edition: '',
     price: '₩500,000',
-    images: ['236.jpeg'],
+    images: [
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/236__original.webp',
+    ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/372',
   },
   {
@@ -129,7 +147,9 @@ export const batch006: Artwork[] = [
     year: '확인 중',
     edition: '',
     price: '₩1,000,000',
-    images: ['237.jpeg'],
+    images: [
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/237__original.webp',
+    ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/373',
   },
   {
@@ -142,7 +162,9 @@ export const batch006: Artwork[] = [
     year: '2009',
     edition: '',
     price: '₩400,000',
-    images: ['238.jpeg'],
+    images: [
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/238__original.webp',
+    ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/374',
   },
   {
@@ -168,7 +190,9 @@ export const batch006: Artwork[] = [
     year: '2025',
     edition: '',
     price: '₩1,000,000',
-    images: ['240.jpeg'],
+    images: [
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/240__original.webp',
+    ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/376',
     sold: true,
   },
@@ -182,7 +206,9 @@ export const batch006: Artwork[] = [
     year: '2022',
     edition: '',
     price: '₩3,600,000',
-    images: ['241.jpeg'],
+    images: [
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/241__original.webp',
+    ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/377',
     sold: true,
   },
@@ -209,7 +235,9 @@ export const batch006: Artwork[] = [
     year: '2025',
     edition: '',
     price: '₩2,700,000',
-    images: ['243.jpg'],
+    images: [
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/243__original.webp',
+    ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/379',
     sold: true,
   },
@@ -223,7 +251,9 @@ export const batch006: Artwork[] = [
     year: '2025',
     edition: '',
     price: '₩840,000',
-    images: ['244.jpeg'],
+    images: [
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0/244__original.webp',
+    ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/380',
   },
   {
@@ -236,7 +266,9 @@ export const batch006: Artwork[] = [
     year: '2025',
     edition: '',
     price: '₩840,000',
-    images: ['245.jpeg'],
+    images: [
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0/245__original.webp',
+    ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/381',
     sold: true,
   },
@@ -250,7 +282,9 @@ export const batch006: Artwork[] = [
     year: '2025',
     edition: '',
     price: '₩840,000',
-    images: ['246.jpeg'],
+    images: [
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0/246__original.webp',
+    ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/382',
   },
   {
@@ -263,7 +297,9 @@ export const batch006: Artwork[] = [
     year: '2025',
     edition: '',
     price: '₩840,000',
-    images: ['247.jpeg'],
+    images: [
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0/247__original.webp',
+    ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/383',
   },
 ];
