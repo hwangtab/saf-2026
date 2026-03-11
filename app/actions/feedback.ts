@@ -38,6 +38,7 @@ export async function submitFeedback(formData: FormData) {
   });
 
   if (error) {
+    console.error('[feedback] insert failed:', error.message, error.code, error.details);
     return { error: getActionErrorMessage(error, '피드백 제출 중 오류가 발생했습니다.') };
   }
 
@@ -67,6 +68,7 @@ export async function updateFeedbackStatus(id: string, status: FeedbackStatus, a
   const { error } = await supabase.from('feedback').update(updateData).eq('id', id);
 
   if (error) {
+    console.error('[feedback] status update failed:', error.message, error.code, error.details);
     return { error: getActionErrorMessage(error, '상태 변경 중 오류가 발생했습니다.') };
   }
 
