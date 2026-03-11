@@ -42,8 +42,8 @@ export function TermsConsentForm({
   const [state, formAction, isPending] = useActionState(submitTermsConsent, initialState);
   const [hasReadArtistTerms, setHasReadArtistTerms] = useState(false);
   const [hasReadExhibitorTerms, setHasReadExhibitorTerms] = useState(false);
-  const hasReadPrivacy = true;
-  const hasReadTos = true;
+  const [hasReadPrivacy, setHasReadPrivacy] = useState(false);
+  const [hasReadTos, setHasReadTos] = useState(false);
   const [artistAgreed, setArtistAgreed] = useState(false);
   const [exhibitorAgreed, setExhibitorAgreed] = useState(false);
   const [privacyAgreed, setPrivacyAgreed] = useState(false);
@@ -51,6 +51,8 @@ export function TermsConsentForm({
   const [isIncompleteModalOpen, setIsIncompleteModalOpen] = useState(false);
   const artistTermsContainerRef = useRef<HTMLDivElement>(null);
   const exhibitorTermsContainerRef = useRef<HTMLDivElement>(null);
+  const privacyContainerRef = useRef<HTMLDivElement>(null);
+  const tosContainerRef = useRef<HTMLDivElement>(null);
   const submitTriggerRef = useRef<HTMLElement | null>(null);
 
   const artistReady = !needsArtistConsent || (hasReadArtistTerms && artistAgreed);
@@ -94,20 +96,36 @@ export function TermsConsentForm({
       }
     }
 
-    if (needsPrivacyConsent && !privacyAgreed) {
-      items.push({
-        label: '개인정보처리방침',
-        reason: '동의 체크박스를 선택해주세요.',
-        targetId: 'privacy-consent-section',
-      });
+    if (needsPrivacyConsent) {
+      if (!hasReadPrivacy) {
+        items.push({
+          label: '개인정보처리방침',
+          reason: '문서 하단까지 스크롤해주세요.',
+          targetId: 'privacy-consent-section',
+        });
+      } else if (!privacyAgreed) {
+        items.push({
+          label: '개인정보처리방침',
+          reason: '동의 체크박스를 선택해주세요.',
+          targetId: 'privacy-consent-section',
+        });
+      }
     }
 
-    if (needsTosConsent && !tosAgreed) {
-      items.push({
-        label: '이용약관',
-        reason: '동의 체크박스를 선택해주세요.',
-        targetId: 'tos-consent-section',
-      });
+    if (needsTosConsent) {
+      if (!hasReadTos) {
+        items.push({
+          label: '이용약관',
+          reason: '문서 하단까지 스크롤해주세요.',
+          targetId: 'tos-consent-section',
+        });
+      } else if (!tosAgreed) {
+        items.push({
+          label: '이용약관',
+          reason: '동의 체크박스를 선택해주세요.',
+          targetId: 'tos-consent-section',
+        });
+      }
     }
 
     return items;
@@ -116,6 +134,8 @@ export function TermsConsentForm({
     exhibitorAgreed,
     hasReadArtistTerms,
     hasReadExhibitorTerms,
+    hasReadPrivacy,
+    hasReadTos,
     needsArtistConsent,
     needsExhibitorConsent,
     needsPrivacyConsent,
@@ -196,6 +216,24 @@ export function TermsConsentForm({
     }
   };
 
+  const handlePrivacyScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    if (hasReadPrivacy) return;
+    const target = event.currentTarget;
+    const reachedBottom = target.scrollTop + target.clientHeight >= target.scrollHeight - 12;
+    if (reachedBottom) {
+      setHasReadPrivacy(true);
+    }
+  };
+
+  const handleTosScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    if (hasReadTos) return;
+    const target = event.currentTarget;
+    const reachedBottom = target.scrollTop + target.clientHeight >= target.scrollHeight - 12;
+    if (reachedBottom) {
+      setHasReadTos(true);
+    }
+  };
+
   useEffect(() => {
     const checkScrollableState = () => {
       if (
@@ -212,6 +250,20 @@ export function TermsConsentForm({
           exhibitorTermsContainerRef.current.clientHeight + 1
       ) {
         setHasReadExhibitorTerms(true);
+      }
+
+      if (
+        privacyContainerRef.current &&
+        privacyContainerRef.current.scrollHeight <= privacyContainerRef.current.clientHeight + 1
+      ) {
+        setHasReadPrivacy(true);
+      }
+
+      if (
+        tosContainerRef.current &&
+        tosContainerRef.current.scrollHeight <= tosContainerRef.current.clientHeight + 1
+      ) {
+        setHasReadTos(true);
       }
     };
 
@@ -394,28 +446,59 @@ export function TermsConsentForm({
           <p id="privacy-heading" className="mb-2 text-xs font-semibold text-gray-700">
             개인정보처리방침 전문
           </p>
-          <div
-            className="mb-3 max-h-[60vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[70vh]"
-            tabIndex={0}
-            role="region"
-            aria-labelledby="privacy-heading"
-          >
-            <LegalDocumentContent document={PRIVACY_POLICY_DOCUMENT} />
+          <div className="relative">
+            <div
+              ref={privacyContainerRef}
+              className="mb-3 max-h-[60vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[70vh]"
+              onScroll={handlePrivacyScroll}
+              tabIndex={0}
+              role="region"
+              aria-labelledby="privacy-heading"
+            >
+              <LegalDocumentContent document={PRIVACY_POLICY_DOCUMENT} />
+            </div>
+            {!hasReadPrivacy && (
+              <div className="pointer-events-none absolute bottom-3 left-0 right-0 flex flex-col items-center">
+                <div className="absolute inset-x-0 bottom-0 h-16 rounded-b-md bg-gradient-to-t from-white via-white/80 to-transparent" />
+                <span className="relative animate-bounce rounded-full bg-gray-900 px-3 py-1 text-xs font-medium text-white shadow">
+                  아래로 스크롤하세요 ↓
+                </span>
+              </div>
+            )}
           </div>
+          {!hasReadPrivacy && (
+            <div className="mb-3 flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2">
+              <span className="text-sm text-amber-600">↓</span>
+              <p className="text-xs font-medium text-amber-800">
+                문서 하단까지 스크롤하면 동의 항목이 활성화됩니다.
+              </p>
+            </div>
+          )}
 
-          <div className="flex items-start gap-3">
+          <div
+            className="flex items-start gap-3"
+            onClick={!hasReadPrivacy ? () => nudgeScroll(privacyContainerRef) : undefined}
+            role={!hasReadPrivacy ? 'button' : undefined}
+            tabIndex={!hasReadPrivacy ? 0 : undefined}
+          >
             <input
               id="agree_privacy"
               name="agree_privacy"
               type="checkbox"
               checked={privacyAgreed}
               onChange={(event) => setPrivacyAgreed(event.target.checked)}
+              disabled={!hasReadPrivacy}
               className="mt-1 h-4 w-4 rounded border-gray-300 text-black focus:ring-black"
             />
             <div className="text-sm">
               <label htmlFor="agree_privacy" className="font-medium text-gray-700">
                 개인정보처리방침에 동의합니다. <span className="text-red-500">*</span>
               </label>
+              <p className="mt-1 text-gray-500">
+                {hasReadPrivacy
+                  ? '전체 문서를 읽어야 체크할 수 있습니다.'
+                  : '위 문서를 끝까지 스크롤해주세요.'}
+              </p>
               <p className="mt-1 text-xs text-gray-400">
                 <Link href="/privacy" className="underline underline-offset-2">
                   개인정보처리방침 원문 보기
@@ -448,28 +531,59 @@ export function TermsConsentForm({
           <p id="tos-heading" className="mb-2 text-xs font-semibold text-gray-700">
             이용약관 전문
           </p>
-          <div
-            className="mb-3 max-h-[60vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[70vh]"
-            tabIndex={0}
-            role="region"
-            aria-labelledby="tos-heading"
-          >
-            <LegalDocumentContent document={TERMS_OF_SERVICE_DOCUMENT} />
+          <div className="relative">
+            <div
+              ref={tosContainerRef}
+              className="mb-3 max-h-[60vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[70vh]"
+              onScroll={handleTosScroll}
+              tabIndex={0}
+              role="region"
+              aria-labelledby="tos-heading"
+            >
+              <LegalDocumentContent document={TERMS_OF_SERVICE_DOCUMENT} />
+            </div>
+            {!hasReadTos && (
+              <div className="pointer-events-none absolute bottom-3 left-0 right-0 flex flex-col items-center">
+                <div className="absolute inset-x-0 bottom-0 h-16 rounded-b-md bg-gradient-to-t from-white via-white/80 to-transparent" />
+                <span className="relative animate-bounce rounded-full bg-gray-900 px-3 py-1 text-xs font-medium text-white shadow">
+                  아래로 스크롤하세요 ↓
+                </span>
+              </div>
+            )}
           </div>
+          {!hasReadTos && (
+            <div className="mb-3 flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2">
+              <span className="text-sm text-amber-600">↓</span>
+              <p className="text-xs font-medium text-amber-800">
+                문서 하단까지 스크롤하면 동의 항목이 활성화됩니다.
+              </p>
+            </div>
+          )}
 
-          <div className="flex items-start gap-3">
+          <div
+            className="flex items-start gap-3"
+            onClick={!hasReadTos ? () => nudgeScroll(tosContainerRef) : undefined}
+            role={!hasReadTos ? 'button' : undefined}
+            tabIndex={!hasReadTos ? 0 : undefined}
+          >
             <input
               id="agree_tos"
               name="agree_tos"
               type="checkbox"
               checked={tosAgreed}
               onChange={(event) => setTosAgreed(event.target.checked)}
+              disabled={!hasReadTos}
               className="mt-1 h-4 w-4 rounded border-gray-300 text-black focus:ring-black"
             />
             <div className="text-sm">
               <label htmlFor="agree_tos" className="font-medium text-gray-700">
                 이용약관에 동의합니다. <span className="text-red-500">*</span>
               </label>
+              <p className="mt-1 text-gray-500">
+                {hasReadTos
+                  ? '전체 문서를 읽어야 체크할 수 있습니다.'
+                  : '위 문서를 끝까지 스크롤해주세요.'}
+              </p>
               <p className="mt-1 text-xs text-gray-400">
                 <Link href="/terms" className="underline underline-offset-2">
                   이용약관 원문 보기

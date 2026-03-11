@@ -29,12 +29,17 @@ type OnboardingDefaults = {
 export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDefaults }) {
   const [state, formAction, isPending] = useActionState(submitArtistApplication, initialState);
   const [hasReadTerms, setHasReadTerms] = useState(false);
+  const [hasReadTos, setHasReadTos] = useState(false);
+  const [hasReadPrivacy, setHasReadPrivacy] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [isIncompleteModalOpen, setIsIncompleteModalOpen] = useState(false);
   const termsContainerRef = useRef<HTMLDivElement>(null);
+  const tosContainerRef = useRef<HTMLDivElement>(null);
+  const privacyContainerRef = useRef<HTMLDivElement>(null);
   const submitTriggerRef = useRef<HTMLElement | null>(null);
 
-  const canSubmit = hasReadTerms && termsAccepted;
+  const allRead = hasReadTerms && hasReadTos && hasReadPrivacy;
+  const canSubmit = allRead && termsAccepted;
   const incompleteItems = useMemo(() => {
     const items: IncompleteItem[] = [];
 
@@ -46,7 +51,23 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
       });
     }
 
-    if (hasReadTerms && !termsAccepted) {
+    if (!hasReadTos) {
+      items.push({
+        label: '이용약관',
+        reason: '문서 하단까지 스크롤해주세요.',
+        targetId: 'artist-tos-section',
+      });
+    }
+
+    if (!hasReadPrivacy) {
+      items.push({
+        label: '개인정보처리방침',
+        reason: '문서 하단까지 스크롤해주세요.',
+        targetId: 'artist-privacy-section',
+      });
+    }
+
+    if (allRead && !termsAccepted) {
       items.push({
         label: '약관/방침 동의',
         reason: '동의 체크박스를 선택해주세요.',
@@ -55,7 +76,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
     }
 
     return items;
-  }, [hasReadTerms, termsAccepted]);
+  }, [hasReadTerms, hasReadTos, hasReadPrivacy, allRead, termsAccepted]);
 
   const handleCloseIncompleteModal = () => {
     setIsIncompleteModalOpen(false);
@@ -106,6 +127,24 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
     }
   };
 
+  const handleTosScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    if (hasReadTos) return;
+    const target = event.currentTarget;
+    const reachedBottom = target.scrollTop + target.clientHeight >= target.scrollHeight - 12;
+    if (reachedBottom) {
+      setHasReadTos(true);
+    }
+  };
+
+  const handlePrivacyScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    if (hasReadPrivacy) return;
+    const target = event.currentTarget;
+    const reachedBottom = target.scrollTop + target.clientHeight >= target.scrollHeight - 12;
+    if (reachedBottom) {
+      setHasReadPrivacy(true);
+    }
+  };
+
   useEffect(() => {
     const checkScrollableState = () => {
       if (
@@ -114,12 +153,33 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
       ) {
         setHasReadTerms(true);
       }
+      if (
+        tosContainerRef.current &&
+        tosContainerRef.current.scrollHeight <= tosContainerRef.current.clientHeight + 1
+      ) {
+        setHasReadTos(true);
+      }
+      if (
+        privacyContainerRef.current &&
+        privacyContainerRef.current.scrollHeight <= privacyContainerRef.current.clientHeight + 1
+      ) {
+        setHasReadPrivacy(true);
+      }
     };
 
     checkScrollableState();
     window.addEventListener('resize', checkScrollableState);
     return () => window.removeEventListener('resize', checkScrollableState);
   }, []);
+
+  // 아직 읽지 않은 첫 번째 문서의 ref를 반환
+  const firstUnreadRef = !hasReadTerms
+    ? termsContainerRef
+    : !hasReadTos
+      ? tosContainerRef
+      : !hasReadPrivacy
+        ? privacyContainerRef
+        : null;
 
   return (
     <form action={formAction} className="space-y-6" onSubmit={handleSubmitAttempt}>
@@ -236,37 +296,77 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
             <p id="tos-heading" className="mb-2 text-xs font-semibold text-gray-700">
               이용약관 전문
             </p>
-            <div
-              className="max-h-[52vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[65vh]"
-              tabIndex={0}
-              role="region"
-              aria-labelledby="tos-heading"
-            >
-              <LegalDocumentContent document={TERMS_OF_SERVICE_DOCUMENT} />
+            <div className="relative">
+              <div
+                ref={tosContainerRef}
+                className="max-h-[52vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[65vh]"
+                onScroll={handleTosScroll}
+                tabIndex={0}
+                role="region"
+                aria-labelledby="tos-heading"
+              >
+                <LegalDocumentContent document={TERMS_OF_SERVICE_DOCUMENT} />
+              </div>
+              {!hasReadTos && (
+                <div className="pointer-events-none absolute bottom-0 left-0 right-0 flex flex-col items-center">
+                  <div className="absolute inset-x-0 bottom-0 h-16 rounded-b-md bg-gradient-to-t from-white via-white/80 to-transparent" />
+                  <span className="relative animate-bounce rounded-full bg-gray-900 px-3 py-1 text-xs font-medium text-white shadow">
+                    아래로 스크롤하세요 ↓
+                  </span>
+                </div>
+              )}
             </div>
+            {!hasReadTos && (
+              <div className="mt-1 flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2">
+                <span className="text-sm text-amber-600">↓</span>
+                <p className="text-xs font-medium text-amber-800">
+                  문서 하단까지 스크롤하면 동의 항목이 활성화됩니다.
+                </p>
+              </div>
+            )}
           </div>
 
           <div id="artist-privacy-section">
             <p id="privacy-policy-heading" className="mb-2 text-xs font-semibold text-gray-700">
               개인정보처리방침 전문
             </p>
-            <div
-              className="max-h-[52vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[65vh]"
-              tabIndex={0}
-              role="region"
-              aria-labelledby="privacy-policy-heading"
-            >
-              <LegalDocumentContent document={PRIVACY_POLICY_DOCUMENT} />
+            <div className="relative">
+              <div
+                ref={privacyContainerRef}
+                className="max-h-[52vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[65vh]"
+                onScroll={handlePrivacyScroll}
+                tabIndex={0}
+                role="region"
+                aria-labelledby="privacy-policy-heading"
+              >
+                <LegalDocumentContent document={PRIVACY_POLICY_DOCUMENT} />
+              </div>
+              {!hasReadPrivacy && (
+                <div className="pointer-events-none absolute bottom-0 left-0 right-0 flex flex-col items-center">
+                  <div className="absolute inset-x-0 bottom-0 h-16 rounded-b-md bg-gradient-to-t from-white via-white/80 to-transparent" />
+                  <span className="relative animate-bounce rounded-full bg-gray-900 px-3 py-1 text-xs font-medium text-white shadow">
+                    아래로 스크롤하세요 ↓
+                  </span>
+                </div>
+              )}
             </div>
+            {!hasReadPrivacy && (
+              <div className="mt-1 flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2">
+                <span className="text-sm text-amber-600">↓</span>
+                <p className="text-xs font-medium text-amber-800">
+                  문서 하단까지 스크롤하면 동의 항목이 활성화됩니다.
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
         <div
           id="artist-agreement-section"
           className="mt-4 flex items-start gap-3"
-          onClick={!hasReadTerms ? () => nudgeScroll(termsContainerRef) : undefined}
-          role={!hasReadTerms ? 'button' : undefined}
-          tabIndex={!hasReadTerms ? 0 : undefined}
+          onClick={!allRead && firstUnreadRef ? () => nudgeScroll(firstUnreadRef) : undefined}
+          role={!allRead ? 'button' : undefined}
+          tabIndex={!allRead ? 0 : undefined}
         >
           <input
             id="terms_accepted"
@@ -274,7 +374,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
             type="checkbox"
             checked={termsAccepted}
             onChange={(event) => setTermsAccepted(event.target.checked)}
-            disabled={!hasReadTerms}
+            disabled={!allRead}
             className="mt-1 h-4 w-4 rounded border-gray-300 text-black focus:ring-black"
           />
           <div className="text-sm">
@@ -283,9 +383,9 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
               <span className="text-red-500">*</span>
             </label>
             <p className="mt-1 text-gray-500">
-              {hasReadTerms
-                ? '계약서 전문을 읽어야 체크할 수 있습니다.'
-                : '위 계약서를 끝까지 스크롤해주세요.'}
+              {allRead
+                ? '모든 문서를 읽었습니다. 체크하여 동의해주세요.'
+                : '위 문서를 모두 끝까지 스크롤해주세요.'}
             </p>
             <p className="mt-1 text-xs text-gray-400">
               계약서 원문:{' '}
