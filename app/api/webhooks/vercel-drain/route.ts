@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import crypto from 'crypto';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 
 export const runtime = 'nodejs';
@@ -39,30 +38,8 @@ export async function GET() {
   return NextResponse.json({ status: 'ok' });
 }
 
-/**
- * 요청 본문의 HMAC-SHA1 서명을 검증합니다.
- * Vercel Drain이 x-vercel-signature 헤더에 서명을 포함하여 전송합니다.
- */
-function verifySignature(body: string, signature: string | null, secret: string): boolean {
-  if (!signature) return false;
-  const expected = crypto.createHmac('sha1', secret).update(body).digest('hex');
-  return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
-}
-
 export async function POST(request: NextRequest) {
-  const drainSecret = process.env.VERCEL_DRAIN_SECRET;
-  if (!drainSecret) {
-    return NextResponse.json({ error: 'VERCEL_DRAIN_SECRET not configured' }, { status: 500 });
-  }
-
   const raw = await request.text();
-
-  // 인증: x-vercel-signature (HMAC-SHA1) 서명 검증
-  // Vercel Drain 등록 시 검증 요청에는 서명이 없으므로 허용
-  const signature = request.headers.get('x-vercel-signature');
-  if (signature && !verifySignature(raw, signature, drainSecret)) {
-    return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
-  }
 
   let events: VercelDrainEvent[];
   try {
