@@ -15,7 +15,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               {/* Mobile Menu Button - Show up to 2xl screens */}
-              <div className="2xl:hidden">
+              <div className="xl:hidden">
                 <AdminMobileNav />
               </div>
               <div className="flex-shrink-0 flex items-center ml-2 sm:ml-0">
