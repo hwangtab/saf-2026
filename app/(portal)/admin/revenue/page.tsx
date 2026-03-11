@@ -3,6 +3,7 @@ import { getRevenueAnalytics } from '@/app/actions/admin-revenue';
 import {
   AdminCard,
   AdminCardHeader,
+  AdminEmptyState,
   AdminPageDescription,
   AdminPageHeader,
   AdminPageTitle,
@@ -210,7 +211,7 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
           <h2 className="text-base font-semibold text-slate-900">월별 회계 상세</h2>
           <span className="text-sm text-slate-500">1월 ~ 12월 인식매출 (KST 기준)</span>
         </AdminCardHeader>
-        <div className="max-h-[460px] overflow-auto">
+        <div className="max-h-[460px] overflow-x-auto overflow-y-auto">
           <table className="min-w-full divide-y divide-slate-200">
             <thead className="bg-slate-50 text-xs font-semibold uppercase text-slate-500">
               <tr>
@@ -294,9 +295,10 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
           </AdminCardHeader>
           <div className="p-0">
             {analytics.topArtists.length === 0 ? (
-              <div className="p-8 text-center text-sm text-slate-500">
-                해당 기간 매출 데이터가 없습니다.
-              </div>
+              <AdminEmptyState
+                title="매출 데이터 없음"
+                description="해당 기간 매출 데이터가 없습니다."
+              />
             ) : (
               <ol className="divide-y divide-gray-100">
                 {analytics.topArtists.map((artist, index) => (
@@ -329,9 +331,10 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
           </AdminCardHeader>
           <div className="p-0">
             {analytics.topArtworks.length === 0 ? (
-              <div className="p-8 text-center text-sm text-slate-500">
-                해당 기간 매출 데이터가 없습니다.
-              </div>
+              <AdminEmptyState
+                title="매출 데이터 없음"
+                description="해당 기간 매출 데이터가 없습니다."
+              />
             ) : (
               <ul className="divide-y divide-gray-100">
                 {analytics.topArtworks.map((artwork) => (

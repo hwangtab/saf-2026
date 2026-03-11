@@ -5,9 +5,11 @@ import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import {
   AdminCard,
+  AdminEmptyState,
   AdminPageHeader,
   AdminPageTitle,
   AdminPageDescription,
+  AdminSelect,
 } from '@/app/admin/_components/admin-ui';
 import { useToast } from '@/lib/hooks/useToast';
 import { updateFeedbackStatus } from '@/app/actions/feedback';
@@ -150,10 +152,9 @@ export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedb
 
       {/* Filters */}
       <div className="flex flex-wrap gap-3">
-        <select
+        <AdminSelect
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value as FeedbackStatus | 'all')}
-          className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm"
           aria-label="상태 필터"
         >
           <option value="all">전체 상태</option>
@@ -162,11 +163,10 @@ export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedb
               {label}
             </option>
           ))}
-        </select>
-        <select
+        </AdminSelect>
+        <AdminSelect
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value as FeedbackCategory | 'all')}
-          className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm"
           aria-label="카테고리 필터"
         >
           <option value="all">전체 카테고리</option>
@@ -175,14 +175,14 @@ export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedb
               {label}
             </option>
           ))}
-        </select>
+        </AdminSelect>
         <span className="ml-auto text-sm text-slate-500">{filtered.length}건</span>
       </div>
 
       {/* List */}
       <AdminCard>
         {filtered.length === 0 ? (
-          <p className="p-8 text-center text-sm text-slate-500">피드백이 없습니다.</p>
+          <AdminEmptyState title="피드백이 없습니다" description="조건에 맞는 피드백이 없습니다." />
         ) : (
           <ul className="divide-y divide-[var(--admin-border-soft)]">
             {filtered.map((f) => (

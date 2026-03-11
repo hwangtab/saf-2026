@@ -646,7 +646,9 @@ export function UserList({
                 <p className="text-sm text-gray-500">{selectedUser.email}</p>
                 <div className="mt-1 flex gap-2">
                   <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
-                    {selectedUser.role}
+                    {{ user: '일반 사용자', artist: '작가', exhibitor: '출품자', admin: '관리자' }[
+                      selectedUser.role
+                    ] || selectedUser.role}
                   </span>
                   <span
                     className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
@@ -655,7 +657,8 @@ export function UserList({
                         : 'bg-yellow-100 text-yellow-800'
                     }`}
                   >
-                    {selectedUser.status}
+                    {{ active: '활성', pending: '대기', suspended: '정지' }[selectedUser.status] ||
+                      selectedUser.status}
                   </span>
                 </div>
               </div>
@@ -664,7 +667,7 @@ export function UserList({
             {selectedUser.application ? (
               <div className="border-t border-gray-100 pt-4 space-y-4">
                 <h3 className="font-medium text-gray-900">작가 신청 정보</h3>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <label className="block text-xs text-gray-500">작가명</label>
                     <div className="text-sm text-gray-900">
@@ -694,7 +697,7 @@ export function UserList({
             ) : selectedUser.exhibitorApplication ? (
               <div className="border-t border-gray-100 pt-4 space-y-4">
                 <h3 className="font-medium text-gray-900">출품자 신청 정보</h3>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <label className="block text-xs text-gray-500">대표명</label>
                     <div className="text-sm text-gray-900">

@@ -2,6 +2,7 @@ import { getAnalyticsData, type AnalyticsPeriod } from '@/app/actions/admin-anal
 import {
   AdminCard,
   AdminCardHeader,
+  AdminEmptyState,
   AdminPageDescription,
   AdminPageHeader,
   AdminPageTitle,
@@ -160,7 +161,10 @@ export default async function AdminAnalyticsPage({ searchParams }: Props) {
           </AdminCardHeader>
           <div className="p-0">
             {data.countryDistribution.length === 0 ? (
-              <div className="p-8 text-center text-sm text-slate-500">국가 데이터가 없습니다.</div>
+              <AdminEmptyState
+                title="국가 데이터가 없습니다"
+                description="해당 기간의 국가별 방문 데이터가 없습니다."
+              />
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
@@ -199,9 +203,10 @@ export default async function AdminAnalyticsPage({ searchParams }: Props) {
           </AdminCardHeader>
           <div className="p-0">
             {data.topReferrers.length === 0 ? (
-              <div className="p-8 text-center text-sm text-slate-500">
-                유입 경로 데이터가 없습니다.
-              </div>
+              <AdminEmptyState
+                title="유입 경로 데이터가 없습니다"
+                description="해당 기간의 유입 경로 데이터가 없습니다."
+              />
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">

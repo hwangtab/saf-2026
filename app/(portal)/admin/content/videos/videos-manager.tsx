@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import { createVideo, updateVideo, deleteVideo } from '@/app/actions/admin-content';
-import { AdminCard } from '@/app/admin/_components/admin-ui';
+import { AdminCard, AdminInput, AdminTextarea } from '@/app/admin/_components/admin-ui';
 import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import { useToast } from '@/lib/hooks/useToast';
 import { matchesAnySearch } from '@/lib/search-utils';
@@ -114,36 +114,12 @@ export function VideosManager({ videos }: { videos: VideoItem[] }) {
           className="mt-4 grid grid-cols-1 gap-4"
         >
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <input
-              name="title"
-              required
-              placeholder="제목"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-            />
-            <input
-              name="youtube_id"
-              required
-              placeholder="유튜브 ID"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-            />
+            <AdminInput name="title" required placeholder="제목" />
+            <AdminInput name="youtube_id" required placeholder="유튜브 ID" />
           </div>
-          <input
-            name="thumbnail"
-            placeholder="썸네일 URL"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-          />
-          <textarea
-            name="description"
-            placeholder="설명"
-            rows={3}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-          />
-          <textarea
-            name="transcript"
-            placeholder="자막/요약"
-            rows={4}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-          />
+          <AdminInput name="thumbnail" placeholder="썸네일 URL" />
+          <AdminTextarea name="description" placeholder="설명" rows={3} />
+          <AdminTextarea name="transcript" placeholder="자막/요약" rows={4} />
           <div className="flex justify-end">
             <Button type="submit" variant="primary" loading={creating} disabled={creating}>
               추가
@@ -167,13 +143,12 @@ export function VideosManager({ videos }: { videos: VideoItem[] }) {
           <label htmlFor="search-videos" className="sr-only">
             영상 검색
           </label>
-          <input
+          <AdminInput
             id="search-videos"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="검색: 제목/유튜브 ID"
             aria-describedby="search-videos-description"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
           />
           <span id="search-videos-description" className="sr-only">
             영상 제목 또는 유튜브 ID로 검색할 수 있습니다.
@@ -207,40 +182,30 @@ export function VideosManager({ videos }: { videos: VideoItem[] }) {
                 </Button>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <input
-                  name="title"
-                  required
-                  defaultValue={item.title}
-                  placeholder="제목"
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-                />
-                <input
+                <AdminInput name="title" required defaultValue={item.title} placeholder="제목" />
+                <AdminInput
                   name="youtube_id"
                   required
                   defaultValue={item.youtube_id}
                   placeholder="유튜브 ID"
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
                 />
               </div>
-              <input
+              <AdminInput
                 name="thumbnail"
                 defaultValue={item.thumbnail || ''}
                 placeholder="썸네일 URL"
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
               />
-              <textarea
+              <AdminTextarea
                 name="description"
                 defaultValue={item.description || ''}
                 placeholder="설명"
                 rows={3}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
               />
-              <textarea
+              <AdminTextarea
                 name="transcript"
                 defaultValue={item.transcript || ''}
                 placeholder="자막/요약"
                 rows={4}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
               />
               <div className="flex justify-end">
                 <Button

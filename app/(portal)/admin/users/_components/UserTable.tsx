@@ -202,10 +202,10 @@ export function UserTable({
                       onChange={(e) => onRoleChange(user, e.target.value)}
                       disabled={processingId === user.id}
                     >
-                      <option value="user">User</option>
-                      <option value="artist">Artist</option>
-                      <option value="exhibitor">Exhibitor</option>
-                      <option value="admin">Admin</option>
+                      <option value="user">일반 사용자</option>
+                      <option value="artist">작가</option>
+                      <option value="exhibitor">출품자</option>
+                      <option value="admin">관리자</option>
                     </AdminSelect>
                     {user.status === 'pending' && (
                       <span className="text-[11px] text-amber-700">

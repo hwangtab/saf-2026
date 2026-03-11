@@ -8,7 +8,7 @@ import {
   updateTestimonial,
   deleteTestimonial,
 } from '@/app/actions/admin-content';
-import { AdminCard } from '@/app/admin/_components/admin-ui';
+import { AdminCard, AdminInput, AdminTextarea } from '@/app/admin/_components/admin-ui';
 import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import { useToast } from '@/lib/hooks/useToast';
 import { matchesAnySearch } from '@/lib/search-utils';
@@ -107,37 +107,12 @@ export function TestimonialsManager({ testimonials }: { testimonials: Testimonia
           className="mt-4 grid grid-cols-1 gap-4"
         >
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <input
-              name="category"
-              required
-              placeholder="카테고리"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-            />
-            <input
-              name="author"
-              required
-              placeholder="작성자"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-            />
+            <AdminInput name="category" required placeholder="카테고리" />
+            <AdminInput name="author" required placeholder="작성자" />
           </div>
-          <textarea
-            name="quote"
-            required
-            rows={3}
-            placeholder="추천사 내용"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-          />
-          <input
-            name="context"
-            placeholder="컨텍스트 (선택)"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-          />
-          <input
-            type="number"
-            name="display_order"
-            placeholder="노출 순서 (숫자)"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-          />
+          <AdminTextarea name="quote" required rows={3} placeholder="추천사 내용" />
+          <AdminInput name="context" placeholder="컨텍스트 (선택)" />
+          <AdminInput type="number" name="display_order" placeholder="노출 순서 (숫자)" />
           <div className="flex justify-end">
             <Button type="submit" variant="primary" loading={creating} disabled={creating}>
               추가
@@ -161,13 +136,12 @@ export function TestimonialsManager({ testimonials }: { testimonials: Testimonia
           <label htmlFor="search-testimonials" className="sr-only">
             추천사 검색
           </label>
-          <input
+          <AdminInput
             id="search-testimonials"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="검색: 카테고리/작성자/내용"
             aria-describedby="search-testimonials-description"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
           />
           <span id="search-testimonials-description" className="sr-only">
             추천사 카테고리, 작성자 또는 내용으로 검색할 수 있습니다.
@@ -201,41 +175,36 @@ export function TestimonialsManager({ testimonials }: { testimonials: Testimonia
                 </Button>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <input
+                <AdminInput
                   name="category"
                   required
                   defaultValue={item.category}
                   placeholder="카테고리"
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
                 />
-                <input
+                <AdminInput
                   name="author"
                   required
                   defaultValue={item.author}
                   placeholder="작성자"
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
                 />
               </div>
-              <textarea
+              <AdminTextarea
                 name="quote"
                 required
                 rows={3}
                 defaultValue={item.quote}
                 placeholder="추천사 내용"
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
               />
-              <input
+              <AdminInput
                 name="context"
                 defaultValue={item.context || ''}
                 placeholder="컨텍스트 (선택)"
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
               />
-              <input
+              <AdminInput
                 type="number"
                 name="display_order"
                 defaultValue={item.display_order ?? 0}
                 placeholder="노출 순서 (숫자)"
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
               />
               <div className="flex justify-end">
                 <Button

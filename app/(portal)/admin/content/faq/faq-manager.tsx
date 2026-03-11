@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import { createFaq, updateFaq, deleteFaq } from '@/app/actions/admin-content';
-import { AdminCard } from '@/app/admin/_components/admin-ui';
+import { AdminCard, AdminInput, AdminTextarea } from '@/app/admin/_components/admin-ui';
 import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import { useToast } from '@/lib/hooks/useToast';
 import { matchesAnySearch } from '@/lib/search-utils';
@@ -96,25 +96,9 @@ export function FaqManager({ faqs }: { faqs: FaqItem[] }) {
           }}
           className="mt-4 grid grid-cols-1 gap-4"
         >
-          <input
-            name="question"
-            required
-            placeholder="질문"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-          />
-          <textarea
-            name="answer"
-            required
-            rows={4}
-            placeholder="답변"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-          />
-          <input
-            type="number"
-            name="display_order"
-            placeholder="노출 순서 (숫자)"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-          />
+          <AdminInput name="question" required placeholder="질문" />
+          <AdminTextarea name="answer" required rows={4} placeholder="답변" />
+          <AdminInput type="number" name="display_order" placeholder="노출 순서 (숫자)" />
           <div className="flex justify-end">
             <Button type="submit" variant="primary" loading={creating} disabled={creating}>
               추가
@@ -138,13 +122,12 @@ export function FaqManager({ faqs }: { faqs: FaqItem[] }) {
           <label htmlFor="search-faqs" className="sr-only">
             FAQ 검색
           </label>
-          <input
+          <AdminInput
             id="search-faqs"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="검색: 질문/답변"
             aria-describedby="search-faqs-description"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
           />
           <span id="search-faqs-description" className="sr-only">
             FAQ 질문 또는 답변으로 검색할 수 있습니다.
@@ -177,27 +160,24 @@ export function FaqManager({ faqs }: { faqs: FaqItem[] }) {
                   삭제
                 </Button>
               </div>
-              <input
+              <AdminInput
                 name="question"
                 required
                 defaultValue={item.question}
                 placeholder="질문"
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
               />
-              <textarea
+              <AdminTextarea
                 name="answer"
                 required
                 rows={4}
                 defaultValue={item.answer}
                 placeholder="답변"
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
               />
-              <input
+              <AdminInput
                 type="number"
                 name="display_order"
                 defaultValue={item.display_order ?? 0}
                 placeholder="노출 순서 (숫자)"
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
               />
               <div className="flex justify-end">
                 <Button
