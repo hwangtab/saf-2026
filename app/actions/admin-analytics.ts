@@ -12,10 +12,18 @@ export type AnalyticsData = {
     uniqueVisitors: number;
     avgViewsPerVisitor: number;
   };
+  realtime: {
+    activeVisitors: number;
+    activePageviews: number;
+  };
   dailyTrend: Array<{ date: string; views: number; visitors: number }>;
   topPages: Array<{ path: string; views: number; visitors: number }>;
   deviceDistribution: Array<{ type: string; count: number }>;
   topReferrers: Array<{ referrer: string; count: number }>;
+  countryDistribution: Array<{ country: string; views: number; visitors: number }>;
+  browserDistribution: Array<{ browser: string; count: number }>;
+  osDistribution: Array<{ os: string; count: number }>;
+  hourlyDistribution: Array<{ hour: number; views: number; visitors: number }>;
 };
 
 const PERIOD_DAYS: Record<AnalyticsPeriod, number> = {
@@ -31,12 +39,28 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
   const days = PERIOD_DAYS[period];
   const sinceTs = new Date(Date.now() - days * 86_400_000).toISOString();
 
-  const [summaryRes, trendRes, pagesRes, deviceRes, referrerRes] = await Promise.all([
+  const [
+    summaryRes,
+    trendRes,
+    pagesRes,
+    deviceRes,
+    referrerRes,
+    countryRes,
+    browserRes,
+    osRes,
+    hourlyRes,
+    realtimeRes,
+  ] = await Promise.all([
     supabase.rpc('get_pv_summary', { since_ts: sinceTs }),
     supabase.rpc('get_pv_daily_trend', { since_ts: sinceTs }),
     supabase.rpc('get_pv_top_pages', { since_ts: sinceTs, lim: 10 }),
     supabase.rpc('get_pv_device_distribution', { since_ts: sinceTs }),
     supabase.rpc('get_pv_top_referrers', { since_ts: sinceTs, lim: 10 }),
+    supabase.rpc('get_pv_country_distribution', { since_ts: sinceTs, lim: 20 }),
+    supabase.rpc('get_pv_browser_distribution', { since_ts: sinceTs, lim: 10 }),
+    supabase.rpc('get_pv_os_distribution', { since_ts: sinceTs, lim: 10 }),
+    supabase.rpc('get_pv_hourly_distribution', { since_ts: sinceTs }),
+    supabase.rpc('get_pv_realtime_visitors', { minutes: 5 }),
   ]);
 
   // Summary
@@ -94,12 +118,65 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
       }))
     : [];
 
+  // Country distribution
+  const countryDistribution: AnalyticsData['countryDistribution'] = Array.isArray(countryRes.data)
+    ? countryRes.data.map((row: { country: string; views: number; visitors: number }) => ({
+        country: row.country,
+        views: Number(row.views),
+        visitors: Number(row.visitors),
+      }))
+    : [];
+
+  // Browser distribution
+  const browserDistribution: AnalyticsData['browserDistribution'] = Array.isArray(browserRes.data)
+    ? browserRes.data.map((row: { browser: string; count: number }) => ({
+        browser: row.browser,
+        count: Number(row.count),
+      }))
+    : [];
+
+  // OS distribution
+  const osDistribution: AnalyticsData['osDistribution'] = Array.isArray(osRes.data)
+    ? osRes.data.map((row: { os: string; count: number }) => ({
+        os: row.os,
+        count: Number(row.count),
+      }))
+    : [];
+
+  // Hourly distribution — fill missing hours with 0
+  const hourlyMap = new Map<number, { views: number; visitors: number }>();
+  if (Array.isArray(hourlyRes.data)) {
+    for (const row of hourlyRes.data) {
+      hourlyMap.set(Number(row.hour), {
+        views: Number(row.views),
+        visitors: Number(row.visitors),
+      });
+    }
+  }
+  const hourlyDistribution: AnalyticsData['hourlyDistribution'] = [];
+  for (let h = 0; h < 24; h++) {
+    const entry = hourlyMap.get(h);
+    hourlyDistribution.push({ hour: h, views: entry?.views ?? 0, visitors: entry?.visitors ?? 0 });
+  }
+
+  // Realtime
+  const realtimeRow = Array.isArray(realtimeRes.data) ? realtimeRes.data[0] : null;
+  const realtime: AnalyticsData['realtime'] = {
+    activeVisitors: Number(realtimeRow?.active_visitors ?? 0),
+    activePageviews: Number(realtimeRow?.active_pageviews ?? 0),
+  };
+
   return {
     period,
     summary: { totalPageViews, uniqueVisitors, avgViewsPerVisitor },
+    realtime,
     dailyTrend,
     topPages,
     deviceDistribution,
     topReferrers,
+    countryDistribution,
+    browserDistribution,
+    osDistribution,
+    hourlyDistribution,
   };
 }
