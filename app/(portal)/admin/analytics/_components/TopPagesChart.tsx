@@ -8,6 +8,14 @@ type Props = {
   data: AnalyticsData['topPages'];
 };
 
+function decodePath(path: string): string {
+  try {
+    return decodeURIComponent(path);
+  } catch {
+    return path;
+  }
+}
+
 function truncatePath(path: string, maxLen = 30): string {
   if (path.length <= maxLen) return path;
   return path.slice(0, maxLen - 1) + '\u2026';
@@ -15,8 +23,9 @@ function truncatePath(path: string, maxLen = 30): string {
 
 export function TopPagesChart({ data }: Props) {
   const chartData = data.slice(0, 10).map((item) => ({
-    path: truncatePath(item.path),
+    path: truncatePath(decodePath(item.path)),
     fullPath: item.path,
+    decodedPath: decodePath(item.path),
     views: item.views,
   }));
 
@@ -58,9 +67,24 @@ export function TopPagesChart({ data }: Props) {
                 border: '1px solid #e2e8f0',
                 boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
               }}
+              labelFormatter={(_label, payload) => {
+                const entry = payload?.[0]?.payload;
+                return entry?.decodedPath ?? _label;
+              }}
               formatter={(value: number) => [`${value.toLocaleString('ko-KR')}회`, '페이지뷰']}
             />
-            <Bar dataKey="views" fill="#e63946" radius={[0, 4, 4, 0]} barSize={20} />
+            <Bar
+              dataKey="views"
+              fill="#e63946"
+              radius={[0, 4, 4, 0]}
+              barSize={20}
+              className="cursor-pointer"
+              onClick={(entry) => {
+                if (entry?.fullPath) {
+                  window.open(entry.fullPath, '_blank', 'noopener,noreferrer');
+                }
+              }}
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>

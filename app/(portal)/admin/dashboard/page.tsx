@@ -251,19 +251,34 @@ export default async function AdminDashboardPage() {
               <div className="p-8 text-center text-sm text-gray-500">페이지 데이터가 없습니다.</div>
             ) : (
               <ul className="divide-y divide-gray-100">
-                {stats.siteAnalytics.topPages.map((page, i) => (
-                  <li key={page.path} className="flex items-center justify-between p-4">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-medium text-slate-500">
-                        {i + 1}
+                {stats.siteAnalytics.topPages.map((page, i) => {
+                  let displayPath: string;
+                  try {
+                    displayPath = decodeURIComponent(page.path);
+                  } catch {
+                    displayPath = page.path;
+                  }
+                  return (
+                    <li key={page.path} className="flex items-center justify-between p-4">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-medium text-slate-500">
+                          {i + 1}
+                        </span>
+                        <a
+                          href={page.path}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="truncate text-sm text-gray-900 hover:text-indigo-600 hover:underline"
+                        >
+                          {displayPath}
+                        </a>
+                      </div>
+                      <span className="ml-3 shrink-0 text-sm font-medium text-slate-500">
+                        {NUMBER_FORMATTER.format(page.views)}
                       </span>
-                      <span className="truncate text-sm text-gray-900">{page.path}</span>
-                    </div>
-                    <span className="ml-3 shrink-0 text-sm font-medium text-slate-500">
-                      {NUMBER_FORMATTER.format(page.views)}
-                    </span>
-                  </li>
-                ))}
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </div>
