@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import ExportedImage from 'next-image-export-optimizer';
 import clsx from 'clsx';
 import { UI_STRINGS } from '@/lib/ui-strings';

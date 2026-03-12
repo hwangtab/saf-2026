@@ -1,7 +1,10 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import { useTranslations } from 'next-intl';
 import Button from '@/components/ui/Button';
+import LanguageSwitcher from '@/components/common/LanguageSwitcher';
+import { EXTERNAL_LINKS } from '@/lib/constants';
 
 import type { NavigationItem } from '@/types';
 import NavLink from './NavLink';
@@ -18,6 +21,8 @@ interface DesktopNavProps {
 }
 
 export default function DesktopNav({ navigation, isActive, textColor }: DesktopNavProps) {
+  const t = useTranslations('nav');
+
   return (
     <>
       <ul className="hidden md:flex xl:absolute xl:left-1/2 xl:-translate-x-1/2 top-0 items-center gap-8 h-full m-0 p-0 list-none">
@@ -52,19 +57,21 @@ export default function DesktopNav({ navigation, isActive, textColor }: DesktopN
       <div className="hidden md:flex items-center gap-2">
         {/* Utility Menu (Order Status) */}
         <a
-          href="https://koreasmartcoop.cafe24.com/myshop/order/list.html"
+          href={EXTERNAL_LINKS.ORDER_STATUS}
           target="_blank"
           rel="noopener noreferrer"
           className={`text-sm font-medium hover:opacity-70 transition-opacity px-3 py-2 ${textColor}`}
         >
-          주문조회
+          {t('orderStatus')}
         </a>
 
         <Button href="/artworks" variant="accent" size="xs">
-          작품 구매
+          {t('buyArt')}
         </Button>
 
         <AuthButtons size="xs" variant={textColor === 'text-white' ? 'white' : 'white'} />
+
+        <LanguageSwitcher className={textColor} />
       </div>
     </>
   );

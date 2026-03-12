@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import SafeImage from '@/components/common/SafeImage';
 import type { ArtworkCardData } from '@/types';
 import { cn, resolveArtworkImageUrlForPreset } from '@/lib/utils';

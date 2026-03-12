@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo, useLayoutEffect } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname } from '@/i18n/navigation';
 import { HERO_PAGES } from '@/lib/constants';
 
 const HEADER_SOLID_STYLE = 'bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200/50';

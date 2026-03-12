@@ -22,6 +22,31 @@ jest.mock('next/navigation', () => ({
   },
 }));
 
+// Mock next-intl
+jest.mock('next-intl', () => ({
+  useTranslations: () => (key) => key,
+  useLocale: () => 'ko',
+}));
+
+// Mock @/i18n/navigation (locale-aware navigation)
+jest.mock('@/i18n/navigation', () => {
+  const React = require('react');
+  return {
+    Link: React.forwardRef(({ href, children, ...props }, ref) =>
+      React.createElement('a', { href, ref, ...props }, children)
+    ),
+    usePathname: () => '/',
+    useRouter: () => ({
+      push: jest.fn(),
+      replace: jest.fn(),
+      prefetch: jest.fn(),
+      back: jest.fn(),
+    }),
+    redirect: jest.fn(),
+    getPathname: jest.fn(),
+  };
+});
+
 // Mock IntersectionObserver
 global.IntersectionObserver = class IntersectionObserver {
   constructor() {}

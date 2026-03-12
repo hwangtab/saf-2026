@@ -5,7 +5,7 @@ import useEmblaCarousel from 'embla-carousel-react';
 import AutoScroll from 'embla-carousel-auto-scroll';
 import { Artwork } from '@/types';
 import ArtworkCard from '@/components/ui/ArtworkCard';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
 

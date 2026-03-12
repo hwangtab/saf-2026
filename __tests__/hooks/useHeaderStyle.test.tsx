@@ -3,8 +3,12 @@ import { useHeaderStyle } from '../../lib/hooks/useHeaderStyle';
 
 let mockPathname = '/';
 
-jest.mock('next/navigation', () => ({
+jest.mock('@/i18n/navigation', () => ({
   usePathname: () => mockPathname,
+  Link: 'a',
+  useRouter: () => ({ replace: jest.fn(), push: jest.fn() }),
+  redirect: jest.fn(),
+  getPathname: jest.fn(),
 }));
 
 function setWindowScrollY(value: number) {

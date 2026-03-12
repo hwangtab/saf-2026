@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import PageHero from '@/components/ui/PageHero';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';

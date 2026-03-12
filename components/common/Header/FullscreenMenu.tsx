@@ -1,13 +1,14 @@
 'use client';
 
 import { useRef, useEffect } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { Link } from '@/i18n/navigation';
+import { usePathname } from '@/i18n/navigation';
 import dynamic from 'next/dynamic';
+import { useTranslations } from 'next-intl';
 import Button from '@/components/ui/Button';
+import LanguageSwitcher from '@/components/common/LanguageSwitcher';
 import MenuToggleIcon from '@/components/ui/MenuToggleIcon';
 import { EXTERNAL_LINKS } from '@/lib/constants';
-import { UI_STRINGS } from '@/lib/ui-strings';
 import type { NavigationItem } from '@/types';
 import styles from './FullscreenMenu.module.css';
 
@@ -35,6 +36,9 @@ export default function FullscreenMenu({
   const skipRestoreScrollRef = useRef(false);
   const pathname = usePathname();
   const prevPathnameRef = useRef(pathname);
+  const t = useTranslations('nav');
+  const tFooter = useTranslations('footer');
+  const tA11y = useTranslations('a11y');
 
   // body 스크롤 잠금 해제 및 위치 복원
   const restoreBodyScroll = (restorePosition = true) => {
@@ -110,14 +114,15 @@ export default function FullscreenMenu({
       className={styles.dialog}
       onClose={handleDialogClose}
       onClick={handleBackdropClick}
-      aria-label="메뉴"
+      aria-label={tA11y('menu')}
     >
       <div className={styles.container}>
         {/* 헤더 - 닫기 버튼 */}
         <header className={styles.header}>
-          <button onClick={onClose} className={styles.closeButton} aria-label="메뉴 닫기">
+          <LanguageSwitcher className="text-charcoal" />
+          <button onClick={onClose} className={styles.closeButton} aria-label={tA11y('closeMenu')}>
             <MenuToggleIcon isOpen={true} />
-            <span>닫기</span>
+            <span>{tA11y('close')}</span>
           </button>
         </header>
 
@@ -186,7 +191,7 @@ export default function FullscreenMenu({
                 className={`${styles.navLink} text-base! text-charcoal-muted!`}
                 onClick={onClose}
               >
-                주문조회
+                {t('orderStatus')}
               </a>
             </li>
           </ul>
@@ -200,13 +205,13 @@ export default function FullscreenMenu({
               className="hover:text-primary transition-colors"
               onClick={onClose}
             >
-              {UI_STRINGS.FOOTER.PRIVACY_POLICY}
+              {tFooter('privacyPolicy')}
             </Link>
             <span className="text-gray-400" aria-hidden="true">
               |
             </span>
             <Link href="/terms" className="hover:text-primary transition-colors" onClick={onClose}>
-              {UI_STRINGS.FOOTER.TERMS_OF_SERVICE}
+              {tFooter('termsOfService')}
             </Link>
           </div>
           <AuthButtons layout="stacked" />
@@ -217,7 +222,7 @@ export default function FullscreenMenu({
             className="w-full justify-center"
             onClick={onClose}
           >
-            조합원 가입하기
+            {t('donate')}
           </Button>
         </footer>
       </div>

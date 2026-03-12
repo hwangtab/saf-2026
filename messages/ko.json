@@ -76,7 +76,10 @@
     "logoAlt": "씨앗페 로고",
     "homeLink": "씨앗페 2026 홈",
     "shareKakao": "카카오톡으로 공유하기",
-    "skipToMain": "메인 콘텐츠로 이동"
+    "skipToMain": "메인 콘텐츠로 이동",
+    "menu": "메뉴",
+    "closeMenu": "메뉴 닫기",
+    "close": "닫기"
   },
   "home": {
     "heroTitle": "온라인 전시 오픈\n작품 구매 가능",

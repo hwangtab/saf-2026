@@ -5,7 +5,6 @@ import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import DesktopNav from './Header/DesktopNav';
 import HeaderLogo from './Header/HeaderLogo';
-import LanguageSwitcher from './LanguageSwitcher';
 import MenuToggleIcon from '@/components/ui/MenuToggleIcon';
 import { Z_INDEX } from '@/lib/constants';
 import { useHeaderStyle } from '@/lib/hooks/useHeaderStyle';
@@ -40,23 +39,20 @@ function PublicHeader() {
 
         <DesktopNav navigation={navigation} isActive={isActive} textColor={textColor} />
 
-        <div className="flex items-center gap-1">
-          <LanguageSwitcher className={clsx('hidden md:flex', textColor)} />
-          <button
-            onClick={openMenu}
-            className={clsx(
-              'md:hidden p-3 min-w-[44px] min-h-[44px] flex items-center justify-center',
-              'transition-transform active:scale-90',
-              'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg',
-              textColor,
-              'hover:text-primary'
-            )}
-            aria-label={t('toggleMenu')}
-            aria-expanded={isMenuOpen}
-          >
-            <MenuToggleIcon isOpen={isMenuOpen} />
-          </button>
-        </div>
+        <button
+          onClick={openMenu}
+          className={clsx(
+            'md:hidden p-3 min-w-[44px] min-h-[44px] flex items-center justify-center',
+            'transition-transform active:scale-90',
+            'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg',
+            textColor,
+            'hover:text-primary'
+          )}
+          aria-label={t('toggleMenu')}
+          aria-expanded={isMenuOpen}
+        >
+          <MenuToggleIcon isOpen={isMenuOpen} />
+        </button>
       </nav>
 
       {/* Fullscreen menu */}

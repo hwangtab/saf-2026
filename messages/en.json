@@ -76,7 +76,10 @@
     "logoAlt": "SAF Logo",
     "homeLink": "SAF 2026 Home",
     "shareKakao": "Share on KakaoTalk",
-    "skipToMain": "Skip to main content"
+    "skipToMain": "Skip to main content",
+    "menu": "Menu",
+    "closeMenu": "Close menu",
+    "close": "Close"
   },
   "home": {
     "heroTitle": "Online Exhibition Now Open\nArtworks Available for Purchase",

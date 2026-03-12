@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { artworks } from '@/content/saf2026-artworks';
 import OhYoonMasonryGallery from '@/components/special/OhYoonMasonryGallery';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
