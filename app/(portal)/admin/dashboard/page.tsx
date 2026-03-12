@@ -189,9 +189,142 @@ export default async function AdminDashboardPage() {
         </AdminCard>
       </div>
 
-      {/* 최근 활동 */}
-      <section className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {/* 최근 가입 신청 */}
+      {/* 사이트 현황 */}
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {stats.siteAnalytics ? (
+          <>
+            <AdminCard className="flex h-full flex-col justify-between bg-emerald-50/50 p-6 transition-all duration-200">
+              <div>
+                <p className="text-sm font-medium text-emerald-700">실시간 방문자</p>
+                <p className="mt-2 text-3xl font-bold tracking-tight text-emerald-900">
+                  {NUMBER_FORMATTER.format(stats.siteAnalytics.realtimeVisitors)}
+                </p>
+              </div>
+              <p className="mt-2 text-sm text-emerald-600">최근 5분</p>
+            </AdminCard>
+            <StatCard
+              title="30일 페이지뷰"
+              valueText={NUMBER_FORMATTER.format(stats.siteAnalytics.totalPageViews)}
+              href="/admin/analytics"
+            />
+            <StatCard
+              title="30일 순방문자"
+              valueText={NUMBER_FORMATTER.format(stats.siteAnalytics.uniqueVisitors)}
+              href="/admin/analytics"
+            />
+          </>
+        ) : (
+          <>
+            <AdminCard className="flex h-full items-center justify-center p-6 sm:col-span-2 lg:col-span-3">
+              <p className="text-sm text-slate-400">사이트 분석 데이터를 불러올 수 없습니다</p>
+            </AdminCard>
+          </>
+        )}
+        {stats.feedback ? (
+          <StatCard
+            title="미해결 피드백"
+            valueText={NUMBER_FORMATTER.format(stats.feedback.openCount)}
+            subtitle={stats.feedback.openCount > 0 ? '확인 필요' : '처리 완료'}
+            href="/admin/feedback"
+          />
+        ) : (
+          <AdminCard className="flex h-full items-center justify-center p-6">
+            <p className="text-sm text-slate-400">피드백 데이터 없음</p>
+          </AdminCard>
+        )}
+      </div>
+
+      {/* 인기 페이지 + 최근 피드백 */}
+      <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <AdminCard className="flex flex-col">
+          <AdminCardHeader className="rounded-t-2xl">
+            <h2 className="text-base font-semibold text-slate-900">인기 페이지 Top 5</h2>
+            <Link
+              href="/admin/analytics"
+              className="text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:underline"
+            >
+              전체 보기
+            </Link>
+          </AdminCardHeader>
+          <div className="p-0">
+            {!stats.siteAnalytics || stats.siteAnalytics.topPages.length === 0 ? (
+              <div className="p-8 text-center text-sm text-gray-500">페이지 데이터가 없습니다.</div>
+            ) : (
+              <ul className="divide-y divide-gray-100">
+                {stats.siteAnalytics.topPages.map((page, i) => (
+                  <li key={page.path} className="flex items-center justify-between p-4">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-medium text-slate-500">
+                        {i + 1}
+                      </span>
+                      <span className="truncate text-sm text-gray-900">{page.path}</span>
+                    </div>
+                    <span className="ml-3 shrink-0 text-sm font-medium text-slate-500">
+                      {NUMBER_FORMATTER.format(page.views)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </AdminCard>
+
+        <AdminCard className="flex flex-col">
+          <AdminCardHeader className="rounded-t-2xl">
+            <h2 className="text-base font-semibold text-slate-900">최근 피드백</h2>
+            <Link
+              href="/admin/feedback"
+              className="text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:underline"
+            >
+              전체 보기
+            </Link>
+          </AdminCardHeader>
+          <div className="p-0">
+            {!stats.feedback || stats.feedback.recentItems.length === 0 ? (
+              <div className="p-8 text-center text-sm text-gray-500">미해결 피드백이 없습니다.</div>
+            ) : (
+              <ul className="divide-y divide-gray-100">
+                {stats.feedback.recentItems.map((item) => (
+                  <li key={item.id} className="p-4 hover:bg-gray-50 transition-colors">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span
+                          className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
+                            item.category === 'bug'
+                              ? 'bg-red-100 text-red-700'
+                              : item.category === 'improvement'
+                                ? 'bg-blue-100 text-blue-700'
+                                : item.category === 'question'
+                                  ? 'bg-amber-100 text-amber-700'
+                                  : 'bg-gray-100 text-gray-700'
+                          }`}
+                        >
+                          {item.category === 'bug'
+                            ? '버그'
+                            : item.category === 'improvement'
+                              ? '개선'
+                              : item.category === 'question'
+                                ? '질문'
+                                : '기타'}
+                        </span>
+                        <span className="truncate text-sm font-medium text-gray-900">
+                          {item.title}
+                        </span>
+                      </div>
+                      <span className="ml-3 shrink-0 text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">
+                        {formatDate(item.created_at)}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </AdminCard>
+      </section>
+
+      {/* 최근 가입/작품 */}
+      <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <AdminCard className="flex flex-col">
           <AdminCardHeader className="rounded-t-2xl">
             <h2 className="text-base font-semibold text-slate-900">최근 가입 신청</h2>

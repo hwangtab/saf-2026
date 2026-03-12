@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import type { AdminNavItem } from './admin-nav-items';
 
 interface NavDropdownProps {
@@ -10,15 +10,26 @@ interface NavDropdownProps {
   items: AdminNavItem[];
 }
 
+function isItemActive(item: AdminNavItem, pathname: string, isReviewQueueMode: boolean): boolean {
+  const isReviewQueueItem = item.href.includes('status=pending');
+  const isUsersItem = item.href === '/admin/users';
+
+  if (isReviewQueueItem) return isReviewQueueMode;
+  if (isUsersItem) return pathname === '/admin/users' && !isReviewQueueMode;
+
+  const targetPath = item.href.split('?')[0];
+  return pathname.startsWith(targetPath);
+}
+
 export function NavDropdown({ label, items }: NavDropdownProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  const isGroupActive = items.some((item) => {
-    const targetPath = item.href.split('?')[0];
-    return pathname.startsWith(targetPath);
-  });
+  const isReviewQueueMode = pathname === '/admin/users' && searchParams.get('status') === 'pending';
+
+  const isGroupActive = items.some((item) => isItemActive(item, pathname, isReviewQueueMode));
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -57,8 +68,7 @@ export function NavDropdown({ label, items }: NavDropdownProps) {
       {open && (
         <div className="absolute left-0 top-full z-50 mt-1 min-w-[160px] rounded-lg bg-white py-1 shadow-lg ring-1 ring-black/5">
           {items.map((item) => {
-            const targetPath = item.href.split('?')[0];
-            const isActive = pathname.startsWith(targetPath);
+            const isActive = isItemActive(item, pathname, isReviewQueueMode);
             return (
               <Link
                 key={item.href}

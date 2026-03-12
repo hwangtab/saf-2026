@@ -2,6 +2,7 @@
 
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
+import type { FeedbackCategory, FeedbackStatus } from '@/types';
 
 const KST_PARTS_FORMATTER = new Intl.DateTimeFormat('en-CA', {
   timeZone: 'Asia/Seoul',
@@ -46,6 +47,24 @@ type RecentArtworkRow = {
     | null;
 };
 
+export type DashboardSiteAnalytics = {
+  realtimeVisitors: number;
+  totalPageViews: number;
+  uniqueVisitors: number;
+  topPages: Array<{ path: string; views: number }>;
+};
+
+export type DashboardFeedbackSummary = {
+  openCount: number;
+  recentItems: Array<{
+    id: string;
+    category: FeedbackCategory;
+    title: string;
+    status: FeedbackStatus;
+    created_at: string;
+  }>;
+};
+
 export type DashboardOverviewStats = {
   artists: {
     totalRegistered: number;
@@ -77,6 +96,8 @@ export type DashboardOverviewStats = {
     artist_name: string;
     created_at: string;
   }>;
+  siteAnalytics: DashboardSiteAnalytics | null;
+  feedback: DashboardFeedbackSummary | null;
 };
 
 function parsePrice(price: unknown): number {
@@ -136,6 +157,68 @@ function isMissingVoidedAtColumnError(error: unknown): boolean {
     .trim();
 
   return candidate.code === '42703' && merged.includes('voided_at');
+}
+
+type SupabaseClient = Awaited<ReturnType<typeof createSupabaseAdminOrServerClient>>;
+
+async function fetchAnalyticsSummary(supabase: SupabaseClient): Promise<DashboardSiteAnalytics> {
+  const sinceTs = new Date(Date.now() - 30 * 86_400_000).toISOString();
+
+  const [summaryRes, pagesRes, realtimeRes] = await Promise.all([
+    supabase.rpc('get_pv_summary', { since_ts: sinceTs }),
+    supabase.rpc('get_pv_top_pages', { since_ts: sinceTs, lim: 5 }),
+    supabase.rpc('get_pv_realtime_visitors', { minutes: 5 }),
+  ]);
+
+  // RPC 에러 시 throw → allSettled가 rejected 처리 → UI에서 null fallback
+  if (summaryRes.error) throw summaryRes.error;
+  if (pagesRes.error) throw pagesRes.error;
+  if (realtimeRes.error) throw realtimeRes.error;
+
+  const summaryRow = Array.isArray(summaryRes.data) ? summaryRes.data[0] : null;
+  const realtimeRow = Array.isArray(realtimeRes.data) ? realtimeRes.data[0] : null;
+
+  return {
+    realtimeVisitors: Number(realtimeRow?.active_visitors ?? 0),
+    totalPageViews: Number(summaryRow?.total_views ?? 0),
+    uniqueVisitors: Number(summaryRow?.unique_visitors ?? 0),
+    topPages: Array.isArray(pagesRes.data)
+      ? pagesRes.data.map((row: { path: string; views: number }) => ({
+          path: row.path,
+          views: Number(row.views),
+        }))
+      : [],
+  };
+}
+
+async function fetchFeedbackSummary(supabase: SupabaseClient): Promise<DashboardFeedbackSummary> {
+  const [countRes, recentRes] = await Promise.all([
+    supabase
+      .from('feedback')
+      .select('id', { count: 'exact', head: true })
+      .in('status', ['open', 'reviewing']),
+    supabase
+      .from('feedback')
+      .select('id, category, title, status, created_at')
+      .in('status', ['open', 'reviewing'])
+      .order('created_at', { ascending: false })
+      .limit(5),
+  ]);
+
+  // 테이블 미존재 등 에러 시 throw → allSettled가 rejected 처리 → UI에서 null fallback
+  if (countRes.error) throw countRes.error;
+  if (recentRes.error) throw recentRes.error;
+
+  return {
+    openCount: countRes.count ?? 0,
+    recentItems: (recentRes.data ?? []).map((row) => ({
+      id: row.id as string,
+      category: row.category as FeedbackCategory,
+      title: row.title as string,
+      status: row.status as FeedbackStatus,
+      created_at: row.created_at as string,
+    })),
+  };
 }
 
 export async function getDashboardOverviewStats(): Promise<DashboardOverviewStats> {
@@ -277,6 +360,15 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
     0
   );
 
+  // Analytics + Feedback: graceful degradation (don't break dashboard if these fail)
+  const [analyticsSettled, feedbackSettled] = await Promise.allSettled([
+    fetchAnalyticsSummary(supabase),
+    fetchFeedbackSummary(supabase),
+  ]);
+
+  const siteAnalytics = analyticsSettled.status === 'fulfilled' ? analyticsSettled.value : null;
+  const feedback = feedbackSettled.status === 'fulfilled' ? feedbackSettled.value : null;
+
   return {
     artists: {
       totalRegistered: totalArtistsResult.count || 0,
@@ -331,5 +423,7 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
         created_at: artwork.created_at,
       };
     }),
+    siteAnalytics,
+    feedback,
   };
 }

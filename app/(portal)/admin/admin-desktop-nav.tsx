@@ -1,14 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { adminNavGroups } from './_components/admin-nav-items';
 import { NavDropdown } from './_components/NavDropdown';
 
 export function AdminDesktopNav() {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const isReviewQueueMode = pathname === '/admin/users' && searchParams.get('status') === 'pending';
 
   return (
     <div className="hidden xl:ml-6 xl:flex xl:items-center xl:gap-3">
@@ -22,14 +20,7 @@ export function AdminDesktopNav() {
             <div className="flex items-center gap-4">
               {group.items.map((item) => {
                 const targetPath = item.href.split('?')[0];
-                const isReviewQueueItem = item.href.includes('status=pending');
-                const isUsersItem = item.href === '/admin/users';
-
-                const isActive = isReviewQueueItem
-                  ? isReviewQueueMode
-                  : isUsersItem
-                    ? pathname === '/admin/users' && !isReviewQueueMode
-                    : pathname.startsWith(targetPath);
+                const isActive = pathname.startsWith(targetPath);
 
                 return (
                   <Link

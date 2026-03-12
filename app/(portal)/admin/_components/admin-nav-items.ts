@@ -6,16 +6,19 @@ export type AdminNavGroup = {
 
 export const adminNavGroups: AdminNavGroup[] = [
   {
+    items: [{ href: '/admin/dashboard', label: '대시보드' }],
+  },
+  {
+    label: '구성원',
     items: [
-      { href: '/admin/dashboard', label: '대시보드' },
       { href: '/admin/users?status=pending', label: '심사 큐' },
       { href: '/admin/users', label: '사용자 관리' },
+      { href: '/admin/artists', label: '작가 관리' },
     ],
   },
   {
-    label: '관리',
+    label: '콘텐츠',
     items: [
-      { href: '/admin/artists', label: '작가 관리' },
       { href: '/admin/artworks', label: '작품 관리' },
       { href: '/admin/content', label: '콘텐츠 관리' },
     ],
