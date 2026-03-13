@@ -15,6 +15,7 @@ import {
 } from '@/lib/auth/terms-consent';
 import { TermsConsentForm } from './terms-consent-form';
 import { SignOutButton } from '@/components/auth/SignOutButton';
+import { getServerLocale } from '@/lib/server-locale';
 
 type SearchParams = {
   next?: string;
@@ -25,6 +26,26 @@ export default async function TermsConsentPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
+  const locale = await getServerLocale();
+  const copy =
+    locale === 'en'
+      ? {
+          profileLoadError: 'An error occurred while verifying account information.',
+          applicationLoadError: 'An error occurred while checking application information.',
+          consentHeading: 'Updated consent is required',
+          privacyHeading: 'Updated privacy consent is required',
+          description:
+            'The document contents have been updated. Please review the changes and consent again. After consent, you will be redirected automatically.',
+        }
+      : {
+          profileLoadError: '계정 정보를 확인하는 중 오류가 발생했습니다.',
+          applicationLoadError: '신청 정보를 확인하는 중 오류가 발생했습니다.',
+          consentHeading: '계약 재동의가 필요합니다',
+          privacyHeading: '개인정보처리방침 재동의가 필요합니다',
+          description:
+            '문서 내용이 업데이트되었습니다. 변경된 내용을 확인하고 다시 동의해주세요. 동의 후 기존 화면으로 자동 이동합니다.',
+        };
+
   const user = await requireAuth();
   const params = await searchParams;
   const requestedNextPath = sanitizeInternalPath(params.next, '/onboarding');
@@ -45,11 +66,11 @@ export default async function TermsConsentPage({
   ]);
 
   if (profileResult.error) {
-    throw new Error('계정 정보를 확인하는 중 오류가 발생했습니다.');
+    throw new Error(copy.profileLoadError);
   }
 
   if (artistResult.error || exhibitorResult.error) {
-    throw new Error('신청 정보를 확인하는 중 오류가 발생했습니다.');
+    throw new Error(copy.applicationLoadError);
   }
 
   const profile = profileResult.data;
@@ -103,8 +124,8 @@ export default async function TermsConsentPage({
 
   const headingText =
     needsArtistConsent || needsExhibitorConsent || needsTos
-      ? '계약 재동의가 필요합니다'
-      : '개인정보처리방침 재동의가 필요합니다';
+      ? copy.consentHeading
+      : copy.privacyHeading;
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 pt-24 pb-12">
@@ -112,10 +133,7 @@ export default async function TermsConsentPage({
         <div className="mb-8 flex items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">{headingText}</h1>
-            <p className="mt-3 text-sm leading-6 text-gray-600">
-              문서 내용이 업데이트되었습니다. 변경된 내용을 확인하고 다시 동의해주세요. 동의 후 기존
-              화면으로 자동 이동합니다.
-            </p>
+            <p className="mt-3 text-sm leading-6 text-gray-600">{copy.description}</p>
           </div>
           <SignOutButton />
         </div>

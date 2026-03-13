@@ -39,6 +39,8 @@ interface Props {
 
 export const revalidate = 300;
 
+const containsHangul = (value: string): boolean => /[가-힣]/.test(value);
+
 // Generate metadata for SEO
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const locale = (await getLocale()) === 'en' ? 'en' : 'ko';
@@ -83,6 +85,29 @@ export default async function ArtworkDetailPage({ params }: Props) {
 
   // Get related articles for this artist
   const relatedArticles = getArticlesByArtist(artwork.artist);
+  const localizeDataValue = (value: string | null | undefined): string | null => {
+    if (!value) return null;
+    if (locale !== 'en') return value;
+    if (value === '문의') return 'Inquiry';
+    if (value === '확인 중') return 'Pending';
+    if (containsHangul(value)) return t('originalKoreanDetail');
+    return value;
+  };
+  const localizeLongText = (value: string | null | undefined, fallback: string): string | null => {
+    if (!value) return null;
+    if (locale === 'en' && containsHangul(value)) {
+      return fallback;
+    }
+    return value;
+  };
+  const localizedProfile = localizeLongText(artwork.profile, t('originalKoreanProfile'));
+  const localizedDescription = localizeLongText(artwork.description, t('originalKoreanNote'));
+  const localizedHistory = localizeLongText(artwork.history, t('originalKoreanHistory'));
+  const localizedPrice = localizeDataValue(artwork.price);
+  const localizedMaterial = localizeDataValue(artwork.material);
+  const localizedSize = localizeDataValue(artwork.size);
+  const localizedEdition = localizeDataValue(artwork.edition);
+  const hasActionablePrice = parsedPrice !== Infinity;
 
   // Generate JSON-LD schemas
   const { productSchema, breadcrumbSchema } = generateArtworkJsonLd(
@@ -133,8 +158,8 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   <p id="artist-name-mobile" className="text-lg text-gray-600 font-medium">
                     {artwork.artist}
                   </p>
-                  {artwork.price && (
-                    <p className="text-xl font-bold text-charcoal">{artwork.price}</p>
+                  {localizedPrice && (
+                    <p className="text-xl font-bold text-charcoal">{localizedPrice}</p>
                   )}
                 </div>
               </div>
@@ -155,7 +180,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
               {/* CTA Section - Moved here for better visibility */}
               <div className="space-y-6">
                 {/* 온라인 구매 버튼 - 가격이 있고, shopUrl이 있고, 판매되지 않은 경우에만 표시 */}
-                {artwork.price && artwork.price !== '문의' && artwork.shopUrl && !artwork.sold && (
+                {hasActionablePrice && artwork.shopUrl && !artwork.sold && (
                   <>
                     {/* Purchase Guide */}
                     <PurchaseGuide className="mb-4" />
@@ -180,7 +205,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 )}
 
                 {/* 구매 링크가 없는 경우 - 안내 문구 표시 */}
-                {artwork.price && artwork.price !== '문의' && !artwork.shopUrl && !artwork.sold && (
+                {hasActionablePrice && !artwork.shopUrl && !artwork.sold && (
                   <>
                     <PurchaseGuide className="mb-6" />
 
@@ -273,18 +298,18 @@ export default async function ArtworkDetailPage({ params }: Props) {
               <div className="border-t border-b border-gray-100 py-6">
                 <div className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 items-baseline">
                   {/* 재료 */}
-                  {artwork.material && (
+                  {localizedMaterial && (
                     <>
                       <span className="text-gray-600 font-medium text-sm">{t('material')}</span>
-                      <span className="text-charcoal">{artwork.material}</span>
+                      <span className="text-charcoal">{localizedMaterial}</span>
                     </>
                   )}
 
                   {/* 크기 */}
-                  {artwork.size && (
+                  {localizedSize && (
                     <>
                       <span className="text-gray-600 font-medium text-sm">{t('size')}</span>
-                      <span className="text-charcoal">{artwork.size}</span>
+                      <span className="text-charcoal">{localizedSize}</span>
                     </>
                   )}
 
@@ -297,25 +322,25 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   )}
 
                   {/* 에디션 */}
-                  {artwork.edition && (
+                  {localizedEdition && (
                     <>
                       <span className="text-gray-600 font-medium text-sm">{t('edition')}</span>
-                      <span className="text-charcoal">{artwork.edition}</span>
+                      <span className="text-charcoal">{localizedEdition}</span>
                     </>
                   )}
 
                   {/* 가격 */}
-                  {artwork.price && (
+                  {localizedPrice && (
                     <>
                       <span className="text-gray-600 font-medium text-sm">{t('price')}</span>
-                      <span className="text-charcoal font-semibold">{artwork.price}</span>
+                      <span className="text-charcoal font-semibold">{localizedPrice}</span>
                     </>
                   )}
                 </div>
               </div>
 
               {/* Artist Profile (profile only, no history) */}
-              {artwork.profile && (
+              {localizedProfile && (
                 <div className="bg-gray-50 p-6 rounded-xl">
                   <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">
                     {t('artistProfile')}
@@ -324,13 +349,13 @@ export default async function ArtworkDetailPage({ params }: Props) {
                     id="artist-profile"
                     className="text-gray-700 leading-relaxed text-sm whitespace-pre-line"
                   >
-                    {artwork.profile}
+                    {localizedProfile}
                   </p>
                 </div>
               )}
 
               {/* Artist Note */}
-              {artwork.description && (
+              {localizedDescription && (
                 <div className="bg-gray-50 p-6 rounded-xl">
                   <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">
                     {t('artistNote')}
@@ -339,13 +364,13 @@ export default async function ArtworkDetailPage({ params }: Props) {
                     id="artist-note"
                     className="text-gray-700 leading-relaxed text-sm whitespace-pre-line"
                   >
-                    {artwork.description}
+                    {localizedDescription}
                   </p>
                 </div>
               )}
 
               {/* Artist History - separate card, below artist note */}
-              {artwork.history && <ExpandableHistory history={artwork.history} />}
+              {localizedHistory && <ExpandableHistory history={localizedHistory} />}
 
               {/* Related Articles */}
               <RelatedArticles articles={relatedArticles} />

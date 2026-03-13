@@ -12,11 +12,44 @@ import {
   needsPrivacyConsent,
   resolveArtistReconsentRequirements,
 } from '@/lib/auth/terms-consent';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
+import { resolveClientLocale } from '@/lib/client-locale';
+
+const LOGIN_COPY = {
+  ko: {
+    subtitle: '아티스트 로그인',
+    continueWithGoogle: '구글로 계속하기',
+    orEmailLogin: '또는 이메일 로그인',
+    emailLabel: '이메일 주소',
+    passwordLabel: '비밀번호',
+    loginButton: '로그인',
+    noAccount: '계정이 없으신가요?',
+    signUp: '회원가입',
+    invalidCredentials: '이메일 또는 비밀번호가 올바르지 않습니다.',
+    loginError: '로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+    oauthError: '소셜 로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+  },
+  en: {
+    subtitle: 'Artist login',
+    continueWithGoogle: 'Continue with Google',
+    orEmailLogin: 'Or sign in with email',
+    emailLabel: 'Email address',
+    passwordLabel: 'Password',
+    loginButton: 'Sign in',
+    noAccount: "Don't have an account?",
+    signUp: 'Sign up',
+    invalidCredentials: 'Invalid email or password.',
+    loginError: 'An error occurred while signing in. Please try again shortly.',
+    oauthError: 'An error occurred during social sign-in. Please try again shortly.',
+  },
+} as const;
 
 export default function LoginPage() {
+  const pathname = usePathname();
+  const locale = resolveClientLocale(pathname);
+  const copy = LOGIN_COPY[locale];
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -43,9 +76,7 @@ export default function LoginPage() {
 
     if (error) {
       setError(
-        error.message === 'Invalid login credentials'
-          ? '이메일 또는 비밀번호가 올바르지 않습니다.'
-          : '로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'
+        error.message === 'Invalid login credentials' ? copy.invalidCredentials : copy.loginError
       );
       setLoading(false);
     } else {
@@ -191,7 +222,7 @@ export default function LoginPage() {
     });
 
     if (error) {
-      setError('소셜 로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      setError(copy.oauthError);
       setOauthLoading(null);
     }
   };
@@ -202,7 +233,7 @@ export default function LoginPage() {
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           SAF 2026
           <br />
-          <span className="text-xl font-medium text-gray-600">아티스트 로그인</span>
+          <span className="text-xl font-medium text-gray-600">{copy.subtitle}</span>
         </h2>
       </div>
 
@@ -217,19 +248,19 @@ export default function LoginPage() {
               disabled={oauthLoading !== null}
               onClick={() => handleOAuthLogin('google')}
             >
-              구글로 계속하기
+              {copy.continueWithGoogle}
             </Button>
           </div>
 
           <div className="my-6 flex items-center gap-4">
             <div className="h-px flex-1 bg-gray-200" />
-            <span className="text-xs text-gray-400">또는 이메일 로그인</span>
+            <span className="text-xs text-gray-400">{copy.orEmailLogin}</span>
             <div className="h-px flex-1 bg-gray-200" />
           </div>
           <form className="space-y-6" onSubmit={handleLogin}>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                이메일 주소
+                {copy.emailLabel}
               </label>
               <div className="mt-1">
                 <input
@@ -247,7 +278,7 @@ export default function LoginPage() {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                비밀번호
+                {copy.passwordLabel}
               </label>
               <div className="mt-1">
                 <input
@@ -272,15 +303,15 @@ export default function LoginPage() {
                 disabled={loading}
                 className="w-full flex justify-center"
               >
-                로그인
+                {copy.loginButton}
               </Button>
             </div>
 
             {/* Simple footer for sign up hint */}
             <div className="mt-6 text-center text-sm">
-              <span className="text-gray-500">계정이 없으신가요? </span>
+              <span className="text-gray-500">{copy.noAccount} </span>
               <Link href="/signup" className="font-medium text-indigo-600 hover:text-indigo-500">
-                회원가입
+                {copy.signUp}
               </Link>
             </div>
           </form>

@@ -102,9 +102,10 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale();
-  const organizationSchema = generateOrganizationSchema();
-  const websiteSchema = generateWebsiteSchema();
-  const localBusinessSchema = generateLocalBusinessSchema();
+  const resolvedLocale = locale === 'en' ? 'en' : 'ko';
+  const organizationSchema = generateOrganizationSchema(resolvedLocale);
+  const websiteSchema = generateWebsiteSchema(resolvedLocale);
+  const localBusinessSchema = generateLocalBusinessSchema(resolvedLocale);
 
   return (
     <html lang={locale} suppressHydrationWarning>

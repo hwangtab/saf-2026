@@ -23,6 +23,22 @@ function resolveSeoArtworkImageUrl(image: string): string {
   });
 }
 
+function containsHangul(value: string): boolean {
+  return /[가-힣]/.test(value);
+}
+
+function sanitizeForLocale(
+  value: string | null | undefined,
+  locale: 'ko' | 'en',
+  fallback = ''
+): string {
+  if (!value) return '';
+  if (locale === 'en' && containsHangul(value)) {
+    return fallback;
+  }
+  return value;
+}
+
 // JSON-LD Security: Escape < characters to prevent XSS
 export function escapeJsonLdForScript(json: string): string {
   return json.replace(/</g, '\\u003c');
@@ -48,23 +64,41 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
     : `${SITE_URL}${resolvedImageUrl}`;
 
   const isEnglish = locale === 'en';
+  const materialForLocale = sanitizeForLocale(
+    artwork.material,
+    locale,
+    isEnglish ? 'Original details in Korean' : ''
+  );
+  const sizeForLocale = sanitizeForLocale(
+    artwork.size,
+    locale,
+    isEnglish ? 'Original details in Korean' : ''
+  );
 
   const summary = [
     isEnglish ? `Artist: ${artwork.artist}` : `작가: ${artwork.artist}`,
     isEnglish ? `Title: ${artwork.title}` : `작품명: ${artwork.title}`,
     artwork.year ? (isEnglish ? `Year: ${artwork.year}` : `제작년도: ${artwork.year}`) : '',
-    artwork.material
+    materialForLocale
       ? isEnglish
-        ? `Material: ${artwork.material}`
-        : `재료: ${artwork.material}`
+        ? `Material: ${materialForLocale}`
+        : `재료: ${materialForLocale}`
       : '',
-    artwork.size ? (isEnglish ? `Size: ${artwork.size}` : `크기: ${artwork.size}`) : '',
+    sizeForLocale ? (isEnglish ? `Size: ${sizeForLocale}` : `크기: ${sizeForLocale}`) : '',
   ]
     .filter(Boolean)
     .join(', ');
 
-  const profileSnippet = artwork.profile ? artwork.profile.substring(0, 150) : '';
-  const descSnippet = artwork.description ? artwork.description.substring(0, 150) : '';
+  const profileSnippet = sanitizeForLocale(
+    artwork.profile,
+    locale,
+    isEnglish ? 'Original profile available in Korean.' : ''
+  ).substring(0, 150);
+  const descSnippet = sanitizeForLocale(
+    artwork.description,
+    locale,
+    isEnglish ? 'Original artwork description available in Korean.' : ''
+  ).substring(0, 150);
 
   const seoDescription =
     `${summary}. ` +
@@ -80,7 +114,7 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
   );
 
   // Get medium-specific keywords for better categorization
-  const mediumKeywords = getMediumKeywords(artwork.material || '');
+  const mediumKeywords = getMediumKeywords(materialForLocale || '');
 
   return {
     ...baseMetadata,
@@ -89,8 +123,7 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
       artwork.title,
       ...mediumKeywords,
       ...(isEnglish ? ['SAF', 'artist solidarity', 'art purchase'] : ['씨앗페']),
-      '씨앗페 2026',
-      'SAF 2026',
+      ...(isEnglish ? ['SAF 2026', 'Seed Art Festival 2026'] : ['씨앗페 2026', 'SAF 2026']),
       ...(isEnglish
         ? [
             'artist solidarity',
@@ -109,8 +142,8 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
             '현대미술 컬렉션',
             '예술인 상호부조',
           ]),
-      '인사아트센터',
-      artwork.material?.split(' ')?.[0] ?? (isEnglish ? 'artwork' : '미술품'),
+      ...(isEnglish ? ['Insa Art Center'] : ['인사아트센터']),
+      materialForLocale.split(' ')?.[0] || (isEnglish ? 'artwork' : '미술품'),
       artwork.year ? (isEnglish ? `${artwork.year} artwork` : `${artwork.year}년 작품`) : null,
     ].filter(Boolean) as string[],
     openGraph: {
@@ -134,9 +167,28 @@ export function generateArtworkJsonLd(
 ) {
   const isEnglish = locale === 'en';
   const resolvedImageUrl = resolveSeoArtworkImageUrl(artwork.images[0]);
+  const materialForLocale = sanitizeForLocale(
+    artwork.material,
+    locale,
+    isEnglish ? 'Original details in Korean' : ''
+  );
+  const sizeForLocale = sanitizeForLocale(
+    artwork.size,
+    locale,
+    isEnglish ? 'Original details in Korean' : ''
+  );
+  const profileForLocale = sanitizeForLocale(artwork.profile, locale);
+  const descriptionForLocale = sanitizeForLocale(artwork.description, locale);
+  const historyForLocale = sanitizeForLocale(artwork.history, locale);
+  const editionForLocale = sanitizeForLocale(
+    artwork.edition,
+    locale,
+    isEnglish ? 'Original details in Korean' : ''
+  );
+
   const schemaDescription =
-    artwork.description ||
-    artwork.profile ||
+    descriptionForLocale ||
+    profileForLocale ||
     (isEnglish
       ? `Artwork titled "${artwork.title}" by ${artwork.artist}`
       : `${artwork.artist}의 작품 "${artwork.title}"`);
@@ -147,7 +199,7 @@ export function generateArtworkJsonLd(
       ? `${artwork.title} by ${artwork.artist}`
       : `${formatArtistName(artwork.artist)}의 ${artwork.title}`,
     artwork.year,
-    artwork.material,
+    materialForLocale,
   ]
     .filter(Boolean)
     .join(', ');
@@ -229,14 +281,14 @@ export function generateArtworkJsonLd(
       };
 
   // Classify artwork medium for better SEO categorization
-  const mediumCategory = classifyArtworkMedium(artwork.material || '');
+  const mediumCategory = classifyArtworkMedium(materialForLocale || '');
 
   const productSchema = {
     '@context': 'https://schema.org',
     '@type': ['VisualArtwork', 'Product'],
     name: artwork.title,
     inLanguage: isEnglish ? 'en' : 'ko',
-    artform: getArtformForSchema(artwork.material || ''),
+    artform: getArtformForSchema(materialForLocale || ''),
     // Category for faceted navigation SEO
     ...(mediumCategory && {
       category: {
@@ -265,13 +317,13 @@ export function generateArtworkJsonLd(
     creator: {
       '@type': 'Person',
       name: artwork.artist,
-      description: artwork.profile || undefined,
+      description: profileForLocale || undefined,
     },
-    artMedium: artwork.material || undefined,
-    artworkSurface: artwork.material || undefined,
+    artMedium: materialForLocale || undefined,
+    artworkSurface: materialForLocale || undefined,
     dateCreated: artwork.year || undefined,
-    size: artwork.size
-      ? { '@type': 'QuantitativeValue', value: artwork.size, unitText: 'dimensions' }
+    size: sizeForLocale
+      ? { '@type': 'QuantitativeValue', value: sizeForLocale, unitText: 'dimensions' }
       : undefined,
     offers,
     isPartOf: {
@@ -289,30 +341,30 @@ export function generateArtworkJsonLd(
       organizer: sellerOrg,
     },
     additionalProperty: [
-      artwork.material && {
+      materialForLocale && {
         '@type': 'PropertyValue',
         name: isEnglish ? 'Material' : '재료',
-        value: artwork.material,
+        value: materialForLocale,
       },
-      artwork.size && {
+      sizeForLocale && {
         '@type': 'PropertyValue',
         name: isEnglish ? 'Size' : '크기',
-        value: artwork.size,
+        value: sizeForLocale,
       },
       artwork.year && {
         '@type': 'PropertyValue',
         name: isEnglish ? 'Year' : '제작년도',
         value: artwork.year,
       },
-      artwork.edition && {
+      editionForLocale && {
         '@type': 'PropertyValue',
         name: isEnglish ? 'Edition' : '에디션',
-        value: artwork.edition,
+        value: editionForLocale,
       },
-      artwork.history && {
+      historyForLocale && {
         '@type': 'PropertyValue',
         name: isEnglish ? 'Artist history' : '작가이력',
-        value: artwork.history?.substring(0, 200),
+        value: historyForLocale.substring(0, 200),
       },
     ].filter(Boolean),
     potentialAction: [
@@ -359,7 +411,11 @@ export function generateArtworkJsonLd(
   };
 }
 
-export function generateExhibitionSchema(reviews: ExhibitionReview[] = []) {
+export function generateExhibitionSchema(
+  reviews: ExhibitionReview[] = [],
+  locale: 'ko' | 'en' = 'ko'
+) {
+  const isEnglish = locale === 'en';
   const hasReviews = reviews.length > 0;
   const startDate = '2026-01-14T10:00:00+09:00';
   const endDate = '2026-01-26T19:00:00+09:00';
@@ -376,9 +432,10 @@ export function generateExhibitionSchema(reviews: ExhibitionReview[] = []) {
   return {
     '@context': 'https://schema.org',
     '@type': 'ExhibitionEvent',
-    name: '씨앗페 2026 (Seed Art Festival 2026)',
-    description:
-      '한국 예술인들의 상호부조 기금 마련을 위한 특별전. 50여 명의 작가가 참여한 회화, 조각, 사진 등 다양한 예술 작품을 만나보세요.',
+    name: isEnglish ? 'SAF 2026 (Seed Art Festival 2026)' : '씨앗페 2026 (Seed Art Festival 2026)',
+    description: isEnglish
+      ? 'A special exhibition raising mutual-aid funds for Korean artists, featuring paintings, sculptures, photography, and other works by over 50 artists.'
+      : '한국 예술인들의 상호부조 기금 마련을 위한 특별전. 50여 명의 작가가 참여한 회화, 조각, 사진 등 다양한 예술 작품을 만나보세요.',
     url: SITE_URL,
     image: [OG_IMAGE.url],
     startDate,
@@ -392,7 +449,7 @@ export function generateExhibitionSchema(reviews: ExhibitionReview[] = []) {
         '@type': 'PostalAddress',
         streetAddress: EXHIBITION.ADDRESS,
         postalCode: EXHIBITION.POSTAL_CODE,
-        addressLocality: '서울시',
+        addressLocality: isEnglish ? 'Seoul' : '서울시',
         addressCountry: 'KR',
       },
       geo: {
@@ -415,7 +472,7 @@ export function generateExhibitionSchema(reviews: ExhibitionReview[] = []) {
     },
     performer: {
       '@type': 'Organization',
-      name: '참여 예술가 50여 명',
+      name: isEnglish ? 'Over 50 participating artists' : '참여 예술가 50여 명',
     },
     isAccessibleForFree: true,
     ...(hasReviews && {
@@ -445,14 +502,17 @@ export function generateExhibitionSchema(reviews: ExhibitionReview[] = []) {
   };
 }
 
-export function generateOrganizationSchema() {
+export function generateOrganizationSchema(locale: 'ko' | 'en' = 'ko') {
+  const isEnglish = locale === 'en';
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: CONTACT.ORGANIZATION_NAME,
     url: SITE_URL,
     logo: `${SITE_URL}/images/og-image2.png`,
-    description: '한국 예술인들의 상호부조 기금 마련을 위한 특별전',
+    description: isEnglish
+      ? 'A special exhibition raising mutual-aid funds for Korean artists'
+      : '한국 예술인들의 상호부조 기금 마련을 위한 특별전',
     sameAs: [
       SOCIAL_LINKS.INSTAGRAM,
       SOCIAL_LINKS.FACEBOOK,
@@ -463,7 +523,7 @@ export function generateOrganizationSchema() {
       '@type': 'PostalAddress',
       streetAddress: CONTACT.ADDRESS,
       postalCode: CONTACT.POSTAL_CODE,
-      addressLocality: '서울시',
+      addressLocality: isEnglish ? 'Seoul' : '서울시',
       addressCountry: 'KR',
     },
     contactPoint: {
@@ -475,15 +535,18 @@ export function generateOrganizationSchema() {
   };
 }
 
-export function generateWebsiteSchema() {
+export function generateWebsiteSchema(locale: 'ko' | 'en' = 'ko') {
+  const isEnglish = locale === 'en';
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: '씨앗페 2026',
+    name: isEnglish ? 'SAF 2026' : '씨앗페 2026',
     alternateName: 'SAF 2026',
     url: SITE_URL,
-    description: '한국 예술인들의 상호부조 기금 마련을 위한 특별전',
-    inLanguage: 'ko-KR',
+    description: isEnglish
+      ? 'A special exhibition raising mutual-aid funds for Korean artists'
+      : '한국 예술인들의 상호부조 기금 마련을 위한 특별전',
+    inLanguage: isEnglish ? 'en-US' : 'ko-KR',
     publisher: {
       '@type': 'Organization',
       name: CONTACT.ORGANIZATION_NAME,
@@ -585,11 +648,12 @@ export function generateSpeakableSchema(cssSelectors: string[]) {
   };
 }
 
-export function generateLocalBusinessSchema() {
+export function generateLocalBusinessSchema(locale: 'ko' | 'en' = 'ko') {
+  const isEnglish = locale === 'en';
   return {
     '@context': 'https://schema.org',
     '@type': 'ArtGallery',
-    name: '씨앗페 2026 (Seed Art Festival)',
+    name: isEnglish ? 'SAF 2026 (Seed Art Festival)' : '씨앗페 2026 (Seed Art Festival)',
     image: OG_IMAGE.url,
     '@id': SITE_URL,
     url: SITE_URL,
@@ -599,7 +663,7 @@ export function generateLocalBusinessSchema() {
       '@type': 'PostalAddress',
       streetAddress: EXHIBITION.ADDRESS,
       postalCode: EXHIBITION.POSTAL_CODE,
-      addressLocality: '서울시',
+      addressLocality: isEnglish ? 'Seoul' : '서울시',
       addressCountry: 'KR',
     },
     geo: {
@@ -827,14 +891,17 @@ export function generateGalleryAggregateOffer(artworks: Artwork[]) {
   };
 }
 
-export function generateArtworkListSchema(artworks: Artwork[]) {
+export function generateArtworkListSchema(artworks: Artwork[], locale: 'ko' | 'en' = 'ko') {
+  const isEnglish = locale === 'en';
   const aggregateOffer = generateGalleryAggregateOffer(artworks);
 
   return {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: '씨앗페 2026 출품작',
-    description: '씨앗페 2026에 출품된 예술가들의 작품 목록',
+    name: isEnglish ? 'SAF 2026 Artworks' : '씨앗페 2026 출품작',
+    description: isEnglish
+      ? 'Artwork list from SAF 2026'
+      : '씨앗페 2026에 출품된 예술가들의 작품 목록',
     numberOfItems: artworks.length,
     // Price range for art buyers
     ...(aggregateOffer && { offers: aggregateOffer }),
@@ -876,15 +943,17 @@ export function generateArtistSchema(artist: ArtistSchemaInput) {
  * Generate campaign/funding scheme schema for SEO
  * Exposes the mutual aid fund mission to search engines
  */
-export function generateCampaignSchema() {
+export function generateCampaignSchema(locale: 'ko' | 'en' = 'ko') {
+  const isEnglish = locale === 'en';
   return {
     '@context': 'https://schema.org',
     '@type': 'FundingScheme',
     '@id': `${SITE_URL}#campaign`,
-    name: '예술인 상호부조 기금 마련 캠페인',
+    name: isEnglish ? 'Artist Mutual Aid Fund Campaign' : '예술인 상호부조 기금 마련 캠페인',
     alternateName: 'SAF 2026 Artist Mutual Aid Fund',
-    description:
-      '한국 예술인들의 고리대금 문제 해결을 위한 상호부조 기금 마련 특별 캠페인. 작품 구매를 통해 예술인들의 금융 자립을 지원합니다.',
+    description: isEnglish
+      ? 'A special campaign raising mutual-aid funds to help Korean artists avoid predatory lending and build financial stability through artwork purchases.'
+      : '한국 예술인들의 고리대금 문제 해결을 위한 상호부조 기금 마련 특별 캠페인. 작품 구매를 통해 예술인들의 금융 자립을 지원합니다.',
     url: SITE_URL,
     funder: {
       '@type': 'Organization',
@@ -894,7 +963,7 @@ export function generateCampaignSchema() {
     isAccessibleForFree: false,
     audience: {
       '@type': 'Audience',
-      audienceType: '미술 컬렉터, 예술 후원자',
+      audienceType: isEnglish ? 'Art collectors and supporters' : '미술 컬렉터, 예술 후원자',
     },
   };
 }

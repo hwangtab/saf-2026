@@ -89,7 +89,7 @@ export default async function Archive2026Page() {
         };
 
   // JSON-LD Schema for Event
-  const eventSchema = generateExhibitionSchema(exhibitionReviews);
+  const eventSchema = generateExhibitionSchema(exhibitionReviews, locale);
   const breadcrumbSchema = createBreadcrumbSchema([
     { name: tBreadcrumbs('home'), url: SITE_URL },
     { name: tBreadcrumbs('archive'), url: `${SITE_URL}/archive` },

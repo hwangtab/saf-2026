@@ -23,6 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ArtworksPage() {
+  const locale = (await getLocale()) === 'en' ? 'en' : 'ko';
   const t = await getTranslations('artworksPage');
   const tBreadcrumbs = await getTranslations('breadcrumbs');
   const artworks = await getSupabaseArtworks();
@@ -33,7 +34,7 @@ export default async function ArtworksPage() {
     { name: tBreadcrumbs('home'), url: SITE_URL },
     { name: tBreadcrumbs('artworks'), url: `${SITE_URL}/artworks` },
   ]);
-  const itemListSchema = generateArtworkListSchema(artworks);
+  const itemListSchema = generateArtworkListSchema(artworks, locale);
 
   return (
     <>

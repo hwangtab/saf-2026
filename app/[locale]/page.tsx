@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import SafeImage from '@/components/common/SafeImage';
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
@@ -78,6 +78,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
+  const locale = (await getLocale()) === 'en' ? 'en' : 'ko';
   const t = await getTranslations('home');
   const counterItems = STATISTICS_DATA.slice(0, 3);
 
@@ -294,9 +295,9 @@ export default async function Home() {
       </Section>
 
       {/* ExhibitionEvent JSON-LD Schema using Component */}
-      <JsonLdScript data={generateExhibitionSchema()} />
+      <JsonLdScript data={generateExhibitionSchema([], locale)} />
       {/* FundingScheme JSON-LD for campaign Rich Results */}
-      <JsonLdScript data={generateCampaignSchema()} />
+      <JsonLdScript data={generateCampaignSchema(locale)} />
     </>
   );
 }

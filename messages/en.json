@@ -181,6 +181,10 @@
     "price": "Price",
     "artistProfile": "About the Artist",
     "artistNote": "Artist Statement",
+    "originalKoreanProfile": "The artist profile is currently available in Korean.",
+    "originalKoreanNote": "The artist statement is currently available in Korean.",
+    "originalKoreanHistory": "The artist history is currently available in Korean.",
+    "originalKoreanDetail": "Original details are available in Korean.",
     "otherWorks": "Other works by {artist}",
     "viewAll": "View All"
   },
@@ -192,7 +196,13 @@
     "metaTitle": "{artist} - Artworks | SAF 2026",
     "metaDescription": "Explore the artistic world of {artist}. ",
     "metaFallback": "Messages of solidarity and hope from artists, SAF 2026.",
+    "originalKoreanDescription": "Profile details are currently available in Korean.",
     "metaImageAlt": "Artwork by {artist} - {title}"
+  },
+  "relatedArticles": {
+    "sectionTitle": "Related materials",
+    "originalKoreanTitle": "Original Korean article",
+    "originalKoreanDescription": "This article text is currently available in Korean. Open the source to read the original version."
   },
   "language": {
     "ko": "한국어",
@@ -215,7 +225,8 @@
   "artworkCard": {
     "untitled": "Untitled",
     "unknownArtist": "Unknown artist",
-    "pendingInfo": "Detailed information coming soon"
+    "pendingInfo": "Detailed information coming soon",
+    "originalKoreanData": "Original details in Korean"
   },
   "trustBadges": {
     "authenticity": "✓ 100% authenticity guaranteed",

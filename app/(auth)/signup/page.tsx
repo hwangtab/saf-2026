@@ -3,10 +3,57 @@
 import { useState } from 'react';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
+import { resolveClientLocale } from '@/lib/client-locale';
+
+const SIGNUP_COPY = {
+  ko: {
+    subtitle: '아티스트 회원가입',
+    continueWithGoogle: '구글로 계속하기',
+    orEmailSignup: '또는 이메일 가입',
+    nameLabel: '이름 (실명)',
+    emailLabel: '이메일 주소',
+    passwordLabel: '비밀번호',
+    submit: '가입하기',
+    alreadyHaveAccount: '이미 계정이 있으신가요?',
+    login: '로그인',
+    doneTitle: '가입 신청 완료',
+    needsEmailConfirmLine1: '이메일 인증 링크가 전송되었습니다.',
+    needsEmailConfirmLine2: '이메일 확인 후 로그인해주세요.',
+    successLine1: '가입이 완료되었습니다.',
+    successLine2: '로그인 후 아티스트 정보를 제출해주세요.',
+    goLogin: '로그인 페이지로 이동',
+    userExists: '이미 등록된 이메일입니다. 로그인을 시도해주세요.',
+    signupError: '회원가입 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+    oauthError: '소셜 로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+  },
+  en: {
+    subtitle: 'Artist sign-up',
+    continueWithGoogle: 'Continue with Google',
+    orEmailSignup: 'Or sign up with email',
+    nameLabel: 'Name (legal name)',
+    emailLabel: 'Email address',
+    passwordLabel: 'Password',
+    submit: 'Create account',
+    alreadyHaveAccount: 'Already have an account?',
+    login: 'Sign in',
+    doneTitle: 'Sign-up request completed',
+    needsEmailConfirmLine1: 'A verification email has been sent.',
+    needsEmailConfirmLine2: 'Please confirm your email and then sign in.',
+    successLine1: 'Your account has been created.',
+    successLine2: 'Sign in and submit your artist information.',
+    goLogin: 'Go to sign-in page',
+    userExists: 'This email is already registered. Please sign in instead.',
+    signupError: 'An error occurred during sign-up. Please try again shortly.',
+    oauthError: 'An error occurred during social sign-in. Please try again shortly.',
+  },
+} as const;
 
 export default function SignUpPage() {
+  const pathname = usePathname();
+  const locale = resolveClientLocale(pathname);
+  const copy = SIGNUP_COPY[locale];
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -44,9 +91,7 @@ export default function SignUpPage() {
 
     if (signUpError) {
       setError(
-        signUpError.message === 'User already registered'
-          ? '이미 등록된 이메일입니다. 로그인을 시도해주세요.'
-          : '회원가입 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'
+        signUpError.message === 'User already registered' ? copy.userExists : copy.signupError
       );
       setLoading(false);
       return;
@@ -75,7 +120,7 @@ export default function SignUpPage() {
     });
 
     if (error) {
-      setError('소셜 로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      setError(copy.oauthError);
       setOauthLoading(null);
     }
   };
@@ -84,24 +129,24 @@ export default function SignUpPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md bg-white p-8 rounded-lg shadow text-center">
-          <h2 className="text-2xl font-bold text-green-600 mb-4">가입 신청 완료</h2>
+          <h2 className="text-2xl font-bold text-green-600 mb-4">{copy.doneTitle}</h2>
           <p className="text-gray-600 mb-6">
             {requiresConfirmation ? (
               <>
-                이메일 인증 링크가 전송되었습니다.
+                {copy.needsEmailConfirmLine1}
                 <br />
-                이메일 확인 후 로그인해주세요.
+                {copy.needsEmailConfirmLine2}
               </>
             ) : (
               <>
-                가입이 완료되었습니다.
+                {copy.successLine1}
                 <br />
-                로그인 후 아티스트 정보를 제출해주세요.
+                {copy.successLine2}
               </>
             )}
           </p>
           <Button href="/login" variant="primary">
-            로그인 페이지로 이동
+            {copy.goLogin}
           </Button>
         </div>
       </div>
@@ -114,7 +159,7 @@ export default function SignUpPage() {
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           SAF 2026
           <br />
-          <span className="text-xl font-medium text-gray-600">아티스트 회원가입</span>
+          <span className="text-xl font-medium text-gray-600">{copy.subtitle}</span>
         </h2>
       </div>
 
@@ -129,19 +174,19 @@ export default function SignUpPage() {
               disabled={oauthLoading !== null}
               onClick={() => handleOAuthLogin('google')}
             >
-              구글로 계속하기
+              {copy.continueWithGoogle}
             </Button>
           </div>
 
           <div className="my-6 flex items-center gap-4">
             <div className="h-px flex-1 bg-gray-200" />
-            <span className="text-xs text-gray-400">또는 이메일 가입</span>
+            <span className="text-xs text-gray-400">{copy.orEmailSignup}</span>
             <div className="h-px flex-1 bg-gray-200" />
           </div>
           <form className="space-y-6" onSubmit={handleSignUp}>
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                이름 (실명)
+                {copy.nameLabel}
               </label>
               <div className="mt-1">
                 <input
@@ -158,7 +203,7 @@ export default function SignUpPage() {
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                이메일 주소
+                {copy.emailLabel}
               </label>
               <div className="mt-1">
                 <input
@@ -176,7 +221,7 @@ export default function SignUpPage() {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                비밀번호
+                {copy.passwordLabel}
               </label>
               <div className="mt-1">
                 <input
@@ -201,13 +246,13 @@ export default function SignUpPage() {
                 disabled={loading}
                 className="w-full flex justify-center"
               >
-                가입하기
+                {copy.submit}
               </Button>
             </div>
             <div className="mt-6 text-center text-sm">
-              <span className="text-gray-500">이미 계정이 있으신가요? </span>
+              <span className="text-gray-500">{copy.alreadyHaveAccount} </span>
               <Link href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
-                로그인
+                {copy.login}
               </Link>
             </div>
           </form>

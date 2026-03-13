@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import { getLocale, getMessages } from 'next-intl/server';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import PageLoader from '@/components/common/PageLoader';
@@ -9,14 +9,16 @@ import AnimationProvider from '@/components/providers/AnimationProvider';
 import ToastProvider from '@/components/providers/ToastProvider';
 
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {
+  const locale = (await getLocale()) === 'en' ? 'en' : 'ko';
   const messages = await getMessages();
+  const skipToMain = locale === 'en' ? 'Skip to main content' : '메인 콘텐츠로 이동';
 
   return (
     <NextIntlClientProvider messages={messages}>
       <AnimationProvider>
         <ToastProvider>
           <a href="#main-content" className="skip-to-main">
-            메인 콘텐츠로 이동
+            {skipToMain}
           </a>
           <Header />
           <main id="main-content" className="flex-1">

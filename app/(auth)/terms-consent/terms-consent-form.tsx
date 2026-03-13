@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { type RefObject, useActionState, useEffect, useMemo, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import { LegalDocumentContent } from '@/components/auth/LegalDocumentContent';
 import { IncompleteItemsModal, type IncompleteItem } from '@/components/ui/IncompleteItemsModal';
@@ -18,6 +19,7 @@ import {
   PRIVACY_POLICY_DOCUMENT,
   TERMS_OF_SERVICE_DOCUMENT,
 } from '@/lib/legal-documents';
+import { resolveClientLocale } from '@/lib/client-locale';
 
 const initialState: TermsConsentState = {
   message: '',
@@ -32,6 +34,88 @@ type TermsConsentFormProps = {
   needsTosConsent: boolean;
 };
 
+type LocaleCode = 'ko' | 'en';
+
+const TERMS_CONSENT_COPY: Record<
+  LocaleCode,
+  {
+    artistContract: string;
+    exhibitorContract: string;
+    privacyPolicy: string;
+    tos: string;
+    scrollToBottom: string;
+    checkAgreement: string;
+    scrollPrompt: string;
+    scrollHint: string;
+    agreeArtist: string;
+    agreeExhibitor: string;
+    agreePrivacy: string;
+    agreeTos: string;
+    readRequired: string;
+    readGuide: string;
+    viewArtistContract: string;
+    viewExhibitorContract: string;
+    viewPrivacy: string;
+    viewTos: string;
+    privacyLinkGuide: string;
+    privacyOpenNew: string;
+    continueAfterConsent: string;
+    incompleteTitle: string;
+    incompleteDescription: string;
+  }
+> = {
+  ko: {
+    artistContract: '전시·판매위탁 계약서',
+    exhibitorContract: '출품자 전시위탁 계약서',
+    privacyPolicy: '개인정보처리방침',
+    tos: '이용약관',
+    scrollToBottom: '문서 하단까지 스크롤해주세요.',
+    checkAgreement: '동의 체크박스를 선택해주세요.',
+    scrollPrompt: '아래로 스크롤하세요 ↓',
+    scrollHint: '문서 하단까지 스크롤하면 동의 항목이 활성화됩니다.',
+    agreeArtist: '전시·판매위탁 계약서에 동의합니다.',
+    agreeExhibitor: '출품자 전시위탁 계약서에 동의합니다.',
+    agreePrivacy: '개인정보처리방침에 동의합니다.',
+    agreeTos: '이용약관에 동의합니다.',
+    readRequired: '전체 문서를 읽어야 체크할 수 있습니다.',
+    readGuide: '위 문서를 끝까지 스크롤해주세요.',
+    viewArtistContract: '계약서 원문 보기',
+    viewExhibitorContract: '계약서 원문 보기',
+    viewPrivacy: '개인정보처리방침 원문 보기',
+    viewTos: '이용약관 원문 보기',
+    privacyLinkGuide: '아래 링크에서 개인정보처리방침 전문을 확인하실 수 있습니다.',
+    privacyOpenNew: '개인정보처리방침 전문 보기 (새 창)',
+    continueAfterConsent: '동의하고 계속하기',
+    incompleteTitle: '아직 완료되지 않은 항목이 있어요',
+    incompleteDescription: '아래 항목을 완료하면 계속 진행할 수 있습니다.',
+  },
+  en: {
+    artistContract: 'Exhibition and sales consignment agreement',
+    exhibitorContract: 'Exhibitor consignment agreement',
+    privacyPolicy: 'Privacy policy',
+    tos: 'Terms of service',
+    scrollToBottom: 'Please scroll to the bottom of the document.',
+    checkAgreement: 'Please check the consent box.',
+    scrollPrompt: 'Scroll down ↓',
+    scrollHint: 'Consent options become active after you scroll to the bottom.',
+    agreeArtist: 'I agree to the exhibition and sales consignment agreement.',
+    agreeExhibitor: 'I agree to the exhibitor consignment agreement.',
+    agreePrivacy: 'I agree to the privacy policy.',
+    agreeTos: 'I agree to the terms of service.',
+    readRequired: 'You can check this box after reading the full document.',
+    readGuide: 'Please scroll through the document above to continue.',
+    viewArtistContract: 'View original agreement',
+    viewExhibitorContract: 'View original agreement',
+    viewPrivacy: 'View original privacy policy',
+    viewTos: 'View original terms of service',
+    privacyLinkGuide: 'You can review the full privacy policy at the link below.',
+    privacyOpenNew: 'Open full privacy policy (new window)',
+    continueAfterConsent: 'Agree and continue',
+    incompleteTitle: 'Some required items are incomplete',
+    incompleteDescription: 'Complete the items below to continue.',
+  },
+};
+
 export function TermsConsentForm({
   nextPath,
   needsArtistConsent,
@@ -39,6 +123,9 @@ export function TermsConsentForm({
   needsPrivacyConsent,
   needsTosConsent,
 }: TermsConsentFormProps) {
+  const pathname = usePathname();
+  const locale = resolveClientLocale(pathname);
+  const copy = TERMS_CONSENT_COPY[locale];
   const [state, formAction, isPending] = useActionState(submitTermsConsent, initialState);
   const [hasReadArtistTerms, setHasReadArtistTerms] = useState(false);
   const [hasReadExhibitorTerms, setHasReadExhibitorTerms] = useState(false);
@@ -67,14 +154,14 @@ export function TermsConsentForm({
     if (needsArtistConsent) {
       if (!hasReadArtistTerms) {
         items.push({
-          label: '전시·판매위탁 계약서',
-          reason: '문서 하단까지 스크롤해주세요.',
+          label: copy.artistContract,
+          reason: copy.scrollToBottom,
           targetId: 'artist-consent-section',
         });
       } else if (!artistAgreed) {
         items.push({
-          label: '전시·판매위탁 계약서',
-          reason: '동의 체크박스를 선택해주세요.',
+          label: copy.artistContract,
+          reason: copy.checkAgreement,
           targetId: 'artist-consent-section',
         });
       }
@@ -83,14 +170,14 @@ export function TermsConsentForm({
     if (needsExhibitorConsent) {
       if (!hasReadExhibitorTerms) {
         items.push({
-          label: '출품자 전시위탁 계약서',
-          reason: '문서 하단까지 스크롤해주세요.',
+          label: copy.exhibitorContract,
+          reason: copy.scrollToBottom,
           targetId: 'exhibitor-consent-section',
         });
       } else if (!exhibitorAgreed) {
         items.push({
-          label: '출품자 전시위탁 계약서',
-          reason: '동의 체크박스를 선택해주세요.',
+          label: copy.exhibitorContract,
+          reason: copy.checkAgreement,
           targetId: 'exhibitor-consent-section',
         });
       }
@@ -99,14 +186,14 @@ export function TermsConsentForm({
     if (needsPrivacyConsent) {
       if (!hasReadPrivacy) {
         items.push({
-          label: '개인정보처리방침',
-          reason: '문서 하단까지 스크롤해주세요.',
+          label: copy.privacyPolicy,
+          reason: copy.scrollToBottom,
           targetId: 'privacy-consent-section',
         });
       } else if (!privacyAgreed) {
         items.push({
-          label: '개인정보처리방침',
-          reason: '동의 체크박스를 선택해주세요.',
+          label: copy.privacyPolicy,
+          reason: copy.checkAgreement,
           targetId: 'privacy-consent-section',
         });
       }
@@ -115,14 +202,14 @@ export function TermsConsentForm({
     if (needsTosConsent) {
       if (!hasReadTos) {
         items.push({
-          label: '이용약관',
-          reason: '문서 하단까지 스크롤해주세요.',
+          label: copy.tos,
+          reason: copy.scrollToBottom,
           targetId: 'tos-consent-section',
         });
       } else if (!tosAgreed) {
         items.push({
-          label: '이용약관',
-          reason: '동의 체크박스를 선택해주세요.',
+          label: copy.tos,
+          reason: copy.checkAgreement,
           targetId: 'tos-consent-section',
         });
       }
@@ -142,6 +229,12 @@ export function TermsConsentForm({
     needsTosConsent,
     privacyAgreed,
     tosAgreed,
+    copy.artistContract,
+    copy.checkAgreement,
+    copy.exhibitorContract,
+    copy.privacyPolicy,
+    copy.scrollToBottom,
+    copy.tos,
   ]);
 
   const handleCloseIncompleteModal = () => {
@@ -300,7 +393,7 @@ export function TermsConsentForm({
           className="rounded-lg border border-gray-200 bg-gray-50 p-4"
         >
           <p id="artist-terms-heading" className="mb-2 text-xs font-semibold text-gray-700">
-            전시·판매위탁 계약서 전문
+            {copy.artistContract}
           </p>
           <div className="relative">
             <div
@@ -317,7 +410,7 @@ export function TermsConsentForm({
               <div className="pointer-events-none absolute bottom-3 left-0 right-0 flex flex-col items-center">
                 <div className="absolute inset-x-0 bottom-0 h-16 rounded-b-md bg-gradient-to-t from-white via-white/80 to-transparent" />
                 <span className="relative animate-bounce rounded-full bg-gray-900 px-3 py-1 text-xs font-medium text-white shadow">
-                  아래로 스크롤하세요 ↓
+                  {copy.scrollPrompt}
                 </span>
               </div>
             )}
@@ -325,9 +418,7 @@ export function TermsConsentForm({
           {!hasReadArtistTerms && (
             <div className="mb-3 flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2">
               <span className="text-sm text-amber-600">↓</span>
-              <p className="text-xs font-medium text-amber-800">
-                문서 하단까지 스크롤하면 동의 항목이 활성화됩니다.
-              </p>
+              <p className="text-xs font-medium text-amber-800">{copy.scrollHint}</p>
             </div>
           )}
 
@@ -348,16 +439,14 @@ export function TermsConsentForm({
             />
             <div className="text-sm">
               <label htmlFor="agree_artist" className="font-medium text-gray-700">
-                전시·판매위탁 계약서에 동의합니다. <span className="text-red-500">*</span>
+                {copy.agreeArtist} <span className="text-red-500">*</span>
               </label>
               <p className="mt-1 text-gray-500">
-                {hasReadArtistTerms
-                  ? '전체 문서를 읽어야 체크할 수 있습니다.'
-                  : '위 문서를 끝까지 스크롤해주세요.'}
+                {hasReadArtistTerms ? copy.readRequired : copy.readGuide}
               </p>
               <p className="mt-1 text-xs text-gray-400">
                 <Link href="/terms/artist" className="underline underline-offset-2">
-                  계약서 원문 보기
+                  {copy.viewArtistContract}
                 </Link>
               </p>
             </div>
@@ -371,7 +460,7 @@ export function TermsConsentForm({
           className="rounded-lg border border-gray-200 bg-gray-50 p-4"
         >
           <p id="exhibitor-terms-heading" className="mb-2 text-xs font-semibold text-gray-700">
-            출품자 전시위탁 계약서 전문
+            {copy.exhibitorContract}
           </p>
           <div className="relative">
             <div
@@ -388,7 +477,7 @@ export function TermsConsentForm({
               <div className="pointer-events-none absolute bottom-3 left-0 right-0 flex flex-col items-center">
                 <div className="absolute inset-x-0 bottom-0 h-16 rounded-b-md bg-gradient-to-t from-white via-white/80 to-transparent" />
                 <span className="relative animate-bounce rounded-full bg-gray-900 px-3 py-1 text-xs font-medium text-white shadow">
-                  아래로 스크롤하세요 ↓
+                  {copy.scrollPrompt}
                 </span>
               </div>
             )}
@@ -396,9 +485,7 @@ export function TermsConsentForm({
           {!hasReadExhibitorTerms && (
             <div className="mb-3 flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2">
               <span className="text-sm text-amber-600">↓</span>
-              <p className="text-xs font-medium text-amber-800">
-                문서 하단까지 스크롤하면 동의 항목이 활성화됩니다.
-              </p>
+              <p className="text-xs font-medium text-amber-800">{copy.scrollHint}</p>
             </div>
           )}
 
@@ -421,16 +508,14 @@ export function TermsConsentForm({
             />
             <div className="text-sm">
               <label htmlFor="agree_exhibitor" className="font-medium text-gray-700">
-                출품자 전시위탁 계약서에 동의합니다. <span className="text-red-500">*</span>
+                {copy.agreeExhibitor} <span className="text-red-500">*</span>
               </label>
               <p className="mt-1 text-gray-500">
-                {hasReadExhibitorTerms
-                  ? '전체 문서를 읽어야 체크할 수 있습니다.'
-                  : '위 문서를 끝까지 스크롤해주세요.'}
+                {hasReadExhibitorTerms ? copy.readRequired : copy.readGuide}
               </p>
               <p className="mt-1 text-xs text-gray-400">
                 <Link href="/terms/exhibitor" className="underline underline-offset-2">
-                  계약서 원문 보기
+                  {copy.viewExhibitorContract}
                 </Link>
               </p>
             </div>
@@ -444,7 +529,7 @@ export function TermsConsentForm({
           className="rounded-lg border border-gray-200 bg-gray-50 p-4"
         >
           <p id="privacy-heading" className="mb-2 text-xs font-semibold text-gray-700">
-            개인정보처리방침 전문
+            {copy.privacyPolicy}
           </p>
           <div className="relative">
             <div
@@ -461,7 +546,7 @@ export function TermsConsentForm({
               <div className="pointer-events-none absolute bottom-3 left-0 right-0 flex flex-col items-center">
                 <div className="absolute inset-x-0 bottom-0 h-16 rounded-b-md bg-gradient-to-t from-white via-white/80 to-transparent" />
                 <span className="relative animate-bounce rounded-full bg-gray-900 px-3 py-1 text-xs font-medium text-white shadow">
-                  아래로 스크롤하세요 ↓
+                  {copy.scrollPrompt}
                 </span>
               </div>
             )}
@@ -469,9 +554,7 @@ export function TermsConsentForm({
           {!hasReadPrivacy && (
             <div className="mb-3 flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2">
               <span className="text-sm text-amber-600">↓</span>
-              <p className="text-xs font-medium text-amber-800">
-                문서 하단까지 스크롤하면 동의 항목이 활성화됩니다.
-              </p>
+              <p className="text-xs font-medium text-amber-800">{copy.scrollHint}</p>
             </div>
           )}
 
@@ -492,16 +575,14 @@ export function TermsConsentForm({
             />
             <div className="text-sm">
               <label htmlFor="agree_privacy" className="font-medium text-gray-700">
-                개인정보처리방침에 동의합니다. <span className="text-red-500">*</span>
+                {copy.agreePrivacy} <span className="text-red-500">*</span>
               </label>
               <p className="mt-1 text-gray-500">
-                {hasReadPrivacy
-                  ? '전체 문서를 읽어야 체크할 수 있습니다.'
-                  : '위 문서를 끝까지 스크롤해주세요.'}
+                {hasReadPrivacy ? copy.readRequired : copy.readGuide}
               </p>
               <p className="mt-1 text-xs text-gray-400">
                 <Link href="/privacy" className="underline underline-offset-2">
-                  개인정보처리방침 원문 보기
+                  {copy.viewPrivacy}
                 </Link>
               </p>
             </div>
@@ -509,10 +590,8 @@ export function TermsConsentForm({
         </div>
       ) : (
         <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-600">
-          <p className="text-xs font-semibold text-gray-700">개인정보처리방침</p>
-          <p className="mt-1 text-xs text-gray-500">
-            아래 링크에서 개인정보처리방침 전문을 확인하실 수 있습니다.
-          </p>
+          <p className="text-xs font-semibold text-gray-700">{copy.privacyPolicy}</p>
+          <p className="mt-1 text-xs text-gray-500">{copy.privacyLinkGuide}</p>
           <p className="mt-2 text-xs text-gray-400">
             <Link
               href="/privacy"
@@ -520,7 +599,7 @@ export function TermsConsentForm({
               rel="noopener noreferrer"
               className="underline underline-offset-2"
             >
-              개인정보처리방침 전문 보기 (새 창)
+              {copy.privacyOpenNew}
             </Link>
           </p>
         </div>
@@ -529,7 +608,7 @@ export function TermsConsentForm({
       {needsTosConsent && (
         <div id="tos-consent-section" className="rounded-lg border border-gray-200 bg-gray-50 p-4">
           <p id="tos-heading" className="mb-2 text-xs font-semibold text-gray-700">
-            이용약관 전문
+            {copy.tos}
           </p>
           <div className="relative">
             <div
@@ -546,7 +625,7 @@ export function TermsConsentForm({
               <div className="pointer-events-none absolute bottom-3 left-0 right-0 flex flex-col items-center">
                 <div className="absolute inset-x-0 bottom-0 h-16 rounded-b-md bg-gradient-to-t from-white via-white/80 to-transparent" />
                 <span className="relative animate-bounce rounded-full bg-gray-900 px-3 py-1 text-xs font-medium text-white shadow">
-                  아래로 스크롤하세요 ↓
+                  {copy.scrollPrompt}
                 </span>
               </div>
             )}
@@ -554,9 +633,7 @@ export function TermsConsentForm({
           {!hasReadTos && (
             <div className="mb-3 flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2">
               <span className="text-sm text-amber-600">↓</span>
-              <p className="text-xs font-medium text-amber-800">
-                문서 하단까지 스크롤하면 동의 항목이 활성화됩니다.
-              </p>
+              <p className="text-xs font-medium text-amber-800">{copy.scrollHint}</p>
             </div>
           )}
 
@@ -577,16 +654,14 @@ export function TermsConsentForm({
             />
             <div className="text-sm">
               <label htmlFor="agree_tos" className="font-medium text-gray-700">
-                이용약관에 동의합니다. <span className="text-red-500">*</span>
+                {copy.agreeTos} <span className="text-red-500">*</span>
               </label>
               <p className="mt-1 text-gray-500">
-                {hasReadTos
-                  ? '전체 문서를 읽어야 체크할 수 있습니다.'
-                  : '위 문서를 끝까지 스크롤해주세요.'}
+                {hasReadTos ? copy.readRequired : copy.readGuide}
               </p>
               <p className="mt-1 text-xs text-gray-400">
                 <Link href="/terms" className="underline underline-offset-2">
-                  이용약관 원문 보기
+                  {copy.viewTos}
                 </Link>
               </p>
             </div>
@@ -597,14 +672,14 @@ export function TermsConsentForm({
       <div className="flex items-center justify-between gap-3 border-t border-gray-100 pt-4">
         {state.error && <p className="text-sm text-red-600">{state.message}</p>}
         <Button type="submit" loading={isPending} disabled={isPending} variant="secondary">
-          동의하고 계속하기
+          {copy.continueAfterConsent}
         </Button>
       </div>
       <IncompleteItemsModal
         isOpen={isIncompleteModalOpen}
         onClose={handleCloseIncompleteModal}
-        title="아직 완료되지 않은 항목이 있어요"
-        description="아래 항목을 완료하면 계속 진행할 수 있습니다."
+        title={copy.incompleteTitle}
+        description={copy.incompleteDescription}
         items={incompleteItems}
         onSelectItem={handleSelectIncompleteItem}
       />

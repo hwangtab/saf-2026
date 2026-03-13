@@ -181,6 +181,10 @@
     "price": "가격",
     "artistProfile": "작가 소개",
     "artistNote": "작가 노트",
+    "originalKoreanProfile": "작가 소개 원문은 한국어로 제공됩니다.",
+    "originalKoreanNote": "작가 노트 원문은 한국어로 제공됩니다.",
+    "originalKoreanHistory": "작가 이력 원문은 한국어로 제공됩니다.",
+    "originalKoreanDetail": "상세 정보 원문은 한국어로 제공됩니다.",
     "otherWorks": "{artist} 작가의 다른 작품",
     "viewAll": "전체보기"
   },
@@ -192,7 +196,13 @@
     "metaTitle": "{artist} - 출품작 | 씨앗페 2026",
     "metaDescription": "{artist}의 작품 세계를 만나보세요. ",
     "metaFallback": "예술가들이 전하는 연대와 희망의 메시지, 씨앗페 2026.",
+    "originalKoreanDescription": "프로필 상세 내용은 한국어 원문으로 제공됩니다.",
     "metaImageAlt": "{artist}의 작품 - {title}"
+  },
+  "relatedArticles": {
+    "sectionTitle": "작가 관련 자료",
+    "originalKoreanTitle": "원문 기사 (한국어)",
+    "originalKoreanDescription": "이 기사 내용은 한국어 원문으로 제공됩니다. 원문 링크에서 확인해 주세요."
   },
   "language": {
     "ko": "한국어",
@@ -215,7 +225,8 @@
   "artworkCard": {
     "untitled": "무제",
     "unknownArtist": "작가 미상",
-    "pendingInfo": "상세 정보 준비 중"
+    "pendingInfo": "상세 정보 준비 중",
+    "originalKoreanData": "상세 정보 원문은 한국어로 제공됩니다"
   },
   "trustBadges": {
     "authenticity": "✓ 100% 진품 보증",

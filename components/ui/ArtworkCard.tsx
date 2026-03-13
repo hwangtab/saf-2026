@@ -2,7 +2,7 @@
 
 import { memo } from 'react';
 import { Link } from '@/i18n/navigation';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import SafeImage from '@/components/common/SafeImage';
 import type { ArtworkCardData } from '@/types';
 import { cn, resolveArtworkImageUrlForPreset } from '@/lib/utils';
@@ -72,6 +72,7 @@ function ArtworkCard({
   returnTo,
   className,
 }: ArtworkCardProps) {
+  const locale = useLocale();
   const t = useTranslations('artworkCard');
   const config = VARIANT_CONFIG[variant];
   const isDisplayable = (value: string | undefined): value is string => Boolean(value);
@@ -79,8 +80,22 @@ function ArtworkCard({
   const untitledLabel = t('untitled');
   const unknownArtistLabel = t('unknownArtist');
   const pendingInfoLabel = t('pendingInfo');
+  const originalKoreanDataLabel = t('originalKoreanData');
+  const containsHangul = (value: string) => /[가-힣]/.test(value);
   const isPending = (value: string | undefined) => value === '확인 중' || value === 'Pending';
   const isInquiryPrice = (value: string | undefined) => value === '문의' || value === 'Inquiry';
+  const localizeDataValue = (value: string | undefined) => {
+    if (!value) return value;
+    if (locale !== 'en') return value;
+    if (value === '문의') return 'Inquiry';
+    if (value === '확인 중') return 'Pending';
+    if (containsHangul(value)) return originalKoreanDataLabel;
+    return value;
+  };
+
+  const localizedPrice = localizeDataValue(artwork.price);
+  const localizedMaterial = localizeDataValue(artwork.material);
+  const localizedSize = localizeDataValue(artwork.size);
 
   const showMaterial = isDisplayable(artwork.material);
   const showSize = isDisplayable(artwork.size);
@@ -111,7 +126,7 @@ function ArtworkCard({
           <p className="text-xs text-gray-500 truncate">
             {getSafeArtist(artwork, unknownArtistLabel)}
           </p>
-          <p className="text-sm font-semibold text-charcoal mt-1">{artwork.price}</p>
+          <p className="text-sm font-semibold text-charcoal mt-1">{localizedPrice}</p>
         </div>
       </Link>
     );
@@ -179,9 +194,9 @@ function ArtworkCard({
               if (showMaterial || showSize) {
                 return (
                   <>
-                    {showMaterial && artwork.material}
+                    {showMaterial && localizedMaterial}
                     {showMaterial && showSize && ' · '}
-                    {showSize && artwork.size}
+                    {showSize && localizedSize}
                   </>
                 );
               }
@@ -189,7 +204,7 @@ function ArtworkCard({
             })()}
           </p>
 
-          {artwork.price && !isInquiryPrice(artwork.price) ? (
+          {localizedPrice && !isInquiryPrice(localizedPrice) ? (
             <p
               className={cn(
                 'text-sm font-semibold mt-1',
@@ -202,7 +217,7 @@ function ArtworkCard({
                     : 'text-primary'
               )}
             >
-              {artwork.price}
+              {localizedPrice}
             </p>
           ) : (
             <p className="text-sm font-semibold mt-1 min-h-[1.25rem]">{'\u00A0'}</p>

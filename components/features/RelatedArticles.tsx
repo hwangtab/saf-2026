@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import type { Article } from '@/content/artist-articles';
 
 interface RelatedArticlesProps {
@@ -10,6 +10,48 @@ interface RelatedArticlesProps {
 
 export default function RelatedArticles({ articles }: RelatedArticlesProps) {
   const locale = useLocale();
+  const t = useTranslations('relatedArticles');
+
+  const containsHangul = (value: string): boolean => /[가-힣]/.test(value);
+
+  const localizeSource = (source: string): string => {
+    if (locale !== 'en') return source;
+
+    const sourceMap: Record<string, string> = {
+      경향신문: 'Kyunghyang Shinmun',
+      뉴시스: 'Newsis',
+      뉴스프리존: 'NewsFreeZone',
+      아주경제: 'Aju Business Daily',
+      위클리피플: 'Weekly People',
+      한국예술문화단체총연합회: 'Korean Federation of Arts and Culture Organizations',
+      한국예총: 'Korean Artists Federation',
+      비마이너: 'BeMinor',
+    };
+
+    if (sourceMap[source]) {
+      return sourceMap[source];
+    }
+
+    return containsHangul(source) ? 'Korean media' : source;
+  };
+
+  const localizeTitle = (title: string, source: string): string => {
+    if (locale !== 'en') return title;
+    const localizedSource = localizeSource(source);
+    if (!title || containsHangul(title)) {
+      return `${localizedSource} · ${t('originalKoreanTitle')}`;
+    }
+    return title;
+  };
+
+  const localizeDescription = (description: string): string => {
+    if (locale !== 'en') return description;
+    if (!description) return '';
+    if (containsHangul(description)) {
+      return t('originalKoreanDescription');
+    }
+    return description;
+  };
 
   if (!articles || articles.length === 0) {
     return null;
@@ -18,49 +60,55 @@ export default function RelatedArticles({ articles }: RelatedArticlesProps) {
   return (
     <section className="bg-gray-50 p-6 rounded-xl">
       <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">
-        {locale === 'en' ? 'Related materials' : '작가 관련 자료'}
+        {t('sectionTitle')}
       </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {articles.map((article) => (
-          <Link
-            key={article.url}
-            href={article.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group block p-5 bg-white border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition-all duration-300"
-          >
-            {/* Source Badge */}
-            <div className="flex items-center justify-between mb-3">
-              <span className="inline-block px-2.5 py-1 text-xs font-bold text-primary bg-primary/10 rounded">
-                {article.source}
-              </span>
-              <svg
-                className="w-4 h-4 text-gray-400 group-hover:text-primary transition-colors"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                />
-              </svg>
-            </div>
+        {articles.map((article) => {
+          const localizedSource = localizeSource(article.source);
+          const localizedTitle = localizeTitle(article.title, article.source);
+          const localizedDescription = localizeDescription(article.description);
 
-            {/* Title */}
-            <h3 className="font-bold text-charcoal mb-2 line-clamp-2 group-hover:text-primary transition-colors">
-              {article.title}
-            </h3>
+          return (
+            <Link
+              key={article.url}
+              href={article.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group block p-5 bg-white border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition-all duration-300"
+            >
+              {/* Source Badge */}
+              <div className="flex items-center justify-between mb-3">
+                <span className="inline-block px-2.5 py-1 text-xs font-bold text-primary bg-primary/10 rounded">
+                  {localizedSource}
+                </span>
+                <svg
+                  className="w-4 h-4 text-gray-400 group-hover:text-primary transition-colors"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                  />
+                </svg>
+              </div>
 
-            {/* Description */}
-            <p className="text-sm text-charcoal-muted line-clamp-3 leading-relaxed">
-              {article.description}
-            </p>
-          </Link>
-        ))}
+              {/* Title */}
+              <h3 className="font-bold text-charcoal mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                {localizedTitle}
+              </h3>
+
+              {/* Description */}
+              <p className="text-sm text-charcoal-muted line-clamp-3 leading-relaxed">
+                {localizedDescription}
+              </p>
+            </Link>
+          );
+        })}
       </div>
     </section>
   );

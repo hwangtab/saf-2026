@@ -33,6 +33,7 @@ interface Props {
 }
 
 const resolveLocale = (locale: string): 'ko' | 'en' => (locale === 'en' ? 'en' : 'ko');
+const containsHangul = (value: string): boolean => /[가-힣]/.test(value);
 
 // Generate metadata for Artist Page
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -61,8 +62,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const artistProfile = artistArtworks.find((a) => a.profile)?.profile || '';
   const artistNote = artistArtworks.find((a) => a.description)?.description || '';
 
-  const profileSnippet = artistProfile ? `${artistProfile.substring(0, 150)}... ` : '';
-  const noteSnippet = artistNote ? `${artistNote.substring(0, 150)}... ` : '';
+  const profileSnippet =
+    artistProfile && !(locale === 'en' && containsHangul(artistProfile))
+      ? `${artistProfile.substring(0, 150)}... `
+      : '';
+  const noteSnippet =
+    artistNote && !(locale === 'en' && containsHangul(artistNote))
+      ? `${artistNote.substring(0, 150)}... `
+      : '';
 
   const formattedName = formatArtistName(artistName, locale !== 'en');
   const seoDescription =
@@ -141,22 +148,34 @@ export default async function ArtistPage({ params }: Props) {
   const formattedName = formatArtistName(artistName, locale !== 'en');
   const rawDescription =
     artistProfile || artistNote || t('defaultDescription', { artist: formattedName });
+  const localizedDescription =
+    locale === 'en' && containsHangul(rawDescription)
+      ? t('originalKoreanDescription')
+      : rawDescription;
 
   // Truncate to 100 characters for visual balance
-  const isTruncated = rawDescription.length > 100;
-  const heroDescription = isTruncated ? `${rawDescription.substring(0, 100)}...` : rawDescription;
+  const isTruncated = localizedDescription.length > 100;
+  const heroDescription = isTruncated
+    ? `${localizedDescription.substring(0, 100)}...`
+    : localizedDescription;
 
   const pageUrl = `${SITE_URL}/artworks/artist/${encodeURIComponent(artistName)}`;
 
   // Person JSON-LD Schema for SEO (enhanced with credentials, expertise, work samples)
   const artistHistory = artistArtworks.find((a) => a.history)?.history;
+  const schemaDescription =
+    locale === 'en' && artistProfile && containsHangul(artistProfile)
+      ? t('originalKoreanDescription')
+      : artistProfile || artistNote || undefined;
+  const schemaHistory =
+    locale === 'en' && artistHistory && containsHangul(artistHistory) ? undefined : artistHistory;
   const personSchema = generateEnhancedArtistSchema({
     name: artistName,
-    description: artistProfile || artistNote || undefined,
+    description: schemaDescription,
     image: representativeArtwork.images[0],
     url: pageUrl,
     jobTitle: 'Artist',
-    history: artistHistory,
+    history: schemaHistory,
     artworks: artistArtworks.map((a) => ({
       id: a.id,
       title: a.title,
