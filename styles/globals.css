@@ -1,27 +1,20 @@
 @font-face {
-  font-family: 'GMarketSans';
-  src: url('/fonts/GmarketSansLight.woff') format('woff');
-  font-weight: 300;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'GMarketSans';
-  src: url('/fonts/GmarketSansMedium.woff') format('woff');
-  font-weight: 500;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'GMarketSans';
-  src: url('/fonts/GmarketSansMedium.woff') format('woff');
+  font-family: 'Pretendard';
+  src: url('/fonts/Pretendard-Regular.subset.woff2') format('woff2');
   font-weight: 400;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'GMarketSans';
-  src: url('/fonts/GmarketSansBold.woff') format('woff');
+  font-family: 'Pretendard';
+  src: url('/fonts/Pretendard-Medium.subset.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Pretendard';
+  src: url('/fonts/Pretendard-Bold.subset.woff2') format('woff2');
   font-weight: 700;
   font-display: swap;
 }
@@ -51,7 +44,7 @@
   --admin-surface-muted: #f8fafc;
   --admin-border: #dbe4ef;
   --admin-border-soft: #e6edf5;
-  --font-display: 'PartialSans', 'GMarketSans', sans-serif;
+  --font-display: 'PartialSans', 'Pretendard', sans-serif;
 }
 
 @tailwind base;
