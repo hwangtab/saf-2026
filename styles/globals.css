@@ -67,7 +67,7 @@
 html {
   word-break: keep-all;
   overflow-wrap: break-word;
-  font-weight: 300;
+  font-weight: 400;
   overflow-x: hidden;
   overscroll-behavior-x: none;
   -webkit-overflow-scrolling: touch;
@@ -77,7 +77,7 @@ body {
   background-color: var(--color-canvas-soft);
   color: var(--color-charcoal);
   line-height: 1.6;
-  font-weight: 300;
+  font-weight: 400;
   overflow-x: hidden;
 }
 

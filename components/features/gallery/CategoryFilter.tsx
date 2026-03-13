@@ -23,14 +23,14 @@ export default function CategoryFilter({
 
   return (
     <div role="radiogroup" aria-label={ui.A11Y.FILTER_CATEGORY}>
-      <div className="flex gap-2 overflow-x-auto pb-1 md:flex-wrap md:justify-center md:overflow-x-visible scrollbar-hide">
+      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide md:flex-wrap md:justify-center md:overflow-x-visible">
         {/* "All" button */}
         <button
           type="button"
           role="radio"
           aria-checked={selected === null}
           onClick={() => onSelect(null)}
-          className={`shrink-0 px-3 py-1.5 text-xs font-medium rounded-full transition-colors whitespace-nowrap border ${
+          className={`shrink-0 px-3 md:px-4 py-1.5 text-xs font-medium rounded-full transition-colors whitespace-nowrap border text-center ${
             selected === null
               ? 'bg-charcoal text-white shadow-sm border-charcoal'
               : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-100'
@@ -48,7 +48,7 @@ export default function CategoryFilter({
             role="radio"
             aria-checked={selected === cat.value}
             onClick={() => onSelect(selected === cat.value ? null : cat.value)}
-            className={`shrink-0 px-3 py-1.5 text-xs font-medium rounded-full transition-colors whitespace-nowrap border ${
+            className={`shrink-0 px-3 md:px-4 py-1.5 text-xs font-medium rounded-full transition-colors whitespace-nowrap border text-center ${
               selected === cat.value
                 ? 'bg-charcoal text-white shadow-sm border-charcoal'
                 : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-100'
