@@ -14,7 +14,7 @@ import { AdminCard, AdminSelect } from '@/app/admin/_components/admin-ui';
 import { useToast } from '@/lib/hooks/useToast';
 import { matchesSearchText } from '@/lib/search-utils';
 import { cn } from '@/lib/utils';
-import { EditionType, TaxType } from '@/types';
+import { ARTWORK_CATEGORIES, EditionType, TaxType } from '@/types';
 
 type Artist = {
   id: string;
@@ -33,6 +33,7 @@ type Artwork = {
   edition_type: EditionType | null;
   edition_limit: number | null;
   tax_type: TaxType | null;
+  category: string | null;
   price: string | null;
   artist_id: string | null;
   images: string[] | null;
@@ -75,6 +76,18 @@ export function ArtworkEditForm({
   const [editionType, setEditionType] = useState<EditionType>(artwork.edition_type || 'unique');
   const [editionLimit, setEditionLimit] = useState<number | ''>(artwork.edition_limit || '');
   const [showErrors, setShowErrors] = useState(false);
+  const isPresetCategory = (val: string | null | undefined) =>
+    !val || (ARTWORK_CATEGORIES as readonly string[]).includes(val);
+  const [categoryMode, setCategoryMode] = useState<'preset' | 'custom'>(
+    isPresetCategory(artwork.category) ? 'preset' : 'custom'
+  );
+  const [categoryPreset, setCategoryPreset] = useState(
+    isPresetCategory(artwork.category) ? artwork.category || '' : ''
+  );
+  const [categoryCustom, setCategoryCustom] = useState(
+    isPresetCategory(artwork.category) ? '' : artwork.category || ''
+  );
+  const categoryValue = categoryMode === 'custom' ? categoryCustom : categoryPreset;
 
   const formatPrice = (val: string) => {
     // 숫자만 추출
@@ -414,6 +427,42 @@ export function ArtworkEditForm({
               <option value="A">과세</option>
               <option value="C">영세</option>
             </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">분류</label>
+            <input type="hidden" name="category" value={categoryValue} />
+            <select
+              value={categoryMode === 'custom' ? '__custom__' : categoryPreset}
+              onChange={(e) => {
+                if (e.target.value === '__custom__') {
+                  setCategoryMode('custom');
+                  setCategoryPreset('');
+                } else {
+                  setCategoryMode('preset');
+                  setCategoryPreset(e.target.value);
+                  setCategoryCustom('');
+                }
+              }}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
+            >
+              <option value="">선택해주세요</option>
+              {ARTWORK_CATEGORIES.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+              <option value="__custom__">직접입력</option>
+            </select>
+            {categoryMode === 'custom' && (
+              <input
+                type="text"
+                value={categoryCustom}
+                onChange={(e) => setCategoryCustom(e.target.value)}
+                placeholder="분류를 직접 입력하세요"
+                className="mt-2 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
+              />
+            )}
           </div>
 
           {editionType === 'limited' && (

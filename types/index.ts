@@ -22,6 +22,20 @@ export type EditionType = 'unique' | 'limited' | 'open';
 
 export type TaxType = 'A' | 'B' | 'C';
 
+export const ARTWORK_CATEGORIES = [
+  '회화',
+  '한국화',
+  '판화',
+  '사후판화',
+  '드로잉',
+  '조각',
+  '도자/공예',
+  '사진',
+  '아트프린트',
+  '혼합매체',
+  '디지털아트',
+] as const;
+
 // Base artwork data structure (from DB/Files)
 export interface BaseArtwork {
   id: string;
@@ -36,6 +50,7 @@ export interface BaseArtwork {
   edition_type?: EditionType;
   edition_limit?: number | null;
   tax_type?: TaxType;
+  category?: string;
   price: string;
   images: string[];
   shopUrl?: string;

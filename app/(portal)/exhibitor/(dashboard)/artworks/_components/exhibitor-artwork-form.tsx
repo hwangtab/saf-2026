@@ -19,7 +19,7 @@ import {
   AdminTextarea,
   AdminFieldLabel,
 } from '@/app/admin/_components/admin-ui';
-import { EditionType } from '@/types';
+import { ARTWORK_CATEGORIES, EditionType } from '@/types';
 import { resolveClientLocale } from '@/lib/client-locale';
 
 type LocaleCode = 'ko' | 'en';
@@ -54,6 +54,10 @@ const ARTWORK_FORM_COPY: Record<
     material: string;
     year: string;
     edition: string;
+    category: string;
+    categoryPlaceholder: string;
+    categoryCustom: string;
+    categoryCustomPlaceholder: string;
     editionType: string;
     editionUnique: string;
     editionLimited: string;
@@ -99,6 +103,10 @@ const ARTWORK_FORM_COPY: Record<
     material: '재료',
     year: '제작연도',
     edition: '에디션 (선택)',
+    category: '분류',
+    categoryPlaceholder: '선택해주세요',
+    categoryCustom: '직접입력',
+    categoryCustomPlaceholder: '분류를 직접 입력하세요',
     editionType: '에디션 유형',
     editionUnique: 'Unique (1점)',
     editionLimited: 'Limited (한정판)',
@@ -143,6 +151,10 @@ const ARTWORK_FORM_COPY: Record<
     material: 'Material',
     year: 'Year',
     edition: 'Edition (optional)',
+    category: 'Category',
+    categoryPlaceholder: 'Select category',
+    categoryCustom: 'Other',
+    categoryCustomPlaceholder: 'Enter category',
     editionType: 'Edition type',
     editionUnique: 'Unique (1 item)',
     editionLimited: 'Limited',
@@ -171,6 +183,7 @@ type Artwork = {
   edition: string | null;
   edition_type: EditionType | null;
   edition_limit: number | null;
+  category: string | null;
   price: string | null;
   artist_id: string | null;
   images: string[] | null;
@@ -208,6 +221,18 @@ export function ExhibitorArtworkForm({
   const [selectedArtistId, setSelectedArtistId] = useState(initialSelectedArtistId);
   const [editionType, setEditionType] = useState<EditionType>(artwork.edition_type || 'unique');
   const [editionLimit, setEditionLimit] = useState<number | ''>(artwork.edition_limit || '');
+  const isPresetCategory = (val: string | null | undefined) =>
+    !val || (ARTWORK_CATEGORIES as readonly string[]).includes(val);
+  const [categoryMode, setCategoryMode] = useState<'preset' | 'custom'>(
+    isPresetCategory(artwork.category) ? 'preset' : 'custom'
+  );
+  const [categoryPreset, setCategoryPreset] = useState(
+    isPresetCategory(artwork.category) ? artwork.category || '' : ''
+  );
+  const [categoryCustom, setCategoryCustom] = useState(
+    isPresetCategory(artwork.category) ? '' : artwork.category || ''
+  );
+  const categoryValue = categoryMode === 'custom' ? categoryCustom : categoryPreset;
 
   useEffect(() => {
     setSelectedArtistId(initialSelectedArtistId);
@@ -412,6 +437,42 @@ export function ExhibitorArtworkForm({
           <div>
             <AdminFieldLabel>{copy.edition}</AdminFieldLabel>
             <AdminInput name="edition" defaultValue={artwork.edition || ''} placeholder="1/10" />
+          </div>
+
+          <div>
+            <AdminFieldLabel>{copy.category}</AdminFieldLabel>
+            <input type="hidden" name="category" value={categoryValue} />
+            <AdminSelect
+              value={categoryMode === 'custom' ? '__custom__' : categoryPreset}
+              onChange={(e) => {
+                if (e.target.value === '__custom__') {
+                  setCategoryMode('custom');
+                  setCategoryPreset('');
+                } else {
+                  setCategoryMode('preset');
+                  setCategoryPreset(e.target.value);
+                  setCategoryCustom('');
+                }
+              }}
+              className="w-full"
+            >
+              <option value="">{copy.categoryPlaceholder}</option>
+              {ARTWORK_CATEGORIES.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+              <option value="__custom__">{copy.categoryCustom}</option>
+            </AdminSelect>
+            {categoryMode === 'custom' && (
+              <AdminInput
+                type="text"
+                value={categoryCustom}
+                onChange={(e) => setCategoryCustom(e.target.value)}
+                placeholder={copy.categoryCustomPlaceholder}
+                className="mt-2"
+              />
+            )}
           </div>
 
           <div>

@@ -143,6 +143,7 @@ export async function createExhibitorArtwork(formData: FormData) {
   const edition_limit =
     edition_type === 'limited' && edition_limit_str ? Number(edition_limit_str) : null;
   const price = getString(formData, 'price');
+  const category = getString(formData, 'category') || null;
   const artist_id = getString(formData, 'artist_id');
 
   if (!artist_id) throw new Error('작가를 선택해주세요.');
@@ -170,6 +171,7 @@ export async function createExhibitorArtwork(formData: FormData) {
       edition_type,
       edition_limit,
       price,
+      category,
       artist_id,
       status: 'available',
       is_hidden: false,
@@ -229,6 +231,7 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
   const edition_limit =
     edition_type === 'limited' && edition_limit_str ? Number(edition_limit_str) : null;
   const price = getString(formData, 'price');
+  const category = getString(formData, 'category') || null;
   const artist_id = getString(formData, 'artist_id');
 
   // Fetch full existing artwork for snapshot
@@ -271,6 +274,7 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
       edition_type,
       edition_limit,
       price,
+      category,
       artist_id: artist_id || oldArtwork.artist_id,
       updated_at: new Date().toISOString(),
     })

@@ -223,6 +223,7 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
     edition_type === 'limited' && edition_limit_raw ? Number(edition_limit_raw) : null;
   const price = getString(formData, 'price');
   const tax_type = getString(formData, 'tax_type') || 'B';
+  const category = getString(formData, 'category') || null;
   const artist_id = getString(formData, 'artist_id');
 
   const { data: oldArtwork } = await supabase
@@ -247,6 +248,7 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
       edition_limit,
       price,
       tax_type,
+      category,
       artist_id: artist_id || null,
       updated_at: new Date().toISOString(),
     })
@@ -324,6 +326,7 @@ export async function createAdminArtwork(formData: FormData) {
     edition_type === 'limited' && edition_limit_raw ? Number(edition_limit_raw) : null;
   const price = getString(formData, 'price');
   const tax_type = getString(formData, 'tax_type') || 'B';
+  const category = getString(formData, 'category') || null;
   const artist_id = getString(formData, 'artist_id');
 
   if (!artist_id) throw new Error('작가를 선택해주세요.');
@@ -342,6 +345,7 @@ export async function createAdminArtwork(formData: FormData) {
       edition_limit,
       price,
       tax_type,
+      category,
       shop_url: null,
       artist_id,
       status: 'available',

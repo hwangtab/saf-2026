@@ -100,6 +100,7 @@ export async function createArtwork(
     const edition_limit =
       edition_type === 'limited' && edition_limit_str ? Number(edition_limit_str) : null;
     const price = getString(formData, 'price');
+    const category = getString(formData, 'category') || null;
     const rawStatus = getString(formData, 'status') || 'available';
     const status = ['available', 'reserved', 'sold'].includes(rawStatus) ? rawStatus : 'available';
     const { urls: images, error: imagesError } = parseUrlList(formData.get('images'), '이미지');
@@ -162,6 +163,7 @@ export async function createArtwork(
         edition_type,
         edition_limit,
         price,
+        category,
         status,
         images,
         is_hidden: false,
@@ -254,6 +256,7 @@ export async function updateArtwork(
     const edition_limit =
       edition_type === 'limited' && edition_limit_str ? Number(edition_limit_str) : null;
     const price = getString(formData, 'price');
+    const category = getString(formData, 'category') || null;
     const rawStatus = getString(formData, 'status') || 'available';
     const status = ['available', 'reserved', 'sold'].includes(rawStatus) ? rawStatus : 'available';
     const hidden = formData.get('hidden') === 'on';
@@ -324,6 +327,7 @@ export async function updateArtwork(
         edition_type,
         edition_limit,
         price,
+        category,
         status,
         is_hidden: hidden,
         images,
