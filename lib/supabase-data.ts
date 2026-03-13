@@ -4,7 +4,7 @@ import { hasSupabaseConfig, supabase } from './supabase';
 import { formatPriceForDisplay } from '@/lib/utils';
 import { artworks as fallbackArtworks, getArtworkById } from '@/content/saf2026-artworks';
 import { newsArticles } from '@/content/news';
-import { faqs } from '@/content/faq';
+import { getFaqsByLocale } from '@/content/faq';
 import { testimonials } from '@/content/testimonials';
 import { exhibitionReviews } from '@/content/reviews';
 import type { Artwork, ExhibitionReview, NewsArticle, TestimonialCategory } from '@/types';
@@ -22,6 +22,7 @@ type ArtworkRow = {
   images: string[] | null;
   shop_url: string | null;
   status: string | null;
+  category: string | null;
 };
 
 type ArtistRow = {
@@ -58,12 +59,21 @@ type NewsRow = {
   description: string | null;
 };
 
+type FAQRow = {
+  question: string;
+  answer: string;
+  question_en?: string | null;
+  answer_en?: string | null;
+};
+
+const containsHangul = (value: string): boolean => /[가-힣]/.test(value);
+
 function isMissingTableError(error: unknown): boolean {
   if (!error || typeof error !== 'object') return false;
   return (error as { code?: string }).code === '42P01';
 }
 const ARTWORK_SELECT_COLUMNS =
-  'id, artist_id, title, description, size, material, year, edition, price, images, shop_url, status';
+  'id, artist_id, title, description, size, material, year, edition, price, images, shop_url, status, category';
 const ARTIST_SELECT_COLUMNS = 'id, name_ko, bio, history';
 const ARTWORK_DATA_REVALIDATE_SECONDS = 300;
 
@@ -89,6 +99,7 @@ const mapArtworkRow = (item: ArtworkRow, artist?: ArtistRow | null): Artwork => 
   images: item.images || [],
   shopUrl: item.shop_url || '',
   sold: item.status === 'sold' || item.status === 'reserved',
+  category: item.category || undefined,
   profile: artist?.profile || artist?.bio || '', // Support both bio and profile fields
   history: artist?.history || '',
 });
@@ -311,29 +322,58 @@ export const getSupabaseTestimonials = cache(async (): Promise<TestimonialCatego
   return Object.values(grouped);
 });
 
-export const getSupabaseFAQs = cache(async (): Promise<{ question: string; answer: string }[]> => {
-  if (!hasSupabaseConfig || !supabase) {
-    return faqs.map((item) => ({ question: item.question, answer: item.answer }));
-  }
+export const getSupabaseFAQs = cache(
+  async (locale: 'ko' | 'en' = 'ko'): Promise<{ question: string; answer: string }[]> => {
+    const fallbackFaqs = getFaqsByLocale(locale);
 
-  const { data, error } = await supabase
-    .from('faq')
-    .select('*')
-    .order('created_at', { ascending: true });
+    const localizeFaqRows = (rows: FAQRow[]): { question: string; answer: string }[] => {
+      if (locale === 'ko') {
+        return rows.map((row) => ({ question: row.question, answer: row.answer }));
+      }
 
-  if (error) {
-    if (isMissingTableError(error)) {
-      return faqs.map((item) => ({ question: item.question, answer: item.answer }));
+      return rows.map((row, index) => {
+        const questionEn = row.question_en?.trim();
+        const answerEn = row.answer_en?.trim();
+
+        if (questionEn && answerEn) {
+          return { question: questionEn, answer: answerEn };
+        }
+
+        const fallback = fallbackFaqs[index];
+        if (fallback) {
+          return fallback;
+        }
+
+        return {
+          question: containsHangul(row.question) ? `FAQ ${index + 1}` : row.question,
+          answer: containsHangul(row.answer)
+            ? 'This answer is currently available in Korean.'
+            : row.answer,
+        };
+      });
+    };
+
+    if (!hasSupabaseConfig || !supabase) {
+      return fallbackFaqs;
     }
-    console.error('Error fetching FAQs from Supabase:', error);
-    return faqs.map((item) => ({ question: item.question, answer: item.answer }));
-  }
 
-  return (data || []).map((item) => {
-    const row = item as { question: string; answer: string };
-    return { question: row.question, answer: row.answer };
-  });
-});
+    const { data, error } = await supabase
+      .from('faq')
+      .select('*')
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      if (isMissingTableError(error)) {
+        return fallbackFaqs;
+      }
+      console.error('Error fetching FAQs from Supabase:', error);
+      return fallbackFaqs;
+    }
+
+    const rows = (data || []) as FAQRow[];
+    return localizeFaqRows(rows);
+  }
+);
 
 export const getSupabaseReviews = cache(async (): Promise<ExhibitionReview[]> => {
   if (!hasSupabaseConfig || !supabase) {

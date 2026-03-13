@@ -4,6 +4,7 @@ export const UI_STRINGS_BY_LOCALE = {
       ALL: '전체',
       SELLING: '판매중',
       SOLD: '판매완료',
+      CATEGORY_ALL: '전체 분류',
     },
     SORT: {
       ARTIST_ASC: '작가명순',
@@ -49,6 +50,7 @@ export const UI_STRINGS_BY_LOCALE = {
     A11Y: {
       SORT_OPTIONS: '정렬 옵션 선택',
       FILTER_STATUS: '판매 상태 필터',
+      FILTER_CATEGORY: '작품 분류 필터',
       SEARCH_LABEL: '작품 검색',
       CLEAR_SEARCH: '검색어 지우기',
       VIEW_ARTIST: '작가 작품 보기',
@@ -62,6 +64,7 @@ export const UI_STRINGS_BY_LOCALE = {
       ALL: 'All',
       SELLING: 'For Sale',
       SOLD: 'Sold',
+      CATEGORY_ALL: 'All Categories',
     },
     SORT: {
       ARTIST_ASC: 'Artist A-Z',
@@ -107,6 +110,7 @@ export const UI_STRINGS_BY_LOCALE = {
     A11Y: {
       SORT_OPTIONS: 'Choose sort option',
       FILTER_STATUS: 'Filter by sale status',
+      FILTER_CATEGORY: 'Filter by category',
       SEARCH_LABEL: 'Search artworks',
       CLEAR_SEARCH: 'Clear search text',
       VIEW_ARTIST: 'View artist artworks',

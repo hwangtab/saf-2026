@@ -8,6 +8,12 @@ import { sortArtworks, extractUniqueArtists } from '@/lib/artworkUtils';
 /** Status filter options for artwork gallery */
 export type StatusFilter = 'all' | 'selling' | 'sold';
 
+/** Category with artwork count */
+export interface CategoryCount {
+  value: string;
+  count: number;
+}
+
 /**
  * Custom hook for artwork filtering, sorting, and URL synchronization.
  *
@@ -16,6 +22,7 @@ export type StatusFilter = 'all' | 'selling' | 'sold';
  * - **Sorting**: By artist name, price, or year (ascending/descending)
  * - **Search**: Full-text search with debouncing (300ms)
  * - **Status Filter**: Show all, selling only, or sold only
+ * - **Category Filter**: Filter by artwork category
  * - **Artist Selection**: Filter by specific artist
  *
  * The hook also handles **bidirectional URL synchronization**:
@@ -28,8 +35,8 @@ export type StatusFilter = 'all' | 'selling' | 'sold';
  * @returns Object containing:
  * - `filteredArtworks` - Sorted and filtered artworks array
  * - `uniqueArtists` - List of unique artist names for navigation
- * - State values and setters for sort, search, status, and artist
- * - `clearFilters()` - Reset all filters to default
+ * - `categoryCounts` - Categories with artwork counts
+ * - State values and setters for sort, search, status, category, and artist
  *
  * @example
  * ```tsx
@@ -39,6 +46,8 @@ export type StatusFilter = 'all' | 'selling' | 'sold';
  *   setSearchQuery,
  *   sortOption,
  *   setSortOption,
+ *   categoryFilter,
+ *   setCategoryFilter,
  * } = useArtworkFilter(artworks);
  * ```
  */
@@ -55,6 +64,9 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
   const [statusFilter, setStatusFilter] = useState<StatusFilter>(
     (searchParams.get('status') as StatusFilter) || 'all'
   );
+  const [categoryFilter, setCategoryFilter] = useState<string | null>(
+    searchParams.get('category') || null
+  );
   const [selectedArtist, setSelectedArtist] = useState<string | null>(
     initialArtist || searchParams.get('artist') || null
   );
@@ -67,6 +79,7 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
     searchQuery,
     debouncedSearchQuery,
     statusFilter,
+    categoryFilter,
     selectedArtist,
   });
 
@@ -76,12 +89,19 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
       searchQuery,
       debouncedSearchQuery,
       statusFilter,
+      categoryFilter,
       selectedArtist,
     };
-  }, [sortOption, searchQuery, debouncedSearchQuery, statusFilter, selectedArtist]);
+  }, [sortOption, searchQuery, debouncedSearchQuery, statusFilter, categoryFilter, selectedArtist]);
 
   const updateUrlParams = useCallback(
-    (params: { sort?: SortOption; q?: string; status?: StatusFilter; artist?: string | null }) => {
+    (params: {
+      sort?: SortOption;
+      q?: string;
+      status?: StatusFilter;
+      category?: string | null;
+      artist?: string | null;
+    }) => {
       const newSearchParams = new URLSearchParams(searchParams.toString());
 
       if (params.sort) {
@@ -99,6 +119,11 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
         else newSearchParams.set('status', params.status);
       }
 
+      if (params.category !== undefined) {
+        if (!params.category) newSearchParams.delete('category');
+        else newSearchParams.set('category', params.category);
+      }
+
       if (params.artist !== undefined) {
         if (!params.artist) newSearchParams.delete('artist');
         else newSearchParams.set('artist', params.artist);
@@ -113,6 +138,7 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
         params.q !== undefined &&
         params.sort === undefined &&
         params.status === undefined &&
+        params.category === undefined &&
         params.artist === undefined;
 
       // Keep input focus stable while typing by avoiding App Router navigation for query-only updates.
@@ -143,12 +169,14 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
     const currentSort = (searchParams.get('sort') as SortOption) || 'artist-asc';
     const currentQ = searchParams.get('q') || '';
     const currentStatus = (searchParams.get('status') as StatusFilter) || 'all';
+    const currentCategory = searchParams.get('category') || null;
     const currentArtist = searchParams.get('artist');
 
     const paramsToUpdate: Partial<{
       sort: SortOption;
       q: string;
       status: StatusFilter;
+      category: string | null;
       artist: string | null;
     }> = {};
     let shouldUpdate = false;
@@ -168,6 +196,11 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
       shouldUpdate = true;
     }
 
+    if (categoryFilter !== currentCategory) {
+      paramsToUpdate.category = categoryFilter;
+      shouldUpdate = true;
+    }
+
     if (selectedArtist !== currentArtist) {
       paramsToUpdate.artist = selectedArtist;
       shouldUpdate = true;
@@ -181,6 +214,7 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
     sortOption,
     debouncedSearchQuery,
     statusFilter,
+    categoryFilter,
     selectedArtist,
     searchParams,
     updateUrlParams,
@@ -199,6 +233,7 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
     const urlSort = (searchParams.get('sort') as SortOption) || 'artist-asc';
     const urlQ = searchParams.get('q') || '';
     const urlStatus = (searchParams.get('status') as StatusFilter) || 'all';
+    const urlCategory = searchParams.get('category') || null;
     const urlArtist = searchParams.get('artist') || null;
 
     const effectiveArtist = initialArtist || urlArtist;
@@ -208,6 +243,7 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
       searchQuery: currentQuery,
       debouncedSearchQuery: currentDebouncedQuery,
       statusFilter: currentStatus,
+      categoryFilter: currentCategory,
       selectedArtist: currentArtist,
     } = stateRef.current;
 
@@ -216,8 +252,23 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
     if (urlSort !== currentSort) setSortOption(urlSort);
     if (urlQ !== currentQuery && urlQ !== currentDebouncedQuery) setSearchQuery(urlQ);
     if (urlStatus !== currentStatus) setStatusFilter(urlStatus);
+    if (urlCategory !== currentCategory) setCategoryFilter(urlCategory);
     if (effectiveArtist !== currentArtist) setSelectedArtist(effectiveArtist);
   }, [searchParams, initialArtist]);
+
+  // Compute category counts from all artworks (before filtering)
+  const categoryCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const artwork of artworks) {
+      const cat = artwork.category;
+      if (cat) {
+        counts.set(cat, (counts.get(cat) || 0) + 1);
+      }
+    }
+    return Array.from(counts.entries())
+      .map(([value, count]) => ({ value, count }))
+      .sort((a, b) => b.count - a.count);
+  }, [artworks]);
 
   const filteredArtworks = useMemo(() => {
     let result = artworks;
@@ -226,6 +277,10 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
       result = result.filter((a) => !a.sold);
     } else if (statusFilter === 'sold') {
       result = result.filter((a) => a.sold === true);
+    }
+
+    if (categoryFilter) {
+      result = result.filter((a) => a.category === categoryFilter);
     }
 
     if (debouncedSearchQuery.trim()) {
@@ -240,7 +295,7 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
     }
 
     return result;
-  }, [artworks, debouncedSearchQuery, statusFilter, selectedArtist]);
+  }, [artworks, debouncedSearchQuery, statusFilter, categoryFilter, selectedArtist]);
 
   const sortedArtworks = useMemo(
     () => sortArtworks(filteredArtworks, sortOption),
@@ -265,21 +320,26 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
       setSearchQuery: handleSetSearchQuery,
       statusFilter,
       setStatusFilter,
+      categoryFilter,
+      setCategoryFilter,
       selectedArtist,
       setSelectedArtist,
       filteredArtworks,
       sortedArtworks,
       uniqueArtists,
+      categoryCounts,
     }),
     [
       sortOption,
       searchQuery,
       handleSetSearchQuery,
       statusFilter,
+      categoryFilter,
       selectedArtist,
       filteredArtworks,
       sortedArtworks,
       uniqueArtists,
+      categoryCounts,
     ]
   );
 }

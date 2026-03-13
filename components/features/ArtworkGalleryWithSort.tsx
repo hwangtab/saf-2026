@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import MasonryGallery from './MasonryGallery';
 import SearchBar from './SearchBar';
 import FilterBar from './gallery/FilterBar';
+import CategoryFilter from './gallery/CategoryFilter';
 import ArtistNavigation from './gallery/ArtistNavigation';
 import GalleryEmptyState from './gallery/GalleryEmptyState';
 import { ArtworkListItem } from '@/types';
@@ -29,10 +30,13 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
     setSearchQuery,
     statusFilter,
     setStatusFilter,
+    categoryFilter,
+    setCategoryFilter,
     selectedArtist,
     filteredArtworks,
     sortedArtworks,
     uniqueArtists,
+    categoryCounts,
   } = useArtworkFilter(artworks, initialArtist);
 
   // Handler for artist button click - navigate to artist page
@@ -74,6 +78,18 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
               setSortOption={setSortOption}
             />
           </div>
+
+          {/* Category Filter - second row */}
+          {categoryCounts.length > 0 && (
+            <div className="pb-3">
+              <CategoryFilter
+                categories={categoryCounts}
+                selected={categoryFilter}
+                onSelect={setCategoryFilter}
+                totalCount={artworks.length}
+              />
+            </div>
+          )}
         </div>
       </div>
 
@@ -104,7 +120,12 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
 
         {/* No Results State */}
         {filteredArtworks.length === 0 ? (
-          <GalleryEmptyState onReset={() => setSearchQuery('')} />
+          <GalleryEmptyState
+            onReset={() => {
+              setSearchQuery('');
+              setCategoryFilter(null);
+            }}
+          />
         ) : (
           <MasonryGallery artworks={sortedArtworks} />
         )}
