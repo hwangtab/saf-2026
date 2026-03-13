@@ -16,6 +16,7 @@ type SyncArtworkRecord = {
   edition: string | null;
   edition_type: 'unique' | 'limited' | 'open' | string | null;
   edition_limit: number | null;
+  tax_type: 'A' | 'B' | 'C' | null;
   price: string | null;
   images: string[] | null;
   status: 'available' | 'reserved' | 'sold' | string | null;
@@ -703,6 +704,7 @@ async function upsertCafe24Product(
   const payload = compactObject({
     display: isVisible ? 'T' : 'F',
     selling: selling ? 'T' : 'F',
+    tax_type: artwork.tax_type || 'B',
     custom_product_code: customProductCode,
     product_name: `${artwork.title} - ${artistName}`.trim(),
     internal_product_name: internalName,
@@ -906,7 +908,7 @@ export async function syncArtworkToCafe24(artworkId: string): Promise<SyncResult
   const { data, error } = await supabase
     .from('artworks')
     .select(
-      'id, title, admin_product_name, description, size, material, year, edition, edition_type, edition_limit, price, images, status, is_hidden, shop_url, cafe24_product_no, cafe24_custom_product_code, artists(name_ko, bio, history)'
+      'id, title, admin_product_name, description, size, material, year, edition, edition_type, edition_limit, price, tax_type, images, status, is_hidden, shop_url, cafe24_product_no, cafe24_custom_product_code, artists(name_ko, bio, history)'
     )
     .eq('id', artworkId)
     .single();

@@ -222,12 +222,13 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
   const edition_limit =
     edition_type === 'limited' && edition_limit_raw ? Number(edition_limit_raw) : null;
   const price = getString(formData, 'price');
+  const tax_type = getString(formData, 'tax_type') || 'B';
   const artist_id = getString(formData, 'artist_id');
 
   const { data: oldArtwork } = await supabase
     .from('artworks')
     .select(
-      'id, title, admin_product_name, artist_id, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, images, is_hidden, shop_url, updated_at'
+      'id, title, admin_product_name, artist_id, description, size, material, year, edition, edition_type, edition_limit, price, tax_type, status, sold_at, images, is_hidden, shop_url, updated_at'
     )
     .eq('id', id)
     .single();
@@ -245,6 +246,7 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
       edition_type,
       edition_limit,
       price,
+      tax_type,
       artist_id: artist_id || null,
       updated_at: new Date().toISOString(),
     })
@@ -255,7 +257,7 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
   const { data: newArtwork } = await supabase
     .from('artworks')
     .select(
-      'id, title, admin_product_name, artist_id, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, images, is_hidden, shop_url, updated_at'
+      'id, title, admin_product_name, artist_id, description, size, material, year, edition, edition_type, edition_limit, price, tax_type, status, sold_at, images, is_hidden, shop_url, updated_at'
     )
     .eq('id', id)
     .single();
@@ -321,6 +323,7 @@ export async function createAdminArtwork(formData: FormData) {
   const edition_limit =
     edition_type === 'limited' && edition_limit_raw ? Number(edition_limit_raw) : null;
   const price = getString(formData, 'price');
+  const tax_type = getString(formData, 'tax_type') || 'B';
   const artist_id = getString(formData, 'artist_id');
 
   if (!artist_id) throw new Error('작가를 선택해주세요.');
@@ -338,6 +341,7 @@ export async function createAdminArtwork(formData: FormData) {
       edition_type,
       edition_limit,
       price,
+      tax_type,
       shop_url: null,
       artist_id,
       status: 'available',

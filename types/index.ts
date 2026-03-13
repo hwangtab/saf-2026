@@ -20,6 +20,8 @@ export interface ArtistData {
 
 export type EditionType = 'unique' | 'limited' | 'open';
 
+export type TaxType = 'A' | 'B' | 'C';
+
 // Base artwork data structure (from DB/Files)
 export interface BaseArtwork {
   id: string;
@@ -33,6 +35,7 @@ export interface BaseArtwork {
   edition: string;
   edition_type?: EditionType;
   edition_limit?: number | null;
+  tax_type?: TaxType;
   price: string;
   images: string[];
   shopUrl?: string;

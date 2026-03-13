@@ -14,7 +14,7 @@ import { AdminCard, AdminSelect } from '@/app/admin/_components/admin-ui';
 import { useToast } from '@/lib/hooks/useToast';
 import { matchesSearchText } from '@/lib/search-utils';
 import { cn } from '@/lib/utils';
-import { EditionType } from '@/types';
+import { EditionType, TaxType } from '@/types';
 
 type Artist = {
   id: string;
@@ -32,6 +32,7 @@ type Artwork = {
   edition: string | null;
   edition_type: EditionType | null;
   edition_limit: number | null;
+  tax_type: TaxType | null;
   price: string | null;
   artist_id: string | null;
   images: string[] | null;
@@ -399,6 +400,19 @@ export function ArtworkEditForm({
               <option value="unique">Unique (1점)</option>
               <option value="limited">Limited (한정판)</option>
               <option value="open">Open (무제한)</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">과세구분</label>
+            <select
+              name="tax_type"
+              defaultValue={artwork.tax_type || 'B'}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
+            >
+              <option value="B">면세</option>
+              <option value="A">과세</option>
+              <option value="C">영세</option>
             </select>
           </div>
 
