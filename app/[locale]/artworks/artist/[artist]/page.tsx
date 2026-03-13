@@ -7,24 +7,12 @@ import { generateEnhancedArtistSchema, createBreadcrumbSchema } from '@/lib/seo-
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { formatArtistName, resolveArtworkImageUrl } from '@/lib/utils';
 import { Metadata } from 'next';
-import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
 import { getLocale, getTranslations } from 'next-intl/server';
 import type { Artwork, ArtworkListItem } from '@/types';
 import { createLocaleAlternates } from '@/lib/locale-alternates';
 
-const ArtworkGalleryWithSort = dynamic(
-  () => import('@/components/features/ArtworkGalleryWithSort'),
-  {
-    loading: () => (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {[...Array(6)].map((_, i) => (
-          <div key={i} className="aspect-[4/5] bg-gray-200 rounded-sm animate-pulse" />
-        ))}
-      </div>
-    ),
-  }
-);
+import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
 
 interface Props {
   params: Promise<{
