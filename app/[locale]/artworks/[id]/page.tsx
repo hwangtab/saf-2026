@@ -298,14 +298,6 @@ export default async function ArtworkDetailPage({ params }: Props) {
 
               <div className="border-t border-b border-gray-100 py-6">
                 <div className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 items-baseline">
-                  {/* 재료 */}
-                  {localizedMaterial && (
-                    <>
-                      <span className="text-gray-600 font-medium text-sm">{t('material')}</span>
-                      <span className="text-charcoal">{localizedMaterial}</span>
-                    </>
-                  )}
-
                   {/* 분류 */}
                   {artwork.category && (
                     <>
@@ -316,6 +308,14 @@ export default async function ArtworkDetailPage({ params }: Props) {
                       >
                         {getCategoryLabel(artwork.category, locale)}
                       </Link>
+                    </>
+                  )}
+
+                  {/* 재료 */}
+                  {localizedMaterial && (
+                    <>
+                      <span className="text-gray-600 font-medium text-sm">{t('material')}</span>
+                      <span className="text-charcoal">{localizedMaterial}</span>
                     </>
                   )}
 
