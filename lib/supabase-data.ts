@@ -4,7 +4,7 @@ import { hasSupabaseConfig, supabase } from './supabase';
 import { formatPriceForDisplay } from '@/lib/utils';
 import { artworks as fallbackArtworks, getArtworkById } from '@/content/saf2026-artworks';
 import { newsArticles } from '@/content/news';
-import { getFaqsByLocale } from '@/content/faq';
+import { faqs, faqsEn, getFaqsByLocale } from '@/content/faq';
 import { testimonials } from '@/content/testimonials';
 import { exhibitionReviews } from '@/content/reviews';
 import type { Artwork, ExhibitionReview, NewsArticle, TestimonialCategory } from '@/types';
@@ -325,6 +325,9 @@ export const getSupabaseTestimonials = cache(async (): Promise<TestimonialCatego
 export const getSupabaseFAQs = cache(
   async (locale: 'ko' | 'en' = 'ko'): Promise<{ question: string; answer: string }[]> => {
     const fallbackFaqs = getFaqsByLocale(locale);
+    const fallbackByQuestion = new Map(
+      faqs.map((faq, index) => [faq.question, faqsEn[index]] as const)
+    );
 
     const localizeFaqRows = (rows: FAQRow[]): { question: string; answer: string }[] => {
       if (locale === 'ko') {
@@ -334,21 +337,25 @@ export const getSupabaseFAQs = cache(
       return rows.map((row, index) => {
         const questionEn = row.question_en?.trim();
         const answerEn = row.answer_en?.trim();
+        const fallbackByQuestionMatch = fallbackByQuestion.get(row.question.trim());
+        const fallbackByIndex = fallbackFaqs[index];
+        const fallback = fallbackByQuestionMatch || fallbackByIndex;
 
         if (questionEn && answerEn) {
           return { question: questionEn, answer: answerEn };
         }
 
-        const fallback = fallbackFaqs[index];
-        if (fallback) {
-          return fallback;
-        }
-
         return {
-          question: containsHangul(row.question) ? `FAQ ${index + 1}` : row.question,
-          answer: containsHangul(row.answer)
-            ? 'This answer is currently available in Korean.'
-            : row.answer,
+          question:
+            questionEn ||
+            fallback?.question ||
+            (containsHangul(row.question) ? `FAQ ${index + 1}` : row.question),
+          answer:
+            answerEn ||
+            fallback?.answer ||
+            (containsHangul(row.answer)
+              ? 'This answer is currently available in Korean.'
+              : row.answer),
         };
       });
     };
@@ -360,6 +367,7 @@ export const getSupabaseFAQs = cache(
     const { data, error } = await supabase
       .from('faq')
       .select('question, answer, question_en, answer_en')
+      .order('display_order', { ascending: true, nullsFirst: false })
       .order('created_at', { ascending: true });
 
     if (error) {

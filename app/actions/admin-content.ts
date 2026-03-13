@@ -129,6 +129,7 @@ export async function createFaq(formData: FormData) {
   });
 
   revalidatePath('/');
+  revalidatePath('/en');
 }
 
 export async function updateFaq(id: string, formData: FormData) {
@@ -165,6 +166,7 @@ export async function updateFaq(id: string, formData: FormData) {
   });
 
   revalidatePath('/');
+  revalidatePath('/en');
 }
 
 export async function deleteFaq(id: string) {
@@ -190,6 +192,7 @@ export async function deleteFaq(id: string) {
   );
 
   revalidatePath('/');
+  revalidatePath('/en');
 }
 
 export async function createTestimonial(formData: FormData) {

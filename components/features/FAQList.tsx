@@ -25,7 +25,7 @@ export default function FAQList({ items }: FAQListProps) {
 
         return (
           <div
-            key={index}
+            key={`${item.question}-${item.answer.slice(0, 32)}`}
             className="border border-gray-200 rounded-xl bg-white overflow-hidden transition-all duration-200 hover:border-gray-300"
           >
             <button

@@ -2049,6 +2049,7 @@ export async function revertActivityLog(
 
     if (log.target_type === 'faq') {
       revalidatePath('/');
+      revalidatePath('/en');
       revalidatePath('/admin/content/faq');
     }
 
