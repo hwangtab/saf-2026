@@ -23,6 +23,7 @@ import {
   generateArtworkJsonLd,
   generateSpeakableSchema,
 } from '@/lib/seo-utils';
+import { getCategoryLabel } from '@/lib/artwork-category';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import SupportMessage from '@/components/features/SupportMessage';
 import TrustBadges from '@/components/features/TrustBadges';
@@ -302,6 +303,16 @@ export default async function ArtworkDetailPage({ params }: Props) {
                     <>
                       <span className="text-gray-600 font-medium text-sm">{t('material')}</span>
                       <span className="text-charcoal">{localizedMaterial}</span>
+                    </>
+                  )}
+
+                  {/* 분류 */}
+                  {artwork.category && (
+                    <>
+                      <span className="text-gray-600 font-medium text-sm">{t('category')}</span>
+                      <span className="text-charcoal">
+                        {getCategoryLabel(artwork.category, locale)}
+                      </span>
                     </>
                   )}
 

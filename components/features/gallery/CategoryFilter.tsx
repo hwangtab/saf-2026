@@ -2,21 +2,8 @@
 
 import { useLocale } from 'next-intl';
 import { getUIStrings } from '@/lib/ui-strings';
+import { getCategoryLabel } from '@/lib/artwork-category';
 import { CategoryCount } from '@/lib/hooks/useArtworkFilter';
-
-const CATEGORY_EN_MAP: Record<string, string> = {
-  회화: 'Painting',
-  한국화: 'Korean Painting',
-  판화: 'Printmaking',
-  사후판화: 'Posthumous Print',
-  드로잉: 'Drawing',
-  조각: 'Sculpture',
-  '도자/공예': 'Ceramics/Craft',
-  사진: 'Photography',
-  아트프린트: 'Art Print',
-  혼합매체: 'Mixed Media',
-  디지털아트: 'Digital Art',
-};
 
 interface CategoryFilterProps {
   categories: CategoryCount[];
@@ -33,13 +20,6 @@ export default function CategoryFilter({
 }: CategoryFilterProps) {
   const locale = useLocale();
   const ui = getUIStrings(locale);
-
-  const getCategoryLabel = (value: string) => {
-    if (locale === 'en') {
-      return CATEGORY_EN_MAP[value] || value;
-    }
-    return value;
-  };
 
   return (
     <div role="radiogroup" aria-label={ui.A11Y.FILTER_CATEGORY}>
@@ -74,7 +54,7 @@ export default function CategoryFilter({
                 : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-100'
             }`}
           >
-            {getCategoryLabel(cat.value)}
+            {getCategoryLabel(cat.value, locale)}
             <span className="ml-1 opacity-60">{cat.count}</span>
           </button>
         ))}
