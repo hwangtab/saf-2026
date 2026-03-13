@@ -66,7 +66,7 @@ const config: Config = {
       fontFamily: {
         // 기본 폰트 - 모든 텍스트에 사용
         sans: [
-          'Pretendard',
+          'Paperlogy',
           '-apple-system',
           'BlinkMacSystemFont',
           'system-ui',
@@ -78,7 +78,7 @@ const config: Config = {
         // 히어로 타이틀 전용
         display: [
           'PartialSans',
-          'Pretendard',
+          'Paperlogy',
           '-apple-system',
           'BlinkMacSystemFont',
           'system-ui',
@@ -87,7 +87,7 @@ const config: Config = {
         // 섹션 제목 전용
         section: [
           'SchoolSafetyPoster',
-          'Pretendard',
+          'Paperlogy',
           '-apple-system',
           'BlinkMacSystemFont',
           'sans-serif',
