@@ -37,6 +37,7 @@ type ArtworkItem = {
   is_hidden: boolean;
   images: string[] | null;
   created_at: string | null;
+  category: string | null;
   cafe24_sync_status: string | null;
   cafe24_sync_error: string | null;
   artists: { name_ko: string | null } | null;
@@ -44,7 +45,7 @@ type ArtworkItem = {
 
 type StatusFilter = 'all' | 'available' | 'reserved' | 'sold';
 type VisibilityFilter = 'all' | 'visible' | 'hidden';
-type SortKey = 'artwork_info' | 'status' | 'visibility' | 'created_at';
+type SortKey = 'artwork_info' | 'status' | 'category' | 'visibility' | 'created_at';
 type SortDirection = 'asc' | 'desc';
 type SortFilter = 'default' | 'recent' | 'oldest';
 
@@ -447,6 +448,12 @@ export function AdminArtworkList({
         result = compareArtworkInfo(a, b);
       } else if (sortKey === 'status') {
         result = statusRank[a.status] - statusRank[b.status];
+      } else if (sortKey === 'category') {
+        const catA = a.category || '';
+        const catB = b.category || '';
+        if (!catA && catB) result = 1;
+        else if (catA && !catB) result = -1;
+        else result = catA.localeCompare(catB, 'ko');
       } else if (sortKey === 'created_at') {
         result = compareCreatedAt(a, b);
       } else {
@@ -919,6 +926,20 @@ export function AdminArtworkList({
                 >
                   <button
                     type="button"
+                    onClick={() => handleSort('category')}
+                    className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
+                    aria-label={getSortAriaLabel('분류', 'category')}
+                  >
+                    분류
+                    <span className="text-[11px] text-gray-400">{getSortArrow('category')}</span>
+                  </button>
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  <button
+                    type="button"
                     onClick={() => handleSort('created_at')}
                     className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
                     aria-label={getSortAriaLabel(msg.createdAt, 'created_at')}
@@ -949,7 +970,7 @@ export function AdminArtworkList({
             <tbody className="bg-white divide-y divide-gray-200">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-0">
+                  <td colSpan={7} className="px-6 py-0">
                     <AdminEmptyState title={msg.noSearchResult} />
                   </td>
                 </tr>
@@ -1075,6 +1096,9 @@ export function AdminArtworkList({
                         <option value="reserved">{msg.reserved}</option>
                         <option value="sold">{msg.sold}</option>
                       </AdminSelect>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="text-sm text-gray-500">{artwork.category || '-'}</span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className="text-sm text-gray-500">

@@ -26,7 +26,7 @@ export default async function AdminArtworksPage({ searchParams }: Props) {
   const { data: artworks } = await supabase
     .from('artworks')
     .select(
-      'id, title, admin_product_name, status, is_hidden, images, created_at, cafe24_sync_status, cafe24_sync_error, artists(name_ko)'
+      'id, title, admin_product_name, status, is_hidden, images, created_at, category, cafe24_sync_status, cafe24_sync_error, artists(name_ko)'
     )
     .order('created_at', { ascending: false });
 
