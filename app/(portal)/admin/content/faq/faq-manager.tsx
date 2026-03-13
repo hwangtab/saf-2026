@@ -13,6 +13,8 @@ type FaqItem = {
   id: string;
   question: string;
   answer: string;
+  question_en: string | null;
+  answer_en: string | null;
   display_order: number | null;
 };
 
@@ -47,11 +49,22 @@ export function FaqManager({ faqs }: { faqs: FaqItem[] }) {
     const originalFaqs = [...optimisticFaqs];
     const question = formData.get('question') as string;
     const answer = formData.get('answer') as string;
+    const questionEn = (formData.get('question_en') as string) || null;
+    const answerEn = (formData.get('answer_en') as string) || null;
     const displayOrder = Number(formData.get('display_order'));
 
     setOptimisticFaqs((prev) =>
       prev.map((item) =>
-        item.id === id ? { ...item, question, answer, display_order: displayOrder } : item
+        item.id === id
+          ? {
+              ...item,
+              question,
+              answer,
+              question_en: questionEn,
+              answer_en: answerEn,
+              display_order: displayOrder,
+            }
+          : item
       )
     );
     setSavingId(id);
@@ -98,6 +111,8 @@ export function FaqManager({ faqs }: { faqs: FaqItem[] }) {
         >
           <AdminInput name="question" required placeholder="질문" />
           <AdminTextarea name="answer" required rows={4} placeholder="답변" />
+          <AdminInput name="question_en" placeholder="Question (English)" />
+          <AdminTextarea name="answer_en" rows={4} placeholder="Answer (English)" />
           <AdminInput type="number" name="display_order" placeholder="노출 순서 (숫자)" />
           <div className="flex justify-end">
             <Button type="submit" variant="primary" loading={creating} disabled={creating}>
@@ -136,7 +151,12 @@ export function FaqManager({ faqs }: { faqs: FaqItem[] }) {
         {optimisticFaqs
           .filter((item) => {
             if (!query.trim()) return true;
-            return matchesAnySearch(query, [item.question, item.answer]);
+            return matchesAnySearch(query, [
+              item.question,
+              item.answer,
+              item.question_en,
+              item.answer_en,
+            ]);
           })
           .map((item) => (
             <form
@@ -172,6 +192,17 @@ export function FaqManager({ faqs }: { faqs: FaqItem[] }) {
                 rows={4}
                 defaultValue={item.answer}
                 placeholder="답변"
+              />
+              <AdminInput
+                name="question_en"
+                defaultValue={item.question_en ?? ''}
+                placeholder="Question (English)"
+              />
+              <AdminTextarea
+                name="answer_en"
+                rows={4}
+                defaultValue={item.answer_en ?? ''}
+                placeholder="Answer (English)"
               />
               <AdminInput
                 type="number"

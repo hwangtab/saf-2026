@@ -8,7 +8,7 @@ export default async function FaqPage() {
 
   const { data: faqs } = await supabase
     .from('faq')
-    .select('id, question, answer, display_order')
+    .select('id, question, answer, question_en, answer_en, display_order')
     .order('display_order', { ascending: true });
 
   return <FaqManager faqs={faqs || []} />;

@@ -359,7 +359,7 @@ export const getSupabaseFAQs = cache(
 
     const { data, error } = await supabase
       .from('faq')
-      .select('*')
+      .select('question, answer, question_en, answer_en')
       .order('created_at', { ascending: true });
 
     if (error) {

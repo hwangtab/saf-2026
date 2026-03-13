@@ -359,13 +359,13 @@ function formatActionDescription(log: ActivityLogEntry, locale: LocaleCode): str
       text = `뉴스 삭제: ${details?.title || log.target_id}`;
       break;
     case 'faq_created':
-      text = `FAQ 생성: ${details?.question || log.target_id}`;
+      text = `FAQ 생성: ${details?.question_en || details?.question || log.target_id}`;
       break;
     case 'faq_updated':
-      text = `FAQ 수정: ${details?.question || log.target_id}`;
+      text = `FAQ 수정: ${details?.question_en || details?.question || log.target_id}`;
       break;
     case 'faq_deleted':
-      text = `FAQ 삭제: ${details?.question || log.target_id}`;
+      text = `FAQ 삭제: ${details?.question_en || details?.question || log.target_id}`;
       break;
     case 'video_created':
       text = `영상 생성: ${details?.title || log.target_id}`;

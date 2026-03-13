@@ -83,6 +83,29 @@ export default async function Archive2023Page() {
     }
   }
 
+  const containsHangul = (value: string): boolean => /[가-힣]/.test(value);
+  const localizeVideoTitle = (title: string, index: number): string => {
+    if (!isEnglish) return title;
+    if (containsHangul(title)) {
+      return `SAF 2023 Campaign Video #${index + 1}`;
+    }
+    return title;
+  };
+  const localizeArtworkTitle = (title: string, index: number): string => {
+    if (!isEnglish) return title;
+    if (containsHangul(title)) {
+      return `SAF 2023 Artwork #${index + 1}`;
+    }
+    return title;
+  };
+  const localizeArtworkArtist = (artist: string): string => {
+    if (!isEnglish) return artist;
+    if (containsHangul(artist)) {
+      return 'Participating Artist';
+    }
+    return artist;
+  };
+
   const currentUrl = PAGE_URL;
 
   const pageTitle = `${PAGE_COPY[locale].title} | ${isEnglish ? 'SAF 2026' : '씨앗페 2026'}`;
@@ -236,34 +259,39 @@ export default async function Archive2023Page() {
             {isEnglish ? '🎨 2023 Featured Works' : '🎨 2023년 출품작'}
           </SectionTitle>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {saf2023Artworks.map((artwork) => (
-              <div
-                key={artwork.id}
-                className="bg-white rounded-lg shadow-md overflow-hidden group flex flex-col"
-              >
-                <div className="relative aspect-square w-full overflow-hidden">
-                  <SafeImage
-                    src={artwork.imageUrl}
-                    alt={`${artwork.artist} - ${artwork.title}`}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  />
-                </div>
-                <div className="p-6 flex-grow flex flex-col">
-                  <h3 className="font-sans font-bold text-xl mb-2">{artwork.title}</h3>
-                  <p className="text-primary font-semibold mb-3">{artwork.artist}</p>
-                  <p className="text-charcoal-muted text-sm mb-4 flex-grow">
-                    {isEnglish ? 'Artwork presented during SAF 2023.' : artwork.description}
-                  </p>
-                  {artwork.details && !isEnglish && (
-                    <p className="text-xs text-charcoal-soft mt-auto pt-4 border-t border-gray-200">
-                      {artwork.details}
+            {saf2023Artworks.map((artwork, index) => {
+              const localizedArtworkTitle = localizeArtworkTitle(artwork.title, index);
+              const localizedArtworkArtist = localizeArtworkArtist(artwork.artist);
+
+              return (
+                <div
+                  key={artwork.id}
+                  className="bg-white rounded-lg shadow-md overflow-hidden group flex flex-col"
+                >
+                  <div className="relative aspect-square w-full overflow-hidden">
+                    <SafeImage
+                      src={artwork.imageUrl}
+                      alt={`${localizedArtworkArtist} - ${localizedArtworkTitle}`}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    />
+                  </div>
+                  <div className="p-6 flex-grow flex flex-col">
+                    <h3 className="font-sans font-bold text-xl mb-2">{localizedArtworkTitle}</h3>
+                    <p className="text-primary font-semibold mb-3">{localizedArtworkArtist}</p>
+                    <p className="text-charcoal-muted text-sm mb-4 flex-grow">
+                      {isEnglish ? 'Artwork presented during SAF 2023.' : artwork.description}
                     </p>
-                  )}
+                    {artwork.details && !isEnglish && (
+                      <p className="text-xs text-charcoal-soft mt-auto pt-4 border-t border-gray-200">
+                        {artwork.details}
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </Section>
@@ -305,38 +333,45 @@ export default async function Archive2023Page() {
             {isEnglish ? '📹 Video Archive' : '📹 영상 아카이브'}
           </SectionTitle>
           {/* VideoObject JSON-LD for each video */}
-          {videos.map((video) => (
+          {videos.map((video, index) => (
             <JsonLdScript
               key={`video-schema-${video.id}`}
               data={generateVideoSchema({
                 ...video,
+                title: localizeVideoTitle(video.title, index),
+                description: isEnglish ? 'Campaign video from SAF 2023.' : video.description,
+                transcript: isEnglish ? undefined : video.transcript,
                 youtubeId: video.youtube_id, // Map database field to component expected field
               })}
             />
           ))}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {videos.map((video) => (
-              <div key={video.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-                <VideoEmbed id={video.youtube_id} title={video.title} />
-                <div className="p-6">
-                  <h3 className="font-sans font-bold text-xl mb-2">{video.title}</h3>
-                  <p className="text-charcoal-muted text-sm mb-4 line-clamp-2">
-                    {isEnglish ? 'Campaign video from SAF 2023.' : video.description}
-                  </p>
+            {videos.map((video, index) => {
+              const localizedVideoTitle = localizeVideoTitle(video.title, index);
 
-                  {video.transcript && !isEnglish && (
-                    <div className="mt-4 p-4 bg-primary/5 rounded-lg border-l-4 border-primary/30">
-                      <h4 className="flex items-center gap-2 text-xs font-bold text-primary mb-2 uppercase tracking-wider">
-                        🎞️ 영상 기록 요약
-                      </h4>
-                      <p className="text-xs md:text-sm text-charcoal leading-relaxed">
-                        {video.transcript}
-                      </p>
-                    </div>
-                  )}
+              return (
+                <div key={video.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+                  <VideoEmbed id={video.youtube_id} title={localizedVideoTitle} />
+                  <div className="p-6">
+                    <h3 className="font-sans font-bold text-xl mb-2">{localizedVideoTitle}</h3>
+                    <p className="text-charcoal-muted text-sm mb-4 line-clamp-2">
+                      {isEnglish ? 'Campaign video from SAF 2023.' : video.description}
+                    </p>
+
+                    {video.transcript && !isEnglish && (
+                      <div className="mt-4 p-4 bg-primary/5 rounded-lg border-l-4 border-primary/30">
+                        <h4 className="flex items-center gap-2 text-xs font-bold text-primary mb-2 uppercase tracking-wider">
+                          🎞️ 영상 기록 요약
+                        </h4>
+                        <p className="text-xs md:text-sm text-charcoal leading-relaxed">
+                          {video.transcript}
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </Section>

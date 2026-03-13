@@ -289,7 +289,7 @@ export default async function Home() {
               />
             }
           >
-            <HomeFAQSection />
+            <HomeFAQSection locale={locale} />
           </Suspense>
         </div>
       </Section>
@@ -313,13 +313,13 @@ async function HomeDataSections({ counterItems }: { counterItems: typeof STATIST
   );
 }
 
-async function HomeFAQSection() {
-  const faqs = await getSupabaseFAQs();
+async function HomeFAQSection({ locale }: { locale: 'ko' | 'en' }) {
+  const faqs = await getSupabaseFAQs(locale);
 
   return (
     <>
       <FAQList items={faqs} />
-      {faqs.length > 0 && <JsonLdScript data={generateFAQSchema(faqs)} />}
+      {faqs.length > 0 && <JsonLdScript data={generateFAQSchema(faqs, locale)} />}
     </>
   );
 }

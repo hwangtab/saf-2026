@@ -188,7 +188,13 @@ const ARTIST_RESTORE_KEYS = [
 const USER_REVERT_KEYS = ['role', 'status'] as const;
 
 const NEWS_REVERT_KEYS = ['title', 'source', 'date', 'link', 'thumbnail', 'description'] as const;
-const FAQ_REVERT_KEYS = ['question', 'answer', 'display_order'] as const;
+const FAQ_REVERT_KEYS = [
+  'question',
+  'answer',
+  'question_en',
+  'answer_en',
+  'display_order',
+] as const;
 const TESTIMONIAL_REVERT_KEYS = [
   'category',
   'quote',

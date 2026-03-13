@@ -26,7 +26,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 // Data Loaders using jiti
 const { newsArticles } = jiti('../content/news.ts');
-const { faqs } = jiti('../content/faq.ts');
+const { faqs, faqsEn } = jiti('../content/faq.ts');
 const { testimonials } = jiti('../content/testimonials.ts');
 const { videos } = jiti('../content/videos.ts');
 const { ARTIST_DATA } = jiti('../content/artists-data.ts');
@@ -89,6 +89,8 @@ async function migrateFAQ() {
     faqs.map((item, index) => ({
       question: item.question,
       answer: item.answer,
+      question_en: faqsEn[index]?.question || null,
+      answer_en: faqsEn[index]?.answer || null,
       display_order: index,
     }))
   );

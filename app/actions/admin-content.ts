@@ -106,6 +106,8 @@ export async function createFaq(formData: FormData) {
 
   const question = getString(formData, 'question');
   const answer = getString(formData, 'answer');
+  const question_en = getString(formData, 'question_en') || null;
+  const answer_en = getString(formData, 'answer_en') || null;
   const display_order = getNumber(formData, 'display_order', 0);
 
   const { data, error } = await supabase
@@ -113,6 +115,8 @@ export async function createFaq(formData: FormData) {
     .insert({
       question,
       answer,
+      question_en,
+      answer_en,
       display_order,
     })
     .select()
@@ -120,7 +124,7 @@ export async function createFaq(formData: FormData) {
 
   if (error) throw error;
 
-  await logAdminAction('faq_created', 'faq', data.id, { question }, admin.id, {
+  await logAdminAction('faq_created', 'faq', data.id, { question, question_en }, admin.id, {
     afterSnapshot: data,
   });
 
@@ -135,6 +139,8 @@ export async function updateFaq(id: string, formData: FormData) {
 
   const question = getString(formData, 'question');
   const answer = getString(formData, 'answer');
+  const question_en = getString(formData, 'question_en') || null;
+  const answer_en = getString(formData, 'answer_en') || null;
   const display_order = getNumber(formData, 'display_order', 0);
 
   const { data: newFaq, error } = await supabase
@@ -142,6 +148,8 @@ export async function updateFaq(id: string, formData: FormData) {
     .update({
       question,
       answer,
+      question_en,
+      answer_en,
       display_order,
     })
     .eq('id', id)
@@ -150,7 +158,7 @@ export async function updateFaq(id: string, formData: FormData) {
 
   if (error) throw error;
 
-  await logAdminAction('faq_updated', 'faq', id, { question }, admin.id, {
+  await logAdminAction('faq_updated', 'faq', id, { question, question_en }, admin.id, {
     beforeSnapshot: oldFaq,
     afterSnapshot: newFaq,
     reversible: true,
@@ -168,11 +176,18 @@ export async function deleteFaq(id: string) {
   const { error } = await supabase.from('faq').delete().eq('id', id);
   if (error) throw error;
 
-  await logAdminAction('faq_deleted', 'faq', id, { question: faq?.question }, admin.id, {
-    beforeSnapshot: faq,
-    afterSnapshot: null,
-    reversible: true,
-  });
+  await logAdminAction(
+    'faq_deleted',
+    'faq',
+    id,
+    { question: faq?.question, question_en: faq?.question_en },
+    admin.id,
+    {
+      beforeSnapshot: faq,
+      afterSnapshot: null,
+      reversible: true,
+    }
+  );
 
   revalidatePath('/');
 }

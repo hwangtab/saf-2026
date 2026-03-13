@@ -559,16 +559,21 @@ export interface FAQItem {
   answer: string;
 }
 
-export function generateFAQSchema(faqs: FAQItem[]) {
+export function generateFAQSchema(faqs: FAQItem[], locale: 'ko' | 'en' = 'ko') {
+  const isEnglish = locale === 'en';
+
   return {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: faqs.map((faq) => ({
+    mainEntity: faqs.map((faq, index) => ({
       '@type': 'Question',
-      name: faq.question,
+      name: isEnglish && containsHangul(faq.question) ? `FAQ ${index + 1}` : faq.question,
       acceptedAnswer: {
         '@type': 'Answer',
-        text: faq.answer,
+        text:
+          isEnglish && containsHangul(faq.answer)
+            ? 'This answer is currently available in Korean.'
+            : faq.answer,
       },
     })),
   };
