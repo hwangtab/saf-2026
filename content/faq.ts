@@ -41,3 +41,40 @@ export const faqs: FAQItem[] = [
       '기본적으로 주문 금액 20만원 이상은 무료 배송(미만 시 4,000원)입니다. 단, 대형 작품(세 변의 합 180cm 이상)이나 파손 위험이 있는 작품(유리, 도자 등)은 미술품 전문 운송 차량으로 배송되며, 지역에 따라 별도 비용(3.5만원~30만원)이 발생할 수 있습니다. 평균 배송일은 결제 확인 후 영업일 기준 3~4일입니다.',
   },
 ];
+
+export const faqsEn: FAQItem[] = [
+  {
+    question: 'What is SAF 2026?',
+    answer:
+      'SAF 2026 is a special exhibition that raises a mutual-aid loan fund for Korean artists. Through co-op membership and artwork purchases, it helps create a stable environment for creative work.',
+  },
+  {
+    question: 'How can I join the cooperative?',
+    answer:
+      'Click the "Join Co-op" button on the website to become a member of Korea Smart Cooperative. Your membership supports the creation and operation of the artist mutual-aid fund.',
+  },
+  {
+    question: 'When and where is the exhibition held?',
+    answer:
+      'The offline exhibition concluded on January 26, 2026. The online exhibition remains open on this site, so you can continue to view and purchase artworks anytime.',
+  },
+  {
+    question: 'What is a mutual-aid loan?',
+    answer:
+      'It is a financing program for artists excluded from primary banking, offering fixed-rate loans at around 5% APR based on a jointly built fund. The program currently maintains a high repayment rate of over 95%.',
+  },
+  {
+    question: 'What is the funding goal of SAF 2026?',
+    answer:
+      'This campaign aims to secure a mutual-aid loan fund capacity of about KRW 1 billion. Co-op membership and artwork purchases make this goal possible.',
+  },
+  {
+    question: 'How are purchased artworks delivered?',
+    answer:
+      'Orders over KRW 200,000 are generally shipped free (KRW 4,000 below that threshold). Large or fragile works may require specialized art transport with additional regional fees. Typical delivery is 3-4 business days after payment confirmation.',
+  },
+];
+
+export function getFaqsByLocale(locale: 'ko' | 'en'): FAQItem[] {
+  return locale === 'en' ? faqsEn : faqs;
+}
