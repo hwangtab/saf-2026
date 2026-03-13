@@ -2,11 +2,13 @@
 
 import { useState, useRef } from 'react';
 import dynamic from 'next/dynamic';
+import { usePathname } from 'next/navigation';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
 import { optimizeArtworkImage, optimizeImage } from '@/lib/client/image-optimization';
 import { useToast } from '@/lib/hooks/useToast';
 import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
 import SafeImage from '@/components/common/SafeImage';
+import { resolveClientLocale } from '@/lib/client-locale';
 
 const ArtworkLightbox = dynamic(() => import('@/components/ui/ArtworkLightbox'), { ssr: false });
 
@@ -25,6 +27,51 @@ type UploadProps = {
 const UPLOAD_MAX_RETRIES = 2;
 const UPLOAD_RETRY_DELAY_BASE = 1000; // 1 second base delay for exponential backoff
 
+type LocaleCode = 'ko' | 'en';
+
+const IMAGE_UPLOAD_COPY: Record<
+  LocaleCode,
+  {
+    maxRetriesExceeded: string;
+    optimizing: (index: number, total: number) => string;
+    uploading: (index: number, total: number) => string;
+    uploadFailed: string;
+    removeFailed: string;
+    zoomImage: string;
+    imageAlt: (index: number) => string;
+    addImage: string;
+    footer: (maxFiles: number) => string;
+    previewAlt: string;
+  }
+> = {
+  ko: {
+    maxRetriesExceeded: '최대 재시도 횟수 초과',
+    optimizing: (index: number, total: number) => `이미지 ${index}/${total}: 최적화 중...`,
+    uploading: (index: number, total: number) => `이미지 ${index}/${total}: 업로드 중...`,
+    uploadFailed: '이미지 업로드에 실패했습니다. 잠시 후 다시 시도해주세요.',
+    removeFailed: '이미지 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.',
+    zoomImage: '이미지 확대하기',
+    imageAlt: (index: number) => `이미지 ${index}`,
+    addImage: '이미지 추가',
+    footer: (maxFiles: number) =>
+      `* 최대 ${maxFiles}장, 업로드 시 자동 최적화 (WebP, 작품 이미지는 동적 리사이징)`,
+    previewAlt: '미리보기',
+  },
+  en: {
+    maxRetriesExceeded: 'Exceeded maximum retry attempts',
+    optimizing: (index: number, total: number) => `Image ${index}/${total}: optimizing...`,
+    uploading: (index: number, total: number) => `Image ${index}/${total}: uploading...`,
+    uploadFailed: 'Failed to upload image. Please try again shortly.',
+    removeFailed: 'Failed to remove image. Please try again shortly.',
+    zoomImage: 'Zoom image',
+    imageAlt: (index: number) => `Image ${index}`,
+    addImage: 'Add image',
+    footer: (maxFiles: number) =>
+      `* Up to ${maxFiles} files, auto-optimized on upload (WebP, dynamic resizing for artwork images)`,
+    previewAlt: 'Preview',
+  },
+};
+
 export function ImageUpload({
   bucket,
   pathPrefix,
@@ -36,6 +83,9 @@ export function ImageUpload({
   defaultImages = [],
   deleteOnRemove,
 }: UploadProps) {
+  const pathname = usePathname();
+  const locale = resolveClientLocale(pathname);
+  const copy = IMAGE_UPLOAD_COPY[locale];
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<string | null>(null);
   const [previewUrls, setPreviewUrls] = useState<string[]>(defaultImages);
@@ -67,7 +117,7 @@ export function ImageUpload({
       // Exponential backoff: 1s, 2s
       await new Promise((r) => setTimeout(r, UPLOAD_RETRY_DELAY_BASE * (attempt + 1)));
     }
-    return { success: false, error: new Error('최대 재시도 횟수 초과') };
+    return { success: false, error: new Error(copy.maxRetriesExceeded) };
   };
 
   const applyUrls = (nextUrls: string[]) => {
@@ -92,12 +142,12 @@ export function ImageUpload({
         if (currentUrls.length + newUrls.length >= maxFiles) break;
 
         if (bucket === 'artworks') {
-          setUploadProgress(`이미지 ${fileIdx + 1}/${files.length}: 최적화 중...`);
+          setUploadProgress(copy.optimizing(fileIdx + 1, files.length));
           const optimizedFile = await optimizeArtworkImage(file);
           const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.webp`;
           const filePath = `${pathPrefix}/${fileName}`;
 
-          setUploadProgress(`이미지 ${fileIdx + 1}/${files.length}: 업로드 중...`);
+          setUploadProgress(copy.uploading(fileIdx + 1, files.length));
           const uploadResult = await uploadWithRetry(filePath, optimizedFile);
           if (!uploadResult.success) {
             throw uploadResult.error;
@@ -114,13 +164,13 @@ export function ImageUpload({
           continue;
         }
 
-        setUploadProgress(`이미지 ${fileIdx + 1}/${files.length}: 최적화 중...`);
+        setUploadProgress(copy.optimizing(fileIdx + 1, files.length));
         const optimizedFile = await optimizeImage(file);
         const fileExt = optimizedFile.name.split('.').pop();
         const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
         const filePath = `${pathPrefix}/${fileName}`;
 
-        setUploadProgress(`이미지 ${fileIdx + 1}/${files.length}: 업로드 중...`);
+        setUploadProgress(copy.uploading(fileIdx + 1, files.length));
         const uploadResult = await uploadWithRetry(filePath, optimizedFile);
 
         if (!uploadResult.success) {
@@ -146,7 +196,7 @@ export function ImageUpload({
       if (uploadedPaths.length > 0) {
         await supabase.storage.from(bucket).remove(uploadedPaths);
       }
-      toast.error('이미지 업로드에 실패했습니다. 잠시 후 다시 시도해주세요.');
+      toast.error(copy.uploadFailed);
     } finally {
       setUploading(false);
       setUploadProgress(null);
@@ -206,7 +256,7 @@ export function ImageUpload({
       const removalPaths = [path];
       const { error } = await supabase.storage.from(bucket).remove(removalPaths);
       if (error) {
-        toast.error('이미지 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.');
+        toast.error(copy.removeFailed);
         return;
       }
     }
@@ -219,7 +269,7 @@ export function ImageUpload({
     setLightboxData({
       images: currentUrls,
       initialIndex: index,
-      alt: `이미지 ${index + 1}`,
+      alt: copy.imageAlt(index + 1),
     });
     setLightboxOpen(true);
   };
@@ -246,11 +296,11 @@ export function ImageUpload({
                 }}
                 role="button"
                 tabIndex={0}
-                aria-label="이미지 확대하기"
+                aria-label={copy.zoomImage}
               >
                 <SafeImage
                   src={previewSrc}
-                  alt="Preview"
+                  alt={copy.previewAlt}
                   fill
                   className="object-cover"
                   sizes="128px"
@@ -312,7 +362,7 @@ export function ImageUpload({
                     d="M12 4v16m8-8H4"
                   />
                 </svg>
-                <span className="text-xs text-gray-500">이미지 추가</span>
+                <span className="text-xs text-gray-500">{copy.addImage}</span>
               </>
             )}
           </div>
@@ -328,9 +378,7 @@ export function ImageUpload({
         multiple={maxFiles > 1}
       />
 
-      <p className="text-xs text-gray-500">
-        * 최대 {maxFiles}장, 업로드 시 자동 최적화 (WebP, 작품 이미지는 동적 리사이징)
-      </p>
+      <p className="text-xs text-gray-500">{copy.footer(maxFiles)}</p>
 
       {lightboxData && (
         <ArtworkLightbox

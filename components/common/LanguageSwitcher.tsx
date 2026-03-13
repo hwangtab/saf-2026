@@ -25,7 +25,7 @@ export default function LanguageSwitcher({ className }: LanguageSwitcherProps) {
           'px-2 py-1 rounded transition-colors',
           locale === 'ko' ? 'font-bold text-primary' : 'text-current opacity-60 hover:opacity-100'
         )}
-        aria-label="한국어로 전환"
+        aria-label={locale === 'en' ? 'Switch to Korean' : '한국어로 전환'}
         aria-current={locale === 'ko' ? 'true' : undefined}
       >
         KO

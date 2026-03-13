@@ -2,6 +2,7 @@
 
 import { Link } from '@/i18n/navigation';
 import { useSearchParams } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import { cn } from '@/lib/utils';
 
 type PaginationProps = {
@@ -17,8 +18,26 @@ export function Pagination({
   totalPages,
   totalItems,
   baseUrl,
-  itemName = '항목',
+  itemName,
 }: PaginationProps) {
+  const locale = useLocale();
+  const copy =
+    locale === 'en'
+      ? {
+          itemName: 'items',
+          total: 'Total',
+          previous: 'Previous',
+          next: 'Next',
+          navAria: 'Pagination',
+        }
+      : {
+          itemName: '항목',
+          total: '총',
+          previous: '이전',
+          next: '다음',
+          navAria: '페이지네이션',
+        };
+  const resolvedItemName = itemName ?? copy.itemName;
   const searchParams = useSearchParams();
 
   if (totalPages <= 1) return null;
@@ -69,21 +88,21 @@ export function Pagination({
   return (
     <div className="flex flex-col items-center gap-3 py-4 sm:flex-row sm:justify-between">
       <p className="text-sm text-gray-500">
-        총 {totalItems.toLocaleString()}개 {itemName}
+        {copy.total} {totalItems.toLocaleString()} {resolvedItemName}
       </p>
 
-      <nav className="flex items-center gap-1" aria-label="페이지네이션">
+      <nav className="flex items-center gap-1" aria-label={copy.navAria}>
         {/* 이전 버튼 */}
         {currentPage > 1 ? (
           <Link
             href={getPageUrl(currentPage - 1)}
             className="flex h-8 items-center justify-center rounded-md border border-gray-300 bg-white px-3 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
-            이전
+            {copy.previous}
           </Link>
         ) : (
           <span className="flex h-8 cursor-not-allowed items-center justify-center rounded-md border border-gray-200 bg-gray-50 px-3 text-sm font-medium text-gray-400">
-            이전
+            {copy.previous}
           </span>
         )}
 
@@ -127,11 +146,11 @@ export function Pagination({
             href={getPageUrl(currentPage + 1)}
             className="flex h-8 items-center justify-center rounded-md border border-gray-300 bg-white px-3 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
-            다음
+            {copy.next}
           </Link>
         ) : (
           <span className="flex h-8 cursor-not-allowed items-center justify-center rounded-md border border-gray-200 bg-gray-50 px-3 text-sm font-medium text-gray-400">
-            다음
+            {copy.next}
           </span>
         )}
       </nav>

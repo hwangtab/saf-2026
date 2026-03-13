@@ -1,9 +1,11 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import { Profile, UserSortKey, SortDirection } from '@/types/admin';
 import Button from '@/components/ui/Button';
 import SafeAvatarImage from '@/components/common/SafeAvatarImage';
 import { AdminEmptyState, AdminSelect } from '@/app/admin/_components/admin-ui';
+import { resolveClientLocale } from '@/lib/client-locale';
 
 interface UserTableProps {
   users: Profile[];
@@ -30,14 +32,79 @@ export function UserTable({
   onRoleChange,
   processingId,
 }: UserTableProps) {
+  const pathname = usePathname();
+  const locale = resolveClientLocale(pathname);
+  const copy =
+    locale === 'en'
+      ? {
+          sortAscending: (label: string) => `Sort ${label} ascending`,
+          sortDescending: (label: string) => `Sort ${label} descending`,
+          user: 'User',
+          statusRole: 'Status/Role',
+          application: 'Application',
+          joinedAt: 'Joined',
+          manage: 'Manage',
+          emptyTitle: 'No search results',
+          emptyDescription: 'Try a different keyword.',
+          artistApplicant: 'Artist applicant',
+          exhibitorApplicant: 'Exhibitor applicant',
+          active: 'Active',
+          pending: 'Pending',
+          suspended: 'Suspended',
+          activeHint: 'Can sign in and use all features',
+          pendingHint: 'Waiting for application review',
+          suspendedHint: 'Sign-in is blocked',
+          roleUser: 'User',
+          roleArtist: 'Artist',
+          roleExhibitor: 'Exhibitor',
+          roleAdmin: 'Admin',
+          reviewQueueHint: 'Approve/reject from the review queue.',
+          noApplication: 'No application',
+          approve: 'Approve',
+          rejectApplication: 'Reject application',
+          suspendAccount: 'Suspend account',
+          reactivate: 'Reactivate',
+          details: 'Details',
+        }
+      : {
+          sortAscending: (label: string) => `${label} 오름차순 정렬`,
+          sortDescending: (label: string) => `${label} 내림차순 정렬`,
+          user: '사용자',
+          statusRole: '상태/권한',
+          application: '신청 정보',
+          joinedAt: '가입일',
+          manage: '관리',
+          emptyTitle: '검색 결과가 없습니다',
+          emptyDescription: '다른 검색어로 다시 시도해보세요.',
+          artistApplicant: '작가 신청',
+          exhibitorApplicant: '출품자 신청',
+          active: '활성',
+          pending: '대기',
+          suspended: '정지',
+          activeHint: '로그인 및 모든 기능 이용 가능',
+          pendingHint: '작가 신청 대기 중인 상태',
+          suspendedHint: '로그인이 차단된 사용자',
+          roleUser: '일반 사용자',
+          roleArtist: '작가',
+          roleExhibitor: '출품자',
+          roleAdmin: '관리자',
+          reviewQueueHint: '심사 큐에서 승인/거절합니다.',
+          noApplication: '신청 정보 없음',
+          approve: '승인',
+          rejectApplication: '신청 거절',
+          suspendAccount: '계정 정지',
+          reactivate: '재활성화',
+          details: '상세',
+        };
+
   const getSortArrow = (key: UserSortKey) => {
     if (sortKey !== key) return '↕';
     return sortDirection === 'asc' ? '↑' : '↓';
   };
 
   const getSortAriaLabel = (label: string, key: UserSortKey) => {
-    if (sortKey !== key) return `${label} 오름차순 정렬`;
-    return sortDirection === 'asc' ? `${label} 내림차순 정렬` : `${label} 오름차순 정렬`;
+    if (sortKey !== key) return copy.sortAscending(label);
+    return sortDirection === 'asc' ? copy.sortDescending(label) : copy.sortAscending(label);
   };
 
   return (
@@ -53,9 +120,9 @@ export function UserTable({
                 type="button"
                 onClick={() => onSort('user')}
                 className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
-                aria-label={getSortAriaLabel('사용자', 'user')}
+                aria-label={getSortAriaLabel(copy.user, 'user')}
               >
-                사용자
+                {copy.user}
                 <span className="text-[11px] text-gray-400">{getSortArrow('user')}</span>
               </button>
             </th>
@@ -67,9 +134,9 @@ export function UserTable({
                 type="button"
                 onClick={() => onSort('status_role')}
                 className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
-                aria-label={getSortAriaLabel('상태/권한', 'status_role')}
+                aria-label={getSortAriaLabel(copy.statusRole, 'status_role')}
               >
-                상태/권한
+                {copy.statusRole}
                 <span className="text-[11px] text-gray-400">{getSortArrow('status_role')}</span>
               </button>
             </th>
@@ -81,9 +148,9 @@ export function UserTable({
                 type="button"
                 onClick={() => onSort('application')}
                 className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
-                aria-label={getSortAriaLabel('신청 정보', 'application')}
+                aria-label={getSortAriaLabel(copy.application, 'application')}
               >
-                신청 정보
+                {copy.application}
                 <span className="text-[11px] text-gray-400">{getSortArrow('application')}</span>
               </button>
             </th>
@@ -95,14 +162,14 @@ export function UserTable({
                 type="button"
                 onClick={() => onSort('created_at')}
                 className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
-                aria-label={getSortAriaLabel('가입일', 'created_at')}
+                aria-label={getSortAriaLabel(copy.joinedAt, 'created_at')}
               >
-                가입일
+                {copy.joinedAt}
                 <span className="text-[11px] text-gray-400">{getSortArrow('created_at')}</span>
               </button>
             </th>
             <th scope="col" className="relative px-6 py-3">
-              <span className="sr-only">관리</span>
+              <span className="sr-only">{copy.manage}</span>
             </th>
           </tr>
         </thead>
@@ -110,10 +177,7 @@ export function UserTable({
           {users.length === 0 ? (
             <tr>
               <td colSpan={5} className="px-6 py-0">
-                <AdminEmptyState
-                  title="검색 결과가 없습니다"
-                  description="다른 검색어로 다시 시도해보세요."
-                />
+                <AdminEmptyState title={copy.emptyTitle} description={copy.emptyDescription} />
               </td>
             </tr>
           ) : (
@@ -153,7 +217,9 @@ export function UserTable({
                                 : 'bg-emerald-50 text-emerald-700 ring-emerald-600/20'
                             }`}
                           >
-                            {user.exhibitorApplication ? '출품자 신청' : '작가 신청'}
+                            {user.exhibitorApplication
+                              ? copy.exhibitorApplicant
+                              : copy.artistApplicant}
                           </span>
                         </div>
                       )}
@@ -181,16 +247,16 @@ export function UserTable({
                         }`}
                       />
                       {user.status === 'active'
-                        ? '활성'
+                        ? copy.active
                         : user.status === 'pending'
-                          ? '대기'
-                          : '정지'}
+                          ? copy.pending
+                          : copy.suspended}
                       <span className="invisible group-hover:visible absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-32 px-2 py-1 text-[10px] font-normal text-white bg-slate-800 rounded shadow-lg text-center z-50">
                         {user.status === 'active'
-                          ? '로그인 및 모든 기능 이용 가능'
+                          ? copy.activeHint
                           : user.status === 'pending'
-                            ? '작가 신청 대기 중인 상태'
-                            : '로그인이 차단된 사용자'}
+                            ? copy.pendingHint
+                            : copy.suspendedHint}
                         <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800" />
                       </span>
                     </span>
@@ -202,15 +268,13 @@ export function UserTable({
                       onChange={(e) => onRoleChange(user, e.target.value)}
                       disabled={processingId === user.id}
                     >
-                      <option value="user">일반 사용자</option>
-                      <option value="artist">작가</option>
-                      <option value="exhibitor">출품자</option>
-                      <option value="admin">관리자</option>
+                      <option value="user">{copy.roleUser}</option>
+                      <option value="artist">{copy.roleArtist}</option>
+                      <option value="exhibitor">{copy.roleExhibitor}</option>
+                      <option value="admin">{copy.roleAdmin}</option>
                     </AdminSelect>
                     {user.status === 'pending' && (
-                      <span className="text-[11px] text-amber-700">
-                        심사 큐에서 승인/거절합니다.
-                      </span>
+                      <span className="text-[11px] text-amber-700">{copy.reviewQueueHint}</span>
                     )}
                   </div>
                 </td>
@@ -234,16 +298,19 @@ export function UserTable({
                       </div>
                     </div>
                   ) : (
-                    <span className="text-xs text-gray-400 italic">신청 정보 없음</span>
+                    <span className="text-xs text-gray-400 italic">{copy.noApplication}</span>
                   )}
                 </td>
                 <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {user.created_at
-                    ? new Date(user.created_at).toLocaleDateString('ko-KR', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      })
+                    ? new Date(user.created_at).toLocaleDateString(
+                        locale === 'en' ? 'en-US' : 'ko-KR',
+                        {
+                          year: 'numeric',
+                          month: locale === 'en' ? 'short' : 'long',
+                          day: 'numeric',
+                        }
+                      )
                     : '-'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -255,7 +322,7 @@ export function UserTable({
                         onClick={() => onApprove(user.id)}
                         disabled={processingId === user.id}
                       >
-                        승인
+                        {copy.approve}
                       </Button>
                     )}
                     {user.status !== 'suspended' && (
@@ -266,7 +333,7 @@ export function UserTable({
                         disabled={processingId === user.id}
                         className="text-red-600 hover:text-red-900 hover:bg-red-50 disabled:opacity-50"
                       >
-                        {user.status === 'pending' ? '신청 거절' : '계정 정지'}
+                        {user.status === 'pending' ? copy.rejectApplication : copy.suspendAccount}
                       </Button>
                     )}
                     {user.status === 'suspended' && (
@@ -277,7 +344,7 @@ export function UserTable({
                         disabled={processingId === user.id}
                         className="text-blue-700 hover:text-blue-900 hover:bg-blue-50 disabled:opacity-50"
                       >
-                        재활성화
+                        {copy.reactivate}
                       </Button>
                     )}
                     <Button
@@ -286,7 +353,7 @@ export function UserTable({
                       onClick={() => onSelectUser(user)}
                       className="text-gray-500 hover:text-gray-900 hover:bg-gray-100"
                     >
-                      상세
+                      {copy.details}
                     </Button>
                   </div>
                 </td>

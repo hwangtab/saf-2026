@@ -1,3 +1,6 @@
+'use client';
+
+import { useLocale } from 'next-intl';
 import { cn } from '@/lib/utils';
 
 interface SupportMessageProps {
@@ -5,6 +8,22 @@ interface SupportMessageProps {
 }
 
 export default function SupportMessage({ className }: SupportMessageProps) {
+  const locale = useLocale();
+  const copy =
+    locale === 'en'
+      ? {
+          titleTop: 'By purchasing this artwork,',
+          titleBottom: "you support artists' creative work",
+          bodyTop: 'SAF 2026 is an exhibition',
+          bodyBottom: 'addressing predatory lending issues for artists.',
+        }
+      : {
+          titleTop: '이 작품 구매로',
+          titleBottom: '예술인의 창작 활동을 응원합니다',
+          bodyTop: '씨앗페 2026은 예술인의 고리대금',
+          bodyBottom: '문제 해결을 위한 전시입니다',
+        };
+
   return (
     <div
       className={cn(
@@ -17,14 +36,14 @@ export default function SupportMessage({ className }: SupportMessageProps) {
 
         <div className="space-y-1">
           <h3 className="font-bold text-gray-800 text-lg break-keep">
-            이 작품 구매로
+            {copy.titleTop}
             <br />
-            예술인의 창작 활동을 응원합니다
+            {copy.titleBottom}
           </h3>
           <p className="text-sm text-gray-500 break-keep opacity-80 mt-2">
-            씨앗페 2026은 예술인의 고리대금
+            {copy.bodyTop}
             <br />
-            문제 해결을 위한 전시입니다
+            {copy.bodyBottom}
           </p>
         </div>
       </div>

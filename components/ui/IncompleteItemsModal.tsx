@@ -1,7 +1,9 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
+import { resolveClientLocale } from '@/lib/client-locale';
 
 export type IncompleteItem = {
   label: string;
@@ -26,11 +28,24 @@ export function IncompleteItemsModal({
   items,
   onSelectItem,
 }: IncompleteItemsModalProps) {
+  const pathname = usePathname();
+  const locale = resolveClientLocale(pathname);
+  const copy =
+    locale === 'en'
+      ? {
+          listAria: 'Incomplete items list',
+          close: 'Review and go back',
+        }
+      : {
+          listAria: '미완료 항목 목록',
+          close: '확인하고 돌아가기',
+        };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title} className="max-w-lg">
       <div className="space-y-4">
         <p className="text-sm text-gray-600">{description}</p>
-        <ul className="space-y-2" aria-label="미완료 항목 목록">
+        <ul className="space-y-2" aria-label={copy.listAria}>
           {items.map((item) => (
             <li
               key={`${item.label}-${item.reason}`}
@@ -56,7 +71,7 @@ export function IncompleteItemsModal({
         </ul>
         <div className="pt-2">
           <Button type="button" onClick={onClose} variant="secondary" className="w-full">
-            확인하고 돌아가기
+            {copy.close}
           </Button>
         </div>
       </div>

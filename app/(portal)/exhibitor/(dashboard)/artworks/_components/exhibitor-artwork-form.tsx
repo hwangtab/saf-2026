@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
@@ -20,6 +20,141 @@ import {
   AdminFieldLabel,
 } from '@/app/admin/_components/admin-ui';
 import { EditionType } from '@/types';
+import { resolveClientLocale } from '@/lib/client-locale';
+
+type LocaleCode = 'ko' | 'en';
+
+const ARTWORK_FORM_COPY: Record<
+  LocaleCode,
+  {
+    syncSuccess: (action: string) => string;
+    syncPendingAuth: (action: string) => string;
+    syncFailed: (action: string) => string;
+    syncContinuing: (action: string) => string;
+    actionSave: string;
+    actionCreate: string;
+    actionSaveImage: string;
+    missingRepresentativeImageWarning: string;
+    saveError: string;
+    imageSaveError: string;
+    artworkImages: string;
+    saving: string;
+    imageGuide: string;
+    artistCreatedNotice: string;
+    editTitle: string;
+    createTitle: string;
+    artworkTitle: string;
+    artist: string;
+    addNewArtist: string;
+    searchArtistPlaceholder: string;
+    selectArtist: string;
+    unnamed: string;
+    price: string;
+    size: string;
+    material: string;
+    year: string;
+    edition: string;
+    editionType: string;
+    editionUnique: string;
+    editionLimited: string;
+    editionOpen: string;
+    editionLimit: string;
+    editionLimitPlaceholder: string;
+    artistNote: string;
+    backToList: string;
+    save: string;
+    create: string;
+  }
+> = {
+  ko: {
+    syncSuccess: (action: string) => `작품 ${action}이 완료되었습니다.`,
+    syncPendingAuth: (action: string) =>
+      `작품 ${action}은 완료되었습니다. 온라인 구매 정보 반영이 지연될 수 있습니다.`,
+    syncFailed: (action: string) =>
+      `작품 ${action}은 완료되었습니다. 온라인 구매 정보 반영이 지연되고 있습니다.`,
+    syncContinuing: (action: string) =>
+      `작품 ${action}은 완료되었습니다. 온라인 구매 정보 반영을 계속 진행합니다.`,
+    actionSave: '저장',
+    actionCreate: '등록',
+    actionSaveImage: '이미지 저장',
+    missingRepresentativeImageWarning:
+      '작품 등록은 완료되었습니다. 온라인 구매 페이지에 노출할 이미지를 지금 업로드해 주세요.',
+    saveError: '저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+    imageSaveError: '이미지 저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+    artworkImages: '작품 이미지',
+    saving: '저장 중...',
+    imageGuide: '이미지 등록은 작품 정보를 먼저 저장한 후에 가능합니다.',
+    artistCreatedNotice:
+      '새 작가가 등록되었습니다. 아래에서 바로 선택해 작품 등록을 이어서 진행하세요.',
+    editTitle: '작품 정보 수정',
+    createTitle: '새 작품 등록',
+    artworkTitle: '작품명',
+    artist: '작가',
+    addNewArtist: '+ 새 작가 등록',
+    searchArtistPlaceholder: '작가명 검색...',
+    selectArtist: '작가 선택...',
+    unnamed: '(이름 없음)',
+    price: '가격',
+    size: '크기',
+    material: '재료',
+    year: '제작연도',
+    edition: '에디션 (선택)',
+    editionType: '에디션 유형',
+    editionUnique: 'Unique (1점)',
+    editionLimited: 'Limited (한정판)',
+    editionOpen: 'Open (무제한)',
+    editionLimit: '에디션 수량',
+    editionLimitPlaceholder: '예: 50',
+    artistNote: '작가 노트',
+    backToList: '목록으로',
+    save: '저장',
+    create: '등록',
+  },
+  en: {
+    syncSuccess: (action: string) => `Artwork ${action} completed.`,
+    syncPendingAuth: (action: string) =>
+      `Artwork ${action} completed. Online purchase info may be delayed.`,
+    syncFailed: (action: string) =>
+      `Artwork ${action} completed. Online purchase info sync is currently delayed.`,
+    syncContinuing: (action: string) =>
+      `Artwork ${action} completed. Online purchase info sync is continuing.`,
+    actionSave: 'save',
+    actionCreate: 'creation',
+    actionSaveImage: 'image save',
+    missingRepresentativeImageWarning:
+      'Artwork was created, but please upload an image now to show it on the online purchase page.',
+    saveError: 'An error occurred while saving. Please try again shortly.',
+    imageSaveError: 'An error occurred while saving image. Please try again shortly.',
+    artworkImages: 'Artwork images',
+    saving: 'Saving...',
+    imageGuide: 'Images can be uploaded after artwork information is saved first.',
+    artistCreatedNotice:
+      'A new artist has been created. Select it below and continue registering artwork.',
+    editTitle: 'Edit artwork information',
+    createTitle: 'Create new artwork',
+    artworkTitle: 'Artwork title',
+    artist: 'Artist',
+    addNewArtist: '+ Add new artist',
+    searchArtistPlaceholder: 'Search artist name...',
+    selectArtist: 'Select artist...',
+    unnamed: '(Unnamed)',
+    price: 'Price',
+    size: 'Size',
+    material: 'Material',
+    year: 'Year',
+    edition: 'Edition (optional)',
+    editionType: 'Edition type',
+    editionUnique: 'Unique (1 item)',
+    editionLimited: 'Limited',
+    editionOpen: 'Open',
+    editionLimit: 'Edition quantity',
+    editionLimitPlaceholder: 'e.g., 50',
+    artistNote: 'Artist note',
+    backToList: 'Back to list',
+    save: 'Save',
+    create: 'Create',
+  },
+};
 
 type Artist = {
   id: string;
@@ -59,6 +194,9 @@ export function ExhibitorArtworkForm({
   initialArtistId,
   artistJustCreated = false,
 }: ExhibitorArtworkFormProps) {
+  const pathname = usePathname();
+  const locale = resolveClientLocale(pathname);
+  const copy = ARTWORK_FORM_COPY[locale];
   const router = useRouter();
   const toast = useToast();
   const [saving, setSaving] = useState(false);
@@ -81,27 +219,31 @@ export function ExhibitorArtworkForm({
     return artists.filter((artist) => matchesSearchText(artist.name_ko, normalizedQuery));
   }, [artists, artistQuery]);
 
+  const isMissingRepresentativeImageReason = (reason: string | null | undefined) => {
+    if (!reason) return false;
+    return (
+      reason.includes('대표 이미지') ||
+      /representative image|primary image|main image|cover image/i.test(reason)
+    );
+  };
+
   const notifyCafe24SyncResult = (sync: Cafe24SyncFeedback, actionLabel: string) => {
     if (sync.status === 'synced') {
-      toast.success(`작품 ${actionLabel}이 완료되었습니다.`);
+      toast.success(copy.syncSuccess(actionLabel));
       return;
     }
 
     if (sync.status === 'pending_auth') {
-      toast.warning(
-        `작품 ${actionLabel}은 완료되었습니다. 온라인 구매 정보 반영이 지연될 수 있습니다.`
-      );
+      toast.warning(copy.syncPendingAuth(actionLabel));
       return;
     }
 
     if (sync.status === 'failed') {
-      toast.warning(
-        `작품 ${actionLabel}은 완료되었습니다. 온라인 구매 정보 반영이 지연되고 있습니다.`
-      );
+      toast.warning(copy.syncFailed(actionLabel));
       return;
     }
 
-    toast.warning(`작품 ${actionLabel}은 완료되었습니다. 온라인 구매 정보 반영을 계속 진행합니다.`);
+    toast.warning(copy.syncContinuing(actionLabel));
   };
 
   const handleSubmit = async (formData: FormData) => {
@@ -110,7 +252,7 @@ export function ExhibitorArtworkForm({
       if (isEditing && artwork.id) {
         const result = await updateExhibitorArtwork(artwork.id, formData);
         if (result.success) {
-          notifyCafe24SyncResult(result.cafe24, '저장');
+          notifyCafe24SyncResult(result.cafe24, copy.actionSave);
         }
         router.push('/exhibitor/artworks');
       } else {
@@ -118,22 +260,20 @@ export function ExhibitorArtworkForm({
         if (result.success && result.id) {
           const missingImageWarning =
             result.cafe24.status === 'warning' &&
-            (result.cafe24.reason || '').includes('대표 이미지가 없어');
+            isMissingRepresentativeImageReason(result.cafe24.reason);
 
           if (missingImageWarning) {
-            toast.warning(
-              '작품 등록은 완료되었습니다. 온라인 구매 페이지에 노출할 이미지를 지금 업로드해 주세요.'
-            );
+            toast.warning(copy.missingRepresentativeImageWarning);
             router.push(`/exhibitor/artworks/${result.id}`);
             return;
           }
 
-          notifyCafe24SyncResult(result.cafe24, '등록');
+          notifyCafe24SyncResult(result.cafe24, copy.actionCreate);
           router.push('/exhibitor/artworks');
         }
       }
     } catch {
-      toast.error('저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      toast.error(copy.saveError);
     } finally {
       setSaving(false);
     }
@@ -146,11 +286,11 @@ export function ExhibitorArtworkForm({
     try {
       const result = await updateExhibitorArtworkImages(artwork.id, newImages);
       if (result.success) {
-        notifyCafe24SyncResult(result.cafe24, '이미지 저장');
+        notifyCafe24SyncResult(result.cafe24, copy.actionSaveImage);
       }
       router.refresh();
     } catch {
-      toast.error('이미지 저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      toast.error(copy.imageSaveError);
     } finally {
       setSavingImages(false);
     }
@@ -161,8 +301,8 @@ export function ExhibitorArtworkForm({
       {isEditing && artwork.id ? (
         <AdminCard className="p-6">
           <h2 className="mb-4 text-lg font-semibold text-slate-900">
-            작품 이미지
-            {savingImages && <span className="ml-2 text-sm text-slate-500">저장 중...</span>}
+            {copy.artworkImages}
+            {savingImages && <span className="ml-2 text-sm text-slate-500">{copy.saving}</span>}
           </h2>
           <ImageUpload
             bucket="artworks"
@@ -174,13 +314,13 @@ export function ExhibitorArtworkForm({
         </AdminCard>
       ) : (
         <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800">
-          이미지 등록은 작품 정보를 먼저 저장한 후에 가능합니다.
+          {copy.imageGuide}
         </div>
       )}
 
       {artistJustCreated && !isEditing && (
         <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-800">
-          새 작가가 등록되었습니다. 아래에서 바로 선택해 작품 등록을 이어서 진행하세요.
+          {copy.artistCreatedNotice}
         </div>
       )}
 
@@ -192,13 +332,13 @@ export function ExhibitorArtworkForm({
         className="space-y-6 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface)] p-6 shadow-sm"
       >
         <h2 className="text-lg font-semibold text-gray-900">
-          {isEditing ? '작품 정보 수정' : '새 작품 등록'}
+          {isEditing ? copy.editTitle : copy.createTitle}
         </h2>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
             <AdminFieldLabel>
-              작품명 <span className="text-red-500">*</span>
+              {copy.artworkTitle} <span className="text-red-500">*</span>
             </AdminFieldLabel>
             <AdminInput name="title" defaultValue={artwork.title} required />
           </div>
@@ -206,20 +346,20 @@ export function ExhibitorArtworkForm({
           <div>
             <div className="mb-2 flex items-center justify-between">
               <AdminFieldLabel className="mb-0">
-                작가 <span className="text-red-500">*</span>
+                {copy.artist} <span className="text-red-500">*</span>
               </AdminFieldLabel>
               <Link
                 href="/exhibitor/artists/new?returnTo=%2Fexhibitor%2Fartworks%2Fnew"
                 className="text-xs text-blue-600 hover:text-blue-800 hover:underline"
               >
-                + 새 작가 등록
+                {copy.addNewArtist}
               </Link>
             </div>
             <AdminInput
               type="text"
               value={artistQuery}
               onChange={(e) => setArtistQuery(e.target.value)}
-              placeholder="작가명 검색..."
+              placeholder={copy.searchArtistPlaceholder}
               className="mb-2"
             />
             <AdminSelect
@@ -229,10 +369,10 @@ export function ExhibitorArtworkForm({
               required
               className="w-full"
             >
-              <option value="">작가 선택...</option>
+              <option value="">{copy.selectArtist}</option>
               {filteredArtists.map((artist) => (
                 <option key={artist.id} value={artist.id}>
-                  {artist.name_ko || '(이름 없음)'}
+                  {artist.name_ko || copy.unnamed}
                 </option>
               ))}
             </AdminSelect>
@@ -240,7 +380,7 @@ export function ExhibitorArtworkForm({
 
           <div>
             <AdminFieldLabel>
-              가격 <span className="text-red-500">*</span>
+              {copy.price} <span className="text-red-500">*</span>
             </AdminFieldLabel>
             <AdminInput
               name="price"
@@ -251,12 +391,12 @@ export function ExhibitorArtworkForm({
           </div>
 
           <div>
-            <AdminFieldLabel>크기</AdminFieldLabel>
+            <AdminFieldLabel>{copy.size}</AdminFieldLabel>
             <AdminInput name="size" defaultValue={artwork.size || ''} placeholder="60x45cm" />
           </div>
 
           <div>
-            <AdminFieldLabel>재료</AdminFieldLabel>
+            <AdminFieldLabel>{copy.material}</AdminFieldLabel>
             <AdminInput
               name="material"
               defaultValue={artwork.material || ''}
@@ -265,18 +405,18 @@ export function ExhibitorArtworkForm({
           </div>
 
           <div>
-            <AdminFieldLabel>제작연도</AdminFieldLabel>
+            <AdminFieldLabel>{copy.year}</AdminFieldLabel>
             <AdminInput name="year" defaultValue={artwork.year || ''} placeholder="2026" />
           </div>
 
           <div>
-            <AdminFieldLabel>에디션 (선택)</AdminFieldLabel>
+            <AdminFieldLabel>{copy.edition}</AdminFieldLabel>
             <AdminInput name="edition" defaultValue={artwork.edition || ''} placeholder="1/10" />
           </div>
 
           <div>
             <AdminFieldLabel>
-              에디션 유형 <span className="text-red-500">*</span>
+              {copy.editionType} <span className="text-red-500">*</span>
             </AdminFieldLabel>
             <AdminSelect
               name="edition_type"
@@ -290,16 +430,16 @@ export function ExhibitorArtworkForm({
               required
               className="w-full"
             >
-              <option value="unique">Unique (1점)</option>
-              <option value="limited">Limited (한정판)</option>
-              <option value="open">Open (무제한)</option>
+              <option value="unique">{copy.editionUnique}</option>
+              <option value="limited">{copy.editionLimited}</option>
+              <option value="open">{copy.editionOpen}</option>
             </AdminSelect>
           </div>
 
           {editionType === 'limited' && (
             <div>
               <AdminFieldLabel>
-                에디션 수량 <span className="text-red-500">*</span>
+                {copy.editionLimit} <span className="text-red-500">*</span>
               </AdminFieldLabel>
               <AdminInput
                 type="number"
@@ -307,7 +447,7 @@ export function ExhibitorArtworkForm({
                 value={editionLimit}
                 onChange={(e) => setEditionLimit(e.target.value ? parseInt(e.target.value) : '')}
                 min="1"
-                placeholder="예: 50"
+                placeholder={copy.editionLimitPlaceholder}
                 required
               />
             </div>
@@ -315,16 +455,16 @@ export function ExhibitorArtworkForm({
         </div>
 
         <div>
-          <AdminFieldLabel>작가 노트</AdminFieldLabel>
+          <AdminFieldLabel>{copy.artistNote}</AdminFieldLabel>
           <AdminTextarea name="description" defaultValue={artwork.description || ''} rows={4} />
         </div>
 
         <div className="flex justify-end gap-3">
           <Button type="button" variant="white" onClick={() => router.push('/exhibitor/artworks')}>
-            목록으로
+            {copy.backToList}
           </Button>
           <Button type="submit" variant="primary" loading={saving}>
-            {isEditing ? '저장' : '등록'}
+            {isEditing ? copy.save : copy.create}
           </Button>
         </div>
       </form>

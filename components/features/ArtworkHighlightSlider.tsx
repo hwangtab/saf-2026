@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import AutoScroll from 'embla-carousel-auto-scroll';
+import { useLocale } from 'next-intl';
 import { Artwork } from '@/types';
 import ArtworkCard from '@/components/ui/ArtworkCard';
 import { Link } from '@/i18n/navigation';
@@ -14,6 +15,26 @@ interface ArtworkHighlightSliderProps {
 }
 
 export default function ArtworkHighlightSlider({ artworks }: ArtworkHighlightSliderProps) {
+  const locale = useLocale();
+  const copy =
+    locale === 'en'
+      ? {
+          title: 'Online showcase highlights',
+          viewAll: 'View all artworks',
+          play: 'Play',
+          pause: 'Pause',
+          playAria: 'Play artwork slider',
+          pauseAria: 'Pause artwork slider',
+        }
+      : {
+          title: '온라인 전시 하이라이트',
+          viewAll: '전체 작품 보기',
+          play: '재생',
+          pause: '일시정지',
+          playAria: '작품 슬라이더 재생',
+          pauseAria: '작품 슬라이더 일시정지',
+        };
+
   const [mounted, setMounted] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
 
@@ -65,13 +86,13 @@ export default function ArtworkHighlightSlider({ artworks }: ArtworkHighlightSli
         <div className="inline-flex items-center px-3 py-1 rounded-full border border-primary text-primary text-xs font-semibold tracking-wide uppercase mb-4">
           Online Showcase
         </div>
-        <SectionTitle className="mb-4">온라인 전시 하이라이트</SectionTitle>
+        <SectionTitle className="mb-4">{copy.title}</SectionTitle>
         <div className="flex justify-center">
           <Link
             href="/artworks"
             className="text-charcoal-muted hover:text-primary transition-colors font-medium border-b border-charcoal-muted/20 hover:border-primary"
           >
-            전체 작품 보기 &rarr;
+            {copy.viewAll} &rarr;
           </Link>
         </div>
         <button
@@ -79,9 +100,9 @@ export default function ArtworkHighlightSlider({ artworks }: ArtworkHighlightSli
           onClick={() => setIsPaused((prev) => !prev)}
           className="absolute right-0 top-0 rounded-md border border-charcoal/20 bg-white/80 px-3 py-1.5 text-xs font-medium text-charcoal hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           aria-pressed={isPaused}
-          aria-label={isPaused ? '작품 슬라이더 재생' : '작품 슬라이더 일시정지'}
+          aria-label={isPaused ? copy.playAria : copy.pauseAria}
         >
-          {isPaused ? '재생' : '일시정지'}
+          {isPaused ? copy.play : copy.pause}
         </button>
       </div>
 

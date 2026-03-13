@@ -4,8 +4,11 @@ import { SignOutButton } from '@/components/auth/SignOutButton';
 import { AdminBadge } from '@/app/admin/_components/admin-ui';
 import ExhibitorNav from './exhibitor-nav';
 import FeedbackButton from '@/components/feedback/FeedbackButton';
+import { getServerLocale } from '@/lib/server-locale';
 
 export default async function ExhibitorLayout({ children }: { children: React.ReactNode }) {
+  const locale = await getServerLocale();
+  const modeLabel = locale === 'en' ? 'Exhibition Partner Mode' : '전시 파트너 모드';
   const user = await requireExhibitor();
 
   return (
@@ -25,7 +28,7 @@ export default async function ExhibitorLayout({ children }: { children: React.Re
 
             <div className="flex items-center gap-2 sm:gap-3">
               <AdminBadge tone="warning" className="hidden sm:inline-flex">
-                전시 파트너 모드
+                {modeLabel}
               </AdminBadge>
               <span className="hidden max-w-[220px] truncate text-sm text-slate-500 sm:inline">
                 {user.email}

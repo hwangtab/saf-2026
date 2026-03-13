@@ -1,5 +1,8 @@
+'use client';
+
 import { memo } from 'react';
 import { Link } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 import SafeImage from '@/components/common/SafeImage';
 import type { ArtworkCardData } from '@/types';
 import { cn, resolveArtworkImageUrlForPreset } from '@/lib/utils';
@@ -34,16 +37,18 @@ const getHref = (artwork: ArtworkCardData, returnTo?: string) => {
 };
 const ARTWORK_PLACEHOLDER_IMAGE = '/images/og-image.png';
 
-const getSafeTitle = (artwork: ArtworkCardData) => artwork.title?.trim() || '무제';
-const getSafeArtist = (artwork: ArtworkCardData) => artwork.artist?.trim() || '작가 미상';
+const getSafeTitle = (artwork: ArtworkCardData, untitledLabel: string) =>
+  artwork.title?.trim() || untitledLabel;
+const getSafeArtist = (artwork: ArtworkCardData, unknownArtistLabel: string) =>
+  artwork.artist?.trim() || unknownArtistLabel;
 
 const getImageSrc = (artwork: ArtworkCardData, variant: ArtworkCardVariant) =>
   resolveArtworkImageUrlForPreset(
     artwork.images?.[0] || ARTWORK_PLACEHOLDER_IMAGE,
     variant === 'slider' ? 'slider' : 'card'
   );
-const getImageAlt = (artwork: ArtworkCardData) =>
-  `${getSafeTitle(artwork)} - ${getSafeArtist(artwork)}`;
+const getImageAlt = (artwork: ArtworkCardData, untitledLabel: string, unknownArtistLabel: string) =>
+  `${getSafeTitle(artwork, untitledLabel)} - ${getSafeArtist(artwork, unknownArtistLabel)}`;
 
 function SoldBadge({ variant }: { variant: ArtworkCardVariant }) {
   return (
@@ -67,8 +72,16 @@ function ArtworkCard({
   returnTo,
   className,
 }: ArtworkCardProps) {
+  const t = useTranslations('artworkCard');
   const config = VARIANT_CONFIG[variant];
   const isDisplayable = (value: string | undefined): value is string => Boolean(value);
+
+  const untitledLabel = t('untitled');
+  const unknownArtistLabel = t('unknownArtist');
+  const pendingInfoLabel = t('pendingInfo');
+  const isPending = (value: string | undefined) => value === '확인 중' || value === 'Pending';
+  const isInquiryPrice = (value: string | undefined) => value === '문의' || value === 'Inquiry';
+
   const showMaterial = isDisplayable(artwork.material);
   const showSize = isDisplayable(artwork.size);
 
@@ -84,7 +97,7 @@ function ArtworkCard({
         <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100 shadow-sm group-hover:shadow-xl transition-all duration-300">
           <SafeImage
             src={getImageSrc(artwork, variant)}
-            alt={getImageAlt(artwork)}
+            alt={getImageAlt(artwork, untitledLabel, unknownArtistLabel)}
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-300"
             sizes={config.imageSizes}
@@ -93,9 +106,11 @@ function ArtworkCard({
         </div>
         <div className="mt-3 px-1">
           <p className="text-sm font-medium text-charcoal truncate group-hover:text-primary transition-colors">
-            {getSafeTitle(artwork)}
+            {getSafeTitle(artwork, untitledLabel)}
           </p>
-          <p className="text-xs text-gray-500 truncate">{getSafeArtist(artwork)}</p>
+          <p className="text-xs text-gray-500 truncate">
+            {getSafeArtist(artwork, unknownArtistLabel)}
+          </p>
           <p className="text-sm font-semibold text-charcoal mt-1">{artwork.price}</p>
         </div>
       </Link>
@@ -115,7 +130,7 @@ function ArtworkCard({
           <div className="absolute inset-0 shimmer-loading" />
           <SafeImage
             src={getImageSrc(artwork, variant)}
-            alt={getImageAlt(artwork)}
+            alt={getImageAlt(artwork, untitledLabel, unknownArtistLabel)}
             loading="lazy"
             fill
             className="object-cover transform transition-transform duration-300 group-hover:scale-105"
@@ -141,7 +156,7 @@ function ArtworkCard({
                 : 'text-charcoal group-hover:text-primary'
             )}
           >
-            {getSafeTitle(artwork)}
+            {getSafeTitle(artwork, untitledLabel)}
           </h2>
           <p
             className={cn(
@@ -149,7 +164,7 @@ function ArtworkCard({
               theme === 'dark' ? 'text-white/75' : 'text-charcoal-muted'
             )}
           >
-            {getSafeArtist(artwork)}
+            {getSafeArtist(artwork, unknownArtistLabel)}
           </p>
           <p
             className={cn(
@@ -158,9 +173,8 @@ function ArtworkCard({
             )}
           >
             {(() => {
-              const isPending = (v: string | undefined) => v === '확인 중';
               if (isPending(artwork.material) && isPending(artwork.size)) {
-                return '상세 정보 준비 중';
+                return pendingInfoLabel;
               }
               if (showMaterial || showSize) {
                 return (
@@ -175,7 +189,7 @@ function ArtworkCard({
             })()}
           </p>
 
-          {artwork.price && artwork.price !== '문의' ? (
+          {artwork.price && !isInquiryPrice(artwork.price) ? (
             <p
               className={cn(
                 'text-sm font-semibold mt-1',

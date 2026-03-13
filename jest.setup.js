@@ -32,9 +32,9 @@ jest.mock('next-intl', () => ({
 jest.mock('@/i18n/navigation', () => {
   const React = require('react');
   return {
-    Link: React.forwardRef(({ href, children, ...props }, ref) =>
-      React.createElement('a', { href, ref, ...props }, children)
-    ),
+    Link: React.forwardRef(function MockLink({ href, children, ...props }, ref) {
+      return React.createElement('a', { href, ref, ...props }, children);
+    }),
     usePathname: () => '/',
     useRouter: () => ({
       push: jest.fn(),

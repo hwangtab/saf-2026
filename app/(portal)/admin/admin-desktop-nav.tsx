@@ -2,11 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { adminNavGroups } from './_components/admin-nav-items';
+import { getAdminNavGroups } from './_components/admin-nav-items';
 import { NavDropdown } from './_components/NavDropdown';
+import { resolveClientLocale } from '@/lib/client-locale';
 
 export function AdminDesktopNav() {
   const pathname = usePathname();
+  const locale = resolveClientLocale(pathname);
+  const adminNavGroups = getAdminNavGroups(locale);
 
   return (
     <div className="hidden xl:ml-6 xl:flex xl:items-center xl:gap-3">

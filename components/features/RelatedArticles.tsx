@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import { useLocale } from 'next-intl';
 import type { Article } from '@/content/artist-articles';
 
 interface RelatedArticlesProps {
@@ -6,6 +9,8 @@ interface RelatedArticlesProps {
 }
 
 export default function RelatedArticles({ articles }: RelatedArticlesProps) {
+  const locale = useLocale();
+
   if (!articles || articles.length === 0) {
     return null;
   }
@@ -13,7 +18,7 @@ export default function RelatedArticles({ articles }: RelatedArticlesProps) {
   return (
     <section className="bg-gray-50 p-6 rounded-xl">
       <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">
-        작가 관련 자료
+        {locale === 'en' ? 'Related materials' : '작가 관련 자료'}
       </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

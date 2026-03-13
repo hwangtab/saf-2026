@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import { usePathname } from 'next/navigation';
 import SafeImage from '@/components/common/SafeImage';
 import { deleteExhibitorArtwork } from '@/app/actions/exhibitor-artworks';
 import { useToast } from '@/lib/hooks/useToast';
@@ -15,8 +16,88 @@ import {
   AdminEmptyState,
   AdminInput,
 } from '@/app/admin/_components/admin-ui';
+import { resolveClientLocale } from '@/lib/client-locale';
 
 const ArtworkLightbox = dynamic(() => import('@/components/ui/ArtworkLightbox'), { ssr: false });
+
+type LocaleCode = 'ko' | 'en';
+
+const EXHIBITOR_ARTWORK_LIST_COPY: Record<
+  LocaleCode,
+  {
+    deleteConfirm: string;
+    deleteSuccess: string;
+    deleteError: string;
+    title: string;
+    count: (count: number) => string;
+    searchArtwork: string;
+    searchPlaceholder: string;
+    artworkInfo: string;
+    price: string;
+    status: string;
+    manage: string;
+    noSearchResult: string;
+    noArtwork: string;
+    noSearchResultDescription: string;
+    noArtworkDescription: string;
+    unknownArtist: string;
+    available: string;
+    reserved: string;
+    sold: string;
+    edit: string;
+    deleting: string;
+    delete: string;
+  }
+> = {
+  ko: {
+    deleteConfirm: '정말 이 작품을 삭제하시겠습니까?',
+    deleteSuccess: '작품을 삭제했습니다.',
+    deleteError: '삭제 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+    title: '등록된 작품',
+    count: (count: number) => `${count}개`,
+    searchArtwork: '작품 검색',
+    searchPlaceholder: '작품명 또는 작가명 검색...',
+    artworkInfo: '작품 정보',
+    price: '가격',
+    status: '상태',
+    manage: '관리',
+    noSearchResult: '검색 결과가 없습니다.',
+    noArtwork: '등록된 작품이 없습니다.',
+    noSearchResultDescription: '다른 검색어로 시도해보세요.',
+    noArtworkDescription: '새로운 작품을 등록하여 전시를 시작해보세요.',
+    unknownArtist: '작가 미상',
+    available: '판매 중',
+    reserved: '예약됨',
+    sold: '판매 완료',
+    edit: '편집',
+    deleting: '삭제 중...',
+    delete: '삭제',
+  },
+  en: {
+    deleteConfirm: 'Are you sure you want to delete this artwork?',
+    deleteSuccess: 'Artwork deleted.',
+    deleteError: 'An error occurred while deleting. Please try again shortly.',
+    title: 'Registered artworks',
+    count: (count: number) => `${count}`,
+    searchArtwork: 'Search artworks',
+    searchPlaceholder: 'Search by artwork title or artist name...',
+    artworkInfo: 'Artwork info',
+    price: 'Price',
+    status: 'Status',
+    manage: 'Manage',
+    noSearchResult: 'No search results.',
+    noArtwork: 'No artworks registered.',
+    noSearchResultDescription: 'Try a different keyword.',
+    noArtworkDescription: 'Register a new artwork to start your exhibition.',
+    unknownArtist: 'Unknown artist',
+    available: 'Available',
+    reserved: 'Reserved',
+    sold: 'Sold',
+    edit: 'Edit',
+    deleting: 'Deleting...',
+    delete: 'Delete',
+  },
+};
 
 type ArtworkItem = {
   id: string;
@@ -29,6 +110,9 @@ type ArtworkItem = {
 };
 
 export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
+  const pathname = usePathname();
+  const locale = resolveClientLocale(pathname);
+  const copy = EXHIBITOR_ARTWORK_LIST_COPY[locale];
   const toast = useToast();
   const [query, setQuery] = useState('');
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -59,13 +143,13 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('정말 이 작품을 삭제하시겠습니까?')) return;
+    if (!confirm(copy.deleteConfirm)) return;
     setIsDeleting(id);
     try {
       await deleteExhibitorArtwork(id);
-      toast.success('작품이 삭제되었습니다.');
+      toast.success(copy.deleteSuccess);
     } catch {
-      toast.error('삭제 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      toast.error(copy.deleteError);
     } finally {
       setIsDeleting(null);
     }
@@ -76,13 +160,13 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
       <AdminCard className="overflow-hidden">
         <AdminCardHeader>
           <div className="flex items-center gap-3">
-            <h2 className="text-lg font-semibold text-gray-900">등록된 작품</h2>
-            <AdminBadge tone="info">{filtered.length}개</AdminBadge>
+            <h2 className="text-lg font-semibold text-gray-900">{copy.title}</h2>
+            <AdminBadge tone="info">{copy.count(filtered.length)}</AdminBadge>
           </div>
 
           <div className="relative max-w-sm w-full">
             <label htmlFor="search-artworks" className="sr-only">
-              작품 검색
+              {copy.searchArtwork}
             </label>
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <svg
@@ -100,7 +184,7 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
             </div>
             <AdminInput
               id="search-artworks"
-              placeholder="작품명 또는 작가명 검색..."
+              placeholder={copy.searchPlaceholder}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               className="h-10 border-0 py-2 pl-10"
@@ -113,16 +197,16 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
             <thead className="bg-gray-50/50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  작품 정보
+                  {copy.artworkInfo}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  가격
+                  {copy.price}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  상태
+                  {copy.status}
                 </th>
                 <th className="relative px-6 py-3">
-                  <span className="sr-only">관리</span>
+                  <span className="sr-only">{copy.manage}</span>
                 </th>
               </tr>
             </thead>
@@ -131,11 +215,9 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
                 <tr>
                   <td colSpan={4} className="px-6 py-0">
                     <AdminEmptyState
-                      title={query ? '검색 결과가 없습니다.' : '등록된 작품이 없습니다.'}
+                      title={query ? copy.noSearchResult : copy.noArtwork}
                       description={
-                        query
-                          ? '다른 검색어로 시도해보세요.'
-                          : '새로운 작품을 등록하여 전시를 시작해보세요.'
+                        query ? copy.noSearchResultDescription : copy.noArtworkDescription
                       }
                     />
                   </td>
@@ -182,7 +264,7 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
                         <div className="ml-4">
                           <div className="font-medium text-gray-900">{artwork.title}</div>
                           <div className="text-sm text-gray-500">
-                            {artwork.artists?.name_ko || '작가 미상'}
+                            {artwork.artists?.name_ko || copy.unknownArtist}
                           </div>
                         </div>
                       </div>
@@ -199,10 +281,10 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
                         }
                       >
                         {artwork.status === 'available'
-                          ? '판매 중'
+                          ? copy.available
                           : artwork.status === 'reserved'
-                            ? '예약됨'
-                            : '판매 완료'}
+                            ? copy.reserved
+                            : copy.sold}
                       </AdminBadge>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -211,14 +293,14 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
                           href={`/exhibitor/artworks/${artwork.id}`}
                           className="rounded-md px-3 py-1.5 text-gray-500 transition-colors hover:bg-indigo-50 hover:text-indigo-600"
                         >
-                          편집
+                          {copy.edit}
                         </Link>
                         <button
                           onClick={() => handleDelete(artwork.id)}
                           disabled={isDeleting === artwork.id}
                           className="rounded-md px-3 py-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                          {isDeleting === artwork.id ? '삭제 중...' : '삭제'}
+                          {isDeleting === artwork.id ? copy.deleting : copy.delete}
                         </button>
                       </div>
                     </td>

@@ -40,7 +40,7 @@ export function TestimonialsManager({ testimonials }: { testimonials: Testimonia
     setCreating(true);
     try {
       await createTestimonial(formData);
-      toast.success('추천사를 추가했습니다.');
+      toast.success('Testimonial added.');
       router.refresh();
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : '추가 중 오류가 발생했습니다.');
@@ -67,7 +67,7 @@ export function TestimonialsManager({ testimonials }: { testimonials: Testimonia
     setSavingId(id);
     try {
       await updateTestimonial(id, formData);
-      toast.success('추천사를 저장했습니다.');
+      toast.success('Testimonial saved.');
     } catch (err: unknown) {
       setOptimisticTestimonials(originalTestimonials);
       toast.error(err instanceof Error ? err.message : '저장 중 오류가 발생했습니다.');
@@ -85,7 +85,7 @@ export function TestimonialsManager({ testimonials }: { testimonials: Testimonia
     setProcessingId(id);
     try {
       await deleteTestimonial(id);
-      toast.success('추천사를 삭제했습니다.');
+      toast.success('Testimonial deleted.');
     } catch (err: unknown) {
       setOptimisticTestimonials(originalTestimonials);
       console.error('삭제 중 오류:', err);

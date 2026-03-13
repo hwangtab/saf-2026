@@ -14,8 +14,8 @@ interface State {
 const DefaultFallback = () => (
   <div className="h-96 bg-gray-100 rounded flex items-center justify-center">
     <div className="text-center text-charcoal-muted">
-      <p className="text-lg mb-2">차트를 불러올 수 없습니다</p>
-      <p className="text-sm">페이지를 새로고침 해주세요</p>
+      <p className="text-lg mb-2">Unable to load chart</p>
+      <p className="text-sm">Please refresh the page</p>
     </div>
   </div>
 );

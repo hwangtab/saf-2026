@@ -1,13 +1,17 @@
 import type { Metadata } from 'next';
 import { SITE_URL, OG_IMAGE } from '@/lib/constants';
+import { createLocaleAlternates } from '@/lib/locale-alternates';
 
 export function createPageMetadata(
   title: string,
   description: string,
   path: string,
-  imageUrl?: string
+  imageUrl?: string,
+  locale: 'ko' | 'en' = 'ko'
 ): Metadata {
   const url = `${SITE_URL}${path}`;
+  const siteTitle = locale === 'en' ? 'SAF 2026' : '씨앗페 2026';
+  const ogLocale = locale === 'en' ? 'en_US' : 'ko_KR';
   const images = [
     {
       url: imageUrl || OG_IMAGE.url,
@@ -18,20 +22,19 @@ export function createPageMetadata(
   ];
 
   return {
-    title: `${title} | 씨앗페 2026`,
+    title: `${title} | ${siteTitle}`,
     description,
-    alternates: {
-      canonical: url,
-    },
+    alternates: createLocaleAlternates(path),
     openGraph: {
-      title: `${title} | 씨앗페 2026`,
+      title: `${title} | ${siteTitle}`,
       description,
       url,
+      locale: ogLocale,
       images,
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${title} | 씨앗페 2026`,
+      title: `${title} | ${siteTitle}`,
       description,
       images: [images[0].url],
     },

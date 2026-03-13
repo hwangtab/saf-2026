@@ -1,7 +1,10 @@
 'use client';
 
-import { useContext } from 'react';
+import { useCallback, useContext, useMemo } from 'react';
+import { usePathname } from 'next/navigation';
 import { ToastContext, type ToastContextValue } from '@/components/providers/ToastProvider';
+import { resolveClientLocale } from '@/lib/client-locale';
+import { localizeToastMessage } from '@/lib/toast-localization';
 
 /**
  * Toast 알림을 표시하기 위한 훅
@@ -33,12 +36,54 @@ import { ToastContext, type ToastContextValue } from '@/components/providers/Toa
  */
 export function useToast(): ToastContextValue {
   const context = useContext(ToastContext);
+  const pathname = usePathname();
+  const locale = resolveClientLocale(pathname);
 
   if (!context) {
     throw new Error('useToast must be used within a ToastProvider');
   }
 
-  return context;
+  const localize = useCallback(
+    (message: string) => localizeToastMessage(message, locale),
+    [locale]
+  );
+
+  const addToast = useCallback<ToastContextValue['addToast']>(
+    (type, message, options) => context.addToast(type, localize(message), options),
+    [context, localize]
+  );
+
+  const success = useCallback<ToastContextValue['success']>(
+    (message, options) => context.success(localize(message), options),
+    [context, localize]
+  );
+
+  const error = useCallback<ToastContextValue['error']>(
+    (message, options) => context.error(localize(message), options),
+    [context, localize]
+  );
+
+  const warning = useCallback<ToastContextValue['warning']>(
+    (message, options) => context.warning(localize(message), options),
+    [context, localize]
+  );
+
+  const info = useCallback<ToastContextValue['info']>(
+    (message, options) => context.info(localize(message), options),
+    [context, localize]
+  );
+
+  return useMemo(
+    () => ({
+      ...context,
+      addToast,
+      success,
+      error,
+      warning,
+      info,
+    }),
+    [context, addToast, success, error, warning, info]
+  );
 }
 
 export default useToast;

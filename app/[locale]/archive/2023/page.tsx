@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import ExportedImage from 'next-image-export-optimizer';
 import SafeImage from '@/components/common/SafeImage';
 import SectionTitle from '@/components/ui/SectionTitle';
@@ -12,34 +12,42 @@ import { saf2023Photos } from '@/content/saf2023-photos';
 import { saf2023Artworks } from '@/content/saf2023-artworks';
 import { supabase } from '@/lib/supabase';
 import { videos as fallbackVideos } from '@/content/videos';
-import {
-  SITE_URL,
-  escapeJsonLdForScript,
-  BREADCRUMB_HOME,
-  BREADCRUMBS,
-  OG_IMAGE,
-} from '@/lib/constants';
+import { SITE_URL, escapeJsonLdForScript, OG_IMAGE } from '@/lib/constants';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema, generateVideoSchema } from '@/lib/seo-utils';
+import { createLocaleAlternates } from '@/lib/locale-alternates';
 
 export const revalidate = 3600;
 
 const PAGE_URL = `${SITE_URL}/archive/2023`;
-const PAGE_TITLE = '2023 아카이브';
-const PAGE_DESCRIPTION =
-  '2023년 씨앗페의 여정. 캠페인 영상, 현장 스케치, 그리고 우리가 함께 만든 변화의 기록들을 만나보세요.';
+const PAGE_COPY = {
+  ko: {
+    title: '2023 아카이브',
+    description:
+      '2023년 씨앗페의 여정. 캠페인 영상, 현장 스케치, 그리고 우리가 함께 만든 변화의 기록들을 만나보세요.',
+  },
+  en: {
+    title: '2023 Archive',
+    description:
+      'The SAF 2023 journey, including campaign videos, exhibition moments, and outcomes created through solidarity.',
+  },
+} as const;
+
+const resolveLocale = (locale: string): 'ko' | 'en' => (locale === 'en' ? 'en' : 'ko');
 
 export async function generateMetadata(): Promise<Metadata> {
+  const locale = resolveLocale(await getLocale());
+  const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
-  const title = `${PAGE_TITLE} | ${tSeo('siteTitle')}`;
+  const title = `${copy.title} | ${tSeo('siteTitle')}`;
 
   return {
     title,
-    description: PAGE_DESCRIPTION,
-    alternates: { canonical: PAGE_URL },
+    description: copy.description,
+    alternates: createLocaleAlternates('/archive/2023'),
     openGraph: {
       title,
-      description: PAGE_DESCRIPTION,
+      description: copy.description,
       url: PAGE_URL,
       images: [
         { url: OG_IMAGE.url, width: OG_IMAGE.width, height: OG_IMAGE.height, alt: OG_IMAGE.alt },
@@ -48,13 +56,17 @@ export async function generateMetadata(): Promise<Metadata> {
     twitter: {
       card: 'summary_large_image',
       title,
-      description: PAGE_DESCRIPTION,
+      description: copy.description,
       images: [OG_IMAGE.url],
     },
   };
 }
 
 export default async function Archive2023Page() {
+  const locale = resolveLocale(await getLocale());
+  const tBreadcrumbs = await getTranslations('breadcrumbs');
+  const isEnglish = locale === 'en';
+
   const fallbackVideoRows = fallbackVideos.map((video) => ({
     ...video,
     youtube_id: video.youtubeId,
@@ -73,27 +85,29 @@ export default async function Archive2023Page() {
 
   const currentUrl = PAGE_URL;
 
-  const pageTitle = '2023 아카이브 | 씨앗페 2026';
-  const pageDescription = '씨앗페의 활동 기록과 성과들을 담아냅니다.';
+  const pageTitle = `${PAGE_COPY[locale].title} | ${isEnglish ? 'SAF 2026' : '씨앗페 2026'}`;
+  const pageDescription = isEnglish
+    ? 'A look back at SAF 2023 exhibitions, performances, and campaign outcomes.'
+    : '씨앗페의 활동 기록과 성과들을 담아냅니다.';
 
   // JSON-LD Schema for CollectionPage with Articles
   const collectionSchema = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: '씨앗페 2026 아카이브',
+    name: isEnglish ? 'SAF 2026 Archive' : '씨앗페 2026 아카이브',
     description: pageDescription,
     url: currentUrl,
     publisher: {
       '@type': 'Organization',
-      name: '한국스마트협동조합',
+      name: isEnglish ? 'Korea Smart Cooperative' : '한국스마트협동조합',
       url: SITE_URL,
     },
   };
 
   const breadcrumbSchema = createBreadcrumbSchema([
-    BREADCRUMB_HOME,
-    BREADCRUMBS['/archive'],
-    BREADCRUMBS['/archive/2023'],
+    { name: tBreadcrumbs('home'), url: SITE_URL },
+    { name: tBreadcrumbs('archive'), url: `${SITE_URL}/archive` },
+    { name: tBreadcrumbs('archive2023'), url: PAGE_URL },
   ]);
 
   return (
@@ -106,8 +120,12 @@ export default async function Archive2023Page() {
         }}
       />
       <PageHero
-        title="2023 오프라인 전시"
-        description="씨앗페의 발자취와 성과, 언론 보도를 기록합니다"
+        title={isEnglish ? 'SAF 2023 Offline Exhibition' : '2023 오프라인 전시'}
+        description={
+          isEnglish
+            ? 'A record of SAF milestones, outcomes, and media coverage.'
+            : '씨앗페의 발자취와 성과, 언론 보도를 기록합니다'
+        }
         dividerColor="text-sun-soft"
         className="py-24 md:py-32"
       >
@@ -117,13 +135,15 @@ export default async function Archive2023Page() {
       {/* Past Events Section */}
       <Section variant="sun-soft">
         <div className="container-max">
-          <SectionTitle className="mb-12">🎉 2023년 행사 기록</SectionTitle>
+          <SectionTitle className="mb-12">
+            {isEnglish ? '🎉 2023 Event Highlights' : '🎉 2023년 행사 기록'}
+          </SectionTitle>
 
           {/* 2023 SAF Poster */}
           <div className="mb-12">
             <ExportedImage
               src="/images/saf2023/saf2023poster.png"
-              alt="씨앗페 2023 공식 포스터"
+              alt={isEnglish ? 'Official SAF 2023 poster' : '씨앗페 2023 공식 포스터'}
               width={1200}
               height={1700}
               className="w-full rounded-2xl shadow-xl"
@@ -132,49 +152,77 @@ export default async function Archive2023Page() {
           </div>
 
           <div className="bg-white rounded-lg shadow-sm p-8 mb-12">
-            <h3 className="text-card-title mb-4">씨앗페 2023 성과</h3>
+            <h3 className="text-card-title mb-4">
+              {isEnglish ? 'SAF 2023 Outcomes' : '씨앗페 2023 성과'}
+            </h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
               <div className="text-center">
-                <p className="text-3xl font-bold text-primary">7일</p>
-                <p className="text-charcoal-muted text-sm">전시 기간</p>
+                <p className="text-3xl font-bold text-primary">{isEnglish ? '7 days' : '7일'}</p>
+                <p className="text-charcoal-muted text-sm">
+                  {isEnglish ? 'Exhibition days' : '전시 기간'}
+                </p>
               </div>
               <div className="text-center">
-                <p className="text-3xl font-bold text-primary">5일</p>
-                <p className="text-charcoal-muted text-sm">공연 일정</p>
+                <p className="text-3xl font-bold text-primary">{isEnglish ? '5 days' : '5일'}</p>
+                <p className="text-charcoal-muted text-sm">
+                  {isEnglish ? 'Performance days' : '공연 일정'}
+                </p>
               </div>
               <div className="text-center">
                 <p className="text-3xl font-bold text-primary">120+</p>
-                <p className="text-charcoal-muted text-sm">참여 예술인</p>
+                <p className="text-charcoal-muted text-sm">
+                  {isEnglish ? 'Participating artists' : '참여 예술인'}
+                </p>
               </div>
               <div className="text-center">
-                <p className="text-3xl font-bold text-primary">3,400만원</p>
-                <p className="text-charcoal-muted text-sm">기금 마련</p>
+                <p className="text-3xl font-bold text-primary">
+                  {isEnglish ? 'KRW 34M' : '3,400만원'}
+                </p>
+                <p className="text-charcoal-muted text-sm">
+                  {isEnglish ? 'Fund raised' : '기금 마련'}
+                </p>
               </div>
             </div>
             <p className="text-charcoal-muted mb-4">
-              2023년 3월 21일부터 3월 31일까지 서울시 종로구 인사동의 오디오가이 스튜디오와
-              인디프레스 갤러리에서 전시와 공연이 펼쳐졌습니다. 국내 저명 뮤지션, 화가, 무용가 등
-              50명 이상의 예술인이 참여하여 예술인 금융 위기의 심각성을 알리고, 작품 판매 수익을
-              포함해 총 6,000만원을 조성하여 화가들에게 작품비를 지급하고, 대관 등 행사진행비를
-              제외하고 3,400만원의 기금을 조성하였습니다.
+              {isEnglish
+                ? 'From March 21 to 31, 2023, exhibitions and performances were held in Insadong, Seoul. More than 50 artists across music, visual art, and dance joined the campaign and helped raise KRW 34 million for the mutual-aid fund after event operating costs.'
+                : '2023년 3월 21일부터 3월 31일까지 서울시 종로구 인사동의 오디오가이 스튜디오와 인디프레스 갤러리에서 전시와 공연이 펼쳐졌습니다. 국내 저명 뮤지션, 화가, 무용가 등 50명 이상의 예술인이 참여하여 예술인 금융 위기의 심각성을 알리고, 작품 판매 수익을 포함해 총 6,000만원을 조성하여 화가들에게 작품비를 지급하고, 대관 등 행사진행비를 제외하고 3,400만원의 기금을 조성하였습니다.'}
             </p>
           </div>
 
           {/* Event Details */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
-              <h4 className="text-card-title mb-4">📍 전시 장소</h4>
+              <h4 className="text-card-title mb-4">{isEnglish ? '📍 Venues' : '📍 전시 장소'}</h4>
               <ul className="space-y-2 text-charcoal-muted">
-                <li>🎪 오디오가이 스튜디오 (서울시 종로구 효자로 23)</li>
-                <li>🎨 인디프레스 갤러리 (서울시 종로구 효자로 31)</li>
+                <li>
+                  {isEnglish
+                    ? '🎪 Audioguy Studio (23 Hyoja-ro, Jongno-gu, Seoul)'
+                    : '🎪 오디오가이 스튜디오 (서울시 종로구 효자로 23)'}
+                </li>
+                <li>
+                  {isEnglish
+                    ? '🎨 Indiepress Gallery (31 Hyoja-ro, Jongno-gu, Seoul)'
+                    : '🎨 인디프레스 갤러리 (서울시 종로구 효자로 31)'}
+                </li>
               </ul>
             </div>
             <div>
-              <h4 className="text-card-title mb-4">⏰ 공연 일정</h4>
+              <h4 className="text-card-title mb-4">
+                {isEnglish ? '⏰ Performance Schedule' : '⏰ 공연 일정'}
+              </h4>
               <ul className="space-y-2 text-charcoal-muted text-sm">
-                <li>3월 22-28일: 매일 다양한 뮤지션 공연</li>
-                <li>30분 간격으로 번갈아가며 진행</li>
-                <li>선착순 무료입장</li>
+                <li>
+                  {isEnglish
+                    ? 'Mar 22-28: daily performances by diverse musicians'
+                    : '3월 22-28일: 매일 다양한 뮤지션 공연'}
+                </li>
+                <li>
+                  {isEnglish ? 'Rotating sets every 30 minutes' : '30분 간격으로 번갈아가며 진행'}
+                </li>
+                <li>
+                  {isEnglish ? 'Free admission (first come, first served)' : '선착순 무료입장'}
+                </li>
               </ul>
             </div>
           </div>
@@ -184,7 +232,9 @@ export default async function Archive2023Page() {
       {/* SAF 2023 Artworks Section */}
       <Section variant="gray" prevVariant="sun-soft">
         <div className="container-max">
-          <SectionTitle className="mb-12">🎨 2023년 출품작</SectionTitle>
+          <SectionTitle className="mb-12">
+            {isEnglish ? '🎨 2023 Featured Works' : '🎨 2023년 출품작'}
+          </SectionTitle>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {saf2023Artworks.map((artwork) => (
               <div
@@ -204,9 +254,9 @@ export default async function Archive2023Page() {
                   <h3 className="font-sans font-bold text-xl mb-2">{artwork.title}</h3>
                   <p className="text-primary font-semibold mb-3">{artwork.artist}</p>
                   <p className="text-charcoal-muted text-sm mb-4 flex-grow">
-                    {artwork.description}
+                    {isEnglish ? 'Artwork presented during SAF 2023.' : artwork.description}
                   </p>
-                  {artwork.details && (
+                  {artwork.details && !isEnglish && (
                     <p className="text-xs text-charcoal-soft mt-auto pt-4 border-t border-gray-200">
                       {artwork.details}
                     </p>
@@ -221,7 +271,9 @@ export default async function Archive2023Page() {
       {/* SAF 2023 Gallery Section */}
       <Section variant="white" prevVariant="gray">
         <div className="container-max">
-          <SectionTitle className="mb-12">📸 씨앗페 2023 현장</SectionTitle>
+          <SectionTitle className="mb-12">
+            {isEnglish ? '📸 SAF 2023 On-site Moments' : '📸 씨앗페 2023 현장'}
+          </SectionTitle>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {saf2023Photos.map((photo) => (
               <div
@@ -230,7 +282,7 @@ export default async function Archive2023Page() {
               >
                 <ExportedImage
                   src={`/images/saf2023/${photo.filename}`}
-                  alt={photo.alt}
+                  alt={isEnglish ? `SAF 2023 photo ${photo.id}` : photo.alt}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-300"
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -239,7 +291,9 @@ export default async function Archive2023Page() {
             ))}
           </div>
           <p className="text-center text-charcoal-muted mt-12 text-sm">
-            2023년 3월 21일부터 3월 31일까지 인사동에서 펼쳐진 씨앗페 2023의 생생한 현장 모습입니다.
+            {isEnglish
+              ? 'Scenes from SAF 2023 in Insadong (Mar 21-31, 2023).'
+              : '2023년 3월 21일부터 3월 31일까지 인사동에서 펼쳐진 씨앗페 2023의 생생한 현장 모습입니다.'}
           </p>
         </div>
       </Section>
@@ -247,7 +301,9 @@ export default async function Archive2023Page() {
       {/* Video Archive Section */}
       <Section variant="accent-soft" prevVariant="white">
         <div className="container-max">
-          <SectionTitle className="mb-12">📹 영상 아카이브</SectionTitle>
+          <SectionTitle className="mb-12">
+            {isEnglish ? '📹 Video Archive' : '📹 영상 아카이브'}
+          </SectionTitle>
           {/* VideoObject JSON-LD for each video */}
           {videos.map((video) => (
             <JsonLdScript
@@ -265,10 +321,10 @@ export default async function Archive2023Page() {
                 <div className="p-6">
                   <h3 className="font-sans font-bold text-xl mb-2">{video.title}</h3>
                   <p className="text-charcoal-muted text-sm mb-4 line-clamp-2">
-                    {video.description}
+                    {isEnglish ? 'Campaign video from SAF 2023.' : video.description}
                   </p>
 
-                  {video.transcript && (
+                  {video.transcript && !isEnglish && (
                     <div className="mt-4 p-4 bg-primary/5 rounded-lg border-l-4 border-primary/30">
                       <h4 className="flex items-center gap-2 text-xs font-bold text-primary mb-2 uppercase tracking-wider">
                         🎞️ 영상 기록 요약
@@ -288,12 +344,24 @@ export default async function Archive2023Page() {
       {/* Call to Action */}
       <Section variant="primary-soft" prevVariant="accent-soft" className="pb-24 md:pb-32">
         <div className="container-max text-center">
-          <SectionTitle className="mb-6">이 역사에 당신도 함께하세요</SectionTitle>
+          <SectionTitle className="mb-6">
+            {isEnglish ? 'Be part of this ongoing history' : '이 역사에 당신도 함께하세요'}
+          </SectionTitle>
           <p className="text-lg text-charcoal-muted mb-8 max-w-2xl mx-auto text-balance">
-            씨앗페의 역사는 당신의 참여와 연대로 이어집니다. <br className="hidden md:block" />
-            조합원 가입과 작품 구매로 예술인 상호부조의 미래를 함께 만들어주세요.
+            {isEnglish
+              ? 'SAF grows through participation and solidarity.'
+              : '씨앗페의 역사는 당신의 참여와 연대로 이어집니다.'}{' '}
+            <br className="hidden md:block" />
+            {isEnglish
+              ? 'Join the cooperative and purchase artworks to strengthen mutual-aid finance for artists.'
+              : '조합원 가입과 작품 구매로 예술인 상호부조의 미래를 함께 만들어주세요.'}
           </p>
-          <CTAButtonGroup variant="large" className="justify-center" />
+          <CTAButtonGroup
+            variant="large"
+            className="justify-center"
+            donateText={isEnglish ? '🤝 Join the Co-op' : undefined}
+            purchaseText={isEnglish ? '🎨 Browse Artworks' : undefined}
+          />
         </div>
       </Section>
     </>

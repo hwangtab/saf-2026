@@ -9,7 +9,8 @@ import ArtistNavigation from './gallery/ArtistNavigation';
 import GalleryEmptyState from './gallery/GalleryEmptyState';
 import { ArtworkListItem } from '@/types';
 import { useArtworkFilter } from '@/lib/hooks/useArtworkFilter';
-import { UI_STRINGS } from '@/lib/ui-strings';
+import { useLocale } from 'next-intl';
+import { getUIStrings } from '@/lib/ui-strings';
 
 interface ArtworkGalleryWithSortProps {
   artworks: ArtworkListItem[];
@@ -17,6 +18,8 @@ interface ArtworkGalleryWithSortProps {
 }
 
 function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithSortProps) {
+  const locale = useLocale();
+  const ui = getUIStrings(locale);
   const router = useRouter();
 
   const {
@@ -60,7 +63,7 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
               <SearchBar
                 value={searchQuery}
                 onChange={setSearchQuery}
-                placeholder={UI_STRINGS.SEARCH.PLACEHOLDER_ARTWORKS}
+                placeholder={ui.SEARCH.PLACEHOLDER_ARTWORKS}
               />
             </div>
 
@@ -92,8 +95,9 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
           <div className="mb-6 container-max mt-6" role="status" aria-live="polite">
             <p className="text-gray-500">
               <span className="font-semibold text-primary">&apos;{searchQuery}&apos;</span>{' '}
-              {UI_STRINGS.SEARCH.RESULT_PREFIX} {filteredArtworks.length}
-              {UI_STRINGS.SEARCH.RESULT_SUFFIX}
+              {locale === 'en'
+                ? `${filteredArtworks.length} ${ui.SEARCH.RESULT_PREFIX}`
+                : `${ui.SEARCH.RESULT_PREFIX} ${filteredArtworks.length}${ui.SEARCH.RESULT_SUFFIX}`}
             </p>
           </div>
         )}

@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+import { headers } from 'next/headers';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import {
   ARTIST_APPLICATION_CONSENT_SELECT,
@@ -13,6 +14,15 @@ import {
 } from '@/lib/auth/terms-consent';
 
 export default async function DashboardPage() {
+  const requestHeaders = await headers();
+  const acceptsEnglish = requestHeaders.get('accept-language')?.toLowerCase().includes('en');
+  const accountFetchErrorMessage = acceptsEnglish
+    ? 'Failed to verify account information. Please try again shortly.'
+    : '계정 정보를 확인하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+  const applicationFetchErrorMessage = acceptsEnglish
+    ? 'Failed to verify application status. Please try again shortly.'
+    : '신청 상태를 확인하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
@@ -30,7 +40,7 @@ export default async function DashboardPage() {
     .maybeSingle();
 
   if (profileError) {
-    throw new Error('계정 정보를 확인하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+    throw new Error(accountFetchErrorMessage);
   }
 
   if (profile?.role === 'admin') {
@@ -90,7 +100,7 @@ export default async function DashboardPage() {
       .maybeSingle();
 
     if (applicationError) {
-      throw new Error('신청 상태를 확인하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      throw new Error(applicationFetchErrorMessage);
     }
 
     const hasApplication = hasArtistApplication(application);

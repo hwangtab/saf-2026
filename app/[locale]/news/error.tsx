@@ -1,6 +1,7 @@
 'use client';
 
 import ErrorView from '@/components/common/ErrorView';
+import { useTranslations } from 'next-intl';
 
 export default function NewsError({
   error,
@@ -9,12 +10,14 @@ export default function NewsError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const t = useTranslations('pageErrors.news');
+
   return (
     <ErrorView
       icon="📰"
-      title="소식을 불러올 수 없습니다"
-      message="관련 기사를 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
-      backLink={{ href: '/news', label: '뉴스 목록으로' }}
+      title={t('title')}
+      message={t('message')}
+      backLink={{ href: '/news', label: t('backLabel') }}
       error={error}
       reset={reset}
     />

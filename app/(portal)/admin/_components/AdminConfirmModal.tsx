@@ -3,6 +3,8 @@
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
+import { usePathname } from 'next/navigation';
+import { resolveClientLocale } from '@/lib/client-locale';
 
 interface AdminConfirmModalProps {
   isOpen: boolean;
@@ -23,12 +25,17 @@ export function AdminConfirmModal({
   onConfirm,
   title,
   description,
-  confirmText = '확인',
-  cancelText = '취소',
+  confirmText,
+  cancelText,
   variant = 'danger',
   isLoading = false,
   children,
 }: AdminConfirmModalProps) {
+  const pathname = usePathname();
+  const locale = resolveClientLocale(pathname);
+  const resolvedConfirmText = confirmText ?? (locale === 'en' ? 'Confirm' : '확인');
+  const resolvedCancelText = cancelText ?? (locale === 'en' ? 'Cancel' : '취소');
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title} className="max-w-md">
       <div className="space-y-4">
@@ -83,7 +90,7 @@ export function AdminConfirmModal({
 
         <div className="flex justify-end gap-3 pt-2">
           <Button variant="white" onClick={onClose} disabled={isLoading}>
-            {cancelText}
+            {resolvedCancelText}
           </Button>
           <Button
             variant={variant === 'danger' ? 'primary' : 'primary'} // Button doesn't have danger variant, will use primary
@@ -93,7 +100,7 @@ export function AdminConfirmModal({
             onClick={onConfirm}
             loading={isLoading}
           >
-            {confirmText}
+            {resolvedConfirmText}
           </Button>
         </div>
       </div>

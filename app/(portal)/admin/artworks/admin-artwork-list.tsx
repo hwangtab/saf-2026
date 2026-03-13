@@ -23,6 +23,7 @@ import {
 } from '@/app/admin/_components/admin-ui';
 import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import { useToast } from '@/lib/hooks/useToast';
+import { resolveClientLocale } from '@/lib/client-locale';
 import { matchesAnySearch } from '@/lib/search-utils';
 import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
 
@@ -93,13 +94,13 @@ function mapSortStateToFilter(sortKey: SortKey, sortDirection: SortDirection): S
   return sortDirection === 'desc' ? 'recent' : 'oldest';
 }
 
-function formatDate(dateString: string | null | undefined) {
+function formatDate(dateString: string | null | undefined, locale: 'ko' | 'en') {
   if (!dateString) return '-';
 
   const date = new Date(dateString);
   if (Number.isNaN(date.getTime())) return '-';
 
-  return date.toLocaleDateString('ko-KR', {
+  return date.toLocaleDateString(locale === 'en' ? 'en-US' : 'ko-KR', {
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
@@ -120,6 +121,172 @@ export function AdminArtworkList({
 }) {
   const toast = useToast();
   const pathname = usePathname();
+  const locale = resolveClientLocale(pathname);
+  const msg =
+    locale === 'en'
+      ? {
+          deleted: 'Artwork deleted.',
+          deleteError: 'An error occurred while deleting artwork.',
+          statusRollback: 'Cafe24 sync failed. Status change was partially rolled back.',
+          statusChanged: 'Artwork status updated.',
+          statusError: 'An error occurred while updating status.',
+          visibilityRollback: 'Cafe24 sync failed. Visibility change was partially rolled back.',
+          shown: 'Artwork is now visible.',
+          hidden: 'Artwork is now hidden.',
+          visibilityError: 'An error occurred while updating visibility.',
+          partialSuccess: (ok: number, failed: number) =>
+            `Partial success: ${ok} succeeded, ${failed} rolled back.`,
+          batchStatusChanged: 'Selected artwork statuses updated.',
+          batchStatusError: 'An error occurred while updating statuses in batch.',
+          batchShown: 'Selected artworks are now visible.',
+          batchHidden: 'Selected artworks are now hidden.',
+          batchVisibilityError: 'An error occurred while updating visibility in batch.',
+          batchDeleted: 'Selected artworks deleted.',
+          batchDeleteError: 'An error occurred during batch delete.',
+          sortAscending: (label: string) => `Sort ${label} ascending`,
+          sortDescending: (label: string) => `Sort ${label} descending`,
+          truncatedNotice: (count: number) =>
+            `There are many artworks, so only the latest ${count} entries are loaded.`,
+          downloadAllArtworks: 'Download full artwork data',
+          title: 'Artwork list',
+          titleHelp:
+            'Manage all artworks. You can change sales status and visibility or edit detailed information.',
+          count: (count: number) => `${count}`,
+          searchArtwork: 'Search artworks',
+          searchPlaceholder: 'Search by artwork title or artist name...',
+          searchDescription: (count: number) =>
+            `You can search by artwork title or artist name. ${count} items are currently shown.`,
+          allStatus: 'All status',
+          available: 'Available',
+          reserved: 'Reserved',
+          sold: 'Sold',
+          allVisibility: 'All visibility',
+          visible: 'Visible',
+          hiddenLabel: 'Hidden',
+          defaultSort: 'Default sort',
+          recentSort: 'Most recent',
+          oldestSort: 'Oldest',
+          selectedCount: (count: number) => `${count} selected`,
+          changeStatus: 'Change status...',
+          hide: 'Hide',
+          show: 'Show',
+          delete: 'Delete',
+          processing: 'Processing...',
+          artworkInfo: 'Artwork info',
+          status: 'Status',
+          createdAt: 'Created',
+          visibility: 'Visibility',
+          manage: 'Manage',
+          noSearchResult: 'No artworks found',
+          zoomImage: 'Zoom image',
+          unknownArtist: 'Unknown artist',
+          cafe24SyncFailed: 'Shop sync failed',
+          cafe24PendingAuth: 'Shop sync requires re-authorization',
+          cafe24Warning: 'Shop sync warning',
+          cafe24Syncing: 'Shop sync in progress',
+          visibleNow: 'Visible',
+          edit: 'Edit',
+          deleteConfirmTitle: 'Confirm artwork deletion',
+          deleteConfirmDescription: (title: string | undefined) =>
+            `Delete '${title || '-'}'?\nYou can restore it later from admin activity logs.`,
+          deleteConfirmText: 'Delete',
+          batchDeleteTitle: 'Delete selected artworks',
+          batchDeleteDescription: (count: number) =>
+            `Delete all ${count} selected artworks?\nYou can restore them later from admin activity logs.`,
+          batchDeleteText: (count: number) => `Delete ${count} artworks`,
+          batchStatusTitle: 'Batch status update',
+          batchStatusDescription: (count: number, status: string) =>
+            `Change status of ${count} selected artworks to '${status}'?`,
+          batchStatusConfirm: 'Update status',
+          batchHideTitle: 'Batch hide',
+          batchShowTitle: 'Batch show',
+          batchHideDescription: (count: number) => `Set all ${count} selected artworks to hidden?`,
+          batchShowDescription: (count: number) => `Set all ${count} selected artworks to visible?`,
+          batchHideConfirm: 'Hide all',
+          batchShowConfirm: 'Show all',
+        }
+      : {
+          deleted: '작품을 삭제했습니다.',
+          deleteError: '작품 삭제 중 오류가 발생했습니다.',
+          statusRollback: '카페24 동기화에 실패해 상태 변경이 일부 롤백되었습니다.',
+          statusChanged: '작품 상태를 변경했습니다.',
+          statusError: '상태 변경 중 오류가 발생했습니다.',
+          visibilityRollback: '카페24 동기화에 실패해 공개 상태 변경이 일부 롤백되었습니다.',
+          shown: '작품을 공개 처리했습니다.',
+          hidden: '작품을 숨김 처리했습니다.',
+          visibilityError: '공개 상태 변경 중 오류가 발생했습니다.',
+          partialSuccess: (ok: number, failed: number) =>
+            `부분 성공: ${ok}건 성공, ${failed}건 롤백되었습니다.`,
+          batchStatusChanged: '선택한 작품 상태를 변경했습니다.',
+          batchStatusError: '일괄 상태 변경 중 오류가 발생했습니다.',
+          batchShown: '선택한 작품을 공개 처리했습니다.',
+          batchHidden: '선택한 작품을 숨김 처리했습니다.',
+          batchVisibilityError: '일괄 공개 상태 변경 중 오류가 발생했습니다.',
+          batchDeleted: '선택한 작품을 삭제했습니다.',
+          batchDeleteError: '일괄 삭제 중 오류가 발생했습니다.',
+          sortAscending: (label: string) => `${label} 오름차순 정렬`,
+          sortDescending: (label: string) => `${label} 내림차순 정렬`,
+          truncatedNotice: (count: number) => `작품 데이터가 많아 최근 ${count}건만 불러왔습니다.`,
+          downloadAllArtworks: '전체 작품 데이터 다운받기',
+          title: '작품 목록',
+          titleHelp:
+            '전체 작품을 관리합니다. 판매 상태와 공개 여부를 변경하거나 작품 상세 정보를 편집할 수 있습니다.',
+          count: (count: number) => `${count}개`,
+          searchArtwork: '작품 검색',
+          searchPlaceholder: '작품명, 작가명 검색...',
+          searchDescription: (count: number) =>
+            `작품명 또는 작가명으로 검색할 수 있습니다. 현재 ${count}개가 표시됩니다.`,
+          allStatus: '모든 상태',
+          available: '판매 중',
+          reserved: '예약됨',
+          sold: '판매 완료',
+          allVisibility: '모든 노출',
+          visible: '공개',
+          hiddenLabel: '숨김',
+          defaultSort: '기본 정렬',
+          recentSort: '최근 등록순',
+          oldestSort: '오래된 등록순',
+          selectedCount: (count: number) => `${count}개 선택됨`,
+          changeStatus: '상태 변경...',
+          hide: '숨김',
+          show: '노출',
+          delete: '삭제',
+          processing: '처리 중...',
+          artworkInfo: '작품 정보',
+          status: '상태',
+          createdAt: '등록일',
+          visibility: '공개 여부',
+          manage: '관리',
+          noSearchResult: '검색된 작품이 없습니다',
+          zoomImage: '이미지 확대하기',
+          unknownArtist: '작가 미상',
+          cafe24SyncFailed: '구매연동 오류',
+          cafe24PendingAuth: '구매연동 재승인 필요',
+          cafe24Warning: '구매연동 경고',
+          cafe24Syncing: '구매연동 진행 중',
+          visibleNow: '공개 중',
+          edit: '편집',
+          deleteConfirmTitle: '작품 삭제 확인',
+          deleteConfirmDescription: (title: string | undefined) =>
+            `'${title || '-'}' 작품을 삭제하시겠습니까?\n삭제 후 관리자 활동 로그에서 복구할 수 있습니다.`,
+          deleteConfirmText: '삭제하기',
+          batchDeleteTitle: '선택 작품 일괄 삭제',
+          batchDeleteDescription: (count: number) =>
+            `선택한 ${count}개의 작품을 모두 삭제하시겠습니까?\n삭제 후 관리자 활동 로그에서 복구할 수 있습니다.`,
+          batchDeleteText: (count: number) => `${count}개 작품 삭제`,
+          batchStatusTitle: '일괄 상태 변경',
+          batchStatusDescription: (count: number, status: string) =>
+            `선택한 ${count}개 작품의 상태를 '${status}'(으)로 변경하시겠습니까?`,
+          batchStatusConfirm: '상태 변경',
+          batchHideTitle: '일괄 숨김 처리',
+          batchShowTitle: '일괄 공개 처리',
+          batchHideDescription: (count: number) =>
+            `선택한 ${count}개 작품을 모두 숨김 처리하시겠습니까?`,
+          batchShowDescription: (count: number) =>
+            `선택한 ${count}개 작품을 모두 공개 처리하시겠습니까?`,
+          batchHideConfirm: '숨김 처리',
+          batchShowConfirm: '공개 처리',
+        };
   const artworksRef = useRef(artworks);
   artworksRef.current = artworks;
   const [optimisticArtworks, setOptimisticArtworks] = useState(artworks);
@@ -260,11 +427,12 @@ export function AdminArtworkList({
     };
 
     const compareArtworkInfo = (a: ArtworkItem, b: ArtworkItem) => {
-      const titleCompare = a.title.localeCompare(b.title, 'ko');
+      const collatorLocale = locale === 'en' ? 'en' : 'ko';
+      const titleCompare = a.title.localeCompare(b.title, collatorLocale);
       if (titleCompare !== 0) return titleCompare;
       const artistA = a.artists?.name_ko || '';
       const artistB = b.artists?.name_ko || '';
-      return artistA.localeCompare(artistB, 'ko');
+      return artistA.localeCompare(artistB, collatorLocale);
     };
 
     const compareCreatedAt = (a: ArtworkItem, b: ArtworkItem) => {
@@ -293,7 +461,7 @@ export function AdminArtworkList({
     });
 
     return sorted;
-  }, [filtered, sortDirection, sortKey]);
+  }, [filtered, locale, sortDirection, sortKey]);
 
   const filteredIds = new Set(filtered.map((a) => a.id));
   const selectedInFiltered = [...selectedIds].filter((id) => filteredIds.has(id));
@@ -322,8 +490,8 @@ export function AdminArtworkList({
   };
 
   const getSortAriaLabel = (label: string, key: SortKey) => {
-    if (sortKey !== key) return `${label} 오름차순 정렬`;
-    return sortDirection === 'asc' ? `${label} 내림차순 정렬` : `${label} 오름차순 정렬`;
+    if (sortKey !== key) return msg.sortAscending(label);
+    return sortDirection === 'asc' ? msg.sortDescending(label) : msg.sortAscending(label);
   };
 
   // -- Handlers --
@@ -351,11 +519,13 @@ export function AdminArtworkList({
 
     try {
       await deleteAdminArtwork(id);
-      toast.success('작품을 삭제했습니다.');
+      toast.success(msg.deleted);
       setDeleteConfirm(null);
     } catch (error) {
       setOptimisticArtworks(artworksRef.current);
-      toast.error(error instanceof Error ? error.message : '작품 삭제 중 오류가 발생했습니다.');
+      toast.error(
+        locale === 'en' ? msg.deleteError : error instanceof Error ? error.message : msg.deleteError
+      );
     } finally {
       setProcessingId(null);
     }
@@ -366,7 +536,9 @@ export function AdminArtworkList({
     setProcessingId(id);
 
     setOptimisticArtworks((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, status: newStatus as any } : item))
+      prev.map((item) =>
+        item.id === id ? { ...item, status: newStatus as ArtworkItem['status'] } : item
+      )
     );
 
     try {
@@ -378,13 +550,15 @@ export function AdminArtworkList({
             prev.map((item) => (item.id === id ? { ...item, status: source.status } : item))
           );
         }
-        toast.error(result.errors[0] || '카페24 동기화에 실패해 상태 변경이 일부 롤백되었습니다.');
+        toast.error(locale === 'en' ? msg.statusRollback : result.errors[0] || msg.statusRollback);
         return;
       }
-      toast.success('작품 상태를 변경했습니다.');
+      toast.success(msg.statusChanged);
     } catch (error) {
       setOptimisticArtworks(artworksRef.current);
-      toast.error(error instanceof Error ? error.message : '상태 변경 중 오류가 발생했습니다.');
+      toast.error(
+        locale === 'en' ? msg.statusError : error instanceof Error ? error.message : msg.statusError
+      );
     } finally {
       setProcessingId(null);
     }
@@ -407,15 +581,19 @@ export function AdminArtworkList({
           );
         }
         toast.error(
-          result.errors[0] || '카페24 동기화에 실패해 공개 상태 변경이 일부 롤백되었습니다.'
+          locale === 'en' ? msg.visibilityRollback : result.errors[0] || msg.visibilityRollback
         );
         return;
       }
-      toast.success(currentHidden ? '작품을 공개 처리했습니다.' : '작품을 숨김 처리했습니다.');
+      toast.success(currentHidden ? msg.shown : msg.hidden);
     } catch (error) {
       setOptimisticArtworks(artworksRef.current);
       toast.error(
-        error instanceof Error ? error.message : '공개 상태 변경 중 오류가 발생했습니다.'
+        locale === 'en'
+          ? msg.visibilityError
+          : error instanceof Error
+            ? error.message
+            : msg.visibilityError
       );
     } finally {
       setProcessingId(null);
@@ -444,7 +622,9 @@ export function AdminArtworkList({
 
     const targets = new Set(selectedInFiltered);
     setOptimisticArtworks((prev) =>
-      prev.map((item) => (targets.has(item.id) ? { ...item, status: status as any } : item))
+      prev.map((item) =>
+        targets.has(item.id) ? { ...item, status: status as ArtworkItem['status'] } : item
+      )
     );
 
     try {
@@ -461,19 +641,21 @@ export function AdminArtworkList({
         );
         setSelectedIds(new Set(result.failedIds));
         setBatchStatusConfirm(null);
-        toast.warning(
-          `부분 성공: ${result.succeededIds.length}건 성공, ${result.failedIds.length}건 롤백되었습니다.`
-        );
+        toast.warning(msg.partialSuccess(result.succeededIds.length, result.failedIds.length));
         return;
       }
 
       setSelectedIds(new Set());
       setBatchStatusConfirm(null);
-      toast.success('선택한 작품 상태를 변경했습니다.');
+      toast.success(msg.batchStatusChanged);
     } catch (error) {
       setOptimisticArtworks(artworksRef.current);
       toast.error(
-        error instanceof Error ? error.message : '일괄 상태 변경 중 오류가 발생했습니다.'
+        locale === 'en'
+          ? msg.batchStatusError
+          : error instanceof Error
+            ? error.message
+            : msg.batchStatusError
       );
     } finally {
       setBatchProcessing(false);
@@ -504,21 +686,21 @@ export function AdminArtworkList({
         );
         setSelectedIds(new Set(result.failedIds));
         setBatchHiddenConfirm(null);
-        toast.warning(
-          `부분 성공: ${result.succeededIds.length}건 성공, ${result.failedIds.length}건 롤백되었습니다.`
-        );
+        toast.warning(msg.partialSuccess(result.succeededIds.length, result.failedIds.length));
         return;
       }
 
       setSelectedIds(new Set());
       setBatchHiddenConfirm(null);
-      toast.success(
-        isHidden ? '선택한 작품을 숨김 처리했습니다.' : '선택한 작품을 공개 처리했습니다.'
-      );
+      toast.success(isHidden ? msg.batchHidden : msg.batchShown);
     } catch (error) {
       setOptimisticArtworks(artworksRef.current);
       toast.error(
-        error instanceof Error ? error.message : '일괄 공개 상태 변경 중 오류가 발생했습니다.'
+        locale === 'en'
+          ? msg.batchVisibilityError
+          : error instanceof Error
+            ? error.message
+            : msg.batchVisibilityError
       );
     } finally {
       setBatchProcessing(false);
@@ -536,10 +718,16 @@ export function AdminArtworkList({
       await batchDeleteArtworks(selectedInFiltered);
       setSelectedIds(new Set());
       setShowBatchDeleteConfirm(false);
-      toast.success('선택한 작품을 삭제했습니다.');
+      toast.success(msg.batchDeleted);
     } catch (error) {
       setOptimisticArtworks(artworksRef.current);
-      toast.error(error instanceof Error ? error.message : '일괄 삭제 중 오류가 발생했습니다.');
+      toast.error(
+        locale === 'en'
+          ? msg.batchDeleteError
+          : error instanceof Error
+            ? error.message
+            : msg.batchDeleteError
+      );
     } finally {
       setBatchProcessing(false);
     }
@@ -550,38 +738,35 @@ export function AdminArtworkList({
       <AdminCard className="overflow-hidden">
         {isTruncated && (
           <div className="border-b border-amber-200 bg-amber-50 px-6 py-3 text-sm text-amber-800">
-            작품 데이터가 많아 최근 {maxRows}건만 불러왔습니다. 오래된 작품 확인은{' '}
-            <span className="font-medium">전체 작품 데이터 다운받기</span>를 이용해 주세요.
+            {msg.truncatedNotice(maxRows)}{' '}
+            <span className="font-medium">{msg.downloadAllArtworks}</span>
           </div>
         )}
         {/* Header & Main Controls */}
         <AdminCardHeader>
           <div className="flex items-center gap-3">
             <h2 className="text-lg font-semibold text-gray-900">
-              작품 목록
-              <AdminHelp>
-                전체 작품을 관리합니다. 판매 상태와 공개 여부를 변경하거나 작품 상세 정보를 편집할
-                수 있습니다.
-              </AdminHelp>
+              {msg.title}
+              <AdminHelp>{msg.titleHelp}</AdminHelp>
             </h2>
-            <AdminBadge tone="info">{filtered.length}개</AdminBadge>
+            <AdminBadge tone="info">{msg.count(filtered.length)}</AdminBadge>
           </div>
 
           <div className="grid w-full gap-3 sm:w-auto sm:grid-cols-[minmax(260px,1fr)_auto] sm:items-end">
             <div className="relative w-full sm:min-w-[320px]">
               <label htmlFor="search-artworks" className="sr-only">
-                작품 검색
+                {msg.searchArtwork}
               </label>
               <AdminInput
                 id="search-artworks"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="작품명, 작가명 검색..."
+                placeholder={msg.searchPlaceholder}
                 aria-describedby="search-artworks-description"
                 className="h-10 border-0 pl-10 pr-3"
               />
               <span id="search-artworks-description" className="sr-only">
-                작품명 또는 작가명으로 검색할 수 있습니다. 현재 {filtered.length}개가 표시됩니다.
+                {msg.searchDescription(filtered.length)}
               </span>
             </div>
             <div className="grid grid-cols-3 gap-3 sm:flex sm:justify-end">
@@ -595,10 +780,10 @@ export function AdminArtworkList({
                 }}
                 wrapperClassName="min-w-[120px]"
               >
-                <option value="all">모든 상태</option>
-                <option value="available">판매 중</option>
-                <option value="reserved">예약됨</option>
-                <option value="sold">판매 완료</option>
+                <option value="all">{msg.allStatus}</option>
+                <option value="available">{msg.available}</option>
+                <option value="reserved">{msg.reserved}</option>
+                <option value="sold">{msg.sold}</option>
               </AdminSelect>
               <AdminSelect
                 value={visibilityFilter}
@@ -610,9 +795,9 @@ export function AdminArtworkList({
                 }}
                 wrapperClassName="min-w-[120px]"
               >
-                <option value="all">모든 노출</option>
-                <option value="visible">공개</option>
-                <option value="hidden">숨김</option>
+                <option value="all">{msg.allVisibility}</option>
+                <option value="visible">{msg.visible}</option>
+                <option value="hidden">{msg.hiddenLabel}</option>
               </AdminSelect>
               <AdminSelect
                 value={sortFilter}
@@ -627,9 +812,9 @@ export function AdminArtworkList({
                 }}
                 wrapperClassName="min-w-[140px]"
               >
-                <option value="default">기본 정렬</option>
-                <option value="recent">최근 등록순</option>
-                <option value="oldest">오래된 등록순</option>
+                <option value="default">{msg.defaultSort}</option>
+                <option value="recent">{msg.recentSort}</option>
+                <option value="oldest">{msg.oldestSort}</option>
               </AdminSelect>
             </div>
           </div>
@@ -639,7 +824,7 @@ export function AdminArtworkList({
         {selectedInFiltered.length > 0 && (
           <div className="flex flex-wrap items-center gap-4 border-b border-indigo-100 bg-indigo-50 px-6 py-4">
             <span className="text-sm font-medium text-indigo-900">
-              {selectedInFiltered.length}개 선택됨
+              {msg.selectedCount(selectedInFiltered.length)}
             </span>
             <div className="h-4 w-px bg-indigo-200"></div>
             <div className="flex items-center gap-2">
@@ -651,24 +836,24 @@ export function AdminArtworkList({
                 disabled={batchProcessing}
                 className="border-indigo-200"
               >
-                <option value="">상태 변경...</option>
-                <option value="available">판매 중</option>
-                <option value="reserved">예약됨</option>
-                <option value="sold">판매 완료</option>
+                <option value="">{msg.changeStatus}</option>
+                <option value="available">{msg.available}</option>
+                <option value="reserved">{msg.reserved}</option>
+                <option value="sold">{msg.sold}</option>
               </AdminSelect>
               <Button
                 variant="white"
                 onClick={() => setBatchHiddenConfirm(true)}
                 disabled={batchProcessing}
               >
-                숨김
+                {msg.hide}
               </Button>
               <Button
                 variant="white"
                 onClick={() => setBatchHiddenConfirm(false)}
                 disabled={batchProcessing}
               >
-                노출
+                {msg.show}
               </Button>
               <Button
                 variant="white"
@@ -676,11 +861,11 @@ export function AdminArtworkList({
                 disabled={batchProcessing}
                 className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
               >
-                삭제
+                {msg.delete}
               </Button>
             </div>
             {batchProcessing && (
-              <span className="text-xs text-indigo-600 animate-pulse">처리 중...</span>
+              <span className="text-xs text-indigo-600 animate-pulse">{msg.processing}</span>
             )}
           </div>
         )}
@@ -706,9 +891,9 @@ export function AdminArtworkList({
                     type="button"
                     onClick={() => handleSort('artwork_info')}
                     className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
-                    aria-label={getSortAriaLabel('작품 정보', 'artwork_info')}
+                    aria-label={getSortAriaLabel(msg.artworkInfo, 'artwork_info')}
                   >
-                    작품 정보
+                    {msg.artworkInfo}
                     <span className="text-[11px] text-gray-400">
                       {getSortArrow('artwork_info')}
                     </span>
@@ -722,9 +907,9 @@ export function AdminArtworkList({
                     type="button"
                     onClick={() => handleSort('status')}
                     className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
-                    aria-label={getSortAriaLabel('상태', 'status')}
+                    aria-label={getSortAriaLabel(msg.status, 'status')}
                   >
-                    상태
+                    {msg.status}
                     <span className="text-[11px] text-gray-400">{getSortArrow('status')}</span>
                   </button>
                 </th>
@@ -736,9 +921,9 @@ export function AdminArtworkList({
                     type="button"
                     onClick={() => handleSort('created_at')}
                     className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
-                    aria-label={getSortAriaLabel('등록일', 'created_at')}
+                    aria-label={getSortAriaLabel(msg.createdAt, 'created_at')}
                   >
-                    등록일
+                    {msg.createdAt}
                     <span className="text-[11px] text-gray-400">{getSortArrow('created_at')}</span>
                   </button>
                 </th>
@@ -750,14 +935,14 @@ export function AdminArtworkList({
                     type="button"
                     onClick={() => handleSort('visibility')}
                     className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
-                    aria-label={getSortAriaLabel('공개 여부', 'visibility')}
+                    aria-label={getSortAriaLabel(msg.visibility, 'visibility')}
                   >
-                    공개 여부
+                    {msg.visibility}
                     <span className="text-[11px] text-gray-400">{getSortArrow('visibility')}</span>
                   </button>
                 </th>
                 <th scope="col" className="relative px-6 py-3">
-                  <span className="sr-only">관리</span>
+                  <span className="sr-only">{msg.manage}</span>
                 </th>
               </tr>
             </thead>
@@ -765,7 +950,7 @@ export function AdminArtworkList({
               {filtered.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-0">
-                    <AdminEmptyState title="검색된 작품이 없습니다" />
+                    <AdminEmptyState title={msg.noSearchResult} />
                   </td>
                 </tr>
               ) : (
@@ -801,7 +986,7 @@ export function AdminArtworkList({
                           }}
                           role={artwork.images?.[0] ? 'button' : undefined}
                           tabIndex={artwork.images?.[0] ? 0 : undefined}
-                          aria-label={artwork.images?.[0] ? '이미지 확대하기' : undefined}
+                          aria-label={artwork.images?.[0] ? msg.zoomImage : undefined}
                         >
                           {artwork.images?.[0] ? (
                             <SafeImage
@@ -842,7 +1027,7 @@ export function AdminArtworkList({
                             )}
                           </Link>
                           <div className="text-sm text-gray-500">
-                            {artwork.artists?.name_ko || '작가 미상'}
+                            {artwork.artists?.name_ko || msg.unknownArtist}
                           </div>
                           {(artwork.cafe24_sync_status === 'failed' ||
                             artwork.cafe24_sync_status === 'pending_auth' ||
@@ -860,12 +1045,12 @@ export function AdminArtworkList({
                               }`}
                               title={artwork.cafe24_sync_error || ''}
                             >
-                              {artwork.cafe24_sync_status === 'failed' && '구매연동 오류'}
+                              {artwork.cafe24_sync_status === 'failed' && msg.cafe24SyncFailed}
                               {artwork.cafe24_sync_status === 'pending_auth' &&
-                                '구매연동 재승인 필요'}
+                                msg.cafe24PendingAuth}
                               {artwork.cafe24_sync_status === 'synced_with_warning' &&
-                                '구매연동 경고'}
-                              {artwork.cafe24_sync_status === 'syncing' && '구매연동 진행 중'}
+                                msg.cafe24Warning}
+                              {artwork.cafe24_sync_status === 'syncing' && msg.cafe24Syncing}
                             </div>
                           )}
                         </div>
@@ -886,14 +1071,14 @@ export function AdminArtworkList({
                               : 'border-sky-200 bg-sky-50 text-sky-700 focus:border-sky-400'
                         }`}
                       >
-                        <option value="available">판매 중</option>
-                        <option value="reserved">예약됨</option>
-                        <option value="sold">판매 완료</option>
+                        <option value="available">{msg.available}</option>
+                        <option value="reserved">{msg.reserved}</option>
+                        <option value="sold">{msg.sold}</option>
                       </AdminSelect>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className="text-sm text-gray-500">
-                        {formatDate(artwork.created_at)}
+                        {formatDate(artwork.created_at, locale)}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -906,7 +1091,7 @@ export function AdminArtworkList({
                             : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100'
                         }`}
                       >
-                        {artwork.is_hidden ? '숨김' : '공개 중'}
+                        {artwork.is_hidden ? msg.hiddenLabel : msg.visibleNow}
                       </button>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -917,7 +1102,7 @@ export function AdminArtworkList({
                           size="sm"
                           className="px-2 text-gray-500 hover:bg-indigo-50 hover:text-indigo-600"
                         >
-                          편집
+                          {msg.edit}
                         </Button>
                         <Button
                           variant="white"
@@ -926,7 +1111,7 @@ export function AdminArtworkList({
                           disabled={processingId === artwork.id}
                           className="text-gray-400 hover:text-red-600 hover:bg-red-50 px-2"
                         >
-                          삭제
+                          {msg.delete}
                         </Button>
                       </div>
                     </td>
@@ -953,9 +1138,9 @@ export function AdminArtworkList({
         isOpen={!!deleteConfirm}
         onClose={() => setDeleteConfirm(null)}
         onConfirm={handleDelete}
-        title="작품 삭제 확인"
-        description={`'${deleteConfirm?.title}' 작품을 삭제하시겠습니까?\n삭제 후 관리자 활동 로그에서 복구할 수 있습니다.`}
-        confirmText="삭제하기"
+        title={msg.deleteConfirmTitle}
+        description={msg.deleteConfirmDescription(deleteConfirm?.title)}
+        confirmText={msg.deleteConfirmText}
         variant="danger"
         isLoading={!!processingId}
       />
@@ -964,9 +1149,9 @@ export function AdminArtworkList({
         isOpen={showBatchDeleteConfirm}
         onClose={() => setShowBatchDeleteConfirm(false)}
         onConfirm={handleBatchDelete}
-        title="선택 작품 일괄 삭제"
-        description={`선택한 ${selectedInFiltered.length}개의 작품을 모두 삭제하시겠습니까?\n삭제 후 관리자 활동 로그에서 복구할 수 있습니다.`}
-        confirmText={`${selectedInFiltered.length}개 작품 삭제`}
+        title={msg.batchDeleteTitle}
+        description={msg.batchDeleteDescription(selectedInFiltered.length)}
+        confirmText={msg.batchDeleteText(selectedInFiltered.length)}
         variant="danger"
         isLoading={batchProcessing}
       />
@@ -975,15 +1160,16 @@ export function AdminArtworkList({
         isOpen={!!batchStatusConfirm}
         onClose={() => setBatchStatusConfirm(null)}
         onConfirm={handleBatchStatus}
-        title="일괄 상태 변경"
-        description={`선택한 ${selectedInFiltered.length}개 작품의 상태를 '${
+        title={msg.batchStatusTitle}
+        description={msg.batchStatusDescription(
+          selectedInFiltered.length,
           batchStatusConfirm === 'available'
-            ? '판매 중'
+            ? msg.available
             : batchStatusConfirm === 'reserved'
-              ? '예약됨'
-              : '판매 완료'
-        }'(으)로 변경하시겠습니까?`}
-        confirmText="상태 변경"
+              ? msg.reserved
+              : msg.sold
+        )}
+        confirmText={msg.batchStatusConfirm}
         variant="warning"
         isLoading={batchProcessing}
       />
@@ -992,11 +1178,13 @@ export function AdminArtworkList({
         isOpen={batchHiddenConfirm !== null}
         onClose={() => setBatchHiddenConfirm(null)}
         onConfirm={handleBatchHidden}
-        title={batchHiddenConfirm ? '일괄 숨김 처리' : '일괄 공개 처리'}
-        description={`선택한 ${selectedInFiltered.length}개 작품을 모두 ${
-          batchHiddenConfirm ? '숨김' : '공개'
-        } 처리하시겠습니까?`}
-        confirmText={batchHiddenConfirm ? '숨김 처리' : '공개 처리'}
+        title={batchHiddenConfirm ? msg.batchHideTitle : msg.batchShowTitle}
+        description={
+          batchHiddenConfirm
+            ? msg.batchHideDescription(selectedInFiltered.length)
+            : msg.batchShowDescription(selectedInFiltered.length)
+        }
+        confirmText={batchHiddenConfirm ? msg.batchHideConfirm : msg.batchShowConfirm}
         variant="info"
         isLoading={batchProcessing}
       />

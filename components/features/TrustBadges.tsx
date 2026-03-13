@@ -1,11 +1,13 @@
 import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 interface TrustBadgesProps {
   className?: string;
 }
 
 export default function TrustBadges({ className }: TrustBadgesProps) {
-  const badges = ['✓ 100% 진품 보증', '✓ 안전한 포장 배송', '✓ 전문 큐레이터 검증'];
+  const t = useTranslations('trustBadges');
+  const badges = [t('authenticity'), t('safeDelivery'), t('curatorVerified')];
 
   return (
     <div className={cn('flex flex-wrap gap-2', className)}>

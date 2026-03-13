@@ -3,15 +3,25 @@
 import clsx from 'clsx';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { resolveClientLocale } from '@/lib/client-locale';
 
-const navItems = [
-  { href: '/exhibitor', label: '대시보드' },
-  { href: '/exhibitor/artists', label: '작가 관리' },
-  { href: '/exhibitor/artworks', label: '작품 관리' },
-];
+const navItemsByLocale = {
+  ko: [
+    { href: '/exhibitor', label: '대시보드' },
+    { href: '/exhibitor/artists', label: '작가 관리' },
+    { href: '/exhibitor/artworks', label: '작품 관리' },
+  ],
+  en: [
+    { href: '/exhibitor', label: 'Dashboard' },
+    { href: '/exhibitor/artists', label: 'Artists' },
+    { href: '/exhibitor/artworks', label: 'Artworks' },
+  ],
+} as const;
 
 export default function ExhibitorNav() {
   const pathname = usePathname();
+  const locale = resolveClientLocale(pathname);
+  const navItems = navItemsByLocale[locale];
 
   const isActive = (href: string) => {
     if (href === '/exhibitor') {

@@ -8,6 +8,7 @@ import {
   AdminPageHeader,
   AdminPageTitle,
 } from '@/app/admin/_components/admin-ui';
+import { getServerLocale } from '@/lib/server-locale';
 
 type ArtworksPageProps = {
   searchParams?: {
@@ -18,18 +19,50 @@ type ArtworksPageProps = {
 };
 
 export default async function ArtworksPage({ searchParams }: ArtworksPageProps) {
+  const locale = await getServerLocale();
+  const copy =
+    locale === 'en'
+      ? {
+          updated: 'Artwork has been updated.',
+          created: 'Artwork has been created.',
+          missingImageWarning:
+            'Please upload an image to display this artwork on the online purchase page.',
+          partialSyncWarning: 'Some sales info is still being synchronized.',
+          delayedSyncWarning: 'Online purchase info sync is delayed. Please check again shortly.',
+          pendingAuthWarning: 'Online purchase info sync is delayed.',
+          title: 'Artwork management',
+          badge: 'My artworks',
+          description: (count: number) => `${count} artworks are currently registered.`,
+          create: 'Create artwork',
+        }
+      : {
+          updated: '작품이 수정되었습니다.',
+          created: '작품이 등록되었습니다.',
+          missingImageWarning: '온라인 구매 페이지에 노출할 이미지를 업로드해 주세요.',
+          partialSyncWarning: '일부 판매 정보 반영이 진행 중입니다.',
+          delayedSyncWarning:
+            '온라인 구매 정보 반영이 지연되고 있습니다. 잠시 후 다시 확인해 주세요.',
+          pendingAuthWarning: '온라인 구매 정보 반영이 지연되고 있습니다.',
+          title: '작품 관리',
+          badge: '내 작품',
+          description: (count: number) => `총 ${count}개의 작품이 등록되어 있습니다.`,
+          create: '작품 등록',
+        };
+
   const { artist } = await getArtistDashboardContext();
   const supabase = await createSupabaseServerClient();
 
   const baseMessage =
     searchParams?.result === 'updated'
-      ? '작품이 수정되었습니다.'
+      ? copy.updated
       : searchParams?.result === 'created'
-        ? '작품이 등록되었습니다.'
+        ? copy.created
         : null;
   const cafe24State = searchParams?.cafe24;
   const cafe24Reason = searchParams?.cafe24_reason?.trim() || null;
-  const isMissingImageWarning = cafe24Reason?.includes('대표 이미지가 없어') || false;
+  const isMissingImageWarning =
+    cafe24Reason?.includes('대표 이미지') ||
+    /representative image|primary image|main image|cover image/i.test(cafe24Reason || '');
 
   let flashMessage = baseMessage;
   let flashType: 'success' | 'warning' | 'error' | null = baseMessage ? 'success' : null;
@@ -37,14 +70,14 @@ export default async function ArtworksPage({ searchParams }: ArtworksPageProps) 
   if (baseMessage && cafe24State === 'warning') {
     flashType = 'warning';
     flashMessage = isMissingImageWarning
-      ? `${baseMessage} 온라인 구매 페이지에 노출할 이미지를 업로드해 주세요.`
-      : `${baseMessage} 일부 판매 정보 반영이 진행 중입니다.`;
+      ? `${baseMessage} ${copy.missingImageWarning}`
+      : `${baseMessage} ${copy.partialSyncWarning}`;
   } else if (baseMessage && cafe24State === 'failed') {
     flashType = 'warning';
-    flashMessage = `${baseMessage} 온라인 구매 정보 반영이 지연되고 있습니다. 잠시 후 다시 확인해 주세요.`;
+    flashMessage = `${baseMessage} ${copy.delayedSyncWarning}`;
   } else if (baseMessage && cafe24State === 'pending_auth') {
     flashType = 'warning';
-    flashMessage = `${baseMessage} 온라인 구매 정보 반영이 지연되고 있습니다.`;
+    flashMessage = `${baseMessage} ${copy.pendingAuthWarning}`;
   }
 
   // Fetch artworks
@@ -59,15 +92,13 @@ export default async function ArtworksPage({ searchParams }: ArtworksPageProps) 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <AdminPageHeader>
           <div className="flex items-center gap-2">
-            <AdminPageTitle>작품 관리</AdminPageTitle>
-            <AdminBadge tone="info">내 작품</AdminBadge>
+            <AdminPageTitle>{copy.title}</AdminPageTitle>
+            <AdminBadge tone="info">{copy.badge}</AdminBadge>
           </div>
-          <AdminPageDescription>
-            총 {artworks?.length || 0}개의 작품이 등록되어 있습니다.
-          </AdminPageDescription>
+          <AdminPageDescription>{copy.description(artworks?.length || 0)}</AdminPageDescription>
         </AdminPageHeader>
         <LinkButton href="/dashboard/artworks/new" variant="primary" className="w-full sm:w-auto">
-          작품 등록
+          {copy.create}
         </LinkButton>
       </div>
 

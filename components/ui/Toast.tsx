@@ -2,6 +2,7 @@
 
 import { useEffect, useCallback } from 'react';
 import { m, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { useLocale } from 'next-intl';
 import { cn } from '@/lib/utils';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
@@ -41,6 +42,8 @@ const ICON_STYLES: Record<ToastType, string> = {
 
 function Toast({ toast, onDismiss }: ToastProps) {
   const { id, type, message, duration = 4000 } = toast;
+  const locale = useLocale();
+  const closeLabel = locale === 'en' ? 'Close' : '닫기';
   const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
@@ -99,7 +102,7 @@ function Toast({ toast, onDismiss }: ToastProps) {
           onDismiss(id);
         }}
         className="p-1 rounded hover:bg-white/20 transition-colors"
-        aria-label="닫기"
+        aria-label={closeLabel}
       >
         <svg
           className="w-4 h-4"

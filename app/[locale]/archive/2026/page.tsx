@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import ExportedImage from 'next-image-export-optimizer';
 import LinkButton from '@/components/ui/LinkButton';
 import SectionTitle from '@/components/ui/SectionTitle';
@@ -7,39 +7,45 @@ import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import {
-  BREADCRUMB_HOME,
-  BREADCRUMBS,
-  EXHIBITION,
-  EXTERNAL_LINKS,
-  OG_IMAGE,
-  SITE_URL,
-} from '@/lib/constants';
+import { EXHIBITION, EXTERNAL_LINKS, OG_IMAGE, SITE_URL } from '@/lib/constants';
 import { getSupabaseReviews } from '@/lib/supabase-data';
 import {
   escapeJsonLdForScript,
   generateExhibitionSchema,
   createBreadcrumbSchema,
 } from '@/lib/seo-utils';
+import { createLocaleAlternates } from '@/lib/locale-alternates';
 
 // Dynamically import KakaoMap (client-side only, reduces initial bundle)
 import ExhibitionMapWrapper from '@/components/features/ExhibitionMapWrapper';
 
 const PAGE_URL = `${SITE_URL}/archive/2026`;
-const PAGE_TITLE = '2026 오프라인 전시 기록';
-const PAGE_DESCRIPTION = '인사아트센터에서 진행된 씨앗페 2026 오프라인 전시의 기록입니다.';
+const PAGE_COPY = {
+  ko: {
+    title: '2026 오프라인 전시 기록',
+    description: '인사아트센터에서 진행된 씨앗페 2026 오프라인 전시의 기록입니다.',
+  },
+  en: {
+    title: '2026 Offline Exhibition Archive',
+    description: 'A record of the SAF 2026 offline exhibition held at Insa Art Center.',
+  },
+} as const;
+
+const resolveLocale = (locale: string): 'ko' | 'en' => (locale === 'en' ? 'en' : 'ko');
 
 export async function generateMetadata(): Promise<Metadata> {
+  const locale = resolveLocale(await getLocale());
+  const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
-  const title = `${PAGE_TITLE} | ${tSeo('siteTitle')}`;
+  const title = `${copy.title} | ${tSeo('siteTitle')}`;
 
   return {
     title,
-    description: PAGE_DESCRIPTION,
-    alternates: { canonical: PAGE_URL },
+    description: copy.description,
+    alternates: createLocaleAlternates('/archive/2026'),
     openGraph: {
       title,
-      description: PAGE_DESCRIPTION,
+      description: copy.description,
       url: PAGE_URL,
       images: [
         { url: OG_IMAGE.url, width: OG_IMAGE.width, height: OG_IMAGE.height, alt: OG_IMAGE.alt },
@@ -48,26 +54,146 @@ export async function generateMetadata(): Promise<Metadata> {
     twitter: {
       card: 'summary_large_image',
       title,
-      description: PAGE_DESCRIPTION,
+      description: copy.description,
       images: [OG_IMAGE.url],
     },
   };
 }
 
 export default async function Archive2026Page() {
+  const locale = resolveLocale(await getLocale());
+  const tBreadcrumbs = await getTranslations('breadcrumbs');
   const exhibitionReviews = await getSupabaseReviews();
   const canonicalUrl = PAGE_URL;
-  const shareTitle = '2026 오프라인 전시 기록 | 씨앗페 2026';
+  const shareTitle =
+    locale === 'en'
+      ? '2026 Offline Exhibition Archive | SAF 2026'
+      : '2026 오프라인 전시 기록 | 씨앗페 2026';
   const shareDescription =
-    '씨앗페 2026 오프라인 전시의 기록. 인사아트센터에서의 뜨거웠던 연대의 현장.';
+    locale === 'en'
+      ? 'Records from the SAF 2026 offline exhibition at Insa Art Center.'
+      : '씨앗페 2026 오프라인 전시의 기록. 인사아트센터에서의 뜨거웠던 연대의 현장.';
+  const exhibitionSummary =
+    locale === 'en'
+      ? {
+          name: 'SAF 2026',
+          date: 'January 14, 2026 - January 26, 2026',
+          venue: 'Insa Art Center, 3F G&J Gallery',
+          address: '41-1, Insadong-gil, Jongno-gu, Seoul',
+        }
+      : {
+          name: EXHIBITION.NAME,
+          date: EXHIBITION.DATE,
+          venue: EXHIBITION.LOCATION,
+          address: EXHIBITION.ADDRESS,
+        };
 
   // JSON-LD Schema for Event
   const eventSchema = generateExhibitionSchema(exhibitionReviews);
   const breadcrumbSchema = createBreadcrumbSchema([
-    BREADCRUMB_HOME,
-    BREADCRUMBS['/archive'],
-    BREADCRUMBS['/archive/2026'],
+    { name: tBreadcrumbs('home'), url: SITE_URL },
+    { name: tBreadcrumbs('archive'), url: `${SITE_URL}/archive` },
+    { name: tBreadcrumbs('archive2026'), url: PAGE_URL },
   ]);
+
+  if (locale === 'en') {
+    return (
+      <>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: escapeJsonLdForScript(JSON.stringify(eventSchema)) }}
+        />
+        <JsonLdScript data={breadcrumbSchema} />
+        <PageHero
+          title="2026 Offline Exhibition"
+          description="A 12-day exhibition record at Insa Art Center"
+          dividerColor="text-red-50"
+        >
+          <ShareButtonsWrapper
+            url={canonicalUrl}
+            title={shareTitle}
+            description={shareDescription}
+          />
+        </PageHero>
+
+        <Section variant="white" className="bg-red-50">
+          <div className="container-max text-center">
+            <p className="text-lg font-bold text-primary">
+              🚫 This offline exhibition ended on January 26, 2026.
+            </p>
+            <p className="text-charcoal-muted mt-2">
+              Online exhibition and artwork purchase are currently available.
+            </p>
+          </div>
+        </Section>
+
+        <Section variant="primary-surface" prevVariant="white">
+          <div className="container-max">
+            <SectionTitle className="mb-8">Exhibition overview</SectionTitle>
+            <div className="mb-12">
+              <ExportedImage
+                src="/images/safposter.png"
+                alt="SAF 2026 official poster"
+                width={1200}
+                height={1700}
+                className="w-full rounded-2xl shadow-xl"
+                priority
+              />
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-stretch">
+              <div className="flex flex-col gap-8 h-full">
+                <div className="space-y-4">
+                  <div className="border-l-4 border-primary pl-4">
+                    <h3 className="font-sans font-bold text-sm text-charcoal-muted mb-1">Event</h3>
+                    <p className="text-lg font-semibold">{exhibitionSummary.name}</p>
+                  </div>
+                  <div className="border-l-4 border-primary pl-4">
+                    <h3 className="font-sans font-bold text-sm text-charcoal-muted mb-1">Date</h3>
+                    <p className="text-lg font-semibold">{exhibitionSummary.date}</p>
+                  </div>
+                  <div className="border-l-4 border-primary pl-4">
+                    <h3 className="font-sans font-bold text-sm text-charcoal-muted mb-1">Venue</h3>
+                    <p className="text-lg font-semibold">{exhibitionSummary.venue}</p>
+                    <p className="text-charcoal-muted text-sm">{exhibitionSummary.address}</p>
+                  </div>
+                </div>
+
+                <div className="mt-auto space-y-3">
+                  <h3 className="text-card-title mb-4">Participate</h3>
+                  <LinkButton
+                    href={EXTERNAL_LINKS.JOIN_MEMBER}
+                    external
+                    variant="accent"
+                    className="w-full"
+                    size="md"
+                    leadingIcon="🤝"
+                    iconLayout="fixed-left"
+                  >
+                    Join as a member
+                  </LinkButton>
+                  <LinkButton
+                    href="/artworks"
+                    variant="secondary"
+                    className="w-full"
+                    size="md"
+                    leadingIcon="🎨"
+                    iconLayout="fixed-left"
+                  >
+                    Buy artworks
+                  </LinkButton>
+                </div>
+              </div>
+
+              <div className="h-full">
+                <ExhibitionMapWrapper className="min-h-[400px]" />
+              </div>
+            </div>
+          </div>
+        </Section>
+      </>
+    );
+  }
 
   return (
     <>

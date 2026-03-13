@@ -285,3 +285,34 @@ export function formatPriceForDisplay(priceValue: string | number | null | undef
 
   return `₩${numeric.toLocaleString('ko-KR')}`;
 }
+
+const KOREAN_DATE_PATTERN = /^(\d{4})\s*년\s*(\d{1,2})\s*월\s*(\d{1,2})\s*일$/;
+
+export function formatEffectiveDateForLocale(rawDate: string, locale: 'ko' | 'en'): string {
+  const normalizedDate = rawDate.trim();
+
+  if (locale === 'ko' || !normalizedDate) {
+    return normalizedDate;
+  }
+
+  const matched = normalizedDate.match(KOREAN_DATE_PATTERN);
+  if (!matched) {
+    return normalizedDate;
+  }
+
+  const year = Number(matched[1]);
+  const month = Number(matched[2]);
+  const day = Number(matched[3]);
+  const parsed = new Date(Date.UTC(year, month - 1, day));
+
+  if (Number.isNaN(parsed.getTime())) {
+    return normalizedDate;
+  }
+
+  return parsed.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'UTC',
+  });
+}

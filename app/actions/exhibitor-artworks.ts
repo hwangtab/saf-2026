@@ -72,7 +72,7 @@ function toCafe24SyncFeedback(
   }
 
   const reason = result.reason || null;
-  if (reason?.includes('OAuth 연결')) {
+  if (reason?.includes('OAuth')) {
     return {
       status: 'pending_auth',
       reason,

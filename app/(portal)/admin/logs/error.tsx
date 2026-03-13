@@ -1,6 +1,9 @@
 'use client';
 
 import ErrorView from '@/components/common/ErrorView';
+import { usePathname } from 'next/navigation';
+import { resolveClientLocale } from '@/lib/client-locale';
+import { getPortalErrorCopy } from '@/lib/portal-error-copy';
 
 export default function AdminLogsError({
   error,
@@ -9,12 +12,16 @@ export default function AdminLogsError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const pathname = usePathname();
+  const locale = resolveClientLocale(pathname);
+  const copy = getPortalErrorCopy('adminLogs', locale);
+
   return (
     <ErrorView
       icon="⚠️"
-      title="활동 로그를 불러올 수 없습니다"
-      message="로그 데이터를 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
-      backLink={{ href: '/admin/dashboard', label: '관리자 홈으로' }}
+      title={copy.title}
+      message={copy.message}
+      backLink={{ href: '/admin/dashboard', label: copy.backLabel || 'Back' }}
       error={error}
       reset={reset}
     />

@@ -3,10 +3,12 @@
 import { useEffect, useState } from 'react';
 import SafeImage from '@/components/common/SafeImage';
 import { m, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import { ANIMATION, HERO_IMAGES } from '@/lib/constants';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
 
 export default function BackgroundSlider() {
+  const t = useTranslations('backgroundSlider');
   const prefersReducedMotion = useReducedMotion();
   const isMobile = useIsMobile();
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -120,9 +122,9 @@ export default function BackgroundSlider() {
             onClick={() => setIsPaused((prev) => !prev)}
             className="absolute bottom-4 right-4 z-20 rounded-md bg-black/45 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm hover:bg-black/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
             aria-pressed={isPaused}
-            aria-label={isPaused ? '배경 슬라이드 재생' : '배경 슬라이드 일시정지'}
+            aria-label={isPaused ? t('playAria') : t('pauseAria')}
           >
-            {isPaused ? '재생' : '일시정지'}
+            {isPaused ? t('play') : t('pause')}
           </button>
         )}
       </div>

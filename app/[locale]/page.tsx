@@ -18,6 +18,7 @@ import {
 } from '@/lib/seo-utils';
 import { getSupabaseHomepageArtworks, getSupabaseFAQs } from '@/lib/supabase-data';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
+import { createLocaleAlternates } from '@/lib/locale-alternates';
 
 export const revalidate = 300;
 
@@ -51,9 +52,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: t('metaTitle'),
     description: t('metaDescription'),
-    alternates: {
-      canonical: SITE_URL,
-    },
+    alternates: createLocaleAlternates('/'),
     openGraph: {
       type: 'website',
       siteName: t('metaTitle').split(' - ')[0],

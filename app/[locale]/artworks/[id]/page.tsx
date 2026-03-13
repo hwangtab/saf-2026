@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import { Link } from '@/i18n/navigation';
 import { notFound } from 'next/navigation';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 
 import {
   getSupabaseArtworks,
@@ -41,6 +41,7 @@ export const revalidate = 300;
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const locale = (await getLocale()) === 'en' ? 'en' : 'ko';
   const { id } = await params;
   const artwork = await getSupabaseArtworkById(id);
   const t = await getTranslations('artworkDetail');
@@ -51,7 +52,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  return generateArtworkMetadata(artwork);
+  return generateArtworkMetadata(artwork, locale);
 }
 
 // Generate static params for all artworks at build time
@@ -63,6 +64,7 @@ export async function generateStaticParams() {
 }
 
 export default async function ArtworkDetailPage({ params }: Props) {
+  const locale = (await getLocale()) === 'en' ? 'en' : 'ko';
   const { id } = await params;
   const artwork = await getSupabaseArtworkById(id);
   const t = await getTranslations('artworkDetail');
@@ -86,7 +88,8 @@ export default async function ArtworkDetailPage({ params }: Props) {
   const { productSchema, breadcrumbSchema } = generateArtworkJsonLd(
     artwork,
     numericPrice,
-    isInquiry
+    isInquiry,
+    locale
   );
 
   const speakableSchema = generateSpeakableSchema([

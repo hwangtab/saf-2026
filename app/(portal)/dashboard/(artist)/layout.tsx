@@ -4,8 +4,11 @@ import { SignOutButton } from '@/components/auth/SignOutButton';
 import DashboardNav from './dashboard-nav';
 import { AdminBadge } from '@/app/admin/_components/admin-ui';
 import FeedbackButton from '@/components/feedback/FeedbackButton';
+import { getServerLocale } from '@/lib/server-locale';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const locale = await getServerLocale();
+  const modeLabel = locale === 'en' ? 'Artist Mode' : '아티스트 모드';
   // Guard: Protects all dashboard routes
   // Checks if user is logged in AND is an active artist
   const user = await requireArtistActive();
@@ -26,7 +29,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
               <AdminBadge tone="success" className="hidden sm:inline-flex">
-                아티스트 모드
+                {modeLabel}
               </AdminBadge>
               <span className="hidden text-sm text-slate-500 sm:inline">{user.email}</span>
               <SignOutButton />

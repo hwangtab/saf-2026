@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getExhibitorArtistById } from '@/app/actions/exhibitor-artists';
 import { ArtistForm } from '../_components/artist-form';
@@ -6,12 +7,31 @@ import {
   AdminPageHeader,
   AdminPageTitle,
 } from '@/app/admin/_components/admin-ui';
+import { getServerLocale } from '@/lib/server-locale';
+
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getServerLocale();
+  return {
+    title: locale === 'en' ? 'Edit Artist | SAF 2026' : '작가 정보 수정 | 씨앗페 2026',
+  };
+}
 
 type Props = {
   params: Promise<{ id: string }>;
 };
 
 export default async function ExhibitorArtistDetailPage({ params }: Props) {
+  const locale = await getServerLocale();
+  const copy =
+    locale === 'en'
+      ? {
+          title: 'Edit artist information',
+          unnamed: '(Unnamed)',
+        }
+      : {
+          title: '작가 정보 수정',
+          unnamed: '(이름 없음)',
+        };
   const { id } = await params;
 
   let artist;
@@ -28,8 +48,8 @@ export default async function ExhibitorArtistDetailPage({ params }: Props) {
   return (
     <div className="space-y-6">
       <AdminPageHeader>
-        <AdminPageTitle>작가 정보 수정</AdminPageTitle>
-        <AdminPageDescription>{artist.name_ko || '(이름 없음)'}</AdminPageDescription>
+        <AdminPageTitle>{copy.title}</AdminPageTitle>
+        <AdminPageDescription>{artist.name_ko || copy.unnamed}</AdminPageDescription>
       </AdminPageHeader>
       <ArtistForm artist={artist} />
     </div>

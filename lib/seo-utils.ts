@@ -41,18 +41,24 @@ export function createBreadcrumbSchema(items: BreadcrumbItem[]) {
   };
 }
 
-export function generateArtworkMetadata(artwork: Artwork): Metadata {
+export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 'ko'): Metadata {
   const resolvedImageUrl = resolveSeoArtworkImageUrl(artwork.images[0]);
   const imageUrl = resolvedImageUrl.startsWith('http')
     ? resolvedImageUrl
     : `${SITE_URL}${resolvedImageUrl}`;
 
+  const isEnglish = locale === 'en';
+
   const summary = [
-    `작가: ${artwork.artist}`,
-    `작품명: ${artwork.title}`,
-    artwork.year ? `제작년도: ${artwork.year}` : '',
-    artwork.material ? `재료: ${artwork.material}` : '',
-    artwork.size ? `크기: ${artwork.size}` : '',
+    isEnglish ? `Artist: ${artwork.artist}` : `작가: ${artwork.artist}`,
+    isEnglish ? `Title: ${artwork.title}` : `작품명: ${artwork.title}`,
+    artwork.year ? (isEnglish ? `Year: ${artwork.year}` : `제작년도: ${artwork.year}`) : '',
+    artwork.material
+      ? isEnglish
+        ? `Material: ${artwork.material}`
+        : `재료: ${artwork.material}`
+      : '',
+    artwork.size ? (isEnglish ? `Size: ${artwork.size}` : `크기: ${artwork.size}`) : '',
   ]
     .filter(Boolean)
     .join(', ');
@@ -62,14 +68,15 @@ export function generateArtworkMetadata(artwork: Artwork): Metadata {
 
   const seoDescription =
     `${summary}. ` +
-    (descSnippet ? `작품 설명: ${descSnippet}... ` : '') +
-    (profileSnippet ? `작가 소개: ${profileSnippet}...` : '');
+    (descSnippet ? `${isEnglish ? 'Artwork description' : '작품 설명'}: ${descSnippet}... ` : '') +
+    (profileSnippet ? `${isEnglish ? 'Artist profile' : '작가 소개'}: ${profileSnippet}...` : '');
 
   const baseMetadata = createPageMetadata(
     `${artwork.title} - ${artwork.artist}`,
     seoDescription.substring(0, 300),
     `/artworks/${artwork.id}`,
-    imageUrl
+    imageUrl,
+    locale
   );
 
   // Get medium-specific keywords for better categorization
@@ -81,26 +88,36 @@ export function generateArtworkMetadata(artwork: Artwork): Metadata {
       artwork.artist,
       artwork.title,
       ...mediumKeywords,
-      '씨앗페',
+      ...(isEnglish ? ['SAF', 'artist solidarity', 'art purchase'] : ['씨앗페']),
       '씨앗페 2026',
       'SAF 2026',
-      '예술인 연대',
-      '미술품 구매',
-      '상호부조',
-      '원화 구매',
-      '미술품 투자',
-      '신진작가 원화',
-      '현대미술 컬렉션',
-      '예술인 상호부조',
+      ...(isEnglish
+        ? [
+            'artist solidarity',
+            'buy artwork',
+            'mutual aid',
+            'original artwork',
+            'contemporary art collection',
+          ]
+        : [
+            '예술인 연대',
+            '미술품 구매',
+            '상호부조',
+            '원화 구매',
+            '미술품 투자',
+            '신진작가 원화',
+            '현대미술 컬렉션',
+            '예술인 상호부조',
+          ]),
       '인사아트센터',
-      artwork.material?.split(' ')?.[0] ?? '미술품',
-      artwork.year ? `${artwork.year}년 작품` : null,
+      artwork.material?.split(' ')?.[0] ?? (isEnglish ? 'artwork' : '미술품'),
+      artwork.year ? (isEnglish ? `${artwork.year} artwork` : `${artwork.year}년 작품`) : null,
     ].filter(Boolean) as string[],
     openGraph: {
       ...baseMetadata.openGraph,
       type: 'website',
-      locale: 'ko_KR',
-      siteName: '씨앗페 2026',
+      locale: isEnglish ? 'en_US' : 'ko_KR',
+      siteName: isEnglish ? 'SAF 2026' : '씨앗페 2026',
     },
     twitter: {
       ...baseMetadata.twitter,
@@ -109,14 +126,26 @@ export function generateArtworkMetadata(artwork: Artwork): Metadata {
   };
 }
 
-export function generateArtworkJsonLd(artwork: Artwork, numericPrice: string, isInquiry: boolean) {
+export function generateArtworkJsonLd(
+  artwork: Artwork,
+  numericPrice: string,
+  isInquiry: boolean,
+  locale: 'ko' | 'en' = 'ko'
+) {
+  const isEnglish = locale === 'en';
   const resolvedImageUrl = resolveSeoArtworkImageUrl(artwork.images[0]);
   const schemaDescription =
-    artwork.description || artwork.profile || `${artwork.artist}의 작품 "${artwork.title}"`;
+    artwork.description ||
+    artwork.profile ||
+    (isEnglish
+      ? `Artwork titled "${artwork.title}" by ${artwork.artist}`
+      : `${artwork.artist}의 작품 "${artwork.title}"`);
 
   // Build alternateName for image SEO
   const imageAlternateName = [
-    `${formatArtistName(artwork.artist)}의 ${artwork.title}`,
+    isEnglish
+      ? `${artwork.title} by ${artwork.artist}`
+      : `${formatArtistName(artwork.artist)}의 ${artwork.title}`,
     artwork.year,
     artwork.material,
   ]
@@ -126,7 +155,7 @@ export function generateArtworkJsonLd(artwork: Artwork, numericPrice: string, is
   // Seller organization (reused in offers)
   const sellerOrg = {
     '@type': 'Organization',
-    name: '한국스마트협동조합',
+    name: isEnglish ? 'Korea Smart Cooperative' : '한국스마트협동조합',
     url: SITE_URL,
   };
 
@@ -206,7 +235,7 @@ export function generateArtworkJsonLd(artwork: Artwork, numericPrice: string, is
     '@context': 'https://schema.org',
     '@type': ['VisualArtwork', 'Product'],
     name: artwork.title,
-    inLanguage: 'ko',
+    inLanguage: isEnglish ? 'en' : 'ko',
     artform: getArtformForSchema(artwork.material || ''),
     // Category for faceted navigation SEO
     ...(mediumCategory && {
@@ -230,7 +259,7 @@ export function generateArtworkJsonLd(artwork: Artwork, numericPrice: string, is
     mpn: `SAF2026-ART-${artwork.id}`,
     brand: {
       '@type': 'Brand',
-      name: '씨앗페 2026',
+      name: isEnglish ? 'SAF 2026' : '씨앗페 2026',
       url: SITE_URL,
     },
     creator: {
@@ -247,7 +276,9 @@ export function generateArtworkJsonLd(artwork: Artwork, numericPrice: string, is
     offers,
     isPartOf: {
       '@type': 'ExhibitionEvent',
-      name: '씨앗페 2026 - 예술인 상호부조 기금 마련 특별전',
+      name: isEnglish
+        ? 'SAF 2026 - Special Exhibition for Artist Mutual Aid'
+        : '씨앗페 2026 - 예술인 상호부조 기금 마련 특별전',
       startDate: CAMPAIGN.START_DATE,
       endDate: CAMPAIGN.END_DATE,
       location: {
@@ -260,27 +291,27 @@ export function generateArtworkJsonLd(artwork: Artwork, numericPrice: string, is
     additionalProperty: [
       artwork.material && {
         '@type': 'PropertyValue',
-        name: '재료',
+        name: isEnglish ? 'Material' : '재료',
         value: artwork.material,
       },
       artwork.size && {
         '@type': 'PropertyValue',
-        name: '크기',
+        name: isEnglish ? 'Size' : '크기',
         value: artwork.size,
       },
       artwork.year && {
         '@type': 'PropertyValue',
-        name: '제작년도',
+        name: isEnglish ? 'Year' : '제작년도',
         value: artwork.year,
       },
       artwork.edition && {
         '@type': 'PropertyValue',
-        name: '에디션',
+        name: isEnglish ? 'Edition' : '에디션',
         value: artwork.edition,
       },
       artwork.history && {
         '@type': 'PropertyValue',
-        name: '작가이력',
+        name: isEnglish ? 'Artist history' : '작가이력',
         value: artwork.history?.substring(0, 200),
       },
     ].filter(Boolean),
@@ -288,27 +319,39 @@ export function generateArtworkJsonLd(artwork: Artwork, numericPrice: string, is
       {
         '@type': 'BuyAction',
         target: offerUrl,
-        name: '작품 구매하기',
+        name: isEnglish ? 'Buy artwork' : '작품 구매하기',
       },
       {
         '@type': 'DonateAction',
-        name: '예술인 상호부조 기금 후원',
-        description: '이 작품 구매 수익금의 일부가 예술인 상호부조 기금으로 사용됩니다',
+        name: isEnglish ? 'Support artist mutual-aid fund' : '예술인 상호부조 기금 후원',
+        description: isEnglish
+          ? 'Part of this artwork purchase supports the artist mutual-aid fund.'
+          : '이 작품 구매 수익금의 일부가 예술인 상호부조 기금으로 사용됩니다',
         recipient: {
           '@type': 'Organization',
-          name: '한국스마트협동조합',
-          description: '예술인 상호부조 기금 운영 단체',
+          name: isEnglish ? 'Korea Smart Cooperative' : '한국스마트협동조합',
+          description: isEnglish
+            ? 'Organization operating the artist mutual-aid fund'
+            : '예술인 상호부조 기금 운영 단체',
           url: SITE_URL,
         },
       },
     ],
   };
 
-  const breadcrumbSchema = createBreadcrumbSchema([
-    BREADCRUMB_HOME,
-    BREADCRUMBS['/artworks'],
-    { name: artwork.title, url: `${SITE_URL}/artworks/${artwork.id}` },
-  ]);
+  const breadcrumbSchema = createBreadcrumbSchema(
+    isEnglish
+      ? [
+          { name: 'Home', url: SITE_URL },
+          { name: 'Artworks', url: `${SITE_URL}/artworks` },
+          { name: artwork.title, url: `${SITE_URL}/artworks/${artwork.id}` },
+        ]
+      : [
+          BREADCRUMB_HOME,
+          BREADCRUMBS['/artworks'],
+          { name: artwork.title, url: `${SITE_URL}/artworks/${artwork.id}` },
+        ]
+  );
 
   return {
     productSchema,

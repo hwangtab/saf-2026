@@ -1,6 +1,9 @@
+'use client';
+
 import { cn } from '@/lib/utils';
 import { EXTERNAL_LINKS } from '@/lib/constants';
-import { UI_STRINGS } from '@/lib/ui-strings';
+import { useLocale } from 'next-intl';
+import { getUIStrings } from '@/lib/ui-strings';
 import LinkButton from '@/components/ui/LinkButton';
 
 interface CTAButtonGroupProps {
@@ -27,14 +30,18 @@ interface CTAButtonGroupProps {
  * ```
  */
 export default function CTAButtonGroup({
-  donateText = UI_STRINGS.CTA.DONATE_NOW,
-  purchaseText = UI_STRINGS.CTA.BUY_ART,
+  donateText,
+  purchaseText,
   donateHref = EXTERNAL_LINKS.JOIN_MEMBER,
   purchaseHref = '/artworks',
   variant = 'default',
   className,
   vertical = false,
 }: CTAButtonGroupProps) {
+  const ui = getUIStrings(useLocale());
+  const resolvedDonateText = donateText ?? ui.CTA.DONATE_NOW;
+  const resolvedPurchaseText = purchaseText ?? ui.CTA.BUY_ART;
+
   const containerClasses = cn(
     'flex gap-4',
     vertical ? 'flex-col' : 'flex-col sm:flex-row',
@@ -46,10 +53,10 @@ export default function CTAButtonGroup({
   return (
     <div className={containerClasses}>
       <LinkButton href={donateHref} external variant="accent" size={buttonSize}>
-        {donateText}
+        {resolvedDonateText}
       </LinkButton>
       <LinkButton href={purchaseHref} variant="secondary" size={buttonSize}>
-        {purchaseText}
+        {resolvedPurchaseText}
       </LinkButton>
     </div>
   );

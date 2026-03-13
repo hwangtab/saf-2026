@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 interface ExpandableHistoryProps {
   history: string;
@@ -8,6 +9,7 @@ interface ExpandableHistoryProps {
 
 export default function ExpandableHistory({ history }: ExpandableHistoryProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const t = useTranslations('expandableHistory');
 
   // Count lines to determine if we need expand button
   const lines = history.split('\n').filter((line) => line.trim()).length;
@@ -15,7 +17,9 @@ export default function ExpandableHistory({ history }: ExpandableHistoryProps) {
 
   return (
     <div className="bg-gray-50 p-6 rounded-xl">
-      <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">주요 경력</h3>
+      <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">
+        {t('title')}
+      </h3>
       <div className="relative">
         <p
           className={`text-gray-600 leading-relaxed text-sm whitespace-pre-line ${
@@ -29,7 +33,7 @@ export default function ExpandableHistory({ history }: ExpandableHistoryProps) {
             onClick={() => setIsExpanded(!isExpanded)}
             className="mt-3 text-sm font-medium text-primary hover:text-primary-strong transition-colors"
           >
-            {isExpanded ? '접기 ▲' : '더보기 ▼'}
+            {isExpanded ? t('collapse') : t('expand')}
           </button>
         )}
       </div>

@@ -8,12 +8,21 @@ import { useIsMobile } from '@/lib/hooks/useIsMobile';
 
 interface KakaoMapProps {
   className?: string;
+  loadingFallback?: string;
 }
 
 export default function KakaoMap(props?: KakaoMapProps): React.JSX.Element {
-  const { className } = props ?? {};
+  const { className, loadingFallback } = props ?? {};
   const { loading, error, hasAppKey, isReady } = useKakaoMapSDK();
   const isMobile = useIsMobile();
+
+  const copy = {
+    missingKey:
+      'Kakao Map APP KEY is not configured. Please set NEXT_PUBLIC_KAKAO_MAP_KEY in your environment variables.',
+    loading: loadingFallback ?? 'Loading map...',
+    loadFailed: 'Failed to load Kakao Map. Please check APP KEY and domain settings.',
+    markerTitle: 'Insa Art Center 3F G&J Gallery',
+  };
 
   const [position, setPosition] = useState<{ lat: number; lng: number }>({
     lat: EXHIBITION.LAT,
@@ -61,8 +70,7 @@ export default function KakaoMap(props?: KakaoMapProps): React.JSX.Element {
   if (!hasAppKey) {
     return (
       <div className="flex h-[400px] w-full items-center justify-center rounded-lg border border-dashed border-gray-300 bg-canvas-soft text-sm text-charcoal-soft">
-        카카오 지도 APP KEY가 설정되지 않았습니다. 환경 변수 `NEXT_PUBLIC_KAKAO_MAP_KEY`에
-        JavaScript 키를 등록해주세요.
+        {copy.missingKey}
       </div>
     );
   }
@@ -70,7 +78,7 @@ export default function KakaoMap(props?: KakaoMapProps): React.JSX.Element {
   if (loading) {
     return (
       <div className="flex h-[400px] w-full items-center justify-center rounded-lg bg-canvas-soft text-sm text-charcoal-soft">
-        지도를 불러오는 중입니다…
+        {copy.loading}
       </div>
     );
   }
@@ -79,7 +87,7 @@ export default function KakaoMap(props?: KakaoMapProps): React.JSX.Element {
     console.error('Kakao map load error', error);
     return (
       <div className="flex h-[400px] w-full items-center justify-center rounded-lg border border-red-200 bg-red-50 text-sm text-red-600">
-        카카오 지도를 불러오지 못했습니다. APP KEY와 도메인 설정을 확인해주세요.
+        {copy.loadFailed}
         <span className="ml-2 text-xs text-red-500">{String(error)}</span>
       </div>
     );
@@ -105,7 +113,7 @@ export default function KakaoMap(props?: KakaoMapProps): React.JSX.Element {
         draggable={!isMobile}
         zoomable={!isMobile}
       >
-        <MapMarker position={position} title="인사아트센터 3층 G&J 갤러리" />
+        <MapMarker position={position} title={copy.markerTitle} />
       </Map>
     </div>
   );

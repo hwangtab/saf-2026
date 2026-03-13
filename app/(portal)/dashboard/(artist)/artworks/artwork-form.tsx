@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { createArtwork, updateArtwork, type ActionState } from '@/app/actions/artwork';
 import Button from '@/components/ui/Button';
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
@@ -14,6 +14,7 @@ import {
   AdminTextarea,
 } from '@/app/admin/_components/admin-ui';
 import { EditionType } from '@/types';
+import { resolveClientLocale } from '@/lib/client-locale';
 
 type ArtworkFormProps = {
   artwork?: any; // If provided, mode is 'edit'
@@ -23,6 +24,106 @@ type ArtworkFormProps = {
 const initialState: ActionState = {
   message: '',
   error: false,
+};
+
+type LocaleCode = 'ko' | 'en';
+
+const ARTWORK_FORM_COPY: Record<
+  LocaleCode,
+  {
+    editTitle: string;
+    createTitle: string;
+    subtitle: string;
+    images: string;
+    title: string;
+    price: string;
+    priceHint: string;
+    size: string;
+    material: string;
+    year: string;
+    edition: string;
+    editionType: string;
+    editionUnique: string;
+    editionLimited: string;
+    editionOpen: string;
+    editionLimit: string;
+    editionLimitPlaceholder: string;
+    artistNote: string;
+    artistNotePlaceholder: string;
+    status: string;
+    statusAvailable: string;
+    statusReserved: string;
+    statusSold: string;
+    hidden: string;
+    hiddenDescription: string;
+    cancel: string;
+    saveEdit: string;
+    saveCreate: string;
+    genericError: string;
+  }
+> = {
+  ko: {
+    editTitle: '작품 수정',
+    createTitle: '새 작품 등록',
+    subtitle: '작품의 상세 정보를 입력해주세요.',
+    images: '작품 이미지 (최대 5장)',
+    title: '작품명',
+    price: '가격 (₩)',
+    priceHint: '통화를 제외한 숫자 또는 ₩ 포함 텍스트',
+    size: '크기',
+    material: '재료',
+    year: '제작년도',
+    edition: '에디션 (선택)',
+    editionType: '에디션 유형',
+    editionUnique: 'Unique (1점)',
+    editionLimited: 'Limited (한정판)',
+    editionOpen: 'Open (무제한)',
+    editionLimit: '에디션 수량',
+    editionLimitPlaceholder: '예: 50',
+    artistNote: '작가 노트',
+    artistNotePlaceholder: '작품에 담긴 의도나 작가 노트를 적어주세요.',
+    status: '판매 상태',
+    statusAvailable: '판매 중',
+    statusReserved: '예약됨',
+    statusSold: '판매 완료',
+    hidden: '숨김 (Hidden)',
+    hiddenDescription: '갤러리 리스트에서 숨깁니다.',
+    cancel: '취소',
+    saveEdit: '수정 사항 저장',
+    saveCreate: '작품 등록하기',
+    genericError: 'An error occurred while saving. Please try again shortly.',
+  },
+  en: {
+    editTitle: 'Edit artwork',
+    createTitle: 'Create new artwork',
+    subtitle: 'Enter detailed information for this artwork.',
+    images: 'Artwork images (up to 5)',
+    title: 'Title',
+    price: 'Price (₩)',
+    priceHint: 'Enter numbers only or text including ₩',
+    size: 'Size',
+    material: 'Material',
+    year: 'Year',
+    edition: 'Edition (optional)',
+    editionType: 'Edition type',
+    editionUnique: 'Unique (1 item)',
+    editionLimited: 'Limited',
+    editionOpen: 'Open',
+    editionLimit: 'Edition quantity',
+    editionLimitPlaceholder: 'e.g., 50',
+    artistNote: 'Artist note',
+    artistNotePlaceholder: 'Describe the intention or artist note for this artwork.',
+    status: 'Sales status',
+    statusAvailable: 'Available',
+    statusReserved: 'Reserved',
+    statusSold: 'Sold',
+    hidden: 'Hidden',
+    hiddenDescription: 'Hide from the gallery list.',
+    cancel: 'Cancel',
+    saveEdit: 'Save changes',
+    saveCreate: 'Create artwork',
+    genericError: 'An error occurred while saving. Please try again shortly.',
+  },
 };
 
 const createSessionId = () => {
@@ -36,6 +137,9 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
   // If editing, we bind the ID to the update action
   const action = artwork ? updateArtwork.bind(null, artwork.id) : createArtwork;
 
+  const pathname = usePathname();
+  const locale = resolveClientLocale(pathname);
+  const copy = ARTWORK_FORM_COPY[locale];
   const router = useRouter();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [state, formAction, isPending] = useActionState(action, initialState);
@@ -147,6 +251,12 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
   };
 
   const inputClassName = 'mt-1';
+  const actionErrorMessage =
+    state.error && state.message
+      ? locale === 'en' && /[가-힣]/.test(state.message)
+        ? copy.genericError
+        : state.message
+      : '';
 
   return (
     <form
@@ -159,9 +269,9 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
       <div className="space-y-8 divide-y divide-gray-200">
         <div>
           <h3 className="text-lg leading-6 font-semibold text-slate-900">
-            {artwork ? '작품 수정' : '새 작품 등록'}
+            {artwork ? copy.editTitle : copy.createTitle}
           </h3>
-          <p className="mt-1 text-sm text-slate-500">작품의 상세 정보를 입력해주세요.</p>
+          <p className="mt-1 text-sm text-slate-500">{copy.subtitle}</p>
 
           <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
             {/* Hidden: Images JSON */}
@@ -171,7 +281,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
             {/* Images Upload */}
             <div className="sm:col-span-6">
               <AdminFieldLabel>
-                작품 이미지 (최대 5장) <span className="text-red-500">*</span>
+                {copy.images} <span className="text-red-500">*</span>
               </AdminFieldLabel>
               <ImageUpload
                 bucket="artworks"
@@ -194,7 +304,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
             {/* Title */}
             <div className="sm:col-span-4">
               <AdminFieldLabel htmlFor="title">
-                작품명 <span className="text-red-500">*</span>
+                {copy.title} <span className="text-red-500">*</span>
               </AdminFieldLabel>
               <AdminInput
                 type="text"
@@ -209,7 +319,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
             {/* Price */}
             <div className="sm:col-span-2">
               <AdminFieldLabel htmlFor="price">
-                가격 (₩) <span className="text-red-500">*</span>
+                {copy.price} <span className="text-red-500">*</span>
               </AdminFieldLabel>
               <div className="relative mt-1 rounded-md shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -225,12 +335,12 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
                   className="pl-7 pr-12"
                 />
               </div>
-              <p className="mt-1 text-xs text-slate-500">통화를 제외한 숫자 또는 ₩ 포함 텍스트</p>
+              <p className="mt-1 text-xs text-slate-500">{copy.priceHint}</p>
             </div>
 
             {/* Size */}
             <div className="sm:col-span-2">
-              <AdminFieldLabel htmlFor="size">크기</AdminFieldLabel>
+              <AdminFieldLabel htmlFor="size">{copy.size}</AdminFieldLabel>
               <AdminInput
                 type="text"
                 name="size"
@@ -243,7 +353,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
 
             {/* Material */}
             <div className="sm:col-span-2">
-              <AdminFieldLabel htmlFor="material">재료</AdminFieldLabel>
+              <AdminFieldLabel htmlFor="material">{copy.material}</AdminFieldLabel>
               <AdminInput
                 type="text"
                 name="material"
@@ -256,7 +366,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
 
             {/* Year */}
             <div className="sm:col-span-1">
-              <AdminFieldLabel htmlFor="year">제작년도</AdminFieldLabel>
+              <AdminFieldLabel htmlFor="year">{copy.year}</AdminFieldLabel>
               <AdminInput
                 type="text"
                 name="year"
@@ -268,7 +378,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
 
             {/* Edition */}
             <div className="sm:col-span-1">
-              <AdminFieldLabel htmlFor="edition">에디션 (선택)</AdminFieldLabel>
+              <AdminFieldLabel htmlFor="edition">{copy.edition}</AdminFieldLabel>
               <AdminInput
                 type="text"
                 name="edition"
@@ -282,7 +392,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
             {/* Edition Type */}
             <div className="sm:col-span-2">
               <AdminFieldLabel htmlFor="edition_type">
-                에디션 유형 <span className="text-red-500">*</span>
+                {copy.editionType} <span className="text-red-500">*</span>
               </AdminFieldLabel>
               <AdminSelect
                 id="edition_type"
@@ -297,9 +407,9 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
                 className={inputClassName}
                 required
               >
-                <option value="unique">Unique (1점)</option>
-                <option value="limited">Limited (한정판)</option>
-                <option value="open">Open (무제한)</option>
+                <option value="unique">{copy.editionUnique}</option>
+                <option value="limited">{copy.editionLimited}</option>
+                <option value="open">{copy.editionOpen}</option>
               </AdminSelect>
             </div>
 
@@ -307,7 +417,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
             {editionType === 'limited' && (
               <div className="sm:col-span-2">
                 <AdminFieldLabel htmlFor="edition_limit">
-                  에디션 수량 <span className="text-red-500">*</span>
+                  {copy.editionLimit} <span className="text-red-500">*</span>
                 </AdminFieldLabel>
                 <AdminInput
                   type="number"
@@ -317,7 +427,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
                   onChange={(e) => setEditionLimit(e.target.value ? parseInt(e.target.value) : '')}
                   min="1"
                   required
-                  placeholder="예: 50"
+                  placeholder={copy.editionLimitPlaceholder}
                   className={inputClassName}
                 />
               </div>
@@ -325,14 +435,14 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
 
             {/* Description */}
             <div className="sm:col-span-6">
-              <AdminFieldLabel htmlFor="description">작가 노트</AdminFieldLabel>
+              <AdminFieldLabel htmlFor="description">{copy.artistNote}</AdminFieldLabel>
               <AdminTextarea
                 id="description"
                 name="description"
                 rows={5}
                 defaultValue={artwork?.description || ''}
                 className={inputClassName}
-                placeholder="작품에 담긴 의도나 작가 노트를 적어주세요."
+                placeholder={copy.artistNotePlaceholder}
               />
             </div>
 
@@ -340,7 +450,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
             <div className="sm:col-span-6 border-t border-gray-200 pt-6 flex flex-wrap gap-6">
               <div className="flex items-center gap-3">
                 <AdminFieldLabel htmlFor="status" className="mb-0">
-                  판매 상태
+                  {copy.status}
                 </AdminFieldLabel>
                 <AdminSelect
                   id="status"
@@ -348,9 +458,9 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
                   defaultValue={artwork?.status || 'available'}
                   className="min-w-36"
                 >
-                  <option value="available">판매 중</option>
-                  <option value="reserved">예약됨</option>
-                  <option value="sold">판매 완료</option>
+                  <option value="available">{copy.statusAvailable}</option>
+                  <option value="reserved">{copy.statusReserved}</option>
+                  <option value="sold">{copy.statusSold}</option>
                 </AdminSelect>
               </div>
 
@@ -367,9 +477,9 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
                   </div>
                   <div className="ml-3 text-sm">
                     <label htmlFor="hidden" className="font-medium text-slate-700">
-                      숨김 (Hidden)
+                      {copy.hidden}
                     </label>
-                    <p className="text-slate-500">갤러리 리스트에서 숨깁니다.</p>
+                    <p className="text-slate-500">{copy.hiddenDescription}</p>
                   </div>
                 </div>
               )}
@@ -381,13 +491,15 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
       <div className="pt-5">
         <div className="flex justify-end gap-3">
           <Button type="button" variant="white" onClick={handleCancel}>
-            취소
+            {copy.cancel}
           </Button>
           <Button type="submit" loading={isPending} disabled={isPending}>
-            {artwork ? '수정 사항 저장' : '작품 등록하기'}
+            {artwork ? copy.saveEdit : copy.saveCreate}
           </Button>
         </div>
-        {state.error && <p className="mt-2 text-right text-sm text-rose-600">{state.message}</p>}
+        {state.error && actionErrorMessage && (
+          <p className="mt-2 text-right text-sm text-rose-600">{actionErrorMessage}</p>
+        )}
       </div>
     </form>
   );

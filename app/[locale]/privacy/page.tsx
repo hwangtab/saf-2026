@@ -1,37 +1,45 @@
 import type { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import PageHero from '@/components/ui/PageHero';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import {
-  CONTACT,
-  SITE_URL,
-  BREADCRUMB_HOME,
-  BREADCRUMBS,
-  OG_IMAGE,
-  PRIVACY_POLICY_VERSION,
-} from '@/lib/constants';
+import { CONTACT, SITE_URL, OG_IMAGE, PRIVACY_POLICY_VERSION } from '@/lib/constants';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { PRIVACY_POLICY_DOCUMENT } from '@/lib/legal-documents';
+import { createLocaleAlternates } from '@/lib/locale-alternates';
+import { formatEffectiveDateForLocale } from '@/lib/utils';
 
 const PAGE_PATH = '/privacy';
 const PAGE_URL = `${SITE_URL}${PAGE_PATH}`;
-const PAGE_TITLE = '개인정보처리방침';
-const PAGE_DESCRIPTION =
-  '씨앗페 2026 웹사이트 이용 과정에서 처리되는 개인정보 항목, 이용 목적, 보유 기간 및 권리 안내입니다.';
+const PAGE_COPY = {
+  ko: {
+    title: '개인정보처리방침',
+    description:
+      '씨앗페 2026 웹사이트 이용 과정에서 처리되는 개인정보 항목, 이용 목적, 보유 기간 및 권리 안내입니다.',
+  },
+  en: {
+    title: 'Privacy Policy',
+    description:
+      'Guidance on personal data processing, purpose of use, retention period, and user rights for SAF 2026.',
+  },
+} as const;
+
+const resolveLocale = (locale: string): 'ko' | 'en' => (locale === 'en' ? 'en' : 'ko');
 
 export async function generateMetadata(): Promise<Metadata> {
+  const locale = resolveLocale(await getLocale());
+  const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
-  const title = `${PAGE_TITLE} | ${tSeo('siteTitle')}`;
+  const title = `${copy.title} | ${tSeo('siteTitle')}`;
 
   return {
     title,
-    description: PAGE_DESCRIPTION,
-    alternates: { canonical: PAGE_URL },
+    description: copy.description,
+    alternates: createLocaleAlternates(PAGE_PATH),
     openGraph: {
       title,
-      description: PAGE_DESCRIPTION,
+      description: copy.description,
       url: PAGE_URL,
       images: [
         { url: OG_IMAGE.url, width: OG_IMAGE.width, height: OG_IMAGE.height, alt: OG_IMAGE.alt },
@@ -40,15 +48,67 @@ export async function generateMetadata(): Promise<Metadata> {
     twitter: {
       card: 'summary_large_image',
       title,
-      description: PAGE_DESCRIPTION,
+      description: copy.description,
       images: [OG_IMAGE.url],
     },
   };
 }
 
-export default function PrivacyPolicyPage() {
-  const breadcrumbSchema = createBreadcrumbSchema([BREADCRUMB_HOME, BREADCRUMBS[PAGE_PATH]]);
+export default async function PrivacyPolicyPage() {
+  const locale = resolveLocale(await getLocale());
+  const tBreadcrumbs = await getTranslations('breadcrumbs');
+  const breadcrumbSchema = createBreadcrumbSchema([
+    { name: tBreadcrumbs('home'), url: SITE_URL },
+    { name: tBreadcrumbs('privacy'), url: PAGE_URL },
+  ]);
   const doc = PRIVACY_POLICY_DOCUMENT;
+  const effectiveDate = formatEffectiveDateForLocale(doc.effectiveDate, locale);
+
+  if (locale === 'en') {
+    return (
+      <>
+        <JsonLdScript data={breadcrumbSchema} />
+        <PageHero
+          title="Privacy Policy"
+          description="Guidance on personal data processing and user rights. The official legal text is currently maintained in Korean."
+        />
+
+        <Section variant="white" className="pb-24 md:pb-32">
+          <div className="container-max">
+            <div className="mx-auto max-w-4xl rounded-2xl border border-gray-200 bg-white p-6 shadow-sm md:p-10 space-y-6">
+              <p className="text-sm text-charcoal-muted">Effective date: {effectiveDate}</p>
+              <p className="text-sm text-charcoal-muted">Version: {PRIVACY_POLICY_VERSION}</p>
+
+              <div className="rounded-lg bg-canvas-soft p-5 text-sm leading-7 text-charcoal-muted">
+                The official Privacy Policy text is currently provided in Korean.
+                <br />
+                Please refer to the Korean version for legally binding interpretation.
+              </div>
+
+              <section>
+                <SectionTitle className="mb-4">Contact</SectionTitle>
+                <div className="rounded-lg bg-canvas-soft p-4 text-sm leading-7">
+                  <p>
+                    Email:{' '}
+                    <a href={`mailto:${CONTACT.EMAIL}`} className="hover:underline">
+                      {CONTACT.EMAIL}
+                    </a>
+                  </p>
+                  <p>
+                    Phone:{' '}
+                    <a href={`tel:${CONTACT.PHONE.replace(/-/g, '')}`} className="hover:underline">
+                      {CONTACT.PHONE}
+                    </a>
+                  </p>
+                </div>
+                <p className="mt-4 text-sm text-charcoal-muted">Document URL: {PAGE_URL}</p>
+              </section>
+            </div>
+          </div>
+        </Section>
+      </>
+    );
+  }
 
   return (
     <>
@@ -61,7 +121,7 @@ export default function PrivacyPolicyPage() {
       <Section variant="white" className="pb-24 md:pb-32">
         <div className="container-max">
           <div className="mx-auto max-w-4xl rounded-2xl border border-gray-200 bg-white p-6 shadow-sm md:p-10">
-            <p className="mb-1 text-sm text-charcoal-muted">시행일: {doc.effectiveDate}</p>
+            <p className="mb-1 text-sm text-charcoal-muted">시행일: {effectiveDate}</p>
             <p className="mb-8 text-sm text-charcoal-muted">버전: {PRIVACY_POLICY_VERSION}</p>
 
             {doc.preamble && (

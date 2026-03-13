@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
@@ -17,27 +17,40 @@ import {
   CreativeImpactChart,
 } from '@/components/features/charts/DynamicCharts';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { BREADCRUMB_HOME, BREADCRUMBS } from '@/lib/constants';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
+import { createLocaleAlternates } from '@/lib/locale-alternates';
 
 export const revalidate = 300;
 
 const PAGE_URL = `${SITE_URL}/our-reality`;
-const PAGE_TITLE = '우리의 현실';
-const PAGE_DESCRIPTION =
-  '제1금융권 배제율 84.9%. 예술인들이 직면한 금융 재난의 실태와 구조적 원인을 데이터로 증명합니다.';
+const PAGE_COPY = {
+  ko: {
+    title: '우리의 현실',
+    description:
+      '제1금융권 배제율 84.9%. 예술인들이 직면한 금융 재난의 실태와 구조적 원인을 데이터로 증명합니다.',
+  },
+  en: {
+    title: 'Our Reality',
+    description:
+      'An evidence-based view of artist financial exclusion, predatory lending, and structural barriers in Korea.',
+  },
+} as const;
+
+const resolveLocale = (locale: string): 'ko' | 'en' => (locale === 'en' ? 'en' : 'ko');
 
 export async function generateMetadata(): Promise<Metadata> {
+  const locale = resolveLocale(await getLocale());
+  const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
-  const title = `${PAGE_TITLE} | ${tSeo('siteTitle')}`;
+  const title = `${copy.title} | ${tSeo('siteTitle')}`;
 
   return {
     title,
-    description: PAGE_DESCRIPTION,
-    alternates: { canonical: PAGE_URL },
+    description: copy.description,
+    alternates: createLocaleAlternates('/our-reality'),
     openGraph: {
       title,
-      description: PAGE_DESCRIPTION,
+      description: copy.description,
       url: PAGE_URL,
       images: [
         { url: OG_IMAGE.url, width: OG_IMAGE.width, height: OG_IMAGE.height, alt: OG_IMAGE.alt },
@@ -46,15 +59,140 @@ export async function generateMetadata(): Promise<Metadata> {
     twitter: {
       card: 'summary_large_image',
       title,
-      description: PAGE_DESCRIPTION,
+      description: copy.description,
       images: [OG_IMAGE.url],
     },
   };
 }
 
 export default async function OurReality() {
+  const locale = resolveLocale(await getLocale());
   const testimonialsData = await getSupabaseTestimonials();
-  const breadcrumbSchema = createBreadcrumbSchema([BREADCRUMB_HOME, BREADCRUMBS['/our-reality']]);
+  const tBreadcrumbs = await getTranslations('breadcrumbs');
+  const breadcrumbSchema = createBreadcrumbSchema([
+    { name: tBreadcrumbs('home'), url: SITE_URL },
+    { name: tBreadcrumbs('ourReality'), url: PAGE_URL },
+  ]);
+
+  if (locale === 'en') {
+    return (
+      <>
+        <JsonLdScript data={breadcrumbSchema} />
+        <PageHero
+          title="Our Reality"
+          description="Data from the 2025 report shows structural financial exclusion faced by artists in Korea."
+        >
+          <ShareButtonsWrapper
+            url={PAGE_URL}
+            title="Our Reality - SAF 2026"
+            description="Understand the structure of artist financial exclusion through data."
+          />
+        </PageHero>
+
+        <Section variant="white" prevVariant="canvas-soft">
+          <div className="container-max max-w-3xl text-balance">
+            <SectionTitle className="mb-8">
+              For artists, finance is a life-support system
+            </SectionTitle>
+            <div className="space-y-6 text-lg text-charcoal">
+              <p>
+                Many artists earn irregular, project-based income. During unavoidable income gaps,
+                access to fair finance determines whether creative work can continue.
+              </p>
+              <p>
+                Yet mainstream systems often assess only regular payroll patterns, which excludes
+                artists by design.
+              </p>
+              <p>
+                The result is a recurring cycle of{' '}
+                <strong>exclusion → predatory lending → collapse</strong>.
+              </p>
+            </div>
+          </div>
+        </Section>
+
+        <Section variant="primary-surface" prevVariant="white">
+          <div className="container-max">
+            <div className="mb-10">
+              <span className="text-sm font-bold text-primary-strong uppercase">Stage 1</span>
+              <SectionTitle className="mb-4">Closed doors: banking rejection</SectionTitle>
+              <p className="text-xl text-charcoal-muted max-w-2xl leading-relaxed">
+                Primary banking exclusion rate:{' '}
+                <strong className="text-primary-strong">84.9%</strong>
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 gap-12 items-start mb-16">
+              <div className="h-[420px] md:h-96">
+                <RejectionReasonsChart />
+              </div>
+              <div className="h-[420px] md:h-96">
+                <FirstBankAccessChart />
+              </div>
+            </div>
+          </div>
+        </Section>
+
+        <Section variant="accent-soft" prevVariant="primary-surface">
+          <div className="container-max">
+            <div className="mb-10">
+              <span className="text-sm font-bold text-accent-strong uppercase">Stage 2</span>
+              <SectionTitle className="mb-4">Predatory exposure under pressure</SectionTitle>
+              <p className="text-xl text-charcoal-muted max-w-2xl leading-relaxed">
+                Predatory product exposure: <strong className="text-accent-strong">48.6%</strong>
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 gap-12 items-start mb-16">
+              <div className="h-[420px] md:h-96">
+                <HighInterestProductChart />
+              </div>
+              <div className="h-[420px] md:h-96">
+                <InterestRateDistributionChart />
+              </div>
+            </div>
+          </div>
+        </Section>
+
+        <Section variant="sun-soft" prevVariant="accent-soft">
+          <div className="container-max">
+            <div className="mb-10">
+              <span className="text-sm font-bold text-danger uppercase">Stage 3</span>
+              <SectionTitle className="mb-4">Creative breakdown</SectionTitle>
+              <p className="text-xl text-charcoal-muted max-w-2xl leading-relaxed">
+                Creative interruption among debt-collection-experienced artists:{' '}
+                <strong className="text-danger">88.3%</strong>
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 gap-12 items-start mb-16">
+              <div className="h-[420px] md:h-96">
+                <DebtCollectionChart />
+              </div>
+              <div className="h-[420px] md:h-96">
+                <CreativeImpactChart />
+              </div>
+            </div>
+          </div>
+        </Section>
+
+        <Section variant="white" prevVariant="sun-soft">
+          <div className="container-max max-w-4xl">
+            <SectionTitle className="mb-6">
+              This is a structural issue, not a personal failure
+            </SectionTitle>
+            <p className="text-lg text-charcoal-muted leading-relaxed mb-8">
+              Artist financial hardship is rooted in systemic mismatch. We need financing models
+              that recognize project-based livelihoods and protect creative continuity.
+            </p>
+            <CTAButtonGroup
+              donateText="🤝 Join as a member"
+              purchaseText="🎨 Buy artworks"
+              donateHref={EXTERNAL_LINKS.JOIN_MEMBER}
+              purchaseHref="/artworks"
+            />
+          </div>
+        </Section>
+      </>
+    );
+  }
 
   return (
     <>

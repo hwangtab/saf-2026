@@ -2,8 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Button from '@/components/ui/Button';
+import { usePathname } from 'next/navigation';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
-import { UI_STRINGS } from '@/lib/ui-strings';
+import { resolveClientLocale } from '@/lib/client-locale';
 
 import { UserRole, UserStatus } from '@/types/database.types';
 
@@ -33,6 +34,31 @@ export default function AuthButtons({
   variant = 'white',
   size = 'md',
 }: AuthButtonsProps) {
+  const pathname = usePathname();
+  const locale = resolveClientLocale(pathname);
+  const copy =
+    locale === 'en'
+      ? {
+          artistMenu: 'Artist menu',
+          adminDashboard: 'Admin dashboard',
+          myPage: 'My page',
+          exhibitorDashboard: 'Exhibitor dashboard',
+          pendingApproval: 'Pending approval',
+          accountSuspended: 'Account suspended',
+          registerArtist: 'Register as artist',
+          checkingAccount: 'Checking account...',
+        }
+      : {
+          artistMenu: '아티스트 메뉴',
+          adminDashboard: '관리자 대시보드',
+          myPage: '마이페이지',
+          exhibitorDashboard: '출품자 대시보드',
+          pendingApproval: '승인 대기',
+          accountSuspended: '계정 정지',
+          registerArtist: '작가 등록',
+          checkingAccount: '계정 확인 중...',
+        };
+
   // Memoize client to ensure it's stable across renders
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
@@ -182,7 +208,7 @@ export default function AuthButtons({
           size={size}
           className={layout === 'stacked' ? 'w-full justify-center' : ''}
         >
-          {UI_STRINGS.NAV.ARTIST_MENU}
+          {copy.artistMenu}
         </Button>
       </div>
     );
@@ -190,22 +216,22 @@ export default function AuthButtons({
 
   const dashboardLink = (() => {
     if (profile?.role === 'admin') {
-      return { href: '/admin/dashboard', label: UI_STRINGS.NAV.ADMIN_DASHBOARD };
+      return { href: '/admin/dashboard', label: copy.adminDashboard };
     }
     if (profile?.role === 'artist' && profile.status === 'active') {
-      return { href: '/dashboard/artworks', label: '마이페이지' };
+      return { href: '/dashboard/artworks', label: copy.myPage };
     }
     if (profile?.role === 'exhibitor') {
-      return { href: '/exhibitor', label: '출품자 대시보드' };
+      return { href: '/exhibitor', label: copy.exhibitorDashboard };
     }
     if (profile?.status === 'pending') {
-      return { href: '/dashboard/pending', label: '승인 대기' };
+      return { href: '/dashboard/pending', label: copy.pendingApproval };
     }
     if (profile?.status === 'suspended') {
-      return { href: '/dashboard/suspended', label: '계정 정지' };
+      return { href: '/dashboard/suspended', label: copy.accountSuspended };
     }
     if (profile?.role === 'user') {
-      return { href: '/onboarding', label: '작가 등록' };
+      return { href: '/onboarding', label: copy.registerArtist };
     }
     return null;
   })();
@@ -228,7 +254,7 @@ export default function AuthButtons({
           disabled
           className={layout === 'stacked' ? 'w-full justify-center' : ''}
         >
-          계정 확인 중...
+          {copy.checkingAccount}
         </Button>
       )}
     </div>

@@ -7,6 +7,7 @@ import TwitterShareButton from 'react-share/lib/TwitterShareButton';
 import FacebookIcon from 'react-share/lib/FacebookIcon';
 import TwitterIcon from 'react-share/lib/TwitterIcon';
 import clsx from 'clsx';
+import { useLocale, useTranslations } from 'next-intl';
 import { useKakaoShareSDK } from '@/lib/hooks/useKakaoSDK';
 
 interface ShareButtonsProps {
@@ -18,6 +19,8 @@ interface ShareButtonsProps {
 type CopyStatus = 'idle' | 'copied' | 'error';
 
 export default function ShareButtons({ url, title, description }: ShareButtonsProps) {
+  const locale = useLocale();
+  const t = useTranslations('shareButtons');
   const [copyStatus, setCopyStatus] = useState<CopyStatus>('idle');
   const [kakaoStatusMessage, setKakaoStatusMessage] = useState('');
   const {
@@ -43,7 +46,7 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
   const handleKakaoShare = async () => {
     if (!hasAppKey || kakaoLoading) {
       if (!hasAppKey) {
-        setKakaoStatusMessage('카카오 공유를 사용할 수 없습니다.');
+        setKakaoStatusMessage(t('kakaoUnavailable'));
       }
       return;
     }
@@ -54,13 +57,13 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
       const loaded = await ensureLoaded();
       if (!loaded) {
         console.error('Failed to prepare Kakao Share SDK', kakaoError);
-        setKakaoStatusMessage('카카오 공유 준비에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+        setKakaoStatusMessage(t('kakaoPrepareFailed'));
         return;
       }
     }
 
     if (!window.Kakao) {
-      setKakaoStatusMessage('카카오 공유 준비에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+      setKakaoStatusMessage(t('kakaoPrepareFailed'));
       return;
     }
 
@@ -81,7 +84,7 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
         },
         buttons: [
           {
-            title: '웹사이트 방문',
+            title: t('kakaoVisitWebsite'),
             link: {
               webUrl: url,
               mobileWebUrl: url,
@@ -102,7 +105,7 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
       <FacebookShareButton
         url={url}
         quote={title}
-        hashtag="#씨앗페"
+        hashtag={locale === 'en' ? '#SAF2026' : '#씨앗페'}
         className="hover:opacity-80 transition-opacity p-1.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full"
       >
         <FacebookIcon size={32} round iconFillColor="white" />
@@ -125,12 +128,12 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
           'min-w-[44px] min-h-[44px] p-1.5 flex items-center justify-center transition-opacity hover:opacity-80 focus:outline-none rounded-full',
           (!hasAppKey || kakaoLoading) && 'opacity-50 cursor-not-allowed'
         )}
-        title={hasAppKey ? '카카오톡 공유' : '카카오 키 설정 필요'}
-        aria-label="카카오톡으로 공유하기"
+        title={hasAppKey ? t('kakaoButtonTitle') : t('kakaoNeedKey')}
+        aria-label={t('kakaoAria')}
       >
         <ExportedImage
           src="/images/free-icon-kakao-talk-3669973.png"
-          alt="카카오톡"
+          alt={t('kakaoIconAlt')}
           width={32}
           height={32}
           className="rounded-full"
@@ -141,13 +144,13 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
       <button
         onClick={handleCopyLink}
         className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full focus:outline-none"
-        title="링크 복사"
+        title={t('copyLinkTitle')}
         aria-label={
           copyStatus === 'copied'
-            ? '링크가 복사되었습니다'
+            ? t('copied')
             : copyStatus === 'error'
-              ? '복사 실패'
-              : '링크 복사하기'
+              ? t('copyFailed')
+              : t('copyLink')
         }
       >
         <div

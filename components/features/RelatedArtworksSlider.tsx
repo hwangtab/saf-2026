@@ -4,6 +4,7 @@ import type { ArtworkCardData } from '@/types';
 import { useEffect, useMemo, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import AutoScroll from 'embla-carousel-auto-scroll';
+import { useLocale } from 'next-intl';
 import ArtworkCard from '@/components/ui/ArtworkCard';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
 
@@ -55,6 +56,26 @@ export default function RelatedArtworksSlider({
   currentArtworkId,
   currentArtist,
 }: RelatedArtworksProps = {}) {
+  const locale = useLocale();
+  const copy =
+    locale === 'en'
+      ? {
+          title: 'More artworks from SAF',
+          description: 'Discover more featured works and support artists',
+          play: 'Play',
+          pause: 'Pause',
+          playAria: 'Play related artworks slider',
+          pauseAria: 'Pause related artworks slider',
+        }
+      : {
+          title: '씨앗페 출품작 보기',
+          description: '더 많은 출품작을 감상하고 예술인을 응원하세요',
+          play: '재생',
+          pause: '일시정지',
+          playAria: '관련 작품 슬라이더 재생',
+          pauseAria: '관련 작품 슬라이더 일시정지',
+        };
+
   const [isPaused, setIsPaused] = useState(false);
 
   const [emblaRef, emblaApi] = useEmblaCarousel(
@@ -132,8 +153,8 @@ export default function RelatedArtworksSlider({
       <div className="container-max mb-8">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-charcoal">씨앗페 출품작 보기</h2>
-            <p className="text-gray-500 mt-1">더 많은 출품작을 감상하고 예술인을 응원하세요</p>
+            <h2 className="text-2xl font-bold text-charcoal">{copy.title}</h2>
+            <p className="text-gray-500 mt-1">{copy.description}</p>
           </div>
           <div className="self-start sm:self-auto">
             <button
@@ -141,9 +162,9 @@ export default function RelatedArtworksSlider({
               onClick={() => setIsPaused((prev) => !prev)}
               className="rounded-md border border-charcoal/20 bg-white px-3 py-1.5 text-xs font-medium text-charcoal hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               aria-pressed={isPaused}
-              aria-label={isPaused ? '관련 작품 슬라이더 재생' : '관련 작품 슬라이더 일시정지'}
+              aria-label={isPaused ? copy.playAria : copy.pauseAria}
             >
-              {isPaused ? '재생' : '일시정지'}
+              {isPaused ? copy.play : copy.pause}
             </button>
           </div>
         </div>

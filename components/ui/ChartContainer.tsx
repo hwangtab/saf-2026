@@ -1,6 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
+import { useLocale } from 'next-intl';
 import { useChartDimensions } from '@/lib/hooks/useChartDimensions';
 
 interface ChartDimensions {
@@ -30,12 +31,12 @@ interface ChartContainerProps {
   dataTable?: DataTableRow[];
 }
 
-const ChartSkeleton = () => (
+const ChartSkeleton = ({ loadingLabel }: { loadingLabel: string }) => (
   <div
     className="bg-white p-6 rounded-lg shadow-sm h-full min-h-[400px] animate-pulse"
     role="status"
     aria-busy="true"
-    aria-label="차트를 로드하는 중입니다"
+    aria-label={loadingLabel}
   >
     <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
     <div className="h-64 bg-gray-100 rounded"></div>
@@ -51,9 +52,24 @@ export default function ChartContainer({
   descriptionId,
   dataTable,
 }: ChartContainerProps) {
+  const locale = useLocale();
+  const copy =
+    locale === 'en'
+      ? {
+          loadingLabel: 'Loading chart',
+          tableCaption: 'data table',
+          item: 'Item',
+          value: 'Value',
+        }
+      : {
+          loadingLabel: '차트를 로드하는 중입니다',
+          tableCaption: '데이터 테이블',
+          item: '항목',
+          value: '값',
+        };
   const dimensions = useChartDimensions();
 
-  if (!dimensions) return <ChartSkeleton />;
+  if (!dimensions) return <ChartSkeleton loadingLabel={copy.loadingLabel} />;
 
   const descriptionElementId = id ? `${id}-description` : undefined;
   const ariaDescribedBy =
@@ -76,11 +92,11 @@ export default function ChartContainer({
       {/* Screen reader only data table */}
       {dataTable && dataTable.length > 0 && (
         <table className="sr-only">
-          <caption>{title} 데이터 테이블</caption>
+          <caption>{`${title} ${copy.tableCaption}`}</caption>
           <thead>
             <tr>
-              <th scope="col">항목</th>
-              <th scope="col">값</th>
+              <th scope="col">{copy.item}</th>
+              <th scope="col">{copy.value}</th>
             </tr>
           </thead>
           <tbody>

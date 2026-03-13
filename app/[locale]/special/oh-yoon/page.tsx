@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { artworks } from '@/content/saf2026-artworks';
 import OhYoonMasonryGallery from '@/components/special/OhYoonMasonryGallery';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { BREADCRUMB_HOME, BREADCRUMBS, OG_IMAGE, SITE_URL } from '@/lib/constants';
+import { OG_IMAGE, SITE_URL } from '@/lib/constants';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
+import { createLocaleAlternates } from '@/lib/locale-alternates';
 
 const OH_YOON_ARTIST_KEYS = new Set(['오윤', 'oh yoon', 'ohyoon', 'o yoon', 'o-yoon']);
 
@@ -26,47 +27,196 @@ const isOhYoonArtist = (artist: string): boolean => {
 const OH_YOON_ARTWORKS = artworks.filter((artwork) => isOhYoonArtist(artwork.artist));
 
 const PAGE_URL = `${SITE_URL}/special/oh-yoon`;
-const PAGE_TITLE = '오윤 40주기 특별전: Oh Yoon 40th Anniversary Special Exhibition';
-const PAGE_DESCRIPTION = '씨앗페 2026에서 진행하는 민중미술의 거장 오윤의 40주기 특별전입니다.';
+const PAGE_COPY = {
+  ko: {
+    title: '오윤 40주기 특별전: Oh Yoon 40th Anniversary Special Exhibition',
+    description: '씨앗페 2026에서 진행하는 민중미술의 거장 오윤의 40주기 특별전입니다.',
+    ogDescription: '민중미술의 거장 오윤의 작품 세계를 만나는 온라인 특별전 페이지입니다.',
+    ogAlt: '오윤 40주기 특별전 대표 이미지',
+    twitterTitle: '오윤 40주기 특별전',
+    twitterDescription: '민중미술의 거장 오윤의 작품 세계를 만나는 온라인 특별전',
+  },
+  en: {
+    title: 'Oh Yoon 40th Anniversary Special Exhibition',
+    description:
+      'A special online exhibition at SAF 2026 honoring 40 years since the artist Oh Yoon.',
+    ogDescription:
+      "Explore the world of Oh Yoon, a major figure in Korean people's art, through this special online exhibition.",
+    ogAlt: 'Oh Yoon 40th Anniversary Special Exhibition key visual',
+    twitterTitle: 'Oh Yoon 40th Anniversary Special Exhibition',
+    twitterDescription:
+      'Discover selected works by Oh Yoon in this SAF 2026 special online exhibition.',
+  },
+} as const;
+
+const resolveLocale = (locale: string): 'ko' | 'en' => (locale === 'en' ? 'en' : 'ko');
 
 export async function generateMetadata(): Promise<Metadata> {
+  const locale = resolveLocale(await getLocale());
+  const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
   const siteName = tSeo('siteTitle');
 
   return {
-    title: PAGE_TITLE,
-    description: PAGE_DESCRIPTION,
-    alternates: { canonical: PAGE_URL },
+    title: copy.title,
+    description: copy.description,
+    alternates: createLocaleAlternates('/special/oh-yoon'),
     openGraph: {
       type: 'website',
       url: PAGE_URL,
-      title: PAGE_TITLE,
-      description: '민중미술의 거장 오윤의 작품 세계를 만나는 온라인 특별전 페이지입니다.',
+      title: copy.title,
+      description: copy.ogDescription,
       siteName,
       images: [
         {
           url: OG_IMAGE.url,
           width: OG_IMAGE.width,
           height: OG_IMAGE.height,
-          alt: '오윤 40주기 특별전 대표 이미지',
+          alt: copy.ogAlt,
         },
       ],
     },
     twitter: {
       card: 'summary_large_image',
-      title: '오윤 40주기 특별전',
-      description: '민중미술의 거장 오윤의 작품 세계를 만나는 온라인 특별전',
+      title: copy.twitterTitle,
+      description: copy.twitterDescription,
       images: [OG_IMAGE.url],
     },
   };
 }
 
-export default function OhYoonPage() {
-  const artworkCountLabel = new Intl.NumberFormat('ko-KR').format(OH_YOON_ARTWORKS.length);
+export default async function OhYoonPage() {
+  const locale = resolveLocale(await getLocale());
+  const tBreadcrumbs = await getTranslations('breadcrumbs');
+  const artworkCountLabel = new Intl.NumberFormat(locale === 'en' ? 'en-US' : 'ko-KR').format(
+    OH_YOON_ARTWORKS.length
+  );
   const breadcrumbSchema = createBreadcrumbSchema([
-    BREADCRUMB_HOME,
-    BREADCRUMBS['/special/oh-yoon'],
+    { name: tBreadcrumbs('home'), url: SITE_URL },
+    { name: tBreadcrumbs('ohYoon'), url: PAGE_URL },
   ]);
+
+  if (locale === 'en') {
+    return (
+      <>
+        <JsonLdScript data={breadcrumbSchema} />
+        <div className="w-full bg-canvas-soft min-h-screen font-sans">
+          <section className="relative w-full py-20 md:py-32 px-4 overflow-hidden border-b-8 border-double border-charcoal/20 bg-canvas">
+            <div className="max-w-4xl mx-auto text-center relative z-10">
+              <div className="inline-block relative mb-8">
+                <span className="relative z-10 inline-block px-6 py-3 border-4 border-charcoal bg-white text-charcoal font-bold text-lg tracking-widest transform -rotate-1 shadow-[4px_4px_0px_0px_rgba(49,57,60,0.2)]">
+                  Oh Yoon 40th Anniversary
+                </span>
+                <div className="absolute inset-0 border-4 border-brand-orange transform rotate-2 translate-x-1 translate-y-1 -z-0 opacity-60" />
+              </div>
+
+              <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-normal mb-8 md:mb-10 leading-tight text-charcoal tracking-tighter text-balance drop-shadow-sm font-display">
+                The Blade of the People,
+                <br />
+                Returning After 40 Years
+              </h1>
+
+              <p className="text-lg sm:text-xl md:text-2xl text-charcoal/90 max-w-2xl mx-auto font-medium leading-relaxed border-t-2 border-b-2 border-charcoal/15 py-5 md:py-6">
+                A short yet powerful life. A spirit of the times carved in printmaking.
+                <br />
+                Oh Yoon speaks to us again through his work.
+              </p>
+            </div>
+          </section>
+
+          <div className="max-w-[1440px] mx-auto px-4 py-16 md:py-24">
+            <div className="mb-20 flex justify-center">
+              <blockquote className="relative p-8 sm:p-10 md:p-16 text-center max-w-4xl border-4 border-charcoal bg-white shadow-[8px_8px_0px_0px_rgba(49,57,60,0.1)]">
+                <p className="text-2xl sm:text-3xl md:text-5xl font-normal text-charcoal leading-relaxed text-balance pt-4 font-display">
+                  Art should be shared by everyone.
+                </p>
+                <footer className="mt-8 text-xl text-charcoal font-bold tracking-widest">
+                  Oh Yoon
+                </footer>
+              </blockquote>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-12 md:gap-24 mb-24 items-start">
+              <div className="space-y-8">
+                <h2 className="text-4xl font-normal border-l-[12px] border-charcoal pl-6 py-2 leading-tight font-display text-balance">
+                  Carving the pain of the era
+                  <br />
+                  <span className="text-brand-orange-strong">into hope</span>
+                </h2>
+                <div className="prose prose-xl text-charcoal/90 leading-loose space-y-6 font-medium">
+                  <p>
+                    Oh Yoon (1946-1986) chose woodcut printmaking as a social language. At a time
+                    when elite abstraction dominated, he turned toward ordinary people and
+                    collective realities.
+                  </p>
+                  <p>
+                    His visual language captured labor, grief, resilience, and shared dignity. Even
+                    today, his prints remain urgent and alive.
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-white p-8 md:p-12 border-4 border-charcoal shadow-[8px_8px_0px_0px_rgba(247,152,36,0.3)]">
+                <h3 className="text-2xl font-normal text-charcoal mb-8 flex items-center gap-3 border-b-2 border-charcoal pb-4 font-display text-balance">
+                  <span className="w-4 h-4 bg-brand-orange rotate-45" />
+                  Major themes
+                </h3>
+                <ul className="space-y-6 text-lg text-charcoal/85">
+                  <li>
+                    <strong>Reality:</strong> recording concrete sites of everyday life.
+                  </li>
+                  <li>
+                    <strong>Han:</strong> transforming collective grief into artistic vitality.
+                  </li>
+                  <li>
+                    <strong>Shared art:</strong> practicing art beyond galleries, in public spaces.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative py-20 bg-[#2a3032] text-white">
+            <div className="max-w-[1440px] mx-auto px-4 mb-16 flex flex-col md:flex-row justify-between items-end gap-6 border-b border-white/20 pb-8">
+              <div>
+                <h2 className="text-4xl md:text-5xl font-normal mb-4 text-white font-display text-balance">
+                  Exhibition Works
+                </h2>
+                <p className="text-base sm:text-lg text-white/70 font-medium">
+                  <span className="text-brand-orange font-bold text-xl">{artworkCountLabel}</span>{' '}
+                  prints are currently on display.
+                </p>
+              </div>
+              <span className="text-sm text-white/60">Click a work to view details</span>
+            </div>
+
+            <div className="max-w-[1440px] mx-auto px-4">
+              {OH_YOON_ARTWORKS.length > 0 ? (
+                <OhYoonMasonryGallery artworks={OH_YOON_ARTWORKS} />
+              ) : (
+                <section className="py-24 text-center">
+                  <div className="inline-block rounded-xl border border-white/10 bg-white/5 p-12 backdrop-blur-sm">
+                    <h3 className="text-2xl font-bold text-white text-balance mb-4">
+                      Artwork data is being prepared
+                    </h3>
+                    <p className="text-white/60 text-balance mb-8">
+                      We are currently organizing the Oh Yoon special exhibition data.
+                    </p>
+                    <Link
+                      href="/artworks"
+                      className="inline-flex items-center justify-center px-6 py-3 border border-white/30 rounded text-white hover:bg-white hover:text-[#2a3032] transition-colors font-medium"
+                    >
+                      Browse all artworks
+                    </Link>
+                  </div>
+                </section>
+              )}
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>

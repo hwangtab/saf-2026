@@ -42,7 +42,7 @@ export function NewsManager({ news }: { news: NewsItem[] }) {
     setCreating(true);
     try {
       await createNews(formData);
-      toast.success('뉴스를 추가했습니다.');
+      toast.success('News item added.');
       router.refresh();
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : '추가 중 오류가 발생했습니다.');
@@ -80,7 +80,7 @@ export function NewsManager({ news }: { news: NewsItem[] }) {
 
     try {
       await updateNews(id, formData);
-      toast.success('뉴스를 저장했습니다.');
+      toast.success('News item saved.');
     } catch (err: unknown) {
       setOptimisticNews(previousNews);
       toast.error(err instanceof Error ? err.message : '저장 중 오류가 발생했습니다.');
@@ -100,7 +100,7 @@ export function NewsManager({ news }: { news: NewsItem[] }) {
 
     try {
       await deleteNews(id);
-      toast.success('뉴스를 삭제했습니다.');
+      toast.success('News item deleted.');
     } catch (err: unknown) {
       console.error('삭제 중 오류:', err);
       setOptimisticNews(previousNews);

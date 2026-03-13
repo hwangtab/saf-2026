@@ -34,7 +34,7 @@ export function FaqManager({ faqs }: { faqs: FaqItem[] }) {
     setCreating(true);
     try {
       await createFaq(formData);
-      toast.success('FAQ를 추가했습니다.');
+      toast.success('FAQ added.');
       router.refresh();
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : '추가 중 오류가 발생했습니다.');
@@ -57,7 +57,7 @@ export function FaqManager({ faqs }: { faqs: FaqItem[] }) {
     setSavingId(id);
     try {
       await updateFaq(id, formData);
-      toast.success('FAQ를 저장했습니다.');
+      toast.success('FAQ saved.');
     } catch (err: unknown) {
       setOptimisticFaqs(originalFaqs);
       toast.error(err instanceof Error ? err.message : '저장 중 오류가 발생했습니다.');
@@ -75,7 +75,7 @@ export function FaqManager({ faqs }: { faqs: FaqItem[] }) {
     setProcessingId(id);
     try {
       await deleteFaq(id);
-      toast.success('FAQ를 삭제했습니다.');
+      toast.success('FAQ deleted.');
     } catch (err: unknown) {
       setOptimisticFaqs(originalFaqs);
       console.error('삭제 중 오류:', err);

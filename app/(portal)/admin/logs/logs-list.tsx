@@ -6,8 +6,183 @@ import { revertActivityLog, type ActivityLogEntry } from '@/app/actions/admin-lo
 import Button from '@/components/ui/Button';
 import { AdminCard } from '@/app/admin/_components/admin-ui';
 import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/lib/hooks/useToast';
+import { resolveClientLocale } from '@/lib/client-locale';
+
+type LocaleCode = 'ko' | 'en';
+
+const LOGS_UI = {
+  ko: {
+    noLogsTitle: '활동 로그가 없습니다',
+    noLogsDescription: '관리자/아티스트 활동이 기록되면 여기에 표시됩니다.',
+    totalZero: '총 0개의 기록',
+    revertModalTitle: '활동 복구 확인',
+    revertConfirmText: '복구하기',
+    revertDescription:
+      '정말 이 변경을 복구하시겠습니까? 현재 데이터에 직접적인 영향을 줄 수 있습니다. 복구 사유를 아래에 입력해주세요.',
+    revertReasonLabel: '복구 사유',
+    revertReasonPlaceholder: '예: 실수로 삭제한 데이터를 복구함',
+    headerTime: '시간',
+    headerActor: '행위자',
+    headerAction: '활동',
+    headerTarget: '대상',
+    headerOperation: '조치',
+    changesCount: (count: number) => `변경 ${count}건`,
+    showChanges: '변경 보기',
+    hideChanges: '변경 닫기',
+    revertButton: '복구',
+    reverted: '복구됨',
+    revertUnavailable: '복구 불가',
+    revertTitle:
+      '삭제/수정/권한 변경 로그를 복구할 수 있으며, 이후 추가 변경이 있으면 복구가 중단될 수 있습니다.',
+    revertUnavailableTitle: '복구 대상이 아닌 활동입니다.',
+    diffTitle: '변경 상세 비교',
+    missingInAfter: (count: number) => `변경 후 스냅샷에서 누락된 대상: ${count}개`,
+    addedInAfter: (count: number) => `변경 후 스냅샷에 새로 포함된 대상: ${count}개`,
+    target: '대상',
+    nameMissing: (idLabel: string) => `이름 정보 없음 (${idLabel})`,
+    identifier: (value: string) => `(식별 ID: ${value})`,
+    colField: '변경 내용',
+    colBefore: '이전 값',
+    colAfter: '변경 값',
+    totalCount: (total: number, current: number, pages: number) =>
+      `총 ${total}개의 기록 (페이지 ${current} / ${pages})`,
+    prev: '이전',
+    next: '다음',
+    unknownActor: '(알 수 없음)',
+    reason: '사유',
+    revertReason: '복구 사유',
+    purgeReason: '영구 삭제 사유',
+    revertSuccess: '복구가 완료되었습니다.',
+    revertError: '복구 중 오류가 발생했습니다.',
+  },
+  en: {
+    noLogsTitle: 'No activity logs',
+    noLogsDescription: 'Admin/artist activities will appear here once recorded.',
+    totalZero: 'Total 0 records',
+    revertModalTitle: 'Confirm Revert',
+    revertConfirmText: 'Revert',
+    revertDescription:
+      'Are you sure you want to revert this change? It can directly affect current data. Please provide a reason below.',
+    revertReasonLabel: 'Reason for revert',
+    revertReasonPlaceholder: 'e.g., Restore data deleted by mistake',
+    headerTime: 'Time',
+    headerActor: 'Actor',
+    headerAction: 'Action',
+    headerTarget: 'Target',
+    headerOperation: 'Operation',
+    changesCount: (count: number) => `${count} changes`,
+    showChanges: 'Show changes',
+    hideChanges: 'Hide changes',
+    revertButton: 'Revert',
+    reverted: 'Reverted',
+    revertUnavailable: 'Unavailable',
+    revertTitle:
+      'Delete/update/role-change logs can be reverted. Revert may stop if additional changes were made afterward.',
+    revertUnavailableTitle: 'This activity cannot be reverted.',
+    diffTitle: 'Detailed Diff',
+    missingInAfter: (count: number) => `Missing in after snapshot: ${count}`,
+    addedInAfter: (count: number) => `Newly added in after snapshot: ${count}`,
+    target: 'Target',
+    nameMissing: (idLabel: string) => `Name unavailable (${idLabel})`,
+    identifier: (value: string) => `(Identifier: ${value})`,
+    colField: 'Field',
+    colBefore: 'Before',
+    colAfter: 'After',
+    totalCount: (total: number, current: number, pages: number) =>
+      `Total ${total} records (page ${current} / ${pages})`,
+    prev: 'Previous',
+    next: 'Next',
+    unknownActor: '(Unknown)',
+    reason: 'Reason',
+    revertReason: 'Revert reason',
+    purgeReason: 'Purge reason',
+    revertSuccess: 'Restore completed.',
+    revertError: 'Error while reverting.',
+  },
+} as const;
+
+const ACTION_PREFIX_TRANSLATIONS: Array<[RegExp, string]> = [
+  [/^사용자 승인:/, 'User approved:'],
+  [/^사용자 거절:/, 'User rejected:'],
+  [/^사용자 재활성화:/, 'User reactivated:'],
+  [/^권한 변경:/, 'Role changed:'],
+  [/^작품 수정:/, 'Artwork updated:'],
+  [/^작품 등록:/, 'Artwork created:'],
+  [/^작품 삭제:/, 'Artwork deleted:'],
+  [/^작품 이미지 변경/, 'Artwork images updated'],
+  [/^작가 정보 수정:/, 'Artist updated:'],
+  [/^작가 등록:/, 'Artist created:'],
+  [/^작가 삭제:/, 'Artist deleted:'],
+  [/^작가 계정 연결:/, 'Artist linked to user:'],
+  [/^작가 계정 연결 해제:/, 'Artist unlinked from user:'],
+  [/^아티스트 프로필 수정:/, 'Artist profile updated:'],
+  [/^아티스트 프로필 이미지 변경:/, 'Artist profile image updated:'],
+  [/^아티스트 작품 등록:/, 'Artist artwork created:'],
+  [/^아티스트 작품 수정:/, 'Artist artwork updated:'],
+  [/^아티스트 작품 삭제:/, 'Artist artwork deleted:'],
+  [/^아티스트 신청서 제출:/, 'Artist application submitted:'],
+  [/^출품자 신청서 제출:/, 'Exhibitor application submitted:'],
+  [/^출품자 작가 등록:/, 'Exhibitor artist created:'],
+  [/^출품자 작가 수정:/, 'Exhibitor artist updated:'],
+  [/^출품자 작가 프로필 이미지 변경:/, 'Exhibitor artist profile image updated:'],
+  [/^출품자 작가 삭제:/, 'Exhibitor artist deleted:'],
+  [/^출품자 작품 등록:/, 'Exhibitor artwork created:'],
+  [/^출품자 작품 수정:/, 'Exhibitor artwork updated:'],
+  [/^출품자 작품 이미지 변경:/, 'Exhibitor artwork images updated:'],
+  [/^출품자 작품 삭제:/, 'Exhibitor artwork deleted:'],
+  [/^복구 실행:/, 'Revert executed:'],
+  [/^휴지통 영구 삭제:/, 'Trash purged:'],
+  [/^콘텐츠 생성:/, 'Content created:'],
+  [/^콘텐츠 수정:/, 'Content updated:'],
+  [/^콘텐츠 삭제:/, 'Content deleted:'],
+  [/^뉴스 생성:/, 'News created:'],
+  [/^뉴스 수정:/, 'News updated:'],
+  [/^뉴스 삭제:/, 'News deleted:'],
+  [/^FAQ 생성:/, 'FAQ created:'],
+  [/^FAQ 수정:/, 'FAQ updated:'],
+  [/^FAQ 삭제:/, 'FAQ deleted:'],
+  [/^영상 생성:/, 'Video created:'],
+  [/^영상 수정:/, 'Video updated:'],
+  [/^영상 삭제:/, 'Video deleted:'],
+  [/^추천사 수정:/, 'Testimonial updated:'],
+  [/^일괄 상태 변경:/, 'Batch status changed:'],
+  [/^일괄 숨김 변경:/, 'Batch visibility changed:'],
+  [/^일괄 삭제:/, 'Batch delete:'],
+  [/^구매링크 누락 동기화:/, 'Missing purchase-link sync:'],
+  [/^Cafe24 판매 동기화 경고:/, 'Cafe24 sales sync warning:'],
+  [/^Cafe24 판매 동기화 실패:/, 'Cafe24 sales sync failed:'],
+  [/^판매 기록 등록:/, 'Sale recorded:'],
+  [/^출품자 승인:/, 'Exhibitor approved:'],
+  [/^출품자 정지:/, 'Exhibitor suspended:'],
+  [/^추천사 생성:/, 'Testimonial created:'],
+  [/^추천사 삭제:/, 'Testimonial deleted:'],
+  [/^작품 데이터 다운로드:/, 'Artwork data exported:'],
+  [/^작가 연락처 다운로드:/, 'Artist contacts exported:'],
+  [/^정의되지 않은 활동/, 'Unknown activity'],
+  [/일부 항목 확인 필요/g, 'check some items'],
+  [/원인 확인 필요/g, 'cause needs investigation'],
+  [/건/g, ' items'],
+  [/명/g, ' people'],
+  [/점/g, ' items'],
+  [/총 /g, 'Total '],
+];
+
+const STATUS_LABELS_BY_LOCALE: Record<LocaleCode, Record<string, string>> = {
+  ko: {
+    available: '판매 가능',
+    reserved: '예약중',
+    sold: '판매 완료',
+    hidden: '숨김',
+  },
+  en: {
+    available: 'Available',
+    reserved: 'Reserved',
+    sold: 'Sold',
+    hidden: 'Hidden',
+  },
+};
 
 type LogsListProps = {
   logs: ActivityLogEntry[];
@@ -33,71 +208,114 @@ function getCafe24SyncIssueText(details: Record<string, unknown> | null, fallbac
   return fallback;
 }
 
-function formatActionDescription(log: ActivityLogEntry): string {
+function localizeActionText(text: string, locale: LocaleCode): string {
+  if (locale === 'ko') return text;
+  return ACTION_PREFIX_TRANSLATIONS.reduce((acc, [pattern, replacement]) => {
+    if (pattern.global) {
+      return acc.replace(pattern, replacement);
+    }
+    return pattern.test(acc) ? acc.replace(pattern, replacement) : acc;
+  }, text);
+}
+
+function formatActionDescription(log: ActivityLogEntry, locale: LocaleCode): string {
   const details = log.metadata as Record<string, unknown> | null;
+  let text: string;
 
   switch (log.action) {
     case 'user_approved':
-      return `사용자 승인: ${details?.user_name || log.target_id}`;
+      text = `사용자 승인: ${details?.user_name || log.target_id}`;
+      break;
     case 'user_rejected':
-      return `사용자 거절: ${details?.user_name || log.target_id}`;
+      text = `사용자 거절: ${details?.user_name || log.target_id}`;
+      break;
     case 'user_reactivated':
-      return `사용자 재활성화: ${details?.user_name || log.target_id}`;
+      text = `사용자 재활성화: ${details?.user_name || log.target_id}`;
+      break;
     case 'user_role_changed': {
       const from = typeof details?.from === 'string' ? details.from : null;
       const to = typeof details?.to === 'string' ? details.to : null;
-      return `권한 변경: ${details?.user_name || log.target_id}${from ? ` (${from} → ${to || '-'})` : ` → ${to || '-'}`}`;
+      text = `권한 변경: ${details?.user_name || log.target_id}${from ? ` (${from} → ${to || '-'})` : ` → ${to || '-'}`}`;
+      break;
     }
     case 'artwork_updated':
-      return `작품 수정: ${details?.title || log.target_id}`;
+      text = `작품 수정: ${details?.title || log.target_id}`;
+      break;
     case 'artwork_created':
-      return `작품 등록: ${details?.title || log.target_id}`;
+      text = `작품 등록: ${details?.title || log.target_id}`;
+      break;
     case 'artwork_deleted':
-      return `작품 삭제: ${details?.title || log.target_id}`;
+      text = `작품 삭제: ${details?.title || log.target_id}`;
+      break;
     case 'artwork_images_updated':
-      return `작품 이미지 변경`;
+      text = '작품 이미지 변경';
+      break;
     case 'artist_updated':
-      return `작가 정보 수정: ${details?.name || log.target_id}`;
+      text = `작가 정보 수정: ${details?.name || log.target_id}`;
+      break;
     case 'artist_created':
-      return `작가 등록: ${details?.name || log.target_id}`;
+      text = `작가 등록: ${details?.name || log.target_id}`;
+      break;
     case 'artist_deleted':
-      return `작가 삭제: ${details?.name || log.target_id}`;
+      text = `작가 삭제: ${details?.name || log.target_id}`;
+      break;
     case 'artist_linked_to_user':
-      return `작가 계정 연결: ${details?.artist_name || log.target_id}`;
+      text = `작가 계정 연결: ${details?.artist_name || log.target_id}`;
+      break;
     case 'artist_unlinked_from_user':
-      return `작가 계정 연결 해제: ${details?.artist_name || log.target_id}`;
+      text = `작가 계정 연결 해제: ${details?.artist_name || log.target_id}`;
+      break;
     case 'artist_profile_updated':
-      return `아티스트 프로필 수정: ${details?.name || log.target_id}`;
+      text = `아티스트 프로필 수정: ${details?.name || log.target_id}`;
+      break;
     case 'artist_profile_image_updated':
-      return `아티스트 프로필 이미지 변경: ${details?.name || log.target_id}`;
+      text = `아티스트 프로필 이미지 변경: ${details?.name || log.target_id}`;
+      break;
     case 'artist_artwork_created':
-      return `아티스트 작품 등록: ${details?.title || log.target_id}`;
+      text = `아티스트 작품 등록: ${details?.title || log.target_id}`;
+      break;
     case 'artist_artwork_updated':
-      return `아티스트 작품 수정: ${details?.title || log.target_id}`;
+      text = `아티스트 작품 수정: ${details?.title || log.target_id}`;
+      break;
     case 'artist_artwork_deleted':
-      return `아티스트 작품 삭제: ${details?.title || log.target_id}`;
+      text = `아티스트 작품 삭제: ${details?.title || log.target_id}`;
+      break;
     case 'artist_application_submitted':
-      return `아티스트 신청서 제출: ${details?.artist_name || log.target_id}`;
+      text = `아티스트 신청서 제출: ${details?.artist_name || log.target_id}`;
+      break;
     case 'exhibitor_application_submitted':
-      return `출품자 신청서 제출: ${details?.representative_name || log.target_id}`;
+      text = `출품자 신청서 제출: ${details?.representative_name || log.target_id}`;
+      break;
     case 'exhibitor_artist_created':
-      return `출품자 작가 등록: ${details?.name || log.target_id}`;
+      text = `출품자 작가 등록: ${details?.name || log.target_id}`;
+      break;
     case 'exhibitor_artist_updated':
-      return `출품자 작가 수정: ${details?.name || log.target_id}`;
+      text = `출품자 작가 수정: ${details?.name || log.target_id}`;
+      break;
     case 'exhibitor_artist_profile_image_updated':
-      return `출품자 작가 프로필 이미지 변경: ${details?.name || log.target_id}`;
+      text = `출품자 작가 프로필 이미지 변경: ${details?.name || log.target_id}`;
+      break;
     case 'exhibitor_artist_deleted':
-      return `출품자 작가 삭제: ${details?.name || log.target_id}`;
+      text = `출품자 작가 삭제: ${details?.name || log.target_id}`;
+      break;
     case 'exhibitor_artwork_created':
-      return `출품자 작품 등록: ${details?.title || log.target_id}`;
+      text = `출품자 작품 등록: ${details?.title || log.target_id}`;
+      break;
     case 'exhibitor_artwork_updated':
-      return `출품자 작품 수정: ${details?.title || log.target_id}`;
+      text = `출품자 작품 수정: ${details?.title || log.target_id}`;
+      break;
     case 'exhibitor_artwork_images_updated':
-      return `출품자 작품 이미지 변경: ${details?.title || log.target_id}`;
+      text = `출품자 작품 이미지 변경: ${details?.title || log.target_id}`;
+      break;
     case 'exhibitor_artwork_deleted':
-      return `출품자 작품 삭제: ${details?.title || log.target_id}`;
+      text = `출품자 작품 삭제: ${details?.title || log.target_id}`;
+      break;
     case 'revert_executed':
-      return `복구 실행: 로그 ${details?.reverted_log_id || '-'}`;
+      text =
+        locale === 'en'
+          ? `Revert executed: log ${details?.reverted_log_id || '-'}`
+          : `복구 실행: 로그 ${details?.reverted_log_id || '-'}`;
+      break;
     case 'trash_purged': {
       const purgedLogId = typeof details?.purged_log_id === 'string' ? details.purged_log_id : '-';
       const targetNamesRaw =
@@ -116,112 +334,154 @@ function formatActionDescription(log: ActivityLogEntry): string {
         (typeof details?.title === 'string' && details.title) ||
         (typeof details?.name === 'string' && details.name) ||
         null;
-      return `휴지통 영구 삭제: ${targetName || getLogTargetDisplayName(log)} (로그 ${purgedLogId})`;
+      text =
+        locale === 'en'
+          ? `Trash purged: ${targetName || getLogTargetDisplayName(log, locale)} (log ${purgedLogId})`
+          : `휴지통 영구 삭제: ${targetName || getLogTargetDisplayName(log, locale)} (로그 ${purgedLogId})`;
+      break;
     }
     case 'content_created':
-      return `콘텐츠 생성: ${log.target_type} - ${details?.title || log.target_id}`;
+      text = `콘텐츠 생성: ${log.target_type} - ${details?.title || log.target_id}`;
+      break;
     case 'content_updated':
-      return `콘텐츠 수정: ${log.target_type} - ${details?.title || log.target_id}`;
+      text = `콘텐츠 수정: ${log.target_type} - ${details?.title || log.target_id}`;
+      break;
     case 'content_deleted':
-      return `콘텐츠 삭제: ${log.target_type} - ${log.target_id}`;
+      text = `콘텐츠 삭제: ${log.target_type} - ${log.target_id}`;
+      break;
     case 'news_created':
-      return `뉴스 생성: ${details?.title || log.target_id}`;
+      text = `뉴스 생성: ${details?.title || log.target_id}`;
+      break;
     case 'news_updated':
-      return `뉴스 수정: ${details?.title || log.target_id}`;
+      text = `뉴스 수정: ${details?.title || log.target_id}`;
+      break;
     case 'news_deleted':
-      return `뉴스 삭제: ${details?.title || log.target_id}`;
+      text = `뉴스 삭제: ${details?.title || log.target_id}`;
+      break;
     case 'faq_created':
-      return `FAQ 생성: ${details?.question || log.target_id}`;
+      text = `FAQ 생성: ${details?.question || log.target_id}`;
+      break;
     case 'faq_updated':
-      return `FAQ 수정: ${details?.question || log.target_id}`;
+      text = `FAQ 수정: ${details?.question || log.target_id}`;
+      break;
     case 'faq_deleted':
-      return `FAQ 삭제: ${details?.question || log.target_id}`;
+      text = `FAQ 삭제: ${details?.question || log.target_id}`;
+      break;
     case 'video_created':
-      return `영상 생성: ${details?.title || log.target_id}`;
+      text = `영상 생성: ${details?.title || log.target_id}`;
+      break;
     case 'video_updated':
-      return `영상 수정: ${details?.title || log.target_id}`;
+      text = `영상 수정: ${details?.title || log.target_id}`;
+      break;
     case 'video_deleted':
-      return `영상 삭제: ${details?.title || log.target_id}`;
+      text = `영상 삭제: ${details?.title || log.target_id}`;
+      break;
     case 'testimonial_updated':
-      return `추천사 수정: ${details?.author || log.target_id}`;
+      text = `추천사 수정: ${details?.author || log.target_id}`;
+      break;
     case 'batch_artwork_status':
-      return `일괄 상태 변경: ${details?.count}건 → ${formatStatus(details?.status) || details?.status}`;
+      text = `일괄 상태 변경: ${details?.count}건 → ${formatStatus(details?.status, locale) || details?.status}`;
+      break;
     case 'batch_artwork_visibility':
-      return `일괄 숨김 변경: ${details?.count}건`;
+      text = `일괄 숨김 변경: ${details?.count}건`;
+      break;
     case 'batch_artwork_deleted':
-      return `일괄 삭제: ${details?.count}건`;
+      text = `일괄 삭제: ${details?.count}건`;
+      break;
     case 'batch_cafe24_missing_shop_url_sync':
-      return `구매링크 누락 동기화: 성공 ${details?.succeeded || 0}건 / 실패 ${details?.failed || 0}건`;
+      text =
+        locale === 'en'
+          ? `Missing purchase-link sync: ${details?.succeeded || 0} succeeded / ${details?.failed || 0} failed`
+          : `구매링크 누락 동기화: 성공 ${details?.succeeded || 0}건 / 실패 ${details?.failed || 0}건`;
+      break;
     case 'cafe24_sales_sync_warning':
-      return `Cafe24 판매 동기화 경고: ${getCafe24SyncIssueText(details, '일부 항목 확인 필요')}`;
+      text = `Cafe24 판매 동기화 경고: ${getCafe24SyncIssueText(details, '일부 항목 확인 필요')}`;
+      break;
     case 'cafe24_sales_sync_failed':
-      return `Cafe24 판매 동기화 실패: ${getCafe24SyncIssueText(details, '원인 확인 필요')}`;
+      text = `Cafe24 판매 동기화 실패: ${getCafe24SyncIssueText(details, '원인 확인 필요')}`;
+      break;
     case 'artwork_sold':
-      return `판매 기록 등록: ${details?.quantity || 1}점`;
+      text = `판매 기록 등록: ${details?.quantity || 1}점`;
+      break;
     case 'approve_exhibitor':
-      return `출품자 승인: ${details?.user_name || log.target_id}`;
+      text = `출품자 승인: ${details?.user_name || log.target_id}`;
+      break;
     case 'suspend_exhibitor':
-      return `출품자 정지: ${details?.user_name || log.target_id}`;
+      text = `출품자 정지: ${details?.user_name || log.target_id}`;
+      break;
     case 'testimonial_created':
-      return `추천사 생성: ${details?.author || log.target_id}`;
+      text = `추천사 생성: ${details?.author || log.target_id}`;
+      break;
     case 'testimonial_deleted':
-      return `추천사 삭제: ${details?.author || log.target_id}`;
+      text = `추천사 삭제: ${details?.author || log.target_id}`;
+      break;
     case 'artworks_exported':
-      return `작품 데이터 다운로드: ${details?.total_count || '-'}건`;
+      text = `작품 데이터 다운로드: ${details?.total_count || '-'}건`;
+      break;
     case 'artist_contacts_exported':
-      return `작가 연락처 다운로드: ${details?.total_count || '-'}명`;
+      text = `작가 연락처 다운로드: ${details?.total_count || '-'}명`;
+      break;
     default:
-      return `정의되지 않은 활동 (${log.action})`;
+      text = `정의되지 않은 활동 (${log.action})`;
+      break;
   }
+
+  return localizeActionText(text, locale);
 }
 
-function getActionReason(log: ActivityLogEntry): { label: string; value: string } | null {
+function getActionReason(
+  log: ActivityLogEntry,
+  locale: LocaleCode
+): { label: string; value: string } | null {
   const details = log.metadata as Record<string, unknown> | null;
   const metadataReason = typeof details?.reason === 'string' ? details.reason.trim() : '';
   const revertReason = typeof log.revert_reason === 'string' ? log.revert_reason.trim() : '';
   const purgeNote = typeof log.purge_note === 'string' ? log.purge_note.trim() : '';
 
-  if (revertReason) return { label: '복구 사유', value: revertReason };
-  if (purgeNote) return { label: '영구 삭제 사유', value: purgeNote };
+  if (revertReason) return { label: LOGS_UI[locale].revertReason, value: revertReason };
+  if (purgeNote) return { label: LOGS_UI[locale].purgeReason, value: purgeNote };
 
   if (metadataReason) {
-    if (log.action === 'revert_executed') return { label: '복구 사유', value: metadataReason };
-    if (log.action === 'trash_purged') return { label: '영구 삭제 사유', value: metadataReason };
-    return { label: '사유', value: metadataReason };
+    if (log.action === 'revert_executed')
+      return { label: LOGS_UI[locale].revertReason, value: metadataReason };
+    if (log.action === 'trash_purged')
+      return { label: LOGS_UI[locale].purgeReason, value: metadataReason };
+    return { label: LOGS_UI[locale].reason, value: metadataReason };
   }
 
   return null;
 }
 
-function getActorRoleLabel(role: ActivityLogEntry['actor_role']) {
+function getActorRoleLabel(role: ActivityLogEntry['actor_role'], locale: LocaleCode) {
   switch (role) {
     case 'admin':
-      return '관리자';
+      return locale === 'en' ? 'Admin' : '관리자';
     case 'artist':
-      return '아티스트';
+      return locale === 'en' ? 'Artist' : '아티스트';
     case 'exhibitor':
-      return '출품자';
+      return locale === 'en' ? 'Exhibitor' : '출품자';
     case 'system':
-      return '시스템';
+      return locale === 'en' ? 'System' : '시스템';
     default:
       return role;
   }
 }
 
-function getActorDisplay(log: ActivityLogEntry) {
+function getActorDisplay(log: ActivityLogEntry, locale: LocaleCode) {
   if (log.actor_name) return log.actor_name;
   if (log.actor_email) return log.actor_email;
-  if (log.actor_id) return `${getActorRoleLabel(log.actor_role)} #${log.actor_id.slice(0, 8)}`;
-  return '(알 수 없음)';
+  if (log.actor_id)
+    return `${getActorRoleLabel(log.actor_role, locale)} #${log.actor_id.slice(0, 8)}`;
+  return LOGS_UI[locale].unknownActor;
 }
 
-function formatDate(dateString: string | null | undefined) {
+function formatDate(dateString: string | null | undefined, locale: LocaleCode) {
   if (!dateString) return '-';
 
   const date = new Date(dateString);
   if (Number.isNaN(date.getTime())) return '-';
 
-  return date.toLocaleDateString('ko-KR', {
+  return date.toLocaleDateString(locale === 'en' ? 'en-US' : 'ko-KR', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -230,22 +490,22 @@ function formatDate(dateString: string | null | undefined) {
   });
 }
 
-function getTargetTypeLabel(type: string | null) {
+function getTargetTypeLabel(type: string | null, locale: LocaleCode) {
   switch (type) {
     case 'user':
-      return '사용자';
+      return locale === 'en' ? 'User' : '사용자';
     case 'artwork':
-      return '작품';
+      return locale === 'en' ? 'Artwork' : '작품';
     case 'artist':
-      return '작가';
+      return locale === 'en' ? 'Artist' : '작가';
     case 'news':
-      return '뉴스';
+      return locale === 'en' ? 'News' : '뉴스';
     case 'faq':
       return 'FAQ';
     case 'testimonial':
-      return '후기';
+      return locale === 'en' ? 'Testimonial' : '후기';
     case 'video':
-      return '영상';
+      return locale === 'en' ? 'Video' : '영상';
     default:
       return type || '-';
   }
@@ -289,26 +549,21 @@ type DiffItem = {
   changes: DiffRow[];
 };
 
-const STATUS_LABELS: Record<string, string> = {
-  available: '판매 가능',
-  reserved: '예약중',
-  sold: '판매 완료',
-  hidden: '숨김',
-};
-
 function isLikelyUuid(value: string) {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 }
 
-function formatIdentifier(value: string) {
+function formatIdentifier(value: string, locale: LocaleCode) {
   if (!value) return '-';
-  if (value.includes(',')) return '다중 대상';
+  if (value.includes(',')) return locale === 'en' ? 'Multiple targets' : '다중 대상';
   if (isLikelyUuid(value)) return `${value.slice(0, 8)}...`;
   return value;
 }
 
-function formatIdentifierLabel(value: string) {
-  return `식별 ID ${formatIdentifier(value)}`;
+function formatIdentifierLabel(value: string, locale: LocaleCode) {
+  return locale === 'en'
+    ? `Identifier ${formatIdentifier(value, locale)}`
+    : `식별 ID ${formatIdentifier(value, locale)}`;
 }
 
 function getSnapshotDisplayName(snapshot: Record<string, unknown> | null): string | null {
@@ -324,7 +579,7 @@ function getSnapshotDisplayName(snapshot: Record<string, unknown> | null): strin
   return title || nameKo || name || artistName || representativeName || null;
 }
 
-function getLogTargetDisplayName(log: ActivityLogEntry): string {
+function getLogTargetDisplayName(log: ActivityLogEntry, locale: LocaleCode): string {
   const details = log.metadata as Record<string, unknown> | null;
   const targetNameFromMetadata =
     details && typeof details.target_name === 'string' ? details.target_name : null;
@@ -345,15 +600,21 @@ function getLogTargetDisplayName(log: ActivityLogEntry): string {
   const fromSnapshot = getSnapshotDisplayName(afterObj) || getSnapshotDisplayName(beforeObj);
   if (fromSnapshot) return fromSnapshot;
 
-  if (log.target_id.includes(',')) return `총 ${log.target_id.split(',').length}개 대상`;
+  if (log.target_id.includes(',')) {
+    return locale === 'en'
+      ? `Total ${log.target_id.split(',').length} targets`
+      : `총 ${log.target_id.split(',').length}개 대상`;
+  }
   if (isLikelyUuid(log.target_id))
-    return `이름 정보 없음 (${formatIdentifierLabel(log.target_id)})`;
+    return locale === 'en'
+      ? `Name unavailable (${formatIdentifierLabel(log.target_id, locale)})`
+      : `이름 정보 없음 (${formatIdentifierLabel(log.target_id, locale)})`;
   return log.target_id;
 }
 
-function formatStatus(value: unknown): string | null {
+function formatStatus(value: unknown, locale: LocaleCode): string | null {
   if (typeof value !== 'string') return null;
-  return STATUS_LABELS[value] || value;
+  return STATUS_LABELS_BY_LOCALE[locale][value] || value;
 }
 
 function getTargetNameMap(log: ActivityLogEntry): Map<string, string> {
@@ -420,9 +681,39 @@ function valueEquals(a: unknown, b: unknown) {
   return JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
 }
 
-function getFieldLabel(key: string, targetType?: string | null) {
+function getFieldLabel(key: string, locale: LocaleCode, targetType?: string | null) {
   if (key === 'status') {
+    if (locale === 'en') {
+      return targetType === 'artwork' ? 'Sales status' : 'Status';
+    }
     return targetType === 'artwork' ? '판매상태' : '상태';
+  }
+  if (locale === 'en') {
+    const enLabels: Record<string, string> = {
+      title: 'Title',
+      description: 'Description',
+      size: 'Size',
+      material: 'Material',
+      year: 'Year',
+      edition: 'Edition',
+      price: 'Price',
+      sold_at: 'Sold at',
+      is_hidden: 'Hidden',
+      images: 'Images',
+      shop_url: 'Purchase link',
+      artist_id: 'Artist',
+      name_ko: 'Name (Korean)',
+      name_en: 'Name (English)',
+      bio: 'Bio',
+      history: 'History',
+      profile_image: 'Profile image',
+      contact_phone: 'Contact phone',
+      contact_email: 'Contact email',
+      instagram: 'Instagram',
+      homepage: 'Homepage',
+      role: 'Role',
+    };
+    return enLabels[key] || key;
   }
   return FIELD_LABELS[key] || key;
 }
@@ -533,26 +824,29 @@ function getSnapshotIdWarnings(log: ActivityLogEntry): {
   return { missingInAfter, addedInAfter };
 }
 
-function formatDiffValue(value: unknown, field: string): string {
+function formatDiffValue(value: unknown, field: string, locale: LocaleCode): string {
   if (value === null || value === undefined || value === '') return '-';
 
   if (field === 'status') {
-    const statusText = formatStatus(value);
+    const statusText = formatStatus(value, locale);
     if (statusText) return statusText;
   }
 
   if (field.endsWith('_id') && typeof value === 'string') {
-    return formatIdentifier(value);
+    return formatIdentifier(value, locale);
   }
 
-  if (typeof value === 'boolean') return value ? '예' : '아니오';
+  if (typeof value === 'boolean')
+    return value ? (locale === 'en' ? 'Yes' : '예') : locale === 'en' ? 'No' : '아니오';
   if (typeof value === 'number') return String(value);
   if (Array.isArray(value)) {
     if (value.length === 0) return '[]';
     if (value.every((item) => typeof item === 'string')) {
-      return `${value.length}개 (${value.slice(0, 2).join(', ')}${value.length > 2 ? '...' : ''})`;
+      return locale === 'en'
+        ? `${value.length} items (${value.slice(0, 2).join(', ')}${value.length > 2 ? '...' : ''})`
+        : `${value.length}개 (${value.slice(0, 2).join(', ')}${value.length > 2 ? '...' : ''})`;
     }
-    return `${value.length}개 항목`;
+    return locale === 'en' ? `${value.length} items` : `${value.length}개 항목`;
   }
   if (typeof value === 'object') {
     const text = JSON.stringify(value);
@@ -564,6 +858,9 @@ function formatDiffValue(value: unknown, field: string): string {
 }
 
 export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps) {
+  const pathname = usePathname();
+  const locale = resolveClientLocale(pathname);
+  const copy = LOGS_UI[locale];
   const router = useRouter();
   const searchParams = useSearchParams();
   const toast = useToast();
@@ -589,13 +886,18 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
     try {
       const result = await revertActivityLog(logId, reason);
       if (!result.success) {
-        toast.error(result.message || '복구 중 오류가 발생했습니다.');
+        toast.error(locale === 'en' ? copy.revertError : result.message || copy.revertError);
         return;
       }
-      toast.success('복구가 완료되었습니다.');
+      toast.success(copy.revertSuccess);
       router.refresh();
     } catch (error) {
-      const message = error instanceof Error ? error.message : '복구 중 오류가 발생했습니다.';
+      const message =
+        locale === 'en'
+          ? copy.revertError
+          : error instanceof Error
+            ? error.message
+            : copy.revertError;
       toast.error(message);
     }
   };
@@ -617,12 +919,10 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
               d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
             />
           </svg>
-          <h3 className="mt-2 text-sm font-medium text-gray-900">활동 로그가 없습니다</h3>
-          <p className="mt-1 text-sm text-gray-500">
-            관리자/아티스트 활동이 기록되면 여기에 표시됩니다.
-          </p>
+          <h3 className="mt-2 text-sm font-medium text-gray-900">{copy.noLogsTitle}</h3>
+          <p className="mt-1 text-sm text-gray-500">{copy.noLogsDescription}</p>
         </AdminCard>
-        <p className="text-sm text-gray-500">총 0개의 기록</p>
+        <p className="text-sm text-gray-500">{copy.totalZero}</p>
       </div>
     );
   }
@@ -636,20 +936,20 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
           setRevertReason('');
         }}
         onConfirm={handleRevert}
-        title="활동 복구 확인"
-        confirmText="복구하기"
+        title={copy.revertModalTitle}
+        confirmText={copy.revertConfirmText}
         variant="warning"
         isLoading={false}
-        description="정말 이 변경을 복구하시겠습니까? 현재 데이터에 직접적인 영향을 줄 수 있습니다. 복구 사유를 아래에 입력해주세요."
+        description={copy.revertDescription}
       >
         <div className="mt-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            복구 사유 <span className="text-red-500">*</span>
+            {copy.revertReasonLabel} <span className="text-red-500">*</span>
           </label>
           <textarea
             value={revertReason}
             onChange={(e) => setRevertReason(e.target.value)}
-            placeholder="예: 실수로 삭제한 데이터를 복구함"
+            placeholder={copy.revertReasonPlaceholder}
             rows={3}
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
             autoFocus
@@ -662,19 +962,19 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
           <thead className="bg-gray-50">
             <tr>
               <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                시간
+                {copy.headerTime}
               </th>
               <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
-                행위자
+                {copy.headerActor}
               </th>
               <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                활동
+                {copy.headerAction}
               </th>
               <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                대상
+                {copy.headerTarget}
               </th>
               <th className="px-4 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                조치
+                {copy.headerOperation}
               </th>
             </tr>
           </thead>
@@ -685,29 +985,29 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
               const totalDiffCount = diffItems.reduce((sum, item) => sum + item.changes.length, 0);
               const canShowDiff = totalDiffCount > 0;
               const isExpanded = expandedLogId === log.id;
-              const targetDisplayName = getLogTargetDisplayName(log);
+              const targetDisplayName = getLogTargetDisplayName(log, locale);
               const snapshotWarnings = getSnapshotIdWarnings(log);
-              const actionReason = getActionReason(log);
+              const actionReason = getActionReason(log, locale);
 
               return (
                 <Fragment key={log.id}>
                   <tr className="hover:bg-gray-50 transition-colors">
                     <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {formatDate(log.created_at)}
+                      {formatDate(log.created_at, locale)}
                     </td>
                     <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900 hidden sm:table-cell">
-                      {getActorDisplay(log)}
+                      {getActorDisplay(log, locale)}
                       <span className="ml-2 rounded bg-gray-100 px-1.5 py-0.5 text-[10px] text-gray-600">
-                        {getActorRoleLabel(log.actor_role)}
+                        {getActorRoleLabel(log.actor_role, locale)}
                       </span>
                     </td>
                     <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">
                       <div className="space-y-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <span>{formatActionDescription(log)}</span>
+                          <span>{formatActionDescription(log, locale)}</span>
                           {canShowDiff && (
                             <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-medium text-blue-700">
-                              변경 {totalDiffCount}건
+                              {copy.changesCount(totalDiffCount)}
                             </span>
                           )}
                         </div>
@@ -722,13 +1022,13 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                       {link ? (
                         <div className="space-y-0.5">
                           <Link href={link} className="text-indigo-600 hover:underline">
-                            {getTargetTypeLabel(log.target_type)}
+                            {getTargetTypeLabel(log.target_type, locale)}
                           </Link>
                           <div className="text-xs text-slate-600">{targetDisplayName}</div>
                         </div>
                       ) : (
                         <div className="space-y-0.5">
-                          <div>{getTargetTypeLabel(log.target_type)}</div>
+                          <div>{getTargetTypeLabel(log.target_type, locale)}</div>
                           <div className="text-xs text-slate-600">{targetDisplayName}</div>
                         </div>
                       )}
@@ -740,25 +1040,25 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                             onClick={() => setExpandedLogId(isExpanded ? null : log.id)}
                             className="rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50"
                           >
-                            {isExpanded ? '변경 닫기' : '변경 보기'}
+                            {isExpanded ? copy.hideChanges : copy.showChanges}
                           </button>
                         )}
                         {log.reversible && !log.reverted_at ? (
                           <button
                             onClick={() => setRevertTargetId(log.id)}
                             className="rounded-md border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800 hover:bg-amber-100"
-                            title="삭제/수정/권한 변경 로그를 복구할 수 있으며, 이후 추가 변경이 있으면 복구가 중단될 수 있습니다."
+                            title={copy.revertTitle}
                           >
-                            복구
+                            {copy.revertButton}
                           </button>
                         ) : log.reverted_at ? (
-                          <span className="text-xs text-green-700">복구됨</span>
+                          <span className="text-xs text-green-700">{copy.reverted}</span>
                         ) : (
                           <span
                             className="text-xs text-gray-400"
-                            title="복구 대상이 아닌 활동입니다."
+                            title={copy.revertUnavailableTitle}
                           >
-                            복구 불가
+                            {copy.revertUnavailable}
                           </span>
                         )}
                       </div>
@@ -768,21 +1068,19 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                     <tr className="bg-slate-50">
                       <td colSpan={5} className="px-4 sm:px-6 py-4">
                         <div className="space-y-3">
-                          <div className="text-xs font-semibold text-slate-700">변경 상세 비교</div>
+                          <div className="text-xs font-semibold text-slate-700">
+                            {copy.diffTitle}
+                          </div>
                           {(snapshotWarnings.missingInAfter.length > 0 ||
                             snapshotWarnings.addedInAfter.length > 0) && (
                             <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
                               {snapshotWarnings.missingInAfter.length > 0 && (
                                 <div>
-                                  변경 후 스냅샷에서 누락된 대상:{' '}
-                                  {snapshotWarnings.missingInAfter.length}개
+                                  {copy.missingInAfter(snapshotWarnings.missingInAfter.length)}
                                 </div>
                               )}
                               {snapshotWarnings.addedInAfter.length > 0 && (
-                                <div>
-                                  변경 후 스냅샷에 새로 포함된 대상:{' '}
-                                  {snapshotWarnings.addedInAfter.length}개
-                                </div>
+                                <div>{copy.addedInAfter(snapshotWarnings.addedInAfter.length)}</div>
                               )}
                             </div>
                           )}
@@ -792,12 +1090,12 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                               className="rounded-md border border-slate-200 bg-white"
                             >
                               <div className="border-b border-slate-200 px-3 py-2 text-xs font-medium text-slate-600">
-                                대상:{' '}
+                                {copy.target}:{' '}
                                 {item.itemLabel ||
-                                  `이름 정보 없음 (${formatIdentifierLabel(item.itemId)})`}
+                                  copy.nameMissing(formatIdentifierLabel(item.itemId, locale))}
                                 {item.itemLabel ? (
                                   <span className="ml-2 text-slate-500">
-                                    (식별 ID: {formatIdentifier(item.itemId)})
+                                    {copy.identifier(formatIdentifier(item.itemId, locale))}
                                   </span>
                                 ) : null}
                               </div>
@@ -805,9 +1103,15 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                                 <table className="min-w-full text-xs">
                                   <thead className="bg-slate-50 text-slate-500">
                                     <tr>
-                                      <th className="px-3 py-2 text-left font-medium">변경 내용</th>
-                                      <th className="px-3 py-2 text-left font-medium">이전 값</th>
-                                      <th className="px-3 py-2 text-left font-medium">변경 값</th>
+                                      <th className="px-3 py-2 text-left font-medium">
+                                        {copy.colField}
+                                      </th>
+                                      <th className="px-3 py-2 text-left font-medium">
+                                        {copy.colBefore}
+                                      </th>
+                                      <th className="px-3 py-2 text-left font-medium">
+                                        {copy.colAfter}
+                                      </th>
                                     </tr>
                                   </thead>
                                   <tbody>
@@ -817,13 +1121,13 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                                         className="border-t border-slate-100"
                                       >
                                         <td className="px-3 py-2 text-slate-700">
-                                          {getFieldLabel(change.field, log.target_type)}
+                                          {getFieldLabel(change.field, locale, log.target_type)}
                                         </td>
                                         <td className="px-3 py-2 text-rose-700 whitespace-pre-wrap break-all">
-                                          {formatDiffValue(change.before, change.field)}
+                                          {formatDiffValue(change.before, change.field, locale)}
                                         </td>
                                         <td className="px-3 py-2 text-emerald-700 whitespace-pre-wrap break-all">
-                                          {formatDiffValue(change.after, change.field)}
+                                          {formatDiffValue(change.after, change.field, locale)}
                                         </td>
                                       </tr>
                                     ))}
@@ -845,18 +1149,16 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
 
       {/* Pagination */}
       <div className="flex items-center justify-between">
-        <p className="text-sm text-gray-500">
-          총 {total}개의 기록 (페이지 {currentPage} / {totalPages})
-        </p>
+        <p className="text-sm text-gray-500">{copy.totalCount(total, currentPage, totalPages)}</p>
         <div className="flex gap-2">
           {currentPage > 1 && (
             <Button variant="white" href={getPageHref(currentPage - 1)}>
-              이전
+              {copy.prev}
             </Button>
           )}
           {currentPage < totalPages && (
             <Button variant="white" href={getPageHref(currentPage + 1)}>
-              다음
+              {copy.next}
             </Button>
           )}
         </div>

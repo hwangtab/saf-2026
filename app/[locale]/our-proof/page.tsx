@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 
 import LinkButton from '@/components/ui/LinkButton';
 import SectionTitle from '@/components/ui/SectionTitle';
@@ -8,26 +8,40 @@ import PageHero from '@/components/ui/PageHero';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import TestimonialCard from '@/components/ui/TestimonialCard';
 import StatCard from '@/components/ui/StatCard';
-import { EXTERNAL_LINKS, SITE_URL, BREADCRUMB_HOME, BREADCRUMBS, OG_IMAGE } from '@/lib/constants';
+import { EXTERNAL_LINKS, SITE_URL, OG_IMAGE } from '@/lib/constants';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
+import { createLocaleAlternates } from '@/lib/locale-alternates';
 
 const PAGE_URL = `${SITE_URL}/our-proof`;
-const PAGE_TITLE = '우리의 증명';
-const PAGE_DESCRIPTION =
-  '상호부조 대출 305건, 6억 900만원 지원. 연체율 0%의 기적. 예술인 금융 안전망이 실제로 작동함을 증명합니다.';
+const PAGE_COPY = {
+  ko: {
+    title: '우리의 증명',
+    description:
+      '상호부조 대출 305건, 6억 900만원 지원. 연체율 0%의 기적. 예술인 금융 안전망이 실제로 작동함을 증명합니다.',
+  },
+  en: {
+    title: 'Our Proof',
+    description:
+      '354 mutual-aid loans and nearly KRW 700 million deployed. A 95% repayment rate shows this artist-focused safety net works in practice.',
+  },
+} as const;
+
+const resolveLocale = (locale: string): 'ko' | 'en' => (locale === 'en' ? 'en' : 'ko');
 
 export async function generateMetadata(): Promise<Metadata> {
+  const locale = resolveLocale(await getLocale());
+  const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
-  const title = `${PAGE_TITLE} | ${tSeo('siteTitle')}`;
+  const title = `${copy.title} | ${tSeo('siteTitle')}`;
 
   return {
     title,
-    description: PAGE_DESCRIPTION,
-    alternates: { canonical: PAGE_URL },
+    description: copy.description,
+    alternates: createLocaleAlternates('/our-proof'),
     openGraph: {
       title,
-      description: PAGE_DESCRIPTION,
+      description: copy.description,
       url: PAGE_URL,
       images: [
         { url: OG_IMAGE.url, width: OG_IMAGE.width, height: OG_IMAGE.height, alt: OG_IMAGE.alt },
@@ -36,14 +50,241 @@ export async function generateMetadata(): Promise<Metadata> {
     twitter: {
       card: 'summary_large_image',
       title,
-      description: PAGE_DESCRIPTION,
+      description: copy.description,
       images: [OG_IMAGE.url],
     },
   };
 }
 
-export default function OurProof() {
-  const breadcrumbSchema = createBreadcrumbSchema([BREADCRUMB_HOME, BREADCRUMBS['/our-proof']]);
+export default async function OurProof() {
+  const locale = resolveLocale(await getLocale());
+  const tBreadcrumbs = await getTranslations('breadcrumbs');
+  const breadcrumbSchema = createBreadcrumbSchema([
+    { name: tBreadcrumbs('home'), url: SITE_URL },
+    { name: tBreadcrumbs('ourProof'), url: PAGE_URL },
+  ]);
+
+  if (locale === 'en') {
+    return (
+      <>
+        <JsonLdScript data={breadcrumbSchema} />
+        <PageHero
+          title="Our Proof"
+          description="Mutual-aid finance is not a theory. 354 loans and a 95% repayment rate prove that trust-based lending to artists works."
+        >
+          <ShareButtonsWrapper
+            url={PAGE_URL}
+            title="Our Proof - SAF 2026"
+            description="See the measurable outcomes of artist mutual-aid lending at SAF 2026."
+          />
+        </PageHero>
+
+        <Section variant="primary-surface" prevVariant="white">
+          <div className="container-max">
+            <div className="max-w-3xl mx-auto text-center mb-12">
+              <SectionTitle className="mb-8">
+                A <span className="text-primary font-bold">95%</span> repayment rate tells the story
+              </SectionTitle>
+              <p className="text-xl text-sky-strong">
+                Out of 354 loans totaling nearly KRW 700 million, 95% were repaid on time. Even the
+                5.10% subrogation level remains lower than many conventional low-credit loan
+                markets.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+              <StatCard value="354" label="Loans approved" variant="highlight" />
+              <StatCard value="~KRW 700M" label="Total support deployed" variant="highlight" />
+              <StatCard
+                value="95%"
+                label="Repayment rate (5.10% subrogation)"
+                variant="highlight"
+              />
+            </div>
+
+            <div className="mt-12 bg-white p-8 rounded-lg max-w-3xl mx-auto border-l-4 border-primary">
+              <p className="text-lg text-charcoal mb-2">
+                The data is clear.{' '}
+                <span className="text-primary font-semibold">Artists are bankable.</span>
+              </p>
+              <p className="text-base text-charcoal-muted mb-6">
+                The real risk is a system that excludes artists from fair finance and pushes them
+                toward predatory lending.
+              </p>
+              <p className="text-2xl font-bold text-charcoal">
+                Trust-based finance can be both socially just and financially stable.
+              </p>
+            </div>
+          </div>
+        </Section>
+
+        <Section variant="white" prevVariant="primary-surface">
+          <div className="container-max">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
+              <div>
+                <SectionTitle className="mb-6">What is mutual-aid lending?</SectionTitle>
+                <div className="space-y-4 text-charcoal">
+                  <p>
+                    When the cooperative builds a shared fund, partner financial institutions can
+                    lend up to about 7x that amount to artists at low fixed rates.
+                  </p>
+                  <p>
+                    This is not just a product. It is relationship-based finance built on trust,
+                    accountability, and solidarity.
+                  </p>
+                  <p className="font-semibold">
+                    When traditional finance says, &ldquo;No regular income, no loan,&rdquo; we say,
+                    &ldquo;We trust your work and your future.&rdquo;
+                  </p>
+                </div>
+              </div>
+              <div className="bg-primary/10 rounded-lg p-8 border-2 border-primary text-center">
+                <h3 className="text-card-title mb-6">Fund leverage</h3>
+                <p className="text-sm text-charcoal-muted mb-3">Accumulated mutual-aid reserve</p>
+                <p className="text-4xl font-bold text-primary">KRW 77,000,000</p>
+                <p className="text-sm text-charcoal-muted mt-4">
+                  Built through artwork sales, co-op membership, and special solidarity
+                  contributions.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+              <StatCard
+                value="354"
+                label="Cumulative loans"
+                description="354 loans were executed between Dec 2022 and Sep 2025."
+                variant="bordered"
+                className="hover:shadow-md transition-shadow"
+              />
+              <StatCard
+                value="~KRW 700M"
+                label="Cumulative support"
+                description="Funds supported living costs, creation costs, and project operations."
+                variant="bordered"
+                className="hover:shadow-md transition-shadow"
+              />
+              <StatCard
+                value="5.10%"
+                label="Subrogation rate"
+                description="Subrogation remained at a controlled level versus total executed amount."
+                variant="bordered"
+                className="hover:shadow-md transition-shadow"
+              />
+            </div>
+          </div>
+        </Section>
+
+        <Section variant="sun-soft" prevVariant="white">
+          <div className="container-max">
+            <SectionTitle className="mb-12">Voices from artists</SectionTitle>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <TestimonialCard
+                quote="When I urgently needed hospital expenses, mutual-aid lending let me focus on recovery instead of debt pressure."
+                author="Kim"
+                context="Visual Artist"
+                borderColor="border-primary"
+                contextColor="text-sky-strong"
+              />
+              <TestimonialCard
+                quote="I had been denied at every bank. Here, I was recognized as an artist with a viable future."
+                author="Lee"
+                context="Independent Film Director"
+                borderColor="border-sun"
+                contextColor="text-sun-strong"
+              />
+              <TestimonialCard
+                quote="The program enabled my exhibition preparation when production costs were impossible to cover."
+                author="Park"
+                context="Installation Artist"
+                borderColor="border-accent"
+                contextColor="text-accent-strong"
+              />
+              <TestimonialCard
+                quote="Knowing my repayments can support another artist makes me even more responsible."
+                author="Choi"
+                context="Musical Actor"
+                borderColor="border-primary-strong"
+                contextColor="text-primary-strong"
+              />
+            </div>
+          </div>
+        </Section>
+
+        <Section variant="primary-surface" prevVariant="sun-soft">
+          <div className="container-max">
+            <SectionTitle className="mb-12">Traditional finance vs mutual-aid lending</SectionTitle>
+            <div className="overflow-x-auto">
+              <table className="w-full bg-white rounded-lg shadow-sm overflow-hidden">
+                <thead className="bg-gray-100 border-b-2 border-gray-300">
+                  <tr>
+                    <th className="px-6 py-4 text-left font-bold">Category</th>
+                    <th className="px-6 py-4 text-center font-bold">Traditional lenders</th>
+                    <th className="px-6 py-4 text-center font-bold">Mutual-aid lending</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b">
+                    <td className="px-6 py-4 font-semibold">Screening basis</td>
+                    <td className="px-6 py-4 text-center">Regular income, credit score</td>
+                    <td className="px-6 py-4 text-center text-primary font-semibold">
+                      Artist identity
+                    </td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="px-6 py-4 font-semibold">Interest rate</td>
+                    <td className="px-6 py-4 text-center text-red-500">15-30%</td>
+                    <td className="px-6 py-4 text-center text-primary font-semibold">
+                      Fixed 5% APR
+                    </td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="px-6 py-4 font-semibold">Loan flexibility</td>
+                    <td className="px-6 py-4 text-center">Limited</td>
+                    <td className="px-6 py-4 text-center">Relatively flexible</td>
+                  </tr>
+                  <tr>
+                    <td className="px-6 py-4 font-semibold">Core philosophy</td>
+                    <td className="px-6 py-4 text-center">Profit-first</td>
+                    <td className="px-6 py-4 text-center text-primary font-semibold">Mutual aid</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </Section>
+
+        <Section variant="primary-soft" prevVariant="primary-surface" className="pb-24 md:pb-32">
+          <div className="container-max text-center">
+            <h2 className="font-section font-normal text-4xl md:text-5xl mb-8">
+              You can join this trust network
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto text-balance">
+              <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-lg bg-white text-left shadow-sm">
+                <h3 className="text-card-title mb-3">Join the cooperative</h3>
+                <p className="text-charcoal-muted mb-4 flex-grow">
+                  Become a member of Korea Smart Cooperative and help sustain artist mutual-aid
+                  finance.
+                </p>
+                <LinkButton href={EXTERNAL_LINKS.JOIN_MEMBER} external variant="accent" size="md">
+                  Join now
+                </LinkButton>
+              </div>
+              <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-lg bg-white text-left shadow-sm">
+                <h3 className="text-card-title mb-3">Support artists through purchases</h3>
+                <p className="text-charcoal-muted mb-4 flex-grow">
+                  Sales proceeds return to the fund. Explore artworks in the online gallery.
+                </p>
+                <LinkButton href="/artworks" variant="secondary" size="md">
+                  Browse artworks
+                </LinkButton>
+              </div>
+            </div>
+          </div>
+        </Section>
+      </>
+    );
+  }
 
   return (
     <>

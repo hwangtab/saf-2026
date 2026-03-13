@@ -2,10 +2,39 @@
 
 import { useMemo, useState } from 'react';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useToast } from '@/lib/hooks/useToast';
+import { resolveClientLocale } from '@/lib/client-locale';
+
+type LocaleCode = 'ko' | 'en';
+
+const SIGN_OUT_COPY: Record<
+  LocaleCode,
+  {
+    error: string;
+    success: string;
+    signingOut: string;
+    signOut: string;
+  }
+> = {
+  ko: {
+    error: '로그아웃 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+    success: '로그아웃되었습니다.',
+    signingOut: '로그아웃 중...',
+    signOut: '로그아웃',
+  },
+  en: {
+    error: 'An error occurred while signing out. Please try again shortly.',
+    success: 'Signed out.',
+    signingOut: 'Signing out...',
+    signOut: 'Sign out',
+  },
+};
 
 export function SignOutButton() {
+  const pathname = usePathname();
+  const locale = resolveClientLocale(pathname);
+  const copy = SIGN_OUT_COPY[locale];
   const [isSigningOut, setIsSigningOut] = useState(false);
   const router = useRouter();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
@@ -20,17 +49,17 @@ export function SignOutButton() {
       const { error } = await supabase.auth.signOut({ scope: 'local' });
 
       if (error) {
-        toast.error('로그아웃 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+        toast.error(copy.error);
         setIsSigningOut(false);
         return;
       }
 
-      toast.success('로그아웃되었습니다.');
+      toast.success(copy.success);
       setIsSigningOut(false);
       router.replace('/');
       router.refresh();
     } catch (error) {
-      toast.error('로그아웃 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      toast.error(copy.error);
       setIsSigningOut(false);
     }
   };
@@ -55,7 +84,7 @@ export function SignOutButton() {
           d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
         />
       </svg>
-      {isSigningOut ? '로그아웃 중...' : '로그아웃'}
+      {isSigningOut ? copy.signingOut : copy.signOut}
     </button>
   );
 }

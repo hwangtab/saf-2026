@@ -3,12 +3,33 @@ import { createSupabaseServerClient } from '@/lib/auth/server';
 import { redirect } from 'next/navigation';
 import { ExhibitorOnboardingForm } from './exhibitor-onboarding-form';
 import { SignOutButton } from '@/components/auth/SignOutButton';
+import { getServerLocale } from '@/lib/server-locale';
 
 export default async function ExhibitorOnboardingPage({
   searchParams,
 }: {
   searchParams: Promise<{ recover?: string }>;
 }) {
+  const locale = await getServerLocale();
+  const copy =
+    locale === 'en'
+      ? {
+          recoveryTitle: 'Recover exhibitor information',
+          onboardingTitle: 'Enter exhibitor information',
+          recoveryDescription:
+            'Existing exhibitor application data is missing and must be recovered. After saving, you will be redirected to the exhibitor dashboard.',
+          onboardingDescription:
+            'Submit your information for approval. Access to the exhibitor dashboard remains restricted until approval.',
+        }
+      : {
+          recoveryTitle: '출품자 정보 복구',
+          onboardingTitle: '출품자 정보 입력',
+          recoveryDescription:
+            '기존 출품자 계정의 신청서 정보가 누락되어 복구가 필요합니다. 정보 저장 후 바로 출품자 대시보드로 이동합니다.',
+          onboardingDescription:
+            '승인 심사를 위해 정보를 제출해주세요. 제출 후에는 관리자 승인 전까지 출품자 대시보드 접근이 제한됩니다.',
+        };
+
   const user = await requireAuth();
   const params = await searchParams;
   const isRecoveryFlow = params.recover === '1';
@@ -55,13 +76,11 @@ export default async function ExhibitorOnboardingPage({
           SAF 2026
           <br />
           <span className="text-xl font-medium text-gray-600">
-            {isExhibitorRecovery ? '출품자 정보 복구' : '출품자 정보 입력'}
+            {isExhibitorRecovery ? copy.recoveryTitle : copy.onboardingTitle}
           </span>
         </h2>
         <p className="mt-4 text-center text-sm text-gray-500">
-          {isExhibitorRecovery
-            ? '기존 출품자 계정의 신청서 정보가 누락되어 복구가 필요합니다. 정보 저장 후 바로 출품자 대시보드로 이동합니다.'
-            : '승인 심사를 위해 정보를 제출해주세요. 제출 후에는 관리자 승인 전까지 출품자 대시보드 접근이 제한됩니다.'}
+          {isExhibitorRecovery ? copy.recoveryDescription : copy.onboardingDescription}
         </p>
       </div>
 

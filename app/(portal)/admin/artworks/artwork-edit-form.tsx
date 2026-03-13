@@ -127,12 +127,12 @@ export function ArtworkEditForm({
 
     // Validation
     if (!title.trim() || !selectedArtistId) {
-      toast.error('필수 정보를 입력해주세요.');
+      toast.error('Please fill in required fields.');
       return;
     }
 
     if (editionType === 'limited' && !editionLimit) {
-      toast.error('한정판은 에디션 수량을 입력해주세요.');
+      toast.error('For limited editions, please enter edition quantity.');
       return;
     }
 
@@ -165,7 +165,7 @@ export function ArtworkEditForm({
       }
     } catch {
       setError('저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-      toast.error('저장 중 오류가 발생했습니다.');
+      toast.error('An error occurred while saving.');
     } finally {
       setSaving(false);
     }
@@ -184,7 +184,7 @@ export function ArtworkEditForm({
       router.refresh();
     } catch {
       setError('이미지 저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-      toast.error('이미지 저장 중 오류가 발생했습니다.');
+      toast.error('An error occurred while saving image.');
     } finally {
       setSavingImages(false);
     }

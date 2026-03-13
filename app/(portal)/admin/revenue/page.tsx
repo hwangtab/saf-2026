@@ -11,14 +11,94 @@ import {
 import { RevenueCard } from '@/app/admin/_components/RevenueCard';
 import { RevenueFilterBar } from '@/app/admin/revenue/_components/RevenueFilterBar';
 import { MonthlyRevenueChart } from '@/app/admin/revenue/_components/RevenueCharts';
+import { getServerLocale } from '@/lib/server-locale';
 
-const KRW_FORMATTER = new Intl.NumberFormat('ko-KR', {
-  style: 'currency',
-  currency: 'KRW',
-  maximumFractionDigits: 0,
-});
-
-const NUMBER_FORMATTER = new Intl.NumberFormat('ko-KR');
+const REVENUE_COPY = {
+  ko: {
+    title: '매출 현황',
+    description: '판매 완료일이 확인된 기록만 인식매출로 집계합니다 (KST 기준).',
+    selectedYear: '조회 연도',
+    accountingCsv: '회계 템플릿 CSV',
+    reportCsv: '분석 리포트 CSV',
+    dataWarningTitle: '데이터 점검 필요',
+    dataWarningDescPrefix: '판매 완료일이 누락된 기록이',
+    dataWarningDescSuffix: '건 있습니다. 현재 인식매출 집계에서는 제외됩니다.',
+    monthlyRevenue: '인식매출',
+    soldCount: '판매수량',
+    offlineRevenue: '오프라인 매출',
+    onlineRevenue: '온라인 매출',
+    avgPrice: '평균단가',
+    ytdRevenue: '누계 인식매출 (YTD)',
+    cumulativeSold: '누적 판매수량',
+    compareRevenue: '비교 기준 인식매출',
+    compareBase: '기준',
+    onlineShare: '온라인 매출 비중',
+    quantityShare: '수량 비중',
+    previousMonthBase: '전월 기준',
+    previousYearBase: '전년동월 기준',
+    monthlyDetail: '월별 회계 상세',
+    monthlyDetailSub: '1월 ~ 12월 인식매출 (KST 기준)',
+    month: '월',
+    currentRevenue: '당월 인식매출',
+    offlineCount: '오프라인 수량',
+    onlineCount: '온라인 수량',
+    mom: 'MoM',
+    yoy: 'YoY',
+    prevMonthRevenue: '전월 매출',
+    prevYearRevenue: '전년동월 매출',
+    ytd: '누계 YTD',
+    topArtists: '작가별 인식매출 TOP',
+    topArtworks: '작품별 인식매출 TOP',
+    noRevenueData: '매출 데이터 없음',
+    noRevenueDataDesc: '해당 기간 매출 데이터가 없습니다.',
+    loadErrorTitle: '매출 현황 로딩 오류',
+    loadErrorMessage: '데이터를 불러오는 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.',
+    pointsUnit: '점',
+    yearSuffix: '년',
+  },
+  en: {
+    title: 'Revenue Analytics',
+    description: 'Only records with confirmed sold dates are counted as recognized revenue (KST).',
+    selectedYear: 'Selected year',
+    accountingCsv: 'Accounting CSV',
+    reportCsv: 'Report CSV',
+    dataWarningTitle: 'Data Check Required',
+    dataWarningDescPrefix: 'Records missing sold completion dates:',
+    dataWarningDescSuffix: 'These are excluded from recognized revenue calculations.',
+    monthlyRevenue: 'Recognized Revenue',
+    soldCount: 'Sold count',
+    offlineRevenue: 'Offline Revenue',
+    onlineRevenue: 'Online Revenue',
+    avgPrice: 'Average Price',
+    ytdRevenue: 'Recognized Revenue (YTD)',
+    cumulativeSold: 'Cumulative sold count',
+    compareRevenue: 'Comparison Baseline Revenue',
+    compareBase: 'baseline',
+    onlineShare: 'Online Revenue Share',
+    quantityShare: 'Quantity share',
+    previousMonthBase: 'vs previous month',
+    previousYearBase: 'vs same month last year',
+    monthlyDetail: 'Monthly Accounting Details',
+    monthlyDetailSub: 'Jan-Dec recognized revenue (KST)',
+    month: 'Month',
+    currentRevenue: 'Current Recognized Revenue',
+    offlineCount: 'Offline Count',
+    onlineCount: 'Online Count',
+    mom: 'MoM',
+    yoy: 'YoY',
+    prevMonthRevenue: 'Previous Month Revenue',
+    prevYearRevenue: 'Previous Year Same Month',
+    ytd: 'YTD',
+    topArtists: 'Top Artists by Revenue',
+    topArtworks: 'Top Artworks by Revenue',
+    noRevenueData: 'No revenue data',
+    noRevenueDataDesc: 'No revenue data available for this period.',
+    loadErrorTitle: 'Revenue Page Load Error',
+    loadErrorMessage: 'Failed to load data. Please try again shortly.',
+    pointsUnit: 'items',
+    yearSuffix: '',
+  },
+} as const;
 
 type Props = {
   searchParams: Promise<{
@@ -45,6 +125,14 @@ function formatShare(value: number | null) {
 }
 
 export default async function AdminRevenuePage({ searchParams }: Props) {
+  const locale = await getServerLocale();
+  const copy = REVENUE_COPY[locale];
+  const krwFormatter = new Intl.NumberFormat(locale === 'en' ? 'en-US' : 'ko-KR', {
+    style: 'currency',
+    currency: 'KRW',
+    maximumFractionDigits: 0,
+  });
+  const numberFormatter = new Intl.NumberFormat(locale === 'en' ? 'en-US' : 'ko-KR');
   const params = await searchParams;
 
   let analytics;
@@ -58,10 +146,8 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
     return (
       <div className="p-8">
         <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-          <h2 className="text-lg font-semibold text-red-800">매출 현황 로딩 오류</h2>
-          <p className="mt-2 text-sm text-red-600">
-            데이터를 불러오는 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.
-          </p>
+          <h2 className="text-lg font-semibold text-red-800">{copy.loadErrorTitle}</h2>
+          <p className="mt-2 text-sm text-red-600">{copy.loadErrorMessage}</p>
         </div>
       </div>
     );
@@ -84,11 +170,12 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
   return (
     <div className="space-y-8">
       <AdminPageHeader>
-        <AdminPageTitle>매출 현황</AdminPageTitle>
-        <AdminPageDescription>
-          판매 완료일이 확인된 기록만 인식매출로 집계합니다 (KST 기준).
-        </AdminPageDescription>
-        <p className="text-xs text-slate-500">조회 연도: {analytics.filter.selectedYear}년</p>
+        <AdminPageTitle>{copy.title}</AdminPageTitle>
+        <AdminPageDescription>{copy.description}</AdminPageDescription>
+        <p className="text-xs text-slate-500">
+          {copy.selectedYear}: {analytics.filter.selectedYear}
+          {copy.yearSuffix}
+        </p>
       </AdminPageHeader>
 
       <RevenueFilterBar
@@ -101,74 +188,74 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
           href={accountingExportHref}
           className="inline-flex items-center justify-center rounded-lg border border-indigo-300 bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700 hover:bg-indigo-100"
         >
-          회계 템플릿 CSV
+          {copy.accountingCsv}
         </a>
         <a
           href={reportExportHref}
           className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
         >
-          분석 리포트 CSV
+          {copy.reportCsv}
         </a>
       </div>
 
       {analytics.dataQuality.soldWithoutSoldAtCount > 0 ? (
         <AdminCard className="border-amber-200 bg-amber-50 p-4">
-          <p className="text-sm font-semibold text-amber-900">데이터 점검 필요</p>
+          <p className="text-sm font-semibold text-amber-900">{copy.dataWarningTitle}</p>
           <p className="mt-1 text-sm text-amber-800">
-            판매 완료일이 누락된 기록이{' '}
-            {NUMBER_FORMATTER.format(analytics.dataQuality.soldWithoutSoldAtCount)}건 있습니다. 현재
-            인식매출 집계에서는 제외됩니다.
+            {copy.dataWarningDescPrefix}{' '}
+            {numberFormatter.format(analytics.dataQuality.soldWithoutSoldAtCount)}.{' '}
+            {copy.dataWarningDescSuffix}
           </p>
         </AdminCard>
       ) : null}
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
         <RevenueCard
-          title={`${analytics.summary.periodLabel} 인식매출`}
+          title={`${analytics.summary.periodLabel} ${copy.monthlyRevenue}`}
           value={analytics.summary.totalRevenue}
-          subtitle={`판매수량: ${NUMBER_FORMATTER.format(analytics.summary.soldCount)}점`}
+          subtitle={`${copy.soldCount}: ${numberFormatter.format(analytics.summary.soldCount)} ${copy.pointsUnit}`}
           trend={summaryTrend}
         />
         <RevenueCard
-          title={`${analytics.summary.periodLabel} 오프라인 매출`}
+          title={`${analytics.summary.periodLabel} ${copy.offlineRevenue}`}
           value={channelSummary.offline.revenue}
-          subtitle={`오프라인 판매: ${NUMBER_FORMATTER.format(channelSummary.offline.soldCount)}점`}
+          subtitle={`${copy.offlineCount}: ${numberFormatter.format(channelSummary.offline.soldCount)} ${copy.pointsUnit}`}
         />
         <RevenueCard
-          title={`${analytics.summary.periodLabel} 온라인 매출`}
+          title={`${analytics.summary.periodLabel} ${copy.onlineRevenue}`}
           value={channelSummary.online.revenue}
-          subtitle={`온라인 판매: ${NUMBER_FORMATTER.format(channelSummary.online.soldCount)}점`}
+          subtitle={`${copy.onlineCount}: ${numberFormatter.format(channelSummary.online.soldCount)} ${copy.pointsUnit}`}
         />
         <RevenueCard
-          title={`${analytics.summary.periodLabel} 평균단가`}
+          title={`${analytics.summary.periodLabel} ${copy.avgPrice}`}
           value={analytics.summary.averagePrice}
         />
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
         <RevenueCard
-          title={`${analytics.filter.selectedYear}년 누계 인식매출 (YTD)`}
+          title={`${analytics.filter.selectedYear}${copy.yearSuffix} ${copy.ytdRevenue}`}
           value={analytics.yearly.totalRevenue}
-          subtitle={`누적 판매수량: ${NUMBER_FORMATTER.format(analytics.yearly.soldCount)}점`}
+          subtitle={`${copy.cumulativeSold}: ${numberFormatter.format(analytics.yearly.soldCount)} ${copy.pointsUnit}`}
         />
         <RevenueCard
-          title="비교 기준 인식매출"
+          title={copy.compareRevenue}
           value={analytics.summary.comparedToRevenue}
-          subtitle={`${analytics.summary.comparedToLabel} 기준`}
+          subtitle={`${analytics.summary.comparedToLabel} ${copy.compareBase}`}
         />
         <AdminCard className="flex h-full flex-col justify-between p-6">
           <div>
-            <p className="text-sm font-medium text-slate-500">온라인 매출 비중</p>
+            <p className="text-sm font-medium text-slate-500">{copy.onlineShare}</p>
             <p className="mt-2 text-2xl font-bold tracking-tight text-slate-900">
               {formatShare(channelSummary.onlineRevenueSharePct)}
             </p>
           </div>
           <p className="mt-2 text-sm text-slate-500">
-            수량 비중: {formatShare(channelSummary.onlineSoldSharePct)}
+            {copy.quantityShare}: {formatShare(channelSummary.onlineSoldSharePct)}
           </p>
           <p className="mt-1 text-xs text-slate-500">
-            오프라인 {KRW_FORMATTER.format(sourceSummary.manual.revenue)} / 온라인{' '}
-            {KRW_FORMATTER.format(sourceSummary.cafe24.revenue)}
+            {copy.offlineRevenue} {krwFormatter.format(sourceSummary.manual.revenue)} /{' '}
+            {copy.onlineRevenue} {krwFormatter.format(sourceSummary.cafe24.revenue)}
           </p>
         </AdminCard>
       </div>
@@ -180,7 +267,7 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
               {analytics.filter.selectedYear}년 {analytics.focusMonth.month}월 전월 기준
             </p>
             <p className="mt-2 text-2xl font-bold tracking-tight text-slate-900">
-              {KRW_FORMATTER.format(analytics.focusMonth.previousMonthRevenue)}
+              {krwFormatter.format(analytics.focusMonth.previousMonthRevenue)}
             </p>
             <p
               className={`mt-2 text-sm font-semibold ${getChangeRateClass(analytics.focusMonth.momChangeRatePct)}`}
@@ -193,7 +280,7 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
               {analytics.filter.selectedYear}년 {analytics.focusMonth.month}월 전년동월 기준
             </p>
             <p className="mt-2 text-2xl font-bold tracking-tight text-slate-900">
-              {KRW_FORMATTER.format(analytics.focusMonth.previousYearRevenue)}
+              {krwFormatter.format(analytics.focusMonth.previousYearRevenue)}
             </p>
             <p
               className={`mt-2 text-sm font-semibold ${getChangeRateClass(analytics.focusMonth.yoyChangeRatePct)}`}
@@ -240,28 +327,28 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
                   <tr key={month.month} className={isSelected ? 'bg-indigo-50/50' : ''}>
                     <td className="px-4 py-3 font-medium text-slate-800">{month.label}</td>
                     <td className="px-4 py-3 text-right font-medium text-slate-900">
-                      {KRW_FORMATTER.format(month.revenue)}
+                      {krwFormatter.format(month.revenue)}
                     </td>
                     <td className="px-4 py-3 text-right text-slate-700">
-                      {KRW_FORMATTER.format(month.offlineRevenue)}
+                      {krwFormatter.format(month.offlineRevenue)}
                     </td>
                     <td className="px-4 py-3 text-right text-slate-700">
-                      {KRW_FORMATTER.format(month.onlineRevenue)}
+                      {krwFormatter.format(month.onlineRevenue)}
                     </td>
                     <td className="px-4 py-3 text-right text-slate-700">
-                      {NUMBER_FORMATTER.format(month.offlineSoldCount)}점
+                      {numberFormatter.format(month.offlineSoldCount)} {copy.pointsUnit}
                     </td>
                     <td className="px-4 py-3 text-right text-slate-700">
-                      {NUMBER_FORMATTER.format(month.onlineSoldCount)}점
+                      {numberFormatter.format(month.onlineSoldCount)} {copy.pointsUnit}
                     </td>
                     <td className="px-4 py-3 text-right text-slate-700">
-                      {NUMBER_FORMATTER.format(month.soldCount)}점
+                      {numberFormatter.format(month.soldCount)} {copy.pointsUnit}
                     </td>
                     <td className="px-4 py-3 text-right text-slate-700">
-                      {KRW_FORMATTER.format(month.averagePrice)}
+                      {krwFormatter.format(month.averagePrice)}
                     </td>
                     <td className="px-4 py-3 text-right text-slate-500">
-                      {KRW_FORMATTER.format(month.previousMonthRevenue)}
+                      {krwFormatter.format(month.previousMonthRevenue)}
                     </td>
                     <td
                       className={`px-4 py-3 text-right font-semibold ${getChangeRateClass(month.momChangeRatePct)}`}
@@ -269,7 +356,7 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
                       {formatChangeRate(month.momChangeRatePct)}
                     </td>
                     <td className="px-4 py-3 text-right text-slate-500">
-                      {KRW_FORMATTER.format(month.previousYearRevenue)}
+                      {krwFormatter.format(month.previousYearRevenue)}
                     </td>
                     <td
                       className={`px-4 py-3 text-right font-semibold ${getChangeRateClass(month.yoyChangeRatePct)}`}
@@ -277,7 +364,7 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
                       {formatChangeRate(month.yoyChangeRatePct)}
                     </td>
                     <td className="px-4 py-3 text-right font-medium text-slate-700">
-                      {KRW_FORMATTER.format(month.cumulativeRevenue)}
+                      {krwFormatter.format(month.cumulativeRevenue)}
                     </td>
                   </tr>
                 );
@@ -311,11 +398,12 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
                         {index + 1}. {artist.artistName}
                       </p>
                       <p className="mt-0.5 text-xs text-slate-500">
-                        판매수량 {NUMBER_FORMATTER.format(artist.soldCount)}점
+                        {copy.soldCount} {numberFormatter.format(artist.soldCount)}{' '}
+                        {copy.pointsUnit}
                       </p>
                     </div>
                     <p className="text-sm font-semibold text-slate-900">
-                      {KRW_FORMATTER.format(artist.revenue)}
+                      {krwFormatter.format(artist.revenue)}
                     </p>
                   </li>
                 ))}
@@ -352,7 +440,7 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
                         </p>
                       </div>
                       <p className="shrink-0 text-sm font-semibold text-slate-900">
-                        {KRW_FORMATTER.format(artwork.revenue)}
+                        {krwFormatter.format(artwork.revenue)}
                       </p>
                     </div>
                   </li>

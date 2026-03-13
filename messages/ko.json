@@ -198,5 +198,56 @@
     "ko": "한국어",
     "en": "English",
     "switchTo": "영어로 전환"
+  },
+  "shareButtons": {
+    "kakaoUnavailable": "카카오 공유를 사용할 수 없습니다.",
+    "kakaoPrepareFailed": "카카오 공유 준비에 실패했습니다. 잠시 후 다시 시도해 주세요.",
+    "kakaoVisitWebsite": "웹사이트 방문",
+    "kakaoButtonTitle": "카카오톡 공유",
+    "kakaoNeedKey": "카카오 키 설정 필요",
+    "kakaoAria": "카카오톡으로 공유하기",
+    "kakaoIconAlt": "카카오톡",
+    "copyLinkTitle": "링크 복사",
+    "copyLink": "링크 복사하기",
+    "copied": "링크가 복사되었습니다",
+    "copyFailed": "복사 실패"
+  },
+  "artworkCard": {
+    "untitled": "무제",
+    "unknownArtist": "작가 미상",
+    "pendingInfo": "상세 정보 준비 중"
+  },
+  "trustBadges": {
+    "authenticity": "✓ 100% 진품 보증",
+    "safeDelivery": "✓ 안전한 포장 배송",
+    "curatorVerified": "✓ 전문 큐레이터 검증"
+  },
+  "artworkDetailNav": {
+    "backToList": "목록으로 돌아가기",
+    "specialExhibition": "오윤 특별전",
+    "artworks": "출품작"
+  },
+  "expandableHistory": {
+    "title": "주요 경력",
+    "expand": "더보기 ▼",
+    "collapse": "접기 ▲"
+  },
+  "backgroundSlider": {
+    "play": "재생",
+    "pause": "일시정지",
+    "playAria": "배경 슬라이드 재생",
+    "pauseAria": "배경 슬라이드 일시정지"
+  },
+  "pageErrors": {
+    "artworks": {
+      "title": "작품을 불러올 수 없습니다",
+      "message": "작품 데이터를 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도하거나 다른 검색어를 입력해주세요.",
+      "backLabel": "전체 작품 보기"
+    },
+    "news": {
+      "title": "소식을 불러올 수 없습니다",
+      "message": "관련 기사를 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+      "backLabel": "뉴스 목록으로"
+    }
   }
 }

@@ -1,23 +1,28 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { SortOption } from '@/types';
 import { ChevronDownIcon, CheckMarkIcon } from '@/components/ui/Icons';
-import { UI_STRINGS } from '@/lib/ui-strings';
+import { useLocale } from 'next-intl';
+import { getUIStrings } from '@/lib/ui-strings';
 
 interface SortControlsProps {
   value: SortOption;
   onChange: (option: SortOption) => void;
 }
 
-const sortOptions: { value: SortOption; label: string; icon: string }[] = [
-  { value: 'artist-asc', label: UI_STRINGS.SORT.ARTIST_ASC, icon: '👤' },
-  { value: 'title-asc', label: UI_STRINGS.SORT.TITLE_ASC, icon: '🖼️' },
-  { value: 'price-desc', label: UI_STRINGS.SORT.PRICE_DESC, icon: '💰↓' },
-  { value: 'price-asc', label: UI_STRINGS.SORT.PRICE_ASC, icon: '💰↑' },
-];
-
 export default function SortControls({ value, onChange }: SortControlsProps) {
+  const ui = getUIStrings(useLocale());
+  const sortOptions = useMemo<{ value: SortOption; label: string; icon: string }[]>(
+    () => [
+      { value: 'artist-asc', label: ui.SORT.ARTIST_ASC, icon: '👤' },
+      { value: 'title-asc', label: ui.SORT.TITLE_ASC, icon: '🖼️' },
+      { value: 'price-desc', label: ui.SORT.PRICE_DESC, icon: '💰↓' },
+      { value: 'price-asc', label: ui.SORT.PRICE_ASC, icon: '💰↑' },
+    ],
+    [ui.SORT.ARTIST_ASC, ui.SORT.TITLE_ASC, ui.SORT.PRICE_DESC, ui.SORT.PRICE_ASC]
+  );
+
   const [isOpen, setIsOpen] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -81,7 +86,7 @@ export default function SortControls({ value, onChange }: SortControlsProps) {
           break;
       }
     },
-    [isOpen, focusedIndex, currentIndex, onChange]
+    [isOpen, focusedIndex, currentIndex, onChange, sortOptions]
   );
 
   return (
@@ -92,7 +97,7 @@ export default function SortControls({ value, onChange }: SortControlsProps) {
         className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-primary hover:bg-primary/5 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50"
         aria-haspopup="listbox"
         aria-expanded={isOpen}
-        aria-label={UI_STRINGS.A11Y.SORT_OPTIONS}
+        aria-label={ui.A11Y.SORT_OPTIONS}
       >
         <span className="text-xs sm:text-sm font-medium text-charcoal whitespace-nowrap">
           {currentOption?.icon} {currentOption?.label}
@@ -107,7 +112,7 @@ export default function SortControls({ value, onChange }: SortControlsProps) {
         <div
           className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
           role="listbox"
-          aria-label="정렬 옵션"
+          aria-label={ui.A11Y.SORT_OPTIONS}
         >
           {sortOptions.map((option, index) => (
             <button

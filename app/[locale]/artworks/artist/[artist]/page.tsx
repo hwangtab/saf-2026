@@ -9,8 +9,9 @@ import { formatArtistName, resolveArtworkImageUrl } from '@/lib/utils';
 import { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import type { Artwork, ArtworkListItem } from '@/types';
+import { createLocaleAlternates } from '@/lib/locale-alternates';
 
 const ArtworkGalleryWithSort = dynamic(
   () => import('@/components/features/ArtworkGalleryWithSort'),
@@ -31,8 +32,11 @@ interface Props {
   }>;
 }
 
+const resolveLocale = (locale: string): 'ko' | 'en' => (locale === 'en' ? 'en' : 'ko');
+
 // Generate metadata for Artist Page
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const locale = resolveLocale(await getLocale());
   const { artist } = await params;
   const artistName = decodeURIComponent(artist);
   const artistArtworks = await getSupabaseArtworksByArtist(artistName);
@@ -50,7 +54,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const imageUrl = resolvedImageUrl.startsWith('http')
     ? resolvedImageUrl
     : `${SITE_URL}${resolvedImageUrl}`;
-  const pageUrl = `${SITE_URL}/artworks/artist/${encodeURIComponent(artistName)}`;
+  const artistPath = `/artworks/artist/${encodeURIComponent(artistName)}`;
+  const pageUrl = `${SITE_URL}${artistPath}`;
 
   // Find valid profile or note from any of the artist's artworks
   const artistProfile = artistArtworks.find((a) => a.profile)?.profile || '';
@@ -59,7 +64,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const profileSnippet = artistProfile ? `${artistProfile.substring(0, 150)}... ` : '';
   const noteSnippet = artistNote ? `${artistNote.substring(0, 150)}... ` : '';
 
-  const formattedName = formatArtistName(artistName);
+  const formattedName = formatArtistName(artistName, locale !== 'en');
   const seoDescription =
     t('metaDescription', { artist: formattedName }) +
     (profileSnippet || noteSnippet || t('metaFallback'));
@@ -69,10 +74,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: metaTitle,
     description: seoDescription.substring(0, 160),
-    keywords: [artistName, '씨앗페', 'SAF 2026', '예술가', '전시회'],
-    alternates: {
-      canonical: pageUrl,
-    },
+    keywords:
+      locale === 'en'
+        ? [artistName, 'SAF 2026', 'artist', 'artworks', 'exhibition']
+        : [artistName, '씨앗페', 'SAF 2026', '예술가', '전시회'],
+    alternates: createLocaleAlternates(artistPath),
     openGraph: {
       title: metaTitle,
       description: seoDescription.substring(0, 200),
@@ -109,6 +115,7 @@ export async function generateStaticParams() {
 }
 
 export default async function ArtistPage({ params }: Props) {
+  const locale = resolveLocale(await getLocale());
   const { artist } = await params;
   const artistName = decodeURIComponent(artist);
   const artistArtworks = await getSupabaseArtworksByArtist(artistName);
@@ -131,7 +138,7 @@ export default async function ArtistPage({ params }: Props) {
   const artistProfile = artistArtworks.find((a) => a.profile)?.profile;
   const artistNote = artistArtworks.find((a) => a.description)?.description;
 
-  const formattedName = formatArtistName(artistName);
+  const formattedName = formatArtistName(artistName, locale !== 'en');
   const rawDescription =
     artistProfile || artistNote || t('defaultDescription', { artist: formattedName });
 

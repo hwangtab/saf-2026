@@ -198,5 +198,56 @@
     "ko": "한국어",
     "en": "English",
     "switchTo": "Switch to Korean"
+  },
+  "shareButtons": {
+    "kakaoUnavailable": "Kakao sharing is not available.",
+    "kakaoPrepareFailed": "Failed to prepare Kakao sharing. Please try again in a moment.",
+    "kakaoVisitWebsite": "Visit website",
+    "kakaoButtonTitle": "Share on KakaoTalk",
+    "kakaoNeedKey": "Kakao app key required",
+    "kakaoAria": "Share on KakaoTalk",
+    "kakaoIconAlt": "KakaoTalk",
+    "copyLinkTitle": "Copy link",
+    "copyLink": "Copy link",
+    "copied": "Link copied",
+    "copyFailed": "Copy failed"
+  },
+  "artworkCard": {
+    "untitled": "Untitled",
+    "unknownArtist": "Unknown artist",
+    "pendingInfo": "Detailed information coming soon"
+  },
+  "trustBadges": {
+    "authenticity": "✓ 100% authenticity guaranteed",
+    "safeDelivery": "✓ Secure packaging & delivery",
+    "curatorVerified": "✓ Verified by professional curators"
+  },
+  "artworkDetailNav": {
+    "backToList": "Back to list",
+    "specialExhibition": "Oh Yoon Special Exhibition",
+    "artworks": "Artworks"
+  },
+  "expandableHistory": {
+    "title": "Key Career Highlights",
+    "expand": "Show more ▼",
+    "collapse": "Show less ▲"
+  },
+  "backgroundSlider": {
+    "play": "Play",
+    "pause": "Pause",
+    "playAria": "Play background slideshow",
+    "pauseAria": "Pause background slideshow"
+  },
+  "pageErrors": {
+    "artworks": {
+      "title": "Unable to load artworks",
+      "message": "An error occurred while loading artwork data. Please try again or use a different search query.",
+      "backLabel": "Back to artworks"
+    },
+    "news": {
+      "title": "Unable to load news",
+      "message": "An error occurred while loading news articles. Please try again shortly.",
+      "backLabel": "Back to news"
+    }
   }
 }

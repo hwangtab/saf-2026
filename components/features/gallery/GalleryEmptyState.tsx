@@ -1,10 +1,16 @@
-import { UI_STRINGS } from '@/lib/ui-strings';
+'use client';
+
+import { useLocale } from 'next-intl';
+import { getUIStrings } from '@/lib/ui-strings';
 
 interface GalleryEmptyStateProps {
   onReset: () => void;
 }
 
 export default function GalleryEmptyState({ onReset }: GalleryEmptyStateProps) {
+  const locale = useLocale();
+  const ui = getUIStrings(locale);
+
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
       <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
@@ -23,21 +29,21 @@ export default function GalleryEmptyState({ onReset }: GalleryEmptyStateProps) {
           />
         </svg>
       </div>
-      <h3 className="text-lg font-medium text-gray-900 mb-2">
-        {UI_STRINGS.SEARCH.NO_RESULTS_TITLE}
-      </h3>
+      <h3 className="text-lg font-medium text-gray-900 mb-2">{ui.SEARCH.NO_RESULTS_TITLE}</h3>
       <p className="text-gray-500 mb-6 max-w-sm mx-auto">
-        {UI_STRINGS.SEARCH.NO_RESULTS_DESC}
+        {ui.SEARCH.NO_RESULTS_DESC}
         <br />
         <span className="text-sm mt-1 block text-gray-400">
-          오타가 있는지 확인하거나, 작가명으로 검색해 보세요.
+          {locale === 'en'
+            ? 'Check for typos or try searching by artist name.'
+            : '오타가 있는지 확인하거나, 작가명으로 검색해 보세요.'}
         </span>
       </p>
       <button
         onClick={onReset}
         className="px-6 py-2.5 bg-charcoal text-white font-bold rounded-full hover:bg-black transition-colors shadow-sm hover:shadow-md active:scale-95"
       >
-        전체 작품 보기
+        {ui.SEARCH.RESET_BUTTON}
       </button>
     </div>
   );

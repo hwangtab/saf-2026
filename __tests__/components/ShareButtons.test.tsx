@@ -73,8 +73,8 @@ describe('ShareButtons', () => {
 
     expect(screen.getByTestId('facebook-share')).toBeInTheDocument();
     expect(screen.getByTestId('twitter-share')).toBeInTheDocument();
-    expect(screen.getByTitle('카카오톡 공유')).toBeInTheDocument();
-    expect(screen.getByTitle('링크 복사')).toBeInTheDocument();
+    expect(screen.getByTitle('kakaoButtonTitle')).toBeInTheDocument();
+    expect(screen.getByTitle('copyLinkTitle')).toBeInTheDocument();
   });
 
   it('handles link copying successfully', async () => {
@@ -82,13 +82,13 @@ describe('ShareButtons', () => {
 
     render(<ShareButtons {...defaultProps} />);
 
-    const copyButton = screen.getByTitle('링크 복사');
+    const copyButton = screen.getByTitle('copyLinkTitle');
     fireEvent.click(copyButton);
 
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(defaultProps.url);
 
     await waitFor(() => {
-      expect(screen.getByLabelText('링크가 복사되었습니다')).toBeInTheDocument();
+      expect(screen.getByLabelText('copied')).toBeInTheDocument();
     });
   });
 
@@ -98,11 +98,11 @@ describe('ShareButtons', () => {
 
     render(<ShareButtons {...defaultProps} />);
 
-    const copyButton = screen.getByTitle('링크 복사');
+    const copyButton = screen.getByTitle('copyLinkTitle');
     fireEvent.click(copyButton);
 
     await waitFor(() => {
-      expect(screen.getByLabelText('복사 실패')).toBeInTheDocument();
+      expect(screen.getByLabelText('copyFailed')).toBeInTheDocument();
     });
 
     consoleSpy.mockRestore();
@@ -111,7 +111,7 @@ describe('ShareButtons', () => {
   it('handles Kakao share when ready', () => {
     render(<ShareButtons {...defaultProps} />);
 
-    const kakaoButton = screen.getByTitle('카카오톡 공유');
+    const kakaoButton = screen.getByTitle('kakaoButtonTitle');
     fireEvent.click(kakaoButton);
 
     expect(mockKakaoSendDefault).toHaveBeenCalledWith(

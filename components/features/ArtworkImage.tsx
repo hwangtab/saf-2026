@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useLocale } from 'next-intl';
 import SafeImage from '@/components/common/SafeImage';
 import dynamic from 'next/dynamic';
 import { resolveArtworkImageUrl, resolveArtworkImageUrlForPreset } from '@/lib/utils';
@@ -17,6 +18,18 @@ interface ArtworkImageProps {
 }
 
 export default function ArtworkImage({ images, title, artist, sold }: ArtworkImageProps) {
+  const locale = useLocale();
+  const copy =
+    locale === 'en'
+      ? {
+          zoomImage: 'Zoom image',
+          zoomHint: 'Zoom',
+        }
+      : {
+          zoomImage: '이미지 확대하기',
+          zoomHint: '확대하기',
+        };
+
   const [isOpen, setIsOpen] = useState(false);
   const alt = `${title} - ${artist}`;
   const firstImage = images?.[0] || '';
@@ -29,7 +42,7 @@ export default function ArtworkImage({ images, title, artist, sold }: ArtworkIma
         className="relative shadow-sm cursor-zoom-in group overflow-hidden rounded-lg bg-gray-50"
         onClick={() => setIsOpen(true)}
         role="button"
-        aria-label="이미지 확대하기"
+        aria-label={copy.zoomImage}
         tabIndex={0}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
@@ -64,7 +77,7 @@ export default function ArtworkImage({ images, title, artist, sold }: ArtworkIma
                 d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6"
               />
             </svg>
-            확대하기
+            {copy.zoomHint}
           </div>
         </div>
 

@@ -36,7 +36,7 @@ export function VideosManager({ videos }: { videos: VideoItem[] }) {
     setCreating(true);
     try {
       await createVideo(formData);
-      toast.success('영상을 추가했습니다.');
+      toast.success('Video added.');
       router.refresh();
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : '추가 중 오류가 발생했습니다.');
@@ -72,7 +72,7 @@ export function VideosManager({ videos }: { videos: VideoItem[] }) {
 
     try {
       await updateVideo(id, formData);
-      toast.success('영상을 저장했습니다.');
+      toast.success('Video saved.');
     } catch (err: unknown) {
       setOptimisticVideos(previousVideos);
       toast.error(err instanceof Error ? err.message : '저장 중 오류가 발생했습니다.');
@@ -92,7 +92,7 @@ export function VideosManager({ videos }: { videos: VideoItem[] }) {
 
     try {
       await deleteVideo(id);
-      toast.success('영상을 삭제했습니다.');
+      toast.success('Video deleted.');
     } catch (err: unknown) {
       console.error('삭제 중 오류:', err);
       setOptimisticVideos(previousVideos);

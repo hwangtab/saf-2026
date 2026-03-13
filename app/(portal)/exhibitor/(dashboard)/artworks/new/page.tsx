@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { getExhibitorArtists } from '@/app/actions/exhibitor-artists';
 import { ExhibitorArtworkForm } from '../_components/exhibitor-artwork-form';
 import {
@@ -5,10 +6,14 @@ import {
   AdminPageHeader,
   AdminPageTitle,
 } from '@/app/admin/_components/admin-ui';
+import { getServerLocale } from '@/lib/server-locale';
 
-export const metadata = {
-  title: '새 작품 등록 | 씨앗페 2026',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getServerLocale();
+  return {
+    title: locale === 'en' ? 'Create New Artwork | SAF 2026' : '새 작품 등록 | 씨앗페 2026',
+  };
+}
 
 type NewExhibitorArtworkPageProps = {
   searchParams?: {
@@ -20,6 +25,17 @@ type NewExhibitorArtworkPageProps = {
 export default async function NewExhibitorArtworkPage({
   searchParams,
 }: NewExhibitorArtworkPageProps) {
+  const locale = await getServerLocale();
+  const copy =
+    locale === 'en'
+      ? {
+          title: 'Create new artwork',
+          description: 'Select one of your artists and register a new artwork.',
+        }
+      : {
+          title: '새 작품 등록',
+          description: '보유한 작가를 선택하여 새로운 작품을 등록합니다.',
+        };
   const artists = await getExhibitorArtists();
   const initialArtistId = Array.isArray(searchParams?.artist_id)
     ? searchParams?.artist_id[0]
@@ -32,10 +48,8 @@ export default async function NewExhibitorArtworkPage({
   return (
     <div className="space-y-6">
       <AdminPageHeader>
-        <AdminPageTitle>새 작품 등록</AdminPageTitle>
-        <AdminPageDescription>
-          보유한 작가를 선택하여 새로운 작품을 등록합니다.
-        </AdminPageDescription>
+        <AdminPageTitle>{copy.title}</AdminPageTitle>
+        <AdminPageDescription>{copy.description}</AdminPageDescription>
       </AdminPageHeader>
       <ExhibitorArtworkForm
         artists={artists}

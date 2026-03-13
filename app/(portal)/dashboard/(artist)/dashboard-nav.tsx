@@ -3,14 +3,23 @@
 import clsx from 'clsx';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { resolveClientLocale } from '@/lib/client-locale';
 
-const navItems = [
-  { href: '/dashboard/artworks', label: '작품 관리' },
-  { href: '/dashboard/profile', label: '프로필 설정' },
-];
+const navItemsByLocale = {
+  ko: [
+    { href: '/dashboard/artworks', label: '작품 관리' },
+    { href: '/dashboard/profile', label: '프로필 설정' },
+  ],
+  en: [
+    { href: '/dashboard/artworks', label: 'Artworks' },
+    { href: '/dashboard/profile', label: 'Profile Settings' },
+  ],
+} as const;
 
 export default function DashboardNav() {
   const pathname = usePathname();
+  const locale = resolveClientLocale(pathname);
+  const navItems = navItemsByLocale[locale];
 
   const isActive = (href: string) => {
     if (href === '/dashboard/artworks') {

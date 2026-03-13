@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 
 interface BackToListButtonProps {
   fallbackHref?: string;
@@ -8,6 +9,7 @@ interface BackToListButtonProps {
 
 export default function BackToListButton({ fallbackHref = '/artworks' }: BackToListButtonProps) {
   const router = useRouter();
+  const t = useTranslations('artworkDetailNav');
 
   const handleBack = () => {
     // 브라우저 히스토리가 있으면 뒤로가기, 없으면 /artworks로 이동
@@ -23,7 +25,7 @@ export default function BackToListButton({ fallbackHref = '/artworks' }: BackToL
       onClick={handleBack}
       className="inline-flex items-center justify-center min-h-[44px] py-2 text-sm font-medium text-gray-500 hover:text-primary active:scale-[0.98] transition-all"
     >
-      ← 목록으로 돌아가기
+      ← {t('backToList')}
     </button>
   );
 }

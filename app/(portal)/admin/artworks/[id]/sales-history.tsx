@@ -75,7 +75,7 @@ export function SalesHistory({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!salePrice) {
-      toast.error('판매 금액을 입력해주세요.');
+      toast.error('Please enter sale amount.');
       return;
     }
 
@@ -92,13 +92,13 @@ export function SalesHistory({
       const result = await recordArtworkSale(formData);
       if (result.success) {
         if (result.cafe24.status === 'synced') {
-          toast.success('판매가 기록되었고 카페24 동기화도 완료되었습니다.');
+          toast.success('Sale recorded and Cafe24 sync completed.');
         } else if (result.cafe24.status === 'pending_auth') {
-          toast.warning('판매 기록은 저장됐지만 카페24 인증이 필요합니다.');
+          toast.warning('Sale record saved, but Cafe24 authentication is required.');
         } else if (result.cafe24.status === 'failed') {
-          toast.warning('판매 기록은 저장됐지만 카페24 동기화에 실패했습니다.');
+          toast.warning('Sale record saved, but Cafe24 sync failed.');
         } else {
-          toast.warning('판매 기록은 저장됐지만 카페24 동기화 경고가 있습니다.');
+          toast.warning('Sale record saved, but Cafe24 sync returned warnings.');
         }
         setIsFormOpen(false);
         setSalePrice('');

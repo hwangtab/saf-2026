@@ -22,7 +22,7 @@ export function Cafe24MissingLinkSyncButton() {
       const result = await syncMissingArtworkPurchaseLinks();
 
       if (result.total === 0) {
-        toast.info('구매 링크 누락 작품이 없습니다.');
+        toast.info('No artworks with missing purchase links.');
         return;
       }
 
@@ -40,7 +40,7 @@ export function Cafe24MissingLinkSyncButton() {
 
       router.refresh();
     } catch {
-      toast.error('일괄 동기화 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      toast.error('An error occurred during batch sync. Please try again shortly.');
     } finally {
       setSyncing(false);
     }

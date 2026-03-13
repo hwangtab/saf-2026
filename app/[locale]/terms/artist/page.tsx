@@ -1,36 +1,43 @@
 import type { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import PageHero from '@/components/ui/PageHero';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
-import {
-  ARTIST_APPLICATION_TERMS_VERSION,
-  BREADCRUMB_HOME,
-  BREADCRUMBS,
-  CONTACT,
-  OG_IMAGE,
-  SITE_URL,
-} from '@/lib/constants';
+import { ARTIST_APPLICATION_TERMS_VERSION, CONTACT, OG_IMAGE, SITE_URL } from '@/lib/constants';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { ARTIST_APPLICATION_TERMS_DOCUMENT } from '@/lib/legal-documents';
+import { createLocaleAlternates } from '@/lib/locale-alternates';
+import { formatEffectiveDateForLocale } from '@/lib/utils';
 
 const PAGE_PATH = '/terms/artist';
 const PAGE_URL = `${SITE_URL}${PAGE_PATH}`;
-const PAGE_TITLE = '아티스트 계약서';
-const PAGE_DESCRIPTION = '씨앗페 2026 온라인전시 및 판매위탁 계약서 전문입니다.';
+const PAGE_COPY = {
+  ko: {
+    title: '아티스트 계약서',
+    description: '씨앗페 2026 온라인전시 및 판매위탁 계약서 전문입니다.',
+  },
+  en: {
+    title: 'Artist Agreement',
+    description: 'Full text of the SAF 2026 artist exhibition and consignment agreement.',
+  },
+} as const;
+
+const resolveLocale = (locale: string): 'ko' | 'en' => (locale === 'en' ? 'en' : 'ko');
 
 export async function generateMetadata(): Promise<Metadata> {
+  const locale = resolveLocale(await getLocale());
+  const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
-  const title = `${PAGE_TITLE} | ${tSeo('siteTitle')}`;
+  const title = `${copy.title} | ${tSeo('siteTitle')}`;
 
   return {
     title,
-    description: PAGE_DESCRIPTION,
-    alternates: { canonical: PAGE_URL },
+    description: copy.description,
+    alternates: createLocaleAlternates(PAGE_PATH),
     openGraph: {
       title,
-      description: PAGE_DESCRIPTION,
+      description: copy.description,
       url: PAGE_URL,
       images: [
         { url: OG_IMAGE.url, width: OG_IMAGE.width, height: OG_IMAGE.height, alt: OG_IMAGE.alt },
@@ -39,20 +46,71 @@ export async function generateMetadata(): Promise<Metadata> {
     twitter: {
       card: 'summary_large_image',
       title,
-      description: PAGE_DESCRIPTION,
+      description: copy.description,
       images: [OG_IMAGE.url],
     },
   };
 }
 
-export default function ArtistTermsPage() {
+export default async function ArtistTermsPage() {
+  const locale = resolveLocale(await getLocale());
+  const tBreadcrumbs = await getTranslations('breadcrumbs');
   const breadcrumbSchema = createBreadcrumbSchema([
-    BREADCRUMB_HOME,
-    BREADCRUMBS['/terms'],
-    BREADCRUMBS[PAGE_PATH],
+    { name: tBreadcrumbs('home'), url: SITE_URL },
+    { name: tBreadcrumbs('terms'), url: `${SITE_URL}/terms` },
+    { name: tBreadcrumbs('termsArtist'), url: PAGE_URL },
   ]);
 
   const doc = ARTIST_APPLICATION_TERMS_DOCUMENT;
+  const effectiveDate = formatEffectiveDateForLocale(doc.effectiveDate, locale);
+
+  if (locale === 'en') {
+    return (
+      <>
+        <JsonLdScript data={breadcrumbSchema} />
+        <PageHero
+          title="Artist Exhibition and Consignment Agreement"
+          description="Full artist agreement for SAF 2026. The official legal text is currently maintained in Korean."
+        />
+
+        <Section variant="white" className="pb-24 md:pb-32">
+          <div className="container-max">
+            <div className="mx-auto max-w-4xl rounded-2xl border border-gray-200 bg-white p-6 shadow-sm md:p-10 space-y-6">
+              <p className="text-sm text-charcoal-muted">Effective date: {effectiveDate}</p>
+              <p className="text-sm text-charcoal-muted">
+                Version: {ARTIST_APPLICATION_TERMS_VERSION}
+              </p>
+
+              <div className="rounded-lg bg-canvas-soft p-5 text-sm leading-7 text-charcoal-muted">
+                The official artist agreement text is currently provided in Korean.
+                <br />
+                Please review the Korean version for legal interpretation.
+              </div>
+
+              <section>
+                <SectionTitle className="mb-4">Contact</SectionTitle>
+                <div className="rounded-lg bg-canvas-soft p-4 text-sm leading-7">
+                  <p>
+                    Email:{' '}
+                    <a href={`mailto:${CONTACT.EMAIL}`} className="hover:underline">
+                      {CONTACT.EMAIL}
+                    </a>
+                  </p>
+                  <p>
+                    Phone:{' '}
+                    <a href={`tel:${CONTACT.PHONE.replace(/-/g, '')}`} className="hover:underline">
+                      {CONTACT.PHONE}
+                    </a>
+                  </p>
+                </div>
+                <p className="mt-4 text-sm text-charcoal-muted">Document URL: {PAGE_URL}</p>
+              </section>
+            </div>
+          </div>
+        </Section>
+      </>
+    );
+  }
 
   return (
     <>
@@ -65,7 +123,7 @@ export default function ArtistTermsPage() {
       <Section variant="white" className="pb-24 md:pb-32">
         <div className="container-max">
           <div className="mx-auto max-w-4xl rounded-2xl border border-gray-200 bg-white p-6 shadow-sm md:p-10">
-            <p className="mb-1 text-sm text-charcoal-muted">시행일: {doc.effectiveDate}</p>
+            <p className="mb-1 text-sm text-charcoal-muted">시행일: {effectiveDate}</p>
             <p className="mb-8 text-sm text-charcoal-muted">
               버전: {ARTIST_APPLICATION_TERMS_VERSION}
             </p>

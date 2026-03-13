@@ -2,7 +2,7 @@
 
 import { useOptimistic, useState, useTransition } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { deleteExhibitorArtist } from '@/app/actions/exhibitor-artists';
 import SafeAvatarImage from '@/components/common/SafeAvatarImage';
 import {
@@ -13,6 +13,80 @@ import {
   AdminInput,
 } from '@/app/admin/_components/admin-ui';
 import { matchesAnySearch } from '@/lib/search-utils';
+import { resolveClientLocale } from '@/lib/client-locale';
+
+type LocaleCode = 'ko' | 'en';
+
+const EXHIBITOR_ARTIST_LIST_COPY: Record<
+  LocaleCode,
+  {
+    deleteConfirm: string;
+    deleteError: string;
+    closeError: string;
+    title: string;
+    count: (count: number) => string;
+    searchArtist: string;
+    searchPlaceholder: string;
+    searchDescription: (count: number) => string;
+    artistInfo: string;
+    contact: string;
+    artworkCount: string;
+    manage: string;
+    noSearchResult: string;
+    noSearchResultDescription: string;
+    unnamed: string;
+    artworkCountValue: (count: number) => string;
+    edit: string;
+    delete: string;
+    deleteArtistAria: (name: string) => string;
+  }
+> = {
+  ko: {
+    deleteConfirm: '이 작가를 삭제하시겠습니까? 연결된 작품이 있으면 삭제할 수 없습니다.',
+    deleteError: '삭제 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+    closeError: '오류 메시지 닫기',
+    title: '작가 목록',
+    count: (count: number) => `${count}명`,
+    searchArtist: '작가 검색',
+    searchPlaceholder: '이름, 이메일 검색...',
+    searchDescription: (count: number) =>
+      `작가 이름 또는 이메일로 검색할 수 있습니다. 현재 ${count}명이 표시됩니다.`,
+    artistInfo: '작가 정보',
+    contact: '연락처',
+    artworkCount: '작품 수',
+    manage: '관리',
+    noSearchResult: '검색 결과가 없습니다',
+    noSearchResultDescription: '다른 검색어로 시도해보세요.',
+    unnamed: '이름 없음',
+    artworkCountValue: (count: number) => `${count} 작품`,
+    edit: '편집',
+    delete: '삭제',
+    deleteArtistAria: (name: string) => `${name} 작가 삭제`,
+  },
+  en: {
+    deleteConfirm:
+      'Do you want to delete this artist? Deletion is blocked if linked artworks exist.',
+    deleteError: 'An error occurred while deleting. Please try again.',
+    closeError: 'Close error message',
+    title: 'Artist list',
+    count: (count: number) => `${count}`,
+    searchArtist: 'Search artists',
+    searchPlaceholder: 'Search by name or email...',
+    searchDescription: (count: number) =>
+      `Search artists by name or email. ${count} currently shown.`,
+    artistInfo: 'Artist info',
+    contact: 'Contact',
+    artworkCount: 'Artwork count',
+    manage: 'Manage',
+    noSearchResult: 'No search results',
+    noSearchResultDescription: 'Try a different keyword.',
+    unnamed: 'Unnamed',
+    artworkCountValue: (count: number) => `${count} artworks`,
+    edit: 'Edit',
+    delete: 'Delete',
+    deleteArtistAria: (name: string) => `Delete artist ${name}`,
+  },
+};
 
 type ArtistItem = {
   id: string;
@@ -24,6 +98,9 @@ type ArtistItem = {
 };
 
 export function ArtistList({ artists }: { artists: ArtistItem[] }) {
+  const pathname = usePathname();
+  const locale = resolveClientLocale(pathname);
+  const copy = EXHIBITOR_ARTIST_LIST_COPY[locale];
   const [, startTransition] = useTransition();
   const [optimisticArtists, removeOptimistic] = useOptimistic(
     artists,
@@ -35,7 +112,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
   const router = useRouter();
 
   const handleDelete = async (id: string) => {
-    if (!confirm('이 작가를 삭제하시겠습니까? 연결된 작품이 있으면 삭제할 수 없습니다.')) return;
+    if (!confirm(copy.deleteConfirm)) return;
 
     setProcessingId(id);
     setError(null);
@@ -45,7 +122,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
         await deleteExhibitorArtist(id);
         router.refresh();
       } catch {
-        setError('삭제 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+        setError(copy.deleteError);
       } finally {
         setProcessingId(null);
       }
@@ -75,7 +152,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
             type="button"
             onClick={() => setError(null)}
             className="text-red-500 hover:text-red-700 p-1 hover:bg-red-100 rounded-full transition-colors"
-            aria-label="오류 메시지 닫기"
+            aria-label={copy.closeError}
           >
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path
@@ -91,13 +168,13 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
       <AdminCard className="overflow-hidden">
         <AdminCardHeader>
           <div className="flex items-center gap-3">
-            <h2 className="text-lg font-semibold text-gray-900">작가 목록</h2>
-            <AdminBadge tone="info">{filtered.length}명</AdminBadge>
+            <h2 className="text-lg font-semibold text-gray-900">{copy.title}</h2>
+            <AdminBadge tone="info">{copy.count(filtered.length)}</AdminBadge>
           </div>
 
           <div className="relative max-w-sm w-full">
             <label htmlFor="search-artists" className="sr-only">
-              작가 검색
+              {copy.searchArtist}
             </label>
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <svg
@@ -118,12 +195,12 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="이름, 이메일 검색..."
+              placeholder={copy.searchPlaceholder}
               aria-describedby="search-artists-description"
               className="h-10 border-0 py-2 pl-10"
             />
             <span id="search-artists-description" className="sr-only">
-              작가 이름 또는 이메일로 검색할 수 있습니다. 현재 {filtered.length}명이 표시됩니다.
+              {copy.searchDescription(filtered.length)}
             </span>
           </div>
         </AdminCardHeader>
@@ -136,22 +213,22 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  작가 정보
+                  {copy.artistInfo}
                 </th>
                 <th
                   scope="col"
                   className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  연락처
+                  {copy.contact}
                 </th>
                 <th
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  작품 수
+                  {copy.artworkCount}
                 </th>
                 <th scope="col" className="relative px-6 py-3">
-                  <span className="sr-only">관리</span>
+                  <span className="sr-only">{copy.manage}</span>
                 </th>
               </tr>
             </thead>
@@ -160,8 +237,8 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
                 <tr>
                   <td colSpan={4} className="px-6 py-0">
                     <AdminEmptyState
-                      title="검색 결과가 없습니다"
-                      description="다른 검색어로 시도해보세요."
+                      title={copy.noSearchResult}
+                      description={copy.noSearchResultDescription}
                     />
                   </td>
                 </tr>
@@ -193,7 +270,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
                         </div>
                         <div className="ml-4">
                           <div className="font-medium text-gray-900">
-                            {artist.name_ko || '이름 없음'}
+                            {artist.name_ko || copy.unnamed}
                           </div>
                           {artist.name_en && (
                             <div className="text-gray-500 text-sm">{artist.name_en}</div>
@@ -206,7 +283,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
-                        {artist.artwork_count} 작품
+                        {copy.artworkCountValue(artist.artwork_count)}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -215,16 +292,16 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
                           href={`/exhibitor/artists/${artist.id}`}
                           className="text-gray-500 hover:text-indigo-600 px-3 py-1.5 rounded-md hover:bg-indigo-50 transition-colors"
                         >
-                          편집
+                          {copy.edit}
                         </Link>
                         <button
                           type="button"
                           onClick={() => handleDelete(artist.id)}
                           className="text-gray-400 hover:text-red-600 px-3 py-1.5 rounded-md hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           disabled={processingId !== null}
-                          aria-label={`${artist.name_ko} 작가 삭제`}
+                          aria-label={copy.deleteArtistAria(artist.name_ko || copy.unnamed)}
                         >
-                          {processingId === artist.id ? '...' : '삭제'}
+                          {processingId === artist.id ? '...' : copy.delete}
                         </button>
                       </div>
                     </td>

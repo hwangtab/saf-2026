@@ -110,3 +110,45 @@
 - 주문 일부 실패가 있어도 동기화 파이프라인이 멈추지 않는다.
 - 취소/환불이 매출/판매상태/재고에 반영된다.
 - 배치 조작에서 DB와 Cafe24 상태 불일치가 남지 않는다.
+
+---
+
+# i18n 영문 누수(P0) 실행 계획 (2026-03-12)
+
+## 1) 목적
+
+- 영어 로케일(`en`)에서 한국어가 노출되는 P0 구간을 우선 제거한다.
+- 번역 키 누락이 아닌 하드코딩/상수 우회 구간을 `next-intl` 경로로 일원화한다.
+
+## 2) P0 범위
+
+- 공개 라우트:
+  - `app/[locale]/news/page.tsx`
+  - `app/[locale]/our-proof/page.tsx`
+  - `app/[locale]/archive/2023/page.tsx`
+  - `app/[locale]/special/oh-yoon/page.tsx`
+- 공용 컴포넌트:
+  - `components/common/ShareButtons.tsx`
+  - `components/ui/ArtworkCard.tsx`
+  - `components/features/TrustBadges.tsx`
+  - `components/features/ArtworkDetailNav.tsx`
+  - `components/features/BackgroundSlider.tsx`
+  - `components/features/ExpandableHistory.tsx`
+
+## 3) 구현 방법
+
+1. 각 파일의 하드코딩 한글 문자열을 `useTranslations`/`getTranslations` 기반으로 치환
+2. `messages/ko.json`, `messages/en.json`에 대응 키 추가
+3. 의미상 데이터 문구(예: `'문의'`, `'확인 중'`)는 키 기반 상수로 통일
+
+## 4) 검증
+
+- 수정 파일 LSP 진단 오류 0
+- `npm run lint` 통과
+- `npm run type-check` 통과
+- `npm run build` 통과(환경 의존 이슈가 있으면 로그와 함께 명시)
+
+## 5) 완료 기준
+
+- P0 대상 파일에서 영어 로케일 시 한국어 UI 문구가 노출되지 않는다.
+- ko/en 메시지 키 정합성이 유지된다.

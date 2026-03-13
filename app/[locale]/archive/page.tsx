@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import ExportedImage from 'next-image-export-optimizer';
 import { Link } from '@/i18n/navigation';
 import Section from '@/components/ui/Section';
@@ -7,24 +7,38 @@ import SectionTitle from '@/components/ui/SectionTitle';
 import PageHero from '@/components/ui/PageHero';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { BREADCRUMB_HOME, BREADCRUMBS, SITE_URL, OG_IMAGE } from '@/lib/constants';
+import { SITE_URL, OG_IMAGE } from '@/lib/constants';
+import { createLocaleAlternates } from '@/lib/locale-alternates';
 
 const PAGE_URL = `${SITE_URL}/archive`;
-const PAGE_TITLE = '아카이브';
-const PAGE_DESCRIPTION =
-  '2023년 첫 번째 전시부터 2026년 캠페인까지, 예술인 상호부조를 위한 씨앗페(SAF)의 여정과 기록을 만나보세요. 120여 명의 예술가가 함께한 연대의 발자취를 아카이브에서 확인하세요.';
+const PAGE_COPY = {
+  ko: {
+    title: '아카이브',
+    description:
+      '2023년 첫 번째 전시부터 2026년 캠페인까지, 예술인 상호부조를 위한 씨앗페(SAF)의 여정과 기록을 만나보세요. 120여 명의 예술가가 함께한 연대의 발자취를 아카이브에서 확인하세요.',
+  },
+  en: {
+    title: 'Archive',
+    description:
+      'Explore SAF records from the first 2023 exhibition to the 2026 campaign for artist mutual-aid finance.',
+  },
+} as const;
+
+const resolveLocale = (locale: string): 'ko' | 'en' => (locale === 'en' ? 'en' : 'ko');
 
 export async function generateMetadata(): Promise<Metadata> {
+  const locale = resolveLocale(await getLocale());
+  const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
-  const title = `${PAGE_TITLE} | ${tSeo('siteTitle')}`;
+  const title = `${copy.title} | ${tSeo('siteTitle')}`;
 
   return {
     title,
-    description: PAGE_DESCRIPTION,
-    alternates: { canonical: PAGE_URL },
+    description: copy.description,
+    alternates: createLocaleAlternates('/archive'),
     openGraph: {
       title,
-      description: PAGE_DESCRIPTION,
+      description: copy.description,
       url: PAGE_URL,
       images: [
         { url: OG_IMAGE.url, width: OG_IMAGE.width, height: OG_IMAGE.height, alt: OG_IMAGE.alt },
@@ -33,14 +47,88 @@ export async function generateMetadata(): Promise<Metadata> {
     twitter: {
       card: 'summary_large_image',
       title,
-      description: PAGE_DESCRIPTION,
+      description: copy.description,
       images: [OG_IMAGE.url],
     },
   };
 }
 
-export default function ArchiveHubPage() {
-  const breadcrumbSchema = createBreadcrumbSchema([BREADCRUMB_HOME, BREADCRUMBS['/archive']]);
+export default async function ArchiveHubPage() {
+  const locale = resolveLocale(await getLocale());
+  const tBreadcrumbs = await getTranslations('breadcrumbs');
+  const breadcrumbSchema = createBreadcrumbSchema([
+    { name: tBreadcrumbs('home'), url: SITE_URL },
+    { name: tBreadcrumbs('archive'), url: PAGE_URL },
+  ]);
+
+  if (locale === 'en') {
+    return (
+      <>
+        <JsonLdScript data={breadcrumbSchema} />
+        <PageHero title="Archive" description="The SAF journey for artist mutual-aid." />
+
+        <Section variant="white" className="min-h-[60vh] pb-24 md:pb-32">
+          <div className="container-max">
+            <SectionTitle className="mb-12">Past event records</SectionTitle>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+              <Link href="/archive/2026" className="group block">
+                <div className="bg-canvas-soft rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
+                  <div className="relative aspect-[4/3] w-full overflow-hidden">
+                    <ExportedImage
+                      src="/images/safposter.png"
+                      alt="SAF 2026 poster"
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-300" />
+                  </div>
+                  <div className="p-8">
+                    <h3 className="text-2xl font-bold font-display text-charcoal mb-2 group-hover:text-primary transition-colors">
+                      SAF 2026
+                    </h3>
+                    <p className="text-charcoal-muted mb-4">
+                      The second festival for artist mutual-aid funding, held at Insa Art Center.
+                    </p>
+                    <span className="inline-block px-4 py-2 bg-white rounded-full text-sm font-bold text-primary border border-primary/20">
+                      View archive &rarr;
+                    </span>
+                  </div>
+                </div>
+              </Link>
+
+              <Link href="/archive/2023" className="group block">
+                <div className="bg-canvas-soft rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
+                  <div className="relative aspect-[4/3] w-full overflow-hidden">
+                    <ExportedImage
+                      src="/images/saf2023/saf2023poster.png"
+                      alt="SAF 2023 poster"
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-300" />
+                  </div>
+                  <div className="p-8">
+                    <h3 className="text-2xl font-bold font-display text-charcoal mb-2 group-hover:text-primary transition-colors">
+                      SAF 2023
+                    </h3>
+                    <p className="text-charcoal-muted mb-4">
+                      The beginning of SAF, launched with over 120 participating artists.
+                    </p>
+                    <span className="inline-block px-4 py-2 bg-white rounded-full text-sm font-bold text-primary border border-primary/20">
+                      View archive &rarr;
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          </div>
+        </Section>
+      </>
+    );
+  }
+
   return (
     <>
       <JsonLdScript data={breadcrumbSchema} />

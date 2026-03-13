@@ -31,7 +31,7 @@ export default function Footer() {
                     height={56}
                     className="h-12 w-auto flex-shrink-0"
                   />
-                  <span className="sr-only">씨앗페 2026</span>
+                  <span className="sr-only">{tA11y('homeLink')}</span>
                 </div>
                 <p className="text-gray-300 text-sm mb-4">{t('description')}</p>
                 <p className="text-sm text-gray-400">{t('guide')}</p>
