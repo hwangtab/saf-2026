@@ -1,5 +1,5 @@
-import { useState, useMemo, useEffect, useCallback, useRef, useTransition } from 'react';
-import { useSearchParams, useRouter, usePathname } from 'next/navigation';
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
+import { useSearchParams, usePathname } from 'next/navigation';
 import { ArtworkListItem, SortOption } from '@/types';
 import { matchesAnySearch } from '@/lib/search-utils';
 import { useDebounce } from './useDebounce';
@@ -53,9 +53,7 @@ export interface CategoryCount {
  */
 export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: string) {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const pathname = usePathname();
-  const [, startTransition] = useTransition();
 
   const [sortOption, setSortOption] = useState<SortOption>(
     (searchParams.get('sort') as SortOption) || 'artist-asc'
@@ -94,68 +92,6 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
     };
   }, [sortOption, searchQuery, debouncedSearchQuery, statusFilter, categoryFilter, selectedArtist]);
 
-  const updateUrlParams = useCallback(
-    (params: {
-      sort?: SortOption;
-      q?: string;
-      status?: StatusFilter;
-      category?: string | null;
-      artist?: string | null;
-    }) => {
-      const newSearchParams = new URLSearchParams(searchParams.toString());
-
-      if (params.sort) {
-        if (params.sort === 'artist-asc') newSearchParams.delete('sort');
-        else newSearchParams.set('sort', params.sort);
-      }
-
-      if (params.q !== undefined) {
-        if (!params.q) newSearchParams.delete('q');
-        else newSearchParams.set('q', params.q);
-      }
-
-      if (params.status) {
-        if (params.status === 'all') newSearchParams.delete('status');
-        else newSearchParams.set('status', params.status);
-      }
-
-      if (params.category !== undefined) {
-        if (!params.category) newSearchParams.delete('category');
-        else newSearchParams.set('category', params.category);
-      }
-
-      if (params.artist !== undefined) {
-        if (!params.artist) newSearchParams.delete('artist');
-        else newSearchParams.set('artist', params.artist);
-      }
-
-      const nextSearch = newSearchParams.toString();
-      const currentSearch = searchParams.toString();
-      if (nextSearch === currentSearch) return;
-
-      const nextUrl = nextSearch ? `${pathname}?${nextSearch}` : pathname;
-      const isSearchOnlyUpdate =
-        params.q !== undefined &&
-        params.sort === undefined &&
-        params.status === undefined &&
-        params.category === undefined &&
-        params.artist === undefined;
-
-      // Keep input focus stable while typing by avoiding App Router navigation for query-only updates.
-      if (isSearchOnlyUpdate && typeof window !== 'undefined') {
-        window.history.replaceState(window.history.state, '', nextUrl);
-        return;
-      }
-
-      // Use startTransition to prevent Suspense fallback (loading.tsx) from showing
-      // This keeps interactions responsive during URL updates
-      startTransition(() => {
-        router.replace(nextUrl, { scroll: false });
-      });
-    },
-    [pathname, router, searchParams, startTransition]
-  );
-
   // Sync selectedArtist with initialArtist prop
   // This effect intentionally updates state based on prop changes for URL/prop synchronization
   useEffect(() => {
@@ -163,61 +99,32 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
     setSelectedArtist(initialArtist || null);
   }, [initialArtist]);
 
+  // State → URL sync: build URL entirely from React state to avoid stale searchParams issues.
+  // window.history.replaceState doesn't update useSearchParams(), so we never read from it for URL construction.
   useEffect(() => {
     if (initialArtist) return;
 
-    const currentSort = (searchParams.get('sort') as SortOption) || 'artist-asc';
-    const currentQ = searchParams.get('q') || '';
-    const currentStatus = (searchParams.get('status') as StatusFilter) || 'all';
-    const currentCategory = searchParams.get('category') || null;
-    const currentArtist = searchParams.get('artist');
+    const params = new URLSearchParams();
+    if (sortOption !== 'artist-asc') params.set('sort', sortOption);
+    if (debouncedSearchQuery) params.set('q', debouncedSearchQuery);
+    if (statusFilter !== 'all') params.set('status', statusFilter);
+    if (categoryFilter) params.set('category', categoryFilter);
+    if (selectedArtist) params.set('artist', selectedArtist);
 
-    const paramsToUpdate: Partial<{
-      sort: SortOption;
-      q: string;
-      status: StatusFilter;
-      category: string | null;
-      artist: string | null;
-    }> = {};
-    let shouldUpdate = false;
+    const search = params.toString();
+    const nextUrl = search ? `${pathname}?${search}` : pathname;
 
-    if (sortOption !== currentSort) {
-      paramsToUpdate.sort = sortOption;
-      shouldUpdate = true;
-    }
-
-    if (debouncedSearchQuery !== currentQ) {
-      paramsToUpdate.q = debouncedSearchQuery;
-      shouldUpdate = true;
-    }
-
-    if (statusFilter !== currentStatus) {
-      paramsToUpdate.status = statusFilter;
-      shouldUpdate = true;
-    }
-
-    if (categoryFilter !== currentCategory) {
-      paramsToUpdate.category = categoryFilter;
-      shouldUpdate = true;
-    }
-
-    if (selectedArtist !== currentArtist) {
-      paramsToUpdate.artist = selectedArtist;
-      shouldUpdate = true;
-    }
-
-    if (shouldUpdate) {
-      updateUrlParams(paramsToUpdate);
+    if (typeof window !== 'undefined') {
+      window.history.replaceState(window.history.state, '', nextUrl);
     }
   }, [
     initialArtist,
+    pathname,
     sortOption,
     debouncedSearchQuery,
     statusFilter,
     categoryFilter,
     selectedArtist,
-    searchParams,
-    updateUrlParams,
   ]);
 
   const prevSearchParamsStr = useRef(searchParams.toString());
