@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useCallback } from 'react';
+import { memo, useCallback, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import MasonryGallery from './MasonryGallery';
 import SearchBar from './SearchBar';
@@ -22,6 +22,7 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
   const locale = useLocale();
   const ui = getUIStrings(locale);
   const router = useRouter();
+  const [, startNavigationTransition] = useTransition();
 
   const {
     sortOption,
@@ -42,15 +43,14 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
   // Handler for artist button click - navigate to artist page
   const handleArtistClick = useCallback(
     (artist: string) => {
-      if (selectedArtist === artist) {
-        // If same artist is clicked, go back to main artworks page
-        router.push('/artworks', { scroll: false });
-      } else {
-        // Navigate to artist's dedicated page
-        router.push(`/artworks/artist/${encodeURIComponent(artist)}`, { scroll: false });
-      }
+      const nextPath =
+        selectedArtist === artist ? '/artworks' : `/artworks/artist/${encodeURIComponent(artist)}`;
+
+      startNavigationTransition(() => {
+        router.push(nextPath, { scroll: false });
+      });
     },
-    [selectedArtist, router]
+    [selectedArtist, router, startNavigationTransition]
   );
 
   // 작가명순일 때만 작가 네비게이션 표시

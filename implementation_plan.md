@@ -152,3 +152,73 @@
 
 - P0 대상 파일에서 영어 로케일 시 한국어 UI 문구가 노출되지 않는다.
 - ko/en 메시지 키 정합성이 유지된다.
+
+---
+
+# 출품작 페이지 전환 중간화면(3열 스켈레톤/연노랑 배경) 근본 개선 계획 (2026-03-13)
+
+## 1) 목적
+
+- 출품작 라우트 전환 시 간헐적으로 노출되는 불쾌한 중간 프레임(3열 스켈레톤 + 연노랑 계열 배경)을 제거한다.
+- 로딩/전환 UI를 라우트별로 일관화해 "가끔 보임" 같은 타이밍 의존 현상을 줄인다.
+
+## 2) 원인 요약 (확인 완료)
+
+1. `app/[locale]/artworks/loading.tsx`가 데스크톱 기준 `lg:grid-cols-3` 스켈레톤을 강제 렌더링함.
+2. 같은 파일에서 `bg-[var(--color-primary-surface)]`를 사용하지만, `styles/globals.css`의 `:root`에는 `--color-primary-surface`가 정의되어 있지 않음.
+3. 결과적으로 로딩 구간에서 의도한 배경 대신 body 기본 배경(`--color-canvas-soft`, 연노랑 톤)이 드러나며, 전환 타이밍에 따라 중간 화면으로 체감됨.
+4. 전환 경로가 `app/[locale]/layout.tsx`의 `Suspense` + 세그먼트 `loading.tsx` 조합이라 네트워크/프리패치 타이밍에 따라 간헐적으로 노출됨.
+
+## 3) 근본 해결 전략
+
+### 3-1) 로딩 UI 정책 일원화 (핵심)
+
+- 출품작 라우트(`list/detail/artist`)에 대해 "콘텐츠 형태를 흉내내는 스켈레톤"을 지양하고, 공통 로더 패턴으로 통일.
+- 구체안:
+  - `app/[locale]/artworks/loading.tsx`의 3열 카드 스켈레톤 제거
+  - 전환 중에는 단일 안정 로더(레이아웃 점프가 적은 형태)만 노출
+  - 필요 시 `app/[locale]/artworks/[id]/loading.tsx`, `app/[locale]/artworks/artist/[artist]/loading.tsx`도 동일 정책으로 맞춤
+
+### 3-2) 색상 토큰 정합성 복구
+
+- `bg-[var(--color-primary-surface)]` 제거 후 Tailwind 토큰 클래스(`bg-primary-surface`) 사용으로 통일.
+- 또는 `styles/globals.css`에 `--color-primary-surface`를 명시적으로 추가하되, 프로젝트 표준은 Tailwind 토큰 우선으로 유지.
+
+### 3-3) 전환 타이밍 노출 최소화
+
+- 출품작 내부 프로그래매틱 네비게이션(`router.push`) 경로를 점검하고 필요 시 `startTransition` 래핑하여 fallback 노출 빈도 완화.
+- 현재 쿼리 기반 필터 전환은 이미 `useArtworkFilter`에서 `startTransition` 사용 중이므로, 아티스트 전환 등 미적용 경로만 보강.
+
+### 3-4) PageTransition/로더 충돌 점검
+
+- `components/common/PageTransition.tsx`와 route loading이 동시에 체감되는 구간을 최소화하도록, 불필요한 중간 opacity 프레임 노출 여부 점검.
+- 변경 시 전체 라우트 영향이 있으므로 출품작 경로 한정 A/B 비교 후 확정.
+
+## 4) 구현 대상 파일
+
+- `app/[locale]/artworks/loading.tsx`
+- `app/[locale]/artworks/[id]/loading.tsx` (신규 가능)
+- `app/[locale]/artworks/artist/[artist]/loading.tsx` (신규 가능)
+- `components/features/ArtworkGalleryWithSort.tsx`
+- `lib/hooks/useArtworkFilter.ts` (필요 시)
+- `components/common/PageTransition.tsx` (필요 시)
+- `styles/globals.css` 또는 토큰 사용부(변수 정합성 선택안에 따라)
+
+## 5) 검증 계획
+
+1. 기능 검증
+   - `/en/artworks` 진입 시 3열 카드형 스켈레톤이 중간에 노출되지 않는지 확인
+   - `/en/artworks` ↔ `/en/artworks/artist/[artist]` ↔ `/en/artworks/[id]` 왕복 전환 반복(최소 20회)
+2. 시각 검증
+   - 전환 영상 캡처(데스크톱/모바일)로 배경 플래시 재현 여부 확인
+3. 정적 검증
+   - `npm run lint`
+   - `npm run type-check`
+   - `npm run build`
+   - `npm test -- --runInBand`
+
+## 6) 완료 기준
+
+- 출품작 전환 중 "3열 스켈레톤 + 연노랑 배경" 중간 프레임이 재현되지 않는다.
+- 로딩 UI가 list/detail/artist 간 일관되게 동작한다.
+- 전역 라우트 전환 품질 저하(깜빡임 증가, 레이아웃 점프 증가)가 없다.
