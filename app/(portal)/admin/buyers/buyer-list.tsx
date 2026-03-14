@@ -90,13 +90,13 @@ export function BuyerList({ buyers }: { buyers: BuyerRecord[] }) {
     setEditPhone(buyer.buyerPhone || '');
   }
 
-  async function savePhone(saleIds: string[]) {
+  async function savePhone(buyerName: string, saleIds: string[]) {
     if (saving) return;
     setSaving(true);
     try {
       await updateBuyerPhone(saleIds, editPhone);
       toast.success('연락처가 저장되었습니다.');
-      setEditingName(null);
+      setEditingName((prev) => (prev === buyerName ? null : prev));
       router.refresh();
     } catch {
       toast.error('연락처 저장에 실패했습니다.');
@@ -105,10 +105,10 @@ export function BuyerList({ buyers }: { buyers: BuyerRecord[] }) {
     }
   }
 
-  function handleKeyDown(e: React.KeyboardEvent, saleIds: string[]) {
+  function handleKeyDown(e: React.KeyboardEvent, buyerName: string, saleIds: string[]) {
     if (e.key === 'Enter') {
       e.preventDefault();
-      savePhone(saleIds);
+      savePhone(buyerName, saleIds);
     }
     if (e.key === 'Escape') setEditingName(null);
   }
@@ -187,8 +187,8 @@ export function BuyerList({ buyers }: { buyers: BuyerRecord[] }) {
                           type="tel"
                           value={editPhone}
                           onChange={(e) => setEditPhone(e.target.value)}
-                          onBlur={() => savePhone(buyer.saleIds)}
-                          onKeyDown={(e) => handleKeyDown(e, buyer.saleIds)}
+                          onBlur={() => savePhone(buyer.buyerName, buyer.saleIds)}
+                          onKeyDown={(e) => handleKeyDown(e, buyer.buyerName, buyer.saleIds)}
                           disabled={saving}
                           autoFocus
                           className="w-36 rounded border border-indigo-300 px-2 py-1 text-sm focus:outline-none"
