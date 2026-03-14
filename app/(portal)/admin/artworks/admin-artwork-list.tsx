@@ -11,7 +11,9 @@ import {
   batchUpdateArtworkStatus,
   batchToggleHidden,
   batchDeleteArtworks,
+  updateArtworkCategory,
 } from '@/app/actions/admin-artworks';
+import { ARTWORK_CATEGORIES } from '@/types';
 import {
   AdminBadge,
   AdminCard,
@@ -175,6 +177,7 @@ export function AdminArtworkList({
           processing: 'Processing...',
           artworkInfo: 'Artwork info',
           status: 'Status',
+          category: 'Category',
           createdAt: 'Created',
           visibility: 'Visibility',
           manage: 'Manage',
@@ -186,6 +189,9 @@ export function AdminArtworkList({
           cafe24Warning: 'Shop sync warning',
           cafe24Syncing: 'Shop sync in progress',
           visibleNow: 'Visible',
+          categoryChanged: 'Category updated.',
+          categoryError: 'An error occurred while updating category.',
+          noCategory: 'None',
           edit: 'Edit',
           deleteConfirmTitle: 'Confirm artwork deletion',
           deleteConfirmDescription: (title: string | undefined) =>
@@ -255,6 +261,7 @@ export function AdminArtworkList({
           processing: '처리 중...',
           artworkInfo: '작품 정보',
           status: '상태',
+          category: '분류',
           createdAt: '등록일',
           visibility: '공개 여부',
           manage: '관리',
@@ -266,6 +273,9 @@ export function AdminArtworkList({
           cafe24Warning: '구매연동 경고',
           cafe24Syncing: '구매연동 진행 중',
           visibleNow: '공개 중',
+          categoryChanged: '카테고리를 변경했습니다.',
+          categoryError: '카테고리 변경 중 오류가 발생했습니다.',
+          noCategory: '없음',
           edit: '편집',
           deleteConfirmTitle: '작품 삭제 확인',
           deleteConfirmDescription: (title: string | undefined) =>
@@ -607,6 +617,33 @@ export function AdminArtworkList({
     }
   };
 
+  const handleCategoryChange = async (id: string, newCategory: string) => {
+    const category = newCategory || null;
+    const current = optimisticArtworks.find((a) => a.id === id)?.category ?? null;
+    if (category === current) return;
+    setProcessingId(id);
+
+    setOptimisticArtworks((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, category } : item))
+    );
+
+    try {
+      await updateArtworkCategory(id, category);
+      toast.success(msg.categoryChanged);
+    } catch (error) {
+      setOptimisticArtworks(artworksRef.current);
+      toast.error(
+        locale === 'en'
+          ? msg.categoryError
+          : error instanceof Error
+            ? error.message
+            : msg.categoryError
+      );
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
   const handleImageClick = (images: string[], title: string) => {
     const normalizedImages = (images || []).map((image) =>
       resolveArtworkImageUrlForPreset(image, 'detail')
@@ -928,9 +965,9 @@ export function AdminArtworkList({
                     type="button"
                     onClick={() => handleSort('category')}
                     className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
-                    aria-label={getSortAriaLabel('분류', 'category')}
+                    aria-label={getSortAriaLabel(msg.category, 'category')}
                   >
-                    분류
+                    {msg.category}
                     <span className="text-[11px] text-gray-400">{getSortArrow('category')}</span>
                   </button>
                 </th>
@@ -1098,7 +1135,21 @@ export function AdminArtworkList({
                       </AdminSelect>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-gray-500">{artwork.category || '-'}</span>
+                      <AdminSelect
+                        wrapperClassName="min-w-24"
+                        iconClassName="h-3.5 w-3.5"
+                        value={artwork.category || ''}
+                        onChange={(e) => handleCategoryChange(artwork.id, e.target.value)}
+                        disabled={processingId === artwork.id}
+                        className="py-1 pl-2.5 pr-7 text-xs"
+                      >
+                        <option value="">{msg.noCategory}</option>
+                        {ARTWORK_CATEGORIES.map((cat) => (
+                          <option key={cat} value={cat}>
+                            {cat}
+                          </option>
+                        ))}
+                      </AdminSelect>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className="text-sm text-gray-500">

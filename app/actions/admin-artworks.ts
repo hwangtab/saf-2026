@@ -715,6 +715,47 @@ export async function batchUpdateArtworkStatus(ids: string[], status: string) {
   } satisfies BatchArtworkMutationResult;
 }
 
+export async function updateArtworkCategory(id: string, category: string | null) {
+  const admin = await requireAdmin();
+  const supabase = await createSupabaseAdminOrServerClient();
+
+  const { data: before } = await supabase
+    .from('artworks')
+    .select('id, title, category')
+    .eq('id', id)
+    .single();
+
+  const { error } = await supabase
+    .from('artworks')
+    .update({ category, updated_at: new Date().toISOString() })
+    .eq('id', id);
+
+  if (error) throw error;
+
+  revalidatePath('/artworks');
+  revalidatePath(`/artworks/${id}`);
+  revalidatePath('/api/artworks');
+  revalidatePath('/');
+  revalidatePath('/admin/artworks');
+  revalidatePath(`/admin/artworks/${id}`);
+
+  await logAdminAction(
+    'update_artwork_category',
+    'artwork',
+    id,
+    { category, previous_category: before?.category },
+    admin.id,
+    {
+      summary: `작품 카테고리 변경: ${before?.title || id} → ${category || '없음'}`,
+      beforeSnapshot: { category: before?.category },
+      afterSnapshot: { category },
+      reversible: true,
+    }
+  );
+
+  return { success: true };
+}
+
 export async function getArtworkSales(artworkId: string) {
   await requireAdmin();
   const supabase = await createSupabaseAdminOrServerClient();
@@ -746,6 +787,7 @@ export async function recordArtworkSale(formData: FormData) {
   const salePriceRaw = getString(formData, 'sale_price');
   const quantityRaw = getString(formData, 'quantity') || '1';
   const buyerName = getString(formData, 'buyer_name');
+  const buyerPhone = getString(formData, 'buyer_phone');
   const note = getString(formData, 'note');
   const soldAt = getString(formData, 'sold_at') || new Date().toISOString();
 
@@ -796,6 +838,7 @@ export async function recordArtworkSale(formData: FormData) {
     sale_price: salePrice,
     quantity,
     buyer_name: buyerName,
+    buyer_phone: buyerPhone || null,
     note,
     sold_at: soldAt,
   });
@@ -817,6 +860,7 @@ export async function recordArtworkSale(formData: FormData) {
       sale_price: salePrice,
       quantity,
       buyer_name: buyerName,
+      buyer_phone: buyerPhone || null,
     },
     admin.id,
     {
