@@ -11,7 +11,7 @@ import {
 } from 'remotion';
 import type { GridScene as GridSceneType } from '../types';
 import { Background } from '../components/Background';
-import { COLORS, GRADIENTS } from '../utils/colors';
+import { COLORS, GRADIENTS, KOREAN_TEXT } from '../utils/colors';
 
 interface Props {
   scene: GridSceneType;
@@ -49,6 +49,7 @@ export const GridScene: React.FC<Props> = ({ scene }) => {
       >
         <h2
           style={{
+            ...KOREAN_TEXT,
             fontFamily: '"Noto Sans KR", sans-serif',
             fontSize: 50,
             fontWeight: 800,
@@ -110,6 +111,7 @@ export const GridScene: React.FC<Props> = ({ scene }) => {
                 <div style={{ padding: hasImage ? '20px 28px' : '34px 30px' }}>
                   <div
                     style={{
+                      ...KOREAN_TEXT,
                       fontFamily: '"Noto Sans KR", sans-serif',
                       fontSize: 18,
                       fontWeight: 600,
@@ -122,6 +124,7 @@ export const GridScene: React.FC<Props> = ({ scene }) => {
                   </div>
                   <div
                     style={{
+                      ...KOREAN_TEXT,
                       fontFamily: '"Noto Sans KR", sans-serif',
                       fontSize: hasImage ? 28 : 36,
                       fontWeight: 800,
@@ -138,6 +141,7 @@ export const GridScene: React.FC<Props> = ({ scene }) => {
                   {card.description && (
                     <div
                       style={{
+                        ...KOREAN_TEXT,
                         fontFamily: '"Noto Sans KR", sans-serif',
                         fontSize: 20,
                         fontWeight: 400,

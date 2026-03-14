@@ -2,7 +2,7 @@ import React from 'react';
 import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
 import type { HeroScene as HeroSceneType } from '../types';
 import { Background } from '../components/Background';
-import { COLORS, GRADIENTS } from '../utils/colors';
+import { COLORS, GRADIENTS, KOREAN_TEXT } from '../utils/colors';
 
 interface Props {
   scene: HeroSceneType;
@@ -56,6 +56,7 @@ export const HeroScene: React.FC<Props> = ({ scene }) => {
       >
         <h1
           style={{
+            ...KOREAN_TEXT,
             fontFamily: '"Noto Sans KR", sans-serif',
             fontSize: scene.title.length > 15 ? 72 : 88,
             fontWeight: 900,
@@ -88,6 +89,7 @@ export const HeroScene: React.FC<Props> = ({ scene }) => {
         {scene.subtitle && (
           <p
             style={{
+              ...KOREAN_TEXT,
               fontFamily: '"Noto Sans KR", sans-serif',
               fontSize: 34,
               fontWeight: 400,

@@ -10,7 +10,7 @@ import {
 } from 'remotion';
 import type { StatScene as StatSceneType } from '../types';
 import { Background } from '../components/Background';
-import { COLORS, GRADIENTS } from '../utils/colors';
+import { COLORS, GRADIENTS, KOREAN_TEXT } from '../utils/colors';
 
 interface Props {
   scene: StatSceneType;
@@ -102,6 +102,7 @@ export const StatScene: React.FC<Props> = ({ scene }) => {
       >
         <p
           style={{
+            ...KOREAN_TEXT,
             fontFamily: '"Noto Sans KR", sans-serif',
             fontSize: 28,
             fontWeight: 600,
@@ -144,6 +145,7 @@ export const StatScene: React.FC<Props> = ({ scene }) => {
         {scene.description && (
           <p
             style={{
+              ...KOREAN_TEXT,
               fontFamily: '"Noto Sans KR", sans-serif',
               fontSize: 28,
               fontWeight: 400,

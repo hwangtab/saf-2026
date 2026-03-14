@@ -73,6 +73,15 @@ const chatSceneSchema = z.object({
   ),
 });
 
+const montageSceneSchema = z.object({
+  id: z.string(),
+  type: z.literal('montage'),
+  narration: z.string(),
+  durationInSeconds: z.number().optional(),
+  images: z.array(z.string()),
+  captions: z.array(z.string()).optional(),
+});
+
 const sceneSchema = z.discriminatedUnion('type', [
   heroSceneSchema,
   listSceneSchema,
@@ -80,6 +89,7 @@ const sceneSchema = z.discriminatedUnion('type', [
   statSceneSchema,
   flowSceneSchema,
   chatSceneSchema,
+  montageSceneSchema,
 ]);
 
 export const videoConfigSchema = z.object({

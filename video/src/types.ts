@@ -1,6 +1,6 @@
 export interface SceneBase {
   id: string;
-  type: 'hero' | 'list' | 'grid' | 'stat' | 'flow' | 'chat' | 'intro' | 'outro';
+  type: 'hero' | 'list' | 'grid' | 'stat' | 'flow' | 'chat' | 'intro' | 'outro' | 'montage';
   narration: string;
   durationInSeconds?: number; // auto-calculated from TTS if not set
   keywords?: string[]; // words to highlight in subtitles
@@ -54,6 +54,12 @@ export interface OutroScene extends SceneBase {
   durationInSeconds: number;
 }
 
+export interface MontageScene extends SceneBase {
+  type: 'montage';
+  images: string[];
+  captions?: string[];
+}
+
 export type Scene =
   | HeroScene
   | ListScene
@@ -62,7 +68,8 @@ export type Scene =
   | FlowScene
   | ChatScene
   | IntroScene
-  | OutroScene;
+  | OutroScene
+  | MontageScene;
 
 export interface VideoConfig {
   title: string;

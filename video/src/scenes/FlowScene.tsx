@@ -10,7 +10,7 @@ import {
 } from 'remotion';
 import type { FlowScene as FlowSceneType } from '../types';
 import { Background } from '../components/Background';
-import { COLORS, GRADIENTS } from '../utils/colors';
+import { COLORS, GRADIENTS, KOREAN_TEXT } from '../utils/colors';
 
 interface Props {
   scene: FlowSceneType;
@@ -46,6 +46,7 @@ export const FlowScene: React.FC<Props> = ({ scene }) => {
       >
         <h2
           style={{
+            ...KOREAN_TEXT,
             fontFamily: '"Noto Sans KR", sans-serif',
             fontSize: 50,
             fontWeight: 800,
@@ -119,6 +120,7 @@ export const FlowScene: React.FC<Props> = ({ scene }) => {
 
                   <div
                     style={{
+                      ...KOREAN_TEXT,
                       fontFamily: '"Noto Sans KR", sans-serif',
                       fontSize: 24,
                       fontWeight: 700,
@@ -135,6 +137,7 @@ export const FlowScene: React.FC<Props> = ({ scene }) => {
                   {step.description && (
                     <div
                       style={{
+                        ...KOREAN_TEXT,
                         fontFamily: '"Noto Sans KR", sans-serif',
                         fontSize: 16,
                         fontWeight: 400,

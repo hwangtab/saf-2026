@@ -10,7 +10,7 @@ import {
 } from 'remotion';
 import type { ListScene as ListSceneType } from '../types';
 import { Background } from '../components/Background';
-import { COLORS, GRADIENTS } from '../utils/colors';
+import { COLORS, GRADIENTS, KOREAN_TEXT } from '../utils/colors';
 
 interface Props {
   scene: ListSceneType;
@@ -59,6 +59,7 @@ export const ListScene: React.FC<Props> = ({ scene }) => {
       >
         <h2
           style={{
+            ...KOREAN_TEXT,
             fontFamily: '"Noto Sans KR", sans-serif',
             fontSize: 54,
             fontWeight: 800,
@@ -115,6 +116,7 @@ export const ListScene: React.FC<Props> = ({ scene }) => {
                 </div>
                 <p
                   style={{
+                    ...KOREAN_TEXT,
                     fontFamily: '"Noto Sans KR", sans-serif',
                     fontSize: 32,
                     fontWeight: 400,

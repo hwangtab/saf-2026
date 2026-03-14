@@ -20,6 +20,7 @@ import { FlowScene } from './scenes/FlowScene';
 import { ChatScene } from './scenes/ChatScene';
 import { IntroScene } from './scenes/IntroScene';
 import { OutroScene } from './scenes/OutroScene';
+import { MontageScene } from './scenes/MontageScene';
 import { Subtitle } from './components/Subtitle';
 
 interface Props {
@@ -47,6 +48,8 @@ function renderScene(scene: Scene) {
       return <IntroScene />;
     case 'outro':
       return <OutroScene />;
+    case 'montage':
+      return <MontageScene scene={scene} />;
     default:
       return null;
   }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
 import { Particles } from '../components/Particles';
-import { COLORS } from '../utils/colors';
+import { COLORS, KOREAN_TEXT } from '../utils/colors';
 
 export const IntroScene: React.FC = () => {
   const frame = useCurrentFrame();
@@ -143,6 +143,7 @@ export const IntroScene: React.FC = () => {
         {/* Subtitle */}
         <div
           style={{
+            ...KOREAN_TEXT,
             fontFamily: '"Noto Sans KR", sans-serif',
             fontSize: 28,
             fontWeight: 400,
@@ -153,7 +154,7 @@ export const IntroScene: React.FC = () => {
             transform: `translateY(${interpolate(subtitleProgress, [0, 1], [15, 0])}px)`,
           }}
         >
-          씨앗예술제 · Seed Art Festival
+          씨앗페 · Seed Art Festival
         </div>
       </AbsoluteFill>
 

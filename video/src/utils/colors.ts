@@ -1,3 +1,5 @@
+import type React from 'react';
+
 // SAF brand colors for video
 export const COLORS = {
   primary: '#2176FF',
@@ -19,6 +21,12 @@ export const COLORS = {
   gray300: '#B3BAC7',
   gray700: '#3D464D',
   gray900: '#1F2428',
+};
+
+// Korean text needs keep-all to prevent breaking in the middle of words
+export const KOREAN_TEXT: React.CSSProperties = {
+  wordBreak: 'keep-all',
+  overflowWrap: 'break-word',
 };
 
 export const GRADIENTS = {

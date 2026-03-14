@@ -17,7 +17,8 @@ import edge_tts
 # ko-KR-SunHiNeural (female, warm, natural)
 # ko-KR-InJoonNeural (male, clear)
 VOICE = "ko-KR-InJoonNeural"
-RATE = "+0%"  # Speed adjustment: -10% slower, +10% faster
+RATE = "+0%"   # Speed: -10% slower, +10% faster
+PITCH = "+0Hz"  # Pitch: -5Hz lower, +5Hz higher
 VOLUME = "+0%"
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -35,14 +36,17 @@ def split_sentences(text: str) -> list[str]:
 
 async def generate_scene_audio(
     scene_id: str, narration: str, output_dir: str,
-    voice: str = None, rate: str = None
+    voice: str = None, rate: str = None, pitch: str = None
 ) -> dict:
     """Generate TTS audio for a single scene and extract subtitle timings."""
     mp3_path = os.path.join(output_dir, f"{scene_id}.mp3")
 
     scene_voice = voice or VOICE
     scene_rate = rate or RATE
-    communicate = edge_tts.Communicate(narration, scene_voice, rate=scene_rate, volume=VOLUME)
+    scene_pitch = pitch or PITCH
+    communicate = edge_tts.Communicate(
+        narration, scene_voice, rate=scene_rate, pitch=scene_pitch, volume=VOLUME
+    )
 
     subtitles = []
     audio_chunks = []
@@ -132,6 +136,7 @@ async def main():
     print("🎙️ SAF 2026 TTS Generator")
     print(f"   Voice: {VOICE}")
     print(f"   Config: {CONFIG_PATH}")
+    print(f"   Default pitch: {PITCH}")
     print()
 
     # Load config
@@ -159,9 +164,10 @@ async def main():
 
         scene_voice = scene.get("voice", None)
         scene_rate = scene.get("rate", None)
+        scene_pitch = scene.get("pitch", None)
         timing = await generate_scene_audio(
             scene["id"], narration, OUTPUT_DIR,
-            voice=scene_voice, rate=scene_rate
+            voice=scene_voice, rate=scene_rate, pitch=scene_pitch
         )
         timings.append(timing)
 

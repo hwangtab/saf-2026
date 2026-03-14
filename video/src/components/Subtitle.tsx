@@ -1,7 +1,7 @@
 import React from 'react';
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
 import type { SubtitleEntry } from '../types';
-import { COLORS } from '../utils/colors';
+import { COLORS, KOREAN_TEXT } from '../utils/colors';
 
 interface SubtitleProps {
   subtitles: SubtitleEntry[];
@@ -78,6 +78,7 @@ export const Subtitle: React.FC<SubtitleProps> = ({ subtitles, offsetMs = 0, key
     >
       <div
         style={{
+          ...KOREAN_TEXT,
           background: 'linear-gradient(135deg, rgba(0,0,0,0.82), rgba(0,0,0,0.68))',
           color: COLORS.white,
           padding: '16px 36px',

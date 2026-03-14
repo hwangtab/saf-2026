@@ -253,6 +253,7 @@ video/
 │   │   ├── GridScene.tsx       # 카드 그리드 + 이미지/Ken Burns (title, cards[])
 │   │   ├── FlowScene.tsx       # 흐름도 (title, steps[])
 │   │   ├── ChatScene.tsx       # 대화/증언 (title, messages[])
+│   │   ├── MontageScene.tsx    # 전체 화면 작품 이미지 전환 (images[], captions[])
 │   │   └── OutroScene.tsx      # CTA + 구독 유도 아웃트로
 │   ├── components/             # Subtitle, Background, Logo, Particles
 │   ├── schemas/video-config.ts # Zod 스키마
@@ -285,18 +286,19 @@ cd video && npm run render                 # 영상만 렌더링
 
 ### 씬 템플릿 종류
 
-| 타입    | 용도                         | 주요 props                                            |
-| ------- | ---------------------------- | ----------------------------------------------------- |
-| `intro` | 로고 애니메이션 인트로       | `durationInSeconds`                                   |
-| `hero`  | 타이틀/엔딩                  | `title`, `subtitle`, `backgroundGradient`             |
-| `stat`  | 통계 수치 + 카운트업 + SFX   | `value`, `label`, `description`                       |
-| `list`  | 번호 목록                    | `title`, `items[]`                                    |
-| `grid`  | 카드 배열 + 이미지 Ken Burns | `title`, `cards[{label, value, description, image?}]` |
-| `flow`  | 흐름도                       | `title`, `steps[{label, description}]`                |
-| `chat`  | 증언/대화                    | `title`, `messages[{text, sender, role}]`             |
-| `outro` | CTA + 구독 유도              | `durationInSeconds`                                   |
+| 타입      | 용도                         | 주요 props                                            |
+| --------- | ---------------------------- | ----------------------------------------------------- |
+| `intro`   | 로고 애니메이션 인트로       | `durationInSeconds`                                   |
+| `hero`    | 타이틀/엔딩                  | `title`, `subtitle`, `backgroundGradient`             |
+| `stat`    | 통계 수치 + 카운트업 + SFX   | `value`, `label`, `description`                       |
+| `list`    | 번호 목록                    | `title`, `items[]`                                    |
+| `grid`    | 카드 배열 + 이미지 Ken Burns | `title`, `cards[{label, value, description, image?}]` |
+| `flow`    | 흐름도                       | `title`, `steps[{label, description}]`                |
+| `chat`    | 증언/대화                    | `title`, `messages[{text, sender, role}]`             |
+| `montage` | 전체 화면 작품 이미지 전환   | `images[]`, `captions?[]`                             |
+| `outro`   | CTA + 구독 유도              | `durationInSeconds`                                   |
 
-모든 씬 공통 props: `narration` (TTS 음성), `keywords?` (자막 하이라이트), `durationInSeconds?` (생략 시 TTS 길이 기준 자동 설정).
+모든 씬 공통 props: `narration` (TTS 음성), `keywords?` (자막 하이라이트), `durationInSeconds?` (생략 시 TTS 길이 기준 자동 설정), `rate?` (TTS 속도 조절, 예: "-5%"), `pitch?` (TTS 음높이 조절, 예: "+2Hz").
 
 ### 프로 기능
 
@@ -306,7 +308,9 @@ cd video && npm run render                 # 영상만 렌더링
 - **키워드 하이라이트**: `keywords[]` 배열의 단어가 자막에서 노란색 볼드로 강조
 - **SFX**: StatScene에 tick, ListScene/GridScene에 pop, 전환 시 whoosh
 - **작품 이미지**: GridScene의 `cards[].image`에 경로 지정 시 Ken Burns 효과 적용
+- **작품 몽타주**: MontageScene으로 전체 화면 이미지 크로스페이드 + Ken Burns
 - **비네팅/노이즈 텍스처**: Background 컴포넌트에서 자동 적용
+- **한국어 줄바꿈**: 모든 씬 컴포넌트에 `KOREAN_TEXT` (wordBreak: 'keep-all') 적용됨
 
 ### TTS 참고
 
@@ -314,6 +318,13 @@ cd video && npm run render                 # 영상만 렌더링
 - 대안 음성: `ko-KR-SunHiNeural` (여성), `ko-KR-HyunsuMultilingualNeural` (남성 다국어)
 - 한국어는 `SentenceBoundary`로 자막 타이밍 반환 (WordBoundary 아님)
 - Python venv 위치: `video/.venv/`
+- 씬별 `rate` (속도), `pitch` (음높이) 조절 가능 — video-config.json에서 씬 객체에 직접 지정
+- **나레이션 작성 팁** (TTS 품질 최적화):
+  - 짧은 문장으로 끊기 (15~20자). 긴 복합문 금지
+  - 쉼표로 자연스러운 호흡 삽입
+  - 숫자는 숫자 그대로 쓰기 (한글 변환하면 더 어색함)
+  - 감정적 대목은 `rate: "-5%"` ~ `"-8%"`, 정보 전달은 기본 `"+0%"`
+- **커스텀 SSML은 edge-tts v5+에서 지원 안 됨** — rate/pitch/volume 파라미터만 사용 가능
 
 ## Pre-commit Hooks
 

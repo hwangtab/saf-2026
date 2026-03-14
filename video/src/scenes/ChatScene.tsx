@@ -10,7 +10,7 @@ import {
 } from 'remotion';
 import type { ChatScene as ChatSceneType } from '../types';
 import { Background } from '../components/Background';
-import { COLORS, GRADIENTS } from '../utils/colors';
+import { COLORS, GRADIENTS, KOREAN_TEXT } from '../utils/colors';
 
 interface Props {
   scene: ChatSceneType;
@@ -46,6 +46,7 @@ export const ChatScene: React.FC<Props> = ({ scene }) => {
       >
         <h2
           style={{
+            ...KOREAN_TEXT,
             fontFamily: '"Noto Sans KR", sans-serif',
             fontSize: 46,
             fontWeight: 800,
@@ -110,6 +111,7 @@ export const ChatScene: React.FC<Props> = ({ scene }) => {
 
                   <p
                     style={{
+                      ...KOREAN_TEXT,
                       fontFamily: '"Noto Sans KR", sans-serif',
                       fontSize: 26,
                       fontWeight: 400,

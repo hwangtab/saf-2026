@@ -1,7 +1,7 @@
 import React from 'react';
 import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
 import { Particles } from '../components/Particles';
-import { COLORS } from '../utils/colors';
+import { COLORS, KOREAN_TEXT } from '../utils/colors';
 
 export const OutroScene: React.FC = () => {
   const frame = useCurrentFrame();
@@ -87,6 +87,7 @@ export const OutroScene: React.FC = () => {
         {/* Main CTA */}
         <h1
           style={{
+            ...KOREAN_TEXT,
             fontFamily: '"Noto Sans KR", sans-serif',
             fontSize: 64,
             fontWeight: 900,
@@ -132,6 +133,7 @@ export const OutroScene: React.FC = () => {
             <div
               key={i}
               style={{
+                ...KOREAN_TEXT,
                 fontFamily: '"Noto Sans KR", sans-serif',
                 fontSize: 22,
                 fontWeight: 700,
@@ -150,6 +152,7 @@ export const OutroScene: React.FC = () => {
         {/* Subscribe hint */}
         <div
           style={{
+            ...KOREAN_TEXT,
             fontFamily: '"Noto Sans KR", sans-serif',
             fontSize: 20,
             fontWeight: 400,
