@@ -66,6 +66,7 @@ export interface ArtworkSale {
   quantity: number;
   source?: 'manual' | 'cafe24' | null;
   buyer_name?: string | null;
+  buyer_phone?: string | null;
   note?: string | null;
   external_order_id?: string | null;
   external_order_item_code?: string | null;

@@ -49,6 +49,13 @@ const REVENUE_COPY = {
     ytd: '누계 YTD',
     topArtists: '작가별 인식매출 TOP',
     topArtworks: '작품별 인식매출 TOP',
+    topBuyers: '구매자별 매출 TOP',
+    purchaseCount: '구매 수량',
+    artworksPurchased: '작품 수',
+    lastPurchase: '최근 구매',
+    contact: '연락처',
+    channel: '채널',
+    buyer: '구매자',
     noRevenueData: '매출 데이터 없음',
     noRevenueDataDesc: '해당 기간 매출 데이터가 없습니다.',
     loadErrorTitle: '매출 현황 로딩 오류',
@@ -91,6 +98,13 @@ const REVENUE_COPY = {
     ytd: 'YTD',
     topArtists: 'Top Artists by Revenue',
     topArtworks: 'Top Artworks by Revenue',
+    topBuyers: 'Top Buyers by Revenue',
+    purchaseCount: 'Purchase count',
+    artworksPurchased: 'Artworks',
+    lastPurchase: 'Last purchase',
+    contact: 'Contact',
+    channel: 'Channel',
+    buyer: 'Buyer',
     noRevenueData: 'No revenue data',
     noRevenueDataDesc: 'No revenue data available for this period.',
     loadErrorTitle: 'Revenue Page Load Error',
@@ -450,6 +464,79 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
           </div>
         </AdminCard>
       </section>
+
+      <AdminCard className="flex flex-col">
+        <AdminCardHeader className="rounded-t-2xl">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-base font-semibold text-slate-900">{copy.topBuyers}</h2>
+              <span className="text-xs text-slate-500">{analytics.summary.periodLabel} 기준</span>
+            </div>
+            <Link
+              href="/admin/buyers"
+              className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+            >
+              전체 보기 →
+            </Link>
+          </div>
+        </AdminCardHeader>
+        <div className="p-0">
+          {analytics.topBuyers.length === 0 ? (
+            <AdminEmptyState title={copy.noRevenueData} description={copy.noRevenueDataDesc} />
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-slate-200">
+                <thead className="bg-slate-50 text-xs font-semibold uppercase text-slate-500">
+                  <tr>
+                    <th className="px-4 py-3 text-left">#</th>
+                    <th className="px-4 py-3 text-left">{copy.buyer}</th>
+                    <th className="px-4 py-3 text-left">{copy.contact}</th>
+                    <th className="px-4 py-3 text-right">{copy.purchaseCount}</th>
+                    <th className="px-4 py-3 text-right">{copy.artworksPurchased}</th>
+                    <th className="px-4 py-3 text-right">{copy.channel}</th>
+                    <th className="px-4 py-3 text-right">{copy.lastPurchase}</th>
+                    <th className="px-4 py-3 text-right">{copy.monthlyRevenue}</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 bg-white text-sm">
+                  {analytics.topBuyers.map((buyer, index) => (
+                    <tr key={`${buyer.buyerName}-${index}`}>
+                      <td className="px-4 py-3 font-medium text-slate-800">{index + 1}</td>
+                      <td className="px-4 py-3 font-medium text-slate-900">{buyer.buyerName}</td>
+                      <td className="px-4 py-3 text-slate-600">{buyer.buyerPhone || '-'}</td>
+                      <td className="px-4 py-3 text-right text-slate-700">
+                        {numberFormatter.format(buyer.purchaseCount)} {copy.pointsUnit}
+                      </td>
+                      <td className="px-4 py-3 text-right text-slate-700">
+                        {numberFormatter.format(buyer.artworkCount)}
+                      </td>
+                      <td className="px-4 py-3 text-right text-slate-600">
+                        {buyer.channels.includes('offline') && buyer.channels.includes('online')
+                          ? locale === 'ko'
+                            ? '오프+온라인'
+                            : 'Both'
+                          : buyer.channels.includes('online')
+                            ? locale === 'ko'
+                              ? '온라인'
+                              : 'Online'
+                            : locale === 'ko'
+                              ? '오프라인'
+                              : 'Offline'}
+                      </td>
+                      <td className="px-4 py-3 text-right text-slate-500">
+                        {buyer.lastPurchaseDate}
+                      </td>
+                      <td className="px-4 py-3 text-right font-semibold text-slate-900">
+                        {krwFormatter.format(buyer.revenue)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </AdminCard>
     </div>
   );
 }

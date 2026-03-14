@@ -35,6 +35,8 @@ type SalesRecordRow = {
   quantity: number;
   sold_at: string;
   source: string | null;
+  buyer_name: string | null;
+  buyer_phone: string | null;
   artworks: {
     title: string;
     artist_id: string | null;
@@ -67,6 +69,16 @@ type RankedArtwork = {
   artistName: string;
   soldAtKst: string;
   revenue: number;
+};
+
+export type RankedBuyer = {
+  buyerName: string;
+  buyerPhone: string | null;
+  revenue: number;
+  purchaseCount: number;
+  artworkCount: number;
+  channels: RevenueChannel[];
+  lastPurchaseDate: string;
 };
 
 type RevenueEntry = {
@@ -153,6 +165,7 @@ export type RevenueAnalytics = {
   }>;
   topArtists: RankedArtist[];
   topArtworks: RankedArtwork[];
+  topBuyers: RankedBuyer[];
   entries: RevenueEntry[];
   dataQuality: {
     soldWithoutSoldAtCount: number;
@@ -351,6 +364,8 @@ export async function getRevenueAnalyticsForAuthorizedUser(
       quantity,
       sold_at,
       source,
+      buyer_name,
+      buyer_phone,
       artworks!inner (
         title,
         artist_id,
@@ -376,6 +391,8 @@ export async function getRevenueAnalyticsForAuthorizedUser(
         quantity,
         sold_at,
         source,
+        buyer_name,
+        buyer_phone,
         artworks!inner (
           title,
           artist_id,
@@ -398,6 +415,18 @@ export async function getRevenueAnalyticsForAuthorizedUser(
   const previousYearMonthly = createMonthlyAccumulator();
   const currentYearMonthlyBySource = createMonthlySourceBreakdown();
   const focusArtistMap = new Map<string, RankedArtist>();
+  const focusBuyerMap = new Map<
+    string,
+    {
+      buyerName: string;
+      buyerPhone: string | null;
+      revenue: number;
+      purchaseCount: number;
+      artworkIds: Set<string>;
+      channels: Set<RevenueChannel>;
+      lastPurchaseDate: string;
+    }
+  >();
   const focusEntries: RevenueEntry[] = [];
   const focusSourceBreakdown = createSourceBreakdown();
   const focusChannelBreakdown = createChannelBreakdown();
@@ -464,6 +493,38 @@ export async function getRevenueAnalyticsForAuthorizedUser(
       source,
       channel,
     });
+
+    const rawBuyerName = (row as unknown as SalesRecordRow).buyer_name;
+    if (rawBuyerName && rawBuyerName.trim()) {
+      const normalizedName = rawBuyerName.trim();
+      const buyerKey = normalizedName;
+      const rawPhone = (row as unknown as SalesRecordRow).buyer_phone;
+      const kstDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      const existing = focusBuyerMap.get(buyerKey);
+
+      if (existing) {
+        existing.revenue += price;
+        existing.purchaseCount += row.quantity;
+        existing.artworkIds.add(row.artwork_id);
+        existing.channels.add(channel);
+        if (!existing.buyerPhone && rawPhone) {
+          existing.buyerPhone = rawPhone.trim();
+        }
+        if (kstDate > existing.lastPurchaseDate) {
+          existing.lastPurchaseDate = kstDate;
+        }
+      } else {
+        focusBuyerMap.set(buyerKey, {
+          buyerName: normalizedName,
+          buyerPhone: rawPhone?.trim() || null,
+          revenue: price,
+          purchaseCount: row.quantity,
+          artworkIds: new Set([row.artwork_id]),
+          channels: new Set([channel]),
+          lastPurchaseDate: kstDate,
+        });
+      }
+    }
   }
 
   const monthly: RevenueMonthlyRow[] = [];
@@ -564,6 +625,22 @@ export async function getRevenueAnalyticsForAuthorizedUser(
     })
     .slice(0, 8);
 
+  const topBuyers: RankedBuyer[] = Array.from(focusBuyerMap.values())
+    .map((entry) => ({
+      buyerName: entry.buyerName,
+      buyerPhone: entry.buyerPhone,
+      revenue: entry.revenue,
+      purchaseCount: entry.purchaseCount,
+      artworkCount: entry.artworkIds.size,
+      channels: Array.from(entry.channels),
+      lastPurchaseDate: entry.lastPurchaseDate,
+    }))
+    .sort((a, b) => {
+      if (b.revenue !== a.revenue) return b.revenue - a.revenue;
+      return b.purchaseCount - a.purchaseCount;
+    })
+    .slice(0, 10);
+
   const topArtworks = [...focusEntries]
     .sort((a, b) => {
       if (b.revenue !== a.revenue) return b.revenue - a.revenue;
@@ -615,6 +692,7 @@ export async function getRevenueAnalyticsForAuthorizedUser(
     })),
     topArtists,
     topArtworks,
+    topBuyers,
     entries,
     dataQuality: {
       soldWithoutSoldAtCount: soldWithoutSoldAtResult.count || 0,

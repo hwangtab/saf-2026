@@ -30,6 +30,7 @@ const ADMIN_NAV_GROUPS_BY_LOCALE: Record<LocaleCode, AdminNavGroup[]> = {
       label: '분석',
       items: [
         { href: '/admin/revenue', label: '매출 현황' },
+        { href: '/admin/buyers', label: '구매자 관리' },
         { href: '/admin/analytics', label: '사이트 분석' },
       ],
     },
@@ -65,6 +66,7 @@ const ADMIN_NAV_GROUPS_BY_LOCALE: Record<LocaleCode, AdminNavGroup[]> = {
       label: 'Analytics',
       items: [
         { href: '/admin/revenue', label: 'Revenue' },
+        { href: '/admin/buyers', label: 'Buyers' },
         { href: '/admin/analytics', label: 'Site Analytics' },
       ],
     },

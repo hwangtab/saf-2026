@@ -860,7 +860,7 @@ export async function recordArtworkSale(formData: FormData) {
       sale_price: salePrice,
       quantity,
       buyer_name: buyerName,
-      buyer_phone: buyerPhone || null,
+      buyer_phone: buyerPhone ? '[set]' : null,
     },
     admin.id,
     {

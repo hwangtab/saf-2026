@@ -57,6 +57,7 @@ export function SalesHistory({
   const [salePrice, setSalePrice] = useState(formattedOriginalPrice);
   const [quantity, setQuantity] = useState(1);
   const [buyerName, setBuyerName] = useState('');
+  const [buyerPhone, setBuyerPhone] = useState('');
   const [note, setNote] = useState('');
   const [soldAt, setSoldAt] = useState(new Date().toISOString().split('T')[0]);
 
@@ -86,6 +87,7 @@ export function SalesHistory({
       formData.append('sale_price', salePrice.replace(/,/g, ''));
       formData.append('quantity', quantity.toString());
       formData.append('buyer_name', buyerName);
+      formData.append('buyer_phone', buyerPhone);
       formData.append('note', note);
       formData.append('sold_at', soldAt);
 
@@ -104,6 +106,7 @@ export function SalesHistory({
         setSalePrice('');
         setQuantity(1);
         setBuyerName('');
+        setBuyerPhone('');
         setNote('');
         router.refresh();
       }
@@ -236,6 +239,16 @@ export function SalesHistory({
                 className="w-full rounded border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none"
               />
             </div>
+            <div>
+              <label className="mb-1 block text-xs font-medium text-gray-500">연락처 (선택)</label>
+              <input
+                type="tel"
+                value={buyerPhone}
+                onChange={(e) => setBuyerPhone(e.target.value)}
+                placeholder="010-1234-5678"
+                className="w-full rounded border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none"
+              />
+            </div>
             <div className="md:col-span-2">
               <label className="mb-1 block text-xs font-medium text-gray-500">비고 (선택)</label>
               <input
@@ -265,6 +278,9 @@ export function SalesHistory({
                 구매자
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                연락처
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 채널
               </th>
               <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
@@ -281,7 +297,7 @@ export function SalesHistory({
           <tbody className="divide-y divide-gray-200 bg-white">
             {sales.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-sm text-gray-500">
+                <td colSpan={7} className="px-4 py-8 text-center text-sm text-gray-500">
                   판매 기록이 없습니다.
                 </td>
               </tr>
@@ -299,6 +315,7 @@ export function SalesHistory({
                       </span>
                     )}
                   </td>
+                  <td className="px-4 py-3 text-sm text-gray-600">{sale.buyer_phone || '-'}</td>
                   <td className="px-4 py-3 text-sm text-gray-600">
                     <span
                       className={cn(
