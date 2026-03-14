@@ -1,0 +1,82 @@
+{
+  "title": "한국 예술인 84.9%가 은행에서 거절당합니다",
+  "fps": 30,
+  "width": 1920,
+  "height": 1080,
+  "bgm": "bgm/ambient-pad.mp3",
+  "scenes": [
+    {
+      "id": "s1-hook",
+      "type": "hero",
+      "title": "한국 예술인의\n__% 가",
+      "subtitle": "",
+      "narration": "",
+      "durationInSeconds": 2,
+      "backgroundGradient": ["#1F2428", "#31393C"]
+    },
+    {
+      "id": "s1-exclusion",
+      "type": "stat",
+      "value": "84.9%",
+      "label": "제1금융권 배제율",
+      "description": "은행에서 거절당합니다",
+      "narration": "한국 예술인의 84.9%가 은행에서 거절당합니다.",
+      "keywords": ["84.9%"],
+      "rate": "+5%"
+    },
+    {
+      "id": "s1-predatory",
+      "type": "stat",
+      "value": "48.6%",
+      "label": "고금리 대출 노출률",
+      "description": "연 15% 이상 고금리에 내몰립니다",
+      "narration": "거절당한 이들의 48.6%가 연 15% 이상 고금리 대출에 내몰립니다.",
+      "keywords": ["48.6%", "15%"]
+    },
+    {
+      "id": "s1-collection",
+      "type": "stat",
+      "value": "38%",
+      "label": "채권추심 경험률",
+      "description": "채권추심을 경험합니다",
+      "narration": "38%가 채권추심을 경험합니다.",
+      "keywords": ["38%"]
+    },
+    {
+      "id": "s1-quit",
+      "type": "stat",
+      "value": "45%",
+      "label": "창작 중단율",
+      "description": "결국 예술을 포기합니다",
+      "narration": "45%가 결국 창작을 중단합니다.",
+      "keywords": ["45%", "창작을 중단"]
+    },
+    {
+      "id": "s1-but",
+      "type": "hero",
+      "title": "그런데,",
+      "subtitle": "",
+      "narration": "",
+      "durationInSeconds": 2,
+      "backgroundGradient": ["#1F2428", "#31393C"]
+    },
+    {
+      "id": "s1-proof",
+      "type": "stat",
+      "value": "95%",
+      "label": "상환율",
+      "description": "기회를 주자, 95%가 갚았습니다",
+      "narration": "이들에게 기회를 준 결과, 95% 이상이 성실하게 갚았습니다.",
+      "keywords": ["95%"]
+    },
+    {
+      "id": "s1-cta",
+      "type": "hero",
+      "title": "기회만 주면\n이런 결과가 나옵니다",
+      "subtitle": "saf2026.com · 프로필 링크에서 자세히",
+      "narration": "기회만 주면 이런 결과가 나옵니다. 자세한 이야기는 프로필 링크에서 확인하세요.",
+      "keywords": ["기회"],
+      "backgroundGradient": ["#0E4ECF", "#2176FF"]
+    }
+  ]
+}

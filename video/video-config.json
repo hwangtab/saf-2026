@@ -1,0 +1,164 @@
+{
+  "title": "은행이 '무직자'라 부른 사람들의 상환율 95% | 씨앗예술제 2026",
+  "fps": 30,
+  "width": 1920,
+  "height": 1080,
+  "bgm": "bgm/ambient-pad.mp3",
+  "scenes": [
+    {
+      "id": "hook",
+      "type": "stat",
+      "value": "84.9%",
+      "label": "",
+      "description": "",
+      "narration": "은행에서 무직자 취급당한 사람들이 있습니다.",
+      "keywords": ["무직자"],
+      "rate": "+5%"
+    },
+    {
+      "id": "who",
+      "type": "hero",
+      "title": "그들은\n한국의 예술인입니다",
+      "subtitle": "110명의 작가 · 276점의 작품 · 하나의 목소리",
+      "narration": "그들은 한국의 예술인입니다. 화가, 배우, 음악인, 사진작가. 110명의 작가가 276점의 작품으로 하나의 목소리를 냅니다.",
+      "keywords": ["한국의 예술인", "110명", "276점"],
+      "backgroundGradient": ["#1F2428", "#31393C"]
+    },
+    {
+      "id": "exclusion",
+      "type": "grid",
+      "title": "은행이 보는 예술인",
+      "cards": [
+        { "label": "은행의 판단", "value": "무직자", "description": "불규칙한 소득 = 소득 없음" },
+        { "label": "직접 거절", "value": "53.1%", "description": "대출 신청 자체를 거부당한 비율" },
+        {
+          "label": "신청 포기",
+          "value": "31.8%",
+          "description": "거절이 두려워 아예 시도조차 못함"
+        }
+      ],
+      "narration": "은행은 예술인을 무직자로 분류합니다. 53.1%가 직접 거절당하고, 31.8%는 거절이 두려워 신청조차 하지 못합니다.",
+      "keywords": ["무직자", "53.1%", "31.8%"]
+    },
+    {
+      "id": "spiral",
+      "type": "flow",
+      "title": "",
+      "steps": [
+        { "label": "은행 거절", "description": "제1금융권 완전 배제" },
+        { "label": "고금리 대출", "description": "연 15~30% 이자 부담" },
+        { "label": "채권추심", "description": "38%가 추심을 경험" },
+        { "label": "창작 중단", "description": "45%가 예술을 포기" }
+      ],
+      "narration": "거절당한 예술인의 48.6%가 연 15% 이상의 고금리 대출에 내몰립니다. 38%가 채권추심을 경험하고, 45%가 결국 창작을 중단합니다.",
+      "keywords": ["48.6%", "15%", "38%", "45%", "창작을 중단"]
+    },
+    {
+      "id": "voices",
+      "type": "chat",
+      "title": "실제 예술인의 목소리",
+      "messages": [
+        { "text": "아이들 모르게 나만 3일을 굶었던 기억.", "sender": "50대 연극인" },
+        { "text": "연극배우라고 하자 '무직자'라고 들었습니다.", "sender": "50대 배우" },
+        { "text": "노숙을 한 적이 있습니다.", "sender": "30대 음악인" },
+        { "text": "어머니 병원비를 낼 수 없었습니다.", "sender": "50대 방송인" },
+        { "text": "공연을 할수록 빚만 늘어 그만두기로 했습니다.", "sender": "30대 배우" }
+      ],
+      "narration": "아이들 모르게 3일을 굶은 연극인. 은행에서 무직자라 불린 배우. 갈 곳이 없어 노숙한 음악인. 어머니 병원비를 낼 수 없었던 방송인. 공연을 할수록 빚이 느는 배우. 이것이 한국 예술인의 현실입니다.",
+      "keywords": ["3일을 굶은", "무직자", "노숙", "병원비", "빚"],
+      "rate": "-5%"
+    },
+    {
+      "id": "but",
+      "type": "hero",
+      "title": "그런데,",
+      "subtitle": "",
+      "narration": "",
+      "durationInSeconds": 2,
+      "backgroundGradient": ["#1F2428", "#31393C"]
+    },
+    {
+      "id": "proof",
+      "type": "stat",
+      "value": "95%",
+      "label": "상환율",
+      "description": "354건의 대출, 95% 이상 정상 상환",
+      "narration": "기회를 준 결과, 95% 이상이 성실하게 갚았습니다. 354건의 대출, 2022년 12월부터 지금까지. 은행이 무직자라 불렀던 사람들의 신뢰는 숫자로 증명됐습니다.",
+      "keywords": ["95%", "354건", "무직자라 불렀던", "증명"]
+    },
+    {
+      "id": "how",
+      "type": "flow",
+      "title": "상호부조의 힘",
+      "steps": [
+        { "label": "작품 구매\n& 후원", "description": "상호부조 기금 조성" },
+        { "label": "저금리\n대출 제공", "description": "기금의 7배까지 연 5%" },
+        { "label": "예술인\n창작 지속", "description": "안정적 금융으로 창작 집중" },
+        { "label": "성실 상환\n95%", "description": "신뢰의 선순환" }
+      ],
+      "narration": "여러분의 작품 구매와 후원이 상호부조 기금이 됩니다. 이 기금의 7배까지 연 5% 저금리 대출이 예술인에게 제공됩니다. 예술인은 창작에 집중하고, 95%가 성실하게 갚습니다. 이것이 신뢰의 선순환입니다.",
+      "keywords": ["작품 구매", "7배", "5%", "선순환"]
+    },
+    {
+      "id": "gallery",
+      "type": "grid",
+      "title": "작품이 곧 지원입니다",
+      "cards": [
+        {
+          "label": "최윤정",
+          "value": "face #02-홍범도",
+          "description": "Oil on canvas · ₩4,500,000",
+          "image": "artworks/artwork-1.webp"
+        },
+        {
+          "label": "이열",
+          "value": "별들과 녹색 바오밥",
+          "description": "62×92cm · ₩2,660,000",
+          "image": "artworks/artwork-2.webp"
+        },
+        {
+          "label": "최재란",
+          "value": "쿼크의 시간#113",
+          "description": "Pigment print · ₩3,000,000",
+          "image": "artworks/artwork-3.webp"
+        }
+      ],
+      "narration": "지금 온라인 갤러리에서 276점의 작품을 만나볼 수 있습니다. 3만 원부터 시작하는 작품도 있습니다. 여러분의 구매 한 건이 예술인의 삶을 직접 지탱합니다.",
+      "keywords": ["276점", "3만 원", "직접 지탱"]
+    },
+    {
+      "id": "reviews",
+      "type": "chat",
+      "title": "",
+      "messages": [
+        {
+          "text": "95% 상환율 보는데 뭉클해지는 기분이었습니다.",
+          "sender": "김OO",
+          "role": "미술교사"
+        },
+        {
+          "text": "그림 사는 게 직접적인 도움이 된다니 더 의미 있게 느껴집니다.",
+          "sender": "박OO",
+          "role": "관람객"
+        }
+      ],
+      "narration": "방문하신 분들의 이야기입니다.",
+      "keywords": ["95%", "직접적인 도움"]
+    },
+    {
+      "id": "cta",
+      "type": "hero",
+      "title": "예술인에게 금융은\n산소호흡기입니다",
+      "subtitle": "saf2026.com",
+      "narration": "예술인에게 금융은 산소호흡기입니다. 지금 에스에이에프 이공이륙 닷컴에서 함께해 주세요.",
+      "keywords": ["산소호흡기"],
+      "backgroundGradient": ["#0E4ECF", "#2176FF"]
+    },
+    {
+      "id": "outro",
+      "type": "outro",
+      "narration": "",
+      "durationInSeconds": 5
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "name": "saf-2026-video",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SAF 2026 promotional video generator using Remotion",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "render": "remotion render src/index.ts Video out/saf-2026-promo.mp4",
+    "build": "bash scripts/build-video.sh"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.0",
+    "@remotion/player": "^4.0.0",
+    "@remotion/transitions": "4.0.435",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.0",
+    "zod": "4.3.6"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.0",
+    "typescript": "^5.5.0"
+  }
+}
