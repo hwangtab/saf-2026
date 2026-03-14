@@ -45,5 +45,5 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules", "__tests__", "jest.config.js", "jest.setup.js"]
+  "exclude": ["node_modules", "__tests__", "jest.config.js", "jest.setup.js", "video"]
 }
