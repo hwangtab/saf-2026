@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && next-image-export-optimizer",
+    "build": "npm run generate-changelog && next build && next-image-export-optimizer",
     "start": "next start",
     "lint": "eslint . && npm run check:server-button-imports",
     "check:server-button-imports": "node scripts/check-server-button-imports.js",

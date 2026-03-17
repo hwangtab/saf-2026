@@ -1,5 +1,15 @@
 [
   {
+    "hash": "69194fa",
+    "type": "fix",
+    "scope": "admin",
+    "subject": "align detail toggle with content text in dev changelog",
+    "summary": "개발 이력 '상세 보기' 버튼 들여쓰기를 본문과 정렬",
+    "body": null,
+    "date": "2026-03-17",
+    "author": "hwangtab"
+  },
+  {
     "hash": "7809b7d",
     "type": "fix",
     "scope": "admin",

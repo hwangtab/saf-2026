@@ -141,6 +141,19 @@ function writeOutput(entries) {
     fs.mkdirSync(dir, { recursive: true });
   }
 
+  // 기존 파일이 더 많으면 덮어쓰지 않음 (Vercel 얕은 클론 보호)
+  try {
+    const existing = JSON.parse(fs.readFileSync(outPath, 'utf-8'));
+    if (existing.length > entries.length) {
+      console.log(
+        `Changelog skipped: existing file has ${existing.length} entries, new has ${entries.length} (shallow clone detected)`
+      );
+      return;
+    }
+  } catch {
+    // 기존 파일 없음 — 새로 생성
+  }
+
   fs.writeFileSync(outPath, JSON.stringify(entries, null, 2), 'utf-8');
   console.log(`Changelog generated: ${entries.length} entries → ${outPath}`);
 }
