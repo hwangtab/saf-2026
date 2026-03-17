@@ -33,7 +33,7 @@
     "coopHome": "Co-op Website",
     "privacyPolicy": "Privacy Policy",
     "termsOfService": "Terms of Service",
-    "description": "A mutual aid campaign to address the financial crisis facing Korean artists.",
+    "description": "A mutual aid campaign building a brighter future for Korean artists.",
     "guide": "Visit our links and contact section for information about online exhibitions and purchases.",
     "businessInfo": "Organization: {org} | Representative: {rep} | Business Registration: {bizNo}",
     "addressInfo": "Address: {address} ({postalCode}) | Mail Order Report: {mailOrder}",
@@ -93,7 +93,7 @@
     "joinMemberDesc": "Become a member of Korea Smart Cooperative and support the mutual aid fund for artists.",
     "joinMemberLink": "Join Now",
     "buyArtwork": "Buy Artwork",
-    "buyArtworkDesc": "Discover works by artists standing in solidarity. Proceeds fund the mutual aid program for all artists.",
+    "buyArtworkDesc": "Discover works by artists who care. Proceeds fund the mutual aid program for all artists.",
     "buyArtworkLink": "Browse Artworks",
     "archiveTitle": "Archive",
     "archiveDesc": "Explore the records and achievements of past exhibitions.",
@@ -116,7 +116,7 @@
     "logoAlt": "SAF 2026 Logo",
     "metaTitle": "SAF 2026 - Special Exhibition for Artist Mutual Aid Fund",
     "metaDescription": "SAF 2026 is a special online exhibition connecting co-op membership and artwork purchases to raise mutual aid loan funds for artists. Help provide a stable creative environment for financially excluded artists.",
-    "ogDescription": "A special exhibition to raise mutual aid funds for Korean artists. Join the solidarity by becoming a co-op member and purchasing artworks.",
+    "ogDescription": "A special exhibition building a brighter future for Korean artists. Support artists by becoming a co-op member and purchasing artworks.",
     "twitterDescription": "Join SAF 2026, a special exhibition raising mutual aid loan funds for artists."
   },
   "breadcrumbs": {
@@ -148,12 +148,12 @@
   "seo": {
     "siteTitle": "SAF 2026",
     "titleTemplate": "%s | SAF 2026",
-    "siteDescription": "A special exhibition to raise mutual aid funds for Korean artists. Join the solidarity by becoming a co-op member and purchasing artworks.",
+    "siteDescription": "A special exhibition building a brighter future for Korean artists. Support artists by becoming a co-op member and purchasing artworks.",
     "ogImageAlt": "SAF 2026 Campaign Image"
   },
   "artworksPage": {
     "title": "Artworks",
-    "metaDescription": "Discover artworks exhibited at SAF 2026. Support artists facing financial exclusion by joining the co-op and purchasing artwork.",
+    "metaDescription": "Discover artworks exhibited at SAF 2026. Help build a brighter future for artists by joining the co-op and purchasing artwork.",
     "heroDescription": "Reality and hope through the eyes of artists. Introducing artworks from SAF 2026.",
     "shareTitle": "Artworks - SAF 2026",
     "shareDescription": "Explore the beautiful artworks exhibited at the 2026 Seed Art Festival."
@@ -253,14 +253,14 @@
     "pauseAria": "Pause background slideshow"
   },
   "support": {
-    "titleTop": "This artist stands in solidarity",
-    "titleBottom": "with artists facing financial crisis",
+    "titleTop": "This artist is building a future",
+    "titleBottom": "together with fellow artists",
     "bodyTop": "Proceeds become mutual aid funds",
     "bodyBottom": "supporting all artists in need"
   },
   "galleryCampaign": {
-    "heading": "Every purchase is an act of solidarity",
-    "description": "These artists stand in solidarity against the financial crisis facing Korean artists. Join the mutual aid fund through artwork purchases or co-op membership."
+    "heading": "Every purchase makes a difference",
+    "description": "These artists are building a future together with fellow artists. Join the mutual aid fund through artwork purchases or co-op membership."
   },
   "pageErrors": {
     "artworks": {
