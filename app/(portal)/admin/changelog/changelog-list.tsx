@@ -167,7 +167,7 @@ export function ChangelogList({ entries }: { entries: ChangelogEntry[] }) {
                     <p className="mt-1 pl-16 text-xs text-slate-400">{entry.subject}</p>
                   )}
                   {entry.body && (
-                    <details className="mt-2">
+                    <details className="mt-2 pl-16">
                       <summary className="cursor-pointer text-xs text-slate-400 hover:text-slate-600">
                         상세 보기
                       </summary>

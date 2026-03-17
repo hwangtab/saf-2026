@@ -1,5 +1,15 @@
 [
   {
+    "hash": "7809b7d",
+    "type": "fix",
+    "scope": "admin",
+    "subject": "commit changelog.json to repo instead of generating at build time",
+    "summary": "Vercel 얕은 클론 문제 해결 — changelog.json을 직접 커밋하여 전체 833개 이력 표시",
+    "body": "- Remove content/changelog.json from .gitignore (now tracked)\n- Remove generate-changelog from build script (run manually)\n- Remove fetch-depth and changelog step from CI workflow\n- Vercel shallow clone no longer affects changelog data",
+    "date": "2026-03-17",
+    "author": "hwangtab"
+  },
+  {
     "hash": "c5dc262",
     "type": "feat",
     "scope": "admin",
