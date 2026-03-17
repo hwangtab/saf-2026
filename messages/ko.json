@@ -93,7 +93,7 @@
     "joinMemberDesc": "한국스마트협동조합의 조합원이 되어 예술인 상호부조의 든든한 지원군이 되어주세요.",
     "joinMemberLink": "조합원 가입하기",
     "buyArtwork": "작품 구매",
-    "buyArtworkDesc": "참여 예술가들의 작품을 구매하며 지원합니다.",
+    "buyArtworkDesc": "연대에 동참한 작가들의 작품을 만나보세요. 구매 수익은 예술인 상호부조 기금이 됩니다.",
     "buyArtworkLink": "출품작 보기",
     "archiveTitle": "아카이브",
     "archiveDesc": "지난 전시의 기록과 성과를 확인해보세요.",
@@ -174,6 +174,8 @@
     "noShopSuffix": "로 문의주시면",
     "noShopGuide": "담당자가 <highlight>구매 절차 및 배송 일정</highlight>을 상세히 안내해 드립니다.",
     "emailInquiry": "이메일 문의",
+    "trustInline": "📦 무료 배송 · 🔒 안전 결제 · ↩️ 7일 환불",
+    "viewPurchaseGuide": "구매 안내 자세히 보기",
     "material": "재료",
     "category": "분류",
     "size": "크기",
@@ -249,6 +251,12 @@
     "pause": "일시정지",
     "playAria": "배경 슬라이드 재생",
     "pauseAria": "배경 슬라이드 일시정지"
+  },
+  "support": {
+    "titleTop": "이 작가는 예술인 금융 위기 해결에",
+    "titleBottom": "연대하는 참여 작가입니다",
+    "bodyTop": "구매 수익은 상호부조 기금이 되어",
+    "bodyBottom": "더 많은 예술인에게 돌아갑니다"
   },
   "pageErrors": {
     "artworks": {

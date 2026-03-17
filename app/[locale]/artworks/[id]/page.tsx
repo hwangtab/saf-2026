@@ -166,6 +166,113 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 </div>
               </div>
 
+              {/* Mobile CTA Section (visible only on mobile, right after title) */}
+              <div className="block lg:hidden space-y-6 mt-6">
+                {/* 구매 가이드 인라인 요약 */}
+                {hasActionablePrice && !artwork.sold && (
+                  <p className="text-center text-sm text-gray-500">{t('trustInline')}</p>
+                )}
+
+                {/* 온라인 구매 버튼 */}
+                {hasActionablePrice && artwork.shopUrl && !artwork.sold && (
+                  <>
+                    <TrackClick
+                      event="purchase_click"
+                      properties={{
+                        artwork_id: artwork.id,
+                        artwork_title: artwork.title,
+                        artist: artwork.artist,
+                      }}
+                    >
+                      <LinkButton
+                        href={artwork.shopUrl}
+                        variant="primary"
+                        size="lg"
+                        external
+                        className="w-full text-lg gap-3 rounded-xl"
+                      >
+                        {t('buyOnline')}
+                      </LinkButton>
+                    </TrackClick>
+
+                    <div className="flex items-center gap-4">
+                      <div className="flex-1 h-px bg-gray-200" />
+                      <span className="text-gray-400 text-sm">{t('orContactDirectly')}</span>
+                      <div className="flex-1 h-px bg-gray-200" />
+                    </div>
+                  </>
+                )}
+
+                {/* 구매 링크가 없는 경우 */}
+                {hasActionablePrice && !artwork.shopUrl && !artwork.sold && (
+                  <div className="bg-white rounded-xl p-6 text-center border border-gray-200 shadow-sm">
+                    <h3 className="text-lg font-bold text-charcoal mb-4">{t('wantToBuy')}</h3>
+                    <div className="flex justify-center items-center gap-2 text-xs text-gray-500 mb-6">
+                      <div className="flex flex-col items-center gap-2">
+                        <span className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center font-bold text-primary shadow-sm">
+                          1
+                        </span>
+                        <span>{t('stepInquiry')}</span>
+                      </div>
+                      <div className="w-12 h-px bg-gray-300 mb-4"></div>
+                      <div className="flex flex-col items-center gap-2">
+                        <span className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center font-bold text-gray-400 shadow-sm">
+                          2
+                        </span>
+                        <span>{t('stepPayment')}</span>
+                      </div>
+                      <div className="w-12 h-px bg-gray-300 mb-4"></div>
+                      <div className="flex flex-col items-center gap-2">
+                        <span className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center font-bold text-gray-400 shadow-sm">
+                          3
+                        </span>
+                        <span>{t('stepDelivery')}</span>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-0 word-keep leading-relaxed">
+                      {t('noShopDescription')}
+                      <br />
+                      <span className="font-semibold text-charcoal">{t('noShopContact')}</span>
+                      {t('noShopSuffix')}
+                      <br />
+                      {t.rich('noShopGuide', {
+                        highlight: (chunks) => (
+                          <span className="text-primary font-medium">{chunks}</span>
+                        ),
+                      })}
+                    </p>
+                  </div>
+                )}
+
+                {/* 연락처 */}
+                <div className="grid grid-cols-2 gap-4">
+                  <LinkButton
+                    href="tel:02-764-3114"
+                    variant="accent"
+                    leadingIcon="📞"
+                    iconLayout="fixed-left"
+                    iconClassName="grayscale group-hover:grayscale-0 transition-all"
+                  >
+                    <span className="text-sm font-bold text-center">02-764-3114</span>
+                  </LinkButton>
+                  <LinkButton
+                    href="mailto:contact@kosmart.org"
+                    variant="accent"
+                    leadingIcon="✉️"
+                    iconLayout="fixed-left"
+                    iconClassName="grayscale group-hover:grayscale-0 transition-all"
+                  >
+                    <span className="text-sm font-bold text-center">{t('emailInquiry')}</span>
+                  </LinkButton>
+                </div>
+
+                {/* 신뢰배지 */}
+                <TrustBadges />
+
+                {/* 연대 메시지 */}
+                <SupportMessage />
+              </div>
+
               {/* Share Section */}
               <div className="flex items-center justify-center gap-2 py-4 border-y border-gray-100">
                 <span className="text-sm text-gray-500 mr-2">{t('share')}</span>
@@ -179,12 +286,11 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 />
               </div>
 
-              {/* CTA Section - Moved here for better visibility */}
-              <div className="space-y-6">
-                {/* 온라인 구매 버튼 - 가격이 있고, shopUrl이 있고, 판매되지 않은 경우에만 표시 */}
+              {/* Desktop CTA Section (hidden on mobile) */}
+              <div className="hidden lg:block space-y-6">
+                {/* 온라인 구매 버튼 */}
                 {hasActionablePrice && artwork.shopUrl && !artwork.sold && (
                   <>
-                    {/* Purchase Guide */}
                     <PurchaseGuide className="mb-4" />
 
                     <TrackClick
@@ -206,7 +312,6 @@ export default async function ArtworkDetailPage({ params }: Props) {
                       </LinkButton>
                     </TrackClick>
 
-                    {/* 구분선 */}
                     <div className="flex items-center gap-4">
                       <div className="flex-1 h-px bg-gray-200" />
                       <span className="text-gray-400 text-sm">{t('orContactDirectly')}</span>
@@ -215,15 +320,13 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   </>
                 )}
 
-                {/* 구매 링크가 없는 경우 - 안내 문구 표시 */}
+                {/* 구매 링크가 없는 경우 */}
                 {hasActionablePrice && !artwork.shopUrl && !artwork.sold && (
                   <>
                     <PurchaseGuide className="mb-6" />
 
                     <div className="bg-white rounded-xl p-6 mb-6 text-center border border-gray-200 shadow-sm">
                       <h3 className="text-lg font-bold text-charcoal mb-4">{t('wantToBuy')}</h3>
-
-                      {/* 구매 절차 시각화 */}
                       <div className="flex justify-center items-center gap-2 text-xs text-gray-500 mb-6">
                         <div className="flex flex-col items-center gap-2">
                           <span className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center font-bold text-primary shadow-sm">
@@ -246,7 +349,6 @@ export default async function ArtworkDetailPage({ params }: Props) {
                           <span>{t('stepDelivery')}</span>
                         </div>
                       </div>
-
                       <p className="text-sm text-gray-600 mb-0 word-keep leading-relaxed">
                         {t('noShopDescription')}
                         <br />
@@ -304,7 +406,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 </p>
               </header>
 
-              <TrustBadges className="mb-6" />
+              <TrustBadges className="mb-6 hidden lg:flex" />
 
               <div className="border-t border-b border-gray-100 py-6">
                 <div className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 items-baseline">

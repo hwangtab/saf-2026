@@ -146,14 +146,18 @@ describe('useArtworkFilter', () => {
     replaceStateSpy.mockRestore();
   });
 
-  it('should keep using router navigation for non-search filters', () => {
+  it('should sync non-search filters via history API (not router)', () => {
+    const replaceStateSpy = jest.spyOn(window.history, 'replaceState');
     const { result } = renderHook(() => useArtworkFilter(mockArtworks));
 
     act(() => {
       result.current.setStatusFilter('sold');
     });
 
-    expect(mockReplace).toHaveBeenCalled();
+    expect(replaceStateSpy).toHaveBeenCalled();
+    expect(mockReplace).not.toHaveBeenCalled();
+
+    replaceStateSpy.mockRestore();
   });
 
   it('should filter by status (selling)', () => {
