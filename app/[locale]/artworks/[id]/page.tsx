@@ -16,6 +16,7 @@ import ArtworkDetailNav from '@/components/features/ArtworkDetailNav';
 import { parsePrice } from '@/lib/parsePrice';
 import { SITE_URL } from '@/lib/constants';
 import LinkButton from '@/components/ui/LinkButton';
+import TrackClick from '@/components/common/TrackingLink';
 import RelatedArticles from '@/components/features/RelatedArticles';
 import ExpandableHistory from '@/components/features/ExpandableHistory';
 import {
@@ -186,15 +187,24 @@ export default async function ArtworkDetailPage({ params }: Props) {
                     {/* Purchase Guide */}
                     <PurchaseGuide className="mb-4" />
 
-                    <LinkButton
-                      href={artwork.shopUrl}
-                      variant="primary"
-                      size="lg"
-                      external
-                      className="w-full text-lg gap-3 rounded-xl"
+                    <TrackClick
+                      event="purchase_click"
+                      properties={{
+                        artwork_id: artwork.id,
+                        artwork_title: artwork.title,
+                        artist: artwork.artist,
+                      }}
                     >
-                      {t('buyOnline')}
-                    </LinkButton>
+                      <LinkButton
+                        href={artwork.shopUrl}
+                        variant="primary"
+                        size="lg"
+                        external
+                        className="w-full text-lg gap-3 rounded-xl"
+                      >
+                        {t('buyOnline')}
+                      </LinkButton>
+                    </TrackClick>
 
                     {/* 구분선 */}
                     <div className="flex items-center gap-4">
