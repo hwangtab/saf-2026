@@ -879,6 +879,183 @@ export async function recordArtworkSale(formData: FormData) {
   };
 }
 
+export async function updateArtworkSale(formData: FormData) {
+  const admin = await requireAdmin();
+  const supabase = await createSupabaseAdminOrServerClient();
+
+  const saleId = getString(formData, 'sale_id');
+  const artworkId = getString(formData, 'artwork_id');
+  const salePriceRaw = getString(formData, 'sale_price');
+  const quantityRaw = getString(formData, 'quantity') || '1';
+  const buyerName = getString(formData, 'buyer_name');
+  const buyerPhone = getString(formData, 'buyer_phone');
+  const note = getString(formData, 'note');
+  const soldAt = getString(formData, 'sold_at');
+
+  if (!saleId || !artworkId || !salePriceRaw) {
+    throw new Error('필수 정보가 누락되었습니다.');
+  }
+
+  const { data: existing } = await supabase
+    .from('artwork_sales')
+    .select('id, source, sale_price, quantity, buyer_name, buyer_phone, note, sold_at')
+    .eq('id', saleId)
+    .single();
+
+  if (!existing) throw new Error('판매 기록을 찾을 수 없습니다.');
+  if (existing.source === 'cafe24') {
+    throw new Error('Cafe24 동기화 판매 기록은 수정할 수 없습니다.');
+  }
+
+  const validationError = validateSaleInput(salePriceRaw, quantityRaw);
+  if (validationError) throw new Error(validationError);
+
+  const salePrice = Number(salePriceRaw);
+  const quantity = Number(quantityRaw);
+
+  const { data: artwork } = await supabase
+    .from('artworks')
+    .select('id, title, edition_type, edition_limit')
+    .eq('id', artworkId)
+    .single();
+
+  if (!artwork) throw new Error('작품을 찾을 수 없습니다.');
+
+  if (artwork.edition_type === 'limited' && artwork.edition_limit) {
+    let { data: sales, error: salesError } = await supabase
+      .from('artwork_sales')
+      .select('id, quantity')
+      .eq('artwork_id', artworkId)
+      .is('voided_at', null);
+
+    if (salesError && isMissingVoidedAtColumnError(salesError)) {
+      ({ data: sales, error: salesError } = await supabase
+        .from('artwork_sales')
+        .select('id, quantity')
+        .eq('artwork_id', artworkId));
+    }
+    if (salesError) throw salesError;
+
+    const currentSold =
+      sales?.filter((s) => s.id !== saleId).reduce((sum, sale) => sum + (sale.quantity || 1), 0) ||
+      0;
+
+    if (currentSold + quantity > artwork.edition_limit) {
+      throw new Error(
+        `에디션 수량을 초과할 수 없습니다. (현재: ${currentSold}, 제한: ${artwork.edition_limit}, 수정시도: ${quantity})`
+      );
+    }
+  }
+
+  const { error } = await supabase
+    .from('artwork_sales')
+    .update({
+      sale_price: salePrice,
+      quantity,
+      buyer_name: buyerName || null,
+      buyer_phone: buyerPhone || null,
+      note: note || null,
+      sold_at: soldAt || new Date().toISOString(),
+    })
+    .eq('id', saleId);
+
+  if (error) throw error;
+
+  revalidatePath('/artworks');
+  revalidatePath('/api/artworks');
+  revalidateTag('artworks', 'max');
+  revalidatePath('/');
+  revalidatePath('/admin/artworks');
+  revalidatePath(`/admin/artworks/${artworkId}`);
+  revalidatePath('/admin/buyers');
+  revalidatePath('/admin/revenue');
+  revalidatePath('/admin/artist-sales');
+
+  await logAdminAction(
+    'artwork_sale_updated',
+    'artwork',
+    artworkId,
+    { sale_id: saleId },
+    admin.id,
+    {
+      summary: `판매 기록 수정: ${artwork.title}`,
+      beforeSnapshot: {
+        sale_price: existing.sale_price,
+        quantity: existing.quantity,
+        buyer_name: existing.buyer_name,
+      },
+      afterSnapshot: { sale_price: salePrice, quantity, buyer_name: buyerName },
+      reversible: true,
+    }
+  );
+
+  return { success: true };
+}
+
+export async function voidArtworkSale(saleId: string, reason: string) {
+  const admin = await requireAdmin();
+  const supabase = await createSupabaseAdminOrServerClient();
+
+  if (!saleId) throw new Error('판매 기록 ID가 필요합니다.');
+  if (!reason.trim()) throw new Error('취소 사유를 입력해주세요.');
+
+  const { data: existing } = await supabase
+    .from('artwork_sales')
+    .select('id, artwork_id, source, sale_price, quantity, buyer_name')
+    .eq('id', saleId)
+    .single();
+
+  if (!existing) throw new Error('판매 기록을 찾을 수 없습니다.');
+  if (existing.source === 'cafe24') {
+    throw new Error('Cafe24 동기화 판매 기록은 취소할 수 없습니다.');
+  }
+
+  const { error } = await supabase
+    .from('artwork_sales')
+    .update({ voided_at: new Date().toISOString(), void_reason: reason.trim() })
+    .eq('id', saleId);
+
+  if (error) throw error;
+
+  const artworkId = existing.artwork_id;
+
+  revalidatePath('/artworks');
+  revalidatePath('/api/artworks');
+  revalidateTag('artworks', 'max');
+  revalidatePath('/');
+  revalidatePath('/admin/artworks');
+  revalidatePath(`/admin/artworks/${artworkId}`);
+  revalidatePath('/admin/buyers');
+  revalidatePath('/admin/revenue');
+  revalidatePath('/admin/artist-sales');
+
+  const { data: artwork } = await supabase
+    .from('artworks')
+    .select('title')
+    .eq('id', artworkId)
+    .single();
+
+  await logAdminAction(
+    'artwork_sale_voided',
+    'artwork',
+    artworkId,
+    { sale_id: saleId, reason },
+    admin.id,
+    {
+      summary: `판매 취소: ${artwork?.title || artworkId} (${existing.quantity}점, ${existing.buyer_name || '구매자 미상'})`,
+      beforeSnapshot: {
+        sale_price: existing.sale_price,
+        quantity: existing.quantity,
+        buyer_name: existing.buyer_name,
+      },
+      afterSnapshot: null,
+      reversible: false,
+    }
+  );
+
+  return { success: true };
+}
+
 export async function batchToggleHidden(ids: string[], isHidden: boolean) {
   if (ids.length === 0) {
     return {

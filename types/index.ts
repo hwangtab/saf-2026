@@ -71,6 +71,8 @@ export interface ArtworkSale {
   external_order_id?: string | null;
   external_order_item_code?: string | null;
   created_at?: string;
+  voided_at?: string | null;
+  void_reason?: string | null;
 }
 
 // Artwork with hydrated artist data (for UI)
