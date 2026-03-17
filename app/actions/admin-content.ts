@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 import { logAdminAction } from './admin-logs';
@@ -40,6 +40,7 @@ export async function createNews(formData: FormData) {
 
   revalidatePath('/news');
   revalidatePath('/sitemap.xml');
+  revalidateTag('news', 'max');
 }
 
 export async function updateNews(id: string, formData: FormData) {
@@ -79,6 +80,7 @@ export async function updateNews(id: string, formData: FormData) {
 
   revalidatePath('/news');
   revalidatePath('/sitemap.xml');
+  revalidateTag('news', 'max');
 }
 
 export async function deleteNews(id: string) {
@@ -98,6 +100,7 @@ export async function deleteNews(id: string) {
 
   revalidatePath('/news');
   revalidatePath('/sitemap.xml');
+  revalidateTag('news', 'max');
 }
 
 export async function createFaq(formData: FormData) {
@@ -130,6 +133,7 @@ export async function createFaq(formData: FormData) {
 
   revalidatePath('/');
   revalidatePath('/en');
+  revalidateTag('faqs', 'max');
 }
 
 export async function updateFaq(id: string, formData: FormData) {
@@ -167,6 +171,7 @@ export async function updateFaq(id: string, formData: FormData) {
 
   revalidatePath('/');
   revalidatePath('/en');
+  revalidateTag('faqs', 'max');
 }
 
 export async function deleteFaq(id: string) {
@@ -193,6 +198,7 @@ export async function deleteFaq(id: string) {
 
   revalidatePath('/');
   revalidatePath('/en');
+  revalidateTag('faqs', 'max');
 }
 
 export async function createTestimonial(formData: FormData) {
@@ -231,6 +237,7 @@ export async function createTestimonial(formData: FormData) {
   );
 
   revalidatePath('/our-reality');
+  revalidateTag('testimonials', 'max');
 }
 
 export async function updateTestimonial(id: string, formData: FormData) {
@@ -271,6 +278,7 @@ export async function updateTestimonial(id: string, formData: FormData) {
   });
 
   revalidatePath('/our-reality');
+  revalidateTag('testimonials', 'max');
 }
 
 export async function deleteTestimonial(id: string) {
@@ -300,6 +308,7 @@ export async function deleteTestimonial(id: string) {
   );
 
   revalidatePath('/our-reality');
+  revalidateTag('testimonials', 'max');
 }
 
 export async function createVideo(formData: FormData) {

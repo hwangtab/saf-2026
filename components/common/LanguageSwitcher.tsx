@@ -22,7 +22,7 @@ export default function LanguageSwitcher({ className }: LanguageSwitcherProps) {
       <button
         onClick={() => switchLocale('ko')}
         className={clsx(
-          'px-2 py-1 rounded transition-colors',
+          'px-2 py-1 min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded transition-colors',
           locale === 'ko' ? 'font-bold text-primary' : 'text-current opacity-60 hover:opacity-100'
         )}
         aria-label={locale === 'en' ? 'Switch to Korean' : '한국어로 전환'}
@@ -36,7 +36,7 @@ export default function LanguageSwitcher({ className }: LanguageSwitcherProps) {
       <button
         onClick={() => switchLocale('en')}
         className={clsx(
-          'px-2 py-1 rounded transition-colors',
+          'px-2 py-1 min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded transition-colors',
           locale === 'en' ? 'font-bold text-primary' : 'text-current opacity-60 hover:opacity-100'
         )}
         aria-label="Switch to English"

@@ -2045,17 +2045,20 @@ export async function revertActivityLog(
       revalidatePath('/news');
       revalidatePath('/admin/content/news');
       revalidatePath('/sitemap.xml');
+      revalidateTag('news', 'max');
     }
 
     if (log.target_type === 'faq') {
       revalidatePath('/');
       revalidatePath('/en');
       revalidatePath('/admin/content/faq');
+      revalidateTag('faqs', 'max');
     }
 
     if (log.target_type === 'testimonial') {
       revalidatePath('/our-reality');
       revalidatePath('/admin/content/testimonials');
+      revalidateTag('testimonials', 'max');
     }
 
     if (log.target_type === 'video') {

@@ -271,7 +271,7 @@ export const getSupabaseArtworksByArtist = cache(
   async (artistName: string): Promise<Artwork[]> => getSupabaseArtworksByArtistCached(artistName)
 );
 
-export const getSupabaseTestimonials = cache(async (): Promise<TestimonialCategory[]> => {
+const getSupabaseTestimonialsUncached = async (): Promise<TestimonialCategory[]> => {
   if (!hasSupabaseConfig || !supabase) {
     return testimonials;
   }
@@ -301,67 +301,88 @@ export const getSupabaseTestimonials = cache(async (): Promise<TestimonialCatego
   }, {});
 
   return Object.values(grouped);
-});
+};
 
-export const getSupabaseFAQs = cache(
-  async (locale: 'ko' | 'en' = 'ko'): Promise<{ question: string; answer: string }[]> => {
-    const fallbackFaqs = getFaqsByLocale(locale);
-    const fallbackByQuestion = new Map(
-      faqs.map((faq, index) => [faq.question, faqsEn[index]] as const)
-    );
-
-    const localizeFaqRows = (rows: FAQRow[]): { question: string; answer: string }[] => {
-      if (locale === 'ko') {
-        return rows.map((row) => ({ question: row.question, answer: row.answer }));
-      }
-
-      return rows.map((row, index) => {
-        const questionEn = row.question_en?.trim();
-        const answerEn = row.answer_en?.trim();
-        const fallbackByQuestionMatch = fallbackByQuestion.get(row.question.trim());
-        const fallbackByIndex = fallbackFaqs[index];
-        const fallback = fallbackByQuestionMatch || fallbackByIndex;
-
-        if (questionEn && answerEn) {
-          return { question: questionEn, answer: answerEn };
-        }
-
-        return {
-          question:
-            questionEn ||
-            fallback?.question ||
-            (containsHangul(row.question) ? `FAQ ${index + 1}` : row.question),
-          answer:
-            answerEn ||
-            fallback?.answer ||
-            (containsHangul(row.answer)
-              ? 'This answer is currently available in Korean.'
-              : row.answer),
-        };
-      });
-    };
-
-    if (!hasSupabaseConfig || !supabase) {
-      return fallbackFaqs;
-    }
-
-    const { data, error } = await supabase
-      .from('faq')
-      .select('question, answer, question_en, answer_en')
-      .order('display_order', { ascending: true, nullsFirst: false })
-      .order('created_at', { ascending: true });
-
-    if (error) {
-      console.error('Error fetching FAQs from Supabase:', error);
-      return fallbackFaqs;
-    }
-
-    const rows = (data || []) as FAQRow[];
-    return localizeFaqRows(rows);
-  }
+const getSupabaseTestimonialsCached = unstable_cache(
+  async () => getSupabaseTestimonialsUncached(),
+  ['supabase-testimonials'],
+  { revalidate: 3600, tags: ['testimonials'] }
 );
 
-export const getSupabaseReviews = cache(async (): Promise<ExhibitionReview[]> => {
+export const getSupabaseTestimonials = cache(
+  async (): Promise<TestimonialCategory[]> => getSupabaseTestimonialsCached()
+);
+
+const getSupabaseFAQsUncached = async (
+  locale: 'ko' | 'en' = 'ko'
+): Promise<{ question: string; answer: string }[]> => {
+  const fallbackFaqs = getFaqsByLocale(locale);
+  const fallbackByQuestion = new Map(
+    faqs.map((faq, index) => [faq.question, faqsEn[index]] as const)
+  );
+
+  const localizeFaqRows = (rows: FAQRow[]): { question: string; answer: string }[] => {
+    if (locale === 'ko') {
+      return rows.map((row) => ({ question: row.question, answer: row.answer }));
+    }
+
+    return rows.map((row, index) => {
+      const questionEn = row.question_en?.trim();
+      const answerEn = row.answer_en?.trim();
+      const fallbackByQuestionMatch = fallbackByQuestion.get(row.question.trim());
+      const fallbackByIndex = fallbackFaqs[index];
+      const fallback = fallbackByQuestionMatch || fallbackByIndex;
+
+      if (questionEn && answerEn) {
+        return { question: questionEn, answer: answerEn };
+      }
+
+      return {
+        question:
+          questionEn ||
+          fallback?.question ||
+          (containsHangul(row.question) ? `FAQ ${index + 1}` : row.question),
+        answer:
+          answerEn ||
+          fallback?.answer ||
+          (containsHangul(row.answer)
+            ? 'This answer is currently available in Korean.'
+            : row.answer),
+      };
+    });
+  };
+
+  if (!hasSupabaseConfig || !supabase) {
+    return fallbackFaqs;
+  }
+
+  const { data, error } = await supabase
+    .from('faq')
+    .select('question, answer, question_en, answer_en')
+    .order('display_order', { ascending: true, nullsFirst: false })
+    .order('created_at', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching FAQs from Supabase:', error);
+    return fallbackFaqs;
+  }
+
+  const rows = (data || []) as FAQRow[];
+  return localizeFaqRows(rows);
+};
+
+const getSupabaseFAQsCached = unstable_cache(
+  async (locale: 'ko' | 'en') => getSupabaseFAQsUncached(locale),
+  ['supabase-faqs'],
+  { revalidate: 3600, tags: ['faqs'] }
+);
+
+export const getSupabaseFAQs = cache(
+  async (locale: 'ko' | 'en' = 'ko'): Promise<{ question: string; answer: string }[]> =>
+    getSupabaseFAQsCached(locale)
+);
+
+const getSupabaseReviewsUncached = async (): Promise<ExhibitionReview[]> => {
   if (!hasSupabaseConfig || !supabase) {
     return exhibitionReviews;
   }
@@ -389,9 +410,19 @@ export const getSupabaseReviews = cache(async (): Promise<ExhibitionReview[]> =>
       date: row.date,
     };
   });
-});
+};
 
-export const getSupabaseNews = cache(async (): Promise<NewsArticle[]> => {
+const getSupabaseReviewsCached = unstable_cache(
+  async () => getSupabaseReviewsUncached(),
+  ['supabase-reviews'],
+  { revalidate: 3600, tags: ['reviews'] }
+);
+
+export const getSupabaseReviews = cache(
+  async (): Promise<ExhibitionReview[]> => getSupabaseReviewsCached()
+);
+
+const getSupabaseNewsUncached = async (): Promise<NewsArticle[]> => {
   if (!hasSupabaseConfig || !supabase) {
     return newsArticles;
   }
@@ -418,7 +449,15 @@ export const getSupabaseNews = cache(async (): Promise<NewsArticle[]> => {
       description: row.description || '',
     };
   });
-});
+};
+
+const getSupabaseNewsCached = unstable_cache(
+  async () => getSupabaseNewsUncached(),
+  ['supabase-news'],
+  { revalidate: 1800, tags: ['news'] }
+);
+
+export const getSupabaseNews = cache(async (): Promise<NewsArticle[]> => getSupabaseNewsCached());
 
 export const getSupabaseArtistsByOwner = cache(async (ownerId: string): Promise<ArtistRow[]> => {
   if (!hasSupabaseConfig || !supabase) {
