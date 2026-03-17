@@ -31,7 +31,9 @@ import TrustBadges from '@/components/features/TrustBadges';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import ArtworkCard from '@/components/ui/ArtworkCard';
 
-const PurchaseGuide = dynamic(() => import('@/components/features/PurchaseGuide'));
+const PurchaseGuide = dynamic(() => import('@/components/features/PurchaseGuide'), {
+  loading: () => <div className="h-20 rounded-xl shimmer-loading" aria-hidden="true" />,
+});
 
 interface Props {
   params: Promise<{

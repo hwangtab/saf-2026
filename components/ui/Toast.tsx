@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useCallback } from 'react';
-import { LazyMotion, domAnimation, m, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { useEffect, useCallback, useState } from 'react';
 import { useLocale } from 'next-intl';
 import { cn } from '@/lib/utils';
 
@@ -44,46 +43,53 @@ function Toast({ toast, onDismiss }: ToastProps) {
   const { id, type, message, duration = 4000 } = toast;
   const locale = useLocale();
   const closeLabel = locale === 'en' ? 'Close' : '닫기';
-  const prefersReducedMotion = useReducedMotion();
+  const [isDismissing, setIsDismissing] = useState(false);
 
   useEffect(() => {
     if (duration <= 0) return;
 
     const timer = setTimeout(() => {
-      onDismiss(id);
+      setIsDismissing(true);
     }, duration);
 
     return () => clearTimeout(timer);
-  }, [id, duration, onDismiss]);
+  }, [id, duration]);
+
+  const handleDismiss = useCallback(() => {
+    setIsDismissing(true);
+  }, []);
+
+  const handleAnimationEnd = useCallback(() => {
+    if (isDismissing) {
+      onDismiss(id);
+    }
+  }, [isDismissing, id, onDismiss]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === 'Escape' || e.key === 'Enter') {
-        onDismiss(id);
+        handleDismiss();
       }
     },
-    [id, onDismiss]
+    [handleDismiss]
   );
 
   return (
-    <m.div
-      layout={!prefersReducedMotion}
-      initial={prefersReducedMotion ? false : { opacity: 0, y: -20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -20, scale: 0.95 }}
-      transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.2, ease: 'easeOut' }}
-      role="alert"
-      aria-live="polite"
+    <div
+      role={type === 'error' ? 'alert' : 'status'}
       tabIndex={0}
       onKeyDown={handleKeyDown}
+      onAnimationEnd={handleAnimationEnd}
       className={cn(
         'flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg',
         'min-w-[280px] max-w-[400px]',
         'cursor-pointer select-none',
         'focus:outline-none focus:ring-2 focus:ring-white/50',
+        'transition-all duration-200 ease-out',
+        isDismissing ? 'animate-toast-out' : 'animate-toast-in',
         TOAST_STYLES[type]
       )}
-      onClick={() => onDismiss(id)}
+      onClick={handleDismiss}
     >
       <span
         className={cn(
@@ -99,7 +105,7 @@ function Toast({ toast, onDismiss }: ToastProps) {
         type="button"
         onClick={(e) => {
           e.stopPropagation();
-          onDismiss(id);
+          handleDismiss();
         }}
         className="p-1 rounded hover:bg-white/20 transition-colors"
         aria-label={closeLabel}
@@ -119,7 +125,7 @@ function Toast({ toast, onDismiss }: ToastProps) {
           />
         </svg>
       </button>
-    </m.div>
+    </div>
   );
 }
 
@@ -129,21 +135,15 @@ interface ToastContainerProps {
 }
 
 export function ToastContainer({ toasts, onDismiss }: ToastContainerProps) {
-  const prefersReducedMotion = useReducedMotion();
-
   return (
-    <LazyMotion features={domAnimation}>
-      <div
-        className="fixed top-4 right-4 z-[9999] flex flex-col gap-2"
-        style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
-      >
-        <AnimatePresence mode={prefersReducedMotion ? 'sync' : 'popLayout'}>
-          {toasts.map((toast) => (
-            <Toast key={toast.id} toast={toast} onDismiss={onDismiss} />
-          ))}
-        </AnimatePresence>
-      </div>
-    </LazyMotion>
+    <div
+      className="fixed top-4 right-4 z-[9999] flex flex-col gap-2"
+      style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
+    >
+      {toasts.map((toast) => (
+        <Toast key={toast.id} toast={toast} onDismiss={onDismiss} />
+      ))}
+    </div>
   );
 }
 

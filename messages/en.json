@@ -272,6 +272,26 @@
       "title": "Unable to load news",
       "message": "An error occurred while loading news articles. Please try again shortly.",
       "backLabel": "Back to news"
+    },
+    "home": {
+      "title": "Unable to load page",
+      "message": "An error occurred while loading the homepage. Please try again shortly.",
+      "backLabel": "Go to home"
+    },
+    "ourReality": {
+      "title": "Unable to load statistics",
+      "message": "An error occurred while loading the data. Please try again shortly.",
+      "backLabel": "Back to Our Reality"
+    },
+    "ourProof": {
+      "title": "Unable to load data",
+      "message": "An error occurred while loading proof data. Please try again shortly.",
+      "backLabel": "Back to Our Proof"
+    },
+    "archive": {
+      "title": "Unable to load archive",
+      "message": "An error occurred while loading archive data. Please try again shortly.",
+      "backLabel": "Back to archive"
     }
   }
 }
