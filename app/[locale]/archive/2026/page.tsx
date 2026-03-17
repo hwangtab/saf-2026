@@ -19,6 +19,8 @@ import { createLocaleAlternates } from '@/lib/locale-alternates';
 // Dynamically import KakaoMap (client-side only, reduces initial bundle)
 import ExhibitionMapWrapper from '@/components/features/ExhibitionMapWrapper';
 
+export const revalidate = 3600;
+
 const PAGE_URL = `${SITE_URL}/archive/2026`;
 const PAGE_COPY = {
   ko: {

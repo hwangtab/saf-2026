@@ -20,7 +20,7 @@ import { getSupabaseHomepageArtworks, getSupabaseFAQs } from '@/lib/supabase-dat
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createLocaleAlternates } from '@/lib/locale-alternates';
 
-export const revalidate = 300;
+export const revalidate = 1800;
 
 const DynamicCounter = dynamic(() => import('@/components/features/DynamicCounter'), {
   loading: () => (

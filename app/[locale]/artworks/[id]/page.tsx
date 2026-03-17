@@ -39,7 +39,7 @@ interface Props {
   }>;
 }
 
-export const revalidate = 300;
+export const revalidate = 600;
 
 const containsHangul = (value: string): boolean => /[가-힣]/.test(value);
 

@@ -12,7 +12,7 @@ import { createBreadcrumbSchema, generateArtworkListSchema } from '@/lib/seo-uti
 import { getSupabaseArtworks } from '@/lib/supabase-data';
 import type { Artwork, ArtworkListItem } from '@/types';
 
-export const revalidate = 300;
+export const revalidate = 600;
 
 const PAGE_URL = `${SITE_URL}/artworks`;
 

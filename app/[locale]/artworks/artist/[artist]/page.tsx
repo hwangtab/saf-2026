@@ -14,6 +14,8 @@ import { createLocaleAlternates } from '@/lib/locale-alternates';
 
 import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
 
+export const revalidate = 600;
+
 interface Props {
   params: Promise<{
     artist: string;

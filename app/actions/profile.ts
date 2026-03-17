@@ -5,6 +5,7 @@ import { requireArtistActive } from '@/lib/auth/guards';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { logArtistAction } from './admin-logs';
 import { getActionErrorMessage } from '@/lib/utils/action-error';
+import { validateTextLength, validateUrl, validateEmail } from '@/lib/utils/input-validation';
 
 export type ActionState = {
   message: string;
@@ -28,14 +29,14 @@ export async function updateArtistProfile(
       .eq('user_id', user.id)
       .single();
 
-    const name_ko = formData.get('name_ko') as string;
-    const name_en = formData.get('name_en') as string;
-    const bio = formData.get('bio') as string;
-    const history = formData.get('history') as string;
-    const profile_image = formData.get('profile_image') as string;
-    const contact_email = formData.get('contact_email') as string;
-    const instagram = formData.get('instagram') as string;
-    const homepage = formData.get('homepage') as string;
+    const name_ko = validateTextLength(formData.get('name_ko') as string, 100, '한국어 이름');
+    const name_en = validateTextLength(formData.get('name_en') as string, 100, '영어 이름');
+    const bio = validateTextLength(formData.get('bio') as string, 5000, '소개');
+    const history = validateTextLength(formData.get('history') as string, 10000, '이력');
+    const profile_image = (formData.get('profile_image') as string)?.trim() || '';
+    const contact_email = validateEmail(formData.get('contact_email') as string | null);
+    const instagram = validateUrl(formData.get('instagram') as string | null);
+    const homepage = validateUrl(formData.get('homepage') as string | null);
 
     const { error } = await supabase
       .from('artists')

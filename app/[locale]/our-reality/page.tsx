@@ -20,7 +20,7 @@ import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { createLocaleAlternates } from '@/lib/locale-alternates';
 
-export const revalidate = 300;
+export const revalidate = 3600;
 
 const PAGE_URL = `${SITE_URL}/our-reality`;
 const PAGE_COPY = {

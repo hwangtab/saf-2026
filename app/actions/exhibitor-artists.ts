@@ -5,6 +5,7 @@ import { requireExhibitor } from '@/lib/auth/guards';
 import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { getString, getStoragePathFromPublicUrl } from '@/lib/utils/form-helpers';
+import { validateTextLength, validateUrl, validateEmail } from '@/lib/utils/input-validation';
 import { logExhibitorAction } from './admin-logs';
 
 export async function getExhibitorArtists() {
@@ -44,13 +45,13 @@ export async function createExhibitorArtist(formData: FormData) {
   const user = await requireExhibitor();
   const supabase = await createSupabaseAdminOrServerClient();
 
-  const name_ko = getString(formData, 'name_ko');
-  const name_en = getString(formData, 'name_en');
-  const bio = getString(formData, 'bio');
-  const history = getString(formData, 'history');
-  const contact_email = getString(formData, 'contact_email');
-  const instagram = getString(formData, 'instagram');
-  const homepage = getString(formData, 'homepage');
+  const name_ko = validateTextLength(getString(formData, 'name_ko'), 100, '한국어 이름');
+  const name_en = validateTextLength(getString(formData, 'name_en'), 100, '영어 이름');
+  const bio = validateTextLength(getString(formData, 'bio'), 5000, '소개');
+  const history = validateTextLength(getString(formData, 'history'), 10000, '이력');
+  const contact_email = validateEmail(getString(formData, 'contact_email') || null);
+  const instagram = validateUrl(getString(formData, 'instagram') || null);
+  const homepage = validateUrl(getString(formData, 'homepage') || null);
   const profile_image = getString(formData, 'profile_image');
 
   const { data, error } = await supabase
@@ -61,9 +62,9 @@ export async function createExhibitorArtist(formData: FormData) {
       name_en,
       bio,
       history,
-      contact_email: contact_email || null,
-      instagram: instagram || null,
-      homepage: homepage || null,
+      contact_email,
+      instagram,
+      homepage,
       profile_image: profile_image || null,
     })
     .select()
@@ -104,14 +105,14 @@ export async function updateExhibitorArtist(id: string, formData: FormData) {
     throw new Error('You do not have permission to update this artist.');
   }
 
-  const name_ko = getString(formData, 'name_ko');
-  const name_en = getString(formData, 'name_en');
-  const bio = getString(formData, 'bio');
-  const history = getString(formData, 'history');
+  const name_ko = validateTextLength(getString(formData, 'name_ko'), 100, '한국어 이름');
+  const name_en = validateTextLength(getString(formData, 'name_en'), 100, '영어 이름');
+  const bio = validateTextLength(getString(formData, 'bio'), 5000, '소개');
+  const history = validateTextLength(getString(formData, 'history'), 10000, '이력');
   const profile_image = getString(formData, 'profile_image');
-  const contact_email = getString(formData, 'contact_email');
-  const instagram = getString(formData, 'instagram');
-  const homepage = getString(formData, 'homepage');
+  const contact_email = validateEmail(getString(formData, 'contact_email') || null);
+  const instagram = validateUrl(getString(formData, 'instagram') || null);
+  const homepage = validateUrl(getString(formData, 'homepage') || null);
 
   const { data: newArtist, error } = await supabase
     .from('artists')
@@ -121,9 +122,9 @@ export async function updateExhibitorArtist(id: string, formData: FormData) {
       bio,
       history,
       profile_image: profile_image || null,
-      contact_email: contact_email || null,
-      instagram: instagram || null,
-      homepage: homepage || null,
+      contact_email,
+      instagram,
+      homepage,
       updated_at: new Date().toISOString(),
     })
     .eq('id', id)
