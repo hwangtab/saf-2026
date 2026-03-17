@@ -167,6 +167,16 @@ export interface BreadcrumbItem {
   url: string;
 }
 
+export interface ChangelogEntry {
+  hash: string;
+  type: 'feat' | 'fix' | 'perf';
+  scope: string | null;
+  subject: string;
+  body: string | null;
+  date: string;
+  author: string;
+}
+
 export type FeedbackCategory = 'bug' | 'improvement' | 'question' | 'other';
 export type FeedbackStatus = 'open' | 'reviewing' | 'resolved' | 'closed';
 

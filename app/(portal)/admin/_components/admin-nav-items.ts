@@ -40,6 +40,7 @@ const ADMIN_NAV_GROUPS_BY_LOCALE: Record<LocaleCode, AdminNavGroup[]> = {
       items: [
         { href: '/admin/feedback', label: '피드백' },
         { href: '/admin/logs', label: '활동 로그' },
+        { href: '/admin/changelog', label: '개발 이력' },
         { href: '/admin/trash', label: '휴지통' },
       ],
     },
@@ -77,6 +78,7 @@ const ADMIN_NAV_GROUPS_BY_LOCALE: Record<LocaleCode, AdminNavGroup[]> = {
       items: [
         { href: '/admin/feedback', label: 'Feedback' },
         { href: '/admin/logs', label: 'Activity Logs' },
+        { href: '/admin/changelog', label: 'Dev Changelog' },
         { href: '/admin/trash', label: 'Trash' },
       ],
     },

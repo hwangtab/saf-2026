@@ -16,6 +16,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 200
 
       - uses: actions/setup-node@v4
         with:
@@ -36,6 +38,9 @@ jobs:
 
       - name: Validate artworks
         run: npm run validate-artworks
+
+      - name: Generate changelog
+        run: npm run generate-changelog
 
       - name: Build
         run: npx next build

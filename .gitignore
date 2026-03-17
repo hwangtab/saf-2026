@@ -39,6 +39,9 @@ yarn-error.log*
 # Vercel
 .vercel/
 
+# Generated changelog
+content/changelog.json
+
 # next-image-export-optimizer
 /public/images/**/nextImageExportOptimizer/
 .vercel
