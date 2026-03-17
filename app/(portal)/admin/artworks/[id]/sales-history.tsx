@@ -164,8 +164,16 @@ export function SalesHistory({
       formData.append('note', editNote);
       formData.append('sold_at', editDate);
 
-      await updateArtworkSale(formData);
-      toast.success('판매 기록이 수정되었습니다.');
+      const result = await updateArtworkSale(formData);
+      if (result.cafe24.status === 'synced') {
+        toast.success('판매 기록 수정 및 Cafe24 동기화 완료.');
+      } else if (result.cafe24.status === 'pending_auth') {
+        toast.warning('판매 기록 수정됨. Cafe24 인증이 필요합니다.');
+      } else if (result.cafe24.status === 'failed') {
+        toast.warning('판매 기록 수정됨. Cafe24 동기화 실패.');
+      } else {
+        toast.success('판매 기록이 수정되었습니다.');
+      }
       setEditingSaleId(null);
       router.refresh();
     } catch (err: unknown) {
@@ -190,8 +198,16 @@ export function SalesHistory({
     }
     setIsVoiding(true);
     try {
-      await voidArtworkSale(saleId, voidReason);
-      toast.success('판매 기록이 취소되었습니다.');
+      const result = await voidArtworkSale(saleId, voidReason);
+      if (result.cafe24.status === 'synced') {
+        toast.success('판매 기록 취소 및 Cafe24 동기화 완료.');
+      } else if (result.cafe24.status === 'pending_auth') {
+        toast.warning('판매 기록 취소됨. Cafe24 인증이 필요합니다.');
+      } else if (result.cafe24.status === 'failed') {
+        toast.warning('판매 기록 취소됨. Cafe24 동기화 실패.');
+      } else {
+        toast.success('판매 기록이 취소되었습니다.');
+      }
       setVoidingSaleId(null);
       router.refresh();
     } catch (err: unknown) {

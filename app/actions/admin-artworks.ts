@@ -58,6 +58,77 @@ function toCafe24SyncFeedback(
   };
 }
 
+/**
+ * 활성(non-voided) 판매 기록 기반으로 artwork.status를 재계산하고 업데이트.
+ * sold → available, available → sold 양방향 동기화.
+ * reserved 상태는 관리자 수동 설정이므로 판매 완료가 아닌 한 유지.
+ */
+async function deriveAndSyncArtworkStatus(
+  supabase: Awaited<ReturnType<typeof createSupabaseAdminOrServerClient>>,
+  artworkId: string
+): Promise<'available' | 'sold' | 'reserved'> {
+  const { data: artwork } = await supabase
+    .from('artworks')
+    .select('id, status, sold_at, edition_type, edition_limit')
+    .eq('id', artworkId)
+    .single();
+
+  if (!artwork) return 'available';
+
+  let { data: salesRows, error: salesError } = await supabase
+    .from('artwork_sales')
+    .select('quantity')
+    .eq('artwork_id', artworkId)
+    .is('voided_at', null);
+
+  if (salesError && isMissingVoidedAtColumnError(salesError)) {
+    ({ data: salesRows, error: salesError } = await supabase
+      .from('artwork_sales')
+      .select('quantity')
+      .eq('artwork_id', artworkId));
+  }
+  if (salesError) return artwork.status as 'available' | 'sold' | 'reserved';
+
+  const soldQuantity = (salesRows || []).reduce(
+    (sum, row) => sum + Math.max(1, typeof row.quantity === 'number' ? row.quantity : 1),
+    0
+  );
+
+  const editionType = artwork.edition_type || 'unique';
+  const isSold =
+    editionType === 'unique'
+      ? soldQuantity >= 1
+      : editionType === 'limited' && !!artwork.edition_limit
+        ? soldQuantity >= artwork.edition_limit
+        : false;
+
+  if (isSold && artwork.status !== 'sold') {
+    await supabase
+      .from('artworks')
+      .update({
+        status: 'sold',
+        sold_at: artwork.sold_at || new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', artworkId);
+    return 'sold';
+  }
+
+  if (!isSold && artwork.status === 'sold') {
+    await supabase
+      .from('artworks')
+      .update({
+        status: 'available',
+        sold_at: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', artworkId);
+    return 'available';
+  }
+
+  return artwork.status as 'available' | 'sold' | 'reserved';
+}
+
 type Cafe24BatchSyncResult = {
   succeeded: number;
   failed: number;
@@ -871,6 +942,7 @@ export async function recordArtworkSale(formData: FormData) {
     }
   );
 
+  await deriveAndSyncArtworkStatus(supabase, artworkId);
   const syncResult = await syncArtworkToCafe24(artworkId);
 
   return {
@@ -989,7 +1061,13 @@ export async function updateArtworkSale(formData: FormData) {
     }
   );
 
-  return { success: true };
+  await deriveAndSyncArtworkStatus(supabase, artworkId);
+  const syncResult = await syncArtworkToCafe24(artworkId);
+
+  return {
+    success: true,
+    cafe24: toCafe24SyncFeedback(syncResult),
+  };
 }
 
 export async function voidArtworkSale(saleId: string, reason: string) {
@@ -1050,7 +1128,13 @@ export async function voidArtworkSale(saleId: string, reason: string) {
     }
   );
 
-  return { success: true };
+  await deriveAndSyncArtworkStatus(supabase, artworkId);
+  const syncResult = await syncArtworkToCafe24(artworkId);
+
+  return {
+    success: true,
+    cafe24: toCafe24SyncFeedback(syncResult),
+  };
 }
 
 export async function batchToggleHidden(ids: string[], isHidden: boolean) {
