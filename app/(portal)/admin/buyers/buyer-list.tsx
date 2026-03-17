@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { AdminCard, AdminCardHeader, AdminEmptyState } from '@/app/admin/_components/admin-ui';
 import { matchesAnySearch } from '@/lib/search-utils';
@@ -34,7 +34,7 @@ export function BuyerList({ buyers }: { buyers: BuyerRecord[] }) {
   const router = useRouter();
   const toast = useToast();
   const [search, setSearch] = useState('');
-  const [sortKey, setSortKey] = useState<SortKey>('revenue');
+  const [sortKey, setSortKey] = useState<SortKey>('purchaseCount');
   const [sortDir, setSortDir] = useState<SortDir>('desc');
   const [editingName, setEditingName] = useState<string | null>(null);
   const [editPhone, setEditPhone] = useState('');
@@ -115,6 +115,32 @@ export function BuyerList({ buyers }: { buyers: BuyerRecord[] }) {
     if (e.key === 'Escape') setEditingName(null);
   }
 
+  const exportCsv = useCallback(() => {
+    const lines: string[] = [];
+    lines.push('구매자,연락처,구매 수량,작품 수,채널,최근 구매,매출');
+    for (const b of sorted) {
+      lines.push(
+        [
+          `"${b.buyerName}"`,
+          b.buyerPhone || '',
+          b.purchaseCount,
+          b.artworkCount,
+          formatChannel(b.channels),
+          formatDate(b.lastPurchaseDate),
+          b.revenue,
+        ].join(',')
+      );
+    }
+    const bom = '\uFEFF';
+    const blob = new Blob([bom + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `saf2026-buyers.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [sorted]);
+
   return (
     <>
       <div className="flex items-center gap-3">
@@ -128,6 +154,27 @@ export function BuyerList({ buyers }: { buyers: BuyerRecord[] }) {
         <span className="shrink-0 text-sm text-slate-500">
           {filtered.length}명{search.trim() ? ` / ${buyers.length}명` : ''}
         </span>
+        <button
+          onClick={exportCsv}
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 shadow-sm transition-colors hover:bg-slate-50"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          CSV
+        </button>
       </div>
 
       <AdminCard className="overflow-hidden">
