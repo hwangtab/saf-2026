@@ -1,15 +1,56 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { AdminBadge, AdminCard } from '@/app/admin/_components/admin-ui';
 import type { ChangelogEntry } from '@/types';
 
 type FilterType = 'all' | 'feat' | 'fix' | 'perf';
 
+const PER_PAGE = 30;
+
 const TYPE_CONFIG: Record<string, { label: string; tone: 'info' | 'warning' | 'success' }> = {
   feat: { label: '새 기능', tone: 'info' },
   fix: { label: '버그 수정', tone: 'warning' },
   perf: { label: '성능 개선', tone: 'success' },
+};
+
+const SCOPE_KO: Record<string, string> = {
+  admin: '관리자',
+  'admin-artworks': '작품관리',
+  analytics: '분석',
+  archive: '아카이브',
+  artworks: '출품작',
+  auth: '로그인',
+  build: '빌드',
+  cache: '캐시',
+  cafe24: '카페24',
+  consent: '약관동의',
+  dashboard: '대시보드',
+  data: '데이터',
+  db: 'DB',
+  detail: '상세페이지',
+  feedback: '피드백',
+  fonts: '글꼴',
+  footer: '하단',
+  gallery: '갤러리',
+  i18n: '다국어',
+  images: '이미지',
+  legal: '법적문서',
+  logs: '활동로그',
+  onboarding: '가입',
+  privacy: '개인정보',
+  revenue: '매출',
+  rsc: '서버컴포넌트',
+  sales: '판매',
+  search: '검색',
+  seo: 'SEO',
+  share: '공유',
+  terms: '약관',
+  trigger: '트리거',
+  ui: '화면',
+  video: '영상',
+  web: '웹성능',
+  webhook: '웹훅',
 };
 
 const FILTERS: { value: FilterType; label: string }[] = [
@@ -35,17 +76,33 @@ function groupByDate(entries: ChangelogEntry[]): Record<string, ChangelogEntry[]
 
 export function ChangelogList({ entries }: { entries: ChangelogEntry[] }) {
   const [filter, setFilter] = useState<FilterType>('all');
+  const [page, setPage] = useState(1);
 
-  const filtered = filter === 'all' ? entries : entries.filter((e) => e.type === filter);
-  const grouped = groupByDate(filtered);
+  const filtered = useMemo(
+    () => (filter === 'all' ? entries : entries.filter((e) => e.type === filter)),
+    [entries, filter]
+  );
+
+  const totalPages = Math.ceil(filtered.length / PER_PAGE);
+  const start = (page - 1) * PER_PAGE;
+  const paged = filtered.slice(start, start + PER_PAGE);
+  const grouped = groupByDate(paged);
   const dates = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
 
-  const counts = {
-    all: entries.length,
-    feat: entries.filter((e) => e.type === 'feat').length,
-    fix: entries.filter((e) => e.type === 'fix').length,
-    perf: entries.filter((e) => e.type === 'perf').length,
-  };
+  const counts = useMemo(
+    () => ({
+      all: entries.length,
+      feat: entries.filter((e) => e.type === 'feat').length,
+      fix: entries.filter((e) => e.type === 'fix').length,
+      perf: entries.filter((e) => e.type === 'perf').length,
+    }),
+    [entries]
+  );
+
+  function handleFilterChange(f: FilterType) {
+    setFilter(f);
+    setPage(1);
+  }
 
   if (entries.length === 0) {
     return (
@@ -60,12 +117,12 @@ export function ChangelogList({ entries }: { entries: ChangelogEntry[] }) {
 
   return (
     <div className="space-y-6">
-      {/* Filter pills */}
-      <div className="flex flex-wrap gap-2">
+      {/* Filter pills + count */}
+      <div className="flex flex-wrap items-center gap-2">
         {FILTERS.map((f) => (
           <button
             key={f.value}
-            onClick={() => setFilter(f.value)}
+            onClick={() => handleFilterChange(f.value)}
             className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
               filter === f.value
                 ? 'bg-indigo-600 text-white shadow-sm'
@@ -80,6 +137,9 @@ export function ChangelogList({ entries }: { entries: ChangelogEntry[] }) {
             </span>
           </button>
         ))}
+        <span className="ml-auto text-xs text-slate-400">
+          총 {filtered.length}개 중 {start + 1}–{Math.min(start + PER_PAGE, filtered.length)}
+        </span>
       </div>
 
       {/* Grouped entries */}
@@ -95,14 +155,17 @@ export function ChangelogList({ entries }: { entries: ChangelogEntry[] }) {
                     <AdminBadge tone={config.tone}>{config.label}</AdminBadge>
                     {entry.scope && (
                       <span className="rounded bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
-                        {entry.scope}
+                        {SCOPE_KO[entry.scope] || entry.scope}
                       </span>
                     )}
                     <span className="flex-1 text-sm font-medium text-slate-900">
-                      {entry.subject}
+                      {entry.summary || entry.subject}
                     </span>
                     <span className="shrink-0 font-mono text-xs text-slate-400">{entry.hash}</span>
                   </div>
+                  {entry.summary && (
+                    <p className="mt-1 pl-16 text-xs text-slate-400">{entry.subject}</p>
+                  )}
                   {entry.body && (
                     <details className="mt-2">
                       <summary className="cursor-pointer text-xs text-slate-400 hover:text-slate-600">
@@ -124,6 +187,39 @@ export function ChangelogList({ entries }: { entries: ChangelogEntry[] }) {
         <AdminCard className="p-8 text-center">
           <p className="text-sm text-slate-500">해당 카테고리의 변경 이력이 없습니다.</p>
         </AdminCard>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <nav className="flex items-center justify-center gap-1 pt-2">
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="rounded-lg px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent"
+          >
+            이전
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+            <button
+              key={p}
+              onClick={() => setPage(p)}
+              className={`min-w-[2.25rem] rounded-lg px-2 py-2 text-sm font-medium transition ${
+                p === page
+                  ? 'bg-indigo-600 text-white shadow-sm'
+                  : 'text-slate-600 hover:bg-slate-100'
+              }`}
+            >
+              {p}
+            </button>
+          ))}
+          <button
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+            className="rounded-lg px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent"
+          >
+            다음
+          </button>
+        </nav>
       )}
     </div>
   );

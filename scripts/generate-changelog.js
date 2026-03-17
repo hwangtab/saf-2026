@@ -11,7 +11,6 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-const LIMIT = 200;
 const ALLOWED_TYPES = ['feat', 'fix', 'perf'];
 const DELIMITER = '---COMMIT_DELIM---';
 const FIELD_SEP = '---FIELD_SEP---';
@@ -28,7 +27,7 @@ function getGitLog() {
     ].join(FIELD_SEP);
 
     const raw = execSync(
-      `git log -${LIMIT} --no-merges --format="${DELIMITER}${format}"`,
+      `git log --no-merges --format="${DELIMITER}${format}"`,
       { encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 }
     );
 
@@ -61,6 +60,17 @@ function cleanBody(body) {
   return cleaned || null;
 }
 
+// 한국어 요약 매핑 로드
+function loadKoreanSummaries() {
+  try {
+    const filePath = path.join(__dirname, '..', 'content', 'changelog-ko.json');
+    const raw = fs.readFileSync(filePath, 'utf-8');
+    return JSON.parse(raw);
+  } catch {
+    return {};
+  }
+}
+
 // 메인 로직
 function generateChangelog() {
   const raw = getGitLog();
@@ -68,6 +78,8 @@ function generateChangelog() {
     writeOutput([]);
     return;
   }
+
+  const koSummaries = loadKoreanSummaries();
 
   const commits = raw
     .split(DELIMITER)
@@ -81,17 +93,31 @@ function generateChangelog() {
       if (!parsed) return null;
       if (!ALLOWED_TYPES.includes(parsed.type)) return null;
 
+      const trimmedHash = hash.trim();
       return {
-        hash: hash.trim(),
+        hash: trimmedHash,
         type: parsed.type,
         scope: parsed.scope,
         subject: parsed.subject,
+        summary: koSummaries[trimmedHash] || null,
         body: cleanBody(bodyParts.join(FIELD_SEP)),
         date: dateISO.trim().slice(0, 10), // YYYY-MM-DD
         author: author.trim(),
       };
     })
     .filter(Boolean);
+
+  // 한국어 요약 누락 경고
+  const missing = commits.filter((c) => !c.summary);
+  if (missing.length > 0) {
+    console.warn(
+      `\nWarning: ${missing.length}개 커밋에 한국어 요약이 없습니다.`
+    );
+    console.warn('content/changelog-ko.json에 다음 해시를 추가해 주세요:');
+    for (const c of missing) {
+      console.warn(`  "${c.hash}": "${c.subject}"`);
+    }
+  }
 
   writeOutput(commits);
 }

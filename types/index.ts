@@ -172,6 +172,7 @@ export interface ChangelogEntry {
   type: 'feat' | 'fix' | 'perf';
   scope: string | null;
   subject: string;
+  summary: string | null;
   body: string | null;
   date: string;
   author: string;
