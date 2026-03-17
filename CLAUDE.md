@@ -326,6 +326,25 @@ cd video && npm run render                 # 영상만 렌더링
   - 감정적 대목은 `rate: "-5%"` ~ `"-8%"`, 정보 전달은 기본 `"+0%"`
 - **커스텀 SSML은 edge-tts v5+에서 지원 안 됨** — rate/pitch/volume 파라미터만 사용 가능
 
+## Commit Convention
+
+Semantic format: `type(scope): subject`
+
+커밋 본문에 반드시 `요약:` 줄을 포함할 것. 개발 이력 페이지(`/admin/changelog`)에서 한국어로 표시됨.
+
+```
+feat(admin): add some new feature
+
+요약: 어떤 새 기능 추가
+
+- detail 1
+- detail 2
+
+Co-Authored-By: ...
+```
+
+`요약:` 줄이 없으면 영문 subject가 그대로 노출되어 비개발자 관리자가 이해할 수 없음.
+
 ## Pre-commit Hooks
 
 Husky + lint-staged runs automatically on commit:

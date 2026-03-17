@@ -47,6 +47,13 @@ function parseSubject(subject) {
   return { type, scope: scope || null, subject: text };
 }
 
+// 커밋 본문에서 "요약:" 줄 추출
+function extractSummary(body) {
+  if (!body) return null;
+  const match = body.match(/^요약:\s*(.+)$/m);
+  return match ? match[1].trim() : null;
+}
+
 // 커밋 본문 정리
 function cleanBody(body) {
   if (!body || !body.trim()) return null;
@@ -54,7 +61,8 @@ function cleanBody(body) {
   const lines = body
     .split('\n')
     .filter((line) => !line.startsWith('Co-Authored-By:'))
-    .filter((line) => !line.startsWith('co-authored-by:'));
+    .filter((line) => !line.startsWith('co-authored-by:'))
+    .filter((line) => !line.match(/^요약:\s*.+$/));
 
   const cleaned = lines.join('\n').trim();
   return cleaned || null;
@@ -94,13 +102,15 @@ function generateChangelog() {
       if (!ALLOWED_TYPES.includes(parsed.type)) return null;
 
       const trimmedHash = hash.trim();
+      const rawBody = bodyParts.join(FIELD_SEP);
+      const bodySummary = extractSummary(rawBody);
       return {
         hash: trimmedHash,
         type: parsed.type,
         scope: parsed.scope,
         subject: parsed.subject,
-        summary: koSummaries[trimmedHash] || null,
-        body: cleanBody(bodyParts.join(FIELD_SEP)),
+        summary: bodySummary || koSummaries[trimmedHash] || null,
+        body: cleanBody(rawBody),
         date: dateISO.trim().slice(0, 10), // YYYY-MM-DD
         author: author.trim(),
       };
