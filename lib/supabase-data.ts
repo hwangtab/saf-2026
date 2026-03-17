@@ -68,10 +68,6 @@ type FAQRow = {
 
 const containsHangul = (value: string): boolean => /[가-힣]/.test(value);
 
-function isMissingTableError(error: unknown): boolean {
-  if (!error || typeof error !== 'object') return false;
-  return (error as { code?: string }).code === '42P01';
-}
 const ARTWORK_SELECT_COLUMNS =
   'id, artist_id, title, description, size, material, year, edition, price, images, shop_url, status, category';
 const ARTIST_SELECT_COLUMNS = 'id, name_ko, bio, history';
@@ -122,11 +118,8 @@ const getSupabaseArtworksUncached = async (): Promise<Artwork[]> => {
     .order('created_at', { ascending: false });
 
   if (error) {
-    if (isMissingTableError(error)) {
-      return fallbackArtworks;
-    }
     console.error('Error fetching artworks from Supabase:', error);
-    return [];
+    return fallbackArtworks;
   }
 
   return (data || []).map((item) =>
@@ -166,11 +159,8 @@ const getSupabaseHomepageArtworkCandidatesUncached = async (limit: number): Prom
     .limit(limit * 3);
 
   if (error) {
-    if (isMissingTableError(error)) {
-      return fallbackArtworks.filter((artwork) => !artwork.sold);
-    }
     console.error('Error fetching homepage artworks from Supabase:', error);
-    return [];
+    return fallbackArtworks.filter((artwork) => !artwork.sold);
   }
 
   return (data || []).map((item) =>
@@ -209,9 +199,6 @@ const getSupabaseArtworkByIdUncached = async (id: string): Promise<Artwork | nul
     .maybeSingle();
 
   if (error) {
-    if (isMissingTableError(error)) {
-      return getArtworkById(id) || null;
-    }
     console.error(`Error fetching artwork ${id} from Supabase:`, error);
     return getArtworkById(id) || null;
   }
@@ -262,11 +249,8 @@ const getSupabaseArtworksByArtistUncached = async (artistName: string): Promise<
     .order('created_at', { ascending: false });
 
   if (error) {
-    if (isMissingTableError(error)) {
-      return fallbackArtworks.filter((a) => a.artist === artistName);
-    }
     console.error(`Error fetching artworks for artist ${artistName}:`, error);
-    return [];
+    return fallbackArtworks.filter((a) => a.artist === artistName);
   }
 
   return (data || []).map((item) =>
@@ -298,11 +282,8 @@ export const getSupabaseTestimonials = cache(async (): Promise<TestimonialCatego
     .order('category', { ascending: true });
 
   if (error) {
-    if (isMissingTableError(error)) {
-      return testimonials;
-    }
     console.error('Error fetching testimonials from Supabase:', error);
-    return [];
+    return testimonials;
   }
 
   // Group by category
@@ -371,9 +352,6 @@ export const getSupabaseFAQs = cache(
       .order('created_at', { ascending: true });
 
     if (error) {
-      if (isMissingTableError(error)) {
-        return fallbackFaqs;
-      }
       console.error('Error fetching FAQs from Supabase:', error);
       return fallbackFaqs;
     }
@@ -394,11 +372,8 @@ export const getSupabaseReviews = cache(async (): Promise<ExhibitionReview[]> =>
     .order('date', { ascending: false });
 
   if (error) {
-    if (isMissingTableError(error)) {
-      return exhibitionReviews;
-    }
     console.error('Error fetching reviews from Supabase:', error);
-    return [];
+    return exhibitionReviews;
   }
 
   return (data || []).map((item) => {
@@ -427,11 +402,8 @@ export const getSupabaseNews = cache(async (): Promise<NewsArticle[]> => {
     .order('date', { ascending: false });
 
   if (error) {
-    if (isMissingTableError(error)) {
-      return newsArticles;
-    }
     console.error('Error fetching news from Supabase:', error);
-    return [];
+    return newsArticles;
   }
 
   return (data || []).map((item) => {
@@ -459,9 +431,6 @@ export const getSupabaseArtistsByOwner = cache(async (ownerId: string): Promise<
     .eq('owner_id', ownerId);
 
   if (error) {
-    if (isMissingTableError(error)) {
-      return [];
-    }
     console.error(`Error fetching artists for owner ${ownerId}:`, error);
     return [];
   }
