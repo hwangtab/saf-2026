@@ -221,6 +221,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  if (!process.env.CAFE24_MALL_ID || !process.env.CAFE24_CLIENT_ID) {
+    return NextResponse.json({ message: 'Cafe24 not configured, skipping' }, { status: 200 });
+  }
+
   try {
     const forceWindowFromIso = request.nextUrl.searchParams.get('from');
     const forceWindowToIso = request.nextUrl.searchParams.get('to');

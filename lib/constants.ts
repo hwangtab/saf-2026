@@ -1,7 +1,7 @@
 import { BreadcrumbItem } from '@/types';
 
 // External Links
-export const SITE_URL = 'https://www.saf2026.com';
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.saf2026.com';
 export const SITE_URL_ALIAS = 'https://saf2026.com';
 
 export const OG_IMAGE = {
