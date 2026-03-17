@@ -1006,9 +1006,6 @@ export async function voidArtworkSale(saleId: string, reason: string) {
     .single();
 
   if (!existing) throw new Error('판매 기록을 찾을 수 없습니다.');
-  if (existing.source === 'cafe24') {
-    throw new Error('Cafe24 동기화 판매 기록은 취소할 수 없습니다.');
-  }
 
   const { error } = await supabase
     .from('artwork_sales')
@@ -1039,7 +1036,7 @@ export async function voidArtworkSale(saleId: string, reason: string) {
     'artwork_sale_voided',
     'artwork',
     artworkId,
-    { sale_id: saleId, reason },
+    { sale_id: saleId, reason, source: existing.source },
     admin.id,
     {
       summary: `판매 취소: ${artwork?.title || artworkId} (${existing.quantity}점, ${existing.buyer_name || '구매자 미상'})`,

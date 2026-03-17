@@ -560,8 +560,8 @@ export function SalesHistory({
                       ₩{(sale.sale_price * sale.quantity).toLocaleString()}
                     </td>
                     <td className="px-4 py-3 text-right">
-                      {canManage ? (
-                        <div className="flex items-center justify-end gap-1">
+                      <div className="flex items-center justify-end gap-1">
+                        {canManage && (
                           <button
                             type="button"
                             onClick={() => startEdit(sale)}
@@ -569,17 +569,15 @@ export function SalesHistory({
                           >
                             수정
                           </button>
-                          <button
-                            type="button"
-                            onClick={() => startVoid(sale.id)}
-                            className="rounded px-1.5 py-0.5 text-xs text-red-600 hover:bg-red-50"
-                          >
-                            삭제
-                          </button>
-                        </div>
-                      ) : (
-                        <span className="text-xs text-gray-400">-</span>
-                      )}
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => startVoid(sale.id)}
+                          className="rounded px-1.5 py-0.5 text-xs text-red-600 hover:bg-red-50"
+                        >
+                          삭제
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );
