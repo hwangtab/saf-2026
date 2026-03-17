@@ -81,8 +81,10 @@ export function BuyerList({ buyers }: { buyers: BuyerRecord[] }) {
   }
 
   function sortIndicator(key: SortKey) {
-    if (sortKey !== key) return '';
-    return sortDir === 'asc' ? ' ▲' : ' ▼';
+    if (sortKey !== key) {
+      return <span className="ml-1 text-slate-300">↕</span>;
+    }
+    return <span className="ml-1">{sortDir === 'asc' ? '▲' : '▼'}</span>;
   }
 
   function startEdit(buyer: BuyerRecord) {
@@ -143,33 +145,33 @@ export function BuyerList({ buyers }: { buyers: BuyerRecord[] }) {
                 <tr>
                   <th className="px-4 py-3 text-left">#</th>
                   <th
-                    className="cursor-pointer px-4 py-3 text-left hover:text-slate-800"
+                    className="cursor-pointer select-none px-4 py-3 text-left hover:text-slate-800"
                     onClick={() => toggleSort('buyerName')}
                   >
                     구매자{sortIndicator('buyerName')}
                   </th>
                   <th className="px-4 py-3 text-left">연락처</th>
                   <th
-                    className="cursor-pointer px-4 py-3 text-right hover:text-slate-800"
+                    className="cursor-pointer select-none px-4 py-3 text-right hover:text-slate-800"
                     onClick={() => toggleSort('purchaseCount')}
                   >
                     구매 수량{sortIndicator('purchaseCount')}
                   </th>
                   <th
-                    className="cursor-pointer px-4 py-3 text-right hover:text-slate-800"
+                    className="cursor-pointer select-none px-4 py-3 text-right hover:text-slate-800"
                     onClick={() => toggleSort('artworkCount')}
                   >
                     작품 수{sortIndicator('artworkCount')}
                   </th>
                   <th className="px-4 py-3 text-right">채널</th>
                   <th
-                    className="cursor-pointer px-4 py-3 text-right hover:text-slate-800"
+                    className="cursor-pointer select-none px-4 py-3 text-right hover:text-slate-800"
                     onClick={() => toggleSort('lastPurchaseDate')}
                   >
                     최근 구매{sortIndicator('lastPurchaseDate')}
                   </th>
                   <th
-                    className="cursor-pointer px-4 py-3 text-right hover:text-slate-800"
+                    className="cursor-pointer select-none px-4 py-3 text-right hover:text-slate-800"
                     onClick={() => toggleSort('revenue')}
                   >
                     매출{sortIndicator('revenue')}
