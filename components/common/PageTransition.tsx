@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
-import { m, useAnimationControls, useReducedMotion } from 'framer-motion';
 
 /**
  * 페이지 전환 래퍼 컴포넌트.
@@ -11,36 +10,34 @@ import { m, useAnimationControls, useReducedMotion } from 'framer-motion';
  */
 export default function PageTransition({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const prefersReducedMotion = useReducedMotion();
-  const controls = useAnimationControls();
   const isFirstRenderRef = useRef(true);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (prefersReducedMotion) return;
-
-    // 첫 렌더는 즉시 표시, 이후 라우트 변경부터 미세 전환 적용
     if (isFirstRenderRef.current) {
       isFirstRenderRef.current = false;
       return;
     }
 
-    void (async () => {
-      await controls.set({ opacity: 0.985 });
-      await controls.start({
-        opacity: 1,
-        transition: { duration: 0.16, ease: 'easeOut' },
+    const el = containerRef.current;
+    if (!el) return;
+
+    el.style.opacity = '0.985';
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        el.style.opacity = '1';
       });
-    })();
-  }, [controls, pathname, prefersReducedMotion]);
+    });
+  }, [pathname]);
 
   return (
-    <m.div
+    <div
+      ref={containerRef}
       data-route-path={pathname || ''}
-      className="w-full h-full"
-      initial={{ opacity: 1 }}
-      animate={prefersReducedMotion ? { opacity: 1 } : controls}
+      className="w-full h-full motion-reduce:!opacity-100"
+      style={{ transition: 'opacity 150ms ease-out' }}
     >
       {children}
-    </m.div>
+    </div>
   );
 }

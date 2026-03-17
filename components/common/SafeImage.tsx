@@ -97,7 +97,8 @@ function RemoteSafeImage({ src, sizes, ...props }: { src: string } & Omit<ImageP
           alt={alt || ''}
           className={className}
           loading={priority ? 'eager' : (loading as 'lazy' | 'eager') || 'lazy'}
-          decoding="async"
+          fetchPriority={priority ? 'high' : undefined}
+          decoding={priority ? 'sync' : 'async'}
           style={{
             position: 'absolute',
             height: '100%',
@@ -121,7 +122,8 @@ function RemoteSafeImage({ src, sizes, ...props }: { src: string } & Omit<ImageP
         height={typeof height === 'number' ? height : undefined}
         className={className}
         loading={priority ? 'eager' : (loading as 'lazy' | 'eager') || 'lazy'}
-        decoding="async"
+        fetchPriority={priority ? 'high' : undefined}
+        decoding={priority ? 'sync' : 'async'}
         style={style as React.CSSProperties}
         onError={handleError}
       />

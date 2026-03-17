@@ -102,6 +102,7 @@ const config: Config = {
         'fade-in-up': 'fadeInUp 0.4s ease-out forwards',
         'zoom-in-95': 'zoomIn95 0.2s ease-out forwards',
         stamp: 'stampIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+        'hero-breathing': 'heroBreathing 40s ease-in-out infinite',
       },
       keyframes: {
         shimmer: {
@@ -123,6 +124,10 @@ const config: Config = {
         stampIn: {
           '0%': { opacity: '0', transform: 'scale(1.05)' },
           '100%': { opacity: '1', transform: 'scale(1)' },
+        },
+        heroBreathing: {
+          '0%, 100%': { transform: 'scale(1.1)' },
+          '50%': { transform: 'scale(1.0)' },
         },
       },
       transitionDuration: {

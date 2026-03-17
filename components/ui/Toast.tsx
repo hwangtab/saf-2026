@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useCallback } from 'react';
-import { m, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { LazyMotion, domAnimation, m, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useLocale } from 'next-intl';
 import { cn } from '@/lib/utils';
 
@@ -132,16 +132,18 @@ export function ToastContainer({ toasts, onDismiss }: ToastContainerProps) {
   const prefersReducedMotion = useReducedMotion();
 
   return (
-    <div
-      className="fixed top-4 right-4 z-[9999] flex flex-col gap-2"
-      style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
-    >
-      <AnimatePresence mode={prefersReducedMotion ? 'sync' : 'popLayout'}>
-        {toasts.map((toast) => (
-          <Toast key={toast.id} toast={toast} onDismiss={onDismiss} />
-        ))}
-      </AnimatePresence>
-    </div>
+    <LazyMotion features={domAnimation}>
+      <div
+        className="fixed top-4 right-4 z-[9999] flex flex-col gap-2"
+        style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
+      >
+        <AnimatePresence mode={prefersReducedMotion ? 'sync' : 'popLayout'}>
+          {toasts.map((toast) => (
+            <Toast key={toast.id} toast={toast} onDismiss={onDismiss} />
+          ))}
+        </AnimatePresence>
+      </div>
+    </LazyMotion>
   );
 }
 

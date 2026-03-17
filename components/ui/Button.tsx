@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Link } from '@/i18n/navigation';
-import { m } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import {
   buttonVariants,
@@ -97,15 +96,13 @@ export default function Button({
   const content = (
     <>
       {isBusy && (
-        <m.div
+        <div
           className={cn(
-            'h-4 w-4 border-2 border-white border-t-transparent rounded-full',
+            'h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin',
             isFixedLeftLayout
               ? `absolute ${iconOffsetClass} top-1/2 -translate-y-1/2 pointer-events-none`
               : 'mr-2'
           )}
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
           aria-hidden="true"
         />
       )}

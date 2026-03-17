@@ -13,6 +13,7 @@ import type { Artwork, ArtworkListItem } from '@/types';
 import { createLocaleAlternates } from '@/lib/locale-alternates';
 
 import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
+import GalleryCampaignBanner from '@/components/features/GalleryCampaignBanner';
 
 export const revalidate = 600;
 
@@ -201,6 +202,11 @@ export default async function ArtistPage({ params }: Props) {
         <div className="container-max">
           <ArtworkGalleryWithSort artworks={listArtworks} initialArtist={artistName} />
         </div>
+      </Section>
+
+      {/* Campaign Banner */}
+      <Section variant="white" prevVariant="primary-surface" className="py-20 md:py-28">
+        <GalleryCampaignBanner />
       </Section>
     </main>
   );

@@ -258,6 +258,10 @@
     "bodyTop": "Proceeds become mutual aid funds",
     "bodyBottom": "supporting all artists in need"
   },
+  "galleryCampaign": {
+    "heading": "Every purchase is an act of solidarity",
+    "description": "These artists stand in solidarity against the financial crisis facing Korean artists. Join the mutual aid fund through artwork purchases or co-op membership."
+  },
   "pageErrors": {
     "artworks": {
       "title": "Unable to load artworks",

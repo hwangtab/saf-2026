@@ -49,13 +49,20 @@ export default function CTAButtonGroup({
   );
 
   const buttonSize = variant === 'large' ? 'lg' : 'md';
+  const isDonateExternal = donateHref?.startsWith('http');
+  const isPurchaseExternal = purchaseHref?.startsWith('http');
 
   return (
     <div className={containerClasses}>
-      <LinkButton href={donateHref} external variant="accent" size={buttonSize}>
+      <LinkButton href={donateHref} external={isDonateExternal} variant="accent" size={buttonSize}>
         {resolvedDonateText}
       </LinkButton>
-      <LinkButton href={purchaseHref} variant="secondary" size={buttonSize}>
+      <LinkButton
+        href={purchaseHref}
+        external={isPurchaseExternal}
+        variant="secondary"
+        size={buttonSize}
+      >
         {resolvedPurchaseText}
       </LinkButton>
     </div>

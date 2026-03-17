@@ -2,52 +2,73 @@
 
 import { useEffect, useState } from 'react';
 import SafeImage from '@/components/common/SafeImage';
-import { m, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { ANIMATION, HERO_IMAGES } from '@/lib/constants';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
 
 export default function BackgroundSlider() {
   const t = useTranslations('backgroundSlider');
-  const prefersReducedMotion = useReducedMotion();
   const isMobile = useIsMobile();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [isMotionStarted, setIsMotionStarted] = useState(false);
+  const [layers, setLayers] = useState<{ active: 'a' | 'b'; aIndex: number; bIndex: number }>({
+    active: 'a',
+    aIndex: 0,
+    bIndex: 0,
+  });
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const images = HERO_IMAGES;
 
-  const currentPhoto = images[currentIndex];
-  const nextIndex = (currentIndex + 1) % images.length;
-  const nextPhoto = images[nextIndex];
+  // Detect prefers-reduced-motion (replaces FM useReducedMotion)
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: sync with OS accessibility setting
+    setPrefersReducedMotion(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
 
   useEffect(() => {
-    if (prefersReducedMotion) {
-      return;
-    }
-
+    if (prefersReducedMotion) return;
     const timeoutId = setTimeout(() => {
       setIsMotionStarted(true);
     }, 1200);
-
-    return () => {
-      clearTimeout(timeoutId);
-    };
+    return () => clearTimeout(timeoutId);
   }, [prefersReducedMotion]);
 
   useEffect(() => {
-    // Don't start interval if reduced motion is preferred
-    if (prefersReducedMotion || !isMotionStarted || isPaused) return;
+    if (!isMotionStarted || isPaused) return;
 
     const interval = setInterval(() => {
-      // Only transition if the tab is focused
       if (!document.hidden) {
         setCurrentIndex((prev) => (prev + 1) % images.length);
       }
     }, ANIMATION.SLIDER_INTERVAL);
 
     return () => clearInterval(interval);
-  }, [images.length, prefersReducedMotion, isMotionStarted, isPaused]);
+  }, [images.length, isMotionStarted, isPaused]);
 
+  // Update the inactive layer's image, then toggle active layer
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: sync layer state with currentIndex for crossfade
+    setLayers((prev) => {
+      if (currentIndex === 0) {
+        return { active: 'a', aIndex: 0, bIndex: prev.bIndex };
+      }
+      if (prev.active === 'a') {
+        return { ...prev, bIndex: currentIndex, active: 'b' };
+      }
+      return { ...prev, aIndex: currentIndex, active: 'a' };
+    });
+  }, [currentIndex]);
+
+  const nextIndex = (currentIndex + 1) % images.length;
+  const nextPhoto = images[nextIndex];
+  const currentPhoto = images[currentIndex];
+
+  // Static image for reduced motion or pre-animation state
   if (prefersReducedMotion || !isMotionStarted) {
     return (
       <div className="absolute inset-0 -z-10 overflow-hidden bg-gray-900">
@@ -63,6 +84,9 @@ export default function BackgroundSlider() {
       </div>
     );
   }
+
+  const transitionDuration = isMobile ? '1000ms' : '1500ms';
+  const scaleDuration = isMobile ? '0ms' : '5000ms';
 
   return (
     <>
@@ -82,39 +106,47 @@ export default function BackgroundSlider() {
       )}
 
       <div className="absolute inset-0 -z-10 overflow-hidden bg-gray-900">
-        <AnimatePresence mode="sync" initial={false}>
-          <m.div
-            key={currentPhoto.id}
-            initial={{ opacity: 0, scale: isMobile ? 1.0 : 1.02 }}
-            animate={{
-              opacity: 1,
-              scale: 1.0,
-              zIndex: 1,
-              transition: {
-                opacity: { duration: isMobile ? 1 : 1.5, ease: 'easeOut' },
-                scale: { duration: isMobile ? 0 : 5, ease: 'linear' },
-              },
-            }}
-            exit={{
-              opacity: 0,
-              zIndex: 0,
-              transition: {
-                opacity: { duration: isMobile ? 1 : 1.5, ease: 'easeIn' },
-              },
-            }}
-            className="absolute inset-0"
-          >
-            <SafeImage
-              src={`/images/hero/${currentPhoto.filename}`}
-              alt={currentPhoto.alt}
-              fill
-              className="object-cover"
-              priority={currentIndex === 0}
-              placeholder="blur"
-              sizes="100vw"
-            />
-          </m.div>
-        </AnimatePresence>
+        {/* Layer A */}
+        <div
+          className="absolute inset-0 will-change-[opacity,transform]"
+          style={{
+            opacity: layers.active === 'a' ? 1 : 0,
+            transform: layers.active === 'a' ? 'scale(1)' : `scale(${isMobile ? 1 : 1.02})`,
+            transition: `opacity ${transitionDuration} ease-out, transform ${scaleDuration} linear`,
+            zIndex: layers.active === 'a' ? 1 : 0,
+          }}
+        >
+          <SafeImage
+            src={`/images/hero/${images[layers.aIndex].filename}`}
+            alt={images[layers.aIndex].alt}
+            fill
+            className="object-cover"
+            priority={layers.aIndex === 0}
+            placeholder="blur"
+            sizes="100vw"
+          />
+        </div>
+
+        {/* Layer B */}
+        <div
+          className="absolute inset-0 will-change-[opacity,transform]"
+          style={{
+            opacity: layers.active === 'b' ? 1 : 0,
+            transform: layers.active === 'b' ? 'scale(1)' : `scale(${isMobile ? 1 : 1.02})`,
+            transition: `opacity ${transitionDuration} ease-out, transform ${scaleDuration} linear`,
+            zIndex: layers.active === 'b' ? 1 : 0,
+          }}
+        >
+          <SafeImage
+            src={`/images/hero/${images[layers.bIndex].filename}`}
+            alt={images[layers.bIndex].alt}
+            fill
+            className="object-cover"
+            placeholder="blur"
+            sizes="100vw"
+          />
+        </div>
+
         <div className="absolute inset-0 bg-black/60 z-10" />
         {images.length > 1 && (
           <button

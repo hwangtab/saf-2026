@@ -5,6 +5,7 @@ import Section from '@/components/ui/Section';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import PageHero from '@/components/ui/PageHero';
 import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
+import GalleryCampaignBanner from '@/components/features/GalleryCampaignBanner';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { SITE_URL } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
@@ -54,6 +55,11 @@ export default async function ArtworksPage() {
           <div className="container-max">
             <ArtworkGalleryWithSort artworks={listArtworks} />
           </div>
+        </Section>
+
+        {/* Campaign Banner */}
+        <Section variant="white" prevVariant="primary-surface" className="py-20 md:py-28">
+          <GalleryCampaignBanner />
         </Section>
       </main>
     </>

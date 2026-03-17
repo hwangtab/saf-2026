@@ -16,6 +16,7 @@ interface ArtworkCardProps {
   theme?: ArtworkCardTheme;
   returnTo?: string;
   className?: string;
+  priorityIndex?: number;
 }
 
 const VARIANT_CONFIG = {
@@ -71,10 +72,13 @@ function ArtworkCard({
   theme = 'light',
   returnTo,
   className,
+  priorityIndex,
 }: ArtworkCardProps) {
   const locale = useLocale();
   const t = useTranslations('artworkCard');
   const config = VARIANT_CONFIG[variant];
+  const isAboveFold =
+    variant === 'gallery' && typeof priorityIndex === 'number' && priorityIndex < 3;
   const isDisplayable = (value: string | undefined): value is string => Boolean(value);
 
   const untitledLabel = t('untitled');
@@ -146,7 +150,8 @@ function ArtworkCard({
           <SafeImage
             src={getImageSrc(artwork, variant)}
             alt={getImageAlt(artwork, untitledLabel, unknownArtistLabel)}
-            loading="lazy"
+            loading={isAboveFold ? 'eager' : 'lazy'}
+            priority={isAboveFold}
             fill
             className="object-cover transform transition-transform duration-300 group-hover:scale-105"
             sizes={config.imageSizes}
