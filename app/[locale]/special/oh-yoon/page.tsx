@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
+import ExportedImage from 'next-image-export-optimizer';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import OhYoonMasonryGallery from '@/components/special/OhYoonMasonryGallery';
@@ -147,7 +147,7 @@ export default async function OhYoonPage() {
               <div className="flex flex-col items-center lg:items-start">
                 <figure className="relative w-full max-w-[260px] lg:max-w-none">
                   <div className="border-4 border-charcoal shadow-[8px_8px_0px_0px_rgba(49,57,60,0.15)] overflow-hidden">
-                    <Image
+                    <ExportedImage
                       src="/images/ohyoon.webp"
                       alt="Oh Yoon (1946-1986)"
                       width={400}
@@ -313,7 +313,7 @@ export default async function OhYoonPage() {
             <div className="flex flex-col items-center lg:items-start">
               <figure className="relative w-full max-w-[260px] lg:max-w-none">
                 <div className="border-4 border-charcoal shadow-[8px_8px_0px_0px_rgba(49,57,60,0.15)] overflow-hidden">
-                  <Image
+                  <ExportedImage
                     src="/images/ohyoon.webp"
                     alt="오윤 작가 (1946-1986)"
                     width={400}
