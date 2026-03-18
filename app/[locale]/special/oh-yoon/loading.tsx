@@ -2,7 +2,7 @@ export default function OhYoonLoading() {
   return (
     <div
       aria-hidden="true"
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-8 bg-[#2a3032]"
+      className="w-full min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center gap-8 bg-[#2a3032]"
     >
       {/* Brutalist stamp spinner */}
       <div className="relative flex items-center justify-center w-12 h-12 border-4 border-white animate-spin">
