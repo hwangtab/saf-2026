@@ -14,8 +14,8 @@ export default function TrackClick({ event, properties, children }: TrackClickPr
       onClick={() => {
         try {
           track(event, properties);
-        } catch {
-          // analytics not loaded
+        } catch (error) {
+          console.error('[TrackingLink] Analytics track call failed:', error);
         }
       }}
     >

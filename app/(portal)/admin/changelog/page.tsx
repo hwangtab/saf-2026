@@ -14,7 +14,8 @@ function loadChangelog(): ChangelogEntry[] {
     const filePath = path.join(process.cwd(), 'content', 'changelog.json');
     const raw = fs.readFileSync(filePath, 'utf-8');
     return JSON.parse(raw);
-  } catch {
+  } catch (error) {
+    console.error('[admin-changelog] Changelog loading failed:', error);
     return [];
   }
 }

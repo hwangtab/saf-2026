@@ -1094,6 +1094,7 @@ export function AdminArtworkList({
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <button
+                        type="button"
                         onClick={() => handleHiddenToggle(artwork.id, artwork.is_hidden)}
                         disabled={processingId === artwork.id}
                         className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors ${

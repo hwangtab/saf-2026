@@ -14,7 +14,8 @@ export default async function AdminArtistDetailPage({ params }: Props) {
   let artist;
   try {
     artist = await getArtistById(id);
-  } catch {
+  } catch (error) {
+    console.error('[admin-artist-detail] Artist detail loading failed:', error);
     notFound();
   }
 

@@ -9,7 +9,8 @@ function verifySignature(body: string, signature: string | null, secret: string)
   const expected = crypto.createHmac('sha1', secret).update(body).digest('hex');
   try {
     return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
-  } catch {
+  } catch (error) {
+    console.error('[vercel-drain] Signature comparison failed:', error);
     return false;
   }
 }
@@ -80,7 +81,8 @@ export async function POST(request: NextRequest) {
       const parsed = JSON.parse(raw);
       events = Array.isArray(parsed) ? parsed : [parsed];
     }
-  } catch {
+  } catch (error) {
+    console.error('[vercel-drain] Request body parsing failed:', error);
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
   }
 

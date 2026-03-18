@@ -121,7 +121,8 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
       try {
         await deleteExhibitorArtist(id);
         router.refresh();
-      } catch {
+      } catch (error) {
+        console.error('[exhibitor-artist-list] Artist deletion failed:', error);
         setError(copy.deleteError);
       } finally {
         setProcessingId(null);

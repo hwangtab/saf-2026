@@ -20,6 +20,7 @@ export default function LanguageSwitcher({ className }: LanguageSwitcherProps) {
   return (
     <div className={clsx('flex items-center gap-1 text-sm', className)}>
       <button
+        type="button"
         onClick={() => switchLocale('ko')}
         className={clsx(
           'px-2 py-1 min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded transition-colors',
@@ -34,6 +35,7 @@ export default function LanguageSwitcher({ className }: LanguageSwitcherProps) {
         |
       </span>
       <button
+        type="button"
         onClick={() => switchLocale('en')}
         className={clsx(
           'px-2 py-1 min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded transition-colors',

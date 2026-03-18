@@ -34,6 +34,7 @@ export function AnalyticsPeriodTabs({ selected }: Props) {
     <div className="inline-flex items-center gap-1 rounded-lg border border-[var(--admin-border)] bg-white/90 p-1 shadow-sm">
       {PERIODS.map(({ value, label }) => (
         <button
+          type="button"
           key={value}
           onClick={() => handleClick(value)}
           disabled={isPending}

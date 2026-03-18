@@ -40,6 +40,7 @@ export default function GalleryEmptyState({ onReset }: GalleryEmptyStateProps) {
         </span>
       </p>
       <button
+        type="button"
         onClick={onReset}
         className="px-6 py-2.5 bg-charcoal text-white font-bold rounded-full hover:bg-black transition-colors shadow-sm hover:shadow-md active:scale-95"
       >

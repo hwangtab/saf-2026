@@ -11,7 +11,8 @@ type Props = {
 function decodePath(path: string): string {
   try {
     return decodeURIComponent(path);
-  } catch {
+  } catch (error) {
+    console.error('[TopPagesChart] Path decoding failed:', error);
     return path;
   }
 }

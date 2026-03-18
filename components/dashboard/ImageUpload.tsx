@@ -192,7 +192,8 @@ export function ImageUpload({
       if (cleanupCandidateUrls.length > 0) {
         onUploadDelta?.(cleanupCandidateUrls);
       }
-    } catch {
+    } catch (error) {
+      console.error('[ImageUpload] File upload flow failed:', error);
       if (uploadedPaths.length > 0) {
         await supabase.storage.from(bucket).remove(uploadedPaths);
       }
@@ -243,7 +244,8 @@ export function ImageUpload({
       }
 
       return null;
-    } catch {
+    } catch (error) {
+      console.error('[ImageUpload] Public URL parsing failed:', error);
       return null;
     }
   };
@@ -307,9 +309,9 @@ export function ImageUpload({
                 />
               </div>
               <button
+                type="button"
                 onClick={() => removeImage(index)}
                 className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10"
-                type="button"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path

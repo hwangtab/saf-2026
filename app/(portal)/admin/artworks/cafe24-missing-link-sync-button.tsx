@@ -39,7 +39,8 @@ export function Cafe24MissingLinkSyncButton() {
       }
 
       router.refresh();
-    } catch {
+    } catch (error) {
+      console.error('[cafe24-missing-link-sync] Batch sync trigger failed:', error);
       toast.error('An error occurred during batch sync. Please try again shortly.');
     } finally {
       setSyncing(false);

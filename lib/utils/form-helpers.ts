@@ -36,7 +36,8 @@ export const getStoragePathFromPublicUrl = (publicUrl: string, bucket: string): 
     }
 
     return null;
-  } catch {
+  } catch (error) {
+    console.error('[form-helpers] Storage path parsing failed:', error);
     return null;
   }
 };

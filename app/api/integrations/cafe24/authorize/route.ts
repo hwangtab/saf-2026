@@ -67,7 +67,8 @@ function parseRawQueryPairs(request: NextRequest): RawQueryPair[] {
     try {
       key = decodeURIComponent(rawKey.replace(/\+/g, '%20'));
       value = decodeURIComponent(rawValue.replace(/\+/g, '%20'));
-    } catch {
+    } catch (error) {
+      console.error('[cafe24-authorize] Query pair decoding failed:', error);
       continue;
     }
 
@@ -94,7 +95,8 @@ function getRawQueryValue(pairs: RawQueryPair[], targetKey: string): string | nu
 function decodeQueryValue(rawValue: string): string | null {
   try {
     return decodeURIComponent(rawValue.replace(/\+/g, '%20'));
-  } catch {
+  } catch (error) {
+    console.error('[cafe24-authorize] Query value decoding failed:', error);
     return null;
   }
 }
@@ -162,7 +164,8 @@ function safeEqualHex(leftHex: string, rightHex: string): boolean {
     const right = Buffer.from(rightHex, 'hex');
     if (left.length !== right.length || left.length === 0) return false;
     return crypto.timingSafeEqual(left, right);
-  } catch {
+  } catch (error) {
+    console.error('[cafe24-authorize] Hex timing-safe comparison failed:', error);
     return false;
   }
 }
@@ -177,7 +180,8 @@ function normalizeBase64(input: string): string | null {
     const decoded = Buffer.from(padded, 'base64');
     if (decoded.length === 0) return null;
     return decoded.toString('base64').replace(/=+$/g, '');
-  } catch {
+  } catch (error) {
+    console.error('[cafe24-authorize] Base64 normalization failed:', error);
     return null;
   }
 }
@@ -189,7 +193,8 @@ function safeEqualBase64(leftBase64: string, rightBase64: string): boolean {
   if (left.length !== right.length) return false;
   try {
     return crypto.timingSafeEqual(Buffer.from(left, 'utf8'), Buffer.from(right, 'utf8'));
-  } catch {
+  } catch (error) {
+    console.error('[cafe24-authorize] Base64 timing-safe comparison failed:', error);
     return false;
   }
 }

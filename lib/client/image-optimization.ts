@@ -88,7 +88,8 @@ export async function optimizeImage(file: File): Promise<File> {
     const img = await loadImage(file);
     const baseName = file.name.replace(/\.[^/.]+$/, '');
     return await renderToWebpFile(img, `${baseName}.webp`, 2560, 0.8);
-  } catch {
+  } catch (error) {
+    console.error('[image-optimization] Image optimization failed:', error);
     return file;
   }
 }

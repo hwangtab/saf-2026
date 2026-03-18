@@ -11,6 +11,8 @@ import { SITE_URL } from '@/lib/constants';
 import { createStandardPageMetadata } from '@/lib/seo';
 import { resolveLocale } from '@/lib/server-locale';
 
+export const revalidate = false;
+
 const PAGE_URL = `${SITE_URL}/archive`;
 const PAGE_COPY = {
   ko: {

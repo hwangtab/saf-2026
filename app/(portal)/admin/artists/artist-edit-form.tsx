@@ -188,7 +188,8 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
           }
         }
       }
-    } catch {
+    } catch (error) {
+      console.error('[admin-artist-edit-form] Artist save failed:', error);
       setError('저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
       toast.error('An error occurred while saving.');
     } finally {
@@ -205,7 +206,8 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
       await updateArtistProfileImage(artist.id, newImages[0] || null);
       toast.success('Profile image saved.');
       router.refresh();
-    } catch {
+    } catch (error) {
+      console.error('[admin-artist-edit-form] Profile image save failed:', error);
       setError('이미지 저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
       toast.error('An error occurred while saving image.');
     } finally {
@@ -231,7 +233,8 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
         setSelectedUserForLink(null);
         router.refresh();
       }
-    } catch {
+    } catch (error) {
+      console.error('[admin-artist-edit-form] User link failed:', error);
       setError('사용자 연결 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
       toast.error('An error occurred while linking user account.');
     } finally {
@@ -250,7 +253,8 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
         setShowUnlinkConfirm(false);
         router.refresh();
       }
-    } catch {
+    } catch (error) {
+      console.error('[admin-artist-edit-form] User unlink failed:', error);
       setError('연결 해제 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
       toast.error('An error occurred while unlinking user account.');
     } finally {

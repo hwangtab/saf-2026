@@ -122,6 +122,7 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
 
       {/* Kakao Talk */}
       <button
+        type="button"
         onClick={handleKakaoShare}
         disabled={!hasAppKey || kakaoLoading}
         className={clsx(
@@ -142,6 +143,7 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
 
       {/* Copy Link */}
       <button
+        type="button"
         onClick={handleCopyLink}
         className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         title={t('copyLinkTitle')}

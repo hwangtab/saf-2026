@@ -463,6 +463,7 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
                     <div className="flex justify-end gap-2">
                       {!isExpired ? (
                         <button
+                          type="button"
                           onClick={() => setRestoreTargetId(log.id)}
                           className="rounded-md border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800 hover:bg-amber-100"
                         >
@@ -472,6 +473,7 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
                         <span className="text-xs text-gray-400">{copy.restoreExpired}</span>
                       )}
                       <button
+                        type="button"
                         onClick={() => setPurgeTargetId(log.id)}
                         className="rounded-md border border-rose-300 bg-rose-50 px-2.5 py-1 text-xs font-medium text-rose-700 hover:bg-rose-100"
                       >

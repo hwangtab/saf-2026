@@ -11,6 +11,8 @@ import { createStandardPageMetadata } from '@/lib/seo';
 import { formatEffectiveDateForLocale } from '@/lib/utils';
 import { resolveLocale } from '@/lib/server-locale';
 
+export const revalidate = false;
+
 const PAGE_PATH = '/terms/exhibitor';
 const PAGE_URL = `${SITE_URL}${PAGE_PATH}`;
 const PAGE_COPY = {

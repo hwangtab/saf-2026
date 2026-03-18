@@ -92,6 +92,7 @@ export default function SortControls({ value, onChange }: SortControlsProps) {
   return (
     <div className="relative" ref={dropdownRef} onKeyDown={handleKeyDown}>
       <button
+        type="button"
         ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-primary hover:bg-primary/5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
@@ -116,6 +117,7 @@ export default function SortControls({ value, onChange }: SortControlsProps) {
         >
           {sortOptions.map((option, index) => (
             <button
+              type="button"
               key={option.value}
               onClick={() => {
                 onChange(option.value);

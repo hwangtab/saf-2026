@@ -89,6 +89,7 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
                 {guide.text}
                 {guide.action ? (
                   <button
+                    type="button"
                     onClick={() => setIsModalOpen(true)}
                     className="ml-1 text-blue-600 hover:underline font-medium"
                   >

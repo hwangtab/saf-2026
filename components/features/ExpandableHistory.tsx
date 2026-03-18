@@ -30,6 +30,7 @@ export default function ExpandableHistory({ history }: ExpandableHistoryProps) {
         </p>
         {needsExpand && (
           <button
+            type="button"
             onClick={() => setIsExpanded(!isExpanded)}
             className="mt-3 text-sm font-medium text-primary hover:text-primary-strong transition-colors"
           >

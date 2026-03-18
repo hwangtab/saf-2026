@@ -513,7 +513,8 @@ function normalizeCafe24ImagePath(path: string): string {
       if (markerIndex >= 0) {
         return pathname.slice(markerIndex);
       }
-    } catch {
+    } catch (error) {
+      console.error('[cafe24-sync] Cafe24 image URL parsing failed:', error);
       // ignore URL parse errors and fallback to string scan below
     }
   }
@@ -837,7 +838,8 @@ async function ensureProductCategory(
   try {
     const productResponse = await client.request(`/products/${productNo}`, { method: 'GET' });
     return extractCategoryNo(productResponse) || categoryNo;
-  } catch {
+  } catch (error) {
+    console.error('[cafe24-sync] Product category lookup failed:', error);
     return categoryNo;
   }
 }

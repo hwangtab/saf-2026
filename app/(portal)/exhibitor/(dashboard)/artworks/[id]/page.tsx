@@ -31,7 +31,8 @@ export default async function ExhibitorArtworkDetailPage({ params }: Props) {
 
   try {
     [artwork, artists] = await Promise.all([getExhibitorArtworkById(id), getExhibitorArtists()]);
-  } catch {
+  } catch (error) {
+    console.error('[exhibitor-artwork-detail] Artwork detail loading failed:', error);
     notFound();
   }
 

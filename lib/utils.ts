@@ -84,7 +84,8 @@ export function resolveArtworkVariantUrl(image: string, variant: ArtworkImageVar
   let parsed: URL;
   try {
     parsed = new URL(resolved);
-  } catch {
+  } catch (error) {
+    console.error('[utils] resolveArtworkVariantUrl URL parsing failed:', error);
     return resolved;
   }
 
@@ -155,7 +156,8 @@ export function getArtworkImageFamilyKey(imageUrl: string): string {
 
     const familyPath = parsed.pathname.replace(ARTWORK_VARIANT_FILENAME_REGEX, '');
     return `${parsed.origin}${familyPath}`;
-  } catch {
+  } catch (error) {
+    console.error('[utils] getArtworkImageFamilyKey URL parsing failed:', error);
     return resolved;
   }
 }
@@ -196,7 +198,8 @@ export function resolveOptimizedArtworkImageUrl(
   let parsed: URL;
   try {
     parsed = new URL(resolved);
-  } catch {
+  } catch (error) {
+    console.error('[utils] resolveOptimizedArtworkImageUrl URL parsing failed:', error);
     return resolved;
   }
 
@@ -243,7 +246,8 @@ export function resolveSupabaseOriginalPublicUrl(url: string): string {
   let parsed: URL;
   try {
     parsed = new URL(url);
-  } catch {
+  } catch (error) {
+    console.error('[utils] resolveSupabaseOriginalPublicUrl URL parsing failed:', error);
     return url;
   }
 

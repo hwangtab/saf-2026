@@ -20,6 +20,8 @@ import {
   BORROWER_FIELDS,
 } from '@/content/transparency-data';
 
+export const revalidate = false;
+
 const PAGE_URL = `${SITE_URL}/transparency`;
 const PAGE_COPY = {
   ko: {

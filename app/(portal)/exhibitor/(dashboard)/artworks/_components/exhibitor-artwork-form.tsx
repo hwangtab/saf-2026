@@ -297,7 +297,8 @@ export function ExhibitorArtworkForm({
           router.push('/exhibitor/artworks');
         }
       }
-    } catch {
+    } catch (error) {
+      console.error('[exhibitor-artwork-form] Artwork save failed:', error);
       toast.error(copy.saveError);
     } finally {
       setSaving(false);
@@ -314,7 +315,8 @@ export function ExhibitorArtworkForm({
         notifyCafe24SyncResult(result.cafe24, copy.actionSaveImage);
       }
       router.refresh();
-    } catch {
+    } catch (error) {
+      console.error('[exhibitor-artwork-form] Artwork image save failed:', error);
       toast.error(copy.imageSaveError);
     } finally {
       setSavingImages(false);

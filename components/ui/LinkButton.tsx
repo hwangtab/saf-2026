@@ -45,7 +45,8 @@ function toInternalHref(href: string): string | null {
       return null;
     }
     return `${targetUrl.pathname}${targetUrl.search}${targetUrl.hash}`;
-  } catch {
+  } catch (error) {
+    console.error('[LinkButton] Internal href conversion failed:', error);
     return null;
   }
 }

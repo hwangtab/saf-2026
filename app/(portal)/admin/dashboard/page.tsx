@@ -406,7 +406,8 @@ export default async function AdminDashboardPage() {
                   let displayPath: string;
                   try {
                     displayPath = decodeURIComponent(page.path);
-                  } catch {
+                  } catch (error) {
+                    console.error('[admin-dashboard] Top page path decoding failed:', error);
                     displayPath = page.path;
                   }
                   return (

@@ -21,7 +21,8 @@ export default async function AdminArtworkDetailPage({ params }: Props) {
       getAllArtists(),
       getArtworkSales(id),
     ]);
-  } catch {
+  } catch (error) {
+    console.error('[admin-artwork-detail] Artwork detail loading failed:', error);
     notFound();
   }
 

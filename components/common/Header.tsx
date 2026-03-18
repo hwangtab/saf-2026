@@ -40,6 +40,7 @@ function PublicHeader() {
         <DesktopNav navigation={navigation} isActive={isActive} textColor={textColor} />
 
         <button
+          type="button"
           onClick={openMenu}
           className={clsx(
             'md:hidden p-3 min-w-[44px] min-h-[44px] flex items-center justify-center',

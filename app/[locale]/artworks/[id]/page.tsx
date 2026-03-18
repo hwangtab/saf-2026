@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import { Link } from '@/i18n/navigation';
 import { notFound } from 'next/navigation';
@@ -137,7 +138,9 @@ export default async function ArtworkDetailPage({ params }: Props) {
         padding="none"
         className="pb-24 md:pb-32 pt-[calc(4rem+env(safe-area-inset-top,0px))]"
       >
-        <ArtworkDetailNav artist={artwork.artist} title={artwork.title} />
+        <Suspense fallback={<div className="h-[57px] border-b bg-white/80" />}>
+          <ArtworkDetailNav artist={artwork.artist} title={artwork.title} />
+        </Suspense>
 
         <article className="container-max pt-12 md:pt-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">

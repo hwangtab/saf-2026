@@ -147,7 +147,8 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
           }
         }
       }
-    } catch {
+    } catch (error) {
+      console.error('[exhibitor-artist-form] Artist save failed:', error);
       setError(copy.saveError);
       toast.error(copy.saveErrorToast);
     } finally {
@@ -164,7 +165,8 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
       await updateExhibitorArtistProfileImage(artist.id, newImages[0] || null);
       toast.success(copy.profileImageSaved);
       router.refresh();
-    } catch {
+    } catch (error) {
+      console.error('[exhibitor-artist-form] Profile image save failed:', error);
       setError(copy.imageSaveError);
       toast.error(copy.imageSaveErrorToast);
     } finally {

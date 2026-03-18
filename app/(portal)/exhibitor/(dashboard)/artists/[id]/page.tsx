@@ -37,7 +37,8 @@ export default async function ExhibitorArtistDetailPage({ params }: Props) {
   let artist;
   try {
     artist = await getExhibitorArtistById(id);
-  } catch {
+  } catch (error) {
+    console.error('[exhibitor-artist-detail] Artist detail loading failed:', error);
     notFound();
   }
 

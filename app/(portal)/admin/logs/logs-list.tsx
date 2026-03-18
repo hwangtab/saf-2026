@@ -208,6 +208,7 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                       <div className="flex justify-end gap-2">
                         {canShowDiff && (
                           <button
+                            type="button"
                             onClick={() => setExpandedLogId(isExpanded ? null : log.id)}
                             className="rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50"
                           >
@@ -216,6 +217,7 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                         )}
                         {log.reversible && !log.reverted_at ? (
                           <button
+                            type="button"
                             onClick={() => setRevertTargetId(log.id)}
                             className="rounded-md border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800 hover:bg-amber-100"
                             title={copy.revertTitle}

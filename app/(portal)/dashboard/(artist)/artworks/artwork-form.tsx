@@ -189,8 +189,8 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
           pendingKey,
           JSON.stringify({ sessionId: sessionIdRef.current, urls, updatedAt: Date.now() })
         );
-      } catch {
-        // ignore storage errors
+      } catch (error) {
+        console.error('[artist-artwork-form] Pending upload session save failed:', error);
       }
     },
     [pendingKey]
@@ -200,8 +200,8 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
     pendingUploadsRef.current = [];
     try {
       sessionStorage.removeItem(pendingKey);
-    } catch {
-      // ignore storage errors
+    } catch (error) {
+      console.error('[artist-artwork-form] Pending upload session clear failed:', error);
     }
   }, [pendingKey]);
 
@@ -240,8 +240,8 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
           }
         }
       }
-    } catch {
-      // ignore parse errors
+    } catch (error) {
+      console.error('[artist-artwork-form] Pending upload session parse failed:', error);
     }
 
     persistPending(pendingUploadsRef.current);
@@ -266,8 +266,8 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
       if (pendingUploadsRef.current.length > 0) {
         await removeStorageObjects(pendingUploadsRef.current);
       }
-    } catch {
-      // ignore cleanup errors on cancel
+    } catch (error) {
+      console.error('[artist-artwork-form] Pending upload cleanup on cancel failed:', error);
     } finally {
       clearPending();
       router.push('/dashboard/artworks');

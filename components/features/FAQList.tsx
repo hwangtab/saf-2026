@@ -27,6 +27,7 @@ export default function FAQList({ items }: FAQListProps) {
             className="border border-gray-200 rounded-xl bg-white overflow-hidden transition-all duration-200 hover:border-gray-300"
           >
             <button
+              type="button"
               onClick={() => toggleItem(index)}
               className="w-full flex items-center justify-between gap-4 p-6 text-left cursor-pointer transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
               aria-expanded={isOpen}

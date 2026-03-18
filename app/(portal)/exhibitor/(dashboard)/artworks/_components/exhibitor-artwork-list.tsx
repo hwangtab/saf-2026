@@ -148,7 +148,8 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
     try {
       await deleteExhibitorArtwork(id);
       toast.success(copy.deleteSuccess);
-    } catch {
+    } catch (error) {
+      console.error('[exhibitor-artwork-list] Artwork deletion failed:', error);
       toast.error(copy.deleteError);
     } finally {
       setIsDeleting(null);
@@ -296,6 +297,7 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
                           {copy.edit}
                         </Link>
                         <button
+                          type="button"
                           onClick={() => handleDelete(artwork.id)}
                           disabled={isDeleting === artwork.id}
                           className="rounded-md px-3 py-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"

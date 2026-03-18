@@ -193,7 +193,8 @@ export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedb
         toast.success(copy.statusUpdated);
         router.refresh();
       }
-    } catch {
+    } catch (error) {
+      console.error('[admin-feedback-manager] Feedback status update failed:', error);
       toast.error(copy.statusUpdateError);
     } finally {
       setSaving(false);
@@ -216,7 +217,8 @@ export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedb
         toast.success(copy.memoSaved);
         router.refresh();
       }
-    } catch {
+    } catch (error) {
+      console.error('[admin-feedback-manager] Feedback memo save failed:', error);
       toast.error(copy.memoSaveError);
     } finally {
       setSaving(false);

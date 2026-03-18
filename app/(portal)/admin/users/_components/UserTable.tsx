@@ -202,6 +202,7 @@ export function UserTable({
                     </div>
                     <div className="ml-4">
                       <button
+                        type="button"
                         onClick={() => onSelectUser(user)}
                         className="text-sm font-medium text-gray-900 hover:text-indigo-600 hover:underline text-left"
                       >

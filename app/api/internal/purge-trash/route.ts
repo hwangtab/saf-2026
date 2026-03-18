@@ -118,7 +118,8 @@ function getStoragePathFromPublicUrl(publicUrl: string, bucket: string): string 
     }
 
     return null;
-  } catch {
+  } catch (error) {
+    console.error('[purge-trash] Storage URL parsing failed:', error);
     return null;
   }
 }

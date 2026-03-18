@@ -121,6 +121,7 @@ export function ChangelogList({ entries }: { entries: ChangelogEntry[] }) {
       <div className="flex flex-wrap items-center gap-2">
         {FILTERS.map((f) => (
           <button
+            type="button"
             key={f.value}
             onClick={() => handleFilterChange(f.value)}
             className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
@@ -193,6 +194,7 @@ export function ChangelogList({ entries }: { entries: ChangelogEntry[] }) {
       {totalPages > 1 && (
         <nav className="flex items-center justify-center gap-1 pt-2">
           <button
+            type="button"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
             className="rounded-lg px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent"
@@ -201,6 +203,7 @@ export function ChangelogList({ entries }: { entries: ChangelogEntry[] }) {
           </button>
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
             <button
+              type="button"
               key={p}
               onClick={() => setPage(p)}
               className={`min-w-[2.25rem] rounded-lg px-2 py-2 text-sm font-medium transition ${
@@ -213,6 +216,7 @@ export function ChangelogList({ entries }: { entries: ChangelogEntry[] }) {
             </button>
           ))}
           <button
+            type="button"
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
             className="rounded-lg px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent"

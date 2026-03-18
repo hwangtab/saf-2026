@@ -34,7 +34,8 @@ function getSafeReturnTo(request: NextRequest): string {
   let decoded: string;
   try {
     decoded = decodeURIComponent(encoded);
-  } catch {
+  } catch (error) {
+    console.error('[cafe24-callback] return_to cookie decoding failed:', error);
     return '/admin/artworks';
   }
   if (!decoded.startsWith('/') || decoded.startsWith('//')) return '/admin/artworks';
@@ -54,7 +55,8 @@ function getRawQueryParam(request: NextRequest, key: string): string | null {
     const rawValue = rawValueParts.join('=');
     try {
       return decodeURIComponent(rawValue.replace(/\+/g, '%2B'));
-    } catch {
+    } catch (error) {
+      console.error('[cafe24-callback] Raw query parameter decoding failed:', error);
       return null;
     }
   }

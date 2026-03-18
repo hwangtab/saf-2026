@@ -129,6 +129,7 @@ export function ArtistSalesList({ artists }: { artists: ArtistSalesRecord[] }) {
           {filtered.length}명{search.trim() ? ` / ${artists.length}명` : ''}
         </span>
         <button
+          type="button"
           onClick={exportCsv}
           className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 shadow-sm transition-colors hover:bg-slate-50"
         >

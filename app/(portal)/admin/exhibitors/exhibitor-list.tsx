@@ -53,6 +53,7 @@ export function ExhibitorList({ initialExhibitors }: { initialExhibitors: Exhibi
       {/* Filters */}
       <div className="flex gap-2 border-b border-gray-200 pb-4">
         <button
+          type="button"
           onClick={() => handleStatusFilter(null)}
           className={`px-3 py-1.5 text-sm font-medium rounded-md ${
             !currentStatus
@@ -63,6 +64,7 @@ export function ExhibitorList({ initialExhibitors }: { initialExhibitors: Exhibi
           전체
         </button>
         <button
+          type="button"
           onClick={() => handleStatusFilter('pending')}
           className={`px-3 py-1.5 text-sm font-medium rounded-md ${
             currentStatus === 'pending'
@@ -73,6 +75,7 @@ export function ExhibitorList({ initialExhibitors }: { initialExhibitors: Exhibi
           대기중
         </button>
         <button
+          type="button"
           onClick={() => handleStatusFilter('active')}
           className={`px-3 py-1.5 text-sm font-medium rounded-md ${
             currentStatus === 'active'
@@ -83,6 +86,7 @@ export function ExhibitorList({ initialExhibitors }: { initialExhibitors: Exhibi
           승인됨
         </button>
         <button
+          type="button"
           onClick={() => handleStatusFilter('suspended')}
           className={`px-3 py-1.5 text-sm font-medium rounded-md ${
             currentStatus === 'suspended'

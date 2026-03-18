@@ -21,6 +21,7 @@ const ArtistButton = memo(function ArtistButton({
 
   return (
     <button
+      type="button"
       onClick={handleClick}
       aria-label={`${artist} ${ariaLabelSuffix}`}
       aria-pressed={isSelected}

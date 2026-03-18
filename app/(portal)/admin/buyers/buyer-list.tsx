@@ -100,7 +100,8 @@ export function BuyerList({ buyers }: { buyers: BuyerRecord[] }) {
       toast.success('연락처가 저장되었습니다.');
       setEditingName((prev) => (prev === buyerName ? null : prev));
       router.refresh();
-    } catch {
+    } catch (error) {
+      console.error('[buyer-list] Buyer phone save failed:', error);
       toast.error('연락처 저장에 실패했습니다.');
     } finally {
       setSaving(false);
@@ -155,6 +156,7 @@ export function BuyerList({ buyers }: { buyers: BuyerRecord[] }) {
           {filtered.length}명{search.trim() ? ` / ${buyers.length}명` : ''}
         </span>
         <button
+          type="button"
           onClick={exportCsv}
           className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 shadow-sm transition-colors hover:bg-slate-50"
         >

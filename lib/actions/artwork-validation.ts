@@ -28,7 +28,8 @@ export const parseUrlList = (
       return { urls: [], error: `${label} 형식이 올바르지 않습니다.` };
     }
     return { urls };
-  } catch {
+  } catch (error) {
+    console.error('[artwork-validation] URL list parsing failed:', error);
     return { urls: [], error: `${label} 형식이 올바르지 않습니다.` };
   }
 };

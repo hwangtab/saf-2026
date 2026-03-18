@@ -1,7 +1,18 @@
 {
   "active_plan": ".sisyphus/plans/edition-migration.md",
   "started_at": "2026-02-15T03:56:04Z",
-  "session_ids": ["ses_current", "ses_394f7f7dfffejcXVxiZvH4gGYa"],
+  "session_ids": [
+    "ses_current",
+    "ses_394f7f7dfffejcXVxiZvH4gGYa",
+    "ses_30063b967ffeDZCke4EWRCPKXu",
+    "ses_300462f14ffeP02ltfi765Yc3R",
+    "ses_3004206bfffeFy52SMayUKQn8n",
+    "ses_3001f6f1cffeNJybJTzJ8Y5UsH",
+    "ses_3001e1dc6ffeHvK1p6rm0Eh1gm",
+    "ses_3001c3c9dffe2Mle35zjrB5RsP",
+    "ses_30012c5fbffegdvtuINCI9oEBP",
+    "ses_300069681ffeaSMppDiXOagM5P"
+  ],
   "plan_name": "edition-migration",
   "status": "complete",
   "completed_at": "2026-02-15T04:45:00Z",

@@ -66,6 +66,7 @@ export function SignOutButton() {
 
   return (
     <button
+      type="button"
       onClick={handleSignOut}
       disabled={isSigningOut}
       className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-red-600 border border-gray-200 hover:border-red-100 rounded-lg hover:bg-red-50 transition-all duration-200 group"

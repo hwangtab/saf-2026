@@ -19,7 +19,8 @@ export function validateUrl(value: string | null): string | null {
       throw new Error('URL은 http 또는 https만 허용됩니다.');
     }
     return url.toString();
-  } catch {
+  } catch (error) {
+    console.error('[input-validation] URL validation failed:', error);
     throw new Error('유효하지 않은 URL 형식입니다.');
   }
 }

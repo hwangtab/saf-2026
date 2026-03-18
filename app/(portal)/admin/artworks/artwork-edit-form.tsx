@@ -177,7 +177,8 @@ export function ArtworkEditForm({
           router.push('/admin/artworks');
         }
       }
-    } catch {
+    } catch (error) {
+      console.error('[admin-artwork-edit-form] Artwork save failed:', error);
       setError('저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
       toast.error('An error occurred while saving.');
     } finally {
@@ -196,7 +197,8 @@ export function ArtworkEditForm({
         notifyCafe24SyncResult(result.cafe24, '이미지 저장');
       }
       router.refresh();
-    } catch {
+    } catch (error) {
+      console.error('[admin-artwork-edit-form] Artwork image save failed:', error);
       setError('이미지 저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
       toast.error('An error occurred while saving image.');
     } finally {

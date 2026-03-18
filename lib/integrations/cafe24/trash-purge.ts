@@ -56,7 +56,8 @@ function extractProductNoFromShopUrl(value: unknown): number | null {
     if (fromQuery && /^\d+$/.test(fromQuery)) {
       return Number(fromQuery);
     }
-  } catch {
+  } catch (error) {
+    console.error('[cafe24-trash-purge] Shop URL parsing failed:', error);
     // Fallback regex below
   }
 

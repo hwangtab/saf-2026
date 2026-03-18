@@ -159,7 +159,8 @@ export function ArtworkList({
           toast.success(copy.deleteSuccess);
           router.refresh();
         }
-      } catch {
+      } catch (error) {
+        console.error('[artist-artwork-list] Artwork deletion failed:', error);
         toast.error(copy.deleteError);
       } finally {
         setIsDeleting(null);
@@ -229,6 +230,7 @@ export function ArtworkList({
                 <Link
                   href={`/artworks/${artwork.id}`}
                   target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex h-10 w-10 items-center justify-center rounded-md text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700"
                   title={copy.preview}
                 >

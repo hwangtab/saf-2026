@@ -203,7 +203,8 @@ async function parseJsonResponse(response: Response): Promise<unknown> {
   if (!text) return {};
   try {
     return JSON.parse(text) as unknown;
-  } catch {
+  } catch (error) {
+    console.error('[cafe24-client] JSON response parsing failed:', error);
     return text;
   }
 }

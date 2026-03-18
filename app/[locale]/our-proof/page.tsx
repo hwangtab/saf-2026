@@ -14,6 +14,8 @@ import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { createStandardPageMetadata } from '@/lib/seo';
 import { resolveLocale } from '@/lib/server-locale';
 
+export const revalidate = false;
+
 const PAGE_URL = `${SITE_URL}/our-proof`;
 const PAGE_COPY = {
   ko: {

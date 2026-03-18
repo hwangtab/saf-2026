@@ -120,7 +120,12 @@ export default function FullscreenMenu({
         {/* 헤더 - 닫기 버튼 */}
         <header className={styles.header}>
           <LanguageSwitcher className="text-charcoal" />
-          <button onClick={onClose} className={styles.closeButton} aria-label={tA11y('closeMenu')}>
+          <button
+            type="button"
+            onClick={onClose}
+            className={styles.closeButton}
+            aria-label={tA11y('closeMenu')}
+          >
             <MenuToggleIcon isOpen={true} />
             <span>{tA11y('close')}</span>
           </button>

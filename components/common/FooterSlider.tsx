@@ -26,7 +26,8 @@ function loadSessionCache(): FooterSliderSessionCache | null {
       cachedAt: parsed.cachedAt,
       artworks: parsed.artworks,
     };
-  } catch {
+  } catch (error) {
+    console.error('[FooterSlider] Session cache load failed:', error);
     return null;
   }
 }
@@ -38,8 +39,8 @@ function saveSessionCache(artworks: ArtworkCardData[]): void {
       artworks,
     };
     sessionStorage.setItem(FOOTER_SLIDER_SESSION_CACHE_KEY, JSON.stringify(payload));
-  } catch {
-    return;
+  } catch (error) {
+    console.error('[FooterSlider] Session cache save failed:', error);
   }
 }
 

@@ -33,9 +33,9 @@ export default function SearchBar({ value, onChange, placeholder }: SearchBarPro
       />
       {value && (
         <button
+          type="button"
           onClick={() => onChange('')}
           className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-600 hover:text-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-full"
-          type="button"
           aria-label={ui.A11Y.CLEAR_SEARCH}
         >
           <CloseIcon className="h-5 w-5" />
