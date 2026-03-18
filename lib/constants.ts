@@ -144,6 +144,7 @@ export const HERO_PAGES = [
   '/',
   '/our-reality',
   '/our-proof',
+  '/transparency',
   '/archive/2023',
   '/archive/2026',
   '/archive',
