@@ -1,12 +1,12 @@
 export default function ArtistPageLoading() {
   return (
     <div aria-hidden="true">
-      {/* Hero skeleton */}
-      <div className="relative bg-gray-200 py-20 md:py-28">
+      {/* Hero skeleton — charcoal matching PageHero default */}
+      <div className="relative bg-charcoal py-20 md:py-28">
         <div className="container-max text-center space-y-4">
-          <div className="h-10 w-48 mx-auto animate-pulse rounded bg-gray-300" />
-          <div className="h-5 w-80 mx-auto animate-pulse rounded bg-gray-300" />
-          <div className="h-5 w-64 mx-auto animate-pulse rounded bg-gray-300/70" />
+          <div className="h-10 w-48 mx-auto animate-pulse rounded bg-white/20" />
+          <div className="h-5 w-80 mx-auto animate-pulse rounded bg-white/20" />
+          <div className="h-5 w-64 mx-auto animate-pulse rounded bg-white/15" />
         </div>
       </div>
 
