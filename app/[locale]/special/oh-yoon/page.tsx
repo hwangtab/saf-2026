@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import OhYoonMasonryGallery from '@/components/special/OhYoonMasonryGallery';
@@ -141,7 +142,26 @@ export default async function OhYoonPage() {
               </blockquote>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-12 md:gap-24 mb-24 items-start">
+            <div className="grid lg:grid-cols-[280px_1fr_1fr] gap-8 lg:gap-16 mb-24 items-start">
+              {/* Portrait */}
+              <div className="flex flex-col items-center lg:items-start">
+                <figure className="relative w-full max-w-[260px] lg:max-w-none">
+                  <div className="border-4 border-charcoal shadow-[8px_8px_0px_0px_rgba(49,57,60,0.15)] overflow-hidden">
+                    <Image
+                      src="/images/ohyoon.webp"
+                      alt="Oh Yoon (1946-1986)"
+                      width={400}
+                      height={533}
+                      className="w-full object-cover grayscale"
+                      priority
+                    />
+                  </div>
+                  <figcaption className="mt-3 text-xs text-charcoal/50 font-medium tracking-widest uppercase text-center">
+                    Oh Yoon, 1946–1986
+                  </figcaption>
+                </figure>
+              </div>
+
               <div className="space-y-8">
                 <h2 className="text-4xl font-normal border-l-[12px] border-charcoal pl-6 py-2 leading-tight font-display text-balance">
                   Carving the pain of the era
@@ -288,7 +308,26 @@ export default async function OhYoonPage() {
           </div>
 
           {/* Bio / Narrative Section */}
-          <div className="grid md:grid-cols-2 gap-12 md:gap-24 mb-32 items-start">
+          <div className="grid lg:grid-cols-[280px_1fr_1fr] gap-8 lg:gap-16 mb-32 items-start">
+            {/* Portrait */}
+            <div className="flex flex-col items-center lg:items-start">
+              <figure className="relative w-full max-w-[260px] lg:max-w-none">
+                <div className="border-4 border-charcoal shadow-[8px_8px_0px_0px_rgba(49,57,60,0.15)] overflow-hidden">
+                  <Image
+                    src="/images/ohyoon.webp"
+                    alt="오윤 작가 (1946-1986)"
+                    width={400}
+                    height={533}
+                    className="w-full object-cover grayscale"
+                    priority
+                  />
+                </div>
+                <figcaption className="mt-3 text-xs text-charcoal/50 font-medium tracking-widest uppercase text-center">
+                  오윤, 1946–1986
+                </figcaption>
+              </figure>
+            </div>
+
             <div className="space-y-8">
               <h2 className="text-4xl font-normal border-l-[12px] border-charcoal pl-6 py-2 leading-tight font-display text-balance">
                 시대의 아픔을
