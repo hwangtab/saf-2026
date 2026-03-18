@@ -11,7 +11,13 @@ import { EXTERNAL_LINKS, SITE_URL, OG_IMAGE } from '@/lib/constants';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { createLocaleAlternates } from '@/lib/locale-alternates';
-import { REPORTS, YEARLY_GROWTH } from '@/content/transparency-data';
+import {
+  REPORTS,
+  YEARLY_GROWTH,
+  LOAN_TERMS,
+  INTEREST_SAVING,
+  BORROWER_FIELDS,
+} from '@/content/transparency-data';
 
 const PAGE_URL = `${SITE_URL}/transparency`;
 const PAGE_COPY = {
@@ -105,6 +111,9 @@ export default async function TransparencyPage() {
                       </div>
                     ))}
                   </div>
+                  <p className="text-xs text-charcoal-muted mb-3 text-center">
+                    Rate: {LOAN_TERMS.rateRange.en}
+                  </p>
                   <a
                     href={`/reports/${encodeURIComponent(report.pdfFilename)}`}
                     download={report.pdfFilename}
@@ -156,14 +165,40 @@ export default async function TransparencyPage() {
           </div>
         </Section>
 
-        {/* Key Stats */}
+        {/* Borrower Distribution */}
         <Section variant="primary-surface" prevVariant="white">
           <div className="container-max">
+            <SectionTitle className="mb-4">Borrower Distribution</SectionTitle>
+            <p className="text-charcoal-muted text-center mb-10">
+              Based on the 2024 operation report — loan utilization by artistic field.
+            </p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
+              {BORROWER_FIELDS.map((item) => (
+                <div
+                  key={item.field.en}
+                  className="bg-white rounded-lg p-5 text-center shadow-sm border border-gray-100"
+                >
+                  <p className="text-2xl font-bold text-primary mb-1">{item.rate}</p>
+                  <p className="text-sm text-charcoal">{item.field.en}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        {/* Key Stats */}
+        <Section variant="white" prevVariant="primary-surface">
+          <div className="container-max">
             <SectionTitle className="mb-12">Cumulative Impact</SectionTitle>
-            <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
               <StatCard value="354" label="Total loans issued" variant="highlight" />
               <StatCard value="~KRW 700M" label="Total support deployed" variant="highlight" />
               <StatCard value="95%" label="Repayment rate" variant="highlight" />
+              <StatCard
+                value={INTEREST_SAVING.value.en}
+                label={INTEREST_SAVING.label.en}
+                variant="highlight"
+              />
             </div>
             <div className="mt-12 bg-white p-8 rounded-lg max-w-3xl mx-auto border-l-4 border-primary">
               <p className="text-lg text-charcoal mb-2">
@@ -180,7 +215,7 @@ export default async function TransparencyPage() {
         </Section>
 
         {/* CTA */}
-        <Section variant="primary-soft" prevVariant="primary-surface" className="pb-24 md:pb-32">
+        <Section variant="primary-soft" prevVariant="white" className="pb-24 md:pb-32">
           <div className="container-max text-center">
             <h2 className="font-section font-normal text-4xl md:text-5xl mb-8">
               You can extend this impact
@@ -251,6 +286,9 @@ export default async function TransparencyPage() {
                     </div>
                   ))}
                 </div>
+                <p className="text-xs text-charcoal-muted mb-3 text-center">
+                  대출 금리: {LOAN_TERMS.rateRange.ko}
+                </p>
                 <a
                   href={`/reports/${encodeURIComponent(report.pdfFilename)}`}
                   download={report.pdfFilename}
@@ -301,14 +339,40 @@ export default async function TransparencyPage() {
         </div>
       </Section>
 
-      {/* 누적 핵심 수치 */}
+      {/* 수혜자 분야별 분포 */}
       <Section variant="primary-surface" prevVariant="white">
         <div className="container-max">
+          <SectionTitle className="mb-4">수혜자 분포</SectionTitle>
+          <p className="text-charcoal-muted text-center mb-10">
+            2024 운용보고서 기준, 분야별 대출 이용 현황입니다.
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
+            {BORROWER_FIELDS.map((item) => (
+              <div
+                key={item.field.ko}
+                className="bg-white rounded-lg p-5 text-center shadow-sm border border-gray-100"
+              >
+                <p className="text-2xl font-bold text-primary mb-1">{item.rate}</p>
+                <p className="text-sm text-charcoal">{item.field.ko}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Section>
+
+      {/* 누적 핵심 수치 */}
+      <Section variant="white" prevVariant="primary-surface">
+        <div className="container-max">
           <SectionTitle className="mb-12">누적 성과 요약</SectionTitle>
-          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
             <StatCard value="354건" label="누적 대출 건수" variant="highlight" />
             <StatCard value="약 7억 원" label="누적 지원 금액" variant="highlight" />
             <StatCard value="95%" label="상환율" variant="highlight" />
+            <StatCard
+              value={INTEREST_SAVING.value.ko}
+              label={INTEREST_SAVING.label.ko}
+              variant="highlight"
+            />
           </div>
           <div className="mt-12 bg-white p-8 rounded-lg max-w-3xl mx-auto border-l-4 border-primary">
             <p className="text-lg text-charcoal mb-2">
@@ -324,7 +388,7 @@ export default async function TransparencyPage() {
       </Section>
 
       {/* CTA 섹션 */}
-      <Section variant="primary-soft" prevVariant="primary-surface" className="pb-24 md:pb-32">
+      <Section variant="primary-soft" prevVariant="white" className="pb-24 md:pb-32">
         <div className="container-max text-center">
           <h2 className="font-section font-normal text-4xl md:text-5xl mb-8">
             이 흐름에 함께해 주세요

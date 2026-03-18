@@ -117,6 +117,35 @@ export const REPORTS: Report[] = [
   },
 ];
 
+// 대출 조건
+export const LOAN_TERMS = {
+  rateRange: { ko: '연 3.0 ~ 5.5%', en: '3.0–5.5% p.a.' },
+  source: { ko: '2024 운용보고서 기준', en: 'Source: 2024 Operation Report' },
+};
+
+// 이자 절감 효과
+export const INTEREST_SAVING = {
+  value: { ko: '약 1억 4천만 원', en: '~KRW 140M' },
+  label: { ko: '이자 절감 효과', en: 'Interest saved vs. market rate' },
+  note: {
+    ko: '카드론(15%) 또는 대부업(20%) 이용 시와 비교한 추산값입니다.',
+    en: 'Estimated savings vs. card loan (15%) or lending (20%) rates.',
+  },
+};
+
+// 분야별 수혜자 분포 (2024 운용보고서 기준)
+export interface BorrowerField {
+  field: { ko: string; en: string };
+  rate: string;
+}
+
+export const BORROWER_FIELDS: BorrowerField[] = [
+  { field: { ko: '연극·영화', en: 'Theater / Film' }, rate: '35.4%' },
+  { field: { ko: '음악', en: 'Music' }, rate: '30.2%' },
+  { field: { ko: '미술·사진', en: 'Visual Arts' }, rate: '23.6%' },
+  { field: { ko: '문학', en: 'Literature' }, rate: '7.2%' },
+];
+
 export const YEARLY_GROWTH: YearlyGrowthRow[] = [
   {
     year: '2023',
