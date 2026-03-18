@@ -106,7 +106,7 @@ export default async function OhYoonPage() {
       <>
         <JsonLdScript data={breadcrumbSchema} />
         <div className="w-full bg-canvas-soft min-h-screen font-sans">
-          <section className="relative w-full py-20 md:py-32 px-4 overflow-hidden border-b-8 border-double border-charcoal/20 bg-canvas">
+          <section className="relative w-full py-20 md:py-32 px-4 overflow-hidden border-b-8 border-double border-white/10 bg-[#2a3032]">
             <div className="max-w-4xl mx-auto text-center relative z-10">
               <div className="inline-block relative mb-8 animate-stamp [animation-fill-mode:both]">
                 <span className="relative z-10 inline-block px-6 py-3 border-4 border-charcoal bg-white text-charcoal font-bold text-lg tracking-widest transform -rotate-1 shadow-[4px_4px_0px_0px_rgba(49,57,60,0.2)]">
@@ -115,13 +115,13 @@ export default async function OhYoonPage() {
                 <div className="absolute inset-0 border-4 border-accent transform rotate-2 translate-x-1 translate-y-1 -z-0 opacity-60" />
               </div>
 
-              <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-normal mb-8 md:mb-10 leading-tight text-charcoal tracking-tighter text-balance drop-shadow-sm font-display animate-fade-in-up opacity-0 [animation-fill-mode:both] [animation-delay:200ms]">
+              <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-normal mb-8 md:mb-10 leading-tight text-white tracking-tighter text-balance drop-shadow-sm font-display animate-fade-in-up opacity-0 [animation-fill-mode:both] [animation-delay:200ms]">
                 The Blade of the People,
                 <br />
                 Returning After 40 Years
               </h1>
 
-              <p className="text-lg sm:text-xl md:text-2xl text-charcoal/90 max-w-2xl mx-auto font-medium leading-relaxed border-t-2 border-b-2 border-charcoal/15 py-5 md:py-6 animate-fade-in-up opacity-0 [animation-fill-mode:both] [animation-delay:400ms]">
+              <p className="text-lg sm:text-xl md:text-2xl text-white/80 max-w-2xl mx-auto font-medium leading-relaxed border-t-2 border-b-2 border-white/20 py-5 md:py-6 animate-fade-in-up opacity-0 [animation-fill-mode:both] [animation-delay:400ms]">
                 A short yet powerful life. A spirit of the times carved in printmaking.
                 <br />
                 Oh Yoon speaks to us again through his work.
@@ -228,7 +228,7 @@ export default async function OhYoonPage() {
       <JsonLdScript data={breadcrumbSchema} />
       <div className="w-full bg-canvas-soft min-h-screen font-sans">
         {/* Hero Section */}
-        <section className="relative w-full py-20 md:py-32 px-4 overflow-hidden border-b-8 border-double border-charcoal/20 bg-canvas">
+        <section className="relative w-full py-20 md:py-32 px-4 overflow-hidden border-b-8 border-double border-white/10 bg-[#2a3032]">
           <div
             data-hero-sentinel="true"
             aria-hidden="true"
@@ -242,19 +242,19 @@ export default async function OhYoonPage() {
               <div className="absolute inset-0 border-4 border-accent transform rotate-2 translate-x-1 translate-y-1 -z-0 opacity-60" />
             </div>
 
-            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-normal mb-8 md:mb-10 leading-tight text-charcoal tracking-tighter text-balance drop-shadow-sm font-display animate-fade-in-up opacity-0 [animation-fill-mode:both] [animation-delay:200ms]">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-normal mb-8 md:mb-10 leading-tight text-white tracking-tighter text-balance drop-shadow-sm font-display animate-fade-in-up opacity-0 [animation-fill-mode:both] [animation-delay:200ms]">
               40년 만에 돌아온
               <br />
               <span className="relative inline-block px-2">
-                <span className="relative z-10 text-accent-strong">민중의 칼날</span>
-                <span className="absolute bottom-2 left-0 w-full h-4 bg-charcoal/10 -z-0 -rotate-1" />
+                <span className="relative z-10 text-accent">민중의 칼날</span>
+                <span className="absolute bottom-2 left-0 w-full h-4 bg-white/15 -z-0 -rotate-1" />
               </span>
               , 다시
               <br />
               신명을 깨우다
             </h1>
 
-            <p className="text-lg sm:text-xl md:text-2xl text-charcoal/90 max-w-2xl mx-auto font-medium leading-relaxed border-t-2 border-b-2 border-charcoal/15 py-5 md:py-6 animate-fade-in-up opacity-0 [animation-fill-mode:both] [animation-delay:400ms]">
+            <p className="text-lg sm:text-xl md:text-2xl text-white/80 max-w-2xl mx-auto font-medium leading-relaxed border-t-2 border-b-2 border-white/20 py-5 md:py-6 animate-fade-in-up opacity-0 [animation-fill-mode:both] [animation-delay:400ms]">
               짧지만 강렬했던 삶, 판화로 새긴 시대의 정신.
               <br />
               오윤의 예술혼이 오늘 우리에게 다시 말을 겁니다.
@@ -262,10 +262,10 @@ export default async function OhYoonPage() {
           </div>
 
           {/* Background Decorative Elements */}
-          <div className="absolute top-0 left-0 w-32 h-32 border-l-[12px] border-t-[12px] border-charcoal/10" />
-          <div className="absolute bottom-0 right-0 w-32 h-32 border-r-[12px] border-b-[12px] border-charcoal/10" />
+          <div className="absolute top-0 left-0 w-32 h-32 border-l-[12px] border-t-[12px] border-white/15" />
+          <div className="absolute bottom-0 right-0 w-32 h-32 border-r-[12px] border-b-[12px] border-white/15" />
           <div className="absolute top-1/2 left-4 w-4 h-4 rounded-full bg-accent opacity-40" />
-          <div className="absolute top-1/3 right-8 w-6 h-6 rounded-full bg-charcoal opacity-10" />
+          <div className="absolute top-1/3 right-8 w-6 h-6 rounded-full bg-white opacity-10" />
         </section>
 
         <div className="max-w-[1440px] mx-auto px-4 py-16 md:py-24">
