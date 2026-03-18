@@ -9,6 +9,7 @@ import { CONTACT, SITE_URL, TERMS_OF_SERVICE_VERSION } from '@/lib/constants';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { TERMS_OF_SERVICE_DOCUMENT } from '@/lib/legal-documents';
 import { createStandardPageMetadata } from '@/lib/seo';
+import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { formatEffectiveDateForLocale } from '@/lib/utils';
 import { resolveLocale } from '@/lib/server-locale';
 
@@ -32,15 +33,16 @@ export async function generateMetadata(): Promise<Metadata> {
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
-  return createStandardPageMetadata(title, copy.description, PAGE_URL, PAGE_PATH);
+  return createStandardPageMetadata(title, copy.description, PAGE_URL, PAGE_PATH, locale);
 }
 
 export default async function TermsPage() {
   const locale = resolveLocale(await getLocale());
+  const pageUrl = buildLocaleUrl(PAGE_PATH, locale);
   const tBreadcrumbs = await getTranslations('breadcrumbs');
   const breadcrumbSchema = createBreadcrumbSchema([
     { name: tBreadcrumbs('home'), url: SITE_URL },
-    { name: tBreadcrumbs('terms'), url: PAGE_URL },
+    { name: tBreadcrumbs('terms'), url: pageUrl },
   ]);
   const doc = TERMS_OF_SERVICE_DOCUMENT;
   const effectiveDate = formatEffectiveDateForLocale(doc.effectiveDate, locale);

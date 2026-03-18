@@ -19,6 +19,7 @@ import {
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { createStandardPageMetadata } from '@/lib/seo';
+import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
 
 export const revalidate = 3600;
@@ -42,16 +43,17 @@ export async function generateMetadata(): Promise<Metadata> {
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
-  return createStandardPageMetadata(title, copy.description, PAGE_URL, '/our-reality');
+  return createStandardPageMetadata(title, copy.description, PAGE_URL, '/our-reality', locale);
 }
 
 export default async function OurReality() {
   const locale = resolveLocale(await getLocale());
+  const pageUrl = buildLocaleUrl('/our-reality', locale);
   const testimonialsData = await getSupabaseTestimonials();
   const tBreadcrumbs = await getTranslations('breadcrumbs');
   const breadcrumbSchema = createBreadcrumbSchema([
     { name: tBreadcrumbs('home'), url: SITE_URL },
-    { name: tBreadcrumbs('ourReality'), url: PAGE_URL },
+    { name: tBreadcrumbs('ourReality'), url: pageUrl },
   ]);
 
   if (locale === 'en') {
@@ -63,7 +65,7 @@ export default async function OurReality() {
           description="Data from the 2025 report shows structural financial exclusion faced by artists in Korea."
         >
           <ShareButtonsWrapper
-            url={PAGE_URL}
+            url={pageUrl}
             title="Our Reality - SAF 2026"
             description="Understand the structure of artist financial exclusion through data."
           />

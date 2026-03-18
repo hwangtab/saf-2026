@@ -8,6 +8,7 @@ import { ARTIST_APPLICATION_TERMS_VERSION, CONTACT, SITE_URL } from '@/lib/const
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { ARTIST_APPLICATION_TERMS_DOCUMENT } from '@/lib/legal-documents';
 import { createStandardPageMetadata } from '@/lib/seo';
+import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { formatEffectiveDateForLocale } from '@/lib/utils';
 import { resolveLocale } from '@/lib/server-locale';
 
@@ -31,16 +32,18 @@ export async function generateMetadata(): Promise<Metadata> {
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
-  return createStandardPageMetadata(title, copy.description, PAGE_URL, PAGE_PATH);
+  return createStandardPageMetadata(title, copy.description, PAGE_URL, PAGE_PATH, locale);
 }
 
 export default async function ArtistTermsPage() {
   const locale = resolveLocale(await getLocale());
+  const pageUrl = buildLocaleUrl(PAGE_PATH, locale);
+  const termsUrl = buildLocaleUrl('/terms', locale);
   const tBreadcrumbs = await getTranslations('breadcrumbs');
   const breadcrumbSchema = createBreadcrumbSchema([
     { name: tBreadcrumbs('home'), url: SITE_URL },
-    { name: tBreadcrumbs('terms'), url: `${SITE_URL}/terms` },
-    { name: tBreadcrumbs('termsArtist'), url: PAGE_URL },
+    { name: tBreadcrumbs('terms'), url: termsUrl },
+    { name: tBreadcrumbs('termsArtist'), url: pageUrl },
   ]);
 
   const doc = ARTIST_APPLICATION_TERMS_DOCUMENT;

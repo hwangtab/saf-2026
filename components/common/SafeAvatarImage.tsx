@@ -30,11 +30,18 @@ function buildAvatarSrcSet(src: string): string {
 
 export default function SafeAvatarImage({
   src,
-  alt = '',
+  alt,
   onError,
   sizes,
   ...props
 }: SafeAvatarImageProps) {
+  if (process.env.NODE_ENV !== 'production' && alt === undefined) {
+    console.warn('[SafeAvatarImage] Missing alt prop. Pass alt="" for decorative avatars.', {
+      src,
+    });
+  }
+
+  const resolvedAlt = alt ?? '';
   const [currentSrc, setCurrentSrc] = useState(src);
   const shouldTransform = useMemo(() => isProfileStorageUrl(src), [src]);
   const srcSet = useMemo(
@@ -52,7 +59,7 @@ export default function SafeAvatarImage({
       src={currentSrc}
       srcSet={srcSet}
       sizes={srcSet ? sizes || '64px' : undefined}
-      alt={alt}
+      alt={resolvedAlt}
       decoding="async"
       onError={(event) => {
         onError?.(event);

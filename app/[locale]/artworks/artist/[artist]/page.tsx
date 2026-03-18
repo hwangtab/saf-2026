@@ -10,7 +10,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getLocale, getTranslations } from 'next-intl/server';
 import type { Artwork, ArtworkListItem } from '@/types';
-import { createLocaleAlternates } from '@/lib/locale-alternates';
+import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
 
 import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? resolvedImageUrl
     : `${SITE_URL}${resolvedImageUrl}`;
   const artistPath = `/artworks/artist/${encodeURIComponent(artistName)}`;
-  const pageUrl = `${SITE_URL}${artistPath}`;
+  const pageUrl = buildLocaleUrl(artistPath, locale);
 
   // Find valid profile or note from any of the artist's artworks
   const artistProfile = artistArtworks.find((a) => a.profile)?.profile || '';
@@ -75,7 +75,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       locale === 'en'
         ? [artistName, 'SAF 2026', 'artist', 'artworks', 'exhibition']
         : [artistName, '씨앗페', 'SAF 2026', '예술가', '전시회'],
-    alternates: createLocaleAlternates(artistPath),
+    alternates: createLocaleAlternates(artistPath, locale),
     openGraph: {
       title: metaTitle,
       description: seoDescription.substring(0, 200),

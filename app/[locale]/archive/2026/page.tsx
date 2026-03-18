@@ -15,6 +15,7 @@ import {
   createBreadcrumbSchema,
 } from '@/lib/seo-utils';
 import { createStandardPageMetadata } from '@/lib/seo';
+import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
 
 // Dynamically import KakaoMap (client-side only, reduces initial bundle)
@@ -39,14 +40,16 @@ export async function generateMetadata(): Promise<Metadata> {
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
-  return createStandardPageMetadata(title, copy.description, PAGE_URL, '/archive/2026');
+  return createStandardPageMetadata(title, copy.description, PAGE_URL, '/archive/2026', locale);
 }
 
 export default async function Archive2026Page() {
   const locale = resolveLocale(await getLocale());
+  const pageUrl = buildLocaleUrl('/archive/2026', locale);
+  const archiveUrl = buildLocaleUrl('/archive', locale);
   const tBreadcrumbs = await getTranslations('breadcrumbs');
   const exhibitionReviews = await getSupabaseReviews();
-  const canonicalUrl = PAGE_URL;
+  const canonicalUrl = pageUrl;
   const shareTitle =
     locale === 'en'
       ? '2026 Offline Exhibition Archive | SAF 2026'
@@ -74,8 +77,8 @@ export default async function Archive2026Page() {
   const eventSchema = generateExhibitionSchema(exhibitionReviews, locale);
   const breadcrumbSchema = createBreadcrumbSchema([
     { name: tBreadcrumbs('home'), url: SITE_URL },
-    { name: tBreadcrumbs('archive'), url: `${SITE_URL}/archive` },
-    { name: tBreadcrumbs('archive2026'), url: PAGE_URL },
+    { name: tBreadcrumbs('archive'), url: archiveUrl },
+    { name: tBreadcrumbs('archive2026'), url: pageUrl },
   ]);
 
   if (locale === 'en') {

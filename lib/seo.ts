@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
-import { SITE_URL, OG_IMAGE } from '@/lib/constants';
-import { createLocaleAlternates } from '@/lib/locale-alternates';
+import { OG_IMAGE } from '@/lib/constants';
+import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 
 export function createPageMetadata(
   title: string,
@@ -9,7 +9,7 @@ export function createPageMetadata(
   imageUrl?: string,
   locale: 'ko' | 'en' = 'ko'
 ): Metadata {
-  const url = `${SITE_URL}${path}`;
+  const url = buildLocaleUrl(path, locale);
   const siteTitle = locale === 'en' ? 'SAF 2026' : '씨앗페 2026';
   const ogLocale = locale === 'en' ? 'en_US' : 'ko_KR';
   const images = [
@@ -26,7 +26,7 @@ export function createPageMetadata(
   return {
     title,
     description,
-    alternates: createLocaleAlternates(path),
+    alternates: createLocaleAlternates(path, locale),
     openGraph: {
       title: `${title} | ${siteTitle}`,
       description,
@@ -62,16 +62,19 @@ export function createStandardPageMetadata(
   title: string,
   description: string,
   pageUrl: string,
-  pagePath: string
+  pagePath: string,
+  locale: 'ko' | 'en' = 'ko'
 ): Metadata {
+  const localizedPageUrl = buildLocaleUrl(pagePath, locale);
+
   return {
     title,
     description,
-    alternates: createLocaleAlternates(pagePath),
+    alternates: createLocaleAlternates(pagePath, locale),
     openGraph: {
       title,
       description,
-      url: pageUrl,
+      url: localizedPageUrl || pageUrl,
       images: [
         { url: OG_IMAGE.url, width: OG_IMAGE.width, height: OG_IMAGE.height, alt: OG_IMAGE.alt },
       ],

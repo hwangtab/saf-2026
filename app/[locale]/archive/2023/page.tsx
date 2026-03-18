@@ -16,6 +16,7 @@ import { SITE_URL, escapeJsonLdForScript } from '@/lib/constants';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema, generateVideoSchema } from '@/lib/seo-utils';
 import { createStandardPageMetadata } from '@/lib/seo';
+import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
 
 export const revalidate = 3600;
@@ -39,11 +40,13 @@ export async function generateMetadata(): Promise<Metadata> {
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
-  return createStandardPageMetadata(title, copy.description, PAGE_URL, '/archive/2023');
+  return createStandardPageMetadata(title, copy.description, PAGE_URL, '/archive/2023', locale);
 }
 
 export default async function Archive2023Page() {
   const locale = resolveLocale(await getLocale());
+  const pageUrl = buildLocaleUrl('/archive/2023', locale);
+  const archiveUrl = buildLocaleUrl('/archive', locale);
   const tBreadcrumbs = await getTranslations('breadcrumbs');
   const isEnglish = locale === 'en';
 
@@ -109,8 +112,8 @@ export default async function Archive2023Page() {
 
   const breadcrumbSchema = createBreadcrumbSchema([
     { name: tBreadcrumbs('home'), url: SITE_URL },
-    { name: tBreadcrumbs('archive'), url: `${SITE_URL}/archive` },
-    { name: tBreadcrumbs('archive2023'), url: PAGE_URL },
+    { name: tBreadcrumbs('archive'), url: archiveUrl },
+    { name: tBreadcrumbs('archive2023'), url: pageUrl },
   ]);
 
   return (

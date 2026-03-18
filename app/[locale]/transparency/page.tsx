@@ -11,6 +11,7 @@ import { EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { createStandardPageMetadata } from '@/lib/seo';
+import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
 import {
   REPORTS,
@@ -41,15 +42,16 @@ export async function generateMetadata(): Promise<Metadata> {
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
-  return createStandardPageMetadata(title, copy.description, PAGE_URL, '/transparency');
+  return createStandardPageMetadata(title, copy.description, PAGE_URL, '/transparency', locale);
 }
 
 export default async function TransparencyPage() {
   const locale = resolveLocale(await getLocale());
+  const pageUrl = buildLocaleUrl('/transparency', locale);
   const tBreadcrumbs = await getTranslations('breadcrumbs');
   const breadcrumbSchema = createBreadcrumbSchema([
     { name: tBreadcrumbs('home'), url: SITE_URL },
-    { name: tBreadcrumbs('transparency'), url: PAGE_URL },
+    { name: tBreadcrumbs('transparency'), url: pageUrl },
   ]);
 
   if (locale === 'en') {
@@ -61,7 +63,7 @@ export default async function TransparencyPage() {
           description="Every loan, every repayment, every won — published openly. Here is the full operational record of the artist mutual aid fund."
         >
           <ShareButtonsWrapper
-            url={PAGE_URL}
+            url={pageUrl}
             title="Transparency Reports - SAF 2026"
             description="Annual operational reports of the artist mutual aid loan program."
           />

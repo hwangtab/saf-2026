@@ -18,7 +18,7 @@ import {
 } from '@/lib/seo-utils';
 import { getSupabaseHomepageArtworks, getSupabaseFAQs } from '@/lib/supabase-data';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { createLocaleAlternates } from '@/lib/locale-alternates';
+import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 
 export const revalidate = 1800;
 
@@ -47,18 +47,20 @@ const ArtworkHighlightSlider = dynamic(
 );
 
 export async function generateMetadata(): Promise<Metadata> {
+  const locale = (await getLocale()) === 'en' ? 'en' : 'ko';
   const t = await getTranslations('home');
+  const pageUrl = buildLocaleUrl('/', locale);
 
   return {
     title: t('metaTitle'),
     description: t('metaDescription'),
-    alternates: createLocaleAlternates('/'),
+    alternates: createLocaleAlternates('/', locale),
     openGraph: {
       type: 'website',
       siteName: t('metaTitle').split(' - ')[0],
       title: t('metaTitle'),
       description: t('ogDescription'),
-      url: SITE_URL,
+      url: pageUrl,
       images: [
         {
           url: OG_IMAGE.url,

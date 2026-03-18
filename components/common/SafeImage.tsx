@@ -149,6 +149,11 @@ function RemoteSafeImage({ src, sizes, ...props }: { src: string } & Omit<ImageP
 }
 
 export default function SafeImage({ src, ...props }: SafeImageProps) {
+  const hasAltProp = Object.prototype.hasOwnProperty.call(props, 'alt');
+  if (process.env.NODE_ENV !== 'production' && !hasAltProp) {
+    console.warn('[SafeImage] Missing alt prop. Pass alt="" for decorative images.', { src });
+  }
+
   const isRemote =
     typeof src === 'string' && (src.startsWith('http://') || src.startsWith('https://'));
 

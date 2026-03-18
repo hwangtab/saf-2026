@@ -12,6 +12,7 @@ import { EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { createStandardPageMetadata } from '@/lib/seo';
+import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
 
 export const revalidate = false;
@@ -35,15 +36,16 @@ export async function generateMetadata(): Promise<Metadata> {
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
-  return createStandardPageMetadata(title, copy.description, PAGE_URL, '/our-proof');
+  return createStandardPageMetadata(title, copy.description, PAGE_URL, '/our-proof', locale);
 }
 
 export default async function OurProof() {
   const locale = resolveLocale(await getLocale());
+  const pageUrl = buildLocaleUrl('/our-proof', locale);
   const tBreadcrumbs = await getTranslations('breadcrumbs');
   const breadcrumbSchema = createBreadcrumbSchema([
     { name: tBreadcrumbs('home'), url: SITE_URL },
-    { name: tBreadcrumbs('ourProof'), url: PAGE_URL },
+    { name: tBreadcrumbs('ourProof'), url: pageUrl },
   ]);
 
   if (locale === 'en') {
@@ -55,7 +57,7 @@ export default async function OurProof() {
           description="Mutual-aid finance is not a theory. 354 loans and a 95% repayment rate prove that trust-based lending to artists works."
         >
           <ShareButtonsWrapper
-            url={PAGE_URL}
+            url={pageUrl}
             title="Our Proof - SAF 2026"
             description="See the measurable outcomes of artist mutual-aid lending at SAF 2026."
           />

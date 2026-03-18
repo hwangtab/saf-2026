@@ -228,15 +228,17 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
                   <tr key={artwork.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center">
-                        <div
-                          className={`relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-md bg-gray-100 border border-gray-200 ${
-                            artwork.images?.[0] ? 'cursor-pointer hover:opacity-80' : ''
-                          }`}
-                          onClick={() =>
-                            artwork.images?.[0] && handleImageClick(artwork.images, artwork.title)
-                          }
-                        >
-                          {artwork.images?.[0] ? (
+                        {artwork.images?.[0] ? (
+                          <button
+                            type="button"
+                            className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-md border border-gray-200 bg-gray-100 cursor-pointer hover:opacity-80"
+                            onClick={() => handleImageClick(artwork.images || [], artwork.title)}
+                            aria-label={
+                              locale === 'en'
+                                ? `${artwork.title} image preview`
+                                : `${artwork.title} 이미지 미리보기`
+                            }
+                          >
                             <SafeImage
                               src={resolveArtworkImageUrlForPreset(artwork.images[0], 'slider')}
                               alt={artwork.title}
@@ -244,13 +246,16 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
                               sizes="48px"
                               className="object-cover"
                             />
-                          ) : (
+                          </button>
+                        ) : (
+                          <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-md border border-gray-200 bg-gray-100">
                             <div className="flex h-full w-full items-center justify-center text-gray-300">
                               <svg
                                 className="h-6 w-6"
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"
+                                aria-hidden="true"
                               >
                                 <path
                                   strokeLinecap="round"
@@ -260,8 +265,8 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
                                 />
                               </svg>
                             </div>
-                          )}
-                        </div>
+                          </div>
+                        )}
                         <div className="ml-4">
                           <div className="font-medium text-gray-900">{artwork.title}</div>
                           <div className="text-sm text-gray-500">

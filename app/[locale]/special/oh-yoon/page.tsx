@@ -6,7 +6,7 @@ import OhYoonMasonryGallery from '@/components/special/OhYoonMasonryGallery';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { OG_IMAGE, SITE_URL } from '@/lib/constants';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
-import { createLocaleAlternates } from '@/lib/locale-alternates';
+import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { getSupabaseArtworks } from '@/lib/supabase-data';
 import { resolveLocale } from '@/lib/server-locale';
 import type { Artwork, ArtworkListItem } from '@/types';
@@ -29,7 +29,6 @@ const isOhYoonArtist = (artist: string): boolean => {
   return OH_YOON_ARTIST_KEYS.has(normalized) || compact === '오윤' || compact === 'ohyoon';
 };
 
-const PAGE_URL = `${SITE_URL}/special/oh-yoon`;
 const PAGE_COPY = {
   ko: {
     title: '오윤 40주기 특별전: Oh Yoon 40th Anniversary Special Exhibition',
@@ -57,14 +56,15 @@ export async function generateMetadata(): Promise<Metadata> {
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
   const siteName = tSeo('siteTitle');
+  const pageUrl = buildLocaleUrl('/special/oh-yoon', locale);
 
   return {
     title: copy.title,
     description: copy.description,
-    alternates: createLocaleAlternates('/special/oh-yoon'),
+    alternates: createLocaleAlternates('/special/oh-yoon', locale),
     openGraph: {
       type: 'website',
-      url: PAGE_URL,
+      url: pageUrl,
       title: copy.title,
       description: copy.ogDescription,
       siteName,
@@ -88,6 +88,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function OhYoonPage() {
   const locale = resolveLocale(await getLocale());
+  const pageUrl = buildLocaleUrl('/special/oh-yoon', locale);
   const tBreadcrumbs = await getTranslations('breadcrumbs');
   const allArtworks = await getSupabaseArtworks();
   const OH_YOON_ARTWORKS: ArtworkListItem[] = allArtworks
@@ -98,7 +99,7 @@ export default async function OhYoonPage() {
   );
   const breadcrumbSchema = createBreadcrumbSchema([
     { name: tBreadcrumbs('home'), url: SITE_URL },
-    { name: tBreadcrumbs('ohYoon'), url: PAGE_URL },
+    { name: tBreadcrumbs('ohYoon'), url: pageUrl },
   ]);
 
   if (locale === 'en') {

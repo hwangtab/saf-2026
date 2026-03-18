@@ -9,6 +9,7 @@ import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { SITE_URL } from '@/lib/constants';
 import { createStandardPageMetadata } from '@/lib/seo';
+import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
 
 export const revalidate = false;
@@ -32,15 +33,16 @@ export async function generateMetadata(): Promise<Metadata> {
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
-  return createStandardPageMetadata(title, copy.description, PAGE_URL, '/archive');
+  return createStandardPageMetadata(title, copy.description, PAGE_URL, '/archive', locale);
 }
 
 export default async function ArchiveHubPage() {
   const locale = resolveLocale(await getLocale());
+  const pageUrl = buildLocaleUrl('/archive', locale);
   const tBreadcrumbs = await getTranslations('breadcrumbs');
   const breadcrumbSchema = createBreadcrumbSchema([
     { name: tBreadcrumbs('home'), url: SITE_URL },
-    { name: tBreadcrumbs('archive'), url: PAGE_URL },
+    { name: tBreadcrumbs('archive'), url: pageUrl },
   ]);
 
   if (locale === 'en') {

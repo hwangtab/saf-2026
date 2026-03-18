@@ -211,19 +211,19 @@ export function ImageUpload({
     await handleFiles(files);
   };
 
-  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = async (e: React.DragEvent<HTMLElement>) => {
     e.preventDefault();
     setIsDragging(false);
     const files = Array.from(e.dataTransfer.files || []);
     await handleFiles(files);
   };
 
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDragOver = (e: React.DragEvent<HTMLElement>) => {
     e.preventDefault();
     if (!isDragging) setIsDragging(true);
   };
 
-  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDragLeave = (e: React.DragEvent<HTMLElement>) => {
     e.preventDefault();
     setIsDragging(false);
   };
@@ -327,11 +327,21 @@ export function ImageUpload({
         })}
 
         {currentUrls.length < maxFiles && (
-          <div
+          <button
+            type="button"
             onClick={() => !uploading && fileInputRef.current?.click()}
+            onKeyDown={(e) => {
+              if (uploading) return;
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                fileInputRef.current?.click();
+              }
+            }}
             onDrop={handleDrop}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
+            aria-label={copy.addImage}
+            disabled={uploading}
             className={`w-32 h-32 border-2 border-dashed rounded-lg flex flex-col items-center justify-center transition-colors ${
               uploading
                 ? 'border-gray-200 bg-gray-50 cursor-wait'
@@ -367,7 +377,7 @@ export function ImageUpload({
                 <span className="text-xs text-gray-500">{copy.addImage}</span>
               </>
             )}
-          </div>
+          </button>
         )}
       </div>
 

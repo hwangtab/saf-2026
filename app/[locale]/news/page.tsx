@@ -14,12 +14,11 @@ import {
   generateSpeakableSchema,
 } from '@/lib/seo-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { createLocaleAlternates } from '@/lib/locale-alternates';
+import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
 
 export const revalidate = 300;
 
-const PAGE_URL = `${SITE_URL}/news`;
 type LocaleCode = 'ko' | 'en';
 
 type NewsPageCopy = {
@@ -87,15 +86,16 @@ export async function generateMetadata(): Promise<Metadata> {
   const copy = NEWS_COPY[locale];
   const tSeo = await getTranslations('seo');
   const title = `${copy.pageTitle} | ${tSeo('siteTitle')}`;
+  const pageUrl = buildLocaleUrl('/news', locale);
 
   return {
     title,
     description: copy.pageDescription,
-    alternates: createLocaleAlternates('/news'),
+    alternates: createLocaleAlternates('/news', locale),
     openGraph: {
       title,
       description: copy.pageDescription,
-      url: PAGE_URL,
+      url: pageUrl,
       images: [
         { url: OG_IMAGE.url, width: OG_IMAGE.width, height: OG_IMAGE.height, alt: OG_IMAGE.alt },
       ],
@@ -108,8 +108,6 @@ export async function generateMetadata(): Promise<Metadata> {
     },
   };
 }
-
-const canonicalUrl = PAGE_URL;
 
 type HighlightQuote = {
   id: string;
@@ -329,6 +327,7 @@ function formatDate(isoString: string, locale: LocaleCode) {
 
 export default async function NewsPage() {
   const locale = resolveLocale(await getLocale());
+  const canonicalUrl = buildLocaleUrl('/news', locale);
   const copy = NEWS_COPY[locale];
   const highlightQuotes = highlightQuotesByLocale[locale];
   const tBreadcrumbs = await getTranslations('breadcrumbs');
@@ -336,7 +335,7 @@ export default async function NewsPage() {
 
   const breadcrumbSchema = createBreadcrumbSchema([
     { name: tBreadcrumbs('home'), url: SITE_URL },
-    { name: tBreadcrumbs('news'), url: PAGE_URL },
+    { name: tBreadcrumbs('news'), url: canonicalUrl },
   ]);
 
   const structuredData = {
