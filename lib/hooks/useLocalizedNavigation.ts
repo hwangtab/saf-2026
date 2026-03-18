@@ -9,6 +9,22 @@ export function useLocalizedNavigation(): NavigationItem[] {
 
   return [
     {
+      name: t('artworks'),
+      href: '/artworks',
+      items: [
+        {
+          name: t('allArtworks'),
+          href: '/artworks',
+          description: t('allArtworksDesc'),
+        },
+        {
+          name: t('ohYoon'),
+          href: '/special/oh-yoon',
+          description: t('ohYoonDesc'),
+        },
+      ],
+    },
+    {
       name: t('intro'),
       href: '#',
       items: [
@@ -42,22 +58,6 @@ export function useLocalizedNavigation(): NavigationItem[] {
           name: t('archive2023'),
           href: '/archive/2023',
           description: t('archive2023Desc'),
-        },
-      ],
-    },
-    {
-      name: t('artworks'),
-      href: '/artworks',
-      items: [
-        {
-          name: t('allArtworks'),
-          href: '/artworks',
-          description: t('allArtworksDesc'),
-        },
-        {
-          name: t('ohYoon'),
-          href: '/special/oh-yoon',
-          description: t('ohYoonDesc'),
         },
       ],
     },
