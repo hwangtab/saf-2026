@@ -22,7 +22,9 @@
     "allArtworks": "전체 작품 목록",
     "allArtworksDesc": "씨앗페 전체 작품 목록 보기",
     "ohYoon": "오윤 40주기 특별전",
-    "ohYoonDesc": "한국을 대표하는 민중미술 거장의 40주기 특별전"
+    "ohYoonDesc": "한국을 대표하는 민중미술 거장의 40주기 특별전",
+    "transparency": "운용 보고서",
+    "transparencyDesc": "상호부조 대출 운용 현황과 연간 보고서"
   },
   "footer": {
     "links": "링크",
@@ -132,7 +134,8 @@
     "artworks": "출품작",
     "archive": "아카이브",
     "news": "언론 보도",
-    "ohYoon": "오윤 특별전"
+    "ohYoon": "오윤 특별전",
+    "transparency": "운용 보고서"
   },
   "statistics": {
     "exclusionRate": "제1금융권 배제율",

@@ -22,7 +22,9 @@
     "allArtworks": "All Artworks",
     "allArtworksDesc": "Browse the full SAF collection",
     "ohYoon": "Oh Yoon 40th Memorial",
-    "ohYoonDesc": "A special exhibition for the 40th anniversary of Korean master Oh Yoon"
+    "ohYoonDesc": "A special exhibition for the 40th anniversary of Korean master Oh Yoon",
+    "transparency": "Reports",
+    "transparencyDesc": "Annual transparency reports for the mutual aid loan program"
   },
   "footer": {
     "links": "Links",
@@ -132,7 +134,8 @@
     "artworks": "Artworks",
     "archive": "Archive",
     "news": "Press",
-    "ohYoon": "Oh Yoon Special Exhibition"
+    "ohYoon": "Oh Yoon Special Exhibition",
+    "transparency": "Transparency Reports"
   },
   "statistics": {
     "exclusionRate": "Primary Banking Exclusion Rate",
