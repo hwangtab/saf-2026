@@ -1,6 +1,8 @@
+import { AdminCardSkeleton } from '@/components/ui/Skeleton';
+
 export default function ArtistDashboardLoading() {
   return (
-    <div className="min-h-screen bg-[var(--admin-bg)]">
+    <div aria-hidden="true" className="min-h-screen bg-[var(--admin-bg)]">
       <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top,#e0e7ff_0%,#f8fafc_38%,#f1f5f9_100%)]" />
 
       {/* Nav skeleton */}
@@ -27,7 +29,7 @@ export default function ArtistDashboardLoading() {
           <div className="h-4 w-72 animate-pulse rounded bg-slate-100" />
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white/90 shadow-sm">
+        <AdminCardSkeleton padded={false} className="overflow-hidden">
           <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
             <div className="h-6 w-28 animate-pulse rounded bg-slate-200" />
             <div className="h-10 w-44 animate-pulse rounded bg-slate-100" />
@@ -37,7 +39,7 @@ export default function ArtistDashboardLoading() {
             <div className="h-12 animate-pulse rounded bg-slate-100" />
             <div className="h-12 animate-pulse rounded bg-slate-100" />
           </div>
-        </div>
+        </AdminCardSkeleton>
       </div>
     </div>
   );
