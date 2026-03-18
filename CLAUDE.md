@@ -124,6 +124,11 @@ types/
 
 **Responsive Design**: Mobile-first with breakpoints at `sm` (640px), `md` (768px), `lg` (1024px - mobile/desktop nav switch), `xl` (1280px).
 
+**Image Components**: This project uses `next-image-export-optimizer` for static export. **Never use `import Image from 'next/image'` directly** — it breaks the static export build.
+
+- Local images (`public/` directory): `import ExportedImage from 'next-image-export-optimizer'`
+- Remote artwork images (Supabase storage URLs): `import SafeImage from '@/components/common/SafeImage'`
+
 ## Code Style
 
 ### TypeScript (Strict)
@@ -141,7 +146,7 @@ types/
 ```typescript
 // 1. React/Next.js
 import { useState } from 'react';
-import Image from 'next/image';
+// ⚠️ Do NOT use 'next/image' directly — use ExportedImage or SafeImage (see Key Patterns)
 
 // 2. External packages
 import { useInView } from 'react-intersection-observer';
