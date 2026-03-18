@@ -1,5 +1,215 @@
 [
   {
+    "hash": "50d4436",
+    "type": "fix",
+    "scope": "seo,a11y",
+    "subject": "localize metadata URLs and restore keyboard access",
+    "summary": "SEO 로케일 URL 정합성 및 키보드 접근성 개선",
+    "body": "Ensure canonical/alternates/open graph URLs respect locale routes and replace mouse-only interactive divs with keyboard-accessible buttons. Add dev-only warnings for missing image alt props to prevent silent accessibility regressions.",
+    "date": "2026-03-18",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "53cf977",
+    "type": "fix",
+    "scope": null,
+    "subject": "blind spot issues from refactoring audit",
+    "summary": "블라인드 스팟 점검 이슈 수정(보안·접근성·캐시 전략)",
+    "body": "- Add rel='noopener noreferrer' to target='_blank' link in artwork-list.tsx\n- Wrap ArtworkDetailNav with Suspense boundary (useSearchParams fix)\n- Add type='button' to all button elements missing type attribute\n- Replace empty catch{} blocks with console.error logging (56 instances)\n- Add explicit revalidate=false to 7 static pages",
+    "date": "2026-03-18",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "688c819",
+    "type": "feat",
+    "scope": "not-found",
+    "subject": "add context-specific 404 pages for dynamic routes",
+    "summary": "notFound() 호출 페이지에 전용 404 UI 추가 — 루트 generic 404 낙하 방지",
+    "body": "- [locale]/artworks/artist/[artist]/not-found.tsx — 공개 작가 갤러리 404\n- admin/artworks/[id]/not-found.tsx — 어드민 작품 상세 404\n- admin/artists/[id]/not-found.tsx — 어드민 작가 상세 404\n- dashboard/(artist)/artworks/[id]/edit/not-found.tsx — 아티스트 작품 편집 404\n- exhibitor/(dashboard)/artworks/[id]/not-found.tsx — 출품자 작품 상세 404\n- exhibitor/(dashboard)/artists/[id]/not-found.tsx — 출품자 작가 상세 404\n\n각 not-found는 상위 목록으로 돌아가는 back link 포함.\n포털 페이지는 기존 포털 nav layout 유지 (min-h-[60vh] content 영역 표시).",
+    "date": "2026-03-18",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "d9d46fd",
+    "type": "fix",
+    "scope": "loading",
+    "subject": "add aria-hidden, new loaders, fix CSS vars",
+    "summary": "loading.tsx 블라인드스팟 2차 수정 — 접근성 누락 픽스 + 미생성 페이지 추가",
+    "body": "Group A — aria-hidden=\"true\" 추가 (7개 파일):\n- admin/loading.tsx, logs, trash, users, revenue\n- dashboard/loading.tsx, exhibitor/(dashboard)/loading.tsx\n\nGroup B — exhibitor/(dashboard)/loading.tsx CSS 변수 정리:\n- var(--admin-border)/var(--admin-surface) → AdminCardSkeleton\n\nGroup C — 신규 loading.tsx 생성 (9개):\n- dashboard/(artist)/artworks/[id]/edit/loading.tsx (아트워크 편집 폼)\n- exhibitor/(dashboard)/artworks/new/loading.tsx (출품자 작품 등록 폼)\n- onboarding/loading.tsx, exhibitor/onboarding/loading.tsx (스피너)\n- dashboard/pending, dashboard/suspended (스피너)\n- exhibitor/pending, exhibitor/suspended (스피너)\n- (auth)/terms-consent/loading.tsx (동의 폼 스켈레톤)",
+    "date": "2026-03-18",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "ce6e598",
+    "type": "feat",
+    "scope": "loading",
+    "subject": "add loading skeletons for new/create form pages",
+    "summary": "신규 등록 폼 페이지 로딩 스켈레톤 추가",
+    "body": "- admin/artists/new: 작가 등록 폼 스켈레톤\n- admin/artworks/new: 작품 등록 폼 스켈레톤 (판매이력 없음)\n- dashboard/(artist)/artworks/new: 아티스트 작품 등록 폼 스켈레톤",
+    "date": "2026-03-18",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "9da3844",
+    "type": "feat",
+    "scope": "loading",
+    "subject": "add and improve loading skeletons for all pages",
+    "summary": "전체 페이지 로딩 스켈레톤 신규 추가 및 구조 정확도 개선",
+    "body": "- 포털 상세/서브 페이지 20개 loading.tsx 신규 추가\n- archive/2023: PageHero+sun-soft섹션+세로형 포스터+3열 카드로 완전 재작성\n- transparency: 보고서카드 3열+연도별 성장 테이블 구조\n- admin 상세 폼: 이미지업로드+2열 그리드+textarea 반영\n- 포털 파일 전체 slate-* + rounded-2xl + bg-white/90 shadow-sm 통일",
+    "date": "2026-03-18",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "0253a51",
+    "type": "feat",
+    "scope": "transparency",
+    "subject": "보고서 데이터 3종 보강 — 대출 금리·이자 절감·수혜자 분포 추가",
+    "summary": "보고서 원본 데이터 기반으로 대출 금리(연 3.0~5.5%), 이자 절감액(약 1억 4천만 원), 분야별 수혜자 분포 섹션 신설",
+    "body": "- 보고서 카드에 대출 금리 표시\n- 누적 성과 섹션에 이자 절감 효과 StatCard 추가 (3→4개)\n- 수혜자 분야별 분포 섹션 신설 (연극/영화·음악·미술·문학)\n- 한/영 모두 적용",
+    "date": "2026-03-18",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "2a4aa13",
+    "type": "fix",
+    "scope": "transparency",
+    "subject": "보고서 카드 수치 줄바꿈 방지 — text-sm + whitespace-nowrap 적용",
+    "summary": "3열 그리드에서 긴 금액 값(\"2억 9,400만 원\")이 두 줄로 깨지던 UI 버그 수정",
+    "body": null,
+    "date": "2026-03-18",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "433db55",
+    "type": "fix",
+    "scope": "transparency",
+    "subject": "운용보고서 페이지 헤더 투명화 — HERO_PAGES 등록 누락 수정",
+    "summary": "HERO_PAGES 배열에 /transparency 누락으로 헤더가 항상 불투명하던 버그 수정",
+    "body": null,
+    "date": "2026-03-18",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "a3d35d4",
+    "type": "fix",
+    "scope": "loading",
+    "subject": "로딩 UI 최종 정비 — oh-yoon fixed 수정 + 3개 페이지 신규",
+    "summary": "oh-yoon 스피너 헤더 가림 수정, our-reality·archive 2023/2026 스켈레톤 추가",
+    "body": "- oh-yoon: fixed inset-0 → min-h-[calc(100vh-4rem)] (헤더 jarring 제거)\n- our-reality: charcoal 히어로 + 차트 3단 스켈레톤 신규\n- archive/2023: 대표이미지 + 통계 그리드 스켈레톤 신규\n- archive/2026: 2열 콘텐츠 스켈레톤 신규",
+    "date": "2026-03-18",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "78f7d50",
+    "type": "feat",
+    "scope": "transparency",
+    "subject": "예술인 상호부조 대출 운용 보고서 공개 페이지 추가",
+    "summary": "기금 투명성 강화를 위한 /transparency 페이지 신설 — 2023/2024/2025 연간 보고서 PDF 다운로드, 성장 추이 테이블, 작품 구매 CTA 포함",
+    "body": "- app/[locale]/transparency/page.tsx: 한/영 투명성 보고서 페이지 (SSR, i18n)\n- content/transparency-data.ts: 보고서 메타 + 연도별 성장 데이터 (ko/en 이중 구조)\n- public/reports/: 2023~2025 PDF 파일 3종 서빙\n- docs/대출보고서/: 원본 PDF 보관\n- app/sitemap.ts: /transparency 항목 추가 (priority 0.85)\n- lib/constants.ts: BREADCRUMBS 맵에 /transparency 추가\n- lib/hooks/useLocalizedNavigation.ts: 소개 드롭다운에 운용 보고서 추가\n- messages/ko.json, messages/en.json: nav/breadcrumbs i18n 키 추가\n- docs/SAF2026-SWOT-ANALYSIS.md, SAF2026-GTM-STRATEGY.md: PM 전략 문서",
+    "date": "2026-03-18",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "2137533",
+    "type": "fix",
+    "scope": "admin",
+    "subject": "작품 데이터 다운로드 로그 프리페치로 인한 오발생 수정",
+    "summary": "작품 관리 페이지 방문만으로 다운로드 로그가 남던 버그 수정",
+    "body": "Next.js Link 프리페치 요청(Next-Router-Prefetch: 1)이 export\nRoute Handler를 실제 다운로드와 동일하게 처리하여 관리자가\n페이지를 방문할 때마다 로그가 쌓이는 문제가 있었음.\n프리페치 요청 감지 시 204로 즉시 반환하도록 수정.",
+    "date": "2026-03-18",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "b9a5ecf",
+    "type": "fix",
+    "scope": "special",
+    "subject": "오윤 페이지 런타임 에러 수정 — Image → ExportedImage",
+    "summary": "next/image 직접 사용 → next-image-export-optimizer로 교체하여 static export 호환성 복원",
+    "body": null,
+    "date": "2026-03-18",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "1692417",
+    "type": "fix",
+    "scope": "loading",
+    "subject": "홈·작가 페이지 스켈레톤 실제 디자인과 일치하도록 개선",
+    "summary": "홈 로딩은 전체화면 charcoal 히어로만 남기고, 작가 페이지 히어로를 회색→charcoal로 수정",
+    "body": "- loading.tsx(홈): stats/CTA 스켈레톤 제거, min-h-screen으로 실제 히어로와 일치\n- artist/loading.tsx: 히어로 bg-gray-200 → bg-charcoal, pulse 색상 흰색 계열로 교체",
+    "date": "2026-03-18",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "db653f8",
+    "type": "feat",
+    "scope": "special",
+    "subject": "오윤 특별전 작가 사진 배치 + 로딩 스피너 교체",
+    "summary": "바이오 섹션에 작가 초상 사진(ohyoon.webp) 추가, 스켈레톤 로딩을 브루탈리스트 스탬프 스피너로 교체",
+    "body": "- page.tsx: 바이오 섹션 2열 → 3열(초상|산문|테마), next/image로 ohyoon.webp 배치\n- loading.tsx: 복잡한 스켈레톤 → 전체화면 다크 배경 + 정사각형 스피너",
+    "date": "2026-03-18",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "54aaf82",
+    "type": "fix",
+    "scope": "special",
+    "subject": "오윤 특별전 히어로 다크 배경으로 전환 + 헤더 임시 수정 롤백",
+    "summary": "히어로 배경을 잉크 다크(#2a3032)로 변경해 헤더 흰색 텍스트 가시성 확보 및 갤러리 섹션과 시각적 일관성 달성",
+    "body": "- 히어로 bg-canvas(크림) → bg-[#2a3032](잉크 다크)\n- h1 text-charcoal → text-white, 부제목 text-charcoal/90 → text-white/80\n- \"민중의 칼날\" text-accent-strong → text-accent (어두운 배경에서 오렌지 더 선명)\n- 장식 요소 border/bg charcoal → white 계열로 전환\n- ko/en 버전 모두 동일하게 적용\n- useHeaderStyle.ts: isDarkText 임시 수정(|| specialHeroPage) 롤백",
+    "date": "2026-03-18",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "83725e9",
+    "type": "fix",
+    "scope": "nav",
+    "subject": "실제 헤더 메뉴 순서 변경 (전시 작품 → 소개 → 아카이브)",
+    "summary": "useLocalizedNavigation 훅에서 메뉴 순서 수정 (lib/menus.ts는 deprecated로 미사용)",
+    "body": null,
+    "date": "2026-03-18",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "7fff2fc",
+    "type": "fix",
+    "scope": "ux",
+    "subject": "페이지 전환 스켈레톤 잔류 + 오윤 특별전 오렌지 컬러 버그 수정",
+    "summary": "갤러리/작가/오윤 페이지 자체 loading.tsx 추가로 스켈레톤 상속 차단, brand-orange 미정의 클래스를 accent로 일괄 수정",
+    "body": "- fix: artworks/[id]/loading.tsx 추가 — 상세 페이지 전환 시 갤러리 스켈레톤 표시 방지\n- fix: artworks/artist/[artist]/loading.tsx 추가 — 작가 페이지 전환 시 갤러리 스켈레톤 표시 방지\n- fix: special/oh-yoon/loading.tsx 추가 — 오윤 특별전 전환 시 홈 스켈레톤 표시 방지\n- fix: oh-yoon/page.tsx의 brand-orange → accent, brand-sun-soft → sun-soft 일괄 치환 (미정의 Tailwind 클래스로 오렌지 포인트 컬러 전부 투명하게 렌더링되던 버그)\n- feat: oh-yoon 히어로에 animate-stamp(배지), animate-fade-in-up(h1+부제목) 진입 애니메이션 추가",
+    "date": "2026-03-18",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "a498445",
+    "type": "fix",
+    "scope": "special",
+    "subject": "oh-yoon 특별전 가격 데이터를 Supabase DB에서 동적으로 로드",
+    "summary": "오윤 특별전 작품 데이터를 정적 파일 대신 Supabase DB에서 가져오도록 수정 (가격 변경 즉시 반영)",
+    "body": "- getSupabaseArtworks() 사용으로 일반 출품작 페이지와 데이터 소스 통일\n- Supabase 미연결 시 정적 파일 fallback 자동 처리 (기존 동작 유지)\n- revalidate = 600 추가 (10분 캐시)",
+    "date": "2026-03-18",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "fb58824",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "remove double title suffix and enrich meta descriptions",
+    "summary": "타이틀 이중 접미사 버그 수정 및 메타 설명 보강",
+    "body": "- createPageMetadata: <title>에서 수동 접미사 제거, layout template에 위임 (OG/Twitter는 유지)\n- Exhibitor 포털 7개 페이지: 수동 '| 씨앗페 2026' 접미사 제거\n- 작품/작가 description snippet: 150자→200자, 불필요한 라벨 제거\n- 작가 페이지 description: 160자→300자 (구글 스니펫 최대 활용)\n- Sitemap: 반복 new Date() → 단일 now 변수",
+    "date": "2026-03-18",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "ea05272",
+    "type": "fix",
+    "scope": "changelog",
+    "subject": "merge new entries instead of skip on shallow clone",
+    "summary": "얕은 클론 환경(Vercel)에서도 새 커밋이 자동 반영되도록 skip → merge 전략으로 변경",
+    "body": null,
+    "date": "2026-03-18",
+    "author": "hwangtab"
+  },
+  {
     "hash": "df31a45",
     "type": "fix",
     "scope": "admin",
