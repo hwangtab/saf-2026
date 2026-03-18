@@ -93,17 +93,17 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
     artwork.profile,
     locale,
     isEnglish ? 'Original profile available in Korean.' : ''
-  ).substring(0, 150);
+  ).substring(0, 200);
   const descSnippet = sanitizeForLocale(
     artwork.description,
     locale,
     isEnglish ? 'Original artwork description available in Korean.' : ''
-  ).substring(0, 150);
+  ).substring(0, 200);
 
   const seoDescription =
     `${summary}. ` +
-    (descSnippet ? `${isEnglish ? 'Artwork description' : '작품 설명'}: ${descSnippet}... ` : '') +
-    (profileSnippet ? `${isEnglish ? 'Artist profile' : '작가 소개'}: ${profileSnippet}...` : '');
+    (descSnippet ? `${descSnippet}... ` : '') +
+    (profileSnippet ? `${profileSnippet}...` : '');
 
   const baseMetadata = createPageMetadata(
     `${artwork.title} - ${artwork.artist}`,

@@ -55,11 +55,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const profileSnippet =
     artistProfile && !(locale === 'en' && containsHangul(artistProfile))
-      ? `${artistProfile.substring(0, 150)}... `
+      ? `${artistProfile.substring(0, 200)}... `
       : '';
   const noteSnippet =
     artistNote && !(locale === 'en' && containsHangul(artistNote))
-      ? `${artistNote.substring(0, 150)}... `
+      ? `${artistNote.substring(0, 200)}... `
       : '';
 
   const formattedName = formatArtistName(artistName, locale !== 'en');
@@ -71,7 +71,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: metaTitle,
-    description: seoDescription.substring(0, 160),
+    description: seoDescription.substring(0, 300),
     keywords:
       locale === 'en'
         ? [artistName, 'SAF 2026', 'artist', 'artworks', 'exhibition']

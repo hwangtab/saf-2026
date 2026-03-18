@@ -21,8 +21,10 @@ export function createPageMetadata(
     },
   ];
 
+  // title: layout template '%s | 씨앗페 2026' handles the suffix for <title> tag
+  // OG/Twitter: no template applied, so we add the suffix manually
   return {
-    title: `${title} | ${siteTitle}`,
+    title,
     description,
     alternates: createLocaleAlternates(path),
     openGraph: {

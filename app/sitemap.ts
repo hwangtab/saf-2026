@@ -25,6 +25,7 @@ function createAlternates(baseUrl: string, path: string) {
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = SITE_URL;
   const allArtworks = await getSupabaseArtworks();
+  const now = new Date();
 
   const staticPaths: Array<{
     path: string;
@@ -56,7 +57,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = staticPaths.flatMap((page) =>
     routing.locales.map((locale) => ({
       url: localizedUrl(baseUrl, page.path, locale),
-      lastModified: page.lastModified || new Date(),
+      lastModified: page.lastModified || now,
       changeFrequency: page.changeFrequency,
       priority: locale === routing.defaultLocale ? page.priority : page.priority * 0.9,
       alternates: createAlternates(baseUrl, page.path),
@@ -67,7 +68,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const artworkPages: MetadataRoute.Sitemap = allArtworks.flatMap((artwork) =>
     routing.locales.map((locale) => ({
       url: localizedUrl(baseUrl, `/artworks/${artwork.id}`, locale),
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: 'monthly' as const,
       priority: locale === routing.defaultLocale ? 0.7 : 0.63,
       alternates: createAlternates(baseUrl, `/artworks/${artwork.id}`),
@@ -80,7 +81,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const encodedArtist = encodeURIComponent(artist);
     return routing.locales.map((locale) => ({
       url: localizedUrl(baseUrl, `/artworks/artist/${encodedArtist}`, locale),
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: 'monthly' as const,
       priority: locale === routing.defaultLocale ? 0.65 : 0.58,
       alternates: createAlternates(baseUrl, `/artworks/artist/${encodedArtist}`),

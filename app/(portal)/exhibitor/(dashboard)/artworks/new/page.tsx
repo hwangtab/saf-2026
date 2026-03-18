@@ -11,7 +11,7 @@ import { getServerLocale } from '@/lib/server-locale';
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getServerLocale();
   return {
-    title: locale === 'en' ? 'Create New Artwork | SAF 2026' : '새 작품 등록 | 씨앗페 2026',
+    title: locale === 'en' ? 'Create New Artwork' : '새 작품 등록',
   };
 }
 
