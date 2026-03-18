@@ -4,6 +4,22 @@ import { NavigationItem } from '@/types';
 
 export const MAIN_NAVIGATION: NavigationItem[] = [
   {
+    name: '전시 작품',
+    href: '/artworks',
+    items: [
+      {
+        name: '전체 작품 목록',
+        href: '/artworks',
+        description: '씨앗페 전체 작품 목록 보기',
+      },
+      {
+        name: '오윤 40주기 특별전',
+        href: '/special/oh-yoon',
+        description: '한국을 대표하는 민중미술 거장의 40주기 특별전',
+      },
+    ],
+  },
+  {
     name: '소개',
     href: '#',
     items: [
@@ -37,22 +53,6 @@ export const MAIN_NAVIGATION: NavigationItem[] = [
         name: '2023 씨앗페',
         href: '/archive/2023',
         description: '지난 씨앗페의 기록',
-      },
-    ],
-  },
-  {
-    name: '전시 작품',
-    href: '/artworks',
-    items: [
-      {
-        name: '전체 작품 목록',
-        href: '/artworks',
-        description: '씨앗페 전체 작품 목록 보기',
-      },
-      {
-        name: '오윤 40주기 특별전',
-        href: '/special/oh-yoon',
-        description: '한국을 대표하는 민중미술 거장의 40주기 특별전',
       },
     ],
   },
