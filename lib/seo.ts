@@ -42,3 +42,45 @@ export function createPageMetadata(
     },
   };
 }
+
+/**
+ * 표준 페이지 메타데이터를 생성합니다.
+ * 기존 페이지들의 generateMetadata 패턴과 완전히 호환됩니다.
+ *
+ * 사용 패턴:
+ * ```ts
+ * const title = `${copy.title} | ${tSeo('siteTitle')}`;
+ * return createStandardPageMetadata(title, copy.description, PAGE_URL, PAGE_PATH);
+ * ```
+ *
+ * @param title - 이미 suffix가 포함된 전체 제목 (예: "우리의 증명 | 씨앗페 2026")
+ * @param description - 페이지 설명
+ * @param pageUrl - 전체 URL (예: "https://www.saf2026.com/our-proof")
+ * @param pagePath - 경로 (예: "/our-proof") — alternates 생성에 사용
+ */
+export function createStandardPageMetadata(
+  title: string,
+  description: string,
+  pageUrl: string,
+  pagePath: string
+): Metadata {
+  return {
+    title,
+    description,
+    alternates: createLocaleAlternates(pagePath),
+    openGraph: {
+      title,
+      description,
+      url: pageUrl,
+      images: [
+        { url: OG_IMAGE.url, width: OG_IMAGE.width, height: OG_IMAGE.height, alt: OG_IMAGE.alt },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [OG_IMAGE.url],
+    },
+  };
+}

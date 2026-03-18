@@ -7,8 +7,9 @@ import SectionTitle from '@/components/ui/SectionTitle';
 import PageHero from '@/components/ui/PageHero';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { SITE_URL, OG_IMAGE } from '@/lib/constants';
-import { createLocaleAlternates } from '@/lib/locale-alternates';
+import { SITE_URL } from '@/lib/constants';
+import { createStandardPageMetadata } from '@/lib/seo';
+import { resolveLocale } from '@/lib/server-locale';
 
 const PAGE_URL = `${SITE_URL}/archive`;
 const PAGE_COPY = {
@@ -24,33 +25,12 @@ const PAGE_COPY = {
   },
 } as const;
 
-const resolveLocale = (locale: string): 'ko' | 'en' => (locale === 'en' ? 'en' : 'ko');
-
 export async function generateMetadata(): Promise<Metadata> {
   const locale = resolveLocale(await getLocale());
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
-
-  return {
-    title,
-    description: copy.description,
-    alternates: createLocaleAlternates('/archive'),
-    openGraph: {
-      title,
-      description: copy.description,
-      url: PAGE_URL,
-      images: [
-        { url: OG_IMAGE.url, width: OG_IMAGE.width, height: OG_IMAGE.height, alt: OG_IMAGE.alt },
-      ],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description: copy.description,
-      images: [OG_IMAGE.url],
-    },
-  };
+  return createStandardPageMetadata(title, copy.description, PAGE_URL, '/archive');
 }
 
 export default async function ArchiveHubPage() {

@@ -15,6 +15,7 @@ import {
 } from '@/lib/seo-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createLocaleAlternates } from '@/lib/locale-alternates';
+import { resolveLocale } from '@/lib/server-locale';
 
 export const revalidate = 300;
 
@@ -80,8 +81,6 @@ const NEWS_COPY: Record<LocaleCode, NewsPageCopy> = {
     collectionDescription: 'A collection of media coverage about the SAF campaign.',
   },
 };
-
-const resolveLocale = (locale: string): LocaleCode => (locale === 'en' ? 'en' : 'ko');
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = resolveLocale(await getLocale());

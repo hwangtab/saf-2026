@@ -11,6 +11,7 @@ import { notFound } from 'next/navigation';
 import { getLocale, getTranslations } from 'next-intl/server';
 import type { Artwork, ArtworkListItem } from '@/types';
 import { createLocaleAlternates } from '@/lib/locale-alternates';
+import { resolveLocale } from '@/lib/server-locale';
 
 import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
 import GalleryCampaignBanner from '@/components/features/GalleryCampaignBanner';
@@ -22,8 +23,6 @@ interface Props {
     artist: string;
   }>;
 }
-
-const resolveLocale = (locale: string): 'ko' | 'en' => (locale === 'en' ? 'en' : 'ko');
 const containsHangul = (value: string): boolean => /[가-힣]/.test(value);
 
 // Generate metadata for Artist Page

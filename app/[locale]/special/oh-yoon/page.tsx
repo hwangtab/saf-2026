@@ -8,6 +8,7 @@ import { OG_IMAGE, SITE_URL } from '@/lib/constants';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { createLocaleAlternates } from '@/lib/locale-alternates';
 import { getSupabaseArtworks } from '@/lib/supabase-data';
+import { resolveLocale } from '@/lib/server-locale';
 import type { Artwork, ArtworkListItem } from '@/types';
 
 export const revalidate = 600;
@@ -50,8 +51,6 @@ const PAGE_COPY = {
       'Discover selected works by Oh Yoon in this SAF 2026 special online exhibition.',
   },
 } as const;
-
-const resolveLocale = (locale: string): 'ko' | 'en' => (locale === 'en' ? 'en' : 'ko');
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = resolveLocale(await getLocale());

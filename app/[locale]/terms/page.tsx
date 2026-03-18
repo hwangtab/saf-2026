@@ -5,11 +5,12 @@ import PageHero from '@/components/ui/PageHero';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { CONTACT, SITE_URL, OG_IMAGE, TERMS_OF_SERVICE_VERSION } from '@/lib/constants';
+import { CONTACT, SITE_URL, TERMS_OF_SERVICE_VERSION } from '@/lib/constants';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { TERMS_OF_SERVICE_DOCUMENT } from '@/lib/legal-documents';
-import { createLocaleAlternates } from '@/lib/locale-alternates';
+import { createStandardPageMetadata } from '@/lib/seo';
 import { formatEffectiveDateForLocale } from '@/lib/utils';
+import { resolveLocale } from '@/lib/server-locale';
 
 const PAGE_PATH = '/terms';
 const PAGE_URL = `${SITE_URL}${PAGE_PATH}`;
@@ -24,33 +25,12 @@ const PAGE_COPY = {
   },
 } as const;
 
-const resolveLocale = (locale: string): 'ko' | 'en' => (locale === 'en' ? 'en' : 'ko');
-
 export async function generateMetadata(): Promise<Metadata> {
   const locale = resolveLocale(await getLocale());
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
-
-  return {
-    title,
-    description: copy.description,
-    alternates: createLocaleAlternates(PAGE_PATH),
-    openGraph: {
-      title,
-      description: copy.description,
-      url: PAGE_URL,
-      images: [
-        { url: OG_IMAGE.url, width: OG_IMAGE.width, height: OG_IMAGE.height, alt: OG_IMAGE.alt },
-      ],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description: copy.description,
-      images: [OG_IMAGE.url],
-    },
-  };
+  return createStandardPageMetadata(title, copy.description, PAGE_URL, PAGE_PATH);
 }
 
 export default async function TermsPage() {

@@ -12,10 +12,11 @@ import { saf2023Photos } from '@/content/saf2023-photos';
 import { saf2023Artworks } from '@/content/saf2023-artworks';
 import { supabase } from '@/lib/supabase';
 import { videos as fallbackVideos } from '@/content/videos';
-import { SITE_URL, escapeJsonLdForScript, OG_IMAGE } from '@/lib/constants';
+import { SITE_URL, escapeJsonLdForScript } from '@/lib/constants';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema, generateVideoSchema } from '@/lib/seo-utils';
-import { createLocaleAlternates } from '@/lib/locale-alternates';
+import { createStandardPageMetadata } from '@/lib/seo';
+import { resolveLocale } from '@/lib/server-locale';
 
 export const revalidate = 3600;
 
@@ -33,33 +34,12 @@ const PAGE_COPY = {
   },
 } as const;
 
-const resolveLocale = (locale: string): 'ko' | 'en' => (locale === 'en' ? 'en' : 'ko');
-
 export async function generateMetadata(): Promise<Metadata> {
   const locale = resolveLocale(await getLocale());
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
-
-  return {
-    title,
-    description: copy.description,
-    alternates: createLocaleAlternates('/archive/2023'),
-    openGraph: {
-      title,
-      description: copy.description,
-      url: PAGE_URL,
-      images: [
-        { url: OG_IMAGE.url, width: OG_IMAGE.width, height: OG_IMAGE.height, alt: OG_IMAGE.alt },
-      ],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description: copy.description,
-      images: [OG_IMAGE.url],
-    },
-  };
+  return createStandardPageMetadata(title, copy.description, PAGE_URL, '/archive/2023');
 }
 
 export default async function Archive2023Page() {

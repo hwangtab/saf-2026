@@ -8,10 +8,11 @@ import PageHero from '@/components/ui/PageHero';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import TestimonialCard from '@/components/ui/TestimonialCard';
 import StatCard from '@/components/ui/StatCard';
-import { EXTERNAL_LINKS, SITE_URL, OG_IMAGE } from '@/lib/constants';
+import { EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
-import { createLocaleAlternates } from '@/lib/locale-alternates';
+import { createStandardPageMetadata } from '@/lib/seo';
+import { resolveLocale } from '@/lib/server-locale';
 
 const PAGE_URL = `${SITE_URL}/our-proof`;
 const PAGE_COPY = {
@@ -27,33 +28,12 @@ const PAGE_COPY = {
   },
 } as const;
 
-const resolveLocale = (locale: string): 'ko' | 'en' => (locale === 'en' ? 'en' : 'ko');
-
 export async function generateMetadata(): Promise<Metadata> {
   const locale = resolveLocale(await getLocale());
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
-
-  return {
-    title,
-    description: copy.description,
-    alternates: createLocaleAlternates('/our-proof'),
-    openGraph: {
-      title,
-      description: copy.description,
-      url: PAGE_URL,
-      images: [
-        { url: OG_IMAGE.url, width: OG_IMAGE.width, height: OG_IMAGE.height, alt: OG_IMAGE.alt },
-      ],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description: copy.description,
-      images: [OG_IMAGE.url],
-    },
-  };
+  return createStandardPageMetadata(title, copy.description, PAGE_URL, '/our-proof');
 }
 
 export default async function OurProof() {
