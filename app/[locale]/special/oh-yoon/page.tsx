@@ -1,12 +1,15 @@
 import type { Metadata } from 'next';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
-import { artworks } from '@/content/saf2026-artworks';
 import OhYoonMasonryGallery from '@/components/special/OhYoonMasonryGallery';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { OG_IMAGE, SITE_URL } from '@/lib/constants';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { createLocaleAlternates } from '@/lib/locale-alternates';
+import { getSupabaseArtworks } from '@/lib/supabase-data';
+import type { Artwork, ArtworkListItem } from '@/types';
+
+export const revalidate = 600;
 
 const OH_YOON_ARTIST_KEYS = new Set(['오윤', 'oh yoon', 'ohyoon', 'o yoon', 'o-yoon']);
 
@@ -23,8 +26,6 @@ const isOhYoonArtist = (artist: string): boolean => {
 
   return OH_YOON_ARTIST_KEYS.has(normalized) || compact === '오윤' || compact === 'ohyoon';
 };
-
-const OH_YOON_ARTWORKS = artworks.filter((artwork) => isOhYoonArtist(artwork.artist));
 
 const PAGE_URL = `${SITE_URL}/special/oh-yoon`;
 const PAGE_COPY = {
@@ -88,6 +89,10 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function OhYoonPage() {
   const locale = resolveLocale(await getLocale());
   const tBreadcrumbs = await getTranslations('breadcrumbs');
+  const allArtworks = await getSupabaseArtworks();
+  const OH_YOON_ARTWORKS: ArtworkListItem[] = allArtworks
+    .filter((artwork: Artwork) => isOhYoonArtist(artwork.artist))
+    .map(({ profile: _profile, history: _history, ...rest }: Artwork) => rest);
   const artworkCountLabel = new Intl.NumberFormat(locale === 'en' ? 'en-US' : 'ko-KR').format(
     OH_YOON_ARTWORKS.length
   );
