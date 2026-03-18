@@ -98,7 +98,9 @@ export default async function TransparencyPage() {
                   <div className="grid grid-cols-3 gap-2 mb-6">
                     {report.stats.map((stat) => (
                       <div key={stat.label.en} className="text-center">
-                        <p className="text-lg font-bold text-primary">{stat.value.en}</p>
+                        <p className="text-sm font-bold text-primary whitespace-nowrap">
+                          {stat.value.en}
+                        </p>
                         <p className="text-xs text-charcoal-muted leading-tight">{stat.label.en}</p>
                       </div>
                     ))}
@@ -242,7 +244,9 @@ export default async function TransparencyPage() {
                 <div className="grid grid-cols-3 gap-2 mb-6">
                   {report.stats.map((stat) => (
                     <div key={stat.label.ko} className="text-center">
-                      <p className="text-lg font-bold text-primary">{stat.value.ko}</p>
+                      <p className="text-sm font-bold text-primary whitespace-nowrap">
+                        {stat.value.ko}
+                      </p>
                       <p className="text-xs text-charcoal-muted leading-tight">{stat.label.ko}</p>
                     </div>
                   ))}
