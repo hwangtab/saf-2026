@@ -1,5 +1,25 @@
 [
   {
+    "hash": "df31a45",
+    "type": "fix",
+    "scope": "admin",
+    "subject": "auto-sync artwork.status when sales are voided/recorded/edited",
+    "summary": "판매 취소·기록·수정 시 artwork.status 자동 재계산하여 목록/상세 상태 불일치 해소",
+    "body": "- Add deriveAndSyncArtworkStatus() helper for bidirectional status sync\n- voidArtworkSale: recalculate status + Cafe24 sync after voiding\n- recordArtworkSale: recalculate status before Cafe24 sync\n- updateArtworkSale: recalculate status + add missing Cafe24 sync\n- SalesHistory: show Cafe24 sync feedback on void/edit actions",
+    "date": "2026-03-17",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "14b41f9",
+    "type": "fix",
+    "scope": "admin",
+    "subject": "restore build-time changelog with shallow clone protection",
+    "summary": "빌드 시 changelog 자동 갱신 복원, 얕은 클론에서는 기존 파일 유지",
+    "body": "- Add skip logic: if existing file has more entries, keep it (shallow clone safe)\n- Restore generate-changelog in build script\n- New commits now auto-appear in changelog on next build",
+    "date": "2026-03-17",
+    "author": "hwangtab"
+  },
+  {
     "hash": "69194fa",
     "type": "fix",
     "scope": "admin",
