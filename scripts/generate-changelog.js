@@ -141,21 +141,28 @@ function writeOutput(entries) {
     fs.mkdirSync(dir, { recursive: true });
   }
 
-  // 기존 파일이 더 많으면 덮어쓰지 않음 (Vercel 얕은 클론 보호)
+  // 기존 파일과 merge (Vercel 얕은 클론에서도 새 커밋 자동 반영)
+  let existing = [];
   try {
-    const existing = JSON.parse(fs.readFileSync(outPath, 'utf-8'));
-    if (existing.length > entries.length) {
-      console.log(
-        `Changelog skipped: existing file has ${existing.length} entries, new has ${entries.length} (shallow clone detected)`
-      );
-      return;
-    }
+    existing = JSON.parse(fs.readFileSync(outPath, 'utf-8'));
   } catch {
     // 기존 파일 없음 — 새로 생성
   }
 
-  fs.writeFileSync(outPath, JSON.stringify(entries, null, 2), 'utf-8');
-  console.log(`Changelog generated: ${entries.length} entries → ${outPath}`);
+  const existingHashes = new Set(existing.map((e) => e.hash));
+  const newEntries = entries.filter((e) => !existingHashes.has(e.hash));
+
+  if (newEntries.length === 0 && entries.length <= existing.length) {
+    console.log(`Changelog unchanged: ${existing.length} entries`);
+    return;
+  }
+
+  // 새 항목을 앞에 추가하되, 전체 history가 있으면 그걸 사용
+  const merged = entries.length >= existing.length ? entries : [...newEntries, ...existing];
+  fs.writeFileSync(outPath, JSON.stringify(merged, null, 2), 'utf-8');
+  console.log(
+    `Changelog updated: ${merged.length} entries (${newEntries.length} new) → ${outPath}`
+  );
 }
 
 generateChangelog();
