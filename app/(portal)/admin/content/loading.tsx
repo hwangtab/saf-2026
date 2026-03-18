@@ -1,3 +1,5 @@
+import { AdminCardSkeleton } from '@/components/ui/Skeleton';
+
 export default function AdminContentLoading() {
   return (
     <div className="space-y-6">
@@ -12,7 +14,7 @@ export default function AdminContentLoading() {
         ))}
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-white/90 shadow-sm overflow-hidden">
+      <AdminCardSkeleton padded={false} className="overflow-hidden">
         <div className="divide-y divide-slate-100">
           {[...Array(6)].map((_, i) => (
             <div key={i} className="flex items-start gap-4 px-6 py-5">
@@ -29,7 +31,7 @@ export default function AdminContentLoading() {
             </div>
           ))}
         </div>
-      </div>
+      </AdminCardSkeleton>
     </div>
   );
 }

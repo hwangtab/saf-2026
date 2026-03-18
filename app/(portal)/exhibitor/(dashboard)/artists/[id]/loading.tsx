@@ -1,3 +1,5 @@
+import { AdminCardSkeleton } from '@/components/ui/Skeleton';
+
 export default function ExhibitorArtistDetailLoading() {
   return (
     <div aria-hidden="true" className="space-y-6">
@@ -5,7 +7,7 @@ export default function ExhibitorArtistDetailLoading() {
         <div className="h-8 w-40 animate-pulse rounded bg-slate-200" />
         <div className="mt-2 h-4 w-28 animate-pulse rounded bg-slate-100" />
       </div>
-      <div className="rounded-2xl border border-slate-200 bg-white/90 p-6 shadow-sm space-y-6">
+      <AdminCardSkeleton className="space-y-6">
         {[...Array(5)].map((_, i) => (
           <div key={i} className="space-y-2">
             <div className="h-4 w-24 animate-pulse rounded bg-slate-200" />
@@ -16,7 +18,7 @@ export default function ExhibitorArtistDetailLoading() {
           <div className="h-10 w-28 animate-pulse rounded bg-slate-200" />
           <div className="h-10 w-20 animate-pulse rounded bg-slate-100" />
         </div>
-      </div>
+      </AdminCardSkeleton>
     </div>
   );
 }

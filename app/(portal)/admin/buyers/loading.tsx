@@ -1,3 +1,5 @@
+import { AdminCardSkeleton } from '@/components/ui/Skeleton';
+
 export default function AdminBuyersLoading() {
   return (
     <div aria-hidden="true" className="space-y-6">
@@ -5,7 +7,7 @@ export default function AdminBuyersLoading() {
         <div className="h-8 w-40 animate-pulse rounded bg-slate-200" />
         <div className="h-4 w-56 animate-pulse rounded bg-slate-100" />
       </div>
-      <div className="rounded-2xl border border-slate-200 bg-white/90 shadow-sm overflow-hidden">
+      <AdminCardSkeleton padded={false} className="overflow-hidden">
         <div className="divide-y divide-slate-100">
           {[...Array(8)].map((_, i) => (
             <div key={i} className="flex items-center gap-4 px-6 py-4">
@@ -19,7 +21,7 @@ export default function AdminBuyersLoading() {
             </div>
           ))}
         </div>
-      </div>
+      </AdminCardSkeleton>
     </div>
   );
 }

@@ -192,4 +192,38 @@ export function ChartSkeleton({
   );
 }
 
+/**
+ * 포털 카드 래퍼 스켈레톤 (admin / dashboard / exhibitor 공통)
+ *
+ * @example
+ * ```tsx
+ * // 기본 (p-6 포함)
+ * <AdminCardSkeleton className="space-y-8">...</AdminCardSkeleton>
+ *
+ * // 패딩 없음 (테이블/오버플로 래퍼)
+ * <AdminCardSkeleton padded={false} className="overflow-hidden">...</AdminCardSkeleton>
+ * ```
+ */
+export function AdminCardSkeleton({
+  children,
+  className,
+  padded = true,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  padded?: boolean;
+}) {
+  return (
+    <div
+      className={cn(
+        'rounded-2xl border border-slate-200 bg-white/90 shadow-sm',
+        padded && 'p-6',
+        className
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
 export default Skeleton;

@@ -1,3 +1,5 @@
+import { AdminCardSkeleton } from '@/components/ui/Skeleton';
+
 export default function AdminChangelogLoading() {
   return (
     <div aria-hidden="true" className="space-y-8">
@@ -7,10 +9,7 @@ export default function AdminChangelogLoading() {
       </div>
       <div className="space-y-4">
         {[...Array(5)].map((_, i) => (
-          <div
-            key={i}
-            className="rounded-2xl border border-slate-200 bg-white/90 p-5 shadow-sm space-y-3"
-          >
+          <AdminCardSkeleton key={i} padded={false} className="p-5 space-y-3">
             <div className="flex items-center gap-3">
               <div className="h-5 w-16 animate-pulse rounded-full bg-slate-200" />
               <div className="h-5 w-48 animate-pulse rounded bg-slate-200" />
@@ -18,7 +17,7 @@ export default function AdminChangelogLoading() {
             </div>
             <div className="h-4 w-full animate-pulse rounded bg-slate-100" />
             <div className="h-4 w-3/4 animate-pulse rounded bg-slate-100" />
-          </div>
+          </AdminCardSkeleton>
         ))}
       </div>
     </div>

@@ -1,3 +1,5 @@
+import { AdminCardSkeleton } from '@/components/ui/Skeleton';
+
 export default function AdminFeedbackLoading() {
   return (
     <div aria-hidden="true" className="space-y-6">
@@ -5,7 +7,7 @@ export default function AdminFeedbackLoading() {
         <div className="h-8 w-32 animate-pulse rounded bg-slate-200" />
         <div className="h-4 w-48 animate-pulse rounded bg-slate-100" />
       </div>
-      <div className="rounded-2xl border border-slate-200 bg-white/90 shadow-sm overflow-hidden">
+      <AdminCardSkeleton padded={false} className="overflow-hidden">
         <div className="divide-y divide-slate-100">
           {[...Array(6)].map((_, i) => (
             <div key={i} className="p-5 space-y-2">
@@ -18,7 +20,7 @@ export default function AdminFeedbackLoading() {
             </div>
           ))}
         </div>
-      </div>
+      </AdminCardSkeleton>
     </div>
   );
 }

@@ -1,3 +1,5 @@
+import { AdminCardSkeleton } from '@/components/ui/Skeleton';
+
 export default function DashboardProfileLoading() {
   return (
     <div aria-hidden="true" className="mx-auto max-w-4xl space-y-6">
@@ -5,7 +7,7 @@ export default function DashboardProfileLoading() {
         <div className="h-8 w-36 animate-pulse rounded bg-slate-200" />
         <div className="h-4 w-52 animate-pulse rounded bg-slate-100" />
       </div>
-      <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 sm:p-6 shadow-sm space-y-6">
+      <AdminCardSkeleton padded={false} className="p-5 sm:p-6 space-y-6">
         {[...Array(7)].map((_, i) => (
           <div key={i} className="space-y-2">
             <div className="h-4 w-20 animate-pulse rounded bg-slate-200" />
@@ -17,7 +19,7 @@ export default function DashboardProfileLoading() {
         <div className="flex gap-3 pt-2 border-t border-slate-100">
           <div className="h-10 w-28 animate-pulse rounded bg-slate-200" />
         </div>
-      </div>
+      </AdminCardSkeleton>
     </div>
   );
 }

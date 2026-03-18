@@ -1,3 +1,5 @@
+import { AdminCardSkeleton } from '@/components/ui/Skeleton';
+
 export default function ExhibitorArtistsLoading() {
   return (
     <div aria-hidden="true" className="space-y-6">
@@ -8,7 +10,7 @@ export default function ExhibitorArtistsLoading() {
         </div>
         <div className="h-9 w-24 animate-pulse rounded-full bg-slate-100" />
       </div>
-      <div className="rounded-2xl border border-slate-200 bg-white/90 shadow-sm overflow-hidden">
+      <AdminCardSkeleton padded={false} className="overflow-hidden">
         <div className="divide-y divide-slate-100">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="flex items-center gap-4 px-6 py-4">
@@ -21,7 +23,7 @@ export default function ExhibitorArtistsLoading() {
             </div>
           ))}
         </div>
-      </div>
+      </AdminCardSkeleton>
     </div>
   );
 }

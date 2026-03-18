@@ -1,3 +1,5 @@
+import { AdminCardSkeleton } from '@/components/ui/Skeleton';
+
 export default function AdminAnalyticsLoading() {
   return (
     <div aria-hidden="true" className="space-y-8">
@@ -19,44 +21,41 @@ export default function AdminAnalyticsLoading() {
       {/* 4 stat cards */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-4">
         {[...Array(4)].map((_, i) => (
-          <div
-            key={i}
-            className="rounded-2xl border border-slate-200 bg-white/90 p-6 shadow-sm space-y-3"
-          >
+          <AdminCardSkeleton key={i} className="space-y-3">
             <div className="h-4 w-24 animate-pulse rounded bg-slate-100" />
             <div className="h-9 w-20 animate-pulse rounded bg-slate-200" />
             <div className="h-3 w-28 animate-pulse rounded bg-slate-100" />
-          </div>
+          </AdminCardSkeleton>
         ))}
       </div>
 
       {/* Daily views — full width */}
-      <div className="rounded-2xl border border-slate-200 bg-white/90 p-6 shadow-sm">
+      <AdminCardSkeleton>
         <div className="h-5 w-36 animate-pulse rounded bg-slate-200 mb-4" />
         <div className="h-64 animate-pulse rounded bg-slate-100" />
-      </div>
+      </AdminCardSkeleton>
 
       {/* Hourly heatmap — full width */}
-      <div className="rounded-2xl border border-slate-200 bg-white/90 p-6 shadow-sm">
+      <AdminCardSkeleton>
         <div className="h-5 w-32 animate-pulse rounded bg-slate-200 mb-4" />
         <div className="h-40 animate-pulse rounded bg-slate-100" />
-      </div>
+      </AdminCardSkeleton>
 
       {/* Top pages + device pie */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {[...Array(2)].map((_, i) => (
-          <div key={i} className="rounded-2xl border border-slate-200 bg-white/90 p-6 shadow-sm">
+          <AdminCardSkeleton key={i}>
             <div className="h-5 w-28 animate-pulse rounded bg-slate-200 mb-4" />
             <div className="h-56 animate-pulse rounded bg-slate-100" />
-          </div>
+          </AdminCardSkeleton>
         ))}
       </div>
 
       {/* Browser/OS — full width */}
-      <div className="rounded-2xl border border-slate-200 bg-white/90 p-6 shadow-sm">
+      <AdminCardSkeleton>
         <div className="h-5 w-32 animate-pulse rounded bg-slate-200 mb-4" />
         <div className="h-48 animate-pulse rounded bg-slate-100" />
-      </div>
+      </AdminCardSkeleton>
     </div>
   );
 }

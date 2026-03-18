@@ -1,3 +1,5 @@
+import { AdminCardSkeleton } from '@/components/ui/Skeleton';
+
 export default function AdminLoading() {
   return (
     <div className="min-h-screen bg-[var(--admin-bg)]">
@@ -15,7 +17,7 @@ export default function AdminLoading() {
           <div className="h-4 w-64 animate-pulse rounded bg-slate-100" />
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white/90 shadow-sm">
+        <AdminCardSkeleton padded={false} className="overflow-hidden">
           <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
             <div className="h-6 w-28 animate-pulse rounded bg-slate-200" />
             <div className="h-10 w-64 animate-pulse rounded bg-slate-100" />
@@ -25,7 +27,7 @@ export default function AdminLoading() {
             <div className="h-12 animate-pulse rounded bg-slate-100" />
             <div className="h-12 animate-pulse rounded bg-slate-100" />
           </div>
-        </div>
+        </AdminCardSkeleton>
 
         <div className="flex items-center justify-center py-2">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-300 border-t-transparent" />

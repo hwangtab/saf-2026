@@ -1,3 +1,5 @@
+import { AdminCardSkeleton } from '@/components/ui/Skeleton';
+
 export default function AdminRevenueLoading() {
   return (
     <div className="space-y-6">
@@ -8,23 +10,23 @@ export default function AdminRevenueLoading() {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="rounded-2xl border border-slate-200 bg-white/90 p-6 shadow-sm">
+          <AdminCardSkeleton key={i}>
             <div className="h-4 w-20 animate-pulse rounded bg-slate-100 mb-3" />
             <div className="h-8 w-32 animate-pulse rounded bg-slate-200" />
-          </div>
+          </AdminCardSkeleton>
         ))}
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-white/90 shadow-sm overflow-hidden">
+      <AdminCardSkeleton padded={false} className="overflow-hidden">
         <div className="border-b border-slate-200 px-6 py-4">
           <div className="h-6 w-28 animate-pulse rounded bg-slate-200" />
         </div>
         <div className="p-6">
           <div className="h-64 animate-pulse rounded bg-slate-100" />
         </div>
-      </div>
+      </AdminCardSkeleton>
 
-      <div className="rounded-2xl border border-slate-200 bg-white/90 shadow-sm overflow-hidden">
+      <AdminCardSkeleton padded={false} className="overflow-hidden">
         <div className="border-b border-slate-200 px-6 py-4">
           <div className="h-6 w-24 animate-pulse rounded bg-slate-200" />
         </div>
@@ -39,7 +41,7 @@ export default function AdminRevenueLoading() {
             </div>
           ))}
         </div>
-      </div>
+      </AdminCardSkeleton>
     </div>
   );
 }

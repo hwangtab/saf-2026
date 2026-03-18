@@ -1,3 +1,5 @@
+import { AdminCardSkeleton } from '@/components/ui/Skeleton';
+
 export default function AdminLogsLoading() {
   return (
     <div className="space-y-6">
@@ -6,7 +8,7 @@ export default function AdminLogsLoading() {
         <div className="h-4 w-48 animate-pulse rounded bg-slate-100" />
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-white/90 shadow-sm overflow-hidden">
+      <AdminCardSkeleton padded={false} className="overflow-hidden">
         <div className="border-b border-slate-200 px-6 py-4">
           <div className="h-6 w-28 animate-pulse rounded bg-slate-200" />
         </div>
@@ -22,7 +24,7 @@ export default function AdminLogsLoading() {
             </div>
           ))}
         </div>
-      </div>
+      </AdminCardSkeleton>
     </div>
   );
 }
