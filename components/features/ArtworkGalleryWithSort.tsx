@@ -10,8 +10,7 @@ import ArtistNavigation from './gallery/ArtistNavigation';
 import GalleryEmptyState from './gallery/GalleryEmptyState';
 import { ArtworkListItem } from '@/types';
 import { useArtworkFilter } from '@/lib/hooks/useArtworkFilter';
-import { useLocale } from 'next-intl';
-import { getUIStrings } from '@/lib/ui-strings';
+import { useLocale, useTranslations } from 'next-intl';
 
 interface ArtworkGalleryWithSortProps {
   artworks: ArtworkListItem[];
@@ -20,7 +19,7 @@ interface ArtworkGalleryWithSortProps {
 
 function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithSortProps) {
   const locale = useLocale();
-  const ui = getUIStrings(locale);
+  const tSearch = useTranslations('search');
   const router = useRouter();
   const [, startNavigationTransition] = useTransition();
 
@@ -67,7 +66,7 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
               <SearchBar
                 value={searchQuery}
                 onChange={setSearchQuery}
-                placeholder={ui.SEARCH.PLACEHOLDER_ARTWORKS}
+                placeholder={tSearch('placeholderArtworks')}
               />
             </div>
 
@@ -112,8 +111,8 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
             <p className="text-gray-500">
               <span className="font-semibold text-primary">&apos;{searchQuery}&apos;</span>{' '}
               {locale === 'en'
-                ? `${filteredArtworks.length} ${ui.SEARCH.RESULT_PREFIX}`
-                : `${ui.SEARCH.RESULT_PREFIX} ${filteredArtworks.length}${ui.SEARCH.RESULT_SUFFIX}`}
+                ? `${filteredArtworks.length} ${tSearch('resultPrefix')}`
+                : `${tSearch('resultPrefix')} ${filteredArtworks.length}${tSearch('resultSuffix')}`}
             </p>
           </div>
         )}

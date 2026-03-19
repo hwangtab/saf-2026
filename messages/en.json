@@ -44,7 +44,8 @@
   "filters": {
     "all": "All",
     "selling": "Available",
-    "sold": "Sold"
+    "sold": "Sold",
+    "categoryAll": "All Categories"
   },
   "sort": {
     "artistAsc": "Artist Name",
@@ -72,6 +73,7 @@
   "a11y": {
     "sortOptions": "Select sort option",
     "filterStatus": "Filter by sale status",
+    "filterCategory": "Filter by category",
     "searchLabel": "Search artworks",
     "clearSearch": "Clear search",
     "viewArtist": "View artist's works",
@@ -215,7 +217,30 @@
     "en": "English",
     "switchTo": "Switch to Korean"
   },
+  "feedbackWidget": {
+    "buttonLabel": "Send feedback",
+    "success": "Thank you! Your feedback has been submitted.",
+    "submitError": "An error occurred while submitting feedback. Please try again shortly.",
+    "title": "Send feedback",
+    "category": "Category",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Please summarize briefly",
+    "description": "Details",
+    "descriptionPlaceholder": "Tell us what happened and how you would like it improved",
+    "cancel": "Cancel",
+    "sending": "Sending...",
+    "send": "Send",
+    "categoryBug": "Bug report",
+    "categoryImprovement": "Improvement request",
+    "categoryQuestion": "Question",
+    "categoryOther": "Other"
+  },
+  "common": {
+    "loadingMap": "Loading map...",
+    "loadingChart": "Loading chart"
+  },
   "shareButtons": {
+    "hashtag": "#SAF2026",
     "kakaoUnavailable": "Kakao sharing is not available.",
     "kakaoPrepareFailed": "Failed to prepare Kakao sharing. Please try again in a moment.",
     "kakaoVisitWebsite": "Visit website",

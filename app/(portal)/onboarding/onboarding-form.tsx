@@ -2,7 +2,7 @@
 
 import { type RefObject, useActionState, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useLocale, useTranslations } from 'next-intl';
 import Button from '@/components/ui/Button';
 import { LegalDocumentContent } from '@/components/auth/LegalDocumentContent';
 import { IncompleteItemsModal, type IncompleteItem } from '@/components/ui/IncompleteItemsModal';
@@ -14,120 +14,10 @@ import {
   PRIVACY_POLICY_DOCUMENT,
   TERMS_OF_SERVICE_DOCUMENT,
 } from '@/lib/legal-documents';
-import { resolveClientLocale } from '@/lib/client-locale';
 
 const initialState: OnboardingState = {
   message: '',
   error: false,
-};
-
-type LocaleCode = 'ko' | 'en';
-
-const ONBOARDING_COPY: Record<
-  LocaleCode,
-  {
-    contractLabel: string;
-    tosLabel: string;
-    privacyLabel: string;
-    readToBottom: string;
-    agreementLabel: string;
-    checkAgreement: string;
-    artistName: string;
-    artistNamePlaceholder: string;
-    contact: string;
-    contactPlaceholder: string;
-    bio: string;
-    bioPlaceholder: string;
-    referrer: string;
-    optional: string;
-    referrerPlaceholder: string;
-    contractFull: string;
-    tosFull: string;
-    privacyFull: string;
-    scrollDown: string;
-    scrollHint: string;
-    agreeAll: string;
-    allReadGuide: string;
-    needScrollGuide: string;
-    originalLinks: string;
-    contractLink: string;
-    tosLink: string;
-    privacyLink: string;
-    submitted: string;
-    submit: string;
-    incompleteTitle: string;
-    incompleteDescription: string;
-    genericSubmitError: string;
-  }
-> = {
-  ko: {
-    contractLabel: '전시·판매위탁 계약서',
-    tosLabel: '이용약관',
-    privacyLabel: '개인정보처리방침',
-    readToBottom: '문서 하단까지 스크롤해주세요.',
-    agreementLabel: '약관/방침 동의',
-    checkAgreement: '동의 체크박스를 선택해주세요.',
-    artistName: '작가명',
-    artistNamePlaceholder: '활동명 또는 작가명',
-    contact: '연락처',
-    contactPlaceholder: '이메일 또는 전화번호',
-    bio: '자기 소개',
-    bioPlaceholder: '간단한 소개를 입력해주세요.',
-    referrer: '추천인',
-    optional: '(선택)',
-    referrerPlaceholder: '추천인 이름 또는 연락처',
-    contractFull: '전시·판매위탁 계약서 전문',
-    tosFull: '이용약관 전문',
-    privacyFull: '개인정보처리방침 전문',
-    scrollDown: '아래로 스크롤하세요 ↓',
-    scrollHint: '문서 하단까지 스크롤하면 동의 항목이 활성화됩니다.',
-    agreeAll: '전시·판매위탁 계약서, 이용약관 및 개인정보처리방침에 동의합니다.',
-    allReadGuide: '모든 문서를 읽었습니다. 체크하여 동의해주세요.',
-    needScrollGuide: '위 문서를 모두 끝까지 스크롤해주세요.',
-    originalLinks: '계약서 원문:',
-    contractLink: '전시·판매위탁 계약서',
-    tosLink: '이용약관',
-    privacyLink: '개인정보처리방침',
-    submitted: '제출 완료',
-    submit: '제출하기',
-    incompleteTitle: '아직 완료되지 않은 항목이 있어요',
-    incompleteDescription: '아래 항목을 완료하면 제출할 수 있습니다.',
-    genericSubmitError: '제출 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
-  },
-  en: {
-    contractLabel: 'Exhibition and sales consignment agreement',
-    tosLabel: 'Terms of service',
-    privacyLabel: 'Privacy policy',
-    readToBottom: 'Please scroll to the bottom of the document.',
-    agreementLabel: 'Agreement consent',
-    checkAgreement: 'Please check the consent box.',
-    artistName: 'Artist name',
-    artistNamePlaceholder: 'Stage name or artist name',
-    contact: 'Contact',
-    contactPlaceholder: 'Email or phone number',
-    bio: 'Introduction',
-    bioPlaceholder: 'Please provide a brief introduction.',
-    referrer: 'Referrer',
-    optional: '(optional)',
-    referrerPlaceholder: 'Referrer name or contact information',
-    contractFull: 'Full exhibition and sales consignment agreement',
-    tosFull: 'Full terms of service',
-    privacyFull: 'Full privacy policy',
-    scrollDown: 'Scroll down ↓',
-    scrollHint: 'Consent options become active after you scroll to the bottom.',
-    agreeAll: 'I agree to the consignment agreement, terms of service, and privacy policy.',
-    allReadGuide: 'You have read all documents. Check the box to agree.',
-    needScrollGuide: 'Please scroll through all documents above to continue.',
-    originalLinks: 'Original documents:',
-    contractLink: 'Exhibition and sales consignment agreement',
-    tosLink: 'Terms of service',
-    privacyLink: 'Privacy policy',
-    submitted: 'Submitted',
-    submit: 'Submit',
-    incompleteTitle: 'Some required items are incomplete',
-    incompleteDescription: 'Complete the items below to submit.',
-    genericSubmitError: 'An error occurred while submitting. Please try again shortly.',
-  },
 };
 
 type OnboardingDefaults = {
@@ -138,9 +28,8 @@ type OnboardingDefaults = {
 } | null;
 
 export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDefaults }) {
-  const pathname = usePathname();
-  const locale = resolveClientLocale(pathname);
-  const copy = ONBOARDING_COPY[locale];
+  const locale = useLocale();
+  const t = useTranslations('onboardingForm');
   const [state, formAction, isPending] = useActionState(submitArtistApplication, initialState);
   const [hasReadTerms, setHasReadTerms] = useState(false);
   const [hasReadTos, setHasReadTos] = useState(false);
@@ -156,57 +45,45 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
   const canSubmit = allRead && termsAccepted;
   const actionMessage =
     locale === 'en' && state.message && /[가-힣]/.test(state.message)
-      ? copy.genericSubmitError
+      ? t('genericSubmitError')
       : state.message;
   const incompleteItems = useMemo(() => {
     const items: IncompleteItem[] = [];
 
     if (!hasReadTerms) {
       items.push({
-        label: copy.contractLabel,
-        reason: copy.readToBottom,
+        label: t('contractLabel'),
+        reason: t('readToBottom'),
         targetId: 'artist-contract-section',
       });
     }
 
     if (!hasReadTos) {
       items.push({
-        label: copy.tosLabel,
-        reason: copy.readToBottom,
+        label: t('tosLabel'),
+        reason: t('readToBottom'),
         targetId: 'artist-tos-section',
       });
     }
 
     if (!hasReadPrivacy) {
       items.push({
-        label: copy.privacyLabel,
-        reason: copy.readToBottom,
+        label: t('privacyLabel'),
+        reason: t('readToBottom'),
         targetId: 'artist-privacy-section',
       });
     }
 
     if (allRead && !termsAccepted) {
       items.push({
-        label: copy.agreementLabel,
-        reason: copy.checkAgreement,
+        label: t('agreementLabel'),
+        reason: t('checkAgreement'),
         targetId: 'artist-agreement-section',
       });
     }
 
     return items;
-  }, [
-    allRead,
-    copy.agreementLabel,
-    copy.checkAgreement,
-    copy.contractLabel,
-    copy.privacyLabel,
-    copy.readToBottom,
-    copy.tosLabel,
-    hasReadPrivacy,
-    hasReadTerms,
-    hasReadTos,
-    termsAccepted,
-  ]);
+  }, [allRead, t, hasReadPrivacy, hasReadTerms, hasReadTos, termsAccepted]);
 
   const handleCloseIncompleteModal = () => {
     setIsIncompleteModalOpen(false);
@@ -302,7 +179,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
     return () => window.removeEventListener('resize', checkScrollableState);
   }, []);
 
-  // 아직 읽지 않은 첫 번째 문서의 ref를 반환
+  // Return ref of first unread document
   const firstUnreadRef = !hasReadTerms
     ? termsContainerRef
     : !hasReadTos
@@ -315,7 +192,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
     <form action={formAction} className="space-y-6" onSubmit={handleSubmitAttempt}>
       <div>
         <label htmlFor="artist_name" className="block text-sm font-medium text-gray-700">
-          {copy.artistName} <span className="text-red-500">*</span>
+          {t('artistName')} <span className="text-red-500">*</span>
         </label>
         <div className="mt-1">
           <input
@@ -325,14 +202,14 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
             required
             defaultValue={defaultValues?.artist_name || ''}
             className="shadow-sm focus:ring-black focus:border-black block w-full sm:text-sm border-gray-300 rounded-md"
-            placeholder={copy.artistNamePlaceholder}
+            placeholder={t('artistNamePlaceholder')}
           />
         </div>
       </div>
 
       <div>
         <label htmlFor="contact" className="block text-sm font-medium text-gray-700">
-          {copy.contact} <span className="text-red-500">*</span>
+          {t('contact')} <span className="text-red-500">*</span>
         </label>
         <div className="mt-1">
           <input
@@ -342,14 +219,14 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
             required
             defaultValue={defaultValues?.contact || ''}
             className="shadow-sm focus:ring-black focus:border-black block w-full sm:text-sm border-gray-300 rounded-md"
-            placeholder={copy.contactPlaceholder}
+            placeholder={t('contactPlaceholder')}
           />
         </div>
       </div>
 
       <div>
         <label htmlFor="bio" className="block text-sm font-medium text-gray-700">
-          {copy.bio} <span className="text-red-500">*</span>
+          {t('bio')} <span className="text-red-500">*</span>
         </label>
         <div className="mt-1">
           <textarea
@@ -359,14 +236,14 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
             required
             defaultValue={defaultValues?.bio || ''}
             className="shadow-sm focus:ring-black focus:border-black block w-full sm:text-sm border-gray-300 rounded-md"
-            placeholder={copy.bioPlaceholder}
+            placeholder={t('bioPlaceholder')}
           />
         </div>
       </div>
 
       <div>
         <label htmlFor="referrer" className="block text-sm font-medium text-gray-700">
-          {copy.referrer} <span className="text-gray-400 font-normal">{copy.optional}</span>
+          {t('referrer')} <span className="text-gray-400 font-normal">{t('optional')}</span>
         </label>
         <div className="mt-1">
           <input
@@ -375,7 +252,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
             type="text"
             defaultValue={defaultValues?.referrer || ''}
             className="shadow-sm focus:ring-black focus:border-black block w-full sm:text-sm border-gray-300 rounded-md"
-            placeholder={copy.referrerPlaceholder}
+            placeholder={t('referrerPlaceholder')}
           />
         </div>
       </div>
@@ -390,7 +267,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
         <div className="space-y-3">
           <div id="artist-contract-section">
             <p id="artist-terms-heading" className="mb-2 text-xs font-semibold text-gray-700">
-              {copy.contractFull}
+              {t('contractFull')}
             </p>
             <div className="relative">
               <div
@@ -407,7 +284,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
                 <div className="pointer-events-none absolute bottom-0 left-0 right-0 flex flex-col items-center">
                   <div className="absolute inset-x-0 bottom-0 h-16 rounded-b-md bg-gradient-to-t from-white via-white/80 to-transparent" />
                   <span className="relative animate-bounce rounded-full bg-gray-900 px-3 py-1 text-xs font-medium text-white shadow">
-                    {copy.scrollDown}
+                    {t('scrollDown')}
                   </span>
                 </div>
               )}
@@ -415,14 +292,14 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
             {!hasReadTerms && (
               <div className="mt-1 flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2">
                 <span className="text-sm text-amber-600">↓</span>
-                <p className="text-xs font-medium text-amber-800">{copy.scrollHint}</p>
+                <p className="text-xs font-medium text-amber-800">{t('scrollHint')}</p>
               </div>
             )}
           </div>
 
           <div id="artist-tos-section">
             <p id="tos-heading" className="mb-2 text-xs font-semibold text-gray-700">
-              {copy.tosFull}
+              {t('tosFull')}
             </p>
             <div className="relative">
               <div
@@ -439,7 +316,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
                 <div className="pointer-events-none absolute bottom-0 left-0 right-0 flex flex-col items-center">
                   <div className="absolute inset-x-0 bottom-0 h-16 rounded-b-md bg-gradient-to-t from-white via-white/80 to-transparent" />
                   <span className="relative animate-bounce rounded-full bg-gray-900 px-3 py-1 text-xs font-medium text-white shadow">
-                    {copy.scrollDown}
+                    {t('scrollDown')}
                   </span>
                 </div>
               )}
@@ -447,14 +324,14 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
             {!hasReadTos && (
               <div className="mt-1 flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2">
                 <span className="text-sm text-amber-600">↓</span>
-                <p className="text-xs font-medium text-amber-800">{copy.scrollHint}</p>
+                <p className="text-xs font-medium text-amber-800">{t('scrollHint')}</p>
               </div>
             )}
           </div>
 
           <div id="artist-privacy-section">
             <p id="privacy-policy-heading" className="mb-2 text-xs font-semibold text-gray-700">
-              {copy.privacyFull}
+              {t('privacyFull')}
             </p>
             <div className="relative">
               <div
@@ -471,7 +348,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
                 <div className="pointer-events-none absolute bottom-0 left-0 right-0 flex flex-col items-center">
                   <div className="absolute inset-x-0 bottom-0 h-16 rounded-b-md bg-gradient-to-t from-white via-white/80 to-transparent" />
                   <span className="relative animate-bounce rounded-full bg-gray-900 px-3 py-1 text-xs font-medium text-white shadow">
-                    {copy.scrollDown}
+                    {t('scrollDown')}
                   </span>
                 </div>
               )}
@@ -479,7 +356,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
             {!hasReadPrivacy && (
               <div className="mt-1 flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2">
                 <span className="text-sm text-amber-600">↓</span>
-                <p className="text-xs font-medium text-amber-800">{copy.scrollHint}</p>
+                <p className="text-xs font-medium text-amber-800">{t('scrollHint')}</p>
               </div>
             )}
           </div>
@@ -503,23 +380,23 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
           />
           <div className="text-sm">
             <label htmlFor="terms_accepted" className="font-medium text-gray-700">
-              {copy.agreeAll} <span className="text-red-500">*</span>
+              {t('agreeAll')} <span className="text-red-500">*</span>
             </label>
             <p className="mt-1 text-gray-500">
-              {allRead ? copy.allReadGuide : copy.needScrollGuide}
+              {allRead ? t('allReadGuide') : t('needScrollGuide')}
             </p>
             <p className="mt-1 text-xs text-gray-400">
-              {copy.originalLinks}{' '}
+              {t('originalLinks')}{' '}
               <Link href="/terms/artist" className="underline underline-offset-2">
-                {copy.contractLink}
+                {t('contractLink')}
               </Link>{' '}
               /{' '}
               <Link href="/terms" className="underline underline-offset-2">
-                {copy.tosLink}
+                {t('tosLink')}
               </Link>{' '}
               /{' '}
               <Link href="/privacy" className="underline underline-offset-2">
-                {copy.privacyLink}
+                {t('privacyLink')}
               </Link>
             </p>
           </div>
@@ -532,19 +409,19 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
           {state.message && !state.error && (
             <p className="text-green-600 text-sm flex items-center gap-1">
               <CheckMarkIcon />
-              {copy.submitted}
+              {t('submitted')}
             </p>
           )}
           <Button type="submit" loading={isPending} disabled={isPending} variant="secondary">
-            {copy.submit}
+            {t('submit')}
           </Button>
         </div>
       </div>
       <IncompleteItemsModal
         isOpen={isIncompleteModalOpen}
         onClose={handleCloseIncompleteModal}
-        title={copy.incompleteTitle}
-        description={copy.incompleteDescription}
+        title={t('incompleteTitle')}
+        description={t('incompleteDescription')}
         items={incompleteItems}
         onSelectItem={handleSelectIncompleteItem}
       />

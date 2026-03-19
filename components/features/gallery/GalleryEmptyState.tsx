@@ -1,7 +1,6 @@
 'use client';
 
-import { useLocale } from 'next-intl';
-import { getUIStrings } from '@/lib/ui-strings';
+import { useLocale, useTranslations } from 'next-intl';
 
 interface GalleryEmptyStateProps {
   onReset: () => void;
@@ -9,7 +8,7 @@ interface GalleryEmptyStateProps {
 
 export default function GalleryEmptyState({ onReset }: GalleryEmptyStateProps) {
   const locale = useLocale();
-  const ui = getUIStrings(locale);
+  const tSearch = useTranslations('search');
 
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -29,9 +28,9 @@ export default function GalleryEmptyState({ onReset }: GalleryEmptyStateProps) {
           />
         </svg>
       </div>
-      <h3 className="text-lg font-medium text-gray-900 mb-2">{ui.SEARCH.NO_RESULTS_TITLE}</h3>
+      <h3 className="text-lg font-medium text-gray-900 mb-2">{tSearch('noResultsTitle')}</h3>
       <p className="text-gray-500 mb-6 max-w-sm mx-auto">
-        {ui.SEARCH.NO_RESULTS_DESC}
+        {tSearch('noResultsDesc')}
         <br />
         <span className="text-sm mt-1 block text-gray-400">
           {locale === 'en'
@@ -44,7 +43,7 @@ export default function GalleryEmptyState({ onReset }: GalleryEmptyStateProps) {
         onClick={onReset}
         className="px-6 py-2.5 bg-charcoal text-white font-bold rounded-full hover:bg-black transition-colors shadow-sm hover:shadow-md active:scale-95"
       >
-        {ui.SEARCH.RESET_BUTTON}
+        {tSearch('resetButton')}
       </button>
     </div>
   );

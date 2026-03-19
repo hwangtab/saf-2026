@@ -3,8 +3,7 @@
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
-import { usePathname } from 'next/navigation';
-import { resolveClientLocale } from '@/lib/client-locale';
+import { useTranslations } from 'next-intl';
 
 interface AdminConfirmModalProps {
   isOpen: boolean;
@@ -31,10 +30,9 @@ export function AdminConfirmModal({
   isLoading = false,
   children,
 }: AdminConfirmModalProps) {
-  const pathname = usePathname();
-  const locale = resolveClientLocale(pathname);
-  const resolvedConfirmText = confirmText ?? (locale === 'en' ? 'Confirm' : '확인');
-  const resolvedCancelText = cancelText ?? (locale === 'en' ? 'Cancel' : '취소');
+  const t = useTranslations('admin.common');
+  const resolvedConfirmText = confirmText ?? t('confirm');
+  const resolvedCancelText = cancelText ?? t('cancel');
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title} className="max-w-md">

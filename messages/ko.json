@@ -44,7 +44,8 @@
   "filters": {
     "all": "전체",
     "selling": "판매중",
-    "sold": "판매완료"
+    "sold": "판매완료",
+    "categoryAll": "전체 분류"
   },
   "sort": {
     "artistAsc": "작가명순",
@@ -72,6 +73,7 @@
   "a11y": {
     "sortOptions": "정렬 옵션 선택",
     "filterStatus": "판매 상태 필터",
+    "filterCategory": "작품 분류 필터",
     "searchLabel": "작품 검색",
     "clearSearch": "검색어 지우기",
     "viewArtist": "작가 작품 보기",
@@ -215,7 +217,30 @@
     "en": "English",
     "switchTo": "영어로 전환"
   },
+  "feedbackWidget": {
+    "buttonLabel": "의견 보내기",
+    "success": "소중한 의견이 전달되었습니다. 감사합니다!",
+    "submitError": "의견 전송 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+    "title": "의견 보내기",
+    "category": "카테고리",
+    "titleLabel": "제목",
+    "titlePlaceholder": "간단히 요약해주세요",
+    "description": "상세 내용",
+    "descriptionPlaceholder": "어떤 상황에서 발생했는지, 어떻게 개선되면 좋겠는지 알려주세요",
+    "cancel": "취소",
+    "sending": "전송 중...",
+    "send": "보내기",
+    "categoryBug": "버그 신고",
+    "categoryImprovement": "개선 요청",
+    "categoryQuestion": "질문",
+    "categoryOther": "기타"
+  },
+  "common": {
+    "loadingMap": "지도를 불러오는 중...",
+    "loadingChart": "차트를 로드하는 중입니다"
+  },
   "shareButtons": {
+    "hashtag": "#씨앗페",
     "kakaoUnavailable": "카카오 공유를 사용할 수 없습니다.",
     "kakaoPrepareFailed": "카카오 공유 준비에 실패했습니다. 잠시 후 다시 시도해 주세요.",
     "kakaoVisitWebsite": "웹사이트 방문",

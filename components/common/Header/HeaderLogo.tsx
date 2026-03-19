@@ -3,15 +3,14 @@
 import { Link } from '@/i18n/navigation';
 import ExportedImage from 'next-image-export-optimizer';
 import clsx from 'clsx';
-import { useLocale } from 'next-intl';
-import { getUIStrings } from '@/lib/ui-strings';
+import { useTranslations } from 'next-intl';
 
 interface HeaderLogoProps {
   isDarkText: boolean;
 }
 
 export default function HeaderLogo({ isDarkText }: HeaderLogoProps) {
-  const ui = getUIStrings(useLocale());
+  const tA11y = useTranslations('a11y');
 
   return (
     <Link
@@ -21,7 +20,7 @@ export default function HeaderLogo({ isDarkText }: HeaderLogoProps) {
       <div className="relative h-9 w-40">
         <ExportedImage
           src="/images/logo/320pxX90px.webp"
-          alt={ui.A11Y.LOGO_ALT}
+          alt={tA11y('logoAlt')}
           width={160}
           height={45}
           className={clsx(
@@ -43,7 +42,7 @@ export default function HeaderLogo({ isDarkText }: HeaderLogoProps) {
           priority
         />
       </div>
-      <span className="sr-only">{ui.A11Y.HOME_LINK}</span>
+      <span className="sr-only">{tA11y('homeLink')}</span>
     </Link>
   );
 }

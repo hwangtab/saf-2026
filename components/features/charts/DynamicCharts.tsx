@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { ComponentType } from 'react';
-import { useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { ChartErrorBoundary } from './ChartErrorBoundary';
 
 const LoadingPlaceholder = ({ label }: { label: string }) => (
@@ -16,9 +16,8 @@ const LoadingPlaceholder = ({ label }: { label: string }) => (
 
 function createLoadingPlaceholder() {
   return function ChartLoadingPlaceholder() {
-    const locale = useLocale();
-    const label = locale === 'en' ? 'Loading chart' : '차트를 로드하는 중입니다';
-    return <LoadingPlaceholder label={label} />;
+    const t = useTranslations('common');
+    return <LoadingPlaceholder label={t('loadingChart')} />;
   };
 }
 

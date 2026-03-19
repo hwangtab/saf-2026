@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useCallback, useState } from 'react';
-import { useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
@@ -41,8 +41,8 @@ const ICON_STYLES: Record<ToastType, string> = {
 
 function Toast({ toast, onDismiss }: ToastProps) {
   const { id, type, message, duration = 4000 } = toast;
-  const locale = useLocale();
-  const closeLabel = locale === 'en' ? 'Close' : '닫기';
+  const tA11y = useTranslations('a11y');
+  const closeLabel = tA11y('close');
   const [isDismissing, setIsDismissing] = useState(false);
 
   useEffect(() => {

@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import {
   purgeActivityTrashLog,
   revertActivityLog,
@@ -12,9 +13,6 @@ import { AdminCard, AdminEmptyState } from '@/app/admin/_components/admin-ui';
 import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import Button from '@/components/ui/Button';
 import { useToast } from '@/lib/hooks/useToast';
-import { resolveClientLocale } from '@/lib/client-locale';
-
-type LocaleCode = 'ko' | 'en';
 
 type TrashListProps = {
   logs: ActivityLogEntry[];
@@ -23,7 +21,7 @@ type TrashListProps = {
   total: number;
 };
 
-function formatDate(value: string | null | undefined, locale: LocaleCode) {
+function formatDate(value: string | null | undefined, locale: string) {
   if (!value) return '-';
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return '-';
@@ -36,12 +34,12 @@ function formatDate(value: string | null | undefined, locale: LocaleCode) {
   });
 }
 
-function getTargetTypeLabel(type: string | null, locale: LocaleCode) {
+function getTargetTypeLabel(type: string | null, t: (key: string) => string) {
   switch (type) {
     case 'artwork':
-      return locale === 'en' ? 'Artwork' : '작품';
+      return t('targetTypeArtwork');
     case 'artist':
-      return locale === 'en' ? 'Artist' : '작가';
+      return t('targetTypeArtist');
     default:
       return type || '-';
   }
@@ -87,7 +85,10 @@ function getSnapshotDisplayName(snapshot: Record<string, unknown> | null): strin
   return title || nameKo || name || artistName || representativeName || null;
 }
 
-function getTargetDisplayName(log: ActivityLogEntry, locale: LocaleCode) {
+function getTargetDisplayName(
+  log: ActivityLogEntry,
+  t: (key: string, params?: Record<string, string | number | Date>) => string
+) {
   const details = log.metadata as Record<string, unknown> | null;
   const targetName = typeof details?.target_name === 'string' ? details.target_name : null;
   if (targetName) return targetName;
@@ -125,9 +126,7 @@ function getTargetDisplayName(log: ActivityLogEntry, locale: LocaleCode) {
       .filter((value): value is string => !!value);
     if (namedItems.length > 0) {
       return namedItems.length > 1
-        ? locale === 'en'
-          ? `${namedItems[0]} and ${namedItems.length - 1} more`
-          : `${namedItems[0]} 외 ${namedItems.length - 1}건`
+        ? t('andMore', { name: namedItems[0], count: namedItems.length - 1 })
         : namedItems[0];
     }
   }
@@ -147,120 +146,9 @@ function getDaysLeft(expiresAt: string | null) {
   return Math.ceil(diffMs / (1000 * 60 * 60 * 24));
 }
 
-const TRASH_COPY: Record<
-  LocaleCode,
-  {
-    restoreError: string;
-    restoreSuccess: string;
-    purgeSuccess: string;
-    purgePartial: (failed: number) => string;
-    purgeError: string;
-    emptyTitle: string;
-    emptyDescription: string;
-    restoreModalTitle: string;
-    restoreModalConfirm: string;
-    restoreModalDescription: string;
-    restoreReasonLabel: string;
-    restoreReasonPlaceholder: string;
-    purgeModalTitle: string;
-    purgeModalConfirm: string;
-    purgeModalDescription: string;
-    purgeReasonLabel: string;
-    purgeReasonPlaceholder: string;
-    colDeletedAt: string;
-    colTarget: string;
-    colExpireAt: string;
-    colStatus: string;
-    colAction: string;
-    expired: string;
-    retained: string;
-    daysLeft: (days: number) => string;
-    restore: string;
-    restoreExpired: string;
-    purge: string;
-    total: (total: number, page: number, totalPages: number) => string;
-    prev: string;
-    next: string;
-  }
-> = {
-  ko: {
-    restoreError: '복원 중 오류가 발생했습니다.',
-    restoreSuccess: '휴지통 항목을 복원했습니다.',
-    purgeSuccess: '휴지통 항목을 영구 삭제했습니다.',
-    purgePartial: (failed: number) => `영구 삭제 완료(일부 스토리지 ${failed}건 삭제 실패)`,
-    purgeError: '영구 삭제 중 오류가 발생했습니다.',
-    emptyTitle: '휴지통이 비어 있습니다',
-    emptyDescription: '삭제된 항목이 생기면 이 페이지에서 복원 또는 영구 삭제할 수 있습니다.',
-    restoreModalTitle: '휴지통 복원 확인',
-    restoreModalConfirm: '복원하기',
-    restoreModalDescription: '휴지통 항목을 복원하시겠습니까? 복원 사유를 입력해주세요.',
-    restoreReasonLabel: '복원 사유',
-    restoreReasonPlaceholder: '예: 실수로 삭제한 항목 복원',
-    purgeModalTitle: '휴지통 영구 삭제 확인',
-    purgeModalConfirm: '영구 삭제',
-    purgeModalDescription:
-      '휴지통 항목을 영구 삭제하면 복구할 수 없습니다. 영구 삭제 사유를 입력해주세요.',
-    purgeReasonLabel: '영구 삭제 사유',
-    purgeReasonPlaceholder: '예: 보관 기간 종료 전 수동 정리',
-    colDeletedAt: '삭제 시각',
-    colTarget: '대상',
-    colExpireAt: '보관 만료',
-    colStatus: '상태',
-    colAction: '조치',
-    expired: '만료됨',
-    retained: '보관 중',
-    daysLeft: (days: number) => `${days}일 남음`,
-    restore: '복원',
-    restoreExpired: '복원 만료',
-    purge: '영구 삭제',
-    total: (total: number, page: number, totalPages: number) =>
-      `총 ${total}건 (페이지 ${page} / ${totalPages})`,
-    prev: '이전',
-    next: '다음',
-  },
-  en: {
-    restoreError: 'An error occurred while restoring.',
-    restoreSuccess: 'Trash item restored.',
-    purgeSuccess: 'Trash item permanently deleted.',
-    purgePartial: (failed: number) =>
-      `Permanent delete completed (failed to delete ${failed} storage item(s))`,
-    purgeError: 'An error occurred while permanently deleting.',
-    emptyTitle: 'Trash is empty',
-    emptyDescription:
-      'When deleted items appear, you can restore or permanently delete them on this page.',
-    restoreModalTitle: 'Confirm restore from trash',
-    restoreModalConfirm: 'Restore',
-    restoreModalDescription: 'Do you want to restore this trash item? Please enter a reason.',
-    restoreReasonLabel: 'Reason for restore',
-    restoreReasonPlaceholder: 'e.g., Restore an item deleted by mistake',
-    purgeModalTitle: 'Confirm permanent delete from trash',
-    purgeModalConfirm: 'Permanently delete',
-    purgeModalDescription:
-      'If you permanently delete a trash item, it cannot be restored. Please enter a reason.',
-    purgeReasonLabel: 'Reason for permanent delete',
-    purgeReasonPlaceholder: 'e.g., Manual cleanup before retention period ends',
-    colDeletedAt: 'Deleted at',
-    colTarget: 'Target',
-    colExpireAt: 'Retention expires',
-    colStatus: 'Status',
-    colAction: 'Action',
-    expired: 'Expired',
-    retained: 'Retained',
-    daysLeft: (days: number) => `${days} days left`,
-    restore: 'Restore',
-    restoreExpired: 'Restore expired',
-    purge: 'Permanently delete',
-    total: (total: number, page: number, totalPages: number) =>
-      `Total ${total} records (page ${page} / ${totalPages})`,
-    prev: 'Previous',
-    next: 'Next',
-  },
-};
-
 export function TrashList({ logs, currentPage, totalPages, total }: TrashListProps) {
-  const pathname = usePathname();
-  const locale = resolveClientLocale(pathname);
-  const copy = TRASH_COPY[locale];
+  const locale = useLocale();
+  const t = useTranslations('admin.trash');
   const router = useRouter();
   const searchParams = useSearchParams();
   const toast = useToast();
@@ -286,20 +174,20 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
     try {
       const result = await revertActivityLog(logId, reason);
       if (!result.success) {
-        toast.error(locale === 'en' ? copy.restoreError : result.message || copy.restoreError);
+        toast.error(locale === 'en' ? t('restoreError') : result.message || t('restoreError'));
         return;
       }
-      toast.success(copy.restoreSuccess);
+      toast.success(t('restoreSuccess'));
       setRestoreTargetId(null);
       setRestoreReason('');
       router.refresh();
     } catch (error) {
       const message =
         locale === 'en'
-          ? copy.restoreError
+          ? t('restoreError')
           : error instanceof Error
             ? error.message
-            : copy.restoreError;
+            : t('restoreError');
       toast.error(message);
     } finally {
       setIsRestoring(false);
@@ -316,9 +204,9 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
       const result = await purgeActivityTrashLog(logId, reason);
       const failed = typeof result?.failed === 'number' ? result.failed : 0;
       if (failed > 0) {
-        toast.warning(copy.purgePartial(failed));
+        toast.warning(t('purgePartial', { failed }));
       } else {
-        toast.success(copy.purgeSuccess);
+        toast.success(t('purgeSuccess'));
       }
       setPurgeTargetId(null);
       setPurgeReason('');
@@ -326,10 +214,10 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
     } catch (error) {
       const message =
         locale === 'en'
-          ? copy.purgeError
+          ? t('purgeError')
           : error instanceof Error
             ? error.message
-            : copy.purgeError;
+            : t('purgeError');
       toast.error(message);
     } finally {
       setIsPurging(false);
@@ -339,7 +227,7 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
   if (logs.length === 0) {
     return (
       <AdminCard>
-        <AdminEmptyState title={copy.emptyTitle} description={copy.emptyDescription} />
+        <AdminEmptyState title={t('emptyTitle')} description={t('emptyDescription')} />
       </AdminCard>
     );
   }
@@ -353,21 +241,21 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
           setRestoreReason('');
         }}
         onConfirm={handleRestore}
-        title={copy.restoreModalTitle}
-        confirmText={copy.restoreModalConfirm}
+        title={t('restoreModalTitle')}
+        confirmText={t('restoreModalConfirm')}
         variant="warning"
         isLoading={isRestoring}
-        description={copy.restoreModalDescription}
+        description={t('restoreModalDescription')}
       >
         <div className="mt-4">
           <label className="mb-1 block text-sm font-medium text-gray-700">
-            {copy.restoreReasonLabel} <span className="text-red-500">*</span>
+            {t('restoreReasonLabel')} <span className="text-red-500">*</span>
           </label>
           <textarea
             value={restoreReason}
             onChange={(e) => setRestoreReason(e.target.value)}
             rows={3}
-            placeholder={copy.restoreReasonPlaceholder}
+            placeholder={t('restoreReasonPlaceholder')}
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
           />
         </div>
@@ -380,21 +268,21 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
           setPurgeReason('');
         }}
         onConfirm={handlePurge}
-        title={copy.purgeModalTitle}
-        confirmText={copy.purgeModalConfirm}
+        title={t('purgeModalTitle')}
+        confirmText={t('purgeModalConfirm')}
         variant="danger"
         isLoading={isPurging}
-        description={copy.purgeModalDescription}
+        description={t('purgeModalDescription')}
       >
         <div className="mt-4">
           <label className="mb-1 block text-sm font-medium text-gray-700">
-            {copy.purgeReasonLabel} <span className="text-red-500">*</span>
+            {t('purgeReasonLabel')} <span className="text-red-500">*</span>
           </label>
           <textarea
             value={purgeReason}
             onChange={(e) => setPurgeReason(e.target.value)}
             rows={3}
-            placeholder={copy.purgeReasonPlaceholder}
+            placeholder={t('purgeReasonPlaceholder')}
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
           />
         </div>
@@ -405,19 +293,19 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
           <thead className="bg-gray-50">
             <tr>
               <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                {copy.colDeletedAt}
+                {t('colDeletedAt')}
               </th>
               <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                {copy.colTarget}
+                {t('colTarget')}
               </th>
               <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                {copy.colExpireAt}
+                {t('colExpireAt')}
               </th>
               <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                {copy.colStatus}
+                {t('colStatus')}
               </th>
               <th className="px-4 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                {copy.colAction}
+                {t('colAction')}
               </th>
             </tr>
           </thead>
@@ -426,7 +314,7 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
               const daysLeft = getDaysLeft(log.trash_expires_at);
               const isExpired = daysLeft !== null ? daysLeft <= 0 : false;
               const targetLink = getTargetLink(log);
-              const targetName = getTargetDisplayName(log, locale);
+              const targetName = getTargetDisplayName(log, t);
 
               return (
                 <tr key={log.id} className="hover:bg-gray-50">
@@ -437,10 +325,10 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
                     <div className="space-y-0.5">
                       {targetLink ? (
                         <Link href={targetLink} className="text-indigo-600 hover:underline">
-                          {getTargetTypeLabel(log.target_type, locale)}
+                          {getTargetTypeLabel(log.target_type, t)}
                         </Link>
                       ) : (
-                        <div>{getTargetTypeLabel(log.target_type, locale)}</div>
+                        <div>{getTargetTypeLabel(log.target_type, t)}</div>
                       )}
                       <div className="text-xs text-slate-600">{targetName}</div>
                     </div>
@@ -451,11 +339,11 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
                   <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm">
                     {isExpired ? (
                       <span className="rounded-full bg-rose-50 px-2 py-0.5 text-xs font-medium text-rose-700">
-                        {copy.expired}
+                        {t('expired')}
                       </span>
                     ) : (
                       <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
-                        {copy.retained} {daysLeft !== null ? copy.daysLeft(daysLeft) : ''}
+                        {t('retained')} {daysLeft !== null ? t('daysLeft', { days: daysLeft }) : ''}
                       </span>
                     )}
                   </td>
@@ -467,17 +355,17 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
                           onClick={() => setRestoreTargetId(log.id)}
                           className="rounded-md border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800 hover:bg-amber-100"
                         >
-                          {copy.restore}
+                          {t('restore')}
                         </button>
                       ) : (
-                        <span className="text-xs text-gray-400">{copy.restoreExpired}</span>
+                        <span className="text-xs text-gray-400">{t('restoreExpired')}</span>
                       )}
                       <button
                         type="button"
                         onClick={() => setPurgeTargetId(log.id)}
                         className="rounded-md border border-rose-300 bg-rose-50 px-2.5 py-1 text-xs font-medium text-rose-700 hover:bg-rose-100"
                       >
-                        {copy.purge}
+                        {t('purge')}
                       </button>
                     </div>
                   </td>
@@ -489,16 +377,18 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
       </AdminCard>
 
       <div className="flex items-center justify-between">
-        <p className="text-sm text-gray-500">{copy.total(total, currentPage, totalPages)}</p>
+        <p className="text-sm text-gray-500">
+          {t('total', { total, page: currentPage, totalPages })}
+        </p>
         <div className="flex gap-2">
           {currentPage > 1 && (
             <Button variant="white" href={getPageHref(currentPage - 1)}>
-              {copy.prev}
+              {t('prev')}
             </Button>
           )}
           {currentPage < totalPages && (
             <Button variant="white" href={getPageHref(currentPage + 1)}>
-              {copy.next}
+              {t('next')}
             </Button>
           )}
         </div>

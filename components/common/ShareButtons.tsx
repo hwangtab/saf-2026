@@ -7,7 +7,7 @@ import TwitterShareButton from 'react-share/lib/TwitterShareButton';
 import FacebookIcon from 'react-share/lib/FacebookIcon';
 import TwitterIcon from 'react-share/lib/TwitterIcon';
 import clsx from 'clsx';
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { useKakaoShareSDK } from '@/lib/hooks/useKakaoSDK';
 
 interface ShareButtonsProps {
@@ -19,7 +19,6 @@ interface ShareButtonsProps {
 type CopyStatus = 'idle' | 'copied' | 'error';
 
 export default function ShareButtons({ url, title, description }: ShareButtonsProps) {
-  const locale = useLocale();
   const t = useTranslations('shareButtons');
   const [copyStatus, setCopyStatus] = useState<CopyStatus>('idle');
   const [kakaoStatusMessage, setKakaoStatusMessage] = useState('');
@@ -105,7 +104,7 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
       <FacebookShareButton
         url={url}
         quote={title}
-        hashtag={locale === 'en' ? '#SAF2026' : '#씨앗페'}
+        hashtag={t('hashtag')}
         className="hover:opacity-80 transition-opacity p-1.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
       >
         <FacebookIcon size={32} round iconFillColor="white" />

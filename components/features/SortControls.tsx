@@ -3,8 +3,7 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { SortOption } from '@/types';
 import { ChevronDownIcon, CheckMarkIcon } from '@/components/ui/Icons';
-import { useLocale } from 'next-intl';
-import { getUIStrings } from '@/lib/ui-strings';
+import { useTranslations } from 'next-intl';
 
 interface SortControlsProps {
   value: SortOption;
@@ -12,15 +11,16 @@ interface SortControlsProps {
 }
 
 export default function SortControls({ value, onChange }: SortControlsProps) {
-  const ui = getUIStrings(useLocale());
+  const tSort = useTranslations('sort');
+  const tA11y = useTranslations('a11y');
   const sortOptions = useMemo<{ value: SortOption; label: string; icon: string }[]>(
     () => [
-      { value: 'artist-asc', label: ui.SORT.ARTIST_ASC, icon: '👤' },
-      { value: 'title-asc', label: ui.SORT.TITLE_ASC, icon: '🖼️' },
-      { value: 'price-desc', label: ui.SORT.PRICE_DESC, icon: '💰↓' },
-      { value: 'price-asc', label: ui.SORT.PRICE_ASC, icon: '💰↑' },
+      { value: 'artist-asc', label: tSort('artistAsc'), icon: '👤' },
+      { value: 'title-asc', label: tSort('titleAsc'), icon: '🖼️' },
+      { value: 'price-desc', label: tSort('priceDesc'), icon: '💰↓' },
+      { value: 'price-asc', label: tSort('priceAsc'), icon: '💰↑' },
     ],
-    [ui.SORT.ARTIST_ASC, ui.SORT.TITLE_ASC, ui.SORT.PRICE_DESC, ui.SORT.PRICE_ASC]
+    [tSort]
   );
 
   const [isOpen, setIsOpen] = useState(false);
@@ -98,7 +98,7 @@ export default function SortControls({ value, onChange }: SortControlsProps) {
         className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-primary hover:bg-primary/5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
         aria-haspopup="listbox"
         aria-expanded={isOpen}
-        aria-label={ui.A11Y.SORT_OPTIONS}
+        aria-label={tA11y('sortOptions')}
       >
         <span className="text-xs sm:text-sm font-medium text-charcoal whitespace-nowrap">
           {currentOption?.icon} {currentOption?.label}
@@ -113,7 +113,7 @@ export default function SortControls({ value, onChange }: SortControlsProps) {
         <div
           className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
           role="listbox"
-          aria-label={ui.A11Y.SORT_OPTIONS}
+          aria-label={tA11y('sortOptions')}
         >
           {sortOptions.map((option, index) => (
             <button

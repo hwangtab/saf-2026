@@ -1,8 +1,7 @@
 'use client';
 
 import { memo, useCallback } from 'react';
-import { useLocale } from 'next-intl';
-import { getUIStrings } from '@/lib/ui-strings';
+import { useTranslations } from 'next-intl';
 
 interface ArtistButtonProps {
   artist: string;
@@ -43,7 +42,7 @@ interface ArtistNavigationProps {
 }
 
 function ArtistNavigation({ uniqueArtists, selectedArtist, onArtistClick }: ArtistNavigationProps) {
-  const ui = getUIStrings(useLocale());
+  const tA11y = useTranslations('a11y');
 
   return (
     <div className="hidden md:block py-4">
@@ -54,7 +53,7 @@ function ArtistNavigation({ uniqueArtists, selectedArtist, onArtistClick }: Arti
             artist={artist}
             isSelected={selectedArtist === artist}
             onClick={onArtistClick}
-            ariaLabelSuffix={ui.A11Y.VIEW_ARTIST}
+            ariaLabelSuffix={tA11y('viewArtist')}
           />
         ))}
       </div>

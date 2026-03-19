@@ -9,192 +9,27 @@ import {
   AdminHelp,
 } from '@/app/admin/_components/admin-ui';
 import { RevenueCard } from '@/app/admin/_components/RevenueCard';
-import { getServerLocale } from '@/lib/server-locale';
-
-type LocaleCode = 'ko' | 'en';
-
-const DASHBOARD_COPY: Record<
-  LocaleCode,
-  {
-    loadErrorTitle: string;
-    loadErrorMessage: string;
-    title: string;
-    titleHelp: string;
-    description: string;
-    revenueButton: string;
-    artistsTotal: string;
-    artistsUnlinked: string;
-    linkedArtistAccounts: string;
-    linkedHelp: string;
-    linkedRate: string;
-    artistsPending: string;
-    needsCheck: string;
-    noPending: string;
-    artworksTotal: string;
-    soldCount: string;
-    soldArtworks: string;
-    soldRate: string;
-    hiddenArtworks: string;
-    hiddenHelp: string;
-    hiddenRate: string;
-    monthlyRevenue: string;
-    analyticsPanelTitle: string;
-    analyticsPanelDescription: string;
-    analyticsPanelButton: string;
-    realtimeVisitors: string;
-    recentFiveMin: string;
-    pageViews30d: string;
-    uniqueVisitors30d: string;
-    siteAnalyticsUnavailable: string;
-    openFeedback: string;
-    processedDone: string;
-    noFeedbackData: string;
-    topPagesTitle: string;
-    viewAll: string;
-    noPageData: string;
-    recentFeedbackTitle: string;
-    noOpenFeedback: string;
-    feedbackCategory: Record<'bug' | 'improvement' | 'question' | 'other', string>;
-    recentApplicationsTitle: string;
-    noPendingApplications: string;
-    recentArtworksTitle: string;
-    viewRecent: string;
-    noArtworks: string;
-  }
-> = {
-  ko: {
-    loadErrorTitle: '대시보드 로딩 오류',
-    loadErrorMessage: '데이터를 불러오는 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.',
-    title: '대시보드',
-    titleHelp:
-      'SAF 2026 운영 현황을 간략하게 요약합니다. 매출 상세 분석은 별도 매출 현황 페이지에서 확인할 수 있습니다.',
-    description: '관리자 운영 핵심 지표와 최근 활동만 빠르게 확인합니다.',
-    revenueButton: '매출 현황 보기',
-    artistsTotal: '등록 작가(전체)',
-    artistsUnlinked: '계정 미연결',
-    linkedArtistAccounts: '연결된 아티스트 계정',
-    linkedHelp:
-      '전체 작가 프로필 중 실제 사용자 계정과 연결된 수입니다. 연결된 작가만 작품을 직접 관리할 수 있습니다.',
-    linkedRate: '연결률',
-    artistsPending: '아티스트 신청 대기',
-    needsCheck: '확인 필요',
-    noPending: '대기 없음',
-    artworksTotal: '등록 작품(전체)',
-    soldCount: '판매 완료',
-    soldArtworks: '판매 완료 작품',
-    soldRate: '전체 작품 대비',
-    hiddenArtworks: '숨김 작품',
-    hiddenHelp: "현재 '공개 안 함'으로 설정되어 사용자 웹사이트에 노출되지 않는 작품의 수입니다.",
-    hiddenRate: '전체 작품 대비',
-    monthlyRevenue: '매출',
-    analyticsPanelTitle: '매출 분석 전용 화면',
-    analyticsPanelDescription:
-      '회계 기준 월별(1월~12월) 매출, 전월/전년 동월 비교, 작품/작가별 매출을 별도 페이지에서 확인하세요.',
-    analyticsPanelButton: '매출 현황 페이지로 이동',
-    realtimeVisitors: '실시간 방문자',
-    recentFiveMin: '최근 5분',
-    pageViews30d: '30일 페이지뷰',
-    uniqueVisitors30d: '30일 순방문자',
-    siteAnalyticsUnavailable: '사이트 분석 데이터를 불러올 수 없습니다',
-    openFeedback: '미해결 피드백',
-    processedDone: '처리 완료',
-    noFeedbackData: '피드백 데이터 없음',
-    topPagesTitle: '인기 페이지 Top 5',
-    viewAll: '전체 보기',
-    noPageData: '페이지 데이터가 없습니다.',
-    recentFeedbackTitle: '최근 피드백',
-    noOpenFeedback: '미해결 피드백이 없습니다.',
-    feedbackCategory: { bug: '버그', improvement: '개선', question: '질문', other: '기타' },
-    recentApplicationsTitle: '최근 가입 신청',
-    noPendingApplications: '대기 중인 신청이 없습니다.',
-    recentArtworksTitle: '최근 등록된 작품',
-    viewRecent: '최근 등록순으로 보기',
-    noArtworks: '등록된 작품이 없습니다.',
-  },
-  en: {
-    loadErrorTitle: 'Dashboard Load Error',
-    loadErrorMessage: 'Failed to load data. Please try again shortly.',
-    title: 'Dashboard',
-    titleHelp:
-      'This is a quick snapshot of SAF 2026 operations. For detailed revenue analytics, use the revenue page.',
-    description: 'Quickly review key admin metrics and recent activity.',
-    revenueButton: 'View Revenue',
-    artistsTotal: 'Registered Artists (Total)',
-    artistsUnlinked: 'Unlinked accounts',
-    linkedArtistAccounts: 'Linked Artist Accounts',
-    linkedHelp:
-      'Number of artist profiles connected to real user accounts. Only linked artists can manage artworks directly.',
-    linkedRate: 'Link rate',
-    artistsPending: 'Pending Artist Applications',
-    needsCheck: 'Needs review',
-    noPending: 'No pending items',
-    artworksTotal: 'Registered Artworks (Total)',
-    soldCount: 'Sold',
-    soldArtworks: 'Sold Artworks',
-    soldRate: 'Share of total artworks',
-    hiddenArtworks: 'Hidden Artworks',
-    hiddenHelp: 'Number of artworks currently set to hidden and not visible on the public website.',
-    hiddenRate: 'Share of total artworks',
-    monthlyRevenue: 'Revenue',
-    analyticsPanelTitle: 'Dedicated Revenue Analytics',
-    analyticsPanelDescription:
-      'Review monthly accounting revenue, month-over-month/year-over-year comparisons, and artist/artwork breakdowns on a dedicated page.',
-    analyticsPanelButton: 'Go to Revenue Analytics',
-    realtimeVisitors: 'Realtime Visitors',
-    recentFiveMin: 'Last 5 minutes',
-    pageViews30d: '30-Day Page Views',
-    uniqueVisitors30d: '30-Day Unique Visitors',
-    siteAnalyticsUnavailable: 'Unable to load site analytics data',
-    openFeedback: 'Open Feedback',
-    processedDone: 'All resolved',
-    noFeedbackData: 'No feedback data',
-    topPagesTitle: 'Top 5 Pages',
-    viewAll: 'View all',
-    noPageData: 'No page data available.',
-    recentFeedbackTitle: 'Recent Feedback',
-    noOpenFeedback: 'No open feedback.',
-    feedbackCategory: {
-      bug: 'Bug',
-      improvement: 'Improvement',
-      question: 'Question',
-      other: 'Other',
-    },
-    recentApplicationsTitle: 'Recent Sign-up Applications',
-    noPendingApplications: 'No pending applications.',
-    recentArtworksTitle: 'Recently Registered Artworks',
-    viewRecent: 'Sort by newest',
-    noArtworks: 'No artworks registered.',
-  },
-};
+import { getTranslations, getLocale } from 'next-intl/server';
 
 function StatCard({
   title,
   valueText,
   subtitle,
   href,
+  helpContent,
 }: {
   title: string;
   valueText: string;
   subtitle?: string;
   href?: string;
+  helpContent?: string;
 }) {
   const content = (
     <AdminCard className="flex h-full flex-col justify-between p-6 transition-all duration-200">
       <div>
         <div className="flex items-center gap-1">
           <p className="text-sm font-medium text-slate-500">{title}</p>
-          {(title === '연결된 아티스트 계정' || title === 'Linked Artist Accounts') && (
-            <AdminHelp>
-              전체 작가 프로필 중 실제 사용자 계정과 연결된 수입니다. 연결된 작가만 작품을 직접
-              관리할 수 있습니다.
-            </AdminHelp>
-          )}
-          {(title === '숨김 작품' || title === 'Hidden Artworks') && (
-            <AdminHelp>
-              현재 &apos;공개 안 함&apos;으로 설정되어 사용자 웹사이트에 노출되지 않는 작품의
-              수입니다.
-            </AdminHelp>
-          )}
+          {helpContent && <AdminHelp>{helpContent}</AdminHelp>}
         </div>
         <p className="mt-2 text-3xl font-bold tracking-tight text-slate-900">{valueText}</p>
       </div>
@@ -215,7 +50,7 @@ function StatCard({
 
 export const dynamic = 'force-dynamic';
 
-function formatDate(dateString: string | null | undefined, locale: LocaleCode) {
+function formatDate(dateString: string | null | undefined, locale: string) {
   if (!dateString) return '-';
 
   const date = new Date(dateString);
@@ -230,8 +65,8 @@ function formatDate(dateString: string | null | undefined, locale: LocaleCode) {
 }
 
 export default async function AdminDashboardPage() {
-  const locale = await getServerLocale();
-  const copy = DASHBOARD_COPY[locale];
+  const locale = await getLocale();
+  const t = await getTranslations('admin.dashboard');
   const numberFormatter = new Intl.NumberFormat(locale === 'en' ? 'en-US' : 'ko-KR');
 
   let stats;
@@ -242,8 +77,8 @@ export default async function AdminDashboardPage() {
     return (
       <div className="p-8">
         <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-          <h2 className="text-lg font-semibold text-red-800">{copy.loadErrorTitle}</h2>
-          <p className="mt-2 text-sm text-red-600">{copy.loadErrorMessage}</p>
+          <h2 className="text-lg font-semibold text-red-800">{t('loadErrorTitle')}</h2>
+          <p className="mt-2 text-sm text-red-600">{t('loadErrorMessage')}</p>
         </div>
       </div>
     );
@@ -264,69 +99,71 @@ export default async function AdminDashboardPage() {
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <AdminPageHeader>
           <AdminPageTitle>
-            대시보드
-            <AdminHelp>{copy.titleHelp}</AdminHelp>
+            {t('title')}
+            <AdminHelp>{t('titleHelp')}</AdminHelp>
           </AdminPageTitle>
-          <AdminPageDescription>{copy.description}</AdminPageDescription>
+          <AdminPageDescription>{t('description')}</AdminPageDescription>
         </AdminPageHeader>
         <Link
           href="/admin/revenue"
           className="inline-flex items-center justify-center rounded-lg border border-indigo-300 bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700 hover:bg-indigo-100"
         >
-          {copy.revenueButton}
+          {t('revenueButton')}
         </Link>
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard
-          title={copy.artistsTotal}
+          title={t('artistsTotal')}
           valueText={numberFormatter.format(stats.artists.totalRegistered)}
-          subtitle={`${copy.artistsUnlinked}: ${stats.artists.unlinkedAccounts}`}
+          subtitle={`${t('artistsUnlinked')}: ${stats.artists.unlinkedAccounts}`}
           href="/admin/artists"
         />
         <StatCard
-          title={copy.linkedArtistAccounts}
+          title={t('linkedArtistAccounts')}
           valueText={numberFormatter.format(stats.artists.linkedAccounts)}
-          subtitle={`${copy.linkedRate}: ${linkedRate}%`}
+          subtitle={`${t('linkedRate')}: ${linkedRate}%`}
           href="/admin/users"
+          helpContent={t('linkedHelp')}
         />
         <StatCard
-          title={copy.artistsPending}
+          title={t('artistsPending')}
           valueText={numberFormatter.format(stats.artists.pendingApplications)}
-          subtitle={stats.artists.pendingApplications > 0 ? copy.needsCheck : copy.noPending}
+          subtitle={stats.artists.pendingApplications > 0 ? t('needsCheck') : t('noPending')}
           href="/admin/users?status=pending"
         />
         <StatCard
-          title={copy.artworksTotal}
+          title={t('artworksTotal')}
           valueText={numberFormatter.format(stats.artworks.total)}
-          subtitle={`${copy.soldCount}: ${numberFormatter.format(stats.artworks.sold)}`}
+          subtitle={`${t('soldCount')}: ${numberFormatter.format(stats.artworks.sold)}`}
           href="/admin/artworks"
         />
         <StatCard
-          title={copy.soldArtworks}
+          title={t('soldArtworks')}
           valueText={numberFormatter.format(stats.artworks.sold)}
-          subtitle={`${copy.soldRate}: ${soldRate}%`}
+          subtitle={`${t('soldRate')}: ${soldRate}%`}
           href="/admin/artworks?status=sold"
         />
         <StatCard
-          title={copy.hiddenArtworks}
+          title={t('hiddenArtworks')}
           valueText={numberFormatter.format(stats.artworks.hidden)}
-          subtitle={`${copy.hiddenRate}: ${hiddenRate}%`}
+          subtitle={`${t('hiddenRate')}: ${hiddenRate}%`}
           href="/admin/artworks?visibility=hidden"
+          helpContent={t('hiddenHelp')}
         />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <RevenueCard
-          title={`${stats.revenue.currentMonthLabel} ${copy.monthlyRevenue}`}
+          title={`${stats.revenue.currentMonthLabel} ${t('monthlyRevenue')}`}
           value={stats.revenue.currentMonthRevenue}
-          subtitle={`${copy.soldCount}: ${numberFormatter.format(stats.revenue.currentMonthSoldCount)}`}
+          subtitle={`${t('soldCount')}: ${numberFormatter.format(stats.revenue.currentMonthSoldCount)}`}
         />
         <AdminCard className="flex flex-col justify-between p-6">
           <div>
-            <h2 className="text-lg font-semibold text-slate-900">{copy.analyticsPanelTitle}</h2>
+            <h2 className="text-lg font-semibold text-slate-900">{t('analyticsPanelTitle')}</h2>
             <p className="mt-2 text-sm leading-relaxed text-slate-600">
-              {copy.analyticsPanelDescription}
+              {t('analyticsPanelDescription')}
             </p>
           </div>
           <div className="mt-6">
@@ -334,7 +171,7 @@ export default async function AdminDashboardPage() {
               href="/admin/revenue"
               className="inline-flex items-center justify-center rounded-lg border border-indigo-300 bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700 hover:bg-indigo-100"
             >
-              {copy.analyticsPanelButton}
+              {t('analyticsPanelButton')}
             </Link>
           </div>
         </AdminCard>
@@ -346,20 +183,20 @@ export default async function AdminDashboardPage() {
           <>
             <AdminCard className="flex h-full flex-col justify-between bg-emerald-50/50 p-6 transition-all duration-200">
               <div>
-                <p className="text-sm font-medium text-emerald-700">{copy.realtimeVisitors}</p>
+                <p className="text-sm font-medium text-emerald-700">{t('realtimeVisitors')}</p>
                 <p className="mt-2 text-3xl font-bold tracking-tight text-emerald-900">
                   {numberFormatter.format(stats.siteAnalytics.realtimeVisitors)}
                 </p>
               </div>
-              <p className="mt-2 text-sm text-emerald-600">{copy.recentFiveMin}</p>
+              <p className="mt-2 text-sm text-emerald-600">{t('recentFiveMin')}</p>
             </AdminCard>
             <StatCard
-              title={copy.pageViews30d}
+              title={t('pageViews30d')}
               valueText={numberFormatter.format(stats.siteAnalytics.totalPageViews)}
               href="/admin/analytics"
             />
             <StatCard
-              title={copy.uniqueVisitors30d}
+              title={t('uniqueVisitors30d')}
               valueText={numberFormatter.format(stats.siteAnalytics.uniqueVisitors)}
               href="/admin/analytics"
             />
@@ -367,20 +204,20 @@ export default async function AdminDashboardPage() {
         ) : (
           <>
             <AdminCard className="flex h-full items-center justify-center p-6 sm:col-span-2 lg:col-span-3">
-              <p className="text-sm text-slate-400">{copy.siteAnalyticsUnavailable}</p>
+              <p className="text-sm text-slate-400">{t('siteAnalyticsUnavailable')}</p>
             </AdminCard>
           </>
         )}
         {stats.feedback ? (
           <StatCard
-            title={copy.openFeedback}
+            title={t('openFeedback')}
             valueText={numberFormatter.format(stats.feedback.openCount)}
-            subtitle={stats.feedback.openCount > 0 ? copy.needsCheck : copy.processedDone}
+            subtitle={stats.feedback.openCount > 0 ? t('needsCheck') : t('processedDone')}
             href="/admin/feedback"
           />
         ) : (
           <AdminCard className="flex h-full items-center justify-center p-6">
-            <p className="text-sm text-slate-400">{copy.noFeedbackData}</p>
+            <p className="text-sm text-slate-400">{t('noFeedbackData')}</p>
           </AdminCard>
         )}
       </div>
@@ -389,17 +226,17 @@ export default async function AdminDashboardPage() {
       <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <AdminCard className="flex flex-col">
           <AdminCardHeader className="rounded-t-2xl">
-            <h2 className="text-base font-semibold text-slate-900">{copy.topPagesTitle}</h2>
+            <h2 className="text-base font-semibold text-slate-900">{t('topPagesTitle')}</h2>
             <Link
               href="/admin/analytics"
               className="text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:underline"
             >
-              {copy.viewAll}
+              {t('viewAll')}
             </Link>
           </AdminCardHeader>
           <div className="p-0">
             {!stats.siteAnalytics || stats.siteAnalytics.topPages.length === 0 ? (
-              <div className="p-8 text-center text-sm text-gray-500">{copy.noPageData}</div>
+              <div className="p-8 text-center text-sm text-gray-500">{t('noPageData')}</div>
             ) : (
               <ul className="divide-y divide-gray-100">
                 {stats.siteAnalytics.topPages.map((page, i) => {
@@ -438,17 +275,17 @@ export default async function AdminDashboardPage() {
 
         <AdminCard className="flex flex-col">
           <AdminCardHeader className="rounded-t-2xl">
-            <h2 className="text-base font-semibold text-slate-900">{copy.recentFeedbackTitle}</h2>
+            <h2 className="text-base font-semibold text-slate-900">{t('recentFeedbackTitle')}</h2>
             <Link
               href="/admin/feedback"
               className="text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:underline"
             >
-              {copy.viewAll}
+              {t('viewAll')}
             </Link>
           </AdminCardHeader>
           <div className="p-0">
             {!stats.feedback || stats.feedback.recentItems.length === 0 ? (
-              <div className="p-8 text-center text-sm text-gray-500">{copy.noOpenFeedback}</div>
+              <div className="p-8 text-center text-sm text-gray-500">{t('noOpenFeedback')}</div>
             ) : (
               <ul className="divide-y divide-gray-100">
                 {stats.feedback.recentItems.map((item) => (
@@ -467,12 +304,12 @@ export default async function AdminDashboardPage() {
                           }`}
                         >
                           {item.category === 'bug'
-                            ? copy.feedbackCategory.bug
+                            ? t('feedbackCategoryBug')
                             : item.category === 'improvement'
-                              ? copy.feedbackCategory.improvement
+                              ? t('feedbackCategoryImprovement')
                               : item.category === 'question'
-                                ? copy.feedbackCategory.question
-                                : copy.feedbackCategory.other}
+                                ? t('feedbackCategoryQuestion')
+                                : t('feedbackCategoryOther')}
                         </span>
                         <span className="truncate text-sm font-medium text-gray-900">
                           {item.title}
@@ -495,19 +332,19 @@ export default async function AdminDashboardPage() {
         <AdminCard className="flex flex-col">
           <AdminCardHeader className="rounded-t-2xl">
             <h2 className="text-base font-semibold text-slate-900">
-              {copy.recentApplicationsTitle}
+              {t('recentApplicationsTitle')}
             </h2>
             <Link
               href="/admin/users?status=pending"
               className="text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:underline"
             >
-              {copy.viewAll}
+              {t('viewAll')}
             </Link>
           </AdminCardHeader>
           <div className="p-0">
             {stats.recentApplications.length === 0 ? (
               <div className="p-8 text-center text-sm text-gray-500">
-                {copy.noPendingApplications}
+                {t('noPendingApplications')}
               </div>
             ) : (
               <ul className="divide-y divide-gray-100">
@@ -533,17 +370,17 @@ export default async function AdminDashboardPage() {
         {/* 최근 등록된 작품 */}
         <AdminCard className="flex flex-col">
           <AdminCardHeader className="rounded-t-2xl">
-            <h2 className="text-base font-semibold text-slate-900">{copy.recentArtworksTitle}</h2>
+            <h2 className="text-base font-semibold text-slate-900">{t('recentArtworksTitle')}</h2>
             <Link
               href="/admin/artworks?sort=recent"
               className="text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:underline"
             >
-              {copy.viewRecent}
+              {t('viewRecent')}
             </Link>
           </AdminCardHeader>
           <div className="p-0">
             {stats.recentArtworks.length === 0 ? (
-              <div className="p-8 text-center text-sm text-gray-500">{copy.noArtworks}</div>
+              <div className="p-8 text-center text-sm text-gray-500">{t('noArtworks')}</div>
             ) : (
               <ul className="divide-y divide-gray-100">
                 {stats.recentArtworks.map((artwork) => (

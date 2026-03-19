@@ -2,12 +2,11 @@ import { SignOutButton } from '@/components/auth/SignOutButton';
 import FeedbackButton from '@/components/feedback/FeedbackButton';
 import { requireAuth } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
-import { getServerLocale } from '@/lib/server-locale';
+import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 
 export default async function SuspendedPage() {
-  const locale = await getServerLocale();
-  const isEnglish = locale === 'en';
+  const t = await getTranslations('dashboard.suspended');
   const user = await requireAuth();
   const supabase = await createSupabaseServerClient();
 
@@ -41,18 +40,12 @@ export default async function SuspendedPage() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 text-center bg-white p-10 rounded-xl shadow-md border border-red-100">
         <div>
-          <h2 className="mt-6 text-3xl font-extrabold text-red-600">
-            {isEnglish ? 'Account Suspended' : '계정 정지됨'}
-          </h2>
+          <h2 className="mt-6 text-3xl font-extrabold text-red-600">{t('title')}</h2>
           <div className="mt-4 text-5xl">🚫</div>
           <p className="mt-6 text-sm text-gray-600 leading-relaxed">
-            {isEnglish
-              ? 'Your account has been restricted due to policy violations or an administrator decision.'
-              : '회원님의 계정은 운영 정책 위반 또는 관리자의 판단에 의해 이용이 제한되었습니다.'}
+            {t('description')}
             <br />
-            {isEnglish
-              ? 'Please contact the admin team if you need assistance.'
-              : '문의사항이 있으시면 관리자에게 연락해주세요.'}
+            {t('contactSupport')}
           </p>
         </div>
         <div className="pt-4 border-t border-gray-100">

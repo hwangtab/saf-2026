@@ -4,15 +4,15 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import { SignOutButton } from '@/components/auth/SignOutButton';
 import { getAdminNavGroups } from './_components/admin-nav-items';
-import { resolveClientLocale } from '@/lib/client-locale';
 
 export function AdminMobileNav() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-  const locale = resolveClientLocale(pathname);
-  const isEnglish = locale === 'en';
+  const locale = useLocale() as 'ko' | 'en';
+  const t = useTranslations('admin.common');
   const adminNavGroups = getAdminNavGroups(locale);
   const searchParams = useSearchParams();
   const isReviewQueueMode = pathname === '/admin/users' && searchParams.get('status') === 'pending';
@@ -50,7 +50,7 @@ export function AdminMobileNav() {
         type="button"
         className="inline-flex items-center justify-center rounded-md p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700"
         onClick={() => setIsOpen(true)}
-        aria-label={isEnglish ? 'Open menu' : '메뉴 열기'}
+        aria-label={t('openMenu')}
         aria-expanded={isOpen}
         aria-controls="mobile-nav-drawer"
       >
@@ -82,7 +82,7 @@ export function AdminMobileNav() {
               className="fixed top-0 left-0 h-full w-64 bg-white z-50 transform transition-transform duration-300 ease-in-out xl:hidden translate-x-0"
               role="dialog"
               aria-modal="true"
-              aria-label={isEnglish ? 'Admin menu' : '관리자 메뉴'}
+              aria-label={t('adminMenu')}
             >
               <div className="flex items-center justify-between border-b border-slate-100 p-4">
                 <span className="text-lg font-bold text-slate-900">SAF Admin</span>
@@ -90,7 +90,7 @@ export function AdminMobileNav() {
                   type="button"
                   className="rounded-md p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
                   onClick={() => setIsOpen(false)}
-                  aria-label={isEnglish ? 'Close menu' : '메뉴 닫기'}
+                  aria-label={t('closeMenu')}
                 >
                   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path

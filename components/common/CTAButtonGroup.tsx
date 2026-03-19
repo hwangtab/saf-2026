@@ -2,8 +2,7 @@
 
 import { cn } from '@/lib/utils';
 import { EXTERNAL_LINKS } from '@/lib/constants';
-import { useLocale } from 'next-intl';
-import { getUIStrings } from '@/lib/ui-strings';
+import { useTranslations } from 'next-intl';
 import LinkButton from '@/components/ui/LinkButton';
 
 interface CTAButtonGroupProps {
@@ -38,9 +37,9 @@ export default function CTAButtonGroup({
   className,
   vertical = false,
 }: CTAButtonGroupProps) {
-  const ui = getUIStrings(useLocale());
-  const resolvedDonateText = donateText ?? ui.CTA.DONATE_NOW;
-  const resolvedPurchaseText = purchaseText ?? ui.CTA.BUY_ART;
+  const tCta = useTranslations('cta');
+  const resolvedDonateText = donateText ?? tCta('donateNow');
+  const resolvedPurchaseText = purchaseText ?? tCta('buyArt');
 
   const containerClasses = cn(
     'flex gap-4',

@@ -1,14 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import FeedbackModal from './FeedbackModal';
-import { resolveClientLocale } from '@/lib/client-locale';
 
 export default function FeedbackButton() {
-  const pathname = usePathname();
-  const locale = resolveClientLocale(pathname);
-  const label = locale === 'en' ? 'Send feedback' : '의견 보내기';
+  const t = useTranslations('feedbackWidget');
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -17,7 +14,7 @@ export default function FeedbackButton() {
         type="button"
         onClick={() => setIsOpen(true)}
         className="fixed bottom-6 right-6 z-40 flex items-center gap-2 rounded-full bg-slate-800 px-4 py-2.5 text-sm font-medium text-white shadow-lg transition-all hover:bg-slate-700 hover:shadow-xl active:scale-95"
-        aria-label={label}
+        aria-label={t('buttonLabel')}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -32,7 +29,7 @@ export default function FeedbackButton() {
             clipRule="evenodd"
           />
         </svg>
-        <span className="hidden sm:inline">{label}</span>
+        <span className="hidden sm:inline">{t('buttonLabel')}</span>
       </button>
 
       <FeedbackModal isOpen={isOpen} onClose={() => setIsOpen(false)} />

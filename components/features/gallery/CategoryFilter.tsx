@@ -1,7 +1,6 @@
 'use client';
 
-import { useLocale } from 'next-intl';
-import { getUIStrings } from '@/lib/ui-strings';
+import { useLocale, useTranslations } from 'next-intl';
 import { getCategoryLabel } from '@/lib/artwork-category';
 import { CategoryCount } from '@/lib/hooks/useArtworkFilter';
 
@@ -19,10 +18,11 @@ export default function CategoryFilter({
   totalCount,
 }: CategoryFilterProps) {
   const locale = useLocale();
-  const ui = getUIStrings(locale);
+  const tFilters = useTranslations('filters');
+  const tA11y = useTranslations('a11y');
 
   return (
-    <div role="radiogroup" aria-label={ui.A11Y.FILTER_CATEGORY}>
+    <div role="radiogroup" aria-label={tA11y('filterCategory')}>
       <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide md:flex-wrap md:justify-center md:overflow-x-visible">
         {/* "All" button */}
         <button
@@ -36,7 +36,7 @@ export default function CategoryFilter({
               : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-100'
           }`}
         >
-          {ui.FILTERS.CATEGORY_ALL}
+          {tFilters('categoryAll')}
           <span className="ml-1 opacity-60">{totalCount}</span>
         </button>
 

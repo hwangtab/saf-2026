@@ -1,7 +1,8 @@
 'use client';
 
 import { useActionState, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useLocale, useTranslations } from 'next-intl';
 import { createArtwork, updateArtwork, type ActionState } from '@/app/actions/artwork';
 import Button from '@/components/ui/Button';
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
@@ -14,7 +15,6 @@ import {
   AdminTextarea,
 } from '@/app/admin/_components/admin-ui';
 import { ARTWORK_CATEGORIES, EditionType } from '@/types';
-import { resolveClientLocale } from '@/lib/client-locale';
 
 type ArtworkFormProps = {
   artwork?: any; // If provided, mode is 'edit'
@@ -24,118 +24,6 @@ type ArtworkFormProps = {
 const initialState: ActionState = {
   message: '',
   error: false,
-};
-
-type LocaleCode = 'ko' | 'en';
-
-const ARTWORK_FORM_COPY: Record<
-  LocaleCode,
-  {
-    editTitle: string;
-    createTitle: string;
-    subtitle: string;
-    images: string;
-    title: string;
-    price: string;
-    priceHint: string;
-    size: string;
-    material: string;
-    year: string;
-    edition: string;
-    category: string;
-    categoryPlaceholder: string;
-    categoryCustom: string;
-    categoryCustomPlaceholder: string;
-    editionType: string;
-    editionUnique: string;
-    editionLimited: string;
-    editionOpen: string;
-    editionLimit: string;
-    editionLimitPlaceholder: string;
-    artistNote: string;
-    artistNotePlaceholder: string;
-    status: string;
-    statusAvailable: string;
-    statusReserved: string;
-    statusSold: string;
-    hidden: string;
-    hiddenDescription: string;
-    cancel: string;
-    saveEdit: string;
-    saveCreate: string;
-    genericError: string;
-  }
-> = {
-  ko: {
-    editTitle: '작품 수정',
-    createTitle: '새 작품 등록',
-    subtitle: '작품의 상세 정보를 입력해주세요.',
-    images: '작품 이미지 (최대 5장)',
-    title: '작품명',
-    price: '가격 (₩)',
-    priceHint: '통화를 제외한 숫자 또는 ₩ 포함 텍스트',
-    size: '크기',
-    material: '재료',
-    year: '제작년도',
-    edition: '에디션 (선택)',
-    category: '분류',
-    categoryPlaceholder: '선택해주세요',
-    categoryCustom: '직접입력',
-    categoryCustomPlaceholder: '분류를 직접 입력하세요',
-    editionType: '에디션 유형',
-    editionUnique: 'Unique (1점)',
-    editionLimited: 'Limited (한정판)',
-    editionOpen: 'Open (무제한)',
-    editionLimit: '에디션 수량',
-    editionLimitPlaceholder: '예: 50',
-    artistNote: '작가 노트',
-    artistNotePlaceholder: '작품에 담긴 의도나 작가 노트를 적어주세요.',
-    status: '판매 상태',
-    statusAvailable: '판매 중',
-    statusReserved: '예약됨',
-    statusSold: '판매 완료',
-    hidden: '숨김 (Hidden)',
-    hiddenDescription: '갤러리 리스트에서 숨깁니다.',
-    cancel: '취소',
-    saveEdit: '수정 사항 저장',
-    saveCreate: '작품 등록하기',
-    genericError: 'An error occurred while saving. Please try again shortly.',
-  },
-  en: {
-    editTitle: 'Edit artwork',
-    createTitle: 'Create new artwork',
-    subtitle: 'Enter detailed information for this artwork.',
-    images: 'Artwork images (up to 5)',
-    title: 'Title',
-    price: 'Price (₩)',
-    priceHint: 'Enter numbers only or text including ₩',
-    size: 'Size',
-    material: 'Material',
-    year: 'Year',
-    edition: 'Edition (optional)',
-    category: 'Category',
-    categoryPlaceholder: 'Select category',
-    categoryCustom: 'Other',
-    categoryCustomPlaceholder: 'Enter category',
-    editionType: 'Edition type',
-    editionUnique: 'Unique (1 item)',
-    editionLimited: 'Limited',
-    editionOpen: 'Open',
-    editionLimit: 'Edition quantity',
-    editionLimitPlaceholder: 'e.g., 50',
-    artistNote: 'Artist note',
-    artistNotePlaceholder: 'Describe the intention or artist note for this artwork.',
-    status: 'Sales status',
-    statusAvailable: 'Available',
-    statusReserved: 'Reserved',
-    statusSold: 'Sold',
-    hidden: 'Hidden',
-    hiddenDescription: 'Hide from the gallery list.',
-    cancel: 'Cancel',
-    saveEdit: 'Save changes',
-    saveCreate: 'Create artwork',
-    genericError: 'An error occurred while saving. Please try again shortly.',
-  },
 };
 
 const createSessionId = () => {
@@ -149,9 +37,8 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
   // If editing, we bind the ID to the update action
   const action = artwork ? updateArtwork.bind(null, artwork.id) : createArtwork;
 
-  const pathname = usePathname();
-  const locale = resolveClientLocale(pathname);
-  const copy = ARTWORK_FORM_COPY[locale];
+  const locale = useLocale();
+  const t = useTranslations('dashboard.artworkForm');
   const router = useRouter();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [state, formAction, isPending] = useActionState(action, initialState);
@@ -278,7 +165,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
   const actionErrorMessage =
     state.error && state.message
       ? locale === 'en' && /[가-힣]/.test(state.message)
-        ? copy.genericError
+        ? t('genericError')
         : state.message
       : '';
 
@@ -293,9 +180,9 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
       <div className="space-y-8 divide-y divide-gray-200">
         <div>
           <h3 className="text-lg leading-6 font-semibold text-slate-900">
-            {artwork ? copy.editTitle : copy.createTitle}
+            {artwork ? t('editTitle') : t('createTitle')}
           </h3>
-          <p className="mt-1 text-sm text-slate-500">{copy.subtitle}</p>
+          <p className="mt-1 text-sm text-slate-500">{t('subtitle')}</p>
 
           <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
             {/* Hidden: Images JSON */}
@@ -305,7 +192,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
             {/* Images Upload */}
             <div className="sm:col-span-6">
               <AdminFieldLabel>
-                {copy.images} <span className="text-red-500">*</span>
+                {t('images')} <span className="text-red-500">*</span>
               </AdminFieldLabel>
               <ImageUpload
                 bucket="artworks"
@@ -328,7 +215,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
             {/* Title */}
             <div className="sm:col-span-4">
               <AdminFieldLabel htmlFor="title">
-                {copy.title} <span className="text-red-500">*</span>
+                {t('title')} <span className="text-red-500">*</span>
               </AdminFieldLabel>
               <AdminInput
                 type="text"
@@ -343,7 +230,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
             {/* Price */}
             <div className="sm:col-span-2">
               <AdminFieldLabel htmlFor="price">
-                {copy.price} <span className="text-red-500">*</span>
+                {t('price')} <span className="text-red-500">*</span>
               </AdminFieldLabel>
               <div className="relative mt-1 rounded-md shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -359,12 +246,12 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
                   className="pl-7 pr-12"
                 />
               </div>
-              <p className="mt-1 text-xs text-slate-500">{copy.priceHint}</p>
+              <p className="mt-1 text-xs text-slate-500">{t('priceHint')}</p>
             </div>
 
             {/* Size */}
             <div className="sm:col-span-2">
-              <AdminFieldLabel htmlFor="size">{copy.size}</AdminFieldLabel>
+              <AdminFieldLabel htmlFor="size">{t('size')}</AdminFieldLabel>
               <AdminInput
                 type="text"
                 name="size"
@@ -377,7 +264,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
 
             {/* Material */}
             <div className="sm:col-span-2">
-              <AdminFieldLabel htmlFor="material">{copy.material}</AdminFieldLabel>
+              <AdminFieldLabel htmlFor="material">{t('material')}</AdminFieldLabel>
               <AdminInput
                 type="text"
                 name="material"
@@ -390,7 +277,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
 
             {/* Year */}
             <div className="sm:col-span-1">
-              <AdminFieldLabel htmlFor="year">{copy.year}</AdminFieldLabel>
+              <AdminFieldLabel htmlFor="year">{t('year')}</AdminFieldLabel>
               <AdminInput
                 type="text"
                 name="year"
@@ -402,7 +289,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
 
             {/* Edition */}
             <div className="sm:col-span-1">
-              <AdminFieldLabel htmlFor="edition">{copy.edition}</AdminFieldLabel>
+              <AdminFieldLabel htmlFor="edition">{t('edition')}</AdminFieldLabel>
               <AdminInput
                 type="text"
                 name="edition"
@@ -415,7 +302,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
 
             {/* Category */}
             <div className="sm:col-span-2">
-              <AdminFieldLabel htmlFor="category">{copy.category}</AdminFieldLabel>
+              <AdminFieldLabel htmlFor="category">{t('category')}</AdminFieldLabel>
               <input type="hidden" name="category" value={categoryValue} />
               <AdminSelect
                 id="category"
@@ -432,20 +319,20 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
                 }}
                 className={inputClassName}
               >
-                <option value="">{copy.categoryPlaceholder}</option>
+                <option value="">{t('categoryPlaceholder')}</option>
                 {ARTWORK_CATEGORIES.map((cat) => (
                   <option key={cat} value={cat}>
                     {cat}
                   </option>
                 ))}
-                <option value="__custom__">{copy.categoryCustom}</option>
+                <option value="__custom__">{t('categoryCustom')}</option>
               </AdminSelect>
               {categoryMode === 'custom' && (
                 <AdminInput
                   type="text"
                   value={categoryCustom}
                   onChange={(e) => setCategoryCustom(e.target.value)}
-                  placeholder={copy.categoryCustomPlaceholder}
+                  placeholder={t('categoryCustomPlaceholder')}
                   className="mt-2"
                 />
               )}
@@ -454,7 +341,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
             {/* Edition Type */}
             <div className="sm:col-span-2">
               <AdminFieldLabel htmlFor="edition_type">
-                {copy.editionType} <span className="text-red-500">*</span>
+                {t('editionType')} <span className="text-red-500">*</span>
               </AdminFieldLabel>
               <AdminSelect
                 id="edition_type"
@@ -469,9 +356,9 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
                 className={inputClassName}
                 required
               >
-                <option value="unique">{copy.editionUnique}</option>
-                <option value="limited">{copy.editionLimited}</option>
-                <option value="open">{copy.editionOpen}</option>
+                <option value="unique">{t('editionUnique')}</option>
+                <option value="limited">{t('editionLimited')}</option>
+                <option value="open">{t('editionOpen')}</option>
               </AdminSelect>
             </div>
 
@@ -479,7 +366,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
             {editionType === 'limited' && (
               <div className="sm:col-span-2">
                 <AdminFieldLabel htmlFor="edition_limit">
-                  {copy.editionLimit} <span className="text-red-500">*</span>
+                  {t('editionLimit')} <span className="text-red-500">*</span>
                 </AdminFieldLabel>
                 <AdminInput
                   type="number"
@@ -489,7 +376,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
                   onChange={(e) => setEditionLimit(e.target.value ? parseInt(e.target.value) : '')}
                   min="1"
                   required
-                  placeholder={copy.editionLimitPlaceholder}
+                  placeholder={t('editionLimitPlaceholder')}
                   className={inputClassName}
                 />
               </div>
@@ -497,14 +384,14 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
 
             {/* Description */}
             <div className="sm:col-span-6">
-              <AdminFieldLabel htmlFor="description">{copy.artistNote}</AdminFieldLabel>
+              <AdminFieldLabel htmlFor="description">{t('artistNote')}</AdminFieldLabel>
               <AdminTextarea
                 id="description"
                 name="description"
                 rows={5}
                 defaultValue={artwork?.description || ''}
                 className={inputClassName}
-                placeholder={copy.artistNotePlaceholder}
+                placeholder={t('artistNotePlaceholder')}
               />
             </div>
 
@@ -512,7 +399,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
             <div className="sm:col-span-6 border-t border-gray-200 pt-6 flex flex-wrap gap-6">
               <div className="flex items-center gap-3">
                 <AdminFieldLabel htmlFor="status" className="mb-0">
-                  {copy.status}
+                  {t('status')}
                 </AdminFieldLabel>
                 <AdminSelect
                   id="status"
@@ -520,9 +407,9 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
                   defaultValue={artwork?.status || 'available'}
                   className="min-w-36"
                 >
-                  <option value="available">{copy.statusAvailable}</option>
-                  <option value="reserved">{copy.statusReserved}</option>
-                  <option value="sold">{copy.statusSold}</option>
+                  <option value="available">{t('statusAvailable')}</option>
+                  <option value="reserved">{t('statusReserved')}</option>
+                  <option value="sold">{t('statusSold')}</option>
                 </AdminSelect>
               </div>
 
@@ -539,9 +426,9 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
                   </div>
                   <div className="ml-3 text-sm">
                     <label htmlFor="hidden" className="font-medium text-slate-700">
-                      {copy.hidden}
+                      {t('hidden')}
                     </label>
-                    <p className="text-slate-500">{copy.hiddenDescription}</p>
+                    <p className="text-slate-500">{t('hiddenDescription')}</p>
                   </div>
                 </div>
               )}
@@ -553,10 +440,10 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
       <div className="pt-5">
         <div className="flex justify-end gap-3">
           <Button type="button" variant="white" onClick={handleCancel}>
-            {copy.cancel}
+            {t('cancel')}
           </Button>
           <Button type="submit" loading={isPending} disabled={isPending}>
-            {artwork ? copy.saveEdit : copy.saveCreate}
+            {artwork ? t('saveEdit') : t('saveCreate')}
           </Button>
         </div>
         {state.error && actionErrorMessage && (

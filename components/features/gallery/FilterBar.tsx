@@ -2,8 +2,7 @@
 
 import { StatusFilter } from '@/lib/hooks/useArtworkFilter';
 import { SortOption } from '@/types';
-import { useLocale } from 'next-intl';
-import { getUIStrings } from '@/lib/ui-strings';
+import { useTranslations } from 'next-intl';
 import SortControls from '../SortControls';
 
 interface FilterBarProps {
@@ -19,17 +18,18 @@ export default function FilterBar({
   sortOption,
   setSortOption,
 }: FilterBarProps) {
-  const ui = getUIStrings(useLocale());
+  const tFilters = useTranslations('filters');
+  const tA11y = useTranslations('a11y');
   const statusOptions: Array<{ value: StatusFilter; label: string }> = [
-    { value: 'all', label: ui.FILTERS.ALL },
-    { value: 'selling', label: ui.FILTERS.SELLING },
-    { value: 'sold', label: ui.FILTERS.SOLD },
+    { value: 'all', label: tFilters('all') },
+    { value: 'selling', label: tFilters('selling') },
+    { value: 'sold', label: tFilters('sold') },
   ];
 
   return (
     <div className="flex flex-row items-center gap-2 shrink-0 ml-auto">
       <fieldset className="flex bg-white rounded-lg p-1 border border-gray-200 shadow-sm">
-        <legend className="sr-only">{ui.A11Y.FILTER_STATUS}</legend>
+        <legend className="sr-only">{tA11y('filterStatus')}</legend>
         {statusOptions.map((option) => (
           <label
             key={option.value}

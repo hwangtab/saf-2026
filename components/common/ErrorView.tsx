@@ -2,8 +2,7 @@
 
 import { useEffect } from 'react';
 import Button from '@/components/ui/Button';
-import { useLocale } from 'next-intl';
-import { getUIStrings } from '@/lib/ui-strings';
+import { useTranslations } from 'next-intl';
 
 interface ErrorViewProps {
   icon: string;
@@ -22,8 +21,8 @@ export default function ErrorView({
   error,
   reset,
 }: ErrorViewProps) {
-  const ui = getUIStrings(useLocale());
-  const resolvedBackLink = backLink ?? { href: '/', label: ui.ERROR.GO_HOME };
+  const tError = useTranslations('error');
+  const resolvedBackLink = backLink ?? { href: '/', label: tError('goHome') };
 
   useEffect(() => {
     console.error(error);
@@ -39,7 +38,7 @@ export default function ErrorView({
         <p className="text-charcoal-muted mb-8 leading-relaxed text-balance">{message}</p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button onClick={reset} variant="primary">
-            {ui.ERROR.RETRY}
+            {tError('retry')}
           </Button>
           <Button href={resolvedBackLink.href} variant="outline">
             {resolvedBackLink.label}
