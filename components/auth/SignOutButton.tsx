@@ -2,14 +2,12 @@
 
 import { useMemo, useState } from 'react';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import { useToast } from '@/lib/hooks/useToast';
-import { resolveClientLocale } from '@/lib/client-locale';
-
-type LocaleCode = 'ko' | 'en';
 
 const SIGN_OUT_COPY: Record<
-  LocaleCode,
+  'ko' | 'en',
   {
     error: string;
     success: string;
@@ -32,9 +30,8 @@ const SIGN_OUT_COPY: Record<
 };
 
 export function SignOutButton() {
-  const pathname = usePathname();
-  const locale = resolveClientLocale(pathname);
-  const copy = SIGN_OUT_COPY[locale];
+  const locale = useLocale();
+  const copy = SIGN_OUT_COPY[locale as 'ko' | 'en'];
   const [isSigningOut, setIsSigningOut] = useState(false);
   const router = useRouter();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);

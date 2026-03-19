@@ -2,96 +2,7 @@ import type { ActivityLogEntry } from '@/app/actions/admin-logs';
 
 export type LocaleCode = 'ko' | 'en';
 
-export const LOGS_UI = {
-  ko: {
-    noLogsTitle: '활동 로그가 없습니다',
-    noLogsDescription: '관리자/아티스트 활동이 기록되면 여기에 표시됩니다.',
-    totalZero: '총 0개의 기록',
-    revertModalTitle: '활동 복구 확인',
-    revertConfirmText: '복구하기',
-    revertDescription:
-      '정말 이 변경을 복구하시겠습니까? 현재 데이터에 직접적인 영향을 줄 수 있습니다. 복구 사유를 아래에 입력해주세요.',
-    revertReasonLabel: '복구 사유',
-    revertReasonPlaceholder: '예: 실수로 삭제한 데이터를 복구함',
-    headerTime: '시간',
-    headerActor: '행위자',
-    headerAction: '활동',
-    headerTarget: '대상',
-    headerOperation: '조치',
-    changesCount: (count: number) => `변경 ${count}건`,
-    showChanges: '변경 보기',
-    hideChanges: '변경 닫기',
-    revertButton: '복구',
-    reverted: '복구됨',
-    revertUnavailable: '복구 불가',
-    revertTitle:
-      '삭제/수정/권한 변경 로그를 복구할 수 있으며, 이후 추가 변경이 있으면 복구가 중단될 수 있습니다.',
-    revertUnavailableTitle: '복구 대상이 아닌 활동입니다.',
-    diffTitle: '변경 상세 비교',
-    missingInAfter: (count: number) => `변경 후 스냅샷에서 누락된 대상: ${count}개`,
-    addedInAfter: (count: number) => `변경 후 스냅샷에 새로 포함된 대상: ${count}개`,
-    target: '대상',
-    nameMissing: (idLabel: string) => `이름 정보 없음 (${idLabel})`,
-    identifier: (value: string) => `(식별 ID: ${value})`,
-    colField: '변경 내용',
-    colBefore: '이전 값',
-    colAfter: '변경 값',
-    totalCount: (total: number, current: number, pages: number) =>
-      `총 ${total}개의 기록 (페이지 ${current} / ${pages})`,
-    prev: '이전',
-    next: '다음',
-    unknownActor: '(알 수 없음)',
-    reason: '사유',
-    revertReason: '복구 사유',
-    purgeReason: '영구 삭제 사유',
-    revertSuccess: '복구가 완료되었습니다.',
-    revertError: '복구 중 오류가 발생했습니다.',
-  },
-  en: {
-    noLogsTitle: 'No activity logs',
-    noLogsDescription: 'Admin/artist activities will appear here once recorded.',
-    totalZero: 'Total 0 records',
-    revertModalTitle: 'Confirm Revert',
-    revertConfirmText: 'Revert',
-    revertDescription:
-      'Are you sure you want to revert this change? It can directly affect current data. Please provide a reason below.',
-    revertReasonLabel: 'Reason for revert',
-    revertReasonPlaceholder: 'e.g., Restore data deleted by mistake',
-    headerTime: 'Time',
-    headerActor: 'Actor',
-    headerAction: 'Action',
-    headerTarget: 'Target',
-    headerOperation: 'Operation',
-    changesCount: (count: number) => `${count} changes`,
-    showChanges: 'Show changes',
-    hideChanges: 'Hide changes',
-    revertButton: 'Revert',
-    reverted: 'Reverted',
-    revertUnavailable: 'Unavailable',
-    revertTitle:
-      'Delete/update/role-change logs can be reverted. Revert may stop if additional changes were made afterward.',
-    revertUnavailableTitle: 'This activity cannot be reverted.',
-    diffTitle: 'Detailed Diff',
-    missingInAfter: (count: number) => `Missing in after snapshot: ${count}`,
-    addedInAfter: (count: number) => `Newly added in after snapshot: ${count}`,
-    target: 'Target',
-    nameMissing: (idLabel: string) => `Name unavailable (${idLabel})`,
-    identifier: (value: string) => `(Identifier: ${value})`,
-    colField: 'Field',
-    colBefore: 'Before',
-    colAfter: 'After',
-    totalCount: (total: number, current: number, pages: number) =>
-      `Total ${total} records (page ${current} / ${pages})`,
-    prev: 'Previous',
-    next: 'Next',
-    unknownActor: '(Unknown)',
-    reason: 'Reason',
-    revertReason: 'Revert reason',
-    purgeReason: 'Purge reason',
-    revertSuccess: 'Restore completed.',
-    revertError: 'Error while reverting.',
-  },
-} as const;
+type TranslationFn = (key: string, params?: Record<string, string | number>) => string;
 
 export const ACTION_PREFIX_TRANSLATIONS: Array<[RegExp, string]> = [
   [/^사용자 승인:/, 'User approved:'],
@@ -158,21 +69,6 @@ export const ACTION_PREFIX_TRANSLATIONS: Array<[RegExp, string]> = [
   [/점/g, ' items'],
   [/총 /g, 'Total '],
 ];
-
-export const STATUS_LABELS_BY_LOCALE: Record<LocaleCode, Record<string, string>> = {
-  ko: {
-    available: '판매 가능',
-    reserved: '예약중',
-    sold: '판매 완료',
-    hidden: '숨김',
-  },
-  en: {
-    available: 'Available',
-    reserved: 'Reserved',
-    sold: 'Sold',
-    hidden: 'Hidden',
-  },
-};
 
 export type LogsListProps = {
   logs: ActivityLogEntry[];
@@ -424,48 +320,47 @@ export function formatActionDescription(log: ActivityLogEntry, locale: LocaleCod
 
 export function getActionReason(
   log: ActivityLogEntry,
-  locale: LocaleCode
+  _locale: LocaleCode,
+  t: TranslationFn
 ): { label: string; value: string } | null {
   const details = log.metadata as Record<string, unknown> | null;
   const metadataReason = typeof details?.reason === 'string' ? details.reason.trim() : '';
   const revertReason = typeof log.revert_reason === 'string' ? log.revert_reason.trim() : '';
   const purgeNote = typeof log.purge_note === 'string' ? log.purge_note.trim() : '';
 
-  if (revertReason) return { label: LOGS_UI[locale].revertReason, value: revertReason };
-  if (purgeNote) return { label: LOGS_UI[locale].purgeReason, value: purgeNote };
+  if (revertReason) return { label: t('revertReason'), value: revertReason };
+  if (purgeNote) return { label: t('purgeReason'), value: purgeNote };
 
   if (metadataReason) {
     if (log.action === 'revert_executed')
-      return { label: LOGS_UI[locale].revertReason, value: metadataReason };
-    if (log.action === 'trash_purged')
-      return { label: LOGS_UI[locale].purgeReason, value: metadataReason };
-    return { label: LOGS_UI[locale].reason, value: metadataReason };
+      return { label: t('revertReason'), value: metadataReason };
+    if (log.action === 'trash_purged') return { label: t('purgeReason'), value: metadataReason };
+    return { label: t('reason'), value: metadataReason };
   }
 
   return null;
 }
 
-export function getActorRoleLabel(role: ActivityLogEntry['actor_role'], locale: LocaleCode) {
+export function getActorRoleLabel(role: ActivityLogEntry['actor_role'], t: TranslationFn) {
   switch (role) {
     case 'admin':
-      return locale === 'en' ? 'Admin' : '관리자';
+      return t('actorRoleAdmin');
     case 'artist':
-      return locale === 'en' ? 'Artist' : '아티스트';
+      return t('actorRoleArtist');
     case 'exhibitor':
-      return locale === 'en' ? 'Exhibitor' : '출품자';
+      return t('actorRoleExhibitor');
     case 'system':
-      return locale === 'en' ? 'System' : '시스템';
+      return t('actorRoleSystem');
     default:
       return role;
   }
 }
 
-export function getActorDisplay(log: ActivityLogEntry, locale: LocaleCode) {
+export function getActorDisplay(log: ActivityLogEntry, t: TranslationFn) {
   if (log.actor_name) return log.actor_name;
   if (log.actor_email) return log.actor_email;
-  if (log.actor_id)
-    return `${getActorRoleLabel(log.actor_role, locale)} #${log.actor_id.slice(0, 8)}`;
-  return LOGS_UI[locale].unknownActor;
+  if (log.actor_id) return `${getActorRoleLabel(log.actor_role, t)} #${log.actor_id.slice(0, 8)}`;
+  return t('unknownActor');
 }
 
 export function formatDate(dateString: string | null | undefined, locale: LocaleCode) {
@@ -483,22 +378,22 @@ export function formatDate(dateString: string | null | undefined, locale: Locale
   });
 }
 
-export function getTargetTypeLabel(type: string | null, locale: LocaleCode) {
+export function getTargetTypeLabel(type: string | null, t: TranslationFn) {
   switch (type) {
     case 'user':
-      return locale === 'en' ? 'User' : '사용자';
+      return t('targetTypeUser');
     case 'artwork':
-      return locale === 'en' ? 'Artwork' : '작품';
+      return t('targetTypeArtwork');
     case 'artist':
-      return locale === 'en' ? 'Artist' : '작가';
+      return t('targetTypeArtist');
     case 'news':
-      return locale === 'en' ? 'News' : '뉴스';
+      return t('targetTypeNews');
     case 'faq':
       return 'FAQ';
     case 'testimonial':
-      return locale === 'en' ? 'Testimonial' : '후기';
+      return t('targetTypeTestimonial');
     case 'video':
-      return locale === 'en' ? 'Video' : '영상';
+      return t('targetTypeVideo');
     default:
       return type || '-';
   }
@@ -546,17 +441,15 @@ export function isLikelyUuid(value: string) {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 }
 
-export function formatIdentifier(value: string, locale: LocaleCode) {
+export function formatIdentifier(value: string, t: TranslationFn) {
   if (!value) return '-';
-  if (value.includes(',')) return locale === 'en' ? 'Multiple targets' : '다중 대상';
+  if (value.includes(',')) return t('multipleTargets');
   if (isLikelyUuid(value)) return `${value.slice(0, 8)}...`;
   return value;
 }
 
-export function formatIdentifierLabel(value: string, locale: LocaleCode) {
-  return locale === 'en'
-    ? `Identifier ${formatIdentifier(value, locale)}`
-    : `식별 ID ${formatIdentifier(value, locale)}`;
+export function formatIdentifierLabel(value: string, t: TranslationFn) {
+  return t('identifierLabel', { value: formatIdentifier(value, t) });
 }
 
 export function getSnapshotDisplayName(snapshot: Record<string, unknown> | null): string | null {
@@ -600,14 +493,60 @@ export function getLogTargetDisplayName(log: ActivityLogEntry, locale: LocaleCod
   }
   if (isLikelyUuid(log.target_id))
     return locale === 'en'
-      ? `Name unavailable (${formatIdentifierLabel(log.target_id, locale)})`
-      : `이름 정보 없음 (${formatIdentifierLabel(log.target_id, locale)})`;
+      ? `Name unavailable (Identifier ${log.target_id.slice(0, 8)}...)`
+      : `이름 정보 없음 (식별 ID ${log.target_id.slice(0, 8)}...)`;
+  return log.target_id;
+}
+
+export function getLogTargetDisplayNameWithT(log: ActivityLogEntry, t: TranslationFn): string {
+  const details = log.metadata as Record<string, unknown> | null;
+  const targetNameFromMetadata =
+    details && typeof details.target_name === 'string' ? details.target_name : null;
+  if (targetNameFromMetadata) return targetNameFromMetadata;
+
+  const fromDetails =
+    (typeof details?.title === 'string' && details.title) ||
+    (typeof details?.name === 'string' && details.name) ||
+    (typeof details?.user_name === 'string' && details.user_name) ||
+    (typeof details?.artist_name === 'string' && details.artist_name) ||
+    (typeof details?.representative_name === 'string' && details.representative_name) ||
+    null;
+
+  if (fromDetails) return fromDetails;
+
+  const afterObj = toObject(log.after_snapshot);
+  const beforeObj = toObject(log.before_snapshot);
+  const fromSnapshot = getSnapshotDisplayName(afterObj) || getSnapshotDisplayName(beforeObj);
+  if (fromSnapshot) return fromSnapshot;
+
+  if (log.target_id.includes(',')) {
+    return t('totalTargets', { count: log.target_id.split(',').length });
+  }
+  if (isLikelyUuid(log.target_id))
+    return t('nameUnavailable', { label: formatIdentifierLabel(log.target_id, t) });
   return log.target_id;
 }
 
 export function formatStatus(value: unknown, locale: LocaleCode): string | null {
   if (typeof value !== 'string') return null;
-  return STATUS_LABELS_BY_LOCALE[locale][value] || value;
+  const statusMap: Record<string, Record<string, string>> = {
+    ko: { available: '판매 가능', reserved: '예약중', sold: '판매 완료', hidden: '숨김' },
+    en: { available: 'Available', reserved: 'Reserved', sold: 'Sold', hidden: 'Hidden' },
+  };
+  return statusMap[locale][value] || value;
+}
+
+export function formatStatusWithT(value: unknown, t: TranslationFn): string | null {
+  if (typeof value !== 'string') return null;
+  const keyMap: Record<string, string> = {
+    available: 'statusAvailable',
+    reserved: 'statusReserved',
+    sold: 'statusSold',
+    hidden: 'statusHidden',
+  };
+  const key = keyMap[value];
+  if (key) return t(key);
+  return value;
 }
 
 export function getTargetNameMap(log: ActivityLogEntry): Map<string, string> {
@@ -623,31 +562,39 @@ export function getTargetNameMap(log: ActivityLogEntry): Map<string, string> {
   return new Map(entries);
 }
 
-export const FIELD_LABELS: Record<string, string> = {
-  title: '제목',
-  description: '작품 소개',
-  size: '크기',
-  material: '재료',
-  year: '연도',
-  edition: '에디션',
-  price: '가격',
-  status: '판매상태',
-  sold_at: '판매 완료 시점',
-  is_hidden: '숨김',
-  images: '이미지',
-  shop_url: '구매 링크',
-  artist_id: '작가',
-  name_ko: '이름(한글)',
-  name_en: '이름(영문)',
-  bio: '작가 소개',
-  history: '작가 이력',
-  profile_image: '프로필 이미지',
-  contact_phone: '연락 전화번호',
-  contact_email: '연락 이메일',
-  instagram: '인스타그램',
-  homepage: '홈페이지',
-  role: '권한',
+const FIELD_LABEL_KEYS: Record<string, string> = {
+  title: 'fieldTitle',
+  description: 'fieldDescription',
+  size: 'fieldSize',
+  material: 'fieldMaterial',
+  year: 'fieldYear',
+  edition: 'fieldEdition',
+  price: 'fieldPrice',
+  sold_at: 'fieldSoldAt',
+  is_hidden: 'fieldIsHidden',
+  images: 'fieldImages',
+  shop_url: 'fieldShopUrl',
+  artist_id: 'fieldArtistId',
+  name_ko: 'fieldNameKo',
+  name_en: 'fieldNameEn',
+  bio: 'fieldBio',
+  history: 'fieldHistory',
+  profile_image: 'fieldProfileImage',
+  contact_phone: 'fieldContactPhone',
+  contact_email: 'fieldContactEmail',
+  instagram: 'fieldInstagram',
+  homepage: 'fieldHomepage',
+  role: 'fieldRole',
 };
+
+export function getFieldLabel(key: string, t: TranslationFn, targetType?: string | null) {
+  if (key === 'status') {
+    return targetType === 'artwork' ? t('fieldStatusArtwork') : t('fieldStatusGeneric');
+  }
+  const msgKey = FIELD_LABEL_KEYS[key];
+  if (msgKey) return t(msgKey);
+  return key;
+}
 
 export function toObject(value: unknown): Record<string, unknown> | null {
   if (!value || Array.isArray(value) || typeof value !== 'object') return null;
@@ -672,43 +619,6 @@ export function toObjectList(value: unknown): Record<string, unknown>[] | null {
 
 export function valueEquals(a: unknown, b: unknown) {
   return JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
-}
-
-export function getFieldLabel(key: string, locale: LocaleCode, targetType?: string | null) {
-  if (key === 'status') {
-    if (locale === 'en') {
-      return targetType === 'artwork' ? 'Sales status' : 'Status';
-    }
-    return targetType === 'artwork' ? '판매상태' : '상태';
-  }
-  if (locale === 'en') {
-    const enLabels: Record<string, string> = {
-      title: 'Title',
-      description: 'Description',
-      size: 'Size',
-      material: 'Material',
-      year: 'Year',
-      edition: 'Edition',
-      price: 'Price',
-      sold_at: 'Sold at',
-      is_hidden: 'Hidden',
-      images: 'Images',
-      shop_url: 'Purchase link',
-      artist_id: 'Artist',
-      name_ko: 'Name (Korean)',
-      name_en: 'Name (English)',
-      bio: 'Bio',
-      history: 'History',
-      profile_image: 'Profile image',
-      contact_phone: 'Contact phone',
-      contact_email: 'Contact email',
-      instagram: 'Instagram',
-      homepage: 'Homepage',
-      role: 'Role',
-    };
-    return enLabels[key] || key;
-  }
-  return FIELD_LABELS[key] || key;
 }
 
 export function getDiffRows(
@@ -817,29 +727,27 @@ export function getSnapshotIdWarnings(log: ActivityLogEntry): {
   return { missingInAfter, addedInAfter };
 }
 
-export function formatDiffValue(value: unknown, field: string, locale: LocaleCode): string {
+export function formatDiffValue(value: unknown, field: string, t: TranslationFn): string {
   if (value === null || value === undefined || value === '') return '-';
 
   if (field === 'status') {
-    const statusText = formatStatus(value, locale);
+    const statusText = formatStatusWithT(value, t);
     if (statusText) return statusText;
   }
 
   if (field.endsWith('_id') && typeof value === 'string') {
-    return formatIdentifier(value, locale);
+    return formatIdentifier(value, t);
   }
 
-  if (typeof value === 'boolean')
-    return value ? (locale === 'en' ? 'Yes' : '예') : locale === 'en' ? 'No' : '아니오';
+  if (typeof value === 'boolean') return value ? t('booleanYes') : t('booleanNo');
   if (typeof value === 'number') return String(value);
   if (Array.isArray(value)) {
     if (value.length === 0) return '[]';
     if (value.every((item) => typeof item === 'string')) {
-      return locale === 'en'
-        ? `${value.length} items (${value.slice(0, 2).join(', ')}${value.length > 2 ? '...' : ''})`
-        : `${value.length}개 (${value.slice(0, 2).join(', ')}${value.length > 2 ? '...' : ''})`;
+      const preview = `${value.slice(0, 2).join(', ')}${value.length > 2 ? '...' : ''}`;
+      return t('arrayItems', { count: value.length, preview });
     }
-    return locale === 'en' ? `${value.length} items` : `${value.length}개 항목`;
+    return t('arrayItemsOnly', { count: value.length });
   }
   if (typeof value === 'object') {
     const text = JSON.stringify(value);

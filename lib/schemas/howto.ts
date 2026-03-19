@@ -65,7 +65,7 @@ export function generateArtworkPurchaseHowTo(locale: 'ko' | 'en' = 'ko') {
       ? [
           {
             name: 'Browse the artwork gallery',
-            text: 'Visit the SAF 2026 artworks page to explore paintings, sculptures, photography, and more by over 50 participating artists.',
+            text: 'Visit the SAF 2026 artworks page to explore paintings, sculptures, photography, and more by over 110 participating artists.',
             url: `${SITE_URL}/en/artworks`,
           },
           {
@@ -84,7 +84,7 @@ export function generateArtworkPurchaseHowTo(locale: 'ko' | 'en' = 'ko') {
       : [
           {
             name: '작품 갤러리 둘러보기',
-            text: '씨앗페 2026 출품작 페이지에서 50여 명의 참여 작가가 출품한 회화, 조각, 사진 등 다양한 작품을 탐색합니다.',
+            text: '씨앗페 2026 출품작 페이지에서 110여 명의 참여 작가가 출품한 회화, 조각, 사진 등 다양한 작품을 탐색합니다.',
             url: `${SITE_URL}/artworks`,
           },
           {

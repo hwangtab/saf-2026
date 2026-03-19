@@ -3,7 +3,7 @@
 import clsx from 'clsx';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { resolveClientLocale } from '@/lib/client-locale';
+import { useLocale } from 'next-intl';
 
 const navItemsByLocale = {
   ko: [
@@ -18,8 +18,8 @@ const navItemsByLocale = {
 
 export default function DashboardNav() {
   const pathname = usePathname();
-  const locale = resolveClientLocale(pathname);
-  const navItems = navItemsByLocale[locale];
+  const locale = useLocale();
+  const navItems = navItemsByLocale[locale as 'ko' | 'en'];
 
   const isActive = (href: string) => {
     if (href === '/dashboard/artworks') {

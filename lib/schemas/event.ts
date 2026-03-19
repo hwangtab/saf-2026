@@ -24,8 +24,8 @@ export function generateExhibitionSchema(
     '@type': 'ExhibitionEvent',
     name: isEnglish ? 'SAF 2026 (Seed Art Festival 2026)' : '씨앗페 2026 (Seed Art Festival 2026)',
     description: isEnglish
-      ? 'A special exhibition raising mutual-aid funds for Korean artists, featuring paintings, sculptures, photography, and other works by over 50 artists.'
-      : '한국 예술인들의 상호부조 기금 마련을 위한 특별전. 50여 명의 작가가 참여한 회화, 조각, 사진 등 다양한 예술 작품을 만나보세요.',
+      ? 'A special exhibition raising mutual-aid funds for Korean artists, featuring paintings, sculptures, photography, and other works by over 110 artists.'
+      : '한국 예술인들의 상호부조 기금 마련을 위한 특별전. 110여 명의 작가가 참여한 회화, 조각, 사진 등 다양한 예술 작품을 만나보세요.',
     url: SITE_URL,
     image: [OG_IMAGE.url],
     startDate,
@@ -62,7 +62,7 @@ export function generateExhibitionSchema(
     },
     performer: {
       '@type': 'Organization',
-      name: isEnglish ? 'Over 50 participating artists' : '참여 예술가 50여 명',
+      name: isEnglish ? 'Over 110 participating artists' : '참여 예술가 110여 명',
     },
     isAccessibleForFree: true,
     ...(hasReviews && {

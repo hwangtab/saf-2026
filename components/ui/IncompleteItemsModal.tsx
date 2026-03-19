@@ -1,9 +1,8 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
-import { resolveClientLocale } from '@/lib/client-locale';
 
 export type IncompleteItem = {
   label: string;
@@ -28,8 +27,7 @@ export function IncompleteItemsModal({
   items,
   onSelectItem,
 }: IncompleteItemsModalProps) {
-  const pathname = usePathname();
-  const locale = resolveClientLocale(pathname);
+  const locale = useLocale();
   const copy =
     locale === 'en'
       ? {

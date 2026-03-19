@@ -1,4 +1,4 @@
-import type { AppLocale } from '@/lib/client-locale';
+type AppLocale = 'ko' | 'en';
 
 export type PortalErrorKey =
   | 'dashboard'

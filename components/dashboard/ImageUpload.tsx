@@ -2,13 +2,12 @@
 
 import { useState, useRef } from 'react';
 import dynamic from 'next/dynamic';
-import { usePathname } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
 import { optimizeArtworkImage, optimizeImage } from '@/lib/client/image-optimization';
 import { useToast } from '@/lib/hooks/useToast';
 import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
 import SafeImage from '@/components/common/SafeImage';
-import { resolveClientLocale } from '@/lib/client-locale';
 
 const ArtworkLightbox = dynamic(() => import('@/components/ui/ArtworkLightbox'), { ssr: false });
 
@@ -27,10 +26,8 @@ type UploadProps = {
 const UPLOAD_MAX_RETRIES = 2;
 const UPLOAD_RETRY_DELAY_BASE = 1000; // 1 second base delay for exponential backoff
 
-type LocaleCode = 'ko' | 'en';
-
 const IMAGE_UPLOAD_COPY: Record<
-  LocaleCode,
+  'ko' | 'en',
   {
     maxRetriesExceeded: string;
     optimizing: (index: number, total: number) => string;
@@ -83,9 +80,8 @@ export function ImageUpload({
   defaultImages = [],
   deleteOnRemove,
 }: UploadProps) {
-  const pathname = usePathname();
-  const locale = resolveClientLocale(pathname);
-  const copy = IMAGE_UPLOAD_COPY[locale];
+  const locale = useLocale();
+  const copy = IMAGE_UPLOAD_COPY[locale as 'ko' | 'en'];
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<string | null>(null);
   const [previewUrls, setPreviewUrls] = useState<string[]>(defaultImages);

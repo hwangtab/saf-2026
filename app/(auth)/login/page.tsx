@@ -12,10 +12,10 @@ import {
   needsPrivacyConsent,
   resolveArtistReconsentRequirements,
 } from '@/lib/auth/terms-consent';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
-import { resolveClientLocale } from '@/lib/client-locale';
 
 const LOGIN_COPY = {
   ko: {
@@ -47,9 +47,8 @@ const LOGIN_COPY = {
 } as const;
 
 export default function LoginPage() {
-  const pathname = usePathname();
-  const locale = resolveClientLocale(pathname);
-  const copy = LOGIN_COPY[locale];
+  const locale = useLocale();
+  const copy = LOGIN_COPY[locale as 'ko' | 'en'];
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);

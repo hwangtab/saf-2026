@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import Button from '@/components/ui/Button';
-import { resolveClientLocale } from '@/lib/client-locale';
 
 const SIGNUP_COPY = {
   ko: {
@@ -51,9 +51,8 @@ const SIGNUP_COPY = {
 } as const;
 
 export default function SignUpPage() {
-  const pathname = usePathname();
-  const locale = resolveClientLocale(pathname);
-  const copy = SIGNUP_COPY[locale];
+  const locale = useLocale();
+  const copy = SIGNUP_COPY[locale as 'ko' | 'en'];
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');

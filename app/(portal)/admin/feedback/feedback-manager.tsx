@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import Button from '@/components/ui/Button';
 import {
   AdminCard,
@@ -15,45 +16,12 @@ import { useToast } from '@/lib/hooks/useToast';
 import { updateFeedbackStatus } from '@/app/actions/feedback';
 import type { Feedback, FeedbackCategory, FeedbackStatus } from '@/types';
 import clsx from 'clsx';
-import { resolveClientLocale } from '@/lib/client-locale';
-
-type LocaleCode = 'ko' | 'en';
-
-const CATEGORY_LABELS_BY_LOCALE: Record<LocaleCode, Record<FeedbackCategory, string>> = {
-  ko: {
-    bug: '버그',
-    improvement: '개선',
-    question: '질문',
-    other: '기타',
-  },
-  en: {
-    bug: 'Bug',
-    improvement: 'Improvement',
-    question: 'Question',
-    other: 'Other',
-  },
-};
 
 const CATEGORY_COLORS: Record<FeedbackCategory, string> = {
   bug: 'bg-red-100 text-red-700',
   improvement: 'bg-blue-100 text-blue-700',
   question: 'bg-amber-100 text-amber-700',
   other: 'bg-gray-100 text-gray-700',
-};
-
-const STATUS_LABELS_BY_LOCALE: Record<LocaleCode, Record<FeedbackStatus, string>> = {
-  ko: {
-    open: '접수',
-    reviewing: '검토 중',
-    resolved: '해결',
-    closed: '닫힘',
-  },
-  en: {
-    open: 'Open',
-    reviewing: 'Reviewing',
-    resolved: 'Resolved',
-    closed: 'Closed',
-  },
 };
 
 const STATUS_COLORS: Record<FeedbackStatus, string> = {
@@ -63,67 +31,18 @@ const STATUS_COLORS: Record<FeedbackStatus, string> = {
   closed: 'bg-gray-100 text-gray-500',
 };
 
-const FEEDBACK_COPY: Record<
-  LocaleCode,
-  {
-    statusUpdated: string;
-    statusUpdateError: string;
-    memoSaved: string;
-    memoSaveError: string;
-    pageTitle: string;
-    pageDescription: string;
-    statusFilterAria: string;
-    allStatuses: string;
-    categoryFilterAria: string;
-    allCategories: string;
-    count: (count: number) => string;
-    emptyTitle: string;
-    emptyDescription: string;
-    close: string;
-    adminMemo: string;
-    adminMemoPlaceholder: string;
-    saveMemo: string;
-  }
-> = {
-  ko: {
-    statusUpdated: '상태를 변경했습니다.',
-    statusUpdateError: '상태 변경 중 오류가 발생했습니다.',
-    memoSaved: '메모를 저장했습니다.',
-    memoSaveError: '메모 저장 중 오류가 발생했습니다.',
-    pageTitle: '피드백 관리',
-    pageDescription: '사용자들이 보낸 버그 신고, 개선 요청, 질문 등을 확인하고 관리합니다.',
-    statusFilterAria: '상태 필터',
-    allStatuses: '전체 상태',
-    categoryFilterAria: '카테고리 필터',
-    allCategories: '전체 카테고리',
-    count: (count: number) => `${count}건`,
-    emptyTitle: '피드백이 없습니다',
-    emptyDescription: '조건에 맞는 피드백이 없습니다.',
-    close: '닫기',
-    adminMemo: '관리자 메모',
-    adminMemoPlaceholder: '내부 메모를 남겨주세요 (사용자에게 표시되지 않음)',
-    saveMemo: '메모 저장',
-  },
-  en: {
-    statusUpdated: 'Status updated.',
-    statusUpdateError: 'An error occurred while changing status.',
-    memoSaved: 'Memo saved.',
-    memoSaveError: 'An error occurred while saving memo.',
-    pageTitle: 'Feedback management',
-    pageDescription:
-      'Review and manage bug reports, improvement requests, and questions submitted by users.',
-    statusFilterAria: 'Status filter',
-    allStatuses: 'All statuses',
-    categoryFilterAria: 'Category filter',
-    allCategories: 'All categories',
-    count: (count: number) => `${count}`,
-    emptyTitle: 'No feedback',
-    emptyDescription: 'No feedback matches the selected conditions.',
-    close: 'Close',
-    adminMemo: 'Admin memo',
-    adminMemoPlaceholder: 'Leave an internal memo (not visible to users)',
-    saveMemo: 'Save memo',
-  },
+const CATEGORY_KEYS: Record<FeedbackCategory, string> = {
+  bug: 'categoryBug',
+  improvement: 'categoryImprovement',
+  question: 'categoryQuestion',
+  other: 'categoryOther',
+};
+
+const STATUS_KEYS: Record<FeedbackStatus, string> = {
+  open: 'statusOpen',
+  reviewing: 'statusReviewing',
+  resolved: 'statusResolved',
+  closed: 'statusClosed',
 };
 
 function Badge({ className, children }: { className: string; children: React.ReactNode }) {
@@ -140,11 +59,8 @@ function Badge({ className, children }: { className: string; children: React.Rea
 }
 
 export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedback[] }) {
-  const pathname = usePathname();
-  const locale = resolveClientLocale(pathname);
-  const copy = FEEDBACK_COPY[locale];
-  const categoryLabels = CATEGORY_LABELS_BY_LOCALE[locale];
-  const statusLabels = STATUS_LABELS_BY_LOCALE[locale];
+  const locale = useLocale();
+  const t = useTranslations('admin.feedback');
   const router = useRouter();
   const toast = useToast();
   const [localFeedback, setLocalFeedback] = useState(initialFeedback);
@@ -190,12 +106,12 @@ export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedb
               : f
           )
         );
-        toast.success(copy.statusUpdated);
+        toast.success(t('statusUpdated'));
         router.refresh();
       }
     } catch (error) {
       console.error('[admin-feedback-manager] Feedback status update failed:', error);
-      toast.error(copy.statusUpdateError);
+      toast.error(t('statusUpdateError'));
     } finally {
       setSaving(false);
     }
@@ -214,12 +130,12 @@ export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedb
             f.id === selectedId ? { ...f, admin_note: adminNote.trim() || null } : f
           )
         );
-        toast.success(copy.memoSaved);
+        toast.success(t('memoSaved'));
         router.refresh();
       }
     } catch (error) {
       console.error('[admin-feedback-manager] Feedback memo save failed:', error);
-      toast.error(copy.memoSaveError);
+      toast.error(t('memoSaveError'));
     } finally {
       setSaving(false);
     }
@@ -234,11 +150,14 @@ export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedb
     });
   };
 
+  const getCategoryLabel = (cat: FeedbackCategory) => t(CATEGORY_KEYS[cat]);
+  const getStatusLabel = (status: FeedbackStatus) => t(STATUS_KEYS[status]);
+
   return (
     <div className="space-y-6">
       <AdminPageHeader>
-        <AdminPageTitle>{copy.pageTitle}</AdminPageTitle>
-        <AdminPageDescription>{copy.pageDescription}</AdminPageDescription>
+        <AdminPageTitle>{t('pageTitle')}</AdminPageTitle>
+        <AdminPageDescription>{t('pageDescription')}</AdminPageDescription>
       </AdminPageHeader>
 
       {/* Filters */}
@@ -246,34 +165,36 @@ export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedb
         <AdminSelect
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value as FeedbackStatus | 'all')}
-          aria-label={copy.statusFilterAria}
+          aria-label={t('statusFilterAria')}
         >
-          <option value="all">{copy.allStatuses}</option>
-          {(Object.entries(statusLabels) as [FeedbackStatus, string][]).map(([val, label]) => (
-            <option key={val} value={val}>
-              {label}
+          <option value="all">{t('allStatuses')}</option>
+          {(Object.keys(STATUS_KEYS) as FeedbackStatus[]).map((status) => (
+            <option key={status} value={status}>
+              {getStatusLabel(status)}
             </option>
           ))}
         </AdminSelect>
         <AdminSelect
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value as FeedbackCategory | 'all')}
-          aria-label={copy.categoryFilterAria}
+          aria-label={t('categoryFilterAria')}
         >
-          <option value="all">{copy.allCategories}</option>
-          {(Object.entries(categoryLabels) as [FeedbackCategory, string][]).map(([val, label]) => (
-            <option key={val} value={val}>
-              {label}
+          <option value="all">{t('allCategories')}</option>
+          {(Object.keys(CATEGORY_KEYS) as FeedbackCategory[]).map((cat) => (
+            <option key={cat} value={cat}>
+              {getCategoryLabel(cat)}
             </option>
           ))}
         </AdminSelect>
-        <span className="ml-auto text-sm text-slate-500">{copy.count(filtered.length)}</span>
+        <span className="ml-auto text-sm text-slate-500">
+          {t('count', { count: filtered.length })}
+        </span>
       </div>
 
       {/* List */}
       <AdminCard>
         {filtered.length === 0 ? (
-          <AdminEmptyState title={copy.emptyTitle} description={copy.emptyDescription} />
+          <AdminEmptyState title={t('emptyTitle')} description={t('emptyDescription')} />
         ) : (
           <ul className="divide-y divide-[var(--admin-border-soft)]">
             {filtered.map((f) => (
@@ -288,9 +209,9 @@ export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedb
                 >
                   <div className="flex items-center gap-2">
                     <Badge className={CATEGORY_COLORS[f.category]}>
-                      {categoryLabels[f.category]}
+                      {getCategoryLabel(f.category)}
                     </Badge>
-                    <Badge className={STATUS_COLORS[f.status]}>{statusLabels[f.status]}</Badge>
+                    <Badge className={STATUS_COLORS[f.status]}>{getStatusLabel(f.status)}</Badge>
                     <span className="flex-1 truncate text-sm font-medium text-slate-900">
                       {f.title}
                     </span>
@@ -317,10 +238,10 @@ export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedb
               <div>
                 <div className="flex items-center gap-2">
                   <Badge className={CATEGORY_COLORS[selected.category]}>
-                    {categoryLabels[selected.category]}
+                    {getCategoryLabel(selected.category)}
                   </Badge>
                   <Badge className={STATUS_COLORS[selected.status]}>
-                    {statusLabels[selected.status]}
+                    {getStatusLabel(selected.status)}
                   </Badge>
                 </div>
                 <h3 className="mt-2 text-lg font-semibold text-slate-900">{selected.title}</h3>
@@ -337,7 +258,7 @@ export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedb
                 onClick={() => setSelectedId(null)}
                 className="shrink-0"
               >
-                {copy.close}
+                {t('close')}
               </Button>
             </div>
 
@@ -350,14 +271,14 @@ export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedb
                 htmlFor="admin-note"
                 className="mb-1.5 block text-sm font-medium text-slate-700"
               >
-                {copy.adminMemo}
+                {t('adminMemo')}
               </label>
               <textarea
                 id="admin-note"
                 value={adminNote}
                 onChange={(e) => setAdminNote(e.target.value)}
                 rows={3}
-                placeholder={copy.adminMemoPlaceholder}
+                placeholder={t('adminMemoPlaceholder')}
                 className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
               />
               <div className="mt-1.5 flex justify-end">
@@ -367,25 +288,23 @@ export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedb
                   disabled={saving || adminNote === (selected.admin_note || '')}
                   onClick={handleSaveNote}
                 >
-                  {copy.saveMemo}
+                  {t('saveMemo')}
                 </Button>
               </div>
             </div>
 
             <div className="flex flex-wrap gap-2">
-              {(Object.entries(statusLabels) as [FeedbackStatus, string][]).map(
-                ([status, label]) => (
-                  <Button
-                    key={status}
-                    variant={selected.status === status ? 'primary' : 'secondary'}
-                    size="sm"
-                    disabled={saving || selected.status === status}
-                    onClick={() => handleStatusChange(status)}
-                  >
-                    {label}
-                  </Button>
-                )
-              )}
+              {(Object.keys(STATUS_KEYS) as FeedbackStatus[]).map((status) => (
+                <Button
+                  key={status}
+                  variant={selected.status === status ? 'primary' : 'secondary'}
+                  size="sm"
+                  disabled={saving || selected.status === status}
+                  onClick={() => handleStatusChange(status)}
+                >
+                  {getStatusLabel(status)}
+                </Button>
+              ))}
             </div>
           </div>
         </AdminCard>

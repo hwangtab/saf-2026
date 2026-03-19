@@ -1,8 +1,7 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import { type LegalDocument } from '@/lib/legal-documents';
-import { resolveClientLocale } from '@/lib/client-locale';
 import { formatEffectiveDateForLocale } from '@/lib/utils';
 
 type LegalDocumentContentProps = {
@@ -44,9 +43,11 @@ const isDocumentKoreanHeavy = (document: LegalDocument) => {
 };
 
 export function LegalDocumentContent({ document }: LegalDocumentContentProps) {
-  const pathname = usePathname();
-  const locale = resolveClientLocale(pathname);
-  const effectiveDateDisplay = formatEffectiveDateForLocale(document.effectiveDate, locale);
+  const locale = useLocale();
+  const effectiveDateDisplay = formatEffectiveDateForLocale(
+    document.effectiveDate,
+    locale as 'ko' | 'en'
+  );
   const copy =
     locale === 'en'
       ? {

@@ -2,9 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Button from '@/components/ui/Button';
-import { usePathname } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
-import { resolveClientLocale } from '@/lib/client-locale';
 
 import { UserRole, UserStatus } from '@/types/database.types';
 
@@ -34,8 +33,7 @@ export default function AuthButtons({
   variant = 'white',
   size = 'md',
 }: AuthButtonsProps) {
-  const pathname = usePathname();
-  const locale = resolveClientLocale(pathname);
+  const locale = useLocale();
   const copy =
     locale === 'en'
       ? {

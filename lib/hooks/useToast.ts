@@ -1,9 +1,8 @@
 'use client';
 
 import { useCallback, useContext, useMemo } from 'react';
-import { usePathname } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import { ToastContext, type ToastContextValue } from '@/components/providers/ToastProvider';
-import { resolveClientLocale } from '@/lib/client-locale';
 import { localizeToastMessage } from '@/lib/toast-localization';
 
 /**
@@ -36,15 +35,14 @@ import { localizeToastMessage } from '@/lib/toast-localization';
  */
 export function useToast(): ToastContextValue {
   const context = useContext(ToastContext);
-  const pathname = usePathname();
-  const locale = resolveClientLocale(pathname);
+  const locale = useLocale();
 
   if (!context) {
     throw new Error('useToast must be used within a ToastProvider');
   }
 
   const localize = useCallback(
-    (message: string) => localizeToastMessage(message, locale),
+    (message: string) => localizeToastMessage(message, locale as 'ko' | 'en'),
     [locale]
   );
 

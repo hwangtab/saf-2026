@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import Button from '@/components/ui/Button';
 import {
   updateExhibitorArtist,
@@ -11,12 +12,9 @@ import {
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
 import { useToast } from '@/lib/hooks/useToast';
 import { AdminCard } from '@/app/admin/_components/admin-ui';
-import { resolveClientLocale } from '@/lib/client-locale';
-
-type LocaleCode = 'ko' | 'en';
 
 const ARTIST_FORM_COPY: Record<
-  LocaleCode,
+  'ko' | 'en',
   {
     artistSaved: string;
     artistCreatedReturning: string;
@@ -112,9 +110,8 @@ type ArtistFormProps = {
 };
 
 export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
-  const pathname = usePathname();
-  const locale = resolveClientLocale(pathname);
-  const copy = ARTIST_FORM_COPY[locale];
+  const locale = useLocale();
+  const copy = ARTIST_FORM_COPY[locale as 'ko' | 'en'];
   const router = useRouter();
   const toast = useToast();
   const [saving, setSaving] = useState(false);

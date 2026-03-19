@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
@@ -20,12 +21,9 @@ import {
   AdminFieldLabel,
 } from '@/app/admin/_components/admin-ui';
 import { ARTWORK_CATEGORIES, EditionType } from '@/types';
-import { resolveClientLocale } from '@/lib/client-locale';
-
-type LocaleCode = 'ko' | 'en';
 
 const ARTWORK_FORM_COPY: Record<
-  LocaleCode,
+  'ko' | 'en',
   {
     syncSuccess: (action: string) => string;
     syncPendingAuth: (action: string) => string;
@@ -207,9 +205,8 @@ export function ExhibitorArtworkForm({
   initialArtistId,
   artistJustCreated = false,
 }: ExhibitorArtworkFormProps) {
-  const pathname = usePathname();
-  const locale = resolveClientLocale(pathname);
-  const copy = ARTWORK_FORM_COPY[locale];
+  const locale = useLocale();
+  const copy = ARTWORK_FORM_COPY[locale as 'ko' | 'en'];
   const router = useRouter();
   const toast = useToast();
   const [saving, setSaving] = useState(false);

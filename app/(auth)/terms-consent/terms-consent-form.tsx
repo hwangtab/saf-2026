@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { type RefObject, useActionState, useEffect, useMemo, useRef, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import Button from '@/components/ui/Button';
 import { LegalDocumentContent } from '@/components/auth/LegalDocumentContent';
 import { IncompleteItemsModal, type IncompleteItem } from '@/components/ui/IncompleteItemsModal';
@@ -19,7 +19,6 @@ import {
   PRIVACY_POLICY_DOCUMENT,
   TERMS_OF_SERVICE_DOCUMENT,
 } from '@/lib/legal-documents';
-import { resolveClientLocale } from '@/lib/client-locale';
 
 const initialState: TermsConsentState = {
   message: '',
@@ -34,10 +33,8 @@ type TermsConsentFormProps = {
   needsTosConsent: boolean;
 };
 
-type LocaleCode = 'ko' | 'en';
-
 const TERMS_CONSENT_COPY: Record<
-  LocaleCode,
+  'ko' | 'en',
   {
     artistContract: string;
     exhibitorContract: string;
@@ -123,9 +120,8 @@ export function TermsConsentForm({
   needsPrivacyConsent,
   needsTosConsent,
 }: TermsConsentFormProps) {
-  const pathname = usePathname();
-  const locale = resolveClientLocale(pathname);
-  const copy = TERMS_CONSENT_COPY[locale];
+  const locale = useLocale();
+  const copy = TERMS_CONSENT_COPY[locale as 'ko' | 'en'];
   const [state, formAction, isPending] = useActionState(submitTermsConsent, initialState);
   const [hasReadArtistTerms, setHasReadArtistTerms] = useState(false);
   const [hasReadExhibitorTerms, setHasReadExhibitorTerms] = useState(false);

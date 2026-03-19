@@ -2,7 +2,8 @@
 
 import { useOptimistic, useState, useTransition } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import { deleteExhibitorArtist } from '@/app/actions/exhibitor-artists';
 import SafeAvatarImage from '@/components/common/SafeAvatarImage';
 import {
@@ -13,12 +14,9 @@ import {
   AdminInput,
 } from '@/app/admin/_components/admin-ui';
 import { matchesAnySearch } from '@/lib/search-utils';
-import { resolveClientLocale } from '@/lib/client-locale';
-
-type LocaleCode = 'ko' | 'en';
 
 const EXHIBITOR_ARTIST_LIST_COPY: Record<
-  LocaleCode,
+  'ko' | 'en',
   {
     deleteConfirm: string;
     deleteError: string;
@@ -98,9 +96,8 @@ type ArtistItem = {
 };
 
 export function ArtistList({ artists }: { artists: ArtistItem[] }) {
-  const pathname = usePathname();
-  const locale = resolveClientLocale(pathname);
-  const copy = EXHIBITOR_ARTIST_LIST_COPY[locale];
+  const locale = useLocale();
+  const copy = EXHIBITOR_ARTIST_LIST_COPY[locale as 'ko' | 'en'];
   const [, startTransition] = useTransition();
   const [optimisticArtists, removeOptimistic] = useOptimistic(
     artists,

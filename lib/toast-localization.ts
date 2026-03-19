@@ -1,4 +1,4 @@
-import type { AppLocale } from '@/lib/client-locale';
+type AppLocale = 'ko' | 'en';
 
 const TOAST_TRANSLATIONS: Record<string, string> = {
   '작품을 삭제했습니다.': 'Artwork deleted.',
