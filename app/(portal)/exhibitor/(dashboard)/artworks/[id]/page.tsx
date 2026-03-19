@@ -8,12 +8,12 @@ import {
   AdminPageHeader,
   AdminPageTitle,
 } from '@/app/admin/_components/admin-ui';
-import { getServerLocale } from '@/lib/server-locale';
+import { getTranslations } from 'next-intl/server';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const locale = await getServerLocale();
+  const t = await getTranslations('exhibitor');
   return {
-    title: locale === 'en' ? 'Edit Artwork' : '작품 정보 수정',
+    title: t('meta.editArtwork'),
   };
 }
 
@@ -22,8 +22,7 @@ type Props = {
 };
 
 export default async function ExhibitorArtworkDetailPage({ params }: Props) {
-  const locale = await getServerLocale();
-  const title = locale === 'en' ? 'Edit artwork information' : '작품 정보 수정';
+  const t = await getTranslations('exhibitor.artworkEdit');
   const { id } = await params;
 
   let artwork;
@@ -43,7 +42,7 @@ export default async function ExhibitorArtworkDetailPage({ params }: Props) {
   return (
     <div className="space-y-6">
       <AdminPageHeader>
-        <AdminPageTitle>{title}</AdminPageTitle>
+        <AdminPageTitle>{t('title')}</AdminPageTitle>
         <AdminPageDescription>{artwork.title}</AdminPageDescription>
       </AdminPageHeader>
       <ExhibitorArtworkForm artwork={artwork} artists={artists} />

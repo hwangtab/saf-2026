@@ -14,6 +14,7 @@ import { createPageMetadata } from '@/lib/seo';
 import { formatArtistName, resolveOptimizedArtworkImageUrl } from '@/lib/utils';
 import { getArtformForSchema, getMediumKeywords, classifyArtworkMedium } from '@/lib/art-taxonomy';
 import { Artwork, BreadcrumbItem, ExhibitionReview } from '@/types';
+import { containsHangul } from '@/lib/search-utils';
 
 function resolveSeoArtworkImageUrl(image: string): string {
   return resolveOptimizedArtworkImageUrl(image, {
@@ -21,10 +22,6 @@ function resolveSeoArtworkImageUrl(image: string): string {
     quality: 80,
     resize: 'contain',
   });
-}
-
-function containsHangul(value: string): boolean {
-  return /[가-힣]/.test(value);
 }
 
 function sanitizeForLocale(

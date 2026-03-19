@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
+import { containsHangul } from '@/lib/search-utils';
 import type { Article } from '@/content/artist-articles';
 
 interface RelatedArticlesProps {
@@ -11,8 +12,6 @@ interface RelatedArticlesProps {
 export default function RelatedArticles({ articles }: RelatedArticlesProps) {
   const locale = useLocale();
   const t = useTranslations('relatedArticles');
-
-  const containsHangul = (value: string): boolean => /[가-힣]/.test(value);
 
   const localizeSource = (source: string): string => {
     if (locale !== 'en') return source;

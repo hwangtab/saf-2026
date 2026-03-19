@@ -31,6 +31,7 @@ import SupportMessage from '@/components/features/SupportMessage';
 import TrustBadges from '@/components/features/TrustBadges';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import ArtworkCard from '@/components/ui/ArtworkCard';
+import { containsHangul } from '@/lib/search-utils';
 
 const PurchaseGuide = dynamic(() => import('@/components/features/PurchaseGuide'), {
   loading: () => <div className="h-20 rounded-xl shimmer-loading" aria-hidden="true" />,
@@ -43,8 +44,6 @@ interface Props {
 }
 
 export const revalidate = 600;
-
-const containsHangul = (value: string): boolean => /[가-힣]/.test(value);
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

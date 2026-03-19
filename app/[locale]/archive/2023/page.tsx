@@ -13,6 +13,7 @@ import { saf2023Artworks } from '@/content/saf2023-artworks';
 import { supabase } from '@/lib/supabase';
 import { videos as fallbackVideos } from '@/content/videos';
 import { SITE_URL, escapeJsonLdForScript } from '@/lib/constants';
+import { containsHangul } from '@/lib/search-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema, generateVideoSchema } from '@/lib/seo-utils';
 import { createStandardPageMetadata } from '@/lib/seo';
@@ -66,7 +67,6 @@ export default async function Archive2023Page() {
     }
   }
 
-  const containsHangul = (value: string): boolean => /[가-힣]/.test(value);
   const localizeVideoTitle = (title: string, index: number): string => {
     if (!isEnglish) return title;
     if (containsHangul(title)) {

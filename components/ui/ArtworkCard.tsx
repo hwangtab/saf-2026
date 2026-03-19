@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import SafeImage from '@/components/common/SafeImage';
 import type { ArtworkCardData } from '@/types';
 import { cn, resolveArtworkImageUrlForPreset } from '@/lib/utils';
+import { containsHangul } from '@/lib/search-utils';
 
 type ArtworkCardVariant = 'gallery' | 'slider';
 type ArtworkCardTheme = 'light' | 'dark';
@@ -85,7 +86,6 @@ function ArtworkCard({
   const unknownArtistLabel = t('unknownArtist');
   const pendingInfoLabel = t('pendingInfo');
   const originalKoreanDataLabel = t('originalKoreanData');
-  const containsHangul = (value: string) => /[가-힣]/.test(value);
   const isPending = (value: string | undefined) => value === '확인 중' || value === 'Pending';
   const isInquiryPrice = (value: string | undefined) => value === '문의' || value === 'Inquiry';
   const localizeDataValue = (value: string | undefined) => {

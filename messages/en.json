@@ -296,5 +296,127 @@
       "message": "An error occurred while loading archive data. Please try again shortly.",
       "backLabel": "Back to archive"
     }
+  },
+  "exhibitor": {
+    "modeLabel": "Exhibition Partner Mode",
+    "meta": {
+      "dashboard": "Dashboard",
+      "artistManagement": "Artist Management",
+      "createNewArtist": "Create New Artist",
+      "editArtist": "Edit Artist",
+      "artworkManagement": "Artwork Management",
+      "createNewArtwork": "Create New Artwork",
+      "editArtwork": "Edit Artwork"
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "description": "Overview of artists and artworks managed by this account.",
+      "managedArtists": "Managed artists",
+      "registeredArtworks": "Registered artworks"
+    },
+    "artists": {
+      "title": "Artist management",
+      "badge": "My artists",
+      "description": "Register and manage affiliated artist information.",
+      "createArtist": "Add artist"
+    },
+    "artistNew": {
+      "title": "Create new artist",
+      "description": "Enter and register information for a new artist."
+    },
+    "artistEdit": {
+      "title": "Edit artist information",
+      "unnamed": "(Unnamed)"
+    },
+    "artworks": {
+      "title": "Artwork management",
+      "badge": "My artworks",
+      "description": "Register and manage artworks for your affiliated artists.",
+      "createArtwork": "Add artwork"
+    },
+    "artworkNew": {
+      "title": "Create new artwork",
+      "description": "Select one of your artists and register a new artwork."
+    },
+    "artworkEdit": {
+      "title": "Edit artwork information"
+    },
+    "artworkList": {
+      "deleteConfirm": "Are you sure you want to delete this artwork?",
+      "deleteSuccess": "Artwork deleted.",
+      "deleteError": "An error occurred while deleting. Please try again shortly.",
+      "title": "Registered artworks",
+      "count": "{count}",
+      "searchArtwork": "Search artworks",
+      "searchPlaceholder": "Search by artwork title or artist name...",
+      "artworkInfo": "Artwork info",
+      "price": "Price",
+      "status": "Status",
+      "manage": "Manage",
+      "noSearchResult": "No search results.",
+      "noArtwork": "No artworks registered.",
+      "noSearchResultDescription": "Try a different keyword.",
+      "noArtworkDescription": "Register a new artwork to start your exhibition.",
+      "unknownArtist": "Unknown artist",
+      "available": "Available",
+      "reserved": "Reserved",
+      "sold": "Sold",
+      "edit": "Edit",
+      "deleting": "Deleting...",
+      "delete": "Delete",
+      "imagePreview": "{title} image preview"
+    },
+    "pending": {
+      "title": "Pending Approval",
+      "applicationSubmitted": "Your exhibitor application has been submitted.",
+      "awaitingApproval": "You can start exhibitor activities after admin approval.",
+      "readyToUse": "You will be able to use the service once approval is complete.",
+      "submitted": "Submitted:"
+    },
+    "suspended": {
+      "title": "Exhibitor Account Suspended",
+      "description": "Your exhibitor account has been restricted based on operating policies.",
+      "contactSupport": "If you need help, please contact the operations team."
+    },
+    "onboarding": {
+      "recoveryTitle": "Recover exhibitor information",
+      "onboardingTitle": "Enter exhibitor information",
+      "recoveryDescription": "Existing exhibitor application data is missing and must be recovered. After saving, you will be redirected to the exhibitor dashboard.",
+      "onboardingDescription": "Submit your information for approval. Access to the exhibitor dashboard remains restricted until approval."
+    },
+    "onboardingForm": {
+      "contractLabel": "Exhibitor consignment agreement",
+      "tosLabel": "Terms of service",
+      "privacyLabel": "Privacy policy",
+      "readToBottom": "Please scroll to the bottom of the document.",
+      "agreementLabel": "Agreement consent",
+      "checkAgreement": "Please check the consent box.",
+      "representativeName": "Representative name",
+      "representativeNamePlaceholder": "Individual or organization name (gallery, curator, etc.)",
+      "contact": "Contact",
+      "contactPlaceholder": "Email or phone number",
+      "bio": "Introduction",
+      "bioPlaceholder": "Please provide a brief introduction (gallery profile, activity area, etc.)",
+      "referrer": "Referrer",
+      "optional": "(optional)",
+      "referrerPlaceholder": "Referrer name or contact information",
+      "contractFull": "Full exhibitor consignment agreement",
+      "tosFull": "Full terms of service",
+      "privacyFull": "Full privacy policy",
+      "scrollDown": "Scroll down ↓",
+      "scrollHint": "Consent options become active after you scroll to the bottom.",
+      "agreeAll": "I agree to the exhibitor consignment agreement, terms of service, and privacy policy.",
+      "allReadGuide": "You have read all documents. Check the box to agree.",
+      "needScrollGuide": "Please scroll through all documents above to continue.",
+      "originalLinks": "Original documents:",
+      "contractLink": "Exhibitor consignment agreement",
+      "tosLink": "Terms of service",
+      "privacyLink": "Privacy policy",
+      "submitted": "Submitted",
+      "submit": "Submit",
+      "incompleteTitle": "Some required items are incomplete",
+      "incompleteDescription": "Complete the items below to submit.",
+      "genericSubmitError": "An error occurred while submitting. Please try again shortly."
+    }
   }
 }

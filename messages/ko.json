@@ -296,5 +296,127 @@
       "message": "아카이브 데이터를 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
       "backLabel": "아카이브로"
     }
+  },
+  "exhibitor": {
+    "modeLabel": "전시 파트너 모드",
+    "meta": {
+      "dashboard": "대시보드",
+      "artistManagement": "작가 관리",
+      "createNewArtist": "새 작가 등록",
+      "editArtist": "작가 정보 수정",
+      "artworkManagement": "작품 관리",
+      "createNewArtwork": "새 작품 등록",
+      "editArtwork": "작품 정보 수정"
+    },
+    "dashboard": {
+      "title": "대시보드",
+      "description": "현재 계정에서 관리 중인 작가와 작품 현황입니다.",
+      "managedArtists": "관리 중인 작가",
+      "registeredArtworks": "등록된 작품"
+    },
+    "artists": {
+      "title": "작가 관리",
+      "badge": "내 작가",
+      "description": "소속 작가 정보를 등록하고 관리합니다.",
+      "createArtist": "작가 등록"
+    },
+    "artistNew": {
+      "title": "새 작가 등록",
+      "description": "새로운 작가 정보를 입력하고 등록합니다."
+    },
+    "artistEdit": {
+      "title": "작가 정보 수정",
+      "unnamed": "(이름 없음)"
+    },
+    "artworks": {
+      "title": "작품 관리",
+      "badge": "내 작품",
+      "description": "보유한 작가의 작품을 등록하고 관리합니다.",
+      "createArtwork": "작품 등록"
+    },
+    "artworkNew": {
+      "title": "새 작품 등록",
+      "description": "보유한 작가를 선택하여 새로운 작품을 등록합니다."
+    },
+    "artworkEdit": {
+      "title": "작품 정보 수정"
+    },
+    "artworkList": {
+      "deleteConfirm": "정말 이 작품을 삭제하시겠습니까?",
+      "deleteSuccess": "작품을 삭제했습니다.",
+      "deleteError": "삭제 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+      "title": "등록된 작품",
+      "count": "{count}개",
+      "searchArtwork": "작품 검색",
+      "searchPlaceholder": "작품명 또는 작가명 검색...",
+      "artworkInfo": "작품 정보",
+      "price": "가격",
+      "status": "상태",
+      "manage": "관리",
+      "noSearchResult": "검색 결과가 없습니다.",
+      "noArtwork": "등록된 작품이 없습니다.",
+      "noSearchResultDescription": "다른 검색어로 시도해보세요.",
+      "noArtworkDescription": "새로운 작품을 등록하여 전시를 시작해보세요.",
+      "unknownArtist": "작가 미상",
+      "available": "판매 중",
+      "reserved": "예약됨",
+      "sold": "판매 완료",
+      "edit": "편집",
+      "deleting": "삭제 중...",
+      "delete": "삭제",
+      "imagePreview": "{title} 이미지 미리보기"
+    },
+    "pending": {
+      "title": "승인 대기 중",
+      "applicationSubmitted": "출품자 신청이 접수되었습니다.",
+      "awaitingApproval": "관리자의 승인 후 출품자 활동을 시작할 수 있습니다.",
+      "readyToUse": "승인이 완료되면 서비스를 이용하실 수 있습니다.",
+      "submitted": "제출 완료:"
+    },
+    "suspended": {
+      "title": "출품자 계정 정지됨",
+      "description": "출품자 계정이 운영 정책에 따라 제한되었습니다.",
+      "contactSupport": "문의가 필요하면 운영팀으로 연락해주세요."
+    },
+    "onboarding": {
+      "recoveryTitle": "출품자 정보 복구",
+      "onboardingTitle": "출품자 정보 입력",
+      "recoveryDescription": "기존 출품자 계정의 신청서 정보가 누락되어 복구가 필요합니다. 정보 저장 후 바로 출품자 대시보드로 이동합니다.",
+      "onboardingDescription": "승인 심사를 위해 정보를 제출해주세요. 제출 후에는 관리자 승인 전까지 출품자 대시보드 접근이 제한됩니다."
+    },
+    "onboardingForm": {
+      "contractLabel": "출품자 전시위탁 계약서",
+      "tosLabel": "이용약관",
+      "privacyLabel": "개인정보처리방침",
+      "readToBottom": "문서 하단까지 스크롤해주세요.",
+      "agreementLabel": "약관/방침 동의",
+      "checkAgreement": "동의 체크박스를 선택해주세요.",
+      "representativeName": "대표명",
+      "representativeNamePlaceholder": "개인명 또는 단체명 (갤러리, 큐레이터 등)",
+      "contact": "연락처",
+      "contactPlaceholder": "이메일 또는 전화번호",
+      "bio": "자기 소개",
+      "bioPlaceholder": "간단한 소개를 입력해주세요. (갤러리 소개, 활동 분야 등)",
+      "referrer": "추천인",
+      "optional": "(선택)",
+      "referrerPlaceholder": "추천인 이름 또는 연락처",
+      "contractFull": "출품자 전시위탁 계약서 전문",
+      "tosFull": "이용약관 전문",
+      "privacyFull": "개인정보처리방침 전문",
+      "scrollDown": "아래로 스크롤하세요 ↓",
+      "scrollHint": "문서 하단까지 스크롤하면 동의 항목이 활성화됩니다.",
+      "agreeAll": "출품자 전시위탁 계약서, 이용약관 및 개인정보처리방침에 동의합니다.",
+      "allReadGuide": "모든 문서를 읽었습니다. 체크하여 동의해주세요.",
+      "needScrollGuide": "위 문서를 모두 끝까지 스크롤해주세요.",
+      "originalLinks": "계약서 원문:",
+      "contractLink": "출품자 전시위탁 계약서",
+      "tosLink": "이용약관",
+      "privacyLink": "개인정보처리방침",
+      "submitted": "제출 완료",
+      "submit": "제출하기",
+      "incompleteTitle": "아직 완료되지 않은 항목이 있어요",
+      "incompleteDescription": "아래 항목을 완료하면 제출할 수 있습니다.",
+      "genericSubmitError": "제출 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
+    }
   }
 }

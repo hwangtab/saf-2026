@@ -12,6 +12,7 @@ import { getLocale, getTranslations } from 'next-intl/server';
 import type { Artwork, ArtworkListItem } from '@/types';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
+import { containsHangul } from '@/lib/search-utils';
 
 import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
 import GalleryCampaignBanner from '@/components/features/GalleryCampaignBanner';
@@ -23,7 +24,6 @@ interface Props {
     artist: string;
   }>;
 }
-const containsHangul = (value: string): boolean => /[가-힣]/.test(value);
 
 // Generate metadata for Artist Page
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

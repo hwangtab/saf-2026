@@ -74,6 +74,10 @@ export function hasHangulSyllable(value: string | null | undefined): boolean {
   return /[가-힣]/.test((value || '').normalize('NFC'));
 }
 
+export function containsHangul(value: string): boolean {
+  return /[가-힣]/.test(value);
+}
+
 function isHangulSyllable(char: string): boolean {
   if (!char) return false;
   const code = char.charCodeAt(0);

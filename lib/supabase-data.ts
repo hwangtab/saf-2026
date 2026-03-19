@@ -8,6 +8,7 @@ import { faqs, faqsEn, getFaqsByLocale } from '@/content/faq';
 import { testimonials } from '@/content/testimonials';
 import { exhibitionReviews } from '@/content/reviews';
 import type { Artwork, ExhibitionReview, NewsArticle, TestimonialCategory } from '@/types';
+import { containsHangul } from '@/lib/search-utils';
 
 type ArtworkRow = {
   id: string;
@@ -65,8 +66,6 @@ type FAQRow = {
   question_en?: string | null;
   answer_en?: string | null;
 };
-
-const containsHangul = (value: string): boolean => /[가-힣]/.test(value);
 
 const ARTWORK_SELECT_COLUMNS =
   'id, artist_id, title, description, size, material, year, edition, price, images, shop_url, status, category';

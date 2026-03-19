@@ -5,12 +5,12 @@ import {
   AdminPageHeader,
   AdminPageTitle,
 } from '@/app/admin/_components/admin-ui';
-import { getServerLocale } from '@/lib/server-locale';
+import { getTranslations } from 'next-intl/server';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const locale = await getServerLocale();
+  const t = await getTranslations('exhibitor');
   return {
-    title: locale === 'en' ? 'Create New Artist' : '새 작가 등록',
+    title: t('meta.createNewArtist'),
   };
 }
 
@@ -21,17 +21,7 @@ type NewArtistPageProps = {
 };
 
 export default async function NewArtistPage({ searchParams }: NewArtistPageProps) {
-  const locale = await getServerLocale();
-  const copy =
-    locale === 'en'
-      ? {
-          title: 'Create new artist',
-          description: 'Enter and register information for a new artist.',
-        }
-      : {
-          title: '새 작가 등록',
-          description: '새로운 작가 정보를 입력하고 등록합니다.',
-        };
+  const t = await getTranslations('exhibitor.artistNew');
   const returnTo = Array.isArray(searchParams?.returnTo)
     ? searchParams?.returnTo[0]
     : searchParams?.returnTo;
@@ -39,8 +29,8 @@ export default async function NewArtistPage({ searchParams }: NewArtistPageProps
   return (
     <div className="space-y-6">
       <AdminPageHeader>
-        <AdminPageTitle>{copy.title}</AdminPageTitle>
-        <AdminPageDescription>{copy.description}</AdminPageDescription>
+        <AdminPageTitle>{t('title')}</AdminPageTitle>
+        <AdminPageDescription>{t('description')}</AdminPageDescription>
       </AdminPageHeader>
       <ArtistForm returnTo={returnTo} />
     </div>

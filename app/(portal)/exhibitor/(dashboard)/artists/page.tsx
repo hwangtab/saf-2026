@@ -8,31 +8,17 @@ import {
   AdminPageHeader,
   AdminPageTitle,
 } from '@/app/admin/_components/admin-ui';
-import { getServerLocale } from '@/lib/server-locale';
+import { getTranslations } from 'next-intl/server';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const locale = await getServerLocale();
+  const t = await getTranslations('exhibitor');
   return {
-    title: locale === 'en' ? 'Artist Management' : '작가 관리',
+    title: t('meta.artistManagement'),
   };
 }
 
 export default async function ExhibitorArtistsPage() {
-  const locale = await getServerLocale();
-  const copy =
-    locale === 'en'
-      ? {
-          title: 'Artist management',
-          badge: 'My artists',
-          description: 'Register and manage affiliated artist information.',
-          createArtist: 'Add artist',
-        }
-      : {
-          title: '작가 관리',
-          badge: '내 작가',
-          description: '소속 작가 정보를 등록하고 관리합니다.',
-          createArtist: '작가 등록',
-        };
+  const t = await getTranslations('exhibitor.artists');
   const artists = await getExhibitorArtists();
 
   return (
@@ -40,13 +26,13 @@ export default async function ExhibitorArtistsPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <AdminPageHeader>
           <div className="flex items-center gap-2">
-            <AdminPageTitle>{copy.title}</AdminPageTitle>
-            <AdminBadge tone="info">{copy.badge}</AdminBadge>
+            <AdminPageTitle>{t('title')}</AdminPageTitle>
+            <AdminBadge tone="info">{t('badge')}</AdminBadge>
           </div>
-          <AdminPageDescription>{copy.description}</AdminPageDescription>
+          <AdminPageDescription>{t('description')}</AdminPageDescription>
         </AdminPageHeader>
         <LinkButton href="/exhibitor/artists/new" className="w-full sm:w-auto">
-          {copy.createArtist}
+          {t('createArtist')}
         </LinkButton>
       </div>
       <ArtistList artists={artists} />

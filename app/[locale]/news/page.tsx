@@ -13,6 +13,7 @@ import {
   generateNewsArticleSchema,
   generateSpeakableSchema,
 } from '@/lib/seo-utils';
+import { containsHangul } from '@/lib/search-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
@@ -125,8 +126,6 @@ const SOURCE_NAME_MAP: Record<string, { ko: string; en: string }> = {
   ABC뉴스: { ko: 'ABC뉴스', en: 'ABC News' },
   소셜임팩트뉴스: { ko: '소셜임팩트뉴스', en: 'Social Impact News' },
 };
-
-const containsHangul = (value: string): boolean => /[가-힣]/.test(value);
 
 const localizeSourceName = (source: string, locale: LocaleCode): string => {
   const mapped = SOURCE_NAME_MAP[source];
