@@ -87,6 +87,9 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
+      'max-snippet': -1,
+      'max-image-preview': 'large',
+      'max-video-preview': -1,
     },
   },
   verification: {
@@ -124,6 +127,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           type="font/woff2"
           crossOrigin="anonymous"
         />
+        <link rel="alternate" type="text/plain" title="LLM instructions" href="/llms.txt" />
         {process.env.NEXT_PUBLIC_SUPABASE_URL && (
           <>
             <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />

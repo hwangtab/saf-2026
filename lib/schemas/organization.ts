@@ -1,0 +1,131 @@
+import { SITE_URL, OG_IMAGE, CONTACT, EXHIBITION, CAMPAIGN, SOCIAL_LINKS } from '@/lib/constants';
+
+export function generateOrganizationSchema(locale: 'ko' | 'en' = 'ko') {
+  const isEnglish = locale === 'en';
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: CONTACT.ORGANIZATION_NAME,
+    url: SITE_URL,
+    logo: `${SITE_URL}/images/og-image2.png`,
+    description: isEnglish
+      ? 'A special exhibition raising mutual-aid funds for Korean artists'
+      : '한국 예술인들의 상호부조 기금 마련을 위한 특별전',
+    sameAs: [
+      SOCIAL_LINKS.INSTAGRAM,
+      SOCIAL_LINKS.FACEBOOK,
+      SOCIAL_LINKS.TWITTER,
+      SOCIAL_LINKS.YOUTUBE,
+    ],
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: CONTACT.ADDRESS,
+      postalCode: CONTACT.POSTAL_CODE,
+      addressLocality: isEnglish ? 'Seoul' : '서울시',
+      addressCountry: 'KR',
+    },
+    contactPoint: {
+      '@type': 'ContactPoint',
+      contactType: 'Customer Service',
+      telephone: CONTACT.PHONE,
+      email: CONTACT.EMAIL,
+    },
+  };
+}
+
+export function generateWebsiteSchema(locale: 'ko' | 'en' = 'ko') {
+  const isEnglish = locale === 'en';
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: isEnglish ? 'SAF 2026' : '씨앗페 2026',
+    alternateName: 'SAF 2026',
+    url: SITE_URL,
+    description: isEnglish
+      ? 'A special exhibition raising mutual-aid funds for Korean artists'
+      : '한국 예술인들의 상호부조 기금 마련을 위한 특별전',
+    inLanguage: isEnglish ? 'en-US' : 'ko-KR',
+    publisher: {
+      '@type': 'Organization',
+      name: CONTACT.ORGANIZATION_NAME,
+    },
+    // Accessibility metadata for AEO/GEO
+    accessibilityFeature: [
+      'alternativeText',
+      'highContrastDisplay',
+      'largePrint',
+      'readingOrder',
+      'structuralNavigation',
+      'tableOfContents',
+    ],
+    accessibilityHazard: 'none',
+    accessMode: ['textual', 'visual'],
+    accessModeSufficient: [{ '@type': 'ItemList', itemListElement: ['textual'] }],
+  };
+}
+
+export function generateLocalBusinessSchema(locale: 'ko' | 'en' = 'ko') {
+  const isEnglish = locale === 'en';
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ArtGallery',
+    name: isEnglish ? 'SAF 2026 (Seed Art Festival)' : '씨앗페 2026 (Seed Art Festival)',
+    image: OG_IMAGE.url,
+    '@id': SITE_URL,
+    url: SITE_URL,
+    telephone: CONTACT.PHONE,
+    email: CONTACT.EMAIL,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: EXHIBITION.ADDRESS,
+      postalCode: EXHIBITION.POSTAL_CODE,
+      addressLocality: isEnglish ? 'Seoul' : '서울시',
+      addressCountry: 'KR',
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: EXHIBITION.LAT,
+      longitude: EXHIBITION.LNG,
+    },
+    openingHoursSpecification: [
+      {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+        opens: '10:00',
+        closes: '19:00',
+        validFrom: CAMPAIGN.START_DATE,
+        validThrough: CAMPAIGN.END_DATE,
+      },
+    ],
+    priceRange: 'KRW',
+  };
+}
+
+/**
+ * Generate campaign/funding scheme schema for SEO
+ * Exposes the mutual aid fund mission to search engines
+ */
+export function generateCampaignSchema(locale: 'ko' | 'en' = 'ko') {
+  const isEnglish = locale === 'en';
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FundingScheme',
+    '@id': `${SITE_URL}#campaign`,
+    name: isEnglish ? 'Artist Mutual Aid Fund Campaign' : '예술인 상호부조 기금 마련 캠페인',
+    alternateName: 'SAF 2026 Artist Mutual Aid Fund',
+    description: isEnglish
+      ? 'A special campaign raising mutual-aid funds to help Korean artists avoid predatory lending and build financial stability through artwork purchases.'
+      : '한국 예술인들의 고리대금 문제 해결을 위한 상호부조 기금 마련 특별 캠페인. 작품 구매를 통해 예술인들의 금융 자립을 지원합니다.',
+    url: SITE_URL,
+    funder: {
+      '@type': 'Organization',
+      name: CONTACT.ORGANIZATION_NAME,
+      url: SITE_URL,
+    },
+    isAccessibleForFree: false,
+    audience: {
+      '@type': 'Audience',
+      audienceType: isEnglish ? 'Art collectors and supporters' : '미술 컬렉터, 예술 후원자',
+    },
+  };
+}

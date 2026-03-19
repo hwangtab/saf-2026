@@ -1,0 +1,198 @@
+import { SITE_URL } from '@/lib/constants';
+import { resolveSeoArtworkImageUrl } from './utils';
+
+export interface ArtistSchemaInput {
+  name: string;
+  description?: string;
+  image?: string;
+  url: string;
+  jobTitle?: string;
+}
+
+// Enhanced artist schema input for SEO optimization
+export interface EnhancedArtistSchemaInput extends ArtistSchemaInput {
+  history?: string;
+  artworks?: Array<{ id: string; title: string; image: string }>;
+}
+
+// Helper: Extract expertise topics from artist history/profile
+function extractKnowsAbout(history?: string, profile?: string): string[] {
+  const text = `${history || ''} ${profile || ''}`.toLowerCase();
+  const topics: string[] = [];
+
+  const topicMap: Record<string, string> = {
+    유화: 'Oil Painting',
+    oil: 'Oil Painting',
+    아크릴: 'Acrylic Painting',
+    acrylic: 'Acrylic Painting',
+    목판화: 'Woodcut Printmaking',
+    판화: 'Printmaking',
+    사진: 'Photography',
+    조각: 'Sculpture',
+    설치: 'Installation Art',
+    미디어: 'Media Art',
+    수채화: 'Watercolor',
+    동양화: 'East Asian Painting',
+    서양화: 'Western Painting',
+    옻칠: 'Lacquer Art',
+    도자: 'Ceramics',
+    캘리그래피: 'Calligraphy',
+  };
+
+  Object.entries(topicMap).forEach(([korean, english]) => {
+    if (text.includes(korean)) {
+      topics.push(english);
+    }
+  });
+
+  return [...new Set(topics)].slice(0, 5);
+}
+
+// Helper: Extract credentials (education, awards) from artist history
+interface Credential {
+  type: 'degree' | 'award';
+  name: string;
+  institution?: string;
+}
+
+function parseArtistCredentials(history?: string): Credential[] {
+  if (!history) return [];
+  const credentials: Credential[] = [];
+
+  // Parse education lines
+  const eduPatterns = [
+    /(.+대학교?.+(?:졸업|석사|박사|수료))/g,
+    /(.+대학원.+(?:졸업|석사|박사|수료))/g,
+  ];
+
+  eduPatterns.forEach((pattern) => {
+    const matches = history.matchAll(pattern);
+    for (const match of matches) {
+      const line = match[1].trim();
+      if (line.length < 100) {
+        credentials.push({
+          type: 'degree',
+          name: line,
+          institution: line.match(/(.+대학)/)?.[1],
+        });
+      }
+    }
+  });
+
+  // Parse awards
+  const awardPatterns = [/(.+(?:상|대상|우수상|특선|입선).+)/g, /(.+수상.+)/g];
+
+  awardPatterns.forEach((pattern) => {
+    const matches = history.matchAll(pattern);
+    for (const match of matches) {
+      const line = match[1].trim();
+      if (line.length < 100 && !credentials.some((c) => c.name === line)) {
+        credentials.push({
+          type: 'award',
+          name: line,
+        });
+      }
+    }
+  });
+
+  return credentials.slice(0, 8);
+}
+
+// Helper: Extract memberships/associations from artist history
+function extractMemberships(history?: string): Array<{ '@type': string; name: string }> {
+  if (!history) return [];
+  const memberships: Array<{ '@type': string; name: string }> = [];
+
+  const patterns = [/한국(\w+)(?:협회|회)/g, /(\w+)협회 회원/g, /(\w+)작가회/g];
+
+  patterns.forEach((pattern) => {
+    const matches = history.matchAll(pattern);
+    for (const match of matches) {
+      const name = match[0].replace(' 회원', '').trim();
+      if (name.length < 30 && !memberships.some((m) => m.name === name)) {
+        memberships.push({
+          '@type': 'Organization',
+          name,
+        });
+      }
+    }
+  });
+
+  return memberships.slice(0, 5);
+}
+
+export function generateArtistSchema(artist: ArtistSchemaInput) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: artist.name,
+    description: artist.description,
+    image: artist.image
+      ? (() => {
+          const resolved = resolveSeoArtworkImageUrl(artist.image!);
+          return resolved.startsWith('http') ? resolved : `${SITE_URL}${resolved}`;
+        })()
+      : undefined,
+    url: artist.url,
+    jobTitle: artist.jobTitle || 'Artist',
+    sameAs: [artist.url],
+    mainEntityOfPage: {
+      '@type': 'ProfilePage',
+      '@id': artist.url,
+    },
+  };
+}
+
+/**
+ * Generate enhanced artist schema with credentials, expertise, and work samples
+ */
+export function generateEnhancedArtistSchema(artist: EnhancedArtistSchemaInput) {
+  const knowsAbout = extractKnowsAbout(artist.history, artist.description);
+  const credentials = parseArtistCredentials(artist.history);
+  const memberships = extractMemberships(artist.history);
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: artist.name,
+    description: artist.description,
+    image: artist.image,
+    url: artist.url,
+    jobTitle: artist.jobTitle || 'Visual Artist',
+    sameAs: [artist.url],
+    mainEntityOfPage: {
+      '@type': 'ProfilePage',
+      '@id': artist.url,
+    },
+    // Expertise areas
+    ...(knowsAbout.length > 0 && { knowsAbout }),
+    // Education and awards
+    ...(credentials.length > 0 && {
+      hasCredential: credentials.map((cred) => ({
+        '@type': 'EducationalOccupationalCredential',
+        credentialCategory: cred.type === 'degree' ? 'degree' : 'award',
+        name: cred.name,
+        ...(cred.institution && {
+          recognizedBy: {
+            '@type': 'Organization',
+            name: cred.institution,
+          },
+        }),
+      })),
+    }),
+    // Organization memberships
+    ...(memberships.length > 0 && { memberOf: memberships }),
+    // Work samples (representative artworks)
+    ...(artist.artworks &&
+      artist.artworks.length > 0 && {
+        workSample: artist.artworks.slice(0, 5).map((work) => ({
+          '@type': 'VisualArtwork',
+          name: work.title,
+          url: `${SITE_URL}/artworks/${work.id}`,
+          image: work.image.startsWith('http')
+            ? work.image
+            : `${SITE_URL}/images/artworks/${work.image}`,
+        })),
+      }),
+  };
+}

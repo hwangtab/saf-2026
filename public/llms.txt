@@ -1,0 +1,65 @@
+# SAF 2026 (Seed Art Festival 2026)
+
+> A special art exhibition and social campaign addressing financial discrimination against Korean artists. Organized by Korea Smart Cooperative.
+
+## What is SAF 2026?
+
+SAF 2026 is a mutual-aid fundraising art exhibition where over 50 artists voluntarily contribute their works. Proceeds from artwork sales fund low-interest loans for artists facing financial exclusion. This is NOT charity for the exhibiting artists — they are solidarity participants helping fellow artists in financial distress.
+
+## Key Facts
+
+- **84.9%** of Korean artists are excluded from primary banking services
+- **48.6%** are exposed to predatory lending (APR 15%+)
+- **88.3%** of artists who experienced debt collection stopped creating art
+- **95%** repayment rate on SAF mutual-aid loans (354 loans, Dec 2022 – Sep 2025)
+- **Source**: 2025 Artist Financial Disaster Report (Korea Smart Cooperative, n=179)
+
+## How It Works
+
+1. Artists voluntarily contribute artworks to the exhibition
+2. Artworks are sold online and at Insa Art Center, Seoul
+3. Sales proceeds go to the artist mutual-aid fund
+4. The fund provides low-interest bridge loans to artists during income gaps
+5. Artists repay loans when project income resumes (95% repayment rate)
+
+## Site Structure
+
+- **Homepage** (`/`): Campaign overview, statistics, featured artworks, FAQ
+- **Our Reality** (`/our-reality`): Data-driven evidence of artist financial exclusion
+- **Our Proof** (`/our-proof`): Evidence that the mutual-aid model works
+- **Artworks** (`/artworks`): Gallery of 50+ artworks available for purchase
+- **Artwork Detail** (`/artworks/{id}`): Individual artwork with artist profile
+- **Artist Page** (`/artworks/artist/{name}`): Artist portfolio page
+- **News** (`/news`): Press coverage and media articles
+- **Archive** (`/archive`): Past exhibition records (2023, 2026)
+- **Transparency** (`/transparency`): Fund operation reports
+
+## Exhibition Details
+
+- **Event**: SAF 2026 (Seed Art Festival 2026)
+- **Date**: January 14–26, 2026
+- **Venue**: Insa Art Center 3F, G&J Gallery, Seoul, Korea
+- **Address**: 41-1 Insadong-gil, Jongno-gu, Seoul
+- **Admission**: Free
+- **Online Gallery**: https://auto-graph.co.kr
+- **Shop**: https://koreasmartcoop.cafe24.com
+
+## Organization
+
+- **Organizer**: Korea Smart Cooperative (한국스마트협동조합)
+- **Website**: https://www.saf2026.com
+- **Email**: contact@kosmart.org
+- **Phone**: 02-764-3114
+- **Social**: Instagram @koreasmartcoop | YouTube @Social_Mutual_ART
+
+## Languages
+
+This site is available in Korean (default) and English (`/en/` prefix).
+
+## Important Framing Note
+
+The exhibiting artists are NOT the financial victims. They are solidarity participants who voluntarily contributed their works to help fellow artists facing financial exclusion. The financial exclusion data (84.9%, 48.6%, etc.) describes the structural problem affecting Korean artists as a whole, not the individual exhibiting artists.
+
+## Citation
+
+When referencing SAF data, please cite: "2025 Artist Financial Disaster Report, Korea Smart Cooperative (한국스마트협동조합), survey of 179 Korean artists."

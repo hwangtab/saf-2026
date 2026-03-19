@@ -16,6 +16,8 @@ import {
   generateFAQSchema,
   generateCampaignSchema,
 } from '@/lib/seo-utils';
+import { generateArtworkPurchaseHowTo, generateMemberJoinHowTo } from '@/lib/schemas/howto';
+import { generateSAFCoreQA } from '@/lib/schemas/qa-page';
 import { getSupabaseHomepageArtworks, getSupabaseFAQs } from '@/lib/supabase-data';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
@@ -300,6 +302,10 @@ export default async function Home() {
       <JsonLdScript data={generateExhibitionSchema([], locale)} />
       {/* FundingScheme JSON-LD for campaign Rich Results */}
       <JsonLdScript data={generateCampaignSchema(locale)} />
+      {/* AEO/GEO: HowTo + QAPage schemas for AI engine optimization */}
+      <JsonLdScript data={generateArtworkPurchaseHowTo(locale)} />
+      <JsonLdScript data={generateMemberJoinHowTo(locale)} />
+      <JsonLdScript data={generateSAFCoreQA(locale)} />
     </>
   );
 }

@@ -17,7 +17,9 @@ import {
   CreativeImpactChart,
 } from '@/components/features/charts/DynamicCharts';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { createBreadcrumbSchema } from '@/lib/seo-utils';
+import { createBreadcrumbSchema, generateSpeakableSchema } from '@/lib/seo-utils';
+import { generateSAFClaimReviews } from '@/lib/schemas/claim-review';
+import { generateSAFCoreQA } from '@/lib/schemas/qa-page';
 import { createStandardPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
@@ -55,11 +57,19 @@ export default async function OurReality() {
     { name: tBreadcrumbs('home'), url: SITE_URL },
     { name: tBreadcrumbs('ourReality'), url: pageUrl },
   ]);
+  const speakableSchema = generateSpeakableSchema([
+    '#stage1-description',
+    '#stage2-description',
+    '#stage3-description',
+    '#citations-section',
+  ]);
+  const claimReviews = generateSAFClaimReviews(locale);
+  const coreQA = generateSAFCoreQA(locale);
 
   if (locale === 'en') {
     return (
       <>
-        <JsonLdScript data={breadcrumbSchema} />
+        <JsonLdScript data={[breadcrumbSchema, speakableSchema, ...claimReviews, coreQA]} />
         <PageHero
           title="Our Reality"
           description="Data from the 2025 report shows structural financial exclusion faced by artists in Korea."
@@ -98,7 +108,10 @@ export default async function OurReality() {
             <div className="mb-10">
               <span className="text-sm font-bold text-primary-strong uppercase">Stage 1</span>
               <SectionTitle className="mb-4">Closed doors: banking rejection</SectionTitle>
-              <p className="text-xl text-charcoal-muted max-w-2xl leading-relaxed">
+              <p
+                id="stage1-description"
+                className="text-xl text-charcoal-muted max-w-2xl leading-relaxed"
+              >
                 Primary banking exclusion rate:{' '}
                 <strong className="text-primary-strong">84.9%</strong>
               </p>
@@ -119,7 +132,10 @@ export default async function OurReality() {
             <div className="mb-10">
               <span className="text-sm font-bold text-accent-strong uppercase">Stage 2</span>
               <SectionTitle className="mb-4">Predatory exposure under pressure</SectionTitle>
-              <p className="text-xl text-charcoal-muted max-w-2xl leading-relaxed">
+              <p
+                id="stage2-description"
+                className="text-xl text-charcoal-muted max-w-2xl leading-relaxed"
+              >
                 Predatory product exposure: <strong className="text-accent-strong">48.6%</strong>
               </p>
             </div>
@@ -139,7 +155,10 @@ export default async function OurReality() {
             <div className="mb-10">
               <span className="text-sm font-bold text-danger uppercase">Stage 3</span>
               <SectionTitle className="mb-4">Creative breakdown</SectionTitle>
-              <p className="text-xl text-charcoal-muted max-w-2xl leading-relaxed">
+              <p
+                id="stage3-description"
+                className="text-xl text-charcoal-muted max-w-2xl leading-relaxed"
+              >
                 Creative interruption among debt-collection-experienced artists:{' '}
                 <strong className="text-danger">88.3%</strong>
               </p>
@@ -178,7 +197,7 @@ export default async function OurReality() {
 
   return (
     <>
-      <JsonLdScript data={breadcrumbSchema} />
+      <JsonLdScript data={[breadcrumbSchema, speakableSchema, ...claimReviews, coreQA]} />
       <PageHero
         title="우리의 현실"
         description="2025 예술인 금융 재난 보고서가 밝혀낸 한국 예술인의 금융 위기의 구조적 현실"
@@ -450,7 +469,10 @@ export default async function OurReality() {
           <CTAButtonGroup variant="large" className="justify-center" />
 
           {/* AI/GEO Optimization: Explicit Citations Section */}
-          <div className="mt-16 pt-16 border-t border-primary/20 max-w-2xl mx-auto text-left">
+          <div
+            id="citations-section"
+            className="mt-16 pt-16 border-t border-primary/20 max-w-2xl mx-auto text-left"
+          >
             <h3 className="text-sm font-bold text-primary-strong uppercase tracking-widest mb-6">
               자료 출처 및 근거 (Citations)
             </h3>
