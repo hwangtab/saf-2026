@@ -4,7 +4,7 @@
 
 ## What is SAF 2026?
 
-SAF 2026 is a mutual-aid fundraising art exhibition where over 50 artists voluntarily contribute their works. Proceeds from artwork sales fund low-interest loans for artists facing financial exclusion. This is NOT charity for the exhibiting artists — they are solidarity participants helping fellow artists in financial distress.
+SAF 2026 is a mutual-aid fundraising art exhibition where over 110 artists voluntarily contribute their works. Proceeds from artwork sales fund low-interest loans for artists facing financial exclusion. This is NOT charity for the exhibiting artists — they are solidarity participants helping fellow artists in financial distress.
 
 ## Key Facts
 
@@ -27,7 +27,7 @@ SAF 2026 is a mutual-aid fundraising art exhibition where over 50 artists volunt
 - **Homepage** (`/`): Campaign overview, statistics, featured artworks, FAQ
 - **Our Reality** (`/our-reality`): Data-driven evidence of artist financial exclusion
 - **Our Proof** (`/our-proof`): Evidence that the mutual-aid model works
-- **Artworks** (`/artworks`): Gallery of 50+ artworks available for purchase
+- **Artworks** (`/artworks`): Gallery of 270+ artworks available for purchase
 - **Artwork Detail** (`/artworks/{id}`): Individual artwork with artist profile
 - **Artist Page** (`/artworks/artist/{name}`): Artist portfolio page
 - **News** (`/news`): Press coverage and media articles

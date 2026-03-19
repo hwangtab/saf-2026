@@ -7,6 +7,13 @@ import {
   generateCampaignSchema,
   generateSpeakableSchema,
   escapeJsonLdForScript,
+  generateClaimReviewSchema,
+  generateSAFClaimReviews,
+  generateHowToSchema,
+  generateArtworkPurchaseHowTo,
+  generateMemberJoinHowTo,
+  generateQAPageSchema,
+  generateSAFCoreQA,
 } from '@/lib/schemas';
 
 describe('createBreadcrumbSchema', () => {
@@ -280,5 +287,165 @@ describe('escapeJsonLdForScript', () => {
     const input = '{"name":"safe text"}';
     const result = escapeJsonLdForScript(input);
     expect(result).toBe(input);
+  });
+});
+
+// ── AEO/GEO Schemas ──
+
+describe('generateClaimReviewSchema', () => {
+  it('should have @type ClaimReview with required fields', () => {
+    const schema = generateClaimReviewSchema({
+      claimText: '84.9% of artists are excluded',
+      url: 'https://www.saf2026.com/our-reality',
+      truthRating: 5,
+      ratingLabel: 'Verified',
+      evidenceSource: '2025 Report',
+      datePublished: '2025-11-05',
+    });
+    expect(schema['@type']).toBe('ClaimReview');
+    expect(schema['@context']).toBe('https://schema.org');
+    expect(schema.claimReviewed).toBe('84.9% of artists are excluded');
+    expect(schema.reviewRating.ratingValue).toBe(5);
+    expect(schema.reviewRating.bestRating).toBe(5);
+    expect(schema.reviewRating.worstRating).toBe(1);
+  });
+
+  it('should include author as Organization', () => {
+    const schema = generateClaimReviewSchema({
+      claimText: 'Test claim',
+      url: 'https://example.com',
+      truthRating: 4,
+      ratingLabel: 'Mostly True',
+      evidenceSource: 'Test source',
+      datePublished: '2025-01-01',
+    });
+    expect(schema.author['@type']).toBe('Organization');
+    expect(schema.author.name).toBeTruthy();
+  });
+
+  it('should include itemReviewed with Claim type', () => {
+    const schema = generateClaimReviewSchema({
+      claimText: 'Test claim',
+      url: 'https://example.com',
+      truthRating: 3,
+      ratingLabel: 'Half True',
+      evidenceSource: 'Some report',
+      datePublished: '2025-01-01',
+    });
+    expect(schema.itemReviewed['@type']).toBe('Claim');
+    expect(schema.itemReviewed.appearance['@type']).toBe('CreativeWork');
+  });
+});
+
+describe('generateSAFClaimReviews', () => {
+  it('should return 4 claim reviews for ko locale', () => {
+    const reviews = generateSAFClaimReviews('ko');
+    expect(reviews).toHaveLength(4);
+    reviews.forEach((r) => expect(r['@type']).toBe('ClaimReview'));
+  });
+
+  it('should return 4 claim reviews for en locale with English text', () => {
+    const reviews = generateSAFClaimReviews('en');
+    expect(reviews).toHaveLength(4);
+    expect(reviews[0].claimReviewed).toMatch(/84\.9%/);
+    expect(reviews[0].url).toContain('/en/our-reality');
+  });
+
+  it('should use Korean URLs for ko locale', () => {
+    const reviews = generateSAFClaimReviews('ko');
+    expect(reviews[0].url).not.toContain('/en/');
+    expect(reviews[0].url).toContain('/our-reality');
+  });
+});
+
+describe('generateHowToSchema', () => {
+  it('should have @type HowTo with steps', () => {
+    const schema = generateHowToSchema({
+      name: 'Test HowTo',
+      description: 'Test description',
+      steps: [
+        { name: 'Step 1', text: 'Do this' },
+        { name: 'Step 2', text: 'Do that' },
+      ],
+    });
+    expect(schema['@type']).toBe('HowTo');
+    expect(schema['@context']).toBe('https://schema.org');
+    expect(schema.step).toHaveLength(2);
+    expect(schema.step[0].position).toBe(1);
+    expect(schema.step[1].position).toBe(2);
+  });
+
+  it('should include optional fields when provided', () => {
+    const schema = generateHowToSchema({
+      name: 'Test',
+      description: 'Test',
+      totalTime: 'PT10M',
+      estimatedCost: { currency: 'KRW', value: '1000000' },
+      url: 'https://example.com',
+      steps: [{ name: 'Step', text: 'Do it' }],
+    });
+    expect(schema.totalTime).toBe('PT10M');
+    expect(schema.estimatedCost.currency).toBe('KRW');
+    expect(schema.url).toBe('https://example.com');
+  });
+});
+
+describe('generateArtworkPurchaseHowTo', () => {
+  it('should have 4 steps for ko locale', () => {
+    const schema = generateArtworkPurchaseHowTo('ko');
+    expect(schema.step).toHaveLength(4);
+    expect(schema.name).toMatch(/SAF 2026/);
+  });
+
+  it('should have 4 steps for en locale with English content', () => {
+    const schema = generateArtworkPurchaseHowTo('en');
+    expect(schema.step).toHaveLength(4);
+    expect(schema.step[0].name).toMatch(/Browse/i);
+  });
+});
+
+describe('generateMemberJoinHowTo', () => {
+  it('should have 3 steps', () => {
+    const schema = generateMemberJoinHowTo('ko');
+    expect(schema.step).toHaveLength(3);
+  });
+});
+
+describe('generateQAPageSchema', () => {
+  it('should have @type QAPage with questions', () => {
+    const schema = generateQAPageSchema(
+      [
+        { question: 'What is SAF?', answer: 'An art exhibition.' },
+        { question: 'How to participate?', answer: 'Buy artwork.' },
+      ],
+      'https://www.saf2026.com'
+    );
+    expect(schema['@type']).toBe('QAPage');
+    expect(schema['@context']).toBe('https://schema.org');
+    expect(schema.mainEntity).toHaveLength(2);
+    expect(schema.mainEntity[0]['@type']).toBe('Question');
+    expect(schema.mainEntity[0].acceptedAnswer['@type']).toBe('Answer');
+  });
+
+  it('should include author Organization in answers', () => {
+    const schema = generateQAPageSchema(
+      [{ question: 'Q?', answer: 'A.' }],
+      'https://www.saf2026.com'
+    );
+    expect(schema.mainEntity[0].acceptedAnswer.author['@type']).toBe('Organization');
+  });
+});
+
+describe('generateSAFCoreQA', () => {
+  it('should return 4 questions for ko locale', () => {
+    const schema = generateSAFCoreQA('ko');
+    expect(schema.mainEntity).toHaveLength(4);
+    expect(schema.mainEntity[0].name).toMatch(/씨앗페/);
+  });
+
+  it('should return 4 questions for en locale with English text', () => {
+    const schema = generateSAFCoreQA('en');
+    expect(schema.mainEntity).toHaveLength(4);
+    expect(schema.mainEntity[0].name).toMatch(/SAF/);
   });
 });

@@ -31,6 +31,14 @@ export {
   generateVideoSchema,
   generateNewsArticleSchema,
   generateSpeakableSchema,
+  // AEO/GEO — ClaimReview, HowTo, QAPage
+  generateClaimReviewSchema,
+  generateSAFClaimReviews,
+  generateHowToSchema,
+  generateArtworkPurchaseHowTo,
+  generateMemberJoinHowTo,
+  generateQAPageSchema,
+  generateSAFCoreQA,
 } from './schemas';
 
 export type {
@@ -39,4 +47,8 @@ export type {
   FAQItem,
   VideoSchemaInput,
   NewsArticleSchemaInput,
+  ClaimReviewInput,
+  HowToStep,
+  HowToInput,
+  QAItem,
 } from './schemas';
