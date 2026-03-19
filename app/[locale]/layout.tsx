@@ -1,10 +1,8 @@
-import { Suspense } from 'react';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
-import PageLoader from '@/components/common/PageLoader';
 import PageTransition from '@/components/common/PageTransition';
 import ToastProvider from '@/components/providers/ToastProvider';
 
@@ -30,9 +28,7 @@ export default async function LocaleLayout({
         </a>
         <Header />
         <main id="main-content" className="flex-1">
-          <PageTransition>
-            <Suspense fallback={<PageLoader />}>{children}</Suspense>
-          </PageTransition>
+          <PageTransition>{children}</PageTransition>
         </main>
         <Footer />
       </ToastProvider>
