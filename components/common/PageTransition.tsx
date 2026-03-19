@@ -22,7 +22,7 @@ export default function PageTransition({ children }: { children: React.ReactNode
     const el = containerRef.current;
     if (!el) return;
 
-    el.style.opacity = '0.985';
+    el.style.opacity = '0.96';
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         el.style.opacity = '1';
