@@ -80,7 +80,7 @@ export default function BackgroundSlider() {
           priority
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-black/60 z-10" />
+        <div className="absolute inset-0 bg-black/30 z-10" />
       </div>
     );
   }
@@ -147,7 +147,7 @@ export default function BackgroundSlider() {
           />
         </div>
 
-        <div className="absolute inset-0 bg-black/60 z-10" />
+        <div className="absolute inset-0 bg-black/30 z-10" />
         {images.length > 1 && (
           <button
             type="button"

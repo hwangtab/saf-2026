@@ -100,19 +100,19 @@ export default async function Home() {
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-black/35 pointer-events-none" />
         <SawtoothDivider position="bottom" colorClass="text-canvas-soft" />
         <div className="relative z-10 container-max text-center">
-          <div className="mb-12 translate-y-6 hidden md:flex justify-center">
+          <div className="mb-8 hidden md:flex justify-center">
             <SafeImage
               src="/images/logo/320pxX90px_white.webp"
               alt={t('logoAlt')}
               width={1120}
               height={320}
-              className="w-96 md:w-[56rem] h-auto drop-shadow-2xl"
+              className="w-72 md:w-[42rem] xl:w-[48rem] h-auto drop-shadow-2xl"
               priority
               placeholder="empty"
             />
           </div>
           <h1
-            className="mt-12 md:mt-0 font-display text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight text-white drop-shadow-lg text-balance opacity-0 animate-fade-in-up"
+            className="mt-8 md:mt-0 font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-4 leading-tight text-white drop-shadow-lg text-balance opacity-0 animate-fade-in-up"
             style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}
           >
             {heroTitleLines.map((line, i) => (
@@ -123,7 +123,7 @@ export default async function Home() {
             ))}
           </h1>
           <p
-            className="text-lg md:text-xl text-white/90 mb-12 max-w-2xl mx-auto leading-relaxed drop-shadow-lg break-keep text-balance opacity-0 animate-fade-in-up"
+            className="text-xl md:text-2xl text-white/90 mb-10 max-w-2xl mx-auto leading-relaxed drop-shadow-lg break-keep text-balance opacity-0 animate-fade-in-up"
             style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}
           >
             {heroDescLines.map((line, i) => (
@@ -135,7 +135,7 @@ export default async function Home() {
           </p>
 
           <div
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12 opacity-0 animate-fade-in-up"
+            className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8 opacity-0 animate-fade-in-up"
             style={{ animationDelay: '0.6s', animationFillMode: 'forwards' }}
           >
             <LinkButton
@@ -148,9 +148,9 @@ export default async function Home() {
             </LinkButton>
             <LinkButton
               href="/our-reality"
-              variant="outline"
+              variant="outline-white"
               size="lg"
-              className="w-full sm:w-auto bg-white/10 backdrop-blur-sm border-white/50 text-white hover:bg-white hover:text-primary min-w-[160px] justify-center"
+              className="w-full sm:w-auto backdrop-blur-sm min-w-[160px] justify-center"
             >
               {t('aboutSaf')}
             </LinkButton>
@@ -171,7 +171,7 @@ export default async function Home() {
       </Suspense>
 
       {/* Call to Action Section (Moved Up) */}
-      <Section variant="accent-soft" prevVariant="canvas-soft" className="pb-24">
+      <Section variant="accent-soft" prevVariant="white" className="pb-24">
         <div className="container-max">
           <SectionTitle className="mb-12">{t('joinCta')}</SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
@@ -210,19 +210,19 @@ export default async function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
             <div className="space-y-4">
               <h3 className="text-card-title text-charcoal">{t('problemFinancial')}</h3>
-              <p className="text-charcoal-muted leading-relaxed">{t('problemFinancialDesc')}</p>
+              <p className="text-charcoal leading-relaxed">{t('problemFinancialDesc')}</p>
             </div>
             <div className="space-y-4">
               <h3 className="text-card-title text-charcoal">{t('problemDebt')}</h3>
-              <p className="text-charcoal-muted leading-relaxed">{t('problemDebtDesc')}</p>
+              <p className="text-charcoal leading-relaxed">{t('problemDebtDesc')}</p>
             </div>
             <div className="space-y-4">
               <h3 className="text-card-title text-charcoal">{t('problemDamage')}</h3>
-              <p className="text-charcoal-muted leading-relaxed">{t('problemDamageDesc')}</p>
+              <p className="text-charcoal leading-relaxed">{t('problemDamageDesc')}</p>
             </div>
-            <div className="space-y-4">
+            <div className="md:col-span-2 bg-white/70 rounded-xl p-6 md:p-8 space-y-4">
               <h3 className="text-card-title text-charcoal">{t('problemSolution')}</h3>
-              <p className="text-charcoal-muted leading-relaxed">
+              <p className="text-charcoal leading-relaxed">
                 {t.rich('problemSolutionDesc', {
                   orgLink: (chunks) => (
                     <a
@@ -290,6 +290,21 @@ export default async function Home() {
           >
             <HomeFAQSection locale={locale} />
           </Suspense>
+        </div>
+      </Section>
+
+      {/* Closing CTA Section */}
+      <Section variant="primary" prevVariant="sun-soft" padding="sm">
+        <div className="container-max text-center">
+          <p className="text-white text-xl md:text-2xl font-bold mb-6">{t('closingCta')}</p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <LinkButton href={EXTERNAL_LINKS.DONATE} external variant="white" size="md">
+              {t('closingDonate')}
+            </LinkButton>
+            <LinkButton href="/artworks" variant="outline-white" size="md">
+              {t('closingArtworks')}
+            </LinkButton>
+          </div>
         </div>
       </Section>
 
