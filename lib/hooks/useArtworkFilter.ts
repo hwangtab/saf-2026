@@ -193,7 +193,13 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
     if (debouncedSearchQuery.trim()) {
       const query = debouncedSearchQuery.trim();
       result = result.filter((artwork) =>
-        matchesAnySearch(query, [artwork.title, artwork.artist, artwork.description])
+        matchesAnySearch(query, [
+          artwork.title,
+          artwork.title_en,
+          artwork.artist,
+          artwork.artist_en,
+          artwork.description,
+        ])
       );
     }
 

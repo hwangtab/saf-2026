@@ -14,6 +14,7 @@ type ArtworkRow = {
   id: string;
   artist_id: string | null;
   title: string;
+  title_en: string | null;
   description: string | null;
   size: string | null;
   material: string | null;
@@ -29,9 +30,12 @@ type ArtworkRow = {
 type ArtistRow = {
   id: string;
   name_ko: string | null;
+  name_en: string | null;
   bio: string | null;
+  bio_en: string | null;
   profile?: string | null;
   history: string | null;
+  history_en: string | null;
 };
 
 type TestimonialRow = {
@@ -68,8 +72,8 @@ type FAQRow = {
 };
 
 const ARTWORK_SELECT_COLUMNS =
-  'id, artist_id, title, description, size, material, year, edition, price, images, shop_url, status, category';
-const ARTIST_SELECT_COLUMNS = 'id, name_ko, bio, history';
+  'id, artist_id, title, title_en, description, size, material, year, edition, price, images, shop_url, status, category';
+const ARTIST_SELECT_COLUMNS = 'id, name_ko, name_en, bio, bio_en, history, history_en';
 const ARTWORK_DATA_REVALIDATE_SECONDS = 300;
 
 function pickRandomItems<T>(items: T[], limit: number): T[] {
@@ -84,7 +88,9 @@ function pickRandomItems<T>(items: T[], limit: number): T[] {
 const mapArtworkRow = (item: ArtworkRow, artist?: ArtistRow | null): Artwork => ({
   id: item.id,
   artist: artist?.name_ko || 'Unknown Artist',
+  artist_en: artist?.name_en || undefined,
   title: item.title,
+  title_en: item.title_en || undefined,
   description: item.description || '',
   size: item.size || '',
   material: item.material || '',
@@ -95,8 +101,10 @@ const mapArtworkRow = (item: ArtworkRow, artist?: ArtistRow | null): Artwork => 
   shopUrl: item.shop_url || '',
   sold: item.status === 'sold' || item.status === 'reserved',
   category: item.category || undefined,
-  profile: artist?.profile || artist?.bio || '', // Support both bio and profile fields
+  profile: artist?.profile || artist?.bio || '',
+  profile_en: artist?.bio_en || undefined,
   history: artist?.history || '',
+  history_en: artist?.history_en || undefined,
 });
 
 const getSupabaseArtworksUncached = async (): Promise<Artwork[]> => {

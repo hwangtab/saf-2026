@@ -29,7 +29,13 @@ export default async function ArtworksPage() {
   const tBreadcrumbs = await getTranslations('breadcrumbs');
   const artworks = await getSupabaseArtworks();
   const listArtworks: ArtworkListItem[] = artworks.map(
-    ({ profile: _profile, history: _history, ...rest }: Artwork) => rest
+    ({
+      profile: _profile,
+      history: _history,
+      profile_en: _pe,
+      history_en: _he,
+      ...rest
+    }: Artwork) => rest
   );
   const breadcrumbSchema = createBreadcrumbSchema([
     { name: tBreadcrumbs('home'), url: SITE_URL },

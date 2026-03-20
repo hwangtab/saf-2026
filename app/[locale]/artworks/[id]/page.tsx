@@ -97,20 +97,41 @@ export default async function ArtworkDetailPage({ params }: Props) {
     if (containsHangul(value)) return t('originalKoreanDetail');
     return value;
   };
-  const localizeLongText = (value: string | null | undefined, fallback: string): string | null => {
-    if (!value) return null;
-    if (locale === 'en' && containsHangul(value)) {
-      return fallback;
+  const localizeLongText = (
+    value: string | null | undefined,
+    enValue: string | null | undefined,
+    fallback: string
+  ): string | null => {
+    if (!value && !enValue) return null;
+    if (locale === 'en') {
+      if (enValue?.trim()) return enValue;
+      if (value && !containsHangul(value)) return value;
+      if (value) return fallback;
+      return null;
     }
-    return value;
+    return value || null;
   };
-  const localizedProfile = localizeLongText(artwork.profile, t('originalKoreanProfile'));
-  const localizedDescription = localizeLongText(artwork.description, t('originalKoreanNote'));
-  const localizedHistory = localizeLongText(artwork.history, t('originalKoreanHistory'));
+  const localizedProfile = localizeLongText(
+    artwork.profile,
+    artwork.profile_en,
+    t('originalKoreanProfile')
+  );
+  const localizedDescription = localizeLongText(
+    artwork.description,
+    undefined,
+    t('originalKoreanNote')
+  );
+  const localizedHistory = localizeLongText(
+    artwork.history,
+    artwork.history_en,
+    t('originalKoreanHistory')
+  );
   const localizedPrice = localizeDataValue(artwork.price);
   const localizedMaterial = localizeDataValue(artwork.material);
   const localizedSize = localizeDataValue(artwork.size);
   const localizedEdition = localizeDataValue(artwork.edition);
+  const displayTitle = locale === 'en' && artwork.title_en ? artwork.title_en : artwork.title;
+  const displayArtist = locale === 'en' && artwork.artist_en ? artwork.artist_en : artwork.artist;
   const hasActionablePrice = parsedPrice !== Infinity;
 
   // Generate JSON-LD schemas
@@ -138,7 +159,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
         className="pb-24 md:pb-32 pt-[calc(4rem+env(safe-area-inset-top,0px))]"
       >
         <Suspense fallback={<div className="h-[57px] border-b bg-white/80" />}>
-          <ArtworkDetailNav artist={artwork.artist} title={artwork.title} />
+          <ArtworkDetailNav artist={displayArtist} title={displayTitle} />
         </Suspense>
 
         <article className="container-max pt-12 md:pt-20">
@@ -147,8 +168,8 @@ export default async function ArtworkDetailPage({ params }: Props) {
             <div className="space-y-8">
               <ArtworkImage
                 images={artwork.images}
-                title={artwork.title}
-                artist={artwork.artist}
+                title={displayTitle}
+                artist={displayArtist}
                 sold={artwork.sold}
               />
 
@@ -158,11 +179,11 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   id="artwork-title-mobile"
                   className="text-2xl font-bold font-sans text-charcoal break-keep text-center"
                 >
-                  {artwork.title}
+                  {displayTitle}
                 </h1>
                 <div className="flex flex-col items-center gap-1">
                   <p id="artist-name-mobile" className="text-lg text-gray-600 font-medium">
-                    {artwork.artist}
+                    {displayArtist}
                   </p>
                   {localizedPrice && (
                     <p className="text-xl font-bold text-charcoal">{localizedPrice}</p>
@@ -282,10 +303,10 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 <span className="text-sm text-gray-500 mr-2">{t('share')}</span>
                 <ShareButtonsWrapper
                   url={`${SITE_URL}/artworks/${artwork.id}`}
-                  title={t('shareTitle', { title: artwork.title, artist: artwork.artist })}
+                  title={t('shareTitle', { title: displayTitle, artist: displayArtist })}
                   description={t('shareDescription', {
-                    title: artwork.title,
-                    artist: artwork.artist,
+                    title: displayTitle,
+                    artist: displayArtist,
                   })}
                 />
               </div>
@@ -403,10 +424,10 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   id="artwork-title"
                   className="text-3xl md:text-4xl font-bold font-sans text-charcoal mb-2 break-keep"
                 >
-                  {artwork.title}
+                  {displayTitle}
                 </h1>
                 <p id="artist-name" className="text-xl text-gray-600 font-medium">
-                  {artwork.artist}
+                  {displayArtist}
                 </p>
               </header>
 
@@ -512,7 +533,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
             <div className="mt-24 pt-24 border-t border-gray-100">
               <div className="flex items-center justify-between mb-10">
                 <h2 className="text-2xl font-bold text-charcoal">
-                  {t('otherWorks', { artist: artwork.artist })}
+                  {t('otherWorks', { artist: displayArtist })}
                 </h2>
                 <Link
                   href={`/artworks/artist/${encodeURIComponent(artwork.artist)}`}

@@ -50,18 +50,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   // Find valid profile or note from any of the artist's artworks
   const artistProfile = artistArtworks.find((a) => a.profile)?.profile || '';
+  const artistProfileEn = artistArtworks.find((a) => a.profile_en)?.profile_en || '';
   const artistNote = artistArtworks.find((a) => a.description)?.description || '';
 
+  const effectiveProfile = locale === 'en' && artistProfileEn ? artistProfileEn : artistProfile;
   const profileSnippet =
-    artistProfile && !(locale === 'en' && containsHangul(artistProfile))
-      ? `${artistProfile.substring(0, 200)}... `
+    effectiveProfile && !(locale === 'en' && containsHangul(effectiveProfile))
+      ? `${effectiveProfile.substring(0, 200)}... `
       : '';
   const noteSnippet =
     artistNote && !(locale === 'en' && containsHangul(artistNote))
       ? `${artistNote.substring(0, 200)}... `
       : '';
 
-  const formattedName = formatArtistName(artistName, locale !== 'en');
+  const displayArtistName =
+    locale === 'en' && artistArtworks[0]?.artist_en ? artistArtworks[0].artist_en : artistName;
+  const formattedName = formatArtistName(displayArtistName, locale !== 'en');
   const seoDescription =
     t('metaDescription', { artist: formattedName }) +
     (profileSnippet || noteSnippet || t('metaFallback'));
@@ -85,7 +89,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           url: imageUrl,
           width: 1200,
           height: 630,
-          alt: t('metaImageAlt', { artist: formattedName, title: representativeArtwork.title }),
+          alt: t('metaImageAlt', {
+            artist: formattedName,
+            title:
+              locale === 'en' && representativeArtwork.title_en
+                ? representativeArtwork.title_en
+                : representativeArtwork.title,
+          }),
         },
       ],
       type: 'website',
@@ -117,7 +127,7 @@ export default async function ArtistPage({ params }: Props) {
   const artistName = decodeURIComponent(artist);
   const artistArtworks = await getSupabaseArtworksByArtist(artistName);
   const listArtworks: ArtworkListItem[] = artistArtworks.map(
-    ({ profile: _profile, history: _history, ...rest }: Artwork) => rest
+    ({ profile: _p, history: _h, profile_en: _pe, history_en: _he, ...rest }: Artwork) => rest
   );
   const t = await getTranslations('artistPage');
 
@@ -133,11 +143,19 @@ export default async function ArtistPage({ params }: Props) {
   // Description Logic: Profile > Description (Note) > Default
   // Find valid profile or note from any of the artist's artworks (usually they are same for all)
   const artistProfile = artistArtworks.find((a) => a.profile)?.profile;
+  const artistProfileEn = artistArtworks.find((a) => a.profile_en)?.profile_en;
   const artistNote = artistArtworks.find((a) => a.description)?.description;
 
-  const formattedName = formatArtistName(artistName, locale !== 'en');
+  const displayArtistName =
+    locale === 'en' && artistArtworks[0]?.artist_en ? artistArtworks[0].artist_en : artistName;
+  const formattedName = formatArtistName(displayArtistName, locale !== 'en');
   const rawDescription =
-    artistProfile || artistNote || t('defaultDescription', { artist: formattedName });
+    locale === 'en'
+      ? artistProfileEn ||
+        artistProfile ||
+        artistNote ||
+        t('defaultDescription', { artist: formattedName })
+      : artistProfile || artistNote || t('defaultDescription', { artist: formattedName });
   const localizedDescription =
     locale === 'en' && containsHangul(rawDescription)
       ? t('originalKoreanDescription')
@@ -153,14 +171,19 @@ export default async function ArtistPage({ params }: Props) {
 
   // Person JSON-LD Schema for SEO (enhanced with credentials, expertise, work samples)
   const artistHistory = artistArtworks.find((a) => a.history)?.history;
+  const artistHistoryEn = artistArtworks.find((a) => a.history_en)?.history_en;
+  const schemaProfile = locale === 'en' ? artistProfileEn || artistProfile : artistProfile;
   const schemaDescription =
-    locale === 'en' && artistProfile && containsHangul(artistProfile)
+    locale === 'en' && schemaProfile && containsHangul(schemaProfile)
       ? t('originalKoreanDescription')
-      : artistProfile || artistNote || undefined;
+      : schemaProfile || artistNote || undefined;
+  const effectiveHistory = locale === 'en' ? artistHistoryEn || artistHistory : artistHistory;
   const schemaHistory =
-    locale === 'en' && artistHistory && containsHangul(artistHistory) ? undefined : artistHistory;
+    locale === 'en' && effectiveHistory && containsHangul(effectiveHistory)
+      ? undefined
+      : effectiveHistory;
   const personSchema = generateEnhancedArtistSchema({
-    name: artistName,
+    name: displayArtistName,
     description: schemaDescription,
     image: representativeArtwork.images[0],
     url: pageUrl,
@@ -168,7 +191,7 @@ export default async function ArtistPage({ params }: Props) {
     history: schemaHistory,
     artworks: artistArtworks.map((a) => ({
       id: a.id,
-      title: a.title,
+      title: locale === 'en' && a.title_en ? a.title_en : a.title,
       image: a.images[0],
     })),
   });

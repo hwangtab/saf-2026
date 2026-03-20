@@ -16,6 +16,8 @@ export interface ArtistData {
   profile: string;
   history: string;
   owner_id?: string;
+  profile_en?: string;
+  history_en?: string;
 }
 
 export type EditionType = 'unique' | 'limited' | 'open';
@@ -56,6 +58,7 @@ export interface BaseArtwork {
   shopUrl?: string;
   sold?: boolean;
   hidden?: boolean;
+  title_en?: string;
 }
 
 export interface ArtworkSale {
@@ -79,13 +82,19 @@ export interface ArtworkSale {
 export interface HydratedArtwork extends BaseArtwork {
   profile?: string;
   history?: string;
+  artist_en?: string;
+  profile_en?: string;
+  history_en?: string;
 }
 
 // Backward compatibility alias
 export type Artwork = HydratedArtwork;
 
 // Lightweight artwork shape for gallery/list UIs
-export type ArtworkListItem = Omit<HydratedArtwork, 'profile' | 'history'>;
+export type ArtworkListItem = Omit<
+  HydratedArtwork,
+  'profile' | 'history' | 'profile_en' | 'history_en'
+>;
 
 export interface ArtworkCardData {
   id: string;
@@ -96,6 +105,8 @@ export interface ArtworkCardData {
   sold?: boolean;
   material?: string;
   size?: string;
+  artist_en?: string;
+  title_en?: string;
 }
 
 export interface Video {

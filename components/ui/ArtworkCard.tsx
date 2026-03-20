@@ -39,18 +39,23 @@ const getHref = (artwork: ArtworkCardData, returnTo?: string) => {
 };
 const ARTWORK_PLACEHOLDER_IMAGE = '/images/og-image.png';
 
-const getSafeTitle = (artwork: ArtworkCardData, untitledLabel: string) =>
-  artwork.title?.trim() || untitledLabel;
-const getSafeArtist = (artwork: ArtworkCardData, unknownArtistLabel: string) =>
-  artwork.artist?.trim() || unknownArtistLabel;
+const getSafeTitle = (artwork: ArtworkCardData, untitledLabel: string, locale?: string) =>
+  (locale === 'en' && artwork.title_en?.trim()) || artwork.title?.trim() || untitledLabel;
+const getSafeArtist = (artwork: ArtworkCardData, unknownArtistLabel: string, locale?: string) =>
+  (locale === 'en' && artwork.artist_en?.trim()) || artwork.artist?.trim() || unknownArtistLabel;
 
 const getImageSrc = (artwork: ArtworkCardData, variant: ArtworkCardVariant) =>
   resolveArtworkImageUrlForPreset(
     artwork.images?.[0] || ARTWORK_PLACEHOLDER_IMAGE,
     variant === 'slider' ? 'slider' : 'card'
   );
-const getImageAlt = (artwork: ArtworkCardData, untitledLabel: string, unknownArtistLabel: string) =>
-  `${getSafeTitle(artwork, untitledLabel)} - ${getSafeArtist(artwork, unknownArtistLabel)}`;
+const getImageAlt = (
+  artwork: ArtworkCardData,
+  untitledLabel: string,
+  unknownArtistLabel: string,
+  locale?: string
+) =>
+  `${getSafeTitle(artwork, untitledLabel, locale)} - ${getSafeArtist(artwork, unknownArtistLabel, locale)}`;
 
 function SoldBadge({ variant }: { variant: ArtworkCardVariant }) {
   return (
@@ -116,7 +121,7 @@ function ArtworkCard({
         <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100 shadow-sm group-hover:shadow-xl transition-all duration-300">
           <SafeImage
             src={getImageSrc(artwork, variant)}
-            alt={getImageAlt(artwork, untitledLabel, unknownArtistLabel)}
+            alt={getImageAlt(artwork, untitledLabel, unknownArtistLabel, locale)}
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-300"
             sizes={config.imageSizes}
@@ -125,10 +130,10 @@ function ArtworkCard({
         </div>
         <div className="mt-3 px-1">
           <p className="text-sm font-medium text-charcoal truncate group-hover:text-primary transition-colors">
-            {getSafeTitle(artwork, untitledLabel)}
+            {getSafeTitle(artwork, untitledLabel, locale)}
           </p>
           <p className="text-xs text-gray-500 truncate">
-            {getSafeArtist(artwork, unknownArtistLabel)}
+            {getSafeArtist(artwork, unknownArtistLabel, locale)}
           </p>
           <p className="text-sm font-semibold text-charcoal mt-1">{localizedPrice}</p>
         </div>
@@ -149,7 +154,7 @@ function ArtworkCard({
           <div className="absolute inset-0 shimmer-loading" />
           <SafeImage
             src={getImageSrc(artwork, variant)}
-            alt={getImageAlt(artwork, untitledLabel, unknownArtistLabel)}
+            alt={getImageAlt(artwork, untitledLabel, unknownArtistLabel, locale)}
             loading={isAboveFold ? 'eager' : 'lazy'}
             priority={isAboveFold}
             fill
@@ -176,7 +181,7 @@ function ArtworkCard({
                 : 'text-charcoal group-hover:text-primary'
             )}
           >
-            {getSafeTitle(artwork, untitledLabel)}
+            {getSafeTitle(artwork, untitledLabel, locale)}
           </h2>
           <p
             className={cn(
@@ -184,7 +189,7 @@ function ArtworkCard({
               theme === 'dark' ? 'text-white/75' : 'text-charcoal-muted'
             )}
           >
-            {getSafeArtist(artwork, unknownArtistLabel)}
+            {getSafeArtist(artwork, unknownArtistLabel, locale)}
           </p>
           <p
             className={cn(

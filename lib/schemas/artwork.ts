@@ -21,6 +21,8 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
     : `${SITE_URL}${resolvedImageUrl}`;
 
   const isEnglish = locale === 'en';
+  const titleForLocale = isEnglish && artwork.title_en ? artwork.title_en : artwork.title;
+  const artistForLocale = isEnglish && artwork.artist_en ? artwork.artist_en : artwork.artist;
   const materialForLocale = sanitizeForLocale(
     artwork.material,
     locale,
@@ -33,8 +35,8 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
   );
 
   const summary = [
-    isEnglish ? `Artist: ${artwork.artist}` : `작가: ${artwork.artist}`,
-    isEnglish ? `Title: ${artwork.title}` : `작품명: ${artwork.title}`,
+    isEnglish ? `Artist: ${artistForLocale}` : `작가: ${artwork.artist}`,
+    isEnglish ? `Title: ${titleForLocale}` : `작품명: ${artwork.title}`,
     artwork.year ? (isEnglish ? `Year: ${artwork.year}` : `제작년도: ${artwork.year}`) : '',
     materialForLocale
       ? isEnglish
@@ -47,7 +49,7 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
     .join(', ');
 
   const profileSnippet = sanitizeForLocale(
-    artwork.profile,
+    isEnglish ? artwork.profile_en || artwork.profile : artwork.profile,
     locale,
     isEnglish ? 'Original profile available in Korean.' : ''
   ).substring(0, 200);
@@ -63,7 +65,7 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
     (profileSnippet ? `${profileSnippet}...` : '');
 
   const baseMetadata = createPageMetadata(
-    `${artwork.title} - ${artwork.artist}`,
+    `${titleForLocale} - ${artistForLocale}`,
     seoDescription.substring(0, 300),
     `/artworks/${artwork.id}`,
     imageUrl,
@@ -76,8 +78,8 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
   return {
     ...baseMetadata,
     keywords: [
-      artwork.artist,
-      artwork.title,
+      artistForLocale,
+      titleForLocale,
       ...mediumKeywords,
       ...(isEnglish ? ['SAF', 'artist solidarity', 'art purchase'] : ['씨앗페']),
       ...(isEnglish ? ['SAF 2026', 'Seed Art Festival 2026'] : ['씨앗페 2026', 'SAF 2026']),
@@ -123,6 +125,8 @@ export function generateArtworkJsonLd(
   locale: 'ko' | 'en' = 'ko'
 ) {
   const isEnglish = locale === 'en';
+  const titleForLocale = isEnglish && artwork.title_en ? artwork.title_en : artwork.title;
+  const artistForLocale = isEnglish && artwork.artist_en ? artwork.artist_en : artwork.artist;
   const resolvedImageUrl = resolveSeoArtworkImageUrl(artwork.images[0]);
   const materialForLocale = sanitizeForLocale(
     artwork.material,
@@ -134,9 +138,15 @@ export function generateArtworkJsonLd(
     locale,
     isEnglish ? 'Original details in Korean' : ''
   );
-  const profileForLocale = sanitizeForLocale(artwork.profile, locale);
+  const profileForLocale = sanitizeForLocale(
+    isEnglish ? artwork.profile_en || artwork.profile : artwork.profile,
+    locale
+  );
   const descriptionForLocale = sanitizeForLocale(artwork.description, locale);
-  const historyForLocale = sanitizeForLocale(artwork.history, locale);
+  const historyForLocale = sanitizeForLocale(
+    isEnglish ? artwork.history_en || artwork.history : artwork.history,
+    locale
+  );
   const editionForLocale = sanitizeForLocale(
     artwork.edition,
     locale,
@@ -147,13 +157,13 @@ export function generateArtworkJsonLd(
     descriptionForLocale ||
     profileForLocale ||
     (isEnglish
-      ? `Artwork titled "${artwork.title}" by ${artwork.artist}`
+      ? `Artwork titled "${titleForLocale}" by ${artistForLocale}`
       : `${artwork.artist}의 작품 "${artwork.title}"`);
 
   // Build alternateName for image SEO
   const imageAlternateName = [
     isEnglish
-      ? `${artwork.title} by ${artwork.artist}`
+      ? `${titleForLocale} by ${artistForLocale}`
       : `${formatArtistName(artwork.artist)}의 ${artwork.title}`,
     artwork.year,
     materialForLocale,
@@ -243,7 +253,7 @@ export function generateArtworkJsonLd(
   const productSchema = {
     '@context': 'https://schema.org',
     '@type': ['VisualArtwork', 'Product'],
-    name: artwork.title,
+    name: titleForLocale,
     inLanguage: isEnglish ? 'en' : 'ko',
     artform: getArtformForSchema(materialForLocale || ''),
     // Category for faceted navigation SEO
@@ -260,7 +270,7 @@ export function generateArtworkJsonLd(
       url: resolvedImageUrl.startsWith('http')
         ? resolvedImageUrl
         : `${SITE_URL}${resolvedImageUrl}`,
-      name: `${artwork.title} - ${artwork.artist}`,
+      name: `${titleForLocale} - ${artistForLocale}`,
       alternateName: imageAlternateName,
     },
     description: schemaDescription.substring(0, 500),
@@ -273,7 +283,7 @@ export function generateArtworkJsonLd(
     },
     creator: {
       '@type': 'Person',
-      name: artwork.artist,
+      name: artistForLocale,
       description: profileForLocale || undefined,
     },
     artMedium: materialForLocale || undefined,
@@ -353,7 +363,7 @@ export function generateArtworkJsonLd(
       ? [
           { name: 'Home', url: SITE_URL },
           { name: 'Artworks', url: `${SITE_URL}/artworks` },
-          { name: artwork.title, url: `${SITE_URL}/artworks/${artwork.id}` },
+          { name: titleForLocale, url: `${SITE_URL}/artworks/${artwork.id}` },
         ]
       : [
           BREADCRUMB_HOME,
@@ -410,7 +420,7 @@ export function generateArtworkListSchema(artworks: Artwork[], locale: 'ko' | 'e
       '@type': 'ListItem',
       position: index + 1,
       url: `${SITE_URL}/artworks/${artwork.id}`,
-      name: artwork.title,
+      name: isEnglish && artwork.title_en ? artwork.title_en : artwork.title,
       image: resolveSeoArtworkImageUrl(artwork.images[0]).startsWith('http')
         ? resolveSeoArtworkImageUrl(artwork.images[0])
         : `${SITE_URL}${resolveSeoArtworkImageUrl(artwork.images[0])}`,

@@ -69,5 +69,7 @@ export function getArtworkWithArtistData(
     ...artwork,
     profile: artwork.profile || artistInfo.profile || '',
     history: artwork.history || artistInfo.history || '',
+    profile_en: artwork.profile_en || artistInfo.profile_en || undefined,
+    history_en: artwork.history_en || artistInfo.history_en || undefined,
   };
 }
