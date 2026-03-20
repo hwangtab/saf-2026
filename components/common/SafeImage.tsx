@@ -1,7 +1,6 @@
 'use client';
 
 import ExportedImage from 'next-image-export-optimizer';
-import Image from 'next/image';
 import type { ImageProps } from 'next/image';
 import { useEffect, useState, useMemo, type ComponentProps } from 'react';
 import {
@@ -42,20 +41,6 @@ function generateArtworkSrcSet(src: string): string | undefined {
   return candidates.map((candidate) => `${candidate.variantUrl} ${candidate.width}w`).join(', ');
 }
 
-function optimizedRemoteLoader({
-  src,
-  width,
-  quality,
-}: {
-  src: string;
-  width: number;
-  quality?: number;
-}): string {
-  const encodedSrc = encodeURIComponent(src);
-  const targetQuality = quality ?? 75;
-  return `/_next/image?url=${encodedSrc}&w=${width}&q=${targetQuality}`;
-}
-
 function RemoteSafeImage({ src, sizes, ...props }: { src: string } & Omit<ImageProps, 'src'>) {
   const [currentSrc, setCurrentSrc] = useState(src);
   const { alt, onError, ...restProps } = props;
@@ -70,80 +55,59 @@ function RemoteSafeImage({ src, sizes, ...props }: { src: string } & Omit<ImageP
     setCurrentSrc(src);
   }, [src]);
 
-  // For artwork images, use native img to avoid hydration issues
-  if (isArtwork) {
-    // Extract only the props we need, ignore Next.js Image specific props
-    const { fill, width, height, className, loading, priority, style } = restProps;
+  const { fill, width, height, className, loading, priority, style } = restProps;
 
-    // Determine default sizes if not provided
-    const defaultSizes = '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw';
-    const effectiveSizes = sizes || defaultSizes;
+  const defaultSizes = '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw';
+  const effectiveSizes = sizes || defaultSizes;
 
-    const handleError = (event: React.SyntheticEvent<HTMLImageElement>) => {
-      onError?.(event);
+  const handleError = (event: React.SyntheticEvent<HTMLImageElement>) => {
+    onError?.(event);
+    if (isArtwork) {
       const fallbackSrc = resolveArtworkImageFallbackUrl(currentSrc);
       if (fallbackSrc !== currentSrc) {
         setCurrentSrc(fallbackSrc);
       }
-    };
-
-    // Handle fill mode
-    if (fill) {
-      return (
-        <img
-          src={currentSrc}
-          srcSet={srcSet}
-          sizes={srcSet ? effectiveSizes : undefined}
-          alt={alt || ''}
-          className={className}
-          loading={priority ? 'eager' : (loading as 'lazy' | 'eager') || 'lazy'}
-          fetchPriority={priority ? 'high' : undefined}
-          decoding={priority ? 'sync' : 'async'}
-          style={{
-            position: 'absolute',
-            height: '100%',
-            width: '100%',
-            inset: 0,
-            objectFit: (style as React.CSSProperties)?.objectFit || 'cover',
-            ...style,
-          }}
-          onError={handleError}
-        />
-      );
     }
+  };
 
+  if (fill) {
     return (
       <img
         src={currentSrc}
         srcSet={srcSet}
         sizes={srcSet ? effectiveSizes : undefined}
         alt={alt || ''}
-        width={typeof width === 'number' ? width : undefined}
-        height={typeof height === 'number' ? height : undefined}
         className={className}
         loading={priority ? 'eager' : (loading as 'lazy' | 'eager') || 'lazy'}
         fetchPriority={priority ? 'high' : undefined}
         decoding={priority ? 'sync' : 'async'}
-        style={style as React.CSSProperties}
+        style={{
+          position: 'absolute',
+          height: '100%',
+          width: '100%',
+          inset: 0,
+          objectFit: (style as React.CSSProperties)?.objectFit || 'cover',
+          ...style,
+        }}
         onError={handleError}
       />
     );
   }
 
   return (
-    <Image
-      {...restProps}
+    <img
       src={currentSrc}
+      srcSet={srcSet}
+      sizes={srcSet ? effectiveSizes : undefined}
       alt={alt || ''}
-      sizes={sizes || (restProps.fill ? '100vw' : sizes)}
-      loader={optimizedRemoteLoader}
-      onError={(event) => {
-        onError?.(event);
-        const fallbackSrc = resolveArtworkImageFallbackUrl(currentSrc);
-        if (fallbackSrc !== currentSrc) {
-          setCurrentSrc(fallbackSrc);
-        }
-      }}
+      width={typeof width === 'number' ? width : undefined}
+      height={typeof height === 'number' ? height : undefined}
+      className={className}
+      loading={priority ? 'eager' : (loading as 'lazy' | 'eager') || 'lazy'}
+      fetchPriority={priority ? 'high' : undefined}
+      decoding={priority ? 'sync' : 'async'}
+      style={style as React.CSSProperties}
+      onError={handleError}
     />
   );
 }
