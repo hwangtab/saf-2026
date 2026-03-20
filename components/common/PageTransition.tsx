@@ -22,7 +22,7 @@ export default function PageTransition({ children }: { children: React.ReactNode
     const el = containerRef.current;
     if (!el) return;
 
-    el.style.opacity = '0.96';
+    el.style.opacity = '0.90';
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         el.style.opacity = '1';
@@ -35,7 +35,7 @@ export default function PageTransition({ children }: { children: React.ReactNode
       ref={containerRef}
       data-route-path={pathname || ''}
       className="w-full h-full motion-reduce:!opacity-100"
-      style={{ transition: 'opacity 150ms ease-out' }}
+      style={{ transition: 'opacity 200ms ease-out' }}
     >
       {children}
     </div>

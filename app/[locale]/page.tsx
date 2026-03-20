@@ -25,17 +25,17 @@ import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates'
 export const revalidate = 1800;
 
 const DynamicCounter = dynamic(() => import('@/components/features/DynamicCounter'), {
-  loading: () => <div className="w-full h-[180px] rounded-xl bg-canvas " aria-hidden="true" />,
+  loading: () => <div className="w-full h-[180px] rounded-xl bg-canvas" aria-hidden="true" />,
 });
 const FAQList = dynamic(() => import('@/components/features/FAQList'), {
-  loading: () => <div className="w-full h-[280px] rounded-xl bg-white/60 " aria-hidden="true" />,
+  loading: () => <div className="w-full h-[280px] rounded-xl bg-white/60" aria-hidden="true" />,
 });
 const ArtworkHighlightSlider = dynamic(
   () => import('@/components/features/ArtworkHighlightSlider'),
   {
     loading: () => (
       <Section variant="canvas-soft" className="py-16 md:py-24 overflow-hidden">
-        <div className="container-max h-[300px]  rounded-xl bg-white/70" aria-hidden="true" />
+        <div className="container-max h-[300px] rounded-xl bg-white/70" aria-hidden="true" />
       </Section>
     ),
   }
@@ -280,7 +280,7 @@ export default async function Home() {
           <SectionTitle className="mb-12">{t('faqTitle')}</SectionTitle>
           <Suspense
             fallback={
-              <div className="w-full h-[280px] rounded-xl bg-white/60 " aria-hidden="true" />
+              <div className="w-full h-[280px] rounded-xl bg-white/60" aria-hidden="true" />
             }
           >
             <HomeFAQSection locale={locale} />
@@ -326,10 +326,10 @@ function HomeDataSectionsFallback() {
   return (
     <>
       <Section variant="canvas-soft" className="py-16 md:py-24 overflow-hidden">
-        <div className="container-max h-[300px]  rounded-xl bg-white/70" aria-hidden="true" />
+        <div className="container-max h-[300px] rounded-xl bg-white/70" aria-hidden="true" />
       </Section>
       <div className="container-max py-8">
-        <div className="w-full h-[180px] rounded-xl bg-canvas " aria-hidden="true" />
+        <div className="w-full h-[180px] rounded-xl bg-canvas" aria-hidden="true" />
       </div>
     </>
   );
