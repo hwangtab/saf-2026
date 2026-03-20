@@ -1,8 +1,9 @@
 'use client';
 
-import { useCallback, useRef, useState, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { fetchWithRetry, type FetchWithRetryOptions, FetchError } from '@/lib/fetchWithRetry';
 import { useToast } from '@/lib/hooks/useToast';
+import { useRetry, type UseRetryReturn } from '@/lib/hooks/useRetry';
 
 export interface UseFetchWithRetryOptions<T> extends FetchWithRetryOptions {
   /** 마운트 시 자동 실행 여부 */
@@ -23,22 +24,14 @@ export interface UseFetchWithRetryOptions<T> extends FetchWithRetryOptions {
   onError?: (error: Error) => void;
 }
 
-export interface UseFetchWithRetryState<T> {
-  data: T | null;
-  error: Error | null;
-  isLoading: boolean;
-  isRetrying: boolean;
-  retryCount: number;
-}
-
-export interface UseFetchWithRetryReturn<T> extends UseFetchWithRetryState<T> {
-  execute: (overrideUrl?: string) => Promise<T | null>;
+export interface UseFetchWithRetryReturn<T> extends UseRetryReturn<T> {
   refetch: () => Promise<T | null>;
-  reset: () => void;
 }
 
 /**
  * Toast 알림이 통합된 fetch with retry 훅
+ *
+ * 내부적으로 useRetry를 활용하며, fetch 특화 기능과 Toast 알림을 추가합니다.
  *
  * @example
  * ```tsx
@@ -76,167 +69,88 @@ export function useFetchWithRetry<T = unknown>(
   } = options;
 
   const toast = useToast();
-
-  const [state, setState] = useState<UseFetchWithRetryState<T>>({
-    data: null,
-    error: null,
-    isLoading: immediate,
-    isRetrying: false,
-    retryCount: 0,
-  });
-
-  const mountedRef = useRef(true);
-  const executingRef = useRef(false);
   const retryToastIdRef = useRef<string | null>(null);
 
-  const execute = useCallback(
-    async (overrideUrl?: string): Promise<T | null> => {
-      if (executingRef.current) return null;
-      executingRef.current = true;
-
-      setState((prev) => ({
-        ...prev,
-        isLoading: true,
-        error: null,
-        retryCount: 0,
-        isRetrying: false,
-      }));
-
-      try {
-        const result = await fetchWithRetry<T>(overrideUrl || url, {
-          ...fetchOptions,
-          onRetry: (attempt, error, nextDelay) => {
-            if (mountedRef.current) {
-              setState((prev) => ({
-                ...prev,
-                isRetrying: true,
-                retryCount: attempt,
-              }));
-
-              // 재시도 Toast 표시
-              if (showRetryToast && !retryToastIdRef.current) {
-                retryToastIdRef.current = toast.warning(
-                  `${retryMessage} (${attempt}/${fetchOptions.maxRetries || 3})`,
-                  { duration: nextDelay + 1000 }
-                );
-              }
-            }
-
-            fetchOptions.onRetry?.(attempt, error, nextDelay);
-          },
-        });
-
-        // 재시도 Toast 닫기
-        if (retryToastIdRef.current) {
-          toast.dismissToast(retryToastIdRef.current);
-          retryToastIdRef.current = null;
-        }
-
-        if (mountedRef.current) {
-          setState({
-            data: result,
-            error: null,
-            isLoading: false,
-            isRetrying: false,
-            retryCount: 0,
-          });
-
-          if (successMessage) {
-            toast.success(successMessage);
+  const fetchFn = useCallback(
+    () =>
+      fetchWithRetry<T>(url, {
+        ...fetchOptions,
+        onRetry: (attempt, error, nextDelay) => {
+          // 재시도 Toast 표시
+          if (showRetryToast && !retryToastIdRef.current) {
+            retryToastIdRef.current = toast.warning(
+              `${retryMessage} (${attempt}/${fetchOptions.maxRetries || 3})`,
+              { duration: nextDelay + 1000 }
+            );
           }
-
-          onSuccess?.(result);
-        }
-
-        return result;
-      } catch (error) {
-        // 재시도 Toast 닫기
-        if (retryToastIdRef.current) {
-          toast.dismissToast(retryToastIdRef.current);
-          retryToastIdRef.current = null;
-        }
-
-        const err = error instanceof Error ? error : new Error(String(error));
-
-        if (mountedRef.current) {
-          setState((prev) => ({
-            ...prev,
-            error: err,
-            isLoading: false,
-            isRetrying: false,
-          }));
-
-          if (showErrorToast) {
-            const message =
-              error instanceof FetchError ? `${errorMessage} (${error.status})` : errorMessage;
-            toast.error(message);
-          }
-
-          onError?.(err);
-        }
-
-        return null;
-      } finally {
-        executingRef.current = false;
-      }
-    },
-    [
-      url,
-      fetchOptions,
-      showRetryToast,
-      showErrorToast,
-      successMessage,
-      errorMessage,
-      retryMessage,
-      toast,
-      onSuccess,
-      onError,
-    ]
+          fetchOptions.onRetry?.(attempt, error, nextDelay);
+        },
+      }),
+    [url, fetchOptions, showRetryToast, retryMessage, toast]
   );
 
-  const refetch = useCallback(() => {
-    setState((prev) => ({ ...prev, error: null, retryCount: 0 }));
-    return execute();
-  }, [execute]);
+  const retryResult = useRetry<T>(fetchFn, { immediate });
 
-  const reset = useCallback(() => {
-    if (retryToastIdRef.current) {
-      toast.dismissToast(retryToastIdRef.current);
-      retryToastIdRef.current = null;
-    }
-    setState({
-      data: null,
-      error: null,
-      isLoading: false,
-      isRetrying: false,
-      retryCount: 0,
-    });
-  }, [toast]);
-
-  // Immediate execution
+  // Toast side-effects based on state changes
+  const prevLoadingRef = useRef(retryResult.isLoading);
   useEffect(() => {
-    if (immediate) {
-      execute();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    const wasLoading = prevLoadingRef.current;
+    prevLoadingRef.current = retryResult.isLoading;
 
-  // Cleanup on unmount
+    // Transition from loading to not loading = request finished
+    if (wasLoading && !retryResult.isLoading) {
+      // Dismiss retry toast
+      if (retryToastIdRef.current) {
+        toast.dismissToast(retryToastIdRef.current);
+        retryToastIdRef.current = null;
+      }
+
+      if (retryResult.error) {
+        // Error occurred
+        if (showErrorToast) {
+          const message =
+            retryResult.error instanceof FetchError
+              ? `${errorMessage} (${retryResult.error.status})`
+              : errorMessage;
+          toast.error(message);
+        }
+        onError?.(retryResult.error);
+      } else if (retryResult.data !== null) {
+        // Success
+        if (successMessage) {
+          toast.success(successMessage);
+        }
+        onSuccess?.(retryResult.data);
+      }
+    }
+  }, [
+    retryResult.isLoading,
+    retryResult.error,
+    retryResult.data,
+    showErrorToast,
+    errorMessage,
+    successMessage,
+    toast,
+    onSuccess,
+    onError,
+  ]);
+
+  // Cleanup retry toast on unmount
   useEffect(() => {
-    mountedRef.current = true;
     return () => {
-      mountedRef.current = false;
       if (retryToastIdRef.current) {
         toast.dismissToast(retryToastIdRef.current);
       }
     };
   }, [toast]);
 
+  const refetch = useCallback(() => {
+    return retryResult.retryNow();
+  }, [retryResult]);
+
   return {
-    ...state,
-    execute,
+    ...retryResult,
     refetch,
-    reset,
   };
 }
 

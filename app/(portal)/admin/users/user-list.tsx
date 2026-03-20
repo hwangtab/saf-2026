@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import {
   approveUser,
   promoteUserToArtistWithLink,
@@ -52,195 +52,7 @@ export function UserList({
   const locale = useLocale() as 'ko' | 'en';
   const router = useRouter();
   const toast = useToast();
-  const msg = useMemo(
-    () =>
-      locale === 'en'
-        ? {
-            filterConflictNotice:
-              'Role filter conflicting with applicant type was cleared automatically.',
-            filterConflictToast:
-              'Role filter was cleared automatically to prevent applicant type conflict.',
-            selectUnlinkedArtist: 'Please select an unlinked artist to connect.',
-            rejectSuccess: 'Application rejected and account suspended.',
-            exhibitorApproveSuccess: 'Exhibitor application approved.',
-            artistApproveSuccess: 'Artist application approved.',
-            reactivated: 'User has been reactivated.',
-            roleChanged: (role: string) => `Role changed to ${role}.`,
-            searchUnlinkedArtistFailed:
-              'Failed to search unlinked artists. Please try again shortly.',
-            linkedNameConflictFailed: 'Failed to check duplicate-name linked artists.',
-            exhibitorApproveError: 'An error occurred while approving exhibitor.',
-            userDetailsTitle: 'User details',
-            roleUser: 'User',
-            roleArtist: 'Artist',
-            roleExhibitor: 'Exhibitor',
-            roleAdmin: 'Admin',
-            statusActive: 'Active',
-            statusPending: 'Pending',
-            statusSuspended: 'Suspended',
-            artistApplicationInfo: 'Artist application',
-            exhibitorApplicationInfo: 'Exhibitor application',
-            artistName: 'Artist name',
-            representativeName: 'Representative',
-            contact: 'Contact',
-            referrer: 'Referrer',
-            bio: 'Bio',
-            noApplicationInfo: 'No application information.',
-            close: 'Close',
-            promoteArtistTitle: 'Grant Artist role and link profile',
-            unnamed: 'Unnamed',
-            noSubmittedArtistName: 'No submitted artist name.',
-            noSubmittedContact: 'No submitted contact.',
-            targetUser: 'Target user',
-            submittedArtistName: 'Submitted artist name',
-            submittedContact: 'Submitted contact',
-            chooseMode: 'Select processing mode',
-            modeLinkExisting: 'Select unlinked artist',
-            modeCreateAndLink: 'Create and link new artist',
-            modeRoleOnly: 'Change role only',
-            searchUnlinkedArtist: 'Search unlinked artist',
-            searchUnlinkedPlaceholder: 'Search by artist name (KR/EN) or email...',
-            linkedNameConflicts: (count: number) =>
-              `There are ${count} already-linked artists with the same name.`,
-            searchMinChars: 'Enter at least 2 characters to search unlinked artists.',
-            searchingUnlinkedArtist: 'Searching unlinked artists...',
-            searchSlow: 'Search is taking longer than usual. Please wait a moment.',
-            enterSearchKeyword: 'Please enter a search keyword.',
-            noSearchResult: 'No search results.',
-            noPhone: 'No phone',
-            noEmail: 'No email',
-            artworkCount: (count: number) => `${count} artworks`,
-            recommended: 'Recommended',
-            selected: 'Selected',
-            executionSummary: 'Execution summary',
-            summaryActivateStatus: 'Set user status to `active`.',
-            summaryChangeRole: 'Set user role to `artist`.',
-            summaryAutofillContact:
-              'If artist contact fields are empty, auto-fill phone/email from user application data.',
-            summaryLinkSelectedArtist: 'Link with selected artist',
-            summarySelectionRequired: '(selection required)',
-            summaryCreateArtist: 'Create an artist profile from application data and link it.',
-            summaryRoleOnly: 'Change role only without linking an artist profile.',
-            cancel: 'Cancel',
-            approve: 'Approve',
-            approveWithLink: 'Link and approve',
-            approveWithCreate: 'Create and approve',
-            approveConfirmTitle: 'Confirm approval',
-            approveConfirmDescription: (name: string, email: string) =>
-              `Approve application for ${name} (${email})?`,
-            approveConfirmText: 'Approve',
-            rejectConfirmTitle: 'Confirm reject/suspend',
-            rejectConfirmDescription: (name: string, email: string, isPending: boolean) =>
-              `Are you sure you want to ${isPending ? 'reject the application' : 'suspend the account'} for ${name} (${email})?`,
-            rejectConfirmText: (isPending: boolean) => (isPending ? 'Reject' : 'Suspend'),
-            reactivateConfirmTitle: 'Confirm reactivation',
-            reactivateConfirmDescription: (name: string, email: string) =>
-              `Reactivate account for ${name} (${email})?`,
-            reactivateConfirmText: 'Reactivate',
-            roleChangeConfirmTitle: 'Confirm role change',
-            roleChangeConfirmDescription: (name: string, fromRole: string, toRole: string) =>
-              `Change ${name}'s role from ${fromRole} to ${toRole}?`,
-            roleChangeConfirmText: 'Change role',
-            promoteArtistSuccess: 'Artist role granted.',
-            promoteArtistError: 'An error occurred while granting artist role.',
-            rejectError: 'An error occurred while rejecting/suspending account.',
-            approveError: 'An error occurred while approving application.',
-            reactivateError: 'An error occurred while reactivating account.',
-            roleChangeError: 'An error occurred while changing role.',
-          }
-        : {
-            filterConflictNotice: '신청유형과 충돌하는 권한 필터를 자동 해제했습니다.',
-            filterConflictToast: '필터 충돌을 방지하기 위해 권한 필터를 자동 해제했습니다.',
-            selectUnlinkedArtist: '연결할 미연결 작가를 선택해 주세요.',
-            rejectSuccess: '신청을 거절하고 계정을 정지했습니다.',
-            exhibitorApproveSuccess: '출품자 신청을 승인했습니다.',
-            artistApproveSuccess: '작가 신청을 승인했습니다.',
-            reactivated: '사용자를 다시 활성화했습니다.',
-            roleChanged: (role: string) => `권한을 ${role}로 변경했습니다.`,
-            searchUnlinkedArtistFailed:
-              '미연결 작가 검색에 실패했습니다. 잠시 후 다시 시도해 주세요.',
-            linkedNameConflictFailed: '동명이인 연결 여부 확인에 실패했습니다.',
-            exhibitorApproveError: '출품자 승인 중 오류가 발생했습니다.',
-            userDetailsTitle: '사용자 상세 정보',
-            roleUser: '일반 사용자',
-            roleArtist: '작가',
-            roleExhibitor: '출품자',
-            roleAdmin: '관리자',
-            statusActive: '활성',
-            statusPending: '대기',
-            statusSuspended: '정지',
-            artistApplicationInfo: '작가 신청 정보',
-            exhibitorApplicationInfo: '출품자 신청 정보',
-            artistName: '작가명',
-            representativeName: '대표명',
-            contact: '연락처',
-            referrer: '추천인',
-            bio: '소개',
-            noApplicationInfo: '신청 정보가 없습니다.',
-            close: '닫기',
-            promoteArtistTitle: 'Artist 권한 부여 및 작가 연결',
-            unnamed: '이름 없음',
-            noSubmittedArtistName: '제출된 작가명이 없습니다.',
-            noSubmittedContact: '제출된 연락처가 없습니다.',
-            targetUser: '대상 사용자',
-            submittedArtistName: '신청 작가명',
-            submittedContact: '신청 연락처',
-            chooseMode: '처리 방식 선택',
-            modeLinkExisting: '미연결 작가 선택',
-            modeCreateAndLink: '새 작가 생성 후 연결',
-            modeRoleOnly: '권한만 변경',
-            searchUnlinkedArtist: '미연결 작가 검색',
-            searchUnlinkedPlaceholder: '작가명(한/영) 또는 이메일 검색...',
-            linkedNameConflicts: (count: number) =>
-              `이미 연결된 동명이인 작가가 ${count}명 있습니다.`,
-            searchMinChars: '두 글자 이상 입력하면 미연결 작가를 검색합니다.',
-            searchingUnlinkedArtist: '미연결 작가를 검색 중입니다...',
-            searchSlow: '검색이 평소보다 오래 걸리고 있습니다. 잠시만 기다려 주세요.',
-            enterSearchKeyword: '검색어를 입력해 주세요.',
-            noSearchResult: '검색 결과가 없습니다.',
-            noPhone: '전화번호 없음',
-            noEmail: '이메일 없음',
-            artworkCount: (count: number) => `${count} 작품`,
-            recommended: '추천',
-            selected: '선택됨',
-            executionSummary: '실행 요약',
-            summaryActivateStatus: '사용자 상태를 `active`로 변경합니다.',
-            summaryChangeRole: '사용자 권한을 `artist`로 변경합니다.',
-            summaryAutofillContact:
-              '작가 연락처가 비어 있으면 사용자/신청 정보로 전화번호·이메일을 자동 채웁니다.',
-            summaryLinkSelectedArtist: '선택 작가와 연결',
-            summarySelectionRequired: '(선택 필요)',
-            summaryCreateArtist: '신청 정보를 기준으로 작가 프로필을 생성하고 사용자와 연결합니다.',
-            summaryRoleOnly: '작가 프로필 연결 없이 권한만 변경됩니다.',
-            cancel: '취소',
-            approve: '승인',
-            approveWithLink: '연결하고 승인',
-            approveWithCreate: '생성하고 승인',
-            approveConfirmTitle: '신청 승인 확인',
-            approveConfirmDescription: (name: string, email: string) =>
-              `${name} (${email}) 님의 신청을 승인하시겠습니까?`,
-            approveConfirmText: '승인하기',
-            rejectConfirmTitle: '계정 거절/정지 확인',
-            rejectConfirmDescription: (name: string, email: string, isPending: boolean) =>
-              `${name} (${email}) 님의 ${isPending ? '가입 신청을 거절' : '계정을 정지'}하시겠습니까?`,
-            rejectConfirmText: (isPending: boolean) => (isPending ? '거절하기' : '정지하기'),
-            reactivateConfirmTitle: '계정 재활성화 확인',
-            reactivateConfirmDescription: (name: string, email: string) =>
-              `${name} (${email}) 님의 계정을 다시 활성화하시겠습니까?`,
-            reactivateConfirmText: '재활성화',
-            roleChangeConfirmTitle: '권한 변경 확인',
-            roleChangeConfirmDescription: (name: string, fromRole: string, toRole: string) =>
-              `${name} 님의 권한을 ${fromRole}에서 ${toRole}로 변경하시겠습니까?`,
-            roleChangeConfirmText: '변경하기',
-            promoteArtistSuccess: '작가 권한을 부여했습니다.',
-            promoteArtistError: '작가 권한 부여 중 오류가 발생했습니다.',
-            rejectError: '계정 거절/정지 처리 중 오류가 발생했습니다.',
-            approveError: '신청 승인 중 오류가 발생했습니다.',
-            reactivateError: '계정 재활성화 중 오류가 발생했습니다.',
-            roleChangeError: '권한 변경 중 오류가 발생했습니다.',
-          },
-    [locale]
-  );
+  const t = useTranslations('admin.users');
 
   const resolveActionMessage = (serverMessage: string | undefined, fallback: string) =>
     locale === 'en' ? fallback : serverMessage || fallback;
@@ -339,8 +151,8 @@ export function UserList({
 
       if (incompatibleArtist || incompatibleExhibitor) {
         params.delete('role');
-        setFilterNotice(msg.filterConflictNotice);
-        toast.info(msg.filterConflictToast);
+        setFilterNotice(t('filterConflictNotice'));
+        toast.info(t('filterConflictToast'));
       } else {
         setFilterNotice(null);
       }
@@ -363,7 +175,7 @@ export function UserList({
 
       router.replace(nextUrl, { scroll: false });
     },
-    [msg.filterConflictNotice, msg.filterConflictToast, pathname, router, toast]
+    [t, pathname, router, toast]
   );
 
   // 실시간 검색: debounced query가 변경되면 자동 검색
@@ -420,7 +232,7 @@ export function UserList({
       } catch (err: unknown) {
         if (!cancelled) {
           setArtistOptions([]);
-          setArtistSearchError(msg.searchUnlinkedArtistFailed);
+          setArtistSearchError(t('searchUnlinkedArtistFailed'));
         }
       } finally {
         if (!cancelled) {
@@ -437,7 +249,7 @@ export function UserList({
       cancelled = true;
       if (slowTimer) clearTimeout(slowTimer);
     };
-  }, [artistPromoteContext, debouncedArtistSearchQuery, msg.searchUnlinkedArtistFailed]);
+  }, [artistPromoteContext, debouncedArtistSearchQuery, t]);
 
   useEffect(() => {
     if (!artistPromoteContext || artistPromoteContext.mode !== 'link_existing') {
@@ -471,7 +283,7 @@ export function UserList({
       } catch (error: unknown) {
         if (!cancelled) {
           setLinkedNameConflicts([]);
-          setLinkedNameConflictError(msg.linkedNameConflictFailed);
+          setLinkedNameConflictError(t('linkedNameConflictFailed'));
         }
       }
     };
@@ -481,7 +293,7 @@ export function UserList({
     return () => {
       cancelled = true;
     };
-  }, [artistPromoteContext, msg.linkedNameConflictFailed]);
+  }, [artistPromoteContext, t]);
 
   const filteredUsers = useMemo(() => {
     const normalizedQuery = normalizeQuery(query);
@@ -596,7 +408,7 @@ export function UserList({
     const { user, mode, selectedArtistId } = artistPromoteContext;
 
     if (mode === 'link_existing' && !selectedArtistId) {
-      toast.error(msg.selectUnlinkedArtist);
+      toast.error(t('selectUnlinkedArtist'));
       return;
     }
 
@@ -611,7 +423,7 @@ export function UserList({
     setProcessingId(null);
 
     if (res.error) {
-      toast.error(resolveActionMessage(res.message, msg.promoteArtistError));
+      toast.error(resolveActionMessage(res.message, t('promoteArtistError')));
       return;
     }
 
@@ -627,7 +439,7 @@ export function UserList({
       )
     );
     closeArtistPromoteModal();
-    toast.success(resolveActionMessage(res.message, msg.promoteArtistSuccess));
+    toast.success(resolveActionMessage(res.message, t('promoteArtistSuccess')));
   };
 
   const handleRejectRequest = (id: string) => {
@@ -658,13 +470,13 @@ export function UserList({
     const res = await rejectUser(id);
     setProcessingId(null);
     if (res.error) {
-      toast.error(resolveActionMessage(res.message, msg.rejectError));
+      toast.error(resolveActionMessage(res.message, t('rejectError')));
     } else {
       setLocalUsers((prev) =>
         prev.map((user) => (user.id === id ? { ...user, status: 'suspended' } : user))
       );
       setRejectConfirmId(null);
-      toast.success(msg.rejectSuccess);
+      toast.success(t('rejectSuccess'));
     }
   };
 
@@ -686,10 +498,10 @@ export function UserList({
         setProcessingId(null);
         const message =
           locale === 'en'
-            ? msg.exhibitorApproveError
+            ? t('exhibitorApproveError')
             : error instanceof Error
               ? error.message
-              : msg.exhibitorApproveError;
+              : t('exhibitorApproveError');
         toast.error(message);
         return;
       }
@@ -701,7 +513,7 @@ export function UserList({
       );
       setProcessingId(null);
       setApproveConfirmId(null);
-      toast.success(msg.exhibitorApproveSuccess);
+      toast.success(t('exhibitorApproveSuccess'));
       return;
     }
 
@@ -709,7 +521,7 @@ export function UserList({
     setProcessingId(null);
 
     if (result.error) {
-      toast.error(resolveActionMessage(result.message, msg.approveError));
+      toast.error(resolveActionMessage(result.message, t('approveError')));
       return;
     }
 
@@ -719,7 +531,7 @@ export function UserList({
       )
     );
     setApproveConfirmId(null);
-    toast.success(msg.artistApproveSuccess);
+    toast.success(t('artistApproveSuccess'));
   };
 
   const executeReactivate = async () => {
@@ -729,13 +541,13 @@ export function UserList({
     const res = await reactivateUser(id);
     setProcessingId(null);
     if (res.error) {
-      toast.error(resolveActionMessage(res.message, msg.reactivateError));
+      toast.error(resolveActionMessage(res.message, t('reactivateError')));
     } else {
       setLocalUsers((prev) =>
         prev.map((user) => (user.id === id ? { ...user, status: 'active' } : user))
       );
       setReactivateConfirmId(null);
-      toast.success(msg.reactivated);
+      toast.success(t('reactivated'));
     }
   };
 
@@ -746,7 +558,7 @@ export function UserList({
     const res = await updateUserRole(id, newRole as Profile['role']);
     setProcessingId(null);
     if (res.error) {
-      toast.error(resolveActionMessage(res.message, msg.roleChangeError));
+      toast.error(resolveActionMessage(res.message, t('roleChangeError')));
     } else {
       setLocalUsers((prev) =>
         prev.map((user) =>
@@ -765,7 +577,7 @@ export function UserList({
         )
       );
       setRoleChangeConfirm(null);
-      toast.success(msg.roleChanged(newRole));
+      toast.success(t('roleChanged', { role: newRole }));
     }
   };
 
@@ -822,7 +634,7 @@ export function UserList({
       <Modal
         isOpen={!!selectedUser}
         onClose={() => setSelectedUser(null)}
-        title={msg.userDetailsTitle}
+        title={t('userDetailsTitle')}
       >
         {selectedUser && (
           <div className="space-y-6">
@@ -850,10 +662,10 @@ export function UserList({
                 <div className="mt-1 flex gap-2">
                   <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
                     {{
-                      user: msg.roleUser,
-                      artist: msg.roleArtist,
-                      exhibitor: msg.roleExhibitor,
-                      admin: msg.roleAdmin,
+                      user: t('roleUser'),
+                      artist: t('roleArtist'),
+                      exhibitor: t('roleExhibitor'),
+                      admin: t('roleAdmin'),
                     }[selectedUser.role] || selectedUser.role}
                   </span>
                   <span
@@ -864,9 +676,9 @@ export function UserList({
                     }`}
                   >
                     {{
-                      active: msg.statusActive,
-                      pending: msg.statusPending,
-                      suspended: msg.statusSuspended,
+                      active: t('statusActive'),
+                      pending: t('statusPending'),
+                      suspended: t('statusSuspended'),
                     }[selectedUser.status] || selectedUser.status}
                   </span>
                 </div>
@@ -875,21 +687,21 @@ export function UserList({
 
             {selectedUser.application ? (
               <div className="border-t border-gray-100 pt-4 space-y-4">
-                <h3 className="font-medium text-gray-900">{msg.artistApplicationInfo}</h3>
+                <h3 className="font-medium text-gray-900">{t('artistApplicationInfo')}</h3>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="block text-xs text-gray-500">{msg.artistName}</label>
+                    <label className="block text-xs text-gray-500">{t('artistName')}</label>
                     <div className="text-sm text-gray-900">
                       {selectedUser.application.artist_name}
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-500">{msg.contact}</label>
+                    <label className="block text-xs text-gray-500">{t('contact')}</label>
                     <div className="text-sm text-gray-900">{selectedUser.application.contact}</div>
                   </div>
                   {selectedUser.application.referrer && (
                     <div className="col-span-2">
-                      <label className="block text-xs text-gray-500">{msg.referrer}</label>
+                      <label className="block text-xs text-gray-500">{t('referrer')}</label>
                       <div className="text-sm text-gray-900">
                         {selectedUser.application.referrer}
                       </div>
@@ -897,7 +709,7 @@ export function UserList({
                   )}
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">{msg.bio}</label>
+                  <label className="block text-xs text-gray-500 mb-1">{t('bio')}</label>
                   <div className="bg-gray-50 p-3 rounded-md text-sm text-gray-700 whitespace-pre-wrap">
                     {selectedUser.application.bio}
                   </div>
@@ -905,23 +717,23 @@ export function UserList({
               </div>
             ) : selectedUser.exhibitorApplication ? (
               <div className="border-t border-gray-100 pt-4 space-y-4">
-                <h3 className="font-medium text-gray-900">{msg.exhibitorApplicationInfo}</h3>
+                <h3 className="font-medium text-gray-900">{t('exhibitorApplicationInfo')}</h3>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="block text-xs text-gray-500">{msg.representativeName}</label>
+                    <label className="block text-xs text-gray-500">{t('representativeName')}</label>
                     <div className="text-sm text-gray-900">
                       {selectedUser.exhibitorApplication.representative_name}
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-500">{msg.contact}</label>
+                    <label className="block text-xs text-gray-500">{t('contact')}</label>
                     <div className="text-sm text-gray-900">
                       {selectedUser.exhibitorApplication.contact}
                     </div>
                   </div>
                   {selectedUser.exhibitorApplication.referrer && (
                     <div className="col-span-2">
-                      <label className="block text-xs text-gray-500">{msg.referrer}</label>
+                      <label className="block text-xs text-gray-500">{t('referrer')}</label>
                       <div className="text-sm text-gray-900">
                         {selectedUser.exhibitorApplication.referrer}
                       </div>
@@ -929,7 +741,7 @@ export function UserList({
                   )}
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">{msg.bio}</label>
+                  <label className="block text-xs text-gray-500 mb-1">{t('bio')}</label>
                   <div className="bg-gray-50 p-3 rounded-md text-sm text-gray-700 whitespace-pre-wrap">
                     {selectedUser.exhibitorApplication.bio}
                   </div>
@@ -937,13 +749,13 @@ export function UserList({
               </div>
             ) : (
               <div className="border-t border-gray-100 pt-4 text-center py-4">
-                <span className="text-sm text-gray-500">{msg.noApplicationInfo}</span>
+                <span className="text-sm text-gray-500">{t('noApplicationInfo')}</span>
               </div>
             )}
 
             <div className="border-t border-gray-100 pt-4 flex justify-end gap-2">
               <Button variant="white" onClick={() => setSelectedUser(null)}>
-                {msg.close}
+                {t('close')}
               </Button>
             </div>
           </div>
@@ -954,28 +766,28 @@ export function UserList({
       <Modal
         isOpen={!!artistPromoteContext}
         onClose={closeArtistPromoteModal}
-        title={msg.promoteArtistTitle}
+        title={t('promoteArtistTitle')}
         className="max-w-3xl"
       >
         {artistPromoteContext && (
           <div className="space-y-5">
             <div className="rounded-lg border border-indigo-100 bg-indigo-50/50 p-4">
               <p className="text-sm text-indigo-900 font-medium">
-                {msg.targetUser}: {artistPromoteContext.user.name || msg.unnamed} (
+                {t('targetUser')}: {artistPromoteContext.user.name || t('unnamed')} (
                 {artistPromoteContext.user.email})
               </p>
               <p className="text-xs text-indigo-700 mt-1">
-                {msg.submittedArtistName}:{' '}
-                {artistPromoteContext.user.application?.artist_name || msg.noSubmittedArtistName}
+                {t('submittedArtistName')}:{' '}
+                {artistPromoteContext.user.application?.artist_name || t('noSubmittedArtistName')}
               </p>
               <p className="text-xs text-indigo-700 mt-1">
-                {msg.submittedContact}:{' '}
-                {artistPromoteContext.user.application?.contact || msg.noSubmittedContact}
+                {t('submittedContact')}:{' '}
+                {artistPromoteContext.user.application?.contact || t('noSubmittedContact')}
               </p>
             </div>
 
             <div className="space-y-2">
-              <p className="text-sm font-medium text-slate-900">{msg.chooseMode}</p>
+              <p className="text-sm font-medium text-slate-900">{t('chooseMode')}</p>
               <div className="grid gap-2 md:grid-cols-3">
                 <button
                   type="button"
@@ -990,7 +802,7 @@ export function UserList({
                       : 'border-slate-200 hover:bg-slate-50'
                   }`}
                 >
-                  {msg.modeLinkExisting}
+                  {t('modeLinkExisting')}
                 </button>
                 <button
                   type="button"
@@ -1005,7 +817,7 @@ export function UserList({
                       : 'border-slate-200 hover:bg-slate-50'
                   }`}
                 >
-                  {msg.modeCreateAndLink}
+                  {t('modeCreateAndLink')}
                 </button>
                 <button
                   type="button"
@@ -1020,7 +832,7 @@ export function UserList({
                       : 'border-slate-200 hover:bg-slate-50'
                   }`}
                 >
-                  {msg.modeRoleOnly}
+                  {t('modeRoleOnly')}
                 </button>
               </div>
             </div>
@@ -1028,13 +840,13 @@ export function UserList({
             {artistPromoteContext.mode === 'link_existing' && (
               <div className="space-y-3 rounded-xl border border-slate-200 p-4">
                 <label className="block text-sm font-medium text-slate-700">
-                  {msg.searchUnlinkedArtist}
+                  {t('searchUnlinkedArtist')}
                 </label>
                 <div className="relative">
                   <AdminInput
                     value={artistSearchQuery}
                     onChange={(e) => setArtistSearchQuery(e.target.value)}
-                    placeholder={msg.searchUnlinkedPlaceholder}
+                    placeholder={t('searchUnlinkedPlaceholder')}
                     className="pr-10"
                     disabled={processingId === artistPromoteContext.user.id}
                   />
@@ -1048,7 +860,7 @@ export function UserList({
                 <div aria-live="polite" className="min-h-[1.25rem] text-xs">
                   {linkedNameConflicts.length > 0 && (
                     <p className="rounded-md border border-amber-200 bg-amber-50 px-2 py-1 text-amber-700">
-                      {msg.linkedNameConflicts(linkedNameConflicts.length)}{' '}
+                      {t('linkedNameConflicts', { count: linkedNameConflicts.length })}{' '}
                       {linkedNameConflicts
                         .map(
                           (item) =>
@@ -1061,12 +873,12 @@ export function UserList({
                     <p className="text-amber-700">{linkedNameConflictError}</p>
                   )}
                   {artistSearchQuery.trim().length < 2 && (
-                    <p className="text-slate-500">{msg.searchMinChars}</p>
+                    <p className="text-slate-500">{t('searchMinChars')}</p>
                   )}
                   {artistSearchQuery.trim().length >= 2 && isSearchingArtists && (
-                    <p className="text-indigo-600">{msg.searchingUnlinkedArtist}</p>
+                    <p className="text-indigo-600">{t('searchingUnlinkedArtist')}</p>
                   )}
-                  {isArtistSearchSlow && <p className="text-amber-600">{msg.searchSlow}</p>}
+                  {isArtistSearchSlow && <p className="text-amber-600">{t('searchSlow')}</p>}
                   {artistSearchError && <p className="text-rose-600">{artistSearchError}</p>}
                 </div>
 
@@ -1074,8 +886,8 @@ export function UserList({
                   {artistOptions.length === 0 && !isSearchingArtists ? (
                     <div className="px-3 py-6 text-sm text-slate-500 text-center">
                       {artistSearchQuery.trim().length < 2
-                        ? msg.enterSearchKeyword
-                        : msg.noSearchResult}
+                        ? t('enterSearchKeyword')
+                        : t('noSearchResult')}
                     </div>
                   ) : (
                     artistOptions.map((artist) => {
@@ -1100,25 +912,25 @@ export function UserList({
                           <div className="flex items-start justify-between gap-3">
                             <div className="min-w-0">
                               <p className="text-sm font-medium text-slate-900 truncate">
-                                {artist.name_ko || msg.unnamed}
+                                {artist.name_ko || t('unnamed')}
                               </p>
                               <p className="text-xs text-slate-500 truncate">
-                                {artist.name_en || '-'} · {artist.contact_phone || msg.noPhone} ·{' '}
-                                {artist.contact_email || msg.noEmail}
+                                {artist.name_en || '-'} · {artist.contact_phone || t('noPhone')} ·{' '}
+                                {artist.contact_email || t('noEmail')}
                               </p>
                               <p className="text-xs text-slate-500 mt-1">
-                                {msg.artworkCount(artist.artwork_count)}
+                                {t('artworkCount', { count: artist.artwork_count })}
                               </p>
                             </div>
                             <div className="flex items-center gap-2">
                               {isRecommended && (
                                 <span className="rounded-md bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700 ring-1 ring-emerald-600/20">
-                                  {msg.recommended}
+                                  {t('recommended')}
                                 </span>
                               )}
                               {isSelected && (
                                 <span className="rounded-md bg-indigo-100 px-2 py-0.5 text-[11px] font-medium text-indigo-700">
-                                  {msg.selected}
+                                  {t('selected')}
                                 </span>
                               )}
                             </div>
@@ -1132,31 +944,31 @@ export function UserList({
             )}
 
             <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <p className="font-medium text-slate-900 mb-2">{msg.executionSummary}</p>
+              <p className="font-medium text-slate-900 mb-2">{t('executionSummary')}</p>
               <ul className="space-y-1 list-disc pl-5">
-                <li>{msg.summaryActivateStatus}</li>
-                <li>{msg.summaryChangeRole}</li>
-                <li>{msg.summaryAutofillContact}</li>
+                <li>{t('summaryActivateStatus')}</li>
+                <li>{t('summaryChangeRole')}</li>
+                <li>{t('summaryAutofillContact')}</li>
                 {artistPromoteContext.mode === 'link_existing' && (
                   <li>
-                    {msg.summaryLinkSelectedArtist}:
+                    {t('summaryLinkSelectedArtist')}:
                     {selectedArtistOption
                       ? ` ${selectedArtistOption.name_ko || selectedArtistOption.id}`
-                      : ` ${msg.summarySelectionRequired}`}
+                      : ` ${t('summarySelectionRequired')}`}
                   </li>
                 )}
                 {artistPromoteContext.mode === 'create_and_link' && (
-                  <li>{msg.summaryCreateArtist}</li>
+                  <li>{t('summaryCreateArtist')}</li>
                 )}
                 {artistPromoteContext.mode === 'role_only' && (
-                  <li className="text-amber-700">{msg.summaryRoleOnly}</li>
+                  <li className="text-amber-700">{t('summaryRoleOnly')}</li>
                 )}
               </ul>
             </div>
 
             <div className="flex justify-end gap-2">
               <Button variant="white" onClick={closeArtistPromoteModal}>
-                {msg.cancel}
+                {t('cancel')}
               </Button>
               <Button
                 variant="primary"
@@ -1169,10 +981,10 @@ export function UserList({
                 }
               >
                 {artistPromoteContext.mode === 'link_existing'
-                  ? msg.approveWithLink
+                  ? t('approveWithLink')
                   : artistPromoteContext.mode === 'create_and_link'
-                    ? msg.approveWithCreate
-                    : msg.approve}
+                    ? t('approveWithCreate')
+                    : t('approve')}
               </Button>
             </div>
           </div>
@@ -1184,12 +996,12 @@ export function UserList({
           isOpen={!!approveTargetUser}
           onClose={() => setApproveConfirmId(null)}
           onConfirm={executeApprove}
-          title={msg.approveConfirmTitle}
-          description={msg.approveConfirmDescription(
-            approveTargetUser.name || msg.unnamed,
-            approveTargetUser.email
-          )}
-          confirmText={msg.approveConfirmText}
+          title={t('approveConfirmTitle')}
+          description={t('approveConfirmDescription', {
+            name: approveTargetUser.name || t('unnamed'),
+            email: approveTargetUser.email,
+          })}
+          confirmText={t('approveConfirmText')}
           variant="info"
           isLoading={processingId === approveTargetUser.id}
         />
@@ -1201,13 +1013,18 @@ export function UserList({
           isOpen={!!rejectTargetUser}
           onClose={() => setRejectConfirmId(null)}
           onConfirm={executeReject}
-          title={msg.rejectConfirmTitle}
-          description={msg.rejectConfirmDescription(
-            rejectTargetUser.name || msg.unnamed,
-            rejectTargetUser.email,
+          title={t('rejectConfirmTitle')}
+          description={t(
             rejectTargetUser.status === 'pending'
+              ? 'rejectConfirmDescriptionPending'
+              : 'rejectConfirmDescriptionActive',
+            { name: rejectTargetUser.name || t('unnamed'), email: rejectTargetUser.email }
           )}
-          confirmText={msg.rejectConfirmText(rejectTargetUser.status === 'pending')}
+          confirmText={t(
+            rejectTargetUser.status === 'pending'
+              ? 'rejectConfirmTextPending'
+              : 'rejectConfirmTextActive'
+          )}
           variant="danger"
           isLoading={processingId === rejectTargetUser.id}
         />
@@ -1219,12 +1036,12 @@ export function UserList({
           isOpen={!!reactivateTargetUser}
           onClose={() => setReactivateConfirmId(null)}
           onConfirm={executeReactivate}
-          title={msg.reactivateConfirmTitle}
-          description={msg.reactivateConfirmDescription(
-            reactivateTargetUser.name || msg.unnamed,
-            reactivateTargetUser.email
-          )}
-          confirmText={msg.reactivateConfirmText}
+          title={t('reactivateConfirmTitle')}
+          description={t('reactivateConfirmDescription', {
+            name: reactivateTargetUser.name || t('unnamed'),
+            email: reactivateTargetUser.email,
+          })}
+          confirmText={t('reactivateConfirmText')}
           variant="info"
           isLoading={processingId === reactivateTargetUser.id}
         />
@@ -1236,13 +1053,13 @@ export function UserList({
           isOpen={!!roleChangeTargetUser}
           onClose={() => setRoleChangeConfirm(null)}
           onConfirm={executeRoleChange}
-          title={msg.roleChangeConfirmTitle}
-          description={msg.roleChangeConfirmDescription(
-            roleChangeTargetUser.name || msg.unnamed,
-            roleChangeTargetUser.role,
-            roleChangeConfirm.role
-          )}
-          confirmText={msg.roleChangeConfirmText}
+          title={t('roleChangeConfirmTitle')}
+          description={t('roleChangeConfirmDescription', {
+            name: roleChangeTargetUser.name || t('unnamed'),
+            fromRole: roleChangeTargetUser.role,
+            toRole: roleChangeConfirm.role,
+          })}
+          confirmText={t('roleChangeConfirmText')}
           variant="warning"
           isLoading={processingId === roleChangeTargetUser.id}
         />

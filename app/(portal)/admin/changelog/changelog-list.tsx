@@ -1,12 +1,11 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useCallback } from 'react';
 import { AdminBadge, AdminCard } from '@/app/admin/_components/admin-ui';
 import type { ChangelogEntry } from '@/types';
 
 type FilterType = 'all' | 'feat' | 'fix' | 'perf';
-
-const PER_PAGE = 30;
 
 const TYPE_CONFIG: Record<string, { label: string; tone: 'info' | 'warning' | 'success' }> = {
   feat: { label: '새 기능', tone: 'info' },
@@ -74,37 +73,51 @@ function groupByDate(entries: ChangelogEntry[]): Record<string, ChangelogEntry[]
   return groups;
 }
 
-export function ChangelogList({ entries }: { entries: ChangelogEntry[] }) {
-  const [filter, setFilter] = useState<FilterType>('all');
-  const [page, setPage] = useState(1);
+interface ChangelogListProps {
+  entries: ChangelogEntry[];
+  filter: FilterType;
+  page: number;
+  totalPages: number;
+  totalFiltered: number;
+  counts: Record<FilterType, number>;
+}
 
-  const filtered = useMemo(
-    () => (filter === 'all' ? entries : entries.filter((e) => e.type === filter)),
-    [entries, filter]
+export function ChangelogList({
+  entries,
+  filter,
+  page,
+  totalPages,
+  totalFiltered,
+  counts,
+}: ChangelogListProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const navigate = useCallback(
+    (params: { filter?: FilterType; page?: number }) => {
+      const sp = new URLSearchParams(searchParams.toString());
+      if (params.filter !== undefined) {
+        if (params.filter === 'all') sp.delete('filter');
+        else sp.set('filter', params.filter);
+        sp.delete('page'); // reset page on filter change
+      }
+      if (params.page !== undefined) {
+        if (params.page <= 1) sp.delete('page');
+        else sp.set('page', String(params.page));
+      }
+      const qs = sp.toString();
+      router.push(qs ? `?${qs}` : '?');
+    },
+    [router, searchParams]
   );
 
-  const totalPages = Math.ceil(filtered.length / PER_PAGE);
-  const start = (page - 1) * PER_PAGE;
-  const paged = filtered.slice(start, start + PER_PAGE);
-  const grouped = groupByDate(paged);
+  const grouped = groupByDate(entries);
   const dates = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
 
-  const counts = useMemo(
-    () => ({
-      all: entries.length,
-      feat: entries.filter((e) => e.type === 'feat').length,
-      fix: entries.filter((e) => e.type === 'fix').length,
-      perf: entries.filter((e) => e.type === 'perf').length,
-    }),
-    [entries]
-  );
+  const PER_PAGE = 30;
+  const start = (page - 1) * PER_PAGE;
 
-  function handleFilterChange(f: FilterType) {
-    setFilter(f);
-    setPage(1);
-  }
-
-  if (entries.length === 0) {
+  if (counts.all === 0) {
     return (
       <AdminCard className="p-12 text-center">
         <p className="text-sm text-slate-500">
@@ -123,7 +136,7 @@ export function ChangelogList({ entries }: { entries: ChangelogEntry[] }) {
           <button
             type="button"
             key={f.value}
-            onClick={() => handleFilterChange(f.value)}
+            onClick={() => navigate({ filter: f.value })}
             className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
               filter === f.value
                 ? 'bg-indigo-600 text-white shadow-sm'
@@ -139,7 +152,7 @@ export function ChangelogList({ entries }: { entries: ChangelogEntry[] }) {
           </button>
         ))}
         <span className="ml-auto text-xs text-slate-400">
-          총 {filtered.length}개 중 {start + 1}–{Math.min(start + PER_PAGE, filtered.length)}
+          총 {totalFiltered}개 중 {start + 1}–{Math.min(start + PER_PAGE, totalFiltered)}
         </span>
       </div>
 
@@ -184,7 +197,7 @@ export function ChangelogList({ entries }: { entries: ChangelogEntry[] }) {
         </div>
       ))}
 
-      {filtered.length === 0 && (
+      {entries.length === 0 && (
         <AdminCard className="p-8 text-center">
           <p className="text-sm text-slate-500">해당 카테고리의 변경 이력이 없습니다.</p>
         </AdminCard>
@@ -195,7 +208,7 @@ export function ChangelogList({ entries }: { entries: ChangelogEntry[] }) {
         <nav className="flex items-center justify-center gap-1 pt-2">
           <button
             type="button"
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            onClick={() => navigate({ page: page - 1 })}
             disabled={page === 1}
             className="rounded-lg px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent"
           >
@@ -205,7 +218,7 @@ export function ChangelogList({ entries }: { entries: ChangelogEntry[] }) {
             <button
               type="button"
               key={p}
-              onClick={() => setPage(p)}
+              onClick={() => navigate({ page: p })}
               className={`min-w-[2.25rem] rounded-lg px-2 py-2 text-sm font-medium transition ${
                 p === page
                   ? 'bg-indigo-600 text-white shadow-sm'
@@ -217,7 +230,7 @@ export function ChangelogList({ entries }: { entries: ChangelogEntry[] }) {
           ))}
           <button
             type="button"
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            onClick={() => navigate({ page: page + 1 })}
             disabled={page === totalPages}
             className="rounded-lg px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent"
           >

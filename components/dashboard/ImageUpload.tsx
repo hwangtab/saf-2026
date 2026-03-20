@@ -1,73 +1,14 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import dynamic from 'next/dynamic';
+import { useState, useCallback } from 'react';
 import { useLocale } from 'next-intl';
-import { createSupabaseBrowserClient } from '@/lib/auth/client';
-import { optimizeArtworkImage, optimizeImage } from '@/lib/client/image-optimization';
-import { useToast } from '@/lib/hooks/useToast';
-import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
-import SafeImage from '@/components/common/SafeImage';
+import { IMAGE_UPLOAD_COPY } from './image-upload/types';
+import { useImageUpload } from './image-upload/useImageUpload';
+import { ImageDropZone } from './image-upload/ImageDropZone';
+import { ImagePreview } from './image-upload/ImagePreview';
+import type { UploadProps } from './image-upload/types';
 
-const ArtworkLightbox = dynamic(() => import('@/components/ui/ArtworkLightbox'), { ssr: false });
-
-type UploadProps = {
-  bucket: 'artworks' | 'profiles';
-  pathPrefix: string; // e.g. user_id or artist_id
-  onUploadComplete: (urls: string[]) => void;
-  onUploadDelta?: (urls: string[]) => void;
-  value?: string[];
-  onChange?: (urls: string[]) => void;
-  maxFiles?: number;
-  defaultImages?: string[];
-  deleteOnRemove?: boolean;
-};
-
-const UPLOAD_MAX_RETRIES = 2;
-const UPLOAD_RETRY_DELAY_BASE = 1000; // 1 second base delay for exponential backoff
-
-const IMAGE_UPLOAD_COPY: Record<
-  'ko' | 'en',
-  {
-    maxRetriesExceeded: string;
-    optimizing: (index: number, total: number) => string;
-    uploading: (index: number, total: number) => string;
-    uploadFailed: string;
-    removeFailed: string;
-    zoomImage: string;
-    imageAlt: (index: number) => string;
-    addImage: string;
-    footer: (maxFiles: number) => string;
-    previewAlt: string;
-  }
-> = {
-  ko: {
-    maxRetriesExceeded: '최대 재시도 횟수 초과',
-    optimizing: (index: number, total: number) => `이미지 ${index}/${total}: 최적화 중...`,
-    uploading: (index: number, total: number) => `이미지 ${index}/${total}: 업로드 중...`,
-    uploadFailed: '이미지 업로드에 실패했습니다. 잠시 후 다시 시도해주세요.',
-    removeFailed: '이미지 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.',
-    zoomImage: '이미지 확대하기',
-    imageAlt: (index: number) => `이미지 ${index}`,
-    addImage: '이미지 추가',
-    footer: (maxFiles: number) =>
-      `* 최대 ${maxFiles}장, 업로드 시 자동 최적화 (WebP, 작품 이미지는 동적 리사이징)`,
-    previewAlt: '미리보기',
-  },
-  en: {
-    maxRetriesExceeded: 'Exceeded maximum retry attempts',
-    optimizing: (index: number, total: number) => `Image ${index}/${total}: optimizing...`,
-    uploading: (index: number, total: number) => `Image ${index}/${total}: uploading...`,
-    uploadFailed: 'Failed to upload image. Please try again shortly.',
-    removeFailed: 'Failed to remove image. Please try again shortly.',
-    zoomImage: 'Zoom image',
-    imageAlt: (index: number) => `Image ${index}`,
-    addImage: 'Add image',
-    footer: (maxFiles: number) =>
-      `* Up to ${maxFiles} files, auto-optimized on upload (WebP, dynamic resizing for artwork images)`,
-    previewAlt: 'Preview',
-  },
-};
+export type { UploadProps };
 
 export function ImageUpload({
   bucket,
@@ -82,298 +23,46 @@ export function ImageUpload({
 }: UploadProps) {
   const locale = useLocale();
   const copy = IMAGE_UPLOAD_COPY[locale as 'ko' | 'en'];
-  const [uploading, setUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState<string | null>(null);
   const [previewUrls, setPreviewUrls] = useState<string[]>(defaultImages);
-  const [isDragging, setIsDragging] = useState(false);
-  const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [lightboxData, setLightboxData] = useState<{
-    images: string[];
-    initialIndex: number;
-    alt: string;
-  } | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const supabase = createSupabaseBrowserClient();
-  const toast = useToast();
   const isControlled = Array.isArray(value);
   const currentUrls = isControlled ? (value as string[]) : previewUrls;
-  const shouldDeleteOnRemove = deleteOnRemove ?? bucket !== 'artworks';
 
-  // Upload with retry logic and exponential backoff
-  const uploadWithRetry = async (
-    filePath: string,
-    file: Blob
-  ): Promise<{ success: true } | { success: false; error: Error }> => {
-    for (let attempt = 0; attempt <= UPLOAD_MAX_RETRIES; attempt++) {
-      const { error } = await supabase.storage.from(bucket).upload(filePath, file);
-      if (!error) return { success: true };
-      if (attempt === UPLOAD_MAX_RETRIES) {
-        return { success: false, error: new Error(error.message) };
+  const applyUrls = useCallback(
+    (nextUrls: string[]) => {
+      if (!isControlled) {
+        setPreviewUrls(nextUrls);
       }
-      // Exponential backoff: 1s, 2s
-      await new Promise((r) => setTimeout(r, UPLOAD_RETRY_DELAY_BASE * (attempt + 1)));
-    }
-    return { success: false, error: new Error(copy.maxRetriesExceeded) };
-  };
+      onUploadComplete(nextUrls);
+      onChange?.(nextUrls);
+    },
+    [isControlled, onUploadComplete, onChange]
+  );
 
-  const applyUrls = (nextUrls: string[]) => {
-    if (!isControlled) {
-      setPreviewUrls(nextUrls);
-    }
-    onUploadComplete(nextUrls);
-    onChange?.(nextUrls);
-  };
-
-  const handleFiles = async (files: File[]) => {
-    if (files.length === 0) return;
-    setUploading(true);
-    setUploadProgress(null);
-    const newUrls: string[] = [];
-    const cleanupCandidateUrls: string[] = [];
-    const uploadedPaths: string[] = [];
-
-    try {
-      for (let fileIdx = 0; fileIdx < files.length; fileIdx++) {
-        const file = files[fileIdx];
-        if (currentUrls.length + newUrls.length >= maxFiles) break;
-
-        if (bucket === 'artworks') {
-          setUploadProgress(copy.optimizing(fileIdx + 1, files.length));
-          const optimizedFile = await optimizeArtworkImage(file);
-          const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.webp`;
-          const filePath = `${pathPrefix}/${fileName}`;
-
-          setUploadProgress(copy.uploading(fileIdx + 1, files.length));
-          const uploadResult = await uploadWithRetry(filePath, optimizedFile);
-          if (!uploadResult.success) {
-            throw uploadResult.error;
-          }
-
-          uploadedPaths.push(filePath);
-
-          const {
-            data: { publicUrl },
-          } = supabase.storage.from(bucket).getPublicUrl(filePath);
-
-          newUrls.push(publicUrl);
-          cleanupCandidateUrls.push(publicUrl);
-          continue;
-        }
-
-        setUploadProgress(copy.optimizing(fileIdx + 1, files.length));
-        const optimizedFile = await optimizeImage(file);
-        const fileExt = optimizedFile.name.split('.').pop();
-        const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
-        const filePath = `${pathPrefix}/${fileName}`;
-
-        setUploadProgress(copy.uploading(fileIdx + 1, files.length));
-        const uploadResult = await uploadWithRetry(filePath, optimizedFile);
-
-        if (!uploadResult.success) {
-          throw uploadResult.error;
-        }
-
-        uploadedPaths.push(filePath);
-
-        const {
-          data: { publicUrl },
-        } = supabase.storage.from(bucket).getPublicUrl(filePath);
-
-        newUrls.push(publicUrl);
-        cleanupCandidateUrls.push(publicUrl);
-      }
-
-      const updatedUrls = [...currentUrls, ...newUrls];
-      applyUrls(updatedUrls);
-      if (cleanupCandidateUrls.length > 0) {
-        onUploadDelta?.(cleanupCandidateUrls);
-      }
-    } catch (error) {
-      console.error('[ImageUpload] File upload flow failed:', error);
-      if (uploadedPaths.length > 0) {
-        await supabase.storage.from(bucket).remove(uploadedPaths);
-      }
-      toast.error(copy.uploadFailed);
-    } finally {
-      setUploading(false);
-      setUploadProgress(null);
-      if (fileInputRef.current) fileInputRef.current.value = '';
-    }
-  };
-
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
-    const files = Array.from(e.target.files);
-    await handleFiles(files);
-  };
-
-  const handleDrop = async (e: React.DragEvent<HTMLElement>) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const files = Array.from(e.dataTransfer.files || []);
-    await handleFiles(files);
-  };
-
-  const handleDragOver = (e: React.DragEvent<HTMLElement>) => {
-    e.preventDefault();
-    if (!isDragging) setIsDragging(true);
-  };
-
-  const handleDragLeave = (e: React.DragEvent<HTMLElement>) => {
-    e.preventDefault();
-    setIsDragging(false);
-  };
-
-  const getStoragePathFromPublicUrl = (publicUrl: string) => {
-    try {
-      const url = new URL(publicUrl);
-      const markers = [
-        `/storage/v1/object/public/${bucket}/`,
-        `/storage/v1/render/image/public/${bucket}/`,
-      ];
-
-      for (const marker of markers) {
-        const index = url.pathname.indexOf(marker);
-        if (index !== -1) {
-          return url.pathname.slice(index + marker.length);
-        }
-      }
-
-      return null;
-    } catch (error) {
-      console.error('[ImageUpload] Public URL parsing failed:', error);
-      return null;
-    }
-  };
-
-  const removeImage = async (index: number) => {
-    const urlToRemove = currentUrls[index];
-    const path = getStoragePathFromPublicUrl(urlToRemove);
-
-    if (shouldDeleteOnRemove && path) {
-      const removalPaths = [path];
-      const { error } = await supabase.storage.from(bucket).remove(removalPaths);
-      if (error) {
-        toast.error(copy.removeFailed);
-        return;
-      }
-    }
-
-    const newUrls = currentUrls.filter((_, i) => i !== index);
-    applyUrls(newUrls);
-  };
-
-  const handleImageClick = (index: number) => {
-    setLightboxData({
-      images: currentUrls,
-      initialIndex: index,
-      alt: copy.imageAlt(index + 1),
+  const { uploading, uploadProgress, fileInputRef, handleFiles, handleFileSelect, removeImage } =
+    useImageUpload({
+      bucket,
+      pathPrefix,
+      maxFiles,
+      currentUrls,
+      copy,
+      applyUrls,
+      onUploadDelta,
+      deleteOnRemove,
     });
-    setLightboxOpen(true);
-  };
 
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap gap-4">
-        {currentUrls.map((url, index) => {
-          const previewSrc =
-            bucket === 'artworks' ? resolveArtworkImageUrlForPreset(url, 'slider') : url;
-          return (
-            <div
-              key={index}
-              className="relative w-32 h-32 rounded-lg overflow-hidden border border-gray-200 group"
-            >
-              <div
-                className="absolute inset-0 cursor-zoom-in z-0"
-                onClick={() => handleImageClick(index)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    handleImageClick(index);
-                  }
-                }}
-                role="button"
-                tabIndex={0}
-                aria-label={copy.zoomImage}
-              >
-                <SafeImage
-                  src={previewSrc}
-                  alt={copy.previewAlt}
-                  fill
-                  className="object-cover"
-                  sizes="128px"
-                />
-              </div>
-              <button
-                type="button"
-                onClick={() => removeImage(index)}
-                className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-          );
-        })}
+        <ImagePreview bucket={bucket} urls={currentUrls} copy={copy} onRemove={removeImage} />
 
         {currentUrls.length < maxFiles && (
-          <button
-            type="button"
-            onClick={() => !uploading && fileInputRef.current?.click()}
-            onKeyDown={(e) => {
-              if (uploading) return;
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                fileInputRef.current?.click();
-              }
-            }}
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            aria-label={copy.addImage}
-            disabled={uploading}
-            className={`w-32 h-32 border-2 border-dashed rounded-lg flex flex-col items-center justify-center transition-colors ${
-              uploading
-                ? 'border-gray-200 bg-gray-50 cursor-wait'
-                : isDragging
-                  ? 'border-primary bg-primary/5 cursor-pointer'
-                  : 'border-gray-300 hover:border-primary hover:bg-primary/5 cursor-pointer'
-            }`}
-          >
-            {uploading ? (
-              <div className="flex flex-col items-center px-2">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mb-2"></div>
-                {uploadProgress && (
-                  <span className="text-[10px] text-gray-500 text-center leading-tight">
-                    {uploadProgress}
-                  </span>
-                )}
-              </div>
-            ) : (
-              <>
-                <svg
-                  className="w-8 h-8 text-gray-400 mb-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
-                <span className="text-xs text-gray-500">{copy.addImage}</span>
-              </>
-            )}
-          </button>
+          <ImageDropZone
+            uploading={uploading}
+            uploadProgress={uploadProgress}
+            copy={copy}
+            fileInputRef={fileInputRef}
+            onDrop={handleFiles}
+          />
         )}
       </div>
 
@@ -387,16 +76,6 @@ export function ImageUpload({
       />
 
       <p className="text-xs text-gray-500">{copy.footer(maxFiles)}</p>
-
-      {lightboxData && (
-        <ArtworkLightbox
-          open={lightboxOpen}
-          close={() => setLightboxOpen(false)}
-          images={lightboxData.images}
-          initialIndex={lightboxData.initialIndex}
-          alt={lightboxData.alt}
-        />
-      )}
     </div>
   );
 }

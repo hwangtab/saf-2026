@@ -45,9 +45,11 @@ export default function Modal({ isOpen, onClose, title, children, className }: M
     return () => document.removeEventListener('keydown', handleEscape);
   }, [isOpen, onClose]);
 
-  // Focus trap and initial focus
+  // Focus trap, initial focus, and focus restoration
   useEffect(() => {
     if (!isOpen) return;
+
+    const previouslyFocused = document.activeElement as HTMLElement | null;
 
     const modal = modalRef.current;
     if (!modal) return;
@@ -78,7 +80,11 @@ export default function Modal({ isOpen, onClose, title, children, className }: M
     };
 
     modal.addEventListener('keydown', handleTab);
-    return () => modal.removeEventListener('keydown', handleTab);
+    return () => {
+      modal.removeEventListener('keydown', handleTab);
+      // Restore focus to the element that was focused before the modal opened
+      previouslyFocused?.focus();
+    };
   }, [isOpen]);
 
   if (!mounted || !isOpen) return null;

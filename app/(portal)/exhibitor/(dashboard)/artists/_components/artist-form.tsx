@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import Button from '@/components/ui/Button';
 import {
   updateExhibitorArtist,
@@ -12,85 +12,6 @@ import {
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
 import { useToast } from '@/lib/hooks/useToast';
 import { AdminCard } from '@/app/admin/_components/admin-ui';
-
-const ARTIST_FORM_COPY: Record<
-  'ko' | 'en',
-  {
-    artistSaved: string;
-    artistCreatedReturning: string;
-    artistCreated: string;
-    saveError: string;
-    saveErrorToast: string;
-    profileImageSaved: string;
-    imageSaveError: string;
-    imageSaveErrorToast: string;
-    closeError: string;
-    profileImageOptional: string;
-    saving: string;
-    profileImageGuide: string;
-    editTitle: string;
-    createTitle: string;
-    nameKo: string;
-    nameEn: string;
-    email: string;
-    homepage: string;
-    bio: string;
-    history: string;
-    backToList: string;
-    save: string;
-  }
-> = {
-  ko: {
-    artistSaved: '작가 정보를 저장했습니다.',
-    artistCreatedReturning: '작가를 등록했습니다. 작품 등록 화면으로 이동합니다.',
-    artistCreated: '작가를 등록했습니다.',
-    saveError: '저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
-    saveErrorToast: '저장 중 오류가 발생했습니다.',
-    profileImageSaved: '프로필 이미지를 저장했습니다.',
-    imageSaveError: '이미지 저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
-    imageSaveErrorToast: '이미지 저장 중 오류가 발생했습니다.',
-    closeError: '오류 메시지 닫기',
-    profileImageOptional: '프로필 이미지 (선택)',
-    saving: '저장 중...',
-    profileImageGuide:
-      '프로필 이미지는 선택 사항이며, 작가 정보를 먼저 저장한 뒤 필요할 때 등록할 수 있습니다.',
-    editTitle: '작가 정보 수정',
-    createTitle: '새 작가 등록',
-    nameKo: '작가명 (한글)',
-    nameEn: '작가명 (영문)',
-    email: '이메일',
-    homepage: '홈페이지',
-    bio: '소개',
-    history: '이력',
-    backToList: '목록으로',
-    save: '저장',
-  },
-  en: {
-    artistSaved: 'Artist information saved.',
-    artistCreatedReturning: 'Artist created. Returning to artwork registration.',
-    artistCreated: 'Artist created.',
-    saveError: 'An error occurred while saving. Please try again shortly.',
-    saveErrorToast: 'An error occurred while saving.',
-    profileImageSaved: 'Profile image saved.',
-    imageSaveError: 'An error occurred while saving image. Please try again shortly.',
-    imageSaveErrorToast: 'An error occurred while saving image.',
-    closeError: 'Close error message',
-    profileImageOptional: 'Profile image (optional)',
-    saving: 'Saving...',
-    profileImageGuide:
-      'Profile image is optional. Save artist information first and upload it later if needed.',
-    editTitle: 'Edit artist information',
-    createTitle: 'Create new artist',
-    nameKo: 'Artist name (Korean)',
-    nameEn: 'Artist name (English)',
-    email: 'Email',
-    homepage: 'Homepage',
-    bio: 'Bio',
-    history: 'History',
-    backToList: 'Back to list',
-    save: 'Save',
-  },
-};
 
 type Artist = {
   id: string;
@@ -110,8 +31,7 @@ type ArtistFormProps = {
 };
 
 export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
-  const locale = useLocale();
-  const copy = ARTIST_FORM_COPY[locale as 'ko' | 'en'];
+  const t = useTranslations('exhibitor.artistForm');
   const router = useRouter();
   const toast = useToast();
   const [saving, setSaving] = useState(false);
@@ -129,25 +49,25 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
     try {
       if (isEditing && artist.id) {
         await updateExhibitorArtist(artist.id, formData);
-        toast.success(copy.artistSaved);
+        toast.success(t('artistSaved'));
         router.push('/exhibitor/artists');
       } else {
         const result = await createExhibitorArtist(formData);
         if (result.success && result.id) {
           if (returnTo) {
-            toast.success(copy.artistCreatedReturning);
+            toast.success(t('artistCreatedReturning'));
             const separator = returnTo.includes('?') ? '&' : '?';
             router.push(`${returnTo}${separator}artist_id=${result.id}&artist_created=1`);
           } else {
-            toast.success(copy.artistCreated);
+            toast.success(t('artistCreated'));
             router.push(`/exhibitor/artists`);
           }
         }
       }
     } catch (error) {
       console.error('[exhibitor-artist-form] Artist save failed:', error);
-      setError(copy.saveError);
-      toast.error(copy.saveErrorToast);
+      setError(t('saveError'));
+      toast.error(t('saveErrorToast'));
     } finally {
       setSaving(false);
     }
@@ -160,12 +80,12 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
     setSavingImage(true);
     try {
       await updateExhibitorArtistProfileImage(artist.id, newImages[0] || null);
-      toast.success(copy.profileImageSaved);
+      toast.success(t('profileImageSaved'));
       router.refresh();
     } catch (error) {
       console.error('[exhibitor-artist-form] Profile image save failed:', error);
-      setError(copy.imageSaveError);
-      toast.error(copy.imageSaveErrorToast);
+      setError(t('imageSaveError'));
+      toast.error(t('imageSaveErrorToast'));
     } finally {
       setSavingImage(false);
     }
@@ -180,7 +100,7 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
             type="button"
             onClick={() => setError(null)}
             className="ml-4 text-red-500 hover:text-red-700"
-            aria-label={copy.closeError}
+            aria-label={t('closeError')}
           >
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path
@@ -196,8 +116,8 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
       {isEditing && artist.id ? (
         <AdminCard className="p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            {copy.profileImageOptional}
-            {savingImage && <span className="ml-2 text-sm text-gray-500">{copy.saving}</span>}
+            {t('profileImageOptional')}
+            {savingImage && <span className="ml-2 text-sm text-gray-500">{t('saving')}</span>}
           </h2>
           <ImageUpload
             bucket="profiles"
@@ -209,7 +129,7 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
         </AdminCard>
       ) : (
         <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800">
-          {copy.profileImageGuide}
+          {t('profileImageGuide')}
         </div>
       )}
 
@@ -221,13 +141,13 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
         className="space-y-6 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface)] p-6 shadow-sm"
       >
         <h2 className="text-lg font-semibold text-gray-900">
-          {isEditing ? copy.editTitle : copy.createTitle}
+          {isEditing ? t('editTitle') : t('createTitle')}
         </h2>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              {copy.nameKo} <span className="text-red-500">*</span>
+              {t('nameKo')} <span className="text-red-500">*</span>
             </label>
             <input
               name="name_ko"
@@ -238,7 +158,7 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">{copy.nameEn}</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('nameEn')}</label>
             <input
               name="name_en"
               defaultValue={artist.name_en || ''}
@@ -247,7 +167,7 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">{copy.email}</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('email')}</label>
             <input
               name="contact_email"
               type="email"
@@ -267,7 +187,7 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">{copy.homepage}</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('homepage')}</label>
             <input
               name="homepage"
               type="url"
@@ -281,7 +201,7 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">{copy.bio}</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">{t('bio')}</label>
           <textarea
             name="bio"
             defaultValue={artist.bio || ''}
@@ -291,7 +211,7 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">{copy.history}</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">{t('history')}</label>
           <textarea
             name="history"
             defaultValue={artist.history || ''}
@@ -302,10 +222,10 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
 
         <div className="flex justify-end gap-3">
           <Button type="button" variant="white" onClick={() => router.push('/exhibitor/artists')}>
-            {copy.backToList}
+            {t('backToList')}
           </Button>
           <Button type="submit" variant="primary" loading={saving}>
-            {copy.save}
+            {t('save')}
           </Button>
         </div>
       </form>

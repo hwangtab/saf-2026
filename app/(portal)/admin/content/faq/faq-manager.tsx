@@ -1,13 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import Button from '@/components/ui/Button';
 import { createFaq, updateFaq, deleteFaq } from '@/app/actions/admin-content';
-import { AdminCard, AdminInput, AdminTextarea } from '@/app/admin/_components/admin-ui';
-import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
-import { useToast } from '@/lib/hooks/useToast';
-import { matchesAnySearch } from '@/lib/search-utils';
+import { AdminInput, AdminTextarea } from '@/app/admin/_components/admin-ui';
+import { CRUDManager } from '../_components/CRUDManager';
 
 type FaqItem = {
   id: string;
@@ -19,210 +14,72 @@ type FaqItem = {
 };
 
 export function FaqManager({ faqs }: { faqs: FaqItem[] }) {
-  const router = useRouter();
-  const toast = useToast();
-  const [processingId, setProcessingId] = useState<string | null>(null);
-  const [creating, setCreating] = useState(false);
-  const [savingId, setSavingId] = useState<string | null>(null);
-  const [query, setQuery] = useState('');
-  const [optimisticFaqs, setOptimisticFaqs] = useState(faqs);
-  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
-
-  useEffect(() => {
-    setOptimisticFaqs(faqs);
-  }, [faqs]);
-
-  const handleCreate = async (formData: FormData) => {
-    setCreating(true);
-    try {
-      await createFaq(formData);
-      toast.success('FAQ added.');
-      router.refresh();
-    } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : '추가 중 오류가 발생했습니다.');
-    } finally {
-      setCreating(false);
-    }
-  };
-
-  const handleUpdate = async (id: string, formData: FormData) => {
-    const originalFaqs = [...optimisticFaqs];
-    const question = formData.get('question') as string;
-    const answer = formData.get('answer') as string;
-    const questionEn = (formData.get('question_en') as string) || null;
-    const answerEn = (formData.get('answer_en') as string) || null;
-    const displayOrder = Number(formData.get('display_order'));
-
-    setOptimisticFaqs((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              question,
-              answer,
-              question_en: questionEn,
-              answer_en: answerEn,
-              display_order: displayOrder,
-            }
-          : item
-      )
-    );
-    setSavingId(id);
-    try {
-      await updateFaq(id, formData);
-      toast.success('FAQ saved.');
-    } catch (err: unknown) {
-      setOptimisticFaqs(originalFaqs);
-      toast.error(err instanceof Error ? err.message : '저장 중 오류가 발생했습니다.');
-    } finally {
-      setSavingId(null);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!deleteTargetId) return;
-    const id = deleteTargetId;
-    setDeleteTargetId(null);
-    const originalFaqs = [...optimisticFaqs];
-    setOptimisticFaqs((prev) => prev.filter((item) => item.id !== id));
-    setProcessingId(id);
-    try {
-      await deleteFaq(id);
-      toast.success('FAQ deleted.');
-    } catch (err: unknown) {
-      setOptimisticFaqs(originalFaqs);
-      console.error('삭제 중 오류:', err);
-      toast.error(err instanceof Error ? err.message : '삭제 중 오류가 발생했습니다.');
-    } finally {
-      setProcessingId(null);
-    }
-  };
-
   return (
-    <div className="space-y-8">
-      <AdminCard className="p-6">
-        <h2 className="text-lg font-medium text-gray-900">FAQ 추가</h2>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            void handleCreate(new FormData(e.currentTarget));
-          }}
-          className="mt-4 grid grid-cols-1 gap-4"
-        >
+    <CRUDManager<FaqItem>
+      items={faqs}
+      actions={{
+        create: createFaq,
+        update: updateFaq,
+        delete: deleteFaq,
+      }}
+      searchFields={(item) => [item.question, item.answer, item.question_en, item.answer_en]}
+      extractOptimisticUpdate={(formData) => ({
+        question: formData.get('question') as string,
+        answer: formData.get('answer') as string,
+        question_en: (formData.get('question_en') as string) || null,
+        answer_en: (formData.get('answer_en') as string) || null,
+        display_order: Number(formData.get('display_order')),
+      })}
+      renderCreateForm={() => (
+        <>
           <AdminInput name="question" required placeholder="질문" />
           <AdminTextarea name="answer" required rows={4} placeholder="답변" />
           <AdminInput name="question_en" placeholder="Question (English)" />
           <AdminTextarea name="answer_en" rows={4} placeholder="Answer (English)" />
           <AdminInput type="number" name="display_order" placeholder="노출 순서 (숫자)" />
-          <div className="flex justify-end">
-            <Button type="submit" variant="primary" loading={creating} disabled={creating}>
-              추가
-            </Button>
-          </div>
-        </form>
-      </AdminCard>
-
-      <AdminConfirmModal
-        isOpen={!!deleteTargetId}
-        onClose={() => setDeleteTargetId(null)}
-        onConfirm={handleDelete}
-        title="FAQ 삭제 확인"
-        description="이 FAQ를 삭제하시겠습니까?"
-        confirmText="삭제하기"
-        variant="danger"
-      />
-
-      <section className="space-y-4">
-        <AdminCard className="p-4">
-          <label htmlFor="search-faqs" className="sr-only">
-            FAQ 검색
-          </label>
-          <AdminInput
-            id="search-faqs"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="검색: 질문/답변"
-            aria-describedby="search-faqs-description"
+        </>
+      )}
+      renderEditForm={(item) => (
+        <>
+          <AdminInput name="question" required defaultValue={item.question} placeholder="질문" />
+          <AdminTextarea
+            name="answer"
+            required
+            rows={4}
+            defaultValue={item.answer}
+            placeholder="답변"
           />
-          <span id="search-faqs-description" className="sr-only">
-            FAQ 질문 또는 답변으로 검색할 수 있습니다.
-          </span>
-        </AdminCard>
-        {optimisticFaqs
-          .filter((item) => {
-            if (!query.trim()) return true;
-            return matchesAnySearch(query, [
-              item.question,
-              item.answer,
-              item.question_en,
-              item.answer_en,
-            ]);
-          })
-          .map((item) => (
-            <form
-              key={item.id}
-              onSubmit={(e) => {
-                e.preventDefault();
-                void handleUpdate(item.id, new FormData(e.currentTarget));
-              }}
-              className="space-y-4 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface)] p-6 shadow-sm"
-            >
-              <div className="flex items-center justify-between gap-4">
-                <div className="text-sm text-gray-500 break-all">ID: {item.id}</div>
-                <Button
-                  type="button"
-                  variant="white"
-                  className="text-red-600"
-                  onClick={() => setDeleteTargetId(item.id)}
-                  loading={processingId === item.id}
-                  disabled={processingId !== null || creating || savingId !== null}
-                >
-                  삭제
-                </Button>
-              </div>
-              <AdminInput
-                name="question"
-                required
-                defaultValue={item.question}
-                placeholder="질문"
-              />
-              <AdminTextarea
-                name="answer"
-                required
-                rows={4}
-                defaultValue={item.answer}
-                placeholder="답변"
-              />
-              <AdminInput
-                name="question_en"
-                defaultValue={item.question_en ?? ''}
-                placeholder="Question (English)"
-              />
-              <AdminTextarea
-                name="answer_en"
-                rows={4}
-                defaultValue={item.answer_en ?? ''}
-                placeholder="Answer (English)"
-              />
-              <AdminInput
-                type="number"
-                name="display_order"
-                defaultValue={item.display_order ?? 0}
-                placeholder="노출 순서 (숫자)"
-              />
-              <div className="flex justify-end">
-                <Button
-                  type="submit"
-                  variant="secondary"
-                  loading={savingId === item.id}
-                  disabled={creating || savingId !== null || processingId !== null}
-                >
-                  저장
-                </Button>
-              </div>
-            </form>
-          ))}
-      </section>
-    </div>
+          <AdminInput
+            name="question_en"
+            defaultValue={item.question_en ?? ''}
+            placeholder="Question (English)"
+          />
+          <AdminTextarea
+            name="answer_en"
+            rows={4}
+            defaultValue={item.answer_en ?? ''}
+            placeholder="Answer (English)"
+          />
+          <AdminInput
+            type="number"
+            name="display_order"
+            defaultValue={item.display_order ?? 0}
+            placeholder="노출 순서 (숫자)"
+          />
+        </>
+      )}
+      labels={{
+        createTitle: 'FAQ 추가',
+        createButton: '추가',
+        deleteTitle: 'FAQ 삭제 확인',
+        deleteDescription: '이 FAQ를 삭제하시겠습니까?',
+        searchLabel: 'FAQ 검색',
+        searchPlaceholder: '검색: 질문/답변',
+        searchDescription: 'FAQ 질문 또는 답변으로 검색할 수 있습니다.',
+        addedMessage: 'FAQ added.',
+        savedMessage: 'FAQ saved.',
+        deletedMessage: 'FAQ deleted.',
+      }}
+    />
   );
 }

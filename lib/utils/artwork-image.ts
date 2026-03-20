@@ -1,53 +1,3 @@
-import { type ClassValue, clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
-
-export function shuffleArray<T>(array: T[]): T[] {
-  return [...array].sort(() => 0.5 - Math.random());
-}
-
-/**
- * Formats artist name for display by appending '작가' suffix.
- * Special case: '작가미상' (unknown artist) is displayed as-is without suffix.
- *
- * @param artistName - The artist's name
- * @param addSuffix - Whether to add '작가' suffix (default: true)
- * @returns Formatted artist name
- *
- * @example
- * formatArtistName('김철수') // Returns: '김철수 작가'
- * formatArtistName('작가미상') // Returns: '작가미상'
- * formatArtistName('김철수', false) // Returns: '김철수'
- */
-export function formatArtistName(artistName: string, addSuffix: boolean = true): string {
-  if (!artistName || !addSuffix) {
-    return artistName || '';
-  }
-
-  // Special case: "작가미상" should not have "작가" suffix
-  if (artistName === '작가미상') {
-    return artistName;
-  }
-
-  return `${artistName} 작가`;
-}
-
-export function resolveArtworkImageUrl(image: string): string {
-  if (!image) return '';
-  const normalizedImage = image.trim();
-  if (!normalizedImage) return '';
-  if (normalizedImage.startsWith('http://') || normalizedImage.startsWith('https://')) {
-    return normalizedImage;
-  }
-  if (normalizedImage.startsWith('/')) {
-    return normalizedImage;
-  }
-  return `/images/artworks/${normalizedImage}`;
-}
-
 export const ARTWORK_IMAGE_VARIANTS = ['thumb', 'card', 'detail', 'hero', 'original'] as const;
 export type ArtworkImageVariant = (typeof ARTWORK_IMAGE_VARIANTS)[number];
 export type ArtworkImagePreset = 'slider' | 'card' | 'detail' | 'hero' | 'original';
@@ -75,6 +25,19 @@ const PRESET_TO_VARIANT: Record<ArtworkImagePreset, ArtworkImageVariant> = {
   original: 'original',
 };
 
+export function resolveArtworkImageUrl(image: string): string {
+  if (!image) return '';
+  const normalizedImage = image.trim();
+  if (!normalizedImage) return '';
+  if (normalizedImage.startsWith('http://') || normalizedImage.startsWith('https://')) {
+    return normalizedImage;
+  }
+  if (normalizedImage.startsWith('/')) {
+    return normalizedImage;
+  }
+  return `/images/artworks/${normalizedImage}`;
+}
+
 export function resolveArtworkVariantUrl(image: string, variant: ArtworkImageVariant): string {
   const resolved = resolveArtworkImageUrl(image);
   if (!resolved.startsWith('http://') && !resolved.startsWith('https://')) {
@@ -85,7 +48,7 @@ export function resolveArtworkVariantUrl(image: string, variant: ArtworkImageVar
   try {
     parsed = new URL(resolved);
   } catch (error) {
-    console.error('[utils] resolveArtworkVariantUrl URL parsing failed:', error);
+    console.error('[artwork-image] resolveArtworkVariantUrl URL parsing failed:', error);
     return resolved;
   }
 
@@ -102,6 +65,84 @@ export function resolveArtworkVariantUrl(image: string, variant: ArtworkImageVar
   }
 
   parsed.pathname = parsed.pathname.replace(ARTWORK_VARIANT_FILENAME_REGEX, `__${variant}.$2`);
+  return parsed.toString();
+}
+
+type SupabaseImageResizeMode = 'cover' | 'contain' | 'fill';
+
+export interface SupabaseImageTransformOptions {
+  width?: number;
+  height?: number;
+  quality?: number;
+  format?: 'origin' | 'webp' | 'avif';
+  resize?: SupabaseImageResizeMode;
+}
+
+const SUPABASE_OBJECT_PUBLIC_PATH = '/storage/v1/object/public/';
+const SUPABASE_RENDER_PUBLIC_PATH = '/storage/v1/render/image/public/';
+const ENABLE_SUPABASE_RENDER_TRANSFORM =
+  process.env.NEXT_PUBLIC_SUPABASE_RENDER_TRANSFORM === 'true';
+
+const toPositiveInteger = (value: number | undefined): number | null => {
+  if (!Number.isFinite(value)) return null;
+  const rounded = Math.round(value as number);
+  return rounded > 0 ? rounded : null;
+};
+
+const clamp = (value: number, min: number, max: number): number =>
+  Math.min(Math.max(value, min), max);
+
+export function resolveOptimizedArtworkImageUrl(
+  image: string,
+  options: SupabaseImageTransformOptions = {}
+): string {
+  const resolved = resolveArtworkImageUrl(image);
+  if (!resolved.startsWith('http://') && !resolved.startsWith('https://')) {
+    return resolved;
+  }
+
+  let parsed: URL;
+  try {
+    parsed = new URL(resolved);
+  } catch (error) {
+    console.error('[artwork-image] resolveOptimizedArtworkImageUrl URL parsing failed:', error);
+    return resolved;
+  }
+
+  const hasObjectPath = parsed.pathname.includes(SUPABASE_OBJECT_PUBLIC_PATH);
+  const hasRenderPath = parsed.pathname.includes(SUPABASE_RENDER_PUBLIC_PATH);
+
+  if (!hasObjectPath && !hasRenderPath) {
+    return resolved;
+  }
+
+  // Supabase render endpoint can return 401 depending on project settings/plan.
+  // Keep object/public as default and only opt-in to render via env flag.
+  if (!ENABLE_SUPABASE_RENDER_TRANSFORM && hasObjectPath) {
+    return resolved;
+  }
+
+  if (hasObjectPath && ENABLE_SUPABASE_RENDER_TRANSFORM) {
+    parsed.pathname = parsed.pathname.replace(
+      SUPABASE_OBJECT_PUBLIC_PATH,
+      SUPABASE_RENDER_PUBLIC_PATH
+    );
+  }
+
+  const widthValue = toPositiveInteger(options.width);
+  const heightValue = toPositiveInteger(options.height);
+  const qualityValue = toPositiveInteger(options.quality);
+
+  const width = widthValue ? clamp(widthValue, 1, 2500) : null;
+  const height = heightValue ? clamp(heightValue, 1, 2500) : null;
+  const quality = qualityValue ? clamp(qualityValue, 20, 100) : null;
+
+  if (width) parsed.searchParams.set('width', String(width));
+  if (height) parsed.searchParams.set('height', String(height));
+  if (quality) parsed.searchParams.set('quality', String(quality));
+  if (options.resize) parsed.searchParams.set('resize', options.resize);
+  if (options.format) parsed.searchParams.set('format', options.format);
+
   return parsed.toString();
 }
 
@@ -157,87 +198,9 @@ export function getArtworkImageFamilyKey(imageUrl: string): string {
     const familyPath = parsed.pathname.replace(ARTWORK_VARIANT_FILENAME_REGEX, '');
     return `${parsed.origin}${familyPath}`;
   } catch (error) {
-    console.error('[utils] getArtworkImageFamilyKey URL parsing failed:', error);
+    console.error('[artwork-image] getArtworkImageFamilyKey URL parsing failed:', error);
     return resolved;
   }
-}
-
-type SupabaseImageResizeMode = 'cover' | 'contain' | 'fill';
-
-export interface SupabaseImageTransformOptions {
-  width?: number;
-  height?: number;
-  quality?: number;
-  format?: 'origin' | 'webp' | 'avif';
-  resize?: SupabaseImageResizeMode;
-}
-
-const SUPABASE_OBJECT_PUBLIC_PATH = '/storage/v1/object/public/';
-const SUPABASE_RENDER_PUBLIC_PATH = '/storage/v1/render/image/public/';
-const ENABLE_SUPABASE_RENDER_TRANSFORM =
-  process.env.NEXT_PUBLIC_SUPABASE_RENDER_TRANSFORM === 'true';
-
-const toPositiveInteger = (value: number | undefined): number | null => {
-  if (!Number.isFinite(value)) return null;
-  const rounded = Math.round(value as number);
-  return rounded > 0 ? rounded : null;
-};
-
-const clamp = (value: number, min: number, max: number): number =>
-  Math.min(Math.max(value, min), max);
-
-export function resolveOptimizedArtworkImageUrl(
-  image: string,
-  options: SupabaseImageTransformOptions = {}
-): string {
-  const resolved = resolveArtworkImageUrl(image);
-  if (!resolved.startsWith('http://') && !resolved.startsWith('https://')) {
-    return resolved;
-  }
-
-  let parsed: URL;
-  try {
-    parsed = new URL(resolved);
-  } catch (error) {
-    console.error('[utils] resolveOptimizedArtworkImageUrl URL parsing failed:', error);
-    return resolved;
-  }
-
-  const hasObjectPath = parsed.pathname.includes(SUPABASE_OBJECT_PUBLIC_PATH);
-  const hasRenderPath = parsed.pathname.includes(SUPABASE_RENDER_PUBLIC_PATH);
-
-  if (!hasObjectPath && !hasRenderPath) {
-    return resolved;
-  }
-
-  // Supabase render endpoint can return 401 depending on project settings/plan.
-  // Keep object/public as default and only opt-in to render via env flag.
-  if (!ENABLE_SUPABASE_RENDER_TRANSFORM && hasObjectPath) {
-    return resolved;
-  }
-
-  if (hasObjectPath && ENABLE_SUPABASE_RENDER_TRANSFORM) {
-    parsed.pathname = parsed.pathname.replace(
-      SUPABASE_OBJECT_PUBLIC_PATH,
-      SUPABASE_RENDER_PUBLIC_PATH
-    );
-  }
-
-  const widthValue = toPositiveInteger(options.width);
-  const heightValue = toPositiveInteger(options.height);
-  const qualityValue = toPositiveInteger(options.quality);
-
-  const width = widthValue ? clamp(widthValue, 1, 2500) : null;
-  const height = heightValue ? clamp(heightValue, 1, 2500) : null;
-  const quality = qualityValue ? clamp(qualityValue, 20, 100) : null;
-
-  if (width) parsed.searchParams.set('width', String(width));
-  if (height) parsed.searchParams.set('height', String(height));
-  if (quality) parsed.searchParams.set('quality', String(quality));
-  if (options.resize) parsed.searchParams.set('resize', options.resize);
-  if (options.format) parsed.searchParams.set('format', options.format);
-
-  return parsed.toString();
 }
 
 export function resolveSupabaseOriginalPublicUrl(url: string): string {
@@ -247,7 +210,7 @@ export function resolveSupabaseOriginalPublicUrl(url: string): string {
   try {
     parsed = new URL(url);
   } catch (error) {
-    console.error('[utils] resolveSupabaseOriginalPublicUrl URL parsing failed:', error);
+    console.error('[artwork-image] resolveSupabaseOriginalPublicUrl URL parsing failed:', error);
     return url;
   }
 
@@ -273,50 +236,4 @@ export function resolveSupabaseOriginalPublicUrl(url: string): string {
 export function resolveArtworkImageFallbackUrl(url: string): string {
   const originalVariantUrl = resolveArtworkVariantUrl(url, 'original');
   return resolveSupabaseOriginalPublicUrl(originalVariantUrl);
-}
-
-export function formatPriceForDisplay(priceValue: string | number | null | undefined): string {
-  if (priceValue === null || priceValue === undefined) return '';
-  const priceStr = String(priceValue).trim();
-  if (!priceStr) return '';
-  if (priceStr === '문의' || priceStr === '확인 중') return priceStr;
-
-  const numericStr = priceStr.replace(/[^\d]/g, '');
-  if (!numericStr) return priceStr;
-
-  const numeric = Number(numericStr);
-  if (!Number.isFinite(numeric) || numeric <= 0) return '';
-
-  return `₩${numeric.toLocaleString('ko-KR')}`;
-}
-
-const KOREAN_DATE_PATTERN = /^(\d{4})\s*년\s*(\d{1,2})\s*월\s*(\d{1,2})\s*일$/;
-
-export function formatEffectiveDateForLocale(rawDate: string, locale: 'ko' | 'en'): string {
-  const normalizedDate = rawDate.trim();
-
-  if (locale === 'ko' || !normalizedDate) {
-    return normalizedDate;
-  }
-
-  const matched = normalizedDate.match(KOREAN_DATE_PATTERN);
-  if (!matched) {
-    return normalizedDate;
-  }
-
-  const year = Number(matched[1]);
-  const month = Number(matched[2]);
-  const day = Number(matched[3]);
-  const parsed = new Date(Date.UTC(year, month - 1, day));
-
-  if (Number.isNaN(parsed.getTime())) {
-    return normalizedDate;
-  }
-
-  return parsed.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    timeZone: 'UTC',
-  });
 }

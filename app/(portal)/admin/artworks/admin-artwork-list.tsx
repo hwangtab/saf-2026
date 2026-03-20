@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import SafeImage from '@/components/common/SafeImage';
 import Button from '@/components/ui/Button';
 import {
@@ -61,185 +61,7 @@ export function AdminArtworkList({
   const toast = useToast();
   const pathname = usePathname();
   const locale = useLocale() as 'ko' | 'en';
-  const msg = useMemo(
-    () =>
-      locale === 'en'
-        ? {
-            deleted: 'Artwork deleted.',
-            deleteError: 'An error occurred while deleting artwork.',
-            statusRollback: 'Cafe24 sync failed. Status change was partially rolled back.',
-            statusChanged: 'Artwork status updated.',
-            statusError: 'An error occurred while updating status.',
-            visibilityRollback: 'Cafe24 sync failed. Visibility change was partially rolled back.',
-            shown: 'Artwork is now visible.',
-            hidden: 'Artwork is now hidden.',
-            visibilityError: 'An error occurred while updating visibility.',
-            partialSuccess: (ok: number, failed: number) =>
-              `Partial success: ${ok} succeeded, ${failed} rolled back.`,
-            batchStatusChanged: 'Selected artwork statuses updated.',
-            batchStatusError: 'An error occurred while updating statuses in batch.',
-            batchShown: 'Selected artworks are now visible.',
-            batchHidden: 'Selected artworks are now hidden.',
-            batchVisibilityError: 'An error occurred while updating visibility in batch.',
-            batchDeleted: 'Selected artworks deleted.',
-            batchDeleteError: 'An error occurred during batch delete.',
-            sortAscending: (label: string) => `Sort ${label} ascending`,
-            sortDescending: (label: string) => `Sort ${label} descending`,
-            truncatedNotice: (count: number) =>
-              `There are many artworks, so only the latest ${count} entries are loaded.`,
-            downloadAllArtworks: 'Download full artwork data',
-            title: 'Artwork list',
-            titleHelp:
-              'Manage all artworks. You can change sales status and visibility or edit detailed information.',
-            count: (count: number) => `${count}`,
-            searchArtwork: 'Search artworks',
-            searchPlaceholder: 'Search by artwork title or artist name...',
-            searchDescription: (count: number) =>
-              `You can search by artwork title or artist name. ${count} items are currently shown.`,
-            allStatus: 'All status',
-            available: 'Available',
-            reserved: 'Reserved',
-            sold: 'Sold',
-            allVisibility: 'All visibility',
-            visible: 'Visible',
-            hiddenLabel: 'Hidden',
-            defaultSort: 'Default sort',
-            recentSort: 'Most recent',
-            oldestSort: 'Oldest',
-            selectedCount: (count: number) => `${count} selected`,
-            changeStatus: 'Change status...',
-            hide: 'Hide',
-            show: 'Show',
-            delete: 'Delete',
-            processing: 'Processing...',
-            artworkInfo: 'Artwork info',
-            status: 'Status',
-            category: 'Category',
-            createdAt: 'Created',
-            visibility: 'Visibility',
-            manage: 'Manage',
-            noSearchResult: 'No artworks found',
-            zoomImage: 'Zoom image',
-            unknownArtist: 'Unknown artist',
-            cafe24SyncFailed: 'Shop sync failed',
-            cafe24PendingAuth: 'Shop sync requires re-authorization',
-            cafe24Warning: 'Shop sync warning',
-            cafe24Syncing: 'Shop sync in progress',
-            visibleNow: 'Visible',
-            categoryChanged: 'Category updated.',
-            categoryError: 'An error occurred while updating category.',
-            noCategory: 'None',
-            edit: 'Edit',
-            deleteConfirmTitle: 'Confirm artwork deletion',
-            deleteConfirmDescription: (title: string | undefined) =>
-              `Delete '${title || '-'}'?\nYou can restore it later from admin activity logs.`,
-            deleteConfirmText: 'Delete',
-            batchDeleteTitle: 'Delete selected artworks',
-            batchDeleteDescription: (count: number) =>
-              `Delete all ${count} selected artworks?\nYou can restore them later from admin activity logs.`,
-            batchDeleteText: (count: number) => `Delete ${count} artworks`,
-            batchStatusTitle: 'Batch status update',
-            batchStatusDescription: (count: number, status: string) =>
-              `Change status of ${count} selected artworks to '${status}'?`,
-            batchStatusConfirm: 'Update status',
-            batchHideTitle: 'Batch hide',
-            batchShowTitle: 'Batch show',
-            batchHideDescription: (count: number) =>
-              `Set all ${count} selected artworks to hidden?`,
-            batchShowDescription: (count: number) =>
-              `Set all ${count} selected artworks to visible?`,
-            batchHideConfirm: 'Hide all',
-            batchShowConfirm: 'Show all',
-          }
-        : {
-            deleted: '작품을 삭제했습니다.',
-            deleteError: '작품 삭제 중 오류가 발생했습니다.',
-            statusRollback: '카페24 동기화에 실패해 상태 변경이 일부 롤백되었습니다.',
-            statusChanged: '작품 상태를 변경했습니다.',
-            statusError: '상태 변경 중 오류가 발생했습니다.',
-            visibilityRollback: '카페24 동기화에 실패해 공개 상태 변경이 일부 롤백되었습니다.',
-            shown: '작품을 공개 처리했습니다.',
-            hidden: '작품을 숨김 처리했습니다.',
-            visibilityError: '공개 상태 변경 중 오류가 발생했습니다.',
-            partialSuccess: (ok: number, failed: number) =>
-              `부분 성공: ${ok}건 성공, ${failed}건 롤백되었습니다.`,
-            batchStatusChanged: '선택한 작품 상태를 변경했습니다.',
-            batchStatusError: '일괄 상태 변경 중 오류가 발생했습니다.',
-            batchShown: '선택한 작품을 공개 처리했습니다.',
-            batchHidden: '선택한 작품을 숨김 처리했습니다.',
-            batchVisibilityError: '일괄 공개 상태 변경 중 오류가 발생했습니다.',
-            batchDeleted: '선택한 작품을 삭제했습니다.',
-            batchDeleteError: '일괄 삭제 중 오류가 발생했습니다.',
-            sortAscending: (label: string) => `${label} 오름차순 정렬`,
-            sortDescending: (label: string) => `${label} 내림차순 정렬`,
-            truncatedNotice: (count: number) =>
-              `작품 데이터가 많아 최근 ${count}건만 불러왔습니다.`,
-            downloadAllArtworks: '전체 작품 데이터 다운받기',
-            title: '작품 목록',
-            titleHelp:
-              '전체 작품을 관리합니다. 판매 상태와 공개 여부를 변경하거나 작품 상세 정보를 편집할 수 있습니다.',
-            count: (count: number) => `${count}개`,
-            searchArtwork: '작품 검색',
-            searchPlaceholder: '작품명, 작가명 검색...',
-            searchDescription: (count: number) =>
-              `작품명 또는 작가명으로 검색할 수 있습니다. 현재 ${count}개가 표시됩니다.`,
-            allStatus: '모든 상태',
-            available: '판매 중',
-            reserved: '예약됨',
-            sold: '판매 완료',
-            allVisibility: '모든 노출',
-            visible: '공개',
-            hiddenLabel: '숨김',
-            defaultSort: '기본 정렬',
-            recentSort: '최근 등록순',
-            oldestSort: '오래된 등록순',
-            selectedCount: (count: number) => `${count}개 선택됨`,
-            changeStatus: '상태 변경...',
-            hide: '숨김',
-            show: '노출',
-            delete: '삭제',
-            processing: '처리 중...',
-            artworkInfo: '작품 정보',
-            status: '상태',
-            category: '분류',
-            createdAt: '등록일',
-            visibility: '공개 여부',
-            manage: '관리',
-            noSearchResult: '검색된 작품이 없습니다',
-            zoomImage: '이미지 확대하기',
-            unknownArtist: '작가 미상',
-            cafe24SyncFailed: '구매연동 오류',
-            cafe24PendingAuth: '구매연동 재승인 필요',
-            cafe24Warning: '구매연동 경고',
-            cafe24Syncing: '구매연동 진행 중',
-            visibleNow: '공개 중',
-            categoryChanged: '카테고리를 변경했습니다.',
-            categoryError: '카테고리 변경 중 오류가 발생했습니다.',
-            noCategory: '없음',
-            edit: '편집',
-            deleteConfirmTitle: '작품 삭제 확인',
-            deleteConfirmDescription: (title: string | undefined) =>
-              `'${title || '-'}' 작품을 삭제하시겠습니까?\n삭제 후 관리자 활동 로그에서 복구할 수 있습니다.`,
-            deleteConfirmText: '삭제하기',
-            batchDeleteTitle: '선택 작품 일괄 삭제',
-            batchDeleteDescription: (count: number) =>
-              `선택한 ${count}개의 작품을 모두 삭제하시겠습니까?\n삭제 후 관리자 활동 로그에서 복구할 수 있습니다.`,
-            batchDeleteText: (count: number) => `${count}개 작품 삭제`,
-            batchStatusTitle: '일괄 상태 변경',
-            batchStatusDescription: (count: number, status: string) =>
-              `선택한 ${count}개 작품의 상태를 '${status}'(으)로 변경하시겠습니까?`,
-            batchStatusConfirm: '상태 변경',
-            batchHideTitle: '일괄 숨김 처리',
-            batchShowTitle: '일괄 공개 처리',
-            batchHideDescription: (count: number) =>
-              `선택한 ${count}개 작품을 모두 숨김 처리하시겠습니까?`,
-            batchShowDescription: (count: number) =>
-              `선택한 ${count}개 작품을 모두 공개 처리하시겠습니까?`,
-            batchHideConfirm: '숨김 처리',
-            batchShowConfirm: '공개 처리',
-          },
-    [locale]
-  );
+  const t = useTranslations('admin.artworks');
   const artworksRef = useRef(artworks);
   artworksRef.current = artworks;
   const [optimisticArtworks, setOptimisticArtworks] = useState(artworks);
@@ -449,8 +271,8 @@ export function AdminArtworkList({
   };
 
   const getSortAriaLabel = (label: string, key: SortKey) => {
-    if (sortKey !== key) return msg.sortAscending(label);
-    return sortDirection === 'asc' ? msg.sortDescending(label) : msg.sortAscending(label);
+    if (sortKey !== key) return t('sortAscending', { label });
+    return sortDirection === 'asc' ? t('sortDescending', { label }) : t('sortAscending', { label });
   };
 
   // -- Handlers --
@@ -478,12 +300,16 @@ export function AdminArtworkList({
 
     try {
       await deleteAdminArtwork(id);
-      toast.success(msg.deleted);
+      toast.success(t('deleted'));
       setDeleteConfirm(null);
     } catch (error) {
       setOptimisticArtworks(artworksRef.current);
       toast.error(
-        locale === 'en' ? msg.deleteError : error instanceof Error ? error.message : msg.deleteError
+        locale === 'en'
+          ? t('deleteError')
+          : error instanceof Error
+            ? error.message
+            : t('deleteError')
       );
     } finally {
       setProcessingId(null);
@@ -509,14 +335,20 @@ export function AdminArtworkList({
             prev.map((item) => (item.id === id ? { ...item, status: source.status } : item))
           );
         }
-        toast.error(locale === 'en' ? msg.statusRollback : result.errors[0] || msg.statusRollback);
+        toast.error(
+          locale === 'en' ? t('statusRollback') : result.errors[0] || t('statusRollback')
+        );
         return;
       }
-      toast.success(msg.statusChanged);
+      toast.success(t('statusChanged'));
     } catch (error) {
       setOptimisticArtworks(artworksRef.current);
       toast.error(
-        locale === 'en' ? msg.statusError : error instanceof Error ? error.message : msg.statusError
+        locale === 'en'
+          ? t('statusError')
+          : error instanceof Error
+            ? error.message
+            : t('statusError')
       );
     } finally {
       setProcessingId(null);
@@ -540,19 +372,19 @@ export function AdminArtworkList({
           );
         }
         toast.error(
-          locale === 'en' ? msg.visibilityRollback : result.errors[0] || msg.visibilityRollback
+          locale === 'en' ? t('visibilityRollback') : result.errors[0] || t('visibilityRollback')
         );
         return;
       }
-      toast.success(currentHidden ? msg.shown : msg.hidden);
+      toast.success(currentHidden ? t('shown') : t('hidden'));
     } catch (error) {
       setOptimisticArtworks(artworksRef.current);
       toast.error(
         locale === 'en'
-          ? msg.visibilityError
+          ? t('visibilityError')
           : error instanceof Error
             ? error.message
-            : msg.visibilityError
+            : t('visibilityError')
       );
     } finally {
       setProcessingId(null);
@@ -571,15 +403,15 @@ export function AdminArtworkList({
 
     try {
       await updateArtworkCategory(id, category);
-      toast.success(msg.categoryChanged);
+      toast.success(t('categoryChanged'));
     } catch (error) {
       setOptimisticArtworks(artworksRef.current);
       toast.error(
         locale === 'en'
-          ? msg.categoryError
+          ? t('categoryError')
           : error instanceof Error
             ? error.message
-            : msg.categoryError
+            : t('categoryError')
       );
     } finally {
       setProcessingId(null);
@@ -627,21 +459,23 @@ export function AdminArtworkList({
         );
         setSelectedIds(new Set(result.failedIds));
         setBatchStatusConfirm(null);
-        toast.warning(msg.partialSuccess(result.succeededIds.length, result.failedIds.length));
+        toast.warning(
+          t('partialSuccess', { ok: result.succeededIds.length, failed: result.failedIds.length })
+        );
         return;
       }
 
       setSelectedIds(new Set());
       setBatchStatusConfirm(null);
-      toast.success(msg.batchStatusChanged);
+      toast.success(t('batchStatusChanged'));
     } catch (error) {
       setOptimisticArtworks(artworksRef.current);
       toast.error(
         locale === 'en'
-          ? msg.batchStatusError
+          ? t('batchStatusError')
           : error instanceof Error
             ? error.message
-            : msg.batchStatusError
+            : t('batchStatusError')
       );
     } finally {
       setBatchProcessing(false);
@@ -672,21 +506,23 @@ export function AdminArtworkList({
         );
         setSelectedIds(new Set(result.failedIds));
         setBatchHiddenConfirm(null);
-        toast.warning(msg.partialSuccess(result.succeededIds.length, result.failedIds.length));
+        toast.warning(
+          t('partialSuccess', { ok: result.succeededIds.length, failed: result.failedIds.length })
+        );
         return;
       }
 
       setSelectedIds(new Set());
       setBatchHiddenConfirm(null);
-      toast.success(isHidden ? msg.batchHidden : msg.batchShown);
+      toast.success(isHidden ? t('batchHidden') : t('batchShown'));
     } catch (error) {
       setOptimisticArtworks(artworksRef.current);
       toast.error(
         locale === 'en'
-          ? msg.batchVisibilityError
+          ? t('batchVisibilityError')
           : error instanceof Error
             ? error.message
-            : msg.batchVisibilityError
+            : t('batchVisibilityError')
       );
     } finally {
       setBatchProcessing(false);
@@ -704,15 +540,15 @@ export function AdminArtworkList({
       await batchDeleteArtworks(selectedInFiltered);
       setSelectedIds(new Set());
       setShowBatchDeleteConfirm(false);
-      toast.success(msg.batchDeleted);
+      toast.success(t('batchDeleted'));
     } catch (error) {
       setOptimisticArtworks(artworksRef.current);
       toast.error(
         locale === 'en'
-          ? msg.batchDeleteError
+          ? t('batchDeleteError')
           : error instanceof Error
             ? error.message
-            : msg.batchDeleteError
+            : t('batchDeleteError')
       );
     } finally {
       setBatchProcessing(false);
@@ -724,35 +560,35 @@ export function AdminArtworkList({
       <AdminCard className="overflow-hidden">
         {isTruncated && (
           <div className="border-b border-amber-200 bg-amber-50 px-6 py-3 text-sm text-amber-800">
-            {msg.truncatedNotice(maxRows)}{' '}
-            <span className="font-medium">{msg.downloadAllArtworks}</span>
+            {t('truncatedNotice', { count: maxRows })}{' '}
+            <span className="font-medium">{t('downloadAllArtworks')}</span>
           </div>
         )}
         {/* Header & Main Controls */}
         <AdminCardHeader>
           <div className="flex items-center gap-3">
             <h2 className="text-lg font-semibold text-gray-900">
-              {msg.title}
-              <AdminHelp>{msg.titleHelp}</AdminHelp>
+              {t('title')}
+              <AdminHelp>{t('titleHelp')}</AdminHelp>
             </h2>
-            <AdminBadge tone="info">{msg.count(filtered.length)}</AdminBadge>
+            <AdminBadge tone="info">{t('count', { count: filtered.length })}</AdminBadge>
           </div>
 
           <div className="grid w-full gap-3 sm:w-auto sm:grid-cols-[minmax(260px,1fr)_auto] sm:items-end">
             <div className="relative w-full sm:min-w-[320px]">
               <label htmlFor="search-artworks" className="sr-only">
-                {msg.searchArtwork}
+                {t('searchArtwork')}
               </label>
               <AdminInput
                 id="search-artworks"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder={msg.searchPlaceholder}
+                placeholder={t('searchPlaceholder')}
                 aria-describedby="search-artworks-description"
                 className="h-10 border-0 pl-10 pr-3"
               />
               <span id="search-artworks-description" className="sr-only">
-                {msg.searchDescription(filtered.length)}
+                {t('searchDescription', { count: filtered.length })}
               </span>
             </div>
             <div className="grid grid-cols-3 gap-3 sm:flex sm:justify-end">
@@ -766,10 +602,10 @@ export function AdminArtworkList({
                 }}
                 wrapperClassName="min-w-[120px]"
               >
-                <option value="all">{msg.allStatus}</option>
-                <option value="available">{msg.available}</option>
-                <option value="reserved">{msg.reserved}</option>
-                <option value="sold">{msg.sold}</option>
+                <option value="all">{t('allStatus')}</option>
+                <option value="available">{t('available')}</option>
+                <option value="reserved">{t('reserved')}</option>
+                <option value="sold">{t('sold')}</option>
               </AdminSelect>
               <AdminSelect
                 value={visibilityFilter}
@@ -781,9 +617,9 @@ export function AdminArtworkList({
                 }}
                 wrapperClassName="min-w-[120px]"
               >
-                <option value="all">{msg.allVisibility}</option>
-                <option value="visible">{msg.visible}</option>
-                <option value="hidden">{msg.hiddenLabel}</option>
+                <option value="all">{t('allVisibility')}</option>
+                <option value="visible">{t('visible')}</option>
+                <option value="hidden">{t('hiddenLabel')}</option>
               </AdminSelect>
               <AdminSelect
                 value={sortFilter}
@@ -798,9 +634,9 @@ export function AdminArtworkList({
                 }}
                 wrapperClassName="min-w-[140px]"
               >
-                <option value="default">{msg.defaultSort}</option>
-                <option value="recent">{msg.recentSort}</option>
-                <option value="oldest">{msg.oldestSort}</option>
+                <option value="default">{t('defaultSort')}</option>
+                <option value="recent">{t('recentSort')}</option>
+                <option value="oldest">{t('oldestSort')}</option>
               </AdminSelect>
             </div>
           </div>
@@ -810,7 +646,7 @@ export function AdminArtworkList({
         {selectedInFiltered.length > 0 && (
           <div className="flex flex-wrap items-center gap-4 border-b border-indigo-100 bg-indigo-50 px-6 py-4">
             <span className="text-sm font-medium text-indigo-900">
-              {msg.selectedCount(selectedInFiltered.length)}
+              {t('selectedCount', { count: selectedInFiltered.length })}
             </span>
             <div className="h-4 w-px bg-indigo-200"></div>
             <div className="flex items-center gap-2">
@@ -822,24 +658,24 @@ export function AdminArtworkList({
                 disabled={batchProcessing}
                 className="border-indigo-200"
               >
-                <option value="">{msg.changeStatus}</option>
-                <option value="available">{msg.available}</option>
-                <option value="reserved">{msg.reserved}</option>
-                <option value="sold">{msg.sold}</option>
+                <option value="">{t('changeStatus')}</option>
+                <option value="available">{t('available')}</option>
+                <option value="reserved">{t('reserved')}</option>
+                <option value="sold">{t('sold')}</option>
               </AdminSelect>
               <Button
                 variant="white"
                 onClick={() => setBatchHiddenConfirm(true)}
                 disabled={batchProcessing}
               >
-                {msg.hide}
+                {t('hide')}
               </Button>
               <Button
                 variant="white"
                 onClick={() => setBatchHiddenConfirm(false)}
                 disabled={batchProcessing}
               >
-                {msg.show}
+                {t('show')}
               </Button>
               <Button
                 variant="white"
@@ -847,11 +683,11 @@ export function AdminArtworkList({
                 disabled={batchProcessing}
                 className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
               >
-                {msg.delete}
+                {t('delete')}
               </Button>
             </div>
             {batchProcessing && (
-              <span className="text-xs text-indigo-600 animate-pulse">{msg.processing}</span>
+              <span className="text-xs text-indigo-600 animate-pulse">{t('processing')}</span>
             )}
           </div>
         )}
@@ -877,9 +713,9 @@ export function AdminArtworkList({
                     type="button"
                     onClick={() => handleSort('artwork_info')}
                     className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
-                    aria-label={getSortAriaLabel(msg.artworkInfo, 'artwork_info')}
+                    aria-label={getSortAriaLabel(t('artworkInfo'), 'artwork_info')}
                   >
-                    {msg.artworkInfo}
+                    {t('artworkInfo')}
                     <span className="text-[11px] text-gray-400">
                       {getSortArrow('artwork_info')}
                     </span>
@@ -893,9 +729,9 @@ export function AdminArtworkList({
                     type="button"
                     onClick={() => handleSort('status')}
                     className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
-                    aria-label={getSortAriaLabel(msg.status, 'status')}
+                    aria-label={getSortAriaLabel(t('status'), 'status')}
                   >
-                    {msg.status}
+                    {t('status')}
                     <span className="text-[11px] text-gray-400">{getSortArrow('status')}</span>
                   </button>
                 </th>
@@ -907,9 +743,9 @@ export function AdminArtworkList({
                     type="button"
                     onClick={() => handleSort('category')}
                     className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
-                    aria-label={getSortAriaLabel(msg.category, 'category')}
+                    aria-label={getSortAriaLabel(t('category'), 'category')}
                   >
-                    {msg.category}
+                    {t('category')}
                     <span className="text-[11px] text-gray-400">{getSortArrow('category')}</span>
                   </button>
                 </th>
@@ -921,9 +757,9 @@ export function AdminArtworkList({
                     type="button"
                     onClick={() => handleSort('created_at')}
                     className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
-                    aria-label={getSortAriaLabel(msg.createdAt, 'created_at')}
+                    aria-label={getSortAriaLabel(t('createdAt'), 'created_at')}
                   >
-                    {msg.createdAt}
+                    {t('createdAt')}
                     <span className="text-[11px] text-gray-400">{getSortArrow('created_at')}</span>
                   </button>
                 </th>
@@ -935,14 +771,14 @@ export function AdminArtworkList({
                     type="button"
                     onClick={() => handleSort('visibility')}
                     className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
-                    aria-label={getSortAriaLabel(msg.visibility, 'visibility')}
+                    aria-label={getSortAriaLabel(t('visibility'), 'visibility')}
                   >
-                    {msg.visibility}
+                    {t('visibility')}
                     <span className="text-[11px] text-gray-400">{getSortArrow('visibility')}</span>
                   </button>
                 </th>
                 <th scope="col" className="relative px-6 py-3">
-                  <span className="sr-only">{msg.manage}</span>
+                  <span className="sr-only">{t('manage')}</span>
                 </th>
               </tr>
             </thead>
@@ -950,7 +786,7 @@ export function AdminArtworkList({
               {filtered.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-6 py-0">
-                    <AdminEmptyState title={msg.noSearchResult} />
+                    <AdminEmptyState title={t('noSearchResult')} />
                   </td>
                 </tr>
               ) : (
@@ -986,7 +822,7 @@ export function AdminArtworkList({
                           }}
                           role={artwork.images?.[0] ? 'button' : undefined}
                           tabIndex={artwork.images?.[0] ? 0 : undefined}
-                          aria-label={artwork.images?.[0] ? msg.zoomImage : undefined}
+                          aria-label={artwork.images?.[0] ? t('zoomImage') : undefined}
                         >
                           {artwork.images?.[0] ? (
                             <SafeImage
@@ -1027,7 +863,7 @@ export function AdminArtworkList({
                             )}
                           </Link>
                           <div className="text-sm text-gray-500">
-                            {artwork.artists?.name_ko || msg.unknownArtist}
+                            {artwork.artists?.name_ko || t('unknownArtist')}
                           </div>
                           {(artwork.cafe24_sync_status === 'failed' ||
                             artwork.cafe24_sync_status === 'pending_auth' ||
@@ -1045,12 +881,12 @@ export function AdminArtworkList({
                               }`}
                               title={artwork.cafe24_sync_error || ''}
                             >
-                              {artwork.cafe24_sync_status === 'failed' && msg.cafe24SyncFailed}
+                              {artwork.cafe24_sync_status === 'failed' && t('cafe24SyncFailed')}
                               {artwork.cafe24_sync_status === 'pending_auth' &&
-                                msg.cafe24PendingAuth}
+                                t('cafe24PendingAuth')}
                               {artwork.cafe24_sync_status === 'synced_with_warning' &&
-                                msg.cafe24Warning}
-                              {artwork.cafe24_sync_status === 'syncing' && msg.cafe24Syncing}
+                                t('cafe24Warning')}
+                              {artwork.cafe24_sync_status === 'syncing' && t('cafe24Syncing')}
                             </div>
                           )}
                         </div>
@@ -1071,9 +907,9 @@ export function AdminArtworkList({
                               : 'border-sky-200 bg-sky-50 text-sky-700 focus:border-sky-400'
                         }`}
                       >
-                        <option value="available">{msg.available}</option>
-                        <option value="reserved">{msg.reserved}</option>
-                        <option value="sold">{msg.sold}</option>
+                        <option value="available">{t('available')}</option>
+                        <option value="reserved">{t('reserved')}</option>
+                        <option value="sold">{t('sold')}</option>
                       </AdminSelect>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -1085,7 +921,7 @@ export function AdminArtworkList({
                         disabled={processingId === artwork.id}
                         className="py-1 pl-2.5 pr-7 text-xs"
                       >
-                        <option value="">{msg.noCategory}</option>
+                        <option value="">{t('noCategory')}</option>
                         {ARTWORK_CATEGORIES.map((cat) => (
                           <option key={cat} value={cat}>
                             {cat}
@@ -1109,7 +945,7 @@ export function AdminArtworkList({
                             : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100'
                         }`}
                       >
-                        {artwork.is_hidden ? msg.hiddenLabel : msg.visibleNow}
+                        {artwork.is_hidden ? t('hiddenLabel') : t('visibleNow')}
                       </button>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -1120,7 +956,7 @@ export function AdminArtworkList({
                           size="sm"
                           className="px-2 text-gray-500 hover:bg-indigo-50 hover:text-indigo-600"
                         >
-                          {msg.edit}
+                          {t('edit')}
                         </Button>
                         <Button
                           variant="white"
@@ -1129,7 +965,7 @@ export function AdminArtworkList({
                           disabled={processingId === artwork.id}
                           className="text-gray-400 hover:text-red-600 hover:bg-red-50 px-2"
                         >
-                          {msg.delete}
+                          {t('delete')}
                         </Button>
                       </div>
                     </td>
@@ -1156,9 +992,9 @@ export function AdminArtworkList({
         isOpen={!!deleteConfirm}
         onClose={() => setDeleteConfirm(null)}
         onConfirm={handleDelete}
-        title={msg.deleteConfirmTitle}
-        description={msg.deleteConfirmDescription(deleteConfirm?.title)}
-        confirmText={msg.deleteConfirmText}
+        title={t('deleteConfirmTitle')}
+        description={t('deleteConfirmDescription', { title: deleteConfirm?.title || '-' })}
+        confirmText={t('deleteConfirmText')}
         variant="danger"
         isLoading={!!processingId}
       />
@@ -1167,9 +1003,9 @@ export function AdminArtworkList({
         isOpen={showBatchDeleteConfirm}
         onClose={() => setShowBatchDeleteConfirm(false)}
         onConfirm={handleBatchDelete}
-        title={msg.batchDeleteTitle}
-        description={msg.batchDeleteDescription(selectedInFiltered.length)}
-        confirmText={msg.batchDeleteText(selectedInFiltered.length)}
+        title={t('batchDeleteTitle')}
+        description={t('batchDeleteDescription', { count: selectedInFiltered.length })}
+        confirmText={t('batchDeleteText', { count: selectedInFiltered.length })}
         variant="danger"
         isLoading={batchProcessing}
       />
@@ -1178,16 +1014,17 @@ export function AdminArtworkList({
         isOpen={!!batchStatusConfirm}
         onClose={() => setBatchStatusConfirm(null)}
         onConfirm={handleBatchStatus}
-        title={msg.batchStatusTitle}
-        description={msg.batchStatusDescription(
-          selectedInFiltered.length,
-          batchStatusConfirm === 'available'
-            ? msg.available
-            : batchStatusConfirm === 'reserved'
-              ? msg.reserved
-              : msg.sold
-        )}
-        confirmText={msg.batchStatusConfirm}
+        title={t('batchStatusTitle')}
+        description={t('batchStatusDescription', {
+          count: selectedInFiltered.length,
+          status:
+            batchStatusConfirm === 'available'
+              ? t('available')
+              : batchStatusConfirm === 'reserved'
+                ? t('reserved')
+                : t('sold'),
+        })}
+        confirmText={t('batchStatusConfirm')}
         variant="warning"
         isLoading={batchProcessing}
       />
@@ -1196,13 +1033,13 @@ export function AdminArtworkList({
         isOpen={batchHiddenConfirm !== null}
         onClose={() => setBatchHiddenConfirm(null)}
         onConfirm={handleBatchHidden}
-        title={batchHiddenConfirm ? msg.batchHideTitle : msg.batchShowTitle}
+        title={batchHiddenConfirm ? t('batchHideTitle') : t('batchShowTitle')}
         description={
           batchHiddenConfirm
-            ? msg.batchHideDescription(selectedInFiltered.length)
-            : msg.batchShowDescription(selectedInFiltered.length)
+            ? t('batchHideDescription', { count: selectedInFiltered.length })
+            : t('batchShowDescription', { count: selectedInFiltered.length })
         }
-        confirmText={batchHiddenConfirm ? msg.batchHideConfirm : msg.batchShowConfirm}
+        confirmText={batchHiddenConfirm ? t('batchHideConfirm') : t('batchShowConfirm')}
         variant="info"
         isLoading={batchProcessing}
       />
