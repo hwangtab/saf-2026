@@ -1,5 +1,75 @@
 [
   {
+    "hash": "4168a29",
+    "type": "fix",
+    "scope": "ux",
+    "subject": "finalize page transition — opacity 0.90/200ms + Suspense safety net",
+    "summary": "페이지 전환 최종 조정 — opacity 0.90/200ms + Suspense 안전망",
+    "body": "- PageTransition: opacity 0.96→0.90 (10% dip), duration 150ms→200ms\n  → 전환 인지성 확보하면서 과하지 않은 sweet spot\n- layout.tsx: <Suspense fallback={null}> 복원\n  → 시각적 스피너 없이 React 에러 바운더리 역할 유지\n- page.tsx: animate-pulse 제거 후 남은 더블 스페이스 정리",
+    "date": "2026-03-20",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "462616b",
+    "type": "fix",
+    "scope": "ux",
+    "subject": "remove layout Suspense spinner and inline animate-pulse",
+    "summary": "레이아웃 Suspense 스피너 제거 및 홈페이지 인라인 스켈레톤 애니메이션 제거",
+    "body": "- app/[locale]/layout.tsx: <Suspense fallback={<PageLoader />}> 래퍼 제거\n  → 전환 시 이전 페이지 유지 후 새 페이지로 자연스럽게 교체\n- app/[locale]/page.tsx: dynamic import loading 콜백 5곳 animate-pulse 제거\n  → CLS 방지용 placeholder div는 유지, 깜빡이는 회색 효과만 제거",
+    "date": "2026-03-19",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "4a16bcc",
+    "type": "fix",
+    "scope": "ux",
+    "subject": "remove SSG skeleton flash and clean up dead code",
+    "summary": "SSG 공개 페이지 스켈레톤 플래시 제거 및 dead code 정리",
+    "body": "- SSG 공개 페이지 loading.tsx 12개 삭제 (스켈레톤 플래시 UX 저하 해소)\n- PageTransition opacity dip 0.985→0.96 (체감 가능한 부드러운 전환)\n- Skeleton.tsx 미사용 export 8개 제거 (TextSkeleton, ArtworkCardSkeleton 등)\n- 포털/인증 loading.tsx 39개는 SSR 로딩 시간이 있으므로 유지",
+    "date": "2026-03-19",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "7849818",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "blind spot fixes — artist count, test coverage, re-exports",
+    "summary": "블라인드스팟 수정 — 작가 수 정정, 테스트 보강, re-export 누락 해결",
+    "body": "- 작가 수 \"50여 명\" → \"110여 명\" (실제 110명, 276작품)\n  - llms.txt, event.ts, howto.ts, qa-page.ts 일괄 수정\n- 새 AEO/GEO 스키마 테스트 15개 추가 (총 52개)\n  - ClaimReview, HowTo, QAPage 전체 커버리지\n- seo-utils.ts에 새 스키마 re-export 추가 (역호환성 완성)",
+    "date": "2026-03-19",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "da50ae5",
+    "type": "fix",
+    "scope": null,
+    "subject": "blind spot issues from refactoring audit",
+    "summary": "리팩토링 감사에서 발견된 블라인드 스팟 수정",
+    "body": "- lib/ui-strings.ts 삭제 (모든 소비자가 next-intl로 전환 완료, 데드 코드)\n- 15개 파일에서 resolveClientLocale → useLocale() 전환 (SignOutButton, AuthButtons, ImageUpload, nav 컴포넌트, auth 페이지 등)\n- AppLocale 타입 의존성 정리 (portal-error-copy.ts, toast-localization.ts에서 자체 타입 정의로 변경)\n- ESLint 경고 수정 (admin/logs/_utils.ts의 불필요한 eslint-disable 제거, TranslationFn 타입 정확화)\n- lib/schemas/*.ts git 추가 (seo-utils 분리 시 생성된 미커밋 파일)",
+    "date": "2026-03-19",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "bbe4d93",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "add AEO/GEO optimization with schema modularization and AI engine support",
+    "summary": "SEO 스키마 모듈 분리 및 AEO/GEO 최적화 (ClaimReview, HowTo, QAPage, llms.txt)",
+    "body": "Phase A — 기술적 SEO 보강:\n- lib/seo-utils.ts (972줄) → lib/schemas/ 11개 모듈로 분리 (역호환 유지)\n- googleBot max-snippet:-1, max-image-preview:large 설정\n- /our-reality 페이지에 Speakable 스키마 추가 (ID 기반 타겟팅)\n- JSON-LD 스키마 단위 테스트 37개 작성\n\nPhase B — GEO/AEO 콘텐츠 구조화:\n- ClaimReview 스키마: 핵심 통계 4건 (84.9%, 48.6%, 88.3%, 95%) 검증 마크업\n- QAPage 스키마: 핵심 Q&A 4쌍 (한/영) → 홈 + /our-reality\n- HowTo 스키마: 작품구매 + 조합원가입 가이드 → 홈\n- public/llms.txt: AI 크롤러용 사이트 요약 + <link> 태그\n- WebSite 스키마에 accessibilityFeature 6종 추가",
+    "date": "2026-03-19",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "714b6b5",
+    "type": "fix",
+    "scope": "changelog",
+    "subject": "add missing Korean summaries for recent commits",
+    "summary": "최근 커밋 한국어 요약 누락분 추가",
+    "body": "Map recent blind-spot and SEO/accessibility commits to Korean summaries so admin changelog no longer falls back to English subjects.",
+    "date": "2026-03-18",
+    "author": "hwangtab"
+  },
+  {
     "hash": "50d4436",
     "type": "fix",
     "scope": "seo,a11y",

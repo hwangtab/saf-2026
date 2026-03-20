@@ -45,7 +45,10 @@ export default function DynamicCounter({ items }: DynamicCounterProps) {
                       <span className="text-lg">{item.unit}</span>
                     </>
                   ) : (
-                    <span>0{item.unit}</span>
+                    <span>
+                      {item.value.toLocaleString('ko-KR')}
+                      {item.unit}
+                    </span>
                   )}
                 </span>
               </div>
