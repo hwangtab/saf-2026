@@ -142,7 +142,7 @@ export default async function Home() {
               {t('viewArtworks')}
             </LinkButton>
             <LinkButton
-              href="/archive"
+              href="/our-reality"
               variant="outline"
               size="lg"
               className="w-full sm:w-auto bg-white/10 backdrop-blur-sm border-white/50 text-white hover:bg-white hover:text-primary min-w-[160px] justify-center"
