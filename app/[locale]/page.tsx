@@ -10,7 +10,7 @@ import SectionTitle from '@/components/ui/SectionTitle';
 import ActionCard from '@/components/ui/ActionCard';
 import BackgroundSlider from '@/components/features/BackgroundSlider';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
-import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL, STATISTICS_DATA } from '@/lib/constants';
+import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL } from '@/lib/constants';
 import {
   generateExhibitionSchema,
   generateFAQSchema,
@@ -77,7 +77,12 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function Home() {
   const locale = (await getLocale()) === 'en' ? 'en' : 'ko';
   const t = await getTranslations('home');
-  const counterItems = STATISTICS_DATA.slice(0, 3);
+  const tStat = await getTranslations('statistics');
+  const counterItems = [
+    { label: tStat('exclusionRate'), value: 84.9, unit: tStat('unitPercent') },
+    { label: tStat('predatoryLending'), value: 48.6, unit: tStat('unitPercent') },
+    { label: tStat('repaymentRate'), value: 95, unit: tStat('unitPercent') },
+  ];
 
   const heroTitleLines = t('heroTitle').split('\n');
   const heroDescLines = t('heroDescription').split('\n');
@@ -162,7 +167,7 @@ export default async function Home() {
       </section>
 
       <Suspense fallback={<HomeDataSectionsFallback />}>
-        <HomeDataSections counterItems={counterItems} />
+        <HomeDataSections counterItems={counterItems} locale={locale} />
       </Suspense>
 
       {/* Call to Action Section (Moved Up) */}
@@ -300,13 +305,19 @@ export default async function Home() {
   );
 }
 
-async function HomeDataSections({ counterItems }: { counterItems: typeof STATISTICS_DATA }) {
+async function HomeDataSections({
+  counterItems,
+  locale,
+}: {
+  counterItems: { label: string; value: number; unit: string }[];
+  locale: 'ko' | 'en';
+}) {
   const sliderArtworks = await getSupabaseHomepageArtworks(30);
 
   return (
     <>
       <ArtworkHighlightSlider artworks={sliderArtworks} />
-      <DynamicCounter items={counterItems} />
+      <DynamicCounter items={counterItems} locale={locale} />
     </>
   );
 }

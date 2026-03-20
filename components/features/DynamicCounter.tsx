@@ -13,9 +13,10 @@ interface CounterItem {
 
 interface DynamicCounterProps {
   items: CounterItem[];
+  locale?: 'ko' | 'en';
 }
 
-export default function DynamicCounter({ items }: DynamicCounterProps) {
+export default function DynamicCounter({ items, locale = 'ko' }: DynamicCounterProps) {
   const { ref, inView } = useInView({
     triggerOnce: true,
     threshold: 0.5,
@@ -46,7 +47,7 @@ export default function DynamicCounter({ items }: DynamicCounterProps) {
                     </>
                   ) : (
                     <span>
-                      {item.value.toLocaleString('ko-KR')}
+                      {item.value.toLocaleString(locale === 'en' ? 'en-US' : 'ko-KR')}
                       {item.unit}
                     </span>
                   )}

@@ -29,6 +29,7 @@ type NewsPageCopy = {
   heroDescription: string;
   shareTitle: string;
   shareDescription: string;
+  highlightsBadge: string;
   highlightsTitle: string;
   highlightsDescription: string;
   coverageSuffix: string;
@@ -49,6 +50,7 @@ const NEWS_COPY: Record<LocaleCode, NewsPageCopy> = {
     heroDescription: '씨앗페 캠페인을 조명한 기사와 인터뷰를 모았습니다.',
     shareTitle: '언론 보도 | 씨앗페 2026',
     shareDescription: '씨앗페 캠페인을 다룬 언론 보도를 한 눈에 확인해보세요.',
+    highlightsBadge: '언론 하이라이트',
     highlightsTitle: '언론이 짚어낸 예술인 금융 위기의 핵심 메시지',
     highlightsDescription:
       '언론이 기록한 현장의 목소리와 데이터를 통해,\n예술인이 마주한 금융 사각지대의 현실과 상호부조의 필요성을 확인합니다.',
@@ -68,6 +70,7 @@ const NEWS_COPY: Record<LocaleCode, NewsPageCopy> = {
     heroDescription: 'A curated collection of articles and interviews covering the SAF campaign.',
     shareTitle: 'Press | SAF 2026',
     shareDescription: 'Browse media coverage and interviews about the SAF campaign.',
+    highlightsBadge: 'Press Highlights',
     highlightsTitle: 'Key Messages the Press Highlighted',
     highlightsDescription:
       'Through field interviews and data-driven reporting,\nsee why artist financial exclusion requires mutual-aid finance.',
@@ -386,7 +389,7 @@ export default async function NewsPage() {
         <div className="container-max flex flex-col gap-12">
           <div className="max-w-3xl mx-auto text-center">
             <span className="inline-flex items-center px-3 py-1 rounded-full border border-primary text-primary text-xs font-semibold tracking-wide uppercase mb-4">
-              Press Highlights
+              {copy.highlightsBadge}
             </span>
             <SectionTitle id="press-highlights-title" className="mb-4">
               {copy.highlightsTitle}
