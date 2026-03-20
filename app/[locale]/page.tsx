@@ -293,21 +293,6 @@ export default async function Home() {
         </div>
       </Section>
 
-      {/* Closing CTA Section */}
-      <Section variant="primary" prevVariant="sun-soft" padding="sm">
-        <div className="container-max text-center">
-          <p className="text-white text-xl md:text-2xl font-bold mb-6">{t('closingCta')}</p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <LinkButton href={EXTERNAL_LINKS.DONATE} external variant="white" size="md">
-              {t('closingDonate')}
-            </LinkButton>
-            <LinkButton href="/artworks" variant="outline-white" size="md">
-              {t('closingArtworks')}
-            </LinkButton>
-          </div>
-        </div>
-      </Section>
-
       {/* ExhibitionEvent JSON-LD Schema using Component */}
       <JsonLdScript data={generateExhibitionSchema([], locale)} />
       {/* FundingScheme JSON-LD for campaign Rich Results */}
