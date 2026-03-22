@@ -2,7 +2,7 @@
 
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { requireExhibitor } from '@/lib/auth/guards';
-import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
+import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { syncArtworkToCafe24 } from '@/lib/integrations/cafe24/sync-artwork';
 import { purgeCafe24ProductsFromTrashEntry } from '@/lib/integrations/cafe24/trash-purge';
 import {
@@ -87,7 +87,7 @@ function toCafe24SyncFeedback(
 
 export async function getExhibitorArtworks() {
   const user = await requireExhibitor();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const { data: artworks, error } = await supabase
     .from('artworks')
@@ -105,7 +105,7 @@ export async function getExhibitorArtworks() {
 
 export async function getExhibitorArtworkById(id: string) {
   const user = await requireExhibitor();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const { data: artwork, error } = await supabase
     .from('artworks')
@@ -124,7 +124,7 @@ export async function getExhibitorArtworkById(id: string) {
 
 export async function createExhibitorArtwork(formData: FormData) {
   const user = await requireExhibitor();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   // Validate Data
   const validation = validateArtworkData(formData);
@@ -212,7 +212,7 @@ export async function createExhibitorArtwork(formData: FormData) {
 
 export async function updateExhibitorArtwork(id: string, formData: FormData) {
   const user = await requireExhibitor();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   // Validate Data
   const validation = validateArtworkData(formData);
@@ -312,7 +312,7 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
 
 export async function updateExhibitorArtworkImages(id: string, images: string[]) {
   const user = await requireExhibitor();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   // Fetch full existing artwork for snapshot
   const { data: oldArtwork, error: fetchError } = await supabase
@@ -391,7 +391,7 @@ export async function updateExhibitorArtworkImages(id: string, images: string[])
 
 export async function deleteExhibitorArtwork(id: string) {
   const user = await requireExhibitor();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   // Fetch full artwork for snapshot
   const { data: artwork, error: fetchError } = await supabase

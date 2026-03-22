@@ -1,7 +1,7 @@
 'use server';
 
 import { requireAdmin } from '@/lib/auth/guards';
-import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
+import { createSupabaseAdminClient } from '@/lib/auth/server';
 
 export type AnalyticsPeriod = '7d' | '30d' | '90d';
 
@@ -34,7 +34,7 @@ const PERIOD_DAYS: Record<AnalyticsPeriod, number> = {
 
 export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise<AnalyticsData> {
   await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const days = PERIOD_DAYS[period];
   const sinceTs = new Date(Date.now() - days * 86_400_000).toISOString();

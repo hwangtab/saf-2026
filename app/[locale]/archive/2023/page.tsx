@@ -12,7 +12,7 @@ import { saf2023Photos } from '@/content/saf2023-photos';
 import { saf2023Artworks } from '@/content/saf2023-artworks';
 import { supabase } from '@/lib/supabase';
 import { videos as fallbackVideos } from '@/content/videos';
-import { SITE_URL, escapeJsonLdForScript } from '@/lib/constants';
+import { SITE_URL } from '@/lib/constants';
 import { containsHangul } from '@/lib/search-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema, generateVideoSchema } from '@/lib/seo-utils';
@@ -119,12 +119,7 @@ export default async function Archive2023Page() {
   return (
     <>
       <JsonLdScript data={breadcrumbSchema} />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: escapeJsonLdForScript(JSON.stringify(collectionSchema)),
-        }}
-      />
+      <JsonLdScript data={collectionSchema} />
       <PageHero
         title={isEnglish ? 'SAF 2023 Offline Exhibition' : '2023 오프라인 전시'}
         description={

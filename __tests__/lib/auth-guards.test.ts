@@ -171,6 +171,8 @@ describe('requireArtistActive', () => {
       bio: 'bio',
       terms_version: ARTIST_APPLICATION_TERMS_VERSION,
       terms_accepted_at: '2024-01-01',
+      privacy_version: PRIVACY_POLICY_VERSION,
+      privacy_accepted_at: '2024-01-01',
       tos_version: TERMS_OF_SERVICE_VERSION,
       tos_accepted_at: '2024-01-01',
     });
@@ -192,6 +194,8 @@ describe('requireArtistActive', () => {
       bio: 'bio',
       terms_version: ARTIST_APPLICATION_TERMS_VERSION,
       terms_accepted_at: '2024-01-01',
+      privacy_version: PRIVACY_POLICY_VERSION,
+      privacy_accepted_at: '2024-01-01',
       tos_version: TERMS_OF_SERVICE_VERSION,
       tos_accepted_at: '2024-01-01',
     });

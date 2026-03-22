@@ -7,7 +7,3 @@ export const hasSupabaseConfig = Boolean(supabaseUrl && supabaseAnonKey);
 
 export const supabase =
   supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supabaseAnonKey) : null;
-
-// Helper for server-side fetching (optional, same as client if no cookies/auth needed yet)
-export const getSupabaseServer = () =>
-  supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supabaseAnonKey) : null;

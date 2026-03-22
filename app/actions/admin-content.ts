@@ -2,13 +2,13 @@
 
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
-import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
+import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { logAdminAction } from './admin-logs';
 import { getString, getNumber } from '@/lib/utils/form-helpers';
 
 export async function createNews(formData: FormData) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const id = getString(formData, 'id') || crypto.randomUUID();
   const title = getString(formData, 'title');
@@ -45,7 +45,7 @@ export async function createNews(formData: FormData) {
 
 export async function updateNews(id: string, formData: FormData) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const { data: oldNews } = await supabase.from('news').select('*').eq('id', id).single();
 
@@ -85,7 +85,7 @@ export async function updateNews(id: string, formData: FormData) {
 
 export async function deleteNews(id: string) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const { data: news } = await supabase.from('news').select('*').eq('id', id).single();
 
@@ -105,7 +105,7 @@ export async function deleteNews(id: string) {
 
 export async function createFaq(formData: FormData) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const question = getString(formData, 'question');
   const answer = getString(formData, 'answer');
@@ -138,7 +138,7 @@ export async function createFaq(formData: FormData) {
 
 export async function updateFaq(id: string, formData: FormData) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const { data: oldFaq } = await supabase.from('faq').select('*').eq('id', id).single();
 
@@ -176,7 +176,7 @@ export async function updateFaq(id: string, formData: FormData) {
 
 export async function deleteFaq(id: string) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const { data: faq } = await supabase.from('faq').select('*').eq('id', id).single();
 
@@ -203,7 +203,7 @@ export async function deleteFaq(id: string) {
 
 export async function createTestimonial(formData: FormData) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const category = getString(formData, 'category');
   const quote = getString(formData, 'quote');
@@ -242,7 +242,7 @@ export async function createTestimonial(formData: FormData) {
 
 export async function updateTestimonial(id: string, formData: FormData) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const { data: oldTestimonial } = await supabase
     .from('testimonials')
@@ -283,7 +283,7 @@ export async function updateTestimonial(id: string, formData: FormData) {
 
 export async function deleteTestimonial(id: string) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const { data: testimonial } = await supabase
     .from('testimonials')
@@ -313,7 +313,7 @@ export async function deleteTestimonial(id: string) {
 
 export async function createVideo(formData: FormData) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const youtube_id = getString(formData, 'youtube_id');
   const id = getString(formData, 'id') || youtube_id || crypto.randomUUID();
@@ -347,7 +347,7 @@ export async function createVideo(formData: FormData) {
 
 export async function updateVideo(id: string, formData: FormData) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const { data: oldVideo } = await supabase.from('videos').select('*').eq('id', id).single();
 
@@ -384,7 +384,7 @@ export async function updateVideo(id: string, formData: FormData) {
 
 export async function deleteVideo(id: string) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const { data: video } = await supabase.from('videos').select('*').eq('id', id).single();
 

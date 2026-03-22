@@ -1,42 +1,45 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Exhibitor, approveExhibitor, suspendExhibitor } from '@/app/actions/admin-exhibitors';
 import Button from '@/components/ui/Button';
+import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
+import { useToast } from '@/lib/hooks/useToast';
+
+type ConfirmAction = { type: 'approve' | 'suspend'; id: string };
 
 export function ExhibitorList({ initialExhibitors }: { initialExhibitors: Exhibitor[] }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const toast = useToast();
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [confirmAction, setConfirmAction] = useState<ConfirmAction | null>(null);
 
   const currentStatus = searchParams.get('status') as 'active' | 'pending' | 'suspended' | null;
 
-  const handleApprove = async (id: string) => {
-    if (!confirm('출품자를 승인하시겠습니까?')) return;
+  const handleConfirm = useCallback(async () => {
+    if (!confirmAction) return;
+    const { type, id } = confirmAction;
+    setConfirmAction(null);
     setLoadingId(id);
     try {
-      await approveExhibitor(id);
+      if (type === 'approve') {
+        await approveExhibitor(id);
+      } else {
+        await suspendExhibitor(id);
+      }
       router.refresh();
-    } catch (error) {
-      alert('승인 처리 중 오류가 발생했습니다.');
+    } catch {
+      toast.error(
+        type === 'approve'
+          ? '승인 처리 중 오류가 발생했습니다.'
+          : '정지 처리 중 오류가 발생했습니다.'
+      );
     } finally {
       setLoadingId(null);
     }
-  };
-
-  const handleSuspend = async (id: string) => {
-    if (!confirm('출품자를 정지하시겠습니까?')) return;
-    setLoadingId(id);
-    try {
-      await suspendExhibitor(id);
-      router.refresh();
-    } catch (error) {
-      alert('정지 처리 중 오류가 발생했습니다.');
-    } finally {
-      setLoadingId(null);
-    }
-  };
+  }, [confirmAction, router, toast]);
 
   const handleStatusFilter = (status: string | null) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -182,7 +185,7 @@ export function ExhibitorList({ initialExhibitors }: { initialExhibitors: Exhibi
                       <Button
                         variant="primary"
                         size="sm"
-                        onClick={() => handleApprove(exhibitor.id)}
+                        onClick={() => setConfirmAction({ type: 'approve', id: exhibitor.id })}
                         loading={loadingId === exhibitor.id}
                         disabled={loadingId !== null}
                       >
@@ -194,7 +197,7 @@ export function ExhibitorList({ initialExhibitors }: { initialExhibitors: Exhibi
                         variant="white"
                         size="sm"
                         className="text-red-600 hover:text-red-700"
-                        onClick={() => handleSuspend(exhibitor.id)}
+                        onClick={() => setConfirmAction({ type: 'suspend', id: exhibitor.id })}
                         loading={loadingId === exhibitor.id}
                         disabled={loadingId !== null}
                       >
@@ -205,7 +208,7 @@ export function ExhibitorList({ initialExhibitors }: { initialExhibitors: Exhibi
                       <Button
                         variant="white"
                         size="sm"
-                        onClick={() => handleApprove(exhibitor.id)}
+                        onClick={() => setConfirmAction({ type: 'approve', id: exhibitor.id })}
                         loading={loadingId === exhibitor.id}
                         disabled={loadingId !== null}
                       >
@@ -219,6 +222,20 @@ export function ExhibitorList({ initialExhibitors }: { initialExhibitors: Exhibi
           </tbody>
         </table>
       </div>
+
+      <AdminConfirmModal
+        isOpen={confirmAction !== null}
+        onClose={() => setConfirmAction(null)}
+        onConfirm={handleConfirm}
+        title={confirmAction?.type === 'approve' ? '출품자 승인' : '출품자 정지'}
+        description={
+          confirmAction?.type === 'approve'
+            ? '출품자를 승인하시겠습니까?'
+            : '출품자를 정지하시겠습니까?'
+        }
+        variant={confirmAction?.type === 'suspend' ? 'danger' : 'info'}
+        isLoading={loadingId !== null}
+      />
     </div>
   );
 }

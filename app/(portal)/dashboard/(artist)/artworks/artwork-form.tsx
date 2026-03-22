@@ -16,8 +16,25 @@ import {
 } from '@/app/admin/_components/admin-ui';
 import { ARTWORK_CATEGORIES, EditionType } from '@/types';
 
+type ArtworkData = {
+  id: string;
+  title: string;
+  description: string | null;
+  size: string | null;
+  material: string | null;
+  year: string | null;
+  edition: string | null;
+  edition_type: EditionType | null;
+  edition_limit: number | null;
+  category: string | null;
+  price: string | null;
+  status: string | null;
+  images: string[] | null;
+  is_hidden: boolean | null;
+};
+
 type ArtworkFormProps = {
-  artwork?: any; // If provided, mode is 'edit'
+  artwork?: Partial<ArtworkData>;
   artistId: string;
 };
 
@@ -35,7 +52,7 @@ const createSessionId = () => {
 
 export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
   // If editing, we bind the ID to the update action
-  const action = artwork ? updateArtwork.bind(null, artwork.id) : createArtwork;
+  const action = artwork?.id ? updateArtwork.bind(null, artwork.id) : createArtwork;
 
   const locale = useLocale();
   const t = useTranslations('dashboard.artworkForm');
@@ -420,7 +437,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
                       id="hidden"
                       name="hidden"
                       type="checkbox"
-                      defaultChecked={artwork?.is_hidden}
+                      defaultChecked={artwork?.is_hidden ?? undefined}
                       className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
                     />
                   </div>

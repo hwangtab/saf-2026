@@ -13,6 +13,7 @@ import {
   AdminEmptyState,
   AdminInput,
 } from '@/app/admin/_components/admin-ui';
+import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import { matchesAnySearch } from '@/lib/search-utils';
 
 type ArtistItem = {
@@ -36,9 +37,12 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleDelete = async (id: string) => {
-    if (!confirm(t('deleteConfirm'))) return;
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
+  const handleDeleteConfirm = async () => {
+    if (!deleteTarget) return;
+    const id = deleteTarget;
+    setDeleteTarget(null);
     setProcessingId(id);
     setError(null);
     startTransition(async () => {
@@ -222,7 +226,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
                         </Link>
                         <button
                           type="button"
-                          onClick={() => handleDelete(artist.id)}
+                          onClick={() => setDeleteTarget(artist.id)}
                           className="text-gray-400 hover:text-red-600 px-3 py-1.5 rounded-md hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           disabled={processingId !== null}
                           aria-label={t('deleteArtistAria', {
@@ -240,6 +244,16 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
           </table>
         </div>
       </AdminCard>
+
+      <AdminConfirmModal
+        isOpen={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={handleDeleteConfirm}
+        title={t('delete')}
+        description={t('deleteConfirm')}
+        variant="danger"
+        isLoading={processingId !== null}
+      />
     </div>
   );
 }

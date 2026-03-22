@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { retry, type RetryOptions, isNetworkError } from '@/lib/retry';
 
 export interface UseRetryState<T> {
@@ -71,6 +71,15 @@ export function useRetry<T>(
 
   const mountedRef = useRef(true);
   const executingRef = useRef(false);
+  const optionsRef = useRef(retryOptions);
+  optionsRef.current = retryOptions;
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   const execute = useCallback(async (): Promise<T | null> => {
     if (executingRef.current) return null;
@@ -84,9 +93,10 @@ export function useRetry<T>(
     }));
 
     try {
+      const opts = optionsRef.current;
       const result = await retry(fn, {
-        ...retryOptions,
-        shouldRetry: retryOptions.shouldRetry ?? isNetworkError,
+        ...opts,
+        shouldRetry: opts.shouldRetry ?? isNetworkError,
         onRetry: (attempt, error, nextDelay) => {
           if (mountedRef.current) {
             setState((prev) => ({
@@ -95,7 +105,7 @@ export function useRetry<T>(
               retryCount: attempt,
             }));
           }
-          retryOptions.onRetry?.(attempt, error, nextDelay);
+          opts.onRetry?.(attempt, error, nextDelay);
         },
       });
 
@@ -123,7 +133,7 @@ export function useRetry<T>(
     } finally {
       executingRef.current = false;
     }
-  }, [fn, retryOptions]);
+  }, [fn]);
 
   const retryNow = useCallback(async (): Promise<T | null> => {
     setState((prev) => ({ ...prev, error: null, retryCount: 0 }));
@@ -139,10 +149,6 @@ export function useRetry<T>(
       retryCount: 0,
     });
   }, []);
-
-  // Cleanup on unmount
-  // Note: immediate execution is handled by the component using useEffect
-  // to avoid React 18 strict mode double-execution issues
 
   return {
     ...state,

@@ -1,3 +1,4 @@
+import { requireAdmin } from '@/lib/auth/guards';
 import { getAllBuyers } from '@/app/actions/admin-buyers';
 import {
   AdminPageHeader,
@@ -9,6 +10,7 @@ import { BuyerList } from './buyer-list';
 export const dynamic = 'force-dynamic';
 
 export default async function AdminBuyersPage() {
+  await requireAdmin();
   const buyers = await getAllBuyers();
 
   return (

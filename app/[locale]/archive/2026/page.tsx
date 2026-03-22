@@ -9,11 +9,7 @@ import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { EXHIBITION, EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
 import { getSupabaseReviews } from '@/lib/supabase-data';
-import {
-  escapeJsonLdForScript,
-  generateExhibitionSchema,
-  createBreadcrumbSchema,
-} from '@/lib/seo-utils';
+import { generateExhibitionSchema, createBreadcrumbSchema } from '@/lib/seo-utils';
 import { createStandardPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
@@ -84,10 +80,7 @@ export default async function Archive2026Page() {
   if (locale === 'en') {
     return (
       <>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: escapeJsonLdForScript(JSON.stringify(eventSchema)) }}
-        />
+        <JsonLdScript data={eventSchema} />
         <JsonLdScript data={breadcrumbSchema} />
         <PageHero
           title="2026 Offline Exhibition"
@@ -182,10 +175,7 @@ export default async function Archive2026Page() {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: escapeJsonLdForScript(JSON.stringify(eventSchema)) }}
-      />
+      <JsonLdScript data={eventSchema} />
       <JsonLdScript data={breadcrumbSchema} />
       <PageHero
         title="2026 오프라인 전시"

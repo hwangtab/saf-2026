@@ -1,7 +1,7 @@
 'use server';
 
 import { requireAdmin } from '@/lib/auth/guards';
-import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
+import { createSupabaseAdminClient } from '@/lib/auth/server';
 
 export type ArtistSalesRecord = {
   artistId: string | null;
@@ -41,7 +41,7 @@ function isMissingVoidedAtColumnError(error: unknown): boolean {
 
 export async function getAllArtistSales(): Promise<ArtistSalesRecord[]> {
   await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   // Fetch sales with artwork → artist join
   let { data, error } = await supabase

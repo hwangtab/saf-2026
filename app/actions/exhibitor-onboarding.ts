@@ -8,6 +8,7 @@ import {
   TERMS_OF_SERVICE_VERSION,
 } from '@/lib/constants';
 import { redirect } from 'next/navigation';
+import { getActionErrorMessage } from '@/lib/utils/action-error';
 import { logExhibitorAction } from './admin-logs';
 import { getRequestMetadata } from './request-metadata';
 
@@ -103,7 +104,7 @@ export async function submitExhibitorApplication(
     ) {
       const { error: profileUpdateError } = await supabase
         .from('profiles')
-        .update({ status: 'pending' })
+        .update({ role: 'exhibitor', status: 'pending' })
         .eq('id', user.id);
 
       if (profileUpdateError) throw profileUpdateError;
@@ -134,8 +135,10 @@ export async function submitExhibitorApplication(
         ? '/exhibitor'
         : '/exhibitor/pending';
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : '알 수 없는 오류';
-    return { message: `신청 저장 중 오류가 발생했습니다: ${message}`, error: true };
+    return {
+      message: getActionErrorMessage(error, '신청 저장 중 오류가 발생했습니다.'),
+      error: true,
+    };
   }
 
   if (redirectPath) {

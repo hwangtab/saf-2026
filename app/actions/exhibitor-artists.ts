@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { requireExhibitor } from '@/lib/auth/guards';
-import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
+import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { getString, getStoragePathFromPublicUrl } from '@/lib/utils/form-helpers';
 import { validateTextLength, validateUrl, validateEmail } from '@/lib/utils/input-validation';
@@ -10,7 +10,7 @@ import { logExhibitorAction } from './admin-logs';
 
 export async function getExhibitorArtists() {
   const user = await requireExhibitor();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const { data: artists, error } = await supabase
     .from('artists')
@@ -20,15 +20,15 @@ export async function getExhibitorArtists() {
 
   if (error) throw error;
 
-  return (artists || []).map((artist: any) => ({
+  return (artists || []).map((artist) => ({
     ...artist,
-    artwork_count: artist.artworks?.[0]?.count || 0,
+    artwork_count: (artist.artworks as unknown as { count: number }[] | undefined)?.[0]?.count || 0,
   }));
 }
 
 export async function getExhibitorArtistById(id: string) {
   const user = await requireExhibitor();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const { data, error } = await supabase
     .from('artists')
@@ -43,7 +43,7 @@ export async function getExhibitorArtistById(id: string) {
 
 export async function createExhibitorArtist(formData: FormData) {
   const user = await requireExhibitor();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const name_ko = validateTextLength(getString(formData, 'name_ko'), 100, '한국어 이름');
   const name_en = validateTextLength(getString(formData, 'name_en'), 100, '영어 이름');
@@ -91,7 +91,7 @@ export async function createExhibitorArtist(formData: FormData) {
 
 export async function updateExhibitorArtist(id: string, formData: FormData) {
   const user = await requireExhibitor();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   // Fetch existing artist for snapshot
   const { data: oldArtist, error: fetchError } = await supabase
@@ -155,7 +155,7 @@ export async function updateExhibitorArtist(id: string, formData: FormData) {
 
 export async function updateExhibitorArtistProfileImage(id: string, profileImage: string | null) {
   const user = await requireExhibitor();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   // Fetch existing artist for snapshot
   const { data: oldArtist, error: fetchError } = await supabase
@@ -205,7 +205,7 @@ export async function updateExhibitorArtistProfileImage(id: string, profileImage
 
 export async function deleteExhibitorArtist(id: string) {
   const user = await requireExhibitor();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   // Fetch full artist data for snapshot
   const { data: artist, error: fetchError } = await supabase

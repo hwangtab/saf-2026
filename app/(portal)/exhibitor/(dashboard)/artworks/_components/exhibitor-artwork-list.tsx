@@ -16,6 +16,7 @@ import {
   AdminEmptyState,
   AdminInput,
 } from '@/app/admin/_components/admin-ui';
+import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 
 const ArtworkLightbox = dynamic(() => import('@/components/ui/ArtworkLightbox'), { ssr: false });
 
@@ -60,8 +61,12 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
     setLightboxOpen(true);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm(t('deleteConfirm'))) return;
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteTarget) return;
+    const id = deleteTarget;
+    setDeleteTarget(null);
     setIsDeleting(id);
     try {
       await deleteExhibitorArtwork(id);
@@ -217,7 +222,7 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
                         </Link>
                         <button
                           type="button"
-                          onClick={() => handleDelete(artwork.id)}
+                          onClick={() => setDeleteTarget(artwork.id)}
                           disabled={isDeleting === artwork.id}
                           className="rounded-md px-3 py-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
                         >
@@ -242,6 +247,16 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
           alt={lightboxData.alt}
         />
       )}
+
+      <AdminConfirmModal
+        isOpen={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={handleDeleteConfirm}
+        title={t('delete')}
+        description={t('deleteConfirm')}
+        variant="danger"
+        isLoading={isDeleting !== null}
+      />
     </div>
   );
 }

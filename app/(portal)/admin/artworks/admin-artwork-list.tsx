@@ -244,9 +244,15 @@ export function AdminArtworkList({
     return sorted;
   }, [filtered, locale, sortDirection, sortKey]);
 
-  const filteredIds = new Set(filtered.map((a) => a.id));
-  const selectedInFiltered = [...selectedIds].filter((id) => filteredIds.has(id));
-  const allFilteredSelected = filtered.length > 0 && selectedInFiltered.length === filtered.length;
+  const { filteredIds, selectedInFiltered, allFilteredSelected } = useMemo(() => {
+    const ids = new Set(filtered.map((a) => a.id));
+    const inFiltered = [...selectedIds].filter((id) => ids.has(id));
+    return {
+      filteredIds: ids,
+      selectedInFiltered: inFiltered,
+      allFilteredSelected: filtered.length > 0 && inFiltered.length === filtered.length,
+    };
+  }, [filtered, selectedIds]);
 
   const handleSort = (key: SortKey) => {
     if (sortKey === key) {

@@ -77,12 +77,17 @@ export const requireArtistActive = cache(async function requireArtistActive() {
     }
 
     const artistReconsent = resolveArtistReconsentRequirements(application);
-    if (artistReconsent.needsArtistConsent || artistReconsent.needsTosConsent) {
+    if (
+      artistReconsent.needsArtistConsent ||
+      artistReconsent.needsTosConsent ||
+      artistReconsent.needsPrivacyConsent
+    ) {
       redirect(
         buildTermsConsentPath({
           nextPath: profile.status === 'active' ? '/dashboard/artworks' : '/dashboard/pending',
           needsArtistConsent: artistReconsent.needsArtistConsent,
           needsTosConsent: artistReconsent.needsTosConsent,
+          needsPrivacyConsent: artistReconsent.needsPrivacyConsent,
         })
       );
     }

@@ -1,6 +1,6 @@
 'use server';
 
-import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
+import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { requireAdmin } from '@/lib/auth/guards';
 import { getActionErrorMessage } from '@/lib/utils/action-error';
 import { sanitizeIlikeQuery } from '@/lib/utils/query';
@@ -105,7 +105,7 @@ function parseApplicationContact(contact: string | null | undefined) {
 
 export async function searchUnlinkedArtists(query: string): Promise<UnlinkedArtistSearchItem[]> {
   await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const rawQuery = query.trim().normalize('NFC');
   const normalizedQuery = sanitizeIlikeQuery(rawQuery);
@@ -195,7 +195,7 @@ export async function searchLinkedArtistsByName(
   name: string
 ): Promise<LinkedArtistNameConflictItem[]> {
   await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const normalizedName = name.trim().normalize('NFC');
   if (normalizedName.length < 2) return [];
@@ -260,7 +260,7 @@ export async function promoteUserToArtistWithLink({
 }: PromoteUserToArtistParams): Promise<AdminActionState> {
   try {
     const adminUser = await requireAdmin();
-    const supabase = await createSupabaseAdminOrServerClient();
+    const supabase = await createSupabaseAdminClient();
 
     if (!userId) {
       return { message: '사용자 ID가 필요합니다.', error: true };
@@ -546,7 +546,7 @@ export async function promoteUserToArtistWithLink({
 export async function approveUser(userId: string): Promise<AdminActionState> {
   try {
     const adminUser = await requireAdmin();
-    const supabase = await createSupabaseAdminOrServerClient();
+    const supabase = await createSupabaseAdminClient();
 
     const { data: beforeProfile, error: beforeProfileError } = await supabase
       .from('profiles')
@@ -688,7 +688,7 @@ export async function approveUser(userId: string): Promise<AdminActionState> {
 export async function rejectUser(userId: string): Promise<AdminActionState> {
   try {
     const adminUser = await requireAdmin();
-    const supabase = await createSupabaseAdminOrServerClient();
+    const supabase = await createSupabaseAdminClient();
 
     const { data: beforeProfile, error: beforeProfileError } = await supabase
       .from('profiles')
@@ -748,7 +748,7 @@ export async function rejectUser(userId: string): Promise<AdminActionState> {
 export async function reactivateUser(userId: string): Promise<AdminActionState> {
   try {
     const adminUser = await requireAdmin();
-    const supabase = await createSupabaseAdminOrServerClient();
+    const supabase = await createSupabaseAdminClient();
 
     const { data: beforeProfile, error: beforeProfileError } = await supabase
       .from('profiles')
@@ -815,7 +815,7 @@ export async function updateUserRole(userId: string, role: UserRole): Promise<Ad
       return { message: '본인의 관리자 권한은 해제할 수 없습니다.', error: true };
     }
 
-    const supabase = await createSupabaseAdminOrServerClient();
+    const supabase = await createSupabaseAdminClient();
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('id, name, email, role, status, updated_at')

@@ -387,30 +387,6 @@ export async function GET(request: NextRequest) {
       return response;
     }
 
-    const consumed = await consumeOAuthContext(launchContext.state);
-    if (!consumed) {
-      if (isCafe24Launch) {
-        const response = buildLaunchCompletionResponse('error', 'oauth_context_reused', 409);
-        clearOAuthCookies(response, cookieDomain);
-        return response;
-      }
-
-      const redirectUrl = new URL(
-        withResultParam(returnTo, 'error', 'oauth_context_reused', undefined, 'state').pathname,
-        request.url
-      );
-      redirectUrl.search = withResultParam(
-        returnTo,
-        'error',
-        'oauth_context_reused',
-        undefined,
-        'state'
-      ).search;
-      const response = NextResponse.redirect(redirectUrl);
-      clearOAuthCookies(response, cookieDomain);
-      return response;
-    }
-
     const response = isCafe24Launch
       ? buildLaunchCompletionResponse('connected', undefined, 200)
       : (() => {
@@ -439,6 +415,32 @@ export async function GET(request: NextRequest) {
         mallId,
       }
     );
+
+    // Consume OAuth state AFTER token persistence succeeds
+    // so that transient DB failures during token save don't permanently waste the OAuth code
+    const consumed = await consumeOAuthContext(launchContext.state);
+    if (!consumed) {
+      if (isCafe24Launch) {
+        const consumeResponse = buildLaunchCompletionResponse('error', 'oauth_context_reused', 409);
+        clearOAuthCookies(consumeResponse, cookieDomain);
+        return consumeResponse;
+      }
+
+      const redirectUrl = new URL(
+        withResultParam(returnTo, 'error', 'oauth_context_reused', undefined, 'state').pathname,
+        request.url
+      );
+      redirectUrl.search = withResultParam(
+        returnTo,
+        'error',
+        'oauth_context_reused',
+        undefined,
+        'state'
+      ).search;
+      const consumeResponse = NextResponse.redirect(redirectUrl);
+      clearOAuthCookies(consumeResponse, cookieDomain);
+      return consumeResponse;
+    }
 
     const sameSite = isCafe24Launch ? 'none' : 'lax';
 

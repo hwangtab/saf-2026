@@ -2,6 +2,7 @@
 
 import { useCallback } from 'react';
 import type { AnalyticsData } from '@/app/actions/admin-analytics';
+import { csvSafeCell } from '@/lib/utils/csv';
 
 type Props = {
   data: AnalyticsData;
@@ -31,7 +32,7 @@ export function AnalyticsCsvExport({ data }: Props) {
     lines.push('=== 인기 페이지 ===');
     lines.push('경로,페이지뷰,방문자');
     for (const row of data.topPages) {
-      lines.push(`"${row.path}",${row.views},${row.visitors}`);
+      lines.push(`${csvSafeCell(row.path)},${csvSafeCell(row.views)},${csvSafeCell(row.visitors)}`);
     }
     lines.push('');
 
@@ -39,7 +40,7 @@ export function AnalyticsCsvExport({ data }: Props) {
     lines.push('=== 디바이스 분포 ===');
     lines.push('유형,수');
     for (const row of data.deviceDistribution) {
-      lines.push(`${row.type},${row.count}`);
+      lines.push(`${csvSafeCell(row.type)},${csvSafeCell(row.count)}`);
     }
     lines.push('');
 
@@ -47,7 +48,9 @@ export function AnalyticsCsvExport({ data }: Props) {
     lines.push('=== 국가 분포 ===');
     lines.push('국가,페이지뷰,방문자');
     for (const row of data.countryDistribution) {
-      lines.push(`${row.country},${row.views},${row.visitors}`);
+      lines.push(
+        `${csvSafeCell(row.country)},${csvSafeCell(row.views)},${csvSafeCell(row.visitors)}`
+      );
     }
     lines.push('');
 
@@ -55,7 +58,7 @@ export function AnalyticsCsvExport({ data }: Props) {
     lines.push('=== 브라우저 분포 ===');
     lines.push('브라우저,수');
     for (const row of data.browserDistribution) {
-      lines.push(`${row.browser},${row.count}`);
+      lines.push(`${csvSafeCell(row.browser)},${csvSafeCell(row.count)}`);
     }
     lines.push('');
 
@@ -63,7 +66,7 @@ export function AnalyticsCsvExport({ data }: Props) {
     lines.push('=== OS 분포 ===');
     lines.push('OS,수');
     for (const row of data.osDistribution) {
-      lines.push(`${row.os},${row.count}`);
+      lines.push(`${csvSafeCell(row.os)},${csvSafeCell(row.count)}`);
     }
     lines.push('');
 
@@ -79,7 +82,7 @@ export function AnalyticsCsvExport({ data }: Props) {
     lines.push('=== 유입 경로 ===');
     lines.push('소스,수');
     for (const row of data.topReferrers) {
-      lines.push(`"${row.referrer}",${row.count}`);
+      lines.push(`${csvSafeCell(row.referrer)},${csvSafeCell(row.count)}`);
     }
 
     const bom = '\uFEFF';

@@ -8,9 +8,11 @@ function verifySignature(body: string, signature: string | null, secret: string)
   if (!signature) return false;
   const expected = crypto.createHmac('sha1', secret).update(body).digest('hex');
   try {
-    return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
-  } catch (error) {
-    console.error('[vercel-drain] Signature comparison failed:', error);
+    const sigBuf = Buffer.from(signature, 'hex');
+    const expectedBuf = Buffer.from(expected, 'hex');
+    if (sigBuf.length !== expectedBuf.length) return false;
+    return crypto.timingSafeEqual(sigBuf, expectedBuf);
+  } catch {
     return false;
   }
 }
@@ -53,17 +55,12 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   const raw = await request.text();
 
-  // HMAC-SHA1 서명 검증 (경고 모드 — 검증 실패해도 처리 진행)
+  // HMAC-SHA1 서명 검증
   const secret = process.env.VERCEL_DRAIN_SECRET;
   if (secret) {
     const signature = request.headers.get('x-vercel-signature');
     if (!verifySignature(raw, signature, secret)) {
-      console.warn(
-        '[vercel-drain] Signature mismatch — received:',
-        signature,
-        'expected:',
-        crypto.createHmac('sha1', secret).update(raw).digest('hex')
-      );
+      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
     }
   }
 
@@ -106,7 +103,9 @@ export async function POST(request: NextRequest) {
     session_id: e.sessionId != null ? String(e.sessionId) : null,
     device_id: e.deviceId != null ? String(e.deviceId) : null,
     event_name: e.eventName || null,
-    event_timestamp: new Date(e.timestamp).toISOString(),
+    event_timestamp: Number.isFinite(e.timestamp)
+      ? new Date(e.timestamp).toISOString()
+      : new Date().toISOString(),
   }));
 
   const supabase = createSupabaseAdminClient();

@@ -2,7 +2,7 @@
 
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
-import { createSupabaseAdminOrServerClient, createSupabaseServerClient } from '@/lib/auth/server';
+import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/auth/server';
 import { purgeCafe24ProductsFromTrashEntry } from '@/lib/integrations/cafe24/trash-purge';
 import { syncArtworkToCafe24 } from '@/lib/integrations/cafe24/sync-artwork';
 import { getStoragePathFromPublicUrl, getStoragePathsForRemoval } from '@/lib/utils/form-helpers';
@@ -52,7 +52,7 @@ async function resolveActorIdentity(
   role: 'admin' | 'artist' | 'exhibitor',
   fallbackEmail?: string | null
 ): Promise<{ name: string | null; email: string | null }> {
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const { data: profile } = await supabase
     .from('profiles')
@@ -372,7 +372,7 @@ function collectStorageCleanupPaths(log: ActivityLogEntry) {
 }
 
 async function removeStoragePaths(
-  supabase: Awaited<ReturnType<typeof createSupabaseAdminOrServerClient>>,
+  supabase: Awaited<ReturnType<typeof createSupabaseAdminClient>>,
   bucket: 'artworks' | 'profiles',
   paths: string[]
 ) {
@@ -414,7 +414,7 @@ async function enrichActivityLogActors(logs: ActivityLogEntry[]): Promise<Activi
   const actorIds = Array.from(new Set(unresolvedLogs.map((log) => log.actor_id).filter(Boolean)));
   if (actorIds.length === 0) return logs;
 
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
   const { data: profiles } = await supabase
     .from('profiles')
     .select('id, name, email')
@@ -593,7 +593,7 @@ async function enrichActivityLogTargets(logs: ActivityLogEntry[]): Promise<Activ
 
   if (artworkIds.size === 0 && artistIds.size === 0) return logs;
 
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const [artworkResult, artistResult, applicationResult, exhibitorAppResult] = await Promise.all([
     artworkIds.size > 0
@@ -704,7 +704,7 @@ async function enrichTrashPurgedTargetNames(logs: ActivityLogEntry[]): Promise<A
   );
   if (purgedLogIds.length === 0) return logs;
 
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
   const { data: sourceLogs } = await supabase
     .from('activity_logs')
     .select('id, target_id, metadata')
@@ -763,7 +763,7 @@ async function writeActivityLog(params: {
   metadata?: Record<string, unknown>;
   options?: LogOptions;
 }) {
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
   const trashExpiresAt = computeTrashExpiryAt(
     params.action,
     params.options?.beforeSnapshot || null,
@@ -807,7 +807,7 @@ export async function logAdminAction(
   options?: LogOptions
 ) {
   const user = adminId ? { id: adminId } : await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
   const actor = await resolveActorIdentity(user.id, 'admin');
 
   const { error: legacyError } = await supabase.from('admin_logs').insert({
@@ -902,7 +902,7 @@ async function getLegacyAdminLogs(
   page = 1,
   limit = 50
 ): Promise<{ logs: ActivityLogEntry[]; total: number }> {
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
   const offset = (page - 1) * limit;
 
   const { count } = await supabase.from('admin_logs').select('id', { count: 'exact', head: true });
@@ -997,7 +997,7 @@ type CleanupCafe24SyncLogsResult = {
 
 export async function getActivityLogs(filters: ActivityLogFilters = {}) {
   await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const page = filters.page && filters.page > 0 ? filters.page : 1;
   const limit = filters.limit && filters.limit > 0 ? Math.min(filters.limit, 100) : 50;
@@ -1061,7 +1061,7 @@ export async function getActivityLogs(filters: ActivityLogFilters = {}) {
 
 export async function cleanupCafe24SyncLogs(): Promise<CleanupCafe24SyncLogsResult> {
   await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const relevantLogs: ActivityLogEntry[] = [];
   let offset = 0;
@@ -1147,7 +1147,7 @@ type TrashLogFilters = {
 
 export async function getTrashLogs(filters: TrashLogFilters = {}) {
   await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const page = filters.page && filters.page > 0 ? filters.page : 1;
   const limit = filters.limit && filters.limit > 0 ? Math.min(filters.limit, 100) : 30;
@@ -1195,7 +1195,7 @@ export async function getTrashLogs(filters: TrashLogFilters = {}) {
 
 export async function purgeActivityTrashLog(logId: string, reason: string) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
   const actor = await resolveActorIdentity(admin.id, 'admin');
 
   const { data: log, error: logError } = await supabase
@@ -1342,7 +1342,7 @@ export async function revertActivityLog(
 ): Promise<{ success: boolean; message?: string }> {
   try {
     const admin = await requireAdmin();
-    const supabase = await createSupabaseAdminOrServerClient();
+    const supabase = await createSupabaseAdminClient();
     const actor = await resolveActorIdentity(admin.id, 'admin');
 
     const { data: log, error: logError } = await supabase

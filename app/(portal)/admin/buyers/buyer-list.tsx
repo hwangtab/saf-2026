@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { AdminCard, AdminCardHeader, AdminEmptyState } from '@/app/admin/_components/admin-ui';
 import { matchesAnySearch } from '@/lib/search-utils';
+import { csvSafeCell } from '@/lib/utils/csv';
 import { useToast } from '@/lib/hooks/useToast';
 import { updateBuyerPhone } from '@/app/actions/admin-buyers';
 import type { BuyerRecord } from '@/app/actions/admin-buyers';
@@ -39,6 +40,7 @@ export function BuyerList({ buyers }: { buyers: BuyerRecord[] }) {
   const [editingName, setEditingName] = useState<string | null>(null);
   const [editPhone, setEditPhone] = useState('');
   const [saving, setSaving] = useState(false);
+  const cancelledRef = useRef(false);
 
   const filtered = useMemo(() => {
     if (!search.trim()) return buyers;
@@ -88,12 +90,13 @@ export function BuyerList({ buyers }: { buyers: BuyerRecord[] }) {
   }
 
   function startEdit(buyer: BuyerRecord) {
+    cancelledRef.current = false;
     setEditingName(buyer.buyerName);
     setEditPhone(buyer.buyerPhone || '');
   }
 
   async function savePhone(buyerName: string, saleIds: string[]) {
-    if (saving) return;
+    if (saving || cancelledRef.current) return;
     setSaving(true);
     try {
       await updateBuyerPhone(saleIds, editPhone);
@@ -113,7 +116,10 @@ export function BuyerList({ buyers }: { buyers: BuyerRecord[] }) {
       e.preventDefault();
       savePhone(buyerName, saleIds);
     }
-    if (e.key === 'Escape') setEditingName(null);
+    if (e.key === 'Escape') {
+      cancelledRef.current = true;
+      setEditingName(null);
+    }
   }
 
   const exportCsv = useCallback(() => {
@@ -122,13 +128,13 @@ export function BuyerList({ buyers }: { buyers: BuyerRecord[] }) {
     for (const b of sorted) {
       lines.push(
         [
-          `"${b.buyerName}"`,
-          b.buyerPhone || '',
-          b.purchaseCount,
-          b.artworkCount,
-          formatChannel(b.channels),
-          formatDate(b.lastPurchaseDate),
-          b.revenue,
+          csvSafeCell(b.buyerName),
+          csvSafeCell(b.buyerPhone || ''),
+          csvSafeCell(b.purchaseCount),
+          csvSafeCell(b.artworkCount),
+          csvSafeCell(formatChannel(b.channels)),
+          csvSafeCell(formatDate(b.lastPurchaseDate)),
+          csvSafeCell(b.revenue),
         ].join(',')
       );
     }
@@ -229,7 +235,7 @@ export function BuyerList({ buyers }: { buyers: BuyerRecord[] }) {
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white text-sm">
                 {sorted.map((buyer, index) => (
-                  <tr key={buyer.saleIds[0]} className="hover:bg-slate-50/50">
+                  <tr key={buyer.buyerName} className="hover:bg-slate-50/50">
                     <td className="px-4 py-3 font-medium text-slate-800">{index + 1}</td>
                     <td className="px-4 py-3 font-medium text-slate-900">{buyer.buyerName}</td>
                     <td className="px-4 py-3 text-slate-600">

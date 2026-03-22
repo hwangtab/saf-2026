@@ -2,7 +2,7 @@
 
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
-import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
+import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { syncArtworkToCafe24 } from '@/lib/integrations/cafe24/sync-artwork';
 import { purgeCafe24ProductsFromTrashEntry } from '@/lib/integrations/cafe24/trash-purge';
 import { logAdminAction } from './admin-logs';
@@ -64,7 +64,7 @@ function toCafe24SyncFeedback(
  * reserved 상태는 관리자 수동 설정이므로 판매 완료가 아닌 한 유지.
  */
 async function deriveAndSyncArtworkStatus(
-  supabase: Awaited<ReturnType<typeof createSupabaseAdminOrServerClient>>,
+  supabase: Awaited<ReturnType<typeof createSupabaseAdminClient>>,
   artworkId: string
 ): Promise<'available' | 'sold' | 'reserved'> {
   const { data: artwork } = await supabase
@@ -194,7 +194,7 @@ async function syncCafe24Batch(ids: string[]): Promise<Cafe24BatchSyncResult> {
 
 export async function deleteAdminArtwork(id: string) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const { data: artwork } = await supabase
     .from('artworks')
@@ -252,7 +252,7 @@ export async function deleteAdminArtwork(id: string) {
 
 export async function getArtworkById(id: string) {
   await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const { data, error } = await supabase
     .from('artworks')
@@ -266,7 +266,7 @@ export async function getArtworkById(id: string) {
 
 export async function getAllArtists() {
   await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const { data, error } = await supabase.from('artists').select('id, name_ko').order('name_ko');
 
@@ -276,7 +276,7 @@ export async function getAllArtists() {
 
 export async function updateArtworkDetails(id: string, formData: FormData) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const dataValidation = validateArtworkData(formData);
   if (dataValidation.error) throw new Error(dataValidation.error);
@@ -379,7 +379,7 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
 
 export async function createAdminArtwork(formData: FormData) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const dataValidation = validateArtworkData(formData);
   if (dataValidation.error) throw new Error(dataValidation.error);
@@ -455,7 +455,7 @@ export async function createAdminArtwork(formData: FormData) {
 
 export async function updateArtworkImages(id: string, images: string[]) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const { data: beforeArtwork } = await supabase
     .from('artworks')
@@ -537,7 +537,7 @@ type MissingPurchaseLinkSyncResult = {
 
 export async function syncMissingArtworkPurchaseLinks(): Promise<MissingPurchaseLinkSyncResult> {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const { data: targets, error } = await supabase
     .from('artworks')
@@ -637,6 +637,7 @@ export async function syncMissingArtworkPurchaseLinks(): Promise<MissingPurchase
 
 // Batch operations
 export async function batchUpdateArtworkStatus(ids: string[], status: string) {
+  const admin = await requireAdmin();
   if (ids.length === 0) {
     return {
       success: true,
@@ -648,8 +649,7 @@ export async function batchUpdateArtworkStatus(ids: string[], status: string) {
     } satisfies BatchArtworkMutationResult;
   }
   validateBatchSize(ids);
-  const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   if (!['available', 'reserved', 'sold'].includes(status)) {
     throw new Error('Invalid status');
@@ -788,7 +788,7 @@ export async function batchUpdateArtworkStatus(ids: string[], status: string) {
 
 export async function updateArtworkCategory(id: string, category: string | null) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const { data: before } = await supabase
     .from('artworks')
@@ -829,7 +829,7 @@ export async function updateArtworkCategory(id: string, category: string | null)
 
 export async function getArtworkSales(artworkId: string) {
   await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   let { data, error } = await supabase
     .from('artwork_sales')
@@ -852,7 +852,7 @@ export async function getArtworkSales(artworkId: string) {
 
 export async function recordArtworkSale(formData: FormData) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const artworkId = getString(formData, 'artwork_id');
   const salePriceRaw = getString(formData, 'sale_price');
@@ -953,7 +953,7 @@ export async function recordArtworkSale(formData: FormData) {
 
 export async function updateArtworkSale(formData: FormData) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const saleId = getString(formData, 'sale_id');
   const artworkId = getString(formData, 'artwork_id');
@@ -970,11 +970,14 @@ export async function updateArtworkSale(formData: FormData) {
 
   const { data: existing } = await supabase
     .from('artwork_sales')
-    .select('id, source, sale_price, quantity, buyer_name, buyer_phone, note, sold_at')
+    .select('id, artwork_id, source, sale_price, quantity, buyer_name, buyer_phone, note, sold_at')
     .eq('id', saleId)
     .single();
 
   if (!existing) throw new Error('판매 기록을 찾을 수 없습니다.');
+  if (existing.artwork_id !== artworkId) {
+    throw new Error('판매 기록과 작품 정보가 일치하지 않습니다.');
+  }
   if (existing.source === 'cafe24') {
     throw new Error('Cafe24 동기화 판매 기록은 수정할 수 없습니다.');
   }
@@ -1072,7 +1075,7 @@ export async function updateArtworkSale(formData: FormData) {
 
 export async function voidArtworkSale(saleId: string, reason: string) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   if (!saleId) throw new Error('판매 기록 ID가 필요합니다.');
   if (!reason.trim()) throw new Error('취소 사유를 입력해주세요.');
@@ -1150,7 +1153,7 @@ export async function batchToggleHidden(ids: string[], isHidden: boolean) {
   }
   validateBatchSize(ids);
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const { data: beforeArtworks } = await supabase
     .from('artworks')
@@ -1253,7 +1256,7 @@ export async function batchDeleteArtworks(ids: string[]) {
   if (ids.length === 0) return { success: true, count: 0 };
   validateBatchSize(ids);
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   // Keep full snapshots so deleted rows can be restored from activity logs.
   const { data: artworks } = await supabase

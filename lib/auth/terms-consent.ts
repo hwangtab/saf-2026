@@ -44,6 +44,8 @@ export function sanitizeInternalPath(nextPath: string | null | undefined, fallba
   if (!trimmed.startsWith('/')) return fallback;
   if (trimmed.startsWith('//')) return fallback;
   if (trimmed.startsWith('/terms-consent')) return fallback;
+  // 쿼리 스트링과 프래그먼트 차단 (파라미터 인젝션 방지)
+  if (trimmed.includes('?') || trimmed.includes('#')) return fallback;
   // 백슬래시와 제어 문자 차단 (open redirect 방지)
   if (/[\\<>\s]/.test(trimmed.slice(1))) return fallback;
   return trimmed;
@@ -132,21 +134,25 @@ export function resolveArtistReconsentRequirements(
 ): {
   needsArtistConsent: boolean;
   needsTosConsent: boolean;
+  needsPrivacyConsent: boolean;
 } {
   if (!hasArtistApplication(application)) {
     return {
       needsArtistConsent: false,
       needsTosConsent: false,
+      needsPrivacyConsent: false,
     };
   }
 
   const needsContract = needsArtistTermsConsent(application);
   const needsTos = needsTosConsent(application);
   const needsBundle = needsContract || needsTos;
+  const needsPrivacy = needsPrivacyConsent(application);
 
   return {
     needsArtistConsent: needsBundle,
     needsTosConsent: needsBundle,
+    needsPrivacyConsent: needsPrivacy,
   };
 }
 

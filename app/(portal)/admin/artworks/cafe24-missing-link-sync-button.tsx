@@ -4,19 +4,17 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { syncMissingArtworkPurchaseLinks } from '@/app/actions/admin-artworks';
 import Button from '@/components/ui/Button';
+import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import { useToast } from '@/lib/hooks/useToast';
 
 export function Cafe24MissingLinkSyncButton() {
   const router = useRouter();
   const toast = useToast();
   const [syncing, setSyncing] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const handleSync = async () => {
-    const confirmed = window.confirm(
-      '구매 링크가 누락된 작품을 카페24와 일괄 동기화합니다.\n작품 수에 따라 최대 수십 초가 걸릴 수 있습니다.\n계속하시겠습니까?'
-    );
-    if (!confirmed) return;
-
+    setShowConfirm(false);
     setSyncing(true);
     try {
       const result = await syncMissingArtworkPurchaseLinks();
@@ -48,15 +46,26 @@ export function Cafe24MissingLinkSyncButton() {
   };
 
   return (
-    <Button
-      type="button"
-      variant="white"
-      className="w-full sm:w-auto"
-      loading={syncing}
-      disabled={syncing}
-      onClick={handleSync}
-    >
-      구매링크 누락 동기화
-    </Button>
+    <>
+      <Button
+        type="button"
+        variant="white"
+        className="w-full sm:w-auto"
+        loading={syncing}
+        disabled={syncing}
+        onClick={() => setShowConfirm(true)}
+      >
+        구매링크 누락 동기화
+      </Button>
+      <AdminConfirmModal
+        isOpen={showConfirm}
+        onClose={() => setShowConfirm(false)}
+        onConfirm={handleSync}
+        title="카페24 일괄 동기화"
+        description="구매 링크가 누락된 작품을 카페24와 일괄 동기화합니다. 작품 수에 따라 최대 수십 초가 걸릴 수 있습니다."
+        variant="warning"
+        confirmText="동기화 시작"
+      />
+    </>
   );
 }

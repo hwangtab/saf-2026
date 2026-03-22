@@ -63,6 +63,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
         router.refresh();
       } catch {
         setError(t('deleteError'));
+        router.refresh();
       } finally {
         setProcessingId(null);
       }

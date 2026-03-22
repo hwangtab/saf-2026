@@ -1,7 +1,7 @@
 'use server';
 
 import { requireAdmin } from '@/lib/auth/guards';
-import { createSupabaseAdminOrServerClient } from '@/lib/auth/server';
+import { createSupabaseAdminClient } from '@/lib/auth/server';
 import type { FeedbackCategory, FeedbackStatus } from '@/types';
 
 const KST_PARTS_FORMATTER = new Intl.DateTimeFormat('en-CA', {
@@ -159,7 +159,7 @@ function isMissingVoidedAtColumnError(error: unknown): boolean {
   return candidate.code === '42703' && merged.includes('voided_at');
 }
 
-type SupabaseClient = Awaited<ReturnType<typeof createSupabaseAdminOrServerClient>>;
+type SupabaseClient = Awaited<ReturnType<typeof createSupabaseAdminClient>>;
 
 async function fetchAnalyticsSummary(supabase: SupabaseClient): Promise<DashboardSiteAnalytics> {
   const sinceTs = new Date(Date.now() - 30 * 86_400_000).toISOString();
@@ -223,7 +223,7 @@ async function fetchFeedbackSummary(supabase: SupabaseClient): Promise<Dashboard
 
 export async function getDashboardOverviewStats(): Promise<DashboardOverviewStats> {
   await requireAdmin();
-  const supabase = await createSupabaseAdminOrServerClient();
+  const supabase = await createSupabaseAdminClient();
 
   const now = new Date();
   const monthBoundary = getKstMonthBoundaryIso(now);
