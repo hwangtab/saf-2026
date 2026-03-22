@@ -78,7 +78,7 @@ export default function BackgroundSlider() {
           fill
           className="object-cover"
           priority
-          sizes="100vw"
+          sizes="(max-width: 768px) 100vw, 1200px"
         />
         <div className="absolute inset-0 bg-black/30 z-10" />
       </div>
@@ -100,7 +100,7 @@ export default function BackgroundSlider() {
             priority={false}
             loading="lazy"
             className="object-cover"
-            sizes="100vw"
+            sizes="(max-width: 768px) 100vw, 1200px"
           />
         </div>
       )}
@@ -123,7 +123,7 @@ export default function BackgroundSlider() {
             className="object-cover"
             priority={layers.aIndex === 0}
             placeholder="blur"
-            sizes="100vw"
+            sizes="(max-width: 768px) 100vw, 1200px"
           />
         </div>
 
@@ -143,7 +143,7 @@ export default function BackgroundSlider() {
             fill
             className="object-cover"
             placeholder="blur"
-            sizes="100vw"
+            sizes="(max-width: 768px) 100vw, 1200px"
           />
         </div>
 

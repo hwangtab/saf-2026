@@ -3,6 +3,9 @@
   src: url('/fonts/Paperlogy-4Regular.woff2') format('woff2');
   font-weight: 400;
   font-display: swap;
+  unicode-range:
+    U+0000-00FF, U+0100-024F, U+2000-206F, U+2190-21FF, U+2200-22FF, U+3000-303F, U+3131-318E,
+    U+AC00-D7AF, U+F900-FAFF, U+FE10-FE1F, U+FF00-FFEF;
 }
 
 @font-face {
@@ -10,6 +13,9 @@
   src: url('/fonts/Paperlogy-5Medium.woff2') format('woff2');
   font-weight: 500;
   font-display: swap;
+  unicode-range:
+    U+0000-00FF, U+0100-024F, U+2000-206F, U+2190-21FF, U+2200-22FF, U+3000-303F, U+3131-318E,
+    U+AC00-D7AF, U+F900-FAFF, U+FE10-FE1F, U+FF00-FFEF;
 }
 
 @font-face {
@@ -17,6 +23,9 @@
   src: url('/fonts/Paperlogy-7Bold.woff2') format('woff2');
   font-weight: 700;
   font-display: swap;
+  unicode-range:
+    U+0000-00FF, U+0100-024F, U+2000-206F, U+2190-21FF, U+2200-22FF, U+3000-303F, U+3131-318E,
+    U+AC00-D7AF, U+F900-FAFF, U+FE10-FE1F, U+FF00-FFEF;
 }
 
 @font-face {
@@ -24,6 +33,9 @@
   src: url('/fonts/PartialSansKR-Regular.woff2') format('woff2');
   font-weight: normal;
   font-display: swap;
+  unicode-range:
+    U+0000-00FF, U+0100-024F, U+2000-206F, U+2190-21FF, U+2200-22FF, U+3000-303F, U+3131-318E,
+    U+AC00-D7AF, U+F900-FAFF, U+FE10-FE1F, U+FF00-FFEF;
 }
 
 @font-face {
@@ -31,6 +43,9 @@
   src: url('/fonts/HakgyoansimPosterB.woff2') format('woff2');
   font-weight: normal;
   font-display: swap;
+  unicode-range:
+    U+0000-00FF, U+0100-024F, U+2000-206F, U+2190-21FF, U+2200-22FF, U+3000-303F, U+3131-318E,
+    U+AC00-D7AF, U+F900-FAFF, U+FE10-FE1F, U+FF00-FFEF;
 }
 
 :root {

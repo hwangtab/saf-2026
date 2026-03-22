@@ -161,21 +161,13 @@ export const Z_INDEX = {
 
 export const HERO_IMAGES = [
   { id: '1', filename: '1.jpg', alt: '씨앗페 2026 전시 출품작 1' },
-  { id: '2', filename: '2.jpg', alt: '씨앗페 2026 전시 출품작 2' },
   { id: '3', filename: '3.jpg', alt: '씨앗페 2026 전시 출품작 3' },
   { id: '4', filename: '4.jpg', alt: '씨앗페 2026 전시 출품작 4' },
-  { id: '5', filename: '5.jpg', alt: '씨앗페 2026 전시 출품작 5' },
   { id: '6', filename: '6.jpg', alt: '씨앗페 2026 전시 출품작 6' },
   { id: '7', filename: '7.jpg', alt: '씨앗페 2026 전시 출품작 7' },
-  { id: '8', filename: '8.jpg', alt: '씨앗페 2026 전시 출품작 8' },
   { id: '9', filename: '9.jpg', alt: '씨앗페 2026 전시 출품작 9' },
   { id: '10', filename: '10.jpg', alt: '씨앗페 2026 전시 출품작 10' },
   { id: '11', filename: '11.jpg', alt: '씨앗페 2026 전시 출품작 11' },
-  { id: '12', filename: '12.jpg', alt: '씨앗페 2026 전시 출품작 12' },
-  { id: '13', filename: '13.jpg', alt: '씨앗페 2026 전시 출품작 13' },
   { id: '14', filename: '14.jpg', alt: '씨앗페 2026 전시 출품작 14' },
-  { id: '15', filename: '15.jpg', alt: '씨앗페 2026 전시 출품작 15' },
-  { id: '16', filename: '16.jpg', alt: '씨앗페 2026 전시 출품작 16' },
   { id: '17', filename: '17.jpg', alt: '씨앗페 2026 전시 출품작 17' },
-  { id: '18', filename: '18.jpg', alt: '씨앗페 2026 전시 출품작 18' },
 ] as const;

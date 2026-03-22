@@ -55,7 +55,14 @@ export default function PageHeroBackground({ customImage }: PageHeroBackgroundPr
           transition: 'opacity 1200ms ease-out',
         }}
       >
-        <SafeImage src={bgImage} alt="" fill className="object-cover" priority sizes="100vw" />
+        <SafeImage
+          src={bgImage}
+          alt=""
+          fill
+          className="object-cover"
+          priority
+          sizes="(max-width: 768px) 100vw, 1200px"
+        />
       </div>
     </div>
   );
