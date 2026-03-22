@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { Handshake } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface SupportMessageProps {
@@ -18,7 +19,7 @@ export default function SupportMessage({ className }: SupportMessageProps) {
       )}
     >
       <div className="relative z-10 flex flex-col items-center gap-3">
-        <span className="text-3xl">🤝</span>
+        <Handshake className="w-8 h-8 text-primary" />
 
         <div className="space-y-1">
           <h3 className="font-bold text-gray-800 text-lg break-keep">

@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useLocale } from 'next-intl';
+import { Truck, ShieldCheck, Award, RotateCcw, ClipboardList, CreditCard } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Modal from '@/components/ui/Modal';
 import { CONTACT } from '@/lib/constants';
@@ -10,36 +11,45 @@ interface PurchaseGuideProps {
   className?: string;
 }
 
+interface GuideItem {
+  icon: ReactNode;
+  label: string;
+  text: string;
+  action: boolean;
+}
+
+const ICON_CLASS = 'w-[18px] h-[18px] text-primary shrink-0';
+
 export default function PurchaseGuide({ className }: PurchaseGuideProps) {
   const locale = useLocale();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const copy =
+  const copy: { modalTitle: string; details: string; guides: GuideItem[] } =
     locale === 'en'
       ? {
           modalTitle: 'Purchase and service guide',
           details: 'Details',
           guides: [
             {
-              icon: '📦',
+              icon: <Truck className={ICON_CLASS} />,
               label: 'Shipping',
               text: 'Conditional free shipping',
               action: true,
             },
             {
-              icon: '🔒',
+              icon: <ShieldCheck className={ICON_CLASS} />,
               label: 'Secure payment',
               text: 'SSL secure payment system',
               action: true,
             },
             {
-              icon: '📜',
+              icon: <Award className={ICON_CLASS} />,
               label: 'Certificate',
               text: 'Certificate of authenticity included',
               action: false,
             },
             {
-              icon: '↩️',
+              icon: <RotateCcw className={ICON_CLASS} />,
               label: 'Cancel/Refund',
               text: 'Withdrawal possible within 7 days after delivery',
               action: true,
@@ -51,25 +61,25 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
           details: '자세히 보기',
           guides: [
             {
-              icon: '📦',
+              icon: <Truck className={ICON_CLASS} />,
               label: '배송 안내',
               text: '조건부 무료배송',
               action: true,
             },
             {
-              icon: '🔒',
+              icon: <ShieldCheck className={ICON_CLASS} />,
               label: '안전 결제',
               text: 'SSL 보안 결제 시스템',
               action: true,
             },
             {
-              icon: '📜',
+              icon: <Award className={ICON_CLASS} />,
               label: '작품 보증서',
               text: '모든 작품 진품 보증서 발급',
               action: false,
             },
             {
-              icon: '↩️',
+              icon: <RotateCcw className={ICON_CLASS} />,
               label: '취소/환불',
               text: '수령 후 7일 이내 청약철회 가능',
               action: true,
@@ -81,8 +91,8 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
     <>
       <div className={cn('rounded-xl bg-gray-50 p-4 space-y-2', className)}>
         {copy.guides.map((guide, index) => (
-          <div key={index} className="flex items-start gap-3">
-            <span className="text-xl leading-none mt-0.5">{guide.icon}</span>
+          <div key={index} className="flex items-center gap-3">
+            {guide.icon}
             <div className="flex-1">
               <h4 className="text-sm font-bold text-gray-900 inline-block mr-1">{guide.label}:</h4>
               <span className="text-sm text-gray-600">
@@ -111,7 +121,9 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
         {locale === 'en' ? (
           <div className="space-y-8 text-sm md:text-base text-gray-700">
             <section className="space-y-3">
-              <h4 className="font-bold text-lg text-charcoal">🧾 Service overview</h4>
+              <h4 className="font-bold text-lg text-charcoal flex items-center gap-2">
+                <ClipboardList className="w-5 h-5 text-primary" /> Service overview
+              </h4>
               <div className="bg-gray-50 p-4 rounded-lg space-y-2">
                 <p>
                   Each order covers one physical artwork based on the listed details. Processing
@@ -124,7 +136,9 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
             </section>
 
             <section className="space-y-3">
-              <h4 className="font-bold text-lg text-charcoal">💳 Payment</h4>
+              <h4 className="font-bold text-lg text-charcoal flex items-center gap-2">
+                <CreditCard className="w-5 h-5 text-primary" /> Payment
+              </h4>
               <div className="bg-gray-50 p-4 rounded-lg space-y-2">
                 <p>Payments are handled securely via Cafe24 SSL checkout.</p>
                 <p className="text-gray-600">
@@ -134,7 +148,9 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
             </section>
 
             <section className="space-y-3">
-              <h4 className="font-bold text-lg text-charcoal">📦 Shipping</h4>
+              <h4 className="font-bold text-lg text-charcoal flex items-center gap-2">
+                <Truck className="w-5 h-5 text-primary" /> Shipping
+              </h4>
               <div className="bg-gray-50 p-4 rounded-lg space-y-2">
                 <p>
                   <span className="font-semibold">Shipping fee:</span> Conditional free shipping
@@ -148,7 +164,9 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
             </section>
 
             <section className="space-y-3 pt-4 border-t border-gray-100">
-              <h4 className="font-bold text-lg text-charcoal">↩️ Cancellation and refund</h4>
+              <h4 className="font-bold text-lg text-charcoal flex items-center gap-2">
+                <RotateCcw className="w-5 h-5 text-primary" /> Cancellation and refund
+              </h4>
               <ul className="list-disc pl-5 space-y-1 text-gray-600">
                 <li>Withdrawal due to change of mind is available within 7 days after delivery.</li>
                 <li>
@@ -164,7 +182,9 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
         ) : (
           <div className="space-y-8 text-sm md:text-base">
             <section className="space-y-3">
-              <h4 className="font-bold text-lg text-charcoal">🧾 서비스 내용 및 이용 안내</h4>
+              <h4 className="font-bold text-lg text-charcoal flex items-center gap-2">
+                <ClipboardList className="w-5 h-5 text-primary" /> 서비스 내용 및 이용 안내
+              </h4>
               <div className="bg-gray-50 p-4 rounded-lg space-y-2 text-gray-700">
                 <p>
                   본 상품은 등록된 작품 상세정보 기준의 실물 작품 1점을 제공합니다. 구매 후{' '}
@@ -178,7 +198,9 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
             </section>
 
             <section className="space-y-3">
-              <h4 className="font-bold text-lg text-charcoal">💳 결제 안내</h4>
+              <h4 className="font-bold text-lg text-charcoal flex items-center gap-2">
+                <CreditCard className="w-5 h-5 text-primary" /> 결제 안내
+              </h4>
               <div className="bg-gray-50 p-4 rounded-lg space-y-2 text-gray-700">
                 <p>카페24 보안결제(SSL) 시스템을 통해 안전하게 결제가 처리됩니다.</p>
                 <p className="text-gray-600">
@@ -188,7 +210,9 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
             </section>
 
             <section className="space-y-3">
-              <h4 className="font-bold text-lg text-charcoal">📦 택배 배송 안내</h4>
+              <h4 className="font-bold text-lg text-charcoal flex items-center gap-2">
+                <Truck className="w-5 h-5 text-primary" /> 택배 배송 안내
+              </h4>
               <div className="bg-gray-50 p-4 rounded-lg space-y-2 text-gray-700">
                 <p>
                   <span className="font-semibold">배송비:</span> 조건부 무료
@@ -207,7 +231,9 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
             </section>
 
             <section className="space-y-3 pt-4 border-t border-gray-100">
-              <h4 className="font-bold text-lg text-charcoal">↩️ 취소 · 교환 · 환불 정책</h4>
+              <h4 className="font-bold text-lg text-charcoal flex items-center gap-2">
+                <RotateCcw className="w-5 h-5 text-primary" /> 취소 · 교환 · 환불 정책
+              </h4>
               <ul className="list-disc pl-5 space-y-1 text-gray-600">
                 <li>
                   단순변심 청약철회는 <span className="font-semibold">수령 후 7일 이내</span>{' '}

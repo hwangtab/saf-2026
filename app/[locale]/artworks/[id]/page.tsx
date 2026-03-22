@@ -29,6 +29,7 @@ import { getCategoryLabel } from '@/lib/artwork-category';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import SupportMessage from '@/components/features/SupportMessage';
 import TrustBadges from '@/components/features/TrustBadges';
+import { Phone, Mail } from 'lucide-react';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import ArtworkCard from '@/components/ui/ArtworkCard';
 import { containsHangul } from '@/lib/search-utils';
@@ -274,18 +275,16 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   <LinkButton
                     href="tel:02-764-3114"
                     variant="accent"
-                    leadingIcon="📞"
+                    leadingIcon={<Phone className="w-4 h-4" />}
                     iconLayout="fixed-left"
-                    iconClassName="grayscale group-hover:grayscale-0 transition-all"
                   >
                     <span className="text-sm font-bold text-center">02-764-3114</span>
                   </LinkButton>
                   <LinkButton
                     href="mailto:contact@kosmart.org"
                     variant="accent"
-                    leadingIcon="✉️"
+                    leadingIcon={<Mail className="w-4 h-4" />}
                     iconLayout="fixed-left"
-                    iconClassName="grayscale group-hover:grayscale-0 transition-all"
                   >
                     <span className="text-sm font-bold text-center">{t('emailInquiry')}</span>
                   </LinkButton>
@@ -395,18 +394,16 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   <LinkButton
                     href="tel:02-764-3114"
                     variant="accent"
-                    leadingIcon="📞"
+                    leadingIcon={<Phone className="w-4 h-4" />}
                     iconLayout="fixed-left"
-                    iconClassName="grayscale group-hover:grayscale-0 transition-all"
                   >
                     <span className="text-sm font-bold text-center">02-764-3114</span>
                   </LinkButton>
                   <LinkButton
                     href="mailto:contact@kosmart.org"
                     variant="accent"
-                    leadingIcon="✉️"
+                    leadingIcon={<Mail className="w-4 h-4" />}
                     iconLayout="fixed-left"
-                    iconClassName="grayscale group-hover:grayscale-0 transition-all"
                   >
                     <span className="text-sm font-bold text-center">{t('emailInquiry')}</span>
                   </LinkButton>
