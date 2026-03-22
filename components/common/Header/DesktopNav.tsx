@@ -25,7 +25,7 @@ export default function DesktopNav({ navigation, isActive, textColor }: DesktopN
 
   return (
     <>
-      <ul className="hidden md:flex xl:absolute xl:left-1/2 xl:-translate-x-1/2 top-0 items-center gap-8 h-full m-0 p-0 list-none">
+      <ul className="hidden lg:flex xl:absolute xl:left-1/2 xl:-translate-x-1/2 top-0 items-center gap-4 xl:gap-8 h-full m-0 p-0 list-none">
         {navigation.map((item) => (
           <li key={item.name} className="h-full flex items-center group relative">
             <div className="relative h-full flex items-center">
@@ -54,7 +54,7 @@ export default function DesktopNav({ navigation, isActive, textColor }: DesktopN
           </li>
         ))}
       </ul>
-      <div className="hidden md:flex items-center gap-2">
+      <div className="hidden lg:flex items-center gap-1.5">
         {/* Utility Menu (Order Status) */}
         <a
           href={EXTERNAL_LINKS.ORDER_STATUS}
