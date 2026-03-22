@@ -260,9 +260,9 @@
     "originalKoreanData": "상세 정보 원문은 한국어로 제공됩니다"
   },
   "trustBadges": {
-    "authenticity": "✓ 100% 진품 보증",
-    "safeDelivery": "✓ 안전한 포장 배송",
-    "curatorVerified": "✓ 전문 큐레이터 검증"
+    "authenticity": "100% 진품 보증",
+    "safeDelivery": "안전한 포장 배송",
+    "curatorVerified": "전문 큐레이터 검증"
   },
   "artworkDetailNav": {
     "backToList": "목록으로 돌아가기",

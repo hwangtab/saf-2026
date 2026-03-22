@@ -260,9 +260,9 @@
     "originalKoreanData": "Original details in Korean"
   },
   "trustBadges": {
-    "authenticity": "✓ 100% authenticity guaranteed",
-    "safeDelivery": "✓ Secure packaging & delivery",
-    "curatorVerified": "✓ Verified by professional curators"
+    "authenticity": "100% authenticity guaranteed",
+    "safeDelivery": "Secure packaging & delivery",
+    "curatorVerified": "Verified by professional curators"
   },
   "artworkDetailNav": {
     "backToList": "Back to list",
