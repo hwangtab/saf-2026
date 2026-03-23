@@ -454,6 +454,8 @@
       "editTitle": "작품 정보 수정",
       "createTitle": "새 작품 등록",
       "artworkTitle": "작품명",
+      "artworkTitleEn": "작품명 (영문)",
+      "artworkTitleEnPlaceholder": "Artwork title in English",
       "artist": "작가",
       "addNewArtist": "+ 새 작가 등록",
       "searchArtistPlaceholder": "작가명 검색...",

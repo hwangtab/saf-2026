@@ -19,6 +19,7 @@ import { ARTWORK_CATEGORIES, EditionType } from '@/types';
 type ArtworkData = {
   id: string;
   title: string;
+  title_en: string | null;
   description: string | null;
   size: string | null;
   material: string | null;
@@ -240,6 +241,19 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
                 id="title"
                 required
                 defaultValue={artwork?.title || ''}
+                className={inputClassName}
+              />
+            </div>
+
+            {/* Title (English) */}
+            <div className="sm:col-span-4">
+              <AdminFieldLabel htmlFor="title_en">{t('titleEn')}</AdminFieldLabel>
+              <AdminInput
+                type="text"
+                name="title_en"
+                id="title_en"
+                defaultValue={artwork?.title_en || ''}
+                placeholder={t('titleEnPlaceholder')}
                 className={inputClassName}
               />
             </div>

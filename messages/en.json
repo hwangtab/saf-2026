@@ -454,6 +454,8 @@
       "editTitle": "Edit artwork information",
       "createTitle": "Create new artwork",
       "artworkTitle": "Artwork title",
+      "artworkTitleEn": "Artwork title (English)",
+      "artworkTitleEnPlaceholder": "Artwork title in English",
       "artist": "Artist",
       "addNewArtist": "+ Add new artist",
       "searchArtistPlaceholder": "Search artist name...",

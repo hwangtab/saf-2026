@@ -30,6 +30,7 @@ type Artist = {
 type Artwork = {
   id: string;
   title: string;
+  title_en: string | null;
   description: string | null;
   size: string | null;
   material: string | null;
@@ -220,6 +221,15 @@ export function ExhibitorArtworkForm({
               {t('artworkTitle')} <span className="text-red-500">*</span>
             </AdminFieldLabel>
             <AdminInput name="title" defaultValue={artwork.title} required />
+          </div>
+
+          <div>
+            <AdminFieldLabel>{t('artworkTitleEn')}</AdminFieldLabel>
+            <AdminInput
+              name="title_en"
+              defaultValue={artwork.title_en || ''}
+              placeholder={t('artworkTitleEnPlaceholder')}
+            />
           </div>
 
           <div>
