@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import ExportedImage from 'next-image-export-optimizer';
 import { SOCIAL_LINKS, CONTACT, EXTERNAL_LINKS } from '@/lib/constants';
@@ -11,6 +11,8 @@ export default function Footer() {
   const t = useTranslations('footer');
   const tNav = useTranslations('nav');
   const tA11y = useTranslations('a11y');
+  const locale = useLocale();
+  const isEn = locale === 'en';
 
   return (
     <>
@@ -160,14 +162,14 @@ export default function Footer() {
               <div className="text-center text-xs text-gray-400 leading-6 mb-4">
                 <p>
                   {t('businessInfo', {
-                    org: CONTACT.ORGANIZATION_NAME,
+                    org: isEn ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
                     rep: CONTACT.REPRESENTATIVE_NAME,
                     bizNo: CONTACT.BUSINESS_REGISTRATION_NUMBER,
                   })}
                 </p>
                 <p>
                   {t('addressInfo', {
-                    address: CONTACT.ADDRESS,
+                    address: isEn ? CONTACT.ADDRESS_EN : CONTACT.ADDRESS,
                     postalCode: CONTACT.POSTAL_CODE,
                     mailOrder: CONTACT.MAIL_ORDER_REPORT_NUMBER,
                   })}

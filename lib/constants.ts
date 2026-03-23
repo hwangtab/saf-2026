@@ -39,11 +39,13 @@ export const CONTACT = {
   EMAIL: 'contact@kosmart.org',
   PHONE: '02-764-3114',
   ORGANIZATION_NAME: '한국스마트협동조합',
+  ORGANIZATION_NAME_EN: 'Korea Smart Cooperative',
   REPRESENTATIVE_NAME: '서인형',
   BUSINESS_REGISTRATION_NUMBER: '385-86-01622',
   MAIL_ORDER_REPORT_NUMBER: '제2021-서울은평-0715호',
   PERSON_NAME: '황경하 조직국장',
   ADDRESS: '서울특별시 은평구 통일로 68길 4, 302호 (불광동)',
+  ADDRESS_EN: '302, 4, Tongil-ro 68-gil, Eunpyeong-gu, Seoul',
   POSTAL_CODE: '03358',
 };
 
