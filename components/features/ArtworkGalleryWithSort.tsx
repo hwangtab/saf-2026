@@ -101,6 +101,7 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
               uniqueArtists={uniqueArtists}
               selectedArtist={selectedArtist}
               onArtistClick={handleArtistClick}
+              locale={locale}
             />
           </div>
         )}

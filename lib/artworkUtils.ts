@@ -45,19 +45,24 @@ export function sortArtworks<T extends SortableArtwork>(
   }
 }
 
-export function extractUniqueArtists<T extends Pick<Artwork, 'artist'>>(artworks: T[]): string[] {
-  const seen = new Set<string>();
-  const artists: string[] = [];
+export interface ArtistName {
+  ko: string;
+  en: string;
+}
+
+export function extractUniqueArtists<T extends Pick<Artwork, 'artist' | 'artist_en'>>(
+  artworks: T[]
+): ArtistName[] {
+  const seen = new Map<string, string>();
   const source = [...artworks].sort((a, b) => a.artist.localeCompare(b.artist, 'ko-KR'));
 
   for (const artwork of source) {
     if (!seen.has(artwork.artist)) {
-      seen.add(artwork.artist);
-      artists.push(artwork.artist);
+      seen.set(artwork.artist, artwork.artist_en || artwork.artist);
     }
   }
 
-  return artists;
+  return Array.from(seen.entries()).map(([ko, en]) => ({ ko, en }));
 }
 
 export function getArtworkWithArtistData(
