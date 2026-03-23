@@ -38,7 +38,7 @@ export default function AuthButtons({
     locale === 'en'
       ? {
           artistMenu: 'Artist menu',
-          adminDashboard: 'Admin dashboard',
+          adminDashboard: 'Admin',
           myPage: 'My page',
           exhibitorDashboard: 'Exhibitor dashboard',
           pendingApproval: 'Pending approval',
