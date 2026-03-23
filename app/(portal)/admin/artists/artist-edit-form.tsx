@@ -22,7 +22,9 @@ type Artist = {
   name_ko: string | null;
   name_en: string | null;
   bio: string | null;
+  bio_en: string | null;
   history: string | null;
+  history_en: string | null;
   profile_image: string | null;
   contact_phone: string | null;
   contact_email: string | null;
@@ -549,11 +551,33 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
         </div>
 
         <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">소개 (영문)</label>
+          <textarea
+            name="bio_en"
+            defaultValue={artist.bio_en || ''}
+            rows={4}
+            placeholder="Artist biography in English"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
+          />
+        </div>
+
+        <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">이력</label>
           <textarea
             name="history"
             defaultValue={artist.history || ''}
             rows={6}
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">이력 (영문)</label>
+          <textarea
+            name="history_en"
+            defaultValue={artist.history_en || ''}
+            rows={6}
+            placeholder="Artist career history in English"
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
           />
         </div>

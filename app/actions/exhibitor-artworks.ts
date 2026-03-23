@@ -133,6 +133,7 @@ export async function createExhibitorArtwork(formData: FormData) {
   }
 
   const title = getString(formData, 'title');
+  const title_en = getString(formData, 'title_en') || null;
   const description = getString(formData, 'description');
   const size = getString(formData, 'size');
   const material = getString(formData, 'material');
@@ -163,6 +164,7 @@ export async function createExhibitorArtwork(formData: FormData) {
     .from('artworks')
     .insert({
       title,
+      title_en,
       description,
       size,
       material,
@@ -221,6 +223,7 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
   }
 
   const title = getString(formData, 'title');
+  const title_en = getString(formData, 'title_en') || null;
   const description = getString(formData, 'description');
   const size = getString(formData, 'size');
   const material = getString(formData, 'material');
@@ -266,6 +269,7 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
     .from('artworks')
     .update({
       title,
+      title_en,
       description,
       size,
       material,

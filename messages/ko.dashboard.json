@@ -61,6 +61,8 @@
       "subtitle": "작품의 상세 정보를 입력해주세요.",
       "images": "작품 이미지 (최대 5장)",
       "title": "작품명",
+      "titleEn": "작품명 (영문)",
+      "titleEnPlaceholder": "Artwork title in English",
       "price": "가격 (₩)",
       "priceHint": "통화를 제외한 숫자 또는 ₩ 포함 텍스트",
       "size": "크기",

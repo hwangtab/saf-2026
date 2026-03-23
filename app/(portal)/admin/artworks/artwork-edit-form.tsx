@@ -24,6 +24,7 @@ type Artist = {
 type Artwork = {
   id: string;
   title: string;
+  title_en: string | null;
   admin_product_name: string | null;
   description: string | null;
   size: string | null;
@@ -73,6 +74,7 @@ export function ArtworkEditForm({
   // Form Field States for Validation & Formatting
   const [price, setPrice] = useState(artwork.price || '');
   const [title, setTitle] = useState(artwork.title || '');
+  const [titleEn, setTitleEn] = useState(artwork.title_en || '');
   const [editionType, setEditionType] = useState<EditionType>(artwork.edition_type || 'unique');
   const [editionLimit, setEditionLimit] = useState<number | ''>(artwork.edition_limit || '');
   const [showErrors, setShowErrors] = useState(false);
@@ -286,6 +288,17 @@ export function ArtworkEditForm({
             {showErrors && !title.trim() && (
               <p className="mt-1 text-xs text-red-600">작품명을 입력해주세요.</p>
             )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">작품명 (영문)</label>
+            <input
+              name="title_en"
+              value={titleEn}
+              onChange={(e) => setTitleEn(e.target.value)}
+              placeholder="Artwork title in English"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
+            />
           </div>
 
           <div>
