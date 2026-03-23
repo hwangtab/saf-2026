@@ -31,7 +31,7 @@ export default function NavLink({
             : 'text-charcoal-muted hover:text-primary',
         ]
       : [
-          'h-full text-sm font-medium items-center',
+          'h-full text-xs xl:text-sm font-medium items-center whitespace-nowrap',
           'after:absolute after:bottom-3 after:left-0 after:right-0 after:h-0.5 after:transition-colors',
           isActive
             ? ['text-primary font-semibold', 'after:bg-primary']

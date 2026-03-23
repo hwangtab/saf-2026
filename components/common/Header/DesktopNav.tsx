@@ -25,7 +25,7 @@ export default function DesktopNav({ navigation, isActive, textColor }: DesktopN
 
   return (
     <>
-      <ul className="hidden lg:flex xl:absolute xl:left-1/2 xl:-translate-x-1/2 top-0 items-center gap-4 xl:gap-8 h-full m-0 p-0 list-none">
+      <ul className="hidden lg:flex xl:absolute xl:left-1/2 xl:-translate-x-1/2 top-0 items-center gap-5 xl:gap-8 h-full m-0 p-0 list-none">
         {navigation.map((item) => (
           <li key={item.name} className="h-full flex items-center group relative">
             <div className="relative h-full flex items-center">
@@ -60,7 +60,7 @@ export default function DesktopNav({ navigation, isActive, textColor }: DesktopN
           href={EXTERNAL_LINKS.ORDER_STATUS}
           target="_blank"
           rel="noopener noreferrer"
-          className={`text-sm font-medium hover:opacity-70 transition-opacity px-3 py-2 ${textColor}`}
+          className={`text-xs xl:text-sm font-medium hover:opacity-70 transition-opacity px-3 py-2 whitespace-nowrap ${textColor}`}
         >
           {t('orderStatus')}
         </a>
