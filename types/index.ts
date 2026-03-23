@@ -16,6 +16,7 @@ export interface ArtistData {
   profile: string;
   history: string;
   owner_id?: string;
+  name_en?: string;
   profile_en?: string;
   history_en?: string;
 }
