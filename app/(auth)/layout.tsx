@@ -24,7 +24,9 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
             <Suspense fallback={<PageLoader />}>{children}</Suspense>
           </PageTransition>
         </main>
-        <Footer />
+        <Suspense>
+          <Footer />
+        </Suspense>
       </ToastProvider>
     </NextIntlClientProvider>
   );

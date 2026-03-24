@@ -33,7 +33,9 @@ export default async function LocaleLayout({
             <Suspense fallback={null}>{children}</Suspense>
           </PageTransition>
         </main>
-        <Footer />
+        <Suspense>
+          <Footer />
+        </Suspense>
       </ToastProvider>
     </NextIntlClientProvider>
   );
