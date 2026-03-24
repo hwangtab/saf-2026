@@ -48,15 +48,15 @@ describe('DynamicCounter', () => {
     );
   });
 
-  it('shows 0 when not in view', () => {
+  it('shows static values when not in view', () => {
     const { useInView } = require('react-intersection-observer');
     useInView.mockReturnValue({ ref: jest.fn(), inView: false });
 
     render(<DynamicCounter items={mockItems} />);
 
-    // Should show 0 with units when not started
-    expect(screen.getByText('0명')).toBeInTheDocument();
-    expect(screen.getByText('0원')).toBeInTheDocument();
-    expect(screen.getByText('0건')).toBeInTheDocument();
+    // Should show full values as static text when not in view
+    expect(screen.getByText(/150명/)).toBeInTheDocument();
+    expect(screen.getByText(/1,000,000원/)).toBeInTheDocument();
+    expect(screen.getByText(/50건/)).toBeInTheDocument();
   });
 });

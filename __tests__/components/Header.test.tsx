@@ -65,7 +65,7 @@ describe('Header', () => {
 
   it('renders logo and navigation', () => {
     render(<Header />);
-    expect(screen.getByAltText('씨앗페 로고')).toBeInTheDocument();
+    expect(screen.getByAltText('logoAlt')).toBeInTheDocument();
     expect(screen.getByTestId('desktop-nav')).toBeInTheDocument();
   });
 

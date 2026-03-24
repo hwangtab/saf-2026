@@ -82,8 +82,8 @@ describe('ArtworkGalleryWithSort', () => {
   it('renders correctly with default state', () => {
     render(<ArtworkGalleryWithSort artworks={mockArtworks} />);
 
-    expect(screen.getByRole('textbox', { name: /작품 검색/i })).toBeInTheDocument();
-    expect(screen.getByRole('group', { name: /판매 상태 필터/i })).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: /searchLabel/i })).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: /filterStatus/i })).toBeInTheDocument();
     expect(screen.getByText('Artwork 1')).toBeInTheDocument();
     expect(screen.getByText('Artwork 2')).toBeInTheDocument();
   });
@@ -91,7 +91,7 @@ describe('ArtworkGalleryWithSort', () => {
   it('filters by status correctly', () => {
     render(<ArtworkGalleryWithSort artworks={mockArtworks} />);
 
-    const sellingButton = screen.getByRole('radio', { name: /판매중/i });
+    const sellingButton = screen.getByRole('radio', { name: /selling/i });
     fireEvent.click(sellingButton);
 
     expect(screen.getByText('Artwork 1')).toBeInTheDocument();
@@ -101,7 +101,7 @@ describe('ArtworkGalleryWithSort', () => {
   it('filters by search query', async () => {
     render(<ArtworkGalleryWithSort artworks={mockArtworks} />);
 
-    const searchInput = screen.getByRole('textbox', { name: /작품 검색/i });
+    const searchInput = screen.getByRole('textbox', { name: /searchLabel/i });
     fireEvent.change(searchInput, { target: { value: 'Unique' } });
 
     act(() => {
@@ -115,14 +115,14 @@ describe('ArtworkGalleryWithSort', () => {
   it('shows empty state when no results', async () => {
     render(<ArtworkGalleryWithSort artworks={mockArtworks} />);
 
-    const searchInput = screen.getByRole('textbox', { name: /작품 검색/i });
+    const searchInput = screen.getByRole('textbox', { name: /searchLabel/i });
     fireEvent.change(searchInput, { target: { value: 'NonExistent' } });
 
     act(() => {
       jest.advanceTimersByTime(300);
     });
 
-    expect(screen.getByText(/검색 결과가 없습니다/i)).toBeInTheDocument();
+    expect(screen.getByText(/noResultsTitle/i)).toBeInTheDocument();
     expect(screen.queryByTestId('masonry-gallery')).not.toBeInTheDocument();
   });
 });
