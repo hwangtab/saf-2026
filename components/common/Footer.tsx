@@ -1,17 +1,15 @@
-'use client';
-
-import { useLocale, useTranslations } from 'next-intl';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import ExportedImage from 'next-image-export-optimizer';
 import { SOCIAL_LINKS, CONTACT, EXTERNAL_LINKS } from '@/lib/constants';
 import FooterSliderWrapper from '@/components/common/FooterSliderWrapper';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
 
-export default function Footer() {
-  const t = useTranslations('footer');
-  const tNav = useTranslations('nav');
-  const tA11y = useTranslations('a11y');
-  const locale = useLocale();
+export default async function Footer() {
+  const t = await getTranslations('footer');
+  const tNav = await getTranslations('nav');
+  const tA11y = await getTranslations('a11y');
+  const locale = await getLocale();
   const isEn = locale === 'en';
 
   return (

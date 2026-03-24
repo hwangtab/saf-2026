@@ -16,34 +16,6 @@ jest.mock('next-image-export-optimizer', () => ({
   default: ({ alt, ...props }: any) => <img alt={alt} {...props} />,
 }));
 
-jest.mock('react-share/lib/FacebookShareButton', () => ({
-  __esModule: true,
-  default: ({ children, ...props }: any) => (
-    <button data-testid="facebook-share" {...props}>
-      {children}
-    </button>
-  ),
-}));
-
-jest.mock('react-share/lib/TwitterShareButton', () => ({
-  __esModule: true,
-  default: ({ children, ...props }: any) => (
-    <button data-testid="twitter-share" {...props}>
-      {children}
-    </button>
-  ),
-}));
-
-jest.mock('react-share/lib/FacebookIcon', () => ({
-  __esModule: true,
-  default: () => <span>FB Icon</span>,
-}));
-
-jest.mock('react-share/lib/TwitterIcon', () => ({
-  __esModule: true,
-  default: () => <span>Twitter Icon</span>,
-}));
-
 Object.assign(navigator, {
   clipboard: {
     writeText: jest.fn(),
@@ -64,17 +36,50 @@ describe('ShareButtons', () => {
     description: 'Test Description',
   };
 
+  let windowOpenSpy: jest.SpyInstance;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    windowOpenSpy = jest.spyOn(window, 'open').mockImplementation(() => null);
+  });
+
+  afterEach(() => {
+    windowOpenSpy.mockRestore();
   });
 
   it('renders all share buttons', () => {
     render(<ShareButtons {...defaultProps} />);
 
-    expect(screen.getByTestId('facebook-share')).toBeInTheDocument();
-    expect(screen.getByTestId('twitter-share')).toBeInTheDocument();
+    expect(screen.getByLabelText('facebookAria')).toBeInTheDocument();
+    expect(screen.getByLabelText('twitterAria')).toBeInTheDocument();
     expect(screen.getByTitle('kakaoButtonTitle')).toBeInTheDocument();
     expect(screen.getByTitle('copyLinkTitle')).toBeInTheDocument();
+  });
+
+  it('opens Facebook share popup on click', () => {
+    render(<ShareButtons {...defaultProps} />);
+
+    const fbButton = screen.getByLabelText('facebookAria');
+    fireEvent.click(fbButton);
+
+    expect(windowOpenSpy).toHaveBeenCalledWith(
+      expect.stringContaining('facebook.com/sharer/sharer.php'),
+      '_blank',
+      expect.any(String)
+    );
+  });
+
+  it('opens Twitter share popup on click', () => {
+    render(<ShareButtons {...defaultProps} />);
+
+    const twitterButton = screen.getByLabelText('twitterAria');
+    fireEvent.click(twitterButton);
+
+    expect(windowOpenSpy).toHaveBeenCalledWith(
+      expect.stringContaining('twitter.com/intent/tweet'),
+      '_blank',
+      expect.any(String)
+    );
   });
 
   it('handles link copying successfully', async () => {

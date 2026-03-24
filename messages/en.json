@@ -240,6 +240,8 @@
     "loadingChart": "Loading chart"
   },
   "shareButtons": {
+    "facebookAria": "Share on Facebook",
+    "twitterAria": "Share on X",
     "hashtag": "#SAF2026",
     "kakaoUnavailable": "Kakao sharing is not available.",
     "kakaoPrepareFailed": "Failed to prepare Kakao sharing. Please try again in a moment.",

@@ -112,7 +112,7 @@ export default async function Home() {
             />
           </div>
           <h1
-            className="mt-8 md:mt-0 font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-4 leading-tight text-white drop-shadow-lg text-balance opacity-0 animate-fade-in-up"
+            className="mt-8 md:mt-0 font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-4 leading-tight text-white drop-shadow-lg text-balance motion-safe:opacity-0 motion-safe:animate-fade-in-up"
             style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}
           >
             {heroTitleLines.map((line, i) => (
@@ -123,7 +123,7 @@ export default async function Home() {
             ))}
           </h1>
           <p
-            className="text-xl md:text-2xl text-white/90 mb-10 max-w-2xl mx-auto leading-relaxed drop-shadow-lg break-keep text-balance opacity-0 animate-fade-in-up"
+            className="text-xl md:text-2xl text-white/90 mb-10 max-w-2xl mx-auto leading-relaxed drop-shadow-lg break-keep text-balance motion-safe:opacity-0 motion-safe:animate-fade-in-up"
             style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}
           >
             {heroDescLines.map((line, i) => (
@@ -135,7 +135,7 @@ export default async function Home() {
           </p>
 
           <div
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8 opacity-0 animate-fade-in-up"
+            className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8 motion-safe:opacity-0 motion-safe:animate-fade-in-up"
             style={{ animationDelay: '0.6s', animationFillMode: 'forwards' }}
           >
             <LinkButton

@@ -2,10 +2,6 @@
 
 import { useState } from 'react';
 import ExportedImage from 'next-image-export-optimizer';
-import FacebookShareButton from 'react-share/lib/FacebookShareButton';
-import TwitterShareButton from 'react-share/lib/TwitterShareButton';
-import FacebookIcon from 'react-share/lib/FacebookIcon';
-import TwitterIcon from 'react-share/lib/TwitterIcon';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import { useKakaoShareSDK } from '@/lib/hooks/useKakaoSDK';
@@ -18,6 +14,13 @@ interface ShareButtonsProps {
 
 type CopyStatus = 'idle' | 'copied' | 'error';
 
+const SHARE_BUTTON_CLASS =
+  'hover:opacity-80 transition-opacity p-1.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2';
+
+function openSharePopup(shareUrl: string) {
+  window.open(shareUrl, '_blank', 'noopener,noreferrer,width=600,height=400');
+}
+
 export default function ShareButtons({ url, title, description }: ShareButtonsProps) {
   const t = useTranslations('shareButtons');
   const [copyStatus, setCopyStatus] = useState<CopyStatus>('idle');
@@ -29,6 +32,16 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
     hasAppKey,
     ensureLoaded,
   } = useKakaoShareSDK();
+
+  const handleFacebookShare = () => {
+    const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(title)}`;
+    openSharePopup(fbUrl);
+  };
+
+  const handleTwitterShare = () => {
+    const twitterUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`;
+    openSharePopup(twitterUrl);
+  };
 
   const handleCopyLink = async () => {
     try {
@@ -101,23 +114,36 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
       </span>
 
       {/* Facebook */}
-      <FacebookShareButton
-        url={url}
-        quote={title}
-        hashtag={t('hashtag')}
-        className="hover:opacity-80 transition-opacity p-1.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+      <button
+        type="button"
+        onClick={handleFacebookShare}
+        className={SHARE_BUTTON_CLASS}
+        aria-label={t('facebookAria')}
       >
-        <FacebookIcon size={32} round iconFillColor="white" />
-      </FacebookShareButton>
+        <svg className="w-8 h-8" viewBox="0 0 64 64" fill="none">
+          <circle cx="32" cy="32" r="32" fill="#1877F2" />
+          <path
+            d="M42.525 41.142l1.573-10.257h-9.847V24.09c0-2.806 1.374-5.542 5.783-5.542h4.474V9.638S40.67 9 36.996 9c-7.68 0-12.698 4.655-12.698 13.084v7.8H15.69v10.258h8.608V64h10.595V41.142h8.632z"
+            fill="#fff"
+          />
+        </svg>
+      </button>
 
       {/* Twitter/X */}
-      <TwitterShareButton
-        url={url}
-        title={title}
-        className="hover:opacity-80 transition-opacity p-1.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+      <button
+        type="button"
+        onClick={handleTwitterShare}
+        className={SHARE_BUTTON_CLASS}
+        aria-label={t('twitterAria')}
       >
-        <TwitterIcon size={32} round />
-      </TwitterShareButton>
+        <svg className="w-8 h-8" viewBox="0 0 64 64" fill="none">
+          <circle cx="32" cy="32" r="32" fill="#000" />
+          <path
+            d="M36.652 29.13L47.74 16h-2.628l-9.628 11.396L27.176 16H17l11.627 17.228L17 47.248h2.628l10.164-12.03L38.824 47.248H49L36.652 29.13zm-3.597 4.258l-1.178-1.716L20.41 17.96h4.035l7.563 11.02 1.178 1.716 9.833 14.323h-4.035l-8.03-11.63z"
+            fill="#fff"
+          />
+        </svg>
+      </button>
 
       {/* Kakao Talk */}
       <button
@@ -125,7 +151,7 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
         onClick={handleKakaoShare}
         disabled={!hasAppKey || kakaoLoading}
         className={clsx(
-          'min-w-[44px] min-h-[44px] p-1.5 flex items-center justify-center transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-full',
+          SHARE_BUTTON_CLASS,
           (!hasAppKey || kakaoLoading) && 'opacity-50 cursor-not-allowed'
         )}
         title={hasAppKey ? t('kakaoButtonTitle') : t('kakaoNeedKey')}
@@ -144,7 +170,7 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
       <button
         type="button"
         onClick={handleCopyLink}
-        className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+        className={SHARE_BUTTON_CLASS}
         title={t('copyLinkTitle')}
         aria-label={
           copyStatus === 'copied'

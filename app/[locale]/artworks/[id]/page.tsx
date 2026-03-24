@@ -5,11 +5,7 @@ import { Link } from '@/i18n/navigation';
 import { notFound } from 'next/navigation';
 import { getLocale, getTranslations } from 'next-intl/server';
 
-import {
-  getSupabaseArtworks,
-  getSupabaseArtworksByArtist,
-  getSupabaseArtworkById,
-} from '@/lib/supabase-data';
+import { getSupabaseArtworks, getSupabaseArtworkById } from '@/lib/supabase-data';
 import Section from '@/components/ui/Section';
 import { getArticlesByArtist } from '@/content/artist-articles';
 import ArtworkImage from '@/components/features/ArtworkImage';
@@ -73,15 +69,21 @@ export async function generateStaticParams() {
 export default async function ArtworkDetailPage({ params }: Props) {
   const locale = (await getLocale()) === 'en' ? 'en' : 'ko';
   const { id } = await params;
-  const artwork = await getSupabaseArtworkById(id);
-  const t = await getTranslations('artworkDetail');
+
+  // Parallel fetch: artwork detail + all artworks (cached) to avoid waterfall
+  const [artwork, allArtworks, t] = await Promise.all([
+    getSupabaseArtworkById(id),
+    getSupabaseArtworks(),
+    getTranslations('artworkDetail'),
+  ]);
 
   if (!artwork) {
     notFound();
   }
 
-  const artistArtworks = await getSupabaseArtworksByArtist(artwork.artist);
-  const otherWorks = artistArtworks.filter((a) => a.id !== artwork.id).slice(0, 3);
+  const otherWorks = allArtworks
+    .filter((a) => a.artist === artwork.artist && a.id !== artwork.id)
+    .slice(0, 3);
 
   // Extract numeric price using utility
   const parsedPrice = parsePrice(artwork.price);

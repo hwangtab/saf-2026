@@ -240,6 +240,8 @@
     "loadingChart": "차트를 로드하는 중입니다"
   },
   "shareButtons": {
+    "facebookAria": "페이스북에 공유하기",
+    "twitterAria": "X(트위터)에 공유하기",
     "hashtag": "#씨앗페",
     "kakaoUnavailable": "카카오 공유를 사용할 수 없습니다.",
     "kakaoPrepareFailed": "카카오 공유 준비에 실패했습니다. 잠시 후 다시 시도해 주세요.",

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import Button from '@/components/ui/Button';
 import { useLocale } from 'next-intl';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
@@ -27,7 +27,7 @@ type AuthButtonsProps = {
   size?: 'xs' | 'sm' | 'md' | 'lg';
 };
 
-export default function AuthButtons({
+export default memo(function AuthButtons({
   layout = 'inline',
   className = '',
   variant = 'white',
@@ -257,4 +257,4 @@ export default function AuthButtons({
       )}
     </div>
   );
-}
+});
