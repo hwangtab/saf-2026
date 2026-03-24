@@ -98,7 +98,7 @@ export default function ArtworkHighlightSlider({ artworks }: ArtworkHighlightSli
         <button
           type="button"
           onClick={() => setIsPaused((prev) => !prev)}
-          className="absolute right-0 top-0 rounded-md border border-charcoal/20 bg-white/80 px-3 py-1.5 text-xs font-medium text-charcoal hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          className="absolute right-0 top-0 rounded-md border border-charcoal/20 bg-white/80 px-3 py-1.5 text-xs font-medium text-charcoal hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           aria-pressed={isPaused}
           aria-label={isPaused ? copy.playAria : copy.pauseAria}
         >

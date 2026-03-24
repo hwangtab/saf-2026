@@ -160,7 +160,7 @@ export default function RelatedArtworksSlider({
             <button
               type="button"
               onClick={() => setIsPaused((prev) => !prev)}
-              className="rounded-md border border-charcoal/20 bg-white px-3 py-1.5 text-xs font-medium text-charcoal hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              className="rounded-md border border-charcoal/20 bg-white px-3 py-1.5 text-xs font-medium text-charcoal hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               aria-pressed={isPaused}
               aria-label={isPaused ? copy.playAria : copy.pauseAria}
             >

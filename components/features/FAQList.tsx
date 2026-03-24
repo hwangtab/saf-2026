@@ -29,7 +29,7 @@ export default function FAQList({ items }: FAQListProps) {
             <button
               type="button"
               onClick={() => toggleItem(index)}
-              className="w-full flex items-center justify-between gap-4 p-6 text-left cursor-pointer transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
+              className="w-full flex items-center justify-between gap-4 p-6 text-left cursor-pointer transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
               aria-expanded={isOpen}
               aria-controls={`faq-content-${index}`}
             >

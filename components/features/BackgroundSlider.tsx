@@ -152,7 +152,7 @@ export default function BackgroundSlider() {
           <button
             type="button"
             onClick={() => setIsPaused((prev) => !prev)}
-            className="absolute bottom-4 right-4 z-20 rounded-md bg-black/45 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm hover:bg-black/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+            className="absolute bottom-4 right-4 z-20 rounded-md bg-black/45 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm hover:bg-black/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
             aria-pressed={isPaused}
             aria-label={isPaused ? t('playAria') : t('pauseAria')}
           >

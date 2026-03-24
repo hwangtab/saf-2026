@@ -26,7 +26,7 @@ export default function SearchBar({ value, onChange, placeholder }: SearchBarPro
         type="text"
         id="artwork-search"
         aria-label={tA11y('searchLabel')}
-        className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-full leading-5 bg-white placeholder-gray-600 outline-none focus-visible:placeholder-gray-400 focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary text-base sm:text-sm transition-colors"
+        className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-full leading-5 bg-white placeholder-gray-600 focus-visible:outline-nonefocus-visible:placeholder-gray-400 focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary text-base sm:text-sm transition-colors"
         placeholder={resolvedPlaceholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -35,7 +35,7 @@ export default function SearchBar({ value, onChange, placeholder }: SearchBarPro
         <button
           type="button"
           onClick={() => onChange('')}
-          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-600 hover:text-gray-800 outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-full"
+          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-600 hover:text-gray-800 focus-visible:outline-nonefocus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-full"
           aria-label={tA11y('clearSearch')}
         >
           <CloseIcon className="h-5 w-5" />

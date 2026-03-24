@@ -84,7 +84,7 @@ function Toast({ toast, onDismiss }: ToastProps) {
         'flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg',
         'min-w-[280px] max-w-[400px]',
         'cursor-pointer select-none',
-        'focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50',
         'transition-[transform,opacity,color,background-color] duration-200 ease-out',
         isDismissing ? 'animate-toast-out' : 'animate-toast-in',
         TOAST_STYLES[type]

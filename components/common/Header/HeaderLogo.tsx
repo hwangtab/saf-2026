@@ -15,7 +15,7 @@ export default function HeaderLogo({ isDarkText }: HeaderLogoProps) {
   return (
     <Link
       href="/"
-      className="flex items-center gap-2 hover:opacity-80 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded"
+      className="flex items-center gap-2 hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded"
     >
       <div className="relative h-9 w-40">
         <ExportedImage

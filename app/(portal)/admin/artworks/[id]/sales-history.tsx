@@ -294,7 +294,7 @@ export function SalesHistory({
                   value={salePrice}
                   onChange={handlePriceChange}
                   placeholder="1,000,000"
-                  className="flex-1 rounded border border-gray-300 p-2 text-sm outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/25"
+                  className="flex-1 rounded border border-gray-300 p-2 text-sm focus-visible:outline-nonefocus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/25"
                 />
                 {originalPrice > 0 && salePrice !== formattedOriginalPrice && (
                   <button
@@ -313,7 +313,7 @@ export function SalesHistory({
                 type="date"
                 value={soldAt}
                 onChange={(e) => setSoldAt(e.target.value)}
-                className="w-full rounded border border-gray-300 p-2 text-sm outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/25"
+                className="w-full rounded border border-gray-300 p-2 text-sm focus-visible:outline-nonefocus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/25"
               />
             </div>
             {editionType === 'limited' && (
@@ -327,7 +327,7 @@ export function SalesHistory({
                   max={editionLimit ? editionLimit - totalSold : undefined}
                   value={quantity}
                   onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-                  className="w-full rounded border border-gray-300 p-2 text-sm outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/25"
+                  className="w-full rounded border border-gray-300 p-2 text-sm focus-visible:outline-nonefocus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/25"
                 />
               </div>
             )}
@@ -337,7 +337,7 @@ export function SalesHistory({
                 value={buyerName}
                 onChange={(e) => setBuyerName(e.target.value)}
                 placeholder="홍길동"
-                className="w-full rounded border border-gray-300 p-2 text-sm outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/25"
+                className="w-full rounded border border-gray-300 p-2 text-sm focus-visible:outline-nonefocus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/25"
               />
             </div>
             <div>
@@ -347,7 +347,7 @@ export function SalesHistory({
                 value={buyerPhone}
                 onChange={(e) => setBuyerPhone(e.target.value)}
                 placeholder="010-1234-5678"
-                className="w-full rounded border border-gray-300 p-2 text-sm outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/25"
+                className="w-full rounded border border-gray-300 p-2 text-sm focus-visible:outline-nonefocus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/25"
               />
             </div>
             <div className="md:col-span-2">
@@ -356,7 +356,7 @@ export function SalesHistory({
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 placeholder="메모..."
-                className="w-full rounded border border-gray-300 p-2 text-sm outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/25"
+                className="w-full rounded border border-gray-300 p-2 text-sm focus-visible:outline-nonefocus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/25"
               />
             </div>
           </div>
@@ -419,7 +419,7 @@ export function SalesHistory({
                           type="date"
                           value={editDate}
                           onChange={(e) => setEditDate(e.target.value)}
-                          className="w-full rounded border border-gray-300 px-2 py-1 text-sm outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/25"
+                          className="w-full rounded border border-gray-300 px-2 py-1 text-sm focus-visible:outline-nonefocus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/25"
                         />
                       </td>
                       <td className="px-4 py-2">
@@ -427,7 +427,7 @@ export function SalesHistory({
                           value={editBuyerName}
                           onChange={(e) => setEditBuyerName(e.target.value)}
                           placeholder="구매자"
-                          className="w-full rounded border border-gray-300 px-2 py-1 text-sm outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/25"
+                          className="w-full rounded border border-gray-300 px-2 py-1 text-sm focus-visible:outline-nonefocus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/25"
                         />
                       </td>
                       <td className="px-4 py-2">
@@ -436,7 +436,7 @@ export function SalesHistory({
                           value={editBuyerPhone}
                           onChange={(e) => setEditBuyerPhone(e.target.value)}
                           placeholder="010-0000-0000"
-                          className="w-full rounded border border-gray-300 px-2 py-1 text-sm outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/25"
+                          className="w-full rounded border border-gray-300 px-2 py-1 text-sm focus-visible:outline-nonefocus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/25"
                         />
                       </td>
                       <td className="px-4 py-2 text-sm text-gray-600">
@@ -451,7 +451,7 @@ export function SalesHistory({
                             min="1"
                             value={editQuantity}
                             onChange={(e) => setEditQuantity(parseInt(e.target.value) || 1)}
-                            className="w-16 rounded border border-gray-300 px-2 py-1 text-right text-sm outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/25"
+                            className="w-16 rounded border border-gray-300 px-2 py-1 text-right text-sm focus-visible:outline-nonefocus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/25"
                           />
                         ) : (
                           <span className="block text-right text-sm text-gray-900">
@@ -466,7 +466,7 @@ export function SalesHistory({
                             const val = e.target.value.replace(/,/g, '');
                             setEditPrice(formatPriceInput(val));
                           }}
-                          className="w-28 rounded border border-gray-300 px-2 py-1 text-right text-sm outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/25"
+                          className="w-28 rounded border border-gray-300 px-2 py-1 text-right text-sm focus-visible:outline-nonefocus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/25"
                         />
                       </td>
                       <td className="px-4 py-2 text-right text-sm text-gray-500">-</td>
@@ -513,7 +513,7 @@ export function SalesHistory({
                               }
                               if (e.key === 'Escape') setVoidingSaleId(null);
                             }}
-                            className="flex-1 rounded border border-red-300 px-2 py-1 text-sm outline-none focus-visible:border-red-500 focus-visible:ring-1 focus-visible:ring-red-500/25"
+                            className="flex-1 rounded border border-red-300 px-2 py-1 text-sm focus-visible:outline-nonefocus-visible:border-red-500 focus-visible:ring-1 focus-visible:ring-red-500/25"
                           />
                         </div>
                       </td>

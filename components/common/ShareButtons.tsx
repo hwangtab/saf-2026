@@ -105,7 +105,7 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
         url={url}
         quote={title}
         hashtag={t('hashtag')}
-        className="hover:opacity-80 transition-opacity p-1.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+        className="hover:opacity-80 transition-opacity p-1.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
       >
         <FacebookIcon size={32} round iconFillColor="white" />
       </FacebookShareButton>
@@ -114,7 +114,7 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
       <TwitterShareButton
         url={url}
         title={title}
-        className="hover:opacity-80 transition-opacity p-1.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+        className="hover:opacity-80 transition-opacity p-1.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
       >
         <TwitterIcon size={32} round />
       </TwitterShareButton>
@@ -125,7 +125,7 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
         onClick={handleKakaoShare}
         disabled={!hasAppKey || kakaoLoading}
         className={clsx(
-          'min-w-[44px] min-h-[44px] p-1.5 flex items-center justify-center transition-opacity hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-full',
+          'min-w-[44px] min-h-[44px] p-1.5 flex items-center justify-center transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-full',
           (!hasAppKey || kakaoLoading) && 'opacity-50 cursor-not-allowed'
         )}
         title={hasAppKey ? t('kakaoButtonTitle') : t('kakaoNeedKey')}
@@ -144,7 +144,7 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
       <button
         type="button"
         onClick={handleCopyLink}
-        className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+        className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         title={t('copyLinkTitle')}
         aria-label={
           copyStatus === 'copied'

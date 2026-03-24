@@ -123,7 +123,7 @@ export function ArtistSalesList({ artists }: { artists: ArtistSalesRecord[] }) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="작가명 검색..."
-          className="w-full max-w-sm rounded-lg border border-slate-300 px-4 py-2 text-sm outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/25"
+          className="w-full max-w-sm rounded-lg border border-slate-300 px-4 py-2 text-sm focus-visible:outline-nonefocus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/25"
         />
         <span className="shrink-0 text-sm text-slate-500">
           {filtered.length}명{search.trim() ? ` / ${artists.length}명` : ''}
