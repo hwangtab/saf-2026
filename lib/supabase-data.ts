@@ -418,11 +418,12 @@ const getSupabaseReviewsUncached = async (): Promise<ExhibitionReview[]> => {
     };
   });
 
-  // Deduplicate by comment content (defensive: duplicate rows may have different IDs)
+  // Deduplicate by comment + author (defensive: duplicate rows may have different IDs)
   const seen = new Set<string>();
   return reviews.filter((r) => {
-    if (seen.has(r.comment)) return false;
-    seen.add(r.comment);
+    const key = `${r.comment}::${r.author}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
     return true;
   });
 };
