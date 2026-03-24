@@ -88,7 +88,8 @@ export function Pagination({
   return (
     <div className="flex flex-col items-center gap-3 py-4 sm:flex-row sm:justify-between">
       <p className="text-sm text-gray-500">
-        {copy.total} {totalItems.toLocaleString()} {resolvedItemName}
+        {copy.total} {totalItems.toLocaleString(locale === 'en' ? 'en-US' : 'ko-KR')}{' '}
+        {resolvedItemName}
       </p>
 
       <nav className="flex items-center gap-1" aria-label={copy.navAria}>
@@ -101,9 +102,12 @@ export function Pagination({
             {copy.previous}
           </Link>
         ) : (
-          <span className="flex h-8 cursor-not-allowed items-center justify-center rounded-md border border-gray-200 bg-gray-50 px-3 text-sm font-medium text-gray-400">
+          <button
+            disabled
+            className="flex h-8 cursor-not-allowed items-center justify-center rounded-md border border-gray-200 bg-gray-50 px-3 text-sm font-medium text-gray-400"
+          >
             {copy.previous}
-          </span>
+          </button>
         )}
 
         {/* 페이지 번호 */}
@@ -115,7 +119,7 @@ export function Pagination({
                   key={`ellipsis-${index}`}
                   className="flex h-8 w-8 items-center justify-center text-sm text-gray-400"
                 >
-                  ...
+                  {'\u2026'}
                 </span>
               );
             }
@@ -127,7 +131,7 @@ export function Pagination({
                 key={page}
                 href={getPageUrl(page)}
                 className={cn(
-                  'flex h-8 min-w-8 items-center justify-center rounded-md px-2 text-sm font-medium transition-colors',
+                  'flex h-8 min-w-8 items-center justify-center rounded-md px-2 text-sm font-medium transition-colors tabular-nums',
                   isCurrentPage
                     ? 'bg-blue-600 text-white'
                     : 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
@@ -149,9 +153,12 @@ export function Pagination({
             {copy.next}
           </Link>
         ) : (
-          <span className="flex h-8 cursor-not-allowed items-center justify-center rounded-md border border-gray-200 bg-gray-50 px-3 text-sm font-medium text-gray-400">
+          <button
+            disabled
+            className="flex h-8 cursor-not-allowed items-center justify-center rounded-md border border-gray-200 bg-gray-50 px-3 text-sm font-medium text-gray-400"
+          >
             {copy.next}
-          </span>
+          </button>
         )}
       </nav>
     </div>

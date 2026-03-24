@@ -11,7 +11,7 @@ export const FIXED_LEFT_ICON_OFFSET: Record<ButtonSize, string> = {
 };
 
 export const buttonVariants = cva(
-  'inline-flex items-center justify-center font-bold rounded-lg transition-all duration-300 ease-out group',
+  'inline-flex items-center justify-center font-bold rounded-lg transition-[transform,box-shadow,color,background-color,border-color] duration-300 ease-out group',
   {
     variants: {
       variant: {

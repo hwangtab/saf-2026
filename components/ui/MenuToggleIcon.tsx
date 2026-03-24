@@ -26,7 +26,7 @@ export default function MenuToggleIcon({ isOpen, className, ...props }: MenuTogg
         x2="20"
         y2="6"
         className={clsx(
-          'transition-all duration-300 ease-in-out origin-center',
+          'transition-transform duration-300 ease-in-out origin-center',
           isOpen ? 'translate-y-[6px] rotate-45' : 'translate-y-0 rotate-0'
         )}
       />
@@ -46,7 +46,7 @@ export default function MenuToggleIcon({ isOpen, className, ...props }: MenuTogg
         x2="20"
         y2="18"
         className={clsx(
-          'transition-all duration-300 ease-in-out origin-center',
+          'transition-transform duration-300 ease-in-out origin-center',
           isOpen ? '-translate-y-[6px] -rotate-45' : 'translate-y-0 rotate-0'
         )}
       />

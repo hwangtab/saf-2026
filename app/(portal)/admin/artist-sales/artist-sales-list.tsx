@@ -123,7 +123,7 @@ export function ArtistSalesList({ artists }: { artists: ArtistSalesRecord[] }) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="작가명 검색..."
-          className="w-full max-w-sm rounded-lg border border-slate-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none"
+          className="w-full max-w-sm rounded-lg border border-slate-300 px-4 py-2 text-sm outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/25"
         />
         <span className="shrink-0 text-sm text-slate-500">
           {filtered.length}명{search.trim() ? ` / ${artists.length}명` : ''}
@@ -162,30 +162,87 @@ export function ArtistSalesList({ artists }: { artists: ArtistSalesRecord[] }) {
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-slate-200">
+              <caption className="sr-only">작가별 판매 현황</caption>
               <thead className="bg-slate-50 text-xs font-semibold uppercase text-slate-500">
                 <tr>
                   <th className="px-4 py-3 text-left">#</th>
                   <th
                     className="cursor-pointer select-none px-4 py-3 text-left hover:text-slate-800"
                     onClick={() => toggleSort('artistName')}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleSort('artistName');
+                      }
+                    }}
+                    tabIndex={0}
+                    aria-sort={
+                      sortKey === 'artistName'
+                        ? sortDir === 'asc'
+                          ? 'ascending'
+                          : 'descending'
+                        : 'none'
+                    }
                   >
                     작가명{sortIndicator('artistName')}
                   </th>
                   <th
                     className="cursor-pointer select-none px-4 py-3 text-right hover:text-slate-800"
                     onClick={() => toggleSort('soldCount')}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleSort('soldCount');
+                      }
+                    }}
+                    tabIndex={0}
+                    aria-sort={
+                      sortKey === 'soldCount'
+                        ? sortDir === 'asc'
+                          ? 'ascending'
+                          : 'descending'
+                        : 'none'
+                    }
                   >
                     판매 수량{sortIndicator('soldCount')}
                   </th>
                   <th
                     className="cursor-pointer select-none px-4 py-3 text-right hover:text-slate-800"
                     onClick={() => toggleSort('artworkCount')}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleSort('artworkCount');
+                      }
+                    }}
+                    tabIndex={0}
+                    aria-sort={
+                      sortKey === 'artworkCount'
+                        ? sortDir === 'asc'
+                          ? 'ascending'
+                          : 'descending'
+                        : 'none'
+                    }
                   >
                     판매 작품{sortIndicator('artworkCount')}
                   </th>
                   <th
                     className="cursor-pointer select-none px-4 py-3 text-right hover:text-slate-800"
                     onClick={() => toggleSort('avgPrice')}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleSort('avgPrice');
+                      }
+                    }}
+                    tabIndex={0}
+                    aria-sort={
+                      sortKey === 'avgPrice'
+                        ? sortDir === 'asc'
+                          ? 'ascending'
+                          : 'descending'
+                        : 'none'
+                    }
                   >
                     평균 판매가{sortIndicator('avgPrice')}
                   </th>
@@ -193,12 +250,40 @@ export function ArtistSalesList({ artists }: { artists: ArtistSalesRecord[] }) {
                   <th
                     className="cursor-pointer select-none px-4 py-3 text-right hover:text-slate-800"
                     onClick={() => toggleSort('lastSaleDate')}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleSort('lastSaleDate');
+                      }
+                    }}
+                    tabIndex={0}
+                    aria-sort={
+                      sortKey === 'lastSaleDate'
+                        ? sortDir === 'asc'
+                          ? 'ascending'
+                          : 'descending'
+                        : 'none'
+                    }
                   >
                     최근 판매{sortIndicator('lastSaleDate')}
                   </th>
                   <th
                     className="cursor-pointer select-none px-4 py-3 text-right hover:text-slate-800"
                     onClick={() => toggleSort('revenue')}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleSort('revenue');
+                      }
+                    }}
+                    tabIndex={0}
+                    aria-sort={
+                      sortKey === 'revenue'
+                        ? sortDir === 'asc'
+                          ? 'ascending'
+                          : 'descending'
+                        : 'none'
+                    }
                   >
                     매출{sortIndicator('revenue')}
                   </th>

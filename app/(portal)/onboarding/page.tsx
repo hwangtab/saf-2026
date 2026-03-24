@@ -93,7 +93,7 @@ export default async function OnboardingPage({
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 px-4 sm:px-0">
             <Link
               href="/onboarding?role=artist"
-              className="flex flex-col rounded-lg border-2 border-gray-200 bg-white p-6 shadow-sm hover:border-gray-900 hover:shadow-md transition-all"
+              className="flex flex-col rounded-lg border-2 border-gray-200 bg-white p-6 shadow-sm hover:border-gray-900 hover:shadow-md transition-[box-shadow,border-color]"
             >
               <span className="text-lg font-semibold text-gray-900">{t('applyArtist')}</span>
               <span className="mt-2 text-sm text-gray-500">{t('applyArtistDescription')}</span>
@@ -101,7 +101,7 @@ export default async function OnboardingPage({
 
             <Link
               href="/exhibitor/onboarding"
-              className="flex flex-col rounded-lg border-2 border-gray-200 bg-white p-6 shadow-sm hover:border-gray-900 hover:shadow-md transition-all"
+              className="flex flex-col rounded-lg border-2 border-gray-200 bg-white p-6 shadow-sm hover:border-gray-900 hover:shadow-md transition-[box-shadow,border-color]"
             >
               <span className="text-lg font-semibold text-gray-900">{t('applyExhibitor')}</span>
               <span className="mt-2 text-sm text-gray-500">{t('applyExhibitorDescription')}</span>

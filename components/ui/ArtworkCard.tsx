@@ -114,11 +114,11 @@ function ArtworkCard({
       <Link
         href={getHref(artwork, returnTo)}
         className={cn(
-          'flex-shrink-0 w-[160px] sm:w-[180px] md:w-[200px] group transition-all duration-300 hover:-translate-y-1',
+          'flex-shrink-0 w-[160px] sm:w-[180px] md:w-[200px] group transition-transform duration-300 hover:-translate-y-1',
           className
         )}
       >
-        <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100 shadow-sm group-hover:shadow-xl transition-all duration-300">
+        <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100 shadow-sm group-hover:shadow-xl transition-shadow duration-300">
           <SafeImage
             src={getImageSrc(artwork, variant)}
             alt={getImageAlt(artwork, untitledLabel, unknownArtistLabel, locale)}
@@ -145,7 +145,7 @@ function ArtworkCard({
   return (
     <div
       className={cn(
-        'bg-gray-100 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl group rounded-lg overflow-hidden',
+        'bg-gray-100 shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl group rounded-lg overflow-hidden',
         className
       )}
     >

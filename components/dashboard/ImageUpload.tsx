@@ -73,6 +73,7 @@ export function ImageUpload({
         className="hidden"
         accept="image/*"
         multiple={maxFiles > 1}
+        aria-label={copy.addImage}
       />
 
       <p className="text-xs text-gray-500">{copy.footer(maxFiles)}</p>

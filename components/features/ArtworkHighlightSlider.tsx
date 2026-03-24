@@ -116,7 +116,7 @@ export default function ArtworkHighlightSlider({ artworks }: ArtworkHighlightSli
               <ArtworkCard
                 artwork={artwork}
                 variant="gallery"
-                className="h-full border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500"
+                className="h-full border border-gray-100 shadow-sm hover:shadow-xl transition-shadow duration-500"
               />
             </div>
           ))}

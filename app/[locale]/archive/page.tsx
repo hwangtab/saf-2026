@@ -56,7 +56,7 @@ export default async function ArchiveHubPage() {
             <SectionTitle className="mb-12">Past event records</SectionTitle>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
               <Link href="/archive/2026" className="group block">
-                <div className="bg-canvas-soft rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
+                <div className="bg-canvas-soft rounded-2xl overflow-hidden shadow-lg transition-[transform,box-shadow] duration-300 hover:shadow-2xl hover:-translate-y-2">
                   <div className="relative aspect-[4/3] w-full overflow-hidden">
                     <ExportedImage
                       src="/images/safposter.png"
@@ -82,7 +82,7 @@ export default async function ArchiveHubPage() {
               </Link>
 
               <Link href="/archive/2023" className="group block">
-                <div className="bg-canvas-soft rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
+                <div className="bg-canvas-soft rounded-2xl overflow-hidden shadow-lg transition-[transform,box-shadow] duration-300 hover:shadow-2xl hover:-translate-y-2">
                   <div className="relative aspect-[4/3] w-full overflow-hidden">
                     <ExportedImage
                       src="/images/saf2023/saf2023poster.png"
@@ -124,7 +124,7 @@ export default async function ArchiveHubPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
             {/* 2026 Archive Card */}
             <Link href="/archive/2026" className="group block">
-              <div className="bg-canvas-soft rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
+              <div className="bg-canvas-soft rounded-2xl overflow-hidden shadow-lg transition-[transform,box-shadow] duration-300 hover:shadow-2xl hover:-translate-y-2">
                 <div className="relative aspect-[4/3] w-full overflow-hidden">
                   <ExportedImage
                     src="/images/safposter.png"
@@ -152,7 +152,7 @@ export default async function ArchiveHubPage() {
 
             {/* 2023 Archive Card */}
             <Link href="/archive/2023" className="group block">
-              <div className="bg-canvas-soft rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
+              <div className="bg-canvas-soft rounded-2xl overflow-hidden shadow-lg transition-[transform,box-shadow] duration-300 hover:shadow-2xl hover:-translate-y-2">
                 <div className="relative aspect-[4/3] w-full overflow-hidden">
                   <ExportedImage
                     src="/images/saf2023/saf2023poster.png"

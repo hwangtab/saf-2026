@@ -118,7 +118,7 @@ export default function Modal({ isOpen, onClose, title, children, className }: M
             ✕
           </Button>
         </div>
-        <div className="p-6 overflow-y-auto">{children}</div>
+        <div className="p-6 overflow-y-auto overscroll-contain">{children}</div>
       </div>
     </div>,
     document.body

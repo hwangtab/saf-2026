@@ -85,7 +85,7 @@ function Toast({ toast, onDismiss }: ToastProps) {
         'min-w-[280px] max-w-[400px]',
         'cursor-pointer select-none',
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50',
-        'transition-all duration-200 ease-out',
+        'transition-[transform,opacity,color,background-color] duration-200 ease-out',
         isDismissing ? 'animate-toast-out' : 'animate-toast-in',
         TOAST_STYLES[type]
       )}
@@ -139,6 +139,7 @@ export function ToastContainer({ toasts, onDismiss }: ToastContainerProps) {
     <div
       className="fixed top-4 right-4 z-[9999] flex flex-col gap-2"
       style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
+      aria-live="polite"
     >
       {toasts.map((toast) => (
         <Toast key={toast.id} toast={toast} onDismiss={onDismiss} />

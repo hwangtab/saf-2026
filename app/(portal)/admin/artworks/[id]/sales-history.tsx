@@ -251,7 +251,7 @@ export function SalesHistory({
           </div>
           <div className="h-2 w-full overflow-hidden rounded-full bg-gray-100">
             <div
-              className="h-full bg-blue-500 transition-all duration-500"
+              className="h-full bg-blue-500 transition-[width] duration-500"
               style={{ width: `${percent}%` }}
             />
           </div>

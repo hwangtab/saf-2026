@@ -31,10 +31,10 @@ export default function ErrorView({
   return (
     <div className="min-h-[60vh] flex items-center justify-center p-4">
       <div className="text-center max-w-md mx-auto">
-        <div className="text-6xl mb-6" role="img" aria-label="icon">
+        <div className="text-6xl mb-6" aria-hidden="true">
           {icon}
         </div>
-        <h2 className="text-2xl font-bold mb-4 text-charcoal">{title}</h2>
+        <h1 className="text-2xl font-bold mb-4 text-charcoal">{title}</h1>
         <p className="text-charcoal-muted mb-8 leading-relaxed text-balance">{message}</p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button onClick={reset} variant="primary">

@@ -826,9 +826,9 @@ export function AdminArtworkList({
                               handleImageClick(artwork.images || [], artwork.title);
                             }
                           }}
-                          role={artwork.images?.[0] ? 'button' : undefined}
-                          tabIndex={artwork.images?.[0] ? 0 : undefined}
-                          aria-label={artwork.images?.[0] ? t('zoomImage') : undefined}
+                          {...(artwork.images?.[0]
+                            ? { role: 'button', tabIndex: 0, 'aria-label': t('zoomImage') }
+                            : {})}
                         >
                           {artwork.images?.[0] ? (
                             <SafeImage

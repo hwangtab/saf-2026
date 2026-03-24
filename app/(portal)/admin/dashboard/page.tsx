@@ -25,7 +25,7 @@ function StatCard({
   helpContent?: string;
 }) {
   const content = (
-    <AdminCard className="flex h-full flex-col justify-between p-6 transition-all duration-200">
+    <AdminCard className="flex h-full flex-col justify-between p-6 transition-[transform,box-shadow] duration-200">
       <div>
         <div className="flex items-center gap-1">
           <p className="text-sm font-medium text-slate-500">{title}</p>
@@ -181,7 +181,7 @@ export default async function AdminDashboardPage() {
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {stats.siteAnalytics ? (
           <>
-            <AdminCard className="flex h-full flex-col justify-between bg-emerald-50/50 p-6 transition-all duration-200">
+            <AdminCard className="flex h-full flex-col justify-between bg-emerald-50/50 p-6 transition-[transform,box-shadow] duration-200">
               <div>
                 <p className="text-sm font-medium text-emerald-700">{t('realtimeVisitors')}</p>
                 <p className="mt-2 text-3xl font-bold tracking-tight text-emerald-900">
