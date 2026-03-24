@@ -153,7 +153,7 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
               name="name_ko"
               defaultValue={artist.name_ko || ''}
               required
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
             />
           </div>
 
@@ -162,7 +162,7 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
             <input
               name="name_en"
               defaultValue={artist.name_en || ''}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
             />
           </div>
 
@@ -172,7 +172,7 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
               name="contact_email"
               type="email"
               defaultValue={artist.contact_email || ''}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
             />
           </div>
 
@@ -182,7 +182,7 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
               name="instagram"
               defaultValue={artist.instagram || ''}
               placeholder="@username"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
             />
           </div>
 
@@ -193,7 +193,7 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
               type="url"
               defaultValue={artist.homepage || ''}
               placeholder="https://..."
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
             />
           </div>
 
@@ -206,7 +206,7 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
             name="bio"
             defaultValue={artist.bio || ''}
             rows={4}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
           />
         </div>
 
@@ -216,7 +216,7 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
             name="history"
             defaultValue={artist.history || ''}
             rows={6}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
           />
         </div>
 

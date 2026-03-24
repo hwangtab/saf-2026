@@ -279,7 +279,7 @@ export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedb
                 onChange={(e) => setAdminNote(e.target.value)}
                 rows={3}
                 placeholder={t('adminMemoPlaceholder')}
-                className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
+                className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus-visible:border-gray-900 focus-visible:ring-1 focus-visible:ring-gray-900"
               />
               <div className="mt-1.5 flex justify-end">
                 <Button

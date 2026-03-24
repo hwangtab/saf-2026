@@ -256,7 +256,7 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
             onChange={(e) => setRestoreReason(e.target.value)}
             rows={3}
             placeholder={t('restoreReasonPlaceholder')}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
           />
         </div>
       </AdminConfirmModal>
@@ -283,7 +283,7 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
             onChange={(e) => setPurgeReason(e.target.value)}
             rows={3}
             placeholder={t('purgeReasonPlaceholder')}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
           />
         </div>
       </AdminConfirmModal>
