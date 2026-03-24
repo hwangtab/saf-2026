@@ -404,7 +404,7 @@ const getSupabaseReviewsUncached = async (): Promise<ExhibitionReview[]> => {
     return exhibitionReviews;
   }
 
-  return (data || []).map((item) => {
+  const reviews = (data || []).map((item) => {
     const row = item as ReviewRow;
     const parsedRating =
       typeof row.rating === 'number' ? row.rating : parseFloat(String(row.rating));
@@ -416,6 +416,14 @@ const getSupabaseReviewsUncached = async (): Promise<ExhibitionReview[]> => {
       comment: row.comment,
       date: row.date,
     };
+  });
+
+  // Deduplicate by id (defensive: Supabase table may contain duplicate rows)
+  const seen = new Set<string>();
+  return reviews.filter((r) => {
+    if (seen.has(r.id)) return false;
+    seen.add(r.id);
+    return true;
   });
 };
 
