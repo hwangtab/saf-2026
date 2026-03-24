@@ -41,5 +41,7 @@ yarn-error.log*
 
 # next-image-export-optimizer
 /public/images/**/nextImageExportOptimizer/
-.vercel
 .gstack/
+
+# TypeScript build cache
+tsconfig.tsbuildinfo
