@@ -11,6 +11,14 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
+const EXCLUDED_PUBLIC_NAMESPACES = new Set([
+  'admin',
+  'dashboard',
+  'exhibitor',
+  'onboarding',
+  'onboardingForm',
+]);
+
 export default async function LocaleLayout({
   children,
   params,
@@ -21,9 +29,7 @@ export default async function LocaleLayout({
   const { locale } = await params;
   const messages = await getMessages();
   const publicMessages = Object.fromEntries(
-    Object.entries(messages).filter(
-      ([namespace]) => namespace !== 'admin' && namespace !== 'dashboard'
-    )
+    Object.entries(messages).filter(([namespace]) => !EXCLUDED_PUBLIC_NAMESPACES.has(namespace))
   );
 
   return (
