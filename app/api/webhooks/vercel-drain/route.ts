@@ -41,15 +41,26 @@ const BATCH_SIZE = 500;
  * Vercel이 `x-vercel-verify` 헤더를 포함한 GET 요청을 보내고,
  * 응답 본문에 동일한 값을 반환해야 검증이 완료됩니다.
  */
-export async function GET() {
-  const verifyToken = process.env.VERCEL_DRAIN_VERIFY;
-  if (verifyToken) {
-    return new Response(verifyToken, {
-      status: 200,
-      headers: { 'x-vercel-verify': verifyToken },
-    });
+export async function GET(request: NextRequest) {
+  const expectedVerifyToken = process.env.VERCEL_DRAIN_VERIFY;
+  if (!expectedVerifyToken) {
+    console.error('[vercel-drain] VERCEL_DRAIN_VERIFY is not configured');
+    return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
   }
-  return NextResponse.json({ status: 'ok' });
+
+  const requestVerifyToken = request.headers.get('x-vercel-verify');
+  if (!requestVerifyToken) {
+    return NextResponse.json({ error: 'Missing verification token' }, { status: 400 });
+  }
+
+  if (requestVerifyToken !== expectedVerifyToken) {
+    return NextResponse.json({ error: 'Invalid verification token' }, { status: 401 });
+  }
+
+  return new Response(requestVerifyToken, {
+    status: 200,
+    headers: { 'x-vercel-verify': requestVerifyToken },
+  });
 }
 
 export async function POST(request: NextRequest) {
@@ -57,11 +68,14 @@ export async function POST(request: NextRequest) {
 
   // HMAC-SHA1 서명 검증
   const secret = process.env.VERCEL_DRAIN_SECRET;
-  if (secret) {
-    const signature = request.headers.get('x-vercel-signature');
-    if (!verifySignature(raw, signature, secret)) {
-      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
-    }
+  if (!secret) {
+    console.error('[vercel-drain] VERCEL_DRAIN_SECRET is not configured');
+    return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
+  }
+
+  const signature = request.headers.get('x-vercel-signature');
+  if (!verifySignature(raw, signature, secret)) {
+    return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
   }
 
   let events: VercelDrainEvent[];
