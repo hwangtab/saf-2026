@@ -74,7 +74,11 @@ function getKstDateToken() {
   }).format(new Date());
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  if (request.headers.get('next-router-prefetch') === '1') {
+    return new Response(null, { status: 204 });
+  }
+
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
