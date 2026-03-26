@@ -20,9 +20,14 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params;
   const messages = await getMessages();
+  const publicMessages = Object.fromEntries(
+    Object.entries(messages).filter(
+      ([namespace]) => namespace !== 'admin' && namespace !== 'dashboard'
+    )
+  );
 
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
+    <NextIntlClientProvider locale={locale} messages={publicMessages}>
       <ToastProvider>
         <a href="#main-content" className="skip-to-main">
           {locale === 'en' ? 'Skip to main content' : '메인 콘텐츠로 이동'}
