@@ -14,6 +14,8 @@ import { logExhibitorAction } from './admin-logs';
 import { validateArtworkData } from '@/lib/actions/artwork-validation';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 
+type ArtistJoin = { owner_id: string | null; name_ko: string | null };
+
 type Cafe24SyncFeedback = {
   status: 'synced' | 'warning' | 'failed' | 'pending_auth';
   reason: string | null;
@@ -297,7 +299,6 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
 
   revalidatePath('/exhibitor/artworks');
   revalidatePath(`/exhibitor/artworks/${id}`);
-  type ArtistJoin = { owner_id: string | null; name_ko: string | null };
   const oldArtistName = (oldArtwork.artists as ArtistJoin | null)?.name_ko ?? null;
   const targetArtistId = artist_id || oldArtwork.artist_id;
 
@@ -388,7 +389,6 @@ export async function updateExhibitorArtworkImages(id: string, images: string[])
 
   revalidatePath('/exhibitor/artworks');
   revalidatePath(`/exhibitor/artworks/${id}`);
-  type ArtistJoin = { owner_id: string | null; name_ko: string | null };
   const oldArtistName = (oldArtwork.artists as ArtistJoin | null)?.name_ko ?? null;
   revalidatePublicArtworkSurfaces([oldArtistName]);
 
@@ -431,7 +431,6 @@ export async function deleteExhibitorArtwork(id: string) {
   const { error } = await supabase.from('artworks').delete().eq('id', id);
   if (error) throw error;
 
-  type ArtistJoin = { name_ko: string | null; owner_id: string | null };
   const artworkArtist = artwork.artists as ArtistJoin | null;
 
   await logExhibitorAction(

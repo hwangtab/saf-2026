@@ -1,8 +1,9 @@
 'use server';
 
-import { revalidatePath, revalidateTag } from 'next/cache';
+import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
+import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import {
   hasComposedTrailingConsonantQuery,
   hasHangulJamo,
@@ -195,14 +196,9 @@ export async function updateArtist(id: string, formData: FormData) {
     .eq('id', id)
     .single();
 
-  revalidatePath('/artworks');
-  revalidatePath('/api/artworks');
-  revalidateTag('artworks', 'max');
+  revalidatePublicArtworkSurfaces([name_ko]);
   revalidatePath('/admin/artists');
   revalidatePath(`/admin/artists/${id}`);
-  if (name_ko) {
-    revalidatePath(`/artworks/artist/${encodeURIComponent(name_ko)}`);
-  }
 
   await logAdminAction('artist_updated', 'artist', id, { name: name_ko }, admin.id, {
     summary: `작가 수정: ${name_ko || id}`,
@@ -286,13 +282,8 @@ export async function deleteArtist(id: string) {
   const { error } = await supabase.from('artists').delete().eq('id', id);
   if (error) throw error;
 
-  revalidatePath('/artworks');
-  revalidatePath('/api/artworks');
-  revalidateTag('artworks', 'max');
+  revalidatePublicArtworkSurfaces([artist?.name_ko]);
   revalidatePath('/admin/artists');
-  if (artist?.name_ko) {
-    revalidatePath(`/artworks/artist/${encodeURIComponent(artist.name_ko)}`);
-  }
 
   await logAdminAction(
     'artist_deleted',

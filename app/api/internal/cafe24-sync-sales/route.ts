@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { revalidatePath, revalidateTag } from 'next/cache';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
+import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import {
   syncCafe24SalesFromOrders,
   type Cafe24SalesSyncResult,
@@ -234,12 +234,7 @@ export async function GET(request: NextRequest) {
     });
 
     if (hasArtworkMutation(result)) {
-      revalidatePath('/');
-      revalidatePath('/artworks');
-      revalidatePath('/artworks/[id]', 'page');
-      revalidatePath('/artworks/artist/[artist]', 'page');
-      revalidatePath('/api/artworks');
-      revalidateTag('artworks', 'max');
+      revalidatePublicArtworkSurfaces();
     }
 
     if (!result.ok) {

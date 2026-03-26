@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidatePath, revalidateTag } from 'next/cache';
+import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { syncArtworkToCafe24 } from '@/lib/integrations/cafe24/sync-artwork';
@@ -8,6 +8,7 @@ import { purgeCafe24ProductsFromTrashEntry } from '@/lib/integrations/cafe24/tra
 import { logAdminAction } from './admin-logs';
 import { getString, getStoragePathsForRemoval, validateBatchSize } from '@/lib/utils/form-helpers';
 import { validateArtworkData, validateSaleInput } from '@/lib/actions/artwork-validation';
+import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 
 type Cafe24SyncFeedback = {
   status: 'synced' | 'warning' | 'failed' | 'pending_auth';
@@ -217,20 +218,16 @@ export async function deleteAdminArtwork(id: string) {
   const { error } = await supabase.from('artworks').delete().eq('id', id);
   if (error) throw error;
 
-  revalidatePath('/artworks');
-  revalidatePath('/api/artworks');
-  revalidateTag('artworks', 'max');
-  revalidatePath('/');
+  let artistName: string | null = null;
   if (artwork?.artist_id) {
     const { data: artist } = await supabase
       .from('artists')
       .select('name_ko')
       .eq('id', artwork.artist_id)
       .single();
-    if (artist?.name_ko) {
-      revalidatePath(`/artworks/artist/${encodeURIComponent(artist.name_ko)}`);
-    }
+    artistName = artist?.name_ko ?? null;
   }
+  revalidatePublicArtworkSurfaces([artistName]);
 
   await logAdminAction(
     'artwork_deleted',
@@ -335,24 +332,14 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
     .eq('id', id)
     .single();
 
-  revalidatePath('/artworks');
-  revalidatePath('/api/artworks');
-  revalidateTag('artworks', 'max');
-  revalidatePath('/');
-  revalidatePath(`/artworks/${id}`);
-  revalidatePath('/admin/artworks');
-  revalidatePath(`/admin/artworks/${id}`);
-
-  // Revalidate both old and new artist pages
+  const artistNames: Array<string | null> = [];
   if (oldArtwork?.artist_id) {
     const { data: artist } = await supabase
       .from('artists')
       .select('name_ko')
       .eq('id', oldArtwork.artist_id)
       .single();
-    if (artist?.name_ko) {
-      revalidatePath(`/artworks/artist/${encodeURIComponent(artist.name_ko)}`);
-    }
+    artistNames.push(artist?.name_ko ?? null);
   }
   if (artist_id && artist_id !== oldArtwork?.artist_id) {
     const { data: artist } = await supabase
@@ -360,10 +347,12 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
       .select('name_ko')
       .eq('id', artist_id)
       .single();
-    if (artist?.name_ko) {
-      revalidatePath(`/artworks/artist/${encodeURIComponent(artist.name_ko)}`);
-    }
+    artistNames.push(artist?.name_ko ?? null);
   }
+  revalidatePublicArtworkSurfaces(artistNames);
+  revalidatePath(`/artworks/${id}`);
+  revalidatePath('/admin/artworks');
+  revalidatePath(`/admin/artworks/${id}`);
 
   await logAdminAction('artwork_updated', 'artwork', id, { title }, admin.id, {
     summary: `작품 수정: ${title}`,
@@ -427,21 +416,13 @@ export async function createAdminArtwork(formData: FormData) {
 
   if (error) throw error;
 
-  revalidatePath('/artworks');
-  revalidatePath('/api/artworks');
-  revalidateTag('artworks', 'max');
-  revalidatePath('/');
-  revalidatePath('/admin/artworks');
-
   const { data: artist } = await supabase
     .from('artists')
     .select('name_ko')
     .eq('id', artist_id)
     .single();
-
-  if (artist?.name_ko) {
-    revalidatePath(`/artworks/artist/${encodeURIComponent(artist.name_ko)}`);
-  }
+  revalidatePublicArtworkSurfaces([artist?.name_ko]);
+  revalidatePath('/admin/artworks');
 
   await logAdminAction('artwork_created', 'artwork', artwork.id, { title }, admin.id, {
     afterSnapshot: artwork,
@@ -493,10 +474,7 @@ export async function updateArtworkImages(id: string, images: string[]) {
     .eq('id', id)
     .single();
 
-  revalidatePath('/artworks');
-  revalidatePath('/api/artworks');
-  revalidateTag('artworks', 'max');
-  revalidatePath('/');
+  revalidatePublicArtworkSurfaces();
   revalidatePath(`/artworks/${id}`);
   revalidatePath('/admin/artworks');
   revalidatePath(`/admin/artworks/${id}`);
@@ -600,11 +578,8 @@ export async function syncMissingArtworkPurchaseLinks(): Promise<MissingPurchase
 
   const failed = errors.length;
 
+  revalidatePublicArtworkSurfaces();
   revalidatePath('/admin/artworks');
-  revalidatePath('/artworks');
-  revalidatePath('/api/artworks');
-  revalidateTag('artworks', 'max');
-  revalidatePath('/');
 
   await logAdminAction(
     'batch_cafe24_missing_shop_url_sync',
@@ -726,10 +701,7 @@ export async function batchUpdateArtworkStatus(ids: string[], status: string) {
       }
     }
 
-    revalidatePath('/artworks');
-    revalidatePath('/api/artworks');
-    revalidateTag('artworks', 'max');
-    revalidatePath('/');
+    revalidatePublicArtworkSurfaces();
     revalidatePath('/admin/artworks');
 
     if (rollbackErrors.length > 0) {
@@ -750,10 +722,7 @@ export async function batchUpdateArtworkStatus(ids: string[], status: string) {
     } satisfies BatchArtworkMutationResult;
   }
 
-  revalidatePath('/artworks');
-  revalidatePath('/api/artworks');
-  revalidateTag('artworks', 'max');
-  revalidatePath('/');
+  revalidatePublicArtworkSurfaces();
   revalidatePath('/admin/artworks');
 
   await logAdminAction(
@@ -803,10 +772,8 @@ export async function updateArtworkCategory(id: string, category: string | null)
 
   if (error) throw error;
 
-  revalidatePath('/artworks');
+  revalidatePublicArtworkSurfaces();
   revalidatePath(`/artworks/${id}`);
-  revalidatePath('/api/artworks');
-  revalidatePath('/');
   revalidatePath('/admin/artworks');
   revalidatePath(`/admin/artworks/${id}`);
 
@@ -916,10 +883,7 @@ export async function recordArtworkSale(formData: FormData) {
 
   if (error) throw error;
 
-  revalidatePath('/artworks');
-  revalidatePath('/api/artworks');
-  revalidateTag('artworks', 'max');
-  revalidatePath('/');
+  revalidatePublicArtworkSurfaces();
   revalidatePath('/admin/artworks');
   revalidatePath(`/admin/artworks/${artworkId}`);
 
@@ -1036,10 +1000,7 @@ export async function updateArtworkSale(formData: FormData) {
 
   if (error) throw error;
 
-  revalidatePath('/artworks');
-  revalidatePath('/api/artworks');
-  revalidateTag('artworks', 'max');
-  revalidatePath('/');
+  revalidatePublicArtworkSurfaces();
   revalidatePath('/admin/artworks');
   revalidatePath(`/admin/artworks/${artworkId}`);
   revalidatePath('/admin/buyers');
@@ -1097,10 +1058,7 @@ export async function voidArtworkSale(saleId: string, reason: string) {
 
   const artworkId = existing.artwork_id;
 
-  revalidatePath('/artworks');
-  revalidatePath('/api/artworks');
-  revalidateTag('artworks', 'max');
-  revalidatePath('/');
+  revalidatePublicArtworkSurfaces();
   revalidatePath('/admin/artworks');
   revalidatePath(`/admin/artworks/${artworkId}`);
   revalidatePath('/admin/buyers');
@@ -1192,10 +1150,7 @@ export async function batchToggleHidden(ids: string[], isHidden: boolean) {
       }
     }
 
-    revalidatePath('/artworks');
-    revalidatePath('/api/artworks');
-    revalidateTag('artworks', 'max');
-    revalidatePath('/');
+    revalidatePublicArtworkSurfaces();
     revalidatePath('/admin/artworks');
 
     if (rollbackErrors.length > 0) {
@@ -1216,10 +1171,7 @@ export async function batchToggleHidden(ids: string[], isHidden: boolean) {
     } satisfies BatchArtworkMutationResult;
   }
 
-  revalidatePath('/artworks');
-  revalidatePath('/api/artworks');
-  revalidateTag('artworks', 'max');
-  revalidatePath('/');
+  revalidatePublicArtworkSurfaces();
   revalidatePath('/admin/artworks');
 
   await logAdminAction(
@@ -1293,10 +1245,7 @@ export async function batchDeleteArtworks(ids: string[]) {
   const { error } = await supabase.from('artworks').delete().in('id', ids);
   if (error) throw error;
 
-  revalidatePath('/artworks');
-  revalidatePath('/api/artworks');
-  revalidateTag('artworks', 'max');
-  revalidatePath('/');
+  revalidatePublicArtworkSurfaces();
   revalidatePath('/admin/artworks');
 
   await logAdminAction(

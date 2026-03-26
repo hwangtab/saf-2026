@@ -3,6 +3,7 @@
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/auth/server';
+import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { purgeCafe24ProductsFromTrashEntry } from '@/lib/integrations/cafe24/trash-purge';
 import { syncArtworkToCafe24 } from '@/lib/integrations/cafe24/sync-artwork';
 import { getStoragePathFromPublicUrl, getStoragePathsForRemoval } from '@/lib/utils/form-helpers';
@@ -1311,16 +1312,11 @@ export async function purgeActivityTrashLog(logId: string, reason: string) {
   });
 
   if (log.target_type === 'artwork') {
-    revalidatePath('/artworks');
-    revalidatePath('/api/artworks');
-    revalidateTag('artworks', 'max');
-    revalidatePath('/');
+    revalidatePublicArtworkSurfaces();
     revalidatePath('/admin/artworks');
   }
   if (log.target_type === 'artist') {
-    revalidatePath('/artworks');
-    revalidatePath('/api/artworks');
-    revalidateTag('artworks', 'max');
+    revalidatePublicArtworkSurfaces();
     revalidatePath('/admin/artists');
   }
   revalidatePath('/admin/trash');
@@ -2016,10 +2012,7 @@ export async function revertActivityLog(
     }
 
     if (log.target_type === 'artwork') {
-      revalidatePath('/artworks');
-      revalidatePath('/api/artworks');
-      revalidateTag('artworks', 'max');
-      revalidatePath('/');
+      revalidatePublicArtworkSurfaces();
       revalidatePath('/admin/artworks');
       if (!log.target_id.includes(',')) {
         revalidatePath(`/artworks/${log.target_id}`);
@@ -2028,9 +2021,7 @@ export async function revertActivityLog(
     }
 
     if (log.target_type === 'artist') {
-      revalidatePath('/artworks');
-      revalidatePath('/api/artworks');
-      revalidateTag('artworks', 'max');
+      revalidatePublicArtworkSurfaces();
       revalidatePath('/admin/artists');
       if (!log.target_id.includes(',')) {
         revalidatePath(`/admin/artists/${log.target_id}`);
