@@ -96,7 +96,9 @@ export default async function TermsConsentPage({
   const needsExhibitorConsent = showExhibitor
     ? needsExhibitorTermsConsent(exhibitorApplication)
     : false;
-  const needsPrivacy = needsPrivacyConsent(exhibitorApplication);
+  const needsArtistPrivacy = showArtist ? artistReconsent.needsPrivacyConsent : false;
+  const needsExhibitorPrivacy = showExhibitor ? needsPrivacyConsent(exhibitorApplication) : false;
+  const needsPrivacy = needsArtistPrivacy || needsExhibitorPrivacy;
   const needsTos =
     (showArtist ? artistReconsent.needsTosConsent : false) ||
     (showExhibitor ? needsTosConsent(exhibitorApplication) : false);

@@ -109,10 +109,13 @@ export default async function DashboardPage() {
     if (profile.status === 'active') {
       redirect(
         hasApplication
-          ? artistReconsent.needsArtistConsent || artistReconsent.needsTosConsent
+          ? artistReconsent.needsArtistConsent ||
+            artistReconsent.needsPrivacyConsent ||
+            artistReconsent.needsTosConsent
             ? buildTermsConsentPath({
                 nextPath: '/dashboard/artworks',
                 needsArtistConsent: artistReconsent.needsArtistConsent,
+                needsPrivacyConsent: artistReconsent.needsPrivacyConsent,
                 needsTosConsent: artistReconsent.needsTosConsent,
               })
             : '/dashboard/artworks'
@@ -123,10 +126,13 @@ export default async function DashboardPage() {
     if (profile.status === 'pending') {
       redirect(
         hasApplication
-          ? artistReconsent.needsArtistConsent || artistReconsent.needsTosConsent
+          ? artistReconsent.needsArtistConsent ||
+            artistReconsent.needsPrivacyConsent ||
+            artistReconsent.needsTosConsent
             ? buildTermsConsentPath({
                 nextPath: '/dashboard/pending',
                 needsArtistConsent: artistReconsent.needsArtistConsent,
+                needsPrivacyConsent: artistReconsent.needsPrivacyConsent,
                 needsTosConsent: artistReconsent.needsTosConsent,
               })
             : '/dashboard/pending'
@@ -174,10 +180,13 @@ export default async function DashboardPage() {
     if (hasArtistApplicationData) {
       const artistReconsent = resolveArtistReconsentRequirements(artistApplication);
       redirect(
-        artistReconsent.needsArtistConsent || artistReconsent.needsTosConsent
+        artistReconsent.needsArtistConsent ||
+          artistReconsent.needsPrivacyConsent ||
+          artistReconsent.needsTosConsent
           ? buildTermsConsentPath({
               nextPath: '/dashboard/pending',
               needsArtistConsent: artistReconsent.needsArtistConsent,
+              needsPrivacyConsent: artistReconsent.needsPrivacyConsent,
               needsTosConsent: artistReconsent.needsTosConsent,
             })
           : '/dashboard/pending'

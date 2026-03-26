@@ -43,11 +43,16 @@ export default async function PendingPage() {
   const hasApplication = hasArtistApplication(application);
   const artistReconsent = resolveArtistReconsentRequirements(application);
 
-  if (artistReconsent.needsArtistConsent || artistReconsent.needsTosConsent) {
+  if (
+    artistReconsent.needsArtistConsent ||
+    artistReconsent.needsPrivacyConsent ||
+    artistReconsent.needsTosConsent
+  ) {
     redirect(
       buildTermsConsentPath({
         nextPath: '/dashboard/pending',
         needsArtistConsent: artistReconsent.needsArtistConsent,
+        needsPrivacyConsent: artistReconsent.needsPrivacyConsent,
         needsTosConsent: artistReconsent.needsTosConsent,
       })
     );

@@ -104,10 +104,13 @@ export async function GET(request: NextRequest) {
             return NextResponse.redirect(
               hasApplication
                 ? `${origin}${
-                    artistReconsent.needsArtistConsent || artistReconsent.needsTosConsent
+                    artistReconsent.needsArtistConsent ||
+                    artistReconsent.needsPrivacyConsent ||
+                    artistReconsent.needsTosConsent
                       ? buildTermsConsentPath({
                           nextPath: '/dashboard/artworks',
                           needsArtistConsent: artistReconsent.needsArtistConsent,
+                          needsPrivacyConsent: artistReconsent.needsPrivacyConsent,
                           needsTosConsent: artistReconsent.needsTosConsent,
                         })
                       : '/dashboard/artworks'
@@ -120,10 +123,13 @@ export async function GET(request: NextRequest) {
             return NextResponse.redirect(
               hasApplication
                 ? `${origin}${
-                    artistReconsent.needsArtistConsent || artistReconsent.needsTosConsent
+                    artistReconsent.needsArtistConsent ||
+                    artistReconsent.needsPrivacyConsent ||
+                    artistReconsent.needsTosConsent
                       ? buildTermsConsentPath({
                           nextPath: '/dashboard/pending',
                           needsArtistConsent: artistReconsent.needsArtistConsent,
+                          needsPrivacyConsent: artistReconsent.needsPrivacyConsent,
                           needsTosConsent: artistReconsent.needsTosConsent,
                         })
                       : '/dashboard/pending'
@@ -175,10 +181,13 @@ export async function GET(request: NextRequest) {
             const artistReconsent = resolveArtistReconsentRequirements(artistApplication);
             return NextResponse.redirect(
               `${origin}${
-                artistReconsent.needsArtistConsent || artistReconsent.needsTosConsent
+                artistReconsent.needsArtistConsent ||
+                artistReconsent.needsPrivacyConsent ||
+                artistReconsent.needsTosConsent
                   ? buildTermsConsentPath({
                       nextPath: '/dashboard/pending',
                       needsArtistConsent: artistReconsent.needsArtistConsent,
+                      needsPrivacyConsent: artistReconsent.needsPrivacyConsent,
                       needsTosConsent: artistReconsent.needsTosConsent,
                     })
                   : '/dashboard/pending'

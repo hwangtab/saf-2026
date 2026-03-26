@@ -57,6 +57,10 @@ async function loadConsentStatus(userId: string): Promise<ConsentStatus> {
     throw new Error('계정 정보를 확인하는 중 오류가 발생했습니다.');
   }
 
+  if (artistResult.error || exhibitorResult.error) {
+    throw new Error('신청 정보를 확인하는 중 오류가 발생했습니다.');
+  }
+
   const profile = profileResult.data;
   return {
     profileRole: (profile?.role as ConsentStatus['profileRole']) || null,
@@ -94,12 +98,13 @@ export async function submitTermsConsent(
   const needsExhibitorConsent = showExhibitor
     ? needsExhibitorTermsConsent(status.exhibitorApplication)
     : false;
+  const needsArtistPrivacy = showArtist ? artistReconsent.needsPrivacyConsent : false;
   const needsArtistTos = showArtist ? artistReconsent.needsTosConsent : false;
   const needsExhibitorPrivacy = showExhibitor
     ? needsPrivacyConsent(status.exhibitorApplication)
     : false;
   const needsExhibitorTos = showExhibitor ? needsTosConsent(status.exhibitorApplication) : false;
-  const needsPrivacy = needsExhibitorPrivacy;
+  const needsPrivacy = needsArtistPrivacy || needsExhibitorPrivacy;
   const needsTos = needsArtistTos || needsExhibitorTos;
 
   if (!needsArtistConsent && !needsExhibitorConsent && !needsPrivacy && !needsTos) {
@@ -183,7 +188,10 @@ export async function submitTermsConsent(
 
   const updates: Promise<{ target: string; error: unknown }>[] = [];
 
-  if (hasArtistApplication(status.artistApplication) && (needsArtistConsent || needsArtistTos)) {
+  if (
+    hasArtistApplication(status.artistApplication) &&
+    (needsArtistConsent || needsArtistPrivacy || needsArtistTos)
+  ) {
     updates.push(
       (async () => {
         const updateData: Record<string, string | null> = { updated_at: acceptedAt };
@@ -192,6 +200,10 @@ export async function submitTermsConsent(
           updateData.terms_accepted_at = acceptedAt;
           updateData.terms_accepted_ip = requestMetadata.ip;
           updateData.terms_accepted_user_agent = requestMetadata.userAgent;
+        }
+        if (needsArtistPrivacy) {
+          updateData.privacy_version = PRIVACY_POLICY_VERSION;
+          updateData.privacy_accepted_at = acceptedAt;
         }
         if (needsArtistTos) {
           updateData.tos_version = TERMS_OF_SERVICE_VERSION;
