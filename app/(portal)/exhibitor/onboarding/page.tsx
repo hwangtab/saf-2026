@@ -17,7 +17,7 @@ export default async function ExhibitorOnboardingPage({
   const supabase = await createSupabaseServerClient();
 
   // Fetch profile and existing application in parallel (both need only user.id).
-  const [{ data: profile }, { data: application }] = await Promise.all([
+  const [profileResult, applicationResult] = await Promise.all([
     supabase.from('profiles').select('role, status').eq('id', user.id).single(),
     supabase
       .from('exhibitor_applications')
@@ -25,6 +25,17 @@ export default async function ExhibitorOnboardingPage({
       .eq('user_id', user.id)
       .maybeSingle(),
   ]);
+
+  if (profileResult.error) {
+    throw new Error('계정 정보를 확인하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+  }
+
+  if (applicationResult.error) {
+    throw new Error('신청 정보를 확인하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+  }
+
+  const profile = profileResult.data;
+  const application = applicationResult.data;
 
   if (profile?.role === 'admin') {
     redirect('/admin/dashboard');

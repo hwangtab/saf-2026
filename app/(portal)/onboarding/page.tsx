@@ -19,11 +19,15 @@ export default async function OnboardingPage({
   const role = params.role;
   const supabase = await createSupabaseServerClient();
 
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('role, status')
     .eq('id', user.id)
     .single();
+
+  if (profileError) {
+    throw new Error('계정 정보를 확인하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+  }
 
   if (profile?.role === 'admin') {
     redirect('/admin/dashboard');
@@ -52,7 +56,7 @@ export default async function OnboardingPage({
     redirect('/dashboard/suspended');
   }
 
-  const [{ data: application }, { data: exhibitorApplication }] = await Promise.all([
+  const [artistApplicationResult, exhibitorApplicationResult] = await Promise.all([
     supabase
       .from('artist_applications')
       .select('artist_name, contact, bio, referrer')
@@ -64,6 +68,13 @@ export default async function OnboardingPage({
       .eq('user_id', user.id)
       .maybeSingle(),
   ]);
+
+  if (artistApplicationResult.error || exhibitorApplicationResult.error) {
+    throw new Error('신청 정보를 확인하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+  }
+
+  const application = artistApplicationResult.data;
+  const exhibitorApplication = exhibitorApplicationResult.data;
 
   const hasExhibitorApplication =
     !!exhibitorApplication?.representative_name?.trim() &&

@@ -16,11 +16,15 @@ export default async function PendingPage() {
   const user = await requireAuth();
   const supabase = await createSupabaseServerClient();
 
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('role, status')
     .eq('id', user.id)
     .single();
+
+  if (profileError) {
+    throw new Error('계정 정보를 확인하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+  }
 
   if (profile?.role === 'admin') {
     redirect('/admin/dashboard');
@@ -34,11 +38,15 @@ export default async function PendingPage() {
     redirect('/dashboard/suspended');
   }
 
-  const { data: application } = await supabase
+  const { data: application, error: applicationError } = await supabase
     .from('artist_applications')
     .select(ARTIST_APPLICATION_CONSENT_SELECT)
     .eq('user_id', user.id)
     .maybeSingle();
+
+  if (applicationError) {
+    throw new Error('신청 정보를 확인하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+  }
 
   const hasApplication = hasArtistApplication(application);
   const artistReconsent = resolveArtistReconsentRequirements(application);

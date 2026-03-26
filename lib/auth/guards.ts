@@ -61,11 +61,15 @@ export const requireArtistActive = cache(async function requireArtistActive() {
   }
 
   // Fetch application once and reuse below
-  const { data: application } = await supabase
+  const { data: application, error: applicationError } = await supabase
     .from('artist_applications')
     .select(ARTIST_APPLICATION_CONSENT_SELECT)
     .eq('user_id', user.id)
     .maybeSingle();
+
+  if (applicationError) {
+    throw new Error('신청 정보를 확인하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+  }
 
   if (profile?.role === 'artist') {
     if (profile.status === 'suspended') redirect('/dashboard/suspended');
@@ -155,11 +159,15 @@ export const requireExhibitor = cache(async function requireExhibitor() {
     redirect('/');
   }
 
-  const { data: application } = await supabase
+  const { data: application, error: applicationError } = await supabase
     .from('exhibitor_applications')
     .select(EXHIBITOR_APPLICATION_CONSENT_SELECT)
     .eq('user_id', user.id)
     .maybeSingle();
+
+  if (applicationError) {
+    throw new Error('신청 정보를 확인하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+  }
 
   const hasApplication = hasExhibitorApplication(application);
 

@@ -9,11 +9,15 @@ export default async function ExhibitorSuspendedPage() {
   const user = await requireAuth();
   const supabase = await createSupabaseServerClient();
 
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('role, status')
     .eq('id', user.id)
     .single();
+
+  if (profileError) {
+    throw new Error('계정 정보를 확인하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+  }
 
   if (profile?.role === 'admin') {
     redirect('/admin/dashboard');
