@@ -35,6 +35,7 @@ type VercelDrainEvent = {
 };
 
 const BATCH_SIZE = 500;
+const ACCEPTED_ANALYTICS_SCHEMAS = new Set(['vercel.analytics.v1', 'vercel.analytics.v2']);
 
 /**
  * Vercel Log Drain 등록 시 엔드포인트 검증용 GET 핸들러.
@@ -98,7 +99,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Vercel Analytics 이벤트만 필터
-  const analyticsEvents = events.filter((e) => e.schema === 'vercel.analytics.v1');
+  const analyticsEvents = events.filter((e) => ACCEPTED_ANALYTICS_SCHEMAS.has(e.schema));
 
   if (analyticsEvents.length === 0) {
     return NextResponse.json({ inserted: 0, filtered: events.length });
