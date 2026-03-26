@@ -1,5 +1,105 @@
 [
   {
+    "hash": "bf4290f9",
+    "type": "refactor",
+    "scope": "revalidation",
+    "subject": "미사용 revalidateArtworkPaths() 함수 제거",
+    "summary": "모든 호출이 revalidatePublicArtworkSurfaces()로 전환되어 사용처가 없어진 함수 삭제",
+    "body": null,
+    "date": "2026-03-26",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "39603e8e",
+    "type": "refactor",
+    "scope": "revalidation",
+    "subject": "admin 액션·API의 잔여 raw revalidate를 공통 유틸로 통합",
+    "summary": "admin-artworks·admin-artists·admin-logs·cafe24-sync-sales의 중복 revalidate 호출을 일괄 전환",
+    "body": "- admin-artworks.ts: 14곳의 raw revalidatePath/revalidateTag → revalidatePublicArtworkSurfaces() 통합\n- admin-artists.ts: 2곳 마이그레이션\n- admin-logs.ts: purge/revert 4곳 마이그레이션\n- cafe24-sync-sales/route.ts: 6줄 → 1줄 호출로 교체\n- exhibitor-artworks.ts: ArtistJoin 타입 3곳 중복 → 파일 레벨 1곳으로 추출",
+    "date": "2026-03-26",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "844310b2",
+    "type": "refactor",
+    "scope": "revalidation",
+    "subject": "작품 캐시 무효화를 공통 유틸로 통합 및 성능 개선",
+    "summary": "중복 revalidate 호출을 revalidatePublicArtworkSurfaces()로 통합하고 FooterSlider 캐시 전략 개선",
+    "body": "- artwork/exhibitor-artworks/profile 액션의 중복 revalidatePath/revalidateTag 호출을 공통 유틸로 통합\n- FooterSlider: 세션 캐시 TTL 15초→60초, cache: 'no-store' 제거\n- Vercel drain webhook: event 타입에 eventName 필수 검증 추가 + 테스트 추가\n- jest.setup.js: matchMedia mock에 window 존재 확인 guard 추가",
+    "date": "2026-03-26",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "21dc8331",
+    "type": "perf",
+    "scope": "i18n",
+    "subject": "공개 레이아웃에서 portal namespace를 제외",
+    "summary": "공개 레이아웃에서 portal namespace를 제외하여 i18n 번들 경량화",
+    "body": null,
+    "date": "2026-03-26",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "63a8672c",
+    "type": "fix",
+    "scope": "webhook",
+    "subject": "drain 이벤트 본문을 fail-closed로 엄격 검증",
+    "summary": "Vercel drain 이벤트 본문을 fail-closed로 엄격 검증",
+    "body": null,
+    "date": "2026-03-26",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "5f21d398",
+    "type": "fix",
+    "scope": "portal",
+    "subject": "조회 오류를 명시 실패로 처리해 오인 리다이렉트 방지",
+    "summary": "포털 조회 오류를 명시적 실패로 처리하여 잘못된 리다이렉트 방지",
+    "body": null,
+    "date": "2026-03-26",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "fe51cf7b",
+    "type": "perf",
+    "scope": "hero",
+    "subject": "첫 페인트부터 히어로 배경 이미지를 렌더링",
+    "summary": "첫 페인트부터 히어로 배경 이미지가 즉시 렌더링되도록 최적화",
+    "body": null,
+    "date": "2026-03-26",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "9552ddcb",
+    "type": "perf",
+    "scope": null,
+    "subject": "proxy 범위를 축소하고 공개 i18n payload를 경량화",
+    "summary": "proxy 범위를 축소하고 공개 페이지의 i18n payload를 경량화",
+    "body": null,
+    "date": "2026-03-26",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "800472ca",
+    "type": "fix",
+    "scope": "webhook",
+    "subject": "vercel analytics v2 스키마 이벤트를 수용",
+    "summary": "Vercel analytics v2 스키마 이벤트를 수용하도록 webhook 핸들러 수정",
+    "body": null,
+    "date": "2026-03-26",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "05aa42ed",
+    "type": "fix",
+    "scope": "auth",
+    "subject": "이중 신청 재동의 경로와 조회 오류 처리를 정합화",
+    "summary": "이중 신청 시 재동의 경로와 조회 오류 처리 로직을 정합화",
+    "body": null,
+    "date": "2026-03-26",
+    "author": "hwangtab"
+  },
+  {
     "hash": "061f644b",
     "type": "fix",
     "scope": "archive",

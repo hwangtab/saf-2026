@@ -4,7 +4,9 @@ export function revalidatePublicArtworkSurfaces(
   artistNames: Array<string | null | undefined> = []
 ): void {
   revalidatePath('/');
+  revalidatePath('/en');
   revalidatePath('/artworks');
+  revalidatePath('/en/artworks');
   revalidatePath('/api/artworks');
 
   const uniqueArtistNames = Array.from(
@@ -17,7 +19,9 @@ export function revalidatePublicArtworkSurfaces(
   );
 
   uniqueArtistNames.forEach((name) => {
-    revalidatePath(`/artworks/artist/${encodeURIComponent(name)}`);
+    const slug = encodeURIComponent(name);
+    revalidatePath(`/artworks/artist/${slug}`);
+    revalidatePath(`/en/artworks/artist/${slug}`);
   });
 
   revalidateTag('artworks', 'max');
