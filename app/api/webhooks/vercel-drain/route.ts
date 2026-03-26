@@ -70,6 +70,13 @@ function isValidVercelDrainEvent(value: unknown): value is VercelDrainEvent {
     return false;
   }
 
+  if (
+    value.eventType === 'event' &&
+    (typeof value.eventName !== 'string' || value.eventName.trim().length === 0)
+  ) {
+    return false;
+  }
+
   if (typeof value.path !== 'string' || value.path.length === 0) {
     return false;
   }

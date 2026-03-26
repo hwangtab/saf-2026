@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidatePath, revalidateTag } from 'next/cache';
+import { revalidatePath } from 'next/cache';
 import { requireExhibitor } from '@/lib/auth/guards';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { syncArtworkToCafe24 } from '@/lib/integrations/cafe24/sync-artwork';
@@ -12,6 +12,7 @@ import {
 } from '@/lib/utils/form-helpers';
 import { logExhibitorAction } from './admin-logs';
 import { validateArtworkData } from '@/lib/actions/artwork-validation';
+import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 
 type Cafe24SyncFeedback = {
   status: 'synced' | 'warning' | 'failed' | 'pending_auth';
@@ -197,9 +198,7 @@ export async function createExhibitorArtwork(formData: FormData) {
   );
 
   revalidatePath('/exhibitor/artworks');
-  if (artist.name_ko) {
-    revalidatePath(`/artworks/artist/${encodeURIComponent(artist.name_ko)}`);
-  }
+  revalidatePublicArtworkSurfaces([artist.name_ko]);
 
   const syncResult = await syncArtworkToCafe24(artwork.id);
 
@@ -237,7 +236,7 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
   // Fetch full existing artwork for snapshot
   const { data: oldArtwork, error: fetchError } = await supabase
     .from('artworks')
-    .select('*, artists!inner(owner_id)')
+    .select('*, artists!inner(owner_id, name_ko)')
     .eq('id', id)
     .eq('artists.owner_id', user.id)
     .single();
@@ -298,9 +297,21 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
 
   revalidatePath('/exhibitor/artworks');
   revalidatePath(`/exhibitor/artworks/${id}`);
-  revalidatePath('/artworks');
-  revalidatePath('/api/artworks');
-  revalidateTag('artworks', 'max');
+  type ArtistJoin = { owner_id: string | null; name_ko: string | null };
+  const oldArtistName = (oldArtwork.artists as ArtistJoin | null)?.name_ko ?? null;
+  const targetArtistId = artist_id || oldArtwork.artist_id;
+
+  let nextArtistName: string | null = null;
+  if (targetArtistId) {
+    const { data: targetArtist } = await supabase
+      .from('artists')
+      .select('name_ko')
+      .eq('id', targetArtistId)
+      .single();
+    nextArtistName = targetArtist?.name_ko ?? null;
+  }
+
+  revalidatePublicArtworkSurfaces([oldArtistName, nextArtistName]);
 
   const syncResult = await syncArtworkToCafe24(id);
 
@@ -317,7 +328,7 @@ export async function updateExhibitorArtworkImages(id: string, images: string[])
   // Fetch full existing artwork for snapshot
   const { data: oldArtwork, error: fetchError } = await supabase
     .from('artworks')
-    .select('*, artists!inner(owner_id)')
+    .select('*, artists!inner(owner_id, name_ko)')
     .eq('id', id)
     .eq('artists.owner_id', user.id)
     .single();
@@ -377,9 +388,9 @@ export async function updateExhibitorArtworkImages(id: string, images: string[])
 
   revalidatePath('/exhibitor/artworks');
   revalidatePath(`/exhibitor/artworks/${id}`);
-  revalidatePath('/artworks');
-  revalidatePath('/api/artworks');
-  revalidateTag('artworks', 'max');
+  type ArtistJoin = { owner_id: string | null; name_ko: string | null };
+  const oldArtistName = (oldArtwork.artists as ArtistJoin | null)?.name_ko ?? null;
+  revalidatePublicArtworkSurfaces([oldArtistName]);
 
   const syncResult = await syncArtworkToCafe24(id);
 
@@ -447,9 +458,7 @@ export async function deleteExhibitorArtwork(id: string) {
   }
 
   revalidatePath('/exhibitor/artworks');
-  if (artworkArtist?.name_ko) {
-    revalidatePath(`/artworks/artist/${encodeURIComponent(artworkArtist.name_ko)}`);
-  }
+  revalidatePublicArtworkSurfaces([artworkArtist?.name_ko]);
 
   return { success: true };
 }

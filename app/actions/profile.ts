@@ -2,10 +2,11 @@
 
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { requireArtistActive } from '@/lib/auth/guards';
-import { revalidatePath, revalidateTag } from 'next/cache';
+import { revalidatePath } from 'next/cache';
 import { logArtistAction } from './admin-logs';
 import { getActionErrorMessage } from '@/lib/utils/action-error';
 import { validateTextLength, validateUrl, validateEmail } from '@/lib/utils/input-validation';
+import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 
 export type ActionState = {
   message: string;
@@ -79,19 +80,9 @@ export async function updateArtistProfile(
     }
 
     revalidatePath('/dashboard/profile');
-    revalidatePath('/artworks');
-    revalidatePath('/api/artworks');
-    revalidateTag('artworks', 'max');
-    revalidatePath('/');
-
     const previousName = existingArtist?.name_ko;
     const nextName = name_ko;
-    if (previousName) {
-      revalidatePath(`/artworks/artist/${encodeURIComponent(previousName)}`);
-    }
-    if (nextName && nextName !== previousName) {
-      revalidatePath(`/artworks/artist/${encodeURIComponent(nextName)}`);
-    }
+    revalidatePublicArtworkSurfaces([previousName, nextName]);
 
     return { message: '프로필이 성공적으로 수정되었습니다.', error: false };
   } catch (error: unknown) {

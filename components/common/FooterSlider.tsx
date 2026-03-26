@@ -7,7 +7,7 @@ import { shouldShowFooterSlider } from '@/lib/path-rules';
 import type { ArtworkCardData } from '@/types';
 
 const FOOTER_SLIDER_SESSION_CACHE_KEY = 'footer-slider-artworks-cache-v1';
-const FOOTER_SLIDER_SESSION_CACHE_TTL_MS = 15 * 1000;
+const FOOTER_SLIDER_SESSION_CACHE_TTL_MS = 60 * 1000;
 
 type FooterSliderSessionCache = {
   cachedAt: number;
@@ -72,7 +72,7 @@ export default function FooterSlider() {
         setIsLoading(true);
       }
       try {
-        const response = await fetch('/api/artworks', { cache: 'no-store' });
+        const response = await fetch('/api/artworks');
         if (response.ok) {
           const data = await response.json();
           if (cancelled) return;
@@ -96,7 +96,7 @@ export default function FooterSlider() {
     return () => {
       cancelled = true;
     };
-  }, [showSlider, pathname]);
+  }, [showSlider]);
 
   if (!showSlider || artworks.length === 0) return null;
 

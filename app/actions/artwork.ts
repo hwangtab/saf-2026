@@ -4,7 +4,7 @@ import { createSupabaseServerClient } from '@/lib/auth/server';
 import { requireArtistActive } from '@/lib/auth/guards';
 import { syncArtworkToCafe24 } from '@/lib/integrations/cafe24/sync-artwork';
 import { purgeCafe24ProductsFromTrashEntry } from '@/lib/integrations/cafe24/trash-purge';
-import { revalidatePath, revalidateTag } from 'next/cache';
+import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { logArtistAction } from './admin-logs';
 import {
@@ -17,6 +17,7 @@ import {
 } from '@/lib/actions/artwork-validation';
 import { getString } from '@/lib/utils/form-helpers';
 import { getActionErrorMessage } from '@/lib/utils/action-error';
+import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 
 export type ActionState = {
   message: string;
@@ -193,15 +194,8 @@ export async function createArtwork(
       }
     );
 
-    const artistSlug = artist.name_ko ? encodeURIComponent(artist.name_ko) : null;
     revalidatePath('/dashboard/artworks');
-    revalidatePath('/artworks');
-    revalidatePath('/api/artworks');
-    revalidateTag('artworks', 'max');
-    revalidatePath('/');
-    if (artistSlug) {
-      revalidatePath(`/artworks/artist/${artistSlug}`);
-    }
+    revalidatePublicArtworkSurfaces([artist.name_ko]);
 
     const syncResult = await syncArtworkToCafe24(insertedArtwork.id);
     redirectPath = buildRedirectPath(
@@ -379,16 +373,9 @@ export async function updateArtwork(
       }
     );
 
-    const artistSlug = artist.name_ko ? encodeURIComponent(artist.name_ko) : null;
     revalidatePath('/dashboard/artworks');
-    revalidatePath('/artworks');
-    revalidatePath('/api/artworks');
-    revalidateTag('artworks', 'max');
-    revalidatePath('/');
     revalidatePath(`/artworks/${id}`);
-    if (artistSlug) {
-      revalidatePath(`/artworks/artist/${artistSlug}`);
-    }
+    revalidatePublicArtworkSurfaces([artist.name_ko]);
 
     const syncResult = await syncArtworkToCafe24(id);
     redirectPath = buildRedirectPath(
@@ -453,23 +440,18 @@ export async function deleteArtwork(id: string): Promise<ActionState> {
 
     if (error) throw error;
 
+    let artistName: string | null = null;
     if (artwork?.artist_id) {
       const { data: artist } = await supabase
         .from('artists')
         .select('name_ko')
         .eq('id', artwork.artist_id)
         .single();
-      if (artist?.name_ko) {
-        const artistSlug = encodeURIComponent(artist.name_ko);
-        revalidatePath(`/artworks/artist/${artistSlug}`);
-      }
+      artistName = artist?.name_ko ?? null;
     }
 
     revalidatePath('/dashboard/artworks');
-    revalidatePath('/artworks');
-    revalidatePath('/api/artworks');
-    revalidateTag('artworks', 'max');
-    revalidatePath('/');
+    revalidatePublicArtworkSurfaces([artistName]);
 
     if (artwork) {
       await logArtistAction(
