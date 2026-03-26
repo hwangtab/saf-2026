@@ -48,11 +48,15 @@ export default async function DashboardPage() {
   }
 
   if (profile?.role === 'exhibitor') {
-    const { data: exhibitorApplication } = await supabase
+    const { data: exhibitorApplication, error: applicationError } = await supabase
       .from('exhibitor_applications')
       .select(EXHIBITOR_APPLICATION_CONSENT_SELECT)
       .eq('user_id', user.id)
       .maybeSingle();
+
+    if (applicationError) {
+      throw new Error(applicationFetchErrorMessage);
+    }
 
     const hasExhibitorApplicationData = hasExhibitorApplication(exhibitorApplication);
     const needsExhibitorConsent = needsExhibitorTermsConsent(exhibitorApplication);
@@ -145,7 +149,7 @@ export default async function DashboardPage() {
   }
 
   if (profile?.role === 'user') {
-    const [{ data: exhibitorApplication }, { data: artistApplication }] = await Promise.all([
+    const [exhibitorResult, artistResult] = await Promise.all([
       supabase
         .from('exhibitor_applications')
         .select(EXHIBITOR_APPLICATION_CONSENT_SELECT)
@@ -158,38 +162,49 @@ export default async function DashboardPage() {
         .maybeSingle(),
     ]);
 
+    if (exhibitorResult.error || artistResult.error) {
+      throw new Error(applicationFetchErrorMessage);
+    }
+
+    const exhibitorApplication = exhibitorResult.data;
+    const artistApplication = artistResult.data;
+
     const hasExhibitorApplicationData = hasExhibitorApplication(exhibitorApplication);
     const hasArtistApplicationData = hasArtistApplication(artistApplication);
 
-    if (hasExhibitorApplicationData) {
-      const needsExhibitorConsent = needsExhibitorTermsConsent(exhibitorApplication);
-      const needsExhibitorPrivacy = needsPrivacyConsent(exhibitorApplication);
-      const needsExhibitorTos = needsTosConsent(exhibitorApplication);
-      redirect(
-        needsExhibitorConsent || needsExhibitorPrivacy || needsExhibitorTos
-          ? buildTermsConsentPath({
-              nextPath: '/exhibitor/pending',
-              needsExhibitorConsent: needsExhibitorConsent,
-              needsPrivacyConsent: needsExhibitorPrivacy,
-              needsTosConsent: needsExhibitorTos,
-            })
-          : '/exhibitor/pending'
-      );
-    }
+    if (hasExhibitorApplicationData || hasArtistApplicationData) {
+      const artistReconsent = hasArtistApplicationData
+        ? resolveArtistReconsentRequirements(artistApplication)
+        : null;
+      const needsArtistConsent = artistReconsent?.needsArtistConsent ?? false;
+      const needsArtistPrivacy = artistReconsent?.needsPrivacyConsent ?? false;
+      const needsArtistTos = artistReconsent?.needsTosConsent ?? false;
+      const needsExhibitorConsent = hasExhibitorApplicationData
+        ? needsExhibitorTermsConsent(exhibitorApplication)
+        : false;
+      const needsExhibitorPrivacy = hasExhibitorApplicationData
+        ? needsPrivacyConsent(exhibitorApplication)
+        : false;
+      const needsExhibitorTos = hasExhibitorApplicationData
+        ? needsTosConsent(exhibitorApplication)
+        : false;
+      const needsPrivacy = needsArtistPrivacy || needsExhibitorPrivacy;
+      const needsTos = needsArtistTos || needsExhibitorTos;
+      const defaultPath =
+        hasExhibitorApplicationData && !hasArtistApplicationData
+          ? '/exhibitor/pending'
+          : '/dashboard/pending';
 
-    if (hasArtistApplicationData) {
-      const artistReconsent = resolveArtistReconsentRequirements(artistApplication);
       redirect(
-        artistReconsent.needsArtistConsent ||
-          artistReconsent.needsPrivacyConsent ||
-          artistReconsent.needsTosConsent
+        needsArtistConsent || needsExhibitorConsent || needsPrivacy || needsTos
           ? buildTermsConsentPath({
-              nextPath: '/dashboard/pending',
-              needsArtistConsent: artistReconsent.needsArtistConsent,
-              needsPrivacyConsent: artistReconsent.needsPrivacyConsent,
-              needsTosConsent: artistReconsent.needsTosConsent,
+              nextPath: defaultPath,
+              needsArtistConsent,
+              needsExhibitorConsent,
+              needsPrivacyConsent: needsPrivacy,
+              needsTosConsent: needsTos,
             })
-          : '/dashboard/pending'
+          : defaultPath
       );
     }
   }

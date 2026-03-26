@@ -42,11 +42,15 @@ export async function GET(request: NextRequest) {
         }
 
         if (profile?.role === 'exhibitor') {
-          const { data: application } = await supabase
+          const { data: application, error: applicationError } = await supabase
             .from('exhibitor_applications')
             .select(EXHIBITOR_APPLICATION_CONSENT_SELECT)
             .eq('user_id', user.id)
             .maybeSingle();
+
+          if (applicationError) {
+            return NextResponse.redirect(`${origin}/login`);
+          }
 
           const hasApplication = hasExhibitorApplication(application);
           const needsTermsConsent = needsExhibitorTermsConsent(application);
@@ -91,11 +95,15 @@ export async function GET(request: NextRequest) {
         }
 
         if (profile?.role === 'artist') {
-          const { data: application } = await supabase
+          const { data: application, error: applicationError } = await supabase
             .from('artist_applications')
             .select(ARTIST_APPLICATION_CONSENT_SELECT)
             .eq('user_id', user.id)
             .maybeSingle();
+
+          if (applicationError) {
+            return NextResponse.redirect(`${origin}/login`);
+          }
 
           const hasApplication = hasArtistApplication(application);
           const artistReconsent = resolveArtistReconsentRequirements(application);
@@ -143,7 +151,7 @@ export async function GET(request: NextRequest) {
         }
 
         if (profile?.role === 'user') {
-          const [{ data: exhibitorApplication }, { data: artistApplication }] = await Promise.all([
+          const [exhibitorResult, artistResult] = await Promise.all([
             supabase
               .from('exhibitor_applications')
               .select(EXHIBITOR_APPLICATION_CONSENT_SELECT)
@@ -156,41 +164,50 @@ export async function GET(request: NextRequest) {
               .maybeSingle(),
           ]);
 
+          if (exhibitorResult.error || artistResult.error) {
+            return NextResponse.redirect(`${origin}/login`);
+          }
+
+          const exhibitorApplication = exhibitorResult.data;
+          const artistApplication = artistResult.data;
+
           const hasExhibitorApplicationData = hasExhibitorApplication(exhibitorApplication);
           const hasArtistApplicationData = hasArtistApplication(artistApplication);
 
-          if (hasExhibitorApplicationData) {
-            const needsExhibitorConsent = needsExhibitorTermsConsent(exhibitorApplication);
-            const needsExhibitorPrivacy = needsPrivacyConsent(exhibitorApplication);
-            const needsExhibitorTos = needsTosConsent(exhibitorApplication);
-            return NextResponse.redirect(
-              `${origin}${
-                needsExhibitorConsent || needsExhibitorPrivacy || needsExhibitorTos
-                  ? buildTermsConsentPath({
-                      nextPath: '/exhibitor/pending',
-                      needsExhibitorConsent,
-                      needsPrivacyConsent: needsExhibitorPrivacy,
-                      needsTosConsent: needsExhibitorTos,
-                    })
-                  : '/exhibitor/pending'
-              }`
-            );
-          }
+          if (hasExhibitorApplicationData || hasArtistApplicationData) {
+            const artistReconsent = hasArtistApplicationData
+              ? resolveArtistReconsentRequirements(artistApplication)
+              : null;
+            const needsArtistConsent = artistReconsent?.needsArtistConsent ?? false;
+            const needsArtistPrivacy = artistReconsent?.needsPrivacyConsent ?? false;
+            const needsArtistTos = artistReconsent?.needsTosConsent ?? false;
+            const needsExhibitorConsent = hasExhibitorApplicationData
+              ? needsExhibitorTermsConsent(exhibitorApplication)
+              : false;
+            const needsExhibitorPrivacy = hasExhibitorApplicationData
+              ? needsPrivacyConsent(exhibitorApplication)
+              : false;
+            const needsExhibitorTos = hasExhibitorApplicationData
+              ? needsTosConsent(exhibitorApplication)
+              : false;
+            const needsPrivacy = needsArtistPrivacy || needsExhibitorPrivacy;
+            const needsTos = needsArtistTos || needsExhibitorTos;
+            const defaultPath =
+              hasExhibitorApplicationData && !hasArtistApplicationData
+                ? '/exhibitor/pending'
+                : '/dashboard/pending';
 
-          if (hasArtistApplicationData) {
-            const artistReconsent = resolveArtistReconsentRequirements(artistApplication);
             return NextResponse.redirect(
               `${origin}${
-                artistReconsent.needsArtistConsent ||
-                artistReconsent.needsPrivacyConsent ||
-                artistReconsent.needsTosConsent
+                needsArtistConsent || needsExhibitorConsent || needsPrivacy || needsTos
                   ? buildTermsConsentPath({
-                      nextPath: '/dashboard/pending',
-                      needsArtistConsent: artistReconsent.needsArtistConsent,
-                      needsPrivacyConsent: artistReconsent.needsPrivacyConsent,
-                      needsTosConsent: artistReconsent.needsTosConsent,
+                      nextPath: defaultPath,
+                      needsArtistConsent,
+                      needsExhibitorConsent,
+                      needsPrivacyConsent: needsPrivacy,
+                      needsTosConsent: needsTos,
                     })
-                  : '/dashboard/pending'
+                  : defaultPath
               }`
             );
           }

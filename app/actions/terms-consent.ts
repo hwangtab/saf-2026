@@ -85,12 +85,11 @@ export async function submitTermsConsent(
     redirect('/admin/dashboard');
   }
 
-  // 페이지와 동일한 역할 기반 필터링 (유저 당 역할 1개만 부여)
   const hasArtist = hasArtistApplication(status.artistApplication);
   const hasExhibitor = hasExhibitorApplication(status.exhibitorApplication);
   const isArtistRole = status.profileRole === 'artist';
   const isExhibitorRole = status.profileRole === 'exhibitor';
-  const showArtist = isArtistRole || (!isExhibitorRole && !hasExhibitor && hasArtist);
+  const showArtist = isArtistRole || (!isExhibitorRole && hasArtist);
   const showExhibitor = isExhibitorRole || (!isArtistRole && hasExhibitor);
 
   const artistReconsent = resolveArtistReconsentRequirements(status.artistApplication);
