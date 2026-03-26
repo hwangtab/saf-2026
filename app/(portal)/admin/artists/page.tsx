@@ -1,6 +1,7 @@
 import { getArtistsWithArtworkCount } from '@/app/actions/admin-artists';
 import { ArtistList } from './artist-list';
 import LinkButton from '@/components/ui/LinkButton';
+import { buttonVariants } from '@/components/ui/button-base';
 import {
   AdminPageDescription,
   AdminPageHeader,
@@ -18,9 +19,13 @@ export default async function AdminArtistsPage() {
           <AdminPageDescription>등록된 작가 정보를 관리합니다.</AdminPageDescription>
         </AdminPageHeader>
         <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
-          <LinkButton href="/admin/artists/export" variant="white" className="w-full sm:w-auto">
+          <a
+            href="/admin/artists/export"
+            download
+            className={buttonVariants({ variant: 'white', size: 'md' }) + ' w-full sm:w-auto'}
+          >
             전체 연락처 다운받기
-          </LinkButton>
+          </a>
           <LinkButton href="/admin/artists/new" className="w-full sm:w-auto">
             작가 등록
           </LinkButton>
