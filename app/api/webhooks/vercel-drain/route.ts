@@ -37,6 +37,69 @@ type VercelDrainEvent = {
 const BATCH_SIZE = 500;
 const ACCEPTED_ANALYTICS_SCHEMAS = new Set(['vercel.analytics.v1', 'vercel.analytics.v2']);
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
+function isOptionalString(value: unknown): value is string | undefined {
+  return value === undefined || typeof value === 'string';
+}
+
+function isOptionalStringOrNumber(value: unknown): value is string | number | undefined {
+  return value === undefined || typeof value === 'string' || typeof value === 'number';
+}
+
+function isValidTimestamp(value: unknown): value is number {
+  if (typeof value !== 'number' || !Number.isFinite(value)) {
+    return false;
+  }
+
+  return !Number.isNaN(new Date(value).getTime());
+}
+
+function isValidVercelDrainEvent(value: unknown): value is VercelDrainEvent {
+  if (!isRecord(value)) {
+    return false;
+  }
+
+  if (!ACCEPTED_ANALYTICS_SCHEMAS.has(String(value.schema))) {
+    return false;
+  }
+
+  if (value.eventType !== 'pageview' && value.eventType !== 'event') {
+    return false;
+  }
+
+  if (typeof value.path !== 'string' || value.path.length === 0) {
+    return false;
+  }
+
+  if (!isValidTimestamp(value.timestamp)) {
+    return false;
+  }
+
+  return (
+    isOptionalString(value.eventName) &&
+    isOptionalString(value.referrer) &&
+    isOptionalString(value.country) &&
+    isOptionalString(value.region) &&
+    isOptionalString(value.city) &&
+    isOptionalString(value.osName) &&
+    isOptionalString(value.clientName) &&
+    isOptionalString(value.deviceType) &&
+    isOptionalStringOrNumber(value.sessionId) &&
+    isOptionalStringOrNumber(value.deviceId)
+  );
+}
+
+function hasAcceptedAnalyticsSchema(value: unknown): boolean {
+  return (
+    isRecord(value) &&
+    typeof value.schema === 'string' &&
+    ACCEPTED_ANALYTICS_SCHEMAS.has(value.schema)
+  );
+}
+
 /**
  * Vercel Log Drain 등록 시 엔드포인트 검증용 GET 핸들러.
  * Vercel이 `x-vercel-verify` 헤더를 포함한 GET 요청을 보내고,
@@ -79,7 +142,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
   }
 
-  let events: VercelDrainEvent[];
+  let events: unknown[];
   try {
     const contentType = request.headers.get('content-type') || '';
 
@@ -98,29 +161,34 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
   }
 
-  // Vercel Analytics 이벤트만 필터
-  const analyticsEvents = events.filter((e) => ACCEPTED_ANALYTICS_SCHEMAS.has(e.schema));
+  const invalidAnalyticsEvents = events.filter(
+    (event) => hasAcceptedAnalyticsSchema(event) && !isValidVercelDrainEvent(event)
+  );
+
+  if (invalidAnalyticsEvents.length > 0) {
+    return NextResponse.json({ error: 'Invalid analytics event payload' }, { status: 400 });
+  }
+
+  const analyticsEvents = events.filter(isValidVercelDrainEvent);
 
   if (analyticsEvents.length === 0) {
     return NextResponse.json({ inserted: 0, filtered: events.length });
   }
 
   const rows = analyticsEvents.map((e) => ({
-    event_type: e.eventType || 'pageview',
-    path: e.path || '/',
-    referrer: e.referrer || null,
-    country: e.country || null,
-    region: e.region || null,
-    city: e.city || null,
-    os_name: e.osName || null,
-    client_name: e.clientName || null,
-    device_type: e.deviceType || null,
+    event_type: e.eventType,
+    path: e.path,
+    referrer: e.referrer ?? null,
+    country: e.country ?? null,
+    region: e.region ?? null,
+    city: e.city ?? null,
+    os_name: e.osName ?? null,
+    client_name: e.clientName ?? null,
+    device_type: e.deviceType ?? null,
     session_id: e.sessionId != null ? String(e.sessionId) : null,
     device_id: e.deviceId != null ? String(e.deviceId) : null,
-    event_name: e.eventName || null,
-    event_timestamp: Number.isFinite(e.timestamp)
-      ? new Date(e.timestamp).toISOString()
-      : new Date().toISOString(),
+    event_name: e.eventName ?? null,
+    event_timestamp: new Date(e.timestamp).toISOString(),
   }));
 
   const supabase = createSupabaseAdminClient();
