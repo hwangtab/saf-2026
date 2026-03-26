@@ -41,7 +41,7 @@ export default function PageHero({
         className="absolute top-0 left-0 h-px w-px"
       />
       {/* Background Image */}
-      <PageHeroBackground customImage={customBackgroundImage} />
+      <PageHeroBackground customImage={customBackgroundImage} seed={id || title} />
       {/* Dark Overlay */}
       <div className="absolute inset-0 bg-black/60 z-10" />
 
