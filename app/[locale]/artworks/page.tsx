@@ -57,16 +57,10 @@ export default async function ArtworksPage() {
           />
         </PageHero>
 
-        {/* Status Bar */}
-        <div className="bg-primary-surface border-b border-primary/5">
-          <div className="container-max">
-            <GalleryStatusBar />
-          </div>
-        </div>
-
         {/* Gallery Section */}
         <Section variant="primary-surface" prevVariant="white" className="pb-24 md:pb-32">
           <div className="container-max">
+            <GalleryStatusBar className="mb-6" />
             <ArtworkGalleryWithSort artworks={listArtworks} />
           </div>
         </Section>
