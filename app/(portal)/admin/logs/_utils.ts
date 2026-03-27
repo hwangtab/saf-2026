@@ -55,6 +55,9 @@ export const ACTION_PREFIX_TRANSLATIONS: Array<[RegExp, string]> = [
   [/^Cafe24 판매 동기화 경고:/, 'Cafe24 sales sync warning:'],
   [/^Cafe24 판매 동기화 실패:/, 'Cafe24 sales sync failed:'],
   [/^판매 기록 등록:/, 'Sale recorded:'],
+  [/^판매 기록 수정$/, 'Sale updated'],
+  [/^판매 취소:/, 'Sale voided:'],
+  [/^카테고리 변경:/, 'Category changed:'],
   [/^출품자 승인:/, 'Exhibitor approved:'],
   [/^출품자 정지:/, 'Exhibitor suspended:'],
   [/^추천사 생성:/, 'Testimonial created:'],
@@ -291,6 +294,15 @@ export function formatActionDescription(log: ActivityLogEntry, locale: LocaleCod
       break;
     case 'artwork_sold':
       text = `판매 기록 등록: ${details?.quantity || 1}점`;
+      break;
+    case 'artwork_sale_updated':
+      text = '판매 기록 수정';
+      break;
+    case 'artwork_sale_voided':
+      text = `판매 취소: ${details?.quantity || ''}점`;
+      break;
+    case 'update_artwork_category':
+      text = `카테고리 변경: ${details?.category || '없음'}`;
       break;
     case 'approve_exhibitor':
       text = `출품자 승인: ${details?.user_name || log.target_id}`;

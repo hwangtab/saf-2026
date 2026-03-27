@@ -781,7 +781,7 @@ export async function updateArtworkCategory(id: string, category: string | null)
     'update_artwork_category',
     'artwork',
     id,
-    { category, previous_category: before?.category },
+    { title: before?.title, category, previous_category: before?.category },
     admin.id,
     {
       summary: `작품 카테고리 변경: ${before?.title || id} → ${category || '없음'}`,
@@ -892,6 +892,7 @@ export async function recordArtworkSale(formData: FormData) {
     'artwork',
     artworkId,
     {
+      title: artwork.title,
       sale_price: salePrice,
       quantity,
       buyer_name: buyerName,
@@ -1011,7 +1012,7 @@ export async function updateArtworkSale(formData: FormData) {
     'artwork_sale_updated',
     'artwork',
     artworkId,
-    { sale_id: saleId },
+    { title: artwork.title, sale_id: saleId },
     admin.id,
     {
       summary: `판매 기록 수정: ${artwork.title}`,
@@ -1075,7 +1076,7 @@ export async function voidArtworkSale(saleId: string, reason: string) {
     'artwork_sale_voided',
     'artwork',
     artworkId,
-    { sale_id: saleId, reason, source: existing.source },
+    { title: artwork?.title, sale_id: saleId, reason, source: existing.source },
     admin.id,
     {
       summary: `판매 취소: ${artwork?.title || artworkId} (${existing.quantity}점, ${existing.buyer_name || '구매자 미상'})`,
