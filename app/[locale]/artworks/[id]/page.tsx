@@ -328,7 +328,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                     <PurchaseGuide className="mb-4" />
 
                     {/* 신뢰배지 */}
-                    <TrustBadges />
+                    <TrustBadges className="mb-2" />
 
                     <TrackClick
                       event="purchase_click"

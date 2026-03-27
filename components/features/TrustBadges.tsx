@@ -15,17 +15,17 @@ export default function TrustBadges({ className }: TrustBadgesProps) {
   const badges = [t('authenticity'), t('safeDelivery'), t('curatorVerified')];
 
   return (
-    <div className={cn('flex flex-wrap gap-2', className)}>
-      <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-50 border border-green-100 rounded-full text-xs font-medium text-green-700">
-        <Clock className="w-3.5 h-3.5" />
+    <div className={cn('grid grid-cols-2 gap-2', className)}>
+      <span className="inline-flex items-center justify-center gap-1 px-3 py-1.5 bg-green-50 border border-green-100 rounded-full text-xs font-medium text-green-700">
+        <Clock className="w-3.5 h-3.5 shrink-0" />
         {t('alwaysOpen', { date: formattedDate })}
       </span>
       {badges.map((badge, index) => (
         <span
           key={index}
-          className="inline-flex items-center gap-1 px-3 py-1 bg-slate-50 border border-slate-100 rounded-full text-xs font-medium text-slate-600"
+          className="inline-flex items-center justify-center gap-1 px-3 py-1.5 bg-slate-50 border border-slate-100 rounded-full text-xs font-medium text-slate-600"
         >
-          <Check className="w-3.5 h-3.5 text-primary" />
+          <Check className="w-3.5 h-3.5 shrink-0 text-primary" />
           {badge}
         </span>
       ))}
