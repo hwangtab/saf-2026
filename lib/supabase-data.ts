@@ -297,7 +297,6 @@ const getRecentlySoldArtworksUncached = async (limit: number): Promise<Artwork[]
     `
     )
     .eq('is_hidden', false)
-    .in('status', ['sold', 'reserved'])
     .not('sold_at', 'is', null)
     .gte('sold_at', thirtyDaysAgo.toISOString())
     .order('sold_at', { ascending: false })
