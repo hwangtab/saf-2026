@@ -71,7 +71,11 @@ export default async function ArtworksPage() {
         </Section>
 
         {/* Campaign Banner */}
-        <Section variant="white" prevVariant="primary-surface" className="py-20 md:py-28">
+        <Section
+          variant="white"
+          prevVariant="primary-surface"
+          className="pt-10 pb-20 md:pt-14 md:pb-28"
+        >
           <GalleryCampaignBanner />
         </Section>
       </main>
