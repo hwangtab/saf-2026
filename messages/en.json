@@ -288,8 +288,10 @@
   },
   "support": {
     "title": "Art protects art",
-    "body": "Proceeds from this artwork become the Seed Fund, providing affordable loans to fellow artists shut out by traditional finance.",
-    "footer": "One artwork is where solidarity for a fellow artist's tomorrow begins."
+    "statValue": "8 out of 10",
+    "statLabel": "artists are shut out by banks",
+    "body": "Until the next exhibition, the next performance.\nFor artists, income gaps are an unavoidable reality.\n\nFor fellow artists forced into predatory loans just to afford paint, canvas, and studio rent, proceeds from this artwork become the Seed Fund — extending a fair hand at fair rates.",
+    "footer": "One artwork becomes the oxygen that keeps a fellow artist creating."
   },
   "galleryCampaign": {
     "heading": "Every purchase makes a difference",

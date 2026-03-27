@@ -18,16 +18,24 @@ export default function SupportMessage({ className }: SupportMessageProps) {
         className
       )}
     >
-      <div className="relative z-10 flex flex-col items-center gap-3">
+      <div className="relative z-10 flex flex-col items-center gap-4">
         <Sprout className="w-8 h-8 text-primary" />
 
-        <div className="space-y-1">
-          <h3 className="font-bold text-gray-800 text-lg break-keep">{t('title')}</h3>
-          <p className="text-sm text-gray-600 break-keep leading-relaxed mt-2">{t('body')}</p>
-          <p className="text-xs text-primary-strong break-keep font-medium mt-3 opacity-80">
-            {t('footer')}
-          </p>
+        <h3 className="font-bold text-gray-800 text-lg break-keep">{t('title')}</h3>
+
+        {/* 통계 콜아웃 */}
+        <div className="w-full rounded-xl bg-primary/[0.08] py-3 px-4">
+          <p className="text-2xl font-bold text-primary">{t('statValue')}</p>
+          <p className="text-xs text-gray-600 mt-0.5 break-keep">{t('statLabel')}</p>
         </div>
+
+        <p className="text-sm text-gray-600 break-keep leading-relaxed whitespace-pre-line text-left">
+          {t('body')}
+        </p>
+
+        <p className="text-xs text-primary-strong break-keep font-medium opacity-80">
+          {t('footer')}
+        </p>
       </div>
 
       {/* Background decoration */}
