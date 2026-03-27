@@ -11,7 +11,7 @@ import type { ChangelogEntry } from '@/types';
 
 const PER_PAGE = 30;
 
-type ChangelogFilter = 'all' | 'feat' | 'fix' | 'perf';
+type ChangelogFilter = 'all' | 'feat' | 'fix' | 'perf' | 'refactor';
 
 function loadChangelog(): ChangelogEntry[] {
   try {
@@ -26,7 +26,7 @@ function loadChangelog(): ChangelogEntry[] {
 
 function parseFilter(value: string | string[] | undefined): ChangelogFilter {
   const v = Array.isArray(value) ? value[0] : value;
-  if (v === 'feat' || v === 'fix' || v === 'perf') return v;
+  if (v === 'feat' || v === 'fix' || v === 'perf' || v === 'refactor') return v;
   return 'all';
 }
 

@@ -164,7 +164,10 @@ export function ChangelogList({
           <h3 className="mb-3 text-sm font-semibold text-slate-500">{formatDate(date)}</h3>
           <AdminCard className="divide-y divide-[var(--admin-border-soft)]">
             {grouped[date].map((entry) => {
-              const config = TYPE_CONFIG[entry.type];
+              const config = TYPE_CONFIG[entry.type] || {
+                label: entry.type,
+                tone: 'info' as const,
+              };
               return (
                 <div key={entry.hash} className="px-5 py-4">
                   <div className="flex flex-wrap items-start gap-2">
