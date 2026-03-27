@@ -35,8 +35,8 @@ export function resolveArtworkImageUrl(image: string): string {
   if (normalizedImage.startsWith('/')) {
     return normalizedImage;
   }
-  // bare filename (legacy) — local files no longer exist, return empty to trigger fallback
-  return '';
+  // bare filename (legacy) — local files no longer exist, return placeholder
+  return '/images/og-image.png';
 }
 
 export function resolveArtworkVariantUrl(image: string, variant: ArtworkImageVariant): string {

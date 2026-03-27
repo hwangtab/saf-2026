@@ -1,6 +1,8 @@
+import { useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { useLocale, useTranslations } from 'next-intl';
 import { Check, Clock } from 'lucide-react';
+import { formatCurrentDate } from '@/lib/utils/format-date';
 
 interface TrustBadgesProps {
   className?: string;
@@ -9,10 +11,7 @@ interface TrustBadgesProps {
 export default function TrustBadges({ className }: TrustBadgesProps) {
   const t = useTranslations('trustBadges');
   const locale = useLocale();
-  const formattedDate = new Intl.DateTimeFormat(locale === 'en' ? 'en' : 'ko', {
-    month: 'long',
-    day: 'numeric',
-  }).format(new Date());
+  const formattedDate = useMemo(() => formatCurrentDate(locale), [locale]);
   const badges = [t('authenticity'), t('safeDelivery'), t('curatorVerified')];
 
   return (

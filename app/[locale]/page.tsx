@@ -21,6 +21,7 @@ import { generateSAFCoreQA } from '@/lib/schemas/qa-page';
 import { getSupabaseHomepageArtworks, getSupabaseFAQs } from '@/lib/supabase-data';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
+import { formatCurrentDate } from '@/lib/utils/format-date';
 
 export const revalidate = 1800;
 
@@ -143,12 +144,7 @@ export default async function Home() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-400" />
               </span>
-              {t('alwaysAvailable', {
-                date: new Intl.DateTimeFormat(locale === 'en' ? 'en' : 'ko', {
-                  month: 'long',
-                  day: 'numeric',
-                }).format(new Date()),
-              })}
+              {t('alwaysAvailable', { date: formatCurrentDate(locale) })}
             </span>
           </div>
 

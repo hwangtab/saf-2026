@@ -1,8 +1,10 @@
 'use client';
 
+import { useMemo } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { Phone, Mail } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { formatCurrentDate } from '@/lib/utils/format-date';
 import { CONTACT } from '@/lib/constants';
 
 interface GalleryStatusBarProps {
@@ -12,10 +14,7 @@ interface GalleryStatusBarProps {
 export default function GalleryStatusBar({ className }: GalleryStatusBarProps) {
   const t = useTranslations('galleryStatus');
   const locale = useLocale();
-  const formattedDate = new Intl.DateTimeFormat(locale === 'en' ? 'en' : 'ko', {
-    month: 'long',
-    day: 'numeric',
-  }).format(new Date());
+  const formattedDate = useMemo(() => formatCurrentDate(locale), [locale]);
 
   return (
     <div
