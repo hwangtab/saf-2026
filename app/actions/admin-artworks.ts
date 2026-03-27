@@ -440,7 +440,7 @@ export async function updateArtworkImages(id: string, images: string[]) {
 
   const { data: beforeArtwork } = await supabase
     .from('artworks')
-    .select('id, images, updated_at')
+    .select('id, title, images, updated_at')
     .eq('id', id)
     .single();
 
@@ -470,7 +470,7 @@ export async function updateArtworkImages(id: string, images: string[]) {
 
   const { data: afterArtwork } = await supabase
     .from('artworks')
-    .select('id, images, updated_at')
+    .select('id, title, images, updated_at')
     .eq('id', id)
     .single();
 
@@ -484,11 +484,12 @@ export async function updateArtworkImages(id: string, images: string[]) {
     'artwork',
     id,
     {
+      title: beforeArtwork?.title || afterArtwork?.title,
       image_count: images.length,
     },
     admin.id,
     {
-      summary: `작품 이미지 변경: ${id}`,
+      summary: `작품 이미지 변경: ${beforeArtwork?.title || id}`,
       beforeSnapshot: beforeArtwork || null,
       afterSnapshot: afterArtwork || null,
       reversible: true,
