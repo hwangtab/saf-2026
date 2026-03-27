@@ -35,7 +35,8 @@ export function resolveArtworkImageUrl(image: string): string {
   if (normalizedImage.startsWith('/')) {
     return normalizedImage;
   }
-  return `/images/artworks/${normalizedImage}`;
+  // bare filename (legacy) — local files no longer exist, return empty to trigger fallback
+  return '';
 }
 
 export function resolveArtworkVariantUrl(image: string, variant: ArtworkImageVariant): string {
