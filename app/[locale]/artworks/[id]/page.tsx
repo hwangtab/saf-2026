@@ -533,9 +533,6 @@ export default async function ArtworkDetailPage({ params }: Props) {
             </div>
           </div>
 
-          {/* Recently Sold Section */}
-          <RecentlySoldSection artworks={recentlySold} locale={locale} />
-
           {/* Other Works by this Artist Section */}
           {otherWorks.length > 0 ? (
             <div className="mt-24 pt-24 border-t border-gray-100">
@@ -557,6 +554,9 @@ export default async function ArtworkDetailPage({ params }: Props) {
               </div>
             </div>
           ) : null}
+
+          {/* Recently Sold Section */}
+          <RecentlySoldSection artworks={recentlySold} locale={locale} />
         </article>
       </Section>
     </>
