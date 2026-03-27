@@ -5,12 +5,13 @@ import { useCallback } from 'react';
 import { AdminBadge, AdminCard } from '@/app/admin/_components/admin-ui';
 import type { ChangelogEntry } from '@/types';
 
-type FilterType = 'all' | 'feat' | 'fix' | 'perf';
+type FilterType = 'all' | 'feat' | 'fix' | 'perf' | 'refactor';
 
 const TYPE_CONFIG: Record<string, { label: string; tone: 'info' | 'warning' | 'success' }> = {
   feat: { label: '새 기능', tone: 'info' },
   fix: { label: '버그 수정', tone: 'warning' },
   perf: { label: '성능 개선', tone: 'success' },
+  refactor: { label: '리팩토링', tone: 'info' },
 };
 
 const SCOPE_KO: Record<string, string> = {
@@ -57,6 +58,7 @@ const FILTERS: { value: FilterType; label: string }[] = [
   { value: 'feat', label: '새 기능' },
   { value: 'fix', label: '버그 수정' },
   { value: 'perf', label: '성능 개선' },
+  { value: 'refactor', label: '리팩토링' },
 ];
 
 function formatDate(dateStr: string): string {

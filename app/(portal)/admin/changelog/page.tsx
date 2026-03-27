@@ -61,6 +61,7 @@ export default async function ChangelogPage({
     feat: allEntries.filter((e) => e.type === 'feat').length,
     fix: allEntries.filter((e) => e.type === 'fix').length,
     perf: allEntries.filter((e) => e.type === 'perf').length,
+    refactor: allEntries.filter((e) => e.type === 'refactor').length,
   };
 
   return (

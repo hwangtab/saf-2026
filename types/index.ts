@@ -181,7 +181,7 @@ export interface BreadcrumbItem {
 
 export interface ChangelogEntry {
   hash: string;
-  type: 'feat' | 'fix' | 'perf';
+  type: 'feat' | 'fix' | 'perf' | 'refactor';
   scope: string | null;
   subject: string;
   summary: string | null;
