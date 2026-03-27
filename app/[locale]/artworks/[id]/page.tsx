@@ -9,6 +9,7 @@ import {
   getSupabaseArtworks,
   getSupabaseArtworkById,
   getRecentlySoldArtworks,
+  getTotalSoldCount,
 } from '@/lib/supabase-data';
 import RecentlySoldSection from '@/components/features/RecentlySoldSection';
 import Section from '@/components/ui/Section';
@@ -76,10 +77,11 @@ export default async function ArtworkDetailPage({ params }: Props) {
   const { id } = await params;
 
   // Parallel fetch: artwork detail + all artworks (cached) to avoid waterfall
-  const [artwork, allArtworks, recentlySold, t] = await Promise.all([
+  const [artwork, allArtworks, recentlySold, totalSoldCount, t] = await Promise.all([
     getSupabaseArtworkById(id),
     getSupabaseArtworks(),
-    getRecentlySoldArtworks(6, id),
+    getRecentlySoldArtworks(3, id),
+    getTotalSoldCount(),
     getTranslations('artworkDetail'),
   ]);
 
@@ -556,7 +558,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
           ) : null}
 
           {/* Recently Sold Section */}
-          <RecentlySoldSection artworks={recentlySold} />
+          <RecentlySoldSection artworks={recentlySold} totalCount={totalSoldCount} />
         </article>
       </Section>
     </>

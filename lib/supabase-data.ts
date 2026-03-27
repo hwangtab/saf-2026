@@ -329,6 +329,36 @@ export const getRecentlySoldArtworks = cache(
   }
 );
 
+// --- Total sold count (for trust signal) ---
+
+const getTotalSoldCountUncached = async (): Promise<number> => {
+  if (!hasSupabaseConfig || !supabase) return 0;
+
+  const { count, error } = await supabase
+    .from('artworks')
+    .select('*', { count: 'exact', head: true })
+    .eq('is_hidden', false)
+    .not('sold_at', 'is', null);
+
+  if (error) {
+    console.error('Error fetching total sold count:', error);
+    return 0;
+  }
+
+  return count || 0;
+};
+
+const getTotalSoldCountCached = unstable_cache(
+  async () => getTotalSoldCountUncached(),
+  ['supabase-total-sold-count'],
+  {
+    revalidate: ARTWORK_DATA_REVALIDATE_SECONDS,
+    tags: ['artworks'],
+  }
+);
+
+export const getTotalSoldCount = cache(async (): Promise<number> => getTotalSoldCountCached());
+
 const getSupabaseTestimonialsUncached = async (): Promise<TestimonialCategory[]> => {
   if (!hasSupabaseConfig || !supabase) {
     return testimonials;

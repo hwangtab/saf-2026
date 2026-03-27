@@ -197,7 +197,7 @@
     "otherWorks": "Other works by {artist}",
     "viewAll": "View All",
     "recentlySold": "Recently Sold",
-    "recentlySoldDesc": "Works sold in the last 30 days"
+    "recentlySoldDesc": "{count} artworks sold recently"
   },
   "artistPage": {
     "notFound": "Artist not found",
