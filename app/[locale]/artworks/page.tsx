@@ -62,7 +62,7 @@ export default async function ArtworksPage() {
           variant="primary-surface"
           prevVariant="white"
           padding="none"
-          className="pt-6 md:pt-10 pb-16 md:pb-20"
+          className="pt-6 md:pt-10 pb-24 md:pb-32"
         >
           <div className="container-max">
             <GalleryStatusBar className="mb-6" />
