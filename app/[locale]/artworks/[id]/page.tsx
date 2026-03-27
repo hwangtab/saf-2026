@@ -556,7 +556,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
           ) : null}
 
           {/* Recently Sold Section */}
-          <RecentlySoldSection artworks={recentlySold} locale={locale} />
+          <RecentlySoldSection artworks={recentlySold} />
         </article>
       </Section>
     </>

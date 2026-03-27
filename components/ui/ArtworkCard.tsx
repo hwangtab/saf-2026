@@ -67,6 +67,42 @@ function SoldBadge({ variant }: { variant: ArtworkCardVariant }) {
   );
 }
 
+function formatSoldDate(soldAt: string, locale: string): string {
+  const d = new Date(soldAt);
+  const y = d.getFullYear();
+  const m = d.getMonth() + 1;
+  const day = d.getDate();
+  if (locale === 'en') {
+    return `Sold ${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+  }
+  return `${y}.${m}.${day} 판매`;
+}
+
+function SoldDateBadge({
+  soldAt,
+  variant,
+  locale,
+}: {
+  soldAt: string;
+  variant: ArtworkCardVariant;
+  locale: string;
+}) {
+  const posClass =
+    variant === 'gallery'
+      ? 'top-3 left-3 px-2.5 py-1 text-xs'
+      : 'top-2 left-2 px-2 py-0.5 text-[10px]';
+  return (
+    <div
+      className={cn(
+        'absolute bg-black/60 backdrop-blur-sm text-white font-medium rounded',
+        posClass
+      )}
+    >
+      {formatSoldDate(soldAt, locale)}
+    </div>
+  );
+}
+
 /**
  * Shared artwork card component with two variants:
  * - gallery: Full card for MasonryGallery with material/size info
@@ -127,6 +163,9 @@ function ArtworkCard({
             sizes={config.imageSizes}
           />
           {artwork.sold && <SoldBadge variant="slider" />}
+          {artwork.sold_at && (
+            <SoldDateBadge soldAt={artwork.sold_at} variant="slider" locale={locale} />
+          )}
         </div>
         <div className="mt-3 px-1">
           <p className="text-sm font-medium text-charcoal truncate group-hover:text-primary transition-colors">
@@ -170,6 +209,9 @@ function ArtworkCard({
             )}
           />
           {artwork.sold && <SoldBadge variant="gallery" />}
+          {artwork.sold_at && (
+            <SoldDateBadge soldAt={artwork.sold_at} variant="gallery" locale={locale} />
+          )}
         </div>
 
         <div className={cn('p-4', theme === 'dark' ? 'bg-[#1f2527]' : 'bg-white')}>
