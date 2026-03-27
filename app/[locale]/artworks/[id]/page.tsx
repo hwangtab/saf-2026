@@ -204,6 +204,9 @@ export default async function ArtworkDetailPage({ params }: Props) {
 
               {/* Mobile CTA Section (visible only on mobile, right after title) */}
               <div className="block lg:hidden space-y-6 mt-6">
+                {/* 신뢰배지 */}
+                <TrustBadges />
+
                 {/* 구매 가이드 인라인 요약 */}
                 {hasActionablePrice && !artwork.sold && (
                   <p className="text-center text-sm text-gray-500">{t('trustInline')}</p>
@@ -300,9 +303,6 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   </LinkButton>
                 </div>
 
-                {/* 신뢰배지 */}
-                <TrustBadges />
-
                 {/* 연대 메시지 */}
                 <SupportMessage />
               </div>
@@ -322,6 +322,9 @@ export default async function ArtworkDetailPage({ params }: Props) {
 
               {/* Desktop CTA Section (hidden on mobile) */}
               <div className="hidden lg:block space-y-6">
+                {/* 신뢰배지 */}
+                <TrustBadges />
+
                 {/* 온라인 구매 버튼 */}
                 {hasActionablePrice && artwork.shopUrl && !artwork.sold && (
                   <>
@@ -437,8 +440,6 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   {displayArtist}
                 </p>
               </header>
-
-              <TrustBadges className="mb-6 hidden lg:flex" />
 
               <div className="border-t border-b border-gray-100 py-6">
                 <div className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 items-baseline">
