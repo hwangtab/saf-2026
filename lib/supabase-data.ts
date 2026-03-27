@@ -74,7 +74,7 @@ type FAQRow = {
 
 const ARTWORK_SELECT_COLUMNS =
   'id, artist_id, title, title_en, description, size, material, year, edition, price, images, shop_url, status, sold_at, category';
-const ARTIST_SELECT_COLUMNS = 'id, name_ko, name_en, bio, bio_en, history, history_en';
+const ARTIST_SELECT_COLUMNS = 'id, name_ko, name_en, bio, bio_en, profile, history, history_en';
 const ARTWORK_DATA_REVALIDATE_SECONDS = 300;
 
 function pickRandomItems<T>(items: T[], limit: number): T[] {
