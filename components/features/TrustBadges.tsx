@@ -12,10 +12,10 @@ export default function TrustBadges({ className }: TrustBadgesProps) {
   const t = useTranslations('trustBadges');
   const locale = useLocale();
   const formattedDate = useMemo(() => formatCurrentDate(locale), [locale]);
-  const badges = [t('authenticity'), t('safeDelivery'), t('curatorVerified')];
+  const badges = [t('safeDelivery'), t('curatorVerified')];
 
   return (
-    <div className={cn('grid grid-cols-2 gap-2', className)}>
+    <div className={cn('flex flex-wrap justify-center gap-2', className)}>
       <span className="inline-flex items-center justify-center gap-1 px-3 py-1.5 bg-green-50 border border-green-100 rounded-full text-xs font-medium text-green-700">
         <Clock className="w-3.5 h-3.5 shrink-0" />
         {t('alwaysOpen', { date: formattedDate })}
