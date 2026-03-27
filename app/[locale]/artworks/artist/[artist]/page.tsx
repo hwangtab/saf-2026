@@ -220,14 +220,14 @@ export default async function ArtistPage({ params }: Props) {
       </PageHero>
 
       {/* Gallery Section */}
-      <Section variant="primary-surface" prevVariant="white" className="pb-24 md:pb-32">
+      <Section variant="primary-surface" prevVariant="white">
         <div className="container-max">
           <ArtworkGalleryWithSort artworks={listArtworks} initialArtist={artistName} />
         </div>
       </Section>
 
       {/* Campaign Banner */}
-      <Section variant="white" prevVariant="primary-surface" className="py-20 md:py-28">
+      <Section variant="white" prevVariant="primary-surface" className="pb-24 md:pb-32">
         <GalleryCampaignBanner />
       </Section>
     </main>
