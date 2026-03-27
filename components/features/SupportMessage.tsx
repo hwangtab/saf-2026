@@ -12,7 +12,6 @@ const TESTIMONIAL_INTERVAL = 8000;
 
 interface SupportMessageProps {
   className?: string;
-  totalSoldCount?: number;
 }
 
 function useReducedMotion() {
@@ -41,7 +40,7 @@ function useCycleIndex(count: number, interval: number, enabled: boolean) {
   return index;
 }
 
-export default function SupportMessage({ className, totalSoldCount }: SupportMessageProps) {
+export default function SupportMessage({ className }: SupportMessageProps) {
   const t = useTranslations('support');
   const reducedMotion = useReducedMotion();
 
@@ -82,16 +81,6 @@ export default function SupportMessage({ className, totalSoldCount }: SupportMes
             ))}
           </div>
         </div>
-
-        {/* 컨텍스트 연결 문구 */}
-        {totalSoldCount != null && totalSoldCount > 0 && (
-          <div className="w-full space-y-1">
-            <p className="text-sm font-medium text-gray-700 break-keep">
-              {t('soldCount', { count: totalSoldCount })}
-            </p>
-            <p className="text-[11px] text-gray-400 break-keep">{t('fieldDistribution')}</p>
-          </div>
-        )}
 
         <p className="text-sm text-gray-600 break-keep leading-relaxed whitespace-pre-line text-left">
           {t('body')}
