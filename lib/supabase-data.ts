@@ -138,7 +138,7 @@ const getSupabaseArtworksUncached = async (): Promise<Artwork[]> => {
 
 const getSupabaseArtworksCached = unstable_cache(
   async () => getSupabaseArtworksUncached(),
-  ['supabase-artworks'],
+  ['supabase-artworks-v2'],
   {
     revalidate: ARTWORK_DATA_REVALIDATE_SECONDS,
     tags: ['artworks'],
@@ -221,7 +221,7 @@ const getSupabaseArtworkByIdUncached = async (id: string): Promise<Artwork | nul
 
 const getSupabaseArtworkByIdCached = unstable_cache(
   async (id: string) => getSupabaseArtworkByIdUncached(id),
-  ['supabase-artwork-by-id'],
+  ['supabase-artwork-by-id-v2'],
   {
     revalidate: ARTWORK_DATA_REVALIDATE_SECONDS,
     tags: ['artworks'],
@@ -269,7 +269,7 @@ const getSupabaseArtworksByArtistUncached = async (artistName: string): Promise<
 
 const getSupabaseArtworksByArtistCached = unstable_cache(
   async (artistName: string) => getSupabaseArtworksByArtistUncached(artistName),
-  ['supabase-artworks-by-artist'],
+  ['supabase-artworks-by-artist-v2'],
   {
     revalidate: ARTWORK_DATA_REVALIDATE_SECONDS,
     tags: ['artworks'],
