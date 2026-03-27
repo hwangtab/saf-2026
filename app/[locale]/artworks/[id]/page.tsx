@@ -204,13 +204,13 @@ export default async function ArtworkDetailPage({ params }: Props) {
 
               {/* Mobile CTA Section (visible only on mobile, right after title) */}
               <div className="block lg:hidden space-y-6 mt-6">
-                {/* 신뢰배지 */}
-                <TrustBadges />
-
                 {/* 구매 가이드 인라인 요약 */}
                 {hasActionablePrice && !artwork.sold && (
                   <p className="text-center text-sm text-gray-500">{t('trustInline')}</p>
                 )}
+
+                {/* 신뢰배지 */}
+                <TrustBadges />
 
                 {/* 온라인 구매 버튼 */}
                 {hasActionablePrice && artwork.shopUrl && !artwork.sold && (
@@ -322,13 +322,13 @@ export default async function ArtworkDetailPage({ params }: Props) {
 
               {/* Desktop CTA Section (hidden on mobile) */}
               <div className="hidden lg:block space-y-6">
-                {/* 신뢰배지 */}
-                <TrustBadges />
-
                 {/* 온라인 구매 버튼 */}
                 {hasActionablePrice && artwork.shopUrl && !artwork.sold && (
                   <>
                     <PurchaseGuide className="mb-4" />
+
+                    {/* 신뢰배지 */}
+                    <TrustBadges />
 
                     <TrackClick
                       event="purchase_click"
