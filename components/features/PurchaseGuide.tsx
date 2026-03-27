@@ -2,7 +2,15 @@
 
 import { useState, type ReactNode } from 'react';
 import { useLocale } from 'next-intl';
-import { Truck, ShieldCheck, Award, RotateCcw, ClipboardList, CreditCard } from 'lucide-react';
+import {
+  Truck,
+  ShieldCheck,
+  Award,
+  RotateCcw,
+  ClipboardList,
+  CreditCard,
+  ChevronRight,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Modal from '@/components/ui/Modal';
 import { CONTACT } from '@/lib/constants';
@@ -80,22 +88,27 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
 
   return (
     <>
-      <div className={cn('rounded-xl bg-gray-50 p-4 space-y-2', className)}>
-        {copy.guides.map((guide, index) => (
-          <div key={index} className="flex items-center gap-3">
-            {guide.icon}
-            <div className="flex-1">
-              <h4 className="text-sm font-bold text-gray-900 inline-block mr-1">{guide.label}:</h4>
-              <span className="text-sm text-gray-600">{guide.text}</span>
+      <div className={cn('rounded-xl bg-gray-50 p-4 space-y-3', className)}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+          {copy.guides.map((guide, index) => (
+            <div key={index} className="flex items-start gap-3">
+              <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                {guide.icon}
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-bold text-gray-900">{guide.label}</p>
+                <p className="text-xs text-gray-500">{guide.text}</p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
         <button
           type="button"
           onClick={() => setIsModalOpen(true)}
-          className="w-full text-center text-sm text-blue-600 hover:underline font-medium pt-2 border-t border-gray-200 mt-2"
+          className="w-full flex items-center justify-center gap-1 text-sm text-blue-600 hover:underline font-medium pt-2 border-t border-gray-200"
         >
           {copy.viewAll}
+          <ChevronRight className="w-4 h-4" />
         </button>
       </div>
 
