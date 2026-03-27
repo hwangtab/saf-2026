@@ -287,10 +287,9 @@
     "pauseAria": "Pause background slideshow"
   },
   "support": {
-    "titleTop": "This artist is building a future",
-    "titleBottom": "together with fellow artists",
-    "bodyTop": "Proceeds become mutual aid funds",
-    "bodyBottom": "supporting all artists in need"
+    "title": "Art protects art",
+    "body": "Proceeds from this artwork become the Seed Fund, providing affordable loans to fellow artists shut out by traditional finance.",
+    "footer": "One artwork is where solidarity for a fellow artist's tomorrow begins."
   },
   "galleryCampaign": {
     "heading": "Every purchase makes a difference",

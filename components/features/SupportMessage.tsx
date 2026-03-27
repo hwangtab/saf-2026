@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Handshake } from 'lucide-react';
+import { Sprout } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface SupportMessageProps {
@@ -19,18 +19,13 @@ export default function SupportMessage({ className }: SupportMessageProps) {
       )}
     >
       <div className="relative z-10 flex flex-col items-center gap-3">
-        <Handshake className="w-8 h-8 text-primary" />
+        <Sprout className="w-8 h-8 text-primary" />
 
         <div className="space-y-1">
-          <h3 className="font-bold text-gray-800 text-lg break-keep">
-            {t('titleTop')}
-            <br />
-            {t('titleBottom')}
-          </h3>
-          <p className="text-sm text-gray-500 break-keep opacity-80 mt-2">
-            {t('bodyTop')}
-            <br />
-            {t('bodyBottom')}
+          <h3 className="font-bold text-gray-800 text-lg break-keep">{t('title')}</h3>
+          <p className="text-sm text-gray-600 break-keep leading-relaxed mt-2">{t('body')}</p>
+          <p className="text-xs text-primary-strong break-keep font-medium mt-3 opacity-80">
+            {t('footer')}
           </p>
         </div>
       </div>
