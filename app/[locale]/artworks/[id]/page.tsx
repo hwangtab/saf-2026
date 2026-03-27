@@ -304,7 +304,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 <TrustBadges />
 
                 {/* 연대 메시지 */}
-                <SupportMessage />
+                <SupportMessage totalSoldCount={totalSoldCount} />
               </div>
 
               {/* Share Section */}
@@ -420,7 +420,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 </div>
 
                 {/* Campaign Support Message */}
-                <SupportMessage className="mt-4" />
+                <SupportMessage className="mt-4" totalSoldCount={totalSoldCount} />
               </div>
             </div>
 
