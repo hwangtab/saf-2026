@@ -15,7 +15,6 @@ interface GuideItem {
   icon: ReactNode;
   label: string;
   text: string;
-  action: boolean;
 }
 
 const ICON_CLASS = 'w-[18px] h-[18px] text-primary shrink-0';
@@ -24,65 +23,57 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
   const locale = useLocale();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const copy: { modalTitle: string; details: string; guides: GuideItem[] } =
+  const copy: { modalTitle: string; viewAll: string; guides: GuideItem[] } =
     locale === 'en'
       ? {
           modalTitle: 'Purchase and service guide',
-          details: 'Details',
+          viewAll: 'View purchase guide',
           guides: [
             {
               icon: <Truck className={ICON_CLASS} />,
               label: 'Shipping',
               text: 'Conditional free shipping',
-              action: true,
             },
             {
               icon: <ShieldCheck className={ICON_CLASS} />,
               label: 'Secure payment',
               text: 'SSL secure payment system',
-              action: true,
             },
             {
               icon: <Award className={ICON_CLASS} />,
               label: 'Certificate',
               text: 'Certificate of authenticity included',
-              action: false,
             },
             {
               icon: <RotateCcw className={ICON_CLASS} />,
               label: 'Cancel/Refund',
               text: 'Withdrawal possible within 7 days after delivery',
-              action: true,
             },
           ],
         }
       : {
           modalTitle: '구매 및 이용 안내',
-          details: '자세히 보기',
+          viewAll: '구매 및 이용 안내 보기',
           guides: [
             {
               icon: <Truck className={ICON_CLASS} />,
               label: '배송 안내',
               text: '조건부 무료배송',
-              action: true,
             },
             {
               icon: <ShieldCheck className={ICON_CLASS} />,
               label: '안전 결제',
               text: 'SSL 보안 결제 시스템',
-              action: true,
             },
             {
               icon: <Award className={ICON_CLASS} />,
               label: '작품 보증서',
               text: '모든 작품 진품 보증서 발급',
-              action: false,
             },
             {
               icon: <RotateCcw className={ICON_CLASS} />,
               label: '취소/환불',
               text: '수령 후 7일 이내 청약철회 가능',
-              action: true,
             },
           ],
         };
@@ -95,21 +86,17 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
             {guide.icon}
             <div className="flex-1">
               <h4 className="text-sm font-bold text-gray-900 inline-block mr-1">{guide.label}:</h4>
-              <span className="text-sm text-gray-600">
-                {guide.text}
-                {guide.action ? (
-                  <button
-                    type="button"
-                    onClick={() => setIsModalOpen(true)}
-                    className="ml-1 text-blue-600 hover:underline font-medium"
-                  >
-                    {copy.details}
-                  </button>
-                ) : null}
-              </span>
+              <span className="text-sm text-gray-600">{guide.text}</span>
             </div>
           </div>
         ))}
+        <button
+          type="button"
+          onClick={() => setIsModalOpen(true)}
+          className="w-full text-center text-sm text-blue-600 hover:underline font-medium pt-2 border-t border-gray-200 mt-2"
+        >
+          {copy.viewAll}
+        </button>
       </div>
 
       <Modal
