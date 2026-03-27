@@ -143,7 +143,12 @@ export default async function Home() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-400" />
               </span>
-              {t('alwaysAvailable')}
+              {t('alwaysAvailable', {
+                date: new Intl.DateTimeFormat(locale === 'en' ? 'en' : 'ko', {
+                  month: 'long',
+                  day: 'numeric',
+                }).format(new Date()),
+              })}
             </span>
           </div>
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Phone, Mail } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { CONTACT } from '@/lib/constants';
@@ -11,6 +11,11 @@ interface GalleryStatusBarProps {
 
 export default function GalleryStatusBar({ className }: GalleryStatusBarProps) {
   const t = useTranslations('galleryStatus');
+  const locale = useLocale();
+  const formattedDate = new Intl.DateTimeFormat(locale === 'en' ? 'en' : 'ko', {
+    month: 'long',
+    day: 'numeric',
+  }).format(new Date());
 
   return (
     <div
@@ -24,7 +29,7 @@ export default function GalleryStatusBar({ className }: GalleryStatusBarProps) {
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75" />
           <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500" />
         </span>
-        {t('status')}
+        {t('status', { date: formattedDate })}
         <span className="text-charcoal/40 hidden md:inline">|</span>
         <span className="text-charcoal/70 font-normal">{t('hours')}</span>
       </div>

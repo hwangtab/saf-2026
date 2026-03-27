@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Check, Clock } from 'lucide-react';
 
 interface TrustBadgesProps {
@@ -8,13 +8,18 @@ interface TrustBadgesProps {
 
 export default function TrustBadges({ className }: TrustBadgesProps) {
   const t = useTranslations('trustBadges');
+  const locale = useLocale();
+  const formattedDate = new Intl.DateTimeFormat(locale === 'en' ? 'en' : 'ko', {
+    month: 'long',
+    day: 'numeric',
+  }).format(new Date());
   const badges = [t('authenticity'), t('safeDelivery'), t('curatorVerified')];
 
   return (
     <div className={cn('flex flex-wrap gap-2', className)}>
       <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-50 border border-green-100 rounded-full text-xs font-medium text-green-700">
         <Clock className="w-3.5 h-3.5" />
-        {t('alwaysOpen')}
+        {t('alwaysOpen', { date: formattedDate })}
       </span>
       {badges.map((badge, index) => (
         <span
