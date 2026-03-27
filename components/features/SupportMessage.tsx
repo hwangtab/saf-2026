@@ -102,7 +102,7 @@ export default function SupportMessage({ className, totalSoldCount }: SupportMes
           <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-2">
             {t('voiceLabel')}
           </p>
-          <div className="relative min-h-[48px]" aria-live="polite">
+          <div className="relative min-h-[56px]" aria-live="polite">
             {Array.from({ length: TESTIMONIAL_COUNT }).map((_, i) => (
               <div
                 key={i}
@@ -112,10 +112,10 @@ export default function SupportMessage({ className, totalSoldCount }: SupportMes
                   i === testimonialIndex ? 'opacity-100' : 'opacity-0 pointer-events-none'
                 )}
               >
-                <p className="text-xs text-gray-500 italic break-keep leading-relaxed">
+                <p className="text-sm text-gray-600 italic break-keep leading-relaxed">
                   &ldquo;{t(`testimonial${i}Quote` as 'testimonial0Quote')}&rdquo;
                 </p>
-                <p className="text-[10px] text-gray-400 mt-1">
+                <p className="text-xs text-gray-400 mt-1">
                   — {t(`testimonial${i}Author` as 'testimonial0Author')}
                 </p>
               </div>
