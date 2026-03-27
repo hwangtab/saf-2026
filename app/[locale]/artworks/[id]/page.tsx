@@ -5,7 +5,12 @@ import { Link } from '@/i18n/navigation';
 import { notFound } from 'next/navigation';
 import { getLocale, getTranslations } from 'next-intl/server';
 
-import { getSupabaseArtworks, getSupabaseArtworkById } from '@/lib/supabase-data';
+import {
+  getSupabaseArtworks,
+  getSupabaseArtworkById,
+  getRecentlySoldArtworks,
+} from '@/lib/supabase-data';
+import RecentlySoldSection from '@/components/features/RecentlySoldSection';
 import Section from '@/components/ui/Section';
 import { getArticlesByArtist } from '@/content/artist-articles';
 import ArtworkImage from '@/components/features/ArtworkImage';
@@ -71,9 +76,10 @@ export default async function ArtworkDetailPage({ params }: Props) {
   const { id } = await params;
 
   // Parallel fetch: artwork detail + all artworks (cached) to avoid waterfall
-  const [artwork, allArtworks, t] = await Promise.all([
+  const [artwork, allArtworks, recentlySold, t] = await Promise.all([
     getSupabaseArtworkById(id),
     getSupabaseArtworks(),
+    getRecentlySoldArtworks(6, id),
     getTranslations('artworkDetail'),
   ]);
 
@@ -526,6 +532,9 @@ export default async function ArtworkDetailPage({ params }: Props) {
               <RelatedArticles articles={relatedArticles} />
             </div>
           </div>
+
+          {/* Recently Sold Section */}
+          <RecentlySoldSection artworks={recentlySold} locale={locale} />
 
           {/* Other Works by this Artist Section */}
           {otherWorks.length > 0 ? (

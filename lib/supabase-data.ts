@@ -24,6 +24,7 @@ type ArtworkRow = {
   images: string[] | null;
   shop_url: string | null;
   status: string | null;
+  sold_at: string | null;
   category: string | null;
 };
 
@@ -72,7 +73,7 @@ type FAQRow = {
 };
 
 const ARTWORK_SELECT_COLUMNS =
-  'id, artist_id, title, title_en, description, size, material, year, edition, price, images, shop_url, status, category';
+  'id, artist_id, title, title_en, description, size, material, year, edition, price, images, shop_url, status, sold_at, category';
 const ARTIST_SELECT_COLUMNS = 'id, name_ko, name_en, bio, bio_en, history, history_en';
 const ARTWORK_DATA_REVALIDATE_SECONDS = 300;
 
@@ -100,6 +101,7 @@ const mapArtworkRow = (item: ArtworkRow, artist?: ArtistRow | null): Artwork => 
   images: item.images || [],
   shopUrl: item.shop_url || '',
   sold: item.status === 'sold' || item.status === 'reserved',
+  sold_at: item.sold_at || undefined,
   category: item.category || undefined,
   profile: artist?.profile || artist?.bio || '',
   profile_en: artist?.bio_en || undefined,
@@ -276,6 +278,56 @@ const getSupabaseArtworksByArtistCached = unstable_cache(
 
 export const getSupabaseArtworksByArtist = cache(
   async (artistName: string): Promise<Artwork[]> => getSupabaseArtworksByArtistCached(artistName)
+);
+
+// --- Recently sold artworks (for trust signal) ---
+
+const getRecentlySoldArtworksUncached = async (limit: number): Promise<Artwork[]> => {
+  if (!hasSupabaseConfig || !supabase) return [];
+
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+  const { data, error } = await supabase
+    .from('artworks')
+    .select(
+      `
+      ${ARTWORK_SELECT_COLUMNS},
+      artists (${ARTIST_SELECT_COLUMNS})
+    `
+    )
+    .eq('is_hidden', false)
+    .in('status', ['sold', 'reserved'])
+    .not('sold_at', 'is', null)
+    .gte('sold_at', thirtyDaysAgo.toISOString())
+    .order('sold_at', { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error('Error fetching recently sold artworks:', error);
+    return [];
+  }
+
+  return (data || []).map((item) =>
+    mapArtworkRow(item as ArtworkRow, item.artists as unknown as ArtistRow | null)
+  );
+};
+
+const getRecentlySoldArtworksCached = unstable_cache(
+  async (limit: number) => getRecentlySoldArtworksUncached(limit),
+  ['supabase-recently-sold-artworks'],
+  {
+    revalidate: ARTWORK_DATA_REVALIDATE_SECONDS,
+    tags: ['artworks'],
+  }
+);
+
+export const getRecentlySoldArtworks = cache(
+  async (limit = 6, excludeId?: string): Promise<Artwork[]> => {
+    const all = await getRecentlySoldArtworksCached(limit + 1);
+    const filtered = excludeId ? all.filter((a) => a.id !== excludeId) : all;
+    return filtered.slice(0, limit);
+  }
 );
 
 const getSupabaseTestimonialsUncached = async (): Promise<TestimonialCategory[]> => {

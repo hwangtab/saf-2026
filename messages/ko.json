@@ -195,7 +195,9 @@
     "originalKoreanHistory": "작가 이력 원문은 한국어로 제공됩니다.",
     "originalKoreanDetail": "상세 정보 원문은 한국어로 제공됩니다.",
     "otherWorks": "{artist} 작가의 다른 작품",
-    "viewAll": "전체보기"
+    "viewAll": "전체보기",
+    "recentlySold": "최근 판매된 작품",
+    "recentlySoldDesc": "최근 30일간 판매된 작품입니다"
   },
   "artistPage": {
     "notFound": "작가를 찾을 수 없습니다",

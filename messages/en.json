@@ -195,7 +195,9 @@
     "originalKoreanHistory": "The artist history is currently available in Korean.",
     "originalKoreanDetail": "Original details are available in Korean.",
     "otherWorks": "Other works by {artist}",
-    "viewAll": "View All"
+    "viewAll": "View All",
+    "recentlySold": "Recently Sold",
+    "recentlySoldDesc": "Works sold in the last 30 days"
   },
   "artistPage": {
     "notFound": "Artist not found",
