@@ -121,7 +121,8 @@
     "metaTitle": "SAF 2026 - Special Exhibition for Artist Mutual Aid Fund",
     "metaDescription": "SAF 2026 is a special online exhibition connecting co-op membership and artwork purchases to raise mutual aid loan funds for artists. Help provide a stable creative environment for financially excluded artists.",
     "ogDescription": "A special exhibition building a brighter future for Korean artists. Support artists by becoming a co-op member and purchasing artworks.",
-    "twitterDescription": "Join SAF 2026, a special exhibition raising mutual aid loan funds for artists."
+    "twitterDescription": "Join SAF 2026, a special exhibition raising mutual aid loan funds for artists.",
+    "alwaysAvailable": "Online purchases available even after the exhibition"
   },
   "breadcrumbs": {
     "home": "Home",
@@ -264,7 +265,8 @@
   "trustBadges": {
     "authenticity": "100% authenticity guaranteed",
     "safeDelivery": "Secure packaging & delivery",
-    "curatorVerified": "Verified by professional curators"
+    "curatorVerified": "Verified by professional curators",
+    "alwaysOpen": "Available after exhibition ends"
   },
   "artworkDetailNav": {
     "backToList": "Back to list",
@@ -291,6 +293,12 @@
   "galleryCampaign": {
     "heading": "Every purchase makes a difference",
     "description": "These artists are building a future together with fellow artists. Join the mutual aid fund through artwork purchases or co-op membership."
+  },
+  "galleryStatus": {
+    "status": "Online purchases available",
+    "hours": "Weekday 10:00-18:00 KST support",
+    "phone": "Call",
+    "email": "Email"
   },
   "pageErrors": {
     "artworks": {

@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
-import { Check } from 'lucide-react';
+import { Check, Clock } from 'lucide-react';
 
 interface TrustBadgesProps {
   className?: string;
@@ -12,6 +12,10 @@ export default function TrustBadges({ className }: TrustBadgesProps) {
 
   return (
     <div className={cn('flex flex-wrap gap-2', className)}>
+      <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-50 border border-green-100 rounded-full text-xs font-medium text-green-700">
+        <Clock className="w-3.5 h-3.5" />
+        {t('alwaysOpen')}
+      </span>
       {badges.map((badge, index) => (
         <span
           key={index}

@@ -6,6 +6,7 @@ import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import PageHero from '@/components/ui/PageHero';
 import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
 import GalleryCampaignBanner from '@/components/features/GalleryCampaignBanner';
+import GalleryStatusBar from '@/components/features/GalleryStatusBar';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { SITE_URL } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
@@ -55,6 +56,13 @@ export default async function ArtworksPage() {
             description={t('shareDescription')}
           />
         </PageHero>
+
+        {/* Status Bar */}
+        <div className="bg-primary-surface border-b border-primary/5">
+          <div className="container-max">
+            <GalleryStatusBar />
+          </div>
+        </div>
 
         {/* Gallery Section */}
         <Section variant="primary-surface" prevVariant="white" className="pb-24 md:pb-32">
