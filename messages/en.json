@@ -294,7 +294,8 @@
   },
   "galleryCampaign": {
     "heading": "Every purchase makes a difference",
-    "description": "These artists are building a future together with fellow artists. Join the mutual aid fund through artwork purchases or co-op membership."
+    "descriptionLine1": "These artists are building a future together with fellow artists.",
+    "descriptionLine2": "Join the mutual aid fund through artwork purchases or co-op membership."
   },
   "galleryStatus": {
     "status": "Open now · {date}",
