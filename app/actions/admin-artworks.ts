@@ -279,6 +279,7 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
   if (dataValidation.error) throw new Error(dataValidation.error);
 
   const title = getString(formData, 'title');
+  const title_en = getString(formData, 'title_en') || null;
   const admin_product_name = getString(formData, 'admin_product_name') || null;
   const description = getString(formData, 'description');
   const size = getString(formData, 'size');
@@ -297,7 +298,7 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
   const { data: oldArtwork } = await supabase
     .from('artworks')
     .select(
-      'id, title, admin_product_name, artist_id, description, size, material, year, edition, edition_type, edition_limit, price, tax_type, status, sold_at, images, is_hidden, shop_url, updated_at'
+      'id, title, title_en, admin_product_name, artist_id, description, size, material, year, edition, edition_type, edition_limit, price, tax_type, status, sold_at, images, is_hidden, shop_url, updated_at'
     )
     .eq('id', id)
     .single();
@@ -306,6 +307,7 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
     .from('artworks')
     .update({
       title,
+      title_en,
       admin_product_name,
       description,
       size,
@@ -374,6 +376,7 @@ export async function createAdminArtwork(formData: FormData) {
   if (dataValidation.error) throw new Error(dataValidation.error);
 
   const title = getString(formData, 'title');
+  const title_en = getString(formData, 'title_en') || null;
   const admin_product_name = getString(formData, 'admin_product_name') || null;
   const description = getString(formData, 'description');
   const size = getString(formData, 'size');
@@ -395,6 +398,7 @@ export async function createAdminArtwork(formData: FormData) {
     .from('artworks')
     .insert({
       title,
+      title_en,
       admin_product_name,
       description,
       size,

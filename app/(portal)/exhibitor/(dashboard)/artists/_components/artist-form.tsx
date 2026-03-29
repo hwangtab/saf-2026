@@ -18,7 +18,9 @@ type Artist = {
   name_ko: string | null;
   name_en: string | null;
   bio: string | null;
+  bio_en: string | null;
   history: string | null;
+  history_en: string | null;
   profile_image: string | null;
   contact_email: string | null;
   instagram: string | null;
@@ -211,11 +213,33 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
         </div>
 
         <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">{t('bioEn')}</label>
+          <textarea
+            name="bio_en"
+            defaultValue={artist.bio_en || ''}
+            rows={4}
+            placeholder="English bio"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-nonefocus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
+          />
+        </div>
+
+        <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">{t('history')}</label>
           <textarea
             name="history"
             defaultValue={artist.history || ''}
             rows={6}
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-nonefocus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">{t('historyEn')}</label>
+          <textarea
+            name="history_en"
+            defaultValue={artist.history_en || ''}
+            rows={6}
+            placeholder="English exhibition history"
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-nonefocus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
           />
         </div>
