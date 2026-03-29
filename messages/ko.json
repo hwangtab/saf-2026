@@ -465,7 +465,9 @@
       "email": "이메일",
       "homepage": "홈페이지",
       "bio": "소개",
+      "bioEn": "소개 (영문)",
       "history": "이력",
+      "historyEn": "이력 (영문)",
       "backToList": "목록으로",
       "save": "저장"
     },
@@ -487,6 +489,7 @@
       "editTitle": "작품 정보 수정",
       "createTitle": "새 작품 등록",
       "artworkTitle": "작품명",
+      "artworkTitleEn": "작품명 (영문)",
       "artist": "작가",
       "addNewArtist": "+ 새 작가 등록",
       "searchArtistPlaceholder": "작가명 검색...",

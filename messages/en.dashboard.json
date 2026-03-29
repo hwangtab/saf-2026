@@ -61,6 +61,7 @@
       "subtitle": "Enter detailed information for this artwork.",
       "images": "Artwork images (up to 5)",
       "title": "Title",
+      "titleEn": "Title (English)",
       "price": "Price (₩)",
       "priceHint": "Enter numbers only or text including ₩",
       "size": "Size",

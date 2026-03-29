@@ -48,7 +48,9 @@ export async function createExhibitorArtist(formData: FormData) {
   const name_ko = validateTextLength(getString(formData, 'name_ko'), 100, '한국어 이름');
   const name_en = validateTextLength(getString(formData, 'name_en'), 100, '영어 이름');
   const bio = validateTextLength(getString(formData, 'bio'), 5000, '소개');
+  const bio_en = validateTextLength(getString(formData, 'bio_en'), 5000, '영문 소개') || null;
   const history = validateTextLength(getString(formData, 'history'), 10000, '이력');
+  const history_en = validateTextLength(getString(formData, 'history_en'), 10000, '영문 이력') || null;
   const contact_email = validateEmail(getString(formData, 'contact_email') || null);
   const instagram = validateUrl(getString(formData, 'instagram') || null);
   const homepage = validateUrl(getString(formData, 'homepage') || null);
@@ -61,7 +63,9 @@ export async function createExhibitorArtist(formData: FormData) {
       name_ko,
       name_en,
       bio,
+      bio_en,
       history,
+      history_en,
       contact_email,
       instagram,
       homepage,
@@ -108,7 +112,9 @@ export async function updateExhibitorArtist(id: string, formData: FormData) {
   const name_ko = validateTextLength(getString(formData, 'name_ko'), 100, '한국어 이름');
   const name_en = validateTextLength(getString(formData, 'name_en'), 100, '영어 이름');
   const bio = validateTextLength(getString(formData, 'bio'), 5000, '소개');
+  const bio_en = validateTextLength(getString(formData, 'bio_en'), 5000, '영문 소개') || null;
   const history = validateTextLength(getString(formData, 'history'), 10000, '이력');
+  const history_en = validateTextLength(getString(formData, 'history_en'), 10000, '영문 이력') || null;
   const profile_image = getString(formData, 'profile_image');
   const contact_email = validateEmail(getString(formData, 'contact_email') || null);
   const instagram = validateUrl(getString(formData, 'instagram') || null);
@@ -120,7 +126,9 @@ export async function updateExhibitorArtist(id: string, formData: FormData) {
       name_ko,
       name_en,
       bio,
+      bio_en,
       history,
+      history_en,
       profile_image: profile_image || null,
       contact_email,
       instagram,

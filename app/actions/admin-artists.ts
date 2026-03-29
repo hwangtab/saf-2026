@@ -155,7 +155,9 @@ export async function updateArtist(id: string, formData: FormData) {
   const name_ko = getString(formData, 'name_ko');
   const name_en = getString(formData, 'name_en');
   const bio = getString(formData, 'bio');
+  const bio_en = getString(formData, 'bio_en') || null;
   const history = getString(formData, 'history');
+  const history_en = getString(formData, 'history_en') || null;
   const profile_image = getString(formData, 'profile_image');
   const contact_phone = getString(formData, 'contact_phone');
   const contact_email = getString(formData, 'contact_email');
@@ -165,7 +167,7 @@ export async function updateArtist(id: string, formData: FormData) {
   const { data: oldArtist } = await supabase
     .from('artists')
     .select(
-      'id, name_ko, name_en, bio, history, profile_image, contact_phone, contact_email, instagram, homepage, updated_at'
+      'id, name_ko, name_en, bio, bio_en, history, history_en, profile_image, contact_phone, contact_email, instagram, homepage, updated_at'
     )
     .eq('id', id)
     .single();
@@ -176,7 +178,9 @@ export async function updateArtist(id: string, formData: FormData) {
       name_ko,
       name_en,
       bio,
+      bio_en,
       history,
+      history_en,
       profile_image: profile_image || null,
       contact_phone: contact_phone || null,
       contact_email: contact_email || null,
@@ -191,7 +195,7 @@ export async function updateArtist(id: string, formData: FormData) {
   const { data: newArtist } = await supabase
     .from('artists')
     .select(
-      'id, name_ko, name_en, bio, history, profile_image, contact_phone, contact_email, instagram, homepage, updated_at'
+      'id, name_ko, name_en, bio, bio_en, history, history_en, profile_image, contact_phone, contact_email, instagram, homepage, updated_at'
     )
     .eq('id', id)
     .single();
@@ -312,7 +316,9 @@ export async function createAdminArtist(formData: FormData) {
   const name_ko = getString(formData, 'name_ko');
   const name_en = getString(formData, 'name_en');
   const bio = getString(formData, 'bio');
+  const bio_en = getString(formData, 'bio_en') || null;
   const history = getString(formData, 'history');
+  const history_en = getString(formData, 'history_en') || null;
   const contact_phone = getString(formData, 'contact_phone');
   const contact_email = getString(formData, 'contact_email');
   const instagram = getString(formData, 'instagram');
@@ -324,7 +330,9 @@ export async function createAdminArtist(formData: FormData) {
       name_ko,
       name_en,
       bio,
+      bio_en,
       history,
+      history_en,
       contact_phone: contact_phone || null,
       contact_email: contact_email || null,
       instagram: instagram || null,

@@ -465,7 +465,9 @@
       "email": "Email",
       "homepage": "Homepage",
       "bio": "Bio",
+      "bioEn": "Bio (English)",
       "history": "History",
+      "historyEn": "History (English)",
       "backToList": "Back to list",
       "save": "Save"
     },
@@ -487,6 +489,7 @@
       "editTitle": "Edit artwork information",
       "createTitle": "Create new artwork",
       "artworkTitle": "Artwork title",
+      "artworkTitleEn": "Artwork title (English)",
       "artist": "Artist",
       "addNewArtist": "+ Add new artist",
       "searchArtistPlaceholder": "Search artist name...",

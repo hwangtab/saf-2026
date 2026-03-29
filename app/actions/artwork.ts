@@ -91,6 +91,7 @@ export async function createArtwork(
 
     // 2. Extract Data
     const title = getString(formData, 'title');
+    const title_en = getString(formData, 'title_en') || null;
     const description = getString(formData, 'description');
     const size = getString(formData, 'size');
     const material = getString(formData, 'material');
@@ -156,6 +157,7 @@ export async function createArtwork(
       .insert({
         artist_id: artist.id,
         title,
+        title_en,
         description,
         size,
         material,
@@ -240,6 +242,7 @@ export async function updateArtwork(
     artistId = artist.id;
 
     const title = getString(formData, 'title');
+    const title_en = getString(formData, 'title_en') || null;
     const description = getString(formData, 'description');
     const size = getString(formData, 'size');
     const material = getString(formData, 'material');
@@ -313,6 +316,7 @@ export async function updateArtwork(
       .from('artworks')
       .update({
         title,
+        title_en,
         description,
         size,
         material,
