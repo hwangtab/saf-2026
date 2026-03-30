@@ -191,8 +191,16 @@ export const getSupabaseHomepageArtworks = cache(
     pickRandomItems(await getSupabaseHomepageArtworksCached(limit), limit)
 );
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 const getSupabaseArtworkByIdUncached = async (id: string): Promise<Artwork | null> => {
   if (!hasSupabaseConfig || !supabase) {
+    return getArtworkById(id) || null;
+  }
+
+  // Legacy numeric IDs (e.g. "20", "157") are not valid UUIDs — skip Supabase query
+  // to avoid "invalid input syntax for type uuid" errors and fall back to static data.
+  if (!UUID_REGEX.test(id)) {
     return getArtworkById(id) || null;
   }
 
