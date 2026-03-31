@@ -202,7 +202,8 @@
     "soldExploreOther": "Explore other works by this artist",
     "soldExploreAll": "Browse other artworks",
     "inquiryTitle": "Price & Purchase Inquiry",
-    "inquiryDescription": "If you're interested in this artwork, please contact us below."
+    "inquiryDescription": "If you're interested in this artwork, please contact us below.",
+    "artworkPrice": "Price"
   },
   "artistPage": {
     "notFound": "Artist not found",
