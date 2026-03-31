@@ -2,12 +2,14 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { cn } from '@/lib/utils';
 
 interface ExpandableHistoryProps {
   history: string;
+  className?: string;
 }
 
-export default function ExpandableHistory({ history }: ExpandableHistoryProps) {
+export default function ExpandableHistory({ history, className }: ExpandableHistoryProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const t = useTranslations('expandableHistory');
 
@@ -16,7 +18,7 @@ export default function ExpandableHistory({ history }: ExpandableHistoryProps) {
   const needsExpand = lines > 3;
 
   return (
-    <div className="bg-gray-50 p-6 rounded-xl">
+    <div className={cn('bg-gray-50 p-6 rounded-xl', className)}>
       <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">
         {t('title')}
       </h3>
