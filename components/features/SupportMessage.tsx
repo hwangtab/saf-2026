@@ -50,7 +50,7 @@ export default function SupportMessage({ className }: SupportMessageProps) {
   return (
     <div
       className={cn(
-        'relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/5 to-white border border-primary/10 p-6 text-center transition-transform hover:scale-[1.01] duration-300',
+        'relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/5 to-white border border-primary/10 p-6 text-center',
         className
       )}
     >
