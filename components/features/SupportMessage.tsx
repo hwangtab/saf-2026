@@ -118,6 +118,18 @@ export default function SupportMessage({ className, totalSoldCount }: SupportMes
                 </div>
               ))}
             </div>
+            {/* 슬라이드 인디케이터 */}
+            <div className="flex justify-center gap-1.5 mt-3">
+              {Array.from({ length: TESTIMONIAL_COUNT }).map((_, i) => (
+                <span
+                  key={i}
+                  className={cn(
+                    'w-1.5 h-1.5 rounded-full transition-colors duration-500',
+                    i === testimonialIndex ? 'bg-primary/60' : 'bg-gray-300'
+                  )}
+                />
+              ))}
+            </div>
           </div>
         </div>
 
