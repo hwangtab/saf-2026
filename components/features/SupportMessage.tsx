@@ -90,13 +90,13 @@ export default function SupportMessage({ className, totalSoldCount }: SupportMes
 
         {/* 영역 2: 캠페인 메시지 + 증언 카드 */}
         <div className="w-full flex flex-col gap-4">
-          <p className="text-sm text-gray-600 break-keep leading-relaxed whitespace-pre-line text-left">
+          <p className="text-sm text-gray-600 break-keep leading-relaxed whitespace-pre-line text-center">
             {t('body')}
           </p>
 
           {/* 증언 카드 */}
-          <div className="w-full bg-gray-50/80 rounded-xl p-4 border-l-4 border-primary/30">
-            <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-3">
+          <div className="w-full bg-gray-50/80 rounded-xl p-4">
+            <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-3 text-center">
               {t('voiceLabel')}
             </p>
             <div className="relative min-h-[72px]" aria-live="polite">
@@ -105,14 +105,14 @@ export default function SupportMessage({ className, totalSoldCount }: SupportMes
                   key={i}
                   className={cn(
                     'transition-opacity duration-700',
-                    i === 0 ? '' : 'absolute inset-0 flex flex-col justify-center',
+                    i === 0 ? '' : 'absolute inset-0 flex flex-col items-center justify-center',
                     i === testimonialIndex ? 'opacity-100' : 'opacity-0 pointer-events-none'
                   )}
                 >
-                  <p className="text-sm text-gray-700 italic break-keep leading-relaxed">
+                  <p className="text-sm text-gray-700 italic break-keep leading-relaxed text-center">
                     &ldquo;{t(`testimonial${i}Quote` as 'testimonial0Quote')}&rdquo;
                   </p>
-                  <p className="text-xs text-gray-400 mt-1.5">
+                  <p className="text-xs text-gray-400 mt-1.5 text-center">
                     — {t(`testimonial${i}Author` as 'testimonial0Author')}
                   </p>
                 </div>

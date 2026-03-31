@@ -203,6 +203,8 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 displayPrice={localizedPrice}
               />
 
+              <SupportMessage totalSoldCount={totalSoldCount} />
+
               {/* Share Section */}
               <div className="flex items-center justify-center gap-2 py-4 border-y border-gray-100">
                 <span className="text-sm text-gray-500 mr-2">{t('share')}</span>
@@ -329,11 +331,6 @@ export default async function ArtworkDetailPage({ params }: Props) {
               {/* Related Articles */}
               <RelatedArticles articles={relatedArticles} />
             </div>
-          </div>
-
-          {/* Full-width: Campaign Support Message */}
-          <div className="mt-12">
-            <SupportMessage totalSoldCount={totalSoldCount} />
           </div>
 
           {/* Other Works by this Artist Section */}
