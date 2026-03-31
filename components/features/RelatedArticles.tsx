@@ -1,7 +1,4 @@
-'use client';
-
-import Link from 'next/link';
-import { useLocale, useTranslations } from 'next-intl';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { containsHangul } from '@/lib/search-utils';
 import type { Article } from '@/content/artist-articles';
 
@@ -9,9 +6,9 @@ interface RelatedArticlesProps {
   articles: Article[];
 }
 
-export default function RelatedArticles({ articles }: RelatedArticlesProps) {
-  const locale = useLocale();
-  const t = useTranslations('relatedArticles');
+export default async function RelatedArticles({ articles }: RelatedArticlesProps) {
+  const locale = (await getLocale()) === 'en' ? 'en' : 'ko';
+  const t = await getTranslations('relatedArticles');
 
   const localizeSource = (source: string): string => {
     if (locale !== 'en') return source;
@@ -57,7 +54,7 @@ export default function RelatedArticles({ articles }: RelatedArticlesProps) {
   }
 
   return (
-    <section className="bg-gray-50 p-6 rounded-xl">
+    <section className="rounded-xl border border-primary/10 p-6">
       <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">
         {t('sectionTitle')}
       </h3>
@@ -69,7 +66,7 @@ export default function RelatedArticles({ articles }: RelatedArticlesProps) {
           const localizedDescription = localizeDescription(article.description);
 
           return (
-            <Link
+            <a
               key={article.url}
               href={article.url}
               target="_blank"
@@ -105,7 +102,7 @@ export default function RelatedArticles({ articles }: RelatedArticlesProps) {
               <p className="text-sm text-charcoal-muted line-clamp-3 leading-relaxed">
                 {localizedDescription}
               </p>
-            </Link>
+            </a>
           );
         })}
       </div>
