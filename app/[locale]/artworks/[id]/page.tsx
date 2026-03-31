@@ -333,7 +333,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
 
           {/* Full-width: Campaign Support Message */}
           <div className="mt-12">
-            <SupportMessage />
+            <SupportMessage totalSoldCount={totalSoldCount} />
           </div>
 
           {/* Other Works by this Artist Section */}
