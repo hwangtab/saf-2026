@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 
 const STAT_COUNT = 4;
 const STAT_INTERVAL = 6000;
-const TESTIMONIAL_INTERVAL = 12000;
+const TESTIMONIAL_INTERVAL = 4000;
 
 interface SupportMessageProps {
   className?: string;
