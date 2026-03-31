@@ -60,7 +60,7 @@ export default function SupportMessage({ className, totalSoldCount }: SupportMes
         {/* 영역 1: 헤더 + 통계 */}
         <div className="flex flex-col items-center gap-3 w-full">
           <Sprout className="w-8 h-8 text-primary" />
-          <h3 className="font-bold text-gray-800 text-lg break-keep text-center">{t('title')}</h3>
+          <h3 className="font-bold text-gray-800 text-2xl break-keep text-center">{t('title')}</h3>
 
           {/* 순환 통계 콜아웃 */}
           <div className="w-full rounded-xl bg-primary/[0.08] py-3 px-4 relative min-h-[60px]">
