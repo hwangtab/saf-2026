@@ -51,18 +51,18 @@ export default function SupportMessage({ className, totalSoldCount }: SupportMes
   return (
     <div
       className={cn(
-        'relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/5 to-white border border-primary/10 p-6',
+        'relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/5 to-white border border-primary/10 p-8',
         className
       )}
     >
-      <div className="relative z-10 flex flex-col items-center gap-5">
+      <div className="relative z-10 flex flex-col items-center gap-6">
         {/* 영역 1: 헤더 + 통계 */}
-        <div className="flex flex-col items-center gap-3 w-full">
+        <div className="flex flex-col items-center gap-4 w-full">
           <Sprout className="w-8 h-8 text-primary" />
           <h3 className="font-bold text-gray-800 text-2xl break-keep text-center">{t('title')}</h3>
 
           {/* 순환 통계 콜아웃 */}
-          <div className="w-full rounded-xl bg-primary/[0.08] py-3 px-4 relative min-h-[60px]">
+          <div className="w-full rounded-xl bg-primary/[0.08] py-4 px-5 relative min-h-[60px]">
             <div aria-live="polite">
               {Array.from({ length: STAT_COUNT }).map((_, i) => (
                 <div
@@ -88,17 +88,17 @@ export default function SupportMessage({ className, totalSoldCount }: SupportMes
         </div>
 
         {/* 영역 2: 캠페인 메시지 + 증언 카드 */}
-        <div className="w-full flex flex-col gap-4">
+        <div className="w-full flex flex-col gap-5">
           <p className="text-sm text-gray-600 break-keep leading-relaxed whitespace-pre-line text-center">
             {t('body')}
           </p>
 
           {/* 증언 카드 */}
-          <div className="w-full bg-gray-50/80 rounded-xl p-4">
+          <div className="w-full bg-gray-50/80 rounded-xl p-5">
             <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-3 text-center">
               {t('voiceLabel')}
             </p>
-            <div className="relative min-h-[72px]" aria-live="polite">
+            <div className="relative min-h-[80px]" aria-live="polite">
               {Array.from({ length: TESTIMONIAL_COUNT }).map((_, i) => (
                 <div
                   key={i}
@@ -133,7 +133,7 @@ export default function SupportMessage({ className, totalSoldCount }: SupportMes
         </div>
 
         {/* 영역 3: 사회적 증거 */}
-        <div className="w-full flex flex-col items-center gap-3 pt-1 border-t border-primary/10">
+        <div className="w-full flex flex-col items-center gap-2 pt-4 border-t border-primary/10">
           {totalSoldCount && totalSoldCount > 0 ? (
             <p className="text-sm text-primary font-medium break-keep text-center">
               {t('soldCount', { count: totalSoldCount })}
