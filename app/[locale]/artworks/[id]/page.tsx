@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
 import { Suspense } from 'react';
-import dynamic from 'next/dynamic';
 import { Link } from '@/i18n/navigation';
 import { notFound } from 'next/navigation';
 import { getLocale, getTranslations } from 'next-intl/server';
@@ -32,10 +31,6 @@ import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import ArtworkCard from '@/components/ui/ArtworkCard';
 import ArtworkPurchaseCTA from '@/components/features/ArtworkPurchaseCTA';
 import { containsHangul } from '@/lib/search-utils';
-
-const PurchaseGuide = dynamic(() => import('@/components/features/PurchaseGuide'), {
-  loading: () => <div className="h-20 rounded-xl shimmer-loading" aria-hidden="true" />,
-});
 
 interface Props {
   params: Promise<{
@@ -207,6 +202,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 shopUrl={artwork.shopUrl}
                 sold={artwork.sold}
                 hasActionablePrice={hasActionablePrice}
+                hasOtherWorks={otherWorks.length > 0}
               />
 
               {/* Share Section */}
@@ -336,13 +332,6 @@ export default async function ArtworkDetailPage({ params }: Props) {
               <RelatedArticles articles={relatedArticles} />
             </div>
           </div>
-
-          {/* Full-width: Purchase Guide (only when purchase is possible) */}
-          {hasActionablePrice && !artwork.sold && (
-            <div className="mt-16 border-t border-gray-100 pt-12 lg:hidden">
-              <PurchaseGuide />
-            </div>
-          )}
 
           {/* Full-width: Campaign Support Message */}
           <div className="mt-12">

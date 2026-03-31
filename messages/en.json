@@ -197,7 +197,12 @@
     "otherWorks": "Other works by {artist}",
     "viewAll": "View All",
     "recentlySold": "Recently Sold",
-    "recentlySoldDesc": "{count} artworks sold recently"
+    "recentlySoldDesc": "{count} artworks sold recently",
+    "soldNotice": "This artwork has been sold",
+    "soldExploreOther": "Explore other works by this artist",
+    "soldExploreAll": "Browse other artworks",
+    "inquiryTitle": "Price & Purchase Inquiry",
+    "inquiryDescription": "If you're interested in this artwork, please contact us below."
   },
   "artistPage": {
     "notFound": "Artist not found",
