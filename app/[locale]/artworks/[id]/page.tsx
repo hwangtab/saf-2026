@@ -209,30 +209,30 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   <p className="text-center text-sm text-gray-500">{t('trustInline')}</p>
                 )}
 
-                {/* 신뢰배지 */}
-                <TrustBadges className="mb-4" />
-
                 {/* 온라인 구매 버튼 */}
                 {hasActionablePrice && artwork.shopUrl && !artwork.sold && (
                   <>
-                    <TrackClick
-                      event="purchase_click"
-                      properties={{
-                        artwork_id: artwork.id,
-                        artwork_title: artwork.title,
-                        artist: artwork.artist,
-                      }}
-                    >
-                      <LinkButton
-                        href={artwork.shopUrl}
-                        variant="primary"
-                        size="lg"
-                        external
-                        className="w-full text-lg gap-3 rounded-xl"
+                    <div className="flex flex-col gap-3">
+                      <TrustBadges />
+                      <TrackClick
+                        event="purchase_click"
+                        properties={{
+                          artwork_id: artwork.id,
+                          artwork_title: artwork.title,
+                          artist: artwork.artist,
+                        }}
                       >
-                        {t('buyOnline')}
-                      </LinkButton>
-                    </TrackClick>
+                        <LinkButton
+                          href={artwork.shopUrl}
+                          variant="primary"
+                          size="lg"
+                          external
+                          className="w-full text-lg gap-3 rounded-xl"
+                        >
+                          {t('buyOnline')}
+                        </LinkButton>
+                      </TrackClick>
+                    </div>
 
                     <div className="flex items-center gap-4">
                       <div className="flex-1 h-px bg-gray-200" />
@@ -327,27 +327,27 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   <>
                     <PurchaseGuide className="mb-4" />
 
-                    {/* 신뢰배지 */}
-                    <TrustBadges className="mb-4" />
-
-                    <TrackClick
-                      event="purchase_click"
-                      properties={{
-                        artwork_id: artwork.id,
-                        artwork_title: artwork.title,
-                        artist: artwork.artist,
-                      }}
-                    >
-                      <LinkButton
-                        href={artwork.shopUrl}
-                        variant="primary"
-                        size="lg"
-                        external
-                        className="w-full text-lg gap-3 rounded-xl"
+                    <div className="flex flex-col gap-3">
+                      <TrustBadges />
+                      <TrackClick
+                        event="purchase_click"
+                        properties={{
+                          artwork_id: artwork.id,
+                          artwork_title: artwork.title,
+                          artist: artwork.artist,
+                        }}
                       >
-                        {t('buyOnline')}
-                      </LinkButton>
-                    </TrackClick>
+                        <LinkButton
+                          href={artwork.shopUrl}
+                          variant="primary"
+                          size="lg"
+                          external
+                          className="w-full text-lg gap-3 rounded-xl"
+                        >
+                          {t('buyOnline')}
+                        </LinkButton>
+                      </TrackClick>
+                    </div>
 
                     <div className="flex items-center gap-4">
                       <div className="flex-1 h-px bg-gray-200" />
