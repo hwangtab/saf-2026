@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import LinkButton from '@/components/ui/LinkButton';
 import TrackClick from '@/components/common/TrackingLink';
 import TrustBadges from '@/components/features/TrustBadges';
-import { Phone, Mail } from 'lucide-react';
+import { Phone, Mail, CheckCircle } from 'lucide-react';
 
 const PurchaseGuide = dynamic(() => import('@/components/features/PurchaseGuide'), {
   loading: () => <div className="h-20 rounded-xl shimmer-loading" aria-hidden="true" />,
@@ -18,6 +18,32 @@ interface ArtworkPurchaseCTAProps {
   shopUrl?: string | null;
   sold?: boolean;
   hasActionablePrice: boolean;
+  hasOtherWorks?: boolean;
+}
+
+function ContactButtons() {
+  const t = useTranslations('artworkDetail');
+
+  return (
+    <div className="grid grid-cols-2 gap-4">
+      <LinkButton
+        href="tel:02-764-3114"
+        variant="accent"
+        leadingIcon={<Phone className="w-4 h-4" />}
+        iconLayout="fixed-left"
+      >
+        <span className="text-sm font-bold text-center">02-764-3114</span>
+      </LinkButton>
+      <LinkButton
+        href="mailto:contact@kosmart.org"
+        variant="accent"
+        leadingIcon={<Mail className="w-4 h-4" />}
+        iconLayout="fixed-left"
+      >
+        <span className="text-sm font-bold text-center">{t('emailInquiry')}</span>
+      </LinkButton>
+    </div>
+  );
 }
 
 export default function ArtworkPurchaseCTA({
@@ -27,17 +53,56 @@ export default function ArtworkPurchaseCTA({
   shopUrl,
   sold,
   hasActionablePrice,
+  hasOtherWorks,
 }: ArtworkPurchaseCTAProps) {
   const t = useTranslations('artworkDetail');
 
-  if (sold || !hasActionablePrice) return null;
+  // sold 상태: 판매 완료 안내 + 다른 작품 유도
+  if (sold) {
+    return (
+      <div className="space-y-4">
+        <div className="rounded-xl border border-gray-200 bg-gray-50 p-6 text-center">
+          <CheckCircle className="w-10 h-10 text-gray-400 mx-auto mb-3" />
+          <p className="text-lg font-bold text-charcoal mb-1">{t('soldNotice')}</p>
+          <p className="text-sm text-gray-500">{t('soldExploreOther')}</p>
+        </div>
+        {hasOtherWorks ? (
+          <LinkButton
+            href={`/artworks/artist/${encodeURIComponent(artist)}`}
+            variant="outline"
+            className="w-full"
+          >
+            {t('viewAll')} →
+          </LinkButton>
+        ) : (
+          <LinkButton href="/artworks" variant="outline" className="w-full">
+            {t('soldExploreAll')} →
+          </LinkButton>
+        )}
+      </div>
+    );
+  }
 
+  // "문의" 가격 (hasActionablePrice=false): 연락처만 표시
+  if (!hasActionablePrice) {
+    return (
+      <div className="space-y-4">
+        <div className="rounded-xl border border-gray-200 bg-gray-50 p-5 text-center">
+          <p className="text-base font-bold text-charcoal mb-1">{t('inquiryTitle')}</p>
+          <p className="text-sm text-gray-500">{t('inquiryDescription')}</p>
+        </div>
+        <ContactButtons />
+      </div>
+    );
+  }
+
+  // 구매 가능 작품
   return (
     <div className="space-y-6">
       {/* Branch A: 온라인 구매 가능 */}
       {shopUrl && (
         <>
-          <PurchaseGuide className="hidden lg:block mb-4" />
+          <PurchaseGuide className="mb-4" />
 
           <div className="flex flex-col gap-3">
             <TrustBadges />
@@ -72,7 +137,7 @@ export default function ArtworkPurchaseCTA({
       {/* Branch B: 구매 링크 없음 - 문의 안내 */}
       {!shopUrl && (
         <>
-          <PurchaseGuide className="hidden lg:block mb-6" />
+          <PurchaseGuide className="mb-6" />
 
           <div className="bg-white rounded-xl p-6 text-center border border-gray-200 shadow-sm">
             <h3 className="text-lg font-bold text-charcoal mb-4">{t('wantToBuy')}</h3>
@@ -113,24 +178,7 @@ export default function ArtworkPurchaseCTA({
       )}
 
       {/* 공통: 연락처 */}
-      <div className="grid grid-cols-2 gap-4">
-        <LinkButton
-          href="tel:02-764-3114"
-          variant="accent"
-          leadingIcon={<Phone className="w-4 h-4" />}
-          iconLayout="fixed-left"
-        >
-          <span className="text-sm font-bold text-center">02-764-3114</span>
-        </LinkButton>
-        <LinkButton
-          href="mailto:contact@kosmart.org"
-          variant="accent"
-          leadingIcon={<Mail className="w-4 h-4" />}
-          iconLayout="fixed-left"
-        >
-          <span className="text-sm font-bold text-center">{t('emailInquiry')}</span>
-        </LinkButton>
-      </div>
+      <ContactButtons />
     </div>
   );
 }
