@@ -6,13 +6,13 @@ import { Sprout } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const STAT_COUNT = 4;
-const TESTIMONIAL_COUNT = 5;
 const STAT_INTERVAL = 6000;
 const TESTIMONIAL_INTERVAL = 12000;
 
 interface SupportMessageProps {
   className?: string;
   totalSoldCount?: number;
+  testimonials: { quote: string; author: string }[];
 }
 
 function useReducedMotion() {
@@ -41,12 +41,20 @@ function useCycleIndex(count: number, interval: number, enabled: boolean) {
   return index;
 }
 
-export default function SupportMessage({ className, totalSoldCount }: SupportMessageProps) {
+export default function SupportMessage({
+  className,
+  totalSoldCount,
+  testimonials,
+}: SupportMessageProps) {
   const t = useTranslations('support');
   const reducedMotion = useReducedMotion();
 
   const statIndex = useCycleIndex(STAT_COUNT, STAT_INTERVAL, !reducedMotion);
-  const testimonialIndex = useCycleIndex(TESTIMONIAL_COUNT, TESTIMONIAL_INTERVAL, !reducedMotion);
+  const testimonialIndex = useCycleIndex(
+    testimonials.length,
+    TESTIMONIAL_INTERVAL,
+    !reducedMotion && testimonials.length > 0
+  );
 
   return (
     <div
@@ -99,7 +107,7 @@ export default function SupportMessage({ className, totalSoldCount }: SupportMes
               {t('voiceLabel')}
             </p>
             <div className="relative min-h-[80px]" aria-live="polite">
-              {Array.from({ length: TESTIMONIAL_COUNT }).map((_, i) => (
+              {testimonials.map((item, i) => (
                 <div
                   key={i}
                   className={cn(
@@ -109,17 +117,15 @@ export default function SupportMessage({ className, totalSoldCount }: SupportMes
                   )}
                 >
                   <p className="text-sm text-gray-700 italic break-keep leading-relaxed text-center">
-                    &ldquo;{t(`testimonial${i}Quote` as 'testimonial0Quote')}&rdquo;
+                    &ldquo;{item.quote}&rdquo;
                   </p>
-                  <p className="text-xs text-gray-400 mt-1.5 text-center">
-                    — {t(`testimonial${i}Author` as 'testimonial0Author')}
-                  </p>
+                  <p className="text-xs text-gray-400 mt-1.5 text-center">— {item.author}</p>
                 </div>
               ))}
             </div>
             {/* 슬라이드 인디케이터 */}
             <div className="flex justify-center gap-1.5 mt-3">
-              {Array.from({ length: TESTIMONIAL_COUNT }).map((_, i) => (
+              {testimonials.map((_, i) => (
                 <span
                   key={i}
                   className={cn(
