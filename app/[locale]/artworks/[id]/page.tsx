@@ -9,6 +9,7 @@ import {
   getSupabaseArtworkById,
   getRecentlySoldArtworks,
   getTotalSoldCount,
+  getSupabaseTestimonials,
 } from '@/lib/supabase-data';
 import RecentlySoldSection from '@/components/features/RecentlySoldSection';
 import Section from '@/components/ui/Section';
@@ -69,17 +70,26 @@ export default async function ArtworkDetailPage({ params }: Props) {
   const { id } = await params;
 
   // Parallel fetch: artwork detail + all artworks (cached) to avoid waterfall
-  const [artwork, allArtworks, recentlySold, totalSoldCount, t] = await Promise.all([
-    getSupabaseArtworkById(id),
-    getSupabaseArtworks(),
-    getRecentlySoldArtworks(3, id),
-    getTotalSoldCount(),
-    getTranslations('artworkDetail'),
-  ]);
+  const [artwork, allArtworks, recentlySold, totalSoldCount, testimonialCategories, t] =
+    await Promise.all([
+      getSupabaseArtworkById(id),
+      getSupabaseArtworks(),
+      getRecentlySoldArtworks(3, id),
+      getTotalSoldCount(),
+      getSupabaseTestimonials(),
+      getTranslations('artworkDetail'),
+    ]);
 
   if (!artwork) {
     notFound();
   }
+
+  const flatTestimonials = testimonialCategories
+    .flatMap((c) => c.items)
+    .map((item) => ({
+      quote: item.quote.replace(/<\/?strong>/g, ''),
+      author: item.author,
+    }));
 
   const otherWorks = allArtworks
     .filter((a) => a.artist === artwork.artist && a.id !== artwork.id)
@@ -203,7 +213,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 displayPrice={localizedPrice}
               />
 
-              <SupportMessage totalSoldCount={totalSoldCount} />
+              <SupportMessage testimonials={flatTestimonials} totalSoldCount={totalSoldCount} />
 
               {/* Share Section */}
               <div className="flex items-center justify-center gap-2 py-4 border-y border-gray-100">
