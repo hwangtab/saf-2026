@@ -210,7 +210,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 )}
 
                 {/* 신뢰배지 */}
-                <TrustBadges />
+                <TrustBadges className="mb-4" />
 
                 {/* 온라인 구매 버튼 */}
                 {hasActionablePrice && artwork.shopUrl && !artwork.sold && (
@@ -328,7 +328,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                     <PurchaseGuide className="mb-4" />
 
                     {/* 신뢰배지 */}
-                    <TrustBadges className="mb-2" />
+                    <TrustBadges className="mb-4" />
 
                     <TrackClick
                       event="purchase_click"
