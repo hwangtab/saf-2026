@@ -1,6 +1,6 @@
 'use client';
 
-import { memo } from 'react';
+import { memo, useRef, useEffect } from 'react';
 import { Link } from '@/i18n/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import SafeImage from '@/components/common/SafeImage';
@@ -121,6 +121,28 @@ function ArtworkCard({
   const config = VARIANT_CONFIG[variant];
   const isAboveFold =
     variant === 'gallery' && typeof priorityIndex === 'number' && priorityIndex < 3;
+
+  const imageContainerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const container = imageContainerRef.current;
+    if (!container) return;
+
+    const img = container.querySelector('img');
+    if (!img) return;
+
+    const hideShimmer = () => {
+      const shimmer = container.querySelector('.shimmer-loading') as HTMLElement | null;
+      if (shimmer) shimmer.style.display = 'none';
+    };
+
+    if (img.complete && img.naturalWidth > 0) {
+      hideShimmer();
+      return;
+    }
+
+    img.addEventListener('load', hideShimmer, { once: true });
+    return () => img.removeEventListener('load', hideShimmer);
+  }, []);
   const isDisplayable = (value: string | undefined): value is string => Boolean(value);
 
   const untitledLabel = t('untitled');
@@ -189,7 +211,7 @@ function ArtworkCard({
       )}
     >
       <Link href={getHref(artwork, returnTo)} className="block h-full">
-        <div className="relative w-full overflow-hidden aspect-[4/5]">
+        <div ref={imageContainerRef} className="relative w-full overflow-hidden aspect-[4/5]">
           <div className="absolute inset-0 shimmer-loading" />
           <SafeImage
             src={getImageSrc(artwork, variant)}

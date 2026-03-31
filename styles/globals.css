@@ -222,4 +222,12 @@ button:focus:not(:focus-visible) {
   .hover\:shadow-lg:hover {
     box-shadow: none;
   }
+
+  /* Remove unnecessary GPU layer promotion for gallery card images — hover scale is already disabled above */
+  .group .transform {
+    transform: none !important;
+  }
+  .group .transition-transform {
+    transition-property: none !important;
+  }
 }
