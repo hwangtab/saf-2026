@@ -203,6 +203,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 sold={artwork.sold}
                 hasActionablePrice={hasActionablePrice}
                 hasOtherWorks={otherWorks.length > 0}
+                displayPrice={localizedPrice}
               />
 
               {/* Share Section */}

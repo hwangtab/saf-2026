@@ -19,16 +19,17 @@ interface ArtworkPurchaseCTAProps {
   sold?: boolean;
   hasActionablePrice: boolean;
   hasOtherWorks?: boolean;
+  displayPrice?: string | null;
 }
 
 function ContactButtons() {
   const t = useTranslations('artworkDetail');
 
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-2 gap-3">
       <LinkButton
         href="tel:02-764-3114"
-        variant="accent"
+        variant="outline"
         leadingIcon={<Phone className="w-4 h-4" />}
         iconLayout="fixed-left"
       >
@@ -36,7 +37,7 @@ function ContactButtons() {
       </LinkButton>
       <LinkButton
         href="mailto:contact@kosmart.org"
-        variant="accent"
+        variant="outline"
         leadingIcon={<Mail className="w-4 h-4" />}
         iconLayout="fixed-left"
       >
@@ -54,40 +55,41 @@ export default function ArtworkPurchaseCTA({
   sold,
   hasActionablePrice,
   hasOtherWorks,
+  displayPrice,
 }: ArtworkPurchaseCTAProps) {
   const t = useTranslations('artworkDetail');
 
-  // sold 상태: 판매 완료 안내 + 다른 작품 유도
+  // D분기: sold — 판매 완료 안내
   if (sold) {
     return (
-      <div className="space-y-4">
-        <div className="rounded-xl border border-gray-200 bg-gray-50 p-6 text-center">
-          <CheckCircle className="w-10 h-10 text-gray-400 mx-auto mb-3" />
+      <div className="rounded-2xl border border-gray-200 bg-gradient-to-b from-green-50/50 to-white p-6 shadow-sm">
+        <div className="text-center">
+          <CheckCircle className="w-10 h-10 text-green-500 mx-auto mb-3" />
           <p className="text-lg font-bold text-charcoal mb-1">{t('soldNotice')}</p>
-          <p className="text-sm text-gray-500">{t('soldExploreOther')}</p>
+          <p className="text-sm text-gray-500 mb-4">{t('soldExploreOther')}</p>
+          {hasOtherWorks ? (
+            <LinkButton
+              href={`/artworks/artist/${encodeURIComponent(artist)}`}
+              variant="outline"
+              className="w-full"
+            >
+              {t('viewAll')} →
+            </LinkButton>
+          ) : (
+            <LinkButton href="/artworks" variant="outline" className="w-full">
+              {t('soldExploreAll')} →
+            </LinkButton>
+          )}
         </div>
-        {hasOtherWorks ? (
-          <LinkButton
-            href={`/artworks/artist/${encodeURIComponent(artist)}`}
-            variant="outline"
-            className="w-full"
-          >
-            {t('viewAll')} →
-          </LinkButton>
-        ) : (
-          <LinkButton href="/artworks" variant="outline" className="w-full">
-            {t('soldExploreAll')} →
-          </LinkButton>
-        )}
       </div>
     );
   }
 
-  // "문의" 가격 (hasActionablePrice=false): 연락처만 표시
+  // C분기: "문의" 가격 — 연락처 강조
   if (!hasActionablePrice) {
     return (
-      <div className="space-y-4">
-        <div className="rounded-xl border border-gray-200 bg-gray-50 p-5 text-center">
+      <div className="rounded-2xl border border-primary/15 bg-gradient-to-b from-primary/5 to-white p-6 shadow-sm space-y-4">
+        <div className="text-center">
           <p className="text-base font-bold text-charcoal mb-1">{t('inquiryTitle')}</p>
           <p className="text-sm text-gray-500">{t('inquiryDescription')}</p>
         </div>
@@ -96,74 +98,57 @@ export default function ArtworkPurchaseCTA({
     );
   }
 
-  // 구매 가능 작품
+  // A분기 + B분기: 가격 있는 작품
   return (
-    <div className="space-y-6">
-      {/* Branch A: 온라인 구매 가능 */}
+    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm space-y-5">
+      {/* 가격 — 최상단 */}
+      {displayPrice && (
+        <div className="text-center">
+          <p className="text-2xl font-bold text-charcoal">{displayPrice}</p>
+        </div>
+      )}
+
+      {/* A분기: 온라인 구매 가능 */}
       {shopUrl && (
         <>
-          <PurchaseGuide className="mb-4" />
-
-          <div className="flex flex-col gap-3">
-            <TrustBadges />
-            <TrackClick
-              event="purchase_click"
-              properties={{
-                artwork_id: artworkId,
-                artwork_title: artworkTitle,
-                artist: artist,
-              }}
+          <TrackClick
+            event="purchase_click"
+            properties={{
+              artwork_id: artworkId,
+              artwork_title: artworkTitle,
+              artist: artist,
+            }}
+          >
+            <LinkButton
+              href={shopUrl}
+              variant="primary"
+              size="lg"
+              external
+              className="w-full text-lg gap-3 rounded-xl shadow-[0_0_20px_rgba(33,118,255,0.15)]"
             >
-              <LinkButton
-                href={shopUrl}
-                variant="primary"
-                size="lg"
-                external
-                className="w-full text-lg gap-3 rounded-xl"
-              >
-                {t('buyOnline')}
-              </LinkButton>
-            </TrackClick>
-          </div>
+              {t('buyOnline')}
+            </LinkButton>
+          </TrackClick>
+
+          <TrustBadges />
 
           <div className="flex items-center gap-4">
             <div className="flex-1 h-px bg-gray-200" />
             <span className="text-gray-400 text-sm">{t('orContactDirectly')}</span>
             <div className="flex-1 h-px bg-gray-200" />
           </div>
+
+          <ContactButtons />
+
+          <PurchaseGuide />
         </>
       )}
 
-      {/* Branch B: 구매 링크 없음 - 문의 안내 */}
+      {/* B분기: shopUrl 없음 — 문의 안내 */}
       {!shopUrl && (
         <>
-          <PurchaseGuide className="mb-6" />
-
-          <div className="bg-white rounded-xl p-6 text-center border border-gray-200 shadow-sm">
-            <h3 className="text-lg font-bold text-charcoal mb-4">{t('wantToBuy')}</h3>
-            <div className="flex justify-center items-center gap-2 text-xs text-gray-500 mb-6">
-              <div className="flex flex-col items-center gap-2">
-                <span className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center font-bold text-primary shadow-sm">
-                  1
-                </span>
-                <span>{t('stepInquiry')}</span>
-              </div>
-              <div className="w-12 h-px bg-gray-300 mb-4"></div>
-              <div className="flex flex-col items-center gap-2">
-                <span className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center font-bold text-gray-400 shadow-sm">
-                  2
-                </span>
-                <span>{t('stepPayment')}</span>
-              </div>
-              <div className="w-12 h-px bg-gray-300 mb-4"></div>
-              <div className="flex flex-col items-center gap-2">
-                <span className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center font-bold text-gray-400 shadow-sm">
-                  3
-                </span>
-                <span>{t('stepDelivery')}</span>
-              </div>
-            </div>
-            <p className="text-sm text-gray-600 mb-0 word-keep leading-relaxed">
+          <div className="rounded-xl bg-gray-50 p-4 text-center">
+            <p className="text-sm text-gray-600 word-keep leading-relaxed">
               {t('noShopDescription')}
               <br />
               <span className="font-semibold text-charcoal">{t('noShopContact')}</span>
@@ -174,11 +159,12 @@ export default function ArtworkPurchaseCTA({
               })}
             </p>
           </div>
+
+          <ContactButtons />
+
+          <PurchaseGuide />
         </>
       )}
-
-      {/* 공통: 연락처 */}
-      <ContactButtons />
     </div>
   );
 }
