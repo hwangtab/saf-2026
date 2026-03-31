@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Sprout } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import LinkButton from '@/components/ui/LinkButton';
 
 const STAT_COUNT = 4;
 const TESTIMONIAL_COUNT = 5;
@@ -133,7 +132,7 @@ export default function SupportMessage({ className, totalSoldCount }: SupportMes
           </div>
         </div>
 
-        {/* 영역 3: 사회적 증거 + CTA */}
+        {/* 영역 3: 사회적 증거 */}
         <div className="w-full flex flex-col items-center gap-3 pt-1 border-t border-primary/10">
           {totalSoldCount && totalSoldCount > 0 ? (
             <p className="text-sm text-primary font-medium break-keep text-center">
@@ -143,9 +142,6 @@ export default function SupportMessage({ className, totalSoldCount }: SupportMes
           <p className="text-xs text-primary-strong break-keep font-medium opacity-80 text-center">
             {t('footer')}
           </p>
-          <LinkButton href="/artworks" variant="outline">
-            {t('exploreArtworks')}
-          </LinkButton>
         </div>
       </div>
 
