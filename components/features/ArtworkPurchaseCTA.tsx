@@ -103,8 +103,9 @@ export default function ArtworkPurchaseCTA({
     <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm space-y-5">
       {/* 가격 — 최상단 */}
       {displayPrice && (
-        <div className="text-center">
-          <p className="text-2xl font-bold text-charcoal">{displayPrice}</p>
+        <div className="text-center pb-4 border-b border-gray-100">
+          <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">{t('artworkPrice')}</p>
+          <p className="text-3xl font-bold text-charcoal">{displayPrice}</p>
         </div>
       )}
 

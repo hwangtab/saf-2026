@@ -188,9 +188,6 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   <p id="artist-name-mobile" className="text-lg text-gray-600 font-medium">
                     {displayArtist}
                   </p>
-                  {localizedPrice && (
-                    <p className="text-xl font-bold text-charcoal">{localizedPrice}</p>
-                  )}
                 </div>
               </div>
 

@@ -202,7 +202,8 @@
     "soldExploreOther": "같은 작가의 다른 작품을 살펴보세요",
     "soldExploreAll": "다른 출품작 보기",
     "inquiryTitle": "가격 및 구매 문의",
-    "inquiryDescription": "이 작품에 관심이 있으시면 아래 연락처로 문의해 주세요."
+    "inquiryDescription": "이 작품에 관심이 있으시면 아래 연락처로 문의해 주세요.",
+    "artworkPrice": "작품 가격"
   },
   "artistPage": {
     "notFound": "작가를 찾을 수 없습니다",
