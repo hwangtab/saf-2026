@@ -1,15 +1,16 @@
 import type { Metadata } from 'next';
 import { getLocale, getTranslations } from 'next-intl/server';
-import SafeImage from '@/components/common/SafeImage';
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
+import { Link } from '@/i18n/navigation';
 import LinkButton from '@/components/ui/LinkButton';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
-import ActionCard from '@/components/ui/ActionCard';
-import BackgroundSlider from '@/components/features/BackgroundSlider';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
+import HeroGalleryGrid from '@/components/features/HeroGalleryGrid';
+import BackgroundSlider from '@/components/features/BackgroundSlider';
+import SafeImage from '@/components/common/SafeImage';
 import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL } from '@/lib/constants';
 import {
   generateExhibitionSchema,
@@ -18,10 +19,15 @@ import {
 } from '@/lib/seo-utils';
 import { generateArtworkPurchaseHowTo, generateMemberJoinHowTo } from '@/lib/schemas/howto';
 import { generateSAFCoreQA } from '@/lib/schemas/qa-page';
-import { getSupabaseHomepageArtworks, getSupabaseFAQs } from '@/lib/supabase-data';
+import {
+  getSupabaseHomepageArtworks,
+  getSupabaseArtworksByCategories,
+  getSupabaseFAQs,
+} from '@/lib/supabase-data';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { formatCurrentDate } from '@/lib/utils/format-date';
+import type { Artwork } from '@/types';
 
 export const revalidate = 1800;
 
@@ -35,9 +41,12 @@ const ArtworkHighlightSlider = dynamic(
   () => import('@/components/features/ArtworkHighlightSlider'),
   {
     loading: () => (
-      <Section variant="canvas-soft" className="py-16 md:py-24 overflow-hidden">
-        <div className="container-max h-[300px] rounded-xl bg-white/70" aria-hidden="true" />
-      </Section>
+      <section className="bg-charcoal py-16 md:py-24 overflow-hidden">
+        <div
+          className="container-max h-[300px] rounded-xl bg-white/10 animate-pulse"
+          aria-hidden="true"
+        />
+      </section>
     ),
   }
 );
@@ -79,222 +88,98 @@ export default async function Home() {
   const locale = (await getLocale()) === 'en' ? 'en' : 'ko';
   const t = await getTranslations('home');
   const tStat = await getTranslations('statistics');
+
   const counterItems = [
     { label: tStat('exclusionRate'), value: 84.9, unit: tStat('unitPercent') },
     { label: tStat('predatoryLending'), value: 48.6, unit: tStat('unitPercent') },
     { label: tStat('repaymentRate'), value: 95, unit: tStat('unitPercent') },
   ];
 
-  const heroTitleLines = t('heroTitle').split('\n');
-  const heroDescLines = t('heroDescription').split('\n');
-
   return (
     <>
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center pt-12 pb-12 md:pt-20 md:pb-20">
-        <div
-          data-hero-sentinel="true"
-          aria-hidden="true"
-          className="absolute top-0 left-0 h-px w-px"
-        />
-        <BackgroundSlider />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-black/35 pointer-events-none" />
-        <SawtoothDivider position="bottom" colorClass="text-canvas-soft" />
-        <div className="relative z-10 container-max text-center">
-          <div className="mb-8 hidden md:flex justify-center">
-            <SafeImage
-              src="/images/logo/320pxX90px_white.webp"
-              alt={t('logoAlt')}
-              width={1120}
-              height={320}
-              className="w-72 md:w-[42rem] xl:w-[48rem] h-auto drop-shadow-2xl"
-              priority
-              placeholder="empty"
-            />
-          </div>
-          <h1
-            className="mt-8 md:mt-0 font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-4 leading-tight text-white drop-shadow-lg text-balance motion-safe:opacity-0 motion-safe:animate-fade-in-up"
-            style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}
-          >
-            {heroTitleLines.map((line, i) => (
-              <span key={i}>
-                {i > 0 && <br />}
-                {line}
-              </span>
-            ))}
-          </h1>
-          <p
-            className="text-xl md:text-2xl text-white/90 mb-10 max-w-2xl mx-auto leading-relaxed drop-shadow-lg break-keep text-balance motion-safe:opacity-0 motion-safe:animate-fade-in-up"
-            style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}
-          >
-            {heroDescLines.map((line, i) => (
-              <span key={i}>
-                {i > 0 && <br className="hidden md:block" />}
-                {line}
-              </span>
-            ))}
-          </p>
-
-          <div
-            className="flex justify-center mb-6 motion-safe:opacity-0 motion-safe:animate-fade-in-up"
-            style={{ animationDelay: '0.5s', animationFillMode: 'forwards' }}
-          >
-            <span className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20 rounded-full px-5 py-2 text-sm text-white font-medium">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-400" />
-              </span>
-              {t('alwaysAvailable', { date: formatCurrentDate(locale) })}
-            </span>
-          </div>
-
-          <div
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8 motion-safe:opacity-0 motion-safe:animate-fade-in-up"
-            style={{ animationDelay: '0.6s', animationFillMode: 'forwards' }}
-          >
-            <LinkButton
-              href="/artworks"
-              variant="accent"
-              size="lg"
-              className="w-full sm:w-auto shadow-lg min-w-[200px] justify-center text-lg"
-            >
-              {t('viewArtworks')}
-            </LinkButton>
-            <LinkButton
-              href="/our-reality"
-              variant="outline-white"
-              size="lg"
-              className="w-full sm:w-auto backdrop-blur-sm min-w-[160px] justify-center"
-            >
-              {t('aboutSaf')}
-            </LinkButton>
-          </div>
-
-          <div className="flex justify-center">
-            <ShareButtonsWrapper
-              url={SITE_URL}
-              title={t('shareTitle')}
-              description={t('shareDescription')}
-            />
-          </div>
-        </div>
-      </section>
-
-      <Suspense fallback={<HomeDataSectionsFallback />}>
-        <HomeDataSections counterItems={counterItems} locale={locale} />
+      {/* Gallery Wall Hero */}
+      <Suspense fallback={<HeroFallback />}>
+        <HeroSection locale={locale} />
       </Suspense>
 
-      {/* Call to Action Section (Moved Up) */}
-      <Section variant="accent-soft" prevVariant="white" className="pb-24">
+      {/* Mission Banner */}
+      <Section variant="canvas-soft" padding="sm">
+        <div className="container-max text-center py-4 md:py-6">
+          <p className="text-charcoal text-xl md:text-2xl font-semibold break-keep mb-6">
+            {t('missionBanner')}
+          </p>
+          {/* 3-step flow */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-0 mb-6">
+            {/* Step 1 */}
+            <div className="flex items-center gap-2 bg-white rounded-xl px-5 py-3 shadow-sm">
+              <span className="text-2xl" aria-hidden="true">
+                🎨
+              </span>
+              <span className="text-sm font-semibold text-charcoal">{t('missionStep1')}</span>
+            </div>
+            <span className="text-charcoal-soft text-xl font-light hidden sm:block mx-3">→</span>
+            <span className="text-charcoal-soft text-lg font-light sm:hidden">↓</span>
+            {/* Step 2 */}
+            <div className="flex items-center gap-2 bg-white rounded-xl px-5 py-3 shadow-sm">
+              <span className="text-2xl" aria-hidden="true">
+                💰
+              </span>
+              <span className="text-sm font-semibold text-charcoal">{t('missionStep2')}</span>
+            </div>
+            <span className="text-charcoal-soft text-xl font-light hidden sm:block mx-3">→</span>
+            <span className="text-charcoal-soft text-lg font-light sm:hidden">↓</span>
+            {/* Step 3 */}
+            <div className="flex items-center gap-2 bg-primary/10 rounded-xl px-5 py-3 shadow-sm border border-primary/20">
+              <span className="text-2xl" aria-hidden="true">
+                🤝
+              </span>
+              <span className="text-sm font-semibold text-primary-a11y">{t('missionStep3')}</span>
+            </div>
+          </div>
+          <Link
+            href="/our-reality"
+            className="inline-flex items-center gap-1 text-sm text-charcoal-muted hover:text-primary transition-colors border-b border-charcoal-muted/30 hover:border-primary pb-0.5"
+          >
+            {t('missionLearnMore')} →
+          </Link>
+        </div>
+      </Section>
+
+      {/* Category Artwork Sections */}
+      <Suspense fallback={<CategorySectionsFallback />}>
+        <CategorySections />
+      </Suspense>
+
+      {/* Impact Stats + CTA */}
+      <Section variant="white" prevVariant="canvas-soft" className="pb-20">
         <div className="container-max">
-          <SectionTitle className="mb-12">{t('joinCta')}</SectionTitle>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-            <ActionCard
+          <SectionTitle className="mb-12">{t('statsTitle')}</SectionTitle>
+          <DynamicCounter items={counterItems} locale={locale} />
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-12">
+            <LinkButton
               href={EXTERNAL_LINKS.JOIN_MEMBER}
               external
-              icon="🤝"
-              title={t('joinMember')}
-              description={t('joinMemberDesc')}
-              linkText={t('joinMemberLink')}
-            />
-
-            <ActionCard
-              href="/artworks"
-              icon="🎨"
-              title={t('buyArtwork')}
-              description={t('buyArtworkDesc')}
-              linkText={t('buyArtworkLink')}
-            />
-
-            <ActionCard
-              href="/archive"
-              icon="🏛️"
-              title={t('archiveTitle')}
-              description={t('archiveDesc')}
-              linkText={t('archiveLink')}
-            />
+              variant="primary"
+              size="lg"
+              className="w-full sm:w-auto justify-center min-w-[180px]"
+            >
+              {t('joinMemberLink')}
+            </LinkButton>
+            <LinkButton
+              href={EXTERNAL_LINKS.LOAN_INFO}
+              external
+              variant="accent"
+              size="lg"
+              className="w-full sm:w-auto justify-center min-w-[180px]"
+            >
+              {t('applyLoan')}
+            </LinkButton>
           </div>
         </div>
       </Section>
 
-      {/* Problem Section */}
-      <Section variant="sun-soft" prevVariant="accent-soft">
-        <div className="container-max">
-          <SectionTitle className="mb-12">{t('problemTitle')}</SectionTitle>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-            <div className="space-y-4">
-              <h3 className="text-card-title text-charcoal">{t('problemFinancial')}</h3>
-              <p className="text-charcoal leading-relaxed">{t('problemFinancialDesc')}</p>
-            </div>
-            <div className="space-y-4">
-              <h3 className="text-card-title text-charcoal">{t('problemDebt')}</h3>
-              <p className="text-charcoal leading-relaxed">{t('problemDebtDesc')}</p>
-            </div>
-            <div className="space-y-4">
-              <h3 className="text-card-title text-charcoal">{t('problemDamage')}</h3>
-              <p className="text-charcoal leading-relaxed">{t('problemDamageDesc')}</p>
-            </div>
-            <div className="md:col-span-2 bg-white/70 rounded-xl p-6 md:p-8 space-y-4">
-              <h3 className="text-card-title text-charcoal">{t('problemSolution')}</h3>
-              <p className="text-charcoal leading-relaxed">
-                {t.rich('problemSolutionDesc', {
-                  orgLink: (chunks) => (
-                    <a
-                      href={EXTERNAL_LINKS.KOSMART_HOME}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:underline"
-                    >
-                      {chunks}
-                    </a>
-                  ),
-                })}
-              </p>
-            </div>
-          </div>
-        </div>
-      </Section>
-
-      {/* Solution Section */}
-      <Section variant="primary-surface" prevVariant="sun-soft" className="pb-32">
-        <div className="container-max">
-          <SectionTitle className="mb-12">{t('solutionTitle')}</SectionTitle>
-          <div className="bg-white rounded-lg shadow-lg p-8 md:p-12 max-w-3xl mx-auto text-balance text-center md:text-left">
-            <div className="mb-8">
-              <h3 className="text-card-title text-charcoal mb-4">{t('solutionTrust')}</h3>
-              <p className="text-charcoal-muted leading-relaxed mb-4">
-                {t.rich('solutionTrustDesc', {
-                  orgLink: (chunks) => (
-                    <a
-                      href={EXTERNAL_LINKS.KOSMART_HOME}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:underline"
-                    >
-                      {chunks}
-                    </a>
-                  ),
-                })}
-              </p>
-            </div>
-            <div className="border-t pt-8">
-              <p className="text-charcoal mb-6">{t('solutionProof')}</p>
-              <LinkButton
-                href={EXTERNAL_LINKS.LOAN_INFO}
-                external
-                variant="accent"
-                size="md"
-                className="w-full md:w-auto justify-center"
-              >
-                {t('applyLoan')}
-              </LinkButton>
-            </div>
-          </div>
-        </div>
-      </Section>
-
-      {/* FAQ Section */}
-      <Section variant="sun-soft" prevVariant="primary-surface" className="pb-24 md:pb-32">
+      {/* FAQ */}
+      <Section variant="sun-soft" prevVariant="white" className="pb-24 md:pb-32">
         <div className="container-max">
           <SectionTitle className="mb-12">{t('faqTitle')}</SectionTitle>
           <Suspense
@@ -307,31 +192,170 @@ export default async function Home() {
         </div>
       </Section>
 
-      {/* ExhibitionEvent JSON-LD Schema using Component */}
+      {/* JSON-LD schemas */}
       <JsonLdScript data={generateExhibitionSchema([], locale)} />
-      {/* FundingScheme JSON-LD for campaign Rich Results */}
       <JsonLdScript data={generateCampaignSchema(locale)} />
-      {/* AEO/GEO: HowTo + QAPage schemas for AI engine optimization */}
       <JsonLdScript data={generateArtworkPurchaseHowTo(locale)} />
       <JsonLdScript data={generateMemberJoinHowTo(locale)} />
       <JsonLdScript data={generateSAFCoreQA(locale)} />
+
+      {/* Share buttons (hidden, for metadata) */}
+      <div className="hidden">
+        <ShareButtonsWrapper
+          url={SITE_URL}
+          title={t('shareTitle')}
+          description={t('shareDescription')}
+        />
+      </div>
     </>
   );
 }
 
-async function HomeDataSections({
-  counterItems,
-  locale,
-}: {
-  counterItems: { label: string; value: number; unit: string }[];
-  locale: 'ko' | 'en';
-}) {
-  const sliderArtworks = await getSupabaseHomepageArtworks(30);
+// ─── Async server sub-components ──────────────────────────────────────────────
+
+async function HeroSection({ locale }: { locale: 'ko' | 'en' }) {
+  const t = await getTranslations('home');
+  const artworks = await getSupabaseHomepageArtworks(16);
+
+  return (
+    <section className="relative overflow-hidden">
+      <BackgroundSlider />
+      <SawtoothDivider position="bottom" colorClass="text-canvas-soft" />
+      <div className="relative z-10 container-max pt-16 pb-24 md:pt-20 md:pb-32">
+        {/* Logo */}
+        <div className="mb-6 hidden md:flex justify-center">
+          <SafeImage
+            src="/images/logo/320pxX90px_white.webp"
+            alt={t('logoAlt')}
+            width={1120}
+            height={320}
+            className="w-64 md:w-[36rem] h-auto drop-shadow-2xl"
+            priority
+            placeholder="empty"
+          />
+        </div>
+
+        {/* Title */}
+        <div className="mb-8 text-center">
+          <h1
+            className="font-display text-3xl sm:text-4xl md:text-5xl text-white mb-3 leading-tight drop-shadow-lg motion-safe:opacity-0 motion-safe:animate-fade-in-up"
+            style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}
+          >
+            {t('heroGalleryTitle')}
+          </h1>
+          <p
+            className="text-white/70 text-sm md:text-base motion-safe:opacity-0 motion-safe:animate-fade-in-up"
+            style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}
+          >
+            {t('heroGallerySubtitle')}
+          </p>
+
+          {/* Always-available badge */}
+          <div
+            className="mt-4 flex justify-center motion-safe:opacity-0 motion-safe:animate-fade-in-up"
+            style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}
+          >
+            <span className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 text-xs text-white font-medium">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400" />
+              </span>
+              {t('alwaysAvailable', { date: formatCurrentDate(locale) })}
+            </span>
+          </div>
+        </div>
+
+        {/* Gallery Grid */}
+        <div
+          className="motion-safe:opacity-0 motion-safe:animate-fade-in-up"
+          style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}
+        >
+          <HeroGalleryGrid artworks={artworks} />
+        </div>
+
+        {/* CTA */}
+        <div
+          className="mt-8 flex flex-col sm:flex-row gap-4 justify-center motion-safe:opacity-0 motion-safe:animate-fade-in-up"
+          style={{ animationDelay: '0.5s', animationFillMode: 'forwards' }}
+        >
+          <LinkButton
+            href="/artworks"
+            variant="accent"
+            size="lg"
+            className="w-full sm:w-auto shadow-lg min-w-[200px] justify-center text-lg"
+          >
+            {t('viewArtworks')}
+          </LinkButton>
+          <LinkButton
+            href="/our-reality"
+            variant="outline-white"
+            size="lg"
+            className="w-full sm:w-auto backdrop-blur-sm min-w-[160px] justify-center"
+          >
+            {t('aboutSaf')}
+          </LinkButton>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+async function CategorySections() {
+  const t = await getTranslations('home');
+
+  const [paintingArtworks, printArtworks, photoMediaArtworks, sculptureArtworks] =
+    await Promise.all([
+      getSupabaseArtworksByCategories(['회화', '한국화', '드로잉'], 20),
+      getSupabaseArtworksByCategories(['판화', '사후판화', '아트프린트'], 20),
+      getSupabaseArtworksByCategories(['사진', '디지털아트', '혼합매체'], 20),
+      getSupabaseArtworksByCategories(['조각', '도자/공예'], 20),
+    ]);
+
+  const sections: {
+    artworks: Artwork[];
+    title: string;
+    viewAllHref: string;
+    theme: 'dark' | 'light';
+  }[] = [
+    {
+      artworks: paintingArtworks,
+      title: t('sectionPainting'),
+      viewAllHref: '/artworks?category=%ED%9A%8C%ED%99%94',
+      theme: 'dark',
+    },
+    {
+      artworks: printArtworks,
+      title: t('sectionPrint'),
+      viewAllHref: '/artworks?category=%ED%8C%90%ED%99%94',
+      theme: 'light',
+    },
+    {
+      artworks: photoMediaArtworks,
+      title: t('sectionPhotoMedia'),
+      viewAllHref: '/artworks?category=%EC%82%AC%EC%A7%84',
+      theme: 'dark',
+    },
+    {
+      artworks: sculptureArtworks,
+      title: t('sectionSculpture'),
+      viewAllHref: '/artworks?category=%EC%A1%B0%EA%B0%81',
+      theme: 'light',
+    },
+  ];
 
   return (
     <>
-      <ArtworkHighlightSlider artworks={sliderArtworks} />
-      <DynamicCounter items={counterItems} locale={locale} />
+      {sections.map((section) =>
+        section.artworks.length > 0 ? (
+          <ArtworkHighlightSlider
+            key={section.title}
+            artworks={section.artworks}
+            title={section.title}
+            viewAllHref={section.viewAllHref}
+            theme={section.theme}
+          />
+        ) : null
+      )}
     </>
   );
 }
@@ -347,15 +371,34 @@ async function HomeFAQSection({ locale }: { locale: 'ko' | 'en' }) {
   );
 }
 
-function HomeDataSectionsFallback() {
+// ─── Fallbacks ────────────────────────────────────────────────────────────────
+
+function HeroFallback() {
+  return (
+    <section className="bg-charcoal min-h-[80vh] flex items-center justify-center">
+      <div className="container-max w-full">
+        <div className="h-8 w-48 mx-auto bg-white/10 rounded mb-4 animate-pulse" />
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-1 md:gap-1.5">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="aspect-[3/4] bg-white/10 rounded animate-pulse" />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function CategorySectionsFallback() {
   return (
     <>
-      <Section variant="canvas-soft" className="py-16 md:py-24 overflow-hidden">
-        <div className="container-max h-[300px] rounded-xl bg-white/70" aria-hidden="true" />
-      </Section>
-      <div className="container-max py-8">
-        <div className="w-full h-[180px] rounded-xl bg-canvas" aria-hidden="true" />
-      </div>
+      {['dark', 'light', 'dark', 'light'].map((theme, i) => (
+        <section
+          key={i}
+          className={`py-16 overflow-hidden ${theme === 'dark' ? 'bg-charcoal' : 'bg-canvas-soft'}`}
+        >
+          <div className="container-max h-[300px] rounded-xl bg-white/10 animate-pulse" />
+        </section>
+      ))}
     </>
   );
 }

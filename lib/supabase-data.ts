@@ -191,6 +191,51 @@ export const getSupabaseHomepageArtworks = cache(
     pickRandomItems(await getSupabaseHomepageArtworksCached(limit), limit)
 );
 
+const getSupabaseArtworksByCategoriesUncached = async (
+  categories: string[],
+  limit: number
+): Promise<Artwork[]> => {
+  if (!hasSupabaseConfig || !supabase) {
+    return fallbackArtworks.filter((a) => categories.includes(a.category || ''));
+  }
+
+  const { data, error } = await supabase
+    .from('artworks')
+    .select(
+      `
+      ${ARTWORK_SELECT_COLUMNS},
+      artists (${ARTIST_SELECT_COLUMNS})
+    `
+    )
+    .eq('is_hidden', false)
+    .in('category', categories)
+    .limit(limit * 3);
+
+  if (error) {
+    console.error('Error fetching artworks by categories from Supabase:', error);
+    return fallbackArtworks.filter((a) => categories.includes(a.category || ''));
+  }
+
+  return (data || []).map((item) =>
+    mapArtworkRow(item as ArtworkRow, item.artists as unknown as ArtistRow | null)
+  );
+};
+
+const getSupabaseArtworksByCategoriesCached = unstable_cache(
+  async (categories: string[], limit: number) =>
+    getSupabaseArtworksByCategoriesUncached(categories, limit),
+  ['supabase-artworks-by-categories'],
+  {
+    revalidate: ARTWORK_DATA_REVALIDATE_SECONDS,
+    tags: ['artworks'],
+  }
+);
+
+export const getSupabaseArtworksByCategories = cache(
+  async (categories: string[], limit = 20): Promise<Artwork[]> =>
+    pickRandomItems(await getSupabaseArtworksByCategoriesCached(categories, limit), limit)
+);
+
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const getSupabaseArtworkByIdUncached = async (id: string): Promise<Artwork | null> => {

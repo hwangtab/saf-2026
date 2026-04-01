@@ -1,0 +1,68 @@
+'use client';
+
+import { useLocale } from 'next-intl';
+import SafeImage from '@/components/common/SafeImage';
+import { Link } from '@/i18n/navigation';
+import type { Artwork } from '@/types';
+import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
+
+interface HeroGalleryGridProps {
+  artworks: Artwork[];
+}
+
+export default function HeroGalleryGrid({ artworks }: HeroGalleryGridProps) {
+  const locale = useLocale();
+
+  if (artworks.length === 0) return null;
+
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-1 md:gap-1.5">
+      {artworks.map((artwork, index) => {
+        const title = (locale === 'en' && artwork.title_en?.trim()) || artwork.title;
+        const artist = (locale === 'en' && artwork.artist_en?.trim()) || artwork.artist;
+        const imageSrc = resolveArtworkImageUrlForPreset(
+          artwork.images?.[0] || '/images/og-image.png',
+          'card'
+        );
+        const isInquiry = artwork.price === '문의' || artwork.price === 'Inquiry';
+
+        return (
+          <Link
+            key={artwork.id}
+            href={`/artworks/${artwork.id}`}
+            className="group relative block overflow-hidden bg-charcoal"
+          >
+            <div className="aspect-[3/4]">
+              <SafeImage
+                src={imageSrc}
+                alt={`${title} - ${artist}`}
+                fill
+                priority={index < 4}
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              />
+            </div>
+
+            {/* Always-visible bottom info overlay */}
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent px-3 pt-10 pb-3">
+              <p className="text-white font-semibold text-sm line-clamp-2 leading-snug">{title}</p>
+              <p className="text-white/70 text-xs mt-0.5 truncate">{artist}</p>
+              {!isInquiry && artwork.price && (
+                <p className="text-sun text-xs font-semibold mt-1">{artwork.price}</p>
+              )}
+              <span className="inline-block mt-2 text-xs text-white/90 border border-white/40 bg-white/10 backdrop-blur-sm px-2 py-0.5 rounded leading-tight">
+                {locale === 'en' ? 'View artwork →' : '작품 보기 →'}
+              </span>
+            </div>
+
+            {artwork.sold && (
+              <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded">
+                SOLD
+              </div>
+            )}
+          </Link>
+        );
+      })}
+    </div>
+  );
+}

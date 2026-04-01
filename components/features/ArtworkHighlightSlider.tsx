@@ -7,16 +7,25 @@ import { useLocale } from 'next-intl';
 import { Artwork } from '@/types';
 import ArtworkCard from '@/components/ui/ArtworkCard';
 import { Link } from '@/i18n/navigation';
-import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
+import { cn } from '@/lib/utils';
 
 interface ArtworkHighlightSliderProps {
   artworks: Artwork[];
+  title?: string;
+  viewAllHref?: string;
+  theme?: 'dark' | 'light';
 }
 
-export default function ArtworkHighlightSlider({ artworks }: ArtworkHighlightSliderProps) {
+export default function ArtworkHighlightSlider({
+  artworks,
+  title,
+  viewAllHref,
+  theme = 'light',
+}: ArtworkHighlightSliderProps) {
   const locale = useLocale();
-  const copy =
+
+  const defaultCopy =
     locale === 'en'
       ? {
           title: 'Online showcase highlights',
@@ -34,6 +43,10 @@ export default function ArtworkHighlightSlider({ artworks }: ArtworkHighlightSli
           playAria: '작품 슬라이더 재생',
           pauseAria: '작품 슬라이더 일시정지',
         };
+
+  const resolvedTitle = title ?? defaultCopy.title;
+  const resolvedViewAllHref = viewAllHref ?? '/artworks';
+  const resolvedViewAllLabel = locale === 'en' ? 'View all →' : '전체 보기 →';
 
   const [mounted, setMounted] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
@@ -74,35 +87,48 @@ export default function ArtworkHighlightSlider({ artworks }: ArtworkHighlightSli
 
   if (!mounted || artworks.length === 0) {
     return (
-      <Section variant="white" className="py-12 bg-canvas-soft/30">
-        <div className="container-max h-[300px] animate-pulse bg-gray-100 rounded-xl" />
-      </Section>
+      <section className={cn('py-12', theme === 'dark' ? 'bg-charcoal' : 'bg-canvas-soft')}>
+        <div className="container-max h-[300px] animate-pulse rounded-xl bg-white/10" />
+      </section>
     );
   }
 
+  const isDark = theme === 'dark';
+
   return (
-    <Section variant="canvas-soft" className="py-16 md:py-24 overflow-hidden">
+    <section
+      className={cn('py-16 md:py-24 overflow-hidden', isDark ? 'bg-charcoal' : 'bg-canvas-soft')}
+    >
       <div className="container-max mb-12 text-center relative">
-        <div className="inline-flex items-center px-3 py-1 rounded-full border border-primary text-primary text-xs font-semibold tracking-wide uppercase mb-4">
-          Online Showcase
-        </div>
-        <SectionTitle className="mb-4">{copy.title}</SectionTitle>
+        <SectionTitle className={cn('mb-4', isDark ? 'text-white' : 'text-charcoal')}>
+          {resolvedTitle}
+        </SectionTitle>
         <div className="flex justify-center">
           <Link
-            href="/artworks"
-            className="text-charcoal-muted hover:text-primary transition-colors font-medium border-b border-charcoal-muted/20 hover:border-primary"
+            href={resolvedViewAllHref}
+            className={cn(
+              'font-medium border-b transition-colors',
+              isDark
+                ? 'text-white/70 hover:text-white border-white/30 hover:border-white'
+                : 'text-charcoal-muted hover:text-primary border-charcoal-muted/20 hover:border-primary'
+            )}
           >
-            {copy.viewAll} &rarr;
+            {resolvedViewAllLabel}
           </Link>
         </div>
         <button
           type="button"
           onClick={() => setIsPaused((prev) => !prev)}
-          className="absolute right-0 top-0 rounded-md border border-charcoal/20 bg-white/80 px-3 py-1.5 text-xs font-medium text-charcoal hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          className={cn(
+            'absolute right-0 top-0 rounded-md border px-3 py-1.5 text-xs font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+            isDark
+              ? 'border-white/30 bg-white/10 text-white hover:bg-white/20'
+              : 'border-charcoal/20 bg-white/80 text-charcoal hover:bg-white'
+          )}
           aria-pressed={isPaused}
-          aria-label={isPaused ? copy.playAria : copy.pauseAria}
+          aria-label={isPaused ? defaultCopy.playAria : defaultCopy.pauseAria}
         >
-          {isPaused ? copy.play : copy.pause}
+          {isPaused ? defaultCopy.play : defaultCopy.pause}
         </button>
       </div>
 
@@ -116,12 +142,16 @@ export default function ArtworkHighlightSlider({ artworks }: ArtworkHighlightSli
               <ArtworkCard
                 artwork={artwork}
                 variant="gallery"
-                className="h-full border border-gray-100 shadow-sm hover:shadow-xl transition-shadow duration-500"
+                theme={theme}
+                className={cn(
+                  'h-full shadow-sm hover:shadow-xl transition-shadow duration-500',
+                  isDark ? 'border border-white/10' : 'border border-gray-100'
+                )}
               />
             </div>
           ))}
         </div>
       </div>
-    </Section>
+    </section>
   );
 }
