@@ -65,7 +65,7 @@ export default async function ExhibitorOnboardingPage({
       </div>
       <div className="sm:mx-auto sm:w-full sm:max-w-2xl">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          SAF 2026
+          SAF Online
           <br />
           <span className="text-xl font-medium text-gray-600">
             {isExhibitorRecovery ? t('recoveryTitle') : t('onboardingTitle')}

@@ -76,7 +76,7 @@ export default async function OurReality() {
         >
           <ShareButtonsWrapper
             url={pageUrl}
-            title="Our Reality - SAF 2026"
+            title="Our Reality - SAF Online"
             description="Understand the structure of artist financial exclusion through data."
           />
         </PageHero>
@@ -204,7 +204,7 @@ export default async function OurReality() {
       >
         <ShareButtonsWrapper
           url={PAGE_URL}
-          title="우리의 현실 - 씨앗페 2026"
+          title="우리의 현실 - 씨앗페 온라인"
           description="예술인이 겪는 금융 재난의 구조와 데이터를 확인하세요."
         />
       </PageHero>

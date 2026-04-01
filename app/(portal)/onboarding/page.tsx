@@ -95,7 +95,7 @@ export default async function OnboardingPage({
           <SignOutButton />
         </div>
         <div className="sm:mx-auto sm:w-full sm:max-w-xl">
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">SAF 2026</h2>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">SAF Online</h2>
           <p className="mt-2 text-center text-lg font-medium text-gray-600">{t('chooseType')}</p>
           <p className="mt-3 text-center text-sm text-gray-500">{t('chooseDescription')}</p>
         </div>
@@ -130,7 +130,7 @@ export default async function OnboardingPage({
       </div>
       <div className="sm:mx-auto sm:w-full sm:max-w-2xl">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          SAF 2026
+          SAF Online
           <br />
           <span className="text-xl font-medium text-gray-600">
             {isArtistRecovery ? t('artistRecoveryTitle') : t('artistOnboardingTitle')}

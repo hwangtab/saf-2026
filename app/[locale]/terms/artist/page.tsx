@@ -19,11 +19,11 @@ const PAGE_URL = `${SITE_URL}${PAGE_PATH}`;
 const PAGE_COPY = {
   ko: {
     title: '아티스트 계약서',
-    description: '씨앗페 2026 온라인전시 및 판매위탁 계약서 전문입니다.',
+    description: '씨앗페 온라인 온라인전시 및 판매위탁 계약서 전문입니다.',
   },
   en: {
     title: 'Artist Agreement',
-    description: 'Full text of the SAF 2026 artist exhibition and consignment agreement.',
+    description: 'Full text of the SAF Online artist exhibition and consignment agreement.',
   },
 } as const;
 
@@ -55,7 +55,7 @@ export default async function ArtistTermsPage() {
         <JsonLdScript data={breadcrumbSchema} />
         <PageHero
           title="Artist Exhibition and Consignment Agreement"
-          description="Full artist agreement for SAF 2026. The official legal text is currently maintained in Korean."
+          description="Full artist agreement for SAF Online. The official legal text is currently maintained in Korean."
         />
 
         <Section variant="white" className="pb-24 md:pb-32">
@@ -102,7 +102,7 @@ export default async function ArtistTermsPage() {
       <JsonLdScript data={breadcrumbSchema} />
       <PageHero
         title="온라인전시 및 판매위탁 계약서"
-        description="씨앗페 2026 아티스트 전시·판매위탁 계약서 전문입니다."
+        description="씨앗페 온라인 아티스트 전시·판매위탁 계약서 전문입니다."
       />
 
       <Section variant="white" className="pb-24 md:pb-32">

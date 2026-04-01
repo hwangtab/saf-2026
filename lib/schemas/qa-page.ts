@@ -47,9 +47,9 @@ export function generateSAFCoreQA(locale: 'ko' | 'en' = 'ko') {
   const items: QAItem[] = isEnglish
     ? [
         {
-          question: 'What is SAF (Seed Art Festival) 2026?',
+          question: 'What is SAF (Seed Art Festival) Online?',
           answer:
-            'SAF 2026 is a special art exhibition organized by the Korea Smart Cooperative to raise mutual-aid funds for Korean artists facing financial exclusion. Over 110 artists voluntarily contributed their works, and proceeds from sales go to a low-interest loan fund for artists in financial distress.',
+            'SAF Online is a special art exhibition organized by the Korea Smart Cooperative to raise mutual-aid funds for Korean artists facing financial exclusion. Over 110 artists voluntarily contributed their works, and proceeds from sales go to a low-interest loan fund for artists in financial distress.',
           url: `${SITE_URL}/en`,
         },
         {
@@ -59,9 +59,9 @@ export function generateSAFCoreQA(locale: 'ko' | 'en' = 'ko') {
           url: `${SITE_URL}/en/our-reality`,
         },
         {
-          question: 'How can I support SAF 2026?',
+          question: 'How can I support SAF Online?',
           answer:
-            'You can support SAF 2026 in two ways: (1) Purchase artwork from the online gallery — proceeds fund the mutual-aid program, or (2) Join as a cooperative member to provide ongoing support. Visit saf2026.com for details.',
+            'You can support SAF Online in two ways: (1) Purchase artwork from the online gallery — proceeds fund the mutual-aid program, or (2) Join as a cooperative member to provide ongoing support. Visit saf2026.com for details.',
           url: `${SITE_URL}/en/artworks`,
         },
         {
@@ -73,9 +73,9 @@ export function generateSAFCoreQA(locale: 'ko' | 'en' = 'ko') {
       ]
     : [
         {
-          question: '씨앗페(SAF) 2026이란 무엇인가요?',
+          question: '씨앗페(SAF) 온라인이란 무엇인가요?',
           answer:
-            '씨앗페 2026은 한국스마트협동조합이 주최하는 예술인 상호부조 기금 마련 특별전입니다. 110여 명의 작가가 자발적으로 작품을 출품했으며, 판매 수익금은 금융 위기에 처한 예술인에게 저금리 대출로 전달됩니다.',
+            '씨앗페 온라인은 한국스마트협동조합이 주최하는 예술인 상호부조 기금 마련 특별전입니다. 110여 명의 작가가 자발적으로 작품을 출품했으며, 판매 수익금은 금융 위기에 처한 예술인에게 저금리 대출로 전달됩니다.',
           url: SITE_URL,
         },
         {
@@ -85,7 +85,7 @@ export function generateSAFCoreQA(locale: 'ko' | 'en' = 'ko') {
           url: `${SITE_URL}/our-reality`,
         },
         {
-          question: '씨앗페 2026을 어떻게 지원할 수 있나요?',
+          question: '씨앗페 온라인을 어떻게 지원할 수 있나요?',
           answer:
             '두 가지 방법이 있습니다: (1) 온라인 갤러리에서 작품 구매 — 수익금이 상호부조 기금으로 사용됩니다. (2) 조합원 가입 — 지속적인 기금 지원에 참여합니다. saf2026.com에서 자세한 내용을 확인하세요.',
           url: `${SITE_URL}/artworks`,

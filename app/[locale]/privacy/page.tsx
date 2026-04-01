@@ -20,12 +20,12 @@ const PAGE_COPY = {
   ko: {
     title: '개인정보처리방침',
     description:
-      '씨앗페 2026 웹사이트 이용 과정에서 처리되는 개인정보 항목, 이용 목적, 보유 기간 및 권리 안내입니다.',
+      '씨앗페 온라인 웹사이트 이용 과정에서 처리되는 개인정보 항목, 이용 목적, 보유 기간 및 권리 안내입니다.',
   },
   en: {
     title: 'Privacy Policy',
     description:
-      'Guidance on personal data processing, purpose of use, retention period, and user rights for SAF 2026.',
+      'Guidance on personal data processing, purpose of use, retention period, and user rights for SAF Online.',
   },
 } as const;
 
@@ -99,7 +99,7 @@ export default async function PrivacyPolicyPage() {
       <JsonLdScript data={breadcrumbSchema} />
       <PageHero
         title="개인정보처리방침"
-        description="씨앗페 2026 웹사이트의 개인정보 처리 기준과 이용자 권리를 안내합니다."
+        description="씨앗페 온라인 웹사이트의 개인정보 처리 기준과 이용자 권리를 안내합니다."
       />
 
       <Section variant="white" className="pb-24 md:pb-32">

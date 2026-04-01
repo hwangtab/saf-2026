@@ -22,7 +22,9 @@ export function generateExhibitionSchema(
   return {
     '@context': 'https://schema.org',
     '@type': 'ExhibitionEvent',
-    name: isEnglish ? 'SAF 2026 (Seed Art Festival 2026)' : '씨앗페 2026 (Seed Art Festival 2026)',
+    name: isEnglish
+      ? 'SAF Online (Seed Art Festival Online)'
+      : '씨앗페 온라인 (Seed Art Festival Online)',
     description: isEnglish
       ? 'A special exhibition raising mutual-aid funds for Korean artists, featuring paintings, sculptures, photography, and other works by over 110 artists.'
       : '한국 예술인들의 상호부조 기금 마련을 위한 특별전. 110여 명의 작가가 참여한 회화, 조각, 사진 등 다양한 예술 작품을 만나보세요.',

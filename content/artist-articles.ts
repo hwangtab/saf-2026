@@ -330,8 +330,8 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://www.saf2026.com/artworks/263',
       title: '월정교 - 이미지 오버랩으로 표현한 기억의 순간',
       description:
-        '씨앗페 2026 출품작 정보. 경주 월정교를 소재로 시간의 중첩과 기억의 오버랩을 회화적 언어로 풀어낸 김주희 작가의 작품 설명 및 작가 노트.',
-      source: '씨앗페 2026',
+        '씨앗페 온라인 출품작 정보. 경주 월정교를 소재로 시간의 중첩과 기억의 오버랩을 회화적 언어로 풀어낸 김주희 작가의 작품 설명 및 작가 노트.',
+      source: '씨앗페 온라인',
     },
     {
       url: 'https://www.artsnculture.com/news/articleView.html?idxno=4796',
@@ -2701,7 +2701,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://koreasmartcoop.cafe24.com/product/%EC%B1%85%EA%B1%B0%EB%A6%ACx%ED%82%A4%EC%8A%A4%ED%95%B4%EB%A7%81-%EC%9D%B4%EB%AC%B8%ED%98%95/85/',
       title: '책거리x키스해링 - 이문형',
       description:
-        '책거리x키스해링 - 이문형, 씨앗페 온라인 갤러리, 이문형,씨앗페,SAF2026,미술,예술,작품, 씨앗페 2026, 한지위에 수묵채색 | 60.6×40.9cm,',
+        '책거리x키스해링 - 이문형, 씨앗페 온라인 갤러리, 이문형,씨앗페,SAF2026,미술,예술,작품, 씨앗페 온라인, 한지위에 수묵채색 | 60.6×40.9cm,',
       source: '씨앗페 온라인 갤러리',
     },
   ],

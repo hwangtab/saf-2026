@@ -9,7 +9,7 @@ export const OG_IMAGE = {
   url: `${SITE_URL}/images/og-image.png`,
   width: 1200,
   height: 630,
-  alt: '씨앗페 2026 캠페인 대표 이미지',
+  alt: '씨앗페 온라인 캠페인 대표 이미지',
 } as const;
 
 export const EXTERNAL_LINKS = {
@@ -56,7 +56,7 @@ export const TERMS_OF_SERVICE_VERSION = 'terms-v1-2026-03-05';
 
 // Exhibition Info
 export const EXHIBITION = {
-  NAME: '씨앗페(SAF) 2026',
+  NAME: '씨앗페(SAF) 온라인',
   DATE: '2026년 1월 14일 - 2026년 1월 26일',
   LOCATION: '인사아트센터 3층 G&J 갤러리',
   ADDRESS: '서울시 종로구 인사동길 41-1',
@@ -161,15 +161,50 @@ export const Z_INDEX = {
   HEADER: 100,
 } as const;
 
+export const HOMEPAGE_CATEGORY_GROUPS = [
+  {
+    key: 'painting',
+    label: '회화',
+    labelEn: 'Painting',
+    categories: ['회화', '한국화', '드로잉'],
+    theme: 'dark' as const,
+    viewAllCategory: '회화',
+  },
+  {
+    key: 'print',
+    label: '판화',
+    labelEn: 'Print',
+    categories: ['판화', '사후판화', '아트프린트'],
+    theme: 'light' as const,
+    viewAllCategory: '판화',
+  },
+  {
+    key: 'photoMedia',
+    label: '사진·미디어',
+    labelEn: 'Photo & Media',
+    categories: ['사진', '디지털아트', '혼합매체'],
+    theme: 'dark' as const,
+    viewAllCategory: '사진',
+  },
+  {
+    key: 'sculpture',
+    label: '입체·공예',
+    labelEn: 'Sculpture & Craft',
+    categories: ['조각', '도자/공예'],
+    theme: 'light' as const,
+    viewAllCategory: '조각',
+  },
+] as const;
+
 export const HERO_IMAGES = [
-  { id: '1', filename: '1.jpg', alt: '씨앗페 2026 전시 출품작 1' },
-  { id: '3', filename: '3.jpg', alt: '씨앗페 2026 전시 출품작 3' },
-  { id: '4', filename: '4.jpg', alt: '씨앗페 2026 전시 출품작 4' },
-  { id: '6', filename: '6.jpg', alt: '씨앗페 2026 전시 출품작 6' },
-  { id: '7', filename: '7.jpg', alt: '씨앗페 2026 전시 출품작 7' },
-  { id: '9', filename: '9.jpg', alt: '씨앗페 2026 전시 출품작 9' },
-  { id: '10', filename: '10.jpg', alt: '씨앗페 2026 전시 출품작 10' },
-  { id: '11', filename: '11.jpg', alt: '씨앗페 2026 전시 출품작 11' },
-  { id: '14', filename: '14.jpg', alt: '씨앗페 2026 전시 출품작 14' },
-  { id: '17', filename: '17.jpg', alt: '씨앗페 2026 전시 출품작 17' },
+  { id: '1', filename: '1.jpg', alt: '씨앗페 온라인 전시 출품작 1' },
+  { id: '3', filename: '3.jpg', alt: '씨앗페 온라인 전시 출품작 3' },
+  { id: '4', filename: '4.jpg', alt: '씨앗페 온라인 전시 출품작 4' },
+  { id: '6', filename: '6.jpg', alt: '씨앗페 온라인 전시 출품작 6' },
+  { id: '7', filename: '7.jpg', alt: '씨앗페 온라인 전시 출품작 7' },
+  { id: '9', filename: '9.jpg', alt: '씨앗페 온라인 전시 출품작 9' },
+  { id: '10', filename: '10.jpg', alt: '씨앗페 온라인 전시 출품작 10' },
+  { id: '11', filename: '11.jpg', alt: '씨앗페 온라인 전시 출품작 11' },
+  { id: '14', filename: '14.jpg', alt: '씨앗페 온라인 전시 출품작 14' },
+  { id: '17', filename: '17.jpg', alt: '씨앗페 온라인 전시 출품작 17' },
 ] as const;

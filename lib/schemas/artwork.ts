@@ -82,7 +82,7 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
       titleForLocale,
       ...mediumKeywords,
       ...(isEnglish ? ['SAF', 'artist solidarity', 'art purchase'] : ['씨앗페']),
-      ...(isEnglish ? ['SAF 2026', 'Seed Art Festival 2026'] : ['씨앗페 2026', 'SAF 2026']),
+      ...(isEnglish ? ['SAF Online', 'Seed Art Festival Online'] : ['씨앗페 온라인', 'SAF Online']),
       ...(isEnglish
         ? [
             'artist solidarity',
@@ -109,7 +109,7 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
       ...baseMetadata.openGraph,
       type: 'website',
       locale: isEnglish ? 'en_US' : 'ko_KR',
-      siteName: isEnglish ? 'SAF 2026' : '씨앗페 2026',
+      siteName: isEnglish ? 'SAF Online' : '씨앗페 온라인',
     },
     twitter: {
       ...baseMetadata.twitter,
@@ -278,7 +278,7 @@ export function generateArtworkJsonLd(
     mpn: `SAF2026-ART-${artwork.id}`,
     brand: {
       '@type': 'Brand',
-      name: isEnglish ? 'SAF 2026' : '씨앗페 2026',
+      name: isEnglish ? 'SAF Online' : '씨앗페 온라인',
       url: SITE_URL,
     },
     creator: {
@@ -296,8 +296,8 @@ export function generateArtworkJsonLd(
     isPartOf: {
       '@type': 'ExhibitionEvent',
       name: isEnglish
-        ? 'SAF 2026 - Special Exhibition for Artist Mutual Aid'
-        : '씨앗페 2026 - 예술인 상호부조 기금 마련 특별전',
+        ? 'SAF Online - Special Exhibition for Artist Mutual Aid'
+        : '씨앗페 온라인 - 예술인 상호부조 기금 마련 특별전',
       startDate: CAMPAIGN.START_DATE,
       endDate: CAMPAIGN.END_DATE,
       location: {
@@ -409,10 +409,10 @@ export function generateArtworkListSchema(artworks: Artwork[], locale: 'ko' | 'e
   return {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: isEnglish ? 'SAF 2026 Artworks' : '씨앗페 2026 출품작',
+    name: isEnglish ? 'SAF Online Artworks' : '씨앗페 온라인 출품작',
     description: isEnglish
-      ? 'Artwork list from SAF 2026'
-      : '씨앗페 2026에 출품된 예술가들의 작품 목록',
+      ? 'Artwork list from SAF Online'
+      : '씨앗페 온라인에 출품된 예술가들의 작품 목록',
     numberOfItems: artworks.length,
     // Price range for art buyers
     ...(aggregateOffer && { offers: aggregateOffer }),

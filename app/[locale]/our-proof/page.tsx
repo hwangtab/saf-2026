@@ -58,8 +58,8 @@ export default async function OurProof() {
         >
           <ShareButtonsWrapper
             url={pageUrl}
-            title="Our Proof - SAF 2026"
-            description="See the measurable outcomes of artist mutual-aid lending at SAF 2026."
+            title="Our Proof - SAF Online"
+            description="See the measurable outcomes of artist mutual-aid lending at SAF Online."
           />
         </PageHero>
 
@@ -279,7 +279,7 @@ export default async function OurProof() {
       >
         <ShareButtonsWrapper
           url={PAGE_URL}
-          title="우리의 증명 - 씨앗페 2026"
+          title="우리의 증명 - 씨앗페 온라인"
           description="예술인 상호부조 대출 354건, 누적 약 7억 원 지원. 데이터로 확인하세요."
         />
       </PageHero>

@@ -64,7 +64,7 @@ export default async function TransparencyPage() {
         >
           <ShareButtonsWrapper
             url={pageUrl}
-            title="Transparency Reports - SAF 2026"
+            title="Transparency Reports - SAF Online"
             description="Annual operational reports of the artist mutual aid loan program."
           />
         </PageHero>
@@ -239,7 +239,7 @@ export default async function TransparencyPage() {
       >
         <ShareButtonsWrapper
           url={PAGE_URL}
-          title="운용 보고서 - 씨앗페 2026"
+          title="운용 보고서 - 씨앗페 온라인"
           description="예술인 상호부조 대출 연간 운용 보고서. 데이터로 확인하세요."
         />
       </PageHero>

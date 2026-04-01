@@ -157,7 +157,7 @@ function buildAccountingTemplateCsv(analytics: RevenueAnalytics): string {
       'KRW',
       entry.artistName,
       `${entry.title} 판매 인식`,
-      'SAF 2026',
+      'SAF Online',
       entry.artworkId,
       entry.title,
       entry.source,
