@@ -236,12 +236,12 @@ function ArtworkCard({
           )}
         </div>
 
-        <div className={cn('p-4', theme === 'dark' ? 'bg-[#1f2527]' : 'bg-white')}>
+        <div className={cn('p-4', theme === 'dark' ? 'bg-charcoal' : 'bg-white')}>
           <h2
             className={cn(
               'text-lg font-bold font-sans transition-colors duration-300 break-keep line-clamp-2 min-h-[3.5rem]',
               theme === 'dark'
-                ? 'text-white group-hover:text-brand-sun'
+                ? 'text-white group-hover:text-sun'
                 : 'text-charcoal group-hover:text-primary'
             )}
           >
@@ -287,7 +287,7 @@ function ArtworkCard({
                     ? 'text-white/50 line-through'
                     : 'text-gray-600 line-through'
                   : theme === 'dark'
-                    ? 'text-brand-sun'
+                    ? 'text-sun'
                     : 'text-primary'
               )}
             >

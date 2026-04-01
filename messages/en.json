@@ -78,7 +78,7 @@
     "clearSearch": "Clear search",
     "viewArtist": "View artist's works",
     "logoAlt": "SAF Logo",
-    "homeLink": "SAF 2026 Home",
+    "homeLink": "SAF Online Home",
     "shareKakao": "Share on KakaoTalk",
     "skipToMain": "Skip to main content",
     "menu": "Menu",
@@ -117,12 +117,24 @@
     "solutionProof": "Over 95% of artists who received support have been faithfully repaying their loans. This proves that when given access to a trustworthy financial system, artists act responsibly.",
     "applyLoan": "Apply for a Loan",
     "faqTitle": "Frequently Asked Questions",
-    "logoAlt": "SAF 2026 Logo",
-    "metaTitle": "SAF 2026 - Special Exhibition for Artist Mutual Aid Fund",
-    "metaDescription": "SAF 2026 is a special online exhibition connecting co-op membership and artwork purchases to raise mutual aid loan funds for artists. Help provide a stable creative environment for financially excluded artists.",
+    "logoAlt": "SAF Online Logo",
+    "metaTitle": "SAF Online - Special Exhibition for Artist Mutual Aid Fund",
+    "metaDescription": "SAF Online is a special online exhibition connecting co-op membership and artwork purchases to raise mutual aid loan funds for artists. Help provide a stable creative environment for financially excluded artists.",
     "ogDescription": "A special exhibition building a brighter future for Korean artists. Support artists by becoming a co-op member and purchasing artworks.",
-    "twitterDescription": "Join SAF 2026, a special exhibition raising mutual aid loan funds for artists.",
-    "alwaysAvailable": "Available now · {date}"
+    "twitterDescription": "Join SAF Online, a special exhibition raising mutual aid loan funds for artists.",
+    "alwaysAvailable": "Available now · {date}",
+    "heroGalleryTitle": "United Through Art",
+    "heroGallerySubtitle": "110 artists, works waiting to be discovered",
+    "missionBanner": "Your artwork purchase changes an artist's tomorrow",
+    "missionStep1": "Buy Artwork",
+    "missionStep2": "Fund Grows",
+    "missionStep3": "Low-Rate Artist Loans",
+    "missionLearnMore": "How does this work?",
+    "sectionPainting": "Painting",
+    "sectionPrint": "Print",
+    "sectionPhotoMedia": "Photo & Media",
+    "sectionSculpture": "Sculpture & Craft",
+    "statsTitle": "Artist Finance: The Reality in Numbers"
   },
   "breadcrumbs": {
     "home": "Home",
@@ -152,22 +164,22 @@
     "unitKrw": "KRW"
   },
   "seo": {
-    "siteTitle": "SAF 2026",
-    "titleTemplate": "%s | SAF 2026",
+    "siteTitle": "SAF Online",
+    "titleTemplate": "%s | SAF Online",
     "siteDescription": "A special exhibition building a brighter future for Korean artists. Support artists by becoming a co-op member and purchasing artworks.",
-    "ogImageAlt": "SAF 2026 Campaign Image"
+    "ogImageAlt": "SAF Online Campaign Image"
   },
   "artworksPage": {
     "title": "Artworks",
-    "metaDescription": "Discover artworks exhibited at SAF 2026. Help build a brighter future for artists by joining the co-op and purchasing artwork.",
-    "heroDescription": "Reality and hope through the eyes of artists. Introducing artworks from SAF 2026.",
-    "shareTitle": "Artworks - SAF 2026",
-    "shareDescription": "Explore the beautiful artworks exhibited at the 2026 Seed Art Festival."
+    "metaDescription": "Discover artworks exhibited at SAF Online. Help build a brighter future for artists by joining the co-op and purchasing artwork.",
+    "heroDescription": "Reality and hope through the eyes of artists. Introducing artworks from SAF Online.",
+    "shareTitle": "Artworks - SAF Online",
+    "shareDescription": "Explore the beautiful artworks exhibited at SAF Online."
   },
   "artworkDetail": {
     "notFound": "Artwork not found",
     "share": "Share",
-    "shareTitle": "{title} - {artist} | SAF 2026 Artworks",
+    "shareTitle": "{title} - {artist} | SAF Online Artworks",
     "shareDescription": "View \"{title}\" by {artist} and support Korean artists.",
     "buyOnline": "Buy Online",
     "orContactDirectly": "or contact directly",
@@ -208,11 +220,11 @@
   "artistPage": {
     "notFound": "Artist not found",
     "defaultDescription": "Encounter the depth of {artist}'s vision.",
-    "shareTitle": "{artist} - SAF 2026 Artworks",
+    "shareTitle": "{artist} - SAF Online Artworks",
     "shareDescription": "View artworks by {artist} and support Korean artists.",
-    "metaTitle": "{artist} - Artworks | SAF 2026",
+    "metaTitle": "{artist} - Artworks | SAF Online",
     "metaDescription": "Explore the artistic world of {artist}. ",
-    "metaFallback": "Messages of solidarity and hope from artists, SAF 2026.",
+    "metaFallback": "Messages of solidarity and hope from artists, SAF Online.",
     "originalKoreanDescription": "Profile details are currently available in Korean.",
     "metaImageAlt": "Artwork by {artist} - {title}"
   },
