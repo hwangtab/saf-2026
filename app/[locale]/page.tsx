@@ -32,12 +32,8 @@ import type { Artwork } from '@/types';
 
 export const revalidate = 1800;
 
-const DynamicCounter = dynamic(() => import('@/components/features/DynamicCounter'), {
-  loading: () => <div className="w-full h-[180px] rounded-xl bg-canvas" aria-hidden="true" />,
-});
-const FAQList = dynamic(() => import('@/components/features/FAQList'), {
-  loading: () => <div className="w-full h-[280px] rounded-xl bg-white/60" aria-hidden="true" />,
-});
+const DynamicCounter = dynamic(() => import('@/components/features/DynamicCounter'));
+const FAQList = dynamic(() => import('@/components/features/FAQList'));
 const ArtworkHighlightSlider = dynamic(
   () => import('@/components/features/ArtworkHighlightSlider')
 );
@@ -173,11 +169,7 @@ export default async function Home() {
       <Section variant="sun-soft" prevVariant="white" className="pb-24 md:pb-32">
         <div className="container-max">
           <SectionTitle className="mb-12">{t('faqTitle')}</SectionTitle>
-          <Suspense
-            fallback={
-              <div className="w-full h-[280px] rounded-xl bg-white/60" aria-hidden="true" />
-            }
-          >
+          <Suspense fallback={<BrandLoader minHeight="30vh" />}>
             <HomeFAQSection locale={locale} />
           </Suspense>
         </div>
