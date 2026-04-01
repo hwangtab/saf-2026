@@ -375,13 +375,30 @@ async function HomeFAQSection({ locale }: { locale: 'ko' | 'en' }) {
 
 function HeroFallback() {
   return (
-    <section className="bg-charcoal min-h-[80vh] flex items-center justify-center">
-      <div className="container-max w-full">
-        <div className="h-8 w-48 mx-auto bg-white/10 rounded mb-4 animate-pulse" />
+    <section className="bg-charcoal overflow-hidden">
+      <div className="container-max pt-16 pb-24 md:pt-20 md:pb-32">
+        {/* 로고 */}
+        <div className="mb-6 hidden md:flex justify-center">
+          <div className="h-12 w-64 md:w-[36rem] bg-white/10 rounded animate-pulse" />
+        </div>
+        {/* 타이틀 + 서브타이틀 + 뱃지 */}
+        <div className="mb-8 text-center space-y-3">
+          <div className="h-10 md:h-14 w-3/4 mx-auto bg-white/10 rounded animate-pulse" />
+          <div className="h-4 w-1/2 mx-auto bg-white/10 rounded animate-pulse" />
+          <div className="flex justify-center mt-4">
+            <div className="h-7 w-52 bg-white/10 rounded-full animate-pulse" />
+          </div>
+        </div>
+        {/* 갤러리 그리드 */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-1 md:gap-1.5">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="aspect-[3/4] bg-white/10 rounded animate-pulse" />
+          {Array.from({ length: 16 }).map((_, i) => (
+            <div key={i} className="aspect-[3/4] bg-white/10 animate-pulse" />
           ))}
+        </div>
+        {/* CTA 버튼 */}
+        <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="h-12 w-full sm:w-[200px] bg-white/10 rounded-lg animate-pulse" />
+          <div className="h-12 w-full sm:w-[160px] bg-white/10 rounded-lg animate-pulse" />
         </div>
       </div>
     </section>
@@ -391,12 +408,29 @@ function HeroFallback() {
 function CategorySectionsFallback() {
   return (
     <>
-      {['dark', 'light', 'dark', 'light'].map((theme, i) => (
+      {(['dark', 'light', 'dark', 'light'] as const).map((theme, i) => (
         <section
           key={i}
-          className={`py-16 overflow-hidden ${theme === 'dark' ? 'bg-charcoal' : 'bg-canvas-soft'}`}
+          className={`py-16 md:py-24 overflow-hidden ${theme === 'dark' ? 'bg-charcoal' : 'bg-canvas-soft'}`}
         >
-          <div className="container-max h-[300px] rounded-xl bg-white/10 animate-pulse" />
+          {/* 제목 + 링크 */}
+          <div className="container-max mb-12 text-center space-y-3">
+            <div
+              className={`h-8 w-40 mx-auto rounded animate-pulse ${theme === 'dark' ? 'bg-white/10' : 'bg-charcoal/10'}`}
+            />
+            <div
+              className={`h-5 w-20 mx-auto rounded animate-pulse ${theme === 'dark' ? 'bg-white/10' : 'bg-charcoal/10'}`}
+            />
+          </div>
+          {/* 가로 카드 열 */}
+          <div className="flex gap-6 px-4 md:px-8 overflow-hidden">
+            {Array.from({ length: 6 }).map((_, j) => (
+              <div
+                key={j}
+                className={`flex-shrink-0 w-[220px] sm:w-[260px] md:w-[300px] aspect-[4/5] rounded-lg animate-pulse ${theme === 'dark' ? 'bg-white/10' : 'bg-charcoal/10'}`}
+              />
+            ))}
+          </div>
         </section>
       ))}
     </>
