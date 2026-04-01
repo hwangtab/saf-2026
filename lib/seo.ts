@@ -10,7 +10,7 @@ export function createPageMetadata(
   locale: 'ko' | 'en' = 'ko'
 ): Metadata {
   const url = buildLocaleUrl(path, locale);
-  const siteTitle = locale === 'en' ? 'SAF 2026' : '씨앗페 2026';
+  const siteTitle = locale === 'en' ? 'SAF Online' : '씨앗페 온라인';
   const ogLocale = locale === 'en' ? 'en_US' : 'ko_KR';
   const images = [
     {

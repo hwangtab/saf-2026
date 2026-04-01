@@ -12,7 +12,7 @@
       "loadErrorTitle": "대시보드 로딩 오류",
       "loadErrorMessage": "데이터를 불러오는 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.",
       "title": "대시보드",
-      "titleHelp": "SAF 2026 운영 현황을 간략하게 요약합니다. 매출 상세 분석은 별도 매출 현황 페이지에서 확인할 수 있습니다.",
+      "titleHelp": "SAF Online 운영 현황을 간략하게 요약합니다. 매출 상세 분석은 별도 매출 현황 페이지에서 확인할 수 있습니다.",
       "description": "관리자 운영 핵심 지표와 최근 활동만 빠르게 확인합니다.",
       "revenueButton": "매출 현황 보기",
       "artistsTotal": "등록 작가(전체)",

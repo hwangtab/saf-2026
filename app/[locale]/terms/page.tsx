@@ -20,11 +20,12 @@ const PAGE_URL = `${SITE_URL}${PAGE_PATH}`;
 const PAGE_COPY = {
   ko: {
     title: '이용약관',
-    description: '씨앗페 2026 웹사이트 이용약관 및 서비스 이용 시 적용되는 기본 조건을 안내합니다.',
+    description:
+      '씨앗페 온라인 웹사이트 이용약관 및 서비스 이용 시 적용되는 기본 조건을 안내합니다.',
   },
   en: {
     title: 'Terms of Service',
-    description: 'Core terms and conditions for using the SAF 2026 website and related services.',
+    description: 'Core terms and conditions for using the SAF Online website and related services.',
   },
 } as const;
 
@@ -53,7 +54,7 @@ export default async function TermsPage() {
         <JsonLdScript data={breadcrumbSchema} />
         <PageHero
           title="Terms of Service"
-          description="Core terms for using SAF 2026 services. The official legal text is currently maintained in Korean."
+          description="Core terms for using SAF Online services. The official legal text is currently maintained in Korean."
         />
 
         <Section variant="white" className="pb-24 md:pb-32">
@@ -114,7 +115,7 @@ export default async function TermsPage() {
       <JsonLdScript data={breadcrumbSchema} />
       <PageHero
         title="이용약관"
-        description="씨앗페 2026 웹사이트와 관련 서비스 이용 시 적용되는 기본 약관입니다."
+        description="씨앗페 온라인 웹사이트와 관련 서비스 이용 시 적용되는 기본 약관입니다."
       />
 
       <Section variant="white" className="pb-24 md:pb-32">

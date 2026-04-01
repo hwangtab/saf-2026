@@ -55,17 +55,17 @@ export function generateArtworkPurchaseHowTo(locale: 'ko' | 'en' = 'ko') {
   const isEnglish = locale === 'en';
 
   return generateHowToSchema({
-    name: isEnglish ? 'How to Purchase Artwork at SAF 2026' : 'SAF 2026에서 작품 구매하는 방법',
+    name: isEnglish ? 'How to Purchase Artwork at SAF Online' : 'SAF Online에서 작품 구매하는 방법',
     description: isEnglish
-      ? 'A step-by-step guide to purchasing artwork from the Seed Art Festival 2026. Your purchase supports the artist mutual-aid fund.'
-      : '씨앗페 2026 작품 구매 가이드. 작품 구매 수익금은 예술인 상호부조 기금으로 사용됩니다.',
+      ? 'A step-by-step guide to purchasing artwork from the Seed Art Festival Online. Your purchase supports the artist mutual-aid fund.'
+      : '씨앗페 온라인 작품 구매 가이드. 작품 구매 수익금은 예술인 상호부조 기금으로 사용됩니다.',
     totalTime: 'PT10M',
     url: isEnglish ? `${SITE_URL}/en/artworks` : `${SITE_URL}/artworks`,
     steps: isEnglish
       ? [
           {
             name: 'Browse the artwork gallery',
-            text: 'Visit the SAF 2026 artworks page to explore paintings, sculptures, photography, and more by over 110 participating artists.',
+            text: 'Visit the SAF Online artworks page to explore paintings, sculptures, photography, and more by over 110 participating artists.',
             url: `${SITE_URL}/en/artworks`,
           },
           {
@@ -84,7 +84,7 @@ export function generateArtworkPurchaseHowTo(locale: 'ko' | 'en' = 'ko') {
       : [
           {
             name: '작품 갤러리 둘러보기',
-            text: '씨앗페 2026 출품작 페이지에서 110여 명의 참여 작가가 출품한 회화, 조각, 사진 등 다양한 작품을 탐색합니다.',
+            text: '씨앗페 온라인 출품작 페이지에서 110여 명의 참여 작가가 출품한 회화, 조각, 사진 등 다양한 작품을 탐색합니다.',
             url: `${SITE_URL}/artworks`,
           },
           {
@@ -122,7 +122,7 @@ export function generateMemberJoinHowTo(locale: 'ko' | 'en' = 'ko') {
       ? [
           {
             name: 'Visit the membership page',
-            text: 'Click the "Join as a member" button on the SAF 2026 website.',
+            text: 'Click the "Join as a member" button on the SAF Online website.',
           },
           {
             name: 'Fill out the application form',
@@ -136,7 +136,7 @@ export function generateMemberJoinHowTo(locale: 'ko' | 'en' = 'ko') {
       : [
           {
             name: '가입 페이지 방문',
-            text: '씨앗페 2026 웹사이트에서 "조합원 가입" 버튼을 클릭합니다.',
+            text: '씨앗페 온라인 웹사이트에서 "조합원 가입" 버튼을 클릭합니다.',
           },
           {
             name: '신청서 작성',

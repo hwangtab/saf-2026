@@ -38,8 +38,8 @@ export function generateWebsiteSchema(locale: 'ko' | 'en' = 'ko') {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: isEnglish ? 'SAF 2026' : '씨앗페 2026',
-    alternateName: 'SAF 2026',
+    name: isEnglish ? 'SAF Online' : '씨앗페 온라인',
+    alternateName: 'SAF Online',
     url: SITE_URL,
     description: isEnglish
       ? 'A special exhibition raising mutual-aid funds for Korean artists'
@@ -69,7 +69,7 @@ export function generateLocalBusinessSchema(locale: 'ko' | 'en' = 'ko') {
   return {
     '@context': 'https://schema.org',
     '@type': 'ArtGallery',
-    name: isEnglish ? 'SAF 2026 (Seed Art Festival)' : '씨앗페 2026 (Seed Art Festival)',
+    name: isEnglish ? 'SAF Online (Seed Art Festival)' : '씨앗페 온라인 (Seed Art Festival)',
     image: OG_IMAGE.url,
     '@id': SITE_URL,
     url: SITE_URL,
@@ -112,7 +112,7 @@ export function generateCampaignSchema(locale: 'ko' | 'en' = 'ko') {
     '@type': 'FundingScheme',
     '@id': `${SITE_URL}#campaign`,
     name: isEnglish ? 'Artist Mutual Aid Fund Campaign' : '예술인 상호부조 기금 마련 캠페인',
-    alternateName: 'SAF 2026 Artist Mutual Aid Fund',
+    alternateName: 'SAF Online Artist Mutual Aid Fund',
     description: isEnglish
       ? 'A special campaign raising mutual-aid funds to help Korean artists avoid predatory lending and build financial stability through artwork purchases.'
       : '한국 예술인들의 고리대금 문제 해결을 위한 상호부조 기금 마련 특별 캠페인. 작품 구매를 통해 예술인들의 금융 자립을 지원합니다.',

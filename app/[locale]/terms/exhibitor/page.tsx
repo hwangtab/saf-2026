@@ -19,11 +19,11 @@ const PAGE_URL = `${SITE_URL}${PAGE_PATH}`;
 const PAGE_COPY = {
   ko: {
     title: '출품자 계약서',
-    description: '씨앗페 2026 출품자 전시위탁 계약서 전문입니다.',
+    description: '씨앗페 온라인 출품자 전시위탁 계약서 전문입니다.',
   },
   en: {
     title: 'Exhibitor Agreement',
-    description: 'Full text of the SAF 2026 exhibitor consignment agreement.',
+    description: 'Full text of the SAF Online exhibitor consignment agreement.',
   },
 } as const;
 
@@ -55,7 +55,7 @@ export default async function ExhibitorTermsPage() {
         <JsonLdScript data={breadcrumbSchema} />
         <PageHero
           title="Exhibitor Consignment Agreement"
-          description="Full exhibitor agreement for SAF 2026. The official legal text is currently maintained in Korean."
+          description="Full exhibitor agreement for SAF Online. The official legal text is currently maintained in Korean."
         />
 
         <Section variant="white" className="pb-24 md:pb-32">
@@ -102,7 +102,7 @@ export default async function ExhibitorTermsPage() {
       <JsonLdScript data={breadcrumbSchema} />
       <PageHero
         title="출품자 전시위탁 계약서"
-        description="씨앗페 2026 출품자 전시위탁 계약서 전문입니다."
+        description="씨앗페 온라인 출품자 전시위탁 계약서 전문입니다."
       />
 
       <Section variant="white" className="pb-24 md:pb-32">

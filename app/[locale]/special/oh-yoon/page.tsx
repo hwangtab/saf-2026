@@ -32,7 +32,7 @@ const isOhYoonArtist = (artist: string): boolean => {
 const PAGE_COPY = {
   ko: {
     title: '오윤 40주기 특별전: Oh Yoon 40th Anniversary Special Exhibition',
-    description: '씨앗페 2026에서 진행하는 민중미술의 거장 오윤의 40주기 특별전입니다.',
+    description: '씨앗페 온라인에서 진행하는 민중미술의 거장 오윤의 40주기 특별전입니다.',
     ogDescription: '민중미술의 거장 오윤의 작품 세계를 만나는 온라인 특별전 페이지입니다.',
     ogAlt: '오윤 40주기 특별전 대표 이미지',
     twitterTitle: '오윤 40주기 특별전',
@@ -41,13 +41,13 @@ const PAGE_COPY = {
   en: {
     title: 'Oh Yoon 40th Anniversary Special Exhibition',
     description:
-      'A special online exhibition at SAF 2026 honoring 40 years since the artist Oh Yoon.',
+      'A special online exhibition at SAF Online honoring 40 years since the artist Oh Yoon.',
     ogDescription:
       "Explore the world of Oh Yoon, a major figure in Korean people's art, through this special online exhibition.",
     ogAlt: 'Oh Yoon 40th Anniversary Special Exhibition key visual',
     twitterTitle: 'Oh Yoon 40th Anniversary Special Exhibition',
     twitterDescription:
-      'Discover selected works by Oh Yoon in this SAF 2026 special online exhibition.',
+      'Discover selected works by Oh Yoon in this SAF Online special online exhibition.',
   },
 } as const;
 

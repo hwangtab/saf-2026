@@ -13,9 +13,9 @@ const repaymentRate = repaymentRateStat ? `${repaymentRateStat.value}%` : '95%';
 
 export const faqs: FAQItem[] = [
   {
-    question: '씨앗페 2026이란 무엇인가요?',
+    question: '씨앗페 온라인이란 무엇인가요?',
     answer:
-      '씨앗페 2026은 한국 예술인들의 상호부조 대출 기금 마련을 위한 특별전입니다. 조합원 가입과 작품 구매를 통해 예술인들에게 안정적인 창작 환경을 제공합니다.',
+      '씨앗페 온라인은 한국 예술인들의 상호부조 대출 기금 마련을 위한 특별전입니다. 조합원 가입과 작품 구매를 통해 예술인들에게 안정적인 창작 환경을 제공합니다.',
   },
   {
     question: '조합원 가입은 어떻게 하나요?',
@@ -32,7 +32,7 @@ export const faqs: FAQItem[] = [
     answer: `제1금융권에서 소외된 예술인들을 위해, 조성된 기금을 바탕으로 연 5%의 고정금리로 대출해주는 시스템입니다. 현재 ${repaymentRate}의 높은 상환율을 유지하고 있습니다.`,
   },
   {
-    question: '씨앗페 2026의 목표 금액은 얼마인가요?',
+    question: '씨앗페 온라인의 목표 금액은 얼마인가요?',
     answer: `이번 캠페인을 통해 총 ${loanGoal} 원의 상호부조 대출 가능 기금 확보를 목표로 하고 있습니다. 여러분의 조합원 가입과 작품 구매가 이 목표를 가능하게 합니다.`,
   },
   {
@@ -44,9 +44,9 @@ export const faqs: FAQItem[] = [
 
 export const faqsEn: FAQItem[] = [
   {
-    question: 'What is SAF 2026?',
+    question: 'What is SAF Online?',
     answer:
-      'SAF 2026 is a special exhibition that raises a mutual-aid loan fund for Korean artists. Through co-op membership and artwork purchases, it helps create a stable environment for creative work.',
+      'SAF Online is a special exhibition that raises a mutual-aid loan fund for Korean artists. Through co-op membership and artwork purchases, it helps create a stable environment for creative work.',
   },
   {
     question: 'How can I join the cooperative?',
@@ -64,7 +64,7 @@ export const faqsEn: FAQItem[] = [
       'It is a financing program for artists excluded from primary banking, offering fixed-rate loans at around 5% APR based on a jointly built fund. The program currently maintains a high repayment rate of over 95%.',
   },
   {
-    question: 'What is the funding goal of SAF 2026?',
+    question: 'What is the funding goal of SAF Online?',
     answer:
       'This campaign aims to secure a mutual-aid loan fund capacity of about KRW 1 billion. Co-op membership and artwork purchases make this goal possible.',
   },

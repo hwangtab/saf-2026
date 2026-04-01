@@ -22,8 +22,8 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   metadataBase: new URL(SITE_URL),
   title: {
-    default: '씨앗페 2026 | 예술인 상호부조 기금 마련 특별전',
-    template: '%s | 씨앗페 2026',
+    default: '씨앗페 온라인 | 예술인 상호부조 기금 마련 특별전',
+    template: '%s | 씨앗페 온라인',
   },
   alternates: {
     canonical: SITE_URL,
@@ -37,8 +37,8 @@ export const metadata: Metadata = {
     '한국 예술인들의 내일을 함께 만드는 특별전. 조합원 가입과 작품 구매로 예술인의 창작 환경을 지켜주세요.',
   keywords: [
     '씨앗페',
-    '씨앗페 2026',
-    'SAF 2026',
+    '씨앗페 온라인',
+    'SAF Online',
     'Seed Art Festival',
     '예술인 상호부조',
     '예술인 기금',
@@ -62,10 +62,10 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'ko_KR',
     url: SITE_URL,
-    title: '씨앗페 2026 | 예술인 상호부조 기금 마련 특별전',
+    title: '씨앗페 온라인 | 예술인 상호부조 기금 마련 특별전',
     description:
       '한국 예술인들의 내일을 함께 만드는 특별전. 조합원 가입과 작품 구매로 예술인의 창작 환경을 지켜주세요.',
-    siteName: '씨앗페 2026',
+    siteName: '씨앗페 온라인',
     images: [
       {
         url: OG_IMAGE.url,
@@ -77,7 +77,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '씨앗페 2026',
+    title: '씨앗페 온라인',
     description: '한국 예술인들의 상호부조 기금 마련을 위한 특별전',
     images: [OG_IMAGE.url],
   },

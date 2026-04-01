@@ -45,10 +45,10 @@ const NEWS_COPY: Record<LocaleCode, NewsPageCopy> = {
   ko: {
     pageTitle: '언론 보도',
     pageDescription:
-      '언론이 주목한 씨앗페 2026. 주요 뉴스 보도와 칼럼을 통해 캠페인의 사회적 의미를 확인하세요.',
+      '언론이 주목한 씨앗페 온라인. 주요 뉴스 보도와 칼럼을 통해 캠페인의 사회적 의미를 확인하세요.',
     heroTitle: '언론 보도',
     heroDescription: '씨앗페 캠페인을 조명한 기사와 인터뷰를 모았습니다.',
-    shareTitle: '언론 보도 | 씨앗페 2026',
+    shareTitle: '언론 보도 | 씨앗페 온라인',
     shareDescription: '씨앗페 캠페인을 다룬 언론 보도를 한 눈에 확인해보세요.',
     highlightsBadge: '언론 하이라이트',
     highlightsTitle: '언론이 짚어낸 예술인 금융 위기의 핵심 메시지',
@@ -59,16 +59,16 @@ const NEWS_COPY: Record<LocaleCode, NewsPageCopy> = {
     readMore: '자세히 보기',
     originalKoreanArticleTitle: '원문 기사 (한국어)',
     originalKoreanArticleDescription: '이 기사의 본문은 한국어로 제공됩니다.',
-    collectionName: '씨앗페 2026 언론 보도',
+    collectionName: '씨앗페 온라인 언론 보도',
     collectionDescription: '주요 매체가 보도한 씨앗페 캠페인 기사 모음입니다.',
   },
   en: {
     pageTitle: 'Press',
     pageDescription:
-      'Media coverage of SAF 2026. Explore major stories and columns about financial exclusion among artists.',
+      'Media coverage of SAF Online. Explore major stories and columns about financial exclusion among artists.',
     heroTitle: 'Press',
     heroDescription: 'A curated collection of articles and interviews covering the SAF campaign.',
-    shareTitle: 'Press | SAF 2026',
+    shareTitle: 'Press | SAF Online',
     shareDescription: 'Browse media coverage and interviews about the SAF campaign.',
     highlightsBadge: 'Press Highlights',
     highlightsTitle: 'Key Messages the Press Highlighted',
@@ -80,7 +80,7 @@ const NEWS_COPY: Record<LocaleCode, NewsPageCopy> = {
     originalKoreanArticleTitle: 'Original Korean article',
     originalKoreanArticleDescription:
       'This article body is currently available in Korean. Open the source to read the original coverage.',
-    collectionName: 'SAF 2026 Press Coverage',
+    collectionName: 'SAF Online Press Coverage',
     collectionDescription: 'A collection of media coverage about the SAF campaign.',
   },
 };

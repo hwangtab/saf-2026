@@ -77,8 +77,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: seoDescription.substring(0, 300),
     keywords:
       locale === 'en'
-        ? [artistName, 'SAF 2026', 'artist', 'artworks', 'exhibition']
-        : [artistName, '씨앗페', 'SAF 2026', '예술가', '전시회'],
+        ? [artistName, 'SAF Online', 'artist', 'artworks', 'exhibition']
+        : [artistName, '씨앗페', 'SAF Online', '예술가', '전시회'],
     alternates: createLocaleAlternates(artistPath, locale),
     openGraph: {
       title: metaTitle,
