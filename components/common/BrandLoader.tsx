@@ -20,6 +20,7 @@ export default function BrandLoader({ minHeight = '80vh' }: BrandLoaderProps) {
           width={320}
           height={90}
           className="w-44 md:w-64 h-auto"
+          placeholder="empty"
           priority
         />
       </div>
