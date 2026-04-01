@@ -39,8 +39,7 @@ const FAQList = dynamic(() => import('@/components/features/FAQList'), {
   loading: () => <div className="w-full h-[280px] rounded-xl bg-white/60" aria-hidden="true" />,
 });
 const ArtworkHighlightSlider = dynamic(
-  () => import('@/components/features/ArtworkHighlightSlider'),
-  { ssr: false }
+  () => import('@/components/features/ArtworkHighlightSlider')
 );
 
 export async function generateMetadata(): Promise<Metadata> {
