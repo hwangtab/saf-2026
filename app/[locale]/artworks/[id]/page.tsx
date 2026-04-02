@@ -200,6 +200,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 artist={displayArtist}
                 sold={artwork.sold}
                 size={artwork.size}
+                category={artwork.category}
               />
 
               {/* Mobile Header: Title, Artist, Price (Visible only on mobile) */}
