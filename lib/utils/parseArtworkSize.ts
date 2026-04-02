@@ -30,6 +30,7 @@ const HO_SIZES: Record<number, [number, number]> = {
 export interface ArtworkDimensions {
   widthM: number;
   heightM: number;
+  depthM?: number;
   isDefault?: boolean;
 }
 
@@ -42,24 +43,28 @@ export function parseArtworkSize(size: string): ArtworkDimensions {
 
   // WxH(xD)cm — e.g. "53x53cm", "60.6x40.9cm", "60x60x130cm"
   const cmMatch = trimmed.match(
-    /^(\d+(?:\.\d+)?)\s*[×xX]\s*(\d+(?:\.\d+)?)(?:\s*[×xX]\s*\d+(?:\.\d+)?)?\s*cm/i
+    /^(\d+(?:\.\d+)?)\s*[×xX]\s*(\d+(?:\.\d+)?)(?:\s*[×xX]\s*(\d+(?:\.\d+)?))?\s*cm/i
   );
   if (cmMatch) {
-    return {
+    const result: ArtworkDimensions = {
       widthM: parseFloat(cmMatch[1]) / 100,
       heightM: parseFloat(cmMatch[2]) / 100,
     };
+    if (cmMatch[3]) result.depthM = parseFloat(cmMatch[3]) / 100;
+    return result;
   }
 
   // WxH(xD)mm — e.g. "12x12x285mm"
   const mmMatch = trimmed.match(
-    /^(\d+(?:\.\d+)?)\s*[×xX]\s*(\d+(?:\.\d+)?)(?:\s*[×xX]\s*\d+(?:\.\d+)?)?\s*mm/i
+    /^(\d+(?:\.\d+)?)\s*[×xX]\s*(\d+(?:\.\d+)?)(?:\s*[×xX]\s*(\d+(?:\.\d+)?))?\s*mm/i
   );
   if (mmMatch) {
-    return {
+    const result: ArtworkDimensions = {
       widthM: parseFloat(mmMatch[1]) / 1000,
       heightM: parseFloat(mmMatch[2]) / 1000,
     };
+    if (mmMatch[3]) result.depthM = parseFloat(mmMatch[3]) / 1000;
+    return result;
   }
 
   // WxH inch — e.g. "11x40inch"

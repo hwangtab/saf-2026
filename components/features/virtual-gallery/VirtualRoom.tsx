@@ -7,13 +7,16 @@ import * as THREE from 'three';
 import RoomGeometry from './RoomGeometry';
 import RoomFurniture from './RoomFurniture';
 import ArtworkPlane from './ArtworkPlane';
+import ArtworkPedestal from './ArtworkPedestal';
 import type { RoomPreset } from './roomPresets';
 import type { ArtworkDimensions } from '@/lib/utils/parseArtworkSize';
+import type { DisplayMode } from './VirtualGalleryPortal';
 
 interface VirtualRoomProps {
   preset: RoomPreset;
   imageUrl: string;
   dimensions: ArtworkDimensions;
+  displayMode?: DisplayMode;
   isMobile: boolean;
 }
 
@@ -150,11 +153,15 @@ function LoadingPlaceholder() {
   );
 }
 
-function Scene({ preset, imageUrl, dimensions, isMobile }: VirtualRoomProps) {
+function Scene({ preset, imageUrl, dimensions, displayMode = 'wall', isMobile }: VirtualRoomProps) {
   const { roomHeight, roomDepth } = preset;
   const artworkZ = -roomDepth / 2 + 0.05;
+  const isPedestal = displayMode === 'pedestal';
 
-  const cameraTarget = useMemo(() => [0, 1.5, artworkZ] as [number, number, number], [artworkZ]);
+  const cameraTarget = useMemo(
+    () => (isPedestal ? [0, 1.2, 0] : [0, 1.5, artworkZ]) as [number, number, number],
+    [artworkZ, isPedestal]
+  );
 
   return (
     <>
@@ -164,32 +171,38 @@ function Scene({ preset, imageUrl, dimensions, isMobile }: VirtualRoomProps) {
 
       <RoomGeometry preset={preset} />
 
-      <RoomFurniture preset={preset} />
+      {!isPedestal && <RoomFurniture preset={preset} />}
 
       {!isMobile && (
         <ContactShadows
-          position={[0, 0.001, artworkZ]}
+          position={isPedestal ? [0, 0.001, 0] : [0, 0.001, artworkZ]}
           opacity={0.3}
-          scale={4}
+          scale={isPedestal ? 6 : 4}
           blur={2.5}
           far={3}
         />
       )}
 
-      <group position={[0, 0, artworkZ]}>
+      {isPedestal ? (
         <Suspense fallback={<LoadingPlaceholder />}>
-          <ArtworkPlane imageUrl={imageUrl} dimensions={dimensions} wallY={roomHeight} />
+          <ArtworkPedestal imageUrl={imageUrl} dimensions={dimensions} />
         </Suspense>
-      </group>
+      ) : (
+        <group position={[0, 0, artworkZ]}>
+          <Suspense fallback={<LoadingPlaceholder />}>
+            <ArtworkPlane imageUrl={imageUrl} dimensions={dimensions} wallY={roomHeight} />
+          </Suspense>
+        </group>
+      )}
 
       <OrbitControls
         target={cameraTarget}
         minDistance={0.8}
-        maxDistance={4.5}
-        minPolarAngle={Math.PI * 0.15}
+        maxDistance={isPedestal ? 5.0 : 4.5}
+        minPolarAngle={Math.PI * 0.1}
         maxPolarAngle={Math.PI * 0.72}
-        minAzimuthAngle={-Math.PI * 0.45}
-        maxAzimuthAngle={Math.PI * 0.45}
+        minAzimuthAngle={isPedestal ? -Math.PI : -Math.PI * 0.45}
+        maxAzimuthAngle={isPedestal ? Math.PI : Math.PI * 0.45}
         enablePan={false}
         enableDamping
         dampingFactor={0.06}
@@ -200,10 +213,20 @@ function Scene({ preset, imageUrl, dimensions, isMobile }: VirtualRoomProps) {
   );
 }
 
-export default function VirtualRoom({ preset, imageUrl, dimensions, isMobile }: VirtualRoomProps) {
+export default function VirtualRoom({
+  preset,
+  imageUrl,
+  dimensions,
+  displayMode = 'wall',
+  isMobile,
+}: VirtualRoomProps) {
+  const isPedestal = displayMode === 'pedestal';
   const cameraPosition = useMemo(
-    () => [0, 1.5, preset.roomDepth / 2 - 0.5] as [number, number, number],
-    [preset.roomDepth]
+    () =>
+      isPedestal
+        ? ([2.5, 1.6, 2.5] as [number, number, number])
+        : ([0, 1.5, preset.roomDepth / 2 - 0.5] as [number, number, number]),
+    [preset.roomDepth, isPedestal]
   );
 
   return (
@@ -220,7 +243,13 @@ export default function VirtualRoom({ preset, imageUrl, dimensions, isMobile }: 
       shadows={!isMobile}
       style={{ width: '100%', height: '100%' }}
     >
-      <Scene preset={preset} imageUrl={imageUrl} dimensions={dimensions} isMobile={isMobile} />
+      <Scene
+        preset={preset}
+        imageUrl={imageUrl}
+        dimensions={dimensions}
+        displayMode={displayMode}
+        isMobile={isMobile}
+      />
     </Canvas>
   );
 }

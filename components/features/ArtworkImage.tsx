@@ -7,7 +7,7 @@ import dynamic from 'next/dynamic';
 import { resolveArtworkImageUrl, resolveArtworkImageUrlForPreset } from '@/lib/utils';
 import { parseArtworkSize } from '@/lib/utils/parseArtworkSize';
 
-const NON_WALL_CATEGORIES = ['조각', '도자/공예'];
+const PEDESTAL_CATEGORIES = ['조각', '도자/공예'];
 
 const ArtworkLightbox = dynamic(() => import('@/components/ui/ArtworkLightbox'), {
   ssr: false,
@@ -36,17 +36,19 @@ export default function ArtworkImage({
   category,
 }: ArtworkImageProps) {
   const locale = useLocale();
+  const isPedestal = PEDESTAL_CATEGORIES.includes(category || '');
+
   const copy =
     locale === 'en'
       ? {
           zoomImage: 'Zoom image',
           zoomHint: 'Zoom',
-          viewInRoom: 'Preview on Wall',
+          viewInRoom: isPedestal ? 'Preview in Gallery' : 'Preview on Wall',
         }
       : {
           zoomImage: '이미지 확대하기',
           zoomHint: '확대하기',
-          viewInRoom: '내 벽에 걸어보기',
+          viewInRoom: isPedestal ? '공간에 놓아보기' : '내 벽에 걸어보기',
         };
 
   const [isOpen, setIsOpen] = useState(false);
@@ -55,8 +57,7 @@ export default function ArtworkImage({
   const handlePrefetch = useCallback(() => {
     import('@/components/features/virtual-gallery/VirtualGalleryPortal');
   }, []);
-  const canPreviewOnWall =
-    !NON_WALL_CATEGORIES.includes(category || '') && !parseArtworkSize(size || '').isDefault;
+  const canPreview = !parseArtworkSize(size || '').isDefault;
 
   const alt = `${title} - ${artist}`;
   const firstImage = images?.[0] || '';
@@ -117,7 +118,7 @@ export default function ArtworkImage({
       </div>
 
       {/* View in Room Button */}
-      {canPreviewOnWall && (
+      {canPreview && (
         <button
           onClick={() => setIsRoomOpen(true)}
           onMouseEnter={handlePrefetch}
@@ -155,6 +156,7 @@ export default function ArtworkImage({
         <VirtualGalleryPortal
           imageUrl={resolveArtworkImageUrl(firstImage)}
           dimensions={parseArtworkSize(size || '')}
+          displayMode={isPedestal ? 'pedestal' : 'wall'}
           title={title}
           artist={artist}
           onClose={() => setIsRoomOpen(false)}
