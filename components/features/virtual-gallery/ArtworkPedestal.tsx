@@ -74,9 +74,26 @@ export default function ArtworkPedestal({ imageUrl, dimensions }: ArtworkPedesta
   const pedestalW = Math.max(0.4, artW + 0.2);
   const pedestalD = Math.max(0.35, artW * 0.6 + 0.1);
 
+  const artworkMaterial = useMemo(() => {
+    if (!loaded) return null;
+    return new THREE.MeshBasicMaterial({
+      map: loaded.texture,
+      toneMapped: false,
+      side: THREE.DoubleSide,
+    });
+  }, [loaded]);
+
+  useEffect(() => {
+    return () => {
+      artworkMaterial?.dispose();
+    };
+  }, [artworkMaterial]);
+
+  const artworkY = pedestalH + 0.02 + artH / 2;
+
   return (
     <group position={[0, 0, 0]}>
-      <object3D ref={targetRef} position={[0, pedestalH + artH / 2, 0]} />
+      <object3D ref={targetRef} position={[0, artworkY, 0]} />
 
       {/* Overhead spotlight */}
       <spotLight
@@ -106,15 +123,28 @@ export default function ArtworkPedestal({ imageUrl, dimensions }: ArtworkPedesta
         <meshStandardMaterial color="#e8e4de" roughness={0.5} metalness={0.03} />
       </mesh>
 
-      {/* Artwork image — vertical plane on pedestal */}
-      <mesh position={[0, pedestalH + 0.02 + artH / 2, 0]}>
-        <planeGeometry args={[artW, artH]} />
-        {loaded ? (
-          <meshBasicMaterial map={loaded.texture} toneMapped={false} side={THREE.DoubleSide} />
-        ) : (
-          <meshStandardMaterial color="#e0d8cc" roughness={0.8} metalness={0} />
-        )}
-      </mesh>
+      {/* Cross billboard — two planes at 90° for 3D appearance */}
+      <group position={[0, artworkY, 0]}>
+        {/* Front-back plane */}
+        <mesh>
+          <planeGeometry args={[artW, artH]} />
+          {artworkMaterial ? (
+            <primitive object={artworkMaterial} attach="material" />
+          ) : (
+            <meshStandardMaterial color="#e0d8cc" roughness={0.8} metalness={0} />
+          )}
+        </mesh>
+
+        {/* Left-right plane (rotated 90°) */}
+        <mesh rotation={[0, Math.PI / 2, 0]}>
+          <planeGeometry args={[artW, artH]} />
+          {artworkMaterial ? (
+            <primitive object={artworkMaterial} attach="material" />
+          ) : (
+            <meshStandardMaterial color="#e0d8cc" roughness={0.8} metalness={0} />
+          )}
+        </mesh>
+      </group>
 
       {/* Info label on pedestal front */}
       <mesh position={[0, pedestalH * 0.55, pedestalD / 2 + 0.001]}>
