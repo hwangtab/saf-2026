@@ -17,6 +17,8 @@
     "test:watch": "jest --watch",
     "prepare": "husky install",
     "backup:artwork-images": "node scripts/backup-artwork-images.js",
+    "upscale-artwork-images": "node scripts/upscale-artwork-images.js",
+    "upscale-artwork-images:apply": "node scripts/upscale-artwork-images.js --apply",
     "backfill:artwork-images:dry": "node scripts/backfill-artwork-image-variants.js",
     "backfill:artwork-images:apply": "node scripts/backfill-artwork-image-variants.js --apply",
     "cleanup:artwork-variants:dry": "node scripts/cleanup-artwork-variants.js",
