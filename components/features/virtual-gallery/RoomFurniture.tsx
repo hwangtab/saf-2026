@@ -486,10 +486,14 @@ function BedroomFurniture({ preset }: { preset: RoomPreset }) {
   const rightX = roomWidth / 2;
   const leftX = -roomWidth / 2;
 
+  // Bed pushed into right-front corner: right side ~5cm from right wall
+  const bedCenterX = rightX - 0.82; // 1.68 for 5m room
+  // Bed left edge at bedCenterX - 0.75 = 0.93 → accessible left side
+
   return (
     <group>
-      {/* ── Bed — headboard against front wall, centered ── */}
-      <group position={[0, 0, frontZ - 1.05]}>
+      {/* ── Bed — right-front corner, headboard flush with front wall ── */}
+      <group position={[bedCenterX, 0, frontZ - 1.05]}>
         {/* Bed frame base */}
         <Box size={[1.5, 0.28, 2.0]} position={[0, 0.14, 0]} color="#6b5a48" roughness={0.7} />
         {/* Mattress */}
@@ -525,32 +529,41 @@ function BedroomFurniture({ preset }: { preset: RoomPreset }) {
           roughness={1}
           metalness={0}
         />
-        {/* Bed legs */}
+        {/* Bed legs (only left side visible, right is against wall) */}
         <Box size={[0.06, 0.06, 0.06]} position={[-0.68, 0.03, -0.9]} color="#5c4a3a" />
-        <Box size={[0.06, 0.06, 0.06]} position={[0.68, 0.03, -0.9]} color="#5c4a3a" />
+        <Box size={[0.06, 0.06, 0.06]} position={[-0.68, 0.03, 0.9]} color="#5c4a3a" />
       </group>
 
-      {/* ── Rug beside bed ── */}
-      <Rug width={1.6} depth={1.0} position={[rightX - 0.5, 0.003, frontZ - 1.0]} color="#b0a090" />
+      {/* ── Rug — left/foot side of bed (step-out zone) ── */}
+      <Rug
+        width={1.1}
+        depth={1.6}
+        position={[bedCenterX - 1.15, 0.003, frontZ - 1.2]}
+        color="#b0a090"
+      />
 
-      {/* ── Nightstand — right of bed ── */}
-      <group position={[rightX - 0.35, 0, frontZ - 0.6]}>
+      {/* ── Nightstand — left of bed only (accessible side) ── */}
+      <group position={[bedCenterX - 1.08, 0, frontZ - 0.55]}>
         <Box size={[0.38, 0.48, 0.35]} position={[0, 0.24, 0]} color="#6b5a48" roughness={0.6} />
         <Box size={[0.32, 0.12, 0.01]} position={[0, 0.3, 0.175]} color="#7a6a58" roughness={0.5} />
         <TableLamp position={[0, 0.48, 0]} shadeColor="#f5eee0" />
-      </group>
-
-      {/* ── Nightstand — left of bed ── */}
-      <group position={[leftX + 0.35, 0, frontZ - 0.6]}>
-        <Box size={[0.38, 0.48, 0.35]} position={[0, 0.24, 0]} color="#6b5a48" roughness={0.6} />
-        <Box size={[0.32, 0.12, 0.01]} position={[0, 0.3, 0.175]} color="#7a6a58" roughness={0.5} />
         {/* Small stack of books */}
-        <Box size={[0.14, 0.04, 0.1]} position={[0, 0.5, 0]} color="#8b6050" roughness={0.9} />
-        <Box size={[0.12, 0.03, 0.09]} position={[0, 0.535, 0]} color="#506880" roughness={0.9} />
+        <Box
+          size={[0.14, 0.04, 0.1]}
+          position={[0.05, 0.5, -0.05]}
+          color="#8b6050"
+          roughness={0.9}
+        />
+        <Box
+          size={[0.12, 0.03, 0.09]}
+          position={[0.05, 0.535, -0.05]}
+          color="#506880"
+          roughness={0.9}
+        />
       </group>
 
       {/* ── Dresser — along left wall ── */}
-      <group position={[leftX + 0.3, 0, -0.3]}>
+      <group position={[leftX + 0.3, 0, 0.3]}>
         <Box size={[0.5, 0.8, 0.9]} position={[0, 0.4, 0]} color="#6b5a48" roughness={0.6} />
         <Box size={[0.42, 0.18, 0.01]} position={[0, 0.2, 0.45]} color="#7a6a58" roughness={0.5} />
         <Box size={[0.42, 0.18, 0.01]} position={[0, 0.42, 0.45]} color="#7a6a58" roughness={0.5} />
@@ -558,7 +571,7 @@ function BedroomFurniture({ preset }: { preset: RoomPreset }) {
       </group>
 
       {/* ── Small plant on dresser ── */}
-      <group position={[leftX + 0.3, 0.8, 0.0]}>
+      <group position={[leftX + 0.3, 0.8, 0.3]}>
         <Cylinder
           args={[0.05, 0.06, 0.1, 10]}
           position={[0, 0.05, 0]}
@@ -571,11 +584,11 @@ function BedroomFurniture({ preset }: { preset: RoomPreset }) {
         </mesh>
       </group>
 
-      {/* ── Tall plant — right corner near artwork wall ── */}
-      <Plant position={[rightX - 0.35, 0, -roomDepth / 2 + 0.5]} />
+      {/* ── Tall plant — left corner near artwork wall ── */}
+      <Plant position={[leftX + 0.45, 0, -roomDepth / 2 + 0.5]} />
 
-      {/* ── Small chair / reading nook — left of artwork wall ── */}
-      <group position={[leftX + 0.6, 0, -roomDepth / 2 + 0.6]}>
+      {/* ── Small chair / reading nook — left wall, mid-room ── */}
+      <group position={[leftX + 0.55, 0, -0.8]}>
         <Box
           size={[0.5, 0.3, 0.5]}
           position={[0, 0.2, 0]}
@@ -596,43 +609,34 @@ function BedroomFurniture({ preset }: { preset: RoomPreset }) {
         <Box size={[0.04, 0.14, 0.04]} position={[0.2, 0.07, -0.2]} color="#5c4a3a" />
       </group>
 
-      {/* ── Floor lamp — right wall ── */}
-      <FloorLamp position={[rightX - 0.35, 0, 0.3]} />
+      {/* ── Floor lamp — beside nightstand ── */}
+      <FloorLamp position={[bedCenterX - 1.5, 0, frontZ - 1.4]} />
 
       {/* ── Frames on left wall ── */}
       <WallFrame
-        position={[leftX + 0.01, 1.5, 0.5]}
+        position={[leftX + 0.01, 1.5, 0.8]}
         rotation={[0, Math.PI / 2, 0]}
         width={0.3}
         height={0.2}
         canvasColor="#d0c4b0"
       />
       <WallFrame
-        position={[leftX + 0.01, 1.45, -0.8]}
+        position={[leftX + 0.01, 1.45, -0.5]}
         rotation={[0, Math.PI / 2, 0]}
         width={0.2}
         height={0.28}
         canvasColor="#b8c8b8"
       />
 
-      {/* ── Frame on right wall ── */}
-      <WallFrame
-        position={[rightX - 0.01, 1.5, frontZ - 0.8]}
-        rotation={[0, -Math.PI / 2, 0]}
-        width={0.35}
-        height={0.25}
-        canvasColor="#c8c0b0"
-      />
-
-      {/* ── Window on front wall (above headboard) ── */}
-      <group position={[0, 1.8, frontZ - 0.01]} rotation={[0, Math.PI, 0]}>
-        <Box size={[0.8, 0.5, 0.03]} position={[0, 0, 0]} color="#e0d8cc" roughness={0.5} />
-        <mesh position={[0, 0, 0.016]}>
-          <planeGeometry args={[0.72, 0.42]} />
+      {/* ── Window on front wall — centered (away from bed corner) ── */}
+      <group position={[-0.8, 1.75, frontZ - 0.01]} rotation={[0, Math.PI, 0]}>
+        <Box size={[0.9, 0.55, 0.04]} position={[0, 0, 0]} color="#e0d8cc" roughness={0.5} />
+        <mesh position={[0, 0, 0.021]}>
+          <planeGeometry args={[0.82, 0.47]} />
           <meshBasicMaterial color="#c8d8e8" />
         </mesh>
-        <Box size={[0.72, 0.025, 0.01]} position={[0, 0, 0.02]} color="#e0d8cc" roughness={0.5} />
-        <Box size={[0.025, 0.42, 0.01]} position={[0, 0, 0.02]} color="#e0d8cc" roughness={0.5} />
+        <Box size={[0.82, 0.025, 0.01]} position={[0, 0, 0.025]} color="#e0d8cc" roughness={0.5} />
+        <Box size={[0.025, 0.47, 0.01]} position={[0, 0, 0.025]} color="#e0d8cc" roughness={0.5} />
       </group>
     </group>
   );
