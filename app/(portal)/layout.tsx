@@ -1,5 +1,7 @@
+import { Suspense } from 'react';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
+import NavigationProgress from '@/components/layout/NavigationProgress';
 import ToastProvider from '@/components/providers/ToastProvider';
 
 export default async function PortalLayout({ children }: { children: React.ReactNode }) {
@@ -9,6 +11,9 @@ export default async function PortalLayout({ children }: { children: React.React
   return (
     <NextIntlClientProvider messages={messages}>
       <ToastProvider>
+        <Suspense fallback={null}>
+          <NavigationProgress />
+        </Suspense>
         <a href="#portal-content" className="skip-to-main">
           {t('skipToMain')}
         </a>

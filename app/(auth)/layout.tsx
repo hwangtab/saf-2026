@@ -4,7 +4,6 @@ import { getLocale, getMessages } from 'next-intl/server';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import PageLoader from '@/components/common/PageLoader';
-import PageTransition from '@/components/common/PageTransition';
 import ToastProvider from '@/components/providers/ToastProvider';
 
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {
@@ -20,9 +19,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
         </a>
         <Header />
         <main id="main-content" className="flex-1">
-          <PageTransition>
-            <Suspense fallback={<PageLoader />}>{children}</Suspense>
-          </PageTransition>
+          <Suspense fallback={<PageLoader />}>{children}</Suspense>
         </main>
         <Suspense>
           <Footer />
