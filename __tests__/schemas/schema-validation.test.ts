@@ -394,7 +394,7 @@ describe('generateArtworkPurchaseHowTo', () => {
   it('should have 4 steps for ko locale', () => {
     const schema = generateArtworkPurchaseHowTo('ko');
     expect(schema.step).toHaveLength(4);
-    expect(schema.name).toMatch(/SAF 2026/);
+    expect(schema.name).toMatch(/SAF Online/);
   });
 
   it('should have 4 steps for en locale with English content', () => {
