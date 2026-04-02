@@ -546,7 +546,9 @@ function BedroomFurniture({ preset }: { preset: RoomPreset }) {
       <group position={[bedCenterX - 1.08, 0, frontZ - 0.55]}>
         <Box size={[0.38, 0.48, 0.35]} position={[0, 0.24, 0]} color="#6b5a48" roughness={0.6} />
         <Box size={[0.32, 0.12, 0.01]} position={[0, 0.3, 0.175]} color="#7a6a58" roughness={0.5} />
-        <TableLamp position={[0, 0.48, 0]} shadeColor="#f5eee0" />
+        <TableLamp position={[0, 0.48, 0]} shadeColor="#ffecd0" />
+        {/* Mood light — warm glow fills the bedroom */}
+        <pointLight position={[0, 0.7, 0]} intensity={3} color="#ffcc80" distance={5} decay={2} />
         {/* Small stack of books */}
         <Box
           size={[0.14, 0.04, 0.1]}
