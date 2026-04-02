@@ -9,12 +9,9 @@ import type { ArtworkDimensions } from '@/lib/utils/parseArtworkSize';
 
 const VirtualRoom = dynamic(() => import('./VirtualRoom'), { ssr: false });
 
-export type DisplayMode = 'wall' | 'pedestal';
-
 interface VirtualGalleryPortalProps {
   imageUrl: string;
   dimensions: ArtworkDimensions;
-  displayMode?: DisplayMode;
   title: string;
   artist: string;
   onClose: () => void;
@@ -69,20 +66,15 @@ function useIsMobile() {
   return isMobile;
 }
 
-const GALLERY_PRESET = ROOM_PRESETS.find((p) => p.key === 'gallery') || ROOM_PRESETS[0];
-
 export default function VirtualGalleryPortal({
   imageUrl,
   dimensions,
-  displayMode = 'wall',
   title,
   artist,
   onClose,
   locale,
 }: VirtualGalleryPortalProps) {
-  const [selectedPreset, setSelectedPreset] = useState(
-    displayMode === 'pedestal' ? GALLERY_PRESET : ROOM_PRESETS[0]
-  );
+  const [selectedPreset, setSelectedPreset] = useState(ROOM_PRESETS[0]);
   const [webglSupported] = useState(() => detectWebGL());
   const isMobile = useIsMobile();
 
@@ -141,23 +133,21 @@ export default function VirtualGalleryPortal({
 
             {/* Room selector + close */}
             <div className="flex items-center gap-2 flex-shrink-0">
-              {displayMode === 'wall' && (
-                <div className="flex gap-1.5 overflow-x-auto no-scrollbar">
-                  {ROOM_PRESETS.map((preset) => (
-                    <button
-                      key={preset.key}
-                      onClick={() => setSelectedPreset(preset)}
-                      className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
-                        selectedPreset.key === preset.key
-                          ? 'bg-white text-gray-900'
-                          : 'bg-white/10 text-white/70 hover:bg-white/20'
-                      }`}
-                    >
-                      {isKo ? preset.labelKo : preset.labelEn}
-                    </button>
-                  ))}
-                </div>
-              )}
+              <div className="flex gap-1.5 overflow-x-auto no-scrollbar">
+                {ROOM_PRESETS.map((preset) => (
+                  <button
+                    key={preset.key}
+                    onClick={() => setSelectedPreset(preset)}
+                    className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+                      selectedPreset.key === preset.key
+                        ? 'bg-white text-gray-900'
+                        : 'bg-white/10 text-white/70 hover:bg-white/20'
+                    }`}
+                  >
+                    {isKo ? preset.labelKo : preset.labelEn}
+                  </button>
+                ))}
+              </div>
 
               <button
                 onClick={onClose}
@@ -177,7 +167,6 @@ export default function VirtualGalleryPortal({
                   preset={selectedPreset}
                   imageUrl={imageUrl}
                   dimensions={dimensions}
-                  displayMode={displayMode}
                   isMobile={isMobile}
                 />
               </GalleryErrorBoundary>
