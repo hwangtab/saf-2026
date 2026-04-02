@@ -65,3 +65,22 @@
 - [x] `artworks` 동기화 상태(`cafe24_sync_status`, `cafe24_sync_error`) 기록 처리
 - [x] `npm run lint` 통과
 - [x] `npm run type-check` 통과
+
+---
+
+# 작품 상세 작가 관련 URL 확장 체크리스트
+
+- [x] 현재 `artist-articles.ts` 보유 현황 파악
+- [x] 출품 작가 대비 누락/공백 작가 집계
+- [x] URL 중복 현황 확인
+- [x] 동명이인 리스크 작가 식별
+- [x] `implementation_plan.md`에 수집/검수/중복방지 계획 작성
+- [x] 1차 배치 대상(0개/공백 작가) 확정
+- [x] 작가별 검색 힌트 시트 작성
+- [x] 후보 URL 수집
+- [x] canonical URL 정규화 및 중복 제거
+- [x] 동명이인 검수
+- [x] `content/artist-articles.ts` 반영
+- [x] 필요 시 `npm run lint`
+- [x] 필요 시 `npm run type-check`
+- [x] `walkthrough.md` 업데이트

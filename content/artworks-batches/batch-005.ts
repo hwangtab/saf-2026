@@ -47,7 +47,7 @@ export const batch005: Artwork[] = [
     title: `Ottogi – Pink DB Matte`,
     title_en: 'Ottogi – Pink DB Matte',
     material: `Car paint on resin`,
-    size: '12x12x285mm',
+    size: '1.2x1.2x28.5cm',
     year: '2021',
     edition: '',
     price: '₩5,000,000',

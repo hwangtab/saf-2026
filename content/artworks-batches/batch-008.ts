@@ -40,7 +40,7 @@ export const batch008: Artwork[] = [
     title: '기억의 푸른 바오밥',
     title_en: 'Blue Baobab of Memory',
     description: '',
-    size: 'A4 size',
+    size: '21x29.7cm',
     material: 'Hahnemuhle Baryta FB, pigment ink-jet print',
     year: '확인 중',
     edition: '',

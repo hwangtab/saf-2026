@@ -526,6 +526,29 @@ export const artistArticles: Record<string, Article[]> = {
       source: 'artlecture',
     },
   ],
+  손장섭: [
+    {
+      url: 'https://www.yna.co.kr/view/AKR20210603026000005',
+      title: '민중미술운동 이끈 서양화가 손장섭 별세',
+      description:
+        "연합뉴스 부고 기사. '현실과 발언' 창립 동인과 민족미술인협회 초대 회장 경력, 역사화에서 자연 풍경으로 이어진 손장섭의 작업 세계를 함께 정리한다.",
+      source: '연합뉴스',
+    },
+    {
+      url: 'https://www.yna.co.kr/view/AKR20170512165600005',
+      title: '"자연은 역사가 배어있는 현장"…민중미술가 손장섭 개인전',
+      description:
+        '2017년 학고재갤러리 회고전 보도. 1960년대 작품부터 신작까지 38점을 통해 손장섭의 역사화, 나무 연작, 민중미술 맥락을 소개한다.',
+      source: '연합뉴스',
+    },
+    {
+      url: 'https://www.daljin.com/display/D063283',
+      title: '손장섭 초대전',
+      description:
+        '서울아트가이드 전시 아카이브. 광주시립미술관 초대전의 기획 의도와 함께 1960년대 수채화, 1980년대 민중미술, 신목과 금강산·독도 풍경까지 아우른 회고전 성격을 확인할 수 있다.',
+      source: '서울아트가이드',
+    },
+  ],
   심모비: [
     {
       url: 'https://www.daljin.com/?WS=21&BC=gdv&GNO=D103448',
@@ -963,7 +986,7 @@ export const artistArticles: Record<string, Article[]> = {
       source: '미디어스',
     },
   ],
-  칡뫼김구: [
+  '칡뫼 김구': [
     {
       url: 'https://www.hanion.co.kr/news/articleView.html?idxno=33271',
       title: '시대의 상징이 된 화가 칡뫼김구',
@@ -984,6 +1007,13 @@ export const artistArticles: Record<string, Article[]> = {
       description:
         '임진강 접경지 유년의 기억과 분단의 역사적 통증을 붓으로 기록한 전시. 시대의 아픔을 외면하지 않고 캔버스에 투영하여 예술로 승화시킨 현장형 작가의 고백.',
       source: '서울문화투데이',
+    },
+    {
+      url: 'https://www.book.daljin.com/?BC=gdv&GNO=D039077&WS=21',
+      title: '칡뫼 김구전',
+      description:
+        "서울아트가이드 전시 아카이브. 2016년 개인전 '밤 골목 이야기'를 통해 도시의 밤 골목과 서민의 삶을 꾸준히 그려온 작가의 주제의식과 주요 약력을 확인할 수 있다.",
+      source: '서울아트가이드',
     },
   ],
   '장천 김성태': [
@@ -1439,7 +1469,36 @@ export const artistArticles: Record<string, Article[]> = {
       source: '신세계갤러리',
     },
   ],
-  김영서: [],
+  김영서: [
+    {
+      url: 'https://culture.seoul.go.kr/culture/culture/cultureEvent/view.do?cultcode=145429&menuNo=200009',
+      title: '[문화실험공간 호수] 신진 예술가 공모전시 [고운 기록]',
+      description:
+        '서울문화포털 전시 안내. 김영서, 신지현, 심현지가 참여한 공모 전시로, 먹과 연필을 활용한 기억과 일상 기록의 작업 맥락을 함께 확인할 수 있다.',
+      source: '서울문화포털',
+    },
+    {
+      url: 'https://culture.seoul.go.kr/culture/culture/cultureEvent/view.do?cultcode=151489&menuNo=200009',
+      title: '[동작문화재단] 2024 동작아트갤러리 전시기획공모사업 선정전시 1부 [흔적의 깊이]',
+      description:
+        '서울문화포털 전시 안내. 검정 돌(김영서, 조정은) 참여 전시로, 김영서의 최근 전시 이력과 공공 문화기관 전시 기록을 확인할 수 있다.',
+      source: '서울문화포털',
+    },
+    {
+      url: 'https://www.mediapen.com/news/view/761713',
+      title: "김영서 작가 '사라지는 것들의 아름다움' 전시",
+      description:
+        '미디어펜 기사. 유년의 추억, 오래된 아파트, 비눗방울 모티브를 통해 사라지는 것들의 아름다움을 기록하고 기억하려는 작가의 작업 의도를 전한다.',
+      source: '미디어펜',
+    },
+    {
+      url: 'https://v.daum.net/v/KGo4UXVsbe',
+      title: '기억의 파동 - 추억을 기록하다, 김영서 작가',
+      description:
+        '청년타임스 평론. 먹과 연필, 층층이 쌓인 회색빛 화면, 기억과 그리움의 정서를 중심으로 김영서 작업의 조형 언어를 읽어낸다.',
+      source: '청년타임스',
+    },
+  ],
 
   리호: [
     {
@@ -1730,7 +1789,29 @@ export const artistArticles: Record<string, Article[]> = {
       source: '광주미술문화연구소',
     },
   ],
-  변경희: [],
+  변경희: [
+    {
+      url: 'https://culture.seoul.go.kr/culture/culture/cultureEvent/view.do?cultcode=148315&menuNo=200011',
+      title: '[강북문화재단] 2024 강북Festa - 전시 안내',
+      description:
+        '서울문화포털 전시 안내. 변경희의 점(dot) 연작을 사람과 세상의 관계성을 시각화하는 작업으로 설명하며, 2024 전시 참여 기록을 함께 확인할 수 있다.',
+      source: '서울문화포털',
+    },
+    {
+      url: 'https://www.daljin.com/display/D079693',
+      title: '변경희 : 점을 찍다',
+      description:
+        '서울아트가이드 전시 아카이브. 2022년 개인전 개요와 함께 점을 통해 인연과 전체의 관계를 확장해 온 작업 맥락, 주요 전시 이력을 확인할 수 있다.',
+      source: '서울아트가이드',
+    },
+    {
+      url: 'https://cicamuseum.com/abstract-mind-2025/',
+      title: 'Abstract Mind 2025',
+      description:
+        'CICA Museum 국제전 페이지. Byun Kyung-Hee 명의의 참여 사실과 함께 점을 인간 개체와 존재의 출발점으로 보는 작업 개념이 수록돼 있다.',
+      source: 'CICA Museum',
+    },
+  ],
   조이락: [
     {
       url: 'https://www.ibulgyo.com/news/articleView.html?idxno=206941',
@@ -2548,7 +2629,22 @@ export const artistArticles: Record<string, Article[]> = {
       source: '유튜브',
     },
   ],
-  이채원: [],
+  이채원: [
+    {
+      url: 'https://gmoma.ggcf.kr/exhibitions/193',
+      title: '기다림이 끝나는 날에도',
+      description:
+        '경기도미술관 기후 위기 특별전 페이지. 참여작가 명단에 이채원이 포함되어 있으며, 자연과 인간, 인공 환경의 관계를 다루는 전시 맥락을 확인할 수 있다.',
+      source: '경기도미술관',
+    },
+    {
+      url: 'https://artinculture.kr/webzine/exhibitions-on-the-climate-crisis',
+      title: '지구의 경고장',
+      description:
+        '아트인컬처 기사. 기후 위기 전시들을 묶어 소개하며 이채원의 작품 〈하얀 밤 검은 낮〉와 경기도미술관 전시를 함께 언급한다.',
+      source: '아트인컬처',
+    },
+  ],
   조문호: [
     {
       url: 'https://www.artbava.com/exhibits/2016-%EA%B0%A4%EB%9F%AC%EB%A6%AC-%EB%B8%8C%EB%A0%88%EC%86%A1-%EA%B8%B0%ED%9A%8D%EC%A0%84-%EC%82%AC%EC%A7%84%EC%9D%B8%EC%9D%84-%EC%B0%BE%EC%95%84%EC%84%9C12-%EC%A1%B0%EB%AC%B8%ED%98%B8%EB%A1%A0',
