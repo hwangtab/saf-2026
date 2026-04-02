@@ -47,12 +47,12 @@ export default function HeroGalleryGrid({ artworks }: HeroGalleryGridProps) {
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent px-3 pt-10 pb-3">
               <p className="text-white font-semibold text-sm line-clamp-2 leading-snug">{title}</p>
               <p className="text-white/70 text-xs mt-0.5 truncate">{artist}</p>
+              {artwork.material && (
+                <p className="text-white/60 text-xs mt-0.5 truncate">{artwork.material}</p>
+              )}
               {!isInquiry && artwork.price && (
                 <p className="text-sun text-xs font-semibold mt-1">{artwork.price}</p>
               )}
-              <span className="inline-block mt-2 text-xs text-white/90 border border-white/40 bg-white/10 backdrop-blur-sm px-2 py-0.5 rounded leading-tight">
-                {locale === 'en' ? 'View artwork →' : '작품 보기 →'}
-              </span>
             </div>
 
             {artwork.sold && (
