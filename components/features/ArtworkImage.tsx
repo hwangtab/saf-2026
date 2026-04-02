@@ -15,6 +15,8 @@ interface ArtworkImageProps {
   title: string;
   artist: string;
   sold?: boolean;
+  size?: string;
+  category?: string;
 }
 
 export default function ArtworkImage({ images, title, artist, sold }: ArtworkImageProps) {
