@@ -16,6 +16,7 @@ interface LoadedTexture {
 }
 
 const EYE_HEIGHT = 1.4;
+const SIDE_COLOR = '#e8e4de';
 
 export default function ArtworkPedestal({ imageUrl, dimensions }: ArtworkPedestalProps) {
   const [loaded, setLoaded] = useState<LoadedTexture | null>(null);
@@ -49,45 +50,97 @@ export default function ArtworkPedestal({ imageUrl, dimensions }: ArtworkPedesta
     }
   }, []);
 
-  // For 3D objects, the third dimension (depthM) is typically the height for sculptures
-  // Use the largest dimension as the display height
-  const { artW, artH } = useMemo(() => {
+  // Compute 3D box dimensions for the sculpture
+  const { boxW, boxD, boxH } = useMemo(() => {
     const { widthM, heightM, depthM } = dimensions;
-    // For sculptures: WxDxH format — depthM is often the actual height
-    const displayH = depthM ? Math.max(heightM, depthM) : heightM;
-    const displayW = widthM;
 
-    if (!loaded) return { artW: displayW, artH: displayH };
+    if (depthM) {
+      // 3D size given (WxHxD or WxDxH) — use largest as height
+      const vals = [widthM, heightM, depthM].sort((a, b) => b - a);
+      return { boxH: vals[0], boxW: vals[1], boxD: vals[2] };
+    }
 
-    const physAspect = displayW / displayH;
+    // 2D size only — infer depth as fraction of width
+    return { boxW: widthM, boxH: heightM, boxD: Math.min(widthM, heightM) * 0.6 };
+  }, [dimensions]);
+
+  // Fit image aspect within front face (boxW x boxH)
+  const { imgW, imgH } = useMemo(() => {
+    if (!loaded) return { imgW: boxW, imgH: boxH };
+
+    const faceAspect = boxW / boxH;
     const imgAspect = loaded.aspect;
 
-    if (imgAspect > physAspect) {
-      return { artW: displayW, artH: displayW / imgAspect };
+    if (imgAspect > faceAspect) {
+      return { imgW: boxW, imgH: boxW / imgAspect };
     } else {
-      return { artW: displayH * imgAspect, artH: displayH };
+      return { imgW: boxH * imgAspect, imgH: boxH };
     }
-  }, [dimensions, loaded]);
+  }, [boxW, boxH, loaded]);
 
   // Pedestal height: position artwork center near eye level
   const pedestalH = useMemo(() => {
-    const idealH = EYE_HEIGHT - artH / 2;
-    return Math.max(0.25, Math.min(1.2, idealH));
-  }, [artH]);
+    const idealH = EYE_HEIGHT - boxH / 2;
+    return Math.max(0.2, Math.min(1.2, idealH));
+  }, [boxH]);
 
-  // Pedestal top dimensions: slightly larger than artwork
-  const pedestalW = Math.max(0.4, artW + 0.15);
-  const pedestalD = Math.max(0.35, 0.35);
+  // Pedestal dimensions: slightly larger than object footprint
+  const pedestalW = Math.max(0.4, boxW + 0.15);
+  const pedestalD = Math.max(0.35, boxD + 0.15);
+
+  // Box material array: [+X, -X, +Y, -Y, +Z (front), -Z (back)]
+  const materials = useMemo(() => {
+    const sideMat = new THREE.MeshStandardMaterial({
+      color: SIDE_COLOR,
+      roughness: 0.7,
+      metalness: 0,
+    });
+    const topMat = new THREE.MeshStandardMaterial({
+      color: SIDE_COLOR,
+      roughness: 0.8,
+      metalness: 0,
+    });
+
+    if (loaded) {
+      const frontMat = new THREE.MeshBasicMaterial({
+        map: loaded.texture,
+        toneMapped: false,
+      });
+      // Back shows same image
+      const backTex = loaded.texture.clone();
+      backTex.wrapS = THREE.RepeatWrapping;
+      backTex.repeat.x = -1;
+      const backMat = new THREE.MeshBasicMaterial({
+        map: backTex,
+        toneMapped: false,
+      });
+      return [sideMat, sideMat, topMat, topMat, frontMat, backMat];
+    }
+
+    const placeholderMat = new THREE.MeshStandardMaterial({
+      color: '#e0d8cc',
+      roughness: 0.8,
+      metalness: 0,
+    });
+    return [sideMat, sideMat, topMat, topMat, placeholderMat, placeholderMat];
+  }, [loaded]);
+
+  // Dispose materials on unmount
+  useEffect(() => {
+    return () => {
+      materials.forEach((m) => m.dispose());
+    };
+  }, [materials]);
 
   return (
     <group position={[0, 0, 0]}>
-      <object3D ref={targetRef} position={[0, pedestalH + artH / 2, 0]} />
+      <object3D ref={targetRef} position={[0, pedestalH + boxH / 2, 0]} />
 
       {/* Overhead spotlight */}
       <spotLight
         ref={spotRef}
-        position={[0, 3.2, 1.0]}
-        angle={0.5}
+        position={[0.5, 3.2, 1.5]}
+        angle={0.45}
         penumbra={0.8}
         intensity={15}
         color="#fff8f0"
@@ -99,36 +152,22 @@ export default function ArtworkPedestal({ imageUrl, dimensions }: ArtworkPedesta
         shadow-bias={-0.001}
       />
 
-      {/* Pedestal */}
+      {/* Pedestal body */}
       <mesh position={[0, pedestalH / 2, 0]} castShadow receiveShadow>
         <boxGeometry args={[pedestalW, pedestalH, pedestalD]} />
         <meshStandardMaterial color="#f0ece6" roughness={0.6} metalness={0.02} />
       </mesh>
 
-      {/* Pedestal top cap — slight overhang */}
+      {/* Pedestal top cap */}
       <mesh position={[0, pedestalH + 0.01, 0]} receiveShadow>
         <boxGeometry args={[pedestalW + 0.02, 0.02, pedestalD + 0.02]} />
         <meshStandardMaterial color="#e8e4de" roughness={0.5} metalness={0.03} />
       </mesh>
 
-      {/* Artwork image panel — standing on pedestal */}
-      <group position={[0, pedestalH + 0.02 + artH / 2, 0]}>
-        {/* Image */}
-        <mesh position={[0, 0, 0.005]}>
-          <planeGeometry args={[artW, artH]} />
-          {loaded ? (
-            <meshBasicMaterial map={loaded.texture} toneMapped={false} />
-          ) : (
-            <meshStandardMaterial color="#e0d8cc" roughness={0.8} metalness={0} />
-          )}
-        </mesh>
-
-        {/* Back panel — gives the image some depth */}
-        <mesh position={[0, 0, -0.005]} castShadow>
-          <boxGeometry args={[artW + 0.01, artH + 0.01, 0.01]} />
-          <meshStandardMaterial color="#fafafa" roughness={0.8} metalness={0} />
-        </mesh>
-      </group>
+      {/* Sculpture body — 3D box with image on front/back faces */}
+      <mesh position={[0, pedestalH + 0.02 + boxH / 2, 0]} castShadow material={materials}>
+        <boxGeometry args={[imgW, imgH, boxD]} />
+      </mesh>
 
       {/* Info label on pedestal front */}
       <mesh position={[0, pedestalH * 0.55, pedestalD / 2 + 0.001]}>
