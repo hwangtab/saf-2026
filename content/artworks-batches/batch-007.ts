@@ -335,7 +335,7 @@ export const batch007: Artwork[] = [
     title_en: 'Voice of Memory',
     sold: true,
     description: '',
-    size: '11x40inch',
+    size: '27.9x101.6cm',
     material: 'Archival pigment print / Hahnemuhle William Turner (Edition 54/100)',
     year: '2021',
     edition: '',

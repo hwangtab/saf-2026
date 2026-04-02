@@ -16,13 +16,12 @@ function validateArtworks() {
     required: ['id', 'artist', 'title', 'images'],
 
     size: (value, id) => {
-      if (value === '') return null;
+      if (value === '') return `ID ${id}: size 빈 문자열 - "확인 중" 또는 "숫자x숫자cm" 사용`;
       if (!value) return `ID ${id}: size 필드 누락`;
       if (value === '확인 중') return null;
-      if (/^\d+(\.\d+)?x\d+(\.\d+)?cm$/.test(value)) return null;
-      if (/^\d+F?\s*\([\d\s.x×cm]+\)$/.test(value)) return null;
-      if (/^\d+호$/.test(value)) return null;
-      return `ID ${id}: size 형식 오류 ("${value}") - "숫자x숫자cm", "숫자호", 또는 "확인 중" 사용`;
+      // WxHcm 또는 WxHxDcm (e.g. "60x45cm", "60x60x130cm")
+      if (/^\d+(\.\d+)?x\d+(\.\d+)?(x\d+(\.\d+)?)?cm$/.test(value)) return null;
+      return `ID ${id}: size 형식 오류 ("${value}") - "숫자x숫자cm" 또는 "확인 중" 사용`;
     },
 
     price: (value, id) => {
@@ -43,7 +42,7 @@ function validateArtworks() {
 
     edition: (value, id) => {
       if (value === '' || value === undefined) return null;
-      if (/^에디션\s*\d+\/\d+/.test(value)) return null;
+      if (/^에디션\s*.+/.test(value)) return null;
       return `ID ${id}: edition 형식 경고 ("${value}") - "에디션 X/Y" 또는 빈 문자열 권장`;
     },
 
