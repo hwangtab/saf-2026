@@ -92,7 +92,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const newsPages: MetadataRoute.Sitemap = allNews.flatMap((article) =>
     routing.locales.map((locale) => ({
       url: localizedUrl(baseUrl, `/news/${article.id}`, locale),
-      lastModified: new Date(article.date),
+      lastModified: article.date ? new Date(article.date) : now,
       changeFrequency: 'yearly' as const,
       priority: locale === routing.defaultLocale ? 0.6 : 0.54,
       alternates: createAlternates(baseUrl, `/news/${article.id}`),
