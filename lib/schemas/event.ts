@@ -1,6 +1,10 @@
 import { SITE_URL, OG_IMAGE, EXHIBITION, CONTACT } from '@/lib/constants';
 import { ExhibitionReview } from '@/types';
 
+export const isExhibitionCompleted = (): boolean => {
+  return Date.now() > Date.parse('2026-01-26T19:00:00+09:00');
+};
+
 export function generateExhibitionSchema(
   reviews: ExhibitionReview[] = [],
   locale: 'ko' | 'en' = 'ko'

@@ -41,7 +41,7 @@ export {
 } from './organization';
 
 // Event
-export { generateExhibitionSchema } from './event';
+export { generateExhibitionSchema, isExhibitionCompleted } from './event';
 
 // Content
 export type { FAQItem, VideoSchemaInput, NewsArticleSchemaInput } from './content';
