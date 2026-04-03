@@ -26,6 +26,7 @@ export {
   generateCampaignSchema,
   // Event
   generateExhibitionSchema,
+  isExhibitionCompleted,
   // Content
   generateFAQSchema,
   generateVideoSchema,
