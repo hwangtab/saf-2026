@@ -107,7 +107,7 @@ export default async function OhYoonPage() {
       <>
         <JsonLdScript data={breadcrumbSchema} />
         <div className="w-full bg-canvas-soft min-h-screen font-sans">
-          <section className="relative w-full py-20 md:py-32 px-4 overflow-hidden border-b-8 border-double border-white/10 bg-[#2a3032]">
+          <section className="relative w-full py-20 md:py-32 px-4 overflow-hidden border-b-8 border-double border-white/10 bg-charcoal">
             <div className="max-w-4xl mx-auto text-center relative z-10">
               <div className="inline-block relative mb-8 animate-stamp [animation-fill-mode:both]">
                 <span className="relative z-10 inline-block px-6 py-3 border-4 border-charcoal bg-white text-charcoal font-bold text-lg tracking-widest transform -rotate-1 shadow-[4px_4px_0px_0px_rgba(49,57,60,0.2)]">
@@ -201,7 +201,7 @@ export default async function OhYoonPage() {
             </div>
           </div>
 
-          <div className="relative py-20 bg-[#2a3032] text-white">
+          <div className="relative py-20 bg-charcoal text-white">
             <div className="max-w-[1440px] mx-auto px-4 mb-16 flex flex-col md:flex-row justify-between items-end gap-6 border-b border-white/20 pb-8">
               <div>
                 <h2 className="text-4xl md:text-5xl font-normal mb-4 text-white font-display text-balance">
@@ -229,7 +229,7 @@ export default async function OhYoonPage() {
                     </p>
                     <Link
                       href="/artworks"
-                      className="inline-flex items-center justify-center px-6 py-3 border border-white/30 rounded text-white hover:bg-white hover:text-[#2a3032] transition-colors font-medium"
+                      className="inline-flex items-center justify-center px-6 py-3 border border-white/30 rounded text-white hover:bg-white hover:text-charcoal transition-colors font-medium"
                     >
                       Browse all artworks
                     </Link>
@@ -248,7 +248,7 @@ export default async function OhYoonPage() {
       <JsonLdScript data={breadcrumbSchema} />
       <div className="w-full bg-canvas-soft min-h-screen font-sans">
         {/* Hero Section */}
-        <section className="relative w-full py-20 md:py-32 px-4 overflow-hidden border-b-8 border-double border-white/10 bg-[#2a3032]">
+        <section className="relative w-full py-20 md:py-32 px-4 overflow-hidden border-b-8 border-double border-white/10 bg-charcoal">
           <div
             data-hero-sentinel="true"
             aria-hidden="true"
@@ -413,7 +413,7 @@ export default async function OhYoonPage() {
         </div>
 
         {/* Gallery Section - The 40th Archive Theme */}
-        <div className="relative py-20 bg-[#2a3032] text-white">
+        <div className="relative py-20 bg-charcoal text-white">
           {/* Section Header */}
           <div className="max-w-[1440px] mx-auto px-4 mb-16 flex flex-col md:flex-row justify-between items-end gap-6 border-b border-white/20 pb-8">
             <div className="relative">
@@ -453,7 +453,7 @@ export default async function OhYoonPage() {
                   </p>
                   <Link
                     href="/artworks"
-                    className="inline-flex items-center justify-center px-6 py-3 border border-white/30 rounded text-white hover:bg-white hover:text-[#2a3032] transition-colors font-medium"
+                    className="inline-flex items-center justify-center px-6 py-3 border border-white/30 rounded text-white hover:bg-white hover:text-charcoal transition-colors font-medium"
                   >
                     전체 작품 보러 가기
                   </Link>

@@ -17,7 +17,7 @@ export default function PageLoader() {
       style={isProtectedSurface ? undefined : { minHeight: 'calc(100vh - 200px)' }}
     >
       {isProtectedSurface && (
-        <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top,#e0e7ff_0%,#f8fafc_38%,#f1f5f9_100%)]" />
+        <div className="pointer-events-none fixed inset-0 -z-10 bg-gradient-portal" />
       )}
       <div className="relative w-12 h-12">
         <div className="absolute top-0 left-0 w-full h-full border-4 border-gray-200 rounded-full"></div>

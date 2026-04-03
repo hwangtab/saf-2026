@@ -3,7 +3,7 @@ import { AdminCardSkeleton } from '@/components/ui/Skeleton';
 export default function ArtistDashboardLoading() {
   return (
     <div aria-hidden="true" className="min-h-screen bg-[var(--admin-bg)]">
-      <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top,#e0e7ff_0%,#f8fafc_38%,#f1f5f9_100%)]" />
+      <div className="pointer-events-none fixed inset-0 -z-10 bg-gradient-portal" />
 
       {/* Nav skeleton */}
       <div className="fixed left-0 top-0 z-30 w-full border-b border-slate-200/90 bg-white/90 backdrop-blur">

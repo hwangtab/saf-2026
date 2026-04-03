@@ -10,6 +10,9 @@
  * - 버튼 텍스트: primary-a11y, accent-a11y, success-a11y, danger-a11y 사용 권장
  * - 링크 텍스트: primary-strong (#0E4ECF) 사용 권장
  * - 비활성 텍스트: gray-600 이상 사용 권장
+ * - 하이라이트: sun (가격, 통계 수치, 별점 등 숫자/성과 강조 전용)
+ * - CTA 버튼: accent (기부, 주요 액션 전용)
+ * - 섹션 배경: canvas / sun-soft / primary-surface (sun-DEFAULT 배경 사용 금지)
  */
 export const BRAND_COLORS = {
   primary: {
@@ -19,6 +22,10 @@ export const BRAND_COLORS = {
     surface: '#EDF3FF', // Blue Veil
     a11y: '#1565D8', // Accessible Blue (4.63:1 on white - AA compliant)
   },
+  /**
+   * Highlight 전용 색상. 가격·통계·뱃지 등 숫자/성과 강조에만 사용.
+   * 배경 섹션은 sun-soft만 허용. 버튼·CTA에는 사용 금지 (accent 사용).
+   */
   sun: {
     DEFAULT: '#FDCA40', // Sun Glow
     soft: '#FEE9A3', // Sun Mist
@@ -37,6 +44,7 @@ export const BRAND_COLORS = {
   },
   charcoal: {
     DEFAULT: '#31393C', // Gunmetal (11.79:1 on white - AAA compliant)
+    deep: '#1F2428', // Deep Gunmetal (14.68:1 on white - AAA compliant)
     muted: '#555E67', // Slate (6.60:1 on white - AA compliant)
     soft: '#6A7378', // Fog Slate (4.84:1 on white - AA compliant)
   },
@@ -71,6 +79,8 @@ export const BRAND_COLORS = {
  * - charcoal on canvas-soft: 11.21:1
  * - charcoal on canvas: 10.94:1
  * - charcoal on white: 11.79:1
+ * - white on charcoal-deep: 14.68:1
+ * - charcoal-deep on white: 14.68:1
  * - charcoal-muted on white: 6.60:1
  * - charcoal-soft on white: 4.84:1
  * - white on primary-strong: 6.98:1

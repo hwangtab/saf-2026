@@ -201,7 +201,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
             type="text"
             required
             defaultValue={defaultValues?.artist_name || ''}
-            className="shadow-sm focus-visible:ring-black focus-visible:border-black block w-full sm:text-sm border-gray-300 rounded-md"
+            className="shadow-sm focus-visible:ring-primary focus-visible:border-primary block w-full sm:text-sm border-gray-300 rounded-md"
             placeholder={t('artistNamePlaceholder')}
           />
         </div>
@@ -218,7 +218,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
             type="text"
             required
             defaultValue={defaultValues?.contact || ''}
-            className="shadow-sm focus-visible:ring-black focus-visible:border-black block w-full sm:text-sm border-gray-300 rounded-md"
+            className="shadow-sm focus-visible:ring-primary focus-visible:border-primary block w-full sm:text-sm border-gray-300 rounded-md"
             placeholder={t('contactPlaceholder')}
           />
         </div>
@@ -235,7 +235,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
             rows={5}
             required
             defaultValue={defaultValues?.bio || ''}
-            className="shadow-sm focus-visible:ring-black focus-visible:border-black block w-full sm:text-sm border-gray-300 rounded-md"
+            className="shadow-sm focus-visible:ring-primary focus-visible:border-primary block w-full sm:text-sm border-gray-300 rounded-md"
             placeholder={t('bioPlaceholder')}
           />
         </div>
@@ -251,7 +251,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
             name="referrer"
             type="text"
             defaultValue={defaultValues?.referrer || ''}
-            className="shadow-sm focus-visible:ring-black focus-visible:border-black block w-full sm:text-sm border-gray-300 rounded-md"
+            className="shadow-sm focus-visible:ring-primary focus-visible:border-primary block w-full sm:text-sm border-gray-300 rounded-md"
             placeholder={t('referrerPlaceholder')}
           />
         </div>
@@ -376,7 +376,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
             checked={termsAccepted}
             onChange={(event) => setTermsAccepted(event.target.checked)}
             disabled={!allRead}
-            className="mt-1 h-4 w-4 rounded border-gray-300 text-black focus:ring-black"
+            className="mt-1 h-4 w-4 rounded border-gray-300 text-black focus:ring-primary"
           />
           <div className="text-sm">
             <label htmlFor="terms_accepted" className="font-medium text-gray-700">

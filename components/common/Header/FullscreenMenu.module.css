@@ -79,7 +79,7 @@
   height: max(3.5rem, 7dvh);
   /* 최소 56px, 화면 높이의 7% - 짧은 화면에서 유연하게 축소 */
   padding: 0 1rem;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--color-gray-100);
   flex-shrink: 0;
 }
 
@@ -90,8 +90,8 @@
   padding: 0.625rem 1rem;
   font-size: 0.9375rem;
   font-weight: 500;
-  color: #666;
-  background: #f5f5f5;
+  color: var(--color-charcoal-soft);
+  background: var(--color-gray-50);
   border: none;
   border-radius: 0.5rem;
   cursor: pointer;
@@ -103,8 +103,8 @@
 }
 
 .closeButton:hover {
-  background: #eaeaea;
-  color: #333;
+  background: var(--color-gray-100);
+  color: var(--color-charcoal);
 }
 
 .closeButton:focus {
@@ -117,7 +117,7 @@
 }
 
 .closeButton:active {
-  background: #ddd;
+  background: var(--color-gray-200);
 }
 
 .closeButton svg {
@@ -163,7 +163,7 @@
   font-size: clamp(1.25rem, 4dvh, 2rem);
   font-weight: 500;
   /* PartialSans는 Regular만 있음 */
-  color: #333;
+  color: var(--color-charcoal);
   text-decoration: none;
   text-align: center;
   border-radius: 0.5rem;
@@ -173,7 +173,7 @@
 }
 
 .navLink:hover {
-  background: #f8f8f8;
+  background: var(--color-gray-50);
   color: var(--color-primary, #2176ff);
 }
 
@@ -187,7 +187,7 @@
 }
 
 .navLink:active {
-  background: #f0f0f0;
+  background: var(--color-gray-100);
 }
 
 .navLink.active {
@@ -202,8 +202,8 @@
   gap: 1rem;
   padding: clamp(1rem, 2dvh, 1.5rem);
   /* 최소 16px, 화면 2%, 최대 24px */
-  border-top: 1px solid #f0f0f0;
-  background: #fafafa;
+  border-top: 1px solid var(--color-gray-100);
+  background: var(--color-gray-50);
 }
 
 /* 데스크톱에서는 숨김 */
