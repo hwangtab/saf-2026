@@ -11,8 +11,9 @@ import SafeImage from '@/components/common/SafeImage';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import { Link } from '@/i18n/navigation';
+import { routing } from '@/i18n/routing';
 
-export const revalidate = 300;
+export const revalidate = 1800;
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -20,7 +21,7 @@ interface Props {
 
 export async function generateStaticParams() {
   const news = await getSupabaseNews();
-  return news.map((article) => ({ id: article.id }));
+  return news.flatMap((article) => routing.locales.map((locale) => ({ locale, id: article.id })));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -107,14 +108,16 @@ export default async function NewsArticlePage({ params }: Props) {
           {article.description && (
             <p className="text-lg leading-relaxed mb-8">{article.description}</p>
           )}
-          <a
-            href={article.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block px-6 py-3 bg-primary text-white rounded hover:opacity-90 transition"
-          >
-            {locale === 'en' ? 'Read original article' : '원문 기사 보기'}
-          </a>
+          {article.link && (
+            <a
+              href={article.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block px-6 py-3 bg-primary text-white rounded hover:opacity-90 transition"
+            >
+              {locale === 'en' ? 'Read original article' : '원문 기사 보기'}
+            </a>
+          )}
           <div className="mt-8">
             <Link href="/news" className="text-sm text-charcoal-muted hover:underline">
               ← {locale === 'en' ? 'Back to News' : '언론 보도 목록으로'}
