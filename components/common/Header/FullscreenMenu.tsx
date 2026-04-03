@@ -7,7 +7,6 @@ import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 import Button from '@/components/ui/Button';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher';
-import MenuToggleIcon from '@/components/ui/MenuToggleIcon';
 import { EXTERNAL_LINKS } from '@/lib/constants';
 import type { NavigationItem } from '@/types';
 import styles from './FullscreenMenu.module.css';
@@ -155,7 +154,21 @@ export default function FullscreenMenu({
             className={styles.closeButton}
             aria-label={tA11y('closeMenu')}
           >
-            <MenuToggleIcon isOpen={true} />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M18 6 6 18" />
+              <path d="m6 6 12 12" />
+            </svg>
             <span>{tA11y('close')}</span>
           </button>
         </header>
