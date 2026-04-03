@@ -24,7 +24,8 @@
     "ohYoon": "오윤 40주기 특별전",
     "ohYoonDesc": "한국을 대표하는 민중미술 거장의 40주기 특별전",
     "transparency": "운용 보고서",
-    "transparencyDesc": "상호부조 대출 운용 현황과 연간 보고서"
+    "transparencyDesc": "상호부조 대출 운용 현황과 연간 보고서",
+    "searchButton": "검색"
   },
   "footer": {
     "links": "링크",
@@ -61,6 +62,23 @@
     "resetButton": "전체 목록 보기",
     "resultPrefix": "검색 결과:",
     "resultSuffix": "개"
+  },
+  "globalSearch": {
+    "placeholder": "작품명, 작가명으로 검색",
+    "shortcutHint": "⌘K",
+    "noResults": "검색 결과가 없습니다",
+    "noResultsDesc": "다른 키워드로 검색해보세요",
+    "artworksSection": "작품",
+    "artistsSection": "작가",
+    "artworkCount": "{count}점",
+    "viewAll": "작품 {count}개 전체 결과 보기",
+    "searching": "검색 중...",
+    "close": "닫기",
+    "clear": "지우기",
+    "searchButton": "검색",
+    "initialHint": "작가명 또는 작품명을 입력해 검색하세요",
+    "dialogLabel": "작품 및 작가 검색",
+    "error": "검색 중 오류가 발생했습니다"
   },
   "cta": {
     "donateNow": "🤝 조합원 가입하기",
