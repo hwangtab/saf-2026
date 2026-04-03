@@ -821,16 +821,22 @@ function s9() {
 
   const logoB = file('public/images/logo/320pxX90px_black.webp');
 
-  // 1. 커버 — 오윤 초상 배경 + 모노톤 오버레이
+  // 1. 커버 — 낮도깨비 작품 배경 + 세피아 오버레이
   const slide1 = pg(`
-    <div class="z s p" style="justify-content:center;align-items:center;text-align:center;gap:28px;">
-      <div class="stamp-badge">오윤 40주기 특별전</div>
-      <h1 style="font-size:100px;font-weight:900;color:#fff;line-height:1.1;letter-spacing:-2px;" class="ka">민중의<br>칼날,<br>오윤</h1>
-      <div class="doc-divider" style="margin:0 auto;"></div>
-      <p style="font-size:32px;color:rgba(255,255,255,0.7);letter-spacing:4px;font-weight:400;">1946 — 1986</p>
-      <p style="font-size:26px;color:rgba(255,255,255,0.5);letter-spacing:2px;">목판화가 · 민중미술</p>
+    <div class="z s p" style="justify-content:flex-end;align-items:flex-start;gap:0;padding-bottom:100px;">
+      <!-- 상단 배지 -->
+      <div style="position:absolute;top:64px;left:64px;">
+        <div class="stamp-badge">오윤 40주기 특별전</div>
+      </div>
+      <!-- 하단 타이포 -->
+      <div style="display:flex;flex-direction:column;gap:20px;">
+        <h1 style="font-size:108px;font-weight:900;color:#fff;line-height:1.05;letter-spacing:-3px;text-shadow:0 4px 24px rgba(0,0,0,0.5);" class="ka">민중의<br>칼날,<br>오윤</h1>
+        <div class="doc-divider" style="background:${amberLight};"></div>
+        <p style="font-size:32px;color:rgba(255,255,255,0.8);letter-spacing:4px;">1946 — 1986</p>
+        <p style="font-size:26px;color:rgba(255,255,255,0.55);letter-spacing:2px;">(사후판화)목판 · 민중미술</p>
+      </div>
     </div>
-  `, { bgImg:ohyoon, overlayStyle:`background:linear-gradient(180deg,rgba(42,42,42,0.55) 0%,rgba(42,42,42,0.85) 100%);`, color:ink, pn:1, total:t, logo:logoW, extraCss:docCss });
+  `, { bgImg:OY.낮도깨비, overlayStyle:`background:linear-gradient(180deg,rgba(42,42,42,0.2) 0%,rgba(42,42,42,0.3) 40%,rgba(42,42,42,0.75) 75%,rgba(42,42,42,0.9) 100%);`, color:ink, pn:1, total:t, logo:logoW, extraCss:docCss });
 
   // 2. 생애 — 좌측 텍스트 + 우측 칼노래 이미지
   const slide2 = pg(`
