@@ -22,6 +22,7 @@ interface FullscreenMenuProps {
   onClose: () => void;
   navigation: NavigationItem[];
   isActive: (href: string) => boolean;
+  onSearchClick: () => void;
 }
 
 export default function FullscreenMenu({
@@ -29,6 +30,7 @@ export default function FullscreenMenu({
   onClose,
   navigation,
   isActive,
+  onSearchClick,
 }: FullscreenMenuProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const scrollYRef = useRef(0);
@@ -39,6 +41,7 @@ export default function FullscreenMenu({
   const t = useTranslations('nav');
   const tFooter = useTranslations('footer');
   const tA11y = useTranslations('a11y');
+  const tSearch = useTranslations('globalSearch');
 
   // body 스크롤 잠금 해제 및 위치 복원
   const restoreBodyScroll = (restorePosition = true) => {
@@ -48,6 +51,7 @@ export default function FullscreenMenu({
     document.body.style.top = '';
     document.body.style.left = '';
     document.body.style.right = '';
+    document.body.style.width = '';
     document.body.style.overflow = '';
     if (restorePosition) {
       window.scrollTo(0, scrollYRef.current);
@@ -119,6 +123,31 @@ export default function FullscreenMenu({
       <div className={styles.container}>
         {/* 헤더 - 닫기 버튼 */}
         <header className={styles.header}>
+          {/* 검색 버튼 */}
+          <button
+            type="button"
+            onClick={onSearchClick}
+            className="flex items-center gap-2 px-3 py-2 text-sm text-charcoal-muted hover:text-primary transition-colors rounded-lg hover:bg-gray-50 mr-auto"
+            aria-label={tSearch('dialogLabel')}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.3-4.3" />
+            </svg>
+            <span>{tSearch('searchButton')}</span>
+          </button>
+
           <LanguageSwitcher className="text-charcoal" />
           <button
             type="button"

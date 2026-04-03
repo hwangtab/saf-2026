@@ -18,10 +18,17 @@ interface DesktopNavProps {
   navigation: NavigationItem[];
   isActive: (href: string) => boolean;
   textColor: string;
+  onSearchClick: () => void;
 }
 
-export default function DesktopNav({ navigation, isActive, textColor }: DesktopNavProps) {
+export default function DesktopNav({
+  navigation,
+  isActive,
+  textColor,
+  onSearchClick,
+}: DesktopNavProps) {
   const t = useTranslations('nav');
+  const tSearch = useTranslations('globalSearch');
 
   return (
     <>
@@ -55,6 +62,31 @@ export default function DesktopNav({ navigation, isActive, textColor }: DesktopN
         ))}
       </ul>
       <div className="hidden lg:flex items-center gap-1.5">
+        {/* 검색 버튼 */}
+        <button
+          type="button"
+          onClick={onSearchClick}
+          className={`flex items-center gap-1.5 text-xs xl:text-sm font-medium hover:opacity-70 transition-opacity px-3 py-2 ${textColor}`}
+          aria-label={tSearch('dialogLabel')}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.3-4.3" />
+          </svg>
+          <span className="hidden xl:inline">{tSearch('shortcutHint')}</span>
+        </button>
+
         {/* Utility Menu (Order Status) */}
         <a
           href={EXTERNAL_LINKS.ORDER_STATUS}
