@@ -76,6 +76,7 @@
     "close": "Close",
     "clear": "Clear",
     "searchButton": "Search",
+    "triggerTooltip": "Search (⌘K)",
     "initialHint": "Type an artist name or artwork title to search",
     "dialogLabel": "Search artworks and artists",
     "error": "An error occurred while searching"

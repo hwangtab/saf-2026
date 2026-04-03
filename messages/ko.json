@@ -76,6 +76,7 @@
     "close": "닫기",
     "clear": "지우기",
     "searchButton": "검색",
+    "triggerTooltip": "검색 (⌘K)",
     "initialHint": "작가명 또는 작품명을 입력해 검색하세요",
     "dialogLabel": "작품 및 작가 검색",
     "error": "검색 중 오류가 발생했습니다"

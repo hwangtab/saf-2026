@@ -1,6 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import Button from '@/components/ui/Button';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher';
@@ -66,8 +67,15 @@ export default function DesktopNav({
         <button
           type="button"
           onClick={onSearchClick}
-          className={`flex items-center gap-1.5 text-xs xl:text-sm font-medium hover:opacity-70 transition-opacity px-3 py-2 ${textColor}`}
+          className={clsx(
+            'flex items-center gap-1.5 text-sm font-medium rounded-full px-3 py-1.5',
+            'border transition-colors duration-200',
+            textColor === 'text-white'
+              ? 'border-white/30 bg-white/10 text-white/90 hover:bg-white/20 hover:border-white/50'
+              : 'border-gray-200 bg-gray-50 text-charcoal-muted hover:border-gray-300 hover:bg-gray-100'
+          )}
           aria-label={tSearch('dialogLabel')}
+          title={tSearch('triggerTooltip')}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -84,7 +92,7 @@ export default function DesktopNav({
             <circle cx="11" cy="11" r="8" />
             <path d="m21 21-4.3-4.3" />
           </svg>
-          <span className="hidden xl:inline">{tSearch('shortcutHint')}</span>
+          <span>{tSearch('searchButton')}</span>
         </button>
 
         {/* Utility Menu (Order Status) */}
