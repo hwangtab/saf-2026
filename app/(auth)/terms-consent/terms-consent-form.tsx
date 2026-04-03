@@ -431,7 +431,7 @@ export function TermsConsentForm({
               checked={artistAgreed}
               onChange={(event) => setArtistAgreed(event.target.checked)}
               disabled={!hasReadArtistTerms}
-              className="mt-1 h-4 w-4 rounded border-gray-300 text-black focus-visible:ring-black"
+              className="mt-1 h-4 w-4 rounded border-gray-300 text-black focus-visible:ring-primary"
             />
             <div className="text-sm">
               <label htmlFor="agree_artist" className="font-medium text-gray-700">
@@ -500,7 +500,7 @@ export function TermsConsentForm({
               checked={exhibitorAgreed}
               onChange={(event) => setExhibitorAgreed(event.target.checked)}
               disabled={!hasReadExhibitorTerms}
-              className="mt-1 h-4 w-4 rounded border-gray-300 text-black focus-visible:ring-black"
+              className="mt-1 h-4 w-4 rounded border-gray-300 text-black focus-visible:ring-primary"
             />
             <div className="text-sm">
               <label htmlFor="agree_exhibitor" className="font-medium text-gray-700">
@@ -567,7 +567,7 @@ export function TermsConsentForm({
               checked={privacyAgreed}
               onChange={(event) => setPrivacyAgreed(event.target.checked)}
               disabled={!hasReadPrivacy}
-              className="mt-1 h-4 w-4 rounded border-gray-300 text-black focus-visible:ring-black"
+              className="mt-1 h-4 w-4 rounded border-gray-300 text-black focus-visible:ring-primary"
             />
             <div className="text-sm">
               <label htmlFor="agree_privacy" className="font-medium text-gray-700">
@@ -646,7 +646,7 @@ export function TermsConsentForm({
               checked={tosAgreed}
               onChange={(event) => setTosAgreed(event.target.checked)}
               disabled={!hasReadTos}
-              className="mt-1 h-4 w-4 rounded border-gray-300 text-black focus-visible:ring-black"
+              className="mt-1 h-4 w-4 rounded border-gray-300 text-black focus-visible:ring-primary"
             />
             <div className="text-sm">
               <label htmlFor="agree_tos" className="font-medium text-gray-700">

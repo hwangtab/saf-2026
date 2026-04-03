@@ -53,7 +53,7 @@ export function IncompleteItemsModal({
                 <button
                   type="button"
                   onClick={() => onSelectItem(item)}
-                  className="w-full rounded text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
+                  className="w-full rounded text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 >
                   <p className="text-sm font-semibold text-gray-800">{item.label}</p>
                   <p className="mt-1 text-xs text-amber-800">{item.reason}</p>

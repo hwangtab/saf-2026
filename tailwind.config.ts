@@ -36,6 +36,9 @@ const config: Config = {
           'sans-serif',
         ],
       },
+      backgroundImage: {
+        'gradient-portal': 'radial-gradient(circle at top, #EDF3FF 0%, #F7F8FA 38%, #FFFFFF 100%)',
+      },
       spacing: {
         safe: 'max(1rem, env(safe-area-inset-bottom))',
       },

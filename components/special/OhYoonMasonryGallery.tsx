@@ -36,7 +36,7 @@ const OhYoonMasonryGallery = memo(function OhYoonMasonryGallery({
               */}
               <div className="group relative">
                 {/* Image Container - Removed shadows/borders for "illuminated in dark" look */}
-                <div className="relative overflow-hidden bg-[#2a3032]">
+                <div className="relative overflow-hidden bg-charcoal">
                   <ArtworkCard
                     artwork={artwork}
                     variant="gallery"

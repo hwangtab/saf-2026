@@ -52,8 +52,14 @@
   --color-canvas: #fff6dd;
   --color-canvas-soft: #fff9e8;
   --color-charcoal: #31393c;
+  --color-charcoal-muted: #555e67;
+  --color-charcoal-soft: #6a7378;
   --color-primary: #2176ff;
   --color-sun: #fdca40;
+  --color-gray-50: #f7f8fa;
+  --color-gray-100: #e6eaf0;
+  --color-gray-200: #d1d7e0;
+  --color-gray-400: #8f98a5;
   --admin-bg: #f4f7fc;
   --admin-surface: #ffffff;
   --admin-surface-muted: #f8fafc;
@@ -94,16 +100,16 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--color-gray-100);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #888;
+  background: var(--color-gray-400);
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: var(--color-charcoal-muted);
 }
 
 .scrollbar-hide {
@@ -192,7 +198,12 @@ button:focus:not(:focus-visible) {
 }
 
 .shimmer-loading {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background: linear-gradient(
+    90deg,
+    var(--color-gray-100) 25%,
+    var(--color-gray-200) 50%,
+    var(--color-gray-100) 75%
+  );
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
 }
