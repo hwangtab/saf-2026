@@ -24,7 +24,8 @@
     "ohYoon": "Oh Yoon 40th Memorial",
     "ohYoonDesc": "A special exhibition for the 40th anniversary of Korean master Oh Yoon",
     "transparency": "Reports",
-    "transparencyDesc": "Annual transparency reports for the mutual aid loan program"
+    "transparencyDesc": "Annual transparency reports for the mutual aid loan program",
+    "searchButton": "Search"
   },
   "footer": {
     "links": "Links",
@@ -61,6 +62,23 @@
     "resetButton": "View all artworks",
     "resultPrefix": "Results:",
     "resultSuffix": ""
+  },
+  "globalSearch": {
+    "placeholder": "Search artworks and artists",
+    "shortcutHint": "⌘K",
+    "noResults": "No results found",
+    "noResultsDesc": "Try a different keyword",
+    "artworksSection": "Artworks",
+    "artistsSection": "Artists",
+    "artworkCount": "{count} works",
+    "viewAll": "View all {count} artwork results",
+    "searching": "Searching...",
+    "close": "Close",
+    "clear": "Clear",
+    "searchButton": "Search",
+    "initialHint": "Type an artist name or artwork title to search",
+    "dialogLabel": "Search artworks and artists",
+    "error": "An error occurred while searching"
   },
   "cta": {
     "donateNow": "🤝 Join the Co-op",

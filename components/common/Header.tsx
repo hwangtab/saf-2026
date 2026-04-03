@@ -9,8 +9,13 @@ import MenuToggleIcon from '@/components/ui/MenuToggleIcon';
 import { Z_INDEX } from '@/lib/constants';
 import { useHeaderStyle } from '@/lib/hooks/useHeaderStyle';
 import { useLocalizedNavigation } from '@/lib/hooks/useLocalizedNavigation';
+import { useGlobalSearch } from '@/lib/hooks/useGlobalSearch';
 
 const FullscreenMenu = dynamic(() => import('./Header/FullscreenMenu'), { ssr: false });
+const GlobalSearchDialog = dynamic(
+  () => import('@/components/features/search/GlobalSearchDialog'),
+  { ssr: false }
+);
 
 export default function Header() {
   return <PublicHeader />;
@@ -21,6 +26,17 @@ function PublicHeader() {
   const { isMenuOpen, openMenu, closeMenu, isActive, headerStyle, isDarkText, textColor } =
     useHeaderStyle();
   const navigation = useLocalizedNavigation();
+  const search = useGlobalSearch();
+
+  const handleOpenSearch = () => {
+    if (isMenuOpen) {
+      // 메뉴 닫기 후 스크롤 복원 effect가 완료된 뒤에 검색 다이얼로그 열기
+      closeMenu();
+      setTimeout(() => search.open(), 50);
+    } else {
+      search.open();
+    }
+  };
 
   return (
     <header
@@ -37,23 +53,61 @@ function PublicHeader() {
       <nav className="relative container-max flex items-center justify-between h-16">
         <HeaderLogo isDarkText={isDarkText} />
 
-        <DesktopNav navigation={navigation} isActive={isActive} textColor={textColor} />
+        <DesktopNav
+          navigation={navigation}
+          isActive={isActive}
+          textColor={textColor}
+          onSearchClick={handleOpenSearch}
+        />
 
-        <button
-          type="button"
-          onClick={openMenu}
-          className={clsx(
-            'lg:hidden p-3 min-w-[44px] min-h-[44px] flex items-center justify-center',
-            'transition-transform active:scale-90',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg',
-            textColor,
-            'hover:text-primary'
-          )}
-          aria-label={t('toggleMenu')}
-          aria-expanded={isMenuOpen}
-        >
-          <MenuToggleIcon isOpen={isMenuOpen} />
-        </button>
+        <div className="lg:hidden flex items-center gap-1">
+          {/* 모바일 검색 버튼 */}
+          <button
+            type="button"
+            onClick={handleOpenSearch}
+            className={clsx(
+              'p-3 min-w-[44px] min-h-[44px] flex items-center justify-center',
+              'transition-transform active:scale-90',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg',
+              textColor,
+              'hover:text-primary'
+            )}
+            aria-label={t('searchButton')}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.3-4.3" />
+            </svg>
+          </button>
+
+          {/* 모바일 메뉴 토글 */}
+          <button
+            type="button"
+            onClick={openMenu}
+            className={clsx(
+              'p-3 min-w-[44px] min-h-[44px] flex items-center justify-center',
+              'transition-transform active:scale-90',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg',
+              textColor,
+              'hover:text-primary'
+            )}
+            aria-label={t('toggleMenu')}
+            aria-expanded={isMenuOpen}
+          >
+            <MenuToggleIcon isOpen={isMenuOpen} />
+          </button>
+        </div>
       </nav>
 
       {/* Fullscreen menu */}
@@ -62,6 +116,18 @@ function PublicHeader() {
         onClose={closeMenu}
         navigation={navigation}
         isActive={isActive}
+        onSearchClick={handleOpenSearch}
+      />
+
+      {/* Global search dialog */}
+      <GlobalSearchDialog
+        isOpen={search.isOpen}
+        query={search.query}
+        results={search.results}
+        isLoading={search.isLoading}
+        error={search.error}
+        onClose={search.close}
+        onQueryChange={search.setQuery}
       />
     </header>
   );

@@ -159,6 +159,7 @@ export type HeroPage = (typeof HERO_PAGES)[number];
 // Z-Index layers for consistent stacking
 export const Z_INDEX = {
   HEADER: 100,
+  SEARCH_DIALOG: 200,
 } as const;
 
 export const HOMEPAGE_CATEGORY_GROUPS = [

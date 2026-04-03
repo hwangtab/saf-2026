@@ -19,7 +19,7 @@ export default function BrandLoader({ minHeight = '80vh' }: BrandLoaderProps) {
           alt="씨앗페 온라인"
           width={320}
           height={90}
-          className="w-44 md:w-64 h-auto"
+          className="w-72 md:w-96 max-w-[85vw] h-auto"
           placeholder="empty"
           priority
         />
