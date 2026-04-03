@@ -56,7 +56,7 @@ export const metadata: Metadata = {
   authors: [{ name: CONTACT.ORGANIZATION_NAME }],
   icons: {
     icon: '/favicon.ico',
-    apple: '/images/logo/saf-logo.png',
+    apple: '/images/icons/icon-192.png',
   },
   openGraph: {
     type: 'website',
@@ -127,7 +127,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           type="font/woff2"
           crossOrigin="anonymous"
         />
-        <link rel="alternate" type="text/plain" title="LLM instructions" href="/llms.txt" />
         {process.env.NEXT_PUBLIC_SUPABASE_URL && (
           <>
             <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
