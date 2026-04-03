@@ -77,6 +77,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
+    site: '@saf2026',
     title: '씨앗페 온라인',
     description: '한국 예술인들의 상호부조 기금 마련을 위한 특별전',
     images: [OG_IMAGE.url],
