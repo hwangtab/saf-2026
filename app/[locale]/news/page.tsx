@@ -17,6 +17,7 @@ import { containsHangul } from '@/lib/search-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
+import { Link } from '@/i18n/navigation';
 
 export const revalidate = 300;
 
@@ -435,12 +436,7 @@ export default async function NewsPage() {
                   key={article.id}
                   className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow"
                 >
-                  <a
-                    href={article.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex flex-col h-full"
-                  >
+                  <Link href={`/news/${article.id}`} className="flex flex-col h-full">
                     <div className="relative aspect-video bg-gray-100">
                       {article.thumbnail ? (
                         <SafeImage
@@ -486,7 +482,7 @@ export default async function NewsPage() {
                         </svg>
                       </span>
                     </div>
-                  </a>
+                  </Link>
                 </article>
               );
             })}

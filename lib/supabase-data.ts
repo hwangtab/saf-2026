@@ -609,6 +609,11 @@ const getSupabaseNewsCached = unstable_cache(
 
 export const getSupabaseNews = cache(async (): Promise<NewsArticle[]> => getSupabaseNewsCached());
 
+export const getSupabaseNewsById = cache(async (id: string): Promise<NewsArticle | null> => {
+  const allNews = await getSupabaseNews();
+  return allNews.find((article) => article.id === id) ?? null;
+});
+
 export const getSupabaseArtistsByOwner = cache(async (ownerId: string): Promise<ArtistRow[]> => {
   if (!hasSupabaseConfig || !supabase) {
     return [];
