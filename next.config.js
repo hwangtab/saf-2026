@@ -50,6 +50,16 @@ const nextConfig = {
   transpilePackages: ['next-image-export-optimizer'],
   experimental: {},
   reactStrictMode: true,
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'saf2026.com' }],
+        destination: 'https://www.saf2026.com/:path*',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {
