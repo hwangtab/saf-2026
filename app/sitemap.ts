@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { SITE_URL } from '@/lib/constants';
 import { routing } from '@/i18n/routing';
-import { getSupabaseArtworks } from '@/lib/supabase-data';
+import { getSupabaseArtworks, getSupabaseNews } from '@/lib/supabase-data';
 
 export const dynamic = 'force-static';
 
@@ -24,7 +24,7 @@ function createAlternates(baseUrl: string, path: string) {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = SITE_URL;
-  const allArtworks = await getSupabaseArtworks();
+  const [allArtworks, allNews] = await Promise.all([getSupabaseArtworks(), getSupabaseNews()]);
   const now = new Date();
 
   const staticPaths: Array<{
@@ -89,5 +89,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
   });
 
-  return [...staticPages, ...artworkPages, ...artistPages];
+  const newsPages: MetadataRoute.Sitemap = allNews.flatMap((article) =>
+    routing.locales.map((locale) => ({
+      url: localizedUrl(baseUrl, `/news/${article.id}`, locale),
+      lastModified: new Date(article.date),
+      changeFrequency: 'yearly' as const,
+      priority: locale === routing.defaultLocale ? 0.6 : 0.54,
+      alternates: createAlternates(baseUrl, `/news/${article.id}`),
+    }))
+  );
+
+  return [...staticPages, ...artworkPages, ...artistPages, ...newsPages];
 }
