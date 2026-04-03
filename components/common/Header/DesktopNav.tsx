@@ -100,7 +100,13 @@ export default function DesktopNav({
           href={EXTERNAL_LINKS.ORDER_STATUS}
           target="_blank"
           rel="noopener noreferrer"
-          className={`text-xs xl:text-sm font-medium hover:opacity-70 transition-opacity px-3 py-2 whitespace-nowrap ${textColor}`}
+          className={clsx(
+            'flex items-center text-sm font-medium rounded-full px-3 py-1.5 whitespace-nowrap',
+            'border transition-colors duration-200',
+            textColor === 'text-white'
+              ? 'border-white/30 bg-white/10 text-white/90 hover:bg-white/20 hover:border-white/50'
+              : 'border-gray-200 bg-gray-50 text-charcoal-muted hover:border-gray-300 hover:bg-gray-100'
+          )}
         >
           {t('orderStatus')}
         </a>
@@ -111,7 +117,7 @@ export default function DesktopNav({
 
         <AuthButtons size="xs" variant={textColor === 'text-white' ? 'white' : 'white'} />
 
-        <LanguageSwitcher className={textColor} />
+        <LanguageSwitcher className={textColor} compact />
       </div>
     </>
   );

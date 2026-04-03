@@ -6,9 +6,10 @@ import clsx from 'clsx';
 
 interface LanguageSwitcherProps {
   className?: string;
+  compact?: boolean;
 }
 
-export default function LanguageSwitcher({ className }: LanguageSwitcherProps) {
+export default function LanguageSwitcher({ className, compact }: LanguageSwitcherProps) {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
@@ -17,13 +18,17 @@ export default function LanguageSwitcher({ className }: LanguageSwitcherProps) {
     router.replace(pathname, { locale: newLocale });
   }
 
+  const btnBase = compact
+    ? 'px-1.5 py-0.5 inline-flex items-center justify-center rounded transition-colors text-xs'
+    : 'px-2 py-1 min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded transition-colors';
+
   return (
     <div className={clsx('flex items-center gap-1 text-sm', className)}>
       <button
         type="button"
         onClick={() => switchLocale('ko')}
         className={clsx(
-          'px-2 py-1 min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded transition-colors',
+          btnBase,
           locale === 'ko' ? 'font-bold text-primary' : 'text-current opacity-60 hover:opacity-100'
         )}
         aria-label={locale === 'en' ? 'Switch to Korean' : '한국어로 전환'}
@@ -38,7 +43,7 @@ export default function LanguageSwitcher({ className }: LanguageSwitcherProps) {
         type="button"
         onClick={() => switchLocale('en')}
         className={clsx(
-          'px-2 py-1 min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded transition-colors',
+          btnBase,
           locale === 'en' ? 'font-bold text-primary' : 'text-current opacity-60 hover:opacity-100'
         )}
         aria-label="Switch to English"
