@@ -5,7 +5,7 @@
  * - 모든 슬라이드에 작품/히어로 이미지 배경 + 오버레이
  * - 통계는 시각적 그래프(바, 도넛, 게이지)로 표현
  * - URL 통일: saf2026.com
- * - 58장, 1080×1350px
+ * - 66장 (S1~S9), 1080×1350px
  *
  * Usage: node scripts/generate-instagram-carousels.mjs
  */
@@ -94,7 +94,22 @@ const HT = {
   s6:`#씨앗페2026 #SAF2026 #아트페어 #조각 #공예`,
   s7:`#씨앗페2026 #SAF2026 #투명경영 #95퍼센트상환율`,
   s8:`#씨앗페2026 #SAF2026 #예술후원 #전시추천`,
+  s9:`#오윤 #OhYoon #민중미술 #목판화 #오윤40주기 #씨앗페2026 #SAF2026`,
 };
+
+// ─── 오윤 작품 이미지 URLs ───
+const SUPABASE = 'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8';
+const OY = {
+  낮도깨비: `${SUPABASE}/154__original.webp`,
+  칼노래:   `${SUPABASE}/151__original.webp`,
+  석양:     `${SUPABASE}/156__original.webp`,
+  무호도:   `${SUPABASE}/153__original.webp`,
+  대지:     `${SUPABASE}/213__original.webp`,
+  팔엽일화: `${SUPABASE}/211__original.webp`,
+  봄의소리1:`${SUPABASE}/149__original.webp`,
+  귀향:     `${SUPABASE}/212__original.webp`,
+};
+const ohyoon = file('public/images/ohyoon.webp');
 
 // ═══════════════════════════════════════════════
 // HTML FRAMEWORK — 모바일 최적화 대형 사이즈
@@ -782,11 +797,217 @@ function s8() {
 }
 
 // ═══════════════════════════════════════════════
+// S9: 오윤 40주기 특별전 — 다큐멘터리 톤
+// ═══════════════════════════════════════════════
+
+function s9() {
+  const t = 8;
+  const sepia = '#F5F0E8';    // 한지 배경
+  const ink   = '#2a2a2a';    // 먹 텍스트
+  const amber = '#B8860B';    // 황토 강조
+  const amberLight = '#D4A017';
+  const ht = HT.s9;
+
+  // 다큐멘터리 공통 CSS 추가
+  const docCss = `
+    .doc-bg{background:${sepia};width:1080px;height:1350px;}
+    .doc-divider{width:80px;height:4px;background:${amber};border-radius:2px;}
+    .doc-img{width:100%;object-fit:cover;filter:grayscale(20%) sepia(30%) contrast(1.05);}
+    .stamp-badge{display:inline-block;border:3px solid ${amber};padding:10px 28px;letter-spacing:6px;font-size:22px;font-weight:700;color:${amber};text-transform:uppercase;transform:rotate(-1.5deg);}
+    .art-caption{background:rgba(42,42,42,0.9);padding:32px 48px;border-left:6px solid ${amber};}
+    .doc-quote{border-left:6px solid ${amber};padding:28px 40px;background:rgba(184,134,11,0.06);}
+    .price-card{background:#fff;border:2px solid ${amber};border-radius:16px;padding:36px 48px;width:100%;}
+  `;
+
+  const logoB = file('public/images/logo/320pxX90px_black.webp');
+
+  // 1. 커버 — 오윤 초상 배경 + 모노톤 오버레이
+  const slide1 = pg(`
+    <div class="z s p" style="justify-content:center;align-items:center;text-align:center;gap:28px;">
+      <div class="stamp-badge">오윤 40주기 특별전</div>
+      <h1 style="font-size:100px;font-weight:900;color:#fff;line-height:1.1;letter-spacing:-2px;" class="ka">민중의<br>칼날,<br>오윤</h1>
+      <div class="doc-divider" style="margin:0 auto;"></div>
+      <p style="font-size:32px;color:rgba(255,255,255,0.7);letter-spacing:4px;font-weight:400;">1946 — 1986</p>
+      <p style="font-size:26px;color:rgba(255,255,255,0.5);letter-spacing:2px;">목판화가 · 민중미술</p>
+    </div>
+  `, { bgImg:ohyoon, overlayStyle:`background:linear-gradient(180deg,rgba(42,42,42,0.55) 0%,rgba(42,42,42,0.85) 100%);`, color:ink, pn:1, total:t, logo:logoW, extraCss:docCss });
+
+  // 2. 생애 — 좌측 텍스트 + 우측 칼노래 이미지
+  const slide2 = pg(`
+    <div class="z s" style="flex-direction:row;height:100%;">
+      <!-- 좌측 텍스트 -->
+      <div style="width:52%;padding:72px 56px;display:flex;flex-direction:column;justify-content:center;gap:32px;background:${sepia};">
+        <p style="font-size:24px;font-weight:700;color:${amber};letter-spacing:6px;">BIOGRAPHY</p>
+        <div class="doc-divider"></div>
+        <h2 style="font-size:56px;font-weight:800;color:${ink};line-height:1.25;" class="ka">소설가의 아들,<br>조각을 배우고<br>판화를 택하다</h2>
+        <p style="font-size:30px;color:#555;line-height:1.7;" class="ka">서울대 조각과 졸업 후<br>목판화를 평생 매체로 선택.</p>
+        <div class="doc-quote">
+          <p style="font-size:28px;color:${ink};line-height:1.7;font-style:italic;" class="ka">"한 번 새기면<br>돌이킬 수 없는 칼자국,<br>그것이 삶과 닮았다"</p>
+        </div>
+        <p style="font-size:24px;color:#777;" class="ka">부친 소설가 오영수<br>1946년 부산 출생</p>
+      </div>
+      <!-- 우측 작품 이미지 -->
+      <div style="width:48%;position:relative;overflow:hidden;">
+        <img class="doc-img" src="${OY.칼노래}" alt="칼노래" style="width:100%;height:100%;object-fit:cover;">
+        <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(0deg,rgba(42,42,42,0.85),transparent);padding:32px 28px;">
+          <p style="font-size:26px;font-weight:700;color:#fff;">칼노래</p>
+          <p style="font-size:22px;color:rgba(255,255,255,0.6);">목판화, 1985</p>
+        </div>
+      </div>
+    </div>
+    <div class="pn" style="color:${ink};">${2} / ${t}</div>
+  `, { color:ink, logo:logoB, extraCss:docCss });
+
+  // 3. 철학 — 중앙 큰 인용문
+  const slide3 = pg(`
+    <div class="z s p doc-bg" style="justify-content:center;align-items:center;text-align:center;gap:40px;">
+      <p style="font-size:24px;font-weight:700;color:${amber};letter-spacing:6px;">PHILOSOPHY</p>
+      <div class="doc-divider" style="margin:0 auto;"></div>
+      <blockquote style="font-size:72px;font-weight:900;color:${ink};line-height:1.3;letter-spacing:-1px;" class="ka">"미술은 많은 사람이<br>나누어야 한다"</blockquote>
+      <p style="font-size:28px;color:#666;font-style:italic;">— 오윤, 1980년대</p>
+      <div style="max-width:700px;display:flex;flex-direction:column;gap:20px;margin-top:12px;">
+        <div style="display:flex;align-items:center;gap:16px;background:rgba(184,134,11,0.08);border-radius:12px;padding:24px 32px;">
+          <span style="font-size:36px;">🪵</span>
+          <p style="font-size:28px;color:${ink};line-height:1.5;" class="ka">판화 = 복제 가능한 유일한 '원작'<br>누구나 소장할 수 있는 예술</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;background:rgba(184,134,11,0.08);border-radius:12px;padding:24px 32px;">
+          <span style="font-size:36px;">✊</span>
+          <p style="font-size:28px;color:${ink};line-height:1.5;" class="ka">1980년대 민중미술 운동의<br>핵심 작가로 활동</p>
+        </div>
+      </div>
+    </div>
+  `, { color:ink, logo:logoB, pn:3, total:t, extraCss:docCss });
+
+  // 4. 대표작 1 — 낮도깨비
+  const slide4 = pg(`
+    <div class="z s" style="height:100%;">
+      <!-- 작품 이미지 70% -->
+      <div style="height:68%;position:relative;overflow:hidden;">
+        <img class="doc-img" src="${OY.낮도깨비}" alt="낮도깨비" style="width:100%;height:100%;object-fit:cover;">
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(42,42,42,0.7) 100%);"></div>
+        <div style="position:absolute;top:40px;left:48px;">
+          <div class="stamp-badge" style="font-size:20px;">대표작 01</div>
+        </div>
+      </div>
+      <!-- 하단 해설 30% -->
+      <div style="height:32%;padding:36px 56px;background:${sepia};display:flex;flex-direction:column;justify-content:center;gap:16px;">
+        <div style="display:flex;align-items:baseline;gap:20px;">
+          <h2 style="font-size:64px;font-weight:900;color:${ink};">낮도깨비</h2>
+          <p style="font-size:28px;color:${amber};font-weight:600;">1985</p>
+        </div>
+        <div class="doc-divider"></div>
+        <p style="font-size:30px;color:#444;line-height:1.6;" class="ka">탈춤·굿·도깨비를 현대적으로 재해석.<br>한(恨)과 신명(神明)의 공존을 목판에 새기다.</p>
+        <p style="font-size:24px;color:#888;">(사후판화)목판 · 54.5×36cm</p>
+      </div>
+    </div>
+  `, { color:ink, logo:logoB, pn:4, total:t, extraCss:docCss });
+
+  // 5. 대표작 2 — 칼노래
+  const slide5 = pg(`
+    <div class="z s" style="height:100%;">
+      <div style="height:68%;position:relative;overflow:hidden;">
+        <img class="doc-img" src="${OY.칼노래}" alt="칼노래" style="width:100%;height:100%;object-fit:cover;">
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(42,42,42,0.7) 100%);"></div>
+        <div style="position:absolute;top:40px;left:48px;">
+          <div class="stamp-badge" style="font-size:20px;">대표작 02</div>
+        </div>
+      </div>
+      <div style="height:32%;padding:36px 56px;background:${sepia};display:flex;flex-direction:column;justify-content:center;gap:16px;">
+        <div style="display:flex;align-items:baseline;gap:20px;">
+          <h2 style="font-size:64px;font-weight:900;color:${ink};">칼노래</h2>
+          <p style="font-size:28px;color:${amber};font-weight:600;">1985</p>
+        </div>
+        <div class="doc-divider"></div>
+        <p style="font-size:30px;color:#444;line-height:1.6;" class="ka">민중의 저항과 희망을 담은 대표작.</p>
+        <div style="display:flex;align-items:center;gap:16px;margin-top:4px;">
+          <span style="font-size:22px;">🏛️</span>
+          <p style="font-size:26px;color:#666;" class="ka">최근 5년 경매 낙찰 총액 <strong style="color:${amber};">17.7억 원</strong></p>
+        </div>
+        <p style="font-size:24px;color:#888;">(사후판화)목판 · 32.2×25.5cm</p>
+      </div>
+    </div>
+  `, { color:ink, logo:logoB, pn:5, total:t, extraCss:docCss });
+
+  // 6. 대표작 3 — 석양
+  const slide6 = pg(`
+    <div class="z s" style="height:100%;">
+      <div style="height:68%;position:relative;overflow:hidden;">
+        <img class="doc-img" src="${OY.석양}" alt="석양" style="width:100%;height:100%;object-fit:cover;">
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(42,42,42,0.7) 100%);"></div>
+        <div style="position:absolute;top:40px;left:48px;">
+          <div class="stamp-badge" style="font-size:20px;">대표작 03</div>
+        </div>
+        <div style="position:absolute;top:40px;right:48px;background:rgba(184,134,11,0.9);border-radius:10px;padding:12px 24px;">
+          <p style="font-size:22px;font-weight:700;color:#fff;">BTS RM 소장</p>
+        </div>
+      </div>
+      <div style="height:32%;padding:36px 56px;background:${sepia};display:flex;flex-direction:column;justify-content:center;gap:16px;">
+        <div style="display:flex;align-items:baseline;gap:20px;">
+          <h2 style="font-size:64px;font-weight:900;color:${ink};">석양</h2>
+          <p style="font-size:28px;color:${amber};font-weight:600;">1982</p>
+        </div>
+        <div class="doc-divider"></div>
+        <p style="font-size:30px;color:#444;line-height:1.6;" class="ka">서정적 자연 속에 민중의 삶을 담아.<br>BTS RM 소장으로 다시 조명받다.</p>
+        <p style="font-size:24px;color:#888;">(사후판화)목판 · 23.5×22.5cm</p>
+      </div>
+    </div>
+  `, { color:ink, logo:logoB, pn:6, total:t, extraCss:docCss });
+
+  // 7. 의의 — 가격 비교 카드
+  const slide7 = pg(`
+    <div class="z s p doc-bg" style="justify-content:center;align-items:center;gap:36px;">
+      <p style="font-size:24px;font-weight:700;color:${amber};letter-spacing:6px;text-align:center;">ACCESS</p>
+      <div class="doc-divider" style="margin:0 auto;"></div>
+      <h2 style="font-size:72px;font-weight:900;color:${ink};text-align:center;line-height:1.2;" class="ka">경매장이 아닌,<br>당신의 벽에</h2>
+      <!-- 가격 비교 -->
+      <div style="display:flex;flex-direction:column;gap:20px;width:100%;max-width:800px;">
+        <div class="price-card" style="border-color:#ccc;background:#f0f0f0;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <p style="font-size:24px;color:#999;margin-bottom:8px;">일반 경매 시장</p>
+              <p style="font-size:52px;font-weight:900;color:#888;" class="m">수백 ~ 수천만 원</p>
+            </div>
+            <span style="font-size:48px;">🏛️</span>
+          </div>
+        </div>
+        <div style="text-align:center;font-size:40px;color:${amber};">↓</div>
+        <div class="price-card" style="border-color:${amber};background:rgba(184,134,11,0.05);">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <p style="font-size:24px;color:${amber};font-weight:700;margin-bottom:8px;">씨앗페 2026</p>
+              <p style="font-size:52px;font-weight:900;color:${ink};" class="m">105 ~ 295만 원</p>
+            </div>
+            <span style="font-size:48px;">🌱</span>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:28px;color:#666;text-align:center;line-height:1.7;" class="ka">판매 수익의 50%는<br>예술인 상호부조 기금으로</p>
+    </div>
+  `, { color:ink, logo:logoB, pn:7, total:t, extraCss:docCss });
+
+  // 8. CTA — 특별전 보러가기
+  const slide8 = pg(`
+    <div class="z s p" style="justify-content:center;align-items:center;text-align:center;gap:32px;">
+      <div class="stamp-badge" style="color:#fff;border-color:rgba(255,255,255,0.6);">40주기 특별전</div>
+      <h1 style="font-size:80px;font-weight:900;color:#fff;line-height:1.2;" class="ka">40년 만에<br>돌아온<br>민중의 칼날</h1>
+      <div class="doc-divider" style="margin:0 auto;background:${amberLight};"></div>
+      <p style="font-size:34px;color:rgba(255,255,255,0.85);line-height:1.6;" class="ka">오윤 40주기 특별전<br>지금 온라인에서 만나보세요</p>
+      <div style="background:rgba(255,255,255,0.12);border:2px solid rgba(255,255,255,0.3);border-radius:16px;padding:28px 56px;">
+        <p style="font-size:36px;font-weight:700;color:${amberLight};" class="m">saf2026.com/special/oh-yoon</p>
+      </div>
+      <p style="font-size:24px;color:rgba(255,255,255,0.45);line-height:2;margin-top:8px;">${ht}</p>
+    </div>
+  `, { bgImg:OY.낮도깨비, overlayStyle:`background:linear-gradient(180deg,rgba(42,42,42,0.6),rgba(42,42,42,0.88));`, color:ink, pn:8, total:t, logo:logoW, extraCss:docCss });
+
+  return [slide1, slide2, slide3, slide4, slide5, slide6, slide7, slide8];
+}
+
+// ═══════════════════════════════════════════════
 // MAIN
 // ═══════════════════════════════════════════════
 
 async function main() {
-  for (let i=1;i<=8;i++) fs.mkdirSync(path.join(OUT,`S${i}`),{recursive:true});
+  for (let i=1;i<=9;i++) fs.mkdirSync(path.join(OUT,`S${i}`),{recursive:true});
 
   console.log('🚀 Launching browser...');
   const browser = await chromium.launch();
@@ -796,7 +1017,7 @@ async function main() {
   const all = [
     {n:'S1',sl:s1()},{n:'S2',sl:s2()},{n:'S3',sl:s3()},
     {n:'S4',sl:s4()},{n:'S5',sl:s5()},{n:'S6',sl:s6()},
-    {n:'S7',sl:s7()},{n:'S8',sl:s8()},
+    {n:'S7',sl:s7()},{n:'S8',sl:s8()},{n:'S9',sl:s9()},
   ];
 
   let c = 0;
