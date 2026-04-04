@@ -2,7 +2,7 @@ import { getSupabaseArtworks, getSupabaseArtworksByArtist } from '@/lib/supabase
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
-import { SITE_URL, BREADCRUMB_HOME, BREADCRUMBS } from '@/lib/constants';
+import { SITE_URL } from '@/lib/constants';
 import { generateEnhancedArtistSchema, createBreadcrumbSchema } from '@/lib/seo-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { formatArtistName, resolveArtworkImageUrl } from '@/lib/utils';
@@ -197,14 +197,15 @@ export default async function ArtistPage({ params }: Props) {
   });
 
   // Breadcrumb Schema: Home > Artworks > Artist Name
+  const tBreadcrumbs = await getTranslations('breadcrumbs');
   const breadcrumbSchema = createBreadcrumbSchema([
-    BREADCRUMB_HOME,
-    BREADCRUMBS['/artworks'],
+    { name: tBreadcrumbs('home'), url: SITE_URL },
+    { name: tBreadcrumbs('artworks'), url: `${SITE_URL}/artworks` },
     { name: formattedName, url: pageUrl },
   ]);
 
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       <JsonLdScript data={personSchema} />
       <JsonLdScript data={breadcrumbSchema} />
       <PageHero
@@ -230,6 +231,6 @@ export default async function ArtistPage({ params }: Props) {
       <Section variant="white" prevVariant="primary-surface" className="pb-24 md:pb-32">
         <GalleryCampaignBanner />
       </Section>
-    </main>
+    </div>
   );
 }

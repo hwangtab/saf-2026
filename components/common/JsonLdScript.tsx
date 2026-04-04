@@ -1,4 +1,4 @@
-import { escapeJsonLdForScript } from '@/lib/constants';
+import { escapeJsonLdForScript } from '@/lib/seo-utils';
 
 interface JsonLdScriptProps {
   data: Record<string, unknown> | Record<string, unknown>[];

@@ -1,12 +1,5 @@
 import type { Metadata } from 'next';
-import {
-  SITE_URL,
-  BREADCRUMB_HOME,
-  BREADCRUMBS,
-  CAMPAIGN,
-  EXHIBITION,
-  MERCHANT_POLICIES,
-} from '@/lib/constants';
+import { SITE_URL, CAMPAIGN, EXHIBITION, MERCHANT_POLICIES } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
 import { formatArtistName } from '@/lib/utils';
 import { getArtformForSchema, getMediumKeywords, classifyArtworkMedium } from '@/lib/art-taxonomy';
@@ -122,7 +115,8 @@ export function generateArtworkJsonLd(
   artwork: Artwork,
   numericPrice: string,
   isInquiry: boolean,
-  locale: 'ko' | 'en' = 'ko'
+  locale: 'ko' | 'en' = 'ko',
+  breadcrumbLabels?: { home: string; artworks: string }
 ) {
   const isEnglish = locale === 'en';
   const titleForLocale = isEnglish && artwork.title_en ? artwork.title_en : artwork.title;
@@ -358,19 +352,13 @@ export function generateArtworkJsonLd(
     ],
   };
 
-  const breadcrumbSchema = createBreadcrumbSchema(
-    isEnglish
-      ? [
-          { name: 'Home', url: SITE_URL },
-          { name: 'Artworks', url: `${SITE_URL}/artworks` },
-          { name: titleForLocale, url: `${SITE_URL}/artworks/${artwork.id}` },
-        ]
-      : [
-          BREADCRUMB_HOME,
-          BREADCRUMBS['/artworks'],
-          { name: artwork.title, url: `${SITE_URL}/artworks/${artwork.id}` },
-        ]
-  );
+  const homeLabel = breadcrumbLabels?.home ?? (isEnglish ? 'Home' : '홈');
+  const artworksLabel = breadcrumbLabels?.artworks ?? (isEnglish ? 'Artworks' : '출품작');
+  const breadcrumbSchema = createBreadcrumbSchema([
+    { name: homeLabel, url: SITE_URL },
+    { name: artworksLabel, url: `${SITE_URL}/artworks` },
+    { name: titleForLocale, url: `${SITE_URL}/artworks/${artwork.id}` },
+  ]);
 
   return {
     productSchema,
