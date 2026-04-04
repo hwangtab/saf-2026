@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import SafeImage from '@/components/common/SafeImage';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { ANIMATION, HERO_IMAGES } from '@/lib/constants';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
 
 export default function BackgroundSlider() {
   const t = useTranslations('backgroundSlider');
+  const locale = useLocale();
   const isMobile = useIsMobile();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -74,7 +75,7 @@ export default function BackgroundSlider() {
       <div className="absolute inset-0 -z-10 overflow-hidden bg-gray-900">
         <SafeImage
           src={`/images/hero/${currentPhoto.filename}`}
-          alt={currentPhoto.alt}
+          alt={locale === 'en' ? currentPhoto.altEn : currentPhoto.alt}
           fill
           className="object-cover"
           priority
@@ -118,7 +119,7 @@ export default function BackgroundSlider() {
         >
           <SafeImage
             src={`/images/hero/${images[layers.aIndex].filename}`}
-            alt={images[layers.aIndex].alt}
+            alt={locale === 'en' ? images[layers.aIndex].altEn : images[layers.aIndex].alt}
             fill
             className="object-cover"
             priority={layers.aIndex === 0}
@@ -139,7 +140,7 @@ export default function BackgroundSlider() {
         >
           <SafeImage
             src={`/images/hero/${images[layers.bIndex].filename}`}
-            alt={images[layers.bIndex].alt}
+            alt={locale === 'en' ? images[layers.bIndex].altEn : images[layers.bIndex].alt}
             fill
             className="object-cover"
             placeholder="blur"

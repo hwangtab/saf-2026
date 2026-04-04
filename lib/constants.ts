@@ -1,5 +1,3 @@
-import { BreadcrumbItem } from '@/types';
-
 // External Links
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.saf2026.com';
 export const SITE_URL_ALIAS = 'https://saf2026.com';
@@ -116,32 +114,6 @@ export const ANIMATION = {
   COUNTER_DURATION: 2000, // 2 seconds
 } as const;
 
-// Re-export helpers from seo-utils for backward compatibility
-export { escapeJsonLdForScript, createBreadcrumbSchema } from '@/lib/seo-utils';
-export type { BreadcrumbItem } from '@/types';
-
-// Common breadcrumb items
-export const BREADCRUMB_HOME: BreadcrumbItem = {
-  name: '홈',
-  url: SITE_URL,
-};
-
-export const BREADCRUMBS: Record<string, BreadcrumbItem> = {
-  '/our-reality': { name: '우리의 현실', url: `${SITE_URL}/our-reality` },
-  '/our-proof': { name: '우리의 증명', url: `${SITE_URL}/our-proof` },
-  '/privacy': { name: '개인정보처리방침', url: `${SITE_URL}/privacy` },
-  '/terms': { name: '이용약관', url: `${SITE_URL}/terms` },
-  '/terms/artist': { name: '아티스트 계약서', url: `${SITE_URL}/terms/artist` },
-  '/terms/exhibitor': { name: '출품자 계약서', url: `${SITE_URL}/terms/exhibitor` },
-  '/archive/2023': { name: '2023 아카이브', url: `${SITE_URL}/archive/2023` },
-  '/archive/2026': { name: '2026 아카이브', url: `${SITE_URL}/archive/2026` },
-  '/artworks': { name: '출품작', url: `${SITE_URL}/artworks` },
-  '/archive': { name: '아카이브', url: `${SITE_URL}/archive` },
-  '/news': { name: '언론 보도', url: `${SITE_URL}/news` },
-  '/special/oh-yoon': { name: '오윤 특별전', url: `${SITE_URL}/special/oh-yoon` },
-  '/transparency': { name: '운용 보고서', url: `${SITE_URL}/transparency` },
-} as const;
-
 export const HERO_PAGES = [
   '/',
   '/our-reality',
@@ -197,15 +169,73 @@ export const HOMEPAGE_CATEGORY_GROUPS = [
   },
 ] as const;
 
+type HeroImage = {
+  readonly id: string;
+  readonly filename: string;
+  readonly alt: string;
+  readonly altEn: string;
+};
+
 export const HERO_IMAGES = [
-  { id: '1', filename: '1.jpg', alt: '씨앗페 온라인 전시 출품작 1' },
-  { id: '3', filename: '3.jpg', alt: '씨앗페 온라인 전시 출품작 3' },
-  { id: '4', filename: '4.jpg', alt: '씨앗페 온라인 전시 출품작 4' },
-  { id: '6', filename: '6.jpg', alt: '씨앗페 온라인 전시 출품작 6' },
-  { id: '7', filename: '7.jpg', alt: '씨앗페 온라인 전시 출품작 7' },
-  { id: '9', filename: '9.jpg', alt: '씨앗페 온라인 전시 출품작 9' },
-  { id: '10', filename: '10.jpg', alt: '씨앗페 온라인 전시 출품작 10' },
-  { id: '11', filename: '11.jpg', alt: '씨앗페 온라인 전시 출품작 11' },
-  { id: '14', filename: '14.jpg', alt: '씨앗페 온라인 전시 출품작 14' },
-  { id: '17', filename: '17.jpg', alt: '씨앗페 온라인 전시 출품작 17' },
-] as const;
+  {
+    id: '1',
+    filename: '1.jpg',
+    alt: '신예리, 취도(鷲圖) — 씨앗페 온라인 출품작',
+    altEn: 'Shin Yeri, Eagle (鷲圖) — SAF Online Exhibition',
+  },
+  {
+    id: '3',
+    filename: '3.jpg',
+    alt: '최윤정, pop kids #96 — 씨앗페 온라인 출품작',
+    altEn: 'Choi Yoonjung, pop kids #96 — SAF Online Exhibition',
+  },
+  {
+    id: '4',
+    filename: '4.jpg',
+    alt: '이수철, 포르코 당신은 어디있나요?-1 — 씨앗페 온라인 출품작',
+    altEn: 'Lee Soocheol, Porco, Where Are You?-1 — SAF Online Exhibition',
+  },
+  {
+    id: '6',
+    filename: '6.jpg',
+    alt: '이광수, 回2 — 씨앗페 온라인 출품작',
+    altEn: 'Lee Gwangsu, Return 2 (回2) — SAF Online Exhibition',
+  },
+  {
+    id: '7',
+    filename: '7.jpg',
+    alt: '안소현, 무제 — 씨앗페 온라인 출품작',
+    altEn: 'Ahn Sohyun, Untitled — SAF Online Exhibition',
+  },
+  {
+    id: '9',
+    filename: '9.jpg',
+    alt: '안소현, Authentic City — 씨앗페 온라인 출품작',
+    altEn: 'Ahn Sohyun, Authentic City — SAF Online Exhibition',
+  },
+  {
+    id: '10',
+    filename: '10.jpg',
+    alt: '신예리, 야형화접도(夜螢花蝶圖) — 씨앗페 온라인 출품작',
+    altEn: 'Shin Yeri, Fireflies and Butterflies at Night (夜螢花蝶圖) — SAF Online Exhibition',
+  },
+  {
+    id: '11',
+    filename: '11.jpg',
+    alt: '신예리, 책거리 — 씨앗페 온라인 출품작',
+    altEn: 'Shin Yeri, Chaekgeori — SAF Online Exhibition',
+  },
+  {
+    id: '14',
+    filename: '14.jpg',
+    alt: '라인석, 곡선운동의 궤적으로부터 롯데월드타워 230817 — 씨앗페 온라인 출품작',
+    altEn:
+      'Ra Inseok, From the Trajectory of Curvilinear Motion: Lotte World Tower 230817 — SAF Online Exhibition',
+  },
+  {
+    id: '17',
+    filename: '17.jpg',
+    alt: '이호철, The Great Resurrection (위대한 부활) — 씨앗페 온라인 출품작',
+    altEn: 'Lee Hochul, The Great Resurrection — SAF Online Exhibition',
+  },
+] as const satisfies readonly HeroImage[];

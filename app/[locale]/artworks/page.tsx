@@ -48,7 +48,7 @@ export default async function ArtworksPage() {
     <>
       <JsonLdScript data={breadcrumbSchema} />
       <JsonLdScript data={itemListSchema} />
-      <main className="min-h-screen">
+      <div className="min-h-screen">
         <PageHero title={t('title')} description={t('heroDescription')}>
           <ShareButtonsWrapper
             url={PAGE_URL}
@@ -74,7 +74,7 @@ export default async function ArtworksPage() {
         <Section variant="white" prevVariant="primary-surface" className="pb-24 md:pb-32">
           <GalleryCampaignBanner />
         </Section>
-      </main>
+      </div>
     </>
   );
 }

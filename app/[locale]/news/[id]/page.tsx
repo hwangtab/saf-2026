@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getLocale } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { getSupabaseNews, getSupabaseNewsById } from '@/lib/supabase-data';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { generateNewsArticleSchema, createBreadcrumbSchema } from '@/lib/seo-utils';
@@ -83,9 +83,10 @@ export default async function NewsArticlePage({ params }: Props) {
     publisherName: CONTACT.ORGANIZATION_NAME,
   });
 
+  const tBreadcrumbs = await getTranslations('breadcrumbs');
   const breadcrumbSchema = createBreadcrumbSchema([
-    { name: locale === 'en' ? 'Home' : '홈', url: SITE_URL },
-    { name: locale === 'en' ? 'News' : '언론 보도', url: buildLocaleUrl('/news', locale) },
+    { name: tBreadcrumbs('home'), url: SITE_URL },
+    { name: tBreadcrumbs('news'), url: buildLocaleUrl('/news', locale) },
     { name: article.title, url: buildLocaleUrl(`/news/${article.id}`, locale) },
   ]);
 

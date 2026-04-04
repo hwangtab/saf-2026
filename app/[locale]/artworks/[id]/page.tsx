@@ -70,15 +70,23 @@ export default async function ArtworkDetailPage({ params }: Props) {
   const { id } = await params;
 
   // Parallel fetch: artwork detail + all artworks (cached) to avoid waterfall
-  const [artwork, allArtworks, recentlySold, totalSoldCount, testimonialCategories, t] =
-    await Promise.all([
-      getSupabaseArtworkById(id),
-      getSupabaseArtworks(),
-      getRecentlySoldArtworks(3, id),
-      getTotalSoldCount(),
-      getSupabaseTestimonials(),
-      getTranslations('artworkDetail'),
-    ]);
+  const [
+    artwork,
+    allArtworks,
+    recentlySold,
+    totalSoldCount,
+    testimonialCategories,
+    t,
+    tBreadcrumbs,
+  ] = await Promise.all([
+    getSupabaseArtworkById(id),
+    getSupabaseArtworks(),
+    getRecentlySoldArtworks(3, id),
+    getTotalSoldCount(),
+    getSupabaseTestimonials(),
+    getTranslations('artworkDetail'),
+    getTranslations('breadcrumbs'),
+  ]);
 
   if (!artwork) {
     notFound();
@@ -152,7 +160,8 @@ export default async function ArtworkDetailPage({ params }: Props) {
     artwork,
     numericPrice,
     isInquiry,
-    locale
+    locale,
+    { home: tBreadcrumbs('home'), artworks: tBreadcrumbs('artworks') }
   );
 
   const speakableSchema = generateSpeakableSchema([
@@ -203,18 +212,13 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 category={artwork.category}
               />
 
-              {/* Mobile Header: Title, Artist, Price (Visible only on mobile) */}
-              <div className="block lg:hidden space-y-3 mt-6">
-                <h1
-                  id="artwork-title-mobile"
-                  className="text-2xl font-bold font-sans text-charcoal break-keep text-center"
-                >
+              {/* Mobile Header: Title, Artist, Price (Visible only on mobile, hidden from screen readers to avoid duplication with sr-only header) */}
+              <div className="block lg:hidden space-y-3 mt-6" aria-hidden="true">
+                <p className="text-2xl font-bold font-sans text-charcoal break-keep text-center">
                   {displayTitle}
-                </h1>
+                </p>
                 <div className="flex flex-col items-center gap-1">
-                  <p id="artist-name-mobile" className="text-lg text-gray-600 font-medium">
-                    {displayArtist}
-                  </p>
+                  <p className="text-lg text-gray-600 font-medium">{displayArtist}</p>
                 </div>
               </div>
 
@@ -248,7 +252,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
 
             {/* Right Column: Info Section */}
             <div className="space-y-8">
-              <header className="hidden lg:block mb-6 border-b border-gray-100 pb-6 lg:border-none lg:pb-0 lg:mb-0">
+              <header className="sr-only lg:not-sr-only lg:block mb-6 border-b border-gray-100 pb-6 lg:border-none lg:pb-0 lg:mb-0">
                 <h1
                   id="artwork-title"
                   className="text-3xl md:text-4xl font-bold font-sans text-charcoal mb-2 break-keep"
