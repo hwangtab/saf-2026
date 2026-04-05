@@ -59,10 +59,42 @@ export default async function TransparencyPage() {
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
 
+  // Annual report structured data — helps Google understand these as document records
+  const reportsSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: locale === 'en' ? 'Annual Transparency Reports' : '연간 운용 보고서',
+    description:
+      locale === 'en'
+        ? 'Annual operational reports of the SAF artist mutual aid loan program'
+        : '씨앗페 예술인 상호부조 대출 연간 운용 보고서',
+    url: pageUrl,
+    numberOfItems: REPORTS.length,
+    itemListElement: REPORTS.map((report, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: {
+        '@type': 'Article',
+        '@id': `${SITE_URL}/reports/${encodeURIComponent(report.pdfFilename)}`,
+        headline: locale === 'en' ? report.title.en : report.title.ko,
+        description: locale === 'en' ? report.summary.en : report.summary.ko,
+        datePublished:
+          report.year === 2023 ? '2024-03-12' : report.year === 2024 ? '2025-04-17' : '2025-10-18',
+        url: `${SITE_URL}/reports/${encodeURIComponent(report.pdfFilename)}`,
+        publisher: {
+          '@type': 'Organization',
+          '@id': `${SITE_URL}#organization`,
+          name: '한국스마트협동조합',
+          url: SITE_URL,
+        },
+      },
+    })),
+  };
+
   if (locale === 'en') {
     return (
       <>
-        <JsonLdScript data={breadcrumbSchema} />
+        <JsonLdScript data={[breadcrumbSchema, reportsSchema]} />
         <PageHero
           title="Transparency Reports"
           description="Every loan, every repayment, every won — published openly. Here is the full operational record of the artist mutual aid fund."
@@ -241,7 +273,7 @@ export default async function TransparencyPage() {
 
   return (
     <>
-      <JsonLdScript data={breadcrumbSchema} />
+      <JsonLdScript data={[breadcrumbSchema, reportsSchema]} />
       <PageHero
         title="운용 보고서"
         description="대출 한 건, 상환 한 건, 원 단위까지. 예술인 상호부조 대출 기금 운용 전 과정을 투명하게 공개합니다."
