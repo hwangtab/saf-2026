@@ -11,7 +11,7 @@ export function generateOrganizationSchema(locale: 'ko' | 'en' = 'ko') {
     legalName: CONTACT.ORGANIZATION_NAME,
     alternateName: CONTACT.ORGANIZATION_NAME_EN,
     url: SITE_URL,
-    foundingDate: '2021',
+    foundingDate: '2020',
     taxID: CONTACT.BUSINESS_REGISTRATION_NUMBER,
     logo: `${SITE_URL}/images/og-image2.png`,
     description: isEnglish
