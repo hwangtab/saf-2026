@@ -67,6 +67,7 @@ export async function generateMetadata(): Promise<Metadata> {
       url: pageUrl,
       title: copy.title,
       description: copy.ogDescription,
+      locale: locale === 'en' ? 'en_US' : 'ko_KR',
       siteName,
       images: [
         {

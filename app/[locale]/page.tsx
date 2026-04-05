@@ -56,6 +56,7 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: t('metaTitle').split(' - ')[0],
       title: t('metaTitle'),
       description: t('ogDescription'),
+      locale: locale === 'en' ? 'en_US' : 'ko_KR',
       url: pageUrl,
       images: [
         {
