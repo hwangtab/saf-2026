@@ -78,6 +78,7 @@ export function createStandardPageMetadata(
       title,
       description,
       url: localizedPageUrl || pageUrl,
+      locale: locale === 'en' ? 'en_US' : 'ko_KR',
       images: [{ url: OG_IMAGE.url, width: OG_IMAGE.width, height: OG_IMAGE.height, alt: ogAlt }],
     },
     twitter: {

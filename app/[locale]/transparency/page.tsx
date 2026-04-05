@@ -45,6 +45,10 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
   return {
     ...createStandardPageMetadata(title, copy.description, PAGE_URL, '/transparency', locale),
+    keywords:
+      locale === 'en'
+        ? 'artist loan transparency, mutual aid fund report, Korea artist loan program, annual report artist fund, artist financial accountability'
+        : '예술인 대출 투명성, 상호부조 기금 보고서, 예술인 대출 운용 현황, 씨앗페 연간 보고서, 예술인 금융 지원 성과',
     other: { 'article:modified_time': LAST_UPDATED },
   };
 }
