@@ -1,4 +1,5 @@
 import { SITE_URL, OG_IMAGE, CONTACT, EXHIBITION, CAMPAIGN, SOCIAL_LINKS } from '@/lib/constants';
+import { isExhibitionCompleted } from '@/lib/schemas/event';
 
 export function generateOrganizationSchema(locale: 'ko' | 'en' = 'ko') {
   const isEnglish = locale === 'en';
@@ -61,6 +62,14 @@ export function generateWebsiteSchema(locale: 'ko' | 'en' = 'ko') {
     accessibilityHazard: 'none',
     accessMode: ['textual', 'visual'],
     accessModeSufficient: [{ '@type': 'ItemList', itemListElement: ['textual'] }],
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: `${SITE_URL}/artworks?q={search_term_string}`,
+      },
+      'query-input': 'required name=search_term_string',
+    },
   };
 }
 
@@ -87,16 +96,28 @@ export function generateLocalBusinessSchema(locale: 'ko' | 'en' = 'ko') {
       latitude: EXHIBITION.LAT,
       longitude: EXHIBITION.LNG,
     },
-    openingHoursSpecification: [
-      {
-        '@type': 'OpeningHoursSpecification',
-        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-        opens: '10:00',
-        closes: '19:00',
-        validFrom: CAMPAIGN.START_DATE,
-        validThrough: CAMPAIGN.END_DATE,
-      },
-    ],
+    ...(isExhibitionCompleted()
+      ? {}
+      : {
+          openingHoursSpecification: [
+            {
+              '@type': 'OpeningHoursSpecification',
+              dayOfWeek: [
+                'Monday',
+                'Tuesday',
+                'Wednesday',
+                'Thursday',
+                'Friday',
+                'Saturday',
+                'Sunday',
+              ],
+              opens: '10:00',
+              closes: '19:00',
+              validFrom: CAMPAIGN.START_DATE,
+              validThrough: CAMPAIGN.END_DATE,
+            },
+          ],
+        }),
     priceRange: 'KRW',
   };
 }

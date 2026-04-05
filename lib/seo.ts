@@ -12,12 +12,13 @@ export function createPageMetadata(
   const url = buildLocaleUrl(path, locale);
   const siteTitle = locale === 'en' ? 'SAF Online' : '씨앗페 온라인';
   const ogLocale = locale === 'en' ? 'en_US' : 'ko_KR';
+  const ogAlt = locale === 'en' ? OG_IMAGE.altEn : OG_IMAGE.alt;
   const images = [
     {
       url: imageUrl || OG_IMAGE.url,
       width: imageUrl ? 1200 : OG_IMAGE.width,
       height: imageUrl ? 630 : OG_IMAGE.height,
-      alt: OG_IMAGE.alt,
+      alt: ogAlt,
     },
   ];
 
@@ -67,6 +68,8 @@ export function createStandardPageMetadata(
 ): Metadata {
   const localizedPageUrl = buildLocaleUrl(pagePath, locale);
 
+  const ogAlt = locale === 'en' ? OG_IMAGE.altEn : OG_IMAGE.alt;
+
   return {
     title,
     description,
@@ -75,9 +78,7 @@ export function createStandardPageMetadata(
       title,
       description,
       url: localizedPageUrl || pageUrl,
-      images: [
-        { url: OG_IMAGE.url, width: OG_IMAGE.width, height: OG_IMAGE.height, alt: OG_IMAGE.alt },
-      ],
+      images: [{ url: OG_IMAGE.url, width: OG_IMAGE.width, height: OG_IMAGE.height, alt: ogAlt }],
     },
     twitter: {
       card: 'summary_large_image',

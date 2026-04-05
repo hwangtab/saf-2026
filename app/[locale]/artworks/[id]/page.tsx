@@ -345,9 +345,9 @@ export default async function ArtworkDetailPage({ params }: Props) {
               {/* Artist Profile */}
               {localizedProfile && (
                 <div className="bg-white border-l-4 border-primary/20 pl-6 pr-6 py-5 rounded-r-xl">
-                  <h3 className="text-sm font-bold text-primary/60 uppercase tracking-wider mb-4">
+                  <h2 className="text-sm font-bold text-primary/60 uppercase tracking-wider mb-4">
                     {t('artistProfile')}
-                  </h3>
+                  </h2>
                   <p
                     id="artist-profile"
                     className="text-gray-700 leading-relaxed text-sm whitespace-pre-line"
@@ -360,9 +360,9 @@ export default async function ArtworkDetailPage({ params }: Props) {
               {/* Artist Note */}
               {localizedDescription && (
                 <div className="bg-primary/5 p-6 rounded-xl">
-                  <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">
+                  <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">
                     {t('artistNote')}
-                  </h3>
+                  </h2>
                   <p
                     id="artist-note"
                     className="text-gray-700 leading-relaxed text-sm whitespace-pre-line"

@@ -5,7 +5,7 @@ import { getSupabaseNews, getSupabaseNewsById } from '@/lib/supabase-data';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { generateNewsArticleSchema, createBreadcrumbSchema } from '@/lib/seo-utils';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
-import { SITE_URL, OG_IMAGE, CONTACT } from '@/lib/constants';
+import { SITE_URL, OG_IMAGE } from '@/lib/constants';
 import { resolveLocale } from '@/lib/server-locale';
 import SafeImage from '@/components/common/SafeImage';
 import Section from '@/components/ui/Section';
@@ -61,6 +61,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: 'summary_large_image',
       title: article.title,
       description,
+      images: article.thumbnail ? [article.thumbnail] : [OG_IMAGE.url],
     },
   };
 }
@@ -80,7 +81,7 @@ export default async function NewsArticlePage({ params }: Props) {
     datePublished: article.date,
     image: article.thumbnail || OG_IMAGE.url,
     url: buildLocaleUrl(`/news/${article.id}`, locale),
-    publisherName: CONTACT.ORGANIZATION_NAME,
+    sourceName: article.source,
   });
 
   const tBreadcrumbs = await getTranslations('breadcrumbs');

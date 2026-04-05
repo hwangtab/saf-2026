@@ -17,7 +17,6 @@ import {
   generateExhibitionSchema,
   generateFAQSchema,
   generateCampaignSchema,
-  isExhibitionCompleted,
 } from '@/lib/seo-utils';
 import { generateArtworkPurchaseHowTo, generateMemberJoinHowTo } from '@/lib/schemas/howto';
 import { generateSAFCoreQA } from '@/lib/schemas/qa-page';
@@ -177,7 +176,7 @@ export default async function Home() {
       </Section>
 
       {/* JSON-LD schemas */}
-      {!isExhibitionCompleted() && <JsonLdScript data={generateExhibitionSchema([], locale)} />}
+      <JsonLdScript data={generateExhibitionSchema([], locale)} />
       <JsonLdScript data={generateCampaignSchema(locale)} />
       <JsonLdScript data={generateArtworkPurchaseHowTo(locale)} />
       <JsonLdScript data={generateMemberJoinHowTo(locale)} />

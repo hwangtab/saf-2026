@@ -1,4 +1,4 @@
-import { SITE_URL } from '@/lib/constants';
+import { SITE_URL, CONTACT } from '@/lib/constants';
 import { containsHangul } from '@/lib/search-utils';
 
 export interface FAQItem {
@@ -59,7 +59,8 @@ export interface NewsArticleSchemaInput {
   datePublished: string;
   image: string;
   url: string;
-  publisherName: string;
+  /** 원본 언론사 이름 (author로 표시됨) */
+  sourceName: string;
 }
 
 export function generateNewsArticleSchema(article: NewsArticleSchemaInput) {
@@ -73,13 +74,17 @@ export function generateNewsArticleSchema(article: NewsArticleSchemaInput) {
     author: [
       {
         '@type': 'Organization',
-        name: article.publisherName,
+        name: article.sourceName,
       },
     ],
     publisher: {
       '@type': 'Organization',
-      name: article.publisherName,
-      url: article.url,
+      name: CONTACT.ORGANIZATION_NAME,
+      url: SITE_URL,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${SITE_URL}/images/og-image2.png`,
+      },
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
