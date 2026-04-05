@@ -107,6 +107,7 @@ export default async function TransparencyPage() {
         <PageHero
           title="Transparency Reports"
           description="Every loan, every repayment, every won — published openly. Here is the full operational record of the artist mutual aid fund."
+          descriptionId="transparency-hero-description"
           breadcrumbItems={breadcrumbItems}
         >
           <ShareButtonsWrapper
@@ -121,7 +122,7 @@ export default async function TransparencyPage() {
         </div>
         {/* Reports Grid */}
         <Section variant="primary-surface" prevVariant="white">
-          <div className="container-max">
+          <div id="transparency-reports-section" className="container-max">
             <SectionTitle className="mb-12">Annual Reports</SectionTitle>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {REPORTS.map((report) => (
@@ -163,7 +164,7 @@ export default async function TransparencyPage() {
 
         {/* Growth Table */}
         <Section variant="white" prevVariant="primary-surface">
-          <div className="container-max">
+          <div id="transparency-stats-section" className="container-max">
             <SectionTitle className="mb-4">Year-on-Year Growth</SectionTitle>
             <p className="text-charcoal-muted text-center mb-12">
               Loan volume has grown each year since inception in December 2022, while maintaining a
@@ -286,6 +287,7 @@ export default async function TransparencyPage() {
       <PageHero
         title="운용 보고서"
         description="대출 한 건, 상환 한 건, 원 단위까지. 예술인 상호부조 대출 기금 운용 전 과정을 투명하게 공개합니다."
+        descriptionId="transparency-hero-description"
         breadcrumbItems={breadcrumbItems}
       >
         <ShareButtonsWrapper
@@ -300,7 +302,7 @@ export default async function TransparencyPage() {
       </div>
       {/* 보고서 카드 섹션 */}
       <Section variant="primary-surface" prevVariant="white">
-        <div className="container-max">
+        <div id="transparency-reports-section" className="container-max">
           <SectionTitle className="mb-12">연간 운용 보고서</SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {REPORTS.map((report) => (
@@ -342,7 +344,7 @@ export default async function TransparencyPage() {
 
       {/* 성장 추이 테이블 */}
       <Section variant="white" prevVariant="primary-surface">
-        <div className="container-max">
+        <div id="transparency-stats-section" className="container-max">
           <SectionTitle className="mb-4">연도별 성장 추이</SectionTitle>
           <p className="text-charcoal-muted text-center mb-12">
             2022년 12월 출범 이후 매년 증가하는 대출 규모와 안정적인 상환율을 확인할 수 있습니다.
