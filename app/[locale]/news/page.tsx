@@ -96,11 +96,16 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: { absolute: title },
     description: copy.pageDescription,
+    keywords:
+      locale === 'en'
+        ? 'SAF Online press coverage, Korean artist news, artist financial exclusion media, art festival news'
+        : '씨앗페 언론 보도, 예술인 금융 차별 뉴스, 한국 예술인 뉴스, 씨앗페 기사',
     alternates: createLocaleAlternates('/news', locale),
     openGraph: {
       title,
       description: copy.pageDescription,
       url: pageUrl,
+      locale: locale === 'en' ? 'en_US' : 'ko_KR',
       images: [
         { url: OG_IMAGE.url, width: OG_IMAGE.width, height: OG_IMAGE.height, alt: OG_IMAGE.alt },
       ],
