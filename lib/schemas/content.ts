@@ -71,6 +71,7 @@ export function generateNewsArticleSchema(article: NewsArticleSchemaInput) {
     description: article.description,
     image: [article.image],
     datePublished: article.datePublished,
+    dateModified: article.datePublished,
     author: [
       {
         '@type': 'Organization',

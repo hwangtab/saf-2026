@@ -224,6 +224,7 @@ export function generateArtworkJsonLd(
   const productSchema = {
     '@context': 'https://schema.org',
     '@type': ['VisualArtwork', 'Product'],
+    '@id': buildLocaleUrl(`/artworks/${artwork.id}`, locale),
     name: titleForLocale,
     inLanguage: isEnglish ? 'en' : 'ko',
     artform: getArtformForSchema(materialForLocale || ''),
