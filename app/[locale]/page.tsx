@@ -17,6 +17,9 @@ import {
   generateExhibitionSchema,
   generateFAQSchema,
   generateCampaignSchema,
+  generateOrganizationSchema,
+  generateWebsiteSchema,
+  generateLocalBusinessSchema,
 } from '@/lib/seo-utils';
 import { generateArtworkPurchaseHowTo, generateMemberJoinHowTo } from '@/lib/schemas/howto';
 import { generateSAFCoreQA } from '@/lib/schemas/qa-page';
@@ -175,7 +178,10 @@ export default async function Home() {
         </div>
       </Section>
 
-      {/* JSON-LD schemas */}
+      {/* JSON-LD schemas — entity definitions (Organization, WebSite, ArtGallery) */}
+      <JsonLdScript data={generateOrganizationSchema(locale)} />
+      <JsonLdScript data={generateWebsiteSchema(locale)} />
+      <JsonLdScript data={generateLocalBusinessSchema(locale)} />
       <JsonLdScript data={generateExhibitionSchema([], locale)} />
       <JsonLdScript data={generateCampaignSchema(locale)} />
       <JsonLdScript data={generateArtworkPurchaseHowTo(locale)} />
