@@ -256,6 +256,7 @@ export function generateArtworkJsonLd(
     },
     creator: {
       '@type': 'Person',
+      '@id': `${SITE_URL}/artworks/artist/${encodeURIComponent(artwork.artist)}`,
       name: artistForLocale,
       description: profileForLocale || undefined,
     },
