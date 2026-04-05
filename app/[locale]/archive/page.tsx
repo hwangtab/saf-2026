@@ -45,11 +45,36 @@ export default async function ArchiveHubPage() {
     { name: tBreadcrumbs('archive'), url: pageUrl },
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
+  const collectionSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: locale === 'en' ? 'SAF Archive' : '씨앗페 아카이브',
+    description:
+      locale === 'en'
+        ? 'A collection of SAF event records from 2023 to 2026.'
+        : '2023년부터 2026년까지의 씨앗페 행사 기록 모음.',
+    url: pageUrl,
+    hasPart: [
+      {
+        '@type': 'WebPage',
+        name:
+          locale === 'en'
+            ? 'SAF 2026 Offline Exhibition Archive'
+            : '씨앗페 2026 오프라인 전시 기록',
+        url: buildLocaleUrl('/archive/2026', locale),
+      },
+      {
+        '@type': 'WebPage',
+        name: locale === 'en' ? 'SAF 2023 Archive' : '씨앗페 2023 아카이브',
+        url: buildLocaleUrl('/archive/2023', locale),
+      },
+    ],
+  };
 
   if (locale === 'en') {
     return (
       <>
-        <JsonLdScript data={breadcrumbSchema} />
+        <JsonLdScript data={[breadcrumbSchema, collectionSchema]} />
         <PageHero
           title="Archive"
           description="The SAF journey for artist mutual-aid."
@@ -120,7 +145,7 @@ export default async function ArchiveHubPage() {
 
   return (
     <>
-      <JsonLdScript data={breadcrumbSchema} />
+      <JsonLdScript data={[breadcrumbSchema, collectionSchema]} />
       <PageHero
         title="아카이브"
         description="예술인 상호부조를 위한 씨앗페의 발자취입니다."

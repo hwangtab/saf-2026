@@ -49,6 +49,10 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
   return {
     ...createStandardPageMetadata(title, copy.description, PAGE_URL, '/our-reality', locale),
+    keywords:
+      locale === 'en'
+        ? 'Korean artist financial exclusion, predatory lending artists, artist loan statistics, cultural worker finance, artist banking access Korea'
+        : '예술인 금융 배제, 예술인 대출 통계, 고금리 예술인, 한국 예술인 금융, 문화예술인 금융 차별',
     other: { 'article:modified_time': LAST_UPDATED },
   };
 }
