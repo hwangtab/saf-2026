@@ -58,6 +58,7 @@ export function generateWebsiteSchema(locale: 'ko' | 'en' = 'ko') {
     inLanguage: isEnglish ? 'en-US' : 'ko-KR',
     publisher: {
       '@type': 'Organization',
+      '@id': `${SITE_URL}#organization`,
       name: CONTACT.ORGANIZATION_NAME,
     },
     // Accessibility metadata for AEO/GEO
@@ -150,6 +151,7 @@ export function generateCampaignSchema(locale: 'ko' | 'en' = 'ko') {
     url: SITE_URL,
     funder: {
       '@type': 'Organization',
+      '@id': `${SITE_URL}#organization`,
       name: CONTACT.ORGANIZATION_NAME,
       url: SITE_URL,
     },
