@@ -362,9 +362,25 @@ export function generateArtworkJsonLd(
     { name: titleForLocale, url: buildLocaleUrl(`/artworks/${artwork.id}`, locale) },
   ]);
 
+  // ItemPage: explicitly links this WebPage to the VisualArtwork/Product entity
+  const artworkPageUrl = buildLocaleUrl(`/artworks/${artwork.id}`, locale);
+  const webPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemPage',
+    '@id': `${artworkPageUrl}#webpage`,
+    url: artworkPageUrl,
+    name: `${titleForLocale} - ${artistForLocale}`,
+    isPartOf: { '@id': `${SITE_URL}#website` },
+    mainEntity: { '@id': artworkPageUrl },
+    datePublished: CAMPAIGN.START_DATE,
+    dateModified: CAMPAIGN.END_DATE,
+    inLanguage: isEnglish ? 'en-US' : 'ko-KR',
+  };
+
   return {
     productSchema,
     breadcrumbSchema,
+    webPageSchema,
   };
 }
 

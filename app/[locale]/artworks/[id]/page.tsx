@@ -156,7 +156,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
   const hasActionablePrice = parsedPrice !== Infinity;
 
   // Generate JSON-LD schemas
-  const { productSchema, breadcrumbSchema } = generateArtworkJsonLd(
+  const { productSchema, breadcrumbSchema, webPageSchema } = generateArtworkJsonLd(
     artwork,
     numericPrice,
     isInquiry,
@@ -173,7 +173,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
 
   return (
     <>
-      <JsonLdScript data={[productSchema, breadcrumbSchema, speakableSchema]} />
+      <JsonLdScript data={[productSchema, breadcrumbSchema, webPageSchema, speakableSchema]} />
       <Section
         variant="white"
         prevVariant="canvas-soft"

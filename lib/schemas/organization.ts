@@ -8,7 +8,11 @@ export function generateOrganizationSchema(locale: 'ko' | 'en' = 'ko') {
     '@type': 'Organization',
     '@id': `${SITE_URL}#organization`,
     name: CONTACT.ORGANIZATION_NAME,
+    legalName: CONTACT.ORGANIZATION_NAME,
+    alternateName: CONTACT.ORGANIZATION_NAME_EN,
     url: SITE_URL,
+    foundingDate: '2021',
+    taxID: CONTACT.BUSINESS_REGISTRATION_NUMBER,
     logo: `${SITE_URL}/images/og-image2.png`,
     description: isEnglish
       ? 'A special exhibition raising mutual-aid funds for Korean artists'
@@ -91,7 +95,7 @@ export function generateLocalBusinessSchema(locale: 'ko' | 'en' = 'ko') {
     '@type': 'ArtGallery',
     name: isEnglish ? 'SAF Online (Seed Art Festival)' : '씨앗페 온라인 (Seed Art Festival)',
     image: OG_IMAGE.url,
-    '@id': SITE_URL,
+    '@id': `${SITE_URL}#art-gallery`,
     url: SITE_URL,
     telephone: CONTACT.PHONE,
     email: CONTACT.EMAIL,
