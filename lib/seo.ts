@@ -71,7 +71,7 @@ export function createStandardPageMetadata(
   const ogAlt = locale === 'en' ? OG_IMAGE.altEn : OG_IMAGE.alt;
 
   return {
-    title,
+    title: { absolute: title },
     description,
     alternates: createLocaleAlternates(pagePath, locale),
     openGraph: {

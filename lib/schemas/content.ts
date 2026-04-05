@@ -42,11 +42,13 @@ export function generateVideoSchema(video: VideoSchemaInput) {
     description: video.description,
     thumbnailUrl: `https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`,
     uploadDate: video.uploadDate || '2023-03-26',
+    dateModified: video.uploadDate || '2023-03-26',
     contentUrl: `https://www.youtube.com/watch?v=${video.youtubeId}`,
     embedUrl: `https://www.youtube.com/embed/${video.youtubeId}`,
     transcript: video.transcript,
     publisher: {
       '@type': 'Organization',
+      '@id': `${SITE_URL}#organization`,
       name: '한국스마트협동조합',
       url: SITE_URL,
     },
@@ -80,6 +82,7 @@ export function generateNewsArticleSchema(article: NewsArticleSchemaInput) {
     ],
     publisher: {
       '@type': 'Organization',
+      '@id': `${SITE_URL}#organization`,
       name: CONTACT.ORGANIZATION_NAME,
       url: SITE_URL,
       logo: {

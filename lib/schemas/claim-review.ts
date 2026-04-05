@@ -38,6 +38,7 @@ export function generateClaimReviewSchema(input: ClaimReviewInput) {
     claimReviewed: input.claimText,
     author: {
       '@type': 'Organization',
+      '@id': `${SITE_URL}#organization`,
       name: CONTACT.ORGANIZATION_NAME,
       url: SITE_URL,
     },

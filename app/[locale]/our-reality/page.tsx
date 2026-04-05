@@ -467,7 +467,7 @@ export default async function OurReality() {
           <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             <div className="bg-white p-6 rounded-lg shadow-sm border-t-4 border-primary">
               <div className="text-4xl mb-3">⏱️</div>
-              <h4 className="font-bold text-lg mb-2">창작 시간을 살려내고</h4>
+              <h3 className="font-bold text-lg mb-2">창작 시간을 살려내고</h3>
               <p className="text-sm text-charcoal-muted">
                 안정적인 금융으로 소득 공백기를 버티며 창작에 집중할 수 있습니다
               </p>
@@ -475,7 +475,7 @@ export default async function OurReality() {
 
             <div className="bg-white p-6 rounded-lg shadow-sm border-t-4 border-primary">
               <div className="text-4xl mb-3">🎭</div>
-              <h4 className="font-bold text-lg mb-2">예술적 존엄성을 지키며</h4>
+              <h3 className="font-bold text-lg mb-2">예술적 존엄성을 지키며</h3>
               <p className="text-sm text-charcoal-muted">
                 부당한 조건을 거부하고 자신의 예술적 가치를 지킬 수 있습니다
               </p>
@@ -483,7 +483,7 @@ export default async function OurReality() {
 
             <div className="bg-white p-6 rounded-lg shadow-sm border-t-4 border-primary">
               <div className="text-4xl mb-3">🌱</div>
-              <h4 className="font-bold text-lg mb-2">생태계를 지속가능하게</h4>
+              <h3 className="font-bold text-lg mb-2">생태계를 지속가능하게</h3>
               <p className="text-sm text-charcoal-muted">
                 문화예술 생태계의 다양성과 지속가능성을 확보할 수 있습니다
               </p>

@@ -34,11 +34,36 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified?: Date;
   }> = [
     { path: '', changeFrequency: 'weekly', priority: 1.0 },
-    { path: '/our-reality', changeFrequency: 'monthly', priority: 0.9 },
-    { path: '/our-proof', changeFrequency: 'monthly', priority: 0.9 },
-    { path: '/transparency', changeFrequency: 'monthly', priority: 0.85 },
-    { path: '/special/oh-yoon', changeFrequency: 'monthly', priority: 0.7 },
-    { path: '/archive/2026', changeFrequency: 'monthly', priority: 0.8 },
+    {
+      path: '/our-reality',
+      changeFrequency: 'monthly',
+      priority: 0.9,
+      lastModified: new Date('2026-01-15'),
+    },
+    {
+      path: '/our-proof',
+      changeFrequency: 'monthly',
+      priority: 0.9,
+      lastModified: new Date('2026-03-01'),
+    },
+    {
+      path: '/transparency',
+      changeFrequency: 'monthly',
+      priority: 0.85,
+      lastModified: new Date('2026-03-01'),
+    },
+    {
+      path: '/special/oh-yoon',
+      changeFrequency: 'monthly',
+      priority: 0.7,
+      lastModified: new Date('2026-01-01'),
+    },
+    {
+      path: '/archive/2026',
+      changeFrequency: 'monthly',
+      priority: 0.8,
+      lastModified: new Date('2026-03-15'),
+    },
     {
       path: '/archive/2023',
       changeFrequency: 'yearly',
@@ -46,12 +71,37 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date('2023-12-31'),
     },
     { path: '/artworks', changeFrequency: 'weekly', priority: 0.9 },
-    { path: '/archive', changeFrequency: 'monthly', priority: 0.8 },
+    {
+      path: '/archive',
+      changeFrequency: 'monthly',
+      priority: 0.8,
+      lastModified: new Date('2026-03-15'),
+    },
     { path: '/news', changeFrequency: 'weekly', priority: 0.85 },
-    { path: '/privacy', changeFrequency: 'yearly', priority: 0.4 },
-    { path: '/terms', changeFrequency: 'yearly', priority: 0.4 },
-    { path: '/terms/artist', changeFrequency: 'yearly', priority: 0.35 },
-    { path: '/terms/exhibitor', changeFrequency: 'yearly', priority: 0.35 },
+    {
+      path: '/privacy',
+      changeFrequency: 'yearly',
+      priority: 0.4,
+      lastModified: new Date('2026-01-01'),
+    },
+    {
+      path: '/terms',
+      changeFrequency: 'yearly',
+      priority: 0.4,
+      lastModified: new Date('2026-01-01'),
+    },
+    {
+      path: '/terms/artist',
+      changeFrequency: 'yearly',
+      priority: 0.35,
+      lastModified: new Date('2026-01-01'),
+    },
+    {
+      path: '/terms/exhibitor',
+      changeFrequency: 'yearly',
+      priority: 0.35,
+      lastModified: new Date('2026-01-01'),
+    },
   ];
 
   // Generate entries for both locales with hreflang alternates

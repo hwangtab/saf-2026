@@ -135,9 +135,10 @@ export function generateArtworkJsonLd(
     .filter(Boolean)
     .join(', ');
 
-  // Seller organization (reused in offers)
+  // Seller organization (reused in offers) — @id links to root Organization schema
   const sellerOrg = {
     '@type': 'Organization',
+    '@id': `${SITE_URL}#organization`,
     name: isEnglish ? 'Korea Smart Cooperative' : '한국스마트협동조합',
     url: SITE_URL,
   };

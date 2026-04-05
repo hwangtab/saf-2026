@@ -6,6 +6,7 @@ export function generateOrganizationSchema(locale: 'ko' | 'en' = 'ko') {
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
+    '@id': `${SITE_URL}#organization`,
     name: CONTACT.ORGANIZATION_NAME,
     url: SITE_URL,
     logo: `${SITE_URL}/images/og-image2.png`,
@@ -25,6 +26,14 @@ export function generateOrganizationSchema(locale: 'ko' | 'en' = 'ko') {
       addressLocality: isEnglish ? 'Seoul' : '서울시',
       addressCountry: 'KR',
     },
+    areaServed: {
+      '@type': 'Country',
+      name: isEnglish ? 'South Korea' : '대한민국',
+      '@id': 'https://www.wikidata.org/wiki/Q884',
+    },
+    knowsAbout: isEnglish
+      ? ['contemporary art', 'Korean art', 'artist financial aid', 'mutual aid fund', 'art market']
+      : ['현대미술', '한국미술', '예술인 금융지원', '상호부조 기금', '미술 시장'],
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'Customer Service',
@@ -39,6 +48,7 @@ export function generateWebsiteSchema(locale: 'ko' | 'en' = 'ko') {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
+    '@id': `${SITE_URL}#website`,
     name: isEnglish ? 'SAF Online' : '씨앗페 온라인',
     alternateName: 'SAF Online',
     url: SITE_URL,
