@@ -46,6 +46,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: 'article',
       publishedTime: article.date,
       authors: [article.source],
+      section: locale === 'en' ? 'News' : '언론 보도',
       images: article.thumbnail
         ? [{ url: article.thumbnail, width: 1200, height: 630, alt: article.title }]
         : [

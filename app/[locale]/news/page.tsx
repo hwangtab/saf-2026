@@ -94,7 +94,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const pageUrl = buildLocaleUrl('/news', locale);
 
   return {
-    title,
+    title: { absolute: title },
     description: copy.pageDescription,
     alternates: createLocaleAlternates('/news', locale),
     openGraph: {
@@ -438,7 +438,11 @@ export default async function NewsPage() {
                   key={article.id}
                   className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow"
                 >
-                  <Link href={`/news/${article.id}`} className="flex flex-col h-full">
+                  <Link
+                    href={`/news/${article.id}`}
+                    className="flex flex-col h-full"
+                    aria-label={`${localizedTitle} — ${localizeSourceName(article.source, locale)}`}
+                  >
                     <div className="relative aspect-video bg-gray-100">
                       {article.thumbnail ? (
                         <SafeImage

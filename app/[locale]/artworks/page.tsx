@@ -22,7 +22,13 @@ const PAGE_URL = `${SITE_URL}/artworks`;
 export async function generateMetadata(): Promise<Metadata> {
   const locale = (await getLocale()) === 'en' ? 'en' : 'ko';
   const t = await getTranslations('artworksPage');
-  return createPageMetadata(t('title'), t('metaDescription'), '/artworks', undefined, locale);
+  return {
+    ...createPageMetadata(t('title'), t('metaDescription'), '/artworks', undefined, locale),
+    keywords:
+      locale === 'en'
+        ? 'Korean art, contemporary art, paintings for sale, original artworks, prints, sculpture, photography, art gallery'
+        : '한국미술, 현대미술, 원화 구매, 회화, 판화, 조각, 사진, 미술 작품 판매',
+  };
 }
 
 export default async function ArtworksPage() {
