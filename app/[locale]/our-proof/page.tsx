@@ -41,6 +41,10 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
   return {
     ...createStandardPageMetadata(title, copy.description, PAGE_URL, '/our-proof', locale),
+    keywords:
+      locale === 'en'
+        ? 'artist mutual aid loan, artist financial safety net, Korea artist support, low interest artist loan, repayment rate artists'
+        : '예술인 상호부조 대출, 예술인 금융 안전망, 저금리 예술인 대출, 예술인 대출 상환율, 한국 예술인 지원',
     other: { 'article:modified_time': LAST_UPDATED },
   };
 }
