@@ -84,6 +84,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: metaTitle,
       description: seoDescription.substring(0, 200),
       url: pageUrl,
+      type: 'website',
+      locale: locale === 'en' ? 'en_US' : 'ko_KR',
       images: [
         {
           url: imageUrl,
@@ -98,7 +100,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           }),
         },
       ],
-      type: 'website',
     },
     twitter: {
       card: 'summary_large_image',

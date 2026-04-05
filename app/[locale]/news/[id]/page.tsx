@@ -44,6 +44,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
       url: pageUrl,
       type: 'article',
+      locale: locale === 'en' ? 'en_US' : 'ko_KR',
       publishedTime: article.date,
       authors: [article.source],
       section: locale === 'en' ? 'News' : '언론 보도',
