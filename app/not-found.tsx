@@ -3,10 +3,13 @@ import { Link } from '@/i18n/navigation';
 import type { Metadata } from 'next';
 import { CONTACT } from '@/lib/constants';
 
-export const metadata: Metadata = {
-  title: '페이지를 찾을 수 없습니다',
-  robots: { index: false, follow: true },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale().catch(() => 'ko');
+  return {
+    title: locale === 'en' ? 'Page Not Found' : '페이지를 찾을 수 없습니다',
+    robots: { index: false, follow: true },
+  };
+}
 
 const COPY = {
   ko: {

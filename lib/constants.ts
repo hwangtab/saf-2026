@@ -8,6 +8,7 @@ export const OG_IMAGE = {
   width: 1200,
   height: 630,
   alt: '씨앗페 온라인 캠페인 대표 이미지',
+  altEn: 'SAF Online campaign representative image',
 } as const;
 
 export const EXTERNAL_LINKS = {

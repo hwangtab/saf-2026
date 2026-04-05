@@ -23,7 +23,7 @@ export default async function Footer() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
               {/* Organization Info with Logo */}
               <div>
-                <div className="flex items-start gap-3 mb-6">
+                <Link href="/" className="flex items-start gap-3 mb-6 inline-flex">
                   <ExportedImage
                     src="/images/logo/320pxX90px_feet.webp"
                     alt={tA11y('logoAlt')}
@@ -32,7 +32,7 @@ export default async function Footer() {
                     className="h-12 w-auto flex-shrink-0"
                   />
                   <span className="sr-only">{tA11y('homeLink')}</span>
-                </div>
+                </Link>
                 <p className="text-gray-300 text-sm mb-4">{t('description')}</p>
                 <p className="text-sm text-gray-400">{t('guide')}</p>
               </div>

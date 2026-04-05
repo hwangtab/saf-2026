@@ -359,7 +359,7 @@ export default async function NewsPage() {
           datePublished: article.date,
           image: article.thumbnail || OG_IMAGE.url,
           url: article.link,
-          publisherName: localizeSourceName(article.source, locale),
+          sourceName: localizeSourceName(article.source, locale),
         }),
       })),
     },

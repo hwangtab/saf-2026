@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { SITE_URL } from '@/lib/constants';
+import { SITE_URL, CAMPAIGN } from '@/lib/constants';
 import { routing } from '@/i18n/routing';
 import { getSupabaseArtworks, getSupabaseNews } from '@/lib/supabase-data';
 
@@ -66,10 +66,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   );
 
   // Dynamic artwork detail pages (both locales)
+  // lastModified: 전시 종료일 고정 (updated_at 미제공 — 빌드마다 false freshness 방지)
+  const exhibitionEndDate = new Date(CAMPAIGN.END_DATE);
   const artworkPages: MetadataRoute.Sitemap = allArtworks.flatMap((artwork) =>
     routing.locales.map((locale) => ({
       url: localizedUrl(baseUrl, `/artworks/${artwork.id}`, locale),
-      lastModified: now,
+      lastModified: exhibitionEndDate,
       changeFrequency: 'monthly' as const,
       priority: locale === routing.defaultLocale ? 0.7 : 0.63,
       alternates: createAlternates(baseUrl, `/artworks/${artwork.id}`),
@@ -82,7 +84,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const encodedArtist = encodeURIComponent(artist);
     return routing.locales.map((locale) => ({
       url: localizedUrl(baseUrl, `/artworks/artist/${encodedArtist}`, locale),
-      lastModified: now,
+      lastModified: exhibitionEndDate,
       changeFrequency: 'monthly' as const,
       priority: locale === routing.defaultLocale ? 0.65 : 0.58,
       alternates: createAlternates(baseUrl, `/artworks/artist/${encodedArtist}`),
