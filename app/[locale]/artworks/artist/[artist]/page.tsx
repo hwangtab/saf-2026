@@ -199,7 +199,7 @@ export default async function ArtistPage({ params }: Props) {
   // Breadcrumb Schema: Home > Artworks > Artist Name
   const tBreadcrumbs = await getTranslations('breadcrumbs');
   const breadcrumbItems = [
-    { name: tBreadcrumbs('home'), url: SITE_URL },
+    { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
     { name: tBreadcrumbs('artworks'), url: `${SITE_URL}/artworks` },
     { name: formattedName, url: pageUrl },
   ];

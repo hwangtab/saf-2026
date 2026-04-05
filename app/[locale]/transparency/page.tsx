@@ -23,6 +23,7 @@ import {
 
 export const revalidate = false;
 
+const LAST_UPDATED = '2026-03-01';
 const PAGE_URL = `${SITE_URL}/transparency`;
 const PAGE_COPY = {
   ko: {
@@ -42,7 +43,10 @@ export async function generateMetadata(): Promise<Metadata> {
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
-  return createStandardPageMetadata(title, copy.description, PAGE_URL, '/transparency', locale);
+  return {
+    ...createStandardPageMetadata(title, copy.description, PAGE_URL, '/transparency', locale),
+    other: { 'article:modified_time': LAST_UPDATED },
+  };
 }
 
 export default async function TransparencyPage() {
@@ -50,7 +54,7 @@ export default async function TransparencyPage() {
   const pageUrl = buildLocaleUrl('/transparency', locale);
   const tBreadcrumbs = await getTranslations('breadcrumbs');
   const breadcrumbItems = [
-    { name: tBreadcrumbs('home'), url: SITE_URL },
+    { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
     { name: tBreadcrumbs('transparency'), url: pageUrl },
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
@@ -71,6 +75,9 @@ export default async function TransparencyPage() {
           />
         </PageHero>
 
+        <div className="container-max pt-4 text-right">
+          <p className="text-xs text-gray-400">Last updated: {LAST_UPDATED}</p>
+        </div>
         {/* Reports Grid */}
         <Section variant="primary-surface" prevVariant="white">
           <div className="container-max">
@@ -247,6 +254,9 @@ export default async function TransparencyPage() {
         />
       </PageHero>
 
+      <div className="container-max pt-4 text-right">
+        <p className="text-xs text-gray-400">마지막 업데이트: {LAST_UPDATED}</p>
+      </div>
       {/* 보고서 카드 섹션 */}
       <Section variant="primary-surface" prevVariant="white">
         <div className="container-max">

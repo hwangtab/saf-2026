@@ -2,10 +2,11 @@ import type { Metadata } from 'next';
 import { SITE_URL, CAMPAIGN, EXHIBITION, MERCHANT_POLICIES } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
 import { formatArtistName } from '@/lib/utils';
-import { getArtformForSchema, getMediumKeywords, classifyArtworkMedium } from '@/lib/art-taxonomy';
+import { getArtformForSchema, classifyArtworkMedium } from '@/lib/art-taxonomy';
 import { Artwork } from '@/types';
 import { resolveSeoArtworkImageUrl, sanitizeForLocale, parseArtworkPrice } from './utils';
 import { createBreadcrumbSchema } from './breadcrumb';
+import { buildLocaleUrl } from '@/lib/locale-alternates';
 
 export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 'ko'): Metadata {
   const resolvedImageUrl = resolveSeoArtworkImageUrl(artwork.images[0]);
@@ -65,39 +66,8 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
     locale
   );
 
-  // Get medium-specific keywords for better categorization
-  const mediumKeywords = getMediumKeywords(materialForLocale || '');
-
   return {
     ...baseMetadata,
-    keywords: [
-      artistForLocale,
-      titleForLocale,
-      ...mediumKeywords,
-      ...(isEnglish ? ['SAF', 'artist solidarity', 'art purchase'] : ['씨앗페']),
-      ...(isEnglish ? ['SAF Online', 'Seed Art Festival Online'] : ['씨앗페 온라인', 'SAF Online']),
-      ...(isEnglish
-        ? [
-            'artist solidarity',
-            'buy artwork',
-            'mutual aid',
-            'original artwork',
-            'contemporary art collection',
-          ]
-        : [
-            '예술인 연대',
-            '미술품 구매',
-            '상호부조',
-            '원화 구매',
-            '미술품 투자',
-            '신진작가 원화',
-            '현대미술 컬렉션',
-            '예술인 상호부조',
-          ]),
-      ...(isEnglish ? ['Insa Art Center'] : ['인사아트센터']),
-      materialForLocale.split(' ')?.[0] || (isEnglish ? 'artwork' : '미술품'),
-      artwork.year ? (isEnglish ? `${artwork.year} artwork` : `${artwork.year}년 작품`) : null,
-    ].filter(Boolean) as string[],
     openGraph: {
       ...baseMetadata.openGraph,
       type: 'website',
@@ -362,9 +332,9 @@ export function generateArtworkJsonLd(
   const homeLabel = breadcrumbLabels?.home ?? (isEnglish ? 'Home' : '홈');
   const artworksLabel = breadcrumbLabels?.artworks ?? (isEnglish ? 'Artworks' : '출품작');
   const breadcrumbSchema = createBreadcrumbSchema([
-    { name: homeLabel, url: SITE_URL },
-    { name: artworksLabel, url: `${SITE_URL}/artworks` },
-    { name: titleForLocale, url: `${SITE_URL}/artworks/${artwork.id}` },
+    { name: homeLabel, url: buildLocaleUrl('/', locale) },
+    { name: artworksLabel, url: buildLocaleUrl('/artworks', locale) },
+    { name: titleForLocale, url: buildLocaleUrl(`/artworks/${artwork.id}`, locale) },
   ]);
 
   return {

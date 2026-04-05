@@ -111,7 +111,7 @@ export default async function Archive2023Page() {
   };
 
   const breadcrumbItems = [
-    { name: tBreadcrumbs('home'), url: SITE_URL },
+    { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
     { name: tBreadcrumbs('archive'), url: archiveUrl },
     { name: tBreadcrumbs('archive2023'), url: pageUrl },
   ];

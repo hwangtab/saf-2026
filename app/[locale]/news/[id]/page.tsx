@@ -5,7 +5,7 @@ import { getSupabaseNews, getSupabaseNewsById } from '@/lib/supabase-data';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { generateNewsArticleSchema, createBreadcrumbSchema } from '@/lib/seo-utils';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
-import { SITE_URL, OG_IMAGE } from '@/lib/constants';
+import { OG_IMAGE } from '@/lib/constants';
 import { resolveLocale } from '@/lib/server-locale';
 import SafeImage from '@/components/common/SafeImage';
 import Section from '@/components/ui/Section';
@@ -86,7 +86,7 @@ export default async function NewsArticlePage({ params }: Props) {
 
   const tBreadcrumbs = await getTranslations('breadcrumbs');
   const breadcrumbItems = [
-    { name: tBreadcrumbs('home'), url: SITE_URL },
+    { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
     { name: tBreadcrumbs('news'), url: buildLocaleUrl('/news', locale) },
     { name: article.title, url: buildLocaleUrl(`/news/${article.id}`, locale) },
   ];
@@ -119,7 +119,7 @@ export default async function NewsArticlePage({ params }: Props) {
             <a
               href={article.link}
               target="_blank"
-              rel="noopener noreferrer"
+              rel="noopener noreferrer nofollow"
               className="inline-block px-6 py-3 bg-primary text-white rounded hover:opacity-90 transition"
             >
               {locale === 'en' ? 'Read original article' : '원문 기사 보기'}

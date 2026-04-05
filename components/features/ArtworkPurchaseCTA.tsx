@@ -73,7 +73,7 @@ export default function ArtworkPurchaseCTA({
               variant="outline"
               className="w-full"
             >
-              {t('viewAll')} →
+              {t('otherWorks', { artist })} →
             </LinkButton>
           ) : (
             <LinkButton href="/artworks" variant="outline" className="w-full">

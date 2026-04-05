@@ -45,7 +45,7 @@ export default function NavLink({
       <a
         href={item.href}
         target="_blank"
-        rel="noopener noreferrer"
+        rel="noopener noreferrer nofollow"
         onClick={onClick}
         className={className}
       >

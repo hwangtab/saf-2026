@@ -99,7 +99,7 @@ export default function DesktopNav({
         <a
           href={EXTERNAL_LINKS.ORDER_STATUS}
           target="_blank"
-          rel="noopener noreferrer"
+          rel="noopener noreferrer nofollow"
           className={clsx(
             'flex items-center text-sm font-medium rounded-full px-3 py-1.5 whitespace-nowrap',
             'border transition-colors duration-200',
