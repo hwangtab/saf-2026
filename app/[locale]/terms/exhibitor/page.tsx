@@ -41,7 +41,7 @@ export default async function ExhibitorTermsPage() {
   const termsUrl = buildLocaleUrl('/terms', locale);
   const tBreadcrumbs = await getTranslations('breadcrumbs');
   const breadcrumbItems = [
-    { name: tBreadcrumbs('home'), url: SITE_URL },
+    { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
     { name: tBreadcrumbs('terms'), url: termsUrl },
     { name: tBreadcrumbs('termsExhibitor'), url: pageUrl },
   ];

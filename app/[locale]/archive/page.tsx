@@ -41,7 +41,7 @@ export default async function ArchiveHubPage() {
   const pageUrl = buildLocaleUrl('/archive', locale);
   const tBreadcrumbs = await getTranslations('breadcrumbs');
   const breadcrumbItems = [
-    { name: tBreadcrumbs('home'), url: SITE_URL },
+    { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
     { name: tBreadcrumbs('archive'), url: pageUrl },
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);

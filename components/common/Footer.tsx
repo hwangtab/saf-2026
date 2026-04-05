@@ -45,7 +45,7 @@ export default async function Footer() {
                     <a
                       href={EXTERNAL_LINKS.JOIN_MEMBER}
                       target="_blank"
-                      rel="noopener noreferrer"
+                      rel="noopener noreferrer nofollow"
                       className="text-gray-300 hover:text-primary transition-colors"
                     >
                       {tNav('donate')}
@@ -55,7 +55,7 @@ export default async function Footer() {
                     <a
                       href={EXTERNAL_LINKS.ONLINE_GALLERY}
                       target="_blank"
-                      rel="noopener noreferrer"
+                      rel="noopener noreferrer nofollow"
                       className="text-gray-300 hover:text-primary transition-colors"
                     >
                       {t('onlineGallery')}
@@ -65,7 +65,7 @@ export default async function Footer() {
                     <a
                       href={EXTERNAL_LINKS.LOAN_INFO}
                       target="_blank"
-                      rel="noopener noreferrer"
+                      rel="noopener noreferrer nofollow"
                       className="text-gray-300 hover:text-primary transition-colors"
                     >
                       {t('loanInfo')}
@@ -75,7 +75,7 @@ export default async function Footer() {
                     <a
                       href={EXTERNAL_LINKS.KOSMART_HOME}
                       target="_blank"
-                      rel="noopener noreferrer"
+                      rel="noopener noreferrer nofollow"
                       className="text-gray-300 hover:text-primary transition-colors"
                     >
                       {t('coopHome')}
@@ -85,7 +85,7 @@ export default async function Footer() {
                     <a
                       href={EXTERNAL_LINKS.ORDER_STATUS}
                       target="_blank"
-                      rel="noopener noreferrer"
+                      rel="noopener noreferrer nofollow"
                       className="text-gray-300 hover:text-primary transition-colors"
                     >
                       {tNav('orderStatus')}
@@ -101,7 +101,7 @@ export default async function Footer() {
                   <a
                     href={SOCIAL_LINKS.INSTAGRAM}
                     target="_blank"
-                    rel="noopener noreferrer"
+                    rel="noopener noreferrer nofollow"
                     className="text-gray-300 hover:text-primary transition-colors p-2 min-w-[44px] min-h-[44px] flex items-center justify-center -ml-2"
                     aria-label="Instagram"
                   >
@@ -112,7 +112,7 @@ export default async function Footer() {
                   <a
                     href={SOCIAL_LINKS.FACEBOOK}
                     target="_blank"
-                    rel="noopener noreferrer"
+                    rel="noopener noreferrer nofollow"
                     className="text-gray-300 hover:text-primary transition-colors p-2 min-w-[44px] min-h-[44px] flex items-center justify-center"
                     aria-label="Facebook"
                   >
@@ -123,7 +123,7 @@ export default async function Footer() {
                   <a
                     href={SOCIAL_LINKS.YOUTUBE}
                     target="_blank"
-                    rel="noopener noreferrer"
+                    rel="noopener noreferrer nofollow"
                     className="text-gray-300 hover:text-primary transition-colors p-2 min-w-[44px] min-h-[44px] flex items-center justify-center"
                     aria-label="YouTube"
                   >

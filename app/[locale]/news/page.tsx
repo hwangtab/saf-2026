@@ -7,7 +7,7 @@ import SectionTitle from '@/components/ui/SectionTitle';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { getSupabaseNews } from '@/lib/supabase-data';
-import { SITE_URL, OG_IMAGE } from '@/lib/constants';
+import { OG_IMAGE } from '@/lib/constants';
 import {
   createBreadcrumbSchema,
   generateNewsArticleSchema,
@@ -337,7 +337,7 @@ export default async function NewsPage() {
   const newsArticles = await getSupabaseNews();
 
   const breadcrumbItems = [
-    { name: tBreadcrumbs('home'), url: SITE_URL },
+    { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
     { name: tBreadcrumbs('news'), url: canonicalUrl },
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);

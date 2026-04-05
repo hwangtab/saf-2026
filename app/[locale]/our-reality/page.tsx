@@ -27,6 +27,7 @@ import { Link } from '@/i18n/navigation';
 
 export const revalidate = 3600;
 
+const LAST_UPDATED = '2026-01-15';
 const PAGE_URL = `${SITE_URL}/our-reality`;
 const PAGE_COPY = {
   ko: {
@@ -46,7 +47,10 @@ export async function generateMetadata(): Promise<Metadata> {
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
-  return createStandardPageMetadata(title, copy.description, PAGE_URL, '/our-reality', locale);
+  return {
+    ...createStandardPageMetadata(title, copy.description, PAGE_URL, '/our-reality', locale),
+    other: { 'article:modified_time': LAST_UPDATED },
+  };
 }
 
 export default async function OurReality() {
@@ -55,7 +59,7 @@ export default async function OurReality() {
   const testimonialsData = await getSupabaseTestimonials();
   const tBreadcrumbs = await getTranslations('breadcrumbs');
   const breadcrumbItems = [
-    { name: tBreadcrumbs('home'), url: SITE_URL },
+    { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
     { name: tBreadcrumbs('ourReality'), url: pageUrl },
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
@@ -84,6 +88,9 @@ export default async function OurReality() {
           />
         </PageHero>
 
+        <div className="container-max pt-4 text-right">
+          <p className="text-xs text-gray-400">Last updated: {LAST_UPDATED}</p>
+        </div>
         <Section variant="white" prevVariant="canvas-soft">
           <div className="container-max max-w-3xl text-balance">
             <SectionTitle className="mb-8">
@@ -224,6 +231,9 @@ export default async function OurReality() {
         />
       </PageHero>
 
+      <div className="container-max pt-4 text-right">
+        <p className="text-xs text-gray-400">마지막 업데이트: {LAST_UPDATED}</p>
+      </div>
       {testimonialsData.map((group, groupIndex) => {
         const variants: ('white' | 'gray' | 'canvas-soft')[] = ['white', 'gray', 'canvas-soft'];
         const currentVariant = variants[groupIndex];

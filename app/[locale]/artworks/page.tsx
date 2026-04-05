@@ -10,6 +10,7 @@ import GalleryStatusBar from '@/components/features/GalleryStatusBar';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { SITE_URL } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
+import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { createBreadcrumbSchema, generateArtworkListSchema } from '@/lib/seo-utils';
 import { getSupabaseArtworks } from '@/lib/supabase-data';
 import type { Artwork, ArtworkListItem } from '@/types';
@@ -39,8 +40,8 @@ export default async function ArtworksPage() {
     }: Artwork) => rest
   );
   const breadcrumbItems = [
-    { name: tBreadcrumbs('home'), url: SITE_URL },
-    { name: tBreadcrumbs('artworks'), url: `${SITE_URL}/artworks` },
+    { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
+    { name: tBreadcrumbs('artworks'), url: buildLocaleUrl('/artworks', locale) },
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
   const itemListSchema = generateArtworkListSchema(artworks, locale);

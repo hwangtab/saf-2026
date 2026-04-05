@@ -234,7 +234,7 @@ export default function FullscreenMenu({
               <a
                 href={EXTERNAL_LINKS.ORDER_STATUS}
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noopener noreferrer nofollow"
                 className={`${styles.navLink} text-base! text-charcoal-muted!`}
                 onClick={onClose}
               >

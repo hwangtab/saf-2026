@@ -4,7 +4,7 @@ import { getLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import OhYoonMasonryGallery from '@/components/special/OhYoonMasonryGallery';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { OG_IMAGE, SITE_URL } from '@/lib/constants';
+import { OG_IMAGE } from '@/lib/constants';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { getSupabaseArtworks } from '@/lib/supabase-data';
@@ -98,7 +98,7 @@ export default async function OhYoonPage() {
     OH_YOON_ARTWORKS.length
   );
   const breadcrumbSchema = createBreadcrumbSchema([
-    { name: tBreadcrumbs('home'), url: SITE_URL },
+    { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
     { name: tBreadcrumbs('ohYoon'), url: pageUrl },
   ]);
 

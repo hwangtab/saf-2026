@@ -72,7 +72,7 @@ export default async function Archive2026Page() {
   // JSON-LD Schema for Event
   const eventSchema = generateExhibitionSchema(exhibitionReviews, locale);
   const breadcrumbItems = [
-    { name: tBreadcrumbs('home'), url: SITE_URL },
+    { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
     { name: tBreadcrumbs('archive'), url: archiveUrl },
     { name: tBreadcrumbs('archive2026'), url: pageUrl },
   ];

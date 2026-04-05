@@ -18,6 +18,7 @@ import { Link } from '@/i18n/navigation';
 
 export const revalidate = false;
 
+const LAST_UPDATED = '2026-03-01';
 const PAGE_URL = `${SITE_URL}/our-proof`;
 const PAGE_COPY = {
   ko: {
@@ -37,7 +38,10 @@ export async function generateMetadata(): Promise<Metadata> {
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
-  return createStandardPageMetadata(title, copy.description, PAGE_URL, '/our-proof', locale);
+  return {
+    ...createStandardPageMetadata(title, copy.description, PAGE_URL, '/our-proof', locale),
+    other: { 'article:modified_time': LAST_UPDATED },
+  };
 }
 
 export default async function OurProof() {
@@ -45,7 +49,7 @@ export default async function OurProof() {
   const pageUrl = buildLocaleUrl('/our-proof', locale);
   const tBreadcrumbs = await getTranslations('breadcrumbs');
   const breadcrumbItems = [
-    { name: tBreadcrumbs('home'), url: SITE_URL },
+    { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
     { name: tBreadcrumbs('ourProof'), url: pageUrl },
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
@@ -66,6 +70,9 @@ export default async function OurProof() {
           />
         </PageHero>
 
+        <div className="container-max pt-4 text-right">
+          <p className="text-xs text-gray-400">Last updated: {LAST_UPDATED}</p>
+        </div>
         <Section variant="primary-surface" prevVariant="white">
           <div className="container-max">
             <div className="max-w-3xl mx-auto text-center mb-12">
@@ -298,6 +305,9 @@ export default async function OurProof() {
         />
       </PageHero>
 
+      <div className="container-max pt-4 text-right">
+        <p className="text-xs text-gray-400">마지막 업데이트: {LAST_UPDATED}</p>
+      </div>
       <Section variant="primary-surface" prevVariant="white">
         <div className="container-max">
           <div className="max-w-3xl mx-auto text-center mb-12">
