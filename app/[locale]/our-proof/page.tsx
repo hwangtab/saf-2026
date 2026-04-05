@@ -10,7 +10,7 @@ import TestimonialCard from '@/components/ui/TestimonialCard';
 import StatCard from '@/components/ui/StatCard';
 import { EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { createBreadcrumbSchema } from '@/lib/seo-utils';
+import { createBreadcrumbSchema, generateSpeakableSchema } from '@/lib/seo-utils';
 import { generateQAPageSchema } from '@/lib/schemas/qa-page';
 import { createStandardPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
@@ -58,6 +58,11 @@ export default async function OurProof() {
     { name: tBreadcrumbs('ourProof'), url: pageUrl },
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
+  const speakableSchema = generateSpeakableSchema([
+    '#proof-hero-description',
+    '#proof-stats-summary',
+    '#proof-qa-section',
+  ]);
   const qaSchema = generateQAPageSchema(
     locale === 'en'
       ? [
@@ -106,7 +111,7 @@ export default async function OurProof() {
   if (locale === 'en') {
     return (
       <>
-        <JsonLdScript data={[breadcrumbSchema, qaSchema]} />
+        <JsonLdScript data={[breadcrumbSchema, qaSchema, speakableSchema]} />
         <PageHero
           title="Our Proof"
           description="Mutual-aid finance is not a theory. 354 loans and a 95% repayment rate prove that trust-based lending to artists works."
@@ -341,7 +346,7 @@ export default async function OurProof() {
 
   return (
     <>
-      <JsonLdScript data={[breadcrumbSchema, qaSchema]} />
+      <JsonLdScript data={[breadcrumbSchema, qaSchema, speakableSchema]} />
       <PageHero
         title="우리의 증명"
         description="예술인 상호부조 대출의 실제 성과. 354건, 약 7억 원의 신뢰가 데이터로 증명되었습니다."
