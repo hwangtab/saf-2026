@@ -118,6 +118,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         )}
         <link rel="dns-prefetch" href="https://img.youtube.com" />
         <link rel="dns-prefetch" href="https://i.ytimg.com" />
+        <link rel="dns-prefetch" href="https://dapi.kakao.com" />
+        <link rel="dns-prefetch" href="https://t1.kakaocdn.net" />
       </head>
       <body className="bg-canvas-soft text-charcoal flex flex-col min-h-screen font-sans antialiased">
         {children}
