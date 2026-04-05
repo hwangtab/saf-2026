@@ -115,6 +115,7 @@ export default async function OurProof() {
         <PageHero
           title="Our Proof"
           description="Mutual-aid finance is not a theory. 354 loans and a 95% repayment rate prove that trust-based lending to artists works."
+          descriptionId="proof-hero-description"
           breadcrumbItems={breadcrumbItems}
         >
           <ShareButtonsWrapper
@@ -129,7 +130,7 @@ export default async function OurProof() {
         </div>
         <Section variant="primary-surface" prevVariant="white">
           <div className="container-max">
-            <div className="max-w-3xl mx-auto text-center mb-12">
+            <div id="proof-stats-summary" className="max-w-3xl mx-auto text-center mb-12">
               <SectionTitle className="mb-8">
                 A <span className="text-primary font-bold">95%</span> repayment rate tells the story
               </SectionTitle>
@@ -270,7 +271,7 @@ export default async function OurProof() {
         </Section>
 
         <Section variant="primary-surface" prevVariant="sun-soft">
-          <div className="container-max">
+          <div id="proof-qa-section" className="container-max">
             <SectionTitle className="mb-12">Traditional finance vs mutual-aid lending</SectionTitle>
             <div className="overflow-x-auto">
               <table className="w-full bg-white rounded-lg shadow-sm overflow-hidden">
@@ -350,6 +351,7 @@ export default async function OurProof() {
       <PageHero
         title="우리의 증명"
         description="예술인 상호부조 대출의 실제 성과. 354건, 약 7억 원의 신뢰가 데이터로 증명되었습니다."
+        descriptionId="proof-hero-description"
         breadcrumbItems={breadcrumbItems}
       >
         <ShareButtonsWrapper
@@ -364,7 +366,7 @@ export default async function OurProof() {
       </div>
       <Section variant="primary-surface" prevVariant="white">
         <div className="container-max">
-          <div className="max-w-3xl mx-auto text-center mb-12">
+          <div id="proof-stats-summary" className="max-w-3xl mx-auto text-center mb-12">
             <SectionTitle className="mb-8">
               <span className="text-primary font-bold">95%</span>의 상환율이 증명합니다
             </SectionTitle>
@@ -565,7 +567,7 @@ export default async function OurProof() {
 
       {/* Statistics Comparison */}
       <Section variant="primary-surface" prevVariant="sun-soft">
-        <div className="container-max">
+        <div id="proof-qa-section" className="container-max">
           <SectionTitle className="mb-12">기존 금융 vs 상호부조 대출</SectionTitle>
           <div className="overflow-x-auto">
             <table className="w-full bg-white rounded-lg shadow-sm overflow-hidden">
