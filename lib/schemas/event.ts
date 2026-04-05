@@ -26,6 +26,7 @@ export function generateExhibitionSchema(
   return {
     '@context': 'https://schema.org',
     '@type': 'ExhibitionEvent',
+    '@id': `${SITE_URL}#exhibition`,
     name: isEnglish
       ? 'SAF Online (Seed Art Festival Online)'
       : '씨앗페 온라인 (Seed Art Festival Online)',

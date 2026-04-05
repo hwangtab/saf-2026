@@ -269,6 +269,7 @@ export function generateArtworkJsonLd(
     offers,
     isPartOf: {
       '@type': 'ExhibitionEvent',
+      '@id': `${SITE_URL}#exhibition`,
       name: isEnglish
         ? 'SAF Online - Special Exhibition for Artist Mutual Aid'
         : '씨앗페 온라인 - 예술인 상호부조 기금 마련 특별전',
