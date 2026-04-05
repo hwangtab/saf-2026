@@ -189,6 +189,7 @@ export function generateEnhancedArtistSchema(artist: EnhancedArtistSchemaInput) 
       artist.artworks.length > 0 && {
         workSample: artist.artworks.slice(0, 5).map((work) => ({
           '@type': 'VisualArtwork',
+          '@id': `${SITE_URL}/artworks/${work.id}`,
           name: work.title,
           url: `${SITE_URL}/artworks/${work.id}`,
           image: work.image.startsWith('http')

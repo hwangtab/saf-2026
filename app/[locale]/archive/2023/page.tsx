@@ -41,7 +41,13 @@ export async function generateMetadata(): Promise<Metadata> {
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
-  return createStandardPageMetadata(title, copy.description, PAGE_URL, '/archive/2023', locale);
+  return {
+    ...createStandardPageMetadata(title, copy.description, PAGE_URL, '/archive/2023', locale),
+    keywords:
+      locale === 'en'
+        ? 'SAF 2023 archive, Korean art 2023, artist solidarity, SAF campaign video, Insadong exhibition, artist mutual aid fund'
+        : '씨앗페 2023, 씨앗페 아카이브, 인사동 전시, 예술인 연대, 씨앗페 캠페인 영상, 예술인 상호부조 기금',
+  };
 }
 
 export default async function Archive2023Page() {

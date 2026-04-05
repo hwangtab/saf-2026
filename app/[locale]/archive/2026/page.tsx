@@ -36,7 +36,13 @@ export async function generateMetadata(): Promise<Metadata> {
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
-  return createStandardPageMetadata(title, copy.description, PAGE_URL, '/archive/2026', locale);
+  return {
+    ...createStandardPageMetadata(title, copy.description, PAGE_URL, '/archive/2026', locale),
+    keywords:
+      locale === 'en'
+        ? 'SAF 2026 exhibition, Insa Art Center, Korean art exhibition, artist mutual aid, Seoul art event, SAF Online'
+        : '씨앗페 2026, 씨앗페 오프라인 전시, 인사아트센터, 예술인 상호부조, 서울 미술 전시, 씨앗페 온라인',
+  };
 }
 
 export default async function Archive2026Page() {
