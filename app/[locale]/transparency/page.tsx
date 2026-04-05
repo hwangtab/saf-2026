@@ -9,7 +9,7 @@ import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import StatCard from '@/components/ui/StatCard';
 import { EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { createBreadcrumbSchema } from '@/lib/seo-utils';
+import { createBreadcrumbSchema, generateSpeakableSchema } from '@/lib/seo-utils';
 import { createStandardPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
@@ -62,6 +62,11 @@ export default async function TransparencyPage() {
     { name: tBreadcrumbs('transparency'), url: pageUrl },
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
+  const speakableSchema = generateSpeakableSchema([
+    '#transparency-hero-description',
+    '#transparency-stats-section',
+    '#transparency-reports-section',
+  ]);
 
   // Annual report structured data — helps Google understand these as document records
   const reportsSchema = {
@@ -98,7 +103,7 @@ export default async function TransparencyPage() {
   if (locale === 'en') {
     return (
       <>
-        <JsonLdScript data={[breadcrumbSchema, reportsSchema]} />
+        <JsonLdScript data={[breadcrumbSchema, reportsSchema, speakableSchema]} />
         <PageHero
           title="Transparency Reports"
           description="Every loan, every repayment, every won — published openly. Here is the full operational record of the artist mutual aid fund."
@@ -277,7 +282,7 @@ export default async function TransparencyPage() {
 
   return (
     <>
-      <JsonLdScript data={[breadcrumbSchema, reportsSchema]} />
+      <JsonLdScript data={[breadcrumbSchema, reportsSchema, speakableSchema]} />
       <PageHero
         title="운용 보고서"
         description="대출 한 건, 상환 한 건, 원 단위까지. 예술인 상호부조 대출 기금 운용 전 과정을 투명하게 공개합니다."
