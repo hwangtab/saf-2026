@@ -41,10 +41,11 @@ export default async function TermsPage() {
   const locale = resolveLocale(await getLocale());
   const pageUrl = buildLocaleUrl(PAGE_PATH, locale);
   const tBreadcrumbs = await getTranslations('breadcrumbs');
-  const breadcrumbSchema = createBreadcrumbSchema([
+  const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: SITE_URL },
     { name: tBreadcrumbs('terms'), url: pageUrl },
-  ]);
+  ];
+  const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
   const doc = TERMS_OF_SERVICE_DOCUMENT;
   const effectiveDate = formatEffectiveDateForLocale(doc.effectiveDate, locale);
 
@@ -55,6 +56,7 @@ export default async function TermsPage() {
         <PageHero
           title="Terms of Service"
           description="Core terms for using SAF Online services. The official legal text is currently maintained in Korean."
+          breadcrumbItems={breadcrumbItems}
         />
 
         <Section variant="white" className="pb-24 md:pb-32">
@@ -116,6 +118,7 @@ export default async function TermsPage() {
       <PageHero
         title="이용약관"
         description="씨앗페 온라인 웹사이트와 관련 서비스 이용 시 적용되는 기본 약관입니다."
+        breadcrumbItems={breadcrumbItems}
       />
 
       <Section variant="white" className="pb-24 md:pb-32">

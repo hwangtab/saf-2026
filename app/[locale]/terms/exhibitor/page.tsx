@@ -40,11 +40,12 @@ export default async function ExhibitorTermsPage() {
   const pageUrl = buildLocaleUrl(PAGE_PATH, locale);
   const termsUrl = buildLocaleUrl('/terms', locale);
   const tBreadcrumbs = await getTranslations('breadcrumbs');
-  const breadcrumbSchema = createBreadcrumbSchema([
+  const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: SITE_URL },
     { name: tBreadcrumbs('terms'), url: termsUrl },
     { name: tBreadcrumbs('termsExhibitor'), url: pageUrl },
-  ]);
+  ];
+  const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
 
   const doc = EXHIBITOR_APPLICATION_TERMS_DOCUMENT;
   const effectiveDate = formatEffectiveDateForLocale(doc.effectiveDate, locale);
@@ -56,6 +57,7 @@ export default async function ExhibitorTermsPage() {
         <PageHero
           title="Exhibitor Consignment Agreement"
           description="Full exhibitor agreement for SAF Online. The official legal text is currently maintained in Korean."
+          breadcrumbItems={breadcrumbItems}
         />
 
         <Section variant="white" className="pb-24 md:pb-32">
@@ -103,6 +105,7 @@ export default async function ExhibitorTermsPage() {
       <PageHero
         title="출품자 전시위탁 계약서"
         description="씨앗페 온라인 출품자 전시위탁 계약서 전문입니다."
+        breadcrumbItems={breadcrumbItems}
       />
 
       <Section variant="white" className="pb-24 md:pb-32">

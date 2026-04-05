@@ -236,6 +236,27 @@ export default async function ArtworkDetailPage({ params }: Props) {
 
               <SupportMessage testimonials={flatTestimonials} totalSoldCount={totalSoldCount} />
 
+              {/* Fund context cross-link */}
+              <p className="text-xs text-charcoal-muted text-center leading-relaxed">
+                {locale === 'en' ? (
+                  <>
+                    Sales proceeds go to the{' '}
+                    <Link href="/our-proof" className="text-primary hover:underline">
+                      artist mutual-aid fund
+                    </Link>
+                    .
+                  </>
+                ) : (
+                  <>
+                    판매 수익 전액은{' '}
+                    <Link href="/our-proof" className="text-primary hover:underline">
+                      예술인 상호부조 기금
+                    </Link>
+                    으로 귀속됩니다.
+                  </>
+                )}
+              </p>
+
               {/* Share Section */}
               <div className="flex items-center justify-center gap-2 py-4 border-y border-gray-100">
                 <span className="text-sm text-gray-500 mr-2">{t('share')}</span>

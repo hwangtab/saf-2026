@@ -336,10 +336,11 @@ export default async function NewsPage() {
   const tBreadcrumbs = await getTranslations('breadcrumbs');
   const newsArticles = await getSupabaseNews();
 
-  const breadcrumbSchema = createBreadcrumbSchema([
+  const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: SITE_URL },
     { name: tBreadcrumbs('news'), url: canonicalUrl },
-  ]);
+  ];
+  const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
 
   const structuredData = {
     '@context': 'https://schema.org',
@@ -378,6 +379,7 @@ export default async function NewsPage() {
         title={copy.heroTitle}
         description={copy.heroDescription}
         descriptionId="news-hero-description"
+        breadcrumbItems={breadcrumbItems}
       >
         <ShareButtonsWrapper
           url={canonicalUrl}

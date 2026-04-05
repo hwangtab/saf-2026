@@ -41,10 +41,11 @@ export default async function PrivacyPolicyPage() {
   const locale = resolveLocale(await getLocale());
   const pageUrl = buildLocaleUrl(PAGE_PATH, locale);
   const tBreadcrumbs = await getTranslations('breadcrumbs');
-  const breadcrumbSchema = createBreadcrumbSchema([
+  const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: SITE_URL },
     { name: tBreadcrumbs('privacy'), url: pageUrl },
-  ]);
+  ];
+  const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
   const doc = PRIVACY_POLICY_DOCUMENT;
   const effectiveDate = formatEffectiveDateForLocale(doc.effectiveDate, locale);
 
@@ -55,6 +56,7 @@ export default async function PrivacyPolicyPage() {
         <PageHero
           title="Privacy Policy"
           description="Guidance on personal data processing and user rights. The official legal text is currently maintained in Korean."
+          breadcrumbItems={breadcrumbItems}
         />
 
         <Section variant="white" className="pb-24 md:pb-32">
@@ -100,6 +102,7 @@ export default async function PrivacyPolicyPage() {
       <PageHero
         title="개인정보처리방침"
         description="씨앗페 온라인 웹사이트의 개인정보 처리 기준과 이용자 권리를 안내합니다."
+        breadcrumbItems={breadcrumbItems}
       />
 
       <Section variant="white" className="pb-24 md:pb-32">

@@ -198,11 +198,12 @@ export default async function ArtistPage({ params }: Props) {
 
   // Breadcrumb Schema: Home > Artworks > Artist Name
   const tBreadcrumbs = await getTranslations('breadcrumbs');
-  const breadcrumbSchema = createBreadcrumbSchema([
+  const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: SITE_URL },
     { name: tBreadcrumbs('artworks'), url: `${SITE_URL}/artworks` },
     { name: formattedName, url: pageUrl },
-  ]);
+  ];
+  const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
 
   return (
     <div className="min-h-screen">
@@ -212,6 +213,7 @@ export default async function ArtistPage({ params }: Props) {
         title={formattedName}
         description={heroDescription}
         customBackgroundImage={heroBackgroundImage}
+        breadcrumbItems={breadcrumbItems}
       >
         <ShareButtonsWrapper
           url={pageUrl}

@@ -84,16 +84,21 @@ export default async function NewsArticlePage({ params }: Props) {
   });
 
   const tBreadcrumbs = await getTranslations('breadcrumbs');
-  const breadcrumbSchema = createBreadcrumbSchema([
+  const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: SITE_URL },
     { name: tBreadcrumbs('news'), url: buildLocaleUrl('/news', locale) },
     { name: article.title, url: buildLocaleUrl(`/news/${article.id}`, locale) },
-  ]);
+  ];
+  const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
 
   return (
     <>
       <JsonLdScript data={[articleSchema, breadcrumbSchema]} />
-      <PageHero title={article.title} description={`${article.source} · ${article.date}`} />
+      <PageHero
+        title={article.title}
+        description={`${article.source} · ${article.date}`}
+        breadcrumbItems={breadcrumbItems}
+      />
       <Section>
         <div className="max-w-3xl mx-auto">
           {article.thumbnail && (
@@ -119,7 +124,48 @@ export default async function NewsArticlePage({ params }: Props) {
               {locale === 'en' ? 'Read original article' : '원문 기사 보기'}
             </a>
           )}
-          <div className="mt-8">
+          <div className="mt-10 p-5 bg-primary/5 rounded-lg border border-primary/15">
+            <p className="text-sm text-charcoal-muted leading-relaxed">
+              {locale === 'en' ? (
+                <>
+                  Understand{' '}
+                  <Link
+                    href="/our-reality"
+                    className="text-primary-strong hover:underline font-medium"
+                  >
+                    the structural causes of artist financial exclusion
+                  </Link>
+                  , or explore{' '}
+                  <Link
+                    href="/artworks"
+                    className="text-primary-strong hover:underline font-medium"
+                  >
+                    artworks from participating artists
+                  </Link>
+                  .
+                </>
+              ) : (
+                <>
+                  예술인 금융 배제의 구조적 원인은{' '}
+                  <Link
+                    href="/our-reality"
+                    className="text-primary-strong hover:underline font-medium"
+                  >
+                    우리의 현실
+                  </Link>
+                  에서, 참여 작가들의 작품은{' '}
+                  <Link
+                    href="/artworks"
+                    className="text-primary-strong hover:underline font-medium"
+                  >
+                    전시 작품
+                  </Link>
+                  에서 확인하세요.
+                </>
+              )}
+            </p>
+          </div>
+          <div className="mt-6">
             <Link href="/news" className="text-sm text-charcoal-muted hover:underline">
               ← {locale === 'en' ? 'Back to News' : '언론 보도 목록으로'}
             </Link>

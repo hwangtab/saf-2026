@@ -1,31 +1,841 @@
 [
   {
-    "hash": "bf4290f9",
-    "type": "refactor",
-    "scope": "revalidation",
-    "subject": "미사용 revalidateArtworkPaths() 함수 제거",
-    "summary": "모든 호출이 revalidatePublicArtworkSurfaces()로 전환되어 사용처가 없어진 함수 삭제",
+    "hash": "66617d86",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "Google SEO 가이드 기반 HTML 표준 및 접근성 개선",
+    "summary": "<main> 중첩 제거, 복수 <h1> 해소, 히어로 이미지 alt 구체화, breadcrumb 다국어 통일",
+    "body": "- artworks/page.tsx, artworks/artist/[artist]/page.tsx: <main> → <div> (layout의 <main>과 중첩 방지)\n- artworks/[id]/page.tsx: 모바일 <h1> → <p aria-hidden>, 데스크톱 header를 sr-only로 접근성 트리 유지\n- artworks/[id]/page.tsx: 모바일 헤더 div에 aria-hidden — 스크린리더 이중 노출 방지\n- artworks/[id]/page.tsx: getTranslations('breadcrumbs')를 Promise.all에 병합\n- artworks/[id]/page.tsx, artist/page.tsx, news/[id]/page.tsx: breadcrumb을 tBreadcrumbs() 번역 함수로 통일\n- lib/constants.ts: HERO_IMAGES alt 텍스트를 작품명/작가명 포함으로 구체화 + altEn 추가, satisfies 타입 보호\n- lib/constants.ts: BREADCRUMB_HOME, BREADCRUMBS, re-export 제거 (dead code)\n- lib/schemas/artwork.ts: breadcrumbLabels? 파라미터로 한국어 하드코딩 제거\n- components/common/JsonLdScript.tsx: import 경로를 @/lib/seo-utils로 수정\n- components/features/BackgroundSlider.tsx: useLocale()로 locale 분기하여 영문 alt 제공\n- app/robots.ts: sitemap URL trailing slash 이중 슬래시 방지",
+    "date": "2026-04-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "75cd3563",
+    "type": "fix",
+    "scope": "instagram",
+    "subject": "S9 커버 슬라이드 배경 이미지 수정",
+    "summary": "오윤 초상 로컬 파일 대신 낮도깨비 작품(Supabase URL) 배경으로 교체",
+    "body": "- ohyoon.webp (로컬 file://) → Playwright headless에서 미로드 문제 해결\n- OY.낮도깨비 Supabase URL 사용으로 안정적 렌더링\n- 상단-하단 그라디언트 오버레이로 타이포 가독성 확보\n- 텍스트 레이아웃 하단 정렬로 변경 (배지 상단, 제목 하단)",
+    "date": "2026-04-03",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "b655baae",
+    "type": "feat",
+    "scope": "instagram",
+    "subject": "오윤 40주기 특별전 캐러셀 S9 추가",
+    "summary": "오윤(1946-1986) 40주기를 기념하는 인스타그램 캐러셀 시리즈 S9 추가. 다큐멘터리 톤(세피아/한지 배경)으로 생애·철학·대표작·작품 의의를 8장으로 구성, 이미지 자동 생성",
+    "body": "- S9 8장 구성: 커버→생애→철학→낮도깨비→칼노래→석양→가격비교→CTA\n- 비주얼: 세피아(#F5F0E8) 배경, 황토(#B8860B) 강조, 목판화 스탬프 배지\n- 대표작: 낮도깨비·칼노래·석양 Supabase 원본 이미지 사용\n- CTA: saf2026.com/special/oh-yoon 특별전 관람 유도\n- 해시태그: #오윤 #OhYoon #민중미술 #목판화 #오윤40주기 #씨앗페2026\n- 총 이미지 58장 → 66장으로 업데이트\n- 기획안(docs/instagram-promo-carousel-plan.md) S9 섹션 추가",
+    "date": "2026-04-03",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "c214981f",
+    "type": "fix",
+    "scope": "mobile-menu",
+    "subject": "닫기 버튼 아이콘을 깔끔한 X SVG로 교체",
+    "summary": "CSS transform 기반 MenuToggleIcon 정적 X 대신 명확한 SVG X 아이콘 사용",
+    "body": "- MenuToggleIcon은 애니메이션 전용 컴포넌트라 isOpen={true} 고정 시 선 정렬 어긋남\n- GlobalSearchDialog 클리어 버튼과 동일한 path 기반 X 아이콘으로 교체\n- MenuToggleIcon import 제거",
+    "date": "2026-04-03",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "b8d2fc51",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "fix code quality issues in news detail page and sitemap",
+    "summary": "뉴스 상세 페이지 코드 품질 수정 (빈 링크 가드, revalidate 정렬, generateStaticParams 다국어, 사이트맵 날짜 가드)",
+    "body": "- app/[locale]/news/[id]/page.tsx: article.link 빈 문자열 가드 추가\n- app/[locale]/news/[id]/page.tsx: revalidate 300→1800 (데이터 캐시 TTL 일치)\n- app/[locale]/news/[id]/page.tsx: generateStaticParams에 locale 차원 추가 (ko/en 양쪽 정적 생성)\n- app/sitemap.ts: article.date 비어있을 때 now 폴백 추가",
+    "date": "2026-04-03",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "463bec1b",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "add news article detail pages with NewsArticle JSON-LD and sitemap entries",
+    "summary": "뉴스 개별 기사 상세 페이지 신규 생성, NewsArticle JSON-LD 및 사이트맵 URL 추가",
+    "body": "- lib/supabase-data.ts: getSupabaseNewsById 함수 추가\n- app/[locale]/news/[id]/page.tsx: 기사 상세 페이지 신규 생성 (generateMetadata, generateStaticParams 포함)\n- app/[locale]/news/page.tsx: 기사 카드 외부링크 → 내부 라우트 링크로 변경\n- app/sitemap.ts: 뉴스 개별 URL 추가 (ko/en 양쪽)",
+    "date": "2026-04-03",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "9d11c06b",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "hide EventCompleted schema from homepage after exhibition end",
+    "summary": "전시 종료 후 홈페이지에서 EventCompleted 스키마 조건부 숨김 처리",
     "body": null,
+    "date": "2026-04-03",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "7b78866f",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "add twitter:site tag to global metadata",
+    "summary": "트위터 카드에 @saf2026 계정 태그 추가",
+    "body": null,
+    "date": "2026-04-03",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "ec71cddb",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "replace PWA icons with PNG, add maskable icon",
+    "summary": "PWA 아이콘을 PNG로 교체하고 maskable 아이콘 추가, 잘못된 llms.txt 헤더 링크 제거",
+    "body": null,
+    "date": "2026-04-03",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "4bc85e2a",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "add www canonical redirect for saf2026.com",
+    "summary": "saf2026.com 접속 시 www.saf2026.com으로 301 리다이렉트 추가",
+    "body": null,
+    "date": "2026-04-03",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "c0d084ce",
+    "type": "feat",
+    "scope": "header",
+    "subject": "데스크톱 검색 버튼을 pill 형태로 개선",
+    "summary": "아이콘+⌘K 조합 대신 아이콘+\"검색\" 텍스트+테두리 pill로 교체하여 직관성 향상",
+    "body": "- rounded-full pill 컨테이너 + border로 버튼임을 시각적으로 명확히\n- 투명 헤더(white): border-white/30 + bg-white/10 프로스티드 효과\n- 솔리드 헤더(dark): border-gray-200 + bg-gray-50 부드러운 컨테이너\n- ⌘K 힌트는 title tooltip으로 이동 (파워유저용)\n- triggerTooltip i18n 키 추가 (ko: \"검색 (⌘K)\", en: \"Search (⌘K)\")",
+    "date": "2026-04-03",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "9368e56d",
+    "type": "feat",
+    "scope": "search",
+    "subject": "글로벌 검색 오버레이 추가 (헤더 + Cmd/Ctrl+K)",
+    "summary": "모든 페이지 헤더에서 작품·작가를 즉시 검색할 수 있는 글로벌 검색 기능 추가",
+    "body": "- 헤더 검색 아이콘 클릭 또는 Cmd/Ctrl+K로 검색 다이얼로그 오픈\n- 서버사이드 /api/search 엔드포인트 (기존 Supabase 캐시 재사용)\n- 한국어 초성 검색 지원 (기존 search-utils.ts 재사용)\n- 작가/작품 결과 분리 표시, 전체 결과 보기 → /artworks?q=...\n- 데스크톱: 중앙 모달, 모바일: 풀스크린 다이얼로그\n- 모바일 햄버거 메뉴 상단에도 검색 버튼 추가\n- GlobalSearchDialog, SearchResultItem, ArtistResultItem 컴포넌트 신규 생성\n- Z_INDEX.SEARCH_DIALOG(200) 상수 추가, globalSearch i18n 네임스페이스 추가",
+    "date": "2026-04-03",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "c2a12c2f",
+    "type": "fix",
+    "scope": null,
+    "subject": "stabilize portal navigation progress",
+    "summary": null,
+    "body": null,
+    "date": "2026-04-02",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "4e7e01c6",
+    "type": "feat",
+    "scope": null,
+    "subject": "add artwork image upscale tooling",
+    "summary": null,
+    "body": null,
+    "date": "2026-04-02",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "c2179be0",
+    "type": "feat",
+    "scope": "virtual-gallery",
+    "subject": "좌대 작품에 교차 평면(cross billboard) 적용",
+    "summary": "좌대 전시 모드에서 90° 교차 평면 기법으로 어느 각도에서든 작품 형태가 보이도록 개선",
+    "body": "- 두 개의 이미지 평면을 90°로 교차 배치\n- 어느 방향에서 보더라도 작품 형태가 보임\n- 게임 개발에서 사용하는 cross billboard 기법 적용",
+    "date": "2026-04-02",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "44545754",
+    "type": "fix",
+    "scope": "virtual-gallery",
+    "subject": "좌대 작품을 이미지 플레인으로 단순화",
+    "summary": "좌대 전시 모드에서 억지 3D 박스 대신 작품 사진을 좌대 위에 세워놓는 방식으로 변경",
+    "body": "- 6면 박스 → 단일 PlaneGeometry + DoubleSide\n- 작품 실제 치수 기반 크기 유지\n- 좌대 위에 작품 사진을 깔끔하게 전시",
+    "date": "2026-04-02",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "8b9c370f",
+    "type": "fix",
+    "scope": "virtual-gallery",
+    "subject": "좌대 작품을 3D 박스로 변경",
+    "summary": "좌대 전시 모드에서 2D 평면 대신 실제 W×D×H 치수를 반영한 3D 박스로 렌더링",
+    "body": "- BoxGeometry + 6면 멀티 머티리얼 (전면/후면: 작품 이미지, 나머지: 무채색)\n- 3D 치수(depthM) 있으면 사용, 없으면 최소 변 60%로 추정\n- 이미지 종횡비를 전면에 맞춰 fit\n- 좌대 높이 자동 조정 (작품 중심이 눈높이 1.4m 근처)",
+    "date": "2026-04-02",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "2191b94d",
+    "type": "feat",
+    "scope": "virtual-gallery",
+    "subject": "입체 작품(조각/도자공예) 좌대 전시 모드 추가",
+    "summary": "조각·도자/공예 카테고리 작품도 3D 뷰어에서 좌대 위에 전시할 수 있도록 pedestal 모드 추가. 갤러리 프리셋 강제 적용, 360도 회전 가능.",
+    "body": "- parseArtworkSize: depthM(3번째 치수) 캡처 추가\n- ArtworkImage: 조각/공예도 버튼 표시 (\"공간에 놓아보기\"), displayMode 전달\n- VirtualGalleryPortal: pedestal 모드 시 갤러리 프리셋 강제, 방 선택 숨김\n- VirtualRoom: pedestal 모드 — 방 중앙 배치, 가구 숨김, 360도 OrbitControls\n- ArtworkPedestal 신규 — 좌대 + 이미지 패널 + 오버헤드 스팟라이트\n  - 좌대 높이: 작품 크기에 따라 자동 조정 (중심이 눈높이)\n  - 3D 치수(WxDxH): depthM이 있으면 가장 큰 값을 높이로 사용",
+    "date": "2026-04-02",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "ac5f5ba0",
+    "type": "fix",
+    "scope": "virtual-gallery",
+    "subject": "침실 침대 배치를 현실적으로 수정",
+    "summary": "침대를 방 중앙에서 오른쪽-앞벽 구석으로 이동. 접근 가능한 왼쪽에만 협탁 1개 배치. 러그·가구·창문 위치 조정.",
+    "body": "- 침대: 오른쪽 벽에 밀착(5cm 간격), headboard 앞벽, 양쪽 여유 없음\n- 협탁: 2개 → 1개 (왼쪽 접근 면만)\n- 러그: 침대 발치/왼쪽 스텝 아웃 구역으로 이동\n- 창문: 방 왼쪽으로 이동 (침대 구석과 분리)\n- 서랍장·의자·식물: 위치 소폭 조정",
+    "date": "2026-04-02",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "b2924cb8",
+    "type": "fix",
+    "scope": "test",
+    "subject": "HowTo 스키마 테스트 이름 패턴 수정",
+    "summary": "generateArtworkPurchaseHowTo 이름이 \"SAF 2026\" → \"SAF Online\"으로 변경된 것에 맞춰 테스트 수정",
+    "body": null,
+    "date": "2026-04-02",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "9afab019",
+    "type": "fix",
+    "scope": "types",
+    "subject": "ArtworkImage에 size, category prop 타입 추가",
+    "summary": "page.tsx에서 전달하는 size, category prop이 ArtworkImageProps에 없어 빌드 실패 — 타입 선언 추가",
+    "body": null,
+    "date": "2026-04-02",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "4994e07e",
+    "type": "feat",
+    "scope": "virtual-gallery",
+    "subject": "3D 가상 갤러리 — 방별 가구, 텍스처, 모달 UI",
+    "summary": "작품 상세 페이지에 3D 가상 갤러리(\"내 벽에 걸어보기\") 기능 추가. 거실/침실/갤러리/카페 4개 프리셋에 가구 배치, 절차적 텍스처(나무결/플라스터/마루), IBL 환경맵으로 PBR 품질 개선. 조각·도자/공예 카테고리 및 크기 미상 작품은 버튼 숨김. 사이즈 데이터 정규화.",
+    "body": "- components/features/virtual-gallery/ 신규 (7개 파일)\n  - VirtualGalleryPortal: 모달 레이아웃 (화면 70%, 헤더 겹침 해결)\n  - VirtualRoom: R3F Canvas + OrbitControls + ContactShadows\n  - RoomGeometry: 5면 벽 + 바닥 + 천장 + 앞벽 추가, 환경맵 설정\n  - RoomFurniture: 거실(소파·TV·책장), 침실(침대·화분), 갤러리(벤치·조각대), 카페(테이블·카운터)\n  - ArtworkPlane: 물리 치수에 이미지 비율 맞춰 액자·마운트·스팟라이트 렌더\n  - proceduralTextures: Canvas2D 절차적 텍스처 + PMREMGenerator 환경맵\n  - roomPresets: 거실/침실/갤러리/카페 조명·색상 프리셋\n\n- lib/utils/parseArtworkSize.ts: 크기 파싱 유틸 신규 (cm/mm/inch/호 지원, isDefault 플래그)\n- components/features/ArtworkImage.tsx: canPreviewOnWall 조건 추가 (조각·도자 숨김, isDefault 숨김)\n- app/[locale]/artworks/[id]/page.tsx: ArtworkImage에 category 전달\n- next.config.js: CSP worker-src blob: 추가 (WebGL 워커)\n- package.json: three + @react-three/fiber + @react-three/drei 의존성 추가\n- content/artworks-batches/: 크기 표기 정규화 (호 → cm, 특수 구분자 정리)\n- scripts/normalize-artwork-sizes.js: 크기 정규화 스크립트\n- scripts/validate_artworks.js: 빈 문자열 size 경고 추가, 형식 규칙 강화\n- supabase/migrations/: DB size 컬럼 정규화 마이그레이션 2건",
+    "date": "2026-04-02",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "91ea0f8f",
+    "type": "feat",
+    "scope": "gallery",
+    "subject": "Three.js 기반 작품 가상 갤러리 3D 뷰어 추가",
+    "summary": "작품 상세 페이지에 Three.js/R3F 기반 3D 가상 갤러리 뷰어 추가, 작품 크기 파싱 유틸리티 신규 작성",
+    "body": "- @react-three/fiber, @react-three/drei, three 패키지 추가\n- VirtualGalleryPortal, VirtualRoom, ArtworkPlane 컴포넌트 구현\n- RoomGeometry, RoomFurniture, proceduralTextures, roomPresets 추가\n- lib/utils/parseArtworkSize: 사이즈 문자열 → 미터 단위 변환 유틸리티\n- ArtworkImage, artwork 상세 페이지 3D 뷰어 연동",
+    "date": "2026-04-02",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "13761cff",
+    "type": "fix",
+    "scope": "ui",
+    "subject": "BrandLoader 로고 blur placeholder 제거",
+    "summary": "ExportedImage 기본 blur placeholder가 로고 번짐 유발 → placeholder=\"empty\" 추가",
+    "body": null,
+    "date": "2026-04-01",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "9343c8ef",
+    "type": "fix",
+    "scope": "ui",
+    "subject": "BrandLoader 디자인 개선 (drop-shadow 제거, dot 색상 변경)",
+    "summary": "로고 번짐 효과 제거, dot을 흰색으로 변경하여 깔끔하게 개선",
+    "body": "- 로고 drop-shadow-xl 제거 → 번지는 효과 해소\n- 로고 크기: w-40 md:w-56 → w-44 md:w-64\n- dot 색상: bg-primary → bg-white/60\n- dot 크기: w-2 h-2 → w-2.5 h-2.5\n- 간격: mt-8 → mt-6",
+    "date": "2026-04-01",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "96e1aab6",
+    "type": "fix",
+    "scope": "ui",
+    "subject": "남은 스켈레톤 fallback을 BrandLoader로 교체",
+    "summary": "DynamicCounter, FAQList, FAQ Suspense의 스켈레톤 플레이스홀더 제거",
+    "body": "- DynamicCounter dynamic loading 스켈레톤 제거\n- FAQList dynamic loading 스켈레톤 제거\n- FAQ Suspense fallback → BrandLoader(minHeight=30vh)",
+    "date": "2026-04-01",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "d46daf39",
+    "type": "fix",
+    "scope": "ui",
+    "subject": "ArtworkHighlightSlider dynamic ssr:false 옵션 제거",
+    "summary": "Server Component에서 dynamic() ssr:false 사용 불가 빌드 에러 수정",
+    "body": "- App Router Server Component에서는 dynamic() { ssr: false } 불허\n- ArtworkHighlightSlider는 'use client'이므로 ssr:false 불필요\n- 옵션 제거로 빌드 에러 해소",
+    "date": "2026-04-01",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "369de68a",
+    "type": "feat",
+    "scope": "ui",
+    "subject": "BrandLoader 로딩 컴포넌트 도입 및 스켈레톤 교체",
+    "summary": "메인 페이지의 Suspense 스켈레톤을 씨앗페 로고 + 바운싱 dot 브랜드 로더로 교체",
+    "body": "- components/common/BrandLoader.tsx 신규 생성 (로고 + 로딩 dot)\n- 히어로 Suspense fallback → BrandLoader(minHeight=100vh)\n- 카테고리 섹션 Suspense fallback → BrandLoader(minHeight=60vh)\n- ArtworkHighlightSlider dynamic import ssr:false로 변경\n- 사용하지 않는 HeroFallback, CategorySectionsFallback 함수 제거",
+    "date": "2026-04-01",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "5cb03383",
+    "type": "fix",
+    "scope": "skeleton",
+    "subject": "홈·작품상세 Suspense 스켈레톤 실제 레이아웃 매칭",
+    "summary": "스켈레톤이 실제 콘텐츠와 달라 로드 후 화면이 점프하는 문제 수정",
+    "body": "- HeroFallback: 카드 8→16개, 로고·서브타이틀·뱃지·CTA 버튼 영역 추가\n- CategorySectionsFallback: 300px 박스 → 제목+가로 카드 6개 슬라이더 구조\n- ArtworkDetailNav fallback: h-[57px] div → sticky nav + 뒤로가기·브레드크럼 플레이스홀더",
+    "date": "2026-04-01",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "0e56d1f2",
+    "type": "feat",
+    "scope": "home",
+    "subject": "메인페이지 갤러리 중심 리뉴얼 + 디자인 일관성 수정",
+    "summary": "메인페이지를 캠페인 중심에서 온라인 갤러리/작품 판매 중심으로 대형 리뉴얼",
+    "body": "- 히어로: 16개 랜덤 작품 그리드(HeroGalleryGrid) + BackgroundSlider 배경\n- 카테고리 4섹션: 회화/판화/사진·미디어/입체·공예 슬라이더 (dark/light 교대)\n- 미션 배너: 3단계 플로우 (작품 구매 → 기금 조성 → 예술인 대출)\n- 통계 섹션 제목: \"숫자로 보는 예술인 금융 현실\"로 변경\n- DynamicCounter: 내부 Section 래핑 제거 (이중 래핑 해소)\n- ArtworkCard: text-brand-sun → text-sun, bg-[#1f2527] → bg-charcoal\n- HeroGalleryGrid: bg-[#1a1a1a] → bg-charcoal, text-yellow-300 → text-sun, text-[11px] → text-xs",
+    "date": "2026-04-01",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "5411efaf",
+    "type": "fix",
+    "scope": "ui",
+    "subject": "증언 전환 속도 4초로 변경",
+    "summary": "TESTIMONIAL_INTERVAL 12000 → 4000ms",
+    "body": null,
+    "date": "2026-03-31",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "c2f63b18",
+    "type": "feat",
+    "scope": "ui",
+    "subject": "SupportMessage 증언 데이터 동적화 (15개 전체 순환)",
+    "summary": "i18n 하드코딩 5개 → content/testimonials.ts 전체 15개 동적 연결",
+    "body": "- SupportMessage: testimonials props 추가, TESTIMONIAL_COUNT 제거\n- 작품 상세 페이지: getSupabaseTestimonials() 호출 후 flat 변환하여 props 전달\n- i18n: testimonial0~4 키 및 exploreArtworks 키 제거",
+    "date": "2026-03-31",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "678179fa",
+    "type": "fix",
+    "scope": "ui",
+    "subject": "가격-버튼 간격 복원 (pb-4 유지, border-b만 제거)",
+    "summary": "구분선 제거 시 패딩까지 삭제된 문제 수정",
+    "body": null,
+    "date": "2026-03-31",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "e987b4e9",
+    "type": "fix",
+    "scope": "ui",
+    "subject": "CTA 가격 구분선이 구매 버튼과 겹치는 문제 수정",
+    "summary": "가격 영역의 border-b 제거하여 버튼과의 겹침 해소",
+    "body": null,
+    "date": "2026-03-31",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "d213178f",
+    "type": "fix",
+    "scope": "ui",
+    "subject": "SupportMessage 내부 패딩·간격 개선",
+    "summary": "카드 패딩 확대, 영역 간 간격 통일, 하단 border-t 여백 확보로 전체 레이아웃 숨통",
+    "body": null,
+    "date": "2026-03-31",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "ebf48e2a",
+    "type": "fix",
+    "scope": "ui",
+    "subject": "SupportMessage에서 이탈 유발 CTA 버튼 제거",
+    "summary": "작품 상세페이지에서 다른 페이지로 이탈시키는 '출품작 둘러보기' 버튼 제거",
+    "body": null,
+    "date": "2026-03-31",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "2273e8db",
+    "type": "fix",
+    "scope": "ui",
+    "subject": "SupportMessage를 CTA 카드 하단으로 이동 + 내부 중앙 정렬",
+    "summary": "SupportMessage를 풀와이드 섹션에서 좌측 CTA 컬럼 하단으로 이동, 본문·증언 카드 내부를 중앙 정렬로 통일",
+    "body": "- page.tsx: SupportMessage를 ArtworkPurchaseCTA 바로 아래로 이동\n- 풀와이드 섹션의 SupportMessage 제거\n- 본문 text-left → text-center\n- 증언 카드 border-l-4 제거, 내부 텍스트 중앙 정렬\n- voiceLabel 중앙 정렬",
+    "date": "2026-03-31",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "d8c03001",
+    "type": "fix",
+    "scope": "ui",
+    "subject": "SupportMessage 제목 크기 text-lg → text-2xl로 확대",
+    "summary": "캠페인 제목이 너무 작아 존재감이 없던 문제 수정",
+    "body": null,
+    "date": "2026-03-31",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "a1bd3c87",
+    "type": "feat",
+    "scope": "ui",
+    "subject": "SupportMessage 증언 영역에 슬라이드 도트 인디케이터 추가",
+    "summary": "증언 순환 섹션 하단에 도트 인디케이터 추가하여 여러 증언이 있음을 시각적으로 표시",
+    "body": null,
+    "date": "2026-03-31",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "aa72ce48",
+    "type": "fix",
+    "scope": "artworks",
+    "subject": "CTA 가격 라벨·크기 강화 및 모바일 헤더 가격 중복 제거",
+    "summary": "가격 블록에 라벨+text-3xl+구분선 추가, 모바일 헤더 가격 제거로 CTA가 유일한 가격 표시 포인트가 됨",
+    "body": "- 가격 텍스트 text-2xl → text-3xl, \"작품 가격\" 라벨 추가\n- 가격 블록 하단에 pb-4 border-b 구분선 추가 (버튼과 시각적 분리)\n- 모바일 헤더의 localizedPrice 중복 표시 제거\n- i18n: artworkPrice 키 추가 (ko: \"작품 가격\", en: \"Price\")",
+    "date": "2026-03-31",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "0290ec3b",
+    "type": "fix",
+    "scope": "ui",
+    "subject": "SupportMessage 카드의 불필요한 hover 효과 제거",
+    "summary": "클릭 기능 없는 정보 카드에서 hover:scale 제거하여 UX 혼동 방지",
+    "body": null,
+    "date": "2026-03-31",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "9dbd3acc",
+    "type": "fix",
+    "scope": "artworks",
+    "subject": "문의 작품 연락처 복구, sold 대체 UI, PurchaseGuide 이중 렌더 제거",
+    "summary": "리뷰에서 발견된 3건의 개선 사항 일괄 수정",
+    "body": "- \"문의\" 가격 작품(hasActionablePrice=false)에서 연락처 CTA가 사라지던 회귀 수정\n- sold 작품에 판매 완료 안내 + 같은 작가 다른 작품 유도 UI 추가\n- PurchaseGuide를 ArtworkPurchaseCTA 내부로 통합, page.tsx 이중 렌더 제거\n- i18n 키 추가: soldNotice, soldExploreOther, soldExploreAll, inquiryTitle, inquiryDescription",
+    "date": "2026-03-31",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "35ca4c53",
+    "type": "fix",
+    "scope": "ui",
+    "subject": "TrustBadges와 구매 버튼 간격 수정 (flex gap 적용)",
+    "summary": "TrackClick이 span(인라인)을 렌더링하여 space-y-6 margin이 무시되던 버그 수정, flex flex-col gap-3 컨테이너로 확실한 간격 확보",
+    "body": null,
+    "date": "2026-03-31",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "35bd30b2",
+    "type": "fix",
+    "scope": "gallery",
+    "subject": "모바일 스크롤 시 작품 이미지 깜빡임 수정",
+    "summary": "content-visibility 제거, shimmer 자동 숨김, 터치 기기 GPU 레이어 최적화로 모바일 이미지 플리커 해결",
+    "body": "- MasonryGallery: content-visibility:auto 제거 (infinite scroll로 이미 DOM 크기 제한됨)\n- ArtworkCard: 이미지 로드 후 ref 기반 shimmer 숨기기 (re-render 없음)\n- globals.css: hover:none 미디어 쿼리에 transform/transition-transform 비활성화 추가",
+    "date": "2026-03-31",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "5b7bc712",
+    "type": "fix",
+    "scope": "gallery",
+    "subject": "모바일 스크롤 시 작품 이미지 깜빡임 수정",
+    "summary": "content-visibility 제거, shimmer 자동 숨김, 터치 기기 GPU 레이어 최적화로 모바일 이미지 플리커 해결",
+    "body": "- MasonryGallery: content-visibility:auto 제거 (infinite scroll로 이미 DOM 크기 제한됨)\n- ArtworkCard: 이미지 로드 후 ref 기반 shimmer 숨기기 (re-render 없음)\n- globals.css: hover:none 미디어 쿼리에 transform/transition-transform 비활성화 추가",
+    "date": "2026-03-31",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "e2c16c3d",
+    "type": "fix",
+    "scope": "ui",
+    "subject": "신뢰 배지와 구매 버튼 사이 간격 추가",
+    "summary": "TrustBadges와 온라인 구매 버튼 사이 mb-4 간격 추가 (모바일/데스크톱)",
+    "body": null,
+    "date": "2026-03-31",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "8c04252c",
+    "type": "fix",
+    "scope": "ci",
+    "subject": "sync-artworks 워크플로우에 write 권한 추가",
+    "summary": "github-actions[bot] 브랜치 push 권한 오류 수정",
+    "body": null,
+    "date": "2026-03-30",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "647e4262",
+    "type": "feat",
+    "scope": "data",
+    "subject": "DB → 정적 파일 자동 동기화 스크립트 추가",
+    "summary": "Supabase DB 작품 데이터를 정적 fallback 파일로 자동 동기화하는 스크립트 및 GitHub Actions 워크플로우 추가",
+    "body": "- scripts/sync-artworks-from-db.js: DB 전체 작품을 batch-db-generated.ts로 생성\n- content/artworks-batches/batch-db-generated.ts: 353개 작품 초기 동기화\n- content/saf2026-artworks.ts: DB 생성 파일 primary source로 추가, title+artist 중복 제거 병합\n- .github/workflows/sync-artworks.yml: 매일 KST 12:00 자동 실행, 변경 시 PR 생성\n- package.json: npm run sync-artworks 스크립트 추가\n\n기존 278개 fallback → 350개 (75개 증가)",
+    "date": "2026-03-30",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "da4bd78f",
+    "type": "fix",
+    "scope": "data",
+    "subject": "숫자 ID → Supabase UUID 타입 오류 수정 및 심모비 작품 fallback 추가",
+    "summary": "작품 상세 페이지의 레거시 숫자 ID로 인한 Supabase 400 에러 제거 및 심모비 9406·9407 정적 fallback 추가",
+    "body": "- getSupabaseArtworkById에 UUID 형식 판별 추가: 숫자 ID는 Supabase 쿼리 없이 바로 정적 fallback 사용\n  → \"invalid input syntax for type uuid\" 400 에러 대량 발생 제거\n- 심모비 9406, 9407 작품을 batch-001.ts에 추가 (Supabase UUID를 id로 사용)\n  → Supabase 실패 시에도 심모비 작품 4개 모두 표시 보장",
+    "date": "2026-03-30",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "618e7635",
+    "type": "feat",
+    "scope": "i18n",
+    "subject": "작품/작가 등록 폼에 영문 필드 추가",
+    "summary": "관리자·작가·출품자 포털의 작품/작가 등록 폼에 영문 입력 필드 추가",
+    "body": "- 작품 폼(관리자·대시보드·출품자): title_en 입력 필드 추가\n- 작가 폼(관리자·출품자): bio_en, history_en 입력 필드 추가\n- 각 서버 액션(createArtwork, updateArtwork 등)에 영문 필드 저장 로직 추가\n- ko/en 번역 파일에 신규 필드 레이블 키 추가\n\nhttps://claude.ai/code/session_01L5JC7eMwhdvnDp3SXrS1sT",
+    "date": "2026-03-29",
+    "author": "Claude"
+  },
+  {
+    "hash": "937345d5",
+    "type": "fix",
+    "scope": "ui",
+    "subject": "TrustBadges를 구매 버튼 바로 위로 위치 수정",
+    "summary": "TrustBadges가 PurchaseGuide 위에 잘못 배치된 버그 수정, 구매 버튼 바로 위로 이동",
+    "body": "- 데스크톱: PurchaseGuide → TrustBadges → 온라인 구매 버튼 순서로 수정\n- 모바일: trustInline → TrustBadges → 온라인 구매 버튼 순서로 수정",
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "ba3712b3",
+    "type": "fix",
+    "scope": "i18n",
+    "subject": "SupportMessage 본문 '공정한 금리' → '공정한 금융' 수정",
+    "summary": "'공정한 금리의 손' → '공정한 금융의 손'으로 표현 수정",
+    "body": null,
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "1a430b20",
+    "type": "fix",
+    "scope": "i18n",
+    "subject": "'구매 가능' → '작품 구매 가능' 통일 및 '연습실' → '작업실' 수정",
+    "summary": "구매 가능 문구에 '작품' 추가하여 명확화, SupportMessage 본문의 '연습실'을 '작업실'로 수정",
+    "body": "- artworkDetail.alwaysAvailable: \"{date} 현재 작품 구매 가능\"\n- gallery.alwaysOpen: \"{date} 현재 작품 구매 가능\"\n- support.body: \"연습실 월세\" → \"작업실 월세\"",
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "ffc6df05",
+    "type": "fix",
+    "scope": "i18n",
+    "subject": "SupportMessage 판매 문구에 '판매되어' 추가",
+    "summary": "\"연대의 씨앗이 되었습니다\" → \"판매되어 연대의 씨앗이 되었습니다\"로 명확화",
+    "body": null,
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "3d73d0b2",
+    "type": "fix",
+    "scope": "cache",
+    "subject": "Vercel Data Cache 강제 무효화를 위한 캐시 키 v3 범프",
+    "summary": "깨진 배포에서 캐시된 정적 fallback 데이터(숫자 ID) 무효화",
+    "body": "- supabase-artworks-v2 → v3\n- supabase-artwork-by-id-v2 → v3\n- supabase-artworks-by-artist-v2 → v3\n- Vercel Data Cache는 배포 간 공유되어 --force로도 초기화 안 됨",
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "40bc5d6c",
+    "type": "feat",
+    "scope": "ui",
+    "subject": "SupportMessage 카드에 순환 통계·증언·컨텍스트 문구 추가",
+    "summary": "SupportMessage 카드를 동적으로 개선 — 순환 통계, 증언 마이크로 인용, 판매 컨텍스트 문구 추가",
+    "body": "- 4개 핵심 통계를 5초 간격 페이드 순환 (배제율, 354건 대출, 95% 상환율, ~1.4억 절감)\n- 실제 예술인 증언 5개를 8초 간격 독립 순환\n- totalSoldCount prop으로 \"지금까지 N점의 작품이 연대의 씨앗\" 문구 + 분야별 수혜 분포\n- prefers-reduced-motion 존중, aria-live=\"polite\" 접근성 보장\n- ko/en 번역 키 추가",
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "be1794de",
+    "type": "feat",
+    "scope": "data",
+    "subject": "정적 파일 작가 프로필을 Supabase bio로 백필하는 마이그레이션 추가",
+    "summary": "artists-data.ts/batch-005.ts의 작가 소개·이력을 DB bio/history로 백필",
+    "body": "- artists-data.ts: profile → bio (57명), profile_en → bio_en (57명), history (102명), history_en (74명)\n- batch-005.ts: artists-data.ts에 없는 작가 8명의 bio/history 추가 (강레아, 정채희, 박영선 등)\n- 안전장치: WHERE (bio IS NULL OR trim(bio) = '') 조건으로 대시보드에서 직접 수정한 데이터 보존",
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "e33057ac",
+    "type": "fix",
+    "scope": "data",
+    "subject": "ARTIST_SELECT_COLUMNS에서 존재하지 않는 profile 컬럼 제거",
+    "summary": "작가 대시보드에서 수정한 소개가 정적 파일 데이터로 덮어씌워지는 문제 수정",
+    "body": "- DB artists 테이블에는 bio 컬럼만 존재, profile 컬럼은 없음\n- 이전 커밋(f6830cce)에서 잘못 추가한 profile 컬럼 제거\n- mapArtworkRow의 fallback 체인을 artist?.bio로 단순화",
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "f6830cce",
+    "type": "fix",
+    "scope": "data",
+    "subject": "Supabase artist 조회 시 profile 컬럼 누락 수정",
+    "summary": "작가 프로필이 표시되지 않는 버그 수정 (ARTIST_SELECT_COLUMNS에 profile 추가)",
+    "body": "- ARTIST_SELECT_COLUMNS에 profile 컬럼이 빠져있어 모든 작가의 프로필이 빈 문자열로 처리됨\n- mapArtworkRow의 artist?.profile fallback이 항상 undefined → '' 로 평가되는 문제 해결",
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "ac0fd91b",
+    "type": "feat",
+    "scope": "ui",
+    "subject": "SupportMessage 카드를 씨앗기금 연대 메시지로 교체",
+    "summary": "작품 상세페이지 SupportMessage 카드를 구체적인 씨앗기금 임팩트 메시지로 교체",
+    "body": "- 아이콘: Handshake → Sprout (씨앗기금 테마)\n- 텍스트 구조: titleTop/titleBottom/bodyTop/bodyBottom → title/body/footer 3단 구조\n- 한국어: \"예술이 예술을 지킵니다\" + 씨앗기금 구조 설명\n- 영어: \"Art protects art\" + Seed Fund 설명",
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "c0b2d4e9",
+    "type": "fix",
+    "scope": "ui",
+    "subject": "PurchaseGuide 자세히 보기 버튼을 하단 통합 버튼으로 변경",
+    "summary": "3개의 동일 모달 연결 버튼을 하단 통합 버튼 1개로 개선",
+    "body": "- 배송/결제/환불 각각의 \"자세히 보기\"가 같은 모달을 열던 UX 결함 수정\n- GuideItem에서 action 필드 제거\n- 하단에 \"구매 및 이용 안내 보기\" 통합 버튼 배치 (en: \"View purchase guide\")",
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "50e02a1e",
+    "type": "fix",
+    "scope": "gallery",
+    "subject": "갤러리-캠페인 배너 섹션 간격을 사이트 표준에 맞게 정리",
+    "summary": "갤러리 하단 패딩을 기본값으로 줄이고, 캠페인 배너를 마지막 섹션 표준(pb-24 md:pb-32)으로 통일",
+    "body": "- 갤러리 섹션: pb-24→pb-12 (마지막 섹션이 아니므로 기본 수준으로)\n- 캠페인 배너: 상단 기본 패딩 + 하단 마지막 섹션 표준\n- 작가별 갤러리 페이지도 동일하게 적용",
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "ef9a0bb2",
+    "type": "fix",
+    "scope": "image",
+    "subject": "bare filename fallback을 빈 문자열로 변경하여 404 방지",
+    "summary": "레거시 bare filename(예: 38.jpg)이 존재하지 않는 로컬 경로로 변환되어 404 발생하던 문제 해결",
+    "body": "- resolveArtworkImageUrl()에서 bare filename → 빈 문자열 반환\n- SafeImage가 fallback으로 placeholder 이미지 사용\n- 모든 현재 데이터는 full Supabase URL이므로 영향 없음",
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "bda4974f",
+    "type": "fix",
+    "scope": "gallery",
+    "subject": "캠페인 배너 설명 텍스트 두 줄로 분리",
+    "summary": "한 줄로 이어지던 설명문을 두 문장으로 줄바꿈 처리하여 가독성 개선",
+    "body": null,
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "03ea681c",
+    "type": "fix",
+    "scope": "gallery",
+    "subject": "갤러리 섹션 하단 패딩 원복",
+    "summary": "갤러리 하단 패딩(pb-24 md:pb-32)은 원래대로, 캠페인 배너 상단만 축소 유지",
+    "body": null,
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "d498a50b",
+    "type": "fix",
+    "scope": "cache",
+    "subject": "artworks 캐시 키 갱신으로 sold_at 데이터 강제 리프레시",
+    "summary": "Vercel unstable_cache가 sold_at 없는 stale 데이터를 유지하여 날짜 배지가 사라지는 문제 해결",
+    "body": "- supabase-artworks → supabase-artworks-v2\n- supabase-artwork-by-id → supabase-artwork-by-id-v2\n- supabase-artworks-by-artist → supabase-artworks-by-artist-v2",
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "1ff4c83c",
+    "type": "fix",
+    "scope": "gallery",
+    "subject": "갤러리-캠페인 배너 섹션 간 상단 패딩 추가 축소",
+    "summary": "갤러리 하단 pb-24→pb-16, 캠페인 배너 상단 pt-10→pt-6으로 줄여 상하 여백 균형 개선",
+    "body": null,
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "20293c1a",
+    "type": "fix",
+    "scope": "gallery",
+    "subject": "캠페인 배너 섹션 상단 패딩 중복 해소",
+    "summary": "갤러리 하단 패딩과 캠페인 배너 상단 패딩 중복으로 인한 상하 여백 불균형 수정",
+    "body": "- py-20 md:py-28 → pt-10 pb-20 md:pt-14 md:pb-28으로 변경",
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "c644c024",
+    "type": "fix",
+    "scope": "trust",
+    "subject": "최근 판매 섹션을 카드 3개 + \"최근 N점 판매\" 요약으로 개선",
+    "summary": "카드 6개 나열 대신 최근 3개만 보여주고, 서브텍스트로 전체 판매 규모(\"최근 65점의 작품이 판매되었습니다\") 표시",
+    "body": "- getTotalSoldCount() 함수 추가 (sold_at IS NOT NULL 카운트)\n- getRecentlySoldArtworks limit 6 → 3으로 변경\n- RecentlySoldSection에 totalCount prop 추가\n- i18n 서브텍스트를 \"최근 {count}점의 작품이 판매되었습니다\"로 변경",
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "1c448720",
+    "type": "feat",
+    "scope": "trust",
+    "subject": "모든 판매 작품에 날짜 배지를 이미지 왼쪽 상단에 오버레이",
+    "summary": "판매 날짜를 ArtworkCard 이미지 위 왼쪽 상단에 반투명 배지로 표시 (연도 포함, 모든 판매 작품 적용)",
+    "body": "- ArtworkCard에 SoldDateBadge 추가 (gallery/slider 양쪽)\n- 포맷: \"2026.3.26 판매\" (ko) / \"Sold Mar 26, 2026\" (en)\n- RecentlySoldSection에서 중복 하단 날짜 badge 제거",
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "5ce3a8fe",
+    "type": "fix",
+    "scope": "trust",
+    "subject": "RecentlySoldSection을 \"작가의 다른 작품\" 아래로 이동",
+    "summary": "작품 상세 → 같은 작가 다른 작품 → 최근 판매 작품 순서로 변경하여 자연스러운 맥락 유지",
+    "body": null,
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "911187c2",
+    "type": "fix",
+    "scope": "trust",
+    "subject": "최근 판매 작품 쿼리에서 status 필터 제거 + DB 백필/트리거 적용",
+    "summary": "artwork_sales 데이터로 artworks.sold_at 백필하고 status 필터를 제거하여 open 에디션 판매도 표시",
+    "body": "- SQL 백필: artwork_sales → artworks.sold_at (65개 sold 작품 모두 sold_at 보유)\n- DB 트리거: artwork_sales INSERT 시 artworks.sold_at 자동 갱신\n- status IN ('sold','reserved') 필터 제거 → sold_at만으로 판단",
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "c35542cc",
+    "type": "feat",
+    "scope": "trust",
+    "subject": "작품 상세 페이지에 \"최근 판매된 작품\" 섹션 추가 (Tier 2)",
+    "summary": "최근 30일 이내 판매된 작품을 작품 상세 페이지 하단에 표시하여 실제 거래 활성 신뢰감 제공",
+    "body": "- getRecentlySoldArtworks() 함수 추가 (30일 제한, sold_at DESC, 캐시 최적화)\n- RecentlySoldSection 서버 컴포넌트 생성 (ArtworkCard 재사용 + 판매 날짜 badge)\n- BaseArtwork, ArtworkCardData 타입에 sold_at 필드 추가\n- ARTWORK_SELECT_COLUMNS, mapArtworkRow에 sold_at 매핑 추가\n- 판매 기록 0건이면 섹션 자동 숨김, 현재 작품 제외 로직 포함",
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "de452076",
+    "type": "fix",
+    "scope": "gallery",
+    "subject": "GalleryStatusBar 상단 패딩 축소",
+    "summary": "갤러리 섹션 상단 여백을 py-12/py-20에서 pt-6/pt-10으로 줄여 자연스러운 배치",
+    "body": null,
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "a999dddb",
+    "type": "fix",
+    "scope": "gallery",
+    "subject": "GalleryStatusBar 위치를 Gallery Section 내부로 이동",
+    "summary": "톱니(SawtoothDivider) 아래 독립 div에서 갤러리 섹션 내부로 이동하여 자연스러운 배치",
+    "body": null,
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "266dbf95",
+    "type": "fix",
+    "scope": "trust",
+    "subject": "정적 문구를 오늘 날짜 기반 동적 문구로 변경",
+    "summary": "\"전시 종료 후에도 구매 가능\" → \"3월 27일 현재 구매 가능\"으로 변경하여 사이트 실시간 운영 신뢰감 강화",
+    "body": "- 홈 히어로, 갤러리 상태 바, TrustBadges 3곳 모두 오늘 날짜 표시\n- Intl.DateTimeFormat으로 locale(ko/en)에 맞게 날짜 포맷\n- i18n 메시지에 {date} 변수 적용",
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "017e75fc",
+    "type": "feat",
+    "scope": "trust",
+    "subject": "상시 구매 가능 신뢰 신호 추가",
+    "summary": "오프라인 전시 종료 후에도 온라인 구매가 가능하다는 신뢰 신호를 홈페이지, 갤러리, 작품 상세 3곳에 추가",
+    "body": "- 홈페이지 히어로에 녹색 pulse dot + \"온라인 구매 가능\" 반투명 배지\n- 갤러리 상단에 운영 상태 바 (GalleryStatusBar) + 전화/이메일 바로가기\n- TrustBadges에 \"전시 종료 후에도 구매 가능\" 녹색 배지 추가\n- ko/en i18n 메시지 추가",
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "a158d7e7",
+    "type": "fix",
+    "scope": "logs",
+    "subject": "작품 이미지 변경 로그에 작품명 누락 수정",
+    "summary": "artwork_images_updated 로그에서 \"이름 정보 없음\" 대신 작품명 표시",
+    "body": "- before/after 스냅샷 select에 title 필드 추가\n- metadata에 title 포함하여 이름 해석 체인에서 즉시 resolve\n- summary에도 작품명 표시",
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "47941fa3",
+    "type": "fix",
+    "scope": "changelog",
+    "subject": "SCOPE_KO 맵에 누락된 scope 46개 추가",
+    "summary": "changelog 페이지에서 영문 raw scope이 표시되던 문제 수정 — 전체 81개 scope 한글 매핑 완성",
+    "body": null,
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "b6adb867",
+    "type": "fix",
+    "scope": "admin",
+    "subject": "changelog 필터에 refactor 누락 + TYPE_CONFIG fallback 방어 코드",
+    "summary": "page.tsx의 ChangelogFilter 타입과 parseFilter에 refactor 추가, TYPE_CONFIG lookup에 fallback 방어",
+    "body": "- page.tsx: ChangelogFilter 타입에 'refactor' 추가, parseFilter()에서 refactor 허용\n- changelog-list.tsx: TYPE_CONFIG[entry.type]에 fallback 추가하여 미지원 타입 크래시 방지",
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "edca35ff",
+    "type": "fix",
+    "scope": "admin",
+    "subject": "changelog 페이지 refactor 타입 미지원으로 인한 크래시 수정",
+    "summary": "ChangelogEntry 타입과 changelog UI에 refactor 타입 지원 추가하여 페이지 크래시 해소",
+    "body": "- types/index.ts: ChangelogEntry.type union에 'refactor' 추가\n- changelog-list.tsx: TYPE_CONFIG, FilterType, FILTERS에 refactor 항목 추가\n- page.tsx: counts 객체에 refactor 카운트 추가",
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "8ab380b9",
+    "type": "fix",
+    "scope": "admin",
+    "subject": "활동 로그 \"정의되지 않은 활동\" + \"이름 정보 없음\" 수정",
+    "summary": "누락된 활동 유형 라벨 3개 추가 및 판매 관련 로그에 작품명 메타데이터 포함",
+    "body": "- artwork_sale_updated, artwork_sale_voided, update_artwork_category case 추가\n- 영어 번역 매핑(SUMMARY_PATTERNS)도 함께 추가\n- recordArtworkSale, updateArtworkSale, voidArtworkSale, updateArtworkCategory의\n  logAdminAction metadata에 title 필드 추가하여 \"이름 정보 없음\" 해소",
+    "date": "2026-03-27",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "1668a0ce",
+    "type": "fix",
+    "scope": "admin",
+    "subject": "작가 연락처 다운로드 로그 자동 발생 방지",
+    "summary": "작가 관리 페이지의 연락처 다운로드 버튼이 Next.js Link prefetch로 인해 자동 실행되던 문제 수정",
+    "body": "- LinkButton(<Link>) → <a download>로 변경하여 prefetch 완전 차단\n- 페이지 방문만으로 CSV 생성 + 로깅이 트리거되던 현상 해소\n- CSV 다운로드는 SPA 내비게이션이 아니므로 <a> 태그가 의미적으로도 올바름",
     "date": "2026-03-26",
     "author": "hwangtab"
   },
   {
-    "hash": "39603e8e",
-    "type": "refactor",
-    "scope": "revalidation",
-    "subject": "admin 액션·API의 잔여 raw revalidate를 공통 유틸로 통합",
-    "summary": "admin-artworks·admin-artists·admin-logs·cafe24-sync-sales의 중복 revalidate 호출을 일괄 전환",
-    "body": "- admin-artworks.ts: 14곳의 raw revalidatePath/revalidateTag → revalidatePublicArtworkSurfaces() 통합\n- admin-artists.ts: 2곳 마이그레이션\n- admin-logs.ts: purge/revert 4곳 마이그레이션\n- cafe24-sync-sales/route.ts: 6줄 → 1줄 호출로 교체\n- exhibitor-artworks.ts: ArtistJoin 타입 3곳 중복 → 파일 레벨 1곳으로 추출",
-    "date": "2026-03-26",
-    "author": "hwangtab"
-  },
-  {
-    "hash": "844310b2",
-    "type": "refactor",
-    "scope": "revalidation",
-    "subject": "작품 캐시 무효화를 공통 유틸로 통합 및 성능 개선",
-    "summary": "중복 revalidate 호출을 revalidatePublicArtworkSurfaces()로 통합하고 FooterSlider 캐시 전략 개선",
-    "body": "- artwork/exhibitor-artworks/profile 액션의 중복 revalidatePath/revalidateTag 호출을 공통 유틸로 통합\n- FooterSlider: 세션 캐시 TTL 15초→60초, cache: 'no-store' 제거\n- Vercel drain webhook: event 타입에 eventName 필수 검증 추가 + 테스트 추가\n- jest.setup.js: matchMedia mock에 window 존재 확인 guard 추가",
+    "hash": "30cd24b0",
+    "type": "fix",
+    "scope": "i18n",
+    "subject": "작품 캐시 무효화에 영어 locale 경로 추가 + changelog 갱신",
+    "summary": "revalidatePublicArtworkSurfaces()에 /en 경로를 추가하여 영어 페이지 캐시 무효화 누락 수정",
+    "body": "- /en, /en/artworks, /en/artworks/artist/{name} 경로 revalidation 추가\n- 작품 데이터 변경 시 영어 페이지도 즉시 갱신됨\n- changelog.json에 최근 커밋 10건 엔트리 추가",
     "date": "2026-03-26",
     "author": "hwangtab"
   },
@@ -34,7 +844,7 @@
     "type": "perf",
     "scope": "i18n",
     "subject": "공개 레이아웃에서 portal namespace를 제외",
-    "summary": "공개 레이아웃에서 portal namespace를 제외하여 i18n 번들 경량화",
+    "summary": null,
     "body": null,
     "date": "2026-03-26",
     "author": "hwangtab"
@@ -44,7 +854,7 @@
     "type": "fix",
     "scope": "webhook",
     "subject": "drain 이벤트 본문을 fail-closed로 엄격 검증",
-    "summary": "Vercel drain 이벤트 본문을 fail-closed로 엄격 검증",
+    "summary": null,
     "body": null,
     "date": "2026-03-26",
     "author": "hwangtab"
@@ -54,7 +864,7 @@
     "type": "fix",
     "scope": "portal",
     "subject": "조회 오류를 명시 실패로 처리해 오인 리다이렉트 방지",
-    "summary": "포털 조회 오류를 명시적 실패로 처리하여 잘못된 리다이렉트 방지",
+    "summary": null,
     "body": null,
     "date": "2026-03-26",
     "author": "hwangtab"
@@ -64,7 +874,7 @@
     "type": "perf",
     "scope": "hero",
     "subject": "첫 페인트부터 히어로 배경 이미지를 렌더링",
-    "summary": "첫 페인트부터 히어로 배경 이미지가 즉시 렌더링되도록 최적화",
+    "summary": null,
     "body": null,
     "date": "2026-03-26",
     "author": "hwangtab"
@@ -74,7 +884,7 @@
     "type": "perf",
     "scope": null,
     "subject": "proxy 범위를 축소하고 공개 i18n payload를 경량화",
-    "summary": "proxy 범위를 축소하고 공개 페이지의 i18n payload를 경량화",
+    "summary": null,
     "body": null,
     "date": "2026-03-26",
     "author": "hwangtab"
@@ -84,7 +894,7 @@
     "type": "fix",
     "scope": "webhook",
     "subject": "vercel analytics v2 스키마 이벤트를 수용",
-    "summary": "Vercel analytics v2 스키마 이벤트를 수용하도록 webhook 핸들러 수정",
+    "summary": null,
     "body": null,
     "date": "2026-03-26",
     "author": "hwangtab"
@@ -94,9 +904,59 @@
     "type": "fix",
     "scope": "auth",
     "subject": "이중 신청 재동의 경로와 조회 오류 처리를 정합화",
-    "summary": "이중 신청 시 재동의 경로와 조회 오류 처리 로직을 정합화",
+    "summary": null,
     "body": null,
     "date": "2026-03-26",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "a3a75a87",
+    "type": "fix",
+    "scope": "webhook",
+    "subject": "vercel drain 검증을 fail-closed로 강화",
+    "summary": null,
+    "body": null,
+    "date": "2026-03-26",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "ae0a9a22",
+    "type": "fix",
+    "scope": "admin",
+    "subject": "작가 연락처 export 프리패치 요청을 차단",
+    "summary": null,
+    "body": null,
+    "date": "2026-03-26",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "c427d02c",
+    "type": "fix",
+    "scope": "auth",
+    "subject": "아티스트 privacy 재동의 분기와 저장 경로를 일관화",
+    "summary": null,
+    "body": null,
+    "date": "2026-03-26",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "653c00d5",
+    "type": "fix",
+    "scope": "layout",
+    "subject": "async Footer에 Suspense 경계 추가",
+    "summary": "서버 컴포넌트로 전환된 Footer에 Suspense 래핑 추가",
+    "body": null,
+    "date": "2026-03-24",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "e3914a3e",
+    "type": "perf",
+    "scope": null,
+    "subject": "웹사이트 성능 최적화 — 번들 경량화, 워터폴 제거, 서버 컴포넌트 전환",
+    "summary": "react-share 제거(-30KB), 데이터 워터폴 해소, Footer 서버 컴포넌트 전환, Hero CLS 개선",
+    "body": "- 작품 상세 페이지: Promise.all로 artwork + allArtworks 병렬 fetch (워터폴 -200~500ms)\n- react-share → window.open 네이티브 공유로 대체 (5개 패키지 제거)\n- Footer.tsx: 'use client' 제거, getTranslations/getLocale 서버 API로 전환\n- AuthButtons.tsx: React.memo() 래핑으로 불필요한 re-render 방지\n- Hero 텍스트: motion-safe: 접두사로 CLS 리스크 제거\n- 이미지 캐시 TTL: 24시간 → 7일로 연장\n- i18n: facebookAria, twitterAria 공유 버튼 접근성 라벨 추가",
+    "date": "2026-03-24",
     "author": "hwangtab"
   },
   {

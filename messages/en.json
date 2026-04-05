@@ -594,5 +594,18 @@
       "incompleteDescription": "Complete the items below to submit.",
       "genericSubmitError": "An error occurred while submitting. Please try again shortly."
     }
+  },
+  "notFound": {
+    "pageTitle": "Page Not Found",
+    "pageDescription": "The page you requested does not exist or has been moved. Please check the URL or return home.",
+    "goHome": "Go Home",
+    "browseArtworks": "Browse Artworks",
+    "helpText": "Need help?",
+    "artworkTitle": "Artwork Not Found",
+    "artworkDescription": "The artwork you requested does not exist or has been removed. Browse other works in the gallery.",
+    "artworkCta": "View All Artworks",
+    "artistTitle": "Artist Not Found",
+    "artistDescription": "No artworks found for this artist. Browse other works in the gallery.",
+    "artistCta": "View All Artworks"
   }
 }

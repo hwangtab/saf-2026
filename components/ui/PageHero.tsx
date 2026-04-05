@@ -2,6 +2,8 @@ import { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import PageHeroBackground from './PageHeroBackground';
 import SawtoothDivider from './SawtoothDivider';
+import Breadcrumb from './Breadcrumb';
+import type { BreadcrumbItem } from '@/types';
 
 // ... (imports)
 
@@ -16,6 +18,7 @@ interface PageHeroProps {
   dividerColor?: string;
   id?: string;
   descriptionId?: string;
+  breadcrumbItems?: BreadcrumbItem[];
 }
 
 export default function PageHero({
@@ -27,6 +30,7 @@ export default function PageHero({
   dividerColor = 'text-white',
   id,
   descriptionId,
+  breadcrumbItems,
 }: PageHeroProps) {
   return (
     <section
@@ -47,6 +51,11 @@ export default function PageHero({
 
       {/* Content */}
       <div className="relative z-10 container-max text-center w-full">
+        {breadcrumbItems && breadcrumbItems.length >= 2 && (
+          <div className="flex justify-center mb-4">
+            <Breadcrumb items={breadcrumbItems} />
+          </div>
+        )}
         <h1
           id={id}
           className="font-display text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight text-white drop-shadow-lg break-keep text-balance"

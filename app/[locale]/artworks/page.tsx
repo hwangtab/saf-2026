@@ -38,10 +38,11 @@ export default async function ArtworksPage() {
       ...rest
     }: Artwork) => rest
   );
-  const breadcrumbSchema = createBreadcrumbSchema([
+  const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: SITE_URL },
     { name: tBreadcrumbs('artworks'), url: `${SITE_URL}/artworks` },
-  ]);
+  ];
+  const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
   const itemListSchema = generateArtworkListSchema(artworks, locale);
 
   return (
@@ -49,7 +50,11 @@ export default async function ArtworksPage() {
       <JsonLdScript data={breadcrumbSchema} />
       <JsonLdScript data={itemListSchema} />
       <div className="min-h-screen">
-        <PageHero title={t('title')} description={t('heroDescription')}>
+        <PageHero
+          title={t('title')}
+          description={t('heroDescription')}
+          breadcrumbItems={breadcrumbItems}
+        >
           <ShareButtonsWrapper
             url={PAGE_URL}
             title={t('shareTitle')}
