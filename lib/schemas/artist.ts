@@ -125,6 +125,7 @@ export function generateArtistSchema(artist: ArtistSchemaInput) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Person',
+    '@id': artist.url,
     name: artist.name,
     description: artist.description,
     image: artist.image
@@ -154,6 +155,7 @@ export function generateEnhancedArtistSchema(artist: EnhancedArtistSchemaInput) 
   return {
     '@context': 'https://schema.org',
     '@type': 'Person',
+    '@id': artist.url,
     name: artist.name,
     description: artist.description,
     image: artist.image,
