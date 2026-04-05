@@ -40,16 +40,21 @@ export default async function ArchiveHubPage() {
   const locale = resolveLocale(await getLocale());
   const pageUrl = buildLocaleUrl('/archive', locale);
   const tBreadcrumbs = await getTranslations('breadcrumbs');
-  const breadcrumbSchema = createBreadcrumbSchema([
+  const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: SITE_URL },
     { name: tBreadcrumbs('archive'), url: pageUrl },
-  ]);
+  ];
+  const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
 
   if (locale === 'en') {
     return (
       <>
         <JsonLdScript data={breadcrumbSchema} />
-        <PageHero title="Archive" description="The SAF journey for artist mutual-aid." />
+        <PageHero
+          title="Archive"
+          description="The SAF journey for artist mutual-aid."
+          breadcrumbItems={breadcrumbItems}
+        />
 
         <Section variant="white" className="min-h-[60vh] pb-24 md:pb-32">
           <div className="container-max">
@@ -116,7 +121,11 @@ export default async function ArchiveHubPage() {
   return (
     <>
       <JsonLdScript data={breadcrumbSchema} />
-      <PageHero title="아카이브" description="예술인 상호부조를 위한 씨앗페의 발자취입니다." />
+      <PageHero
+        title="아카이브"
+        description="예술인 상호부조를 위한 씨앗페의 발자취입니다."
+        breadcrumbItems={breadcrumbItems}
+      />
 
       <Section variant="white" className="min-h-[60vh] pb-24 md:pb-32">
         <div className="container-max">

@@ -71,11 +71,12 @@ export default async function Archive2026Page() {
 
   // JSON-LD Schema for Event
   const eventSchema = generateExhibitionSchema(exhibitionReviews, locale);
-  const breadcrumbSchema = createBreadcrumbSchema([
+  const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: SITE_URL },
     { name: tBreadcrumbs('archive'), url: archiveUrl },
     { name: tBreadcrumbs('archive2026'), url: pageUrl },
-  ]);
+  ];
+  const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
 
   if (locale === 'en') {
     return (
@@ -86,6 +87,7 @@ export default async function Archive2026Page() {
           title="2026 Offline Exhibition"
           description="A 12-day exhibition record at Insa Art Center"
           dividerColor="text-red-50"
+          breadcrumbItems={breadcrumbItems}
         >
           <ShareButtonsWrapper
             url={canonicalUrl}
@@ -181,6 +183,7 @@ export default async function Archive2026Page() {
         title="2026 오프라인 전시"
         description="인사아트센터에서 진행된 12일간의 기록"
         dividerColor="text-red-50"
+        breadcrumbItems={breadcrumbItems}
       >
         <ShareButtonsWrapper url={canonicalUrl} title={shareTitle} description={shareDescription} />
       </PageHero>

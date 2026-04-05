@@ -110,11 +110,12 @@ export default async function Archive2023Page() {
     },
   };
 
-  const breadcrumbSchema = createBreadcrumbSchema([
+  const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: SITE_URL },
     { name: tBreadcrumbs('archive'), url: archiveUrl },
     { name: tBreadcrumbs('archive2023'), url: pageUrl },
-  ]);
+  ];
+  const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
 
   return (
     <>
@@ -129,6 +130,7 @@ export default async function Archive2023Page() {
         }
         dividerColor="text-sun-soft"
         className="py-24 md:py-32"
+        breadcrumbItems={breadcrumbItems}
       >
         <ShareButtonsWrapper url={currentUrl} title={pageTitle} description={pageDescription} />
       </PageHero>

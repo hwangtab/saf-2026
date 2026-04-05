@@ -14,6 +14,7 @@ import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { createStandardPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
+import { Link } from '@/i18n/navigation';
 
 export const revalidate = false;
 
@@ -43,10 +44,11 @@ export default async function OurProof() {
   const locale = resolveLocale(await getLocale());
   const pageUrl = buildLocaleUrl('/our-proof', locale);
   const tBreadcrumbs = await getTranslations('breadcrumbs');
-  const breadcrumbSchema = createBreadcrumbSchema([
+  const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: SITE_URL },
     { name: tBreadcrumbs('ourProof'), url: pageUrl },
-  ]);
+  ];
+  const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
 
   if (locale === 'en') {
     return (
@@ -55,6 +57,7 @@ export default async function OurProof() {
         <PageHero
           title="Our Proof"
           description="Mutual-aid finance is not a theory. 354 loans and a 95% repayment rate prove that trust-based lending to artists works."
+          breadcrumbItems={breadcrumbItems}
         >
           <ShareButtonsWrapper
             url={pageUrl}
@@ -91,9 +94,19 @@ export default async function OurProof() {
                 The data is clear.{' '}
                 <span className="text-primary font-semibold">Artists are bankable.</span>
               </p>
-              <p className="text-base text-charcoal-muted mb-6">
+              <p className="text-base text-charcoal-muted mb-4">
                 The real risk is a system that excludes artists from fair finance and pushes them
                 toward predatory lending.
+              </p>
+              <p className="text-sm text-charcoal-muted mb-6">
+                See the structural causes in{' '}
+                <Link
+                  href="/our-reality"
+                  className="text-primary-strong hover:underline font-medium"
+                >
+                  Our Reality
+                </Link>
+                .
               </p>
               <p className="text-2xl font-bold text-charcoal">
                 Trust-based finance can be both socially just and financially stable.
@@ -276,6 +289,7 @@ export default async function OurProof() {
       <PageHero
         title="우리의 증명"
         description="예술인 상호부조 대출의 실제 성과. 354건, 약 7억 원의 신뢰가 데이터로 증명되었습니다."
+        breadcrumbItems={breadcrumbItems}
       >
         <ShareButtonsWrapper
           url={PAGE_URL}
@@ -309,9 +323,16 @@ export default async function OurProof() {
                 예술인은 빚을 떼먹는 사람이 아닙니다.
               </span>
             </p>
-            <p className="text-base text-charcoal-muted mb-6">
+            <p className="text-base text-charcoal-muted mb-4">
               354건 중 95%가 제때 갚혔고 대위변제율도 5.10%에 머물러 뉴스아트(2025.05.22)가 소개한
               것처럼 일반 금융기관 저신용 대출 연체율보다 낮은 수준이 유지되고 있습니다.
+            </p>
+            <p className="text-sm text-charcoal-muted mb-6">
+              예술인이 처한 금융 배제의 구조적 원인은{' '}
+              <Link href="/our-reality" className="text-primary-strong hover:underline font-medium">
+                우리의 현실
+              </Link>
+              에서 확인하세요.
             </p>
             <p className="text-2xl font-bold text-charcoal">
               위험한 것은 이들을 약탈하도록 방치하는 현재의 금융 시스템입니다.

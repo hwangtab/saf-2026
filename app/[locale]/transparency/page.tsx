@@ -49,10 +49,11 @@ export default async function TransparencyPage() {
   const locale = resolveLocale(await getLocale());
   const pageUrl = buildLocaleUrl('/transparency', locale);
   const tBreadcrumbs = await getTranslations('breadcrumbs');
-  const breadcrumbSchema = createBreadcrumbSchema([
+  const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: SITE_URL },
     { name: tBreadcrumbs('transparency'), url: pageUrl },
-  ]);
+  ];
+  const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
 
   if (locale === 'en') {
     return (
@@ -61,6 +62,7 @@ export default async function TransparencyPage() {
         <PageHero
           title="Transparency Reports"
           description="Every loan, every repayment, every won — published openly. Here is the full operational record of the artist mutual aid fund."
+          breadcrumbItems={breadcrumbItems}
         >
           <ShareButtonsWrapper
             url={pageUrl}
@@ -236,6 +238,7 @@ export default async function TransparencyPage() {
       <PageHero
         title="운용 보고서"
         description="대출 한 건, 상환 한 건, 원 단위까지. 예술인 상호부조 대출 기금 운용 전 과정을 투명하게 공개합니다."
+        breadcrumbItems={breadcrumbItems}
       >
         <ShareButtonsWrapper
           url={PAGE_URL}

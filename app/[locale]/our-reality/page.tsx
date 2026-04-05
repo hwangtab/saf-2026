@@ -23,6 +23,7 @@ import { generateSAFCoreQA } from '@/lib/schemas/qa-page';
 import { createStandardPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
+import { Link } from '@/i18n/navigation';
 
 export const revalidate = 3600;
 
@@ -53,10 +54,11 @@ export default async function OurReality() {
   const pageUrl = buildLocaleUrl('/our-reality', locale);
   const testimonialsData = await getSupabaseTestimonials();
   const tBreadcrumbs = await getTranslations('breadcrumbs');
-  const breadcrumbSchema = createBreadcrumbSchema([
+  const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: SITE_URL },
     { name: tBreadcrumbs('ourReality'), url: pageUrl },
-  ]);
+  ];
+  const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
   const speakableSchema = generateSpeakableSchema([
     '#stage1-description',
     '#stage2-description',
@@ -73,6 +75,7 @@ export default async function OurReality() {
         <PageHero
           title="Our Reality"
           description="Data from the 2025 report shows structural financial exclusion faced by artists in Korea."
+          breadcrumbItems={breadcrumbItems}
         >
           <ShareButtonsWrapper
             url={pageUrl}
@@ -179,9 +182,20 @@ export default async function OurReality() {
             <SectionTitle className="mb-6">
               This is a structural issue, not a personal failure
             </SectionTitle>
-            <p className="text-lg text-charcoal-muted leading-relaxed mb-8">
+            <p className="text-lg text-charcoal-muted leading-relaxed mb-6">
               Artist financial hardship is rooted in systemic mismatch. We need financing models
               that recognize project-based livelihoods and protect creative continuity.
+            </p>
+            <p className="text-base text-charcoal-muted leading-relaxed mb-8">
+              Korea Smart Cooperative is responding with a{' '}
+              <Link href="/our-proof" className="text-primary-strong hover:underline font-medium">
+                proven mutual-aid lending program
+              </Link>
+              . Purchasing{' '}
+              <Link href="/artworks" className="text-primary-strong hover:underline font-medium">
+                artworks from participating artists
+              </Link>{' '}
+              sends all proceeds directly to the fund.
             </p>
             <CTAButtonGroup
               donateText="🤝 Join as a member"
@@ -201,6 +215,7 @@ export default async function OurReality() {
       <PageHero
         title="우리의 현실"
         description="2025 예술인 금융 재난 보고서가 밝혀낸 한국 예술인의 금융 위기의 구조적 현실"
+        breadcrumbItems={breadcrumbItems}
       >
         <ShareButtonsWrapper
           url={PAGE_URL}
@@ -408,6 +423,17 @@ export default async function OurReality() {
             <p>
               따라서 이것은 단순한 개인의 빈곤 문제가 아닌,
               <strong> 한국 문화예술 생태계의 지속가능성을 위협하는 사회적 재난</strong>입니다.
+            </p>
+            <p>
+              씨앗페는 이 구조적 문제에 대한 대안으로{' '}
+              <Link href="/our-proof" className="text-primary-strong hover:underline font-medium">
+                예술인 상호부조 대출
+              </Link>
+              을 실행하고 있으며, 데이터로 그 성과를 증명하고 있습니다.{' '}
+              <Link href="/artworks" className="text-primary-strong hover:underline font-medium">
+                출품 작가들의 작품을 구매
+              </Link>
+              하면 판매 수익 전액이 이 기금으로 귀속됩니다.
             </p>
           </div>
         </div>

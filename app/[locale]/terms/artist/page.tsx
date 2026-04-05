@@ -40,11 +40,12 @@ export default async function ArtistTermsPage() {
   const pageUrl = buildLocaleUrl(PAGE_PATH, locale);
   const termsUrl = buildLocaleUrl('/terms', locale);
   const tBreadcrumbs = await getTranslations('breadcrumbs');
-  const breadcrumbSchema = createBreadcrumbSchema([
+  const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: SITE_URL },
     { name: tBreadcrumbs('terms'), url: termsUrl },
     { name: tBreadcrumbs('termsArtist'), url: pageUrl },
-  ]);
+  ];
+  const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
 
   const doc = ARTIST_APPLICATION_TERMS_DOCUMENT;
   const effectiveDate = formatEffectiveDateForLocale(doc.effectiveDate, locale);
@@ -56,6 +57,7 @@ export default async function ArtistTermsPage() {
         <PageHero
           title="Artist Exhibition and Consignment Agreement"
           description="Full artist agreement for SAF Online. The official legal text is currently maintained in Korean."
+          breadcrumbItems={breadcrumbItems}
         />
 
         <Section variant="white" className="pb-24 md:pb-32">
@@ -103,6 +105,7 @@ export default async function ArtistTermsPage() {
       <PageHero
         title="온라인전시 및 판매위탁 계약서"
         description="씨앗페 온라인 아티스트 전시·판매위탁 계약서 전문입니다."
+        breadcrumbItems={breadcrumbItems}
       />
 
       <Section variant="white" className="pb-24 md:pb-32">
