@@ -215,12 +215,18 @@ export function generateArtworkJsonLd(
     },
   };
 
+  // priceValidUntil: 1년 후 날짜 (Google Merchant Center 유효성 유지)
+  const priceValidUntil = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .split('T')[0];
+
   // Build offers based on whether price is inquiry or numeric
   const offers = isInquiry
     ? {
         '@type': 'Offer',
         url: offerUrl,
         availability: artwork.sold ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock',
+        itemCondition: 'https://schema.org/NewCondition',
         priceSpecification: {
           '@type': 'PriceSpecification',
           valueAddedTaxIncluded: true,
@@ -234,8 +240,9 @@ export function generateArtworkJsonLd(
         url: offerUrl,
         priceCurrency: 'KRW',
         price: parseFloat(numericPrice) || 0,
-        priceValidUntil: CAMPAIGN.END_DATE,
+        priceValidUntil,
         availability: artwork.sold ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock',
+        itemCondition: 'https://schema.org/NewCondition',
         seller: sellerOrg,
         hasMerchantReturnPolicy: returnPolicy,
         shippingDetails,
