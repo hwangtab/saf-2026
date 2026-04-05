@@ -60,7 +60,7 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
 
   const baseMetadata = createPageMetadata(
     `${titleForLocale} - ${artistForLocale}`,
-    seoDescription.substring(0, 300),
+    seoDescription.substring(0, 160),
     `/artworks/${artwork.id}`,
     imageUrl,
     locale

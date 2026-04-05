@@ -53,7 +53,7 @@ export async function generateMetadata(): Promise<Metadata> {
     alternates: createLocaleAlternates('/', locale),
     openGraph: {
       type: 'website',
-      siteName: t('metaTitle').split(' - ')[0],
+      siteName: locale === 'en' ? 'SAF Online' : '씨앗페 온라인',
       title: t('metaTitle'),
       description: t('ogDescription'),
       locale: locale === 'en' ? 'en_US' : 'ko_KR',
