@@ -4,7 +4,7 @@ import { getLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import OhYoonMasonryGallery from '@/components/special/OhYoonMasonryGallery';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { OG_IMAGE } from '@/lib/constants';
+import { OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { getSupabaseArtworks } from '@/lib/supabase-data';
@@ -102,10 +102,50 @@ export default async function OhYoonPage() {
     { name: tBreadcrumbs('ohYoon'), url: pageUrl },
   ]);
 
+  const ohYoonPerson = {
+    '@type': 'Person',
+    name: '오윤',
+    alternateName: 'Oh Yoon',
+    jobTitle: locale === 'en' ? 'Artist' : '화가',
+    description:
+      locale === 'en'
+        ? "Oh Yoon (1946–1986) was a pivotal figure in Korean people's art (minjung misul), known for bold woodblock prints depicting the lives of workers and farmers."
+        : '오윤(1946–1986)은 민중미술의 대표 작가로, 노동자·농민의 삶을 담은 역동적인 판화로 한국 현대미술에 큰 족적을 남겼습니다.',
+    nationality: { '@type': 'Country', name: 'South Korea' },
+    sameAs: ['https://www.wikidata.org/wiki/Q18399737'],
+  };
+
+  const exhibitionEventSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ExhibitionEvent',
+    name: locale === 'en' ? 'Oh Yoon 40th Anniversary Special Exhibition' : '오윤 40주기 특별전',
+    description:
+      locale === 'en'
+        ? "A special online exhibition honoring the 40th anniversary of Oh Yoon's passing, presenting his selected works from the SAF Online collection."
+        : '민중미술의 거장 오윤 화백의 40주기를 기념하는 온라인 특별전. 씨앗페 온라인에 소장된 오윤 작품들을 선보입니다.',
+    url: pageUrl,
+    eventStatus: 'https://schema.org/EventScheduled',
+    eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
+    location: {
+      '@type': 'VirtualLocation',
+      url: pageUrl,
+    },
+    startDate: '2026-01-14',
+    endDate: '2026-01-26',
+    organizer: {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}#organization`,
+      name: CONTACT.ORGANIZATION_NAME,
+      url: SITE_URL,
+    },
+    about: ohYoonPerson,
+    isAccessibleForFree: true,
+  };
+
   if (locale === 'en') {
     return (
       <>
-        <JsonLdScript data={breadcrumbSchema} />
+        <JsonLdScript data={[breadcrumbSchema, exhibitionEventSchema]} />
         <div className="w-full bg-canvas-soft min-h-screen font-sans">
           <section className="relative w-full py-20 md:py-32 px-4 overflow-hidden border-b-8 border-double border-white/10 bg-charcoal">
             <div className="max-w-4xl mx-auto text-center relative z-10">
@@ -245,7 +285,7 @@ export default async function OhYoonPage() {
 
   return (
     <>
-      <JsonLdScript data={breadcrumbSchema} />
+      <JsonLdScript data={[breadcrumbSchema, exhibitionEventSchema]} />
       <div className="w-full bg-canvas-soft min-h-screen font-sans">
         {/* Hero Section */}
         <section className="relative w-full py-20 md:py-32 px-4 overflow-hidden border-b-8 border-double border-white/10 bg-charcoal">
