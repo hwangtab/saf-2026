@@ -66,8 +66,29 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
     locale
   );
 
+  const keywordBase = isEnglish
+    ? [
+        artistForLocale,
+        titleForLocale,
+        materialForLocale,
+        'Korean art',
+        'original artwork',
+        'SAF Online',
+        'buy artwork',
+      ]
+    : [
+        artwork.artist,
+        artwork.title,
+        materialForLocale,
+        '원화 구매',
+        '한국 현대미술',
+        '씨앗페 온라인',
+        '출품작',
+      ];
+
   return {
     ...baseMetadata,
+    keywords: keywordBase.filter(Boolean) as string[],
     openGraph: {
       ...baseMetadata.openGraph,
       type: 'website',
