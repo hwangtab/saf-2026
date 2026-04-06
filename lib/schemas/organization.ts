@@ -77,6 +77,15 @@ export function generateWebsiteSchema(locale: 'ko' | 'en' = 'ko') {
     accessibilityHazard: 'none',
     accessMode: ['textual', 'visual'],
     accessModeSufficient: [{ '@type': 'ItemList', itemListElement: ['textual'] }],
+    // Sitelinks Searchbox: 브랜드 검색 결과에서 직접 작품/작가 검색 가능
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: `${SITE_URL}/artworks?q={search_term_string}`,
+      },
+      'query-input': 'required name=search_term_string',
+    },
   };
 }
 
@@ -125,7 +134,7 @@ export function generateLocalBusinessSchema(locale: 'ko' | 'en' = 'ko') {
             },
           ],
         }),
-    priceRange: 'KRW',
+    priceRange: '₩50,000 ~ ₩20,000,000',
   };
 }
 
