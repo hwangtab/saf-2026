@@ -1,6 +1,6 @@
 // ⚡ AUTO-GENERATED — do not edit manually
 // Run: npm run sync-artworks
-// Last synced: 2026-04-02T04:57:24.315Z
+// Last synced: 2026-04-06T05:16:52.598Z
 // Total: 354 artworks
 
 import type { Artwork } from '@/types';
@@ -22,7 +22,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/538',
     artist_en: 'SIM_Moby',
-    title_en: '9505 SIM_Memory',
     category: '회화',
   },
   {
@@ -40,7 +39,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/537',
     title_en: 'Cityscape',
-    artist_en: 'Park Jae-dong',
     category: '회화',
   },
   {
@@ -58,7 +56,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/536',
     title_en: 'Boy by the Sea',
-    artist_en: 'Park Jae-dong',
     category: '회화',
   },
   {
@@ -76,7 +73,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/535',
     title_en: 'Hometown Village Scenery',
-    artist_en: 'Park Jae-dong',
     category: '회화',
   },
   {
@@ -94,7 +90,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/534',
     title_en: 'Girl',
-    artist_en: 'Park Jae-dong',
     category: '회화',
   },
   {
@@ -112,7 +107,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/533',
     title_en: 'Woman',
-    artist_en: 'Park Jae-dong',
     category: '회화',
   },
   {
@@ -130,7 +124,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/532',
     title_en: 'Grandmother - Oh My Dear Grandchild',
-    artist_en: 'Park Jae-dong',
     category: '아트프린트',
   },
   {
@@ -148,7 +141,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/531',
     title_en: 'Hangang Riverside',
-    artist_en: 'Park Jae-dong',
     category: '아트프린트',
   },
   {
@@ -166,7 +158,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/530',
     title_en: 'Candlelight',
-    artist_en: 'Park Jae-dong',
     category: '아트프린트',
   },
   {
@@ -184,7 +175,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/529',
     title_en: 'There Stands Haengjusanseong',
-    artist_en: 'Park Jae-dong',
     category: '아트프린트',
   },
   {
@@ -202,7 +192,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/528',
     title_en: 'First Magnolia of the Year',
-    artist_en: 'Park Jae-dong',
     category: '아트프린트',
   },
   {
@@ -220,7 +209,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/527',
     title_en: 'Lovers',
-    artist_en: 'Park Jae-dong',
     category: '아트프린트',
   },
   {
@@ -238,7 +226,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/526',
     title_en: 'Woman',
-    artist_en: 'Park Jae-dong',
     category: '아트프린트',
   },
   {
@@ -256,7 +243,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/525',
     title_en: 'Mom, Look at That Tree',
-    artist_en: 'Park Jae-dong',
     category: '아트프린트',
   },
   {
@@ -274,7 +260,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/524',
     title_en: 'On the Hillside',
-    artist_en: 'Park Jae-dong',
     category: '아트프린트',
   },
   {
@@ -292,7 +277,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/523',
     title_en: 'Seaside',
-    artist_en: 'Park Jae-dong',
     category: '아트프린트',
   },
   {
@@ -310,7 +294,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/522',
     title_en: 'Lovers Under the Moonlight',
-    artist_en: 'Park Jae-dong',
     category: '아트프린트',
   },
   {
@@ -328,7 +311,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/521',
     title_en: 'Autumn Leaves',
-    artist_en: 'Park Jae-dong',
     category: '아트프린트',
   },
   {
@@ -346,7 +328,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/520',
     title_en: 'Fly, Soar High',
-    artist_en: 'Park Jae-dong',
     category: '아트프린트',
   },
   {
@@ -364,7 +345,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/519',
     title_en: 'Giggling',
-    artist_en: 'Park Jae-dong',
     category: '아트프린트',
   },
   {
@@ -382,7 +362,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/518',
     title_en: 'Winter Night, From a Windowsill',
-    artist_en: 'Park Jae-dong',
     category: '아트프린트',
   },
   {
@@ -400,7 +379,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/517',
     title_en: "New Year's Wish",
-    artist_en: 'Park Jae-dong',
     category: '아트프린트',
   },
   {
@@ -1119,8 +1097,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/476',
     sold: true,
     sold_at: '2026-03-24T00:00:00+00:00',
-    title_en: 'Roh Moo-hyun',
-    artist_en: 'Park Jae-dong',
     category: '회화',
   },
   {
@@ -2779,7 +2755,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/362',
     title_en: 'Winter Mid-Mountain',
-    artist_en: 'Kim Su-o',
     category: '사진',
   },
   {
@@ -2798,7 +2773,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/361',
     title_en: 'Winter Hallasan',
-    artist_en: 'Kim Su-o',
     category: '사진',
   },
   {
@@ -2819,7 +2793,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     title_en: 'Morning of the Oreum',
     sold: true,
     sold_at: '2026-02-13T06:21:07+00:00',
-    artist_en: 'Kim Su-o',
     category: '사진',
   },
   {
@@ -3117,8 +3090,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/337',
     sold: true,
     sold_at: '2026-01-25T03:00:00+00:00',
-    title_en: 'Roh Moo-hyun',
-    artist_en: 'Park Jae-dong',
     category: '회화',
   },
   {
@@ -3136,7 +3107,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/336',
     title_en: 'Flower',
-    artist_en: 'Park Jae-dong',
     category: '회화',
   },
   {
@@ -3155,8 +3125,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/335',
     sold: true,
     sold_at: '2026-01-21T00:00:00+00:00',
-    title_en: 'Roh Moo-hyun (Five Works)',
-    artist_en: 'Park Jae-dong',
     category: '회화',
   },
   {
