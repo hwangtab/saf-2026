@@ -78,7 +78,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
               url: OG_IMAGE.url,
               width: OG_IMAGE.width,
               height: OG_IMAGE.height,
-              alt: OG_IMAGE.alt,
+              alt: isEn ? OG_IMAGE.altEn : OG_IMAGE.alt,
             },
           ],
     },
@@ -86,7 +86,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: 'summary_large_image',
       title: article.title,
       description,
-      images: article.thumbnail ? [article.thumbnail] : [OG_IMAGE.url],
+      images: article.thumbnail
+        ? [{ url: article.thumbnail, alt: article.title }]
+        : [{ url: OG_IMAGE.url, alt: isEn ? OG_IMAGE.altEn : OG_IMAGE.alt }],
     },
   };
 }
