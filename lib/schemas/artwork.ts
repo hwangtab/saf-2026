@@ -101,6 +101,17 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
       type: 'website',
       locale: isEnglish ? 'en_US' : 'ko_KR',
       siteName: isEnglish ? 'SAF Online' : '씨앗페 온라인',
+      // 작품별 alt로 덮어씀 — createPageMetadata의 제네릭 alt 대신 작품명 사용
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: isEnglish
+            ? `${titleForLocale} by ${artistForLocale} — SAF Online`
+            : `${artwork.artist} 작가의 작품 "${artwork.title}" — 씨앗페 온라인`,
+        },
+      ],
     },
     twitter: {
       ...baseMetadata.twitter,
@@ -114,6 +125,22 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
       }),
       'product:availability': isSold ? 'out of stock' : 'in stock',
       'product:condition': 'new',
+      // Twitter/X Product Card 라벨 — 카드에 가격·상태 직접 표시
+      'twitter:label1': isEnglish ? 'Price' : '가격',
+      'twitter:data1':
+        numericPriceValue !== null
+          ? `₩${numericPriceValue.toLocaleString('ko-KR')}`
+          : isEnglish
+            ? 'Inquiry'
+            : '문의',
+      'twitter:label2': isEnglish ? 'Status' : '판매 상태',
+      'twitter:data2': isSold
+        ? isEnglish
+          ? 'Sold'
+          : '판매 완료'
+        : isEnglish
+          ? 'Available'
+          : '판매 중',
     },
   };
 }
