@@ -79,6 +79,7 @@ export function createStandardPageMetadata(
       description,
       url: localizedPageUrl || pageUrl,
       locale: locale === 'en' ? 'en_US' : 'ko_KR',
+      siteName: locale === 'en' ? 'SAF Online' : '씨앗페 온라인',
       images: [{ url: OG_IMAGE.url, width: OG_IMAGE.width, height: OG_IMAGE.height, alt: ogAlt }],
     },
     twitter: {

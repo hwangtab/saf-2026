@@ -49,7 +49,7 @@ export async function generateMetadata(): Promise<Metadata> {
     keywords:
       locale === 'en'
         ? 'Korean contemporary art, original artworks for sale, art gallery, artist mutual aid, SAF Online, Seed Art Festival, paintings, prints, sculpture, photography'
-        : '한국 현대미술, 원화 구매, 미술 작품 판매, 씨앗페, 씨앗페 온라인, 예술인 상호부조, 회화, 판화, 조각, 사진',
+        : '한국 현대미술, 작품 구매, 미술 작품 판매, 씨앗페, 씨앗페 온라인, 예술인 상호부조, 회화, 판화, 조각, 사진',
     alternates: createLocaleAlternates('/', locale),
     openGraph: {
       type: 'website',

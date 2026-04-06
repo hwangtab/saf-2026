@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import localFont from 'next/font/local';
 import { getLocale } from 'next-intl/server';
 import { Analytics } from '@vercel/analytics/react';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
@@ -10,6 +11,37 @@ import {
 } from '@/lib/seo-utils';
 import { BRAND_COLORS } from '@/lib/colors';
 import '@/styles/globals.css';
+
+const UNICODE_RANGE =
+  'U+0000-00FF, U+0100-024F, U+2000-206F, U+2190-21FF, U+2200-22FF, U+3000-303F, U+3131-318E, U+AC00-D7AF, U+F900-FAFF, U+FE10-FE1F, U+FF00-FFEF';
+
+const paperlogy = localFont({
+  src: [
+    { path: '../public/fonts/Paperlogy-4Regular.woff2', weight: '400', style: 'normal' },
+    { path: '../public/fonts/Paperlogy-5Medium.woff2', weight: '500', style: 'normal' },
+    { path: '../public/fonts/Paperlogy-7Bold.woff2', weight: '700', style: 'normal' },
+  ],
+  variable: '--font-paperlogy',
+  display: 'swap',
+  preload: true,
+  declarations: [{ prop: 'unicode-range', value: UNICODE_RANGE }],
+});
+
+const partialSans = localFont({
+  src: '../public/fonts/PartialSansKR-Regular.woff2',
+  variable: '--font-partial-sans',
+  display: 'swap',
+  preload: true,
+  declarations: [{ prop: 'unicode-range', value: UNICODE_RANGE }],
+});
+
+const schoolSafetyPoster = localFont({
+  src: '../public/fonts/HakgyoansimPosterB.woff2',
+  variable: '--font-section',
+  display: 'swap',
+  preload: false,
+  declarations: [{ prop: 'unicode-range', value: UNICODE_RANGE }],
+});
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -34,7 +66,7 @@ export const metadata: Metadata = {
     },
   },
   description:
-    '한국 현대미술 원화 127점을 온라인에서 구매하세요. 회화, 판화, 사진, 조각 등 다양한 장르의 작품을 합리적인 가격에 만나볼 수 있습니다.',
+    '한국 현대미술 작품 127점을 온라인에서 구매하세요. 회화, 판화, 사진, 조각 등 다양한 장르의 작품을 합리적인 가격에 만나볼 수 있습니다.',
   authors: [{ name: CONTACT.ORGANIZATION_NAME }],
   icons: {
     icon: '/favicon.ico',
@@ -46,7 +78,7 @@ export const metadata: Metadata = {
     url: SITE_URL,
     title: '씨앗페 온라인 | 한국 현대미술 작품 구매',
     description:
-      '한국 현대미술 원화 127점을 온라인에서 구매하세요. 회화, 판화, 사진, 조각 등 다양한 장르의 작품을 합리적인 가격에 만나볼 수 있습니다.',
+      '한국 현대미술 작품 127점을 온라인에서 구매하세요. 회화, 판화, 사진, 조각 등 다양한 장르의 작품을 합리적인 가격에 만나볼 수 있습니다.',
     siteName: '씨앗페 온라인',
     images: [
       {
@@ -61,7 +93,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     site: '@saf2026',
     title: '씨앗페 온라인',
-    description: '한국 현대미술 원화 127점 온라인 구매 — 회화, 판화, 사진, 조각',
+    description: '한국 현대미술 작품 127점 온라인 구매 — 회화, 판화, 사진, 조각',
     images: [OG_IMAGE.url],
   },
   robots: {
@@ -94,22 +126,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const localBusinessSchema = generateLocalBusinessSchema(resolvedLocale);
 
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html
+      lang={locale}
+      className={`${paperlogy.variable} ${partialSans.variable} ${schoolSafetyPoster.variable}`}
+      suppressHydrationWarning
+    >
       <head>
-        <link
-          rel="preload"
-          href="/fonts/Paperlogy-4Regular.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
-        <link
-          rel="preload"
-          href="/fonts/PartialSansKR-Regular.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
         {process.env.NEXT_PUBLIC_SUPABASE_URL && (
           <>
             <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />

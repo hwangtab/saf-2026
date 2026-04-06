@@ -33,7 +33,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const path = `/news/${article.id}`;
   const pageUrl = buildLocaleUrl(path, locale);
-  const description = article.description || `${article.source} · ${article.date}`;
+  const isEn = locale === 'en';
+  const description = article.description
+    ? article.description.substring(0, 160)
+    : isEn
+      ? `Coverage by ${article.source}${article.date ? ` (${article.date})` : ''}. Reporting on financial discrimination against Korean artists and the mutual aid campaign.`
+      : `${article.source}의 씨앗페 온라인 보도${article.date ? ` (${article.date})` : ''}. 예술인 금융 차별 문제와 상호부조 캠페인을 조명합니다.`;
 
   return {
     title: article.title,
@@ -75,7 +80,12 @@ export default async function NewsArticlePage({ params }: Props) {
 
   if (!article) notFound();
 
-  const description = article.description || `${article.source} · ${article.date}`;
+  const isEn = locale === 'en';
+  const description = article.description
+    ? article.description.substring(0, 160)
+    : isEn
+      ? `Coverage by ${article.source}${article.date ? ` (${article.date})` : ''}. Reporting on financial discrimination against Korean artists and the mutual aid campaign.`
+      : `${article.source}의 씨앗페 온라인 보도${article.date ? ` (${article.date})` : ''}. 예술인 금융 차별 문제와 상호부조 캠페인을 조명합니다.`;
 
   const articleSchema = generateNewsArticleSchema({
     title: article.title,

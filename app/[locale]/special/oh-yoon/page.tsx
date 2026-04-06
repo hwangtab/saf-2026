@@ -32,8 +32,10 @@ const isOhYoonArtist = (artist: string): boolean => {
 const PAGE_COPY = {
   ko: {
     title: '오윤 40주기 특별전: Oh Yoon 40th Anniversary Special Exhibition',
-    description: '씨앗페 온라인에서 진행하는 민중미술의 거장 오윤의 40주기 특별전입니다.',
-    ogDescription: '민중미술의 거장 오윤의 작품 세계를 만나는 온라인 특별전 페이지입니다.',
+    description:
+      '민중미술의 거장 오윤(1946–1986) 40주기 특별전. 목판화에 시대의 아픔과 민중의 생명력을 새긴 오윤의 대표작을 씨앗페 온라인에서 감상하고 소장하세요. 현실, 한(恨), 함께하는 미술이라는 세 가지 테마로 오윤의 예술 세계와 민중미술의 역사를 조명하는 온라인 전시입니다.',
+    ogDescription:
+      '민중미술의 거장 오윤 40주기 특별전. 목판화로 시대를 기록한 오윤의 대표작을 씨앗페 온라인에서 만나보세요.',
     ogAlt: '오윤 40주기 특별전 대표 이미지',
     twitterTitle: '오윤 40주기 특별전',
     twitterDescription: '민중미술의 거장 오윤의 작품 세계를 만나는 온라인 특별전',
@@ -41,9 +43,9 @@ const PAGE_COPY = {
   en: {
     title: 'Oh Yoon 40th Anniversary Special Exhibition',
     description:
-      'A special online exhibition at SAF Online honoring 40 years since the artist Oh Yoon.',
+      "A special online exhibition marking the 40th anniversary of Oh Yoon (1946–1986), a pivotal figure in Korean people's art (minjung misul). Explore his bold woodblock prints that carved the pain and resilience of ordinary people into art. View and collect selected works at SAF Online.",
     ogDescription:
-      "Explore the world of Oh Yoon, a major figure in Korean people's art, through this special online exhibition.",
+      "Oh Yoon 40th Anniversary Special Exhibition. Explore the bold woodblock prints of a pivotal figure in Korean people's art at SAF Online.",
     ogAlt: 'Oh Yoon 40th Anniversary Special Exhibition key visual',
     twitterTitle: 'Oh Yoon 40th Anniversary Special Exhibition',
     twitterDescription:

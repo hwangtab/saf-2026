@@ -73,6 +73,8 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
         materialForLocale,
         'Korean art',
         'original artwork',
+        artwork.category || null,
+        artwork.category ? `buy ${artwork.category}` : null,
         'SAF Online',
         'buy artwork',
       ]
@@ -80,7 +82,9 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
         artwork.artist,
         artwork.title,
         materialForLocale,
-        '원화 구매',
+        '작품 구매',
+        artwork.category || null,
+        artwork.category ? `${artwork.category} 구매` : null,
         '한국 현대미술',
         '씨앗페 온라인',
         '출품작',
@@ -88,7 +92,7 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
 
   return {
     ...baseMetadata,
-    keywords: keywordBase.filter(Boolean) as string[],
+    keywords: keywordBase.filter((k): k is string => Boolean(k)),
     openGraph: {
       ...baseMetadata.openGraph,
       type: 'website',
