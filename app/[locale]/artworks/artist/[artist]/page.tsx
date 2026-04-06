@@ -71,9 +71,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const displayArtistName =
     locale === 'en' && artistArtworks[0]?.artist_en ? artistArtworks[0].artist_en : artistName;
   const formattedName = formatArtistName(displayArtistName, locale !== 'en');
+  const availableCount = artistArtworks.filter((a) => !a.sold).length;
+  const availabilitySnippet =
+    availableCount > 0
+      ? locale === 'en'
+        ? ` ${availableCount} work${availableCount > 1 ? 's' : ''} available now.`
+        : ` 현재 ${availableCount}점 구매 가능.`
+      : locale === 'en'
+        ? ' All works sold.'
+        : ' 전 작품 판매 완료.';
   const seoDescription =
     t('metaDescription', { artist: formattedName }) +
-    (profileSnippet || noteSnippet || t('metaFallback'));
+    (profileSnippet || noteSnippet || t('metaFallback')) +
+    availabilitySnippet;
 
   const metaTitle = t('metaTitle', { artist: formattedName });
   const primaryCategory = artistArtworks[0]?.category;
@@ -222,10 +232,15 @@ export default async function ArtistPage({ params }: Props) {
   // AggregateOffer: 작가명 검색 시 가격 범위를 리치 스니펫에 노출
   const aggregateOfferSchema = generateGalleryAggregateOffer(artistArtworks);
   // ItemList: 작가의 작품 목록 — 검색 결과에서 개별 작품 카드 노출 가능
-  const itemListSchema = generateArtworkListSchema(artistArtworks, locale, artistArtworks.length);
   const artistPageUrl = buildLocaleUrl(
     `/artworks/artist/${encodeURIComponent(artistName)}`,
     locale
+  );
+  const itemListSchema = generateArtworkListSchema(
+    artistArtworks,
+    locale,
+    artistArtworks.length,
+    artistPageUrl
   );
   const collectionPageSchema = {
     '@context': 'https://schema.org',
@@ -238,6 +253,7 @@ export default async function ArtistPage({ params }: Props) {
     url: artistPageUrl,
     isPartOf: { '@id': `${SITE_URL}#website` },
     inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
+    mainEntity: { '@id': `${artistPageUrl}#item-list` },
   };
 
   return (
