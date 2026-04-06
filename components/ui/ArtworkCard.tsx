@@ -54,8 +54,18 @@ const getImageAlt = (
   untitledLabel: string,
   unknownArtistLabel: string,
   locale?: string
-) =>
-  `${getSafeTitle(artwork, untitledLabel, locale)} - ${getSafeArtist(artwork, unknownArtistLabel, locale)}`;
+) => {
+  const title = getSafeTitle(artwork, untitledLabel, locale);
+  const artist = getSafeArtist(artwork, unknownArtistLabel, locale);
+  // 재료 정보가 있고 미확인이 아닌 경우 alt에 포함 (영어 locale에서 한글 재료는 제외)
+  const rawMaterial = artwork.material;
+  const hasMaterial =
+    rawMaterial &&
+    rawMaterial !== '확인 중' &&
+    rawMaterial !== 'Pending' &&
+    !(locale === 'en' && containsHangul(rawMaterial));
+  return hasMaterial ? `${title}, ${rawMaterial} - ${artist}` : `${title} - ${artist}`;
+};
 
 function SoldBadge({ variant }: { variant: ArtworkCardVariant }) {
   return (
