@@ -488,6 +488,8 @@ export function generateArtworkJsonLd(
       ? new Date(artwork.sold_at).toISOString().slice(0, 10)
       : CAMPAIGN.END_DATE,
     inLanguage: isEnglish ? 'en-US' : 'ko-KR',
+    author: sellerOrg,
+    publisher: sellerOrg,
     speakable: {
       '@type': 'SpeakableSpecification',
       cssSelector: ['#artwork-title', '#artist-name', '#artist-profile', '#artist-note'],
