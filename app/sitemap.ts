@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next';
 import { SITE_URL, CAMPAIGN } from '@/lib/constants';
 import { routing } from '@/i18n/routing';
 import { getSupabaseArtworks, getSupabaseNews } from '@/lib/supabase-data';
+import { CATEGORY_EN_MAP } from '@/lib/artwork-category';
 
 export const dynamic = 'force-static';
 
@@ -161,5 +162,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }))
   );
 
-  return [...staticPages, ...artworkPages, ...artistPages, ...newsPages];
+  // Category landing pages (SEO: "한국 회화 작품 구매" 등 카테고리별 구매 의도 검색 대응)
+  const categoryPages: MetadataRoute.Sitemap = Object.keys(CATEGORY_EN_MAP).flatMap((category) => {
+    const encodedCategory = encodeURIComponent(category);
+    return routing.locales.map((locale) => ({
+      url: localizedUrl(baseUrl, `/artworks/category/${encodedCategory}`, locale),
+      lastModified: exhibitionEndDate,
+      changeFrequency: 'monthly' as const,
+      priority: locale === routing.defaultLocale ? 0.75 : 0.67,
+      alternates: createAlternates(baseUrl, `/artworks/category/${encodedCategory}`),
+    }));
+  });
+
+  return [...staticPages, ...categoryPages, ...artworkPages, ...artistPages, ...newsPages];
 }
