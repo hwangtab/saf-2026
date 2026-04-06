@@ -18,6 +18,7 @@ import {
   generateArtworkListSchema,
   generateGalleryAggregateOffer,
 } from '@/lib/seo-utils';
+import { generateArtworkPurchaseHowTo } from '@/lib/schemas/howto';
 import { getSupabaseArtworks } from '@/lib/supabase-data';
 import type { Artwork, ArtworkListItem } from '@/types';
 
@@ -166,11 +167,22 @@ export default async function CategoryPage({ params }: Props) {
     availableCount,
   });
 
+  // 관련 카테고리 (현재 카테고리 제외, 작품 수 기준 정렬)
+  const categoryCounts = SUPPORTED_CATEGORIES.map((cat) => ({
+    category: cat,
+    displayName: isEnglish ? getCategoryEnName(cat) : cat,
+    count: allArtworks.filter((a) => a.category === cat).length,
+    path: `/artworks/category/${encodeURIComponent(cat)}`,
+  }))
+    .filter((c) => c.category !== category && c.count > 0)
+    .sort((a, b) => b.count - a.count);
+
   return (
     <>
       <JsonLdScript data={breadcrumbSchema} />
       <JsonLdScript data={itemListSchema} />
       {aggregateOfferSchema && <JsonLdScript data={aggregateOfferSchema} />}
+      <JsonLdScript data={generateArtworkPurchaseHowTo(locale)} />
 
       <div className="min-h-screen">
         <PageHero
@@ -188,6 +200,29 @@ export default async function CategoryPage({ params }: Props) {
         <Section>
           <ArtworkGalleryWithSort artworks={listArtworks} />
         </Section>
+
+        {/* 관련 카테고리 내부 링크 — 검색엔진 크롤링 및 구매자 탐색 지원 */}
+        {categoryCounts.length > 0 && (
+          <Section variant="white" className="pb-12">
+            <div className="container-max">
+              <p className="text-sm font-medium text-gray-500 mb-3">
+                {isEnglish ? 'Browse other categories' : '다른 카테고리 작품'}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {categoryCounts.map((cat) => (
+                  <a
+                    key={cat.category}
+                    href={buildLocaleUrl(cat.path, locale)}
+                    className="px-4 py-2 text-sm font-medium rounded-full border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-colors"
+                  >
+                    {cat.displayName}
+                    <span className="ml-1 text-gray-400 text-xs">{cat.count}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </Section>
+        )}
 
         <GalleryCampaignBanner />
       </div>

@@ -12,7 +12,9 @@ import { SITE_URL } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { createBreadcrumbSchema, generateArtworkListSchema } from '@/lib/seo-utils';
+import { generateArtworkPurchaseHowTo } from '@/lib/schemas/howto';
 import { getSupabaseArtworks } from '@/lib/supabase-data';
+import { parseArtworkPrice } from '@/lib/schemas/utils';
 import type { Artwork, ArtworkListItem } from '@/types';
 
 export const revalidate = 600;
@@ -22,8 +24,23 @@ const PAGE_URL = `${SITE_URL}/artworks`;
 export async function generateMetadata(): Promise<Metadata> {
   const locale = (await getLocale()) === 'en' ? 'en' : 'ko';
   const t = await getTranslations('artworksPage');
+
+  // 실시간 작품 수와 가격 범위를 메타 description에 반영
+  const artworks = await getSupabaseArtworks();
+  const availableCount = artworks.filter((a) => !a.sold).length;
+  const prices = artworks
+    .map((a) => parseArtworkPrice(a.price))
+    .filter((p): p is number => p !== null && p > 0);
+  const minPrice = prices.length > 0 ? Math.min(...prices).toLocaleString('ko-KR') : null;
+  const maxPrice = prices.length > 0 ? Math.max(...prices).toLocaleString('ko-KR') : null;
+
+  const dynamicDescription =
+    locale === 'en'
+      ? `Browse ${artworks.length} original Korean artworks (${availableCount} available) — paintings, prints, photography, sculpture. Price range ₩${minPrice}–₩${maxPrice}. Free shipping, 7-day returns.`
+      : `씨앗페 온라인에서 총 ${artworks.length}점의 작품 중 현재 ${availableCount}점 구매 가능. 가격대 ₩${minPrice}–₩${maxPrice}. 무료 배송, 7일 반품. 회화·판화·사진·조각 등 다양한 장르.`;
+
   return {
-    ...createPageMetadata(t('title'), t('metaDescription'), '/artworks', undefined, locale),
+    ...createPageMetadata(t('title'), dynamicDescription, '/artworks', undefined, locale),
     keywords:
       locale === 'en'
         ? 'Korean art, contemporary art, paintings for sale, original artworks, prints, sculpture, photography, art gallery'
@@ -56,6 +73,7 @@ export default async function ArtworksPage() {
     <>
       <JsonLdScript data={breadcrumbSchema} />
       <JsonLdScript data={itemListSchema} />
+      <JsonLdScript data={generateArtworkPurchaseHowTo(locale)} />
       <div className="min-h-screen">
         <PageHero
           title={t('title')}

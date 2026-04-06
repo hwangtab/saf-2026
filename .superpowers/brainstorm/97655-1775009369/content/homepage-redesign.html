@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAF 2026 Homepage Redesign Mockup</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a1a; color: #fff; }
+
+  /* === SECTION 1: Gallery Wall Hero === */
+  .hero-gallery {
+    min-height: 100vh;
+    background: #111;
+    padding: 80px 24px 60px;
+    position: relative;
+  }
+  .hero-gallery::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 15%, transparent 85%, rgba(0,0,0,0.8) 100%);
+    z-index: 2;
+    pointer-events: none;
+  }
+  .hero-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 16px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(10px);
+  }
+  .hero-nav .logo { font-size: 20px; font-weight: 700; letter-spacing: 2px; }
+  .hero-nav .nav-links { display: flex; gap: 24px; font-size: 14px; opacity: 0.8; }
+  .hero-nav .nav-cta { background: #F79824; color: #000; padding: 8px 20px; border-radius: 6px; font-weight: 600; font-size: 14px; }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 8px;
+    height: calc(100vh - 200px);
+    position: relative;
+    z-index: 1;
+  }
+  .gallery-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.3s;
+  }
+  .gallery-item:hover { transform: scale(1.02); z-index: 3; }
+  .gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .gallery-item .overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 16px;
+  }
+  .gallery-item:hover .overlay { opacity: 1; }
+  .overlay .art-title { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+  .overlay .art-artist { font-size: 12px; opacity: 0.7; margin-bottom: 4px; }
+  .overlay .art-price { font-size: 14px; font-weight: 700; color: #F79824; }
+  .overlay .art-buy {
+    margin-top: 8px;
+    background: #F79824;
+    color: #000;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    width: fit-content;
+  }
+
+  /* Featured large items */
+  .gallery-item:nth-child(1) { grid-column: 1 / 3; grid-row: 1 / 3; }
+  .gallery-item:nth-child(5) { grid-column: 3 / 5; grid-row: 2 / 4; }
+
+  /* Hero overlay text */
+  .hero-overlay-text {
+    position: absolute;
+    bottom: 48px;
+    left: 32px;
+    z-index: 10;
+  }
+  .hero-overlay-text h1 {
+    font-size: 48px;
+    font-weight: 300;
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+  }
+  .hero-overlay-text p {
+    font-size: 16px;
+    opacity: 0.7;
+    margin-bottom: 16px;
+  }
+  .hero-overlay-text .hero-cta {
+    display: inline-block;
+    background: #F79824;
+    color: #000;
+    padding: 12px 32px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 16px;
+    text-decoration: none;
+  }
+
+  /* === MISSION BANNER === */
+  .mission-banner {
+    background: #FFF9E8;
+    padding: 16px 32px;
+    text-align: center;
+    color: #31393C;
+    font-size: 15px;
+    border-bottom: 1px solid rgba(33,118,255,0.15);
+  }
+  .mission-banner a { color: #2176FF; font-weight: 600; text-decoration: none; margin-left: 12px; }
+
+  /* === SECTION 2: Featured Slider (Dark) === */
+  .featured-section {
+    background: #1a1d1f;
+    padding: 80px 32px;
+  }
+  .section-label {
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-size: 12px;
+    color: #F79824;
+    margin-bottom: 8px;
+  }
+  .section-title-dark {
+    font-size: 36px;
+    font-weight: 300;
+    color: #fff;
+    margin-bottom: 40px;
+  }
+  .artwork-scroll {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding-bottom: 16px;
+    scrollbar-width: none;
+  }
+  .artwork-scroll::-webkit-scrollbar { display: none; }
+  .artwork-card-dark {
+    flex-shrink: 0;
+    width: 240px;
+    background: #25292b;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .artwork-card-dark:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,0,0,0.5); }
+  .artwork-card-dark .card-img {
+    width: 100%;
+    aspect-ratio: 4/5;
+    object-fit: cover;
+  }
+  .artwork-card-dark .card-info { padding: 14px; }
+  .artwork-card-dark .card-info h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; color: #fff; }
+  .artwork-card-dark .card-info .artist { font-size: 12px; color: rgba(255,255,255,0.5); margin-bottom: 6px; }
+  .artwork-card-dark .card-info .price { font-size: 14px; font-weight: 700; color: #FDCA40; }
+
+  /* === SECTION 3: Impact Line (Light) === */
+  .impact-line {
+    background: #FFF9E8;
+    padding: 60px 32px;
+    text-align: center;
+  }
+  .impact-stat {
+    display: flex;
+    justify-content: center;
+    gap: 80px;
+    margin-bottom: 24px;
+  }
+  .impact-stat .num { font-size: 56px; font-weight: 700; color: #2176FF; }
+  .impact-stat .label { font-size: 14px; color: #555E67; margin-top: 4px; }
+  .impact-msg {
+    font-size: 20px;
+    color: #31393C;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+  .impact-msg strong { color: #2176FF; }
+
+  /* === SECTION 4: Category Navigation === */
+  .category-section {
+    background: #111;
+    padding: 80px 32px;
+  }
+  .section-title-light {
+    font-size: 36px;
+    font-weight: 300;
+    color: #fff;
+    margin-bottom: 40px;
+    text-align: center;
+  }
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .category-card {
+    position: relative;
+    aspect-ratio: 3/4;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s;
+  }
+  .category-card:hover { transform: scale(1.03); }
+  .category-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .category-card .cat-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 40%, transparent 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 24px;
+  }
+  .category-card .cat-name { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .category-card .cat-count { font-size: 14px; opacity: 0.6; }
+
+  /* === SECTION 5: Artist Spotlight === */
+  .artist-section {
+    background: #FFF9E8;
+    padding: 80px 32px;
+  }
+  .artist-section .section-label { color: #2176FF; }
+  .artist-card {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .artist-profile {
+    text-align: center;
+  }
+  .artist-avatar {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+    border: 4px solid #fff;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  .artist-name { font-size: 28px; font-weight: 700; color: #31393C; margin-bottom: 8px; }
+  .artist-bio { font-size: 14px; color: #555E67; line-height: 1.7; max-width: 300px; margin: 0 auto 16px; }
+  .artist-link { color: #2176FF; font-weight: 600; font-size: 14px; text-decoration: none; }
+
+  .artist-works {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .artist-work {
+    aspect-ratio: 4/5;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.3s;
+  }
+  .artist-work:hover { transform: scale(1.05); }
+  .artist-work img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .artist-work .work-price {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    background: rgba(0,0,0,0.7);
+    color: #FDCA40;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  /* === SECTION 6: CTA === */
+  .final-cta {
+    background: #2176FF;
+    padding: 80px 32px;
+    text-align: center;
+    color: #fff;
+  }
+  .final-cta h2 { font-size: 36px; font-weight: 300; margin-bottom: 12px; }
+  .final-cta p { font-size: 16px; opacity: 0.8; margin-bottom: 32px; }
+  .final-cta .cta-btn {
+    display: inline-block;
+    background: #fff;
+    color: #2176FF;
+    padding: 14px 40px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 16px;
+    text-decoration: none;
+  }
+
+  /* === FAQ === */
+  .faq-section {
+    background: #FFF9E8;
+    padding: 80px 32px;
+  }
+  .faq-section h2 { font-size: 36px; font-weight: 300; color: #31393C; text-align: center; margin-bottom: 40px; }
+  .faq-list { max-width: 700px; margin: 0 auto; }
+  .faq-item {
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    padding: 20px 0;
+    cursor: pointer;
+  }
+  .faq-item .q { font-size: 16px; font-weight: 600; color: #31393C; display: flex; justify-content: space-between; align-items: center; }
+  .faq-item .q::after { content: '+'; font-size: 24px; color: #999; }
+
+  /* Placeholder images */
+  .ph { display: block; width: 100%; height: 100%; }
+  .ph-1 { background: linear-gradient(135deg, #2c5364, #203a43, #0f2027); }
+  .ph-2 { background: linear-gradient(135deg, #834d9b, #d04ed6); }
+  .ph-3 { background: linear-gradient(135deg, #e65c00, #f9d423); }
+  .ph-4 { background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d); }
+  .ph-5 { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); }
+  .ph-6 { background: linear-gradient(135deg, #136a8a, #267871); }
+  .ph-7 { background: linear-gradient(135deg, #c94b4b, #4b134f); }
+  .ph-8 { background: linear-gradient(135deg, #56ab2f, #a8e063); }
+
+  .section-badge {
+    position: fixed;
+    top: 70px;
+    right: 16px;
+    background: rgba(247,152,36,0.9);
+    color: #000;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    z-index: 99;
+    letter-spacing: 1px;
+  }
+
+  @media (max-width: 768px) {
+    .gallery-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(4, 1fr); }
+    .gallery-item:nth-child(1) { grid-column: 1 / 3; grid-row: 1 / 2; }
+    .gallery-item:nth-child(5) { grid-column: 1 / 3; grid-row: 3 / 4; }
+    .category-grid { grid-template-columns: repeat(2, 1fr); }
+    .artist-card { grid-template-columns: 1fr; }
+    .impact-stat { gap: 40px; }
+    .hero-overlay-text h1 { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="section-badge">MOCKUP</div>
+
+<!-- NAV -->
+<div class="hero-nav">
+  <div class="logo">SAF 2026</div>
+  <div class="nav-links">
+    <span>전시 작품</span>
+    <span>소개</span>
+    <span>아카이브</span>
+  </div>
+  <span class="nav-cta">작품 구매</span>
+</div>
+
+<!-- SECTION 1: Gallery Wall Hero -->
+<section class="hero-gallery">
+  <div class="gallery-grid">
+    <div class="gallery-item">
+      <div class="ph ph-1"></div>
+      <div class="overlay">
+        <div class="art-title">무제의 풍경 #12</div>
+        <div class="art-artist">김예술</div>
+        <div class="art-price">₩2,500,000</div>
+        <button class="art-buy">구매하기</button>
+      </div>
+    </div>
+    <div class="gallery-item">
+      <div class="ph ph-2"></div>
+      <div class="overlay">
+        <div class="art-title">The great resurrection</div>
+        <div class="art-artist">박현대</div>
+        <div class="art-price">₩1,800,000</div>
+        <button class="art-buy">구매하기</button>
+      </div>
+    </div>
+    <div class="gallery-item">
+      <div class="ph ph-3"></div>
+      <div class="overlay">
+        <div class="art-title">WildFlower Collage 25</div>
+        <div class="art-artist">이자연</div>
+        <div class="art-price">₩850,000</div>
+        <button class="art-buy">구매하기</button>
+      </div>
+    </div>
+    <div class="gallery-item">
+      <div class="ph ph-4"></div>
+      <div class="overlay">
+        <div class="art-title">MIXI</div>
+        <div class="art-artist">최모던</div>
+        <div class="art-price">₩3,200,000</div>
+        <button class="art-buy">구매하기</button>
+      </div>
+    </div>
+    <div class="gallery-item">
+      <div class="ph ph-5"></div>
+      <div class="overlay">
+        <div class="art-title">Serenity Fortress</div>
+        <div class="art-artist">정평화</div>
+        <div class="art-price">₩1,500,000</div>
+        <button class="art-buy">구매하기</button>
+      </div>
+    </div>
+    <div class="gallery-item">
+      <div class="ph ph-6"></div>
+      <div class="overlay">
+        <div class="art-title">산하일</div>
+        <div class="art-artist">한산수</div>
+        <div class="art-price">₩4,000,000</div>
+        <button class="art-buy">구매하기</button>
+      </div>
+    </div>
+    <div class="gallery-item">
+      <div class="ph ph-7"></div>
+      <div class="overlay">
+        <div class="art-title">Encore</div>
+        <div class="art-artist">강반복</div>
+        <div class="art-price">₩950,000</div>
+        <button class="art-buy">구매하기</button>
+      </div>
+    </div>
+    <div class="gallery-item">
+      <div class="ph ph-8"></div>
+      <div class="overlay">
+        <div class="art-title">한마디의 숲</div>
+        <div class="art-artist">윤자연</div>
+        <div class="art-price">₩1,200,000</div>
+        <button class="art-buy">구매하기</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-overlay-text">
+    <h1>110명 작가의 작품을 만나보세요</h1>
+    <p>당신의 구매가 예술인의 내일을 바꿉니다</p>
+    <a href="#" class="hero-cta">전체 작품 보기</a>
+  </div>
+</section>
+
+<!-- MISSION BANNER -->
+<div class="mission-banner">
+  작품 판매 수익이 예술인 상호부조 기금이 됩니다
+  <a href="#">자세히 보기 &rarr;</a>
+</div>
+
+<!-- SECTION 2: Featured Artworks (Dark) -->
+<section class="featured-section">
+  <div class="section-label">Online Showcase</div>
+  <div class="section-title-dark">온라인 전시 하이라이트</div>
+  <div class="artwork-scroll">
+    <div class="artwork-card-dark">
+      <div class="ph ph-3" style="aspect-ratio:4/5"></div>
+      <div class="card-info"><h4>독립문구·거인의 풍상</h4><div class="artist">김작가</div><div class="price">₩4,500,000</div></div>
+    </div>
+    <div class="artwork-card-dark">
+      <div class="ph ph-7" style="aspect-ratio:4/5"></div>
+      <div class="card-info"><h4>BAON SIM_Visibility</h4><div class="artist">심바온</div><div class="price">₩1,200,000</div></div>
+    </div>
+    <div class="artwork-card-dark">
+      <div class="ph ph-2" style="aspect-ratio:4/5"></div>
+      <div class="card-info"><h4>Mango tree_Savani</h4><div class="artist">이사바니</div><div class="price">₩800,000</div></div>
+    </div>
+    <div class="artwork-card-dark">
+      <div class="ph ph-6" style="aspect-ratio:4/5"></div>
+      <div class="card-info"><h4>Revealed 01_그래서 더 미지다</h4><div class="artist">박미지</div><div class="price">₩2,800,000</div></div>
+    </div>
+    <div class="artwork-card-dark">
+      <div class="ph ph-1" style="aspect-ratio:4/5"></div>
+      <div class="card-info"><h4>한마리의 숲</h4><div class="artist">윤자연</div><div class="price">₩1,500,000</div></div>
+    </div>
+    <div class="artwork-card-dark">
+      <div class="ph ph-8" style="aspect-ratio:4/5"></div>
+      <div class="card-info"><h4>명왕의 인사</h4><div class="artist">정왕</div><div class="price">₩3,000,000</div></div>
+    </div>
+    <div class="artwork-card-dark">
+      <div class="ph ph-4" style="aspect-ratio:4/5"></div>
+      <div class="card-info"><h4>무한의 시선</h4><div class="artist">최시선</div><div class="price">₩950,000</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3: Impact (Light) -->
+<section class="impact-line">
+  <div class="impact-stat">
+    <div><div class="num">110</div><div class="label">참여 작가</div></div>
+    <div><div class="num">110</div><div class="label">전시 작품</div></div>
+    <div><div class="num">95%</div><div class="label">상환율</div></div>
+  </div>
+  <p class="impact-msg">
+    작품 구매 수익은 <strong>예술인 상호부조 기금</strong>이 되어<br>
+    금융 차별을 겪는 동료 예술인에게 저금리 대출로 이어집니다
+  </p>
+</section>
+
+<!-- SECTION 4: Category Navigation (Dark) -->
+<section class="category-section">
+  <div class="section-title-light">어떤 작품을 찾고 계세요?</div>
+  <div class="category-grid">
+    <div class="category-card">
+      <div class="ph ph-1" style="height:100%"></div>
+      <div class="cat-overlay">
+        <div class="cat-name">회화</div>
+        <div class="cat-count">48점</div>
+      </div>
+    </div>
+    <div class="category-card">
+      <div class="ph ph-2" style="height:100%"></div>
+      <div class="cat-overlay">
+        <div class="cat-name">판화</div>
+        <div class="cat-count">22점</div>
+      </div>
+    </div>
+    <div class="category-card">
+      <div class="ph ph-6" style="height:100%"></div>
+      <div class="cat-overlay">
+        <div class="cat-name">사진 · 영상</div>
+        <div class="cat-count">18점</div>
+      </div>
+    </div>
+    <div class="category-card">
+      <div class="ph ph-4" style="height:100%"></div>
+      <div class="cat-overlay">
+        <div class="cat-name">입체 · 설치</div>
+        <div class="cat-count">22점</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 5: Artist Spotlight (Light) -->
+<section class="artist-section">
+  <div style="text-align:center">
+    <div class="section-label">ARTIST SPOTLIGHT</div>
+    <div style="font-size:36px; font-weight:300; color:#31393C; margin-bottom:40px;">이달의 작가</div>
+  </div>
+  <div class="artist-card">
+    <div class="artist-profile">
+      <div class="ph ph-5" style="width:200px;height:200px;border-radius:50%;margin:0 auto 20px;border:4px solid #fff;box-shadow:0 4px 20px rgba(0,0,0,0.1)"></div>
+      <div class="artist-name">김예술</div>
+      <p class="artist-bio">서울 기반 현대 미술 작가. 자연과 도시의 경계에서 발견하는 이야기를 캔버스에 담고 있습니다. 2024 대한민국 미술대전 우수상.</p>
+      <a href="#" class="artist-link">이 작가의 전체 작품 보기 &rarr;</a>
+    </div>
+    <div class="artist-works">
+      <div class="artist-work">
+        <div class="ph ph-1" style="height:100%"></div>
+        <div class="work-price">₩2,500,000</div>
+      </div>
+      <div class="artist-work">
+        <div class="ph ph-3" style="height:100%"></div>
+        <div class="work-price">₩1,800,000</div>
+      </div>
+      <div class="artist-work">
+        <div class="ph ph-8" style="height:100%"></div>
+        <div class="work-price">₩950,000</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 6: Final CTA -->
+<section class="final-cta">
+  <h2>마음에 드는 작품을 찾아보세요</h2>
+  <p>110명 작가의 작품이 당신을 기다립니다</p>
+  <a href="#" class="cta-btn">전체 작품 보기</a>
+</section>
+
+<!-- SECTION 7: FAQ -->
+<section class="faq-section">
+  <h2>자주 묻는 질문</h2>
+  <div class="faq-list">
+    <div class="faq-item"><div class="q">작품은 어떻게 구매하나요?</div></div>
+    <div class="faq-item"><div class="q">구매한 작품의 배송은 어떻게 이루어지나요?</div></div>
+    <div class="faq-item"><div class="q">환불이나 교환이 가능한가요?</div></div>
+    <div class="faq-item"><div class="q">씨앗페 2026이란 무엇인가요?</div></div>
+  </div>
+</section>
+
+</body>
+</html>
