@@ -1,4 +1,12 @@
-import { SITE_URL, OG_IMAGE, CONTACT, EXHIBITION, CAMPAIGN, SOCIAL_LINKS } from '@/lib/constants';
+import {
+  SITE_URL,
+  OG_IMAGE,
+  CONTACT,
+  EXHIBITION,
+  CAMPAIGN,
+  SOCIAL_LINKS,
+  EXTERNAL_LINKS,
+} from '@/lib/constants';
 import { isExhibitionCompleted } from '@/lib/schemas/event';
 
 export function generateOrganizationSchema(locale: 'ko' | 'en' = 'ko') {
@@ -93,7 +101,8 @@ export function generateLocalBusinessSchema(locale: 'ko' | 'en' = 'ko') {
   const isEnglish = locale === 'en';
   return {
     '@context': 'https://schema.org',
-    '@type': 'ArtGallery',
+    // OnlineStore 추가: Google Shopping 호환성 + 온라인 판매 명시
+    '@type': ['ArtGallery', 'OnlineStore'],
     name: isEnglish ? 'SAF Online (Seed Art Festival)' : '씨앗페 온라인 (Seed Art Festival)',
     image: OG_IMAGE.url,
     '@id': `${SITE_URL}#art-gallery`,
@@ -135,6 +144,7 @@ export function generateLocalBusinessSchema(locale: 'ko' | 'en' = 'ko') {
           ],
         }),
     priceRange: '₩50,000 ~ ₩20,000,000',
+    hasMap: EXTERNAL_LINKS.KOSMART_OFFICE_MAP,
   };
 }
 
