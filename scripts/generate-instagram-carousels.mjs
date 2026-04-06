@@ -555,34 +555,39 @@ function spot(sn, title, sub, arts, ht) {
 
     // 프로필
     ...[arts[0], arts[1]].map((a,i) => pg(`
-      <div class="z s p" style="justify-content:center;gap:32px;">
-        <div style="display:flex;gap:28px;align-items:center;">
-          <div style="width:120px;height:120px;border-radius:50%;overflow:hidden;border:4px solid ${C.gold};flex-shrink:0;">
-            <img src="${a.img}" alt="" style="width:100%;height:100%;object-fit:cover;">
-          </div>
-          <div>
-            <div style="font-size:28px;color:${C.gold};font-weight:600;letter-spacing:3px;">ARTIST</div>
-            <div style="font-size:52px;font-weight:700;color:#fff;margin-top:6px;">${a.artist}</div>
+      <div class="z s" style="height:100%;">
+        <!-- 작품 이미지 65% -->
+        <div style="height:65%;position:relative;overflow:hidden;">
+          <img src="${a.img}" alt="${a.title}" style="width:100%;height:100%;object-fit:cover;">
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,${C.charcoal}cc 100%);"></div>
+          <!-- 작가 이름 오버레이 -->
+          <div style="position:absolute;bottom:32px;left:48px;right:48px;">
+            <div style="font-size:28px;color:${C.gold};font-weight:600;letter-spacing:4px;margin-bottom:8px;">ARTIST</div>
+            <div style="font-size:56px;font-weight:700;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,0.5);">${a.artist}</div>
           </div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-          ${[{l:'재료',v:a.material},{l:'크기',v:a.size}].map(x => `
-            <div class="glass" style="padding:28px;">
-              <div style="font-size:28px;color:${C.gold};font-weight:600;margin-bottom:8px;">${x.l}</div>
-              <div style="font-size:28px;color:rgba(255,255,255,0.85);">${x.v}</div>
+        <!-- 정보 패널 35% -->
+        <div style="height:35%;padding:32px 48px;background:${C.charcoal};display:flex;flex-direction:column;justify-content:center;gap:20px;">
+          <div style="display:flex;gap:16px;">
+            <div class="glass" style="flex:1;padding:20px 24px;">
+              <div style="font-size:26px;color:${C.gold};font-weight:600;margin-bottom:6px;">재료</div>
+              <div style="font-size:26px;color:rgba(255,255,255,0.85);line-height:1.4;">${a.material}</div>
             </div>
-          `).join('')}
-        </div>
-        <div class="glass" style="padding:28px;">
-          <div style="font-size:28px;color:${C.gold};font-weight:600;margin-bottom:10px;">대표작</div>
-          <div style="font-size:36px;font-weight:500;color:#fff;">${a.title}</div>
-          <div class="m" style="font-size:34px;color:${C.gold};margin-top:10px;">${a.price}</div>
-        </div>
-        <div style="text-align:center;">
-          <span style="font-size:30px;color:${C.gold};font-weight:600;">이 작가의 모든 작품 보기 →</span>
+            <div class="glass" style="flex:1;padding:20px 24px;">
+              <div style="font-size:26px;color:${C.gold};font-weight:600;margin-bottom:6px;">크기</div>
+              <div style="font-size:26px;color:rgba(255,255,255,0.85);">${a.size}</div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div style="font-size:30px;color:rgba(255,255,255,0.6);margin-bottom:4px;">${a.title}</div>
+              <div class="m" style="font-size:38px;font-weight:700;color:${C.gold};">${a.price}</div>
+            </div>
+            <span style="font-size:30px;color:${C.gold};font-weight:600;">구매 →</span>
+          </div>
         </div>
       </div>
-    `, { bgImg:a.img, overlayStyle:`background:${C.charcoal}e5;`, pn:6+i, total:t })),
+    `, { pn:6+i, total:t })),
 
     // CTA
     pg(`
