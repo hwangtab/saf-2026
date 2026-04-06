@@ -24,7 +24,7 @@ export default function SearchResultItem({ artwork, onSelect }: SearchResultItem
         {artwork.image ? (
           <SafeImage
             src={artwork.image}
-            alt={artwork.title}
+            alt={`${artwork.title} - ${artwork.artist}`}
             fill
             className="object-cover"
             sizes="48px"

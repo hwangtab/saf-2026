@@ -48,9 +48,21 @@ export async function generateMetadata(): Promise<Metadata> {
   const ogImageUrl = representativeArtwork?.images[0]
     ? resolveSeoArtworkImageUrl(representativeArtwork.images[0])
     : undefined;
+  const ogImageAlt = representativeArtwork
+    ? locale === 'en'
+      ? `${representativeArtwork.title_en || representativeArtwork.title} by ${representativeArtwork.artist_en || representativeArtwork.artist} — SAF Online`
+      : `${representativeArtwork.artist} 작가의 작품 "${representativeArtwork.title}" — 씨앗페 온라인`
+    : undefined;
 
   return {
-    ...createPageMetadata(t('title'), dynamicDescription, '/artworks', ogImageUrl, locale),
+    ...createPageMetadata(
+      t('title'),
+      dynamicDescription,
+      '/artworks',
+      ogImageUrl,
+      locale,
+      ogImageAlt
+    ),
     keywords:
       locale === 'en'
         ? 'Korean art, contemporary art, paintings for sale, original artworks, prints, sculpture, photography, art gallery'
