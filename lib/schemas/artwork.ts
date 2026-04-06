@@ -135,6 +135,15 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
     twitter: {
       ...baseMetadata.twitter,
       card: 'summary_large_image',
+      // 작품별 alt로 덮어씀 — baseMetadata.twitter의 제네릭 alt 대신 작품명 사용
+      images: [
+        {
+          url: imageUrl,
+          alt: isEnglish
+            ? `${titleForLocale} by ${artistForLocale} — SAF Online`
+            : `${artwork.artist} 작가의 작품 "${artwork.title}" — 씨앗페 온라인`,
+        },
+      ],
     },
     // Facebook/Instagram 제품 메타 태그 — 소셜 공유 시 가격 정보 노출
     other: {

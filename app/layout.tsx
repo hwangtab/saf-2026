@@ -110,7 +110,7 @@ export const metadata: Metadata = {
     site: '@saf2026',
     title: '씨앗페 온라인',
     description: '한국 현대미술 작품 127점 온라인 구매 — 회화, 판화, 사진, 조각',
-    images: [OG_IMAGE.url],
+    images: [{ url: OG_IMAGE.url, alt: OG_IMAGE.alt }],
   },
   robots: {
     index: true,

@@ -83,6 +83,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         : ' 전 작품 판매 완료.';
   const seoDescription =
     t('metaDescription', { artist: formattedName }) +
+    ' ' +
     (profileSnippet || noteSnippet || t('metaFallback')) +
     availabilitySnippet;
 
