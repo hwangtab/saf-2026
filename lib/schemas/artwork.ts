@@ -315,6 +315,10 @@ export function generateArtworkJsonLd(
     '@id': buildLocaleUrl(`/artworks/${artwork.id}`, locale),
     name: titleForLocale,
     inLanguage: isEnglish ? 'en' : 'ko',
+    audience: {
+      '@type': 'Audience',
+      audienceType: isEnglish ? 'Art collectors and art supporters' : '미술 컬렉터 및 예술 후원자',
+    },
     artform: getArtformForSchema(materialForLocale || ''),
     // Category for faceted navigation SEO
     ...(mediumCategory && {
