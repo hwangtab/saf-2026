@@ -362,6 +362,7 @@ export function generateArtworkJsonLd(
       width: 1200,
       height: 1200,
       acquireLicensePage: `${SITE_URL}/artworks/${artwork.id}`,
+      representativeOfPage: true,
     },
     description: schemaDescription.substring(0, 500),
     sku: `SAF2026-${artwork.id}`,

@@ -7,7 +7,7 @@ import SectionTitle from '@/components/ui/SectionTitle';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { getSupabaseNews } from '@/lib/supabase-data';
-import { OG_IMAGE, SITE_URL } from '@/lib/constants';
+import { CONTACT, OG_IMAGE, SITE_URL } from '@/lib/constants';
 import { createBreadcrumbSchema, generateNewsArticleSchema } from '@/lib/seo-utils';
 import { containsHangul } from '@/lib/search-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
@@ -359,6 +359,11 @@ export default async function NewsPage() {
     description: copy.collectionDescription,
     url: canonicalUrl,
     isPartOf: { '@id': `${SITE_URL}#website` },
+    author: {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}#organization`,
+      name: locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
+    },
     ...(latestNewsDate && { dateModified: latestNewsDate }),
     inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
     speakable: {
