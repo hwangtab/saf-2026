@@ -175,6 +175,22 @@ export default async function CategoryPage({ params }: Props) {
   const heroDescription =
     t('heroDescription', { count: categoryArtworks.length, availableCount }) + priceRange;
 
+  // CollectionPage: 카테고리 페이지의 WebPage 타입 명시 (Google에 컬렉션 페이지임을 알림)
+  const collectionPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    '@id': `${pageUrl}#webpage`,
+    url: pageUrl,
+    name: t('title', { category: displayCategory }),
+    description: heroDescription,
+    isPartOf: { '@id': `${SITE_URL}#website` },
+    about: {
+      '@type': 'Thing',
+      name: isEnglish ? getCategoryEnName(category) : category,
+    },
+    inLanguage: isEnglish ? 'en-US' : 'ko-KR',
+  };
+
   // 관련 카테고리 (현재 카테고리 제외, 작품 수 기준 정렬)
   const categoryCounts = SUPPORTED_CATEGORIES.map((cat) => ({
     category: cat,
@@ -188,6 +204,7 @@ export default async function CategoryPage({ params }: Props) {
   return (
     <>
       <JsonLdScript data={breadcrumbSchema} />
+      <JsonLdScript data={collectionPageSchema} />
       <JsonLdScript data={itemListSchema} />
       {aggregateOfferSchema && <JsonLdScript data={aggregateOfferSchema} />}
       <JsonLdScript data={generateArtworkPurchaseHowTo(locale)} />
