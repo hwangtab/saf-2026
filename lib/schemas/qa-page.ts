@@ -28,6 +28,7 @@ export function generateQAPageSchema(items: QAItem[], pageUrl: string) {
         url: item.url || pageUrl,
         author: {
           '@type': 'Organization',
+          '@id': `${SITE_URL}#organization`,
           name: CONTACT.ORGANIZATION_NAME,
           url: SITE_URL,
         },
