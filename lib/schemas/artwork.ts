@@ -53,18 +53,10 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
     isEnglish ? 'Original artwork description available in Korean.' : ''
   ).substring(0, 200);
 
-  const seoDescription =
+  const seoDescriptionBase =
     `${summary}. ` +
     (descSnippet ? `${descSnippet}... ` : '') +
     (profileSnippet ? `${profileSnippet}...` : '');
-
-  const baseMetadata = createPageMetadata(
-    `${titleForLocale} - ${artistForLocale}`,
-    seoDescription.substring(0, 160),
-    `/artworks/${artwork.id}`,
-    imageUrl,
-    locale
-  );
 
   const keywordBase = isEnglish
     ? [
@@ -92,6 +84,26 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
 
   const numericPriceValue = parseArtworkPrice(artwork.price);
   const isSold = artwork.sold === true;
+  // 가격을 메타 description에 포함 — 구매 의도 검색 CTR 향상
+  const priceSnippet = isSold
+    ? isEnglish
+      ? ' · Sold.'
+      : ' · 판매 완료.'
+    : numericPriceValue !== null
+      ? ` · ₩${numericPriceValue.toLocaleString('ko-KR')}${isEnglish ? ' · Free shipping.' : ' · 무료 배송.'}`
+      : isEnglish
+        ? ' · Inquiry for price.'
+        : ' · 가격 문의.';
+
+  const seoDescription = (seoDescriptionBase.substring(0, 140) + priceSnippet).substring(0, 160);
+
+  const baseMetadata = createPageMetadata(
+    `${titleForLocale} - ${artistForLocale}`,
+    seoDescription,
+    `/artworks/${artwork.id}`,
+    imageUrl,
+    locale
+  );
 
   return {
     ...baseMetadata,
@@ -340,6 +352,7 @@ export function generateArtworkJsonLd(
     description: schemaDescription.substring(0, 500),
     sku: `SAF2026-${artwork.id}`,
     mpn: `SAF2026-ART-${artwork.id}`,
+    countryOfOrigin: { '@type': 'Country', name: isEnglish ? 'South Korea' : '대한민국' },
     brand: {
       '@type': 'Brand',
       name: isEnglish ? 'SAF Online' : '씨앗페 온라인',
