@@ -11,7 +11,11 @@ import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { SITE_URL } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
-import { createBreadcrumbSchema, generateArtworkListSchema } from '@/lib/seo-utils';
+import {
+  createBreadcrumbSchema,
+  generateArtworkListSchema,
+  generateGalleryAggregateOffer,
+} from '@/lib/seo-utils';
 import { generateArtworkPurchaseHowTo, generateArtworkPurchaseFAQ } from '@/lib/schemas/howto';
 import { getSupabaseArtworks } from '@/lib/supabase-data';
 import { parseArtworkPrice, resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
@@ -74,6 +78,7 @@ export default async function ArtworksPage() {
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
   const itemListSchema = generateArtworkListSchema(artworks, locale);
+  const aggregateOfferSchema = generateGalleryAggregateOffer(artworks);
   const artworksUrl = buildLocaleUrl('/artworks', locale);
   const collectionPageSchema = {
     '@context': 'https://schema.org',
@@ -108,6 +113,7 @@ export default async function ArtworksPage() {
       <JsonLdScript data={breadcrumbSchema} />
       <JsonLdScript data={collectionPageSchema} />
       <JsonLdScript data={itemListSchema} />
+      {aggregateOfferSchema && <JsonLdScript data={aggregateOfferSchema} />}
       <JsonLdScript data={generateArtworkPurchaseHowTo(locale)} />
       <JsonLdScript data={generateArtworkPurchaseFAQ(locale)} />
       <div className="min-h-screen">

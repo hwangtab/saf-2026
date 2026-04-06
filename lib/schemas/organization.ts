@@ -144,6 +144,15 @@ export function generateLocalBusinessSchema(locale: 'ko' | 'en' = 'ko') {
           ],
         }),
     priceRange: '₩50,000 ~ ₩20,000,000',
+    currenciesAccepted: 'KRW',
+    paymentAccepted: isEnglish
+      ? 'Cash, Credit Card, Debit Card, Bank Transfer'
+      : '현금, 신용카드, 체크카드, 계좌이체',
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: isEnglish ? 'SAF Online Artworks' : '씨앗페 온라인 출품작',
+      url: `${SITE_URL}/artworks`,
+    },
     hasMap: EXTERNAL_LINKS.KOSMART_OFFICE_MAP,
   };
 }
