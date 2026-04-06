@@ -1,4 +1,5 @@
 import { getSupabaseArtworks, getSupabaseArtworksByArtist } from '@/lib/supabase-data';
+import { CATEGORY_EN_MAP, getCategoryLabel } from '@/lib/artwork-category';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
@@ -147,9 +148,11 @@ export async function generateStaticParams() {
 
 export default async function ArtistPage({ params }: Props) {
   const locale = resolveLocale(await getLocale());
+  const isEnglish = locale === 'en';
   const { artist } = await params;
   const artistName = decodeURIComponent(artist);
   const artistArtworks = await getSupabaseArtworksByArtist(artistName);
+  const allArtworks = await getSupabaseArtworks();
   const listArtworks: ArtworkListItem[] = artistArtworks.map(
     ({ profile: _p, history: _h, profile_en: _pe, history_en: _he, ...rest }: Artwork) => rest
   );
@@ -282,8 +285,46 @@ export default async function ArtistPage({ params }: Props) {
         </div>
       </Section>
 
+      {/* 카테고리 바로가기 — 작가 페이지에서 카테고리 페이지로 내부 링크 연결 */}
+      {(() => {
+        const primaryCategory = artistArtworks[0]?.category;
+        const categoryLinks = Object.keys(CATEGORY_EN_MAP)
+          .map((cat) => ({
+            cat,
+            displayName: getCategoryLabel(cat, locale),
+            path: `/artworks/category/${encodeURIComponent(cat)}`,
+            isPrimary: cat === primaryCategory,
+          }))
+          .filter((c) => allArtworks.some((a) => a.category === c.cat));
+        if (categoryLinks.length === 0) return null;
+        return (
+          <Section variant="white" prevVariant="primary-surface" className="pb-8">
+            <div className="container-max">
+              <p className="text-sm font-medium text-gray-500 mb-3">
+                {isEnglish ? 'Browse by category' : '카테고리별 작품 보기'}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {categoryLinks.map(({ cat, displayName, path, isPrimary }) => (
+                  <a
+                    key={cat}
+                    href={buildLocaleUrl(path, locale)}
+                    className={`px-4 py-2 text-sm font-medium rounded-full border transition-colors ${
+                      isPrimary
+                        ? 'border-primary bg-primary/5 text-primary hover:bg-primary/10'
+                        : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300'
+                    }`}
+                  >
+                    {displayName}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </Section>
+        );
+      })()}
+
       {/* Campaign Banner */}
-      <Section variant="white" prevVariant="primary-surface" className="pb-24 md:pb-32">
+      <Section variant="white" prevVariant="white" className="pb-24 md:pb-32">
         <GalleryCampaignBanner />
       </Section>
     </div>

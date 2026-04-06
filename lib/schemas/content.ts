@@ -59,6 +59,8 @@ export interface NewsArticleSchemaInput {
   title: string;
   description: string;
   datePublished: string;
+  /** 기사 수정일 — 없으면 datePublished로 폴백 */
+  dateModified?: string;
   image: string;
   url: string;
   /** 원본 언론사 이름 (author로 표시됨) */
@@ -71,10 +73,11 @@ export function generateNewsArticleSchema(article: NewsArticleSchemaInput) {
     '@type': 'NewsArticle',
     headline: article.title,
     description: article.description,
+    ...(article.description.length > 100 && { articleBody: article.description }),
     url: article.url,
     image: [article.image],
     datePublished: article.datePublished,
-    dateModified: article.datePublished,
+    dateModified: article.dateModified ?? article.datePublished,
     isAccessibleForFree: true,
     isPartOf: { '@id': `${SITE_URL}#website` },
     author: [
@@ -90,7 +93,10 @@ export function generateNewsArticleSchema(article: NewsArticleSchemaInput) {
       url: SITE_URL,
       logo: {
         '@type': 'ImageObject',
-        url: `${SITE_URL}/images/og-image2.png`,
+        // Google NewsArticle 요건: 너비 최대 600px, 높이 최대 60px — 85x60 전용 로고
+        url: `${SITE_URL}/images/logo/publisher-logo.png`,
+        width: 85,
+        height: 60,
       },
     },
     mainEntityOfPage: {
