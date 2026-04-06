@@ -71,9 +71,12 @@ export function generateNewsArticleSchema(article: NewsArticleSchemaInput) {
     '@type': 'NewsArticle',
     headline: article.title,
     description: article.description,
+    url: article.url,
     image: [article.image],
     datePublished: article.datePublished,
     dateModified: article.datePublished,
+    isAccessibleForFree: true,
+    isPartOf: { '@id': `${SITE_URL}#website` },
     author: [
       {
         '@type': 'Organization',
