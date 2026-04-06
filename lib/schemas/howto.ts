@@ -136,8 +136,7 @@ export function generateArtworkPurchaseFAQ(locale: 'ko' | 'en' = 'ko') {
         },
         {
           question: 'What is the purpose of artwork sales revenue?',
-          answer:
-            'All proceeds are donated to the Korea Smart Cooperative artist mutual-aid fund, which provides low-interest loans to Korean artists facing financial discrimination.',
+          answer: `All proceeds are donated to the ${CONTACT.ORGANIZATION_NAME_EN} artist mutual-aid fund, which provides low-interest loans to Korean artists facing financial discrimination.`,
         },
       ]
     : [
@@ -164,8 +163,7 @@ export function generateArtworkPurchaseFAQ(locale: 'ko' | 'en' = 'ko') {
         },
         {
           question: '작품 판매 수익금은 어디에 쓰이나요?',
-          answer:
-            '수익금 전액은 한국스마트협동조합의 예술인 상호부조 기금으로 귀속되어, 금융 차별을 겪는 예술인에게 저금리 대출로 지원됩니다.',
+          answer: `수익금 전액은 ${CONTACT.ORGANIZATION_NAME}의 예술인 상호부조 기금으로 귀속되어, 금융 차별을 겪는 예술인에게 저금리 대출로 지원됩니다.`,
         },
       ];
 
@@ -191,8 +189,8 @@ export function generateMemberJoinHowTo(locale: 'ko' | 'en' = 'ko') {
 
   return generateHowToSchema({
     name: isEnglish
-      ? 'How to Join the Korea Smart Cooperative as a Member'
-      : '한국스마트협동조합 조합원 가입 방법',
+      ? `How to Join ${CONTACT.ORGANIZATION_NAME_EN} as a Member`
+      : `${CONTACT.ORGANIZATION_NAME} 조합원 가입 방법`,
     description: isEnglish
       ? 'Join as a cooperative member to support the artist mutual-aid fund. Members receive regular updates and can participate in governance.'
       : '조합원 가입으로 예술인 상호부조 기금을 지원하세요. 조합원에게는 정기 소식과 운영 참여 기회가 제공됩니다.',

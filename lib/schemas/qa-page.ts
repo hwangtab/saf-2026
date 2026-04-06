@@ -50,8 +50,7 @@ export function generateSAFCoreQA(locale: 'ko' | 'en' = 'ko') {
     ? [
         {
           question: 'What is SAF (Seed Art Festival) Online?',
-          answer:
-            'SAF Online is a special art exhibition organized by the Korea Smart Cooperative to raise mutual-aid funds for Korean artists facing financial exclusion. Over 110 artists voluntarily contributed their works, and proceeds from sales go to a low-interest loan fund for artists in financial distress.',
+          answer: `SAF Online is a special art exhibition organized by ${CONTACT.ORGANIZATION_NAME_EN} to raise mutual-aid funds for Korean artists facing financial exclusion. Over 110 artists voluntarily contributed their works, and proceeds from sales go to a low-interest loan fund for artists in financial distress.`,
           url: `${SITE_URL}/en`,
         },
         {
@@ -74,8 +73,7 @@ export function generateSAFCoreQA(locale: 'ko' | 'en' = 'ko') {
         },
         {
           question: 'How do I purchase artwork from SAF Online?',
-          answer:
-            'Browse the online gallery at saf2026.com/en/artworks, select the artwork you want, and click the purchase button to complete the order via the secure Cafe24 shop. Domestic shipping within Korea is free. Payments are processed through the official Korea Smart Cooperative shop.',
+          answer: `Browse the online gallery at saf2026.com/en/artworks, select the artwork you want, and click the purchase button to complete the order via the secure Cafe24 shop. Domestic shipping within Korea is free. Payments are processed through the official ${CONTACT.ORGANIZATION_NAME_EN} shop.`,
           url: `${SITE_URL}/en/artworks`,
         },
         {
@@ -94,8 +92,7 @@ export function generateSAFCoreQA(locale: 'ko' | 'en' = 'ko') {
     : [
         {
           question: '씨앗페(SAF) 온라인이란 무엇인가요?',
-          answer:
-            '씨앗페 온라인은 한국스마트협동조합이 주최하는 예술인 상호부조 기금 마련 특별전입니다. 110여 명의 작가가 자발적으로 작품을 출품했으며, 판매 수익금은 금융 위기에 처한 예술인에게 저금리 대출로 전달됩니다.',
+          answer: `씨앗페 온라인은 ${CONTACT.ORGANIZATION_NAME}이 주최하는 예술인 상호부조 기금 마련 특별전입니다. 110여 명의 작가가 자발적으로 작품을 출품했으며, 판매 수익금은 금융 위기에 처한 예술인에게 저금리 대출로 전달됩니다.`,
           url: SITE_URL,
         },
         {
@@ -118,8 +115,7 @@ export function generateSAFCoreQA(locale: 'ko' | 'en' = 'ko') {
         },
         {
           question: '씨앗페 온라인에서 작품을 어떻게 구매하나요?',
-          answer:
-            'saf2026.com/artworks에서 원하는 작품을 선택한 후 구매 버튼을 클릭하면 한국스마트협동조합 공식 카페24 쇼핑몰로 연결됩니다. 국내 배송비는 무료이며, 안전결제를 통해 주문이 완료됩니다.',
+          answer: `saf2026.com/artworks에서 원하는 작품을 선택한 후 구매 버튼을 클릭하면 ${CONTACT.ORGANIZATION_NAME} 공식 카페24 쇼핑몰로 연결됩니다. 국내 배송비는 무료이며, 안전결제를 통해 주문이 완료됩니다.`,
           url: `${SITE_URL}/artworks`,
         },
         {
