@@ -136,10 +136,11 @@ body{width:1080px;height:1350px;overflow:hidden;font-family:'Pretendard',sans-se
 .card{border-radius:24px;padding:44px;}
 `;
 
-function pg(body, { bgImg, overlayStyle, color='#fff', pn, total, logo=logoW, extraCss='' }={}) {
+function pg(body, { bgImg, bgFilter, overlayStyle, color='#fff', pn, total, logo=logoW, extraCss='' }={}) {
   const w = logo ? `<img class="wm" src="${logo}" alt="">` : '';
   const p = pn && total ? `<div class="pn" style="color:${color};">${pn} / ${total}</div>` : '';
-  const bgEl = bgImg ? `<img class="bg" src="${bgImg}" alt="" style="filter:blur(4px) saturate(1.2) brightness(0.4);transform:scale(1.05);">` : '';
+  const defaultBgFilter = 'filter:blur(4px) saturate(1.2) brightness(0.4);transform:scale(1.05);';
+  const bgEl = bgImg ? `<img class="bg" src="${bgImg}" alt="" style="${bgFilter ?? defaultBgFilter}">` : '';
   const ovEl = overlayStyle ? `<div class="ov" style="${overlayStyle}"></div>` : '';
   return `<!DOCTYPE html><html><head><meta charset="UTF-8">${FONTS}<style>${CSS}${extraCss}</style></head>
 <body><div class="s">${bgEl}${ovEl}${body}</div>${w}${p}</body></html>`;
@@ -351,16 +352,18 @@ function s2() {
   return [
     // 커버
     pg(`
-      <div class="z s p" style="justify-content:center;align-items:center;text-align:center;gap:20px;">
-        <div style="font-size:26px;color:${C.gold};font-weight:600;letter-spacing:6px;">SERIES 02</div>
-        <div style="font-size:240px;color:${a};opacity:0.2;font-family:Georgia,serif;line-height:0.7;">"</div>
-        <h1 style="font-size:80px;font-weight:700;color:#fff;line-height:1.35;" class="ka">
+      <div class="z s p" style="justify-content:flex-end;align-items:flex-start;gap:16px;padding-bottom:100px;">
+        <div style="position:absolute;top:56px;left:64px;">
+          <div style="font-size:24px;color:${C.gold};font-weight:600;letter-spacing:6px;">SERIES 02</div>
+        </div>
+        <div style="font-size:200px;color:${a};opacity:0.45;font-family:Georgia,serif;line-height:0.5;margin-bottom:-20px;">"</div>
+        <h1 style="font-size:80px;font-weight:700;color:#fff;line-height:1.3;text-shadow:0 4px 20px rgba(0,0,0,0.4);" class="ka">
           우리의 이야기를<br>들어주세요
         </h1>
-        <p style="font-size:32px;color:rgba(255,255,255,0.5);">실제 예술인 증언</p>
-        <div style="font-size:26px;color:rgba(255,255,255,0.3);letter-spacing:6px;margin-top:40px;">스와이프 →</div>
+        <div style="width:80px;height:4px;background:${C.gold};border-radius:2px;"></div>
+        <p style="font-size:32px;color:rgba(255,255,255,0.6);">실제 예술인 증언 6선</p>
       </div>
-    `, { bgImg:hero(9), overlayStyle:`background:linear-gradient(180deg,${C.charcoal}ee,${a}55);`, pn:1, total:t }),
+    `, { bgImg:hero(9), bgFilter:'filter:saturate(1.3) brightness(0.65);transform:scale(1.05);', overlayStyle:`background:linear-gradient(180deg,rgba(49,57,60,0.15) 0%,rgba(49,57,60,0.5) 40%,rgba(49,57,60,0.85) 70%,${C.charcoal}f0 100%);`, pn:1, total:t }),
 
     quote('아이들 모르게 나만 3일을 굶었던 기억.', '50대, 연극인', '생존의 위협', 3, 2),
     quote('공연을 할수록 빚만 늘어가는 상황에서 공연을 그만두기로 했습니다.', '30대, 배우', '창작의 좌절', 6, 3),
@@ -441,19 +444,19 @@ function s3() {
 
   return [
     pg(`
-      <div class="z s p" style="justify-content:center;align-items:center;text-align:center;gap:24px;">
-        <div style="font-size:26px;color:${C.gold};font-weight:600;letter-spacing:6px;">SERIES 03</div>
-        <div style="font-size:100px;">🌱</div>
-        <h1 style="font-size:76px;font-weight:700;color:#fff;line-height:1.35;" class="ka">작품 한 점이<br>씨앗이 되는 과정</h1>
-        <div style="display:flex;gap:12px;margin-top:28px;">
+      <div class="z s p" style="justify-content:flex-end;align-items:flex-start;gap:20px;padding-bottom:100px;">
+        <div style="position:absolute;top:56px;left:64px;">
+          <div style="font-size:24px;color:${C.gold};font-weight:600;letter-spacing:6px;">SERIES 03</div>
+        </div>
+        <h1 style="font-size:80px;font-weight:700;color:#fff;line-height:1.3;text-shadow:0 4px 20px rgba(0,0,0,0.4);" class="ka">작품 한 점이<br>씨앗이 되는 과정</h1>
+        <div style="display:flex;gap:14px;margin-top:12px;">
           ${['🎨','→','💰','→','🏦','→','🎭'].map((x,i) => i%2===0
-            ? `<div style="width:72px;height:72px;background:rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;">${x}</div>`
+            ? `<div style="width:88px;height:88px;background:rgba(255,255,255,0.12);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:42px;">${x}</div>`
             : `<div style="color:${C.gold};font-size:32px;display:flex;align-items:center;">${x}</div>`
           ).join('')}
         </div>
-        <div style="font-size:26px;color:rgba(255,255,255,0.3);letter-spacing:6px;margin-top:32px;">스와이프 →</div>
       </div>
-    `, { bgImg:hero(4), overlayStyle:`background:linear-gradient(180deg,${C.charcoal}ee,${C.primary}66);`, pn:1, total:t }),
+    `, { bgImg:hero(4), bgFilter:'filter:saturate(1.2) brightness(0.6);transform:scale(1.08);', overlayStyle:`background:linear-gradient(180deg,rgba(33,118,255,0.1) 0%,rgba(49,57,60,0.45) 35%,rgba(49,57,60,0.85) 65%,${C.charcoal}ee 100%);`, pn:1, total:t }),
 
     step(1,'🎨','작품 구매','354점의 작품이 온라인샵에서 판매 중','가격대: <strong style="color:'+C.gold+'">₩50,000 ~ ₩5,000,000</strong><br>→ '+URL_MAIN,4,2),
     step(2,'💰','수익의 50%','작품 판매 수익이 상호부조 기금으로','현재 기금: <strong style="color:'+C.gold+'">1억 2,534만 원</strong>',2,3),
@@ -507,16 +510,28 @@ function spot(sn, title, sub, arts, ht) {
   `, { bgImg:a.img, overlayStyle:`background:${C.charcoal}cc;backdrop-filter:blur(40px);`, pn:num, total:t });
 
   return [
-    // 커버
+    // 커버 — 작품 트립티크 갤러리
     pg(`
-      <div class="z s p" style="justify-content:center;align-items:center;text-align:center;gap:28px;">
-        <div style="font-size:24px;color:${C.gold};font-weight:600;letter-spacing:6px;">SERIES 0${sn}</div>
-        <h1 style="font-size:96px;font-weight:700;color:#fff;">${title}</h1>
-        <div style="width:80px;height:4px;background:${C.gold};border-radius:2px;"></div>
-        <p style="font-size:34px;color:rgba(255,255,255,0.5);">${sub}</p>
-        <div style="font-size:26px;color:rgba(255,255,255,0.25);letter-spacing:6px;margin-top:40px;">스와이프 →</div>
+      <div class="z s p" style="justify-content:space-between;align-items:center;text-align:center;">
+        <div style="font-size:24px;color:${C.gold};font-weight:600;letter-spacing:6px;margin-top:12px;">SERIES 0${sn}</div>
+        <div style="display:flex;gap:16px;align-items:center;justify-content:center;">
+          <div style="width:260px;height:330px;border-radius:12px;overflow:hidden;transform:rotate(-3deg);box-shadow:0 12px 40px rgba(0,0,0,0.5);">
+            <img src="${arts[1].img}" alt="" style="width:100%;height:100%;object-fit:cover;">
+          </div>
+          <div style="width:300px;height:380px;border-radius:12px;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,0.6);border:2px solid ${C.gold}44;">
+            <img src="${arts[0].img}" alt="" style="width:100%;height:100%;object-fit:cover;">
+          </div>
+          <div style="width:260px;height:330px;border-radius:12px;overflow:hidden;transform:rotate(3deg);box-shadow:0 12px 40px rgba(0,0,0,0.5);">
+            <img src="${arts[2].img}" alt="" style="width:100%;height:100%;object-fit:cover;">
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:16px;margin-bottom:40px;">
+          <h1 style="font-size:88px;font-weight:700;color:#fff;text-shadow:0 4px 16px rgba(0,0,0,0.4);">${title}</h1>
+          <div style="width:80px;height:4px;background:${C.gold};border-radius:2px;"></div>
+          <p style="font-size:32px;color:rgba(255,255,255,0.5);">${sub}</p>
+        </div>
       </div>
-    `, { bgImg:arts[0].img, overlayStyle:`background:linear-gradient(180deg,${C.charcoal}dd,${C.charcoal}bb);backdrop-filter:blur(20px);`, pn:1, total:t }),
+    `, { bgImg:arts[0].img, bgFilter:'filter:blur(20px) saturate(1.4) brightness(0.35);transform:scale(1.2);', overlayStyle:`background:linear-gradient(180deg,${C.charcoal}88 0%,${C.charcoal}99 50%,${C.charcoal}dd 100%);`, pn:1, total:t }),
 
     artSlide(arts[0],2), artSlide(arts[1],3), artSlide(arts[2],4),
 
@@ -747,15 +762,21 @@ function s8() {
 
   return [
     pg(`
-      <div class="z s p" style="justify-content:center;align-items:center;text-align:center;gap:28px;">
-        <div style="font-size:26px;color:${C.gold};font-weight:600;letter-spacing:6px;">SERIES 08</div>
-        <h1 style="font-size:76px;font-weight:700;color:#fff;line-height:1.35;" class="ka">연대하는 방법은<br>세 가지입니다</h1>
-        <div style="display:flex;gap:36px;margin-top:28px;">
-          ${['🎨','💝','🖼️'].map(x => `<div style="width:96px;height:96px;background:rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:48px;">${x}</div>`).join('')}
+      <div class="z s p" style="justify-content:flex-end;align-items:flex-start;gap:24px;padding-bottom:100px;">
+        <div style="position:absolute;top:56px;left:64px;">
+          <div style="font-size:24px;color:${C.gold};font-weight:600;letter-spacing:6px;">SERIES 08</div>
         </div>
-        <div style="font-size:26px;color:rgba(255,255,255,0.25);letter-spacing:6px;margin-top:40px;">스와이프 →</div>
+        <h1 style="font-size:76px;font-weight:700;color:#fff;line-height:1.3;text-shadow:0 4px 20px rgba(0,0,0,0.4);" class="ka">연대하는 방법은<br>세 가지입니다</h1>
+        <div style="display:flex;gap:16px;width:100%;">
+          ${[{icon:'🎨',label:'작품 구매'},{icon:'💝',label:'직접 후원'},{icon:'🖼️',label:'전시 관람'}].map(x => `
+            <div class="glass" style="flex:1;padding:28px 16px;text-align:center;">
+              <div style="font-size:44px;margin-bottom:12px;">${x.icon}</div>
+              <div style="font-size:22px;color:rgba(255,255,255,0.85);font-weight:600;" class="ka">${x.label}</div>
+            </div>
+          `).join('')}
+        </div>
       </div>
-    `, { bgImg:hero(6), overlayStyle:`background:linear-gradient(180deg,${C.gold}88,${C.charcoal}cc);`, pn:1, total:t }),
+    `, { bgImg:hero(6), bgFilter:'filter:saturate(1.3) brightness(0.6);transform:scale(1.05);', overlayStyle:`background:linear-gradient(180deg,rgba(253,202,64,0.15) 0%,rgba(49,57,60,0.5) 35%,rgba(49,57,60,0.85) 70%,${C.charcoal}f0 100%);`, pn:1, total:t }),
 
     method('🎨','작품 구매하기','354점의 작품이 당신을 기다립니다','판매 수익의 50%가 상호부조 기금으로',3,2),
     method('💝','직접 후원하기','씨앗기금을 직접 후원해주세요','소액부터 누구나 참여 가능',5,3),
