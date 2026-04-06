@@ -363,7 +363,7 @@ function s2() {
         <div style="width:80px;height:4px;background:${C.gold};border-radius:2px;"></div>
         <p style="font-size:32px;color:rgba(255,255,255,0.6);">실제 예술인 증언 6선</p>
       </div>
-    `, { bgImg:hero(9), bgFilter:'filter:saturate(1.3) brightness(0.65);transform:scale(1.05);', overlayStyle:`background:linear-gradient(180deg,rgba(49,57,60,0.15) 0%,rgba(49,57,60,0.5) 40%,rgba(49,57,60,0.85) 70%,${C.charcoal}f0 100%);`, pn:1, total:t }),
+    `, { bgImg:BG[19], bgFilter:'filter:saturate(1.3) brightness(0.65);transform:scale(1.05);', overlayStyle:`background:linear-gradient(180deg,rgba(49,57,60,0.15) 0%,rgba(49,57,60,0.5) 40%,rgba(49,57,60,0.85) 70%,${C.charcoal}f0 100%);`, pn:1, total:t }),
 
     quote('아이들 모르게 나만 3일을 굶었던 기억.', '50대, 연극인', '생존의 위협', 3, 2),
     quote('공연을 할수록 빚만 늘어가는 상황에서 공연을 그만두기로 했습니다.', '30대, 배우', '창작의 좌절', 6, 3),
@@ -456,7 +456,7 @@ function s3() {
           ).join('')}
         </div>
       </div>
-    `, { bgImg:hero(4), bgFilter:'filter:saturate(1.2) brightness(0.6);transform:scale(1.08);', overlayStyle:`background:linear-gradient(180deg,rgba(33,118,255,0.1) 0%,rgba(49,57,60,0.45) 35%,rgba(49,57,60,0.85) 65%,${C.charcoal}ee 100%);`, pn:1, total:t }),
+    `, { bgImg:BG[3], bgFilter:'filter:saturate(1.2) brightness(0.6);transform:scale(1.08);', overlayStyle:`background:linear-gradient(180deg,rgba(33,118,255,0.1) 0%,rgba(49,57,60,0.45) 35%,rgba(49,57,60,0.85) 65%,${C.charcoal}ee 100%);`, pn:1, total:t }),
 
     step(1,'🎨','작품 구매','354점의 작품이 온라인샵에서 판매 중','가격대: <strong style="color:'+C.gold+'">₩50,000 ~ ₩5,000,000</strong><br>→ '+URL_MAIN,4,2),
     step(2,'💰','수익의 50%','작품 판매 수익이 상호부조 기금으로','현재 기금: <strong style="color:'+C.gold+'">1억 2,534만 원</strong>',2,3),
@@ -776,7 +776,7 @@ function s8() {
           `).join('')}
         </div>
       </div>
-    `, { bgImg:hero(6), bgFilter:'filter:saturate(1.3) brightness(0.6);transform:scale(1.05);', overlayStyle:`background:linear-gradient(180deg,rgba(253,202,64,0.15) 0%,rgba(49,57,60,0.5) 35%,rgba(49,57,60,0.85) 70%,${C.charcoal}f0 100%);`, pn:1, total:t }),
+    `, { bgImg:BG[2], bgFilter:'filter:saturate(1.3) brightness(0.6);transform:scale(1.05);', overlayStyle:`background:linear-gradient(180deg,rgba(253,202,64,0.15) 0%,rgba(49,57,60,0.5) 35%,rgba(49,57,60,0.85) 70%,${C.charcoal}f0 100%);`, pn:1, total:t }),
 
     method('🎨','작품 구매하기','354점의 작품이 당신을 기다립니다','판매 수익의 50%가 상호부조 기금으로',3,2),
     method('💝','직접 후원하기','씨앗기금을 직접 후원해주세요','소액부터 누구나 참여 가능',5,3),
