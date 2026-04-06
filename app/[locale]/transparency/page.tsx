@@ -7,7 +7,7 @@ import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import StatCard from '@/components/ui/StatCard';
-import { EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
+import { CONTACT, EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { createStandardPageMetadata } from '@/lib/seo';
@@ -64,6 +64,7 @@ export async function generateMetadata(): Promise<Metadata> {
       'article:published_time': '2022-12-01',
       'article:modified_time': LAST_UPDATED,
       'article:section': locale === 'en' ? 'Transparency & Reports' : '투명성 & 보고서',
+      'article:author': locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
     },
   };
 }
