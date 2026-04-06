@@ -132,8 +132,10 @@ export default async function TransparencyPage() {
           />
         </PageHero>
 
-        <div className="container-max pt-4 text-right">
-          <p className="text-xs text-gray-400">Last updated: {LAST_UPDATED}</p>
+        <div className="w-full bg-white">
+          <div className="container-max pt-4 text-right">
+            <p className="text-xs text-gray-400">Last updated: {LAST_UPDATED}</p>
+          </div>
         </div>
         {/* Reports Grid */}
         <Section variant="primary-surface" prevVariant="white">
@@ -312,8 +314,10 @@ export default async function TransparencyPage() {
         />
       </PageHero>
 
-      <div className="container-max pt-4 text-right bg-white">
-        <p className="text-xs text-gray-400">마지막 업데이트: {LAST_UPDATED}</p>
+      <div className="w-full bg-white">
+        <div className="container-max pt-4 text-right">
+          <p className="text-xs text-gray-400">마지막 업데이트: {LAST_UPDATED}</p>
+        </div>
       </div>
       {/* 보고서 카드 섹션 */}
       <Section variant="primary-surface" prevVariant="white">

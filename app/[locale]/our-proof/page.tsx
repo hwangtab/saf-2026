@@ -142,8 +142,10 @@ export default async function OurProof() {
           />
         </PageHero>
 
-        <div className="container-max pt-4 text-right">
-          <p className="text-xs text-gray-400">Last updated: {LAST_UPDATED}</p>
+        <div className="w-full bg-white">
+          <div className="container-max pt-4 text-right">
+            <p className="text-xs text-gray-400">Last updated: {LAST_UPDATED}</p>
+          </div>
         </div>
         <Section variant="primary-surface" prevVariant="white">
           <div className="container-max">
@@ -378,8 +380,10 @@ export default async function OurProof() {
         />
       </PageHero>
 
-      <div className="container-max pt-4 text-right bg-white">
-        <p className="text-xs text-gray-400">마지막 업데이트: {LAST_UPDATED}</p>
+      <div className="w-full bg-white">
+        <div className="container-max pt-4 text-right">
+          <p className="text-xs text-gray-400">마지막 업데이트: {LAST_UPDATED}</p>
+        </div>
       </div>
       <Section variant="primary-surface" prevVariant="white">
         <div className="container-max">
