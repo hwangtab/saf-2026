@@ -504,7 +504,8 @@ export function generateGalleryAggregateOffer(artworks: Artwork[]) {
 export function generateArtworkListSchema(
   artworks: Artwork[],
   locale: 'ko' | 'en' = 'ko',
-  limit = 30
+  limit = 30,
+  pageUrl?: string
 ) {
   const isEnglish = locale === 'en';
   const aggregateOffer = generateGalleryAggregateOffer(artworks);
@@ -513,7 +514,7 @@ export function generateArtworkListSchema(
     ? (({ '@context': _ctx, ...rest }) => rest)(aggregateOffer as Record<string, unknown>)
     : null;
 
-  const listUrl = buildLocaleUrl('/artworks', locale);
+  const listUrl = pageUrl ?? buildLocaleUrl('/artworks', locale);
   return {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
