@@ -53,7 +53,7 @@ export function generateVideoSchema(video: VideoSchemaInput) {
     publisher: {
       '@type': 'Organization',
       '@id': `${SITE_URL}#organization`,
-      name: '한국스마트협동조합',
+      name: video.locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
       url: SITE_URL,
     },
   };

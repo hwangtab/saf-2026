@@ -520,6 +520,7 @@ export function generateGalleryAggregateOffer(
   locale: 'ko' | 'en' = 'ko',
   pageUrl?: string
 ) {
+  const isEnglish = locale === 'en';
   const availableArtworks = artworks.filter((a) => !a.sold);
   const availablePrices = availableArtworks
     .map((a) => parseArtworkPrice(a.price))
@@ -547,7 +548,7 @@ export function generateGalleryAggregateOffer(
     seller: {
       '@type': 'Organization',
       '@id': `${SITE_URL}#organization`,
-      name: locale === 'en' ? 'Korea Smart Cooperative' : '한국스마트협동조합',
+      name: isEnglish ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
     },
   };
 }
