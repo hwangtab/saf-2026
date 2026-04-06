@@ -147,6 +147,8 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
       'product:availability': isSold ? 'out of stock' : 'in stock',
       'product:condition': 'new',
       'product:retailer_item_id': `SAF2026-${artwork.id}`,
+      // 작가 크레딧 메타 — 이미지 검색·Pinterest에서 작가 귀속 지원
+      author: artistForLocale,
       // Twitter/X Product Card 라벨 — 카드에 가격·상태 직접 표시
       'twitter:label1': isEnglish ? 'Price' : '가격',
       'twitter:data1':
