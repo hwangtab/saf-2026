@@ -199,6 +199,10 @@ export default async function CategoryPage({ params }: Props) {
     },
     inLanguage: isEnglish ? 'en-US' : 'ko-KR',
     mainEntity: { '@id': `${pageUrl}#item-list` },
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['h1', '.category-hero-description'],
+    },
   };
 
   // 관련 카테고리 (현재 카테고리 제외, 작품 수 기준 정렬)

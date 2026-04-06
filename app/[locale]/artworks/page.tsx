@@ -78,7 +78,7 @@ export default async function ArtworksPage() {
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
   const itemListSchema = generateArtworkListSchema(artworks, locale);
-  const aggregateOfferSchema = generateGalleryAggregateOffer(artworks);
+  const aggregateOfferSchema = generateGalleryAggregateOffer(artworks, locale);
   const artworksUrl = buildLocaleUrl('/artworks', locale);
   const collectionPageSchema = {
     '@context': 'https://schema.org',
