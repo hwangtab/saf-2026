@@ -35,24 +35,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: number;
     lastModified?: Date;
   }> = [
-    { path: '', changeFrequency: 'weekly', priority: 1.0, lastModified: new Date('2026-03-15') },
+    { path: '', changeFrequency: 'weekly', priority: 1.0, lastModified: now },
     {
       path: '/our-reality',
       changeFrequency: 'monthly',
       priority: 0.9,
-      lastModified: new Date('2026-01-15'),
+      lastModified: new Date('2026-04-06'),
     },
     {
       path: '/our-proof',
       changeFrequency: 'monthly',
       priority: 0.9,
-      lastModified: new Date('2026-03-01'),
+      lastModified: new Date('2026-04-06'),
     },
     {
       path: '/transparency',
       changeFrequency: 'monthly',
       priority: 0.85,
-      lastModified: new Date('2026-03-01'),
+      lastModified: new Date('2026-04-06'),
     },
     {
       path: '/special/oh-yoon',
@@ -76,7 +76,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       path: '/artworks',
       changeFrequency: 'weekly',
       priority: 0.9,
-      lastModified: new Date('2026-01-26'),
+      lastModified: now,
     },
     {
       path: '/archive',
@@ -88,7 +88,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       path: '/news',
       changeFrequency: 'weekly',
       priority: 0.85,
-      lastModified: new Date('2026-03-15'),
+      lastModified: now,
     },
     {
       path: '/privacy',
