@@ -1,0 +1,31 @@
+{
+  "createdAt": "2026-04-02T08:23:21.592Z",
+  "mode": "dry-run",
+  "options": {
+    "apply": false,
+    "threshold": 800,
+    "minLongEdge": 1600,
+    "maxLongEdge": 1920,
+    "limit": null,
+    "artworkId": null,
+    "includeHidden": false,
+    "syncCafe24": true,
+    "secondPassCutoff": 900,
+    "forceDoublePassBelow": 225,
+    "reportDir": "/Users/hwang-gyeongha/saf/backups/artwork-image-backups",
+    "tempRoot": "/var/folders/80/gxgxs_bj283b73s1ylhyl4zm0000gn/T/saf-artwork-upscale",
+    "modelUrl": "https://raw.githubusercontent.com/Saafke/FSRCNN_Tensorflow/master/models/FSRCNN_x4.pb"
+  },
+  "summary": {
+    "total": 354,
+    "inspected": 354,
+    "failed": 0,
+    "threshold": 800,
+    "targets": 0,
+    "failures": [],
+    "targetsPreview": []
+  },
+  "applied": [],
+  "applyFailures": [],
+  "backup": null
+}

@@ -1,0 +1,2753 @@
+{
+  "createdAt": "2026-04-02T08:04:35.980Z",
+  "mode": "apply",
+  "options": {
+    "apply": true,
+    "threshold": 800,
+    "minLongEdge": 1600,
+    "maxLongEdge": 1920,
+    "limit": null,
+    "artworkId": null,
+    "includeHidden": false,
+    "syncCafe24": true,
+    "secondPassCutoff": 900,
+    "forceDoublePassBelow": 225,
+    "reportDir": "/Users/hwang-gyeongha/saf/backups/artwork-image-backups",
+    "tempRoot": "/var/folders/80/gxgxs_bj283b73s1ylhyl4zm0000gn/T/saf-artwork-upscale",
+    "modelUrl": "https://raw.githubusercontent.com/Saafke/FSRCNN_Tensorflow/master/models/FSRCNN_x4.pb"
+  },
+  "summary": {
+    "total": 354,
+    "inspected": 353,
+    "failed": 1,
+    "threshold": 800,
+    "targets": 71,
+    "failures": [
+      {
+        "id": "e02e6689-748b-447e-b915-dd3f10a9aa36",
+        "title": "pop kids #96",
+        "artist": "최윤정",
+        "images": [
+          "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dcdc982f-31b3-4a14-b375-32afa3866319/3__original.webp"
+        ],
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dcdc982f-31b3-4a14-b375-32afa3866319/3__original.webp",
+        "target": false,
+        "error": "remote_fetch_failed:400"
+      }
+    ],
+    "targetsPreview": [
+      {
+        "id": "7f154b6f-a158-49ef-877f-618f9da166c1",
+        "artist": "오윤",
+        "title": "봄의소리1",
+        "width": 238,
+        "height": 255,
+        "longEdge": 255,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "ec78c03b-9e16-46a2-af71-7e28ac12da60",
+        "artist": "오윤",
+        "title": "지리산3",
+        "width": 282,
+        "height": 264,
+        "longEdge": 282,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "9383bd4e-7a71-47d2-bfd8-68f8771ef72a",
+        "artist": "김지영",
+        "title": "잎파리",
+        "width": 294,
+        "height": 278,
+        "longEdge": 294,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "09c52096-0b93-4983-824a-3de19fc517d3",
+        "artist": "이지은",
+        "title": "Hollowed yellow 04",
+        "width": 213,
+        "height": 320,
+        "longEdge": 320,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "26f7e23c-ba7b-45ab-b8bc-91ce6e7c6d05",
+        "artist": "이지은",
+        "title": "Hollowed blue 02",
+        "width": 213,
+        "height": 320,
+        "longEdge": 320,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "153e2b0a-90f1-4550-992c-ea28b70da648",
+        "artist": "이윤엽",
+        "title": "무슨일 있어?",
+        "width": 276,
+        "height": 324,
+        "longEdge": 324,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "1cb51984-cc53-49e2-bf93-1eb4e00f780a",
+        "artist": "오윤",
+        "title": "춤2",
+        "width": 293,
+        "height": 358,
+        "longEdge": 358,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "b3838f14-0601-4e2a-a502-4b099ecd50ad",
+        "artist": "오윤",
+        "title": "낮도깨비",
+        "width": 323,
+        "height": 377,
+        "longEdge": 377,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "06b76f49-9e49-478a-8f53-8051f31503f8",
+        "artist": "이윤엽",
+        "title": "콩밭메는 할머니2",
+        "width": 317,
+        "height": 394,
+        "longEdge": 394,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "4a78be2f-01b1-4db2-956e-32b11df89177",
+        "artist": "오윤",
+        "title": "징2",
+        "width": 332,
+        "height": 409,
+        "longEdge": 409,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "e26e5ab8-dc57-452b-9ed1-13edff47e58d",
+        "artist": "라인석",
+        "title": "곡선운동의 궤적으로부터 롯데월드타워 230817",
+        "width": 255,
+        "height": 428,
+        "longEdge": 428,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "f4ad6271-5dbe-4184-b77c-753998d4b4f6",
+        "artist": "손은영",
+        "title": "언덕위의 집",
+        "width": 390,
+        "height": 444,
+        "longEdge": 444,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "63c01624-d447-43c1-a480-d21b6c01a0ad",
+        "artist": "라인석",
+        "title": "서울타워로부터",
+        "width": 321,
+        "height": 445,
+        "longEdge": 445,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "aa35786b-c7e9-4b62-9a1f-993213a6813c",
+        "artist": "최윤정",
+        "title": "face #02-홍범도",
+        "width": 446,
+        "height": 448,
+        "longEdge": 448,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "a5b4a644-34b0-4dbe-a085-9d350e401c86",
+        "artist": "이수철",
+        "title": "포르코 당신은 어디있나요?-1",
+        "width": 366,
+        "height": 458,
+        "longEdge": 458,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "3a1259c3-8af5-4805-844f-b392cf31b13e",
+        "artist": "김지영",
+        "title": "순 돋는 나무",
+        "width": 464,
+        "height": 366,
+        "longEdge": 464,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "c8d573de-cd85-4ada-a6b7-b5af4db692ff",
+        "artist": "이윤엽",
+        "title": "좋은소식",
+        "width": 329,
+        "height": 467,
+        "longEdge": 467,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "a7722918-03c1-4c5a-9c56-e772500a4ca9",
+        "artist": "이광수",
+        "title": "回2",
+        "width": 306,
+        "height": 468,
+        "longEdge": 468,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "a4c9601a-a42c-408c-b07f-02d75802bf49",
+        "artist": "이광수",
+        "title": "回1",
+        "width": 310,
+        "height": 468,
+        "longEdge": 468,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "bb0f9ddd-69dc-47da-82b1-c8e0227eceda",
+        "artist": "이호철",
+        "title": "The great resurrection (위대한 부활)",
+        "width": 480,
+        "height": 360,
+        "longEdge": 480,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "0427c48e-0b9c-4408-99a9-bae911dd9791",
+        "artist": "이호철",
+        "title": "The great resurrection (위대한 부활)",
+        "width": 480,
+        "height": 360,
+        "longEdge": 480,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "8e886432-b2d1-4745-b674-bc44989cb59e",
+        "artist": "안소현",
+        "title": "Authentic City",
+        "width": 490,
+        "height": 368,
+        "longEdge": 490,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "4c920878-32dd-4727-ab03-6eda996597d5",
+        "artist": "오윤",
+        "title": "칼노래",
+        "width": 382,
+        "height": 492,
+        "longEdge": 492,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "590d234c-b461-454f-a641-fc14aa3db06c",
+        "artist": "안소현",
+        "title": "Authentic City",
+        "width": 497,
+        "height": 371,
+        "longEdge": 497,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "faba9864-0b11-4c53-b635-a2ab67f08df5",
+        "artist": "손은영",
+        "title": "The Houses at Night,2021, #81",
+        "width": 499,
+        "height": 374,
+        "longEdge": 499,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "562e965e-599c-41de-88c2-1cf4c0133684",
+        "artist": "이호철",
+        "title": "The great resurrection (위대한 부활)",
+        "width": 505,
+        "height": 420,
+        "longEdge": 505,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "4e58bb8f-d078-40ef-8bdc-ba63d9d71a1e",
+        "artist": "류호식",
+        "title": "Naturance",
+        "width": 564,
+        "height": 544,
+        "longEdge": 564,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "fc9605ca-6dcc-4aaa-8cab-b792045eba46",
+        "artist": "라인석",
+        "title": "휘어진 세계로부터_모나미볼펜 1",
+        "width": 566,
+        "height": 376,
+        "longEdge": 566,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "618357b4-b410-472d-8ba5-e0cf3189380e",
+        "artist": "오윤",
+        "title": "형님",
+        "width": 574,
+        "height": 442,
+        "longEdge": 574,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "6a47a8a2-764a-4da9-8d9c-217b05536662",
+        "artist": "오윤",
+        "title": "귀향",
+        "width": 579,
+        "height": 477,
+        "longEdge": 579,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "d0188743-0eb3-4c07-97e1-8021163a0d63",
+        "artist": "오윤",
+        "title": "봄의소리2",
+        "width": 580,
+        "height": 451,
+        "longEdge": 580,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "7fd66a18-1fef-4d55-bdca-892667f2b0e7",
+        "artist": "안소현",
+        "title": "무제",
+        "width": 583,
+        "height": 437,
+        "longEdge": 583,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "03f75942-fcfa-4ab8-aeed-b735a02bebe1",
+        "artist": "박지혜",
+        "title": "기억・속도・정보의 교차",
+        "width": 600,
+        "height": 600,
+        "longEdge": 600,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "139d6191-e984-45ef-9afe-7250e882f257",
+        "artist": "이홍원",
+        "title": "꽃을 사랑한 호랭이",
+        "width": 584,
+        "height": 600,
+        "longEdge": 600,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "eb3d0060-238f-494a-bb63-0432c8fda7c4",
+        "artist": "이철수",
+        "title": "무문관 50장(연작판화)",
+        "width": 600,
+        "height": 343,
+        "longEdge": 600,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "1350256c-5137-4a99-afcc-043e4c72287b",
+        "artist": "오윤",
+        "title": "팔엽일화",
+        "width": 583,
+        "height": 605,
+        "longEdge": 605,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "e637bb45-e888-443b-8f2e-8911c79d9ba7",
+        "artist": "오윤",
+        "title": "대지",
+        "width": 571,
+        "height": 632,
+        "longEdge": 632,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "0fa23930-184b-4516-9f10-a454864457a7",
+        "artist": "박생광",
+        "title": "쏘가리",
+        "width": 640,
+        "height": 528,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "f6cc0d47-8dda-430a-b7c9-2d4c7c6397d1",
+        "artist": "작가미상",
+        "title": "오리",
+        "width": 640,
+        "height": 640,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      {
+        "id": "a18346ab-379f-4a33-8cb2-4b37159372da",
+        "artist": "이동구",
+        "title": "보리술잔",
+        "width": 640,
+        "height": 426,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      }
+    ]
+  },
+  "applied": [
+    {
+      "id": "6aed838e-5588-4ddf-b712-a9ccc8f8ccd4",
+      "artist": "이호철",
+      "title": "Encore",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-6aed838e-5588-4ddf-b712-a9ccc8f8ccd4/66o0jb9buml_1772692188207__original.webp",
+        "width": 771,
+        "height": 642,
+        "longEdge": 771,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 3084,
+        "firstPassHeight": 2568,
+        "outputWidth": 3084,
+        "outputHeight": 2568,
+        "seconds": 0.9017
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-6aed838e-5588-4ddf-b712-a9ccc8f8ccd4/66o0jb9buml_1772692188207__original.webp",
+        "storagePath": "admin-artwork-6aed838e-5588-4ddf-b712-a9ccc8f8ccd4/66o0jb9buml_1772692188207__original.webp",
+        "width": 1920,
+        "height": 1599,
+        "longEdge": 1920,
+        "bytes": 105698
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/484",
+        "productNo": 484
+      }
+    },
+    {
+      "id": "f14bc36b-8dae-4f81-8373-5b79199df29e",
+      "artist": "이철수",
+      "title": "입춘",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-f14bc36b-8dae-4f81-8373-5b79199df29e/b4vaj3n4xko_1771896491032__original.webp",
+        "width": 714,
+        "height": 600,
+        "longEdge": 714,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2856,
+        "firstPassHeight": 2400,
+        "outputWidth": 2856,
+        "outputHeight": 2400,
+        "seconds": 0.8128
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-f14bc36b-8dae-4f81-8373-5b79199df29e/b4vaj3n4xko_1771896491032__original.webp",
+        "storagePath": "admin-artwork-f14bc36b-8dae-4f81-8373-5b79199df29e/b4vaj3n4xko_1771896491032__original.webp",
+        "width": 1920,
+        "height": 1613,
+        "longEdge": 1920,
+        "bytes": 95790
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/461",
+        "productNo": 461
+      }
+    },
+    {
+      "id": "0fa23930-184b-4516-9f10-a454864457a7",
+      "artist": "박생광",
+      "title": "쏘가리",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/279__original.webp",
+        "width": 640,
+        "height": 528,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2560,
+        "firstPassHeight": 2112,
+        "outputWidth": 2560,
+        "outputHeight": 2112,
+        "seconds": 0.5473
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/279__original.webp",
+        "storagePath": "c8839e5b-46a9-490d-a142-74f6d2b99be7/279__original.webp",
+        "width": 1920,
+        "height": 1584,
+        "longEdge": 1920,
+        "bytes": 43340
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/419",
+        "productNo": 419
+      }
+    },
+    {
+      "id": "f6cc0d47-8dda-430a-b7c9-2d4c7c6397d1",
+      "artist": "작가미상",
+      "title": "오리",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/7abe1f77-c8db-4b07-8ffa-c0d91e26b480/275__original.webp",
+        "width": 640,
+        "height": 640,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2560,
+        "firstPassHeight": 2560,
+        "outputWidth": 2560,
+        "outputHeight": 2560,
+        "seconds": 0.6701
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/7abe1f77-c8db-4b07-8ffa-c0d91e26b480/275__original.webp",
+        "storagePath": "7abe1f77-c8db-4b07-8ffa-c0d91e26b480/275__original.webp",
+        "width": 1920,
+        "height": 1920,
+        "longEdge": 1920,
+        "bytes": 66266
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/411",
+        "productNo": 411
+      }
+    },
+    {
+      "id": "a18346ab-379f-4a33-8cb2-4b37159372da",
+      "artist": "이동구",
+      "title": "보리술잔",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/11507750-e624-432a-9fc2-249561633e75/274__original.webp",
+        "width": 640,
+        "height": 426,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2560,
+        "firstPassHeight": 1704,
+        "outputWidth": 2560,
+        "outputHeight": 1704,
+        "seconds": 0.5365
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/11507750-e624-432a-9fc2-249561633e75/274__original.webp",
+        "storagePath": "11507750-e624-432a-9fc2-249561633e75/274__original.webp",
+        "width": 1920,
+        "height": 1278,
+        "longEdge": 1920,
+        "bytes": 54210
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/410",
+        "productNo": 410
+      }
+    },
+    {
+      "id": "581eaec2-9a24-4b18-96a6-ee92c1979120",
+      "artist": "박생광",
+      "title": "백두산 천지 아침",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/273__original.webp",
+        "width": 640,
+        "height": 535,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2560,
+        "firstPassHeight": 2140,
+        "outputWidth": 2560,
+        "outputHeight": 2140,
+        "seconds": 0.5976
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/273__original.webp",
+        "storagePath": "c8839e5b-46a9-490d-a142-74f6d2b99be7/273__original.webp",
+        "width": 1920,
+        "height": 1605,
+        "longEdge": 1920,
+        "bytes": 61120
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/409",
+        "productNo": 409
+      }
+    },
+    {
+      "id": "e0ddcc88-fb94-4d5d-aabb-f81c94ead967",
+      "artist": "김남진",
+      "title": "누드",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/52701ac8-6f38-465d-b6cb-229dcc454e4b/272__original.webp",
+        "width": 518,
+        "height": 640,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2072,
+        "firstPassHeight": 2560,
+        "outputWidth": 2072,
+        "outputHeight": 2560,
+        "seconds": 0.6153
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/52701ac8-6f38-465d-b6cb-229dcc454e4b/272__original.webp",
+        "storagePath": "52701ac8-6f38-465d-b6cb-229dcc454e4b/272__original.webp",
+        "width": 1554,
+        "height": 1920,
+        "longEdge": 1920,
+        "bytes": 81944
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/408",
+        "productNo": 408
+      }
+    },
+    {
+      "id": "5c0d0283-a32e-4969-aa08-d43c055e17cc",
+      "artist": "이동구",
+      "title": "사과",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/11507750-e624-432a-9fc2-249561633e75/271__original.webp",
+        "width": 640,
+        "height": 426,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2560,
+        "firstPassHeight": 1704,
+        "outputWidth": 2560,
+        "outputHeight": 1704,
+        "seconds": 0.4899
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/11507750-e624-432a-9fc2-249561633e75/271__original.webp",
+        "storagePath": "11507750-e624-432a-9fc2-249561633e75/271__original.webp",
+        "width": 1920,
+        "height": 1278,
+        "longEdge": 1920,
+        "bytes": 45242
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/407",
+        "productNo": 407
+      }
+    },
+    {
+      "id": "45adc0b7-56b0-4a40-919c-7acd090df223",
+      "artist": "박불똥",
+      "title": "멸(滅)",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/1b4a67e4-f946-4f83-b65e-0bace3e526a5/270__original.webp",
+        "width": 447,
+        "height": 640,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 1788,
+        "firstPassHeight": 2560,
+        "outputWidth": 1788,
+        "outputHeight": 2560,
+        "seconds": 0.6019
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/1b4a67e4-f946-4f83-b65e-0bace3e526a5/270__original.webp",
+        "storagePath": "1b4a67e4-f946-4f83-b65e-0bace3e526a5/270__original.webp",
+        "width": 1341,
+        "height": 1920,
+        "longEdge": 1920,
+        "bytes": 109284
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/406",
+        "productNo": 406
+      }
+    },
+    {
+      "id": "4c4ae4ed-fefe-469f-9f9f-9a2c11e93e64",
+      "artist": "최연택",
+      "title": "풀",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/5f7e2a47-eeba-451e-8c79-828965cff26b/269__original.webp",
+        "width": 547,
+        "height": 640,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2188,
+        "firstPassHeight": 2560,
+        "outputWidth": 2188,
+        "outputHeight": 2560,
+        "seconds": 0.6553
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/5f7e2a47-eeba-451e-8c79-828965cff26b/269__original.webp",
+        "storagePath": "5f7e2a47-eeba-451e-8c79-828965cff26b/269__original.webp",
+        "width": 1641,
+        "height": 1920,
+        "longEdge": 1920,
+        "bytes": 128080
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/405",
+        "productNo": 405
+      }
+    },
+    {
+      "id": "34244640-a01f-48cb-b391-a3e8d2403073",
+      "artist": "고현주",
+      "title": "기억의 목소리",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/9d561b47-f0b0-440e-b947-46c312ac101e/268__original.webp",
+        "width": 640,
+        "height": 508,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2560,
+        "firstPassHeight": 2032,
+        "outputWidth": 2560,
+        "outputHeight": 2032,
+        "seconds": 0.6872
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/9d561b47-f0b0-440e-b947-46c312ac101e/268__original.webp",
+        "storagePath": "9d561b47-f0b0-440e-b947-46c312ac101e/268__original.webp",
+        "width": 1920,
+        "height": 1524,
+        "longEdge": 1920,
+        "bytes": 165582
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/404",
+        "productNo": 404
+      }
+    },
+    {
+      "id": "40e8ff52-aaae-455a-b5d9-57964b3b390c",
+      "artist": "고자영",
+      "title": "이동식 정원 69-사라지는 3",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3052cddc-f6b3-436d-9c47-f458629337a4/267__original.webp",
+        "width": 592,
+        "height": 640,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2368,
+        "firstPassHeight": 2560,
+        "outputWidth": 2368,
+        "outputHeight": 2560,
+        "seconds": 0.7263
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3052cddc-f6b3-436d-9c47-f458629337a4/267__original.webp",
+        "storagePath": "3052cddc-f6b3-436d-9c47-f458629337a4/267__original.webp",
+        "width": 1776,
+        "height": 1920,
+        "longEdge": 1920,
+        "bytes": 147212
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/403",
+        "productNo": 403
+      }
+    },
+    {
+      "id": "86d67a1a-d757-41d7-8f26-2291e88cbc42",
+      "artist": "김유진",
+      "title": "폭발의 다음",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ba5234c4-51b3-405b-9e06-db2b2ed184df/266__original.webp",
+        "width": 450,
+        "height": 640,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 1800,
+        "firstPassHeight": 2560,
+        "outputWidth": 1800,
+        "outputHeight": 2560,
+        "seconds": 0.6307
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ba5234c4-51b3-405b-9e06-db2b2ed184df/266__original.webp",
+        "storagePath": "ba5234c4-51b3-405b-9e06-db2b2ed184df/266__original.webp",
+        "width": 1350,
+        "height": 1920,
+        "longEdge": 1920,
+        "bytes": 122704
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/402",
+        "productNo": 402
+      }
+    },
+    {
+      "id": "db1d7b02-60e2-4e23-b893-10eb68da15c7",
+      "artist": "김주호",
+      "title": "사랑만들기",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6013c2fb-9efb-4695-855f-18c892c9bbe6/265__original.webp",
+        "width": 429,
+        "height": 640,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 1716,
+        "firstPassHeight": 2560,
+        "outputWidth": 1716,
+        "outputHeight": 2560,
+        "seconds": 0.4837
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6013c2fb-9efb-4695-855f-18c892c9bbe6/265__original.webp",
+        "storagePath": "6013c2fb-9efb-4695-855f-18c892c9bbe6/265__original.webp",
+        "width": 1287,
+        "height": 1920,
+        "longEdge": 1920,
+        "bytes": 47904
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/401",
+        "productNo": 401
+      }
+    },
+    {
+      "id": "9238f8fc-0a7b-4bc3-adca-7916a23fffe5",
+      "artist": "김주희",
+      "title": "제주 섭지코지",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dedcad53-cd2c-4dba-aae7-e35a526f82c1/264__original.webp",
+        "width": 640,
+        "height": 398,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2560,
+        "firstPassHeight": 1592,
+        "outputWidth": 2560,
+        "outputHeight": 1592,
+        "seconds": 0.5678
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dedcad53-cd2c-4dba-aae7-e35a526f82c1/264__original.webp",
+        "storagePath": "dedcad53-cd2c-4dba-aae7-e35a526f82c1/264__original.webp",
+        "width": 1920,
+        "height": 1194,
+        "longEdge": 1920,
+        "bytes": 184286
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/400",
+        "productNo": 400
+      }
+    },
+    {
+      "id": "53f0d943-9039-416c-9dd0-1215618e36b8",
+      "artist": "김주희",
+      "title": "월정교",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dedcad53-cd2c-4dba-aae7-e35a526f82c1/263__original.webp",
+        "width": 640,
+        "height": 629,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2560,
+        "firstPassHeight": 2516,
+        "outputWidth": 2560,
+        "outputHeight": 2516,
+        "seconds": 0.949
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dedcad53-cd2c-4dba-aae7-e35a526f82c1/263__original.webp",
+        "storagePath": "dedcad53-cd2c-4dba-aae7-e35a526f82c1/263__original.webp",
+        "width": 1920,
+        "height": 1887,
+        "longEdge": 1920,
+        "bytes": 359088
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/399",
+        "productNo": 399
+      }
+    },
+    {
+      "id": "dddeb6fe-f4f1-418b-8a40-cbe59dd5b16a",
+      "artist": "장희진",
+      "title": "folded tint",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a4ad1ceb-f987-4c57-b682-0c308aff16d0/262__original.webp",
+        "width": 640,
+        "height": 570,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2560,
+        "firstPassHeight": 2280,
+        "outputWidth": 2560,
+        "outputHeight": 2280,
+        "seconds": 0.7264
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a4ad1ceb-f987-4c57-b682-0c308aff16d0/262__original.webp",
+        "storagePath": "a4ad1ceb-f987-4c57-b682-0c308aff16d0/262__original.webp",
+        "width": 1920,
+        "height": 1710,
+        "longEdge": 1920,
+        "bytes": 264758
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/398",
+        "productNo": 398
+      }
+    },
+    {
+      "id": "2e300692-6c50-4b1a-8129-b6a0e19be18f",
+      "artist": "정재철",
+      "title": "Middle ground",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4efdaed3-3ba2-443e-b68c-3cbbf203dd55/261__original.webp",
+        "width": 511,
+        "height": 640,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2044,
+        "firstPassHeight": 2560,
+        "outputWidth": 2044,
+        "outputHeight": 2560,
+        "seconds": 0.6347
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4efdaed3-3ba2-443e-b68c-3cbbf203dd55/261__original.webp",
+        "storagePath": "4efdaed3-3ba2-443e-b68c-3cbbf203dd55/261__original.webp",
+        "width": 1533,
+        "height": 1920,
+        "longEdge": 1920,
+        "bytes": 146312
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/397",
+        "productNo": 397
+      }
+    },
+    {
+      "id": "099a6bc7-bd7c-4712-92fc-d2c95a9ad64c",
+      "artist": "류준화",
+      "title": "녹색발",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/1549a33f-5d05-4321-866c-49f81f250621/260__original.webp",
+        "width": 426,
+        "height": 640,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 1704,
+        "firstPassHeight": 2560,
+        "outputWidth": 1704,
+        "outputHeight": 2560,
+        "seconds": 0.5084
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/1549a33f-5d05-4321-866c-49f81f250621/260__original.webp",
+        "storagePath": "1549a33f-5d05-4321-866c-49f81f250621/260__original.webp",
+        "width": 1278,
+        "height": 1920,
+        "longEdge": 1920,
+        "bytes": 60868
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/396",
+        "productNo": 396
+      }
+    },
+    {
+      "id": "2e2a2883-88fe-4eb3-b86a-4a0d77740ff9",
+      "artist": "하선영",
+      "title": "Hope 013",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/00bb8541-b810-4ddd-892a-b3ac2da87c85/259__original.webp",
+        "width": 640,
+        "height": 477,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2560,
+        "firstPassHeight": 1908,
+        "outputWidth": 2560,
+        "outputHeight": 1908,
+        "seconds": 0.4355
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/00bb8541-b810-4ddd-892a-b3ac2da87c85/259__original.webp",
+        "storagePath": "00bb8541-b810-4ddd-892a-b3ac2da87c85/259__original.webp",
+        "width": 1920,
+        "height": 1431,
+        "longEdge": 1920,
+        "bytes": 43820
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/395",
+        "productNo": 395
+      }
+    },
+    {
+      "id": "658a3544-e7ce-481d-a280-38f549115e5e",
+      "artist": "민병산",
+      "title": "수하석상",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/31950760-2c0f-43b7-8b42-39a8a5b8f992/258__original.webp",
+        "width": 640,
+        "height": 147,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2560,
+        "firstPassHeight": 588,
+        "outputWidth": 2560,
+        "outputHeight": 588,
+        "seconds": 0.1833
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/31950760-2c0f-43b7-8b42-39a8a5b8f992/258__original.webp",
+        "storagePath": "31950760-2c0f-43b7-8b42-39a8a5b8f992/258__original.webp",
+        "width": 1920,
+        "height": 441,
+        "longEdge": 1920,
+        "bytes": 34110
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/394",
+        "productNo": 394
+      }
+    },
+    {
+      "id": "8b9ed190-216b-4693-87e2-6c2622421ee8",
+      "artist": "한애규",
+      "title": "무제",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/309e02b1-1c58-4090-a9ea-355745623075/257__original.webp",
+        "width": 480,
+        "height": 640,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 1920,
+        "firstPassHeight": 2560,
+        "outputWidth": 1920,
+        "outputHeight": 2560,
+        "seconds": 0.5488
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/309e02b1-1c58-4090-a9ea-355745623075/257__original.webp",
+        "storagePath": "309e02b1-1c58-4090-a9ea-355745623075/257__original.webp",
+        "width": 1440,
+        "height": 1920,
+        "longEdge": 1920,
+        "bytes": 90794
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/393",
+        "productNo": 393
+      }
+    },
+    {
+      "id": "72d0fa08-dd9d-4c31-838b-45f9c9556abf",
+      "artist": "김태희",
+      "title": "각진 병",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/2d078e74-10dd-42ee-9d24-f239067e7fa6/255__original.webp",
+        "width": 640,
+        "height": 426,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2560,
+        "firstPassHeight": 1704,
+        "outputWidth": 2560,
+        "outputHeight": 1704,
+        "seconds": 0.4667
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/2d078e74-10dd-42ee-9d24-f239067e7fa6/255__original.webp",
+        "storagePath": "2d078e74-10dd-42ee-9d24-f239067e7fa6/255__original.webp",
+        "width": 1920,
+        "height": 1278,
+        "longEdge": 1920,
+        "bytes": 38232
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/391",
+        "productNo": 391
+      }
+    },
+    {
+      "id": "9383bd4e-7a71-47d2-bfd8-68f8771ef72a",
+      "artist": "김지영",
+      "title": "잎파리",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3adda803-0141-4358-8fa1-0298123f2090/254__original.webp",
+        "width": 294,
+        "height": 278,
+        "longEdge": 294,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 1176,
+        "firstPassHeight": 1112,
+        "outputWidth": 1176,
+        "outputHeight": 1112,
+        "seconds": 0.1577
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3adda803-0141-4358-8fa1-0298123f2090/254__original.webp",
+        "storagePath": "3adda803-0141-4358-8fa1-0298123f2090/254__original.webp",
+        "width": 1600,
+        "height": 1513,
+        "longEdge": 1600,
+        "bytes": 50440
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/390",
+        "productNo": 390
+      }
+    },
+    {
+      "id": "3a1259c3-8af5-4805-844f-b392cf31b13e",
+      "artist": "김지영",
+      "title": "순 돋는 나무",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3adda803-0141-4358-8fa1-0298123f2090/253__original.webp",
+        "width": 464,
+        "height": 366,
+        "longEdge": 464,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 1856,
+        "firstPassHeight": 1464,
+        "outputWidth": 1856,
+        "outputHeight": 1464,
+        "seconds": 0.3066
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3adda803-0141-4358-8fa1-0298123f2090/253__original.webp",
+        "storagePath": "3adda803-0141-4358-8fa1-0298123f2090/253__original.webp",
+        "width": 1856,
+        "height": 1464,
+        "longEdge": 1856,
+        "bytes": 58494
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/389",
+        "productNo": 389
+      }
+    },
+    {
+      "id": "4e58bb8f-d078-40ef-8bdc-ba63d9d71a1e",
+      "artist": "류호식",
+      "title": "Naturance",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e9f5787d-da31-446d-90e6-d36ad22c517b/252__original.webp",
+        "width": 564,
+        "height": 544,
+        "longEdge": 564,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2256,
+        "firstPassHeight": 2176,
+        "outputWidth": 2256,
+        "outputHeight": 2176,
+        "seconds": 0.522
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e9f5787d-da31-446d-90e6-d36ad22c517b/252__original.webp",
+        "storagePath": "e9f5787d-da31-446d-90e6-d36ad22c517b/252__original.webp",
+        "width": 1920,
+        "height": 1852,
+        "longEdge": 1920,
+        "bytes": 68076
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/388",
+        "productNo": 388
+      }
+    },
+    {
+      "id": "1d56ce6e-4d8b-45a8-adce-c0347fe8c1f8",
+      "artist": "천지수",
+      "title": "가족 family",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/251__original.webp",
+        "width": 640,
+        "height": 640,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2560,
+        "firstPassHeight": 2560,
+        "outputWidth": 2560,
+        "outputHeight": 2560,
+        "seconds": 0.9287
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/251__original.webp",
+        "storagePath": "e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/251__original.webp",
+        "width": 1920,
+        "height": 1920,
+        "longEdge": 1920,
+        "bytes": 403446
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/387",
+        "productNo": 387
+      }
+    },
+    {
+      "id": "75f0d3e9-f2c6-4651-8439-a4dbd081a5d5",
+      "artist": "천지수",
+      "title": "아프리카 커피의 기억",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/250__original.webp",
+        "width": 522,
+        "height": 640,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2088,
+        "firstPassHeight": 2560,
+        "outputWidth": 2088,
+        "outputHeight": 2560,
+        "seconds": 0.7468
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/250__original.webp",
+        "storagePath": "e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/250__original.webp",
+        "width": 1566,
+        "height": 1920,
+        "longEdge": 1920,
+        "bytes": 256498
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/386",
+        "productNo": 386
+      }
+    },
+    {
+      "id": "8194e308-0284-4844-9500-b135e261e023",
+      "artist": "천지수",
+      "title": "정글의 대화",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/249__original.webp",
+        "width": 532,
+        "height": 640,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2128,
+        "firstPassHeight": 2560,
+        "outputWidth": 2128,
+        "outputHeight": 2560,
+        "seconds": 0.7254
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/249__original.webp",
+        "storagePath": "e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/249__original.webp",
+        "width": 1596,
+        "height": 1920,
+        "longEdge": 1920,
+        "bytes": 276612
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/385",
+        "productNo": 385
+      }
+    },
+    {
+      "id": "5c928a21-bf5e-4eeb-97b6-96a0e7209896",
+      "artist": "천지수",
+      "title": "다른 세계와의 교감",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/248__original.webp",
+        "width": 508,
+        "height": 640,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2032,
+        "firstPassHeight": 2560,
+        "outputWidth": 2032,
+        "outputHeight": 2560,
+        "seconds": 0.7148
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/248__original.webp",
+        "storagePath": "e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/248__original.webp",
+        "width": 1524,
+        "height": 1920,
+        "longEdge": 1920,
+        "bytes": 346222
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/384",
+        "productNo": 384
+      }
+    },
+    {
+      "id": "06b76f49-9e49-478a-8f53-8051f31503f8",
+      "artist": "이윤엽",
+      "title": "콩밭메는 할머니2",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/238__original.webp",
+        "width": 317,
+        "height": 394,
+        "longEdge": 394,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 1268,
+        "firstPassHeight": 1576,
+        "outputWidth": 1268,
+        "outputHeight": 1576,
+        "seconds": 0.2216
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/238__original.webp",
+        "storagePath": "411a33be-9297-4c47-b4f4-e5c84e79e6d9/238__original.webp",
+        "width": 1287,
+        "height": 1600,
+        "longEdge": 1600,
+        "bytes": 82120
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/374",
+        "productNo": 374
+      }
+    },
+    {
+      "id": "c8d573de-cd85-4ada-a6b7-b5af4db692ff",
+      "artist": "이윤엽",
+      "title": "좋은소식",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/236__original.webp",
+        "width": 329,
+        "height": 467,
+        "longEdge": 467,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 1316,
+        "firstPassHeight": 1868,
+        "outputWidth": 1316,
+        "outputHeight": 1868,
+        "seconds": 0.3143
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/236__original.webp",
+        "storagePath": "411a33be-9297-4c47-b4f4-e5c84e79e6d9/236__original.webp",
+        "width": 1316,
+        "height": 1868,
+        "longEdge": 1868,
+        "bytes": 131720
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/372",
+        "productNo": 372
+      }
+    },
+    {
+      "id": "153e2b0a-90f1-4550-992c-ea28b70da648",
+      "artist": "이윤엽",
+      "title": "무슨일 있어?",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/235__original.webp",
+        "width": 276,
+        "height": 324,
+        "longEdge": 324,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 1104,
+        "firstPassHeight": 1296,
+        "outputWidth": 1104,
+        "outputHeight": 1296,
+        "seconds": 0.1783
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/235__original.webp",
+        "storagePath": "411a33be-9297-4c47-b4f4-e5c84e79e6d9/235__original.webp",
+        "width": 1363,
+        "height": 1600,
+        "longEdge": 1600,
+        "bytes": 69506
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/371",
+        "productNo": 371
+      }
+    },
+    {
+      "id": "760c97d0-b2c9-4382-b21c-def0baa0ec5a",
+      "artist": "양순열",
+      "title": "Ottogi Earthy Rainbow Matte",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a8d68dcb-f8c5-4e40-9705-b2bb95f18190/233__original.webp",
+        "width": 556,
+        "height": 744,
+        "longEdge": 744,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2224,
+        "firstPassHeight": 2976,
+        "outputWidth": 2224,
+        "outputHeight": 2976,
+        "seconds": 0.6729
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a8d68dcb-f8c5-4e40-9705-b2bb95f18190/233__original.webp",
+        "storagePath": "a8d68dcb-f8c5-4e40-9705-b2bb95f18190/233__original.webp",
+        "width": 1435,
+        "height": 1920,
+        "longEdge": 1920,
+        "bytes": 25458
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/369",
+        "productNo": 369
+      }
+    },
+    {
+      "id": "90abb8b3-61f7-4cd0-a681-4db28a1c18ea",
+      "artist": "서공임",
+      "title": "영웅",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/14b69635-17e4-4350-b6a9-868a7ca4bdd9/223__original.webp",
+        "width": 402,
+        "height": 640,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 1608,
+        "firstPassHeight": 2560,
+        "outputWidth": 1608,
+        "outputHeight": 2560,
+        "seconds": 0.47
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/14b69635-17e4-4350-b6a9-868a7ca4bdd9/223__original.webp",
+        "storagePath": "14b69635-17e4-4350-b6a9-868a7ca4bdd9/223__original.webp",
+        "width": 1206,
+        "height": 1920,
+        "longEdge": 1920,
+        "bytes": 91960
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/359",
+        "productNo": 359
+      }
+    },
+    {
+      "id": "3c0fcf82-e04a-4ad7-90ec-caa61c563029",
+      "artist": "서공임",
+      "title": "영웅",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/14b69635-17e4-4350-b6a9-868a7ca4bdd9/222__original.webp",
+        "width": 435,
+        "height": 640,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 1740,
+        "firstPassHeight": 2560,
+        "outputWidth": 1740,
+        "outputHeight": 2560,
+        "seconds": 0.5106
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/14b69635-17e4-4350-b6a9-868a7ca4bdd9/222__original.webp",
+        "storagePath": "14b69635-17e4-4350-b6a9-868a7ca4bdd9/222__original.webp",
+        "width": 1305,
+        "height": 1920,
+        "longEdge": 1920,
+        "bytes": 102516
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/358",
+        "productNo": 358
+      }
+    },
+    {
+      "id": "618357b4-b410-472d-8ba5-e0cf3189380e",
+      "artist": "오윤",
+      "title": "형님",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/216__original.webp",
+        "width": 574,
+        "height": 442,
+        "longEdge": 574,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2296,
+        "firstPassHeight": 1768,
+        "outputWidth": 2296,
+        "outputHeight": 1768,
+        "seconds": 0.4481
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/216__original.webp",
+        "storagePath": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/216__original.webp",
+        "width": 1920,
+        "height": 1478,
+        "longEdge": 1920,
+        "bytes": 135762
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/352",
+        "productNo": 352
+      }
+    },
+    {
+      "id": "1cb51984-cc53-49e2-bf93-1eb4e00f780a",
+      "artist": "오윤",
+      "title": "춤2",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/215__original.webp",
+        "width": 293,
+        "height": 358,
+        "longEdge": 358,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 1172,
+        "firstPassHeight": 1432,
+        "outputWidth": 1172,
+        "outputHeight": 1432,
+        "seconds": 0.1892
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/215__original.webp",
+        "storagePath": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/215__original.webp",
+        "width": 1309,
+        "height": 1600,
+        "longEdge": 1600,
+        "bytes": 60932
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/351",
+        "productNo": 351
+      }
+    },
+    {
+      "id": "e637bb45-e888-443b-8f2e-8911c79d9ba7",
+      "artist": "오윤",
+      "title": "대지",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/213__original.webp",
+        "width": 571,
+        "height": 632,
+        "longEdge": 632,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2284,
+        "firstPassHeight": 2528,
+        "outputWidth": 2284,
+        "outputHeight": 2528,
+        "seconds": 0.6604
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/213__original.webp",
+        "storagePath": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/213__original.webp",
+        "width": 1735,
+        "height": 1920,
+        "longEdge": 1920,
+        "bytes": 168342
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/349",
+        "productNo": 349
+      }
+    },
+    {
+      "id": "6a47a8a2-764a-4da9-8d9c-217b05536662",
+      "artist": "오윤",
+      "title": "귀향",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/212__original.webp",
+        "width": 579,
+        "height": 477,
+        "longEdge": 579,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2316,
+        "firstPassHeight": 1908,
+        "outputWidth": 2316,
+        "outputHeight": 1908,
+        "seconds": 0.509
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/212__original.webp",
+        "storagePath": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/212__original.webp",
+        "width": 1920,
+        "height": 1582,
+        "longEdge": 1920,
+        "bytes": 126468
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/348",
+        "productNo": 348
+      }
+    },
+    {
+      "id": "1350256c-5137-4a99-afcc-043e4c72287b",
+      "artist": "오윤",
+      "title": "팔엽일화",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/211__original.webp",
+        "width": 583,
+        "height": 605,
+        "longEdge": 605,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2332,
+        "firstPassHeight": 2420,
+        "outputWidth": 2332,
+        "outputHeight": 2420,
+        "seconds": 0.6892
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/211__original.webp",
+        "storagePath": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/211__original.webp",
+        "width": 1850,
+        "height": 1920,
+        "longEdge": 1920,
+        "bytes": 233148
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/347",
+        "productNo": 347
+      }
+    },
+    {
+      "id": "74824081-63a0-4b76-9de6-a57d865c110e",
+      "artist": "오윤",
+      "title": "춘무인추무의",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/210__original.webp",
+        "width": 583,
+        "height": 773,
+        "longEdge": 773,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2332,
+        "firstPassHeight": 3092,
+        "outputWidth": 2332,
+        "outputHeight": 3092,
+        "seconds": 1.0508
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/210__original.webp",
+        "storagePath": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/210__original.webp",
+        "width": 1448,
+        "height": 1920,
+        "longEdge": 1920,
+        "bytes": 275922
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/346",
+        "productNo": 346
+      }
+    },
+    {
+      "id": "0e60e54b-9bb1-4715-8927-87d84f14d194",
+      "artist": "박재동",
+      "title": "노무현",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3a7840c4-eb4d-48fb-bf45-7bb55e62a091/201__original.webp",
+        "width": 548,
+        "height": 640,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2192,
+        "firstPassHeight": 2560,
+        "outputWidth": 2192,
+        "outputHeight": 2560,
+        "seconds": 0.6803
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3a7840c4-eb4d-48fb-bf45-7bb55e62a091/201__original.webp",
+        "storagePath": "3a7840c4-eb4d-48fb-bf45-7bb55e62a091/201__original.webp",
+        "width": 1644,
+        "height": 1920,
+        "longEdge": 1920,
+        "bytes": 80288
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/337",
+        "productNo": 337
+      }
+    },
+    {
+      "id": "ec78c03b-9e16-46a2-af71-7e28ac12da60",
+      "artist": "오윤",
+      "title": "지리산3",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/186__original.webp",
+        "width": 282,
+        "height": 264,
+        "longEdge": 282,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 1128,
+        "firstPassHeight": 1056,
+        "outputWidth": 1128,
+        "outputHeight": 1056,
+        "seconds": 0.1515
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/186__original.webp",
+        "storagePath": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/186__original.webp",
+        "width": 1600,
+        "height": 1498,
+        "longEdge": 1600,
+        "bytes": 54762
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/296",
+        "productNo": 296
+      }
+    },
+    {
+      "id": "b3838f14-0601-4e2a-a502-4b099ecd50ad",
+      "artist": "오윤",
+      "title": "낮도깨비",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/154__original.webp",
+        "width": 323,
+        "height": 377,
+        "longEdge": 377,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 1292,
+        "firstPassHeight": 1508,
+        "outputWidth": 1292,
+        "outputHeight": 1508,
+        "seconds": 0.2583
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/154__original.webp",
+        "storagePath": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/154__original.webp",
+        "width": 1371,
+        "height": 1600,
+        "longEdge": 1600,
+        "bytes": 84790
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/242",
+        "productNo": 242
+      }
+    },
+    {
+      "id": "4a78be2f-01b1-4db2-956e-32b11df89177",
+      "artist": "오윤",
+      "title": "징2",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/152__original.webp",
+        "width": 332,
+        "height": 409,
+        "longEdge": 409,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 1328,
+        "firstPassHeight": 1636,
+        "outputWidth": 1328,
+        "outputHeight": 1636,
+        "seconds": 0.2988
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/152__original.webp",
+        "storagePath": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/152__original.webp",
+        "width": 1328,
+        "height": 1636,
+        "longEdge": 1636,
+        "bytes": 127146
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/240",
+        "productNo": 240
+      }
+    },
+    {
+      "id": "4c920878-32dd-4727-ab03-6eda996597d5",
+      "artist": "오윤",
+      "title": "칼노래",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/151__original.webp",
+        "width": 382,
+        "height": 492,
+        "longEdge": 492,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 1528,
+        "firstPassHeight": 1968,
+        "outputWidth": 1528,
+        "outputHeight": 1968,
+        "seconds": 0.3731
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/151__original.webp",
+        "storagePath": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/151__original.webp",
+        "width": 1491,
+        "height": 1920,
+        "longEdge": 1920,
+        "bytes": 85618
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/239",
+        "productNo": 239
+      }
+    },
+    {
+      "id": "d0188743-0eb3-4c07-97e1-8021163a0d63",
+      "artist": "오윤",
+      "title": "봄의소리2",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/150__original.webp",
+        "width": 580,
+        "height": 451,
+        "longEdge": 580,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2320,
+        "firstPassHeight": 1804,
+        "outputWidth": 2320,
+        "outputHeight": 1804,
+        "seconds": 0.4843
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/150__original.webp",
+        "storagePath": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/150__original.webp",
+        "width": 1920,
+        "height": 1493,
+        "longEdge": 1920,
+        "bytes": 114856
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/238",
+        "productNo": 238
+      }
+    },
+    {
+      "id": "7f154b6f-a158-49ef-877f-618f9da166c1",
+      "artist": "오윤",
+      "title": "봄의소리1",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/149__original.webp",
+        "width": 238,
+        "height": 255,
+        "longEdge": 255,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 952,
+        "firstPassHeight": 1020,
+        "outputWidth": 952,
+        "outputHeight": 1020,
+        "seconds": 0.1215
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/149__original.webp",
+        "storagePath": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/149__original.webp",
+        "width": 1493,
+        "height": 1600,
+        "longEdge": 1600,
+        "bytes": 61008
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/237",
+        "productNo": 237
+      }
+    },
+    {
+      "id": "7d93201f-1397-4b76-91e6-a504ac2edf36",
+      "artist": "오윤",
+      "title": "검은새",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/148__original.webp",
+        "width": 563,
+        "height": 664,
+        "longEdge": 664,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2252,
+        "firstPassHeight": 2656,
+        "outputWidth": 2252,
+        "outputHeight": 2656,
+        "seconds": 0.6528
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/148__original.webp",
+        "storagePath": "398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/148__original.webp",
+        "width": 1628,
+        "height": 1920,
+        "longEdge": 1920,
+        "bytes": 76332
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/236",
+        "productNo": 236
+      }
+    },
+    {
+      "id": "03f75942-fcfa-4ab8-aeed-b735a02bebe1",
+      "artist": "박지혜",
+      "title": "기억・속도・정보의 교차",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/d3358ece-79e1-4081-a16b-233fa5c2b7d1/143__original.webp",
+        "width": 600,
+        "height": 600,
+        "longEdge": 600,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2400,
+        "firstPassHeight": 2400,
+        "outputWidth": 2400,
+        "outputHeight": 2400,
+        "seconds": 0.7609
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/d3358ece-79e1-4081-a16b-233fa5c2b7d1/143__original.webp",
+        "storagePath": "d3358ece-79e1-4081-a16b-233fa5c2b7d1/143__original.webp",
+        "width": 1920,
+        "height": 1920,
+        "longEdge": 1920,
+        "bytes": 231750
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/231",
+        "productNo": 231
+      }
+    },
+    {
+      "id": "139d6191-e984-45ef-9afe-7250e882f257",
+      "artist": "이홍원",
+      "title": "꽃을 사랑한 호랭이",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/721b01c5-36de-4db2-af35-a9f0d6eabc2c/128__original.webp",
+        "width": 584,
+        "height": 600,
+        "longEdge": 600,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2336,
+        "firstPassHeight": 2400,
+        "outputWidth": 2336,
+        "outputHeight": 2400,
+        "seconds": 0.7203
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/721b01c5-36de-4db2-af35-a9f0d6eabc2c/128__original.webp",
+        "storagePath": "721b01c5-36de-4db2-af35-a9f0d6eabc2c/128__original.webp",
+        "width": 1869,
+        "height": 1920,
+        "longEdge": 1920,
+        "bytes": 225038
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/216",
+        "productNo": 216
+      }
+    },
+    {
+      "id": "09c52096-0b93-4983-824a-3de19fc517d3",
+      "artist": "이지은",
+      "title": "Hollowed yellow 04",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c3a30f14-11d2-443f-9f5f-32914fb1e01f/117__original.webp",
+        "width": 213,
+        "height": 320,
+        "longEdge": 320,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 852,
+        "firstPassHeight": 1280,
+        "outputWidth": 852,
+        "outputHeight": 1280,
+        "seconds": 0.1277
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c3a30f14-11d2-443f-9f5f-32914fb1e01f/117__original.webp",
+        "storagePath": "c3a30f14-11d2-443f-9f5f-32914fb1e01f/117__original.webp",
+        "width": 1065,
+        "height": 1600,
+        "longEdge": 1600,
+        "bytes": 17512
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/205",
+        "productNo": 205
+      }
+    },
+    {
+      "id": "26f7e23c-ba7b-45ab-b8bc-91ce6e7c6d05",
+      "artist": "이지은",
+      "title": "Hollowed blue 02",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c3a30f14-11d2-443f-9f5f-32914fb1e01f/116__original.webp",
+        "width": 213,
+        "height": 320,
+        "longEdge": 320,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 852,
+        "firstPassHeight": 1280,
+        "outputWidth": 852,
+        "outputHeight": 1280,
+        "seconds": 0.1278
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c3a30f14-11d2-443f-9f5f-32914fb1e01f/116__original.webp",
+        "storagePath": "c3a30f14-11d2-443f-9f5f-32914fb1e01f/116__original.webp",
+        "width": 1065,
+        "height": 1600,
+        "longEdge": 1600,
+        "bytes": 23810
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/204",
+        "productNo": 204
+      }
+    },
+    {
+      "id": "253a3793-af5b-41f0-adc5-cf9faa275d43",
+      "artist": "이호철",
+      "title": "The great resurrection (위대한 부활)",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e9ef236c-00e6-4fb6-9e9e-dcf4942524c0/34__original.webp",
+        "width": 640,
+        "height": 575,
+        "longEdge": 640,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2560,
+        "firstPassHeight": 2300,
+        "outputWidth": 2560,
+        "outputHeight": 2300,
+        "seconds": 0.5783
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e9ef236c-00e6-4fb6-9e9e-dcf4942524c0/34__original.webp",
+        "storagePath": "e9ef236c-00e6-4fb6-9e9e-dcf4942524c0/34__original.webp",
+        "width": 1920,
+        "height": 1725,
+        "longEdge": 1920,
+        "bytes": 59694
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/54",
+        "productNo": 54
+      }
+    },
+    {
+      "id": "eb3d0060-238f-494a-bb63-0432c8fda7c4",
+      "artist": "이철수",
+      "title": "무문관 50장(연작판화)",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/5f1c4d25-f6de-4f4a-b9f3-a82430e2d824/32__original.webp",
+        "width": 600,
+        "height": 343,
+        "longEdge": 600,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2400,
+        "firstPassHeight": 1372,
+        "outputWidth": 2400,
+        "outputHeight": 1372,
+        "seconds": 0.414
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/5f1c4d25-f6de-4f4a-b9f3-a82430e2d824/32__original.webp",
+        "storagePath": "5f1c4d25-f6de-4f4a-b9f3-a82430e2d824/32__original.webp",
+        "width": 1920,
+        "height": 1098,
+        "longEdge": 1920,
+        "bytes": 82742
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/52",
+        "productNo": 52
+      }
+    },
+    {
+      "id": "bb0f9ddd-69dc-47da-82b1-c8e0227eceda",
+      "artist": "이호철",
+      "title": "The great resurrection (위대한 부활)",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e9ef236c-00e6-4fb6-9e9e-dcf4942524c0/19__original.webp",
+        "width": 480,
+        "height": 360,
+        "longEdge": 480,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 1920,
+        "firstPassHeight": 1440,
+        "outputWidth": 1920,
+        "outputHeight": 1440,
+        "seconds": 0.4461
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e9ef236c-00e6-4fb6-9e9e-dcf4942524c0/19__original.webp",
+        "storagePath": "e9ef236c-00e6-4fb6-9e9e-dcf4942524c0/19__original.webp",
+        "width": 1920,
+        "height": 1440,
+        "longEdge": 1920,
+        "bytes": 94560
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/38",
+        "productNo": 38
+      }
+    },
+    {
+      "id": "0427c48e-0b9c-4408-99a9-bae911dd9791",
+      "artist": "이호철",
+      "title": "The great resurrection (위대한 부활)",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e9ef236c-00e6-4fb6-9e9e-dcf4942524c0/18__original.webp",
+        "width": 480,
+        "height": 360,
+        "longEdge": 480,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 1920,
+        "firstPassHeight": 1440,
+        "outputWidth": 1920,
+        "outputHeight": 1440,
+        "seconds": 0.3336
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e9ef236c-00e6-4fb6-9e9e-dcf4942524c0/18__original.webp",
+        "storagePath": "e9ef236c-00e6-4fb6-9e9e-dcf4942524c0/18__original.webp",
+        "width": 1920,
+        "height": 1440,
+        "longEdge": 1920,
+        "bytes": 68652
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/37",
+        "productNo": 37
+      }
+    },
+    {
+      "id": "562e965e-599c-41de-88c2-1cf4c0133684",
+      "artist": "이호철",
+      "title": "The great resurrection (위대한 부활)",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e9ef236c-00e6-4fb6-9e9e-dcf4942524c0/17__original.webp",
+        "width": 505,
+        "height": 420,
+        "longEdge": 505,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2020,
+        "firstPassHeight": 1680,
+        "outputWidth": 2020,
+        "outputHeight": 1680,
+        "seconds": 0.4152
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e9ef236c-00e6-4fb6-9e9e-dcf4942524c0/17__original.webp",
+        "storagePath": "e9ef236c-00e6-4fb6-9e9e-dcf4942524c0/17__original.webp",
+        "width": 1920,
+        "height": 1597,
+        "longEdge": 1920,
+        "bytes": 141582
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/36",
+        "productNo": 36
+      }
+    },
+    {
+      "id": "fc9605ca-6dcc-4aaa-8cab-b792045eba46",
+      "artist": "라인석",
+      "title": "휘어진 세계로부터_모나미볼펜 1",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4ea509fd-7f19-4420-8ed3-0c84836685dd/16__original.webp",
+        "width": 566,
+        "height": 376,
+        "longEdge": 566,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2264,
+        "firstPassHeight": 1504,
+        "outputWidth": 2264,
+        "outputHeight": 1504,
+        "seconds": 0.3537
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4ea509fd-7f19-4420-8ed3-0c84836685dd/16__original.webp",
+        "storagePath": "4ea509fd-7f19-4420-8ed3-0c84836685dd/16__original.webp",
+        "width": 1920,
+        "height": 1275,
+        "longEdge": 1920,
+        "bytes": 11206
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/35",
+        "productNo": 35
+      }
+    },
+    {
+      "id": "63c01624-d447-43c1-a480-d21b6c01a0ad",
+      "artist": "라인석",
+      "title": "서울타워로부터",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4ea509fd-7f19-4420-8ed3-0c84836685dd/15__original.webp",
+        "width": 321,
+        "height": 445,
+        "longEdge": 445,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 1284,
+        "firstPassHeight": 1780,
+        "outputWidth": 1284,
+        "outputHeight": 1780,
+        "seconds": 0.2808
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4ea509fd-7f19-4420-8ed3-0c84836685dd/15__original.webp",
+        "storagePath": "4ea509fd-7f19-4420-8ed3-0c84836685dd/15__original.webp",
+        "width": 1284,
+        "height": 1780,
+        "longEdge": 1780,
+        "bytes": 34106
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/34",
+        "productNo": 34
+      }
+    },
+    {
+      "id": "e26e5ab8-dc57-452b-9ed1-13edff47e58d",
+      "artist": "라인석",
+      "title": "곡선운동의 궤적으로부터 롯데월드타워 230817",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4ea509fd-7f19-4420-8ed3-0c84836685dd/14__original.webp",
+        "width": 255,
+        "height": 428,
+        "longEdge": 428,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 1020,
+        "firstPassHeight": 1712,
+        "outputWidth": 1020,
+        "outputHeight": 1712,
+        "seconds": 0.209
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4ea509fd-7f19-4420-8ed3-0c84836685dd/14__original.webp",
+        "storagePath": "4ea509fd-7f19-4420-8ed3-0c84836685dd/14__original.webp",
+        "width": 1020,
+        "height": 1712,
+        "longEdge": 1712,
+        "bytes": 30002
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/33",
+        "productNo": 33
+      }
+    },
+    {
+      "id": "f4ad6271-5dbe-4184-b77c-753998d4b4f6",
+      "artist": "손은영",
+      "title": "언덕위의 집",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/0aea8f22-3c00-4f4a-8f88-338fe69d1bb2/13__original.webp",
+        "width": 390,
+        "height": 444,
+        "longEdge": 444,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 1560,
+        "firstPassHeight": 1776,
+        "outputWidth": 1560,
+        "outputHeight": 1776,
+        "seconds": 0.3583
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/0aea8f22-3c00-4f4a-8f88-338fe69d1bb2/13__original.webp",
+        "storagePath": "0aea8f22-3c00-4f4a-8f88-338fe69d1bb2/13__original.webp",
+        "width": 1560,
+        "height": 1776,
+        "longEdge": 1776,
+        "bytes": 103916
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/32",
+        "productNo": 32
+      }
+    },
+    {
+      "id": "faba9864-0b11-4c53-b635-a2ab67f08df5",
+      "artist": "손은영",
+      "title": "The Houses at Night,2021, #81",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/0aea8f22-3c00-4f4a-8f88-338fe69d1bb2/12__original.webp",
+        "width": 499,
+        "height": 374,
+        "longEdge": 499,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 1996,
+        "firstPassHeight": 1496,
+        "outputWidth": 1996,
+        "outputHeight": 1496,
+        "seconds": 0.3383
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/0aea8f22-3c00-4f4a-8f88-338fe69d1bb2/12__original.webp",
+        "storagePath": "0aea8f22-3c00-4f4a-8f88-338fe69d1bb2/12__original.webp",
+        "width": 1920,
+        "height": 1439,
+        "longEdge": 1920,
+        "bytes": 68490
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/31",
+        "productNo": 31
+      }
+    },
+    {
+      "id": "8e886432-b2d1-4745-b674-bc44989cb59e",
+      "artist": "안소현",
+      "title": "Authentic City",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/5aabb63d-31c8-4418-a6af-3a8736f07e68/9__original.webp",
+        "width": 490,
+        "height": 368,
+        "longEdge": 490,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 1960,
+        "firstPassHeight": 1472,
+        "outputWidth": 1960,
+        "outputHeight": 1472,
+        "seconds": 0.3982
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/5aabb63d-31c8-4418-a6af-3a8736f07e68/9__original.webp",
+        "storagePath": "5aabb63d-31c8-4418-a6af-3a8736f07e68/9__original.webp",
+        "width": 1920,
+        "height": 1442,
+        "longEdge": 1920,
+        "bytes": 185744
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/28",
+        "productNo": 28
+      }
+    },
+    {
+      "id": "590d234c-b461-454f-a641-fc14aa3db06c",
+      "artist": "안소현",
+      "title": "Authentic City",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/5aabb63d-31c8-4418-a6af-3a8736f07e68/8__original.webp",
+        "width": 497,
+        "height": 371,
+        "longEdge": 497,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 1988,
+        "firstPassHeight": 1484,
+        "outputWidth": 1988,
+        "outputHeight": 1484,
+        "seconds": 0.3549
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/5aabb63d-31c8-4418-a6af-3a8736f07e68/8__original.webp",
+        "storagePath": "5aabb63d-31c8-4418-a6af-3a8736f07e68/8__original.webp",
+        "width": 1920,
+        "height": 1433,
+        "longEdge": 1920,
+        "bytes": 116538
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/27",
+        "productNo": 27
+      }
+    },
+    {
+      "id": "7fd66a18-1fef-4d55-bdca-892667f2b0e7",
+      "artist": "안소현",
+      "title": "무제",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/5aabb63d-31c8-4418-a6af-3a8736f07e68/7__original.webp",
+        "width": 583,
+        "height": 437,
+        "longEdge": 583,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 2332,
+        "firstPassHeight": 1748,
+        "outputWidth": 2332,
+        "outputHeight": 1748,
+        "seconds": 0.4817
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/5aabb63d-31c8-4418-a6af-3a8736f07e68/7__original.webp",
+        "storagePath": "5aabb63d-31c8-4418-a6af-3a8736f07e68/7__original.webp",
+        "width": 1920,
+        "height": 1439,
+        "longEdge": 1920,
+        "bytes": 56176
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/26",
+        "productNo": 26
+      }
+    },
+    {
+      "id": "a7722918-03c1-4c5a-9c56-e772500a4ca9",
+      "artist": "이광수",
+      "title": "回2",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/269077db-441d-48ca-8690-5c8d37803384/6__original.webp",
+        "width": 306,
+        "height": 468,
+        "longEdge": 468,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 1224,
+        "firstPassHeight": 1872,
+        "outputWidth": 1224,
+        "outputHeight": 1872,
+        "seconds": 0.3261
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/269077db-441d-48ca-8690-5c8d37803384/6__original.webp",
+        "storagePath": "269077db-441d-48ca-8690-5c8d37803384/6__original.webp",
+        "width": 1224,
+        "height": 1872,
+        "longEdge": 1872,
+        "bytes": 217042
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/25",
+        "productNo": 25
+      }
+    },
+    {
+      "id": "a4c9601a-a42c-408c-b07f-02d75802bf49",
+      "artist": "이광수",
+      "title": "回1",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/269077db-441d-48ca-8690-5c8d37803384/5__original.webp",
+        "width": 310,
+        "height": 468,
+        "longEdge": 468,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 1240,
+        "firstPassHeight": 1872,
+        "outputWidth": 1240,
+        "outputHeight": 1872,
+        "seconds": 0.3298
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/269077db-441d-48ca-8690-5c8d37803384/5__original.webp",
+        "storagePath": "269077db-441d-48ca-8690-5c8d37803384/5__original.webp",
+        "width": 1240,
+        "height": 1872,
+        "longEdge": 1872,
+        "bytes": 169824
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/24",
+        "productNo": 24
+      }
+    },
+    {
+      "id": "a5b4a644-34b0-4dbe-a085-9d350e401c86",
+      "artist": "이수철",
+      "title": "포르코 당신은 어디있나요?-1",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/32b69bdb-3baa-4318-96b5-4b8bd6741a29/4__original.webp",
+        "width": 366,
+        "height": 458,
+        "longEdge": 458,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 1464,
+        "firstPassHeight": 1832,
+        "outputWidth": 1464,
+        "outputHeight": 1832,
+        "seconds": 0.2776
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/32b69bdb-3baa-4318-96b5-4b8bd6741a29/4__original.webp",
+        "storagePath": "32b69bdb-3baa-4318-96b5-4b8bd6741a29/4__original.webp",
+        "width": 1464,
+        "height": 1832,
+        "longEdge": 1832,
+        "bytes": 23778
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/23",
+        "productNo": 23
+      }
+    },
+    {
+      "id": "aa35786b-c7e9-4b62-9a1f-993213a6813c",
+      "artist": "최윤정",
+      "title": "face #02-홍범도",
+      "before": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dcdc982f-31b3-4a14-b375-32afa3866319/2__original.webp",
+        "width": 446,
+        "height": 448,
+        "longEdge": 448,
+        "sourceKind": "remote"
+      },
+      "ai": {
+        "passes": 1,
+        "firstPassWidth": 1784,
+        "firstPassHeight": 1792,
+        "outputWidth": 1784,
+        "outputHeight": 1792,
+        "seconds": 0.3618
+      },
+      "after": {
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dcdc982f-31b3-4a14-b375-32afa3866319/2__original.webp",
+        "storagePath": "dcdc982f-31b3-4a14-b375-32afa3866319/2__original.webp",
+        "width": 1784,
+        "height": 1792,
+        "longEdge": 1792,
+        "bytes": 78506
+      },
+      "cafe24": {
+        "ok": true,
+        "shopUrl": "https://koreasmartcoop.cafe24.com/surl/O/21",
+        "productNo": 21
+      }
+    }
+  ],
+  "applyFailures": [],
+  "backup": [
+    "[dotenv@17.2.3] injecting env (18) from .env.local -- tip: ⚙️  override existing env vars with { override: true }",
+    "backup_json=/Users/hwang-gyeongha/saf/backups/artwork-image-backups/artwork-images-backup-20260402-170436.json",
+    "rollback_sql=/Users/hwang-gyeongha/saf/backups/artwork-image-backups/artwork-images-rollback-20260402-170436.sql",
+    "artworks=369"
+  ]
+}

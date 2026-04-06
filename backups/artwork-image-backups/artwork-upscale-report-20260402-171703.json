@@ -1,0 +1,43 @@
+{
+  "createdAt": "2026-04-02T08:17:15.715Z",
+  "mode": "dry-run",
+  "options": {
+    "apply": false,
+    "threshold": 800,
+    "minLongEdge": 1600,
+    "maxLongEdge": 1920,
+    "limit": null,
+    "artworkId": null,
+    "includeHidden": false,
+    "syncCafe24": true,
+    "secondPassCutoff": 900,
+    "forceDoublePassBelow": 225,
+    "reportDir": "/Users/hwang-gyeongha/saf/backups/artwork-image-backups",
+    "tempRoot": "/var/folders/80/gxgxs_bj283b73s1ylhyl4zm0000gn/T/saf-artwork-upscale",
+    "modelUrl": "https://raw.githubusercontent.com/Saafke/FSRCNN_Tensorflow/master/models/FSRCNN_x4.pb"
+  },
+  "summary": {
+    "total": 354,
+    "inspected": 353,
+    "failed": 1,
+    "threshold": 800,
+    "targets": 0,
+    "failures": [
+      {
+        "id": "e02e6689-748b-447e-b915-dd3f10a9aa36",
+        "title": "pop kids #96",
+        "artist": "최윤정",
+        "images": [
+          "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dcdc982f-31b3-4a14-b375-32afa3866319/3__original.webp"
+        ],
+        "imageUrl": "https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dcdc982f-31b3-4a14-b375-32afa3866319/3__original.webp",
+        "target": false,
+        "error": "remote_fetch_failed:400"
+      }
+    ],
+    "targetsPreview": []
+  },
+  "applied": [],
+  "applyFailures": [],
+  "backup": null
+}
