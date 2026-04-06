@@ -148,7 +148,9 @@ export default async function Home() {
       <Section variant="white" prevVariant="canvas-soft" className="pb-20">
         <div className="container-max">
           <SectionTitle className="mb-12">{t('statsTitle')}</SectionTitle>
-          <DynamicCounter items={counterItems} locale={locale} />
+          <Suspense fallback={<div className="h-32 animate-pulse bg-gray-100 rounded" />}>
+            <DynamicCounter items={counterItems} locale={locale} />
+          </Suspense>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mt-12">
             <LinkButton
               href={EXTERNAL_LINKS.JOIN_MEMBER}

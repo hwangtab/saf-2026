@@ -213,6 +213,7 @@ function ArtworkCard({
   }
 
   // Gallery variant (default)
+  const artistHref = `/artworks/artist/${encodeURIComponent(artwork.artist)}`;
   return (
     <div
       className={cn(
@@ -220,7 +221,8 @@ function ArtworkCard({
         className
       )}
     >
-      <Link href={getHref(artwork, returnTo)} className="block h-full">
+      {/* 이미지 영역만 작품 상세 링크로 감쌈 — 작가명 링크와 중첩 방지 */}
+      <Link href={getHref(artwork, returnTo)} className="block">
         <div ref={imageContainerRef} className="relative w-full overflow-hidden aspect-[4/5]">
           <div className="absolute inset-0 shimmer-loading" />
           <SafeImage
@@ -245,69 +247,80 @@ function ArtworkCard({
             <SoldDateBadge soldAt={artwork.sold_at} variant="gallery" locale={locale} />
           )}
         </div>
+      </Link>
 
-        <div className={cn('p-4', theme === 'dark' ? 'bg-charcoal' : 'bg-white')}>
-          <h2
-            className={cn(
-              'text-lg font-bold font-sans transition-colors duration-300 break-keep line-clamp-2 min-h-[3.5rem]',
-              theme === 'dark'
-                ? 'text-white group-hover:text-sun'
-                : 'text-charcoal group-hover:text-primary'
-            )}
-          >
+      <div className={cn('p-4', theme === 'dark' ? 'bg-charcoal' : 'bg-white')}>
+        <h2
+          className={cn(
+            'text-lg font-bold font-sans transition-colors duration-300 break-keep line-clamp-2 min-h-[3.5rem]',
+            theme === 'dark'
+              ? 'text-white group-hover:text-sun'
+              : 'text-charcoal group-hover:text-primary'
+          )}
+        >
+          <Link href={getHref(artwork, returnTo)} className="hover:underline">
             {getSafeTitle(artwork, untitledLabel, locale)}
-          </h2>
-          <p
+          </Link>
+        </h2>
+        <p
+          className={cn(
+            'text-sm mt-1 min-h-[1.25rem]',
+            theme === 'dark' ? 'text-white/75' : 'text-charcoal-muted'
+          )}
+        >
+          {/* 작가명 → 작가 페이지 링크: 카테고리/아티스트 페이지 간 내부 링크 강화 */}
+          <Link
+            href={artistHref}
             className={cn(
-              'text-sm mt-1 min-h-[1.25rem]',
-              theme === 'dark' ? 'text-white/75' : 'text-charcoal-muted'
+              'hover:underline transition-colors',
+              theme === 'dark' ? 'hover:text-white' : 'hover:text-primary'
             )}
           >
             {getSafeArtist(artwork, unknownArtistLabel, locale)}
-          </p>
+          </Link>
+        </p>
+        <p
+          className={cn(
+            'text-xs mt-2 line-clamp-1 min-h-[1rem]',
+            theme === 'dark' ? 'text-white/55' : 'text-charcoal-soft'
+          )}
+        >
+          {(() => {
+            if (isPending(artwork.material) && isPending(artwork.size)) {
+              return pendingInfoLabel;
+            }
+            if (showMaterial || showSize) {
+              return (
+                <>
+                  {showMaterial && localizedMaterial}
+                  {showMaterial && showSize && ' · '}
+                  {showSize && localizedSize}
+                </>
+              );
+            }
+            return '\u00A0';
+          })()}
+        </p>
+
+        {localizedPrice && !isInquiryPrice(localizedPrice) ? (
           <p
             className={cn(
-              'text-xs mt-2 line-clamp-1 min-h-[1rem]',
-              theme === 'dark' ? 'text-white/55' : 'text-charcoal-soft'
+              'text-sm font-semibold mt-1',
+              artwork.sold
+                ? theme === 'dark'
+                  ? 'text-white/50 line-through'
+                  : 'text-gray-600 line-through'
+                : theme === 'dark'
+                  ? 'text-sun'
+                  : 'text-primary'
             )}
           >
-            {(() => {
-              if (isPending(artwork.material) && isPending(artwork.size)) {
-                return pendingInfoLabel;
-              }
-              if (showMaterial || showSize) {
-                return (
-                  <>
-                    {showMaterial && localizedMaterial}
-                    {showMaterial && showSize && ' · '}
-                    {showSize && localizedSize}
-                  </>
-                );
-              }
-              return '\u00A0';
-            })()}
+            {localizedPrice}
           </p>
-
-          {localizedPrice && !isInquiryPrice(localizedPrice) ? (
-            <p
-              className={cn(
-                'text-sm font-semibold mt-1',
-                artwork.sold
-                  ? theme === 'dark'
-                    ? 'text-white/50 line-through'
-                    : 'text-gray-600 line-through'
-                  : theme === 'dark'
-                    ? 'text-sun'
-                    : 'text-primary'
-              )}
-            >
-              {localizedPrice}
-            </p>
-          ) : (
-            <p className="text-sm font-semibold mt-1 min-h-[1.25rem]">{'\u00A0'}</p>
-          )}
-        </div>
-      </Link>
+        ) : (
+          <p className="text-sm font-semibold mt-1 min-h-[1.25rem]">{'\u00A0'}</p>
+        )}
+      </div>
     </div>
   );
 }
