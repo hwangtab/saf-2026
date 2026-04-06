@@ -136,10 +136,10 @@ export function generateArtistSchema(artist: ArtistSchemaInput) {
       : undefined,
     url: artist.url,
     jobTitle: artist.jobTitle || 'Artist',
-    sameAs: [artist.url],
+    // sameAs: 외부 SNS/Wikipedia URI만 포함 (자기 자신 URL은 url 필드에 있으므로 제외)
     mainEntityOfPage: {
       '@type': 'ProfilePage',
-      '@id': artist.url,
+      '@id': `${artist.url}#webpage`,
     },
   };
 }
@@ -166,10 +166,10 @@ export function generateEnhancedArtistSchema(artist: EnhancedArtistSchemaInput) 
       : undefined,
     url: artist.url,
     jobTitle: artist.jobTitle || 'Visual Artist',
-    sameAs: [artist.url],
+    // sameAs: 외부 SNS/Wikipedia URI만 포함 (자기 자신 URL은 url 필드에 있으므로 제외)
     mainEntityOfPage: {
       '@type': 'ProfilePage',
-      '@id': artist.url,
+      '@id': `${artist.url}#webpage`,
     },
     // Expertise areas
     ...(knowsAbout.length > 0 && { knowsAbout }),

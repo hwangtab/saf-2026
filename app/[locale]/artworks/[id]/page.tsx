@@ -242,6 +242,8 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 hasActionablePrice={hasActionablePrice}
                 hasOtherWorks={otherWorks.length > 0}
                 displayPrice={localizedPrice}
+                category={artwork.category ?? undefined}
+                hasSameCategoryWorks={sameCategoryWorks.length > 0}
               />
 
               <SupportMessage testimonials={flatTestimonials} totalSoldCount={totalSoldCount} />

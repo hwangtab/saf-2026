@@ -20,6 +20,8 @@ interface ArtworkPurchaseCTAProps {
   hasActionablePrice: boolean;
   hasOtherWorks?: boolean;
   displayPrice?: string | null;
+  category?: string;
+  hasSameCategoryWorks?: boolean;
 }
 
 function ContactButtons() {
@@ -56,30 +58,33 @@ export default function ArtworkPurchaseCTA({
   hasActionablePrice,
   hasOtherWorks,
   displayPrice,
+  category,
+  hasSameCategoryWorks,
 }: ArtworkPurchaseCTAProps) {
   const t = useTranslations('artworkDetail');
 
   // D분기: sold — 판매 완료 안내
   if (sold) {
+    // 우선순위: 작가의 다른 작품 → 같은 카테고리 → 전체 갤러리
+    const fallbackHref = hasOtherWorks
+      ? `/artworks/artist/${encodeURIComponent(artist)}`
+      : hasSameCategoryWorks && category
+        ? `/artworks/category/${encodeURIComponent(category)}`
+        : '/artworks';
+
     return (
       <div className="rounded-2xl border border-gray-200 bg-gradient-to-b from-green-50/50 to-white p-6 shadow-sm">
         <div className="text-center">
           <CheckCircle className="w-10 h-10 text-green-500 mx-auto mb-3" />
           <p className="text-lg font-bold text-charcoal mb-1">{t('soldNotice')}</p>
           <p className="text-sm text-gray-500 mb-4">{t('soldExploreOther')}</p>
-          {hasOtherWorks ? (
-            <LinkButton
-              href={`/artworks/artist/${encodeURIComponent(artist)}`}
-              variant="outline"
-              className="w-full"
-            >
-              {t('otherWorks', { artist })} →
-            </LinkButton>
-          ) : (
-            <LinkButton href="/artworks" variant="outline" className="w-full">
-              {t('soldExploreAll')} →
-            </LinkButton>
-          )}
+          <LinkButton href={fallbackHref} variant="outline" className="w-full">
+            {hasOtherWorks
+              ? `${t('otherWorks', { artist })} →`
+              : hasSameCategoryWorks && category
+                ? `${t('sameCategoryBrowse', { category })} →`
+                : `${t('soldExploreAll')} →`}
+          </LinkButton>
         </div>
       </div>
     );

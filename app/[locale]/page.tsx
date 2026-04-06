@@ -18,6 +18,7 @@ import {
   generateFAQSchema,
   generateCampaignSchema,
   generateArtworkListSchema,
+  generateGalleryAggregateOffer,
 } from '@/lib/seo-utils';
 import { generateArtworkPurchaseHowTo, generateMemberJoinHowTo } from '@/lib/schemas/howto';
 import { generateSAFCoreQA } from '@/lib/schemas/qa-page';
@@ -182,6 +183,17 @@ export default async function Home() {
       </Section>
 
       {/* JSON-LD schemas */}
+      <JsonLdScript
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'WebPage',
+          '@id': `${buildLocaleUrl('/', locale)}#webpage`,
+          url: buildLocaleUrl('/', locale),
+          name: locale === 'en' ? 'SAF Online' : '씨앗페 온라인',
+          isPartOf: { '@id': `${SITE_URL}#website` },
+          inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
+        }}
+      />
       <JsonLdScript data={generateExhibitionSchema([], locale)} />
       <JsonLdScript data={generateCampaignSchema(locale)} />
       <JsonLdScript data={generateArtworkPurchaseHowTo(locale)} />
@@ -205,12 +217,16 @@ export default async function Home() {
 async function HeroSection({ locale }: { locale: 'ko' | 'en' }) {
   const t = await getTranslations('home');
   const artworks = await getSupabaseHomepageArtworks(16);
-  // 홈페이지 추천 작품 ItemList — 검색엔진이 홈에서 개별 작품 카드 노출 가능
-  const featuredListSchema = generateArtworkListSchema(artworks, locale, 16);
+  const homepageUrl = buildLocaleUrl('/', locale);
+  // 홈페이지 추천 작품 ItemList — @id를 홈 URL 기반으로 설정 (/artworks ItemList와 충돌 방지)
+  const featuredListSchema = generateArtworkListSchema(artworks, locale, 16, homepageUrl);
+  // AggregateOffer — 브랜드 검색 시 가격 범위 리치 스니펫 노출
+  const aggregateOfferSchema = generateGalleryAggregateOffer(artworks, locale, homepageUrl);
 
   return (
     <>
       <JsonLdScript data={featuredListSchema} />
+      {aggregateOfferSchema && <JsonLdScript data={aggregateOfferSchema} />}
       <section className="relative overflow-hidden">
         <BackgroundSlider />
         <SawtoothDivider position="bottom" colorClass="text-canvas-soft" />

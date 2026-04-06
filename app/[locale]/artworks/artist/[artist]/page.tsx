@@ -229,13 +229,12 @@ export default async function ArtistPage({ params }: Props) {
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
 
-  // AggregateOffer: 작가명 검색 시 가격 범위를 리치 스니펫에 노출
-  const aggregateOfferSchema = generateGalleryAggregateOffer(artistArtworks);
-  // ItemList: 작가의 작품 목록 — 검색 결과에서 개별 작품 카드 노출 가능
   const artistPageUrl = buildLocaleUrl(
     `/artworks/artist/${encodeURIComponent(artistName)}`,
     locale
   );
+  // AggregateOffer: 작가명 검색 시 가격 범위를 리치 스니펫에 노출
+  const aggregateOfferSchema = generateGalleryAggregateOffer(artistArtworks, locale, artistPageUrl);
   const itemListSchema = generateArtworkListSchema(
     artistArtworks,
     locale,
