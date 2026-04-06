@@ -273,6 +273,7 @@ export function generateArtworkJsonLd(
     ? {
         '@type': 'Offer',
         url: offerUrl,
+        validFrom: CAMPAIGN.START_DATE,
         availability: artwork.sold ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock',
         itemCondition: 'https://schema.org/NewCondition',
         priceSpecification: {
@@ -288,6 +289,7 @@ export function generateArtworkJsonLd(
     : {
         '@type': 'Offer',
         url: offerUrl,
+        validFrom: CAMPAIGN.START_DATE,
         priceCurrency: 'KRW',
         price: parseFloat(numericPrice) || 0,
         priceValidUntil,
@@ -342,7 +344,6 @@ export function generateArtworkJsonLd(
       description: profileForLocale || undefined,
     },
     artMedium: materialForLocale || undefined,
-    artworkSurface: materialForLocale || undefined,
     dateCreated: artwork.year || undefined,
     size: sizeForLocale
       ? { '@type': 'QuantitativeValue', value: sizeForLocale, unitText: 'dimensions' }
@@ -390,10 +391,19 @@ export function generateArtworkJsonLd(
         value: historyForLocale.substring(0, 200),
       },
     ].filter(Boolean),
+    // sameAs: 동일 제품의 외부 판매 URL — 검색엔진이 Cafe24 상품과 동일 엔티티로 인식
+    ...(artwork.shopUrl && { sameAs: artwork.shopUrl }),
     potentialAction: [
       {
         '@type': 'BuyAction',
-        target: offerUrl,
+        target: {
+          '@type': 'EntryPoint',
+          urlTemplate: offerUrl,
+          actionPlatform: [
+            'https://schema.org/DesktopWebPlatform',
+            'https://schema.org/MobileWebPlatform',
+          ],
+        },
         name: isEnglish ? 'Buy artwork' : '작품 구매하기',
       },
       {
@@ -438,8 +448,14 @@ export function generateArtworkJsonLd(
     isPartOf: { '@id': `${SITE_URL}#website` },
     mainEntity: { '@id': artworkPageUrl },
     datePublished: CAMPAIGN.START_DATE,
-    dateModified: CAMPAIGN.END_DATE,
+    dateModified: artwork.sold_at
+      ? new Date(artwork.sold_at).toISOString().slice(0, 10)
+      : CAMPAIGN.END_DATE,
     inLanguage: isEnglish ? 'en-US' : 'ko-KR',
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['#artwork-title', '#artist-name', '#artist-profile', '#artist-note'],
+    },
   };
 
   return {
@@ -500,12 +516,29 @@ export function generateArtworkListSchema(
     itemListElement: artworks.slice(0, limit).map((artwork, index) => {
       const rawImg = artwork.images[0] ? resolveSeoArtworkImageUrl(artwork.images[0]) : null;
       const absImg = rawImg ? (rawImg.startsWith('http') ? rawImg : `${SITE_URL}${rawImg}`) : null;
+      const artworkUrl = `${SITE_URL}/artworks/${artwork.id}`;
+      const artworkName = isEnglish && artwork.title_en ? artwork.title_en : artwork.title;
+      const numericPrice = parseArtworkPrice(artwork.price);
       return {
         '@type': 'ListItem',
         position: index + 1,
-        url: `${SITE_URL}/artworks/${artwork.id}`,
-        name: isEnglish && artwork.title_en ? artwork.title_en : artwork.title,
-        ...(absImg && { image: absImg }),
+        item: {
+          '@type': 'VisualArtwork',
+          '@id': artworkUrl,
+          url: artworkUrl,
+          name: artworkName,
+          ...(absImg && { image: absImg }),
+          ...(numericPrice !== null && {
+            offers: {
+              '@type': 'Offer',
+              price: numericPrice,
+              priceCurrency: 'KRW',
+              availability: artwork.sold
+                ? 'https://schema.org/SoldOut'
+                : 'https://schema.org/InStock',
+            },
+          }),
+        },
       };
     }),
   };
