@@ -376,7 +376,11 @@ export function generateArtworkJsonLd(
     description: schemaDescription.substring(0, 500),
     sku: `SAF2026-${artwork.id}`,
     mpn: `SAF2026-ART-${artwork.id}`,
-    countryOfOrigin: { '@type': 'Country', name: isEnglish ? 'South Korea' : '대한민국' },
+    countryOfOrigin: {
+      '@type': 'Country',
+      name: isEnglish ? 'South Korea' : '대한민국',
+      '@id': 'https://www.wikidata.org/wiki/Q884',
+    },
     brand: {
       '@type': 'Brand',
       name: isEnglish ? 'SAF Online' : '씨앗페 온라인',
@@ -387,6 +391,11 @@ export function generateArtworkJsonLd(
       '@id': buildLocaleUrl(`/artworks/artist/${encodeURIComponent(artwork.artist)}`, locale),
       name: artistForLocale,
       description: profileForLocale || undefined,
+      nationality: {
+        '@type': 'Country',
+        name: 'South Korea',
+        '@id': 'https://www.wikidata.org/wiki/Q884',
+      },
     },
     artMedium: materialForLocale || undefined,
     dateCreated: artwork.year || undefined,
