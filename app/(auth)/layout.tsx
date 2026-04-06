@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
@@ -5,6 +6,13 @@ import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import PageLoader from '@/components/common/PageLoader';
 import ToastProvider from '@/components/providers/ToastProvider';
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {
   const locale = (await getLocale()) === 'en' ? 'en' : 'ko';

@@ -86,9 +86,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           primaryCategory || null,
           primaryCategory ? `${primaryCategory} 작가` : null,
         ]
-    )
-      .filter((k): k is string => Boolean(k))
-      .join(', '),
+    ).filter((k): k is string => Boolean(k)),
     alternates: createLocaleAlternates(artistPath, locale),
     openGraph: {
       title: metaTitle,
