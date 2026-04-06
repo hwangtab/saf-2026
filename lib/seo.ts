@@ -7,12 +7,13 @@ export function createPageMetadata(
   description: string,
   path: string,
   imageUrl?: string,
-  locale: 'ko' | 'en' = 'ko'
+  locale: 'ko' | 'en' = 'ko',
+  imageAlt?: string
 ): Metadata {
   const url = buildLocaleUrl(path, locale);
   const siteTitle = locale === 'en' ? 'SAF Online' : '씨앗페 온라인';
   const ogLocale = locale === 'en' ? 'en_US' : 'ko_KR';
-  const ogAlt = locale === 'en' ? OG_IMAGE.altEn : OG_IMAGE.alt;
+  const ogAlt = imageAlt ?? (locale === 'en' ? OG_IMAGE.altEn : OG_IMAGE.alt);
   const images = [
     {
       url: imageUrl || OG_IMAGE.url,
@@ -33,6 +34,7 @@ export function createPageMetadata(
       description,
       url,
       locale: ogLocale,
+      siteName: siteTitle,
       images,
     },
     twitter: {

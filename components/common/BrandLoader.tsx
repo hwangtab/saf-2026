@@ -16,7 +16,7 @@ export default function BrandLoader({ minHeight = '80vh' }: BrandLoaderProps) {
       <div className="animate-fade-in opacity-0" style={{ animationFillMode: 'forwards' }}>
         <ExportedImage
           src="/images/logo/320pxX90px_white.webp"
-          alt="씨앗페 온라인"
+          alt="씨앗페 온라인 – SAF Online"
           width={320}
           height={90}
           className="w-72 md:w-96 max-w-[85vw] h-auto"
