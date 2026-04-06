@@ -47,13 +47,28 @@ export async function generateMetadata(): Promise<Metadata> {
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
+  const base = createStandardPageMetadata(
+    title,
+    copy.description,
+    PAGE_URL,
+    '/our-reality',
+    locale
+  );
   return {
-    ...createStandardPageMetadata(title, copy.description, PAGE_URL, '/our-reality', locale),
+    ...base,
     keywords:
       locale === 'en'
         ? 'Korean artist financial exclusion, predatory lending artists, artist loan statistics, cultural worker finance, artist banking access Korea'
         : '예술인 금융 배제, 예술인 대출 통계, 고금리 예술인, 한국 예술인 금융, 문화예술인 금융 차별',
-    other: { 'article:modified_time': LAST_UPDATED },
+    openGraph: {
+      ...base.openGraph,
+      type: 'article',
+    },
+    other: {
+      'article:published_time': '2026-01-14',
+      'article:modified_time': LAST_UPDATED,
+      'article:section': locale === 'en' ? 'Data & Research' : '데이터 & 연구',
+    },
   };
 }
 

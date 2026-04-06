@@ -112,6 +112,7 @@ export default async function NewsArticlePage({ params }: Props) {
     image: article.thumbnail || OG_IMAGE.url,
     url: buildLocaleUrl(`/news/${article.id}`, locale),
     sourceName: article.source,
+    locale,
   });
 
   const tBreadcrumbs = await getTranslations('breadcrumbs');
