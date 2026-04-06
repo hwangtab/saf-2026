@@ -12,7 +12,7 @@ import SawtoothDivider from '@/components/ui/SawtoothDivider';
 import HeroGalleryGrid from '@/components/features/HeroGalleryGrid';
 import BackgroundSlider from '@/components/features/BackgroundSlider';
 import SafeImage from '@/components/common/SafeImage';
-import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL } from '@/lib/constants';
+import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
 import {
   generateExhibitionSchema,
   generateFAQSchema,
@@ -65,7 +65,7 @@ export async function generateMetadata(): Promise<Metadata> {
           url: OG_IMAGE.url,
           width: OG_IMAGE.width,
           height: OG_IMAGE.height,
-          alt: OG_IMAGE.alt,
+          alt: locale === 'en' ? OG_IMAGE.altEn : OG_IMAGE.alt,
         },
       ],
     },
@@ -73,7 +73,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: 'summary_large_image',
       title: t('metaTitle'),
       description: t('twitterDescription'),
-      images: [OG_IMAGE.url],
+      images: [{ url: OG_IMAGE.url, alt: locale === 'en' ? OG_IMAGE.altEn : OG_IMAGE.alt }],
     },
   };
 }
@@ -196,6 +196,17 @@ export default async function Home() {
           inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
           datePublished: '2026-01-26',
           dateModified: '2026-03-15',
+          author: {
+            '@type': 'Organization',
+            '@id': `${SITE_URL}#organization`,
+            name: locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
+          },
+          publisher: {
+            '@type': 'Organization',
+            '@id': `${SITE_URL}#organization`,
+            name: locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
+            url: SITE_URL,
+          },
           // 홈페이지에서 음성검색 대응 — 브랜드/미션 소개 영역
           speakable: {
             '@type': 'SpeakableSpecification',
