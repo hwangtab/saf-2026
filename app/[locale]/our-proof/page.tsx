@@ -217,7 +217,8 @@ export default async function OurProof() {
             url: pageUrl,
           },
         ],
-    pageUrl
+    pageUrl,
+    locale
   );
 
   if (locale === 'en') {
