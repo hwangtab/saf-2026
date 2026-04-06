@@ -8,6 +8,11 @@ import { resolveSeoArtworkImageUrl, sanitizeForLocale, parseArtworkPrice } from 
 import { createBreadcrumbSchema } from './breadcrumb';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
 
+// 빌드/렌더 시점 기준 +1년 동적 계산 — 만료로 인한 Shopping 노출 중단 방지
+const PRICE_VALID_UNTIL = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+  .toISOString()
+  .slice(0, 10);
+
 export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 'ko'): Metadata {
   const resolvedImageUrl = resolveSeoArtworkImageUrl(artwork.images[0]);
   const imageUrl = resolvedImageUrl.startsWith('http')
@@ -238,6 +243,7 @@ export function generateArtworkJsonLd(
   // Shipping details for e-commerce SEO
   const shippingDetails = {
     '@type': 'OfferShippingDetails',
+    '@id': `${SITE_URL}#shipping-domestic`,
     shippingRate: {
       '@type': 'MonetaryAmount',
       value: MERCHANT_POLICIES.SHIPPING.rate.toString(),
@@ -264,10 +270,7 @@ export function generateArtworkJsonLd(
     },
   };
 
-  // priceValidUntil: 빌드 시점 기준 +1년 (만료로 인한 Shopping 결과 제외 방지)
-  const priceValidUntil = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
-    .toISOString()
-    .slice(0, 10);
+  const priceValidUntil = PRICE_VALID_UNTIL;
 
   // 결제 수단 — Cafe24 쇼핑몰 기준 (신용카드·체크카드·계좌이체)
   const acceptedPaymentMethod = [
@@ -360,7 +363,7 @@ export function generateArtworkJsonLd(
     },
     creator: {
       '@type': 'Person',
-      '@id': `${SITE_URL}/artworks/artist/${encodeURIComponent(artwork.artist)}`,
+      '@id': buildLocaleUrl(`/artworks/artist/${encodeURIComponent(artwork.artist)}`, locale),
       name: artistForLocale,
       description: profileForLocale || undefined,
     },
@@ -487,7 +490,11 @@ export function generateArtworkJsonLd(
 /**
  * Generate aggregate offer schema for gallery price range
  */
-export function generateGalleryAggregateOffer(artworks: Artwork[]) {
+export function generateGalleryAggregateOffer(
+  artworks: Artwork[],
+  locale: 'ko' | 'en' = 'ko',
+  pageUrl?: string
+) {
   const prices = artworks
     .map((a) => parseArtworkPrice(a.price))
     .filter((p): p is number => p !== null && p > 0);
@@ -508,8 +515,8 @@ export function generateGalleryAggregateOffer(artworks: Artwork[]) {
     availability: availableCount > 0 ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut',
     itemCondition: 'https://schema.org/NewCondition',
     validFrom: CAMPAIGN.START_DATE,
-    priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
-    url: `${SITE_URL}/artworks`,
+    priceValidUntil: PRICE_VALID_UNTIL,
+    url: pageUrl ?? buildLocaleUrl('/artworks', locale),
     seller: {
       '@type': 'Organization',
       '@id': `${SITE_URL}#organization`,
@@ -564,9 +571,12 @@ export function generateArtworkListSchema(
               '@type': 'Offer',
               price: numericPrice,
               priceCurrency: 'KRW',
+              priceValidUntil: PRICE_VALID_UNTIL,
               availability: artwork.sold
                 ? 'https://schema.org/SoldOut'
                 : 'https://schema.org/InStock',
+              itemCondition: 'https://schema.org/NewCondition',
+              seller: { '@type': 'Organization', '@id': `${SITE_URL}#organization` },
             },
           }),
         },

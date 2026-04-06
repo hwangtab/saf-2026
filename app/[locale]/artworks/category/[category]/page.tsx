@@ -105,7 +105,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       locale: isEnglish ? 'en_US' : 'ko_KR',
       siteName: isEnglish ? 'SAF Online' : '씨앗페 온라인',
       ...(imageUrl && {
-        images: [{ url: imageUrl, width: 1200, height: 630, alt: displayCategory }],
+        images: [
+          {
+            url: imageUrl,
+            width: 1200,
+            height: 630,
+            alt: isEnglish
+              ? `${displayCategory} artworks — SAF Online`
+              : `씨앗페 온라인 ${displayCategory} 작품 갤러리`,
+          },
+        ],
       }),
     },
     twitter: {
@@ -157,8 +166,8 @@ export default async function CategoryPage({ params }: Props) {
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
 
   // ItemList + AggregateOffer
-  const itemListSchema = generateArtworkListSchema(categoryArtworks, locale);
-  const aggregateOfferSchema = generateGalleryAggregateOffer(categoryArtworks);
+  const itemListSchema = generateArtworkListSchema(categoryArtworks, locale, 30, pageUrl);
+  const aggregateOfferSchema = generateGalleryAggregateOffer(categoryArtworks, locale, pageUrl);
 
   const availableCount = categoryArtworks.filter((a) => !a.sold).length;
   const prices = categoryArtworks
@@ -189,6 +198,7 @@ export default async function CategoryPage({ params }: Props) {
       name: isEnglish ? getCategoryEnName(category) : category,
     },
     inLanguage: isEnglish ? 'en-US' : 'ko-KR',
+    mainEntity: { '@id': `${pageUrl}#item-list` },
   };
 
   // 관련 카테고리 (현재 카테고리 제외, 작품 수 기준 정렬)
