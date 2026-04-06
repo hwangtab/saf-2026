@@ -12,6 +12,7 @@ import {
 } from '@/lib/seo-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { formatArtistName, resolveArtworkImageUrl } from '@/lib/utils';
+import { resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getLocale, getTranslations } from 'next-intl/server';
@@ -47,10 +48,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   // Use the first artwork's image as the representative image for the artist
   const representativeArtwork = artistArtworks[0];
-  const resolvedImageUrl = resolveArtworkImageUrl(representativeArtwork.images[0]);
-  const imageUrl = resolvedImageUrl.startsWith('http')
-    ? resolvedImageUrl
-    : `${SITE_URL}${resolvedImageUrl}`;
+  // OG 이미지는 1200px 최적화 URL 사용 (resolveSeoArtworkImageUrl)
+  const seoImageUrl = resolveSeoArtworkImageUrl(representativeArtwork.images[0]);
+  const imageUrl = seoImageUrl.startsWith('http') ? seoImageUrl : `${SITE_URL}${seoImageUrl}`;
   const artistPath = `/artworks/artist/${encodeURIComponent(artistName)}`;
   const pageUrl = buildLocaleUrl(artistPath, locale);
 

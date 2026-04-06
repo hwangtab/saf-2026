@@ -90,6 +90,54 @@ export default async function OurProof() {
       cssSelector: ['#proof-hero-description', '#proof-stats-summary', '#proof-qa-section'],
     },
   };
+  const datasetSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    '@id': `${pageUrl}#dataset`,
+    name:
+      locale === 'en'
+        ? 'SAF Mutual Aid Loan Program Outcomes 2022–2026'
+        : '씨앗페 상호부조 대출 프로그램 실적 2022–2026',
+    description:
+      locale === 'en'
+        ? 'Operational data for the SAF artist mutual-aid loan program: total loans issued, total amount deployed, repayment rate, and interest savings compared to market rates.'
+        : '씨앗페 예술인 상호부조 대출 운영 데이터: 총 실행 건수, 총 지원 금액, 상환율, 시중금리 대비 이자 절감액.',
+    url: pageUrl,
+    datePublished: '2022-12-01',
+    dateModified: LAST_UPDATED,
+    inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
+    creator: {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}#organization`,
+      name: locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
+    },
+    distribution: {
+      '@type': 'DataDownload',
+      encodingFormat: 'text/html',
+      contentUrl: pageUrl,
+    },
+    variableMeasured: [
+      {
+        '@type': 'PropertyValue',
+        name: locale === 'en' ? 'Total loans issued' : '총 대출 실행 건수',
+        value: '354',
+        unitText: locale === 'en' ? 'loans' : '건',
+      },
+      {
+        '@type': 'PropertyValue',
+        name: locale === 'en' ? 'Repayment rate' : '상환율',
+        value: '95',
+        unitText: '%',
+      },
+      {
+        '@type': 'PropertyValue',
+        name: locale === 'en' ? 'Subrogation (default) rate' : '대위변제율',
+        value: '5.10',
+        unitText: '%',
+      },
+    ],
+    isPartOf: { '@id': `${SITE_URL}#website` },
+  };
   const qaSchema = generateQAPageSchema(
     locale === 'en'
       ? [
@@ -138,7 +186,7 @@ export default async function OurProof() {
   if (locale === 'en') {
     return (
       <>
-        <JsonLdScript data={[breadcrumbSchema, aboutPageSchema, qaSchema]} />
+        <JsonLdScript data={[breadcrumbSchema, aboutPageSchema, datasetSchema, qaSchema]} />
         <PageHero
           title="Our Proof"
           description="Mutual-aid finance is not a theory. 354 loans and a 95% repayment rate prove that trust-based lending to artists works."
@@ -376,7 +424,7 @@ export default async function OurProof() {
 
   return (
     <>
-      <JsonLdScript data={[breadcrumbSchema, aboutPageSchema, qaSchema]} />
+      <JsonLdScript data={[breadcrumbSchema, aboutPageSchema, datasetSchema, qaSchema]} />
       <PageHero
         title="우리의 증명"
         description="예술인 상호부조 대출의 실제 성과. 354건, 약 7억 원의 신뢰가 데이터로 증명되었습니다."
