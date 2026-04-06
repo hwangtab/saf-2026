@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { SITE_URL, CAMPAIGN, MERCHANT_POLICIES } from '@/lib/constants';
+import { SITE_URL, CAMPAIGN, MERCHANT_POLICIES, CONTACT } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
 import { formatArtistName } from '@/lib/utils';
 import { getArtformForSchema, classifyArtworkMedium } from '@/lib/art-taxonomy';
@@ -236,7 +236,7 @@ export function generateArtworkJsonLd(
   const sellerOrg = {
     '@type': 'Organization',
     '@id': `${SITE_URL}#organization`,
-    name: isEnglish ? 'Korea Smart Cooperative' : '한국스마트협동조합',
+    name: isEnglish ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
     url: SITE_URL,
   };
 
@@ -459,7 +459,7 @@ export function generateArtworkJsonLd(
           : '이 작품 구매 수익금의 일부가 예술인 상호부조 기금으로 사용됩니다',
         recipient: {
           '@type': 'Organization',
-          name: isEnglish ? 'Korea Smart Cooperative' : '한국스마트협동조합',
+          name: isEnglish ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
           description: isEnglish
             ? 'Organization operating the artist mutual-aid fund'
             : '예술인 상호부조 기금 운영 단체',
