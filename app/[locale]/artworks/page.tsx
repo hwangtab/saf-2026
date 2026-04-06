@@ -14,7 +14,7 @@ import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { createBreadcrumbSchema, generateArtworkListSchema } from '@/lib/seo-utils';
 import { generateArtworkPurchaseHowTo, generateArtworkPurchaseFAQ } from '@/lib/schemas/howto';
 import { getSupabaseArtworks } from '@/lib/supabase-data';
-import { parseArtworkPrice } from '@/lib/schemas/utils';
+import { parseArtworkPrice, resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import { CATEGORY_EN_MAP, getCategoryLabel } from '@/lib/artwork-category';
 import type { Artwork, ArtworkListItem } from '@/types';
 
@@ -40,8 +40,13 @@ export async function generateMetadata(): Promise<Metadata> {
       ? `Browse ${artworks.length} original Korean artworks (${availableCount} available) — paintings, prints, photography, sculpture. Price range ₩${minPrice}–₩${maxPrice}. Free shipping, 7-day returns.`
       : `씨앗페 온라인에서 총 ${artworks.length}점의 작품 중 현재 ${availableCount}점 구매 가능. 가격대 ₩${minPrice}–₩${maxPrice}. 무료 배송, 7일 반품. 회화·판화·사진·조각 등 다양한 장르.`;
 
+  const representativeArtwork = artworks.find((a) => !a.sold && a.images[0]) || artworks[0];
+  const ogImageUrl = representativeArtwork?.images[0]
+    ? resolveSeoArtworkImageUrl(representativeArtwork.images[0])
+    : undefined;
+
   return {
-    ...createPageMetadata(t('title'), dynamicDescription, '/artworks', undefined, locale),
+    ...createPageMetadata(t('title'), dynamicDescription, '/artworks', ogImageUrl, locale),
     keywords:
       locale === 'en'
         ? 'Korean art, contemporary art, paintings for sale, original artworks, prints, sculpture, photography, art gallery'
