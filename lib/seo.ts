@@ -41,7 +41,7 @@ export function createPageMetadata(
       card: 'summary_large_image',
       title: `${title} | ${siteTitle}`,
       description,
-      images: [images[0].url],
+      images: [{ url: images[0].url, alt: ogAlt }],
     },
   };
 }
@@ -88,7 +88,7 @@ export function createStandardPageMetadata(
       card: 'summary_large_image',
       title,
       description,
-      images: [OG_IMAGE.url],
+      images: [{ url: OG_IMAGE.url, alt: ogAlt }],
     },
   };
 }
