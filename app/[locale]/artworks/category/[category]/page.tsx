@@ -9,7 +9,7 @@ import { JsonLdScript } from '@/components/common/JsonLdScript';
 import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
 import GalleryCampaignBanner from '@/components/features/GalleryCampaignBanner';
 
-import { SITE_URL } from '@/lib/constants';
+import { SITE_URL, CONTACT } from '@/lib/constants';
 import { CATEGORY_EN_MAP } from '@/lib/artwork-category';
 import { resolveLocale } from '@/lib/server-locale';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
@@ -121,7 +121,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: 'summary_large_image',
       title,
       description,
-      ...(imageUrl && { images: [imageUrl] }),
+      ...(imageUrl && {
+        images: [
+          {
+            url: imageUrl,
+            alt: isEnglish
+              ? `${displayCategory} artworks — SAF Online`
+              : `씨앗페 온라인 ${displayCategory} 작품 갤러리`,
+          },
+        ],
+      }),
     },
     other: {
       'product:availability': availableCount > 0 ? 'in stock' : 'out of stock',
@@ -199,6 +208,17 @@ export default async function CategoryPage({ params }: Props) {
     },
     inLanguage: isEnglish ? 'en-US' : 'ko-KR',
     mainEntity: { '@id': `${pageUrl}#item-list` },
+    author: {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}#organization`,
+      name: isEnglish ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
+    },
+    publisher: {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}#organization`,
+      name: isEnglish ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
+      url: SITE_URL,
+    },
     speakable: {
       '@type': 'SpeakableSpecification',
       cssSelector: ['h1', '.category-hero-description'],

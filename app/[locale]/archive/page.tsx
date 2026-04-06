@@ -7,7 +7,7 @@ import SectionTitle from '@/components/ui/SectionTitle';
 import PageHero from '@/components/ui/PageHero';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { SITE_URL } from '@/lib/constants';
+import { SITE_URL, CONTACT } from '@/lib/constants';
 import { createStandardPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
@@ -45,9 +45,12 @@ export default async function ArchiveHubPage() {
     { name: tBreadcrumbs('archive'), url: pageUrl },
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
+  const archive2026Url = buildLocaleUrl('/archive/2026', locale);
+  const archive2023Url = buildLocaleUrl('/archive/2023', locale);
   const collectionSchema = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
+    '@id': `${pageUrl}#webpage`,
     name: locale === 'en' ? 'SAF Archive' : '씨앗페 아카이브',
     description:
       locale === 'en'
@@ -55,19 +58,33 @@ export default async function ArchiveHubPage() {
         : '2023년부터 2026년까지의 씨앗페 행사 기록 모음.',
     url: pageUrl,
     isPartOf: { '@id': `${SITE_URL}#website` },
+    inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
+    author: {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}#organization`,
+      name: locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
+    },
+    publisher: {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}#organization`,
+      name: locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
+      url: SITE_URL,
+    },
     hasPart: [
       {
         '@type': 'WebPage',
+        '@id': `${archive2026Url}#webpage`,
         name:
           locale === 'en'
             ? 'SAF 2026 Offline Exhibition Archive'
             : '씨앗페 2026 오프라인 전시 기록',
-        url: buildLocaleUrl('/archive/2026', locale),
+        url: archive2026Url,
       },
       {
         '@type': 'WebPage',
+        '@id': `${archive2023Url}#collection`,
         name: locale === 'en' ? 'SAF 2023 Archive' : '씨앗페 2023 아카이브',
-        url: buildLocaleUrl('/archive/2023', locale),
+        url: archive2023Url,
       },
     ],
   };
