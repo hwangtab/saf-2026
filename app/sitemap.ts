@@ -160,12 +160,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const uniqueArtists = [...new Set(allArtworks.map((a) => a.artist))];
   const artistPages: MetadataRoute.Sitemap = uniqueArtists.flatMap((artist) => {
     const encodedArtist = encodeURIComponent(artist);
+    // 작가 대표 이미지: 판매 중인 첫 번째 작품 이미지 (Google Images 인덱싱용)
+    const artistWorks = allArtworks.filter((a) => a.artist === artist);
+    const repWork = artistWorks.find((a) => !a.sold && a.images?.[0]) || artistWorks[0];
+    const rawArtistImg = repWork?.images?.[0] ? resolveSeoArtworkImageUrl(repWork.images[0]) : null;
+    const absoluteArtistImg = rawArtistImg
+      ? rawArtistImg.startsWith('http')
+        ? rawArtistImg
+        : `${baseUrl}${rawArtistImg}`
+      : null;
+
     return routing.locales.map((locale) => ({
       url: localizedUrl(baseUrl, `/artworks/artist/${encodedArtist}`, locale),
       lastModified: exhibitionEndDate,
       changeFrequency: 'monthly' as const,
       priority: locale === routing.defaultLocale ? 0.65 : 0.58,
       alternates: createAlternates(baseUrl, `/artworks/artist/${encodedArtist}`),
+      ...(absoluteArtistImg ? { images: [absoluteArtistImg] } : {}),
     }));
   });
 
@@ -182,12 +193,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Category landing pages (SEO: "한국 회화 작품 구매" 등 카테고리별 구매 의도 검색 대응)
   const categoryPages: MetadataRoute.Sitemap = Object.keys(CATEGORY_EN_MAP).flatMap((category) => {
     const encodedCategory = encodeURIComponent(category);
+    const categoryWorks = allArtworks.filter((a) => a.category === category);
+    const repCatWork = categoryWorks.find((a) => !a.sold && a.images?.[0]) || categoryWorks[0];
+    const rawCatImg = repCatWork?.images?.[0]
+      ? resolveSeoArtworkImageUrl(repCatWork.images[0])
+      : null;
+    const absoluteCatImg = rawCatImg
+      ? rawCatImg.startsWith('http')
+        ? rawCatImg
+        : `${baseUrl}${rawCatImg}`
+      : null;
+
     return routing.locales.map((locale) => ({
       url: localizedUrl(baseUrl, `/artworks/category/${encodedCategory}`, locale),
       lastModified: exhibitionEndDate,
       changeFrequency: 'monthly' as const,
       priority: locale === routing.defaultLocale ? 0.75 : 0.67,
       alternates: createAlternates(baseUrl, `/artworks/category/${encodedCategory}`),
+      ...(absoluteCatImg ? { images: [absoluteCatImg] } : {}),
     }));
   });
 

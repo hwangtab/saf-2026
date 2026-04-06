@@ -91,7 +91,7 @@ export const MERCHANT_POLICIES = {
     returnFees: 'https://schema.org/ReturnFeesCustomerResponsibility',
   },
   SHIPPING: {
-    rate: 4000,
+    rate: 0,
     currency: 'KRW',
     country: 'KR',
     handlingDays: { min: 1, max: 3 },

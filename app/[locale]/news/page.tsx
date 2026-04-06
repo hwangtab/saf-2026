@@ -363,7 +363,7 @@ export default async function NewsPage() {
           description: localizeArticleDescription(article.description || '', locale),
           datePublished: article.date,
           image: article.thumbnail || OG_IMAGE.url,
-          url: article.link,
+          url: buildLocaleUrl(`/news/${article.id}`, locale),
           sourceName: localizeSourceName(article.source, locale),
         }),
       })),

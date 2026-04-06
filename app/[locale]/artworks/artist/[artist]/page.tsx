@@ -181,7 +181,7 @@ export default async function ArtistPage({ params }: Props) {
     ? `${localizedDescription.substring(0, 100)}...`
     : localizedDescription;
 
-  const pageUrl = `${SITE_URL}/artworks/artist/${encodeURIComponent(artistName)}`;
+  const pageUrl = buildLocaleUrl(`/artworks/artist/${encodeURIComponent(artistName)}`, locale);
 
   // Person JSON-LD Schema for SEO (enhanced with credentials, expertise, work samples)
   const artistHistory = artistArtworks.find((a) => a.history)?.history;
@@ -214,7 +214,7 @@ export default async function ArtistPage({ params }: Props) {
   const tBreadcrumbs = await getTranslations('breadcrumbs');
   const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
-    { name: tBreadcrumbs('artworks'), url: `${SITE_URL}/artworks` },
+    { name: tBreadcrumbs('artworks'), url: buildLocaleUrl('/artworks', locale) },
     { name: formattedName, url: pageUrl },
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
@@ -223,11 +223,28 @@ export default async function ArtistPage({ params }: Props) {
   const aggregateOfferSchema = generateGalleryAggregateOffer(artistArtworks);
   // ItemList: 작가의 작품 목록 — 검색 결과에서 개별 작품 카드 노출 가능
   const itemListSchema = generateArtworkListSchema(artistArtworks, locale, artistArtworks.length);
+  const artistPageUrl = buildLocaleUrl(
+    `/artworks/artist/${encodeURIComponent(artistName)}`,
+    locale
+  );
+  const collectionPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    '@id': `${artistPageUrl}#webpage`,
+    name:
+      locale === 'en'
+        ? `${formattedName} — Artworks at SAF Online`
+        : `${formattedName} 작가 — 씨앗페 온라인`,
+    url: artistPageUrl,
+    isPartOf: { '@id': `${SITE_URL}#website` },
+    inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
+  };
 
   return (
     <div className="min-h-screen">
       <JsonLdScript data={personSchema} />
       <JsonLdScript data={breadcrumbSchema} />
+      <JsonLdScript data={collectionPageSchema} />
       {aggregateOfferSchema && <JsonLdScript data={aggregateOfferSchema} />}
       <JsonLdScript data={itemListSchema} />
       <PageHero

@@ -5,7 +5,7 @@ import { Link } from '@/i18n/navigation';
 import OhYoonMasonryGallery from '@/components/special/OhYoonMasonryGallery';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
-import { createBreadcrumbSchema } from '@/lib/seo-utils';
+import { createBreadcrumbSchema, generateArtworkListSchema } from '@/lib/seo-utils';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { getSupabaseArtworks } from '@/lib/supabase-data';
 import { resolveLocale } from '@/lib/server-locale';
@@ -98,9 +98,12 @@ export default async function OhYoonPage() {
   const pageUrl = buildLocaleUrl('/special/oh-yoon', locale);
   const tBreadcrumbs = await getTranslations('breadcrumbs');
   const allArtworks = await getSupabaseArtworks();
-  const OH_YOON_ARTWORKS: ArtworkListItem[] = allArtworks
-    .filter((artwork: Artwork) => isOhYoonArtist(artwork.artist))
-    .map(({ profile: _profile, history: _history, ...rest }: Artwork) => rest);
+  const ohYoonFullArtworks = allArtworks.filter((artwork: Artwork) =>
+    isOhYoonArtist(artwork.artist)
+  );
+  const OH_YOON_ARTWORKS: ArtworkListItem[] = ohYoonFullArtworks.map(
+    ({ profile: _profile, history: _history, ...rest }: Artwork) => rest
+  );
   const artworkCountLabel = new Intl.NumberFormat(locale === 'en' ? 'en-US' : 'ko-KR').format(
     OH_YOON_ARTWORKS.length
   );
@@ -149,10 +152,16 @@ export default async function OhYoonPage() {
     isAccessibleForFree: true,
   };
 
+  const itemListSchema = generateArtworkListSchema(
+    ohYoonFullArtworks,
+    locale,
+    ohYoonFullArtworks.length
+  );
+
   if (locale === 'en') {
     return (
       <>
-        <JsonLdScript data={[breadcrumbSchema, exhibitionEventSchema]} />
+        <JsonLdScript data={[breadcrumbSchema, exhibitionEventSchema, itemListSchema]} />
         <div className="w-full bg-canvas-soft min-h-screen font-sans">
           <section className="relative w-full py-20 md:py-32 px-4 overflow-hidden border-b-8 border-double border-white/10 bg-charcoal">
             <div className="max-w-4xl mx-auto text-center relative z-10">
@@ -292,7 +301,7 @@ export default async function OhYoonPage() {
 
   return (
     <>
-      <JsonLdScript data={[breadcrumbSchema, exhibitionEventSchema]} />
+      <JsonLdScript data={[breadcrumbSchema, exhibitionEventSchema, itemListSchema]} />
       <div className="w-full bg-canvas-soft min-h-screen font-sans">
         {/* Hero Section */}
         <section className="relative w-full py-20 md:py-32 px-4 overflow-hidden border-b-8 border-double border-white/10 bg-charcoal">
