@@ -166,7 +166,7 @@ export default async function OhYoonPage() {
     organizer: {
       '@type': 'Organization',
       '@id': `${SITE_URL}#organization`,
-      name: CONTACT.ORGANIZATION_NAME,
+      name: locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
       url: SITE_URL,
     },
     about: ohYoonPerson,

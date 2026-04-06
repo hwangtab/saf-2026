@@ -210,7 +210,7 @@ export function generateMemberJoinHowTo(locale: 'ko' | 'en' = 'ko') {
           },
           {
             name: 'Submit and await confirmation',
-            text: `You will receive a confirmation email from ${CONTACT.ORGANIZATION_NAME} within a few business days.`,
+            text: `You will receive a confirmation email from ${CONTACT.ORGANIZATION_NAME_EN} within a few business days.`,
           },
         ]
       : [
