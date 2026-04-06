@@ -83,12 +83,26 @@ export default async function Archive2026Page() {
     { name: tBreadcrumbs('archive2026'), url: pageUrl },
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
+  const webPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': `${pageUrl}#webpage`,
+    url: pageUrl,
+    name:
+      locale === 'en'
+        ? '2026 Offline Exhibition Archive | SAF 2026'
+        : '2026 오프라인 전시 기록 | 씨앗페 2026',
+    isPartOf: { '@id': `${SITE_URL}#website` },
+    about: { '@id': `${SITE_URL}#exhibition` },
+    datePublished: '2026-01-26',
+    dateModified: '2026-03-15',
+    inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
+  };
 
   if (locale === 'en') {
     return (
       <>
-        <JsonLdScript data={eventSchema} />
-        <JsonLdScript data={breadcrumbSchema} />
+        <JsonLdScript data={[eventSchema, breadcrumbSchema, webPageSchema]} />
         <PageHero
           title="2026 Offline Exhibition"
           description="A 12-day exhibition record at Insa Art Center"

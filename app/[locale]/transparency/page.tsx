@@ -43,13 +43,28 @@ export async function generateMetadata(): Promise<Metadata> {
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
+  const base = createStandardPageMetadata(
+    title,
+    copy.description,
+    PAGE_URL,
+    '/transparency',
+    locale
+  );
   return {
-    ...createStandardPageMetadata(title, copy.description, PAGE_URL, '/transparency', locale),
+    ...base,
     keywords:
       locale === 'en'
         ? 'artist loan transparency, mutual aid fund report, Korea artist loan program, annual report artist fund, artist financial accountability'
         : '예술인 대출 투명성, 상호부조 기금 보고서, 예술인 대출 운용 현황, 씨앗페 연간 보고서, 예술인 금융 지원 성과',
-    other: { 'article:modified_time': LAST_UPDATED },
+    openGraph: {
+      ...base.openGraph,
+      type: 'article',
+    },
+    other: {
+      'article:published_time': '2022-12-01',
+      'article:modified_time': LAST_UPDATED,
+      'article:section': locale === 'en' ? 'Transparency & Reports' : '투명성 & 보고서',
+    },
   };
 }
 
