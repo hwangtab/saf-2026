@@ -192,6 +192,13 @@ export default async function Home() {
           name: locale === 'en' ? 'SAF Online' : '씨앗페 온라인',
           isPartOf: { '@id': `${SITE_URL}#website` },
           inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
+          datePublished: '2026-01-26',
+          dateModified: '2026-03-15',
+          // 홈페이지에서 음성검색 대응 — 브랜드/미션 소개 영역
+          speakable: {
+            '@type': 'SpeakableSpecification',
+            cssSelector: ['h1', '.mission-banner', '.hero-subtitle'],
+          },
         }}
       />
       <JsonLdScript data={generateExhibitionSchema([], locale)} />

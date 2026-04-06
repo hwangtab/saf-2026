@@ -495,15 +495,17 @@ export function generateGalleryAggregateOffer(
   locale: 'ko' | 'en' = 'ko',
   pageUrl?: string
 ) {
-  const prices = artworks
+  const availableArtworks = artworks.filter((a) => !a.sold);
+  const availablePrices = availableArtworks
     .map((a) => parseArtworkPrice(a.price))
     .filter((p): p is number => p !== null && p > 0);
 
-  if (prices.length === 0) return null;
+  // 판매 중인 작품이 없으면 가격 범위 없음 — null 반환
+  if (availablePrices.length === 0) return null;
 
-  const minPrice = Math.min(...prices);
-  const maxPrice = Math.max(...prices);
-  const availableCount = artworks.filter((a) => !a.sold).length;
+  const minPrice = Math.min(...availablePrices);
+  const maxPrice = Math.max(...availablePrices);
+  const availableCount = availableArtworks.length;
 
   return {
     '@context': 'https://schema.org',
@@ -511,7 +513,7 @@ export function generateGalleryAggregateOffer(
     lowPrice: minPrice,
     highPrice: maxPrice,
     priceCurrency: 'KRW',
-    offerCount: artworks.length,
+    offerCount: availableCount,
     availability: availableCount > 0 ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut',
     itemCondition: 'https://schema.org/NewCondition',
     validFrom: CAMPAIGN.START_DATE,
