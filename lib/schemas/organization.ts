@@ -154,6 +154,12 @@ export function generateLocalBusinessSchema(locale: 'ko' | 'en' = 'ko') {
       url: `${SITE_URL}/artworks`,
     },
     hasMap: EXTERNAL_LINKS.KOSMART_OFFICE_MAP,
+    // entity graph: #art-gallery is operated by #organization
+    parentOrganization: {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}#organization`,
+      name: CONTACT.ORGANIZATION_NAME,
+    },
   };
 }
 
