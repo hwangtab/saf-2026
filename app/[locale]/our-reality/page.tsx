@@ -235,7 +235,7 @@ export default async function OurReality() {
         />
       </PageHero>
 
-      <div className="container-max pt-4 text-right">
+      <div className="container-max pt-4 text-right bg-white">
         <p className="text-xs text-gray-400">마지막 업데이트: {LAST_UPDATED}</p>
       </div>
       {testimonialsData.map((group, groupIndex) => {

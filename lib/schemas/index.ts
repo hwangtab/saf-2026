@@ -61,6 +61,7 @@ export type { HowToStep, HowToInput } from './howto';
 export {
   generateHowToSchema,
   generateArtworkPurchaseHowTo,
+  generateArtworkPurchaseFAQ,
   generateMemberJoinHowTo,
 } from './howto';
 

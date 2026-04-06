@@ -18,7 +18,7 @@ import {
   generateArtworkListSchema,
   generateGalleryAggregateOffer,
 } from '@/lib/seo-utils';
-import { generateArtworkPurchaseHowTo } from '@/lib/schemas/howto';
+import { generateArtworkPurchaseHowTo, generateArtworkPurchaseFAQ } from '@/lib/schemas/howto';
 import { getSupabaseArtworks } from '@/lib/supabase-data';
 import type { Artwork, ArtworkListItem } from '@/types';
 
@@ -183,6 +183,7 @@ export default async function CategoryPage({ params }: Props) {
       <JsonLdScript data={itemListSchema} />
       {aggregateOfferSchema && <JsonLdScript data={aggregateOfferSchema} />}
       <JsonLdScript data={generateArtworkPurchaseHowTo(locale)} />
+      <JsonLdScript data={generateArtworkPurchaseFAQ(locale)} />
 
       <div className="min-h-screen">
         <PageHero
