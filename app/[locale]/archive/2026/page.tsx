@@ -23,7 +23,8 @@ const PAGE_URL = `${SITE_URL}/archive/2026`;
 const PAGE_COPY = {
   ko: {
     title: '2026 오프라인 전시 기록',
-    description: '인사아트센터에서 진행된 씨앗페 2026 오프라인 전시의 기록입니다.',
+    description:
+      '2026년 1월 인사아트센터에서 열린 씨앗페 오프라인 전시 기록. 127명 작가, 12일간의 전시 현장과 관람객 후기를 담았습니다.',
   },
   en: {
     title: '2026 Offline Exhibition Archive',
