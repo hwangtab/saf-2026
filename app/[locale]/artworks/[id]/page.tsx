@@ -110,7 +110,8 @@ export default async function ArtworkDetailPage({ params }: Props) {
   // Extract numeric price using utility
   const parsedPrice = parsePrice(artwork.price);
   const isInquiry = parsedPrice === Infinity;
-  const numericPrice = isInquiry ? '0' : String(parsedPrice);
+  // '0' 대신 '' 전달 — 스키마 함수 내부에서 isInquiry 분기로 처리, price:0 노출 방지
+  const numericPrice = isInquiry ? '' : String(parsedPrice);
 
   // Get related articles for this artist
   const relatedArticles = getArticlesByArtist(artwork.artist);

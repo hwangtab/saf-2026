@@ -7,12 +7,8 @@ import SectionTitle from '@/components/ui/SectionTitle';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { getSupabaseNews } from '@/lib/supabase-data';
-import { OG_IMAGE } from '@/lib/constants';
-import {
-  createBreadcrumbSchema,
-  generateNewsArticleSchema,
-  generateSpeakableSchema,
-} from '@/lib/seo-utils';
+import { OG_IMAGE, SITE_URL } from '@/lib/constants';
+import { createBreadcrumbSchema, generateNewsArticleSchema } from '@/lib/seo-utils';
 import { containsHangul } from '@/lib/search-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
@@ -353,6 +349,12 @@ export default async function NewsPage() {
     name: copy.collectionName,
     description: copy.collectionDescription,
     url: canonicalUrl,
+    isPartOf: { '@id': `${SITE_URL}#website` },
+    inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['#news-hero-description', '#press-highlights-title', '#press-highlights-desc'],
+    },
     mainEntity: {
       '@type': 'ItemList',
       itemListElement: newsArticles.map((article, index) => ({
@@ -370,15 +372,9 @@ export default async function NewsPage() {
     },
   };
 
-  const speakableSchema = generateSpeakableSchema([
-    '#news-hero-description',
-    '#press-highlights-title',
-    '#press-highlights-desc',
-  ]);
-
   return (
     <>
-      <JsonLdScript data={[breadcrumbSchema, structuredData, speakableSchema]} />
+      <JsonLdScript data={[breadcrumbSchema, structuredData]} />
 
       <PageHero
         title={copy.heroTitle}

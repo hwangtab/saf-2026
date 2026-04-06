@@ -7,6 +7,7 @@ import { Artwork } from '@/types';
 import { resolveSeoArtworkImageUrl, sanitizeForLocale, parseArtworkPrice } from './utils';
 import { createBreadcrumbSchema } from './breadcrumb';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
+import { isExhibitionCompleted } from '@/lib/schemas/event';
 
 // 빌드/렌더 시점 기준 +1년 동적 계산 — 만료로 인한 Shopping 노출 중단 방지
 const PRICE_VALID_UNTIL = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
@@ -115,7 +116,6 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
     keywords: keywordBase.filter((k): k is string => Boolean(k)),
     openGraph: {
       ...baseMetadata.openGraph,
-      type: 'website',
       locale: isEnglish ? 'en_US' : 'ko_KR',
       siteName: isEnglish ? 'SAF Online' : '씨앗페 온라인',
       // 작품별 alt로 덮어씀 — createPageMetadata의 제네릭 alt 대신 작품명 사용
@@ -390,7 +390,9 @@ export function generateArtworkJsonLd(
         : '씨앗페 온라인 - 예술인 상호부조 기금 마련 특별전',
       startDate: CAMPAIGN.START_DATE,
       endDate: CAMPAIGN.END_DATE,
-      eventStatus: 'https://schema.org/EventCompleted',
+      eventStatus: isExhibitionCompleted()
+        ? 'https://schema.org/EventCompleted'
+        : 'https://schema.org/EventInProgress',
       eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
       location: { '@type': 'VirtualLocation', url: SITE_URL },
       organizer: sellerOrg,
@@ -531,7 +533,7 @@ export function generateGalleryAggregateOffer(
     seller: {
       '@type': 'Organization',
       '@id': `${SITE_URL}#organization`,
-      name: '한국스마트협동조합',
+      name: locale === 'en' ? 'Korea Smart Cooperative' : '한국스마트협동조합',
     },
   };
 }
@@ -558,14 +560,17 @@ export function generateArtworkListSchema(
     description: isEnglish
       ? 'Artwork list from SAF Online'
       : '씨앗페 온라인에 출품된 예술가들의 작품 목록',
-    numberOfItems: artworks.length,
+    numberOfItems: Math.min(artworks.length, limit),
     itemListOrder: 'https://schema.org/ItemListUnordered',
     // Price range for art buyers
     ...(embeddedOffer && { offers: embeddedOffer }),
     itemListElement: artworks.slice(0, limit).map((artwork, index) => {
       const rawImg = artwork.images[0] ? resolveSeoArtworkImageUrl(artwork.images[0]) : null;
       const absImg = rawImg ? (rawImg.startsWith('http') ? rawImg : `${SITE_URL}${rawImg}`) : null;
-      const artworkUrl = `${SITE_URL}/artworks/${artwork.id}`;
+      const artworkLocalePath = buildLocaleUrl(`/artworks/${artwork.id}`, locale);
+      const artworkUrl = artworkLocalePath.startsWith('http')
+        ? artworkLocalePath
+        : `${SITE_URL}${artworkLocalePath}`;
       const artworkName = isEnglish && artwork.title_en ? artwork.title_en : artwork.title;
       const numericPrice = parseArtworkPrice(artwork.price);
       return {
