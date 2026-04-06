@@ -54,6 +54,7 @@ export default async function ArchiveHubPage() {
         ? 'A collection of SAF event records from 2023 to 2026.'
         : '2023년부터 2026년까지의 씨앗페 행사 기록 모음.',
     url: pageUrl,
+    isPartOf: { '@id': `${SITE_URL}#website` },
     hasPart: [
       {
         '@type': 'WebPage',

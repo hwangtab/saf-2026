@@ -109,6 +109,7 @@ export default async function Archive2023Page() {
     name: isEnglish ? 'SAF 2023 Archive' : '씨앗페 2023 아카이브',
     description: pageDescription,
     url: currentUrl,
+    isPartOf: { '@id': `${SITE_URL}#website` },
     publisher: {
       '@type': 'Organization',
       name: isEnglish ? 'Korea Smart Cooperative' : '한국스마트협동조합',
