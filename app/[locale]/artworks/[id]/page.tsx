@@ -20,11 +20,8 @@ import { parsePrice } from '@/lib/parsePrice';
 import { SITE_URL } from '@/lib/constants';
 import RelatedArticles from '@/components/features/RelatedArticles';
 import ExpandableHistory from '@/components/features/ExpandableHistory';
-import {
-  generateArtworkMetadata,
-  generateArtworkJsonLd,
-  generateSpeakableSchema,
-} from '@/lib/seo-utils';
+import { generateArtworkMetadata, generateArtworkJsonLd } from '@/lib/seo-utils';
+import { generateArtworkPurchaseFAQ } from '@/lib/schemas/howto';
 import { getCategoryLabel } from '@/lib/artwork-category';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import SupportMessage from '@/components/features/SupportMessage';
@@ -181,16 +178,12 @@ export default async function ArtworkDetailPage({ params }: Props) {
     }
   );
 
-  const speakableSchema = generateSpeakableSchema([
-    '#artwork-title',
-    '#artist-name',
-    '#artist-profile',
-    '#artist-note',
-  ]);
+  const faqSchema = generateArtworkPurchaseFAQ(locale);
 
   return (
     <>
-      <JsonLdScript data={[productSchema, breadcrumbSchema, webPageSchema, speakableSchema]} />
+      <JsonLdScript data={[productSchema, breadcrumbSchema, webPageSchema]} />
+      <JsonLdScript data={faqSchema} />
       <Section
         variant="white"
         prevVariant="canvas-soft"

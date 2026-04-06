@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { SITE_URL, CAMPAIGN, EXHIBITION, MERCHANT_POLICIES } from '@/lib/constants';
+import { SITE_URL, CAMPAIGN, MERCHANT_POLICIES } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
 import { formatArtistName } from '@/lib/utils';
 import { getArtformForSchema, classifyArtworkMedium } from '@/lib/art-taxonomy';
@@ -119,6 +119,8 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
     },
     // Facebook/Instagram 제품 메타 태그 — 소셜 공유 시 가격 정보 노출
     other: {
+      // og:type 'product' — Next.js 타입 제약으로 openGraph.type에 직접 설정 불가, other로 override
+      'og:type': 'product',
       ...(numericPriceValue !== null && {
         'product:price:amount': String(numericPriceValue),
         'product:price:currency': 'KRW',
@@ -250,8 +252,10 @@ export function generateArtworkJsonLd(
     },
   };
 
-  // priceValidUntil: 고정 미래 날짜 (빌드 주기와 무관하게 만료 방지)
-  const priceValidUntil = '2027-12-31';
+  // priceValidUntil: 빌드 시점 기준 +1년 (만료로 인한 Shopping 결과 제외 방지)
+  const priceValidUntil = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 10);
 
   // 결제 수단 — Cafe24 쇼핑몰 기준 (신용카드·체크카드·계좌이체)
   const acceptedPaymentMethod = [
@@ -357,11 +361,9 @@ export function generateArtworkJsonLd(
         : '씨앗페 온라인 - 예술인 상호부조 기금 마련 특별전',
       startDate: CAMPAIGN.START_DATE,
       endDate: CAMPAIGN.END_DATE,
-      location: {
-        '@type': 'Place',
-        name: EXHIBITION.LOCATION,
-        address: EXHIBITION.ADDRESS,
-      },
+      eventStatus: 'https://schema.org/EventCompleted',
+      eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
+      location: { '@type': 'VirtualLocation', url: SITE_URL },
       organizer: sellerOrg,
     },
     additionalProperty: [
@@ -487,6 +489,15 @@ export function generateGalleryAggregateOffer(artworks: Artwork[]) {
     priceCurrency: 'KRW',
     offerCount: artworks.length,
     availability: availableCount > 0 ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut',
+    itemCondition: 'https://schema.org/NewCondition',
+    validFrom: CAMPAIGN.START_DATE,
+    priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
+    url: `${SITE_URL}/artworks`,
+    seller: {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}#organization`,
+      name: '한국스마트협동조합',
+    },
   };
 }
 
@@ -502,9 +513,11 @@ export function generateArtworkListSchema(
     ? (({ '@context': _ctx, ...rest }) => rest)(aggregateOffer as Record<string, unknown>)
     : null;
 
+  const listUrl = buildLocaleUrl('/artworks', locale);
   return {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
+    '@id': `${listUrl}#item-list`,
     name: isEnglish ? 'SAF Online Artworks' : '씨앗페 온라인 출품작',
     description: isEnglish
       ? 'Artwork list from SAF Online'

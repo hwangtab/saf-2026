@@ -158,7 +158,12 @@ export function generateEnhancedArtistSchema(artist: EnhancedArtistSchemaInput) 
     '@id': artist.url,
     name: artist.name,
     description: artist.description,
-    image: artist.image ? resolveSeoArtworkImageUrl(artist.image) : undefined,
+    image: artist.image
+      ? (() => {
+          const resolved = resolveSeoArtworkImageUrl(artist.image!);
+          return resolved.startsWith('http') ? resolved : `${SITE_URL}${resolved}`;
+        })()
+      : undefined,
     url: artist.url,
     jobTitle: artist.jobTitle || 'Visual Artist',
     sameAs: [artist.url],

@@ -17,7 +17,7 @@ import {
   CreativeImpactChart,
 } from '@/components/features/charts/DynamicCharts';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { createBreadcrumbSchema, generateSpeakableSchema } from '@/lib/seo-utils';
+import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { generateSAFClaimReviews } from '@/lib/schemas/claim-review';
 import { generateSAFCoreQA } from '@/lib/schemas/qa-page';
 import { createStandardPageMetadata } from '@/lib/seo';
@@ -67,19 +67,35 @@ export default async function OurReality() {
     { name: tBreadcrumbs('ourReality'), url: pageUrl },
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
-  const speakableSchema = generateSpeakableSchema([
-    '#stage1-description',
-    '#stage2-description',
-    '#stage3-description',
-    '#citations-section',
-  ]);
+  const aboutPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    '@id': `${pageUrl}#webpage`,
+    url: pageUrl,
+    name:
+      locale === 'en'
+        ? 'Our Reality — Artist Financial Exclusion in Korea'
+        : '우리의 현실 — 한국 예술인 금융 배제',
+    isPartOf: { '@id': `${SITE_URL}#website` },
+    about: {
+      '@type': 'Thing',
+      name: locale === 'en' ? 'Artist Financial Exclusion in Korea' : '한국 예술인 금융 배제',
+    },
+    datePublished: '2026-01-14',
+    dateModified: LAST_UPDATED,
+    inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['#stage1-description', '#stage2-description', '#stage3-description'],
+    },
+  };
   const claimReviews = generateSAFClaimReviews(locale);
   const coreQA = generateSAFCoreQA(locale);
 
   if (locale === 'en') {
     return (
       <>
-        <JsonLdScript data={[breadcrumbSchema, speakableSchema, ...claimReviews, coreQA]} />
+        <JsonLdScript data={[breadcrumbSchema, aboutPageSchema, ...claimReviews, coreQA]} />
         <PageHero
           title="Our Reality"
           description="Data from the 2025 report shows structural financial exclusion faced by artists in Korea."
@@ -222,7 +238,7 @@ export default async function OurReality() {
 
   return (
     <>
-      <JsonLdScript data={[breadcrumbSchema, speakableSchema, ...claimReviews, coreQA]} />
+      <JsonLdScript data={[breadcrumbSchema, aboutPageSchema, ...claimReviews, coreQA]} />
       <PageHero
         title="우리의 현실"
         description="2025 예술인 금융 재난 보고서가 밝혀낸 한국 예술인의 금융 위기의 구조적 현실"

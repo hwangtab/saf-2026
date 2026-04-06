@@ -43,12 +43,30 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: article.title,
     description,
+    keywords: isEn
+      ? [
+          'SAF Online',
+          'Korean artist financial discrimination',
+          'artist mutual aid',
+          article.source,
+          'art news',
+          'Korean art',
+        ]
+      : [
+          '씨앗페',
+          '예술인 금융 차별',
+          '상호부조 기금',
+          article.source,
+          '예술인 뉴스',
+          '씨앗페 보도',
+        ],
     alternates: createLocaleAlternates(path, locale),
     openGraph: {
       title: article.title,
       description,
       url: pageUrl,
       type: 'article',
+      siteName: isEn ? 'SAF Online' : '씨앗페 온라인',
       locale: locale === 'en' ? 'en_US' : 'ko_KR',
       publishedTime: article.date,
       authors: [article.source],

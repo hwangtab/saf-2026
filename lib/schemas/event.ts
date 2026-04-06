@@ -38,23 +38,27 @@ export function generateExhibitionSchema(
     startDate,
     endDate,
     eventStatus,
-    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-    location: {
-      '@type': 'Place',
-      name: EXHIBITION.LOCATION,
-      address: {
-        '@type': 'PostalAddress',
-        streetAddress: EXHIBITION.ADDRESS,
-        postalCode: EXHIBITION.POSTAL_CODE,
-        addressLocality: isEnglish ? 'Seoul' : '서울시',
-        addressCountry: 'KR',
-      },
-      geo: {
-        '@type': 'GeoCoordinates',
-        latitude: EXHIBITION.LAT,
-        longitude: EXHIBITION.LNG,
-      },
-    },
+    eventAttendanceMode: isExhibitionCompleted()
+      ? 'https://schema.org/OnlineEventAttendanceMode'
+      : 'https://schema.org/MixedEventAttendanceMode',
+    location: isExhibitionCompleted()
+      ? { '@type': 'VirtualLocation', url: SITE_URL }
+      : {
+          '@type': 'Place',
+          name: EXHIBITION.LOCATION,
+          address: {
+            '@type': 'PostalAddress',
+            streetAddress: EXHIBITION.ADDRESS,
+            postalCode: EXHIBITION.POSTAL_CODE,
+            addressLocality: isEnglish ? 'Seoul' : '서울시',
+            addressCountry: 'KR',
+          },
+          geo: {
+            '@type': 'GeoCoordinates',
+            latitude: EXHIBITION.LAT,
+            longitude: EXHIBITION.LNG,
+          },
+        },
     organizer: {
       '@type': 'Organization',
       '@id': `${SITE_URL}#organization`,
