@@ -66,6 +66,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  generator: undefined,
   manifest: '/manifest.json',
   metadataBase: new URL(SITE_URL),
   title: {
