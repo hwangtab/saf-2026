@@ -103,6 +103,13 @@ export default async function ArtworkDetailPage({ params }: Props) {
     .filter((a) => a.artist === artwork.artist && a.id !== artwork.id)
     .slice(0, 3);
 
+  // 같은 카테고리의 다른 작품 (같은 작가 제외, 최대 3점)
+  const sameCategoryWorks = artwork.category
+    ? allArtworks
+        .filter((a) => a.category === artwork.category && a.id !== artwork.id && !a.sold)
+        .slice(0, 3)
+    : [];
+
   // Extract numeric price using utility
   const parsedPrice = parsePrice(artwork.price);
   const isInquiry = parsedPrice === Infinity;
@@ -406,6 +413,33 @@ export default async function ArtworkDetailPage({ params }: Props) {
               </div>
             </div>
           ) : null}
+
+          {/* Same Category Works Section */}
+          {sameCategoryWorks.length > 0 && artwork.category && (
+            <div className="mt-24 pt-24 border-t border-gray-100">
+              <div className="flex items-center justify-between mb-10">
+                <h2 className="text-2xl font-bold text-charcoal">
+                  {t('sameCategoryWorks', {
+                    category: getCategoryLabel(artwork.category, locale),
+                  })}
+                </h2>
+                <Link
+                  href={`/artworks/category/${encodeURIComponent(artwork.category)}`}
+                  className="text-primary font-medium hover:underline text-sm"
+                >
+                  {t('viewAllCategory', {
+                    category: getCategoryLabel(artwork.category, locale),
+                  })}{' '}
+                  →
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {sameCategoryWorks.map((other) => (
+                  <ArtworkCard key={other.id} artwork={other} variant="gallery" />
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Recently Sold Section */}
           <RecentlySoldSection artworks={recentlySold} totalCount={totalSoldCount} />

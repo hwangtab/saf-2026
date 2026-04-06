@@ -1,4 +1,4 @@
-import { SITE_URL, CONTACT } from '@/lib/constants';
+import { SITE_URL, CONTACT, MERCHANT_POLICIES } from '@/lib/constants';
 
 export interface HowToStep {
   name: string;
@@ -101,6 +101,86 @@ export function generateArtworkPurchaseHowTo(locale: 'ko' | 'en' = 'ko') {
           },
         ],
   });
+}
+
+/**
+ * 구매 관련 FAQ 스키마 — FAQPage 형식
+ * artworks 목록/카테고리 페이지에서 "사람들이 자주 묻는 질문" 리치 결과 대응
+ */
+export function generateArtworkPurchaseFAQ(locale: 'ko' | 'en' = 'ko') {
+  const isEnglish = locale === 'en';
+  const shipping = MERCHANT_POLICIES.SHIPPING;
+
+  const faqs = isEnglish
+    ? [
+        {
+          question: 'How do I purchase an artwork on SAF Online?',
+          answer: `Browse artworks at ${SITE_URL}/en/artworks, click on the artwork you like, then click the "Buy Now" button to be redirected to the official shop page on Cafe24.`,
+        },
+        {
+          question: 'How much is shipping?',
+          answer: `Shipping within Korea is a flat rate of ₩${shipping.rate.toLocaleString('ko-KR')}. International shipping is not currently available.`,
+        },
+        {
+          question: 'Can I return an artwork?',
+          answer: `Yes. Returns are accepted within ${MERCHANT_POLICIES.RETURN.merchantReturnDays} days of delivery. Return shipping costs are the responsibility of the buyer. Contact us at ${CONTACT.EMAIL} to initiate a return.`,
+        },
+        {
+          question: 'How long does delivery take?',
+          answer: `Order processing takes ${shipping.handlingDays.min}–${shipping.handlingDays.max} business days, and delivery within Korea takes ${shipping.transitDays.min}–${shipping.transitDays.max} business days.`,
+        },
+        {
+          question: 'Are the artworks original works?',
+          answer:
+            'Yes. All artworks are original works by verified Korean artists participating in the SAF 2026 exhibition. Certificates of authenticity are provided where applicable.',
+        },
+        {
+          question: 'What is the purpose of artwork sales revenue?',
+          answer:
+            'All proceeds are donated to the Korea Smart Cooperative artist mutual-aid fund, which provides low-interest loans to Korean artists facing financial discrimination.',
+        },
+      ]
+    : [
+        {
+          question: '씨앗페 온라인에서 작품을 어떻게 구매하나요?',
+          answer: `${SITE_URL}/artworks 에서 마음에 드는 작품을 클릭한 후 "온라인 구매" 버튼을 누르면 공식 판매 페이지(Cafe24)로 이동합니다. 회원가입 없이 구매 가능합니다.`,
+        },
+        {
+          question: '배송비는 얼마인가요?',
+          answer: `배송비는 전국 단일 요금 ₩${shipping.rate.toLocaleString('ko-KR')}이며, 현재 국내 배송만 가능합니다.`,
+        },
+        {
+          question: '반품이나 교환이 가능한가요?',
+          answer: `네. 작품 수령 후 ${MERCHANT_POLICIES.RETURN.merchantReturnDays}일 이내에 반품 신청이 가능합니다. 반품 배송비는 구매자 부담이며, ${CONTACT.EMAIL} 또는 ${CONTACT.PHONE}으로 연락해 주세요.`,
+        },
+        {
+          question: '배송은 얼마나 걸리나요?',
+          answer: `주문 처리에 ${shipping.handlingDays.min}~${shipping.handlingDays.max}일, 국내 배송에 ${shipping.transitDays.min}~${shipping.transitDays.max}일이 소요됩니다.`,
+        },
+        {
+          question: '작품이 진품인가요?',
+          answer:
+            '네. 씨앗페 2026 전시에 참여한 인증된 한국 작가들의 원본 작품입니다. 해당 작품에는 정품 보증서가 함께 제공됩니다.',
+        },
+        {
+          question: '작품 판매 수익금은 어디에 쓰이나요?',
+          answer:
+            '수익금 전액은 한국스마트협동조합의 예술인 상호부조 기금으로 귀속되어, 금융 차별을 겪는 예술인에게 저금리 대출로 지원됩니다.',
+        },
+      ];
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.answer,
+      },
+    })),
+  };
 }
 
 /**

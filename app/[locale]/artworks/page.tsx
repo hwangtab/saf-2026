@@ -12,9 +12,10 @@ import { SITE_URL } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { createBreadcrumbSchema, generateArtworkListSchema } from '@/lib/seo-utils';
-import { generateArtworkPurchaseHowTo } from '@/lib/schemas/howto';
+import { generateArtworkPurchaseHowTo, generateArtworkPurchaseFAQ } from '@/lib/schemas/howto';
 import { getSupabaseArtworks } from '@/lib/supabase-data';
 import { parseArtworkPrice } from '@/lib/schemas/utils';
+import { CATEGORY_EN_MAP, getCategoryLabel } from '@/lib/artwork-category';
 import type { Artwork, ArtworkListItem } from '@/types';
 
 export const revalidate = 600;
@@ -69,11 +70,22 @@ export default async function ArtworksPage() {
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
   const itemListSchema = generateArtworkListSchema(artworks, locale);
 
+  // 카테고리별 작품 수 계산 (네비게이션용)
+  const categoryNav = Object.keys(CATEGORY_EN_MAP)
+    .map((cat) => ({
+      category: cat,
+      displayName: getCategoryLabel(cat, locale),
+      count: artworks.filter((a) => a.category === cat).length,
+    }))
+    .filter((c) => c.count > 0)
+    .sort((a, b) => b.count - a.count);
+
   return (
     <>
       <JsonLdScript data={breadcrumbSchema} />
       <JsonLdScript data={itemListSchema} />
       <JsonLdScript data={generateArtworkPurchaseHowTo(locale)} />
+      <JsonLdScript data={generateArtworkPurchaseFAQ(locale)} />
       <div className="min-h-screen">
         <PageHero
           title={t('title')}
@@ -86,6 +98,25 @@ export default async function ArtworksPage() {
             description={t('shareDescription')}
           />
         </PageHero>
+
+        {/* 카테고리 바로가기 — 검색엔진이 크롤링할 수 있는 앵커 링크 */}
+        <nav aria-label={locale === 'en' ? 'Browse by category' : '카테고리별 둘러보기'}>
+          <div className="container-max py-4 flex flex-wrap gap-2">
+            {categoryNav.map((cat) => (
+              <a
+                key={cat.category}
+                href={buildLocaleUrl(
+                  `/artworks/category/${encodeURIComponent(cat.category)}`,
+                  locale
+                )}
+                className="px-4 py-1.5 text-xs font-medium rounded-full border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-colors"
+              >
+                {cat.displayName}
+                <span className="ml-1 text-gray-400">{cat.count}</span>
+              </a>
+            ))}
+          </div>
+        </nav>
 
         {/* Gallery Section */}
         <Section

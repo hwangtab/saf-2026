@@ -37,6 +37,7 @@ export {
   generateSAFClaimReviews,
   generateHowToSchema,
   generateArtworkPurchaseHowTo,
+  generateArtworkPurchaseFAQ,
   generateMemberJoinHowTo,
   generateQAPageSchema,
   generateSAFCoreQA,
