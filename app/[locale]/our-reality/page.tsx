@@ -108,8 +108,10 @@ export default async function OurReality() {
           />
         </PageHero>
 
-        <div className="container-max pt-4 text-right">
-          <p className="text-xs text-gray-400">Last updated: {LAST_UPDATED}</p>
+        <div className="w-full bg-white">
+          <div className="container-max pt-4 text-right">
+            <p className="text-xs text-gray-400">Last updated: {LAST_UPDATED}</p>
+          </div>
         </div>
         <Section variant="white" prevVariant="canvas-soft">
           <div className="container-max max-w-3xl text-balance">
@@ -251,8 +253,10 @@ export default async function OurReality() {
         />
       </PageHero>
 
-      <div className="container-max pt-4 text-right bg-white">
-        <p className="text-xs text-gray-400">마지막 업데이트: {LAST_UPDATED}</p>
+      <div className="w-full bg-white">
+        <div className="container-max pt-4 text-right">
+          <p className="text-xs text-gray-400">마지막 업데이트: {LAST_UPDATED}</p>
+        </div>
       </div>
       {testimonialsData.map((group, groupIndex) => {
         const variants: ('white' | 'gray' | 'canvas-soft')[] = ['white', 'gray', 'canvas-soft'];
