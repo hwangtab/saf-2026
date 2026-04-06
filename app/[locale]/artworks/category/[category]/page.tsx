@@ -19,6 +19,7 @@ import {
   generateGalleryAggregateOffer,
 } from '@/lib/seo-utils';
 import { generateArtworkPurchaseHowTo, generateArtworkPurchaseFAQ } from '@/lib/schemas/howto';
+import { parseArtworkPrice } from '@/lib/schemas/utils';
 import { getSupabaseArtworks } from '@/lib/supabase-data';
 import type { Artwork, ArtworkListItem } from '@/types';
 
@@ -162,10 +163,19 @@ export default async function CategoryPage({ params }: Props) {
   const aggregateOfferSchema = generateGalleryAggregateOffer(categoryArtworks);
 
   const availableCount = categoryArtworks.filter((a) => !a.sold).length;
-  const heroDescription = t('heroDescription', {
-    count: categoryArtworks.length,
-    availableCount,
-  });
+  const prices = categoryArtworks
+    .map((a) => parseArtworkPrice(a.price))
+    .filter((p): p is number => p !== null && p > 0);
+  const minPrice = prices.length > 0 ? Math.min(...prices).toLocaleString('ko-KR') : null;
+  const maxPrice = prices.length > 0 ? Math.max(...prices).toLocaleString('ko-KR') : null;
+  const priceRange =
+    minPrice && maxPrice
+      ? isEnglish
+        ? ` · ₩${minPrice}–₩${maxPrice}`
+        : ` · ₩${minPrice}~₩${maxPrice}`
+      : '';
+  const heroDescription =
+    t('heroDescription', { count: categoryArtworks.length, availableCount }) + priceRange;
 
   // 관련 카테고리 (현재 카테고리 제외, 작품 수 기준 정렬)
   const categoryCounts = SUPPORTED_CATEGORIES.map((cat) => ({

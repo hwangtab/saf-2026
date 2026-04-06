@@ -70,6 +70,13 @@ export default async function ArtworksPage() {
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
   const itemListSchema = generateArtworkListSchema(artworks, locale);
 
+  // 실시간 작품 수 (heroDescription 동적화용)
+  const availableCount = artworks.filter((a) => !a.sold).length;
+  const dynamicHeroDescription =
+    locale === 'en'
+      ? `${artworks.length} original artworks from ${new Set(artworks.map((a) => a.artist)).size} Korean artists. ${availableCount} available now. Free shipping, 7-day returns.`
+      : `${new Set(artworks.map((a) => a.artist)).size}명 작가의 작품 ${artworks.length}점. 현재 ${availableCount}점 구매 가능. 무료 배송, 7일 반품.`;
+
   // 카테고리별 작품 수 계산 (네비게이션용)
   const categoryNav = Object.keys(CATEGORY_EN_MAP)
     .map((cat) => ({
@@ -89,7 +96,7 @@ export default async function ArtworksPage() {
       <div className="min-h-screen">
         <PageHero
           title={t('title')}
-          description={t('heroDescription')}
+          description={dynamicHeroDescription}
           breadcrumbItems={breadcrumbItems}
         >
           <ShareButtonsWrapper
