@@ -41,6 +41,15 @@ export default async function Footer() {
               <div>
                 <h3 className="font-sans font-bold text-lg mb-4">{t('links')}</h3>
                 <ul className="space-y-2 text-sm">
+                  {/* 내부 링크: 출품작 페이지 — SEO 내부 링크 에쿼티 전달 */}
+                  <li>
+                    <Link
+                      href="/artworks"
+                      className="text-gray-300 hover:text-primary transition-colors"
+                    >
+                      {tNav('buyArt')}
+                    </Link>
+                  </li>
                   <li>
                     <a
                       href={EXTERNAL_LINKS.JOIN_MEMBER}
