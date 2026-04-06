@@ -97,7 +97,7 @@ export function generateNewsArticleSchema(article: NewsArticleSchemaInput) {
     publisher: {
       '@type': 'Organization',
       '@id': `${SITE_URL}#organization`,
-      name: CONTACT.ORGANIZATION_NAME,
+      name: article.locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
       url: SITE_URL,
       logo: {
         '@type': 'ImageObject',

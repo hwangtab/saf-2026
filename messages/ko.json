@@ -245,7 +245,7 @@
     "shareTitle": "{artist} - 씨앗페 온라인 출품작",
     "shareDescription": "{artist}의 작품을 감상하고 예술인을 응원하세요.",
     "metaTitle": "{artist} - 출품작",
-    "metaDescription": "{artist}의 작품 세계를 만나보세요. ",
+    "metaDescription": "{artist}의 작품 세계를 만나보세요.",
     "metaFallback": "예술가들이 전하는 연대와 희망의 메시지, 씨앗페 온라인.",
     "originalKoreanDescription": "프로필 상세 내용은 한국어 원문으로 제공됩니다.",
     "metaImageAlt": "{artist}의 작품 - {title}"
