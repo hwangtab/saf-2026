@@ -146,9 +146,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         : `${baseUrl}${rawImageUrl}`
       : null;
 
+    // lastModified: 판매 완료 시 sold_at 날짜, 판매 중이면 전시 종료일
+    const artworkLastModified = artwork.sold_at ? new Date(artwork.sold_at) : exhibitionEndDate;
+
     return routing.locales.map((locale) => ({
       url: localizedUrl(baseUrl, artworkPath, locale),
-      lastModified: exhibitionEndDate,
+      lastModified: artworkLastModified,
       changeFrequency: freq,
       priority: locale === routing.defaultLocale ? basePriority : basePriority * 0.9,
       alternates: createAlternates(baseUrl, artworkPath),
