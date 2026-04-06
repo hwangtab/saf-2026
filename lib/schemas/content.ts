@@ -65,9 +65,12 @@ export interface NewsArticleSchemaInput {
   url: string;
   /** 원본 언론사 이름 (author로 표시됨) */
   sourceName: string;
+  /** 기사 언어 코드 (기본 'ko') */
+  locale?: 'ko' | 'en';
 }
 
 export function generateNewsArticleSchema(article: NewsArticleSchemaInput) {
+  const inLanguage = article.locale === 'en' ? 'en-US' : 'ko-KR';
   return {
     '@context': 'https://schema.org',
     '@type': 'NewsArticle',
@@ -78,6 +81,7 @@ export function generateNewsArticleSchema(article: NewsArticleSchemaInput) {
     image: [article.image],
     datePublished: article.datePublished,
     dateModified: article.dateModified ?? article.datePublished,
+    inLanguage,
     isAccessibleForFree: true,
     isPartOf: { '@id': `${SITE_URL}#website` },
     author: [

@@ -343,13 +343,23 @@ export default async function NewsPage() {
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
 
+  const latestNewsDate =
+    newsArticles.length > 0
+      ? newsArticles.reduce(
+          (latest, a) => (a.date > latest ? a.date : latest),
+          newsArticles[0].date
+        )
+      : undefined;
+
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
+    '@id': `${canonicalUrl}#collection`,
     name: copy.collectionName,
     description: copy.collectionDescription,
     url: canonicalUrl,
     isPartOf: { '@id': `${SITE_URL}#website` },
+    ...(latestNewsDate && { dateModified: latestNewsDate }),
     inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
     speakable: {
       '@type': 'SpeakableSpecification',
@@ -367,6 +377,7 @@ export default async function NewsPage() {
           image: article.thumbnail || OG_IMAGE.url,
           url: buildLocaleUrl(`/news/${article.id}`, locale),
           sourceName: localizeSourceName(article.source, locale),
+          locale,
         }),
       })),
     },
