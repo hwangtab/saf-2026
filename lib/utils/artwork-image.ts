@@ -167,14 +167,14 @@ export function resolveArtworkImageUrlForPreset(
 
   const variantUrl = resolveArtworkVariantUrl(image, variant);
 
-  // When render/image transform is disabled, remote artwork variant files (e.g. __detail)
-  // may not exist yet. Keep the original URL to avoid one-time 4xx + fallback flicker.
+  // Prefer stored variant files for remote artwork URLs. If a legacy record is missing
+  // the variant file, SafeImage falls back to the original public URL on load error.
   const isRemoteArtwork =
     (resolved.startsWith('http://') || resolved.startsWith('https://')) &&
     ARTWORK_STORAGE_MARKERS.some((marker) => resolved.includes(marker));
 
   if (isRemoteArtwork && variantUrl !== resolved) {
-    return resolved;
+    return variantUrl;
   }
 
   return variantUrl;

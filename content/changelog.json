@@ -1,45 +1,5 @@
 [
   {
-    "hash": "66617d86",
-    "type": "fix",
-    "scope": "seo",
-    "subject": "Google SEO 가이드 기반 HTML 표준 및 접근성 개선",
-    "summary": "<main> 중첩 제거, 복수 <h1> 해소, 히어로 이미지 alt 구체화, breadcrumb 다국어 통일",
-    "body": "- artworks/page.tsx, artworks/artist/[artist]/page.tsx: <main> → <div> (layout의 <main>과 중첩 방지)\n- artworks/[id]/page.tsx: 모바일 <h1> → <p aria-hidden>, 데스크톱 header를 sr-only로 접근성 트리 유지\n- artworks/[id]/page.tsx: 모바일 헤더 div에 aria-hidden — 스크린리더 이중 노출 방지\n- artworks/[id]/page.tsx: getTranslations('breadcrumbs')를 Promise.all에 병합\n- artworks/[id]/page.tsx, artist/page.tsx, news/[id]/page.tsx: breadcrumb을 tBreadcrumbs() 번역 함수로 통일\n- lib/constants.ts: HERO_IMAGES alt 텍스트를 작품명/작가명 포함으로 구체화 + altEn 추가, satisfies 타입 보호\n- lib/constants.ts: BREADCRUMB_HOME, BREADCRUMBS, re-export 제거 (dead code)\n- lib/schemas/artwork.ts: breadcrumbLabels? 파라미터로 한국어 하드코딩 제거\n- components/common/JsonLdScript.tsx: import 경로를 @/lib/seo-utils로 수정\n- components/features/BackgroundSlider.tsx: useLocale()로 locale 분기하여 영문 alt 제공\n- app/robots.ts: sitemap URL trailing slash 이중 슬래시 방지",
-    "date": "2026-04-05",
-    "author": "황경하"
-  },
-  {
-    "hash": "75cd3563",
-    "type": "fix",
-    "scope": "instagram",
-    "subject": "S9 커버 슬라이드 배경 이미지 수정",
-    "summary": "오윤 초상 로컬 파일 대신 낮도깨비 작품(Supabase URL) 배경으로 교체",
-    "body": "- ohyoon.webp (로컬 file://) → Playwright headless에서 미로드 문제 해결\n- OY.낮도깨비 Supabase URL 사용으로 안정적 렌더링\n- 상단-하단 그라디언트 오버레이로 타이포 가독성 확보\n- 텍스트 레이아웃 하단 정렬로 변경 (배지 상단, 제목 하단)",
-    "date": "2026-04-03",
-    "author": "hwangtab"
-  },
-  {
-    "hash": "b655baae",
-    "type": "feat",
-    "scope": "instagram",
-    "subject": "오윤 40주기 특별전 캐러셀 S9 추가",
-    "summary": "오윤(1946-1986) 40주기를 기념하는 인스타그램 캐러셀 시리즈 S9 추가. 다큐멘터리 톤(세피아/한지 배경)으로 생애·철학·대표작·작품 의의를 8장으로 구성, 이미지 자동 생성",
-    "body": "- S9 8장 구성: 커버→생애→철학→낮도깨비→칼노래→석양→가격비교→CTA\n- 비주얼: 세피아(#F5F0E8) 배경, 황토(#B8860B) 강조, 목판화 스탬프 배지\n- 대표작: 낮도깨비·칼노래·석양 Supabase 원본 이미지 사용\n- CTA: saf2026.com/special/oh-yoon 특별전 관람 유도\n- 해시태그: #오윤 #OhYoon #민중미술 #목판화 #오윤40주기 #씨앗페2026\n- 총 이미지 58장 → 66장으로 업데이트\n- 기획안(docs/instagram-promo-carousel-plan.md) S9 섹션 추가",
-    "date": "2026-04-03",
-    "author": "hwangtab"
-  },
-  {
-    "hash": "c214981f",
-    "type": "fix",
-    "scope": "mobile-menu",
-    "subject": "닫기 버튼 아이콘을 깔끔한 X SVG로 교체",
-    "summary": "CSS transform 기반 MenuToggleIcon 정적 X 대신 명확한 SVG X 아이콘 사용",
-    "body": "- MenuToggleIcon은 애니메이션 전용 컴포넌트라 isOpen={true} 고정 시 선 정렬 어긋남\n- GlobalSearchDialog 클리어 버튼과 동일한 path 기반 X 아이콘으로 교체\n- MenuToggleIcon import 제거",
-    "date": "2026-04-03",
-    "author": "hwangtab"
-  },
-  {
     "hash": "b8d2fc51",
     "type": "fix",
     "scope": "seo",
