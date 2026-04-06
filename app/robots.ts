@@ -17,6 +17,7 @@ export default function robots(): MetadataRoute.Robots {
           '/login',
           '/signup',
           '/onboarding',
+          '/terms-consent',
         ],
       },
       {

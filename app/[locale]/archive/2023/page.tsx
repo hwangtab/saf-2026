@@ -106,7 +106,7 @@ export default async function Archive2023Page() {
   const collectionSchema = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: isEnglish ? 'SAF 2026 Archive' : '씨앗페 2026 아카이브',
+    name: isEnglish ? 'SAF 2023 Archive' : '씨앗페 2023 아카이브',
     description: pageDescription,
     url: currentUrl,
     publisher: {
@@ -296,7 +296,7 @@ export default async function Archive2023Page() {
               >
                 <ExportedImage
                   src={`/images/saf2023/${photo.filename}`}
-                  alt={isEnglish ? `SAF 2023 photo ${photo.id}` : photo.alt}
+                  alt={isEnglish ? photo.altEn : photo.alt}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-300"
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"

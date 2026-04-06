@@ -5,8 +5,8 @@ export const SITE_URL_ALIAS = 'https://saf2026.com';
 export const OG_IMAGE = {
   path: '/images/og-image.png',
   url: `${SITE_URL}/images/og-image.png`,
-  width: 800,
-  height: 450,
+  width: 1200,
+  height: 630,
   alt: '씨앗페 온라인 캠페인 대표 이미지',
   altEn: 'SAF Online campaign representative image',
 } as const;

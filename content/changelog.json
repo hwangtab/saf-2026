@@ -1,5 +1,365 @@
 [
   {
+    "hash": "a3532dfc",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "\"원화\" 용어 정비 및 SEO 전반 개선",
+    "summary": "\"원화\" → \"작품\" 표현 통일, 구조화 데이터 siteName 추가, keywords 카테고리 롱테일 확장, next/font 마이그레이션, robots.txt Yeti 허용 등 SEO 감사 결과 일괄 적용",
+    "body": "- messages/ko.json: \"원화\" → \"작품\" 12곳 교체 (heroTitle, metaTitle, ogDescription 등)\n- messages/en.json: \"original paintings\" → \"original artworks\" 수정\n- app/layout.tsx: next/font/local 마이그레이션 (Paperlogy, PartialSans, Poster 3종)\n- lib/constants.ts: OG 이미지 크기 선언 수정 (1200×630 → 800×450, 실제 파일 크기)\n- lib/seo.ts: createStandardPageMetadata에 openGraph.siteName 추가\n- lib/schemas/artwork.ts: keywords에 artwork.category, \"{category} 구매\" 롱테일 추가\n- app/[locale]/artworks/artist/[artist]/page.tsx: keywords에 작가 주장르 추가\n- app/[locale]/news/[id]/page.tsx: description 폴백 개선 (한/영 분기)\n- app/[locale]/special/oh-yoon/page.tsx: description 29자 → 130자+ 확장\n- app/sitemap.ts: oh-yoon priority 0.7 → 0.85 상향\n- app/robots.ts: Yeti(네이버 크롤러) 명시적 허용 추가\n- lib/integrations/cafe24/sync-artwork.ts: \"원화 1/1\" → \"유일작 1/1\"\n- public/manifest.json, lib/schemas/qa-page.ts: \"원화\" → \"작품\" 교체\n- styles/globals.css, tailwind.config.ts: next/font 전환에 따른 @font-face 제거 및 CSS 변수 정리",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "6bdbdec0",
+    "type": "fix",
+    "scope": "instagram",
+    "subject": "작가 프로필 슬라이드 작품 이미지 대형화",
+    "summary": "S4/S5/S6 작가 프로필 슬라이드의 작품 이미지를 상단 65% 전체로 확대, 텍스트 카드를 하단 35%로 이동",
+    "body": "- 기존: 120px 원형 아바타 + 99% 불투명 다크 배경 → 작품 사실상 안 보임\n- 변경: 작품 이미지 상단 65% 전체 (object-fit:cover) + 작가명 오버레이\n- 하단 패널: 재료/크기 glass 카드 + 작품명/가격/구매 → 버튼",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "6d38d925",
+    "type": "feat",
+    "scope": "instagram",
+    "subject": "커버 후킹 강화 + 전체 텍스트 최소 크기 개선",
+    "summary": "인스타그램 캐러셀 커버 6종 시각적 후킹 강화(배경 이미지 노출, 트립티크 갤러리)와 66장 전수 텍스트 크기 개선(28px 미만 요소 모두 상향)",
+    "body": "- pg() 함수에 bgFilter 파라미터 추가 — 슬라이드별 배경 밝기 독립 제어\n- S2 커버: hero 로컬 파일 → BG[19] Supabase URL, brightness 0.65, 하단 정렬\n- S3 커버: hero 로컬 파일 → BG[3] Supabase URL, brightness 0.6, 하단 정렬\n- S4/S5/S6 커버: spot() 텍스트 전용 → 실제 작품 3점 트립티크 갤러리\n- S8 커버: hero 로컬 파일 → BG[2] Supabase URL, glass 카드+라벨\n- 전수 조사: 시리즈 레이블·해시태그·뱃지·보조 텍스트 28px 미만 → 28px+ 일괄 상향\n- docs: 커버 원칙 및 텍스트 최소 크기 기준표 추가",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "3d4db6bc",
+    "type": "fix",
+    "scope": "instagram",
+    "subject": "S2/S3/S8 커버 배경 이미지 로드 오류 수정",
+    "summary": "hero() 로컬 file:// URL → Supabase URL 교체로 Playwright 렌더링 문제 해결",
+    "body": "- hero(9)/hero(4)/hero(6)는 file:// 경로로 Playwright setContent에서 미로드\n- S2: BG[19] 박재동 할머니 (증언 시리즈에 감성적으로 적합)\n- S3: BG[3] 이철수 마음항아리 (씨앗/상호부조 주제와 부합)\n- S8: BG[2] 이문형 책거리×살바도르달리 (시각적으로 강렬한 CTA 배경)",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "d8822eb7",
+    "type": "feat",
+    "scope": "instagram",
+    "subject": "커버 슬라이드 6종 비주얼 후킹 강화",
+    "summary": "S2/S3/S4/S5/S6/S8 첫 번째 이미지에 실제 작품·사진 배경 노출",
+    "body": "- pg() 함수에 bgFilter 파라미터 추가 (기존 슬라이드 하위호환 유지)\n- S4/S5/S6: spot() 커버를 작품 트립티크(3점 갤러리) 구도로 전면 개편\n- S2/S3/S8: 하단 정렬 레이아웃 + 배경 이미지 가시성 개선 (brightness 0.4→0.6~0.65)\n- 커버 디자인 원칙 문서화 (docs/instagram-promo-carousel-plan.md)",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "e7cf4812",
+    "type": "feat",
+    "scope": "i18n",
+    "subject": "영문 데이터 누락 작품 29개 번역 추가",
+    "summary": "batch-db-generated.ts에서 title_en/artist_en이 없던 작품에 영문 데이터 일괄 추가",
+    "body": "- 박재동 작품 25개에 artist_en: 'Park Jae-dong' 추가\n- 김수오 작품 3개에 artist_en: 'Kim Su-o' 추가\n- 박재동 노무현 시리즈 3개에 title_en: 'Roh Moo-hyun' 추가\n- 심모비 '9505 SIM_Memory'에 title_en 추가\n- 전체 354개 작품 title_en/artist_en 100% 커버리지 달성\n\nhttps://claude.ai/code/session_01UcMqMzsqJRfpPxRbiYMB5V",
+    "date": "2026-04-05",
+    "author": "Claude"
+  },
+  {
+    "hash": "570b9b78",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "Organization foundingDate 2021 → 2020 수정",
+    "summary": "통신판매 신고번호 연도를 창립연도로 잘못 적용한 오류 수정",
+    "body": null,
+    "date": "2026-04-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "525efa42",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Organization 엔티티 강화, ItemPage 스키마, Q&A 확장",
+    "summary": "Organization foundingDate/legalName/taxID 추가, 작품 상세 페이지 ItemPage 스키마로 엔티티 연결 완성, Q&A 7항목으로 확장",
+    "body": "- lib/schemas/organization.ts: foundingDate·legalName·taxID 추가, LocalBusiness @id #art-gallery로 충돌 수정\n- lib/schemas/artwork.ts: ItemPage 스키마 (isPartOf→WebSite, mainEntity→VisualArtwork) 추가\n- app/[locale]/artworks/[id]/page.tsx: webPageSchema JsonLd 출력\n- lib/schemas/qa-page.ts: 구매·배송·반품·가격대 Q&A 3항목 추가 (ko+en)",
+    "date": "2026-04-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "c25de2cc",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "작품 메타 디스크립션 160자 제한 및 siteName 상수화",
+    "summary": "작품 페이지 meta description을 Google SERP 표시 기준(160자)으로 축소, 홈 og:siteName을 불안정한 문자열 분리 대신 상수로 교체",
+    "body": "- lib/schemas/artwork.ts: seoDescription.substring(0, 300) → 160\n- app/[locale]/page.tsx: t('metaTitle').split(' - ')[0] → 로케일 상수",
+    "date": "2026-04-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "9b351551",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "아카이브 페이지 keywords 및 작가 workSample @id 추가",
+    "summary": "archive/2026·2023 keywords 메타태그 추가, 작가 스키마 workSample에 @id 링크 추가",
+    "body": "- archive/2026, archive/2023 generateMetadata에 keywords 추가 (Naver 최적화)\n- generateEnhancedArtistSchema workSample VisualArtwork에 @id 추가\n  → VisualArtwork 엔티티 그래프 역방향 연결 완성 (작가 → 출품작)",
+    "date": "2026-04-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "05e071f8",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "작품 상세 페이지 keywords 메타태그 추가 (Naver 최적화)",
+    "summary": "개별 작품 페이지에 작가명·작품명·재료·씨앗페 등 동적 keywords 메타태그 추가 — Naver 검색 최적화",
+    "body": "- generateArtworkMetadata에 작가명, 작품명, 재료, '원화 구매', '씨앗페 온라인' 포함 keywords 추가\n- 영어 페이지: artist, title, material, 'Korean art', 'original artwork', 'buy artwork'\n- 한국어 페이지: 작가명, 작품명, 재료, '원화 구매', '한국 현대미술', '씨앗페 온라인'",
+    "date": "2026-04-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "fb3cf785",
+    "type": "perf",
+    "scope": "seo",
+    "subject": "Kakao API DNS prefetch 힌트 추가",
+    "summary": "카카오 맵 SDK 로딩 최적화를 위한 DNS prefetch 리소스 힌트 추가",
+    "body": "- dapi.kakao.com: 카카오 맵 API\n- t1.kakaocdn.net: 카카오 정적 리소스 CDN",
+    "date": "2026-04-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "741883e7",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "ExhibitionEvent @id 추가 및 VisualArtwork isPartOf @id 참조 연결",
+    "summary": "ExhibitionEvent 엔티티에 @id 추가, VisualArtwork의 isPartOf에서 ExhibitionEvent @id 참조 — 작품-전시 관계 엔티티 그래프 완결",
+    "body": "- event.ts: generateExhibitionSchema에 '@id': \\`${SITE_URL}#exhibition\\` 추가\n- artwork.ts: isPartOf ExhibitionEvent에 '@id': \\`${SITE_URL}#exhibition\\` 참조 추가",
+    "date": "2026-04-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "f794d463",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "작가 Person 스키마에 @id 추가 (VisualArtwork creator 역방향 참조 완결)",
+    "summary": "작가 페이지 Person 스키마에 @id 추가 — 작품의 creator @id에서 참조하는 URL과 일치시켜 Google 엔티티 그래프 완결",
+    "body": "- generateArtistSchema: '@id': artist.url 추가\n- generateEnhancedArtistSchema: '@id': artist.url 추가\n- 이제 VisualArtwork(creator[@id]) ↔ Person(@id) 양방향 참조 성립",
+    "date": "2026-04-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "ea082bca",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "VisualArtwork creator에 작가 페이지 @id 참조 추가",
+    "summary": "작품 상세 페이지 구조화 데이터에서 creator(Person)와 작가 페이지를 @id로 연결 — Google 엔티티 그래프 강화",
+    "body": "- creator @id: \\`${SITE_URL}/artworks/artist/${artist}\\` — 작품과 작가 Person 엔티티를 직접 링크\n- Google Knowledge Graph가 작가-작품 관계를 정확히 파악할 수 있도록 지원",
+    "date": "2026-04-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "8b767a3b",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "WebSite·FundingScheme publisher @id 링크 및 오윤 페이지 keywords 추가",
+    "summary": "구조화 데이터 엔티티 그래프 완결성 강화 — WebSite·FundingScheme의 publisher/funder에 @id 참조 추가, 오윤 특별전 페이지 keywords 추가",
+    "body": "- organization.ts: WebSite.publisher @id, FundingScheme.funder @id 추가\n- special/oh-yoon/page.tsx: 오윤·민중미술·목판화 관련 keywords 추가",
+    "date": "2026-04-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "2500b9cf",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "뉴스 기사·작가 페이지 og:locale 추가",
+    "summary": "소셜 크롤러 언어 신호 강화를 위해 누락된 og:locale 추가",
+    "body": "- news/[id]/page.tsx: og:locale(ko_KR/en_US) 추가\n- artworks/artist/[artist]/page.tsx: og:locale 추가, type 순서 정리",
+    "date": "2026-04-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "29f7950b",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "언론 보도·홈·오윤 페이지 og:locale 및 keywords 추가",
+    "summary": "소셜 크롤러 언어 신호 강화를 위해 og:locale 추가, 언론 보도 페이지 Naver keywords 추가",
+    "body": "- news/page.tsx: og:locale(ko_KR/en_US), keywords(씨앗페 언론 보도 등) 추가\n- page.tsx (홈): og:locale 추가\n- special/oh-yoon/page.tsx: og:locale 추가",
+    "date": "2026-04-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "603dfa8c",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "SpeakableSpecification CSS 셀렉터용 HTML id 속성 추가 (our-proof·transparency)",
+    "summary": "이전에 추가한 SpeakableSpecification 스키마의 CSS 셀렉터(#proof-stats-summary 등)가 실제 HTML 요소를 참조하도록 id 속성 추가",
+    "body": "- our-proof: PageHero descriptionId=\"proof-hero-description\", #proof-stats-summary, #proof-qa-section (ko·en 모두)\n- transparency: PageHero descriptionId=\"transparency-hero-description\", #transparency-reports-section, #transparency-stats-section (ko·en 모두)",
+    "date": "2026-04-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "216596ca",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "our-proof·transparency 페이지 SpeakableSpecification 스키마 추가",
+    "summary": "음성 검색(AEO) 최적화를 위해 our-proof·transparency 페이지에 SpeakableSpecification 구조화 데이터 추가",
+    "body": "- our-proof: #proof-hero-description, #proof-stats-summary, #proof-qa-section CSS 셀렉터\n- transparency: #transparency-hero-description, #transparency-stats-section, #transparency-reports-section CSS 셀렉터\n- 두 페이지 모두 ko·en 언어 브랜치 적용",
+    "date": "2026-04-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "181f5b54",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "OG locale 설정 및 our-proof·transparency 페이지 keywords 추가",
+    "summary": "createStandardPageMetadata에 og:locale 추가(ko_KR/en_US), our-proof·transparency 페이지 Naver 검색 최적화 keywords 추가",
+    "body": "- lib/seo.ts: openGraph.locale 필드 추가 — 소셜 크롤러 언어 신호 명시\n- our-proof: 예술인 상호부조 대출·금융 안전망 관련 keywords\n- transparency: 예술인 대출 운용 보고서·투명성 관련 keywords",
+    "date": "2026-04-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "1beefa28",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "keywords 메타태그 추가 및 아카이브 CollectionPage 스키마 추가",
+    "summary": "Naver 검색 최적화를 위한 keywords 메타태그(홈·우리의 현실) 추가, 아카이브 허브 페이지에 CollectionPage 구조화 데이터 추가",
+    "body": "- 홈페이지: 한국 현대미술·원화 구매·씨앗페 등 주요 검색어 keywords 추가\n- our-reality: 예술인 금융 배제 관련 전문 keywords 추가\n- archive hub: CollectionPage schema (hasPart: SAF2026, SAF2023 WebPage 참조)",
+    "date": "2026-04-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "0e3bb720",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "홈페이지 중복 구조화 데이터 제거 (루트 레이아웃 이미 포함)",
+    "summary": "루트 레이아웃이 Organization·WebSite·ArtGallery 스키마를 전체 페이지에 이미 삽입하므로 홈페이지 페이지 컴포넌트의 중복 추가 코드 제거",
+    "body": null,
+    "date": "2026-04-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "26c02115",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "홈페이지에 Organization·WebSite·ArtGallery 구조화 데이터 추가",
+    "summary": "홈페이지에 브랜드 엔티티 스키마(Organization, WebSite, ArtGallery) 추가 — Google 검색박스 및 지식패널 노출 기반 구축",
+    "body": "- Organization: @id #organization, sameAs 소셜 링크, 연락처\n- WebSite: @id #website, SearchAction (URL 검색 기능 노출)\n- ArtGallery: 오프라인 갤러리 LocalBusiness 정보\n- 기존 ExhibitionEvent·Campaign·HowTo·QAPage 스키마와 병렬 적용",
+    "date": "2026-04-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "ac2aef34",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "오윤 특별전 ExhibitionEvent + Person 구조화 데이터 추가",
+    "summary": "오윤 특별전 페이지에 Schema.org ExhibitionEvent·Person 구조화 데이터 추가 (ko·en 양 언어)",
+    "body": "- ExhibitionEvent: OnlineEventAttendanceMode, organizer @id 참조, 전시 기간\n- Person: 오윤 (1946–1986) Wikidata sameAs 링크 포함\n- 한국어·영어 양 언어 브랜치 모두 data={[breadcrumbSchema, exhibitionEventSchema]} 적용",
+    "date": "2026-04-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "548484ad",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "transparency 보고서 스키마 및 manifest 언어 설정 추가",
+    "summary": "연간 운용 보고서 구조화 데이터(ItemList+Article), PWA manifest lang/categories 추가",
+    "body": "- feat: transparency 페이지에 연간 보고서 ItemList+Article JSON-LD 스키마 추가 (PDF SEO 강화)\n- feat: public/manifest.json에 lang(\"ko\"), dir(\"ltr\"), categories 필드 추가",
+    "date": "2026-04-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "a10b53d4",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "Google SEO 가이드 기반 종합 SEO 개선",
+    "summary": "타이틀 이중 접미사 버그 수정, 구조화 데이터 엔티티 연결, 헤딩 계층 수정 등 11개 SEO 개선 사항 적용",
+    "body": "- fix: createStandardPageMetadata에서 title: { absolute }로 이중 접미사 버그 수정 (11개 페이지 영향)\n- fix: 작가 페이지 metaTitle에서 브랜드명 중복 제거 (ko.json, en.json)\n- fix: sitemap.ts 정적 페이지 lastModified를 실제 수정일로 고정 (빌드마다 변경 방지)\n- fix: robots.ts crawlDelay: 1 제거 (Vercel CDN 정적 사이트에 불필요)\n- fix: our-reality 페이지 h4 → h3로 헤딩 계층 수정 (h2→h4 건너뜀 수정)\n- feat: Organization/WebSite/ArtGallery 스키마에 @id 추가 (엔티티 일관성)\n- feat: 모든 스키마의 seller/publisher/organizer/author에 @id 연결\n- feat: Organization 스키마에 areaServed, knowsAbout 추가\n- feat: VideoObject 스키마에 dateModified 추가\n- feat: news 카드 링크에 aria-label 추가 (접근성 개선)\n- feat: news 상세 페이지 OG에 article:section 추가\n- feat: artworks 목록 페이지에 keywords 메타 추가 (Naver SEO)\n- feat: our-proof 페이지에 QAPage 스키마 추가 (AEO 최적화)\n- feat: layout.tsx에 YouTube CDN dns-prefetch 추가 (아카이브 페이지 성능)",
+    "date": "2026-04-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "6725973e",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "구조화 데이터 @id 및 dateModified 추가",
+    "summary": "Product/VisualArtwork 스키마에 @id 추가, NewsArticle에 dateModified 추가",
+    "body": "- artwork.ts: Product/VisualArtwork 스키마에 @id 필드 추가 (locale-aware URL) — Google Knowledge Graph 엔티티 인식 개선\n- content.ts: NewsArticle 스키마에 dateModified 추가 (= datePublished) — 뉴스 신선도 신호 보강",
+    "date": "2026-04-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "f7f5658b",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "Google SEO 가이드 기반 HTML 표준 및 접근성 개선",
+    "summary": "구글 SEO 가이드 6가지 블라인드 스팟 수정 (메타설명 차별화, nofollow, 브레드크럼 URL, 링크텍스트, keywords 제거, 신선도 신호)",
+    "body": "- Phase 1: seo.siteDescription / home / artworksPage 메타 설명 3개 차별화 (브랜드·구매 유도·필터 기능 강조)\n- Phase 2: 모든 외부 링크에 rel=\"nofollow\" 추가 (LinkButton, NavLink, DesktopNav, FullscreenMenu, Footer, RelatedArticles, news/[id])\n- Phase 3: 브레드크럼 Home URL을 buildLocaleUrl('/', locale)로 수정 (영어 페이지에 /en 접두어 누락 문제 해결) — 16개 페이지 + artwork.ts\n- Phase 4: ArtworkPurchaseCTA 판매완료 링크 텍스트를 \"전체보기\" → \"{artist} 작가의 다른 작품\"으로 개선\n- Phase 5: generateArtworkMetadata와 app/layout.tsx에서 keywords 메타 태그 제거 (Google 무시)\n- Phase 6: our-reality / our-proof / transparency에 article:modified_time 메타 + \"마지막 업데이트\" 텍스트 추가",
+    "date": "2026-04-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "20997889",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "미술품 판매 중심 상업 키워드 전환",
+    "summary": "SEO 메타데이터·콘텐츠를 캠페인 중심에서 미술품 판매 중심으로 대폭 전환",
+    "body": "- app/layout.tsx: 루트 title/description/keywords를 상업 키워드로 교체\n  - \"예술인 상호부조 기금 특별전\" → \"한국 현대미술 작품 구매\"\n  - 키워드: 미술품 구매, 그림 판매, 원화 구매, buy Korean art 등\n  - title template: \"%s | 씨앗페 온라인 갤러리\"\n- messages/ko.json, en.json:\n  - seo.siteTitle: \"씨앗페 온라인 갤러리\" / \"SAF Online Gallery\"\n  - home.heroTitle: \"한국 현대미술 원화 구매\" / \"Buy Contemporary Korean Art\"\n  - home.heroGalleryTitle: 상업 h1 (\"한국 현대미술 원화 구매\")\n  - home.metaTitle/Description: 상품 중심 (127점, 무료 배송, 7일 반품)\n  - artworksPage.title: \"출품작\" → \"작품 구매\" / \"Buy Artworks\"\n  - artworksPage.metaDescription: 장르·가격·배송 강조\n  - CTA: \"작품 보러가기\" → \"작품 구매하기\"\n- lib/schemas/artwork.ts: Product 스키마 강화\n  - priceValidUntil: 만료된 CAMPAIGN.END_DATE → 1년 후 동적 날짜\n  - itemCondition: 'NewCondition' 추가 (Google Merchant Center 필수)\n- public/manifest.json: description 상업 전환",
+    "date": "2026-04-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "d8755f23",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "구조화 데이터·메타데이터·시맨틱 블라인드 스팟 수정",
+    "summary": "WebSite SearchAction, ExhibitionEvent 상시 emit, NewsArticle publisher 정정, twitter.images 추가, manifest theme_color 수정, heading hierarchy 수정, Footer 로고 링크화",
+    "body": "- lib/schemas/organization.ts: WebSite 스키마에 SearchAction 추가 (/artworks?q=)\n- lib/schemas/organization.ts: LocalBusiness openingHours 전시 종료 후 자동 생략\n- app/[locale]/page.tsx: ExhibitionEvent 스키마 조건 제거 (EventCompleted로 항상 emit)\n- lib/schemas/content.ts: NewsArticle publisher.logo 추가, author/publisher 분리\n- app/[locale]/news/[id]/page.tsx: publisherName → sourceName, twitter.images 추가\n- app/[locale]/news/page.tsx: publisherName → sourceName\n- lib/constants.ts: OG_IMAGE.altEn 추가 (영어 대체 텍스트)\n- lib/seo.ts: locale별 OG image alt 분기\n- app/not-found.tsx: 정적 metadata → generateMetadata() (locale-aware title)\n- app/sitemap.ts: 작품/아티스트 lastModified now → CAMPAIGN.END_DATE 고정\n- app/[locale]/artworks/[id]/page.tsx: Artist Profile/Note h3 → h2 (heading hierarchy)\n- components/common/Footer.tsx: 로고를 Link로 감싸 홈 링크 제공\n- public/manifest.json: theme_color #FF5A5F → #2176FF (브랜드 컬러 일치)",
+    "date": "2026-04-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "a06d3606",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Google SEO 가이드 기반 3가지 개선 구현",
+    "summary": "시각적 브레드크럼 UI, 404 국제화, 콘텐츠 간 상호 링크 추가",
+    "body": "- components/ui/Breadcrumb.tsx 신규 생성 (서버 컴포넌트, next-intl Link 사용)\n- PageHero에 breadcrumbItems prop 추가, 14개 페이지에 시각적 브레드크럼 렌더링\n- messages/ko.json, en.json에 notFound 번역 네임스페이스 추가\n- app/not-found.tsx: getLocale()로 한국어/영어 분기 국제화\n- artworks/[id]/not-found.tsx, artist/[artist]/not-found.tsx: getTranslations 적용\n- our-reality ↔ our-proof, artworks/[id] → our-proof, news/[id] → 관련 페이지 교차 링크",
+    "date": "2026-04-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "66617d86",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "Google SEO 가이드 기반 HTML 표준 및 접근성 개선",
+    "summary": "<main> 중첩 제거, 복수 <h1> 해소, 히어로 이미지 alt 구체화, breadcrumb 다국어 통일",
+    "body": "- artworks/page.tsx, artworks/artist/[artist]/page.tsx: <main> → <div> (layout의 <main>과 중첩 방지)\n- artworks/[id]/page.tsx: 모바일 <h1> → <p aria-hidden>, 데스크톱 header를 sr-only로 접근성 트리 유지\n- artworks/[id]/page.tsx: 모바일 헤더 div에 aria-hidden — 스크린리더 이중 노출 방지\n- artworks/[id]/page.tsx: getTranslations('breadcrumbs')를 Promise.all에 병합\n- artworks/[id]/page.tsx, artist/page.tsx, news/[id]/page.tsx: breadcrumb을 tBreadcrumbs() 번역 함수로 통일\n- lib/constants.ts: HERO_IMAGES alt 텍스트를 작품명/작가명 포함으로 구체화 + altEn 추가, satisfies 타입 보호\n- lib/constants.ts: BREADCRUMB_HOME, BREADCRUMBS, re-export 제거 (dead code)\n- lib/schemas/artwork.ts: breadcrumbLabels? 파라미터로 한국어 하드코딩 제거\n- components/common/JsonLdScript.tsx: import 경로를 @/lib/seo-utils로 수정\n- components/features/BackgroundSlider.tsx: useLocale()로 locale 분기하여 영문 alt 제공\n- app/robots.ts: sitemap URL trailing slash 이중 슬래시 방지",
+    "date": "2026-04-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "75cd3563",
+    "type": "fix",
+    "scope": "instagram",
+    "subject": "S9 커버 슬라이드 배경 이미지 수정",
+    "summary": "오윤 초상 로컬 파일 대신 낮도깨비 작품(Supabase URL) 배경으로 교체",
+    "body": "- ohyoon.webp (로컬 file://) → Playwright headless에서 미로드 문제 해결\n- OY.낮도깨비 Supabase URL 사용으로 안정적 렌더링\n- 상단-하단 그라디언트 오버레이로 타이포 가독성 확보\n- 텍스트 레이아웃 하단 정렬로 변경 (배지 상단, 제목 하단)",
+    "date": "2026-04-03",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "b655baae",
+    "type": "feat",
+    "scope": "instagram",
+    "subject": "오윤 40주기 특별전 캐러셀 S9 추가",
+    "summary": "오윤(1946-1986) 40주기를 기념하는 인스타그램 캐러셀 시리즈 S9 추가. 다큐멘터리 톤(세피아/한지 배경)으로 생애·철학·대표작·작품 의의를 8장으로 구성, 이미지 자동 생성",
+    "body": "- S9 8장 구성: 커버→생애→철학→낮도깨비→칼노래→석양→가격비교→CTA\n- 비주얼: 세피아(#F5F0E8) 배경, 황토(#B8860B) 강조, 목판화 스탬프 배지\n- 대표작: 낮도깨비·칼노래·석양 Supabase 원본 이미지 사용\n- CTA: saf2026.com/special/oh-yoon 특별전 관람 유도\n- 해시태그: #오윤 #OhYoon #민중미술 #목판화 #오윤40주기 #씨앗페2026\n- 총 이미지 58장 → 66장으로 업데이트\n- 기획안(docs/instagram-promo-carousel-plan.md) S9 섹션 추가",
+    "date": "2026-04-03",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "c214981f",
+    "type": "fix",
+    "scope": "mobile-menu",
+    "subject": "닫기 버튼 아이콘을 깔끔한 X SVG로 교체",
+    "summary": "CSS transform 기반 MenuToggleIcon 정적 X 대신 명확한 SVG X 아이콘 사용",
+    "body": "- MenuToggleIcon은 애니메이션 전용 컴포넌트라 isOpen={true} 고정 시 선 정렬 어긋남\n- GlobalSearchDialog 클리어 버튼과 동일한 path 기반 X 아이콘으로 교체\n- MenuToggleIcon import 제거",
+    "date": "2026-04-03",
+    "author": "hwangtab"
+  },
+  {
     "hash": "b8d2fc51",
     "type": "fix",
     "scope": "seo",

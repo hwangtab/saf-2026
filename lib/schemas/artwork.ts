@@ -426,7 +426,7 @@ export function generateArtworkListSchema(artworks: Artwork[], locale: 'ko' | 'e
     numberOfItems: artworks.length,
     // Price range for art buyers
     ...(aggregateOffer && { offers: aggregateOffer }),
-    itemListElement: artworks.map((artwork, index) => ({
+    itemListElement: artworks.slice(0, 30).map((artwork, index) => ({
       '@type': 'ListItem',
       position: index + 1,
       url: `${SITE_URL}/artworks/${artwork.id}`,

@@ -12,9 +12,6 @@ import {
 import { BRAND_COLORS } from '@/lib/colors';
 import '@/styles/globals.css';
 
-const UNICODE_RANGE =
-  'U+0000-00FF, U+0100-024F, U+2000-206F, U+2190-21FF, U+2200-22FF, U+3000-303F, U+3131-318E, U+AC00-D7AF, U+F900-FAFF, U+FE10-FE1F, U+FF00-FFEF';
-
 const paperlogy = localFont({
   src: [
     { path: '../public/fonts/Paperlogy-4Regular.woff2', weight: '400', style: 'normal' },
@@ -24,7 +21,13 @@ const paperlogy = localFont({
   variable: '--font-paperlogy',
   display: 'swap',
   preload: true,
-  declarations: [{ prop: 'unicode-range', value: UNICODE_RANGE }],
+  declarations: [
+    {
+      prop: 'unicode-range',
+      value:
+        'U+0000-00FF, U+0100-024F, U+2000-206F, U+2190-21FF, U+2200-22FF, U+3000-303F, U+3131-318E, U+AC00-D7AF, U+F900-FAFF, U+FE10-FE1F, U+FF00-FFEF',
+    },
+  ],
 });
 
 const partialSans = localFont({
@@ -32,7 +35,13 @@ const partialSans = localFont({
   variable: '--font-partial-sans',
   display: 'swap',
   preload: true,
-  declarations: [{ prop: 'unicode-range', value: UNICODE_RANGE }],
+  declarations: [
+    {
+      prop: 'unicode-range',
+      value:
+        'U+0000-00FF, U+0100-024F, U+2000-206F, U+2190-21FF, U+2200-22FF, U+3000-303F, U+3131-318E, U+AC00-D7AF, U+F900-FAFF, U+FE10-FE1F, U+FF00-FFEF',
+    },
+  ],
 });
 
 const schoolSafetyPoster = localFont({
@@ -40,7 +49,13 @@ const schoolSafetyPoster = localFont({
   variable: '--font-section',
   display: 'swap',
   preload: false,
-  declarations: [{ prop: 'unicode-range', value: UNICODE_RANGE }],
+  declarations: [
+    {
+      prop: 'unicode-range',
+      value:
+        'U+0000-00FF, U+0100-024F, U+2000-206F, U+2190-21FF, U+2200-22FF, U+3000-303F, U+3131-318E, U+AC00-D7AF, U+F900-FAFF, U+FE10-FE1F, U+FF00-FFEF',
+    },
+  ],
 });
 
 export const viewport: Viewport = {

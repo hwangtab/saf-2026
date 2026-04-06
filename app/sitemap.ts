@@ -33,7 +33,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: number;
     lastModified?: Date;
   }> = [
-    { path: '', changeFrequency: 'weekly', priority: 1.0 },
+    { path: '', changeFrequency: 'weekly', priority: 1.0, lastModified: new Date('2026-03-15') },
     {
       path: '/our-reality',
       changeFrequency: 'monthly',
@@ -70,14 +70,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
       lastModified: new Date('2023-12-31'),
     },
-    { path: '/artworks', changeFrequency: 'weekly', priority: 0.9 },
+    {
+      path: '/artworks',
+      changeFrequency: 'weekly',
+      priority: 0.9,
+      lastModified: new Date('2026-01-26'),
+    },
     {
       path: '/archive',
       changeFrequency: 'monthly',
       priority: 0.8,
       lastModified: new Date('2026-03-15'),
     },
-    { path: '/news', changeFrequency: 'weekly', priority: 0.85 },
+    {
+      path: '/news',
+      changeFrequency: 'weekly',
+      priority: 0.85,
+      lastModified: new Date('2026-03-15'),
+    },
     {
       path: '/privacy',
       changeFrequency: 'yearly',

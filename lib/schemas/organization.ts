@@ -15,8 +15,8 @@ export function generateOrganizationSchema(locale: 'ko' | 'en' = 'ko') {
     taxID: CONTACT.BUSINESS_REGISTRATION_NUMBER,
     logo: `${SITE_URL}/images/og-image2.png`,
     description: isEnglish
-      ? 'A special exhibition raising mutual-aid funds for Korean artists'
-      : '한국 예술인들의 상호부조 기금 마련을 위한 특별전',
+      ? 'Korea Smart Cooperative is a social cooperative providing mutual-aid financial services and cultural programs for Korean artists.'
+      : '한국스마트협동조합은 예술인을 위한 상호부조 금융 서비스와 문화 프로그램을 제공하는 사회적 협동조합입니다.',
     sameAs: [
       SOCIAL_LINKS.INSTAGRAM,
       SOCIAL_LINKS.FACEBOOK,
@@ -77,14 +77,6 @@ export function generateWebsiteSchema(locale: 'ko' | 'en' = 'ko') {
     accessibilityHazard: 'none',
     accessMode: ['textual', 'visual'],
     accessModeSufficient: [{ '@type': 'ItemList', itemListElement: ['textual'] }],
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: {
-        '@type': 'EntryPoint',
-        urlTemplate: `${SITE_URL}/artworks?q={search_term_string}`,
-      },
-      'query-input': 'required name=search_term_string',
-    },
   };
 }
 
