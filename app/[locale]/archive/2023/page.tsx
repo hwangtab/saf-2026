@@ -333,6 +333,7 @@ export default async function Archive2023Page() {
                 description: isEnglish ? 'Campaign video from SAF 2023.' : video.description,
                 transcript: isEnglish ? undefined : video.transcript,
                 youtubeId: video.youtube_id, // Map database field to component expected field
+                locale: isEnglish ? 'en' : 'ko',
               })}
             />
           ))}

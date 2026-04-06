@@ -32,19 +32,23 @@ export interface VideoSchemaInput {
   youtubeId: string;
   uploadDate?: string;
   transcript?: string;
+  locale?: 'ko' | 'en';
 }
 
 export function generateVideoSchema(video: VideoSchemaInput) {
+  const contentUrl = `https://www.youtube.com/watch?v=${video.youtubeId}`;
   return {
     '@context': 'https://schema.org',
     '@type': 'VideoObject',
+    '@id': contentUrl,
     name: video.title,
     description: video.description,
     thumbnailUrl: `https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`,
     uploadDate: video.uploadDate || '2023-03-26',
     dateModified: video.uploadDate || '2023-03-26',
-    contentUrl: `https://www.youtube.com/watch?v=${video.youtubeId}`,
+    contentUrl,
     embedUrl: `https://www.youtube.com/embed/${video.youtubeId}`,
+    inLanguage: video.locale === 'en' ? 'en-US' : 'ko-KR',
     transcript: video.transcript,
     publisher: {
       '@type': 'Organization',
