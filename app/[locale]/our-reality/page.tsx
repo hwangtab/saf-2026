@@ -6,7 +6,7 @@ import PageHero from '@/components/ui/PageHero';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import CTAButtonGroup from '@/components/common/CTAButtonGroup';
 import { getSupabaseTestimonials } from '@/lib/supabase-data';
-import { EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
+import { CONTACT, EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
 import HighlightedText from '@/components/ui/HighlightedText';
 import {
   FirstBankAccessChart,
@@ -68,6 +68,7 @@ export async function generateMetadata(): Promise<Metadata> {
       'article:published_time': '2026-01-14',
       'article:modified_time': LAST_UPDATED,
       'article:section': locale === 'en' ? 'Data & Research' : '데이터 & 연구',
+      'article:author': locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
     },
   };
 }
@@ -106,11 +107,61 @@ export default async function OurReality() {
   };
   const claimReviews = generateSAFClaimReviews(locale);
   const coreQA = generateSAFCoreQA(locale);
+  const datasetSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    '@id': `${pageUrl}#dataset`,
+    name:
+      locale === 'en'
+        ? 'Korean Artist Financial Exclusion Statistics 2025'
+        : '2025 한국 예술인 금융 배제 통계',
+    description:
+      locale === 'en'
+        ? '2025 survey data on financial exclusion of Korean artists: first-tier bank rejection rates, high-interest loan usage, and impact on creative work.'
+        : '2025년 한국 예술인 금융 배제 실태 데이터: 제1금융권 배제율, 고금리 대출 현황, 창작 활동 영향 등 통계.',
+    url: pageUrl,
+    datePublished: '2026-01-14',
+    dateModified: LAST_UPDATED,
+    inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
+    creator: {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}#organization`,
+      name: locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
+    },
+    distribution: {
+      '@type': 'DataDownload',
+      encodingFormat: 'text/html',
+      contentUrl: pageUrl,
+    },
+    variableMeasured: [
+      {
+        '@type': 'PropertyValue',
+        name: locale === 'en' ? 'First-tier bank exclusion rate' : '제1금융권 배제율',
+        value: '84.9',
+        unitText: '%',
+      },
+      {
+        '@type': 'PropertyValue',
+        name: locale === 'en' ? 'High-interest product usage rate' : '고금리 상품 이용률',
+        value: '48.6',
+        unitText: '%',
+      },
+      {
+        '@type': 'PropertyValue',
+        name: locale === 'en' ? 'Creative activity impact rate' : '창작 활동 영향률',
+        value: '71.3',
+        unitText: '%',
+      },
+    ],
+    isPartOf: { '@id': `${SITE_URL}#website` },
+  };
 
   if (locale === 'en') {
     return (
       <>
-        <JsonLdScript data={[breadcrumbSchema, aboutPageSchema, ...claimReviews, coreQA]} />
+        <JsonLdScript
+          data={[breadcrumbSchema, aboutPageSchema, datasetSchema, ...claimReviews, coreQA]}
+        />
         <PageHero
           title="Our Reality"
           description="Data from the 2025 report shows structural financial exclusion faced by artists in Korea."
@@ -255,7 +306,9 @@ export default async function OurReality() {
 
   return (
     <>
-      <JsonLdScript data={[breadcrumbSchema, aboutPageSchema, ...claimReviews, coreQA]} />
+      <JsonLdScript
+        data={[breadcrumbSchema, aboutPageSchema, datasetSchema, ...claimReviews, coreQA]}
+      />
       <PageHero
         title="우리의 현실"
         description="2025 예술인 금융 재난 보고서가 밝혀낸 한국 예술인의 금융 위기의 구조적 현실"
