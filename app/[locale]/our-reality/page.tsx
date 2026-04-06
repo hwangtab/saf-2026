@@ -100,6 +100,17 @@ export default async function OurReality() {
     datePublished: '2026-01-14',
     dateModified: LAST_UPDATED,
     inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
+    author: {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}#organization`,
+      name: locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
+    },
+    publisher: {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}#organization`,
+      name: locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
+      url: SITE_URL,
+    },
     speakable: {
       '@type': 'SpeakableSpecification',
       cssSelector: ['#stage1-description', '#stage2-description', '#stage3-description'],
