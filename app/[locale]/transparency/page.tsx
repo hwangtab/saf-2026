@@ -89,6 +89,17 @@ export default async function TransparencyPage() {
     datePublished: '2022-12-01',
     dateModified: LAST_UPDATED,
     inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
+    author: {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}#organization`,
+      name: locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
+    },
+    publisher: {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}#organization`,
+      name: locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
+      url: SITE_URL,
+    },
     speakable: {
       '@type': 'SpeakableSpecification',
       cssSelector: [
@@ -125,7 +136,7 @@ export default async function TransparencyPage() {
         publisher: {
           '@type': 'Organization',
           '@id': `${SITE_URL}#organization`,
-          name: '한국스마트협동조합',
+          name: locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
           url: SITE_URL,
         },
       },
