@@ -158,7 +158,7 @@ function s1() {
     // 1. 커버 — 작품 배경 + 게이지
     pg(`
       <div class="z s p" style="justify-content:center;align-items:center;text-align:center;gap:20px;">
-        <div style="font-size:24px;font-weight:600;color:${C.gold};letter-spacing:6px;">SERIES 01</div>
+        <div style="font-size:30px;font-weight:600;color:${C.gold};letter-spacing:6px;">SERIES 01</div>
         <!-- 반원 게이지 -->
         <div style="width:560px;height:280px;position:relative;overflow:hidden;margin:8px 0;">
           <div style="width:560px;height:560px;border-radius:50%;border:44px solid rgba(255,255,255,0.1);position:absolute;top:0;"></div>
@@ -170,14 +170,14 @@ function s1() {
         <h1 style="font-size:64px;font-weight:700;color:#fff;line-height:1.4;" class="ka">
           은행 문턱을 넘지 못하는<br>한국 예술인의 현실
         </h1>
-        <div style="font-size:26px;opacity:0.4;color:#fff;letter-spacing:6px;margin-top:16px;">스와이프 →</div>
+        <div style="font-size:30px;opacity:0.5;color:#fff;letter-spacing:6px;margin-top:16px;">스와이프 →</div>
       </div>
     `, { bgImg:BG[4], overlayStyle:`background:linear-gradient(180deg,${C.charcoal}ee 0%,${a}88 100%);`, pn:1, total:t }),
 
     // 2. 가로 바 차트 — 금융 접근성
     pg(`
       <div class="z s p" style="justify-content:center;gap:36px;">
-        <div style="font-size:24px;color:${C.gold};font-weight:600;letter-spacing:4px;">FINANCIAL ACCESS</div>
+        <div style="font-size:30px;color:${C.gold};font-weight:600;letter-spacing:4px;">FINANCIAL ACCESS</div>
         <h2 style="font-size:56px;font-weight:700;color:#fff;" class="ka">예술인 금융 접근성</h2>
         <div style="margin-top:12px;">
           ${[
@@ -205,7 +205,7 @@ function s1() {
     // 3. 거절 사유 — 수평 바 차트
     pg(`
       <div class="z s p" style="justify-content:center;gap:36px;">
-        <div style="font-size:24px;color:${C.gold};font-weight:600;letter-spacing:4px;">REJECTION REASONS</div>
+        <div style="font-size:30px;color:${C.gold};font-weight:600;letter-spacing:4px;">REJECTION REASONS</div>
         <h2 style="font-size:56px;font-weight:700;color:#fff;">대출 거절 사유</h2>
         ${[
           { label:'고정수입 없음', v:65, icon:'💼' },
@@ -231,7 +231,7 @@ function s1() {
     // 4. 고금리 노출 — 도넛 차트
     pg(`
       <div class="z s p" style="justify-content:center;align-items:center;gap:32px;">
-        <div style="font-size:24px;color:${C.gold};font-weight:600;letter-spacing:4px;">HIGH INTEREST EXPOSURE</div>
+        <div style="font-size:30px;color:${C.gold};font-weight:600;letter-spacing:4px;">HIGH INTEREST EXPOSURE</div>
         <h2 style="font-size:48px;font-weight:700;color:#fff;" class="ka">고금리 금융상품 노출</h2>
         <!-- 도넛 차트 -->
         <div style="width:440px;height:440px;border-radius:50%;position:relative;
@@ -260,7 +260,7 @@ function s1() {
     // 5. 이자율 비교 — 비주얼 바
     pg(`
       <div class="z s p" style="justify-content:center;gap:36px;">
-        <div style="font-size:24px;color:${C.gold};font-weight:600;letter-spacing:4px;">INTEREST RATE GAP</div>
+        <div style="font-size:30px;color:${C.gold};font-weight:600;letter-spacing:4px;">INTEREST RATE GAP</div>
         <h2 style="font-size:56px;font-weight:700;color:#fff;" class="ka">이자율 격차</h2>
         <div style="display:flex;gap:28px;align-items:flex-end;height:480px;padding-top:20px;">
           <!-- 시중은행 바 -->
@@ -270,7 +270,7 @@ function s1() {
             </div>
             <div style="margin-top:24px;text-align:center;">
               <div style="font-size:32px;color:${C.green};font-weight:600;">시중은행</div>
-              <div style="font-size:24px;color:rgba(255,255,255,0.4);margin-top:6px;">일반 시중금리</div>
+              <div style="font-size:28px;color:rgba(255,255,255,0.4);margin-top:6px;">일반 시중금리</div>
             </div>
           </div>
           <!-- 예술인 바 -->
@@ -280,7 +280,7 @@ function s1() {
             </div>
             <div style="margin-top:24px;text-align:center;">
               <div style="font-size:32px;color:${C.red};font-weight:600;">예술인 평균</div>
-              <div style="font-size:24px;color:rgba(255,255,255,0.4);margin-top:6px;">카드론·현금서비스</div>
+              <div style="font-size:28px;color:rgba(255,255,255,0.4);margin-top:6px;">카드론·현금서비스</div>
             </div>
           </div>
         </div>
@@ -293,7 +293,7 @@ function s1() {
     // 6. 88.3% 창작 중단 — 원형 게이지
     pg(`
       <div class="z s p" style="justify-content:center;align-items:center;text-align:center;gap:28px;">
-        <div style="font-size:24px;color:${C.gold};font-weight:600;letter-spacing:4px;">IMPACT ON CREATION</div>
+        <div style="font-size:30px;color:${C.gold};font-weight:600;letter-spacing:4px;">IMPACT ON CREATION</div>
         <!-- 원형 게이지 -->
         <div style="width:460px;height:460px;border-radius:50%;position:relative;
           background:conic-gradient(${C.red} 0% 88.3%,rgba(255,255,255,0.08) 88.3% 100%);
@@ -320,7 +320,7 @@ function s1() {
         <div style="width:80px;height:4px;background:${C.gold};border-radius:2px;"></div>
         <div class="m" style="font-size:44px;font-weight:700;color:${C.gold};letter-spacing:2px;">${URL_MAIN}</div>
         <div class="glass" style="padding:32px 48px;">
-          <div style="font-size:24px;color:rgba(255,255,255,0.6);line-height:2.2;">${HT.s1}</div>
+          <div style="font-size:28px;color:rgba(255,255,255,0.6);line-height:2.2;">${HT.s1}</div>
         </div>
       </div>
     `, { bgImg:hero(15), overlayStyle:`background:linear-gradient(180deg,${a}dd,${C.charcoal}cc);`, pn:7, total:t }),
@@ -337,7 +337,7 @@ function s2() {
 
   const quote = (text, author, cat, bgIdx, num) => pg(`
     <div class="z s p" style="justify-content:center;gap:28px;">
-      <div style="font-size:22px;color:${C.gold};font-weight:600;letter-spacing:4px;">${cat}</div>
+      <div style="font-size:28px;color:${C.gold};font-weight:600;letter-spacing:4px;">${cat}</div>
       <div style="display:flex;gap:28px;">
         <div style="width:6px;background:linear-gradient(180deg,${a},${a}44);border-radius:3px;flex-shrink:0;"></div>
         <div>
@@ -354,7 +354,7 @@ function s2() {
     pg(`
       <div class="z s p" style="justify-content:flex-end;align-items:flex-start;gap:16px;padding-bottom:100px;">
         <div style="position:absolute;top:56px;left:64px;">
-          <div style="font-size:24px;color:${C.gold};font-weight:600;letter-spacing:6px;">SERIES 02</div>
+          <div style="font-size:30px;color:${C.gold};font-weight:600;letter-spacing:6px;">SERIES 02</div>
         </div>
         <div style="font-size:200px;color:${a};opacity:0.45;font-family:Georgia,serif;line-height:0.5;margin-bottom:-20px;">"</div>
         <h1 style="font-size:80px;font-weight:700;color:#fff;line-height:1.3;text-shadow:0 4px 20px rgba(0,0,0,0.4);" class="ka">
@@ -412,7 +412,7 @@ function s2() {
         <div style="width:80px;height:4px;background:${C.gold};border-radius:2px;"></div>
         <div class="m" style="font-size:44px;font-weight:700;color:${C.gold};">${URL_MAIN}</div>
         <div class="glass" style="padding:32px 44px;">
-          <div style="font-size:24px;color:rgba(255,255,255,0.6);line-height:2.2;">${HT.s2}</div>
+          <div style="font-size:28px;color:rgba(255,255,255,0.6);line-height:2.2;">${HT.s2}</div>
         </div>
       </div>
     `, { bgImg:hero(11), overlayStyle:`background:linear-gradient(180deg,${a}cc,${C.charcoal}cc);`, pn:8, total:t }),
@@ -431,7 +431,7 @@ function s3() {
         <div style="width:80px;height:80px;background:linear-gradient(135deg,${C.primary},${C.green});border-radius:50%;display:flex;align-items:center;justify-content:center;">
           <span class="m" style="font-size:36px;font-weight:900;color:#fff;">${n}</span>
         </div>
-        <span style="font-size:24px;color:${C.gold};font-weight:600;letter-spacing:4px;">STEP ${n}</span>
+        <span style="font-size:28px;color:${C.gold};font-weight:600;letter-spacing:4px;">STEP ${n}</span>
       </div>
       <div style="font-size:80px;">${icon}</div>
       <h2 style="font-size:60px;font-weight:700;color:#fff;" class="ka">${title}</h2>
@@ -446,7 +446,7 @@ function s3() {
     pg(`
       <div class="z s p" style="justify-content:flex-end;align-items:flex-start;gap:20px;padding-bottom:100px;">
         <div style="position:absolute;top:56px;left:64px;">
-          <div style="font-size:24px;color:${C.gold};font-weight:600;letter-spacing:6px;">SERIES 03</div>
+          <div style="font-size:30px;color:${C.gold};font-weight:600;letter-spacing:6px;">SERIES 03</div>
         </div>
         <h1 style="font-size:80px;font-weight:700;color:#fff;line-height:1.3;text-shadow:0 4px 20px rgba(0,0,0,0.4);" class="ka">작품 한 점이<br>씨앗이 되는 과정</h1>
         <div style="display:flex;gap:14px;margin-top:12px;">
@@ -475,7 +475,7 @@ function s3() {
         <div style="width:80px;height:4px;background:${C.gold};border-radius:2px;"></div>
         <div class="m" style="font-size:44px;font-weight:700;color:${C.gold};">${URL_MAIN}</div>
         <div class="glass" style="padding:28px 40px;">
-          <div style="font-size:24px;color:rgba(255,255,255,0.5);line-height:2.2;">${HT.s3}</div>
+          <div style="font-size:28px;color:rgba(255,255,255,0.5);line-height:2.2;">${HT.s3}</div>
         </div>
       </div>
     `, { bgImg:hero(8), overlayStyle:`background:linear-gradient(180deg,${C.primary}bb,${C.charcoal}cc);`, pn:6, total:t }),
@@ -497,9 +497,9 @@ function spot(sn, title, sub, arts, ht) {
       <div class="glass-dark" style="margin:0 32px 32px;padding:36px 40px;border-radius:20px;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;">
           <div>
-            <div style="font-size:26px;color:${C.gold};font-weight:600;letter-spacing:1px;">${a.artist}</div>
+            <div style="font-size:28px;color:${C.gold};font-weight:600;letter-spacing:1px;">${a.artist}</div>
             <div style="font-size:36px;font-weight:600;color:#fff;margin-top:8px;">${a.title}</div>
-            <div style="font-size:24px;color:rgba(255,255,255,0.45);margin-top:8px;">${a.material} · ${a.size}</div>
+            <div style="font-size:28px;color:rgba(255,255,255,0.45);margin-top:8px;">${a.material} · ${a.size}</div>
           </div>
           <div style="text-align:right;">
             <div class="m" style="font-size:34px;font-weight:700;color:${C.gold};">${a.price}</div>
@@ -513,7 +513,7 @@ function spot(sn, title, sub, arts, ht) {
     // 커버 — 작품 트립티크 갤러리
     pg(`
       <div class="z s p" style="justify-content:space-between;align-items:center;text-align:center;">
-        <div style="font-size:24px;color:${C.gold};font-weight:600;letter-spacing:6px;margin-top:12px;">SERIES 0${sn}</div>
+        <div style="font-size:30px;color:${C.gold};font-weight:600;letter-spacing:6px;margin-top:12px;">SERIES 0${sn}</div>
         <div style="display:flex;gap:16px;align-items:center;justify-content:center;">
           <div style="width:260px;height:330px;border-radius:12px;overflow:hidden;transform:rotate(-3deg);box-shadow:0 12px 40px rgba(0,0,0,0.5);">
             <img src="${arts[1].img}" alt="" style="width:100%;height:100%;object-fit:cover;">
@@ -544,8 +544,8 @@ function spot(sn, title, sub, arts, ht) {
               <img src="${a.img}" alt="" style="width:100%;height:100%;object-fit:cover;">
               <div style="position:absolute;inset:0;background:linear-gradient(transparent 40%,${C.charcoal}dd);"></div>
               <div style="position:absolute;bottom:24px;left:24px;right:24px;">
-                <div style="font-size:26px;color:${C.gold};font-weight:600;">${a.artist}</div>
-                <div style="font-size:22px;color:rgba(255,255,255,0.7);margin-top:4px;">${a.title}</div>
+                <div style="font-size:28px;color:${C.gold};font-weight:600;">${a.artist}</div>
+                <div style="font-size:26px;color:rgba(255,255,255,0.7);margin-top:4px;">${a.title}</div>
               </div>
             </div>
           `).join('')}
@@ -561,20 +561,20 @@ function spot(sn, title, sub, arts, ht) {
             <img src="${a.img}" alt="" style="width:100%;height:100%;object-fit:cover;">
           </div>
           <div>
-            <div style="font-size:22px;color:${C.gold};font-weight:600;letter-spacing:3px;">ARTIST</div>
+            <div style="font-size:28px;color:${C.gold};font-weight:600;letter-spacing:3px;">ARTIST</div>
             <div style="font-size:52px;font-weight:700;color:#fff;margin-top:6px;">${a.artist}</div>
           </div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
           ${[{l:'재료',v:a.material},{l:'크기',v:a.size}].map(x => `
             <div class="glass" style="padding:28px;">
-              <div style="font-size:22px;color:${C.gold};font-weight:600;margin-bottom:8px;">${x.l}</div>
+              <div style="font-size:28px;color:${C.gold};font-weight:600;margin-bottom:8px;">${x.l}</div>
               <div style="font-size:28px;color:rgba(255,255,255,0.85);">${x.v}</div>
             </div>
           `).join('')}
         </div>
         <div class="glass" style="padding:28px;">
-          <div style="font-size:22px;color:${C.gold};font-weight:600;margin-bottom:10px;">대표작</div>
+          <div style="font-size:28px;color:${C.gold};font-weight:600;margin-bottom:10px;">대표작</div>
           <div style="font-size:36px;font-weight:500;color:#fff;">${a.title}</div>
           <div class="m" style="font-size:34px;color:${C.gold};margin-top:10px;">${a.price}</div>
         </div>
@@ -590,7 +590,7 @@ function spot(sn, title, sub, arts, ht) {
         <h1 style="font-size:64px;font-weight:700;color:#fff;line-height:1.35;" class="ka">127명 작가의 354점,<br>모두 만나보세요</h1>
         <div style="width:80px;height:4px;background:${C.gold};border-radius:2px;"></div>
         <div class="m" style="font-size:44px;font-weight:700;color:${C.gold};">${URL_MAIN}</div>
-        <div style="font-size:22px;color:rgba(255,255,255,0.4);line-height:2.2;margin-top:8px;">${ht}</div>
+        <div style="font-size:26px;color:rgba(255,255,255,0.4);line-height:2.2;margin-top:8px;">${ht}</div>
       </div>
     `, { bgImg:arts[2].img, overlayStyle:`background:linear-gradient(180deg,${C.charcoal}dd,${C.charcoal}bb);backdrop-filter:blur(20px);`, pn:8, total:t }),
   ];
@@ -611,7 +611,7 @@ function s7() {
     // 커버 — 거대 도넛
     pg(`
       <div class="z s p" style="justify-content:center;align-items:center;text-align:center;gap:24px;">
-        <div style="font-size:24px;color:${C.gold};font-weight:600;letter-spacing:6px;">SERIES 07</div>
+        <div style="font-size:30px;color:${C.gold};font-weight:600;letter-spacing:6px;">SERIES 07</div>
         <div style="width:480px;height:480px;border-radius:50%;position:relative;
           background:conic-gradient(${C.gold} 0% 95%,rgba(255,255,255,0.08) 95% 100%);
           display:flex;align-items:center;justify-content:center;">
@@ -621,14 +621,14 @@ function s7() {
           </div>
         </div>
         <h2 style="font-size:44px;font-weight:600;color:#fff;" class="ka">예술인 상호부조 대출 상환율</h2>
-        <div style="font-size:26px;color:rgba(255,255,255,0.25);letter-spacing:6px;margin-top:12px;">스와이프 →</div>
+        <div style="font-size:30px;color:rgba(255,255,255,0.45);letter-spacing:6px;margin-top:12px;">스와이프 →</div>
       </div>
     `, { bgImg:hero(16), overlayStyle:`background:${C.charcoal}e5;`, pn:1, total:t }),
 
     // 누적 대출 — 세로 바 차트
     pg(`
       <div class="z s p" style="justify-content:center;gap:36px;">
-        <div style="font-size:24px;color:${C.gold};font-weight:600;letter-spacing:4px;">CUMULATIVE LOANS</div>
+        <div style="font-size:30px;color:${C.gold};font-weight:600;letter-spacing:4px;">CUMULATIVE LOANS</div>
         <h2 style="font-size:52px;font-weight:700;color:#fff;">누적 대출 추이</h2>
         <div style="display:flex;gap:24px;align-items:flex-end;height:480px;">
           ${[{y:'2023',v:129},{y:'2024',v:305},{y:'2025',v:354}].map(x => `
@@ -647,18 +647,18 @@ function s7() {
     // 이자율 비교
     pg(`
       <div class="z s p" style="justify-content:center;gap:40px;">
-        <div style="font-size:24px;color:${C.gold};font-weight:600;letter-spacing:4px;">INTEREST COMPARISON</div>
+        <div style="font-size:30px;color:${C.gold};font-weight:600;letter-spacing:4px;">INTEREST COMPARISON</div>
         <h2 style="font-size:52px;font-weight:700;color:#fff;">이자율 비교</h2>
         <div style="display:flex;gap:24px;">
           <div style="flex:1;background:${C.green}22;border:3px solid ${C.green}44;border-radius:24px;padding:52px 28px;text-align:center;">
             <div style="font-size:28px;color:${C.green};font-weight:600;letter-spacing:2px;margin-bottom:20px;">씨앗 대출</div>
             <div class="m" style="font-size:80px;font-weight:900;color:${C.green};">3~5.5%</div>
-            <div style="font-size:26px;color:rgba(255,255,255,0.4);margin-top:16px;">연이자율</div>
+            <div style="font-size:30px;color:rgba(255,255,255,0.4);margin-top:16px;">연이자율</div>
           </div>
           <div style="flex:1;background:${C.red}22;border:3px solid ${C.red}44;border-radius:24px;padding:52px 28px;text-align:center;">
             <div style="font-size:28px;color:${C.red};font-weight:600;letter-spacing:2px;margin-bottom:20px;">카드론·현금서비스</div>
             <div class="m" style="font-size:80px;font-weight:900;color:${C.red};">15~20%</div>
-            <div style="font-size:26px;color:rgba(255,255,255,0.4);margin-top:16px;">연이자율</div>
+            <div style="font-size:30px;color:rgba(255,255,255,0.4);margin-top:16px;">연이자율</div>
           </div>
         </div>
       </div>
@@ -667,7 +667,7 @@ function s7() {
     // 이자 절감
     pg(`
       <div class="z s p" style="justify-content:center;align-items:center;text-align:center;gap:32px;">
-        <div style="font-size:24px;color:${C.gold};font-weight:600;letter-spacing:4px;">SAVED INTEREST</div>
+        <div style="font-size:30px;color:${C.gold};font-weight:600;letter-spacing:4px;">SAVED INTEREST</div>
         <div style="width:420px;height:210px;position:relative;overflow:hidden;">
           <div style="width:420px;height:420px;border-radius:50%;border:40px solid rgba(255,255,255,0.08);position:absolute;top:0;"></div>
           <div style="width:420px;height:420px;border-radius:50%;border:40px solid ${C.gold};border-color:${C.gold} ${C.gold} transparent transparent;transform:rotate(-90deg);position:absolute;top:0;"></div>
@@ -716,7 +716,7 @@ function s7() {
             <div class="glass" style="flex:1;padding:32px 20px;text-align:center;">
               <div class="m" style="font-size:34px;font-weight:700;color:${C.gold};margin-bottom:16px;">${x.y}</div>
               <div style="font-size:30px;color:#fff;">${x.l}</div>
-              <div style="font-size:24px;color:rgba(255,255,255,0.45);margin-top:8px;">${x.f}</div>
+              <div style="font-size:28px;color:rgba(255,255,255,0.45);margin-top:8px;">${x.f}</div>
             </div>
           `).join('')}
         </div>
@@ -733,7 +733,7 @@ function s7() {
         <div style="width:80px;height:4px;background:${C.gold};border-radius:2px;"></div>
         <div class="m" style="font-size:44px;font-weight:700;color:${C.gold};">${URL_MAIN}</div>
         <div class="glass" style="padding:32px 44px;">
-          <div style="font-size:24px;color:rgba(255,255,255,0.5);line-height:2.2;">${HT.s7}</div>
+          <div style="font-size:28px;color:rgba(255,255,255,0.5);line-height:2.2;">${HT.s7}</div>
         </div>
       </div>
     `, { bgImg:hero(1), overlayStyle:`background:linear-gradient(180deg,${C.primary}cc,${C.charcoal}cc);`, pn:7, total:t }),
@@ -764,14 +764,14 @@ function s8() {
     pg(`
       <div class="z s p" style="justify-content:flex-end;align-items:flex-start;gap:24px;padding-bottom:100px;">
         <div style="position:absolute;top:56px;left:64px;">
-          <div style="font-size:24px;color:${C.gold};font-weight:600;letter-spacing:6px;">SERIES 08</div>
+          <div style="font-size:30px;color:${C.gold};font-weight:600;letter-spacing:6px;">SERIES 08</div>
         </div>
         <h1 style="font-size:76px;font-weight:700;color:#fff;line-height:1.3;text-shadow:0 4px 20px rgba(0,0,0,0.4);" class="ka">연대하는 방법은<br>세 가지입니다</h1>
         <div style="display:flex;gap:16px;width:100%;">
           ${[{icon:'🎨',label:'작품 구매'},{icon:'💝',label:'직접 후원'},{icon:'🖼️',label:'전시 관람'}].map(x => `
             <div class="glass" style="flex:1;padding:28px 16px;text-align:center;">
               <div style="font-size:44px;margin-bottom:12px;">${x.icon}</div>
-              <div style="font-size:22px;color:rgba(255,255,255,0.85);font-weight:600;" class="ka">${x.label}</div>
+              <div style="font-size:28px;color:rgba(255,255,255,0.85);font-weight:600;" class="ka">${x.label}</div>
             </div>
           `).join('')}
         </div>
@@ -811,7 +811,7 @@ function s8() {
             </div>
           `).join('')}
         </div>
-        <div style="font-size:22px;color:rgba(255,255,255,0.4);line-height:2.2;margin-top:12px;">${HT.s8}</div>
+        <div style="font-size:26px;color:rgba(255,255,255,0.4);line-height:2.2;margin-top:12px;">${HT.s8}</div>
       </div>
     `, { bgImg:hero(9), overlayStyle:`background:linear-gradient(180deg,${C.gold}77,${C.charcoal}dd);`, pn:6, total:t }),
   ];
@@ -834,7 +834,7 @@ function s9() {
     .doc-bg{background:${sepia};width:1080px;height:1350px;}
     .doc-divider{width:80px;height:4px;background:${amber};border-radius:2px;}
     .doc-img{width:100%;object-fit:cover;filter:grayscale(20%) sepia(30%) contrast(1.05);}
-    .stamp-badge{display:inline-block;border:3px solid ${amber};padding:10px 28px;letter-spacing:6px;font-size:22px;font-weight:700;color:${amber};text-transform:uppercase;transform:rotate(-1.5deg);}
+    .stamp-badge{display:inline-block;border:3px solid ${amber};padding:10px 28px;letter-spacing:6px;font-size:26px;font-weight:700;color:${amber};text-transform:uppercase;transform:rotate(-1.5deg);}
     .art-caption{background:rgba(42,42,42,0.9);padding:32px 48px;border-left:6px solid ${amber};}
     .doc-quote{border-left:6px solid ${amber};padding:28px 40px;background:rgba(184,134,11,0.06);}
     .price-card{background:#fff;border:2px solid ${amber};border-radius:16px;padding:36px 48px;width:100%;}
@@ -854,7 +854,7 @@ function s9() {
         <h1 style="font-size:108px;font-weight:900;color:#fff;line-height:1.05;letter-spacing:-3px;text-shadow:0 4px 24px rgba(0,0,0,0.5);" class="ka">민중의<br>칼날,<br>오윤</h1>
         <div class="doc-divider" style="background:${amberLight};"></div>
         <p style="font-size:32px;color:rgba(255,255,255,0.8);letter-spacing:4px;">1946 — 1986</p>
-        <p style="font-size:26px;color:rgba(255,255,255,0.55);letter-spacing:2px;">(사후판화)목판 · 민중미술</p>
+        <p style="font-size:30px;color:rgba(255,255,255,0.55);letter-spacing:2px;">(사후판화)목판 · 민중미술</p>
       </div>
     </div>
   `, { bgImg:OY.낮도깨비, overlayStyle:`background:linear-gradient(180deg,rgba(42,42,42,0.2) 0%,rgba(42,42,42,0.3) 40%,rgba(42,42,42,0.75) 75%,rgba(42,42,42,0.9) 100%);`, color:ink, pn:1, total:t, logo:logoW, extraCss:docCss });
@@ -864,21 +864,21 @@ function s9() {
     <div class="z s" style="flex-direction:row;height:100%;">
       <!-- 좌측 텍스트 -->
       <div style="width:52%;padding:72px 56px;display:flex;flex-direction:column;justify-content:center;gap:32px;background:${sepia};">
-        <p style="font-size:24px;font-weight:700;color:${amber};letter-spacing:6px;">BIOGRAPHY</p>
+        <p style="font-size:28px;font-weight:700;color:${amber};letter-spacing:6px;">BIOGRAPHY</p>
         <div class="doc-divider"></div>
         <h2 style="font-size:56px;font-weight:800;color:${ink};line-height:1.25;" class="ka">소설가의 아들,<br>조각을 배우고<br>판화를 택하다</h2>
         <p style="font-size:30px;color:#555;line-height:1.7;" class="ka">서울대 조각과 졸업 후<br>목판화를 평생 매체로 선택.</p>
         <div class="doc-quote">
           <p style="font-size:28px;color:${ink};line-height:1.7;font-style:italic;" class="ka">"한 번 새기면<br>돌이킬 수 없는 칼자국,<br>그것이 삶과 닮았다"</p>
         </div>
-        <p style="font-size:24px;color:#777;" class="ka">부친 소설가 오영수<br>1946년 부산 출생</p>
+        <p style="font-size:28px;color:#777;" class="ka">부친 소설가 오영수<br>1946년 부산 출생</p>
       </div>
       <!-- 우측 작품 이미지 -->
       <div style="width:48%;position:relative;overflow:hidden;">
         <img class="doc-img" src="${OY.칼노래}" alt="칼노래" style="width:100%;height:100%;object-fit:cover;">
         <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(0deg,rgba(42,42,42,0.85),transparent);padding:32px 28px;">
-          <p style="font-size:26px;font-weight:700;color:#fff;">칼노래</p>
-          <p style="font-size:22px;color:rgba(255,255,255,0.6);">목판화, 1985</p>
+          <p style="font-size:28px;font-weight:700;color:#fff;">칼노래</p>
+          <p style="font-size:26px;color:rgba(255,255,255,0.6);">목판화, 1985</p>
         </div>
       </div>
     </div>
@@ -888,7 +888,7 @@ function s9() {
   // 3. 철학 — 중앙 큰 인용문
   const slide3 = pg(`
     <div class="z s p doc-bg" style="justify-content:center;align-items:center;text-align:center;gap:40px;">
-      <p style="font-size:24px;font-weight:700;color:${amber};letter-spacing:6px;">PHILOSOPHY</p>
+      <p style="font-size:28px;font-weight:700;color:${amber};letter-spacing:6px;">PHILOSOPHY</p>
       <div class="doc-divider" style="margin:0 auto;"></div>
       <blockquote style="font-size:72px;font-weight:900;color:${ink};line-height:1.3;letter-spacing:-1px;" class="ka">"미술은 많은 사람이<br>나누어야 한다"</blockquote>
       <p style="font-size:28px;color:#666;font-style:italic;">— 오윤, 1980년대</p>
@@ -913,7 +913,7 @@ function s9() {
         <img class="doc-img" src="${OY.낮도깨비}" alt="낮도깨비" style="width:100%;height:100%;object-fit:cover;">
         <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(42,42,42,0.7) 100%);"></div>
         <div style="position:absolute;top:40px;left:48px;">
-          <div class="stamp-badge" style="font-size:20px;">대표작 01</div>
+          <div class="stamp-badge" style="font-size:28px;">대표작 01</div>
         </div>
       </div>
       <!-- 하단 해설 30% -->
@@ -924,7 +924,7 @@ function s9() {
         </div>
         <div class="doc-divider"></div>
         <p style="font-size:30px;color:#444;line-height:1.6;" class="ka">탈춤·굿·도깨비를 현대적으로 재해석.<br>한(恨)과 신명(神明)의 공존을 목판에 새기다.</p>
-        <p style="font-size:24px;color:#888;">(사후판화)목판 · 54.5×36cm</p>
+        <p style="font-size:28px;color:#888;">(사후판화)목판 · 54.5×36cm</p>
       </div>
     </div>
   `, { color:ink, logo:logoB, pn:4, total:t, extraCss:docCss });
@@ -936,7 +936,7 @@ function s9() {
         <img class="doc-img" src="${OY.칼노래}" alt="칼노래" style="width:100%;height:100%;object-fit:cover;">
         <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(42,42,42,0.7) 100%);"></div>
         <div style="position:absolute;top:40px;left:48px;">
-          <div class="stamp-badge" style="font-size:20px;">대표작 02</div>
+          <div class="stamp-badge" style="font-size:28px;">대표작 02</div>
         </div>
       </div>
       <div style="height:32%;padding:36px 56px;background:${sepia};display:flex;flex-direction:column;justify-content:center;gap:16px;">
@@ -947,10 +947,10 @@ function s9() {
         <div class="doc-divider"></div>
         <p style="font-size:30px;color:#444;line-height:1.6;" class="ka">민중의 저항과 희망을 담은 대표작.</p>
         <div style="display:flex;align-items:center;gap:16px;margin-top:4px;">
-          <span style="font-size:22px;">🏛️</span>
-          <p style="font-size:26px;color:#666;" class="ka">최근 5년 경매 낙찰 총액 <strong style="color:${amber};">17.7억 원</strong></p>
+          <span style="font-size:28px;">🏛️</span>
+          <p style="font-size:30px;color:#666;" class="ka">최근 5년 경매 낙찰 총액 <strong style="color:${amber};">17.7억 원</strong></p>
         </div>
-        <p style="font-size:24px;color:#888;">(사후판화)목판 · 32.2×25.5cm</p>
+        <p style="font-size:28px;color:#888;">(사후판화)목판 · 32.2×25.5cm</p>
       </div>
     </div>
   `, { color:ink, logo:logoB, pn:5, total:t, extraCss:docCss });
@@ -962,10 +962,10 @@ function s9() {
         <img class="doc-img" src="${OY.석양}" alt="석양" style="width:100%;height:100%;object-fit:cover;">
         <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(42,42,42,0.7) 100%);"></div>
         <div style="position:absolute;top:40px;left:48px;">
-          <div class="stamp-badge" style="font-size:20px;">대표작 03</div>
+          <div class="stamp-badge" style="font-size:28px;">대표작 03</div>
         </div>
         <div style="position:absolute;top:40px;right:48px;background:rgba(184,134,11,0.9);border-radius:10px;padding:12px 24px;">
-          <p style="font-size:22px;font-weight:700;color:#fff;">BTS RM 소장</p>
+          <p style="font-size:26px;font-weight:700;color:#fff;">BTS RM 소장</p>
         </div>
       </div>
       <div style="height:32%;padding:36px 56px;background:${sepia};display:flex;flex-direction:column;justify-content:center;gap:16px;">
@@ -975,7 +975,7 @@ function s9() {
         </div>
         <div class="doc-divider"></div>
         <p style="font-size:30px;color:#444;line-height:1.6;" class="ka">서정적 자연 속에 민중의 삶을 담아.<br>BTS RM 소장으로 다시 조명받다.</p>
-        <p style="font-size:24px;color:#888;">(사후판화)목판 · 23.5×22.5cm</p>
+        <p style="font-size:28px;color:#888;">(사후판화)목판 · 23.5×22.5cm</p>
       </div>
     </div>
   `, { color:ink, logo:logoB, pn:6, total:t, extraCss:docCss });
@@ -983,7 +983,7 @@ function s9() {
   // 7. 의의 — 가격 비교 카드
   const slide7 = pg(`
     <div class="z s p doc-bg" style="justify-content:center;align-items:center;gap:36px;">
-      <p style="font-size:24px;font-weight:700;color:${amber};letter-spacing:6px;text-align:center;">ACCESS</p>
+      <p style="font-size:28px;font-weight:700;color:${amber};letter-spacing:6px;text-align:center;">ACCESS</p>
       <div class="doc-divider" style="margin:0 auto;"></div>
       <h2 style="font-size:72px;font-weight:900;color:${ink};text-align:center;line-height:1.2;" class="ka">경매장이 아닌,<br>당신의 벽에</h2>
       <!-- 가격 비교 -->
@@ -991,7 +991,7 @@ function s9() {
         <div class="price-card" style="border-color:#ccc;background:#f0f0f0;">
           <div style="display:flex;justify-content:space-between;align-items:center;">
             <div>
-              <p style="font-size:24px;color:#999;margin-bottom:8px;">일반 경매 시장</p>
+              <p style="font-size:28px;color:#999;margin-bottom:8px;">일반 경매 시장</p>
               <p style="font-size:52px;font-weight:900;color:#888;" class="m">수백 ~ 수천만 원</p>
             </div>
             <span style="font-size:48px;">🏛️</span>
@@ -1001,7 +1001,7 @@ function s9() {
         <div class="price-card" style="border-color:${amber};background:rgba(184,134,11,0.05);">
           <div style="display:flex;justify-content:space-between;align-items:center;">
             <div>
-              <p style="font-size:24px;color:${amber};font-weight:700;margin-bottom:8px;">씨앗페 2026</p>
+              <p style="font-size:28px;color:${amber};font-weight:700;margin-bottom:8px;">씨앗페 2026</p>
               <p style="font-size:52px;font-weight:900;color:${ink};" class="m">105 ~ 295만 원</p>
             </div>
             <span style="font-size:48px;">🌱</span>
@@ -1022,7 +1022,7 @@ function s9() {
       <div style="background:rgba(255,255,255,0.12);border:2px solid rgba(255,255,255,0.3);border-radius:16px;padding:28px 56px;">
         <p style="font-size:36px;font-weight:700;color:${amberLight};" class="m">saf2026.com/special/oh-yoon</p>
       </div>
-      <p style="font-size:24px;color:rgba(255,255,255,0.45);line-height:2;margin-top:8px;">${ht}</p>
+      <p style="font-size:28px;color:rgba(255,255,255,0.45);line-height:2;margin-top:8px;">${ht}</p>
     </div>
   `, { bgImg:OY.낮도깨비, overlayStyle:`background:linear-gradient(180deg,rgba(42,42,42,0.6),rgba(42,42,42,0.88));`, color:ink, pn:8, total:t, logo:logoW, extraCss:docCss });
 
