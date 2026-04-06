@@ -8,7 +8,7 @@ import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort
 import GalleryCampaignBanner from '@/components/features/GalleryCampaignBanner';
 import GalleryStatusBar from '@/components/features/GalleryStatusBar';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { SITE_URL } from '@/lib/constants';
+import { SITE_URL, CONTACT } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
 import {
@@ -110,6 +110,17 @@ export default async function ArtworksPage() {
     isPartOf: { '@id': `${SITE_URL}#website` },
     inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
     mainEntity: { '@id': `${artworksUrl}#item-list` },
+    author: {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}#organization`,
+      name: locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
+    },
+    publisher: {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}#organization`,
+      name: locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
+      url: SITE_URL,
+    },
   };
 
   // 카테고리별 작품 수 계산 (네비게이션용)

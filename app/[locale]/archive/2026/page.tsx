@@ -7,7 +7,7 @@ import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { EXHIBITION, EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
+import { CONTACT, EXHIBITION, EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
 import { getSupabaseReviews } from '@/lib/supabase-data';
 import { generateExhibitionSchema, createBreadcrumbSchema } from '@/lib/seo-utils';
 import { createStandardPageMetadata } from '@/lib/seo';
@@ -97,6 +97,17 @@ export default async function Archive2026Page() {
     datePublished: '2026-01-26',
     dateModified: '2026-03-15',
     inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
+    author: {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}#organization`,
+      name: locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
+    },
+    publisher: {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}#organization`,
+      name: locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
+      url: SITE_URL,
+    },
   };
 
   if (locale === 'en') {
