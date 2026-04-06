@@ -17,6 +17,7 @@ import {
   generateExhibitionSchema,
   generateFAQSchema,
   generateCampaignSchema,
+  generateArtworkListSchema,
 } from '@/lib/seo-utils';
 import { generateArtworkPurchaseHowTo, generateMemberJoinHowTo } from '@/lib/schemas/howto';
 import { generateSAFCoreQA } from '@/lib/schemas/qa-page';
@@ -204,87 +205,92 @@ export default async function Home() {
 async function HeroSection({ locale }: { locale: 'ko' | 'en' }) {
   const t = await getTranslations('home');
   const artworks = await getSupabaseHomepageArtworks(16);
+  // 홈페이지 추천 작품 ItemList — 검색엔진이 홈에서 개별 작품 카드 노출 가능
+  const featuredListSchema = generateArtworkListSchema(artworks, locale, 16);
 
   return (
-    <section className="relative overflow-hidden">
-      <BackgroundSlider />
-      <SawtoothDivider position="bottom" colorClass="text-canvas-soft" />
-      <div className="relative z-10 container-max pt-16 pb-24 md:pt-20 md:pb-32">
-        {/* Logo */}
-        <div className="mb-6 hidden md:flex justify-center">
-          <SafeImage
-            src="/images/logo/320pxX90px_white.webp"
-            alt={t('logoAlt')}
-            width={1120}
-            height={320}
-            className="w-64 md:w-[36rem] h-auto drop-shadow-2xl"
-            priority
-            placeholder="empty"
-          />
-        </div>
+    <>
+      <JsonLdScript data={featuredListSchema} />
+      <section className="relative overflow-hidden">
+        <BackgroundSlider />
+        <SawtoothDivider position="bottom" colorClass="text-canvas-soft" />
+        <div className="relative z-10 container-max pt-16 pb-24 md:pt-20 md:pb-32">
+          {/* Logo */}
+          <div className="mb-6 hidden md:flex justify-center">
+            <SafeImage
+              src="/images/logo/320pxX90px_white.webp"
+              alt={t('logoAlt')}
+              width={1120}
+              height={320}
+              className="w-64 md:w-[36rem] h-auto drop-shadow-2xl"
+              priority
+              placeholder="empty"
+            />
+          </div>
 
-        {/* Title */}
-        <div className="mb-8 text-center">
-          <h1
-            className="font-display text-3xl sm:text-4xl md:text-5xl text-white mb-3 leading-tight drop-shadow-lg motion-safe:opacity-0 motion-safe:animate-fade-in-up"
-            style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}
-          >
-            {t('heroGalleryTitle')}
-          </h1>
-          <p
-            className="text-white/70 text-sm md:text-base motion-safe:opacity-0 motion-safe:animate-fade-in-up"
-            style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}
-          >
-            {t('heroGallerySubtitle')}
-          </p>
+          {/* Title */}
+          <div className="mb-8 text-center">
+            <h1
+              className="font-display text-3xl sm:text-4xl md:text-5xl text-white mb-3 leading-tight drop-shadow-lg motion-safe:opacity-0 motion-safe:animate-fade-in-up"
+              style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}
+            >
+              {t('heroGalleryTitle')}
+            </h1>
+            <p
+              className="text-white/70 text-sm md:text-base motion-safe:opacity-0 motion-safe:animate-fade-in-up"
+              style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}
+            >
+              {t('heroGallerySubtitle')}
+            </p>
 
-          {/* Always-available badge */}
-          <div
-            className="mt-4 flex justify-center motion-safe:opacity-0 motion-safe:animate-fade-in-up"
-            style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}
-          >
-            <span className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 text-xs text-white font-medium">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400" />
+            {/* Always-available badge */}
+            <div
+              className="mt-4 flex justify-center motion-safe:opacity-0 motion-safe:animate-fade-in-up"
+              style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}
+            >
+              <span className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 text-xs text-white font-medium">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400" />
+                </span>
+                {t('alwaysAvailable', { date: formatCurrentDate(locale) })}
               </span>
-              {t('alwaysAvailable', { date: formatCurrentDate(locale) })}
-            </span>
+            </div>
+          </div>
+
+          {/* Gallery Grid */}
+          <div
+            className="motion-safe:opacity-0 motion-safe:animate-fade-in-up"
+            style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}
+          >
+            <HeroGalleryGrid artworks={artworks} />
+          </div>
+
+          {/* CTA */}
+          <div
+            className="mt-8 flex flex-col sm:flex-row gap-4 justify-center motion-safe:opacity-0 motion-safe:animate-fade-in-up"
+            style={{ animationDelay: '0.5s', animationFillMode: 'forwards' }}
+          >
+            <LinkButton
+              href="/artworks"
+              variant="accent"
+              size="lg"
+              className="w-full sm:w-auto shadow-lg min-w-[200px] justify-center text-lg"
+            >
+              {t('viewArtworks')}
+            </LinkButton>
+            <LinkButton
+              href="/our-reality"
+              variant="outline-white"
+              size="lg"
+              className="w-full sm:w-auto backdrop-blur-sm min-w-[160px] justify-center"
+            >
+              {t('aboutSaf')}
+            </LinkButton>
           </div>
         </div>
-
-        {/* Gallery Grid */}
-        <div
-          className="motion-safe:opacity-0 motion-safe:animate-fade-in-up"
-          style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}
-        >
-          <HeroGalleryGrid artworks={artworks} />
-        </div>
-
-        {/* CTA */}
-        <div
-          className="mt-8 flex flex-col sm:flex-row gap-4 justify-center motion-safe:opacity-0 motion-safe:animate-fade-in-up"
-          style={{ animationDelay: '0.5s', animationFillMode: 'forwards' }}
-        >
-          <LinkButton
-            href="/artworks"
-            variant="accent"
-            size="lg"
-            className="w-full sm:w-auto shadow-lg min-w-[200px] justify-center text-lg"
-          >
-            {t('viewArtworks')}
-          </LinkButton>
-          <LinkButton
-            href="/our-reality"
-            variant="outline-white"
-            size="lg"
-            className="w-full sm:w-auto backdrop-blur-sm min-w-[160px] justify-center"
-          >
-            {t('aboutSaf')}
-          </LinkButton>
-        </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }
 
