@@ -166,6 +166,11 @@ export function generateEnhancedArtistSchema(artist: EnhancedArtistSchemaInput) 
       : undefined,
     url: artist.url,
     jobTitle: artist.jobTitle || 'Visual Artist',
+    nationality: {
+      '@type': 'Country',
+      name: 'South Korea',
+      '@id': 'https://www.wikidata.org/wiki/Q884',
+    },
     // sameAs: 외부 SNS/Wikipedia URI만 포함 (자기 자신 URL은 url 필드에 있으므로 제외)
     mainEntityOfPage: {
       '@type': 'ProfilePage',
