@@ -9,7 +9,7 @@ import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import StatCard from '@/components/ui/StatCard';
 import { EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { createBreadcrumbSchema, generateSpeakableSchema } from '@/lib/seo-utils';
+import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { createStandardPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
@@ -62,16 +62,31 @@ export default async function TransparencyPage() {
     { name: tBreadcrumbs('transparency'), url: pageUrl },
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
-  const speakableSchema = generateSpeakableSchema([
-    '#transparency-hero-description',
-    '#transparency-stats-section',
-    '#transparency-reports-section',
-  ]);
+  const webPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': `${pageUrl}#webpage`,
+    url: pageUrl,
+    name: locale === 'en' ? 'Transparency Reports | SAF Online' : '운용 보고서 | 씨앗페 온라인',
+    isPartOf: { '@id': `${SITE_URL}#website` },
+    mainEntity: { '@id': `${pageUrl}#reports` },
+    dateModified: LAST_UPDATED,
+    inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: [
+        '#transparency-hero-description',
+        '#transparency-stats-section',
+        '#transparency-reports-section',
+      ],
+    },
+  };
 
   // Annual report structured data — helps Google understand these as document records
   const reportsSchema = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
+    '@id': `${pageUrl}#reports`,
     name: locale === 'en' ? 'Annual Transparency Reports' : '연간 운용 보고서',
     description:
       locale === 'en'
@@ -103,7 +118,7 @@ export default async function TransparencyPage() {
   if (locale === 'en') {
     return (
       <>
-        <JsonLdScript data={[breadcrumbSchema, reportsSchema, speakableSchema]} />
+        <JsonLdScript data={[breadcrumbSchema, webPageSchema, reportsSchema]} />
         <PageHero
           title="Transparency Reports"
           description="Every loan, every repayment, every won — published openly. Here is the full operational record of the artist mutual aid fund."
@@ -283,7 +298,7 @@ export default async function TransparencyPage() {
 
   return (
     <>
-      <JsonLdScript data={[breadcrumbSchema, reportsSchema, speakableSchema]} />
+      <JsonLdScript data={[breadcrumbSchema, webPageSchema, reportsSchema]} />
       <PageHero
         title="운용 보고서"
         description="대출 한 건, 상환 한 건, 원 단위까지. 예술인 상호부조 대출 기금 운용 전 과정을 투명하게 공개합니다."

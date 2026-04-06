@@ -232,6 +232,7 @@
     "soldNotice": "This artwork has been sold",
     "soldExploreOther": "Explore other works by this artist",
     "soldExploreAll": "Browse other artworks",
+    "sameCategoryBrowse": "Browse more {category} artworks",
     "inquiryTitle": "Price & Purchase Inquiry",
     "inquiryDescription": "If you're interested in this artwork, please contact us below.",
     "artworkPrice": "Price",
