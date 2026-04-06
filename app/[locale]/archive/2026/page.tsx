@@ -28,7 +28,8 @@ const PAGE_COPY = {
   },
   en: {
     title: '2026 Offline Exhibition Archive',
-    description: 'A record of the SAF 2026 offline exhibition held at Insa Art Center.',
+    description:
+      'A record of the SAF 2026 offline exhibition held at Insa Art Center, featuring 127 artists and 127 artworks across painting, printmaking, sculpture, and more.',
   },
 } as const;
 

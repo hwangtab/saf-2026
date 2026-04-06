@@ -77,6 +77,7 @@ export function generateExhibitionSchema(
       name: isEnglish ? 'Over 110 participating artists' : '참여 예술가 110여 명',
     },
     isAccessibleForFree: true,
+    inLanguage: isEnglish ? 'en-US' : 'ko-KR',
     ...(hasReviews && {
       aggregateRating: {
         '@type': 'AggregateRating',

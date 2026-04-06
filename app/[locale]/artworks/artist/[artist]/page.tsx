@@ -131,7 +131,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: 'summary_large_image',
       title: metaTitle,
       description: seoDescription.substring(0, 200),
-      images: [imageUrl],
+      images: [
+        {
+          url: imageUrl,
+          alt: t('metaImageAlt', {
+            artist: formattedName,
+            title:
+              locale === 'en' && representativeArtwork.title_en
+                ? representativeArtwork.title_en
+                : representativeArtwork.title,
+          }),
+        },
+      ],
     },
   };
 }

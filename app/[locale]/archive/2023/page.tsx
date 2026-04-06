@@ -109,7 +109,7 @@ export default async function Archive2023Page() {
     '@id': `${pageUrl}#collection`,
     name: isEnglish ? 'SAF 2023 Archive' : '씨앗페 2023 아카이브',
     description: pageDescription,
-    url: currentUrl,
+    url: pageUrl,
     isPartOf: { '@id': `${SITE_URL}#website` },
     datePublished: '2023-12-31',
     dateModified: '2024-01-15',

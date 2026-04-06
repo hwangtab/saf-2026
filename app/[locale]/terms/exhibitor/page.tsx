@@ -19,11 +19,13 @@ const PAGE_URL = `${SITE_URL}${PAGE_PATH}`;
 const PAGE_COPY = {
   ko: {
     title: '출품자 계약서',
-    description: '씨앗페 온라인 출품자 전시위탁 계약서 전문입니다.',
+    description:
+      '씨앗페 온라인에 작품을 출품하는 예술인을 위한 전시위탁 계약서 전문. 위탁 조건, 판매 수수료, 정산 방식 및 작품 보험에 관한 조항을 안내합니다.',
   },
   en: {
     title: 'Exhibitor Agreement',
-    description: 'Full text of the SAF Online exhibitor consignment agreement.',
+    description:
+      'Full text of the SAF Online exhibitor consignment agreement. Covers consignment terms, sales commission, settlement process, and artwork insurance provisions.',
   },
 } as const;
 
