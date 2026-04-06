@@ -71,14 +71,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     (profileSnippet || noteSnippet || t('metaFallback'));
 
   const metaTitle = t('metaTitle', { artist: formattedName });
+  const primaryCategory = artistArtworks[0]?.category;
 
   return {
     title: metaTitle,
     description: seoDescription.substring(0, 300),
-    keywords:
-      locale === 'en'
-        ? [artistName, 'SAF Online', 'artist', 'artworks', 'exhibition']
-        : [artistName, '씨앗페', 'SAF Online', '예술가', '전시회'],
+    keywords: (locale === 'en'
+      ? [artistName, 'SAF Online', 'Korean artist', 'contemporary art', primaryCategory || null]
+      : [
+          artistName,
+          '씨앗페',
+          '한국 작가',
+          '현대미술',
+          primaryCategory || null,
+          primaryCategory ? `${primaryCategory} 작가` : null,
+        ]
+    )
+      .filter((k): k is string => Boolean(k))
+      .join(', '),
     alternates: createLocaleAlternates(artistPath, locale),
     openGraph: {
       title: metaTitle,

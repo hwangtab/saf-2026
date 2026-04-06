@@ -169,7 +169,7 @@ function buildEditionDisclosure(artwork: SyncArtworkRecord): string {
   if (edition) return edition;
 
   const editionType = normalizeEditionType(artwork.edition_type);
-  if (editionType === 'unique') return '원화 1/1';
+  if (editionType === 'unique') return '유일작 1/1';
   if (editionType === 'limited') {
     const limit = toPositiveInteger(artwork.edition_limit);
     if (limit) return `리미티드 에디션 (${limit}점)`;

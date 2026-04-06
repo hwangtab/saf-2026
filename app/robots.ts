@@ -31,6 +31,10 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
       },
       {
+        userAgent: 'Yeti',
+        allow: '/',
+      },
+      {
         userAgent: ['AdsBot-Google', 'MJ12bot', 'DotBot'],
         disallow: '/',
       },

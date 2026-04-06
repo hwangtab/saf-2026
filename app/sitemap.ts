@@ -55,7 +55,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     {
       path: '/special/oh-yoon',
       changeFrequency: 'monthly',
-      priority: 0.7,
+      priority: 0.85,
       lastModified: new Date('2026-01-01'),
     },
     {
