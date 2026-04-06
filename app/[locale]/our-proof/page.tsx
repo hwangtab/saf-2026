@@ -169,6 +169,7 @@ export default async function OurProof() {
     areaServed: {
       '@type': 'Country',
       name: locale === 'en' ? 'South Korea' : '대한민국',
+      '@id': 'https://www.wikidata.org/wiki/Q884',
     },
     audience: {
       '@type': 'Audience',
