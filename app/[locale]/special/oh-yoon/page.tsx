@@ -5,7 +5,11 @@ import { Link } from '@/i18n/navigation';
 import OhYoonMasonryGallery from '@/components/special/OhYoonMasonryGallery';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
-import { createBreadcrumbSchema, generateArtworkListSchema } from '@/lib/seo-utils';
+import {
+  createBreadcrumbSchema,
+  generateArtworkListSchema,
+  generateGalleryAggregateOffer,
+} from '@/lib/seo-utils';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { getSupabaseArtworks } from '@/lib/supabase-data';
 import { resolveLocale } from '@/lib/server-locale';
@@ -155,13 +159,16 @@ export default async function OhYoonPage() {
   const itemListSchema = generateArtworkListSchema(
     ohYoonFullArtworks,
     locale,
-    ohYoonFullArtworks.length
+    ohYoonFullArtworks.length,
+    pageUrl
   );
+  const aggregateOfferSchema = generateGalleryAggregateOffer(ohYoonFullArtworks, locale, pageUrl);
 
   if (locale === 'en') {
     return (
       <>
         <JsonLdScript data={[breadcrumbSchema, exhibitionEventSchema, itemListSchema]} />
+        {aggregateOfferSchema && <JsonLdScript data={aggregateOfferSchema} />}
         <div className="w-full bg-canvas-soft min-h-screen font-sans">
           <section className="relative w-full py-20 md:py-32 px-4 overflow-hidden border-b-8 border-double border-white/10 bg-charcoal">
             <div className="max-w-4xl mx-auto text-center relative z-10">
@@ -302,6 +309,7 @@ export default async function OhYoonPage() {
   return (
     <>
       <JsonLdScript data={[breadcrumbSchema, exhibitionEventSchema, itemListSchema]} />
+      {aggregateOfferSchema && <JsonLdScript data={aggregateOfferSchema} />}
       <div className="w-full bg-canvas-soft min-h-screen font-sans">
         {/* Hero Section */}
         <section className="relative w-full py-20 md:py-32 px-4 overflow-hidden border-b-8 border-double border-white/10 bg-charcoal">
