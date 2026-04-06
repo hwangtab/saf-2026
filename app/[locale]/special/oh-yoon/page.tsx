@@ -13,6 +13,7 @@ import {
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { getSupabaseArtworks } from '@/lib/supabase-data';
 import { resolveLocale } from '@/lib/server-locale';
+import { resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import type { Artwork, ArtworkListItem } from '@/types';
 
 export const revalidate = 600;
@@ -64,6 +65,18 @@ export async function generateMetadata(): Promise<Metadata> {
   const siteName = tSeo('siteTitle');
   const pageUrl = buildLocaleUrl('/special/oh-yoon', locale);
 
+  // 오윤 실제 작품 이미지로 OG 이미지 설정 — 소셜 공유 CTR 향상
+  const allArtworks = await getSupabaseArtworks();
+  const ohYoonArtwork = allArtworks.find((a) => isOhYoonArtist(a.artist) && a.images[0]);
+  const ogImageUrl = ohYoonArtwork?.images[0]
+    ? resolveSeoArtworkImageUrl(ohYoonArtwork.images[0])
+    : OG_IMAGE.url;
+  const ogImageAlt = ohYoonArtwork
+    ? locale === 'en'
+      ? `${ohYoonArtwork.title_en || ohYoonArtwork.title} — Oh Yoon 40th Anniversary Special Exhibition`
+      : `${ohYoonArtwork.title} — 오윤 40주기 특별전`
+    : copy.ogAlt;
+
   return {
     title: copy.title,
     description: copy.description,
@@ -81,10 +94,10 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName,
       images: [
         {
-          url: OG_IMAGE.url,
-          width: OG_IMAGE.width,
-          height: OG_IMAGE.height,
-          alt: copy.ogAlt,
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: ogImageAlt,
         },
       ],
     },
@@ -92,7 +105,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: 'summary_large_image',
       title: copy.twitterTitle,
       description: copy.twitterDescription,
-      images: [OG_IMAGE.url],
+      images: [ogImageUrl],
     },
   };
 }
