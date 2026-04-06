@@ -51,6 +51,38 @@ export default async function Footer() {
                     </Link>
                   </li>
                   <li>
+                    <Link
+                      href="/our-reality"
+                      className="text-gray-300 hover:text-primary transition-colors"
+                    >
+                      {tNav('ourReality')}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/our-proof"
+                      className="text-gray-300 hover:text-primary transition-colors"
+                    >
+                      {tNav('ourProof')}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/transparency"
+                      className="text-gray-300 hover:text-primary transition-colors"
+                    >
+                      {tNav('transparency')}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/news"
+                      className="text-gray-300 hover:text-primary transition-colors"
+                    >
+                      {tNav('news')}
+                    </Link>
+                  </li>
+                  <li>
                     <a
                       href={EXTERNAL_LINKS.JOIN_MEMBER}
                       target="_blank"

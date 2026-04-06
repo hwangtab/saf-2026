@@ -70,6 +70,7 @@ export default async function TransparencyPage() {
     name: locale === 'en' ? 'Transparency Reports | SAF Online' : '운용 보고서 | 씨앗페 온라인',
     isPartOf: { '@id': `${SITE_URL}#website` },
     mainEntity: { '@id': `${pageUrl}#reports` },
+    datePublished: '2022-12-01',
     dateModified: LAST_UPDATED,
     inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
     speakable: {

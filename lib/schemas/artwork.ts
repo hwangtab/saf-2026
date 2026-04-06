@@ -330,7 +330,7 @@ export function generateArtworkJsonLd(
   const productSchema = {
     '@context': 'https://schema.org',
     '@type': ['VisualArtwork', 'Product'],
-    '@id': buildLocaleUrl(`/artworks/${artwork.id}`, locale),
+    '@id': `${SITE_URL}/artworks/${artwork.id}`,
     name: titleForLocale,
     inLanguage: isEnglish ? 'en' : 'ko',
     audience: {
