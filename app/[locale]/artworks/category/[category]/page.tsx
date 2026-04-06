@@ -19,7 +19,7 @@ import {
   generateGalleryAggregateOffer,
 } from '@/lib/seo-utils';
 import { generateArtworkPurchaseHowTo, generateArtworkPurchaseFAQ } from '@/lib/schemas/howto';
-import { parseArtworkPrice } from '@/lib/schemas/utils';
+import { parseArtworkPrice, resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import { getSupabaseArtworks } from '@/lib/supabase-data';
 import type { Artwork, ArtworkListItem } from '@/types';
 
@@ -73,9 +73,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const representativeArtwork =
     categoryArtworks.find((a) => !a.sold && a.images[0]) || categoryArtworks[0];
   const imageUrl = representativeArtwork?.images[0]
-    ? representativeArtwork.images[0].startsWith('http')
-      ? representativeArtwork.images[0]
-      : `${SITE_URL}${representativeArtwork.images[0]}`
+    ? resolveSeoArtworkImageUrl(representativeArtwork.images[0])
     : undefined;
 
   return {

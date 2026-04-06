@@ -7,6 +7,7 @@ import {
   generateEnhancedArtistSchema,
   createBreadcrumbSchema,
   generateGalleryAggregateOffer,
+  generateArtworkListSchema,
 } from '@/lib/seo-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { formatArtistName, resolveArtworkImageUrl } from '@/lib/utils';
@@ -79,7 +80,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: metaTitle,
-    description: seoDescription.substring(0, 300),
+    description: seoDescription.substring(0, 160),
     keywords: (locale === 'en'
       ? [artistName, 'SAF Online', 'Korean artist', 'contemporary art', primaryCategory || null]
       : [
@@ -220,12 +221,15 @@ export default async function ArtistPage({ params }: Props) {
 
   // AggregateOffer: 작가명 검색 시 가격 범위를 리치 스니펫에 노출
   const aggregateOfferSchema = generateGalleryAggregateOffer(artistArtworks);
+  // ItemList: 작가의 작품 목록 — 검색 결과에서 개별 작품 카드 노출 가능
+  const itemListSchema = generateArtworkListSchema(artistArtworks, locale, artistArtworks.length);
 
   return (
     <div className="min-h-screen">
       <JsonLdScript data={personSchema} />
       <JsonLdScript data={breadcrumbSchema} />
       {aggregateOfferSchema && <JsonLdScript data={aggregateOfferSchema} />}
+      <JsonLdScript data={itemListSchema} />
       <PageHero
         title={formattedName}
         description={heroDescription}

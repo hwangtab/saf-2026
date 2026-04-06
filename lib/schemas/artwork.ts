@@ -418,6 +418,7 @@ export function generateGalleryAggregateOffer(artworks: Artwork[]) {
   const availableCount = artworks.filter((a) => !a.sold).length;
 
   return {
+    '@context': 'https://schema.org',
     '@type': 'AggregateOffer',
     lowPrice: minPrice,
     highPrice: maxPrice,
@@ -427,9 +428,17 @@ export function generateGalleryAggregateOffer(artworks: Artwork[]) {
   };
 }
 
-export function generateArtworkListSchema(artworks: Artwork[], locale: 'ko' | 'en' = 'ko') {
+export function generateArtworkListSchema(
+  artworks: Artwork[],
+  locale: 'ko' | 'en' = 'ko',
+  limit = 30
+) {
   const isEnglish = locale === 'en';
   const aggregateOffer = generateGalleryAggregateOffer(artworks);
+  // Strip @context when embedding — @context is only needed at the top level of a standalone script
+  const embeddedOffer = aggregateOffer
+    ? (({ '@context': _ctx, ...rest }) => rest)(aggregateOffer as Record<string, unknown>)
+    : null;
 
   return {
     '@context': 'https://schema.org',
@@ -440,8 +449,8 @@ export function generateArtworkListSchema(artworks: Artwork[], locale: 'ko' | 'e
       : '씨앗페 온라인에 출품된 예술가들의 작품 목록',
     numberOfItems: artworks.length,
     // Price range for art buyers
-    ...(aggregateOffer && { offers: aggregateOffer }),
-    itemListElement: artworks.slice(0, 30).map((artwork, index) => ({
+    ...(embeddedOffer && { offers: embeddedOffer }),
+    itemListElement: artworks.slice(0, limit).map((artwork, index) => ({
       '@type': 'ListItem',
       position: index + 1,
       url: `${SITE_URL}/artworks/${artwork.id}`,

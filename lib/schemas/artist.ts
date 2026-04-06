@@ -158,7 +158,7 @@ export function generateEnhancedArtistSchema(artist: EnhancedArtistSchemaInput) 
     '@id': artist.url,
     name: artist.name,
     description: artist.description,
-    image: artist.image,
+    image: artist.image ? resolveSeoArtworkImageUrl(artist.image) : undefined,
     url: artist.url,
     jobTitle: artist.jobTitle || 'Visual Artist',
     sameAs: [artist.url],
