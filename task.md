@@ -1,3 +1,28 @@
+# 작품 이미지 AI 업스케일 체크리스트
+
+- [x] Supabase 기준 저해상도 대상 재집계
+- [x] 업스케일 배치 스크립트 추가
+- [x] 업스케일 보조 Python 스크립트 추가
+- [x] 1순위 대상 dry-run 리포트 생성
+- [x] 작품 이미지 백업 생성
+- [x] 1순위 대상 업스케일 및 업로드 반영
+- [x] Cafe24 동기화 결과 확인
+- [x] `npm run lint` 통과
+- [x] `npm run type-check` 통과
+- [x] `walkthrough.md` 업데이트
+
+---
+
+# 포털 진행바 rAF 충돌 수정 체크리스트
+
+- [x] `components/layout/NavigationProgress.tsx`의 rAF/timer cleanup 보강
+- [x] 연속 네비게이션 회귀 테스트 추가
+- [x] 관련 테스트 실행
+- [x] `npm run lint` 통과
+- [x] `walkthrough.md` 업데이트
+
+---
+
 # 이미지 업로드 장애 수정 체크리스트
 
 - [x] CSP `img-src`에 `blob:` 허용 추가

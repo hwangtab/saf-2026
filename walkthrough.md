@@ -1,4 +1,77 @@
+# 작품 이미지 AI 업스케일 1차 실행
+
+## 추가/수정 파일
+
+- `/Users/hwang-gyeongha/saf/scripts/upscale-artwork-images.js` (신규)
+  - Supabase `artworks` 기준으로 공개 작품 이미지를 전수 점검
+  - `dry-run` 리포트 생성, 백업 스크립트 호출, Python 업스케일 보조 스크립트 실행, Storage 업로드, DB `images` 갱신, Cafe24 동기화까지 한 번에 처리
+  - 이전 원본 cleanup 범위를 raw 경로 계열만 지우도록 보수적으로 수정
+    - 잘못된 `__original__original.webp` 계열을 정리할 때 새 canonical 결과물까지 삭제되지 않도록 방어
+
+- `/Users/hwang-gyeongha/saf/scripts/upscale_artwork_images.py` (신규)
+  - OpenCV `dnn_superres` 기반 `FSRCNN x4` 업스케일 보조 스크립트
+  - 1차 결과가 작거나 원본이 지나치게 작은 경우 2-pass 업스케일 지원
+
+- `/Users/hwang-gyeongha/saf/package.json`
+  - `npm run upscale-artwork-images`
+  - `npm run upscale-artwork-images:apply`
+
+## 실행 결과
+
+- 기준 데이터
+  - Supabase 공개 작품 `354점` 기준으로 집계
+  - 장변 `800px 미만` 대상 `72점`
+
+- 리포트
+  - 초기 dry-run: `/Users/hwang-gyeongha/saf/backups/artwork-image-backups/artwork-upscale-report-20260402-170004.json`
+    - `total=354`, `failed=0`, `targets=72`
+  - 본 실행: `/Users/hwang-gyeongha/saf/backups/artwork-image-backups/artwork-upscale-report-20260402-170424.json`
+    - `applied=71`, `applyFailures=0`
+    - 백업 JSON: `/Users/hwang-gyeongha/saf/backups/artwork-image-backups/artwork-images-backup-20260402-170436.json`
+    - 롤백 SQL: `/Users/hwang-gyeongha/saf/backups/artwork-image-backups/artwork-images-rollback-20260402-170436.sql`
+  - 중간 점검: `/Users/hwang-gyeongha/saf/backups/artwork-image-backups/artwork-upscale-report-20260402-171703.json`
+    - `failed=1`, `targets=0`
+    - `최윤정 / pop kids #96` 한 건이 잘못된 cleanup 영향으로 `400` 응답 상태였음
+  - 최종 점검: `/Users/hwang-gyeongha/saf/backups/artwork-image-backups/artwork-upscale-report-20260402-172303.json`
+    - `total=354`, `failed=0`, `targets=0`
+
+- 추가 복구
+  - 작품 `e02e6689-748b-447e-b915-dd3f10a9aa36` (`최윤정 / pop kids #96`)는 임시 업스케일 산출물을 사용해 canonical 경로 `dcdc982f-31b3-4a14-b375-32afa3866319/3__original.webp` 계열로 재업로드
+  - Cafe24 재동기화까지 다시 실행해 `cafe24_sync_status = synced`로 정리
+
+## 검증 결과
+
+- `node --check scripts/upscale-artwork-images.js` 통과
+- `python3 -m py_compile scripts/upscale_artwork_images.py` 통과
+- `npm run lint` 통과
+- `npm run type-check` 통과
+- 최종 dry-run에서 `targets=0`, `failed=0` 확인
+
 # 버튼 리팩토링 작업 보고
+
+## 포털 진행바 rAF 충돌 수정
+
+### 변경 내용
+
+- `/Users/hwang-gyeongha/saf/components/layout/NavigationProgress.tsx`
+  - 단일 `timerRef`를 완료/숨김 단계별 `completeTimerRef`, `hideTimerRef`로 분리
+  - 예약된 `requestAnimationFrame` id를 `rafIdsRef`로 추적하도록 변경
+  - 새 네비게이션 사이클 시작 전:
+    - 이전 rAF 취소
+    - 이전 타이머 정리
+    - 진행바 DOM 상태(`display`, `opacity`, `width`, `transition`) 초기화
+  - 컴포넌트 unmount 및 effect cleanup에서 남아 있는 animation 작업을 모두 정리하도록 보강
+  - 진행 시작 시 강제 reflow 후 transition을 다시 적용해, 새 사이클이 이전 write와 섞이지 않도록 정리
+
+- `/Users/hwang-gyeongha/saf/__tests__/components/NavigationProgress.test.tsx` (신규)
+  - 연속 네비게이션 시 이전 rAF가 취소되는지 검증하는 회귀 테스트 추가
+  - 완료 직전/직후 새 네비게이션이 시작될 때 이전 hide timer가 다음 사이클을 덮지 않는지 검증하는 테스트 추가
+
+### 검증 결과
+
+- `npm test -- --runInBand __tests__/components/NavigationProgress.test.tsx` 통과
+- `npm run lint` 통과
+- `npm run type-check` 통과
 
 ## 1차 변경(아이콘 정렬 통합)
 
