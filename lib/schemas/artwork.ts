@@ -253,6 +253,21 @@ export function generateArtworkJsonLd(
   // priceValidUntil: 고정 미래 날짜 (빌드 주기와 무관하게 만료 방지)
   const priceValidUntil = '2027-12-31';
 
+  // 결제 수단 — Cafe24 쇼핑몰 기준 (신용카드·체크카드·계좌이체)
+  const acceptedPaymentMethod = [
+    'https://schema.org/CreditCard',
+    'https://schema.org/DebitCard',
+    'http://purl.org/goodrelations/v1#PayByBankTransferInAdvance',
+  ];
+
+  // 에디션 유형별 eligible quantity
+  const eligibleQuantity =
+    artwork.edition_type === 'unique'
+      ? { '@type': 'QuantitativeValue', value: 1 }
+      : artwork.edition_type === 'limited' && artwork.edition_limit
+        ? { '@type': 'QuantitativeValue', value: artwork.edition_limit }
+        : undefined;
+
   // Build offers based on whether price is inquiry or numeric
   const offers = isInquiry
     ? {
@@ -264,6 +279,8 @@ export function generateArtworkJsonLd(
           '@type': 'PriceSpecification',
           valueAddedTaxIncluded: true,
         },
+        acceptedPaymentMethod,
+        ...(eligibleQuantity && { eligibleQuantity }),
         seller: sellerOrg,
         hasMerchantReturnPolicy: returnPolicy,
         shippingDetails,
@@ -276,6 +293,8 @@ export function generateArtworkJsonLd(
         priceValidUntil,
         availability: artwork.sold ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock',
         itemCondition: 'https://schema.org/NewCondition',
+        acceptedPaymentMethod,
+        ...(eligibleQuantity && { eligibleQuantity }),
         seller: sellerOrg,
         hasMerchantReturnPolicy: returnPolicy,
         shippingDetails,
@@ -475,16 +494,19 @@ export function generateArtworkListSchema(
       ? 'Artwork list from SAF Online'
       : '씨앗페 온라인에 출품된 예술가들의 작품 목록',
     numberOfItems: artworks.length,
+    itemListOrder: 'https://schema.org/ItemListUnordered',
     // Price range for art buyers
     ...(embeddedOffer && { offers: embeddedOffer }),
-    itemListElement: artworks.slice(0, limit).map((artwork, index) => ({
-      '@type': 'ListItem',
-      position: index + 1,
-      url: `${SITE_URL}/artworks/${artwork.id}`,
-      name: isEnglish && artwork.title_en ? artwork.title_en : artwork.title,
-      image: resolveSeoArtworkImageUrl(artwork.images[0]).startsWith('http')
-        ? resolveSeoArtworkImageUrl(artwork.images[0])
-        : `${SITE_URL}${resolveSeoArtworkImageUrl(artwork.images[0])}`,
-    })),
+    itemListElement: artworks.slice(0, limit).map((artwork, index) => {
+      const rawImg = artwork.images[0] ? resolveSeoArtworkImageUrl(artwork.images[0]) : null;
+      const absImg = rawImg ? (rawImg.startsWith('http') ? rawImg : `${SITE_URL}${rawImg}`) : null;
+      return {
+        '@type': 'ListItem',
+        position: index + 1,
+        url: `${SITE_URL}/artworks/${artwork.id}`,
+        name: isEnglish && artwork.title_en ? artwork.title_en : artwork.title,
+        ...(absImg && { image: absImg }),
+      };
+    }),
   };
 }
