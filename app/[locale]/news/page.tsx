@@ -42,7 +42,7 @@ const NEWS_COPY: Record<LocaleCode, NewsPageCopy> = {
   ko: {
     pageTitle: '언론 보도',
     pageDescription:
-      '언론이 주목한 씨앗페 온라인. 주요 뉴스 보도와 칼럼을 통해 캠페인의 사회적 의미를 확인하세요.',
+      '언론이 주목한 씨앗페 온라인. 예술인 금융 차별과 상호부조를 다룬 주요 언론 보도·인터뷰·칼럼을 모아 캠페인의 사회적 의미와 예술 현장의 목소리를 전합니다.',
     heroTitle: '언론 보도',
     heroDescription: '씨앗페 캠페인을 조명한 기사와 인터뷰를 모았습니다.',
     shareTitle: '언론 보도 | 씨앗페 온라인',
