@@ -162,13 +162,23 @@ export default async function ArtworkDetailPage({ params }: Props) {
   const displayArtist = locale === 'en' && artwork.artist_en ? artwork.artist_en : artwork.artist;
   const hasActionablePrice = parsedPrice !== Infinity;
 
-  // Generate JSON-LD schemas
+  // Generate JSON-LD schemas — breadcrumb에 카테고리 계층 포함
+  const categoryBreadcrumb = artwork.category
+    ? {
+        name: getCategoryLabel(artwork.category, locale),
+        path: `/artworks/category/${encodeURIComponent(artwork.category)}`,
+      }
+    : undefined;
   const { productSchema, breadcrumbSchema, webPageSchema } = generateArtworkJsonLd(
     artwork,
     numericPrice,
     isInquiry,
     locale,
-    { home: tBreadcrumbs('home'), artworks: tBreadcrumbs('artworks') }
+    {
+      home: tBreadcrumbs('home'),
+      artworks: tBreadcrumbs('artworks'),
+      category: categoryBreadcrumb,
+    }
   );
 
   const speakableSchema = generateSpeakableSchema([

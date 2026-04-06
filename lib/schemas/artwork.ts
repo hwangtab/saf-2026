@@ -123,7 +123,7 @@ export function generateArtworkJsonLd(
   numericPrice: string,
   isInquiry: boolean,
   locale: 'ko' | 'en' = 'ko',
-  breadcrumbLabels?: { home: string; artworks: string }
+  breadcrumbLabels?: { home: string; artworks: string; category?: { name: string; path: string } }
 ) {
   const isEnglish = locale === 'en';
   const titleForLocale = isEnglish && artwork.title_en ? artwork.title_en : artwork.title;
@@ -370,11 +370,16 @@ export function generateArtworkJsonLd(
 
   const homeLabel = breadcrumbLabels?.home ?? (isEnglish ? 'Home' : '홈');
   const artworksLabel = breadcrumbLabels?.artworks ?? (isEnglish ? 'Artworks' : '출품작');
-  const breadcrumbSchema = createBreadcrumbSchema([
+  const categoryBreadcrumb = breadcrumbLabels?.category;
+  const breadcrumbItems = [
     { name: homeLabel, url: buildLocaleUrl('/', locale) },
     { name: artworksLabel, url: buildLocaleUrl('/artworks', locale) },
+    ...(categoryBreadcrumb
+      ? [{ name: categoryBreadcrumb.name, url: buildLocaleUrl(categoryBreadcrumb.path, locale) }]
+      : []),
     { name: titleForLocale, url: buildLocaleUrl(`/artworks/${artwork.id}`, locale) },
-  ]);
+  ];
+  const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
 
   // ItemPage: explicitly links this WebPage to the VisualArtwork/Product entity
   const artworkPageUrl = buildLocaleUrl(`/artworks/${artwork.id}`, locale);
