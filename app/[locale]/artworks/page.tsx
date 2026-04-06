@@ -77,19 +77,6 @@ export default async function ArtworksPage() {
     { name: tBreadcrumbs('artworks'), url: buildLocaleUrl('/artworks', locale) },
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
-  const itemListSchema = generateArtworkListSchema(artworks, locale);
-  const aggregateOfferSchema = generateGalleryAggregateOffer(artworks, locale);
-  const artworksUrl = buildLocaleUrl('/artworks', locale);
-  const collectionPageSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'CollectionPage',
-    '@id': `${artworksUrl}#webpage`,
-    name: locale === 'en' ? 'Artworks — SAF Online' : '전시 작품 — 씨앗페 온라인',
-    url: artworksUrl,
-    isPartOf: { '@id': `${SITE_URL}#website` },
-    inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
-    mainEntity: { '@id': `${artworksUrl}#item-list` },
-  };
 
   // 실시간 작품 수 (heroDescription 동적화용)
   const availableCount = artworks.filter((a) => !a.sold).length;
@@ -97,6 +84,21 @@ export default async function ArtworksPage() {
     locale === 'en'
       ? `${artworks.length} original artworks from ${new Set(artworks.map((a) => a.artist)).size} Korean artists. ${availableCount} available now. Free shipping, 7-day returns.`
       : `${new Set(artworks.map((a) => a.artist)).size}명 작가의 작품 ${artworks.length}점. 현재 ${availableCount}점 구매 가능. 무료 배송, 7일 반품.`;
+
+  const artworksUrl = buildLocaleUrl('/artworks', locale);
+  const itemListSchema = generateArtworkListSchema(artworks, locale, 30, artworksUrl);
+  const aggregateOfferSchema = generateGalleryAggregateOffer(artworks, locale, artworksUrl);
+  const collectionPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    '@id': `${artworksUrl}#webpage`,
+    name: locale === 'en' ? 'Artworks — SAF Online' : '전시 작품 — 씨앗페 온라인',
+    description: dynamicHeroDescription,
+    url: artworksUrl,
+    isPartOf: { '@id': `${SITE_URL}#website` },
+    inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
+    mainEntity: { '@id': `${artworksUrl}#item-list` },
+  };
 
   // 카테고리별 작품 수 계산 (네비게이션용)
   const categoryNav = Object.keys(CATEGORY_EN_MAP)

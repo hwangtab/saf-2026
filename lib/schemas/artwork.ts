@@ -122,11 +122,13 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
       images: [
         {
           url: imageUrl,
+          secureUrl: imageUrl.startsWith('https') ? imageUrl : undefined,
           width: 1200,
           height: 630,
           alt: isEnglish
             ? `${titleForLocale} by ${artistForLocale} — SAF Online`
             : `${artwork.artist} 작가의 작품 "${artwork.title}" — 씨앗페 온라인`,
+          type: 'image/jpeg',
         },
       ],
     },
@@ -144,6 +146,7 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
       }),
       'product:availability': isSold ? 'out of stock' : 'in stock',
       'product:condition': 'new',
+      'product:retailer_item_id': `SAF2026-${artwork.id}`,
       // Twitter/X Product Card 라벨 — 카드에 가격·상태 직접 표시
       'twitter:label1': isEnglish ? 'Price' : '가격',
       'twitter:data1':
@@ -351,6 +354,12 @@ export function generateArtworkJsonLd(
         : `${SITE_URL}${resolvedImageUrl}`,
       name: `${titleForLocale} - ${artistForLocale}`,
       alternateName: imageAlternateName,
+      caption: isEnglish
+        ? `${titleForLocale} by ${artistForLocale}`
+        : `${artistForLocale} 작가의 ${titleForLocale}`,
+      width: 1200,
+      height: 1200,
+      acquireLicensePage: `${SITE_URL}/artworks/${artwork.id}`,
     },
     description: schemaDescription.substring(0, 500),
     sku: `SAF2026-${artwork.id}`,
@@ -534,7 +543,7 @@ export function generateArtworkListSchema(
   pageUrl?: string
 ) {
   const isEnglish = locale === 'en';
-  const aggregateOffer = generateGalleryAggregateOffer(artworks);
+  const aggregateOffer = generateGalleryAggregateOffer(artworks, locale, pageUrl);
   // Strip @context when embedding — @context is only needed at the top level of a standalone script
   const embeddedOffer = aggregateOffer
     ? (({ '@context': _ctx, ...rest }) => rest)(aggregateOffer as Record<string, unknown>)
