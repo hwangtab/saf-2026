@@ -15,9 +15,9 @@ export function generateOrganizationSchema(locale: 'ko' | 'en' = 'ko') {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     '@id': `${SITE_URL}#organization`,
-    name: CONTACT.ORGANIZATION_NAME,
+    name: isEnglish ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
     legalName: CONTACT.ORGANIZATION_NAME,
-    alternateName: CONTACT.ORGANIZATION_NAME_EN,
+    alternateName: isEnglish ? CONTACT.ORGANIZATION_NAME : CONTACT.ORGANIZATION_NAME_EN,
     url: SITE_URL,
     foundingDate: '2020',
     taxID: CONTACT.BUSINESS_REGISTRATION_NUMBER,
@@ -71,7 +71,8 @@ export function generateWebsiteSchema(locale: 'ko' | 'en' = 'ko') {
     publisher: {
       '@type': 'Organization',
       '@id': `${SITE_URL}#organization`,
-      name: CONTACT.ORGANIZATION_NAME,
+      name: isEnglish ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
+      url: SITE_URL,
     },
     // Accessibility metadata for AEO/GEO
     accessibilityFeature: [
@@ -158,7 +159,7 @@ export function generateLocalBusinessSchema(locale: 'ko' | 'en' = 'ko') {
     parentOrganization: {
       '@type': 'Organization',
       '@id': `${SITE_URL}#organization`,
-      name: CONTACT.ORGANIZATION_NAME,
+      name: isEnglish ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
     },
   };
 }
@@ -182,7 +183,7 @@ export function generateCampaignSchema(locale: 'ko' | 'en' = 'ko') {
     funder: {
       '@type': 'Organization',
       '@id': `${SITE_URL}#organization`,
-      name: CONTACT.ORGANIZATION_NAME,
+      name: isEnglish ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
       url: SITE_URL,
     },
     isAccessibleForFree: false,

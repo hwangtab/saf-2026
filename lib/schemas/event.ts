@@ -62,7 +62,7 @@ export function generateExhibitionSchema(
     organizer: {
       '@type': 'Organization',
       '@id': `${SITE_URL}#organization`,
-      name: CONTACT.ORGANIZATION_NAME,
+      name: isEnglish ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
       url: SITE_URL,
     },
     offers: {

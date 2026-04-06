@@ -14,7 +14,8 @@ export interface QAItem {
  *
  * @see https://schema.org/QAPage
  */
-export function generateQAPageSchema(items: QAItem[], pageUrl: string) {
+export function generateQAPageSchema(items: QAItem[], pageUrl: string, locale: 'ko' | 'en' = 'ko') {
+  const orgName = locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME;
   return {
     '@context': 'https://schema.org',
     '@type': 'QAPage',
@@ -29,7 +30,7 @@ export function generateQAPageSchema(items: QAItem[], pageUrl: string) {
         author: {
           '@type': 'Organization',
           '@id': `${SITE_URL}#organization`,
-          name: CONTACT.ORGANIZATION_NAME,
+          name: orgName,
           url: SITE_URL,
         },
       },
@@ -135,5 +136,5 @@ export function generateSAFCoreQA(locale: 'ko' | 'en' = 'ko') {
         },
       ];
 
-  return generateQAPageSchema(items, pageUrl);
+  return generateQAPageSchema(items, pageUrl, locale);
 }

@@ -29,7 +29,7 @@ const RATING_LABELS: Record<number, string> = {
  *
  * @see https://schema.org/ClaimReview
  */
-export function generateClaimReviewSchema(input: ClaimReviewInput) {
+export function generateClaimReviewSchema(input: ClaimReviewInput, locale: 'ko' | 'en' = 'ko') {
   return {
     '@context': 'https://schema.org',
     '@type': 'ClaimReview',
@@ -39,7 +39,7 @@ export function generateClaimReviewSchema(input: ClaimReviewInput) {
     author: {
       '@type': 'Organization',
       '@id': `${SITE_URL}#organization`,
-      name: CONTACT.ORGANIZATION_NAME,
+      name: locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
       url: SITE_URL,
     },
     reviewRating: {
@@ -120,5 +120,5 @@ export function generateSAFClaimReviews(locale: 'ko' | 'en' = 'ko') {
     },
   ];
 
-  return claims.map(generateClaimReviewSchema);
+  return claims.map((claim) => generateClaimReviewSchema(claim, locale));
 }
