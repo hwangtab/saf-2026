@@ -90,6 +90,9 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
         '출품작',
       ];
 
+  const numericPriceValue = parseArtworkPrice(artwork.price);
+  const isSold = artwork.sold === true;
+
   return {
     ...baseMetadata,
     keywords: keywordBase.filter((k): k is string => Boolean(k)),
@@ -102,6 +105,15 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
     twitter: {
       ...baseMetadata.twitter,
       card: 'summary_large_image',
+    },
+    // Facebook/Instagram 제품 메타 태그 — 소셜 공유 시 가격 정보 노출
+    other: {
+      ...(numericPriceValue !== null && {
+        'product:price:amount': String(numericPriceValue),
+        'product:price:currency': 'KRW',
+      }),
+      'product:availability': isSold ? 'out of stock' : 'in stock',
+      'product:condition': 'new',
     },
   };
 }
@@ -211,10 +223,8 @@ export function generateArtworkJsonLd(
     },
   };
 
-  // priceValidUntil: 1년 후 날짜 (Google Merchant Center 유효성 유지)
-  const priceValidUntil = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
-    .toISOString()
-    .split('T')[0];
+  // priceValidUntil: 고정 미래 날짜 (빌드 주기와 무관하게 만료 방지)
+  const priceValidUntil = '2027-12-31';
 
   // Build offers based on whether price is inquiry or numeric
   const offers = isInquiry

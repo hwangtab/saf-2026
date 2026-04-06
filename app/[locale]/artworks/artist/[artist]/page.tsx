@@ -3,7 +3,11 @@ import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { SITE_URL } from '@/lib/constants';
-import { generateEnhancedArtistSchema, createBreadcrumbSchema } from '@/lib/seo-utils';
+import {
+  generateEnhancedArtistSchema,
+  createBreadcrumbSchema,
+  generateGalleryAggregateOffer,
+} from '@/lib/seo-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { formatArtistName, resolveArtworkImageUrl } from '@/lib/utils';
 import { Metadata } from 'next';
@@ -214,10 +218,14 @@ export default async function ArtistPage({ params }: Props) {
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
 
+  // AggregateOffer: 작가명 검색 시 가격 범위를 리치 스니펫에 노출
+  const aggregateOfferSchema = generateGalleryAggregateOffer(artistArtworks);
+
   return (
     <div className="min-h-screen">
       <JsonLdScript data={personSchema} />
       <JsonLdScript data={breadcrumbSchema} />
+      {aggregateOfferSchema && <JsonLdScript data={aggregateOfferSchema} />}
       <PageHero
         title={formattedName}
         description={heroDescription}

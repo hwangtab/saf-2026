@@ -292,7 +292,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                     <>
                       <span className="text-gray-600 font-medium text-sm">{t('category')}</span>
                       <Link
-                        href={`/artworks?category=${encodeURIComponent(artwork.category)}`}
+                        href={`/artworks/category/${encodeURIComponent(artwork.category)}`}
                         className="text-primary hover:underline"
                       >
                         {getCategoryLabel(artwork.category, locale)}

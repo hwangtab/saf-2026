@@ -607,5 +607,13 @@
     "artistTitle": "Artist Not Found",
     "artistDescription": "No artworks found for this artist. Browse other works in the gallery.",
     "artistCta": "View All Artworks"
+  },
+  "categoryPage": {
+    "title": "Buy {category} Art",
+    "metaDescription": "Browse {count} original {category} artworks on SAF Online ({availableCount} available). Free shipping, 7-day returns.",
+    "heroDescription": "{availableCount} of {count} artworks available.",
+    "shareTitle": "{category} Artworks - SAF Online",
+    "shareDescription": "Explore and purchase {category} artworks on SAF Online. Proceeds support the artist mutual-aid fund.",
+    "notFound": "Category not found"
   }
 }

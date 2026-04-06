@@ -121,7 +121,7 @@ export default function ArtworkPurchaseCTA({
             }}
           >
             <LinkButton
-              href={shopUrl}
+              href={`${shopUrl}${shopUrl.includes('?') ? '&' : '?'}utm_source=saf2026&utm_medium=web&utm_campaign=artwork&utm_content=${artworkId}`}
               variant="primary"
               size="lg"
               external
