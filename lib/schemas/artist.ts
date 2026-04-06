@@ -192,15 +192,17 @@ export function generateEnhancedArtistSchema(artist: EnhancedArtistSchemaInput) 
     // Work samples (representative artworks)
     ...(artist.artworks &&
       artist.artworks.length > 0 && {
-        workSample: artist.artworks.slice(0, 5).map((work) => ({
-          '@type': 'VisualArtwork',
-          '@id': `${SITE_URL}/artworks/${work.id}`,
-          name: work.title,
-          url: `${SITE_URL}/artworks/${work.id}`,
-          image: work.image.startsWith('http')
-            ? work.image
-            : `${SITE_URL}/images/artworks/${work.image}`,
-        })),
+        workSample: artist.artworks.slice(0, 5).map((work) => {
+          const resolvedImg = resolveSeoArtworkImageUrl(work.image);
+          const absImg = resolvedImg.startsWith('http') ? resolvedImg : `${SITE_URL}${resolvedImg}`;
+          return {
+            '@type': 'VisualArtwork',
+            '@id': `${SITE_URL}/artworks/${work.id}`,
+            name: work.title,
+            url: `${SITE_URL}/artworks/${work.id}`,
+            image: absImg,
+          };
+        }),
       }),
   };
 }
