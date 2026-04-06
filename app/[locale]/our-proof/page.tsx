@@ -138,6 +138,32 @@ export default async function OurProof() {
     ],
     isPartOf: { '@id': `${SITE_URL}#website` },
   };
+  const loanSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'LoanOrCredit',
+    '@id': `${pageUrl}#loan-product`,
+    name: locale === 'en' ? 'SAF Artist Mutual Aid Loan' : '씨앗페 예술인 상호부조 대출',
+    description:
+      locale === 'en'
+        ? 'Low-interest mutual aid loans for Korean artists. Fixed 5% annual rate, no credit screening, up to KRW 10 million per borrower. Operated by Korea Smart Cooperative since December 2022.'
+        : '한국 예술인을 위한 저금리 상호부조 대출. 연 5% 고정금리, 신용등급 심사 없음, 1인당 최대 1,000만 원. 2022년 12월부터 한국스마트협동조합 운영.',
+    url: pageUrl,
+    provider: {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}#organization`,
+      name: locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
+    },
+    annualPercentageRate: 5,
+    currency: 'KRW',
+    areaServed: {
+      '@type': 'Country',
+      name: locale === 'en' ? 'South Korea' : '대한민국',
+    },
+    audience: {
+      '@type': 'Audience',
+      audienceType: locale === 'en' ? 'Professional artists' : '전업·직업 예술인',
+    },
+  };
   const qaSchema = generateQAPageSchema(
     locale === 'en'
       ? [
@@ -186,7 +212,9 @@ export default async function OurProof() {
   if (locale === 'en') {
     return (
       <>
-        <JsonLdScript data={[breadcrumbSchema, aboutPageSchema, datasetSchema, qaSchema]} />
+        <JsonLdScript
+          data={[breadcrumbSchema, aboutPageSchema, datasetSchema, loanSchema, qaSchema]}
+        />
         <PageHero
           title="Our Proof"
           description="Mutual-aid finance is not a theory. 354 loans and a 95% repayment rate prove that trust-based lending to artists works."
@@ -424,7 +452,9 @@ export default async function OurProof() {
 
   return (
     <>
-      <JsonLdScript data={[breadcrumbSchema, aboutPageSchema, datasetSchema, qaSchema]} />
+      <JsonLdScript
+        data={[breadcrumbSchema, aboutPageSchema, datasetSchema, loanSchema, qaSchema]}
+      />
       <PageHero
         title="우리의 증명"
         description="예술인 상호부조 대출의 실제 성과. 354건, 약 7억 원의 신뢰가 데이터로 증명되었습니다."
