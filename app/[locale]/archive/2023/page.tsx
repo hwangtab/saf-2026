@@ -106,10 +106,14 @@ export default async function Archive2023Page() {
   const collectionSchema = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
+    '@id': `${pageUrl}#collection`,
     name: isEnglish ? 'SAF 2023 Archive' : '씨앗페 2023 아카이브',
     description: pageDescription,
     url: currentUrl,
     isPartOf: { '@id': `${SITE_URL}#website` },
+    datePublished: '2023-12-31',
+    dateModified: '2024-01-15',
+    inLanguage: isEnglish ? 'en-US' : 'ko-KR',
     publisher: {
       '@type': 'Organization',
       name: isEnglish ? 'Korea Smart Cooperative' : '한국스마트협동조합',
