@@ -2,25 +2,62 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import clsx from 'clsx';
 import type { Components } from 'react-markdown';
+import React from 'react';
+
+function ImageFigure({ src, alt }: { src: string; alt?: string }) {
+  return (
+    <figure className="my-8">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt={alt ?? ''}
+        className="w-full rounded-xl shadow-md object-cover"
+        loading="lazy"
+      />
+      {alt && (
+        <figcaption className="mt-3 text-center text-sm text-gray-500 leading-relaxed">
+          {alt}
+        </figcaption>
+      )}
+    </figure>
+  );
+}
 
 const markdownComponents: Components = {
   img({ src, alt }) {
     if (!src) return null;
+    return <ImageFigure src={src} alt={alt ?? undefined} />;
+  },
+  a({ href, children }) {
+    // [![alt](img)](/artworks/id) → 클릭 가능한 figure
+    const childArray = React.Children.toArray(children);
+    if (
+      href &&
+      childArray.length === 1 &&
+      React.isValidElement(childArray[0]) &&
+      childArray[0].type === ImageFigure
+    ) {
+      return (
+        <a
+          href={href}
+          className="block group no-underline hover:no-underline [&>figure>img]:transition-[transform,box-shadow] [&>figure>img]:duration-300 [&>figure>img]:group-hover:shadow-lg [&>figure>img]:group-hover:scale-[1.01]"
+        >
+          {children}
+          <span className="block text-center text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity -mt-2 mb-4">
+            작품 보러 가기 →
+          </span>
+        </a>
+      );
+    }
+    // 일반 링크
     return (
-      <figure className="my-8">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={src}
-          alt={alt ?? ''}
-          className="w-full rounded-xl shadow-md object-cover"
-          loading="lazy"
-        />
-        {alt && (
-          <figcaption className="mt-3 text-center text-sm text-gray-500 leading-relaxed">
-            {alt}
-          </figcaption>
-        )}
-      </figure>
+      <a
+        href={href}
+        target={href?.startsWith('http') ? '_blank' : undefined}
+        rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
+      >
+        {children}
+      </a>
     );
   },
 };
