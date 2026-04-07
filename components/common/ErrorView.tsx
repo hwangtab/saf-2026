@@ -1,8 +1,6 @@
 'use client';
 
 import { useEffect } from 'react';
-import Button from '@/components/ui/Button';
-import { cn } from '@/lib/utils';
 
 interface ErrorViewProps {
   icon: string;
@@ -41,16 +39,18 @@ export default function ErrorView({
         </div>
         <h1 className="text-2xl font-bold mb-4 text-charcoal">{title}</h1>
         <p className="text-charcoal-muted mb-8 leading-relaxed text-balance">{message}</p>
+        {/* 순수 HTML 사용 — Button/Link 컴포넌트는 next-intl 컨텍스트를 필요로 해 GlobalError 밖에서 충돌함 */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button onClick={reset} variant="primary">
+          <button
+            type="button"
+            onClick={reset}
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white transition hover:opacity-90"
+          >
             {retryLabel}
-          </Button>
-          {/* 순수 <a> 사용 — Button의 next-intl Link는 GlobalError 컨텍스트 밖에서 실패함 */}
+          </button>
           <a
             href={resolvedBackLink.href}
-            className={cn(
-              'inline-flex items-center justify-center gap-2 rounded-xl border border-primary px-6 py-3 text-sm font-bold text-primary transition hover:bg-primary/5'
-            )}
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-primary px-6 py-3 text-sm font-bold text-primary transition hover:bg-primary/5"
           >
             {resolvedBackLink.label}
           </a>
