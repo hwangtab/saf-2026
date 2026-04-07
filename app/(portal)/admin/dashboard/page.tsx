@@ -151,6 +151,12 @@ export default async function AdminDashboardPage() {
           href="/admin/artworks?visibility=hidden"
           helpContent={t('hiddenHelp')}
         />
+        <StatCard
+          title={t('pendingOrders')}
+          valueText={numberFormatter.format(stats.pendingOrderCount)}
+          subtitle={stats.pendingOrderCount > 0 ? t('needsCheck') : t('noPending')}
+          href="/admin/orders?status=pending_payment"
+        />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -321,6 +327,74 @@ export default async function AdminDashboardPage() {
                     </div>
                   </li>
                 ))}
+              </ul>
+            )}
+          </div>
+        </AdminCard>
+      </section>
+
+      {/* 최근 주문 */}
+      <section>
+        <AdminCard className="flex flex-col">
+          <AdminCardHeader className="rounded-t-2xl">
+            <h2 className="text-base font-semibold text-slate-900">{t('recentOrdersTitle')}</h2>
+            <Link
+              href="/admin/orders"
+              className="text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:underline"
+            >
+              {t('viewAll')}
+            </Link>
+          </AdminCardHeader>
+          <div className="p-0">
+            {stats.recentOrders.length === 0 ? (
+              <div className="p-8 text-center text-sm text-gray-500">{t('noRecentOrders')}</div>
+            ) : (
+              <ul className="divide-y divide-gray-100">
+                {stats.recentOrders.map((order) => {
+                  const statusKey = `orderStatus${order.status
+                    .split('_')
+                    .map((s: string) => s.charAt(0).toUpperCase() + s.slice(1))
+                    .join('')}` as Parameters<typeof t>[0];
+                  const isPending = order.status === 'pending_payment';
+                  return (
+                    <li key={order.id} className="p-4 hover:bg-gray-50 transition-colors">
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2">
+                            <Link
+                              href={`/admin/orders/${order.id}`}
+                              className="text-sm font-medium text-gray-900 hover:text-indigo-600 hover:underline font-mono"
+                            >
+                              {order.order_no}
+                            </Link>
+                            <span
+                              className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
+                                isPending
+                                  ? 'bg-amber-100 text-amber-700'
+                                  : ['paid', 'preparing', 'shipped', 'delivered'].includes(
+                                        order.status
+                                      )
+                                    ? 'bg-indigo-100 text-indigo-700'
+                                    : order.status === 'completed'
+                                      ? 'bg-emerald-100 text-emerald-700'
+                                      : 'bg-rose-100 text-rose-700'
+                              }`}
+                            >
+                              {t(statusKey)}
+                            </span>
+                          </div>
+                          <p className="text-xs text-gray-500 mt-0.5">
+                            {order.buyer_name || '—'} · ₩
+                            {numberFormatter.format(order.total_amount)}
+                          </p>
+                        </div>
+                        <span className="shrink-0 text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">
+                          {formatDate(order.created_at, locale)}
+                        </span>
+                      </div>
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </div>

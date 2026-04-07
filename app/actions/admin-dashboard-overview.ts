@@ -98,6 +98,15 @@ export type DashboardOverviewStats = {
   }>;
   siteAnalytics: DashboardSiteAnalytics | null;
   feedback: DashboardFeedbackSummary | null;
+  pendingOrderCount: number;
+  recentOrders: Array<{
+    id: string;
+    order_no: string;
+    buyer_name: string | null;
+    total_amount: number;
+    status: string;
+    created_at: string;
+  }>;
 };
 
 function parsePrice(price: unknown): number {
@@ -238,6 +247,8 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
     hiddenArtworksResult,
     recentArtworksResult,
     currentMonthSoldRowsResult,
+    pendingOrderCountResult,
+    recentOrdersResult,
   ] = await Promise.all([
     supabase.from('artists').select('id', { count: 'exact', head: true }),
     supabase
@@ -270,6 +281,15 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
       .gte('sold_at', monthBoundary.startIso)
       .lt('sold_at', monthBoundary.endIso)
       .is('voided_at', null),
+    supabase
+      .from('orders')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'pending_payment'),
+    supabase
+      .from('orders')
+      .select('id, order_no, buyer_name, total_amount, status, created_at')
+      .order('created_at', { ascending: false })
+      .limit(5),
   ]);
 
   const currentMonthSalesVoidColumnMissing = isMissingVoidedAtColumnError(
@@ -286,6 +306,7 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
     hiddenArtworksResult.error,
     recentArtworksResult.error,
     currentMonthSalesVoidColumnMissing ? null : currentMonthSoldRowsResult.error,
+    // orders 테이블이 없을 수 있으므로 graceful: 에러 무시하고 0/빈배열로 fallback
   ].filter((error): error is NonNullable<typeof error> => !!error);
 
   if (baseErrors.length > 0) {
@@ -425,5 +446,14 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
     }),
     siteAnalytics,
     feedback,
+    pendingOrderCount: pendingOrderCountResult.count ?? 0,
+    recentOrders: (recentOrdersResult.data ?? []).map((row) => ({
+      id: row.id as string,
+      order_no: row.order_no as string,
+      buyer_name: (row.buyer_name as string | null) ?? null,
+      total_amount: row.total_amount as number,
+      status: row.status as string,
+      created_at: row.created_at as string,
+    })),
   };
 }

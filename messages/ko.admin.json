@@ -55,7 +55,19 @@
       "noPendingApplications": "대기 중인 신청이 없습니다.",
       "recentArtworksTitle": "최근 등록된 작품",
       "viewRecent": "최근 등록순으로 보기",
-      "noArtworks": "등록된 작품이 없습니다."
+      "noArtworks": "등록된 작품이 없습니다.",
+      "pendingOrders": "결제 대기 주문",
+      "recentOrdersTitle": "최근 주문",
+      "noRecentOrders": "최근 주문이 없습니다.",
+      "orderStatusPendingPayment": "결제 대기",
+      "orderStatusPaid": "결제 완료",
+      "orderStatusPreparing": "준비 중",
+      "orderStatusShipped": "배송 중",
+      "orderStatusDelivered": "배송 완료",
+      "orderStatusCompleted": "거래 완료",
+      "orderStatusCancelled": "취소됨",
+      "orderStatusRefunded": "환불됨",
+      "orderStatusRefundRequested": "환불 요청"
     },
     "trash": {
       "restoreError": "복원 중 오류가 발생했습니다.",
