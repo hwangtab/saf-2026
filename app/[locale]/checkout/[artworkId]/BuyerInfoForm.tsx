@@ -30,7 +30,13 @@ declare global {
   interface Window {
     daum?: {
       Postcode: new (opts: {
-        oncomplete: (data: { address: string; zonecode: string }) => void;
+        oncomplete: (data: {
+          address: string;
+          roadAddress: string;
+          jibunAddress: string;
+          zonecode: string;
+          userSelectedType: 'R' | 'J';
+        }) => void;
       }) => { open(): void };
     };
   }
@@ -75,9 +81,11 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, { locale: 'ko' | 'en' }>(({ l
       if (!window.daum?.Postcode) return;
       new window.daum.Postcode({
         oncomplete: (data) => {
+          const selectedAddress =
+            data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
           setForm((prev) => ({
             ...prev,
-            shippingAddress: data.address,
+            shippingAddress: selectedAddress,
             shippingPostalCode: data.zonecode,
           }));
         },
