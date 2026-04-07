@@ -140,7 +140,11 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
                 <CreditCard className="w-5 h-5 text-primary" /> Payment
               </h4>
               <div className="bg-gray-50 p-4 rounded-lg space-y-2">
-                <p>Payments are handled securely via Cafe24 SSL checkout.</p>
+                <p>
+                  {process.env.NEXT_PUBLIC_PAYMENT_MODE === 'toss'
+                    ? 'Payments are processed securely via TossPayments.'
+                    : 'Payments are handled securely via Cafe24 SSL checkout.'}
+                </p>
                 <p className="text-gray-600">
                   Order confirmation timing may vary depending on payment method approval.
                 </p>
