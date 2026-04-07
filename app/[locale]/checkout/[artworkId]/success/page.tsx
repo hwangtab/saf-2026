@@ -14,7 +14,7 @@ interface Props {
 }
 
 export default async function SuccessPage({ params, searchParams }: Props) {
-  const { artworkId, locale } = await params;
+  const { artworkId } = await params;
   const { paymentKey, orderId, amount, paymentType } = await searchParams;
 
   if (!paymentKey || !orderId || !amount) {
@@ -28,7 +28,6 @@ export default async function SuccessPage({ params, searchParams }: Props) {
       amount={amount}
       paymentType={paymentType ?? ''}
       artworkId={artworkId}
-      locale={locale === 'en' ? 'en' : 'ko'}
     />
   );
 }

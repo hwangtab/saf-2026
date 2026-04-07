@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { formatPriceForDisplay } from '@/lib/utils';
 
@@ -10,7 +11,6 @@ interface Props {
   amount: string;
   paymentType: string;
   artworkId: string;
-  locale: 'ko' | 'en';
 }
 
 interface VirtualAccount {
@@ -21,8 +21,8 @@ interface VirtualAccount {
 
 type PageState = 'loading' | 'success' | 'virtual' | 'error';
 
-export default function SuccessClient({ paymentKey, orderId, amount, locale }: Props) {
-  const isKo = locale === 'ko';
+export default function SuccessClient({ paymentKey, orderId, amount }: Props) {
+  const t = useTranslations('checkout');
 
   const [state, setPageState] = useState<PageState>('loading');
   const [virtualAccount, setVirtualAccount] = useState<VirtualAccount | null>(null);
@@ -50,9 +50,7 @@ export default function SuccessClient({ paymentKey, orderId, amount, locale }: P
         };
 
         if (!res.ok || !data.success) {
-          setErrorMessage(
-            data.error ?? (isKo ? '결제 확인에 실패했습니다.' : 'Payment confirmation failed.')
-          );
+          setErrorMessage(data.error ?? t('confirmationError'));
           setPageState('error');
           return;
         }
@@ -66,7 +64,7 @@ export default function SuccessClient({ paymentKey, orderId, amount, locale }: P
           setPageState('success');
         }
       } catch {
-        setErrorMessage(isKo ? '네트워크 오류가 발생했습니다.' : 'A network error occurred.');
+        setErrorMessage(t('networkError'));
         setPageState('error');
       }
     }
@@ -78,9 +76,7 @@ export default function SuccessClient({ paymentKey, orderId, amount, locale }: P
   if (state === 'loading') {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p className="text-gray-500">
-          {isKo ? '결제를 확인하는 중...' : 'Confirming your payment...'}
-        </p>
+        <p className="text-gray-500">{t('confirmingPayment')}</p>
       </div>
     );
   }
@@ -91,15 +87,13 @@ export default function SuccessClient({ paymentKey, orderId, amount, locale }: P
         <div className="max-w-lg mx-auto px-4 text-center">
           <div className="rounded-2xl border border-red-100 bg-white p-10 shadow-sm">
             <p className="text-4xl mb-4">!</p>
-            <h1 className="text-xl font-bold text-charcoal mb-2">
-              {isKo ? '결제 확인 실패' : 'Payment Confirmation Failed'}
-            </h1>
+            <h1 className="text-xl font-bold text-charcoal mb-2">{t('confirmationFailed')}</h1>
             <p className="text-sm text-gray-600 mb-6">{errorMessage}</p>
             <Link
               href="/artworks"
               className="inline-block rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white hover:opacity-90"
             >
-              {isKo ? '작품 목록으로' : 'Browse Artworks'}
+              {t('backToArtworks')}
             </Link>
           </div>
         </div>
@@ -113,49 +107,39 @@ export default function SuccessClient({ paymentKey, orderId, amount, locale }: P
         <div className="max-w-lg mx-auto px-4">
           <div className="rounded-2xl border border-gray-200 bg-white p-10 shadow-sm text-center">
             <p className="text-4xl mb-4">🏦</p>
-            <h1 className="text-2xl font-bold text-charcoal mb-2">
-              {isKo ? '입금 대기 중입니다' : 'Awaiting Deposit'}
-            </h1>
-            <p className="text-sm text-gray-500 mb-8">
-              {isKo
-                ? '아래 가상 계좌로 입금해주세요. 입금이 확인되면 주문이 완료됩니다.'
-                : 'Please deposit to the virtual account below. Your order will be confirmed upon receipt.'}
-            </p>
+            <h1 className="text-2xl font-bold text-charcoal mb-2">{t('waitingDeposit')}</h1>
+            <p className="text-sm text-gray-500 mb-8">{t('depositInstructions')}</p>
 
             <div className="rounded-xl bg-gray-50 p-6 text-left space-y-3 mb-8">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">{isKo ? '은행' : 'Bank'}</span>
+                <span className="text-gray-500">{t('depositBankName')}</span>
                 <span className="font-semibold text-charcoal">{virtualAccount.bankName}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">{isKo ? '계좌번호' : 'Account'}</span>
+                <span className="text-gray-500">{t('depositAccountNumber')}</span>
                 <span className="font-semibold text-charcoal font-mono">
                   {virtualAccount.accountNumber}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">{isKo ? '입금 기한' : 'Due by'}</span>
+                <span className="text-gray-500">{t('depositDeadline')}</span>
                 <span className="font-semibold text-charcoal">{virtualAccount.dueDate}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">{isKo ? '입금액' : 'Amount'}</span>
+                <span className="text-gray-500">{t('depositAmount')}</span>
                 <span className="font-bold text-primary-a11y">
                   {formatPriceForDisplay(Number(amount))}
                 </span>
               </div>
             </div>
 
-            <p className="text-xs text-gray-400 mb-6">
-              {isKo
-                ? '입금 확인 후 별도 이메일로 안내 드립니다.'
-                : 'You will be notified by email once the deposit is confirmed.'}
-            </p>
+            <p className="text-xs text-gray-400 mb-6">{t('depositEmailNotice')}</p>
 
             <Link
               href="/artworks"
               className="inline-block rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white hover:opacity-90"
             >
-              {isKo ? '작품 더 둘러보기' : 'Browse More Artworks'}
+              {t('browseMore')}
             </Link>
           </div>
         </div>
@@ -169,22 +153,16 @@ export default function SuccessClient({ paymentKey, orderId, amount, locale }: P
       <div className="max-w-lg mx-auto px-4">
         <div className="rounded-2xl border border-gray-200 bg-white p-10 shadow-sm text-center">
           <p className="text-5xl mb-4">✓</p>
-          <h1 className="text-2xl font-bold text-charcoal mb-2">
-            {isKo ? '결제가 완료되었습니다' : 'Payment Complete'}
-          </h1>
-          <p className="text-sm text-gray-500 mb-8">
-            {isKo
-              ? '작품 구매에 참여해주셔서 감사합니다. 구매 확인 이메일이 발송됩니다.'
-              : 'Thank you for your purchase. A confirmation email will be sent shortly.'}
-          </p>
+          <h1 className="text-2xl font-bold text-charcoal mb-2">{t('paymentSuccess')}</h1>
+          <p className="text-sm text-gray-500 mb-8">{t('successThankYou')}</p>
 
           <div className="rounded-xl bg-gray-50 p-6 text-left space-y-3 mb-8">
             <div className="flex justify-between text-sm">
-              <span className="text-gray-500">{isKo ? '주문 번호' : 'Order No.'}</span>
+              <span className="text-gray-500">{t('orderNo')}</span>
               <span className="font-mono font-semibold text-charcoal">{orderId}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-500">{isKo ? '결제 금액' : 'Amount Paid'}</span>
+              <span className="text-gray-500">{t('paymentAmount')}</span>
               <span className="font-bold text-primary-a11y">
                 {formatPriceForDisplay(Number(amount))}
               </span>
@@ -195,7 +173,7 @@ export default function SuccessClient({ paymentKey, orderId, amount, locale }: P
             href="/artworks"
             className="inline-block rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white hover:opacity-90"
           >
-            {isKo ? '작품 더 둘러보기' : 'Browse More Artworks'}
+            {t('browseMore')}
           </Link>
         </div>
       </div>

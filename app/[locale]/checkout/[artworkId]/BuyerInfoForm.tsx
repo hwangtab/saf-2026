@@ -1,6 +1,7 @@
 'use client';
 
 import { forwardRef, useImperativeHandle, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 export interface BuyerInfo {
   buyerName: string;
@@ -46,8 +47,8 @@ const inputClass =
   'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary';
 const labelClass = 'block text-sm font-medium text-charcoal mb-1';
 
-const BuyerInfoForm = forwardRef<BuyerInfo | null, { locale: 'ko' | 'en' }>(({ locale }, ref) => {
-  const isKo = locale === 'ko';
+const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
+  const t = useTranslations('checkout');
 
   const [form, setForm] = useState<FormState>({
     buyerName: '',
@@ -106,13 +107,11 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, { locale: 'ko' | 'en' }>(({ l
     <div className="space-y-6">
       {/* 구매자 정보 */}
       <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h3 className="mb-4 text-base font-semibold text-charcoal">
-          {isKo ? '구매자 정보' : 'Buyer Information'}
-        </h3>
+        <h3 className="mb-4 text-base font-semibold text-charcoal">{t('buyerInfo')}</h3>
         <div className="space-y-4">
           <div>
             <label className={labelClass}>
-              {isKo ? '이름' : 'Name'} <span className="text-red-500">*</span>
+              {t('buyerName')} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -120,12 +119,12 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, { locale: 'ko' | 'en' }>(({ l
               value={form.buyerName}
               onChange={handleChange('buyerName')}
               required
-              placeholder={isKo ? '홍길동' : 'Full name'}
+              placeholder={t('placeholderName')}
             />
           </div>
           <div>
             <label className={labelClass}>
-              {isKo ? '이메일' : 'Email'} <span className="text-red-500">*</span>
+              {t('buyerEmail')} <span className="text-red-500">*</span>
             </label>
             <input
               type="email"
@@ -138,7 +137,7 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, { locale: 'ko' | 'en' }>(({ l
           </div>
           <div>
             <label className={labelClass}>
-              {isKo ? '연락처' : 'Phone'} <span className="text-red-500">*</span>
+              {t('buyerPhone')} <span className="text-red-500">*</span>
             </label>
             <input
               type="tel"
@@ -154,9 +153,7 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, { locale: 'ko' | 'en' }>(({ l
 
       {/* 배송지 정보 */}
       <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h3 className="mb-4 text-base font-semibold text-charcoal">
-          {isKo ? '배송지 정보' : 'Shipping Information'}
-        </h3>
+        <h3 className="mb-4 text-base font-semibold text-charcoal">{t('shippingInfo')}</h3>
 
         <label className="mb-4 flex cursor-pointer items-center gap-2 text-sm text-charcoal">
           <input
@@ -165,7 +162,7 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, { locale: 'ko' | 'en' }>(({ l
             onChange={(e) => setSameAsBuyer(e.target.checked)}
             className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
           />
-          {isKo ? '구매자 정보와 동일' : 'Same as buyer information'}
+          {t('sameAsBuyer')}
         </label>
 
         <div className="space-y-4">
@@ -173,7 +170,7 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, { locale: 'ko' | 'en' }>(({ l
             <>
               <div>
                 <label className={labelClass}>
-                  {isKo ? '수령인' : 'Recipient'} <span className="text-red-500">*</span>
+                  {t('shippingName')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -181,12 +178,12 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, { locale: 'ko' | 'en' }>(({ l
                   value={form.shippingName}
                   onChange={handleChange('shippingName')}
                   required
-                  placeholder={isKo ? '홍길동' : 'Full name'}
+                  placeholder={t('placeholderName')}
                 />
               </div>
               <div>
                 <label className={labelClass}>
-                  {isKo ? '연락처' : 'Phone'} <span className="text-red-500">*</span>
+                  {t('buyerPhone')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="tel"
@@ -202,7 +199,7 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, { locale: 'ko' | 'en' }>(({ l
 
           <div>
             <label className={labelClass}>
-              {isKo ? '주소' : 'Address'} <span className="text-red-500">*</span>
+              {t('addressLabel')} <span className="text-red-500">*</span>
             </label>
             <div className="flex gap-2">
               <input
@@ -210,48 +207,48 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, { locale: 'ko' | 'en' }>(({ l
                 className={inputClass}
                 value={form.shippingAddress}
                 readOnly
-                placeholder={isKo ? '주소 검색을 클릭하세요' : 'Click to search address'}
+                placeholder={t('placeholderAddress')}
               />
               <button
                 type="button"
                 onClick={handleAddressSearch}
                 className="shrink-0 rounded-lg border border-primary px-3 py-2 text-sm font-medium text-primary hover:bg-primary/5"
               >
-                {isKo ? '주소 검색' : 'Search'}
+                {t('searchAddress')}
               </button>
             </div>
           </div>
 
           <div>
-            <label className={labelClass}>{isKo ? '우편번호' : 'Postal Code'}</label>
+            <label className={labelClass}>{t('shippingPostalCode')}</label>
             <input
               type="text"
               className={inputClass}
               value={form.shippingPostalCode}
               readOnly
-              placeholder={isKo ? '우편번호' : 'Postal code'}
+              placeholder={t('shippingPostalCode')}
             />
           </div>
 
           <div>
-            <label className={labelClass}>{isKo ? '상세 주소' : 'Address Detail'}</label>
+            <label className={labelClass}>{t('shippingAddressDetail')}</label>
             <input
               type="text"
               className={inputClass}
               value={form.shippingAddressDetail}
               onChange={handleChange('shippingAddressDetail')}
-              placeholder={isKo ? '동/호수 등 상세 주소' : 'Apartment, suite, etc.'}
+              placeholder={t('placeholderAddressDetail')}
             />
           </div>
 
           <div>
-            <label className={labelClass}>{isKo ? '배송 메모' : 'Delivery Note'}</label>
+            <label className={labelClass}>{t('shippingMemo')}</label>
             <input
               type="text"
               className={inputClass}
               value={form.shippingMemo}
               onChange={handleChange('shippingMemo')}
-              placeholder={isKo ? '배송 시 요청사항 (선택)' : 'Special instructions (optional)'}
+              placeholder={t('placeholderMemo')}
             />
           </div>
         </div>

@@ -49,6 +49,16 @@ export async function POST(req: NextRequest) {
         .single();
 
       if (paymentRecord) {
+        // 멱등성 가드: 이미 paid 상태이면 중복 처리 방지
+        const { data: existingOrder } = await supabase
+          .from('orders')
+          .select('status')
+          .eq('id', paymentRecord.order_id)
+          .single();
+        if (existingOrder?.status === 'paid') {
+          return NextResponse.json({ received: true }, { status: 200 });
+        }
+
         // Update payment status
         const existingWebhooks = Array.isArray(paymentRecord.webhook_responses)
           ? paymentRecord.webhook_responses
@@ -68,10 +78,10 @@ export async function POST(req: NextRequest) {
           .update({ status: 'paid', paid_at: new Date().toISOString() })
           .eq('id', paymentRecord.order_id);
 
-        // Fetch order for artwork_id and total_amount
+        // Fetch order for artwork_id, total_amount, and buyer info
         const { data: order } = await supabase
           .from('orders')
-          .select('artwork_id, total_amount')
+          .select('artwork_id, total_amount, order_no, buyer_name, buyer_phone')
           .eq('id', paymentRecord.order_id)
           .single();
 
@@ -84,6 +94,9 @@ export async function POST(req: NextRequest) {
             source: 'toss',
             source_detail: 'toss_api',
             order_id: paymentRecord.order_id,
+            external_order_id: order.order_no,
+            buyer_name: order.buyer_name,
+            buyer_phone: order.buyer_phone,
             sold_at: new Date().toISOString(),
           });
         }
