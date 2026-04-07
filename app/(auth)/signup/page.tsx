@@ -126,7 +126,7 @@ export default function SignUpPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-canvas-soft flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-canvas-soft flex flex-col justify-center pt-20 pb-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md bg-white p-8 rounded-lg shadow text-center">
           <h2 className="text-2xl font-bold text-green-600 mb-4">{copy.doneTitle}</h2>
           <p className="text-gray-600 mb-6">
@@ -153,7 +153,7 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="min-h-screen bg-canvas-soft flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-canvas-soft flex flex-col justify-center pt-20 pb-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           SAF Online
