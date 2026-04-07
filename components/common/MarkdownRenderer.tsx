@@ -3,6 +3,7 @@ import remarkGfm from 'remark-gfm';
 import clsx from 'clsx';
 import type { Components } from 'react-markdown';
 import React from 'react';
+import { Link } from '@/i18n/navigation';
 
 function ImageFigure({ src, alt }: { src: string; alt?: string }) {
   return (
@@ -25,7 +26,7 @@ function ImageFigure({ src, alt }: { src: string; alt?: string }) {
 
 const markdownComponents: Components = {
   img({ src, alt }) {
-    if (!src) return null;
+    if (!src || typeof src !== 'string') return null;
     return <ImageFigure src={src} alt={alt ?? undefined} />;
   },
   a({ href, children }) {
@@ -49,13 +50,13 @@ const markdownComponents: Components = {
         </a>
       );
     }
-    // 일반 링크
+    // 내부 링크 (작품 페이지 등) — i18n 라우팅
+    if (href && !href.startsWith('http')) {
+      return <Link href={href}>{children}</Link>;
+    }
+    // 외부 링크
     return (
-      <a
-        href={href}
-        target={href?.startsWith('http') ? '_blank' : undefined}
-        rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
-      >
+      <a href={href} target="_blank" rel="noopener noreferrer">
         {children}
       </a>
     );
