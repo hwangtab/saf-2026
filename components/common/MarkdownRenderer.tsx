@@ -15,7 +15,7 @@ export default function MarkdownRenderer({ content, className }: Props) {
         // 문단 줄간격 및 여백
         'prose-p:leading-relaxed prose-p:mb-6',
         // 제목 간격 + 구분선
-        'prose-headings:font-display prose-headings:text-charcoal',
+        'prose-headings:font-display prose-headings:font-normal prose-headings:text-charcoal',
         'prose-h2:mt-12 prose-h2:mb-5 prose-h2:pb-3 prose-h2:border-b prose-h2:border-gray-100',
         'prose-h3:mt-8 prose-h3:mb-4',
         // 테이블 — 선 + 패딩
