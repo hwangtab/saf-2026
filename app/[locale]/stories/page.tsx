@@ -16,6 +16,13 @@ import type { StoryCategory } from '@/types';
 
 export const revalidate = 300;
 
+/** body 마크다운에서 첫 번째 이미지 URL 추출 */
+function extractFirstImage(body: string | null | undefined): string | null {
+  if (!body) return null;
+  const match = body.match(/!\[.*?\]\((https?:\/\/[^)]+)\)/);
+  return match?.[1] ?? null;
+}
+
 type LocaleCode = 'ko' | 'en';
 
 type StoriesPageCopy = {
@@ -205,20 +212,23 @@ export default async function StoriesPage({
                   className="group block overflow-hidden rounded-2xl shadow-lg transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-2xl"
                 >
                   <div className="relative aspect-[16/10] md:aspect-[21/9]">
-                    {featured.thumbnail ? (
-                      <SafeImage
-                        src={featured.thumbnail}
-                        alt={
-                          locale === 'en' && featured.title_en ? featured.title_en : featured.title
-                        }
-                        fill
-                        className="object-cover motion-safe:animate-hero-breathing transition-transform duration-500 group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 bg-gradient-to-br from-charcoal to-charcoal/80 flex items-center justify-center">
-                        <span className="text-white/20 text-8xl font-display">M</span>
-                      </div>
-                    )}
+                    {(() => {
+                      const featuredImg = featured.thumbnail || extractFirstImage(featured.body);
+                      const featuredTitle =
+                        locale === 'en' && featured.title_en ? featured.title_en : featured.title;
+                      return featuredImg ? (
+                        <SafeImage
+                          src={featuredImg}
+                          alt={featuredTitle}
+                          fill
+                          className="object-cover motion-safe:animate-hero-breathing transition-transform duration-500 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 bg-gradient-to-br from-charcoal to-charcoal/80 flex items-center justify-center">
+                          <span className="text-white/20 text-8xl font-display">M</span>
+                        </div>
+                      );
+                    })()}
                     {/* Gradient overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                     {/* Text overlay */}
@@ -274,23 +284,26 @@ export default async function StoriesPage({
                         }}
                       >
                         <div className="relative aspect-[16/10] overflow-hidden">
-                          {story.thumbnail ? (
-                            <>
-                              <SafeImage
-                                src={story.thumbnail}
-                                alt={title}
-                                fill
-                                className="object-cover transition-transform duration-500 group-hover:scale-105"
-                              />
-                              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-                            </>
-                          ) : (
-                            <div className="absolute inset-0 bg-gradient-to-br from-canvas to-canvas-soft flex items-center justify-center">
-                              <span className="text-charcoal-muted/20 text-5xl font-display">
-                                M
-                              </span>
-                            </div>
-                          )}
+                          {(() => {
+                            const cardImg = story.thumbnail || extractFirstImage(story.body);
+                            return cardImg ? (
+                              <>
+                                <SafeImage
+                                  src={cardImg}
+                                  alt={title}
+                                  fill
+                                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                                />
+                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+                              </>
+                            ) : (
+                              <div className="absolute inset-0 bg-gradient-to-br from-canvas to-canvas-soft flex items-center justify-center">
+                                <span className="text-charcoal-muted/20 text-5xl font-display">
+                                  M
+                                </span>
+                              </div>
+                            );
+                          })()}
                         </div>
                         <div className="p-5">
                           <span className="inline-block text-xs font-semibold tracking-wider uppercase text-primary mb-3">

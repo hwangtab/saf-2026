@@ -19,6 +19,12 @@ import type { StoryCategory } from '@/types';
 
 export const revalidate = 1800;
 
+function extractFirstImage(body: string | null | undefined): string | null {
+  if (!body) return null;
+  const match = body.match(/!\[.*?\]\((https?:\/\/[^)]+)\)/);
+  return match?.[1] ?? null;
+}
+
 interface Props {
   params: Promise<{ slug: string }>;
 }
@@ -200,16 +206,19 @@ export default async function StoryDetailPage({ params }: Props) {
                       animationFillMode: 'forwards',
                     }}
                   >
-                    {related.thumbnail && (
-                      <div className="relative aspect-[16/10] overflow-hidden">
-                        <SafeImage
-                          src={related.thumbnail}
-                          alt={relTitle}
-                          fill
-                          className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                      </div>
-                    )}
+                    {(() => {
+                      const relImg = related.thumbnail || extractFirstImage(related.body);
+                      return relImg ? (
+                        <div className="relative aspect-[16/10] overflow-hidden">
+                          <SafeImage
+                            src={relImg}
+                            alt={relTitle}
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                        </div>
+                      ) : null;
+                    })()}
                     <div className="p-5">
                       <span className="text-xs font-semibold tracking-wider uppercase text-primary">
                         {isEn
