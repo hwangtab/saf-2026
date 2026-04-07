@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { loadTossPayments, ANONYMOUS } from '@tosspayments/tosspayments-sdk';
 
 import SafeImage from '@/components/common/SafeImage';
@@ -32,7 +33,7 @@ export default function CheckoutClient({
   imageUrl,
   locale,
 }: Props) {
-  const isKo = locale === 'ko';
+  const t = useTranslations('checkout');
   const shippingFee = calculateShippingFee(price);
   const totalAmount = price + shippingFee;
 
@@ -55,7 +56,7 @@ export default function CheckoutClient({
         await w.setAmount({ currency: 'KRW', value: totalAmount });
         setWidgets(w);
       } catch (err) {
-        setError(isKo ? '결제 모듈을 불러오는 데 실패했습니다.' : 'Failed to load payment module.');
+        setError(t('loadModuleError'));
       } finally {
         setLoading(false);
       }
@@ -90,7 +91,7 @@ export default function CheckoutClient({
 
     const buyerInfo = buyerInfoRef.current;
     if (!buyerInfo) {
-      setError(isKo ? '구매자 정보를 확인해주세요.' : 'Please fill in buyer information.');
+      setError(t('errorBuyerInfoRequired'));
       return;
     }
 
@@ -107,17 +108,15 @@ export default function CheckoutClient({
     } = buyerInfo;
 
     if (!buyerName || !buyerEmail || !buyerPhone) {
-      setError(
-        isKo ? '구매자 이름, 이메일, 연락처는 필수입니다.' : 'Name, email, and phone are required.'
-      );
+      setError(t('errorBuyerFieldsRequired'));
       return;
     }
     if (!shippingAddress || !shippingPostalCode) {
-      setError(isKo ? '배송지 주소를 입력해주세요.' : 'Please enter a shipping address.');
+      setError(t('errorShippingAddressRequired'));
       return;
     }
     if (!shippingName || !shippingPhone) {
-      setError(isKo ? '수령인 정보를 입력해주세요.' : 'Please enter recipient information.');
+      setError(t('errorRecipientRequired'));
       return;
     }
 
@@ -160,10 +159,7 @@ export default function CheckoutClient({
     } catch (err: unknown) {
       const tossErr = err as { code?: string; message?: string } | null;
       if (tossErr?.code === 'USER_CANCEL') return;
-      setError(
-        tossErr?.message ??
-          (isKo ? '결제 중 오류가 발생했습니다.' : 'An error occurred during payment.')
-      );
+      setError(tossErr?.message ?? t('errorPayment'));
     } finally {
       setSubmitting(false);
     }
@@ -178,10 +174,10 @@ export default function CheckoutClient({
           className="mb-6 inline-flex items-center gap-1 text-sm text-gray-500 hover:text-charcoal"
         >
           <span aria-hidden="true">←</span>
-          {isKo ? '작품 보기' : 'Back to artwork'}
+          {t('backToArtwork')}
         </Link>
 
-        <h1 className="mb-6 text-2xl font-bold text-charcoal">{isKo ? '결제' : 'Checkout'}</h1>
+        <h1 className="mb-6 text-2xl font-bold text-charcoal">{t('pageTitle')}</h1>
 
         {/* Artwork summary */}
         <div className="mb-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
@@ -207,34 +203,28 @@ export default function CheckoutClient({
 
         {/* Buyer / shipping form */}
         <div className="mb-6">
-          <BuyerInfoForm ref={buyerInfoRef} locale={locale} />
+          <BuyerInfoForm ref={buyerInfoRef} />
         </div>
 
         {/* Price breakdown */}
         <div className="mb-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-          <h3 className="mb-4 text-base font-semibold text-charcoal">
-            {isKo ? '결제 금액' : 'Order Summary'}
-          </h3>
+          <h3 className="mb-4 text-base font-semibold text-charcoal">{t('orderSummaryTitle')}</h3>
           <table className="w-full text-sm">
             <tbody className="divide-y divide-gray-100">
               <tr>
-                <td className="py-2 text-gray-600">{isKo ? '작품 금액' : 'Item'}</td>
+                <td className="py-2 text-gray-600">{t('artworkAmountLabel')}</td>
                 <td className="py-2 text-right font-medium text-charcoal">
                   {formatPriceForDisplay(price)}
                 </td>
               </tr>
               <tr>
-                <td className="py-2 text-gray-600">{isKo ? '배송비' : 'Shipping'}</td>
+                <td className="py-2 text-gray-600">{t('shippingFee')}</td>
                 <td className="py-2 text-right font-medium text-charcoal">
-                  {shippingFee === 0
-                    ? isKo
-                      ? '무료'
-                      : 'Free'
-                    : formatPriceForDisplay(shippingFee)}
+                  {shippingFee === 0 ? t('freeShipping') : formatPriceForDisplay(shippingFee)}
                 </td>
               </tr>
               <tr>
-                <td className="py-2 font-bold text-charcoal">{isKo ? '총 결제 금액' : 'Total'}</td>
+                <td className="py-2 font-bold text-charcoal">{t('totalAmount')}</td>
                 <td className="py-2 text-right text-lg font-bold text-primary-a11y">
                   {formatPriceForDisplay(totalAmount)}
                 </td>
@@ -246,9 +236,7 @@ export default function CheckoutClient({
         {/* Toss widget containers */}
         {loading && (
           <div className="mb-4 flex h-32 items-center justify-center rounded-2xl border border-gray-200 bg-white">
-            <span className="text-sm text-gray-400">
-              {isKo ? '결제 모듈 로딩 중...' : 'Loading payment module...'}
-            </span>
+            <span className="text-sm text-gray-400">{t('loadingModule')}</span>
           </div>
         )}
 
@@ -267,7 +255,7 @@ export default function CheckoutClient({
           disabled={loading || submitting}
           className="w-full rounded-xl bg-primary py-4 text-base font-bold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {submitting ? (isKo ? '처리 중...' : 'Processing...') : isKo ? '결제하기' : 'Pay Now'}
+          {submitting ? t('processingShort') : t('payNow')}
         </button>
       </div>
     </div>

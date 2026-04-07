@@ -1,4 +1,5 @@
 import { notFound, redirect } from 'next/navigation';
+import type { Metadata } from 'next';
 
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { getPaymentMode } from '@/lib/integrations/toss/config';
@@ -7,6 +8,18 @@ import { formatPriceForDisplay, resolveArtworkImageUrl } from '@/lib/utils';
 import CheckoutClient from './CheckoutClient';
 
 export const dynamic = 'force-dynamic';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return {
+    title: locale === 'en' ? 'Checkout' : '결제',
+    robots: { index: false, follow: false },
+  };
+}
 
 interface Props {
   params: Promise<{ artworkId: string; locale: string }>;

@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
   // Find the order by order_no (orderId from Toss = our orderNo)
   const { data: order, error: orderError } = await supabase
     .from('orders')
-    .select('id, total_amount, status, artwork_id, order_no')
+    .select('id, total_amount, status, artwork_id, order_no, buyer_name, buyer_phone')
     .eq('order_no', orderId)
     .single();
 
@@ -44,9 +44,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Amount mismatch' }, { status: 400 });
   }
 
-  // Idempotency: already paid
-  if (order.status === 'paid') {
-    return NextResponse.json({ success: true, alreadyPaid: true });
+  // Guard: pending_payment 상태에서만 승인 진행
+  if (order.status !== 'pending_payment') {
+    // 멱등성: 이미 결제 완료
+    if (order.status === 'paid') {
+      return NextResponse.json({ success: true, alreadyPaid: true });
+    }
+    // cancelled, refunded 등 — 결제 불가
+    return NextResponse.json(
+      { error: `주문 상태(${order.status})에서는 결제를 진행할 수 없습니다.` },
+      { status: 400 }
+    );
   }
 
   // Confirm with Toss
@@ -109,6 +117,9 @@ export async function POST(req: NextRequest) {
       source: 'toss',
       source_detail: 'toss_api',
       order_id: order.id,
+      external_order_id: order.order_no,
+      buyer_name: order.buyer_name,
+      buyer_phone: order.buyer_phone,
       sold_at: new Date().toISOString(),
     });
   }
