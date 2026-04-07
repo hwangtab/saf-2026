@@ -1,6 +1,29 @@
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import clsx from 'clsx';
+import type { Components } from 'react-markdown';
+
+const markdownComponents: Components = {
+  img({ src, alt }) {
+    if (!src) return null;
+    return (
+      <figure className="my-8">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={src}
+          alt={alt ?? ''}
+          className="w-full rounded-xl shadow-md object-cover"
+          loading="lazy"
+        />
+        {alt && (
+          <figcaption className="mt-3 text-center text-sm text-gray-500 leading-relaxed">
+            {alt}
+          </figcaption>
+        )}
+      </figure>
+    );
+  },
+};
 
 interface Props {
   content: string;
@@ -38,7 +61,9 @@ export default function MarkdownRenderer({ content, className }: Props) {
         className
       )}
     >
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+      <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+        {content}
+      </ReactMarkdown>
     </div>
   );
 }
