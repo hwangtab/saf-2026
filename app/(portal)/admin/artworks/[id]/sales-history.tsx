@@ -27,12 +27,14 @@ function parsePriceString(priceStr: string | null): number {
   return parseInt(numericStr, 10) || 0;
 }
 
-function normalizeSaleSource(source: ArtworkSale['source']): 'manual' | 'cafe24' {
-  return source === 'cafe24' ? 'cafe24' : 'manual';
+function normalizeSaleSource(source: ArtworkSale['source']): 'manual' | 'online' {
+  return source === 'cafe24' || source === 'toss' ? 'online' : 'manual';
 }
 
 function getSaleSourceLabel(source: ArtworkSale['source']): string {
-  return normalizeSaleSource(source) === 'cafe24' ? '온라인' : '오프라인';
+  const normalized = normalizeSaleSource(source);
+  if (normalized === 'online') return source === 'toss' ? '온라인(토스)' : '온라인';
+  return '오프라인';
 }
 
 function formatPriceInput(val: string) {
@@ -218,7 +220,7 @@ export function SalesHistory({
     }
   }
 
-  const isManual = (source: ArtworkSale['source']) => normalizeSaleSource(source) !== 'cafe24';
+  const isManual = (source: ArtworkSale['source']) => normalizeSaleSource(source) === 'manual';
 
   return (
     <div className="space-y-6 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface)] p-6 shadow-sm">
@@ -558,7 +560,7 @@ export function SalesHistory({
                       <span
                         className={cn(
                           'inline-flex rounded-full px-2 py-0.5 text-xs font-medium',
-                          normalizeSaleSource(sale.source) === 'cafe24'
+                          normalizeSaleSource(sale.source) === 'online'
                             ? 'bg-orange-100 text-orange-700'
                             : 'bg-emerald-100 text-emerald-700'
                         )}

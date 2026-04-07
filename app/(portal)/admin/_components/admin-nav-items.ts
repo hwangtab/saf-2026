@@ -27,6 +27,10 @@ const ADMIN_NAV_GROUPS_BY_LOCALE: Record<LocaleCode, AdminNavGroup[]> = {
       ],
     },
     {
+      label: '주문',
+      items: [{ href: '/admin/orders', label: '주문 관리' }],
+    },
+    {
       label: '분석',
       items: [
         { href: '/admin/revenue', label: '매출 현황' },
@@ -63,6 +67,10 @@ const ADMIN_NAV_GROUPS_BY_LOCALE: Record<LocaleCode, AdminNavGroup[]> = {
         { href: '/admin/artworks', label: 'Artworks' },
         { href: '/admin/content', label: 'Content Manager' },
       ],
+    },
+    {
+      label: 'Orders',
+      items: [{ href: '/admin/orders', label: 'Order Management' }],
     },
     {
       label: 'Analytics',
