@@ -77,7 +77,7 @@ const nextConfig = {
               "font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
               "connect-src 'self' https://*.kakao.com https://*.daum.net https://*.daumcdn.net https://*.vercel-insights.com https://*.supabase.co wss://*.supabase.co https://api.tosspayments.com https://log.tosspayments.com",
               "worker-src 'self' blob:",
-              "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://*.kakao.com https://js.tosspayments.com https://payment-widget.tosspayments.com",
+              "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://*.kakao.com https://js.tosspayments.com https://payment-widget.tosspayments.com https://t1.daumcdn.net https://postcode.map.daum.net",
             ].join('; '),
           },
           { key: 'X-Frame-Options', value: 'DENY' },
