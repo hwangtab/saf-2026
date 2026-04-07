@@ -12,10 +12,28 @@ export default function MarkdownRenderer({ content, className }: Props) {
     <div
       className={clsx(
         'prose prose-lg prose-gray max-w-none',
+        // 문단 줄간격 및 여백
+        'prose-p:leading-relaxed prose-p:mb-6',
+        // 제목 간격 + 구분선
         'prose-headings:font-display prose-headings:text-charcoal',
+        'prose-h2:mt-12 prose-h2:mb-5 prose-h2:pb-3 prose-h2:border-b prose-h2:border-gray-100',
+        'prose-h3:mt-8 prose-h3:mb-4',
+        // 테이블 — 선 + 패딩
+        'prose-table:border-collapse prose-table:w-full',
+        'prose-th:border prose-th:border-gray-200 prose-th:bg-gray-50 prose-th:px-4 prose-th:py-3 prose-th:text-left prose-th:font-semibold prose-th:text-charcoal prose-th:text-sm',
+        'prose-td:border prose-td:border-gray-200 prose-td:px-4 prose-td:py-3 prose-td:align-top',
+        'prose-tr:even:bg-gray-50/50',
+        // 링크
         'prose-a:text-primary prose-a:no-underline hover:prose-a:underline',
+        // 이미지
         'prose-img:rounded-xl prose-img:shadow-md',
-        'prose-blockquote:border-primary prose-blockquote:bg-primary/5 prose-blockquote:rounded-r-lg prose-blockquote:py-1',
+        // 인용구
+        'prose-blockquote:border-primary prose-blockquote:bg-primary/5 prose-blockquote:rounded-r-lg prose-blockquote:py-2 prose-blockquote:px-6 prose-blockquote:not-italic',
+        // 목록 간격
+        'prose-li:mb-2',
+        // 구분선
+        'prose-hr:my-10 prose-hr:border-gray-200',
+        // 강조
         'prose-strong:text-charcoal',
         className
       )}
