@@ -1,5 +1,4 @@
 import { getLocale } from 'next-intl/server';
-import { Link } from '@/i18n/navigation';
 import type { Metadata } from 'next';
 import { CONTACT } from '@/lib/constants';
 
@@ -45,14 +44,14 @@ export default async function NotFound() {
           {copy.description}
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center mb-12">
-          <Link
-            href="/"
+          <a
+            href={locale === 'en' ? '/en' : '/'}
             className="inline-flex items-center justify-center px-6 py-3 bg-white border border-gray-200 text-gray-900 font-bold rounded-lg hover:bg-gray-50 transition-colors shadow-sm min-h-[48px]"
           >
             {copy.goHome}
-          </Link>
-          <Link
-            href="/artworks"
+          </a>
+          <a
+            href={locale === 'en' ? '/en/artworks' : '/artworks'}
             className="inline-grid grid-cols-[1.25rem_auto_1.25rem] items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-strong text-white font-bold rounded-lg transition-colors shadow-sm hover:shadow-md min-h-[48px]"
           >
             <span aria-hidden="true">🎨</span>
@@ -60,7 +59,7 @@ export default async function NotFound() {
             <span aria-hidden="true" className="invisible">
               🎨
             </span>
-          </Link>
+          </a>
         </div>
 
         <div className="pt-8 border-t border-gray-200/60">
