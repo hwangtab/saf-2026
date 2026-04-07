@@ -24,13 +24,13 @@ export type OrderListItem = {
 };
 
 export type OrderDetail = OrderListItem & {
-  recipient_name: string | null;
-  recipient_phone: string | null;
+  shipping_name: string | null;
+  shipping_phone: string | null;
   shipping_address: string | null;
   shipping_address_detail: string | null;
-  memo: string | null;
+  shipping_memo: string | null;
   item_amount: number;
-  shipping_fee: number;
+  shipping_amount: number;
   cancelled_at: string | null;
   refunded_at: string | null;
   payment_key: string | null;
@@ -94,7 +94,7 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
   const { data: order, error } = await supabase
     .from('orders')
     .select(
-      'id, order_no, status, total_amount, item_amount, shipping_fee, buyer_name, buyer_phone, recipient_name, recipient_phone, shipping_address, shipping_address_detail, memo, created_at, paid_at, cancelled_at, refunded_at, artwork_id, artworks(title, images)'
+      'id, order_no, status, total_amount, item_amount, shipping_amount, buyer_name, buyer_phone, shipping_name, shipping_phone, shipping_address, shipping_address_detail, shipping_memo, created_at, paid_at, cancelled_at, refunded_at, artwork_id, artworks(title, images)'
     )
     .eq('id', orderId)
     .single();
@@ -133,14 +133,14 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
     status: order.status as OrderStatus,
     total_amount: order.total_amount,
     item_amount: (order as any).item_amount ?? order.total_amount,
-    shipping_fee: (order as any).shipping_fee ?? 0,
+    shipping_amount: (order as any).shipping_amount ?? 0,
     buyer_name: order.buyer_name ?? null,
     buyer_phone: (order as any).buyer_phone ?? null,
-    recipient_name: (order as any).recipient_name ?? null,
-    recipient_phone: (order as any).recipient_phone ?? null,
+    shipping_name: (order as any).shipping_name ?? null,
+    shipping_phone: (order as any).shipping_phone ?? null,
     shipping_address: (order as any).shipping_address ?? null,
     shipping_address_detail: (order as any).shipping_address_detail ?? null,
-    memo: (order as any).memo ?? null,
+    shipping_memo: (order as any).shipping_memo ?? null,
     created_at: order.created_at,
     paid_at: (order as any).paid_at ?? null,
     cancelled_at: (order as any).cancelled_at ?? null,
@@ -286,6 +286,7 @@ export async function refundOrder(input: RefundInput) {
 
 const VALID_STATUS_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   pending_payment: ['cancelled'],
+  awaiting_deposit: ['cancelled'],
   paid: ['preparing', 'cancelled'],
   preparing: ['shipped'],
   shipped: ['delivered'],

@@ -355,7 +355,8 @@ export default async function AdminDashboardPage() {
                     .split('_')
                     .map((s: string) => s.charAt(0).toUpperCase() + s.slice(1))
                     .join('')}` as Parameters<typeof t>[0];
-                  const isPending = order.status === 'pending_payment';
+                  const isPending =
+                    order.status === 'pending_payment' || order.status === 'awaiting_deposit';
                   return (
                     <li key={order.id} className="p-4 hover:bg-gray-50 transition-colors">
                       <div className="flex items-center justify-between gap-3">

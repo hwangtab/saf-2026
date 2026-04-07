@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
   const isDone = tossResponse.status === 'DONE';
 
   // Insert payment record
-  const { data: payment } = await supabase
+  const { data: payment, error: paymentInsertError } = await supabase
     .from('payments')
     .insert({
       order_id: order.id,
@@ -97,20 +97,31 @@ export async function POST(req: NextRequest) {
     .select('id')
     .single();
 
+  if (paymentInsertError) {
+    console.error('[confirm] payment INSERT 실패:', paymentInsertError);
+    return NextResponse.json({ error: '결제 기록 저장에 실패했습니다.' }, { status: 500 });
+  }
+
   // Update order status
-  await supabase
+  // DONE → paid, WAITING_FOR_DEPOSIT → awaiting_deposit (가상계좌 입금 대기)
+  const newOrderStatus = isDone ? 'paid' : isVirtualAccount ? 'awaiting_deposit' : order.status;
+  const { error: orderUpdateError } = await supabase
     .from('orders')
     .update({
-      status: isDone ? 'paid' : order.status,
+      status: newOrderStatus,
       paid_at: isDone ? new Date().toISOString() : null,
       metadata: { payment_method: tossResponse.method ?? null },
     })
     .eq('id', order.id);
 
+  if (orderUpdateError) {
+    console.error('[confirm] order UPDATE 실패:', orderUpdateError);
+  }
+
   // If fully paid, insert artwork_sales record
   // (DB trigger update_artwork_status_on_sale will mark artwork as sold)
   if (isDone && payment) {
-    await supabase.from('artwork_sales').insert({
+    const { error: salesInsertError } = await supabase.from('artwork_sales').insert({
       artwork_id: order.artwork_id,
       sale_price: order.total_amount,
       quantity: 1,
@@ -122,6 +133,10 @@ export async function POST(req: NextRequest) {
       buyer_phone: order.buyer_phone,
       sold_at: new Date().toISOString(),
     });
+
+    if (salesInsertError) {
+      console.error('[confirm] artwork_sales INSERT 실패:', salesInsertError);
+    }
   }
 
   return NextResponse.json({

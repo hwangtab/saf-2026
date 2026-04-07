@@ -60,6 +60,7 @@
       "recentOrdersTitle": "Recent Orders",
       "noRecentOrders": "No recent orders.",
       "orderStatusPendingPayment": "Pending Payment",
+      "orderStatusAwaitingDeposit": "Awaiting Deposit",
       "orderStatusPaid": "Paid",
       "orderStatusPreparing": "Preparing",
       "orderStatusShipped": "Shipped",

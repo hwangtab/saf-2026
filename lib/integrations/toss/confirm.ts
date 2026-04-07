@@ -4,6 +4,7 @@
  */
 
 import { getTossAuthHeader, getTossConfig } from './config';
+import { fetchWithTimeout } from './fetch-with-timeout';
 import type { TossConfirmRequest, TossConfirmResponse, TossErrorResponse } from './types';
 
 export type ConfirmResult =
@@ -31,7 +32,7 @@ export async function confirmPayment(
     headers['Idempotency-Key'] = idempotencyKey;
   }
 
-  const response = await fetch(`${config.apiBaseUrl}/v1/payments/confirm`, {
+  const response = await fetchWithTimeout(`${config.apiBaseUrl}/v1/payments/confirm`, {
     method: 'POST',
     headers,
     body: JSON.stringify(request),
@@ -54,7 +55,7 @@ export async function fetchPayment(paymentKey: string): Promise<TossConfirmRespo
   const config = getTossConfig();
   if (!config) return null;
 
-  const response = await fetch(`${config.apiBaseUrl}/v1/payments/${paymentKey}`, {
+  const response = await fetchWithTimeout(`${config.apiBaseUrl}/v1/payments/${paymentKey}`, {
     headers: { Authorization: getTossAuthHeader() },
   });
 
