@@ -71,13 +71,13 @@ const nextConfig = {
               "default-src 'self'",
               // 'unsafe-eval' is required by Kakao Map SDK which uses eval() internally.
               // Removing it breaks map rendering. Track: https://devtalk.kakao.com
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://developers.kakao.com https://dapi.kakao.com https://t1.daumcdn.net https://map.daumcdn.net https://t1.kakaocdn.net https://*.vercel-insights.com",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://developers.kakao.com https://dapi.kakao.com https://t1.daumcdn.net https://map.daumcdn.net https://t1.kakaocdn.net https://*.vercel-insights.com https://js.tosspayments.com",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https: http:",
               "font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
-              "connect-src 'self' https://*.kakao.com https://*.daum.net https://*.daumcdn.net https://*.vercel-insights.com https://*.supabase.co wss://*.supabase.co",
+              "connect-src 'self' https://*.kakao.com https://*.daum.net https://*.daumcdn.net https://*.vercel-insights.com https://*.supabase.co wss://*.supabase.co https://api.tosspayments.com",
               "worker-src 'self' blob:",
-              "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://*.kakao.com",
+              "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://*.kakao.com https://js.tosspayments.com",
             ].join('; '),
           },
           { key: 'X-Frame-Options', value: 'DENY' },

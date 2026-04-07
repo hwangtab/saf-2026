@@ -202,7 +202,11 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
                 <CreditCard className="w-5 h-5 text-primary" /> 결제 안내
               </h4>
               <div className="bg-gray-50 p-4 rounded-lg space-y-2 text-gray-700">
-                <p>카페24 보안결제(SSL) 시스템을 통해 안전하게 결제가 처리됩니다.</p>
+                <p>
+                  {process.env.NEXT_PUBLIC_PAYMENT_MODE === 'toss'
+                    ? '토스페이먼츠 보안결제 시스템을 통해 안전하게 결제가 처리됩니다.'
+                    : '카페24 보안결제(SSL) 시스템을 통해 안전하게 결제가 처리됩니다.'}
+                </p>
                 <p className="text-gray-600">
                   결제수단별 승인 시점에 따라 주문 확정 시점이 달라질 수 있습니다.
                 </p>

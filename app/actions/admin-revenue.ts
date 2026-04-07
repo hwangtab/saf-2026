@@ -17,7 +17,7 @@ export type RevenueQueryInput = {
   month?: string | null;
 };
 
-export type RevenueSource = 'manual' | 'cafe24';
+export type RevenueSource = 'manual' | 'cafe24' | 'toss';
 export type RevenueChannel = 'offline' | 'online';
 
 type SalesAggregate = {
@@ -233,6 +233,7 @@ function createSourceBreakdown(): SourceBreakdown {
   return {
     manual: createSalesAggregate(),
     cafe24: createSalesAggregate(),
+    toss: createSalesAggregate(),
   };
 }
 
@@ -248,11 +249,14 @@ function createMonthlySourceBreakdown(): SourceBreakdown[] {
 }
 
 function normalizeRevenueSource(source: string | null | undefined): RevenueSource {
-  return source === 'cafe24' ? 'cafe24' : 'manual';
+  if (source === 'cafe24') return 'cafe24';
+  if (source === 'toss') return 'toss';
+  return 'manual';
 }
 
 function mapSourceToChannel(source: RevenueSource): RevenueChannel {
-  return source === 'cafe24' ? 'online' : 'offline';
+  if (source === 'cafe24' || source === 'toss') return 'online';
+  return 'offline';
 }
 
 function addToAggregate(target: SalesAggregate, revenue: number, soldCount: number) {
@@ -481,6 +485,8 @@ export async function getRevenueAnalyticsForAuthorizedUser(
     const manualSoldCount = currentYearMonthlyBySource[index].manual.soldCount;
     const cafe24Revenue = currentYearMonthlyBySource[index].cafe24.revenue;
     const cafe24SoldCount = currentYearMonthlyBySource[index].cafe24.soldCount;
+    const tossRevenue = currentYearMonthlyBySource[index].toss.revenue;
+    const tossSoldCount = currentYearMonthlyBySource[index].toss.soldCount;
 
     cumulativeRevenue += current.revenue;
 
@@ -500,9 +506,9 @@ export async function getRevenueAnalyticsForAuthorizedUser(
       manualSoldCount,
       cafe24SoldCount,
       offlineRevenue: manualRevenue,
-      onlineRevenue: cafe24Revenue,
+      onlineRevenue: cafe24Revenue + tossRevenue,
       offlineSoldCount: manualSoldCount,
-      onlineSoldCount: cafe24SoldCount,
+      onlineSoldCount: cafe24SoldCount + tossSoldCount,
     });
   }
 
