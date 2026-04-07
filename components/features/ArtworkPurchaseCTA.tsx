@@ -65,6 +65,12 @@ export default function ArtworkPurchaseCTA({
   const t = useTranslations('artworkDetail');
   const paymentMode = process.env.NEXT_PUBLIC_PAYMENT_MODE;
 
+  // UUID 형식이 아닌 legacy static 작품은 Supabase DB에 없으므로 Toss 결제 불가
+  const isDbArtwork = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+    artworkId
+  );
+  const isTossMode = paymentMode === 'toss' && isDbArtwork;
+
   // D분기: sold — 판매 완료 안내
   if (sold) {
     // 우선순위: 작가의 다른 작품 → 같은 카테고리 → 전체 갤러리
@@ -116,8 +122,8 @@ export default function ArtworkPurchaseCTA({
         </div>
       )}
 
-      {/* A분기: toss 결제 모드 — 내부 체크아웃 */}
-      {paymentMode === 'toss' && hasActionablePrice && (
+      {/* A분기: toss 결제 모드 + DB 작품 — 내부 체크아웃 */}
+      {isTossMode && hasActionablePrice && (
         <>
           <TrackClick
             event="purchase_click"
@@ -149,8 +155,8 @@ export default function ArtworkPurchaseCTA({
         </>
       )}
 
-      {/* A분기: cafe24 결제 모드 — 외부 Cafe24 링크 */}
-      {paymentMode !== 'toss' && shopUrl && (
+      {/* A분기: cafe24 결제 모드 또는 legacy 작품 — 외부 Cafe24 링크 */}
+      {!isTossMode && shopUrl && (
         <>
           <TrackClick
             event="purchase_click"
@@ -185,8 +191,8 @@ export default function ArtworkPurchaseCTA({
         </>
       )}
 
-      {/* B분기: shopUrl 없음 (cafe24 모드) 또는 가격 없음 — 문의 안내 */}
-      {paymentMode !== 'toss' && !shopUrl && (
+      {/* B분기: shopUrl 없음 (cafe24 모드 또는 legacy 작품) 또는 가격 없음 — 문의 안내 */}
+      {!isTossMode && !shopUrl && (
         <>
           <div className="rounded-xl bg-gray-50 p-4 text-center">
             <p className="text-sm text-gray-600 word-keep leading-relaxed">
