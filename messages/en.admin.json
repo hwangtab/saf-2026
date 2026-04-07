@@ -55,7 +55,19 @@
       "noPendingApplications": "No pending applications.",
       "recentArtworksTitle": "Recently Registered Artworks",
       "viewRecent": "Sort by newest",
-      "noArtworks": "No artworks registered."
+      "noArtworks": "No artworks registered.",
+      "pendingOrders": "Pending Orders",
+      "recentOrdersTitle": "Recent Orders",
+      "noRecentOrders": "No recent orders.",
+      "orderStatusPendingPayment": "Pending Payment",
+      "orderStatusPaid": "Paid",
+      "orderStatusPreparing": "Preparing",
+      "orderStatusShipped": "Shipped",
+      "orderStatusDelivered": "Delivered",
+      "orderStatusCompleted": "Completed",
+      "orderStatusCancelled": "Cancelled",
+      "orderStatusRefunded": "Refunded",
+      "orderStatusRefundRequested": "Refund Requested"
     },
     "trash": {
       "restoreError": "An error occurred while restoring.",
