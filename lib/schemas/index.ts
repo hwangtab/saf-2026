@@ -44,11 +44,17 @@ export {
 export { generateExhibitionSchema, isExhibitionCompleted } from './event';
 
 // Content
-export type { FAQItem, VideoSchemaInput, NewsArticleSchemaInput } from './content';
+export type {
+  FAQItem,
+  VideoSchemaInput,
+  NewsArticleSchemaInput,
+  BlogPostingSchemaInput,
+} from './content';
 export {
   generateFAQSchema,
   generateVideoSchema,
   generateNewsArticleSchema,
+  generateBlogPostingSchema,
   generateSpeakableSchema,
 } from './content';
 

@@ -400,3 +400,129 @@ export async function deleteVideo(id: string) {
   revalidatePath('/admin/content/videos');
   revalidatePath('/our-proof');
 }
+
+// ─── Stories (매거진) ───
+
+export async function createStory(formData: FormData) {
+  const admin = await requireAdmin();
+  const supabase = await createSupabaseAdminClient();
+
+  const title = getString(formData, 'title');
+  const slug = getString(formData, 'slug');
+  const title_en = getString(formData, 'title_en') || null;
+  const category = getString(formData, 'category') || 'artist-story';
+  const excerpt = getString(formData, 'excerpt') || null;
+  const excerpt_en = getString(formData, 'excerpt_en') || null;
+  const body = getString(formData, 'body');
+  const body_en = getString(formData, 'body_en') || null;
+  const thumbnail = getString(formData, 'thumbnail') || null;
+  const author = getString(formData, 'author') || null;
+  const published_at = getString(formData, 'published_at') || null;
+  const is_published = formData.get('is_published') === 'on';
+  const display_order = getNumber(formData, 'display_order', 0);
+
+  const { data: story, error } = await supabase
+    .from('stories')
+    .insert({
+      title,
+      slug,
+      title_en,
+      category,
+      excerpt,
+      excerpt_en,
+      body,
+      body_en,
+      thumbnail,
+      author,
+      published_at: published_at || undefined,
+      is_published,
+      display_order,
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  await logAdminAction('story_created', 'story', story.id, { title, slug }, admin.id, {
+    afterSnapshot: story,
+  });
+
+  revalidatePath('/stories');
+  revalidatePath('/sitemap.xml');
+  revalidateTag('stories', 'max');
+}
+
+export async function updateStory(id: string, formData: FormData) {
+  const admin = await requireAdmin();
+  const supabase = await createSupabaseAdminClient();
+
+  const { data: oldStory } = await supabase.from('stories').select('*').eq('id', id).single();
+
+  const title = getString(formData, 'title');
+  const slug = getString(formData, 'slug');
+  const title_en = getString(formData, 'title_en') || null;
+  const category = getString(formData, 'category') || 'artist-story';
+  const excerpt = getString(formData, 'excerpt') || null;
+  const excerpt_en = getString(formData, 'excerpt_en') || null;
+  const body = getString(formData, 'body');
+  const body_en = getString(formData, 'body_en') || null;
+  const thumbnail = getString(formData, 'thumbnail') || null;
+  const author = getString(formData, 'author') || null;
+  const published_at = getString(formData, 'published_at') || null;
+  const is_published = formData.get('is_published') === 'on';
+  const display_order = getNumber(formData, 'display_order', 0);
+
+  const { data: newStory, error } = await supabase
+    .from('stories')
+    .update({
+      title,
+      slug,
+      title_en,
+      category,
+      excerpt,
+      excerpt_en,
+      body,
+      body_en,
+      thumbnail,
+      author,
+      published_at: published_at || undefined,
+      is_published,
+      display_order,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  await logAdminAction('story_updated', 'story', id, { title, slug }, admin.id, {
+    beforeSnapshot: oldStory,
+    afterSnapshot: newStory,
+    reversible: true,
+  });
+
+  revalidatePath('/stories');
+  revalidatePath('/sitemap.xml');
+  revalidateTag('stories', 'max');
+}
+
+export async function deleteStory(id: string) {
+  const admin = await requireAdmin();
+  const supabase = await createSupabaseAdminClient();
+
+  const { data: story } = await supabase.from('stories').select('*').eq('id', id).single();
+
+  const { error } = await supabase.from('stories').delete().eq('id', id);
+  if (error) throw error;
+
+  await logAdminAction('story_deleted', 'story', id, { title: story?.title }, admin.id, {
+    beforeSnapshot: story,
+    afterSnapshot: null,
+    reversible: true,
+  });
+
+  revalidatePath('/stories');
+  revalidatePath('/sitemap.xml');
+  revalidateTag('stories', 'max');
+}

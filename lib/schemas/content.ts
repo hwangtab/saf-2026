@@ -118,6 +118,50 @@ export function generateNewsArticleSchema(article: NewsArticleSchemaInput) {
   };
 }
 
+export interface BlogPostingSchemaInput {
+  title: string;
+  description: string;
+  datePublished: string;
+  dateModified?: string;
+  image: string;
+  url: string;
+  authorName?: string;
+  locale?: 'ko' | 'en';
+}
+
+export function generateBlogPostingSchema(post: BlogPostingSchemaInput) {
+  const inLanguage = post.locale === 'en' ? 'en-US' : 'ko-KR';
+  const orgName = post.locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.description,
+    url: post.url,
+    image: [post.image],
+    datePublished: post.datePublished,
+    dateModified: post.dateModified ?? post.datePublished,
+    inLanguage,
+    author: post.authorName
+      ? { '@type': 'Person', name: post.authorName }
+      : { '@type': 'Organization', '@id': `${SITE_URL}#organization`, name: orgName },
+    publisher: {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}#organization`,
+      name: orgName,
+      url: SITE_URL,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${SITE_URL}/images/logo/publisher-logo.png`,
+        width: 85,
+        height: 60,
+      },
+    },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': post.url },
+  };
+}
+
 export function generateSpeakableSchema(cssSelectors: string[]) {
   return {
     '@context': 'https://schema.org',

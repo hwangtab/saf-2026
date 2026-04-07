@@ -51,6 +51,32 @@ export function useLocalizedNavigation(): NavigationItem[] {
       ],
     },
     {
+      name: t('magazine'),
+      href: '/stories',
+      items: [
+        {
+          name: t('allStories'),
+          href: '/stories',
+          description: t('allStoriesDesc'),
+        },
+        {
+          name: t('artistStories'),
+          href: '/stories?category=artist-story',
+          description: t('artistStoriesDesc'),
+        },
+        {
+          name: t('buyingGuide'),
+          href: '/stories?category=buying-guide',
+          description: t('buyingGuideDesc'),
+        },
+        {
+          name: t('artKnowledge'),
+          href: '/stories?category=art-knowledge',
+          description: t('artKnowledgeDesc'),
+        },
+      ],
+    },
+    {
       name: t('archive'),
       href: '/archive',
       items: [

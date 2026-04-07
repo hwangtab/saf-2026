@@ -25,6 +25,15 @@
     "ohYoonDesc": "A special exhibition for the 40th anniversary of Korean master Oh Yoon",
     "transparency": "Reports",
     "transparencyDesc": "Annual transparency reports for the mutual aid loan program",
+    "magazine": "Magazine",
+    "allStories": "All Stories",
+    "allStoriesDesc": "Browse all artist stories, buying guides, and art knowledge",
+    "artistStories": "Meet the Artist",
+    "artistStoriesDesc": "Stories behind the artists and their works",
+    "buyingGuide": "Start Collecting",
+    "buyingGuideDesc": "A guide for first-time art buyers",
+    "artKnowledge": "Art Walk",
+    "artKnowledgeDesc": "Enjoy art through bite-sized stories",
     "searchButton": "Search"
   },
   "footer": {
@@ -168,6 +177,7 @@
     "artworks": "Artworks",
     "archive": "Archive",
     "news": "Press",
+    "stories": "Magazine",
     "ohYoon": "Oh Yoon Special Exhibition",
     "transparency": "Transparency Reports"
   },
