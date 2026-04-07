@@ -27,26 +27,35 @@ export async function POST(req: NextRequest) {
   const supabase = createSupabaseAdminClient();
 
   if (isDepositCallback(payload)) {
-    // Verify deposit callback secret
-    if (!verifyDepositCallbackSecret(payload)) {
+    const paymentKey = payload.data.paymentKey;
+
+    // Find payment record by payment_key (also extracts per-payment secret for verification)
+    const { data: paymentRecord } = await supabase
+      .from('payments')
+      .select('id, order_id, webhook_responses, confirm_response')
+      .eq('payment_key', paymentKey)
+      .single();
+
+    // SEC-04a: Verify per-payment secret from confirm_response.virtualAccount.secret
+    // TossPayments secret은 결제 건별 고유값 — 환경변수가 아닌 DB 저장값과 비교
+    const storedSecret =
+      (
+        paymentRecord?.confirm_response as
+          | { virtualAccount?: { secret?: string } }
+          | null
+          | undefined
+      )?.virtualAccount?.secret ?? null;
+
+    if (!verifyDepositCallbackSecret(payload, storedSecret)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     if (payload.data.paymentStatus === 'DONE') {
-      const paymentKey = payload.data.paymentKey;
-
-      // SEC-04: Double-verify from Toss API
+      // SEC-04b: Double-verify from Toss API
       const verified = await fetchPayment(paymentKey);
       if (!verified || verified.status !== 'DONE') {
         return NextResponse.json({ received: true }, { status: 200 });
       }
-
-      // Find payment record by payment_key
-      const { data: paymentRecord } = await supabase
-        .from('payments')
-        .select('id, order_id, webhook_responses')
-        .eq('payment_key', paymentKey)
-        .single();
 
       if (paymentRecord) {
         // 멱등성 가드: 이미 paid 상태이면 중복 처리 방지

@@ -11,11 +11,10 @@ export const SHIPPING_FEE = 4_000; // KRW
 export function getTossConfig() {
   const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
   const secretKey = process.env.TOSS_PAYMENTS_SECRET_KEY;
-  const webhookSecret = process.env.TOSS_PAYMENTS_WEBHOOK_SECRET;
 
   if (!clientKey || !secretKey) return null;
 
-  return { clientKey, secretKey, webhookSecret, apiBaseUrl: TOSS_API_BASE_URL };
+  return { clientKey, secretKey, apiBaseUrl: TOSS_API_BASE_URL };
 }
 
 /** Basic Auth header for TossPayments server-side API calls. */

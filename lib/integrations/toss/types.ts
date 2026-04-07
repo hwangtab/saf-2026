@@ -27,6 +27,7 @@ export interface TossVirtualAccount {
   expired: boolean;
   settlementStatus: string;
   accountType: string;
+  secret?: string;
 }
 
 export interface TossCard {

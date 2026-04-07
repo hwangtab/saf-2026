@@ -6,7 +6,6 @@
  * - DEPOSIT_CALLBACK: virtual account deposit confirmed (uses data.secret)
  */
 
-import { getTossConfig } from './config';
 import type {
   TossWebhookPayload,
   TossWebhookDepositCallback,
@@ -15,12 +14,15 @@ import type {
 
 /**
  * Verifies the DEPOSIT_CALLBACK webhook secret.
- * TossPayments sends data.secret which must match TOSS_PAYMENTS_WEBHOOK_SECRET.
+ * TossPayments의 secret은 결제 건별 고유값으로, 결제 승인 응답의
+ * virtualAccount.secret에 포함된다. DB에 저장된 값과 비교해야 한다.
  */
-export function verifyDepositCallbackSecret(payload: TossWebhookDepositCallback): boolean {
-  const config = getTossConfig();
-  if (!config?.webhookSecret) return false;
-  return payload.data.secret === config.webhookSecret;
+export function verifyDepositCallbackSecret(
+  payload: TossWebhookDepositCallback,
+  storedSecret: string | null
+): boolean {
+  if (!storedSecret) return false;
+  return payload.data.secret === storedSecret;
 }
 
 /** Type guard for DEPOSIT_CALLBACK */
