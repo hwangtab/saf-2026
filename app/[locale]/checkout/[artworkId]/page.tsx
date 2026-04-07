@@ -3,7 +3,7 @@ import { notFound, redirect } from 'next/navigation';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { getPaymentMode } from '@/lib/integrations/toss/config';
 import { parsePrice } from '@/lib/parsePrice';
-import { formatPriceForDisplay } from '@/lib/utils';
+import { formatPriceForDisplay, resolveArtworkImageUrl } from '@/lib/utils';
 import CheckoutClient from './CheckoutClient';
 
 export const dynamic = 'force-dynamic';
@@ -44,13 +44,10 @@ export default async function CheckoutPage({ params }: Props) {
     notFound();
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
   const firstImage: string | undefined = Array.isArray(artwork.images)
     ? artwork.images[0]
     : undefined;
-  const imageUrl = firstImage
-    ? `${supabaseUrl}/storage/v1/object/public/artworks/${firstImage}`
-    : '';
+  const imageUrl = firstImage ? resolveArtworkImageUrl(firstImage) : '';
 
   const displayPrice = formatPriceForDisplay(artwork.price);
   const artistRow = artwork.artists as { name_ko: string } | { name_ko: string }[] | null;

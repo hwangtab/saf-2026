@@ -78,8 +78,8 @@ export default function CheckoutClient({
           selector: '#agreement',
           variantKey: 'AGREEMENT',
         });
-      } catch {
-        // Widgets may throw if already rendered — safe to ignore
+      } catch (err) {
+        console.error('Toss widget render error:', err);
       }
     }
     void renderWidgets();
