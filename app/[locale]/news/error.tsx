@@ -11,6 +11,7 @@ export default function NewsError({
   reset: () => void;
 }) {
   const t = useTranslations('pageErrors.news');
+  const tError = useTranslations('error');
 
   return (
     <ErrorView
@@ -18,6 +19,8 @@ export default function NewsError({
       title={t('title')}
       message={t('message')}
       backLink={{ href: '/news', label: t('backLabel') }}
+      retryLabel={tError('retry')}
+      homeLabel={tError('goHome')}
       error={error}
       reset={reset}
     />
