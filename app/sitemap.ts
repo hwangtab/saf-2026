@@ -227,15 +227,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
   });
 
-  const storyPages: MetadataRoute.Sitemap = allStories.flatMap((story) =>
-    routing.locales.map((locale) => ({
-      url: localizedUrl(baseUrl, `/stories/${story.slug}`, locale),
+  const storyPages: MetadataRoute.Sitemap = allStories.flatMap((story) => {
+    const storyPath = `/stories/${story.slug}`;
+
+    // 이미지: thumbnail 우선, 없으면 body 마크다운 첫 번째 이미지
+    let storyImageUrl: string | null = story.thumbnail || null;
+    if (!storyImageUrl && story.body) {
+      const match = story.body.match(/!\[.*?\]\((https?:\/\/[^)]+)\)/);
+      storyImageUrl = match?.[1] ?? null;
+    }
+    const absoluteStoryImage =
+      storyImageUrl && storyImageUrl.startsWith('http') ? storyImageUrl : null;
+
+    return routing.locales.map((locale) => ({
+      url: localizedUrl(baseUrl, storyPath, locale),
       lastModified: story.updated_at ? new Date(story.updated_at) : new Date(story.published_at),
       changeFrequency: 'monthly' as const,
       priority: locale === routing.defaultLocale ? 0.7 : 0.63,
-      alternates: createAlternates(baseUrl, `/stories/${story.slug}`),
-    }))
-  );
+      alternates: createAlternates(baseUrl, storyPath),
+      ...(absoluteStoryImage ? { images: [absoluteStoryImage] } : {}),
+    }));
+  });
 
   return [
     ...staticPages,
