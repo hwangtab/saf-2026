@@ -69,24 +69,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       publishedTime: story.published_at,
       ...(story.author ? { authors: [story.author] } : {}),
       section: isEn ? 'Magazine' : '매거진',
-      images: story.thumbnail
-        ? [{ url: story.thumbnail, width: 1200, height: 630, alt: title }]
-        : [
-            {
-              url: OG_IMAGE.url,
-              width: OG_IMAGE.width,
-              height: OG_IMAGE.height,
-              alt: isEn ? OG_IMAGE.altEn : OG_IMAGE.alt,
-            },
-          ],
+      // thumbnail이 있으면 명시적으로 설정; 없으면 opengraph-image.tsx가 자동 처리
+      ...(story.thumbnail
+        ? { images: [{ url: story.thumbnail, width: 1200, height: 630, alt: title }] }
+        : {}),
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: story.thumbnail
-        ? [{ url: story.thumbnail, alt: title }]
-        : [{ url: OG_IMAGE.url, alt: isEn ? OG_IMAGE.altEn : OG_IMAGE.alt }],
+      ...(story.thumbnail ? { images: [{ url: story.thumbnail, alt: title }] } : {}),
     },
   };
 }
