@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import Button from '@/components/ui/Button';
+import { cn } from '@/lib/utils';
 
 interface ErrorViewProps {
   icon: string;
@@ -44,9 +45,15 @@ export default function ErrorView({
           <Button onClick={reset} variant="primary">
             {retryLabel}
           </Button>
-          <Button href={resolvedBackLink.href} variant="outline">
+          {/* 순수 <a> 사용 — Button의 next-intl Link는 GlobalError 컨텍스트 밖에서 실패함 */}
+          <a
+            href={resolvedBackLink.href}
+            className={cn(
+              'inline-flex items-center justify-center gap-2 rounded-xl border border-primary px-6 py-3 text-sm font-bold text-primary transition hover:bg-primary/5'
+            )}
+          >
             {resolvedBackLink.label}
-          </Button>
+          </a>
         </div>
       </div>
     </div>
