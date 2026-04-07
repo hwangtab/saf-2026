@@ -138,3 +138,17 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     orderName,
   };
 }
+
+/**
+ * Cancels a pending_payment order when the user abandons the payment widget.
+ * Only cancels orders in 'pending_payment' status — safe to call speculatively.
+ */
+export async function cancelPendingOrder(orderNo: string): Promise<void> {
+  if (!orderNo) return;
+  const adminClient = createSupabaseAdminClient();
+  await adminClient
+    .from('orders')
+    .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
+    .eq('order_no', orderNo)
+    .eq('status', 'pending_payment');
+}

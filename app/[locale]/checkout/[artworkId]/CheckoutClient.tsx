@@ -8,7 +8,7 @@ import SafeImage from '@/components/common/SafeImage';
 import { Link } from '@/i18n/navigation';
 import { calculateShippingFee } from '@/lib/integrations/toss/config';
 import { formatPriceForDisplay } from '@/lib/utils';
-import { createOrder } from '@/app/actions/checkout';
+import { createOrder, cancelPendingOrder } from '@/app/actions/checkout';
 import BuyerInfoForm from './BuyerInfoForm';
 import type { BuyerInfo } from './BuyerInfoForm';
 
@@ -88,6 +88,7 @@ export default function CheckoutClient({
 
   async function handlePayment() {
     setError(null);
+    let createdOrderNo: string | null = null;
 
     const buyerInfo = buyerInfoRef.current;
     if (!buyerInfo) {
@@ -142,6 +143,7 @@ export default function CheckoutClient({
       }
 
       const { orderNo, orderName } = result;
+      createdOrderNo = orderNo;
 
       // 2. Request payment via Toss widget
       const localePrefix = locale === 'en' ? '/en' : '';
@@ -157,6 +159,10 @@ export default function CheckoutClient({
         customerName: buyerName,
       });
     } catch (err: unknown) {
+      // 위젯 에러/취소 시 생성된 pending 주문을 즉시 취소 — 재주문 차단 방지
+      if (createdOrderNo) {
+        void cancelPendingOrder(createdOrderNo);
+      }
       const tossErr = err as { code?: string; message?: string } | null;
       if (tossErr?.code === 'USER_CANCEL') return;
       setError(tossErr?.message ?? t('errorPayment'));
