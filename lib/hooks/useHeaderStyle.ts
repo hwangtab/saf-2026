@@ -34,12 +34,14 @@ export function useHeaderStyle() {
   // 경로 기반 파생 상태 메모이제이션
   const { isArtworkDetail, prefersHeroLayout } = useMemo(() => {
     const artistPage = currentPath.startsWith('/artworks/artist/');
+    const storyDetail = currentPath.startsWith('/stories/') && currentPath !== '/stories';
     const specialHeroPage = currentPath === '/special/oh-yoon';
     const artworkDetail =
       currentPath.startsWith('/artworks/') && currentPath !== '/artworks' && !artistPage;
     const heroPage =
       (HERO_PAGES.includes(currentPath as (typeof HERO_PAGES)[number]) && !artworkDetail) ||
       artistPage ||
+      storyDetail ||
       specialHeroPage;
     return { isArtworkDetail: artworkDetail, prefersHeroLayout: heroPage };
   }, [currentPath]);
