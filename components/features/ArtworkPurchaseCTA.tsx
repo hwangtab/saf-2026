@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import dynamic from 'next/dynamic';
+import { Link } from '@/i18n/navigation';
 import LinkButton from '@/components/ui/LinkButton';
 import TrackClick from '@/components/common/TrackingLink';
 import TrustBadges from '@/components/features/TrustBadges';
@@ -62,6 +63,7 @@ export default function ArtworkPurchaseCTA({
   hasSameCategoryWorks,
 }: ArtworkPurchaseCTAProps) {
   const t = useTranslations('artworkDetail');
+  const paymentMode = process.env.NEXT_PUBLIC_PAYMENT_MODE;
 
   // D분기: sold — 판매 완료 안내
   if (sold) {
@@ -114,8 +116,41 @@ export default function ArtworkPurchaseCTA({
         </div>
       )}
 
-      {/* A분기: 온라인 구매 가능 */}
-      {shopUrl && (
+      {/* A분기: toss 결제 모드 — 내부 체크아웃 */}
+      {paymentMode === 'toss' && hasActionablePrice && (
+        <>
+          <TrackClick
+            event="purchase_click"
+            properties={{
+              artwork_id: artworkId,
+              artwork_title: artworkTitle,
+              artist: artist,
+            }}
+          >
+            <Link
+              href={`/checkout/${artworkId}`}
+              className="flex w-full items-center justify-center gap-3 rounded-xl bg-primary px-6 py-4 text-lg font-bold text-white shadow-[0_0_20px_rgba(33,118,255,0.15)] transition hover:bg-primary/90"
+            >
+              {t('buyOnline')}
+            </Link>
+          </TrackClick>
+
+          <TrustBadges />
+
+          <div className="flex items-center gap-4">
+            <div className="flex-1 h-px bg-gray-200" />
+            <span className="text-gray-400 text-sm">{t('orContactDirectly')}</span>
+            <div className="flex-1 h-px bg-gray-200" />
+          </div>
+
+          <ContactButtons />
+
+          <PurchaseGuide />
+        </>
+      )}
+
+      {/* A분기: cafe24 결제 모드 — 외부 Cafe24 링크 */}
+      {paymentMode !== 'toss' && shopUrl && (
         <>
           <TrackClick
             event="purchase_click"
@@ -150,8 +185,8 @@ export default function ArtworkPurchaseCTA({
         </>
       )}
 
-      {/* B분기: shopUrl 없음 — 문의 안내 */}
-      {!shopUrl && (
+      {/* B분기: shopUrl 없음 (cafe24 모드) 또는 가격 없음 — 문의 안내 */}
+      {paymentMode !== 'toss' && !shopUrl && (
         <>
           <div className="rounded-xl bg-gray-50 p-4 text-center">
             <p className="text-sm text-gray-600 word-keep leading-relaxed">

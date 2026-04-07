@@ -948,8 +948,8 @@ export async function updateArtworkSale(formData: FormData) {
   if (existing.artwork_id !== artworkId) {
     throw new Error('판매 기록과 작품 정보가 일치하지 않습니다.');
   }
-  if (existing.source === 'cafe24') {
-    throw new Error('Cafe24 동기화 판매 기록은 수정할 수 없습니다.');
+  if (existing.source === 'cafe24' || existing.source === 'toss') {
+    throw new Error('외부 동기화 판매 기록은 수정할 수 없습니다.');
   }
 
   const validationError = validateSaleInput(salePriceRaw, quantityRaw);

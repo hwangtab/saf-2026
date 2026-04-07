@@ -69,7 +69,7 @@ export interface ArtworkSale {
   sale_price: number; // Integer (KRW)
   sold_at: string; // ISO timestamp
   quantity: number;
-  source?: 'manual' | 'cafe24' | null;
+  source?: 'manual' | 'cafe24' | 'toss' | null;
   buyer_name?: string | null;
   buyer_phone?: string | null;
   note?: string | null;
@@ -78,6 +78,52 @@ export interface ArtworkSale {
   created_at?: string;
   voided_at?: string | null;
   void_reason?: string | null;
+}
+
+export interface Order {
+  id: string;
+  order_no: string;
+  artwork_id: string;
+  quantity: number;
+  buyer_name: string;
+  buyer_email: string;
+  buyer_phone: string;
+  buyer_user_id?: string | null;
+  shipping_name: string;
+  shipping_phone: string;
+  shipping_address: string;
+  shipping_address_detail?: string | null;
+  shipping_postal_code: string;
+  shipping_memo?: string | null;
+  item_amount: number;
+  shipping_amount: number;
+  total_amount: number;
+  status: string;
+  paid_at?: string | null;
+  cancelled_at?: string | null;
+  refunded_at?: string | null;
+  note?: string | null;
+  metadata?: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Payment {
+  id: string;
+  order_id: string;
+  payment_key: string;
+  toss_order_id: string;
+  method?: string | null;
+  method_detail?: Record<string, unknown> | null;
+  amount: number;
+  currency: string;
+  status: string;
+  approved_at?: string | null;
+  cancelled_at?: string | null;
+  confirm_response?: Record<string, unknown> | null;
+  idempotency_key?: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 // Artwork with hydrated artist data (for UI)
