@@ -4,6 +4,7 @@
  */
 
 import { getTossAuthHeader, getTossConfig } from './config';
+import { fetchWithTimeout } from './fetch-with-timeout';
 import type { TossCancelRequest, CancelResult } from './types';
 
 /**
@@ -29,7 +30,7 @@ export async function cancelPayment(
     headers['Idempotency-Key'] = idempotencyKey;
   }
 
-  const response = await fetch(`${config.apiBaseUrl}/v1/payments/${paymentKey}/cancel`, {
+  const response = await fetchWithTimeout(`${config.apiBaseUrl}/v1/payments/${paymentKey}/cancel`, {
     method: 'POST',
     headers,
     body: JSON.stringify(request),

@@ -8,6 +8,7 @@ import {
   isDepositCallback,
   isPaymentStatusChanged,
 } from '@/lib/integrations/toss/webhook';
+import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
 
 const CANCELED_STATUSES = new Set(['CANCELED', 'PARTIAL_CANCELED']);
 
@@ -63,7 +64,7 @@ export async function POST(req: NextRequest) {
         // 멱등성 가드: 이미 paid 상태이면 중복 처리 방지
         const { data: existingOrder } = await supabase
           .from('orders')
-          .select('status')
+          .select('status, artwork_id')
           .eq('id', paymentRecord.order_id)
           .single();
         if (existingOrder?.status === 'paid') {
@@ -83,7 +84,7 @@ export async function POST(req: NextRequest) {
           })
           .eq('id', paymentRecord.id);
 
-        // Update order status
+        // Update order status (awaiting_deposit → paid)
         await supabase
           .from('orders')
           .update({ status: 'paid', paid_at: new Date().toISOString() })
@@ -117,6 +118,47 @@ export async function POST(req: NextRequest) {
     const paymentKey = payload.data.paymentKey;
     const newStatus = payload.data.status;
 
+    // Fix 6: Toss API double-verify BEFORE any DB mutations to prevent forged webhooks
+    const verified = await fetchPayment(paymentKey);
+    if (!verified) {
+      // Toss API 확인 불가: 웹훅 payload만 기록하고 상태 변경 스킵
+      const { data: existingPayment } = await supabase
+        .from('payments')
+        .select('id, webhook_responses')
+        .eq('payment_key', paymentKey)
+        .single();
+      if (existingPayment) {
+        const existingWebhooks = Array.isArray(existingPayment.webhook_responses)
+          ? existingPayment.webhook_responses
+          : [];
+        await supabase
+          .from('payments')
+          .update({ webhook_responses: [...existingWebhooks, body] })
+          .eq('id', existingPayment.id);
+      }
+      return NextResponse.json({ received: true }, { status: 200 });
+    }
+
+    // Toss 응답 상태와 웹훅 payload 상태 일치 확인
+    if (verified.status !== newStatus) {
+      // 불일치: payload만 기록하고 상태 변경 스킵
+      const { data: existingPayment } = await supabase
+        .from('payments')
+        .select('id, webhook_responses')
+        .eq('payment_key', paymentKey)
+        .single();
+      if (existingPayment) {
+        const existingWebhooks = Array.isArray(existingPayment.webhook_responses)
+          ? existingPayment.webhook_responses
+          : [];
+        await supabase
+          .from('payments')
+          .update({ webhook_responses: [...existingWebhooks, body] })
+          .eq('id', existingPayment.id);
+      }
+      return NextResponse.json({ received: true }, { status: 200 });
+    }
+
     // Update payment status
     const existingWebhooksSC = await supabase
       .from('payments')
@@ -146,31 +188,33 @@ export async function POST(req: NextRequest) {
           .single();
 
         if (existingOrder && !['refunded', 'cancelled'].includes(existingOrder.status)) {
-          // Double-verify from Toss API before modifying DB
-          const verified = await fetchPayment(paymentKey);
-          if (verified && CANCELED_STATUSES.has(verified.status)) {
-            const now = new Date().toISOString();
+          // verified.status already confirmed as CANCELED/PARTIAL_CANCELED above
+          const now = new Date().toISOString();
 
+          await supabase
+            .from('orders')
+            .update({ status: 'refunded', refunded_at: now })
+            .eq('id', paymentRow.order_id)
+            .not('status', 'in', '("refunded","cancelled")');
+
+          // Void artwork_sales
+          const { data: sale } = await supabase
+            .from('artwork_sales')
+            .select('id')
+            .eq('order_id', paymentRow.order_id)
+            .is('voided_at', null)
+            .limit(1)
+            .single();
+
+          if (sale) {
             await supabase
-              .from('orders')
-              .update({ status: 'refunded', refunded_at: now })
-              .eq('id', paymentRow.order_id)
-              .not('status', 'in', '("refunded","cancelled")');
-
-            // Void artwork_sales
-            const { data: sale } = await supabase
               .from('artwork_sales')
-              .select('id')
-              .eq('order_id', paymentRow.order_id)
-              .is('voided_at', null)
-              .limit(1)
-              .single();
+              .update({ voided_at: now, void_reason: 'Toss 웹훅 취소 자동 처리' })
+              .eq('id', sale.id);
 
-            if (sale) {
-              await supabase
-                .from('artwork_sales')
-                .update({ voided_at: now, void_reason: 'Toss 웹훅 취소 자동 처리' })
-                .eq('id', sale.id);
+            // Fix 3: 작품 상태 재계산 (sold → available)
+            if (existingOrder.artwork_id) {
+              await deriveAndSyncArtworkStatus(supabase, existingOrder.artwork_id);
             }
           }
         }

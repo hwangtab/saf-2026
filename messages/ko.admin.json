@@ -60,6 +60,7 @@
       "recentOrdersTitle": "최근 주문",
       "noRecentOrders": "최근 주문이 없습니다.",
       "orderStatusPendingPayment": "결제 대기",
+      "orderStatusAwaitingDeposit": "입금 대기",
       "orderStatusPaid": "결제 완료",
       "orderStatusPreparing": "준비 중",
       "orderStatusShipped": "배송 중",

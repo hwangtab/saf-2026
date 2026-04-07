@@ -17,6 +17,7 @@ import type { OrderStatus } from '@/lib/integrations/toss/types';
 const STATUS_OPTIONS = [
   { value: '', label: '전체 상태' },
   { value: 'pending_payment', label: '결제 대기' },
+  { value: 'awaiting_deposit', label: '입금 대기' },
   { value: 'paid', label: '결제 완료' },
   { value: 'preparing', label: '준비 중' },
   { value: 'shipped', label: '배송 중' },
@@ -31,6 +32,7 @@ function statusBadgeVariant(
 ): 'default' | 'success' | 'warning' | 'danger' | 'info' {
   switch (status) {
     case 'pending_payment':
+    case 'awaiting_deposit':
       return 'warning';
     case 'paid':
     case 'preparing':
@@ -50,6 +52,7 @@ function statusBadgeVariant(
 
 const STATUS_LABELS: Record<string, string> = {
   pending_payment: '결제 대기',
+  awaiting_deposit: '입금 대기',
   paid: '결제 완료',
   preparing: '준비 중',
   shipped: '배송 중',

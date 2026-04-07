@@ -19,6 +19,7 @@ import { useToast } from '@/lib/hooks/useToast';
 
 const STATUS_LABELS: Record<string, string> = {
   pending_payment: '결제 대기',
+  awaiting_deposit: '입금 대기',
   paid: '결제 완료',
   preparing: '준비 중',
   shipped: '배송 중',
@@ -43,6 +44,7 @@ function statusBadgeVariant(
 ): 'default' | 'success' | 'warning' | 'danger' | 'info' {
   switch (status) {
     case 'pending_payment':
+    case 'awaiting_deposit':
       return 'warning';
     case 'paid':
     case 'preparing':
@@ -240,8 +242,8 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
             <span className="text-sm font-semibold text-slate-700">배송 정보</span>
           </AdminCardHeader>
           <dl className="space-y-3 p-5">
-            <InfoRow label="수령인" value={order.recipient_name} />
-            <InfoRow label="연락처" value={order.recipient_phone} />
+            <InfoRow label="수령인" value={order.shipping_name} />
+            <InfoRow label="연락처" value={order.shipping_phone} />
             <InfoRow
               label="주소"
               value={
@@ -250,7 +252,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
                   : null
               }
             />
-            <InfoRow label="메모" value={order.memo} />
+            <InfoRow label="메모" value={order.shipping_memo} />
           </dl>
         </AdminCard>
 
@@ -330,7 +332,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
           </AdminCardHeader>
           <dl className="space-y-3 p-5">
             <InfoRow label="작품 금액" value={formatKRW(order.item_amount)} />
-            <InfoRow label="배송비" value={formatKRW(order.shipping_fee)} />
+            <InfoRow label="배송비" value={formatKRW(order.shipping_amount)} />
             <div className="border-t border-[var(--admin-border-soft)] pt-3">
               <InfoRow
                 label="합계"

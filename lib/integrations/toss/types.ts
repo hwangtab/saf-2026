@@ -136,6 +136,7 @@ export type CancelResult =
 
 export type OrderStatus =
   | 'pending_payment'
+  | 'awaiting_deposit'
   | 'paid'
   | 'preparing'
   | 'shipped'
