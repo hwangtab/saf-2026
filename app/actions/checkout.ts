@@ -49,7 +49,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
   // Fetch artwork (parse price server-side — never trust client)
   const { data: artwork, error: artworkError } = await adminClient
     .from('artworks')
-    .select('id, title, price, status, edition_type, edition_limit, artist')
+    .select('id, title, price, status, edition_type, edition_limit, artists(name_ko)')
     .eq('id', artworkId)
     .single();
 
@@ -82,7 +82,11 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
   const totalAmount = itemAmount + shippingAmount;
 
   const orderNo = generateOrderNumber();
-  const orderName = `${artwork.title} (${artwork.artist})`;
+  const artistRow = artwork.artists as { name_ko: string } | { name_ko: string }[] | null;
+  const artistName = Array.isArray(artistRow)
+    ? (artistRow[0]?.name_ko ?? 'Unknown Artist')
+    : (artistRow?.name_ko ?? 'Unknown Artist');
+  const orderName = `${artwork.title} (${artistName})`;
 
   // Optionally resolve logged-in user
   let buyerUserId: string | null = null;
