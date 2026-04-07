@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react';
 import Button from '@/components/ui/Button';
-import { useTranslations } from 'next-intl';
 
 interface ErrorViewProps {
   icon: string;
@@ -11,6 +10,10 @@ interface ErrorViewProps {
   backLink?: { href: string; label: string };
   error: Error & { digest?: string };
   reset: () => void;
+  /** Override the retry button label. Defaults to '다시 시도하기'. */
+  retryLabel?: string;
+  /** Override the fallback home link label when backLink is not provided. Defaults to '홈으로 돌아가기'. */
+  homeLabel?: string;
 }
 
 export default function ErrorView({
@@ -20,9 +23,10 @@ export default function ErrorView({
   backLink,
   error,
   reset,
+  retryLabel = '다시 시도하기',
+  homeLabel = '홈으로 돌아가기',
 }: ErrorViewProps) {
-  const tError = useTranslations('error');
-  const resolvedBackLink = backLink ?? { href: '/', label: tError('goHome') };
+  const resolvedBackLink = backLink ?? { href: '/', label: homeLabel };
 
   useEffect(() => {
     console.error(error);
@@ -38,7 +42,7 @@ export default function ErrorView({
         <p className="text-charcoal-muted mb-8 leading-relaxed text-balance">{message}</p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button onClick={reset} variant="primary">
-            {tError('retry')}
+            {retryLabel}
           </Button>
           <Button href={resolvedBackLink.href} variant="outline">
             {resolvedBackLink.label}

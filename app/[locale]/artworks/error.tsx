@@ -11,6 +11,7 @@ export default function ArtworksError({
   reset: () => void;
 }) {
   const t = useTranslations('pageErrors.artworks');
+  const tError = useTranslations('error');
 
   return (
     <ErrorView
@@ -18,6 +19,8 @@ export default function ArtworksError({
       title={t('title')}
       message={t('message')}
       backLink={{ href: '/artworks', label: t('backLabel') }}
+      retryLabel={tError('retry')}
+      homeLabel={tError('goHome')}
       error={error}
       reset={reset}
     />

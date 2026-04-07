@@ -11,6 +11,7 @@ export default function ArchiveError({
   reset: () => void;
 }) {
   const t = useTranslations('pageErrors.archive');
+  const tError = useTranslations('error');
 
   return (
     <ErrorView
@@ -18,6 +19,8 @@ export default function ArchiveError({
       title={t('title')}
       message={t('message')}
       backLink={{ href: '/archive', label: t('backLabel') }}
+      retryLabel={tError('retry')}
+      homeLabel={tError('goHome')}
       error={error}
       reset={reset}
     />

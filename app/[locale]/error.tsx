@@ -11,6 +11,7 @@ export default function HomeError({
   reset: () => void;
 }) {
   const t = useTranslations('pageErrors.home');
+  const tError = useTranslations('error');
 
   return (
     <ErrorView
@@ -18,6 +19,8 @@ export default function HomeError({
       title={t('title')}
       message={t('message')}
       backLink={{ href: '/', label: t('backLabel') }}
+      retryLabel={tError('retry')}
+      homeLabel={tError('goHome')}
       error={error}
       reset={reset}
     />

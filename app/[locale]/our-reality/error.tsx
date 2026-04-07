@@ -11,6 +11,7 @@ export default function OurRealityError({
   reset: () => void;
 }) {
   const t = useTranslations('pageErrors.ourReality');
+  const tError = useTranslations('error');
 
   return (
     <ErrorView
@@ -18,6 +19,8 @@ export default function OurRealityError({
       title={t('title')}
       message={t('message')}
       backLink={{ href: '/our-reality', label: t('backLabel') }}
+      retryLabel={tError('retry')}
+      homeLabel={tError('goHome')}
       error={error}
       reset={reset}
     />
