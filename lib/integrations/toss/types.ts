@@ -100,6 +100,40 @@ export interface TossWebhookDepositCallback {
 
 export type TossWebhookPayload = TossWebhookPaymentStatusChanged | TossWebhookDepositCallback;
 
+export interface TossCancelRequest {
+  cancelReason: string;
+  cancelAmount?: number;
+  refundReceiveAccount?: {
+    bank: string;
+    accountNumber: string;
+    holderName: string;
+  };
+  taxFreeAmount?: number;
+  taxExemptionAmount?: number;
+}
+
+export interface TossCancelResponse {
+  paymentKey: string;
+  orderId: string;
+  status: TossPaymentStatus;
+  totalAmount: number;
+  balanceAmount: number;
+  cancelAmount?: number;
+  cancels?: Array<{
+    cancelAmount: number;
+    cancelReason: string;
+    canceledAt: string;
+    transactionKey: string;
+    refundableAmount: number;
+    refundStatus: string;
+  }>;
+  [key: string]: unknown;
+}
+
+export type CancelResult =
+  | { success: true; data: TossCancelResponse }
+  | { success: false; error: TossErrorResponse };
+
 export type OrderStatus =
   | 'pending_payment'
   | 'paid'

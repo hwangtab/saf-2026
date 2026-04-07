@@ -64,7 +64,7 @@ function toCafe24SyncFeedback(
  * sold → available, available → sold 양방향 동기화.
  * reserved 상태는 관리자 수동 설정이므로 판매 완료가 아닌 한 유지.
  */
-async function deriveAndSyncArtworkStatus(
+export async function deriveAndSyncArtworkStatus(
   supabase: Awaited<ReturnType<typeof createSupabaseAdminClient>>,
   artworkId: string
 ): Promise<'available' | 'sold' | 'reserved'> {

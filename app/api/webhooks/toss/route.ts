@@ -9,6 +9,8 @@ import {
   isPaymentStatusChanged,
 } from '@/lib/integrations/toss/webhook';
 
+const CANCELED_STATUSES = new Set(['CANCELED', 'PARTIAL_CANCELED']);
+
 export const runtime = 'nodejs';
 
 export async function POST(req: NextRequest) {
@@ -115,7 +117,65 @@ export async function POST(req: NextRequest) {
     const paymentKey = payload.data.paymentKey;
     const newStatus = payload.data.status;
 
-    await supabase.from('payments').update({ status: newStatus }).eq('payment_key', paymentKey);
+    // Update payment status
+    const existingWebhooksSC = await supabase
+      .from('payments')
+      .select('id, order_id, status, webhook_responses')
+      .eq('payment_key', paymentKey)
+      .single();
+
+    const paymentRow = existingWebhooksSC.data;
+
+    if (paymentRow) {
+      const existingWebhooks = Array.isArray(paymentRow.webhook_responses)
+        ? paymentRow.webhook_responses
+        : [];
+
+      await supabase
+        .from('payments')
+        .update({ status: newStatus, webhook_responses: [...existingWebhooks, body] })
+        .eq('id', paymentRow.id);
+
+      // Cascade cancel to order + artwork_sales when Toss marks payment as canceled
+      if (CANCELED_STATUSES.has(newStatus) && paymentRow.order_id) {
+        // Idempotency: skip if already refunded/cancelled
+        const { data: existingOrder } = await supabase
+          .from('orders')
+          .select('status, artwork_id')
+          .eq('id', paymentRow.order_id)
+          .single();
+
+        if (existingOrder && !['refunded', 'cancelled'].includes(existingOrder.status)) {
+          // Double-verify from Toss API before modifying DB
+          const verified = await fetchPayment(paymentKey);
+          if (verified && CANCELED_STATUSES.has(verified.status)) {
+            const now = new Date().toISOString();
+
+            await supabase
+              .from('orders')
+              .update({ status: 'refunded', refunded_at: now })
+              .eq('id', paymentRow.order_id)
+              .not('status', 'in', '("refunded","cancelled")');
+
+            // Void artwork_sales
+            const { data: sale } = await supabase
+              .from('artwork_sales')
+              .select('id')
+              .eq('order_id', paymentRow.order_id)
+              .is('voided_at', null)
+              .limit(1)
+              .single();
+
+            if (sale) {
+              await supabase
+                .from('artwork_sales')
+                .update({ voided_at: now, void_reason: 'Toss 웹훅 취소 자동 처리' })
+                .eq('id', sale.id);
+            }
+          }
+        }
+      }
+    }
   }
 
   return NextResponse.json({ received: true }, { status: 200 });
