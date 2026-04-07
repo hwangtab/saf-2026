@@ -21,11 +21,15 @@ export default async function CheckoutPage({ params }: Props) {
 
   const adminClient = createSupabaseAdminClient();
 
-  const { data: artwork } = await adminClient
+  const { data: artwork, error } = await adminClient
     .from('artworks')
-    .select('id, title, artist, price, status, images')
+    .select('id, title, price, status, images, artists(name_ko)')
     .eq('id', artworkId)
     .single();
+
+  if (error) {
+    console.error('Checkout artwork fetch error:', error);
+  }
 
   if (!artwork) {
     notFound();
@@ -49,12 +53,16 @@ export default async function CheckoutPage({ params }: Props) {
     : '';
 
   const displayPrice = formatPriceForDisplay(artwork.price);
+  const artistRow = artwork.artists as { name_ko: string } | { name_ko: string }[] | null;
+  const artistName = Array.isArray(artistRow)
+    ? (artistRow[0]?.name_ko ?? 'Unknown Artist')
+    : (artistRow?.name_ko ?? 'Unknown Artist');
 
   return (
     <CheckoutClient
       artworkId={artworkId}
       artworkTitle={artwork.title}
-      artist={artwork.artist}
+      artist={artistName}
       price={price}
       displayPrice={displayPrice}
       imageUrl={imageUrl}
