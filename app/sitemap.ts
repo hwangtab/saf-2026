@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { SITE_URL, CAMPAIGN } from '@/lib/constants';
 import { routing } from '@/i18n/routing';
-import { getSupabaseArtworks, getSupabaseNews } from '@/lib/supabase-data';
+import { getSupabaseArtworks, getSupabaseNews, getSupabaseStories } from '@/lib/supabase-data';
 import { CATEGORY_EN_MAP } from '@/lib/artwork-category';
 import { resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 
@@ -26,7 +26,11 @@ function createAlternates(baseUrl: string, path: string) {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = SITE_URL;
-  const [allArtworks, allNews] = await Promise.all([getSupabaseArtworks(), getSupabaseNews()]);
+  const [allArtworks, allNews, allStories] = await Promise.all([
+    getSupabaseArtworks(),
+    getSupabaseNews(),
+    getSupabaseStories(),
+  ]);
   const now = new Date();
 
   const staticPaths: Array<{
@@ -86,6 +90,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
     {
       path: '/news',
+      changeFrequency: 'weekly',
+      priority: 0.85,
+      lastModified: now,
+    },
+    {
+      path: '/stories',
       changeFrequency: 'weekly',
       priority: 0.85,
       lastModified: now,
@@ -217,5 +227,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
   });
 
-  return [...staticPages, ...categoryPages, ...artworkPages, ...artistPages, ...newsPages];
+  const storyPages: MetadataRoute.Sitemap = allStories.flatMap((story) =>
+    routing.locales.map((locale) => ({
+      url: localizedUrl(baseUrl, `/stories/${story.slug}`, locale),
+      lastModified: story.updated_at ? new Date(story.updated_at) : new Date(story.published_at),
+      changeFrequency: 'monthly' as const,
+      priority: locale === routing.defaultLocale ? 0.7 : 0.63,
+      alternates: createAlternates(baseUrl, `/stories/${story.slug}`),
+    }))
+  );
+
+  return [
+    ...staticPages,
+    ...categoryPages,
+    ...artworkPages,
+    ...artistPages,
+    ...newsPages,
+    ...storyPages,
+  ];
 }

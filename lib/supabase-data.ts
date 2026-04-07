@@ -7,7 +7,8 @@ import { newsArticles } from '@/content/news';
 import { faqs, faqsEn, getFaqsByLocale } from '@/content/faq';
 import { testimonials } from '@/content/testimonials';
 import { exhibitionReviews } from '@/content/reviews';
-import type { Artwork, ExhibitionReview, NewsArticle, TestimonialCategory } from '@/types';
+import type { Artwork, ExhibitionReview, NewsArticle, Story, TestimonialCategory } from '@/types';
+import { stories as fallbackStories } from '@/content/stories';
 import { containsHangul } from '@/lib/search-utils';
 
 type ArtworkRow = {
@@ -612,6 +613,78 @@ export const getSupabaseNews = cache(async (): Promise<NewsArticle[]> => getSupa
 export const getSupabaseNewsById = cache(async (id: string): Promise<NewsArticle | null> => {
   const allNews = await getSupabaseNews();
   return allNews.find((article) => article.id === id) ?? null;
+});
+
+// ─── Stories (매거진) ───
+
+type StoryRow = {
+  id: string;
+  slug: string;
+  title: string;
+  title_en: string | null;
+  category: string;
+  excerpt: string | null;
+  excerpt_en: string | null;
+  body: string;
+  body_en: string | null;
+  thumbnail: string | null;
+  author: string | null;
+  published_at: string;
+  updated_at: string | null;
+  is_published: boolean;
+  display_order: number;
+  tags: string[] | null;
+};
+
+const mapStoryRow = (row: StoryRow): Story => ({
+  id: row.id,
+  slug: row.slug,
+  title: row.title,
+  title_en: row.title_en || undefined,
+  category: row.category as Story['category'],
+  excerpt: row.excerpt || '',
+  excerpt_en: row.excerpt_en || undefined,
+  body: row.body,
+  body_en: row.body_en || undefined,
+  thumbnail: row.thumbnail || undefined,
+  author: row.author || undefined,
+  published_at: row.published_at,
+  updated_at: row.updated_at || undefined,
+  is_published: row.is_published,
+  display_order: row.display_order,
+  tags: row.tags || undefined,
+});
+
+const getSupabaseStoriesUncached = async (): Promise<Story[]> => {
+  if (!hasSupabaseConfig || !supabase) {
+    return fallbackStories;
+  }
+
+  const { data, error } = await supabase
+    .from('stories')
+    .select('*')
+    .eq('is_published', true)
+    .order('published_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching stories from Supabase:', error);
+    return fallbackStories;
+  }
+
+  return (data || []).map((item) => mapStoryRow(item as StoryRow));
+};
+
+const getSupabaseStoriesCached = unstable_cache(
+  async () => getSupabaseStoriesUncached(),
+  ['supabase-stories'],
+  { revalidate: 600, tags: ['stories'] }
+);
+
+export const getSupabaseStories = cache(async (): Promise<Story[]> => getSupabaseStoriesCached());
+
+export const getSupabaseStoryBySlug = cache(async (slug: string): Promise<Story | null> => {
+  const all = await getSupabaseStories();
+  return all.find((s) => s.slug === slug) ?? null;
 });
 
 export const getSupabaseArtistsByOwner = cache(async (ownerId: string): Promise<ArtistRow[]> => {

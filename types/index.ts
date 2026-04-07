@@ -178,6 +178,28 @@ export interface TestimonialCategory {
   items: TestimonialItem[];
 }
 
+export const STORY_CATEGORIES = ['artist-story', 'buying-guide', 'art-knowledge'] as const;
+export type StoryCategory = (typeof STORY_CATEGORIES)[number];
+
+export interface Story {
+  id: string;
+  slug: string;
+  title: string;
+  title_en?: string;
+  category: StoryCategory;
+  excerpt: string;
+  excerpt_en?: string;
+  body: string;
+  body_en?: string;
+  thumbnail?: string;
+  author?: string;
+  published_at: string;
+  updated_at?: string;
+  is_published: boolean;
+  display_order?: number;
+  tags?: string[];
+}
+
 export interface NewsArticle {
   id: string;
   title: string;

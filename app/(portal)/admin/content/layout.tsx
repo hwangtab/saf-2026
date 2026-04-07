@@ -6,6 +6,7 @@ const tabs = [
   { href: '/admin/content/faq', label: 'FAQ' },
   { href: '/admin/content/testimonials', label: '추천사' },
   { href: '/admin/content/videos', label: '영상' },
+  { href: '/admin/content/stories', label: '매거진' },
 ];
 
 export default function ContentLayout({ children }: { children: React.ReactNode }) {

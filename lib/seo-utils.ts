@@ -31,6 +31,7 @@ export {
   generateFAQSchema,
   generateVideoSchema,
   generateNewsArticleSchema,
+  generateBlogPostingSchema,
   generateSpeakableSchema,
   // AEO/GEO — ClaimReview, HowTo, QAPage
   generateClaimReviewSchema,
@@ -49,6 +50,7 @@ export type {
   FAQItem,
   VideoSchemaInput,
   NewsArticleSchemaInput,
+  BlogPostingSchemaInput,
   ClaimReviewInput,
   HowToStep,
   HowToInput,

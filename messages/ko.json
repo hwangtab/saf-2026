@@ -25,6 +25,15 @@
     "ohYoonDesc": "한국을 대표하는 민중미술 거장의 40주기 특별전",
     "transparency": "운용 보고서",
     "transparencyDesc": "상호부조 대출 운용 현황과 연간 보고서",
+    "magazine": "매거진",
+    "allStories": "전체 보기",
+    "allStoriesDesc": "작가 이야기, 컬렉팅 가이드, 미술 상식 모두 보기",
+    "artistStories": "작가를 만나다",
+    "artistStoriesDesc": "작품 너머의 작가 이야기",
+    "buyingGuide": "컬렉팅 시작하기",
+    "buyingGuideDesc": "작품 구매가 처음인 분을 위한 안내",
+    "artKnowledge": "미술 산책",
+    "artKnowledgeDesc": "가볍게 즐기는 미술 이야기",
     "searchButton": "검색"
   },
   "footer": {
@@ -168,6 +177,7 @@
     "artworks": "출품작",
     "archive": "아카이브",
     "news": "언론 보도",
+    "stories": "매거진",
     "ohYoon": "오윤 특별전",
     "transparency": "운용 보고서"
   },
