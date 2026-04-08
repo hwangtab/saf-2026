@@ -231,15 +231,13 @@ export default function FullscreenMenu({
             ))}
             {/* Utility Menu in Mobile */}
             <li className="mt-4 pt-4 border-t border-gray-100">
-              <a
-                href={EXTERNAL_LINKS.ORDER_STATUS}
-                target="_blank"
-                rel="noopener noreferrer nofollow"
+              <Link
+                href="/orders"
                 className={`${styles.navLink} text-base! text-charcoal-muted!`}
                 onClick={onClose}
               >
                 {t('orderStatus')}
-              </a>
+              </Link>
             </li>
           </ul>
         </nav>

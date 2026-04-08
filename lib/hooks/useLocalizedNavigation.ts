@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { EXTERNAL_LINKS } from '@/lib/constants';
+
 import { NavigationItem } from '@/types';
 
 export function useLocalizedNavigation(): NavigationItem[] {
@@ -101,8 +101,8 @@ export function useLocalizedUtilityNavigation(): NavigationItem[] {
   return [
     {
       name: t('orderStatus'),
-      href: EXTERNAL_LINKS.ORDER_STATUS,
-      external: true,
+      href: '/orders',
+      external: false,
     },
   ];
 }
