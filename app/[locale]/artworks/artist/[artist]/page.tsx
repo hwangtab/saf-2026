@@ -20,6 +20,7 @@ import type { Artwork, ArtworkListItem } from '@/types';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
 import { containsHangul } from '@/lib/search-utils';
+import { Link } from '@/i18n/navigation';
 
 import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
 import GalleryCampaignBanner from '@/components/features/GalleryCampaignBanner';
@@ -54,15 +55,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const artistPath = `/artworks/artist/${encodeURIComponent(artistName)}`;
   const pageUrl = buildLocaleUrl(artistPath, locale);
 
-  // Find valid profile or note from any of the artist's artworks
+  // Find valid profile, history, or note from any of the artist's artworks
   const artistProfile = artistArtworks.find((a) => a.profile)?.profile || '';
   const artistProfileEn = artistArtworks.find((a) => a.profile_en)?.profile_en || '';
+  const artistHistory = artistArtworks.find((a) => a.history)?.history || '';
+  const artistHistoryEn = artistArtworks.find((a) => a.history_en)?.history_en || '';
   const artistNote = artistArtworks.find((a) => a.description)?.description || '';
 
   const effectiveProfile = locale === 'en' && artistProfileEn ? artistProfileEn : artistProfile;
+  const effectiveHistory = locale === 'en' && artistHistoryEn ? artistHistoryEn : artistHistory;
   const profileSnippet =
     effectiveProfile && !(locale === 'en' && containsHangul(effectiveProfile))
       ? `${effectiveProfile.substring(0, 200)}... `
+      : '';
+  const historySnippet =
+    effectiveHistory && !(locale === 'en' && containsHangul(effectiveHistory))
+      ? `${effectiveHistory.substring(0, 200)}... `
       : '';
   const noteSnippet =
     artistNote && !(locale === 'en' && containsHangul(artistNote))
@@ -84,7 +92,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const seoDescription =
     t('metaDescription', { artist: formattedName }) +
     ' ' +
-    (profileSnippet || noteSnippet || t('metaFallback')) +
+    (profileSnippet || historySnippet || noteSnippet || t('metaFallback')) +
     availabilitySnippet;
 
   const metaTitle = t('metaTitle', { artist: formattedName });
@@ -180,10 +188,12 @@ export default async function ArtistPage({ params }: Props) {
   const resolvedImageUrl = resolveArtworkImageUrl(representativeArtwork.images[0]);
   const heroBackgroundImage = resolvedImageUrl;
 
-  // Description Logic: Profile > Description (Note) > Default
-  // Find valid profile or note from any of the artist's artworks (usually they are same for all)
+  // Description Logic: Profile > History (CV) > Description (Note) > Default
+  // Find valid profile, history, or note from any of the artist's artworks
   const artistProfile = artistArtworks.find((a) => a.profile)?.profile;
   const artistProfileEn = artistArtworks.find((a) => a.profile_en)?.profile_en;
+  const artistHistoryHero = artistArtworks.find((a) => a.history)?.history;
+  const artistHistoryHeroEn = artistArtworks.find((a) => a.history_en)?.history_en;
   const artistNote = artistArtworks.find((a) => a.description)?.description;
 
   const displayArtistName =
@@ -193,9 +203,14 @@ export default async function ArtistPage({ params }: Props) {
     locale === 'en'
       ? artistProfileEn ||
         artistProfile ||
+        artistHistoryHeroEn ||
+        artistHistoryHero ||
         artistNote ||
         t('defaultDescription', { artist: formattedName })
-      : artistProfile || artistNote || t('defaultDescription', { artist: formattedName });
+      : artistProfile ||
+        artistHistoryHero ||
+        artistNote ||
+        t('defaultDescription', { artist: formattedName });
   const localizedDescription =
     locale === 'en' && containsHangul(rawDescription)
       ? t('originalKoreanDescription')
@@ -318,9 +333,9 @@ export default async function ArtistPage({ params }: Props) {
               </p>
               <div className="flex flex-wrap gap-2">
                 {categoryLinks.map(({ cat, displayName, path, isPrimary }) => (
-                  <a
+                  <Link
                     key={cat}
-                    href={buildLocaleUrl(path, locale)}
+                    href={path}
                     className={`px-4 py-2 text-sm font-medium rounded-full border transition-colors ${
                       isPrimary
                         ? 'border-primary bg-primary/5 text-primary hover:bg-primary/10'
@@ -328,7 +343,7 @@ export default async function ArtistPage({ params }: Props) {
                     }`}
                   >
                     {displayName}
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>

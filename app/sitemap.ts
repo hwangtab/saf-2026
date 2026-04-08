@@ -4,6 +4,7 @@ import { routing } from '@/i18n/routing';
 import { getSupabaseArtworks, getSupabaseNews, getSupabaseStories } from '@/lib/supabase-data';
 import { CATEGORY_EN_MAP } from '@/lib/artwork-category';
 import { resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
+import { STORY_CATEGORIES } from '@/types';
 
 export const dynamic = 'force-static';
 
@@ -227,6 +228,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
   });
 
+  // Story category landing pages (SEO: 토픽 클러스터 — "작가 인터뷰", "미술 구매 가이드" 등)
+  const storyCategoryPages: MetadataRoute.Sitemap = STORY_CATEGORIES.flatMap((category) => {
+    const categoryPath = `/stories/category/${category}`;
+    return routing.locales.map((locale) => ({
+      url: localizedUrl(baseUrl, categoryPath, locale),
+      lastModified: now,
+      changeFrequency: 'weekly' as const,
+      priority: locale === routing.defaultLocale ? 0.8 : 0.72,
+      alternates: createAlternates(baseUrl, categoryPath),
+    }));
+  });
+
   const storyPages: MetadataRoute.Sitemap = allStories.flatMap((story) => {
     const storyPath = `/stories/${story.slug}`;
 
@@ -252,6 +265,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     ...staticPages,
     ...categoryPages,
+    ...storyCategoryPages,
     ...artworkPages,
     ...artistPages,
     ...newsPages,
