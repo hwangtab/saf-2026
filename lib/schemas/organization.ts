@@ -83,8 +83,8 @@ export function generateWebsiteSchema(locale: 'ko' | 'en' = 'ko') {
     alternateName: 'SAF Online',
     url: SITE_URL,
     description: isEnglish
-      ? 'A special exhibition raising mutual-aid funds for Korean artists'
-      : '한국 예술인들의 상호부조 기금 마련을 위한 특별전',
+      ? 'A Seoul Korean art exhibition and online gallery raising mutual-aid funds for artists. Browse and purchase 127 contemporary artworks — paintings, prints, photography, and sculpture.'
+      : '서울 한국 현대미술 전시회 온라인 갤러리. 127명 작가의 회화·판화·사진·조각 작품을 구매하고 예술인 상호부조 기금을 함께 만들어가세요.',
     inLanguage: isEnglish ? 'en-US' : 'ko-KR',
     publisher: {
       '@type': 'Organization',
@@ -169,7 +169,10 @@ export function generateLocalBusinessSchema(locale: 'ko' | 'en' = 'ko') {
       : '현금, 신용카드, 체크카드, 계좌이체',
     hasOfferCatalog: {
       '@type': 'OfferCatalog',
-      name: isEnglish ? 'SAF Online Artworks' : '씨앗페 온라인 출품작',
+      name: isEnglish ? 'SAF Online Exhibition Catalog' : '씨앗페 온라인 전시 도록',
+      description: isEnglish
+        ? '127 original artworks by 127 Korean artists — the official digital exhibition catalog'
+        : '127명 작가의 127점 작품 — 씨앗페 온라인 공식 전시 도록',
       url: `${SITE_URL}/artworks`,
     },
     hasMap: EXTERNAL_LINKS.KOSMART_OFFICE_MAP,
