@@ -155,23 +155,20 @@ export default async function ArtworksPage() {
           />
         </PageHero>
 
-        {/* 카테고리 바로가기 — 검색엔진이 크롤링할 수 있는 앵커 링크 */}
-        <Section variant="white" padding="none">
-          <nav aria-label={locale === 'en' ? 'Browse by category' : '카테고리별 둘러보기'}>
-            <div className="container-max py-4 flex flex-wrap gap-2">
-              {categoryNav.map((cat) => (
-                <Link
-                  key={cat.category}
-                  href={`/artworks/category/${encodeURIComponent(cat.category)}`}
-                  className="px-3 md:px-4 py-1.5 text-xs font-medium rounded-full border border-gray-200 bg-white text-gray-600 hover:bg-gray-100 transition-colors"
-                >
-                  {cat.displayName}
-                  <span className="ml-1 opacity-60">{cat.count}</span>
-                </Link>
-              ))}
-            </div>
-          </nav>
-        </Section>
+        {/* 카테고리 바로가기 — 검색엔진 크롤링용, 시각적으로 숨김 */}
+        <nav
+          aria-label={locale === 'en' ? 'Browse by category' : '카테고리별 둘러보기'}
+          className="sr-only"
+        >
+          {categoryNav.map((cat) => (
+            <Link
+              key={cat.category}
+              href={`/artworks/category/${encodeURIComponent(cat.category)}`}
+            >
+              {cat.displayName} ({cat.count})
+            </Link>
+          ))}
+        </nav>
 
         {/* Gallery Section */}
         <Section

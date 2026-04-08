@@ -13,7 +13,7 @@ export default function FeedbackButton() {
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-40 flex items-center gap-2 rounded-full bg-slate-800 px-4 py-2.5 text-sm font-medium text-white shadow-lg transition-[transform,box-shadow,background-color] hover:bg-slate-700 hover:shadow-xl active:scale-95"
+        className="fixed bottom-6 right-6 z-40 flex items-center gap-2 rounded-full bg-gray-800 px-4 py-2.5 text-sm font-medium text-white shadow-lg transition-[transform,box-shadow,background-color] hover:bg-gray-700 hover:shadow-xl active:scale-95"
         aria-label={t('buttonLabel')}
       >
         <svg

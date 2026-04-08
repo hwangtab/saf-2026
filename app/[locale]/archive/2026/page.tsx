@@ -134,7 +134,7 @@ export default async function Archive2026Page() {
           />
         </PageHero>
 
-        <Section variant="white" className="bg-red-50">
+        <Section variant="red">
           <div className="container-max text-center">
             <p className="text-lg font-bold text-primary">
               🚫 This offline exhibition ended on January 26, 2026.
@@ -145,7 +145,7 @@ export default async function Archive2026Page() {
           </div>
         </Section>
 
-        <Section variant="primary-surface" prevVariant="white">
+        <Section variant="primary-surface" prevVariant="red">
           <div className="container-max">
             <SectionTitle className="mb-8">Exhibition overview</SectionTitle>
             <div className="mb-12">
@@ -225,7 +225,7 @@ export default async function Archive2026Page() {
         <ShareButtonsWrapper url={canonicalUrl} title={shareTitle} description={shareDescription} />
       </PageHero>
 
-      <Section variant="white" className="bg-red-50">
+      <Section variant="red">
         <div className="container-max text-center">
           <p className="text-lg font-bold text-primary">
             🚫 본 오프라인 전시는 2026년 1월 26일에 종료되었습니다.
@@ -235,7 +235,7 @@ export default async function Archive2026Page() {
       </Section>
 
       {/* Exhibition Info */}
-      <Section variant="primary-surface" prevVariant="white">
+      <Section variant="primary-surface" prevVariant="red">
         <div className="container-max">
           <SectionTitle className="mb-8">지난 전시 정보</SectionTitle>
 
@@ -492,7 +492,7 @@ export default async function Archive2026Page() {
           </div>
         </div>
       </Section>
-      <Section variant="primary-soft" prevVariant="gray" className="pb-24 md:pb-32">
+      <Section variant="primary-soft" prevVariant="white" className="pb-24 md:pb-32">
         <div className="container-max text-center">
           <SectionTitle className="mb-8">문의사항</SectionTitle>
           <div className="space-y-4">
