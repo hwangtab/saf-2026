@@ -202,6 +202,7 @@ export async function initiatePayment(input: InitiatePaymentInput): Promise<Init
     try {
       err = await response.json();
     } catch {}
+    console.error('[initiatePayment] Toss API error:', response.status, JSON.stringify(err));
     return { success: false, error: err.message || '결제 세션 생성에 실패했습니다.' };
   }
 
