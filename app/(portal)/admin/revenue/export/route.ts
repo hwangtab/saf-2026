@@ -73,6 +73,8 @@ function buildReportCsv(analytics: RevenueAnalytics): string {
     ['manual 수량(점)', analytics.summaryBySource.manual.soldCount],
     ['cafe24 매출(원)', analytics.summaryBySource.cafe24.revenue],
     ['cafe24 수량(점)', analytics.summaryBySource.cafe24.soldCount],
+    ['toss 매출(원)', analytics.summaryBySource.toss.revenue],
+    ['toss 수량(점)', analytics.summaryBySource.toss.soldCount],
     ['오프라인 매출(원)', analytics.summaryByChannel.offline.revenue],
     ['오프라인 수량(점)', analytics.summaryByChannel.offline.soldCount],
     ['온라인 매출(원)', analytics.summaryByChannel.online.revenue],
