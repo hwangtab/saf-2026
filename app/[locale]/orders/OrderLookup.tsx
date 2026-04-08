@@ -562,10 +562,18 @@ function OrderDetail({
 
 // ─── Order Card ───────────────────────────────────────────────────────────────
 
-function OrderCard({ item, buyerEmail }: { item: OrderListItem; buyerEmail: string }) {
-  const [open, setOpen] = useState(false);
+function OrderCard({
+  item,
+  buyerEmail,
+  initialDetail,
+}: {
+  item: OrderListItem;
+  buyerEmail: string;
+  initialDetail?: OrderPublicInfo | null;
+}) {
+  const [open, setOpen] = useState(!!initialDetail);
   const [loading, setLoading] = useState(false);
-  const [detail, setDetail] = useState<OrderPublicInfo | null>(null);
+  const [detail, setDetail] = useState<OrderPublicInfo | null>(initialDetail ?? null);
   const [cardStatus, setCardStatus] = useState(item.status);
 
   function handleDetailUpdate(updated: Partial<OrderPublicInfo>) {
@@ -641,11 +649,13 @@ export default function OrderLookup() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [orders, setOrders] = useState<OrderListItem[] | null>(null);
+  const [firstDetail, setFirstDetail] = useState<OrderPublicInfo | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     setOrders(null);
+    setFirstDetail(null);
 
     if (!name.trim() || !email.trim() || !phone.trim()) {
       setError(t('errorRequired'));
@@ -660,6 +670,11 @@ export default function OrderLookup() {
           setError(t('errorNotFound'));
         } else {
           setOrders(res.orders);
+          // 첫 번째 주문 상세를 미리 조회하여 자동 펼침
+          const detailRes = await lookupOrderDetail(res.orders[0].orderNo, email);
+          if (detailRes.success) {
+            setFirstDetail(detailRes.order);
+          }
         }
       } else {
         setError(res.error === 'REQUIRED' ? t('errorRequired') : t('errorNotFound'));
@@ -671,6 +686,7 @@ export default function OrderLookup() {
 
   function handleReset() {
     setOrders(null);
+    setFirstDetail(null);
     setError(null);
   }
 
@@ -693,8 +709,13 @@ export default function OrderLookup() {
             </button>
           </div>
           <div className="space-y-3">
-            {orders.map((order) => (
-              <OrderCard key={order.orderNo} item={order} buyerEmail={email} />
+            {orders.map((order, idx) => (
+              <OrderCard
+                key={order.orderNo}
+                item={order}
+                buyerEmail={email}
+                initialDetail={idx === 0 ? firstDetail : undefined}
+              />
             ))}
             <Link
               href="/artworks"
