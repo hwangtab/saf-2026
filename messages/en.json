@@ -695,6 +695,10 @@
     "orderNo": "Order No.",
     "backToArtworkPage": "Back to artwork",
     "errorCode": "Error code",
-    "orderIdLabel": "Order"
+    "orderIdLabel": "Order",
+    "paymentMethodSelect": "Payment Method",
+    "methodCard": "Credit/Debit Card",
+    "methodTransfer": "Bank Transfer",
+    "methodVirtualAccount": "Virtual Account"
   }
 }

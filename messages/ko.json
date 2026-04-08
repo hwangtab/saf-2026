@@ -695,6 +695,10 @@
     "orderNo": "주문 번호",
     "backToArtworkPage": "작품 페이지로 돌아가기",
     "errorCode": "오류 코드",
-    "orderIdLabel": "주문 번호"
+    "orderIdLabel": "주문 번호",
+    "paymentMethodSelect": "결제수단 선택",
+    "methodCard": "신용/체크카드",
+    "methodTransfer": "계좌이체",
+    "methodVirtualAccount": "가상계좌"
   }
 }
