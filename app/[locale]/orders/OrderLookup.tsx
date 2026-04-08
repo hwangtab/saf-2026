@@ -6,8 +6,8 @@ import clsx from 'clsx';
 import { Link } from '@/i18n/navigation';
 import SafeImage from '@/components/common/SafeImage';
 import { formatPriceForDisplay } from '@/lib/utils';
-import { lookupOrder } from '@/app/actions/order-lookup';
-import type { OrderPublicInfo } from '@/app/actions/order-lookup';
+import { lookupOrders, lookupOrderDetail } from '@/app/actions/order-lookup';
+import type { OrderListItem, OrderPublicInfo } from '@/app/actions/order-lookup';
 
 const STATUS_STYLES: Record<string, { label: string; className: string }> = {
   pending_payment: { label: 'statusPendingPayment', className: 'bg-gray-100 text-gray-600' },
@@ -40,55 +40,26 @@ function formatKstDate(utcString: string | null): string {
   }).format(new Date(utcString));
 }
 
-function OrderResult({ order }: { order: OrderPublicInfo }) {
+function StatusBadge({ status }: { status: string }) {
   const t = useTranslations('orderLookup');
-  const statusInfo = STATUS_STYLES[order.status];
-
+  const info = STATUS_STYLES[status];
+  if (!info) return null;
   return (
-    <div className="mt-8 space-y-4">
-      {/* 주문 상태 헤더 */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-xs text-gray-500">{t('orderNo')}</p>
-            <p className="mt-0.5 font-mono font-semibold text-charcoal">{order.orderNo}</p>
-          </div>
-          {statusInfo && (
-            <span
-              className={clsx('rounded-full px-3 py-1 text-sm font-semibold', statusInfo.className)}
-            >
-              {t(statusInfo.label as Parameters<typeof t>[0])}
-            </span>
-          )}
-        </div>
-      </div>
+    <span className={clsx('rounded-full px-2.5 py-1 text-xs font-semibold', info.className)}>
+      {t(info.label as Parameters<typeof t>[0])}
+    </span>
+  );
+}
 
-      {/* 작품 정보 */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-        <div className="flex items-center gap-4">
-          {order.artworkImage && (
-            <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-gray-100">
-              <SafeImage
-                src={order.artworkImage}
-                alt={order.artworkTitle}
-                width={80}
-                height={80}
-                className="h-full w-full object-cover"
-              />
-            </div>
-          )}
-          <div className="min-w-0">
-            <p className="text-xs text-gray-500">{order.artistName}</p>
-            <p className="mt-0.5 font-semibold text-charcoal truncate">{order.artworkTitle}</p>
-          </div>
-        </div>
-      </div>
-
+function OrderDetail({ order }: { order: OrderPublicInfo }) {
+  const t = useTranslations('orderLookup');
+  return (
+    <div className="mt-4 space-y-3 border-t border-gray-100 pt-4">
       {/* 가상계좌 입금 안내 */}
       {order.status === 'awaiting_deposit' && order.virtualAccount && (
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 shadow-sm">
-          <h3 className="mb-4 text-base font-semibold text-amber-900">{t('virtualAccountInfo')}</h3>
-          <div className="space-y-3 text-sm">
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm">
+          <p className="mb-2 font-semibold text-amber-900">{t('virtualAccountInfo')}</p>
+          <div className="space-y-1.5">
             <div className="flex justify-between">
               <span className="text-amber-700">{t('bankName')}</span>
               <span className="font-semibold text-amber-900">{order.virtualAccount.bankName}</span>
@@ -108,110 +79,154 @@ function OrderResult({ order }: { order: OrderPublicInfo }) {
       )}
 
       {/* 주문 정보 */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h3 className="mb-4 text-base font-semibold text-charcoal">{t('orderInfo')}</h3>
-        <div className="space-y-3 text-sm">
-          <div className="flex justify-between">
-            <span className="text-gray-500">{t('orderDate')}</span>
-            <span className="text-charcoal">{formatKstDate(order.createdAt)}</span>
-          </div>
-          {order.paymentMethod && (
-            <div className="flex justify-between">
-              <span className="text-gray-500">{t('paymentMethod')}</span>
-              <span className="text-charcoal">
-                {PAYMENT_METHOD_LABELS[order.paymentMethod] ?? order.paymentMethod}
-              </span>
-            </div>
-          )}
-          {order.paidAt && (
-            <div className="flex justify-between">
-              <span className="text-gray-500">{t('paymentDate')}</span>
-              <span className="text-charcoal">{formatKstDate(order.paidAt)}</span>
-            </div>
-          )}
+      <div className="space-y-2 text-sm">
+        <div className="flex justify-between">
+          <span className="text-gray-500">{t('orderNo')}</span>
+          <span className="font-mono text-charcoal">{order.orderNo}</span>
         </div>
+        <div className="flex justify-between">
+          <span className="text-gray-500">{t('orderDate')}</span>
+          <span className="text-charcoal">{formatKstDate(order.createdAt)}</span>
+        </div>
+        {order.paymentMethod && (
+          <div className="flex justify-between">
+            <span className="text-gray-500">{t('paymentMethod')}</span>
+            <span className="text-charcoal">
+              {PAYMENT_METHOD_LABELS[order.paymentMethod] ?? order.paymentMethod}
+            </span>
+          </div>
+        )}
+        {order.paidAt && (
+          <div className="flex justify-between">
+            <span className="text-gray-500">{t('paymentDate')}</span>
+            <span className="text-charcoal">{formatKstDate(order.paidAt)}</span>
+          </div>
+        )}
       </div>
 
       {/* 배송 정보 */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h3 className="mb-4 text-base font-semibold text-charcoal">{t('shippingInfo')}</h3>
-        <div className="space-y-3 text-sm">
-          <div className="flex justify-between">
-            <span className="text-gray-500">{t('recipient')}</span>
-            <span className="text-charcoal">{order.shippingName}</span>
-          </div>
-          <div className="flex justify-between gap-4">
-            <span className="shrink-0 text-gray-500">{t('address')}</span>
-            <span className="text-right text-charcoal">
-              {order.shippingAddress}
-              {order.shippingAddressDetail && ` ${order.shippingAddressDetail}`}
-            </span>
-          </div>
+      <div className="space-y-2 border-t border-gray-100 pt-3 text-sm">
+        <div className="flex justify-between">
+          <span className="text-gray-500">{t('recipient')}</span>
+          <span className="text-charcoal">{order.shippingName}</span>
+        </div>
+        <div className="flex justify-between gap-4">
+          <span className="shrink-0 text-gray-500">{t('address')}</span>
+          <span className="text-right text-charcoal">
+            {order.shippingAddress}
+            {order.shippingAddressDetail && ` ${order.shippingAddressDetail}`}
+          </span>
         </div>
       </div>
 
       {/* 금액 내역 */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h3 className="mb-4 text-base font-semibold text-charcoal">{t('amountInfo')}</h3>
-        <table className="w-full text-sm">
-          <tbody className="divide-y divide-gray-100">
-            <tr>
-              <td className="py-2 text-gray-600">{t('artworkAmount')}</td>
-              <td className="py-2 text-right font-medium text-charcoal">
-                {formatPriceForDisplay(order.itemAmount)}
-              </td>
-            </tr>
-            <tr>
-              <td className="py-2 text-gray-600">{t('shippingFee')}</td>
-              <td className="py-2 text-right font-medium text-charcoal">
-                {order.shippingAmount === 0
-                  ? t('freeShipping')
-                  : formatPriceForDisplay(order.shippingAmount)}
-              </td>
-            </tr>
-            <tr>
-              <td className="py-2 font-bold text-charcoal">{t('totalAmount')}</td>
-              <td className="py-2 text-right text-lg font-bold text-primary-a11y">
-                {formatPriceForDisplay(order.totalAmount)}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <div className="space-y-2 border-t border-gray-100 pt-3 text-sm">
+        <div className="flex justify-between">
+          <span className="text-gray-500">{t('artworkAmount')}</span>
+          <span className="text-charcoal">{formatPriceForDisplay(order.itemAmount)}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-gray-500">{t('shippingFee')}</span>
+          <span className="text-charcoal">
+            {order.shippingAmount === 0
+              ? t('freeShipping')
+              : formatPriceForDisplay(order.shippingAmount)}
+          </span>
+        </div>
+        <div className="flex justify-between font-bold">
+          <span className="text-charcoal">{t('totalAmount')}</span>
+          <span className="text-primary-a11y">{formatPriceForDisplay(order.totalAmount)}</span>
+        </div>
       </div>
+    </div>
+  );
+}
 
-      <Link
-        href="/artworks"
-        className="block w-full rounded-xl border border-gray-200 py-3 text-center text-sm font-medium text-gray-600 hover:bg-gray-50"
-      >
-        작품 더 보기
-      </Link>
+function OrderCard({ item, buyerEmail }: { item: OrderListItem; buyerEmail: string }) {
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [detail, setDetail] = useState<OrderPublicInfo | null>(null);
+
+  async function handleToggle() {
+    if (open) {
+      setOpen(false);
+      return;
+    }
+    if (detail) {
+      setOpen(true);
+      return;
+    }
+    setLoading(true);
+    const res = await lookupOrderDetail(item.orderNo, buyerEmail);
+    setLoading(false);
+    if (res.success) {
+      setDetail(res.order);
+      setOpen(true);
+    }
+  }
+
+  return (
+    <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+      <button type="button" onClick={handleToggle} className="w-full text-left" disabled={loading}>
+        <div className="flex items-center gap-4">
+          {item.artworkImage && (
+            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-gray-100">
+              <SafeImage
+                src={item.artworkImage}
+                alt={item.artworkTitle}
+                width={64}
+                height={64}
+                className="h-full w-full object-cover"
+              />
+            </div>
+          )}
+          <div className="min-w-0 flex-1">
+            <p className="truncate font-semibold text-charcoal">{item.artworkTitle}</p>
+            <p className="mt-0.5 text-sm font-bold text-primary-a11y">
+              {formatPriceForDisplay(item.totalAmount)}
+            </p>
+            <p className="mt-0.5 text-xs text-gray-400">{formatKstDate(item.createdAt)}</p>
+          </div>
+          <div className="flex shrink-0 flex-col items-end gap-2">
+            <StatusBadge status={item.status} />
+            <span className="text-xs text-gray-400">{loading ? '...' : open ? '▲' : '▼'}</span>
+          </div>
+        </div>
+      </button>
+
+      {open && detail && <OrderDetail order={detail} />}
     </div>
   );
 }
 
 export default function OrderLookup() {
   const t = useTranslations('orderLookup');
-  const [orderNo, setOrderNo] = useState('');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<OrderPublicInfo | null>(null);
+  const [orders, setOrders] = useState<OrderListItem[] | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    setResult(null);
+    setOrders(null);
 
-    if (!orderNo.trim() || !email.trim()) {
+    if (!name.trim() || !email.trim() || !phone.trim()) {
       setError(t('errorRequired'));
       return;
     }
 
     setLoading(true);
     try {
-      const res = await lookupOrder(orderNo, email);
+      const res = await lookupOrders(name, email, phone);
       if (res.success) {
-        setResult(res.order);
+        if (res.orders.length === 0) {
+          setError(t('errorNotFound'));
+        } else {
+          setOrders(res.orders);
+        }
       } else {
         setError(res.error === 'REQUIRED' ? t('errorRequired') : t('errorNotFound'));
       }
@@ -230,16 +245,14 @@ export default function OrderLookup() {
         className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm space-y-4"
       >
         <div>
-          <label className="block text-sm font-medium text-charcoal mb-1.5">
-            {t('orderNoLabel')}
-          </label>
+          <label className="block text-sm font-medium text-charcoal mb-1.5">{t('nameLabel')}</label>
           <input
             type="text"
-            value={orderNo}
-            onChange={(e) => setOrderNo(e.target.value)}
-            placeholder={t('orderNoPlaceholder')}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder={t('namePlaceholder')}
             className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm text-charcoal placeholder-gray-400 focus:border-primary focus:outline-none"
-            autoComplete="off"
+            autoComplete="name"
           />
         </div>
         <div>
@@ -253,6 +266,19 @@ export default function OrderLookup() {
             placeholder={t('emailPlaceholder')}
             className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm text-charcoal placeholder-gray-400 focus:border-primary focus:outline-none"
             autoComplete="email"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-charcoal mb-1.5">
+            {t('phoneLabel')}
+          </label>
+          <input
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder={t('phonePlaceholder')}
+            className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm text-charcoal placeholder-gray-400 focus:border-primary focus:outline-none"
+            autoComplete="tel"
           />
         </div>
 
@@ -269,7 +295,19 @@ export default function OrderLookup() {
         </button>
       </form>
 
-      {result && <OrderResult order={result} />}
+      {orders && (
+        <div className="mt-6 space-y-3">
+          {orders.map((order) => (
+            <OrderCard key={order.orderNo} item={order} buyerEmail={email} />
+          ))}
+          <Link
+            href="/artworks"
+            className="block w-full rounded-xl border border-gray-200 py-3 text-center text-sm font-medium text-gray-600 hover:bg-gray-50"
+          >
+            작품 더 보기
+          </Link>
+        </div>
+      )}
     </div>
   );
 }
