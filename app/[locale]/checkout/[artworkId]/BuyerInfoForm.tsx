@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef, useImperativeHandle, useState } from 'react';
+import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 
 export interface BuyerInfo {
@@ -51,6 +51,7 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
   const t = useTranslations('checkout');
   const locale = useLocale();
   const langAttr = locale === 'ko' ? 'ko' : 'en';
+  const detailRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState<FormState>({
     buyerName: '',
@@ -91,6 +92,7 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
             shippingAddress: selectedAddress,
             shippingPostalCode: data.zonecode,
           }));
+          setTimeout(() => detailRef.current?.focus(), 100);
         },
       }).open();
     };
@@ -239,12 +241,15 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
               {t('shippingAddressDetail')} <span className="text-red-500">*</span>
             </label>
             <input
+              ref={detailRef}
               type="text"
               lang={langAttr}
+              style={{ imeMode: 'active' }}
               className={inputClass}
               value={form.shippingAddressDetail}
               onChange={handleChange('shippingAddressDetail')}
               placeholder={t('placeholderAddressDetail')}
+              autoComplete="address-line2"
             />
           </div>
 
@@ -253,6 +258,7 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
             <input
               type="text"
               lang={langAttr}
+              style={{ imeMode: 'active' }}
               className={inputClass}
               value={form.shippingMemo}
               onChange={handleChange('shippingMemo')}
