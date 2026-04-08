@@ -30,6 +30,7 @@ export function createPageMetadata(
     description,
     alternates: createLocaleAlternates(path, locale),
     openGraph: {
+      type: 'website',
       title: `${title} | ${siteTitle}`,
       description,
       url,
@@ -77,6 +78,7 @@ export function createStandardPageMetadata(
     description,
     alternates: createLocaleAlternates(pagePath, locale),
     openGraph: {
+      type: 'website',
       title,
       description,
       url: localizedPageUrl || pageUrl,
