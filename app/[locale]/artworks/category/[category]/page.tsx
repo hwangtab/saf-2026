@@ -258,8 +258,15 @@ export default async function CategoryPage({ params }: Props) {
           />
         </PageHero>
 
-        <Section>
-          <ArtworkGalleryWithSort artworks={listArtworks} />
+        <Section
+          variant="primary-surface"
+          prevVariant="white"
+          padding="none"
+          className="pt-6 md:pt-10 pb-12 md:pb-20"
+        >
+          <div className="container-max">
+            <ArtworkGalleryWithSort artworks={listArtworks} />
+          </div>
         </Section>
 
         {/* 관련 카테고리 내부 링크 — 검색엔진 크롤링 및 구매자 탐색 지원 */}
@@ -274,15 +281,15 @@ export default async function CategoryPage({ params }: Props) {
                   <Link
                     key={cat.category}
                     href={cat.path}
-                    className="px-4 py-2 text-sm font-medium rounded-full border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-colors"
+                    className="px-3 md:px-4 py-1.5 text-xs font-medium rounded-full border border-gray-200 bg-white text-gray-600 hover:bg-gray-100 transition-colors"
                   >
                     {cat.displayName}
-                    <span className="ml-1 text-gray-400 text-xs">{cat.count}</span>
+                    <span className="ml-1 opacity-60">{cat.count}</span>
                   </Link>
                 ))}
                 <Link
                   href="/stories"
-                  className="px-4 py-2 text-sm font-medium rounded-full border border-primary/20 bg-primary/5 text-primary hover:bg-primary/10 transition-colors"
+                  className="px-3 md:px-4 py-1.5 text-xs font-medium rounded-full border border-primary/20 bg-primary/5 text-primary hover:bg-primary/10 transition-colors"
                 >
                   {isEnglish ? 'Magazine' : '매거진'}
                 </Link>
