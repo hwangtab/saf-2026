@@ -176,7 +176,7 @@ function EditShippingForm({ order, buyerEmail, onSaved, onCancel }: EditShipping
   async function handleSave() {
     setError(null);
     if (!name.trim() || !phone.trim() || !address.trim()) {
-      setError('수령인, 연락처, 주소를 모두 입력해주세요.');
+      setError(t('shippingRequiredFields'));
       return;
     }
     setLoading(true);
@@ -235,7 +235,7 @@ function EditShippingForm({ order, buyerEmail, onSaved, onCancel }: EditShipping
       <div>
         <input
           className={inputClass}
-          placeholder="상세주소"
+          placeholder={t('addressDetailPlaceholder')}
           value={detail}
           onChange={(e) => setDetail(e.target.value)}
         />
@@ -257,7 +257,7 @@ function EditShippingForm({ order, buyerEmail, onSaved, onCancel }: EditShipping
           disabled={loading}
           className="flex-1 rounded-lg bg-primary py-2 text-sm font-bold text-white disabled:opacity-50"
         >
-          {loading ? '저장 중...' : t('saveChanges')}
+          {loading ? t('saving') : t('saveChanges')}
         </button>
         <button
           type="button"
@@ -328,7 +328,7 @@ function CancelModal({ order, buyerEmail, onCancelled, onClose }: CancelModalPro
             disabled={loading}
             className="flex-1 rounded-xl bg-red-600 py-2.5 text-sm font-bold text-white disabled:opacity-50"
           >
-            {loading ? '처리 중...' : t('cancelOrderButton')}
+            {loading ? t('processing') : t('cancelOrderButton')}
           </button>
           <button
             type="button"
@@ -348,9 +348,13 @@ function CancelModal({ order, buyerEmail, onCancelled, onClose }: CancelModalPro
 function OrderDetail({
   order: initialOrder,
   buyerEmail,
+  onStatusChange,
+  onDetailUpdate,
 }: {
   order: OrderPublicInfo;
   buyerEmail: string;
+  onStatusChange: (status: string) => void;
+  onDetailUpdate: (updated: Partial<OrderPublicInfo>) => void;
 }) {
   const t = useTranslations('orderLookup');
   const [order, setOrder] = useState(initialOrder);
@@ -362,11 +366,14 @@ function OrderDetail({
 
   function handleShippingSaved(updated: Partial<OrderPublicInfo>) {
     setOrder((prev) => ({ ...prev, ...updated }));
+    onDetailUpdate(updated);
     setEditingShipping(false);
   }
 
   function handleCancelled() {
     setOrder((prev) => ({ ...prev, status: 'cancelled' }));
+    onStatusChange('cancelled');
+    onDetailUpdate({ status: 'cancelled' });
     setShowCancelModal(false);
   }
 
@@ -559,6 +566,11 @@ function OrderCard({ item, buyerEmail }: { item: OrderListItem; buyerEmail: stri
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [detail, setDetail] = useState<OrderPublicInfo | null>(null);
+  const [cardStatus, setCardStatus] = useState(item.status);
+
+  function handleDetailUpdate(updated: Partial<OrderPublicInfo>) {
+    setDetail((prev) => (prev ? { ...prev, ...updated } : prev));
+  }
 
   async function handleToggle() {
     if (open) {
@@ -601,13 +613,20 @@ function OrderCard({ item, buyerEmail }: { item: OrderListItem; buyerEmail: stri
             <p className="mt-0.5 text-xs text-gray-400">{formatKstDate(item.createdAt)}</p>
           </div>
           <div className="flex shrink-0 flex-col items-end gap-2">
-            <StatusBadge status={item.status} />
+            <StatusBadge status={cardStatus} />
             <span className="text-xs text-gray-400">{loading ? '...' : open ? '▲' : '▼'}</span>
           </div>
         </div>
       </button>
 
-      {open && detail && <OrderDetail order={detail} buyerEmail={buyerEmail} />}
+      {open && detail && (
+        <OrderDetail
+          order={detail}
+          buyerEmail={buyerEmail}
+          onStatusChange={setCardStatus}
+          onDetailUpdate={handleDetailUpdate}
+        />
+      )}
     </div>
   );
 }
@@ -650,78 +669,101 @@ export default function OrderLookup() {
     }
   }
 
+  function handleReset() {
+    setOrders(null);
+    setError(null);
+  }
+
   return (
     <div>
       <h1 className="mb-2 text-2xl font-bold text-charcoal">{t('pageTitle')}</h1>
-      <p className="mb-8 text-sm text-gray-500">{t('pageDescription')}</p>
 
-      <form
-        onSubmit={handleSubmit}
-        className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm space-y-4"
-      >
-        <div>
-          <label className="block text-sm font-medium text-charcoal mb-1.5">{t('nameLabel')}</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder={t('namePlaceholder')}
-            className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm text-charcoal placeholder-gray-400 focus:border-primary focus:outline-none"
-            autoComplete="name"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-charcoal mb-1.5">
-            {t('emailLabel')}
-          </label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder={t('emailPlaceholder')}
-            className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm text-charcoal placeholder-gray-400 focus:border-primary focus:outline-none"
-            autoComplete="email"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-charcoal mb-1.5">
-            {t('phoneLabel')}
-          </label>
-          <input
-            type="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder={t('phonePlaceholder')}
-            className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm text-charcoal placeholder-gray-400 focus:border-primary focus:outline-none"
-            autoComplete="tel"
-          />
-        </div>
-
-        {error && (
-          <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
-        )}
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full rounded-xl bg-primary py-3.5 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {loading ? t('lookingUp') : t('lookupButton')}
-        </button>
-      </form>
-
-      {orders && (
-        <div className="mt-6 space-y-3">
-          {orders.map((order) => (
-            <OrderCard key={order.orderNo} item={order} buyerEmail={email} />
-          ))}
-          <Link
-            href="/artworks"
-            className="block w-full rounded-xl border border-gray-200 py-3 text-center text-sm font-medium text-gray-600 hover:bg-gray-50"
+      {orders ? (
+        <>
+          <div className="mb-6 flex items-center justify-between">
+            <p className="text-sm text-gray-500">
+              {t('orderCount', { name: name.trim(), count: orders.length })}
+            </p>
+            <button
+              type="button"
+              onClick={handleReset}
+              className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
+            >
+              {t('searchAgain')}
+            </button>
+          </div>
+          <div className="space-y-3">
+            {orders.map((order) => (
+              <OrderCard key={order.orderNo} item={order} buyerEmail={email} />
+            ))}
+            <Link
+              href="/artworks"
+              className="block w-full rounded-xl border border-gray-200 py-3 text-center text-sm font-medium text-gray-600 hover:bg-gray-50"
+            >
+              {t('viewMoreArtworks')}
+            </Link>
+          </div>
+        </>
+      ) : (
+        <>
+          <p className="mb-8 text-sm text-gray-500">{t('pageDescription')}</p>
+          <form
+            onSubmit={handleSubmit}
+            className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm space-y-4"
           >
-            작품 더 보기
-          </Link>
-        </div>
+            <div>
+              <label className="block text-sm font-medium text-charcoal mb-1.5">
+                {t('nameLabel')}
+              </label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder={t('namePlaceholder')}
+                className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm text-charcoal placeholder-gray-400 focus:border-primary focus:outline-none"
+                autoComplete="name"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-charcoal mb-1.5">
+                {t('emailLabel')}
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder={t('emailPlaceholder')}
+                className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm text-charcoal placeholder-gray-400 focus:border-primary focus:outline-none"
+                autoComplete="email"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-charcoal mb-1.5">
+                {t('phoneLabel')}
+              </label>
+              <input
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder={t('phonePlaceholder')}
+                className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm text-charcoal placeholder-gray-400 focus:border-primary focus:outline-none"
+                autoComplete="tel"
+              />
+            </div>
+
+            {error && (
+              <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-xl bg-primary py-3.5 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {loading ? t('lookingUp') : t('lookupButton')}
+            </button>
+          </form>
+        </>
       )}
     </div>
   );

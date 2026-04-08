@@ -768,6 +768,13 @@
     "shippingCarrier": "Carrier",
     "trackingNumber": "Tracking No.",
     "trackDelivery": "Track Delivery",
-    "noTrackingYet": "Tracking information has not been registered yet."
+    "noTrackingYet": "Tracking information has not been registered yet.",
+    "shippingRequiredFields": "Please enter recipient, phone, and address.",
+    "addressDetailPlaceholder": "Address detail",
+    "saving": "Saving...",
+    "processing": "Processing...",
+    "viewMoreArtworks": "View more artworks",
+    "orderCount": "{count} order(s) for {name}",
+    "searchAgain": "Search again"
   }
 }
