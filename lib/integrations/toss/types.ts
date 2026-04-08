@@ -145,3 +145,28 @@ export type OrderStatus =
   | 'cancelled'
   | 'refund_requested'
   | 'refunded';
+
+export interface TossInitiateRequest {
+  method: string;
+  amount: number;
+  orderId: string;
+  orderName: string;
+  successUrl: string;
+  failUrl: string;
+  customerName?: string;
+  customerEmail?: string;
+}
+
+export interface TossInitiateResponse {
+  paymentKey: string;
+  orderId: string;
+  orderName: string;
+  status: TossPaymentStatus;
+  checkout: { url: string };
+  totalAmount: number;
+  [key: string]: unknown;
+}
+
+export type InitiateResult =
+  | { success: true; data: TossInitiateResponse }
+  | { success: false; error: TossErrorResponse };

@@ -1,14 +1,13 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { loadTossPayments, ANONYMOUS } from '@tosspayments/tosspayments-sdk';
 
 import SafeImage from '@/components/common/SafeImage';
 import { Link } from '@/i18n/navigation';
 import { calculateShippingFee } from '@/lib/integrations/toss/config';
 import { formatPriceForDisplay } from '@/lib/utils';
-import { createOrder, cancelPendingOrder } from '@/app/actions/checkout';
+import { createOrder, cancelPendingOrder, initiatePayment } from '@/app/actions/checkout';
 import BuyerInfoForm from './BuyerInfoForm';
 import type { BuyerInfo } from './BuyerInfoForm';
 
@@ -21,8 +20,6 @@ interface Props {
   imageUrl: string;
   locale: 'ko' | 'en';
 }
-
-type TossPayment = ReturnType<Awaited<ReturnType<typeof loadTossPayments>>['payment']>;
 
 export default function CheckoutClient({
   artworkId,
@@ -37,31 +34,10 @@ export default function CheckoutClient({
   const shippingFee = calculateShippingFee(price);
   const totalAmount = price + shippingFee;
 
-  const [payment, setPayment] = useState<TossPayment | null>(null);
-  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const buyerInfoRef = useRef<BuyerInfo | null>(null);
-
-  // Load Toss SDK and initialise payment instance
-  useEffect(() => {
-    async function initPayment() {
-      try {
-        const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
-        if (!clientKey) throw new Error('Toss client key is not configured');
-
-        const tossPayments = await loadTossPayments(clientKey);
-        setPayment(tossPayments.payment({ customerKey: ANONYMOUS }));
-      } catch {
-        setError(t('loadModuleError'));
-      } finally {
-        setLoading(false);
-      }
-    }
-    void initPayment();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   async function handlePayment() {
     setError(null);
@@ -119,33 +95,35 @@ export default function CheckoutClient({
         return;
       }
 
-      const { orderNo, orderName } = result;
+      const { orderNo, orderName, totalAmount: serverTotal } = result;
       createdOrderNo = orderNo;
 
-      // 2. Open Toss payment window
+      // 2. Create payment session server-side (POST /v1/payments with sk key)
       const localePrefix = locale === 'en' ? '/en' : '';
       const successUrl = `${window.location.origin}${localePrefix}/checkout/${artworkId}/success`;
       const failUrl = `${window.location.origin}${localePrefix}/checkout/${artworkId}/fail`;
 
-      await payment!.requestPayment({
-        method: 'CARD',
-        amount: { currency: 'KRW', value: totalAmount },
-        orderId: orderNo,
+      const payResult = await initiatePayment({
+        orderNo,
         orderName,
+        totalAmount: serverTotal,
+        buyerName,
+        buyerEmail,
         successUrl,
         failUrl,
-        customerEmail: buyerEmail,
-        customerName: buyerName,
-        card: { useEscrow: false },
       });
-    } catch (err: unknown) {
-      // 결제창 에러/취소 시 pending 주문 즉시 취소
-      if (createdOrderNo) {
-        void cancelPendingOrder(createdOrderNo);
+
+      if (!payResult.success) {
+        void cancelPendingOrder(orderNo);
+        setError(payResult.error);
+        return;
       }
-      const tossErr = err as { code?: string; message?: string } | null;
-      if (tossErr?.code === 'USER_CANCEL') return;
-      setError(tossErr?.message ?? t('errorPayment'));
+
+      // 3. Redirect to Toss-hosted payment page
+      window.location.href = payResult.checkoutUrl;
+    } catch (err: unknown) {
+      if (createdOrderNo) void cancelPendingOrder(createdOrderNo);
+      setError((err as Error)?.message ?? t('errorPayment'));
     } finally {
       setSubmitting(false);
     }
@@ -228,7 +206,7 @@ export default function CheckoutClient({
         <button
           type="button"
           onClick={handlePayment}
-          disabled={loading || submitting}
+          disabled={submitting}
           className="w-full rounded-xl bg-primary py-4 text-base font-bold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {submitting ? t('processingShort') : t('payNow')}

@@ -2,8 +2,14 @@
 
 import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/auth/server';
 import { parsePrice } from '@/lib/parsePrice';
-import { calculateShippingFee } from '@/lib/integrations/toss/config';
+import {
+  calculateShippingFee,
+  getTossAuthHeader,
+  TOSS_API_BASE_URL,
+} from '@/lib/integrations/toss/config';
+import { fetchWithTimeout } from '@/lib/integrations/toss/fetch-with-timeout';
 import { generateOrderNumber } from '@/lib/integrations/toss/order-number';
+import type { TossErrorResponse } from '@/lib/integrations/toss/types';
 
 export type CreateOrderInput = {
   artworkId: string;
@@ -145,6 +151,67 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     totalAmount,
     orderName,
   };
+}
+
+export type InitiatePaymentInput = {
+  orderNo: string;
+  orderName: string;
+  totalAmount: number;
+  buyerName: string;
+  buyerEmail: string;
+  successUrl: string;
+  failUrl: string;
+};
+
+export type InitiatePaymentResult =
+  | { success: true; checkoutUrl: string }
+  | { success: false; error: string };
+
+/**
+ * Creates a TossPayments payment session server-side (POST /v1/payments) using
+ * the API 개별 연동 sk key (CF_koreasmae86 MID). Returns a checkout.url to
+ * redirect the user to the Toss-hosted payment page.
+ */
+export async function initiatePayment(input: InitiatePaymentInput): Promise<InitiatePaymentResult> {
+  let response: Response;
+  try {
+    response = await fetchWithTimeout(`${TOSS_API_BASE_URL}/v1/payments`, {
+      method: 'POST',
+      headers: {
+        Authorization: getTossAuthHeader(),
+        'Content-Type': 'application/json',
+        'Idempotency-Key': input.orderNo,
+      },
+      body: JSON.stringify({
+        method: 'CARD',
+        amount: input.totalAmount,
+        orderId: input.orderNo,
+        orderName: input.orderName,
+        successUrl: input.successUrl,
+        failUrl: input.failUrl,
+        customerName: input.buyerName,
+        customerEmail: input.buyerEmail,
+      }),
+    });
+  } catch {
+    return { success: false, error: '결제 서버 연결에 실패했습니다.' };
+  }
+
+  if (!response.ok) {
+    let err: TossErrorResponse = { code: 'UNKNOWN', message: '결제 세션 생성에 실패했습니다.' };
+    try {
+      err = await response.json();
+    } catch {}
+    return { success: false, error: err.message || '결제 세션 생성에 실패했습니다.' };
+  }
+
+  const data = await response.json();
+  const checkoutUrl = (data as { checkout?: { url?: string } })?.checkout?.url;
+  if (!checkoutUrl) {
+    return { success: false, error: '결제 URL을 받지 못했습니다.' };
+  }
+
+  return { success: true, checkoutUrl };
 }
 
 /**
