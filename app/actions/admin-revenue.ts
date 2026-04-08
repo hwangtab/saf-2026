@@ -94,8 +94,10 @@ export type RevenueMonthlyRow = {
   cumulativeRevenue: number;
   manualRevenue: number;
   cafe24Revenue: number;
+  tossRevenue: number;
   manualSoldCount: number;
   cafe24SoldCount: number;
+  tossSoldCount: number;
   offlineRevenue: number;
   onlineRevenue: number;
   offlineSoldCount: number;
@@ -503,8 +505,10 @@ export async function getRevenueAnalyticsForAuthorizedUser(
       cumulativeRevenue,
       manualRevenue,
       cafe24Revenue,
+      tossRevenue,
       manualSoldCount,
       cafe24SoldCount,
+      tossSoldCount,
       offlineRevenue: manualRevenue,
       onlineRevenue: cafe24Revenue + tossRevenue,
       offlineSoldCount: manualSoldCount,
