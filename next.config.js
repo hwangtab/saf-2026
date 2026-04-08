@@ -71,7 +71,7 @@ const nextConfig = {
               "default-src 'self'",
               // 'unsafe-eval' is required by Kakao Map SDK which uses eval() internally.
               // Removing it breaks map rendering. Track: https://devtalk.kakao.com
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://developers.kakao.com https://dapi.kakao.com https://t1.daumcdn.net https://map.daumcdn.net https://t1.kakaocdn.net https://*.vercel-insights.com https://js.tosspayments.com",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://developers.kakao.com https://dapi.kakao.com https://t1.daumcdn.net https://map.daumcdn.net https://t1.kakaocdn.net https://*.vercel-insights.com https://*.tosspayments.com https://*.toss.im",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https: http:",
               "font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
