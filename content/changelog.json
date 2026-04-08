@@ -1,5 +1,1185 @@
 [
   {
+    "hash": "d10945cf",
+    "type": "fix",
+    "scope": "layout",
+    "subject": "헤더에 가려지는 상단 패딩 수정 — pt-16 → pt-24",
+    "summary": "주문조회·결제성공·결제실패 페이지에서 헤더에 콘텐츠가 겹치는 문제 수정",
+    "body": "- orders/page.tsx\n- checkout/success/SuccessClient.tsx (에러·가상계좌·성공 3개 상태)\n- checkout/fail/page.tsx",
+    "date": "2026-04-08",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "b3a32266",
+    "type": "feat",
+    "scope": "orders",
+    "subject": "주문조회 방식 변경 — 이름+이메일+휴대폰 3중 검증으로 목록 조회",
+    "summary": "주문번호 입력 대신 이름·이메일·휴대폰번호로 주문 목록을 조회하고 클릭 시 상세 펼침",
+    "body": "- lookupOrders(name, email, phone): 3필드 AND 매칭, 최신순 목록 반환\n- lookupOrderDetail(orderNo, email): 목록 항목 클릭 시 상세 조회\n- OrderLookup: 3-input 폼 → 주문 카드 목록 → 클릭 시 인라인 상세 펼침\n- i18n: 주문번호 키 제거, 이름/휴대폰 라벨 추가",
+    "date": "2026-04-08",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "36404c91",
+    "type": "fix",
+    "scope": "orders",
+    "subject": "주문조회 카드 수직 중앙 정렬",
+    "summary": "주문조회 폼이 위로 쏠리지 않고 화면 중앙에 위치하도록 수정",
+    "body": null,
+    "date": "2026-04-08",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "75e4a9ed",
+    "type": "feat",
+    "scope": "orders",
+    "subject": "주문조회 페이지 구축 — Cafe24 외부 링크 → 자체 페이지 전환",
+    "summary": "헤더·푸터 '주문/배송 조회' 링크를 Cafe24에서 자체 /orders 페이지로 변경, 주문번호+이메일 조회 구현",
+    "body": "- app/actions/order-lookup.ts: lookupOrder() 서버 액션 (adminClient, order_no+email 검증)\n- app/[locale]/orders/: 주문조회 페이지 + OrderLookup 클라이언트 컴포넌트\n- 주문 상태·금액·배송지·가상계좌 정보 표시\n- DesktopNav / FullscreenMenu / Footer: 외부 a 태그 → 내부 Link /orders\n- SuccessClient: 결제 성공·입금대기 화면에 '주문 조회하기' 버튼 추가\n- ko/en i18n: orderLookup 섹션 추가\n- lib/constants ORDER_STATUS를 내부 경로로 변경",
+    "date": "2026-04-08",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "5d29eec1",
+    "type": "fix",
+    "scope": "revenue",
+    "subject": "매출 분석에 toss 소스 누락 수정",
+    "summary": "매출 분석 페이지·CSV 내보내기에서 토스 매출 데이터가 표시되지 않던 버그 수정",
+    "body": "- RevenueMonthlyRow 타입에 tossRevenue/tossSoldCount 필드 추가\n- 매출 요약 카드 온라인 매출에 cafe24+toss 합산 표시\n- CSV 리포트에 toss 매출/수량 행 추가",
+    "date": "2026-04-08",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "8309bc5f",
+    "type": "feat",
+    "scope": "analytics",
+    "subject": "GA4 연동 — G-8K0TPPEL9W",
+    "summary": "Google Analytics 4 측정 ID 연동 및 CSP 허용 도메인 추가",
+    "body": "- GoogleAnalytics 컴포넌트 추가 (next/script afterInteractive)\n- app/layout.tsx에 GoogleAnalytics 컴포넌트 연결\n- next.config.js CSP에 googletagmanager.com, google-analytics.com 도메인 허용",
+    "date": "2026-04-08",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "285c2c51",
+    "type": "feat",
+    "scope": "checkout",
+    "subject": "결제수단 선택 UI 추가 (카드, 계좌이체, 가상계좌)",
+    "summary": "결제 화면에 결제수단 선택 버튼 추가 — 신용카드 외 계좌이체·가상계좌 지원",
+    "body": "- initiatePayment() method 파라미터 동적화 (기존 CARD 고정 제거)\n- 체크아웃 결제 금액 아래 3-버튼 선택 UI 추가\n- 가상계좌 성공 시 WAITING_FOR_DEPOSIT 흐름은 기존 SuccessClient에서 처리\n- ko/en i18n 키 추가: paymentMethodSelect, methodCard, methodTransfer, methodVirtualAccount",
+    "date": "2026-04-08",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "a9f57f59",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "서버 사이드 결제 생성 복원 — 키 오타 수정으로 POST /v1/payments 정상 작동",
+    "summary": "UNAUTHORIZED_KEY 원인이 키 오타였음 확인, v1 JS SDK 제거하고 서버 사이드 initiatePayment() 방식 복원",
+    "body": "- live_ck_ 클라이언트 키에서 l 누락, live_sk_ 시크릿 키에서 O/0 혼동 → Vercel 교체 완료\n- curl 테스트로 올바른 sk키 → MID CF_koreasmae86, checkout.url 정상 반환 확인\n- v1 JS SDK 스크립트 로드 방식 제거\n- 서버 사이드 initiatePayment() + window.location.href 리디렉트 방식 복원",
+    "date": "2026-04-08",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "e782a30a",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "v1 결제창 SDK로 전환 — sk키 UNAUTHORIZED_KEY 해결",
+    "summary": "POST /v1/payments가 sk키 거부 확인, v1 결제창 JS SDK(js.tosspayments.com)로 전환",
+    "body": "- POST /v1/payments는 gsk키만 허용, sk키는 UNAUTHORIZED_KEY 반환 (curl로 확인)\n- @tosspayments/tosspayments-sdk v2 제거 → v1 결제창 SDK 스크립트 동적 로드\n- TossPayments(clientKey).requestPayment('카드', {...}) 방식으로 결제창 호출\n- initiatePayment 서버 액션은 유지 (향후 활용 가능)",
+    "date": "2026-04-08",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "10151c43",
+    "type": "feat",
+    "scope": "checkout",
+    "subject": "클라이언트 SDK → 서버 사이드 결제 생성 전환",
+    "summary": "Toss ck 키 401 에러 해결 — 클라이언트 SDK 제거, POST /v1/payments 서버 호출 후 checkout.url 리디렉트",
+    "body": "- @tosspayments/tosspayments-sdk 완전 제거\n- initiatePayment() 서버 액션 추가 (sk 키로 POST /v1/payments)\n- 결제창 팝업 → 페이지 리디렉트 방식으로 전환\n- types.ts에 TossInitiateRequest/Response, InitiateResult 타입 추가",
+    "date": "2026-04-08",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "0057ed44",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "한글 페이지 입력란 한글 IME 기본 설정",
+    "summary": "이름·상세주소·메모 입력 필드에 lang 속성 추가 — 한글 페이지에서 한글 입력기 기본 활성화",
+    "body": null,
+    "date": "2026-04-08",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "efa48d7f",
+    "type": "feat",
+    "scope": "checkout",
+    "subject": "결제위젯 → 결제창 전환 (CF_koreasmae86 MID)",
+    "summary": "MID saf202e7ao(계약 미완료)로 인한 NOT_AVAILABLE_PAYMENT_BY_MERCHANT 오류 해소 — 계약 완료된 CF_koreasmae86의 API 개별 연동 키(ck/sk)로 전환하고 결제위젯 SDK에서 결제창 방식으로 변경",
+    "body": null,
+    "date": "2026-04-08",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "bb5fd09f",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "기술 SEO 마무리 — og:type 명시·에셋 캐시·OG 이미지·SpeedInsights",
+    "summary": "og:type 명시적 추가, 정적 에셋 Cache-Control, Kakao CDN preconnect, Core Web Vitals 모니터링, 작품 상세 동적 OG 이미지 구현",
+    "body": "- lib/seo.ts: createPageMetadata·createStandardPageMetadata에 og:type 'website' 추가 (10+ 페이지 영향)\n- next.config.js: /fonts/*, /images/* 경로 Cache-Control 헤더 추가 (immutable/stale-while-revalidate)\n- app/layout.tsx: Kakao CDN preconnect, @vercel/speed-insights SpeedInsights 컴포넌트 추가\n- app/[locale]/artworks/[id]/opengraph-image.tsx: 작품 이미지·아티스트·제목·가격이 포함된 브랜디드 OG 카드 (ISR)",
+    "date": "2026-04-08",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "ed52e268",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "결제 결과 카드 수직 중앙 정렬",
+    "summary": "결제 성공/실패 페이지의 카드가 상단에 붙어있던 것을 화면 중앙으로 정렬",
+    "body": null,
+    "date": "2026-04-08",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "19780cd3",
+    "type": "fix",
+    "scope": "csp",
+    "subject": "toss.im bare domain 허용으로 퀵계좌이체 팝업 차단 해소",
+    "summary": "CSP frame-src/script-src/connect-src에 https://toss.im bare domain 추가 — *.toss.im 와일드카드는 서브도메인만 매칭하여 퀵계좌이체 팝업 차단됨",
+    "body": null,
+    "date": "2026-04-08",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "1ebb8dca",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "createOrder 시 기존 pending 주문 자동 정리",
+    "summary": "새 주문 생성 전 같은 작품의 pending_payment 주문을 자동 취소하여 재주문 차단 근본 해소",
+    "body": "- 탭 닫기, 뒤로가기 등 catch 블록이 실행 안 되는 시나리오 대비\n- check_artwork_availability RPC 호출 전에 정리하므로 항상 정확한 재고 체크",
+    "date": "2026-04-08",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "19f0cf99",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "상세주소를 필수 입력 항목으로 변경",
+    "summary": "배송을 위해 상세주소(동/호수) 입력을 필수로 변경",
+    "body": "- BuyerInfoForm: 상세주소 라벨에 필수 표시(*) 추가\n- CheckoutClient: 클라이언트 유효성 검사에 shippingAddressDetail 추가\n- checkout.ts: 서버 액션 유효성 검사에 shippingAddressDetail 추가",
+    "date": "2026-04-08",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "82921eef",
+    "type": "fix",
+    "scope": "csp",
+    "subject": "script-src 토스 와일드카드 확장 — 퀵계좌이체 차단 해소",
+    "summary": "script-src에서 js.tosspayments.com만 허용하던 것을 *.tosspayments.com + *.toss.im으로 확장",
+    "body": null,
+    "date": "2026-04-08",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "4cd324eb",
+    "type": "fix",
+    "scope": "csp",
+    "subject": "토스 퀵계좌이체 팝업 차단 해소 — toss.im 도메인 CSP 허용",
+    "summary": "CSP frame-src/connect-src에 toss.im 도메인 추가하여 퀵계좌이체 팝업 차단 해소",
+    "body": null,
+    "date": "2026-04-08",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "749b37e8",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "전역 WebSite·ArtGallery 스키마에 전시회 키워드 추가",
+    "summary": "루트 레이아웃에서 모든 페이지에 삽입되는 WebSite·ArtGallery JSON-LD 스키마에 전시회 관련 표현 추가",
+    "body": "- WebSite.description: '서울 한국 현대미술 전시회 온라인 갤러리' 표현 추가\n- ArtGallery.hasOfferCatalog.name: '씨앗페 온라인 출품작' → '씨앗페 온라인 전시 도록' 변경\n- hasOfferCatalog.description 필드 신규 추가 — '공식 전시 도록' 명시",
+    "date": "2026-04-08",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "95e3841a",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "구글 연관검색어 '전시회' 계열 키워드 SEO 전면 개선",
+    "summary": "전시회·전시회 서울·전시회 일정·전시회 도록·전시회 포스터·전시회 추천·전시회 일정 사이트·전시회를 즐기다·전시회 영어로 등 9개 구글 연관검색어 타깃팅",
+    "body": "- 메타데이터: 홈, artworks, archive/hub, archive/2026, archive/2023, stories, categoryPage, oh-yoon 페이지 description·keywords 업데이트\n- 루트 layout.tsx: keywords 필드 신규 추가 (전시회, 서울 전시회, 현대미술 전시회 등)\n- JSON-LD 구조화 데이터:\n  - ExhibitionEvent 스키마에 keywords 필드 + 설명에 '서울 인사동 전시회' 추가\n  - Organization.knowsAbout에 '전시회', '서울 전시회', '전시 도록' 추가\n  - generateExhibitionEnjoyHowTo() 신규 함수 — \"전시회를 즐기는 방법\" 4단계 HowTo (KO/EN)\n  - archive/2026 및 홈페이지에 ExhibitionEnjoyHowTo JSON-LD 적용\n  - generateSAFCoreQA에 전시회 일정·도록·포스터·영어로 Q&A 6개 추가\n- FAQ: 한국어·영어 각 1건 추가 ('전시회를 즐기는 방법', 'How to enjoy the exhibition')",
+    "date": "2026-04-08",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "80a89a52",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "결제 취소 시 pending 주문 즉시 정리 — 재주문 차단 해소",
+    "summary": "USER_CANCEL 또는 위젯 에러 시 생성된 pending_payment 주문을 즉시 취소하여 check_artwork_availability RPC의 30분 잠금을 해제",
+    "body": "- cancelPendingOrder 서버 액션 추가 (status='pending_payment'인 경우만 취소, 안전)\n- CheckoutClient catch 블록에서 createdOrderNo 추적 후 cancelPendingOrder 호출\n- 재현: 결제창 취소 → 재시도 시 \"이미 판매된 작품\" 오류 발생하던 버그 수정",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "84c6b3bc",
+    "type": "fix",
+    "scope": "auth",
+    "subject": "헤더에 가려지는 상단 패딩 전수 수정",
+    "summary": "고정 헤더(h-16, 64px) 하단에 콘텐츠가 잘리는 페이지 전수 조사 후 수정",
+    "body": "- login/signup: py-12(48px) → pt-20 pb-12(80px)로 헤더 아래 여유 확보\n- checkout success/fail: py-16(64px) → pt-24 pb-16(96px)로 안전 여백 추가\n- 결제 성공 loading 상태에도 pt-24 추가",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "99d10a55",
+    "type": "feat",
+    "scope": "stories",
+    "subject": "본문 작품명 〈〉 클릭 시 작품 상세 페이지 이동",
+    "summary": "매거진 본문의 〈작품명〉 텍스트를 클릭하면 해당 작품 페이지로 이동",
+    "body": "- Supabase stories body에 [〈작품명〉](/artworks/id) 마크다운 링크 삽입 (41개, 5편)\n- MarkdownRenderer: 내부 링크에 i18n Link 컴포넌트 적용\n- 이미지 alt 텍스트 내 〈작품명〉은 링크 변환하지 않음 (cleanup 처리)",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "41c19595",
+    "type": "feat",
+    "scope": "stories",
+    "subject": "작품 이미지 클릭 시 작품 상세 페이지 이동",
+    "summary": "매거진 기사 내 작품 이미지를 클릭하면 해당 작품 페이지로 이동하도록 개선",
+    "body": "- MarkdownRenderer: [![alt](img)](/artworks/id) 링크 이미지 감지 → 클릭 가능한 figure로 렌더링 + hover 효과 + \"작품 보러 가기 →\" 안내 표시\n- DB: 29개 기사 body의 36개 이미지를 artwork ID와 매핑하여 링크로 변환",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "44bed5d0",
+    "type": "fix",
+    "scope": "stories",
+    "subject": "카드 썸네일 미표시 수정 — body 첫 이미지 폴백",
+    "summary": "스토리 목록·관련글 카드에서 thumbnail 없을 때 body 마크다운 첫 이미지를 자동 추출해 표시",
+    "body": "- 목록 페이지: featured 카드 + 그리드 카드에 extractFirstImage() 폴백 추가\n- 상세 페이지: 관련 글 카드에도 동일 폴백 적용\n- thumbnail → body 첫 이미지 → \"M\" 플레이스홀더 순서로 표시",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "1315f4b8",
+    "type": "fix",
+    "scope": "payments",
+    "subject": "블라인드 스팟 수정 — 가상계좌 cron 보호, 컬럼명, 웹훅, timeout",
+    "summary": "가상계좌 주문 30분 cron 취소 버그 수정 및 결제 시스템 보안·무결성 6건 개선",
+    "body": "- CRITICAL: awaiting_deposit 주문 상태 추가 (DB 마이그레이션 포함) — 가상계좌 입금 대기 주문이 30분 cron에 취소되던 문제 해결\n- CRITICAL: admin-orders.ts getOrderDetail 컬럼명 4개 수정 (shipping_fee→shipping_amount, recipient_name→shipping_name, recipient_phone→shipping_phone, memo→shipping_memo) — 관리자 주문 상세 배송 정보가 항상 빈값으로 표시되던 버그 수정\n- CRITICAL: 웹훅 PAYMENT_STATUS_CHANGED 취소 핸들러에서 deriveAndSyncArtworkStatus 호출 추가 — 취소 후 작품이 sold 상태로 고착되던 버그 수정\n- HIGH: Toss API fetch에 AbortController 10초 timeout 추가 (fetch-with-timeout.ts) — confirm/cancel/fetchPayment 무한 대기 방지\n- HIGH: confirm/route.ts payment INSERT 에러 처리 추가 — 결제 기록 저장 실패 시 500 응답\n- MEDIUM: PAYMENT_STATUS_CHANGED 웹훅 인증 순서 개선 — Toss API double-verify를 DB 변경 전에 수행",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "06ebde8b",
+    "type": "feat",
+    "scope": "admin",
+    "subject": "대시보드 주문 통계 — 결제 대기 StatCard + 최근 주문 섹션",
+    "summary": "관리자 대시보드에 결제 대기 주문 수 StatCard와 최근 주문 5건 목록 추가",
+    "body": "- admin-dashboard-overview.ts: pendingOrderCount, recentOrders 필드 추가\n  - orders.status='pending_payment' 카운트 쿼리\n  - 최근 주문 5건 쿼리 (id, order_no, buyer_name, total_amount, status, created_at)\n- dashboard/page.tsx: StatCard 그리드에 \"결제 대기 주문\" 카드 추가 → /admin/orders?status=pending_payment\n- dashboard/page.tsx: \"최근 주문\" 섹션 추가 (주문번호 링크, 상태 뱃지, 구매자, 금액, 일시)\n- ko.admin.json, en.admin.json: pendingOrders, recentOrdersTitle, orderStatus* 키 추가",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "aa690812",
+    "type": "feat",
+    "scope": "admin",
+    "subject": "Phase 3 — 주문 관리, 환불, 만료 주문 정리 Cron",
+    "summary": "관리자 주문 관리 페이지, Toss 환불 API, 만료 주문 자동 정리 Cron 구현",
+    "body": "- lib/integrations/toss/cancel.ts: cancelPayment() — POST /v1/payments/{key}/cancel\n- lib/integrations/toss/types.ts: TossCancelRequest, TossCancelResponse, CancelResult 타입 추가\n- app/actions/admin-orders.ts: getOrders, getOrderDetail, refundOrder, updateOrderStatus 서버 액션\n- app/(portal)/admin/orders/: 주문 목록/상세 페이지 + 환불 모달\n- admin-nav-items.ts: \"주문\" 그룹(주문 관리) 추가 (ko/en)\n- app/api/internal/expire-stale-orders/route.ts: pending_payment 30분 초과 주문 자동 취소 Cron\n- vercel.json: expire-stale-orders */10 * * * * Cron 등록\n- webhooks/toss/route.ts: PAYMENT_STATUS_CHANGED CANCELED 감지 → orders/artwork_sales 캐스케이드\n- admin-artworks.ts: deriveAndSyncArtworkStatus export (admin-orders에서 재사용)\n- sales-history.tsx: normalizeSaleSource toss 인식 ('online'), isManual 로직 수정\n- admin-buyers.ts, admin-artist-sales.ts: mapChannel toss → 'online'",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "b7e74aac",
+    "type": "fix",
+    "scope": "toss",
+    "subject": "DEPOSIT_CALLBACK 시크릿 검증을 per-payment DB 저장값 기반으로 수정",
+    "summary": "웹훅 시크릿 검증 로직 수정 — 환경변수 고정값 대신 결제 승인 응답의 virtualAccount.secret(DB 저장)과 비교",
+    "body": "- webhook.ts: verifyDepositCallbackSecret(payload, storedSecret) 시그니처 변경\n- route.ts: payments 레코드 먼저 조회 후 confirm_response.virtualAccount.secret 추출하여 검증\n- types.ts: TossVirtualAccount에 secret 필드 추가\n- config.ts: 미사용 TOSS_PAYMENTS_WEBHOOK_SECRET 환경변수 참조 제거\n- MarkdownRenderer.tsx: img 렌더링 컴포넌트 추가 (figcaption 포함)",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "b6b709b4",
+    "type": "fix",
+    "scope": "magazine",
+    "subject": "중간제목 폰트를 font-section(학교안심포스터체)으로 변경",
+    "summary": "매거진 h2/h3 제목에 사이트 전체 섹션 제목과 동일한 학교안심포스터체 적용",
+    "body": "- prose-h2/h3: font-display → font-section 변경\n- font-normal 유지 (서체 자체가 충분히 굵음)",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "b6e3437d",
+    "type": "fix",
+    "scope": "magazine",
+    "subject": "제목 font-weight 이중 적용 제거",
+    "summary": "font-display 자체가 굵은 서체인데 prose 기본 font-bold까지 겹쳐 과도하게 두꺼워진 문제 수정",
+    "body": "- prose-headings:font-normal 추가로 prose 기본 bold 제거",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "f21c6677",
+    "type": "fix",
+    "scope": "magazine",
+    "subject": "@tailwindcss/typography 플러그인 설치 — prose 클래스 활성화",
+    "summary": "prose 클래스가 전혀 작동하지 않던 근본 원인 해결",
+    "body": "- @tailwindcss/typography 패키지 설치\n- tailwind.config.ts plugins 배열에 등록\n- 이로써 MarkdownRenderer의 prose-* 스타일 전부 활성화\n  (문단 간격, 표 테두리, 제목 여백, 인용구 스타일 등)",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "3deedc3a",
+    "type": "fix",
+    "scope": "magazine",
+    "subject": "매거진 본문 가독성 개선 — 표 선·문단 간격·제목 여백",
+    "summary": "스토리 상세 페이지 본문 타이포그래피 대폭 개선",
+    "body": "- prose-table/th/td: 테두리·배경·패딩 추가 (표 선이 없던 버그 수정)\n- prose-tr: 짝수 행 배경으로 줄 구분 강화\n- prose-p: leading-relaxed + mb-6으로 문단 간격 확보\n- prose-h2: 하단 구분선 + 상하 여백으로 섹션 구분\n- prose-h3: 상하 여백 추가\n- prose-blockquote: px-6 패딩 추가, not-italic 적용\n- prose-li: mb-2로 목록 항목 간격 확보\n- prose-hr: 상하 여백 10 추가",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "12e2368a",
+    "type": "fix",
+    "scope": "header",
+    "subject": "스토리 페이지 헤더 투명화 미적용 버그 수정",
+    "summary": "/stories 및 /stories/[slug] 페이지에서 헤더 투명→불투명 전환이 동작하지 않는 버그 수정",
+    "body": "- HERO_PAGES 배열에 '/stories' 추가\n- useHeaderStyle에 storyDetail prefix 체크 추가 (/stories/[slug] 대응)",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "94a9e8f6",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "Toss 결제 흐름 안정화 및 i18n 메시지 보완",
+    "summary": "결제 성공/실패 페이지 리팩토링, 웹훅 검증 강화, 영문 번역 추가",
+    "body": "- CheckoutClient: 결제 요청 흐름 정리 및 에러 처리 개선\n- BuyerInfoForm: 입력 폼 UX 개선\n- success/fail 페이지: 레이아웃 및 메시지 정리\n- confirm route: 응답 처리 및 에러 로깅 강화\n- webhook route: 이벤트 검증 로직 보강\n- messages: ko/en 결제 관련 i18n 키 추가",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "251deefb",
+    "type": "fix",
+    "scope": "purchase-guide",
+    "subject": "영문 결제 안내 텍스트에도 toss/cafe24 분기 추가",
+    "summary": "한국어에만 있던 결제 시스템 분기를 영문에도 적용 — TossPayments / Cafe24 SSL",
+    "body": null,
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "5618e47b",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "주소 검색 시 사용자 선택 유형에 따라 도로명/지번 분기",
+    "summary": "data.address(지번 고정) → data.userSelectedType으로 도로명/지번 선택 반영",
+    "body": "- userSelectedType 'R' → roadAddress, 'J' → jibunAddress\n- Window 타입 선언에 roadAddress, jibunAddress, userSelectedType 추가",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "83c70713",
+    "type": "fix",
+    "scope": "csp",
+    "subject": "tosspayments.com 와일드카드로 CSP 통합",
+    "summary": "Toss SDK 내부 API 호출이 connect-src 차단으로 \"알 수 없는 에러\" 발생 — 와일드카드로 교체",
+    "body": "- connect-src/frame-src: 개별 Toss 도메인 → https://*.tosspayments.com 통합\n- Toss SDK가 사용하는 모든 서브도메인 일괄 허용",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "1ffa443d",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "createOrder 서버 액션 artist 컬럼 버그 수정",
+    "summary": "결제하기 클릭 시 \"작품을 찾을 수 없습니다\" 에러 수정 — page.tsx와 동일하게 artists join으로 교체",
+    "body": "- select에서 없는 artist 컬럼 제거, artists(name_ko) join으로 교체\n- orderName 구성 시 join 결과에서 artistName 추출",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "25be3713",
+    "type": "fix",
+    "scope": "csp",
+    "subject": "Daum Postcode의 http://postcode.map.kakao.com iframe 허용",
+    "summary": "주소 검색 위젯이 http://postcode.map.kakao.com을 iframe으로 로드하나 CSP에 http 스킴 누락",
+    "body": "- frame-src: http://*.kakao.com 추가 (Daum Postcode가 http 스킴 사용)",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "24ebe08f",
+    "type": "fix",
+    "scope": "csp",
+    "subject": "Daum Postcode 주소 검색 iframe 차단 해제",
+    "summary": "주소 검색 팝업이 CSP frame-src 차단으로 열리지 않던 문제 수정",
+    "body": "- frame-src: https://t1.daumcdn.net, https://postcode.map.daum.net 추가",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "e1f08e9e",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "고정 헤더에 가려지지 않도록 상단 패딩 추가",
+    "summary": "체크아웃 페이지 상단이 fixed 헤더(64px)에 가려지는 문제 수정 — pt-24 적용",
+    "body": null,
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "c5b22ca3",
+    "type": "fix",
+    "scope": "csp",
+    "subject": "Toss 위젯 렌더링 위해 CSP 도메인 추가",
+    "summary": "Toss 결제 위젯이 CSP 차단으로 빈 박스로 표시되던 문제 수정",
+    "body": "- connect-src: https://log.tosspayments.com 추가 (SDK 로깅)\n- frame-src: https://payment-widget.tosspayments.com 추가 (위젯 iframe)",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "f079ce66",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "이미지 URL 이중 접두사 수정 + 위젯 에러 로깅",
+    "summary": "작품 이미지가 이미 full URL인데 또 접두사를 붙여 깨지던 문제 수정, Toss 위젯 렌더 에러 로깅 추가",
+    "body": "- resolveArtworkImageUrl() 유틸 사용으로 이미지 URL 정규화\n- 수동 ${supabaseUrl}/storage/... 경로 조합 제거\n- Toss 위젯 renderPaymentMethods 에러를 콘솔에 출력하도록 변경",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "8da662e2",
+    "type": "feat",
+    "scope": "magazine",
+    "subject": "매거진(Stories) 섹션 추가 — 목록·상세·Admin CRUD·디자인 고도화",
+    "summary": "작가 이야기, 컬렉팅 가이드, 미술 산책 3개 카테고리의 블로그형 매거진 섹션 구현",
+    "body": "- Supabase stories 테이블 마이그레이션 (RLS, 인덱스)\n- 목록 페이지: featured 풀와이드 히어로 카드(글래스모피즘+그라디언트 오버레이), 그리드, 카테고리 필터\n- 상세 페이지: Markdown 본문 렌더링, 관련 글 썸네일 카드, BlogPosting JSON-LD\n- MarkdownRenderer: 브랜드 prose 스타일(font-display 제목, primary 링크, 이미지 rounded)\n- Admin CRUD: createStory / updateStory / deleteStory 서버 액션 + 관리 페이지\n- 네비게이션: 매거진 드롭다운 추가 (작가를 만나다 / 컬렉팅 시작하기 / 미술 산책)\n- i18n: ko/en 키 추가, 브레드크럼 stories 키\n- SEO: generateBlogPostingSchema, sitemap에 /stories 경로 추가\n- react-markdown + remark-gfm 의존성 추가",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "72f41769",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "artworks 테이블 미존재 artist 컬럼 → artists join으로 수정",
+    "summary": "select에서 없는 artist 컬럼 제거, artists(name_ko) join으로 교체 — UUID 작품 체크아웃 404 해결",
+    "body": "- artworks 테이블에는 artist_id(FK)만 있고 artist text 컬럼 없음\n- 잘못된 select로 Supabase 에러 → data null → notFound() 호출 중이었음\n- artists(name_ko) join + error 반환값 로깅 추가",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "5c3f6ace",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "legacy 작품(숫자 ID)에서 Toss 버튼 미노출",
+    "summary": "UUID가 아닌 정적 작품은 Supabase DB에 없으므로 Toss 결제 버튼 대신 Cafe24/문의 안내로 fallback",
+    "body": "- isTossMode = paymentMode === 'toss' && isDbArtwork (UUID 형식 검증)\n- B분기 조건을 paymentMode !== 'toss' → !isTossMode 로 변경\n- legacy 작품도 shopUrl 있으면 Cafe24 링크, 없으면 문의 안내 표시",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "f1b883d6",
+    "type": "fix",
+    "scope": "404",
+    "subject": "not-found.tsx의 next-intl Link를 순수 <a> 태그로 교체",
+    "summary": "app/not-found.tsx는 NextIntlClientProvider 밖에서 렌더되어 locale-aware Link 충돌 수정",
+    "body": "- Link from @/i18n/navigation → <a href> (locale 변수로 /en 접두사 처리)",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "c3781805",
+    "type": "fix",
+    "scope": "error",
+    "subject": "ErrorView에서 Button 컴포넌트 완전 제거",
+    "summary": "Button이 module-level에서 @/i18n/navigation을 import해 GlobalError 컨텍스트에서 next-intl 오류 유발",
+    "body": "- 재시도 버튼: Button → 순수 <button>\n- 백링크 버튼: Button → 순수 <a>\n- Button/cn import 제거",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "002f3c19",
+    "type": "fix",
+    "scope": "error",
+    "subject": "ErrorView 백링크 버튼을 순수 <a> 태그로 교체",
+    "summary": "Button 컴포넌트가 내부에서 next-intl Link를 사용해 GlobalError 컨텍스트에서 충돌하는 문제 수정",
+    "body": "- 백링크 버튼: Button(href) → <a href> 직접 사용 (intl 컨텍스트 불필요)\n- 재시도 버튼(onClick만): Button 유지 — intl Link 미사용이라 안전",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "eb220f6a",
+    "type": "fix",
+    "scope": "error",
+    "subject": "ErrorView에서 useTranslations 의존성 제거 — GlobalError 충돌 수정",
+    "summary": "GlobalError/app/error.tsx에서 ErrorView 렌더 시 NextIntlClientProvider 없이 useTranslations 호출로 인한 충돌 수정",
+    "body": "- ErrorView: useTranslations('error') 제거, retryLabel/homeLabel을 optional props로 추가 (한국어 기본값)\n- app/error.tsx: locale 감지 기반 retryLabel/homeLabel 전달\n- app/[locale]/*/error.tsx: tError = useTranslations('error') 추가 후 retryLabel/homeLabel 전달\n- app/[locale]/checkout/[artworkId]/error.tsx: 결제 전용 에러 경계 추가\n\n결제 페이지 오류 시 GlobalError 대신 CheckoutError 경계에서 적절한 메시지 표시",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "68889659",
+    "type": "feat",
+    "scope": "payments",
+    "subject": "TossPayments v2 결제위젯 연동 구현 (Phase 0-2)",
+    "summary": "Cafe24 외부 결제에서 사이트 내 토스페이먼츠 위젯 결제로 전환하는 핵심 구현",
+    "body": "## Phase 0: Foundation\n- feat/toss-payments 브랜치 생성\n- @tosspayments/tosspayments-sdk@2.6.0 설치\n- supabase migration: orders, payments 테이블 + 가용성 RPC + artwork_sales 제약 확장\n- CSP 헤더: js.tosspayments.com, api.tosspayments.com 허용\n- lib/integrations/toss/ 모듈 5개 (config, types, confirm, webhook, order-number)\n- types/index.ts: ArtworkSale.source에 'toss' 추가, Order/Payment 인터페이스 추가\n- .env.local: NEXT_PUBLIC_PAYMENT_MODE=toss\n\n## Phase 1: Core Payment Flow\n- app/actions/checkout.ts: createOrder() 서버 액션 (비회원 구매, 재고 RPC 검증)\n- app/[locale]/checkout/[artworkId]/: 체크아웃 페이지 + CheckoutClient (위젯 SDK)\n- app/[locale]/checkout/[artworkId]/BuyerInfoForm.tsx: 구매자/배송지 폼 + 다음 주소 검색\n- app/[locale]/checkout/[artworkId]/success/: 결제 성공 페이지 (가상계좌 대기 포함)\n- app/[locale]/checkout/[artworkId]/fail/: 결제 실패/재시도 페이지\n- app/api/payments/toss/confirm/: 결제 승인 API (금액 검증 SEC-01, artwork_sales 삽입)\n- app/api/webhooks/toss/: 웹훅 핸들러 (DEPOSIT_CALLBACK, PAYMENT_STATUS_CHANGED)\n\n## Phase 2: CTA + UI + i18n\n- ArtworkPurchaseCTA: paymentMode 분기 (toss→내부 링크, cafe24→기존 외부 링크)\n- PurchaseGuide: 결제 안내 문구 조건부 렌더링\n- messages/ko.json + en.json: checkout 네임스페이스 37키 추가\n- admin-revenue.ts: RevenueSource에 'toss' 추가, mapSourceToChannel 연동\n- admin-artworks.ts: toss 소스 판매 기록 수정 보호",
+    "date": "2026-04-07",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "0949ac7d",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "our-proof LoanOrCredit areaServed에 Wikidata @id 추가",
+    "summary": "대출 상품 스키마의 areaServed Country 엔티티에 Wikidata 링크 추가하여 지식 그래프 연결 강화",
+    "body": null,
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "8e55b895",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "작품 스키마 countryOfOrigin·creator nationality Wikidata @id 추가",
+    "summary": "작품 VisualArtwork 스키마의 국가 엔티티에 Wikidata @id 링크 추가하여 지식 그래프 연결 강화",
+    "body": "- lib/schemas/artwork.ts: countryOfOrigin에 '@id': Wikidata Q884(South Korea) 추가\n- lib/schemas/artwork.ts: creator Person에 nationality 필드(Wikidata @id 포함) 추가",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "3add1216",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "artwork·video 스키마 잔여 하드코딩 기관명 CONTACT 상수로 교체",
+    "summary": "generateGalleryAggregateOffer seller.name과 generateVideoSchema publisher.name에서 하드코딩된 기관명 제거",
+    "body": "- lib/schemas/artwork.ts: generateGalleryAggregateOffer seller.name 하드코딩 → CONTACT 상수, isEnglish 변수 추가\n- lib/schemas/content.ts: generateVideoSchema publisher.name → video.locale 기반 CONTACT 상수 적용",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "5f2a6ef4",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "artwork·our-proof 스키마에서 하드코딩된 기관명 CONTACT 상수로 교체",
+    "summary": "artwork.ts의 sellerOrg 기관명 하드코딩 제거 및 our-proof의 generateQAPageSchema에 locale 인수 전달",
+    "body": "- lib/schemas/artwork.ts: 'Korea Smart Cooperative'/'한국스마트협동조합' → CONTACT.ORGANIZATION_NAME_EN/CONTACT.ORGANIZATION_NAME (CONTACT import 추가)\n- app/[locale]/our-proof/page.tsx: generateQAPageSchema 호출 시 locale 파라미터 누락 수정",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "88ee2633",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "howto·oh-yoon 페이지 organization name 영문 locale-aware 처리",
+    "summary": "영문 HowTo 스텝에서 한국어 기관명 사용 버그 수정, oh-yoon 전시 organizer 이름 locale 대응",
+    "body": "- lib/schemas/howto.ts: generateMemberJoinHowTo 영문 스텝에서 ORGANIZATION_NAME → ORGANIZATION_NAME_EN\n- app/[locale]/special/oh-yoon/page.tsx: exhibitionEventSchema organizer.name locale-aware 처리",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "11798eff",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "스키마 라이브러리 organization name locale-aware 완전 통일",
+    "summary": "모든 스키마 함수의 organization name·publisher name을 locale 파라미터 기준으로 한/영 자동 선택하도록 통일",
+    "body": "- lib/schemas/organization.ts: generateOrganizationSchema name/alternateName/parentOrganization/funder, generateWebsiteSchema publisher, generateLocalBusinessSchema parentOrganization locale-aware 처리\n- lib/schemas/event.ts: generateExhibitionSchema organizer.name locale-aware 처리\n- lib/schemas/qa-page.ts: generateQAPageSchema locale 파라미터 추가, generateSAFCoreQA에서 전달\n- lib/schemas/claim-review.ts: generateClaimReviewSchema locale 파라미터 추가, generateSAFClaimReviews에서 전달",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "93e2f9da",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "Twitter image alt·뉴스/작품/oh-yoon 페이지 locale-aware 보완",
+    "summary": "Twitter 카드 이미지 alt를 locale-aware {url,alt} 객체로 통일하고, 작품 상세·뉴스 스키마 publisher 이름 다국어 처리",
+    "body": "- app/layout.tsx: Twitter images 일반 URL → {url, alt} 객체 변환\n- app/[locale]/news/page.tsx: OG·Twitter 이미지 alt locale-aware 처리 (altEn/alt)\n- app/[locale]/special/oh-yoon/page.tsx: Twitter images 객체 변환, ohYoonPerson nationality @id 추가\n- lib/schemas/artwork.ts: 작품 Twitter images에 작품명·작가명 포함 alt 명시\n- lib/schemas/content.ts: NewsArticle publisher.name locale='en'이면 ORGANIZATION_NAME_EN 사용\n- messages/ko.json + en.json: artistPage.metaDescription 불필요한 trailing space 제거\n- app/[locale]/artworks/artist/[artist]/page.tsx: 메시지 separator 공백을 코드에서 명시적으로 추가",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "50d4f6cf",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "archive/2026·2023 KO 메타설명 Naver 80자 이상으로 확장",
+    "summary": "짧은 아카이브 페이지 메타설명 개선 — archive/2026 36자→71자, archive/2023 54자→75자, 구체적 수치 포함",
+    "body": null,
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "5b7db4e2",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "our-reality·transparency 페이지 메타설명 Naver 80자 이상으로 확장",
+    "summary": "Naver 권장 80자 기준 미달인 KO 메타설명 개선 — our-reality 48자→79자, transparency 51자→67자",
+    "body": "- our-reality: 데이터 수치(84.9%, 48.6%)를 포함한 구체적 설명으로 확장\n- transparency: 운영 실적(354건, 95% 상환율) 포함으로 키워드 밀도 향상",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "8e534ddf",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "QAPage Answer author에 @id 추가로 엔티티 그래프 연결",
+    "summary": "generateQAPageSchema의 acceptedAnswer.author에 @id 추가 — Organization 엔티티 참조 연결",
+    "body": null,
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "56cad213",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "작가 Person 스키마에 nationality 한국 추가",
+    "summary": "generateEnhancedArtistSchema에 nationality: Country (South Korea) 추가 — 한국 작가 검색 쿼리 매칭 개선",
+    "body": null,
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "6d4577b7",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "LocalBusiness 엔티티 그래프 연결 및 홈 메타설명 완성",
+    "summary": "generateLocalBusinessSchema에 parentOrganization @id 추가로 #art-gallery→#organization 엔티티 연결, 홈 KO 메타설명 문장 완성",
+    "body": "- organization.ts: LocalBusiness(ArtGallery)에 parentOrganization @id 추가\n- ko.json: home.metaDescription 문장을 \"...까지\"에서 \"...만나보세요.\"로 완성 (69→81자, Naver 권장 80자 충족)",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "c0eb05bc",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "artworks·archive/2026·news 스키마 author·publisher @id 추가",
+    "summary": "전시 작품 목록·아카이브 2026·뉴스 페이지의 CollectionPage/WebPage 스키마에 author·publisher Organization @id 추가",
+    "body": "- artworks/page: CONTACT import 추가, CollectionPage에 author·publisher 추가\n- archive/2026: CONTACT import 추가, WebPage에 author·publisher 추가\n- news/page: CollectionPage에 publisher Organization @id 추가 (author는 기존)",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "4bcd8dbc",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "transparency WebPage 스키마 author·publisher 추가 및 보고서 publisher 로케일화",
+    "summary": "운용 보고서 페이지의 WebPage 스키마에 author·publisher @id 추가, 보고서 항목 publisher 이름을 로케일 기반으로 변경",
+    "body": "- webPageSchema에 author/publisher Organization @id 추가\n- reportsSchema 내 Article publisher name 하드코딩 → locale 기반 CONTACT 상수로 변경",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "3458b258",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "our-reality·our-proof AboutPage 스키마에 author·publisher 추가",
+    "summary": "우리의 현실·우리의 증명 페이지의 AboutPage 스키마에 author/publisher Organization @id 추가",
+    "body": null,
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "f507ee76",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "작품 상세 ItemPage 스키마에 author·publisher 추가",
+    "summary": "generateArtworkJsonLd의 webPageSchema(ItemPage)에 author·publisher Organization @id 추가 — 기존 sellerOrg 재사용",
+    "body": null,
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "a2d6f83c",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "홈페이지 WebPage 스키마 author·publisher 추가 및 OG/Twitter alt 로케일화",
+    "summary": "홈페이지 WebPage 스키마에 author·publisher @id 추가, OG 이미지 alt 및 Twitter images를 로케일(ko/en)에 맞게 분리",
+    "body": "- WebPage 스키마에 author: Organization @id, publisher: Organization @id 추가\n- OG images.alt를 locale 기반으로 변경 (ko: OG_IMAGE.alt, en: OG_IMAGE.altEn)\n- Twitter images를 { url, alt } 객체 형태로 변경하여 alt 속성 지원",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "b7e14bc5",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "카테고리·아카이브 CollectionPage publisher/author @id 추가",
+    "summary": "카테고리 페이지와 아카이브 인덱스 페이지의 CollectionPage 스키마에 author·publisher @id 추가 및 Twitter 이미지 alt 개선",
+    "body": "- category/[category]: CONTACT import 추가, CollectionPage에 author·publisher(with @id) 추가\n- category/[category]: Twitter images를 { url, alt } 객체 형태로 변경 (이미지 alt 지원)\n- archive/index: CONTACT import 추가, CollectionPage에 @id·inLanguage·author·publisher 추가\n- archive/index: hasPart 항목에 @id 추가로 엔티티 연결 강화",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "97afcfb6",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "archive/2023 CollectionPage 스키마 author·publisher @id 추가",
+    "summary": "씨앗페 2023 아카이브 페이지 CollectionPage에 author 필드 및 publisher @id 추가, JsonLdScript 두 호출 병합",
+    "body": "- CONTACT import 추가 (ORGANIZATION_NAME, ORGANIZATION_NAME_EN 활용)\n- collectionSchema에 author: Organization @id 필드 추가\n- publisher에 @id: #organization 추가로 entity 연결 강화\n- breadcrumbSchema + collectionSchema를 단일 JsonLdScript 배열 호출로 통합",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "2cd23067",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "VideoObject inLanguage/@id 및 LoanOrCredit 스키마 추가 — Round 19",
+    "summary": "비디오 검색 최적화 및 상호부조 대출 금융 상품 구조화",
+    "body": "- lib/schemas/content.ts: VideoObject에 @id(YouTube URL), inLanguage 필드 추가, locale 파라미터 지원\n- archive/2023: generateVideoSchema에 locale 파라미터 전달\n- our-proof: LoanOrCredit JSON-LD 스키마 추가\n  - 연 5% 고정금리, 신용심사 없음, 대한민국 예술인 대상\n  - \"예술인 대출\", \"저금리 대출\" 관련 금융 검색 노출 기대",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "7ca28bfb",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "작가 OG 이미지 최적화 및 our-proof Dataset 스키마 추가 — Round 18",
+    "summary": "SEO 이미지 품질 개선 및 상호부조 대출 실적 데이터 구조화",
+    "body": "- artworks/artist/[artist]: generateMetadata OG 이미지를 resolveArtworkImageUrl → resolveSeoArtworkImageUrl(1200px 최적화)로 교체\n- our-proof: Dataset JSON-LD 스키마 추가 (354건, 95% 상환율, 5.1% 대위변제율)\n  - Google Dataset Search 노출 및 E-E-A-T 신뢰도 강화",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "08743d48",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "작품 이미지 페이지 대표성 및 뉴스 컬렉션 author 추가 — Round 17",
+    "summary": "구조화 데이터 완성도 강화로 이미지 검색 및 E-E-A-T 신호 개선",
+    "body": "- lib/schemas/artwork.ts: Product.image에 representativeOfPage:true 추가 (이미지 검색 캐노니컬 신호)\n- news/page.tsx: CollectionPage에 author(Organization) 추가, CONTACT import\n- app/layout.tsx: generator: undefined 설정 (Next.js 자동 삽입 generator 메타 비활성화)",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "9c38b30b",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Twitter 카드 이미지 alt 및 OG 메타 일관성 개선 — Round 16",
+    "summary": "Twitter 카드 이미지 접근성 및 소셜 공유 메타 완성도 강화",
+    "body": "- lib/seo.ts: createPageMetadata·createStandardPageMetadata의 twitter.images에 alt 텍스트 추가\n- artworks/artist/[artist]: openGraph.siteName 추가 (미설정 상태였음)\n- news/[id]: fallback OG 이미지 alt를 locale별 분기 처리 (영문 페이지에도 영문 alt 제공)\n- news/[id]: Twitter 카드 이미지도 alt 포함 객체 형식으로 변경",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "cf0f6048",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "작품 author 메타 및 영문 홈 description 개선 — Round 15",
+    "summary": "작품 상세 페이지 작가 귀속 강화 및 영문 SERP 스니펫 최적화",
+    "body": "- lib/schemas/artwork.ts: other.author에 작가명 추가 (이미지 검색·Pinterest 작가 귀속 지원)\n- messages/en.json: 홈 metaDescription 216자 → 132자 단축 (Google SERP 160자 이내 맞춤)",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "daac53c9",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "article:author 및 Dataset 스키마 추가 — Round 14",
+    "summary": "E-E-A-T 강화 및 통계 데이터 구조화로 검색 노출 개선",
+    "body": "- our-reality, our-proof, transparency: article:author 메타 태그 추가 (한국스마트협동조합)\n- our-reality: Dataset JSON-LD 스키마 추가 (제1금융권 배제율 84.9% 등 핵심 통계 3종)\n  - Google Dataset Search 노출 가능\n  - creator, variableMeasured, distribution 포함",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "9cce4a2f",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "기술적 SEO 개선 — Round 13",
+    "summary": "포털 noindex, 검색 이미지 alt, OG 이미지 alt 일관성 개선",
+    "body": "- app/(portal)/layout.tsx: robots noindex/nofollow 추가 (관리자·대시보드·출품자 30+ 페이지 색인 방지)\n- SearchResultItem: alt에 작가명 추가 (`${title} - ${artist}` 형식)\n- lib/seo.ts: createPageMetadata에 imageAlt 파라미터 추가, openGraph.siteName 추가\n- artworks/page.tsx: 대표 작품의 제목+작가명을 OG 이미지 alt로 전달\n- BrandLoader: alt를 한/영 병기 (\"씨앗페 온라인 – SAF Online\")로 변경",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "7aa764f1",
+    "type": "fix",
+    "scope": "pwa",
+    "subject": "모바일 스플래시 스크린 아이콘 및 manifest 수정",
+    "summary": "Android PWA 스플래시 화면의 기괴한 아이콘 문제 수정 — charcoal 배경 아이콘 4종 재생성 및 manifest background_color 통일",
+    "body": "- manifest background_color #ffffff → #31393C (charcoal, BrandLoader와 통일)\n- icon-maskable-512/192.png: 코랄 띠 제거, charcoal 단색 배경 + 흰 로고 safe zone 배치\n- icon-512/192.png: 흰 배경 → charcoal 배경으로 브랜드 통일\n- manifest id: \"/\" 추가 (PWA 식별 안정성)\n- maskable 192px 아이콘 항목 신규 추가",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "dc2a7e95",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "홈페이지 meta description 수정 (69자)",
+    "summary": "기존 문구에서 뒷부분 제거하여 69자로 조정",
+    "body": null,
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "17059e87",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "홈페이지 meta description 80자 이내로 단축",
+    "summary": "네이버 서치 어드바이저 권장 기준 준수를 위해 94자 → 59자로 단축",
+    "body": null,
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "7b5a528f",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "oh-yoon 특별전 OG 이미지를 실제 작품 이미지로 개선",
+    "summary": "generateMetadata에서 오윤 작품 이미지를 동적으로 조회하여 OG/Twitter 카드에 적용",
+    "body": "- 기존: 사이트 공통 OG 이미지 사용 (og-image2.png)\n- 변경: Supabase에서 오윤 작품의 첫 번째 이미지를 조회해 1200×630 OG 이미지로 사용\n- 폴백: 작품 이미지 없을 시 기존 공통 이미지로 자동 fallback\n- 효과: 소셜 공유 시 실제 오윤 작품이 미리보기에 노출되어 클릭률(CTR) 향상",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "e3165be3",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "노출 및 클릭 수 증대 SEO 개선 — Round 12",
+    "summary": "아카이브 2023 CollectionPage 스키마 강화 (@id, datePublished, inLanguage 추가)",
+    "body": "- feat(schema): archive/2023 CollectionPage에 @id, datePublished, dateModified, inLanguage 추가\n  - Google 지식 그래프 엔티티 연결 및 날짜 기반 색인 품질 향상",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "47efae1e",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "노출 및 클릭 수 증대 SEO 개선 — Round 11",
+    "summary": "오윤 페이지 EventStatus 버그 수정, 투명성 og:type article, 아카이브 2026 WebPage 스키마 추가",
+    "body": "- fix(schema): 오윤 40주기 특별전 ExhibitionEvent eventStatus 버그 수정\n  - 기존: EventScheduled (하드코딩, 전시 종료 후에도 잘못된 상태)\n  - 변경: EventCompleted (전시 종료일 2026-01-26 기준 고정)\n  - 효과: Google 이벤트 리치 결과 정합성 복구\n- feat(seo): transparency/page.tsx og:type을 'article'로 변경\n  - article:published_time, article:section 추가 — 투명성 보고서 페이지 소셜 공유 품질 개선\n- feat(schema): archive/2026 페이지에 WebPage 스키마 추가\n  - datePublished, dateModified, about(ExhibitionEvent 참조) 포함\n  - Google이 아카이브 페이지를 독립 엔티티로 인식 가능",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "8ac11ccd",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "노출 및 클릭 수 증대 SEO 개선 — Round 10",
+    "summary": "og:type article 적용, 뉴스 CollectionPage @id/dateModified, NewsArticle inLanguage 추가",
+    "body": "- feat(seo): our-reality/our-proof 페이지 og:type을 'article'로 설정\n  - article:published_time, article:modified_time, article:section 메타 추가\n  - 카카오/페이스북/iMessage 공유 시 기사 형식 미리보기 활성화\n- feat(schema): 뉴스 목록 CollectionPage에 @id, dateModified(최신 기사 날짜 자동) 추가\n  - Google 지식 그래프 엔티티 연결 가능\n- feat(schema): generateNewsArticleSchema에 inLanguage 필드 추가\n  - locale 파라미터를 받아 ko-KR/en-US 명시 → 다국어 뉴스 노출 개선",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "f8ee58f0",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "노출 및 클릭 수 증대 SEO 개선 — Round 9",
+    "summary": "작품 JSON-LD canonical @id 고정, 투명성 datePublished 추가, Footer 내부 링크 확장, sitemap 날짜 자동화",
+    "body": "- fix(schema): 작품 JSON-LD @id를 locale 독립 canonical URL로 고정\n  - 기존: buildLocaleUrl() → en 페이지의 @id가 /en/artworks/{id}로 분기\n  - 변경: ${SITE_URL}/artworks/${artwork.id} (단일 엔티티 인식)\n  - 효과: ko/en 작품 페이지가 동일 VisualArtwork 엔티티로 인식되어 리치 결과 통합\n- feat(schema): transparency/page.tsx WebPage 스키마에 datePublished: '2022-12-01' 추가\n  - Google이 날짜 리치 스니펫을 표시하려면 datePublished 필수\n- feat(footer): Quick Links에 우리의 현실·우리의 증명·운용 보고서·언론 보도 내부 링크 추가\n  - E-E-A-T 관련 핵심 페이지로의 PageRank 분산 개선\n  - 크롤러 접근성 및 색인 깊이 향상\n- fix(sitemap): 홈·출품작·언론보도 lastModified를 빌드 시간(now)으로 자동화\n  - our-reality/our-proof/transparency 날짜를 2026-04-06으로 업데이트",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "add6e251",
+    "type": "fix",
+    "scope": "layout",
+    "subject": "마지막 업데이트 텍스트 좌우 노란 배경 제거",
+    "summary": "container-max에 bg-white 직접 적용 시 좌우 여백에 페이지 배경색 노출되는 버그 수정",
+    "body": "- container-max는 너비 제한 클래스이므로 배경색을 직접 설정하면\n  좌우 여백 영역에 상위 요소 배경색(canvas-soft)이 노출됨\n- w-full bg-white 외부 래퍼로 감싸 전체 너비에 흰 배경 적용\n- our-proof, our-reality, transparency 3개 페이지 ko/en 분기 모두 수정",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "ab0df8a0",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "작품 판매 전환율 SEO 개선 — Round 8",
+    "summary": "내부 링크 구조 강화, NewsArticle 리치 리절트 요건 충족, Core Web Vitals 개선",
+    "body": "- ArtworkCard 갤러리 변형 재구조화: 이미지/제목/작가명 독립 링크 분리\n  (작가명 클릭 → 작가 페이지, 제목/이미지 → 작품 상세)\n- 작가 페이지 하단에 카테고리 내비게이션 추가 (crawler dead-end 해소)\n- DynamicCounter Suspense 래퍼 추가 (홈페이지 hydration 블로킹 해소)\n- NewsArticle publisher.logo 교체: 1200×630 OG 이미지 → 85×60 전용 로고\n  (Google 리치 리절트 publisher logo 사이즈 요건 충족)\n- NewsArticleSchemaInput에 dateModified 선택 필드 추가\n- articleBody 조건부 포함 (description > 100자일 때)\n- our-proof 메타 description 수치 업데이트 (305건→354건, 6억→7억)\n  및 길이 확장 (56자→140자)",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "8402c7d7",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "아카이브 CollectionPage 스키마에 isPartOf 추가",
+    "summary": "archive 및 archive/2023 페이지 CollectionPage 스키마에 웹사이트 소속 관계(isPartOf) 추가",
+    "body": "- /archive 및 /archive/2023 CollectionPage 스키마에 isPartOf: { '@id': SITE_URL + '#website' } 추가\n- 사이트 내 모든 CollectionPage 스키마 일관성 확보",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "7cdbd973",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "작가 workSample 이미지 URL resolveSeoArtworkImageUrl 적용",
+    "summary": "generateEnhancedArtistSchema의 workSample에서 하드코딩된 경로 대신 실제 이미지 URL 해석 함수 사용",
+    "body": "- lib/schemas/artist.ts: workSample 이미지를 resolveSeoArtworkImageUrl로 처리 (Supabase 스토리지 URL 지원)\n- 이전 코드는 로컬 경로만 가정했으나 실제 데이터는 절대 URL을 사용함",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "9aaa09b6",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "뉴스 페이지 스키마 정합성 개선 및 다국어 판매자명 수정",
+    "summary": "뉴스 목록 speakable 내장화, AggregateOffer 판매자명 영문 대응, ExhibitionEvent 상태 동적화",
+    "body": "- news/page.tsx: speakableSchema를 CollectionPage 내 embedded speakable로 변경 (standalone 스키마 제거)\n- news/page.tsx: CollectionPage에 isPartOf, inLanguage 추가\n- lib/schemas/artwork.ts: generateGalleryAggregateOffer seller.name 영문 locale 대응\n- lib/schemas/artwork.ts: productSchema.isPartOf.eventStatus → isExhibitionCompleted() 동적 처리",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "9ce49413",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "NewsArticle 스키마 강화 (isAccessibleForFree, url, isPartOf)",
+    "summary": "뉴스 기사 스키마에 접근성·URL·웹사이트 소속 필드 추가로 Google 뉴스 리치 스니펫 자격 향상",
+    "body": "- lib/schemas/content.ts: generateNewsArticleSchema에 url, isAccessibleForFree, isPartOf 추가\n- Google News/Google Search Console에서 뉴스 기사 인덱싱 품질 개선",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "1211b359",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "오윤 특별전 페이지 AggregateOffer 및 ItemList pageUrl 보정",
+    "summary": "오윤 특별전 페이지에 AggregateOffer 추가, ItemList @id를 실제 페이지 URL 기준으로 수정",
+    "body": "- special/oh-yoon/page.tsx: generateArtworkListSchema에 pageUrl 전달 (ItemList @id 정확화)\n- special/oh-yoon/page.tsx: generateGalleryAggregateOffer 추가로 오윤 작품 가격범위 리치 스니펫 노출\n- 한/영 두 locale 모두 AggregateOffer 적용",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "900e5045",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "제품 메타 태그 강화 및 AggregateOffer 개선",
+    "summary": "Facebook product:retailer_item_id 추가, OG image secureUrl/type 추가, AggregateOffer 판매중 작품만 반영",
+    "body": "- lib/schemas/artwork.ts: product:retailer_item_id 메타 태그 추가 (SKU 기반)\n- lib/schemas/artwork.ts: OG image secureUrl, type(image/jpeg) 추가 (Facebook 크롤러 호환성)\n- lib/schemas/artwork.ts: generateArtworkListSchema 내 AggregateOffer에 locale/pageUrl 전달\n- lib/schemas/artwork.ts: generateGalleryAggregateOffer - 판매중 작품 기준 가격범위·offerCount 정확화",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "816d1718",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "AggregateOffer 정확도 개선 및 홈/카테고리 페이지 스키마 보강",
+    "summary": "AggregateOffer 판매 중 작품만 반영, 카테고리 페이지 speakable 추가, 홈페이지 WebPage 날짜/speakable 추가",
+    "body": "- lib/schemas/artwork.ts: generateGalleryAggregateOffer - 판매 완료 제외, 판매 중 작품 가격범위·수량만 반영\n- app/artworks/page.tsx: generateGalleryAggregateOffer에 locale 전달 (영문 페이지 URL 정확성)\n- app/artworks/category/[category]/page.tsx: collectionPageSchema에 speakable 추가\n- app/[locale]/page.tsx: WebPage 스키마에 datePublished, dateModified, speakable 추가",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "5265ce80",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "소셜 공유 UTM 추적, 스키마 고도화, ArtworkPurchaseCTA 개선",
+    "summary": "UTM 파라미터 자동 부착, OG type product 오버라이드, 작가/증명/투명성 페이지 스키마 향상, 판매 완료 fallback 로직 카테고리 연결 추가",
+    "body": "- ArtworkPurchaseCTA: shopUrl에 UTM 파라미터 자동 부착으로 Cafe24 매출 추적 가능\n- ArtworkPurchaseCTA: 판매 완료 fallback → 작가 페이지 → 카테고리 페이지 → 전체 갤러리 순위\n- lib/schemas/artwork.ts: og:type 'product' 오버라이드, Twitter Product Card 라벨 추가\n- lib/schemas/artist.ts: mainEntityOfPage @id 수정 (#webpage 앵커), 자기 자신 sameAs 제거\n- our-proof/page.tsx: speakableSchema → AboutPage 내 embedded speakable로 고도화\n- transparency/page.tsx: 동일 패턴 적용\n- messages/ko.json, messages/en.json: sameCategoryBrowse 번역 키 추가\n- app/robots.ts: AI 크롤러 허용 목록 정리",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "672079e6",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "AggregateOffer 독립 스키마 추가 및 스키마 품질 개선",
+    "summary": "작품 갤러리 페이지 AggregateOffer 독립 노출, LocalBusiness 결제 정보 추가, priceValidUntil 상수 중앙화",
+    "body": "- artworks/page.tsx: 전체 갤러리에 AggregateOffer 독립 JSON-LD 추가 (가격 범위 리치 스니펫)\n- category/page.tsx: AggregateOffer + HowTo + FAQ 스키마 추가\n- lib/schemas/organization.ts: OnlineStore에 currenciesAccepted, paymentAccepted, hasOfferCatalog 추가\n- lib/schemas/artwork.ts: PRICE_VALID_UNTIL 상수 중앙화로 import 순서 수정",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "f1f444e7",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "작가 페이지 메타 description에 구매 가능 작품 수 포함",
+    "summary": "작가 페이지 검색 결과에 구매 가능 작품 수 표시로 구매 의도 CTR 향상",
+    "body": "- '현재 N점 구매 가능' 또는 '전 작품 판매 완료' 문구 description 말미에 추가\n- 검색 결과에서 재고 상태를 미리 확인할 수 있어 클릭률 개선 기대",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "3302cea7",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "작품 메타 description에 가격·배송·판매 상태 포함 + countryOfOrigin 추가",
+    "summary": "작품 상세 페이지 메타 description에 가격과 무료 배송 정보 포함으로 구매 의도 CTR 향상",
+    "body": "- 메타 description 끝에 가격(₩xxx,xxx · 무료 배송) 추가\n  - 판매 완료 작품: '판매 완료' 표시\n  - 문의 가격: '가격 문의' 표시\n- Product 스키마에 countryOfOrigin: South Korea(대한민국) 추가\n  - Google Shopping 국가별 필터링 지원",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "15049d0f",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "AI 크롤러 허용 목록 확장 (ChatGPT-User, Meta, Apple, Cohere, Diffbot)",
+    "summary": "AEO/GEO 전략을 위해 주요 AI 엔진 크롤러 추가 허용",
+    "body": "- ChatGPT-User: ChatGPT 브라우징 플러그인\n- meta-externalagent: Meta AI\n- Applebot-Extended: Apple Intelligence\n- cohere-ai: Cohere\n- Diffbot: 구조화 데이터 추출 봇\n- Googlebot-Extended: Gemini AI 추가 봇",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "1780964d",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Product 스키마에 audience 타겟팅 추가 (미술 컬렉터·예술 후원자)",
+    "summary": "작품 상품 스키마에 audience 필드 추가로 Google Shopping 분류 개선",
+    "body": "- Product.audience: AudienceType을 '미술 컬렉터 및 예술 후원자'로 명시\n- 검색 광고 및 쇼핑 탭에서 적절한 구매 의도 타겟에게 노출 향상 기대",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "b993d848",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "sitemap lastModified 판매 완료 날짜 반영, AggregateOffer itemCondition 추가",
+    "summary": "판매 완료 작품 sitemap lastModified를 sold_at으로 업데이트, AggregateOffer 상품 상태 신호 추가",
+    "body": "- sitemap.ts: artwork.sold_at 있는 경우 lastModified에 반영\n  - Google이 \"방금 팔린\" 작품을 빠르게 재크롤링해 soldOut 상태 반영\n- AggregateOffer: itemCondition 필드 추가로 갤러리 전체 상품이 신품임을 명시",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "29cb17c2",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "AggregateOffer 강화, Oh Yoon 전시 ItemList 추가, 불필요 EXHIBITION import 제거",
+    "summary": "AggregateOffer에 itemCondition/validFrom/priceValidUntil 추가, 오윤 특별전 작품 목록 스키마 삽입",
+    "body": "- AggregateOffer: itemCondition, validFrom, priceValidUntil 필드 추가\n  - Google Merchant Center 호환성 개선\n- 오윤 40주기 특별전 (/special/oh-yoon): ItemList 스키마 추가\n  - 전시 작품 개별 가격·이미지·재고 상태가 검색엔진에 노출됨\n- lib/schemas/artwork.ts: EXHIBITION import 제거 (미사용)",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "4f6f4bc6",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Offer validFrom, Product sameAs, ItemList nested item with Offer schema",
+    "summary": "Offer 스키마에 validFrom 추가, Product에 Cafe24 sameAs 연결, ItemList 개별 항목에 가격·재고 정보 포함",
+    "body": "- Offer.validFrom: CAMPAIGN.START_DATE — 가격 신뢰도 및 상품 신선도 신호\n- Product.sameAs: artwork.shopUrl — Google이 SAF 페이지와 Cafe24 상품을 동일 엔티티로 인식\n- ItemList.itemListElement 구조 개선: ListItem.item에 VisualArtwork + Offer 중첩\n  - 목록 페이지에서도 개별 작품 가격/재고가 리치 스니펫 후보에 포함됨\n- 이전 커밋 개선 사항 통합: BuyAction EntryPoint, speakable, dateModified",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "1d008f02",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "카테고리 페이지 CollectionPage 스키마 추가",
+    "summary": "Google에 카테고리 페이지가 컬렉션/갤러리임을 명시하는 WebPage 타입 추가",
+    "body": "- CollectionPage @type 추가: BreadcrumbList, ItemList, AggregateOffer에 더해 페이지 타입 명시\n- about: {Thing, name: \"회화\"} — 페이지 주제를 명확히 구조화\n- isPartOf: WebSite @id 참조 — 사이트 구조 그래프 연결",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "facd4434",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "홈페이지 추천 작품 ItemList 스키마 추가",
+    "summary": "홈 히어로 섹션 작품 16점에 대한 ItemList JSON-LD 추가 — 홈에서 개별 작품 검색 카드 노출 가능",
+    "body": "- HeroSection에서 fetchArtworks 후 generateArtworkListSchema(artworks, locale, 16) 실행\n- React cache() 덕분에 서브컴포넌트 내 중복 데이터 요청 없음 (deduplicated)\n- 홈 → 개별 작품 URL 연결 강화로 Googlebot의 작품 페이지 발견 경로 추가",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "806a97b4",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Footer에 출품작 페이지 내부 링크 추가",
+    "summary": "모든 페이지 Footer에서 /artworks 직접 링크 추가로 내부 SEO 링크 에쿼티 전달",
+    "body": "- 빠른 링크 섹션 최상단에 \"작품 구매\" 내부 링크 추가\n- 기존 외부 링크보다 앞에 배치 — Googlebot이 출품작 페이지를 모든 페이지에서 발견 가능",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "1977b9b0",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "LocalBusiness @type OnlineStore 추가 + hasMap 링크 삽입",
+    "summary": "Google Shopping 호환을 위한 OnlineStore 타입 추가, 위치 지도 링크 구조화 데이터 연결",
+    "body": "- LocalBusiness @type: ['ArtGallery', 'OnlineStore'] — Google Shopping 카탈로그 연동 준비\n- hasMap: 카카오 사무실 지도 URL 추가 — 로컬 검색 최적화",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "f07e0a5c",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Twitter/X 작품 카드에 가격·판매상태 라벨 추가",
+    "summary": "작품 상세 페이지 Twitter 공유 카드에 가격과 판매 상태를 직접 표시",
+    "body": "- twitter:label1/data1: 가격 (₩xxx,xxx 형식)\n- twitter:label2/data2: 판매 중 / 판매 완료\n- 한·영 locale별 라벨 현지화 적용",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "bb54a443",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "WebSite SearchAction + LocalBusiness 가격 범위 개선",
+    "summary": "브랜드 검색 결과에서 사이트 내 작품 검색 가능한 SearchBox 스키마 추가",
+    "body": "- WebSite 스키마에 SearchAction 추가 — 씨앗페 브랜드 검색 시 구글 사이트링크 검색창 표시 가능\n- LocalBusiness priceRange 'KRW'→'₩50,000 ~ ₩20,000,000' (Google 유효 형식으로 수정)",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "dbe3466f",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "작가 페이지 ItemList 스키마 + OG 이미지 동적화 + JSON-LD 수정",
+    "summary": "작가 페이지에 작품 목록 JSON-LD 추가, 갤러리·카테고리 페이지 OG 이미지 실제 작품으로 교체",
+    "body": "- 작가 페이지: ItemList 스키마 추가 — 검색 결과에서 해당 작가 개별 작품 카드 노출 가능\n- 작가 페이지: meta description 300→160자 (Google 스니펫 적정 길이)\n- 작가 스키마: Person image를 resolveSeoArtworkImageUrl로 최적화된 절대 URL로 처리\n- 출품작 목록 페이지: OG 이미지를 undefined→실제 작품 이미지 (소셜 공유 시 작품 노출)\n- 카테고리 페이지: OG 이미지 resolveSeoArtworkImageUrl 사용 (일관성)\n- AggregateOffer에 @context 추가 (standalone script에서도 valid)\n- generateArtworkListSchema: @context 중복 방지 로직 + limit 파라미터 추가",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "56522d1a",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "사이트맵 이미지 인덱싱 및 작품 카드 alt 텍스트 개선",
+    "summary": "판매 중 작품 사이트맵 우선순위 상향 + 이미지 URL 추가, 작품 카드 alt 텍스트에 재료 정보 포함",
+    "body": "- sitemap: 판매 중 작품 priority 0.7→0.8, changeFreq monthly→weekly (판매 완료 반영 속도 개선)\n- sitemap: 판매 완료 작품 priority 0.7→0.55 (크롤 예산 최적화)\n- sitemap: 작품 페이지 entries에 artwork images[] 추가 — Google Images 크롤링 촉진\n- ArtworkCard: getImageAlt에 material 정보 포함 (확인 중·Pending·한글(영어 locale) 제외)\n  예: \"운명의 별, 캔버스에 유채 - 홍길동\" → 이미지 검색 관련성 향상",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "79fca789",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "breadcrumb 카테고리 계층화 + hero 동적 수치 + 가격 범위",
+    "summary": "작품 상세 breadcrumb에 카테고리 계층 추가, artworks/카테고리 페이지 hero를 실시간 수치로 동적화",
+    "body": "- feat: 작품 상세 JSON-LD breadcrumb에 카테고리 계층 추가\n  - 홈 > 출품작 > 회화 > 작품명 구조로 변경 (카테고리 있는 경우)\n  - Google 검색 결과에서 카테고리 계층이 breadcrumb 리치 결과로 노출 가능\n- feat: artworks 목록 페이지 hero description 동적화\n  - \"127명 작가의 작품 312점. 현재 272점 구매 가능\" 실시간 수치 표시\n- feat: 카테고리 페이지 hero에 가격 범위 추가\n  - \"총 183점 중 142점 구매 가능 · ₩30,000~₩8,000,000\" 형태",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "defde98a",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "구매 FAQ 스키마 + 카테고리 크로스링크 + 관련 작품 섹션",
+    "summary": "\"사람들이 자주 묻는 질문\" 리치 결과 대응 FAQ 스키마 추가, 작품 상세 페이지에 카테고리 관련 작품 섹션 추가, artworks 목록에 카테고리 앵커 링크 추가",
+    "body": "- feat: 구매 FAQ 스키마(FAQPage) 신규 생성 — 배송비, 반품, 구매 방법 등 6개 Q&A\n  - artworks 목록 페이지 + 카테고리 랜딩 페이지에 적용\n  - Google \"사람들이 자주 묻는 질문\" 리치 결과 + AI 검색 대응\n- feat: 작품 상세 페이지에 \"같은 카테고리 다른 작품\" 섹션 추가\n  - 구매 가능한 동일 카테고리 작품 3점 표시 (같은 작가 제외)\n  - 카테고리 랜딩 페이지 링크(\"회화 전체보기 →\") 포함\n  - 내부 링크 강화 + 바운스율 감소 + 관련 카테고리 PageRank 분산\n- feat: artworks 목록 페이지 상단에 카테고리 앵커 링크 네비게이션 추가\n  - 검색엔진이 크롤링 가능한 <nav> + <a> 태그 (카테고리별 작품 수 표시)\n  - 기존 클라이언트 필터와 병행하여 크롤러 발견성 확보",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "12f814ce",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "artworks 메타 동적화 + HowTo 스키마 확장 + 카테고리 크로스링크",
+    "summary": "검색 결과 CTR 향상과 AI 검색 대응을 위한 메타데이터/스키마 개선",
+    "body": "- feat: artworks 목록 페이지 메타 description 동적화 (실시간 작품 수 + 가격 범위 반영)\n  - 예: \"총 312점 중 272점 구매 가능. 가격대 ₩30,000–₩10,000,000\"\n- feat: artworks 목록 페이지에 HowTo 구매 가이드 스키마 추가 (AI 검색 대응)\n- feat: 카테고리 랜딩 페이지에 HowTo 스키마 추가\n- feat: 카테고리 페이지 하단에 관련 카테고리 링크 섹션 추가\n  - 검색엔진 크롤링 지원 + PageRank 분산 + 구매자 탐색 UX 개선\n  - 작품 수 기준 정렬, 현재 카테고리 제외",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "9daacc79",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "카테고리 랜딩 페이지 생성 및 매출 추적 SEO 개선",
+    "summary": "작품 판매 증대를 위한 SEO 구조 전면 개선 — 카테고리별 전용 랜딩 페이지, UTM 추적, Facebook 제품 메타, 작가 페이지 가격 범위 노출",
+    "body": "- feat: /artworks/category/[category] 정적 랜딩 페이지 생성 (회화/판화/사진 등 11개)\n  - SSG generateStaticParams, 카테고리별 구매 의도 키워드 메타데이터\n  - BreadcrumbList + ItemList + AggregateOffer JSON-LD 스키마\n  - 한/영 i18n 완비 (categoryPage 네임스페이스)\n- feat: sitemap에 카테고리 페이지 11개 추가 (priority 0.75, hreflang 완비)\n- feat: Cafe24 shopUrl에 UTM 파라미터 자동 부착 (utm_source=saf2026&utm_medium=web&utm_campaign=artwork&utm_content={id})\n- feat: 작품 상세 메타에 Facebook 제품 태그 추가 (product:price:amount, product:price:currency, product:availability)\n- feat: 작가 페이지에 AggregateOffer 스키마 추가 (작가명 검색 시 가격 범위 리치 스니펫)\n- fix: priceValidUntil을 빌드 시점 계산에서 고정 날짜(2027-12-31)로 변경\n- fix: 홈페이지 카테고리 \"전체 보기\" 링크 → 카테고리 랜딩 페이지로 변경\n- fix: 작품 상세 페이지 카테고리 링크 → 카테고리 랜딩 페이지로 변경",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "29a3fd3f",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "SEO 전체 개선 및 폰트 turbopack 버그 수정",
+    "summary": "Google SEO 가이드 기준 13개 이슈 전체 수정 — Naver 인증 메타태그 활성화, OG 이미지 1200×630 업그레이드, Organization 스키마 오류 수정, 폰트 turbopack 빌드 버그 해결",
+    "body": "- C1: NAVER 인증 메타태그 활성화 (env var 추가)\n- C2: archive/2023 CollectionPage 스키마 연도 2026→2023 수정\n- C3: Organization schema description을 조직 설명으로 교체\n- I4: OG 이미지 800×450→1200×630 리사이즈, constants.ts 치수 업데이트\n- I5: saf2023-photos.ts에 altEn 필드 추가, archive/2023 영문 alt 적용\n- I6: artist page keywords string[]로 타입 수정 (.join 제거)\n- I7: WebSite 스키마 SearchAction 제거 (artworks 페이지 SSR 검색 미지원)\n- I8: (auth)/layout.tsx noindex 메타데이터 추가, robots.ts /terms-consent 추가\n- N9: sitemap.ts 홈/artworks/news lastModified 고정일 설정\n- N10: ItemList .slice(0,30)으로 JSON-LD 페이로드 경량화\n- fix(font): Turbopack 정적 분석 버그 수정 — declarations.value를 리터럴 인라인으로 변경",
+    "date": "2026-04-06",
+    "author": "hwangtab"
+  },
+  {
     "hash": "a3532dfc",
     "type": "fix",
     "scope": "seo",

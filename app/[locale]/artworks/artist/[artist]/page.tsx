@@ -1,4 +1,8 @@
-import { getSupabaseArtworks, getSupabaseArtworksByArtist } from '@/lib/supabase-data';
+import {
+  getSupabaseArtworks,
+  getSupabaseArtworksByArtist,
+  getSupabaseStories,
+} from '@/lib/supabase-data';
 import { CATEGORY_EN_MAP, getCategoryLabel } from '@/lib/artwork-category';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
@@ -22,6 +26,7 @@ import { resolveLocale } from '@/lib/server-locale';
 import { containsHangul } from '@/lib/search-utils';
 import { Link } from '@/i18n/navigation';
 
+import SafeImage from '@/components/common/SafeImage';
 import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
 import GalleryCampaignBanner from '@/components/features/GalleryCampaignBanner';
 
@@ -251,6 +256,12 @@ export default async function ArtistPage({ params }: Props) {
     })),
   });
 
+  // Related magazine stories (where tags include the artist name)
+  const allStories = await getSupabaseStories();
+  const relatedStories = allStories
+    .filter((s) => s.tags?.some((tag) => tag === artistName || tag === displayArtistName))
+    .slice(0, 3);
+
   // Breadcrumb Schema: Home > Artworks > Artist Name
   const tBreadcrumbs = await getTranslations('breadcrumbs');
   const breadcrumbItems = [
@@ -351,8 +362,69 @@ export default async function ArtistPage({ params }: Props) {
         );
       })()}
 
+      {/* 관련 매거진 */}
+      {relatedStories.length > 0 && (
+        <Section variant="canvas-soft" prevVariant="white" className="pb-8">
+          <div className="container-max">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-display text-charcoal">
+                {isEnglish ? 'Magazine' : '관련 매거진'}
+              </h2>
+              <Link
+                href="/stories"
+                className="text-sm font-medium text-primary hover:text-primary-strong transition-colors"
+              >
+                {isEnglish ? 'View all →' : '전체 보기 →'}
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+              {relatedStories.map((s, i) => {
+                const storyTitle = isEnglish && s.title_en ? s.title_en : s.title;
+                const storyExcerpt = isEnglish && s.excerpt_en ? s.excerpt_en : s.excerpt;
+                return (
+                  <Link
+                    key={s.id}
+                    href={`/stories/${s.slug}`}
+                    className="group block overflow-hidden rounded-xl bg-white border border-gray-100 shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-lg motion-safe:opacity-0 motion-safe:animate-fade-in-up"
+                    style={{ animationDelay: `${i * 0.1}s`, animationFillMode: 'forwards' }}
+                  >
+                    {s.thumbnail && (
+                      <div className="relative aspect-[16/10] overflow-hidden">
+                        <SafeImage
+                          src={s.thumbnail}
+                          alt={storyTitle}
+                          fill
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      </div>
+                    )}
+                    <div className="p-5">
+                      <h3 className="text-sm font-bold text-charcoal line-clamp-2 group-hover:text-primary transition-colors duration-300">
+                        {storyTitle}
+                      </h3>
+                      {storyExcerpt && (
+                        <p className="text-xs text-charcoal-muted mt-2 line-clamp-2 leading-relaxed">
+                          {storyExcerpt}
+                        </p>
+                      )}
+                      <span className="text-xs text-charcoal-muted/60 mt-3 block">
+                        {s.published_at}
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </Section>
+      )}
+
       {/* Campaign Banner */}
-      <Section variant="white" prevVariant="white" className="pb-24 md:pb-32">
+      <Section
+        variant="white"
+        prevVariant={relatedStories.length > 0 ? 'canvas-soft' : 'white'}
+        className="pb-24 md:pb-32"
+      >
         <GalleryCampaignBanner />
       </Section>
     </div>

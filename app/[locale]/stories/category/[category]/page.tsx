@@ -379,7 +379,7 @@ export default async function StoryCategoryPage({ params }: Props) {
       )}
 
       {/* 다른 카테고리 내부 링크 — 토픽 클러스터 강화 */}
-      <Section variant="white" className="pb-12">
+      <Section variant="white" className="pb-8">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-wrap items-center gap-3">
             <p className="text-sm font-medium text-gray-500">
@@ -404,6 +404,30 @@ export default async function StoryCategoryPage({ params }: Props) {
                 </Link>
               ))}
           </div>
+        </div>
+      </Section>
+
+      {/* 작품 갤러리 교차 링크 — 매거진에서 작품 구매로 전환 유도 */}
+      <Section variant="canvas-soft" prevVariant="white" className="pb-16">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div>
+            <p className="text-lg font-display font-bold text-charcoal">
+              {locale === 'en'
+                ? 'Ready to start your collection?'
+                : '마음에 드는 작품을 찾아보세요'}
+            </p>
+            <p className="text-sm text-charcoal-muted mt-1">
+              {locale === 'en'
+                ? '127 artists, artworks available online.'
+                : '127명의 작가, 지금 바로 구매 가능한 작품들'}
+            </p>
+          </div>
+          <Link
+            href="/artworks"
+            className="shrink-0 inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-strong text-white font-bold rounded-lg transition-colors shadow-sm hover:shadow-md min-h-[48px]"
+          >
+            {locale === 'en' ? 'Browse Artworks' : '작품 갤러리 보기'} →
+          </Link>
         </div>
       </Section>
     </>
