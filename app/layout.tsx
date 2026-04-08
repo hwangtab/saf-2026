@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { getLocale } from 'next-intl/server';
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
 import {
@@ -158,6 +159,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         )}
         <link rel="dns-prefetch" href="https://img.youtube.com" />
         <link rel="dns-prefetch" href="https://i.ytimg.com" />
+        <link rel="preconnect" href="https://t1.kakaocdn.net" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://dapi.kakao.com" />
         <link rel="dns-prefetch" href="https://t1.kakaocdn.net" />
       </head>
@@ -169,6 +171,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <JsonLdScript data={localBusinessSchema} />
 
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
