@@ -347,10 +347,10 @@ export default async function ArtistPage({ params }: Props) {
                   <Link
                     key={cat}
                     href={path}
-                    className={`px-4 py-2 text-sm font-medium rounded-full border transition-colors ${
+                    className={`px-3 md:px-4 py-1.5 text-xs font-medium rounded-full border transition-colors ${
                       isPrimary
                         ? 'border-primary bg-primary/5 text-primary hover:bg-primary/10'
-                        : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300'
+                        : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-100'
                     }`}
                   >
                     {displayName}
