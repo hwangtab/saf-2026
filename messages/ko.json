@@ -768,6 +768,13 @@
     "shippingCarrier": "택배사",
     "trackingNumber": "운송장 번호",
     "trackDelivery": "배송 조회",
-    "noTrackingYet": "운송장 정보가 아직 등록되지 않았습니다."
+    "noTrackingYet": "운송장 정보가 아직 등록되지 않았습니다.",
+    "shippingRequiredFields": "수령인, 연락처, 주소를 모두 입력해주세요.",
+    "addressDetailPlaceholder": "상세주소",
+    "saving": "저장 중...",
+    "processing": "처리 중...",
+    "viewMoreArtworks": "작품 더 보기",
+    "orderCount": "{name} 님의 주문 {count}건",
+    "searchAgain": "다시 조회"
   }
 }
