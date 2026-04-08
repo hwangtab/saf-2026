@@ -95,7 +95,7 @@ export async function generateMetadata(): Promise<Metadata> {
     keywords:
       locale === 'en'
         ? 'SAF Online press coverage, Korean artist news, artist financial exclusion media, art festival news'
-        : '씨앗페 언론 보도, 예술인 금융 차별 뉴스, 한국 예술인 뉴스, 씨앗페 기사',
+        : '씨앗페 언론 보도, 씨앗페 전시회 언론 보도, 서울 전시회 기사, 예술인 금융 차별 뉴스, 한국 예술인 뉴스, 씨앗페 기사',
     alternates: createLocaleAlternates('/news', locale),
     openGraph: {
       title,

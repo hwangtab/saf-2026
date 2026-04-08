@@ -67,7 +67,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     {
       path: '/archive/2026',
       changeFrequency: 'monthly',
-      priority: 0.8,
+      priority: 0.85,
       lastModified: new Date('2026-03-15'),
     },
     {
@@ -85,7 +85,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     {
       path: '/archive',
       changeFrequency: 'monthly',
-      priority: 0.8,
+      priority: 0.85,
       lastModified: new Date('2026-03-15'),
     },
     {
