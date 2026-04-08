@@ -21,7 +21,7 @@ import MarkdownRenderer from '@/components/common/MarkdownRenderer';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { Link } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
-import type { StoryCategory } from '@/types';
+import type { StoryCategory, Artwork } from '@/types';
 
 export const revalidate = 1800;
 
@@ -147,7 +147,7 @@ export default async function StoryDetailPage({ params }: Props) {
     .slice(0, 3);
 
   // Related artworks
-  let relatedArtworks: import('@/types').Artwork[] = [];
+  let relatedArtworks: Artwork[] = [];
   if (story.category === 'artist-story' && story.tags?.[0]) {
     relatedArtworks = (await getSupabaseArtworksByArtist(story.tags[0])).slice(0, 3);
   }
@@ -267,7 +267,10 @@ export default async function StoryDetailPage({ params }: Props) {
 
       {/* 관련 작품 */}
       {relatedArtworks.length > 0 && (
-        <Section variant="white" prevVariant={relatedStories.length > 0 ? 'canvas-soft' : 'white'}>
+        <Section
+          variant={relatedStories.length > 0 ? 'white' : 'canvas-soft'}
+          prevVariant={relatedStories.length > 0 ? 'canvas-soft' : 'white'}
+        >
           <div className="max-w-3xl mx-auto">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-display text-charcoal">
@@ -330,7 +333,9 @@ export default async function StoryDetailPage({ params }: Props) {
         variant="white"
         prevVariant={
           relatedArtworks.length > 0
-            ? 'white'
+            ? relatedStories.length > 0
+              ? 'white'
+              : 'canvas-soft'
             : relatedStories.length > 0
               ? 'canvas-soft'
               : undefined

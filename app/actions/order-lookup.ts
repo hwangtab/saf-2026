@@ -1,6 +1,8 @@
 'use server';
 
 import { createSupabaseAdminClient } from '@/lib/auth/server';
+import { cancelPayment } from '@/lib/integrations/toss/cancel';
+import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
 
 export type OrderListItem = {
   orderNo: string;
@@ -24,8 +26,10 @@ export type OrderPublicInfo = {
   paidAt: string | null;
   createdAt: string;
   shippingName: string;
+  shippingPhone: string | null;
   shippingAddress: string;
   shippingAddressDetail: string | null;
+  shippingMemo: string | null;
   virtualAccount: {
     bankName: string;
     accountNumber: string;
@@ -154,8 +158,10 @@ export async function lookupOrderDetail(
       paid_at,
       created_at,
       shipping_name,
+      shipping_phone,
       shipping_address,
       shipping_address_detail,
+      shipping_memo,
       buyer_email,
       artworks (
         title,
@@ -237,9 +243,148 @@ export async function lookupOrderDetail(
       paidAt: order.paid_at,
       createdAt: order.created_at,
       shippingName: order.shipping_name,
+      shippingPhone: order.shipping_phone ?? null,
       shippingAddress: order.shipping_address,
       shippingAddressDetail: order.shipping_address_detail,
+      shippingMemo: order.shipping_memo ?? null,
       virtualAccount,
     },
   };
+}
+
+export type UpdateShippingInput = {
+  shippingName: string;
+  shippingPhone: string;
+  shippingAddress: string;
+  shippingAddressDetail?: string;
+  shippingMemo?: string;
+};
+
+export async function updateBuyerShipping(
+  orderNo: string,
+  buyerEmail: string,
+  data: UpdateShippingInput
+): Promise<{ success: true } | { success: false; error: string }> {
+  const trimmedOrderNo = orderNo.trim();
+  const trimmedEmail = buyerEmail.trim().toLowerCase();
+
+  if (!trimmedOrderNo || !trimmedEmail) {
+    return { success: false, error: 'REQUIRED' };
+  }
+
+  const adminClient = createSupabaseAdminClient();
+
+  const { data: order, error } = await adminClient
+    .from('orders')
+    .select('id, status, buyer_email')
+    .eq('order_no', trimmedOrderNo)
+    .maybeSingle();
+
+  if (error || !order) return { success: false, error: 'NOT_FOUND' };
+  if (order.buyer_email.toLowerCase() !== trimmedEmail)
+    return { success: false, error: 'NOT_FOUND' };
+  if (!['paid', 'preparing'].includes(order.status)) {
+    return { success: false, error: 'INVALID_STATUS' };
+  }
+
+  const { error: updateError } = await adminClient
+    .from('orders')
+    .update({
+      shipping_name: data.shippingName.trim(),
+      shipping_phone: data.shippingPhone.trim(),
+      shipping_address: data.shippingAddress.trim(),
+      shipping_address_detail: data.shippingAddressDetail?.trim() ?? null,
+      shipping_memo: data.shippingMemo?.trim() ?? null,
+    })
+    .eq('id', order.id);
+
+  if (updateError) return { success: false, error: 'UPDATE_FAILED' };
+
+  return { success: true };
+}
+
+export async function cancelBuyerOrder(
+  orderNo: string,
+  buyerEmail: string,
+  cancelReason: string
+): Promise<{ success: true } | { success: false; error: string }> {
+  const trimmedOrderNo = orderNo.trim();
+  const trimmedEmail = buyerEmail.trim().toLowerCase();
+  const trimmedReason = cancelReason.trim();
+
+  if (!trimmedOrderNo || !trimmedEmail || !trimmedReason) {
+    return { success: false, error: 'REQUIRED' };
+  }
+
+  const adminClient = createSupabaseAdminClient();
+
+  const { data: order, error } = await adminClient
+    .from('orders')
+    .select('id, order_no, status, total_amount, artwork_id, buyer_email')
+    .eq('order_no', trimmedOrderNo)
+    .maybeSingle();
+
+  if (error || !order) return { success: false, error: 'NOT_FOUND' };
+  if (order.buyer_email.toLowerCase() !== trimmedEmail)
+    return { success: false, error: 'NOT_FOUND' };
+  if (order.status !== 'paid') {
+    return { success: false, error: 'INVALID_STATUS' };
+  }
+
+  const { data: payment } = await adminClient
+    .from('payments')
+    .select('id, payment_key, method')
+    .eq('order_id', order.id)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (!payment?.payment_key) return { success: false, error: 'NO_PAYMENT' };
+
+  const cancelResult = await cancelPayment(
+    payment.payment_key,
+    { cancelReason: trimmedReason },
+    `buyer-cancel-${order.order_no}`
+  );
+
+  if (!cancelResult.success) {
+    return {
+      success: false,
+      error: `TOSS_CANCEL_FAILED: ${(cancelResult.error as { message?: string })?.message ?? ''}`,
+    };
+  }
+
+  const now = new Date().toISOString();
+
+  await adminClient
+    .from('orders')
+    .update({ status: 'cancelled', cancelled_at: now })
+    .eq('id', order.id)
+    .eq('status', 'paid');
+
+  await adminClient
+    .from('payments')
+    .update({ status: 'CANCELED', cancelled_at: now })
+    .eq('id', payment.id);
+
+  const { data: sale } = await adminClient
+    .from('artwork_sales')
+    .select('id')
+    .eq('order_id', order.id)
+    .is('voided_at', null)
+    .limit(1)
+    .maybeSingle();
+
+  if (sale) {
+    await adminClient
+      .from('artwork_sales')
+      .update({ voided_at: now, void_reason: trimmedReason })
+      .eq('id', sale.id);
+  }
+
+  if (order.artwork_id) {
+    await deriveAndSyncArtworkStatus(adminClient, order.artwork_id);
+  }
+
+  return { success: true };
 }

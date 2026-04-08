@@ -1,5 +1,15 @@
 [
   {
+    "hash": "c9018578",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "내부 링크 교차 연결 및 메타데이터 개선 (P2~P5)",
+    "summary": "스토리 상세에 관련 작품 섹션, 작가 페이지에 관련 매거진 섹션 추가. 오윤 특별전 title 길이 수정, not-found 페이지 이중언어 메타데이터 적용.",
+    "body": "- P2: stories/[slug] — 카테고리별 관련 작품 3점 자동 추천 (artist-story: 태그 기반 작가 작품, 기타: 판매 중 작품)\n- P3: artworks/artist/[artist] — 태그에 작가명 포함된 매거진 스토리 섹션 추가\n- P4: stories/category/[category] — 작품 갤러리 CTA 링크 추가 (이미 완료된 부분 포함)\n- P5a: special/oh-yoon — title: { absolute } 적용으로 template suffix 초과 방지\n- P5b: artworks/[id]/not-found, artworks/artist/[artist]/not-found — generateMetadata로 전환, 영어 locale 지원",
+    "date": "2026-04-08",
+    "author": "hwangtab"
+  },
+  {
     "hash": "d10945cf",
     "type": "fix",
     "scope": "layout",
