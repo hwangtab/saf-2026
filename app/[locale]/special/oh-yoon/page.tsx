@@ -78,7 +78,7 @@ export async function generateMetadata(): Promise<Metadata> {
     : copy.ogAlt;
 
   return {
-    title: copy.title,
+    title: { absolute: copy.title },
     description: copy.description,
     keywords:
       locale === 'en'

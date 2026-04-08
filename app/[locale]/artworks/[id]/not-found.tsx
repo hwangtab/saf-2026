@@ -1,11 +1,14 @@
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, getLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: '작품을 찾을 수 없습니다',
-  robots: { index: false, follow: true },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale().catch(() => 'ko');
+  return {
+    title: locale === 'en' ? 'Artwork Not Found' : '작품을 찾을 수 없습니다',
+    robots: { index: false, follow: true },
+  };
+}
 
 export default async function ArtworkNotFound() {
   const t = await getTranslations('notFound');

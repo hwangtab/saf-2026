@@ -1,13 +1,19 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getLocale, getTranslations } from 'next-intl/server';
-import { getSupabaseStories, getSupabaseStoryBySlug } from '@/lib/supabase-data';
+import {
+  getSupabaseStories,
+  getSupabaseStoryBySlug,
+  getSupabaseArtworks,
+  getSupabaseArtworksByArtist,
+} from '@/lib/supabase-data';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { generateBlogPostingSchema } from '@/lib/schemas/content';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { OG_IMAGE } from '@/lib/constants';
 import { resolveLocale } from '@/lib/server-locale';
+import { resolveArtworkImageUrl } from '@/lib/utils/artwork-image';
 import SafeImage from '@/components/common/SafeImage';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
@@ -140,6 +146,16 @@ export default async function StoryDetailPage({ params }: Props) {
     .filter((s) => s.category === story.category && s.slug !== story.slug)
     .slice(0, 3);
 
+  // Related artworks
+  let relatedArtworks: import('@/types').Artwork[] = [];
+  if (story.category === 'artist-story' && story.tags?.[0]) {
+    relatedArtworks = (await getSupabaseArtworksByArtist(story.tags[0])).slice(0, 3);
+  }
+  if (relatedArtworks.length === 0) {
+    const allArtworks = await getSupabaseArtworks();
+    relatedArtworks = allArtworks.filter((a) => !a.sold).slice(0, 3);
+  }
+
   return (
     <>
       <JsonLdScript data={[blogPostingSchema, breadcrumbSchema]} />
@@ -249,10 +265,76 @@ export default async function StoryDetailPage({ params }: Props) {
         </Section>
       )}
 
+      {/* 관련 작품 */}
+      {relatedArtworks.length > 0 && (
+        <Section variant="white" prevVariant={relatedStories.length > 0 ? 'canvas-soft' : 'white'}>
+          <div className="max-w-3xl mx-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-display text-charcoal">
+                {isEn ? 'Featured Artworks' : '관련 작품'}
+              </h2>
+              <Link
+                href="/artworks"
+                className="text-sm font-medium text-primary hover:text-primary-strong transition-colors"
+              >
+                {isEn ? 'View all →' : '전체 보기 →'}
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+              {relatedArtworks.map((artwork, i) => {
+                const artTitle = isEn && artwork.title_en ? artwork.title_en : artwork.title;
+                const imgUrl = resolveArtworkImageUrl(artwork.images[0]);
+                return (
+                  <Link
+                    key={artwork.id}
+                    href={`/artworks/${artwork.id}`}
+                    className="group block overflow-hidden rounded-xl bg-white border border-gray-100 shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-lg motion-safe:opacity-0 motion-safe:animate-fade-in-up"
+                    style={{
+                      animationDelay: `${i * 0.1}s`,
+                      animationFillMode: 'forwards',
+                    }}
+                  >
+                    <div className="relative aspect-square overflow-hidden bg-canvas-soft">
+                      {imgUrl ? (
+                        <SafeImage
+                          src={imgUrl}
+                          alt={artTitle}
+                          fill
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span className="text-charcoal-muted/20 text-4xl font-display">M</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-4">
+                      <h3 className="text-sm font-bold text-charcoal line-clamp-2 group-hover:text-primary transition-colors duration-300">
+                        {artTitle}
+                      </h3>
+                      <p className="text-xs text-charcoal-muted mt-1">{artwork.artist}</p>
+                      <p className="text-xs font-semibold text-primary mt-2">
+                        {artwork.sold ? (isEn ? 'Sold' : '판매 완료') : artwork.price}
+                      </p>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </Section>
+      )}
+
       {/* 내부 링크: 매거진 카테고리 + 작품 갤러리 교차 링크 */}
       <Section
         variant="white"
-        prevVariant={relatedStories.length > 0 ? 'canvas-soft' : undefined}
+        prevVariant={
+          relatedArtworks.length > 0
+            ? 'white'
+            : relatedStories.length > 0
+              ? 'canvas-soft'
+              : undefined
+        }
         padding="sm"
       >
         <div className="max-w-3xl mx-auto flex flex-wrap items-center gap-3">
