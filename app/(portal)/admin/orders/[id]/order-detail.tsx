@@ -10,12 +10,14 @@ import {
   AdminFieldLabel,
   AdminInput,
   AdminTextarea,
-} from '@/app/admin/_components/admin-ui';
-import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
-import { refundOrder, updateOrderStatus } from '@/app/actions/admin-orders';
+  AdminSelect,
+} from '@/app/(portal)/admin/_components/admin-ui';
+import { AdminConfirmModal } from '@/app/(portal)/admin/_components/AdminConfirmModal';
+import { refundOrder, updateOrderStatus, updateTrackingInfo } from '@/app/actions/admin-orders';
 import type { OrderDetail as OrderDetailType } from '@/app/actions/admin-orders';
 import type { OrderStatus } from '@/lib/integrations/toss/types';
 import { useToast } from '@/lib/hooks/useToast';
+import { CARRIERS, getCarrierLabel, getTrackingUrl } from '@/lib/shipping';
 
 const STATUS_LABELS: Record<string, string> = {
   pending_payment: '결제 대기',
@@ -93,21 +95,186 @@ const NEXT_STATUS_OPTIONS: Partial<Record<OrderStatus, { value: OrderStatus; lab
   delivered: [{ value: 'completed', label: '거래 완료로 변경' }],
 };
 
+// ─── Tracking Edit Section ────────────────────────────────────────────────────
+
+function TrackingEditSection({
+  orderId,
+  initialCarrier,
+  initialTrackingNumber,
+  onSaved,
+}: {
+  orderId: string;
+  initialCarrier: string | null;
+  initialTrackingNumber: string | null;
+  onSaved: (carrier: string, trackingNumber: string) => void;
+}) {
+  const toast = useToast();
+  const [carrier, setCarrier] = useState(initialCarrier ?? '');
+  const [trackingNumber, setTrackingNumber] = useState(initialTrackingNumber ?? '');
+  const [editing, setEditing] = useState(false);
+  const [isPending, startTransition] = useTransition();
+
+  if (!editing) {
+    return (
+      <button
+        type="button"
+        onClick={() => setEditing(true)}
+        className="text-xs text-indigo-600 hover:underline"
+      >
+        {initialCarrier ? '수정' : '운송장 입력'}
+      </button>
+    );
+  }
+
+  function handleSave() {
+    startTransition(async () => {
+      try {
+        await updateTrackingInfo(orderId, carrier, trackingNumber);
+        toast.success('운송장 정보가 저장되었습니다.');
+        onSaved(carrier, trackingNumber);
+        setEditing(false);
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : '저장에 실패했습니다.');
+      }
+    });
+  }
+
+  return (
+    <div className="mt-3 space-y-2 rounded-lg border border-indigo-200 bg-indigo-50 p-3">
+      <div>
+        <AdminFieldLabel>택배사</AdminFieldLabel>
+        <AdminSelect value={carrier} onChange={(e) => setCarrier(e.target.value)}>
+          <option value="">선택</option>
+          {CARRIERS.map((c) => (
+            <option key={c.value} value={c.value}>
+              {c.label}
+            </option>
+          ))}
+        </AdminSelect>
+      </div>
+      <div>
+        <AdminFieldLabel>운송장 번호</AdminFieldLabel>
+        <AdminInput
+          value={trackingNumber}
+          onChange={(e) => setTrackingNumber(e.target.value)}
+          placeholder="운송장 번호 입력"
+        />
+      </div>
+      <div className="flex gap-2">
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={isPending}
+          className="rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+        >
+          저장
+        </button>
+        <button
+          type="button"
+          onClick={() => setEditing(false)}
+          className="rounded-md border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50"
+        >
+          취소
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Shipped Modal ────────────────────────────────────────────────────────────
+
+function ShippedModal({
+  isOpen,
+  onClose,
+  onConfirm,
+  isPending,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: (carrier: string, trackingNumber: string) => void;
+  isPending: boolean;
+}) {
+  const [carrier, setCarrier] = useState('');
+  const [trackingNumber, setTrackingNumber] = useState('');
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
+        <h2 className="mb-1 text-base font-bold text-slate-900">배송 중으로 변경</h2>
+        <p className="mb-4 text-sm text-slate-500">
+          택배사와 운송장 번호를 입력하세요. 나중에 입력하려면 비워두고 진행하세요.
+        </p>
+        <div className="space-y-3">
+          <div>
+            <AdminFieldLabel>택배사</AdminFieldLabel>
+            <AdminSelect value={carrier} onChange={(e) => setCarrier(e.target.value)}>
+              <option value="">선택 (선택 사항)</option>
+              {CARRIERS.map((c) => (
+                <option key={c.value} value={c.value}>
+                  {c.label}
+                </option>
+              ))}
+            </AdminSelect>
+          </div>
+          <div>
+            <AdminFieldLabel>운송장 번호</AdminFieldLabel>
+            <AdminInput
+              value={trackingNumber}
+              onChange={(e) => setTrackingNumber(e.target.value)}
+              placeholder="운송장 번호 (선택 사항)"
+            />
+          </div>
+        </div>
+        <div className="mt-4 flex gap-2">
+          <button
+            type="button"
+            onClick={() => onConfirm(carrier, trackingNumber)}
+            disabled={isPending}
+            className="flex-1 rounded-xl bg-indigo-600 py-2.5 text-sm font-bold text-white hover:bg-indigo-700 disabled:opacity-50"
+          >
+            {isPending ? '처리 중...' : '배송 시작'}
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-medium text-slate-600"
+          >
+            취소
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Main Component ───────────────────────────────────────────────────────────
+
 export function OrderDetail({ order }: { order: OrderDetailType }) {
   const router = useRouter();
   const toast = useToast();
   const [isPending, startTransition] = useTransition();
 
   const [showRefundModal, setShowRefundModal] = useState(false);
+  const [showShippedModal, setShowShippedModal] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
   const [refundBank, setRefundBank] = useState('');
   const [refundAccount, setRefundAccount] = useState('');
   const [refundHolder, setRefundHolder] = useState('');
 
+  // Local tracking state (updated without page reload)
+  const [trackingCarrier, setTrackingCarrier] = useState(order.shipping_carrier ?? null);
+  const [trackingNumber, setTrackingNumber] = useState(order.tracking_number ?? null);
+
   const isVirtualAccount =
     order.payment_method === '가상계좌' || order.payment_method === 'VIRTUAL_ACCOUNT';
   const canRefund = ['paid', 'preparing'].includes(order.status);
   const nextOptions = NEXT_STATUS_OPTIONS[order.status as OrderStatus] ?? [];
+  const canEditTracking = ['shipped', 'delivered'].includes(order.status);
+
+  const trackingUrl =
+    trackingCarrier && trackingNumber ? getTrackingUrl(trackingCarrier, trackingNumber) : null;
 
   function handleRefund() {
     if (!cancelReason.trim()) {
@@ -155,6 +322,25 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
     });
   }
 
+  function handleShippedConfirm(carrier: string, trackingNo: string) {
+    startTransition(async () => {
+      try {
+        await updateOrderStatus(order.id, 'shipped', { carrier, trackingNumber: trackingNo });
+        if (carrier) setTrackingCarrier(carrier);
+        if (trackingNo) setTrackingNumber(trackingNo);
+        toast.success('배송 중으로 변경되었습니다.');
+        setShowShippedModal(false);
+        router.refresh();
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : '상태 변경에 실패했습니다.');
+      }
+    });
+  }
+
+  // Filter out 'shipped' from direct button click — handled via modal
+  const directNextOptions = nextOptions.filter((opt) => opt.value !== 'shipped');
+  const hasShippedOption = nextOptions.some((opt) => opt.value === 'shipped');
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -169,7 +355,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
           <p className="text-sm text-slate-500">주문일: {formatDate(order.created_at)}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          {nextOptions.map((opt) => (
+          {directNextOptions.map((opt) => (
             <button
               key={opt.value}
               onClick={() => handleStatusUpdate(opt.value)}
@@ -179,6 +365,15 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
               {opt.label}
             </button>
           ))}
+          {hasShippedOption && (
+            <button
+              onClick={() => setShowShippedModal(true)}
+              disabled={isPending}
+              className="rounded-md border border-indigo-300 bg-indigo-50 px-3 py-1.5 text-sm font-medium text-indigo-700 hover:bg-indigo-100 disabled:opacity-50"
+            >
+              배송 중으로 변경
+            </button>
+          )}
           {canRefund && (
             <button
               onClick={() => setShowRefundModal(true)}
@@ -253,6 +448,53 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
               }
             />
             <InfoRow label="메모" value={order.shipping_memo} />
+
+            {/* 운송장 정보 */}
+            {(trackingCarrier || canEditTracking) && (
+              <div className="border-t border-[var(--admin-border-soft)] pt-3">
+                <InfoRow
+                  label="택배사"
+                  value={trackingCarrier ? getCarrierLabel(trackingCarrier) : '—'}
+                />
+                <div className="mt-2">
+                  <InfoRow
+                    label="운송장 번호"
+                    value={
+                      trackingNumber ? (
+                        <span className="flex items-center gap-2 font-mono text-xs">
+                          {trackingNumber}
+                          {trackingUrl && (
+                            <a
+                              href={trackingUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="rounded bg-indigo-100 px-1.5 py-0.5 text-xs font-medium text-indigo-700 hover:bg-indigo-200"
+                            >
+                              조회
+                            </a>
+                          )}
+                        </span>
+                      ) : (
+                        '—'
+                      )
+                    }
+                  />
+                </div>
+                {canEditTracking && (
+                  <div className="mt-2">
+                    <TrackingEditSection
+                      orderId={order.id}
+                      initialCarrier={trackingCarrier}
+                      initialTrackingNumber={trackingNumber}
+                      onSaved={(c, t) => {
+                        setTrackingCarrier(c || null);
+                        setTrackingNumber(t || null);
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
           </dl>
         </AdminCard>
 
@@ -346,6 +588,14 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
           </dl>
         </AdminCard>
       </div>
+
+      {/* 배송 중 전환 모달 */}
+      <ShippedModal
+        isOpen={showShippedModal}
+        onClose={() => setShowShippedModal(false)}
+        onConfirm={handleShippedConfirm}
+        isPending={isPending}
+      />
 
       {/* 환불 모달 */}
       <AdminConfirmModal

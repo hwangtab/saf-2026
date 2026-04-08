@@ -42,6 +42,8 @@ export type OrderDetail = OrderListItem & {
   virtual_account_due_date: string | null;
   sale_id: string | null;
   sale_voided: boolean;
+  shipping_carrier: string | null;
+  tracking_number: string | null;
 };
 
 export type OrderFilters = {
@@ -94,7 +96,7 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
   const { data: order, error } = await supabase
     .from('orders')
     .select(
-      'id, order_no, status, total_amount, item_amount, shipping_amount, buyer_name, buyer_phone, shipping_name, shipping_phone, shipping_address, shipping_address_detail, shipping_memo, created_at, paid_at, cancelled_at, refunded_at, artwork_id, artworks(title, images)'
+      'id, order_no, status, total_amount, item_amount, shipping_amount, buyer_name, buyer_phone, shipping_name, shipping_phone, shipping_address, shipping_address_detail, shipping_memo, shipping_carrier, tracking_number, created_at, paid_at, cancelled_at, refunded_at, artwork_id, artworks(title, images)'
     )
     .eq('id', orderId)
     .single();
@@ -161,6 +163,8 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
       typeof virtualAccount?.dueDate === 'string' ? virtualAccount.dueDate : null,
     sale_id: sale?.id ?? null,
     sale_voided: !!sale?.voided_at,
+    shipping_carrier: (order as any).shipping_carrier ?? null,
+    tracking_number: (order as any).tracking_number ?? null,
   };
 }
 
@@ -297,7 +301,11 @@ const VALID_STATUS_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   refunded: [],
 };
 
-export async function updateOrderStatus(orderId: string, newStatus: OrderStatus) {
+export async function updateOrderStatus(
+  orderId: string,
+  newStatus: OrderStatus,
+  trackingInfo?: { carrier: string; trackingNumber: string }
+) {
   const admin = await requireAdmin();
   const supabase = await createSupabaseAdminClient();
 
@@ -314,9 +322,19 @@ export async function updateOrderStatus(orderId: string, newStatus: OrderStatus)
     throw new Error(`${order.status} → ${newStatus} 전환은 허용되지 않습니다.`);
   }
 
+  const updatePayload: Record<string, unknown> = {
+    status: newStatus,
+    updated_at: new Date().toISOString(),
+  };
+
+  if (newStatus === 'shipped' && trackingInfo?.carrier) {
+    updatePayload.shipping_carrier = trackingInfo.carrier;
+    updatePayload.tracking_number = trackingInfo.trackingNumber || null;
+  }
+
   const { error: updateError } = await supabase
     .from('orders')
-    .update({ status: newStatus, updated_at: new Date().toISOString() })
+    .update(updatePayload)
     .eq('id', orderId);
 
   if (updateError) throw updateError;
@@ -325,9 +343,50 @@ export async function updateOrderStatus(orderId: string, newStatus: OrderStatus)
     'order_status_updated',
     'order',
     orderId,
-    { order_no: order.order_no, from_status: order.status, to_status: newStatus },
+    { order_no: order.order_no, from_status: order.status, to_status: newStatus, ...trackingInfo },
     admin.id,
     { summary: `주문 상태 변경: ${order.order_no} (${order.status} → ${newStatus})` }
+  );
+
+  revalidatePath('/admin/orders');
+  revalidatePath(`/admin/orders/${orderId}`);
+
+  return { success: true };
+}
+
+export async function updateTrackingInfo(orderId: string, carrier: string, trackingNumber: string) {
+  const admin = await requireAdmin();
+  const supabase = await createSupabaseAdminClient();
+
+  const { data: order, error } = await supabase
+    .from('orders')
+    .select('id, order_no, status')
+    .eq('id', orderId)
+    .single();
+
+  if (error || !order) throw new Error('주문을 찾을 수 없습니다.');
+  if (!['shipped', 'delivered'].includes(order.status)) {
+    throw new Error('배송 중 또는 배송 완료 상태인 주문만 운송장 정보를 수정할 수 있습니다.');
+  }
+
+  const { error: updateError } = await supabase
+    .from('orders')
+    .update({
+      shipping_carrier: carrier || null,
+      tracking_number: trackingNumber || null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', orderId);
+
+  if (updateError) throw updateError;
+
+  await logAdminAction(
+    'order_tracking_updated',
+    'order',
+    orderId,
+    { order_no: order.order_no, carrier, tracking_number: trackingNumber },
+    admin.id,
+    { summary: `운송장 정보 수정: ${order.order_no} (${carrier} ${trackingNumber})` }
   );
 
   revalidatePath('/admin/orders');

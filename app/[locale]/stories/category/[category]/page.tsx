@@ -379,7 +379,11 @@ export default async function StoryCategoryPage({ params }: Props) {
       )}
 
       {/* 다른 카테고리 내부 링크 — 토픽 클러스터 강화 */}
-      <Section variant="white" className="pb-8">
+      <Section
+        variant="white"
+        prevVariant={stories.length === 0 ? 'canvas-soft' : 'white'}
+        className="pb-8"
+      >
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-wrap items-center gap-3">
             <p className="text-sm font-medium text-gray-500">

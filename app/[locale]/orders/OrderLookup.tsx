@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import { Link } from '@/i18n/navigation';
 import SafeImage from '@/components/common/SafeImage';
 import { formatPriceForDisplay } from '@/lib/utils';
+import { getCarrierLabel, getTrackingUrl } from '@/lib/shipping';
 import {
   lookupOrders,
   lookupOrderDetail,
@@ -477,6 +478,39 @@ function OrderDetail({
                 <span className="shrink-0 text-gray-500">{t('shippingMemo')}</span>
                 <span className="text-right text-charcoal">{order.shippingMemo}</span>
               </div>
+            )}
+          </div>
+        )}
+
+        {/* 운송장 정보 */}
+        {['shipped', 'delivered', 'completed'].includes(order.status) && (
+          <div className="border-t border-gray-100 pt-3 space-y-1.5">
+            {order.trackingNumber ? (
+              <>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">{t('shippingCarrier')}</span>
+                  <span className="text-charcoal">
+                    {order.shippingCarrier ? getCarrierLabel(order.shippingCarrier) : '—'}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">{t('trackingNumber')}</span>
+                  <span className="font-mono text-charcoal">{order.trackingNumber}</span>
+                </div>
+                {order.shippingCarrier &&
+                  getTrackingUrl(order.shippingCarrier, order.trackingNumber) && (
+                    <a
+                      href={getTrackingUrl(order.shippingCarrier, order.trackingNumber)!}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border border-primary/30 bg-primary/5 py-2.5 text-sm font-semibold text-primary hover:bg-primary/10"
+                    >
+                      {t('trackDelivery')}
+                    </a>
+                  )}
+              </>
+            ) : (
+              <p className="text-sm text-gray-400 text-center py-1">{t('noTrackingYet')}</p>
             )}
           </div>
         )}

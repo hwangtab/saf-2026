@@ -30,6 +30,8 @@ export type OrderPublicInfo = {
   shippingAddress: string;
   shippingAddressDetail: string | null;
   shippingMemo: string | null;
+  shippingCarrier: string | null;
+  trackingNumber: string | null;
   virtualAccount: {
     bankName: string;
     accountNumber: string;
@@ -162,6 +164,8 @@ export async function lookupOrderDetail(
       shipping_address,
       shipping_address_detail,
       shipping_memo,
+      shipping_carrier,
+      tracking_number,
       buyer_email,
       artworks (
         title,
@@ -247,6 +251,8 @@ export async function lookupOrderDetail(
       shippingAddress: order.shipping_address,
       shippingAddressDetail: order.shipping_address_detail,
       shippingMemo: order.shipping_memo ?? null,
+      shippingCarrier: order.shipping_carrier ?? null,
+      trackingNumber: order.tracking_number ?? null,
       virtualAccount,
     },
   };

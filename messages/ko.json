@@ -764,6 +764,10 @@
     "cancelOrderButton": "주문 취소",
     "cancelOrderSuccess": "주문이 취소되었습니다.",
     "cancelOrderFailed": "주문 취소에 실패했습니다.",
-    "cannotCancelOrder": "배송 준비가 시작된 후에는 직접 취소할 수 없습니다. 고객센터에 문의해주세요."
+    "cannotCancelOrder": "배송 준비가 시작된 후에는 직접 취소할 수 없습니다. 고객센터에 문의해주세요.",
+    "shippingCarrier": "택배사",
+    "trackingNumber": "운송장 번호",
+    "trackDelivery": "배송 조회",
+    "noTrackingYet": "운송장 정보가 아직 등록되지 않았습니다."
   }
 }
