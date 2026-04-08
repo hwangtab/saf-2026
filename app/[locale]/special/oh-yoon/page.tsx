@@ -83,7 +83,7 @@ export async function generateMetadata(): Promise<Metadata> {
     keywords:
       locale === 'en'
         ? "Oh Yoon artist, Korean people's art, minjung misul, woodblock prints, Oh Yoon exhibition, 40th anniversary"
-        : '오윤 화가, 민중미술, 오윤 판화, 오윤 40주기, 오윤 특별전, 한국 목판화',
+        : '오윤 화가, 민중미술, 오윤 판화, 오윤 40주기, 오윤 특별전, 한국 목판화, 온라인 전시회, 특별 전시회',
     alternates: createLocaleAlternates('/special/oh-yoon', locale),
     openGraph: {
       type: 'website',

@@ -182,6 +182,70 @@ export function generateArtworkPurchaseFAQ(locale: 'ko' | 'en' = 'ko') {
 }
 
 /**
+ * Pre-configured HowTo: How to enjoy the SAF Online Exhibition
+ * Targets "전시회를 즐기다", "전시회를 즐기는 방법" search intent.
+ */
+export function generateExhibitionEnjoyHowTo(locale: 'ko' | 'en' = 'ko') {
+  const isEnglish = locale === 'en';
+
+  return generateHowToSchema({
+    name: isEnglish
+      ? 'How to Enjoy the SAF Online Exhibition'
+      : '씨앗페 온라인 전시회를 즐기는 방법',
+    description: isEnglish
+      ? 'A guide to getting the most out of the SAF Online Gallery — from discovering artworks to learning about artists and supporting the mutual-aid fund.'
+      : '씨앗페 온라인 전시를 200% 즐기는 방법. 작품 탐색부터 작가 인터뷰, 전시 도록 감상, 작품 구매까지 단계별 안내.',
+    totalTime: 'PT20M',
+    url: isEnglish ? `${SITE_URL}/en` : SITE_URL,
+    steps: isEnglish
+      ? [
+          {
+            name: 'Browse the exhibition gallery',
+            text: 'Visit the online gallery at saf2026.com/en/artworks to explore 127 works across painting, printmaking, photography, and sculpture by 127 Korean artists.',
+            url: `${SITE_URL}/en/artworks`,
+          },
+          {
+            name: 'Read artist stories',
+            text: 'Discover the stories behind the artworks in the Magazine section — artist interviews, collecting guides, and art knowledge articles.',
+            url: `${SITE_URL}/en/stories`,
+          },
+          {
+            name: 'Explore the exhibition archive',
+            text: 'View the exhibition poster, on-site photos, and visitor reviews from the 2026 offline exhibition held at Insa Art Center, Seoul.',
+            url: `${SITE_URL}/en/archive/2026`,
+          },
+          {
+            name: 'Purchase your favorite artwork',
+            text: 'Support Korean artists by purchasing a work. All proceeds fund low-interest mutual-aid loans for artists facing financial exclusion.',
+            url: `${SITE_URL}/en/artworks`,
+          },
+        ]
+      : [
+          {
+            name: '전시 갤러리 탐색',
+            text: '온라인 갤러리(saf2026.com/artworks)에서 127명 작가의 회화·판화·사진·조각 127점을 카테고리별·가격별로 둘러보세요.',
+            url: `${SITE_URL}/artworks`,
+          },
+          {
+            name: '작가 이야기 읽기',
+            text: '매거진에서 작가 인터뷰, 컬렉팅 가이드, 미술 상식을 읽으며 작품을 더 깊이 이해하세요.',
+            url: `${SITE_URL}/stories`,
+          },
+          {
+            name: '전시 아카이브·도록 감상',
+            text: '2026년 서울 인사아트센터 오프라인 전시의 포스터, 현장 사진, 관람객 후기를 아카이브에서 확인하세요.',
+            url: `${SITE_URL}/archive/2026`,
+          },
+          {
+            name: '마음에 드는 작품 구매',
+            text: '작품 구매 수익금은 예술인 상호부조 기금이 되어 금융 차별을 겪는 예술인에게 저금리 대출로 전달됩니다.',
+            url: `${SITE_URL}/artworks`,
+          },
+        ],
+  });
+}
+
+/**
  * Pre-configured HowTo: How to join as a cooperative member
  */
 export function generateMemberJoinHowTo(locale: 'ko' | 'en' = 'ko') {

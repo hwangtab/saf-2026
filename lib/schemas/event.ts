@@ -31,8 +31,11 @@ export function generateExhibitionSchema(
       ? 'SAF Online (Seed Art Festival Online)'
       : '씨앗페 온라인 (Seed Art Festival Online)',
     description: isEnglish
-      ? 'A special exhibition raising mutual-aid funds for Korean artists, featuring paintings, sculptures, photography, and other works by over 110 artists.'
-      : '한국 예술인들의 상호부조 기금 마련을 위한 특별전. 110여 명의 작가가 참여한 회화, 조각, 사진 등 다양한 예술 작품을 만나보세요.',
+      ? 'A special art exhibition in Seoul raising mutual-aid funds for Korean artists. Features paintings, sculptures, photography, and prints by over 110 artists. Online gallery open year-round.'
+      : '서울 인사동 전시회. 한국 예술인들의 상호부조 기금 마련을 위한 특별전. 110여 명의 작가가 참여한 회화, 조각, 사진, 판화 등 다양한 예술 작품을 온라인에서 만나보세요.',
+    keywords: isEnglish
+      ? 'Korean art exhibition, Seoul exhibition, contemporary art, exhibition catalog, art gallery Seoul'
+      : '전시회, 서울 전시회, 전시회 서울, 현대미술 전시회, 전시 도록, 인사동 전시회, 전시회 일정',
     url: SITE_URL,
     image: [OG_IMAGE.url],
     startDate,

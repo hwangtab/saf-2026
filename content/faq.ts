@@ -40,6 +40,11 @@ export const faqs: FAQItem[] = [
     answer:
       '기본적으로 주문 금액 20만원 이상은 무료 배송(미만 시 4,000원)입니다. 단, 대형 작품(세 변의 합 180cm 이상)이나 파손 위험이 있는 작품(유리, 도자 등)은 미술품 전문 운송 차량으로 배송되며, 지역에 따라 별도 비용(3.5만원~30만원)이 발생할 수 있습니다. 평균 배송일은 결제 확인 후 영업일 기준 3~4일입니다.',
   },
+  {
+    question: '씨앗페 온라인 전시를 즐기는 방법은 무엇인가요?',
+    answer:
+      '작품 갤러리(saf2026.com/artworks)에서 회화·판화·사진·조각 127점을 자유롭게 탐색하고, 마음에 드는 작품을 구매하세요. 매거진에서는 작가 인터뷰와 컬렉팅 가이드를, 아카이브에서는 오프라인 전시 현장 기록과 포스터를 만날 수 있습니다.',
+  },
 ];
 
 export const faqsEn: FAQItem[] = [
@@ -72,6 +77,11 @@ export const faqsEn: FAQItem[] = [
     question: 'How are purchased artworks delivered?',
     answer:
       'Orders over KRW 200,000 are generally shipped free (KRW 4,000 below that threshold). Large or fragile works may require specialized art transport with additional regional fees. Typical delivery is 3-4 business days after payment confirmation.',
+  },
+  {
+    question: 'How can I enjoy the SAF Online exhibition?',
+    answer:
+      'Explore 127 artworks across paintings, prints, photography, and sculpture at saf2026.com/artworks. Read artist interviews and collecting guides in the Magazine section, then view the 2026 offline exhibition poster and archive at saf2026.com/archive/2026.',
   },
 ];
 

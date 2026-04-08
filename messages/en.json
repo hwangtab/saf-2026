@@ -146,8 +146,8 @@
     "applyLoan": "Apply for a Loan",
     "faqTitle": "Frequently Asked Questions",
     "logoAlt": "SAF Online Logo",
-    "metaTitle": "SAF Online - Buy Contemporary Korean Art",
-    "metaDescription": "Buy original works from 127 Korean contemporary artists — paintings, prints, photography, and sculpture. Free shipping, 7-day returns.",
+    "metaTitle": "SAF Online - Korean Art Exhibition | Buy Artworks",
+    "metaDescription": "Seoul Korean contemporary art exhibition online gallery. Buy original works from 127 artists — paintings, prints, photography, and sculpture. Free shipping, 7-day returns.",
     "ogDescription": "Buy 127 original Korean artworks online. Paintings, prints, photography, sculptures — accessible prices, free shipping.",
     "twitterDescription": "Buy 127 original contemporary Korean artworks online. Paintings, prints, photography, sculptures at accessible prices.",
     "alwaysAvailable": "Available now · {date}",
@@ -200,7 +200,7 @@
   },
   "artworksPage": {
     "title": "Buy Artworks",
-    "metaDescription": "Browse 127 original Korean artworks across 4 categories — paintings, prints, photography, and sculpture. Filter by genre, price, or artist. Free shipping on all orders.",
+    "metaDescription": "SAF Online exhibition catalog. Browse 127 original Korean artworks across paintings, prints, photography, and sculpture. Filter by genre, price, or artist. Free shipping.",
     "heroDescription": "Original works from 127 Korean artists at accessible prices. Free shipping, 7-day returns.",
     "shareTitle": "Buy Artworks - SAF Online Gallery",
     "shareDescription": "Explore the beautiful artworks exhibited at SAF Online."
@@ -623,7 +623,7 @@
   },
   "categoryPage": {
     "title": "Buy {category} Art",
-    "metaDescription": "Browse {count} original {category} artworks on SAF Online ({availableCount} available). Free shipping, 7-day returns.",
+    "metaDescription": "SAF Online exhibition catalog — {category} section. Browse {count} original Korean artworks ({availableCount} available). Seoul contemporary art exhibition. Free shipping, 7-day returns.",
     "heroDescription": "{availableCount} of {count} artworks available.",
     "shareTitle": "{category} Artworks - SAF Online",
     "shareDescription": "Explore and purchase {category} artworks on SAF Online. Proceeds support the artist mutual-aid fund.",

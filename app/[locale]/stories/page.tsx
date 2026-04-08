@@ -41,7 +41,7 @@ const STORIES_COPY: Record<LocaleCode, StoriesPageCopy> = {
   ko: {
     pageTitle: '매거진',
     pageDescription:
-      '작가의 이야기, 컬렉팅 가이드, 미술 상식까지. 씨앗페 온라인 매거진에서 예술과 더 가까워지세요.',
+      '전시회 추천, 작가 인터뷰, 컬렉팅 가이드, 미술 상식까지. 씨앗페 온라인 매거진에서 전시회를 즐기는 방법을 찾아보세요.',
     heroTitle: '매거진',
     heroDescription: '작가의 이야기, 컬렉팅 가이드, 미술 상식까지',
     noStories: '아직 등록된 글이 없습니다.',
@@ -109,6 +109,10 @@ export async function generateMetadata(): Promise<Metadata> {
       description: copy.pageDescription,
       images: [{ url: OG_IMAGE.url, alt: locale === 'en' ? OG_IMAGE.altEn : OG_IMAGE.alt }],
     },
+    keywords:
+      locale === 'en'
+        ? 'SAF magazine, Korean art, exhibition recommendations, artist stories, art collecting guide'
+        : '전시회 추천, 전시회를 즐기다, 작가 인터뷰, 컬렉팅 가이드, 미술 감상, 씨앗페 매거진',
   };
 }
 

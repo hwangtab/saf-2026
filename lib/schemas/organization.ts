@@ -44,8 +44,26 @@ export function generateOrganizationSchema(locale: 'ko' | 'en' = 'ko') {
       '@id': 'https://www.wikidata.org/wiki/Q884',
     },
     knowsAbout: isEnglish
-      ? ['contemporary art', 'Korean art', 'artist financial aid', 'mutual aid fund', 'art market']
-      : ['현대미술', '한국미술', '예술인 금융지원', '상호부조 기금', '미술 시장'],
+      ? [
+          'contemporary art',
+          'Korean art',
+          'art exhibition',
+          'Seoul art exhibition',
+          'exhibition catalog',
+          'artist financial aid',
+          'mutual aid fund',
+          'art market',
+        ]
+      : [
+          '현대미술',
+          '한국미술',
+          '전시회',
+          '서울 전시회',
+          '전시 도록',
+          '예술인 금융지원',
+          '상호부조 기금',
+          '미술 시장',
+        ],
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'Customer Service',

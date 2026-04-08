@@ -45,8 +45,8 @@ export async function generateMetadata(): Promise<Metadata> {
     ...createStandardPageMetadata(title, copy.description, PAGE_URL, '/archive/2023', locale),
     keywords:
       locale === 'en'
-        ? 'SAF 2023 archive, Korean art 2023, artist solidarity, SAF campaign video, Insadong exhibition, artist mutual aid fund'
-        : '씨앗페 2023, 씨앗페 아카이브, 인사동 전시, 예술인 연대, 씨앗페 캠페인 영상, 예술인 상호부조 기금',
+        ? 'SAF 2023 archive, Korean art exhibition 2023, Seoul exhibition, artist solidarity, SAF campaign video, Insadong exhibition, artist mutual aid fund'
+        : '씨앗페 2023, 전시회 서울, 인사동 전시회, 2023 전시회, 씨앗페 아카이브, 예술인 연대, 씨앗페 캠페인 영상, 예술인 상호부조 기금',
   };
 }
 
