@@ -1,7 +1,12 @@
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import SuccessClient from './SuccessClient';
 
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 interface Props {
   params: Promise<{ artworkId: string; locale: string }>;

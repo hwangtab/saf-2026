@@ -20,6 +20,7 @@ import { generateArtworkPurchaseHowTo, generateArtworkPurchaseFAQ } from '@/lib/
 import { getSupabaseArtworks } from '@/lib/supabase-data';
 import { parseArtworkPrice, resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import { CATEGORY_EN_MAP, getCategoryLabel } from '@/lib/artwork-category';
+import { Link } from '@/i18n/navigation';
 import type { Artwork, ArtworkListItem } from '@/types';
 
 export const revalidate = 600;
@@ -158,17 +159,14 @@ export default async function ArtworksPage() {
         <nav aria-label={locale === 'en' ? 'Browse by category' : '카테고리별 둘러보기'}>
           <div className="container-max py-4 flex flex-wrap gap-2">
             {categoryNav.map((cat) => (
-              <a
+              <Link
                 key={cat.category}
-                href={buildLocaleUrl(
-                  `/artworks/category/${encodeURIComponent(cat.category)}`,
-                  locale
-                )}
+                href={`/artworks/category/${encodeURIComponent(cat.category)}`}
                 className="px-4 py-1.5 text-xs font-medium rounded-full border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-colors"
               >
                 {cat.displayName}
                 <span className="ml-1 text-gray-400">{cat.count}</span>
-              </a>
+              </Link>
             ))}
           </div>
         </nav>
