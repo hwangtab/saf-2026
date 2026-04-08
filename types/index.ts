@@ -95,6 +95,8 @@ export interface Order {
   shipping_address_detail?: string | null;
   shipping_postal_code: string;
   shipping_memo?: string | null;
+  shipping_carrier?: string | null;
+  tracking_number?: string | null;
   item_amount: number;
   shipping_amount: number;
   total_amount: number;

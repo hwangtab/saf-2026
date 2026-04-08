@@ -764,6 +764,10 @@
     "cancelOrderButton": "Cancel Order",
     "cancelOrderSuccess": "Your order has been cancelled.",
     "cancelOrderFailed": "Failed to cancel the order.",
-    "cannotCancelOrder": "Orders in preparation cannot be cancelled directly. Please contact customer support."
+    "cannotCancelOrder": "Orders in preparation cannot be cancelled directly. Please contact customer support.",
+    "shippingCarrier": "Carrier",
+    "trackingNumber": "Tracking No.",
+    "trackDelivery": "Track Delivery",
+    "noTrackingYet": "Tracking information has not been registered yet."
   }
 }
