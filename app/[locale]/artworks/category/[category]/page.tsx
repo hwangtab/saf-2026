@@ -21,6 +21,7 @@ import {
 import { generateArtworkPurchaseHowTo, generateArtworkPurchaseFAQ } from '@/lib/schemas/howto';
 import { parseArtworkPrice, resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import { getSupabaseArtworks } from '@/lib/supabase-data';
+import { Link } from '@/i18n/navigation';
 import type { Artwork, ArtworkListItem } from '@/types';
 
 export const revalidate = 600;
@@ -270,15 +271,21 @@ export default async function CategoryPage({ params }: Props) {
               </p>
               <div className="flex flex-wrap gap-2">
                 {categoryCounts.map((cat) => (
-                  <a
+                  <Link
                     key={cat.category}
-                    href={buildLocaleUrl(cat.path, locale)}
+                    href={cat.path}
                     className="px-4 py-2 text-sm font-medium rounded-full border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-colors"
                   >
                     {cat.displayName}
                     <span className="ml-1 text-gray-400 text-xs">{cat.count}</span>
-                  </a>
+                  </Link>
                 ))}
+                <Link
+                  href="/stories"
+                  className="px-4 py-2 text-sm font-medium rounded-full border border-primary/20 bg-primary/5 text-primary hover:bg-primary/10 transition-colors"
+                >
+                  {isEnglish ? 'Magazine' : '매거진'}
+                </Link>
               </div>
             </div>
           </Section>

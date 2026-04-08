@@ -240,18 +240,32 @@ export default async function StoryDetailPage({ params }: Props) {
         </Section>
       )}
 
-      {/* Back Link */}
+      {/* 내부 링크: 매거진 카테고리 + 작품 갤러리 교차 링크 */}
       <Section
         variant="white"
         prevVariant={relatedStories.length > 0 ? 'canvas-soft' : undefined}
         padding="sm"
       >
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-3xl mx-auto flex flex-wrap items-center gap-3">
           <Link
             href="/stories"
             className="inline-flex items-center gap-1 text-sm font-medium text-charcoal-muted hover:text-primary transition-colors"
           >
             ← {isEn ? 'Back to Magazine' : '매거진 목록으로'}
+          </Link>
+          <span className="text-gray-300">|</span>
+          <Link
+            href={`/stories/category/${story.category}`}
+            className="text-sm font-medium text-charcoal-muted hover:text-primary transition-colors"
+          >
+            {isEn ? CATEGORY_LABELS_EN[story.category] : CATEGORY_LABELS_KO[story.category]}
+          </Link>
+          <span className="text-gray-300">|</span>
+          <Link
+            href="/artworks"
+            className="text-sm font-medium text-charcoal-muted hover:text-primary transition-colors"
+          >
+            {isEn ? 'Browse Artworks' : '작품 둘러보기'}
           </Link>
         </div>
       </Section>
