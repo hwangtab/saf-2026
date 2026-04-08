@@ -6,8 +6,17 @@ import clsx from 'clsx';
 import { Link } from '@/i18n/navigation';
 import SafeImage from '@/components/common/SafeImage';
 import { formatPriceForDisplay } from '@/lib/utils';
-import { lookupOrders, lookupOrderDetail } from '@/app/actions/order-lookup';
-import type { OrderListItem, OrderPublicInfo } from '@/app/actions/order-lookup';
+import {
+  lookupOrders,
+  lookupOrderDetail,
+  updateBuyerShipping,
+  cancelBuyerOrder,
+} from '@/app/actions/order-lookup';
+import type {
+  OrderListItem,
+  OrderPublicInfo,
+  UpdateShippingInput,
+} from '@/app/actions/order-lookup';
 
 const STATUS_STYLES: Record<string, { label: string; className: string }> = {
   pending_payment: { label: 'statusPendingPayment', className: 'bg-gray-100 text-gray-600' },
@@ -27,6 +36,15 @@ const PAYMENT_METHOD_LABELS: Record<string, string> = {
   VIRTUAL_ACCOUNT: '가상계좌',
   MOBILE_PHONE: '휴대폰결제',
 };
+
+// The ordered steps for the normal flow stepper
+const STEPPER_STEPS: { status: string; labelKey: string }[] = [
+  { status: 'paid', labelKey: 'statusStepPaid' },
+  { status: 'preparing', labelKey: 'statusStepPreparing' },
+  { status: 'shipped', labelKey: 'statusStepShipped' },
+  { status: 'delivered', labelKey: 'statusStepDelivered' },
+  { status: 'completed', labelKey: 'statusStepCompleted' },
+];
 
 function formatKstDate(utcString: string | null): string {
   if (!utcString) return '-';
@@ -51,10 +69,319 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-function OrderDetail({ order }: { order: OrderPublicInfo }) {
+function OrderStatusStepper({ status }: { status: string }) {
   const t = useTranslations('orderLookup');
+
+  // Not a normal flow status — show notice instead
+  if (status === 'cancelled') {
+    return (
+      <div className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700 text-center font-medium">
+        {t('orderCancelledNotice')}
+      </div>
+    );
+  }
+  if (status === 'refunded') {
+    return (
+      <div className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700 text-center font-medium">
+        {t('orderRefundedNotice')}
+      </div>
+    );
+  }
+  if (status === 'awaiting_deposit') {
+    // Virtual account UI is handled separately below, skip stepper
+    return null;
+  }
+
+  const currentIndex = STEPPER_STEPS.findIndex((s) => s.status === status);
+
   return (
-    <div className="mt-4 space-y-3 border-t border-gray-100 pt-4">
+    <div className="py-2">
+      <div className="flex items-start justify-between">
+        {STEPPER_STEPS.map((step, idx) => {
+          const isDone = idx < currentIndex;
+          const isCurrent = idx === currentIndex;
+          return (
+            <div key={step.status} className="flex flex-1 flex-col items-center">
+              {/* connector + circle row */}
+              <div className="flex w-full items-center">
+                {/* left connector */}
+                <div
+                  className={clsx(
+                    'h-0.5 flex-1',
+                    idx === 0 ? 'invisible' : isDone || isCurrent ? 'bg-primary' : 'bg-gray-200'
+                  )}
+                />
+                {/* circle */}
+                <div
+                  className={clsx(
+                    'flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 text-xs font-bold transition-colors',
+                    isDone
+                      ? 'border-primary bg-primary text-white'
+                      : isCurrent
+                        ? 'border-primary bg-white text-primary'
+                        : 'border-gray-200 bg-white text-gray-300'
+                  )}
+                >
+                  {isDone ? '✓' : idx + 1}
+                </div>
+                {/* right connector */}
+                <div
+                  className={clsx(
+                    'h-0.5 flex-1',
+                    idx === STEPPER_STEPS.length - 1
+                      ? 'invisible'
+                      : isDone
+                        ? 'bg-primary'
+                        : 'bg-gray-200'
+                  )}
+                />
+              </div>
+              {/* label */}
+              <p
+                className={clsx(
+                  'mt-1.5 text-center text-xs leading-tight',
+                  isCurrent ? 'font-bold text-primary' : isDone ? 'text-gray-500' : 'text-gray-300'
+                )}
+              >
+                {t(step.labelKey as Parameters<typeof t>[0])}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ─── Edit Shipping Form ───────────────────────────────────────────────────────
+
+interface EditShippingFormProps {
+  order: OrderPublicInfo;
+  buyerEmail: string;
+  onSaved: (updated: Partial<OrderPublicInfo>) => void;
+  onCancel: () => void;
+}
+
+function EditShippingForm({ order, buyerEmail, onSaved, onCancel }: EditShippingFormProps) {
+  const t = useTranslations('orderLookup');
+  const [name, setName] = useState(order.shippingName);
+  const [phone, setPhone] = useState(order.shippingPhone ?? '');
+  const [address, setAddress] = useState(order.shippingAddress);
+  const [detail, setDetail] = useState(order.shippingAddressDetail ?? '');
+  const [memo, setMemo] = useState(order.shippingMemo ?? '');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSave() {
+    setError(null);
+    if (!name.trim() || !phone.trim() || !address.trim()) {
+      setError('수령인, 연락처, 주소를 모두 입력해주세요.');
+      return;
+    }
+    setLoading(true);
+    const input: UpdateShippingInput = {
+      shippingName: name,
+      shippingPhone: phone,
+      shippingAddress: address,
+      shippingAddressDetail: detail || undefined,
+      shippingMemo: memo || undefined,
+    };
+    const res = await updateBuyerShipping(order.orderNo, buyerEmail, input);
+    setLoading(false);
+    if (res.success) {
+      onSaved({
+        shippingName: name.trim(),
+        shippingPhone: phone.trim(),
+        shippingAddress: address.trim(),
+        shippingAddressDetail: detail.trim() || null,
+        shippingMemo: memo.trim() || null,
+      });
+    } else {
+      setError(t('shippingUpdateFailed'));
+    }
+  }
+
+  const inputClass =
+    'w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-charcoal placeholder-gray-400 focus:border-primary focus:outline-none';
+
+  return (
+    <div className="space-y-2.5 rounded-xl border border-gray-200 bg-gray-50 p-4">
+      <div className="grid grid-cols-2 gap-2">
+        <div>
+          <label className="mb-1 block text-xs font-medium text-gray-500">{t('recipient')}</label>
+          <input className={inputClass} value={name} onChange={(e) => setName(e.target.value)} />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-gray-500">
+            {t('shippingPhone')}
+          </label>
+          <input
+            className={inputClass}
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            type="tel"
+          />
+        </div>
+      </div>
+      <div>
+        <label className="mb-1 block text-xs font-medium text-gray-500">{t('address')}</label>
+        <input
+          className={inputClass}
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+        />
+      </div>
+      <div>
+        <input
+          className={inputClass}
+          placeholder="상세주소"
+          value={detail}
+          onChange={(e) => setDetail(e.target.value)}
+        />
+      </div>
+      <div>
+        <label className="mb-1 block text-xs font-medium text-gray-500">{t('shippingMemo')}</label>
+        <input
+          className={inputClass}
+          placeholder={t('shippingMemoPlaceholder')}
+          value={memo}
+          onChange={(e) => setMemo(e.target.value)}
+        />
+      </div>
+      {error && <p className="text-xs text-red-600">{error}</p>}
+      <div className="flex gap-2">
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={loading}
+          className="flex-1 rounded-lg bg-primary py-2 text-sm font-bold text-white disabled:opacity-50"
+        >
+          {loading ? '저장 중...' : t('saveChanges')}
+        </button>
+        <button
+          type="button"
+          onClick={onCancel}
+          className="flex-1 rounded-lg border border-gray-200 py-2 text-sm font-medium text-charcoal"
+        >
+          {t('cancelEdit')}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Cancel Order Modal ───────────────────────────────────────────────────────
+
+interface CancelModalProps {
+  order: OrderPublicInfo;
+  buyerEmail: string;
+  onCancelled: () => void;
+  onClose: () => void;
+}
+
+function CancelModal({ order, buyerEmail, onCancelled, onClose }: CancelModalProps) {
+  const t = useTranslations('orderLookup');
+  const [reason, setReason] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleConfirm() {
+    if (!reason.trim()) {
+      setError(t('cancelReasonPlaceholder'));
+      return;
+    }
+    setError(null);
+    setLoading(true);
+    const res = await cancelBuyerOrder(order.orderNo, buyerEmail, reason);
+    setLoading(false);
+    if (res.success) {
+      onCancelled();
+    } else {
+      setError(t('cancelOrderFailed'));
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+      <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
+        <h2 className="mb-1 text-base font-bold text-charcoal">{t('cancelOrderConfirm')}</h2>
+        <p className="mb-4 text-sm text-gray-500">{t('cancelOrderDescription')}</p>
+
+        <label className="mb-1.5 block text-sm font-medium text-charcoal">
+          {t('cancelReasonLabel')}
+        </label>
+        <textarea
+          rows={3}
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+          placeholder={t('cancelReasonPlaceholder')}
+          className="mb-3 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-charcoal placeholder-gray-400 focus:border-primary focus:outline-none resize-none"
+        />
+
+        {error && <p className="mb-3 text-xs text-red-600">{error}</p>}
+
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={handleConfirm}
+            disabled={loading}
+            className="flex-1 rounded-xl bg-red-600 py-2.5 text-sm font-bold text-white disabled:opacity-50"
+          >
+            {loading ? '처리 중...' : t('cancelOrderButton')}
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-1 rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-charcoal"
+          >
+            {t('cancelEdit')}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Order Detail ─────────────────────────────────────────────────────────────
+
+function OrderDetail({
+  order: initialOrder,
+  buyerEmail,
+}: {
+  order: OrderPublicInfo;
+  buyerEmail: string;
+}) {
+  const t = useTranslations('orderLookup');
+  const [order, setOrder] = useState(initialOrder);
+  const [editingShipping, setEditingShipping] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancelSuccess, setCancelSuccess] = useState(false);
+
+  const canEditShipping = ['paid', 'preparing'].includes(order.status);
+  const canCancel = order.status === 'paid';
+
+  function handleShippingSaved(updated: Partial<OrderPublicInfo>) {
+    setOrder((prev) => ({ ...prev, ...updated }));
+    setEditingShipping(false);
+  }
+
+  function handleCancelled() {
+    setOrder((prev) => ({ ...prev, status: 'cancelled' }));
+    setShowCancelModal(false);
+    setCancelSuccess(true);
+  }
+
+  return (
+    <div className="mt-4 space-y-4 border-t border-gray-100 pt-4">
+      {/* Status Stepper */}
+      <OrderStatusStepper status={order.status} />
+
+      {cancelSuccess && (
+        <div className="rounded-xl bg-green-50 px-4 py-3 text-sm text-green-700 text-center font-medium">
+          {t('cancelOrderSuccess')}
+        </div>
+      )}
+
       {/* 가상계좌 입금 안내 */}
       {order.status === 'awaiting_deposit' && order.virtualAccount && (
         <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm">
@@ -106,17 +433,53 @@ function OrderDetail({ order }: { order: OrderPublicInfo }) {
 
       {/* 배송 정보 */}
       <div className="space-y-2 border-t border-gray-100 pt-3 text-sm">
-        <div className="flex justify-between">
-          <span className="text-gray-500">{t('recipient')}</span>
-          <span className="text-charcoal">{order.shippingName}</span>
+        <div className="flex items-center justify-between">
+          <span className="font-medium text-charcoal">{t('shippingInfo')}</span>
+          {canEditShipping && !editingShipping && (
+            <button
+              type="button"
+              onClick={() => setEditingShipping(true)}
+              className="rounded-lg border border-gray-200 px-2.5 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50"
+            >
+              {t('editShipping')}
+            </button>
+          )}
         </div>
-        <div className="flex justify-between gap-4">
-          <span className="shrink-0 text-gray-500">{t('address')}</span>
-          <span className="text-right text-charcoal">
-            {order.shippingAddress}
-            {order.shippingAddressDetail && ` ${order.shippingAddressDetail}`}
-          </span>
-        </div>
+
+        {editingShipping ? (
+          <EditShippingForm
+            order={order}
+            buyerEmail={buyerEmail}
+            onSaved={handleShippingSaved}
+            onCancel={() => setEditingShipping(false)}
+          />
+        ) : (
+          <div className="space-y-1.5">
+            <div className="flex justify-between">
+              <span className="text-gray-500">{t('recipient')}</span>
+              <span className="text-charcoal">{order.shippingName}</span>
+            </div>
+            {order.shippingPhone && (
+              <div className="flex justify-between">
+                <span className="text-gray-500">{t('shippingPhone')}</span>
+                <span className="text-charcoal">{order.shippingPhone}</span>
+              </div>
+            )}
+            <div className="flex justify-between gap-4">
+              <span className="shrink-0 text-gray-500">{t('address')}</span>
+              <span className="text-right text-charcoal">
+                {order.shippingAddress}
+                {order.shippingAddressDetail && ` ${order.shippingAddressDetail}`}
+              </span>
+            </div>
+            {order.shippingMemo && (
+              <div className="flex justify-between gap-4">
+                <span className="shrink-0 text-gray-500">{t('shippingMemo')}</span>
+                <span className="text-right text-charcoal">{order.shippingMemo}</span>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* 금액 내역 */}
@@ -138,9 +501,33 @@ function OrderDetail({ order }: { order: OrderPublicInfo }) {
           <span className="text-primary-a11y">{formatPriceForDisplay(order.totalAmount)}</span>
         </div>
       </div>
+
+      {/* 결제 취소 */}
+      {canCancel && !cancelSuccess && (
+        <div className="border-t border-gray-100 pt-3">
+          <button
+            type="button"
+            onClick={() => setShowCancelModal(true)}
+            className="w-full rounded-xl border border-red-200 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50"
+          >
+            {t('cancelOrder')}
+          </button>
+        </div>
+      )}
+
+      {showCancelModal && (
+        <CancelModal
+          order={order}
+          buyerEmail={buyerEmail}
+          onCancelled={handleCancelled}
+          onClose={() => setShowCancelModal(false)}
+        />
+      )}
     </div>
   );
 }
+
+// ─── Order Card ───────────────────────────────────────────────────────────────
 
 function OrderCard({ item, buyerEmail }: { item: OrderListItem; buyerEmail: string }) {
   const [open, setOpen] = useState(false);
@@ -194,10 +581,12 @@ function OrderCard({ item, buyerEmail }: { item: OrderListItem; buyerEmail: stri
         </div>
       </button>
 
-      {open && detail && <OrderDetail order={detail} />}
+      {open && detail && <OrderDetail order={detail} buyerEmail={buyerEmail} />}
     </div>
   );
 }
+
+// ─── Main Form ────────────────────────────────────────────────────────────────
 
 export default function OrderLookup() {
   const t = useTranslations('orderLookup');

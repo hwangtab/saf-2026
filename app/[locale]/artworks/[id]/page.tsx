@@ -10,7 +10,9 @@ import {
   getRecentlySoldArtworks,
   getTotalSoldCount,
   getSupabaseTestimonials,
+  getSupabaseStories,
 } from '@/lib/supabase-data';
+import SafeImage from '@/components/common/SafeImage';
 import RecentlySoldSection from '@/components/features/RecentlySoldSection';
 import Section from '@/components/ui/Section';
 import { getArticlesByArtist } from '@/content/artist-articles';
@@ -73,6 +75,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
     recentlySold,
     totalSoldCount,
     testimonialCategories,
+    allStories,
     t,
     tBreadcrumbs,
   ] = await Promise.all([
@@ -81,6 +84,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
     getRecentlySoldArtworks(3, id),
     getTotalSoldCount(),
     getSupabaseTestimonials(),
+    getSupabaseStories(),
     getTranslations('artworkDetail'),
     getTranslations('breadcrumbs'),
   ]);
@@ -113,8 +117,13 @@ export default async function ArtworkDetailPage({ params }: Props) {
   // '0' 대신 '' 전달 — 스키마 함수 내부에서 isInquiry 분기로 처리, price:0 노출 방지
   const numericPrice = isInquiry ? '' : String(parsedPrice);
 
-  // Get related articles for this artist
+  // Get related articles for this artist (static content)
   const relatedArticles = getArticlesByArtist(artwork.artist);
+
+  // Get related magazine stories from Supabase (tags include artist name)
+  const relatedMagazineStories = allStories
+    .filter((s) => s.tags?.some((tag) => tag === artwork.artist))
+    .slice(0, 3);
   const localizeDataValue = (value: string | null | undefined): string | null => {
     if (!value) return null;
     if (locale !== 'en') return value;
@@ -395,6 +404,55 @@ export default async function ArtworkDetailPage({ params }: Props) {
 
               {/* Related Articles */}
               <RelatedArticles articles={relatedArticles} />
+
+              {/* Related Magazine Stories (Supabase) */}
+              {relatedMagazineStories.length > 0 && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wider">
+                      {locale === 'en' ? 'Magazine' : '관련 매거진'}
+                    </h2>
+                    <Link
+                      href={`/stories/category/artist-story`}
+                      className="text-xs font-medium text-primary hover:text-primary-strong transition-colors"
+                    >
+                      {locale === 'en' ? 'View all →' : '전체 보기 →'}
+                    </Link>
+                  </div>
+                  <div className="space-y-3">
+                    {relatedMagazineStories.map((story) => {
+                      const storyTitle =
+                        locale === 'en' && story.title_en ? story.title_en : story.title;
+                      return (
+                        <Link
+                          key={story.id}
+                          href={`/stories/${story.slug}`}
+                          className="group flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                        >
+                          {story.thumbnail && (
+                            <div className="relative w-16 h-12 rounded overflow-hidden shrink-0">
+                              <SafeImage
+                                src={story.thumbnail}
+                                alt={storyTitle}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                          )}
+                          <div className="min-w-0">
+                            <h3 className="text-sm font-medium text-charcoal line-clamp-2 group-hover:text-primary transition-colors">
+                              {storyTitle}
+                            </h3>
+                            <span className="text-xs text-charcoal-muted/60 mt-1 block">
+                              {story.published_at}
+                            </span>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
