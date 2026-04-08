@@ -356,7 +356,6 @@ function OrderDetail({
   const [order, setOrder] = useState(initialOrder);
   const [editingShipping, setEditingShipping] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
-  const [cancelSuccess, setCancelSuccess] = useState(false);
 
   const canEditShipping = ['paid', 'preparing'].includes(order.status);
   const canCancel = order.status === 'paid';
@@ -369,19 +368,12 @@ function OrderDetail({
   function handleCancelled() {
     setOrder((prev) => ({ ...prev, status: 'cancelled' }));
     setShowCancelModal(false);
-    setCancelSuccess(true);
   }
 
   return (
     <div className="mt-4 space-y-4 border-t border-gray-100 pt-4">
       {/* Status Stepper */}
       <OrderStatusStepper status={order.status} />
-
-      {cancelSuccess && (
-        <div className="rounded-xl bg-green-50 px-4 py-3 text-sm text-green-700 text-center font-medium">
-          {t('cancelOrderSuccess')}
-        </div>
-      )}
 
       {/* 가상계좌 입금 안내 */}
       {order.status === 'awaiting_deposit' && order.virtualAccount && (
@@ -537,7 +529,7 @@ function OrderDetail({
       </div>
 
       {/* 결제 취소 */}
-      {canCancel && !cancelSuccess && (
+      {canCancel && (
         <div className="border-t border-gray-100 pt-3">
           <button
             type="button"
