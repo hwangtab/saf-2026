@@ -23,6 +23,7 @@ type PageState = 'loading' | 'success' | 'virtual' | 'error';
 
 export default function SuccessClient({ paymentKey, orderId, amount }: Props) {
   const t = useTranslations('checkout');
+  const tOrder = useTranslations('orderLookup');
 
   const [state, setPageState] = useState<PageState>('loading');
   const [virtualAccount, setVirtualAccount] = useState<VirtualAccount | null>(null);
@@ -135,12 +136,20 @@ export default function SuccessClient({ paymentKey, orderId, amount }: Props) {
 
             <p className="text-xs text-gray-400 mb-6">{t('depositEmailNotice')}</p>
 
-            <Link
-              href="/artworks"
-              className="inline-block rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white hover:opacity-90"
-            >
-              {t('browseMore')}
-            </Link>
+            <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+              <Link
+                href="/artworks"
+                className="inline-block rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white hover:opacity-90"
+              >
+                {t('browseMore')}
+              </Link>
+              <Link
+                href="/orders"
+                className="inline-block rounded-xl border border-gray-200 px-6 py-3 text-sm font-medium text-charcoal hover:bg-gray-50"
+              >
+                {tOrder('viewOrders')}
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -169,12 +178,20 @@ export default function SuccessClient({ paymentKey, orderId, amount }: Props) {
             </div>
           </div>
 
-          <Link
-            href="/artworks"
-            className="inline-block rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white hover:opacity-90"
-          >
-            {t('browseMore')}
-          </Link>
+          <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+            <Link
+              href="/artworks"
+              className="inline-block rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white hover:opacity-90"
+            >
+              {t('browseMore')}
+            </Link>
+            <Link
+              href="/orders"
+              className="inline-block rounded-xl border border-gray-200 px-6 py-3 text-sm font-medium text-charcoal hover:bg-gray-50"
+            >
+              {tOrder('viewOrders')}
+            </Link>
+          </div>
         </div>
       </div>
     </div>

@@ -3,9 +3,9 @@
 import dynamic from 'next/dynamic';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import Button from '@/components/ui/Button';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher';
-import { EXTERNAL_LINKS } from '@/lib/constants';
 
 import type { NavigationItem } from '@/types';
 import NavLink from './NavLink';
@@ -96,10 +96,8 @@ export default function DesktopNav({
         </button>
 
         {/* Utility Menu (Order Status) */}
-        <a
-          href={EXTERNAL_LINKS.ORDER_STATUS}
-          target="_blank"
-          rel="noopener noreferrer nofollow"
+        <Link
+          href="/orders"
           className={clsx(
             'flex items-center text-sm font-medium rounded-full px-3 py-1.5 whitespace-nowrap',
             'border transition-colors duration-200',
@@ -109,7 +107,7 @@ export default function DesktopNav({
           )}
         >
           {t('orderStatus')}
-        </a>
+        </Link>
 
         <Button href="/artworks" variant="accent" size="xs">
           {t('buyArt')}

@@ -123,14 +123,12 @@ export default async function Footer() {
                     </a>
                   </li>
                   <li>
-                    <a
-                      href={EXTERNAL_LINKS.ORDER_STATUS}
-                      target="_blank"
-                      rel="noopener noreferrer nofollow"
+                    <Link
+                      href="/orders"
                       className="text-gray-300 hover:text-primary transition-colors"
                     >
                       {tNav('orderStatus')}
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>
