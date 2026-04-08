@@ -22,7 +22,7 @@ interface Props {
   locale: 'ko' | 'en';
 }
 
-type TossWidgets = Awaited<ReturnType<Awaited<ReturnType<typeof loadTossPayments>>['widgets']>>;
+type TossPayment = ReturnType<Awaited<ReturnType<typeof loadTossPayments>>['payment']>;
 
 export default function CheckoutClient({
   artworkId,
@@ -37,54 +37,31 @@ export default function CheckoutClient({
   const shippingFee = calculateShippingFee(price);
   const totalAmount = price + shippingFee;
 
-  const [widgets, setWidgets] = useState<TossWidgets | null>(null);
+  const [payment, setPayment] = useState<TossPayment | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const buyerInfoRef = useRef<BuyerInfo | null>(null);
 
-  // Load Toss SDK and initialise widgets
+  // Load Toss SDK and initialise payment instance
   useEffect(() => {
-    async function initWidgets() {
+    async function initPayment() {
       try {
         const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
         if (!clientKey) throw new Error('Toss client key is not configured');
 
         const tossPayments = await loadTossPayments(clientKey);
-        const w = tossPayments.widgets({ customerKey: ANONYMOUS });
-        await w.setAmount({ currency: 'KRW', value: totalAmount });
-        setWidgets(w);
-      } catch (err) {
+        setPayment(tossPayments.payment({ customerKey: ANONYMOUS }));
+      } catch {
         setError(t('loadModuleError'));
       } finally {
         setLoading(false);
       }
     }
-    void initWidgets();
+    void initPayment();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // Render Toss widget UI once widgets are ready
-  useEffect(() => {
-    if (!widgets) return;
-
-    async function renderWidgets() {
-      try {
-        await widgets!.renderPaymentMethods({
-          selector: '#payment-method',
-          variantKey: 'DEFAULT',
-        });
-        await widgets!.renderAgreement({
-          selector: '#agreement',
-          variantKey: 'AGREEMENT',
-        });
-      } catch (err) {
-        console.error('Toss widget render error:', err);
-      }
-    }
-    void renderWidgets();
-  }, [widgets]);
 
   async function handlePayment() {
     setError(null);
@@ -145,21 +122,24 @@ export default function CheckoutClient({
       const { orderNo, orderName } = result;
       createdOrderNo = orderNo;
 
-      // 2. Request payment via Toss widget
+      // 2. Open Toss payment window
       const localePrefix = locale === 'en' ? '/en' : '';
       const successUrl = `${window.location.origin}${localePrefix}/checkout/${artworkId}/success`;
       const failUrl = `${window.location.origin}${localePrefix}/checkout/${artworkId}/fail`;
 
-      await widgets!.requestPayment({
+      await payment!.requestPayment({
+        method: 'CARD',
+        amount: { currency: 'KRW', value: totalAmount },
         orderId: orderNo,
         orderName,
         successUrl,
         failUrl,
         customerEmail: buyerEmail,
         customerName: buyerName,
+        card: { useEscrow: false },
       });
     } catch (err: unknown) {
-      // 위젯 에러/취소 시 생성된 pending 주문을 즉시 취소 — 재주문 차단 방지
+      // 결제창 에러/취소 시 pending 주문 즉시 취소
       if (createdOrderNo) {
         void cancelPendingOrder(createdOrderNo);
       }
@@ -238,16 +218,6 @@ export default function CheckoutClient({
             </tbody>
           </table>
         </div>
-
-        {/* Toss widget containers */}
-        {loading && (
-          <div className="mb-4 flex h-32 items-center justify-center rounded-2xl border border-gray-200 bg-white">
-            <span className="text-sm text-gray-400">{t('loadingModule')}</span>
-          </div>
-        )}
-
-        <div id="payment-method" className="mb-4" />
-        <div id="agreement" className="mb-6" />
 
         {/* Error */}
         {error && (

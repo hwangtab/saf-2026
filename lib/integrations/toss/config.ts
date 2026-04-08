@@ -1,5 +1,5 @@
 /**
- * TossPayments v2 configuration — 결제위젯 연동 키 (gck/gsk prefix)
+ * TossPayments v2 configuration — API 개별 연동 키 (ck/sk prefix) — MID: CF_koreasmae86
  * Returns null when env vars are missing (safe no-op for unconfigured envs).
  */
 
