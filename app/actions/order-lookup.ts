@@ -4,6 +4,16 @@ import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { cancelPayment } from '@/lib/integrations/toss/cancel';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
 
+/** Strip non-digits and normalise +82 → 0 prefix */
+function normalizePhone(raw: string): string {
+  const digits = raw.replace(/[^0-9]/g, '');
+  // +821012345678 → 821012345678 → 01012345678
+  if (digits.startsWith('82') && digits.length > 10) {
+    return '0' + digits.slice(2);
+  }
+  return digits;
+}
+
 export type OrderListItem = {
   orderNo: string;
   status: string;
@@ -54,7 +64,7 @@ export async function lookupOrders(
 ): Promise<OrderLookupListResult> {
   const trimmedName = name.trim();
   const trimmedEmail = email.trim().toLowerCase();
-  const trimmedPhone = phone.trim().replace(/[^0-9]/g, '');
+  const trimmedPhone = normalizePhone(phone);
 
   if (!trimmedName || !trimmedEmail || !trimmedPhone) {
     return { success: false, error: 'REQUIRED' };
@@ -108,7 +118,7 @@ export async function lookupOrders(
 
   const verifiedOrderNos = new Set(
     (phoneVerifiedOrders ?? [])
-      .filter((o) => (o.buyer_phone ?? '').replace(/[^0-9]/g, '') === trimmedPhone)
+      .filter((o) => normalizePhone(o.buyer_phone ?? '') === trimmedPhone)
       .map((o) => o.order_no)
   );
 
