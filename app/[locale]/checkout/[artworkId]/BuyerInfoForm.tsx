@@ -1,7 +1,7 @@
 'use client';
 
 import { forwardRef, useImperativeHandle, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 export interface BuyerInfo {
   buyerName: string;
@@ -49,6 +49,8 @@ const labelClass = 'block text-sm font-medium text-charcoal mb-1';
 
 const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
   const t = useTranslations('checkout');
+  const locale = useLocale();
+  const langAttr = locale === 'ko' ? 'ko' : 'en';
 
   const [form, setForm] = useState<FormState>({
     buyerName: '',
@@ -115,6 +117,7 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
             </label>
             <input
               type="text"
+              lang={langAttr}
               className={inputClass}
               value={form.buyerName}
               onChange={handleChange('buyerName')}
@@ -174,6 +177,7 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
                 </label>
                 <input
                   type="text"
+                  lang={langAttr}
                   className={inputClass}
                   value={form.shippingName}
                   onChange={handleChange('shippingName')}
@@ -236,6 +240,7 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
             </label>
             <input
               type="text"
+              lang={langAttr}
               className={inputClass}
               value={form.shippingAddressDetail}
               onChange={handleChange('shippingAddressDetail')}
@@ -247,6 +252,7 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
             <label className={labelClass}>{t('shippingMemo')}</label>
             <input
               type="text"
+              lang={langAttr}
               className={inputClass}
               value={form.shippingMemo}
               onChange={handleChange('shippingMemo')}
