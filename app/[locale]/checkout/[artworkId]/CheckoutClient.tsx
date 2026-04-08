@@ -1,15 +1,35 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import SafeImage from '@/components/common/SafeImage';
 import { Link } from '@/i18n/navigation';
 import { calculateShippingFee } from '@/lib/integrations/toss/config';
 import { formatPriceForDisplay } from '@/lib/utils';
-import { createOrder, cancelPendingOrder, initiatePayment } from '@/app/actions/checkout';
+import { createOrder, cancelPendingOrder } from '@/app/actions/checkout';
 import BuyerInfoForm from './BuyerInfoForm';
 import type { BuyerInfo } from './BuyerInfoForm';
+
+declare global {
+  interface Window {
+    TossPayments?: (clientKey: string) => {
+      requestPayment(
+        method: string,
+        params: {
+          amount: number;
+          orderId: string;
+          orderName: string;
+          successUrl: string;
+          failUrl: string;
+          customerName?: string;
+          customerEmail?: string;
+          flowMode?: string;
+        }
+      ): Promise<void>;
+    };
+  }
+}
 
 interface Props {
   artworkId: string;
@@ -34,14 +54,34 @@ export default function CheckoutClient({
   const shippingFee = calculateShippingFee(price);
   const totalAmount = price + shippingFee;
 
+  const [sdkReady, setSdkReady] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const buyerInfoRef = useRef<BuyerInfo | null>(null);
 
+  // Load TossPayments v1 결제창 SDK via script tag
+  useEffect(() => {
+    if (window.TossPayments) {
+      setSdkReady(true);
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://js.tosspayments.com/v1/payment';
+    script.onload = () => setSdkReady(true);
+    script.onerror = () => setError(t('loadModuleError'));
+    document.head.appendChild(script);
+  }, [t]);
+
   async function handlePayment() {
     setError(null);
     let createdOrderNo: string | null = null;
+
+    const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
+    if (!clientKey || !window.TossPayments) {
+      setError(t('loadModuleError'));
+      return;
+    }
 
     const buyerInfo = buyerInfoRef.current;
     if (!buyerInfo) {
@@ -95,35 +135,32 @@ export default function CheckoutClient({
         return;
       }
 
-      const { orderNo, orderName, totalAmount: serverTotal } = result;
+      const { orderNo, orderName } = result;
       createdOrderNo = orderNo;
 
-      // 2. Create payment session server-side (POST /v1/payments with sk key)
+      // 2. Open Toss payment window via v1 SDK
       const localePrefix = locale === 'en' ? '/en' : '';
       const successUrl = `${window.location.origin}${localePrefix}/checkout/${artworkId}/success`;
       const failUrl = `${window.location.origin}${localePrefix}/checkout/${artworkId}/fail`;
 
-      const payResult = await initiatePayment({
-        orderNo,
+      const tossPayments = window.TossPayments(clientKey);
+      await tossPayments.requestPayment('카드', {
+        amount: totalAmount,
+        orderId: orderNo,
         orderName,
-        totalAmount: serverTotal,
-        buyerName,
-        buyerEmail,
         successUrl,
         failUrl,
+        customerName: buyerName,
+        customerEmail: buyerEmail,
       });
-
-      if (!payResult.success) {
-        void cancelPendingOrder(orderNo);
-        setError(payResult.error);
-        return;
-      }
-
-      // 3. Redirect to Toss-hosted payment page
-      window.location.href = payResult.checkoutUrl;
     } catch (err: unknown) {
-      if (createdOrderNo) void cancelPendingOrder(createdOrderNo);
-      setError((err as Error)?.message ?? t('errorPayment'));
+      // 결제창 에러/취소 시 pending 주문 즉시 취소
+      if (createdOrderNo) {
+        void cancelPendingOrder(createdOrderNo);
+      }
+      const tossErr = err as { code?: string; message?: string } | null;
+      if (tossErr?.code === 'USER_CANCEL' || tossErr?.code === 'PAY_PROCESS_CANCELED') return;
+      setError(tossErr?.message ?? t('errorPayment'));
     } finally {
       setSubmitting(false);
     }
@@ -206,7 +243,7 @@ export default function CheckoutClient({
         <button
           type="button"
           onClick={handlePayment}
-          disabled={submitting}
+          disabled={!sdkReady || submitting}
           className="w-full rounded-xl bg-primary py-4 text-base font-bold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {submitting ? t('processingShort') : t('payNow')}
