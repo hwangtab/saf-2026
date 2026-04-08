@@ -40,6 +40,7 @@ export {
   generateArtworkPurchaseHowTo,
   generateArtworkPurchaseFAQ,
   generateMemberJoinHowTo,
+  generateExhibitionEnjoyHowTo,
   generateQAPageSchema,
   generateSAFCoreQA,
 } from './schemas';

@@ -69,6 +69,7 @@ export {
   generateArtworkPurchaseHowTo,
   generateArtworkPurchaseFAQ,
   generateMemberJoinHowTo,
+  generateExhibitionEnjoyHowTo,
 } from './howto';
 
 // QAPage (AEO/GEO)

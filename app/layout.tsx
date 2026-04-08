@@ -83,6 +83,8 @@ export const metadata: Metadata = {
   },
   description:
     '한국 현대미술 작품 127점을 온라인에서 구매하세요. 회화, 판화, 사진, 조각 등 다양한 장르의 작품을 합리적인 가격에 만나볼 수 있습니다.',
+  keywords:
+    '전시회, 서울 전시회, 현대미술 전시회, 전시회 추천, 전시회 일정, 한국 현대미술, 작품 구매, 미술 작품 판매, 씨앗페, 씨앗페 온라인, 예술인 상호부조, 회화, 판화, 조각, 사진',
   authors: [{ name: CONTACT.ORGANIZATION_NAME }],
   icons: {
     icon: '/favicon.ico',

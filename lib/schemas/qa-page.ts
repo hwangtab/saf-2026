@@ -88,6 +88,18 @@ export function generateSAFCoreQA(locale: 'ko' | 'en' = 'ko') {
             'Artwork prices at SAF Online range from affordable prints to unique original paintings. Most original paintings are priced between KRW 300,000 and KRW 5,000,000. Visit the gallery to see current pricing for all 127 works across painting, printmaking, photography, and sculpture.',
           url: `${SITE_URL}/en/artworks`,
         },
+        {
+          question: 'When is the SAF 2026 exhibition?',
+          answer:
+            'The SAF 2026 offline exhibition ran from January 14 to January 26, 2026, at Insa Art Center 3F G&J Gallery in Insadong, Seoul. The online exhibition remains open year-round at saf2026.com.',
+          url: `${SITE_URL}/en/archive/2026`,
+        },
+        {
+          question: 'Where can I find the SAF exhibition catalog?',
+          answer:
+            'The SAF Online Gallery at saf2026.com/en/artworks serves as the digital exhibition catalog. Browse all 127 artworks by 127 artists across painting, printmaking, photography, and sculpture. The 2026 offline exhibition archive with poster and visitor reviews is also available.',
+          url: `${SITE_URL}/en/artworks`,
+        },
       ]
     : [
         {
@@ -129,6 +141,30 @@ export function generateSAFCoreQA(locale: 'ko' | 'en' = 'ko') {
           answer:
             '씨앗페 온라인 작품 가격은 판화·사진 등 소형 작품부터 대형 회화까지 다양합니다. 대부분의 작품은 30만 원에서 500만 원 사이에 형성되어 있으며, 회화·판화·사진·조각 등 127점의 작품이 출품되어 있습니다.',
           url: `${SITE_URL}/artworks`,
+        },
+        {
+          question: '씨앗페 전시회 일정은 언제인가요?',
+          answer:
+            '씨앗페(SAF) 2026 오프라인 전시는 2026년 1월 14일부터 1월 26일까지 서울 종로구 인사아트센터 3층 G&J 갤러리에서 12일간 열렸습니다. 오프라인 전시는 종료되었으나, 온라인 전시는 saf2026.com에서 상설 운영 중입니다.',
+          url: `${SITE_URL}/archive/2026`,
+        },
+        {
+          question: '씨앗페 전시 도록은 어디서 볼 수 있나요?',
+          answer:
+            '씨앗페 온라인 갤러리(saf2026.com/artworks)가 디지털 전시 도록 역할을 합니다. 127명 작가의 127점 작품 전체를 온라인에서 확인·구매하실 수 있으며, 아카이브 페이지(saf2026.com/archive/2026)에서는 오프라인 전시 기록과 포스터도 제공됩니다.',
+          url: `${SITE_URL}/artworks`,
+        },
+        {
+          question: '씨앗페 전시회 포스터는 어디서 확인할 수 있나요?',
+          answer:
+            '씨앗페 2026 전시회 포스터와 오프라인 전시 현장 사진은 아카이브 페이지(saf2026.com/archive/2026)에서 확인하실 수 있습니다. 전시 기록, 관람객 후기, 작품 목록도 함께 제공됩니다.',
+          url: `${SITE_URL}/archive/2026`,
+        },
+        {
+          question: '전시회를 영어로 어떻게 표현하나요?',
+          answer:
+            '전시회는 영어로 "Exhibition" 또는 "Art Exhibition"이라고 합니다. 씨앗페(SAF, Seed Art Festival)는 한국 현대미술 전시회(Korean Contemporary Art Exhibition)로, 영문 페이지(saf2026.com/en)에서 영어로도 이용하실 수 있습니다.',
+          url: `${SITE_URL}/en`,
         },
       ];
 

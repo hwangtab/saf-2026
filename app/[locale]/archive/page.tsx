@@ -19,12 +19,12 @@ const PAGE_COPY = {
   ko: {
     title: '아카이브',
     description:
-      '2023년 첫 번째 전시부터 2026년 캠페인까지, 예술인 상호부조를 위한 씨앗페(SAF)의 여정과 기록을 만나보세요. 120여 명의 예술가가 함께한 연대의 발자취를 아카이브에서 확인하세요.',
+      '서울 현대미술 전시회 일정과 기록을 한눈에. 씨앗페 온라인 전시회 아카이브에서 2023·2026 전시 일정, 추천 전시 작품, 전시회 포스터를 만나보세요. 120여 명 예술가의 연대 발자취.',
   },
   en: {
     title: 'Archive',
     description:
-      'Explore SAF records from the first 2023 exhibition to the 2026 campaign for artist mutual-aid finance.',
+      'Seoul art exhibition records and schedules in one place. Explore SAF exhibition archives from 2023 and 2026 — posters, schedules, and featured artworks.',
   },
 } as const;
 
@@ -33,7 +33,13 @@ export async function generateMetadata(): Promise<Metadata> {
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
-  return createStandardPageMetadata(title, copy.description, PAGE_URL, '/archive', locale);
+  return {
+    ...createStandardPageMetadata(title, copy.description, PAGE_URL, '/archive', locale),
+    keywords:
+      locale === 'en'
+        ? 'SAF exhibition archive, Seoul art exhibition, exhibition schedule, exhibition catalog, Korean art exhibitions, SAF Online'
+        : '전시회 일정, 전시회 일정 사이트, 전시회 추천, 서울 전시회, 씨앗페 전시, 현대미술 전시회, 전시회 아카이브',
+  };
 }
 
 export default async function ArchiveHubPage() {

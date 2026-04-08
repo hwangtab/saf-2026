@@ -65,8 +65,8 @@ export async function generateMetadata(): Promise<Metadata> {
     ),
     keywords:
       locale === 'en'
-        ? 'Korean art, contemporary art, paintings for sale, original artworks, prints, sculpture, photography, art gallery'
-        : '한국미술, 현대미술, 작품 구매, 회화, 판화, 조각, 사진, 미술 작품 판매',
+        ? 'Korean art exhibition catalog, contemporary art, paintings for sale, original artworks, prints, sculpture, photography, art gallery, Seoul exhibition'
+        : '전시 도록, 전시회 도록, 서울 현대미술 전시, 한국미술, 현대미술, 작품 구매, 회화, 판화, 조각, 사진, 미술 작품 판매',
   };
 }
 

@@ -20,7 +20,11 @@ import {
   generateArtworkListSchema,
   generateGalleryAggregateOffer,
 } from '@/lib/seo-utils';
-import { generateArtworkPurchaseHowTo, generateMemberJoinHowTo } from '@/lib/schemas/howto';
+import {
+  generateArtworkPurchaseHowTo,
+  generateMemberJoinHowTo,
+  generateExhibitionEnjoyHowTo,
+} from '@/lib/schemas/howto';
 import { generateSAFCoreQA } from '@/lib/schemas/qa-page';
 import {
   getSupabaseHomepageArtworks,
@@ -218,6 +222,7 @@ export default async function Home() {
       <JsonLdScript data={generateCampaignSchema(locale)} />
       <JsonLdScript data={generateArtworkPurchaseHowTo(locale)} />
       <JsonLdScript data={generateMemberJoinHowTo(locale)} />
+      <JsonLdScript data={generateExhibitionEnjoyHowTo(locale)} />
       <JsonLdScript data={generateSAFCoreQA(locale)} />
 
       {/* Share buttons (hidden, for metadata) */}

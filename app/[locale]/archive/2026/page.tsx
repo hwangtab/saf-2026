@@ -9,7 +9,11 @@ import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { CONTACT, EXHIBITION, EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
 import { getSupabaseReviews } from '@/lib/supabase-data';
-import { generateExhibitionSchema, createBreadcrumbSchema } from '@/lib/seo-utils';
+import {
+  generateExhibitionSchema,
+  createBreadcrumbSchema,
+  generateExhibitionEnjoyHowTo,
+} from '@/lib/seo-utils';
 import { createStandardPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
@@ -24,12 +28,12 @@ const PAGE_COPY = {
   ko: {
     title: '2026 오프라인 전시 기록',
     description:
-      '2026년 1월 인사아트센터에서 열린 씨앗페 오프라인 전시 기록. 작가 127명, 회화·판화·조각 등 작품 127점, 12일간의 전시 현장과 관람객 후기입니다.',
+      '서울 인사동 전시회 기록. 2026년 1월 14일~26일 인사아트센터에서 열린 씨앗페 전시 일정·포스터·도록을 확인하세요. 127명 작가의 127점 작품, 12일간의 전시 현장과 관람객 후기.',
   },
   en: {
     title: '2026 Offline Exhibition Archive',
     description:
-      'A record of the SAF 2026 offline exhibition held at Insa Art Center, featuring 127 artists and 127 artworks across painting, printmaking, sculpture, and more.',
+      'SAF 2026 Seoul exhibition records: January 14–26 at Insa Art Center. Browse the exhibition poster, catalog, and visitor reviews for 127 artworks by 127 artists.',
   },
 } as const;
 
@@ -42,8 +46,8 @@ export async function generateMetadata(): Promise<Metadata> {
     ...createStandardPageMetadata(title, copy.description, PAGE_URL, '/archive/2026', locale),
     keywords:
       locale === 'en'
-        ? 'SAF 2026 exhibition, Insa Art Center, Korean art exhibition, artist mutual aid, Seoul art event, SAF Online'
-        : '씨앗페 2026, 씨앗페 오프라인 전시, 인사아트센터, 예술인 상호부조, 서울 미술 전시, 씨앗페 온라인',
+        ? 'SAF 2026 exhibition, Seoul exhibition, Insa Art Center, Korean art exhibition, exhibition catalog, exhibition poster, exhibition schedule, artist mutual aid, SAF Online'
+        : '전시회 서울, 서울 전시회, 전시회 일정, 인사동 전시회, 전시회 포스터, 전시회 도록, 씨앗페 2026, 인사아트센터, 씨앗페 오프라인 전시, 서울 미술 전시',
   };
 }
 
@@ -79,6 +83,7 @@ export default async function Archive2026Page() {
 
   // JSON-LD Schema for Event
   const eventSchema = generateExhibitionSchema(exhibitionReviews, locale);
+  const howToSchema = generateExhibitionEnjoyHowTo(locale);
   const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
     { name: tBreadcrumbs('archive'), url: archiveUrl },
@@ -115,7 +120,7 @@ export default async function Archive2026Page() {
   if (locale === 'en') {
     return (
       <>
-        <JsonLdScript data={[eventSchema, breadcrumbSchema, webPageSchema]} />
+        <JsonLdScript data={[eventSchema, breadcrumbSchema, webPageSchema, howToSchema]} />
         <PageHero
           title="2026 Offline Exhibition"
           description="A 12-day exhibition record at Insa Art Center"
@@ -210,8 +215,7 @@ export default async function Archive2026Page() {
 
   return (
     <>
-      <JsonLdScript data={eventSchema} />
-      <JsonLdScript data={breadcrumbSchema} />
+      <JsonLdScript data={[eventSchema, breadcrumbSchema, howToSchema]} />
       <PageHero
         title="2026 오프라인 전시"
         description="인사아트센터에서 진행된 12일간의 기록"
