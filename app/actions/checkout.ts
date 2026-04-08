@@ -40,7 +40,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
   if (!artworkId || !buyerName || !buyerEmail || !buyerPhone) {
     return { success: false, error: '필수 정보를 입력해주세요.' };
   }
-  if (!shippingAddress || !shippingPostalCode) {
+  if (!shippingAddress || !shippingPostalCode || !shippingAddressDetail) {
     return { success: false, error: '배송지 정보를 입력해주세요.' };
   }
 

@@ -112,7 +112,7 @@ export default function CheckoutClient({
       setError(t('errorBuyerFieldsRequired'));
       return;
     }
-    if (!shippingAddress || !shippingPostalCode) {
+    if (!shippingAddress || !shippingPostalCode || !shippingAddressDetail) {
       setError(t('errorShippingAddressRequired'));
       return;
     }

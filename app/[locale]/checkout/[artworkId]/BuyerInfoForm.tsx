@@ -231,7 +231,9 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
           </div>
 
           <div>
-            <label className={labelClass}>{t('shippingAddressDetail')}</label>
+            <label className={labelClass}>
+              {t('shippingAddressDetail')} <span className="text-red-500">*</span>
+            </label>
             <input
               type="text"
               className={inputClass}
