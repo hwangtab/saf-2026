@@ -391,7 +391,7 @@ export default async function StoryCategoryPage({ params }: Props) {
             </p>
             <Link
               href="/stories"
-              className="px-4 py-2 text-sm font-medium rounded-full border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-colors"
+              className="px-3 md:px-4 py-1.5 text-xs font-medium rounded-full border border-gray-200 bg-white text-gray-600 hover:bg-gray-100 transition-colors"
             >
               {locale === 'en' ? 'All Stories' : '전체 보기'}
             </Link>
@@ -401,10 +401,10 @@ export default async function StoryCategoryPage({ params }: Props) {
                 <Link
                   key={cat.category}
                   href={cat.path}
-                  className="px-4 py-2 text-sm font-medium rounded-full border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-colors"
+                  className="px-3 md:px-4 py-1.5 text-xs font-medium rounded-full border border-gray-200 bg-white text-gray-600 hover:bg-gray-100 transition-colors"
                 >
                   {cat.label}
-                  <span className="ml-1 text-gray-400 text-xs">{cat.count}</span>
+                  <span className="ml-1 opacity-60">{cat.count}</span>
                 </Link>
               ))}
           </div>

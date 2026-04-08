@@ -36,7 +36,8 @@ export function useHeaderStyle() {
     const artistPage = currentPath.startsWith('/artworks/artist/');
     const categoryPage = currentPath.startsWith('/artworks/category/');
     const storyDetail = currentPath.startsWith('/stories/') && currentPath !== '/stories';
-    const specialHeroPage = currentPath === '/special/oh-yoon';
+    const newsDetail = currentPath.startsWith('/news/') && currentPath !== '/news';
+    const termsPage = currentPath.startsWith('/terms');
     const artworkDetail =
       currentPath.startsWith('/artworks/') &&
       currentPath !== '/artworks' &&
@@ -47,7 +48,8 @@ export function useHeaderStyle() {
       artistPage ||
       categoryPage ||
       storyDetail ||
-      specialHeroPage;
+      newsDetail ||
+      termsPage;
     return { isArtworkDetail: artworkDetail, prefersHeroLayout: heroPage };
   }, [currentPath]);
 

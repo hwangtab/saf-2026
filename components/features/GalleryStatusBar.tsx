@@ -36,14 +36,14 @@ export default function GalleryStatusBar({ className }: GalleryStatusBarProps) {
       <div className="flex items-center gap-3">
         <a
           href={`tel:${CONTACT.PHONE}`}
-          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-slate-200 text-xs font-medium text-charcoal hover:bg-slate-50 transition-colors"
+          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-gray-200 text-xs font-medium text-charcoal hover:bg-gray-100 transition-colors"
         >
           <Phone className="w-3 h-3" />
           {t('phone')}
         </a>
         <a
           href={`mailto:${CONTACT.EMAIL}`}
-          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-slate-200 text-xs font-medium text-charcoal hover:bg-slate-50 transition-colors"
+          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-gray-200 text-xs font-medium text-charcoal hover:bg-gray-100 transition-colors"
         >
           <Mail className="w-3 h-3" />
           {t('email')}
