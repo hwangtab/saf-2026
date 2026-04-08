@@ -271,7 +271,7 @@ export default async function CategoryPage({ params }: Props) {
 
         {/* 관련 카테고리 내부 링크 — 검색엔진 크롤링 및 구매자 탐색 지원 */}
         {categoryCounts.length > 0 && (
-          <Section variant="white" className="pb-12">
+          <Section variant="white" prevVariant="primary-surface" className="pb-12">
             <div className="container-max">
               <p className="text-sm font-medium text-gray-500 mb-3">
                 {isEnglish ? 'Browse other categories' : '다른 카테고리 작품'}

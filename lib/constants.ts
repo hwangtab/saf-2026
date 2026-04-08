@@ -126,6 +126,7 @@ export const HERO_PAGES = [
   '/news',
   '/artworks',
   '/stories',
+  '/privacy',
 ] as const;
 
 export type HeroPage = (typeof HERO_PAGES)[number];

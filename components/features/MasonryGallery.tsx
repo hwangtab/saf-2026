@@ -51,7 +51,7 @@ function MasonryGallery({ artworks }: MasonryGalleryProps) {
   const hasMore = visibleCount < artworks.length;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 pt-2">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
       {visibleArtworks.map((artwork, index) => (
         <div key={artwork.id} id={`artwork-${artwork.id}`} className="w-full">
           <ArtworkCard artwork={artwork} variant="gallery" priorityIndex={index} />
