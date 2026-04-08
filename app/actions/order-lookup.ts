@@ -2,6 +2,15 @@
 
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 
+export type OrderListItem = {
+  orderNo: string;
+  status: string;
+  artworkTitle: string;
+  artworkImage: string | null;
+  totalAmount: number;
+  createdAt: string;
+};
+
 export type OrderPublicInfo = {
   orderNo: string;
   status: string;
@@ -24,11 +33,105 @@ export type OrderPublicInfo = {
   } | null;
 };
 
-export type OrderLookupResult =
+export type OrderLookupListResult =
+  | { success: true; orders: OrderListItem[] }
+  | { success: false; error: string };
+
+export type OrderDetailResult =
   | { success: true; order: OrderPublicInfo }
   | { success: false; error: string };
 
-export async function lookupOrder(orderNo: string, buyerEmail: string): Promise<OrderLookupResult> {
+export async function lookupOrders(
+  name: string,
+  email: string,
+  phone: string
+): Promise<OrderLookupListResult> {
+  const trimmedName = name.trim();
+  const trimmedEmail = email.trim().toLowerCase();
+  const trimmedPhone = phone.trim().replace(/[^0-9]/g, '');
+
+  if (!trimmedName || !trimmedEmail || !trimmedPhone) {
+    return { success: false, error: 'REQUIRED' };
+  }
+
+  const adminClient = createSupabaseAdminClient();
+
+  const { data: orders, error } = await adminClient
+    .from('orders')
+    .select(
+      `
+      order_no,
+      status,
+      total_amount,
+      created_at,
+      artworks (
+        title,
+        images
+      )
+    `
+    )
+    .eq('buyer_name', trimmedName)
+    .ilike('buyer_email', trimmedEmail)
+    .neq('status', 'pending_payment')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    return { success: false, error: 'NOT_FOUND' };
+  }
+
+  // 휴대폰 번호 검증 — DB에서 필터링 후 코드에서 2차 검증
+  // (ilike로 phone까지 하면 인덱스 미사용, 소량이므로 코드 필터)
+  const { data: phoneCheck } = await adminClient
+    .from('orders')
+    .select('order_no')
+    .eq('buyer_name', trimmedName)
+    .ilike('buyer_email', trimmedEmail)
+    .neq('status', 'pending_payment');
+
+  if (!phoneCheck) {
+    return { success: false, error: 'NOT_FOUND' };
+  }
+
+  // 휴대폰 번호 일치하는 주문만 필터
+  const { data: phoneVerifiedOrders } = await adminClient
+    .from('orders')
+    .select('order_no, buyer_phone')
+    .eq('buyer_name', trimmedName)
+    .ilike('buyer_email', trimmedEmail)
+    .neq('status', 'pending_payment');
+
+  const verifiedOrderNos = new Set(
+    (phoneVerifiedOrders ?? [])
+      .filter((o) => (o.buyer_phone ?? '').replace(/[^0-9]/g, '') === trimmedPhone)
+      .map((o) => o.order_no)
+  );
+
+  if (verifiedOrderNos.size === 0) {
+    return { success: false, error: 'NOT_FOUND' };
+  }
+
+  const result: OrderListItem[] = (orders ?? [])
+    .filter((o) => verifiedOrderNos.has(o.order_no))
+    .map((o) => {
+      const artwork = o.artworks as unknown as { title: string; images: string[] } | null;
+      const images = artwork?.images ?? [];
+      return {
+        orderNo: o.order_no,
+        status: o.status,
+        artworkTitle: artwork?.title ?? '알 수 없음',
+        artworkImage: images.length > 0 ? images[0] : null,
+        totalAmount: o.total_amount,
+        createdAt: o.created_at,
+      };
+    });
+
+  return { success: true, orders: result };
+}
+
+export async function lookupOrderDetail(
+  orderNo: string,
+  buyerEmail: string
+): Promise<OrderDetailResult> {
   const trimmedOrderNo = orderNo.trim();
   const trimmedEmail = buyerEmail.trim().toLowerCase();
 
@@ -70,7 +173,6 @@ export async function lookupOrder(orderNo: string, buyerEmail: string): Promise<
     return { success: false, error: 'NOT_FOUND' };
   }
 
-  // 이메일 검증 (대소문자 무시)
   if (order.buyer_email.toLowerCase() !== trimmedEmail) {
     return { success: false, error: 'NOT_FOUND' };
   }
@@ -89,7 +191,6 @@ export async function lookupOrder(orderNo: string, buyerEmail: string): Promise<
   const images = artworkRow?.images ?? [];
   const artworkImage = images.length > 0 ? images[0] : null;
 
-  // 결제 정보 (가상계좌 포함)
   let paymentMethod: string | null = null;
   let virtualAccount: OrderPublicInfo['virtualAccount'] = null;
 
