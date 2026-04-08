@@ -454,7 +454,7 @@ export default async function NewsPage() {
       <Section variant="primary-surface" prevVariant="sun-soft" className="pb-24 md:pb-32">
         <div className="container-max">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {newsArticles.map((article) => {
+            {newsArticles.map((article, index) => {
               const localizedTitle = localizeArticleTitle(article.title, article.source, locale);
               const localizedDescription = localizeArticleDescription(
                 article.description || '',
@@ -477,6 +477,7 @@ export default async function NewsPage() {
                           src={article.thumbnail}
                           alt={localizedTitle}
                           fill
+                          priority={index === 0}
                           className="object-cover transition-transform duration-300 hover:scale-105"
                           sizes="(max-width: 768px) 100vw, 50vw"
                         />

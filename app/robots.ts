@@ -25,6 +25,8 @@ export default function robots(): MetadataRoute.Robots {
           '/en/onboarding',
           '/terms-consent',
           '/en/terms-consent',
+          '/checkout/',
+          '/en/checkout/',
         ],
       },
       {
