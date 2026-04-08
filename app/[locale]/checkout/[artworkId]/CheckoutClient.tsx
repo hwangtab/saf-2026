@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import clsx from 'clsx';
 
 import SafeImage from '@/components/common/SafeImage';
 import { Link } from '@/i18n/navigation';
@@ -10,6 +11,8 @@ import { formatPriceForDisplay } from '@/lib/utils';
 import { createOrder, cancelPendingOrder, initiatePayment } from '@/app/actions/checkout';
 import BuyerInfoForm from './BuyerInfoForm';
 import type { BuyerInfo } from './BuyerInfoForm';
+
+type PaymentMethod = 'CARD' | 'TRANSFER' | 'VIRTUAL_ACCOUNT';
 
 interface Props {
   artworkId: string;
@@ -20,6 +23,15 @@ interface Props {
   imageUrl: string;
   locale: 'ko' | 'en';
 }
+
+const PAYMENT_METHODS: {
+  value: PaymentMethod;
+  labelKey: 'methodCard' | 'methodTransfer' | 'methodVirtualAccount';
+}[] = [
+  { value: 'CARD', labelKey: 'methodCard' },
+  { value: 'TRANSFER', labelKey: 'methodTransfer' },
+  { value: 'VIRTUAL_ACCOUNT', labelKey: 'methodVirtualAccount' },
+];
 
 export default function CheckoutClient({
   artworkId,
@@ -34,6 +46,7 @@ export default function CheckoutClient({
   const shippingFee = calculateShippingFee(price);
   const totalAmount = price + shippingFee;
 
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('CARD');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -104,6 +117,7 @@ export default function CheckoutClient({
       const failUrl = `${window.location.origin}${localePrefix}/checkout/${artworkId}/fail`;
 
       const payResult = await initiatePayment({
+        method: paymentMethod,
         orderNo,
         orderName,
         totalAmount: serverTotal,
@@ -195,6 +209,28 @@ export default function CheckoutClient({
               </tr>
             </tbody>
           </table>
+        </div>
+
+        {/* Payment method selector */}
+        <div className="mb-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h3 className="mb-4 text-base font-semibold text-charcoal">{t('paymentMethodSelect')}</h3>
+          <div className="grid grid-cols-3 gap-3">
+            {PAYMENT_METHODS.map(({ value, labelKey }) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setPaymentMethod(value)}
+                className={clsx(
+                  'rounded-xl border-2 py-3 text-sm font-medium transition-colors',
+                  paymentMethod === value
+                    ? 'border-primary bg-primary/5 text-primary'
+                    : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                )}
+              >
+                {t(labelKey)}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Error */}

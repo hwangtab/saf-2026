@@ -154,6 +154,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
 }
 
 export type InitiatePaymentInput = {
+  method: string;
   orderNo: string;
   orderName: string;
   totalAmount: number;
@@ -183,7 +184,7 @@ export async function initiatePayment(input: InitiatePaymentInput): Promise<Init
         'Idempotency-Key': input.orderNo,
       },
       body: JSON.stringify({
-        method: 'CARD',
+        method: input.method,
         amount: input.totalAmount,
         orderId: input.orderNo,
         orderName: input.orderName,
