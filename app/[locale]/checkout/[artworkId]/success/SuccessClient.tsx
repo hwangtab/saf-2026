@@ -83,8 +83,8 @@ export default function SuccessClient({ paymentKey, orderId, amount }: Props) {
 
   if (state === 'error') {
     return (
-      <div className="min-h-screen bg-gray-50 pt-24 pb-16">
-        <div className="max-w-lg mx-auto px-4 text-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center pt-16 pb-16">
+        <div className="max-w-lg w-full mx-auto px-4 text-center">
           <div className="rounded-2xl border border-red-100 bg-white p-10 shadow-sm">
             <p className="text-4xl mb-4">!</p>
             <h1 className="text-xl font-bold text-charcoal mb-2">{t('confirmationFailed')}</h1>
@@ -103,8 +103,8 @@ export default function SuccessClient({ paymentKey, orderId, amount }: Props) {
 
   if (state === 'virtual' && virtualAccount) {
     return (
-      <div className="min-h-screen bg-gray-50 pt-24 pb-16">
-        <div className="max-w-lg mx-auto px-4">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center pt-16 pb-16">
+        <div className="max-w-lg w-full mx-auto px-4">
           <div className="rounded-2xl border border-gray-200 bg-white p-10 shadow-sm text-center">
             <p className="text-4xl mb-4">🏦</p>
             <h1 className="text-2xl font-bold text-charcoal mb-2">{t('waitingDeposit')}</h1>
@@ -149,8 +149,8 @@ export default function SuccessClient({ paymentKey, orderId, amount }: Props) {
 
   // Success
   return (
-    <div className="min-h-screen bg-gray-50 pt-24 pb-16">
-      <div className="max-w-lg mx-auto px-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center pt-16 pb-16">
+      <div className="max-w-lg w-full mx-auto px-4">
         <div className="rounded-2xl border border-gray-200 bg-white p-10 shadow-sm text-center">
           <p className="text-5xl mb-4">✓</p>
           <h1 className="text-2xl font-bold text-charcoal mb-2">{t('paymentSuccess')}</h1>
