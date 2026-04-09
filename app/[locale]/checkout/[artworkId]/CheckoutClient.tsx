@@ -233,9 +233,9 @@ export default function CheckoutClient({
                   <ExportedImage
                     src={tossLogo}
                     alt="toss"
-                    height={20}
-                    width={66}
-                    className="absolute -top-3 left-2 h-5 w-auto object-contain drop-shadow-sm"
+                    height={32}
+                    width={106}
+                    className="absolute -top-4 left-1.5 h-8 w-auto object-contain drop-shadow-sm"
                     unoptimized
                   />
                 )}
