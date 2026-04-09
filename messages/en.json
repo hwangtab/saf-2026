@@ -698,8 +698,8 @@
     "orderIdLabel": "Order",
     "paymentMethodSelect": "Payment Method",
     "methodCard": "Credit/Debit Card",
-    "methodTransfer": "Bank Transfer",
-    "methodVirtualAccount": "Virtual Account"
+    "methodTransfer": "Quick Transfer (Toss)",
+    "methodVirtualAccount": "Bank Transfer"
   },
   "orderLookup": {
     "pageTitle": "Order Lookup",

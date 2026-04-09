@@ -29,8 +29,8 @@ const PAYMENT_METHODS: {
   labelKey: 'methodCard' | 'methodTransfer' | 'methodVirtualAccount';
 }[] = [
   { value: 'CARD', labelKey: 'methodCard' },
-  { value: 'TRANSFER', labelKey: 'methodTransfer' },
   { value: 'VIRTUAL_ACCOUNT', labelKey: 'methodVirtualAccount' },
+  { value: 'TRANSFER', labelKey: 'methodTransfer' },
 ];
 
 export default function CheckoutClient({
