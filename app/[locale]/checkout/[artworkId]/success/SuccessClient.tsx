@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useEffect, useMemo, useState } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { formatPriceForDisplay } from '@/lib/utils';
 
@@ -22,10 +22,30 @@ interface VirtualAccount {
 
 type PageState = 'loading' | 'success' | 'virtual' | 'bank_transfer' | 'error';
 
+function formatDeadline(locale: string): string {
+  const deadline = new Date(Date.now() + 24 * 60 * 60 * 1000);
+  if (locale === 'ko') {
+    const m = deadline.getMonth() + 1;
+    const d = deadline.getDate();
+    const hh = String(deadline.getHours()).padStart(2, '0');
+    const mm = String(deadline.getMinutes()).padStart(2, '0');
+    return `${m}월 ${d}일 ${hh}:${mm}`;
+  }
+  return deadline.toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+}
+
 export default function SuccessClient({ paymentKey, orderId, amount, method }: Props) {
   const t = useTranslations('checkout');
   const tOrder = useTranslations('orderLookup');
+  const locale = useLocale();
 
+  const deadline = useMemo(() => formatDeadline(locale), [locale]);
   const [state, setPageState] = useState<PageState>('loading');
   const [virtualAccount, setVirtualAccount] = useState<VirtualAccount | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -144,7 +164,9 @@ export default function SuccessClient({ paymentKey, orderId, amount, method }: P
               </div>
             </div>
 
-            <p className="text-xs text-gray-400 mb-6">{t('bankTransferNotice')}</p>
+            <p className="text-xs text-gray-400 mb-6 [text-wrap:balance]">
+              {t('bankTransferNotice', { deadline })}
+            </p>
 
             <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
               <Link
