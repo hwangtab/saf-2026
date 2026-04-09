@@ -211,27 +211,38 @@ export async function refundOrder(input: RefundInput) {
     .eq('order_id', orderId)
     .order('created_at', { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
 
-  if (!payment?.payment_key) throw new Error('결제 정보를 찾을 수 없습니다.');
-
-  // 2. Call Toss cancel API — idempotency key = order_no
-  const cancelResult = await cancelPayment(
-    payment.payment_key,
-    {
-      cancelReason: cancelReason.trim(),
-      ...(refundReceiveAccount ? { refundReceiveAccount } : {}),
-    },
-    `refund-${order.order_no}`
-  );
-
-  if (!cancelResult.success) {
-    throw new Error(
-      `TossPayments 취소 실패: ${cancelResult.error.message || cancelResult.error.code}`
-    );
-  }
+  const hasTossPayment = !!payment?.payment_key;
 
   const now = new Date().toISOString();
+
+  if (hasTossPayment) {
+    // 2a. Toss 결제 — Toss Cancel API 호출
+    const cancelResult = await cancelPayment(
+      payment!.payment_key!,
+      {
+        cancelReason: cancelReason.trim(),
+        ...(refundReceiveAccount ? { refundReceiveAccount } : {}),
+      },
+      `refund-${order.order_no}`
+    );
+
+    if (!cancelResult.success) {
+      throw new Error(
+        `TossPayments 취소 실패: ${cancelResult.error.message || cancelResult.error.code}`
+      );
+    }
+
+    // 2b. Update payment status
+    if (payment?.id) {
+      await supabase
+        .from('payments')
+        .update({ status: 'CANCELED', cancelled_at: now })
+        .eq('id', payment.id);
+    }
+  }
+  // 계좌이체 주문은 Toss API 없이 진행 (실제 환불은 관리자가 외부에서 수동 처리)
 
   // 3. Update orders.status → refunded (idempotency: WHERE status IN ('paid','preparing'))
   const { error: orderUpdateError } = await supabase
@@ -242,12 +253,6 @@ export async function refundOrder(input: RefundInput) {
 
   if (orderUpdateError) throw orderUpdateError;
 
-  // 4. Update payment status
-  await supabase
-    .from('payments')
-    .update({ status: 'CANCELED', cancelled_at: now })
-    .eq('id', payment.id);
-
   // 5. Void artwork_sales record
   const { data: sale } = await supabase
     .from('artwork_sales')
@@ -255,7 +260,7 @@ export async function refundOrder(input: RefundInput) {
     .eq('order_id', orderId)
     .is('voided_at', null)
     .limit(1)
-    .single();
+    .maybeSingle();
 
   if (sale) {
     await supabase
@@ -280,7 +285,8 @@ export async function refundOrder(input: RefundInput) {
       artwork_id: order.artwork_id,
       buyer_name: order.buyer_name,
       total_amount: order.total_amount,
-      payment_key: payment.payment_key,
+      payment_key: payment?.payment_key ?? null,
+      is_bank_transfer: !hasTossPayment,
     },
     admin.id,
     {
@@ -394,6 +400,140 @@ export async function updateTrackingInfo(orderId: string, carrier: string, track
     { order_no: order.order_no, carrier, tracking_number: trackingNumber },
     admin.id,
     { summary: `운송장 정보 수정: ${order.order_no} (${carrier} ${trackingNumber})` }
+  );
+
+  revalidatePath('/admin/orders');
+  revalidatePath(`/admin/orders/${orderId}`);
+
+  return { success: true };
+}
+
+// ─── 입금 확인 (awaiting_deposit → paid) ─────────────────────────────────────
+
+export async function confirmDeposit(orderId: string) {
+  const admin = await requireAdmin();
+  const supabase = await createSupabaseAdminClient();
+
+  const { data: order, error } = await supabase
+    .from('orders')
+    .select('id, order_no, status, artwork_id, total_amount, buyer_name, buyer_phone')
+    .eq('id', orderId)
+    .single();
+
+  if (error || !order) throw new Error('주문을 찾을 수 없습니다.');
+  if (order.status !== 'awaiting_deposit') {
+    throw new Error(`입금 확인은 입금 대기 상태에서만 가능합니다. (현재 상태: ${order.status})`);
+  }
+
+  const now = new Date().toISOString();
+
+  // 1. 주문 상태 → paid (WHERE status = 'awaiting_deposit' 멱등성 가드)
+  const { error: updateError } = await supabase
+    .from('orders')
+    .update({ status: 'paid', paid_at: now, updated_at: now })
+    .eq('id', orderId)
+    .eq('status', 'awaiting_deposit');
+
+  if (updateError) throw updateError;
+
+  // 2. artwork_sales 생성 — DB 트리거가 artwork reserved→sold 처리
+  if (order.artwork_id) {
+    const { error: salesError } = await supabase.from('artwork_sales').insert({
+      artwork_id: order.artwork_id,
+      sale_price: order.total_amount,
+      quantity: 1,
+      source: 'manual',
+      source_detail: 'bank_transfer',
+      order_id: order.id,
+      external_order_id: order.order_no,
+      buyer_name: order.buyer_name,
+      buyer_phone: order.buyer_phone,
+      sold_at: now,
+    });
+    if (salesError) {
+      console.error('[confirmDeposit] artwork_sales INSERT 실패:', salesError);
+    }
+  }
+
+  // 3. 로그
+  await logAdminAction(
+    'order_deposit_confirmed',
+    'order',
+    orderId,
+    {
+      order_no: order.order_no,
+      artwork_id: order.artwork_id,
+      buyer_name: order.buyer_name,
+      total_amount: order.total_amount,
+    },
+    admin.id,
+    {
+      summary: `입금 확인: ${order.order_no} (${order.buyer_name ?? '구매자 미상'}, ₩${order.total_amount.toLocaleString()})`,
+    }
+  );
+
+  revalidatePath('/admin/orders');
+  revalidatePath(`/admin/orders/${orderId}`);
+
+  return { success: true };
+}
+
+// ─── 입금대기 취소 (awaiting_deposit → cancelled) ────────────────────────────
+
+export async function cancelAwaitingOrder(orderId: string, cancelReason: string) {
+  const admin = await requireAdmin();
+  const supabase = await createSupabaseAdminClient();
+
+  if (!cancelReason.trim()) throw new Error('취소 사유를 입력해주세요.');
+
+  const { data: order, error } = await supabase
+    .from('orders')
+    .select('id, order_no, status, artwork_id, buyer_name, total_amount')
+    .eq('id', orderId)
+    .single();
+
+  if (error || !order) throw new Error('주문을 찾을 수 없습니다.');
+  if (order.status !== 'awaiting_deposit') {
+    throw new Error(`입금 대기 상태에서만 취소할 수 있습니다. (현재 상태: ${order.status})`);
+  }
+
+  const now = new Date().toISOString();
+
+  // 1. 주문 취소
+  const { error: updateError } = await supabase
+    .from('orders')
+    .update({ status: 'cancelled', cancelled_at: now, updated_at: now })
+    .eq('id', orderId)
+    .eq('status', 'awaiting_deposit');
+
+  if (updateError) throw updateError;
+
+  // 2. artwork reserved→available 직접 복원
+  // artwork_sales 레코드가 없어 deriveAndSyncArtworkStatus가 reserved를 건드리지 않으므로 직접 업데이트
+  if (order.artwork_id) {
+    await supabase
+      .from('artworks')
+      .update({ status: 'available', updated_at: now })
+      .eq('id', order.artwork_id)
+      .eq('status', 'reserved'); // 멱등성: reserved 상태일 때만 변경
+  }
+
+  // 3. 로그
+  await logAdminAction(
+    'order_awaiting_cancelled',
+    'order',
+    orderId,
+    {
+      order_no: order.order_no,
+      reason: cancelReason,
+      artwork_id: order.artwork_id,
+      buyer_name: order.buyer_name,
+      total_amount: order.total_amount,
+    },
+    admin.id,
+    {
+      summary: `입금대기 주문 취소: ${order.order_no} (${order.buyer_name ?? '구매자 미상'}, 사유: ${cancelReason})`,
+    }
   );
 
   revalidatePath('/admin/orders');

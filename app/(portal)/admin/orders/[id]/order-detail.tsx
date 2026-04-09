@@ -13,7 +13,13 @@ import {
   AdminSelect,
 } from '@/app/(portal)/admin/_components/admin-ui';
 import { AdminConfirmModal } from '@/app/(portal)/admin/_components/AdminConfirmModal';
-import { refundOrder, updateOrderStatus, updateTrackingInfo } from '@/app/actions/admin-orders';
+import {
+  refundOrder,
+  updateOrderStatus,
+  updateTrackingInfo,
+  confirmDeposit,
+  cancelAwaitingOrder,
+} from '@/app/actions/admin-orders';
 import type { OrderDetail as OrderDetailType } from '@/app/actions/admin-orders';
 import type { OrderStatus } from '@/lib/integrations/toss/types';
 import { useToast } from '@/lib/hooks/useToast';
@@ -258,7 +264,10 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
 
   const [showRefundModal, setShowRefundModal] = useState(false);
   const [showShippedModal, setShowShippedModal] = useState(false);
+  const [showConfirmDepositModal, setShowConfirmDepositModal] = useState(false);
+  const [showCancelAwaitingModal, setShowCancelAwaitingModal] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
+  const [cancelAwaitingReason, setCancelAwaitingReason] = useState('');
   const [refundBank, setRefundBank] = useState('');
   const [refundAccount, setRefundAccount] = useState('');
   const [refundHolder, setRefundHolder] = useState('');
@@ -269,12 +278,44 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
 
   const isVirtualAccount =
     order.payment_method === '가상계좌' || order.payment_method === 'VIRTUAL_ACCOUNT';
+  const isBankTransfer = !order.payment_key; // 계좌이체 주문은 Toss payment_key 없음
   const canRefund = ['paid', 'preparing'].includes(order.status);
+  const isAwaitingDeposit = order.status === 'awaiting_deposit';
   const nextOptions = NEXT_STATUS_OPTIONS[order.status as OrderStatus] ?? [];
   const canEditTracking = ['shipped', 'delivered'].includes(order.status);
 
   const trackingUrl =
     trackingCarrier && trackingNumber ? getTrackingUrl(trackingCarrier, trackingNumber) : null;
+
+  function handleConfirmDeposit() {
+    startTransition(async () => {
+      try {
+        await confirmDeposit(order.id);
+        toast.success('입금이 확인되었습니다. 결제 완료 처리되었습니다.');
+        setShowConfirmDepositModal(false);
+        router.refresh();
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : '입금 확인에 실패했습니다.');
+      }
+    });
+  }
+
+  function handleCancelAwaitingOrder() {
+    if (!cancelAwaitingReason.trim()) {
+      toast.error('취소 사유를 입력해주세요.');
+      return;
+    }
+    startTransition(async () => {
+      try {
+        await cancelAwaitingOrder(order.id, cancelAwaitingReason);
+        toast.success('주문이 취소되었습니다. 작품 예약이 해제되었습니다.');
+        setShowCancelAwaitingModal(false);
+        router.refresh();
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : '주문 취소에 실패했습니다.');
+      }
+    });
+  }
 
   function handleRefund() {
     if (!cancelReason.trim()) {
@@ -355,6 +396,24 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
           <p className="text-sm text-slate-500">주문일: {formatDate(order.created_at)}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          {isAwaitingDeposit && (
+            <button
+              onClick={() => setShowConfirmDepositModal(true)}
+              disabled={isPending}
+              className="rounded-md border border-emerald-300 bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-700 hover:bg-emerald-100 disabled:opacity-50"
+            >
+              입금 확인
+            </button>
+          )}
+          {isAwaitingDeposit && (
+            <button
+              onClick={() => setShowCancelAwaitingModal(true)}
+              disabled={isPending}
+              className="rounded-md border border-rose-300 bg-rose-50 px-3 py-1.5 text-sm font-medium text-rose-700 hover:bg-rose-100 disabled:opacity-50"
+            >
+              주문 취소
+            </button>
+          )}
           {directNextOptions.map((opt) => (
             <button
               key={opt.value}
@@ -541,30 +600,38 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
           <dl className="space-y-3 p-5">
             <InfoRow
               label="결제 수단"
-              value={METHOD_LABELS[order.payment_method ?? ''] ?? order.payment_method}
+              value={
+                isBankTransfer
+                  ? '계좌이체 (수동)'
+                  : (METHOD_LABELS[order.payment_method ?? ''] ?? order.payment_method)
+              }
             />
-            <InfoRow label="결제 상태" value={order.payment_status} />
-            <InfoRow label="승인일시" value={formatDate(order.approved_at)} />
-            {order.virtual_account_number && (
+            {!isBankTransfer && (
               <>
+                <InfoRow label="결제 상태" value={order.payment_status} />
+                <InfoRow label="승인일시" value={formatDate(order.approved_at)} />
+                {order.virtual_account_number && (
+                  <>
+                    <InfoRow
+                      label="가상계좌"
+                      value={`${order.virtual_account_bank} ${order.virtual_account_number}`}
+                    />
+                    <InfoRow
+                      label="입금 기한"
+                      value={
+                        order.virtual_account_due_date
+                          ? formatDate(order.virtual_account_due_date)
+                          : null
+                      }
+                    />
+                  </>
+                )}
                 <InfoRow
-                  label="가상계좌"
-                  value={`${order.virtual_account_bank} ${order.virtual_account_number}`}
-                />
-                <InfoRow
-                  label="입금 기한"
-                  value={
-                    order.virtual_account_due_date
-                      ? formatDate(order.virtual_account_due_date)
-                      : null
-                  }
+                  label="결제키"
+                  value={<span className="font-mono text-xs break-all">{order.payment_key}</span>}
                 />
               </>
             )}
-            <InfoRow
-              label="결제키"
-              value={<span className="font-mono text-xs break-all">{order.payment_key}</span>}
-            />
           </dl>
         </AdminCard>
 
@@ -597,6 +664,40 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
         onConfirm={handleShippedConfirm}
         isPending={isPending}
       />
+
+      {/* 입금 확인 모달 */}
+      <AdminConfirmModal
+        isOpen={showConfirmDepositModal}
+        onClose={() => setShowConfirmDepositModal(false)}
+        onConfirm={handleConfirmDeposit}
+        title="입금 확인"
+        description={`주문 ${order.order_no}의 입금을 확인합니다.\n결제 완료 처리되며 판매 기록이 생성됩니다.`}
+        confirmText="입금 확인"
+        isLoading={isPending}
+        variant="info"
+      />
+
+      {/* 입금대기 취소 모달 */}
+      <AdminConfirmModal
+        isOpen={showCancelAwaitingModal}
+        onClose={() => setShowCancelAwaitingModal(false)}
+        onConfirm={handleCancelAwaitingOrder}
+        title="주문 취소"
+        description={`주문 ${order.order_no}를 취소합니다.\n작품 예약이 해제되어 다시 판매 가능 상태가 됩니다.`}
+        confirmText="주문 취소"
+        isLoading={isPending}
+        variant="danger"
+      >
+        <div>
+          <AdminFieldLabel>취소 사유 *</AdminFieldLabel>
+          <AdminTextarea
+            value={cancelAwaitingReason}
+            onChange={(e) => setCancelAwaitingReason(e.target.value)}
+            placeholder="취소 사유를 입력하세요"
+            rows={2}
+          />
+        </div>
+      </AdminConfirmModal>
 
       {/* 환불 모달 */}
       <AdminConfirmModal
