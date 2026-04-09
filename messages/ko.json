@@ -699,7 +699,14 @@
     "paymentMethodSelect": "결제수단 선택",
     "methodCard": "신용/체크카드",
     "methodTransfer": "퀵계좌이체",
-    "methodVirtualAccount": "계좌이체"
+    "methodVirtualAccount": "계좌이체",
+    "bankTransferTitle": "계좌이체 안내",
+    "bankTransferGuide": "아래 계좌로 입금해주세요. 입금 확인 후 주문이 완료됩니다.",
+    "bankTransferBank": "농협 (NH)",
+    "bankTransferAccount": "301-101031-04-095",
+    "bankTransferHolder": "예금주",
+    "bankTransferHolderName": "사회적협동조합 씨앗",
+    "bankTransferNotice": "입금자명을 주문자명과 동일하게 해주세요. 입금 확인까지 영업일 기준 1~2일 소요될 수 있습니다."
   },
   "orderLookup": {
     "pageTitle": "주문 조회",
@@ -775,6 +782,13 @@
     "processing": "처리 중...",
     "viewMoreArtworks": "작품 더 보기",
     "orderCount": "{name} 님의 주문 {count}건",
-    "searchAgain": "다시 조회"
+    "searchAgain": "다시 조회",
+    "bankTransferTitle": "계좌이체 안내",
+    "bankTransferGuide": "아래 계좌로 입금해주세요. 입금 확인 후 주문이 완료됩니다.",
+    "bankTransferBank": "농협 (NH)",
+    "bankTransferAccount": "301-101031-04-095",
+    "bankTransferHolder": "예금주",
+    "bankTransferHolderName": "사회적협동조합 씨앗",
+    "bankTransferNotice": "입금자명을 주문자명과 동일하게 해주세요. 입금 확인까지 영업일 기준 1~2일 소요될 수 있습니다."
   }
 }

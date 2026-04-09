@@ -290,7 +290,7 @@ export async function refundOrder(input: RefundInput) {
 
 const VALID_STATUS_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   pending_payment: ['cancelled'],
-  awaiting_deposit: ['cancelled'],
+  awaiting_deposit: ['paid', 'cancelled'],
   paid: ['preparing', 'cancelled'],
   preparing: ['shipped'],
   shipped: ['delivered'],

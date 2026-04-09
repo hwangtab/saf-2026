@@ -699,7 +699,14 @@
     "paymentMethodSelect": "Payment Method",
     "methodCard": "Credit/Debit Card",
     "methodTransfer": "Quick Transfer",
-    "methodVirtualAccount": "Bank Transfer"
+    "methodVirtualAccount": "Bank Transfer",
+    "bankTransferTitle": "Bank Transfer Details",
+    "bankTransferGuide": "Please deposit to the account below. Your order will be confirmed after payment verification.",
+    "bankTransferBank": "NH (NongHyup)",
+    "bankTransferAccount": "301-101031-04-095",
+    "bankTransferHolder": "Account Holder",
+    "bankTransferHolderName": "Social Cooperative SIAT",
+    "bankTransferNotice": "Please use your name as the depositor. Verification may take 1-2 business days."
   },
   "orderLookup": {
     "pageTitle": "Order Lookup",
@@ -775,6 +782,13 @@
     "processing": "Processing...",
     "viewMoreArtworks": "View more artworks",
     "orderCount": "{count} order(s) for {name}",
-    "searchAgain": "Search again"
+    "searchAgain": "Search again",
+    "bankTransferTitle": "Bank Transfer Details",
+    "bankTransferGuide": "Please deposit to the account below. Your order will be confirmed after payment verification.",
+    "bankTransferBank": "NH (NongHyup)",
+    "bankTransferAccount": "301-101031-04-095",
+    "bankTransferHolder": "Account Holder",
+    "bankTransferHolderName": "Social Cooperative SIAT",
+    "bankTransferNotice": "Please use your name as the depositor. Verification may take 1-2 business days."
   }
 }

@@ -10,7 +10,12 @@ import { Link } from '@/i18n/navigation';
 import tossLogo from '@/public/images/logo/toss-logo.png';
 import { calculateShippingFee } from '@/lib/integrations/toss/config';
 import { formatPriceForDisplay } from '@/lib/utils';
-import { createOrder, cancelPendingOrder, initiatePayment } from '@/app/actions/checkout';
+import {
+  createOrder,
+  cancelPendingOrder,
+  initiatePayment,
+  createBankTransferOrder,
+} from '@/app/actions/checkout';
 import BuyerInfoForm from './BuyerInfoForm';
 import type { BuyerInfo } from './BuyerInfoForm';
 
@@ -91,6 +96,31 @@ export default function CheckoutClient({
 
     setSubmitting(true);
     try {
+      // 계좌이체 — Toss 없이 직접 주문 생성 후 입금 안내 페이지로 이동
+      if (paymentMethod === 'VIRTUAL_ACCOUNT') {
+        const result = await createBankTransferOrder({
+          artworkId,
+          buyerName,
+          buyerEmail,
+          buyerPhone,
+          shippingName,
+          shippingPhone,
+          shippingAddress,
+          shippingAddressDetail,
+          shippingPostalCode,
+          shippingMemo,
+        });
+
+        if (!result.success) {
+          setError(result.error);
+          return;
+        }
+
+        const localePrefix = locale === 'en' ? '/en' : '';
+        window.location.href = `${window.location.origin}${localePrefix}/checkout/${artworkId}/success?method=BANK_TRANSFER&orderId=${result.orderNo}&amount=${result.totalAmount}`;
+        return;
+      }
+
       // 1. Create order via server action
       const result = await createOrder({
         artworkId,

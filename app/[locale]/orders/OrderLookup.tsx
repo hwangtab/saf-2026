@@ -405,6 +405,30 @@ function OrderDetail({
         </div>
       )}
 
+      {/* 수동 계좌이체 입금 안내 */}
+      {order.status === 'awaiting_deposit' && !order.virtualAccount && (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm">
+          <p className="mb-2 font-semibold text-amber-900">{t('bankTransferTitle')}</p>
+          <div className="space-y-1.5">
+            <div className="flex justify-between">
+              <span className="text-amber-700">{t('bankName')}</span>
+              <span className="font-semibold text-amber-900">{t('bankTransferBank')}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-amber-700">{t('accountNumber')}</span>
+              <span className="font-mono font-semibold text-amber-900">
+                {t('bankTransferAccount')}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-amber-700">{t('bankTransferHolder')}</span>
+              <span className="font-semibold text-amber-900">{t('bankTransferHolderName')}</span>
+            </div>
+          </div>
+          <p className="mt-2 text-xs text-amber-700">{t('bankTransferNotice')}</p>
+        </div>
+      )}
+
       {/* 주문 정보 */}
       <div className="space-y-2 text-sm">
         <div className="flex justify-between">
