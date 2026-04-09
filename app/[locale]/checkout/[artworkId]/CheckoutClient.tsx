@@ -4,8 +4,10 @@ import { useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import clsx from 'clsx';
 
+import ExportedImage from 'next-image-export-optimizer';
 import SafeImage from '@/components/common/SafeImage';
 import { Link } from '@/i18n/navigation';
+import tossLogo from '@/public/images/logo/toss-logo.png';
 import { calculateShippingFee } from '@/lib/integrations/toss/config';
 import { formatPriceForDisplay } from '@/lib/utils';
 import { createOrder, cancelPendingOrder, initiatePayment } from '@/app/actions/checkout';
@@ -221,16 +223,22 @@ export default function CheckoutClient({
                 type="button"
                 onClick={() => setPaymentMethod(value)}
                 className={clsx(
-                  'relative rounded-xl border-2 py-3 text-sm font-medium transition-colors',
+                  'flex flex-col items-center justify-center gap-1 rounded-xl border-2 py-3 text-sm font-medium transition-colors',
+                  value === 'TRANSFER' ? 'min-h-[68px]' : 'min-h-[68px]',
                   paymentMethod === value
                     ? 'border-primary bg-primary/5 text-primary'
                     : 'border-gray-200 text-gray-600 hover:border-gray-300'
                 )}
               >
                 {value === 'TRANSFER' && (
-                  <span className="absolute left-1.5 top-1 rounded bg-[#0064FF] px-1 py-px text-[9px] font-bold leading-tight text-white">
-                    toss
-                  </span>
+                  <ExportedImage
+                    src={tossLogo}
+                    alt="toss"
+                    height={16}
+                    width={54}
+                    className="h-4 w-auto object-contain"
+                    unoptimized
+                  />
                 )}
                 {t(labelKey)}
               </button>
