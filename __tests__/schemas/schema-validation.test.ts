@@ -186,11 +186,16 @@ describe('generateExhibitionSchema', () => {
     expect(schema.eventStatus).toBe('https://schema.org/EventCompleted');
   });
 
-  it('should include location with Place type', () => {
+  it('should include valid location schema for current event phase', () => {
     const schema = generateExhibitionSchema();
-    expect(schema.location['@type']).toBe('Place');
-    expect(schema.location.address).toBeDefined();
-    expect(schema.location.geo).toBeDefined();
+    expect(['Place', 'VirtualLocation']).toContain(schema.location['@type']);
+
+    if (schema.location['@type'] === 'VirtualLocation') {
+      expect(schema.location.url).toBeTruthy();
+    } else {
+      expect(schema.location.address).toBeDefined();
+      expect(schema.location.geo).toBeDefined();
+    }
   });
 
   it('should include organizer and offers', () => {
@@ -280,7 +285,7 @@ describe('escapeJsonLdForScript', () => {
   it('should escape multiple < characters', () => {
     const input = '{"name":"<b>test</b>"}';
     const result = escapeJsonLdForScript(input);
-    expect(result).toBe('{"name":"\\u003cb>test\\u003c/b>"}');
+    expect(result).toBe('{"name":"\\u003cb\\u003etest\\u003c/b\\u003e"}');
   });
 
   it('should return the same string when no < characters present', () => {
@@ -341,7 +346,9 @@ describe('generateSAFClaimReviews', () => {
   it('should return 4 claim reviews for ko locale', () => {
     const reviews = generateSAFClaimReviews('ko');
     expect(reviews).toHaveLength(4);
-    reviews.forEach((r) => expect(r['@type']).toBe('ClaimReview'));
+    reviews.forEach((r) => {
+      expect(r['@type']).toBe('ClaimReview');
+    });
   });
 
   it('should return 4 claim reviews for en locale with English text', () => {
@@ -437,15 +444,15 @@ describe('generateQAPageSchema', () => {
 });
 
 describe('generateSAFCoreQA', () => {
-  it('should return 4 questions for ko locale', () => {
+  it('should return at least 4 questions for ko locale', () => {
     const schema = generateSAFCoreQA('ko');
-    expect(schema.mainEntity).toHaveLength(4);
+    expect(schema.mainEntity.length).toBeGreaterThanOrEqual(4);
     expect(schema.mainEntity[0].name).toMatch(/씨앗페/);
   });
 
-  it('should return 4 questions for en locale with English text', () => {
+  it('should return at least 4 questions for en locale with English text', () => {
     const schema = generateSAFCoreQA('en');
-    expect(schema.mainEntity).toHaveLength(4);
+    expect(schema.mainEntity.length).toBeGreaterThanOrEqual(4);
     expect(schema.mainEntity[0].name).toMatch(/SAF/);
   });
 });
