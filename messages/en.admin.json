@@ -147,6 +147,7 @@
       "revertSuccess": "Restore completed.",
       "revertError": "Error while reverting.",
       "targetTypeUser": "User",
+      "targetTypeOrder": "Order",
       "targetTypeArtwork": "Artwork",
       "targetTypeArtist": "Artist",
       "targetTypeNews": "News",

@@ -740,3 +740,46 @@
 
 - `npm run lint` 통과
 - `npm run type-check` 통과
+
+---
+
+## 주문 취소 활동 로그 표시 개선
+
+### 변경 파일
+
+- `/Users/hwang-gyeongha/saf/app/(portal)/admin/logs/_utils.ts`
+  - 주문 관련 활동 로그 액션 라벨 추가
+    - `order_deposit_confirmed`
+    - `order_awaiting_cancelled`
+    - `order_status_updated`
+    - `order_tracking_updated`
+    - `order_refunded`
+  - 활동로그 대상 타입 `order` 라벨 추가
+  - 주문 로그 대상 링크를 `/admin/orders/[id]`로 연결
+  - 대상 이름 표시 시 `order_no`를 우선 사용하도록 보강
+  - 주문 상태 변경 로그에서 상태 코드를 사람이 읽을 수 있는 문구로 변환
+- `/Users/hwang-gyeongha/saf/app/actions/admin-logs.ts`
+  - 활동로그 조회 시 `order` 대상도 이름 보강 대상에 포함
+  - `orders` 테이블에서 주문번호(`order_no`)를 조회해 `target_name`으로 주입
+  - 기존 주문 로그도 조회 시 주문번호 중심으로 자연스럽게 표시되도록 보강
+- `/Users/hwang-gyeongha/saf/app/(portal)/admin/logs/page.tsx`
+  - 활동 유형 필터에 주문 관련 액션 5종 추가
+  - 대상 필터에 `order` 추가
+- `/Users/hwang-gyeongha/saf/messages/ko.admin.json`
+  - `targetTypeOrder` 번역 추가
+- `/Users/hwang-gyeongha/saf/messages/en.admin.json`
+  - `targetTypeOrder` 번역 추가
+- `/Users/hwang-gyeongha/saf/implementation_plan.md`
+  - 본 작업 기준 계획서 작성
+
+### 기대 효과
+
+- 주문 취소 로그가 더 이상 `정의되지 않은 활동`으로 표시되지 않음
+- 대상 열에서 `order` 대신 `주문`과 실제 주문번호가 표시됨
+- 주문 로그에서 주문 상세 페이지로 바로 이동 가능
+- 활동로그 필터에서 주문 관련 로그만 따로 조회 가능
+
+### 검증 결과
+
+- `npm run lint` 통과
+- `npm run type-check` 통과

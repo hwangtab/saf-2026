@@ -500,14 +500,18 @@ function parseTargetIds(log: ActivityLogEntry): string[] {
 function getSnapshotDisplayName(snapshot: Record<string, unknown> | null): string | null {
   if (!snapshot) return null;
 
+  const orderNo = typeof snapshot.order_no === 'string' ? snapshot.order_no : null;
   const title = typeof snapshot.title === 'string' ? snapshot.title : null;
   const nameKo = typeof snapshot.name_ko === 'string' ? snapshot.name_ko : null;
   const name = typeof snapshot.name === 'string' ? snapshot.name : null;
+  const buyerName = typeof snapshot.buyer_name === 'string' ? snapshot.buyer_name : null;
   const artistName = typeof snapshot.artist_name === 'string' ? snapshot.artist_name : null;
   const representativeName =
     typeof snapshot.representative_name === 'string' ? snapshot.representative_name : null;
 
-  return title || nameKo || name || artistName || representativeName || null;
+  return (
+    orderNo || title || nameKo || name || buyerName || artistName || representativeName || null
+  );
 }
 
 function extractTrashPurgeTargetNames(log: ActivityLogEntry): {
@@ -569,6 +573,7 @@ function extractTrashPurgeTargetNames(log: ActivityLogEntry): {
 async function enrichActivityLogTargets(logs: ActivityLogEntry[]): Promise<ActivityLogEntry[]> {
   if (logs.length === 0) return logs;
 
+  const orderIds = new Set<string>();
   const artworkIds = new Set<string>();
   const artistIds = new Set<string>();
   const applicationIds = new Set<string>();
@@ -578,6 +583,9 @@ async function enrichActivityLogTargets(logs: ActivityLogEntry[]): Promise<Activ
     const ids = parseTargetIds(log);
     if (ids.length === 0) continue;
 
+    if (log.target_type === 'order') {
+      ids.forEach((id) => orderIds.add(id));
+    }
     if (log.target_type === 'artwork') {
       ids.forEach((id) => artworkIds.add(id));
     }
@@ -592,31 +600,50 @@ async function enrichActivityLogTargets(logs: ActivityLogEntry[]): Promise<Activ
     }
   }
 
-  if (artworkIds.size === 0 && artistIds.size === 0) return logs;
+  if (
+    orderIds.size === 0 &&
+    artworkIds.size === 0 &&
+    artistIds.size === 0 &&
+    applicationIds.size === 0 &&
+    exhibitorApplicationIds.size === 0
+  ) {
+    return logs;
+  }
 
   const supabase = await createSupabaseAdminClient();
 
-  const [artworkResult, artistResult, applicationResult, exhibitorAppResult] = await Promise.all([
-    artworkIds.size > 0
-      ? supabase.from('artworks').select('id, title').in('id', Array.from(artworkIds))
-      : Promise.resolve({ data: [] as { id: string; title: string | null }[] }),
-    artistIds.size > 0
-      ? supabase.from('artists').select('id, name_ko').in('id', Array.from(artistIds))
-      : Promise.resolve({ data: [] as { id: string; name_ko: string | null }[] }),
-    applicationIds.size > 0
-      ? supabase
-          .from('artist_applications')
-          .select('user_id, artist_name')
-          .in('user_id', Array.from(applicationIds))
-      : Promise.resolve({ data: [] as { user_id: string; artist_name: string | null }[] }),
-    exhibitorApplicationIds.size > 0
-      ? supabase
-          .from('exhibitor_applications')
-          .select('user_id, representative_name')
-          .in('user_id', Array.from(exhibitorApplicationIds))
-      : Promise.resolve({ data: [] as { user_id: string; representative_name: string | null }[] }),
-  ]);
+  const [orderResult, artworkResult, artistResult, applicationResult, exhibitorAppResult] =
+    await Promise.all([
+      orderIds.size > 0
+        ? supabase.from('orders').select('id, order_no, buyer_name').in('id', Array.from(orderIds))
+        : Promise.resolve({
+            data: [] as { id: string; order_no: string | null; buyer_name: string | null }[],
+          }),
+      artworkIds.size > 0
+        ? supabase.from('artworks').select('id, title').in('id', Array.from(artworkIds))
+        : Promise.resolve({ data: [] as { id: string; title: string | null }[] }),
+      artistIds.size > 0
+        ? supabase.from('artists').select('id, name_ko').in('id', Array.from(artistIds))
+        : Promise.resolve({ data: [] as { id: string; name_ko: string | null }[] }),
+      applicationIds.size > 0
+        ? supabase
+            .from('artist_applications')
+            .select('user_id, artist_name')
+            .in('user_id', Array.from(applicationIds))
+        : Promise.resolve({ data: [] as { user_id: string; artist_name: string | null }[] }),
+      exhibitorApplicationIds.size > 0
+        ? supabase
+            .from('exhibitor_applications')
+            .select('user_id, representative_name')
+            .in('user_id', Array.from(exhibitorApplicationIds))
+        : Promise.resolve({
+            data: [] as { user_id: string; representative_name: string | null }[],
+          }),
+    ]);
 
+  const orderNameById = new Map(
+    (orderResult.data || []).map((item) => [item.id, item.order_no || item.buyer_name || null])
+  );
   const artworkNameById = new Map((artworkResult.data || []).map((item) => [item.id, item.title]));
   const artistNameById = new Map((artistResult.data || []).map((item) => [item.id, item.name_ko]));
   const applicationNameById = new Map(
@@ -628,6 +655,7 @@ async function enrichActivityLogTargets(logs: ActivityLogEntry[]): Promise<Activ
 
   return logs.map((log) => {
     if (
+      log.target_type !== 'order' &&
       log.target_type !== 'artwork' &&
       log.target_type !== 'artist' &&
       log.target_type !== 'artist_application' &&
@@ -641,7 +669,8 @@ async function enrichActivityLogTargets(logs: ActivityLogEntry[]): Promise<Activ
     const targetNames: Record<string, string> = {};
     for (const id of ids) {
       let name: string | null = null;
-      if (log.target_type === 'artwork') name = artworkNameById.get(id) || null;
+      if (log.target_type === 'order') name = orderNameById.get(id) || null;
+      else if (log.target_type === 'artwork') name = artworkNameById.get(id) || null;
       else if (log.target_type === 'artist') name = artistNameById.get(id) || null;
       else if (log.target_type === 'artist_application') name = applicationNameById.get(id) || null;
       else if (log.target_type === 'exhibitor_application')
@@ -671,14 +700,18 @@ function getTargetNameFromMetadata(metadata: Record<string, unknown> | null): st
   const targetName = typeof metadata.target_name === 'string' ? metadata.target_name : null;
   if (targetName) return targetName;
 
+  const orderNo = typeof metadata.order_no === 'string' ? metadata.order_no : null;
   const title = typeof metadata.title === 'string' ? metadata.title : null;
   const name = typeof metadata.name === 'string' ? metadata.name : null;
+  const buyerName = typeof metadata.buyer_name === 'string' ? metadata.buyer_name : null;
   const userName = typeof metadata.user_name === 'string' ? metadata.user_name : null;
   const artistName = typeof metadata.artist_name === 'string' ? metadata.artist_name : null;
   const representativeName =
     typeof metadata.representative_name === 'string' ? metadata.representative_name : null;
 
-  return title || name || userName || artistName || representativeName || null;
+  return (
+    orderNo || title || name || buyerName || userName || artistName || representativeName || null
+  );
 }
 
 async function enrichTrashPurgedTargetNames(logs: ActivityLogEntry[]): Promise<ActivityLogEntry[]> {
