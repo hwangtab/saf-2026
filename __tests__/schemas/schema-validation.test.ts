@@ -419,7 +419,7 @@ describe('generateMemberJoinHowTo', () => {
 });
 
 describe('generateQAPageSchema', () => {
-  it('should have @type QAPage with questions', () => {
+  it('should have @type QAPage with a single main question', () => {
     const schema = generateQAPageSchema(
       [
         { question: 'What is SAF?', answer: 'An art exhibition.' },
@@ -429,9 +429,12 @@ describe('generateQAPageSchema', () => {
     );
     expect(schema['@type']).toBe('QAPage');
     expect(schema['@context']).toBe('https://schema.org');
-    expect(schema.mainEntity).toHaveLength(2);
-    expect(schema.mainEntity[0]['@type']).toBe('Question');
-    expect(schema.mainEntity[0].acceptedAnswer['@type']).toBe('Answer');
+    expect(schema.mainEntity['@type']).toBe('Question');
+    expect(schema.mainEntity.acceptedAnswer['@type']).toBe('Answer');
+    expect(schema.mainEntity).toHaveProperty('text');
+    expect(schema.mainEntity).toHaveProperty('datePublished');
+    expect(schema.mainEntity.acceptedAnswer).toHaveProperty('upvoteCount');
+    expect(schema.hasPart).toHaveLength(1);
   });
 
   it('should include author Organization in answers', () => {
@@ -439,20 +442,22 @@ describe('generateQAPageSchema', () => {
       [{ question: 'Q?', answer: 'A.' }],
       'https://www.saf2026.com'
     );
-    expect(schema.mainEntity[0].acceptedAnswer.author['@type']).toBe('Organization');
+    expect(schema.mainEntity.acceptedAnswer.author['@type']).toBe('Organization');
   });
 });
 
 describe('generateSAFCoreQA', () => {
-  it('should return at least 4 questions for ko locale', () => {
+  it('should return one main question and related questions for ko locale', () => {
     const schema = generateSAFCoreQA('ko');
-    expect(schema.mainEntity.length).toBeGreaterThanOrEqual(4);
-    expect(schema.mainEntity[0].name).toMatch(/씨앗페/);
+    expect(schema.mainEntity.name).toMatch(/씨앗페/);
+    expect(Array.isArray(schema.hasPart)).toBe(true);
+    expect(schema.hasPart.length).toBeGreaterThanOrEqual(4);
   });
 
-  it('should return at least 4 questions for en locale with English text', () => {
+  it('should return one main question and related questions for en locale', () => {
     const schema = generateSAFCoreQA('en');
-    expect(schema.mainEntity.length).toBeGreaterThanOrEqual(4);
-    expect(schema.mainEntity[0].name).toMatch(/SAF/);
+    expect(schema.mainEntity.name).toMatch(/SAF/);
+    expect(Array.isArray(schema.hasPart)).toBe(true);
+    expect(schema.hasPart.length).toBeGreaterThanOrEqual(4);
   });
 });

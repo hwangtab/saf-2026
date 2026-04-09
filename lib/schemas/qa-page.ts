@@ -4,7 +4,45 @@ export interface QAItem {
   question: string;
   answer: string;
   url?: string;
+  datePublished?: string;
+  upvoteCount?: number;
 }
+
+const DEFAULT_QA_DATE = '2026-01-01T00:00:00+09:00';
+
+const normalizeQaDate = (value?: string): string => {
+  if (!value) return DEFAULT_QA_DATE;
+
+  const trimmed = value.trim();
+  if (!trimmed) return DEFAULT_QA_DATE;
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+    return `${trimmed}T00:00:00+09:00`;
+  }
+
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?$/.test(trimmed)) {
+    return `${trimmed}+09:00`;
+  }
+
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?(\.\d+)?([+-]\d{2}:\d{2}|Z)$/.test(trimmed)) {
+    return trimmed;
+  }
+
+  const parsed = new Date(trimmed);
+  if (!Number.isNaN(parsed.getTime())) {
+    return parsed.toISOString();
+  }
+
+  return DEFAULT_QA_DATE;
+};
+
+const toAbsoluteUrl = (url: string, fallbackUrl: string): string => {
+  try {
+    return new URL(url, SITE_URL).toString();
+  } catch {
+    return fallbackUrl;
+  }
+};
 
 /**
  * Generate QAPage schema for question-answer content.
@@ -16,17 +54,58 @@ export interface QAItem {
  */
 export function generateQAPageSchema(items: QAItem[], pageUrl: string, locale: 'ko' | 'en' = 'ko') {
   const orgName = locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME;
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'QAPage',
-    mainEntity: items.map((item) => ({
+  const normalizedPageUrl = toAbsoluteUrl(pageUrl, SITE_URL);
+  const cleanedItems = items
+    .map((item) => ({
+      ...item,
+      question: item.question.trim(),
+      answer: item.answer.trim(),
+    }))
+    .filter((item) => item.question.length > 0 && item.answer.length > 0);
+
+  const fallbackItem: QAItem =
+    locale === 'en'
+      ? {
+          question: 'What is SAF Online?',
+          answer:
+            'SAF Online is a special exhibition supporting Korean artists through mutual aid.',
+          url: normalizedPageUrl,
+          datePublished: DEFAULT_QA_DATE,
+          upvoteCount: 1,
+        }
+      : {
+          question: '씨앗페 온라인이란 무엇인가요?',
+          answer: '씨앗페 온라인은 한국 예술인을 상호부조 방식으로 지원하는 특별전입니다.',
+          url: normalizedPageUrl,
+          datePublished: DEFAULT_QA_DATE,
+          upvoteCount: 1,
+        };
+
+  const safeItems = cleanedItems.length > 0 ? cleanedItems : [fallbackItem];
+
+  const buildQuestion = (item: QAItem) => {
+    const resolvedUrl = toAbsoluteUrl(item.url || normalizedPageUrl, normalizedPageUrl);
+    const resolvedDate = normalizeQaDate(item.datePublished);
+
+    return {
       '@type': 'Question',
       name: item.question,
+      text: item.question,
+      url: resolvedUrl,
+      datePublished: resolvedDate,
+      author: {
+        '@type': 'Organization',
+        '@id': `${SITE_URL}#organization`,
+        name: orgName,
+        url: SITE_URL,
+      },
       answerCount: 1,
       acceptedAnswer: {
         '@type': 'Answer',
         text: item.answer,
-        url: item.url || pageUrl,
+        url: resolvedUrl,
+        datePublished: resolvedDate,
+        upvoteCount: item.upvoteCount ?? 1,
         author: {
           '@type': 'Organization',
           '@id': `${SITE_URL}#organization`,
@@ -34,7 +113,18 @@ export function generateQAPageSchema(items: QAItem[], pageUrl: string, locale: '
           url: SITE_URL,
         },
       },
-    })),
+    };
+  };
+
+  const [primaryItem, ...relatedItems] = safeItems;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'QAPage',
+    mainEntity: buildQuestion(primaryItem),
+    ...(relatedItems.length > 0 && {
+      hasPart: relatedItems.map((item) => buildQuestion(item)),
+    }),
   };
 }
 
