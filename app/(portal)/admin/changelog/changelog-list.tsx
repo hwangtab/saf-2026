@@ -107,6 +107,45 @@ const FILTERS: { value: FilterType; label: string }[] = [
   { value: 'refactor', label: '리팩토링' },
 ];
 
+const TYPE_FALLBACK_KO: Record<ChangelogEntry['type'], string> = {
+  feat: '새 기능 추가',
+  fix: '버그 수정',
+  perf: '성능 개선',
+  refactor: '구조 개선',
+};
+
+function containsKorean(text: string): boolean {
+  return /[가-힣]/.test(text);
+}
+
+function getScopeLabel(scope: string | null): string | null {
+  if (!scope) return null;
+  return SCOPE_KO[scope] || (containsKorean(scope) ? scope : null);
+}
+
+function getFallbackSummary(entry: ChangelogEntry): string {
+  if (containsKorean(entry.subject)) return entry.subject;
+  const actionLabel = TYPE_FALLBACK_KO[entry.type] || '변경 사항 반영';
+  const scopeLabel = getScopeLabel(entry.scope);
+  return scopeLabel ? `${scopeLabel} ${actionLabel}` : actionLabel;
+}
+
+function getDisplayTitle(entry: ChangelogEntry): string {
+  const summary = entry.summary?.trim();
+  if (summary) {
+    if (containsKorean(summary)) return summary;
+    if (containsKorean(entry.subject)) return entry.subject;
+    return summary;
+  }
+  return getFallbackSummary(entry);
+}
+
+function shouldShowSubject(entry: ChangelogEntry): boolean {
+  if (!containsKorean(entry.subject)) return false;
+  if (!entry.summary?.trim()) return false;
+  return getDisplayTitle(entry) !== entry.subject;
+}
+
 function formatDate(dateStr: string): string {
   const [year, month, day] = dateStr.split('-');
   return `${year}년 ${parseInt(month)}월 ${parseInt(day)}일`;
@@ -224,11 +263,11 @@ export function ChangelogList({
                       </span>
                     )}
                     <span className="flex-1 text-sm font-medium text-slate-900">
-                      {entry.summary || entry.subject}
+                      {getDisplayTitle(entry)}
                     </span>
                     <span className="shrink-0 font-mono text-xs text-slate-400">{entry.hash}</span>
                   </div>
-                  {entry.summary && (
+                  {shouldShowSubject(entry) && (
                     <p className="mt-1 pl-16 text-xs text-slate-400">{entry.subject}</p>
                   )}
                   {entry.body && (
