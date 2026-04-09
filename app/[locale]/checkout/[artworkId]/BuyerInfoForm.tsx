@@ -248,7 +248,7 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
               className={inputClass}
               value={form.shippingAddressDetail}
               onChange={handleChange('shippingAddressDetail')}
-              onFocus={(e) => e.currentTarget.setAttribute('lang', 'ko')}
+              onFocus={(e) => e.currentTarget.setAttribute('lang', langAttr)}
               placeholder={t('placeholderAddressDetail')}
               autoComplete="off"
             />
@@ -263,7 +263,7 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
               className={inputClass}
               value={form.shippingMemo}
               onChange={handleChange('shippingMemo')}
-              onFocus={(e) => e.currentTarget.setAttribute('lang', 'ko')}
+              onFocus={(e) => e.currentTarget.setAttribute('lang', langAttr)}
               placeholder={t('placeholderMemo')}
             />
           </div>
