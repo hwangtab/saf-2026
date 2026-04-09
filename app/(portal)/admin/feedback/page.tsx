@@ -1,5 +1,11 @@
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
+import {
+  sanitizeNullableSingleLineTextForRscPayload,
+  sanitizeNullableTextForRscPayload,
+  sanitizeSingleLineTextForRscPayload,
+  sanitizeTextForRscPayload,
+} from '@/lib/utils/text-sanitizer';
 import { FeedbackManager } from './feedback-manager';
 
 export default async function FeedbackPage() {
@@ -30,7 +36,11 @@ export default async function FeedbackPage() {
 
   const feedbackWithEmail = (feedback || []).map((f) => ({
     ...f,
-    user_email: emailMap[f.user_id] || '알 수 없음',
+    page_url: sanitizeNullableSingleLineTextForRscPayload(f.page_url),
+    title: sanitizeSingleLineTextForRscPayload(f.title),
+    description: sanitizeTextForRscPayload(f.description),
+    admin_note: sanitizeNullableTextForRscPayload(f.admin_note),
+    user_email: sanitizeSingleLineTextForRscPayload(emailMap[f.user_id] || '알 수 없음'),
   }));
 
   return <FeedbackManager feedback={feedbackWithEmail} />;

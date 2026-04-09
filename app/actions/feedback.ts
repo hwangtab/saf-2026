@@ -5,6 +5,10 @@ import { requireAuth, requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { getString } from '@/lib/utils/form-helpers';
 import { getActionErrorMessage } from '@/lib/utils/action-error';
+import {
+  sanitizeSingleLineTextForRscPayload,
+  sanitizeTextForRscPayload,
+} from '@/lib/utils/text-sanitizer';
 import type { FeedbackCategory, FeedbackStatus } from '@/types';
 
 const VALID_CATEGORIES: FeedbackCategory[] = ['bug', 'improvement', 'question', 'other'];
@@ -15,9 +19,9 @@ export async function submitFeedback(formData: FormData) {
   const supabase = await createSupabaseServerClient();
 
   const category = getString(formData, 'category') as FeedbackCategory;
-  const title = getString(formData, 'title');
-  const description = getString(formData, 'description');
-  const pageUrl = getString(formData, 'page_url');
+  const title = sanitizeSingleLineTextForRscPayload(getString(formData, 'title'));
+  const description = sanitizeTextForRscPayload(getString(formData, 'description'));
+  const pageUrl = sanitizeSingleLineTextForRscPayload(getString(formData, 'page_url'));
 
   if (!VALID_CATEGORIES.includes(category)) {
     return { error: '올바른 카테고리를 선택해주세요.' };
@@ -56,7 +60,7 @@ export async function updateFeedbackStatus(id: string, status: FeedbackStatus, a
 
   const updateData: Record<string, unknown> = {
     status,
-    admin_note: adminNote?.trim() || null,
+    admin_note: sanitizeTextForRscPayload(adminNote?.trim() || '') || null,
   };
 
   if (status === 'resolved' || status === 'closed') {
