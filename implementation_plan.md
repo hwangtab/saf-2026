@@ -593,3 +593,55 @@
 4. 중복/동명이인 검수
 5. `content/artist-articles.ts` 반영
 6. 검증 및 `walkthrough.md` 기록
+
+---
+
+# 주문 취소 활동 로그 표시 개선 계획 (2026-04-09)
+
+## 문제 요약
+
+- 주문 취소 시 활동 로그에는 `order_awaiting_cancelled` 액션이 기록됨
+- 하지만 활동로그 UI에서 이 액션을 해석하는 매핑이 없어 `정의되지 않은 활동`으로 표시됨
+- 대상 타입도 `order`에 대한 라벨/링크/이름 해석이 없어 `order`와 `이름 정보 없음`으로 표시됨
+- 활동로그 필터 목록에도 주문 관련 액션이 빠져 있어 조회성이 떨어짐
+
+## 확인한 원인
+
+1. `app/actions/admin-orders.ts`
+   - 주문 취소는 정상적으로 `logAdminAction('order_awaiting_cancelled', 'order', ...)` 호출
+   - 입금 확인, 상태 변경, 운송장 수정, 환불 등도 모두 `order` 대상 로그를 남기고 있음
+2. `app/(portal)/admin/logs/_utils.ts`
+   - `formatActionDescription()`에 주문 관련 액션 분기 없음
+   - `getTargetTypeLabel()`에 `order` 타입 분기 없음
+   - `getTargetLink()`에 주문 상세(`/admin/orders/[id]`) 연결 없음
+   - `getLogTargetDisplayName()`가 `order_no` 같은 주문 식별값을 우선 사용하지 않음
+3. `app/actions/admin-logs.ts`
+   - 대상 이름 보강 로직이 `artwork`, `artist`, 신청서 계열만 지원
+   - `order`는 조회 보강 대상에서 빠져 있어 기존 로그 재표시 품질이 낮음
+4. `app/(portal)/admin/logs/page.tsx`
+   - 활동 필터 옵션에 주문 관련 액션이 없음
+5. `messages/ko.admin.json`, `messages/en.admin.json`
+   - `targetTypeOrder` 번역 키 없음
+
+## 수정 계획
+
+1. 활동로그 표시 유틸 보강
+   - 주문 관련 액션(`order_awaiting_cancelled`, `order_deposit_confirmed`, `order_status_updated`, `order_tracking_updated`, `order_refunded`) 표시 문구 추가
+   - `order` 대상 라벨, 상세 링크, 표시 이름 해석 추가
+   - 표시 이름은 `target_name` → `order_no` → 구매자명 순으로 우선 사용
+2. 서버 측 대상 이름 보강 확장
+   - `app/actions/admin-logs.ts`의 target enrichment에 `order` 추가
+   - `orders` 테이블에서 `id, order_no, buyer_name` 조회 후 `target_name`/`target_names` 주입
+   - 기존 로그도 조회 시 주문번호 기반으로 자연스럽게 노출되도록 처리
+3. 활동로그 필터 개선
+   - 주문 관련 액션을 관리자 활동로그 필터 옵션에 추가
+   - `order` 대상 번역 키 추가
+4. 검증
+   - 변경 파일 기준 타입 오류 확인
+   - `npm run lint`, `npm run type-check` 실행
+
+## 예상 결과
+
+- 주문 취소 로그가 `입금대기 주문 취소: 주문번호` 형태로 표시됨
+- 대상 열이 `주문` + 실제 주문번호로 표시되고, 상세 페이지로 이동 가능해짐
+- 주문 관련 다른 로그도 동일한 방식으로 일관되게 보이게 됨

@@ -62,6 +62,11 @@ export const ACTION_PREFIX_TRANSLATIONS: Array<[RegExp, string]> = [
   [/^출품자 정지:/, 'Exhibitor suspended:'],
   [/^추천사 생성:/, 'Testimonial created:'],
   [/^추천사 삭제:/, 'Testimonial deleted:'],
+  [/^입금 확인:/, 'Deposit confirmed:'],
+  [/^입금대기 주문 취소:/, 'Awaiting-deposit order cancelled:'],
+  [/^주문 상태 변경:/, 'Order status changed:'],
+  [/^운송장 정보 수정:/, 'Tracking info updated:'],
+  [/^주문 환불:/, 'Order refunded:'],
   [/^작품 데이터 다운로드:/, 'Artwork data exported:'],
   [/^작가 연락처 다운로드:/, 'Artist contacts exported:'],
   [/^정의되지 않은 활동/, 'Unknown activity'],
@@ -316,6 +321,21 @@ export function formatActionDescription(log: ActivityLogEntry, locale: LocaleCod
     case 'testimonial_deleted':
       text = `추천사 삭제: ${details?.author || log.target_id}`;
       break;
+    case 'order_deposit_confirmed':
+      text = `입금 확인: ${details?.order_no || log.target_id}`;
+      break;
+    case 'order_awaiting_cancelled':
+      text = `입금대기 주문 취소: ${details?.order_no || log.target_id}`;
+      break;
+    case 'order_status_updated':
+      text = `주문 상태 변경: ${details?.order_no || log.target_id} (${formatOrderStatus(details?.from_status, locale) || details?.from_status || '-'} → ${formatOrderStatus(details?.to_status, locale) || details?.to_status || '-'})`;
+      break;
+    case 'order_tracking_updated':
+      text = `운송장 정보 수정: ${details?.order_no || log.target_id}`;
+      break;
+    case 'order_refunded':
+      text = `주문 환불: ${details?.order_no || log.target_id}`;
+      break;
     case 'artworks_exported':
       text = `작품 데이터 다운로드: ${details?.total_count || '-'}건`;
       break;
@@ -394,6 +414,8 @@ export function getTargetTypeLabel(type: string | null, t: TranslationFn) {
   switch (type) {
     case 'user':
       return t('targetTypeUser');
+    case 'order':
+      return t('targetTypeOrder');
     case 'artwork':
       return t('targetTypeArtwork');
     case 'artist':
@@ -415,6 +437,7 @@ export function getTargetLink(log: ActivityLogEntry): string | null {
   if (!log.target_id) return null;
 
   if (log.target_id === 'all') {
+    if (log.target_type === 'order') return '/admin/orders';
     if (log.target_type === 'artwork') return '/admin/artworks';
     if (log.target_type === 'artist') return '/admin/artists';
     if (log.target_type === 'user') return '/admin/users';
@@ -428,6 +451,8 @@ export function getTargetLink(log: ActivityLogEntry): string | null {
   switch (log.target_type) {
     case 'user':
       return '/admin/users';
+    case 'order':
+      return `/admin/orders/${log.target_id}`;
     case 'artwork':
       return `/admin/artworks/${log.target_id}`;
     case 'artist':
@@ -484,9 +509,11 @@ export function getLogTargetDisplayName(log: ActivityLogEntry, locale: LocaleCod
   if (targetNameFromMetadata) return targetNameFromMetadata;
 
   const fromDetails =
+    (typeof details?.order_no === 'string' && details.order_no) ||
     (typeof details?.title === 'string' && details.title) ||
     (typeof details?.name === 'string' && details.name) ||
     (typeof details?.user_name === 'string' && details.user_name) ||
+    (typeof details?.buyer_name === 'string' && details.buyer_name) ||
     (typeof details?.artist_name === 'string' && details.artist_name) ||
     (typeof details?.representative_name === 'string' && details.representative_name) ||
     null;
@@ -517,9 +544,11 @@ export function getLogTargetDisplayNameWithT(log: ActivityLogEntry, t: Translati
   if (targetNameFromMetadata) return targetNameFromMetadata;
 
   const fromDetails =
+    (typeof details?.order_no === 'string' && details.order_no) ||
     (typeof details?.title === 'string' && details.title) ||
     (typeof details?.name === 'string' && details.name) ||
     (typeof details?.user_name === 'string' && details.user_name) ||
+    (typeof details?.buyer_name === 'string' && details.buyer_name) ||
     (typeof details?.artist_name === 'string' && details.artist_name) ||
     (typeof details?.representative_name === 'string' && details.representative_name) ||
     null;
@@ -559,6 +588,38 @@ export function formatStatusWithT(value: unknown, t: TranslationFn): string | nu
   const key = keyMap[value];
   if (key) return t(key);
   return value;
+}
+
+export function formatOrderStatus(value: unknown, locale: LocaleCode): string | null {
+  if (typeof value !== 'string') return null;
+  const statusMap: Record<string, Record<string, string>> = {
+    ko: {
+      pending_payment: '결제 대기',
+      awaiting_deposit: '입금 대기',
+      paid: '결제 완료',
+      preparing: '준비 중',
+      shipped: '배송 중',
+      delivered: '배송 완료',
+      completed: '거래 완료',
+      cancelled: '취소됨',
+      refunded: '환불됨',
+      refund_requested: '환불 요청',
+    },
+    en: {
+      pending_payment: 'Pending Payment',
+      awaiting_deposit: 'Awaiting Deposit',
+      paid: 'Paid',
+      preparing: 'Preparing',
+      shipped: 'Shipped',
+      delivered: 'Delivered',
+      completed: 'Completed',
+      cancelled: 'Cancelled',
+      refunded: 'Refunded',
+      refund_requested: 'Refund Requested',
+    },
+  };
+
+  return statusMap[locale][value] || value;
 }
 
 export function getTargetNameMap(log: ActivityLogEntry): Map<string, string> {

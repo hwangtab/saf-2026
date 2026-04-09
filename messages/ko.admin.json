@@ -147,6 +147,7 @@
       "revertSuccess": "복구가 완료되었습니다.",
       "revertError": "복구 중 오류가 발생했습니다.",
       "targetTypeUser": "사용자",
+      "targetTypeOrder": "주문",
       "targetTypeArtwork": "작품",
       "targetTypeArtist": "작가",
       "targetTypeNews": "뉴스",

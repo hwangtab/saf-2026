@@ -60,6 +60,11 @@ const ACTION_FILTER_OPTIONS_KO = [
   { value: 'video_updated', label: '영상 수정' },
   { value: 'video_deleted', label: '영상 삭제' },
   { value: 'testimonial_updated', label: '추천사 수정' },
+  { value: 'order_deposit_confirmed', label: '주문 입금 확인' },
+  { value: 'order_awaiting_cancelled', label: '입금대기 주문 취소' },
+  { value: 'order_status_updated', label: '주문 상태 변경' },
+  { value: 'order_tracking_updated', label: '운송장 정보 수정' },
+  { value: 'order_refunded', label: '주문 환불' },
   { value: 'cafe24_sales_sync_warning', label: 'Cafe24 판매 동기화 경고' },
   { value: 'cafe24_sales_sync_failed', label: 'Cafe24 판매 동기화 실패' },
   { value: 'trash_purged', label: '휴지통 영구 삭제' },
@@ -112,6 +117,11 @@ const ACTION_FILTER_OPTIONS_EN = [
   { value: 'video_updated', label: 'Video updated' },
   { value: 'video_deleted', label: 'Video deleted' },
   { value: 'testimonial_updated', label: 'Testimonial updated' },
+  { value: 'order_deposit_confirmed', label: 'Order deposit confirmed' },
+  { value: 'order_awaiting_cancelled', label: 'Awaiting-deposit order cancelled' },
+  { value: 'order_status_updated', label: 'Order status changed' },
+  { value: 'order_tracking_updated', label: 'Tracking info updated' },
+  { value: 'order_refunded', label: 'Order refunded' },
   { value: 'cafe24_sales_sync_warning', label: 'Cafe24 sales sync warning' },
   { value: 'cafe24_sales_sync_failed', label: 'Cafe24 sales sync failed' },
   { value: 'trash_purged', label: 'Trash purged' },
@@ -249,6 +259,7 @@ export default async function AdminLogsPage({ searchParams }: Props) {
                 className="h-10"
               >
                 <option value="">{isEnglish ? 'All targets' : '전체 대상'}</option>
+                <option value="order">{isEnglish ? 'Order' : '주문'}</option>
                 <option value="artwork">{isEnglish ? 'Artwork' : '작품'}</option>
                 <option value="artist">{isEnglish ? 'Artist' : '작가'}</option>
                 <option value="user">{isEnglish ? 'User' : '사용자'}</option>
