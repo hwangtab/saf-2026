@@ -307,6 +307,7 @@ export default async function StoryDetailPage({ params }: Props) {
         <Section
           variant={relatedStories.length > 0 ? 'white' : 'canvas-soft'}
           prevVariant={relatedStories.length > 0 ? 'canvas-soft' : 'white'}
+          className="pb-16 md:pb-24"
         >
           <div className="max-w-3xl mx-auto">
             <div className="flex items-center justify-between mb-6">
