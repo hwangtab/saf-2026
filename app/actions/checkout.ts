@@ -217,6 +217,27 @@ export async function initiatePayment(input: InitiatePaymentInput): Promise<Init
 }
 
 /**
+ * Creates an order for manual bank transfer (계좌이체).
+ * Skips Toss payment — sets order to awaiting_deposit and artwork to reserved.
+ * Admin confirms deposit manually and transitions order to paid.
+ */
+export async function createBankTransferOrder(input: CreateOrderInput): Promise<CreateOrderResult> {
+  const result = await createOrder(input);
+  if (!result.success) return result;
+
+  const adminClient = createSupabaseAdminClient();
+
+  await adminClient
+    .from('orders')
+    .update({ status: 'awaiting_deposit' })
+    .eq('order_no', result.orderNo);
+
+  await adminClient.from('artworks').update({ status: 'reserved' }).eq('id', input.artworkId);
+
+  return result;
+}
+
+/**
  * Cancels a pending_payment order when the user abandons the payment widget.
  * Only cancels orders in 'pending_payment' status — safe to call speculatively.
  */

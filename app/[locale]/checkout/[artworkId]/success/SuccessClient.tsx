@@ -11,6 +11,7 @@ interface Props {
   amount: string;
   paymentType: string;
   artworkId: string;
+  method: string;
 }
 
 interface VirtualAccount {
@@ -19,9 +20,9 @@ interface VirtualAccount {
   dueDate: string;
 }
 
-type PageState = 'loading' | 'success' | 'virtual' | 'error';
+type PageState = 'loading' | 'success' | 'virtual' | 'bank_transfer' | 'error';
 
-export default function SuccessClient({ paymentKey, orderId, amount }: Props) {
+export default function SuccessClient({ paymentKey, orderId, amount, method }: Props) {
   const t = useTranslations('checkout');
   const tOrder = useTranslations('orderLookup');
 
@@ -30,6 +31,11 @@ export default function SuccessClient({ paymentKey, orderId, amount }: Props) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
+    if (method === 'BANK_TRANSFER') {
+      setPageState('bank_transfer');
+      return;
+    }
+
     async function confirm() {
       try {
         const res = await fetch('/api/payments/toss/confirm', {
@@ -96,6 +102,64 @@ export default function SuccessClient({ paymentKey, orderId, amount }: Props) {
             >
               {t('backToArtworks')}
             </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (state === 'bank_transfer') {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center pt-24 pb-16">
+        <div className="max-w-lg w-full mx-auto px-4">
+          <div className="rounded-2xl border border-gray-200 bg-white p-10 shadow-sm text-center">
+            <p className="text-4xl mb-4">🏦</p>
+            <h1 className="text-2xl font-bold text-charcoal mb-2">{t('bankTransferTitle')}</h1>
+            <p className="text-sm text-gray-500 mb-8">{t('bankTransferGuide')}</p>
+
+            <div className="rounded-xl bg-gray-50 p-6 text-left space-y-3 mb-6">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">{t('depositBankName')}</span>
+                <span className="font-semibold text-charcoal">{t('bankTransferBank')}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">{t('depositAccountNumber')}</span>
+                <span className="font-semibold text-charcoal font-mono">
+                  {t('bankTransferAccount')}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">{t('bankTransferHolder')}</span>
+                <span className="font-semibold text-charcoal">{t('bankTransferHolderName')}</span>
+              </div>
+              <div className="flex justify-between text-sm border-t border-gray-200 pt-3">
+                <span className="text-gray-500">{t('orderNo')}</span>
+                <span className="font-mono font-semibold text-charcoal">{orderId}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">{t('depositAmount')}</span>
+                <span className="font-bold text-primary-a11y">
+                  {formatPriceForDisplay(Number(amount))}
+                </span>
+              </div>
+            </div>
+
+            <p className="text-xs text-gray-400 mb-6">{t('bankTransferNotice')}</p>
+
+            <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+              <Link
+                href="/artworks"
+                className="inline-block rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white hover:opacity-90"
+              >
+                {t('browseMore')}
+              </Link>
+              <Link
+                href="/orders"
+                className="inline-block rounded-xl border border-gray-200 px-6 py-3 text-sm font-medium text-charcoal hover:bg-gray-50"
+              >
+                {tOrder('viewOrders')}
+              </Link>
+            </div>
           </div>
         </div>
       </div>

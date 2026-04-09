@@ -15,24 +15,30 @@ interface Props {
     orderId?: string;
     amount?: string;
     paymentType?: string;
+    method?: string;
   }>;
 }
 
 export default async function SuccessPage({ params, searchParams }: Props) {
   const { artworkId } = await params;
-  const { paymentKey, orderId, amount, paymentType } = await searchParams;
+  const { paymentKey, orderId, amount, paymentType, method } = await searchParams;
 
-  if (!paymentKey || !orderId || !amount) {
-    notFound();
+  const isBankTransfer = method === 'BANK_TRANSFER';
+
+  if (isBankTransfer) {
+    if (!orderId || !amount) notFound();
+  } else {
+    if (!paymentKey || !orderId || !amount) notFound();
   }
 
   return (
     <SuccessClient
-      paymentKey={paymentKey}
-      orderId={orderId}
-      amount={amount}
+      paymentKey={paymentKey ?? ''}
+      orderId={orderId!}
+      amount={amount!}
       paymentType={paymentType ?? ''}
       artworkId={artworkId}
+      method={method ?? ''}
     />
   );
 }
