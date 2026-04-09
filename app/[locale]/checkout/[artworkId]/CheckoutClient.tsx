@@ -235,7 +235,7 @@ export default function CheckoutClient({
                     alt="toss"
                     height={32}
                     width={106}
-                    className="absolute -top-4 left-1.5 h-8 w-auto object-contain drop-shadow-sm"
+                    className="absolute -top-4 -left-1 h-8 w-auto object-contain drop-shadow-sm"
                     unoptimized
                   />
                 )}
