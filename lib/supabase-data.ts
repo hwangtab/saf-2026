@@ -338,9 +338,6 @@ export const getSupabaseArtworksByArtist = cache(
 const getRecentlySoldArtworksUncached = async (limit: number): Promise<Artwork[]> => {
   if (!hasSupabaseConfig || !supabase) return [];
 
-  const thirtyDaysAgo = new Date();
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
   const { data, error } = await supabase
     .from('artworks')
     .select(
@@ -351,7 +348,6 @@ const getRecentlySoldArtworksUncached = async (limit: number): Promise<Artwork[]
     )
     .eq('is_hidden', false)
     .not('sold_at', 'is', null)
-    .gte('sold_at', thirtyDaysAgo.toISOString())
     .order('sold_at', { ascending: false })
     .limit(limit);
 
