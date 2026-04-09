@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import Button from '@/components/ui/Button';
 import {
@@ -61,7 +60,6 @@ function Badge({ className, children }: { className: string; children: React.Rea
 export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedback[] }) {
   const locale = useLocale();
   const t = useTranslations('admin.feedback');
-  const router = useRouter();
   const toast = useToast();
   const [localFeedback, setLocalFeedback] = useState(initialFeedback);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -107,7 +105,6 @@ export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedb
           )
         );
         toast.success(t('statusUpdated'));
-        router.refresh();
       }
     } catch (error) {
       console.error('[admin-feedback-manager] Feedback status update failed:', error);
@@ -131,7 +128,6 @@ export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedb
           )
         );
         toast.success(t('memoSaved'));
-        router.refresh();
       }
     } catch (error) {
       console.error('[admin-feedback-manager] Feedback memo save failed:', error);
