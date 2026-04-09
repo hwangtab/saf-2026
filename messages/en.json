@@ -705,8 +705,8 @@
     "bankTransferBank": "NH (NongHyup)",
     "bankTransferAccount": "301-101031-04-095",
     "bankTransferHolder": "Account Holder",
-    "bankTransferHolderName": "Social Cooperative SIAT",
-    "bankTransferNotice": "Please use your name as the depositor. Verification may take 1-2 business days."
+    "bankTransferHolderName": "Korea Smart Cooperative",
+    "bankTransferNotice": "Please use your name as the depositor. Orders not deposited by {deadline} will be automatically cancelled."
   },
   "orderLookup": {
     "pageTitle": "Order Lookup",
@@ -788,7 +788,7 @@
     "bankTransferBank": "NH (NongHyup)",
     "bankTransferAccount": "301-101031-04-095",
     "bankTransferHolder": "Account Holder",
-    "bankTransferHolderName": "Social Cooperative SIAT",
-    "bankTransferNotice": "Please use your name as the depositor. Verification may take 1-2 business days."
+    "bankTransferHolderName": "Korea Smart Cooperative",
+    "bankTransferNotice": "Please use your name as the depositor. Orders not deposited by {deadline} will be automatically cancelled."
   }
 }

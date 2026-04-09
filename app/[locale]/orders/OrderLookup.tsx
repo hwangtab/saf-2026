@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import clsx from 'clsx';
 import { Link } from '@/i18n/navigation';
 import SafeImage from '@/components/common/SafeImage';
@@ -357,12 +357,34 @@ function OrderDetail({
   onDetailUpdate: (updated: Partial<OrderPublicInfo>) => void;
 }) {
   const t = useTranslations('orderLookup');
+  const locale = useLocale();
   const [order, setOrder] = useState(initialOrder);
   const [editingShipping, setEditingShipping] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
 
   const canEditShipping = ['paid', 'preparing'].includes(order.status);
   const canCancel = order.status === 'paid';
+
+  const bankTransferDeadline =
+    order.status === 'awaiting_deposit' && !order.virtualAccount
+      ? (() => {
+          const dl = new Date(new Date(order.createdAt).getTime() + 24 * 60 * 60 * 1000);
+          if (locale === 'ko') {
+            const m = dl.getMonth() + 1;
+            const d = dl.getDate();
+            const hh = String(dl.getHours()).padStart(2, '0');
+            const mm = String(dl.getMinutes()).padStart(2, '0');
+            return `${m}월 ${d}일 ${hh}:${mm}`;
+          }
+          return dl.toLocaleString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+          });
+        })()
+      : '';
 
   function handleShippingSaved(updated: Partial<OrderPublicInfo>) {
     setOrder((prev) => ({ ...prev, ...updated }));
@@ -425,7 +447,9 @@ function OrderDetail({
               <span className="font-semibold text-amber-900">{t('bankTransferHolderName')}</span>
             </div>
           </div>
-          <p className="mt-2 text-xs text-amber-700">{t('bankTransferNotice')}</p>
+          <p className="mt-2 text-xs text-amber-700 [text-wrap:balance]">
+            {t('bankTransferNotice', { deadline: bankTransferDeadline })}
+          </p>
         </div>
       )}
 

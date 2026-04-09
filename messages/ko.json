@@ -705,8 +705,8 @@
     "bankTransferBank": "농협 (NH)",
     "bankTransferAccount": "301-101031-04-095",
     "bankTransferHolder": "예금주",
-    "bankTransferHolderName": "사회적협동조합 씨앗",
-    "bankTransferNotice": "입금자명을 주문자명과 동일하게 해주세요. 입금 확인까지 영업일 기준 1~2일 소요될 수 있습니다."
+    "bankTransferHolderName": "한국스마트협동조합",
+    "bankTransferNotice": "입금자명을 주문자명과 동일하게 해주세요. {deadline}까지 미입금 시 주문이 자동 취소됩니다."
   },
   "orderLookup": {
     "pageTitle": "주문 조회",
@@ -788,7 +788,7 @@
     "bankTransferBank": "농협 (NH)",
     "bankTransferAccount": "301-101031-04-095",
     "bankTransferHolder": "예금주",
-    "bankTransferHolderName": "사회적협동조합 씨앗",
-    "bankTransferNotice": "입금자명을 주문자명과 동일하게 해주세요. 입금 확인까지 영업일 기준 1~2일 소요될 수 있습니다."
+    "bankTransferHolderName": "한국스마트협동조합",
+    "bankTransferNotice": "입금자명을 주문자명과 동일하게 해주세요. {deadline}까지 미입금 시 주문이 자동 취소됩니다."
   }
 }
