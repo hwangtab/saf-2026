@@ -152,7 +152,7 @@ export const getSupabaseArtworks = cache(
 
 const getSupabaseHomepageArtworkCandidatesUncached = async (limit: number): Promise<Artwork[]> => {
   if (!hasSupabaseConfig || !supabase) {
-    return fallbackArtworks.filter((artwork) => !artwork.sold);
+    return fallbackArtworks;
   }
 
   const { data, error } = await supabase
@@ -164,13 +164,11 @@ const getSupabaseHomepageArtworkCandidatesUncached = async (limit: number): Prom
     `
     )
     .eq('is_hidden', false)
-    .neq('status', 'sold')
-    .neq('status', 'reserved')
     .limit(limit * 3);
 
   if (error) {
     console.error('Error fetching homepage artworks from Supabase:', error);
-    return fallbackArtworks.filter((artwork) => !artwork.sold);
+    return fallbackArtworks;
   }
 
   return (data || []).map((item) =>
