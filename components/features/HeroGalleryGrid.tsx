@@ -60,6 +60,11 @@ export default function HeroGalleryGrid({ artworks }: HeroGalleryGridProps) {
                 SOLD
               </div>
             )}
+            {artwork.reserved && !artwork.sold && (
+              <div className="absolute top-2 right-2 bg-amber-500 text-white text-xs font-bold px-2 py-0.5 rounded">
+                예약중
+              </div>
+            )}
           </Link>
         );
       })}

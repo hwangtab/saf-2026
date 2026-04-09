@@ -77,6 +77,19 @@ function SoldBadge({ variant }: { variant: ArtworkCardVariant }) {
   );
 }
 
+function ReservedBadge({ variant }: { variant: ArtworkCardVariant }) {
+  return (
+    <div
+      className={cn(
+        'absolute bg-amber-500 text-white font-bold',
+        VARIANT_CONFIG[variant].soldBadge
+      )}
+    >
+      예약중
+    </div>
+  );
+}
+
 function formatSoldDate(soldAt: string, locale: string): string {
   const d = new Date(soldAt);
   const y = d.getFullYear();
@@ -195,7 +208,8 @@ function ArtworkCard({
             sizes={config.imageSizes}
           />
           {artwork.sold && <SoldBadge variant="slider" />}
-          {artwork.sold_at && (
+          {artwork.reserved && !artwork.sold && <ReservedBadge variant="slider" />}
+          {artwork.sold && artwork.sold_at && (
             <SoldDateBadge soldAt={artwork.sold_at} variant="slider" locale={locale} />
           )}
         </div>
@@ -243,7 +257,8 @@ function ArtworkCard({
             )}
           />
           {artwork.sold && <SoldBadge variant="gallery" />}
-          {artwork.sold_at && (
+          {artwork.reserved && !artwork.sold && <ReservedBadge variant="gallery" />}
+          {artwork.sold && artwork.sold_at && (
             <SoldDateBadge soldAt={artwork.sold_at} variant="gallery" locale={locale} />
           )}
         </div>
@@ -310,9 +325,13 @@ function ArtworkCard({
                 ? theme === 'dark'
                   ? 'text-white/50 line-through'
                   : 'text-gray-600 line-through'
-                : theme === 'dark'
-                  ? 'text-sun'
-                  : 'text-primary'
+                : artwork.reserved
+                  ? theme === 'dark'
+                    ? 'text-white/70'
+                    : 'text-gray-500'
+                  : theme === 'dark'
+                    ? 'text-sun'
+                    : 'text-primary'
             )}
           >
             {localizedPrice}

@@ -58,6 +58,7 @@ export interface BaseArtwork {
   images: string[];
   shopUrl?: string;
   sold?: boolean;
+  reserved?: boolean;
   sold_at?: string;
   hidden?: boolean;
   title_en?: string;
@@ -153,6 +154,7 @@ export interface ArtworkCardData {
   images: string[];
   price: string;
   sold?: boolean;
+  reserved?: boolean;
   sold_at?: string;
   material?: string;
   size?: string;

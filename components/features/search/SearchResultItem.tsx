@@ -41,10 +41,15 @@ export default function SearchResultItem({ artwork, onSelect }: SearchResultItem
         <p className="text-xs text-charcoal-muted mt-0.5">{artwork.price}</p>
       </div>
 
-      {/* sold 뱃지 */}
+      {/* sold / reserved 뱃지 */}
       {artwork.sold && (
         <span className="flex-shrink-0 text-xs font-medium text-gray-400 bg-gray-100 px-2 py-0.5 rounded">
           {tFilters('sold')}
+        </span>
+      )}
+      {artwork.reserved && !artwork.sold && (
+        <span className="flex-shrink-0 text-xs font-medium text-amber-700 bg-amber-100 px-2 py-0.5 rounded">
+          {tFilters('reserved')}
         </span>
       )}
     </Link>

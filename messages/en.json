@@ -55,6 +55,7 @@
     "all": "All",
     "selling": "Available",
     "sold": "Sold",
+    "reserved": "Reserved",
     "categoryAll": "All Categories"
   },
   "sort": {
@@ -240,6 +241,8 @@
     "recentlySold": "Recently Sold",
     "recentlySoldDesc": "{count} artworks sold recently",
     "soldNotice": "This artwork has been sold",
+    "reservedNotice": "This artwork is currently reserved",
+    "reservedExplore": "Browse other artworks",
     "soldExploreOther": "Explore other works by this artist",
     "soldExploreAll": "Browse other artworks",
     "sameCategoryBrowse": "Browse more {category} artworks",
