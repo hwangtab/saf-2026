@@ -447,9 +447,10 @@ function OrderDetail({
               <span className="font-semibold text-amber-900">{t('bankTransferHolderName')}</span>
             </div>
           </div>
-          <p className="mt-2 text-xs text-amber-700 [text-wrap:balance]">
-            {t('bankTransferNotice', { deadline: bankTransferDeadline })}
-          </p>
+          <div className="mt-2 text-xs text-amber-700 space-y-0.5">
+            <p>{t('bankTransferNoticeName')}</p>
+            <p>{t('bankTransferNoticeDeadline', { deadline: bankTransferDeadline })}</p>
+          </div>
         </div>
       )}
 

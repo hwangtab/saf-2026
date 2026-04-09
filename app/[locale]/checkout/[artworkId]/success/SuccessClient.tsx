@@ -164,9 +164,10 @@ export default function SuccessClient({ paymentKey, orderId, amount, method }: P
               </div>
             </div>
 
-            <p className="text-xs text-gray-400 mb-6 [text-wrap:balance]">
-              {t('bankTransferNotice', { deadline })}
-            </p>
+            <div className="text-xs text-gray-400 mb-6 space-y-1">
+              <p>{t('bankTransferNoticeName')}</p>
+              <p>{t('bankTransferNoticeDeadline', { deadline })}</p>
+            </div>
 
             <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
               <Link

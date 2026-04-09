@@ -706,7 +706,8 @@
     "bankTransferAccount": "301-101031-04-095",
     "bankTransferHolder": "Account Holder",
     "bankTransferHolderName": "Korea Smart Cooperative",
-    "bankTransferNotice": "Please use your name as the depositor. Orders not deposited by {deadline} will be automatically cancelled."
+    "bankTransferNoticeName": "Please use your name as the depositor.",
+    "bankTransferNoticeDeadline": "Orders not deposited by {deadline} will be automatically cancelled."
   },
   "orderLookup": {
     "pageTitle": "Order Lookup",
@@ -789,6 +790,7 @@
     "bankTransferAccount": "301-101031-04-095",
     "bankTransferHolder": "Account Holder",
     "bankTransferHolderName": "Korea Smart Cooperative",
-    "bankTransferNotice": "Please use your name as the depositor. Orders not deposited by {deadline} will be automatically cancelled."
+    "bankTransferNoticeName": "Please use your name as the depositor.",
+    "bankTransferNoticeDeadline": "Orders not deposited by {deadline} will be automatically cancelled."
   }
 }
