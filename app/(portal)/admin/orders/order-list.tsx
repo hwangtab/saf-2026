@@ -145,6 +145,7 @@ export function OrderList({
               <tr className="border-b border-[var(--admin-border-soft)] text-left text-xs font-medium uppercase tracking-wide text-slate-500">
                 <th className="px-4 py-3">주문번호</th>
                 <th className="px-4 py-3">작품명</th>
+                <th className="px-4 py-3">작가</th>
                 <th className="px-4 py-3">구매자</th>
                 <th className="px-4 py-3 text-right">금액</th>
                 <th className="px-4 py-3">상태</th>
@@ -159,6 +160,7 @@ export function OrderList({
                   <td className="max-w-[180px] truncate px-4 py-3 text-slate-800">
                     {order.artwork_title ?? '—'}
                   </td>
+                  <td className="px-4 py-3 text-slate-600">{order.artist_name ?? '—'}</td>
                   <td className="px-4 py-3 text-slate-700">{order.buyer_name ?? '—'}</td>
                   <td className="px-4 py-3 text-right font-medium text-slate-800">
                     {formatKRW(order.total_amount)}

@@ -364,9 +364,9 @@ export default async function AdminDashboardPage() {
                           <div className="flex items-center gap-2">
                             <Link
                               href={`/admin/orders/${order.id}`}
-                              className="text-sm font-medium text-gray-900 hover:text-indigo-600 hover:underline font-mono"
+                              className="text-sm font-medium text-gray-900 hover:text-indigo-600 hover:underline truncate"
                             >
-                              {order.order_no}
+                              {order.artwork_title || order.order_no}
                             </Link>
                             <span
                               className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
@@ -385,6 +385,7 @@ export default async function AdminDashboardPage() {
                             </span>
                           </div>
                           <p className="text-xs text-gray-500 mt-0.5">
+                            {order.artist_name ? `${order.artist_name} · ` : ''}
                             {order.buyer_name || '—'} · ₩
                             {numberFormatter.format(order.total_amount)}
                           </p>
