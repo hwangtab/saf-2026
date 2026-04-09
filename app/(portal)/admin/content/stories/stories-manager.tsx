@@ -18,6 +18,7 @@ type StoryItem = {
   published_at: string | null;
   is_published: boolean;
   display_order: number;
+  tags: string[] | null;
 };
 
 const CATEGORY_OPTIONS = [
@@ -31,6 +32,16 @@ const formatDateInput = (value: string | null) => {
   return value.toString().slice(0, 10);
 };
 
+const formatTagsInput = (value: string[] | null | undefined) => (value || []).join(', ');
+
+const parseTagsInput = (value: FormDataEntryValue | null) => {
+  if (typeof value !== 'string') return [];
+  return value
+    .split(',')
+    .map((tag) => tag.trim())
+    .filter(Boolean);
+};
+
 const inputClass = 'w-full rounded-md border border-gray-300 px-3 py-2 text-sm';
 
 export function StoriesManager({ stories }: { stories: StoryItem[] }) {
@@ -42,7 +53,7 @@ export function StoriesManager({ stories }: { stories: StoryItem[] }) {
         update: updateStory,
         delete: deleteStory,
       }}
-      searchFields={(item) => [item.title, item.slug, item.author]}
+      searchFields={(item) => [item.title, item.slug, item.author, formatTagsInput(item.tags)]}
       extractOptimisticUpdate={(formData) => ({
         title: formData.get('title') as string,
         slug: formData.get('slug') as string,
@@ -57,6 +68,7 @@ export function StoriesManager({ stories }: { stories: StoryItem[] }) {
         published_at: formData.get('published_at') as string,
         is_published: formData.get('is_published') === 'on',
         display_order: Number(formData.get('display_order')) || 0,
+        tags: parseTagsInput(formData.get('tags')),
       })}
       renderCreateForm={() => (
         <>
@@ -97,6 +109,11 @@ export function StoriesManager({ stories }: { stories: StoryItem[] }) {
             name="body_en"
             placeholder="본문 영어 (Markdown, 선택)"
             rows={6}
+            className={inputClass}
+          />
+          <input
+            name="tags"
+            placeholder="태그 (쉼표 구분, 작가 글은 첫 번째에 작가명)"
             className={inputClass}
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -179,6 +196,12 @@ export function StoriesManager({ stories }: { stories: StoryItem[] }) {
             defaultValue={item.body_en || ''}
             placeholder="본문 영어 (Markdown, 선택)"
             rows={6}
+            className={inputClass}
+          />
+          <input
+            name="tags"
+            defaultValue={formatTagsInput(item.tags)}
+            placeholder="태그 (쉼표 구분, 작가 글은 첫 번째에 작가명)"
             className={inputClass}
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
