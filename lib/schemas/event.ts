@@ -73,6 +73,7 @@ export function generateExhibitionSchema(
       price: '0',
       priceCurrency: 'KRW',
       availability: 'https://schema.org/InStock',
+      validFrom: startDate,
       url: SITE_URL,
     },
     performer: {

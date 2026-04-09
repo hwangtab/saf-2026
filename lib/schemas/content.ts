@@ -1,6 +1,34 @@
 import { SITE_URL, CONTACT } from '@/lib/constants';
 import { containsHangul } from '@/lib/search-utils';
 
+const DEFAULT_VIDEO_ISO_DATETIME = '2023-03-26T00:00:00+09:00';
+
+const normalizeIsoDateTime = (value?: string): string => {
+  if (!value) return DEFAULT_VIDEO_ISO_DATETIME;
+
+  const trimmed = value.trim();
+  if (!trimmed) return DEFAULT_VIDEO_ISO_DATETIME;
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+    return `${trimmed}T00:00:00+09:00`;
+  }
+
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?$/.test(trimmed)) {
+    return `${trimmed}+09:00`;
+  }
+
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?(\.\d+)?([+-]\d{2}:\d{2}|Z)$/.test(trimmed)) {
+    return trimmed;
+  }
+
+  const parsed = new Date(trimmed);
+  if (!Number.isNaN(parsed.getTime())) {
+    return parsed.toISOString();
+  }
+
+  return DEFAULT_VIDEO_ISO_DATETIME;
+};
+
 export interface FAQItem {
   question: string;
   answer: string;
@@ -8,11 +36,27 @@ export interface FAQItem {
 
 export function generateFAQSchema(faqs: FAQItem[], locale: 'ko' | 'en' = 'ko') {
   const isEnglish = locale === 'en';
+  const fallbackQuestion = isEnglish ? 'What is SAF Online?' : '씨앗페 온라인이란 무엇인가요?';
+  const fallbackAnswer = isEnglish
+    ? 'SAF Online is a campaign supporting Korean artists through artwork purchases.'
+    : '씨앗페 온라인은 작품 구매를 통해 한국 예술인을 지원하는 캠페인입니다.';
+
+  const dedupedFaqs = Array.from(
+    new Map(
+      faqs
+        .map((faq) => ({ question: faq.question.trim(), answer: faq.answer.trim() }))
+        .filter((faq) => faq.question.length > 0 && faq.answer.length > 0)
+        .map((faq) => [faq.question, faq])
+    ).values()
+  );
+
+  const safeFaqs =
+    dedupedFaqs.length > 0 ? dedupedFaqs : [{ question: fallbackQuestion, answer: fallbackAnswer }];
 
   return {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: faqs.map((faq, index) => ({
+    mainEntity: safeFaqs.map((faq, index) => ({
       '@type': 'Question',
       name: isEnglish && containsHangul(faq.question) ? `FAQ ${index + 1}` : faq.question,
       acceptedAnswer: {
@@ -37,6 +81,7 @@ export interface VideoSchemaInput {
 
 export function generateVideoSchema(video: VideoSchemaInput) {
   const contentUrl = `https://www.youtube.com/watch?v=${video.youtubeId}`;
+  const normalizedUploadDate = normalizeIsoDateTime(video.uploadDate);
   return {
     '@context': 'https://schema.org',
     '@type': 'VideoObject',
@@ -44,8 +89,8 @@ export function generateVideoSchema(video: VideoSchemaInput) {
     name: video.title,
     description: video.description,
     thumbnailUrl: `https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`,
-    uploadDate: video.uploadDate || '2023-03-26',
-    dateModified: video.uploadDate || '2023-03-26',
+    uploadDate: normalizedUploadDate,
+    dateModified: normalizedUploadDate,
     contentUrl,
     embedUrl: `https://www.youtube.com/embed/${video.youtubeId}`,
     inLanguage: video.locale === 'en' ? 'en-US' : 'ko-KR',
