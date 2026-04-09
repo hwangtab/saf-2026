@@ -3,14 +3,18 @@ import {
   generateOrganizationSchema,
   generateWebsiteSchema,
   generateFAQSchema,
+  generateVideoSchema,
   generateExhibitionSchema,
   generateCampaignSchema,
   generateSpeakableSchema,
+  generateArtworkJsonLd,
   escapeJsonLdForScript,
   generateClaimReviewSchema,
   generateSAFClaimReviews,
   generateHowToSchema,
+  generateArtworkMetadata,
   generateArtworkPurchaseHowTo,
+  generateArtworkPurchaseFAQ,
   generateMemberJoinHowTo,
   generateQAPageSchema,
   generateSAFCoreQA,
@@ -51,6 +55,20 @@ describe('createBreadcrumbSchema', () => {
   it('should return an empty itemListElement for no items', () => {
     const schema = createBreadcrumbSchema([]);
     expect(schema.itemListElement).toEqual([]);
+  });
+
+  it('should normalize relative URLs to absolute URLs', () => {
+    const schema = createBreadcrumbSchema([
+      { name: '홈', url: '/' },
+      { name: '출품작', url: '/artworks' },
+      { name: '카테고리', url: 'artworks/category/회화' },
+    ]);
+
+    expect(schema.itemListElement[0].item).toBe('https://www.saf2026.com');
+    expect(schema.itemListElement[1].item).toBe('https://www.saf2026.com/artworks');
+    expect(schema.itemListElement[2].item).toBe(
+      'https://www.saf2026.com/artworks/category/%ED%9A%8C%ED%99%94'
+    );
   });
 });
 
@@ -222,6 +240,98 @@ describe('generateExhibitionSchema', () => {
     expect(schema.aggregateRating.ratingValue).toBe(4.5);
     expect(schema.aggregateRating.reviewCount).toBe(2);
     expect(schema.review).toHaveLength(2);
+  });
+
+  it('should keep eventStatus and attendance mode consistent before exhibition start', () => {
+    const nowSpy = jest.spyOn(Date, 'now').mockReturnValue(Date.parse('2026-01-10T00:00:00+09:00'));
+    const schema = generateExhibitionSchema();
+    nowSpy.mockRestore();
+
+    expect(schema.eventStatus).toBe('https://schema.org/EventScheduled');
+    expect(schema.eventAttendanceMode).toBe('https://schema.org/MixedEventAttendanceMode');
+    expect(schema.location['@type']).toBe('Place');
+  });
+
+  it('should keep eventStatus and attendance mode consistent after exhibition end', () => {
+    const nowSpy = jest.spyOn(Date, 'now').mockReturnValue(Date.parse('2026-02-10T00:00:00+09:00'));
+    const schema = generateExhibitionSchema();
+    nowSpy.mockRestore();
+
+    expect(schema.eventStatus).toBe('https://schema.org/EventCompleted');
+    expect(schema.eventAttendanceMode).toBe('https://schema.org/OnlineEventAttendanceMode');
+    expect(schema.location['@type']).toBe('VirtualLocation');
+  });
+});
+
+describe('generateVideoSchema', () => {
+  it('should normalize YYYY-MM-DD uploadDate into timezone-aware ISO datetime', () => {
+    const schema = generateVideoSchema({
+      title: 'Video',
+      description: 'Desc',
+      youtubeId: 'abc123',
+      uploadDate: '2026-01-15',
+    });
+
+    expect(schema.uploadDate).toBe('2026-01-15T00:00:00+09:00');
+    expect(schema.dateModified).toBe('2026-01-15T00:00:00+09:00');
+  });
+
+  it('should fallback to default datetime when uploadDate is invalid', () => {
+    const schema = generateVideoSchema({
+      title: 'Video',
+      description: 'Desc',
+      youtubeId: 'abc123',
+      uploadDate: 'not-a-date',
+    });
+
+    expect(schema.uploadDate).toBe('2023-03-26T00:00:00+09:00');
+    expect(schema.dateModified).toBe('2023-03-26T00:00:00+09:00');
+  });
+});
+
+describe('generateArtworkJsonLd', () => {
+  const baseArtwork = {
+    id: '9999',
+    artist: '테스트 작가',
+    title: '테스트 작품',
+    description: '설명',
+    size: '40x40cm',
+    material: '캔버스에 유채',
+    year: '2026',
+    edition: '원화',
+    price: '확인 중',
+    images: ['/images/test.png'],
+  };
+
+  it('should emit VisualArtwork only and omit offers for inquiry-priced artworks', () => {
+    const { productSchema } = generateArtworkJsonLd(baseArtwork, '', true, 'ko');
+
+    expect(productSchema['@type']).toBe('VisualArtwork');
+    expect(productSchema).not.toHaveProperty('offers');
+  });
+});
+
+describe('generateArtworkMetadata', () => {
+  const baseArtwork = {
+    id: '9999',
+    artist: '테스트 작가',
+    title: '테스트 작품',
+    description: '설명',
+    size: '40x40cm',
+    material: '캔버스에 유채',
+    year: '2026',
+    edition: '원화',
+    price: '확인 중',
+    images: ['/images/test.png'],
+  };
+
+  it('should avoid product-specific meta tags for inquiry-priced artworks', () => {
+    const metadata = generateArtworkMetadata(baseArtwork, 'ko');
+
+    expect(metadata.other?.['og:type']).toBe('website');
+    expect(metadata.other).not.toHaveProperty('product:price:amount');
+    expect(metadata.other).not.toHaveProperty('product:price:currency');
+    expect(metadata.other).not.toHaveProperty('product:availability');
   });
 });
 
@@ -408,6 +518,17 @@ describe('generateArtworkPurchaseHowTo', () => {
     const schema = generateArtworkPurchaseHowTo('en');
     expect(schema.step).toHaveLength(4);
     expect(schema.step[0].name).toMatch(/Browse/i);
+  });
+});
+
+describe('generateArtworkPurchaseFAQ', () => {
+  it('should delegate to FAQPage structure with Question/Answer entities', () => {
+    const schema = generateArtworkPurchaseFAQ('ko');
+    expect(schema['@type']).toBe('FAQPage');
+    expect(Array.isArray(schema.mainEntity)).toBe(true);
+    expect(schema.mainEntity.length).toBeGreaterThan(0);
+    expect(schema.mainEntity[0]['@type']).toBe('Question');
+    expect(schema.mainEntity[0].acceptedAnswer['@type']).toBe('Answer');
   });
 });
 
