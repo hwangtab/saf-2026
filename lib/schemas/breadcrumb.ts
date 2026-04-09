@@ -2,14 +2,22 @@ import { SITE_URL } from '@/lib/constants';
 import { BreadcrumbItem } from '@/types';
 
 const toAbsoluteUrl = (url: string): string => {
+  const trimmed = url.trim();
+  if (!trimmed) return SITE_URL;
+
+  const isAbsoluteUrl = /^https?:\/\//i.test(trimmed);
+  const normalizedPath = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+
   try {
-    const absoluteUrl = new URL(url, SITE_URL);
+    const absoluteUrl = isAbsoluteUrl ? new URL(trimmed) : new URL(normalizedPath, SITE_URL);
     if (absoluteUrl.pathname === '/' && !absoluteUrl.search && !absoluteUrl.hash) {
       return absoluteUrl.origin;
     }
     return absoluteUrl.toString();
   } catch {
-    return SITE_URL;
+    if (isAbsoluteUrl) return SITE_URL;
+    const fallbackUrl = new URL(encodeURI(normalizedPath), SITE_URL);
+    return fallbackUrl.toString();
   }
 };
 

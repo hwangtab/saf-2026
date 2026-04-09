@@ -1,4 +1,5 @@
 import { SITE_URL, CONTACT, MERCHANT_POLICIES } from '@/lib/constants';
+import { generateFAQSchema } from './content';
 
 export interface HowToStep {
   name: string;
@@ -167,18 +168,7 @@ export function generateArtworkPurchaseFAQ(locale: 'ko' | 'en' = 'ko') {
         },
       ];
 
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: faqs.map((faq) => ({
-      '@type': 'Question',
-      name: faq.question,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: faq.answer,
-      },
-    })),
-  };
+  return generateFAQSchema(faqs, locale);
 }
 
 /**

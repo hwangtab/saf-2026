@@ -89,6 +89,7 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
       ];
 
   const numericPriceValue = parseArtworkPrice(artwork.price);
+  const hasFixedPrice = numericPriceValue !== null;
   const isSold = artwork.sold === true;
   // 가격을 메타 description에 포함 — 구매 의도 검색 CTR 향상
   const priceSnippet = isSold
@@ -148,14 +149,14 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
     // Facebook/Instagram 제품 메타 태그 — 소셜 공유 시 가격 정보 노출
     other: {
       // og:type 'product' — Next.js 타입 제약으로 openGraph.type에 직접 설정 불가, other로 override
-      'og:type': 'product',
-      ...(numericPriceValue !== null && {
+      'og:type': hasFixedPrice ? 'product' : 'website',
+      ...(hasFixedPrice && {
         'product:price:amount': String(numericPriceValue),
         'product:price:currency': 'KRW',
+        'product:availability': isSold ? 'out of stock' : 'in stock',
+        'product:condition': 'new',
+        'product:retailer_item_id': `SAF2026-${artwork.id}`,
       }),
-      'product:availability': isSold ? 'out of stock' : 'in stock',
-      'product:condition': 'new',
-      'product:retailer_item_id': `SAF2026-${artwork.id}`,
       // 작가 크레딧 메타 — 이미지 검색·Pinterest에서 작가 귀속 지원
       author: artistForLocale,
       // Twitter/X Product Card 라벨 — 카드에 가격·상태 직접 표시
@@ -301,24 +302,8 @@ export function generateArtworkJsonLd(
         ? { '@type': 'QuantitativeValue', value: artwork.edition_limit }
         : undefined;
 
-  // Build offers based on whether price is inquiry or numeric
   const offers = isInquiry
-    ? {
-        '@type': 'Offer',
-        url: offerUrl,
-        validFrom: CAMPAIGN.START_DATE,
-        availability: artwork.sold ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock',
-        itemCondition: 'https://schema.org/NewCondition',
-        priceSpecification: {
-          '@type': 'PriceSpecification',
-          valueAddedTaxIncluded: true,
-        },
-        acceptedPaymentMethod,
-        ...(eligibleQuantity && { eligibleQuantity }),
-        seller: sellerOrg,
-        hasMerchantReturnPolicy: returnPolicy,
-        shippingDetails,
-      }
+    ? undefined
     : {
         '@type': 'Offer',
         url: offerUrl,
@@ -340,7 +325,7 @@ export function generateArtworkJsonLd(
 
   const productSchema = {
     '@context': 'https://schema.org',
-    '@type': ['VisualArtwork', 'Product'],
+    '@type': isInquiry ? 'VisualArtwork' : ['VisualArtwork', 'Product'],
     '@id': `${SITE_URL}/artworks/${artwork.id}`,
     name: titleForLocale,
     inLanguage: isEnglish ? 'en' : 'ko',
@@ -403,7 +388,7 @@ export function generateArtworkJsonLd(
     size: sizeForLocale
       ? { '@type': 'QuantitativeValue', value: sizeForLocale, unitText: 'dimensions' }
       : undefined,
-    offers,
+    ...(offers && { offers }),
     isPartOf: {
       '@type': 'ExhibitionEvent',
       '@id': `${SITE_URL}#exhibition`,
