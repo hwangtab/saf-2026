@@ -55,6 +55,7 @@ export function AdminMobileNav() {
         aria-controls="mobile-nav-drawer"
       >
         <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <title>{t('openMenu')}</title>
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -93,6 +94,7 @@ export function AdminMobileNav() {
                   aria-label={t('closeMenu')}
                 >
                   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <title>{t('closeMenu')}</title>
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -105,7 +107,7 @@ export function AdminMobileNav() {
               <div className="flex flex-col h-full">
                 <div className="p-4 flex-1 space-y-3">
                   {adminNavGroups.map((group, gi) => (
-                    <div key={gi}>
+                    <div key={group.label ?? group.items.map((item) => item.href).join('|')}>
                       {gi > 0 && <div className="mb-3 border-t border-slate-100" />}
                       <div className="space-y-1">
                         {group.items.map((item) => {
@@ -122,6 +124,9 @@ export function AdminMobileNav() {
                             <Link
                               key={item.href}
                               href={item.href}
+                              prefetch={
+                                item.href.startsWith('/admin/changelog') ? false : undefined
+                              }
                               aria-current={isActive ? 'page' : undefined}
                               className={`block rounded-md px-3 py-2 text-base font-medium transition-colors ${
                                 isActive
