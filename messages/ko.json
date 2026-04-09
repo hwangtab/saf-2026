@@ -698,7 +698,7 @@
     "orderIdLabel": "주문 번호",
     "paymentMethodSelect": "결제수단 선택",
     "methodCard": "신용/체크카드",
-    "methodTransfer": "퀵계좌이체(토스)",
+    "methodTransfer": "퀵계좌이체",
     "methodVirtualAccount": "계좌이체"
   },
   "orderLookup": {

@@ -33,7 +33,7 @@ const STATUS_STYLES: Record<string, { label: string; className: string }> = {
 
 const PAYMENT_METHOD_LABELS: Record<string, string> = {
   CARD: '신용/체크카드',
-  TRANSFER: '퀵계좌이체(토스)',
+  TRANSFER: '퀵계좌이체',
   VIRTUAL_ACCOUNT: '계좌이체',
   MOBILE_PHONE: '휴대폰결제',
 };

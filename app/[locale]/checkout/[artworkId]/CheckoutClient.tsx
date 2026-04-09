@@ -221,12 +221,17 @@ export default function CheckoutClient({
                 type="button"
                 onClick={() => setPaymentMethod(value)}
                 className={clsx(
-                  'rounded-xl border-2 py-3 text-sm font-medium transition-colors',
+                  'relative rounded-xl border-2 py-3 text-sm font-medium transition-colors',
                   paymentMethod === value
                     ? 'border-primary bg-primary/5 text-primary'
                     : 'border-gray-200 text-gray-600 hover:border-gray-300'
                 )}
               >
+                {value === 'TRANSFER' && (
+                  <span className="absolute left-1.5 top-1 rounded bg-[#0064FF] px-1 py-px text-[9px] font-bold leading-tight text-white">
+                    toss
+                  </span>
+                )}
                 {t(labelKey)}
               </button>
             ))}
