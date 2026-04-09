@@ -229,18 +229,21 @@ export default function FullscreenMenu({
                 )}
               </li>
             ))}
-            {/* Utility Menu in Mobile */}
-            <li className="mt-4 pt-4 border-t border-gray-100">
-              <Link
-                href="/orders"
-                className={`${styles.navLink} text-base! text-charcoal-muted!`}
-                onClick={onClose}
-              >
-                {t('orderStatus')}
-              </Link>
-            </li>
           </ul>
         </nav>
+
+        <div className="mt-6 border-t border-gray-100 pt-5">
+          <div className="flex flex-col items-center gap-3">
+            <Link
+              href="/orders"
+              className="text-sm font-medium text-charcoal-muted transition-colors hover:text-charcoal"
+              onClick={onClose}
+            >
+              {t('orderStatus')}
+            </Link>
+            <AuthButtons layout="stacked" variant="ghost" size="sm" className="w-full max-w-xs" />
+          </div>
+        </div>
 
         {/* 푸터 - 가입 버튼 */}
         <footer className={styles.footer}>
@@ -259,7 +262,6 @@ export default function FullscreenMenu({
               {tFooter('termsOfService')}
             </Link>
           </div>
-          <AuthButtons layout="stacked" />
           <Button
             href={EXTERNAL_LINKS.JOIN_MEMBER}
             variant="accent"

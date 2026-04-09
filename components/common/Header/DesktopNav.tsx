@@ -4,7 +4,6 @@ import dynamic from 'next/dynamic';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import Button from '@/components/ui/Button';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher';
 
 import type { NavigationItem } from '@/types';
@@ -30,6 +29,11 @@ export default function DesktopNav({
 }: DesktopNavProps) {
   const t = useTranslations('nav');
   const tSearch = useTranslations('globalSearch');
+  const isInverse = textColor === 'text-white';
+  const utilityLinkClassName = clsx(
+    'inline-flex items-center text-sm font-medium whitespace-nowrap transition-colors duration-200',
+    isInverse ? 'text-white/72 hover:text-white' : 'text-charcoal-muted hover:text-charcoal'
+  );
 
   return (
     <>
@@ -62,18 +66,12 @@ export default function DesktopNav({
           </li>
         ))}
       </ul>
-      <div className="hidden lg:flex items-center gap-1.5">
+      <div className="hidden lg:flex items-center gap-4">
         {/* 검색 버튼 */}
         <button
           type="button"
           onClick={onSearchClick}
-          className={clsx(
-            'flex items-center gap-1.5 text-sm font-medium rounded-full px-3 py-1.5',
-            'border transition-colors duration-200',
-            textColor === 'text-white'
-              ? 'border-white/30 bg-white/10 text-white/90 hover:bg-white/20 hover:border-white/50'
-              : 'border-gray-200 bg-gray-50 text-charcoal-muted hover:border-gray-300 hover:bg-gray-100'
-          )}
+          className={clsx(utilityLinkClassName, 'gap-1.5 rounded-md px-2 py-2')}
           aria-label={tSearch('dialogLabel')}
           title={tSearch('triggerTooltip')}
         >
@@ -96,26 +94,13 @@ export default function DesktopNav({
         </button>
 
         {/* Utility Menu (Order Status) */}
-        <Link
-          href="/orders"
-          className={clsx(
-            'flex items-center text-sm font-medium rounded-full px-3 py-1.5 whitespace-nowrap',
-            'border transition-colors duration-200',
-            textColor === 'text-white'
-              ? 'border-white/30 bg-white/10 text-white/90 hover:bg-white/20 hover:border-white/50'
-              : 'border-gray-200 bg-gray-50 text-charcoal-muted hover:border-gray-300 hover:bg-gray-100'
-          )}
-        >
+        <Link href="/orders" className={clsx(utilityLinkClassName, 'rounded-md px-2 py-2')}>
           {t('orderStatus')}
         </Link>
 
-        <Button href="/artworks" variant="accent" size="xs">
-          {t('buyArt')}
-        </Button>
+        <AuthButtons size="xs" variant={isInverse ? 'ghost-white' : 'ghost'} />
 
-        <AuthButtons size="xs" variant={textColor === 'text-white' ? 'white' : 'white'} />
-
-        <LanguageSwitcher className={textColor} compact />
+        <LanguageSwitcher className={isInverse ? 'text-white/72' : 'text-charcoal-muted'} compact />
       </div>
     </>
   );

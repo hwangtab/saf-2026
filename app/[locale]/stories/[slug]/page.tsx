@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { Fragment } from 'react';
 import { getLocale, getTranslations } from 'next-intl/server';
 import {
   getSupabaseStories,
@@ -115,11 +116,18 @@ export default async function StoryDetailPage({ params }: Props) {
   const title = isEn && story.title_en ? story.title_en : story.title;
   const excerpt = isEn && story.excerpt_en ? story.excerpt_en : story.excerpt;
   const body = isEn && story.body_en ? story.body_en : story.body;
+  const primaryArtistTag =
+    story.category === 'artist-story'
+      ? story.tags?.find((tag) => tag.trim().length > 0)?.trim()
+      : null;
   const categoryLabel = isEn
     ? CATEGORY_LABELS_EN[story.category]
     : CATEGORY_LABELS_KO[story.category];
   const path = `/stories/${story.slug}`;
   const pageUrl = buildLocaleUrl(path, locale);
+  const artistPageHref = primaryArtistTag
+    ? `/artworks/artist/${encodeURIComponent(primaryArtistTag)}`
+    : null;
 
   const blogPostingSchema = generateBlogPostingSchema({
     title,
@@ -148,13 +156,34 @@ export default async function StoryDetailPage({ params }: Props) {
 
   // Related artworks
   let relatedArtworks: Artwork[] = [];
-  if (story.category === 'artist-story' && story.tags?.[0]) {
-    relatedArtworks = (await getSupabaseArtworksByArtist(story.tags[0])).slice(0, 3);
+  if (primaryArtistTag) {
+    relatedArtworks = (await getSupabaseArtworksByArtist(primaryArtistTag)).slice(0, 3);
   }
-  if (relatedArtworks.length === 0) {
+  if (relatedArtworks.length === 0 && story.category !== 'artist-story') {
     const allArtworks = await getSupabaseArtworks();
     relatedArtworks = allArtworks.filter((a) => !a.sold).slice(0, 3);
   }
+
+  const footerLinks = [
+    artistPageHref
+      ? {
+          href: artistPageHref,
+          label: isEn ? `View ${primaryArtistTag}'s Artworks` : `${primaryArtistTag}의 작품 보기`,
+        }
+      : null,
+    {
+      href: `/stories/category/${story.category}`,
+      label: isEn ? 'Related Magazine' : '관련 매거진',
+    },
+    {
+      href: '/stories',
+      label: isEn ? 'Back to Magazine' : '매거진 목록으로',
+    },
+    {
+      href: '/artworks',
+      label: isEn ? 'Browse Artworks' : '작품 둘러보기',
+    },
+  ].filter((link): link is { href: string; label: string } => Boolean(link));
 
   return (
     <>
@@ -328,7 +357,7 @@ export default async function StoryDetailPage({ params }: Props) {
         </Section>
       )}
 
-      {/* 내부 링크: 매거진 카테고리 + 작품 갤러리 교차 링크 */}
+      {/* 내부 링크: 공통 자동 footer */}
       <Section
         variant="white"
         prevVariant={
@@ -342,27 +371,18 @@ export default async function StoryDetailPage({ params }: Props) {
         }
         padding="sm"
       >
-        <div className="max-w-3xl mx-auto flex flex-wrap items-center gap-3">
-          <Link
-            href="/stories"
-            className="inline-flex items-center gap-1 text-sm font-medium text-charcoal-muted hover:text-primary transition-colors"
-          >
-            ← {isEn ? 'Back to Magazine' : '매거진 목록으로'}
-          </Link>
-          <span className="text-gray-300">|</span>
-          <Link
-            href={`/stories/category/${story.category}`}
-            className="text-sm font-medium text-charcoal-muted hover:text-primary transition-colors"
-          >
-            {isEn ? CATEGORY_LABELS_EN[story.category] : CATEGORY_LABELS_KO[story.category]}
-          </Link>
-          <span className="text-gray-300">|</span>
-          <Link
-            href="/artworks"
-            className="text-sm font-medium text-charcoal-muted hover:text-primary transition-colors"
-          >
-            {isEn ? 'Browse Artworks' : '작품 둘러보기'}
-          </Link>
+        <div className="max-w-3xl mx-auto flex flex-wrap items-center gap-x-3 gap-y-2">
+          {footerLinks.map((link, index) => (
+            <Fragment key={link.href}>
+              {index > 0 && <span className="text-gray-300">|</span>}
+              <Link
+                href={link.href}
+                className="text-sm font-medium text-charcoal-muted hover:text-primary transition-colors"
+              >
+                {link.label}
+              </Link>
+            </Fragment>
+          ))}
         </div>
       </Section>
     </>

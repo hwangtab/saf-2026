@@ -1,3 +1,17 @@
+# 매거진 연관 링크/태그 정합성 개선 체크리스트
+
+- [x] 스토리 관리자 UI에 `tags` 조회/편집 필드 추가
+- [x] 스토리 생성/수정 액션에 `tags` 저장 로직 추가
+- [x] 스토리 상세 공통 footer/CTA 렌더링 추가
+- [x] 태그 누락 `artist-story` 7건 백필
+- [x] 본문 수동 footer 정리
+- [x] 관련 매거진/작품 연결 동작 검증
+- [x] `npm run lint` 통과
+- [x] `npm run type-check` 통과
+- [x] `walkthrough.md` 업데이트
+
+---
+
 # 작품 이미지 AI 업스케일 체크리스트
 
 - [x] Supabase 기준 저해상도 대상 재집계
