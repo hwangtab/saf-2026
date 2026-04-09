@@ -437,6 +437,35 @@
 - `npm run lint` 통과
 - `npm run type-check` 통과
 
+## 공개 헤더 정보구조 정리
+
+### 변경 파일
+
+- `/Users/hwang-gyeongha/saf/components/common/Header/DesktopNav.tsx`
+  - `/artworks`로 연결되던 `작품 구매` CTA 제거
+  - `검색`, `주문/배송 조회`를 버튼형에서 저강도 유틸 링크 스타일로 조정
+  - 관리자/마이페이지 진입 버튼을 `ghost` 계열로 낮춰 공개 헤더에서 과하게 튀지 않도록 조정
+  - 언어 전환의 대비를 낮춰 메인 탐색보다 뒤로 물리도록 조정
+- `/Users/hwang-gyeongha/saf/components/common/Header/FullscreenMenu.tsx`
+  - 모바일에서 메인 탐색과 보조 유틸 영역을 분리
+  - `주문/배송 조회`, 관리자/마이페이지 진입을 별도 보조 섹션으로 이동
+  - 하단 CTA는 `조합원 가입`만 유지
+- `/Users/hwang-gyeongha/saf/implementation_plan_header_cleanup.md`
+  - 이번 헤더 정리 작업 계획서 추가
+
+### 기대 효과
+
+- `전시 작품`과 `작품 구매`의 중복 진입이 사라져 헤더 의미가 더 명확해짐
+- 공개 헤더가 탐색 중심 구조로 돌아와 시선 분산이 줄어듦
+- 관리자/마이페이지, 주문조회, 언어 전환이 보조 기능으로 읽혀 전체 인상이 더 차분해짐
+- 모바일에서도 메인 탐색과 유틸 항목의 역할 구분이 더 분명해짐
+
+### 검증 결과
+
+- `npm run test -- --runInBand __tests__/components/Header.test.tsx` 통과
+- `npm run type-check` 통과
+- 헤더 테스트 실행 중 Next dynamic load 경고(`act(...)`)가 콘솔에 출력되지만 테스트는 성공
+
 ---
 
 ## Cafe24 자동 동기화 2단계 구현
