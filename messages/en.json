@@ -698,7 +698,7 @@
     "orderIdLabel": "Order",
     "paymentMethodSelect": "Payment Method",
     "methodCard": "Credit/Debit Card",
-    "methodTransfer": "Quick Transfer (Toss)",
+    "methodTransfer": "Quick Transfer",
     "methodVirtualAccount": "Bank Transfer"
   },
   "orderLookup": {
