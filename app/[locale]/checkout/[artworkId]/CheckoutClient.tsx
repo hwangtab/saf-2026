@@ -234,9 +234,9 @@ export default function CheckoutClient({
                   <ExportedImage
                     src={tossLogo}
                     alt="toss"
-                    height={16}
-                    width={54}
-                    className="h-4 w-auto object-contain"
+                    height={24}
+                    width={80}
+                    className="h-6 w-auto object-contain"
                     unoptimized
                   />
                 )}
