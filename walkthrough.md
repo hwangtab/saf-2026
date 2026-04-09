@@ -1,3 +1,29 @@
+# 스토리 제목 하이픈 정리
+
+## 처리 결과
+
+- Supabase `public.stories`에서 제목의 대시류 문자를 조회한 결과, 변경 대상은 총 27건이었다.
+  - `title` 4건
+  - `title_en` 23건
+- 실제 주요 치환 대상은 ASCII `-`보다 `—`(em dash)였다.
+- `title`, `title_en`의 대시류 문자 `-`, `–`, `—`, `‑`를 모두 `:`로 치환했다.
+- 대표 변경 예시:
+  - `meet-artist-kim-dongseok`
+    - `씨앗은 먹지 않는다 — 김동석의 우공이산`
+    - → `씨앗은 먹지 않는다 : 김동석의 우공이산`
+  - `artwork-size-guide`
+    - `What Size Fits Your Wall? — A Room:by:Room Artwork Size Guide`
+    - → `What Size Fits Your Wall? : A Room:by:Room Artwork Size Guide`
+  - `oh-yun-40th-anniversary`
+    - `Carving an Era with a Blade — Oh Yun 40th Anniversary Special Exhibition`
+    - → `Carving an Era with a Blade : Oh Yun 40th Anniversary Special Exhibition`
+
+## 검증
+
+- 동일 조건 재조회 시 `title`, `title_en`에 대시류 문자가 남아 있지 않음을 확인
+- 재현용 SQL 마이그레이션 추가:
+  - `/Users/hwang-gyeongha/saf/supabase/migrations/20260409170000_normalize_story_title_dash_characters.sql`
+
 # 매거진 공통 하단 링크 단순화
 
 ## 변경 파일

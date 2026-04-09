@@ -1,3 +1,34 @@
+# 스토리 제목 하이픈 정리 실행 계획 (2026-04-09)
+
+## 1) 목적
+
+- Partial Sans가 대시류 문자를 제대로 처리하지 못하는 문제를 피하기 위해, 스토리 제목의 대시류 문자를 콜론으로 정리한다.
+- 대상은 Supabase `stories` 테이블의 공개/비공개 전체 스토리 제목이다.
+
+## 2) 구현 범위
+
+- Supabase `stories.title`, `stories.title_en`에서 대시류 문자를 `:`로 일괄 변경
+- 치환 대상:
+  - `-`
+  - `–`
+  - `—`
+  - `‑`
+- 코드 수정은 하지 않고 데이터만 정리
+
+## 3) 구현 절차
+
+1. Supabase에서 대시류 문자가 포함된 스토리 제목 목록 조회
+2. 실제 포함 문자가 ASCII `-`가 아니라 `—` 중심임을 확인
+3. `stories.title`, `stories.title_en` 일괄 업데이트
+4. 변경 후 목록 재조회로 결과 검증
+5. 재현용 SQL을 `supabase/migrations`에 기록
+6. `walkthrough.md`에 반영 결과 기록
+
+## 4) 완료 기준
+
+- 대시류 문자가 제목 구분자로 쓰인 스토리 제목이 모두 콜론으로 바뀐다.
+- 변경 전/후 목록을 확인한다.
+
 # 매거진 공통 하단 링크 단순화 실행 계획 (2026-04-09)
 
 ## 1) 목적
@@ -683,3 +714,30 @@
 - 주문 취소 로그가 `입금대기 주문 취소: 주문번호` 형태로 표시됨
 - 대상 열이 `주문` + 실제 주문번호로 표시되고, 상세 페이지로 이동 가능해짐
 - 주문 관련 다른 로그도 동일한 방식으로 일관되게 보이게 됨
+
+## 2026-04-09 admin feedback 해결 버튼 오류 수정 계획
+
+### 문제 요약
+
+- 관리자 피드백 페이지에서 `해결` 버튼 클릭 시 브라우저 콘솔에 `Failed to execute 'appendChild' on 'Node': Invalid or unexpected token` 오류가 발생합니다.
+- 같은 시점에 React minified error `#418`도 함께 발생합니다.
+- 현재 코드 경로상 상태 변경 성공 후 `router.refresh()`가 실행되고, 이 과정에서 루트 레이아웃의 JSON-LD `<script>`가 클라이언트에서 다시 주입됩니다.
+- `components/common/JsonLdScript.tsx`는 `escapeJsonLdForScript(JSON.stringify(data))`를 사용하지만, 실제 이스케이프 함수는 `<` 문자만 처리하고 있어 스크립트 본문 내 특정 유니코드 구분 문자(U+2028/U+2029 등)나 기타 파싱 민감 문자를 안전하게 막지 못할 가능성이 있습니다.
+
+### 가설
+
+1. `router.refresh()` 이후 React가 JSON-LD 스크립트 노드를 다시 생성하면서 스크립트 문자열 파싱 오류가 발생한다.
+2. 현재 JSON-LD 이스케이프가 불충분해 브라우저가 script text를 유효한 JavaScript 문자열/토큰으로 해석하지 못한다.
+3. 이 오류가 연쇄적으로 hydration/update mismatch를 유발해 React error `#418`로 이어진다.
+
+### 실행 계획
+
+1. `lib/schemas/utils.ts`의 `escapeJsonLdForScript`를 보강해 JSON-LD 스크립트 삽입 시 문제가 될 수 있는 문자들을 안전하게 이스케이프합니다.
+2. 필요 시 `components/common/JsonLdScript.tsx` 또는 관련 호출부를 함께 점검해 동일 경로에서 재발하지 않도록 정리합니다.
+3. `npm run lint` 또는 대상 파일 중심 검증을 실행해 타입/문법 문제가 없는지 확인합니다.
+4. 수정 결과와 검증 내용을 `walkthrough.md` 없이 응답에서 간단히 요약합니다.
+
+### 예상 변경 파일
+
+- `lib/schemas/utils.ts`
+- 필요 시 `components/common/JsonLdScript.tsx`
