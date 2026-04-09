@@ -367,6 +367,12 @@ export default async function AdminDashboardPage() {
                               className="text-sm font-medium text-gray-900 hover:text-indigo-600 hover:underline truncate"
                             >
                               {order.artwork_title || order.order_no}
+                              {order.artist_name && (
+                                <span className="font-normal text-gray-400">
+                                  {' '}
+                                  · {order.artist_name}
+                                </span>
+                              )}
                             </Link>
                             <span
                               className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
@@ -385,7 +391,6 @@ export default async function AdminDashboardPage() {
                             </span>
                           </div>
                           <p className="text-xs text-gray-500 mt-0.5">
-                            {order.artist_name ? `${order.artist_name} · ` : ''}
                             {order.buyer_name || '—'} · ₩
                             {numberFormatter.format(order.total_amount)}
                           </p>
