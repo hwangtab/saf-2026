@@ -20,6 +20,7 @@ export type OrderListItem = {
   artwork_id: string | null;
   artwork_title: string | null;
   artwork_image: string | null;
+  artist_name: string | null;
   payment_method: string | null;
 };
 
@@ -58,7 +59,7 @@ export async function getOrders(filters: OrderFilters = {}): Promise<OrderListIt
   let query = supabase
     .from('orders')
     .select(
-      'id, order_no, status, total_amount, buyer_name, buyer_phone, created_at, paid_at, artwork_id, artworks(title, images)'
+      'id, order_no, status, total_amount, buyer_name, buyer_phone, created_at, paid_at, artwork_id, artworks(title, images, artists(name_ko))'
     )
     .order('created_at', { ascending: false });
 
@@ -72,6 +73,8 @@ export async function getOrders(filters: OrderFilters = {}): Promise<OrderListIt
   return (data || []).map((row: any) => {
     const artwork = Array.isArray(row.artworks) ? row.artworks[0] : row.artworks;
     const images = Array.isArray(artwork?.images) ? artwork.images : [];
+    const artistRow = artwork?.artists;
+    const artistName = Array.isArray(artistRow) ? artistRow[0]?.name_ko : artistRow?.name_ko;
     return {
       id: row.id,
       order_no: row.order_no,
@@ -84,6 +87,7 @@ export async function getOrders(filters: OrderFilters = {}): Promise<OrderListIt
       artwork_id: row.artwork_id,
       artwork_title: artwork?.title ?? null,
       artwork_image: images[0] ?? null,
+      artist_name: artistName ?? null,
       payment_method: null,
     };
   });
@@ -96,7 +100,7 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
   const { data: order, error } = await supabase
     .from('orders')
     .select(
-      'id, order_no, status, total_amount, item_amount, shipping_amount, buyer_name, buyer_phone, shipping_name, shipping_phone, shipping_address, shipping_address_detail, shipping_memo, shipping_carrier, tracking_number, created_at, paid_at, cancelled_at, refunded_at, artwork_id, artworks(title, images)'
+      'id, order_no, status, total_amount, item_amount, shipping_amount, buyer_name, buyer_phone, shipping_name, shipping_phone, shipping_address, shipping_address_detail, shipping_memo, shipping_carrier, tracking_number, created_at, paid_at, cancelled_at, refunded_at, artwork_id, artworks(title, images, artists(name_ko))'
     )
     .eq('id', orderId)
     .single();
@@ -124,6 +128,8 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
     ? (order as any).artworks[0]
     : (order as any).artworks;
   const images = Array.isArray(artwork?.images) ? artwork.images : [];
+  const artistRow = artwork?.artists;
+  const artistName = Array.isArray(artistRow) ? artistRow[0]?.name_ko : artistRow?.name_ko;
 
   const confirmResponse = (payment?.confirm_response as Record<string, unknown> | null) ?? null;
   const virtualAccount =
@@ -150,6 +156,7 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
     artwork_id: order.artwork_id ?? null,
     artwork_title: artwork?.title ?? null,
     artwork_image: images[0] ?? null,
+    artist_name: artistName ?? null,
     payment_key: payment?.payment_key ?? null,
     payment_status: payment?.status ?? null,
     payment_method: payment?.method ?? null,

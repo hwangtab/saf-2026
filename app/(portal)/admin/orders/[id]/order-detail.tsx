@@ -519,6 +519,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
                 )
               }
             />
+            <InfoRow label="작가" value={order.artist_name ?? '—'} />
             {order.sale_id && (
               <InfoRow
                 label="판매 기록"

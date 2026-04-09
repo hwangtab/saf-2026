@@ -106,6 +106,8 @@ export type DashboardOverviewStats = {
     total_amount: number;
     status: string;
     created_at: string;
+    artwork_title: string | null;
+    artist_name: string | null;
   }>;
 };
 
@@ -287,7 +289,9 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
       .eq('status', 'pending_payment'),
     supabase
       .from('orders')
-      .select('id, order_no, buyer_name, total_amount, status, created_at')
+      .select(
+        'id, order_no, buyer_name, total_amount, status, created_at, artworks(title, artists(name_ko))'
+      )
       .order('created_at', { ascending: false })
       .limit(5),
   ]);
@@ -447,13 +451,22 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
     siteAnalytics,
     feedback,
     pendingOrderCount: pendingOrderCountResult.count ?? 0,
-    recentOrders: (recentOrdersResult.data ?? []).map((row) => ({
-      id: row.id as string,
-      order_no: row.order_no as string,
-      buyer_name: (row.buyer_name as string | null) ?? null,
-      total_amount: row.total_amount as number,
-      status: row.status as string,
-      created_at: row.created_at as string,
-    })),
+    recentOrders: (recentOrdersResult.data ?? []).map((row) => {
+      const artwork = Array.isArray((row as any).artworks)
+        ? (row as any).artworks[0]
+        : (row as any).artworks;
+      const artistRow = artwork?.artists;
+      const artistName = Array.isArray(artistRow) ? artistRow[0]?.name_ko : artistRow?.name_ko;
+      return {
+        id: row.id as string,
+        order_no: row.order_no as string,
+        buyer_name: (row.buyer_name as string | null) ?? null,
+        total_amount: row.total_amount as number,
+        status: row.status as string,
+        created_at: row.created_at as string,
+        artwork_title: (artwork?.title as string | null) ?? null,
+        artist_name: (artistName as string | null) ?? null,
+      };
+    }),
   };
 }
