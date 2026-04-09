@@ -15,6 +15,50 @@ const ALLOWED_TYPES = ['feat', 'fix', 'perf'];
 const DELIMITER = '---COMMIT_DELIM---';
 const FIELD_SEP = '---FIELD_SEP---';
 
+const TYPE_KO = {
+  feat: '새 기능 추가',
+  fix: '버그 수정',
+  perf: '성능 개선',
+  refactor: '구조 개선',
+};
+
+const SCOPE_KO = {
+  admin: '관리자',
+  analytics: '분석',
+  archive: '아카이브',
+  artworks: '출품작',
+  auth: '로그인',
+  cache: '캐시',
+  cafe24: '카페24',
+  changelog: '개발 이력',
+  checkout: '결제',
+  csp: '보안 정책',
+  dashboard: '대시보드',
+  feedback: '피드백',
+  footer: '하단',
+  gallery: '갤러리',
+  header: '헤더',
+  hero: '히어로',
+  i18n: '다국어',
+  layout: '레이아웃',
+  logs: '활동 로그',
+  magazine: '매거진',
+  mobile: '모바일',
+  nav: '내비게이션',
+  onboarding: '온보딩',
+  orders: '주문',
+  payments: '결제',
+  privacy: '개인정보',
+  revenue: '매출',
+  search: '검색',
+  seo: 'SEO',
+  stories: '스토리',
+  terms: '약관',
+  ui: 'UI',
+  ux: 'UX',
+  webhook: '웹훅',
+};
+
 // git log 실행
 function getGitLog() {
   try {
@@ -26,10 +70,10 @@ function getGitLog() {
       '%b', // body
     ].join(FIELD_SEP);
 
-    const raw = execSync(
-      `git log --no-merges --format="${DELIMITER}${format}"`,
-      { encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 }
-    );
+    const raw = execSync(`git log --no-merges --format="${DELIMITER}${format}"`, {
+      encoding: 'utf-8',
+      maxBuffer: 10 * 1024 * 1024,
+    });
 
     return raw;
   } catch {
@@ -40,7 +84,9 @@ function getGitLog() {
 
 // 시맨틱 커밋 접두어 파싱
 function parseSubject(subject) {
-  const match = subject.match(/^(feat|fix|perf|refactor|style|copy|docs|chore|ci|test)(\((.+?)\))?:\s*(.+)$/);
+  const match = subject.match(
+    /^(feat|fix|perf|refactor|style|copy|docs|chore|ci|test)(\((.+?)\))?:\s*(.+)$/
+  );
   if (!match) return null;
 
   const [, type, , scope, text] = match;
@@ -66,6 +112,23 @@ function cleanBody(body) {
 
   const cleaned = lines.join('\n').trim();
   return cleaned || null;
+}
+
+function containsKorean(text) {
+  return /[가-힣]/.test(text || '');
+}
+
+function toScopeLabel(scope) {
+  if (!scope) return null;
+  return SCOPE_KO[scope] || (containsKorean(scope) ? scope : null);
+}
+
+function createFallbackSummary({ type, scope, subject }) {
+  if (containsKorean(subject)) return subject;
+
+  const actionLabel = TYPE_KO[type] || '변경 사항 반영';
+  const scopeLabel = toScopeLabel(scope);
+  return scopeLabel ? `${scopeLabel} ${actionLabel}` : actionLabel;
 }
 
 // 한국어 요약 매핑 로드
@@ -104,12 +167,13 @@ function generateChangelog() {
       const trimmedHash = hash.trim();
       const rawBody = bodyParts.join(FIELD_SEP);
       const bodySummary = extractSummary(rawBody);
+      const fallbackSummary = createFallbackSummary(parsed);
       return {
         hash: trimmedHash,
         type: parsed.type,
         scope: parsed.scope,
         subject: parsed.subject,
-        summary: bodySummary || koSummaries[trimmedHash] || null,
+        summary: bodySummary || koSummaries[trimmedHash] || fallbackSummary,
         body: cleanBody(rawBody),
         date: dateISO.trim().slice(0, 10), // YYYY-MM-DD
         author: author.trim(),
@@ -117,11 +181,10 @@ function generateChangelog() {
     })
     .filter(Boolean);
 
-  // 한국어 요약 누락 경고
-  const missing = commits.filter((c) => !c.summary);
+  const missing = commits.filter((c) => !koSummaries[c.hash] && !containsKorean(c.subject));
   if (missing.length > 0) {
     console.warn(
-      `\nWarning: ${missing.length}개 커밋에 한국어 요약이 없습니다.`
+      `\nWarning: ${missing.length}개 커밋에 수동 한국어 요약 매핑이 없습니다. (fallback 적용됨)`
     );
     console.warn('content/changelog-ko.json에 다음 해시를 추가해 주세요:');
     for (const c of missing) {
