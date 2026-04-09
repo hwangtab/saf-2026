@@ -30,9 +30,12 @@ export default function DesktopNav({
   const t = useTranslations('nav');
   const tSearch = useTranslations('globalSearch');
   const isInverse = textColor === 'text-white';
-  const utilityLinkClassName = clsx(
-    'inline-flex items-center text-sm font-medium whitespace-nowrap transition-colors duration-200',
-    isInverse ? 'text-white/72 hover:text-white' : 'text-charcoal-muted hover:text-charcoal'
+  const utilityButtonClassName = clsx(
+    'flex items-center gap-1.5 text-sm font-medium rounded-full px-3 py-1.5',
+    'border transition-colors duration-200',
+    isInverse
+      ? 'border-white/30 bg-white/10 text-white/90 hover:bg-white/20 hover:border-white/50'
+      : 'border-gray-200 bg-gray-50 text-charcoal-muted hover:border-gray-300 hover:bg-gray-100'
   );
 
   return (
@@ -66,12 +69,12 @@ export default function DesktopNav({
           </li>
         ))}
       </ul>
-      <div className="hidden lg:flex items-center gap-4">
+      <div className="hidden lg:flex items-center gap-1.5">
         {/* 검색 버튼 */}
         <button
           type="button"
           onClick={onSearchClick}
-          className={clsx(utilityLinkClassName, 'gap-1.5 rounded-md px-2 py-2')}
+          className={utilityButtonClassName}
           aria-label={tSearch('dialogLabel')}
           title={tSearch('triggerTooltip')}
         >
@@ -94,13 +97,13 @@ export default function DesktopNav({
         </button>
 
         {/* Utility Menu (Order Status) */}
-        <Link href="/orders" className={clsx(utilityLinkClassName, 'rounded-md px-2 py-2')}>
+        <Link href="/orders" className={utilityButtonClassName}>
           {t('orderStatus')}
         </Link>
 
-        <AuthButtons size="xs" variant={isInverse ? 'ghost-white' : 'ghost'} />
+        <AuthButtons size="xs" variant="white" />
 
-        <LanguageSwitcher className={isInverse ? 'text-white/72' : 'text-charcoal-muted'} compact />
+        <LanguageSwitcher className={textColor} compact />
       </div>
     </>
   );

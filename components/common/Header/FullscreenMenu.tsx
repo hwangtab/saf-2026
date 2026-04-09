@@ -236,12 +236,12 @@ export default function FullscreenMenu({
           <div className="flex flex-col items-center gap-3">
             <Link
               href="/orders"
-              className="text-sm font-medium text-charcoal-muted transition-colors hover:text-charcoal"
+              className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-medium text-charcoal-muted transition-colors hover:border-gray-300 hover:bg-gray-100"
               onClick={onClose}
             >
               {t('orderStatus')}
             </Link>
-            <AuthButtons layout="stacked" variant="ghost" size="sm" className="w-full max-w-xs" />
+            <AuthButtons layout="stacked" variant="white" size="sm" className="w-full max-w-xs" />
           </div>
         </div>
 
