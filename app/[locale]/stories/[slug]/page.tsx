@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { Fragment } from 'react';
 import { getLocale, getTranslations } from 'next-intl/server';
 import {
   getSupabaseStories,
@@ -125,9 +124,6 @@ export default async function StoryDetailPage({ params }: Props) {
     : CATEGORY_LABELS_KO[story.category];
   const path = `/stories/${story.slug}`;
   const pageUrl = buildLocaleUrl(path, locale);
-  const artistPageHref = primaryArtistTag
-    ? `/artworks/artist/${encodeURIComponent(primaryArtistTag)}`
-    : null;
 
   const blogPostingSchema = generateBlogPostingSchema({
     title,
@@ -159,31 +155,29 @@ export default async function StoryDetailPage({ params }: Props) {
   if (primaryArtistTag) {
     relatedArtworks = (await getSupabaseArtworksByArtist(primaryArtistTag)).slice(0, 3);
   }
-  if (relatedArtworks.length === 0 && story.category !== 'artist-story') {
+  if (relatedArtworks.length === 0) {
     const allArtworks = await getSupabaseArtworks();
     relatedArtworks = allArtworks.filter((a) => !a.sold).slice(0, 3);
   }
 
   const footerLinks = [
-    artistPageHref
-      ? {
-          href: artistPageHref,
-          label: isEn ? `View ${primaryArtistTag}'s Artworks` : `${primaryArtistTag}의 작품 보기`,
-        }
-      : null,
+    {
+      href: primaryArtistTag
+        ? `/artworks/artist/${encodeURIComponent(primaryArtistTag)}`
+        : '/artworks',
+      label: primaryArtistTag
+        ? isEn
+          ? `View ${primaryArtistTag}'s Artworks`
+          : `${primaryArtistTag}의 작품 보기`
+        : isEn
+          ? 'Browse Artworks'
+          : '작품 보기',
+    },
     {
       href: `/stories/category/${story.category}`,
       label: isEn ? 'Related Magazine' : '관련 매거진',
     },
-    {
-      href: '/stories',
-      label: isEn ? 'Back to Magazine' : '매거진 목록으로',
-    },
-    {
-      href: '/artworks',
-      label: isEn ? 'Browse Artworks' : '작품 둘러보기',
-    },
-  ].filter((link): link is { href: string; label: string } => Boolean(link));
+  ];
 
   return (
     <>
@@ -220,6 +214,20 @@ export default async function StoryDetailPage({ params }: Props) {
             style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}
           >
             <MarkdownRenderer content={body} />
+          </div>
+
+          <div
+            className="mt-10 text-lg font-semibold tracking-tight text-primary motion-safe:opacity-0 motion-safe:animate-fade-in-up"
+            style={{ animationDelay: '0.25s', animationFillMode: 'forwards' }}
+          >
+            {footerLinks.map((link, index) => (
+              <span key={link.href}>
+                {index > 0 ? ' · ' : ''}
+                <Link href={link.href} className="hover:text-primary-strong transition-colors">
+                  {link.label}
+                </Link>
+              </span>
+            ))}
           </div>
 
           {/* Author & Share */}
@@ -356,35 +364,6 @@ export default async function StoryDetailPage({ params }: Props) {
           </div>
         </Section>
       )}
-
-      {/* 내부 링크: 공통 자동 footer */}
-      <Section
-        variant="white"
-        prevVariant={
-          relatedArtworks.length > 0
-            ? relatedStories.length > 0
-              ? 'white'
-              : 'canvas-soft'
-            : relatedStories.length > 0
-              ? 'canvas-soft'
-              : undefined
-        }
-        padding="sm"
-      >
-        <div className="max-w-3xl mx-auto flex flex-wrap items-center gap-x-3 gap-y-2">
-          {footerLinks.map((link, index) => (
-            <Fragment key={link.href}>
-              {index > 0 && <span className="text-gray-300">|</span>}
-              <Link
-                href={link.href}
-                className="text-sm font-medium text-charcoal-muted hover:text-primary transition-colors"
-              >
-                {link.label}
-              </Link>
-            </Fragment>
-          ))}
-        </div>
-      </Section>
     </>
   );
 }

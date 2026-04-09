@@ -9,7 +9,7 @@ export default async function StoriesAdminPage() {
   const { data: stories } = await supabase
     .from('stories')
     .select(
-      'id, slug, title, title_en, category, excerpt, excerpt_en, body, body_en, thumbnail, author, published_at, is_published, display_order, tags'
+      'id, slug, title, title_en, category, excerpt, excerpt_en, body, body_en, thumbnail, author, published_at, is_published, display_order'
     )
     .order('published_at', { ascending: false });
 

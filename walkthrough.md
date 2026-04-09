@@ -1,3 +1,30 @@
+# 매거진 공통 하단 링크 단순화
+
+## 변경 파일
+
+- `/Users/hwang-gyeongha/saf/app/[locale]/stories/[slug]/page.tsx`
+  - 매거진 모든 게시물 본문 아래에 단순 인라인 링크 블록 추가
+  - 작가 글은 `{작가명}의 작품 보기`, 그 외 글은 `작품 보기`로 분기
+  - `관련 매거진` 링크를 같은 카테고리 페이지로 연결
+  - 이전에 추가했던 별도 footer 섹션 제거
+  - 관련 작품 폴백을 다시 전체 공개 작품 기준으로 복원
+
+- `/Users/hwang-gyeongha/saf/app/(portal)/admin/content/stories/page.tsx`
+- `/Users/hwang-gyeongha/saf/app/(portal)/admin/content/stories/stories-manager.tsx`
+- `/Users/hwang-gyeongha/saf/app/actions/admin-content.ts`
+  - 이번 요구 범위에서 불필요했던 `tags` 운영 UI/저장 변경 제거
+
+- `/Users/hwang-gyeongha/saf/implementation_plan.md`
+- `/Users/hwang-gyeongha/saf/task.md`
+  - 실행 계획과 체크리스트를 단순화된 요구 기준으로 갱신
+
+## 검증 결과
+
+- `npm run lint` 통과
+- `npm run type-check` 통과
+- 로컬 확인용 스크린샷 저장
+  - `/Users/hwang-gyeongha/saf/output/playwright/story-footer-inline-kim-dongseok.png`
+
 # 매거진 연관 링크/태그 정합성 개선
 
 ## 변경 파일
