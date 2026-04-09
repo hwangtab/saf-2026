@@ -1,9 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { getLocale } from 'next-intl/server';
-import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from '@vercel/speed-insights/next';
-import GoogleAnalytics from '@/components/common/GoogleAnalytics';
+import GlobalAnalyticsGate from '@/components/common/GlobalAnalyticsGate';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
 import {
@@ -171,9 +169,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <JsonLdScript data={websiteSchema} />
         <JsonLdScript data={localBusinessSchema} />
 
-        <Analytics />
-        <SpeedInsights />
-        <GoogleAnalytics />
+        <GlobalAnalyticsGate />
       </body>
     </html>
   );
