@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
+import clsx from 'clsx';
 import Button from '@/components/ui/Button';
 import {
   AdminCard,
@@ -12,9 +13,9 @@ import {
   AdminSelect,
 } from '@/app/admin/_components/admin-ui';
 import { useToast } from '@/lib/hooks/useToast';
+import { sanitizeTextForRscPayload } from '@/lib/utils/text-sanitizer';
 import { updateFeedbackStatus } from '@/app/actions/feedback';
 import type { Feedback, FeedbackCategory, FeedbackStatus } from '@/types';
-import clsx from 'clsx';
 
 const CATEGORY_COLORS: Record<FeedbackCategory, string> = {
   bug: 'bg-red-100 text-red-700',
@@ -83,9 +84,10 @@ export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedb
 
   const handleStatusChange = async (newStatus: FeedbackStatus) => {
     if (!selectedId) return;
+    const sanitizedAdminNote = sanitizeTextForRscPayload(adminNote).trim();
     setSaving(true);
     try {
-      const result = await updateFeedbackStatus(selectedId, newStatus, adminNote);
+      const result = await updateFeedbackStatus(selectedId, newStatus, sanitizedAdminNote);
       if (result.error) {
         toast.error(result.error);
       } else {
@@ -95,7 +97,7 @@ export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedb
               ? {
                   ...f,
                   status: newStatus,
-                  admin_note: adminNote.trim() || null,
+                  admin_note: sanitizedAdminNote || null,
                   resolved_at:
                     newStatus === 'resolved' || newStatus === 'closed'
                       ? new Date().toISOString()
@@ -104,6 +106,7 @@ export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedb
               : f
           )
         );
+        setAdminNote(sanitizedAdminNote);
         toast.success(t('statusUpdated'));
       }
     } catch (error) {
@@ -116,17 +119,19 @@ export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedb
 
   const handleSaveNote = async () => {
     if (!selectedId || !selected) return;
+    const sanitizedAdminNote = sanitizeTextForRscPayload(adminNote).trim();
     setSaving(true);
     try {
-      const result = await updateFeedbackStatus(selectedId, selected.status, adminNote);
+      const result = await updateFeedbackStatus(selectedId, selected.status, sanitizedAdminNote);
       if (result.error) {
         toast.error(result.error);
       } else {
         setLocalFeedback((prev) =>
           prev.map((f) =>
-            f.id === selectedId ? { ...f, admin_note: adminNote.trim() || null } : f
+            f.id === selectedId ? { ...f, admin_note: sanitizedAdminNote || null } : f
           )
         );
+        setAdminNote(sanitizedAdminNote);
         toast.success(t('memoSaved'));
       }
     } catch (error) {
