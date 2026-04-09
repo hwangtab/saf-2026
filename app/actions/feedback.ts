@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { requireAuth, requireAdmin } from '@/lib/auth/guards';
-import { createSupabaseServerClient } from '@/lib/auth/server';
+import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/auth/server';
 import { getString } from '@/lib/utils/form-helpers';
 import { getActionErrorMessage } from '@/lib/utils/action-error';
 import {
@@ -13,6 +13,9 @@ import type { FeedbackCategory, FeedbackStatus } from '@/types';
 
 const VALID_CATEGORIES: FeedbackCategory[] = ['bug', 'improvement', 'question', 'other'];
 const VALID_STATUSES: FeedbackStatus[] = ['open', 'reviewing', 'resolved', 'closed'];
+type FeedbackClient =
+  | Awaited<ReturnType<typeof createSupabaseServerClient>>
+  | ReturnType<typeof createSupabaseAdminClient>;
 
 export async function submitFeedback(formData: FormData) {
   const user = await requireAuth();
@@ -52,7 +55,14 @@ export async function submitFeedback(formData: FormData) {
 
 export async function updateFeedbackStatus(id: string, status: FeedbackStatus, adminNote?: string) {
   await requireAdmin();
-  const supabase = await createSupabaseServerClient();
+  let supabase: FeedbackClient;
+
+  try {
+    supabase = createSupabaseAdminClient();
+  } catch (error) {
+    console.error('[feedback] admin client init failed, fallback to server client:', error);
+    supabase = await createSupabaseServerClient();
+  }
 
   if (!VALID_STATUSES.includes(status)) {
     return { error: '올바른 상태값이 아닙니다.' };
