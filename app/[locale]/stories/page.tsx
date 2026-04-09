@@ -183,7 +183,7 @@ export default async function StoriesPage({
       </Section>
 
       {stories.length === 0 ? (
-        <Section variant="canvas-soft" prevVariant="white">
+        <Section variant="canvas-soft" prevVariant="white" className="pb-16 md:pb-24">
           <div className="flex flex-col items-center justify-center py-20">
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
               <svg
@@ -268,7 +268,7 @@ export default async function StoriesPage({
 
           {/* Story Grid */}
           {rest.length > 0 && (
-            <Section variant="white" prevVariant="canvas-soft">
+            <Section variant="white" prevVariant="canvas-soft" className="pb-16 md:pb-24">
               <div className="max-w-6xl mx-auto">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {rest.map((story, i) => {
