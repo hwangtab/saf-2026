@@ -55,6 +55,7 @@
     "all": "전체",
     "selling": "판매중",
     "sold": "판매완료",
+    "reserved": "예약중",
     "categoryAll": "전체 분류"
   },
   "sort": {
@@ -240,6 +241,8 @@
     "recentlySold": "최근 판매된 작품",
     "recentlySoldDesc": "최근 {count}점의 작품이 판매되었습니다",
     "soldNotice": "이 작품은 판매가 완료되었습니다",
+    "reservedNotice": "현재 예약 중인 작품입니다",
+    "reservedExplore": "다른 작품도 둘러보세요",
     "soldExploreOther": "같은 작가의 다른 작품을 살펴보세요",
     "soldExploreAll": "다른 출품작 보기",
     "sameCategoryBrowse": "{category} 작품 더 보기",

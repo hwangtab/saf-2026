@@ -228,6 +228,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 title={displayTitle}
                 artist={displayArtist}
                 sold={artwork.sold}
+                reserved={artwork.reserved}
                 size={artwork.size}
                 category={artwork.category}
               />
@@ -249,6 +250,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 artist={artwork.artist}
                 shopUrl={artwork.shopUrl}
                 sold={artwork.sold}
+                reserved={artwork.reserved}
                 hasActionablePrice={hasActionablePrice}
                 hasOtherWorks={otherWorks.length > 0}
                 displayPrice={localizedPrice}

@@ -13,6 +13,7 @@ export interface SearchResultArtwork {
   price: string;
   image: string;
   sold?: boolean;
+  reserved?: boolean;
   category?: string;
 }
 
@@ -65,6 +66,7 @@ export async function GET(request: Request) {
       price: a.price,
       image: a.images?.[0] ?? '',
       sold: a.sold,
+      reserved: a.reserved,
       category: a.category,
     }));
 

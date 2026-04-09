@@ -181,7 +181,7 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
     let result = artworks;
 
     if (statusFilter === 'selling') {
-      result = result.filter((a) => !a.sold);
+      result = result.filter((a) => !a.sold && !a.reserved);
     } else if (statusFilter === 'sold') {
       result = result.filter((a) => a.sold === true);
     }

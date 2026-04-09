@@ -6,7 +6,7 @@ import { Link } from '@/i18n/navigation';
 import LinkButton from '@/components/ui/LinkButton';
 import TrackClick from '@/components/common/TrackingLink';
 import TrustBadges from '@/components/features/TrustBadges';
-import { Phone, Mail, CheckCircle } from 'lucide-react';
+import { Phone, Mail, CheckCircle, Clock } from 'lucide-react';
 
 const PurchaseGuide = dynamic(() => import('@/components/features/PurchaseGuide'), {
   loading: () => <div className="h-20 rounded-xl shimmer-loading" aria-hidden="true" />,
@@ -18,6 +18,7 @@ interface ArtworkPurchaseCTAProps {
   artist: string;
   shopUrl?: string | null;
   sold?: boolean;
+  reserved?: boolean;
   hasActionablePrice: boolean;
   hasOtherWorks?: boolean;
   displayPrice?: string | null;
@@ -56,6 +57,7 @@ export default function ArtworkPurchaseCTA({
   artist,
   shopUrl,
   sold,
+  reserved,
   hasActionablePrice,
   hasOtherWorks,
   displayPrice,
@@ -70,6 +72,22 @@ export default function ArtworkPurchaseCTA({
     artworkId
   );
   const isTossMode = paymentMode === 'toss' && isDbArtwork;
+
+  // E분기: reserved — 예약 중 안내
+  if (reserved && !sold) {
+    return (
+      <div className="rounded-2xl border border-amber-200 bg-gradient-to-b from-amber-50/50 to-white p-6 shadow-sm">
+        <div className="text-center">
+          <Clock className="w-10 h-10 text-amber-500 mx-auto mb-3" />
+          <p className="text-lg font-bold text-charcoal mb-1">{t('reservedNotice')}</p>
+          <p className="text-sm text-gray-500 mb-4">{t('reservedExplore')}</p>
+          <LinkButton href="/artworks" variant="outline" className="w-full">
+            {t('soldExploreAll')} →
+          </LinkButton>
+        </div>
+      </div>
+    );
+  }
 
   // D분기: sold — 판매 완료 안내
   if (sold) {
