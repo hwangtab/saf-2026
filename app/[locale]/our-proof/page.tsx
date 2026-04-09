@@ -10,8 +10,7 @@ import TestimonialCard from '@/components/ui/TestimonialCard';
 import StatCard from '@/components/ui/StatCard';
 import { CONTACT, EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { createBreadcrumbSchema } from '@/lib/seo-utils';
-import { generateQAPageSchema } from '@/lib/schemas/qa-page';
+import { createBreadcrumbSchema, generateFAQSchema } from '@/lib/seo-utils';
 import { createStandardPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
@@ -176,26 +175,23 @@ export default async function OurProof() {
       audienceType: locale === 'en' ? 'Professional artists' : '전업·직업 예술인',
     },
   };
-  const qaSchema = generateQAPageSchema(
+  const proofFaqItems =
     locale === 'en'
       ? [
           {
             question: 'What are the results of the SAF mutual-aid loan program?',
             answer:
               '354 mutual-aid loans have been issued since December 2022, totaling nearly KRW 700 million. The repayment rate stands at 95%, demonstrating that artists are reliable borrowers when given fair financial terms.',
-            url: pageUrl,
           },
           {
             question: 'What is the default rate for SAF mutual-aid loans?',
             answer:
               'The subrogation (default) rate for SAF mutual-aid loans is approximately 5.10% — lower than the typical default rate for low-credit bank loans. This is achieved through community accountability and solidarity-based screening.',
-            url: pageUrl,
           },
           {
             question: 'How does the SAF mutual-aid loan program work?',
             answer:
               'The Korea Smart Cooperative builds a shared fund through artwork sales and member contributions. Partner financial institutions then lend up to 7x that amount to artists at a fixed 5% annual rate. Artists receive loans without credit screening, based on cooperative membership and community accountability.',
-            url: pageUrl,
           },
         ]
       : [
@@ -203,30 +199,25 @@ export default async function OurProof() {
             question: '씨앗페 상호부조 대출의 실제 성과는 어떻게 되나요?',
             answer:
               '2022년 12월부터 354건의 상호부조 대출이 실행되어 약 7억 원이 지원되었습니다. 상환율은 95%로, 공정한 금융 조건이 주어지면 예술인도 신뢰할 수 있는 대출자임을 증명합니다.',
-            url: pageUrl,
           },
           {
             question: '씨앗페 상호부조 대출의 연체율은 얼마인가요?',
             answer:
               '씨앗페 상호부조 대출의 대위변제율은 약 5.10%로, 일반 금융기관 저신용 대출 연체율보다 낮은 수준입니다. 이는 조합원 간의 연대와 상호 책임 구조를 통해 달성됩니다.',
-            url: pageUrl,
           },
           {
             question: '씨앗페 상호부조 대출은 어떻게 작동하나요?',
             answer:
               '한국스마트협동조합이 작품 판매 수익과 조합원 출자금으로 기금을 조성하고, 협약 금융기관이 기금의 약 7배에 달하는 금액을 연 5% 고정금리로 예술인에게 대출합니다. 신용등급 심사 없이 조합원 자격과 상호 책임 구조를 기반으로 대출이 실행됩니다.',
-            url: pageUrl,
           },
-        ],
-    pageUrl,
-    locale
-  );
+        ];
+  const proofFaqSchema = generateFAQSchema(proofFaqItems, locale);
 
   if (locale === 'en') {
     return (
       <>
         <JsonLdScript
-          data={[breadcrumbSchema, aboutPageSchema, datasetSchema, loanSchema, qaSchema]}
+          data={[breadcrumbSchema, aboutPageSchema, datasetSchema, loanSchema, proofFaqSchema]}
         />
         <PageHero
           title="Our Proof"
@@ -431,7 +422,24 @@ export default async function OurProof() {
           </div>
         </Section>
 
-        <Section variant="primary-soft" prevVariant="primary-surface" className="pb-24 md:pb-32">
+        <Section variant="white" prevVariant="primary-surface">
+          <div className="container-max max-w-4xl">
+            <SectionTitle className="mb-8">Frequently asked questions</SectionTitle>
+            <div className="space-y-6">
+              {proofFaqItems.map((item) => (
+                <article
+                  key={item.question}
+                  className="rounded-lg border border-gray-200 bg-white p-6"
+                >
+                  <h3 className="mb-2 text-lg font-semibold text-charcoal">{item.question}</h3>
+                  <p className="text-charcoal-muted leading-relaxed">{item.answer}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section variant="primary-soft" prevVariant="white" className="pb-24 md:pb-32">
           <div className="container-max text-center">
             <h2 className="font-section font-normal text-4xl md:text-5xl mb-8">
               You can join this trust network
@@ -466,7 +474,7 @@ export default async function OurProof() {
   return (
     <>
       <JsonLdScript
-        data={[breadcrumbSchema, aboutPageSchema, datasetSchema, loanSchema, qaSchema]}
+        data={[breadcrumbSchema, aboutPageSchema, datasetSchema, loanSchema, proofFaqSchema]}
       />
       <PageHero
         title="우리의 증명"
@@ -732,8 +740,25 @@ export default async function OurProof() {
         </div>
       </Section>
 
+      <Section variant="white" prevVariant="primary-surface">
+        <div className="container-max max-w-4xl">
+          <SectionTitle className="mb-8">자주 묻는 질문</SectionTitle>
+          <div className="space-y-6">
+            {proofFaqItems.map((item) => (
+              <article
+                key={item.question}
+                className="rounded-lg border border-gray-200 bg-white p-6"
+              >
+                <h3 className="mb-2 text-lg font-semibold text-charcoal">{item.question}</h3>
+                <p className="text-charcoal-muted leading-relaxed">{item.answer}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </Section>
+
       {/* Call to Action */}
-      <Section variant="primary-soft" prevVariant="primary-surface" className="pb-24 md:pb-32">
+      <Section variant="primary-soft" prevVariant="white" className="pb-24 md:pb-32">
         <div className="container-max text-center">
           <h2 className="font-section font-normal text-4xl md:text-5xl mb-8">
             당신도 이 신뢰의 체계에 참여할 수 있습니다
