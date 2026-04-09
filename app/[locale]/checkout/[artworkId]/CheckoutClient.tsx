@@ -216,14 +216,14 @@ export default function CheckoutClient({
         {/* Payment method selector */}
         <div className="mb-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
           <h3 className="mb-4 text-base font-semibold text-charcoal">{t('paymentMethodSelect')}</h3>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-3 pt-3">
             {PAYMENT_METHODS.map(({ value, labelKey }) => (
               <button
                 key={value}
                 type="button"
                 onClick={() => setPaymentMethod(value)}
                 className={clsx(
-                  'relative rounded-xl border-2 py-3 text-sm font-medium transition-colors',
+                  'relative overflow-visible rounded-xl border-2 py-3 text-sm font-medium transition-colors',
                   paymentMethod === value
                     ? 'border-primary bg-primary/5 text-primary'
                     : 'border-gray-200 text-gray-600 hover:border-gray-300'
@@ -233,9 +233,9 @@ export default function CheckoutClient({
                   <ExportedImage
                     src={tossLogo}
                     alt="toss"
-                    height={14}
-                    width={46}
-                    className="absolute left-1.5 top-1.5 h-3.5 w-auto object-contain"
+                    height={20}
+                    width={66}
+                    className="absolute -top-3 left-2 h-5 w-auto object-contain drop-shadow-sm"
                     unoptimized
                   />
                 )}
