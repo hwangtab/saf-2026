@@ -61,6 +61,7 @@ export function NavDropdown({ label, items }: NavDropdownProps) {
           stroke="currentColor"
           strokeWidth={2}
         >
+          <title>{label}</title>
           <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
         </svg>
       </button>
@@ -73,6 +74,7 @@ export function NavDropdown({ label, items }: NavDropdownProps) {
               <Link
                 key={item.href}
                 href={item.href}
+                prefetch={item.href.startsWith('/admin/changelog') ? false : undefined}
                 onClick={() => setOpen(false)}
                 className={`block px-4 py-2 text-sm transition-colors ${
                   isActive

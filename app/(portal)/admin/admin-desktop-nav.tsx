@@ -14,7 +14,10 @@ export function AdminDesktopNav() {
   return (
     <div className="hidden xl:ml-6 xl:flex xl:items-center xl:gap-3">
       {adminNavGroups.map((group, gi) => (
-        <div key={gi} className="flex items-center gap-3">
+        <div
+          key={group.label ?? group.items.map((item) => item.href).join('|')}
+          className="flex items-center gap-3"
+        >
           {gi > 0 && <div className="h-4 w-px bg-gray-200" aria-hidden="true" />}
 
           {group.label ? (
@@ -24,11 +27,13 @@ export function AdminDesktopNav() {
               {group.items.map((item) => {
                 const targetPath = item.href.split('?')[0];
                 const isActive = pathname.startsWith(targetPath);
+                const disablePrefetch = item.href.startsWith('/admin/changelog');
 
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
+                    prefetch={disablePrefetch ? false : undefined}
                     aria-current={isActive ? 'page' : undefined}
                     className={`inline-flex items-center whitespace-nowrap border-b-2 px-1 pt-1 text-sm font-medium ${
                       isActive
