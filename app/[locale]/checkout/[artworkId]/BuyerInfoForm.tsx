@@ -92,7 +92,7 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
             shippingAddress: selectedAddress,
             shippingPostalCode: data.zonecode,
           }));
-          setTimeout(() => detailRef.current?.focus(), 100);
+          setTimeout(() => detailRef.current?.focus(), 200);
         },
       }).open();
     };
@@ -244,12 +244,13 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
               ref={detailRef}
               type="text"
               lang={langAttr}
-              style={{ imeMode: 'active' }}
+              inputMode="text"
               className={inputClass}
               value={form.shippingAddressDetail}
               onChange={handleChange('shippingAddressDetail')}
+              onFocus={(e) => e.currentTarget.setAttribute('lang', 'ko')}
               placeholder={t('placeholderAddressDetail')}
-              autoComplete="address-line2"
+              autoComplete="off"
             />
           </div>
 
@@ -258,10 +259,11 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
             <input
               type="text"
               lang={langAttr}
-              style={{ imeMode: 'active' }}
+              inputMode="text"
               className={inputClass}
               value={form.shippingMemo}
               onChange={handleChange('shippingMemo')}
+              onFocus={(e) => e.currentTarget.setAttribute('lang', 'ko')}
               placeholder={t('placeholderMemo')}
             />
           </div>
