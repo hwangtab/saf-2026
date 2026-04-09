@@ -6,6 +6,8 @@ import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { logAdminAction } from './admin-logs';
 import { getString, getNumber } from '@/lib/utils/form-helpers';
 
+const normalizeStoryTitleColonSpacing = (value: string) => value.replace(/[^\S\r\n]+:/g, ':');
+
 export async function createNews(formData: FormData) {
   const admin = await requireAdmin();
   const supabase = await createSupabaseAdminClient();
@@ -407,9 +409,9 @@ export async function createStory(formData: FormData) {
   const admin = await requireAdmin();
   const supabase = await createSupabaseAdminClient();
 
-  const title = getString(formData, 'title');
+  const title = normalizeStoryTitleColonSpacing(getString(formData, 'title'));
   const slug = getString(formData, 'slug');
-  const title_en = getString(formData, 'title_en') || null;
+  const title_en = normalizeStoryTitleColonSpacing(getString(formData, 'title_en')) || null;
   const category = getString(formData, 'category') || 'artist-story';
   const excerpt = getString(formData, 'excerpt') || null;
   const excerpt_en = getString(formData, 'excerpt_en') || null;
@@ -458,9 +460,9 @@ export async function updateStory(id: string, formData: FormData) {
 
   const { data: oldStory } = await supabase.from('stories').select('*').eq('id', id).single();
 
-  const title = getString(formData, 'title');
+  const title = normalizeStoryTitleColonSpacing(getString(formData, 'title'));
   const slug = getString(formData, 'slug');
-  const title_en = getString(formData, 'title_en') || null;
+  const title_en = normalizeStoryTitleColonSpacing(getString(formData, 'title_en')) || null;
   const category = getString(formData, 'category') || 'artist-story';
   const excerpt = getString(formData, 'excerpt') || null;
   const excerpt_en = getString(formData, 'excerpt_en') || null;
