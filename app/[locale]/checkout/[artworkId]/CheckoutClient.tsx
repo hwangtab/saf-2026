@@ -223,8 +223,7 @@ export default function CheckoutClient({
                 type="button"
                 onClick={() => setPaymentMethod(value)}
                 className={clsx(
-                  'flex flex-col items-center justify-center gap-1 rounded-xl border-2 py-3 text-sm font-medium transition-colors',
-                  value === 'TRANSFER' ? 'min-h-[68px]' : 'min-h-[68px]',
+                  'relative rounded-xl border-2 py-3 text-sm font-medium transition-colors',
                   paymentMethod === value
                     ? 'border-primary bg-primary/5 text-primary'
                     : 'border-gray-200 text-gray-600 hover:border-gray-300'
@@ -234,9 +233,9 @@ export default function CheckoutClient({
                   <ExportedImage
                     src={tossLogo}
                     alt="toss"
-                    height={24}
-                    width={80}
-                    className="h-6 w-auto object-contain"
+                    height={14}
+                    width={46}
+                    className="absolute left-1.5 top-1.5 h-3.5 w-auto object-contain"
                     unoptimized
                   />
                 )}
