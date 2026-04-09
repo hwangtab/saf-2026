@@ -21,9 +21,14 @@ export function sanitizeForLocale(
   return value;
 }
 
-// JSON-LD Security: Escape < characters to prevent XSS
+// JSON-LD Security: Escape characters that can break inline script parsing or enable XSS.
 export function escapeJsonLdForScript(json: string): string {
-  return json.replace(/</g, '\\u003c');
+  return json
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026')
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029');
 }
 
 // Helper: Parse price string to number
