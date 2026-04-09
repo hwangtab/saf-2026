@@ -1,3 +1,44 @@
+# 매거진 연관 링크/태그 정합성 개선
+
+## 변경 파일
+
+- `/Users/hwang-gyeongha/saf/app/(portal)/admin/content/stories/page.tsx`
+  - 매거진 관리자 목록 조회에 `tags` 컬럼을 추가
+
+- `/Users/hwang-gyeongha/saf/app/(portal)/admin/content/stories/stories-manager.tsx`
+  - 매거진 생성/수정 폼에 `tags` 입력 추가
+  - 쉼표 구분 문자열을 배열로 바꾸는 클라이언트 보조 로직 추가
+  - 검색 대상에 태그를 포함
+
+- `/Users/hwang-gyeongha/saf/app/actions/admin-content.ts`
+  - 스토리 생성/수정 액션에서 `tags`를 저장하도록 보강
+
+- `/Users/hwang-gyeongha/saf/app/[locale]/stories/[slug]/page.tsx`
+  - `artist-story`의 첫 유효 태그를 작가명으로 해석
+  - 하단 내부 링크를 본문 수동 Markdown 대신 공통 자동 footer로 통일
+  - 작가 태그가 있을 때만 `{작가명}의 작품 보기` 링크를 노출
+  - `artist-story`에서 태그가 없을 때는 무작위 작품 폴백을 하지 않도록 조정
+
+- `/Users/hwang-gyeongha/saf/supabase/migrations/20260409153000_normalize_story_tags_and_footer_links.sql` (신규)
+  - 작가 글 7건에 누락된 작가 태그 백필
+  - 본문 끝에 직접 삽입된 `작품 보기 · 관련 매거진` 수동 footer 4건 제거
+
+## 데이터 반영 결과
+
+- 공개 `artist-story` 32건 중 태그 보유 글이 `24건 → 31건`으로 증가
+- 현재 태그가 없는 `artist-story`는 `127-artists-solidarity` 1건만 남음
+  - 단일 작가 글이 아닌 묶음 소개 글이라 이번 백필 대상에서 제외
+- 본문 수동 footer 형태의 작가 글은 `4건 → 0건`으로 정리
+- buying guide 1건의 일반 갤러리 CTA 문구는 유지
+
+## 검증 결과
+
+- `npm run lint` 통과
+- `npm run type-check` 통과
+- 원격 Supabase에 동일 SQL 반영 후 재집계 확인
+- 로컬 확인용 스크린샷 저장
+  - `/Users/hwang-gyeongha/saf/output/playwright/story-footer-kim-dongseok.png`
+
 # 작품 이미지 AI 업스케일 1차 실행
 
 ## 추가/수정 파일

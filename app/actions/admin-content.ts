@@ -6,6 +6,15 @@ import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { logAdminAction } from './admin-logs';
 import { getString, getNumber } from '@/lib/utils/form-helpers';
 
+function getTags(formData: FormData, key = 'tags') {
+  const raw = getString(formData, key);
+  if (!raw) return [];
+  return raw
+    .split(',')
+    .map((tag) => tag.trim())
+    .filter(Boolean);
+}
+
 export async function createNews(formData: FormData) {
   const admin = await requireAdmin();
   const supabase = await createSupabaseAdminClient();
@@ -420,6 +429,7 @@ export async function createStory(formData: FormData) {
   const published_at = getString(formData, 'published_at') || null;
   const is_published = formData.get('is_published') === 'on';
   const display_order = getNumber(formData, 'display_order', 0);
+  const tags = getTags(formData);
 
   const { data: story, error } = await supabase
     .from('stories')
@@ -437,6 +447,7 @@ export async function createStory(formData: FormData) {
       published_at: published_at || undefined,
       is_published,
       display_order,
+      tags,
     })
     .select()
     .single();
@@ -471,6 +482,7 @@ export async function updateStory(id: string, formData: FormData) {
   const published_at = getString(formData, 'published_at') || null;
   const is_published = formData.get('is_published') === 'on';
   const display_order = getNumber(formData, 'display_order', 0);
+  const tags = getTags(formData);
 
   const { data: newStory, error } = await supabase
     .from('stories')
@@ -488,6 +500,7 @@ export async function updateStory(id: string, formData: FormData) {
       published_at: published_at || undefined,
       is_published,
       display_order,
+      tags,
       updated_at: new Date().toISOString(),
     })
     .eq('id', id)
