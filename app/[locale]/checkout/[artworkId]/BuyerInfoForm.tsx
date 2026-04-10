@@ -119,6 +119,8 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
             </label>
             <input
               type="text"
+              name="name"
+              autoComplete="name"
               lang={langAttr}
               className={inputClass}
               value={form.buyerName}
@@ -133,6 +135,8 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
             </label>
             <input
               type="email"
+              name="email"
+              autoComplete="email"
               className={inputClass}
               value={form.buyerEmail}
               onChange={handleChange('buyerEmail')}
@@ -146,6 +150,8 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
             </label>
             <input
               type="tel"
+              name="tel"
+              autoComplete="tel"
               className={inputClass}
               value={form.buyerPhone}
               onChange={handleChange('buyerPhone')}
@@ -179,6 +185,8 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
                 </label>
                 <input
                   type="text"
+                  name="shipping-name"
+                  autoComplete="shipping name"
                   lang={langAttr}
                   className={inputClass}
                   value={form.shippingName}
@@ -193,6 +201,8 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
                 </label>
                 <input
                   type="tel"
+                  name="shipping-tel"
+                  autoComplete="shipping tel"
                   className={inputClass}
                   value={form.shippingPhone}
                   onChange={handleChange('shippingPhone')}
@@ -229,6 +239,8 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
             <label className={labelClass}>{t('shippingPostalCode')}</label>
             <input
               type="text"
+              name="postal-code"
+              autoComplete="postal-code"
               className={inputClass}
               value={form.shippingPostalCode}
               readOnly
@@ -243,6 +255,8 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
             <input
               ref={detailRef}
               type="text"
+              name="address-detail"
+              autoComplete="address-line2"
               lang={langAttr}
               inputMode="text"
               className={inputClass}
@@ -250,7 +264,6 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
               onChange={handleChange('shippingAddressDetail')}
               onFocus={(e) => e.currentTarget.setAttribute('lang', langAttr)}
               placeholder={t('placeholderAddressDetail')}
-              autoComplete="off"
             />
           </div>
 
