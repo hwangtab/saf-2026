@@ -209,7 +209,7 @@ function ArtworkCard({
             src={getImageSrc(artwork, variant)}
             alt={getImageAlt(artwork, untitledLabel, unknownArtistLabel, locale)}
             fill
-            className="object-contain"
+            className="object-contain p-2"
             sizes={config.imageSizes}
           />
           {artwork.sold && <SoldBadge variant="slider" />}
@@ -256,7 +256,7 @@ function ArtworkCard({
             loading={isAboveFold ? 'eager' : 'lazy'}
             priority={isAboveFold}
             fill
-            className="object-contain"
+            className="object-contain p-3 md:p-4"
             sizes={config.imageSizes}
           />
           <div

@@ -38,7 +38,7 @@ export default function HeroGalleryGrid({ artworks }: HeroGalleryGridProps) {
                 alt={`${title} - ${artist}`}
                 fill
                 priority={index < 4}
-                className="object-contain"
+                className="object-contain p-3 md:p-4"
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               />
             </div>

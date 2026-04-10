@@ -26,7 +26,7 @@ export default function SearchResultItem({ artwork, onSelect }: SearchResultItem
             src={artwork.image}
             alt={`${artwork.title} - ${artwork.artist}`}
             fill
-            className="object-contain"
+            className="object-contain p-1"
             sizes="48px"
           />
         ) : (

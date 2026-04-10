@@ -26,7 +26,7 @@ export default function ArtistResultItem({ artist, onSelect }: ArtistResultItemP
             src={artist.sampleImage}
             alt={artist.name}
             fill
-            className="object-contain"
+            className="object-contain p-1"
             sizes="40px"
           />
         ) : (
