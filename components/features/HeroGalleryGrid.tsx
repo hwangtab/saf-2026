@@ -32,15 +32,17 @@ export default function HeroGalleryGrid({ artworks }: HeroGalleryGridProps) {
             href={`/artworks/${artwork.id}`}
             className="group relative block overflow-hidden bg-canvas-soft"
           >
-            <div className="aspect-[3/4]">
-              <SafeImage
-                src={imageSrc}
-                alt={`${title} - ${artist}`}
-                fill
-                priority={index < 4}
-                className="object-contain p-3 md:p-4"
-                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              />
+            <div className="relative aspect-[3/4]">
+              <div className="absolute inset-3 md:inset-4">
+                <SafeImage
+                  src={imageSrc}
+                  alt={`${title} - ${artist}`}
+                  fill
+                  priority={index < 4}
+                  className="object-contain"
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                />
+              </div>
             </div>
 
             {/* Always-visible bottom info overlay */}

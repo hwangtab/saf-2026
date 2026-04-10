@@ -22,13 +22,15 @@ export default function ArtistResultItem({ artist, onSelect }: ArtistResultItemP
       {/* 샘플 이미지 */}
       <div className="w-10 h-10 flex-shrink-0 rounded-full overflow-hidden bg-canvas-soft relative">
         {artist.sampleImage ? (
-          <SafeImage
-            src={artist.sampleImage}
-            alt={artist.name}
-            fill
-            className="object-contain p-1"
-            sizes="40px"
-          />
+          <div className="absolute inset-1">
+            <SafeImage
+              src={artist.sampleImage}
+              alt={artist.name}
+              fill
+              className="object-contain"
+              sizes="40px"
+            />
+          </div>
         ) : (
           <div className="w-full h-full bg-primary/20 flex items-center justify-center">
             <span className="text-primary text-sm font-semibold">{artist.name.charAt(0)}</span>

@@ -118,13 +118,15 @@ export function ArtworkList({
                   <div className="flex items-center">
                     <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-[var(--admin-border)] bg-slate-100">
                       {artwork.images?.[0] ? (
-                        <SafeImage
-                          className="object-contain p-1"
-                          src={resolveArtworkImageUrlForPreset(artwork.images[0], 'slider')}
-                          alt={artwork.title}
-                          fill
-                          sizes="64px"
-                        />
+                        <div className="absolute inset-1">
+                          <SafeImage
+                            className="object-contain"
+                            src={resolveArtworkImageUrlForPreset(artwork.images[0], 'slider')}
+                            alt={artwork.title}
+                            fill
+                            sizes="64px"
+                          />
+                        </div>
                       ) : (
                         <div className="flex h-full w-full items-center justify-center text-xs text-slate-400">
                           {t('noImage')}

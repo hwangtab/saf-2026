@@ -22,13 +22,15 @@ export default function SearchResultItem({ artwork, onSelect }: SearchResultItem
       {/* 썸네일 */}
       <div className="w-12 h-12 flex-shrink-0 rounded-md overflow-hidden bg-canvas-soft relative">
         {artwork.image ? (
-          <SafeImage
-            src={artwork.image}
-            alt={`${artwork.title} - ${artwork.artist}`}
-            fill
-            className="object-contain p-1"
-            sizes="48px"
-          />
+          <div className="absolute inset-1">
+            <SafeImage
+              src={artwork.image}
+              alt={`${artwork.title} - ${artwork.artist}`}
+              fill
+              className="object-contain"
+              sizes="48px"
+            />
+          </div>
         ) : (
           <div className="w-full h-full bg-gray-200" />
         )}

@@ -831,13 +831,15 @@ export function AdminArtworkList({
                             : {})}
                         >
                           {artwork.images?.[0] ? (
-                            <SafeImage
-                              className="object-contain p-1"
-                              src={resolveArtworkImageUrlForPreset(artwork.images[0], 'slider')}
-                              alt=""
-                              fill
-                              sizes="48px"
-                            />
+                            <div className="absolute inset-1">
+                              <SafeImage
+                                className="object-contain"
+                                src={resolveArtworkImageUrlForPreset(artwork.images[0], 'slider')}
+                                alt=""
+                                fill
+                                sizes="48px"
+                              />
+                            </div>
                           ) : (
                             <div className="flex h-full w-full items-center justify-center text-gray-300">
                               <svg

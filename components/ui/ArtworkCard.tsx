@@ -205,13 +205,15 @@ function ArtworkCard({
             theme === 'dark' ? 'bg-charcoal' : 'bg-primary-surface'
           )}
         >
-          <SafeImage
-            src={getImageSrc(artwork, variant)}
-            alt={getImageAlt(artwork, untitledLabel, unknownArtistLabel, locale)}
-            fill
-            className="object-contain p-2"
-            sizes={config.imageSizes}
-          />
+          <div className="absolute inset-2">
+            <SafeImage
+              src={getImageSrc(artwork, variant)}
+              alt={getImageAlt(artwork, untitledLabel, unknownArtistLabel, locale)}
+              fill
+              className="object-contain"
+              sizes={config.imageSizes}
+            />
+          </div>
           {artwork.sold && <SoldBadge variant="slider" />}
           {artwork.reserved && !artwork.sold && <ReservedBadge variant="slider" />}
           {artwork.sold && artwork.sold_at && (
@@ -250,15 +252,17 @@ function ArtworkCard({
           )}
         >
           <div className="absolute inset-0 shimmer-loading" />
-          <SafeImage
-            src={getImageSrc(artwork, variant)}
-            alt={getImageAlt(artwork, untitledLabel, unknownArtistLabel, locale)}
-            loading={isAboveFold ? 'eager' : 'lazy'}
-            priority={isAboveFold}
-            fill
-            className="object-contain p-3 md:p-4"
-            sizes={config.imageSizes}
-          />
+          <div className="absolute inset-3 md:inset-4">
+            <SafeImage
+              src={getImageSrc(artwork, variant)}
+              alt={getImageAlt(artwork, untitledLabel, unknownArtistLabel, locale)}
+              loading={isAboveFold ? 'eager' : 'lazy'}
+              priority={isAboveFold}
+              fill
+              className="object-contain"
+              sizes={config.imageSizes}
+            />
+          </div>
           <div
             className={cn(
               'absolute inset-0 transition-colors duration-300 pointer-events-none',

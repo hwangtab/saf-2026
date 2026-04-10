@@ -158,13 +158,15 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
                             onClick={() => handleImageClick(artwork.images || [], artwork.title)}
                             aria-label={t('imagePreview', { title: artwork.title })}
                           >
-                            <SafeImage
-                              src={resolveArtworkImageUrlForPreset(artwork.images[0], 'slider')}
-                              alt={artwork.title}
-                              fill
-                              sizes="48px"
-                              className="object-contain p-1"
-                            />
+                            <div className="absolute inset-1">
+                              <SafeImage
+                                src={resolveArtworkImageUrlForPreset(artwork.images[0], 'slider')}
+                                alt={artwork.title}
+                                fill
+                                sizes="48px"
+                                className="object-contain"
+                              />
+                            </div>
                           </button>
                         ) : (
                           <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-md border border-gray-200 bg-gray-100">
