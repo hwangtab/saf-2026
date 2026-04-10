@@ -20,13 +20,13 @@ export default function ArtistResultItem({ artist, onSelect }: ArtistResultItemP
       className="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-gray-50"
     >
       {/* 샘플 이미지 */}
-      <div className="w-10 h-10 flex-shrink-0 rounded-full overflow-hidden bg-gray-100 relative">
+      <div className="w-10 h-10 flex-shrink-0 rounded-full overflow-hidden bg-canvas-soft relative">
         {artist.sampleImage ? (
           <SafeImage
             src={artist.sampleImage}
             alt={artist.name}
             fill
-            className="object-cover"
+            className="object-contain"
             sizes="40px"
           />
         ) : (

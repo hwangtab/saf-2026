@@ -30,7 +30,7 @@ export default function HeroGalleryGrid({ artworks }: HeroGalleryGridProps) {
           <Link
             key={artwork.id}
             href={`/artworks/${artwork.id}`}
-            className="group relative block overflow-hidden bg-charcoal"
+            className="group relative block overflow-hidden bg-canvas-soft"
           >
             <div className="aspect-[3/4]">
               <SafeImage
@@ -38,7 +38,7 @@ export default function HeroGalleryGrid({ artworks }: HeroGalleryGridProps) {
                 alt={`${title} - ${artist}`}
                 fill
                 priority={index < 4}
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                className="object-contain"
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               />
             </div>

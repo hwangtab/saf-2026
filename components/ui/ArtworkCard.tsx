@@ -199,12 +199,17 @@ function ArtworkCard({
           className
         )}
       >
-        <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100 shadow-sm group-hover:shadow-xl transition-shadow duration-300">
+        <div
+          className={cn(
+            'relative aspect-square overflow-hidden rounded-lg shadow-sm group-hover:shadow-xl transition-shadow duration-300',
+            theme === 'dark' ? 'bg-charcoal' : 'bg-primary-surface'
+          )}
+        >
           <SafeImage
             src={getImageSrc(artwork, variant)}
             alt={getImageAlt(artwork, untitledLabel, unknownArtistLabel, locale)}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            className="object-contain"
             sizes={config.imageSizes}
           />
           {artwork.sold && <SoldBadge variant="slider" />}
@@ -237,7 +242,13 @@ function ArtworkCard({
     >
       {/* 이미지 영역만 작품 상세 링크로 감쌈 — 작가명 링크와 중첩 방지 */}
       <Link href={getHref(artwork, returnTo)} className="block">
-        <div ref={imageContainerRef} className="relative w-full overflow-hidden aspect-[4/5]">
+        <div
+          ref={imageContainerRef}
+          className={cn(
+            'relative w-full overflow-hidden aspect-[4/5]',
+            theme === 'dark' ? 'bg-charcoal' : 'bg-canvas-soft'
+          )}
+        >
           <div className="absolute inset-0 shimmer-loading" />
           <SafeImage
             src={getImageSrc(artwork, variant)}
@@ -245,7 +256,7 @@ function ArtworkCard({
             loading={isAboveFold ? 'eager' : 'lazy'}
             priority={isAboveFold}
             fill
-            className="object-cover transform transition-transform duration-300 group-hover:scale-105"
+            className="object-contain"
             sizes={config.imageSizes}
           />
           <div

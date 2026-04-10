@@ -20,13 +20,13 @@ export default function SearchResultItem({ artwork, onSelect }: SearchResultItem
       className="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-gray-50"
     >
       {/* 썸네일 */}
-      <div className="w-12 h-12 flex-shrink-0 rounded-md overflow-hidden bg-gray-100 relative">
+      <div className="w-12 h-12 flex-shrink-0 rounded-md overflow-hidden bg-canvas-soft relative">
         {artwork.image ? (
           <SafeImage
             src={artwork.image}
             alt={`${artwork.title} - ${artwork.artist}`}
             fill
-            className="object-cover"
+            className="object-contain"
             sizes="48px"
           />
         ) : (
