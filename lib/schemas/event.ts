@@ -1,8 +1,8 @@
 import { SITE_URL, OG_IMAGE, EXHIBITION, CONTACT } from '@/lib/constants';
 import { ExhibitionReview } from '@/types';
 
-const EXHIBITION_START_DATE = '2026-01-14T10:00:00+09:00';
-const EXHIBITION_END_DATE = '2026-01-26T19:00:00+09:00';
+export const EXHIBITION_START_DATE = '2026-01-14T10:00:00+09:00';
+export const EXHIBITION_END_DATE = '2026-01-26T19:00:00+09:00';
 
 type ExhibitionState = 'scheduled' | 'inProgress' | 'completed';
 
@@ -50,6 +50,18 @@ const resolveEventLocation = (state: ExhibitionState, isEnglish: boolean) => {
   };
 };
 
+export const getExhibitionSchemaState = (locale: 'ko' | 'en' = 'ko', now: number = Date.now()) => {
+  const isEnglish = locale === 'en';
+  const state = resolveExhibitionState(now);
+
+  return {
+    state,
+    eventStatus: resolveEventStatus(state),
+    eventAttendanceMode: resolveEventAttendanceMode(state),
+    location: resolveEventLocation(state, isEnglish),
+  };
+};
+
 export const isExhibitionCompleted = (): boolean => {
   return resolveExhibitionState() === 'completed';
 };
@@ -60,8 +72,7 @@ export function generateExhibitionSchema(
 ) {
   const isEnglish = locale === 'en';
   const hasReviews = reviews.length > 0;
-  const eventState = resolveExhibitionState();
-  const eventStatus = resolveEventStatus(eventState);
+  const { eventStatus, eventAttendanceMode, location } = getExhibitionSchemaState(locale);
 
   return {
     '@context': 'https://schema.org',
@@ -81,8 +92,8 @@ export function generateExhibitionSchema(
     startDate: EXHIBITION_START_DATE,
     endDate: EXHIBITION_END_DATE,
     eventStatus,
-    eventAttendanceMode: resolveEventAttendanceMode(eventState),
-    location: resolveEventLocation(eventState, isEnglish),
+    eventAttendanceMode,
+    location,
     organizer: {
       '@type': 'Organization',
       '@id': `${SITE_URL}#organization`,

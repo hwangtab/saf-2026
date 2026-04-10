@@ -7,7 +7,11 @@ import { Artwork } from '@/types';
 import { resolveSeoArtworkImageUrl, sanitizeForLocale, parseArtworkPrice } from './utils';
 import { createBreadcrumbSchema } from './breadcrumb';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
-import { isExhibitionCompleted } from '@/lib/schemas/event';
+import {
+  EXHIBITION_END_DATE,
+  EXHIBITION_START_DATE,
+  getExhibitionSchemaState,
+} from '@/lib/schemas/event';
 
 // 빌드/렌더 시점 기준 +1년 동적 계산 — 만료로 인한 Shopping 노출 중단 방지
 const PRICE_VALID_UNTIL = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
@@ -322,6 +326,7 @@ export function generateArtworkJsonLd(
 
   // Classify artwork medium for better SEO categorization
   const mediumCategory = classifyArtworkMedium(materialForLocale || '');
+  const exhibitionSchemaState = getExhibitionSchemaState(locale);
 
   const productSchema = {
     '@context': 'https://schema.org',
@@ -395,13 +400,11 @@ export function generateArtworkJsonLd(
       name: isEnglish
         ? 'SAF Online - Special Exhibition for Artist Mutual Aid'
         : '씨앗페 온라인 - 예술인 상호부조 기금 마련 특별전',
-      startDate: CAMPAIGN.START_DATE,
-      endDate: CAMPAIGN.END_DATE,
-      eventStatus: isExhibitionCompleted()
-        ? 'https://schema.org/EventCompleted'
-        : 'https://schema.org/EventInProgress',
-      eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
-      location: { '@type': 'VirtualLocation', url: SITE_URL },
+      startDate: EXHIBITION_START_DATE,
+      endDate: EXHIBITION_END_DATE,
+      eventStatus: exhibitionSchemaState.eventStatus,
+      eventAttendanceMode: exhibitionSchemaState.eventAttendanceMode,
+      location: exhibitionSchemaState.location,
       organizer: sellerOrg,
     },
     additionalProperty: [
