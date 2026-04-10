@@ -9,7 +9,7 @@ import {
   isPaymentStatusChanged,
 } from '@/lib/integrations/toss/webhook';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
-import { notifyEmail } from '@/lib/notify';
+import { notifyEmail, sendBuyerEmail } from '@/lib/notify';
 
 const CANCELED_STATUSES = new Set(['CANCELED', 'PARTIAL_CANCELED']);
 
@@ -133,7 +133,7 @@ export async function POST(req: NextRequest) {
         if (updatedOrders && updatedOrders.length > 0) {
           const { data: order } = await supabase
             .from('orders')
-            .select('artwork_id, total_amount, order_no, buyer_name, buyer_phone')
+            .select('artwork_id, total_amount, order_no, buyer_name, buyer_phone, buyer_email')
             .eq('id', paymentRecord.order_id)
             .single();
 
@@ -172,6 +172,28 @@ export async function POST(req: NextRequest) {
             주문번호: order?.order_no ?? '',
             금액: `₩${(order?.total_amount ?? 0).toLocaleString()}`,
           });
+
+          if (order?.buyer_email) {
+            // 작품/작가 정보 조회 (구매자 이메일용)
+            const { data: artworkInfo } = await supabase
+              .from('artworks')
+              .select('title, artists(name_ko)')
+              .eq('id', order.artwork_id)
+              .single();
+            const artworkTitle = artworkInfo?.title ?? '';
+            const artistsRaw = artworkInfo?.artists;
+            const artistName = Array.isArray(artistsRaw)
+              ? (artistsRaw[0]?.name_ko ?? '')
+              : ((artistsRaw as { name_ko?: string } | null | undefined)?.name_ko ?? '');
+
+            void sendBuyerEmail(order.buyer_email, 'deposit_confirmed', {
+              orderNo: order.order_no,
+              buyerName: order.buyer_name,
+              artworkTitle,
+              artistName,
+              amount: order.total_amount,
+            });
+          }
         }
       }
     } else if (payload.data.paymentStatus === 'CANCELED') {
@@ -301,7 +323,7 @@ export async function POST(req: NextRequest) {
     if (CANCELED_STATUSES.has(newStatus) && paymentRow.order_id) {
       const { data: existingOrder } = await supabase
         .from('orders')
-        .select('status, artwork_id, order_no')
+        .select('status, artwork_id, order_no, buyer_email, buyer_name, total_amount')
         .eq('id', paymentRow.order_id)
         .single();
 
@@ -362,6 +384,27 @@ export async function POST(req: NextRequest) {
           상태: newStatus,
           paymentKey,
         });
+
+        // 구매자 환불 이메일 발송 (fire-and-forget)
+        if (existingOrder.buyer_email) {
+          const { data: artworkInfo } = await supabase
+            .from('artworks')
+            .select('title, artists(name_ko)')
+            .eq('id', existingOrder.artwork_id)
+            .single();
+          const artworkTitle = artworkInfo?.title ?? '';
+          const artistsRaw = artworkInfo?.artists;
+          const artistName = Array.isArray(artistsRaw)
+            ? (artistsRaw[0]?.name_ko ?? '')
+            : ((artistsRaw as { name_ko?: string } | null | undefined)?.name_ko ?? '');
+          void sendBuyerEmail(existingOrder.buyer_email, 'refunded', {
+            orderNo: existingOrder.order_no ?? '',
+            buyerName: existingOrder.buyer_name ?? '',
+            artworkTitle,
+            artistName,
+            amount: existingOrder.total_amount ?? 0,
+          });
+        }
       }
     }
   }

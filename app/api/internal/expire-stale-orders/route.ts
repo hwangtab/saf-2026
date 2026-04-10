@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { notifyTeams } from '@/lib/notify';
+import { notifyEmail, sendBuyerEmail } from '@/lib/notify';
+import { getArtworkEmailInfo } from '@/lib/utils/get-artwork-email-info';
 
 export const runtime = 'nodejs';
 
@@ -68,7 +69,7 @@ export async function GET(request: NextRequest) {
 
   const { data: expiredDeposit, error: depositFetchError } = await supabase
     .from('orders')
-    .select('id, artwork_id')
+    .select('id, artwork_id, buyer_email, buyer_name, order_no, total_amount')
     .eq('status', 'awaiting_deposit')
     .lt('created_at', depositCutoff);
 
@@ -91,6 +92,25 @@ export async function GET(request: NextRequest) {
     }
     depositCancelled = updated?.length ?? 0;
 
+    // 취소된 구매자에게 자동 취소 이메일 발송 (fire-and-forget)
+    for (const expiredOrder of expiredDeposit) {
+      if (expiredOrder.buyer_email && expiredOrder.order_no) {
+        void (async () => {
+          const { artworkTitle, artistName } = await getArtworkEmailInfo(
+            supabase,
+            expiredOrder.artwork_id
+          );
+          void sendBuyerEmail(expiredOrder.buyer_email!, 'auto_cancelled', {
+            orderNo: expiredOrder.order_no!,
+            buyerName: expiredOrder.buyer_name ?? '',
+            artworkTitle,
+            artistName,
+            amount: expiredOrder.total_amount ?? 0,
+          });
+        })();
+      }
+    }
+
     // 취소된 주문의 artwork reserved→available 복원
     const artworkIds = expiredDeposit
       .map((o: { artwork_id: string | null }) => o.artwork_id)
@@ -105,7 +125,7 @@ export async function GET(request: NextRequest) {
 
       if (artworkError) {
         console.error('[expire-stale-orders] artwork status restore failed:', artworkError);
-        await notifyTeams('error', '만료 크론: 작품 상태 복원 실패', {
+        await notifyEmail('error', '만료 크론: 작품 상태 복원 실패', {
           에러: artworkError.message,
           작품수: `${artworkIds.length}건`,
         });
@@ -118,7 +138,7 @@ export async function GET(request: NextRequest) {
     console.error(
       `[expire-stale-orders] cancelled ${pendingCancelled} pending + ${depositCancelled} awaiting_deposit orders`
     );
-    await notifyTeams('warning', `만료 주문 자동 취소 (${totalCancelled}건)`, {
+    await notifyEmail('warning', `만료 주문 자동 취소 (${totalCancelled}건)`, {
       미결제취소: `${pendingCancelled}건`,
       입금대기취소: `${depositCancelled}건`,
     });

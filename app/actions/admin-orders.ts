@@ -6,6 +6,8 @@ import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { cancelPayment } from '@/lib/integrations/toss/cancel';
 import { logAdminAction } from './admin-logs';
 import { deriveAndSyncArtworkStatus } from './admin-artworks';
+import { sendBuyerEmail } from '@/lib/notify';
+import { getArtworkEmailInfo } from '@/lib/utils/get-artwork-email-info';
 import type { OrderStatus } from '@/lib/integrations/toss/types';
 
 export type OrderListItem = {
@@ -196,7 +198,7 @@ export async function refundOrder(input: RefundInput) {
   // 1. Fetch order + payment (must be paid | preparing)
   const { data: order, error: orderError } = await supabase
     .from('orders')
-    .select('id, order_no, status, total_amount, artwork_id, buyer_name, buyer_phone')
+    .select('id, order_no, status, total_amount, artwork_id, buyer_name, buyer_phone, buyer_email')
     .eq('id', orderId)
     .single();
 
@@ -255,6 +257,20 @@ export async function refundOrder(input: RefundInput) {
     .in('status', ['paid', 'preparing']);
 
   if (orderUpdateError) throw orderUpdateError;
+
+  // 4. 구매자 환불 이메일 발송 (fire-and-forget)
+  if (order.buyer_email) {
+    void (async () => {
+      const { artworkTitle, artistName } = await getArtworkEmailInfo(supabase, order.artwork_id);
+      void sendBuyerEmail(order.buyer_email!, 'refunded', {
+        orderNo: order.order_no,
+        buyerName: order.buyer_name ?? '',
+        artworkTitle,
+        artistName,
+        amount: order.total_amount,
+      });
+    })();
+  }
 
   // 5. Void artwork_sales record
   const { data: sale } = await supabase
@@ -327,7 +343,7 @@ export async function updateOrderStatus(
 
   const { data: order, error } = await supabase
     .from('orders')
-    .select('id, order_no, status')
+    .select('id, order_no, status, buyer_email, buyer_name, artwork_id')
     .eq('id', orderId)
     .single();
 
@@ -368,6 +384,32 @@ export async function updateOrderStatus(
     admin.id,
     { summary: `주문 상태 변경: ${order.order_no} (${order.status} → ${newStatus})` }
   );
+
+  // 구매자 배송 이메일 발송 (fire-and-forget)
+  if (order.buyer_email && (newStatus === 'shipped' || newStatus === 'delivered')) {
+    void (async () => {
+      const { artworkTitle, artistName } = await getArtworkEmailInfo(supabase, order.artwork_id);
+      if (newStatus === 'shipped') {
+        void sendBuyerEmail(order.buyer_email!, 'shipped', {
+          orderNo: order.order_no,
+          buyerName: order.buyer_name ?? '',
+          artworkTitle,
+          artistName,
+          amount: 0,
+          carrier: trackingInfo?.carrier ?? '',
+          trackingNumber: trackingInfo?.trackingNumber,
+        });
+      } else {
+        void sendBuyerEmail(order.buyer_email!, 'delivered', {
+          orderNo: order.order_no,
+          buyerName: order.buyer_name ?? '',
+          artworkTitle,
+          artistName,
+          amount: 0,
+        });
+      }
+    })();
+  }
 
   revalidatePath('/admin/orders');
   revalidatePath(`/admin/orders/${orderId}`);
@@ -424,7 +466,7 @@ export async function confirmDeposit(orderId: string) {
 
   const { data: order, error } = await supabase
     .from('orders')
-    .select('id, order_no, status, artwork_id, total_amount, buyer_name, buyer_phone')
+    .select('id, order_no, status, artwork_id, total_amount, buyer_name, buyer_phone, buyer_email')
     .eq('id', orderId)
     .single();
 
@@ -463,7 +505,21 @@ export async function confirmDeposit(orderId: string) {
     }
   }
 
-  // 3. 로그
+  // 3. 구매자 입금 확인 이메일 발송 (fire-and-forget)
+  if (order.buyer_email) {
+    void (async () => {
+      const { artworkTitle, artistName } = await getArtworkEmailInfo(supabase, order.artwork_id);
+      void sendBuyerEmail(order.buyer_email!, 'deposit_confirmed', {
+        orderNo: order.order_no,
+        buyerName: order.buyer_name ?? '',
+        artworkTitle,
+        artistName,
+        amount: order.total_amount,
+      });
+    })();
+  }
+
+  // 4. 로그
   await logAdminAction(
     'order_deposit_confirmed',
     'order',

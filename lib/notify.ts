@@ -1,7 +1,21 @@
 /**
  * Payment notification and buyer confirmation emails via Resend API.
  * Reads RESEND_API_KEY from env — no-op when unset (safe for dev/test).
+ *
+ * Admin notifications (notifyEmail) use inline HTML.
+ * Buyer emails (sendBuyerEmail) use React Email components.
  */
+
+import { render } from '@react-email/render';
+import * as React from 'react';
+
+import PaymentConfirmedEmail from '@/emails/payment-confirmed';
+import VirtualAccountIssuedEmail from '@/emails/virtual-account-issued';
+import DepositConfirmedEmail from '@/emails/deposit-confirmed';
+import ShippedEmail from '@/emails/shipped';
+import DeliveredEmail from '@/emails/delivered';
+import RefundedEmail from '@/emails/refunded';
+import AutoCancelledEmail from '@/emails/auto-cancelled';
 
 type NotifyLevel = 'payment' | 'warning' | 'error' | 'info';
 
@@ -12,10 +26,6 @@ const LEVEL_CONFIG: Record<NotifyLevel, { emoji: string; color: string }> = {
   info: { emoji: 'ℹ️', color: '#3b82f6' },
 };
 
-const TD_KEY =
-  'padding:10px 14px;font-weight:600;color:#374151;background:#f9fafb;width:110px;border-bottom:1px solid #f3f4f6;vertical-align:top;';
-const TD_VAL = 'padding:10px 14px;color:#111827;border-bottom:1px solid #f3f4f6;';
-
 function escapeHtml(str: string): string {
   return str
     .replace(/&/g, '&amp;')
@@ -23,23 +33,6 @@ function escapeHtml(str: string): string {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
-}
-
-function formatKoreanDate(isoString: string): string {
-  try {
-    const date = new Date(isoString);
-    if (isNaN(date.getTime())) return isoString;
-    return date.toLocaleString('ko-KR', {
-      timeZone: 'Asia/Seoul',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  } catch {
-    return isoString;
-  }
 }
 
 /**
@@ -102,9 +95,16 @@ export async function notifyEmail(
   await resendFetch({ apiKey, from, to, subject: `${emoji} [SAF] ${title}`, html }, '[notify]');
 }
 
-type BuyerEmailType = 'payment_confirmed' | 'virtual_account_issued' | 'deposit_confirmed';
+export type BuyerEmailType =
+  | 'payment_confirmed'
+  | 'virtual_account_issued'
+  | 'deposit_confirmed'
+  | 'shipped'
+  | 'delivered'
+  | 'refunded'
+  | 'auto_cancelled';
 
-interface BuyerEmailData {
+export interface BuyerEmailData {
   orderNo: string;
   buyerName: string;
   artworkTitle: string;
@@ -112,10 +112,22 @@ interface BuyerEmailData {
   amount: number;
   paymentMethod?: string;
   virtualAccount?: { bankName?: string; accountNumber?: string; dueDate?: string };
+  carrier?: string;
+  trackingNumber?: string;
 }
 
+const BUYER_EMAIL_SUBJECTS: Record<BuyerEmailType, string> = {
+  payment_confirmed: '[씨앗페] 결제가 완료되었습니다',
+  virtual_account_issued: '[씨앗페] 가상계좌 입금 안내',
+  deposit_confirmed: '[씨앗페] 입금이 확인되었습니다',
+  shipped: '[씨앗페] 작품이 발송되었습니다',
+  delivered: '[씨앗페] 작품이 배송 완료되었습니다',
+  refunded: '[씨앗페] 환불이 처리되었습니다',
+  auto_cancelled: '[씨앗페] 주문이 자동 취소되었습니다',
+};
+
 /**
- * Sends a buyer-facing confirmation email via Resend.
+ * Sends a buyer-facing confirmation email via Resend using React Email components.
  * Silently no-ops if RESEND_API_KEY or RESEND_FROM_EMAIL is not set.
  * Never throws — payment flow must not fail because of an email error.
  */
@@ -128,74 +140,85 @@ export async function sendBuyerEmail(
   const from = process.env.RESEND_FROM_EMAIL;
   if (!apiKey || !from || !to) return;
 
-  const timestamp = new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
-  const amountStr = `₩${data.amount.toLocaleString()}`;
-  const safeArtwork = escapeHtml(`${data.artworkTitle} (${data.artistName})`);
-  const safeName = escapeHtml(data.buyerName);
-  const safeOrderNo = escapeHtml(data.orderNo);
+  try {
+    let emailElement: React.ReactElement;
 
-  const SUBJECTS: Record<BuyerEmailType, string> = {
-    payment_confirmed: '[씨앗페] 결제가 완료되었습니다',
-    virtual_account_issued: '[씨앗페] 가상계좌 입금 안내',
-    deposit_confirmed: '[씨앗페] 입금이 확인되었습니다',
-  };
+    switch (type) {
+      case 'payment_confirmed':
+        emailElement = React.createElement(PaymentConfirmedEmail, {
+          buyerName: data.buyerName,
+          orderNo: data.orderNo,
+          artworkTitle: data.artworkTitle,
+          artistName: data.artistName,
+          amount: data.amount,
+          paymentMethod: data.paymentMethod,
+        });
+        break;
+      case 'virtual_account_issued':
+        emailElement = React.createElement(VirtualAccountIssuedEmail, {
+          buyerName: data.buyerName,
+          orderNo: data.orderNo,
+          artworkTitle: data.artworkTitle,
+          artistName: data.artistName,
+          amount: data.amount,
+          virtualAccount: data.virtualAccount ?? {},
+        });
+        break;
+      case 'deposit_confirmed':
+        emailElement = React.createElement(DepositConfirmedEmail, {
+          buyerName: data.buyerName,
+          orderNo: data.orderNo,
+          artworkTitle: data.artworkTitle,
+          artistName: data.artistName,
+          amount: data.amount,
+        });
+        break;
+      case 'shipped':
+        emailElement = React.createElement(ShippedEmail, {
+          buyerName: data.buyerName,
+          orderNo: data.orderNo,
+          artworkTitle: data.artworkTitle,
+          artistName: data.artistName,
+          carrier: data.carrier ?? '',
+          trackingNumber: data.trackingNumber,
+        });
+        break;
+      case 'delivered':
+        emailElement = React.createElement(DeliveredEmail, {
+          buyerName: data.buyerName,
+          orderNo: data.orderNo,
+          artworkTitle: data.artworkTitle,
+          artistName: data.artistName,
+        });
+        break;
+      case 'refunded':
+        emailElement = React.createElement(RefundedEmail, {
+          buyerName: data.buyerName,
+          orderNo: data.orderNo,
+          artworkTitle: data.artworkTitle,
+          artistName: data.artistName,
+          amount: data.amount,
+        });
+        break;
+      case 'auto_cancelled':
+        emailElement = React.createElement(AutoCancelledEmail, {
+          buyerName: data.buyerName,
+          orderNo: data.orderNo,
+          artworkTitle: data.artworkTitle,
+          artistName: data.artistName,
+          amount: data.amount,
+        });
+        break;
+    }
 
-  const HEADER_COLORS: Record<BuyerEmailType, string> = {
-    payment_confirmed: '#22c55e',
-    virtual_account_issued: '#3b82f6',
-    deposit_confirmed: '#22c55e',
-  };
-
-  const va = data.virtualAccount;
-  const vaRows =
-    type === 'virtual_account_issued' && va
-      ? `
-      <tr><td style="${TD_KEY}">은행</td><td style="${TD_VAL}">${escapeHtml(va.bankName ?? '')}</td></tr>
-      <tr><td style="${TD_KEY}">계좌번호</td><td style="${TD_VAL}">${escapeHtml(va.accountNumber ?? '')}</td></tr>
-      ${va.dueDate ? `<tr><td style="${TD_KEY}">입금 기한</td><td style="${TD_VAL}">${escapeHtml(formatKoreanDate(va.dueDate))}</td></tr>` : ''}
-      `
-      : '';
-
-  const paymentMethodRow =
-    type === 'payment_confirmed' && data.paymentMethod
-      ? `<tr><td style="${TD_KEY}">결제수단</td><td style="${TD_VAL}">${escapeHtml(data.paymentMethod)}</td></tr>`
-      : '';
-
-  const bodyMessage: Record<BuyerEmailType, string> = {
-    payment_confirmed: `${safeName}님의 결제가 정상적으로 완료되었습니다. 감사합니다.`,
-    virtual_account_issued: `${safeName}님, 아래 가상계좌로 입금해 주시면 주문이 확정됩니다.`,
-    deposit_confirmed: `${safeName}님의 입금이 확인되어 주문이 최종 확정되었습니다. 감사합니다.`,
-  };
-
-  const html = `<!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background:#f9fafb;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
-  <div style="max-width:560px;margin:32px auto;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
-    <div style="background:${HEADER_COLORS[type]};padding:20px 28px;">
-      <p style="margin:0;font-size:20px;font-weight:700;color:#fff;">${SUBJECTS[type]}</p>
-    </div>
-    <div style="padding:20px 28px 8px;">
-      <p style="margin:0 0 20px;color:#374151;font-size:15px;">${bodyMessage[type]}</p>
-      <table style="width:100%;border-collapse:collapse;border:1px solid #e5e7eb;border-radius:6px;overflow:hidden;">
-        <tbody>
-          <tr><td style="${TD_KEY}">주문번호</td><td style="${TD_VAL}">${safeOrderNo}</td></tr>
-          <tr><td style="${TD_KEY}">작품</td><td style="${TD_VAL}">${safeArtwork}</td></tr>
-          <tr><td style="${TD_KEY}">결제금액</td><td style="${TD_VAL};font-weight:700;">${escapeHtml(amountStr)}</td></tr>
-          ${paymentMethodRow}
-          ${vaRows}
-        </tbody>
-      </table>
-    </div>
-    <div style="padding:12px 28px 20px;background:#f9fafb;border-top:1px solid #f3f4f6;margin-top:12px;">
-      <p style="margin:0;font-size:12px;color:#9ca3af;">씨앗페 2026 • ${timestamp}</p>
-      <p style="margin:4px 0 0;font-size:12px;color:#9ca3af;">문의: contact@kosmart.org</p>
-    </div>
-  </div>
-</body>
-</html>`;
-
-  await resendFetch({ apiKey, from, to, subject: SUBJECTS[type], html }, `[buyer-email:${type}]`);
+    const html = await render(emailElement);
+    await resendFetch(
+      { apiKey, from, to, subject: BUYER_EMAIL_SUBJECTS[type], html },
+      `[buyer-email:${type}]`
+    );
+  } catch (err) {
+    console.error(`[buyer-email:${type}] render/send failed:`, err);
+  }
 }
 
 async function resendFetch(

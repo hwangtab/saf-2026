@@ -3,6 +3,8 @@
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { cancelPayment } from '@/lib/integrations/toss/cancel';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
+import { sendBuyerEmail } from '@/lib/notify';
+import { getArtworkEmailInfo } from '@/lib/utils/get-artwork-email-info';
 
 /** Strip non-digits and normalise +82 → 0 prefix */
 function normalizePhone(raw: string): string {
@@ -336,7 +338,7 @@ export async function cancelBuyerOrder(
 
   const { data: order, error } = await adminClient
     .from('orders')
-    .select('id, order_no, status, total_amount, artwork_id, buyer_email')
+    .select('id, order_no, status, total_amount, artwork_id, buyer_email, buyer_name')
     .eq('order_no', trimmedOrderNo)
     .maybeSingle();
 
@@ -400,6 +402,20 @@ export async function cancelBuyerOrder(
 
   if (order.artwork_id) {
     await deriveAndSyncArtworkStatus(adminClient, order.artwork_id);
+  }
+
+  // 구매자 환불 이메일 발송 (fire-and-forget)
+  if (order.buyer_email) {
+    void (async () => {
+      const { artworkTitle, artistName } = await getArtworkEmailInfo(adminClient, order.artwork_id);
+      void sendBuyerEmail(order.buyer_email!, 'refunded', {
+        orderNo: order.order_no,
+        buyerName: order.buyer_name ?? '',
+        artworkTitle,
+        artistName,
+        amount: order.total_amount,
+      });
+    })();
   }
 
   return { success: true };
