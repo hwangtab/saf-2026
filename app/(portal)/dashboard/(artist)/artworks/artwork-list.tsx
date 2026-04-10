@@ -119,7 +119,7 @@ export function ArtworkList({
                     <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-[var(--admin-border)] bg-slate-100">
                       {artwork.images?.[0] ? (
                         <SafeImage
-                          className="object-cover"
+                          className="object-contain"
                           src={resolveArtworkImageUrlForPreset(artwork.images[0], 'slider')}
                           alt={artwork.title}
                           fill

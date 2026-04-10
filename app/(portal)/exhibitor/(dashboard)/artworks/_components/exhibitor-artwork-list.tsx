@@ -163,7 +163,7 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
                               alt={artwork.title}
                               fill
                               sizes="48px"
-                              className="object-cover"
+                              className="object-contain"
                             />
                           </button>
                         ) : (

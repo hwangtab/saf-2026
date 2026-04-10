@@ -832,7 +832,7 @@ export function AdminArtworkList({
                         >
                           {artwork.images?.[0] ? (
                             <SafeImage
-                              className="object-cover"
+                              className="object-contain"
                               src={resolveArtworkImageUrlForPreset(artwork.images[0], 'slider')}
                               alt=""
                               fill
