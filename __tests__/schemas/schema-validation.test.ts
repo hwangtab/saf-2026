@@ -19,6 +19,7 @@ import {
   generateQAPageSchema,
   generateSAFCoreQA,
 } from '@/lib/schemas';
+import { getOurProofFaqSchema } from '@/lib/schemas/our-proof-faq';
 
 describe('createBreadcrumbSchema', () => {
   it('should produce a BreadcrumbList with correct @type', () => {
@@ -309,6 +310,30 @@ describe('generateArtworkJsonLd', () => {
     expect(productSchema['@type']).toBe('VisualArtwork');
     expect(productSchema).not.toHaveProperty('offers');
   });
+
+  it('should align isPartOf status and location before exhibition start', () => {
+    const nowSpy = jest.spyOn(Date, 'now').mockReturnValue(Date.parse('2026-01-10T00:00:00+09:00'));
+    const { productSchema } = generateArtworkJsonLd(baseArtwork, '100000', false, 'ko');
+    nowSpy.mockRestore();
+
+    expect(productSchema.isPartOf.eventStatus).toBe('https://schema.org/EventScheduled');
+    expect(productSchema.isPartOf.eventAttendanceMode).toBe(
+      'https://schema.org/MixedEventAttendanceMode'
+    );
+    expect(productSchema.isPartOf.location['@type']).toBe('Place');
+  });
+
+  it('should align isPartOf status and location after exhibition end', () => {
+    const nowSpy = jest.spyOn(Date, 'now').mockReturnValue(Date.parse('2026-02-10T00:00:00+09:00'));
+    const { productSchema } = generateArtworkJsonLd(baseArtwork, '100000', false, 'ko');
+    nowSpy.mockRestore();
+
+    expect(productSchema.isPartOf.eventStatus).toBe('https://schema.org/EventCompleted');
+    expect(productSchema.isPartOf.eventAttendanceMode).toBe(
+      'https://schema.org/OnlineEventAttendanceMode'
+    );
+    expect(productSchema.isPartOf.location['@type']).toBe('VirtualLocation');
+  });
 });
 
 describe('generateArtworkMetadata', () => {
@@ -529,6 +554,26 @@ describe('generateArtworkPurchaseFAQ', () => {
     expect(schema.mainEntity.length).toBeGreaterThan(0);
     expect(schema.mainEntity[0]['@type']).toBe('Question');
     expect(schema.mainEntity[0].acceptedAnswer['@type']).toBe('Answer');
+  });
+});
+
+describe('getOurProofFaqSchema', () => {
+  it('should keep FAQ items and FAQPage entities synchronized for ko locale', () => {
+    const { items, schema } = getOurProofFaqSchema('ko');
+
+    expect(schema['@type']).toBe('FAQPage');
+    expect(schema.mainEntity).toHaveLength(items.length);
+    expect(schema.mainEntity[0].name).toBe(items[0].question);
+    expect(schema.mainEntity[0].acceptedAnswer.text).toBe(items[0].answer);
+  });
+
+  it('should keep FAQ items and FAQPage entities synchronized for en locale', () => {
+    const { items, schema } = getOurProofFaqSchema('en');
+
+    expect(schema['@type']).toBe('FAQPage');
+    expect(schema.mainEntity).toHaveLength(items.length);
+    expect(schema.mainEntity[0].name).toBe(items[0].question);
+    expect(schema.mainEntity[0].acceptedAnswer.text).toBe(items[0].answer);
   });
 });
 
