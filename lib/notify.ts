@@ -86,13 +86,13 @@ export async function notifyEmail(
         : ''
     }
     <div style="padding:12px 24px;background:#f9fafb;border-top:1px solid #f3f4f6;">
-      <p style="margin:0;font-size:12px;color:#9ca3af;">SAF 결제 시스템 • ${timestamp}</p>
+      <p style="margin:0;font-size:12px;color:#9ca3af;">씨앗페 결제 시스템 • ${timestamp}</p>
     </div>
   </div>
 </body>
 </html>`;
 
-  await resendFetch({ apiKey, from, to, subject: `${emoji} [SAF] ${title}`, html }, '[notify]');
+  await resendFetch({ apiKey, from, to, subject: `${emoji} [씨앗페] ${title}`, html }, '[notify]');
 }
 
 export type BuyerEmailType =
