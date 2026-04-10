@@ -4,7 +4,8 @@ import { createClient } from '@supabase/supabase-js';
 export const runtime = 'nodejs';
 
 /**
- * Cancels pending_payment orders older than 30 minutes.
+ * 1) Cancels pending_payment orders older than 30 minutes.
+ * 2) Cancels awaiting_deposit orders older than 24 hours + restores artwork reserved→available.
  * Called every 10 minutes by Vercel Cron (vercel.json).
  * Requires Bearer CRON_SECRET authorization.
  */
@@ -30,40 +31,93 @@ export async function GET(request: NextRequest) {
     global: { headers: { Authorization: `Bearer ${adminKey}` } },
   });
 
-  // Expire orders that have been pending_payment for more than 30 minutes
-  const cutoff = new Date(Date.now() - 30 * 60 * 1000).toISOString();
   const now = new Date().toISOString();
 
-  const { data: expiredOrders, error: fetchError } = await supabase
+  // ── 1) pending_payment: 30분 초과 자동 취소 ──────────────────────────────────
+  const pendingCutoff = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+
+  const { data: expiredPending, error: pendingFetchError } = await supabase
     .from('orders')
     .select('id')
     .eq('status', 'pending_payment')
-    .lt('created_at', cutoff);
+    .lt('created_at', pendingCutoff);
 
-  if (fetchError) {
-    return NextResponse.json({ error: fetchError.message }, { status: 500 });
+  if (pendingFetchError) {
+    return NextResponse.json({ error: pendingFetchError.message }, { status: 500 });
   }
 
-  if (!expiredOrders || expiredOrders.length === 0) {
-    return NextResponse.json({ cancelled: 0 });
+  let pendingCancelled = 0;
+  if (expiredPending && expiredPending.length > 0) {
+    const ids = expiredPending.map((o: { id: string }) => o.id);
+    const { data: updated, error: updateError } = await supabase
+      .from('orders')
+      .update({ status: 'cancelled', cancelled_at: now })
+      .in('id', ids)
+      .eq('status', 'pending_payment')
+      .select('id');
+
+    if (updateError) {
+      return NextResponse.json({ error: updateError.message }, { status: 500 });
+    }
+    pendingCancelled = updated?.length ?? 0;
   }
 
-  const ids = expiredOrders.map((o: { id: string }) => o.id);
+  // ── 2) awaiting_deposit: 24시간 초과 자동 취소 + artwork reserved→available ──
+  const depositCutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
-  // Optimistic lock: only update rows still in pending_payment state
-  const { data: updated, error: updateError } = await supabase
+  const { data: expiredDeposit, error: depositFetchError } = await supabase
     .from('orders')
-    .update({ status: 'cancelled', cancelled_at: now })
-    .in('id', ids)
-    .eq('status', 'pending_payment')
-    .select('id');
+    .select('id, artwork_id')
+    .eq('status', 'awaiting_deposit')
+    .lt('created_at', depositCutoff);
 
-  if (updateError) {
-    return NextResponse.json({ error: updateError.message }, { status: 500 });
+  if (depositFetchError) {
+    return NextResponse.json({ error: depositFetchError.message }, { status: 500 });
   }
 
-  const cancelled = updated?.length ?? 0;
-  console.error(`[expire-stale-orders] cancelled ${cancelled} orders`);
+  let depositCancelled = 0;
+  if (expiredDeposit && expiredDeposit.length > 0) {
+    const ids = expiredDeposit.map((o: { id: string }) => o.id);
+    const { data: updated, error: updateError } = await supabase
+      .from('orders')
+      .update({ status: 'cancelled', cancelled_at: now })
+      .in('id', ids)
+      .eq('status', 'awaiting_deposit')
+      .select('id');
 
-  return NextResponse.json({ cancelled, total_found: ids.length });
+    if (updateError) {
+      return NextResponse.json({ error: updateError.message }, { status: 500 });
+    }
+    depositCancelled = updated?.length ?? 0;
+
+    // 취소된 주문의 artwork reserved→available 복원
+    const artworkIds = expiredDeposit
+      .map((o: { artwork_id: string | null }) => o.artwork_id)
+      .filter((id): id is string => !!id);
+
+    if (artworkIds.length > 0) {
+      const { error: artworkError } = await supabase
+        .from('artworks')
+        .update({ status: 'available', updated_at: now })
+        .in('id', artworkIds)
+        .eq('status', 'reserved'); // 멱등성: reserved 상태일 때만 변경
+
+      if (artworkError) {
+        console.error('[expire-stale-orders] artwork status restore failed:', artworkError);
+      }
+    }
+  }
+
+  const totalCancelled = pendingCancelled + depositCancelled;
+  if (totalCancelled > 0) {
+    console.error(
+      `[expire-stale-orders] cancelled ${pendingCancelled} pending + ${depositCancelled} awaiting_deposit orders`
+    );
+  }
+
+  return NextResponse.json({
+    cancelled: totalCancelled,
+    pending_cancelled: pendingCancelled,
+    deposit_cancelled: depositCancelled,
+  });
 }
