@@ -718,12 +718,13 @@ export default function OrderLookup() {
         if (res.orders.length === 0) {
           setError(t('errorNotFound'));
         } else {
-          setOrders(res.orders);
-          // 첫 번째 주문 상세를 미리 조회하여 자동 펼침
+          // 첫 번째 주문 상세를 미리 조회 — setOrders 전에 setFirstDetail 먼저 세팅해야
+          // OrderCard의 useState(!!initialDetail) 초기값이 true로 설정됨
           const detailRes = await lookupOrderDetail(res.orders[0].orderNo, email);
           if (detailRes.success) {
             setFirstDetail(detailRes.order);
           }
+          setOrders(res.orders);
         }
       } else {
         setError(res.error === 'REQUIRED' ? t('errorRequired') : t('errorNotFound'));
