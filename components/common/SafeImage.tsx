@@ -57,6 +57,19 @@ function RemoteSafeImage({ src, sizes, ...props }: { src: string } & Omit<ImageP
 
   const { fill, width, height, className, loading, priority, style } = restProps;
 
+  const classObjectFit = (() => {
+    if (typeof className !== 'string') return undefined;
+    if (className.includes('object-contain')) return 'contain';
+    if (className.includes('object-cover')) return 'cover';
+    if (className.includes('object-fill')) return 'fill';
+    if (className.includes('object-none')) return 'none';
+    if (className.includes('object-scale-down')) return 'scale-down';
+    return undefined;
+  })();
+
+  const resolvedObjectFit =
+    (style as React.CSSProperties | undefined)?.objectFit || classObjectFit || 'cover';
+
   const defaultSizes = '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw';
   const effectiveSizes = sizes || defaultSizes;
 
@@ -86,7 +99,7 @@ function RemoteSafeImage({ src, sizes, ...props }: { src: string } & Omit<ImageP
           height: '100%',
           width: '100%',
           inset: 0,
-          objectFit: (style as React.CSSProperties)?.objectFit || 'cover',
+          objectFit: resolvedObjectFit,
           ...style,
         }}
         onError={handleError}
