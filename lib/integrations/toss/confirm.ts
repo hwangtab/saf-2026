@@ -62,3 +62,19 @@ export async function fetchPayment(paymentKey: string): Promise<TossConfirmRespo
   if (!response.ok) return null;
   return response.json();
 }
+
+/**
+ * Fetches a payment by orderId (our order_no) from TossPayments API.
+ * Used by reconciliation cron when payment_key is unknown.
+ */
+export async function fetchPaymentByOrderId(orderId: string): Promise<TossConfirmResponse | null> {
+  const config = getTossConfig();
+  if (!config) return null;
+
+  const response = await fetchWithTimeout(`${config.apiBaseUrl}/v1/payments/orders/${orderId}`, {
+    headers: { Authorization: getTossAuthHeader() },
+  });
+
+  if (!response.ok) return null;
+  return response.json();
+}
