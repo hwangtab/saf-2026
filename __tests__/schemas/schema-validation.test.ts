@@ -334,6 +334,18 @@ describe('generateArtworkJsonLd', () => {
     );
     expect(productSchema.isPartOf.location['@type']).toBe('VirtualLocation');
   });
+
+  it('should align isPartOf status and location during exhibition in-progress', () => {
+    const nowSpy = jest.spyOn(Date, 'now').mockReturnValue(Date.parse('2026-01-20T12:00:00+09:00'));
+    const { productSchema } = generateArtworkJsonLd(baseArtwork, '100000', false, 'ko');
+    nowSpy.mockRestore();
+
+    expect(productSchema.isPartOf.eventStatus).toBe('https://schema.org/EventInProgress');
+    expect(productSchema.isPartOf.eventAttendanceMode).toBe(
+      'https://schema.org/MixedEventAttendanceMode'
+    );
+    expect(productSchema.isPartOf.location['@type']).toBe('Place');
+  });
 });
 
 describe('generateArtworkMetadata', () => {
@@ -563,8 +575,12 @@ describe('getOurProofFaqSchema', () => {
 
     expect(schema['@type']).toBe('FAQPage');
     expect(schema.mainEntity).toHaveLength(items.length);
-    expect(schema.mainEntity[0].name).toBe(items[0].question);
-    expect(schema.mainEntity[0].acceptedAnswer.text).toBe(items[0].answer);
+    schema.mainEntity.forEach(
+      (entity: { name: string; acceptedAnswer: { text: string } }, index: number) => {
+        expect(entity.name).toBe(items[index].question);
+        expect(entity.acceptedAnswer.text).toBe(items[index].answer);
+      }
+    );
   });
 
   it('should keep FAQ items and FAQPage entities synchronized for en locale', () => {
@@ -572,8 +588,12 @@ describe('getOurProofFaqSchema', () => {
 
     expect(schema['@type']).toBe('FAQPage');
     expect(schema.mainEntity).toHaveLength(items.length);
-    expect(schema.mainEntity[0].name).toBe(items[0].question);
-    expect(schema.mainEntity[0].acceptedAnswer.text).toBe(items[0].answer);
+    schema.mainEntity.forEach(
+      (entity: { name: string; acceptedAnswer: { text: string } }, index: number) => {
+        expect(entity.name).toBe(items[index].question);
+        expect(entity.acceptedAnswer.text).toBe(items[index].answer);
+      }
+    );
   });
 });
 
