@@ -288,6 +288,22 @@ describe('generateVideoSchema', () => {
     expect(schema.uploadDate).toBe('2023-03-26T00:00:00+09:00');
     expect(schema.dateModified).toBe('2023-03-26T00:00:00+09:00');
   });
+
+  it('should use watch page URL as canonical id and mainEntityOfPage when provided', () => {
+    const schema = generateVideoSchema({
+      title: 'Video',
+      description: 'Desc',
+      youtubeId: 'abc123',
+      watchPageUrl: 'https://www.saf2026.com/archive/2023/videos/abc123',
+    });
+
+    expect(schema['@id']).toBe('https://www.saf2026.com/archive/2023/videos/abc123');
+    expect(schema.url).toBe('https://www.saf2026.com/archive/2023/videos/abc123');
+    expect(schema.mainEntityOfPage['@id']).toBe(
+      'https://www.saf2026.com/archive/2023/videos/abc123'
+    );
+    expect(schema.contentUrl).toBe('https://www.youtube.com/watch?v=abc123');
+  });
 });
 
 describe('generateArtworkJsonLd', () => {

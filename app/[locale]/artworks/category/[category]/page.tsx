@@ -97,7 +97,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           '미술 작품 판매',
           '현대미술',
         ],
-    alternates: createLocaleAlternates(categoryPath, locale),
+    alternates: createLocaleAlternates(categoryPath, locale, true),
     openGraph: {
       title,
       description,
@@ -136,6 +136,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     other: {
       'product:availability': availableCount > 0 ? 'in stock' : 'out of stock',
     },
+    // 영어 카테고리 페이지는 한국어 콘텐츠만 있어 thin content — 색인 제외
+    ...(isEnglish ? { robots: { index: false, follow: true } } : {}),
   };
 }
 

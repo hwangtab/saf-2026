@@ -169,6 +169,7 @@ export interface Video {
   youtubeId: string;
   thumbnail?: string;
   transcript?: string; // AI-friendly summary or transcript
+  duration?: string; // ISO 8601 duration (e.g. "PT5M30S")
 }
 
 export interface TestimonialItem {

@@ -8,7 +8,7 @@ import { CONTACT, EXHIBITOR_APPLICATION_TERMS_VERSION, SITE_URL } from '@/lib/co
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { EXHIBITOR_APPLICATION_TERMS_DOCUMENT } from '@/lib/legal-documents';
 import { createStandardPageMetadata } from '@/lib/seo';
-import { buildLocaleUrl } from '@/lib/locale-alternates';
+import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { formatEffectiveDateForLocale } from '@/lib/utils';
 import { resolveLocale } from '@/lib/server-locale';
 
@@ -34,7 +34,15 @@ export async function generateMetadata(): Promise<Metadata> {
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
-  return createStandardPageMetadata(title, copy.description, PAGE_URL, PAGE_PATH, locale);
+  const base = createStandardPageMetadata(title, copy.description, PAGE_URL, PAGE_PATH, locale);
+  if (locale === 'en') {
+    return {
+      ...base,
+      alternates: createLocaleAlternates(PAGE_PATH, locale, true),
+      robots: { index: false, follow: true },
+    };
+  }
+  return base;
 }
 
 export default async function ExhibitorTermsPage() {

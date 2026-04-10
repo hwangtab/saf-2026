@@ -117,7 +117,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           primaryCategory ? `${primaryCategory} 작가` : null,
         ]
     ).filter((k): k is string => Boolean(k)),
-    alternates: createLocaleAlternates(artistPath, locale),
+    alternates: createLocaleAlternates(artistPath, locale, true),
     openGraph: {
       title: metaTitle,
       description: seoDescription.substring(0, 200),
@@ -157,6 +157,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         },
       ],
     },
+    // 영어 아티스트 페이지는 한국어 콘텐츠만 있어 thin content — 색인 제외
+    ...(locale === 'en' ? { robots: { index: false, follow: true } } : {}),
   };
 }
 

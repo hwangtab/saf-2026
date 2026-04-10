@@ -11,6 +11,7 @@ type VideoItem = {
   youtube_id: string;
   thumbnail: string | null;
   transcript: string | null;
+  duration: string | null;
 };
 
 export function VideosManager({ videos }: { videos: VideoItem[] }) {
@@ -29,6 +30,7 @@ export function VideosManager({ videos }: { videos: VideoItem[] }) {
         description: formData.get('description') as string,
         thumbnail: formData.get('thumbnail') as string,
         transcript: formData.get('transcript') as string,
+        duration: formData.get('duration') as string,
       })}
       renderCreateForm={() => (
         <>
@@ -39,6 +41,7 @@ export function VideosManager({ videos }: { videos: VideoItem[] }) {
           <AdminInput name="thumbnail" placeholder="썸네일 URL" />
           <AdminTextarea name="description" placeholder="설명" rows={3} />
           <AdminTextarea name="transcript" placeholder="자막/요약" rows={4} />
+          <AdminInput name="duration" placeholder="영상 길이 ISO 8601 (예: PT4M7S)" />
         </>
       )}
       renderEditForm={(item) => (
@@ -68,6 +71,11 @@ export function VideosManager({ videos }: { videos: VideoItem[] }) {
             defaultValue={item.transcript || ''}
             placeholder="자막/요약"
             rows={4}
+          />
+          <AdminInput
+            name="duration"
+            defaultValue={item.duration || ''}
+            placeholder="영상 길이 ISO 8601 (예: PT4M7S)"
           />
         </>
       )}

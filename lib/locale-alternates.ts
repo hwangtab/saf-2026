@@ -18,12 +18,13 @@ export function buildLocaleUrl(path: string, locale: LocaleCode): string {
   return withLocalePrefix(path, locale);
 }
 
-export function createLocaleAlternates(path: string, locale: LocaleCode = 'ko') {
+export function createLocaleAlternates(path: string, locale: LocaleCode = 'ko', koOnly = false) {
   return {
     canonical: withLocalePrefix(path, locale),
     languages: {
       'ko-KR': withLocalePrefix(path, 'ko'),
-      'en-US': withLocalePrefix(path, 'en'),
+      // 한국어 전용 콘텐츠: 영어 alternate 생략 (noindex 대상과 hreflang 충돌 방지)
+      ...(!koOnly && { 'en-US': withLocalePrefix(path, 'en') }),
       'x-default': withLocalePrefix(path, 'ko'),
     },
   };

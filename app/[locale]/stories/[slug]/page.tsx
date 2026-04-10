@@ -70,7 +70,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
-    alternates: createLocaleAlternates(path, locale),
+    alternates: createLocaleAlternates(path, locale, !story.body_en),
     openGraph: {
       title,
       description,
@@ -101,6 +101,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         },
       ],
     },
+    // 영어 번역 본문(body_en)이 없는 스토리는 한국어가 그대로 노출 — thin content 색인 제외
+    ...(isEn && !story.body_en ? { robots: { index: false, follow: true } } : {}),
   };
 }
 

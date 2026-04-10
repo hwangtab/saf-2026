@@ -76,16 +76,21 @@ export interface VideoSchemaInput {
   youtubeId: string;
   uploadDate?: string;
   transcript?: string;
+  duration?: string; // ISO 8601 (e.g. "PT5M30S")
   locale?: 'ko' | 'en';
+  watchPageUrl?: string;
 }
 
 export function generateVideoSchema(video: VideoSchemaInput) {
   const contentUrl = `https://www.youtube.com/watch?v=${video.youtubeId}`;
+  const watchPageUrl = video.watchPageUrl?.trim();
+  const canonicalVideoPageUrl = watchPageUrl || contentUrl;
   const normalizedUploadDate = normalizeIsoDateTime(video.uploadDate);
   return {
     '@context': 'https://schema.org',
     '@type': 'VideoObject',
-    '@id': contentUrl,
+    '@id': canonicalVideoPageUrl,
+    url: canonicalVideoPageUrl,
     name: video.title,
     description: video.description,
     thumbnailUrl: `https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`,
@@ -93,7 +98,12 @@ export function generateVideoSchema(video: VideoSchemaInput) {
     dateModified: normalizedUploadDate,
     contentUrl,
     embedUrl: `https://www.youtube.com/embed/${video.youtubeId}`,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': canonicalVideoPageUrl,
+    },
     inLanguage: video.locale === 'en' ? 'en-US' : 'ko-KR',
+    ...(video.duration ? { duration: video.duration } : {}),
     transcript: video.transcript,
     publisher: {
       '@type': 'Organization',

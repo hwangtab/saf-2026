@@ -60,7 +60,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           '예술인 뉴스',
           '씨앗페 보도',
         ],
-    alternates: createLocaleAlternates(path, locale),
+    alternates: createLocaleAlternates(path, locale, true),
     openGraph: {
       title: article.title,
       description,
@@ -90,6 +90,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         ? [{ url: article.thumbnail, alt: article.title }]
         : [{ url: OG_IMAGE.url, alt: isEn ? OG_IMAGE.altEn : OG_IMAGE.alt }],
     },
+    // 뉴스 콘텐츠는 한국어 전용 — 영어 페이지는 thin content이므로 색인 제외
+    ...(isEn ? { robots: { index: false, follow: true } } : {}),
   };
 }
 

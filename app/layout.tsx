@@ -73,14 +73,6 @@ export const metadata: Metadata = {
     default: '씨앗페 온라인 | 한국 현대미술 작품 구매',
     template: '%s | 씨앗페 온라인 갤러리',
   },
-  alternates: {
-    canonical: SITE_URL,
-    languages: {
-      'ko-KR': SITE_URL,
-      'en-US': `${SITE_URL}/en`,
-      'x-default': SITE_URL,
-    },
-  },
   description:
     '한국 현대미술 작품 127점을 온라인에서 구매하세요. 회화, 판화, 사진, 조각 등 다양한 장르의 작품을 합리적인 가격에 만나볼 수 있습니다.',
   keywords:
@@ -93,7 +85,6 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'ko_KR',
-    url: SITE_URL,
     title: '씨앗페 온라인 | 한국 현대미술 작품 구매',
     description:
       '한국 현대미술 작품 127점을 온라인에서 구매하세요. 회화, 판화, 사진, 조각 등 다양한 장르의 작품을 합리적인 가격에 만나볼 수 있습니다.',
