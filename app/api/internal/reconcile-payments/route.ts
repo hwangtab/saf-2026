@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { fetchPaymentByOrderId } from '@/lib/integrations/toss/confirm';
+import { notifyEmail } from '@/lib/notify';
 
 export const runtime = 'nodejs';
 
@@ -41,14 +42,14 @@ export async function GET(request: NextRequest) {
     global: { headers: { Authorization: `Bearer ${adminKey}` } },
   });
 
-  // 5분~30분 경과한 pending_payment 주문 (5분 미만은 정상 결제 진행 중일 수 있고,
-  // 30분 이상은 expire-stale-orders 크론이 이미 취소함)
-  const minAge = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+  // 5분~28분 경과한 pending_payment 주문 (5분 미만은 정상 결제 진행 중일 수 있고,
+  // 30분 이상은 expire-stale-orders 크론이 이미 취소함 — 2분 안전 마진)
+  const minAge = new Date(Date.now() - 28 * 60 * 1000).toISOString();
   const maxAge = new Date(Date.now() - 5 * 60 * 1000).toISOString();
 
   const { data: staleOrders, error: fetchError } = await supabase
     .from('orders')
-    .select('id, order_no, artwork_id, total_amount, buyer_name, buyer_phone')
+    .select('id, order_no, artwork_id, total_amount, buyer_name, buyer_phone, metadata')
     .eq('status', 'pending_payment')
     .gt('created_at', minAge)
     .lt('created_at', maxAge);
@@ -72,6 +73,7 @@ export async function GET(request: NextRequest) {
       if (!tossPayment) continue; // Toss에 결제 기록 없음 → 미결제, 스킵
 
       const now = new Date().toISOString();
+      const existingMetadata = (order.metadata as Record<string, unknown>) ?? {};
 
       if (tossPayment.status === 'DONE') {
         // ── 결제 완료인데 DB에 반영 안 된 케이스 → 보정 ──
@@ -84,7 +86,7 @@ export async function GET(request: NextRequest) {
           .maybeSingle();
 
         if (!existingPayment) {
-          await supabase.from('payments').insert({
+          const { error: paymentInsertError } = await supabase.from('payments').insert({
             order_id: order.id,
             payment_key: tossPayment.paymentKey,
             toss_order_id: tossPayment.orderId,
@@ -97,18 +99,43 @@ export async function GET(request: NextRequest) {
             confirm_response: tossPayment as Record<string, unknown>,
             idempotency_key: `reconcile-${order.order_no}`,
           });
+
+          if (paymentInsertError) {
+            errors.push(`${order.order_no}: payment insert failed: ${paymentInsertError.message}`);
+            continue;
+          }
         }
 
         // 2) 주문 → paid (멱등성: pending_payment일 때만)
-        await supabase
+        // SELECT로 업데이트된 행 수를 확인 — 0행이면 이미 cancelled 등으로 상태 변경됨
+        const { data: updatedOrders, error: orderUpdateError } = await supabase
           .from('orders')
           .update({
             status: 'paid',
             paid_at: tossPayment.approvedAt ?? now,
-            metadata: { payment_method: tossPayment.method ?? null, reconciled: true },
+            // 기존 metadata 보존 후 병합
+            metadata: {
+              ...existingMetadata,
+              payment_method: tossPayment.method ?? null,
+              reconciled: true,
+            },
           })
           .eq('id', order.id)
-          .eq('status', 'pending_payment');
+          .eq('status', 'pending_payment')
+          .select('id');
+
+        if (orderUpdateError) {
+          errors.push(`${order.order_no}: order update failed: ${orderUpdateError.message}`);
+          continue;
+        }
+
+        // 주문 상태 전환에 실패한 경우 (이미 cancelled 등) → artwork_sales 생성 스킵
+        if (!updatedOrders || updatedOrders.length === 0) {
+          console.error(
+            `[reconcile-payments] SKIP: ${order.order_no} — order no longer pending_payment, skipping artwork_sales`
+          );
+          continue;
+        }
 
         // 3) artwork_sales 레코드가 없으면 생성 (중복 방지)
         if (order.artwork_id) {
@@ -120,7 +147,7 @@ export async function GET(request: NextRequest) {
             .maybeSingle();
 
           if (!existingSale) {
-            await supabase.from('artwork_sales').insert({
+            const { error: saleInsertError } = await supabase.from('artwork_sales').insert({
               artwork_id: order.artwork_id,
               sale_price: order.total_amount,
               quantity: 1,
@@ -132,6 +159,13 @@ export async function GET(request: NextRequest) {
               buyer_phone: order.buyer_phone,
               sold_at: tossPayment.approvedAt ?? now,
             });
+
+            if (saleInsertError) {
+              errors.push(
+                `${order.order_no}: artwork_sales insert failed: ${saleInsertError.message}`
+              );
+              continue;
+            }
           }
         }
 
@@ -150,7 +184,7 @@ export async function GET(request: NextRequest) {
           .maybeSingle();
 
         if (!existingPayment) {
-          await supabase.from('payments').insert({
+          const { error: paymentInsertError } = await supabase.from('payments').insert({
             order_id: order.id,
             payment_key: tossPayment.paymentKey,
             toss_order_id: tossPayment.orderId,
@@ -162,17 +196,39 @@ export async function GET(request: NextRequest) {
             confirm_response: tossPayment as Record<string, unknown>,
             idempotency_key: `reconcile-${order.order_no}`,
           });
+
+          if (paymentInsertError) {
+            errors.push(`${order.order_no}: payment insert failed: ${paymentInsertError.message}`);
+            continue;
+          }
         }
 
         // 주문 → awaiting_deposit
-        await supabase
+        const { data: updatedOrders, error: orderUpdateError } = await supabase
           .from('orders')
           .update({
             status: 'awaiting_deposit',
-            metadata: { payment_method: tossPayment.method ?? null, reconciled: true },
+            metadata: {
+              ...existingMetadata,
+              payment_method: tossPayment.method ?? null,
+              reconciled: true,
+            },
           })
           .eq('id', order.id)
-          .eq('status', 'pending_payment');
+          .eq('status', 'pending_payment')
+          .select('id');
+
+        if (orderUpdateError) {
+          errors.push(`${order.order_no}: order update failed: ${orderUpdateError.message}`);
+          continue;
+        }
+
+        if (!updatedOrders || updatedOrders.length === 0) {
+          console.error(
+            `[reconcile-payments] SKIP: ${order.order_no} — order no longer pending_payment`
+          );
+          continue;
+        }
 
         reconciled++;
         console.error(
@@ -185,6 +241,20 @@ export async function GET(request: NextRequest) {
       errors.push(`${order.order_no}: ${msg}`);
       console.error(`[reconcile-payments] ERROR: ${order.order_no}:`, err);
     }
+  }
+
+  // 결과 알림
+  if (errors.length > 0) {
+    await notifyEmail('error', `결제 보정 크론 에러 (${errors.length}건)`, {
+      검사: `${staleOrders.length}건`,
+      보정: `${reconciled}건`,
+      에러: errors.slice(0, 3).join('\n'),
+    });
+  } else if (reconciled > 0) {
+    await notifyEmail('warning', `결제 보정 완료 (${reconciled}건)`, {
+      검사: `${staleOrders.length}건`,
+      보정: `${reconciled}건`,
+    });
   }
 
   return NextResponse.json({

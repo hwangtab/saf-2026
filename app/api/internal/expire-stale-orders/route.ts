@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { notifyTeams } from '@/lib/notify';
 
 export const runtime = 'nodejs';
 
@@ -104,6 +105,10 @@ export async function GET(request: NextRequest) {
 
       if (artworkError) {
         console.error('[expire-stale-orders] artwork status restore failed:', artworkError);
+        await notifyTeams('error', '만료 크론: 작품 상태 복원 실패', {
+          에러: artworkError.message,
+          작품수: `${artworkIds.length}건`,
+        });
       }
     }
   }
@@ -113,6 +118,10 @@ export async function GET(request: NextRequest) {
     console.error(
       `[expire-stale-orders] cancelled ${pendingCancelled} pending + ${depositCancelled} awaiting_deposit orders`
     );
+    await notifyTeams('warning', `만료 주문 자동 취소 (${totalCancelled}건)`, {
+      미결제취소: `${pendingCancelled}건`,
+      입금대기취소: `${depositCancelled}건`,
+    });
   }
 
   return NextResponse.json({

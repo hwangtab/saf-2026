@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { confirmPayment } from '@/lib/integrations/toss/confirm';
+import { notifyEmail, sendBuyerEmail } from '@/lib/notify';
 
 export const runtime = 'nodejs';
 
@@ -28,10 +29,12 @@ export async function POST(req: NextRequest) {
 
   const supabase = createSupabaseAdminClient();
 
-  // Find the order by order_no (orderId from Toss = our orderNo)
+  // Find the order by order_no — metadata 포함 (병합 시 필요)
   const { data: order, error: orderError } = await supabase
     .from('orders')
-    .select('id, total_amount, status, artwork_id, order_no, buyer_name, buyer_phone')
+    .select(
+      'id, total_amount, status, artwork_id, order_no, buyer_name, buyer_phone, buyer_email, metadata'
+    )
     .eq('order_no', orderId)
     .single();
 
@@ -46,11 +49,9 @@ export async function POST(req: NextRequest) {
 
   // Guard: pending_payment 상태에서만 승인 진행
   if (order.status !== 'pending_payment') {
-    // 멱등성: 이미 결제 완료
     if (order.status === 'paid') {
       return NextResponse.json({ success: true, alreadyPaid: true });
     }
-    // cancelled, refunded 등 — 결제 불가
     return NextResponse.json(
       { error: `주문 상태(${order.status})에서는 결제를 진행할 수 없습니다.` },
       { status: 400 }
@@ -62,11 +63,23 @@ export async function POST(req: NextRequest) {
   const confirmResult = await confirmPayment({ paymentKey, orderId, amount }, idempotencyKey);
 
   if (!confirmResult.success) {
-    // Mark order as cancelled on failure
-    await supabase
+    // Mark order as cancelled on failure (optimistic lock: pending_payment일 때만)
+    const { error: cancelError } = await supabase
       .from('orders')
       .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
-      .eq('id', order.id);
+      .eq('id', order.id)
+      .eq('status', 'pending_payment');
+
+    if (cancelError) {
+      console.error('[confirm] order cancel failed:', cancelError);
+    }
+
+    // fire-and-forget: 알림이 사용자 응답을 블로킹하면 안 됨
+    void notifyEmail('error', '결제 승인 실패', {
+      주문번호: orderId,
+      에러코드: confirmResult.error.code,
+      메시지: confirmResult.error.message,
+    });
 
     return NextResponse.json(
       { error: confirmResult.error.message || '결제 승인에 실패했습니다.' },
@@ -102,25 +115,33 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: '결제 기록 저장에 실패했습니다.' }, { status: 500 });
   }
 
-  // Update order status
-  // DONE → paid, WAITING_FOR_DEPOSIT → awaiting_deposit (가상계좌 입금 대기)
+  // Update order status with optimistic lock (.eq status guard) + metadata merge
   const newOrderStatus = isDone ? 'paid' : isVirtualAccount ? 'awaiting_deposit' : order.status;
-  const { error: orderUpdateError } = await supabase
+  const existingMetadata = (order.metadata as Record<string, unknown>) ?? {};
+
+  const { data: updatedOrders, error: orderUpdateError } = await supabase
     .from('orders')
     .update({
       status: newOrderStatus,
       paid_at: isDone ? new Date().toISOString() : null,
-      metadata: { payment_method: tossResponse.method ?? null },
+      metadata: { ...existingMetadata, payment_method: tossResponse.method ?? null },
     })
-    .eq('id', order.id);
+    .eq('id', order.id)
+    .eq('status', 'pending_payment') // optimistic lock — 레이스로 cancelled 된 경우 스킵
+    .select('id');
 
   if (orderUpdateError) {
     console.error('[confirm] order UPDATE 실패:', orderUpdateError);
+    void notifyEmail('error', '결제 후 주문 상태 업데이트 실패', {
+      주문번호: orderId,
+      에러: orderUpdateError.message,
+      참고: '결제는 완료, 주문 상태 반영 실패 — reconciliation cron이 보정 예정',
+    });
   }
 
   // If fully paid, insert artwork_sales record
   // (DB trigger update_artwork_status_on_sale will mark artwork as sold)
-  if (isDone && payment) {
+  if (isDone && payment && updatedOrders && updatedOrders.length > 0) {
     const { error: salesInsertError } = await supabase.from('artwork_sales').insert({
       artwork_id: order.artwork_id,
       sale_price: order.total_amount,
@@ -136,6 +157,65 @@ export async function POST(req: NextRequest) {
 
     if (salesInsertError) {
       console.error('[confirm] artwork_sales INSERT 실패:', salesInsertError);
+      void notifyEmail('error', '결제 후 판매 기록 생성 실패', {
+        주문번호: orderId,
+        에러: salesInsertError.message,
+        참고: '결제+주문 완료, 판매 기록만 누락 — reconciliation cron이 보정 예정',
+      });
+    }
+  }
+
+  // 작품/작가 정보 조회 (구매자 이메일용)
+  const { data: artworkInfo } = await supabase
+    .from('artworks')
+    .select('title, artists(name_ko)')
+    .eq('id', order.artwork_id)
+    .single();
+  const artworkTitle = artworkInfo?.title ?? '';
+  const artistsRaw = artworkInfo?.artists;
+  const artistName = Array.isArray(artistsRaw)
+    ? (artistsRaw[0]?.name_ko ?? '')
+    : ((artistsRaw as { name_ko?: string } | null | undefined)?.name_ko ?? '');
+
+  // 결제 성공 알림 — fire-and-forget: 응답 전송 후 백그라운드 처리
+  if (isDone) {
+    void notifyEmail('payment', '결제 승인 완료', {
+      주문번호: orderId,
+      결제수단: tossResponse.method ?? '알 수 없음',
+      금액: `₩${tossResponse.totalAmount.toLocaleString()}`,
+    });
+    if (order.buyer_email) {
+      void sendBuyerEmail(order.buyer_email, 'payment_confirmed', {
+        orderNo: orderId,
+        buyerName: order.buyer_name,
+        artworkTitle,
+        artistName,
+        amount: tossResponse.totalAmount,
+        paymentMethod: tossResponse.method ?? undefined,
+      });
+    }
+  } else if (isVirtualAccount) {
+    void notifyEmail('info', '가상계좌 발급 완료 (입금 대기)', {
+      주문번호: orderId,
+      금액: `₩${tossResponse.totalAmount.toLocaleString()}`,
+    });
+    const va = tossResponse.virtualAccount as
+      | { bankName?: string; accountNumber?: string; dueDate?: string }
+      | null
+      | undefined;
+    if (order.buyer_email) {
+      void sendBuyerEmail(order.buyer_email, 'virtual_account_issued', {
+        orderNo: orderId,
+        buyerName: order.buyer_name,
+        artworkTitle,
+        artistName,
+        amount: tossResponse.totalAmount,
+        virtualAccount: {
+          bankName: va?.bankName,
+          accountNumber: va?.accountNumber,
+          dueDate: va?.dueDate,
+        },
+      });
     }
   }
 

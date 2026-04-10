@@ -103,7 +103,7 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
       'id, order_no, status, total_amount, item_amount, shipping_amount, buyer_name, buyer_phone, shipping_name, shipping_phone, shipping_address, shipping_address_detail, shipping_memo, shipping_carrier, tracking_number, created_at, paid_at, cancelled_at, refunded_at, artwork_id, artworks(title, images, artists(name_ko))'
     )
     .eq('id', orderId)
-    .single();
+    .maybeSingle();
 
   if (error || !order) return null;
 
@@ -114,7 +114,7 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
     .eq('order_id', orderId)
     .order('created_at', { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
 
   // Fetch artwork_sales record
   const { data: sale } = await supabase
@@ -122,7 +122,7 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
     .select('id, voided_at')
     .eq('order_id', orderId)
     .limit(1)
-    .single();
+    .maybeSingle();
 
   const artwork = Array.isArray((order as any).artworks)
     ? (order as any).artworks[0]
@@ -236,10 +236,13 @@ export async function refundOrder(input: RefundInput) {
 
     // 2b. Update payment status
     if (payment?.id) {
-      await supabase
+      const { error: paymentUpdateError } = await supabase
         .from('payments')
         .update({ status: 'CANCELED', cancelled_at: now })
         .eq('id', payment.id);
+      if (paymentUpdateError) {
+        console.error('[refundOrder] payment status UPDATE failed:', paymentUpdateError);
+      }
     }
   }
   // 계좌이체 주문은 Toss API 없이 진행 (실제 환불은 관리자가 외부에서 수동 처리)
@@ -345,12 +348,17 @@ export async function updateOrderStatus(
     updatePayload.tracking_number = trackingInfo.trackingNumber || null;
   }
 
-  const { error: updateError } = await supabase
+  const { data: updatedRows, error: updateError } = await supabase
     .from('orders')
     .update(updatePayload)
-    .eq('id', orderId);
+    .eq('id', orderId)
+    .eq('status', order.status)
+    .select('id');
 
   if (updateError) throw updateError;
+  if (!updatedRows || updatedRows.length === 0) {
+    throw new Error('주문 상태가 변경되었습니다. 새로고침 후 다시 시도해주세요.');
+  }
 
   await logAdminAction(
     'order_status_updated',

@@ -10,6 +10,7 @@ export type PortalErrorKey =
   | 'adminExhibitors'
   | 'adminContent'
   | 'adminLogs'
+  | 'adminOrders'
   | 'adminRevenue'
   | 'adminTrash'
   | 'global';
@@ -124,6 +125,18 @@ const COPY: Record<PortalErrorKey, Record<AppLocale, ErrorCopy>> = {
     en: {
       title: 'Unable to load content',
       message: 'An error occurred while loading content data. Please try again shortly.',
+      backLabel: 'Back to admin home',
+    },
+  },
+  adminOrders: {
+    ko: {
+      title: '주문 데이터를 불러올 수 없습니다',
+      message: '주문 데이터를 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+      backLabel: '관리자 홈으로',
+    },
+    en: {
+      title: 'Unable to load orders',
+      message: 'An error occurred while loading order data. Please try again shortly.',
       backLabel: 'Back to admin home',
     },
   },
