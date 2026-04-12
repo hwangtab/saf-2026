@@ -61,7 +61,7 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
         <div>
           <label
             htmlFor="feedback-category"
-            className="mb-1.5 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-charcoal"
           >
             {t('category')}
           </label>
@@ -82,7 +82,7 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
         <div>
           <label
             htmlFor="feedback-title"
-            className="mb-1.5 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-charcoal"
           >
             {t('titleLabel')}
           </label>
@@ -100,7 +100,7 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
         <div>
           <label
             htmlFor="feedback-description"
-            className="mb-1.5 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-charcoal"
           >
             {t('description')}
           </label>

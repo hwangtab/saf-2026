@@ -209,7 +209,7 @@ export default function FullscreenMenu({
                           >
                             {subItem.name}
                             {subItem.description && (
-                              <span className="block text-xs text-gray-400 font-normal mt-1">
+                              <span className="block text-xs text-charcoal-soft font-normal mt-1">
                                 {subItem.description}
                               </span>
                             )}

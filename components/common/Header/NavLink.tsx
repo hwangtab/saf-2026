@@ -51,7 +51,7 @@ export default function NavLink({
       >
         <span className="block">{item.name}</span>
         {isSubItem && item.description && (
-          <span className="block text-xs text-gray-400 font-normal mt-0.5 whitespace-normal">
+          <span className="block text-xs text-charcoal-soft font-normal mt-0.5 whitespace-normal">
             {item.description}
           </span>
         )}
@@ -63,7 +63,7 @@ export default function NavLink({
     <Link href={item.href} onClick={onClick} className={className}>
       <span className="block">{item.name}</span>
       {isSubItem && item.description && (
-        <span className="block text-xs text-gray-400 font-normal mt-0.5 whitespace-normal">
+        <span className="block text-xs text-charcoal-soft font-normal mt-0.5 whitespace-normal">
           {item.description}
         </span>
       )}

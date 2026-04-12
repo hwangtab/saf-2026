@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import { useLocale } from 'next-intl';
 import SafeImage from '@/components/common/SafeImage';
+import Button from '@/components/ui/Button';
 import dynamic from 'next/dynamic';
 import { resolveArtworkImageUrl, resolveArtworkImageUrlForPreset } from '@/lib/utils';
 import { parseArtworkSize } from '@/lib/utils/parseArtworkSize';
@@ -126,27 +127,30 @@ export default function ArtworkImage({
 
       {/* View in Room Button */}
       {canPreview && (
-        <button
-          onClick={() => setIsRoomOpen(true)}
-          onMouseEnter={handlePrefetch}
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 mt-3 rounded-lg border border-gray-200 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.5}
-            className="w-5 h-5"
+        <div onMouseEnter={handlePrefetch} className="mt-3">
+          <Button
+            type="button"
+            onClick={() => setIsRoomOpen(true)}
+            variant="outline"
+            className="w-full"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M2.25 12l8.954-8.955a1.126 1.126 0 011.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
-            />
-          </svg>
-          {copy.viewInRoom}
-        </button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.5}
+              className="w-5 h-5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M2.25 12l8.954-8.955a1.126 1.126 0 011.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
+              />
+            </svg>
+            {copy.viewInRoom}
+          </Button>
+        </div>
       )}
 
       {isOpen && (

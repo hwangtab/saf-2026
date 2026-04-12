@@ -2,6 +2,7 @@
 
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
+import Button from '@/components/ui/Button';
 
 export interface BuyerInfo {
   buyerName: string;
@@ -225,13 +226,15 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
                 readOnly
                 placeholder={t('placeholderAddress')}
               />
-              <button
+              <Button
                 type="button"
                 onClick={handleAddressSearch}
-                className="shrink-0 rounded-lg border border-primary px-3 py-2 text-sm font-medium text-primary hover:bg-primary/5"
+                variant="outline"
+                size="sm"
+                className="shrink-0"
               >
                 {t('searchAddress')}
-              </button>
+              </Button>
             </div>
           </div>
 

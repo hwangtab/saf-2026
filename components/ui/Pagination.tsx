@@ -97,7 +97,7 @@ export function Pagination({
         {currentPage > 1 ? (
           <Link
             href={getPageUrl(currentPage - 1)}
-            className="flex h-8 items-center justify-center rounded-md border border-gray-300 bg-white px-3 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="flex h-8 items-center justify-center rounded-md border border-gray-300 bg-white px-3 text-sm font-medium text-charcoal hover:bg-gray-50"
           >
             {copy.previous}
           </Link>
@@ -134,7 +134,7 @@ export function Pagination({
                   'flex h-8 min-w-8 items-center justify-center rounded-md px-2 text-sm font-medium transition-colors tabular-nums',
                   isCurrentPage
                     ? 'bg-blue-600 text-white'
-                    : 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+                    : 'border border-gray-300 bg-white text-charcoal hover:bg-gray-50'
                 )}
                 aria-current={isCurrentPage ? 'page' : undefined}
               >
@@ -148,7 +148,7 @@ export function Pagination({
         {currentPage < totalPages ? (
           <Link
             href={getPageUrl(currentPage + 1)}
-            className="flex h-8 items-center justify-center rounded-md border border-gray-300 bg-white px-3 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="flex h-8 items-center justify-center rounded-md border border-gray-300 bg-white px-3 text-sm font-medium text-charcoal hover:bg-gray-50"
           >
             {copy.next}
           </Link>

@@ -112,7 +112,7 @@ export default function Modal({ isOpen, onClose, title, children, className }: M
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="p-2 h-auto text-gray-500 hover:text-gray-700"
+            className="p-2 h-auto text-gray-500 hover:text-charcoal"
             aria-label="Close modal"
           >
             ✕

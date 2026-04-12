@@ -65,7 +65,7 @@ export function LegalDocumentContent({ document }: LegalDocumentContentProps) {
 
   if (isKoreanOnlyInEnglish) {
     return (
-      <article className="space-y-4 text-xs leading-6 text-gray-700">
+      <article className="space-y-4 text-xs leading-6 text-charcoal">
         <header className="space-y-1 border-b border-gray-200 pb-3">
           <h3 className="text-sm font-semibold text-gray-900">
             {titleMapForEnglish[document.title] || 'Legal Document'}
@@ -94,7 +94,7 @@ export function LegalDocumentContent({ document }: LegalDocumentContentProps) {
   }
 
   return (
-    <article className="space-y-4 text-xs leading-6 text-gray-700">
+    <article className="space-y-4 text-xs leading-6 text-charcoal">
       <header className="space-y-1 border-b border-gray-200 pb-3">
         <h3 className="text-sm font-semibold text-gray-900">{document.title}</h3>
         <p className="text-gray-500">
@@ -148,7 +148,7 @@ export function LegalDocumentContent({ document }: LegalDocumentContentProps) {
                     {section.table.headers.map((header) => (
                       <th
                         key={header}
-                        className="border border-gray-200 px-2 py-1.5 text-left font-semibold text-gray-700"
+                        className="border border-gray-200 px-2 py-1.5 text-left font-semibold text-charcoal"
                       >
                         {header}
                       </th>

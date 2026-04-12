@@ -483,7 +483,7 @@ export default async function NewsPage() {
                           sizes="(max-width: 768px) 100vw, 50vw"
                         />
                       ) : (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-400">
+                        <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-500">
                           <span className="text-4xl mb-2">📰</span>
                           <span className="text-sm">{copy.noImage}</span>
                         </div>

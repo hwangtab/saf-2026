@@ -119,7 +119,7 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
         className="max-w-3xl"
       >
         {locale === 'en' ? (
-          <div className="space-y-8 text-sm md:text-base text-gray-700">
+          <div className="space-y-8 text-sm md:text-base text-charcoal">
             <section className="space-y-3">
               <h4 className="font-bold text-lg text-charcoal flex items-center gap-2">
                 <ClipboardList className="w-5 h-5 text-primary" /> Service overview
@@ -189,7 +189,7 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
               <h4 className="font-bold text-lg text-charcoal flex items-center gap-2">
                 <ClipboardList className="w-5 h-5 text-primary" /> 서비스 내용 및 이용 안내
               </h4>
-              <div className="bg-gray-50 p-4 rounded-lg space-y-2 text-gray-700">
+              <div className="bg-gray-50 p-4 rounded-lg space-y-2 text-charcoal">
                 <p>
                   본 상품은 등록된 작품 상세정보 기준의 실물 작품 1점을 제공합니다. 구매 후{' '}
                   <span className="font-semibold">결제 확인 → 작품 상태 최종 검수 → 발송</span>{' '}
@@ -205,7 +205,7 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
               <h4 className="font-bold text-lg text-charcoal flex items-center gap-2">
                 <CreditCard className="w-5 h-5 text-primary" /> 결제 안내
               </h4>
-              <div className="bg-gray-50 p-4 rounded-lg space-y-2 text-gray-700">
+              <div className="bg-gray-50 p-4 rounded-lg space-y-2 text-charcoal">
                 <p>
                   {process.env.NEXT_PUBLIC_PAYMENT_MODE === 'toss'
                     ? '토스페이먼츠 보안결제 시스템을 통해 안전하게 결제가 처리됩니다.'
@@ -221,7 +221,7 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
               <h4 className="font-bold text-lg text-charcoal flex items-center gap-2">
                 <Truck className="w-5 h-5 text-primary" /> 택배 배송 안내
               </h4>
-              <div className="bg-gray-50 p-4 rounded-lg space-y-2 text-gray-700">
+              <div className="bg-gray-50 p-4 rounded-lg space-y-2 text-charcoal">
                 <p>
                   <span className="font-semibold">배송비:</span> 조건부 무료
                 </p>

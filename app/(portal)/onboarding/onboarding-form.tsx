@@ -201,7 +201,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
             type="text"
             required
             defaultValue={defaultValues?.artist_name || ''}
-            className="shadow-sm focus-visible:ring-primary focus-visible:border-primary block w-full sm:text-sm border-gray-300 rounded-md"
+            className="shadow-sm focus-visible:ring-primary focus-visible:border-primary block w-full sm:text-sm border-gray-300 rounded-lg"
             placeholder={t('artistNamePlaceholder')}
           />
         </div>
@@ -218,7 +218,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
             type="text"
             required
             defaultValue={defaultValues?.contact || ''}
-            className="shadow-sm focus-visible:ring-primary focus-visible:border-primary block w-full sm:text-sm border-gray-300 rounded-md"
+            className="shadow-sm focus-visible:ring-primary focus-visible:border-primary block w-full sm:text-sm border-gray-300 rounded-lg"
             placeholder={t('contactPlaceholder')}
           />
         </div>
@@ -235,7 +235,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
             rows={5}
             required
             defaultValue={defaultValues?.bio || ''}
-            className="shadow-sm focus-visible:ring-primary focus-visible:border-primary block w-full sm:text-sm border-gray-300 rounded-md"
+            className="shadow-sm focus-visible:ring-primary focus-visible:border-primary block w-full sm:text-sm border-gray-300 rounded-lg"
             placeholder={t('bioPlaceholder')}
           />
         </div>
@@ -251,7 +251,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
             name="referrer"
             type="text"
             defaultValue={defaultValues?.referrer || ''}
-            className="shadow-sm focus-visible:ring-primary focus-visible:border-primary block w-full sm:text-sm border-gray-300 rounded-md"
+            className="shadow-sm focus-visible:ring-primary focus-visible:border-primary block w-full sm:text-sm border-gray-300 rounded-lg"
             placeholder={t('referrerPlaceholder')}
           />
         </div>
@@ -272,7 +272,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
             <div className="relative">
               <div
                 ref={termsContainerRef}
-                className="max-h-[52vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[65vh]"
+                className="max-h-[52vh] overflow-y-auto rounded-lg border border-gray-200 bg-white p-3 md:max-h-[65vh]"
                 onScroll={handleTermsScroll}
                 tabIndex={0}
                 role="region"
@@ -290,7 +290,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
               )}
             </div>
             {!hasReadTerms && (
-              <div className="mt-1 flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2">
+              <div className="mt-1 flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
                 <span className="text-sm text-amber-600">↓</span>
                 <p className="text-xs font-medium text-amber-800">{t('scrollHint')}</p>
               </div>
@@ -304,7 +304,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
             <div className="relative">
               <div
                 ref={tosContainerRef}
-                className="max-h-[52vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[65vh]"
+                className="max-h-[52vh] overflow-y-auto rounded-lg border border-gray-200 bg-white p-3 md:max-h-[65vh]"
                 onScroll={handleTosScroll}
                 tabIndex={0}
                 role="region"
@@ -322,7 +322,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
               )}
             </div>
             {!hasReadTos && (
-              <div className="mt-1 flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2">
+              <div className="mt-1 flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
                 <span className="text-sm text-amber-600">↓</span>
                 <p className="text-xs font-medium text-amber-800">{t('scrollHint')}</p>
               </div>
@@ -336,7 +336,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
             <div className="relative">
               <div
                 ref={privacyContainerRef}
-                className="max-h-[52vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[65vh]"
+                className="max-h-[52vh] overflow-y-auto rounded-lg border border-gray-200 bg-white p-3 md:max-h-[65vh]"
                 onScroll={handlePrivacyScroll}
                 tabIndex={0}
                 role="region"
@@ -354,7 +354,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
               )}
             </div>
             {!hasReadPrivacy && (
-              <div className="mt-1 flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2">
+              <div className="mt-1 flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
                 <span className="text-sm text-amber-600">↓</span>
                 <p className="text-xs font-medium text-amber-800">{t('scrollHint')}</p>
               </div>

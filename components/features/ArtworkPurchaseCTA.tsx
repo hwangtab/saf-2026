@@ -216,7 +216,7 @@ export default function ArtworkPurchaseCTA({
       {!isTossMode && !shopUrl && (
         <>
           <div className="rounded-xl bg-gray-50 p-4 text-center">
-            <p className="text-sm text-gray-600 word-keep leading-relaxed">
+            <p className="text-sm text-gray-600 break-keep leading-relaxed">
               {t('noShopDescription')}
               <br />
               <span className="font-semibold text-charcoal">{t('noShopContact')}</span>

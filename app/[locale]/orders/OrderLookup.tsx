@@ -78,14 +78,20 @@ function OrderStatusStepper({ status }: { status: string }) {
   // Not a normal flow status — show notice instead
   if (status === 'cancelled') {
     return (
-      <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 text-center font-medium">
+      <div
+        role="alert"
+        className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 text-center font-medium"
+      >
         {t('orderCancelledNotice')}
       </div>
     );
   }
   if (status === 'refunded') {
     return (
-      <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 text-center font-medium">
+      <div
+        role="alert"
+        className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 text-center font-medium"
+      >
         {t('orderRefundedNotice')}
       </div>
     );
@@ -257,14 +263,14 @@ function EditShippingForm({ order, buyerEmail, onSaved, onCancel }: EditShipping
           type="button"
           onClick={handleSave}
           disabled={loading}
-          className="flex-1 rounded-lg bg-primary py-2 text-sm font-bold text-white disabled:opacity-50"
+          className="flex-1 rounded-lg bg-primary py-2 text-sm font-bold text-white hover:bg-primary-strong transition-colors disabled:opacity-50"
         >
           {loading ? t('saving') : t('saveChanges')}
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="flex-1 rounded-lg border border-gray-200 py-2 text-sm font-medium text-charcoal"
+          className="flex-1 rounded-lg border border-gray-200 py-2 text-sm font-medium text-charcoal hover:bg-gray-50 transition-colors"
         >
           {t('cancelEdit')}
         </button>
@@ -305,9 +311,18 @@ function CancelModal({ order, buyerEmail, onCancelled, onClose }: CancelModalPro
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-      <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
-        <h2 className="mb-1 text-base font-bold text-charcoal">{t('cancelOrderConfirm')}</h2>
+    <div
+      role="dialog"
+      aria-modal="true"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+    >
+      <div
+        aria-labelledby="cancel-modal-title"
+        className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl"
+      >
+        <h2 id="cancel-modal-title" className="mb-1 text-base font-bold text-charcoal">
+          {t('cancelOrderConfirm')}
+        </h2>
         <p className="mb-4 text-sm text-gray-500">{t('cancelOrderDescription')}</p>
 
         <label className="mb-1.5 block text-sm font-medium text-charcoal">
@@ -328,14 +343,14 @@ function CancelModal({ order, buyerEmail, onCancelled, onClose }: CancelModalPro
             type="button"
             onClick={handleConfirm}
             disabled={loading}
-            className="flex-1 rounded-xl bg-red-600 py-2.5 text-sm font-bold text-white disabled:opacity-50"
+            className="flex-1 rounded-xl bg-red-600 py-2.5 text-sm font-bold text-white hover:bg-red-700 transition-colors disabled:opacity-50"
           >
             {loading ? t('processing') : t('cancelOrderButton')}
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-charcoal"
+            className="flex-1 rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-charcoal hover:bg-gray-50 transition-colors"
           >
             {t('cancelEdit')}
           </button>
@@ -553,7 +568,7 @@ function OrderDetail({
                       href={getTrackingUrl(order.shippingCarrier, order.trackingNumber)!}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border border-primary/30 bg-primary/5 py-2.5 text-sm font-semibold text-primary hover:bg-primary/10"
+                      className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border border-primary/30 bg-primary/5 py-2.5 text-sm font-semibold text-primary hover:bg-primary/10 transition-colors"
                     >
                       {t('trackDelivery')}
                     </a>
@@ -592,7 +607,7 @@ function OrderDetail({
           <button
             type="button"
             onClick={() => setShowCancelModal(true)}
-            className="w-full rounded-xl border border-red-200 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50"
+            className="w-full rounded-xl border border-red-200 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
           >
             {t('cancelOrder')}
           </button>
@@ -651,7 +666,13 @@ function OrderCard({
 
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-      <button type="button" onClick={handleToggle} className="w-full text-left" disabled={loading}>
+      <button
+        type="button"
+        onClick={handleToggle}
+        aria-expanded={open}
+        className="w-full text-left"
+        disabled={loading}
+      >
         <div className="flex items-center gap-4">
           {item.artworkImage && (
             <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-gray-100">
@@ -673,7 +694,7 @@ function OrderCard({
           </div>
           <div className="flex shrink-0 flex-col items-end gap-2">
             <StatusBadge status={cardStatus} />
-            <span className="text-xs text-gray-400">{loading ? '...' : open ? '▲' : '▼'}</span>
+            <span className="text-xs text-gray-500">{loading ? '...' : open ? '▲' : '▼'}</span>
           </div>
         </div>
       </button>
@@ -825,7 +846,9 @@ export default function OrderLookup() {
             </div>
 
             {error && (
-              <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
+              <div role="alert" className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+                {error}
+              </div>
             )}
 
             <Button type="submit" disabled={loading} size="lg" className="w-full">

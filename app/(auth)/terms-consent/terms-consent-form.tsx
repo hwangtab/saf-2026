@@ -394,7 +394,7 @@ export function TermsConsentForm({
           <div className="relative">
             <div
               ref={artistTermsContainerRef}
-              className="mb-3 max-h-[60vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[70vh]"
+              className="mb-3 max-h-[60vh] overflow-y-auto rounded-lg border border-gray-200 bg-white p-3 md:max-h-[70vh]"
               onScroll={handleArtistTermsScroll}
               tabIndex={0}
               role="region"
@@ -412,7 +412,7 @@ export function TermsConsentForm({
             )}
           </div>
           {!hasReadArtistTerms && (
-            <div className="mb-3 flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2">
+            <div className="mb-3 flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
               <span className="text-sm text-amber-600">↓</span>
               <p className="text-xs font-medium text-amber-800">{copy.scrollHint}</p>
             </div>
@@ -461,7 +461,7 @@ export function TermsConsentForm({
           <div className="relative">
             <div
               ref={exhibitorTermsContainerRef}
-              className="mb-3 max-h-[60vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[70vh]"
+              className="mb-3 max-h-[60vh] overflow-y-auto rounded-lg border border-gray-200 bg-white p-3 md:max-h-[70vh]"
               onScroll={handleExhibitorTermsScroll}
               tabIndex={0}
               role="region"
@@ -479,7 +479,7 @@ export function TermsConsentForm({
             )}
           </div>
           {!hasReadExhibitorTerms && (
-            <div className="mb-3 flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2">
+            <div className="mb-3 flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
               <span className="text-sm text-amber-600">↓</span>
               <p className="text-xs font-medium text-amber-800">{copy.scrollHint}</p>
             </div>
@@ -530,7 +530,7 @@ export function TermsConsentForm({
           <div className="relative">
             <div
               ref={privacyContainerRef}
-              className="mb-3 max-h-[60vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[70vh]"
+              className="mb-3 max-h-[60vh] overflow-y-auto rounded-lg border border-gray-200 bg-white p-3 md:max-h-[70vh]"
               onScroll={handlePrivacyScroll}
               tabIndex={0}
               role="region"
@@ -548,7 +548,7 @@ export function TermsConsentForm({
             )}
           </div>
           {!hasReadPrivacy && (
-            <div className="mb-3 flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2">
+            <div className="mb-3 flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
               <span className="text-sm text-amber-600">↓</span>
               <p className="text-xs font-medium text-amber-800">{copy.scrollHint}</p>
             </div>
@@ -609,7 +609,7 @@ export function TermsConsentForm({
           <div className="relative">
             <div
               ref={tosContainerRef}
-              className="mb-3 max-h-[60vh] overflow-y-auto rounded-md border border-gray-200 bg-white p-3 md:max-h-[70vh]"
+              className="mb-3 max-h-[60vh] overflow-y-auto rounded-lg border border-gray-200 bg-white p-3 md:max-h-[70vh]"
               onScroll={handleTosScroll}
               tabIndex={0}
               role="region"
@@ -627,7 +627,7 @@ export function TermsConsentForm({
             )}
           </div>
           {!hasReadTos && (
-            <div className="mb-3 flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2">
+            <div className="mb-3 flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
               <span className="text-sm text-amber-600">↓</span>
               <p className="text-xs font-medium text-amber-800">{copy.scrollHint}</p>
             </div>

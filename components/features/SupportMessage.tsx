@@ -116,7 +116,7 @@ export default function SupportMessage({
                     i === testimonialIndex ? 'opacity-100' : 'opacity-0 pointer-events-none'
                   )}
                 >
-                  <p className="text-sm text-gray-700 italic break-keep leading-relaxed text-center">
+                  <p className="text-sm text-charcoal italic break-keep leading-relaxed text-center">
                     &ldquo;{item.quote}&rdquo;
                   </p>
                   <p className="text-xs text-charcoal-soft mt-1.5 text-center">— {item.author}</p>
