@@ -27,7 +27,7 @@ export function AdminPageHeader({ className, ...props }: HTMLAttributes<HTMLDivE
 export function AdminPageTitle({ className, ...props }: HTMLAttributes<HTMLHeadingElement>) {
   return (
     <h1
-      className={cn('text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl', className)}
+      className={cn('text-2xl font-bold tracking-tight text-charcoal-deep sm:text-3xl', className)}
       {...props}
     />
   );
@@ -37,7 +37,7 @@ export function AdminPageDescription({
   className,
   ...props
 }: HTMLAttributes<HTMLParagraphElement>) {
-  return <p className={cn('text-sm leading-relaxed text-slate-600', className)} {...props} />;
+  return <p className={cn('text-sm leading-relaxed text-charcoal-muted', className)} {...props} />;
 }
 
 export function AdminCardHeader({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
@@ -54,7 +54,10 @@ export function AdminCardHeader({ className, ...props }: HTMLAttributes<HTMLDivE
 
 export function AdminFieldLabel({ className, ...props }: LabelHTMLAttributes<HTMLLabelElement>) {
   return (
-    <label className={cn('mb-2 block text-sm font-medium text-slate-700', className)} {...props} />
+    <label
+      className={cn('mb-2 block text-sm font-medium text-charcoal-muted', className)}
+      {...props}
+    />
   );
 }
 
@@ -62,7 +65,7 @@ export function AdminInput({ className, ...props }: InputHTMLAttributes<HTMLInpu
   return (
     <input
       className={cn(
-        'block h-11 w-full rounded-md border border-[var(--admin-border)] bg-white px-3 text-sm text-slate-900 shadow-sm focus-visible:outline-nonetransition placeholder:text-slate-400 focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/25 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500',
+        'block h-11 w-full rounded-md border border-[var(--admin-border)] bg-white px-3 text-sm text-charcoal-deep shadow-sm focus-visible:outline-nonetransition placeholder:text-charcoal-soft focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/25 disabled:cursor-not-allowed disabled:bg-charcoal/10 disabled:text-charcoal-soft',
         className
       )}
       {...props}
@@ -77,7 +80,7 @@ export function AdminTextarea({
   return (
     <textarea
       className={cn(
-        'block w-full rounded-md border border-[var(--admin-border)] bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm focus-visible:outline-nonetransition placeholder:text-slate-400 focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/25 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500',
+        'block w-full rounded-md border border-[var(--admin-border)] bg-white px-3 py-2.5 text-sm text-charcoal-deep shadow-sm focus-visible:outline-nonetransition placeholder:text-charcoal-soft focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/25 disabled:cursor-not-allowed disabled:bg-charcoal/10 disabled:text-charcoal-soft',
         className
       )}
       {...props}
@@ -100,7 +103,7 @@ export function AdminBadge({
     <span
       className={cn(
         'inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset relative group cursor-help focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2',
-        tone === 'default' && 'bg-slate-100 text-slate-700 ring-slate-200',
+        tone === 'default' && 'bg-charcoal/10 text-charcoal-muted ring-charcoal/15',
         tone === 'info' && 'bg-indigo-50 text-indigo-700 ring-indigo-600/20',
         tone === 'success' && 'bg-emerald-50 text-emerald-700 ring-emerald-600/20',
         tone === 'warning' && 'bg-amber-50 text-amber-800 ring-amber-600/25',
@@ -112,9 +115,9 @@ export function AdminBadge({
     >
       {props.children}
       {description && (
-        <span className="invisible group-hover:visible group-focus-within:visible absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-[10px] sm:text-xs font-normal text-white bg-slate-800 rounded shadow-lg whitespace-nowrap z-50">
+        <span className="invisible group-hover:visible group-focus-within:visible absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-[10px] sm:text-xs font-normal text-white bg-charcoal-deep rounded shadow-lg whitespace-nowrap z-50">
           {description}
-          <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800" />
+          <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-charcoal-deep" />
         </span>
       )}
     </span>
@@ -135,7 +138,7 @@ export function AdminEmptyState({
 }: AdminEmptyStateProps) {
   return (
     <div className={cn('flex flex-col items-center px-4 py-14 text-center', className)} {...props}>
-      <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+      <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-charcoal/10 text-charcoal-soft">
         <svg
           aria-hidden="true"
           className="h-6 w-6"
@@ -151,8 +154,8 @@ export function AdminEmptyState({
           />
         </svg>
       </div>
-      <h3 className="text-sm font-semibold text-slate-900">{title}</h3>
-      {description ? <p className="mt-1 text-sm text-slate-500">{description}</p> : null}
+      <h3 className="text-sm font-semibold text-charcoal-deep">{title}</h3>
+      {description ? <p className="mt-1 text-sm text-charcoal-soft">{description}</p> : null}
       {children ? <div className="mt-6">{children}</div> : null}
     </div>
   );
@@ -174,7 +177,7 @@ export function AdminSelect({
     <div className={cn('relative', wrapperClassName)}>
       <select
         className={cn(
-          'block h-11 w-full appearance-none rounded-md border border-[var(--admin-border)] bg-white px-3 pr-9 text-sm text-slate-800 shadow-sm focus-visible:outline-nonetransition focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/25 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500',
+          'block h-11 w-full appearance-none rounded-md border border-[var(--admin-border)] bg-white px-3 pr-9 text-sm text-charcoal shadow-sm focus-visible:outline-nonetransition focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/25 disabled:cursor-not-allowed disabled:bg-charcoal/10 disabled:text-charcoal-soft',
           className
         )}
         {...props}
@@ -186,7 +189,7 @@ export function AdminSelect({
         viewBox="0 0 20 20"
         fill="none"
         className={cn(
-          'pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500',
+          'pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-charcoal-soft',
           iconClassName
         )}
       >
@@ -205,7 +208,7 @@ export function AdminHelp({ children, className }: { children: ReactNode; classN
   return (
     <div className={cn('relative group inline-flex ml-1.5 align-middle', className)}>
       <svg
-        className="w-4 h-4 text-slate-400 cursor-help hover:text-indigo-500 transition-colors focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded-full"
+        className="w-4 h-4 text-charcoal-soft cursor-help hover:text-indigo-500 transition-colors focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded-full"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -220,9 +223,9 @@ export function AdminHelp({ children, className }: { children: ReactNode; classN
           d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
         />
       </svg>
-      <div className="invisible group-hover:visible group-focus-within:visible absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2.5 text-[11px] leading-relaxed text-white bg-slate-800 rounded-lg shadow-xl z-50 pointer-events-none">
+      <div className="invisible group-hover:visible group-focus-within:visible absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2.5 text-[11px] leading-relaxed text-white bg-charcoal-deep rounded-lg shadow-xl z-50 pointer-events-none">
         {children}
-        <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800" />
+        <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-charcoal-deep" />
       </div>
     </div>
   );
