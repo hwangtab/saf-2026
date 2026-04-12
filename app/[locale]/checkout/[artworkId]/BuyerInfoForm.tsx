@@ -44,7 +44,7 @@ declare global {
 }
 
 const inputClass =
-  'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary';
+  'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary';
 const labelClass = 'block text-sm font-medium text-charcoal mb-1';
 
 const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {

@@ -5,6 +5,7 @@ import SafeImage from '@/components/common/SafeImage';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
 import PageHero from '@/components/ui/PageHero';
+import Badge from '@/components/ui/Badge';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { getSupabaseNews } from '@/lib/supabase-data';
 import { CONTACT, OG_IMAGE, SITE_URL } from '@/lib/constants';
@@ -419,9 +420,9 @@ export default async function NewsPage() {
       <Section variant="sun-soft" prevVariant="white">
         <div className="container-max flex flex-col gap-12">
           <div className="max-w-3xl mx-auto text-center">
-            <span className="inline-flex items-center px-3 py-1 rounded-full border border-primary text-primary text-xs font-semibold tracking-wide uppercase mb-4">
+            <Badge tone="outline-primary" className="tracking-wide uppercase font-semibold mb-4">
               {copy.highlightsBadge}
-            </span>
+            </Badge>
             <SectionTitle id="press-highlights-title" className="mb-4">
               {copy.highlightsTitle}
             </SectionTitle>

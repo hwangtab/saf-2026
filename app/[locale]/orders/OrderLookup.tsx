@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import clsx from 'clsx';
 import { Link } from '@/i18n/navigation';
 import SafeImage from '@/components/common/SafeImage';
+import Badge from '@/components/ui/Badge';
 import { formatPriceForDisplay } from '@/lib/utils';
 import { getCarrierLabel, getTrackingUrl } from '@/lib/shipping';
 import {
@@ -64,9 +65,9 @@ function StatusBadge({ status }: { status: string }) {
   const info = STATUS_STYLES[status];
   if (!info) return null;
   return (
-    <span className={clsx('rounded-full px-2.5 py-1 text-xs font-semibold', info.className)}>
+    <Badge className={clsx('font-semibold', info.className)}>
       {t(info.label as Parameters<typeof t>[0])}
-    </span>
+    </Badge>
   );
 }
 
@@ -203,7 +204,7 @@ function EditShippingForm({ order, buyerEmail, onSaved, onCancel }: EditShipping
   }
 
   const inputClass =
-    'w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-charcoal placeholder-gray-400 focus:border-primary focus:outline-none';
+    'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-charcoal placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary';
 
   return (
     <div className="space-y-2.5 rounded-xl border border-gray-200 bg-gray-50 p-4">
@@ -316,7 +317,7 @@ function CancelModal({ order, buyerEmail, onCancelled, onClose }: CancelModalPro
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           placeholder={t('cancelReasonPlaceholder')}
-          className="mb-3 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-charcoal placeholder-gray-400 focus:border-primary focus:outline-none resize-none"
+          className="mb-3 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-charcoal placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none"
         />
 
         {error && <p className="mb-3 text-xs text-red-600">{error}</p>}
@@ -791,7 +792,7 @@ export default function OrderLookup() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder={t('namePlaceholder')}
-                className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm text-charcoal placeholder-gray-400 focus:border-primary focus:outline-none"
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm text-charcoal placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                 autoComplete="name"
               />
             </div>
@@ -804,7 +805,7 @@ export default function OrderLookup() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={t('emailPlaceholder')}
-                className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm text-charcoal placeholder-gray-400 focus:border-primary focus:outline-none"
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm text-charcoal placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                 autoComplete="email"
               />
             </div>
@@ -817,7 +818,7 @@ export default function OrderLookup() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder={t('phonePlaceholder')}
-                className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm text-charcoal placeholder-gray-400 focus:border-primary focus:outline-none"
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm text-charcoal placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                 autoComplete="tel"
               />
             </div>

@@ -194,13 +194,14 @@ export default async function TransparencyPage() {
                   <p className="text-xs text-charcoal-muted mb-3 text-center">
                     Rate: {LOAN_TERMS.rateRange.en}
                   </p>
-                  <a
+                  <LinkButton
                     href={`/reports/${encodeURIComponent(report.pdfFilename)}`}
-                    download={report.pdfFilename}
-                    className="inline-flex items-center justify-center gap-2 w-full px-4 py-2 text-sm font-semibold text-primary border-2 border-primary rounded-md hover:bg-primary hover:text-white transition-colors"
+                    variant="white"
+                    size="sm"
+                    className="w-full border-2 border-primary text-primary hover:bg-primary hover:text-white hover:border-primary"
                   >
                     Download PDF
-                  </a>
+                  </LinkButton>
                 </div>
               ))}
             </div>
@@ -297,9 +298,7 @@ export default async function TransparencyPage() {
         {/* CTA */}
         <Section variant="primary-soft" prevVariant="white" className="pb-24 md:pb-32">
           <div className="container-max text-center">
-            <h2 className="font-section font-normal text-4xl md:text-5xl mb-8">
-              You can extend this impact
-            </h2>
+            <SectionTitle className="mb-8">You can extend this impact</SectionTitle>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto text-balance">
               <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-2xl bg-white text-left shadow-sm">
                 <h3 className="text-card-title mb-3">Purchase artworks</h3>
@@ -376,13 +375,14 @@ export default async function TransparencyPage() {
                 <p className="text-xs text-charcoal-muted mb-3 text-center">
                   대출 금리: {LOAN_TERMS.rateRange.ko}
                 </p>
-                <a
+                <LinkButton
                   href={`/reports/${encodeURIComponent(report.pdfFilename)}`}
-                  download={report.pdfFilename}
-                  className="inline-flex items-center justify-center gap-2 w-full px-4 py-2 text-sm font-semibold text-primary border-2 border-primary rounded-md hover:bg-primary hover:text-white transition-colors"
+                  variant="white"
+                  size="sm"
+                  className="w-full border-2 border-primary text-primary hover:bg-primary hover:text-white hover:border-primary"
                 >
                   PDF 다운로드
-                </a>
+                </LinkButton>
               </div>
             ))}
           </div>
@@ -477,9 +477,7 @@ export default async function TransparencyPage() {
       {/* CTA 섹션 */}
       <Section variant="primary-soft" prevVariant="white" className="pb-24 md:pb-32">
         <div className="container-max text-center">
-          <h2 className="font-section font-normal text-4xl md:text-5xl mb-8">
-            이 흐름에 함께해 주세요
-          </h2>
+          <SectionTitle className="mb-8">이 흐름에 함께해 주세요</SectionTitle>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto text-balance">
             <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-2xl bg-white text-left shadow-sm">
               <h3 className="text-card-title mb-3">작품을 구매해 기금에 참여하세요</h3>

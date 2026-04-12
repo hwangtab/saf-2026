@@ -1,6 +1,7 @@
 import { getLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { CONTACT } from '@/lib/constants';
+import LinkButton from '@/components/ui/LinkButton';
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale().catch(() => 'ko');
@@ -44,22 +45,26 @@ export default async function NotFound() {
           {copy.description}
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center mb-12">
-          <a
+          <LinkButton
             href={locale === 'en' ? '/en' : '/'}
-            className="inline-flex items-center justify-center px-6 py-3 bg-white border border-gray-200 text-gray-900 font-bold rounded-lg hover:bg-gray-50 transition-colors shadow-sm min-h-[48px]"
+            variant="white"
+            size="sm"
+            className="px-6 py-3 shadow-sm min-h-[48px]"
           >
             {copy.goHome}
-          </a>
-          <a
+          </LinkButton>
+          <LinkButton
             href={locale === 'en' ? '/en/artworks' : '/artworks'}
-            className="inline-grid grid-cols-[1.25rem_auto_1.25rem] items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-strong text-white font-bold rounded-lg transition-colors shadow-sm hover:shadow-md min-h-[48px]"
+            variant="primary"
+            size="sm"
+            className="inline-grid grid-cols-[1.25rem_auto_1.25rem] gap-2 px-6 py-3 shadow-sm hover:shadow-md min-h-[48px]"
           >
             <span aria-hidden="true">🎨</span>
             <span>{copy.browseArtworks}</span>
             <span aria-hidden="true" className="invisible">
               🎨
             </span>
-          </a>
+          </LinkButton>
         </div>
 
         <div className="pt-8 border-t border-gray-200/60">

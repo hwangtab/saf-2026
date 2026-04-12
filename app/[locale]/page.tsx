@@ -13,6 +13,7 @@ import HeroGalleryGrid from '@/components/features/HeroGalleryGrid';
 import BackgroundSlider from '@/components/features/BackgroundSlider';
 import SafeImage from '@/components/common/SafeImage';
 import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
+import Badge from '@/components/ui/Badge';
 import {
   generateExhibitionSchema,
   generateFAQSchema,
@@ -289,13 +290,13 @@ async function HeroSection({ locale }: { locale: 'ko' | 'en' }) {
               className="mt-4 flex justify-center motion-safe:opacity-0 motion-safe:animate-fade-in-up"
               style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}
             >
-              <span className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 text-xs text-white font-medium">
+              <Badge className="gap-2 bg-white/15 backdrop-blur-sm border-white/20 text-white font-medium px-4 py-1.5">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400" />
                 </span>
                 {t('alwaysAvailable', { date: formatCurrentDate(locale) })}
-              </span>
+              </Badge>
             </div>
           </div>
 

@@ -403,9 +403,7 @@ export default async function OurProof() {
 
         <Section variant="primary-soft" prevVariant="white" className="pb-24 md:pb-32">
           <div className="container-max text-center">
-            <h2 className="font-section font-normal text-4xl md:text-5xl mb-8">
-              You can join this trust network
-            </h2>
+            <SectionTitle className="mb-8">You can join this trust network</SectionTitle>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto text-balance">
               <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-2xl bg-white text-left shadow-sm">
                 <h3 className="text-card-title mb-3">Join the cooperative</h3>
@@ -719,9 +717,7 @@ export default async function OurProof() {
       {/* Call to Action */}
       <Section variant="primary-soft" prevVariant="white" className="pb-24 md:pb-32">
         <div className="container-max text-center">
-          <h2 className="font-section font-normal text-4xl md:text-5xl mb-8">
-            당신도 이 신뢰의 체계에 참여할 수 있습니다
-          </h2>
+          <SectionTitle className="mb-8">당신도 이 신뢰의 체계에 참여할 수 있습니다</SectionTitle>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto text-balance">
             <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-2xl bg-white text-left shadow-sm">
               <h3 className="text-card-title mb-3">조합원이 되어 연대해주세요</h3>

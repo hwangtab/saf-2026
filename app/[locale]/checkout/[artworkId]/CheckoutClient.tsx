@@ -7,6 +7,7 @@ import clsx from 'clsx';
 import ExportedImage from 'next-image-export-optimizer';
 import SafeImage from '@/components/common/SafeImage';
 import { Link } from '@/i18n/navigation';
+import Button from '@/components/ui/Button';
 import tossLogo from '@/public/images/logo/toss-logo.png';
 import { calculateShippingFee } from '@/lib/integrations/toss/config';
 import { formatPriceForDisplay } from '@/lib/utils';
@@ -281,14 +282,9 @@ export default function CheckoutClient({
         )}
 
         {/* CTA */}
-        <button
-          type="button"
-          onClick={handlePayment}
-          disabled={submitting}
-          className="w-full rounded-xl bg-primary py-4 text-base font-bold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-        >
+        <Button onClick={handlePayment} loading={submitting} size="lg" className="w-full">
           {submitting ? t('processingShort') : t('payNow')}
-        </button>
+        </Button>
       </div>
     </div>
   );

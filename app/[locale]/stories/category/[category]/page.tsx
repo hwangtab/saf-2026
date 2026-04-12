@@ -5,6 +5,7 @@ import { getLocale } from 'next-intl/server';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import SafeImage from '@/components/common/SafeImage';
+import LinkButton from '@/components/ui/LinkButton';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 
@@ -426,12 +427,14 @@ export default async function StoryCategoryPage({ params }: Props) {
                 : '127명의 작가, 지금 바로 구매 가능한 작품들'}
             </p>
           </div>
-          <Link
+          <LinkButton
             href="/artworks"
-            className="shrink-0 inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-strong text-white font-bold rounded-lg transition-colors shadow-sm hover:shadow-md min-h-[48px]"
+            variant="primary"
+            size="sm"
+            className="shrink-0 px-6 py-3 shadow-sm hover:shadow-md min-h-[48px]"
           >
             {locale === 'en' ? 'Browse Artworks' : '작품 갤러리 보기'} →
-          </Link>
+          </LinkButton>
         </div>
       </Section>
     </>

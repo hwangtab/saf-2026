@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
-import { Link } from '@/i18n/navigation';
+import LinkButton from '@/components/ui/LinkButton';
 import { formatPriceForDisplay } from '@/lib/utils';
 
 interface Props {
@@ -116,12 +116,9 @@ export default function SuccessClient({ paymentKey, orderId, amount, method }: P
             <p className="text-4xl mb-4">!</p>
             <h1 className="text-xl font-bold text-charcoal mb-2">{t('confirmationFailed')}</h1>
             <p className="text-sm text-gray-600 mb-6">{errorMessage}</p>
-            <Link
-              href="/artworks"
-              className="inline-block rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white hover:opacity-90"
-            >
+            <LinkButton href="/artworks" variant="primary" size="sm">
               {t('backToArtworks')}
-            </Link>
+            </LinkButton>
           </div>
         </div>
       </div>
@@ -170,18 +167,12 @@ export default function SuccessClient({ paymentKey, orderId, amount, method }: P
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-              <Link
-                href="/artworks"
-                className="inline-block rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white hover:opacity-90"
-              >
+              <LinkButton href="/artworks" variant="primary" size="sm" className="px-6 py-3">
                 {t('browseMore')}
-              </Link>
-              <Link
-                href="/orders"
-                className="inline-block rounded-xl border border-gray-200 px-6 py-3 text-sm font-medium text-charcoal hover:bg-gray-50"
-              >
+              </LinkButton>
+              <LinkButton href="/orders" variant="white" size="sm" className="px-6 py-3">
                 {tOrder('viewOrders')}
-              </Link>
+              </LinkButton>
             </div>
           </div>
         </div>
@@ -224,18 +215,12 @@ export default function SuccessClient({ paymentKey, orderId, amount, method }: P
             <p className="text-xs text-gray-400 mb-6">{t('depositEmailNotice')}</p>
 
             <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-              <Link
-                href="/artworks"
-                className="inline-block rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white hover:opacity-90"
-              >
+              <LinkButton href="/artworks" variant="primary" size="sm" className="px-6 py-3">
                 {t('browseMore')}
-              </Link>
-              <Link
-                href="/orders"
-                className="inline-block rounded-xl border border-gray-200 px-6 py-3 text-sm font-medium text-charcoal hover:bg-gray-50"
-              >
+              </LinkButton>
+              <LinkButton href="/orders" variant="white" size="sm" className="px-6 py-3">
                 {tOrder('viewOrders')}
-              </Link>
+              </LinkButton>
             </div>
           </div>
         </div>
@@ -266,18 +251,12 @@ export default function SuccessClient({ paymentKey, orderId, amount, method }: P
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-            <Link
-              href="/artworks"
-              className="inline-block rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white hover:opacity-90"
-            >
+            <LinkButton href="/artworks" variant="primary" size="sm" className="px-6 py-3">
               {t('browseMore')}
-            </Link>
-            <Link
-              href="/orders"
-              className="inline-block rounded-xl border border-gray-200 px-6 py-3 text-sm font-medium text-charcoal hover:bg-gray-50"
-            >
+            </LinkButton>
+            <LinkButton href="/orders" variant="white" size="sm" className="px-6 py-3">
               {tOrder('viewOrders')}
-            </Link>
+            </LinkButton>
           </div>
         </div>
       </div>

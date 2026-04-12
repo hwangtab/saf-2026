@@ -2,7 +2,6 @@
 
 import { useTranslations } from 'next-intl';
 import dynamic from 'next/dynamic';
-import { Link } from '@/i18n/navigation';
 import LinkButton from '@/components/ui/LinkButton';
 import TrackClick from '@/components/common/TrackingLink';
 import TrustBadges from '@/components/features/TrustBadges';
@@ -151,12 +150,14 @@ export default function ArtworkPurchaseCTA({
               artist: artist,
             }}
           >
-            <Link
+            <LinkButton
               href={`/checkout/${artworkId}`}
-              className="flex w-full items-center justify-center gap-3 rounded-xl bg-primary px-6 py-4 text-lg font-bold text-white shadow-[0_0_20px_rgba(33,118,255,0.15)] transition hover:bg-primary/90"
+              variant="primary"
+              size="lg"
+              className="w-full gap-3 rounded-xl shadow-[0_0_20px_rgba(33,118,255,0.15)]"
             >
               {t('buyOnline')}
-            </Link>
+            </LinkButton>
           </TrackClick>
 
           <TrustBadges />

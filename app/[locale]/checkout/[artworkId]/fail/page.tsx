@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
+import LinkButton from '@/components/ui/LinkButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -38,12 +39,14 @@ export default async function FailPage({ params, searchParams }: Props) {
           )}
 
           <div className="flex flex-col items-center gap-3">
-            <Link
+            <LinkButton
               href={`/checkout/${artworkId}`}
-              className="inline-block w-full rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white hover:opacity-90"
+              variant="primary"
+              size="sm"
+              className="w-full"
             >
               {t('retryPayment')}
-            </Link>
+            </LinkButton>
             <Link
               href={`/artworks/${artworkId}`}
               className="text-sm text-gray-500 underline hover:text-charcoal"
