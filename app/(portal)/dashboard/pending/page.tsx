@@ -75,12 +75,12 @@ export default async function PendingPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-canvas-soft px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 text-center bg-white p-10 rounded-xl shadow-md">
         <div>
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">{t('title')}</h2>
+          <h2 className="mt-6 text-3xl font-extrabold text-charcoal">{t('title')}</h2>
           <div className="mt-4 text-5xl">⏳</div>
-          <p className="mt-6 text-sm text-gray-600 leading-relaxed">
+          <p className="mt-6 text-sm text-charcoal-muted leading-relaxed">
             {t('applicationSubmitted')}
             <br />
             {t('awaitingApproval')}
@@ -91,7 +91,7 @@ export default async function PendingPage() {
         <div className="rounded-md bg-green-50 px-4 py-3 text-sm text-green-700">
           {t('submitted')} {application?.artist_name}
         </div>
-        <div className="pt-4 border-t border-gray-100">
+        <div className="pt-4 border-t border-charcoal/10">
           <SignOutButton />
         </div>
       </div>

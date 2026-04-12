@@ -10,6 +10,7 @@ import {
 } from '@/lib/integrations/toss/webhook';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
 import { notifyEmail, sendBuyerEmail } from '@/lib/notify';
+import { getArtworkEmailInfo } from '@/lib/utils/get-artwork-email-info';
 
 const CANCELED_STATUSES = new Set(['CANCELED', 'PARTIAL_CANCELED']);
 
@@ -174,25 +175,21 @@ export async function POST(req: NextRequest) {
           });
 
           if (order?.buyer_email) {
-            // 작품/작가 정보 조회 (구매자 이메일용)
-            const { data: artworkInfo } = await supabase
-              .from('artworks')
-              .select('title, artists(name_ko)')
-              .eq('id', order.artwork_id)
-              .single();
-            const artworkTitle = artworkInfo?.title ?? '';
-            const artistsRaw = artworkInfo?.artists;
-            const artistName = Array.isArray(artistsRaw)
-              ? (artistsRaw[0]?.name_ko ?? '')
-              : ((artistsRaw as { name_ko?: string } | null | undefined)?.name_ko ?? '');
-
-            void sendBuyerEmail(order.buyer_email, 'deposit_confirmed', {
-              orderNo: order.order_no,
-              buyerName: order.buyer_name,
-              artworkTitle,
-              artistName,
-              amount: order.total_amount,
-            });
+            try {
+              const { artworkTitle, artistName } = await getArtworkEmailInfo(
+                supabase,
+                order.artwork_id
+              );
+              void sendBuyerEmail(order.buyer_email, 'deposit_confirmed', {
+                orderNo: order.order_no,
+                buyerName: order.buyer_name ?? '',
+                artworkTitle,
+                artistName,
+                amount: order.total_amount,
+              });
+            } catch (err) {
+              console.error('[toss-webhook] deposit email failed:', err);
+            }
           }
         }
       }
@@ -387,23 +384,23 @@ export async function POST(req: NextRequest) {
 
         // 구매자 환불 이메일 발송 (fire-and-forget)
         if (existingOrder.buyer_email) {
-          const { data: artworkInfo } = await supabase
-            .from('artworks')
-            .select('title, artists(name_ko)')
-            .eq('id', existingOrder.artwork_id)
-            .single();
-          const artworkTitle = artworkInfo?.title ?? '';
-          const artistsRaw = artworkInfo?.artists;
-          const artistName = Array.isArray(artistsRaw)
-            ? (artistsRaw[0]?.name_ko ?? '')
-            : ((artistsRaw as { name_ko?: string } | null | undefined)?.name_ko ?? '');
-          void sendBuyerEmail(existingOrder.buyer_email, 'refunded', {
-            orderNo: existingOrder.order_no ?? '',
-            buyerName: existingOrder.buyer_name ?? '',
-            artworkTitle,
-            artistName,
-            amount: existingOrder.total_amount ?? 0,
-          });
+          void (async () => {
+            try {
+              const { artworkTitle, artistName } = await getArtworkEmailInfo(
+                supabase,
+                existingOrder.artwork_id
+              );
+              void sendBuyerEmail(existingOrder.buyer_email!, 'refunded', {
+                orderNo: existingOrder.order_no ?? '',
+                buyerName: existingOrder.buyer_name ?? '',
+                artworkTitle,
+                artistName,
+                amount: existingOrder.total_amount ?? 0,
+              });
+            } catch (err) {
+              console.error('[toss-webhook] refund email failed:', err);
+            }
+          })();
         }
       }
     }
