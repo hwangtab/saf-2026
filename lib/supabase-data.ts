@@ -17,6 +17,7 @@ type ArtworkRow = {
   title: string;
   title_en: string | null;
   description: string | null;
+  description_en: string | null;
   size: string | null;
   material: string | null;
   year: string | null;
@@ -74,7 +75,7 @@ type FAQRow = {
 };
 
 const ARTWORK_SELECT_COLUMNS =
-  'id, artist_id, title, title_en, description, size, material, year, edition, price, images, shop_url, status, sold_at, category';
+  'id, artist_id, title, title_en, description, description_en, size, material, year, edition, price, images, shop_url, status, sold_at, category';
 const ARTIST_SELECT_COLUMNS = 'id, name_ko, name_en, bio, bio_en, history, history_en';
 const ARTWORK_DATA_REVALIDATE_SECONDS = 300;
 
@@ -94,6 +95,7 @@ const mapArtworkRow = (item: ArtworkRow, artist?: ArtistRow | null): Artwork => 
   title: item.title,
   title_en: item.title_en || undefined,
   description: item.description || '',
+  description_en: item.description_en || undefined,
   size: item.size || '',
   material: item.material || '',
   year: item.year || '',

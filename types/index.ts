@@ -46,6 +46,7 @@ export interface BaseArtwork {
   title: string;
   admin_product_name?: string | null;
   description?: string;
+  description_en?: string;
   size: string;
   material: string;
   year: string;

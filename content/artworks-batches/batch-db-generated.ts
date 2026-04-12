@@ -12,6 +12,8 @@ export const dbGeneratedArtworks: Artwork[] = [
     title: '9505 SIM_Memory',
     description:
       '그까짓 자질구레한 거\r\n내 인생의 작은 모래 알갱이도 안돼\r\n\r\nOpen the window let me feel that\r\n사랑한다 말해\r\n\r\n다 내려놓고 올라타\r\n걱정 따윈 태양이 녹여줘\r\n바싹 그을려 돌아올 생각해\r\n\r\nOpen your heart please let me feel that\r\n모두 잊겠다고 말해줘\r\n우리 지쳤던 지난 계절도',
+    description_en:
+      "That trivial little thing\nNot even a grain of sand in my life\n\nOpen the window let me feel that\nTell me you love me\n\nLet it all go and get on\nThe sun melts away your worries\nThink of coming back, sun-scorched\n\nOpen your heart please let me feel that\nTell me you'll forget it all\nEven our weary past season",
     size: '45.5x37.9cm',
     material: '캔버스에 아크릴 채색',
     year: '2025',
@@ -21,6 +23,7 @@ export const dbGeneratedArtworks: Artwork[] = [
       'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/bfcb5ff5-e1b9-474a-b37d-7c3aa344fa28/037rx7aya2mc_1774968363998.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/538',
+    title_en: '9505 SIM_Memory',
     artist_en: 'SIM_Moby',
     category: '회화',
   },
@@ -1097,6 +1100,8 @@ export const dbGeneratedArtworks: Artwork[] = [
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/476',
     sold: true,
     sold_at: '2026-03-24T00:00:00+00:00',
+    title_en: 'Roh Moo-hyun',
+    artist_en: 'Park Jae-dong',
     category: '회화',
   },
   {
@@ -3090,6 +3095,8 @@ export const dbGeneratedArtworks: Artwork[] = [
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/337',
     sold: true,
     sold_at: '2026-01-25T03:00:00+00:00',
+    title_en: 'Roh Moo-hyun',
+    artist_en: 'Park Jae-dong',
     category: '회화',
   },
   {
@@ -3125,6 +3132,8 @@ export const dbGeneratedArtworks: Artwork[] = [
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/335',
     sold: true,
     sold_at: '2026-01-21T00:00:00+00:00',
+    title_en: 'Roh Moo-hyun (Five Works)',
+    artist_en: 'Park Jae-dong',
     category: '회화',
   },
   {

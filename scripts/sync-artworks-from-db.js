@@ -38,7 +38,7 @@ async function fetchAllArtworks() {
     const { data, error } = await supabase
       .from('artworks')
       .select(
-        `id, title, title_en, description, size, material, year, edition,
+        `id, title, title_en, description, description_en, size, material, year, edition,
          price, images, shop_url, status, sold_at, category,
          artists (name_ko, name_en)`
       )
@@ -88,6 +88,7 @@ function mapRow(row) {
   };
 
   if (row.title_en) artwork.title_en = row.title_en;
+  if (row.description_en) artwork.description_en = row.description_en;
   if (artist?.name_en) artwork.artist_en = artist.name_en;
   if (row.status === 'sold' || row.status === 'reserved') artwork.sold = true;
   if (row.sold_at) artwork.sold_at = row.sold_at;

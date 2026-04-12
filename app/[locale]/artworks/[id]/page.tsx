@@ -153,7 +153,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
   );
   const localizedDescription = localizeLongText(
     artwork.description,
-    undefined,
+    artwork.description_en,
     t('originalKoreanNote')
   );
   const localizedHistory = localizeLongText(
