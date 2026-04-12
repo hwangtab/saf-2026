@@ -122,6 +122,13 @@ types/
 
 **Brand Colors**: Defined in `lib/colors.ts` as `BRAND_COLORS`, consumed by `tailwind.config.ts`. Use semantic names: `primary`, `accent`, `canvas`, `charcoal`. Use `a11y` variants for text requiring WCAG AA contrast.
 
+**Color Usage Rules**:
+
+- **`slate-*` 사용 금지** — `tailwind.config.ts`에서 비활성화됨. 사용해도 CSS가 생성되지 않음
+- 중성 색상은 반드시 `gray-*` 브랜드 토큰 사용 (`lib/colors.ts`의 `BRAND_COLORS.gray`)
+- 텍스트 계층: `text-charcoal-deep` (제목) > `text-charcoal` / `text-gray-800` (본문) > `text-charcoal-muted` / `text-gray-600` (보조) > `text-gray-500` (뮤트)
+- 차트·그래프 등 inline hex 사용 시 반드시 `BRAND_COLORS` 값 참조 (`lib/colors.ts`)
+
 **Responsive Design**: Mobile-first with breakpoints at `sm` (640px), `md` (768px), `lg` (1024px - mobile/desktop nav switch), `xl` (1280px).
 
 **Image Components**: This project uses `next-image-export-optimizer` for static export. **Never use `import Image from 'next/image'` directly** — it breaks the static export build.

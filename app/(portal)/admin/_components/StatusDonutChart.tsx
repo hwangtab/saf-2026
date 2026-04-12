@@ -13,7 +13,7 @@ export function StatusDonutChart({ data }: StatusDonutChartProps) {
     { name: '판매 중(공개)', value: data.statusVisible.available, color: '#10b981' },
     { name: '예약됨(공개)', value: data.statusVisible.reserved, color: '#f59e0b' },
     { name: '판매 완료(공개)', value: data.statusVisible.sold, color: '#3b82f6' },
-    { name: '숨김 작품', value: data.hidden, color: '#94a3b8' },
+    { name: '숨김 작품', value: data.hidden, color: '#8F98A5' },
   ].filter((item) => item.value > 0);
 
   const total = data.total;
@@ -41,7 +41,7 @@ export function StatusDonutChart({ data }: StatusDonutChartProps) {
               contentStyle={{
                 backgroundColor: 'white',
                 borderRadius: '8px',
-                border: '1px solid #e2e8f0',
+                border: '1px solid #D1D7E0',
                 boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
               }}
             />

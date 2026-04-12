@@ -38,16 +38,16 @@ export function DailyViewsChart({ data }: Props) {
       <div className="relative h-[320px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={formatted} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#D1D7E0" />
             <XAxis
               dataKey="date"
-              tick={{ fontSize: 12, fill: '#64748b' }}
+              tick={{ fontSize: 12, fill: '#707A84' }}
               tickLine={false}
               axisLine={false}
               padding={{ left: 10, right: 10 }}
             />
             <YAxis
-              tick={{ fontSize: 12, fill: '#64748b' }}
+              tick={{ fontSize: 12, fill: '#707A84' }}
               tickLine={false}
               axisLine={false}
               allowDecimals={false}
@@ -57,7 +57,7 @@ export function DailyViewsChart({ data }: Props) {
               contentStyle={{
                 backgroundColor: 'white',
                 borderRadius: '8px',
-                border: '1px solid #e2e8f0',
+                border: '1px solid #D1D7E0',
                 boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
               }}
             />

@@ -32,23 +32,23 @@ export function BrowserOsChart({ browserData, osData }: Props) {
                   layout="vertical"
                   margin={{ top: 0, right: 20, left: 0, bottom: 0 }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e2e8f0" />
+                  <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#D1D7E0" />
                   <XAxis
                     type="number"
-                    tick={{ fontSize: 11, fill: '#64748b' }}
+                    tick={{ fontSize: 11, fill: '#707A84' }}
                     allowDecimals={false}
                   />
                   <YAxis
                     type="category"
                     dataKey="browser"
-                    tick={{ fontSize: 11, fill: '#64748b' }}
+                    tick={{ fontSize: 11, fill: '#707A84' }}
                     width={80}
                   />
                   <Tooltip
                     contentStyle={{
                       backgroundColor: 'white',
                       borderRadius: '8px',
-                      border: '1px solid #e2e8f0',
+                      border: '1px solid #D1D7E0',
                       boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
                     }}
                     formatter={(value: number) => [`${value.toLocaleString('ko-KR')}회`, '방문']}
@@ -68,23 +68,23 @@ export function BrowserOsChart({ browserData, osData }: Props) {
                   layout="vertical"
                   margin={{ top: 0, right: 20, left: 0, bottom: 0 }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e2e8f0" />
+                  <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#D1D7E0" />
                   <XAxis
                     type="number"
-                    tick={{ fontSize: 11, fill: '#64748b' }}
+                    tick={{ fontSize: 11, fill: '#707A84' }}
                     allowDecimals={false}
                   />
                   <YAxis
                     type="category"
                     dataKey="os"
-                    tick={{ fontSize: 11, fill: '#64748b' }}
+                    tick={{ fontSize: 11, fill: '#707A84' }}
                     width={80}
                   />
                   <Tooltip
                     contentStyle={{
                       backgroundColor: 'white',
                       borderRadius: '8px',
-                      border: '1px solid #e2e8f0',
+                      border: '1px solid #D1D7E0',
                       boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
                     }}
                     formatter={(value: number) => [`${value.toLocaleString('ko-KR')}회`, '방문']}

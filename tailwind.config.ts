@@ -5,7 +5,10 @@ const config: Config = {
   content: ['./app/**/*.{js,ts,jsx,tsx,mdx}', './components/**/*.{js,ts,jsx,tsx,mdx}'],
   theme: {
     extend: {
-      colors: BRAND_COLORS,
+      colors: {
+        ...BRAND_COLORS,
+        slate: {}, // slate 팔레트 비활성화 — gray 브랜드 토큰 사용
+      },
       fontFamily: {
         // 기본 폰트 - 모든 텍스트에 사용
         sans: [

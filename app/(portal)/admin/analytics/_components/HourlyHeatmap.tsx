@@ -23,16 +23,16 @@ export function HourlyHeatmap({ data }: Props) {
       <div className="relative h-[280px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={formatted} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#D1D7E0" />
             <XAxis
               dataKey="시간"
-              tick={{ fontSize: 10, fill: '#64748b' }}
+              tick={{ fontSize: 10, fill: '#707A84' }}
               tickLine={false}
               axisLine={false}
               interval={2}
             />
             <YAxis
-              tick={{ fontSize: 11, fill: '#64748b' }}
+              tick={{ fontSize: 11, fill: '#707A84' }}
               tickLine={false}
               axisLine={false}
               allowDecimals={false}
@@ -41,7 +41,7 @@ export function HourlyHeatmap({ data }: Props) {
               contentStyle={{
                 backgroundColor: 'white',
                 borderRadius: '8px',
-                border: '1px solid #e2e8f0',
+                border: '1px solid #D1D7E0',
                 boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
               }}
             />

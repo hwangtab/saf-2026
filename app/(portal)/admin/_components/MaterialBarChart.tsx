@@ -26,16 +26,16 @@ export function MaterialBarChart({ data }: MaterialBarChartProps) {
               type="category"
               dataKey="material"
               width={100}
-              tick={{ fontSize: 12, fill: '#64748b' }}
+              tick={{ fontSize: 12, fill: '#707A84' }}
               axisLine={false}
               tickLine={false}
             />
             <Tooltip
-              cursor={{ fill: '#f1f5f9' }}
+              cursor={{ fill: '#E6EAF0' }}
               contentStyle={{
                 backgroundColor: 'white',
                 borderRadius: '8px',
-                border: '1px solid #e2e8f0',
+                border: '1px solid #D1D7E0',
                 boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
               }}
             />

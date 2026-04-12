@@ -19,14 +19,14 @@ const DEVICE_COLORS: Record<string, string> = {
   desktop: '#3b82f6',
   mobile: '#10b981',
   tablet: '#f59e0b',
-  unknown: '#94a3b8',
+  unknown: '#8F98A5',
 };
 
 export function DevicePieChart({ data }: Props) {
   const chartData = data.map((item) => ({
     name: DEVICE_LABELS[item.type] || item.type,
     value: item.count,
-    color: DEVICE_COLORS[item.type] || '#94a3b8',
+    color: DEVICE_COLORS[item.type] || '#8F98A5',
   }));
 
   const total = chartData.reduce((sum, item) => sum + item.value, 0);
@@ -65,7 +65,7 @@ export function DevicePieChart({ data }: Props) {
               contentStyle={{
                 backgroundColor: 'white',
                 borderRadius: '8px',
-                border: '1px solid #e2e8f0',
+                border: '1px solid #D1D7E0',
                 boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
               }}
               formatter={(value: number) => [`${value.toLocaleString('ko-KR')}회`, '방문']}
