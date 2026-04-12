@@ -33,14 +33,13 @@ export default function HeroGalleryGrid({ artworks }: HeroGalleryGridProps) {
             className="group relative block overflow-hidden bg-canvas-soft"
           >
             <div className="relative aspect-[3/4]">
-              <div className="absolute inset-3 md:inset-4 flex items-center justify-center">
+              <div className="absolute inset-3 md:inset-4">
                 <SafeImage
                   src={imageSrc}
                   alt={`${title} - ${artist}`}
-                  width={960}
-                  height={960}
+                  fill
                   priority={index < 4}
-                  className="max-w-full max-h-full w-auto h-auto"
+                  className="object-contain"
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                 />
               </div>

@@ -141,7 +141,11 @@ export function resolveOptimizedArtworkImageUrl(
   if (width) parsed.searchParams.set('width', String(width));
   if (height) parsed.searchParams.set('height', String(height));
   if (quality) parsed.searchParams.set('quality', String(quality));
-  if (options.resize) parsed.searchParams.set('resize', options.resize);
+  if (options.resize) {
+    parsed.searchParams.set('resize', options.resize);
+  } else if (width) {
+    parsed.searchParams.set('resize', 'contain');
+  }
   if (options.format) parsed.searchParams.set('format', options.format);
 
   return parsed.toString();

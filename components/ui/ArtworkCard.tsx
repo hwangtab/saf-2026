@@ -213,17 +213,16 @@ function ArtworkCard({
       >
         <div
           className={cn(
-            'relative aspect-square overflow-hidden rounded-lg shadow-sm group-hover:shadow-xl transition-shadow duration-300',
+            'relative aspect-square overflow-hidden rounded-2xl shadow-sm group-hover:shadow-xl transition-shadow duration-300',
             theme === 'dark' ? 'bg-charcoal' : 'bg-primary-surface'
           )}
         >
-          <div className="absolute inset-2 flex items-center justify-center">
+          <div className="absolute inset-2">
             <SafeImage
               src={getImageSrc(artwork, variant)}
               alt={getImageAlt(artwork, untitledLabel, unknownArtistLabel, locale)}
-              width={400}
-              height={400}
-              className="max-w-full max-h-full w-auto h-auto"
+              fill
+              className="object-contain"
               sizes={config.imageSizes}
             />
           </div>
@@ -251,7 +250,7 @@ function ArtworkCard({
   return (
     <div
       className={cn(
-        'bg-gray-100 shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl group rounded-lg overflow-hidden',
+        'bg-gray-100 border border-gray-200 shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl group rounded-2xl overflow-hidden',
         className
       )}
     >
@@ -265,18 +264,14 @@ function ArtworkCard({
           )}
         >
           <div className="absolute inset-0 shimmer-loading" />
-          <div className="absolute inset-3 md:inset-4 flex items-center justify-center">
+          <div className="absolute inset-3 md:inset-4">
             <SafeImage
               src={getImageSrc(artwork, variant)}
               alt={getImageAlt(artwork, untitledLabel, unknownArtistLabel, locale)}
               loading={isAboveFold ? 'eager' : 'lazy'}
               priority={isAboveFold}
-              width={960}
-              height={960}
-              className={cn(
-                'max-w-full max-h-full w-auto h-auto',
-                imageReady ? 'opacity-100' : 'opacity-0'
-              )}
+              fill
+              className={cn('object-contain', imageReady ? 'opacity-100' : 'opacity-0')}
               sizes={config.imageSizes}
             />
           </div>
