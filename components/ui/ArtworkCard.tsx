@@ -217,12 +217,13 @@ function ArtworkCard({
             theme === 'dark' ? 'bg-charcoal' : 'bg-primary-surface'
           )}
         >
-          <div className="absolute inset-2">
+          <div className="absolute inset-2 flex items-center justify-center">
             <SafeImage
               src={getImageSrc(artwork, variant)}
               alt={getImageAlt(artwork, untitledLabel, unknownArtistLabel, locale)}
-              fill
-              className="object-contain"
+              width={400}
+              height={400}
+              className="max-w-full max-h-full w-auto h-auto"
               sizes={config.imageSizes}
             />
           </div>
@@ -264,14 +265,18 @@ function ArtworkCard({
           )}
         >
           <div className="absolute inset-0 shimmer-loading" />
-          <div className="absolute inset-3 md:inset-4">
+          <div className="absolute inset-3 md:inset-4 flex items-center justify-center">
             <SafeImage
               src={getImageSrc(artwork, variant)}
               alt={getImageAlt(artwork, untitledLabel, unknownArtistLabel, locale)}
               loading={isAboveFold ? 'eager' : 'lazy'}
               priority={isAboveFold}
-              fill
-              className={cn('object-contain', imageReady ? 'opacity-100' : 'opacity-0')}
+              width={960}
+              height={960}
+              className={cn(
+                'max-w-full max-h-full w-auto h-auto',
+                imageReady ? 'opacity-100' : 'opacity-0'
+              )}
               sizes={config.imageSizes}
             />
           </div>

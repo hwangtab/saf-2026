@@ -98,6 +98,7 @@ function RemoteSafeImage({ src, sizes, ...props }: { src: string } & Omit<ImageP
           position: 'absolute',
           height: '100%',
           width: '100%',
+          maxWidth: 'none',
           inset: 0,
           objectFit: resolvedObjectFit,
           ...style,
