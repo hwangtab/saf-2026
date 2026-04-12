@@ -9,6 +9,7 @@ import { OG_IMAGE } from '@/lib/constants';
 import { resolveLocale } from '@/lib/server-locale';
 import SafeImage from '@/components/common/SafeImage';
 import Section from '@/components/ui/Section';
+import LinkButton from '@/components/ui/LinkButton';
 import PageHero from '@/components/ui/PageHero';
 import { Link } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
@@ -151,14 +152,15 @@ export default async function NewsArticlePage({ params }: Props) {
             <p className="text-lg leading-relaxed mb-8">{article.description}</p>
           )}
           {article.link && (
-            <a
+            <LinkButton
               href={article.link}
-              target="_blank"
-              rel="noopener noreferrer nofollow"
-              className="inline-block px-6 py-3 bg-primary text-white rounded hover:opacity-90 transition"
+              external
+              variant="primary"
+              size="sm"
+              className="px-6 py-3"
             >
               {locale === 'en' ? 'Read original article' : '원문 기사 보기'}
-            </a>
+            </LinkButton>
           )}
           <div className="mt-10 p-5 bg-primary/5 rounded-lg border border-primary/15">
             <p className="text-sm text-charcoal-muted leading-relaxed">

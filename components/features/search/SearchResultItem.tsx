@@ -45,7 +45,7 @@ export default function SearchResultItem({ artwork, onSelect }: SearchResultItem
 
       {/* sold / reserved 뱃지 */}
       {artwork.sold && (
-        <span className="flex-shrink-0 text-xs font-medium text-gray-400 bg-gray-100 px-2 py-0.5 rounded">
+        <span className="flex-shrink-0 text-xs font-medium text-charcoal-soft bg-gray-100 px-2 py-0.5 rounded">
           {tFilters('sold')}
         </span>
       )}

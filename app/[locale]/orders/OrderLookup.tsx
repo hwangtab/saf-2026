@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import { Link } from '@/i18n/navigation';
 import SafeImage from '@/components/common/SafeImage';
 import Badge from '@/components/ui/Badge';
+import Button from '@/components/ui/Button';
 import { formatPriceForDisplay } from '@/lib/utils';
 import { getCarrierLabel, getTrackingUrl } from '@/lib/shipping';
 import {
@@ -827,13 +828,9 @@ export default function OrderLookup() {
               <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
             )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full rounded-xl bg-primary py-3.5 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-            >
+            <Button type="submit" disabled={loading} size="lg" className="w-full">
               {loading ? t('lookingUp') : t('lookupButton')}
-            </button>
+            </Button>
           </form>
         </>
       )}
