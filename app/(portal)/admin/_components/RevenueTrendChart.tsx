@@ -54,18 +54,18 @@ function RevenueTooltip({
   if (!point) return null;
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs shadow-sm">
-      <p className="font-semibold text-slate-800">
+    <div className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs shadow-sm">
+      <p className="font-semibold text-gray-800">
         {point.startDate} ~ {point.endDate}
       </p>
-      <p className="mt-1 text-slate-600">매출: {KRW_FORMATTER.format(point.revenue)}</p>
-      <p className="text-slate-600">
+      <p className="mt-1 text-gray-600">매출: {KRW_FORMATTER.format(point.revenue)}</p>
+      <p className="text-gray-600">
         {previousRevenueLabel}: {KRW_FORMATTER.format(point.previousRevenue)}
       </p>
       <p
         className={
           point.growthRate === null
-            ? 'text-slate-500'
+            ? 'text-gray-500'
             : point.growthRate >= 0
               ? 'text-green-600'
               : 'text-red-600'
@@ -76,8 +76,8 @@ function RevenueTooltip({
           ? 'N/A'
           : `${point.growthRate >= 0 ? '+' : ''}${point.growthRate.toFixed(1)}%`}
       </p>
-      <p className="text-slate-600">판매 작품: {NUMBER_FORMATTER.format(point.soldCount)}개</p>
-      <p className="text-slate-600">평균판매가: {KRW_FORMATTER.format(point.averagePrice)}</p>
+      <p className="text-gray-600">판매 작품: {NUMBER_FORMATTER.format(point.soldCount)}개</p>
+      <p className="text-gray-600">평균판매가: {KRW_FORMATTER.format(point.averagePrice)}</p>
     </div>
   );
 }
@@ -92,8 +92,8 @@ export function RevenueTrendChart({
 
   return (
     <AdminCard className="flex h-full flex-col p-6">
-      <h3 className="text-lg font-semibold text-slate-900">기간별 매출/평균판매가</h3>
-      <p className="mt-1 text-xs text-slate-500">{periodLabel}</p>
+      <h3 className="text-lg font-semibold text-gray-900">기간별 매출/평균판매가</h3>
+      <p className="mt-1 text-xs text-gray-500">{periodLabel}</p>
       <div className="relative mt-4 h-[340px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={data} margin={{ top: 8, right: 22, left: 8, bottom: 8 }}>
@@ -152,7 +152,7 @@ export function RevenueTrendChart({
         </ResponsiveContainer>
         {!hasData && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <p className="rounded-full bg-white/90 px-3 py-1 text-xs text-slate-500">
+            <p className="rounded-full bg-white/90 px-3 py-1 text-xs text-gray-500">
               선택한 기간의 판매 데이터가 없습니다.
             </p>
           </div>

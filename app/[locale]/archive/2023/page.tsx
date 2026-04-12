@@ -15,10 +15,11 @@ import { videos as fallbackVideos } from '@/content/videos';
 import { SITE_URL, CONTACT } from '@/lib/constants';
 import { containsHangul } from '@/lib/search-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { createBreadcrumbSchema, generateVideoSchema } from '@/lib/seo-utils';
+import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { createStandardPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
+import { Link } from '@/i18n/navigation';
 
 export const revalidate = 3600;
 
@@ -328,23 +329,15 @@ export default async function Archive2023Page() {
           <SectionTitle className="mb-12">
             {isEnglish ? '📹 Video Archive' : '📹 영상 아카이브'}
           </SectionTitle>
-          {/* VideoObject JSON-LD for each video */}
-          {videos.map((video, index) => (
-            <JsonLdScript
-              key={`video-schema-${video.id}`}
-              data={generateVideoSchema({
-                ...video,
-                title: localizeVideoTitle(video.title, index),
-                description: isEnglish ? 'Campaign video from SAF 2023.' : video.description,
-                transcript: isEnglish ? undefined : video.transcript,
-                youtubeId: video.youtube_id, // Map database field to component expected field
-                locale: isEnglish ? 'en' : 'ko',
-              })}
-            />
-          ))}
+          <p className="mb-8 text-sm text-charcoal-muted">
+            {isEnglish
+              ? 'Open each dedicated watch page to see the primary video and metadata details.'
+              : '각 영상을 전용 시청 페이지에서 확인하면 대표 영상과 메타데이터 정보를 함께 볼 수 있습니다.'}
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {videos.map((video, index) => {
               const localizedVideoTitle = localizeVideoTitle(video.title, index);
+              const watchPath = `/archive/2023/videos/${video.youtube_id}`;
 
               return (
                 <div key={video.id} className="bg-white rounded-lg shadow-md overflow-hidden">
@@ -354,6 +347,13 @@ export default async function Archive2023Page() {
                     <p className="text-charcoal-muted text-sm mb-4 line-clamp-2">
                       {isEnglish ? 'Campaign video from SAF 2023.' : video.description}
                     </p>
+
+                    <Link
+                      href={watchPath}
+                      className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80"
+                    >
+                      {isEnglish ? 'Watch on dedicated page' : '전용 시청 페이지로 이동'}
+                    </Link>
 
                     {video.transcript && !isEnglish && (
                       <div className="mt-4 p-4 bg-primary/5 rounded-lg border-l-4 border-primary/30">

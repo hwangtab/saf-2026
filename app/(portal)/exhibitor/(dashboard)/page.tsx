@@ -33,13 +33,13 @@ export default async function ExhibitorDashboard() {
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <AdminCard className="p-6">
-          <h2 className="text-sm font-medium text-slate-500">{t('managedArtists')}</h2>
-          <p className="mt-2 text-4xl font-bold tracking-tight text-slate-900">{artists.length}</p>
+          <h2 className="text-sm font-medium text-gray-500">{t('managedArtists')}</h2>
+          <p className="mt-2 text-4xl font-bold tracking-tight text-gray-900">{artists.length}</p>
         </AdminCard>
 
         <AdminCard className="p-6">
-          <h2 className="text-sm font-medium text-slate-500">{t('registeredArtworks')}</h2>
-          <p className="mt-2 text-4xl font-bold tracking-tight text-slate-900">{artworkCount}</p>
+          <h2 className="text-sm font-medium text-gray-500">{t('registeredArtworks')}</h2>
+          <p className="mt-2 text-4xl font-bold tracking-tight text-gray-900">{artworkCount}</p>
         </AdminCard>
       </div>
     </div>

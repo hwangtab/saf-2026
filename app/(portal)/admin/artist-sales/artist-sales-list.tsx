@@ -83,7 +83,7 @@ export function ArtistSalesList({ artists }: { artists: ArtistSalesRecord[] }) {
 
   function sortIndicator(key: SortKey) {
     if (sortKey !== key) {
-      return <span className="ml-1 text-slate-300">↕</span>;
+      return <span className="ml-1 text-gray-300">↕</span>;
     }
     return <span className="ml-1">{sortDir === 'asc' ? '▲' : '▼'}</span>;
   }
@@ -123,15 +123,15 @@ export function ArtistSalesList({ artists }: { artists: ArtistSalesRecord[] }) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="작가명 검색..."
-          className="w-full max-w-sm rounded-lg border border-slate-300 px-4 py-2 text-sm focus-visible:outline-nonefocus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/25"
+          className="w-full max-w-sm rounded-lg border border-gray-300 px-4 py-2 text-sm focus-visible:outline-nonefocus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/25"
         />
-        <span className="shrink-0 text-sm text-slate-500">
+        <span className="shrink-0 text-sm text-gray-500">
           {filtered.length}명{search.trim() ? ` / ${artists.length}명` : ''}
         </span>
         <button
           type="button"
           onClick={exportCsv}
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 shadow-sm transition-colors hover:bg-slate-50"
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-600 shadow-sm transition-colors hover:bg-gray-50"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -154,20 +154,20 @@ export function ArtistSalesList({ artists }: { artists: ArtistSalesRecord[] }) {
 
       <AdminCard className="overflow-hidden">
         <AdminCardHeader className="rounded-t-2xl">
-          <h2 className="text-base font-semibold text-slate-900">작가별 판매 목록</h2>
+          <h2 className="text-base font-semibold text-gray-900">작가별 판매 목록</h2>
         </AdminCardHeader>
 
         {sorted.length === 0 ? (
           <AdminEmptyState title="판매 기록 없음" description="검색 조건에 맞는 작가가 없습니다." />
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-slate-200">
+            <table className="min-w-full divide-y divide-gray-200">
               <caption className="sr-only">작가별 판매 현황</caption>
-              <thead className="bg-slate-50 text-xs font-semibold uppercase text-slate-500">
+              <thead className="bg-gray-50 text-xs font-semibold uppercase text-gray-500">
                 <tr>
                   <th className="px-4 py-3 text-left">#</th>
                   <th
-                    className="cursor-pointer select-none px-4 py-3 text-left hover:text-slate-800"
+                    className="cursor-pointer select-none px-4 py-3 text-left hover:text-gray-800"
                     onClick={() => toggleSort('artistName')}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ' ') {
@@ -187,7 +187,7 @@ export function ArtistSalesList({ artists }: { artists: ArtistSalesRecord[] }) {
                     작가명{sortIndicator('artistName')}
                   </th>
                   <th
-                    className="cursor-pointer select-none px-4 py-3 text-right hover:text-slate-800"
+                    className="cursor-pointer select-none px-4 py-3 text-right hover:text-gray-800"
                     onClick={() => toggleSort('soldCount')}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ' ') {
@@ -207,7 +207,7 @@ export function ArtistSalesList({ artists }: { artists: ArtistSalesRecord[] }) {
                     판매 수량{sortIndicator('soldCount')}
                   </th>
                   <th
-                    className="cursor-pointer select-none px-4 py-3 text-right hover:text-slate-800"
+                    className="cursor-pointer select-none px-4 py-3 text-right hover:text-gray-800"
                     onClick={() => toggleSort('artworkCount')}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ' ') {
@@ -227,7 +227,7 @@ export function ArtistSalesList({ artists }: { artists: ArtistSalesRecord[] }) {
                     판매 작품{sortIndicator('artworkCount')}
                   </th>
                   <th
-                    className="cursor-pointer select-none px-4 py-3 text-right hover:text-slate-800"
+                    className="cursor-pointer select-none px-4 py-3 text-right hover:text-gray-800"
                     onClick={() => toggleSort('avgPrice')}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ' ') {
@@ -248,7 +248,7 @@ export function ArtistSalesList({ artists }: { artists: ArtistSalesRecord[] }) {
                   </th>
                   <th className="px-4 py-3 text-right">채널</th>
                   <th
-                    className="cursor-pointer select-none px-4 py-3 text-right hover:text-slate-800"
+                    className="cursor-pointer select-none px-4 py-3 text-right hover:text-gray-800"
                     onClick={() => toggleSort('lastSaleDate')}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ' ') {
@@ -268,7 +268,7 @@ export function ArtistSalesList({ artists }: { artists: ArtistSalesRecord[] }) {
                     최근 판매{sortIndicator('lastSaleDate')}
                   </th>
                   <th
-                    className="cursor-pointer select-none px-4 py-3 text-right hover:text-slate-800"
+                    className="cursor-pointer select-none px-4 py-3 text-right hover:text-gray-800"
                     onClick={() => toggleSort('revenue')}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ' ') {
@@ -289,27 +289,27 @@ export function ArtistSalesList({ artists }: { artists: ArtistSalesRecord[] }) {
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 bg-white text-sm">
+              <tbody className="divide-y divide-gray-100 bg-white text-sm">
                 {sorted.map((artist, index) => (
-                  <tr key={artist.artistId || artist.artistName} className="hover:bg-slate-50/50">
-                    <td className="px-4 py-3 font-medium text-slate-800">{index + 1}</td>
-                    <td className="px-4 py-3 font-medium text-slate-900">{artist.artistName}</td>
-                    <td className="px-4 py-3 text-right text-slate-700">
+                  <tr key={artist.artistId || artist.artistName} className="hover:bg-gray-50/50">
+                    <td className="px-4 py-3 font-medium text-gray-800">{index + 1}</td>
+                    <td className="px-4 py-3 font-medium text-gray-900">{artist.artistName}</td>
+                    <td className="px-4 py-3 text-right text-gray-700">
                       {numberFormatter.format(artist.soldCount)} 점
                     </td>
-                    <td className="px-4 py-3 text-right text-slate-700">
+                    <td className="px-4 py-3 text-right text-gray-700">
                       {artist.artworkCount}/{artist.totalArtworkCount}
                     </td>
-                    <td className="px-4 py-3 text-right text-slate-700">
+                    <td className="px-4 py-3 text-right text-gray-700">
                       {krwFormatter.format(artist.avgPrice)}
                     </td>
-                    <td className="px-4 py-3 text-right text-slate-600">
+                    <td className="px-4 py-3 text-right text-gray-600">
                       {formatChannel(artist.channels)}
                     </td>
-                    <td className="px-4 py-3 text-right text-slate-500">
+                    <td className="px-4 py-3 text-right text-gray-500">
                       {formatDate(artist.lastSaleDate)}
                     </td>
-                    <td className="px-4 py-3 text-right font-semibold text-slate-900">
+                    <td className="px-4 py-3 text-right font-semibold text-gray-900">
                       {krwFormatter.format(artist.revenue)}
                     </td>
                   </tr>

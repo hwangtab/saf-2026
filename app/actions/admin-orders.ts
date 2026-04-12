@@ -261,14 +261,18 @@ export async function refundOrder(input: RefundInput) {
   // 4. 구매자 환불 이메일 발송 (fire-and-forget)
   if (order.buyer_email) {
     void (async () => {
-      const { artworkTitle, artistName } = await getArtworkEmailInfo(supabase, order.artwork_id);
-      void sendBuyerEmail(order.buyer_email!, 'refunded', {
-        orderNo: order.order_no,
-        buyerName: order.buyer_name ?? '',
-        artworkTitle,
-        artistName,
-        amount: order.total_amount,
-      });
+      try {
+        const { artworkTitle, artistName } = await getArtworkEmailInfo(supabase, order.artwork_id);
+        void sendBuyerEmail(order.buyer_email!, 'refunded', {
+          orderNo: order.order_no,
+          buyerName: order.buyer_name ?? '',
+          artworkTitle,
+          artistName,
+          amount: order.total_amount,
+        });
+      } catch (err) {
+        console.error('[refundOrder] email failed:', err);
+      }
     })();
   }
 
@@ -388,25 +392,29 @@ export async function updateOrderStatus(
   // 구매자 배송 이메일 발송 (fire-and-forget)
   if (order.buyer_email && (newStatus === 'shipped' || newStatus === 'delivered')) {
     void (async () => {
-      const { artworkTitle, artistName } = await getArtworkEmailInfo(supabase, order.artwork_id);
-      if (newStatus === 'shipped') {
-        void sendBuyerEmail(order.buyer_email!, 'shipped', {
-          orderNo: order.order_no,
-          buyerName: order.buyer_name ?? '',
-          artworkTitle,
-          artistName,
-          amount: 0,
-          carrier: trackingInfo?.carrier ?? '',
-          trackingNumber: trackingInfo?.trackingNumber,
-        });
-      } else {
-        void sendBuyerEmail(order.buyer_email!, 'delivered', {
-          orderNo: order.order_no,
-          buyerName: order.buyer_name ?? '',
-          artworkTitle,
-          artistName,
-          amount: 0,
-        });
+      try {
+        const { artworkTitle, artistName } = await getArtworkEmailInfo(supabase, order.artwork_id);
+        if (newStatus === 'shipped') {
+          void sendBuyerEmail(order.buyer_email!, 'shipped', {
+            orderNo: order.order_no,
+            buyerName: order.buyer_name ?? '',
+            artworkTitle,
+            artistName,
+            amount: 0,
+            carrier: trackingInfo?.carrier ?? '',
+            trackingNumber: trackingInfo?.trackingNumber,
+          });
+        } else {
+          void sendBuyerEmail(order.buyer_email!, 'delivered', {
+            orderNo: order.order_no,
+            buyerName: order.buyer_name ?? '',
+            artworkTitle,
+            artistName,
+            amount: 0,
+          });
+        }
+      } catch (err) {
+        console.error('[updateOrderStatus] email failed:', err);
       }
     })();
   }
@@ -508,14 +516,18 @@ export async function confirmDeposit(orderId: string) {
   // 3. 구매자 입금 확인 이메일 발송 (fire-and-forget)
   if (order.buyer_email) {
     void (async () => {
-      const { artworkTitle, artistName } = await getArtworkEmailInfo(supabase, order.artwork_id);
-      void sendBuyerEmail(order.buyer_email!, 'deposit_confirmed', {
-        orderNo: order.order_no,
-        buyerName: order.buyer_name ?? '',
-        artworkTitle,
-        artistName,
-        amount: order.total_amount,
-      });
+      try {
+        const { artworkTitle, artistName } = await getArtworkEmailInfo(supabase, order.artwork_id);
+        void sendBuyerEmail(order.buyer_email!, 'deposit_confirmed', {
+          orderNo: order.order_no,
+          buyerName: order.buyer_name ?? '',
+          artworkTitle,
+          artistName,
+          amount: order.total_amount,
+        });
+      } catch (err) {
+        console.error('[confirmDeposit] email failed:', err);
+      }
     })();
   }
 
@@ -552,7 +564,7 @@ export async function cancelAwaitingOrder(orderId: string, cancelReason: string)
 
   const { data: order, error } = await supabase
     .from('orders')
-    .select('id, order_no, status, artwork_id, buyer_name, total_amount')
+    .select('id, order_no, status, artwork_id, buyer_name, buyer_email, total_amount')
     .eq('id', orderId)
     .single();
 
@@ -582,7 +594,25 @@ export async function cancelAwaitingOrder(orderId: string, cancelReason: string)
       .eq('status', 'reserved'); // 멱등성: reserved 상태일 때만 변경
   }
 
-  // 3. 로그
+  // 3. 구매자 취소 이메일 발송 (fire-and-forget)
+  if (order.buyer_email) {
+    void (async () => {
+      try {
+        const { artworkTitle, artistName } = await getArtworkEmailInfo(supabase, order.artwork_id);
+        void sendBuyerEmail(order.buyer_email!, 'auto_cancelled', {
+          orderNo: order.order_no,
+          buyerName: order.buyer_name ?? '',
+          artworkTitle,
+          artistName,
+          amount: order.total_amount,
+        });
+      } catch (err) {
+        console.error('[cancelAwaitingOrder] email failed:', err);
+      }
+    })();
+  }
+
+  // 4. 로그
   await logAdminAction(
     'order_awaiting_cancelled',
     'order',

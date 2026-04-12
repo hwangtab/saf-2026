@@ -197,10 +197,10 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
     >
       <div className="space-y-8 divide-y divide-gray-200">
         <div>
-          <h3 className="text-lg leading-6 font-semibold text-slate-900">
+          <h3 className="text-lg leading-6 font-semibold text-gray-900">
             {artwork ? t('editTitle') : t('createTitle')}
           </h3>
-          <p className="mt-1 text-sm text-slate-500">{t('subtitle')}</p>
+          <p className="mt-1 text-sm text-gray-500">{t('subtitle')}</p>
 
           <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
             {/* Hidden: Images JSON */}
@@ -247,9 +247,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
 
             {/* Title (English) */}
             <div className="sm:col-span-4">
-              <AdminFieldLabel htmlFor="title_en">
-                {t('titleEn')}
-              </AdminFieldLabel>
+              <AdminFieldLabel htmlFor="title_en">{t('titleEn')}</AdminFieldLabel>
               <AdminInput
                 type="text"
                 name="title_en"
@@ -267,7 +265,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
               </AdminFieldLabel>
               <div className="relative mt-1 rounded-md shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <span className="text-sm text-slate-500">₩</span>
+                  <span className="text-sm text-gray-500">₩</span>
                 </div>
                 <AdminInput
                   type="text"
@@ -279,7 +277,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
                   className="pl-7 pr-12"
                 />
               </div>
-              <p className="mt-1 text-xs text-slate-500">{t('priceHint')}</p>
+              <p className="mt-1 text-xs text-gray-500">{t('priceHint')}</p>
             </div>
 
             {/* Size */}
@@ -454,14 +452,14 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
                       name="hidden"
                       type="checkbox"
                       defaultChecked={artwork?.is_hidden ?? undefined}
-                      className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                      className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                     />
                   </div>
                   <div className="ml-3 text-sm">
-                    <label htmlFor="hidden" className="font-medium text-slate-700">
+                    <label htmlFor="hidden" className="font-medium text-gray-700">
                       {t('hidden')}
                     </label>
-                    <p className="text-slate-500">{t('hiddenDescription')}</p>
+                    <p className="text-gray-500">{t('hiddenDescription')}</p>
                   </div>
                 </div>
               )}

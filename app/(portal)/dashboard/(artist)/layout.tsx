@@ -18,7 +18,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           {t('modeLabel')}
         </AdminBadge>
       }
-      rightSlot={<span className="hidden text-sm text-slate-500 sm:inline">{user.email}</span>}
+      rightSlot={<span className="hidden text-sm text-gray-500 sm:inline">{user.email}</span>}
     >
       {children}
     </PortalShell>

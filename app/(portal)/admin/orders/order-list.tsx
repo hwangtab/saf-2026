@@ -133,7 +133,7 @@ export function OrderList({
             ))}
           </AdminSelect>
         </div>
-        <p className="text-sm text-slate-500">{filtered.length}건</p>
+        <p className="text-sm text-gray-500">{filtered.length}건</p>
       </AdminCardHeader>
 
       {filtered.length === 0 ? (
@@ -142,7 +142,7 @@ export function OrderList({
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[var(--admin-border-soft)] text-left text-xs font-medium uppercase tracking-wide text-slate-500">
+              <tr className="border-b border-[var(--admin-border-soft)] text-left text-xs font-medium uppercase tracking-wide text-gray-500">
                 <th className="px-4 py-3">주문번호</th>
                 <th className="px-4 py-3">작품명</th>
                 <th className="px-4 py-3">작가</th>
@@ -155,14 +155,14 @@ export function OrderList({
             </thead>
             <tbody className="divide-y divide-[var(--admin-border-soft)]">
               {filtered.map((order) => (
-                <tr key={order.id} className="hover:bg-slate-50">
-                  <td className="px-4 py-3 font-mono text-xs text-slate-700">{order.order_no}</td>
-                  <td className="max-w-[180px] truncate px-4 py-3 text-slate-800">
+                <tr key={order.id} className="hover:bg-gray-50">
+                  <td className="px-4 py-3 font-mono text-xs text-gray-700">{order.order_no}</td>
+                  <td className="max-w-[180px] truncate px-4 py-3 text-gray-800">
                     {order.artwork_title ?? '—'}
                   </td>
-                  <td className="px-4 py-3 text-slate-600">{order.artist_name ?? '—'}</td>
-                  <td className="px-4 py-3 text-slate-700">{order.buyer_name ?? '—'}</td>
-                  <td className="px-4 py-3 text-right font-medium text-slate-800">
+                  <td className="px-4 py-3 text-gray-600">{order.artist_name ?? '—'}</td>
+                  <td className="px-4 py-3 text-gray-700">{order.buyer_name ?? '—'}</td>
+                  <td className="px-4 py-3 text-right font-medium text-gray-800">
                     {formatKRW(order.total_amount)}
                   </td>
                   <td className="px-4 py-3">
@@ -170,7 +170,7 @@ export function OrderList({
                       {STATUS_LABELS[order.status] ?? order.status}
                     </AdminBadge>
                   </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-xs text-slate-500">
+                  <td className="whitespace-nowrap px-4 py-3 text-xs text-gray-500">
                     {formatDate(order.created_at)}
                   </td>
                   <td className="px-4 py-3">

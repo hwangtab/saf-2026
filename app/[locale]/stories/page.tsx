@@ -12,7 +12,7 @@ import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates'
 import { resolveLocale } from '@/lib/server-locale';
 import { Link } from '@/i18n/navigation';
 import StoriesCategoryFilter from '@/components/stories/StoriesCategoryFilter';
-import type { StoryCategory } from '@/types';
+import { STORY_CATEGORIES, type StoryCategory } from '@/types';
 
 export const revalidate = 300;
 
@@ -77,9 +77,23 @@ const CATEGORY_LABELS: Record<LocaleCode, Record<StoryCategory, string>> = {
   },
 };
 
-export async function generateMetadata(): Promise<Metadata> {
+const toValidStoryCategory = (value?: string): StoryCategory | null => {
+  if (!value) return null;
+  if (STORY_CATEGORIES.includes(value as StoryCategory)) {
+    return value as StoryCategory;
+  }
+  return null;
+};
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}): Promise<Metadata> {
   const locale = resolveLocale(await getLocale());
   const copy = STORIES_COPY[locale];
+  const params = await searchParams;
+  const hasQueryParams = Object.values(params).some((value) => Boolean(value));
   const path = '/stories';
   const pageUrl = buildLocaleUrl(path, locale);
 
@@ -113,17 +127,24 @@ export async function generateMetadata(): Promise<Metadata> {
       locale === 'en'
         ? 'SAF magazine, Korean art, exhibition recommendations, artist stories, art collecting guide'
         : '전시회 추천, 전시회를 즐기다, 작가 인터뷰, 컬렉팅 가이드, 미술 감상, 씨앗페 매거진',
+    ...(hasQueryParams && {
+      robots: {
+        index: false,
+        follow: true,
+      },
+    }),
   };
 }
 
 export default async function StoriesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string }>;
+  searchParams: Promise<Record<string, string | undefined>>;
 }) {
   const locale = resolveLocale(await getLocale());
   const copy = STORIES_COPY[locale];
-  const { category } = await searchParams;
+  const params = await searchParams;
+  const category = toValidStoryCategory(params.category);
 
   const allStories = await getSupabaseStories();
   const stories = category ? allStories.filter((s) => s.category === category) : allStories;

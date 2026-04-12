@@ -187,7 +187,7 @@ export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedb
             </option>
           ))}
         </AdminSelect>
-        <span className="ml-auto text-sm text-slate-500">
+        <span className="ml-auto text-sm text-gray-500">
           {t('count', { count: filtered.length })}
         </span>
       </div>
@@ -204,7 +204,7 @@ export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedb
                   type="button"
                   onClick={() => handleSelect(f)}
                   className={clsx(
-                    'w-full px-4 py-3 text-left transition-colors hover:bg-slate-50',
+                    'w-full px-4 py-3 text-left transition-colors hover:bg-gray-50',
                     selectedId === f.id && 'bg-indigo-50'
                   )}
                 >
@@ -213,16 +213,16 @@ export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedb
                       {getCategoryLabel(f.category)}
                     </Badge>
                     <Badge className={STATUS_COLORS[f.status]}>{getStatusLabel(f.status)}</Badge>
-                    <span className="flex-1 truncate text-sm font-medium text-slate-900">
+                    <span className="flex-1 truncate text-sm font-medium text-gray-900">
                       {f.title}
                     </span>
-                    <span className="shrink-0 text-xs text-slate-400">
+                    <span className="shrink-0 text-xs text-gray-400">
                       {formatDate(f.created_at)}
                     </span>
                   </div>
-                  <p className="mt-1 truncate text-xs text-slate-500">
+                  <p className="mt-1 truncate text-xs text-gray-500">
                     {f.user_email}
-                    {f.page_url && <span className="ml-2 text-slate-400">{f.page_url}</span>}
+                    {f.page_url && <span className="ml-2 text-gray-400">{f.page_url}</span>}
                   </p>
                 </button>
               </li>
@@ -245,11 +245,11 @@ export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedb
                     {getStatusLabel(selected.status)}
                   </Badge>
                 </div>
-                <h3 className="mt-2 text-lg font-semibold text-slate-900">{selected.title}</h3>
-                <p className="mt-1 text-xs text-slate-500">
+                <h3 className="mt-2 text-lg font-semibold text-gray-900">{selected.title}</h3>
+                <p className="mt-1 text-xs text-gray-500">
                   {selected.user_email} · {formatDate(selected.created_at)}
                   {selected.page_url && (
-                    <span className="ml-2 text-slate-400">({selected.page_url})</span>
+                    <span className="ml-2 text-gray-400">({selected.page_url})</span>
                   )}
                 </p>
               </div>
@@ -263,14 +263,14 @@ export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedb
               </Button>
             </div>
 
-            <div className="rounded-lg bg-slate-50 p-4">
-              <p className="whitespace-pre-wrap text-sm text-slate-700">{selected.description}</p>
+            <div className="rounded-lg bg-gray-50 p-4">
+              <p className="whitespace-pre-wrap text-sm text-gray-700">{selected.description}</p>
             </div>
 
             <div>
               <label
                 htmlFor="admin-note"
-                className="mb-1.5 block text-sm font-medium text-slate-700"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
               >
                 {t('adminMemo')}
               </label>

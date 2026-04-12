@@ -42,13 +42,13 @@ export function AnalyticsPeriodTabs({ selected }: Props) {
             'rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
             value === selected
               ? 'bg-indigo-600 text-white shadow-sm'
-              : 'text-slate-600 hover:bg-slate-100'
+              : 'text-gray-600 hover:bg-gray-100'
           )}
         >
           {label}
         </button>
       ))}
-      {isPending && <span className="ml-2 text-xs text-slate-400">불러오는 중...</span>}
+      {isPending && <span className="ml-2 text-xs text-gray-400">불러오는 중...</span>}
     </div>
   );
 }

@@ -318,10 +318,10 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
 
               return (
                 <tr key={log.id} className="hover:bg-gray-50">
-                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                     {formatDate(log.created_at, locale)}
                   </td>
-                  <td className="px-4 sm:px-6 py-4 text-sm text-slate-800">
+                  <td className="px-4 sm:px-6 py-4 text-sm text-gray-800">
                     <div className="space-y-0.5">
                       {targetLink ? (
                         <Link href={targetLink} className="text-indigo-600 hover:underline">
@@ -330,10 +330,10 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
                       ) : (
                         <div>{getTargetTypeLabel(log.target_type, t)}</div>
                       )}
-                      <div className="text-xs text-slate-600">{targetName}</div>
+                      <div className="text-xs text-gray-600">{targetName}</div>
                     </div>
                   </td>
-                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                     {formatDate(log.trash_expires_at, locale)}
                   </td>
                   <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm">

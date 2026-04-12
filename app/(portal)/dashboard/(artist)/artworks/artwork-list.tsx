@@ -116,7 +116,7 @@ export function ArtworkList({
               <div className="flex flex-col gap-4 px-4 py-5 sm:px-6 lg:flex-row lg:items-center">
                 <div className="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between">
                   <div className="flex items-center">
-                    <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-[var(--admin-border)] bg-slate-100">
+                    <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-[var(--admin-border)] bg-gray-100">
                       {artwork.images?.[0] ? (
                         <div className="absolute inset-1">
                           <SafeImage
@@ -128,7 +128,7 @@ export function ArtworkList({
                           />
                         </div>
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center text-xs text-slate-400">
+                        <div className="flex h-full w-full items-center justify-center text-xs text-gray-400">
                           {t('noImage')}
                         </div>
                       )}
@@ -137,13 +137,13 @@ export function ArtworkList({
                       <div className="flex items-center gap-2">
                         <Link
                           href={`/dashboard/artworks/${artwork.id}/edit`}
-                          className="truncate text-sm font-semibold text-slate-900 hover:text-indigo-700 hover:underline"
+                          className="truncate text-sm font-semibold text-gray-900 hover:text-indigo-700 hover:underline"
                         >
                           {artwork.title}
                         </Link>
                         {artwork.is_hidden && <AdminBadge>{t('hidden')}</AdminBadge>}
                       </div>
-                      <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-slate-500">
+                      <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-gray-500">
                         <p className="truncate">{formatPriceForDisplay(artwork.price)}</p>
                         <p>
                           {artwork.status === 'sold' ? (
@@ -163,7 +163,7 @@ export function ArtworkList({
                     href={`/artworks/${artwork.id}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex h-10 w-10 items-center justify-center rounded-md text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700"
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-md text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
                     title={t('preview')}
                   >
                     <ExternalLinkIcon />

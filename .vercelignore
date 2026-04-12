@@ -1,0 +1,9 @@
+.git
+.next
+out
+output
+coverage
+video/.venv
+video/out
+docs
+.sisyphus

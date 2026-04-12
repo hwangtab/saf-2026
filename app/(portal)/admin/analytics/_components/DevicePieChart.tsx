@@ -34,9 +34,9 @@ export function DevicePieChart({ data }: Props) {
   if (total === 0) {
     return (
       <AdminCard className="flex h-full flex-col p-6">
-        <h3 className="mb-4 text-lg font-semibold text-slate-900">디바이스 분포</h3>
+        <h3 className="mb-4 text-lg font-semibold text-gray-900">디바이스 분포</h3>
         <div className="flex flex-1 min-h-[300px] items-center justify-center">
-          <p className="text-sm text-slate-500">데이터가 없습니다.</p>
+          <p className="text-sm text-gray-500">데이터가 없습니다.</p>
         </div>
       </AdminCard>
     );
@@ -44,7 +44,7 @@ export function DevicePieChart({ data }: Props) {
 
   return (
     <AdminCard className="flex h-full flex-col p-6">
-      <h3 className="mb-4 text-lg font-semibold text-slate-900">디바이스 분포</h3>
+      <h3 className="mb-4 text-lg font-semibold text-gray-900">디바이스 분포</h3>
       <div className="relative flex-1 min-h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
@@ -74,8 +74,8 @@ export function DevicePieChart({ data }: Props) {
           </PieChart>
         </ResponsiveContainer>
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center pb-8">
-          <p className="text-sm font-medium text-slate-500">총 방문</p>
-          <p className="text-2xl font-bold text-slate-900">{total.toLocaleString('ko-KR')}</p>
+          <p className="text-sm font-medium text-gray-500">총 방문</p>
+          <p className="text-2xl font-bold text-gray-900">{total.toLocaleString('ko-KR')}</p>
         </div>
       </div>
     </AdminCard>

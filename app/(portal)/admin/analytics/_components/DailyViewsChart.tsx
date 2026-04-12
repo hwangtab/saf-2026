@@ -34,7 +34,7 @@ export function DailyViewsChart({ data }: Props) {
 
   return (
     <AdminCard className="flex h-full flex-col p-6">
-      <h3 className="mb-4 text-lg font-semibold text-slate-900">일별 페이지뷰 추이</h3>
+      <h3 className="mb-4 text-lg font-semibold text-gray-900">일별 페이지뷰 추이</h3>
       <div className="relative h-[320px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={formatted} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
@@ -84,7 +84,7 @@ export function DailyViewsChart({ data }: Props) {
         </ResponsiveContainer>
         {!hasData && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <p className="rounded-full bg-white/90 px-3 py-1 text-xs text-slate-500">
+            <p className="rounded-full bg-white/90 px-3 py-1 text-xs text-gray-500">
               해당 기간 데이터가 없습니다.
             </p>
           </div>

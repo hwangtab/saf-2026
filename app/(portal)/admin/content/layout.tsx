@@ -18,7 +18,7 @@ export default function ContentLayout({ children }: { children: React.ReactNode 
             <Link
               key={tab.href}
               href={tab.href}
-              className="rounded-md border border-[var(--admin-border-soft)] bg-white px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+              className="rounded-md border border-[var(--admin-border-soft)] bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900"
             >
               {tab.label}
             </Link>

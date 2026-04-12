@@ -39,7 +39,7 @@ export function DashboardPeriodTabs({ selectedPeriod, options }: DashboardPeriod
             className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
               isActive
                 ? 'border-indigo-600 bg-indigo-50 text-indigo-700'
-                : 'border-slate-300 bg-white text-slate-600 hover:border-slate-400 hover:text-slate-800'
+                : 'border-gray-300 bg-white text-gray-600 hover:border-gray-400 hover:text-gray-800'
             } ${isPending ? 'cursor-wait opacity-80' : ''}`}
           >
             {option.label}

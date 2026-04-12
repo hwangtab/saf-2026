@@ -24,13 +24,13 @@ export default function PortalShell({
   return (
     <div className="min-h-screen bg-[var(--admin-bg)]">
       <div className="pointer-events-none fixed inset-0 -z-10 bg-gradient-portal" />
-      <nav className="fixed left-0 top-0 z-30 w-full border-b border-slate-200/90 bg-white/90 backdrop-blur">
+      <nav className="fixed left-0 top-0 z-30 w-full border-b border-gray-200/90 bg-white/90 backdrop-blur">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 justify-between">
             <div className="flex items-center">
               {mobileNav && <div className="xl:hidden">{mobileNav}</div>}
               <div className="flex shrink-0 items-center ml-2 sm:ml-0">
-                <Link href={titleHref} className="text-xl font-bold text-slate-900">
+                <Link href={titleHref} className="text-xl font-bold text-gray-900">
                   {title}
                 </Link>
               </div>

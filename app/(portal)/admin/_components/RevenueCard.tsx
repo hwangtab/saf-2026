@@ -68,24 +68,24 @@ export function RevenueCard({ title, value, subtitle, trend }: RevenueCardProps)
   return (
     <AdminCard className="flex h-full min-w-0 flex-col justify-between p-6">
       <div className="min-w-0">
-        <p className="text-sm font-medium text-slate-500">{title}</p>
+        <p className="text-sm font-medium text-gray-500">{title}</p>
         <p
-          className={`mt-2 min-w-0 max-w-full font-bold leading-[1.05] tracking-tight text-slate-900 tabular-nums ${valueSizeClass} ${valueWrapClass}`}
+          className={`mt-2 min-w-0 max-w-full font-bold leading-[1.05] tracking-tight text-gray-900 tabular-nums ${valueSizeClass} ${valueWrapClass}`}
           title={primaryValue}
         >
           {primaryValue}
         </p>
-        <p className={`mt-1 font-medium text-slate-500 ${subtitleTextSizeClass}`}>
+        <p className={`mt-1 font-medium text-gray-500 ${subtitleTextSizeClass}`}>
           {secondaryValue}
         </p>
       </div>
-      {subtitle && <p className="mt-2 text-sm text-slate-500">{subtitle}</p>}
+      {subtitle && <p className="mt-2 text-sm text-gray-500">{subtitle}</p>}
       {trend && (
         <div className="mt-4 flex items-center text-sm">
           <span className={trend.isPositive ? 'text-green-600' : 'text-red-600'}>
             {trend.isPositive ? '▲' : '▼'} {trendValue}%
           </span>
-          <span className="ml-2 text-slate-500">직전 동일 기간 대비</span>
+          <span className="ml-2 text-gray-500">직전 동일 기간 대비</span>
         </div>
       )}
     </AdminCard>

@@ -187,7 +187,7 @@ export async function POST(req: NextRequest) {
     if (order.buyer_email) {
       void sendBuyerEmail(order.buyer_email, 'payment_confirmed', {
         orderNo: orderId,
-        buyerName: order.buyer_name,
+        buyerName: order.buyer_name ?? '',
         artworkTitle,
         artistName,
         amount: tossResponse.totalAmount,
@@ -206,7 +206,7 @@ export async function POST(req: NextRequest) {
     if (order.buyer_email) {
       void sendBuyerEmail(order.buyer_email, 'virtual_account_issued', {
         orderNo: orderId,
-        buyerName: order.buyer_name,
+        buyerName: order.buyer_name ?? '',
         artworkTitle,
         artistName,
         amount: tossResponse.totalAmount,

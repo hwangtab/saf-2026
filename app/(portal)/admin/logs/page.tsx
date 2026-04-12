@@ -194,19 +194,19 @@ export default async function AdminLogsPage({ searchParams }: Props) {
       <AdminCard className="overflow-hidden">
         <form>
           <input type="hidden" name="page" value="1" />
-          <div className="flex flex-col gap-2 border-b border-slate-200 bg-slate-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-2 border-b border-gray-200 bg-gray-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="text-sm font-semibold text-slate-900">
+              <h2 className="text-sm font-semibold text-gray-900">
                 {isEnglish ? 'Search / Filters' : '검색/필터'}
               </h2>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-gray-500">
                 {isEnglish
                   ? 'Combine filters to quickly find the logs you need.'
                   : '조건을 조합해 원하는 로그만 빠르게 확인하세요.'}
               </p>
             </div>
             <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
-              <AdminBadge className="bg-white text-slate-700 ring-slate-200">
+              <AdminBadge className="bg-white text-gray-700 ring-gray-200">
                 {isEnglish
                   ? `Applied filters ${activeFilterCount}`
                   : `적용된 필터 ${activeFilterCount}개`}
@@ -215,7 +215,7 @@ export default async function AdminLogsPage({ searchParams }: Props) {
             </div>
           </div>
           <div className="grid grid-cols-1 gap-3 p-4 md:grid-cols-2 xl:grid-cols-4">
-            <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+            <label className="flex flex-col gap-1 text-xs font-medium text-gray-600">
               {isEnglish ? 'Keyword' : '검색어'}
               <AdminInput
                 name="q"
@@ -224,7 +224,7 @@ export default async function AdminLogsPage({ searchParams }: Props) {
                 className="h-10"
               />
             </label>
-            <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+            <label className="flex flex-col gap-1 text-xs font-medium text-gray-600">
               {isEnglish ? 'Actor' : '행위자'}
               <AdminSelect
                 name="actor_role"
@@ -241,7 +241,7 @@ export default async function AdminLogsPage({ searchParams }: Props) {
                 <option value="all">{isEnglish ? 'All actors' : '전체 행위자'}</option>
               </AdminSelect>
             </label>
-            <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+            <label className="flex flex-col gap-1 text-xs font-medium text-gray-600">
               {isEnglish ? 'Action type' : '활동 유형'}
               <AdminSelect name="action" defaultValue={params.action || ''} className="h-10">
                 {actionFilterOptions.map((option) => (
@@ -251,7 +251,7 @@ export default async function AdminLogsPage({ searchParams }: Props) {
                 ))}
               </AdminSelect>
             </label>
-            <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+            <label className="flex flex-col gap-1 text-xs font-medium text-gray-600">
               {isEnglish ? 'Target' : '대상'}
               <AdminSelect
                 name="target_type"
@@ -269,7 +269,7 @@ export default async function AdminLogsPage({ searchParams }: Props) {
                 <option value="testimonial">{isEnglish ? 'Testimonial' : '추천사'}</option>
               </AdminSelect>
             </label>
-            <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+            <label className="flex flex-col gap-1 text-xs font-medium text-gray-600">
               {isEnglish ? 'Start date/time' : '시작일시'}
               <AdminInput
                 name="from"
@@ -278,7 +278,7 @@ export default async function AdminLogsPage({ searchParams }: Props) {
                 className="h-10"
               />
             </label>
-            <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+            <label className="flex flex-col gap-1 text-xs font-medium text-gray-600">
               {isEnglish ? 'End date/time' : '종료일시'}
               <AdminInput
                 name="to"
@@ -287,26 +287,26 @@ export default async function AdminLogsPage({ searchParams }: Props) {
                 className="h-10"
               />
             </label>
-            <label className="flex items-center gap-2 rounded-md border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-700 md:col-span-2 xl:col-span-1">
+            <label className="flex items-center gap-2 rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-700 md:col-span-2 xl:col-span-1">
               <input
                 type="checkbox"
                 name="reversible"
                 value="1"
                 defaultChecked={params.reversible === '1'}
-                className="h-4 w-4 rounded border-slate-300 text-indigo-600"
+                className="h-4 w-4 rounded border-gray-300 text-indigo-600"
               />
               {isEnglish ? 'Only show reversible logs' : '복구 가능한 로그만 보기'}
             </label>
             <div className="flex items-center justify-end gap-2 md:col-span-2 xl:col-span-1">
               <Link
                 href="/admin/logs"
-                className="inline-flex items-center rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                className="inline-flex items-center rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
                 {isEnglish ? 'Reset' : '초기화'}
               </Link>
               <button
                 type="submit"
-                className="inline-flex items-center rounded-md bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800"
+                className="inline-flex items-center rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white hover:bg-gray-800"
               >
                 {isEnglish ? 'Apply filters' : '필터 적용'}
               </button>

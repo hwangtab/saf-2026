@@ -19,7 +19,7 @@ export function HourlyHeatmap({ data }: Props) {
 
   return (
     <AdminCard className="flex h-full flex-col p-6">
-      <h3 className="mb-4 text-lg font-semibold text-slate-900">시간대별 방문 (KST)</h3>
+      <h3 className="mb-4 text-lg font-semibold text-gray-900">시간대별 방문 (KST)</h3>
       <div className="relative h-[280px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={formatted} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
@@ -51,7 +51,7 @@ export function HourlyHeatmap({ data }: Props) {
         </ResponsiveContainer>
         {!hasData && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <p className="rounded-full bg-white/90 px-3 py-1 text-xs text-slate-500">
+            <p className="rounded-full bg-white/90 px-3 py-1 text-xs text-gray-500">
               해당 기간 데이터가 없습니다.
             </p>
           </div>

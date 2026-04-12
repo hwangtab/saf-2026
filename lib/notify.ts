@@ -209,6 +209,11 @@ export async function sendBuyerEmail(
           amount: data.amount,
         });
         break;
+      default: {
+        const _exhaustive: never = type;
+        console.error(`[buyer-email] Unknown email type: ${_exhaustive}`);
+        return;
+      }
     }
 
     const html = await render(emailElement);

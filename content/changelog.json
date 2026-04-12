@@ -1,5 +1,275 @@
 [
   {
+    "hash": "e91e32fe",
+    "type": "fix",
+    "scope": "email",
+    "subject": "구매자 이메일 발송 안정성 및 품질 개선",
+    "summary": "Resend 재시도, FROM 환경변수 필수화, dueDate 포맷, buyer_email 가드 통일",
+    "body": "- RESEND_FROM_EMAIL 미설정 시 no-op으로 변경 (스팸 방지)\n- .env.local.example에 RESEND_FROM_EMAIL 문서화\n- resendFetch에 429/5xx/네트워크에러 시 1회 재시도 추가\n- confirm route 시나리오 1,2에 buyer_email null 가드 추가 (웹훅과 일관성)\n- 가상계좌 dueDate ISO→한국어 날짜 포맷 (formatKoreanDate)\n- 이메일 HTML에 viewport 메타태그 추가 (모바일 최적화)\n- TD_KEY/TD_VAL 상수를 사용 전 위치로 이동\n- 이메일 제목에서 이모지 제거 (스팸필터 회피)",
+    "date": "2026-04-10",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "f53f9cb3",
+    "type": "fix",
+    "scope": null,
+    "subject": ".single() → .maybeSingle() 잔존 2건 수정",
+    "summary": "웹훅 artwork_sales 조회, getOrderDetail 주문 조회에서 불필요한 PGRST116 에러 방지",
+    "body": null,
+    "date": "2026-04-10",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "e92de1cc",
+    "type": "fix",
+    "scope": "payment",
+    "subject": "결제 시스템 레이스 컨디션 및 엣지 케이스 수정",
+    "summary": "주문 상태 전환 optimistic lock, 크론 타이밍 경쟁, 취소 시 artwork 복원 추가",
+    "body": "- updateOrderStatus에 .eq('status', order.status) optimistic lock 추가\n- refundOrder payment UPDATE 에러 체크 추가\n- reconcile-payments 타임 윈도우 30분→28분 (expire 크론과 2분 안전 마진)\n- DEPOSIT_CALLBACK CANCELED 시 주문 cancelled 전환 + artwork reserved→available\n- STATUS_CHANGED 취소 경로에서 artwork reserved→available 복원 추가",
+    "date": "2026-04-10",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "5f7cb0f0",
+    "type": "feat",
+    "scope": "payment",
+    "subject": "결제 시스템 3단계 보안·안정성 개선 및 에러 바운더리 추가",
+    "summary": "Toss 웹훅 보안 강화, 결제 보정 크론, Teams 알림, 관리자 주문 에러 바운더리 추가",
+    "body": "- SEC: virtualAccount.secret 검증에 crypto.timingSafeEqual 적용\n- SEC: DEPOSIT_CALLBACK DB 에러를 401 대신 500으로 구분 반환\n- SEC: confirm route에 optimistic lock(.eq status guard) 및 metadata 병합 수정\n- FEAT: Microsoft Teams Adaptive Card 알림(lib/notify.ts) 추가\n- FEAT: 결제 보정 크론(reconcile-payments) — pending_payment 이상 자동 보정\n- FEAT: 만료 주문 자동 취소 크론(expire-stale-orders)에 알림 추가\n- FEAT: 가상계좌 입금 확인 후 deriveAndSyncArtworkStatus 호출 추가\n- FIX: 관리자 주문 라우트 error.tsx 에러 바운더리 추가 (환불 후 렌더 에러 처리)\n- FIX: getOrderDetail .single() → .maybeSingle() (결제/판매 레코드 조회)\n- DB: artwork_availability_check RPC 수정 (reserved 상태 반영, 24h 입금 대기 집계)\n- DB: artwork_sales(order_id) 부분 유니크 인덱스 추가",
+    "date": "2026-04-10",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "78902773",
+    "type": "feat",
+    "scope": "payments",
+    "subject": "결제-주문 불일치 자동 보정 reconciliation 크론 추가",
+    "summary": "Toss 결제 성공 후 DB 반영 실패 시 자동 복구하는 크론 추가 — 고객 결제 후 주문 취소되는 시나리오 방지",
+    "body": "- app/api/internal/reconcile-payments/route.ts: 새 크론 엔드포인트\n  — pending_payment 5~30분 경과 주문을 Toss API orderId 조회로 실제 결제 상태 확인\n  — DONE: payment 레코드 보정 + 주문 paid 전환 + artwork_sales 생성\n  — WAITING_FOR_DEPOSIT: payment 레코드 보정 + 주문 awaiting_deposit 전환\n  — 모든 INSERT/UPDATE에 멱등성 가드 적용 (중복 실행 안전)\n- lib/integrations/toss/confirm.ts: fetchPaymentByOrderId() 추가\n  — GET /v1/payments/orders/{orderId}로 payment_key 없이 결제 조회\n- vercel.json: reconcile-payments 크론 등록 (매 10분)",
+    "date": "2026-04-10",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "5e387043",
+    "type": "fix",
+    "scope": "security",
+    "subject": "artwork_sales PII 노출 차단 + awaiting_deposit 24시간 자동 만료",
+    "summary": "artwork_sales 공개 SELECT 정책 제거(PII 보호) + 미입금 주문 24시간 자동 취소 크론 추가",
+    "body": "- supabase/migrations/20260409130000: artwork_sales \"Public can view sales\" RLS 정책 삭제\n  — buyer_name, buyer_phone 등 개인정보가 익명 API로 노출되던 문제 차단\n  — 모든 artwork_sales 쿼리는 서버(service_role/admin)에서만 수행되므로 영향 없음\n- app/api/internal/expire-stale-orders/route.ts:\n  — 기존 pending_payment 30분 만료에 추가로 awaiting_deposit 24시간 만료 구현\n  — 만료 시 artwork reserved→available 자동 복원 (멱등성 가드 적용)\n  — 응답에 pending_cancelled, deposit_cancelled 분리 카운트 추가",
+    "date": "2026-04-10",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "900a1d50",
+    "type": "fix",
+    "scope": "orders",
+    "subject": "주문 조회 시 최신 주문 카드 자동 펼침 버그 수정",
+    "summary": "setOrders 전에 firstDetail을 먼저 세팅하여 OrderCard 초기값이 올바르게 설정되도록 수정",
+    "body": "OrderCard의 useState(!!initialDetail)는 마운트 시 한 번만 초기화되는데, 기존 코드에서\nsetOrders() 후 await로 firstDetail을 가져와 setFirstDetail()을 호출하여 첫 렌더 시점에\ninitialDetail이 항상 null이었음. 순서를 바꿔 firstDetail 세팅 후 setOrders() 호출.",
+    "date": "2026-04-10",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "0c5b02f8",
+    "type": "fix",
+    "scope": "image",
+    "subject": "respect contain fit in remote fill renderer",
+    "summary": "버그 수정",
+    "body": null,
+    "date": "2026-04-10",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "1c257245",
+    "type": "fix",
+    "scope": "portal",
+    "subject": "add frame padding to contain thumbnails",
+    "summary": "버그 수정",
+    "body": null,
+    "date": "2026-04-10",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "799f30d8",
+    "type": "fix",
+    "scope": "ui",
+    "subject": "make ratio-preserved framing visually obvious",
+    "summary": "UI 버그 수정",
+    "body": null,
+    "date": "2026-04-10",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "5dd7a95d",
+    "type": "fix",
+    "scope": "portal",
+    "subject": "keep artwork thumbnail aspect ratios",
+    "summary": "버그 수정",
+    "body": null,
+    "date": "2026-04-10",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "e5a35e62",
+    "type": "fix",
+    "scope": "ui",
+    "subject": "preserve artwork ratios on public thumbnails",
+    "summary": "UI 버그 수정",
+    "body": null,
+    "date": "2026-04-10",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "b85a8f1a",
+    "type": "fix",
+    "scope": "schema",
+    "subject": "unify exhibition state and our-proof faq source",
+    "summary": "버그 수정",
+    "body": null,
+    "date": "2026-04-10",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "ccec98e5",
+    "type": "fix",
+    "scope": "our-proof",
+    "subject": "replace qapage markup with visible faq content",
+    "summary": "버그 수정",
+    "body": null,
+    "date": "2026-04-09",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "6315e31b",
+    "type": "fix",
+    "scope": "schema",
+    "subject": "close remaining rich-result blind spots",
+    "summary": "버그 수정",
+    "body": null,
+    "date": "2026-04-09",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "03eda2cf",
+    "type": "fix",
+    "scope": "schema",
+    "subject": "harden qapage entity structure for rich results",
+    "summary": "버그 수정",
+    "body": "Ultraworked with [Sisyphus](https://github.com/code-yeongyu/oh-my-openagent)\n\nCo-authored-by: Sisyphus <clio-agent@sisyphuslabs.ai>",
+    "date": "2026-04-09",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "1a83d021",
+    "type": "fix",
+    "scope": "schema",
+    "subject": "normalize merchant, breadcrumb, video, and event structured data",
+    "summary": "버그 수정",
+    "body": "Ultraworked with [Sisyphus](https://github.com/code-yeongyu/oh-my-openagent)\n\nCo-authored-by: Sisyphus <clio-agent@sisyphuslabs.ai>",
+    "date": "2026-04-09",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "623f7984",
+    "type": "fix",
+    "scope": "feedback",
+    "subject": "harden admin status update path",
+    "summary": "관리자 피드백 상태 변경이 권한/환경 편차에서 실패하지 않도록 admin client 우선 + 폴백 경로를 적용하고 feedback UPDATE 권한 마이그레이션을 추가했습니다.",
+    "body": "- updateFeedbackStatus에서 requireAdmin 후 createSupabaseAdminClient 우선 사용\n\n- admin 키 초기화 실패 시 server client 폴백으로 장애 허용성 강화\n\n- authenticated 대상 feedback UPDATE GRANT 마이그레이션 추가",
+    "date": "2026-04-09",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "cd93845d",
+    "type": "fix",
+    "scope": "analytics",
+    "subject": "gate tracking scripts on portal and auth routes",
+    "summary": "관리자/포털/인증 경로에서는 Vercel Analytics·SpeedInsights·GA 스크립트를 주입하지 않도록 분기해 appendChild 계열 런타임 충돌 원인을 배제했습니다.",
+    "body": "- GlobalAnalyticsGate 컴포넌트 추가\n\n- 루트 레이아웃에서 기존 직접 주입을 게이트 컴포넌트로 교체",
+    "date": "2026-04-09",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "3086541f",
+    "type": "fix",
+    "scope": "admin-nav",
+    "subject": "disable changelog prefetch in mobile drawer",
+    "summary": "관리자 모바일 드로어에서 개발이력 링크 프리패치를 막아 피드백 상태 변경 시 불필요한 경로 로딩 충돌을 줄였습니다.",
+    "body": "- /admin/changelog 링크 prefetch=false 적용\n\n- 접근성 검사 대응을 위한 svg title 추가\n\n- index key 사용 제거",
+    "date": "2026-04-09",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "af2bc635",
+    "type": "fix",
+    "scope": "admin-nav",
+    "subject": "disable changelog prefetch in desktop navigation",
+    "summary": "관리자 데스크톱/드롭다운 내 개발이력 링크의 prefetch를 비활성화해 해결 버튼 클릭 시 동반 프리패치 충돌 가능성을 줄였습니다.",
+    "body": "- /admin/changelog 링크 prefetch=false 적용\n\n- 접근성 검사 대응을 위한 아이콘 title 추가\n\n- index key 사용 제거",
+    "date": "2026-04-09",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "18db5f7b",
+    "type": "fix",
+    "scope": "changelog",
+    "subject": "sanitize admin changelog payload before render",
+    "summary": "관리자 개발 이력 페이지에서 스크립트 파싱 오류를 유발할 수 있는 텍스트를 렌더 직전에 정규화해 런타임 오류 가능성을 줄였습니다.",
+    "body": "- changelog.json 로드 결과를 필드별(single-line/multiline)로 sanitize\n\n- 기존 text-sanitizer 유틸 재사용으로 영향 범위를 최소화",
+    "date": "2026-04-09",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "e90a257b",
+    "type": "fix",
+    "scope": "artwork",
+    "subject": "remove 30-day filter from recently sold list",
+    "summary": "버그 수정",
+    "body": null,
+    "date": "2026-04-09",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "60d28014",
+    "type": "fix",
+    "scope": "feedback",
+    "subject": "sync admin memo state after resolve/save",
+    "summary": "관리자 피드백에서 해결/메모 저장 후 로컬 상태와 저장값이 어긋나 버튼이 계속 활성화될 수 있는 회귀를 수정했습니다.",
+    "body": "- 전송 전 메모 문자열 정규화 적용\n\n- 성공 시 로컬 목록과 textarea 상태를 동일 값으로 동기화\n\n- import 순서 정리",
+    "date": "2026-04-09",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "abc0e6ea",
+    "type": "fix",
+    "scope": "feedback",
+    "subject": "sanitize status update payload across server boundary",
+    "summary": "관리자 피드백 상태 변경 시 RSC 경계에서 파싱 오류를 유발하는 특수문자를 서버 액션 및 페이지 read-path에서 정규화하도록 보완했습니다.",
+    "body": "- submit/update 서버 액션 입력 정규화 적용\n\n- 피드백 목록 전달 전 title/description/url/email/read-note 정규화\n\n- 단일라인 필드와 멀티라인 필드 처리 경로 분리",
+    "date": "2026-04-09",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "8cf261c1",
+    "type": "fix",
+    "scope": "admin",
+    "subject": "개발 이력 페이지 한국어 제목 우선 렌더링",
+    "summary": "개발 이력 페이지 한국어 제목 우선 렌더링",
+    "body": "summary가 비어 있거나 영문인 경우에도 관리자 개발 이력 페이지에서 한국어 제목이 우선 노출되도록 표시 로직을 보강했습니다.\n\nUltraworked with [Sisyphus](https://github.com/code-yeongyu/oh-my-openagent)\n\nCo-authored-by: Sisyphus <clio-agent@sisyphuslabs.ai>",
+    "date": "2026-04-09",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "622c3955",
+    "type": "fix",
+    "scope": "changelog",
+    "subject": "한국어 요약 fallback 생성 로직 추가",
+    "summary": "한국어 요약 fallback 생성 로직 추가",
+    "body": "관리자 개발 이력에서 영문 커밋이 그대로 노출되지 않도록 changelog 생성 단계에 한국어 fallback을 강제 적용했습니다.\n\nUltraworked with [Sisyphus](https://github.com/code-yeongyu/oh-my-openagent)\n\nCo-authored-by: Sisyphus <clio-agent@sisyphuslabs.ai>",
+    "date": "2026-04-09",
+    "author": "hwangtab"
+  },
+  {
     "hash": "f3a747cc",
     "type": "fix",
     "scope": "stories",

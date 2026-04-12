@@ -330,7 +330,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
                     </Button>
                   </div>
                 </div>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-gray-500">
                   이 작가 프로필은 현재 위 사용자 계정과 연결되어 있습니다. 해당 사용자는 작가
                   대시보드를 사용할 수 있습니다.
                 </p>
@@ -358,10 +358,10 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
 
                 <div aria-live="polite" className="min-h-[1.25rem]">
                   {searchQuery.length === 1 && (
-                    <p className="text-xs text-slate-500">두 글자 이상 입력하면 검색됩니다.</p>
+                    <p className="text-xs text-gray-500">두 글자 이상 입력하면 검색됩니다.</p>
                   )}
                   {searchQuery.length >= 2 && searchQuery !== debouncedQuery && (
-                    <p className="text-xs text-slate-500">입력 반영 중...</p>
+                    <p className="text-xs text-gray-500">입력 반영 중...</p>
                   )}
                   {searchQuery.length >= 2 && isSearching && (
                     <p className="text-xs text-indigo-600">사용자 계정을 검색 중입니다...</p>
@@ -375,15 +375,15 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
                 </div>
 
                 {searchResults.length > 0 && (
-                  <div className="border border-slate-200 rounded-lg divide-y divide-slate-100 max-h-48 overflow-y-auto bg-white shadow-sm">
+                  <div className="border border-gray-200 rounded-lg divide-y divide-gray-100 max-h-48 overflow-y-auto bg-white shadow-sm">
                     {searchResults.map((user) => (
                       <div
                         key={user.id}
-                        className="p-3 flex items-center justify-between hover:bg-slate-50 transition-colors"
+                        className="p-3 flex items-center justify-between hover:bg-gray-50 transition-colors"
                       >
                         <div className="min-w-0">
-                          <p className="text-sm font-medium text-slate-900 truncate">{user.name}</p>
-                          <p className="text-xs text-slate-500 truncate">{maskEmail(user.email)}</p>
+                          <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
+                          <p className="text-xs text-gray-500 truncate">{maskEmail(user.email)}</p>
                         </div>
                         <Button
                           type="button"
@@ -403,12 +403,12 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
                 )}
 
                 {searchQuery.length >= 2 && !isSearching && searchResults.length === 0 && (
-                  <p className="text-sm text-slate-500 italic">
+                  <p className="text-sm text-gray-500 italic">
                     {searchError ? '검색에 실패했습니다.' : '검색 결과가 없습니다.'}
                   </p>
                 )}
 
-                <p className="text-xs text-slate-500 leading-relaxed">
+                <p className="text-xs text-gray-500 leading-relaxed">
                   사용자의 이름을 검색하여 이 작가 프로필과 연결하세요. <br />
                   연결된 사용자는 해당 작가 권한으로 로그인하여 작품을 관리할 수 있습니다.
                 </p>

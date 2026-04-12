@@ -84,7 +84,7 @@ export function BuyerList({ buyers }: { buyers: BuyerRecord[] }) {
 
   function sortIndicator(key: SortKey) {
     if (sortKey !== key) {
-      return <span className="ml-1 text-slate-300">↕</span>;
+      return <span className="ml-1 text-gray-300">↕</span>;
     }
     return <span className="ml-1">{sortDir === 'asc' ? '▲' : '▼'}</span>;
   }
@@ -156,15 +156,15 @@ export function BuyerList({ buyers }: { buyers: BuyerRecord[] }) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="이름 또는 전화번호 검색..."
-          className="w-full max-w-sm rounded-lg border border-slate-300 px-4 py-2 text-sm focus-visible:outline-nonefocus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/25"
+          className="w-full max-w-sm rounded-lg border border-gray-300 px-4 py-2 text-sm focus-visible:outline-nonefocus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/25"
         />
-        <span className="shrink-0 text-sm text-slate-500">
+        <span className="shrink-0 text-sm text-gray-500">
           {filtered.length}명{search.trim() ? ` / ${buyers.length}명` : ''}
         </span>
         <button
           type="button"
           onClick={exportCsv}
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 shadow-sm transition-colors hover:bg-slate-50"
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-600 shadow-sm transition-colors hover:bg-gray-50"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -187,58 +187,58 @@ export function BuyerList({ buyers }: { buyers: BuyerRecord[] }) {
 
       <AdminCard className="overflow-hidden">
         <AdminCardHeader className="rounded-t-2xl">
-          <h2 className="text-base font-semibold text-slate-900">구매자 목록</h2>
-          <span className="text-xs text-slate-500">연락처 클릭 시 편집 가능</span>
+          <h2 className="text-base font-semibold text-gray-900">구매자 목록</h2>
+          <span className="text-xs text-gray-500">연락처 클릭 시 편집 가능</span>
         </AdminCardHeader>
 
         {sorted.length === 0 ? (
           <AdminEmptyState title="구매자 없음" description="검색 조건에 맞는 구매자가 없습니다." />
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-slate-200">
-              <thead className="bg-slate-50 text-xs font-semibold uppercase text-slate-500">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50 text-xs font-semibold uppercase text-gray-500">
                 <tr>
                   <th className="px-4 py-3 text-left">#</th>
                   <th
-                    className="cursor-pointer select-none px-4 py-3 text-left hover:text-slate-800"
+                    className="cursor-pointer select-none px-4 py-3 text-left hover:text-gray-800"
                     onClick={() => toggleSort('buyerName')}
                   >
                     구매자{sortIndicator('buyerName')}
                   </th>
                   <th className="px-4 py-3 text-left">연락처</th>
                   <th
-                    className="cursor-pointer select-none px-4 py-3 text-right hover:text-slate-800"
+                    className="cursor-pointer select-none px-4 py-3 text-right hover:text-gray-800"
                     onClick={() => toggleSort('purchaseCount')}
                   >
                     구매 수량{sortIndicator('purchaseCount')}
                   </th>
                   <th
-                    className="cursor-pointer select-none px-4 py-3 text-right hover:text-slate-800"
+                    className="cursor-pointer select-none px-4 py-3 text-right hover:text-gray-800"
                     onClick={() => toggleSort('artworkCount')}
                   >
                     작품 수{sortIndicator('artworkCount')}
                   </th>
                   <th className="px-4 py-3 text-right">채널</th>
                   <th
-                    className="cursor-pointer select-none px-4 py-3 text-right hover:text-slate-800"
+                    className="cursor-pointer select-none px-4 py-3 text-right hover:text-gray-800"
                     onClick={() => toggleSort('lastPurchaseDate')}
                   >
                     최근 구매{sortIndicator('lastPurchaseDate')}
                   </th>
                   <th
-                    className="cursor-pointer select-none px-4 py-3 text-right hover:text-slate-800"
+                    className="cursor-pointer select-none px-4 py-3 text-right hover:text-gray-800"
                     onClick={() => toggleSort('revenue')}
                   >
                     매출{sortIndicator('revenue')}
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 bg-white text-sm">
+              <tbody className="divide-y divide-gray-100 bg-white text-sm">
                 {sorted.map((buyer, index) => (
-                  <tr key={buyer.buyerName} className="hover:bg-slate-50/50">
-                    <td className="px-4 py-3 font-medium text-slate-800">{index + 1}</td>
-                    <td className="px-4 py-3 font-medium text-slate-900">{buyer.buyerName}</td>
-                    <td className="px-4 py-3 text-slate-600">
+                  <tr key={buyer.buyerName} className="hover:bg-gray-50/50">
+                    <td className="px-4 py-3 font-medium text-gray-800">{index + 1}</td>
+                    <td className="px-4 py-3 font-medium text-gray-900">{buyer.buyerName}</td>
+                    <td className="px-4 py-3 text-gray-600">
                       {editingName === buyer.buyerName ? (
                         <input
                           type="tel"
@@ -255,26 +255,26 @@ export function BuyerList({ buyers }: { buyers: BuyerRecord[] }) {
                         <button
                           type="button"
                           onClick={() => startEdit(buyer)}
-                          className="rounded px-1 py-0.5 text-left hover:bg-slate-100"
+                          className="rounded px-1 py-0.5 text-left hover:bg-gray-100"
                           title="클릭하여 편집"
                         >
                           {buyer.buyerPhone || '—'}
                         </button>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-right text-slate-700">
+                    <td className="px-4 py-3 text-right text-gray-700">
                       {numberFormatter.format(buyer.purchaseCount)} 점
                     </td>
-                    <td className="px-4 py-3 text-right text-slate-700">
+                    <td className="px-4 py-3 text-right text-gray-700">
                       {numberFormatter.format(buyer.artworkCount)}
                     </td>
-                    <td className="px-4 py-3 text-right text-slate-600">
+                    <td className="px-4 py-3 text-right text-gray-600">
                       {formatChannel(buyer.channels)}
                     </td>
-                    <td className="px-4 py-3 text-right text-slate-500">
+                    <td className="px-4 py-3 text-right text-gray-500">
                       {formatDate(buyer.lastPurchaseDate)}
                     </td>
-                    <td className="px-4 py-3 text-right font-semibold text-slate-900">
+                    <td className="px-4 py-3 text-right font-semibold text-gray-900">
                       {krwFormatter.format(buyer.revenue)}
                     </td>
                   </tr>

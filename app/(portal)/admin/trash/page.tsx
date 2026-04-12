@@ -60,19 +60,19 @@ export default async function AdminTrashPage({ searchParams }: Props) {
       <AdminCard className="overflow-hidden">
         <form>
           <input type="hidden" name="page" value="1" />
-          <div className="flex flex-col gap-2 border-b border-slate-200 bg-slate-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-2 border-b border-gray-200 bg-gray-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="text-sm font-semibold text-slate-900">검색/필터</h2>
-              <p className="text-xs text-slate-500">
+              <h2 className="text-sm font-semibold text-gray-900">검색/필터</h2>
+              <p className="text-xs text-gray-500">
                 대상 타입과 만료 상태로 휴지통 항목을 확인합니다.
               </p>
             </div>
-            <AdminBadge className="bg-white text-slate-700 ring-slate-200">
+            <AdminBadge className="bg-white text-gray-700 ring-gray-200">
               적용된 필터 {activeFilterCount}개
             </AdminBadge>
           </div>
           <div className="grid grid-cols-1 gap-3 p-4 md:grid-cols-2 xl:grid-cols-4">
-            <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+            <label className="flex flex-col gap-1 text-xs font-medium text-gray-600">
               검색어
               <AdminInput
                 name="q"
@@ -81,7 +81,7 @@ export default async function AdminTrashPage({ searchParams }: Props) {
                 className="h-10"
               />
             </label>
-            <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+            <label className="flex flex-col gap-1 text-xs font-medium text-gray-600">
               대상 타입
               <AdminSelect name="target_type" defaultValue={targetType} className="h-10">
                 <option value="all">전체</option>
@@ -89,7 +89,7 @@ export default async function AdminTrashPage({ searchParams }: Props) {
                 <option value="artist">작가</option>
               </AdminSelect>
             </label>
-            <label className="flex flex-col gap-1 text-xs font-medium text-slate-600">
+            <label className="flex flex-col gap-1 text-xs font-medium text-gray-600">
               보관 상태
               <AdminSelect name="state" defaultValue={state} className="h-10">
                 <option value="all">전체</option>
@@ -100,13 +100,13 @@ export default async function AdminTrashPage({ searchParams }: Props) {
             <div className="flex items-center justify-end gap-2 md:col-span-2 xl:col-span-1">
               <Link
                 href="/admin/trash"
-                className="inline-flex items-center rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                className="inline-flex items-center rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
                 초기화
               </Link>
               <button
                 type="submit"
-                className="inline-flex items-center rounded-md bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800"
+                className="inline-flex items-center rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white hover:bg-gray-800"
               >
                 필터 적용
               </button>

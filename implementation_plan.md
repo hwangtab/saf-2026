@@ -741,3 +741,105 @@
 
 - `lib/schemas/utils.ts`
 - 필요 시 `components/common/JsonLdScript.tsx`
+
+---
+
+# 작품 썸네일 전면 비율 보존 + 저채도 브랜드 프레임 적용 실행 계획 (2026-04-09)
+
+## 1) 목적
+
+- 모든 작품 썸네일 노출 구간에서 이미지 비율을 보존한다.
+- 비율 보존으로 생기는 여백은 저채도 브랜드 컬러로 처리해, 빈칸이 아닌 “의도된 프레임”으로 보이게 한다.
+- 작가 의도(구도/여백/서명) 훼손 리스크를 최소화한다.
+
+## 2) 정책 원칙 (확정)
+
+1. **전면 비율 보존**: 작품 썸네일은 기본적으로 `object-contain`을 사용한다.
+2. **저채도 프레임**: 여백 배경은 고채도 색을 금지하고 아래만 사용한다.
+   - 라이트: `bg-primary-surface`, `bg-canvas-soft`, `bg-gray-50`
+   - 다크: `bg-charcoal`, 필요 시 `bg-charcoal-deep`
+3. **작품 우선**: hover scale/시각효과가 작품 일부를 잘라 보이게 하지 않도록 카드별 효과를 조정한다.
+4. **전역 기본값 일괄 변경 금지**: `SafeImage` 전역 기본값(`fill -> cover`)을 먼저 바꾸지 않고, 썸네일 surface부터 명시적으로 정책 적용 후 필요 시 2차로 확장한다.
+
+## 3) 적용 범위
+
+### 3-1) 공개(우선순위 P0)
+
+- `components/ui/ArtworkCard.tsx`
+  - `gallery`: `aspect-[4/5]` 유지 + `object-cover` -> `object-contain`
+  - `slider`: `aspect-square` 유지 + `object-cover` -> `object-contain`
+  - 이미지 영역 배경을 테마별 저채도 컬러로 통일
+- `components/features/HeroGalleryGrid.tsx`
+  - `object-cover` -> `object-contain`
+  - 카드 배경을 저채도 브랜드 프레임으로 교체
+- `components/features/ArtworkHighlightSlider.tsx`
+  - 내부 `ArtworkCard` 정책 변경 반영 확인
+- `components/features/MasonryGallery.tsx`
+  - `ArtworkCard` 정책 반영 후 간격/리듬감 확인
+- `components/features/RelatedArtworksSlider.tsx`
+  - `ArtworkCard` slider 정책 반영 후 가독성/밀도 확인
+- `components/features/RecentlySoldSection.tsx`
+  - `ArtworkCard` 정책 반영 확인
+- `app/[locale]/artworks/[id]/page.tsx`
+  - 하단 관련 작품 영역의 카드 표시 품질 확인
+
+### 3-2) 포털(우선순위 P1, 모두 비율 보존 요구 반영)
+
+- `app/(portal)/admin/artworks/admin-artwork-list.tsx`
+  - 48px 썸네일 `object-cover` -> `object-contain`
+  - 저채도 배경 유지(`bg-gray-100` 계열)
+- `app/(portal)/dashboard/(artist)/artworks/artwork-list.tsx`
+  - 64px 썸네일 `object-cover` -> `object-contain`
+- `app/(portal)/exhibitor/(dashboard)/artworks/_components/exhibitor-artwork-list.tsx`
+  - 48px 썸네일 `object-cover` -> `object-contain`
+
+## 4) 구현 절차
+
+1. **공통 클래스 정리**
+   - 썸네일 프레임 공통 클래스 규칙 정의(라이트/다크 배경 포함)
+   - 카드별 중복 스타일 최소화
+2. **공개 썸네일 전환(P0)**
+   - `ArtworkCard`, `HeroGalleryGrid` 우선 변경
+   - 관련 재사용 컴포넌트에서 시각 회귀 확인
+3. **포털 썸네일 전환(P1)**
+   - admin/artist/exhibitor 목록 썸네일을 비율 보존으로 통일
+4. **시각 디테일 보정**
+   - contain 전환 후 과도한 여백 구간에 패딩/배경 농도 미세 조정
+   - hover 인터랙션이 작품 표현을 방해하지 않도록 조정
+5. **문서화**
+   - `walkthrough.md`에 변경 파일, 정책 근거, 전/후 차이 요약
+
+## 5) 검증 계획
+
+1. 정적 검증
+   - 수정 파일 `lsp_diagnostics` 오류 0
+   - `npm run lint`
+   - `npm run type-check`
+2. 기능/시각 검증
+   - 공개 경로:
+     - `/[locale]/artworks`
+     - `/[locale]/artworks/[id]`
+     - 홈 하이라이트/푸터 슬라이더
+   - 포털 경로:
+     - `/admin/artworks`
+     - `/dashboard/artworks`
+     - `/exhibitor/artworks`
+   - 체크 항목:
+     - 작품 잘림 없음(모서리, 서명, 상하 여백 포함)
+     - 저채도 배경이 작품보다 튀지 않음
+     - 카드 높이/레이아웃 붕괴 없음
+
+## 6) 리스크 및 대응
+
+- 리스크: 세로/가로 극단 비율 작품에서 여백이 크게 보일 수 있음
+  - 대응: 배경 컬러 농도 통일 + 내부 패딩 최소 조정
+- 리스크: 슬라이더 카드에서 시각적 밀도 저하
+  - 대응: 텍스트 영역 대비와 카드 간격 미세 조정
+- 리스크: 전역 `SafeImage` 정책과 충돌 가능성
+  - 대응: 전역 변경 없이 surface 단위 명시 적용 후 필요 시 후속 통합
+
+## 7) 완료 기준
+
+- 공개/포털의 작품 썸네일이 모두 비율 보존으로 표시된다.
+- 고정 비율 슬롯 내 여백은 저채도 브랜드 프레임으로 일관 적용된다.
+- `lint`, `type-check` 통과 및 주요 경로 시각 검증 완료.

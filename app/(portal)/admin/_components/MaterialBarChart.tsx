@@ -13,7 +13,7 @@ export function MaterialBarChart({ data }: MaterialBarChartProps) {
 
   return (
     <AdminCard className="flex h-full flex-col p-6">
-      <h3 className="mb-4 text-lg font-semibold text-slate-900">재료별 분포</h3>
+      <h3 className="mb-4 text-lg font-semibold text-gray-900">재료별 분포</h3>
       <div className="flex-1 min-h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart

@@ -92,28 +92,35 @@ export async function GET(request: NextRequest) {
     }
     depositCancelled = updated?.length ?? 0;
 
-    // 취소된 구매자에게 자동 취소 이메일 발송 (fire-and-forget)
-    for (const expiredOrder of expiredDeposit) {
+    // 실제 취소된 주문만 이메일 발송 (fetched ≠ updated 방지)
+    const updatedIds = new Set((updated ?? []).map((r: { id: string }) => r.id));
+    const actuallyCancelled = expiredDeposit.filter((o) => updatedIds.has(o.id));
+
+    for (const expiredOrder of actuallyCancelled) {
       if (expiredOrder.buyer_email && expiredOrder.order_no) {
         void (async () => {
-          const { artworkTitle, artistName } = await getArtworkEmailInfo(
-            supabase,
-            expiredOrder.artwork_id
-          );
-          void sendBuyerEmail(expiredOrder.buyer_email!, 'auto_cancelled', {
-            orderNo: expiredOrder.order_no!,
-            buyerName: expiredOrder.buyer_name ?? '',
-            artworkTitle,
-            artistName,
-            amount: expiredOrder.total_amount ?? 0,
-          });
+          try {
+            const { artworkTitle, artistName } = await getArtworkEmailInfo(
+              supabase,
+              expiredOrder.artwork_id
+            );
+            void sendBuyerEmail(expiredOrder.buyer_email!, 'auto_cancelled', {
+              orderNo: expiredOrder.order_no!,
+              buyerName: expiredOrder.buyer_name ?? '',
+              artworkTitle,
+              artistName,
+              amount: expiredOrder.total_amount ?? 0,
+            });
+          } catch (err) {
+            console.error('[expire-stale-orders] email failed:', err);
+          }
         })();
       }
     }
 
-    // 취소된 주문의 artwork reserved→available 복원
-    const artworkIds = expiredDeposit
-      .map((o: { artwork_id: string | null }) => o.artwork_id)
+    // 실제 취소된 주문의 artwork reserved→available 복원
+    const artworkIds = actuallyCancelled
+      .map((o) => o.artwork_id)
       .filter((id): id is string => !!id);
 
     if (artworkIds.length > 0) {

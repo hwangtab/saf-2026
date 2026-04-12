@@ -195,7 +195,7 @@ export async function lookupOrderDetail(
     return { success: false, error: 'NOT_FOUND' };
   }
 
-  if (order.buyer_email.toLowerCase() !== trimmedEmail) {
+  if (order.buyer_email?.toLowerCase() !== trimmedEmail) {
     return { success: false, error: 'NOT_FOUND' };
   }
 
@@ -299,7 +299,7 @@ export async function updateBuyerShipping(
     .maybeSingle();
 
   if (error || !order) return { success: false, error: 'NOT_FOUND' };
-  if (order.buyer_email.toLowerCase() !== trimmedEmail)
+  if (order.buyer_email?.toLowerCase() !== trimmedEmail)
     return { success: false, error: 'NOT_FOUND' };
   if (!['paid', 'preparing'].includes(order.status)) {
     return { success: false, error: 'INVALID_STATUS' };
@@ -343,7 +343,7 @@ export async function cancelBuyerOrder(
     .maybeSingle();
 
   if (error || !order) return { success: false, error: 'NOT_FOUND' };
-  if (order.buyer_email.toLowerCase() !== trimmedEmail)
+  if (order.buyer_email?.toLowerCase() !== trimmedEmail)
     return { success: false, error: 'NOT_FOUND' };
   if (order.status !== 'paid') {
     return { success: false, error: 'INVALID_STATUS' };
@@ -407,14 +407,21 @@ export async function cancelBuyerOrder(
   // 구매자 환불 이메일 발송 (fire-and-forget)
   if (order.buyer_email) {
     void (async () => {
-      const { artworkTitle, artistName } = await getArtworkEmailInfo(adminClient, order.artwork_id);
-      void sendBuyerEmail(order.buyer_email!, 'refunded', {
-        orderNo: order.order_no,
-        buyerName: order.buyer_name ?? '',
-        artworkTitle,
-        artistName,
-        amount: order.total_amount,
-      });
+      try {
+        const { artworkTitle, artistName } = await getArtworkEmailInfo(
+          adminClient,
+          order.artwork_id
+        );
+        void sendBuyerEmail(order.buyer_email!, 'refunded', {
+          orderNo: order.order_no,
+          buyerName: order.buyer_name ?? '',
+          artworkTitle,
+          artistName,
+          amount: order.total_amount,
+        });
+      } catch (err) {
+        console.error('[cancelBuyerOrder] email failed:', err);
+      }
     })();
   }
 

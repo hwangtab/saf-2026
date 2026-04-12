@@ -88,8 +88,8 @@ function formatDate(iso: string | null) {
 function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex gap-2 text-sm">
-      <dt className="w-36 flex-shrink-0 text-slate-500">{label}</dt>
-      <dd className="flex-1 text-slate-800">{value ?? '—'}</dd>
+      <dt className="w-36 flex-shrink-0 text-gray-500">{label}</dt>
+      <dd className="flex-1 text-gray-800">{value ?? '—'}</dd>
     </div>
   );
 }
@@ -178,7 +178,7 @@ function TrackingEditSection({
         <button
           type="button"
           onClick={() => setEditing(false)}
-          className="rounded-md border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50"
+          className="rounded-md border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
         >
           취소
         </button>
@@ -208,8 +208,8 @@ function ShippedModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
-        <h2 className="mb-1 text-base font-bold text-slate-900">배송 중으로 변경</h2>
-        <p className="mb-4 text-sm text-slate-500">
+        <h2 className="mb-1 text-base font-bold text-gray-900">배송 중으로 변경</h2>
+        <p className="mb-4 text-sm text-gray-500">
           택배사와 운송장 번호를 입력하세요. 나중에 입력하려면 비워두고 진행하세요.
         </p>
         <div className="space-y-3">
@@ -245,7 +245,7 @@ function ShippedModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-medium text-slate-600"
+            className="flex-1 rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-gray-600"
           >
             취소
           </button>
@@ -388,12 +388,12 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900">{order.order_no}</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-gray-900">{order.order_no}</h1>
             <AdminBadge tone={statusBadgeVariant(order.status)}>
               {STATUS_LABELS[order.status] ?? order.status}
             </AdminBadge>
           </div>
-          <p className="text-sm text-slate-500">주문일: {formatDate(order.created_at)}</p>
+          <p className="text-sm text-gray-500">주문일: {formatDate(order.created_at)}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {isAwaitingDeposit && (
@@ -444,7 +444,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
           )}
           <Link
             href="/admin/orders"
-            className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-50"
+            className="rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50"
           >
             ← 목록
           </Link>
@@ -455,7 +455,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
         {/* 주문 정보 */}
         <AdminCard>
           <AdminCardHeader>
-            <span className="text-sm font-semibold text-slate-700">주문 정보</span>
+            <span className="text-sm font-semibold text-gray-700">주문 정보</span>
           </AdminCardHeader>
           <dl className="space-y-3 p-5">
             <InfoRow
@@ -482,7 +482,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
         {/* 구매자 정보 */}
         <AdminCard>
           <AdminCardHeader>
-            <span className="text-sm font-semibold text-slate-700">구매자 정보</span>
+            <span className="text-sm font-semibold text-gray-700">구매자 정보</span>
           </AdminCardHeader>
           <dl className="space-y-3 p-5">
             <InfoRow label="이름" value={order.buyer_name} />
@@ -493,7 +493,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
         {/* 배송 정보 */}
         <AdminCard>
           <AdminCardHeader>
-            <span className="text-sm font-semibold text-slate-700">배송 정보</span>
+            <span className="text-sm font-semibold text-gray-700">배송 정보</span>
           </AdminCardHeader>
           <dl className="space-y-3 p-5">
             <InfoRow label="수령인" value={order.shipping_name} />
@@ -560,7 +560,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
         {/* 작품 정보 */}
         <AdminCard>
           <AdminCardHeader>
-            <span className="text-sm font-semibold text-slate-700">작품 정보</span>
+            <span className="text-sm font-semibold text-gray-700">작품 정보</span>
           </AdminCardHeader>
           <dl className="space-y-3 p-5">
             <InfoRow
@@ -583,7 +583,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
               <InfoRow
                 label="판매 기록"
                 value={
-                  <span className={order.sale_voided ? 'text-slate-400 line-through' : ''}>
+                  <span className={order.sale_voided ? 'text-gray-400 line-through' : ''}>
                     {order.sale_voided ? '취소됨' : '기록됨'}
                   </span>
                 }
@@ -595,7 +595,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
         {/* 결제 정보 */}
         <AdminCard>
           <AdminCardHeader>
-            <span className="text-sm font-semibold text-slate-700">결제 정보</span>
+            <span className="text-sm font-semibold text-gray-700">결제 정보</span>
           </AdminCardHeader>
           <dl className="space-y-3 p-5">
             <InfoRow
@@ -638,7 +638,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
         {/* 금액 내역 */}
         <AdminCard>
           <AdminCardHeader>
-            <span className="text-sm font-semibold text-slate-700">금액 내역</span>
+            <span className="text-sm font-semibold text-gray-700">금액 내역</span>
           </AdminCardHeader>
           <dl className="space-y-3 p-5">
             <InfoRow label="작품 금액" value={formatKRW(order.item_amount)} />
@@ -647,7 +647,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
               <InfoRow
                 label="합계"
                 value={
-                  <span className="text-base font-bold text-slate-900">
+                  <span className="text-base font-bold text-gray-900">
                     {formatKRW(order.total_amount)}
                   </span>
                 }

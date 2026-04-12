@@ -787,7 +787,7 @@ export function UserList({
             </div>
 
             <div className="space-y-2">
-              <p className="text-sm font-medium text-slate-900">{t('chooseMode')}</p>
+              <p className="text-sm font-medium text-gray-900">{t('chooseMode')}</p>
               <div className="grid gap-2 md:grid-cols-3">
                 <button
                   type="button"
@@ -799,7 +799,7 @@ export function UserList({
                   className={`rounded-lg border px-3 py-2 text-left text-sm transition-colors ${
                     artistPromoteContext.mode === 'link_existing'
                       ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
-                      : 'border-slate-200 hover:bg-slate-50'
+                      : 'border-gray-200 hover:bg-gray-50'
                   }`}
                 >
                   {t('modeLinkExisting')}
@@ -814,7 +814,7 @@ export function UserList({
                   className={`rounded-lg border px-3 py-2 text-left text-sm transition-colors ${
                     artistPromoteContext.mode === 'create_and_link'
                       ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
-                      : 'border-slate-200 hover:bg-slate-50'
+                      : 'border-gray-200 hover:bg-gray-50'
                   }`}
                 >
                   {t('modeCreateAndLink')}
@@ -829,7 +829,7 @@ export function UserList({
                   className={`rounded-lg border px-3 py-2 text-left text-sm transition-colors ${
                     artistPromoteContext.mode === 'role_only'
                       ? 'border-amber-500 bg-amber-50 text-amber-700'
-                      : 'border-slate-200 hover:bg-slate-50'
+                      : 'border-gray-200 hover:bg-gray-50'
                   }`}
                 >
                   {t('modeRoleOnly')}
@@ -838,8 +838,8 @@ export function UserList({
             </div>
 
             {artistPromoteContext.mode === 'link_existing' && (
-              <div className="space-y-3 rounded-xl border border-slate-200 p-4">
-                <label className="block text-sm font-medium text-slate-700">
+              <div className="space-y-3 rounded-xl border border-gray-200 p-4">
+                <label className="block text-sm font-medium text-gray-700">
                   {t('searchUnlinkedArtist')}
                 </label>
                 <div className="relative">
@@ -873,7 +873,7 @@ export function UserList({
                     <p className="text-amber-700">{linkedNameConflictError}</p>
                   )}
                   {artistSearchQuery.trim().length < 2 && (
-                    <p className="text-slate-500">{t('searchMinChars')}</p>
+                    <p className="text-gray-500">{t('searchMinChars')}</p>
                   )}
                   {artistSearchQuery.trim().length >= 2 && isSearchingArtists && (
                     <p className="text-indigo-600">{t('searchingUnlinkedArtist')}</p>
@@ -882,9 +882,9 @@ export function UserList({
                   {artistSearchError && <p className="text-rose-600">{artistSearchError}</p>}
                 </div>
 
-                <div className="max-h-56 overflow-y-auto rounded-lg border border-slate-200 divide-y divide-slate-100">
+                <div className="max-h-56 overflow-y-auto rounded-lg border border-gray-200 divide-y divide-gray-100">
                   {artistOptions.length === 0 && !isSearchingArtists ? (
-                    <div className="px-3 py-6 text-sm text-slate-500 text-center">
+                    <div className="px-3 py-6 text-sm text-gray-500 text-center">
                       {artistSearchQuery.trim().length < 2
                         ? t('enterSearchKeyword')
                         : t('noSearchResult')}
@@ -906,19 +906,19 @@ export function UserList({
                             )
                           }
                           className={`w-full px-3 py-3 text-left transition-colors ${
-                            isSelected ? 'bg-indigo-50' : 'hover:bg-slate-50'
+                            isSelected ? 'bg-indigo-50' : 'hover:bg-gray-50'
                           }`}
                         >
                           <div className="flex items-start justify-between gap-3">
                             <div className="min-w-0">
-                              <p className="text-sm font-medium text-slate-900 truncate">
+                              <p className="text-sm font-medium text-gray-900 truncate">
                                 {artist.name_ko || t('unnamed')}
                               </p>
-                              <p className="text-xs text-slate-500 truncate">
+                              <p className="text-xs text-gray-500 truncate">
                                 {artist.name_en || '-'} · {artist.contact_phone || t('noPhone')} ·{' '}
                                 {artist.contact_email || t('noEmail')}
                               </p>
-                              <p className="text-xs text-slate-500 mt-1">
+                              <p className="text-xs text-gray-500 mt-1">
                                 {t('artworkCount', { count: artist.artwork_count })}
                               </p>
                             </div>
@@ -943,8 +943,8 @@ export function UserList({
               </div>
             )}
 
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <p className="font-medium text-slate-900 mb-2">{t('executionSummary')}</p>
+            <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-700">
+              <p className="font-medium text-gray-900 mb-2">{t('executionSummary')}</p>
               <ul className="space-y-1 list-disc pl-5">
                 <li>{t('summaryActivateStatus')}</li>
                 <li>{t('summaryChangeRole')}</li>

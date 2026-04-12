@@ -19,7 +19,7 @@ export default async function ExhibitorLayout({ children }: { children: React.Re
         </AdminBadge>
       }
       rightSlot={
-        <span className="hidden max-w-[220px] truncate text-sm text-slate-500 sm:inline">
+        <span className="hidden max-w-[220px] truncate text-sm text-gray-500 sm:inline">
           {user.email}
         </span>
       }

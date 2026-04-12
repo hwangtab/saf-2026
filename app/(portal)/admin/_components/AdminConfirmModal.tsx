@@ -78,7 +78,7 @@ export function AdminConfirmModal({
             )}
           </div>
           <div>
-            <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">
+            <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">
               {description}
             </p>
           </div>

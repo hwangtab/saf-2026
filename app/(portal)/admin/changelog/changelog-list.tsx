@@ -207,7 +207,7 @@ export function ChangelogList({
   if (counts.all === 0) {
     return (
       <AdminCard className="p-12 text-center">
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-gray-500">
           변경 이력이 없습니다. <code className="text-xs">npm run generate-changelog</code>를 실행해
           주세요.
         </p>
@@ -227,18 +227,18 @@ export function ChangelogList({
             className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
               filter === f.value
                 ? 'bg-indigo-600 text-white shadow-sm'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
           >
             {f.label}
             <span
-              className={`ml-1.5 text-xs ${filter === f.value ? 'text-indigo-200' : 'text-slate-400'}`}
+              className={`ml-1.5 text-xs ${filter === f.value ? 'text-indigo-200' : 'text-gray-400'}`}
             >
               {counts[f.value]}
             </span>
           </button>
         ))}
-        <span className="ml-auto text-xs text-slate-400">
+        <span className="ml-auto text-xs text-gray-400">
           총 {totalFiltered}개 중 {start + 1}–{Math.min(start + PER_PAGE, totalFiltered)}
         </span>
       </div>
@@ -246,7 +246,7 @@ export function ChangelogList({
       {/* Grouped entries */}
       {dates.map((date) => (
         <div key={date}>
-          <h3 className="mb-3 text-sm font-semibold text-slate-500">{formatDate(date)}</h3>
+          <h3 className="mb-3 text-sm font-semibold text-gray-500">{formatDate(date)}</h3>
           <AdminCard className="divide-y divide-[var(--admin-border-soft)]">
             {grouped[date].map((entry) => {
               const config = TYPE_CONFIG[entry.type] || {
@@ -258,24 +258,24 @@ export function ChangelogList({
                   <div className="flex flex-wrap items-start gap-2">
                     <AdminBadge tone={config.tone}>{config.label}</AdminBadge>
                     {entry.scope && (
-                      <span className="rounded bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
+                      <span className="rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">
                         {SCOPE_KO[entry.scope] || entry.scope}
                       </span>
                     )}
-                    <span className="flex-1 text-sm font-medium text-slate-900">
+                    <span className="flex-1 text-sm font-medium text-gray-900">
                       {getDisplayTitle(entry)}
                     </span>
-                    <span className="shrink-0 font-mono text-xs text-slate-400">{entry.hash}</span>
+                    <span className="shrink-0 font-mono text-xs text-gray-400">{entry.hash}</span>
                   </div>
                   {shouldShowSubject(entry) && (
-                    <p className="mt-1 pl-16 text-xs text-slate-400">{entry.subject}</p>
+                    <p className="mt-1 pl-16 text-xs text-gray-400">{entry.subject}</p>
                   )}
                   {entry.body && (
                     <details className="mt-2 pl-16">
-                      <summary className="cursor-pointer text-xs text-slate-400 hover:text-slate-600">
+                      <summary className="cursor-pointer text-xs text-gray-400 hover:text-gray-600">
                         상세 보기
                       </summary>
-                      <pre className="mt-2 whitespace-pre-wrap rounded-lg bg-slate-50 p-3 text-xs leading-relaxed text-slate-600">
+                      <pre className="mt-2 whitespace-pre-wrap rounded-lg bg-gray-50 p-3 text-xs leading-relaxed text-gray-600">
                         {entry.body}
                       </pre>
                     </details>
@@ -289,7 +289,7 @@ export function ChangelogList({
 
       {entries.length === 0 && (
         <AdminCard className="p-8 text-center">
-          <p className="text-sm text-slate-500">해당 카테고리의 변경 이력이 없습니다.</p>
+          <p className="text-sm text-gray-500">해당 카테고리의 변경 이력이 없습니다.</p>
         </AdminCard>
       )}
 
@@ -300,7 +300,7 @@ export function ChangelogList({
             type="button"
             onClick={() => navigate({ page: page - 1 })}
             disabled={page === 1}
-            className="rounded-lg px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent"
+            className="rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent"
           >
             이전
           </button>
@@ -312,7 +312,7 @@ export function ChangelogList({
               className={`min-w-[2.25rem] rounded-lg px-2 py-2 text-sm font-medium transition ${
                 p === page
                   ? 'bg-indigo-600 text-white shadow-sm'
-                  : 'text-slate-600 hover:bg-slate-100'
+                  : 'text-gray-600 hover:bg-gray-100'
               }`}
             >
               {p}
@@ -322,7 +322,7 @@ export function ChangelogList({
             type="button"
             onClick={() => navigate({ page: page + 1 })}
             disabled={page === totalPages}
-            className="rounded-lg px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent"
+            className="rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent"
           >
             다음
           </button>

@@ -64,7 +64,7 @@ export function AdminCardSkeleton({
   return (
     <div
       className={cn(
-        'rounded-2xl border border-slate-200 bg-white/90 shadow-sm',
+        'rounded-2xl border border-gray-200 bg-white/90 shadow-sm',
         padded && 'p-6',
         className
       )}

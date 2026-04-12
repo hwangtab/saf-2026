@@ -20,7 +20,7 @@ export function StatusDonutChart({ data }: StatusDonutChartProps) {
 
   return (
     <AdminCard className="flex h-full flex-col p-6">
-      <h3 className="mb-4 text-lg font-semibold text-slate-900">작품 공개/상태 분포</h3>
+      <h3 className="mb-4 text-lg font-semibold text-gray-900">작품 공개/상태 분포</h3>
       <div className="relative flex-1 min-h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
@@ -49,8 +49,8 @@ export function StatusDonutChart({ data }: StatusDonutChartProps) {
           </PieChart>
         </ResponsiveContainer>
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center pb-8">
-          <p className="text-sm font-medium text-slate-500">총 작품</p>
-          <p className="text-2xl font-bold text-slate-900">{total}</p>
+          <p className="text-sm font-medium text-gray-500">총 작품</p>
+          <p className="text-2xl font-bold text-gray-900">{total}</p>
         </div>
       </div>
     </AdminCard>

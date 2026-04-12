@@ -189,13 +189,13 @@ export function UserTable({
                         : user.status === 'pending'
                           ? t('pending')
                           : t('suspended')}
-                      <span className="invisible group-hover:visible absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-32 px-2 py-1 text-[10px] font-normal text-white bg-slate-800 rounded shadow-lg text-center z-50">
+                      <span className="invisible group-hover:visible absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-32 px-2 py-1 text-[10px] font-normal text-white bg-gray-800 rounded shadow-lg text-center z-50">
                         {user.status === 'active'
                           ? t('activeHint')
                           : user.status === 'pending'
                             ? t('pendingHint')
                             : t('suspendedHint')}
-                        <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800" />
+                        <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800" />
                       </span>
                     </span>
                     <AdminSelect

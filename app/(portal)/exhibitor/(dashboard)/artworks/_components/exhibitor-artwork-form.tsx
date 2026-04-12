@@ -180,9 +180,9 @@ export function ExhibitorArtworkForm({
     <div className="space-y-6">
       {isEditing && artwork.id ? (
         <AdminCard className="p-6">
-          <h2 className="mb-4 text-lg font-semibold text-slate-900">
+          <h2 className="mb-4 text-lg font-semibold text-gray-900">
             {t('artworkImages')}
-            {savingImages && <span className="ml-2 text-sm text-slate-500">{t('saving')}</span>}
+            {savingImages && <span className="ml-2 text-sm text-gray-500">{t('saving')}</span>}
           </h2>
           <ImageUpload
             bucket="artworks"

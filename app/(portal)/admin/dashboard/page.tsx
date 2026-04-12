@@ -28,12 +28,12 @@ function StatCard({
     <AdminCard className="flex h-full flex-col justify-between p-6 transition-[transform,box-shadow] duration-200">
       <div>
         <div className="flex items-center gap-1">
-          <p className="text-sm font-medium text-slate-500">{title}</p>
+          <p className="text-sm font-medium text-gray-500">{title}</p>
           {helpContent && <AdminHelp>{helpContent}</AdminHelp>}
         </div>
-        <p className="mt-2 text-3xl font-bold tracking-tight text-slate-900">{valueText}</p>
+        <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900">{valueText}</p>
       </div>
-      {subtitle && <p className="mt-2 text-sm text-slate-500">{subtitle}</p>}
+      {subtitle && <p className="mt-2 text-sm text-gray-500">{subtitle}</p>}
     </AdminCard>
   );
 
@@ -167,8 +167,8 @@ export default async function AdminDashboardPage() {
         />
         <AdminCard className="flex flex-col justify-between p-6">
           <div>
-            <h2 className="text-lg font-semibold text-slate-900">{t('analyticsPanelTitle')}</h2>
-            <p className="mt-2 text-sm leading-relaxed text-slate-600">
+            <h2 className="text-lg font-semibold text-gray-900">{t('analyticsPanelTitle')}</h2>
+            <p className="mt-2 text-sm leading-relaxed text-gray-600">
               {t('analyticsPanelDescription')}
             </p>
           </div>
@@ -210,7 +210,7 @@ export default async function AdminDashboardPage() {
         ) : (
           <>
             <AdminCard className="flex h-full items-center justify-center p-6 sm:col-span-2 lg:col-span-3">
-              <p className="text-sm text-slate-400">{t('siteAnalyticsUnavailable')}</p>
+              <p className="text-sm text-gray-400">{t('siteAnalyticsUnavailable')}</p>
             </AdminCard>
           </>
         )}
@@ -223,7 +223,7 @@ export default async function AdminDashboardPage() {
           />
         ) : (
           <AdminCard className="flex h-full items-center justify-center p-6">
-            <p className="text-sm text-slate-400">{t('noFeedbackData')}</p>
+            <p className="text-sm text-gray-400">{t('noFeedbackData')}</p>
           </AdminCard>
         )}
       </div>
@@ -232,7 +232,7 @@ export default async function AdminDashboardPage() {
       <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <AdminCard className="flex flex-col">
           <AdminCardHeader className="rounded-t-2xl">
-            <h2 className="text-base font-semibold text-slate-900">{t('topPagesTitle')}</h2>
+            <h2 className="text-base font-semibold text-gray-900">{t('topPagesTitle')}</h2>
             <Link
               href="/admin/analytics"
               className="text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:underline"
@@ -256,7 +256,7 @@ export default async function AdminDashboardPage() {
                   return (
                     <li key={page.path} className="flex items-center justify-between p-4">
                       <div className="flex items-center gap-3 min-w-0">
-                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-medium text-slate-500">
+                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gray-100 text-xs font-medium text-gray-500">
                           {i + 1}
                         </span>
                         <a
@@ -268,7 +268,7 @@ export default async function AdminDashboardPage() {
                           {displayPath}
                         </a>
                       </div>
-                      <span className="ml-3 shrink-0 text-sm font-medium text-slate-500">
+                      <span className="ml-3 shrink-0 text-sm font-medium text-gray-500">
                         {numberFormatter.format(page.views)}
                       </span>
                     </li>
@@ -281,7 +281,7 @@ export default async function AdminDashboardPage() {
 
         <AdminCard className="flex flex-col">
           <AdminCardHeader className="rounded-t-2xl">
-            <h2 className="text-base font-semibold text-slate-900">{t('recentFeedbackTitle')}</h2>
+            <h2 className="text-base font-semibold text-gray-900">{t('recentFeedbackTitle')}</h2>
             <Link
               href="/admin/feedback"
               className="text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:underline"
@@ -337,7 +337,7 @@ export default async function AdminDashboardPage() {
       <section>
         <AdminCard className="flex flex-col">
           <AdminCardHeader className="rounded-t-2xl">
-            <h2 className="text-base font-semibold text-slate-900">{t('recentOrdersTitle')}</h2>
+            <h2 className="text-base font-semibold text-gray-900">{t('recentOrdersTitle')}</h2>
             <Link
               href="/admin/orders"
               className="text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:underline"
@@ -412,7 +412,7 @@ export default async function AdminDashboardPage() {
       <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <AdminCard className="flex flex-col">
           <AdminCardHeader className="rounded-t-2xl">
-            <h2 className="text-base font-semibold text-slate-900">
+            <h2 className="text-base font-semibold text-gray-900">
               {t('recentApplicationsTitle')}
             </h2>
             <Link
@@ -451,7 +451,7 @@ export default async function AdminDashboardPage() {
         {/* 최근 등록된 작품 */}
         <AdminCard className="flex flex-col">
           <AdminCardHeader className="rounded-t-2xl">
-            <h2 className="text-base font-semibold text-slate-900">{t('recentArtworksTitle')}</h2>
+            <h2 className="text-base font-semibold text-gray-900">{t('recentArtworksTitle')}</h2>
             <Link
               href="/admin/artworks?sort=recent"
               className="text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:underline"

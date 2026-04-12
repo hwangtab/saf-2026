@@ -490,6 +490,49 @@
 - `npm run lint` 통과
 - `npm run type-check` 통과
 
+---
+
+## 작품 썸네일 전면 비율 보존 + 저채도 브랜드 프레임 적용
+
+### 변경 파일
+
+- `/Users/hwang-gyeongha/saf/components/ui/ArtworkCard.tsx`
+  - `gallery`/`slider` 썸네일 이미지를 `object-cover`에서 `object-contain`으로 전환
+  - 이미지 hover 확대 제거(비율 보존 상태에서 hover 시 크롭처럼 보이는 문제 방지)
+  - 썸네일 프레임 배경을 저채도 브랜드 톤으로 적용
+    - gallery 라이트: `bg-canvas-soft`
+    - slider 라이트: `bg-primary-surface`
+    - 다크: `bg-charcoal`
+
+- `/Users/hwang-gyeongha/saf/components/features/HeroGalleryGrid.tsx`
+  - 작품 썸네일 렌더링을 `object-cover` -> `object-contain`으로 전환
+  - 카드 배경을 `bg-canvas-soft`로 변경
+
+- `/Users/hwang-gyeongha/saf/components/features/search/SearchResultItem.tsx`
+  - 검색 결과 작품 썸네일을 `object-cover` -> `object-contain`으로 전환
+  - 썸네일 배경을 `bg-canvas-soft`로 변경
+
+- `/Users/hwang-gyeongha/saf/components/features/search/ArtistResultItem.tsx`
+  - 작가 결과 샘플 이미지(작품 샘플)를 `object-cover` -> `object-contain`으로 전환
+  - 썸네일 배경을 `bg-canvas-soft`로 변경
+
+- `/Users/hwang-gyeongha/saf/app/(portal)/admin/artworks/admin-artwork-list.tsx`
+  - 관리자 작품 목록 썸네일을 `object-cover` -> `object-contain`으로 전환
+
+- `/Users/hwang-gyeongha/saf/app/(portal)/dashboard/(artist)/artworks/artwork-list.tsx`
+  - 작가 대시보드 작품 목록 썸네일을 `object-cover` -> `object-contain`으로 전환
+
+- `/Users/hwang-gyeongha/saf/app/(portal)/exhibitor/(dashboard)/artworks/_components/exhibitor-artwork-list.tsx`
+  - 전시자 대시보드 작품 목록 썸네일을 `object-cover` -> `object-contain`으로 전환
+
+### 검증 결과
+
+- 수정 파일 `lsp_diagnostics` 확인: 오류 없음
+- `npm run lint` 통과
+- `npm run type-check` 통과
+- `npm test -- __tests__/components/ArtworkCard.test.tsx` 통과 (3 passed)
+- `npm run build` 통과
+
 ## 공개 헤더 정보구조 정리
 
 ### 변경 파일

@@ -182,7 +182,7 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                           )}
                         </div>
                         {actionReason ? (
-                          <p className="text-xs text-slate-500 break-all">
+                          <p className="text-xs text-gray-500 break-all">
                             {actionReason.label}: {actionReason.value}
                           </p>
                         ) : null}
@@ -194,12 +194,12 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                           <Link href={link} className="text-indigo-600 hover:underline">
                             {getTargetTypeLabel(log.target_type, t)}
                           </Link>
-                          <div className="text-xs text-slate-600">{targetDisplayName}</div>
+                          <div className="text-xs text-gray-600">{targetDisplayName}</div>
                         </div>
                       ) : (
                         <div className="space-y-0.5">
                           <div>{getTargetTypeLabel(log.target_type, t)}</div>
-                          <div className="text-xs text-slate-600">{targetDisplayName}</div>
+                          <div className="text-xs text-gray-600">{targetDisplayName}</div>
                         </div>
                       )}
                     </td>
@@ -209,7 +209,7 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                           <button
                             type="button"
                             onClick={() => setExpandedLogId(isExpanded ? null : log.id)}
-                            className="rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50"
+                            className="rounded-md border border-gray-300 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50"
                           >
                             {isExpanded ? t('hideChanges') : t('showChanges')}
                           </button>
@@ -237,10 +237,10 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                     </td>
                   </tr>
                   {isExpanded && canShowDiff && (
-                    <tr className="bg-slate-50">
+                    <tr className="bg-gray-50">
                       <td colSpan={5} className="px-4 sm:px-6 py-4">
                         <div className="space-y-3">
-                          <div className="text-xs font-semibold text-slate-700">
+                          <div className="text-xs font-semibold text-gray-700">
                             {t('diffTitle')}
                           </div>
                           {(snapshotWarnings.missingInAfter.length > 0 ||
@@ -265,23 +265,23 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                           {diffItems.map((item) => (
                             <div
                               key={item.itemId}
-                              className="rounded-md border border-slate-200 bg-white"
+                              className="rounded-md border border-gray-200 bg-white"
                             >
-                              <div className="border-b border-slate-200 px-3 py-2 text-xs font-medium text-slate-600">
+                              <div className="border-b border-gray-200 px-3 py-2 text-xs font-medium text-gray-600">
                                 {t('target')}:{' '}
                                 {item.itemLabel ||
                                   t('nameMissing', {
                                     idLabel: formatIdentifierLabel(item.itemId, t),
                                   })}
                                 {item.itemLabel ? (
-                                  <span className="ml-2 text-slate-500">
+                                  <span className="ml-2 text-gray-500">
                                     {t('identifier', { value: formatIdentifier(item.itemId, t) })}
                                   </span>
                                 ) : null}
                               </div>
                               <div className="overflow-x-auto">
                                 <table className="min-w-full text-xs">
-                                  <thead className="bg-slate-50 text-slate-500">
+                                  <thead className="bg-gray-50 text-gray-500">
                                     <tr>
                                       <th className="px-3 py-2 text-left font-medium">
                                         {t('colField')}
@@ -298,9 +298,9 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                                     {item.changes.map((change) => (
                                       <tr
                                         key={`${item.itemId}-${change.field}`}
-                                        className="border-t border-slate-100"
+                                        className="border-t border-gray-100"
                                       >
-                                        <td className="px-3 py-2 text-slate-700">
+                                        <td className="px-3 py-2 text-gray-700">
                                           {getFieldLabel(change.field, t, log.target_type)}
                                         </td>
                                         <td className="px-3 py-2 text-rose-700 whitespace-pre-wrap break-all">

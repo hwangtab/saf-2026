@@ -33,9 +33,9 @@ export function TopPagesChart({ data }: Props) {
   if (chartData.length === 0) {
     return (
       <AdminCard className="flex h-full flex-col p-6">
-        <h3 className="mb-4 text-lg font-semibold text-slate-900">인기 페이지</h3>
+        <h3 className="mb-4 text-lg font-semibold text-gray-900">인기 페이지</h3>
         <div className="flex flex-1 min-h-[300px] items-center justify-center">
-          <p className="text-sm text-slate-500">데이터가 없습니다.</p>
+          <p className="text-sm text-gray-500">데이터가 없습니다.</p>
         </div>
       </AdminCard>
     );
@@ -43,7 +43,7 @@ export function TopPagesChart({ data }: Props) {
 
   return (
     <AdminCard className="flex h-full flex-col p-6">
-      <h3 className="mb-4 text-lg font-semibold text-slate-900">인기 페이지</h3>
+      <h3 className="mb-4 text-lg font-semibold text-gray-900">인기 페이지</h3>
       <div className="flex-1 min-h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart

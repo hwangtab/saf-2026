@@ -83,7 +83,7 @@ export function RevenueFilterBar({
           </AdminSelect>
         </div>
       </div>
-      <p className="mt-3 text-xs text-slate-500">
+      <p className="mt-3 text-xs text-gray-500">
         회계 기준 시간대: KST (Asia/Seoul)
         {isPending ? ' · 필터 적용 중...' : ''}
       </p>

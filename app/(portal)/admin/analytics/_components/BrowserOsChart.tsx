@@ -15,16 +15,16 @@ export function BrowserOsChart({ browserData, osData }: Props) {
 
   return (
     <AdminCard className="flex h-full flex-col p-6">
-      <h3 className="mb-4 text-lg font-semibold text-slate-900">브라우저 / OS 분포</h3>
+      <h3 className="mb-4 text-lg font-semibold text-gray-900">브라우저 / OS 분포</h3>
       {!hasBrowser && !hasOs ? (
         <div className="flex flex-1 min-h-[300px] items-center justify-center">
-          <p className="text-sm text-slate-500">데이터가 없습니다.</p>
+          <p className="text-sm text-gray-500">데이터가 없습니다.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {/* 브라우저 */}
           <div>
-            <p className="mb-2 text-sm font-medium text-slate-500">브라우저</p>
+            <p className="mb-2 text-sm font-medium text-gray-500">브라우저</p>
             <div className="h-[200px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
@@ -60,7 +60,7 @@ export function BrowserOsChart({ browserData, osData }: Props) {
           </div>
           {/* OS */}
           <div>
-            <p className="mb-2 text-sm font-medium text-slate-500">운영체제</p>
+            <p className="mb-2 text-sm font-medium text-gray-500">운영체제</p>
             <div className="h-[200px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart

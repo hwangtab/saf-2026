@@ -52,13 +52,13 @@ function StatCard({
 }) {
   return (
     <AdminCard className="p-6">
-      <p className="text-sm font-medium text-slate-500">{title}</p>
+      <p className="text-sm font-medium text-gray-500">{title}</p>
       <p
-        className={`mt-2 text-3xl font-bold tracking-tight ${accent ? 'text-emerald-600' : 'text-slate-900'}`}
+        className={`mt-2 text-3xl font-bold tracking-tight ${accent ? 'text-emerald-600' : 'text-gray-900'}`}
       >
         {value}
       </p>
-      {subtitle && <p className="mt-2 text-sm text-slate-500">{subtitle}</p>}
+      {subtitle && <p className="mt-2 text-sm text-gray-500">{subtitle}</p>}
     </AdminCard>
   );
 }
@@ -159,7 +159,7 @@ export default async function AdminAnalyticsPage({ searchParams }: Props) {
         {/* 국가 분포 테이블 */}
         <AdminCard className="flex flex-col">
           <AdminCardHeader className="rounded-t-2xl">
-            <h2 className="text-base font-semibold text-slate-900">{t('countryVisits')}</h2>
+            <h2 className="text-base font-semibold text-gray-900">{t('countryVisits')}</h2>
           </AdminCardHeader>
           <div className="p-0">
             {data.countryDistribution.length === 0 ? (
@@ -168,24 +168,24 @@ export default async function AdminAnalyticsPage({ searchParams }: Props) {
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
                   <thead>
-                    <tr className="border-b border-slate-100">
-                      <th className="px-6 py-3 font-medium text-slate-500">{t('country')}</th>
-                      <th className="px-6 py-3 text-right font-medium text-slate-500">
+                    <tr className="border-b border-gray-100">
+                      <th className="px-6 py-3 font-medium text-gray-500">{t('country')}</th>
+                      <th className="px-6 py-3 text-right font-medium text-gray-500">
                         {t('pageViews')}
                       </th>
-                      <th className="px-6 py-3 text-right font-medium text-slate-500">
+                      <th className="px-6 py-3 text-right font-medium text-gray-500">
                         {t('visitors')}
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-50">
+                  <tbody className="divide-y divide-gray-50">
                     {data.countryDistribution.map((item) => (
-                      <tr key={item.country} className="transition-colors hover:bg-slate-50">
-                        <td className="px-6 py-3 text-slate-700">{getCountryName(item.country)}</td>
-                        <td className="px-6 py-3 text-right tabular-nums text-slate-900">
+                      <tr key={item.country} className="transition-colors hover:bg-gray-50">
+                        <td className="px-6 py-3 text-gray-700">{getCountryName(item.country)}</td>
+                        <td className="px-6 py-3 text-right tabular-nums text-gray-900">
                           {numberFormatter.format(item.views)}
                         </td>
-                        <td className="px-6 py-3 text-right tabular-nums text-slate-900">
+                        <td className="px-6 py-3 text-right tabular-nums text-gray-900">
                           {numberFormatter.format(item.visitors)}
                         </td>
                       </tr>
@@ -200,7 +200,7 @@ export default async function AdminAnalyticsPage({ searchParams }: Props) {
         {/* 유입 경로 테이블 */}
         <AdminCard className="flex flex-col">
           <AdminCardHeader className="rounded-t-2xl">
-            <h2 className="text-base font-semibold text-slate-900">{t('referrer')}</h2>
+            <h2 className="text-base font-semibold text-gray-900">{t('referrer')}</h2>
           </AdminCardHeader>
           <div className="p-0">
             {data.topReferrers.length === 0 ? (
@@ -209,20 +209,20 @@ export default async function AdminAnalyticsPage({ searchParams }: Props) {
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
                   <thead>
-                    <tr className="border-b border-slate-100">
-                      <th className="px-6 py-3 font-medium text-slate-500">{t('source')}</th>
-                      <th className="px-6 py-3 text-right font-medium text-slate-500">
+                    <tr className="border-b border-gray-100">
+                      <th className="px-6 py-3 font-medium text-gray-500">{t('source')}</th>
+                      <th className="px-6 py-3 text-right font-medium text-gray-500">
                         {t('visits')}
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-50">
+                  <tbody className="divide-y divide-gray-50">
                     {data.topReferrers.map((item) => (
-                      <tr key={item.referrer} className="transition-colors hover:bg-slate-50">
-                        <td className="px-6 py-3 text-slate-700 truncate max-w-[300px]">
+                      <tr key={item.referrer} className="transition-colors hover:bg-gray-50">
+                        <td className="px-6 py-3 text-gray-700 truncate max-w-[300px]">
                           {item.referrer}
                         </td>
-                        <td className="px-6 py-3 text-right tabular-nums text-slate-900">
+                        <td className="px-6 py-3 text-right tabular-nums text-gray-900">
                           {numberFormatter.format(item.count)}
                         </td>
                       </tr>

@@ -46,14 +46,14 @@ function RevenueTooltip({ active, payload }: RevenueTooltipProps) {
     point.revenue > 0 ? `${((point.onlineRevenue / point.revenue) * 100).toFixed(1)}%` : '0%';
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs shadow-sm">
-      <p className="font-semibold text-slate-800">{point.label}</p>
-      <p className="mt-1 text-slate-600">총 인식매출: {KRW_FORMATTER.format(point.revenue)}</p>
-      <p className="text-slate-600">오프라인: {KRW_FORMATTER.format(point.offlineRevenue)}</p>
-      <p className="text-slate-600">온라인: {KRW_FORMATTER.format(point.onlineRevenue)}</p>
-      <p className="text-slate-600">온라인 비중: {onlineShare}</p>
-      <p className="text-slate-600">판매수량: {NUMBER_FORMATTER.format(point.soldCount)}점</p>
-      <p className="text-slate-600">평균단가: {KRW_FORMATTER.format(point.averagePrice)}</p>
+    <div className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs shadow-sm">
+      <p className="font-semibold text-gray-800">{point.label}</p>
+      <p className="mt-1 text-gray-600">총 인식매출: {KRW_FORMATTER.format(point.revenue)}</p>
+      <p className="text-gray-600">오프라인: {KRW_FORMATTER.format(point.offlineRevenue)}</p>
+      <p className="text-gray-600">온라인: {KRW_FORMATTER.format(point.onlineRevenue)}</p>
+      <p className="text-gray-600">온라인 비중: {onlineShare}</p>
+      <p className="text-gray-600">판매수량: {NUMBER_FORMATTER.format(point.soldCount)}점</p>
+      <p className="text-gray-600">평균단가: {KRW_FORMATTER.format(point.averagePrice)}</p>
     </div>
   );
 }
@@ -63,8 +63,8 @@ export function MonthlyRevenueChart({ data }: MonthlyRevenueChartProps) {
 
   return (
     <AdminCard className="flex h-full flex-col p-6">
-      <h3 className="text-lg font-semibold text-slate-900">월별 오프라인/온라인 매출 추이</h3>
-      <p className="mt-1 text-xs text-slate-500">KST 기준 월 단위 집계</p>
+      <h3 className="text-lg font-semibold text-gray-900">월별 오프라인/온라인 매출 추이</h3>
+      <p className="mt-1 text-xs text-gray-500">KST 기준 월 단위 집계</p>
       <div className="relative mt-4 h-[340px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={data} margin={{ top: 10, right: 18, left: 10, bottom: 8 }}>
@@ -124,7 +124,7 @@ export function MonthlyRevenueChart({ data }: MonthlyRevenueChartProps) {
         </ResponsiveContainer>
         {!hasData && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <p className="rounded-full bg-white/90 px-3 py-1 text-xs text-slate-500">
+            <p className="rounded-full bg-white/90 px-3 py-1 text-xs text-gray-500">
               선택한 조건의 매출 데이터가 없습니다.
             </p>
           </div>

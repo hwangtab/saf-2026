@@ -28,7 +28,7 @@ function formatChangeRate(changeRate: number | null) {
 }
 
 function getChangeRateClass(changeRate: number | null) {
-  if (changeRate === null) return 'text-slate-500';
+  if (changeRate === null) return 'text-gray-500';
   return changeRate >= 0 ? 'text-green-600' : 'text-red-600';
 }
 
@@ -85,7 +85,7 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
       <AdminPageHeader>
         <AdminPageTitle>{t('title')}</AdminPageTitle>
         <AdminPageDescription>{t('description')}</AdminPageDescription>
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-gray-500">
           {t('selectedYear')}: {analytics.filter.selectedYear}
           {t('yearSuffix')}
         </p>
@@ -105,7 +105,7 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
         </a>
         <a
           href={reportExportHref}
-          className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+          className="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
         >
           {t('reportCsv')}
         </a>
@@ -158,15 +158,15 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
         />
         <AdminCard className="flex h-full flex-col justify-between p-6">
           <div>
-            <p className="text-sm font-medium text-slate-500">{t('onlineShare')}</p>
-            <p className="mt-2 text-2xl font-bold tracking-tight text-slate-900">
+            <p className="text-sm font-medium text-gray-500">{t('onlineShare')}</p>
+            <p className="mt-2 text-2xl font-bold tracking-tight text-gray-900">
               {formatShare(channelSummary.onlineRevenueSharePct)}
             </p>
           </div>
-          <p className="mt-2 text-sm text-slate-500">
+          <p className="mt-2 text-sm text-gray-500">
             {t('quantityShare')}: {formatShare(channelSummary.onlineSoldSharePct)}
           </p>
-          <p className="mt-1 text-xs text-slate-500">
+          <p className="mt-1 text-xs text-gray-500">
             {t('offlineRevenue')} {krwFormatter.format(sourceSummary.manual.revenue)} /{' '}
             {t('onlineRevenue')}{' '}
             {krwFormatter.format(sourceSummary.cafe24.revenue + sourceSummary.toss.revenue)}
@@ -177,13 +177,13 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
       {analytics.focusMonth ? (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <AdminCard className="p-6">
-            <p className="text-sm font-medium text-slate-500">
+            <p className="text-sm font-medium text-gray-500">
               {t('focusMonthPreviousMonth', {
                 year: analytics.filter.selectedYear,
                 month: analytics.focusMonth.month,
               })}
             </p>
-            <p className="mt-2 text-2xl font-bold tracking-tight text-slate-900">
+            <p className="mt-2 text-2xl font-bold tracking-tight text-gray-900">
               {krwFormatter.format(analytics.focusMonth.previousMonthRevenue)}
             </p>
             <p
@@ -193,13 +193,13 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
             </p>
           </AdminCard>
           <AdminCard className="p-6">
-            <p className="text-sm font-medium text-slate-500">
+            <p className="text-sm font-medium text-gray-500">
               {t('focusMonthPreviousYear', {
                 year: analytics.filter.selectedYear,
                 month: analytics.focusMonth.month,
               })}
             </p>
-            <p className="mt-2 text-2xl font-bold tracking-tight text-slate-900">
+            <p className="mt-2 text-2xl font-bold tracking-tight text-gray-900">
               {krwFormatter.format(analytics.focusMonth.previousYearRevenue)}
             </p>
             <p
@@ -215,12 +215,12 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
 
       <AdminCard className="overflow-hidden">
         <AdminCardHeader className="rounded-t-2xl">
-          <h2 className="text-base font-semibold text-slate-900">{t('monthlyDetail')}</h2>
-          <span className="text-sm text-slate-500">{t('monthlyDetailSub')}</span>
+          <h2 className="text-base font-semibold text-gray-900">{t('monthlyDetail')}</h2>
+          <span className="text-sm text-gray-500">{t('monthlyDetailSub')}</span>
         </AdminCardHeader>
         <div className="max-h-[460px] overflow-x-auto overflow-y-auto">
-          <table className="min-w-full divide-y divide-slate-200">
-            <thead className="bg-slate-50 text-xs font-semibold uppercase text-slate-500">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50 text-xs font-semibold uppercase text-gray-500">
               <tr>
                 <th className="px-4 py-3 text-left">{t('month')}</th>
                 <th className="px-4 py-3 text-right">{t('currentRevenue')}</th>
@@ -237,7 +237,7 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
                 <th className="px-4 py-3 text-right">{t('ytd')}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 bg-white text-sm">
+            <tbody className="divide-y divide-gray-100 bg-white text-sm">
               {analytics.monthly.map((month) => {
                 const isSelected =
                   analytics.filter.selectedMonth !== 'all' &&
@@ -245,29 +245,29 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
 
                 return (
                   <tr key={month.month} className={isSelected ? 'bg-indigo-50/50' : ''}>
-                    <td className="px-4 py-3 font-medium text-slate-800">{month.label}</td>
-                    <td className="px-4 py-3 text-right font-medium text-slate-900">
+                    <td className="px-4 py-3 font-medium text-gray-800">{month.label}</td>
+                    <td className="px-4 py-3 text-right font-medium text-gray-900">
                       {krwFormatter.format(month.revenue)}
                     </td>
-                    <td className="px-4 py-3 text-right text-slate-700">
+                    <td className="px-4 py-3 text-right text-gray-700">
                       {krwFormatter.format(month.offlineRevenue)}
                     </td>
-                    <td className="px-4 py-3 text-right text-slate-700">
+                    <td className="px-4 py-3 text-right text-gray-700">
                       {krwFormatter.format(month.onlineRevenue)}
                     </td>
-                    <td className="px-4 py-3 text-right text-slate-700">
+                    <td className="px-4 py-3 text-right text-gray-700">
                       {numberFormatter.format(month.offlineSoldCount)} {t('pointsUnit')}
                     </td>
-                    <td className="px-4 py-3 text-right text-slate-700">
+                    <td className="px-4 py-3 text-right text-gray-700">
                       {numberFormatter.format(month.onlineSoldCount)} {t('pointsUnit')}
                     </td>
-                    <td className="px-4 py-3 text-right text-slate-700">
+                    <td className="px-4 py-3 text-right text-gray-700">
                       {numberFormatter.format(month.soldCount)} {t('pointsUnit')}
                     </td>
-                    <td className="px-4 py-3 text-right text-slate-700">
+                    <td className="px-4 py-3 text-right text-gray-700">
                       {krwFormatter.format(month.averagePrice)}
                     </td>
-                    <td className="px-4 py-3 text-right text-slate-500">
+                    <td className="px-4 py-3 text-right text-gray-500">
                       {krwFormatter.format(month.previousMonthRevenue)}
                     </td>
                     <td
@@ -275,7 +275,7 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
                     >
                       {formatChangeRate(month.momChangeRatePct)}
                     </td>
-                    <td className="px-4 py-3 text-right text-slate-500">
+                    <td className="px-4 py-3 text-right text-gray-500">
                       {krwFormatter.format(month.previousYearRevenue)}
                     </td>
                     <td
@@ -283,7 +283,7 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
                     >
                       {formatChangeRate(month.yoyChangeRatePct)}
                     </td>
-                    <td className="px-4 py-3 text-right font-medium text-slate-700">
+                    <td className="px-4 py-3 text-right font-medium text-gray-700">
                       {krwFormatter.format(month.cumulativeRevenue)}
                     </td>
                   </tr>
@@ -297,8 +297,8 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
       <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <AdminCard className="flex flex-col">
           <AdminCardHeader className="rounded-t-2xl">
-            <h2 className="text-base font-semibold text-slate-900">{t('topArtists')}</h2>
-            <span className="text-xs text-slate-500">
+            <h2 className="text-base font-semibold text-gray-900">{t('topArtists')}</h2>
+            <span className="text-xs text-gray-500">
               {analytics.summary.periodLabel} {t('compareBase')}
             </span>
           </AdminCardHeader>
@@ -313,15 +313,15 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
                     className="flex items-center justify-between p-4"
                   >
                     <div>
-                      <p className="text-sm font-medium text-slate-900">
+                      <p className="text-sm font-medium text-gray-900">
                         {index + 1}. {artist.artistName}
                       </p>
-                      <p className="mt-0.5 text-xs text-slate-500">
+                      <p className="mt-0.5 text-xs text-gray-500">
                         {t('soldCount')} {numberFormatter.format(artist.soldCount)}{' '}
                         {t('pointsUnit')}
                       </p>
                     </div>
-                    <p className="text-sm font-semibold text-slate-900">
+                    <p className="text-sm font-semibold text-gray-900">
                       {krwFormatter.format(artist.revenue)}
                     </p>
                   </li>
@@ -333,8 +333,8 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
 
         <AdminCard className="flex flex-col">
           <AdminCardHeader className="rounded-t-2xl">
-            <h2 className="text-base font-semibold text-slate-900">{t('topArtworks')}</h2>
-            <span className="text-xs text-slate-500">
+            <h2 className="text-base font-semibold text-gray-900">{t('topArtworks')}</h2>
+            <span className="text-xs text-gray-500">
               {analytics.summary.periodLabel} {t('compareBase')}
             </span>
           </AdminCardHeader>
@@ -349,15 +349,15 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
                       <div className="min-w-0">
                         <Link
                           href={`/admin/artworks/${artwork.artworkId}`}
-                          className="block truncate text-sm font-medium text-slate-900 hover:text-indigo-700"
+                          className="block truncate text-sm font-medium text-gray-900 hover:text-indigo-700"
                         >
                           {artwork.title}
                         </Link>
-                        <p className="mt-0.5 text-xs text-slate-500">
+                        <p className="mt-0.5 text-xs text-gray-500">
                           {artwork.artistName} · {t('soldDate')} {artwork.soldAtKst}
                         </p>
                       </div>
-                      <p className="shrink-0 text-sm font-semibold text-slate-900">
+                      <p className="shrink-0 text-sm font-semibold text-gray-900">
                         {krwFormatter.format(artwork.revenue)}
                       </p>
                     </div>
