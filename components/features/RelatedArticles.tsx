@@ -71,7 +71,7 @@ export default async function RelatedArticles({ articles }: RelatedArticlesProps
               href={article.url}
               target="_blank"
               rel="noopener noreferrer nofollow"
-              className="group block p-5 bg-white border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition-[box-shadow,border-color] duration-300"
+              className="group block p-5 bg-white border border-gray-200 rounded-2xl hover:border-primary hover:shadow-xl transition-[box-shadow,border-color] duration-300"
             >
               {/* Source Badge */}
               <div className="flex items-center justify-between mb-3">

@@ -328,7 +328,7 @@ export default async function StoryCategoryPage({ params }: Props) {
                   <Link
                     key={story.id}
                     href={`/stories/${story.slug}`}
-                    className="group block overflow-hidden rounded-xl bg-white border border-gray-100 shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl motion-safe:opacity-0 motion-safe:animate-fade-in-up"
+                    className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl motion-safe:opacity-0 motion-safe:animate-fade-in-up"
                     style={{
                       animationDelay: `${i * 0.08}s`,
                       animationFillMode: 'forwards',

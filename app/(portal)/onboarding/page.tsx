@@ -104,7 +104,7 @@ export default async function OnboardingPage({
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 px-4 sm:px-0">
             <Link
               href="/onboarding?role=artist"
-              className="flex flex-col rounded-lg border-2 border-gray-200 bg-white p-6 shadow-sm hover:border-gray-900 hover:shadow-md transition-[box-shadow,border-color]"
+              className="flex flex-col rounded-2xl border-2 border-gray-200 bg-white p-6 shadow-sm hover:border-gray-900 hover:shadow-xl transition-[box-shadow,border-color]"
             >
               <span className="text-lg font-semibold text-gray-900">{t('applyArtist')}</span>
               <span className="mt-2 text-sm text-gray-500">{t('applyArtistDescription')}</span>
@@ -112,7 +112,7 @@ export default async function OnboardingPage({
 
             <Link
               href="/exhibitor/onboarding"
-              className="flex flex-col rounded-lg border-2 border-gray-200 bg-white p-6 shadow-sm hover:border-gray-900 hover:shadow-md transition-[box-shadow,border-color]"
+              className="flex flex-col rounded-2xl border-2 border-gray-200 bg-white p-6 shadow-sm hover:border-gray-900 hover:shadow-xl transition-[box-shadow,border-color]"
             >
               <span className="text-lg font-semibold text-gray-900">{t('applyExhibitor')}</span>
               <span className="mt-2 text-sm text-gray-500">{t('applyExhibitorDescription')}</span>
@@ -142,7 +142,7 @@ export default async function OnboardingPage({
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-2xl">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="bg-white py-8 px-4 shadow-sm border border-gray-200 sm:rounded-2xl sm:px-10">
           <OnboardingForm defaultValues={application} />
         </div>
       </div>

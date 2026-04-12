@@ -77,7 +77,7 @@ export default async function ExhibitorOnboardingPage({
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-2xl">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="bg-white py-8 px-4 shadow-sm border border-gray-200 sm:rounded-2xl sm:px-10">
           <ExhibitorOnboardingForm defaultValues={application} />
         </div>
       </div>

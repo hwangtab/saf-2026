@@ -195,7 +195,7 @@ export default async function StoryDetailPage({ params }: Props) {
         <article className="max-w-3xl mx-auto">
           {story.thumbnail && (
             <div
-              className="relative w-full aspect-video mb-10 rounded-xl overflow-hidden shadow-lg motion-safe:opacity-0 motion-safe:animate-fade-in-up"
+              className="relative w-full aspect-video mb-10 rounded-2xl overflow-hidden shadow-sm motion-safe:opacity-0 motion-safe:animate-fade-in-up"
               style={{ animationFillMode: 'forwards' }}
             >
               <SafeImage src={story.thumbnail} alt={title} fill className="object-cover" priority />
@@ -264,7 +264,7 @@ export default async function StoryDetailPage({ params }: Props) {
                   <Link
                     key={related.id}
                     href={`/stories/${related.slug}`}
-                    className="group block overflow-hidden rounded-xl bg-white border border-gray-100 shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-lg motion-safe:opacity-0 motion-safe:animate-fade-in-up"
+                    className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl motion-safe:opacity-0 motion-safe:animate-fade-in-up"
                     style={{
                       animationDelay: `${i * 0.1}s`,
                       animationFillMode: 'forwards',
@@ -331,7 +331,7 @@ export default async function StoryDetailPage({ params }: Props) {
                   <Link
                     key={artwork.id}
                     href={`/artworks/${artwork.id}`}
-                    className="group block overflow-hidden rounded-xl bg-white border border-gray-100 shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-lg motion-safe:opacity-0 motion-safe:animate-fade-in-up"
+                    className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl motion-safe:opacity-0 motion-safe:animate-fade-in-up"
                     style={{
                       animationDelay: `${i * 0.1}s`,
                       animationFillMode: 'forwards',

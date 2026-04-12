@@ -225,7 +225,7 @@ export default async function OurProof() {
               />
             </div>
 
-            <div className="mt-12 bg-white p-8 rounded-lg max-w-3xl mx-auto border-l-4 border-primary">
+            <div className="mt-12 bg-white p-8 rounded-2xl max-w-3xl mx-auto border-l-4 border-primary">
               <p className="text-lg text-charcoal mb-2">
                 The data is clear.{' '}
                 <span className="text-primary font-semibold">Artists are bankable.</span>
@@ -271,7 +271,7 @@ export default async function OurProof() {
                   </p>
                 </div>
               </div>
-              <div className="bg-primary/10 rounded-lg p-8 border-2 border-primary text-center">
+              <div className="bg-primary/10 rounded-2xl p-8 border-2 border-primary text-center">
                 <h3 className="text-card-title mb-6">Fund leverage</h3>
                 <p className="text-sm text-charcoal-muted mb-3">Accumulated mutual-aid reserve</p>
                 <p className="text-4xl font-bold text-primary">KRW 77,000,000</p>
@@ -288,21 +288,18 @@ export default async function OurProof() {
                 label="Cumulative loans"
                 description="354 loans were executed between Dec 2022 and Sep 2025."
                 variant="bordered"
-                className="hover:shadow-md transition-shadow"
               />
               <StatCard
                 value="~KRW 700M"
                 label="Cumulative support"
                 description="Funds supported living costs, creation costs, and project operations."
                 variant="bordered"
-                className="hover:shadow-md transition-shadow"
               />
               <StatCard
                 value="5.10%"
                 label="Subrogation rate"
                 description="Subrogation remained at a controlled level versus total executed amount."
                 variant="bordered"
-                className="hover:shadow-md transition-shadow"
               />
             </div>
           </div>
@@ -348,7 +345,7 @@ export default async function OurProof() {
           <div id="proof-qa-section" className="container-max">
             <SectionTitle className="mb-12">Traditional finance vs mutual-aid lending</SectionTitle>
             <div className="overflow-x-auto">
-              <table className="w-full bg-white rounded-lg shadow-sm overflow-hidden">
+              <table className="w-full bg-white rounded-2xl shadow-sm overflow-hidden">
                 <thead className="bg-gray-100 border-b-2 border-gray-300">
                   <tr>
                     <th className="px-6 py-4 text-left font-bold">Category</th>
@@ -394,7 +391,7 @@ export default async function OurProof() {
               {proofFaqItems.map((item) => (
                 <article
                   key={item.question}
-                  className="rounded-lg border border-gray-200 bg-white p-6"
+                  className="rounded-2xl border border-gray-200 bg-white p-6"
                 >
                   <h3 className="mb-2 text-lg font-semibold text-charcoal">{item.question}</h3>
                   <p className="text-charcoal-muted leading-relaxed">{item.answer}</p>
@@ -410,7 +407,7 @@ export default async function OurProof() {
               You can join this trust network
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto text-balance">
-              <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-lg bg-white text-left shadow-sm">
+              <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-2xl bg-white text-left shadow-sm">
                 <h3 className="text-card-title mb-3">Join the cooperative</h3>
                 <p className="text-charcoal-muted mb-4 flex-grow">
                   Become a member of Korea Smart Cooperative and help sustain artist mutual-aid
@@ -420,7 +417,7 @@ export default async function OurProof() {
                   Join now
                 </LinkButton>
               </div>
-              <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-lg bg-white text-left shadow-sm">
+              <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-2xl bg-white text-left shadow-sm">
                 <h3 className="text-card-title mb-3">Support artists through purchases</h3>
                 <p className="text-charcoal-muted mb-4 flex-grow">
                   Sales proceeds return to the fund. Explore artworks in the online gallery.
@@ -477,7 +474,7 @@ export default async function OurProof() {
             <StatCard value="95%" label="상환율 (대위변제율 5.10%)" variant="highlight" />
           </div>
 
-          <div className="mt-12 bg-white p-8 rounded-lg max-w-3xl mx-auto border-l-4 border-primary">
+          <div className="mt-12 bg-white p-8 rounded-2xl max-w-3xl mx-auto border-l-4 border-primary">
             <p className="text-lg text-charcoal mb-2">
               이 데이터는 명백한 사실을 증명합니다.{' '}
               <span className="text-primary font-semibold">
@@ -531,7 +528,7 @@ export default async function OurProof() {
                 </p>
               </div>
             </div>
-            <div className="bg-primary/10 rounded-lg p-8 border-2 border-primary text-center">
+            <div className="bg-primary/10 rounded-2xl p-8 border-2 border-primary text-center">
               <h3 className="text-card-title mb-6">기금의 힘</h3>
               <p className="text-sm text-charcoal-muted mb-3">누적 조성된 상호부조 기금</p>
               <p className="text-4xl font-bold text-primary">77,000,000원</p>
@@ -548,26 +545,23 @@ export default async function OurProof() {
               label="누적 대출 실행"
               description="2022년 12월부터 2025년 9월말까지 354건의 상호부조 대출이 실행되었습니다."
               variant="bordered"
-              className="hover:shadow-md transition-shadow"
             />
             <StatCard
               value="약 7억 원"
               label="누적 지원 금액"
               description="생활비·창작비·프로젝트 자금 등으로 총 약 7억 원이 투입되었습니다."
               variant="bordered"
-              className="hover:shadow-md transition-shadow"
             />
             <StatCard
               value="5.10%"
               label="대위변제율"
               description="총 20건, 31,080,986원이 대위변제 처리되어 전체 실행액 대비 5.10% 수준입니다."
               variant="bordered"
-              className="hover:shadow-md transition-shadow"
             />
           </div>
 
           {/* Why It Works */}
-          <div className="bg-white rounded-lg shadow-lg p-8 md:p-12 max-w-3xl mx-auto mb-16">
+          <div className="bg-white rounded-2xl shadow-sm p-8 md:p-12 max-w-3xl mx-auto mb-16">
             <SectionTitle className="mb-8">왜 상호부조 금융이 작동할까?</SectionTitle>
             <div className="space-y-6">
               <div className="flex gap-4">
@@ -665,7 +659,7 @@ export default async function OurProof() {
         <div id="proof-qa-section" className="container-max">
           <SectionTitle className="mb-12">기존 금융 vs 상호부조 대출</SectionTitle>
           <div className="overflow-x-auto">
-            <table className="w-full bg-white rounded-lg shadow-sm overflow-hidden">
+            <table className="w-full bg-white rounded-2xl shadow-sm overflow-hidden">
               <thead className="bg-gray-100 border-b-2 border-gray-300">
                 <tr>
                   <th className="px-6 py-4 text-left font-bold">항목</th>
@@ -712,7 +706,7 @@ export default async function OurProof() {
             {proofFaqItems.map((item) => (
               <article
                 key={item.question}
-                className="rounded-lg border border-gray-200 bg-white p-6"
+                className="rounded-2xl border border-gray-200 bg-white p-6"
               >
                 <h3 className="mb-2 text-lg font-semibold text-charcoal">{item.question}</h3>
                 <p className="text-charcoal-muted leading-relaxed">{item.answer}</p>
@@ -729,7 +723,7 @@ export default async function OurProof() {
             당신도 이 신뢰의 체계에 참여할 수 있습니다
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto text-balance">
-            <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-lg bg-white text-left shadow-sm">
+            <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-2xl bg-white text-left shadow-sm">
               <h3 className="text-card-title mb-3">조합원이 되어 연대해주세요</h3>
               <p className="text-charcoal-muted mb-4 flex-grow">
                 한국스마트협동조합의 조합원이 되어 예술인 상호부조 대출 기금 조성과 운영에 함께하실
@@ -739,7 +733,7 @@ export default async function OurProof() {
                 조합원 가입하기
               </LinkButton>
             </div>
-            <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-lg bg-white text-left shadow-sm">
+            <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-2xl bg-white text-left shadow-sm">
               <h3 className="text-card-title mb-3">작품을 구매해 예술인을 응원하세요</h3>
               <p className="text-charcoal-muted mb-4 flex-grow">
                 판매 수익은 전액 기금으로 귀속됩니다. 온라인 갤러리에서 작품을 만나보세요.

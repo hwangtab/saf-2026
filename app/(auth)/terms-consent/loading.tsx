@@ -11,7 +11,7 @@ export default function TermsConsentLoading() {
         </div>
         <div className="space-y-4">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="space-y-3 rounded-xl border border-gray-200 bg-white p-5">
+            <div key={i} className="space-y-3 rounded-2xl border border-gray-200 bg-white p-5">
               <div className="h-5 w-36 animate-pulse rounded bg-gray-200" />
               <div className="h-16 w-full animate-pulse rounded bg-gray-100" />
               <div className="h-9 w-full animate-pulse rounded bg-gray-100" />

@@ -3,6 +3,7 @@
 import CountUp from 'react-countup';
 import { useInView } from 'react-intersection-observer';
 import { ANIMATION } from '@/lib/constants';
+import Card from '@/components/ui/Card';
 
 interface CounterItem {
   label: string;
@@ -25,10 +26,7 @@ export default function DynamicCounter({ items, locale = 'ko' }: DynamicCounterP
     <div ref={ref}>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
         {items.map((item) => (
-          <div
-            key={item.label}
-            className="text-center p-6 md:p-8 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200"
-          >
+          <Card key={item.label} className="text-center p-6 md:p-8">
             <h3 className="text-sm font-medium text-charcoal-muted mb-3">{item.label}</h3>
             <div className="text-5xl md:text-6xl font-bold text-primary">
               <span aria-live="polite" aria-atomic="true">
@@ -49,7 +47,7 @@ export default function DynamicCounter({ items, locale = 'ko' }: DynamicCounterP
                 )}
               </span>
             </div>
-          </div>
+          </Card>
         ))}
       </div>
     </div>

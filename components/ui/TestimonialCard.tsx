@@ -16,7 +16,7 @@ export default function TestimonialCard({
   contextColor = 'text-charcoal-muted',
 }: TestimonialCardProps) {
   return (
-    <div className={`${bgColor} p-8 rounded-lg border-l-4 ${borderColor}`}>
+    <div className={`${bgColor} p-8 rounded-2xl border-l-4 ${borderColor}`}>
       <p className="text-lg text-charcoal italic mb-4">&quot;{quote}&quot;</p>
       <p className="font-semibold text-gray-800">— {author}</p>
       {context && <p className={`text-sm mt-3 ${contextColor}`}>{context}</p>}

@@ -145,7 +145,7 @@ export default function ArtworkHighlightSlider({
                 theme={theme}
                 className={cn(
                   'h-full shadow-sm hover:shadow-xl transition-shadow duration-500',
-                  isDark ? 'border border-white/10' : 'border border-gray-100'
+                  isDark ? 'border border-white/10' : 'border border-gray-200'
                 )}
               />
             </div>

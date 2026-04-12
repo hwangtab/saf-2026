@@ -18,6 +18,7 @@ import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { createStandardPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
+import Card from '@/components/ui/Card';
 import { resolveLocale } from '@/lib/server-locale';
 import { Link } from '@/i18n/navigation';
 
@@ -171,7 +172,7 @@ export default async function Archive2023Page() {
             />
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-8 mb-12">
+          <Card className="p-8 mb-12">
             <h3 className="text-card-title mb-4">
               {isEnglish ? 'SAF 2023 Outcomes' : '씨앗페 2023 성과'}
             </h3>
@@ -208,7 +209,7 @@ export default async function Archive2023Page() {
                 ? 'From March 21 to 31, 2023, exhibitions and performances were held in Insadong, Seoul. More than 50 artists across music, visual art, and dance joined the campaign and helped raise KRW 34 million for the mutual-aid fund after event operating costs.'
                 : '2023년 3월 21일부터 3월 31일까지 서울시 종로구 인사동의 오디오가이 스튜디오와 인디프레스 갤러리에서 전시와 공연이 펼쳐졌습니다. 국내 저명 뮤지션, 화가, 무용가 등 50명 이상의 예술인이 참여하여 예술인 금융 위기의 심각성을 알리고, 작품 판매 수익을 포함해 총 6,000만원을 조성하여 화가들에게 작품비를 지급하고, 대관 등 행사진행비를 제외하고 3,400만원의 기금을 조성하였습니다.'}
             </p>
-          </div>
+          </Card>
 
           {/* Event Details */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -261,10 +262,7 @@ export default async function Archive2023Page() {
               const localizedArtworkArtist = localizeArtworkArtist(artwork.artist);
 
               return (
-                <div
-                  key={artwork.id}
-                  className="bg-white rounded-lg shadow-md overflow-hidden group flex flex-col"
-                >
+                <Card key={artwork.id} className="overflow-hidden group flex flex-col">
                   <div className="relative aspect-square w-full overflow-hidden">
                     <SafeImage
                       src={artwork.imageUrl}
@@ -286,7 +284,7 @@ export default async function Archive2023Page() {
                       </p>
                     )}
                   </div>
-                </div>
+                </Card>
               );
             })}
           </div>
@@ -303,7 +301,7 @@ export default async function Archive2023Page() {
             {saf2023Photos.map((photo) => (
               <div
                 key={photo.id}
-                className="group relative aspect-square overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                className="group relative aspect-square overflow-hidden rounded-2xl border border-gray-200 shadow-sm hover:shadow-xl transition-shadow"
               >
                 <ExportedImage
                   src={`/images/saf2023/${photo.filename}`}
@@ -340,7 +338,7 @@ export default async function Archive2023Page() {
               const watchPath = `/archive/2023/videos/${video.youtube_id}`;
 
               return (
-                <div key={video.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+                <Card key={video.id} className="overflow-hidden">
                   <VideoEmbed id={video.youtube_id} title={localizedVideoTitle} />
                   <div className="p-6">
                     <h3 className="font-sans font-bold text-xl mb-2">{localizedVideoTitle}</h3>
@@ -366,7 +364,7 @@ export default async function Archive2023Page() {
                       </div>
                     )}
                   </div>
-                </div>
+                </Card>
               );
             })}
           </div>

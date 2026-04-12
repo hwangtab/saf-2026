@@ -173,7 +173,7 @@ export default async function TransparencyPage() {
               {REPORTS.map((report) => (
                 <div
                   key={report.id}
-                  className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 flex flex-col hover:shadow-md transition-shadow"
+                  className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl"
                 >
                   <div className="flex items-center gap-3 mb-4">
                     <span className="text-3xl font-bold text-primary">{report.year}</span>
@@ -216,7 +216,7 @@ export default async function TransparencyPage() {
               stable repayment rate.
             </p>
             <div className="overflow-x-auto">
-              <table className="w-full bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
+              <table className="w-full bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-200">
                 <thead className="bg-gray-100 border-b-2 border-gray-300">
                   <tr>
                     <th className="px-6 py-4 text-left font-bold">Year</th>
@@ -256,7 +256,7 @@ export default async function TransparencyPage() {
               {BORROWER_FIELDS.map((item) => (
                 <div
                   key={item.field.en}
-                  className="bg-white rounded-lg p-5 text-center shadow-sm border border-gray-100"
+                  className="bg-white rounded-2xl p-5 text-center shadow-sm border border-gray-200"
                 >
                   <p className="text-2xl font-bold text-primary mb-1">{item.rate}</p>
                   <p className="text-sm text-charcoal">{item.field.en}</p>
@@ -280,7 +280,7 @@ export default async function TransparencyPage() {
                 variant="highlight"
               />
             </div>
-            <div className="mt-12 bg-white p-8 rounded-lg max-w-3xl mx-auto border-l-4 border-primary">
+            <div className="mt-12 bg-white p-8 rounded-2xl max-w-3xl mx-auto border-l-4 border-primary">
               <p className="text-lg text-charcoal mb-2">
                 Reports are published{' '}
                 <span className="text-primary font-semibold">annually and independently</span>.
@@ -301,7 +301,7 @@ export default async function TransparencyPage() {
               You can extend this impact
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto text-balance">
-              <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-lg bg-white text-left shadow-sm">
+              <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-2xl bg-white text-left shadow-sm">
                 <h3 className="text-card-title mb-3">Purchase artworks</h3>
                 <p className="text-charcoal-muted mb-4 flex-grow">
                   Sales proceeds return directly to the mutual aid fund.
@@ -310,7 +310,7 @@ export default async function TransparencyPage() {
                   Browse artworks
                 </LinkButton>
               </div>
-              <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-lg bg-white text-left shadow-sm">
+              <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-2xl bg-white text-left shadow-sm">
                 <h3 className="text-card-title mb-3">Join the cooperative</h3>
                 <p className="text-charcoal-muted mb-4 flex-grow">
                   Membership contributions strengthen the fund&apos;s lending capacity.
@@ -355,7 +355,7 @@ export default async function TransparencyPage() {
             {REPORTS.map((report) => (
               <div
                 key={report.id}
-                className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 flex flex-col hover:shadow-md transition-shadow"
+                className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl"
               >
                 <div className="flex items-center gap-3 mb-4">
                   <span className="text-3xl font-bold text-primary">{report.year}</span>
@@ -397,7 +397,7 @@ export default async function TransparencyPage() {
             2022년 12월 출범 이후 매년 증가하는 대출 규모와 안정적인 상환율을 확인할 수 있습니다.
           </p>
           <div className="overflow-x-auto">
-            <table className="w-full bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
+            <table className="w-full bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-200">
               <thead className="bg-gray-100 border-b-2 border-gray-300">
                 <tr>
                   <th className="px-6 py-4 text-left font-bold">연도</th>
@@ -437,7 +437,7 @@ export default async function TransparencyPage() {
             {BORROWER_FIELDS.map((item) => (
               <div
                 key={item.field.ko}
-                className="bg-white rounded-lg p-5 text-center shadow-sm border border-gray-100"
+                className="bg-white rounded-2xl p-5 text-center shadow-sm border border-gray-200"
               >
                 <p className="text-2xl font-bold text-primary mb-1">{item.rate}</p>
                 <p className="text-sm text-charcoal">{item.field.ko}</p>
@@ -461,7 +461,7 @@ export default async function TransparencyPage() {
               variant="highlight"
             />
           </div>
-          <div className="mt-12 bg-white p-8 rounded-lg max-w-3xl mx-auto border-l-4 border-primary">
+          <div className="mt-12 bg-white p-8 rounded-2xl max-w-3xl mx-auto border-l-4 border-primary">
             <p className="text-lg text-charcoal mb-2">
               보고서는 매년 <span className="text-primary font-semibold">독립적으로 작성·발행</span>
               됩니다.
@@ -481,7 +481,7 @@ export default async function TransparencyPage() {
             이 흐름에 함께해 주세요
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto text-balance">
-            <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-lg bg-white text-left shadow-sm">
+            <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-2xl bg-white text-left shadow-sm">
               <h3 className="text-card-title mb-3">작품을 구매해 기금에 참여하세요</h3>
               <p className="text-charcoal-muted mb-4 flex-grow">
                 판매 수익은 상호부조 기금으로 귀속되어 더 많은 예술인에게 저금리 대출로 이어집니다.
@@ -490,7 +490,7 @@ export default async function TransparencyPage() {
                 작품 구매하기
               </LinkButton>
             </div>
-            <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-lg bg-white text-left shadow-sm">
+            <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-2xl bg-white text-left shadow-sm">
               <h3 className="text-card-title mb-3">조합원이 되어 연대해주세요</h3>
               <p className="text-charcoal-muted mb-4 flex-grow">
                 조합원 가입으로 기금 조성에 직접 참여하고 대출 가능 금액을 늘릴 수 있습니다.

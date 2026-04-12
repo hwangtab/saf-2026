@@ -350,7 +350,7 @@ export default async function OurReality() {
                 {group.items.map((item, itemIndex) => (
                   <div
                     key={`${item.author}-${itemIndex}`}
-                    className="bg-white p-6 rounded-lg shadow-lg border-l-8 border-primary flex flex-col justify-between"
+                    className="bg-white p-6 rounded-2xl shadow-sm border-l-8 border-primary flex flex-col justify-between"
                   >
                     <p className="text-xl md:text-2xl text-charcoal mb-4 italic leading-relaxed before:content-['“'] after:content-['”']">
                       <HighlightedText text={item.quote} />
@@ -568,7 +568,7 @@ export default async function OurReality() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            <div className="bg-white p-6 rounded-lg shadow-sm border-t-4 border-primary">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border-t-4 border-primary">
               <div className="text-4xl mb-3">⏱️</div>
               <h3 className="font-bold text-lg mb-2">창작 시간을 살려내고</h3>
               <p className="text-sm text-charcoal-muted">
@@ -576,7 +576,7 @@ export default async function OurReality() {
               </p>
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow-sm border-t-4 border-primary">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border-t-4 border-primary">
               <div className="text-4xl mb-3">🎭</div>
               <h3 className="font-bold text-lg mb-2">예술적 존엄성을 지키며</h3>
               <p className="text-sm text-charcoal-muted">
@@ -584,7 +584,7 @@ export default async function OurReality() {
               </p>
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow-sm border-t-4 border-primary">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border-t-4 border-primary">
               <div className="text-4xl mb-3">🌱</div>
               <h3 className="font-bold text-lg mb-2">생태계를 지속가능하게</h3>
               <p className="text-sm text-charcoal-muted">

@@ -464,7 +464,7 @@ export default async function NewsPage() {
               return (
                 <article
                   key={article.id}
-                  className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow"
+                  className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl"
                 >
                   <Link
                     href={`/news/${article.id}`}

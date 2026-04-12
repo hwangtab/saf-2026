@@ -376,7 +376,7 @@ export default async function Archive2026Page() {
           </div>
 
           {/* Accessibility */}
-          <div className="bg-white border-2 border-blue-200 rounded-lg p-6">
+          <div className="bg-white border-2 border-blue-200 rounded-2xl p-6">
             <h3 className="text-card-title mb-3">
               <span aria-hidden="true">♿</span> 접근성 정보
             </h3>
@@ -402,7 +402,7 @@ export default async function Archive2026Page() {
       <Section variant="gray" prevVariant="accent-soft">
         <div className="container-max">
           <SectionTitle className="mb-12">행사 일정</SectionTitle>
-          <div className="bg-white rounded-lg shadow-lg p-8">
+          <div className="bg-white rounded-2xl shadow-sm p-8">
             <div className="mb-8">
               <h3 className="text-card-title mb-4">📅 주요 일정</h3>
               <div className="space-y-4">
@@ -454,7 +454,7 @@ export default async function Archive2026Page() {
             {exhibitionReviews.map((rev) => (
               <div
                 key={rev.id}
-                className="bg-canvas-soft p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col hover:shadow-md transition-shadow"
+                className="bg-canvas-soft p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl"
               >
                 <div className="flex items-center gap-1 mb-4">
                   {[...Array(5)].map((_, i) => (

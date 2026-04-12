@@ -174,13 +174,40 @@ button:focus:not(:focus-visible) {
   }
 
   /* Disable generic hover scale effects */
+  .hover\:scale-105:hover,
   .hover\:scale-\[1\.02\]:hover {
     transform: none;
   }
 
   /* Disable shadow hover effects */
-  .hover\:shadow-lg:hover {
+  .hover\:shadow-md:hover,
+  .hover\:shadow-lg:hover,
+  .hover\:shadow-xl:hover {
     box-shadow: none;
+  }
+
+  /* Disable lift hover effects */
+  .hover\:-translate-y-0\.5:hover,
+  .hover\:-translate-y-1:hover {
+    transform: none;
+  }
+
+  /* Disable border hover effects */
+  .hover\:border-primary:hover,
+  .hover\:border-gray-900:hover,
+  .hover\:border-gray-300:hover {
+    border-color: inherit;
+  }
+
+  /* Disable group hover shadow effects */
+  .group:hover .group-hover\:shadow-xl,
+  .group:hover .group-hover\:shadow-lg {
+    box-shadow: none;
+  }
+
+  /* Disable group hover scale effects (additional) */
+  .group:hover .group-hover\:scale-\[1\.01\] {
+    transform: none;
   }
 
   /* Remove unnecessary GPU layer promotion for gallery card images — hover scale is already disabled above */

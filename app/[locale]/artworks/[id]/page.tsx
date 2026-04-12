@@ -400,7 +400,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
               {localizedHistory && (
                 <ExpandableHistory
                   history={localizedHistory}
-                  className="bg-white border border-gray-100 shadow-sm"
+                  className="bg-white border border-gray-200 shadow-sm"
                 />
               )}
 
