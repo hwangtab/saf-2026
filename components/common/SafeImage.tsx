@@ -93,7 +93,7 @@ function RemoteSafeImage({ src, sizes, ...props }: { src: string } & Omit<ImageP
         className={className}
         loading={priority ? 'eager' : (loading as 'lazy' | 'eager') || 'lazy'}
         fetchPriority={priority ? 'high' : undefined}
-        decoding={priority ? 'sync' : 'async'}
+        decoding={priority ? 'sync' : 'auto'}
         style={{
           position: 'absolute',
           height: '100%',

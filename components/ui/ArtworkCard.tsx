@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useRef, useEffect } from 'react';
+import { memo, useRef, useEffect, useState } from 'react';
 import { Link } from '@/i18n/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import SafeImage from '@/components/common/SafeImage';
@@ -146,6 +146,9 @@ function ArtworkCard({
     variant === 'gallery' && typeof priorityIndex === 'number' && priorityIndex < 3;
 
   const imageContainerRef = useRef<HTMLDivElement>(null);
+  // Above-fold images use decoding="sync" via priority — start visible immediately.
+  // Below-fold images start hidden and are revealed after img.decode() completes.
+  const [imageReady, setImageReady] = useState(isAboveFold);
   useEffect(() => {
     const container = imageContainerRef.current;
     if (!container) return;
@@ -153,18 +156,27 @@ function ArtworkCard({
     const img = container.querySelector('img');
     if (!img) return;
 
-    const hideShimmer = () => {
+    const reveal = () => {
       const shimmer = container.querySelector('.shimmer-loading') as HTMLElement | null;
       if (shimmer) shimmer.style.display = 'none';
+      setImageReady(true);
+    };
+
+    const afterLoad = () => {
+      if (typeof img.decode === 'function') {
+        img.decode().then(reveal, reveal);
+      } else {
+        reveal();
+      }
     };
 
     if (img.complete && img.naturalWidth > 0) {
-      hideShimmer();
+      afterLoad();
       return;
     }
 
-    img.addEventListener('load', hideShimmer, { once: true });
-    return () => img.removeEventListener('load', hideShimmer);
+    img.addEventListener('load', afterLoad, { once: true });
+    return () => img.removeEventListener('load', afterLoad);
   }, []);
   const isDisplayable = (value: string | undefined): value is string => Boolean(value);
 
@@ -259,7 +271,7 @@ function ArtworkCard({
               loading={isAboveFold ? 'eager' : 'lazy'}
               priority={isAboveFold}
               fill
-              className="object-contain"
+              className={cn('object-contain', imageReady ? 'opacity-100' : 'opacity-0')}
               sizes={config.imageSizes}
             />
           </div>
