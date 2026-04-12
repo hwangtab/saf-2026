@@ -28,12 +28,12 @@ export default async function FailPage({ params, searchParams }: Props) {
 
           {message && <p className="text-sm text-gray-600 mb-3">{message}</p>}
           {code && (
-            <p className="text-xs text-gray-400 mb-6">
+            <p className="text-xs text-charcoal-soft mb-6">
               {t('errorCode')}: {code}
             </p>
           )}
           {orderId && (
-            <p className="text-xs text-gray-400 mb-6">
+            <p className="text-xs text-charcoal-soft mb-6">
               {t('orderIdLabel')}: {orderId}
             </p>
           )}

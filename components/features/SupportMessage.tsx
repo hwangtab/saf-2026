@@ -103,7 +103,7 @@ export default function SupportMessage({
 
           {/* 증언 카드 */}
           <div className="w-full bg-gray-50/80 rounded-xl p-5">
-            <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-3 text-center">
+            <p className="text-[10px] uppercase tracking-wider text-charcoal-soft mb-3 text-center">
               {t('voiceLabel')}
             </p>
             <div className="relative min-h-[80px]" aria-live="polite">
@@ -119,7 +119,7 @@ export default function SupportMessage({
                   <p className="text-sm text-gray-700 italic break-keep leading-relaxed text-center">
                     &ldquo;{item.quote}&rdquo;
                   </p>
-                  <p className="text-xs text-gray-400 mt-1.5 text-center">— {item.author}</p>
+                  <p className="text-xs text-charcoal-soft mt-1.5 text-center">— {item.author}</p>
                 </div>
               ))}
             </div>

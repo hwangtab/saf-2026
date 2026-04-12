@@ -245,7 +245,7 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
 
       <div>
         <label htmlFor="referrer" className="block text-sm font-medium text-gray-700">
-          {t('referrer')} <span className="text-gray-400 font-normal">{t('optional')}</span>
+          {t('referrer')} <span className="text-charcoal-soft font-normal">{t('optional')}</span>
         </label>
         <div className="mt-1">
           <input
@@ -387,7 +387,7 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
             <p className="mt-1 text-gray-500">
               {allRead ? t('allReadGuide') : t('needScrollGuide')}
             </p>
-            <p className="mt-1 text-xs text-gray-400">
+            <p className="mt-1 text-xs text-charcoal-soft">
               {t('originalLinks')}{' '}
               <Link href="/terms/exhibitor" className="underline underline-offset-2">
                 {t('contractLink')}

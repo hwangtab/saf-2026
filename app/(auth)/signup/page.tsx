@@ -179,7 +179,7 @@ export default function SignUpPage() {
 
           <div className="my-6 flex items-center gap-4">
             <div className="h-px flex-1 bg-gray-200" />
-            <span className="text-xs text-gray-400">{copy.orEmailSignup}</span>
+            <span className="text-xs text-charcoal-soft">{copy.orEmailSignup}</span>
             <div className="h-px flex-1 bg-gray-200" />
           </div>
           <form className="space-y-6" onSubmit={handleSignUp}>

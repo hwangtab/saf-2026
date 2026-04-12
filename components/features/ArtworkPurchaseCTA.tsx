@@ -134,7 +134,9 @@ export default function ArtworkPurchaseCTA({
       {/* 가격 — 최상단 */}
       {displayPrice && (
         <div className="text-center pb-4">
-          <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">{t('artworkPrice')}</p>
+          <p className="text-xs text-charcoal-soft uppercase tracking-wider mb-1">
+            {t('artworkPrice')}
+          </p>
           <p className="text-3xl font-bold text-charcoal">{displayPrice}</p>
         </div>
       )}
@@ -164,7 +166,7 @@ export default function ArtworkPurchaseCTA({
 
           <div className="flex items-center gap-4">
             <div className="flex-1 h-px bg-gray-200" />
-            <span className="text-gray-400 text-sm">{t('orContactDirectly')}</span>
+            <span className="text-charcoal-soft text-sm">{t('orContactDirectly')}</span>
             <div className="flex-1 h-px bg-gray-200" />
           </div>
 
@@ -200,7 +202,7 @@ export default function ArtworkPurchaseCTA({
 
           <div className="flex items-center gap-4">
             <div className="flex-1 h-px bg-gray-200" />
-            <span className="text-gray-400 text-sm">{t('orContactDirectly')}</span>
+            <span className="text-charcoal-soft text-sm">{t('orContactDirectly')}</span>
             <div className="flex-1 h-px bg-gray-200" />
           </div>
 

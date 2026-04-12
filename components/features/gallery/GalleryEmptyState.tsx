@@ -32,7 +32,7 @@ export default function GalleryEmptyState({ onReset }: GalleryEmptyStateProps) {
       <p className="text-gray-500 mb-6 max-w-sm mx-auto">
         {tSearch('noResultsDesc')}
         <br />
-        <span className="text-sm mt-1 block text-gray-400">
+        <span className="text-sm mt-1 block text-charcoal-soft">
           {locale === 'en'
             ? 'Check for typos or try searching by artist name.'
             : '오타가 있는지 확인하거나, 작가명으로 검색해 보세요.'}

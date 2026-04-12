@@ -559,7 +559,7 @@ function OrderDetail({
                   )}
               </>
             ) : (
-              <p className="text-sm text-gray-400 text-center py-1">{t('noTrackingYet')}</p>
+              <p className="text-sm text-charcoal-soft text-center py-1">{t('noTrackingYet')}</p>
             )}
           </div>
         )}
@@ -668,7 +668,7 @@ function OrderCard({
             <p className="mt-0.5 text-sm font-bold text-primary-a11y">
               {formatPriceForDisplay(item.totalAmount)}
             </p>
-            <p className="mt-0.5 text-xs text-gray-400">{formatKstDate(item.createdAt)}</p>
+            <p className="mt-0.5 text-xs text-charcoal-soft">{formatKstDate(item.createdAt)}</p>
           </div>
           <div className="flex shrink-0 flex-col items-end gap-2">
             <StatusBadge status={cardStatus} />

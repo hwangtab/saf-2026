@@ -440,7 +440,7 @@ export function TermsConsentForm({
               <p className="mt-1 text-gray-500">
                 {hasReadArtistTerms ? copy.readRequired : copy.readGuide}
               </p>
-              <p className="mt-1 text-xs text-gray-400">
+              <p className="mt-1 text-xs text-charcoal-soft">
                 <Link href="/terms/artist" className="underline underline-offset-2">
                   {copy.viewArtistContract}
                 </Link>
@@ -509,7 +509,7 @@ export function TermsConsentForm({
               <p className="mt-1 text-gray-500">
                 {hasReadExhibitorTerms ? copy.readRequired : copy.readGuide}
               </p>
-              <p className="mt-1 text-xs text-gray-400">
+              <p className="mt-1 text-xs text-charcoal-soft">
                 <Link href="/terms/exhibitor" className="underline underline-offset-2">
                   {copy.viewExhibitorContract}
                 </Link>
@@ -576,7 +576,7 @@ export function TermsConsentForm({
               <p className="mt-1 text-gray-500">
                 {hasReadPrivacy ? copy.readRequired : copy.readGuide}
               </p>
-              <p className="mt-1 text-xs text-gray-400">
+              <p className="mt-1 text-xs text-charcoal-soft">
                 <Link href="/privacy" className="underline underline-offset-2">
                   {copy.viewPrivacy}
                 </Link>
@@ -588,7 +588,7 @@ export function TermsConsentForm({
         <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-600">
           <p className="text-xs font-semibold text-gray-700">{copy.privacyPolicy}</p>
           <p className="mt-1 text-xs text-gray-500">{copy.privacyLinkGuide}</p>
-          <p className="mt-2 text-xs text-gray-400">
+          <p className="mt-2 text-xs text-charcoal-soft">
             <Link
               href="/privacy"
               target="_blank"
@@ -655,7 +655,7 @@ export function TermsConsentForm({
               <p className="mt-1 text-gray-500">
                 {hasReadTos ? copy.readRequired : copy.readGuide}
               </p>
-              <p className="mt-1 text-xs text-gray-400">
+              <p className="mt-1 text-xs text-charcoal-soft">
                 <Link href="/terms" className="underline underline-offset-2">
                   {copy.viewTos}
                 </Link>

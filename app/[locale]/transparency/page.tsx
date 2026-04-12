@@ -162,7 +162,7 @@ export default async function TransparencyPage() {
 
         <div className="w-full bg-white">
           <div className="container-max pt-4 text-right">
-            <p className="text-xs text-gray-400">Last updated: {LAST_UPDATED}</p>
+            <p className="text-xs text-charcoal-soft">Last updated: {LAST_UPDATED}</p>
           </div>
         </div>
         {/* Reports Grid */}
@@ -343,7 +343,7 @@ export default async function TransparencyPage() {
 
       <div className="w-full bg-white">
         <div className="container-max pt-4 text-right">
-          <p className="text-xs text-gray-400">마지막 업데이트: {LAST_UPDATED}</p>
+          <p className="text-xs text-charcoal-soft">마지막 업데이트: {LAST_UPDATED}</p>
         </div>
       </div>
       {/* 보고서 카드 섹션 */}

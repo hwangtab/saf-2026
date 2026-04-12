@@ -161,7 +161,7 @@ export default function SuccessClient({ paymentKey, orderId, amount, method }: P
               </div>
             </div>
 
-            <div className="text-xs text-gray-400 mb-6 space-y-1">
+            <div className="text-xs text-charcoal-soft mb-6 space-y-1">
               <p>{t('bankTransferNoticeName')}</p>
               <p>{t('bankTransferNoticeDeadline', { deadline })}</p>
             </div>
@@ -212,7 +212,7 @@ export default function SuccessClient({ paymentKey, orderId, amount, method }: P
               </div>
             </div>
 
-            <p className="text-xs text-gray-400 mb-6">{t('depositEmailNotice')}</p>
+            <p className="text-xs text-charcoal-soft mb-6">{t('depositEmailNotice')}</p>
 
             <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
               <LinkButton href="/artworks" variant="primary" size="sm" className="px-6 py-3">

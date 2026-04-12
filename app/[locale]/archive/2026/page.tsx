@@ -478,7 +478,7 @@ export default async function Archive2026Page() {
                     <span className="font-bold text-gray-900 block">{rev.author}</span>
                     <span className="text-xs text-charcoal-muted">{rev.role}</span>
                   </div>
-                  <time className="text-xs text-gray-400" dateTime={rev.date}>
+                  <time className="text-xs text-charcoal-soft" dateTime={rev.date}>
                     {rev.date}
                   </time>
                 </div>

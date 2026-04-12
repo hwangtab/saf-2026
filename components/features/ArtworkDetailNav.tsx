@@ -29,7 +29,7 @@ export default function ArtworkDetailNav({ artist, title }: ArtworkDetailNavProp
       <div className="container-max py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <BackToListButton fallbackHref={listHref} />
 
-        <div className="flex items-center text-xs text-gray-400 gap-2 whitespace-nowrap overflow-x-auto pb-1 md:pb-0">
+        <div className="flex items-center text-xs text-charcoal-soft gap-2 whitespace-nowrap overflow-x-auto pb-1 md:pb-0">
           <Link href="/" className="hover:text-primary transition-colors">
             {tBreadcrumbs('home')}
           </Link>
