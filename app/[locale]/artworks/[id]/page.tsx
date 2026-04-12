@@ -374,7 +374,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   </h2>
                   <p
                     id="artist-profile"
-                    className="text-gray-700 leading-relaxed text-sm whitespace-pre-line"
+                    className="text-charcoal leading-relaxed text-sm whitespace-pre-line"
                   >
                     {localizedProfile}
                   </p>
@@ -389,7 +389,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   </h2>
                   <p
                     id="artist-note"
-                    className="text-gray-700 leading-relaxed text-sm whitespace-pre-line"
+                    className="text-charcoal leading-relaxed text-sm whitespace-pre-line"
                   >
                     {localizedDescription}
                   </p>

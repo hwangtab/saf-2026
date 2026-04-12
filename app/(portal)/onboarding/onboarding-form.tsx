@@ -191,7 +191,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
   return (
     <form action={formAction} className="space-y-6" onSubmit={handleSubmitAttempt}>
       <div>
-        <label htmlFor="artist_name" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="artist_name" className="block text-sm font-medium text-charcoal">
           {t('artistName')} <span className="text-red-500">*</span>
         </label>
         <div className="mt-1">
@@ -208,7 +208,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
       </div>
 
       <div>
-        <label htmlFor="contact" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="contact" className="block text-sm font-medium text-charcoal">
           {t('contact')} <span className="text-red-500">*</span>
         </label>
         <div className="mt-1">
@@ -225,7 +225,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
       </div>
 
       <div>
-        <label htmlFor="bio" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="bio" className="block text-sm font-medium text-charcoal">
           {t('bio')} <span className="text-red-500">*</span>
         </label>
         <div className="mt-1">
@@ -242,7 +242,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
       </div>
 
       <div>
-        <label htmlFor="referrer" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="referrer" className="block text-sm font-medium text-charcoal">
           {t('referrer')} <span className="text-charcoal-soft font-normal">{t('optional')}</span>
         </label>
         <div className="mt-1">
@@ -266,7 +266,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
 
         <div className="space-y-3">
           <div id="artist-contract-section">
-            <p id="artist-terms-heading" className="mb-2 text-xs font-semibold text-gray-700">
+            <p id="artist-terms-heading" className="mb-2 text-xs font-semibold text-charcoal">
               {t('contractFull')}
             </p>
             <div className="relative">
@@ -298,7 +298,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
           </div>
 
           <div id="artist-tos-section">
-            <p id="tos-heading" className="mb-2 text-xs font-semibold text-gray-700">
+            <p id="tos-heading" className="mb-2 text-xs font-semibold text-charcoal">
               {t('tosFull')}
             </p>
             <div className="relative">
@@ -330,7 +330,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
           </div>
 
           <div id="artist-privacy-section">
-            <p id="privacy-policy-heading" className="mb-2 text-xs font-semibold text-gray-700">
+            <p id="privacy-policy-heading" className="mb-2 text-xs font-semibold text-charcoal">
               {t('privacyFull')}
             </p>
             <div className="relative">
@@ -379,7 +379,7 @@ export function OnboardingForm({ defaultValues }: { defaultValues?: OnboardingDe
             className="mt-1 h-4 w-4 rounded border-gray-300 text-black focus:ring-primary"
           />
           <div className="text-sm">
-            <label htmlFor="terms_accepted" className="font-medium text-gray-700">
+            <label htmlFor="terms_accepted" className="font-medium text-charcoal">
               {t('agreeAll')} <span className="text-red-500">*</span>
             </label>
             <p className="mt-1 text-gray-500">

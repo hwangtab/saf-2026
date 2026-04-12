@@ -156,7 +156,7 @@ export function BuyerList({ buyers }: { buyers: BuyerRecord[] }) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="이름 또는 전화번호 검색..."
-          className="w-full max-w-sm rounded-lg border border-gray-300 px-4 py-2 text-sm focus-visible:outline-nonefocus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/25"
+          className="w-full max-w-sm rounded-lg border border-gray-300 px-4 py-2 text-sm focus-visible:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/25"
         />
         <span className="shrink-0 text-sm text-gray-500">
           {filtered.length}명{search.trim() ? ` / ${buyers.length}명` : ''}

@@ -1,5 +1,5 @@
 import { getTranslations, getLocale } from 'next-intl/server';
-import { Link } from '@/i18n/navigation';
+import LinkButton from '@/components/ui/LinkButton';
 import type { Metadata } from 'next';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -21,16 +21,9 @@ export default async function ArtistNotFound() {
         </div>
         <h1 className="mb-4 text-2xl font-bold text-charcoal">{t('artistTitle')}</h1>
         <p className="mb-8 leading-relaxed text-charcoal-muted">{t('artistDescription')}</p>
-        <Link
-          href="/artworks"
-          className="inline-grid min-h-[48px] grid-cols-[1.25rem_auto_1.25rem] items-center gap-2 rounded-lg bg-primary px-6 py-3 font-bold text-white shadow-sm transition-colors hover:bg-primary-strong hover:shadow-md"
-        >
-          <span aria-hidden="true">🖼️</span>
-          <span>{t('artistCta')}</span>
-          <span aria-hidden="true" className="invisible">
-            🖼️
-          </span>
-        </Link>
+        <LinkButton href="/artworks" variant="primary">
+          {t('artistCta')}
+        </LinkButton>
       </div>
     </div>
   );

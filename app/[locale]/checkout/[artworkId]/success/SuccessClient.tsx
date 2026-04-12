@@ -110,7 +110,7 @@ export default function SuccessClient({ paymentKey, orderId, amount, method }: P
 
   if (state === 'error') {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center pt-24 pb-16">
+      <div className="min-h-screen bg-canvas-soft flex items-center justify-center pt-24 pb-16">
         <div className="max-w-lg w-full mx-auto px-4 text-center">
           <div className="rounded-2xl border border-red-100 bg-white p-10 shadow-sm">
             <p className="text-4xl mb-4">!</p>
@@ -127,7 +127,7 @@ export default function SuccessClient({ paymentKey, orderId, amount, method }: P
 
   if (state === 'bank_transfer') {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center pt-24 pb-16">
+      <div className="min-h-screen bg-canvas-soft flex items-center justify-center pt-24 pb-16">
         <div className="max-w-lg w-full mx-auto px-4">
           <div className="rounded-2xl border border-gray-200 bg-white p-10 shadow-sm text-center">
             <p className="text-4xl mb-4">🏦</p>
@@ -182,7 +182,7 @@ export default function SuccessClient({ paymentKey, orderId, amount, method }: P
 
   if (state === 'virtual' && virtualAccount) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center pt-24 pb-16">
+      <div className="min-h-screen bg-canvas-soft flex items-center justify-center pt-24 pb-16">
         <div className="max-w-lg w-full mx-auto px-4">
           <div className="rounded-2xl border border-gray-200 bg-white p-10 shadow-sm text-center">
             <p className="text-4xl mb-4">🏦</p>
@@ -230,7 +230,7 @@ export default function SuccessClient({ paymentKey, orderId, amount, method }: P
 
   // Success
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center pt-24 pb-16">
+    <div className="min-h-screen bg-canvas-soft flex items-center justify-center pt-24 pb-16">
       <div className="max-w-lg w-full mx-auto px-4">
         <div className="rounded-2xl border border-gray-200 bg-white p-10 shadow-sm text-center">
           <p className="text-5xl mb-4">✓</p>

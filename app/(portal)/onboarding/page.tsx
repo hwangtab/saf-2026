@@ -90,7 +90,7 @@ export default async function OnboardingPage({
 
   if (!isRecoveryFlow && role !== 'artist') {
     return (
-      <div className="relative min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="relative min-h-screen bg-canvas-soft flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="absolute top-4 right-4">
           <SignOutButton />
         </div>
@@ -124,7 +124,7 @@ export default async function OnboardingPage({
   }
 
   return (
-    <div className="relative min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="relative min-h-screen bg-canvas-soft flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="absolute top-4 right-4">
         <SignOutButton />
       </div>

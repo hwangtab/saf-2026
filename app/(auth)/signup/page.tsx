@@ -184,7 +184,7 @@ export default function SignUpPage() {
           </div>
           <form className="space-y-6" onSubmit={handleSignUp}>
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="name" className="block text-sm font-medium text-charcoal">
                 {copy.nameLabel}
               </label>
               <div className="mt-1">
@@ -202,7 +202,7 @@ export default function SignUpPage() {
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="email" className="block text-sm font-medium text-charcoal">
                 {copy.emailLabel}
               </label>
               <div className="mt-1">
@@ -221,7 +221,7 @@ export default function SignUpPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="password" className="block text-sm font-medium text-charcoal">
                 {copy.passwordLabel}
               </label>
               <div className="mt-1">

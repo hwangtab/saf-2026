@@ -59,7 +59,7 @@ export default async function ExhibitorOnboardingPage({
     isRecoveryFlow && profile?.role === 'exhibitor' && profile?.status === 'active';
 
   return (
-    <div className="relative min-h-screen bg-gray-50 flex flex-col justify-center pt-12 pb-16 lg:pb-24 sm:px-6 lg:px-8">
+    <div className="relative min-h-screen bg-canvas-soft flex flex-col justify-center pt-12 pb-16 lg:pb-24 sm:px-6 lg:px-8">
       <div className="absolute top-4 right-4">
         <SignOutButton />
       </div>

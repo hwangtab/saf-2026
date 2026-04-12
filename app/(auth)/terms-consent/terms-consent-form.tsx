@@ -388,7 +388,7 @@ export function TermsConsentForm({
           id="artist-consent-section"
           className="rounded-lg border border-gray-200 bg-gray-50 p-4"
         >
-          <p id="artist-terms-heading" className="mb-2 text-xs font-semibold text-gray-700">
+          <p id="artist-terms-heading" className="mb-2 text-xs font-semibold text-charcoal">
             {copy.artistContract}
           </p>
           <div className="relative">
@@ -434,7 +434,7 @@ export function TermsConsentForm({
               className="mt-1 h-4 w-4 rounded border-gray-300 text-black focus-visible:ring-primary"
             />
             <div className="text-sm">
-              <label htmlFor="agree_artist" className="font-medium text-gray-700">
+              <label htmlFor="agree_artist" className="font-medium text-charcoal">
                 {copy.agreeArtist} <span className="text-red-500">*</span>
               </label>
               <p className="mt-1 text-gray-500">
@@ -455,7 +455,7 @@ export function TermsConsentForm({
           id="exhibitor-consent-section"
           className="rounded-lg border border-gray-200 bg-gray-50 p-4"
         >
-          <p id="exhibitor-terms-heading" className="mb-2 text-xs font-semibold text-gray-700">
+          <p id="exhibitor-terms-heading" className="mb-2 text-xs font-semibold text-charcoal">
             {copy.exhibitorContract}
           </p>
           <div className="relative">
@@ -503,7 +503,7 @@ export function TermsConsentForm({
               className="mt-1 h-4 w-4 rounded border-gray-300 text-black focus-visible:ring-primary"
             />
             <div className="text-sm">
-              <label htmlFor="agree_exhibitor" className="font-medium text-gray-700">
+              <label htmlFor="agree_exhibitor" className="font-medium text-charcoal">
                 {copy.agreeExhibitor} <span className="text-red-500">*</span>
               </label>
               <p className="mt-1 text-gray-500">
@@ -524,7 +524,7 @@ export function TermsConsentForm({
           id="privacy-consent-section"
           className="rounded-lg border border-gray-200 bg-gray-50 p-4"
         >
-          <p id="privacy-heading" className="mb-2 text-xs font-semibold text-gray-700">
+          <p id="privacy-heading" className="mb-2 text-xs font-semibold text-charcoal">
             {copy.privacyPolicy}
           </p>
           <div className="relative">
@@ -570,7 +570,7 @@ export function TermsConsentForm({
               className="mt-1 h-4 w-4 rounded border-gray-300 text-black focus-visible:ring-primary"
             />
             <div className="text-sm">
-              <label htmlFor="agree_privacy" className="font-medium text-gray-700">
+              <label htmlFor="agree_privacy" className="font-medium text-charcoal">
                 {copy.agreePrivacy} <span className="text-red-500">*</span>
               </label>
               <p className="mt-1 text-gray-500">
@@ -586,7 +586,7 @@ export function TermsConsentForm({
         </div>
       ) : (
         <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-600">
-          <p className="text-xs font-semibold text-gray-700">{copy.privacyPolicy}</p>
+          <p className="text-xs font-semibold text-charcoal">{copy.privacyPolicy}</p>
           <p className="mt-1 text-xs text-gray-500">{copy.privacyLinkGuide}</p>
           <p className="mt-2 text-xs text-charcoal-soft">
             <Link
@@ -603,7 +603,7 @@ export function TermsConsentForm({
 
       {needsTosConsent && (
         <div id="tos-consent-section" className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-          <p id="tos-heading" className="mb-2 text-xs font-semibold text-gray-700">
+          <p id="tos-heading" className="mb-2 text-xs font-semibold text-charcoal">
             {copy.tos}
           </p>
           <div className="relative">
@@ -649,7 +649,7 @@ export function TermsConsentForm({
               className="mt-1 h-4 w-4 rounded border-gray-300 text-black focus-visible:ring-primary"
             />
             <div className="text-sm">
-              <label htmlFor="agree_tos" className="font-medium text-gray-700">
+              <label htmlFor="agree_tos" className="font-medium text-charcoal">
                 {copy.agreeTos} <span className="text-red-500">*</span>
               </label>
               <p className="mt-1 text-gray-500">

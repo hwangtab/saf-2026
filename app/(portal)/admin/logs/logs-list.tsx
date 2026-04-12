@@ -121,7 +121,7 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
             onChange={(e) => setRevertReason(e.target.value)}
             placeholder={t('revertReasonPlaceholder')}
             rows={3}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-nonefocus-visible:ring-2 focus-visible:ring-indigo-500"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
             autoFocus
           />
         </div>

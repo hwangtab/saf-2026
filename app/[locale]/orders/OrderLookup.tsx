@@ -78,14 +78,14 @@ function OrderStatusStepper({ status }: { status: string }) {
   // Not a normal flow status — show notice instead
   if (status === 'cancelled') {
     return (
-      <div className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700 text-center font-medium">
+      <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 text-center font-medium">
         {t('orderCancelledNotice')}
       </div>
     );
   }
   if (status === 'refunded') {
     return (
-      <div className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700 text-center font-medium">
+      <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 text-center font-medium">
         {t('orderRefundedNotice')}
       </div>
     );
@@ -205,7 +205,7 @@ function EditShippingForm({ order, buyerEmail, onSaved, onCancel }: EditShipping
   }
 
   const inputClass =
-    'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-charcoal placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary';
+    'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-charcoal placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary';
 
   return (
     <div className="space-y-2.5 rounded-xl border border-gray-200 bg-gray-50 p-4">
@@ -318,7 +318,7 @@ function CancelModal({ order, buyerEmail, onCancelled, onClose }: CancelModalPro
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           placeholder={t('cancelReasonPlaceholder')}
-          className="mb-3 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-charcoal placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none"
+          className="mb-3 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-charcoal placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary resize-none"
         />
 
         {error && <p className="mb-3 text-xs text-red-600">{error}</p>}
@@ -793,7 +793,7 @@ export default function OrderLookup() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder={t('namePlaceholder')}
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm text-charcoal placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm text-charcoal placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary"
                 autoComplete="name"
               />
             </div>
@@ -806,7 +806,7 @@ export default function OrderLookup() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={t('emailPlaceholder')}
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm text-charcoal placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm text-charcoal placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary"
                 autoComplete="email"
               />
             </div>
@@ -819,7 +819,7 @@ export default function OrderLookup() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder={t('phonePlaceholder')}
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm text-charcoal placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm text-charcoal placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary"
                 autoComplete="tel"
               />
             </div>
