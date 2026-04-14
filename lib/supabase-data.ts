@@ -436,9 +436,9 @@ const getSupabaseTestimonialsUncached = async (): Promise<TestimonialCategory[]>
       acc[row.category] = { category: row.category, items: [] };
     }
     acc[row.category].items.push({
-      quote: row.quote,
-      author: row.author,
-      context: row.context || '',
+      quote: sanitizeTextForRscPayload(row.quote),
+      author: sanitizeTextForRscPayload(row.author),
+      context: sanitizeTextForRscPayload(row.context || ''),
     });
     return acc;
   }, {});
@@ -466,7 +466,10 @@ const getSupabaseFAQsUncached = async (
 
   const localizeFaqRows = (rows: FAQRow[]): { question: string; answer: string }[] => {
     if (locale === 'ko') {
-      return rows.map((row) => ({ question: row.question, answer: row.answer }));
+      return rows.map((row) => ({
+        question: sanitizeTextForRscPayload(row.question),
+        answer: sanitizeTextForRscPayload(row.answer),
+      }));
     }
 
     return rows.map((row, index) => {
@@ -477,20 +480,25 @@ const getSupabaseFAQsUncached = async (
       const fallback = fallbackByQuestionMatch || fallbackByIndex;
 
       if (questionEn && answerEn) {
-        return { question: questionEn, answer: answerEn };
+        return {
+          question: sanitizeTextForRscPayload(questionEn),
+          answer: sanitizeTextForRscPayload(answerEn),
+        };
       }
 
       return {
-        question:
+        question: sanitizeTextForRscPayload(
           questionEn ||
-          fallback?.question ||
-          (containsHangul(row.question) ? `FAQ ${index + 1}` : row.question),
-        answer:
+            fallback?.question ||
+            (containsHangul(row.question) ? `FAQ ${index + 1}` : row.question)
+        ),
+        answer: sanitizeTextForRscPayload(
           answerEn ||
-          fallback?.answer ||
-          (containsHangul(row.answer)
-            ? 'This answer is currently available in Korean.'
-            : row.answer),
+            fallback?.answer ||
+            (containsHangul(row.answer)
+              ? 'This answer is currently available in Korean.'
+              : row.answer)
+        ),
       };
     });
   };
@@ -546,10 +554,10 @@ const getSupabaseReviewsUncached = async (): Promise<ExhibitionReview[]> => {
       typeof row.rating === 'number' ? row.rating : parseFloat(String(row.rating));
     return {
       id: row.id,
-      author: row.author,
-      role: row.role || '',
+      author: sanitizeTextForRscPayload(row.author),
+      role: sanitizeTextForRscPayload(row.role || ''),
       rating: Number.isFinite(parsedRating) ? parsedRating : 0,
-      comment: row.comment,
+      comment: sanitizeTextForRscPayload(row.comment),
       date: row.date,
     };
   });
@@ -593,12 +601,12 @@ const getSupabaseNewsUncached = async (): Promise<NewsArticle[]> => {
     const row = item as NewsRow;
     return {
       id: row.id,
-      title: row.title,
-      source: row.source || '',
+      title: sanitizeTextForRscPayload(row.title),
+      source: sanitizeTextForRscPayload(row.source || ''),
       date: row.date,
       link: row.link || '',
       thumbnail: row.thumbnail || '',
-      description: row.description || '',
+      description: sanitizeTextForRscPayload(row.description || ''),
     };
   });
 };
@@ -640,15 +648,15 @@ type StoryRow = {
 const mapStoryRow = (row: StoryRow): Story => ({
   id: row.id,
   slug: row.slug,
-  title: row.title,
-  title_en: row.title_en || undefined,
+  title: sanitizeTextForRscPayload(row.title),
+  title_en: sanitizeNullableTextForRscPayload(row.title_en) || undefined,
   category: row.category as Story['category'],
-  excerpt: row.excerpt || '',
-  excerpt_en: row.excerpt_en || undefined,
-  body: row.body,
-  body_en: row.body_en || undefined,
+  excerpt: sanitizeTextForRscPayload(row.excerpt || ''),
+  excerpt_en: sanitizeNullableTextForRscPayload(row.excerpt_en) || undefined,
+  body: sanitizeTextForRscPayload(row.body),
+  body_en: sanitizeNullableTextForRscPayload(row.body_en) || undefined,
   thumbnail: row.thumbnail || undefined,
-  author: row.author || undefined,
+  author: sanitizeNullableTextForRscPayload(row.author) || undefined,
   published_at: row.published_at,
   updated_at: row.updated_at || undefined,
   is_published: row.is_published,
