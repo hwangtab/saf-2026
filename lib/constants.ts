@@ -117,6 +117,7 @@ export const ANIMATION = {
 
 export const HERO_PAGES = [
   '/',
+  '/about',
   '/our-reality',
   '/our-proof',
   '/transparency',
