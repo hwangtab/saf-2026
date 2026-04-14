@@ -26,7 +26,7 @@ export function useLocalizedNavigation(): NavigationItem[] {
     },
     {
       name: t('intro'),
-      href: '#',
+      href: '/about',
       items: [
         {
           name: t('ourReality'),
