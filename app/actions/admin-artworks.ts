@@ -3,12 +3,16 @@
 import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
+import type { Database } from '@/types/supabase';
 import { syncArtworkToCafe24 } from '@/lib/integrations/cafe24/sync-artwork';
 import { purgeCafe24ProductsFromTrashEntry } from '@/lib/integrations/cafe24/trash-purge';
 import { logAdminAction } from './admin-logs';
 import { getString, getStoragePathsForRemoval, validateBatchSize } from '@/lib/utils/form-helpers';
 import { validateArtworkData, validateSaleInput } from '@/lib/actions/artwork-validation';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
+
+type EditionType = Database['public']['Enums']['edition_type'];
+type ArtworkStatus = Database['public']['Enums']['artwork_status'];
 
 type Cafe24SyncFeedback = {
   status: 'synced' | 'warning' | 'failed' | 'pending_auth';
@@ -286,7 +290,10 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
   const material = getString(formData, 'material');
   const year = getString(formData, 'year');
   const edition = getString(formData, 'edition');
-  const edition_type = getString(formData, 'edition_type') || 'unique';
+  const rawEditionType = getString(formData, 'edition_type') || 'unique';
+  const edition_type = (
+    ['unique', 'limited', 'open'].includes(rawEditionType) ? rawEditionType : 'unique'
+  ) as EditionType;
   const edition_limit_raw = getString(formData, 'edition_limit');
   const edition_limit =
     edition_type === 'limited' && edition_limit_raw ? Number(edition_limit_raw) : null;
@@ -319,7 +326,7 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
       price,
       tax_type,
       category,
-      artist_id: artist_id || null,
+      artist_id: artist_id || undefined,
       updated_at: new Date().toISOString(),
     })
     .eq('id', id);
@@ -383,7 +390,10 @@ export async function createAdminArtwork(formData: FormData) {
   const material = getString(formData, 'material');
   const year = getString(formData, 'year');
   const edition = getString(formData, 'edition');
-  const edition_type = getString(formData, 'edition_type') || 'unique';
+  const rawEditionType = getString(formData, 'edition_type') || 'unique';
+  const edition_type = (
+    ['unique', 'limited', 'open'].includes(rawEditionType) ? rawEditionType : 'unique'
+  ) as EditionType;
   const edition_limit_raw = getString(formData, 'edition_limit');
   const edition_limit =
     edition_type === 'limited' && edition_limit_raw ? Number(edition_limit_raw) : null;
@@ -616,7 +626,7 @@ export async function syncMissingArtworkPurchaseLinks(): Promise<MissingPurchase
 }
 
 // Batch operations
-export async function batchUpdateArtworkStatus(ids: string[], status: string) {
+export async function batchUpdateArtworkStatus(ids: string[], status: ArtworkStatus) {
   const admin = await requireAdmin();
   if (ids.length === 0) {
     return {

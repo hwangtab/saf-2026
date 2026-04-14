@@ -323,7 +323,6 @@ export async function createVideo(formData: FormData) {
   const description = getString(formData, 'description');
   const thumbnail = getString(formData, 'thumbnail');
   const transcript = getString(formData, 'transcript');
-  const duration = getString(formData, 'duration');
 
   const { data: video, error } = await supabase
     .from('videos')
@@ -334,7 +333,6 @@ export async function createVideo(formData: FormData) {
       youtube_id,
       thumbnail,
       transcript,
-      duration,
     })
     .select()
     .single();
@@ -360,7 +358,6 @@ export async function updateVideo(id: string, formData: FormData) {
   const description = getString(formData, 'description');
   const thumbnail = getString(formData, 'thumbnail');
   const transcript = getString(formData, 'transcript');
-  const duration = getString(formData, 'duration');
 
   const { data: newVideo, error } = await supabase
     .from('videos')
@@ -370,7 +367,6 @@ export async function updateVideo(id: string, formData: FormData) {
       youtube_id,
       thumbnail,
       transcript,
-      duration,
     })
     .eq('id', id)
     .select()

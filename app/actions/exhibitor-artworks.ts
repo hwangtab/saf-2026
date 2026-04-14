@@ -3,8 +3,10 @@
 import { revalidatePath } from 'next/cache';
 import { requireExhibitor } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
+import type { Database } from '@/types/supabase';
 import { syncArtworkToCafe24 } from '@/lib/integrations/cafe24/sync-artwork';
 import { purgeCafe24ProductsFromTrashEntry } from '@/lib/integrations/cafe24/trash-purge';
+
 import {
   getStoragePathFromPublicUrl,
   getString,
@@ -13,6 +15,8 @@ import {
 import { logExhibitorAction } from './admin-logs';
 import { validateArtworkData } from '@/lib/actions/artwork-validation';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
+
+type EditionType = Database['public']['Enums']['edition_type'];
 
 type ArtistJoin = { owner_id: string | null; name_ko: string | null };
 
@@ -142,7 +146,10 @@ export async function createExhibitorArtwork(formData: FormData) {
   const material = getString(formData, 'material');
   const year = getString(formData, 'year');
   const edition = getString(formData, 'edition');
-  const edition_type = getString(formData, 'edition_type') || 'unique';
+  const rawEditionType = getString(formData, 'edition_type') || 'unique';
+  const edition_type = (
+    ['unique', 'limited', 'open'].includes(rawEditionType) ? rawEditionType : 'unique'
+  ) as EditionType;
   const edition_limit_str = getString(formData, 'edition_limit');
   const edition_limit =
     edition_type === 'limited' && edition_limit_str ? Number(edition_limit_str) : null;
@@ -230,7 +237,10 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
   const material = getString(formData, 'material');
   const year = getString(formData, 'year');
   const edition = getString(formData, 'edition');
-  const edition_type = getString(formData, 'edition_type') || 'unique';
+  const rawEditionType = getString(formData, 'edition_type') || 'unique';
+  const edition_type = (
+    ['unique', 'limited', 'open'].includes(rawEditionType) ? rawEditionType : 'unique'
+  ) as EditionType;
   const edition_limit_str = getString(formData, 'edition_limit');
   const edition_limit =
     edition_type === 'limited' && edition_limit_str ? Number(edition_limit_str) : null;

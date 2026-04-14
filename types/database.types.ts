@@ -1,6 +1,6 @@
 export type UserRole = 'admin' | 'artist' | 'user' | 'exhibitor';
 export type UserStatus = 'pending' | 'active' | 'suspended';
-export type ArtworkStatus = 'available' | 'reserved' | 'sold';
+export type ArtworkStatus = 'available' | 'reserved' | 'sold' | 'hidden';
 export type EditionType = 'unique' | 'limited' | 'open';
 
 export interface DatabaseProfile {

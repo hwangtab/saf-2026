@@ -1,6 +1,7 @@
 'use server';
 
 import { createSupabaseServerClient } from '@/lib/auth/server';
+import type { Database } from '@/types/supabase';
 import { requireArtistActive } from '@/lib/auth/guards';
 import { syncArtworkToCafe24 } from '@/lib/integrations/cafe24/sync-artwork';
 import { purgeCafe24ProductsFromTrashEntry } from '@/lib/integrations/cafe24/trash-purge';
@@ -18,6 +19,9 @@ import {
 import { getString } from '@/lib/utils/form-helpers';
 import { getActionErrorMessage } from '@/lib/utils/action-error';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
+
+type EditionType = Database['public']['Enums']['edition_type'];
+type ArtworkStatus = Database['public']['Enums']['artwork_status'];
 
 export type ActionState = {
   message: string;
@@ -97,14 +101,19 @@ export async function createArtwork(
     const material = getString(formData, 'material');
     const year = getString(formData, 'year');
     const edition = getString(formData, 'edition');
-    const edition_type = getString(formData, 'edition_type') || 'unique';
+    const rawEditionType = getString(formData, 'edition_type') || 'unique';
+    const edition_type = (
+      ['unique', 'limited', 'open'].includes(rawEditionType) ? rawEditionType : 'unique'
+    ) as EditionType;
     const edition_limit_str = getString(formData, 'edition_limit');
     const edition_limit =
       edition_type === 'limited' && edition_limit_str ? Number(edition_limit_str) : null;
     const price = getString(formData, 'price');
     const category = getString(formData, 'category') || null;
     const rawStatus = getString(formData, 'status') || 'available';
-    const status = ['available', 'reserved', 'sold'].includes(rawStatus) ? rawStatus : 'available';
+    const status = (
+      ['available', 'reserved', 'sold'].includes(rawStatus) ? rawStatus : 'available'
+    ) as ArtworkStatus;
     const { urls: images, error: imagesError } = parseUrlList(formData.get('images'), '이미지');
     const { urls: newUploads, error: newUploadsError } = parseUrlList(
       formData.get('new_uploads'),
@@ -248,14 +257,19 @@ export async function updateArtwork(
     const material = getString(formData, 'material');
     const year = getString(formData, 'year');
     const edition = getString(formData, 'edition');
-    const edition_type = getString(formData, 'edition_type') || 'unique';
+    const rawEditionType = getString(formData, 'edition_type') || 'unique';
+    const edition_type = (
+      ['unique', 'limited', 'open'].includes(rawEditionType) ? rawEditionType : 'unique'
+    ) as EditionType;
     const edition_limit_str = getString(formData, 'edition_limit');
     const edition_limit =
       edition_type === 'limited' && edition_limit_str ? Number(edition_limit_str) : null;
     const price = getString(formData, 'price');
     const category = getString(formData, 'category') || null;
     const rawStatus = getString(formData, 'status') || 'available';
-    const status = ['available', 'reserved', 'sold'].includes(rawStatus) ? rawStatus : 'available';
+    const status = (
+      ['available', 'reserved', 'sold'].includes(rawStatus) ? rawStatus : 'available'
+    ) as ArtworkStatus;
     const hidden = formData.get('hidden') === 'on';
     const { urls: images, error: imagesError } = parseUrlList(formData.get('images'), '이미지');
     const { urls: newUploads, error: newUploadsError } = parseUrlList(
