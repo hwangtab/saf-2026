@@ -381,7 +381,10 @@ describe('generateArtworkMetadata', () => {
   it('should avoid product-specific meta tags for inquiry-priced artworks', () => {
     const metadata = generateArtworkMetadata(baseArtwork, 'ko');
 
-    expect(metadata.other?.['og:type']).toBe('website');
+    // 가격 문의 작품은 other에 og:type 'product'가 없어야 함
+    // (openGraph.type은 항상 'website'로 설정됨)
+    expect(metadata.other?.['og:type']).toBeUndefined();
+    expect(metadata.openGraph?.type).toBe('website');
     expect(metadata.other).not.toHaveProperty('product:price:amount');
     expect(metadata.other).not.toHaveProperty('product:price:currency');
     expect(metadata.other).not.toHaveProperty('product:availability');

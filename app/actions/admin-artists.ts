@@ -13,19 +13,13 @@ import {
 import { logAdminAction } from './admin-logs';
 import { getString } from '@/lib/utils/form-helpers';
 import { sanitizeIlikeQuery } from '@/lib/utils/query';
+import { validatePhone } from '@/lib/utils/phone';
 
 function normalizeEmail(value: string | null | undefined): string | null {
   const trimmed = (value || '').trim();
   if (!trimmed) return null;
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailPattern.test(trimmed) ? trimmed : null;
-}
-
-function normalizePhone(value: string | null | undefined): string | null {
-  const trimmed = (value || '').trim();
-  if (!trimmed) return null;
-  const phonePattern = /^\+?[0-9()\-\s]{7,20}$/;
-  return phonePattern.test(trimmed) ? trimmed : null;
 }
 
 function extractEmailFromText(value: string): string | null {
@@ -36,7 +30,7 @@ function extractEmailFromText(value: string): string | null {
 function extractPhoneFromText(value: string): string | null {
   const sanitized = value.replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, ' ');
   const phoneMatch = sanitized.match(/(?:\+?\d[\d\s()-]{5,}\d)/);
-  return normalizePhone(phoneMatch?.[0] || null);
+  return validatePhone(phoneMatch?.[0] || null);
 }
 
 function parseApplicationContact(contact: string | null | undefined) {
@@ -46,7 +40,7 @@ function parseApplicationContact(contact: string | null | undefined) {
   }
 
   const parsedEmail = extractEmailFromText(trimmed) || normalizeEmail(trimmed);
-  const parsedPhone = extractPhoneFromText(trimmed) || normalizePhone(trimmed);
+  const parsedPhone = extractPhoneFromText(trimmed) || validatePhone(trimmed);
 
   return {
     contactEmail: parsedEmail,

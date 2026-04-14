@@ -237,12 +237,33 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
 
   const adminClient = createSupabaseAdminClient();
 
-  await adminClient
+  const { error: orderUpdateError } = await adminClient
     .from('orders')
     .update({ status: 'awaiting_deposit' })
     .eq('order_no', result.orderNo);
 
-  await adminClient.from('artworks').update({ status: 'reserved' }).eq('id', input.artworkId);
+  if (orderUpdateError) {
+    // 주문 상태 업데이트 실패 → 생성된 주문을 취소 처리
+    await adminClient
+      .from('orders')
+      .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
+      .eq('order_no', result.orderNo);
+    return { success: false, error: '주문 상태 변경 중 오류가 발생했습니다.' };
+  }
+
+  const { error: artworkUpdateError } = await adminClient
+    .from('artworks')
+    .update({ status: 'reserved' })
+    .eq('id', input.artworkId);
+
+  if (artworkUpdateError) {
+    // 작품 상태 업데이트 실패 → 주문을 되돌림
+    await adminClient
+      .from('orders')
+      .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
+      .eq('order_no', result.orderNo);
+    return { success: false, error: '작품 상태 변경 중 오류가 발생했습니다.' };
+  }
 
   return result;
 }

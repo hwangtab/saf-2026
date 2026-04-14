@@ -13,6 +13,7 @@ import { containsHangul } from '@/lib/search-utils';
 import { createStandardPageMetadata } from '@/lib/seo';
 import { createBreadcrumbSchema, generateVideoSchema } from '@/lib/seo-utils';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
+import { routing } from '@/i18n/routing';
 import { resolveLocale } from '@/lib/server-locale';
 
 type ArchiveVideo = {
@@ -62,7 +63,9 @@ const localizeVideoTitle = (title: string, locale: 'ko' | 'en', index = 0): stri
 };
 
 export function generateStaticParams() {
-  return fallbackVideos.map((video) => ({ youtubeId: video.youtubeId }));
+  return fallbackVideos.flatMap((video) =>
+    routing.locales.map((locale) => ({ locale, youtubeId: video.youtubeId }))
+  );
 }
 
 export async function generateMetadata({

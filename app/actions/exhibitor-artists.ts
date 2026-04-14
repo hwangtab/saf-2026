@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { requireExhibitor } from '@/lib/auth/guards';
-import { createSupabaseAdminClient } from '@/lib/auth/server';
+import { createSupabaseServerClient } from '@/lib/auth/server';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { getString, getStoragePathFromPublicUrl } from '@/lib/utils/form-helpers';
 import { validateTextLength, validateUrl, validateEmail } from '@/lib/utils/input-validation';
@@ -10,7 +10,7 @@ import { logExhibitorAction } from './admin-logs';
 
 export async function getExhibitorArtists() {
   const user = await requireExhibitor();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await createSupabaseServerClient();
 
   const { data: artists, error } = await supabase
     .from('artists')
@@ -28,7 +28,7 @@ export async function getExhibitorArtists() {
 
 export async function getExhibitorArtistById(id: string) {
   const user = await requireExhibitor();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await createSupabaseServerClient();
 
   const { data, error } = await supabase
     .from('artists')
@@ -43,14 +43,15 @@ export async function getExhibitorArtistById(id: string) {
 
 export async function createExhibitorArtist(formData: FormData) {
   const user = await requireExhibitor();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await createSupabaseServerClient();
 
   const name_ko = validateTextLength(getString(formData, 'name_ko'), 100, '한국어 이름');
   const name_en = validateTextLength(getString(formData, 'name_en'), 100, '영어 이름');
   const bio = validateTextLength(getString(formData, 'bio'), 5000, '소개');
   const bio_en = validateTextLength(getString(formData, 'bio_en'), 5000, '영문 소개') || null;
   const history = validateTextLength(getString(formData, 'history'), 10000, '이력');
-  const history_en = validateTextLength(getString(formData, 'history_en'), 10000, '영문 이력') || null;
+  const history_en =
+    validateTextLength(getString(formData, 'history_en'), 10000, '영문 이력') || null;
   const contact_email = validateEmail(getString(formData, 'contact_email') || null);
   const instagram = validateUrl(getString(formData, 'instagram') || null);
   const homepage = validateUrl(getString(formData, 'homepage') || null);
@@ -95,7 +96,7 @@ export async function createExhibitorArtist(formData: FormData) {
 
 export async function updateExhibitorArtist(id: string, formData: FormData) {
   const user = await requireExhibitor();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await createSupabaseServerClient();
 
   // Fetch existing artist for snapshot
   const { data: oldArtist, error: fetchError } = await supabase
@@ -114,7 +115,8 @@ export async function updateExhibitorArtist(id: string, formData: FormData) {
   const bio = validateTextLength(getString(formData, 'bio'), 5000, '소개');
   const bio_en = validateTextLength(getString(formData, 'bio_en'), 5000, '영문 소개') || null;
   const history = validateTextLength(getString(formData, 'history'), 10000, '이력');
-  const history_en = validateTextLength(getString(formData, 'history_en'), 10000, '영문 이력') || null;
+  const history_en =
+    validateTextLength(getString(formData, 'history_en'), 10000, '영문 이력') || null;
   const profile_image = getString(formData, 'profile_image');
   const contact_email = validateEmail(getString(formData, 'contact_email') || null);
   const instagram = validateUrl(getString(formData, 'instagram') || null);
@@ -163,7 +165,7 @@ export async function updateExhibitorArtist(id: string, formData: FormData) {
 
 export async function updateExhibitorArtistProfileImage(id: string, profileImage: string | null) {
   const user = await requireExhibitor();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await createSupabaseServerClient();
 
   // Fetch existing artist for snapshot
   const { data: oldArtist, error: fetchError } = await supabase
@@ -213,7 +215,7 @@ export async function updateExhibitorArtistProfileImage(id: string, profileImage
 
 export async function deleteExhibitorArtist(id: string) {
   const user = await requireExhibitor();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await createSupabaseServerClient();
 
   // Fetch full artist data for snapshot
   const { data: artist, error: fetchError } = await supabase

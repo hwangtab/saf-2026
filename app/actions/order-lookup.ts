@@ -7,16 +7,7 @@ import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
 import { sendBuyerEmail } from '@/lib/notify';
 import { getArtworkEmailInfo } from '@/lib/utils/get-artwork-email-info';
 import { rateLimit } from '@/lib/rate-limit';
-
-/** Strip non-digits and normalise +82 → 0 prefix */
-function normalizePhone(raw: string): string {
-  const digits = raw.replace(/[^0-9]/g, '');
-  // +821012345678 → 821012345678 → 01012345678
-  if (digits.startsWith('82') && digits.length > 10) {
-    return '0' + digits.slice(2);
-  }
-  return digits;
-}
+import { normalizePhoneDigits } from '@/lib/utils/phone';
 
 export type OrderListItem = {
   orderNo: string;
@@ -76,7 +67,7 @@ export async function lookupOrders(
 
   const trimmedName = name.trim();
   const trimmedEmail = email.trim().toLowerCase();
-  const trimmedPhone = normalizePhone(phone);
+  const trimmedPhone = normalizePhoneDigits(phone);
 
   if (!trimmedName || !trimmedEmail || !trimmedPhone) {
     return { success: false, error: 'REQUIRED' };
@@ -130,7 +121,7 @@ export async function lookupOrders(
 
   const verifiedOrderNos = new Set(
     (phoneVerifiedOrders ?? [])
-      .filter((o) => normalizePhone(o.buyer_phone ?? '') === trimmedPhone)
+      .filter((o) => normalizePhoneDigits(o.buyer_phone ?? '') === trimmedPhone)
       .map((o) => o.order_no)
   );
 
@@ -408,16 +399,27 @@ export async function cancelBuyerOrder(
 
   const now = new Date().toISOString();
 
-  await adminClient
+  const { error: orderCancelError } = await adminClient
     .from('orders')
     .update({ status: 'cancelled', cancelled_at: now })
     .eq('id', order.id)
     .eq('status', 'paid');
 
-  await adminClient
+  if (orderCancelError) {
+    console.error('[cancelBuyerOrder] order update failed:', orderCancelError);
+    return { success: false, error: 'ORDER_CANCEL_FAILED' };
+  }
+
+  const { error: paymentCancelError } = await adminClient
     .from('payments')
     .update({ status: 'CANCELED', cancelled_at: now })
     .eq('id', payment.id);
+
+  if (paymentCancelError) {
+    console.error('[cancelBuyerOrder] payment update failed:', paymentCancelError);
+    // 주문은 이미 취소됨 — 결제 레코드 불일치 경고 로그
+    // Toss 환불은 이미 처리되었으므로 주문 취소를 되돌리지 않음
+  }
 
   const { data: sale } = await adminClient
     .from('artwork_sales')
