@@ -317,6 +317,7 @@ async function fetchBoundarySoldDate(
 export async function getRevenueAnalyticsForAuthorizedUser(
   input: RevenueQueryInput = {}
 ): Promise<RevenueAnalytics> {
+  await requireAdmin();
   const supabase = await createSupabaseAdminClient();
 
   const now = new Date();
