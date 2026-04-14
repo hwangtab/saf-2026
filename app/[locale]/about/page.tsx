@@ -535,7 +535,7 @@ export default async function AboutPage() {
       </Section>
 
       {/* 전시 아카이브 */}
-      <Section variant="white" prevVariant="canvas-soft">
+      <Section variant="white">
         <div className="container-max">
           <SectionTitle className="mb-12">전시 기록</SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
