@@ -1,6 +1,7 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import { cn } from '@/lib/utils';
 import { EXTERNAL_LINKS } from '@/lib/constants';
 import CTAButtonGroup from '@/components/common/CTAButtonGroup';
@@ -11,6 +12,8 @@ interface GalleryCampaignBannerProps {
 
 export default function GalleryCampaignBanner({ className }: GalleryCampaignBannerProps) {
   const t = useTranslations('galleryCampaign');
+  const locale = useLocale();
+  const isEn = locale === 'en';
 
   return (
     <div className={cn('mx-auto max-w-2xl text-center', className)}>
@@ -24,6 +27,23 @@ export default function GalleryCampaignBanner({ className }: GalleryCampaignBann
         purchaseHref={EXTERNAL_LINKS.ONLINE_GALLERY}
         className="mt-8 justify-center"
       />
+      <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-charcoal-muted">
+        <Link
+          href="/our-reality"
+          className="underline underline-offset-4 hover:text-primary transition-colors"
+        >
+          {isEn ? 'Why this matters' : '왜 이것이 중요한가'}
+        </Link>
+        <span aria-hidden="true" className="text-gray-300">
+          |
+        </span>
+        <Link
+          href="/our-proof"
+          className="underline underline-offset-4 hover:text-primary transition-colors"
+        >
+          {isEn ? 'How your purchase helps' : '구매가 어떻게 도움이 되는지'}
+        </Link>
+      </div>
     </div>
   );
 }
