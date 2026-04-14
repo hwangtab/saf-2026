@@ -2,6 +2,10 @@ import { cache } from 'react';
 import { unstable_cache } from 'next/cache';
 import { hasSupabaseConfig, supabase } from './supabase';
 import { formatPriceForDisplay } from '@/lib/utils';
+import {
+  sanitizeTextForRscPayload,
+  sanitizeNullableTextForRscPayload,
+} from '@/lib/utils/text-sanitizer';
 import { artworks as fallbackArtworks, getArtworkById } from '@/content/saf2026-artworks';
 import { newsArticles } from '@/content/news';
 import { faqs, faqsEn, getFaqsByLocale } from '@/content/faq';
@@ -90,16 +94,16 @@ function pickRandomItems<T>(items: T[], limit: number): T[] {
 
 const mapArtworkRow = (item: ArtworkRow, artist?: ArtistRow | null): Artwork => ({
   id: item.id,
-  artist: artist?.name_ko || 'Unknown Artist',
-  artist_en: artist?.name_en || undefined,
-  title: item.title,
-  title_en: item.title_en || undefined,
-  description: item.description || '',
-  description_en: item.description_en || undefined,
-  size: item.size || '',
-  material: item.material || '',
-  year: item.year || '',
-  edition: item.edition || '',
+  artist: sanitizeTextForRscPayload(artist?.name_ko || 'Unknown Artist'),
+  artist_en: sanitizeNullableTextForRscPayload(artist?.name_en) || undefined,
+  title: sanitizeTextForRscPayload(item.title),
+  title_en: sanitizeNullableTextForRscPayload(item.title_en) || undefined,
+  description: sanitizeTextForRscPayload(item.description || ''),
+  description_en: sanitizeNullableTextForRscPayload(item.description_en) || undefined,
+  size: sanitizeTextForRscPayload(item.size || ''),
+  material: sanitizeTextForRscPayload(item.material || ''),
+  year: sanitizeTextForRscPayload(item.year || ''),
+  edition: sanitizeTextForRscPayload(item.edition || ''),
   price: formatPriceForDisplay(item.price),
   images: item.images || [],
   shopUrl: item.shop_url || '',
@@ -107,10 +111,10 @@ const mapArtworkRow = (item: ArtworkRow, artist?: ArtistRow | null): Artwork => 
   reserved: item.status === 'reserved',
   sold_at: item.sold_at || undefined,
   category: item.category || undefined,
-  profile: artist?.bio || '',
-  profile_en: artist?.bio_en || undefined,
-  history: artist?.history || '',
-  history_en: artist?.history_en || undefined,
+  profile: sanitizeTextForRscPayload(artist?.bio || ''),
+  profile_en: sanitizeNullableTextForRscPayload(artist?.bio_en) || undefined,
+  history: sanitizeTextForRscPayload(artist?.history || ''),
+  history_en: sanitizeNullableTextForRscPayload(artist?.history_en) || undefined,
 });
 
 const getSupabaseArtworksUncached = async (): Promise<Artwork[]> => {
