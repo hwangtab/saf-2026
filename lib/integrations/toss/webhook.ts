@@ -33,6 +33,27 @@ export function verifyDepositCallbackSecret(
   }
 }
 
+/**
+ * Toss 웹훅 요청의 HMAC-SHA256 서명을 검증한다.
+ * Toss 대시보드에서 발급한 웹훅 시크릿으로 x-toss-signature 헤더를 검증한다.
+ */
+export function verifyWebhookSignature(
+  rawBody: string,
+  signature: string | null,
+  secret: string
+): boolean {
+  if (!signature || !secret) return false;
+  try {
+    const expected = crypto.createHmac('sha256', secret).update(rawBody).digest('base64');
+    const incoming = Buffer.from(signature);
+    const computed = Buffer.from(expected);
+    if (incoming.length !== computed.length) return false;
+    return crypto.timingSafeEqual(incoming, computed);
+  } catch {
+    return false;
+  }
+}
+
 /** Type guard for DEPOSIT_CALLBACK */
 export function isDepositCallback(
   payload: TossWebhookPayload

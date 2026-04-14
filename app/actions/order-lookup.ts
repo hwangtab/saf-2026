@@ -1,10 +1,12 @@
 'use server';
 
+import { headers } from 'next/headers';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { cancelPayment } from '@/lib/integrations/toss/cancel';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
 import { sendBuyerEmail } from '@/lib/notify';
 import { getArtworkEmailInfo } from '@/lib/utils/get-artwork-email-info';
+import { rateLimit } from '@/lib/rate-limit';
 
 /** Strip non-digits and normalise +82 → 0 prefix */
 function normalizePhone(raw: string): string {
@@ -64,6 +66,14 @@ export async function lookupOrders(
   email: string,
   phone: string
 ): Promise<OrderLookupListResult> {
+  // Rate limiting — IP 기준 분당 5회
+  const headersList = await headers();
+  const ip = headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+  const rl = rateLimit(`lookupOrders:${ip}`, { limit: 5, windowMs: 60_000 });
+  if (!rl.success) {
+    return { success: false, error: 'RATE_LIMITED' };
+  }
+
   const trimmedName = name.trim();
   const trimmedEmail = email.trim().toLowerCase();
   const trimmedPhone = normalizePhone(phone);
@@ -326,6 +336,14 @@ export async function cancelBuyerOrder(
   buyerEmail: string,
   cancelReason: string
 ): Promise<{ success: true } | { success: false; error: string }> {
+  // Rate limiting — IP 기준 분당 3회
+  const headersList = await headers();
+  const ip = headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+  const rl = rateLimit(`cancelBuyerOrder:${ip}`, { limit: 3, windowMs: 60_000 });
+  if (!rl.success) {
+    return { success: false, error: 'RATE_LIMITED' };
+  }
+
   const trimmedOrderNo = orderNo.trim();
   const trimmedEmail = buyerEmail.trim().toLowerCase();
   const trimmedReason = cancelReason.trim();

@@ -1,5 +1,6 @@
 'use server';
 
+import { headers } from 'next/headers';
 import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/auth/server';
 import { parsePrice } from '@/lib/parsePrice';
 import {
@@ -10,6 +11,7 @@ import {
 import { fetchWithTimeout } from '@/lib/integrations/toss/fetch-with-timeout';
 import { generateOrderNumber } from '@/lib/integrations/toss/order-number';
 import type { TossErrorResponse } from '@/lib/integrations/toss/types';
+import { rateLimit } from '@/lib/rate-limit';
 
 export type CreateOrderInput = {
   artworkId: string;
@@ -41,6 +43,14 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     shippingPostalCode,
     shippingMemo,
   } = input;
+
+  // Rate limiting — IP 기준 분당 10회
+  const headersList = await headers();
+  const ip = headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+  const rl = rateLimit(`createOrder:${ip}`, { limit: 10, windowMs: 60_000 });
+  if (!rl.success) {
+    return { success: false, error: '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.' };
+  }
 
   // Basic validation
   if (!artworkId || !buyerName || !buyerEmail || !buyerPhone) {
@@ -241,12 +251,13 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
  * Cancels a pending_payment order when the user abandons the payment widget.
  * Only cancels orders in 'pending_payment' status — safe to call speculatively.
  */
-export async function cancelPendingOrder(orderNo: string): Promise<void> {
-  if (!orderNo) return;
+export async function cancelPendingOrder(orderNo: string, buyerEmail: string): Promise<void> {
+  if (!orderNo || !buyerEmail) return;
   const adminClient = createSupabaseAdminClient();
   await adminClient
     .from('orders')
     .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
     .eq('order_no', orderNo)
-    .eq('status', 'pending_payment');
+    .eq('status', 'pending_payment')
+    .eq('buyer_email', buyerEmail.trim().toLowerCase());
 }

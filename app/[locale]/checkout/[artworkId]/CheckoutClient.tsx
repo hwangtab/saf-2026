@@ -161,7 +161,7 @@ export default function CheckoutClient({
       });
 
       if (!payResult.success) {
-        void cancelPendingOrder(orderNo);
+        void cancelPendingOrder(orderNo, buyerEmail);
         setError(payResult.error);
         return;
       }
@@ -169,7 +169,8 @@ export default function CheckoutClient({
       // 3. Redirect to Toss-hosted payment page
       window.location.href = payResult.checkoutUrl;
     } catch (err: unknown) {
-      if (createdOrderNo) void cancelPendingOrder(createdOrderNo);
+      if (createdOrderNo)
+        void cancelPendingOrder(createdOrderNo, buyerInfoRef.current?.buyerEmail ?? '');
       setError((err as Error)?.message ?? t('errorPayment'));
     } finally {
       setSubmitting(false);
