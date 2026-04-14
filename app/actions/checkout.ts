@@ -254,7 +254,8 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
   const { error: artworkUpdateError } = await adminClient
     .from('artworks')
     .update({ status: 'reserved' })
-    .eq('id', input.artworkId);
+    .eq('id', input.artworkId)
+    .eq('status', 'available');
 
   if (artworkUpdateError) {
     // 작품 상태 업데이트 실패 → 주문을 되돌림

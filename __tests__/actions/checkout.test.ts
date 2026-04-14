@@ -52,7 +52,10 @@ jest.mock('@/lib/auth/server', () => ({
         const chain = buildChain(mockArtworkResult);
         return {
           select: chain.select,
-          update: jest.fn(() => ({ eq: jest.fn(() => mockUpdateResult) })),
+          update: jest.fn(() => {
+            const eqChain: jest.Mock = jest.fn(() => ({ eq: eqChain, ...mockUpdateResult }));
+            return { eq: eqChain };
+          }),
         };
       }
       if (table === 'orders') {
