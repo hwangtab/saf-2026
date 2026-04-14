@@ -102,8 +102,9 @@ export default function SuccessClient({ paymentKey, orderId, amount, method }: P
 
   if (state === 'loading') {
     return (
-      <div className="flex min-h-screen items-center justify-center pt-24">
-        <p className="text-gray-500">{t('confirmingPayment')}</p>
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 pt-24">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-gray-200 border-t-primary" />
+        <p className="text-sm text-gray-500">{t('confirmingPayment')}</p>
       </div>
     );
   }

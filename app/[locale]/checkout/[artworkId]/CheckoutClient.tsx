@@ -114,6 +114,7 @@ export default function CheckoutClient({
 
         if (!result.success) {
           setError(result.error);
+          setSubmitting(false);
           return;
         }
 
@@ -138,6 +139,7 @@ export default function CheckoutClient({
 
       if (!result.success) {
         setError(result.error);
+        setSubmitting(false);
         return;
       }
 
@@ -163,16 +165,16 @@ export default function CheckoutClient({
       if (!payResult.success) {
         void cancelPendingOrder(orderNo, buyerEmail);
         setError(payResult.error);
+        setSubmitting(false);
         return;
       }
 
-      // 3. Redirect to Toss-hosted payment page
+      // 3. Redirect to Toss-hosted payment page — submitting stays true until page unloads
       window.location.href = payResult.checkoutUrl;
     } catch (err: unknown) {
       if (createdOrderNo)
         void cancelPendingOrder(createdOrderNo, buyerInfoRef.current?.buyerEmail ?? '');
       setError((err as Error)?.message ?? t('errorPayment'));
-    } finally {
       setSubmitting(false);
     }
   }
