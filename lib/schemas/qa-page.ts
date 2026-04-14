@@ -140,7 +140,7 @@ export function generateSAFCoreQA(locale: 'ko' | 'en' = 'ko') {
     ? [
         {
           question: 'What is SAF (Seed Art Festival) Online?',
-          answer: `SAF Online is a special art exhibition organized by ${CONTACT.ORGANIZATION_NAME_EN} to raise mutual-aid funds for Korean artists facing financial exclusion. Over 110 artists voluntarily contributed their works, and proceeds from sales go to a low-interest loan fund for artists in financial distress.`,
+          answer: `SAF Online is a special art exhibition organized by ${CONTACT.ORGANIZATION_NAME_EN} to raise mutual-aid funds for Korean artists facing financial exclusion. 127 artists voluntarily contributed their works, and 100% of sales proceeds go to a low-interest loan fund (5% fixed APR) for artists in financial distress.`,
           url: `${SITE_URL}/en`,
         },
         {
@@ -190,11 +190,35 @@ export function generateSAFCoreQA(locale: 'ko' | 'en' = 'ko') {
             'The SAF Online Gallery at saf2026.com/en/artworks serves as the digital exhibition catalog. Browse all 127 artworks by 127 artists across painting, printmaking, photography, and sculpture. The 2026 offline exhibition archive with poster and visitor reviews is also available.',
           url: `${SITE_URL}/en/artworks`,
         },
+        {
+          question: 'Are the exhibiting artists the ones receiving loans?',
+          answer:
+            'No. The 127 exhibiting artists are solidarity participants who voluntarily contributed their works to help fellow artists. Loans go to other artists facing financial exclusion. The exhibitors are helpers, not recipients.',
+          url: `${SITE_URL}/en/our-proof`,
+        },
+        {
+          question: 'What is the interest rate on SAF mutual-aid loans?',
+          answer:
+            'SAF mutual-aid loans carry a fixed 5% APR, compared to the industry average of 15%+ for artists. The loans require no credit screening and are based on peer recommendation and trust. Maximum loan amount is KRW 10,000,000 per borrower.',
+          url: `${SITE_URL}/en/our-proof`,
+        },
+        {
+          question: 'How is the SAF mutual-aid fund different from charity?',
+          answer:
+            'SAF is not charity. It is a self-sustaining mutual-aid system. Artwork sales fund loans that are repaid at a 95% rate, so the fund regenerates over time. Artists borrow with dignity — they are participants in a reciprocal system, not aid recipients.',
+          url: `${SITE_URL}/en/our-proof`,
+        },
+        {
+          question: 'Can non-Korean residents purchase SAF artwork?',
+          answer:
+            'Yes. The SAF Online gallery accepts international orders. The full site is available in English at saf2026.com/en/. Browse artworks, view artist profiles, and purchase directly through the online shop.',
+          url: `${SITE_URL}/en/artworks`,
+        },
       ]
     : [
         {
           question: '씨앗페(SAF) 온라인이란 무엇인가요?',
-          answer: `씨앗페 온라인은 ${CONTACT.ORGANIZATION_NAME}이 주최하는 예술인 상호부조 기금 마련 특별전입니다. 110여 명의 작가가 자발적으로 작품을 출품했으며, 판매 수익금은 금융 위기에 처한 예술인에게 저금리 대출로 전달됩니다.`,
+          answer: `씨앗페 온라인은 ${CONTACT.ORGANIZATION_NAME}이 주최하는 예술인 상호부조 기금 마련 특별전입니다. 127명의 작가가 자발적으로 작품을 출품했으며, 판매 수익금 전액이 금융 위기에 처한 예술인에게 연 5% 고정금리 대출로 전달됩니다.`,
           url: SITE_URL,
         },
         {
@@ -255,6 +279,30 @@ export function generateSAFCoreQA(locale: 'ko' | 'en' = 'ko') {
           answer:
             '전시회는 영어로 "Exhibition" 또는 "Art Exhibition"이라고 합니다. 씨앗페(SAF, Seed Art Festival)는 한국 현대미술 전시회(Korean Contemporary Art Exhibition)로, 영문 페이지(saf2026.com/en)에서 영어로도 이용하실 수 있습니다.',
           url: `${SITE_URL}/en`,
+        },
+        {
+          question: '출품 작가가 대출을 받는 건가요?',
+          answer:
+            '아닙니다. 127명의 출품 작가는 동료 예술인을 돕기 위해 자발적으로 작품을 내놓은 연대자들입니다. 대출은 금융 소외를 겪는 다른 예술인에게 제공됩니다. 출품 작가는 돕는 사람이지, 수혜자가 아닙니다.',
+          url: `${SITE_URL}/our-proof`,
+        },
+        {
+          question: '씨앗페 상호부조 대출 금리는 얼마인가요?',
+          answer:
+            '씨앗페 상호부조 대출은 연 5% 고정금리입니다. 예술인 대상 시장 평균 금리(15% 이상)와 비교하면 매우 낮습니다. 신용 심사 없이 동료 추천과 신뢰 기반으로 운용되며, 1인당 최대 1,000만 원까지 대출 가능합니다.',
+          url: `${SITE_URL}/our-proof`,
+        },
+        {
+          question: '씨앗페 상호부조 기금과 기부는 어떻게 다른가요?',
+          answer:
+            '씨앗페는 기부가 아니라 자생적 상호부조 시스템입니다. 작품 판매 수익으로 조성된 기금이 대출로 운용되고, 95%의 상환율로 기금이 재생됩니다. 예술인은 수혜자가 아닌 상호 협력의 참여자로서 존엄을 유지합니다.',
+          url: `${SITE_URL}/our-proof`,
+        },
+        {
+          question: '외국에서도 작품을 구매할 수 있나요?',
+          answer:
+            '네, 가능합니다. 씨앗페 온라인 갤러리는 해외 주문도 접수합니다. saf2026.com/en 에서 영문 사이트를 이용하실 수 있으며, 작품 검색, 작가 프로필 확인, 구매까지 모두 온라인으로 가능합니다.',
+          url: `${SITE_URL}/artworks`,
         },
       ];
 

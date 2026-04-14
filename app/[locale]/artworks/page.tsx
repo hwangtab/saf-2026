@@ -122,6 +122,10 @@ export default async function ArtworksPage() {
       name: locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
       url: SITE_URL,
     },
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['h1', '.page-hero-description'],
+    },
   };
 
   // 카테고리별 작품 수 계산 (네비게이션용)
