@@ -1,46 +1,226 @@
 [
   {
-    "hash": "e91e32fe",
+    "hash": "407e4f5d",
     "type": "fix",
-    "scope": "email",
-    "subject": "구매자 이메일 발송 안정성 및 품질 개선",
-    "summary": "Resend 재시도, FROM 환경변수 필수화, dueDate 포맷, buyer_email 가드 통일",
-    "body": "- RESEND_FROM_EMAIL 미설정 시 no-op으로 변경 (스팸 방지)\n- .env.local.example에 RESEND_FROM_EMAIL 문서화\n- resendFetch에 429/5xx/네트워크에러 시 1회 재시도 추가\n- confirm route 시나리오 1,2에 buyer_email null 가드 추가 (웹훅과 일관성)\n- 가상계좌 dueDate ISO→한국어 날짜 포맷 (formatKoreanDate)\n- 이메일 HTML에 viewport 메타태그 추가 (모바일 최적화)\n- TD_KEY/TD_VAL 상수를 사용 전 위치로 이동\n- 이메일 제목에서 이모지 제거 (스팸필터 회피)",
-    "date": "2026-04-10",
+    "scope": "seo",
+    "subject": "소개 페이지 품질 전면 개선 + 헤더 투명 + 아카이브 섹션",
+    "summary": "/about 페이지 전면 재작성 — 콘텐츠 품질을 our-reality·our-proof 수준으로 향상",
+    "body": "- HERO_PAGES에 '/about' 추가 → 헤더 투명 모드 적용\n- 문제 제기 섹션: 84.9% 배제율·48.6% 고금리 데이터 서사 구조\n- StatCard 4개: 127명 연대 작가, 354건 대출, ~7억 원, 95% 상환율\n- 4단계 흐름도 (STEP 01~04) + 기금 레버리지 callout\n- 기존 금융 vs 상호부조 대출 비교 테이블\n- 전시 아카이브 섹션 (2023/2026 카드, 클릭 시 해당 페이지 이동)\n- CTAButtonGroup + 출처/참고 섹션\n- 하위 4개 페이지 (our-reality, our-proof, transparency, news) 교차 링크\n- ko/en 이중 언어 완전 대응 (251줄 → 777줄)",
+    "date": "2026-04-14",
+    "author": "황경하"
+  },
+  {
+    "hash": "831d5573",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "소개 필라 페이지 추가 + nav href 수정 + 공개 라우트 loading.tsx",
+    "summary": "SEO 감사 결과 반영 — /about 필라 페이지 생성, nav '#' 링크 수정, 공개 라우트 로딩 스켈레톤",
+    "body": "- /about 필라 페이지: 캠페인 미션, 4단계 흐름도, 하위 페이지 카드 링크 (ko/en)\n- nav \"소개\" href '#' → '/about' 변경 (크롤 낭비 방지)\n- app/[locale]/loading.tsx 추가 (공개 라우트 CWV 개선)\n- sitemap.ts에 /about 경로 추가 (priority 0.9)\n- BreadcrumbList JSON-LD, 메타데이터, hreflang 완비",
+    "date": "2026-04-14",
+    "author": "황경하"
+  },
+  {
+    "hash": "01f780f8",
+    "type": "fix",
+    "scope": "security",
+    "subject": "크론 라우트 timing-safe 비교 + rate limiting + CSP frame-src 강화",
+    "summary": "보안 재점검 후속 조치 — 크론 인증 강화, rate limiting 보완, CSP http:// 제거",
+    "body": "- 크론 라우트 4개 CRON_SECRET 비교를 crypto.timingSafeEqual로 교체\n  (purge-trash, cafe24-sync-sales, reconcile-payments, expire-stale-orders)\n- order-lookup: lookupOrderDetail(5/min), updateBuyerShipping(3/min) rate limiting 추가\n- CSP frame-src에서 http://*.kakao.com 제거 (HTTPS만 허용)",
+    "date": "2026-04-14",
+    "author": "황경하"
+  },
+  {
+    "hash": "188ba544",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "사이트 구조 내부 링크 보강 — Footer·갤러리 크로스 링크",
+    "summary": "Footer에 매거진·아카이브 링크 추가, 갤러리 배너에 미션 크로스 링크 추가",
+    "body": "- Footer.tsx: /stories(매거진), /archive(아카이브) 링크 추가\n  → 전체 주요 섹션이 Footer에서 접근 가능하도록 보강\n- GalleryCampaignBanner.tsx: /our-reality, /our-proof 크로스 링크 추가\n  → 작품 갤러리에서 캠페인 맥락(왜 중요한가, 구매가 어떻게 도움이 되는지)\n  으로의 내부 링크 에쿼티 흐름 생성",
+    "date": "2026-04-14",
+    "author": "황경하"
+  },
+  {
+    "hash": "0763f1ff",
+    "type": "feat",
+    "scope": "aeo",
+    "subject": "AI 검색 최적화 — llms-full.txt, QAPage 확장, Speakable",
+    "summary": "AI 검색 엔진 인용률 향상을 위한 AEO/GEO 최적화 5건",
+    "body": "- robots.ts: ClaudeBot 크롤러 명시 허용 추가\n- llms.txt: 작가 수 127명 정정, 대출 조건(5% APR, 최대 1천만원),\n  기금 규모(~7억 집행, 7700만 적립) 등 누락 데이터 보강\n- llms-full.txt 신규 생성: llmstxt.org 표준 상세 버전 — 통계 테이블,\n  대출 조건, FAQ 13건, 사이트 구조, 구조화 데이터 목록 포함\n- artworks/page.tsx: CollectionPage 스키마에 SpeakableSpecification 추가\n- qa-page.ts: 한·영 각 4건 핵심 질문 추가 (출품 작가 프레이밍,\n  대출 금리, 기부와의 차이, 해외 구매 가능 여부), 작가 수 110→127 정정",
+    "date": "2026-04-14",
+    "author": "황경하"
+  },
+  {
+    "hash": "2d673be9",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "SEO 잔여 이슈 4건 일괄 수정",
+    "summary": "og:type product 오버라이드, nofollow 제거, modifiedTime 추가, 인코딩 통일",
+    "body": "- artwork.ts: openGraph.type을 직접 오버라이드 ('product'/'website')\n  other['og:type']는 <meta name>을 생성해 Facebook이 인식 못하는 문제 해소\n- Footer/LinkButton/NavLink/RelatedArticles: 자사 소셜·계열 링크에서\n  nofollow 제거 → Google Knowledge Graph 매칭 신호 복원\n- news/[id]/page.tsx: OG modifiedTime 추가 (article.date 재사용)\n- stories/[slug]/page.tsx: OG modifiedTime 추가 (story.updated_at 우선)\n- category/[category]/page.tsx: generateStaticParams에서 encodeURIComponent\n  제거 → artist 페이지와 동일하게 raw 값 반환으로 통일",
+    "date": "2026-04-14",
+    "author": "황경하"
+  },
+  {
+    "hash": "344fbcf7",
+    "type": "fix",
+    "scope": "schema",
+    "subject": "ItemList Offer에 url 속성 추가",
+    "summary": "아트워크 목록 스키마의 Offer 객체에 구매 URL 누락 보완",
+    "body": "- generateArtworkListSchema()의 ListItem > VisualArtwork > Offer에\n  url: artworkUrl 추가 (Google 권장 필수 필드)\n- VisualArtwork 자체에는 url이 있었지만 Offer 레벨에는 누락된 상태였음",
+    "date": "2026-04-14",
+    "author": "황경하"
+  },
+  {
+    "hash": "fbb3c762",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "영어 locale 기본 메타데이터 및 apple-touch-icon 리다이렉트",
+    "summary": "영어 페이지 기본 메타/OG가 한국어 root layout 값 대신 영문 적용",
+    "body": "- [locale]/layout.tsx에 generateMetadata 추가: locale=en이면 영문\n  title.default/template, description, OG locale/siteName/imageAlt 제공\n- 한국어 locale은 빈 객체 반환으로 root layout 기본값 그대로 유지\n- next.config.js 리다이렉트에 /apple-touch-icon.png →\n  /images/icons/icon-192.png 추가 (구형 iOS 자동 요청 404 방지)",
+    "date": "2026-04-14",
+    "author": "황경하"
+  },
+  {
+    "hash": "c4aff6b6",
+    "type": "fix",
+    "scope": "i18n",
+    "subject": "SEO 메타/JSON-LD에 description_en 연결",
+    "summary": "영어 locale에서 메타 description·OG·JSON-LD도 description_en 사용",
+    "body": "- generateArtworkMetadata: descSnippet 계산 시 isEnglish면 description_en 우선 사용\n- generateArtworkJsonLd: descriptionForLocale도 동일 패턴 적용\n- description_en 없는 작품은 기존 description으로 폴백",
+    "date": "2026-04-14",
+    "author": "황경하"
+  },
+  {
+    "hash": "e6b0d2b8",
+    "type": "feat",
+    "scope": "i18n",
+    "subject": "description_en 인프라 구축 및 영문 누락 작품 4개 보완",
+    "summary": "DB description_en 컬럼을 코드 전체에 연결하고, title_en·artist_en 누락 4개 작품 영문 데이터 추가",
+    "body": "- types/index.ts: BaseArtwork에 description_en?: string 추가\n- lib/supabase-data.ts: description_en을 SELECT·ArtworkRow·mapArtworkRow에 반영\n- scripts/sync-artworks-from-db.js: sync 시 description_en 포함하도록 수정\n- app/[locale]/artworks/[id]/page.tsx: localizeLongText에 artwork.description_en 전달\n- migration: title_en 4개 추가 (심모비 9505 SIM_Memory, 박재동 노무현 시리즈 3개)\n- migration: 박재동 3개 작품 artist_id 연결 수정 → artist_en 자동 복구\n- migration: 심모비 description_en 영문 번역 추가\n- batch-db-generated.ts: 위 변경사항 정적 파일에 즉시 반영\n\nhttps://claude.ai/code/session_014Z9J1ktY9erPaGbYgcF8gM",
+    "date": "2026-04-12",
+    "author": "Claude"
+  },
+  {
+    "hash": "4661fef7",
+    "type": "fix",
+    "scope": "ui",
+    "subject": "블라인드스팟 7라운드 — 색상 토큰·radius·접근성·hover 통일",
+    "summary": "공개 페이지 잔여 UI 불일치 9건 수정 — 색상 토큰, border-radius, 접근성, hover/transition, 컴포넌트 교체",
+    "body": "- H1: text-gray-700 → text-charcoal (LegalDoc, FeedbackModal, SupportMessage,\n  ArtworkImage, PurchaseGuide, Pagination, Modal — 7파일 16곳)\n- H2: rounded-md → rounded-lg (onboarding-form, exhibitor-onboarding-form,\n  terms-consent-form — 3파일 28곳, 입력/스크롤/경고 박스)\n- H3: text-gray-400 읽기 텍스트 → text-charcoal-soft/gray-500\n  (FullscreenMenu, NavLink, news, OrderLookup — 4파일)\n- H4: word-keep → break-keep (ArtworkPurchaseCTA — 프로젝트 유일한 비표준)\n- H5: OrderLookup 접근성 — CancelModal role=\"dialog\" aria-modal,\n  OrderCard aria-expanded, 에러 박스 role=\"alert\" (3곳)\n- M6: OrderLookup 버튼 6개 hover/transition 추가\n- M7: NotFoundView 인라인 Link → LinkButton variant=\"outline\"\n- M8: ArtworkImage \"방에서 보기\" 인라인 button → Button variant=\"outline\"\n- M9: BuyerInfoForm 주소검색 인라인 button → Button variant=\"outline\" size=\"sm\"",
+    "date": "2026-04-12",
     "author": "hwangtab"
   },
   {
-    "hash": "f53f9cb3",
+    "hash": "e05d911e",
     "type": "fix",
-    "scope": null,
-    "subject": ".single() → .maybeSingle() 잔존 2건 수정",
-    "summary": "웹훅 artwork_sales 조회, getOrderDetail 주문 조회에서 불필요한 PGRST116 에러 방지",
+    "scope": "ui",
+    "subject": "UI 체계화 6라운드 — CSS 버그·디자인 토큰·focus 접근성 통일",
+    "summary": "focus-visible CSS 버그 수정, 페이지 배경 bg-canvas-soft 통일, 폼 레이블 text-charcoal 통일, focus-visible 키보드 접근성 개선",
+    "body": "- F1: focus-visible:outline-nonefocus-visible: → outline-none focus-visible: 공백 버그 수정\n  (FeedbackModal, SearchBar, admin/exhibitor 폼 등 10개 파일 49곳)\n- F2: 온보딩·체크아웃·주문조회 페이지 배경 bg-gray-50 → bg-canvas-soft (10개 파일 12곳)\n- F3: auth/onboarding 폼 레이블 text-gray-700 → text-charcoal (6개 파일 36곳)\n  (gray-700은 CLAUDE.md 텍스트 계층에 없는 값)\n- F4: OrderLookup·BuyerInfoForm 입력 focus: → focus-visible: (마우스 클릭 시 불필요한 링 제거)\n- F5: OrderLookup 에러 박스 rounded-xl → rounded-lg (프로젝트 표준)\n- F6: artist/not-found.tsx 인라인 Link → LinkButton variant=\"primary\"",
+    "date": "2026-04-12",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "c91d7116",
+    "type": "fix",
+    "scope": "design",
+    "subject": "블라인드스팟 3건 — 인라인 버튼 2개 교체 + sold 뱃지 접근성",
+    "summary": "UI 체계화 후 잔여 이슈 3건 수정",
+    "body": "- OrderLookup 주문조회 submit 버튼: 인라인 <button> + hover:opacity-90 → Button size=\"lg\"\n- news/[id] 원문 기사 링크: 인라인 <a> + hover:opacity-90 → LinkButton primary\n- SearchResultItem sold 뱃지: text-gray-400 → text-charcoal-soft (WCAG AA)",
+    "date": "2026-04-12",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "2f70c75e",
+    "type": "fix",
+    "scope": "a11y",
+    "subject": "text-gray-400 → text-charcoal-soft 접근성 개선 — WCAG AA 대비율 준수",
+    "summary": "밝은 배경 위 읽어야 하는 텍스트의 text-gray-400(3.34:1)을 text-charcoal-soft(4.84:1)로 교체하여 WCAG AA 기준 충족",
+    "body": "- 타임스탬프 6건 (our-proof, our-reality, transparency \"마지막 업데이트\")\n- checkout fail 에러코드/주문번호 2건\n- checkout success 입금 안내문 2건\n- auth 폼 구분선 텍스트 2건 (login/signup \"또는 이메일 로그인\")\n- 약관 동의 폼 부가설명 5건 (terms-consent)\n- 온보딩 폼 부가설명 4건 (onboarding, exhibitor-onboarding)\n- OrderLookup 메타데이터 2건 (배송추적, 주문일시)\n- archive/2026 리뷰 날짜 1건\n- ArtworkPurchaseCTA 가격 라벨/구분선 3건\n- SupportMessage 증언 저자명/라벨 2건\n- ArtworkDetailNav breadcrumb 1건\n- GalleryEmptyState 안내 메시지 1건\n\n아이콘·비활성 상태·Footer(진한 배경)·placeholder 등 WCAG 면제 대상은 유지.",
+    "date": "2026-04-12",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "3b29256d",
+    "type": "fix",
+    "scope": "image",
+    "subject": "Supabase render transform에 resize=contain 추가 — 비율 왜곡 근본 수정",
+    "summary": "Supabase render endpoint가 width만 지정 시 height를 원본 그대로 유지하여 비율이 왜곡되던 버그 수정",
+    "body": "실제 원인 확인:\n- 원본: 1020×1712 (비율 0.596)\n- width=960 변환 (resize 없음): 960×1712 → 비율 0.561 (왜곡!)\n- width=960 변환 (resize=contain): 960×1611 → 비율 0.596 (정상)\n\nresolveOptimizedArtworkImageUrl()에서 width 지정 시 자동으로\nresize=contain을 추가하여 Supabase가 비율을 보존하도록 수정.\n이전 커밋의 fill→non-fill 변경은 원인이 CSS가 아닌 이미지 소스였으므로 되돌림.",
+    "date": "2026-04-12",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "37f0f75c",
+    "type": "fix",
+    "scope": "artwork",
+    "subject": "fill 모드 제거로 갤러리 카드 이미지 비율 깨짐 수정",
+    "summary": "ArtworkCard/HeroGalleryGrid에서 fill 모드를 제거하고 max-w-full max-h-full w-auto h-auto 패턴으로 교체하여 이미지가 길쭉하게 늘어나는 버그 수정",
+    "body": "- ArtworkCard gallery/slider variant: fill 제거, width={960/400} height={960/400} 추가\n  flex items-center justify-center 내부에서 자연 비율로 렌더\n- HeroGalleryGrid: 동일 패턴 적용\n- SafeImage: fill 모드에 maxWidth: 'none' 추가 (Tailwind preflight 간섭 방어)\n\nfill 모드는 position:absolute + width/height 100%로 object-fit:contain에\n비율 보정을 전적으로 의존하는데, Tailwind preflight img { height: auto }와\n상호작용하여 렌더링이 실패했다. 상세 페이지(ArtworkImage.tsx)의 검증된\nnon-fill + h-auto 패턴을 갤러리 카드에도 동일하게 적용.",
+    "date": "2026-04-12",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "502b3b83",
+    "type": "fix",
+    "scope": "image",
+    "subject": "wait for img.decode() before revealing artwork thumbnails",
+    "summary": "갤러리 카드 이미지 비율 깨짐 근본 원인 수정 — async decode 완료 전 shimmer 제거로 늘어난 이미지가 노출되는 버그",
+    "body": "진짜 원인: fill 모드 <img>에 width/height 속성 없음 + decoding=\"async\" 조합으로\n브라우저가 디코딩 중간 상태에서 object-fit:contain 계산 실패 → 이미지 늘어남.\nshimmer가 load 이벤트(≠ decode 완료)에서 숨겨져 늘어난 상태가 노출됨.\n\n수정:\n- ArtworkCard: imageReady 상태 추가, load 이후 img.decode() 완료를 기다렸다가\n  shimmer 숨김 + opacity-0→opacity-100 전환으로 정상 비율 상태에서만 이미지 노출\n- above-fold 이미지(priority/decoding=\"sync\")는 imageReady=true로 시작해 즉시 노출\n- SafeImage fill 모드: decoding=\"async\" → \"auto\"로 완화 (브라우저 자동 결정)",
+    "date": "2026-04-12",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "d53c94c1",
+    "type": "fix",
+    "scope": "ui",
+    "subject": "use inset wrapper instead of padding on fill img elements",
+    "summary": "replaced element(<img>)에 padding 직접 적용 시 async decode 중 object-fit 계산 불안정 → 초기 로드 시 이미지 비율 깨지는 버그 수정. padding 클래스를 absolute inset-* wrapper div로 교체.",
+    "body": "- ArtworkCard gallery: p-3 md:p-4 → absolute inset-3 md:inset-4 wrapper\n- ArtworkCard slider: p-2 → absolute inset-2 wrapper\n- HeroGalleryGrid: aspect-[3/4]에 relative 누락 버그 수정 + inset wrapper 적용\n- SearchResultItem, ArtistResultItem: p-1 → absolute inset-1 wrapper\n- 포털 관리 페이지 3곳 동일 패턴 적용",
+    "date": "2026-04-11",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "3d258a6e",
+    "type": "fix",
+    "scope": "email",
+    "subject": "이메일 발신자명/제목 SAF → 씨앗페 통일",
+    "summary": "관리자 알림 이메일 발신자명과 제목에서 영문 약칭 SAF를 브랜드명 씨앗페로 변경, Vercel RESEND_FROM_EMAIL 환경변수도 동일하게 수정",
+    "body": "- lib/notify.ts: 푸터 \"SAF 결제 시스템\" → \"씨앗페 결제 시스템\"\n- lib/notify.ts: 관리자 알림 제목 \"[SAF]\" → \"[씨앗페]\"\n- .env.local.example: RESEND_FROM_EMAIL 예시값 업데이트\n- Vercel production 환경변수: RESEND_FROM_EMAIL=씨앗페 <noreply@saf2026.com>",
+    "date": "2026-04-11",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "396197b5",
+    "type": "feat",
+    "scope": "email",
+    "subject": "React Email 전환 + 구매자 이메일 7종 완성",
+    "summary": "기존 3종 인라인 HTML 이메일을 React Email 컴포넌트로 전환하고, 배송·환불·자동취소 이메일 4종을 추가하여 Phase 5 구매자 이메일 알림 완성",
+    "body": "- @react-email/components, @react-email/render 패키지 설치\n- emails/ 디렉토리 — 공통 레이아웃, 주문 테이블, 배송 추적 컴포넌트\n- 이메일 7종: payment-confirmed, virtual-account-issued, deposit-confirmed,\n  shipped, delivered, refunded, auto-cancelled\n- lib/notify.ts: sendBuyerEmail → React Email render() 기반으로 리팩토링\n- lib/utils/get-artwork-email-info.ts: 반복 아트워크 조회 헬퍼 추출\n- admin-orders.ts: shipped/delivered/refunded/deposit_confirmed 이메일 트리거 + select 확장\n- order-lookup.ts: 구매자 자체 취소 시 refunded 이메일 트리거\n- webhooks/toss/route.ts: Toss 웹훅 취소 시 refunded 이메일 트리거\n- expire-stale-orders/route.ts: 24시간 만료 주문 자동 취소 시 auto_cancelled 이메일 트리거\n- confirmDeposit 버그 수정: 관리자 입금 확인 시 deposit_confirmed 이메일 누락 수정",
+    "date": "2026-04-11",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "2d3b2fdb",
+    "type": "feat",
+    "scope": "checkout",
+    "subject": "구매자 정보 폼에 브라우저 자동완성 지원",
+    "summary": "체크아웃 입력 필드에 autocomplete/name 속성 추가하여 브라우저 저장 정보 자동 제안",
     "body": null,
     "date": "2026-04-10",
     "author": "hwangtab"
   },
   {
-    "hash": "e92de1cc",
-    "type": "fix",
-    "scope": "payment",
-    "subject": "결제 시스템 레이스 컨디션 및 엣지 케이스 수정",
-    "summary": "주문 상태 전환 optimistic lock, 크론 타이밍 경쟁, 취소 시 artwork 복원 추가",
-    "body": "- updateOrderStatus에 .eq('status', order.status) optimistic lock 추가\n- refundOrder payment UPDATE 에러 체크 추가\n- reconcile-payments 타임 윈도우 30분→28분 (expire 크론과 2분 안전 마진)\n- DEPOSIT_CALLBACK CANCELED 시 주문 cancelled 전환 + artwork reserved→available\n- STATUS_CHANGED 취소 경로에서 artwork reserved→available 복원 추가",
-    "date": "2026-04-10",
-    "author": "hwangtab"
-  },
-  {
-    "hash": "5f7cb0f0",
+    "hash": "5e9ed7ad",
     "type": "feat",
     "scope": "payment",
-    "subject": "결제 시스템 3단계 보안·안정성 개선 및 에러 바운더리 추가",
-    "summary": "Toss 웹훅 보안 강화, 결제 보정 크론, Teams 알림, 관리자 주문 에러 바운더리 추가",
-    "body": "- SEC: virtualAccount.secret 검증에 crypto.timingSafeEqual 적용\n- SEC: DEPOSIT_CALLBACK DB 에러를 401 대신 500으로 구분 반환\n- SEC: confirm route에 optimistic lock(.eq status guard) 및 metadata 병합 수정\n- FEAT: Microsoft Teams Adaptive Card 알림(lib/notify.ts) 추가\n- FEAT: 결제 보정 크론(reconcile-payments) — pending_payment 이상 자동 보정\n- FEAT: 만료 주문 자동 취소 크론(expire-stale-orders)에 알림 추가\n- FEAT: 가상계좌 입금 확인 후 deriveAndSyncArtworkStatus 호출 추가\n- FIX: 관리자 주문 라우트 error.tsx 에러 바운더리 추가 (환불 후 렌더 에러 처리)\n- FIX: getOrderDetail .single() → .maybeSingle() (결제/판매 레코드 조회)\n- DB: artwork_availability_check RPC 수정 (reserved 상태 반영, 24h 입금 대기 집계)\n- DB: artwork_sales(order_id) 부분 유니크 인덱스 추가",
+    "subject": "결제 시스템 3단계 보안·안정성 + 구매자 이메일 개선",
+    "summary": "웹훅 보안, 에러 바운더리, 레이스 컨디션 수정, 구매자 이메일 발송 안정화",
+    "body": "- SEC: virtualAccount.secret timing-safe 비교, Toss API 이중 검증\n- SEC: confirm/updateOrderStatus optimistic lock, metadata 병합\n- FEAT: DEPOSIT_CALLBACK CANCELED → 주문 취소 + artwork 복원\n- FEAT: STATUS_CHANGED 취소 → artwork reserved→available 복원\n- FEAT: 구매자 이메일 3종 (결제완료/가상계좌발급/입금확인)\n- FEAT: Resend 429/5xx 1회 재시도, RESEND_FROM_EMAIL 필수화\n- FIX: 관리자 주문 error.tsx 에러 바운더리 추가\n- FIX: .single() → .maybeSingle() 전면 통일\n- FIX: 가상계좌 dueDate 한국어 날짜 포맷\n- DB: check_artwork_availability RPC, artwork_sales 유니크 인덱스",
     "date": "2026-04-10",
     "author": "hwangtab"
   },
   {
-    "hash": "78902773",
+    "hash": "312b30a2",
     "type": "feat",
     "scope": "payments",
     "subject": "결제-주문 불일치 자동 보정 reconciliation 크론 추가",
@@ -50,7 +230,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "5e387043",
+    "hash": "4b57b7e0",
     "type": "fix",
     "scope": "security",
     "subject": "artwork_sales PII 노출 차단 + awaiting_deposit 24시간 자동 만료",
@@ -60,7 +240,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "900a1d50",
+    "hash": "0527cbec",
     "type": "fix",
     "scope": "orders",
     "subject": "주문 조회 시 최신 주문 카드 자동 펼침 버그 수정",
@@ -70,7 +250,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "0c5b02f8",
+    "hash": "6a0c99ef",
     "type": "fix",
     "scope": "image",
     "subject": "respect contain fit in remote fill renderer",
@@ -80,7 +260,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "1c257245",
+    "hash": "8216cb4a",
     "type": "fix",
     "scope": "portal",
     "subject": "add frame padding to contain thumbnails",
@@ -90,7 +270,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "799f30d8",
+    "hash": "98466ada",
     "type": "fix",
     "scope": "ui",
     "subject": "make ratio-preserved framing visually obvious",
@@ -100,7 +280,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "5dd7a95d",
+    "hash": "764619e8",
     "type": "fix",
     "scope": "portal",
     "subject": "keep artwork thumbnail aspect ratios",
@@ -110,7 +290,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "e5a35e62",
+    "hash": "750341fd",
     "type": "fix",
     "scope": "ui",
     "subject": "preserve artwork ratios on public thumbnails",
@@ -120,7 +300,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "b85a8f1a",
+    "hash": "b0cf57a9",
     "type": "fix",
     "scope": "schema",
     "subject": "unify exhibition state and our-proof faq source",
@@ -130,7 +310,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "ccec98e5",
+    "hash": "ec4dbfe0",
     "type": "fix",
     "scope": "our-proof",
     "subject": "replace qapage markup with visible faq content",
@@ -140,7 +320,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "6315e31b",
+    "hash": "0d4a5cdb",
     "type": "fix",
     "scope": "schema",
     "subject": "close remaining rich-result blind spots",
@@ -150,7 +330,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "03eda2cf",
+    "hash": "9a7d89d9",
     "type": "fix",
     "scope": "schema",
     "subject": "harden qapage entity structure for rich results",
@@ -160,7 +340,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "1a83d021",
+    "hash": "a30b5a71",
     "type": "fix",
     "scope": "schema",
     "subject": "normalize merchant, breadcrumb, video, and event structured data",
@@ -170,7 +350,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "623f7984",
+    "hash": "c6c29fd2",
     "type": "fix",
     "scope": "feedback",
     "subject": "harden admin status update path",
@@ -180,7 +360,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "cd93845d",
+    "hash": "27bcca5b",
     "type": "fix",
     "scope": "analytics",
     "subject": "gate tracking scripts on portal and auth routes",
@@ -190,7 +370,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "3086541f",
+    "hash": "6123c816",
     "type": "fix",
     "scope": "admin-nav",
     "subject": "disable changelog prefetch in mobile drawer",
@@ -200,7 +380,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "af2bc635",
+    "hash": "135e3494",
     "type": "fix",
     "scope": "admin-nav",
     "subject": "disable changelog prefetch in desktop navigation",
@@ -210,7 +390,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "18db5f7b",
+    "hash": "5d896dfa",
     "type": "fix",
     "scope": "changelog",
     "subject": "sanitize admin changelog payload before render",
@@ -220,7 +400,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "e90a257b",
+    "hash": "f1607561",
     "type": "fix",
     "scope": "artwork",
     "subject": "remove 30-day filter from recently sold list",
@@ -230,7 +410,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "60d28014",
+    "hash": "99ea6b0a",
     "type": "fix",
     "scope": "feedback",
     "subject": "sync admin memo state after resolve/save",
@@ -240,7 +420,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "abc0e6ea",
+    "hash": "4e8fb77c",
     "type": "fix",
     "scope": "feedback",
     "subject": "sanitize status update payload across server boundary",
@@ -250,7 +430,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "8cf261c1",
+    "hash": "6e099355",
     "type": "fix",
     "scope": "admin",
     "subject": "개발 이력 페이지 한국어 제목 우선 렌더링",
@@ -260,7 +440,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "622c3955",
+    "hash": "a528f3fa",
     "type": "fix",
     "scope": "changelog",
     "subject": "한국어 요약 fallback 생성 로직 추가",
@@ -270,7 +450,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "f3a747cc",
+    "hash": "11bc7e59",
     "type": "fix",
     "scope": "stories",
     "subject": "add bottom spacing before footer slider on detail pages",
@@ -280,7 +460,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "19498dca",
+    "hash": "b19199f2",
     "type": "fix",
     "scope": "stories",
     "subject": "normalize colon-left spacing in titles",
@@ -290,7 +470,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "a0dbe04d",
+    "hash": "c4cf2ba6",
     "type": "fix",
     "scope": null,
     "subject": "avoid refresh after feedback status update",
@@ -300,7 +480,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "5455578e",
+    "hash": "b5511672",
     "type": "fix",
     "scope": null,
     "subject": "escape inline json-ld script content",
@@ -310,7 +490,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "32399837",
+    "hash": "35869a21",
     "type": "feat",
     "scope": "admin",
     "subject": "주문 상태 관리 기능 구현 — 입금 확인·취소·계좌이체 환불",
@@ -320,7 +500,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "0122549e",
+    "hash": "597f2ca2",
     "type": "fix",
     "scope": "artworks",
     "subject": "예약중 작품이 SOLD로 표시되는 버그 수정",
@@ -330,7 +510,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "3b25c946",
+    "hash": "6e53ceb3",
     "type": "fix",
     "scope": "admin",
     "subject": "대시보드 작가명 위치 수정 — 작품명 옆으로 이동",
@@ -340,7 +520,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "1adbb1a1",
+    "hash": "b75cae59",
     "type": "feat",
     "scope": "admin",
     "subject": "주문 페이지에 작품명·작가명 표시 추가",
@@ -350,7 +530,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "c941ae07",
+    "hash": "3f81e342",
     "type": "fix",
     "scope": "checkout",
     "subject": "계좌이체 안내 문구 줄바꿈 분리",
@@ -360,7 +540,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "bdada587",
+    "hash": "fbdd61a3",
     "type": "fix",
     "scope": "checkout",
     "subject": "계좌이체 안내 텍스트 보완 — 예금주·마감시각·텍스트랩",
@@ -370,7 +550,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "cd03fa07",
+    "hash": "04636ce5",
     "type": "feat",
     "scope": "checkout",
     "subject": "수동 계좌이체 결제 옵션 구현",
@@ -380,7 +560,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "d9877c4d",
+    "hash": "23a25eab",
     "type": "fix",
     "scope": "checkout",
     "subject": "IME onFocus locale 구분 수정 — 영어 사용자 영향 없도록",
@@ -390,7 +570,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "8b6508ce",
+    "hash": "312bc322",
     "type": "fix",
     "scope": "checkout",
     "subject": "상세주소·배송메모 한글 IME 강제 개선",
@@ -400,7 +580,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "b2208753",
+    "hash": "b671b2fb",
     "type": "fix",
     "scope": "checkout",
     "subject": "토스 뱃지 왼쪽 위치 조정 (left-1.5→-left-1)",
@@ -410,7 +590,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "544f6ba3",
+    "hash": "93dfdc50",
     "type": "fix",
     "scope": "checkout",
     "subject": "토스 로고 뱃지 크기 확대 (h-5→h-8, 32px)",
@@ -420,7 +600,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "20379f0d",
+    "hash": "a7cbad6b",
     "type": "feat",
     "scope": "hero",
     "subject": "히어로 갤러리에 판매완료 작품 포함",
@@ -430,7 +610,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "2499247a",
+    "hash": "e0953f60",
     "type": "fix",
     "scope": "checkout",
     "subject": "토스 로고 버튼 상단 걸침 뱃지로 변경",
@@ -440,7 +620,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "61215ae2",
+    "hash": "3a725948",
     "type": "fix",
     "scope": "checkout",
     "subject": "토스 로고 좌상단 뱃지 배치로 변경",
@@ -450,7 +630,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "7037d527",
+    "hash": "34a93fa5",
     "type": "fix",
     "scope": "checkout",
     "subject": "토스 로고 크기 확대 (h-4→h-6)",
@@ -460,7 +640,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "71d36b5a",
+    "hash": "99542654",
     "type": "fix",
     "scope": "checkout",
     "subject": "하단 빈 공간 제거 — min-h-screen 삭제, 레이아웃 패턴 통일",
@@ -470,7 +650,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "6bb86a0b",
+    "hash": "2cba0104",
     "type": "feat",
     "scope": "checkout",
     "subject": "퀵계좌이체 버튼에 토스 공식 워드마크 적용",
@@ -480,7 +660,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "3b5db492",
+    "hash": "590365ee",
     "type": "fix",
     "scope": "checkout",
     "subject": "퀵계좌이체 버튼에 toss 뱃지 추가 + 라벨 정리",
@@ -490,7 +670,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "c7380992",
+    "hash": "3d2dc221",
     "type": "fix",
     "scope": "checkout",
     "subject": "결제수단 라벨·순서 정리 — 가상계좌→계좌이체, 계좌이체→퀵계좌이체(토스)",
@@ -500,7 +680,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "3e626a17",
+    "hash": "346fcdb3",
     "type": "fix",
     "scope": "checkout",
     "subject": "결제 페이지 카드 폭 원복 (max-w-2xl)",
@@ -510,7 +690,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "b6dced44",
+    "hash": "f4bb7299",
     "type": "fix",
     "scope": "checkout",
     "subject": "결제 페이지 레이아웃 중앙 밀도 개선",
@@ -520,7 +700,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "d74509a7",
+    "hash": "ddd8ec36",
     "type": "fix",
     "scope": "ui",
     "subject": "카테고리 중복 제거 + 블라인드 스팟 추가 수정",
@@ -530,7 +710,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "67294a7c",
+    "hash": "b4a43bb8",
     "type": "fix",
     "scope": "ui",
     "subject": "블라인드 스팟 전수 수정 — 헤더·패딩·색상·pill 통일",
@@ -540,7 +720,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "6583226f",
+    "hash": "73589c18",
     "type": "fix",
     "scope": "orders",
     "subject": "최근 주문 카드 자동 펼침 — 첫 번째 카드 상세 즉시 표시",
@@ -550,7 +730,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "a931959a",
+    "hash": "56b38a1c",
     "type": "fix",
     "scope": "orders",
     "subject": "주문조회 상태 동기화 버그 수정 + i18n 보완 + 조회 폼 UX 개선",
@@ -560,7 +740,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "feb96588",
+    "hash": "28e79d55",
     "type": "fix",
     "scope": "ui",
     "subject": "작품 페이지 UI 일관성 전면 수정 — 헤더·레이아웃·pill 스타일 통일",
@@ -570,7 +750,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "2bcd4a2d",
+    "hash": "81316ba0",
     "type": "fix",
     "scope": "orders",
     "subject": "주문 취소 안내 메시지 중복 표시 제거",
@@ -580,7 +760,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "739f6991",
+    "hash": "2e9cfcca",
     "type": "fix",
     "scope": "checkout",
     "subject": "상세주소 입력 시 한글 IME 자동 전환",
@@ -590,7 +770,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "81f70e4f",
+    "hash": "7fde250e",
     "type": "feat",
     "scope": "orders",
     "subject": "운송장 관리 + 전화번호 정규화",
@@ -600,7 +780,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "fe7ac5e0",
+    "hash": "a5e09ca9",
     "type": "fix",
     "scope": "ui",
     "subject": "stories/category prevVariant 누락 수정 — 빈 상태 시 배경 전환 경계 처리",
@@ -610,7 +790,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "6a28d6f5",
+    "hash": "fcfad5af",
     "type": "fix",
     "scope": "seo",
     "subject": "블라인드 스팟 수정 — 작품 상세 매거진 교차링크, 타입·스타일 정리",
@@ -620,7 +800,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "c9018578",
+    "hash": "5267ad49",
     "type": "feat",
     "scope": "seo",
     "subject": "내부 링크 교차 연결 및 메타데이터 개선 (P2~P5)",
@@ -630,7 +810,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "d10945cf",
+    "hash": "942d9346",
     "type": "fix",
     "scope": "layout",
     "subject": "헤더에 가려지는 상단 패딩 수정 — pt-16 → pt-24",
@@ -640,7 +820,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "b3a32266",
+    "hash": "fd9f91e9",
     "type": "feat",
     "scope": "orders",
     "subject": "주문조회 방식 변경 — 이름+이메일+휴대폰 3중 검증으로 목록 조회",
@@ -650,7 +830,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "36404c91",
+    "hash": "0300463b",
     "type": "fix",
     "scope": "orders",
     "subject": "주문조회 카드 수직 중앙 정렬",
@@ -660,7 +840,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "75e4a9ed",
+    "hash": "711621f4",
     "type": "feat",
     "scope": "orders",
     "subject": "주문조회 페이지 구축 — Cafe24 외부 링크 → 자체 페이지 전환",
@@ -670,7 +850,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "5d29eec1",
+    "hash": "c800ea3a",
     "type": "fix",
     "scope": "revenue",
     "subject": "매출 분석에 toss 소스 누락 수정",
@@ -680,7 +860,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "8309bc5f",
+    "hash": "6767e579",
     "type": "feat",
     "scope": "analytics",
     "subject": "GA4 연동 — G-8K0TPPEL9W",
@@ -690,7 +870,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "285c2c51",
+    "hash": "bc94cbb4",
     "type": "feat",
     "scope": "checkout",
     "subject": "결제수단 선택 UI 추가 (카드, 계좌이체, 가상계좌)",
@@ -700,7 +880,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "a9f57f59",
+    "hash": "ee25a578",
     "type": "fix",
     "scope": "checkout",
     "subject": "서버 사이드 결제 생성 복원 — 키 오타 수정으로 POST /v1/payments 정상 작동",
@@ -710,7 +890,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "e782a30a",
+    "hash": "875675c5",
     "type": "fix",
     "scope": "checkout",
     "subject": "v1 결제창 SDK로 전환 — sk키 UNAUTHORIZED_KEY 해결",
@@ -720,7 +900,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "10151c43",
+    "hash": "180f9ebb",
     "type": "feat",
     "scope": "checkout",
     "subject": "클라이언트 SDK → 서버 사이드 결제 생성 전환",
@@ -730,7 +910,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "0057ed44",
+    "hash": "55201ea2",
     "type": "fix",
     "scope": "checkout",
     "subject": "한글 페이지 입력란 한글 IME 기본 설정",
@@ -740,7 +920,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "efa48d7f",
+    "hash": "56c9f4c7",
     "type": "feat",
     "scope": "checkout",
     "subject": "결제위젯 → 결제창 전환 (CF_koreasmae86 MID)",
@@ -750,7 +930,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "bb5fd09f",
+    "hash": "50705b3f",
     "type": "feat",
     "scope": "seo",
     "subject": "기술 SEO 마무리 — og:type 명시·에셋 캐시·OG 이미지·SpeedInsights",
@@ -760,7 +940,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "ed52e268",
+    "hash": "7a5b153e",
     "type": "fix",
     "scope": "checkout",
     "subject": "결제 결과 카드 수직 중앙 정렬",
@@ -770,7 +950,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "19780cd3",
+    "hash": "d205310a",
     "type": "fix",
     "scope": "csp",
     "subject": "toss.im bare domain 허용으로 퀵계좌이체 팝업 차단 해소",
@@ -780,7 +960,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "1ebb8dca",
+    "hash": "3ee678f4",
     "type": "fix",
     "scope": "checkout",
     "subject": "createOrder 시 기존 pending 주문 자동 정리",
@@ -790,7 +970,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "19f0cf99",
+    "hash": "f897142b",
     "type": "fix",
     "scope": "checkout",
     "subject": "상세주소를 필수 입력 항목으로 변경",
@@ -800,7 +980,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "82921eef",
+    "hash": "529b44e2",
     "type": "fix",
     "scope": "csp",
     "subject": "script-src 토스 와일드카드 확장 — 퀵계좌이체 차단 해소",
@@ -810,7 +990,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "4cd324eb",
+    "hash": "1e3fdb51",
     "type": "fix",
     "scope": "csp",
     "subject": "토스 퀵계좌이체 팝업 차단 해소 — toss.im 도메인 CSP 허용",
@@ -820,7 +1000,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "749b37e8",
+    "hash": "86cb94c7",
     "type": "feat",
     "scope": "seo",
     "subject": "전역 WebSite·ArtGallery 스키마에 전시회 키워드 추가",
@@ -830,7 +1010,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "95e3841a",
+    "hash": "8abf5026",
     "type": "feat",
     "scope": "seo",
     "subject": "구글 연관검색어 '전시회' 계열 키워드 SEO 전면 개선",
@@ -840,7 +1020,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "80a89a52",
+    "hash": "51713ed0",
     "type": "fix",
     "scope": "checkout",
     "subject": "결제 취소 시 pending 주문 즉시 정리 — 재주문 차단 해소",
@@ -850,7 +1030,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "84c6b3bc",
+    "hash": "860c9a5d",
     "type": "fix",
     "scope": "auth",
     "subject": "헤더에 가려지는 상단 패딩 전수 수정",
@@ -860,7 +1040,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "99d10a55",
+    "hash": "1a55a4f4",
     "type": "feat",
     "scope": "stories",
     "subject": "본문 작품명 〈〉 클릭 시 작품 상세 페이지 이동",
@@ -870,7 +1050,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "41c19595",
+    "hash": "680c00a9",
     "type": "feat",
     "scope": "stories",
     "subject": "작품 이미지 클릭 시 작품 상세 페이지 이동",
@@ -880,7 +1060,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "44bed5d0",
+    "hash": "d1961b60",
     "type": "fix",
     "scope": "stories",
     "subject": "카드 썸네일 미표시 수정 — body 첫 이미지 폴백",
@@ -890,7 +1070,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "1315f4b8",
+    "hash": "b14840a1",
     "type": "fix",
     "scope": "payments",
     "subject": "블라인드 스팟 수정 — 가상계좌 cron 보호, 컬럼명, 웹훅, timeout",
@@ -900,7 +1080,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "06ebde8b",
+    "hash": "4e1c99f0",
     "type": "feat",
     "scope": "admin",
     "subject": "대시보드 주문 통계 — 결제 대기 StatCard + 최근 주문 섹션",
@@ -910,7 +1090,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "aa690812",
+    "hash": "cd2fdbbf",
     "type": "feat",
     "scope": "admin",
     "subject": "Phase 3 — 주문 관리, 환불, 만료 주문 정리 Cron",
@@ -920,7 +1100,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "b7e74aac",
+    "hash": "91d31981",
     "type": "fix",
     "scope": "toss",
     "subject": "DEPOSIT_CALLBACK 시크릿 검증을 per-payment DB 저장값 기반으로 수정",
@@ -930,7 +1110,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "b6b709b4",
+    "hash": "81ef6ade",
     "type": "fix",
     "scope": "magazine",
     "subject": "중간제목 폰트를 font-section(학교안심포스터체)으로 변경",
@@ -940,7 +1120,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "b6e3437d",
+    "hash": "e1101e31",
     "type": "fix",
     "scope": "magazine",
     "subject": "제목 font-weight 이중 적용 제거",
@@ -950,7 +1130,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "f21c6677",
+    "hash": "d40f1e64",
     "type": "fix",
     "scope": "magazine",
     "subject": "@tailwindcss/typography 플러그인 설치 — prose 클래스 활성화",
@@ -960,7 +1140,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "3deedc3a",
+    "hash": "4c2260e5",
     "type": "fix",
     "scope": "magazine",
     "subject": "매거진 본문 가독성 개선 — 표 선·문단 간격·제목 여백",
@@ -970,7 +1150,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "12e2368a",
+    "hash": "96d3e5e4",
     "type": "fix",
     "scope": "header",
     "subject": "스토리 페이지 헤더 투명화 미적용 버그 수정",
@@ -980,7 +1160,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "94a9e8f6",
+    "hash": "5d779499",
     "type": "fix",
     "scope": "checkout",
     "subject": "Toss 결제 흐름 안정화 및 i18n 메시지 보완",
@@ -990,7 +1170,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "251deefb",
+    "hash": "8d3e30a2",
     "type": "fix",
     "scope": "purchase-guide",
     "subject": "영문 결제 안내 텍스트에도 toss/cafe24 분기 추가",
@@ -1000,7 +1180,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "5618e47b",
+    "hash": "f5765809",
     "type": "fix",
     "scope": "checkout",
     "subject": "주소 검색 시 사용자 선택 유형에 따라 도로명/지번 분기",
@@ -1010,7 +1190,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "83c70713",
+    "hash": "993c852c",
     "type": "fix",
     "scope": "csp",
     "subject": "tosspayments.com 와일드카드로 CSP 통합",
@@ -1020,7 +1200,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "1ffa443d",
+    "hash": "d444e0a4",
     "type": "fix",
     "scope": "checkout",
     "subject": "createOrder 서버 액션 artist 컬럼 버그 수정",
@@ -1030,7 +1210,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "25be3713",
+    "hash": "ddfa7263",
     "type": "fix",
     "scope": "csp",
     "subject": "Daum Postcode의 http://postcode.map.kakao.com iframe 허용",
@@ -1040,7 +1220,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "24ebe08f",
+    "hash": "ad1416ff",
     "type": "fix",
     "scope": "csp",
     "subject": "Daum Postcode 주소 검색 iframe 차단 해제",
@@ -1050,7 +1230,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "e1f08e9e",
+    "hash": "42938794",
     "type": "fix",
     "scope": "checkout",
     "subject": "고정 헤더에 가려지지 않도록 상단 패딩 추가",
@@ -1060,7 +1240,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "c5b22ca3",
+    "hash": "5afc2a91",
     "type": "fix",
     "scope": "csp",
     "subject": "Toss 위젯 렌더링 위해 CSP 도메인 추가",
@@ -1070,7 +1250,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "f079ce66",
+    "hash": "ee257911",
     "type": "fix",
     "scope": "checkout",
     "subject": "이미지 URL 이중 접두사 수정 + 위젯 에러 로깅",
@@ -1080,7 +1260,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "8da662e2",
+    "hash": "52636023",
     "type": "feat",
     "scope": "magazine",
     "subject": "매거진(Stories) 섹션 추가 — 목록·상세·Admin CRUD·디자인 고도화",
@@ -1090,7 +1270,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "72f41769",
+    "hash": "51a4e363",
     "type": "fix",
     "scope": "checkout",
     "subject": "artworks 테이블 미존재 artist 컬럼 → artists join으로 수정",
@@ -1100,7 +1280,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "5c3f6ace",
+    "hash": "ceed7e85",
     "type": "fix",
     "scope": "checkout",
     "subject": "legacy 작품(숫자 ID)에서 Toss 버튼 미노출",
@@ -1110,7 +1290,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "f1b883d6",
+    "hash": "041a6318",
     "type": "fix",
     "scope": "404",
     "subject": "not-found.tsx의 next-intl Link를 순수 <a> 태그로 교체",
@@ -1120,7 +1300,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "c3781805",
+    "hash": "0194f8e0",
     "type": "fix",
     "scope": "error",
     "subject": "ErrorView에서 Button 컴포넌트 완전 제거",
@@ -1130,7 +1310,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "002f3c19",
+    "hash": "f52d972d",
     "type": "fix",
     "scope": "error",
     "subject": "ErrorView 백링크 버튼을 순수 <a> 태그로 교체",
@@ -1140,7 +1320,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "eb220f6a",
+    "hash": "ade466b5",
     "type": "fix",
     "scope": "error",
     "subject": "ErrorView에서 useTranslations 의존성 제거 — GlobalError 충돌 수정",
@@ -1150,7 +1330,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "68889659",
+    "hash": "2860c9af",
     "type": "feat",
     "scope": "payments",
     "subject": "TossPayments v2 결제위젯 연동 구현 (Phase 0-2)",
@@ -1160,7 +1340,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "0949ac7d",
+    "hash": "5c9dbe0e",
     "type": "fix",
     "scope": "seo",
     "subject": "our-proof LoanOrCredit areaServed에 Wikidata @id 추가",
@@ -1170,7 +1350,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "8e55b895",
+    "hash": "5df955cb",
     "type": "feat",
     "scope": "seo",
     "subject": "작품 스키마 countryOfOrigin·creator nationality Wikidata @id 추가",
@@ -1180,7 +1360,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "3add1216",
+    "hash": "33fbf6cc",
     "type": "fix",
     "scope": "seo",
     "subject": "artwork·video 스키마 잔여 하드코딩 기관명 CONTACT 상수로 교체",
@@ -1190,7 +1370,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "5f2a6ef4",
+    "hash": "d44bd601",
     "type": "fix",
     "scope": "seo",
     "subject": "artwork·our-proof 스키마에서 하드코딩된 기관명 CONTACT 상수로 교체",
@@ -1200,7 +1380,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "88ee2633",
+    "hash": "2fc56e4e",
     "type": "fix",
     "scope": "seo",
     "subject": "howto·oh-yoon 페이지 organization name 영문 locale-aware 처리",
@@ -1210,7 +1390,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "11798eff",
+    "hash": "74eb2bfe",
     "type": "fix",
     "scope": "seo",
     "subject": "스키마 라이브러리 organization name locale-aware 완전 통일",
@@ -1220,7 +1400,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "93e2f9da",
+    "hash": "7bc2283d",
     "type": "fix",
     "scope": "seo",
     "subject": "Twitter image alt·뉴스/작품/oh-yoon 페이지 locale-aware 보완",
@@ -1230,7 +1410,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "50d4f6cf",
+    "hash": "7c13bb6a",
     "type": "fix",
     "scope": "seo",
     "subject": "archive/2026·2023 KO 메타설명 Naver 80자 이상으로 확장",
@@ -1240,7 +1420,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "5b7db4e2",
+    "hash": "0a73d05b",
     "type": "fix",
     "scope": "seo",
     "subject": "our-reality·transparency 페이지 메타설명 Naver 80자 이상으로 확장",
@@ -1250,7 +1430,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "8e534ddf",
+    "hash": "ba6e4451",
     "type": "fix",
     "scope": "seo",
     "subject": "QAPage Answer author에 @id 추가로 엔티티 그래프 연결",
@@ -1260,7 +1440,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "56cad213",
+    "hash": "e4860b01",
     "type": "fix",
     "scope": "seo",
     "subject": "작가 Person 스키마에 nationality 한국 추가",
@@ -1270,7 +1450,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "6d4577b7",
+    "hash": "c1419457",
     "type": "fix",
     "scope": "seo",
     "subject": "LocalBusiness 엔티티 그래프 연결 및 홈 메타설명 완성",
@@ -1280,7 +1460,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "c0eb05bc",
+    "hash": "4eedbae5",
     "type": "fix",
     "scope": "seo",
     "subject": "artworks·archive/2026·news 스키마 author·publisher @id 추가",
@@ -1290,7 +1470,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "4bcd8dbc",
+    "hash": "9800146a",
     "type": "fix",
     "scope": "seo",
     "subject": "transparency WebPage 스키마 author·publisher 추가 및 보고서 publisher 로케일화",
@@ -1300,7 +1480,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "3458b258",
+    "hash": "7dd2168b",
     "type": "fix",
     "scope": "seo",
     "subject": "our-reality·our-proof AboutPage 스키마에 author·publisher 추가",
@@ -1310,7 +1490,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "f507ee76",
+    "hash": "882c5792",
     "type": "fix",
     "scope": "seo",
     "subject": "작품 상세 ItemPage 스키마에 author·publisher 추가",
@@ -1320,7 +1500,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "a2d6f83c",
+    "hash": "750c3752",
     "type": "fix",
     "scope": "seo",
     "subject": "홈페이지 WebPage 스키마 author·publisher 추가 및 OG/Twitter alt 로케일화",
@@ -1330,7 +1510,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "b7e14bc5",
+    "hash": "83fc9e12",
     "type": "fix",
     "scope": "seo",
     "subject": "카테고리·아카이브 CollectionPage publisher/author @id 추가",
@@ -1340,7 +1520,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "97afcfb6",
+    "hash": "3ab5ba05",
     "type": "fix",
     "scope": "seo",
     "subject": "archive/2023 CollectionPage 스키마 author·publisher @id 추가",
@@ -1350,7 +1530,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "2cd23067",
+    "hash": "b2d78310",
     "type": "feat",
     "scope": "seo",
     "subject": "VideoObject inLanguage/@id 및 LoanOrCredit 스키마 추가 — Round 19",
@@ -1360,7 +1540,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "7ca28bfb",
+    "hash": "88c66920",
     "type": "feat",
     "scope": "seo",
     "subject": "작가 OG 이미지 최적화 및 our-proof Dataset 스키마 추가 — Round 18",
@@ -1370,7 +1550,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "08743d48",
+    "hash": "59b233ea",
     "type": "feat",
     "scope": "seo",
     "subject": "작품 이미지 페이지 대표성 및 뉴스 컬렉션 author 추가 — Round 17",
@@ -1380,7 +1560,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "9c38b30b",
+    "hash": "28e67d41",
     "type": "feat",
     "scope": "seo",
     "subject": "Twitter 카드 이미지 alt 및 OG 메타 일관성 개선 — Round 16",
@@ -1390,7 +1570,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "cf0f6048",
+    "hash": "0016e7fa",
     "type": "feat",
     "scope": "seo",
     "subject": "작품 author 메타 및 영문 홈 description 개선 — Round 15",
@@ -1400,7 +1580,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "daac53c9",
+    "hash": "337e0e62",
     "type": "feat",
     "scope": "seo",
     "subject": "article:author 및 Dataset 스키마 추가 — Round 14",
@@ -1410,7 +1590,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "9cce4a2f",
+    "hash": "4f1f0863",
     "type": "feat",
     "scope": "seo",
     "subject": "기술적 SEO 개선 — Round 13",
@@ -1420,7 +1600,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "7aa764f1",
+    "hash": "a064ff11",
     "type": "fix",
     "scope": "pwa",
     "subject": "모바일 스플래시 스크린 아이콘 및 manifest 수정",
@@ -1430,7 +1610,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "dc2a7e95",
+    "hash": "74a76c98",
     "type": "fix",
     "scope": "seo",
     "subject": "홈페이지 meta description 수정 (69자)",
@@ -1440,7 +1620,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "17059e87",
+    "hash": "36c1a1fe",
     "type": "fix",
     "scope": "seo",
     "subject": "홈페이지 meta description 80자 이내로 단축",
@@ -1450,7 +1630,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "7b5a528f",
+    "hash": "549fda8c",
     "type": "feat",
     "scope": "seo",
     "subject": "oh-yoon 특별전 OG 이미지를 실제 작품 이미지로 개선",
@@ -1460,7 +1640,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "e3165be3",
+    "hash": "3ee7daf4",
     "type": "feat",
     "scope": "seo",
     "subject": "노출 및 클릭 수 증대 SEO 개선 — Round 12",
@@ -1470,7 +1650,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "47efae1e",
+    "hash": "2b1641ee",
     "type": "feat",
     "scope": "seo",
     "subject": "노출 및 클릭 수 증대 SEO 개선 — Round 11",
@@ -1480,7 +1660,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "8ac11ccd",
+    "hash": "cc5d0036",
     "type": "feat",
     "scope": "seo",
     "subject": "노출 및 클릭 수 증대 SEO 개선 — Round 10",
@@ -1490,7 +1670,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "f8ee58f0",
+    "hash": "95c6db11",
     "type": "feat",
     "scope": "seo",
     "subject": "노출 및 클릭 수 증대 SEO 개선 — Round 9",
@@ -1500,7 +1680,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "add6e251",
+    "hash": "35975564",
     "type": "fix",
     "scope": "layout",
     "subject": "마지막 업데이트 텍스트 좌우 노란 배경 제거",
@@ -1510,7 +1690,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "ab0df8a0",
+    "hash": "1344b85f",
     "type": "feat",
     "scope": "seo",
     "subject": "작품 판매 전환율 SEO 개선 — Round 8",
@@ -1520,7 +1700,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "8402c7d7",
+    "hash": "2b68795b",
     "type": "fix",
     "scope": "seo",
     "subject": "아카이브 CollectionPage 스키마에 isPartOf 추가",
@@ -1530,7 +1710,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "7cdbd973",
+    "hash": "34a35be3",
     "type": "fix",
     "scope": "seo",
     "subject": "작가 workSample 이미지 URL resolveSeoArtworkImageUrl 적용",
@@ -1540,7 +1720,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "9aaa09b6",
+    "hash": "557adef8",
     "type": "feat",
     "scope": "seo",
     "subject": "뉴스 페이지 스키마 정합성 개선 및 다국어 판매자명 수정",
@@ -1550,7 +1730,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "9ce49413",
+    "hash": "f42a3689",
     "type": "feat",
     "scope": "seo",
     "subject": "NewsArticle 스키마 강화 (isAccessibleForFree, url, isPartOf)",
@@ -1560,7 +1740,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "1211b359",
+    "hash": "88caff9b",
     "type": "feat",
     "scope": "seo",
     "subject": "오윤 특별전 페이지 AggregateOffer 및 ItemList pageUrl 보정",
@@ -1570,7 +1750,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "900e5045",
+    "hash": "9da0cb88",
     "type": "feat",
     "scope": "seo",
     "subject": "제품 메타 태그 강화 및 AggregateOffer 개선",
@@ -1580,7 +1760,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "816d1718",
+    "hash": "436b0da6",
     "type": "feat",
     "scope": "seo",
     "subject": "AggregateOffer 정확도 개선 및 홈/카테고리 페이지 스키마 보강",
@@ -1590,7 +1770,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "5265ce80",
+    "hash": "08639c14",
     "type": "feat",
     "scope": "seo",
     "subject": "소셜 공유 UTM 추적, 스키마 고도화, ArtworkPurchaseCTA 개선",
@@ -1600,7 +1780,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "672079e6",
+    "hash": "4499f8fb",
     "type": "feat",
     "scope": "seo",
     "subject": "AggregateOffer 독립 스키마 추가 및 스키마 품질 개선",
@@ -1610,7 +1790,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "f1f444e7",
+    "hash": "755ba5f5",
     "type": "feat",
     "scope": "seo",
     "subject": "작가 페이지 메타 description에 구매 가능 작품 수 포함",
@@ -1620,7 +1800,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "3302cea7",
+    "hash": "5ec4330b",
     "type": "feat",
     "scope": "seo",
     "subject": "작품 메타 description에 가격·배송·판매 상태 포함 + countryOfOrigin 추가",
@@ -1630,7 +1810,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "15049d0f",
+    "hash": "edb3ebb3",
     "type": "feat",
     "scope": "seo",
     "subject": "AI 크롤러 허용 목록 확장 (ChatGPT-User, Meta, Apple, Cohere, Diffbot)",
@@ -1640,7 +1820,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "1780964d",
+    "hash": "1a257217",
     "type": "feat",
     "scope": "seo",
     "subject": "Product 스키마에 audience 타겟팅 추가 (미술 컬렉터·예술 후원자)",
@@ -1650,7 +1830,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "b993d848",
+    "hash": "7c9e1f5c",
     "type": "feat",
     "scope": "seo",
     "subject": "sitemap lastModified 판매 완료 날짜 반영, AggregateOffer itemCondition 추가",
@@ -1660,7 +1840,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "29cb17c2",
+    "hash": "98522ecd",
     "type": "feat",
     "scope": "seo",
     "subject": "AggregateOffer 강화, Oh Yoon 전시 ItemList 추가, 불필요 EXHIBITION import 제거",
@@ -1670,7 +1850,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "4f6f4bc6",
+    "hash": "89b8ef4c",
     "type": "feat",
     "scope": "seo",
     "subject": "Offer validFrom, Product sameAs, ItemList nested item with Offer schema",
@@ -1680,7 +1860,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "1d008f02",
+    "hash": "ac6aa448",
     "type": "feat",
     "scope": "seo",
     "subject": "카테고리 페이지 CollectionPage 스키마 추가",
@@ -1690,7 +1870,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "facd4434",
+    "hash": "c1354445",
     "type": "feat",
     "scope": "seo",
     "subject": "홈페이지 추천 작품 ItemList 스키마 추가",
@@ -1700,7 +1880,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "806a97b4",
+    "hash": "0e1c3970",
     "type": "feat",
     "scope": "seo",
     "subject": "Footer에 출품작 페이지 내부 링크 추가",
@@ -1710,7 +1890,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "1977b9b0",
+    "hash": "ee08e6dd",
     "type": "feat",
     "scope": "seo",
     "subject": "LocalBusiness @type OnlineStore 추가 + hasMap 링크 삽입",
@@ -1720,7 +1900,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "f07e0a5c",
+    "hash": "d54d541a",
     "type": "feat",
     "scope": "seo",
     "subject": "Twitter/X 작품 카드에 가격·판매상태 라벨 추가",
@@ -1730,7 +1910,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "bb54a443",
+    "hash": "17fe1153",
     "type": "feat",
     "scope": "seo",
     "subject": "WebSite SearchAction + LocalBusiness 가격 범위 개선",
@@ -1740,7 +1920,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "dbe3466f",
+    "hash": "ae971346",
     "type": "feat",
     "scope": "seo",
     "subject": "작가 페이지 ItemList 스키마 + OG 이미지 동적화 + JSON-LD 수정",
@@ -1750,7 +1930,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "56522d1a",
+    "hash": "ce1257c9",
     "type": "feat",
     "scope": "seo",
     "subject": "사이트맵 이미지 인덱싱 및 작품 카드 alt 텍스트 개선",
@@ -1760,7 +1940,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "79fca789",
+    "hash": "b3e573bd",
     "type": "feat",
     "scope": "seo",
     "subject": "breadcrumb 카테고리 계층화 + hero 동적 수치 + 가격 범위",
@@ -1770,7 +1950,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "defde98a",
+    "hash": "da0ad9a9",
     "type": "feat",
     "scope": "seo",
     "subject": "구매 FAQ 스키마 + 카테고리 크로스링크 + 관련 작품 섹션",
@@ -1780,7 +1960,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "12f814ce",
+    "hash": "52e4365c",
     "type": "feat",
     "scope": "seo",
     "subject": "artworks 메타 동적화 + HowTo 스키마 확장 + 카테고리 크로스링크",
@@ -1790,7 +1970,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "9daacc79",
+    "hash": "665c8d44",
     "type": "feat",
     "scope": "seo",
     "subject": "카테고리 랜딩 페이지 생성 및 매출 추적 SEO 개선",
@@ -1800,7 +1980,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "29a3fd3f",
+    "hash": "fc85f4a8",
     "type": "fix",
     "scope": "seo",
     "subject": "SEO 전체 개선 및 폰트 turbopack 버그 수정",
@@ -1810,7 +1990,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "a3532dfc",
+    "hash": "3c51efe9",
     "type": "fix",
     "scope": "seo",
     "subject": "\"원화\" 용어 정비 및 SEO 전반 개선",
@@ -1820,7 +2000,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "6bdbdec0",
+    "hash": "6d52e3ed",
     "type": "fix",
     "scope": "instagram",
     "subject": "작가 프로필 슬라이드 작품 이미지 대형화",
@@ -1830,7 +2010,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "6d38d925",
+    "hash": "be57e4dc",
     "type": "feat",
     "scope": "instagram",
     "subject": "커버 후킹 강화 + 전체 텍스트 최소 크기 개선",
@@ -1840,7 +2020,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "3d4db6bc",
+    "hash": "4df57255",
     "type": "fix",
     "scope": "instagram",
     "subject": "S2/S3/S8 커버 배경 이미지 로드 오류 수정",
@@ -1850,7 +2030,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "d8822eb7",
+    "hash": "96d2530a",
     "type": "feat",
     "scope": "instagram",
     "subject": "커버 슬라이드 6종 비주얼 후킹 강화",
@@ -1860,7 +2040,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "e7cf4812",
+    "hash": "1bc6d593",
     "type": "feat",
     "scope": "i18n",
     "subject": "영문 데이터 누락 작품 29개 번역 추가",
@@ -1870,7 +2050,7 @@
     "author": "Claude"
   },
   {
-    "hash": "570b9b78",
+    "hash": "70c707f1",
     "type": "fix",
     "scope": "seo",
     "subject": "Organization foundingDate 2021 → 2020 수정",
@@ -1880,7 +2060,7 @@
     "author": "황경하"
   },
   {
-    "hash": "525efa42",
+    "hash": "5f6c61ba",
     "type": "feat",
     "scope": "seo",
     "subject": "Organization 엔티티 강화, ItemPage 스키마, Q&A 확장",
@@ -1890,7 +2070,7 @@
     "author": "황경하"
   },
   {
-    "hash": "c25de2cc",
+    "hash": "daf7221e",
     "type": "fix",
     "scope": "seo",
     "subject": "작품 메타 디스크립션 160자 제한 및 siteName 상수화",
@@ -1900,7 +2080,7 @@
     "author": "황경하"
   },
   {
-    "hash": "9b351551",
+    "hash": "b063012d",
     "type": "feat",
     "scope": "seo",
     "subject": "아카이브 페이지 keywords 및 작가 workSample @id 추가",
@@ -1910,7 +2090,7 @@
     "author": "황경하"
   },
   {
-    "hash": "05e071f8",
+    "hash": "5dda1113",
     "type": "feat",
     "scope": "seo",
     "subject": "작품 상세 페이지 keywords 메타태그 추가 (Naver 최적화)",
@@ -1920,7 +2100,7 @@
     "author": "황경하"
   },
   {
-    "hash": "fb3cf785",
+    "hash": "83b05da0",
     "type": "perf",
     "scope": "seo",
     "subject": "Kakao API DNS prefetch 힌트 추가",
@@ -1930,7 +2110,7 @@
     "author": "황경하"
   },
   {
-    "hash": "741883e7",
+    "hash": "a47a0ea3",
     "type": "feat",
     "scope": "seo",
     "subject": "ExhibitionEvent @id 추가 및 VisualArtwork isPartOf @id 참조 연결",
@@ -1940,7 +2120,7 @@
     "author": "황경하"
   },
   {
-    "hash": "f794d463",
+    "hash": "77a59315",
     "type": "feat",
     "scope": "seo",
     "subject": "작가 Person 스키마에 @id 추가 (VisualArtwork creator 역방향 참조 완결)",
@@ -1950,7 +2130,7 @@
     "author": "황경하"
   },
   {
-    "hash": "ea082bca",
+    "hash": "e381ebe6",
     "type": "feat",
     "scope": "seo",
     "subject": "VisualArtwork creator에 작가 페이지 @id 참조 추가",
@@ -1960,7 +2140,7 @@
     "author": "황경하"
   },
   {
-    "hash": "8b767a3b",
+    "hash": "ad8e07ec",
     "type": "feat",
     "scope": "seo",
     "subject": "WebSite·FundingScheme publisher @id 링크 및 오윤 페이지 keywords 추가",
@@ -1970,7 +2150,7 @@
     "author": "황경하"
   },
   {
-    "hash": "2500b9cf",
+    "hash": "aaa7bd4e",
     "type": "feat",
     "scope": "seo",
     "subject": "뉴스 기사·작가 페이지 og:locale 추가",
@@ -1980,7 +2160,7 @@
     "author": "황경하"
   },
   {
-    "hash": "29f7950b",
+    "hash": "3e0ba4fb",
     "type": "feat",
     "scope": "seo",
     "subject": "언론 보도·홈·오윤 페이지 og:locale 및 keywords 추가",
@@ -1990,7 +2170,7 @@
     "author": "황경하"
   },
   {
-    "hash": "603dfa8c",
+    "hash": "5b775080",
     "type": "fix",
     "scope": "seo",
     "subject": "SpeakableSpecification CSS 셀렉터용 HTML id 속성 추가 (our-proof·transparency)",
@@ -2000,7 +2180,7 @@
     "author": "황경하"
   },
   {
-    "hash": "216596ca",
+    "hash": "3acf7f79",
     "type": "feat",
     "scope": "seo",
     "subject": "our-proof·transparency 페이지 SpeakableSpecification 스키마 추가",
@@ -2010,7 +2190,7 @@
     "author": "황경하"
   },
   {
-    "hash": "181f5b54",
+    "hash": "9f5a8156",
     "type": "feat",
     "scope": "seo",
     "subject": "OG locale 설정 및 our-proof·transparency 페이지 keywords 추가",
@@ -2020,7 +2200,7 @@
     "author": "황경하"
   },
   {
-    "hash": "1beefa28",
+    "hash": "81d4e7a0",
     "type": "feat",
     "scope": "seo",
     "subject": "keywords 메타태그 추가 및 아카이브 CollectionPage 스키마 추가",
@@ -2030,7 +2210,7 @@
     "author": "황경하"
   },
   {
-    "hash": "0e3bb720",
+    "hash": "a71029af",
     "type": "fix",
     "scope": "seo",
     "subject": "홈페이지 중복 구조화 데이터 제거 (루트 레이아웃 이미 포함)",
@@ -2040,7 +2220,7 @@
     "author": "황경하"
   },
   {
-    "hash": "26c02115",
+    "hash": "dc5fdb22",
     "type": "feat",
     "scope": "seo",
     "subject": "홈페이지에 Organization·WebSite·ArtGallery 구조화 데이터 추가",
@@ -2050,7 +2230,7 @@
     "author": "황경하"
   },
   {
-    "hash": "ac2aef34",
+    "hash": "d7b93583",
     "type": "feat",
     "scope": "seo",
     "subject": "오윤 특별전 ExhibitionEvent + Person 구조화 데이터 추가",
@@ -2060,7 +2240,7 @@
     "author": "황경하"
   },
   {
-    "hash": "548484ad",
+    "hash": "066a48c4",
     "type": "feat",
     "scope": "seo",
     "subject": "transparency 보고서 스키마 및 manifest 언어 설정 추가",
@@ -2070,7 +2250,7 @@
     "author": "황경하"
   },
   {
-    "hash": "a10b53d4",
+    "hash": "c4154161",
     "type": "fix",
     "scope": "seo",
     "subject": "Google SEO 가이드 기반 종합 SEO 개선",
@@ -2080,7 +2260,7 @@
     "author": "황경하"
   },
   {
-    "hash": "6725973e",
+    "hash": "3cc5d743",
     "type": "fix",
     "scope": "seo",
     "subject": "구조화 데이터 @id 및 dateModified 추가",
@@ -2090,7 +2270,7 @@
     "author": "황경하"
   },
   {
-    "hash": "f7f5658b",
+    "hash": "9776a9e0",
     "type": "fix",
     "scope": "seo",
     "subject": "Google SEO 가이드 기반 HTML 표준 및 접근성 개선",
@@ -2100,7 +2280,7 @@
     "author": "황경하"
   },
   {
-    "hash": "20997889",
+    "hash": "7063d16e",
     "type": "feat",
     "scope": "seo",
     "subject": "미술품 판매 중심 상업 키워드 전환",
@@ -2110,7 +2290,7 @@
     "author": "황경하"
   },
   {
-    "hash": "d8755f23",
+    "hash": "68ad5a46",
     "type": "fix",
     "scope": "seo",
     "subject": "구조화 데이터·메타데이터·시맨틱 블라인드 스팟 수정",
@@ -2120,7 +2300,7 @@
     "author": "황경하"
   },
   {
-    "hash": "a06d3606",
+    "hash": "a14a7445",
     "type": "feat",
     "scope": "seo",
     "subject": "Google SEO 가이드 기반 3가지 개선 구현",
@@ -2130,7 +2310,7 @@
     "author": "황경하"
   },
   {
-    "hash": "66617d86",
+    "hash": "d7eb487f",
     "type": "fix",
     "scope": "seo",
     "subject": "Google SEO 가이드 기반 HTML 표준 및 접근성 개선",
@@ -2140,7 +2320,7 @@
     "author": "황경하"
   },
   {
-    "hash": "75cd3563",
+    "hash": "75a8f644",
     "type": "fix",
     "scope": "instagram",
     "subject": "S9 커버 슬라이드 배경 이미지 수정",
@@ -2150,7 +2330,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "b655baae",
+    "hash": "77aca2b3",
     "type": "feat",
     "scope": "instagram",
     "subject": "오윤 40주기 특별전 캐러셀 S9 추가",
@@ -2160,7 +2340,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "c214981f",
+    "hash": "6414c150",
     "type": "fix",
     "scope": "mobile-menu",
     "subject": "닫기 버튼 아이콘을 깔끔한 X SVG로 교체",
@@ -2170,7 +2350,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "b8d2fc51",
+    "hash": "d22763dd",
     "type": "fix",
     "scope": "seo",
     "subject": "fix code quality issues in news detail page and sitemap",
@@ -2180,7 +2360,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "463bec1b",
+    "hash": "d838d05c",
     "type": "feat",
     "scope": "seo",
     "subject": "add news article detail pages with NewsArticle JSON-LD and sitemap entries",
@@ -2190,7 +2370,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "9d11c06b",
+    "hash": "050a4dce",
     "type": "fix",
     "scope": "seo",
     "subject": "hide EventCompleted schema from homepage after exhibition end",
@@ -2200,7 +2380,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "7b78866f",
+    "hash": "a04d3a47",
     "type": "fix",
     "scope": "seo",
     "subject": "add twitter:site tag to global metadata",
@@ -2210,7 +2390,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "ec71cddb",
+    "hash": "9894f589",
     "type": "fix",
     "scope": "seo",
     "subject": "replace PWA icons with PNG, add maskable icon",
@@ -2220,7 +2400,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "4bc85e2a",
+    "hash": "031d91d0",
     "type": "fix",
     "scope": "seo",
     "subject": "add www canonical redirect for saf2026.com",
@@ -2230,7 +2410,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "c0d084ce",
+    "hash": "0ed39e03",
     "type": "feat",
     "scope": "header",
     "subject": "데스크톱 검색 버튼을 pill 형태로 개선",
@@ -2240,7 +2420,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "9368e56d",
+    "hash": "c0afda5b",
     "type": "feat",
     "scope": "search",
     "subject": "글로벌 검색 오버레이 추가 (헤더 + Cmd/Ctrl+K)",
@@ -2250,7 +2430,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "c2a12c2f",
+    "hash": "441c4673",
     "type": "fix",
     "scope": null,
     "subject": "stabilize portal navigation progress",
@@ -2260,7 +2440,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "4e7e01c6",
+    "hash": "b46005be",
     "type": "feat",
     "scope": null,
     "subject": "add artwork image upscale tooling",
@@ -2270,7 +2450,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "c2179be0",
+    "hash": "bd172f5b",
     "type": "feat",
     "scope": "virtual-gallery",
     "subject": "좌대 작품에 교차 평면(cross billboard) 적용",
@@ -2280,7 +2460,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "44545754",
+    "hash": "fc54fef0",
     "type": "fix",
     "scope": "virtual-gallery",
     "subject": "좌대 작품을 이미지 플레인으로 단순화",
@@ -2290,7 +2470,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "8b9c370f",
+    "hash": "fbe65718",
     "type": "fix",
     "scope": "virtual-gallery",
     "subject": "좌대 작품을 3D 박스로 변경",
@@ -2300,7 +2480,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "2191b94d",
+    "hash": "4a8e2c41",
     "type": "feat",
     "scope": "virtual-gallery",
     "subject": "입체 작품(조각/도자공예) 좌대 전시 모드 추가",
@@ -2310,7 +2490,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "ac5f5ba0",
+    "hash": "d9276a71",
     "type": "fix",
     "scope": "virtual-gallery",
     "subject": "침실 침대 배치를 현실적으로 수정",
@@ -2320,7 +2500,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "b2924cb8",
+    "hash": "261cc8d0",
     "type": "fix",
     "scope": "test",
     "subject": "HowTo 스키마 테스트 이름 패턴 수정",
@@ -2330,7 +2510,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "9afab019",
+    "hash": "51282889",
     "type": "fix",
     "scope": "types",
     "subject": "ArtworkImage에 size, category prop 타입 추가",
@@ -2340,7 +2520,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "4994e07e",
+    "hash": "79fd3778",
     "type": "feat",
     "scope": "virtual-gallery",
     "subject": "3D 가상 갤러리 — 방별 가구, 텍스처, 모달 UI",
@@ -2350,7 +2530,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "91ea0f8f",
+    "hash": "a3961e4e",
     "type": "feat",
     "scope": "gallery",
     "subject": "Three.js 기반 작품 가상 갤러리 3D 뷰어 추가",
@@ -2360,7 +2540,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "13761cff",
+    "hash": "ba7a8657",
     "type": "fix",
     "scope": "ui",
     "subject": "BrandLoader 로고 blur placeholder 제거",
@@ -2370,7 +2550,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "9343c8ef",
+    "hash": "72fcce35",
     "type": "fix",
     "scope": "ui",
     "subject": "BrandLoader 디자인 개선 (drop-shadow 제거, dot 색상 변경)",
@@ -2380,7 +2560,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "96e1aab6",
+    "hash": "0dd65297",
     "type": "fix",
     "scope": "ui",
     "subject": "남은 스켈레톤 fallback을 BrandLoader로 교체",
@@ -2390,7 +2570,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "d46daf39",
+    "hash": "9b1041c4",
     "type": "fix",
     "scope": "ui",
     "subject": "ArtworkHighlightSlider dynamic ssr:false 옵션 제거",
@@ -2400,7 +2580,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "369de68a",
+    "hash": "4d7e1e5f",
     "type": "feat",
     "scope": "ui",
     "subject": "BrandLoader 로딩 컴포넌트 도입 및 스켈레톤 교체",
@@ -2410,7 +2590,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "5cb03383",
+    "hash": "bb4ddaa2",
     "type": "fix",
     "scope": "skeleton",
     "subject": "홈·작품상세 Suspense 스켈레톤 실제 레이아웃 매칭",
@@ -2420,7 +2600,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "0e56d1f2",
+    "hash": "61cf84ff",
     "type": "feat",
     "scope": "home",
     "subject": "메인페이지 갤러리 중심 리뉴얼 + 디자인 일관성 수정",
@@ -2430,7 +2610,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "5411efaf",
+    "hash": "b2965f80",
     "type": "fix",
     "scope": "ui",
     "subject": "증언 전환 속도 4초로 변경",
@@ -2440,7 +2620,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "c2f63b18",
+    "hash": "c42e4e1a",
     "type": "feat",
     "scope": "ui",
     "subject": "SupportMessage 증언 데이터 동적화 (15개 전체 순환)",
@@ -2450,7 +2630,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "678179fa",
+    "hash": "a246e968",
     "type": "fix",
     "scope": "ui",
     "subject": "가격-버튼 간격 복원 (pb-4 유지, border-b만 제거)",
@@ -2460,7 +2640,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "e987b4e9",
+    "hash": "56d26141",
     "type": "fix",
     "scope": "ui",
     "subject": "CTA 가격 구분선이 구매 버튼과 겹치는 문제 수정",
@@ -2470,7 +2650,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "d213178f",
+    "hash": "cd6567a6",
     "type": "fix",
     "scope": "ui",
     "subject": "SupportMessage 내부 패딩·간격 개선",
@@ -2480,7 +2660,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "ebf48e2a",
+    "hash": "d985cd32",
     "type": "fix",
     "scope": "ui",
     "subject": "SupportMessage에서 이탈 유발 CTA 버튼 제거",
@@ -2490,7 +2670,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "2273e8db",
+    "hash": "fc728f03",
     "type": "fix",
     "scope": "ui",
     "subject": "SupportMessage를 CTA 카드 하단으로 이동 + 내부 중앙 정렬",
@@ -2500,7 +2680,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "d8c03001",
+    "hash": "e3b44f24",
     "type": "fix",
     "scope": "ui",
     "subject": "SupportMessage 제목 크기 text-lg → text-2xl로 확대",
@@ -2510,7 +2690,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "a1bd3c87",
+    "hash": "5adc9f50",
     "type": "feat",
     "scope": "ui",
     "subject": "SupportMessage 증언 영역에 슬라이드 도트 인디케이터 추가",
@@ -2520,7 +2700,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "aa72ce48",
+    "hash": "7e994b4d",
     "type": "fix",
     "scope": "artworks",
     "subject": "CTA 가격 라벨·크기 강화 및 모바일 헤더 가격 중복 제거",
@@ -2530,7 +2710,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "0290ec3b",
+    "hash": "b2946b4e",
     "type": "fix",
     "scope": "ui",
     "subject": "SupportMessage 카드의 불필요한 hover 효과 제거",
@@ -2540,7 +2720,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "9dbd3acc",
+    "hash": "cc218bd2",
     "type": "fix",
     "scope": "artworks",
     "subject": "문의 작품 연락처 복구, sold 대체 UI, PurchaseGuide 이중 렌더 제거",
@@ -2550,7 +2730,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "35ca4c53",
+    "hash": "cab7247e",
     "type": "fix",
     "scope": "ui",
     "subject": "TrustBadges와 구매 버튼 간격 수정 (flex gap 적용)",
@@ -2560,7 +2740,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "35bd30b2",
+    "hash": "4e6281f9",
     "type": "fix",
     "scope": "gallery",
     "subject": "모바일 스크롤 시 작품 이미지 깜빡임 수정",
@@ -2570,7 +2750,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "5b7bc712",
+    "hash": "edb7c6b0",
     "type": "fix",
     "scope": "gallery",
     "subject": "모바일 스크롤 시 작품 이미지 깜빡임 수정",
@@ -2580,7 +2760,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "e2c16c3d",
+    "hash": "1ef6c7de",
     "type": "fix",
     "scope": "ui",
     "subject": "신뢰 배지와 구매 버튼 사이 간격 추가",
@@ -2590,7 +2770,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "8c04252c",
+    "hash": "d86498dc",
     "type": "fix",
     "scope": "ci",
     "subject": "sync-artworks 워크플로우에 write 권한 추가",
@@ -2600,7 +2780,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "647e4262",
+    "hash": "fa741f62",
     "type": "feat",
     "scope": "data",
     "subject": "DB → 정적 파일 자동 동기화 스크립트 추가",
@@ -2610,7 +2790,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "da4bd78f",
+    "hash": "6a101dd8",
     "type": "fix",
     "scope": "data",
     "subject": "숫자 ID → Supabase UUID 타입 오류 수정 및 심모비 작품 fallback 추가",
@@ -2620,7 +2800,7 @@
     "author": "hwangtab"
   },
   {
-    "hash": "618e7635",
+    "hash": "d806abbe",
     "type": "feat",
     "scope": "i18n",
     "subject": "작품/작가 등록 폼에 영문 필드 추가",

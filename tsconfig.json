@@ -36,7 +36,7 @@
     },
     "allowJs": true,
     "noEmit": true,
-    "moduleResolution": "node"
+    "moduleResolution": "bundler"
   },
   "include": [
     "next-env.d.ts",
