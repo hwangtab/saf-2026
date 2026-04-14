@@ -601,6 +601,7 @@ export function generateArtworkListSchema(
           ...(numericPrice !== null && {
             offers: {
               '@type': 'Offer',
+              url: artworkUrl,
               price: numericPrice,
               priceCurrency: 'KRW',
               priceValidUntil: PRICE_VALID_UNTIL,
