@@ -58,6 +58,16 @@ const nextConfig = {
         destination: 'https://www.saf2026.com/:path*',
         permanent: true,
       },
+      {
+        source: '/apple-touch-icon.png',
+        destination: '/images/icons/icon-192.png',
+        permanent: true,
+      },
+      {
+        source: '/apple-touch-icon-precomposed.png',
+        destination: '/images/icons/icon-192.png',
+        permanent: true,
+      },
     ];
   },
   async headers() {
