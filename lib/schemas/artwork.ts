@@ -58,7 +58,7 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
     isEnglish ? 'Original profile available in Korean.' : ''
   ).substring(0, 200);
   const descSnippet = sanitizeForLocale(
-    artwork.description,
+    isEnglish ? artwork.description_en || artwork.description : artwork.description,
     locale,
     isEnglish ? 'Original artwork description available in Korean.' : ''
   ).substring(0, 200);
@@ -208,7 +208,10 @@ export function generateArtworkJsonLd(
     isEnglish ? artwork.profile_en || artwork.profile : artwork.profile,
     locale
   );
-  const descriptionForLocale = sanitizeForLocale(artwork.description, locale);
+  const descriptionForLocale = sanitizeForLocale(
+    isEnglish ? artwork.description_en || artwork.description : artwork.description,
+    locale
+  );
   const historyForLocale = sanitizeForLocale(
     isEnglish ? artwork.history_en || artwork.history : artwork.history,
     locale
