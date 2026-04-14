@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { cn } from '@/lib/utils';
 import { EXTERNAL_LINKS } from '@/lib/constants';
@@ -12,8 +12,6 @@ interface GalleryCampaignBannerProps {
 
 export default function GalleryCampaignBanner({ className }: GalleryCampaignBannerProps) {
   const t = useTranslations('galleryCampaign');
-  const locale = useLocale();
-  const isEn = locale === 'en';
 
   return (
     <div className={cn('mx-auto max-w-2xl text-center', className)}>
@@ -32,7 +30,7 @@ export default function GalleryCampaignBanner({ className }: GalleryCampaignBann
           href="/our-reality"
           className="underline underline-offset-4 hover:text-primary transition-colors"
         >
-          {isEn ? 'Why this matters' : '왜 이것이 중요한가'}
+          {t('linkWhyMatters')}
         </Link>
         <span aria-hidden="true" className="text-gray-300">
           |
@@ -41,7 +39,7 @@ export default function GalleryCampaignBanner({ className }: GalleryCampaignBann
           href="/our-proof"
           className="underline underline-offset-4 hover:text-primary transition-colors"
         >
-          {isEn ? 'How your purchase helps' : '구매가 어떻게 도움이 되는지'}
+          {t('linkHowHelps')}
         </Link>
       </div>
     </div>

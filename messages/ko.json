@@ -360,7 +360,9 @@
   "galleryCampaign": {
     "heading": "작품 한 점이 만드는 변화",
     "descriptionLine1": "이 작가들은 예술인의 내일을 함께 만들어가는 작가입니다.",
-    "descriptionLine2": "작품 구매와 조합원 가입으로 예술인 상호부조 기금에 함께해주세요."
+    "descriptionLine2": "작품 구매와 조합원 가입으로 예술인 상호부조 기금에 함께해주세요.",
+    "linkWhyMatters": "왜 이것이 중요한가",
+    "linkHowHelps": "구매가 어떻게 도움이 되는지"
   },
   "galleryStatus": {
     "status": "{date} 현재 운영 중",

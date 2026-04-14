@@ -224,7 +224,7 @@ export default async function CategoryPage({ params }: Props) {
     },
     speakable: {
       '@type': 'SpeakableSpecification',
-      cssSelector: ['h1', '.category-hero-description'],
+      cssSelector: ['h1', '#category-hero-description'],
     },
   };
 
@@ -251,6 +251,7 @@ export default async function CategoryPage({ params }: Props) {
         <PageHero
           title={t('title', { category: displayCategory })}
           description={heroDescription}
+          descriptionId="category-hero-description"
           breadcrumbItems={breadcrumbItems}
         >
           <ShareButtonsWrapper

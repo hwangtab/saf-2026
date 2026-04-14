@@ -70,7 +70,7 @@ export default async function RelatedArticles({ articles }: RelatedArticlesProps
               key={article.url}
               href={article.url}
               target="_blank"
-              rel="noopener noreferrer"
+              rel="noopener noreferrer nofollow"
               className="group block p-5 bg-white border border-gray-200 rounded-2xl hover:border-primary hover:shadow-xl transition-[box-shadow,border-color] duration-300"
             >
               {/* Source Badge */}

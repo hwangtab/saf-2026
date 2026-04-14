@@ -124,7 +124,7 @@ export default async function ArtworksPage() {
     },
     speakable: {
       '@type': 'SpeakableSpecification',
-      cssSelector: ['h1', '.page-hero-description'],
+      cssSelector: ['h1', '#page-hero-description'],
     },
   };
 
@@ -150,6 +150,7 @@ export default async function ArtworksPage() {
         <PageHero
           title={t('title')}
           description={dynamicHeroDescription}
+          descriptionId="page-hero-description"
           breadcrumbItems={breadcrumbItems}
         >
           <ShareButtonsWrapper

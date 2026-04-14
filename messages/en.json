@@ -360,7 +360,9 @@
   "galleryCampaign": {
     "heading": "Every purchase makes a difference",
     "descriptionLine1": "These artists are building a future together with fellow artists.",
-    "descriptionLine2": "Join the mutual aid fund through artwork purchases or co-op membership."
+    "descriptionLine2": "Join the mutual aid fund through artwork purchases or co-op membership.",
+    "linkWhyMatters": "Why this matters",
+    "linkHowHelps": "How your purchase helps"
   },
   "galleryStatus": {
     "status": "Open now · {date}",
