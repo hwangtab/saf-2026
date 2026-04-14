@@ -160,6 +160,14 @@ export async function lookupOrderDetail(
   orderNo: string,
   buyerEmail: string
 ): Promise<OrderDetailResult> {
+  // Rate limiting — IP 기준 분당 5회
+  const headersList = await headers();
+  const ip = headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+  const rl = rateLimit(`lookupOrderDetail:${ip}`, { limit: 5, windowMs: 60_000 });
+  if (!rl.success) {
+    return { success: false, error: 'RATE_LIMITED' };
+  }
+
   const trimmedOrderNo = orderNo.trim();
   const trimmedEmail = buyerEmail.trim().toLowerCase();
 
@@ -293,6 +301,14 @@ export async function updateBuyerShipping(
   buyerEmail: string,
   data: UpdateShippingInput
 ): Promise<{ success: true } | { success: false; error: string }> {
+  // Rate limiting — IP 기준 분당 3회
+  const headersList = await headers();
+  const ip = headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+  const rl = rateLimit(`updateBuyerShipping:${ip}`, { limit: 3, windowMs: 60_000 });
+  if (!rl.success) {
+    return { success: false, error: 'RATE_LIMITED' };
+  }
+
   const trimmedOrderNo = orderNo.trim();
   const trimmedEmail = buyerEmail.trim().toLowerCase();
 

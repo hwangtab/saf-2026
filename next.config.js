@@ -99,7 +99,7 @@ const nextConfig = {
               "font-src 'self' data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
               "connect-src 'self' https://*.kakao.com https://*.daum.net https://*.daumcdn.net https://*.vercel-insights.com https://*.supabase.co wss://*.supabase.co https://*.tosspayments.com https://*.toss.im https://toss.im https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com",
               "worker-src 'self' blob:",
-              "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://*.kakao.com http://*.kakao.com https://*.tosspayments.com https://*.toss.im https://toss.im https://t1.daumcdn.net https://postcode.map.daum.net",
+              "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://*.kakao.com https://*.tosspayments.com https://*.toss.im https://toss.im https://t1.daumcdn.net https://postcode.map.daum.net",
               "base-uri 'self'",
               "form-action 'self'",
             ].join('; '),
