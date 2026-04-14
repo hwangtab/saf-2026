@@ -11,6 +11,8 @@ import {
 
 type SafeImageProps = ComponentProps<typeof ExportedImage>;
 
+const TRANSPARENT_FALLBACK =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12NgAAIABQABNjN9GQAAAAlwSFlzAAAWJQAAFiUBSVIk8AAAAA0lEQVQI12P4z8BQDwAEgAF/QualzQAAAABJRU5ErkJggg==';
 const ARTWORK_STORAGE_MARKERS = [
   '/storage/v1/object/public/artworks/',
   '/storage/v1/render/image/public/artworks/',
@@ -79,7 +81,12 @@ function RemoteSafeImage({ src, sizes, ...props }: { src: string } & Omit<ImageP
       const fallbackSrc = resolveArtworkImageFallbackUrl(currentSrc);
       if (fallbackSrc !== currentSrc) {
         setCurrentSrc(fallbackSrc);
+        return;
       }
+    }
+    // 최종 fallback: 1x1 투명 PNG (깨진 이미지 아이콘 방지)
+    if (currentSrc !== TRANSPARENT_FALLBACK) {
+      setCurrentSrc(TRANSPARENT_FALLBACK);
     }
   };
 

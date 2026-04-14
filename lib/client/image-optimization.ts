@@ -78,8 +78,51 @@ const renderToWebpFile = (
   });
 
 /**
+ * Renders an image to an arbitrary format (JPEG fallback when WebP fails on some browsers).
+ */
+const renderToFormatFile = (
+  img: HTMLImageElement,
+  outputName: string,
+  maxSize: number,
+  quality: number,
+  mimeType: string
+): Promise<File> =>
+  new Promise((resolve, reject) => {
+    const { width, height } = getResizedDimensions(img.width, img.height, maxSize);
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      reject(new Error('캔버스 컨텍스트 생성 실패'));
+      return;
+    }
+
+    ctx.drawImage(img, 0, 0, width, height);
+
+    canvas.toBlob(
+      (blob) => {
+        if (!blob) {
+          reject(new Error('이미지 변환 실패'));
+          return;
+        }
+
+        resolve(
+          new File([blob], outputName, {
+            type: mimeType,
+            lastModified: Date.now(),
+          })
+        );
+      },
+      mimeType,
+      quality
+    );
+  });
+
+/**
  * Optimizes a single image file for non-artwork usage (profiles, etc).
- * Resizes to max 2560px and converts to WebP.
+ * Resizes to max 2560px and converts to WebP. Falls back to JPEG if WebP fails.
  */
 export async function optimizeImage(file: File): Promise<File> {
   if (!file.type.startsWith('image/')) return file;
@@ -87,7 +130,12 @@ export async function optimizeImage(file: File): Promise<File> {
   try {
     const img = await loadImage(file);
     const baseName = file.name.replace(/\.[^/.]+$/, '');
-    return await renderToWebpFile(img, `${baseName}.webp`, 2560, 0.8);
+    try {
+      return await renderToWebpFile(img, `${baseName}.webp`, 2560, 0.8);
+    } catch {
+      // WebP 변환 실패 시 (일부 iOS HEIF 등) JPEG로 fallback
+      return await renderToFormatFile(img, `${baseName}.jpg`, 2560, 0.85, 'image/jpeg');
+    }
   } catch (error) {
     console.error('[image-optimization] Image optimization failed:', error);
     return file;
