@@ -29,6 +29,11 @@ export function useLocalizedNavigation(): NavigationItem[] {
       href: '/about',
       items: [
         {
+          name: t('aboutSaf'),
+          href: '/about',
+          description: t('aboutSafDesc'),
+        },
+        {
           name: t('ourReality'),
           href: '/our-reality',
           description: t('ourRealityDesc'),
