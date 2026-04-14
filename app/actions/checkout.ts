@@ -251,19 +251,20 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
     return { success: false, error: '주문 상태 변경 중 오류가 발생했습니다.' };
   }
 
-  const { error: artworkUpdateError } = await adminClient
+  const { data: reservedArtwork, error: artworkUpdateError } = await adminClient
     .from('artworks')
     .update({ status: 'reserved' })
     .eq('id', input.artworkId)
-    .eq('status', 'available');
+    .eq('status', 'available')
+    .select('id');
 
-  if (artworkUpdateError) {
-    // 작품 상태 업데이트 실패 → 주문을 되돌림
+  // error이거나 0건 matched(동시 구매로 이미 상태 변경됨) → 주문 취소
+  if (artworkUpdateError || !reservedArtwork || reservedArtwork.length === 0) {
     await adminClient
       .from('orders')
       .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
       .eq('order_no', result.orderNo);
-    return { success: false, error: '작품 상태 변경 중 오류가 발생했습니다.' };
+    return { success: false, error: '이미 판매된 작품입니다.' };
   }
 
   return result;

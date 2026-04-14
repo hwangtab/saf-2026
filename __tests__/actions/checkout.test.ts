@@ -53,7 +53,12 @@ jest.mock('@/lib/auth/server', () => ({
         return {
           select: chain.select,
           update: jest.fn(() => {
-            const eqChain: jest.Mock = jest.fn(() => ({ eq: eqChain, ...mockUpdateResult }));
+            const selectFn: jest.Mock = jest.fn(() => mockUpdateResult);
+            const eqChain: jest.Mock = jest.fn(() => ({
+              eq: eqChain,
+              select: selectFn,
+              ...mockUpdateResult,
+            }));
             return { eq: eqChain };
           }),
         };
@@ -142,6 +147,8 @@ function setupSuccessfulArtwork() {
   };
   mockRpcResult = { data: [{ is_available: true }], error: null };
   mockInsertResult = { data: { id: 'order-1' }, error: null };
+  // createBankTransferOrder: artworks.update().select('id')가 예약 성공 반환
+  mockUpdateResult = { data: [{ id: 'art-1' }], error: null };
 }
 
 // ---------- Tests ----------
@@ -351,6 +358,17 @@ describe('createBankTransferOrder', () => {
     mockArtworkResult = { data: null, error: { message: 'not found' } };
     const result = await createBankTransferOrder(validInput);
     expect(result.success).toBe(false);
+  });
+
+  it('동시 구매로 artwork reserve 0건 시 에러 반환', async () => {
+    setupSuccessfulArtwork();
+    // artworks.update가 0건 matched (다른 요청이 이미 reserved로 변경)
+    mockUpdateResult = { data: [], error: null };
+    const result = await createBankTransferOrder(validInput);
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error).toContain('이미 판매된');
+    }
   });
 
   it('성공 시 주문 생성 후 상태 업데이트', async () => {

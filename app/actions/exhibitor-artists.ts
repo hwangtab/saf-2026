@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { requireExhibitor } from '@/lib/auth/guards';
-import { createSupabaseServerClient } from '@/lib/auth/server';
+import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/auth/server';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { getString, getStoragePathFromPublicUrl } from '@/lib/utils/form-helpers';
 import { validateTextLength, validateUrl, validateEmail } from '@/lib/utils/input-validation';
@@ -257,7 +257,9 @@ export async function deleteExhibitorArtist(id: string) {
   if (artist.profile_image) {
     const path = getStoragePathFromPublicUrl(artist.profile_image, 'profiles');
     if (path) {
-      await supabase.storage.from('profiles').remove([path]);
+      // profiles 버킷 RLS는 owner uid 기준이므로 exhibitor가 직접 삭제 불가 → admin client 사용
+      const adminClient = createSupabaseAdminClient();
+      await adminClient.storage.from('profiles').remove([path]);
     }
   }
 
