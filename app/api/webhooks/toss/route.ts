@@ -5,7 +5,6 @@ import { fetchPayment } from '@/lib/integrations/toss/confirm';
 import {
   parseWebhookPayload,
   verifyDepositCallbackSecret,
-  verifyWebhookSignature,
   isDepositCallback,
   isPaymentStatusChanged,
 } from '@/lib/integrations/toss/webhook';
@@ -18,21 +17,9 @@ const CANCELED_STATUSES = new Set(['CANCELED', 'PARTIAL_CANCELED']);
 export const runtime = 'nodejs';
 
 export async function POST(req: NextRequest) {
-  const rawBody = await req.text();
-
-  // 웹훅 서명 검증 — TOSS_WEBHOOK_SECRET 설정 시 활성화
-  const webhookSecret = process.env.TOSS_WEBHOOK_SECRET;
-  if (webhookSecret) {
-    const signature = req.headers.get('x-toss-signature');
-    if (!verifyWebhookSignature(rawBody, signature, webhookSecret)) {
-      console.error('[toss-webhook] Signature verification failed');
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-  }
-
   let body: unknown;
   try {
-    body = JSON.parse(rawBody);
+    body = await req.json();
   } catch {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
   }
