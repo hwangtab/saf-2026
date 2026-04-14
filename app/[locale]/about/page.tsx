@@ -328,6 +328,7 @@ export default async function AboutPage() {
               donateHref={EXTERNAL_LINKS.JOIN_MEMBER}
               purchaseHref="/artworks"
               variant="large"
+              className="justify-center"
             />
           </div>
         </Section>
@@ -647,6 +648,7 @@ export default async function AboutPage() {
             donateHref={EXTERNAL_LINKS.JOIN_MEMBER}
             purchaseHref="/artworks"
             variant="large"
+            className="justify-center"
           />
 
           {/* 출처 */}
