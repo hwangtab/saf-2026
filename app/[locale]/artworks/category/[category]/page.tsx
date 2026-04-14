@@ -39,7 +39,7 @@ function getCategoryEnName(category: string): string {
 
 export async function generateStaticParams() {
   return SUPPORTED_CATEGORIES.map((category) => ({
-    category: encodeURIComponent(category),
+    category,
   }));
 }
 

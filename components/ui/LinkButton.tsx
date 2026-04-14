@@ -113,7 +113,7 @@ export default function LinkButton({
         href={href}
         className={styles}
         target={external ? '_blank' : undefined}
-        rel={external ? 'noopener noreferrer nofollow' : undefined}
+        rel={external ? 'noopener noreferrer' : undefined}
       >
         {content}
       </a>

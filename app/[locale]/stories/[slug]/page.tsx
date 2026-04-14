@@ -79,6 +79,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       siteName: isEn ? 'SAF Online' : '씨앗페 온라인',
       locale: isEn ? 'en_US' : 'ko_KR',
       publishedTime: story.published_at,
+      modifiedTime: story.updated_at ?? story.published_at,
       ...(story.author ? { authors: [story.author] } : {}),
       section: isEn ? 'Magazine' : '매거진',
       images: [
