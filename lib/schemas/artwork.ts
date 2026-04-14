@@ -121,10 +121,7 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
     keywords: keywordBase.filter((k): k is string => Boolean(k)),
     openGraph: {
       ...baseMetadata.openGraph,
-      // og:type 'product' — openGraph.type에 직접 오버라이드 (other로 우회 시 <meta name> 생성되어 Facebook이 인식 못함)
-      // og:type: Next.js Metadata 타입에 'product'가 없어 'website'로 단언. 런타임 값은 정확히 렌더됨.
-      // (other['og:type'] 우회 시 <meta name>이 생성돼 Facebook이 인식 못하는 문제 있어 직접 오버라이드)
-      type: (hasFixedPrice ? 'product' : 'website') as 'website',
+      type: 'website',
       locale: isEnglish ? 'en_US' : 'ko_KR',
       siteName: isEnglish ? 'SAF Online' : '씨앗페 온라인',
       // 작품별 alt로 덮어씀 — createPageMetadata의 제네릭 alt 대신 작품명 사용
@@ -155,8 +152,10 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
       ],
     },
     // Facebook/Instagram 제품 메타 태그 — 소셜 공유 시 가격 정보 노출
+    // og:type 'product'는 Next.js Metadata API가 지원하지 않아 other로 우회
     other: {
       ...(hasFixedPrice && {
+        'og:type': 'product',
         'product:price:amount': String(numericPriceValue),
         'product:price:currency': 'KRW',
         'product:availability': isSold ? 'out of stock' : 'in stock',
