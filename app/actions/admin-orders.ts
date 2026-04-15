@@ -72,7 +72,7 @@ export async function getOrders(filters: OrderFilters = {}): Promise<OrderListIt
   const { data, error } = await query;
   if (error) throw error;
 
-  return (data || []).map((row: any) => {
+  return (data || []).map((row) => {
     const artwork = Array.isArray(row.artworks) ? row.artworks[0] : row.artworks;
     const images = Array.isArray(artwork?.images) ? artwork.images : [];
     const artistRow = artwork?.artists;
@@ -126,9 +126,7 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
     .limit(1)
     .maybeSingle();
 
-  const artwork = Array.isArray((order as any).artworks)
-    ? (order as any).artworks[0]
-    : (order as any).artworks;
+  const artwork = Array.isArray(order.artworks) ? order.artworks[0] : order.artworks;
   const images = Array.isArray(artwork?.images) ? artwork.images : [];
   const artistRow = artwork?.artists;
   const artistName = Array.isArray(artistRow) ? artistRow[0]?.name_ko : artistRow?.name_ko;
@@ -142,19 +140,19 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
     order_no: order.order_no,
     status: order.status as OrderStatus,
     total_amount: order.total_amount,
-    item_amount: (order as any).item_amount ?? order.total_amount,
-    shipping_amount: (order as any).shipping_amount ?? 0,
+    item_amount: order.item_amount ?? order.total_amount,
+    shipping_amount: order.shipping_amount ?? 0,
     buyer_name: order.buyer_name ?? null,
-    buyer_phone: (order as any).buyer_phone ?? null,
-    shipping_name: (order as any).shipping_name ?? null,
-    shipping_phone: (order as any).shipping_phone ?? null,
-    shipping_address: (order as any).shipping_address ?? null,
-    shipping_address_detail: (order as any).shipping_address_detail ?? null,
-    shipping_memo: (order as any).shipping_memo ?? null,
+    buyer_phone: order.buyer_phone ?? null,
+    shipping_name: order.shipping_name ?? null,
+    shipping_phone: order.shipping_phone ?? null,
+    shipping_address: order.shipping_address ?? null,
+    shipping_address_detail: order.shipping_address_detail ?? null,
+    shipping_memo: order.shipping_memo ?? null,
     created_at: order.created_at,
-    paid_at: (order as any).paid_at ?? null,
-    cancelled_at: (order as any).cancelled_at ?? null,
-    refunded_at: (order as any).refunded_at ?? null,
+    paid_at: order.paid_at ?? null,
+    cancelled_at: order.cancelled_at ?? null,
+    refunded_at: order.refunded_at ?? null,
     artwork_id: order.artwork_id ?? null,
     artwork_title: artwork?.title ?? null,
     artwork_image: images[0] ?? null,
@@ -172,8 +170,8 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
       typeof virtualAccount?.dueDate === 'string' ? virtualAccount.dueDate : null,
     sale_id: sale?.id ?? null,
     sale_voided: !!sale?.voided_at,
-    shipping_carrier: (order as any).shipping_carrier ?? null,
-    tracking_number: (order as any).tracking_number ?? null,
+    shipping_carrier: order.shipping_carrier ?? null,
+    tracking_number: order.tracking_number ?? null,
   };
 }
 
