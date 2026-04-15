@@ -6,7 +6,7 @@ import type {
   SelectHTMLAttributes,
   TextareaHTMLAttributes,
 } from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/cn';
 
 export function AdminCard({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
@@ -26,6 +26,7 @@ export function AdminPageHeader({ className, ...props }: HTMLAttributes<HTMLDivE
 
 export function AdminPageTitle({ className, ...props }: HTMLAttributes<HTMLHeadingElement>) {
   return (
+    // eslint-disable-next-line jsx-a11y/heading-has-content -- children passed via ...props
     <h1
       className={cn('text-2xl font-bold tracking-tight text-charcoal-deep sm:text-3xl', className)}
       {...props}
@@ -54,6 +55,7 @@ export function AdminCardHeader({ className, ...props }: HTMLAttributes<HTMLDivE
 
 export function AdminFieldLabel({ className, ...props }: LabelHTMLAttributes<HTMLLabelElement>) {
   return (
+    // eslint-disable-next-line jsx-a11y/label-has-associated-control -- htmlFor passed via ...props from callers
     <label
       className={cn('mb-2 block text-sm font-medium text-charcoal-muted', className)}
       {...props}
@@ -99,6 +101,7 @@ export function AdminBadge({
   description,
   ...props
 }: AdminBadgeProps) {
+  /* eslint-disable jsx-a11y/no-noninteractive-tabindex -- 툴팁 트리거 배지: 키보드 포커스를 위해 tabIndex 필요 */
   return (
     <span
       className={cn(
@@ -110,6 +113,7 @@ export function AdminBadge({
         tone === 'danger' && 'bg-rose-50 text-rose-700 ring-rose-600/20',
         className
       )}
+      role="note"
       tabIndex={0}
       {...props}
     >

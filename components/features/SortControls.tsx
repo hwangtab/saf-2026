@@ -90,6 +90,7 @@ export default function SortControls({ value, onChange }: SortControlsProps) {
   );
 
   return (
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions -- 드롭다운 키보드 탐색용 컨테이너; 실제 버튼은 내부 button 요소
     <div className="relative" ref={dropdownRef} onKeyDown={handleKeyDown}>
       <button
         type="button"

@@ -10,6 +10,7 @@ interface TrackClickProps {
 
 export default function TrackClick({ event, properties, children }: TrackClickProps) {
   return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- 분석 추적 래퍼; 실제 상호작용 가능 요소는 children이 담당
     <span
       onClick={() => {
         try {

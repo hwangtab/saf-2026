@@ -247,6 +247,7 @@ export function BuyerList({ buyers }: { buyers: BuyerRecord[] }) {
                           onBlur={() => savePhone(buyer.buyerName, buyer.saleIds)}
                           onKeyDown={(e) => handleKeyDown(e, buyer.buyerName, buyer.saleIds)}
                           disabled={saving}
+                          // eslint-disable-next-line jsx-a11y/no-autofocus -- 인라인 편집 활성화 시 즉시 포커스가 UX상 필요
                           autoFocus
                           className="w-36 rounded border border-indigo-300 px-2 py-1 text-sm focus-visible:outline-none"
                           placeholder="010-0000-0000"

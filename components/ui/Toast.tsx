@@ -2,7 +2,7 @@
 
 import { useEffect, useCallback, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/cn';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
 
@@ -74,6 +74,7 @@ function Toast({ toast, onDismiss }: ToastProps) {
     [handleDismiss]
   );
 
+  /* eslint-disable jsx-a11y/no-static-element-interactions, jsx-a11y/no-noninteractive-tabindex -- Toast는 키보드 해제(Escape/Enter)가 가능한 인터랙티브 알림 */
   return (
     <div
       role={type === 'error' ? 'alert' : 'status'}

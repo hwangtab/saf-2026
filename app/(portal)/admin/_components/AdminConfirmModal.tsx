@@ -2,7 +2,7 @@
 
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/cn';
 import { useTranslations } from 'next-intl';
 
 interface AdminConfirmModalProps {

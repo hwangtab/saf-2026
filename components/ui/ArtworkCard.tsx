@@ -5,7 +5,8 @@ import { Link } from '@/i18n/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import SafeImage from '@/components/common/SafeImage';
 import type { ArtworkCardData } from '@/types';
-import { cn, resolveArtworkImageUrlForPreset } from '@/lib/utils';
+import { cn } from '@/lib/utils/cn';
+import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
 import { containsHangul } from '@/lib/search-utils';
 
 type ArtworkCardVariant = 'gallery' | 'slider';

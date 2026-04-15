@@ -1,5 +1,5 @@
 // import React from 'react'; // Removed unused import
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/cn';
 
 interface SawtoothDividerProps {
   /**

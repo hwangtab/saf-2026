@@ -11,7 +11,7 @@ import {
   CreditCard,
   ChevronRight,
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/cn';
 import Modal from '@/components/ui/Modal';
 import { CONTACT } from '@/lib/constants';
 

@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/cn';
 
 type BadgeTone = 'default' | 'info' | 'success' | 'warning' | 'danger' | 'outline-primary';
 type BadgeSize = 'sm' | 'md';

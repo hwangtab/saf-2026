@@ -13,7 +13,7 @@ import { ImageUpload } from '@/components/dashboard/ImageUpload';
 import { AdminCard, AdminSelect } from '@/app/admin/_components/admin-ui';
 import { useToast } from '@/lib/hooks/useToast';
 import { matchesSearchText } from '@/lib/search-utils';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/cn';
 import { ARTWORK_CATEGORIES, EditionType, TaxType } from '@/types';
 
 type Artist = {
@@ -271,10 +271,11 @@ export function ArtworkEditForm({
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
               작품명 <span className="text-red-500">*</span>
             </label>
             <input
+              id="title"
               name="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -290,8 +291,11 @@ export function ArtworkEditForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">작품명 (영문)</label>
+            <label htmlFor="title_en" className="block text-sm font-medium text-gray-700 mb-2">
+              작품명 (영문)
+            </label>
             <input
+              id="title_en"
               name="title_en"
               defaultValue={artwork.title_en || ''}
               placeholder="English title"
@@ -300,8 +304,14 @@ export function ArtworkEditForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">상품명(관리용)</label>
+            <label
+              htmlFor="admin_product_name"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              상품명(관리용)
+            </label>
             <input
+              id="admin_product_name"
               name="admin_product_name"
               defaultValue={artwork.admin_product_name || ''}
               placeholder="예: 연작 1, 파란배경"
@@ -314,7 +324,7 @@ export function ArtworkEditForm({
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-gray-700">
+              <label htmlFor="artist_id" className="block text-sm font-medium text-gray-700">
                 작가 <span className="text-red-500">*</span>
               </label>
               <Link
@@ -332,6 +342,7 @@ export function ArtworkEditForm({
               className="mb-2 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
             />
             <AdminSelect
+              id="artist_id"
               name="artist_id"
               value={selectedArtistId}
               onChange={(e) => setSelectedArtistId(e.target.value)}
@@ -358,8 +369,11 @@ export function ArtworkEditForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">가격</label>
+            <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-2">
+              가격
+            </label>
             <input
+              id="price"
               name="price"
               value={price}
               onChange={handlePriceChange}
@@ -369,8 +383,11 @@ export function ArtworkEditForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">크기</label>
+            <label htmlFor="size" className="block text-sm font-medium text-gray-700 mb-2">
+              크기
+            </label>
             <input
+              id="size"
               name="size"
               defaultValue={artwork.size || ''}
               placeholder="60x45cm"
@@ -379,8 +396,11 @@ export function ArtworkEditForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">재료</label>
+            <label htmlFor="material" className="block text-sm font-medium text-gray-700 mb-2">
+              재료
+            </label>
             <input
+              id="material"
               name="material"
               defaultValue={artwork.material || ''}
               placeholder="Oil on canvas"
@@ -389,8 +409,11 @@ export function ArtworkEditForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">제작연도</label>
+            <label htmlFor="year" className="block text-sm font-medium text-gray-700 mb-2">
+              제작연도
+            </label>
             <input
+              id="year"
               name="year"
               defaultValue={artwork.year || ''}
               placeholder="2026"
@@ -399,8 +422,11 @@ export function ArtworkEditForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">에디션</label>
+            <label htmlFor="edition" className="block text-sm font-medium text-gray-700 mb-2">
+              에디션
+            </label>
             <input
+              id="edition"
               name="edition"
               defaultValue={artwork.edition || ''}
               placeholder="1/10"
@@ -409,10 +435,11 @@ export function ArtworkEditForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="edition_type" className="block text-sm font-medium text-gray-700 mb-2">
               에디션 유형 <span className="text-red-500">*</span>
             </label>
             <select
+              id="edition_type"
               name="edition_type"
               value={editionType}
               onChange={(e) => {
@@ -430,8 +457,11 @@ export function ArtworkEditForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">과세구분</label>
+            <label htmlFor="tax_type" className="block text-sm font-medium text-gray-700 mb-2">
+              과세구분
+            </label>
             <select
+              id="tax_type"
               name="tax_type"
               defaultValue={artwork.tax_type || 'B'}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
@@ -443,9 +473,15 @@ export function ArtworkEditForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">분류</label>
+            <label
+              htmlFor="category_select"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              분류
+            </label>
             <input type="hidden" name="category" value={categoryValue} />
             <select
+              id="category_select"
               value={categoryMode === 'custom' ? '__custom__' : categoryPreset}
               onChange={(e) => {
                 if (e.target.value === '__custom__') {
@@ -480,10 +516,14 @@ export function ArtworkEditForm({
 
           {editionType === 'limited' && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="edition_limit"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 에디션 수량 <span className="text-red-500">*</span>
               </label>
               <input
+                id="edition_limit"
                 type="number"
                 name="edition_limit"
                 value={editionLimit}
@@ -505,8 +545,11 @@ export function ArtworkEditForm({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">작가 노트</label>
+          <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+            작가 노트
+          </label>
           <textarea
+            id="description"
             name="description"
             defaultValue={artwork.description || ''}
             rows={4}

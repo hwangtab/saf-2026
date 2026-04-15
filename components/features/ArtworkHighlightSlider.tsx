@@ -8,7 +8,7 @@ import { Artwork } from '@/types';
 import ArtworkCard from '@/components/ui/ArtworkCard';
 import { Link } from '@/i18n/navigation';
 import SectionTitle from '@/components/ui/SectionTitle';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/cn';
 
 interface ArtworkHighlightSliderProps {
   artworks: Artwork[];

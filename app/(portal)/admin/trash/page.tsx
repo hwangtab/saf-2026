@@ -72,6 +72,7 @@ export default async function AdminTrashPage({ searchParams }: Props) {
             </AdminBadge>
           </div>
           <div className="grid grid-cols-1 gap-3 p-4 md:grid-cols-2 xl:grid-cols-4">
+            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- AdminInput은 내부에서 <input>을 렌더링하는 래퍼 컴포넌트 (implicit 연결) */}
             <label className="flex flex-col gap-1 text-xs font-medium text-gray-600">
               검색어
               <AdminInput
@@ -81,6 +82,7 @@ export default async function AdminTrashPage({ searchParams }: Props) {
                 className="h-10"
               />
             </label>
+            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- AdminSelect는 내부에서 <select>를 렌더링하는 래퍼 컴포넌트 (implicit 연결) */}
             <label className="flex flex-col gap-1 text-xs font-medium text-gray-600">
               대상 타입
               <AdminSelect name="target_type" defaultValue={targetType} className="h-10">
@@ -89,6 +91,7 @@ export default async function AdminTrashPage({ searchParams }: Props) {
                 <option value="artist">작가</option>
               </AdminSelect>
             </label>
+            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- AdminSelect는 내부에서 <select>를 렌더링하는 래퍼 컴포넌트 (implicit 연결) */}
             <label className="flex flex-col gap-1 text-xs font-medium text-gray-600">
               보관 상태
               <AdminSelect name="state" defaultValue={state} className="h-10">

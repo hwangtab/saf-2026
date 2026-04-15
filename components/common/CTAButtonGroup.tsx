@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/cn';
 import { EXTERNAL_LINKS } from '@/lib/constants';
 import { useTranslations } from 'next-intl';
 import LinkButton from '@/components/ui/LinkButton';

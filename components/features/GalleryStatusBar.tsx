@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { Phone, Mail } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/cn';
 import { formatCurrentDate } from '@/lib/utils/format-date';
 import { CONTACT } from '@/lib/constants';
 

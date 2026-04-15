@@ -15,7 +15,7 @@ import { ImageUpload } from '@/components/dashboard/ImageUpload';
 import { AdminCard } from '@/app/admin/_components/admin-ui';
 import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import { useToast } from '@/lib/hooks/useToast';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/cn';
 
 type Artist = {
   id: string;
@@ -338,10 +338,14 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
             ) : (
               <div className="space-y-4">
                 <div className="relative">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="user-search"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     사용자 검색 (이름 또는 이메일)
                   </label>
                   <input
+                    id="user-search"
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -468,10 +472,11 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="name_ko" className="block text-sm font-medium text-gray-700 mb-2">
               작가명 (한글) <span className="text-red-500">*</span>
             </label>
             <input
+              id="name_ko"
               name="name_ko"
               value={nameKo}
               onChange={(e) => setNameKo(e.target.value)}
@@ -487,8 +492,11 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">작가명 (영문)</label>
+            <label htmlFor="name_en" className="block text-sm font-medium text-gray-700 mb-2">
+              작가명 (영문)
+            </label>
             <input
+              id="name_en"
               name="name_en"
               defaultValue={artist.name_en || ''}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
@@ -496,8 +504,11 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">연락처(전화번호)</label>
+            <label htmlFor="contact_phone" className="block text-sm font-medium text-gray-700 mb-2">
+              연락처(전화번호)
+            </label>
             <input
+              id="contact_phone"
               name="contact_phone"
               type="tel"
               defaultValue={artist.contact_phone || ''}
@@ -507,8 +518,11 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">이메일</label>
+            <label htmlFor="contact_email" className="block text-sm font-medium text-gray-700 mb-2">
+              이메일
+            </label>
             <input
+              id="contact_email"
               name="contact_email"
               type="email"
               defaultValue={artist.contact_email || ''}
@@ -517,8 +531,11 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Instagram</label>
+            <label htmlFor="instagram" className="block text-sm font-medium text-gray-700 mb-2">
+              Instagram
+            </label>
             <input
+              id="instagram"
               name="instagram"
               defaultValue={artist.instagram || ''}
               placeholder="@username"
@@ -527,8 +544,11 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">홈페이지</label>
+            <label htmlFor="homepage" className="block text-sm font-medium text-gray-700 mb-2">
+              홈페이지
+            </label>
             <input
+              id="homepage"
               name="homepage"
               type="url"
               defaultValue={artist.homepage || ''}
@@ -541,8 +561,11 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">소개</label>
+          <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-2">
+            소개
+          </label>
           <textarea
+            id="bio"
             name="bio"
             defaultValue={artist.bio || ''}
             rows={4}
@@ -551,8 +574,11 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">소개 (영문)</label>
+          <label htmlFor="bio_en" className="block text-sm font-medium text-gray-700 mb-2">
+            소개 (영문)
+          </label>
           <textarea
+            id="bio_en"
             name="bio_en"
             defaultValue={artist.bio_en || ''}
             rows={4}
@@ -562,8 +588,11 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">이력</label>
+          <label htmlFor="history" className="block text-sm font-medium text-gray-700 mb-2">
+            이력
+          </label>
           <textarea
+            id="history"
             name="history"
             defaultValue={artist.history || ''}
             rows={6}
@@ -572,8 +601,11 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">이력 (영문)</label>
+          <label htmlFor="history_en" className="block text-sm font-medium text-gray-700 mb-2">
+            이력 (영문)
+          </label>
           <textarea
+            id="history_en"
             name="history_en"
             defaultValue={artist.history_en || ''}
             rows={6}

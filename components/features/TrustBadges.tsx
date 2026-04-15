@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/cn';
 import { useLocale, useTranslations } from 'next-intl';
 import { Check, Clock } from 'lucide-react';
 import { formatCurrentDate } from '@/lib/utils/format-date';

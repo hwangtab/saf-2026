@@ -54,6 +54,7 @@ export default function SafeAvatarImage({
   }, [src]);
 
   return (
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- {...props} spread로 onError 등 이벤트를 수신하는 이미지 컴포넌트
     <img
       {...props}
       src={currentSrc}

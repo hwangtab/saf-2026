@@ -127,6 +127,7 @@ export default function ArtworkImage({
 
       {/* View in Room Button */}
       {canPreview && (
+        // eslint-disable-next-line jsx-a11y/no-static-element-interactions -- prefetch용 hover 트리거; 실제 버튼은 내부 Button 컴포넌트
         <div onMouseEnter={handlePrefetch} className="mt-3">
           <Button
             type="button"

@@ -9,7 +9,7 @@ import {
   voidArtworkSale,
 } from '@/app/actions/admin-artworks';
 import { useToast } from '@/lib/hooks/useToast';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/cn';
 import { ArtworkSale } from '@/types';
 
 type SalesHistoryProps = {
@@ -282,7 +282,7 @@ export function SalesHistory({
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
               <div className="mb-1 flex items-center justify-between">
-                <label className="block text-xs font-medium text-gray-500">
+                <label htmlFor="sale-price" className="block text-xs font-medium text-gray-500">
                   판매 금액 (KRW) <span className="text-red-500">*</span>
                 </label>
                 {originalPrice > 0 && (
@@ -293,6 +293,7 @@ export function SalesHistory({
               </div>
               <div className="flex gap-2">
                 <input
+                  id="sale-price"
                   value={salePrice}
                   onChange={handlePriceChange}
                   placeholder="1,000,000"
@@ -310,8 +311,11 @@ export function SalesHistory({
               </div>
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-gray-500">판매 일자</label>
+              <label htmlFor="sale-date" className="mb-1 block text-xs font-medium text-gray-500">
+                판매 일자
+              </label>
               <input
+                id="sale-date"
                 type="date"
                 value={soldAt}
                 onChange={(e) => setSoldAt(e.target.value)}
@@ -320,10 +324,14 @@ export function SalesHistory({
             </div>
             {editionType === 'limited' && (
               <div>
-                <label className="mb-1 block text-xs font-medium text-gray-500">
+                <label
+                  htmlFor="sale-quantity"
+                  className="mb-1 block text-xs font-medium text-gray-500"
+                >
                   수량 <span className="text-red-500">*</span>
                 </label>
                 <input
+                  id="sale-quantity"
                   type="number"
                   min="1"
                   max={editionLimit ? editionLimit - totalSold : undefined}
@@ -334,8 +342,14 @@ export function SalesHistory({
               </div>
             )}
             <div>
-              <label className="mb-1 block text-xs font-medium text-gray-500">구매자 (선택)</label>
+              <label
+                htmlFor="sale-buyer-name"
+                className="mb-1 block text-xs font-medium text-gray-500"
+              >
+                구매자 (선택)
+              </label>
               <input
+                id="sale-buyer-name"
                 value={buyerName}
                 onChange={(e) => setBuyerName(e.target.value)}
                 placeholder="홍길동"
@@ -343,8 +357,14 @@ export function SalesHistory({
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-gray-500">연락처 (선택)</label>
+              <label
+                htmlFor="sale-buyer-phone"
+                className="mb-1 block text-xs font-medium text-gray-500"
+              >
+                연락처 (선택)
+              </label>
               <input
+                id="sale-buyer-phone"
                 type="tel"
                 value={buyerPhone}
                 onChange={(e) => setBuyerPhone(e.target.value)}
@@ -353,8 +373,11 @@ export function SalesHistory({
               />
             </div>
             <div className="md:col-span-2">
-              <label className="mb-1 block text-xs font-medium text-gray-500">비고 (선택)</label>
+              <label htmlFor="sale-note" className="mb-1 block text-xs font-medium text-gray-500">
+                비고 (선택)
+              </label>
               <input
+                id="sale-note"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 placeholder="메모..."
@@ -507,6 +530,7 @@ export function SalesHistory({
                             value={voidReason}
                             onChange={(e) => setVoidReason(e.target.value)}
                             placeholder="예: 잘못 입력된 기록"
+                            // eslint-disable-next-line jsx-a11y/no-autofocus -- 모달 열릴 때 즉시 포커스가 UX상 필요
                             autoFocus
                             onKeyDown={(e) => {
                               if (e.key === 'Enter') {

@@ -179,8 +179,11 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Instagram</label>
+            <label htmlFor="instagram" className="block text-sm font-medium text-gray-700 mb-2">
+              Instagram
+            </label>
             <input
+              id="instagram"
               name="instagram"
               defaultValue={artist.instagram || ''}
               placeholder="@username"

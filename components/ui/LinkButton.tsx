@@ -1,5 +1,5 @@
 import { Link } from '@/i18n/navigation';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/cn';
 import {
   buttonVariants,
   FIXED_LEFT_ICON_OFFSET,

@@ -92,6 +92,7 @@ function RemoteSafeImage({ src, sizes, ...props }: { src: string } & Omit<ImageP
 
   if (fill) {
     return (
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- onError는 에러 이벤트 핸들러이며 마우스/키보드 상호작용 아님
       <img
         src={currentSrc}
         srcSet={srcSet}
@@ -116,6 +117,7 @@ function RemoteSafeImage({ src, sizes, ...props }: { src: string } & Omit<ImageP
   }
 
   return (
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- onError는 에러 이벤트 핸들러이며 마우스/키보드 상호작용 아님
     <img
       src={currentSrc}
       srcSet={srcSet}

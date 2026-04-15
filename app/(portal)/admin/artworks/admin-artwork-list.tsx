@@ -333,7 +333,10 @@ export function AdminArtworkList({
     );
 
     try {
-      const result = await batchUpdateArtworkStatus([id], newStatus);
+      const result = await batchUpdateArtworkStatus(
+        [id],
+        newStatus as 'available' | 'sold' | 'reserved' | 'hidden'
+      );
       if (!result.success) {
         const source = artworksRef.current.find((item) => item.id === id);
         if (source) {
@@ -452,7 +455,10 @@ export function AdminArtworkList({
     );
 
     try {
-      const result = await batchUpdateArtworkStatus(selectedInFiltered, status);
+      const result = await batchUpdateArtworkStatus(
+        selectedInFiltered,
+        status as 'available' | 'sold' | 'reserved' | 'hidden'
+      );
       if (!result.success) {
         const failedIdSet = new Set(result.failedIds);
         const sourceMap = new Map(artworksRef.current.map((item) => [item.id, item]));
@@ -811,6 +817,7 @@ export function AdminArtworkList({
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center">
+                        {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions -- role="button"+tabIndex가 조건부 spread로 처리됨 (ESLint 정적 분석 한계) */}
                         <div
                           className={`relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-md bg-gray-100 border border-gray-200 ${
                             artwork.images?.[0] ? 'cursor-zoom-in' : ''

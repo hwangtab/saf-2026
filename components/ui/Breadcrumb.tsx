@@ -1,5 +1,5 @@
 import { Link } from '@/i18n/navigation';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/cn';
 import type { BreadcrumbItem } from '@/types';
 
 interface BreadcrumbProps {

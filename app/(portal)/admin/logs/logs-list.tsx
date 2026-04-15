@@ -122,6 +122,7 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
             placeholder={t('revertReasonPlaceholder')}
             rows={3}
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            // eslint-disable-next-line jsx-a11y/no-autofocus -- 모달 열릴 때 즉시 포커스가 UX상 필요
             autoFocus
           />
         </div>

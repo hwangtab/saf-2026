@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import type { FAQItem } from '@/content/faq';
 import { ChevronDownIcon } from '@/components/ui/Icons';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/cn';
 
 interface FAQListProps {
   items: FAQItem[];

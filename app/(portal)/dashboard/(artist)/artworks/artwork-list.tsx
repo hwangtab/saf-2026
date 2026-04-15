@@ -16,11 +16,11 @@ import { useLocale, useTranslations } from 'next-intl';
 type Artwork = {
   id: string;
   title: string;
-  images: string[];
-  price: string;
-  status: 'available' | 'sold' | 'reserved' | 'hidden';
-  is_hidden: boolean;
-  created_at: string;
+  images: string[] | null;
+  price: string | null;
+  status: 'available' | 'sold' | 'reserved' | 'hidden' | null;
+  is_hidden: boolean | null;
+  created_at: string | null;
 };
 
 export function ArtworkList({
@@ -110,7 +110,7 @@ export function ArtworkList({
   return (
     <>
       <AdminCard className="overflow-hidden">
-        <ul role="list" className="divide-y divide-[var(--admin-border-soft)]">
+        <ul className="divide-y divide-[var(--admin-border-soft)]">
           {optimisticArtworks.map((artwork) => (
             <li key={artwork.id}>
               <div className="flex flex-col gap-4 px-4 py-5 sm:px-6 lg:flex-row lg:items-center">

@@ -272,6 +272,7 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
               {t('contractFull')}
             </p>
             <div className="relative">
+              {/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- 키보드 스크롤 접근성을 위해 region에 tabIndex 필요 */}
               <div
                 ref={termsContainerRef}
                 className="max-h-[52vh] overflow-y-auto rounded-lg border border-gray-200 bg-white p-3 md:max-h-[65vh]"
@@ -282,6 +283,7 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
               >
                 <LegalDocumentContent document={EXHIBITOR_APPLICATION_TERMS_DOCUMENT} />
               </div>
+              {/* eslint-enable jsx-a11y/no-noninteractive-tabindex */}
               {!hasReadTerms && (
                 <div className="pointer-events-none absolute bottom-0 left-0 right-0 flex flex-col items-center">
                   <div className="absolute inset-x-0 bottom-0 h-16 rounded-b-md bg-gradient-to-t from-white via-white/80 to-transparent" />
@@ -304,6 +306,7 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
               {t('tosFull')}
             </p>
             <div className="relative">
+              {/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- 키보드 스크롤 접근성을 위해 region에 tabIndex 필요 */}
               <div
                 ref={tosContainerRef}
                 className="max-h-[52vh] overflow-y-auto rounded-lg border border-gray-200 bg-white p-3 md:max-h-[65vh]"
@@ -314,6 +317,7 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
               >
                 <LegalDocumentContent document={TERMS_OF_SERVICE_DOCUMENT} />
               </div>
+              {/* eslint-enable jsx-a11y/no-noninteractive-tabindex */}
               {!hasReadTos && (
                 <div className="pointer-events-none absolute bottom-0 left-0 right-0 flex flex-col items-center">
                   <div className="absolute inset-x-0 bottom-0 h-16 rounded-b-md bg-gradient-to-t from-white via-white/80 to-transparent" />
@@ -336,6 +340,7 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
               {t('privacyFull')}
             </p>
             <div className="relative">
+              {/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- 키보드 스크롤 접근성을 위해 region에 tabIndex 필요 */}
               <div
                 ref={privacyContainerRef}
                 className="max-h-[52vh] overflow-y-auto rounded-lg border border-gray-200 bg-white p-3 md:max-h-[65vh]"
@@ -346,6 +351,7 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
               >
                 <LegalDocumentContent document={PRIVACY_POLICY_DOCUMENT} />
               </div>
+              {/* eslint-enable jsx-a11y/no-noninteractive-tabindex */}
               {!hasReadPrivacy && (
                 <div className="pointer-events-none absolute bottom-0 left-0 right-0 flex flex-col items-center">
                   <div className="absolute inset-x-0 bottom-0 h-16 rounded-b-md bg-gradient-to-t from-white via-white/80 to-transparent" />
@@ -364,6 +370,7 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
           </div>
         </div>
 
+        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events -- 미읽음 상태에서만 role="button"+onClick 활성화; 내부 checkbox가 키보드 접근성 담당 */}
         <div
           id="exhibitor-agreement-section"
           className="mt-4 flex items-start gap-3"
