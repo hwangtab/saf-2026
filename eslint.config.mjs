@@ -41,6 +41,9 @@ const config = [
       'jsx-a11y/role-supports-aria-props': 'error',
       'jsx-a11y/scope': 'error',
       'jsx-a11y/tabindex-no-positive': 'error',
+      'jsx-a11y/lang': 'error',
+      'jsx-a11y/no-aria-hidden-on-focusable': 'error',
+      'jsx-a11y/prefer-tag-over-role': 'warn',
     },
   },
   {

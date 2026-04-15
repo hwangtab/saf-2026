@@ -126,6 +126,7 @@ export function AdminBadge({
       )}
     </span>
   );
+  /* eslint-enable jsx-a11y/no-noninteractive-tabindex */
 }
 
 type AdminEmptyStateProps = HTMLAttributes<HTMLDivElement> & {
@@ -211,6 +212,7 @@ export function AdminSelect({
 export function AdminHelp({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <div className={cn('relative group inline-flex ml-1.5 align-middle', className)}>
+      {/* eslint-disable-next-line jsx-a11y/prefer-tag-over-role -- 인라인 SVG는 <img>로 대체 불가; role="img"+aria-label로 스크린 리더 지원 */}
       <svg
         className="w-4 h-4 text-charcoal-soft cursor-help hover:text-indigo-500 transition-colors focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded-full"
         fill="none"
