@@ -148,10 +148,11 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="name_ko" className="block text-sm font-medium text-gray-700 mb-2">
               {t('nameKo')} <span className="text-red-500">*</span>
             </label>
             <input
+              id="name_ko"
               name="name_ko"
               defaultValue={artist.name_ko || ''}
               required
@@ -160,8 +161,11 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">{t('nameEn')}</label>
+            <label htmlFor="name_en" className="block text-sm font-medium text-gray-700 mb-2">
+              {t('nameEn')}
+            </label>
             <input
+              id="name_en"
               name="name_en"
               defaultValue={artist.name_en || ''}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
@@ -169,8 +173,11 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">{t('email')}</label>
+            <label htmlFor="contact_email" className="block text-sm font-medium text-gray-700 mb-2">
+              {t('email')}
+            </label>
             <input
+              id="contact_email"
               name="contact_email"
               type="email"
               defaultValue={artist.contact_email || ''}
@@ -192,8 +199,11 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">{t('homepage')}</label>
+            <label htmlFor="homepage" className="block text-sm font-medium text-gray-700 mb-2">
+              {t('homepage')}
+            </label>
             <input
+              id="homepage"
               name="homepage"
               type="url"
               defaultValue={artist.homepage || ''}
@@ -206,8 +216,11 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">{t('bio')}</label>
+          <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-2">
+            {t('bio')}
+          </label>
           <textarea
+            id="bio"
             name="bio"
             defaultValue={artist.bio || ''}
             rows={4}
@@ -216,8 +229,11 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">{t('bioEn')}</label>
+          <label htmlFor="bio_en" className="block text-sm font-medium text-gray-700 mb-2">
+            {t('bioEn')}
+          </label>
           <textarea
+            id="bio_en"
             name="bio_en"
             defaultValue={artist.bio_en || ''}
             rows={4}
@@ -227,8 +243,11 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">{t('history')}</label>
+          <label htmlFor="history" className="block text-sm font-medium text-gray-700 mb-2">
+            {t('history')}
+          </label>
           <textarea
+            id="history"
             name="history"
             defaultValue={artist.history || ''}
             rows={6}
@@ -237,8 +256,11 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">{t('historyEn')}</label>
+          <label htmlFor="history_en" className="block text-sm font-medium text-gray-700 mb-2">
+            {t('historyEn')}
+          </label>
           <textarea
+            id="history_en"
             name="history_en"
             defaultValue={artist.history_en || ''}
             rows={6}

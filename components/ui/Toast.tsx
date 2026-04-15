@@ -128,6 +128,7 @@ function Toast({ toast, onDismiss }: ToastProps) {
       </button>
     </div>
   );
+  /* eslint-enable jsx-a11y/no-static-element-interactions, jsx-a11y/no-noninteractive-tabindex */
 }
 
 interface ToastContainerProps {
