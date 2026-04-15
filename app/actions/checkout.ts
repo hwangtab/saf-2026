@@ -73,12 +73,14 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     return { success: false, error: '작품을 찾을 수 없습니다.' };
   }
 
-  // 같은 작품에 대한 기존 pending_payment 주문 자동 정리
+  // 동일 구매자의 같은 작품에 대한 기존 pending_payment 주문 자동 정리
   // (탭 닫기, 뒤로가기 등으로 catch 블록이 실행되지 못한 경우 대비)
+  // buyer_email 필터로 다른 구매자의 진행 중인 주문은 취소하지 않음
   await adminClient
     .from('orders')
     .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
     .eq('artwork_id', artworkId)
+    .eq('buyer_email', buyerEmail)
     .eq('status', 'pending_payment');
 
   // Check availability via RPC

@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import type { Json } from '@/types/supabase';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { fetchPayment } from '@/lib/integrations/toss/confirm';
 import {
   parseWebhookPayload,
+  verifyWebhookRequest,
   verifyDepositCallbackSecret,
   isDepositCallback,
   isPaymentStatusChanged,
@@ -22,6 +24,12 @@ export async function POST(req: NextRequest) {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+  }
+
+  // SEC-04: 웹훅 시크릿 검증 (PAYMENT_STATUS_CHANGED / DEPOSIT_CALLBACK 공통)
+  if (!verifyWebhookRequest(req)) {
+    console.error('[toss-webhook] Webhook secret verification failed');
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const payload = parseWebhookPayload(body);
@@ -79,7 +87,8 @@ export async function POST(req: NextRequest) {
           paymentKey,
           사유: verified ? `상태 불일치: ${verified.status}` : 'API 응답 없음',
         });
-        return NextResponse.json({ received: true }, { status: 200 });
+        // 일시적 API 장애일 수 있으므로 500 반환 → Toss 재시도 유도
+        return NextResponse.json({ error: 'Verification failed' }, { status: 500 });
       }
 
       if (paymentRecord) {
@@ -102,7 +111,7 @@ export async function POST(req: NextRequest) {
           .update({
             status: 'DONE',
             approved_at: new Date().toISOString(),
-            webhook_responses: [...existingWebhooks, body],
+            webhook_responses: [...existingWebhooks, body as Json],
           })
           .eq('id', paymentRecord.id);
 
@@ -255,7 +264,7 @@ export async function POST(req: NextRequest) {
           : [];
         const { error: auditErr } = await supabase
           .from('payments')
-          .update({ webhook_responses: [...existingWebhooks, body] })
+          .update({ webhook_responses: [...existingWebhooks, body as Json] })
           .eq('id', existingPayment.id);
         if (auditErr) console.error('[toss-webhook] audit trail write failed:', auditErr);
       }
@@ -263,7 +272,8 @@ export async function POST(req: NextRequest) {
         paymentKey,
         수신상태: newStatus,
       });
-      return NextResponse.json({ received: true }, { status: 200 });
+      // 일시적 API 장애일 수 있으므로 500 반환 → Toss 재시도 유도
+      return NextResponse.json({ error: 'Verification failed' }, { status: 500 });
     }
 
     if (verified.status !== newStatus) {
@@ -281,7 +291,7 @@ export async function POST(req: NextRequest) {
           : [];
         const { error: auditErr } = await supabase
           .from('payments')
-          .update({ webhook_responses: [...existingWebhooks, body] })
+          .update({ webhook_responses: [...existingWebhooks, body as Json] })
           .eq('id', existingPayment.id);
         if (auditErr) console.error('[toss-webhook] audit trail write failed:', auditErr);
       }
@@ -297,7 +307,8 @@ export async function POST(req: NextRequest) {
 
     if (paymentFetchError || !paymentRow) {
       console.error(`[toss-webhook] STATUS_CHANGED payment fetch failed: ${paymentKey}`);
-      return NextResponse.json({ received: true }, { status: 200 });
+      // DB 오류 시 500 반환 → Toss 재시도 유도
+      return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 
     const existingWebhooks = Array.isArray(paymentRow.webhook_responses)
@@ -306,7 +317,7 @@ export async function POST(req: NextRequest) {
 
     const { error: paymentUpdateError } = await supabase
       .from('payments')
-      .update({ status: newStatus, webhook_responses: [...existingWebhooks, body] })
+      .update({ status: newStatus, webhook_responses: [...existingWebhooks, body as Json] })
       .eq('id', paymentRow.id);
 
     if (paymentUpdateError) {
