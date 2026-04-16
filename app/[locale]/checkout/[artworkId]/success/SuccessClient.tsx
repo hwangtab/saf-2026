@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import LinkButton from '@/components/ui/LinkButton';
 import { formatPriceForDisplay } from '@/lib/utils';
@@ -49,8 +49,12 @@ export default function SuccessClient({ paymentKey, orderId, amount, method }: P
   const [state, setPageState] = useState<PageState>('loading');
   const [virtualAccount, setVirtualAccount] = useState<VirtualAccount | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const confirmedRef = useRef(false);
 
   useEffect(() => {
+    if (confirmedRef.current) return;
+    confirmedRef.current = true;
+
     if (method === 'BANK_TRANSFER') {
       setPageState('bank_transfer');
       return;

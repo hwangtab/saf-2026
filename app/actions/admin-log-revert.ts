@@ -147,9 +147,10 @@ const ARTWORK_DELETION_ACTIONS = new Set([
   'artwork_deleted',
   'artist_artwork_deleted',
   'batch_artwork_deleted',
+  'exhibitor_artwork_deleted',
 ]);
 const ARTWORK_CREATION_ACTIONS = new Set(['artwork_created', 'artist_artwork_created']);
-const ARTIST_DELETION_ACTIONS = new Set(['artist_deleted']);
+const ARTIST_DELETION_ACTIONS = new Set(['artist_deleted', 'exhibitor_artist_deleted']);
 const ARTIST_CREATION_ACTIONS = new Set(['artist_created']);
 
 const TRASHABLE_DELETE_ACTIONS = new Set([
@@ -157,6 +158,8 @@ const TRASHABLE_DELETE_ACTIONS = new Set([
   'artist_deleted',
   'artist_artwork_deleted',
   'batch_artwork_deleted',
+  'exhibitor_artwork_deleted',
+  'exhibitor_artist_deleted',
 ]);
 
 // ── Utility functions ──

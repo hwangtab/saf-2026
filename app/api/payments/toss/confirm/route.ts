@@ -115,7 +115,12 @@ export async function POST(req: NextRequest) {
 
   if (paymentInsertError) {
     console.error('[confirm] payment INSERT 실패:', paymentInsertError);
-    return NextResponse.json({ error: '결제 기록 저장에 실패했습니다.' }, { status: 500 });
+    void notifyEmail('error', '결제 기록 저장 실패', {
+      주문번호: orderId,
+      에러: paymentInsertError.message,
+      참고: '결제는 승인 완료, 결제 기록만 누락 — reconciliation cron이 보정 예정',
+    });
+    // 500 반환하지 않고 계속 진행 — 결제는 이미 Toss에서 승인됨
   }
 
   // Update order status with optimistic lock (.eq status guard) + metadata merge
@@ -140,6 +145,18 @@ export async function POST(req: NextRequest) {
       에러: orderUpdateError.message,
       참고: '결제는 완료, 주문 상태 반영 실패 — reconciliation cron이 보정 예정',
     });
+  }
+
+  // 가상계좌 발급 시 artwork 예약 처리 (createBankTransferOrder와 동일)
+  if (isVirtualAccount && updatedOrders && updatedOrders.length > 0 && order.artwork_id) {
+    await supabase
+      .from('artworks')
+      .update({ status: 'reserved' })
+      .eq('id', order.artwork_id)
+      .eq('status', 'available');
+    revalidatePublicArtworkSurfaces();
+    revalidatePath(`/artworks/${order.artwork_id}`);
+    revalidatePath(`/en/artworks/${order.artwork_id}`);
   }
 
   // 레이스 컨디션: Toss 결제 성공 but 주문이 이미 취소된 경우 — 자동 환불

@@ -32,10 +32,13 @@ export async function updateArtistProfile(
     const name_en = validateTextLength(formData.get('name_en') as string, 100, '영어 이름');
     const bio = validateTextLength(formData.get('bio') as string, 5000, '소개');
     const history = validateTextLength(formData.get('history') as string, 10000, '이력');
-    const profile_image = (formData.get('profile_image') as string)?.trim() || '';
+    const profile_image = validateUrl(
+      formData.get('profile_image') as string | null,
+      '프로필 이미지'
+    );
     const contact_email = validateEmail(formData.get('contact_email') as string | null);
-    const instagram = validateUrl(formData.get('instagram') as string | null);
-    const homepage = validateUrl(formData.get('homepage') as string | null);
+    const instagram = validateUrl(formData.get('instagram') as string | null, '인스타그램');
+    const homepage = validateUrl(formData.get('homepage') as string | null, '홈페이지');
 
     const { error } = await supabase
       .from('artists')

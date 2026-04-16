@@ -245,6 +245,18 @@ export async function GET(request: NextRequest) {
           continue;
         }
 
+        // awaiting_deposit 전환 후 artwork 예약 처리
+        if (order.artwork_id) {
+          await supabase
+            .from('artworks')
+            .update({ status: 'reserved' })
+            .eq('id', order.artwork_id)
+            .eq('status', 'available');
+          revalidatePublicArtworkSurfaces();
+          revalidatePath(`/artworks/${order.artwork_id}`);
+          revalidatePath(`/en/artworks/${order.artwork_id}`);
+        }
+
         reconciled++;
         console.error(
           `[reconcile-payments] FIXED: ${order.order_no} — Toss WAITING_FOR_DEPOSIT, DB was pending_payment`

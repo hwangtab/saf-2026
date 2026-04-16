@@ -14,6 +14,7 @@ import { fetchWithTimeout } from '@/lib/integrations/toss/fetch-with-timeout';
 import { generateOrderNumber } from '@/lib/integrations/toss/order-number';
 import type { TossErrorResponse } from '@/lib/integrations/toss/types';
 import { rateLimit } from '@/lib/rate-limit';
+import { SITE_URL, SITE_URL_ALIAS } from '@/lib/constants';
 
 export type CreateOrderInput = {
   artworkId: string;
@@ -45,6 +46,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     shippingPostalCode,
     shippingMemo,
   } = input;
+  const buyerEmailNorm = buyerEmail.trim().toLowerCase();
 
   // Rate limiting — IP 기준 분당 10회
   const headersList = await headers();
@@ -69,6 +71,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     .from('artworks')
     .select('id, title, price, status, artists(name_ko)')
     .eq('id', artworkId)
+    .eq('is_hidden', false)
     .single();
 
   if (artworkError || !artwork) {
@@ -82,7 +85,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     .from('orders')
     .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
     .eq('artwork_id', artworkId)
-    .eq('buyer_email', buyerEmail)
+    .eq('buyer_email', buyerEmailNorm)
     .eq('status', 'pending_payment');
 
   // Check availability via RPC
@@ -137,7 +140,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
       artwork_id: artworkId,
       quantity: 1,
       buyer_name: buyerName,
-      buyer_email: buyerEmail,
+      buyer_email: buyerEmailNorm,
       buyer_phone: buyerPhone,
       buyer_user_id: buyerUserId,
       shipping_name: shippingName,
@@ -194,6 +197,19 @@ export async function initiatePayment(input: InitiatePaymentInput): Promise<Init
   const rl = rateLimit(`initiatePayment:${ip}`, { limit: 10, windowMs: 60_000 });
   if (!rl.success) {
     return { success: false, error: '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.' };
+  }
+
+  // BUG 22: redirect URL origin 검증 — 외부 URL 주입 방지
+  const allowedOrigins = [new URL(SITE_URL).origin, new URL(SITE_URL_ALIAS).origin];
+  const isValidUrl = (url: string) => {
+    try {
+      return allowedOrigins.includes(new URL(url).origin);
+    } catch {
+      return false;
+    }
+  };
+  if (!isValidUrl(input.successUrl) || !isValidUrl(input.failUrl)) {
+    return { success: false, error: '잘못된 결제 URL입니다.' };
   }
 
   // DB 주문 검증 — 클라이언트 전달 금액을 신뢰하지 않고 DB에서 재조회
@@ -311,6 +327,11 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
  */
 export async function cancelPendingOrder(orderNo: string, buyerEmail: string): Promise<void> {
   if (!orderNo || !buyerEmail) return;
+  // BUG 29: rate limit — IP 기준 분당 10회
+  const headersList = await headers();
+  const ip = headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+  const rl = rateLimit(`cancelPendingOrder:${ip}`, { limit: 10, windowMs: 60_000 });
+  if (!rl.success) return;
   const adminClient = createSupabaseAdminClient();
   await adminClient
     .from('orders')

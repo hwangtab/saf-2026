@@ -5,6 +5,7 @@ import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { logAdminAction } from './activity-log-writer';
 import { getString, getNumber } from '@/lib/utils/form-helpers';
+import { validateUrl } from '@/lib/utils/input-validation';
 
 const normalizeStoryTitleColonSpacing = (value: string) => value.replace(/[^\S\r\n]+:/g, ':');
 
@@ -16,8 +17,8 @@ export async function createNews(formData: FormData) {
   const title = getString(formData, 'title');
   const source = getString(formData, 'source');
   const date = getString(formData, 'date');
-  const link = getString(formData, 'link');
-  const thumbnail = getString(formData, 'thumbnail');
+  const link = validateUrl(getString(formData, 'link'), '링크');
+  const thumbnail = validateUrl(getString(formData, 'thumbnail'), '썸네일');
   const description = getString(formData, 'description');
 
   const { data: news, error } = await supabase
@@ -54,8 +55,8 @@ export async function updateNews(id: string, formData: FormData) {
   const title = getString(formData, 'title');
   const source = getString(formData, 'source');
   const date = getString(formData, 'date');
-  const link = getString(formData, 'link');
-  const thumbnail = getString(formData, 'thumbnail');
+  const link = validateUrl(getString(formData, 'link'), '링크');
+  const thumbnail = validateUrl(getString(formData, 'thumbnail'), '썸네일');
   const description = getString(formData, 'description');
 
   const { data: newNews, error } = await supabase
@@ -321,7 +322,7 @@ export async function createVideo(formData: FormData) {
   const id = getString(formData, 'id') || youtube_id || crypto.randomUUID();
   const title = getString(formData, 'title');
   const description = getString(formData, 'description');
-  const thumbnail = getString(formData, 'thumbnail');
+  const thumbnail = validateUrl(getString(formData, 'thumbnail'), '썸네일');
   const transcript = getString(formData, 'transcript');
 
   const { data: video, error } = await supabase
@@ -356,7 +357,7 @@ export async function updateVideo(id: string, formData: FormData) {
   const youtube_id = getString(formData, 'youtube_id');
   const title = getString(formData, 'title');
   const description = getString(formData, 'description');
-  const thumbnail = getString(formData, 'thumbnail');
+  const thumbnail = validateUrl(getString(formData, 'thumbnail'), '썸네일');
   const transcript = getString(formData, 'transcript');
 
   const { data: newVideo, error } = await supabase
@@ -417,7 +418,7 @@ export async function createStory(formData: FormData) {
   const excerpt_en = getString(formData, 'excerpt_en') || null;
   const body = getString(formData, 'body');
   const body_en = getString(formData, 'body_en') || null;
-  const thumbnail = getString(formData, 'thumbnail') || null;
+  const thumbnail = validateUrl(getString(formData, 'thumbnail'), '썸네일');
   const author = getString(formData, 'author') || null;
   const published_at = getString(formData, 'published_at') || null;
   const is_published = formData.get('is_published') === 'on';
@@ -468,7 +469,7 @@ export async function updateStory(id: string, formData: FormData) {
   const excerpt_en = getString(formData, 'excerpt_en') || null;
   const body = getString(formData, 'body');
   const body_en = getString(formData, 'body_en') || null;
-  const thumbnail = getString(formData, 'thumbnail') || null;
+  const thumbnail = validateUrl(getString(formData, 'thumbnail'), '썸네일');
   const author = getString(formData, 'author') || null;
   const published_at = getString(formData, 'published_at') || null;
   const is_published = formData.get('is_published') === 'on';
