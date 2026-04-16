@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 
+import type { Json } from '@/types/supabase';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { confirmPayment } from '@/lib/integrations/toss/confirm';
 import { notifyEmail, sendBuyerEmail } from '@/lib/notify';
+import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 
 export const runtime = 'nodejs';
 
@@ -99,12 +102,12 @@ export async function POST(req: NextRequest) {
       payment_key: tossResponse.paymentKey,
       toss_order_id: tossResponse.orderId,
       method: tossResponse.method ?? null,
-      method_detail: tossResponse.card ?? tossResponse.virtualAccount ?? null,
+      method_detail: (tossResponse.card ?? tossResponse.virtualAccount ?? null) as Json,
       amount: tossResponse.totalAmount,
       currency: tossResponse.currency ?? 'KRW',
       status: tossResponse.status,
       approved_at: tossResponse.approvedAt ?? null,
-      confirm_response: tossResponse as Record<string, unknown>,
+      confirm_response: tossResponse as unknown as Json,
       idempotency_key: idempotencyKey,
     })
     .select('id')
@@ -176,6 +179,13 @@ export async function POST(req: NextRequest) {
   const artistName = Array.isArray(artistsRaw)
     ? (artistsRaw[0]?.name_ko ?? '')
     : ((artistsRaw as { name_ko?: string } | null | undefined)?.name_ko ?? '');
+
+  // 결제 완료 시 공개 작품 페이지 캐시 무효화
+  if (isDone && order.artwork_id) {
+    revalidatePublicArtworkSurfaces();
+    revalidatePath(`/artworks/${order.artwork_id}`);
+    revalidatePath(`/en/artworks/${order.artwork_id}`);
+  }
 
   // 결제 성공 알림 — fire-and-forget: 응답 전송 후 백그라운드 처리
   if (isDone) {

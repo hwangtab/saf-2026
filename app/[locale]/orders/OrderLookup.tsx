@@ -16,7 +16,7 @@ import {
   cancelBuyerOrder,
 } from '@/app/actions/order-lookup';
 import type {
-  OrderListItem,
+  PublicOrderListItem,
   OrderPublicInfo,
   UpdateShippingInput,
 } from '@/app/actions/order-lookup';
@@ -633,7 +633,7 @@ function OrderCard({
   buyerEmail,
   initialDetail,
 }: {
-  item: OrderListItem;
+  item: PublicOrderListItem;
   buyerEmail: string;
   initialDetail?: OrderPublicInfo | null;
 }) {
@@ -720,7 +720,7 @@ export default function OrderLookup() {
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [orders, setOrders] = useState<OrderListItem[] | null>(null);
+  const [orders, setOrders] = useState<PublicOrderListItem[] | null>(null);
   const [firstDetail, setFirstDetail] = useState<OrderPublicInfo | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {

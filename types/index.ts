@@ -1,6 +1,13 @@
-import { UserRole } from './database.types';
+import { UserRole, EditionType } from './database.types';
 
-export type { UserRole };
+export type { UserRole, EditionType };
+
+export type ActionState = {
+  message: string;
+  error?: boolean;
+  errors?: Record<string, string[]>;
+  cleanupUrls?: string[];
+};
 
 export type ArtistRole =
   | 'musician'
@@ -20,8 +27,6 @@ export interface ArtistData {
   profile_en?: string;
   history_en?: string;
 }
-
-export type EditionType = 'unique' | 'limited' | 'open';
 
 export type TaxType = 'A' | 'B' | 'C';
 

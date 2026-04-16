@@ -71,7 +71,15 @@ export default async function Archive2023Page() {
       .select('*')
       .order('created_at', { ascending: true });
     if (!error && data) {
-      videos = data;
+      videos = data.map((v) => ({
+        id: v.id,
+        title: v.title,
+        description: v.description || '',
+        youtubeId: v.youtube_id,
+        youtube_id: v.youtube_id,
+        thumbnail: v.thumbnail ?? undefined,
+        transcript: v.transcript ?? undefined,
+      }));
     }
   }
 

@@ -9,7 +9,7 @@ import { getArtworkEmailInfo } from '@/lib/utils/get-artwork-email-info';
 import { rateLimit } from '@/lib/rate-limit';
 import { normalizePhoneDigits } from '@/lib/utils/phone';
 
-export type OrderListItem = {
+export type PublicOrderListItem = {
   orderNo: string;
   status: string;
   artworkTitle: string;
@@ -45,7 +45,7 @@ export type OrderPublicInfo = {
 };
 
 export type OrderLookupListResult =
-  | { success: true; orders: OrderListItem[] }
+  | { success: true; orders: PublicOrderListItem[] }
   | { success: false; error: string };
 
 export type OrderDetailResult =
@@ -129,7 +129,7 @@ export async function lookupOrders(
     return { success: false, error: 'NOT_FOUND' };
   }
 
-  const result: OrderListItem[] = (orders ?? [])
+  const result: PublicOrderListItem[] = (orders ?? [])
     .filter((o) => verifiedOrderNos.has(o.order_no))
     .map((o) => {
       const artwork = o.artworks as unknown as { title: string; images: string[] } | null;

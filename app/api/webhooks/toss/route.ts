@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 
 import type { Json } from '@/types/supabase';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
@@ -13,6 +14,7 @@ import {
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
 import { notifyEmail, sendBuyerEmail } from '@/lib/notify';
 import { getArtworkEmailInfo } from '@/lib/utils/get-artwork-email-info';
+import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 
 const CANCELED_STATUSES = new Set(['CANCELED', 'PARTIAL_CANCELED']);
 
@@ -385,6 +387,12 @@ export async function POST(req: NextRequest) {
           if (artworkError) {
             console.error('[toss-webhook] artwork reserved→available failed:', artworkError);
           }
+        }
+
+        if (existingOrder.artwork_id) {
+          revalidatePublicArtworkSurfaces();
+          revalidatePath(`/artworks/${existingOrder.artwork_id}`);
+          revalidatePath(`/en/artworks/${existingOrder.artwork_id}`);
         }
 
         void notifyEmail('warning', 'Toss 결제 취소 수신', {

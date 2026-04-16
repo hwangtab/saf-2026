@@ -5,7 +5,7 @@ import type { Database } from '@/types/supabase';
 import { requireArtistActive } from '@/lib/auth/guards';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { logArtistAction } from './admin-logs';
+import { logArtistAction } from './activity-log-writer';
 import {
   MAX_IMAGES,
   getOwnedCleanupPaths,
@@ -17,16 +17,12 @@ import {
 import { getString } from '@/lib/utils/form-helpers';
 import { getActionErrorMessage } from '@/lib/utils/action-error';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
+import type { ActionState } from '@/types';
+
+export type { ActionState } from '@/types';
 
 type EditionType = Database['public']['Enums']['edition_type'];
 type ArtworkStatus = Database['public']['Enums']['artwork_status'];
-
-export type ActionState = {
-  message: string;
-  error?: boolean;
-  errors?: Record<string, string[]>;
-  cleanupUrls?: string[];
-};
 
 type SupabaseServerClient = Awaited<ReturnType<typeof createSupabaseServerClient>>;
 

@@ -3,7 +3,7 @@
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
-import { logAdminAction } from './admin-logs';
+import { logAdminAction } from './activity-log-writer';
 import { getString, getNumber } from '@/lib/utils/form-helpers';
 
 const normalizeStoryTitleColonSpacing = (value: string) => value.replace(/[^\S\r\n]+:/g, ':');

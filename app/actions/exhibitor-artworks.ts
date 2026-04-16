@@ -9,7 +9,7 @@ import {
   getString,
   getStoragePathsForRemoval,
 } from '@/lib/utils/form-helpers';
-import { logExhibitorAction } from './admin-logs';
+import { logExhibitorAction } from './activity-log-writer';
 import { validateArtworkData } from '@/lib/actions/artwork-validation';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 

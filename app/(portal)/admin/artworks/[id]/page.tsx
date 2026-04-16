@@ -1,5 +1,6 @@
 import { requireAdmin } from '@/lib/auth/guards';
 import { getArtworkById, getAllArtists, getArtworkSales } from '@/app/actions/admin-artworks';
+import type { Artwork, ArtworkSale } from '@/types';
 import { ArtworkEditForm } from '../artwork-edit-form';
 import { SalesHistory } from './sales-history';
 import { notFound } from 'next/navigation';
@@ -45,14 +46,14 @@ export default async function AdminArtworkDetailPage({ params }: Props) {
           </p>
         </div>
       </div>
-      <ArtworkEditForm artwork={normalizedArtwork} artists={artists} />
+      <ArtworkEditForm artwork={normalizedArtwork as Partial<Artwork>} artists={artists} />
 
       <div className="border-t border-gray-200 pt-6">
         <SalesHistory
           artworkId={id}
           editionType={artwork.edition_type || 'unique'}
           editionLimit={artwork.edition_limit}
-          sales={sales}
+          sales={sales as ArtworkSale[]}
           artworkPrice={artwork.price}
         />
       </div>

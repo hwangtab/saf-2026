@@ -1,3 +1,4 @@
+import type { Feedback } from '@/types';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import {
@@ -43,5 +44,5 @@ export default async function FeedbackPage() {
     user_email: sanitizeSingleLineTextForRscPayload(emailMap[f.user_id] || '알 수 없음'),
   }));
 
-  return <FeedbackManager feedback={feedbackWithEmail} />;
+  return <FeedbackManager feedback={feedbackWithEmail as Feedback[]} />;
 }

@@ -3,15 +3,13 @@
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { requireArtistActive } from '@/lib/auth/guards';
 import { revalidatePath } from 'next/cache';
-import { logArtistAction } from './admin-logs';
+import { logArtistAction } from './activity-log-writer';
 import { getActionErrorMessage } from '@/lib/utils/action-error';
 import { validateTextLength, validateUrl, validateEmail } from '@/lib/utils/input-validation';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
+import type { ActionState } from '@/types';
 
-export type ActionState = {
-  message: string;
-  error?: boolean;
-};
+export type { ActionState } from '@/types';
 
 export async function updateArtistProfile(
   prevState: ActionState,

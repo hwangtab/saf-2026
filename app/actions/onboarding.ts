@@ -8,7 +8,7 @@ import {
   TERMS_OF_SERVICE_VERSION,
 } from '@/lib/constants';
 import { redirect } from 'next/navigation';
-import { logArtistAction } from './admin-logs';
+import { logArtistAction } from './activity-log-writer';
 import { getRequestMetadata } from './request-metadata';
 import { getActionErrorMessage } from '@/lib/utils/action-error';
 

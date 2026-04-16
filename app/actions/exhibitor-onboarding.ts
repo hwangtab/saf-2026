@@ -9,7 +9,7 @@ import {
 } from '@/lib/constants';
 import { redirect } from 'next/navigation';
 import { getActionErrorMessage } from '@/lib/utils/action-error';
-import { logExhibitorAction } from './admin-logs';
+import { logExhibitorAction } from './activity-log-writer';
 import { getRequestMetadata } from './request-metadata';
 
 export type ExhibitorOnboardingState = {

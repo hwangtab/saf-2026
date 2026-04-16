@@ -11,7 +11,7 @@ import {
   AdminBadge,
   AdminEmptyState,
 } from '@/app/admin/_components/admin-ui';
-import type { OrderListItem } from '@/app/actions/admin-orders';
+import type { AdminOrderListItem } from '@/app/actions/admin-orders';
 import type { OrderStatus } from '@/lib/integrations/toss/types';
 
 const STATUS_OPTIONS = [
@@ -82,7 +82,7 @@ export function OrderList({
   initialStatus,
   initialQ,
 }: {
-  orders: OrderListItem[];
+  orders: AdminOrderListItem[];
   initialStatus?: string;
   initialQ?: string;
 }) {

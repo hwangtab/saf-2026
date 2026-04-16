@@ -2,7 +2,7 @@
 
 import { Fragment, useState } from 'react';
 import Link from 'next/link';
-import { revertActivityLog } from '@/app/actions/admin-logs';
+import { revertActivityLog } from '@/app/actions/admin-log-revert';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import Button from '@/components/ui/Button';

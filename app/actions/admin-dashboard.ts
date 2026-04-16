@@ -581,9 +581,9 @@ async function computeDashboardStats(period: DashboardPeriodKey = '7d'): Promise
 
     recentPendingApplicationsRaw = (recentPendingApplicationsData || []).map((item) => ({
       user_id: item.user_id,
-      artist_name: item.artist_name,
-      contact: item.contact,
-      created_at: item.created_at,
+      artist_name: item.artist_name as string | null,
+      contact: item.contact as string | null,
+      created_at: item.created_at || '',
     }));
   }
 
@@ -838,7 +838,7 @@ async function computeDashboardStats(period: DashboardPeriodKey = '7d'): Promise
         name: application?.artist_name || profile.name || '(이름 없음)',
         email: profile.email || '',
         contact: application?.contact || '',
-        created_at: application?.created_at || profile.created_at,
+        created_at: application?.created_at || profile.created_at || '',
         status: profile.status || 'pending',
       };
     }),
@@ -854,7 +854,7 @@ async function computeDashboardStats(period: DashboardPeriodKey = '7d'): Promise
         id: artwork.id,
         title: artwork.title,
         artist_name: artistName,
-        created_at: artwork.created_at,
+        created_at: artwork.created_at || '',
       };
     }),
   };

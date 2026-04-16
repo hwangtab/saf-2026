@@ -3,7 +3,7 @@
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { revalidatePath } from 'next/cache';
-import { logAdminAction } from './admin-logs';
+import { logAdminAction } from './activity-log-writer';
 import { sanitizeIlikeQuery } from '@/lib/utils/query';
 import { hasAllRequiredConsents } from '@/lib/auth/terms-consent';
 
@@ -19,8 +19,8 @@ export type Exhibitor = {
     contact: string;
     bio: string;
     referrer: string | null;
-    created_at: string;
-    updated_at: string;
+    created_at?: string | null;
+    updated_at: string | null;
   } | null;
 };
 
@@ -87,11 +87,11 @@ export async function getExhibitors(filters?: {
 
     return {
       id: profile.id,
-      email: profile.email,
+      email: profile.email || '',
       name: profile.name,
-      role: profile.role,
-      status: profile.status,
-      created_at: profile.created_at,
+      role: (profile.role || 'exhibitor') as Exhibitor['role'],
+      status: (profile.status || 'pending') as Exhibitor['status'],
+      created_at: profile.created_at || '',
       application: application || null,
     };
   });

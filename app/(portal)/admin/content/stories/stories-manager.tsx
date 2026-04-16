@@ -16,8 +16,8 @@ type StoryItem = {
   thumbnail: string | null;
   author: string | null;
   published_at: string | null;
-  is_published: boolean;
-  display_order: number;
+  is_published: boolean | null;
+  display_order: number | null;
 };
 
 const CATEGORY_OPTIONS = [
@@ -205,12 +205,16 @@ export function StoriesManager({ stories }: { stories: StoryItem[] }) {
             <input
               type="number"
               name="display_order"
-              defaultValue={item.display_order}
+              defaultValue={item.display_order ?? undefined}
               placeholder="정렬 순서"
               className={inputClass}
             />
             <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" name="is_published" defaultChecked={item.is_published} />
+              <input
+                type="checkbox"
+                name="is_published"
+                defaultChecked={item.is_published ?? false}
+              />
               공개 여부
             </label>
           </div>

@@ -11,7 +11,7 @@ import {
   matchesAnySearch,
 } from '@/lib/search-utils';
 import { revalidatePath } from 'next/cache';
-import { logAdminAction } from './admin-logs';
+import { logAdminAction } from './activity-log-writer';
 import { UserRole } from '@/types/database.types';
 import { validatePhone } from '@/lib/utils/phone';
 import { hasAllRequiredConsents } from '@/lib/auth/terms-consent';

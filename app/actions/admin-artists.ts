@@ -10,7 +10,7 @@ import {
   hasHangulSyllable,
   matchesAnySearch,
 } from '@/lib/search-utils';
-import { logAdminAction } from './admin-logs';
+import { logAdminAction } from './activity-log-writer';
 import { getString } from '@/lib/utils/form-helpers';
 import { sanitizeIlikeQuery } from '@/lib/utils/query';
 import { validatePhone } from '@/lib/utils/phone';

@@ -4,13 +4,13 @@ import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { cancelPayment } from '@/lib/integrations/toss/cancel';
-import { logAdminAction } from './admin-logs';
+import { logAdminAction } from './activity-log-writer';
 import { deriveAndSyncArtworkStatus } from './admin-artworks';
 import { sendBuyerEmail } from '@/lib/notify';
 import { getArtworkEmailInfo } from '@/lib/utils/get-artwork-email-info';
 import type { OrderStatus } from '@/lib/integrations/toss/types';
 
-export type OrderListItem = {
+export type AdminOrderListItem = {
   id: string;
   order_no: string;
   status: OrderStatus;
@@ -26,7 +26,7 @@ export type OrderListItem = {
   payment_method: string | null;
 };
 
-export type OrderDetail = OrderListItem & {
+export type OrderDetail = AdminOrderListItem & {
   shipping_name: string | null;
   shipping_phone: string | null;
   shipping_address: string | null;
@@ -54,7 +54,7 @@ export type OrderFilters = {
   q?: string;
 };
 
-export async function getOrders(filters: OrderFilters = {}): Promise<OrderListItem[]> {
+export async function getOrders(filters: OrderFilters = {}): Promise<AdminOrderListItem[]> {
   await requireAdmin();
   const supabase = await createSupabaseAdminClient();
 

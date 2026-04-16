@@ -6,7 +6,7 @@ import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/aut
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { getString, getStoragePathFromPublicUrl } from '@/lib/utils/form-helpers';
 import { validateTextLength, validateUrl, validateEmail } from '@/lib/utils/input-validation';
-import { logExhibitorAction } from './admin-logs';
+import { logExhibitorAction } from './activity-log-writer';
 
 export async function getExhibitorArtists() {
   const user = await requireExhibitor();

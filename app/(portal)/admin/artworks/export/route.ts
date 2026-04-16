@@ -1,4 +1,4 @@
-import { logAdminAction } from '@/app/actions/admin-logs';
+import { logAdminAction } from '@/app/actions/activity-log-writer';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { csvSafeCell } from '@/lib/utils/csv';
 

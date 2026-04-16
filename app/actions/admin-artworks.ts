@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import type { Database } from '@/types/supabase';
-import { logAdminAction } from './admin-logs';
+import { logAdminAction } from './activity-log-writer';
 import { getString, getStoragePathsForRemoval, validateBatchSize } from '@/lib/utils/form-helpers';
 import { validateArtworkData, validateSaleInput } from '@/lib/actions/artwork-validation';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';

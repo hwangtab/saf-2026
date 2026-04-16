@@ -14,14 +14,14 @@ type PendingApplicationRow = {
   user_id: string;
   artist_name: string | null;
   contact: string | null;
-  created_at: string;
+  created_at: string | null;
 };
 
 type PendingExhibitorApplicationRow = {
   user_id: string;
   representative_name: string | null;
   contact: string | null;
-  created_at: string;
+  created_at: string | null;
 };
 
 type RecentPendingProfileRow = {
@@ -452,20 +452,18 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
     feedback,
     pendingOrderCount: pendingOrderCountResult.count ?? 0,
     recentOrders: (recentOrdersResult.data ?? []).map((row) => {
-      const artwork = Array.isArray((row as any).artworks)
-        ? (row as any).artworks[0]
-        : (row as any).artworks;
+      const artwork = Array.isArray(row.artworks) ? row.artworks[0] : row.artworks;
       const artistRow = artwork?.artists;
       const artistName = Array.isArray(artistRow) ? artistRow[0]?.name_ko : artistRow?.name_ko;
       return {
-        id: row.id as string,
-        order_no: row.order_no as string,
-        buyer_name: (row.buyer_name as string | null) ?? null,
-        total_amount: row.total_amount as number,
-        status: row.status as string,
-        created_at: row.created_at as string,
-        artwork_title: (artwork?.title as string | null) ?? null,
-        artist_name: (artistName as string | null) ?? null,
+        id: row.id,
+        order_no: row.order_no,
+        buyer_name: row.buyer_name ?? null,
+        total_amount: row.total_amount,
+        status: row.status,
+        created_at: row.created_at,
+        artwork_title: artwork?.title ?? null,
+        artist_name: artistName ?? null,
       };
     }),
   };

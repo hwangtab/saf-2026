@@ -4,11 +4,8 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
-import {
-  purgeActivityTrashLog,
-  revertActivityLog,
-  type ActivityLogEntry,
-} from '@/app/actions/admin-logs';
+import { purgeActivityTrashLog, revertActivityLog } from '@/app/actions/admin-log-revert';
+import type { ActivityLogEntry } from '@/app/actions/admin-logs';
 import { AdminCard, AdminEmptyState } from '@/app/admin/_components/admin-ui';
 import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import Button from '@/components/ui/Button';
