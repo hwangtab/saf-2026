@@ -188,6 +188,32 @@ export type InitiatePaymentResult =
  * redirect the user to the Toss-hosted payment page.
  */
 export async function initiatePayment(input: InitiatePaymentInput): Promise<InitiatePaymentResult> {
+  // Rate limiting — IP 기준 분당 10회
+  const headersList = await headers();
+  const ip = headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+  const rl = rateLimit(`initiatePayment:${ip}`, { limit: 10, windowMs: 60_000 });
+  if (!rl.success) {
+    return { success: false, error: '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.' };
+  }
+
+  // DB 주문 검증 — 클라이언트 전달 금액을 신뢰하지 않고 DB에서 재조회
+  const adminClient = createSupabaseAdminClient();
+  const { data: dbOrder } = await adminClient
+    .from('orders')
+    .select('total_amount, status')
+    .eq('order_no', input.orderNo)
+    .maybeSingle();
+
+  if (!dbOrder) {
+    return { success: false, error: '주문을 찾을 수 없습니다.' };
+  }
+  if (dbOrder.status !== 'pending_payment') {
+    return { success: false, error: '이미 처리된 주문입니다.' };
+  }
+  if (dbOrder.total_amount !== input.totalAmount) {
+    return { success: false, error: '결제 금액이 일치하지 않습니다.' };
+  }
+
   let response: Response;
   try {
     response = await fetchWithTimeout(`${TOSS_API_BASE_URL}/v1/payments`, {

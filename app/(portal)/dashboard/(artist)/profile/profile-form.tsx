@@ -1,12 +1,14 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { useActionState, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { updateArtistProfile, type ActionState } from '@/app/actions/profile';
 import Button from '@/components/ui/Button';
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
 import { CheckMarkIcon } from '@/components/ui/Icons';
 import { AdminFieldLabel, AdminInput, AdminTextarea } from '@/app/admin/_components/admin-ui';
+import { createSupabaseBrowserClient } from '@/lib/auth/client';
+import { getStoragePathsForRemoval } from '@/lib/utils/form-helpers';
 
 const initialState: ActionState = {
   message: '',
@@ -18,10 +20,31 @@ export function ProfileForm({ artist, userId }: { artist: any; userId: string })
   const t = useTranslations('dashboard.profileForm');
   const [state, formAction, isPending] = useActionState(updateArtistProfile, initialState);
   const [profileImage, setProfileImage] = useState<string>(artist?.profile_image || '');
+  const isSubmittingRef = useRef(false);
+  const pendingUploadsRef = useRef<string[]>([]);
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const actionMessage =
     locale === 'en' && state.message && /[가-힣]/.test(state.message)
       ? t('genericError')
       : state.message;
+
+  const removeStorageObjects = useCallback(
+    async (urls: string[]) => {
+      const uniquePaths = getStoragePathsForRemoval(urls, 'profiles');
+      if (uniquePaths.length === 0) return;
+      await supabase.storage.from('profiles').remove(uniquePaths);
+    },
+    [supabase]
+  );
+
+  // 컴포넌트 언마운트 시 미저장 업로드 정리
+  useEffect(() => {
+    return () => {
+      if (!isSubmittingRef.current && pendingUploadsRef.current.length > 0) {
+        void removeStorageObjects(pendingUploadsRef.current).catch(() => {});
+      }
+    };
+  }, [removeStorageObjects]);
 
   const handleImageUpload = (urls: string[]) => {
     if (urls.length > 0) {
@@ -32,7 +55,13 @@ export function ProfileForm({ artist, userId }: { artist: any; userId: string })
   };
 
   return (
-    <form action={formAction} className="space-y-6">
+    <form
+      action={formAction}
+      onSubmit={() => {
+        isSubmittingRef.current = true;
+      }}
+      className="space-y-6"
+    >
       {/* Hidden input for profile_image */}
       <input type="hidden" name="profile_image" value={profileImage} />
 
@@ -75,6 +104,12 @@ export function ProfileForm({ artist, userId }: { artist: any; userId: string })
             maxFiles={1}
             defaultImages={artist?.profile_image ? [artist.profile_image] : []}
             onUploadComplete={handleImageUpload}
+            onUploadDelta={(urls) => {
+              pendingUploadsRef.current = [
+                ...pendingUploadsRef.current,
+                ...urls.filter((url) => !pendingUploadsRef.current.includes(url)),
+              ];
+            }}
           />
           <p className="mt-2 text-sm text-gray-500">{t('profileImageHint')}</p>
         </div>

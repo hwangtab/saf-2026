@@ -516,13 +516,17 @@ export async function confirmDeposit(orderId: string) {
   const now = new Date().toISOString();
 
   // 1. 주문 상태 → paid (WHERE status = 'awaiting_deposit' 멱등성 가드)
-  const { error: updateError } = await supabase
+  const { data: updatedRows, error: updateError } = await supabase
     .from('orders')
     .update({ status: 'paid', paid_at: now, updated_at: now })
     .eq('id', orderId)
-    .eq('status', 'awaiting_deposit');
+    .eq('status', 'awaiting_deposit')
+    .select('id');
 
   if (updateError) throw updateError;
+  if (!updatedRows || updatedRows.length === 0) {
+    throw new Error('주문 상태가 변경되었습니다. 새로고침 후 다시 시도해주세요.');
+  }
 
   // 2. artwork_sales 생성 — DB 트리거가 artwork reserved→sold 처리
   if (order.artwork_id) {

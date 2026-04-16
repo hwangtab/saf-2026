@@ -55,10 +55,11 @@ export function CRUDManager<T extends { id: string }>({
     setOptimisticItems(items);
   }, [items]);
 
-  const handleCreate = async (formData: FormData) => {
+  const handleCreate = async (formData: FormData, formEl: HTMLFormElement) => {
     setCreating(true);
     try {
       await actions.create(formData);
+      formEl.reset();
       toast.success(labels.addedMessage);
       router.refresh();
     } catch (err: unknown) {
@@ -120,7 +121,7 @@ export function CRUDManager<T extends { id: string }>({
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            void handleCreate(new FormData(e.currentTarget));
+            void handleCreate(new FormData(e.currentTarget), e.currentTarget);
           }}
           className="mt-4 grid grid-cols-1 gap-4"
         >

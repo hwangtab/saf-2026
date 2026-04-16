@@ -1,8 +1,10 @@
 import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { createClient } from '@supabase/supabase-js';
 import { notifyEmail, sendBuyerEmail } from '@/lib/notify';
 import { getArtworkEmailInfo } from '@/lib/utils/get-artwork-email-info';
+import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 
 export const runtime = 'nodejs';
 
@@ -139,6 +141,13 @@ export async function GET(request: NextRequest) {
         await notifyEmail('error', '만료 크론: 작품 상태 복원 실패', {
           에러: artworkError.message,
           작품수: `${artworkIds.length}건`,
+        });
+      } else {
+        // reserved → available 복원 후 공개 페이지 캐시 무효화
+        revalidatePublicArtworkSurfaces();
+        artworkIds.forEach((id) => {
+          revalidatePath(`/artworks/${id}`);
+          revalidatePath(`/en/artworks/${id}`);
         });
       }
     }
