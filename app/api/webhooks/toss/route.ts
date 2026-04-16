@@ -206,6 +206,15 @@ export async function POST(req: NextRequest) {
             }
           }
         }
+      } else {
+        // paymentRecord가 DB에 없는데 Toss에서 DONE 수신 — 심각한 정합성 문제
+        console.error(`[toss-webhook] DEPOSIT_CALLBACK DONE but no payment record: ${paymentKey}`);
+        void notifyEmail('error', '웹훅 수신: 결제 기록 없이 입금 완료', {
+          paymentKey,
+          주문ID: payload.data.orderId,
+          참고: 'payments 테이블에 해당 paymentKey 미존재 — reconciliation 또는 수동 확인 필요',
+        });
+        return NextResponse.json({ error: 'Payment record not found' }, { status: 500 });
       }
     } else if (payload.data.paymentStatus === 'CANCELED') {
       // 가상계좌 만료 또는 취소 — 주문 상태 변경 + artwork 복원

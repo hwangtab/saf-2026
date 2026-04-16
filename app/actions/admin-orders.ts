@@ -410,6 +410,21 @@ export async function updateOrderStatus(
     }
   }
 
+  // awaiting_deposit → cancelled: artwork reserved→available 복원
+  if (order.status === 'awaiting_deposit' && newStatus === 'cancelled') {
+    if (order.artwork_id) {
+      const now = new Date().toISOString();
+      await supabase
+        .from('artworks')
+        .update({ status: 'available', updated_at: now })
+        .eq('id', order.artwork_id)
+        .eq('status', 'reserved');
+      revalidatePublicArtworkSurfaces();
+      revalidatePath(`/artworks/${order.artwork_id}`);
+      revalidatePath(`/en/artworks/${order.artwork_id}`);
+    }
+  }
+
   await logAdminAction(
     'order_status_updated',
     'order',
@@ -550,6 +565,10 @@ export async function confirmDeposit(orderId: string) {
         에러: salesError.message,
         참고: '입금 확인 완료, 판매 기록만 누락 — 수동 확인 필요',
       });
+    }
+
+    if (!salesError) {
+      await deriveAndSyncArtworkStatus(supabase, order.artwork_id);
     }
   }
 

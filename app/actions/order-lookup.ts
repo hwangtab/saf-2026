@@ -101,20 +101,7 @@ export async function lookupOrders(
     return { success: false, error: 'NOT_FOUND' };
   }
 
-  // 휴대폰 번호 검증 — DB에서 필터링 후 코드에서 2차 검증
-  // (ilike로 phone까지 하면 인덱스 미사용, 소량이므로 코드 필터)
-  const { data: phoneCheck } = await adminClient
-    .from('orders')
-    .select('order_no')
-    .eq('buyer_name', trimmedName)
-    .ilike('buyer_email', trimmedEmail)
-    .neq('status', 'pending_payment');
-
-  if (!phoneCheck) {
-    return { success: false, error: 'NOT_FOUND' };
-  }
-
-  // 휴대폰 번호 일치하는 주문만 필터
+  // 휴대폰 번호 일치하는 주문만 필터 (ilike로 phone까지 하면 인덱스 미사용, 소량이므로 코드 필터)
   const { data: phoneVerifiedOrders } = await adminClient
     .from('orders')
     .select('order_no, buyer_phone')
@@ -404,7 +391,7 @@ export async function cancelBuyerOrder(
 
   const { error: orderCancelError } = await adminClient
     .from('orders')
-    .update({ status: 'cancelled', cancelled_at: now })
+    .update({ status: 'refunded', refunded_at: now })
     .eq('id', order.id)
     .eq('status', 'paid');
 

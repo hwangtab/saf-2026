@@ -71,22 +71,29 @@ export function useFetchWithRetry<T = unknown>(
   const toast = useToast();
   const retryToastIdRef = useRef<string | null>(null);
 
+  // BUG 39: fetchOptions를 ref로 저장해 매 렌더 새 참조 문제 방지 (latest ref 패턴)
+  const fetchOptionsRef = useRef(fetchOptions);
+  // eslint-disable-next-line react-hooks/refs
+  fetchOptionsRef.current = fetchOptions;
+
+  const stableShowRetryToast = showRetryToast;
+  const stableRetryMessage = retryMessage;
+
   const fetchFn = useCallback(
     () =>
       fetchWithRetry<T>(url, {
-        ...fetchOptions,
+        ...fetchOptionsRef.current,
         onRetry: (attempt, error, nextDelay) => {
-          // 재시도 Toast 표시
-          if (showRetryToast && !retryToastIdRef.current) {
+          if (stableShowRetryToast && !retryToastIdRef.current) {
             retryToastIdRef.current = toast.warning(
-              `${retryMessage} (${attempt}/${fetchOptions.maxRetries || 3})`,
+              `${stableRetryMessage} (${attempt}/${fetchOptionsRef.current.maxRetries || 3})`,
               { duration: nextDelay + 1000 }
             );
           }
-          fetchOptions.onRetry?.(attempt, error, nextDelay);
+          fetchOptionsRef.current.onRetry?.(attempt, error, nextDelay);
         },
       }),
-    [url, fetchOptions, showRetryToast, retryMessage, toast]
+    [url, stableShowRetryToast, stableRetryMessage, toast]
   );
 
   const retryResult = useRetry<T>(fetchFn, { immediate });

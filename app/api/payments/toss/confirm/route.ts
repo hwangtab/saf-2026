@@ -6,6 +6,7 @@ import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { confirmPayment } from '@/lib/integrations/toss/confirm';
 import { notifyEmail, sendBuyerEmail } from '@/lib/notify';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
+import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
 
 export const runtime = 'nodejs';
 
@@ -95,23 +96,19 @@ export async function POST(req: NextRequest) {
   const isDone = tossResponse.status === 'DONE';
 
   // Insert payment record
-  const { data: payment, error: paymentInsertError } = await supabase
-    .from('payments')
-    .insert({
-      order_id: order.id,
-      payment_key: tossResponse.paymentKey,
-      toss_order_id: tossResponse.orderId,
-      method: tossResponse.method ?? null,
-      method_detail: (tossResponse.card ?? tossResponse.virtualAccount ?? null) as Json,
-      amount: tossResponse.totalAmount,
-      currency: tossResponse.currency ?? 'KRW',
-      status: tossResponse.status,
-      approved_at: tossResponse.approvedAt ?? null,
-      confirm_response: tossResponse as unknown as Json,
-      idempotency_key: idempotencyKey,
-    })
-    .select('id')
-    .single();
+  const { error: paymentInsertError } = await supabase.from('payments').insert({
+    order_id: order.id,
+    payment_key: tossResponse.paymentKey,
+    toss_order_id: tossResponse.orderId,
+    method: tossResponse.method ?? null,
+    method_detail: (tossResponse.card ?? tossResponse.virtualAccount ?? null) as Json,
+    amount: tossResponse.totalAmount,
+    currency: tossResponse.currency ?? 'KRW',
+    status: tossResponse.status,
+    approved_at: tossResponse.approvedAt ?? null,
+    confirm_response: tossResponse as unknown as Json,
+    idempotency_key: idempotencyKey,
+  });
 
   if (paymentInsertError) {
     console.error('[confirm] payment INSERT 실패:', paymentInsertError);
@@ -183,7 +180,7 @@ export async function POST(req: NextRequest) {
 
   // If fully paid, insert artwork_sales record
   // (DB trigger update_artwork_status_on_sale will mark artwork as sold)
-  if (isDone && payment && updatedOrders && updatedOrders.length > 0) {
+  if (isDone && updatedOrders && updatedOrders.length > 0) {
     const { error: salesInsertError } = await supabase.from('artwork_sales').insert({
       artwork_id: order.artwork_id,
       sale_price: order.total_amount,
@@ -205,19 +202,29 @@ export async function POST(req: NextRequest) {
         참고: '결제+주문 완료, 판매 기록만 누락 — reconciliation cron이 보정 예정',
       });
     }
+
+    // BUG 40: DB 트리거 실패 대비 방어적으로 artwork 상태 동기화
+    if (order.artwork_id) {
+      await deriveAndSyncArtworkStatus(supabase, order.artwork_id);
+    }
   }
 
   // 작품/작가 정보 조회 (구매자 이메일용)
-  const { data: artworkInfo } = await supabase
-    .from('artworks')
-    .select('title, artists(name_ko)')
-    .eq('id', order.artwork_id)
-    .single();
-  const artworkTitle = artworkInfo?.title ?? '';
-  const artistsRaw = artworkInfo?.artists;
-  const artistName = Array.isArray(artistsRaw)
-    ? (artistsRaw[0]?.name_ko ?? '')
-    : ((artistsRaw as { name_ko?: string } | null | undefined)?.name_ko ?? '');
+  // BUG 52: artwork_id가 null이면 쿼리 스킵
+  let artworkTitle = '';
+  let artistName = '';
+  if (order.artwork_id) {
+    const { data: artworkInfo } = await supabase
+      .from('artworks')
+      .select('title, artists(name_ko)')
+      .eq('id', order.artwork_id)
+      .single();
+    artworkTitle = artworkInfo?.title ?? '';
+    const artistsRaw = artworkInfo?.artists;
+    artistName = Array.isArray(artistsRaw)
+      ? (artistsRaw[0]?.name_ko ?? '')
+      : ((artistsRaw as { name_ko?: string } | null | undefined)?.name_ko ?? '');
+  }
 
   // 결제 완료 시 공개 작품 페이지 캐시 무효화
   if (isDone && order.artwork_id) {

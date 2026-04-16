@@ -14,6 +14,7 @@ import { logAdminAction } from './activity-log-writer';
 import { getString } from '@/lib/utils/form-helpers';
 import { sanitizeIlikeQuery } from '@/lib/utils/query';
 import { validatePhone } from '@/lib/utils/phone';
+import { validateTextLength, validateUrl, validateEmail } from '@/lib/utils/input-validation';
 
 function normalizeEmail(value: string | null | undefined): string | null {
   const trimmed = (value || '').trim();
@@ -146,17 +147,19 @@ export async function updateArtist(id: string, formData: FormData) {
   const admin = await requireAdmin();
   const supabase = await createSupabaseAdminClient();
 
-  const name_ko = getString(formData, 'name_ko');
-  const name_en = getString(formData, 'name_en');
-  const bio = getString(formData, 'bio');
-  const bio_en = getString(formData, 'bio_en') || null;
-  const history = getString(formData, 'history');
-  const history_en = getString(formData, 'history_en') || null;
-  const profile_image = getString(formData, 'profile_image');
+  const name_ko = validateTextLength(getString(formData, 'name_ko'), 100, '한국어 이름');
+  if (!name_ko.trim()) throw new Error('작가명(한국어)을 입력해주세요.');
+  const name_en = validateTextLength(getString(formData, 'name_en'), 100, '영어 이름');
+  const bio = validateTextLength(getString(formData, 'bio'), 5000, '소개');
+  const bio_en = validateTextLength(getString(formData, 'bio_en'), 5000, '영문 소개') || null;
+  const history = validateTextLength(getString(formData, 'history'), 10000, '이력');
+  const history_en =
+    validateTextLength(getString(formData, 'history_en'), 10000, '영문 이력') || null;
+  const profile_image = validateUrl(getString(formData, 'profile_image'), '프로필 이미지');
   const contact_phone = getString(formData, 'contact_phone');
-  const contact_email = getString(formData, 'contact_email');
-  const instagram = getString(formData, 'instagram');
-  const homepage = getString(formData, 'homepage');
+  const contact_email = validateEmail(getString(formData, 'contact_email'));
+  const instagram = validateUrl(getString(formData, 'instagram'), '인스타그램');
+  const homepage = validateUrl(getString(formData, 'homepage'), '홈페이지');
 
   const { data: oldArtist } = await supabase
     .from('artists')
@@ -175,11 +178,11 @@ export async function updateArtist(id: string, formData: FormData) {
       bio_en,
       history,
       history_en,
-      profile_image: profile_image || null,
+      profile_image,
       contact_phone: contact_phone || null,
-      contact_email: contact_email || null,
-      instagram: instagram || null,
-      homepage: homepage || null,
+      contact_email,
+      instagram,
+      homepage,
       updated_at: new Date().toISOString(),
     })
     .eq('id', id);
@@ -307,16 +310,18 @@ export async function createAdminArtist(formData: FormData) {
   const admin = await requireAdmin();
   const supabase = await createSupabaseAdminClient();
 
-  const name_ko = getString(formData, 'name_ko');
-  const name_en = getString(formData, 'name_en');
-  const bio = getString(formData, 'bio');
-  const bio_en = getString(formData, 'bio_en') || null;
-  const history = getString(formData, 'history');
-  const history_en = getString(formData, 'history_en') || null;
+  const name_ko = validateTextLength(getString(formData, 'name_ko'), 100, '한국어 이름');
+  if (!name_ko.trim()) throw new Error('작가명(한국어)을 입력해주세요.');
+  const name_en = validateTextLength(getString(formData, 'name_en'), 100, '영어 이름');
+  const bio = validateTextLength(getString(formData, 'bio'), 5000, '소개');
+  const bio_en = validateTextLength(getString(formData, 'bio_en'), 5000, '영문 소개') || null;
+  const history = validateTextLength(getString(formData, 'history'), 10000, '이력');
+  const history_en =
+    validateTextLength(getString(formData, 'history_en'), 10000, '영문 이력') || null;
   const contact_phone = getString(formData, 'contact_phone');
-  const contact_email = getString(formData, 'contact_email');
-  const instagram = getString(formData, 'instagram');
-  const homepage = getString(formData, 'homepage');
+  const contact_email = validateEmail(getString(formData, 'contact_email'));
+  const instagram = validateUrl(getString(formData, 'instagram'), '인스타그램');
+  const homepage = validateUrl(getString(formData, 'homepage'), '홈페이지');
 
   const { data, error } = await supabase
     .from('artists')
@@ -328,9 +333,9 @@ export async function createAdminArtist(formData: FormData) {
       history,
       history_en,
       contact_phone: contact_phone || null,
-      contact_email: contact_email || null,
-      instagram: instagram || null,
-      homepage: homepage || null,
+      contact_email,
+      instagram,
+      homepage,
     })
     .select()
     .single();
