@@ -17,10 +17,6 @@ const TOAST_TRANSLATIONS: Record<string, string> = {
   '일괄 공개 상태 변경 중 오류가 발생했습니다.':
     'An error occurred while updating visibility in batch.',
   '일괄 삭제 중 오류가 발생했습니다.': 'An error occurred during batch delete.',
-  '카페24 동기화에 실패해 상태 변경이 일부 롤백되었습니다.':
-    'Cafe24 sync failed. Status change was partially rolled back.',
-  '카페24 동기화에 실패해 공개 상태 변경이 일부 롤백되었습니다.':
-    'Cafe24 sync failed. Visibility change was partially rolled back.',
   '필터 충돌을 방지하기 위해 권한 필터를 자동 해제했습니다.':
     'Role filter was cleared automatically to prevent conflicts.',
   '연결할 미연결 작가를 선택해 주세요.': 'Please select an unlinked artist to connect.',
@@ -43,7 +39,6 @@ const TOAST_TRANSLATIONS: Record<string, string> = {
   '메모가 저장되었습니다.': 'Memo saved.',
   '메모 저장 중 오류가 발생했습니다.': 'An error occurred while saving memo.',
   '상태가 변경되었습니다.': 'Status updated.',
-  '정리할 Cafe24 시스템 로그가 없습니다.': 'No Cafe24 system logs to clean up.',
   '복구가 완료되었습니다.': 'Restore completed.',
   '구매 링크 누락 작품이 없습니다.': 'No artworks with missing purchase links.',
   '일괄 동기화 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.':
@@ -62,13 +57,6 @@ const TOAST_TRANSLATIONS: Record<string, string> = {
   '사용자 계정 연결이 해제되었습니다.': 'User account link removed.',
   '연결 해제 중 오류가 발생했습니다.': 'An error occurred while unlinking account.',
   '판매 금액을 입력해주세요.': 'Please enter a sale amount.',
-  '판매 기록은 저장됐지만 카페24 인증이 필요합니다.':
-    'Sale record saved, but Cafe24 authentication is required.',
-  '판매 기록은 저장됐지만 카페24 동기화에 실패했습니다.':
-    'Sale record saved, but Cafe24 sync failed.',
-  '판매 기록은 저장됐지만 카페24 동기화 경고가 있습니다.':
-    'Sale record saved, but Cafe24 sync returned warnings.',
-  '판매가 기록되었고 카페24 동기화도 완료되었습니다.': 'Sale recorded and Cafe24 sync completed.',
   '삭제 중 오류가 발생했습니다.': 'An error occurred while deleting.',
   '삭제 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.':
     'An error occurred while deleting. Please try again shortly.',

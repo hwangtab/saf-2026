@@ -28,12 +28,12 @@ function parsePriceString(priceStr: string | null): number {
 }
 
 function normalizeSaleSource(source: ArtworkSale['source']): 'manual' | 'online' {
-  return source === 'cafe24' || source === 'toss' ? 'online' : 'manual';
+  return source === 'toss' ? 'online' : 'manual';
 }
 
 function getSaleSourceLabel(source: ArtworkSale['source']): string {
   const normalized = normalizeSaleSource(source);
-  if (normalized === 'online') return source === 'toss' ? '온라인(토스)' : '온라인';
+  if (normalized === 'online') return '온라인(토스)';
   return '오프라인';
 }
 
@@ -112,15 +112,7 @@ export function SalesHistory({
 
       const result = await recordArtworkSale(formData);
       if (result.success) {
-        if (result.cafe24.status === 'synced') {
-          toast.success('판매 기록 저장 및 Cafe24 동기화 완료.');
-        } else if (result.cafe24.status === 'pending_auth') {
-          toast.warning('판매 기록 저장됨. Cafe24 인증이 필요합니다.');
-        } else if (result.cafe24.status === 'failed') {
-          toast.warning('판매 기록 저장됨. Cafe24 동기화 실패.');
-        } else {
-          toast.warning('판매 기록 저장됨. Cafe24 동기화 경고.');
-        }
+        toast.success('판매 기록이 저장되었습니다.');
         setIsFormOpen(false);
         setSalePrice('');
         setQuantity(1);
@@ -167,13 +159,7 @@ export function SalesHistory({
       formData.append('sold_at', editDate);
 
       const result = await updateArtworkSale(formData);
-      if (result.cafe24.status === 'synced') {
-        toast.success('판매 기록 수정 및 Cafe24 동기화 완료.');
-      } else if (result.cafe24.status === 'pending_auth') {
-        toast.warning('판매 기록 수정됨. Cafe24 인증이 필요합니다.');
-      } else if (result.cafe24.status === 'failed') {
-        toast.warning('판매 기록 수정됨. Cafe24 동기화 실패.');
-      } else {
+      if (result.success) {
         toast.success('판매 기록이 수정되었습니다.');
       }
       setEditingSaleId(null);
@@ -201,13 +187,7 @@ export function SalesHistory({
     setIsVoiding(true);
     try {
       const result = await voidArtworkSale(saleId, voidReason);
-      if (result.cafe24.status === 'synced') {
-        toast.success('판매 기록 취소 및 Cafe24 동기화 완료.');
-      } else if (result.cafe24.status === 'pending_auth') {
-        toast.warning('판매 기록 취소됨. Cafe24 인증이 필요합니다.');
-      } else if (result.cafe24.status === 'failed') {
-        toast.warning('판매 기록 취소됨. Cafe24 동기화 실패.');
-      } else {
+      if (result.success) {
         toast.success('판매 기록이 취소되었습니다.');
       }
       setVoidingSaleId(null);

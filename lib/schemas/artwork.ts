@@ -295,7 +295,7 @@ export function generateArtworkJsonLd(
 
   const priceValidUntil = PRICE_VALID_UNTIL;
 
-  // 결제 수단 — Cafe24 쇼핑몰 기준 (신용카드·체크카드·계좌이체)
+  // 결제 수단 (신용카드·체크카드·계좌이체)
   const acceptedPaymentMethod = [
     'https://schema.org/CreditCard',
     'https://schema.org/DebitCard',
@@ -438,7 +438,7 @@ export function generateArtworkJsonLd(
         value: historyForLocale.substring(0, 200),
       },
     ].filter(Boolean),
-    // sameAs: 동일 제품의 외부 판매 URL — 검색엔진이 Cafe24 상품과 동일 엔티티로 인식
+    // sameAs: 동일 제품의 외부 판매 URL
     ...(artwork.shopUrl && { sameAs: artwork.shopUrl }),
     potentialAction: [
       {

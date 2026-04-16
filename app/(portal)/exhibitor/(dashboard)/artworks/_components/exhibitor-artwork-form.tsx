@@ -44,11 +44,6 @@ type Artwork = {
   images: string[] | null;
 };
 
-type Cafe24SyncFeedback = {
-  status: 'synced' | 'warning' | 'failed' | 'pending_auth';
-  reason: string | null;
-};
-
 type ExhibitorArtworkFormProps = {
   artwork?: Partial<Artwork>;
   artists: Artist[];
@@ -97,56 +92,19 @@ export function ExhibitorArtworkForm({
     return artists.filter((artist) => matchesSearchText(artist.name_ko, normalizedQuery));
   }, [artists, artistQuery]);
 
-  const isMissingRepresentativeImageReason = (reason: string | null | undefined) => {
-    if (!reason) return false;
-    return (
-      reason.includes('대표 이미지') ||
-      /representative image|primary image|main image|cover image/i.test(reason)
-    );
-  };
-
-  const notifyCafe24SyncResult = (sync: Cafe24SyncFeedback, actionLabel: string) => {
-    if (sync.status === 'synced') {
-      toast.success(t('syncSuccess', { action: actionLabel }));
-      return;
-    }
-
-    if (sync.status === 'pending_auth') {
-      toast.warning(t('syncPendingAuth', { action: actionLabel }));
-      return;
-    }
-
-    if (sync.status === 'failed') {
-      toast.warning(t('syncFailed', { action: actionLabel }));
-      return;
-    }
-
-    toast.warning(t('syncContinuing', { action: actionLabel }));
-  };
-
   const handleSubmit = async (formData: FormData) => {
     setSaving(true);
     try {
       if (isEditing && artwork.id) {
         const result = await updateExhibitorArtwork(artwork.id, formData);
         if (result.success) {
-          notifyCafe24SyncResult(result.cafe24, t('actionSave'));
+          toast.success(t('syncSuccess', { action: t('actionSave') }));
         }
         router.push('/exhibitor/artworks');
       } else {
         const result = await createExhibitorArtwork(formData);
         if (result.success && result.id) {
-          const missingImageWarning =
-            result.cafe24.status === 'warning' &&
-            isMissingRepresentativeImageReason(result.cafe24.reason);
-
-          if (missingImageWarning) {
-            toast.warning(t('missingRepresentativeImageWarning'));
-            router.push(`/exhibitor/artworks/${result.id}`);
-            return;
-          }
-
-          notifyCafe24SyncResult(result.cafe24, t('actionCreate'));
+          toast.success(t('syncSuccess', { action: t('actionCreate') }));
           router.push('/exhibitor/artworks');
         }
       }
@@ -165,7 +123,7 @@ export function ExhibitorArtworkForm({
     try {
       const result = await updateExhibitorArtworkImages(artwork.id, newImages);
       if (result.success) {
-        notifyCafe24SyncResult(result.cafe24, t('actionSaveImage'));
+        toast.success(t('syncSuccess', { action: t('actionSaveImage') }));
       }
       router.refresh();
     } catch (error) {

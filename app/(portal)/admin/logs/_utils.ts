@@ -52,8 +52,6 @@ export const ACTION_PREFIX_TRANSLATIONS: Array<[RegExp, string]> = [
   [/^일괄 숨김 변경:/, 'Batch visibility changed:'],
   [/^일괄 삭제:/, 'Batch delete:'],
   [/^구매링크 누락 동기화:/, 'Missing purchase-link sync:'],
-  [/^Cafe24 판매 동기화 경고:/, 'Cafe24 sales sync warning:'],
-  [/^Cafe24 판매 동기화 실패:/, 'Cafe24 sales sync failed:'],
   [/^판매 기록 등록:/, 'Sale recorded:'],
   [/^판매 기록 수정$/, 'Sale updated'],
   [/^판매 취소:/, 'Sale voided:'],
@@ -84,26 +82,6 @@ export type LogsListProps = {
   totalPages: number;
   total: number;
 };
-
-export function getCafe24SyncIssueText(
-  details: Record<string, unknown> | null,
-  fallback: string
-): string {
-  const primaryError =
-    typeof details?.primary_error === 'string' ? details.primary_error.trim() : '';
-  if (primaryError) return primaryError;
-
-  const firstError =
-    Array.isArray(details?.errors) && typeof details.errors[0] === 'string'
-      ? details.errors[0].trim()
-      : '';
-  if (firstError) return firstError;
-
-  const reason = typeof details?.reason === 'string' ? details.reason.trim() : '';
-  if (reason) return reason;
-
-  return fallback;
-}
 
 export function localizeActionText(text: string, locale: LocaleCode): string {
   if (locale === 'ko') return text;
@@ -284,18 +262,6 @@ export function formatActionDescription(log: ActivityLogEntry, locale: LocaleCod
       break;
     case 'batch_artwork_deleted':
       text = `일괄 삭제: ${details?.count}건`;
-      break;
-    case 'batch_cafe24_missing_shop_url_sync':
-      text =
-        locale === 'en'
-          ? `Missing purchase-link sync: ${details?.succeeded || 0} succeeded / ${details?.failed || 0} failed`
-          : `구매링크 누락 동기화: 성공 ${details?.succeeded || 0}건 / 실패 ${details?.failed || 0}건`;
-      break;
-    case 'cafe24_sales_sync_warning':
-      text = `Cafe24 판매 동기화 경고: ${getCafe24SyncIssueText(details, '일부 항목 확인 필요')}`;
-      break;
-    case 'cafe24_sales_sync_failed':
-      text = `Cafe24 판매 동기화 실패: ${getCafe24SyncIssueText(details, '원인 확인 필요')}`;
       break;
     case 'artwork_sold':
       text = `판매 기록 등록: ${details?.quantity || 1}점`;

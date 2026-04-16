@@ -1,8 +1,6 @@
 import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { purgeCafe24ProductsFromTrashEntry } from '@/lib/integrations/cafe24/trash-purge';
-
 export const runtime = 'nodejs';
 
 const SYSTEM_ACTOR_ID = '00000000-0000-0000-0000-000000000000';
@@ -248,8 +246,6 @@ export async function GET(request: NextRequest) {
   let failed = 0;
   let removedArtwork = 0;
   let removedProfile = 0;
-  let removedCafe24 = 0;
-  let missingCafe24 = 0;
 
   for (const log of logs || []) {
     try {
@@ -260,14 +256,6 @@ export async function GET(request: NextRequest) {
 
       let artworkCleanup = { removed: 0, failed: 0 };
       let profileCleanup = { removed: 0, failed: 0 };
-      let cafe24Cleanup = {
-        deleted: 0,
-        missing: 0,
-        failed: 0,
-        skipped: false,
-        productNos: [] as number[],
-        errors: [] as string[],
-      };
 
       if (shouldCleanupStorage && beforeSnapshot) {
         if (log.target_type === 'artwork') {
@@ -276,16 +264,6 @@ export async function GET(request: NextRequest) {
         } else if (log.target_type === 'artist') {
           const profilePaths = collectProfilePaths(beforeSnapshot);
           profileCleanup = await removeStoragePaths(supabase, 'profiles', profilePaths);
-        }
-      }
-
-      if (log.target_type === 'artwork' && beforeSnapshot) {
-        cafe24Cleanup = await purgeCafe24ProductsFromTrashEntry({
-          targetType: log.target_type,
-          beforeSnapshot: log.before_snapshot,
-        });
-        if (cafe24Cleanup.failed > 0) {
-          throw new Error(`Cafe24 purge failed: ${cafe24Cleanup.errors.join(' | ')}`);
         }
       }
 
@@ -299,13 +277,6 @@ export async function GET(request: NextRequest) {
           artwork_failed: artworkCleanup.failed,
           profile_removed: profileCleanup.removed,
           profile_failed: profileCleanup.failed,
-        },
-        cafe24_cleanup: {
-          product_nos: cafe24Cleanup.productNos,
-          deleted: cafe24Cleanup.deleted,
-          missing: cafe24Cleanup.missing,
-          failed: cafe24Cleanup.failed,
-          skipped: cafe24Cleanup.skipped,
         },
       };
 
@@ -346,11 +317,6 @@ export async function GET(request: NextRequest) {
           artwork_failed: artworkCleanup.failed,
           profile_removed: profileCleanup.removed,
           profile_failed: profileCleanup.failed,
-          cafe24_product_nos: cafe24Cleanup.productNos,
-          cafe24_deleted: cafe24Cleanup.deleted,
-          cafe24_missing: cafe24Cleanup.missing,
-          cafe24_failed: cafe24Cleanup.failed,
-          cafe24_skipped: cafe24Cleanup.skipped,
           ...(purgeTargetInfo.targetName ? { target_name: purgeTargetInfo.targetName } : {}),
           ...(purgeTargetInfo.targetNames ? { target_names: purgeTargetInfo.targetNames } : {}),
         },
@@ -366,8 +332,6 @@ export async function GET(request: NextRequest) {
       success += 1;
       removedArtwork += artworkCleanup.removed;
       removedProfile += profileCleanup.removed;
-      removedCafe24 += cafe24Cleanup.deleted;
-      missingCafe24 += cafe24Cleanup.missing;
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       console.error(`[purge-trash] log=${log.id} failed: ${message}`);
@@ -381,7 +345,5 @@ export async function GET(request: NextRequest) {
     failed,
     removedArtwork,
     removedProfile,
-    removedCafe24,
-    missingCafe24,
   });
 }

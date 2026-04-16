@@ -1,7 +1,6 @@
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { AdminArtworkList } from './admin-artwork-list';
-import { Cafe24MissingLinkSyncButton } from './cafe24-missing-link-sync-button';
 import LinkButton from '@/components/ui/LinkButton';
 import {
   AdminPageDescription,
@@ -26,7 +25,7 @@ export default async function AdminArtworksPage({ searchParams }: Props) {
   const { data: artworks } = await supabase
     .from('artworks')
     .select(
-      'id, title, admin_product_name, status, is_hidden, images, created_at, category, cafe24_sync_status, cafe24_sync_error, artists(name_ko)'
+      'id, title, admin_product_name, status, is_hidden, images, created_at, category, artists(name_ko)'
     )
     .order('created_at', { ascending: false });
 
@@ -43,7 +42,6 @@ export default async function AdminArtworksPage({ searchParams }: Props) {
           <AdminPageDescription>등록된 작품 정보를 관리합니다.</AdminPageDescription>
         </AdminPageHeader>
         <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
-          <Cafe24MissingLinkSyncButton />
           <LinkButton href="/admin/artworks/export" variant="white" className="w-full sm:w-auto">
             전체 작품 데이터 다운받기
           </LinkButton>

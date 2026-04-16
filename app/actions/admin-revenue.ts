@@ -17,7 +17,7 @@ export type RevenueQueryInput = {
   month?: string | null;
 };
 
-export type RevenueSource = 'manual' | 'cafe24' | 'toss';
+export type RevenueSource = 'manual' | 'toss';
 export type RevenueChannel = 'offline' | 'online';
 
 type SalesAggregate = {
@@ -93,10 +93,8 @@ export type RevenueMonthlyRow = {
   yoyChangeRatePct: number | null;
   cumulativeRevenue: number;
   manualRevenue: number;
-  cafe24Revenue: number;
   tossRevenue: number;
   manualSoldCount: number;
-  cafe24SoldCount: number;
   tossSoldCount: number;
   offlineRevenue: number;
   onlineRevenue: number;
@@ -234,7 +232,6 @@ function createMonthlyAccumulator(): MonthlyAccumulator[] {
 function createSourceBreakdown(): SourceBreakdown {
   return {
     manual: createSalesAggregate(),
-    cafe24: createSalesAggregate(),
     toss: createSalesAggregate(),
   };
 }
@@ -251,13 +248,12 @@ function createMonthlySourceBreakdown(): SourceBreakdown[] {
 }
 
 function normalizeRevenueSource(source: string | null | undefined): RevenueSource {
-  if (source === 'cafe24') return 'cafe24';
   if (source === 'toss') return 'toss';
   return 'manual';
 }
 
 function mapSourceToChannel(source: RevenueSource): RevenueChannel {
-  if (source === 'cafe24' || source === 'toss') return 'online';
+  if (source === 'toss') return 'online';
   return 'offline';
 }
 
@@ -486,8 +482,6 @@ export async function getRevenueAnalyticsForAuthorizedUser(
       current.soldCount > 0 ? Math.round(current.revenue / current.soldCount) : 0;
     const manualRevenue = currentYearMonthlyBySource[index].manual.revenue;
     const manualSoldCount = currentYearMonthlyBySource[index].manual.soldCount;
-    const cafe24Revenue = currentYearMonthlyBySource[index].cafe24.revenue;
-    const cafe24SoldCount = currentYearMonthlyBySource[index].cafe24.soldCount;
     const tossRevenue = currentYearMonthlyBySource[index].toss.revenue;
     const tossSoldCount = currentYearMonthlyBySource[index].toss.soldCount;
 
@@ -505,15 +499,13 @@ export async function getRevenueAnalyticsForAuthorizedUser(
       yoyChangeRatePct: calcChangeRate(current.revenue, previousYear.revenue),
       cumulativeRevenue,
       manualRevenue,
-      cafe24Revenue,
       tossRevenue,
       manualSoldCount,
-      cafe24SoldCount,
       tossSoldCount,
       offlineRevenue: manualRevenue,
-      onlineRevenue: cafe24Revenue + tossRevenue,
+      onlineRevenue: tossRevenue,
       offlineSoldCount: manualSoldCount,
-      onlineSoldCount: cafe24SoldCount + tossSoldCount,
+      onlineSoldCount: tossSoldCount,
     });
   }
 

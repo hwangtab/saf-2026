@@ -7,8 +7,6 @@ export type ArtworkItem = {
   images: string[] | null;
   created_at: string | null;
   category: string | null;
-  cafe24_sync_status: string | null;
-  cafe24_sync_error: string | null;
   artists: { name_ko: string | null } | null;
 };
 

@@ -4,8 +4,6 @@ import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import type { Database } from '@/types/supabase';
-import { syncArtworkToCafe24 } from '@/lib/integrations/cafe24/sync-artwork';
-import { purgeCafe24ProductsFromTrashEntry } from '@/lib/integrations/cafe24/trash-purge';
 import { logAdminAction } from './admin-logs';
 import { getString, getStoragePathsForRemoval, validateBatchSize } from '@/lib/utils/form-helpers';
 import { validateArtworkData, validateSaleInput } from '@/lib/actions/artwork-validation';
@@ -13,14 +11,6 @@ import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 
 type EditionType = Database['public']['Enums']['edition_type'];
 type ArtworkStatus = Database['public']['Enums']['artwork_status'];
-
-type Cafe24SyncFeedback = {
-  status: 'synced' | 'warning' | 'failed' | 'pending_auth';
-  reason: string | null;
-};
-
-const CAFE24_SYNC_CONCURRENCY = 6;
-const CAFE24_MISSING_LINK_SYNC_CONCURRENCY = 4;
 
 function isMissingVoidedAtColumnError(error: unknown): boolean {
   if (!error || typeof error !== 'object') return false;
@@ -37,30 +27,6 @@ function isMissingVoidedAtColumnError(error: unknown): boolean {
     .trim();
 
   return candidate.code === '42703' && merged.includes('voided_at');
-}
-
-function toCafe24SyncFeedback(
-  result: Awaited<ReturnType<typeof syncArtworkToCafe24>>
-): Cafe24SyncFeedback {
-  if (result.ok) {
-    return {
-      status: result.reason ? 'warning' : 'synced',
-      reason: result.reason || null,
-    };
-  }
-
-  const reason = result.reason || null;
-  if (reason?.includes('OAuth 연결')) {
-    return {
-      status: 'pending_auth',
-      reason,
-    };
-  }
-
-  return {
-    status: 'failed',
-    reason,
-  };
 }
 
 /**
@@ -134,14 +100,6 @@ export async function deriveAndSyncArtworkStatus(
   return artwork.status as 'available' | 'sold' | 'reserved';
 }
 
-type Cafe24BatchSyncResult = {
-  succeeded: number;
-  failed: number;
-  succeededIds: string[];
-  failedIds: string[];
-  errors: string[];
-};
-
 type BatchArtworkMutationResult = {
   success: boolean;
   partial: boolean;
@@ -151,52 +109,6 @@ type BatchArtworkMutationResult = {
   errors: string[];
 };
 
-async function syncCafe24Batch(ids: string[]): Promise<Cafe24BatchSyncResult> {
-  const uniqueIds = Array.from(new Set(ids.filter((id) => typeof id === 'string' && id)));
-  if (uniqueIds.length === 0) {
-    return { succeeded: 0, failed: 0, succeededIds: [], failedIds: [], errors: [] };
-  }
-
-  let cursor = 0;
-  const succeededIds: string[] = [];
-  const failedIds: string[] = [];
-  const errors: string[] = [];
-
-  const worker = async () => {
-    while (true) {
-      const index = cursor;
-      cursor += 1;
-      if (index >= uniqueIds.length) return;
-
-      const id = uniqueIds[index];
-      try {
-        const result = await syncArtworkToCafe24(id);
-        if (result.ok) {
-          succeededIds.push(id);
-        } else {
-          failedIds.push(id);
-          errors.push(`${id}: ${result.reason || '알 수 없는 오류'}`);
-        }
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        failedIds.push(id);
-        errors.push(`${id}: ${message}`);
-      }
-    }
-  };
-
-  const workerCount = Math.min(CAFE24_SYNC_CONCURRENCY, uniqueIds.length);
-  await Promise.all(Array.from({ length: workerCount }, () => worker()));
-
-  return {
-    succeeded: succeededIds.length,
-    failed: failedIds.length,
-    succeededIds,
-    failedIds,
-    errors,
-  };
-}
-
 export async function deleteAdminArtwork(id: string) {
   const admin = await requireAdmin();
   const supabase = await createSupabaseAdminClient();
@@ -204,20 +116,10 @@ export async function deleteAdminArtwork(id: string) {
   const { data: artwork } = await supabase
     .from('artworks')
     .select(
-      'id, title, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, is_hidden, images, shop_url, cafe24_product_no, artist_id, created_at, updated_at'
+      'id, title, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, is_hidden, images, shop_url, artist_id, created_at, updated_at'
     )
     .eq('id', id)
     .single();
-
-  if (artwork) {
-    const cafe24Cleanup = await purgeCafe24ProductsFromTrashEntry({
-      targetType: 'artwork',
-      beforeSnapshot: artwork,
-    });
-    if (cafe24Cleanup.failed > 0) {
-      throw new Error(`카페24 상품 삭제 실패: ${cafe24Cleanup.errors.join(' | ')}`);
-    }
-  }
 
   const { error } = await supabase.from('artworks').delete().eq('id', id);
   if (error) throw error;
@@ -370,9 +272,7 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
     reversible: true,
   });
 
-  const syncResult = await syncArtworkToCafe24(id);
-
-  return { success: true, cafe24: toCafe24SyncFeedback(syncResult) };
+  return { success: true };
 }
 
 export async function createAdminArtwork(formData: FormData) {
@@ -443,9 +343,7 @@ export async function createAdminArtwork(formData: FormData) {
     reversible: true,
   });
 
-  const syncResult = await syncArtworkToCafe24(artwork.id);
-
-  return { success: true, id: artwork.id, cafe24: toCafe24SyncFeedback(syncResult) };
+  return { success: true, id: artwork.id };
 }
 
 export async function updateArtworkImages(id: string, images: string[]) {
@@ -510,123 +408,14 @@ export async function updateArtworkImages(id: string, images: string[]) {
     }
   );
 
-  const syncResult = await syncArtworkToCafe24(id);
-
-  return { success: true, cafe24: toCafe24SyncFeedback(syncResult) };
-}
-
-type MissingPurchaseLinkSyncError = {
-  id: string;
-  title: string;
-  reason: string;
-};
-
-type MissingPurchaseLinkSyncResult = {
-  total: number;
-  succeeded: number;
-  failed: number;
-  errors: MissingPurchaseLinkSyncError[];
-};
-
-export async function syncMissingArtworkPurchaseLinks(): Promise<MissingPurchaseLinkSyncResult> {
-  const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
-
-  const { data: targets, error } = await supabase
-    .from('artworks')
-    .select('id, title')
-    .or(
-      'shop_url.is.null,shop_url.eq.,cafe24_product_no.is.null,cafe24_sync_status.in.(failed,pending_auth)'
-    )
-    .order('created_at', { ascending: false });
-
-  if (error) {
-    throw new Error(`동기화 대상 조회 실패: ${error.message}`);
-  }
-
-  const rows = targets || [];
-  if (rows.length === 0) {
-    return {
-      total: 0,
-      succeeded: 0,
-      failed: 0,
-      errors: [],
-    };
-  }
-
-  let succeeded = 0;
-  const errors: MissingPurchaseLinkSyncError[] = [];
-  let cursor = 0;
-
-  const worker = async () => {
-    while (true) {
-      const index = cursor;
-      cursor += 1;
-      if (index >= rows.length) return;
-
-      const row = rows[index];
-      try {
-        const result = await syncArtworkToCafe24(row.id);
-        if (result.ok) {
-          succeeded += 1;
-          continue;
-        }
-
-        errors.push({
-          id: row.id,
-          title: row.title || '(제목 없음)',
-          reason: result.reason || '알 수 없는 오류',
-        });
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        errors.push({
-          id: row.id,
-          title: row.title || '(제목 없음)',
-          reason: message,
-        });
-      }
-    }
-  };
-
-  const workerCount = Math.min(CAFE24_MISSING_LINK_SYNC_CONCURRENCY, rows.length);
-  await Promise.all(Array.from({ length: workerCount }, () => worker()));
-
-  const failed = errors.length;
-
-  revalidatePublicArtworkSurfaces();
-  revalidatePath('/admin/artworks');
-
-  await logAdminAction(
-    'batch_cafe24_missing_shop_url_sync',
-    'artwork',
-    rows.map((row) => row.id).join(','),
-    {
-      total: rows.length,
-      succeeded,
-      failed,
-    },
-    admin.id,
-    {
-      summary: `구매 링크 누락 작품 동기화: ${succeeded}/${rows.length} 성공`,
-      afterSnapshot: {
-        succeeded,
-        failed,
-        errors,
-      },
-      reversible: false,
-    }
-  );
-
-  return {
-    total: rows.length,
-    succeeded,
-    failed,
-    errors,
-  };
+  return { success: true };
 }
 
 // Batch operations
-export async function batchUpdateArtworkStatus(ids: string[], status: ArtworkStatus) {
+export async function batchUpdateArtworkStatus(
+  ids: string[],
+  status: ArtworkStatus
+): Promise<BatchArtworkMutationResult> {
   const admin = await requireAdmin();
   if (ids.length === 0) {
     return {
@@ -694,48 +483,6 @@ export async function batchUpdateArtworkStatus(ids: string[], status: ArtworkSta
     .from('artworks')
     .select('id, title, status, sold_at, updated_at')
     .in('id', ids);
-
-  const syncBatchResult = await syncCafe24Batch(ids);
-  if (syncBatchResult.failed > 0) {
-    const beforeMap = new Map((beforeArtworks || []).map((artwork) => [artwork.id, artwork]));
-    const rollbackErrors: string[] = [];
-
-    for (const failedId of syncBatchResult.failedIds) {
-      const before = beforeMap.get(failedId);
-      if (!before) continue;
-      const { error } = await supabase
-        .from('artworks')
-        .update({
-          status: before.status,
-          sold_at: before.sold_at,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', failedId);
-      if (error) {
-        rollbackErrors.push(`${failedId}: ${error.message}`);
-      }
-    }
-
-    revalidatePublicArtworkSurfaces();
-    revalidatePath('/admin/artworks');
-
-    if (rollbackErrors.length > 0) {
-      throw new Error(
-        `카페24 동기화 실패 후 롤백 실패: ${rollbackErrors.join(' | ')} | sync: ${syncBatchResult.errors.join(
-          ' | '
-        )}`
-      );
-    }
-
-    return {
-      success: false,
-      partial: true,
-      count: syncBatchResult.succeededIds.length,
-      succeededIds: syncBatchResult.succeededIds,
-      failedIds: syncBatchResult.failedIds,
-      errors: syncBatchResult.errors,
-    } satisfies BatchArtworkMutationResult;
-  }
 
   revalidatePublicArtworkSurfaces();
   revalidatePath('/admin/artworks');
@@ -923,12 +670,8 @@ export async function recordArtworkSale(formData: FormData) {
   );
 
   await deriveAndSyncArtworkStatus(supabase, artworkId);
-  const syncResult = await syncArtworkToCafe24(artworkId);
 
-  return {
-    success: true,
-    cafe24: toCafe24SyncFeedback(syncResult),
-  };
+  return { success: true };
 }
 
 export async function updateArtworkSale(formData: FormData) {
@@ -958,7 +701,7 @@ export async function updateArtworkSale(formData: FormData) {
   if (existing.artwork_id !== artworkId) {
     throw new Error('판매 기록과 작품 정보가 일치하지 않습니다.');
   }
-  if (existing.source === 'cafe24' || existing.source === 'toss') {
+  if (existing.source === 'toss') {
     throw new Error('외부 동기화 판매 기록은 수정할 수 없습니다.');
   }
 
@@ -1042,12 +785,8 @@ export async function updateArtworkSale(formData: FormData) {
   );
 
   await deriveAndSyncArtworkStatus(supabase, artworkId);
-  const syncResult = await syncArtworkToCafe24(artworkId);
 
-  return {
-    success: true,
-    cafe24: toCafe24SyncFeedback(syncResult),
-  };
+  return { success: true };
 }
 
 export async function voidArtworkSale(saleId: string, reason: string) {
@@ -1106,15 +845,14 @@ export async function voidArtworkSale(saleId: string, reason: string) {
   );
 
   await deriveAndSyncArtworkStatus(supabase, artworkId);
-  const syncResult = await syncArtworkToCafe24(artworkId);
 
-  return {
-    success: true,
-    cafe24: toCafe24SyncFeedback(syncResult),
-  };
+  return { success: true };
 }
 
-export async function batchToggleHidden(ids: string[], isHidden: boolean) {
+export async function batchToggleHidden(
+  ids: string[],
+  isHidden: boolean
+): Promise<BatchArtworkMutationResult> {
   if (ids.length === 0) {
     return {
       success: true,
@@ -1145,47 +883,6 @@ export async function batchToggleHidden(ids: string[], isHidden: boolean) {
     .from('artworks')
     .select('id, title, is_hidden, updated_at')
     .in('id', ids);
-
-  const syncBatchResult = await syncCafe24Batch(ids);
-  if (syncBatchResult.failed > 0) {
-    const beforeMap = new Map((beforeArtworks || []).map((artwork) => [artwork.id, artwork]));
-    const rollbackErrors: string[] = [];
-
-    for (const failedId of syncBatchResult.failedIds) {
-      const before = beforeMap.get(failedId);
-      if (!before) continue;
-      const { error: rollbackError } = await supabase
-        .from('artworks')
-        .update({
-          is_hidden: before.is_hidden,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', failedId);
-      if (rollbackError) {
-        rollbackErrors.push(`${failedId}: ${rollbackError.message}`);
-      }
-    }
-
-    revalidatePublicArtworkSurfaces();
-    revalidatePath('/admin/artworks');
-
-    if (rollbackErrors.length > 0) {
-      throw new Error(
-        `카페24 동기화 실패 후 롤백 실패: ${rollbackErrors.join(' | ')} | sync: ${syncBatchResult.errors.join(
-          ' | '
-        )}`
-      );
-    }
-
-    return {
-      success: false,
-      partial: true,
-      count: syncBatchResult.succeededIds.length,
-      succeededIds: syncBatchResult.succeededIds,
-      failedIds: syncBatchResult.failedIds,
-      errors: syncBatchResult.errors,
-    } satisfies BatchArtworkMutationResult;
-  }
 
   revalidatePublicArtworkSurfaces();
   revalidatePath('/admin/artworks');
@@ -1230,33 +927,9 @@ export async function batchDeleteArtworks(ids: string[]) {
   const { data: artworks } = await supabase
     .from('artworks')
     .select(
-      'id, title, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, is_hidden, images, shop_url, cafe24_product_no, artist_id, created_at, updated_at'
+      'id, title, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, is_hidden, images, shop_url, artist_id, created_at, updated_at'
     )
     .in('id', ids);
-
-  const purgedArtworkIds: string[] = [];
-  for (const artwork of artworks || []) {
-    const cafe24Cleanup = await purgeCafe24ProductsFromTrashEntry({
-      targetType: 'artwork',
-      beforeSnapshot: artwork,
-    });
-    if (cafe24Cleanup.failed > 0) {
-      const rollback = await syncCafe24Batch(purgedArtworkIds);
-      if (rollback.failed > 0) {
-        throw new Error(
-          `카페24 상품 삭제 실패(작품 ${artwork.id}): ${cafe24Cleanup.errors.join(
-            ' | '
-          )} | 롤백 실패: ${rollback.errors.join(' | ')}`
-        );
-      }
-      throw new Error(
-        `카페24 상품 삭제 실패(작품 ${artwork.id}): ${cafe24Cleanup.errors.join(' | ')}`
-      );
-    }
-    if (cafe24Cleanup.deleted > 0 && typeof artwork.id === 'string' && artwork.id) {
-      purgedArtworkIds.push(artwork.id);
-    }
-  }
 
   const { error } = await supabase.from('artworks').delete().in('id', ids);
   if (error) throw error;

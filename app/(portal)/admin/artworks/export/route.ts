@@ -24,7 +24,6 @@ type ArtworkRow = {
   is_hidden: boolean | null;
   images: string[] | null;
   shop_url: string | null;
-  cafe24_product_no: number | null;
   created_at: string | null;
   updated_at: string | null;
   artists: ArtworkArtistRow | ArtworkArtistRow[] | null;
@@ -81,7 +80,7 @@ export async function GET(request: Request) {
   const { data: artworks, error: artworksError } = await supabase
     .from('artworks')
     .select(
-      'id, artist_id, title, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, is_hidden, images, shop_url, cafe24_product_no, created_at, updated_at, artists(name_ko, name_en)'
+      'id, artist_id, title, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, is_hidden, images, shop_url, created_at, updated_at, artists(name_ko, name_en)'
     )
     .order('created_at', { ascending: false });
 
@@ -112,7 +111,6 @@ export async function GET(request: Request) {
     '전체 이미지 URL 목록',
     '이미지 개수',
     '구매 링크',
-    'Cafe24 상품번호',
     '등록일시',
     '수정일시',
   ];
@@ -144,7 +142,6 @@ export async function GET(request: Request) {
       imageList,
       imageUrls.length,
       artwork.shop_url || '',
-      artwork.cafe24_product_no || '',
       artwork.created_at || '',
       artwork.updated_at || '',
     ];

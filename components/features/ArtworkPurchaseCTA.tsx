@@ -176,7 +176,7 @@ export default function ArtworkPurchaseCTA({
         </>
       )}
 
-      {/* A분기: cafe24 결제 모드 또는 legacy 작품 — 외부 Cafe24 링크 */}
+      {/* A분기: legacy 작품 — 외부 링크 */}
       {!isTossMode && shopUrl && (
         <>
           <TrackClick
@@ -212,7 +212,7 @@ export default function ArtworkPurchaseCTA({
         </>
       )}
 
-      {/* B분기: shopUrl 없음 (cafe24 모드 또는 legacy 작품) 또는 가격 없음 — 문의 안내 */}
+      {/* B분기: shopUrl 없음 또는 가격 없음 — 문의 안내 */}
       {!isTossMode && !shopUrl && (
         <>
           <div className="rounded-xl bg-gray-50 p-4 text-center">

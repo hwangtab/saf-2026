@@ -10,10 +10,6 @@
       "schedule": "0 4 * * *"
     },
     {
-      "path": "/api/internal/cafe24-sync-sales",
-      "schedule": "*/5 * * * *"
-    },
-    {
       "path": "/api/internal/expire-stale-orders",
       "schedule": "*/10 * * * *"
     },

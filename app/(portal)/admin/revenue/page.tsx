@@ -168,8 +168,7 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
           </p>
           <p className="mt-1 text-xs text-gray-500">
             {t('offlineRevenue')} {krwFormatter.format(sourceSummary.manual.revenue)} /{' '}
-            {t('onlineRevenue')}{' '}
-            {krwFormatter.format(sourceSummary.cafe24.revenue + sourceSummary.toss.revenue)}
+            {t('onlineRevenue')} {krwFormatter.format(sourceSummary.toss.revenue)}
           </p>
         </AdminCard>
       </div>

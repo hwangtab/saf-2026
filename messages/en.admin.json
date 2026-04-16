@@ -194,15 +194,7 @@
       "booleanYes": "Yes",
       "booleanNo": "No",
       "arrayItems": "{count} items ({preview})",
-      "arrayItemsOnly": "{count} items",
-      "cleanupNone": "No Cafe24 system logs to clean up.",
-      "cleanupKeptOnly": "No duplicates found. Kept {kept} log(s).",
-      "cleanupCleaned": "Cleaned up {deleted} duplicate Cafe24 log(s).",
-      "cleanupError": "An error occurred while cleaning Cafe24 logs.",
-      "cleanupButton": "Clean Cafe24 logs",
-      "cleanupModalTitle": "Clean Cafe24 logs",
-      "cleanupModalConfirm": "Run cleanup",
-      "cleanupModalDescription": "Duplicate Cafe24 sales sync warning/failure system logs are deduplicated to one log per 6-hour window.\nHuman activity logs are not deleted."
+      "arrayItemsOnly": "{count} items"
     },
     "feedback": {
       "statusUpdated": "Status updated.",
@@ -468,10 +460,8 @@
     "artworks": {
       "deleted": "Artwork deleted.",
       "deleteError": "An error occurred while deleting artwork.",
-      "statusRollback": "Cafe24 sync failed. Status change was partially rolled back.",
       "statusChanged": "Artwork status updated.",
       "statusError": "An error occurred while updating status.",
-      "visibilityRollback": "Cafe24 sync failed. Visibility change was partially rolled back.",
       "shown": "Artwork is now visible.",
       "hidden": "Artwork is now hidden.",
       "visibilityError": "An error occurred while updating visibility.",
@@ -518,10 +508,6 @@
       "noSearchResult": "No artworks found",
       "zoomImage": "Zoom image",
       "unknownArtist": "Unknown artist",
-      "cafe24SyncFailed": "Shop sync failed",
-      "cafe24PendingAuth": "Shop sync requires re-authorization",
-      "cafe24Warning": "Shop sync warning",
-      "cafe24Syncing": "Shop sync in progress",
       "visibleNow": "Visible",
       "categoryChanged": "Category updated.",
       "categoryError": "An error occurred while updating category.",

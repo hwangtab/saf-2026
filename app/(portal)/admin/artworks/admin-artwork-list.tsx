@@ -880,30 +880,6 @@ export function AdminArtworkList({
                           <div className="text-sm text-gray-500">
                             {artwork.artists?.name_ko || t('unknownArtist')}
                           </div>
-                          {(artwork.cafe24_sync_status === 'failed' ||
-                            artwork.cafe24_sync_status === 'pending_auth' ||
-                            artwork.cafe24_sync_status === 'synced_with_warning' ||
-                            artwork.cafe24_sync_status === 'syncing') && (
-                            <div
-                              className={`mt-1 text-xs ${
-                                artwork.cafe24_sync_status === 'failed'
-                                  ? 'text-red-600'
-                                  : artwork.cafe24_sync_status === 'pending_auth'
-                                    ? 'text-amber-600'
-                                    : artwork.cafe24_sync_status === 'syncing'
-                                      ? 'text-blue-600'
-                                      : 'text-amber-600'
-                              }`}
-                              title={artwork.cafe24_sync_error || ''}
-                            >
-                              {artwork.cafe24_sync_status === 'failed' && t('cafe24SyncFailed')}
-                              {artwork.cafe24_sync_status === 'pending_auth' &&
-                                t('cafe24PendingAuth')}
-                              {artwork.cafe24_sync_status === 'synced_with_warning' &&
-                                t('cafe24Warning')}
-                              {artwork.cafe24_sync_status === 'syncing' && t('cafe24Syncing')}
-                            </div>
-                          )}
                         </div>
                       </div>
                     </td>

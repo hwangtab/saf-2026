@@ -3,9 +3,8 @@
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/auth/server';
+import type { Json } from '@/types/supabase';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
-import { purgeCafe24ProductsFromTrashEntry } from '@/lib/integrations/cafe24/trash-purge';
-import { syncArtworkToCafe24 } from '@/lib/integrations/cafe24/sync-artwork';
 import { getStoragePathFromPublicUrl, getStoragePathsForRemoval } from '@/lib/utils/form-helpers';
 import { sanitizeIlikeQuery } from '@/lib/utils/query';
 
@@ -92,19 +91,7 @@ type ActivityLogFilters = {
   reversibleOnly?: boolean;
 };
 
-type LegacyAdminLogEntry = {
-  id: string;
-  admin_id: string | null;
-  action: string;
-  target_type: string | null;
-  target_id: string | null;
-  details: Record<string, unknown> | null;
-  created_at: string;
-  admin?: {
-    name: string | null;
-    email: string | null;
-  } | null;
-};
+// LegacyAdminLogEntry: inferred from DB join query below
 
 const ARTWORK_REVERT_KEYS = [
   'title',
@@ -121,11 +108,6 @@ const ARTWORK_REVERT_KEYS = [
   'is_hidden',
   'images',
   'shop_url',
-  'cafe24_product_no',
-  'cafe24_custom_product_code',
-  'cafe24_sync_status',
-  'cafe24_sync_error',
-  'cafe24_synced_at',
   'artist_id',
 ] as const;
 
@@ -146,11 +128,6 @@ const ARTWORK_RESTORE_KEYS = [
   'is_hidden',
   'images',
   'shop_url',
-  'cafe24_product_no',
-  'cafe24_custom_product_code',
-  'cafe24_sync_status',
-  'cafe24_sync_error',
-  'cafe24_synced_at',
   'created_at',
   'updated_at',
 ] as const;
@@ -280,23 +257,6 @@ function buildInsertPayload(snapshot: Record<string, unknown>, keys: readonly st
     }
   }
   return payload;
-}
-
-async function syncArtworksAfterRevert(artworkIds: string[]): Promise<void> {
-  const uniqueIds = Array.from(new Set(artworkIds.filter((id) => typeof id === 'string' && id)));
-  if (uniqueIds.length === 0) return;
-
-  const failed: string[] = [];
-  for (const artworkId of uniqueIds) {
-    const syncResult = await syncArtworkToCafe24(artworkId);
-    if (!syncResult.ok) {
-      failed.push(`${artworkId}: ${syncResult.reason || 'unknown'}`);
-    }
-  }
-
-  if (failed.length > 0) {
-    throw new Error(`복구 후 카페24 동기화 실패: ${failed.join(' | ')}`);
-  }
 }
 
 function isTrashableDeleteAction(action: string) {
@@ -815,9 +775,9 @@ async function writeActivityLog(params: {
       target_type: params.targetType,
       target_id: params.targetId,
       summary: params.options?.summary || null,
-      metadata: params.metadata || null,
-      before_snapshot: params.options?.beforeSnapshot || null,
-      after_snapshot: params.options?.afterSnapshot || null,
+      metadata: (params.metadata || null) as Json,
+      before_snapshot: (params.options?.beforeSnapshot || null) as Json,
+      after_snapshot: (params.options?.afterSnapshot || null) as Json,
       reversible: params.options?.reversible || false,
       trash_expires_at: trashExpiresAt,
     })
@@ -849,7 +809,7 @@ export async function logAdminAction(
     action,
     target_type: targetType || null,
     target_id: targetId || null,
-    details: details || null,
+    details: (details || null) as Json,
   });
 
   if (legacyError) {
@@ -949,7 +909,7 @@ async function getLegacyAdminLogs(
 
   if (error) throw error;
 
-  const mapped = (logs || []).map((log: LegacyAdminLogEntry) => ({
+  const mapped = (logs || []).map((log) => ({
     id: log.id,
     actor_id: log.admin_id || '',
     actor_role: 'admin' as const,
@@ -971,63 +931,11 @@ async function getLegacyAdminLogs(
     purged_at: null,
     purged_by: null,
     purge_note: null,
-    created_at: log.created_at,
-  }));
+    created_at: log.created_at || '',
+  })) as ActivityLogEntry[];
 
   return { logs: mapped, total: count || 0 };
 }
-
-const CAFE24_SYNC_ACTIVITY_ACTIONS = ['cafe24_sales_sync_warning', 'cafe24_sales_sync_failed'];
-const CAFE24_SYNC_ACTIVITY_WINDOW_MS = 6 * 60 * 60 * 1000;
-const ACTIVITY_LOG_DELETE_CHUNK_SIZE = 200;
-
-function normalizeCafe24SyncIssueText(value: string): string {
-  return value
-    .trim()
-    .replace(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z/g, '<timestamp>')
-    .replace(
-      /\b[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\b/gi,
-      '<uuid>'
-    )
-    .replace(/\b\d+\b/g, '#');
-}
-
-function buildCafe24SyncActivityFingerprint(
-  log: Pick<ActivityLogEntry, 'action' | 'target_id' | 'summary' | 'metadata'>
-): string {
-  const metadata =
-    log.metadata && typeof log.metadata === 'object' && !Array.isArray(log.metadata)
-      ? log.metadata
-      : null;
-  const storedFingerprint =
-    metadata && typeof metadata.fingerprint === 'string' ? metadata.fingerprint.trim() : '';
-  if (storedFingerprint) return storedFingerprint;
-
-  const primaryError =
-    metadata && typeof metadata.primary_error === 'string' ? metadata.primary_error.trim() : '';
-  const firstError =
-    metadata &&
-    Array.isArray(metadata.errors) &&
-    typeof metadata.errors[0] === 'string' &&
-    metadata.errors[0].trim()
-      ? metadata.errors[0].trim()
-      : '';
-  const reason = metadata && typeof metadata.reason === 'string' ? metadata.reason.trim() : '';
-  const summary = typeof log.summary === 'string' ? log.summary.trim() : '';
-  const issueText = primaryError || firstError || reason || summary || log.action;
-
-  return JSON.stringify({
-    action: log.action,
-    targetId: log.target_id,
-    issue: normalizeCafe24SyncIssueText(issueText),
-  });
-}
-
-type CleanupCafe24SyncLogsResult = {
-  scanned: number;
-  deleted: number;
-  kept: number;
-};
 
 export async function getActivityLogs(filters: ActivityLogFilters = {}) {
   await requireAdmin();
@@ -1091,77 +999,6 @@ export async function getActivityLogs(filters: ActivityLogFilters = {}) {
   const trashNameEnrichedLogs = await enrichTrashPurgedTargetNames(targetEnrichedLogs);
 
   return { logs: trashNameEnrichedLogs, total: count || 0 };
-}
-
-export async function cleanupCafe24SyncLogs(): Promise<CleanupCafe24SyncLogsResult> {
-  await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
-
-  const relevantLogs: ActivityLogEntry[] = [];
-  let offset = 0;
-  const pageSize = 1000;
-
-  while (true) {
-    const { data, error } = await supabase
-      .from('activity_logs')
-      .select(
-        'id, actor_id, actor_role, actor_name, actor_email, action, target_type, target_id, summary, metadata, before_snapshot, after_snapshot, reversible, reverted_by, reverted_at, revert_reason, reverted_log_id, trash_expires_at, purged_at, purged_by, purge_note, created_at'
-      )
-      .eq('actor_role', 'system')
-      .eq('actor_name', 'Cafe24 Sales Sync Job')
-      .in('action', CAFE24_SYNC_ACTIVITY_ACTIONS)
-      .order('created_at', { ascending: false })
-      .range(offset, offset + pageSize - 1);
-
-    if (error) {
-      throw new Error(`Cafe24 시스템 로그 조회 실패: ${error.message}`);
-    }
-
-    const rows = (data || []) as ActivityLogEntry[];
-    relevantLogs.push(...rows);
-
-    if (rows.length < pageSize) {
-      break;
-    }
-
-    offset += pageSize;
-  }
-
-  const seenKeys = new Set<string>();
-  const duplicateIds: string[] = [];
-
-  for (const log of relevantLogs) {
-    const createdAtMs = Date.parse(log.created_at);
-    if (!Number.isFinite(createdAtMs)) continue;
-
-    const bucketStart = Math.floor(createdAtMs / CAFE24_SYNC_ACTIVITY_WINDOW_MS);
-    const fingerprint = buildCafe24SyncActivityFingerprint(log);
-    const dedupeKey = [log.action, log.target_id, bucketStart, fingerprint].join(':');
-
-    if (seenKeys.has(dedupeKey)) {
-      duplicateIds.push(log.id);
-      continue;
-    }
-
-    seenKeys.add(dedupeKey);
-  }
-
-  for (let index = 0; index < duplicateIds.length; index += ACTIVITY_LOG_DELETE_CHUNK_SIZE) {
-    const chunk = duplicateIds.slice(index, index + ACTIVITY_LOG_DELETE_CHUNK_SIZE);
-    const { error } = await supabase.from('activity_logs').delete().in('id', chunk);
-
-    if (error) {
-      throw new Error(`Cafe24 시스템 로그 삭제 실패: ${error.message}`);
-    }
-  }
-
-  revalidatePath('/admin/logs');
-
-  return {
-    scanned: relevantLogs.length,
-    deleted: duplicateIds.length,
-    kept: relevantLogs.length - duplicateIds.length,
-  };
 }
 
 export async function getAdminLogs(
@@ -1262,14 +1099,6 @@ export async function purgeActivityTrashLog(logId: string, reason: string) {
     removeStoragePaths(supabase, 'artworks', storagePaths.artworkPaths),
     removeStoragePaths(supabase, 'profiles', storagePaths.profilePaths),
   ]);
-  const cafe24Result = await purgeCafe24ProductsFromTrashEntry({
-    targetType: sourceLog.target_type,
-    beforeSnapshot: sourceLog.before_snapshot,
-  });
-
-  if (cafe24Result.failed > 0) {
-    throw new Error(`카페24 상품 영구 삭제 실패: ${cafe24Result.errors.join(' | ')}`);
-  }
 
   const nowIso = new Date().toISOString();
   const previousMetadata = asSnapshotObject(log.metadata) || {};
@@ -1282,13 +1111,6 @@ export async function purgeActivityTrashLog(logId: string, reason: string) {
       artwork_failed: artworkResult.failed,
       profile_removed: profileResult.removed,
       profile_failed: profileResult.failed,
-    },
-    cafe24_cleanup: {
-      product_nos: cafe24Result.productNos,
-      deleted: cafe24Result.deleted,
-      missing: cafe24Result.missing,
-      failed: cafe24Result.failed,
-      skipped: cafe24Result.skipped,
     },
   };
 
@@ -1319,11 +1141,6 @@ export async function purgeActivityTrashLog(logId: string, reason: string) {
     artwork_failed: artworkResult.failed,
     profile_removed: profileResult.removed,
     profile_failed: profileResult.failed,
-    cafe24_product_nos: cafe24Result.productNos,
-    cafe24_deleted: cafe24Result.deleted,
-    cafe24_missing: cafe24Result.missing,
-    cafe24_failed: cafe24Result.failed,
-    cafe24_skipped: cafe24Result.skipped,
   };
   if (purgeTargetInfo.targetName) {
     purgeLogMetadata.target_name = purgeTargetInfo.targetName;
@@ -1359,8 +1176,6 @@ export async function purgeActivityTrashLog(logId: string, reason: string) {
     success: true,
     artworkRemoved: artworkResult.removed,
     profileRemoved: profileResult.removed,
-    cafe24Deleted: cafe24Result.deleted,
-    cafe24Missing: cafe24Result.missing,
     failed: artworkResult.failed + profileResult.failed,
   };
 }
@@ -1418,8 +1233,6 @@ export async function revertActivityLog(
       const isCreationLog = ARTWORK_CREATION_ACTIONS.has(log.action);
       const beforeList = asSnapshotList(log.before_snapshot);
       const afterList = asSnapshotList(log.after_snapshot);
-      const artworkIdsToSync = new Set<string>();
-      let rollbackAfterSyncFailure: (() => Promise<void>) | null = null;
 
       if (isDeletionLog) {
         const listToRestore = beforeList && beforeList.length > 0 ? beforeList : null;
@@ -1478,32 +1291,11 @@ export async function revertActivityLog(
 
           const { data: insertedRows, error: restoreError } = await supabase
             .from('artworks')
-            .insert(restoreRows)
+            .insert(restoreRows as never)
             .select('id');
           if (restoreError) throw restoreError;
           if (!insertedRows || insertedRows.length !== restoreRows.length) {
             throw new Error('복구 적용 중 일부 작품의 반영 결과를 확인하지 못했습니다.');
-          }
-          rollbackAfterSyncFailure = async () => {
-            const { data: createdRows } = await supabase
-              .from('artworks')
-              .select('id, cafe24_product_no, shop_url')
-              .in('id', restoreIds);
-
-            for (const row of createdRows || []) {
-              const cafe24Cleanup = await purgeCafe24ProductsFromTrashEntry({
-                targetType: 'artwork',
-                beforeSnapshot: row,
-              });
-              if (cafe24Cleanup.failed > 0) {
-                throw new Error(`카페24 상품 롤백 삭제 실패: ${cafe24Cleanup.errors.join(' | ')}`);
-              }
-            }
-
-            await supabase.from('artworks').delete().in('id', restoreIds);
-          };
-          for (const id of restoreIds) {
-            artworkIdsToSync.add(id);
           }
         } else {
           const snapshot = asSnapshotObject(log.before_snapshot);
@@ -1544,33 +1336,13 @@ export async function revertActivityLog(
 
           const { data: insertedRow, error: restoreError } = await supabase
             .from('artworks')
-            .insert(payload)
+            .insert(payload as never)
             .select('id')
             .single();
           if (restoreError) throw restoreError;
           if (!insertedRow?.id) {
             throw new Error('복구 대상 작품을 생성하지 못했습니다.');
           }
-          rollbackAfterSyncFailure = async () => {
-            const { data: createdRow } = await supabase
-              .from('artworks')
-              .select('id, cafe24_product_no, shop_url')
-              .eq('id', snapshotId)
-              .maybeSingle();
-
-            if (createdRow) {
-              const cafe24Cleanup = await purgeCafe24ProductsFromTrashEntry({
-                targetType: 'artwork',
-                beforeSnapshot: createdRow,
-              });
-              if (cafe24Cleanup.failed > 0) {
-                throw new Error(`카페24 상품 롤백 삭제 실패: ${cafe24Cleanup.errors.join(' | ')}`);
-              }
-            }
-
-            await supabase.from('artworks').delete().eq('id', snapshotId);
-          };
-          artworkIdsToSync.add(snapshotId);
         }
       } else if (isCreationLog) {
         // Revert creation by deleting the created artwork
@@ -1583,20 +1355,12 @@ export async function revertActivityLog(
 
         const { data: existingArtwork } = await supabase
           .from('artworks')
-          .select('id, cafe24_product_no, shop_url')
+          .select('id')
           .eq('id', artworkId)
           .maybeSingle();
 
         if (!existingArtwork) {
           throw new Error('삭제할 작품이 존재하지 않습니다. (이미 삭제됨)');
-        }
-
-        const cafe24Cleanup = await purgeCafe24ProductsFromTrashEntry({
-          targetType: 'artwork',
-          beforeSnapshot: existingArtwork,
-        });
-        if (cafe24Cleanup.failed > 0) {
-          throw new Error(`카페24 상품 삭제 실패: ${cafe24Cleanup.errors.join(' | ')}`);
         }
 
         const { error: deleteError } = await supabase.from('artworks').delete().eq('id', artworkId);
@@ -1644,7 +1408,7 @@ export async function revertActivityLog(
         const { data: rollbackRows } = await supabase
           .from('artworks')
           .select(
-            'id, title, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, is_hidden, images, shop_url, cafe24_product_no, cafe24_custom_product_code, cafe24_sync_status, cafe24_sync_error, cafe24_synced_at, artist_id, updated_at'
+            'id, title, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, is_hidden, images, shop_url, artist_id, updated_at'
           )
           .in('id', targetIds);
         const rollbackMap = new Map((rollbackRows || []).map((row) => [row.id, row]));
@@ -1667,7 +1431,6 @@ export async function revertActivityLog(
               throw new Error('복구 적용 중 일부 작품의 반영 결과를 확인하지 못했습니다.');
             }
             appliedIds.push(id);
-            artworkIdsToSync.add(id);
           }
         } catch (error) {
           for (const appliedId of appliedIds.reverse()) {
@@ -1681,22 +1444,11 @@ export async function revertActivityLog(
           }
           throw error;
         }
-        rollbackAfterSyncFailure = async () => {
-          for (const id of targetIds) {
-            const rollbackSnapshot = rollbackMap.get(id);
-            if (!rollbackSnapshot) continue;
-            const rollbackPatch = buildPatch(
-              rollbackSnapshot as Record<string, unknown>,
-              ARTWORK_REVERT_KEYS
-            );
-            await supabase.from('artworks').update(rollbackPatch).eq('id', id);
-          }
-        };
       } else {
         const { data: currentArtwork } = await supabase
           .from('artworks')
           .select(
-            'id, title, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, is_hidden, images, shop_url, cafe24_product_no, cafe24_custom_product_code, cafe24_sync_status, cafe24_sync_error, cafe24_synced_at, artist_id, updated_at'
+            'id, title, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, is_hidden, images, shop_url, artist_id, updated_at'
           )
           .eq('id', log.target_id)
           .single();
@@ -1729,36 +1481,6 @@ export async function revertActivityLog(
         if (revertError) throw revertError;
         if (!updatedRows || updatedRows.length !== 1) {
           throw new Error('복구 대상 작품을 찾을 수 없어 복구를 중단합니다.');
-        }
-        rollbackAfterSyncFailure = async () => {
-          if (!currentArtwork) return;
-          const rollbackPatch = buildPatch(
-            currentArtwork as unknown as Record<string, unknown>,
-            ARTWORK_REVERT_KEYS
-          );
-          await supabase.from('artworks').update(rollbackPatch).eq('id', log.target_id);
-        };
-        artworkIdsToSync.add(log.target_id);
-      }
-
-      if (artworkIdsToSync.size > 0) {
-        try {
-          await syncArtworksAfterRevert(Array.from(artworkIdsToSync));
-        } catch (syncError) {
-          if (rollbackAfterSyncFailure) {
-            try {
-              await rollbackAfterSyncFailure();
-            } catch (rollbackError) {
-              const syncMessage =
-                syncError instanceof Error ? syncError.message : String(syncError);
-              const rollbackMessage =
-                rollbackError instanceof Error ? rollbackError.message : String(rollbackError);
-              throw new Error(
-                `복구 후 카페24 동기화 실패 및 DB 롤백 실패: ${syncMessage} | rollback: ${rollbackMessage}`
-              );
-            }
-          }
-          throw syncError;
         }
       }
     } else if (log.target_type === 'artist') {
@@ -1823,7 +1545,7 @@ export async function revertActivityLog(
 
         const { data: insertedArtist, error: restoreError } = await supabase
           .from('artists')
-          .insert(payload)
+          .insert(payload as never)
           .select('id')
           .single();
         if (restoreError) throw restoreError;
@@ -1899,13 +1621,13 @@ export async function revertActivityLog(
         const { data: existing } = await supabase
           .from('news')
           .select('id')
-          .eq('id', payload.id)
+          .eq('id', payload.id as string)
           .maybeSingle();
         if (existing) {
           throw new Error('이미 동일한 뉴스가 존재하여 복구를 중단합니다.');
         }
 
-        const { error: restoreError } = await supabase.from('news').insert(payload);
+        const { error: restoreError } = await supabase.from('news').insert(payload as never);
         if (restoreError) throw restoreError;
       } else {
         const snapshot = asSnapshotObject(log.before_snapshot);
@@ -1933,13 +1655,13 @@ export async function revertActivityLog(
         const { data: existing } = await supabase
           .from('faq')
           .select('id')
-          .eq('id', payload.id)
+          .eq('id', payload.id as string)
           .maybeSingle();
         if (existing) {
           throw new Error('이미 동일한 FAQ가 존재하여 복구를 중단합니다.');
         }
 
-        const { error: restoreError } = await supabase.from('faq').insert(payload);
+        const { error: restoreError } = await supabase.from('faq').insert(payload as never);
         if (restoreError) throw restoreError;
       } else {
         const snapshot = asSnapshotObject(log.before_snapshot);
@@ -1967,13 +1689,15 @@ export async function revertActivityLog(
         const { data: existing } = await supabase
           .from('testimonials')
           .select('id')
-          .eq('id', payload.id)
+          .eq('id', payload.id as string)
           .maybeSingle();
         if (existing) {
           throw new Error('이미 동일한 증언이 존재하여 복구를 중단합니다.');
         }
 
-        const { error: restoreError } = await supabase.from('testimonials').insert(payload);
+        const { error: restoreError } = await supabase
+          .from('testimonials')
+          .insert(payload as never);
         if (restoreError) throw restoreError;
       } else {
         const snapshot = asSnapshotObject(log.before_snapshot);
@@ -2001,13 +1725,13 @@ export async function revertActivityLog(
         const { data: existing } = await supabase
           .from('videos')
           .select('id')
-          .eq('id', payload.id)
+          .eq('id', payload.id as string)
           .maybeSingle();
         if (existing) {
           throw new Error('이미 동일한 비디오가 존재하여 복구를 중단합니다.');
         }
 
-        const { error: restoreError } = await supabase.from('videos').insert(payload);
+        const { error: restoreError } = await supabase.from('videos').insert(payload as never);
         if (restoreError) throw restoreError;
       } else {
         const snapshot = asSnapshotObject(log.before_snapshot);

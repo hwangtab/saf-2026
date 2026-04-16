@@ -4,9 +4,6 @@ import { revalidatePath } from 'next/cache';
 import { requireExhibitor } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import type { Database } from '@/types/supabase';
-import { syncArtworkToCafe24 } from '@/lib/integrations/cafe24/sync-artwork';
-import { purgeCafe24ProductsFromTrashEntry } from '@/lib/integrations/cafe24/trash-purge';
-
 import {
   getStoragePathFromPublicUrl,
   getString,
@@ -19,11 +16,6 @@ import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 type EditionType = Database['public']['Enums']['edition_type'];
 
 type ArtistJoin = { owner_id: string | null; name_ko: string | null };
-
-type Cafe24SyncFeedback = {
-  status: 'synced' | 'warning' | 'failed' | 'pending_auth';
-  reason: string | null;
-};
 
 const MAX_EXHIBITOR_IMAGES = 10;
 
@@ -66,30 +58,6 @@ function validateExhibitorArtworkImages(
   }
 
   return { normalizedImages };
-}
-
-function toCafe24SyncFeedback(
-  result: Awaited<ReturnType<typeof syncArtworkToCafe24>>
-): Cafe24SyncFeedback {
-  if (result.ok) {
-    return {
-      status: result.reason ? 'warning' : 'synced',
-      reason: result.reason || null,
-    };
-  }
-
-  const reason = result.reason || null;
-  if (reason?.includes('OAuth')) {
-    return {
-      status: 'pending_auth',
-      reason,
-    };
-  }
-
-  return {
-    status: 'failed',
-    reason,
-  };
 }
 
 export async function getExhibitorArtworks() {
@@ -211,12 +179,9 @@ export async function createExhibitorArtwork(formData: FormData) {
   revalidatePath('/exhibitor/artworks');
   revalidatePublicArtworkSurfaces([artist.name_ko]);
 
-  const syncResult = await syncArtworkToCafe24(artwork.id);
-
   return {
     success: true,
     id: artwork.id,
-    cafe24: toCafe24SyncFeedback(syncResult),
   };
 }
 
@@ -328,11 +293,8 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
 
   revalidatePublicArtworkSurfaces([oldArtistName, nextArtistName]);
 
-  const syncResult = await syncArtworkToCafe24(id);
-
   return {
     success: true,
-    cafe24: toCafe24SyncFeedback(syncResult),
   };
 }
 
@@ -406,11 +368,8 @@ export async function updateExhibitorArtworkImages(id: string, images: string[])
   const oldArtistName = (oldArtwork.artists as ArtistJoin | null)?.name_ko ?? null;
   revalidatePublicArtworkSurfaces([oldArtistName]);
 
-  const syncResult = await syncArtworkToCafe24(id);
-
   return {
     success: true,
-    cafe24: toCafe24SyncFeedback(syncResult),
   };
 }
 
@@ -431,15 +390,6 @@ export async function deleteExhibitorArtwork(id: string) {
   }
   if (!artwork.artist_id) {
     throw new Error('작품 작가 정보를 찾을 수 없습니다.');
-  }
-
-  const cafe24Cleanup = await purgeCafe24ProductsFromTrashEntry({
-    targetType: 'artwork',
-    beforeSnapshot: artwork,
-  });
-
-  if (cafe24Cleanup.failed > 0) {
-    throw new Error(`카페24 상품 삭제 실패: ${cafe24Cleanup.errors.join(' | ')}`);
   }
 
   const { error } = await supabase.from('artworks').delete().eq('id', id);

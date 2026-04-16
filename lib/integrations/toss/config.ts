@@ -24,9 +24,9 @@ export function getTossAuthHeader(): string {
   return 'Basic ' + Buffer.from(config.secretKey + ':').toString('base64');
 }
 
-/** Reads NEXT_PUBLIC_PAYMENT_MODE — defaults to 'cafe24' when unset. */
-export function getPaymentMode(): 'toss' | 'cafe24' {
-  return process.env.NEXT_PUBLIC_PAYMENT_MODE === 'toss' ? 'toss' : 'cafe24';
+/** Payment mode — always 'toss' (Cafe24 removed). */
+export function getPaymentMode(): 'toss' {
+  return 'toss';
 }
 
 /**

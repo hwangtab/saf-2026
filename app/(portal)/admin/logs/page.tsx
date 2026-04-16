@@ -2,7 +2,6 @@ import Link from 'next/link';
 import { requireAdmin } from '@/lib/auth/guards';
 import { getActivityLogs } from '@/app/actions/admin-logs';
 import { LogsList } from './logs-list';
-import { Cafe24SyncLogCleanupButton } from './cafe24-sync-log-cleanup-button';
 import {
   AdminBadge,
   AdminCard,
@@ -65,8 +64,6 @@ const ACTION_FILTER_OPTIONS_KO = [
   { value: 'order_status_updated', label: '주문 상태 변경' },
   { value: 'order_tracking_updated', label: '운송장 정보 수정' },
   { value: 'order_refunded', label: '주문 환불' },
-  { value: 'cafe24_sales_sync_warning', label: 'Cafe24 판매 동기화 경고' },
-  { value: 'cafe24_sales_sync_failed', label: 'Cafe24 판매 동기화 실패' },
   { value: 'trash_purged', label: '휴지통 영구 삭제' },
   { value: 'revert_executed', label: '복구 실행' },
 ] as const;
@@ -122,8 +119,6 @@ const ACTION_FILTER_OPTIONS_EN = [
   { value: 'order_status_updated', label: 'Order status changed' },
   { value: 'order_tracking_updated', label: 'Tracking info updated' },
   { value: 'order_refunded', label: 'Order refunded' },
-  { value: 'cafe24_sales_sync_warning', label: 'Cafe24 sales sync warning' },
-  { value: 'cafe24_sales_sync_failed', label: 'Cafe24 sales sync failed' },
   { value: 'trash_purged', label: 'Trash purged' },
   { value: 'revert_executed', label: 'Revert executed' },
 ] as const;
@@ -211,7 +206,6 @@ export default async function AdminLogsPage({ searchParams }: Props) {
                   ? `Applied filters ${activeFilterCount}`
                   : `적용된 필터 ${activeFilterCount}개`}
               </AdminBadge>
-              <Cafe24SyncLogCleanupButton />
             </div>
           </div>
           <div className="grid grid-cols-1 gap-3 p-4 md:grid-cols-2 xl:grid-cols-4">

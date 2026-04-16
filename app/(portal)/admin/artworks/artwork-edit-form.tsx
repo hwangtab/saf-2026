@@ -41,11 +41,6 @@ type Artwork = {
   artists: Artist | null;
 };
 
-type Cafe24SyncFeedback = {
-  status: 'synced' | 'warning' | 'failed' | 'pending_auth';
-  reason: string | null;
-};
-
 type ArtworkEditFormProps = {
   artwork?: Partial<Artwork>;
   artists: Artist[];
@@ -113,29 +108,6 @@ export function ArtworkEditForm({
     return artists.filter((artist) => matchesSearchText(artist.name_ko, normalizedQuery));
   }, [artists, artistQuery]);
 
-  const notifyCafe24SyncResult = (sync: Cafe24SyncFeedback, actionLabel: string) => {
-    if (sync.status === 'synced') {
-      toast.success(`작품 ${actionLabel}이 완료되었습니다.`);
-      return;
-    }
-
-    if (sync.status === 'pending_auth') {
-      toast.warning(
-        `작품 ${actionLabel}은 완료되었습니다. 온라인 구매 정보 반영이 지연될 수 있습니다.`
-      );
-      return;
-    }
-
-    if (sync.status === 'failed') {
-      toast.warning(
-        `작품 ${actionLabel}은 완료되었습니다. 온라인 구매 정보 반영이 지연되고 있습니다.`
-      );
-      return;
-    }
-
-    toast.warning(`작품 ${actionLabel}은 완료되었습니다. 온라인 구매 정보 반영을 계속 진행합니다.`);
-  };
-
   const handleSubmit = async (formData: FormData) => {
     setError(null);
     setShowErrors(true);
@@ -156,25 +128,13 @@ export function ArtworkEditForm({
       if (isEditing && artwork.id) {
         const result = await updateArtworkDetails(artwork.id, formData);
         if (result.success) {
-          notifyCafe24SyncResult(result.cafe24, '저장');
+          toast.success('작품 저장이 완료되었습니다.');
         }
         router.push('/admin/artworks');
       } else {
         const result = await createAdminArtwork(formData);
         if (result.success && result.id) {
-          const missingImageWarning =
-            result.cafe24.status === 'warning' &&
-            (result.cafe24.reason || '').includes('대표 이미지가 없어');
-
-          if (missingImageWarning) {
-            toast.warning(
-              '작품 등록은 완료되었습니다. 온라인 구매 페이지에 노출할 이미지를 지금 업로드해 주세요.'
-            );
-            router.push(`/admin/artworks/${result.id}`);
-            return;
-          }
-
-          notifyCafe24SyncResult(result.cafe24, '등록');
+          toast.success('작품 등록이 완료되었습니다.');
           router.push('/admin/artworks');
         }
       }
@@ -195,7 +155,7 @@ export function ArtworkEditForm({
     try {
       const result = await updateArtworkImages(artwork.id, newImages);
       if (result.success) {
-        notifyCafe24SyncResult(result.cafe24, '이미지 저장');
+        toast.success('이미지 저장이 완료되었습니다.');
       }
       router.refresh();
     } catch (error) {
@@ -318,7 +278,7 @@ export function ArtworkEditForm({
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
             />
             <p className="mt-1 text-xs text-gray-500">
-              관리자·카페24에서만 보이며, 동명 작품 구분에 사용됩니다.
+              관리자 화면에서만 보이며, 동명 작품 구분에 사용됩니다.
             </p>
           </div>
 

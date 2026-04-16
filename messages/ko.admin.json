@@ -194,15 +194,7 @@
       "booleanYes": "예",
       "booleanNo": "아니오",
       "arrayItems": "{count}개 ({preview})",
-      "arrayItemsOnly": "{count}개 항목",
-      "cleanupNone": "정리할 Cafe24 시스템 로그가 없습니다.",
-      "cleanupKeptOnly": "중복 로그가 없어 유지 {kept}건만 남았습니다.",
-      "cleanupCleaned": "Cafe24 중복 로그 {deleted}건을 정리했습니다.",
-      "cleanupError": "Cafe24 로그 정리 중 오류가 발생했습니다.",
-      "cleanupButton": "Cafe24 로그 정리",
-      "cleanupModalTitle": "Cafe24 로그 정리",
-      "cleanupModalConfirm": "정리 실행",
-      "cleanupModalDescription": "중복된 Cafe24 판매 동기화 경고/실패 시스템 로그를 6시간 단위로 1건만 남기고 정리합니다.\n사람이 남긴 활동 로그는 삭제하지 않습니다."
+      "arrayItemsOnly": "{count}개 항목"
     },
     "feedback": {
       "statusUpdated": "상태를 변경했습니다.",
@@ -468,10 +460,8 @@
     "artworks": {
       "deleted": "작품을 삭제했습니다.",
       "deleteError": "작품 삭제 중 오류가 발생했습니다.",
-      "statusRollback": "카페24 동기화에 실패해 상태 변경이 일부 롤백되었습니다.",
       "statusChanged": "작품 상태를 변경했습니다.",
       "statusError": "상태 변경 중 오류가 발생했습니다.",
-      "visibilityRollback": "카페24 동기화에 실패해 공개 상태 변경이 일부 롤백되었습니다.",
       "shown": "작품을 공개 처리했습니다.",
       "hidden": "작품을 숨김 처리했습니다.",
       "visibilityError": "공개 상태 변경 중 오류가 발생했습니다.",
@@ -518,10 +508,6 @@
       "noSearchResult": "검색된 작품이 없습니다",
       "zoomImage": "이미지 확대하기",
       "unknownArtist": "작가 미상",
-      "cafe24SyncFailed": "구매연동 오류",
-      "cafe24PendingAuth": "구매연동 재승인 필요",
-      "cafe24Warning": "구매연동 경고",
-      "cafe24Syncing": "구매연동 진행 중",
       "visibleNow": "공개 중",
       "categoryChanged": "카테고리를 변경했습니다.",
       "categoryError": "카테고리 변경 중 오류가 발생했습니다.",
