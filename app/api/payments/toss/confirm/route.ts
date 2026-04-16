@@ -142,6 +142,28 @@ export async function POST(req: NextRequest) {
     });
   }
 
+  // 레이스 컨디션: Toss 결제 성공 but 주문이 이미 취소된 경우 — 자동 환불
+  // (cancelPendingOrder가 confirm API 호출 중 동시에 실행된 경우)
+  if (isDone && !orderUpdateError && (!updatedOrders || updatedOrders.length === 0)) {
+    void (async () => {
+      const { cancelPayment } = await import('@/lib/integrations/toss/cancel');
+      try {
+        await cancelPayment(
+          paymentKey as string,
+          { cancelReason: '주문 취소 후 결제 승인 — 자동 환불' },
+          `auto-refund-${orderId}`
+        );
+      } catch (err) {
+        console.error('[confirm] auto-refund failed:', err);
+      }
+      void notifyEmail('error', '결제 승인 후 주문 취소 감지 — 자동 환불 시도', {
+        주문번호: orderId,
+        paymentKey: paymentKey as string,
+        참고: '결제 승인과 주문 취소가 동시에 발생. 자동 환불을 시도했으나 결과를 수동 확인해주세요.',
+      });
+    })();
+  }
+
   // If fully paid, insert artwork_sales record
   // (DB trigger update_artwork_status_on_sale will mark artwork as sold)
   if (isDone && payment && updatedOrders && updatedOrders.length > 0) {

@@ -327,7 +327,7 @@ export default async function StoryDetailPage({ params }: Props) {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
               {relatedArtworks.map((artwork, i) => {
                 const artTitle = isEn && artwork.title_en ? artwork.title_en : artwork.title;
-                const imgUrl = resolveArtworkImageUrl(artwork.images[0]);
+                const imgUrl = resolveArtworkImageUrl(artwork.images[0] ?? '');
                 return (
                   <Link
                     key={artwork.id}

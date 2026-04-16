@@ -7,7 +7,7 @@ import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { cancelPayment } from '@/lib/integrations/toss/cancel';
 import { logAdminAction } from './activity-log-writer';
 import { deriveAndSyncArtworkStatus } from './admin-artworks';
-import { sendBuyerEmail } from '@/lib/notify';
+import { notifyEmail, sendBuyerEmail } from '@/lib/notify';
 import { getArtworkEmailInfo } from '@/lib/utils/get-artwork-email-info';
 import type { OrderStatus } from '@/lib/integrations/toss/types';
 
@@ -331,7 +331,7 @@ export async function refundOrder(input: RefundInput) {
 const VALID_STATUS_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   pending_payment: ['cancelled'],
   awaiting_deposit: ['paid', 'cancelled'],
-  paid: ['preparing', 'cancelled'],
+  paid: ['preparing'],
   preparing: ['shipped'],
   shipped: ['delivered'],
   delivered: ['completed'],
@@ -544,6 +544,12 @@ export async function confirmDeposit(orderId: string) {
     });
     if (salesError) {
       console.error('[confirmDeposit] artwork_sales INSERT 실패:', salesError);
+      void notifyEmail('error', '입금 확인 후 판매 기록 생성 실패', {
+        주문번호: order.order_no,
+        주문ID: orderId,
+        에러: salesError.message,
+        참고: '입금 확인 완료, 판매 기록만 누락 — 수동 확인 필요',
+      });
     }
   }
 
@@ -615,13 +621,17 @@ export async function cancelAwaitingOrder(orderId: string, cancelReason: string)
   const now = new Date().toISOString();
 
   // 1. 주문 취소
-  const { error: updateError } = await supabase
+  const { data: updatedRows, error: updateError } = await supabase
     .from('orders')
     .update({ status: 'cancelled', cancelled_at: now, updated_at: now })
     .eq('id', orderId)
-    .eq('status', 'awaiting_deposit');
+    .eq('status', 'awaiting_deposit')
+    .select('id');
 
   if (updateError) throw updateError;
+  if (!updatedRows || updatedRows.length === 0) {
+    throw new Error('주문 상태가 변경되었습니다. 새로고침 후 다시 시도해주세요.');
+  }
 
   // 2. artwork reserved→available 직접 복원
   // artwork_sales 레코드가 없어 deriveAndSyncArtworkStatus가 reserved를 건드리지 않으므로 직접 업데이트

@@ -55,7 +55,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // Use the first artwork's image as the representative image for the artist
   const representativeArtwork = artistArtworks[0];
   // OG 이미지는 1200px 최적화 URL 사용 (resolveSeoArtworkImageUrl)
-  const seoImageUrl = resolveSeoArtworkImageUrl(representativeArtwork.images[0]);
+  const seoImageUrl = resolveSeoArtworkImageUrl(representativeArtwork.images[0] ?? '');
   const imageUrl = seoImageUrl.startsWith('http') ? seoImageUrl : `${SITE_URL}${seoImageUrl}`;
   const artistPath = `/artworks/artist/${encodeURIComponent(artistName)}`;
   const pageUrl = buildLocaleUrl(artistPath, locale);
@@ -192,7 +192,7 @@ export default async function ArtistPage({ params }: Props) {
 
   // Use the first artwork's image as the hero background
   const representativeArtwork = artistArtworks[0];
-  const resolvedImageUrl = resolveArtworkImageUrl(representativeArtwork.images[0]);
+  const resolvedImageUrl = resolveArtworkImageUrl(representativeArtwork.images[0] ?? '');
   const heroBackgroundImage = resolvedImageUrl;
 
   // Description Logic: Profile > History (CV) > Description (Note) > Default
@@ -247,14 +247,14 @@ export default async function ArtistPage({ params }: Props) {
   const personSchema = generateEnhancedArtistSchema({
     name: displayArtistName,
     description: schemaDescription,
-    image: representativeArtwork.images[0],
+    image: representativeArtwork.images[0] ?? '',
     url: pageUrl,
     jobTitle: 'Artist',
     history: schemaHistory,
     artworks: artistArtworks.map((a) => ({
       id: a.id,
       title: locale === 'en' && a.title_en ? a.title_en : a.title,
-      image: a.images[0],
+      image: a.images[0] ?? '',
     })),
   });
 
