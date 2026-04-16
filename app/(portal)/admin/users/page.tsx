@@ -1,46 +1,17 @@
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { UserList } from './user-list';
+import type { Profile } from '@/types/admin';
 import { UserRole, UserStatus } from '@/types/database.types';
 import { hasComposedTrailingConsonantQuery, hasHangulJamo } from '@/lib/search-utils';
+import { sanitizeIlikeQuery } from '@/lib/utils/query';
 import {
   AdminPageDescription,
   AdminPageHeader,
   AdminPageTitle,
 } from '@/app/admin/_components/admin-ui';
 
-type ArtistApplication = {
-  user_id: string;
-  artist_name: string;
-  contact: string;
-  bio: string;
-  referrer: string | null;
-  updated_at: string;
-};
-
-type ExhibitorApplication = {
-  user_id: string;
-  representative_name: string;
-  contact: string;
-  bio: string;
-  referrer: string | null;
-  updated_at: string;
-};
-
-type ProfileRow = {
-  id: string;
-  email: string;
-  name: string;
-  avatar_url: string | null;
-  role: UserRole;
-  status: UserStatus;
-  created_at: string;
-};
-
-type ProfileWithApplication = ProfileRow & {
-  application: ArtistApplication | null;
-  exhibitorApplication: ExhibitorApplication | null;
-};
+// Type annotations removed — DB query results are now inferred from typed Supabase client
 
 type Props = {
   searchParams: Promise<{
@@ -84,7 +55,7 @@ export default async function UsersPage({ searchParams }: Props) {
   // 상태 필터
   const validStatuses: UserStatus[] = ['pending', 'active', 'suspended'];
   if (params.status && validStatuses.includes(params.status as UserStatus)) {
-    query = query.eq('status', params.status);
+    query = query.eq('status', params.status as 'pending' | 'active' | 'suspended');
   }
 
   // 검색어 필터: 초성/자모 입력은 클라이언트 보강 필터로 처리
@@ -94,13 +65,13 @@ export default async function UsersPage({ searchParams }: Props) {
     !hasHangulJamo(params.q) &&
     !hasComposedTrailingConsonantQuery(params.q)
   ) {
-    const searchTerm = params.q.trim();
+    const searchTerm = sanitizeIlikeQuery(params.q.trim());
     query = query.or(`name.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%`);
   }
 
   const { data: users } = await query.order('created_at', { ascending: false });
 
-  const userIds = (users || []).map((u: ProfileRow) => u.id);
+  const userIds = (users || []).map((u) => u.id);
 
   // Fetch only applications for the users in the current result set
   const [{ data: artistApplications }, { data: exhibitorApplications }] = await Promise.all([
@@ -118,21 +89,19 @@ export default async function UsersPage({ searchParams }: Props) {
       : { data: [] },
   ]);
 
-  const artistApplicationMap = new Map(
-    (artistApplications || []).map((app: ArtistApplication) => [app.user_id, app])
-  );
+  const artistApplicationMap = new Map((artistApplications || []).map((app) => [app.user_id, app]));
 
   const exhibitorApplicationMap = new Map(
-    (exhibitorApplications || []).map((app: ExhibitorApplication) => [app.user_id, app])
+    (exhibitorApplications || []).map((app) => [app.user_id, app])
   );
 
-  const usersWithApplications: ProfileWithApplication[] = (users || [])
-    .sort((a: ProfileRow, b: ProfileRow) => {
+  const usersWithApplications = (users || [])
+    .sort((a, b) => {
       if (a.status === 'pending' && b.status !== 'pending') return -1;
       if (a.status !== 'pending' && b.status === 'pending') return 1;
       return 0; // Keep date sort
     })
-    .map((user: ProfileRow) => ({
+    .map((user) => ({
       ...user,
       application: artistApplicationMap.get(user.id) || null,
       exhibitorApplication: exhibitorApplicationMap.get(user.id) || null,
@@ -164,7 +133,7 @@ export default async function UsersPage({ searchParams }: Props) {
       </div>
 
       <UserList
-        users={sortedUsers}
+        users={sortedUsers as Profile[]}
         initialFilters={{
           role: params.role,
           status: params.status,

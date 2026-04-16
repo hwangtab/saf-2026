@@ -65,7 +65,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
   // Fetch artwork (parse price server-side — never trust client)
   const { data: artwork, error: artworkError } = await adminClient
     .from('artworks')
-    .select('id, title, price, status, edition_type, edition_limit, artists(name_ko)')
+    .select('id, title, price, status, artists(name_ko)')
     .eq('id', artworkId)
     .single();
 

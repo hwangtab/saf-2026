@@ -466,6 +466,7 @@
       "available": "Available",
       "reserved": "Reserved",
       "sold": "Sold",
+      "hidden": "Hidden",
       "edit": "Edit",
       "deleting": "Deleting...",
       "delete": "Delete",

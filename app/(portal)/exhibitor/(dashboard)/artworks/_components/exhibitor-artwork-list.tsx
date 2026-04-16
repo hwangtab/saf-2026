@@ -23,11 +23,11 @@ const ArtworkLightbox = dynamic(() => import('@/components/ui/ArtworkLightbox'),
 type ArtworkItem = {
   id: string;
   title: string;
-  status: 'available' | 'reserved' | 'sold' | 'hidden';
-  is_hidden: boolean;
+  status: 'available' | 'reserved' | 'sold' | 'hidden' | null;
+  is_hidden: boolean | null;
   price: string | null;
   images: string[] | null;
-  artists: { name_ko: string | null } | null;
+  artists: { name_ko: string; owner_id?: string | null; id?: string } | null;
 };
 
 export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
@@ -204,14 +204,18 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
                             ? 'success'
                             : artwork.status === 'reserved'
                               ? 'warning'
-                              : 'default'
+                              : artwork.status === 'hidden' || !artwork.status
+                                ? 'info'
+                                : 'default'
                         }
                       >
                         {artwork.status === 'available'
                           ? t('available')
                           : artwork.status === 'reserved'
                             ? t('reserved')
-                            : t('sold')}
+                            : artwork.status === 'hidden' || !artwork.status
+                              ? t('hidden')
+                              : t('sold')}
                       </AdminBadge>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

@@ -466,6 +466,7 @@
       "available": "판매 중",
       "reserved": "예약됨",
       "sold": "판매 완료",
+      "hidden": "비공개",
       "edit": "편집",
       "deleting": "삭제 중...",
       "delete": "삭제",

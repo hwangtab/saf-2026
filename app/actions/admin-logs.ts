@@ -3,7 +3,7 @@
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/auth/server';
-import type { Json } from '@/types/supabase';
+import type { Json, TablesInsert } from '@/types/supabase';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { getStoragePathFromPublicUrl, getStoragePathsForRemoval } from '@/lib/utils/form-helpers';
 import { sanitizeIlikeQuery } from '@/lib/utils/query';
@@ -1291,7 +1291,7 @@ export async function revertActivityLog(
 
           const { data: insertedRows, error: restoreError } = await supabase
             .from('artworks')
-            .insert(restoreRows as never)
+            .insert(restoreRows as TablesInsert<'artworks'>[])
             .select('id');
           if (restoreError) throw restoreError;
           if (!insertedRows || insertedRows.length !== restoreRows.length) {
@@ -1336,7 +1336,7 @@ export async function revertActivityLog(
 
           const { data: insertedRow, error: restoreError } = await supabase
             .from('artworks')
-            .insert(payload as never)
+            .insert(payload as TablesInsert<'artworks'>)
             .select('id')
             .single();
           if (restoreError) throw restoreError;
@@ -1545,7 +1545,7 @@ export async function revertActivityLog(
 
         const { data: insertedArtist, error: restoreError } = await supabase
           .from('artists')
-          .insert(payload as never)
+          .insert(payload as TablesInsert<'artists'>)
           .select('id')
           .single();
         if (restoreError) throw restoreError;
@@ -1627,7 +1627,9 @@ export async function revertActivityLog(
           throw new Error('이미 동일한 뉴스가 존재하여 복구를 중단합니다.');
         }
 
-        const { error: restoreError } = await supabase.from('news').insert(payload as never);
+        const { error: restoreError } = await supabase
+          .from('news')
+          .insert(payload as TablesInsert<'news'>);
         if (restoreError) throw restoreError;
       } else {
         const snapshot = asSnapshotObject(log.before_snapshot);
@@ -1661,7 +1663,9 @@ export async function revertActivityLog(
           throw new Error('이미 동일한 FAQ가 존재하여 복구를 중단합니다.');
         }
 
-        const { error: restoreError } = await supabase.from('faq').insert(payload as never);
+        const { error: restoreError } = await supabase
+          .from('faq')
+          .insert(payload as TablesInsert<'faq'>);
         if (restoreError) throw restoreError;
       } else {
         const snapshot = asSnapshotObject(log.before_snapshot);
@@ -1697,7 +1701,7 @@ export async function revertActivityLog(
 
         const { error: restoreError } = await supabase
           .from('testimonials')
-          .insert(payload as never);
+          .insert(payload as TablesInsert<'testimonials'>);
         if (restoreError) throw restoreError;
       } else {
         const snapshot = asSnapshotObject(log.before_snapshot);
@@ -1731,7 +1735,9 @@ export async function revertActivityLog(
           throw new Error('이미 동일한 비디오가 존재하여 복구를 중단합니다.');
         }
 
-        const { error: restoreError } = await supabase.from('videos').insert(payload as never);
+        const { error: restoreError } = await supabase
+          .from('videos')
+          .insert(payload as TablesInsert<'videos'>);
         if (restoreError) throw restoreError;
       } else {
         const snapshot = asSnapshotObject(log.before_snapshot);

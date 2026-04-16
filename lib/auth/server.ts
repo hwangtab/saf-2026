@@ -1,6 +1,7 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { createServerClient } from '@supabase/ssr';
 import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
+import type { Database } from '@/types/supabase';
 
 /**
  * SERVICE_ROLE client – bypasses RLS.
@@ -17,7 +18,7 @@ export function createSupabaseAdminClient() {
   if (!url) {
     throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL');
   }
-  return createClient(url, adminKey, {
+  return createClient<Database>(url, adminKey, {
     auth: {
       persistSession: false,
       autoRefreshToken: false,
@@ -38,27 +39,18 @@ export async function createSupabaseServerClient() {
   if (!url || !key) {
     throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY');
   }
-  return createServerClient(url, key, {
+  return createServerClient<Database>(url, key, {
     cookies: {
-      get(name: string) {
-        return cookieStore.get(name)?.value;
+      getAll() {
+        return cookieStore.getAll();
       },
-      set(name: string, value: string, options: CookieOptions) {
+      setAll(cookiesToSet) {
         try {
-          cookieStore.set({ name, value, ...options });
-        } catch (error) {
-          // The `set` method was called from a Server Component.
-          // This can be ignored if you have middleware refreshing
-          // user sessions.
-        }
-      },
-      remove(name: string, options: CookieOptions) {
-        try {
-          cookieStore.set({ name, value: '', ...options });
-        } catch (error) {
-          // The `delete` method was called from a Server Component.
-          // This can be ignored if you have middleware refreshing
-          // user sessions.
+          cookiesToSet.forEach(({ name, value, options }) => {
+            cookieStore.set(name, value, options);
+          });
+        } catch {
+          // Called from a Server Component — ignored if middleware is refreshing sessions.
         }
       },
     },

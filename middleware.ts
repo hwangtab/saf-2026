@@ -5,7 +5,7 @@ import { updateSession } from '@/lib/auth/middleware';
 
 const intlMiddleware = createMiddleware(routing);
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Admin redirect

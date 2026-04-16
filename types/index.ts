@@ -72,11 +72,17 @@ export interface ArtworkSale {
   sold_at: string; // ISO timestamp
   quantity: number;
   source?: 'manual' | 'toss' | 'cafe24' | null;
+  source_detail?: string | null;
   buyer_name?: string | null;
   buyer_phone?: string | null;
   note?: string | null;
+  order_id?: string | null;
   external_order_id?: string | null;
   external_order_item_code?: string | null;
+  external_payload?: Record<string, unknown> | null;
+  import_batch_id?: string | null;
+  import_payload_hash?: string | null;
+  import_row_no?: number | null;
   created_at?: string;
   voided_at?: string | null;
   void_reason?: string | null;
@@ -125,6 +131,7 @@ export interface Payment {
   approved_at?: string | null;
   cancelled_at?: string | null;
   confirm_response?: Record<string, unknown> | null;
+  webhook_responses?: Record<string, unknown>[] | null;
   idempotency_key?: string | null;
   created_at: string;
   updated_at: string;

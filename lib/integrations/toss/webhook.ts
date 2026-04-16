@@ -16,14 +16,16 @@ import type {
 /**
  * Verifies the TossPayments webhook request using HTTP Basic Authentication.
  * Toss는 웹훅 요청 헤더에 Authorization: Basic {base64(webhookSecret:)}를 포함한다.
- * TOSS_PAYMENTS_WEBHOOK_SECRET 환경 변수가 설정된 경우에만 검증하며,
- * 미설정 시(개발 환경)에는 통과한다.
+ * TOSS_PAYMENTS_WEBHOOK_SECRET 환경 변수가 반드시 설정되어야 한다.
  */
 export function verifyWebhookRequest(req: {
   headers: { get(name: string): string | null };
 }): boolean {
   const secret = process.env.TOSS_PAYMENTS_WEBHOOK_SECRET;
-  if (!secret) return true; // 환경 변수 미설정 시 검증 생략
+  if (!secret) {
+    console.error('[TossWebhook] TOSS_PAYMENTS_WEBHOOK_SECRET is not set — rejecting request');
+    return false;
+  }
 
   const authHeader = req.headers.get('Authorization');
   if (!authHeader || !authHeader.startsWith('Basic ')) return false;
