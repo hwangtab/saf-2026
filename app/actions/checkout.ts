@@ -1,7 +1,9 @@
 'use server';
 
 import { headers } from 'next/headers';
+import { revalidatePath } from 'next/cache';
 import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/auth/server';
+import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { parsePrice } from '@/lib/parsePrice';
 import {
   calculateShippingFee,
@@ -268,6 +270,11 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
       .eq('order_no', result.orderNo);
     return { success: false, error: '이미 판매된 작품입니다.' };
   }
+
+  // artwork available → reserved 반영
+  revalidatePublicArtworkSurfaces();
+  revalidatePath(`/artworks/${input.artworkId}`);
+  revalidatePath(`/en/artworks/${input.artworkId}`);
 
   return result;
 }

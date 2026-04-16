@@ -1,8 +1,12 @@
 import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { createClient } from '@supabase/supabase-js';
 import { fetchPaymentByOrderId } from '@/lib/integrations/toss/confirm';
 import { notifyEmail } from '@/lib/notify';
+import { createSupabaseAdminClient } from '@/lib/auth/server';
+import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
+import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 
 export const runtime = 'nodejs';
 
@@ -171,6 +175,13 @@ export async function GET(request: NextRequest) {
               continue;
             }
           }
+
+          // artwork_sales 반영 후 작품 상태 동기화 + 공개 페이지 캐시 무효화
+          const adminClient = createSupabaseAdminClient();
+          await deriveAndSyncArtworkStatus(adminClient, order.artwork_id);
+          revalidatePublicArtworkSurfaces();
+          revalidatePath(`/artworks/${order.artwork_id}`);
+          revalidatePath(`/en/artworks/${order.artwork_id}`);
         }
 
         reconciled++;

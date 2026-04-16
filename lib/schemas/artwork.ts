@@ -19,7 +19,7 @@ const PRICE_VALID_UNTIL = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
   .slice(0, 10);
 
 export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 'ko'): Metadata {
-  const resolvedImageUrl = resolveSeoArtworkImageUrl(artwork.images[0]);
+  const resolvedImageUrl = resolveSeoArtworkImageUrl(artwork.images[0] ?? '');
   const imageUrl = resolvedImageUrl.startsWith('http')
     ? resolvedImageUrl
     : `${SITE_URL}${resolvedImageUrl}`;
@@ -194,7 +194,7 @@ export function generateArtworkJsonLd(
   const isEnglish = locale === 'en';
   const titleForLocale = isEnglish && artwork.title_en ? artwork.title_en : artwork.title;
   const artistForLocale = isEnglish && artwork.artist_en ? artwork.artist_en : artwork.artist;
-  const resolvedImageUrl = resolveSeoArtworkImageUrl(artwork.images[0]);
+  const resolvedImageUrl = resolveSeoArtworkImageUrl(artwork.images[0] ?? '');
   const materialForLocale = sanitizeForLocale(
     artwork.material,
     locale,

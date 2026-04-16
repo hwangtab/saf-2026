@@ -384,6 +384,32 @@ export async function updateOrderStatus(
     throw new Error('주문 상태가 변경되었습니다. 새로고침 후 다시 시도해주세요.');
   }
 
+  // paid → cancelled: artwork_sales void + 작품 상태 복원
+  if (order.status === 'paid' && newStatus === 'cancelled') {
+    const now = new Date().toISOString();
+    const { data: sale } = await supabase
+      .from('artwork_sales')
+      .select('id')
+      .eq('order_id', orderId)
+      .is('voided_at', null)
+      .limit(1)
+      .maybeSingle();
+
+    if (sale) {
+      await supabase
+        .from('artwork_sales')
+        .update({ voided_at: now, void_reason: 'admin_cancelled' })
+        .eq('id', sale.id);
+    }
+
+    if (order.artwork_id) {
+      await deriveAndSyncArtworkStatus(supabase, order.artwork_id);
+      revalidatePublicArtworkSurfaces();
+      revalidatePath(`/artworks/${order.artwork_id}`);
+      revalidatePath(`/en/artworks/${order.artwork_id}`);
+    }
+  }
+
   await logAdminAction(
     'order_status_updated',
     'order',
