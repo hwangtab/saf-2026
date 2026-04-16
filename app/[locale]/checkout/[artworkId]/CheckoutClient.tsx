@@ -120,6 +120,7 @@ export default function CheckoutClient({
 
         const localePrefix = locale === 'en' ? '/en' : '';
         window.location.href = `${window.location.origin}${localePrefix}/checkout/${artworkId}/success?method=BANK_TRANSFER&orderId=${result.orderNo}&amount=${result.totalAmount}`;
+        await new Promise(() => {});
         return;
       }
 
@@ -171,6 +172,7 @@ export default function CheckoutClient({
 
       // 3. Redirect to Toss-hosted payment page — submitting stays true until page unloads
       window.location.href = payResult.checkoutUrl;
+      await new Promise(() => {});
     } catch (err: unknown) {
       if (createdOrderNo)
         void cancelPendingOrder(createdOrderNo, buyerInfoRef.current?.buyerEmail ?? '');
