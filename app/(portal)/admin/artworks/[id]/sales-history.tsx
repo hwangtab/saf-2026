@@ -28,12 +28,12 @@ function parsePriceString(priceStr: string | null): number {
 }
 
 function normalizeSaleSource(source: ArtworkSale['source']): 'manual' | 'online' {
-  return source === 'toss' ? 'online' : 'manual';
+  return source === 'toss' || source === 'cafe24' ? 'online' : 'manual';
 }
 
 function getSaleSourceLabel(source: ArtworkSale['source']): string {
-  const normalized = normalizeSaleSource(source);
-  if (normalized === 'online') return '온라인(토스)';
+  if (source === 'cafe24') return '온라인(카페24)';
+  if (source === 'toss') return '온라인(토스)';
   return '오프라인';
 }
 

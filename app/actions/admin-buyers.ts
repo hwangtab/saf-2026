@@ -27,7 +27,7 @@ type SaleRow = {
 };
 
 function mapChannel(source: string | null): 'offline' | 'online' {
-  return source === 'toss' ? 'online' : 'offline';
+  return source === 'toss' || source === 'cafe24' ? 'online' : 'offline';
 }
 
 export async function getAllBuyers(): Promise<BuyerRecord[]> {

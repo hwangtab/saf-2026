@@ -163,7 +163,7 @@ export function generateSAFCoreQA(locale: 'ko' | 'en' = 'ko') {
         },
         {
           question: 'How do I purchase artwork from SAF Online?',
-          answer: `Browse the online gallery at saf2026.com/en/artworks, select the artwork you want, and click the purchase button to complete the order via the secure Cafe24 shop. Domestic shipping within Korea is free. Payments are processed through the official ${CONTACT.ORGANIZATION_NAME_EN} shop.`,
+          answer: `Browse the online gallery at saf2026.com/en/artworks, select the artwork you want, and click the purchase button to complete the order via Toss Payments. Domestic shipping within Korea is free. Payments are processed through the official ${CONTACT.ORGANIZATION_NAME_EN} website.`,
           url: `${SITE_URL}/en/artworks`,
         },
         {
@@ -241,7 +241,7 @@ export function generateSAFCoreQA(locale: 'ko' | 'en' = 'ko') {
         },
         {
           question: '씨앗페 온라인에서 작품을 어떻게 구매하나요?',
-          answer: `saf2026.com/artworks에서 원하는 작품을 선택한 후 구매 버튼을 클릭하면 ${CONTACT.ORGANIZATION_NAME} 공식 카페24 쇼핑몰로 연결됩니다. 국내 배송비는 무료이며, 안전결제를 통해 주문이 완료됩니다.`,
+          answer: `saf2026.com/artworks에서 원하는 작품을 선택한 후 구매 버튼을 클릭하면 토스페이먼츠 결제 페이지로 이동합니다. 국내 배송비는 무료이며, 안전결제를 통해 주문이 완료됩니다.`,
           url: `${SITE_URL}/artworks`,
         },
         {

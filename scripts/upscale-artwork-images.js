@@ -67,7 +67,6 @@ const parseArgs = () => {
     limit: null,
     artworkId: null,
     includeHidden: false,
-    syncCafe24: true,
     secondPassCutoff: 900,
     forceDoublePassBelow: 225,
     reportDir: DEFAULT_REPORT_DIR,
@@ -85,10 +84,6 @@ const parseArgs = () => {
     }
     if (arg === '--include-hidden') {
       options.includeHidden = true;
-      continue;
-    }
-    if (arg === '--skip-cafe24') {
-      options.syncCafe24 = false;
       continue;
     }
     if (arg === '--threshold') {
@@ -568,17 +563,7 @@ const getTargetOriginalPath = (record) => {
   return `legacy-artwork-${safeSegment(record.id)}/${baseName}__original.webp`;
 };
 
-function loadCafe24SyncFn() {
-  try {
-    const mod = jiti(path.join(process.cwd(), 'lib', 'integrations', 'cafe24', 'sync-artwork.ts'));
-    return typeof mod.syncArtworkToCafe24 === 'function' ? mod.syncArtworkToCafe24 : null;
-  } catch (error) {
-    console.error('[upscale-artwork-images] Cafe24 sync import failed:', error);
-    return null;
-  }
-}
-
-async function applyOneTarget(record, pythonResultById, options, syncArtworkToCafe24) {
+async function applyOneTarget(record, pythonResultById, options) {
   const pythonResult = pythonResultById.get(record.id);
   if (!pythonResult) {
     throw new Error('python_upscale_result_missing');
@@ -651,18 +636,6 @@ async function applyOneTarget(record, pythonResultById, options, syncArtworkToCa
       }
     }
 
-    let cafe24 = null;
-    if (options.syncCafe24 && syncArtworkToCafe24) {
-      try {
-        cafe24 = await syncArtworkToCafe24(record.id);
-      } catch (error) {
-        cafe24 = {
-          ok: false,
-          reason: error instanceof Error ? error.message : String(error),
-        };
-      }
-    }
-
     return {
       id: record.id,
       artist: record.artist,
@@ -690,7 +663,6 @@ async function applyOneTarget(record, pythonResultById, options, syncArtworkToCa
         longEdge: originalMeta.longEdge,
         bytes: originalMeta.bytes,
       },
-      cafe24,
     };
   } catch (error) {
     if (uploadedPaths.length > 0) {
@@ -774,11 +746,9 @@ async function main() {
     (pythonPayload.results || []).map((result) => [String(result.id), result])
   );
 
-  const syncArtworkToCafe24 = options.syncCafe24 ? loadCafe24SyncFn() : null;
-
   for (const record of targets) {
     try {
-      const applied = await applyOneTarget(record, pythonResultById, options, syncArtworkToCafe24);
+      const applied = await applyOneTarget(record, pythonResultById, options);
       report.applied.push(applied);
       console.log(`applied=${record.id} ${record.artist} / ${record.title}`);
     } catch (error) {

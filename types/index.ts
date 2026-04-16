@@ -71,7 +71,7 @@ export interface ArtworkSale {
   sale_price: number; // Integer (KRW)
   sold_at: string; // ISO timestamp
   quantity: number;
-  source?: 'manual' | 'toss' | null;
+  source?: 'manual' | 'toss' | 'cafe24' | null;
   buyer_name?: string | null;
   buyer_phone?: string | null;
   note?: string | null;

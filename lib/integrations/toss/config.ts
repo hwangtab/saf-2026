@@ -24,7 +24,7 @@ export function getTossAuthHeader(): string {
   return 'Basic ' + Buffer.from(config.secretKey + ':').toString('base64');
 }
 
-/** Payment mode — always 'toss' (Cafe24 removed). */
+/** Payment mode — always 'toss'. */
 export function getPaymentMode(): 'toss' {
   return 'toss';
 }

@@ -47,7 +47,7 @@ function validateArtworks() {
     },
 
     shopUrl: (value, id) => {
-      if (!value) return `ID ${id}: shopUrl 누락 - Cafe24 URL 필요`;
+      if (!value) return `ID ${id}: shopUrl 누락`;
       if (!value.startsWith('https://'))
         return `ID ${id}: shopUrl 형식 오류 - https:// 로 시작해야 함`;
       return null;

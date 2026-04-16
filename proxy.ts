@@ -5,21 +5,8 @@ import { updateSession } from '@/lib/auth/middleware';
 
 const intlMiddleware = createMiddleware(routing);
 
-function isCafe24InstallLaunch(request: NextRequest): boolean {
-  if (request.nextUrl.pathname !== '/') return false;
-  const { searchParams } = request.nextUrl;
-  return searchParams.has('mall_id') && searchParams.has('timestamp') && searchParams.has('hmac');
-}
-
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-
-  // Cafe24 install launch redirect
-  if (isCafe24InstallLaunch(request)) {
-    const authorizeUrl = new URL('/api/integrations/cafe24/authorize', request.url);
-    authorizeUrl.search = request.nextUrl.search;
-    return NextResponse.redirect(authorizeUrl);
-  }
 
   // Admin redirect
   if (pathname === '/admin') {

@@ -10,18 +10,8 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 const IMPORT_DATE_TOKEN = process.env.SALES_IMPORT_DATE_TOKEN || '2026-02-15';
-const CAFE24_DUP_WINDOW_HOURS = Number.parseInt(
-  process.env.CAFE24_MANUAL_MIRROR_PURGE_WINDOW_HOURS || '72',
-  10
-);
-const DEFAULT_ALIAS_PATH = path.join('docs', 'cafe24-mapping', 'sales-csv-alias-map.json');
-const DEFAULT_UNRESOLVED_ALLOWLIST_PATH = path.join(
-  'docs',
-  'cafe24-mapping',
-  'sales-csv-unresolved-allowlist.json'
-);
-const LEGACY_ALIAS_PATH = path.join('docs', 'sales-csv-alias-map.json');
-const LEGACY_UNRESOLVED_ALLOWLIST_PATH = path.join('docs', 'sales-csv-unresolved-allowlist.json');
+const DEFAULT_ALIAS_PATH = path.join('docs', 'sales-csv-alias-map.json');
+const DEFAULT_UNRESOLVED_ALLOWLIST_PATH = path.join('docs', 'sales-csv-unresolved-allowlist.json');
 
 if (!supabaseUrl || !supabaseServiceKey) {
   console.error('❌ NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SECRET_KEY 설정이 필요합니다.');
@@ -56,8 +46,7 @@ function parseArgs() {
 
 function loadAliasMap(filePath) {
   const resolved = path.resolve(filePath);
-  const fallback = path.resolve(LEGACY_ALIAS_PATH);
-  const target = fs.existsSync(resolved) ? resolved : fs.existsSync(fallback) ? fallback : resolved;
+  const target = resolved;
   if (!fs.existsSync(target)) {
     return { map: new Map(ALIAS_KEY_MAP), resolvedPath: target, loaded: false };
   }
@@ -98,8 +87,7 @@ function loadAliasMap(filePath) {
 
 function loadUnresolvedAllowlist(filePath) {
   const resolved = path.resolve(filePath);
-  const fallback = path.resolve(LEGACY_UNRESOLVED_ALLOWLIST_PATH);
-  const target = fs.existsSync(resolved) ? resolved : fs.existsSync(fallback) ? fallback : resolved;
+  const target = resolved;
   if (!fs.existsSync(target)) {
     return { allowlist: new Set(), resolvedPath: target, loaded: false };
   }
@@ -179,8 +167,8 @@ function parseSoldAtKst(rawDate, fallbackSeq) {
   return fallback.toISOString();
 }
 
-function resolveChannel(sourceText) {
-  return /온라인/.test(String(sourceText || '')) ? 'cafe24' : 'manual';
+function resolveChannel() {
+  return 'manual';
 }
 
 function toMs(iso) {
@@ -225,7 +213,6 @@ async function fetchLegacyManualSales() {
   let query = supabase
     .from('artwork_sales')
     .select(baseSelect)
-    .neq('source', 'cafe24')
     .is('external_order_id', null)
     .is('external_order_item_code', null)
     .is('import_batch_id', null);
@@ -236,7 +223,6 @@ async function fetchLegacyManualSales() {
     ({ data, error } = await supabase
       .from('artwork_sales')
       .select(baseSelect)
-      .neq('source', 'cafe24')
       .is('external_order_id', null)
       .is('external_order_item_code', null));
   }
@@ -244,15 +230,6 @@ async function fetchLegacyManualSales() {
   if (error) throw new Error(`legacy 판매 조회 실패: ${error.message}`);
 
   return (data || []).filter((row) => String(row.created_at || '').startsWith(IMPORT_DATE_TOKEN));
-}
-
-async function fetchCafe24Sales() {
-  const { data, error } = await supabase
-    .from('artwork_sales')
-    .select('id, artwork_id, sale_price, quantity, sold_at, source')
-    .eq('source', 'cafe24');
-  if (error) throw new Error(`cafe24 판매 조회 실패: ${error.message}`);
-  return data || [];
 }
 
 async function getImportBatchHashState(importId) {
@@ -341,8 +318,6 @@ async function main() {
   const rawRows = parseCsvRows(csvContent);
   const artworkIndex = await fetchArtworkIndex();
   const legacySales = await fetchLegacyManualSales();
-  const cafe24Sales = await fetchCafe24Sales();
-  const dedupWindowMs = Math.max(1, CAFE24_DUP_WINDOW_HOURS) * 60 * 60 * 1000;
 
   const remainingLegacyCountByArtwork = new Map();
   for (const row of legacySales) {
@@ -352,21 +327,10 @@ async function main() {
     );
   }
 
-  const existingCafe24ByArtwork = new Map();
-  for (const row of cafe24Sales) {
-    if (!existingCafe24ByArtwork.has(row.artwork_id))
-      existingCafe24ByArtwork.set(row.artwork_id, []);
-    existingCafe24ByArtwork.get(row.artwork_id).push({
-      ...row,
-      used: false,
-    });
-  }
-
   let meaningfulRows = 0;
   let unmatchedRows = 0;
   let ambiguousRows = 0;
   let matchedRows = 0;
-  let skippedAsCafe24Duplicate = 0;
 
   const unresolved = [];
   const inserts = [];
@@ -411,30 +375,11 @@ async function main() {
     }
 
     matchedRows += 1;
-    const source = resolveChannel(pathText);
+    const source = resolveChannel();
     const soldAt = parseSoldAtKst(purchaseDate, seq);
     const noteParts = [`CSV 이관 #${seq}`, `경로:${pathText || '-'}`];
     if (extraNote) noteParts.push(extraNote);
     const note = noteParts.join(' | ');
-
-    if (source === 'cafe24') {
-      const sameArtworkRows = existingCafe24ByArtwork.get(picked.id) || [];
-      const soldAtMs = toMs(soldAt);
-      const matchedExisting = sameArtworkRows.find((existing) => {
-        if (existing.used) return false;
-        if ((existing.sale_price || 0) !== salePrice) return false;
-        if ((existing.quantity || 1) !== 1) return false;
-        const existingMs = toMs(existing.sold_at);
-        if (existingMs === null || soldAtMs === null) return false;
-        return Math.abs(existingMs - soldAtMs) <= dedupWindowMs;
-      });
-      if (matchedExisting) {
-        matchedExisting.used = true;
-        skippedAsCafe24Duplicate += 1;
-        touchedArtworkIds.add(picked.id);
-        continue;
-      }
-    }
 
     touchedArtworkIds.add(picked.id);
     inserts.push({
@@ -443,7 +388,7 @@ async function main() {
       quantity: 1,
       sold_at: soldAt,
       source,
-      source_detail: source === 'cafe24' ? 'legacy_csv' : 'manual_csv',
+      source_detail: 'manual_csv',
       buyer_name: buyerName,
       note,
       import_batch_id: importId,
@@ -474,24 +419,15 @@ async function main() {
     matchedRows,
     unmatchedRows,
     ambiguousRows,
-    skippedAsCafe24Duplicate,
     unresolvedBlockedCount: unresolvedBlocked.length,
     insertsCount: inserts.length,
     deleteLegacyCount: legacyDeleteIds.length,
-    insertOnlineCount: inserts.filter((row) => row.source === 'cafe24').length,
-    insertOfflineCount: inserts.filter((row) => row.source === 'manual').length,
-    insertOnlineRevenue: inserts
-      .filter((row) => row.source === 'cafe24')
-      .reduce((sum, row) => sum + row.sale_price * row.quantity, 0),
-    insertOfflineRevenue: inserts
-      .filter((row) => row.source === 'manual')
-      .reduce((sum, row) => sum + row.sale_price * row.quantity, 0),
+    insertRevenue: inserts.reduce((sum, row) => sum + row.sale_price * row.quantity, 0),
   };
 
   console.log('=== CSV 채널 재구성 드라이런 ===');
   console.log(JSON.stringify(summary, null, 2));
-  console.log(`온라인 삽입 매출: ${formatMoney(summary.insertOnlineRevenue)}`);
-  console.log(`오프라인 삽입 매출: ${formatMoney(summary.insertOfflineRevenue)}`);
+  console.log(`삽입 매출 합계: ${formatMoney(summary.insertRevenue)}`);
 
   if (verbose && unresolved.length > 0) {
     console.log('\n[미해결 샘플]');
@@ -587,20 +523,16 @@ async function main() {
     .select('source, sale_price, quantity');
   if (finalError) throw new Error(`최종 검증 조회 실패: ${finalError.message}`);
 
-  const finalManual = (finalRows || []).filter((row) => row.source !== 'cafe24');
-  const finalCafe24 = (finalRows || []).filter((row) => row.source === 'cafe24');
-  const revenue = (rows) =>
-    rows.reduce((sum, row) => sum + (row.sale_price || 0) * (row.quantity || 1), 0);
+  const finalTotalRevenue = (finalRows || []).reduce(
+    (sum, row) => sum + (row.sale_price || 0) * (row.quantity || 1),
+    0
+  );
 
   console.log(
     JSON.stringify(
       {
         finalTotalCount: (finalRows || []).length,
-        finalManualCount: finalManual.length,
-        finalCafe24Count: finalCafe24.length,
-        finalManualRevenue: revenue(finalManual),
-        finalCafe24Revenue: revenue(finalCafe24),
-        finalTotalRevenue: revenue(finalRows || []),
+        finalTotalRevenue,
       },
       null,
       2

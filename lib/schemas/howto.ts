@@ -75,7 +75,7 @@ export function generateArtworkPurchaseHowTo(locale: 'ko' | 'en' = 'ko') {
           },
           {
             name: 'Click "Purchase" to visit the shop',
-            text: 'Click the purchase button to be redirected to the official shop page on Cafe24.',
+            text: 'Click the purchase button to proceed to checkout via Toss Payments.',
           },
           {
             name: 'Complete the purchase',
@@ -94,7 +94,7 @@ export function generateArtworkPurchaseHowTo(locale: 'ko' | 'en' = 'ko') {
           },
           {
             name: '"구매하기" 버튼 클릭',
-            text: '구매하기 버튼을 클릭하면 공식 판매 페이지(Cafe24)로 이동합니다.',
+            text: '구매하기 버튼을 클릭하면 토스페이먼츠 결제 페이지로 이동합니다.',
           },
           {
             name: '결제 완료',
@@ -116,7 +116,7 @@ export function generateArtworkPurchaseFAQ(locale: 'ko' | 'en' = 'ko') {
     ? [
         {
           question: 'How do I purchase an artwork on SAF Online?',
-          answer: `Browse artworks at ${SITE_URL}/en/artworks, click on the artwork you like, then click the "Buy Now" button to be redirected to the official shop page on Cafe24.`,
+          answer: `Browse artworks at ${SITE_URL}/en/artworks, click on the artwork you like, then click the "Buy Now" button to proceed to checkout via Toss Payments.`,
         },
         {
           question: 'How much is shipping?',
@@ -143,7 +143,7 @@ export function generateArtworkPurchaseFAQ(locale: 'ko' | 'en' = 'ko') {
     : [
         {
           question: '씨앗페 온라인에서 작품을 어떻게 구매하나요?',
-          answer: `${SITE_URL}/artworks 에서 마음에 드는 작품을 클릭한 후 "온라인 구매" 버튼을 누르면 공식 판매 페이지(Cafe24)로 이동합니다. 회원가입 없이 구매 가능합니다.`,
+          answer: `${SITE_URL}/artworks 에서 마음에 드는 작품을 클릭한 후 "온라인 구매" 버튼을 누르면 토스페이먼츠 결제 페이지로 이동합니다. 회원가입 없이 구매 가능합니다.`,
         },
         {
           question: '배송비는 얼마인가요?',

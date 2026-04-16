@@ -248,7 +248,7 @@ function createMonthlySourceBreakdown(): SourceBreakdown[] {
 }
 
 function normalizeRevenueSource(source: string | null | undefined): RevenueSource {
-  if (source === 'toss') return 'toss';
+  if (source === 'toss' || source === 'cafe24') return 'toss';
   return 'manual';
 }
 

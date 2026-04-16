@@ -29,7 +29,6 @@ const SCOPE_KO = {
   artworks: '출품작',
   auth: '로그인',
   cache: '캐시',
-  cafe24: '카페24',
   changelog: '개발 이력',
   checkout: '결제',
   csp: '보안 정책',

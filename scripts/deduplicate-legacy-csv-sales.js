@@ -85,8 +85,6 @@ function buildDuplicateKey(row) {
 function findExactCsvDuplicates(rows) {
   const csvRows = rows.filter((row) => {
     if (row.voided_at) return false;
-    if (row.source === 'cafe24') return false;
-
     const note = normalizeText(row.note);
     return note.startsWith('CSV 이관 #');
   });
