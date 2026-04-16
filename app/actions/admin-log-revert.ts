@@ -6,7 +6,7 @@ import { createSupabaseAdminClient } from '@/lib/auth/server';
 import type { TablesInsert } from '@/types/supabase';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { getStoragePathFromPublicUrl, getStoragePathsForRemoval } from '@/lib/utils/form-helpers';
-import { writeActivityLog, resolveActorIdentity } from './activity-log-writer';
+import { writeActivityLog, resolveActorIdentity } from './_log-internals';
 import type { ActivityLogEntry } from './admin-logs';
 
 // ── Snapshot utilities ──

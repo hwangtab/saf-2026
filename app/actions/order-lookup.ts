@@ -1,6 +1,7 @@
 'use server';
 
 import { headers } from 'next/headers';
+import { revalidatePath } from 'next/cache';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { cancelPayment } from '@/lib/integrations/toss/cancel';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
@@ -8,6 +9,8 @@ import { sendBuyerEmail } from '@/lib/notify';
 import { getArtworkEmailInfo } from '@/lib/utils/get-artwork-email-info';
 import { rateLimit } from '@/lib/rate-limit';
 import { normalizePhoneDigits } from '@/lib/utils/phone';
+import { sanitizeIlikeQuery } from '@/lib/utils/query';
+import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 
 export type PublicOrderListItem = {
   orderNo: string;
@@ -66,7 +69,7 @@ export async function lookupOrders(
   }
 
   const trimmedName = name.trim();
-  const trimmedEmail = email.trim().toLowerCase();
+  const trimmedEmail = sanitizeIlikeQuery(email.trim().toLowerCase());
   const trimmedPhone = normalizePhoneDigits(phone);
 
   if (!trimmedName || !trimmedEmail || !trimmedPhone) {
@@ -438,6 +441,9 @@ export async function cancelBuyerOrder(
 
   if (order.artwork_id) {
     await deriveAndSyncArtworkStatus(adminClient, order.artwork_id);
+    revalidatePublicArtworkSurfaces();
+    revalidatePath(`/artworks/${order.artwork_id}`);
+    revalidatePath(`/en/artworks/${order.artwork_id}`);
   }
 
   // 구매자 환불 이메일 발송 (fire-and-forget)
