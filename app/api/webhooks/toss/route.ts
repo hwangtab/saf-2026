@@ -177,6 +177,9 @@ export async function POST(req: NextRequest) {
             // artwork 상태 재계산 (reserved → sold)
             if (order.artwork_id) {
               await deriveAndSyncArtworkStatus(supabase, order.artwork_id);
+              revalidatePublicArtworkSurfaces();
+              revalidatePath(`/artworks/${order.artwork_id}`);
+              revalidatePath(`/en/artworks/${order.artwork_id}`);
             }
           }
 
@@ -238,6 +241,9 @@ export async function POST(req: NextRequest) {
             if (artworkError) {
               console.error('[toss-webhook] artwork reserved→available failed:', artworkError);
             }
+            revalidatePublicArtworkSurfaces();
+            revalidatePath(`/artworks/${artworkId}`);
+            revalidatePath(`/en/artworks/${artworkId}`);
           }
         }
       }

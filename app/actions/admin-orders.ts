@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
+import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { cancelPayment } from '@/lib/integrations/toss/cancel';
 import { logAdminAction } from './activity-log-writer';
@@ -316,6 +317,11 @@ export async function refundOrder(input: RefundInput) {
     }
   );
 
+  if (order.artwork_id) {
+    revalidatePublicArtworkSurfaces();
+    revalidatePath(`/artworks/${order.artwork_id}`);
+    revalidatePath(`/en/artworks/${order.artwork_id}`);
+  }
   revalidatePath('/admin/orders');
   revalidatePath(`/admin/orders/${orderId}`);
 
@@ -546,6 +552,11 @@ export async function confirmDeposit(orderId: string) {
     }
   );
 
+  if (order.artwork_id) {
+    revalidatePublicArtworkSurfaces();
+    revalidatePath(`/artworks/${order.artwork_id}`);
+    revalidatePath(`/en/artworks/${order.artwork_id}`);
+  }
   revalidatePath('/admin/orders');
   revalidatePath(`/admin/orders/${orderId}`);
 
@@ -628,6 +639,11 @@ export async function cancelAwaitingOrder(orderId: string, cancelReason: string)
     }
   );
 
+  if (order.artwork_id) {
+    revalidatePublicArtworkSurfaces();
+    revalidatePath(`/artworks/${order.artwork_id}`);
+    revalidatePath(`/en/artworks/${order.artwork_id}`);
+  }
   revalidatePath('/admin/orders');
   revalidatePath(`/admin/orders/${orderId}`);
 
