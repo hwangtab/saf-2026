@@ -50,9 +50,10 @@ export async function notifyEmail(
   fields?: Record<string, string>
 ): Promise<void> {
   const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.NOTIFY_EMAIL_TO;
+  const toRaw = process.env.NOTIFY_EMAIL_TO;
   const from = process.env.RESEND_FROM_EMAIL;
-  if (!apiKey || !to || !from) return;
+  if (!apiKey || !toRaw || !from) return;
+  const to = toRaw.includes(',') ? toRaw.split(',').map((e) => e.trim()) : toRaw;
 
   const { emoji, color } = LEVEL_CONFIG[level];
   const timestamp = new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
@@ -227,7 +228,7 @@ export async function sendBuyerEmail(
 }
 
 async function resendFetch(
-  opts: { apiKey: string; from: string; to: string; subject: string; html: string },
+  opts: { apiKey: string; from: string; to: string | string[]; subject: string; html: string },
   logPrefix: string
 ): Promise<void> {
   for (let attempt = 0; attempt < 2; attempt++) {
