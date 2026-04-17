@@ -23,14 +23,14 @@ const LAST_UPDATED = '2026-03-01';
 const PAGE_URL = `${SITE_URL}/our-proof`;
 const PAGE_COPY = {
   ko: {
-    title: '우리의 증명',
+    title: '예술인 상호부조 대출 354건, 상환율 95% | 씨앗페 증명',
     description:
-      '예술인 상호부조 대출 354건, 7억 원 이상 지원 — 연체율 0%로 운영 중. 금융 배제율 84.9%의 현실 속에서 씨앗페 모델이 실제로 작동한다는 것을 수치로 증명합니다.',
+      '354건·7억 원 대출, 상환율 95%, 연 5% 고정금리. 금융 배제율 84.9%의 현실에서 3년간 실증된 예술인 상호부조 모델의 운영 지표와 증언.',
   },
   en: {
-    title: 'Our Proof',
+    title: '354 mutual-aid loans to artists, 95% repayment | SAF Proof',
     description:
-      '354 mutual-aid loans and nearly KRW 700 million deployed. A 95% repayment rate shows this artist-focused safety net works in practice.',
+      '354 loans · KRW 700M deployed · 95% repayment rate · 5% fixed APR. Three years of evidence that the SAF artist mutual-aid model works against 84.9% banking exclusion.',
   },
 } as const;
 
@@ -42,10 +42,6 @@ export async function generateMetadata(): Promise<Metadata> {
   const base = createStandardPageMetadata(title, copy.description, PAGE_URL, '/our-proof', locale);
   return {
     ...base,
-    keywords:
-      locale === 'en'
-        ? 'artist mutual aid loan, artist financial safety net, Korea artist support, low interest artist loan, repayment rate artists'
-        : '예술인 상호부조 대출, 예술인 금융 안전망, 저금리 예술인 대출, 예술인 대출 상환율, 한국 예술인 지원',
     openGraph: {
       ...base.openGraph,
       type: 'article',

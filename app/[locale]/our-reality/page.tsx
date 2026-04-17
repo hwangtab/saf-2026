@@ -30,14 +30,14 @@ const LAST_UPDATED = '2026-01-15';
 const PAGE_URL = `${SITE_URL}/our-reality`;
 const PAGE_COPY = {
   ko: {
-    title: '우리의 현실',
+    title: '한국 예술인 84.9%가 대출에서 배제된다 | 2025 금융 재난 보고서',
     description:
-      '예술인의 84.9%가 제1금융권에서 배제되고 48.6%가 고금리에 노출됩니다. 한국 예술인 금융 차별의 실태와 구조적 원인을 데이터로 증명합니다.',
+      '한국 예술인 84.9%가 제1금융권 대출에서 배제, 48.6%가 연 15% 이상 고금리 상품에 노출, 88.3%가 채권추심 후 창작을 중단한다. 2025 실태조사 데이터로 본 예술인 금융 위기의 구조.',
   },
   en: {
-    title: 'Our Reality',
+    title: '84.9% of Korean artists are excluded from bank loans | 2025 Report',
     description:
-      'An evidence-based view of artist financial exclusion, predatory lending, and structural barriers in Korea.',
+      '84.9% of Korean artists are shut out of primary banking, 48.6% are pushed to high-interest products (15%+ APR), and 88.3% stop creating after debt collection. Evidence from the 2025 artist finance survey.',
   },
 } as const;
 
@@ -55,10 +55,6 @@ export async function generateMetadata(): Promise<Metadata> {
   );
   return {
     ...base,
-    keywords:
-      locale === 'en'
-        ? 'Korean artist financial exclusion, predatory lending artists, artist loan statistics, cultural worker finance, artist banking access Korea'
-        : '예술인 금융 배제, 예술인 대출 통계, 고금리 예술인, 한국 예술인 금융, 문화예술인 금융 차별',
     openGraph: {
       ...base.openGraph,
       type: 'article',

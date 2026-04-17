@@ -97,13 +97,25 @@ export async function generateMetadata({
   const path = '/stories';
   const pageUrl = buildLocaleUrl(path, locale);
 
+  const allStories = await getSupabaseStories();
+  const recentTitles = allStories
+    .slice(0, 3)
+    .map((s) => (locale === 'en' && s.title_en ? s.title_en : s.title))
+    .filter((t): t is string => Boolean(t && t.trim()));
+  const dynamicDescription =
+    recentTitles.length > 0
+      ? locale === 'en'
+        ? `${copy.pageDescription} Recent: ${recentTitles.join(' · ')}.`
+        : `${copy.pageDescription} 최근 글: ${recentTitles.join(' · ')}.`
+      : copy.pageDescription;
+
   return {
     title: copy.pageTitle,
-    description: copy.pageDescription,
+    description: dynamicDescription,
     alternates: createLocaleAlternates(path, locale),
     openGraph: {
       title: copy.pageTitle,
-      description: copy.pageDescription,
+      description: dynamicDescription,
       url: pageUrl,
       type: 'website',
       siteName: locale === 'en' ? 'SAF Online' : '씨앗페 온라인',
@@ -120,13 +132,9 @@ export async function generateMetadata({
     twitter: {
       card: 'summary_large_image',
       title: copy.pageTitle,
-      description: copy.pageDescription,
+      description: dynamicDescription,
       images: [{ url: OG_IMAGE.url, alt: locale === 'en' ? OG_IMAGE.altEn : OG_IMAGE.alt }],
     },
-    keywords:
-      locale === 'en'
-        ? 'SAF magazine, Korean art, exhibition recommendations, artist stories, art collecting guide'
-        : '전시회 추천, 전시회를 즐기다, 작가 인터뷰, 컬렉팅 가이드, 미술 감상, 씨앗페 매거진',
     ...(hasQueryParams && {
       robots: {
         index: false,

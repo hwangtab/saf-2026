@@ -23,15 +23,11 @@ const PAGE_COPY = {
     title: '씨앗페 소개',
     description:
       '씨앗페는 금융 차별에 맞서는 예술인 상호부조 캠페인입니다. 127명의 연대 작가, 354건의 저금리 대출, 95%의 상환율 — 작품이 금융이 되는 구조를 소개합니다.',
-    keywords:
-      '씨앗페 2026 소개, 예술인 상호부조 전시, 씨앗페 캠페인, 예술인 금융 차별, 씨앗페 온라인 갤러리, 한국 예술인 연대, 씨앗페 소개, 씨앗페 상호부조 대출',
   },
   en: {
     title: 'About SAF',
     description:
       'SAF is a mutual-aid campaign against financial discrimination toward Korean artists. 127 solidarity artists, 354 low-interest loans, 95% repayment — art becomes finance.',
-    keywords:
-      'SAF 2026 about, artist mutual aid exhibition, SAF campaign, artist financial exclusion, Korean artist solidarity, SAF online gallery, artist mutual aid loan',
   },
 } as const;
 
@@ -43,7 +39,6 @@ export async function generateMetadata(): Promise<Metadata> {
   const base = createStandardPageMetadata(title, copy.description, PAGE_URL, '/about', locale);
   return {
     ...base,
-    keywords: copy.keywords,
     openGraph: {
       ...base.openGraph,
       type: 'website',

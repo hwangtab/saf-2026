@@ -16,7 +16,7 @@ import {
 } from '@/lib/seo-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { formatArtistName, resolveArtworkImageUrl } from '@/lib/utils';
-import { resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
+import { parseArtworkPrice, resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getLocale, getTranslations } from 'next-intl/server';
@@ -60,62 +60,70 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const artistPath = `/artworks/artist/${encodeURIComponent(artistName)}`;
   const pageUrl = buildLocaleUrl(artistPath, locale);
 
-  // Find valid profile, history, or note from any of the artist's artworks
-  const artistProfile = artistArtworks.find((a) => a.profile)?.profile || '';
-  const artistProfileEn = artistArtworks.find((a) => a.profile_en)?.profile_en || '';
-  const artistHistory = artistArtworks.find((a) => a.history)?.history || '';
-  const artistHistoryEn = artistArtworks.find((a) => a.history_en)?.history_en || '';
-  const artistNote = artistArtworks.find((a) => a.description)?.description || '';
-
-  const effectiveProfile = locale === 'en' && artistProfileEn ? artistProfileEn : artistProfile;
-  const effectiveHistory = locale === 'en' && artistHistoryEn ? artistHistoryEn : artistHistory;
-  const profileSnippet =
-    effectiveProfile && !(locale === 'en' && containsHangul(effectiveProfile))
-      ? `${effectiveProfile.substring(0, 200)}... `
-      : '';
-  const historySnippet =
-    effectiveHistory && !(locale === 'en' && containsHangul(effectiveHistory))
-      ? `${effectiveHistory.substring(0, 200)}... `
-      : '';
-  const noteSnippet =
-    artistNote && !(locale === 'en' && containsHangul(artistNote))
-      ? `${artistNote.substring(0, 200)}... `
-      : '';
-
   const displayArtistName =
     locale === 'en' && artistArtworks[0]?.artist_en ? artistArtworks[0].artist_en : artistName;
   const formattedName = formatArtistName(displayArtistName, locale !== 'en');
   const availableCount = artistArtworks.filter((a) => !a.sold).length;
-  const availabilitySnippet =
+  const availabilityText =
     availableCount > 0
-      ? locale === 'en'
-        ? ` ${availableCount} work${availableCount > 1 ? 's' : ''} available now.`
-        : ` 현재 ${availableCount}점 구매 가능.`
-      : locale === 'en'
-        ? ' All works sold.'
-        : ' 전 작품 판매 완료.';
-  const seoDescription =
-    t('metaDescription', { artist: formattedName }) +
-    ' ' +
-    (profileSnippet || historySnippet || noteSnippet || t('metaFallback')) +
-    availabilitySnippet;
+      ? t('availabilityAvailable', { count: availableCount })
+      : t('availabilitySoldOut');
 
-  const metaTitle = t('metaTitle', { artist: formattedName });
-  const primaryCategory = artistArtworks[0]?.category;
+  // Find the most common category as the primary one
+  const categoryCounts = artistArtworks.reduce<Record<string, number>>((acc, a) => {
+    if (a.category) acc[a.category] = (acc[a.category] || 0) + 1;
+    return acc;
+  }, {});
+  const primaryCategory = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1])[0]?.[0];
+  const displayCategory = primaryCategory
+    ? locale === 'en'
+      ? CATEGORY_EN_MAP[primaryCategory] || primaryCategory
+      : primaryCategory
+    : undefined;
+
+  const prices = artistArtworks
+    .map((a) => parseArtworkPrice(a.price))
+    .filter((p): p is number => p !== null && p > 0);
+  const formatKrw = (n: number) => n.toLocaleString(locale === 'en' ? 'en-US' : 'ko-KR');
+  let priceRange: string | undefined;
+  if (prices.length === 1) {
+    priceRange = t('priceRangeSingle', { price: formatKrw(prices[0]) });
+  } else if (prices.length > 1) {
+    const min = Math.min(...prices);
+    const max = Math.max(...prices);
+    priceRange =
+      min === max
+        ? t('priceRangeSingle', { price: formatKrw(min) })
+        : t('priceRangeSpan', { min: formatKrw(min), max: formatKrw(max) });
+  }
+
+  const count = artistArtworks.length;
+  const metaTitle = displayCategory
+    ? t('metaTitleWithCategory', { artist: formattedName, count, category: displayCategory })
+    : t('metaTitleWithoutCategory', { artist: formattedName, count });
+
+  const categoryForDesc = displayCategory ?? '';
+  const seoDescription = priceRange
+    ? t('metaDescriptionWithPrice', {
+        artist: formattedName,
+        count,
+        category: categoryForDesc,
+        priceRange,
+        availability: availabilityText,
+      })
+    : t('metaDescriptionNoPrice', {
+        artist: formattedName,
+        count,
+        category: categoryForDesc,
+        availability: availabilityText,
+      });
 
   return {
     title: metaTitle,
     description: seoDescription.substring(0, 160),
     keywords: (locale === 'en'
-      ? [artistName, 'SAF Online', 'Korean artist', 'contemporary art', primaryCategory || null]
-      : [
-          artistName,
-          '씨앗페',
-          '한국 작가',
-          '현대미술',
-          primaryCategory || null,
-          primaryCategory ? `${primaryCategory} 작가` : null,
-        ]
+      ? [artistName, 'SAF Online', 'Korean artist', primaryCategory || null]
+      : [artistName, '씨앗페', primaryCategory || null]
     ).filter((k): k is string => Boolean(k)),
     alternates: createLocaleAlternates(artistPath, locale, true),
     openGraph: {

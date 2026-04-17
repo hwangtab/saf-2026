@@ -85,22 +85,27 @@ const NEWS_COPY: Record<LocaleCode, NewsPageCopy> = {
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = resolveLocale(await getLocale());
-  const copy = NEWS_COPY[locale];
   const tSeo = await getTranslations('seo');
-  const title = `${copy.pageTitle} | ${tSeo('siteTitle')}`;
+  const newsArticles = await getSupabaseNews();
+  const count = newsArticles.length;
+  const dynamicTitle =
+    locale === 'en'
+      ? `Press coverage — ${count} articles about SAF Online`
+      : `씨앗페 언론 보도 모음 — ${count}건의 기사·인터뷰`;
+  const dynamicDescription =
+    locale === 'en'
+      ? `${count} press articles and interviews about the SAF Online campaign and Korean artist financial exclusion. Curated by major outlets.`
+      : `씨앗페 캠페인과 예술인 금융 차별을 다룬 주요 언론의 기사·인터뷰 ${count}건 모음. 한겨레·경향·KBS 등 보도 링크 제공.`;
+  const title = `${dynamicTitle} | ${tSeo('siteTitle')}`;
   const pageUrl = buildLocaleUrl('/news', locale);
 
   return {
     title: { absolute: title },
-    description: copy.pageDescription,
-    keywords:
-      locale === 'en'
-        ? 'SAF Online press coverage, Korean artist news, artist financial exclusion media, art festival news'
-        : '씨앗페 언론 보도, 씨앗페 전시회 언론 보도, 서울 전시회 기사, 예술인 금융 차별 뉴스, 한국 예술인 뉴스, 씨앗페 기사',
+    description: dynamicDescription,
     alternates: createLocaleAlternates('/news', locale),
     openGraph: {
       title,
-      description: copy.pageDescription,
+      description: dynamicDescription,
       url: pageUrl,
       locale: locale === 'en' ? 'en_US' : 'ko_KR',
       images: [
@@ -115,7 +120,7 @@ export async function generateMetadata(): Promise<Metadata> {
     twitter: {
       card: 'summary_large_image',
       title,
-      description: copy.pageDescription,
+      description: dynamicDescription,
       images: [{ url: OG_IMAGE.url, alt: locale === 'en' ? OG_IMAGE.altEn : OG_IMAGE.alt }],
     },
   };

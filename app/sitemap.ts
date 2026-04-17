@@ -110,7 +110,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     {
       path: '/stories',
       changeFrequency: 'weekly',
-      priority: 0.85,
+      priority: 0.65,
       lastModified: now,
     },
   ];
