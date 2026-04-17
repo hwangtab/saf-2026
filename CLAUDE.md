@@ -145,7 +145,7 @@ types/
 **Header 투명화 규칙 (Hero 경로)**: 특정 경로에서는 헤더가 페이지 상단에서 투명하게 렌더됩니다. 판정 로직은 [lib/hero-routes.ts](lib/hero-routes.ts)가 **단일 출처**. 과거 `/stories`, `/transparency`, `/terms-consent` 세 건의 반복 버그가 있어 재발 방지 구조를 마련했습니다.
 
 - **정확 매칭이 필요하면** `HERO_EXACT`에 경로 추가 (예: `/about`, `/our-reality`)
-- **하위 경로까지 포함하려면** `HERO_PREFIXES`에 추가. **반드시 슬래시로 끝나야 함** — `EndsWithSlash<T>` 타입이 컴파일 타임에 이를 강제 (`'/terms'` 입력 시 타입 에러, `'/terms/'`로 작성)
+- **하위 경로까지 포함하려면** `HERO_PREFIXES`에 추가. **반드시 슬래시로 끝나야 함** — `Slashed = \`${string}/\`` 타입이 컴파일 타임에 이를 강제 (`'/terms'`입력 시 타입 에러,`'/terms/'`로 작성)
 - 훅/컴포넌트에서 `pathname.startsWith('/foo')` 하드코딩 금지. 대신 `isHeroRoute(pathname)` / `isArtworkDetail(pathname)` 호출
 - 새 hero 페이지 추가 후 [**tests**/lib/hero-routes.test.ts](__tests__/lib/hero-routes.test.ts)에 케이스 추가
 
