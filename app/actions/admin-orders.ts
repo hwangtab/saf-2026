@@ -496,7 +496,8 @@ export async function updateTrackingInfo(orderId: string, carrier: string, track
       tracking_number: trackingNumber || null,
       updated_at: new Date().toISOString(),
     })
-    .eq('id', orderId);
+    .eq('id', orderId)
+    .in('status', ['shipped', 'delivered']);
 
   if (updateError) throw updateError;
 

@@ -941,6 +941,15 @@ export async function batchDeleteArtworks(ids: string[]) {
     )
     .in('id', ids);
 
+  const { count: activeOrderCount } = await supabase
+    .from('orders')
+    .select('id', { count: 'exact', head: true })
+    .in('artwork_id', ids)
+    .in('status', ['paid', 'preparing', 'awaiting_deposit', 'shipped']);
+  if ((activeOrderCount ?? 0) > 0) {
+    throw new Error('진행 중인 주문이 있는 작품이 포함되어 삭제할 수 없습니다.');
+  }
+
   const { error } = await supabase.from('artworks').delete().in('id', ids);
   if (error) throw error;
 

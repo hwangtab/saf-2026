@@ -164,7 +164,9 @@ export default function CheckoutClient({
       });
 
       if (!payResult.success) {
-        void cancelPendingOrder(orderNo, buyerEmail);
+        cancelPendingOrder(orderNo, buyerEmail).catch((err) =>
+          console.error('[checkout] cancelPendingOrder failed:', err)
+        );
         setError(payResult.error);
         setSubmitting(false);
         return;
@@ -174,8 +176,11 @@ export default function CheckoutClient({
       window.location.href = payResult.checkoutUrl;
       await new Promise(() => {});
     } catch (err: unknown) {
-      if (createdOrderNo)
-        void cancelPendingOrder(createdOrderNo, buyerInfoRef.current?.buyerEmail ?? '');
+      if (createdOrderNo) {
+        cancelPendingOrder(createdOrderNo, buyerInfoRef.current?.buyerEmail ?? '').catch(
+          (cancelErr) => console.error('[checkout] cancelPendingOrder failed:', cancelErr)
+        );
+      }
       setError((err as Error)?.message ?? t('errorPayment'));
       setSubmitting(false);
     }
