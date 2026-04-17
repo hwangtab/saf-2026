@@ -75,7 +75,13 @@ export async function fetchPayment(paymentKey: string): Promise<TossConfirmRespo
   });
 
   if (!response.ok) return null;
-  return response.json();
+  const text = await response.text();
+  try {
+    return JSON.parse(text) as TossConfirmResponse;
+  } catch {
+    console.error(`[toss] fetchPayment JSON parse failed: ${text.slice(0, 200)}`);
+    return null;
+  }
 }
 
 /**
@@ -91,5 +97,11 @@ export async function fetchPaymentByOrderId(orderId: string): Promise<TossConfir
   });
 
   if (!response.ok) return null;
-  return response.json();
+  const text = await response.text();
+  try {
+    return JSON.parse(text) as TossConfirmResponse;
+  } catch {
+    console.error(`[toss] fetchPaymentByOrderId JSON parse failed: ${text.slice(0, 200)}`);
+    return null;
+  }
 }

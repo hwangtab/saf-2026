@@ -53,7 +53,12 @@ export async function notifyEmail(
   const toRaw = process.env.NOTIFY_EMAIL_TO;
   const from = process.env.RESEND_FROM_EMAIL;
   if (!apiKey || !toRaw || !from) return;
-  const to = toRaw.includes(',') ? toRaw.split(',').map((e) => e.trim()) : toRaw;
+  const to = toRaw.includes(',')
+    ? toRaw
+        .split(',')
+        .map((e) => e.trim())
+        .filter((e) => e.length > 0)
+    : toRaw;
 
   const { emoji, color } = LEVEL_CONFIG[level];
   const timestamp = new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });

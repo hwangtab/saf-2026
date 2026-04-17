@@ -89,7 +89,7 @@ export function useImageUpload({
           if (bucket === 'artworks') {
             setUploadProgress(copy.optimizing(fileIdx + 1, files.length));
             const optimizedFile = await optimizeArtworkImage(file);
-            const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.webp`;
+            const fileName = `${crypto.randomUUID()}.webp`;
             const filePath = `${pathPrefix}/${fileName}`;
 
             setUploadProgress(copy.uploading(fileIdx + 1, files.length));
@@ -112,7 +112,7 @@ export function useImageUpload({
           setUploadProgress(copy.optimizing(fileIdx + 1, files.length));
           const optimizedFile = await optimizeImage(file);
           const fileExt = optimizedFile.name.split('.').pop();
-          const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
+          const fileName = `${crypto.randomUUID()}.${fileExt}`;
           const filePath = `${pathPrefix}/${fileName}`;
 
           setUploadProgress(copy.uploading(fileIdx + 1, files.length));
