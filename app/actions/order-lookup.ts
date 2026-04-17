@@ -5,8 +5,11 @@ import { revalidatePath } from 'next/cache';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { cancelPayment } from '@/lib/integrations/toss/cancel';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
-import { sendBuyerEmail, extractBuyerLocale } from '@/lib/notify';
-import { getArtworkEmailInfo } from '@/lib/utils/get-artwork-email-info';
+import { notifyEmail, sendBuyerEmail, extractBuyerLocale } from '@/lib/notify';
+import {
+  buildAdminNotificationFields,
+  getOrderNotificationInfo,
+} from '@/lib/utils/get-order-notification-info';
 import { rateLimit } from '@/lib/rate-limit';
 import { normalizePhoneDigits } from '@/lib/utils/phone';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
@@ -433,31 +436,39 @@ export async function cancelBuyerOrder(
     revalidatePath(`/en/artworks/${order.artwork_id}`);
   }
 
-  // 구매자 환불 이메일 발송 (fire-and-forget)
-  if (order.buyer_email) {
-    void (async () => {
-      try {
-        const { artworkTitle, artistName } = await getArtworkEmailInfo(
-          adminClient,
-          order.artwork_id
+  // 관리자 + 구매자 환불 이메일 발송 (fire-and-forget)
+  void (async () => {
+    try {
+      const info = await getOrderNotificationInfo(adminClient, { id: order.id });
+
+      if (info) {
+        void notifyEmail(
+          'warning',
+          '구매자 주문 취소 (셀프서비스)',
+          buildAdminNotificationFields(info, { 취소사유: trimmedReason })
         );
+      }
+
+      if (order.buyer_email) {
         void sendBuyerEmail(
-          order.buyer_email!,
+          order.buyer_email,
           'refunded',
           {
             orderNo: order.order_no,
             buyerName: order.buyer_name ?? '',
-            artworkTitle,
-            artistName,
+            artworkTitle: info?.artworkTitle ?? '',
+            artistName: info?.artistName ?? '',
             amount: order.total_amount,
+            itemAmount: info?.itemAmount,
+            shippingAmount: info?.shippingAmount,
           },
           extractBuyerLocale(order.metadata)
         );
-      } catch (err) {
-        console.error('[cancelBuyerOrder] email failed:', err);
       }
-    })();
-  }
+    } catch (err) {
+      console.error('[cancelBuyerOrder] email failed:', err);
+    }
+  })();
 
   return { success: true };
 }

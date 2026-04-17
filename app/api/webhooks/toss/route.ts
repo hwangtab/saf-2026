@@ -13,7 +13,10 @@ import {
 } from '@/lib/integrations/toss/webhook';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
 import { notifyEmail, sendBuyerEmail, extractBuyerLocale } from '@/lib/notify';
-import { getArtworkEmailInfo } from '@/lib/utils/get-artwork-email-info';
+import {
+  buildAdminNotificationFields,
+  getOrderNotificationInfo,
+} from '@/lib/utils/get-order-notification-info';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 
 const CANCELED_STATUSES = new Set(['CANCELED', 'PARTIAL_CANCELED']);
@@ -185,26 +188,44 @@ export async function POST(req: NextRequest) {
             }
           }
 
-          void notifyEmail('payment', '가상계좌 입금 확인', {
-            주문번호: order?.order_no ?? '',
-            금액: `₩${(order?.total_amount ?? 0).toLocaleString()}`,
+          const depositInfo = await getOrderNotificationInfo(supabase, {
+            id: paymentRecord.order_id,
           });
+
+          if (depositInfo) {
+            void notifyEmail(
+              'payment',
+              '가상계좌 입금 확인',
+              buildAdminNotificationFields(depositInfo)
+            );
+          } else {
+            void notifyEmail('payment', '가상계좌 입금 확인', {
+              주문번호: order?.order_no ?? '',
+              금액: `₩${(order?.total_amount ?? 0).toLocaleString()}`,
+            });
+          }
 
           if (order?.buyer_email) {
             try {
-              const { artworkTitle, artistName } = await getArtworkEmailInfo(
-                supabase,
-                order.artwork_id
-              );
               void sendBuyerEmail(
                 order.buyer_email,
                 'deposit_confirmed',
                 {
                   orderNo: order.order_no,
                   buyerName: order.buyer_name ?? '',
-                  artworkTitle,
-                  artistName,
+                  artworkTitle: depositInfo?.artworkTitle ?? '',
+                  artistName: depositInfo?.artistName ?? '',
                   amount: order.total_amount,
+                  itemAmount: depositInfo?.itemAmount,
+                  shippingAmount: depositInfo?.shippingAmount,
+                  shipping: depositInfo
+                    ? {
+                        name: depositInfo.shippingName,
+                        phone: depositInfo.shippingPhone,
+                        address: depositInfo.shippingAddress,
+                        memo: depositInfo.shippingMemo,
+                      }
+                    : undefined,
                 },
                 extractBuyerLocale(order.metadata)
               );
@@ -417,29 +438,42 @@ export async function POST(req: NextRequest) {
           revalidatePath(`/en/artworks/${existingOrder.artwork_id}`);
         }
 
-        void notifyEmail('warning', 'Toss 결제 취소 수신', {
-          주문번호: existingOrder.order_no ?? '',
-          상태: newStatus,
-          paymentKey,
+        const refundInfo = await getOrderNotificationInfo(supabase, {
+          id: paymentRow.order_id,
         });
+
+        if (refundInfo) {
+          void notifyEmail(
+            'warning',
+            'Toss 결제 취소 수신',
+            buildAdminNotificationFields(refundInfo, {
+              상태: newStatus,
+              paymentKey,
+            })
+          );
+        } else {
+          void notifyEmail('warning', 'Toss 결제 취소 수신', {
+            주문번호: existingOrder.order_no ?? '',
+            상태: newStatus,
+            paymentKey,
+          });
+        }
 
         // 구매자 환불 이메일 발송 (fire-and-forget)
         if (existingOrder.buyer_email) {
           void (async () => {
             try {
-              const { artworkTitle, artistName } = await getArtworkEmailInfo(
-                supabase,
-                existingOrder.artwork_id
-              );
               void sendBuyerEmail(
                 existingOrder.buyer_email!,
                 'refunded',
                 {
                   orderNo: existingOrder.order_no ?? '',
                   buyerName: existingOrder.buyer_name ?? '',
-                  artworkTitle,
-                  artistName,
+                  artworkTitle: refundInfo?.artworkTitle ?? '',
+                  artistName: refundInfo?.artistName ?? '',
                   amount: existingOrder.total_amount ?? 0,
+                  itemAmount: refundInfo?.itemAmount,
+                  shippingAmount: refundInfo?.shippingAmount,
                 },
                 extractBuyerLocale(existingOrder.metadata)
               );

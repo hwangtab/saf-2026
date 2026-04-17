@@ -12,6 +12,9 @@ export interface PaymentConfirmedEmailProps {
   artistName: string;
   amount: number;
   paymentMethod?: string;
+  itemAmount?: number;
+  shippingAmount?: number;
+  shipping?: { name?: string; phone?: string; address?: string; memo?: string };
   locale?: EmailLocale;
 }
 
@@ -22,13 +25,33 @@ export default function PaymentConfirmedEmail({
   artistName,
   amount,
   paymentMethod,
+  itemAmount,
+  shippingAmount,
+  shipping,
   locale = 'ko',
 }: PaymentConfirmedEmailProps) {
+  const showItemized = typeof itemAmount === 'number' && typeof shippingAmount === 'number';
   const rows = [
     { label: t('orderNo', locale), value: orderNo },
     { label: t('artwork', locale), value: `${artworkTitle} (${artistName})` },
-    { label: t('amount', locale), value: formatAmount(amount, locale), bold: true },
+    ...(showItemized
+      ? [
+          { label: t('itemAmount', locale), value: formatAmount(itemAmount!, locale) },
+          { label: t('shippingAmount', locale), value: formatAmount(shippingAmount!, locale) },
+        ]
+      : []),
+    {
+      label: t(showItemized ? 'totalAmount' : 'amount', locale),
+      value: formatAmount(amount, locale),
+      bold: true,
+    },
     ...(paymentMethod ? [{ label: t('paymentMethod', locale), value: paymentMethod }] : []),
+    ...(shipping?.name ? [{ label: t('recipient', locale), value: shipping.name }] : []),
+    ...(shipping?.phone ? [{ label: t('recipientPhone', locale), value: shipping.phone }] : []),
+    ...(shipping?.address
+      ? [{ label: t('shippingAddress', locale), value: shipping.address }]
+      : []),
+    ...(shipping?.memo ? [{ label: t('shippingMemo', locale), value: shipping.memo }] : []),
   ];
 
   const header =

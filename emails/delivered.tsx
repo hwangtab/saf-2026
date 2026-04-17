@@ -10,6 +10,7 @@ export interface DeliveredEmailProps {
   orderNo: string;
   artworkTitle: string;
   artistName: string;
+  shipping?: { name?: string; phone?: string; address?: string; memo?: string };
   locale?: EmailLocale;
 }
 
@@ -18,11 +19,16 @@ export default function DeliveredEmail({
   orderNo,
   artworkTitle,
   artistName,
+  shipping,
   locale = 'ko',
 }: DeliveredEmailProps) {
   const rows = [
     { label: t('orderNo', locale), value: orderNo },
     { label: t('artwork', locale), value: `${artworkTitle} (${artistName})` },
+    ...(shipping?.name ? [{ label: t('recipient', locale), value: shipping.name }] : []),
+    ...(shipping?.address
+      ? [{ label: t('shippingAddress', locale), value: shipping.address }]
+      : []),
   ];
 
   const header =

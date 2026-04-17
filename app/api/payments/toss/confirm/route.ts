@@ -6,6 +6,10 @@ import type { Json } from '@/types/supabase';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { confirmPayment } from '@/lib/integrations/toss/confirm';
 import { notifyEmail, sendBuyerEmail } from '@/lib/notify';
+import {
+  buildAdminNotificationFields,
+  getOrderNotificationInfo,
+} from '@/lib/utils/get-order-notification-info';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
 import { apiError, getRequestLocale } from '@/lib/api-locale';
@@ -218,22 +222,8 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // 작품/작가 정보 조회 (구매자 이메일용)
-  // BUG 52: artwork_id가 null이면 쿼리 스킵
-  let artworkTitle = '';
-  let artistName = '';
-  if (order.artwork_id) {
-    const { data: artworkInfo } = await supabase
-      .from('artworks')
-      .select('title, artists(name_ko)')
-      .eq('id', order.artwork_id)
-      .single();
-    artworkTitle = artworkInfo?.title ?? '';
-    const artistsRaw = artworkInfo?.artists;
-    artistName = Array.isArray(artistsRaw)
-      ? (artistsRaw[0]?.name_ko ?? '')
-      : ((artistsRaw as { name_ko?: string } | null | undefined)?.name_ko ?? '');
-  }
+  // 알림용 주문 컨텍스트 (작품/작가/배송지/항목별 금액 포함) — admin/buyer 공통
+  const notifyInfo = await getOrderNotificationInfo(supabase, { id: order.id });
 
   // 결제 완료 시 공개 작품 페이지 캐시 무효화
   if (isDone && order.artwork_id) {
@@ -244,11 +234,21 @@ export async function POST(req: NextRequest) {
 
   // 결제 성공 알림 — fire-and-forget: 응답 전송 후 백그라운드 처리
   if (isDone) {
-    void notifyEmail('payment', '결제 승인 완료', {
-      주문번호: orderId,
-      결제수단: tossResponse.method ?? '알 수 없음',
-      금액: `₩${tossResponse.totalAmount.toLocaleString()}`,
-    });
+    if (notifyInfo) {
+      void notifyEmail(
+        'payment',
+        '결제 승인 완료',
+        buildAdminNotificationFields(notifyInfo, {
+          결제수단: tossResponse.method ?? '알 수 없음',
+        })
+      );
+    } else {
+      void notifyEmail('payment', '결제 승인 완료', {
+        주문번호: orderId,
+        결제수단: tossResponse.method ?? '알 수 없음',
+        금액: `₩${tossResponse.totalAmount.toLocaleString()}`,
+      });
+    }
     if (order.buyer_email) {
       void sendBuyerEmail(
         order.buyer_email,
@@ -256,23 +256,45 @@ export async function POST(req: NextRequest) {
         {
           orderNo: orderId,
           buyerName: order.buyer_name ?? '',
-          artworkTitle,
-          artistName,
+          artworkTitle: notifyInfo?.artworkTitle ?? '',
+          artistName: notifyInfo?.artistName ?? '',
           amount: tossResponse.totalAmount,
           paymentMethod: tossResponse.method ?? undefined,
+          itemAmount: notifyInfo?.itemAmount,
+          shippingAmount: notifyInfo?.shippingAmount,
+          shipping: notifyInfo
+            ? {
+                name: notifyInfo.shippingName,
+                phone: notifyInfo.shippingPhone,
+                address: notifyInfo.shippingAddress,
+                memo: notifyInfo.shippingMemo,
+              }
+            : undefined,
         },
         buyerLocale
       );
     }
   } else if (isVirtualAccount) {
-    void notifyEmail('info', '가상계좌 발급 완료 (입금 대기)', {
-      주문번호: orderId,
-      금액: `₩${tossResponse.totalAmount.toLocaleString()}`,
-    });
     const va = tossResponse.virtualAccount as
       | { bankName?: string; accountNumber?: string; dueDate?: string }
       | null
       | undefined;
+    if (notifyInfo) {
+      void notifyEmail(
+        'info',
+        '가상계좌 발급 완료 (입금 대기)',
+        buildAdminNotificationFields(notifyInfo, {
+          은행: va?.bankName,
+          계좌번호: va?.accountNumber,
+          입금기한: va?.dueDate,
+        })
+      );
+    } else {
+      void notifyEmail('info', '가상계좌 발급 완료 (입금 대기)', {
+        주문번호: orderId,
+        금액: `₩${tossResponse.totalAmount.toLocaleString()}`,
+      });
+    }
     if (order.buyer_email) {
       void sendBuyerEmail(
         order.buyer_email,
@@ -280,8 +302,8 @@ export async function POST(req: NextRequest) {
         {
           orderNo: orderId,
           buyerName: order.buyer_name ?? '',
-          artworkTitle,
-          artistName,
+          artworkTitle: notifyInfo?.artworkTitle ?? '',
+          artistName: notifyInfo?.artistName ?? '',
           amount: tossResponse.totalAmount,
           virtualAccount: {
             bankName: va?.bankName,

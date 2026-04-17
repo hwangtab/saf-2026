@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@supabase/supabase-js';
 import { notifyEmail, sendBuyerEmail, extractBuyerLocale } from '@/lib/notify';
-import { getArtworkEmailInfo } from '@/lib/utils/get-artwork-email-info';
+import { getOrderNotificationInfo } from '@/lib/utils/get-order-notification-info';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 
 export const runtime = 'nodejs';
@@ -106,18 +106,15 @@ export async function GET(request: NextRequest) {
       if (expiredOrder.buyer_email && expiredOrder.order_no) {
         void (async () => {
           try {
-            const { artworkTitle, artistName } = await getArtworkEmailInfo(
-              supabase,
-              expiredOrder.artwork_id
-            );
+            const info = await getOrderNotificationInfo(supabase, { id: expiredOrder.id });
             void sendBuyerEmail(
               expiredOrder.buyer_email!,
               'auto_cancelled',
               {
                 orderNo: expiredOrder.order_no!,
                 buyerName: expiredOrder.buyer_name ?? '',
-                artworkTitle,
-                artistName,
+                artworkTitle: info?.artworkTitle ?? '',
+                artistName: info?.artistName ?? '',
                 amount: expiredOrder.total_amount ?? 0,
               },
               extractBuyerLocale(expiredOrder.metadata)

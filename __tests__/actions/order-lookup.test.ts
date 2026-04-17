@@ -32,15 +32,31 @@ jest.mock('@/app/actions/admin-artworks', () => ({
 
 // --- Mock: notify ---
 jest.mock('@/lib/notify', () => ({
+  notifyEmail: jest.fn(async () => {}),
   sendBuyerEmail: jest.fn(async () => {}),
+  extractBuyerLocale: jest.fn(() => 'ko'),
 }));
 
-// --- Mock: get-artwork-email-info ---
-jest.mock('@/lib/utils/get-artwork-email-info', () => ({
-  getArtworkEmailInfo: jest.fn(async () => ({
+// --- Mock: get-order-notification-info ---
+jest.mock('@/lib/utils/get-order-notification-info', () => ({
+  getOrderNotificationInfo: jest.fn(async () => ({
+    orderId: 'order-id',
+    orderNo: 'SAF-20260417-0001',
+    buyerName: '구매자',
+    buyerEmail: 'buyer@example.com',
+    buyerPhone: '010-0000-0000',
+    shippingName: '수령인',
+    shippingPhone: '010-1111-1111',
+    shippingAddress: '서울시 종로구',
+    shippingMemo: '',
     artworkTitle: '봄의 정원',
     artistName: '김작가',
+    itemAmount: 100000,
+    shippingAmount: 5000,
+    totalAmount: 105000,
+    locale: 'ko',
   })),
+  buildAdminNotificationFields: jest.fn(() => ({})),
 }));
 
 // --- Mock: Supabase ---

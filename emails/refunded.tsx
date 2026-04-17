@@ -11,6 +11,8 @@ export interface RefundedEmailProps {
   artworkTitle: string;
   artistName: string;
   amount: number;
+  itemAmount?: number;
+  shippingAmount?: number;
   locale?: EmailLocale;
 }
 
@@ -20,13 +22,21 @@ export default function RefundedEmail({
   artworkTitle,
   artistName,
   amount,
+  itemAmount,
+  shippingAmount,
   locale = 'ko',
 }: RefundedEmailProps) {
-  const refundLabel = locale === 'en' ? 'Refund Amount' : '환불금액';
+  const showItemized = typeof itemAmount === 'number' && typeof shippingAmount === 'number';
   const rows = [
     { label: t('orderNo', locale), value: orderNo },
     { label: t('artwork', locale), value: `${artworkTitle} (${artistName})` },
-    { label: refundLabel, value: formatAmount(amount, locale), bold: true },
+    ...(showItemized
+      ? [
+          { label: t('itemAmount', locale), value: formatAmount(itemAmount!, locale) },
+          { label: t('shippingAmount', locale), value: formatAmount(shippingAmount!, locale) },
+        ]
+      : []),
+    { label: t('refundAmount', locale), value: formatAmount(amount, locale), bold: true },
   ];
 
   const header =

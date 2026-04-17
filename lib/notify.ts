@@ -128,6 +128,14 @@ export interface BuyerEmailData {
   virtualAccount?: { bankName?: string; accountNumber?: string; dueDate?: string };
   carrier?: string;
   trackingNumber?: string;
+  itemAmount?: number;
+  shippingAmount?: number;
+  shipping?: {
+    name?: string;
+    phone?: string;
+    address?: string;
+    memo?: string;
+  };
 }
 
 const BUYER_EMAIL_SUBJECTS: Record<EmailLocale, Record<BuyerEmailType, string>> = {
@@ -178,6 +186,9 @@ export async function sendBuyerEmail(
           artistName: data.artistName,
           amount: data.amount,
           paymentMethod: data.paymentMethod,
+          itemAmount: data.itemAmount,
+          shippingAmount: data.shippingAmount,
+          shipping: data.shipping,
           locale,
         });
         break;
@@ -199,6 +210,9 @@ export async function sendBuyerEmail(
           artworkTitle: data.artworkTitle,
           artistName: data.artistName,
           amount: data.amount,
+          itemAmount: data.itemAmount,
+          shippingAmount: data.shippingAmount,
+          shipping: data.shipping,
           locale,
         });
         break;
@@ -210,6 +224,7 @@ export async function sendBuyerEmail(
           artistName: data.artistName,
           carrier: data.carrier ?? '',
           trackingNumber: data.trackingNumber,
+          shipping: data.shipping,
           locale,
         });
         break;
@@ -219,6 +234,7 @@ export async function sendBuyerEmail(
           orderNo: data.orderNo,
           artworkTitle: data.artworkTitle,
           artistName: data.artistName,
+          shipping: data.shipping,
           locale,
         });
         break;
@@ -229,6 +245,8 @@ export async function sendBuyerEmail(
           artworkTitle: data.artworkTitle,
           artistName: data.artistName,
           amount: data.amount,
+          itemAmount: data.itemAmount,
+          shippingAmount: data.shippingAmount,
           locale,
         });
         break;

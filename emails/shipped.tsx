@@ -13,6 +13,7 @@ export interface ShippedEmailProps {
   artistName: string;
   carrier: string;
   trackingNumber?: string;
+  shipping?: { name?: string; phone?: string; address?: string; memo?: string };
   locale?: EmailLocale;
 }
 
@@ -23,11 +24,18 @@ export default function ShippedEmail({
   artistName,
   carrier,
   trackingNumber,
+  shipping,
   locale = 'ko',
 }: ShippedEmailProps) {
   const rows = [
     { label: t('orderNo', locale), value: orderNo },
     { label: t('artwork', locale), value: `${artworkTitle} (${artistName})` },
+    ...(shipping?.name ? [{ label: t('recipient', locale), value: shipping.name }] : []),
+    ...(shipping?.phone ? [{ label: t('recipientPhone', locale), value: shipping.phone }] : []),
+    ...(shipping?.address
+      ? [{ label: t('shippingAddress', locale), value: shipping.address }]
+      : []),
+    ...(shipping?.memo ? [{ label: t('shippingMemo', locale), value: shipping.memo }] : []),
   ];
 
   const header =
