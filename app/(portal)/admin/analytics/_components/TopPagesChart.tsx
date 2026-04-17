@@ -2,6 +2,7 @@
 
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
 import { AdminCard } from '@/app/admin/_components/admin-ui';
+import { BRAND_COLORS } from '@/lib/colors';
 import type { AnalyticsData } from '@/app/actions/admin-analytics';
 
 type Props = {
@@ -56,16 +57,16 @@ export function TopPagesChart({ data }: Props) {
               type="category"
               dataKey="path"
               width={140}
-              tick={{ fontSize: 11, fill: '#707A84' }}
+              tick={{ fontSize: 11, fill: BRAND_COLORS.gray[500] }}
               axisLine={false}
               tickLine={false}
             />
             <Tooltip
-              cursor={{ fill: '#E6EAF0' }}
+              cursor={{ fill: BRAND_COLORS.gray[100] }}
               contentStyle={{
                 backgroundColor: 'white',
                 borderRadius: '8px',
-                border: '1px solid #D1D7E0',
+                border: `1px solid ${BRAND_COLORS.gray[200]}`,
                 boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
               }}
               labelFormatter={(_label, payload) => {
@@ -76,7 +77,7 @@ export function TopPagesChart({ data }: Props) {
             />
             <Bar
               dataKey="views"
-              fill="#e63946"
+              fill={BRAND_COLORS.danger.a11y}
               radius={[0, 4, 4, 0]}
               barSize={20}
               className="cursor-pointer"

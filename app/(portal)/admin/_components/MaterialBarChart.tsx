@@ -2,6 +2,7 @@
 
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
 import { AdminCard } from './admin-ui';
+import { BRAND_COLORS } from '@/lib/colors';
 import { DashboardStats } from '@/app/actions/admin-dashboard';
 
 type MaterialBarChartProps = {
@@ -26,20 +27,25 @@ export function MaterialBarChart({ data }: MaterialBarChartProps) {
               type="category"
               dataKey="material"
               width={100}
-              tick={{ fontSize: 12, fill: '#707A84' }}
+              tick={{ fontSize: 12, fill: BRAND_COLORS.gray[500] }}
               axisLine={false}
               tickLine={false}
             />
             <Tooltip
-              cursor={{ fill: '#E6EAF0' }}
+              cursor={{ fill: BRAND_COLORS.gray[100] }}
               contentStyle={{
                 backgroundColor: 'white',
                 borderRadius: '8px',
-                border: '1px solid #D1D7E0',
+                border: `1px solid ${BRAND_COLORS.gray[200]}`,
                 boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
               }}
             />
-            <Bar dataKey="count" fill="#e63946" radius={[0, 4, 4, 0]} barSize={20} />
+            <Bar
+              dataKey="count"
+              fill={BRAND_COLORS.danger.a11y}
+              radius={[0, 4, 4, 0]}
+              barSize={20}
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>

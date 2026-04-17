@@ -2,6 +2,7 @@
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { AdminCard } from '@/app/admin/_components/admin-ui';
+import { BRAND_COLORS } from '@/lib/colors';
 import type { AnalyticsData } from '@/app/actions/admin-analytics';
 
 type Props = {
@@ -23,16 +24,16 @@ export function HourlyHeatmap({ data }: Props) {
       <div className="relative h-[280px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={formatted} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#D1D7E0" />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={BRAND_COLORS.gray[200]} />
             <XAxis
               dataKey="시간"
-              tick={{ fontSize: 10, fill: '#707A84' }}
+              tick={{ fontSize: 10, fill: BRAND_COLORS.gray[500] }}
               tickLine={false}
               axisLine={false}
               interval={2}
             />
             <YAxis
-              tick={{ fontSize: 11, fill: '#707A84' }}
+              tick={{ fontSize: 11, fill: BRAND_COLORS.gray[500] }}
               tickLine={false}
               axisLine={false}
               allowDecimals={false}
@@ -41,12 +42,22 @@ export function HourlyHeatmap({ data }: Props) {
               contentStyle={{
                 backgroundColor: 'white',
                 borderRadius: '8px',
-                border: '1px solid #D1D7E0',
+                border: `1px solid ${BRAND_COLORS.gray[200]}`,
                 boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
               }}
             />
-            <Bar name="페이지뷰" dataKey="페이지뷰" fill="#e63946" radius={[4, 4, 0, 0]} />
-            <Bar name="방문자" dataKey="방문자" fill="#a8dadc" radius={[4, 4, 0, 0]} />
+            <Bar
+              name="페이지뷰"
+              dataKey="페이지뷰"
+              fill={BRAND_COLORS.danger.a11y}
+              radius={[4, 4, 0, 0]}
+            />
+            <Bar
+              name="방문자"
+              dataKey="방문자"
+              fill={BRAND_COLORS.primary.soft}
+              radius={[4, 4, 0, 0]}
+            />
           </BarChart>
         </ResponsiveContainer>
         {!hasData && (

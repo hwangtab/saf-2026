@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { AdminCard } from './admin-ui';
+import { BRAND_COLORS } from '@/lib/colors';
 import { DashboardStats } from '@/app/actions/admin-dashboard';
 
 type TrendLineChartProps = {
@@ -53,16 +54,16 @@ export function TrendLineChart({ data }: TrendLineChartProps) {
       <div className="relative h-[320px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={filledData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#D1D7E0" />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={BRAND_COLORS.gray[200]} />
             <XAxis
               dataKey="date"
-              tick={{ fontSize: 12, fill: '#707A84' }}
+              tick={{ fontSize: 12, fill: BRAND_COLORS.gray[500] }}
               tickLine={false}
               axisLine={false}
               padding={{ left: 10, right: 10 }}
             />
             <YAxis
-              tick={{ fontSize: 12, fill: '#707A84' }}
+              tick={{ fontSize: 12, fill: BRAND_COLORS.gray[500] }}
               tickLine={false}
               axisLine={false}
               allowDecimals={false}
@@ -72,7 +73,7 @@ export function TrendLineChart({ data }: TrendLineChartProps) {
               contentStyle={{
                 backgroundColor: 'white',
                 borderRadius: '8px',
-                border: '1px solid #D1D7E0',
+                border: `1px solid ${BRAND_COLORS.gray[200]}`,
                 boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
               }}
             />
@@ -81,7 +82,7 @@ export function TrendLineChart({ data }: TrendLineChartProps) {
               name="신규 등록 작가"
               type="monotone"
               dataKey="newArtists"
-              stroke="#e63946"
+              stroke={BRAND_COLORS.danger.a11y}
               strokeWidth={2}
               dot={{ r: 2 }}
               activeDot={{ r: 6 }}
@@ -90,7 +91,7 @@ export function TrendLineChart({ data }: TrendLineChartProps) {
               name="신규 작품"
               type="monotone"
               dataKey="newArtworks"
-              stroke="#a8dadc"
+              stroke={BRAND_COLORS.primary.soft}
               strokeWidth={2}
               dot={{ r: 2 }}
               activeDot={{ r: 6 }}

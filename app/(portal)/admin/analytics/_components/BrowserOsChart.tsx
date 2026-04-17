@@ -2,6 +2,7 @@
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { AdminCard } from '@/app/admin/_components/admin-ui';
+import { BRAND_COLORS } from '@/lib/colors';
 import type { AnalyticsData } from '@/app/actions/admin-analytics';
 
 type Props = {
@@ -32,28 +33,32 @@ export function BrowserOsChart({ browserData, osData }: Props) {
                   layout="vertical"
                   margin={{ top: 0, right: 20, left: 0, bottom: 0 }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#D1D7E0" />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    horizontal={false}
+                    stroke={BRAND_COLORS.gray[200]}
+                  />
                   <XAxis
                     type="number"
-                    tick={{ fontSize: 11, fill: '#707A84' }}
+                    tick={{ fontSize: 11, fill: BRAND_COLORS.gray[500] }}
                     allowDecimals={false}
                   />
                   <YAxis
                     type="category"
                     dataKey="browser"
-                    tick={{ fontSize: 11, fill: '#707A84' }}
+                    tick={{ fontSize: 11, fill: BRAND_COLORS.gray[500] }}
                     width={80}
                   />
                   <Tooltip
                     contentStyle={{
                       backgroundColor: 'white',
                       borderRadius: '8px',
-                      border: '1px solid #D1D7E0',
+                      border: `1px solid ${BRAND_COLORS.gray[200]}`,
                       boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
                     }}
                     formatter={(value: number) => [`${value.toLocaleString('ko-KR')}회`, '방문']}
                   />
-                  <Bar dataKey="count" fill="#6366f1" radius={[0, 4, 4, 0]} />
+                  <Bar dataKey="count" fill={BRAND_COLORS.primary.a11y} radius={[0, 4, 4, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -68,28 +73,32 @@ export function BrowserOsChart({ browserData, osData }: Props) {
                   layout="vertical"
                   margin={{ top: 0, right: 20, left: 0, bottom: 0 }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#D1D7E0" />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    horizontal={false}
+                    stroke={BRAND_COLORS.gray[200]}
+                  />
                   <XAxis
                     type="number"
-                    tick={{ fontSize: 11, fill: '#707A84' }}
+                    tick={{ fontSize: 11, fill: BRAND_COLORS.gray[500] }}
                     allowDecimals={false}
                   />
                   <YAxis
                     type="category"
                     dataKey="os"
-                    tick={{ fontSize: 11, fill: '#707A84' }}
+                    tick={{ fontSize: 11, fill: BRAND_COLORS.gray[500] }}
                     width={80}
                   />
                   <Tooltip
                     contentStyle={{
                       backgroundColor: 'white',
                       borderRadius: '8px',
-                      border: '1px solid #D1D7E0',
+                      border: `1px solid ${BRAND_COLORS.gray[200]}`,
                       boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
                     }}
                     formatter={(value: number) => [`${value.toLocaleString('ko-KR')}회`, '방문']}
                   />
-                  <Bar dataKey="count" fill="#0ea5e9" radius={[0, 4, 4, 0]} />
+                  <Bar dataKey="count" fill={BRAND_COLORS.primary.DEFAULT} radius={[0, 4, 4, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

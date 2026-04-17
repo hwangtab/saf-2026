@@ -2,6 +2,7 @@
 
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { AdminCard } from './admin-ui';
+import { BRAND_COLORS } from '@/lib/colors';
 import { DashboardStats } from '@/app/actions/admin-dashboard';
 
 type StatusDonutChartProps = {
@@ -10,10 +11,18 @@ type StatusDonutChartProps = {
 
 export function StatusDonutChart({ data }: StatusDonutChartProps) {
   const chartData = [
-    { name: '판매 중(공개)', value: data.statusVisible.available, color: '#10b981' },
-    { name: '예약됨(공개)', value: data.statusVisible.reserved, color: '#f59e0b' },
-    { name: '판매 완료(공개)', value: data.statusVisible.sold, color: '#3b82f6' },
-    { name: '숨김 작품', value: data.hidden, color: '#8F98A5' },
+    {
+      name: '판매 중(공개)',
+      value: data.statusVisible.available,
+      color: BRAND_COLORS.success.DEFAULT,
+    },
+    { name: '예약됨(공개)', value: data.statusVisible.reserved, color: BRAND_COLORS.sun.DEFAULT },
+    {
+      name: '판매 완료(공개)',
+      value: data.statusVisible.sold,
+      color: BRAND_COLORS.primary.DEFAULT,
+    },
+    { name: '숨김 작품', value: data.hidden, color: BRAND_COLORS.gray[400] },
   ].filter((item) => item.value > 0);
 
   const total = data.total;
@@ -41,7 +50,7 @@ export function StatusDonutChart({ data }: StatusDonutChartProps) {
               contentStyle={{
                 backgroundColor: 'white',
                 borderRadius: '8px',
-                border: '1px solid #D1D7E0',
+                border: `1px solid ${BRAND_COLORS.gray[200]}`,
                 boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
               }}
             />

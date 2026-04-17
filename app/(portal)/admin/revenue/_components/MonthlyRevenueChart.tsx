@@ -13,6 +13,7 @@ import {
 } from 'recharts';
 import type { RevenueAnalytics } from '@/app/actions/admin-revenue';
 import { AdminCard } from '@/app/admin/_components/admin-ui';
+import { BRAND_COLORS } from '@/lib/colors';
 
 const KRW_COMPACT_FORMATTER = new Intl.NumberFormat('ko-KR', {
   notation: 'compact',
@@ -68,16 +69,16 @@ export function MonthlyRevenueChart({ data }: MonthlyRevenueChartProps) {
       <div className="relative mt-4 h-[340px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={data} margin={{ top: 10, right: 18, left: 10, bottom: 8 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#D1D7E0" />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={BRAND_COLORS.gray[200]} />
             <XAxis
               dataKey="label"
-              tick={{ fontSize: 12, fill: '#707A84' }}
+              tick={{ fontSize: 12, fill: BRAND_COLORS.gray[500] }}
               tickLine={false}
               axisLine={false}
             />
             <YAxis
               yAxisId="left"
-              tick={{ fontSize: 12, fill: '#707A84' }}
+              tick={{ fontSize: 12, fill: BRAND_COLORS.gray[500] }}
               tickLine={false}
               axisLine={false}
               tickFormatter={(value) => KRW_COMPACT_FORMATTER.format(value)}
@@ -85,7 +86,7 @@ export function MonthlyRevenueChart({ data }: MonthlyRevenueChartProps) {
             <YAxis
               yAxisId="right"
               orientation="right"
-              tick={{ fontSize: 12, fill: '#707A84' }}
+              tick={{ fontSize: 12, fill: BRAND_COLORS.gray[500] }}
               tickLine={false}
               axisLine={false}
               allowDecimals={false}
@@ -96,7 +97,7 @@ export function MonthlyRevenueChart({ data }: MonthlyRevenueChartProps) {
               yAxisId="left"
               dataKey="offlineRevenue"
               name="오프라인 매출"
-              fill="#0f766e"
+              fill={BRAND_COLORS.success.a11y}
               radius={[5, 5, 0, 0]}
               maxBarSize={28}
               stackId="revenue"
@@ -105,7 +106,7 @@ export function MonthlyRevenueChart({ data }: MonthlyRevenueChartProps) {
               yAxisId="left"
               dataKey="onlineRevenue"
               name="온라인 매출"
-              fill="#ea580c"
+              fill={BRAND_COLORS.accent.a11y}
               radius={[5, 5, 0, 0]}
               maxBarSize={28}
               stackId="revenue"
@@ -115,7 +116,7 @@ export function MonthlyRevenueChart({ data }: MonthlyRevenueChartProps) {
               type="monotone"
               dataKey="soldCount"
               name="판매수량"
-              stroke="#dc2626"
+              stroke={BRAND_COLORS.danger.a11y}
               strokeWidth={2}
               dot={{ r: 2 }}
               activeDot={{ r: 5 }}

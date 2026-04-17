@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { AdminCard } from '@/app/admin/_components/admin-ui';
+import { BRAND_COLORS } from '@/lib/colors';
 import type { AnalyticsData } from '@/app/actions/admin-analytics';
 
 type Props = {
@@ -38,16 +39,16 @@ export function DailyViewsChart({ data }: Props) {
       <div className="relative h-[320px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={formatted} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#D1D7E0" />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={BRAND_COLORS.gray[200]} />
             <XAxis
               dataKey="date"
-              tick={{ fontSize: 12, fill: '#707A84' }}
+              tick={{ fontSize: 12, fill: BRAND_COLORS.gray[500] }}
               tickLine={false}
               axisLine={false}
               padding={{ left: 10, right: 10 }}
             />
             <YAxis
-              tick={{ fontSize: 12, fill: '#707A84' }}
+              tick={{ fontSize: 12, fill: BRAND_COLORS.gray[500] }}
               tickLine={false}
               axisLine={false}
               allowDecimals={false}
@@ -57,7 +58,7 @@ export function DailyViewsChart({ data }: Props) {
               contentStyle={{
                 backgroundColor: 'white',
                 borderRadius: '8px',
-                border: '1px solid #D1D7E0',
+                border: `1px solid ${BRAND_COLORS.gray[200]}`,
                 boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
               }}
             />
@@ -66,7 +67,7 @@ export function DailyViewsChart({ data }: Props) {
               name="페이지뷰"
               type="monotone"
               dataKey="페이지뷰"
-              stroke="#e63946"
+              stroke={BRAND_COLORS.danger.a11y}
               strokeWidth={2}
               dot={{ r: 2 }}
               activeDot={{ r: 6 }}
@@ -75,7 +76,7 @@ export function DailyViewsChart({ data }: Props) {
               name="순 방문자"
               type="monotone"
               dataKey="방문자"
-              stroke="#a8dadc"
+              stroke={BRAND_COLORS.primary.soft}
               strokeWidth={2}
               dot={{ r: 2 }}
               activeDot={{ r: 6 }}

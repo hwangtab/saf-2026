@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { getSupabaseStories, getSupabaseStoryBySlug } from '@/lib/supabase-data';
 import { routing } from '@/i18n/routing';
+import { BRAND_COLORS } from '@/lib/colors';
 import type { StoryCategory } from '@/types';
 
 export const runtime = 'nodejs';
@@ -26,9 +27,11 @@ const CATEGORY_COLORS: Record<
   StoryCategory,
   { bg: string; accent: string; border: string; labelKo: string; labelEn: string }
 > = {
+  // artist-story만 BRAND_COLORS와 일치. buying-guide/art-knowledge는 카테고리 특화 팔레트
+  // (OG 이미지 내부 카테고리 구분용으로 의도된 독립 톤 — BRAND_COLORS 규칙의 예외)
   'artist-story': {
-    bg: '#EDF3FF',
-    accent: '#1565D8',
+    bg: BRAND_COLORS.primary.surface,
+    accent: BRAND_COLORS.primary.a11y,
     border: '#C3D4FF',
     labelKo: '작가를 만나다',
     labelEn: 'Artist Stories',
@@ -106,7 +109,7 @@ export default async function Image({ params }: Props) {
             style={{
               marginLeft: '16px',
               fontSize: '22px',
-              color: '#888',
+              color: BRAND_COLORS.gray[500],
               fontWeight: 400,
             }}
           >
@@ -130,7 +133,7 @@ export default async function Image({ params }: Props) {
             style={{
               fontSize: displayTitle.length > 30 ? '50px' : '58px',
               fontWeight: 700,
-              color: '#1A1F2B',
+              color: BRAND_COLORS.charcoal.deep,
               lineHeight: 1.25,
               letterSpacing: '-1px',
             }}
@@ -141,7 +144,7 @@ export default async function Image({ params }: Props) {
             <div
               style={{
                 fontSize: '26px',
-                color: '#555E6B',
+                color: BRAND_COLORS.charcoal.muted,
                 lineHeight: 1.55,
                 fontWeight: 400,
               }}
@@ -161,7 +164,7 @@ export default async function Image({ params }: Props) {
             paddingTop: '24px',
           }}
         >
-          <div style={{ fontSize: '22px', color: '#6B7280', fontWeight: 400 }}>
+          <div style={{ fontSize: '22px', color: BRAND_COLORS.gray[500], fontWeight: 400 }}>
             {author || '씨앗페 매거진'}
           </div>
           <div

@@ -13,6 +13,7 @@ import {
 } from 'recharts';
 import type { DashboardStats } from '@/app/actions/admin-dashboard';
 import { AdminCard } from './admin-ui';
+import { BRAND_COLORS } from '@/lib/colors';
 
 const KRW_FORMATTER = new Intl.NumberFormat('ko-KR', {
   style: 'currency',
@@ -97,16 +98,16 @@ export function RevenueTrendChart({
       <div className="relative mt-4 h-[340px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={data} margin={{ top: 8, right: 22, left: 8, bottom: 8 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#D1D7E0" />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={BRAND_COLORS.gray[200]} />
             <XAxis
               dataKey="label"
-              tick={{ fontSize: 12, fill: '#707A84' }}
+              tick={{ fontSize: 12, fill: BRAND_COLORS.gray[500] }}
               tickLine={false}
               axisLine={false}
             />
             <YAxis
               yAxisId="left"
-              tick={{ fontSize: 12, fill: '#707A84' }}
+              tick={{ fontSize: 12, fill: BRAND_COLORS.gray[500] }}
               tickLine={false}
               axisLine={false}
               tickFormatter={(value) => COMPACT_KRW_FORMATTER.format(value)}
@@ -114,7 +115,7 @@ export function RevenueTrendChart({
             <YAxis
               yAxisId="right"
               orientation="right"
-              tick={{ fontSize: 12, fill: '#707A84' }}
+              tick={{ fontSize: 12, fill: BRAND_COLORS.gray[500] }}
               tickLine={false}
               axisLine={false}
               tickFormatter={(value) => COMPACT_KRW_FORMATTER.format(value)}
@@ -133,9 +134,9 @@ export function RevenueTrendChart({
               type="monotone"
               dataKey="revenue"
               name="매출"
-              fill="#bfdbfe"
+              fill={BRAND_COLORS.primary.soft}
               fillOpacity={0.7}
-              stroke="#2563eb"
+              stroke={BRAND_COLORS.primary.a11y}
               strokeWidth={2}
             />
             <Line
@@ -143,7 +144,7 @@ export function RevenueTrendChart({
               type="monotone"
               dataKey="averagePrice"
               name="평균판매가"
-              stroke="#dc2626"
+              stroke={BRAND_COLORS.danger.a11y}
               strokeWidth={2}
               dot={{ r: 2 }}
               activeDot={{ r: 5 }}
