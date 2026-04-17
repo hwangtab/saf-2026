@@ -73,17 +73,11 @@ export default function ArtworkImage({
 
   return (
     <>
-      <div
-        className="relative shadow-sm cursor-zoom-in group overflow-hidden rounded-lg bg-gray-50"
+      <button
+        type="button"
+        className="relative block w-full text-left shadow-sm cursor-zoom-in group overflow-hidden rounded-lg bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:ring-offset-2"
         onClick={() => setIsOpen(true)}
-        role="button"
         aria-label={copy.zoomImage}
-        tabIndex={0}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            setIsOpen(true);
-          }
-        }}
       >
         <SafeImage
           src={src}
@@ -127,7 +121,7 @@ export default function ArtworkImage({
             {copy.reserved}
           </div>
         )}
-      </div>
+      </button>
 
       {/* View in Room Button */}
       {canPreview && (
