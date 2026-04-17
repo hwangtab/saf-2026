@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, useLayoutEffect } from 'react';
 import { usePathname } from '@/i18n/navigation';
-import { HERO_PAGES } from '@/lib/constants';
+import { isArtworkDetail, isHeroRoute } from '@/lib/hero-routes';
 
 const HEADER_SOLID_STYLE = 'bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200/50';
 const HERO_SCROLL_TOP_THRESHOLD = 8;
@@ -31,33 +31,20 @@ export function useHeaderStyle() {
   const pathname = usePathname();
   const currentPath = normalizePath(pathname || '/');
 
-  // 경로 기반 파생 상태 메모이제이션
-  const { isArtworkDetail, prefersHeroLayout } = useMemo(() => {
-    const artistPage = currentPath.startsWith('/artworks/artist/');
-    const categoryPage = currentPath.startsWith('/artworks/category/');
-    const storyDetail = currentPath.startsWith('/stories/') && currentPath !== '/stories';
-    const newsDetail = currentPath.startsWith('/news/') && currentPath !== '/news';
-    const termsPage = currentPath.startsWith('/terms');
-    const artworkDetail =
-      currentPath.startsWith('/artworks/') &&
-      currentPath !== '/artworks' &&
-      !artistPage &&
-      !categoryPage;
-    const heroPage =
-      (HERO_PAGES.includes(currentPath as (typeof HERO_PAGES)[number]) && !artworkDetail) ||
-      artistPage ||
-      categoryPage ||
-      storyDetail ||
-      newsDetail ||
-      termsPage;
-    return { isArtworkDetail: artworkDetail, prefersHeroLayout: heroPage };
-  }, [currentPath]);
+  // 경로 기반 파생 상태 — 규칙은 lib/hero-routes.ts 단일 출처
+  const { artworkDetail, prefersHeroLayout } = useMemo(
+    () => ({
+      artworkDetail: isArtworkDetail(currentPath),
+      prefersHeroLayout: isHeroRoute(currentPath),
+    }),
+    [currentPath]
+  );
 
   // Hero routes should render transparent at top by default.
   const [heroAtTop, setHeroAtTop] = useState(true);
 
   useLayoutEffect(() => {
-    if (isArtworkDetail || !prefersHeroLayout) {
+    if (artworkDetail || !prefersHeroLayout) {
       return undefined;
     }
 
@@ -87,7 +74,7 @@ export function useHeaderStyle() {
       window.removeEventListener('resize', requestSync);
       window.removeEventListener('pageshow', requestSync);
     };
-  }, [pathname, isArtworkDetail, prefersHeroLayout]);
+  }, [pathname, artworkDetail, prefersHeroLayout]);
 
   const isActive = useCallback(
     (href: string) => {
@@ -103,10 +90,10 @@ export function useHeaderStyle() {
 
   const headerMode: HeaderMode = useMemo(() => {
     if (isMenuOpen) return 'overlay';
-    if (isArtworkDetail) return 'solid';
+    if (artworkDetail) return 'solid';
     if (!prefersHeroLayout) return 'solid';
     return heroAtTop ? 'transparent' : 'solid';
-  }, [heroAtTop, isArtworkDetail, isMenuOpen, prefersHeroLayout]);
+  }, [heroAtTop, artworkDetail, isMenuOpen, prefersHeroLayout]);
 
   const headerStyle = headerMode === 'transparent' ? 'bg-transparent' : HEADER_SOLID_STYLE;
 

@@ -115,22 +115,8 @@ export const ANIMATION = {
   COUNTER_DURATION: 2000, // 2 seconds
 } as const;
 
-export const HERO_PAGES = [
-  '/',
-  '/about',
-  '/our-reality',
-  '/our-proof',
-  '/transparency',
-  '/archive/2023',
-  '/archive/2026',
-  '/archive',
-  '/news',
-  '/artworks',
-  '/stories',
-  '/privacy',
-] as const;
-
-export type HeroPage = (typeof HERO_PAGES)[number];
+// Hero 경로 판정은 lib/hero-routes.ts로 이동 (타입 강제 + 단일 출처).
+// 과거 HERO_PAGES 상수는 해당 파일의 HERO_EXACT / HERO_PREFIXES로 분리되어 있음.
 
 // Z-Index layers for consistent stacking
 export const Z_INDEX = {

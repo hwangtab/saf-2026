@@ -86,6 +86,15 @@ describe('useHeaderStyle', () => {
     expect(result.current.isDarkText).toBe(true);
   });
 
+  // 회귀 방지: /terms-consent는 /terms 접두어 오매칭으로 투명화되던 버그(2026-04-17).
+  it('/terms-consent에서는 solid header (형제 경로 오매칭 방지)', () => {
+    mockPathname = '/terms-consent';
+    const { result } = renderHook(() => useHeaderStyle());
+
+    expect(result.current.headerStyle).toContain('bg-white/80');
+    expect(result.current.isDarkText).toBe(true);
+  });
+
   it('uses overlay mode while mobile menu is open', () => {
     const { result } = renderHook(() => useHeaderStyle());
 

@@ -15,6 +15,7 @@ import {
 } from '@/lib/auth/terms-consent';
 import { TermsConsentForm } from './terms-consent-form';
 import { SignOutButton } from '@/components/auth/SignOutButton';
+import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
 import { getServerLocale } from '@/lib/server-locale';
 
 type SearchParams = {
@@ -128,7 +129,7 @@ export default async function TermsConsentPage({
       : copy.privacyHeading;
 
   return (
-    <div className="min-h-screen bg-canvas-soft px-4 pt-24 pb-12">
+    <div className={`min-h-screen bg-canvas-soft px-4 pt-24 ${SAWTOOTH_TOP_SAFE_PADDING}`}>
       <div className="mx-auto max-w-2xl">
         <div className="mb-8 flex items-start justify-between gap-4">
           <div>

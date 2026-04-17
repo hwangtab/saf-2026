@@ -1,6 +1,11 @@
+import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
+
 export default function TermsConsentLoading() {
   return (
-    <div aria-hidden="true" className="min-h-screen bg-canvas-soft px-4 pb-12 pt-24">
+    <div
+      aria-hidden="true"
+      className={`min-h-screen bg-canvas-soft px-4 pt-24 ${SAWTOOTH_TOP_SAFE_PADDING}`}
+    >
       <div className="mx-auto max-w-2xl">
         <div className="mb-8 flex items-start justify-between gap-4">
           <div className="space-y-3">

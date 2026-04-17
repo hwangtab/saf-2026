@@ -136,6 +136,19 @@ types/
 - Local images (`public/` directory): `import ExportedImage from 'next-image-export-optimizer'`
 - Remote artwork images (Supabase storage URLs): `import SafeImage from '@/components/common/SafeImage'`
 
+**Sawtooth Divider 여백 규칙**: Footer와 FooterSlider 상단에는 `SawtoothDivider position="top"`이 있고, 이 톱니는 `-translate-y-full`로 **위 섹션의 마지막 24~40px를 덮어씁니다**. 따라서 Footer 위에 렌더되는 페이지 최상위 컨테이너(특히 `min-h-screen` 래퍼)는 반드시 충분한 하단 패딩을 가져야 함.
+
+- 하드코딩 금지. `import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider'`로 표준 상수 사용
+- 예시: `<div className={\`min-h-screen ${SAWTOOTH_TOP_SAFE_PADDING}\`}>`
+- `pb-12` 등 짧은 값은 버튼·본문이 톱니에 묻히므로 사용 금지. 여백을 더 키우고 싶다면 상수 자체를 수정
+
+**Header 투명화 규칙 (Hero 경로)**: 특정 경로에서는 헤더가 페이지 상단에서 투명하게 렌더됩니다. 판정 로직은 [lib/hero-routes.ts](lib/hero-routes.ts)가 **단일 출처**. 과거 `/stories`, `/transparency`, `/terms-consent` 세 건의 반복 버그가 있어 재발 방지 구조를 마련했습니다.
+
+- **정확 매칭이 필요하면** `HERO_EXACT`에 경로 추가 (예: `/about`, `/our-reality`)
+- **하위 경로까지 포함하려면** `HERO_PREFIXES`에 추가. **반드시 슬래시로 끝나야 함** — `EndsWithSlash<T>` 타입이 컴파일 타임에 이를 강제 (`'/terms'` 입력 시 타입 에러, `'/terms/'`로 작성)
+- 훅/컴포넌트에서 `pathname.startsWith('/foo')` 하드코딩 금지. 대신 `isHeroRoute(pathname)` / `isArtworkDetail(pathname)` 호출
+- 새 hero 페이지 추가 후 [**tests**/lib/hero-routes.test.ts](__tests__/lib/hero-routes.test.ts)에 케이스 추가
+
 ## Code Style
 
 ### TypeScript (Strict)
