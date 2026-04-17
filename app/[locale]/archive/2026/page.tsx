@@ -33,7 +33,7 @@ const PAGE_COPY = {
   en: {
     title: '2026 Offline Exhibition Archive',
     description:
-      'SAF 2026 Seoul exhibition records: January 14–26 at Insa Art Center. Browse the exhibition poster, catalog, and visitor reviews for 127 artworks by 127 artists.',
+      '127 original artworks by 127 Korean artists exhibited Jan 14–26, 2026 at Insa Art Center, Seoul. Campaign poster, digital catalog, and visitor reviews — all proceeds funded the artist mutual-aid program.',
   },
 } as const;
 

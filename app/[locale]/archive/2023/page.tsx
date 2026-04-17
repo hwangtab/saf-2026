@@ -34,7 +34,7 @@ const PAGE_COPY = {
   en: {
     title: '2023 Archive',
     description:
-      'The SAF 2023 journey, including campaign videos, exhibition moments, and outcomes created through solidarity.',
+      'SAF 2023 Insadong exhibition (7 days, 50+ artists) raised a KRW 34 million mutual-aid fund. Campaign videos, exhibition photos, and outcome records.',
   },
 } as const;
 

@@ -108,8 +108,20 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
 
   const seoDescription = (seoDescriptionBase.substring(0, 140) + priceSnippet).substring(0, 160);
 
+  // Title에 가격/판매상태를 포함해 CTR 개선 — GSC 실측상 작품 상세가 8,883노출/1.8% CTR로 가장 큰 개선 레버
+  const titleStatusSuffix = isSold
+    ? isEnglish
+      ? ' · Sold'
+      : ' · 판매 완료'
+    : numericPriceValue !== null
+      ? ` · ₩${numericPriceValue.toLocaleString('ko-KR')}`
+      : isEnglish
+        ? ' · Inquiry'
+        : ' · 가격 문의';
+  const pageTitle = `${titleForLocale} · ${artistForLocale}${titleStatusSuffix}`;
+
   const baseMetadata = createPageMetadata(
-    `${titleForLocale} - ${artistForLocale}`,
+    pageTitle,
     seoDescription,
     `/artworks/${artwork.id}`,
     imageUrl,
@@ -132,8 +144,24 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
           width: 1200,
           height: 630,
           alt: isEnglish
-            ? `${titleForLocale} by ${artistForLocale} — SAF Online`
-            : `${artwork.artist} 작가의 작품 "${artwork.title}" — 씨앗페 온라인`,
+            ? [
+                `"${titleForLocale}" by ${artistForLocale}`,
+                artwork.year ? `(${artwork.year})` : '',
+                materialForLocale ? `— ${materialForLocale}` : '',
+                artwork.category ? `— ${artwork.category}` : '',
+                '| SAF Online',
+              ]
+                .filter(Boolean)
+                .join(' ')
+            : [
+                `${artwork.artist} 작가의 작품 "${artwork.title}"`,
+                artwork.year ? `(${artwork.year})` : '',
+                materialForLocale ? `— ${materialForLocale}` : '',
+                artwork.category ? `— ${artwork.category}` : '',
+                '— 씨앗페 온라인',
+              ]
+                .filter(Boolean)
+                .join(' '),
           type: 'image/jpeg',
         },
       ],
@@ -146,8 +174,24 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
         {
           url: imageUrl,
           alt: isEnglish
-            ? `${titleForLocale} by ${artistForLocale} — SAF Online`
-            : `${artwork.artist} 작가의 작품 "${artwork.title}" — 씨앗페 온라인`,
+            ? [
+                `"${titleForLocale}" by ${artistForLocale}`,
+                artwork.year ? `(${artwork.year})` : '',
+                materialForLocale ? `— ${materialForLocale}` : '',
+                artwork.category ? `— ${artwork.category}` : '',
+                '| SAF Online',
+              ]
+                .filter(Boolean)
+                .join(' ')
+            : [
+                `${artwork.artist} 작가의 작품 "${artwork.title}"`,
+                artwork.year ? `(${artwork.year})` : '',
+                materialForLocale ? `— ${materialForLocale}` : '',
+                artwork.category ? `— ${artwork.category}` : '',
+                '— 씨앗페 온라인',
+              ]
+                .filter(Boolean)
+                .join(' '),
         },
       ],
     },

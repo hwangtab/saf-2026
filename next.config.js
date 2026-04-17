@@ -68,6 +68,16 @@ const nextConfig = {
         destination: '/images/icons/icon-192.png',
         permanent: true,
       },
+      {
+        source: '/exhibition',
+        destination: '/archive/2026',
+        permanent: true,
+      },
+      {
+        source: '/en/exhibition',
+        destination: '/en/archive/2026',
+        permanent: true,
+      },
     ];
   },
   async headers() {
