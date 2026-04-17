@@ -35,6 +35,7 @@ yarn-error.log*
 
 # Local AI tooling
 .claude/
+.playwright-mcp/
 
 # Vercel
 .vercel/
