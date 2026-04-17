@@ -64,6 +64,23 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     return { success: false, error: '배송지 정보를 입력해주세요.' };
   }
 
+  // Format validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(buyerEmailNorm)) {
+    return { success: false, error: '올바른 이메일 형식이 아닙니다.' };
+  }
+  const phoneDigits = buyerPhone.replace(/\D/g, '');
+  if (phoneDigits.length < 9 || phoneDigits.length > 11) {
+    return { success: false, error: '올바른 연락처 형식이 아닙니다.' };
+  }
+  const shippingPhoneDigits = shippingPhone.replace(/\D/g, '');
+  if (shippingPhone && (shippingPhoneDigits.length < 9 || shippingPhoneDigits.length > 11)) {
+    return { success: false, error: '올바른 배송지 연락처 형식이 아닙니다.' };
+  }
+  if (!/^\d{5}$/.test(shippingPostalCode.trim())) {
+    return { success: false, error: '우편번호는 5자리 숫자여야 합니다.' };
+  }
+
   const adminClient = createSupabaseAdminClient();
 
   // Fetch artwork (parse price server-side — never trust client)

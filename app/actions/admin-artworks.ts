@@ -271,6 +271,7 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
   }
   revalidatePublicArtworkSurfaces(artistNames);
   revalidatePath(`/artworks/${id}`);
+  revalidatePath(`/en/artworks/${id}`);
   revalidatePath('/admin/artworks');
   revalidatePath(`/admin/artworks/${id}`);
 

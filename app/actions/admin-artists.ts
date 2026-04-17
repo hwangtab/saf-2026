@@ -77,8 +77,8 @@ export async function getArtistsPaginated(params: GetArtistsPaginatedParams = {}
   await requireAdmin();
   const supabase = await createSupabaseAdminClient();
 
-  const page = params.page || 1;
-  const limit = params.limit || 25;
+  const page = Math.max(1, Math.floor(Number(params.page) || 1));
+  const limit = Math.max(1, Math.min(100, Math.floor(Number(params.limit) || 25)));
   const offset = (page - 1) * limit;
 
   let query = supabase.from('artists').select('*, artworks(count)', { count: 'exact' });
