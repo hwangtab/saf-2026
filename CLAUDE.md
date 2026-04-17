@@ -125,9 +125,12 @@ types/
 **Color Usage Rules**:
 
 - **`slate-*` 사용 금지** — `tailwind.config.ts`에서 비활성화됨. 사용해도 CSS가 생성되지 않음
+- **`indigo-*` / `blue-*` / `red-*` / `green-*` / `amber-*` / `sky-*` / `teal-*` / `orange-*` 등 Tailwind 기본 팔레트 사용 금지** — 포털·공개 페이지 모두 `primary-*`, `accent-*`, `sun-*`, `success-*`, `danger-*`, `charcoal-*`, `gray-*` 브랜드 토큰 사용
 - 중성 색상은 반드시 `gray-*` 브랜드 토큰 사용 (`lib/colors.ts`의 `BRAND_COLORS.gray`)
 - 텍스트 계층: `text-charcoal-deep` (제목) > `text-charcoal` / `text-gray-800` (본문) > `text-charcoal-muted` / `text-gray-600` (보조) > `text-gray-500` (뮤트)
-- 차트·그래프 등 inline hex 사용 시 반드시 `BRAND_COLORS` 값 참조 (`lib/colors.ts`)
+- **차트·OG 이미지·Satori 렌더 등 런타임 hex가 필요한 곳은 반드시 `import { BRAND_COLORS } from '@/lib/colors'`로 참조.** `stroke="#D1D7E0"` 같은 리터럴 대신 `stroke={BRAND_COLORS.gray[200]}`, 템플릿 문자열(`` `1px solid ${BRAND_COLORS.gray[200]}` ``) 사용
+
+**i18n 필수 규칙**: 사용자 노출 텍스트는 전부 next-intl 메시지로. 배지·상태·버튼 라벨에 `"예약중"`, `"SOLD"`, `"판매완료"` 같은 리터럴 직접 박으면 영어 locale에서도 그대로 노출됨. `messages/ko.json`·`messages/en.json`에 키 추가 후 `useTranslations` / `getTranslations`로 소비.
 
 **Responsive Design**: Mobile-first with breakpoints at `sm` (640px), `md` (768px), `lg` (1024px - mobile/desktop nav switch), `xl` (1280px).
 
