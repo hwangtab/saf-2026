@@ -11,7 +11,7 @@ export const getArtistDashboardContext = cache(async () => {
     .from('artists')
     .select('*')
     .eq('user_id', user.id)
-    .single();
+    .maybeSingle();
 
   if (error || !artist) {
     notFound();

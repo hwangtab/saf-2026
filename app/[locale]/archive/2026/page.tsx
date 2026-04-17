@@ -215,7 +215,7 @@ export default async function Archive2026Page() {
 
   return (
     <>
-      <JsonLdScript data={[eventSchema, breadcrumbSchema, howToSchema]} />
+      <JsonLdScript data={[eventSchema, breadcrumbSchema, webPageSchema, howToSchema]} />
       <PageHero
         title="2026 오프라인 전시"
         description="인사아트센터에서 진행된 12일간의 기록"

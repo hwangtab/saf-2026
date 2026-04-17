@@ -57,8 +57,8 @@ export default async function AboutPage() {
   const pageUrl = buildLocaleUrl('/about', locale);
 
   const breadcrumbItems = [
-    { name: locale === 'en' ? 'Home' : '홈', url: '/' },
-    { name: pageCopy.title, url: '/about' },
+    { name: locale === 'en' ? 'Home' : '홈', url: buildLocaleUrl('/', locale) },
+    { name: pageCopy.title, url: pageUrl },
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
 

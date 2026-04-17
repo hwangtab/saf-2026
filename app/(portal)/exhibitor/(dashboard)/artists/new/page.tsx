@@ -15,16 +15,17 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 type NewArtistPageProps = {
-  searchParams?: {
+  searchParams: Promise<{
     returnTo?: string | string[];
-  };
+  }>;
 };
 
 export default async function NewArtistPage({ searchParams }: NewArtistPageProps) {
   const t = await getTranslations('exhibitor.artistNew');
-  const returnTo = Array.isArray(searchParams?.returnTo)
-    ? searchParams?.returnTo[0]
-    : searchParams?.returnTo;
+  const params = await searchParams;
+  const returnToRaw = Array.isArray(params.returnTo) ? params.returnTo[0] : params.returnTo;
+  // BUG 23: open redirect 방지 — /exhibitor/ 경로만 허용
+  const returnTo = returnToRaw?.startsWith('/exhibitor/') ? returnToRaw : undefined;
 
   return (
     <div className="space-y-6">

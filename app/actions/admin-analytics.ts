@@ -36,6 +36,7 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
   await requireAdmin();
   const supabase = await createSupabaseAdminClient();
 
+  if (!(period in PERIOD_DAYS)) throw new Error('Invalid period');
   const days = PERIOD_DAYS[period];
   const sinceTs = new Date(Date.now() - days * 86_400_000).toISOString();
 

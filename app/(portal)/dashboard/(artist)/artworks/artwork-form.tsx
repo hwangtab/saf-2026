@@ -406,6 +406,8 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
                   value={editionLimit}
                   onChange={(e) => setEditionLimit(e.target.value ? parseInt(e.target.value) : '')}
                   min="1"
+                  max="10000"
+                  step="1"
                   required
                   placeholder={t('editionLimitPlaceholder')}
                   className={inputClassName}

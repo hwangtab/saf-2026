@@ -16,10 +16,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 type NewExhibitorArtworkPageProps = {
-  searchParams?: {
+  searchParams: Promise<{
     artist_id?: string | string[];
     artist_created?: string | string[];
-  };
+  }>;
 };
 
 export default async function NewExhibitorArtworkPage({
@@ -27,12 +27,11 @@ export default async function NewExhibitorArtworkPage({
 }: NewExhibitorArtworkPageProps) {
   const t = await getTranslations('exhibitor.artworkNew');
   const artists = await getExhibitorArtists();
-  const initialArtistId = Array.isArray(searchParams?.artist_id)
-    ? searchParams?.artist_id[0]
-    : searchParams?.artist_id;
-  const artistCreatedParam = Array.isArray(searchParams?.artist_created)
-    ? searchParams?.artist_created[0]
-    : searchParams?.artist_created;
+  const params = await searchParams;
+  const initialArtistId = Array.isArray(params.artist_id) ? params.artist_id[0] : params.artist_id;
+  const artistCreatedParam = Array.isArray(params.artist_created)
+    ? params.artist_created[0]
+    : params.artist_created;
   const artistJustCreated = artistCreatedParam === '1';
 
   return (

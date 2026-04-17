@@ -46,6 +46,13 @@ export async function submitExhibitorApplication(
       };
     }
 
+    if (profile.role === 'artist' && profile.status === 'pending') {
+      return {
+        message: '작가 신청이 진행 중입니다. 관리자 승인 후 역할 전환을 요청해주세요.',
+        error: true,
+      };
+    }
+
     const representativeName = (formData.get('representative_name') as string | null)?.trim() || '';
     const contact = (formData.get('contact') as string | null)?.trim() || '';
     const bio = (formData.get('bio') as string | null)?.trim() || '';

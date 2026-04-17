@@ -264,6 +264,7 @@ const getSupabaseArtworkByIdUncached = async (id: string): Promise<Artwork | nul
     `
     )
     .eq('id', id)
+    .eq('is_hidden', false)
     .maybeSingle();
 
   if (error) {

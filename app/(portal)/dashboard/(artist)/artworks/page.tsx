@@ -11,9 +11,9 @@ import {
 import { getTranslations } from 'next-intl/server';
 
 type ArtworksPageProps = {
-  searchParams?: {
+  searchParams: Promise<{
     result?: string;
-  };
+  }>;
 };
 
 export default async function ArtworksPage({ searchParams }: ArtworksPageProps) {
@@ -22,12 +22,9 @@ export default async function ArtworksPage({ searchParams }: ArtworksPageProps) 
   const { artist } = await getArtistDashboardContext();
   const supabase = await createSupabaseServerClient();
 
+  const params = await searchParams;
   const flashMessage =
-    searchParams?.result === 'updated'
-      ? t('updated')
-      : searchParams?.result === 'created'
-        ? t('created')
-        : null;
+    params.result === 'updated' ? t('updated') : params.result === 'created' ? t('created') : null;
   const flashType: 'success' | 'warning' | 'error' | null = flashMessage ? 'success' : null;
 
   // Fetch artworks

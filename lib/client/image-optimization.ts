@@ -150,5 +150,10 @@ export async function optimizeArtworkImage(file: File): Promise<File> {
   const img = await loadImage(file);
   const baseName = file.name.replace(/\.[^/.]+$/, '');
 
-  return await renderToWebpFile(img, `${baseName}.webp`, 2560, 0.82);
+  try {
+    return await renderToWebpFile(img, `${baseName}.webp`, 2560, 0.82);
+  } catch {
+    // WebP 변환 실패 시 (일부 iOS HEIF 등) JPEG로 fallback
+    return await renderToFormatFile(img, `${baseName}.jpg`, 2560, 0.85, 'image/jpeg');
+  }
 }

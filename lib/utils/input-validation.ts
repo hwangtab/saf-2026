@@ -11,17 +11,18 @@ export function validateTextLength(value: string, max: number, fieldName: string
   return trimmed;
 }
 
-export function validateUrl(value: string | null): string | null {
+export function validateUrl(value: string | null, fieldName?: string): string | null {
   if (!value?.trim()) return null;
+  const label = fieldName ? `${fieldName} ` : '';
   try {
     const url = new URL(value.trim());
     if (!['http:', 'https:'].includes(url.protocol)) {
-      throw new Error('URL은 http 또는 https만 허용됩니다.');
+      throw new Error(`${label}URL은 http 또는 https만 허용됩니다.`);
     }
     return url.toString();
   } catch (error) {
     console.error('[input-validation] URL validation failed:', error);
-    throw new Error('유효하지 않은 URL 형식입니다.');
+    throw new Error(`${label}URL 형식이 올바르지 않습니다.`);
   }
 }
 

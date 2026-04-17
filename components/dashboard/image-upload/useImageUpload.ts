@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useMemo } from 'react';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
 import { optimizeArtworkImage, optimizeImage } from '@/lib/client/image-optimization';
 import { useToast } from '@/lib/hooks/useToast';
@@ -8,6 +8,7 @@ import type { UploadBucket, ImageUploadCopy } from './types';
 
 const UPLOAD_MAX_RETRIES = 2;
 const UPLOAD_RETRY_DELAY_BASE = 1000; // 1 second base delay for exponential backoff
+const MAX_FILE_SIZE = 30 * 1024 * 1024; // 30MB
 
 type UseImageUploadOptions = {
   bucket: UploadBucket;
@@ -31,10 +32,12 @@ export function useImageUpload({
   deleteOnRemove,
 }: UseImageUploadOptions) {
   const shouldDeleteOnRemove = deleteOnRemove ?? bucket !== 'artworks';
+  const currentUrlsRef = useRef(currentUrls);
+  currentUrlsRef.current = currentUrls;
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const supabase = createSupabaseBrowserClient();
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const toast = useToast();
 
   const uploadWithRetry = useCallback(
@@ -59,6 +62,19 @@ export function useImageUpload({
   const handleFiles = useCallback(
     async (files: File[]) => {
       if (files.length === 0) return;
+
+      const nonImageFiles = files.filter((f) => !f.type.startsWith('image/'));
+      if (nonImageFiles.length > 0) {
+        toast.error(copy.invalidFileType);
+        return;
+      }
+
+      const oversizedFiles = files.filter((f) => f.size > MAX_FILE_SIZE);
+      if (oversizedFiles.length > 0) {
+        toast.error(copy.fileTooLarge);
+        return;
+      }
+
       setUploading(true);
       setUploadProgress(null);
       const newUrls: string[] = [];
@@ -183,7 +199,8 @@ export function useImageUpload({
 
   const removeImage = useCallback(
     async (index: number) => {
-      const urlToRemove = currentUrls[index];
+      const urls = currentUrlsRef.current;
+      const urlToRemove = urls[index];
       const path = getStoragePathFromPublicUrl(urlToRemove);
 
       if (shouldDeleteOnRemove && path) {
@@ -195,13 +212,12 @@ export function useImageUpload({
         }
       }
 
-      const newUrls = currentUrls.filter((_, i) => i !== index);
+      const newUrls = currentUrlsRef.current.filter((_, i) => i !== index);
       applyUrls(newUrls);
     },
     [
       shouldDeleteOnRemove,
       bucket,
-      currentUrls,
       getStoragePathFromPublicUrl,
       supabase.storage,
       toast,

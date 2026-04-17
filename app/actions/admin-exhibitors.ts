@@ -96,7 +96,8 @@ export async function getExhibitors(filters?: {
     };
   });
 
-  // If query filter exists, we might want to filter in-memory for application fields if DB query didn't cover it
+  // DB 필터(email/name ilike)에 추가로 application 필드도 검색.
+  // DB 결과를 기반으로 application 필드 매치까지 확장.
   if (filters?.query) {
     const q = filters.query.toLowerCase();
     return exhibitors.filter(
@@ -172,10 +173,21 @@ export async function suspendExhibitor(userId: string) {
   const admin = await requireAdmin();
   const supabase = await createSupabaseAdminClient();
 
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', userId)
+    .maybeSingle();
+
+  if (!profile || profile.role !== 'exhibitor') {
+    throw new Error('출품자가 아닌 사용자는 정지할 수 없습니다.');
+  }
+
   const { error } = await supabase
     .from('profiles')
     .update({ status: 'suspended' })
-    .eq('id', userId);
+    .eq('id', userId)
+    .eq('role', 'exhibitor');
 
   if (error) {
     throw new Error('정지 처리 중 오류가 발생했습니다.');

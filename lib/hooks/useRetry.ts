@@ -74,6 +74,10 @@ export function useRetry<T>(
   const optionsRef = useRef(retryOptions);
   optionsRef.current = retryOptions;
 
+  // BUG 47: fn을 ref로 저장해 execute의 dep 불안정 방지
+  const fnRef = useRef(fn);
+  fnRef.current = fn;
+
   useEffect(() => {
     mountedRef.current = true;
     return () => {
@@ -94,7 +98,7 @@ export function useRetry<T>(
 
     try {
       const opts = optionsRef.current;
-      const result = await retry(fn, {
+      const result = await retry(fnRef.current, {
         ...opts,
         shouldRetry: opts.shouldRetry ?? isNetworkError,
         onRetry: (attempt, error, nextDelay) => {
@@ -133,7 +137,7 @@ export function useRetry<T>(
     } finally {
       executingRef.current = false;
     }
-  }, [fn]);
+  }, []);
 
   const retryNow = useCallback(async (): Promise<T | null> => {
     setState((prev) => ({ ...prev, error: null, retryCount: 0 }));

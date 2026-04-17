@@ -13,6 +13,10 @@ interface ModalProps {
   className?: string;
 }
 
+// BUG 37: 중첩 모달에서 scroll lock이 깨지는 문제 방지.
+// 모듈 레벨 카운터로 열린 모달 수를 추적, 0이 될 때만 overflow 복원.
+let activeModalCount = 0;
+
 export default function Modal({ isOpen, onClose, title, children, className }: ModalProps) {
   const [mounted, setMounted] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -22,12 +26,19 @@ export default function Modal({ isOpen, onClose, title, children, className }: M
     setMounted(true);
   }, []);
 
+  // BUG 37: 카운터 기반 scroll lock
   useEffect(() => {
     if (isOpen) {
+      activeModalCount += 1;
       document.body.style.overflow = 'hidden';
     }
     return () => {
-      document.body.style.overflow = 'unset';
+      if (isOpen) {
+        activeModalCount -= 1;
+        if (activeModalCount === 0) {
+          document.body.style.overflow = 'unset';
+        }
+      }
     };
   }, [isOpen]);
 
@@ -54,17 +65,21 @@ export default function Modal({ isOpen, onClose, title, children, className }: M
     const modal = modalRef.current;
     if (!modal) return;
 
-    const focusableElements = modal.querySelectorAll(
+    // Set initial focus
+    const initialFocusable = modal.querySelector<HTMLElement>(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
     );
-    const firstElement = focusableElements[0] as HTMLElement;
-    const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+    initialFocusable?.focus();
 
-    // Set initial focus
-    firstElement?.focus();
-
+    // BUG 36: focusable 요소를 Tab 입력마다 재계산해 동적 콘텐츠 변경을 반영
     const handleTab = (e: KeyboardEvent) => {
       if (e.key !== 'Tab') return;
+
+      const focusableElements = modal.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
 
       if (e.shiftKey) {
         if (document.activeElement === firstElement) {

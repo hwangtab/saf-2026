@@ -18,6 +18,8 @@ export type ImageUploadCopy = {
   uploading: (index: number, total: number) => string;
   uploadFailed: string;
   removeFailed: string;
+  invalidFileType: string;
+  fileTooLarge: string;
   zoomImage: string;
   imageAlt: (index: number) => string;
   addImage: string;
@@ -32,6 +34,8 @@ export const IMAGE_UPLOAD_COPY: Record<'ko' | 'en', ImageUploadCopy> = {
     uploading: (index: number, total: number) => `이미지 ${index}/${total}: 업로드 중...`,
     uploadFailed: '이미지 업로드에 실패했습니다. 잠시 후 다시 시도해주세요.',
     removeFailed: '이미지 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.',
+    invalidFileType: '이미지 파일만 업로드할 수 있습니다.',
+    fileTooLarge: '파일 크기는 30MB를 초과할 수 없습니다.',
     zoomImage: '이미지 확대하기',
     imageAlt: (index: number) => `이미지 ${index}`,
     addImage: '이미지 추가',
@@ -45,6 +49,8 @@ export const IMAGE_UPLOAD_COPY: Record<'ko' | 'en', ImageUploadCopy> = {
     uploading: (index: number, total: number) => `Image ${index}/${total}: uploading...`,
     uploadFailed: 'Failed to upload image. Please try again shortly.',
     removeFailed: 'Failed to remove image. Please try again shortly.',
+    invalidFileType: 'Only image files are allowed.',
+    fileTooLarge: 'File size must not exceed 30MB.',
     zoomImage: 'Zoom image',
     imageAlt: (index: number) => `Image ${index}`,
     addImage: 'Add image',

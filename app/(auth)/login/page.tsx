@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
 import {
   ARTIST_APPLICATION_CONSENT_SELECT,
@@ -56,7 +56,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [oauthLoading, setOauthLoading] = useState<'google' | null>(null);
   const router = useRouter();
-  const supabase = createSupabaseBrowserClient();
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
   const getOAuthRedirectUrl = () => {
     const envUrl = process.env.NEXT_PUBLIC_SITE_URL;

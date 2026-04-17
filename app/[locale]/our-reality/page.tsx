@@ -339,8 +339,9 @@ export default async function OurReality() {
       </div>
       {testimonialsData.map((group, groupIndex) => {
         const variants: ('white' | 'gray' | 'canvas-soft')[] = ['white', 'gray', 'canvas-soft'];
-        const currentVariant = variants[groupIndex];
-        const prevVariant = groupIndex > 0 ? variants[groupIndex - 1] : undefined;
+        const currentVariant = variants[groupIndex % variants.length];
+        const prevVariant =
+          groupIndex > 0 ? variants[(groupIndex - 1) % variants.length] : undefined;
 
         return (
           <Section key={group.category} variant={currentVariant} prevVariant={prevVariant}>

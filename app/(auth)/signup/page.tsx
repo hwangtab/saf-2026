@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -63,7 +63,7 @@ export default function SignUpPage() {
   const [oauthLoading, setOauthLoading] = useState<'google' | null>(null);
 
   const router = useRouter();
-  const supabase = createSupabaseBrowserClient();
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
   const getOAuthRedirectUrl = () => {
     const envUrl = process.env.NEXT_PUBLIC_SITE_URL;

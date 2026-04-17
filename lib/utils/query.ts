@@ -10,6 +10,7 @@ export function sanitizeIlikeQuery(query: string): string {
   return query
     .normalize('NFC')
     .trim()
+    .replace(/\\/g, '\\\\')
     .replace(/_/g, '\\_')
     .replace(/'/g, "''")
     .replace(/[%(),]/g, ' ')

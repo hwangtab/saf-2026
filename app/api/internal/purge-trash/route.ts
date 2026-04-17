@@ -9,6 +9,8 @@ const TRASHABLE_ACTIONS = [
   'artist_deleted',
   'artist_artwork_deleted',
   'batch_artwork_deleted',
+  'exhibitor_artwork_deleted',
+  'exhibitor_artist_deleted',
 ];
 
 function asObject(value: unknown): Record<string, unknown> | null {

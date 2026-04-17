@@ -1,5 +1,15 @@
 [
   {
+    "hash": "7ff0558b",
+    "type": "fix",
+    "scope": "security",
+    "subject": "Phase 4 블라인드스팟 7건 수정 — 로그 노출·캐시·artwork 정리",
+    "summary": "activity-log-writer 보안 구멍 봉쇄, 주문 취소/결제 보정 시 artwork 상태·캐시 누락 수정, SEO 스키마 빈 이미지 배열 방어",
+    "body": "- S1+S2: writeActivityLog/resolveActorIdentity를 _log-internals.ts로 격리\n  → 'use server' 파일에서 admin client 직접 노출 제거\n  → logAdminAction의 adminId 우회 경로 제거 (requireAdmin() 항상 실행)\n- P1: order-lookup cancelBuyerOrder — artwork 상태 복원 후 revalidatePublicArtworkSurfaces 추가\n- P2: order-lookup lookupOrders — buyer_email ilike 쿼리에 sanitizeIlikeQuery 적용\n- P3: checkout createBankTransferOrder — artwork reserved 후 캐시 무효화 추가\n- P4+P5: lib/schemas/artwork.ts generateArtworkMetadata/JsonLd — images[0] ?? '' 빈 배열 방어\n- P6: admin-orders updateOrderStatus — paid→cancelled 시 artwork_sales void + deriveAndSyncArtworkStatus 호출\n- P7: reconcile-payments DONE 보정 경로 — artwork_sales INSERT 후 deriveAndSync + 캐시 무효화 추가",
+    "date": "2026-04-16",
+    "author": "황경하"
+  },
+  {
     "hash": "d25706cb",
     "type": "fix",
     "scope": "cache",

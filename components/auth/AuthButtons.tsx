@@ -125,12 +125,12 @@ export default memo(function AuthButtons({
     const init = async () => {
       try {
         const {
-          data: { session },
-        } = await supabase.auth.getSession();
+          data: { user },
+        } = await supabase.auth.getUser();
 
         if (!isMounted) return;
 
-        const currentId = session?.user?.id || null;
+        const currentId = user?.id || null;
         userIdRef.current = currentId;
         setUserId(currentId);
 

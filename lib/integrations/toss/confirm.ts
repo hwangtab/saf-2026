@@ -38,7 +38,22 @@ export async function confirmPayment(
     body: JSON.stringify(request),
   });
 
-  const body = await response.json();
+  const text = await response.text();
+  let body: unknown;
+  try {
+    body = JSON.parse(text);
+  } catch {
+    if (!response.ok) {
+      return {
+        success: false,
+        error: {
+          code: 'PARSE_ERROR',
+          message: `Toss 응답 파싱 실패 (${response.status}): ${text.slice(0, 200)}`,
+        } as TossErrorResponse,
+      };
+    }
+    throw new Error(`Toss 응답 파싱 실패: ${text.slice(0, 200)}`);
+  }
 
   if (!response.ok) {
     return { success: false, error: body as TossErrorResponse };

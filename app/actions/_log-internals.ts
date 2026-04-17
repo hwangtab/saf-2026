@@ -27,6 +27,8 @@ const TRASHABLE_DELETE_ACTIONS = new Set([
   'artist_deleted',
   'artist_artwork_deleted',
   'batch_artwork_deleted',
+  'exhibitor_artwork_deleted',
+  'exhibitor_artist_deleted',
 ]);
 
 function isTrashableDeleteAction(action: string) {

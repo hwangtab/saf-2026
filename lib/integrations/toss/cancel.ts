@@ -5,7 +5,12 @@
 
 import { getTossAuthHeader, getTossConfig } from './config';
 import { fetchWithTimeout } from './fetch-with-timeout';
-import type { TossCancelRequest, CancelResult } from './types';
+import type {
+  TossCancelRequest,
+  CancelResult,
+  TossErrorResponse,
+  TossCancelResponse,
+} from './types';
 
 /**
  * Calls POST /v1/payments/{paymentKey}/cancel with Basic Auth.
@@ -36,11 +41,26 @@ export async function cancelPayment(
     body: JSON.stringify(request),
   });
 
-  const body = await response.json();
-
-  if (!response.ok) {
-    return { success: false, error: body };
+  const text = await response.text();
+  let body: unknown;
+  try {
+    body = JSON.parse(text);
+  } catch {
+    if (!response.ok) {
+      return {
+        success: false,
+        error: {
+          code: 'PARSE_ERROR',
+          message: `Toss 응답 파싱 실패 (${response.status}): ${text.slice(0, 200)}`,
+        },
+      };
+    }
+    throw new Error(`Toss 응답 파싱 실패: ${text.slice(0, 200)}`);
   }
 
-  return { success: true, data: body };
+  if (!response.ok) {
+    return { success: false, error: body as TossErrorResponse };
+  }
+
+  return { success: true, data: body as TossCancelResponse };
 }

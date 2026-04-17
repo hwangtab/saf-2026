@@ -441,7 +441,7 @@ export function TermsConsentForm({
                 {copy.agreeArtist} <span className="text-red-500">*</span>
               </label>
               <p className="mt-1 text-gray-500">
-                {hasReadArtistTerms ? copy.readRequired : copy.readGuide}
+                {hasReadArtistTerms ? copy.readGuide : copy.readRequired}
               </p>
               <p className="mt-1 text-xs text-charcoal-soft">
                 <Link href="/terms/artist" className="underline underline-offset-2">
@@ -513,7 +513,7 @@ export function TermsConsentForm({
                 {copy.agreeExhibitor} <span className="text-red-500">*</span>
               </label>
               <p className="mt-1 text-gray-500">
-                {hasReadExhibitorTerms ? copy.readRequired : copy.readGuide}
+                {hasReadExhibitorTerms ? copy.readGuide : copy.readRequired}
               </p>
               <p className="mt-1 text-xs text-charcoal-soft">
                 <Link href="/terms/exhibitor" className="underline underline-offset-2">
@@ -583,7 +583,7 @@ export function TermsConsentForm({
                 {copy.agreePrivacy} <span className="text-red-500">*</span>
               </label>
               <p className="mt-1 text-gray-500">
-                {hasReadPrivacy ? copy.readRequired : copy.readGuide}
+                {hasReadPrivacy ? copy.readGuide : copy.readRequired}
               </p>
               <p className="mt-1 text-xs text-charcoal-soft">
                 <Link href="/privacy" className="underline underline-offset-2">
@@ -665,7 +665,7 @@ export function TermsConsentForm({
                 {copy.agreeTos} <span className="text-red-500">*</span>
               </label>
               <p className="mt-1 text-gray-500">
-                {hasReadTos ? copy.readRequired : copy.readGuide}
+                {hasReadTos ? copy.readGuide : copy.readRequired}
               </p>
               <p className="mt-1 text-xs text-charcoal-soft">
                 <Link href="/terms" className="underline underline-offset-2">

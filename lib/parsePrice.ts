@@ -11,5 +11,5 @@ export function parsePrice(priceValue: string | number | null | undefined): numb
   const numericStr = priceStr.replace(/[^\d]/g, '');
   const parsed = parseInt(numericStr, 10);
 
-  return isNaN(parsed) || parsed === 0 ? Infinity : parsed;
+  return isNaN(parsed) ? Infinity : parsed;
 }

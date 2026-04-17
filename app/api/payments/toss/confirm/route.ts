@@ -1,3 +1,4 @@
+import { after } from 'next/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 
@@ -159,7 +160,7 @@ export async function POST(req: NextRequest) {
   // 레이스 컨디션: Toss 결제 성공 but 주문이 이미 취소된 경우 — 자동 환불
   // (cancelPendingOrder가 confirm API 호출 중 동시에 실행된 경우)
   if (isDone && !orderUpdateError && (!updatedOrders || updatedOrders.length === 0)) {
-    void (async () => {
+    after(async () => {
       const { cancelPayment } = await import('@/lib/integrations/toss/cancel');
       try {
         await cancelPayment(
@@ -175,7 +176,7 @@ export async function POST(req: NextRequest) {
         paymentKey: paymentKey as string,
         참고: '결제 승인과 주문 취소가 동시에 발생. 자동 환불을 시도했으나 결과를 수동 확인해주세요.',
       });
-    })();
+    });
   }
 
   // If fully paid, insert artwork_sales record

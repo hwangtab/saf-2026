@@ -19,9 +19,8 @@ export function revalidatePublicArtworkSurfaces(
   );
 
   uniqueArtistNames.forEach((name) => {
-    const slug = encodeURIComponent(name);
-    revalidatePath(`/artworks/artist/${slug}`);
-    revalidatePath(`/en/artworks/artist/${slug}`);
+    revalidatePath(`/artworks/artist/${name}`);
+    revalidatePath(`/en/artworks/artist/${name}`);
   });
 
   revalidateTag('artworks', 'max');

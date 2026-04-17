@@ -38,6 +38,7 @@ export default async function CheckoutPage({ params }: Props) {
     .from('artworks')
     .select('id, title, price, status, images, artists(name_ko)')
     .eq('id', artworkId)
+    .eq('is_hidden', false)
     .single();
 
   if (error) {
@@ -48,7 +49,7 @@ export default async function CheckoutPage({ params }: Props) {
     notFound();
   }
 
-  if (artwork.status === 'sold') {
+  if (artwork.status === 'sold' || artwork.status === 'reserved') {
     redirect(`/artworks/${artworkId}`);
   }
 

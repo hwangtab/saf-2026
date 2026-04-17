@@ -46,6 +46,8 @@ const TRASHABLE_DELETE_ACTIONS = new Set([
   'artist_deleted',
   'artist_artwork_deleted',
   'batch_artwork_deleted',
+  'exhibitor_artwork_deleted',
+  'exhibitor_artist_deleted',
 ]);
 const TRASHABLE_DELETE_ACTION_LIST = Array.from(TRASHABLE_DELETE_ACTIONS);
 
@@ -61,7 +63,7 @@ async function enrichActivityLogActors(logs: ActivityLogEntry[]): Promise<Activi
     (log) =>
       !log.actor_name &&
       !log.actor_email &&
-      (log.actor_role === 'admin' || log.actor_role === 'artist')
+      (log.actor_role === 'admin' || log.actor_role === 'artist' || log.actor_role === 'exhibitor')
   );
 
   if (unresolvedLogs.length === 0) return logs;
@@ -97,7 +99,8 @@ async function enrichActivityLogActors(logs: ActivityLogEntry[]): Promise<Activi
 
   return logs.map((log) => {
     if (log.actor_name || log.actor_email) return log;
-    if (log.actor_role !== 'admin' && log.actor_role !== 'artist') return log;
+    if (log.actor_role !== 'admin' && log.actor_role !== 'artist' && log.actor_role !== 'exhibitor')
+      return log;
 
     const profile = profileMap.get(log.actor_id);
     if (!profile && log.actor_role !== 'artist') return log;

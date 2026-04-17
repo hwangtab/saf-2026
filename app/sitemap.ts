@@ -7,7 +7,7 @@ import { CATEGORY_EN_MAP } from '@/lib/artwork-category';
 import { resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import { STORY_CATEGORIES } from '@/types';
 
-export const dynamic = 'force-static';
+export const revalidate = 3600;
 
 function localizedUrl(baseUrl: string, path: string, locale: string): string {
   if (locale === routing.defaultLocale) {

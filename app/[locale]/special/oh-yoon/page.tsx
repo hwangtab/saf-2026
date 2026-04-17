@@ -119,7 +119,7 @@ export default async function OhYoonPage() {
     isOhYoonArtist(artwork.artist)
   );
   const OH_YOON_ARTWORKS: ArtworkListItem[] = ohYoonFullArtworks.map(
-    ({ profile: _profile, history: _history, ...rest }: Artwork) => rest
+    ({ profile: _p, history: _h, profile_en: _pe, history_en: _he, ...rest }: Artwork) => rest
   );
   const artworkCountLabel = new Intl.NumberFormat(locale === 'en' ? 'en-US' : 'ko-KR').format(
     OH_YOON_ARTWORKS.length

@@ -19,6 +19,7 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/dashboard') ||
     pathname.startsWith('/exhibitor') ||
     pathname.startsWith('/onboarding') ||
+    pathname.startsWith('/auth/') ||
     pathname.startsWith('/login') ||
     pathname.startsWith('/signup') ||
     pathname.startsWith('/terms-consent')

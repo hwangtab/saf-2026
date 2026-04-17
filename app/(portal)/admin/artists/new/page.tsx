@@ -2,15 +2,14 @@ import { requireAdmin } from '@/lib/auth/guards';
 import { ArtistEditForm } from '../artist-edit-form';
 
 type AdminNewArtistPageProps = {
-  searchParams?: { returnTo?: string | string[] };
+  searchParams: Promise<{ returnTo?: string | string[] }>;
 };
 
 export default async function AdminNewArtistPage({ searchParams }: AdminNewArtistPageProps) {
   await requireAdmin();
 
-  const returnToRaw = Array.isArray(searchParams?.returnTo)
-    ? searchParams?.returnTo[0]
-    : searchParams?.returnTo;
+  const params = await searchParams;
+  const returnToRaw = Array.isArray(params.returnTo) ? params.returnTo[0] : params.returnTo;
   const returnTo = returnToRaw?.startsWith('/admin/') ? returnToRaw : undefined;
 
   return (

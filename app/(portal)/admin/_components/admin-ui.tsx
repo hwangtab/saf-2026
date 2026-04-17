@@ -67,7 +67,7 @@ export function AdminInput({ className, ...props }: InputHTMLAttributes<HTMLInpu
   return (
     <input
       className={cn(
-        'block h-11 w-full rounded-md border border-[var(--admin-border)] bg-white px-3 text-sm text-charcoal-deep shadow-sm focus-visible:outline-nonetransition placeholder:text-charcoal-soft focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/25 disabled:cursor-not-allowed disabled:bg-charcoal/10 disabled:text-charcoal-soft',
+        'block h-11 w-full rounded-md border border-[var(--admin-border)] bg-white px-3 text-sm text-charcoal-deep shadow-sm focus-visible:outline-none transition placeholder:text-charcoal-soft focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/25 disabled:cursor-not-allowed disabled:bg-charcoal/10 disabled:text-charcoal-soft',
         className
       )}
       {...props}
@@ -82,7 +82,7 @@ export function AdminTextarea({
   return (
     <textarea
       className={cn(
-        'block w-full rounded-md border border-[var(--admin-border)] bg-white px-3 py-2.5 text-sm text-charcoal-deep shadow-sm focus-visible:outline-nonetransition placeholder:text-charcoal-soft focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/25 disabled:cursor-not-allowed disabled:bg-charcoal/10 disabled:text-charcoal-soft',
+        'block w-full rounded-md border border-[var(--admin-border)] bg-white px-3 py-2.5 text-sm text-charcoal-deep shadow-sm focus-visible:outline-none transition placeholder:text-charcoal-soft focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/25 disabled:cursor-not-allowed disabled:bg-charcoal/10 disabled:text-charcoal-soft',
         className
       )}
       {...props}
@@ -182,7 +182,7 @@ export function AdminSelect({
     <div className={cn('relative', wrapperClassName)}>
       <select
         className={cn(
-          'block h-11 w-full appearance-none rounded-md border border-[var(--admin-border)] bg-white px-3 pr-9 text-sm text-charcoal shadow-sm focus-visible:outline-nonetransition focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/25 disabled:cursor-not-allowed disabled:bg-charcoal/10 disabled:text-charcoal-soft',
+          'block h-11 w-full appearance-none rounded-md border border-[var(--admin-border)] bg-white px-3 pr-9 text-sm text-charcoal shadow-sm focus-visible:outline-none transition focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/25 disabled:cursor-not-allowed disabled:bg-charcoal/10 disabled:text-charcoal-soft',
           className
         )}
         {...props}

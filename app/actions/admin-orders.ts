@@ -367,6 +367,10 @@ export async function updateOrderStatus(
     updated_at: new Date().toISOString(),
   };
 
+  if (newStatus === 'cancelled') {
+    updatePayload.cancelled_at = new Date().toISOString();
+  }
+
   if (newStatus === 'shipped' && trackingInfo?.carrier) {
     updatePayload.shipping_carrier = trackingInfo.carrier;
     updatePayload.tracking_number = trackingInfo.trackingNumber || null;
