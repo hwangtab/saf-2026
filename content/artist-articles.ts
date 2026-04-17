@@ -2792,15 +2792,6 @@ export const artistArticles: Record<string, Article[]> = {
     },
   ],
 
-  이문형: [
-    {
-      url: 'https://koreasmartcoop.cafe24.com/product/%EC%B1%85%EA%B1%B0%EB%A6%ACx%ED%82%A4%EC%8A%A4%ED%95%B4%EB%A7%81-%EC%9D%B4%EB%AC%B8%ED%98%95/85/',
-      title: '책거리x키스해링 - 이문형',
-      description:
-        '책거리x키스해링 - 이문형, 씨앗페 온라인 갤러리, 이문형,씨앗페,SAF2026,미술,예술,작품, 씨앗페 온라인, 한지위에 수묵채색 | 60.6×40.9cm,',
-      source: '씨앗페 온라인 갤러리',
-    },
-  ],
   류호식: [
     {
       url: 'https://clayseoul.kr/entry/%EB%A5%98%ED%98%B8%EC%8B%9D-%EC%95%88%EC%98%A8%ED%95%98%EA%B3%A0-%ED%8F%89%EC%95%88%ED%95%9C-%EC%A7%91-Aug-2024',

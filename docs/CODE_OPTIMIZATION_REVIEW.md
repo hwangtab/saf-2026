@@ -265,7 +265,7 @@ export function CTAButtonGroup({
       <Button href="https://www.socialfunch.org/SAF" variant="primary" size="lg">
         {donateText}
       </Button>
-      <Button href="https://auto-graph.co.kr" variant="secondary" size="lg">
+      <Button href="https://www.saf2026.com" variant="secondary" size="lg">
         {purchaseText}
       </Button>
     </div>

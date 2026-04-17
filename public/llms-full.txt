@@ -125,8 +125,6 @@ English versions available at `/en/` prefix (e.g., `/en/artworks`).
 - **Online gallery**: Open year-round at https://www.saf2026.com
 - **Address**: 41-1 Insadong-gil, Jongno-gu, Seoul, Korea
 - **Admission**: Free
-- **3D Online Gallery**: https://auto-graph.co.kr
-- **Shop**: https://koreasmartcoop.cafe24.com
 
 ---
 

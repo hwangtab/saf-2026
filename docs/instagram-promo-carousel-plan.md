@@ -452,8 +452,6 @@ S4와 동일한 레이아웃 구조. 아래 내용만 변경:
 | 용도                 | URL                                      |
 | -------------------- | ---------------------------------------- |
 | SAF 공식 사이트      | https://www.saf2026.com                  |
-| 온라인샵 (작품 구매) | https://koreasmartcoop.cafe24.com        |
-| 온라인 갤러리        | https://auto-graph.co.kr                 |
 | 후원 (소셜펀치)      | https://www.socialfunch.org/SAF          |
 | 우리의 현실 (통계)   | https://www.saf2026.com/our-reality      |
 | 운용 보고서 (투명성) | https://www.saf2026.com/transparency     |

@@ -257,8 +257,7 @@ All external links must have `target="_blank" rel="noopener noreferrer"`.
 Key URLs (defined in `lib/constants.ts`):
 
 - Donate: https://www.socialfunch.org/SAF
-- Online Gallery: https://auto-graph.co.kr
-- Shop: https://koreasmartcoop.cafe24.com
+- Online Gallery: https://www.saf2026.com
 
 ## Video Pipeline (Remotion + edge-tts)
 
