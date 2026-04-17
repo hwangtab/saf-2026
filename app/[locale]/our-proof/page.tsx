@@ -363,7 +363,7 @@ export default async function OurProof() {
                   </tr>
                   <tr className="border-b">
                     <td className="px-6 py-4 font-semibold">Interest rate</td>
-                    <td className="px-6 py-4 text-center text-red-500">15-30%</td>
+                    <td className="px-6 py-4 text-center text-danger">15-30%</td>
                     <td className="px-6 py-4 text-center text-primary font-semibold">
                       Fixed 5% APR
                     </td>
@@ -673,7 +673,7 @@ export default async function OurProof() {
                 </tr>
                 <tr className="border-b">
                   <td className="px-6 py-4 font-semibold">금리</td>
-                  <td className="px-6 py-4 text-center text-red-500">15~30%</td>
+                  <td className="px-6 py-4 text-center text-danger">15~30%</td>
                   <td className="px-6 py-4 text-center text-primary font-semibold">연 5% 고정</td>
                 </tr>
                 <tr className="border-b">

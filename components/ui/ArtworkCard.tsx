@@ -71,7 +71,10 @@ const getImageAlt = (
 function SoldBadge({ variant, label }: { variant: ArtworkCardVariant; label: string }) {
   return (
     <div
-      className={cn('absolute bg-red-600 text-white font-bold', VARIANT_CONFIG[variant].soldBadge)}
+      className={cn(
+        'absolute bg-danger-a11y text-white font-bold',
+        VARIANT_CONFIG[variant].soldBadge
+      )}
     >
       {label}
     </div>
@@ -80,12 +83,7 @@ function SoldBadge({ variant, label }: { variant: ArtworkCardVariant; label: str
 
 function ReservedBadge({ variant, label }: { variant: ArtworkCardVariant; label: string }) {
   return (
-    <div
-      className={cn(
-        'absolute bg-amber-500 text-white font-bold',
-        VARIANT_CONFIG[variant].soldBadge
-      )}
-    >
+    <div className={cn('absolute bg-sun text-white font-bold', VARIANT_CONFIG[variant].soldBadge)}>
       {label}
     </div>
   );

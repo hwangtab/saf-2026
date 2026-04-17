@@ -194,7 +194,7 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
     <form action={formAction} className="space-y-6" onSubmit={handleSubmitAttempt}>
       <div>
         <label htmlFor="representative_name" className="block text-sm font-medium text-charcoal">
-          {t('representativeName')} <span className="text-red-500">*</span>
+          {t('representativeName')} <span className="text-danger">*</span>
         </label>
         <div className="mt-1">
           <input
@@ -211,7 +211,7 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
 
       <div>
         <label htmlFor="contact" className="block text-sm font-medium text-charcoal">
-          {t('contact')} <span className="text-red-500">*</span>
+          {t('contact')} <span className="text-danger">*</span>
         </label>
         <div className="mt-1">
           <input
@@ -228,7 +228,7 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
 
       <div>
         <label htmlFor="bio" className="block text-sm font-medium text-charcoal">
-          {t('bio')} <span className="text-red-500">*</span>
+          {t('bio')} <span className="text-danger">*</span>
         </label>
         <div className="mt-1">
           <textarea
@@ -294,9 +294,9 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
               )}
             </div>
             {!hasReadTerms && (
-              <div className="mt-1 flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
-                <span className="text-sm text-amber-600">↓</span>
-                <p className="text-xs font-medium text-amber-800">{t('scrollHint')}</p>
+              <div className="mt-1 flex items-center gap-2 rounded-lg border border-sun-soft bg-sun-soft px-3 py-2">
+                <span className="text-sm text-sun-strong">↓</span>
+                <p className="text-xs font-medium text-sun-strong">{t('scrollHint')}</p>
               </div>
             )}
           </div>
@@ -328,9 +328,9 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
               )}
             </div>
             {!hasReadTos && (
-              <div className="mt-1 flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
-                <span className="text-sm text-amber-600">↓</span>
-                <p className="text-xs font-medium text-amber-800">{t('scrollHint')}</p>
+              <div className="mt-1 flex items-center gap-2 rounded-lg border border-sun-soft bg-sun-soft px-3 py-2">
+                <span className="text-sm text-sun-strong">↓</span>
+                <p className="text-xs font-medium text-sun-strong">{t('scrollHint')}</p>
               </div>
             )}
           </div>
@@ -362,9 +362,9 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
               )}
             </div>
             {!hasReadPrivacy && (
-              <div className="mt-1 flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
-                <span className="text-sm text-amber-600">↓</span>
-                <p className="text-xs font-medium text-amber-800">{t('scrollHint')}</p>
+              <div className="mt-1 flex items-center gap-2 rounded-lg border border-sun-soft bg-sun-soft px-3 py-2">
+                <span className="text-sm text-sun-strong">↓</span>
+                <p className="text-xs font-medium text-sun-strong">{t('scrollHint')}</p>
               </div>
             )}
           </div>
@@ -389,7 +389,7 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
           />
           <div className="text-sm">
             <label htmlFor="terms_accepted" className="font-medium text-charcoal">
-              {t('agreeAll')} <span className="text-red-500">*</span>
+              {t('agreeAll')} <span className="text-danger">*</span>
             </label>
             <p className="mt-1 text-gray-500">
               {allRead ? t('allReadGuide') : t('needScrollGuide')}
@@ -414,9 +414,9 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
 
       <div className="pt-4 border-t border-gray-200">
         <div className="flex justify-end items-center gap-4">
-          {state.error && actionMessage && <p className="text-red-500 text-sm">{actionMessage}</p>}
+          {state.error && actionMessage && <p className="text-danger text-sm">{actionMessage}</p>}
           {state.message && !state.error && (
-            <p className="text-green-600 text-sm flex items-center gap-1">
+            <p className="text-success-a11y text-sm flex items-center gap-1">
               <CheckMarkIcon />
               {t('submitted')}
             </p>

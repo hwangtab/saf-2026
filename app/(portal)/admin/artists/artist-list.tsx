@@ -142,9 +142,9 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
   return (
     <div className="space-y-6">
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg text-sm flex items-center justify-between">
+        <div className="bg-danger/10 border border-danger/30 text-danger-a11y p-4 rounded-lg text-sm flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+            <svg className="w-5 h-5 text-danger" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fillRule="evenodd"
                 d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
@@ -156,7 +156,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
           <button
             type="button"
             onClick={() => setError(null)}
-            className="text-red-500 hover:text-red-700 p-1 hover:bg-red-100 rounded-full transition-colors"
+            className="text-danger hover:text-danger-a11y p-1 hover:bg-danger/20 rounded-full transition-colors"
             aria-label={t('closeError')}
           >
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -341,11 +341,11 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {artist.user_id ? (
-                        <span className="inline-flex items-center rounded-md bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
+                        <span className="inline-flex items-center rounded-md bg-success/10 px-2 py-1 text-xs font-medium text-success-a11y ring-1 ring-inset ring-success-a11y/20">
                           {t('linked')}
                         </span>
                       ) : (
-                        <span className="inline-flex items-center rounded-md bg-amber-50 px-2 py-1 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-600/20">
+                        <span className="inline-flex items-center rounded-md bg-sun-soft px-2 py-1 text-xs font-medium text-sun-strong ring-1 ring-inset ring-sun-strong/20">
                           {t('unlinked')}
                         </span>
                       )}
@@ -366,7 +366,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
                         <Button
                           variant="white"
                           size="sm"
-                          className="text-gray-400 hover:text-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="text-gray-400 hover:text-danger-a11y disabled:opacity-50 disabled:cursor-not-allowed"
                           onClick={() => setDeleteTargetId(artist.id)}
                           loading={processingId === artist.id}
                           disabled={processingId !== null}

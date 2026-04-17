@@ -69,7 +69,7 @@ export function ProfileForm({ artist, userId }: { artist: any; userId: string })
         {/* Name KO */}
         <div className="sm:col-span-3">
           <AdminFieldLabel htmlFor="name_ko">
-            {t('nameKo')} <span className="text-red-500">*</span>
+            {t('nameKo')} <span className="text-danger">*</span>
           </AdminFieldLabel>
           <div className="mt-1">
             <AdminInput
@@ -186,9 +186,9 @@ export function ProfileForm({ artist, userId }: { artist: any; userId: string })
 
       <div className="pt-5 border-t border-gray-200">
         <div className="flex justify-end items-center gap-4">
-          {state.error && actionMessage && <p className="text-red-500 text-sm">{actionMessage}</p>}
+          {state.error && actionMessage && <p className="text-danger text-sm">{actionMessage}</p>}
           {state.message && !state.error && (
-            <p className="text-green-600 text-sm flex items-center gap-1">
+            <p className="text-success-a11y text-sm flex items-center gap-1">
               <CheckMarkIcon />
               {t('saved')}
             </p>

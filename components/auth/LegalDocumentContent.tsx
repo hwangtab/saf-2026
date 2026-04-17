@@ -79,7 +79,7 @@ export function LegalDocumentContent({ document }: LegalDocumentContentProps) {
             </p>
           )}
         </header>
-        <div className="space-y-2 rounded-md bg-amber-50 p-3 text-amber-900">
+        <div className="space-y-2 rounded-md bg-sun-soft p-3 text-sun-strong">
           <p>
             This document is currently available in Korean only. Please review the Korean original
             text before agreeing.

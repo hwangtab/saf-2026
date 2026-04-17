@@ -152,7 +152,7 @@ export function UserTable({
                             className={`inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-medium ring-1 ring-inset ${
                               user.exhibitorApplication
                                 ? 'bg-primary-surface text-primary-strong ring-primary-a11y/20'
-                                : 'bg-emerald-50 text-emerald-700 ring-emerald-600/20'
+                                : 'bg-success/10 text-success-a11y ring-success-a11y/20'
                             }`}
                           >
                             {user.exhibitorApplication
@@ -169,19 +169,19 @@ export function UserTable({
                     <span
                       className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium ring-1 ring-inset relative group cursor-help ${
                         user.status === 'active'
-                          ? 'bg-green-50 text-green-700 ring-green-600/20'
+                          ? 'bg-success/10 text-success-a11y ring-success-a11y/20'
                           : user.status === 'pending'
-                            ? 'bg-yellow-50 text-yellow-800 ring-yellow-600/20'
-                            : 'bg-red-50 text-red-700 ring-red-600/10'
+                            ? 'bg-sun-soft text-sun-strong ring-sun-strong/20'
+                            : 'bg-danger/10 text-danger-a11y ring-danger-a11y/10'
                       }`}
                     >
                       <span
                         className={`h-1.5 w-1.5 rounded-full ${
                           user.status === 'active'
-                            ? 'bg-green-600'
+                            ? 'bg-success-a11y'
                             : user.status === 'pending'
-                              ? 'bg-yellow-600'
-                              : 'bg-red-600'
+                              ? 'bg-sun-strong'
+                              : 'bg-danger-a11y'
                         }`}
                       />
                       {user.status === 'active'
@@ -212,7 +212,7 @@ export function UserTable({
                       <option value="admin">{t('roleAdmin')}</option>
                     </AdminSelect>
                     {user.status === 'pending' && (
-                      <span className="text-[11px] text-amber-700">{t('reviewQueueHint')}</span>
+                      <span className="text-[11px] text-sun-strong">{t('reviewQueueHint')}</span>
                     )}
                   </div>
                 </td>
@@ -269,7 +269,7 @@ export function UserTable({
                         size="sm"
                         onClick={() => onReject(user.id)}
                         disabled={processingId === user.id}
-                        className="text-red-600 hover:text-red-900 hover:bg-red-50 disabled:opacity-50"
+                        className="text-danger-a11y hover:text-danger-a11y hover:bg-danger/10 disabled:opacity-50"
                       >
                         {user.status === 'pending' ? t('rejectApplication') : t('suspendAccount')}
                       </Button>
@@ -280,7 +280,7 @@ export function UserTable({
                         size="sm"
                         onClick={() => onReactivate(user.id)}
                         disabled={processingId === user.id}
-                        className="text-blue-700 hover:text-blue-900 hover:bg-blue-50 disabled:opacity-50"
+                        className="text-primary-strong hover:text-primary-strong hover:bg-primary-surface disabled:opacity-50"
                       >
                         {t('reactivate')}
                       </Button>

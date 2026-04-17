@@ -117,7 +117,7 @@ export default function SuccessClient({ paymentKey, orderId, amount, method }: P
     return (
       <div className="min-h-screen bg-canvas-soft flex items-center justify-center pt-24 pb-16">
         <div className="max-w-lg w-full mx-auto px-4 text-center">
-          <div className="rounded-2xl border border-red-100 bg-white p-10 shadow-sm">
+          <div className="rounded-2xl border border-danger/20 bg-white p-10 shadow-sm">
             <p className="text-4xl mb-4">!</p>
             <h1 className="text-xl font-bold text-charcoal mb-2">{t('confirmationFailed')}</h1>
             <p className="text-sm text-gray-600 mb-6">{errorMessage}</p>

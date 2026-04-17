@@ -50,7 +50,7 @@ export default function SearchResultItem({ artwork, onSelect }: SearchResultItem
         </span>
       )}
       {artwork.reserved && !artwork.sold && (
-        <span className="flex-shrink-0 text-xs font-medium text-amber-700 bg-amber-100 px-2 py-0.5 rounded">
+        <span className="flex-shrink-0 text-xs font-medium text-sun-strong bg-sun-soft px-2 py-0.5 rounded">
           {tFilters('reserved')}
         </span>
       )}

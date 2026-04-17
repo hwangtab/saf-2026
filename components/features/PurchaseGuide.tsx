@@ -105,7 +105,7 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
         <button
           type="button"
           onClick={() => setIsModalOpen(true)}
-          className="w-full flex items-center justify-center gap-1 text-sm text-blue-600 hover:underline font-medium pt-2 border-t border-gray-200"
+          className="w-full flex items-center justify-center gap-1 text-sm text-primary-a11y hover:underline font-medium pt-2 border-t border-gray-200"
         >
           {copy.viewAll}
           <ChevronRight className="w-4 h-4" />

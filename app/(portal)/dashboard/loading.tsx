@@ -16,7 +16,7 @@ export default function ArtistDashboardLoading() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <div className="hidden h-6 w-24 animate-pulse rounded-full bg-green-50 sm:block" />
+            <div className="hidden h-6 w-24 animate-pulse rounded-full bg-success/10 sm:block" />
             <div className="h-8 w-20 animate-pulse rounded bg-gray-100" />
           </div>
         </div>

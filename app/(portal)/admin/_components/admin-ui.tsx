@@ -108,9 +108,9 @@ export function AdminBadge({
         'inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset relative group cursor-help focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2',
         tone === 'default' && 'bg-charcoal/10 text-charcoal-muted ring-charcoal/15',
         tone === 'info' && 'bg-primary-surface text-primary-strong ring-primary-a11y/20',
-        tone === 'success' && 'bg-emerald-50 text-emerald-700 ring-emerald-600/20',
-        tone === 'warning' && 'bg-amber-50 text-amber-800 ring-amber-600/25',
-        tone === 'danger' && 'bg-rose-50 text-rose-700 ring-rose-600/20',
+        tone === 'success' && 'bg-success/10 text-success-a11y ring-success-a11y/20',
+        tone === 'warning' && 'bg-sun-soft text-sun-strong ring-sun-strong/25',
+        tone === 'danger' && 'bg-danger/10 text-danger-a11y ring-danger-a11y/20',
         className
       )}
       role="note"

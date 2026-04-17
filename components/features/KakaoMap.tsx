@@ -86,9 +86,9 @@ export default function KakaoMap(props?: KakaoMapProps): React.JSX.Element {
   if (error) {
     console.error('Kakao map load error', error);
     return (
-      <div className="flex h-[400px] w-full items-center justify-center rounded-lg border border-red-200 bg-red-50 text-sm text-red-600">
+      <div className="flex h-[400px] w-full items-center justify-center rounded-lg border border-danger/30 bg-danger/10 text-sm text-danger-a11y">
         {copy.loadFailed}
-        <span className="ml-2 text-xs text-red-500">{String(error)}</span>
+        <span className="ml-2 text-xs text-danger">{String(error)}</span>
       </div>
     );
   }

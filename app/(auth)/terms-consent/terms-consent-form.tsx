@@ -414,9 +414,9 @@ export function TermsConsentForm({
             )}
           </div>
           {!hasReadArtistTerms && (
-            <div className="mb-3 flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
-              <span className="text-sm text-amber-600">↓</span>
-              <p className="text-xs font-medium text-amber-800">{copy.scrollHint}</p>
+            <div className="mb-3 flex items-center gap-2 rounded-lg border border-sun-soft bg-sun-soft px-3 py-2">
+              <span className="text-sm text-sun-strong">↓</span>
+              <p className="text-xs font-medium text-sun-strong">{copy.scrollHint}</p>
             </div>
           )}
 
@@ -438,7 +438,7 @@ export function TermsConsentForm({
             />
             <div className="text-sm">
               <label htmlFor="agree_artist" className="font-medium text-charcoal">
-                {copy.agreeArtist} <span className="text-red-500">*</span>
+                {copy.agreeArtist} <span className="text-danger">*</span>
               </label>
               <p className="mt-1 text-gray-500">
                 {hasReadArtistTerms ? copy.readGuide : copy.readRequired}
@@ -484,9 +484,9 @@ export function TermsConsentForm({
             )}
           </div>
           {!hasReadExhibitorTerms && (
-            <div className="mb-3 flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
-              <span className="text-sm text-amber-600">↓</span>
-              <p className="text-xs font-medium text-amber-800">{copy.scrollHint}</p>
+            <div className="mb-3 flex items-center gap-2 rounded-lg border border-sun-soft bg-sun-soft px-3 py-2">
+              <span className="text-sm text-sun-strong">↓</span>
+              <p className="text-xs font-medium text-sun-strong">{copy.scrollHint}</p>
             </div>
           )}
 
@@ -510,7 +510,7 @@ export function TermsConsentForm({
             />
             <div className="text-sm">
               <label htmlFor="agree_exhibitor" className="font-medium text-charcoal">
-                {copy.agreeExhibitor} <span className="text-red-500">*</span>
+                {copy.agreeExhibitor} <span className="text-danger">*</span>
               </label>
               <p className="mt-1 text-gray-500">
                 {hasReadExhibitorTerms ? copy.readGuide : copy.readRequired}
@@ -556,9 +556,9 @@ export function TermsConsentForm({
             )}
           </div>
           {!hasReadPrivacy && (
-            <div className="mb-3 flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
-              <span className="text-sm text-amber-600">↓</span>
-              <p className="text-xs font-medium text-amber-800">{copy.scrollHint}</p>
+            <div className="mb-3 flex items-center gap-2 rounded-lg border border-sun-soft bg-sun-soft px-3 py-2">
+              <span className="text-sm text-sun-strong">↓</span>
+              <p className="text-xs font-medium text-sun-strong">{copy.scrollHint}</p>
             </div>
           )}
 
@@ -580,7 +580,7 @@ export function TermsConsentForm({
             />
             <div className="text-sm">
               <label htmlFor="agree_privacy" className="font-medium text-charcoal">
-                {copy.agreePrivacy} <span className="text-red-500">*</span>
+                {copy.agreePrivacy} <span className="text-danger">*</span>
               </label>
               <p className="mt-1 text-gray-500">
                 {hasReadPrivacy ? copy.readGuide : copy.readRequired}
@@ -638,9 +638,9 @@ export function TermsConsentForm({
             )}
           </div>
           {!hasReadTos && (
-            <div className="mb-3 flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
-              <span className="text-sm text-amber-600">↓</span>
-              <p className="text-xs font-medium text-amber-800">{copy.scrollHint}</p>
+            <div className="mb-3 flex items-center gap-2 rounded-lg border border-sun-soft bg-sun-soft px-3 py-2">
+              <span className="text-sm text-sun-strong">↓</span>
+              <p className="text-xs font-medium text-sun-strong">{copy.scrollHint}</p>
             </div>
           )}
 
@@ -662,7 +662,7 @@ export function TermsConsentForm({
             />
             <div className="text-sm">
               <label htmlFor="agree_tos" className="font-medium text-charcoal">
-                {copy.agreeTos} <span className="text-red-500">*</span>
+                {copy.agreeTos} <span className="text-danger">*</span>
               </label>
               <p className="mt-1 text-gray-500">
                 {hasReadTos ? copy.readGuide : copy.readRequired}
@@ -678,7 +678,7 @@ export function TermsConsentForm({
       )}
 
       <div className="flex items-center justify-between gap-3 border-t border-gray-100 pt-4">
-        {state.error && <p className="text-sm text-red-600">{state.message}</p>}
+        {state.error && <p className="text-sm text-danger-a11y">{state.message}</p>}
         <Button type="submit" loading={isPending} disabled={isPending} variant="secondary">
           {copy.continueAfterConsent}
         </Button>

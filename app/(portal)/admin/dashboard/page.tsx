@@ -76,9 +76,9 @@ export default async function AdminDashboardPage() {
     console.error('Dashboard Stats Error:', error);
     return (
       <div className="p-8">
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-          <h2 className="text-lg font-semibold text-red-800">{t('loadErrorTitle')}</h2>
-          <p className="mt-2 text-sm text-red-600">{t('loadErrorMessage')}</p>
+        <div className="rounded-lg border border-danger/30 bg-danger/10 p-4">
+          <h2 className="text-lg font-semibold text-danger-a11y">{t('loadErrorTitle')}</h2>
+          <p className="mt-2 text-sm text-danger-a11y">{t('loadErrorMessage')}</p>
         </div>
       </div>
     );
@@ -187,14 +187,14 @@ export default async function AdminDashboardPage() {
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {stats.siteAnalytics ? (
           <>
-            <AdminCard className="flex h-full flex-col justify-between bg-emerald-50/50 p-6 transition-[transform,box-shadow] duration-200">
+            <AdminCard className="flex h-full flex-col justify-between bg-success/10/50 p-6 transition-[transform,box-shadow] duration-200">
               <div>
-                <p className="text-sm font-medium text-emerald-700">{t('realtimeVisitors')}</p>
-                <p className="mt-2 text-3xl font-bold tracking-tight text-emerald-900">
+                <p className="text-sm font-medium text-success-a11y">{t('realtimeVisitors')}</p>
+                <p className="mt-2 text-3xl font-bold tracking-tight text-success-a11y">
                   {numberFormatter.format(stats.siteAnalytics.realtimeVisitors)}
                 </p>
               </div>
-              <p className="mt-2 text-sm text-emerald-600">{t('recentFiveMin')}</p>
+              <p className="mt-2 text-sm text-success-a11y">{t('recentFiveMin')}</p>
             </AdminCard>
             <StatCard
               title={t('pageViews30d')}
@@ -301,11 +301,11 @@ export default async function AdminDashboardPage() {
                         <span
                           className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
                             item.category === 'bug'
-                              ? 'bg-red-100 text-red-700'
+                              ? 'bg-danger/20 text-danger-a11y'
                               : item.category === 'improvement'
-                                ? 'bg-blue-100 text-blue-700'
+                                ? 'bg-primary-soft text-primary-strong'
                                 : item.category === 'question'
-                                  ? 'bg-amber-100 text-amber-700'
+                                  ? 'bg-sun-soft text-sun-strong'
                                   : 'bg-gray-100 text-gray-700'
                           }`}
                         >
@@ -377,14 +377,14 @@ export default async function AdminDashboardPage() {
                             <span
                               className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
                                 isPending
-                                  ? 'bg-amber-100 text-amber-700'
+                                  ? 'bg-sun-soft text-sun-strong'
                                   : ['paid', 'preparing', 'shipped', 'delivered'].includes(
                                         order.status
                                       )
                                     ? 'bg-primary-soft text-primary-strong'
                                     : order.status === 'completed'
-                                      ? 'bg-emerald-100 text-emerald-700'
-                                      : 'bg-rose-100 text-rose-700'
+                                      ? 'bg-success/20 text-success-a11y'
+                                      : 'bg-danger/20 text-danger-a11y'
                               }`}
                             >
                               {t(statusKey)}

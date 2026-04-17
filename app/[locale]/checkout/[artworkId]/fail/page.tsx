@@ -22,7 +22,7 @@ export default async function FailPage({ params, searchParams }: Props) {
   return (
     <div className="min-h-screen bg-canvas-soft flex items-center justify-center pt-24 pb-16">
       <div className="max-w-lg w-full mx-auto px-4">
-        <div className="rounded-2xl border border-red-100 bg-white p-10 shadow-sm text-center">
+        <div className="rounded-2xl border border-danger/20 bg-white p-10 shadow-sm text-center">
           <p className="text-4xl mb-4">✗</p>
           <h1 className="text-2xl font-bold text-charcoal mb-2">{t('paymentFailed')}</h1>
 

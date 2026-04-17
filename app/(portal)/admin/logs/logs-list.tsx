@@ -108,7 +108,7 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
       >
         <div className="mt-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            {t('revertReasonLabel')} <span className="text-red-500">*</span>
+            {t('revertReasonLabel')} <span className="text-danger">*</span>
           </label>
           <textarea
             value={revertReason}
@@ -171,7 +171,7 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                         <div className="flex flex-wrap items-center gap-2">
                           <span>{formatActionDescription(log, locale)}</span>
                           {canShowDiff && (
-                            <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-medium text-blue-700">
+                            <span className="rounded-full bg-primary-surface px-2 py-0.5 text-[11px] font-medium text-primary-strong">
                               {t('changesCount', { count: totalDiffCount })}
                             </span>
                           )}
@@ -213,13 +213,13 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                           <button
                             type="button"
                             onClick={() => setRevertTargetId(log.id)}
-                            className="rounded-md border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800 hover:bg-amber-100"
+                            className="rounded-md border border-sun-soft bg-sun-soft px-2.5 py-1 text-xs font-medium text-sun-strong hover:bg-sun-soft"
                             title={t('revertTitle')}
                           >
                             {t('revertButton')}
                           </button>
                         ) : log.reverted_at ? (
-                          <span className="text-xs text-green-700">{t('reverted')}</span>
+                          <span className="text-xs text-success-a11y">{t('reverted')}</span>
                         ) : (
                           <span
                             className="text-xs text-gray-400"
@@ -240,7 +240,7 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                           </div>
                           {(snapshotWarnings.missingInAfter.length > 0 ||
                             snapshotWarnings.addedInAfter.length > 0) && (
-                            <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+                            <div className="rounded-md border border-sun-soft bg-sun-soft px-3 py-2 text-xs text-sun-strong">
                               {snapshotWarnings.missingInAfter.length > 0 && (
                                 <div>
                                   {t('missingInAfter', {
@@ -298,10 +298,10 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                                         <td className="px-3 py-2 text-gray-700">
                                           {getFieldLabel(change.field, t, log.target_type)}
                                         </td>
-                                        <td className="px-3 py-2 text-rose-700 whitespace-pre-wrap break-all">
+                                        <td className="px-3 py-2 text-danger-a11y whitespace-pre-wrap break-all">
                                           {formatDiffValue(change.before, change.field, t)}
                                         </td>
-                                        <td className="px-3 py-2 text-emerald-700 whitespace-pre-wrap break-all">
+                                        <td className="px-3 py-2 text-success-a11y whitespace-pre-wrap break-all">
                                           {formatDiffValue(change.after, change.field, t)}
                                         </td>
                                       </tr>

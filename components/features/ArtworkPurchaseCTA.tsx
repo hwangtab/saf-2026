@@ -75,9 +75,9 @@ export default function ArtworkPurchaseCTA({
   // E분기: reserved — 예약 중 안내
   if (reserved && !sold) {
     return (
-      <div className="rounded-2xl border border-amber-200 bg-gradient-to-b from-amber-50/50 to-white p-6 shadow-sm">
+      <div className="rounded-2xl border border-sun-soft bg-gradient-to-b from-sun-soft/50 to-white p-6 shadow-sm">
         <div className="text-center">
-          <Clock className="w-10 h-10 text-amber-500 mx-auto mb-3" />
+          <Clock className="w-10 h-10 text-sun mx-auto mb-3" />
           <p className="text-lg font-bold text-charcoal mb-1">{t('reservedNotice')}</p>
           <p className="text-sm text-gray-500 mb-4">{t('reservedExplore')}</p>
           <LinkButton href="/artworks" variant="outline" className="w-full">
@@ -98,9 +98,9 @@ export default function ArtworkPurchaseCTA({
         : '/artworks';
 
     return (
-      <div className="rounded-2xl border border-gray-200 bg-gradient-to-b from-green-50/50 to-white p-6 shadow-sm">
+      <div className="rounded-2xl border border-gray-200 bg-gradient-to-b from-success/10/50 to-white p-6 shadow-sm">
         <div className="text-center">
-          <CheckCircle className="w-10 h-10 text-green-500 mx-auto mb-3" />
+          <CheckCircle className="w-10 h-10 text-success mx-auto mb-3" />
           <p className="text-lg font-bold text-charcoal mb-1">{t('soldNotice')}</p>
           <p className="text-sm text-gray-500 mb-4">{t('soldExploreOther')}</p>
           <LinkButton href={fallbackHref} variant="outline" className="w-full">

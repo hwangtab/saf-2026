@@ -268,12 +268,12 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
     <div className="space-y-6">
       {/* Error Message */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-700 flex items-center justify-between">
+        <div className="bg-danger/10 border border-danger/30 rounded-lg p-4 text-sm text-danger-a11y flex items-center justify-between">
           <span>{error}</span>
           <button
             type="button"
             onClick={() => setError(null)}
-            className="ml-4 text-red-500 hover:text-red-700"
+            className="ml-4 text-danger hover:text-danger-a11y"
             aria-label="오류 메시지 닫기"
           >
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -312,11 +312,11 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
 
             {linkedProfile ? (
               <div className="space-y-4">
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <div className="bg-success/10 border border-success/30 rounded-lg p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-green-900">{linkedProfile.name}</p>
-                      <p className="text-sm text-green-700">{maskEmail(linkedProfile.email)}</p>
+                      <p className="text-sm font-medium text-success-a11y">{linkedProfile.name}</p>
+                      <p className="text-sm text-success-a11y">{maskEmail(linkedProfile.email)}</p>
                     </div>
                     <Button
                       type="button"
@@ -324,7 +324,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
                       size="sm"
                       onClick={() => setShowUnlinkConfirm(true)}
                       disabled={isLinking}
-                      className="text-red-600 hover:text-red-700 border-red-200"
+                      className="text-danger-a11y hover:text-danger-a11y border-danger/30"
                     >
                       연결 해제
                     </Button>
@@ -371,11 +371,11 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
                     <p className="text-xs text-primary-a11y">사용자 계정을 검색 중입니다...</p>
                   )}
                   {isSearchSlow && (
-                    <p className="text-xs text-amber-600">
+                    <p className="text-xs text-sun-strong">
                       검색이 평소보다 오래 걸리고 있습니다. 잠시만 기다려주세요.
                     </p>
                   )}
-                  {searchError && <p className="text-xs text-red-600">{searchError}</p>}
+                  {searchError && <p className="text-xs text-danger-a11y">{searchError}</p>}
                 </div>
 
                 {searchResults.length > 0 && (
@@ -421,7 +421,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
           </AdminCard>
         </div>
       ) : (
-        <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800">
+        <div className="rounded-lg border border-primary-soft bg-primary-surface p-4 text-sm text-primary-strong">
           프로필 이미지 및 사용자 연동은 작가 정보를 먼저 저장한 뒤 진행할 수 있습니다.
         </div>
       )}
@@ -473,7 +473,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
             <label htmlFor="name_ko" className="block text-sm font-medium text-gray-700 mb-2">
-              작가명 (한글) <span className="text-red-500">*</span>
+              작가명 (한글) <span className="text-danger">*</span>
             </label>
             <input
               id="name_ko"
@@ -483,11 +483,11 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
               required
               className={cn(
                 'w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y transition-colors',
-                showErrors && !nameKo.trim() ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                showErrors && !nameKo.trim() ? 'border-danger bg-danger/10' : 'border-gray-300'
               )}
             />
             {showErrors && !nameKo.trim() && (
-              <p className="mt-1 text-xs text-red-600">작가 이름을 입력해주세요.</p>
+              <p className="mt-1 text-xs text-danger-a11y">작가 이름을 입력해주세요.</p>
             )}
           </div>
 

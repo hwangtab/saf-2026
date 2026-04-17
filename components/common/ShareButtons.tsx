@@ -183,8 +183,8 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
         <div
           className={clsx(
             'w-8 h-8 flex items-center justify-center rounded-full transition-colors duration-200',
-            copyStatus === 'copied' && 'bg-green-500 text-white',
-            copyStatus === 'error' && 'bg-red-500 text-white',
+            copyStatus === 'copied' && 'bg-success text-white',
+            copyStatus === 'error' && 'bg-danger text-white',
             copyStatus === 'idle' && 'bg-gray-200 text-gray-600 hover:bg-gray-300'
           )}
         >

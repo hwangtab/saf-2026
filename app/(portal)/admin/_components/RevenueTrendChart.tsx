@@ -68,8 +68,8 @@ function RevenueTooltip({
           point.growthRate === null
             ? 'text-gray-500'
             : point.growthRate >= 0
-              ? 'text-green-600'
-              : 'text-red-600'
+              ? 'text-success-a11y'
+              : 'text-danger-a11y'
         }
       >
         {growthRateLabel}:{' '}

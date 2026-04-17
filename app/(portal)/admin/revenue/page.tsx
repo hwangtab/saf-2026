@@ -29,7 +29,7 @@ function formatChangeRate(changeRate: number | null) {
 
 function getChangeRateClass(changeRate: number | null) {
   if (changeRate === null) return 'text-gray-500';
-  return changeRate >= 0 ? 'text-green-600' : 'text-red-600';
+  return changeRate >= 0 ? 'text-success-a11y' : 'text-danger-a11y';
 }
 
 function formatShare(value: number | null) {
@@ -58,9 +58,9 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
     console.error('Revenue Analytics Error:', error);
     return (
       <div className="p-8">
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-          <h2 className="text-lg font-semibold text-red-800">{t('loadErrorTitle')}</h2>
-          <p className="mt-2 text-sm text-red-600">{t('loadErrorMessage')}</p>
+        <div className="rounded-lg border border-danger/30 bg-danger/10 p-4">
+          <h2 className="text-lg font-semibold text-danger-a11y">{t('loadErrorTitle')}</h2>
+          <p className="mt-2 text-sm text-danger-a11y">{t('loadErrorMessage')}</p>
         </div>
       </div>
     );
@@ -112,9 +112,9 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
       </div>
 
       {analytics.dataQuality.soldWithoutSoldAtCount > 0 ? (
-        <AdminCard className="border-amber-200 bg-amber-50 p-4">
-          <p className="text-sm font-semibold text-amber-900">{t('dataWarningTitle')}</p>
-          <p className="mt-1 text-sm text-amber-800">
+        <AdminCard className="border-sun-soft bg-sun-soft p-4">
+          <p className="text-sm font-semibold text-sun-strong">{t('dataWarningTitle')}</p>
+          <p className="mt-1 text-sm text-sun-strong">
             {t('dataWarningDescPrefix')}{' '}
             {numberFormatter.format(analytics.dataQuality.soldWithoutSoldAtCount)}.{' '}
             {t('dataWarningDescSuffix')}

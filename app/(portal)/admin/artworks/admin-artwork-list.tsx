@@ -529,7 +529,7 @@ export function AdminArtworkList({
     <div className="space-y-6">
       <AdminCard className="overflow-hidden">
         {isTruncated && (
-          <div className="border-b border-amber-200 bg-amber-50 px-6 py-3 text-sm text-amber-800">
+          <div className="border-b border-sun-soft bg-sun-soft px-6 py-3 text-sm text-sun-strong">
             {t('truncatedNotice', { count: maxRows })}{' '}
             <span className="font-medium">{t('downloadAllArtworks')}</span>
           </div>
@@ -651,7 +651,7 @@ export function AdminArtworkList({
                 variant="white"
                 onClick={() => setShowBatchDeleteConfirm(true)}
                 disabled={batchProcessing}
-                className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                className="text-danger-a11y hover:text-danger-a11y hover:bg-danger/10 border-danger/30"
               >
                 {t('delete')}
               </Button>
@@ -850,10 +850,10 @@ export function AdminArtworkList({
                         disabled={processingId === artwork.id}
                         className={`py-1 pl-2.5 pr-7 text-xs font-semibold ${
                           artwork.status === 'available'
-                            ? 'border-green-200 bg-green-50 text-green-700 focus:border-green-400'
+                            ? 'border-success/30 bg-success/10 text-success-a11y focus:border-success/60'
                             : artwork.status === 'reserved'
-                              ? 'border-amber-200 bg-amber-50 text-amber-700 focus:border-amber-400'
-                              : 'border-sky-200 bg-sky-50 text-sky-700 focus:border-sky-400'
+                              ? 'border-sun-soft bg-sun-soft text-sun-strong focus:border-sun/60'
+                              : 'border-primary-soft bg-primary-surface text-primary-strong focus:border-primary/60'
                         }`}
                       >
                         <option value="available">{t('available')}</option>
@@ -912,7 +912,7 @@ export function AdminArtworkList({
                           size="sm"
                           onClick={() => setDeleteConfirm({ id: artwork.id, title: artwork.title })}
                           disabled={processingId === artwork.id}
-                          className="text-gray-400 hover:text-red-600 hover:bg-red-50 px-2"
+                          className="text-gray-400 hover:text-danger-a11y hover:bg-danger/10 px-2"
                         >
                           {t('delete')}
                         </Button>

@@ -292,8 +292,8 @@ async function HeroSection({ locale }: { locale: 'ko' | 'en' }) {
             >
               <Badge className="gap-2 bg-white/15 backdrop-blur-sm border-white/20 text-white font-medium px-4 py-1.5">
                 <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400" />
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success/60 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-success/60" />
                 </span>
                 {t('alwaysAvailable', { date: formatCurrentDate(locale) })}
               </Badge>

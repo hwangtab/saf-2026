@@ -180,7 +180,7 @@ export function CRUDManager<T extends { id: string }>({
                 <Button
                   type="button"
                   variant="white"
-                  className="text-red-600"
+                  className="text-danger-a11y"
                   onClick={() => setDeleteTargetId(item.id)}
                   loading={processingId === item.id}
                   disabled={processingId !== null || creating || savingId !== null}

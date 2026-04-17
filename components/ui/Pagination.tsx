@@ -133,7 +133,7 @@ export function Pagination({
                 className={cn(
                   'flex h-8 min-w-8 items-center justify-center rounded-md px-2 text-sm font-medium transition-colors tabular-nums',
                   isCurrentPage
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-primary-a11y text-white'
                     : 'border border-gray-300 bg-white text-charcoal hover:bg-gray-50'
                 )}
                 aria-current={isCurrentPage ? 'page' : undefined}

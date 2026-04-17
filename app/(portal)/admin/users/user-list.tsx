@@ -665,8 +665,8 @@ export function UserList({
                   <span
                     className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
                       selectedUser.status === 'active'
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-yellow-100 text-yellow-800'
+                        ? 'bg-success/20 text-success-a11y'
+                        : 'bg-sun-soft text-sun-strong'
                     }`}
                   >
                     {{
@@ -822,7 +822,7 @@ export function UserList({
                   }
                   className={`rounded-lg border px-3 py-2 text-left text-sm transition-colors ${
                     artistPromoteContext.mode === 'role_only'
-                      ? 'border-amber-500 bg-amber-50 text-amber-700'
+                      ? 'border-sun bg-sun-soft text-sun-strong'
                       : 'border-gray-200 hover:bg-gray-50'
                   }`}
                 >
@@ -853,7 +853,7 @@ export function UserList({
 
                 <div aria-live="polite" className="min-h-[1.25rem] text-xs">
                   {linkedNameConflicts.length > 0 && (
-                    <p className="rounded-md border border-amber-200 bg-amber-50 px-2 py-1 text-amber-700">
+                    <p className="rounded-md border border-sun-soft bg-sun-soft px-2 py-1 text-sun-strong">
                       {t('linkedNameConflicts', { count: linkedNameConflicts.length })}{' '}
                       {linkedNameConflicts
                         .map(
@@ -864,7 +864,7 @@ export function UserList({
                     </p>
                   )}
                   {linkedNameConflictError && (
-                    <p className="text-amber-700">{linkedNameConflictError}</p>
+                    <p className="text-sun-strong">{linkedNameConflictError}</p>
                   )}
                   {artistSearchQuery.trim().length < 2 && (
                     <p className="text-gray-500">{t('searchMinChars')}</p>
@@ -872,8 +872,8 @@ export function UserList({
                   {artistSearchQuery.trim().length >= 2 && isSearchingArtists && (
                     <p className="text-primary-a11y">{t('searchingUnlinkedArtist')}</p>
                   )}
-                  {isArtistSearchSlow && <p className="text-amber-600">{t('searchSlow')}</p>}
-                  {artistSearchError && <p className="text-rose-600">{artistSearchError}</p>}
+                  {isArtistSearchSlow && <p className="text-sun-strong">{t('searchSlow')}</p>}
+                  {artistSearchError && <p className="text-danger-a11y">{artistSearchError}</p>}
                 </div>
 
                 <div className="max-h-56 overflow-y-auto rounded-lg border border-gray-200 divide-y divide-gray-100">
@@ -918,7 +918,7 @@ export function UserList({
                             </div>
                             <div className="flex items-center gap-2">
                               {isRecommended && (
-                                <span className="rounded-md bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700 ring-1 ring-emerald-600/20">
+                                <span className="rounded-md bg-success/10 px-2 py-0.5 text-[11px] font-medium text-success-a11y ring-1 ring-success-a11y/20">
                                   {t('recommended')}
                                 </span>
                               )}
@@ -955,7 +955,7 @@ export function UserList({
                   <li>{t('summaryCreateArtist')}</li>
                 )}
                 {artistPromoteContext.mode === 'role_only' && (
-                  <li className="text-amber-700">{t('summaryRoleOnly')}</li>
+                  <li className="text-sun-strong">{t('summaryRoleOnly')}</li>
                 )}
               </ul>
             </div>

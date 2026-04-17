@@ -210,7 +210,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
             {/* Images Upload */}
             <div className="sm:col-span-6">
               <AdminFieldLabel>
-                {t('images')} <span className="text-red-500">*</span>
+                {t('images')} <span className="text-danger">*</span>
               </AdminFieldLabel>
               <ImageUpload
                 bucket="artworks"
@@ -233,7 +233,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
             {/* Title */}
             <div className="sm:col-span-4">
               <AdminFieldLabel htmlFor="title">
-                {t('title')} <span className="text-red-500">*</span>
+                {t('title')} <span className="text-danger">*</span>
               </AdminFieldLabel>
               <AdminInput
                 type="text"
@@ -261,7 +261,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
             {/* Price */}
             <div className="sm:col-span-2">
               <AdminFieldLabel htmlFor="price">
-                {t('price')} <span className="text-red-500">*</span>
+                {t('price')} <span className="text-danger">*</span>
               </AdminFieldLabel>
               <div className="relative mt-1 rounded-md shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -372,7 +372,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
             {/* Edition Type */}
             <div className="sm:col-span-2">
               <AdminFieldLabel htmlFor="edition_type">
-                {t('editionType')} <span className="text-red-500">*</span>
+                {t('editionType')} <span className="text-danger">*</span>
               </AdminFieldLabel>
               <AdminSelect
                 id="edition_type"
@@ -397,7 +397,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
             {editionType === 'limited' && (
               <div className="sm:col-span-2">
                 <AdminFieldLabel htmlFor="edition_limit">
-                  {t('editionLimit')} <span className="text-red-500">*</span>
+                  {t('editionLimit')} <span className="text-danger">*</span>
                 </AdminFieldLabel>
                 <AdminInput
                   type="number"
@@ -480,7 +480,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
           </Button>
         </div>
         {state.error && actionErrorMessage && (
-          <p className="mt-2 text-right text-sm text-rose-600">{actionErrorMessage}</p>
+          <p className="mt-2 text-right text-sm text-danger-a11y">{actionErrorMessage}</p>
         )}
       </div>
     </form>

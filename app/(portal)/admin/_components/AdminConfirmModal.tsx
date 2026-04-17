@@ -41,9 +41,9 @@ export function AdminConfirmModal({
           <div
             className={cn(
               'flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full',
-              variant === 'danger' && 'bg-rose-50 text-rose-600',
-              variant === 'warning' && 'bg-amber-50 text-amber-600',
-              variant === 'info' && 'bg-blue-50 text-blue-600'
+              variant === 'danger' && 'bg-danger/10 text-danger-a11y',
+              variant === 'warning' && 'bg-sun-soft text-sun-strong',
+              variant === 'info' && 'bg-primary-surface text-primary-a11y'
             )}
           >
             {variant === 'danger' && (
@@ -93,7 +93,8 @@ export function AdminConfirmModal({
           <Button
             variant={variant === 'danger' ? 'primary' : 'primary'} // Button doesn't have danger variant, will use primary
             className={cn(
-              variant === 'danger' && 'bg-rose-600 hover:bg-rose-700 text-white border-rose-600'
+              variant === 'danger' &&
+                'bg-danger-a11y hover:bg-danger-a11y text-white border-danger-a11y'
             )}
             onClick={onConfirm}
             loading={isLoading}

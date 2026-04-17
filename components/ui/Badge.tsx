@@ -12,10 +12,10 @@ interface BadgeProps {
 
 const toneClasses: Record<BadgeTone, string> = {
   default: 'bg-gray-100 text-charcoal-muted',
-  info: 'bg-blue-50 text-blue-700',
-  success: 'bg-green-50 text-green-700',
-  warning: 'bg-yellow-50 text-yellow-700',
-  danger: 'bg-red-50 text-red-600',
+  info: 'bg-primary-surface text-primary-strong',
+  success: 'bg-success/10 text-success-a11y',
+  warning: 'bg-sun-soft text-sun-strong',
+  danger: 'bg-danger/10 text-danger-a11y',
   'outline-primary': 'border border-primary text-primary bg-transparent',
 };
 

@@ -59,12 +59,12 @@ export default function HeroGalleryGrid({ artworks }: HeroGalleryGridProps) {
             </div>
 
             {artwork.sold && (
-              <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded">
+              <div className="absolute top-2 right-2 bg-danger-a11y text-white text-xs font-bold px-2 py-0.5 rounded">
                 {t('soldBadge')}
               </div>
             )}
             {artwork.reserved && !artwork.sold && (
-              <div className="absolute top-2 right-2 bg-amber-500 text-white text-xs font-bold px-2 py-0.5 rounded">
+              <div className="absolute top-2 right-2 bg-sun text-white text-xs font-bold px-2 py-0.5 rounded">
                 {t('reservedBadge')}
               </div>
             )}

@@ -47,7 +47,7 @@ export function IncompleteItemsModal({
           {items.map((item) => (
             <li
               key={`${item.label}-${item.reason}`}
-              className="rounded-lg border border-amber-200 bg-amber-50 p-3"
+              className="rounded-lg border border-sun-soft bg-sun-soft p-3"
             >
               {onSelectItem && item.targetId ? (
                 <button
@@ -56,12 +56,12 @@ export function IncompleteItemsModal({
                   className="w-full rounded text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 >
                   <p className="text-sm font-semibold text-gray-800">{item.label}</p>
-                  <p className="mt-1 text-xs text-amber-800">{item.reason}</p>
+                  <p className="mt-1 text-xs text-sun-strong">{item.reason}</p>
                 </button>
               ) : (
                 <>
                   <p className="text-sm font-semibold text-gray-800">{item.label}</p>
-                  <p className="mt-1 text-xs text-amber-800">{item.reason}</p>
+                  <p className="mt-1 text-xs text-sun-strong">{item.reason}</p>
                 </>
               )}
             </li>

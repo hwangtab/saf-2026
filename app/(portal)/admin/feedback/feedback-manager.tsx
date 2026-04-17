@@ -18,16 +18,16 @@ import { updateFeedbackStatus } from '@/app/actions/feedback';
 import type { Feedback, FeedbackCategory, FeedbackStatus } from '@/types';
 
 const CATEGORY_COLORS: Record<FeedbackCategory, string> = {
-  bug: 'bg-red-100 text-red-700',
-  improvement: 'bg-blue-100 text-blue-700',
-  question: 'bg-amber-100 text-amber-700',
+  bug: 'bg-danger/20 text-danger-a11y',
+  improvement: 'bg-primary-soft text-primary-strong',
+  question: 'bg-sun-soft text-sun-strong',
   other: 'bg-gray-100 text-gray-700',
 };
 
 const STATUS_COLORS: Record<FeedbackStatus, string> = {
-  open: 'bg-emerald-100 text-emerald-700',
-  reviewing: 'bg-yellow-100 text-yellow-700',
-  resolved: 'bg-blue-100 text-blue-700',
+  open: 'bg-success/20 text-success-a11y',
+  reviewing: 'bg-sun-soft text-sun-strong',
+  resolved: 'bg-primary-soft text-primary-strong',
   closed: 'bg-gray-100 text-gray-500',
 };
 

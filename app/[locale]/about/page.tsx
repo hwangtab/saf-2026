@@ -510,7 +510,7 @@ export default async function AboutPage() {
               <thead>
                 <tr className="border-b-2 border-charcoal">
                   <th className="py-4 pr-4 text-sm font-bold text-charcoal-deep">항목</th>
-                  <th className="py-4 px-4 text-sm font-bold text-red-600">기존 금융</th>
+                  <th className="py-4 px-4 text-sm font-bold text-danger-a11y">기존 금융</th>
                   <th className="py-4 pl-4 text-sm font-bold text-primary-strong">상호부조 대출</th>
                 </tr>
               </thead>
@@ -524,7 +524,7 @@ export default async function AboutPage() {
                 ].map(([label, old, mutual], i) => (
                   <tr key={label} className={i < 4 ? 'border-b border-gray-200' : ''}>
                     <td className="py-4 pr-4 font-medium text-charcoal-deep">{label}</td>
-                    <td className="py-4 px-4 text-red-600/80">{old}</td>
+                    <td className="py-4 px-4 text-danger-a11y/80">{old}</td>
                     <td className="py-4 pl-4 text-primary-strong font-medium">{mutual}</td>
                   </tr>
                 ))}

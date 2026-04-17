@@ -82,7 +82,7 @@ export function RevenueCard({ title, value, subtitle, trend }: RevenueCardProps)
       {subtitle && <p className="mt-2 text-sm text-gray-500">{subtitle}</p>}
       {trend && (
         <div className="mt-4 flex items-center text-sm">
-          <span className={trend.isPositive ? 'text-green-600' : 'text-red-600'}>
+          <span className={trend.isPositive ? 'text-success-a11y' : 'text-danger-a11y'}>
             {trend.isPositive ? '▲' : '▼'} {trendValue}%
           </span>
           <span className="ml-2 text-gray-500">직전 동일 기간 대비</span>

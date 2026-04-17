@@ -147,11 +147,11 @@ export function ArtworkList({
                         <p className="truncate">{formatPriceForDisplay(artwork.price)}</p>
                         <p>
                           {artwork.status === 'sold' ? (
-                            <span className="font-medium text-rose-600">{t('sold')}</span>
+                            <span className="font-medium text-danger-a11y">{t('sold')}</span>
                           ) : artwork.status === 'reserved' ? (
-                            <span className="font-medium text-amber-600">{t('reserved')}</span>
+                            <span className="font-medium text-sun-strong">{t('reserved')}</span>
                           ) : (
-                            <span className="font-medium text-emerald-600">{t('available')}</span>
+                            <span className="font-medium text-success-a11y">{t('available')}</span>
                           )}
                         </p>
                       </div>
@@ -174,7 +174,7 @@ export function ArtworkList({
                   <Button
                     variant="white"
                     size="sm"
-                    className="text-rose-600 hover:border-rose-200 hover:text-rose-700"
+                    className="text-danger-a11y hover:border-danger/30 hover:text-danger-a11y"
                     onClick={() => setDeleteTarget(artwork.id)}
                     loading={isDeleting === artwork.id}
                     disabled={!!isDeleting}

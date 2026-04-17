@@ -46,7 +46,7 @@ const SECTION_STYLES: Record<SectionVariant, VariantStyle> = {
   'accent-soft': { bg: 'bg-accent-soft', from: 'from-accent-soft', to: 'to-accent-soft' },
   sun: { bg: 'bg-sun', from: 'from-sun', to: 'to-sun' },
   'sun-soft': { bg: 'bg-sun-soft', from: 'from-sun-soft', to: 'to-sun-soft' },
-  red: { bg: 'bg-red-100', from: 'from-red-100', to: 'to-red-100' },
+  red: { bg: 'bg-danger/20', from: 'from-danger/20', to: 'to-danger/20' },
 };
 
 const Section = forwardRef<HTMLElement, SectionProps>(

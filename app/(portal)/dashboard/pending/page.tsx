@@ -88,7 +88,7 @@ export default async function PendingPage() {
             {t('readyToUse')}
           </p>
         </div>
-        <div className="rounded-md bg-green-50 px-4 py-3 text-sm text-green-700">
+        <div className="rounded-md bg-success/10 px-4 py-3 text-sm text-success-a11y">
           {t('submitted')} {application?.artist_name}
         </div>
         <div className="pt-4 border-t border-charcoal/10">

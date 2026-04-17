@@ -233,7 +233,7 @@ export function SalesHistory({
           </div>
           <div className="h-2 w-full overflow-hidden rounded-full bg-gray-100">
             <div
-              className="h-full bg-blue-500 transition-[width] duration-500"
+              className="h-full bg-primary-a11y transition-[width] duration-500"
               style={{ width: `${percent}%` }}
             />
           </div>
@@ -245,7 +245,7 @@ export function SalesHistory({
           <span
             className={cn(
               'inline-block h-2 w-2 rounded-full',
-              isSoldOut ? 'bg-red-500' : 'bg-green-500'
+              isSoldOut ? 'bg-danger' : 'bg-success'
             )}
           />
           <span className="text-gray-600">{isSoldOut ? '판매 완료 (Sold Out)' : '판매 중'}</span>
@@ -263,7 +263,7 @@ export function SalesHistory({
             <div>
               <div className="mb-1 flex items-center justify-between">
                 <label htmlFor="sale-price" className="block text-xs font-medium text-gray-500">
-                  판매 금액 (KRW) <span className="text-red-500">*</span>
+                  판매 금액 (KRW) <span className="text-danger">*</span>
                 </label>
                 {originalPrice > 0 && (
                   <span className="text-xs text-gray-400">
@@ -308,7 +308,7 @@ export function SalesHistory({
                   htmlFor="sale-quantity"
                   className="mb-1 block text-xs font-medium text-gray-500"
                 >
-                  수량 <span className="text-red-500">*</span>
+                  수량 <span className="text-danger">*</span>
                 </label>
                 <input
                   id="sale-quantity"
@@ -418,7 +418,7 @@ export function SalesHistory({
 
                 if (isEditing) {
                   return (
-                    <tr key={sale.id} className="bg-blue-50/50">
+                    <tr key={sale.id} className="bg-primary-surface/50">
                       <td className="px-4 py-2">
                         <input
                           type="date"
@@ -445,7 +445,7 @@ export function SalesHistory({
                         />
                       </td>
                       <td className="px-4 py-2 text-sm text-gray-600">
-                        <span className="inline-flex rounded-full px-2 py-0.5 text-xs font-medium bg-emerald-100 text-emerald-700">
+                        <span className="inline-flex rounded-full px-2 py-0.5 text-xs font-medium bg-success/20 text-success-a11y">
                           오프라인
                         </span>
                       </td>
@@ -481,7 +481,7 @@ export function SalesHistory({
                             type="button"
                             onClick={() => saveEdit(sale.id)}
                             disabled={isSaving}
-                            className="rounded bg-blue-600 px-2 py-1 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+                            className="rounded bg-primary-a11y px-2 py-1 text-xs font-medium text-white hover:bg-primary-strong disabled:opacity-50"
                           >
                             {isSaving ? '...' : '저장'}
                           </button>
@@ -500,10 +500,10 @@ export function SalesHistory({
 
                 if (isVoidTarget) {
                   return (
-                    <tr key={sale.id} className="bg-red-50/50">
+                    <tr key={sale.id} className="bg-danger/10/50">
                       <td colSpan={7} className="px-4 py-3">
                         <div className="flex items-center gap-3">
-                          <span className="shrink-0 text-sm font-medium text-red-700">
+                          <span className="shrink-0 text-sm font-medium text-danger-a11y">
                             취소 사유:
                           </span>
                           <input
@@ -519,7 +519,7 @@ export function SalesHistory({
                               }
                               if (e.key === 'Escape') setVoidingSaleId(null);
                             }}
-                            className="flex-1 rounded border border-red-300 px-2 py-1 text-sm focus-visible:outline-none focus-visible:border-red-500 focus-visible:ring-1 focus-visible:ring-red-500/25"
+                            className="flex-1 rounded border border-danger/40 px-2 py-1 text-sm focus-visible:outline-none focus-visible:border-danger focus-visible:ring-1 focus-visible:ring-danger/25"
                           />
                         </div>
                       </td>
@@ -529,7 +529,7 @@ export function SalesHistory({
                             type="button"
                             onClick={() => confirmVoid(sale.id)}
                             disabled={isVoiding}
-                            className="rounded bg-red-600 px-2 py-1 text-xs font-medium text-white hover:bg-red-700 disabled:opacity-50"
+                            className="rounded bg-danger-a11y px-2 py-1 text-xs font-medium text-white hover:bg-danger-a11y disabled:opacity-50"
                           >
                             {isVoiding ? '...' : '확인'}
                           </button>
@@ -565,8 +565,8 @@ export function SalesHistory({
                         className={cn(
                           'inline-flex rounded-full px-2 py-0.5 text-xs font-medium',
                           normalizeSaleSource(sale.source) === 'online'
-                            ? 'bg-orange-100 text-orange-700'
-                            : 'bg-emerald-100 text-emerald-700'
+                            ? 'bg-accent-soft text-accent-a11y'
+                            : 'bg-success/20 text-success-a11y'
                         )}
                       >
                         {getSaleSourceLabel(sale.source)}
@@ -587,7 +587,7 @@ export function SalesHistory({
                           <button
                             type="button"
                             onClick={() => startEdit(sale)}
-                            className="rounded px-1.5 py-0.5 text-xs text-blue-600 hover:bg-blue-50"
+                            className="rounded px-1.5 py-0.5 text-xs text-primary-a11y hover:bg-primary-surface"
                           >
                             수정
                           </button>
@@ -595,7 +595,7 @@ export function SalesHistory({
                         <button
                           type="button"
                           onClick={() => startVoid(sale.id)}
-                          className="rounded px-1.5 py-0.5 text-xs text-red-600 hover:bg-red-50"
+                          className="rounded px-1.5 py-0.5 text-xs text-danger-a11y hover:bg-danger/10"
                         >
                           삭제
                         </button>

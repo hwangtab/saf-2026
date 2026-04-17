@@ -151,13 +151,13 @@ export function ExhibitorArtworkForm({
           />
         </AdminCard>
       ) : (
-        <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800">
+        <div className="rounded-lg border border-primary-soft bg-primary-surface p-4 text-sm text-primary-strong">
           {t('imageGuide')}
         </div>
       )}
 
       {artistJustCreated && !isEditing && (
-        <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-800">
+        <div className="rounded-lg border border-success/30 bg-success/10 p-4 text-sm text-success-a11y">
           {t('artistCreatedNotice')}
         </div>
       )}
@@ -176,7 +176,7 @@ export function ExhibitorArtworkForm({
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
             <AdminFieldLabel>
-              {t('artworkTitle')} <span className="text-red-500">*</span>
+              {t('artworkTitle')} <span className="text-danger">*</span>
             </AdminFieldLabel>
             <AdminInput name="title" defaultValue={artwork.title} required />
           </div>
@@ -193,11 +193,11 @@ export function ExhibitorArtworkForm({
           <div>
             <div className="mb-2 flex items-center justify-between">
               <AdminFieldLabel className="mb-0">
-                {t('artist')} <span className="text-red-500">*</span>
+                {t('artist')} <span className="text-danger">*</span>
               </AdminFieldLabel>
               <Link
                 href="/exhibitor/artists/new?returnTo=%2Fexhibitor%2Fartworks%2Fnew"
-                className="text-xs text-blue-600 hover:text-blue-800 hover:underline"
+                className="text-xs text-primary-a11y hover:text-primary-strong hover:underline"
               >
                 {t('addNewArtist')}
               </Link>
@@ -227,7 +227,7 @@ export function ExhibitorArtworkForm({
 
           <div>
             <AdminFieldLabel>
-              {t('price')} <span className="text-red-500">*</span>
+              {t('price')} <span className="text-danger">*</span>
             </AdminFieldLabel>
             <AdminInput
               name="price"
@@ -299,7 +299,7 @@ export function ExhibitorArtworkForm({
 
           <div>
             <AdminFieldLabel>
-              {t('editionType')} <span className="text-red-500">*</span>
+              {t('editionType')} <span className="text-danger">*</span>
             </AdminFieldLabel>
             <AdminSelect
               name="edition_type"
@@ -322,7 +322,7 @@ export function ExhibitorArtworkForm({
           {editionType === 'limited' && (
             <div>
               <AdminFieldLabel>
-                {t('editionLimit')} <span className="text-red-500">*</span>
+                {t('editionLimit')} <span className="text-danger">*</span>
               </AdminFieldLabel>
               <AdminInput
                 type="number"

@@ -171,12 +171,12 @@ export function ArtworkEditForm({
     <div className="space-y-6">
       {/* Error Message */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-700 flex items-center justify-between">
+        <div className="bg-danger/10 border border-danger/30 rounded-lg p-4 text-sm text-danger-a11y flex items-center justify-between">
           <span>{error}</span>
           <button
             type="button"
             onClick={() => setError(null)}
-            className="ml-4 text-red-500 hover:text-red-700"
+            className="ml-4 text-danger hover:text-danger-a11y"
             aria-label="오류 메시지 닫기"
           >
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -191,7 +191,7 @@ export function ArtworkEditForm({
       )}
 
       {artistJustCreated && !isEditing && (
-        <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-800">
+        <div className="rounded-lg border border-success/30 bg-success/10 p-4 text-sm text-success-a11y">
           새 작가가 등록되었습니다. 아래에서 바로 선택해 작품 등록을 이어서 진행하세요.
         </div>
       )}
@@ -212,7 +212,7 @@ export function ArtworkEditForm({
           />
         </AdminCard>
       ) : (
-        <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800">
+        <div className="rounded-lg border border-primary-soft bg-primary-surface p-4 text-sm text-primary-strong">
           이미지 등록은 작품 정보를 먼저 저장한 후에 가능합니다.
         </div>
       )}
@@ -232,7 +232,7 @@ export function ArtworkEditForm({
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
             <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-              작품명 <span className="text-red-500">*</span>
+              작품명 <span className="text-danger">*</span>
             </label>
             <input
               id="title"
@@ -242,11 +242,11 @@ export function ArtworkEditForm({
               required
               className={cn(
                 'w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y transition-colors',
-                showErrors && !title.trim() ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                showErrors && !title.trim() ? 'border-danger bg-danger/10' : 'border-gray-300'
               )}
             />
             {showErrors && !title.trim() && (
-              <p className="mt-1 text-xs text-red-600">작품명을 입력해주세요.</p>
+              <p className="mt-1 text-xs text-danger-a11y">작품명을 입력해주세요.</p>
             )}
           </div>
 
@@ -285,11 +285,11 @@ export function ArtworkEditForm({
           <div>
             <div className="flex items-center justify-between mb-2">
               <label htmlFor="artist_id" className="block text-sm font-medium text-gray-700">
-                작가 <span className="text-red-500">*</span>
+                작가 <span className="text-danger">*</span>
               </label>
               <Link
                 href="/admin/artists/new?returnTo=%2Fadmin%2Fartworks%2Fnew"
-                className="text-xs text-blue-600 hover:text-blue-800 hover:underline"
+                className="text-xs text-primary-a11y hover:text-primary-strong hover:underline"
               >
                 + 새 작가 등록
               </Link>
@@ -308,8 +308,8 @@ export function ArtworkEditForm({
               onChange={(e) => setSelectedArtistId(e.target.value)}
               className={cn(
                 'px-3 py-2 pr-9',
-                artistJustCreated && 'border-green-300 bg-green-50 text-green-900',
-                showErrors && !selectedArtistId && 'border-red-500 bg-red-50'
+                artistJustCreated && 'border-success/40 bg-success/10 text-success-a11y',
+                showErrors && !selectedArtistId && 'border-danger bg-danger/10'
               )}
               iconClassName="right-3"
               required
@@ -322,7 +322,7 @@ export function ArtworkEditForm({
               ))}
             </AdminSelect>
             {showErrors && !selectedArtistId ? (
-              <p className="mt-1 text-xs text-red-600">작가를 선택해주세요.</p>
+              <p className="mt-1 text-xs text-danger-a11y">작가를 선택해주세요.</p>
             ) : (
               <p className="mt-1 text-xs text-gray-500">검색 결과 {filteredArtists.length}명</p>
             )}
@@ -396,7 +396,7 @@ export function ArtworkEditForm({
 
           <div>
             <label htmlFor="edition_type" className="block text-sm font-medium text-gray-700 mb-2">
-              에디션 유형 <span className="text-red-500">*</span>
+              에디션 유형 <span className="text-danger">*</span>
             </label>
             <select
               id="edition_type"
@@ -480,7 +480,7 @@ export function ArtworkEditForm({
                 htmlFor="edition_limit"
                 className="block text-sm font-medium text-gray-700 mb-2"
               >
-                에디션 수량 <span className="text-red-500">*</span>
+                에디션 수량 <span className="text-danger">*</span>
               </label>
               <input
                 id="edition_limit"
@@ -493,12 +493,12 @@ export function ArtworkEditForm({
                 className={cn(
                   'w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y',
                   showErrors && editionType === 'limited' && !editionLimit
-                    ? 'border-red-500 bg-red-50'
+                    ? 'border-danger bg-danger/10'
                     : 'border-gray-300'
                 )}
               />
               {showErrors && editionType === 'limited' && !editionLimit && (
-                <p className="mt-1 text-xs text-red-600">한정판은 수량을 입력해주세요.</p>
+                <p className="mt-1 text-xs text-danger-a11y">한정판은 수량을 입력해주세요.</p>
               )}
             </div>
           )}

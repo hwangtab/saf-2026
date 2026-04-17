@@ -71,7 +71,7 @@ export function ExhibitorList({ initialExhibitors }: { initialExhibitors: Exhibi
           onClick={() => handleStatusFilter('pending')}
           className={`px-3 py-1.5 text-sm font-medium rounded-md ${
             currentStatus === 'pending'
-              ? 'bg-yellow-100 text-yellow-800'
+              ? 'bg-sun-soft text-sun-strong'
               : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
           }`}
         >
@@ -82,7 +82,7 @@ export function ExhibitorList({ initialExhibitors }: { initialExhibitors: Exhibi
           onClick={() => handleStatusFilter('active')}
           className={`px-3 py-1.5 text-sm font-medium rounded-md ${
             currentStatus === 'active'
-              ? 'bg-green-100 text-green-800'
+              ? 'bg-success/20 text-success-a11y'
               : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
           }`}
         >
@@ -93,7 +93,7 @@ export function ExhibitorList({ initialExhibitors }: { initialExhibitors: Exhibi
           onClick={() => handleStatusFilter('suspended')}
           className={`px-3 py-1.5 text-sm font-medium rounded-md ${
             currentStatus === 'suspended'
-              ? 'bg-red-100 text-red-800'
+              ? 'bg-danger/20 text-danger-a11y'
               : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
           }`}
         >
@@ -154,10 +154,10 @@ export function ExhibitorList({ initialExhibitors }: { initialExhibitors: Exhibi
                     <span
                       className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
                         exhibitor.status === 'active'
-                          ? 'bg-green-100 text-green-800'
+                          ? 'bg-success/20 text-success-a11y'
                           : exhibitor.status === 'pending'
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-red-100 text-red-800'
+                            ? 'bg-sun-soft text-sun-strong'
+                            : 'bg-danger/20 text-danger-a11y'
                       }`}
                     >
                       {exhibitor.status === 'active'
@@ -196,7 +196,7 @@ export function ExhibitorList({ initialExhibitors }: { initialExhibitors: Exhibi
                       <Button
                         variant="white"
                         size="sm"
-                        className="text-red-600 hover:text-red-700"
+                        className="text-danger-a11y hover:text-danger-a11y"
                         onClick={() => setConfirmAction({ type: 'suspend', id: exhibitor.id })}
                         loading={loadingId === exhibitor.id}
                         disabled={loadingId !== null}

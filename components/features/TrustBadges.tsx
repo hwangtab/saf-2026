@@ -16,7 +16,7 @@ export default function TrustBadges({ className }: TrustBadgesProps) {
 
   return (
     <div className={cn('flex flex-wrap justify-center gap-2', className)}>
-      <span className="inline-flex items-center justify-center gap-1 px-3 py-1.5 bg-green-50 border border-green-100 rounded-full text-xs font-medium text-green-700">
+      <span className="inline-flex items-center justify-center gap-1 px-3 py-1.5 bg-success/10 border border-success/20 rounded-full text-xs font-medium text-success-a11y">
         <Clock className="w-3.5 h-3.5 shrink-0" />
         {t('alwaysOpen', { date: formattedDate })}
       </span>

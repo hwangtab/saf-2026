@@ -124,7 +124,7 @@ export default async function Archive2026Page() {
         <PageHero
           title="2026 Offline Exhibition"
           description="A 12-day exhibition record at Insa Art Center"
-          dividerColor="text-red-50"
+          dividerColor="text-danger/10"
           breadcrumbItems={breadcrumbItems}
         >
           <ShareButtonsWrapper
@@ -219,7 +219,7 @@ export default async function Archive2026Page() {
       <PageHero
         title="2026 오프라인 전시"
         description="인사아트센터에서 진행된 12일간의 기록"
-        dividerColor="text-red-50"
+        dividerColor="text-danger/10"
         breadcrumbItems={breadcrumbItems}
       >
         <ShareButtonsWrapper url={canonicalUrl} title={shareTitle} description={shareDescription} />
@@ -376,7 +376,7 @@ export default async function Archive2026Page() {
           </div>
 
           {/* Accessibility */}
-          <div className="bg-white border-2 border-blue-200 rounded-2xl p-6">
+          <div className="bg-white border-2 border-primary-soft rounded-2xl p-6">
             <h3 className="text-card-title mb-3">
               <span aria-hidden="true">♿</span> 접근성 정보
             </h3>

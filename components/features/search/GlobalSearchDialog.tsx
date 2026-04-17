@@ -206,7 +206,7 @@ export default function GlobalSearchDialog({
           {/* 에러 */}
           {error && (
             <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
-              <p className="text-sm text-red-500">{t('error')}</p>
+              <p className="text-sm text-danger">{t('error')}</p>
             </div>
           )}
 

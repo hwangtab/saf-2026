@@ -116,7 +116,7 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
         <div className="space-y-4">
           <div>
             <label className={labelClass}>
-              {t('buyerName')} <span className="text-red-500">*</span>
+              {t('buyerName')} <span className="text-danger">*</span>
             </label>
             <input
               type="text"
@@ -132,7 +132,7 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
           </div>
           <div>
             <label className={labelClass}>
-              {t('buyerEmail')} <span className="text-red-500">*</span>
+              {t('buyerEmail')} <span className="text-danger">*</span>
             </label>
             <input
               type="email"
@@ -147,7 +147,7 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
           </div>
           <div>
             <label className={labelClass}>
-              {t('buyerPhone')} <span className="text-red-500">*</span>
+              {t('buyerPhone')} <span className="text-danger">*</span>
             </label>
             <input
               type="tel"
@@ -182,7 +182,7 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
             <>
               <div>
                 <label className={labelClass}>
-                  {t('shippingName')} <span className="text-red-500">*</span>
+                  {t('shippingName')} <span className="text-danger">*</span>
                 </label>
                 <input
                   type="text"
@@ -198,7 +198,7 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
               </div>
               <div>
                 <label className={labelClass}>
-                  {t('buyerPhone')} <span className="text-red-500">*</span>
+                  {t('buyerPhone')} <span className="text-danger">*</span>
                 </label>
                 <input
                   type="tel"
@@ -216,7 +216,7 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
 
           <div>
             <label className={labelClass}>
-              {t('addressLabel')} <span className="text-red-500">*</span>
+              {t('addressLabel')} <span className="text-danger">*</span>
             </label>
             <div className="flex gap-2">
               <input
@@ -253,7 +253,7 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
 
           <div>
             <label className={labelClass}>
-              {t('shippingAddressDetail')} <span className="text-red-500">*</span>
+              {t('shippingAddressDetail')} <span className="text-danger">*</span>
             </label>
             <input
               ref={detailRef}

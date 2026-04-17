@@ -116,7 +116,7 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
         </div>
 
         {error && (
-          <p className="text-sm text-red-600" role="alert">
+          <p className="text-sm text-danger-a11y" role="alert">
             {error}
           </p>
         )}

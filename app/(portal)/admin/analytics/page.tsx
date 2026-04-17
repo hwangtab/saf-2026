@@ -54,7 +54,7 @@ function StatCard({
     <AdminCard className="p-6">
       <p className="text-sm font-medium text-gray-500">{title}</p>
       <p
-        className={`mt-2 text-3xl font-bold tracking-tight ${accent ? 'text-emerald-600' : 'text-gray-900'}`}
+        className={`mt-2 text-3xl font-bold tracking-tight ${accent ? 'text-success-a11y' : 'text-gray-900'}`}
       >
         {value}
       </p>
@@ -83,9 +83,9 @@ export default async function AdminAnalyticsPage({ searchParams }: Props) {
     console.error('Analytics Error:', error);
     return (
       <div className="p-8">
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-          <h2 className="text-lg font-semibold text-red-800">{t('loadErrorTitle')}</h2>
-          <p className="mt-2 text-sm text-red-600">{t('loadErrorMessage')}</p>
+        <div className="rounded-lg border border-danger/30 bg-danger/10 p-4">
+          <h2 className="text-lg font-semibold text-danger-a11y">{t('loadErrorTitle')}</h2>
+          <p className="mt-2 text-sm text-danger-a11y">{t('loadErrorMessage')}</p>
         </div>
       </div>
     );

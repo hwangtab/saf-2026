@@ -400,7 +400,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
             <button
               onClick={() => setShowConfirmDepositModal(true)}
               disabled={isPending}
-              className="rounded-md border border-emerald-300 bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-700 hover:bg-emerald-100 disabled:opacity-50"
+              className="rounded-md border border-success/40 bg-success/10 px-3 py-1.5 text-sm font-medium text-success-a11y hover:bg-success/20 disabled:opacity-50"
             >
               입금 확인
             </button>
@@ -409,7 +409,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
             <button
               onClick={() => setShowCancelAwaitingModal(true)}
               disabled={isPending}
-              className="rounded-md border border-rose-300 bg-rose-50 px-3 py-1.5 text-sm font-medium text-rose-700 hover:bg-rose-100 disabled:opacity-50"
+              className="rounded-md border border-danger/40 bg-danger/10 px-3 py-1.5 text-sm font-medium text-danger-a11y hover:bg-danger/20 disabled:opacity-50"
             >
               주문 취소
             </button>
@@ -437,7 +437,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
             <button
               onClick={() => setShowRefundModal(true)}
               disabled={isPending}
-              className="rounded-md border border-rose-300 bg-rose-50 px-3 py-1.5 text-sm font-medium text-rose-700 hover:bg-rose-100 disabled:opacity-50"
+              className="rounded-md border border-danger/40 bg-danger/10 px-3 py-1.5 text-sm font-medium text-danger-a11y hover:bg-danger/20 disabled:opacity-50"
             >
               환불 처리
             </button>
@@ -721,8 +721,8 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
             />
           </div>
           {isVirtualAccount && (
-            <div className="space-y-2 rounded-lg border border-amber-200 bg-amber-50 p-3">
-              <p className="text-xs font-medium text-amber-800">
+            <div className="space-y-2 rounded-lg border border-sun-soft bg-sun-soft p-3">
+              <p className="text-xs font-medium text-sun-strong">
                 가상계좌 결제 — 환불 계좌 입력 필수
               </p>
               <div>

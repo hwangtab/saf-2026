@@ -96,12 +96,12 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
   return (
     <div className="space-y-6">
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-700 flex items-center justify-between">
+        <div className="bg-danger/10 border border-danger/30 rounded-lg p-4 text-sm text-danger-a11y flex items-center justify-between">
           <span>{error}</span>
           <button
             type="button"
             onClick={() => setError(null)}
-            className="ml-4 text-red-500 hover:text-red-700"
+            className="ml-4 text-danger hover:text-danger-a11y"
             aria-label={t('closeError')}
           >
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -130,7 +130,7 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
           />
         </AdminCard>
       ) : (
-        <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800">
+        <div className="rounded-lg border border-primary-soft bg-primary-surface p-4 text-sm text-primary-strong">
           {t('profileImageGuide')}
         </div>
       )}
@@ -149,7 +149,7 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
             <label htmlFor="name_ko" className="block text-sm font-medium text-gray-700 mb-2">
-              {t('nameKo')} <span className="text-red-500">*</span>
+              {t('nameKo')} <span className="text-danger">*</span>
             </label>
             <input
               id="name_ko"

@@ -234,7 +234,7 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
       >
         <div className="mt-4">
           <label className="mb-1 block text-sm font-medium text-gray-700">
-            {t('restoreReasonLabel')} <span className="text-red-500">*</span>
+            {t('restoreReasonLabel')} <span className="text-danger">*</span>
           </label>
           <textarea
             value={restoreReason}
@@ -261,7 +261,7 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
       >
         <div className="mt-4">
           <label className="mb-1 block text-sm font-medium text-gray-700">
-            {t('purgeReasonLabel')} <span className="text-red-500">*</span>
+            {t('purgeReasonLabel')} <span className="text-danger">*</span>
           </label>
           <textarea
             value={purgeReason}
@@ -323,11 +323,11 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
                   </td>
                   <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm">
                     {isExpired ? (
-                      <span className="rounded-full bg-rose-50 px-2 py-0.5 text-xs font-medium text-rose-700">
+                      <span className="rounded-full bg-danger/10 px-2 py-0.5 text-xs font-medium text-danger-a11y">
                         {t('expired')}
                       </span>
                     ) : (
-                      <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
+                      <span className="rounded-full bg-success/10 px-2 py-0.5 text-xs font-medium text-success-a11y">
                         {t('retained')} {daysLeft !== null ? t('daysLeft', { days: daysLeft }) : ''}
                       </span>
                     )}
@@ -338,7 +338,7 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
                         <button
                           type="button"
                           onClick={() => setRestoreTargetId(log.id)}
-                          className="rounded-md border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800 hover:bg-amber-100"
+                          className="rounded-md border border-sun-soft bg-sun-soft px-2.5 py-1 text-xs font-medium text-sun-strong hover:bg-sun-soft"
                         >
                           {t('restore')}
                         </button>
@@ -348,7 +348,7 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
                       <button
                         type="button"
                         onClick={() => setPurgeTargetId(log.id)}
-                        className="rounded-md border border-rose-300 bg-rose-50 px-2.5 py-1 text-xs font-medium text-rose-700 hover:bg-rose-100"
+                        className="rounded-md border border-danger/40 bg-danger/10 px-2.5 py-1 text-xs font-medium text-danger-a11y hover:bg-danger/20"
                       >
                         {t('purge')}
                       </button>

@@ -23,14 +23,14 @@ import type {
 
 const STATUS_STYLES: Record<string, { label: string; className: string }> = {
   pending_payment: { label: 'statusPendingPayment', className: 'bg-gray-100 text-gray-600' },
-  awaiting_deposit: { label: 'statusAwaitingDeposit', className: 'bg-amber-100 text-amber-700' },
-  paid: { label: 'statusPaid', className: 'bg-blue-100 text-blue-700' },
+  awaiting_deposit: { label: 'statusAwaitingDeposit', className: 'bg-sun-soft text-sun-strong' },
+  paid: { label: 'statusPaid', className: 'bg-primary-soft text-primary-strong' },
   preparing: { label: 'statusPreparing', className: 'bg-primary-soft text-primary-strong' },
-  shipped: { label: 'statusShipped', className: 'bg-purple-100 text-purple-700' },
-  delivered: { label: 'statusDelivered', className: 'bg-green-100 text-green-700' },
-  completed: { label: 'statusCompleted', className: 'bg-green-100 text-green-700' },
-  cancelled: { label: 'statusCancelled', className: 'bg-red-100 text-red-700' },
-  refunded: { label: 'statusRefunded', className: 'bg-red-100 text-red-700' },
+  shipped: { label: 'statusShipped', className: 'bg-accent-soft text-accent-a11y' },
+  delivered: { label: 'statusDelivered', className: 'bg-success/20 text-success-a11y' },
+  completed: { label: 'statusCompleted', className: 'bg-success/20 text-success-a11y' },
+  cancelled: { label: 'statusCancelled', className: 'bg-danger/20 text-danger-a11y' },
+  refunded: { label: 'statusRefunded', className: 'bg-danger/20 text-danger-a11y' },
 };
 
 const PAYMENT_METHOD_LABELS: Record<string, string> = {
@@ -80,7 +80,7 @@ function OrderStatusStepper({ status }: { status: string }) {
     return (
       <div
         role="alert"
-        className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 text-center font-medium"
+        className="rounded-lg bg-danger/10 px-4 py-3 text-sm text-danger-a11y text-center font-medium"
       >
         {t('orderCancelledNotice')}
       </div>
@@ -90,7 +90,7 @@ function OrderStatusStepper({ status }: { status: string }) {
     return (
       <div
         role="alert"
-        className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 text-center font-medium"
+        className="rounded-lg bg-danger/10 px-4 py-3 text-sm text-danger-a11y text-center font-medium"
       >
         {t('orderRefundedNotice')}
       </div>
@@ -257,7 +257,7 @@ function EditShippingForm({ order, buyerEmail, onSaved, onCancel }: EditShipping
           onChange={(e) => setMemo(e.target.value)}
         />
       </div>
-      {error && <p className="text-xs text-red-600">{error}</p>}
+      {error && <p className="text-xs text-danger-a11y">{error}</p>}
       <div className="flex gap-2">
         <button
           type="button"
@@ -336,14 +336,14 @@ function CancelModal({ order, buyerEmail, onCancelled, onClose }: CancelModalPro
           className="mb-3 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-charcoal placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary resize-none"
         />
 
-        {error && <p className="mb-3 text-xs text-red-600">{error}</p>}
+        {error && <p className="mb-3 text-xs text-danger-a11y">{error}</p>}
 
         <div className="flex gap-2">
           <button
             type="button"
             onClick={handleConfirm}
             disabled={loading}
-            className="flex-1 rounded-xl bg-red-600 py-2.5 text-sm font-bold text-white hover:bg-red-700 transition-colors disabled:opacity-50"
+            className="flex-1 rounded-xl bg-danger-a11y py-2.5 text-sm font-bold text-white hover:bg-danger-a11y transition-colors disabled:opacity-50"
           >
             {loading ? t('processing') : t('cancelOrderButton')}
           </button>
@@ -423,22 +423,22 @@ function OrderDetail({
 
       {/* 가상계좌 입금 안내 */}
       {order.status === 'awaiting_deposit' && order.virtualAccount && (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm">
-          <p className="mb-2 font-semibold text-amber-900">{t('virtualAccountInfo')}</p>
+        <div className="rounded-xl border border-sun-soft bg-sun-soft p-4 text-sm">
+          <p className="mb-2 font-semibold text-sun-strong">{t('virtualAccountInfo')}</p>
           <div className="space-y-1.5">
             <div className="flex justify-between">
-              <span className="text-amber-700">{t('bankName')}</span>
-              <span className="font-semibold text-amber-900">{order.virtualAccount.bankName}</span>
+              <span className="text-sun-strong">{t('bankName')}</span>
+              <span className="font-semibold text-sun-strong">{order.virtualAccount.bankName}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-amber-700">{t('accountNumber')}</span>
-              <span className="font-mono font-semibold text-amber-900">
+              <span className="text-sun-strong">{t('accountNumber')}</span>
+              <span className="font-mono font-semibold text-sun-strong">
                 {order.virtualAccount.accountNumber}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-amber-700">{t('dueDate')}</span>
-              <span className="font-semibold text-amber-900">{order.virtualAccount.dueDate}</span>
+              <span className="text-sun-strong">{t('dueDate')}</span>
+              <span className="font-semibold text-sun-strong">{order.virtualAccount.dueDate}</span>
             </div>
           </div>
         </div>
@@ -446,25 +446,25 @@ function OrderDetail({
 
       {/* 수동 계좌이체 입금 안내 */}
       {order.status === 'awaiting_deposit' && !order.virtualAccount && (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm">
-          <p className="mb-2 font-semibold text-amber-900">{t('bankTransferTitle')}</p>
+        <div className="rounded-xl border border-sun-soft bg-sun-soft p-4 text-sm">
+          <p className="mb-2 font-semibold text-sun-strong">{t('bankTransferTitle')}</p>
           <div className="space-y-1.5">
             <div className="flex justify-between">
-              <span className="text-amber-700">{t('bankName')}</span>
-              <span className="font-semibold text-amber-900">{t('bankTransferBank')}</span>
+              <span className="text-sun-strong">{t('bankName')}</span>
+              <span className="font-semibold text-sun-strong">{t('bankTransferBank')}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-amber-700">{t('accountNumber')}</span>
-              <span className="font-mono font-semibold text-amber-900">
+              <span className="text-sun-strong">{t('accountNumber')}</span>
+              <span className="font-mono font-semibold text-sun-strong">
                 {t('bankTransferAccount')}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-amber-700">{t('bankTransferHolder')}</span>
-              <span className="font-semibold text-amber-900">{t('bankTransferHolderName')}</span>
+              <span className="text-sun-strong">{t('bankTransferHolder')}</span>
+              <span className="font-semibold text-sun-strong">{t('bankTransferHolderName')}</span>
             </div>
           </div>
-          <div className="mt-2 text-xs text-amber-700 space-y-0.5">
+          <div className="mt-2 text-xs text-sun-strong space-y-0.5">
             <p>{t('bankTransferNoticeName')}</p>
             <p>{t('bankTransferNoticeDeadline', { deadline: bankTransferDeadline })}</p>
           </div>
@@ -607,7 +607,7 @@ function OrderDetail({
           <button
             type="button"
             onClick={() => setShowCancelModal(true)}
-            className="w-full rounded-xl border border-red-200 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+            className="w-full rounded-xl border border-danger/30 py-2.5 text-sm font-medium text-danger-a11y hover:bg-danger/10 transition-colors"
           >
             {t('cancelOrder')}
           </button>
@@ -846,7 +846,10 @@ export default function OrderLookup() {
             </div>
 
             {error && (
-              <div role="alert" className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+              <div
+                role="alert"
+                className="rounded-lg bg-danger/10 px-4 py-3 text-sm text-danger-a11y"
+              >
                 {error}
               </div>
             )}
