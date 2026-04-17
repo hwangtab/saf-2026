@@ -15,6 +15,7 @@ import { generateOrderNumber } from '@/lib/integrations/toss/order-number';
 import type { TossErrorResponse } from '@/lib/integrations/toss/types';
 import { rateLimit } from '@/lib/rate-limit';
 import { SITE_URL, SITE_URL_ALIAS } from '@/lib/constants';
+import { apiError, type ApiLocale } from '@/lib/api-locale';
 
 export type CreateOrderInput = {
   artworkId: string;
@@ -48,7 +49,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     shippingMemo,
     locale,
   } = input;
-  const buyerLocale = locale === 'en' ? 'en' : 'ko';
+  const buyerLocale: ApiLocale = locale === 'en' ? 'en' : 'ko';
   const buyerEmailNorm = buyerEmail.trim().toLowerCase();
 
   // Rate limiting — IP 기준 분당 10회
@@ -56,32 +57,32 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
   const ip = headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
   const rl = rateLimit(`createOrder:${ip}`, { limit: 10, windowMs: 60_000 });
   if (!rl.success) {
-    return { success: false, error: '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.' };
+    return { success: false, error: apiError('rate_limited', buyerLocale) };
   }
 
   // Basic validation
   if (!artworkId || !buyerName || !buyerEmail || !buyerPhone) {
-    return { success: false, error: '필수 정보를 입력해주세요.' };
+    return { success: false, error: apiError('required_buyer_info', buyerLocale) };
   }
   if (!shippingAddress || !shippingPostalCode || !shippingAddressDetail) {
-    return { success: false, error: '배송지 정보를 입력해주세요.' };
+    return { success: false, error: apiError('required_shipping_info', buyerLocale) };
   }
 
   // Format validation
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(buyerEmailNorm)) {
-    return { success: false, error: '올바른 이메일 형식이 아닙니다.' };
+    return { success: false, error: apiError('invalid_email_format', buyerLocale) };
   }
   const phoneDigits = buyerPhone.replace(/\D/g, '');
   if (phoneDigits.length < 9 || phoneDigits.length > 11) {
-    return { success: false, error: '올바른 연락처 형식이 아닙니다.' };
+    return { success: false, error: apiError('invalid_phone_format', buyerLocale) };
   }
   const shippingPhoneDigits = shippingPhone.replace(/\D/g, '');
   if (shippingPhone && (shippingPhoneDigits.length < 9 || shippingPhoneDigits.length > 11)) {
-    return { success: false, error: '올바른 배송지 연락처 형식이 아닙니다.' };
+    return { success: false, error: apiError('invalid_shipping_phone_format', buyerLocale) };
   }
   if (!/^\d{5}$/.test(shippingPostalCode.trim())) {
-    return { success: false, error: '우편번호는 5자리 숫자여야 합니다.' };
+    return { success: false, error: apiError('invalid_postal_code', buyerLocale) };
   }
 
   const adminClient = createSupabaseAdminClient();
@@ -95,7 +96,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     .single();
 
   if (artworkError || !artwork) {
-    return { success: false, error: '작품을 찾을 수 없습니다.' };
+    return { success: false, error: apiError('artwork_not_found', buyerLocale) };
   }
 
   // 동일 구매자의 같은 작품에 대한 기존 pending_payment 주문 자동 정리
@@ -115,18 +116,18 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
   );
 
   if (availError) {
-    return { success: false, error: '재고 확인 중 오류가 발생했습니다.' };
+    return { success: false, error: apiError('availability_check_failed', buyerLocale) };
   }
 
   const isAvailable = Array.isArray(availResult) && availResult[0]?.is_available === true;
   if (!isAvailable) {
-    return { success: false, error: '이미 판매된 작품입니다.' };
+    return { success: false, error: apiError('artwork_sold_out', buyerLocale) };
   }
 
   // Parse price server-side
   const itemAmount = parsePrice(artwork.price);
   if (!Number.isFinite(itemAmount) || itemAmount <= 0) {
-    return { success: false, error: '작품 가격 정보를 확인할 수 없습니다.' };
+    return { success: false, error: apiError('artwork_price_invalid', buyerLocale) };
   }
 
   const shippingAmount = calculateShippingFee(itemAmount);
@@ -179,7 +180,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     .single();
 
   if (insertError || !order) {
-    return { success: false, error: '주문 생성 중 오류가 발생했습니다.' };
+    return { success: false, error: apiError('order_creation_failed', buyerLocale) };
   }
 
   return {
@@ -200,6 +201,7 @@ export type InitiatePaymentInput = {
   buyerEmail: string;
   successUrl: string;
   failUrl: string;
+  locale?: 'ko' | 'en';
 };
 
 export type InitiatePaymentResult =
@@ -212,12 +214,14 @@ export type InitiatePaymentResult =
  * redirect the user to the Toss-hosted payment page.
  */
 export async function initiatePayment(input: InitiatePaymentInput): Promise<InitiatePaymentResult> {
+  const buyerLocale: ApiLocale = input.locale === 'en' ? 'en' : 'ko';
+
   // Rate limiting — IP 기준 분당 10회
   const headersList = await headers();
   const ip = headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
   const rl = rateLimit(`initiatePayment:${ip}`, { limit: 10, windowMs: 60_000 });
   if (!rl.success) {
-    return { success: false, error: '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.' };
+    return { success: false, error: apiError('rate_limited', buyerLocale) };
   }
 
   // BUG 22: redirect URL origin 검증 — 외부 URL 주입 방지
@@ -230,7 +234,7 @@ export async function initiatePayment(input: InitiatePaymentInput): Promise<Init
     }
   };
   if (!isValidUrl(input.successUrl) || !isValidUrl(input.failUrl)) {
-    return { success: false, error: '잘못된 결제 URL입니다.' };
+    return { success: false, error: apiError('invalid_redirect_url', buyerLocale) };
   }
 
   // DB 주문 검증 — 클라이언트 전달 금액을 신뢰하지 않고 DB에서 재조회
@@ -242,13 +246,13 @@ export async function initiatePayment(input: InitiatePaymentInput): Promise<Init
     .maybeSingle();
 
   if (!dbOrder) {
-    return { success: false, error: '주문을 찾을 수 없습니다.' };
+    return { success: false, error: apiError('order_not_found', buyerLocale) };
   }
   if (dbOrder.status !== 'pending_payment') {
-    return { success: false, error: '이미 처리된 주문입니다.' };
+    return { success: false, error: apiError('invalid_order_status', buyerLocale) };
   }
   if (dbOrder.total_amount !== input.totalAmount) {
-    return { success: false, error: '결제 금액이 일치하지 않습니다.' };
+    return { success: false, error: apiError('amount_mismatch', buyerLocale) };
   }
 
   let response: Response;
@@ -272,22 +276,28 @@ export async function initiatePayment(input: InitiatePaymentInput): Promise<Init
       }),
     });
   } catch {
-    return { success: false, error: '결제 서버 연결에 실패했습니다.' };
+    return { success: false, error: apiError('payment_server_unreachable', buyerLocale) };
   }
 
   if (!response.ok) {
-    let err: TossErrorResponse = { code: 'UNKNOWN', message: '결제 세션 생성에 실패했습니다.' };
+    let err: TossErrorResponse = {
+      code: 'UNKNOWN',
+      message: apiError('payment_session_failed', buyerLocale),
+    };
     try {
       err = await response.json();
     } catch {}
     console.error('[initiatePayment] Toss API error:', response.status, JSON.stringify(err));
-    return { success: false, error: err.message || '결제 세션 생성에 실패했습니다.' };
+    return {
+      success: false,
+      error: err.message || apiError('payment_session_failed', buyerLocale),
+    };
   }
 
   const data = await response.json();
   const checkoutUrl = (data as { checkout?: { url?: string } })?.checkout?.url;
   if (!checkoutUrl) {
-    return { success: false, error: '결제 URL을 받지 못했습니다.' };
+    return { success: false, error: apiError('checkout_url_missing', buyerLocale) };
   }
 
   return { success: true, checkoutUrl };
@@ -299,6 +309,7 @@ export async function initiatePayment(input: InitiatePaymentInput): Promise<Init
  * Admin confirms deposit manually and transitions order to paid.
  */
 export async function createBankTransferOrder(input: CreateOrderInput): Promise<CreateOrderResult> {
+  const buyerLocale: ApiLocale = input.locale === 'en' ? 'en' : 'ko';
   const result = await createOrder(input);
   if (!result.success) return result;
 
@@ -315,7 +326,7 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
       .from('orders')
       .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
       .eq('order_no', result.orderNo);
-    return { success: false, error: '주문 상태 변경 중 오류가 발생했습니다.' };
+    return { success: false, error: apiError('order_state_update_failed', buyerLocale) };
   }
 
   const { data: reservedArtwork, error: artworkUpdateError } = await adminClient
@@ -331,7 +342,7 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
       .from('orders')
       .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
       .eq('order_no', result.orderNo);
-    return { success: false, error: '이미 판매된 작품입니다.' };
+    return { success: false, error: apiError('artwork_sold_out', buyerLocale) };
   }
 
   // artwork available → reserved 반영

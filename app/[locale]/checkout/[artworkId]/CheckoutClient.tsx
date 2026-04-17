@@ -163,6 +163,7 @@ export default function CheckoutClient({
         buyerEmail,
         successUrl,
         failUrl,
+        locale: locale === 'en' ? 'en' : 'ko',
       });
 
       if (!payResult.success) {
@@ -290,7 +291,9 @@ export default function CheckoutClient({
 
         {/* Error */}
         {error && (
-          <div className="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
+          <div className="mb-4 rounded-lg bg-danger/10 px-4 py-3 text-sm text-danger-a11y">
+            {error}
+          </div>
         )}
 
         {/* CTA */}
