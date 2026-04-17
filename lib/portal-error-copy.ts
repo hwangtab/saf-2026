@@ -181,3 +181,10 @@ const COPY: Record<PortalErrorKey, Record<AppLocale, ErrorCopy>> = {
 export function getPortalErrorCopy(key: PortalErrorKey, locale: AppLocale): ErrorCopy {
   return COPY[key][locale];
 }
+
+/** ErrorView의 retry/home 버튼 라벨. locale별 공통. */
+export function getErrorActionLabels(locale: AppLocale): { retryLabel: string; homeLabel: string } {
+  return locale === 'en'
+    ? { retryLabel: 'Try again', homeLabel: 'Go to home' }
+    : { retryLabel: '다시 시도하기', homeLabel: '홈으로 돌아가기' };
+}

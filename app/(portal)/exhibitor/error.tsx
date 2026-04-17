@@ -3,7 +3,7 @@
 import ErrorView from '@/components/common/ErrorView';
 import { usePathname } from 'next/navigation';
 import { resolveClientLocale } from '@/lib/client-locale';
-import { getPortalErrorCopy } from '@/lib/portal-error-copy';
+import { getPortalErrorCopy, getErrorActionLabels } from '@/lib/portal-error-copy';
 
 export default function ExhibitorError({
   error,
@@ -15,6 +15,7 @@ export default function ExhibitorError({
   const pathname = usePathname();
   const locale = resolveClientLocale(pathname);
   const copy = getPortalErrorCopy('exhibitor', locale);
+  const labels = getErrorActionLabels(locale);
 
   return (
     <ErrorView
@@ -22,6 +23,8 @@ export default function ExhibitorError({
       title={copy.title}
       message={copy.message}
       backLink={{ href: '/exhibitor', label: copy.backLabel || 'Back' }}
+      retryLabel={labels.retryLabel}
+      homeLabel={labels.homeLabel}
       error={error}
       reset={reset}
     />

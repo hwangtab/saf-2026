@@ -9,10 +9,10 @@ interface ErrorViewProps {
   backLink?: { href: string; label: string };
   error: Error & { digest?: string };
   reset: () => void;
-  /** Override the retry button label. Defaults to '다시 시도하기'. */
-  retryLabel?: string;
-  /** Override the fallback home link label when backLink is not provided. Defaults to '홈으로 돌아가기'. */
-  homeLabel?: string;
+  /** Label for the retry button. */
+  retryLabel: string;
+  /** Label for the fallback home link when `backLink` is not provided. */
+  homeLabel: string;
 }
 
 export default function ErrorView({
@@ -22,8 +22,8 @@ export default function ErrorView({
   backLink,
   error,
   reset,
-  retryLabel = '다시 시도하기',
-  homeLabel = '홈으로 돌아가기',
+  retryLabel,
+  homeLabel,
 }: ErrorViewProps) {
   const resolvedBackLink = backLink ?? { href: '/', label: homeLabel };
 

@@ -3,7 +3,7 @@
 import ErrorView from '@/components/common/ErrorView';
 import { usePathname } from 'next/navigation';
 import { resolveClientLocale } from '@/lib/client-locale';
-import { getPortalErrorCopy } from '@/lib/portal-error-copy';
+import { getPortalErrorCopy, getErrorActionLabels } from '@/lib/portal-error-copy';
 
 export default function AdminOrderDetailError({
   error,
@@ -15,6 +15,7 @@ export default function AdminOrderDetailError({
   const pathname = usePathname();
   const locale = resolveClientLocale(pathname);
   const copy = getPortalErrorCopy('adminOrders', locale);
+  const labels = getErrorActionLabels(locale);
 
   return (
     <ErrorView
@@ -22,6 +23,8 @@ export default function AdminOrderDetailError({
       title={copy.title}
       message={copy.message}
       backLink={{ href: '/admin/orders', label: copy.backLabel || 'Back' }}
+      retryLabel={labels.retryLabel}
+      homeLabel={labels.homeLabel}
       error={error}
       reset={reset}
     />
