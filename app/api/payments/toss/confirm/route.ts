@@ -8,15 +8,18 @@ import { confirmPayment } from '@/lib/integrations/toss/confirm';
 import { notifyEmail, sendBuyerEmail } from '@/lib/notify';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
+import { apiError, getRequestLocale } from '@/lib/api-locale';
 
 export const runtime = 'nodejs';
 
 export async function POST(req: NextRequest) {
+  const reqLocale = getRequestLocale(req);
+
   let body: unknown;
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+    return NextResponse.json({ error: apiError('invalid_json', reqLocale) }, { status: 400 });
   }
 
   const { paymentKey, orderId, amount } = body as {
@@ -26,10 +29,7 @@ export async function POST(req: NextRequest) {
   };
 
   if (typeof paymentKey !== 'string' || typeof orderId !== 'string' || typeof amount !== 'number') {
-    return NextResponse.json(
-      { error: 'paymentKey, orderId, amount are required' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: apiError('missing_fields', reqLocale) }, { status: 400 });
   }
 
   const supabase = createSupabaseAdminClient();
@@ -44,12 +44,20 @@ export async function POST(req: NextRequest) {
     .single();
 
   if (orderError || !order) {
-    return NextResponse.json({ error: '주문을 찾을 수 없습니다.' }, { status: 404 });
+    return NextResponse.json({ error: apiError('order_not_found', reqLocale) }, { status: 404 });
   }
+
+  // 주문 생성 시 저장된 locale 우선, 없으면 Accept-Language
+  const storedLocale = (order.metadata as Record<string, unknown> | null)?.locale as
+    | 'ko'
+    | 'en'
+    | undefined;
+  const buyerLocale: 'ko' | 'en' =
+    storedLocale === 'en' ? 'en' : storedLocale === 'ko' ? 'ko' : reqLocale;
 
   // SEC-01: Amount must match exactly
   if (order.total_amount !== amount) {
-    return NextResponse.json({ error: 'Amount mismatch' }, { status: 400 });
+    return NextResponse.json({ error: apiError('amount_mismatch', reqLocale) }, { status: 400 });
   }
 
   // Guard: pending_payment 상태에서만 승인 진행
@@ -58,7 +66,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true, alreadyPaid: true });
     }
     return NextResponse.json(
-      { error: `주문 상태(${order.status})에서는 결제를 진행할 수 없습니다.` },
+      { error: `${apiError('invalid_order_status', reqLocale)} (${order.status})` },
       { status: 400 }
     );
   }
@@ -87,7 +95,7 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json(
-      { error: confirmResult.error.message || '결제 승인에 실패했습니다.' },
+      { error: confirmResult.error.message || apiError('payment_confirmation_failed', reqLocale) },
       { status: 400 }
     );
   }
@@ -242,14 +250,19 @@ export async function POST(req: NextRequest) {
       금액: `₩${tossResponse.totalAmount.toLocaleString()}`,
     });
     if (order.buyer_email) {
-      void sendBuyerEmail(order.buyer_email, 'payment_confirmed', {
-        orderNo: orderId,
-        buyerName: order.buyer_name ?? '',
-        artworkTitle,
-        artistName,
-        amount: tossResponse.totalAmount,
-        paymentMethod: tossResponse.method ?? undefined,
-      });
+      void sendBuyerEmail(
+        order.buyer_email,
+        'payment_confirmed',
+        {
+          orderNo: orderId,
+          buyerName: order.buyer_name ?? '',
+          artworkTitle,
+          artistName,
+          amount: tossResponse.totalAmount,
+          paymentMethod: tossResponse.method ?? undefined,
+        },
+        buyerLocale
+      );
     }
   } else if (isVirtualAccount) {
     void notifyEmail('info', '가상계좌 발급 완료 (입금 대기)', {
@@ -261,18 +274,23 @@ export async function POST(req: NextRequest) {
       | null
       | undefined;
     if (order.buyer_email) {
-      void sendBuyerEmail(order.buyer_email, 'virtual_account_issued', {
-        orderNo: orderId,
-        buyerName: order.buyer_name ?? '',
-        artworkTitle,
-        artistName,
-        amount: tossResponse.totalAmount,
-        virtualAccount: {
-          bankName: va?.bankName,
-          accountNumber: va?.accountNumber,
-          dueDate: va?.dueDate,
+      void sendBuyerEmail(
+        order.buyer_email,
+        'virtual_account_issued',
+        {
+          orderNo: orderId,
+          buyerName: order.buyer_name ?? '',
+          artworkTitle,
+          artistName,
+          amount: tossResponse.totalAmount,
+          virtualAccount: {
+            bankName: va?.bankName,
+            accountNumber: va?.accountNumber,
+            dueDate: va?.dueDate,
+          },
         },
-      });
+        buyerLocale
+      );
     }
   }
 

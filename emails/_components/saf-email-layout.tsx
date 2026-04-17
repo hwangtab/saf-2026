@@ -1,10 +1,13 @@
 import { Body, Container, Head, Html, Preview, Section, Text } from '@react-email/components';
 import * as React from 'react';
 
+import type { EmailLocale } from './i18n';
+
 interface SAFEmailLayoutProps {
   headerColor: string;
   headerTitle: string;
   previewText: string;
+  locale?: EmailLocale;
   children: React.ReactNode;
 }
 
@@ -12,12 +15,17 @@ export default function SAFEmailLayout({
   headerColor,
   headerTitle,
   previewText,
+  locale = 'ko',
   children,
 }: SAFEmailLayoutProps) {
-  const timestamp = new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
+  const timestamp = new Date().toLocaleString(locale === 'en' ? 'en-US' : 'ko-KR', {
+    timeZone: 'Asia/Seoul',
+  });
+  const brand = locale === 'en' ? 'SAF 2026' : '씨앗페 2026';
+  const contactLabel = locale === 'en' ? 'Contact' : '문의';
 
   return (
-    <Html lang="ko">
+    <Html lang={locale}>
       <Head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1.0" />
@@ -30,8 +38,12 @@ export default function SAFEmailLayout({
           </Section>
           <Section style={{ padding: '20px 28px 8px' }}>{children}</Section>
           <Section style={footerStyle}>
-            <Text style={footerTextStyle}>씨앗페 2026 • {timestamp}</Text>
-            <Text style={{ ...footerTextStyle, marginTop: '4px' }}>문의: contact@kosmart.org</Text>
+            <Text style={footerTextStyle}>
+              {brand} • {timestamp}
+            </Text>
+            <Text style={{ ...footerTextStyle, marginTop: '4px' }}>
+              {contactLabel}: contact@kosmart.org
+            </Text>
           </Section>
         </Container>
       </Body>

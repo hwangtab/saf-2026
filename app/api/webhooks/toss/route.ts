@@ -12,7 +12,7 @@ import {
   isPaymentStatusChanged,
 } from '@/lib/integrations/toss/webhook';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
-import { notifyEmail, sendBuyerEmail } from '@/lib/notify';
+import { notifyEmail, sendBuyerEmail, extractBuyerLocale } from '@/lib/notify';
 import { getArtworkEmailInfo } from '@/lib/utils/get-artwork-email-info';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 
@@ -145,7 +145,9 @@ export async function POST(req: NextRequest) {
         if (updatedOrders && updatedOrders.length > 0) {
           const { data: order } = await supabase
             .from('orders')
-            .select('artwork_id, total_amount, order_no, buyer_name, buyer_phone, buyer_email')
+            .select(
+              'artwork_id, total_amount, order_no, buyer_name, buyer_phone, buyer_email, metadata'
+            )
             .eq('id', paymentRecord.order_id)
             .single();
 
@@ -194,13 +196,18 @@ export async function POST(req: NextRequest) {
                 supabase,
                 order.artwork_id
               );
-              void sendBuyerEmail(order.buyer_email, 'deposit_confirmed', {
-                orderNo: order.order_no,
-                buyerName: order.buyer_name ?? '',
-                artworkTitle,
-                artistName,
-                amount: order.total_amount,
-              });
+              void sendBuyerEmail(
+                order.buyer_email,
+                'deposit_confirmed',
+                {
+                  orderNo: order.order_no,
+                  buyerName: order.buyer_name ?? '',
+                  artworkTitle,
+                  artistName,
+                  amount: order.total_amount,
+                },
+                extractBuyerLocale(order.metadata)
+              );
             } catch (err) {
               console.error('[toss-webhook] deposit email failed:', err);
             }
@@ -348,7 +355,7 @@ export async function POST(req: NextRequest) {
     if (CANCELED_STATUSES.has(newStatus) && paymentRow.order_id) {
       const { data: existingOrder } = await supabase
         .from('orders')
-        .select('status, artwork_id, order_no, buyer_email, buyer_name, total_amount')
+        .select('status, artwork_id, order_no, buyer_email, buyer_name, total_amount, metadata')
         .eq('id', paymentRow.order_id)
         .single();
 
@@ -424,13 +431,18 @@ export async function POST(req: NextRequest) {
                 supabase,
                 existingOrder.artwork_id
               );
-              void sendBuyerEmail(existingOrder.buyer_email!, 'refunded', {
-                orderNo: existingOrder.order_no ?? '',
-                buyerName: existingOrder.buyer_name ?? '',
-                artworkTitle,
-                artistName,
-                amount: existingOrder.total_amount ?? 0,
-              });
+              void sendBuyerEmail(
+                existingOrder.buyer_email!,
+                'refunded',
+                {
+                  orderNo: existingOrder.order_no ?? '',
+                  buyerName: existingOrder.buyer_name ?? '',
+                  artworkTitle,
+                  artistName,
+                  amount: existingOrder.total_amount ?? 0,
+                },
+                extractBuyerLocale(existingOrder.metadata)
+              );
             } catch (err) {
               console.error('[toss-webhook] refund email failed:', err);
             }

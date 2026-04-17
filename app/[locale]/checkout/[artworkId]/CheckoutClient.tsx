@@ -110,6 +110,7 @@ export default function CheckoutClient({
           shippingAddressDetail,
           shippingPostalCode,
           shippingMemo,
+          locale: locale === 'en' ? 'en' : 'ko',
         });
 
         if (!result.success) {
@@ -136,6 +137,7 @@ export default function CheckoutClient({
         shippingAddressDetail,
         shippingPostalCode,
         shippingMemo,
+        locale: locale === 'en' ? 'en' : 'ko',
       });
 
       if (!result.success) {

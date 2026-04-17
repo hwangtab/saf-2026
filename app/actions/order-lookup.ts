@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { cancelPayment } from '@/lib/integrations/toss/cancel';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
-import { sendBuyerEmail } from '@/lib/notify';
+import { sendBuyerEmail, extractBuyerLocale } from '@/lib/notify';
 import { getArtworkEmailInfo } from '@/lib/utils/get-artwork-email-info';
 import { rateLimit } from '@/lib/rate-limit';
 import { normalizePhoneDigits } from '@/lib/utils/phone';
@@ -353,7 +353,7 @@ export async function cancelBuyerOrder(
 
   const { data: order, error } = await adminClient
     .from('orders')
-    .select('id, order_no, status, total_amount, artwork_id, buyer_email, buyer_name')
+    .select('id, order_no, status, total_amount, artwork_id, buyer_email, buyer_name, metadata')
     .eq('order_no', trimmedOrderNo)
     .maybeSingle();
 
@@ -441,13 +441,18 @@ export async function cancelBuyerOrder(
           adminClient,
           order.artwork_id
         );
-        void sendBuyerEmail(order.buyer_email!, 'refunded', {
-          orderNo: order.order_no,
-          buyerName: order.buyer_name ?? '',
-          artworkTitle,
-          artistName,
-          amount: order.total_amount,
-        });
+        void sendBuyerEmail(
+          order.buyer_email!,
+          'refunded',
+          {
+            orderNo: order.order_no,
+            buyerName: order.buyer_name ?? '',
+            artworkTitle,
+            artistName,
+            amount: order.total_amount,
+          },
+          extractBuyerLocale(order.metadata)
+        );
       } catch (err) {
         console.error('[cancelBuyerOrder] email failed:', err);
       }

@@ -7,7 +7,7 @@ import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { cancelPayment } from '@/lib/integrations/toss/cancel';
 import { logAdminAction } from './activity-log-writer';
 import { deriveAndSyncArtworkStatus } from './admin-artworks';
-import { notifyEmail, sendBuyerEmail } from '@/lib/notify';
+import { notifyEmail, sendBuyerEmail, extractBuyerLocale } from '@/lib/notify';
 import { getArtworkEmailInfo } from '@/lib/utils/get-artwork-email-info';
 import type { OrderStatus } from '@/lib/integrations/toss/types';
 
@@ -197,7 +197,9 @@ export async function refundOrder(input: RefundInput) {
   // 1. Fetch order + payment (must be paid | preparing)
   const { data: order, error: orderError } = await supabase
     .from('orders')
-    .select('id, order_no, status, total_amount, artwork_id, buyer_name, buyer_phone, buyer_email')
+    .select(
+      'id, order_no, status, total_amount, artwork_id, buyer_name, buyer_phone, buyer_email, metadata'
+    )
     .eq('id', orderId)
     .single();
 
@@ -262,13 +264,18 @@ export async function refundOrder(input: RefundInput) {
     void (async () => {
       try {
         const { artworkTitle, artistName } = await getArtworkEmailInfo(supabase, order.artwork_id);
-        void sendBuyerEmail(order.buyer_email!, 'refunded', {
-          orderNo: order.order_no,
-          buyerName: order.buyer_name ?? '',
-          artworkTitle,
-          artistName,
-          amount: order.total_amount,
-        });
+        void sendBuyerEmail(
+          order.buyer_email!,
+          'refunded',
+          {
+            orderNo: order.order_no,
+            buyerName: order.buyer_name ?? '',
+            artworkTitle,
+            artistName,
+            amount: order.total_amount,
+          },
+          extractBuyerLocale(order.metadata)
+        );
       } catch (err) {
         console.error('[refundOrder] email failed:', err);
       }
@@ -351,7 +358,7 @@ export async function updateOrderStatus(
 
   const { data: order, error } = await supabase
     .from('orders')
-    .select('id, order_no, status, buyer_email, buyer_name, artwork_id')
+    .select('id, order_no, status, buyer_email, buyer_name, artwork_id, metadata')
     .eq('id', orderId)
     .single();
 
@@ -443,24 +450,35 @@ export async function updateOrderStatus(
     void (async () => {
       try {
         const { artworkTitle, artistName } = await getArtworkEmailInfo(supabase, order.artwork_id);
+        const locale = extractBuyerLocale(order.metadata);
         if (newStatus === 'shipped') {
-          void sendBuyerEmail(order.buyer_email!, 'shipped', {
-            orderNo: order.order_no,
-            buyerName: order.buyer_name ?? '',
-            artworkTitle,
-            artistName,
-            amount: 0,
-            carrier: trackingInfo?.carrier ?? '',
-            trackingNumber: trackingInfo?.trackingNumber,
-          });
+          void sendBuyerEmail(
+            order.buyer_email!,
+            'shipped',
+            {
+              orderNo: order.order_no,
+              buyerName: order.buyer_name ?? '',
+              artworkTitle,
+              artistName,
+              amount: 0,
+              carrier: trackingInfo?.carrier ?? '',
+              trackingNumber: trackingInfo?.trackingNumber,
+            },
+            locale
+          );
         } else {
-          void sendBuyerEmail(order.buyer_email!, 'delivered', {
-            orderNo: order.order_no,
-            buyerName: order.buyer_name ?? '',
-            artworkTitle,
-            artistName,
-            amount: 0,
-          });
+          void sendBuyerEmail(
+            order.buyer_email!,
+            'delivered',
+            {
+              orderNo: order.order_no,
+              buyerName: order.buyer_name ?? '',
+              artworkTitle,
+              artistName,
+              amount: 0,
+            },
+            locale
+          );
         }
       } catch (err) {
         console.error('[updateOrderStatus] email failed:', err);
@@ -524,7 +542,9 @@ export async function confirmDeposit(orderId: string) {
 
   const { data: order, error } = await supabase
     .from('orders')
-    .select('id, order_no, status, artwork_id, total_amount, buyer_name, buyer_phone, buyer_email')
+    .select(
+      'id, order_no, status, artwork_id, total_amount, buyer_name, buyer_phone, buyer_email, metadata'
+    )
     .eq('id', orderId)
     .single();
 
@@ -582,13 +602,18 @@ export async function confirmDeposit(orderId: string) {
     void (async () => {
       try {
         const { artworkTitle, artistName } = await getArtworkEmailInfo(supabase, order.artwork_id);
-        void sendBuyerEmail(order.buyer_email!, 'deposit_confirmed', {
-          orderNo: order.order_no,
-          buyerName: order.buyer_name ?? '',
-          artworkTitle,
-          artistName,
-          amount: order.total_amount,
-        });
+        void sendBuyerEmail(
+          order.buyer_email!,
+          'deposit_confirmed',
+          {
+            orderNo: order.order_no,
+            buyerName: order.buyer_name ?? '',
+            artworkTitle,
+            artistName,
+            amount: order.total_amount,
+          },
+          extractBuyerLocale(order.metadata)
+        );
       } catch (err) {
         console.error('[confirmDeposit] email failed:', err);
       }
@@ -633,7 +658,7 @@ export async function cancelAwaitingOrder(orderId: string, cancelReason: string)
 
   const { data: order, error } = await supabase
     .from('orders')
-    .select('id, order_no, status, artwork_id, buyer_name, buyer_email, total_amount')
+    .select('id, order_no, status, artwork_id, buyer_name, buyer_email, total_amount, metadata')
     .eq('id', orderId)
     .single();
 
@@ -672,13 +697,18 @@ export async function cancelAwaitingOrder(orderId: string, cancelReason: string)
     void (async () => {
       try {
         const { artworkTitle, artistName } = await getArtworkEmailInfo(supabase, order.artwork_id);
-        void sendBuyerEmail(order.buyer_email!, 'auto_cancelled', {
-          orderNo: order.order_no,
-          buyerName: order.buyer_name ?? '',
-          artworkTitle,
-          artistName,
-          amount: order.total_amount,
-        });
+        void sendBuyerEmail(
+          order.buyer_email!,
+          'auto_cancelled',
+          {
+            orderNo: order.order_no,
+            buyerName: order.buyer_name ?? '',
+            artworkTitle,
+            artistName,
+            amount: order.total_amount,
+          },
+          extractBuyerLocale(order.metadata)
+        );
       } catch (err) {
         console.error('[cancelAwaitingOrder] email failed:', err);
       }

@@ -3,6 +3,7 @@ import * as React from 'react';
 
 import SAFEmailLayout from './_components/saf-email-layout';
 import OrderInfoTable from './_components/order-info-table';
+import { formatAmount, formatDate, t, type EmailLocale } from './_components/i18n';
 
 export interface VirtualAccountIssuedEmailProps {
   buyerName: string;
@@ -15,23 +16,7 @@ export interface VirtualAccountIssuedEmailProps {
     accountNumber?: string;
     dueDate?: string;
   };
-}
-
-function formatKoreanDate(isoString: string): string {
-  try {
-    const date = new Date(isoString);
-    if (isNaN(date.getTime())) return isoString;
-    return date.toLocaleString('ko-KR', {
-      timeZone: 'Asia/Seoul',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  } catch {
-    return isoString;
-  }
+  locale?: EmailLocale;
 }
 
 export default function VirtualAccountIssuedEmail({
@@ -41,27 +26,42 @@ export default function VirtualAccountIssuedEmail({
   artistName,
   amount,
   virtualAccount,
+  locale = 'ko',
 }: VirtualAccountIssuedEmailProps) {
   const rows = [
-    { label: '주문번호', value: orderNo },
-    { label: '작품', value: `${artworkTitle} (${artistName})` },
-    { label: '결제금액', value: `₩${amount.toLocaleString()}`, bold: true },
-    ...(virtualAccount.bankName ? [{ label: '은행', value: virtualAccount.bankName }] : []),
+    { label: t('orderNo', locale), value: orderNo },
+    { label: t('artwork', locale), value: `${artworkTitle} (${artistName})` },
+    { label: t('amount', locale), value: formatAmount(amount, locale), bold: true },
+    ...(virtualAccount.bankName
+      ? [{ label: t('bank', locale), value: virtualAccount.bankName }]
+      : []),
     ...(virtualAccount.accountNumber
-      ? [{ label: '계좌번호', value: virtualAccount.accountNumber }]
+      ? [{ label: t('accountNumber', locale), value: virtualAccount.accountNumber }]
       : []),
     ...(virtualAccount.dueDate
-      ? [{ label: '입금 기한', value: formatKoreanDate(virtualAccount.dueDate) }]
+      ? [{ label: t('dueDate', locale), value: formatDate(virtualAccount.dueDate, locale) }]
       : []),
   ];
+
+  const header =
+    locale === 'en' ? '[SAF] Virtual account deposit instructions' : '[씨앗페] 가상계좌 입금 안내';
+  const preview =
+    locale === 'en'
+      ? `${buyerName}, please transfer to the virtual account to confirm your order.`
+      : `${buyerName}님, 가상계좌로 입금해 주시면 주문이 확정됩니다.`;
+  const body =
+    locale === 'en'
+      ? `Dear ${buyerName}, please transfer the amount to the virtual account below to confirm your order.`
+      : `${buyerName}님, 아래 가상계좌로 입금해 주시면 주문이 확정됩니다.`;
 
   return (
     <SAFEmailLayout
       headerColor="#3b82f6"
-      headerTitle="[씨앗페] 가상계좌 입금 안내"
-      previewText={`${buyerName}님, 가상계좌로 입금해 주시면 주문이 확정됩니다.`}
+      headerTitle={header}
+      previewText={preview}
+      locale={locale}
     >
-      <Text style={bodyText}>{buyerName}님, 아래 가상계좌로 입금해 주시면 주문이 확정됩니다.</Text>
+      <Text style={bodyText}>{body}</Text>
       <OrderInfoTable rows={rows} />
     </SAFEmailLayout>
   );

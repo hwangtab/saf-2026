@@ -3,6 +3,7 @@ import * as React from 'react';
 
 import SAFEmailLayout from './_components/saf-email-layout';
 import OrderInfoTable from './_components/order-info-table';
+import { formatAmount, t, type EmailLocale } from './_components/i18n';
 
 export interface RefundedEmailProps {
   buyerName: string;
@@ -10,6 +11,7 @@ export interface RefundedEmailProps {
   artworkTitle: string;
   artistName: string;
   amount: number;
+  locale?: EmailLocale;
 }
 
 export default function RefundedEmail({
@@ -18,22 +20,40 @@ export default function RefundedEmail({
   artworkTitle,
   artistName,
   amount,
+  locale = 'ko',
 }: RefundedEmailProps) {
+  const refundLabel = locale === 'en' ? 'Refund Amount' : '환불금액';
   const rows = [
-    { label: '주문번호', value: orderNo },
-    { label: '작품', value: `${artworkTitle} (${artistName})` },
-    { label: '환불금액', value: `₩${amount.toLocaleString()}`, bold: true },
+    { label: t('orderNo', locale), value: orderNo },
+    { label: t('artwork', locale), value: `${artworkTitle} (${artistName})` },
+    { label: refundLabel, value: formatAmount(amount, locale), bold: true },
   ];
+
+  const header =
+    locale === 'en' ? '[SAF] Your refund has been processed' : '[씨앗페] 환불이 처리되었습니다';
+  const preview =
+    locale === 'en'
+      ? `${buyerName}, your order refund has been processed.`
+      : `${buyerName}님의 주문 환불이 처리되었습니다.`;
+  const body =
+    locale === 'en'
+      ? `Dear ${buyerName}, your order has been refunded.`
+      : `${buyerName}님, 주문하신 작품의 환불이 처리되었습니다.`;
+  const note =
+    locale === 'en'
+      ? 'Refunds may take 3-5 business days depending on your payment method.'
+      : '환불은 결제수단에 따라 영업일 기준 3~5일 소요될 수 있습니다.';
 
   return (
     <SAFEmailLayout
       headerColor="#f59e0b"
-      headerTitle="[씨앗페] 환불이 처리되었습니다"
-      previewText={`${buyerName}님의 주문 환불이 처리되었습니다.`}
+      headerTitle={header}
+      previewText={preview}
+      locale={locale}
     >
-      <Text style={bodyText}>{buyerName}님, 주문하신 작품의 환불이 처리되었습니다.</Text>
+      <Text style={bodyText}>{body}</Text>
       <OrderInfoTable rows={rows} />
-      <Text style={noteText}>환불은 결제수단에 따라 영업일 기준 3~5일 소요될 수 있습니다.</Text>
+      <Text style={noteText}>{note}</Text>
     </SAFEmailLayout>
   );
 }

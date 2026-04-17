@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@supabase/supabase-js';
-import { notifyEmail, sendBuyerEmail } from '@/lib/notify';
+import { notifyEmail, sendBuyerEmail, extractBuyerLocale } from '@/lib/notify';
 import { getArtworkEmailInfo } from '@/lib/utils/get-artwork-email-info';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 
@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
 
   const { data: expiredDeposit, error: depositFetchError } = await supabase
     .from('orders')
-    .select('id, artwork_id, buyer_email, buyer_name, order_no, total_amount')
+    .select('id, artwork_id, buyer_email, buyer_name, order_no, total_amount, metadata')
     .eq('status', 'awaiting_deposit')
     .lt('created_at', depositCutoff);
 
@@ -110,13 +110,18 @@ export async function GET(request: NextRequest) {
               supabase,
               expiredOrder.artwork_id
             );
-            void sendBuyerEmail(expiredOrder.buyer_email!, 'auto_cancelled', {
-              orderNo: expiredOrder.order_no!,
-              buyerName: expiredOrder.buyer_name ?? '',
-              artworkTitle,
-              artistName,
-              amount: expiredOrder.total_amount ?? 0,
-            });
+            void sendBuyerEmail(
+              expiredOrder.buyer_email!,
+              'auto_cancelled',
+              {
+                orderNo: expiredOrder.order_no!,
+                buyerName: expiredOrder.buyer_name ?? '',
+                artworkTitle,
+                artistName,
+                amount: expiredOrder.total_amount ?? 0,
+              },
+              extractBuyerLocale(expiredOrder.metadata)
+            );
           } catch (err) {
             console.error('[expire-stale-orders] email failed:', err);
           }

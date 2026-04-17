@@ -27,6 +27,7 @@ export type CreateOrderInput = {
   shippingAddressDetail?: string;
   shippingPostalCode: string;
   shippingMemo?: string;
+  locale?: 'ko' | 'en';
 };
 
 export type CreateOrderResult =
@@ -45,7 +46,9 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     shippingAddressDetail,
     shippingPostalCode,
     shippingMemo,
+    locale,
   } = input;
+  const buyerLocale = locale === 'en' ? 'en' : 'ko';
   const buyerEmailNorm = buyerEmail.trim().toLowerCase();
 
   // Rate limiting — IP 기준 분당 10회
@@ -170,6 +173,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
       shipping_amount: shippingAmount,
       total_amount: totalAmount,
       status: 'pending_payment',
+      metadata: { locale: buyerLocale },
     })
     .select('id')
     .single();

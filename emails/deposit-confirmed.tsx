@@ -3,6 +3,7 @@ import * as React from 'react';
 
 import SAFEmailLayout from './_components/saf-email-layout';
 import OrderInfoTable from './_components/order-info-table';
+import { formatAmount, t, type EmailLocale } from './_components/i18n';
 
 export interface DepositConfirmedEmailProps {
   buyerName: string;
@@ -10,6 +11,7 @@ export interface DepositConfirmedEmailProps {
   artworkTitle: string;
   artistName: string;
   amount: number;
+  locale?: EmailLocale;
 }
 
 export default function DepositConfirmedEmail({
@@ -18,22 +20,33 @@ export default function DepositConfirmedEmail({
   artworkTitle,
   artistName,
   amount,
+  locale = 'ko',
 }: DepositConfirmedEmailProps) {
   const rows = [
-    { label: '주문번호', value: orderNo },
-    { label: '작품', value: `${artworkTitle} (${artistName})` },
-    { label: '결제금액', value: `₩${amount.toLocaleString()}`, bold: true },
+    { label: t('orderNo', locale), value: orderNo },
+    { label: t('artwork', locale), value: `${artworkTitle} (${artistName})` },
+    { label: t('amount', locale), value: formatAmount(amount, locale), bold: true },
   ];
+
+  const header =
+    locale === 'en' ? '[SAF] Your deposit has been confirmed' : '[씨앗페] 입금이 확인되었습니다';
+  const preview =
+    locale === 'en'
+      ? `${buyerName}, your deposit has been confirmed.`
+      : `${buyerName}님의 입금이 확인되었습니다.`;
+  const body =
+    locale === 'en'
+      ? `Dear ${buyerName}, your deposit has been confirmed and your order is finalized. Thank you.`
+      : `${buyerName}님의 입금이 확인되어 주문이 최종 확정되었습니다. 감사합니다.`;
 
   return (
     <SAFEmailLayout
       headerColor="#22c55e"
-      headerTitle="[씨앗페] 입금이 확인되었습니다"
-      previewText={`${buyerName}님의 입금이 확인되었습니다.`}
+      headerTitle={header}
+      previewText={preview}
+      locale={locale}
     >
-      <Text style={bodyText}>
-        {buyerName}님의 입금이 확인되어 주문이 최종 확정되었습니다. 감사합니다.
-      </Text>
+      <Text style={bodyText}>{body}</Text>
       <OrderInfoTable rows={rows} />
     </SAFEmailLayout>
   );

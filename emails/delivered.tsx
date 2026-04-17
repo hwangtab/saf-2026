@@ -3,12 +3,14 @@ import * as React from 'react';
 
 import SAFEmailLayout from './_components/saf-email-layout';
 import OrderInfoTable from './_components/order-info-table';
+import { t, type EmailLocale } from './_components/i18n';
 
 export interface DeliveredEmailProps {
   buyerName: string;
   orderNo: string;
   artworkTitle: string;
   artistName: string;
+  locale?: EmailLocale;
 }
 
 export default function DeliveredEmail({
@@ -16,23 +18,40 @@ export default function DeliveredEmail({
   orderNo,
   artworkTitle,
   artistName,
+  locale = 'ko',
 }: DeliveredEmailProps) {
   const rows = [
-    { label: '주문번호', value: orderNo },
-    { label: '작품', value: `${artworkTitle} (${artistName})` },
+    { label: t('orderNo', locale), value: orderNo },
+    { label: t('artwork', locale), value: `${artworkTitle} (${artistName})` },
   ];
+
+  const header =
+    locale === 'en'
+      ? '[SAF] Your artwork has been delivered'
+      : '[씨앗페] 작품이 배송 완료되었습니다';
+  const preview =
+    locale === 'en'
+      ? `${buyerName}, your artwork has been delivered.`
+      : `${buyerName}님, 주문하신 작품이 배송 완료되었습니다.`;
+  const body =
+    locale === 'en'
+      ? `Dear ${buyerName}, your artwork has been delivered. Thank you.`
+      : `${buyerName}님, 주문하신 작품이 배송 완료되었습니다. 감사합니다.`;
+  const note =
+    locale === 'en'
+      ? 'If you have any issues with your artwork, please contact contact@kosmart.org.'
+      : '작품 수령 후 문제가 있으시면 contact@kosmart.org로 문의해 주세요.';
 
   return (
     <SAFEmailLayout
       headerColor="#22c55e"
-      headerTitle="[씨앗페] 작품이 배송 완료되었습니다"
-      previewText={`${buyerName}님, 주문하신 작품이 배송 완료되었습니다.`}
+      headerTitle={header}
+      previewText={preview}
+      locale={locale}
     >
-      <Text style={bodyText}>{buyerName}님, 주문하신 작품이 배송 완료되었습니다. 감사합니다.</Text>
+      <Text style={bodyText}>{body}</Text>
       <OrderInfoTable rows={rows} />
-      <Text style={noteText}>
-        작품 수령 후 문제가 있으시면 contact@kosmart.org로 문의해 주세요.
-      </Text>
+      <Text style={noteText}>{note}</Text>
     </SAFEmailLayout>
   );
 }

@@ -16,8 +16,16 @@ import ShippedEmail from '@/emails/shipped';
 import DeliveredEmail from '@/emails/delivered';
 import RefundedEmail from '@/emails/refunded';
 import AutoCancelledEmail from '@/emails/auto-cancelled';
+import type { EmailLocale } from '@/emails/_components/i18n';
 
 type NotifyLevel = 'payment' | 'warning' | 'error' | 'info';
+
+/** orders.metadata 에서 buyer locale 추출. 기본값 'ko'. */
+export function extractBuyerLocale(metadata: unknown): EmailLocale {
+  if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata)) return 'ko';
+  const locale = (metadata as Record<string, unknown>).locale;
+  return locale === 'en' ? 'en' : 'ko';
+}
 
 const LEVEL_CONFIG: Record<NotifyLevel, { emoji: string; color: string }> = {
   payment: { emoji: '💳', color: '#22c55e' },
@@ -122,14 +130,25 @@ export interface BuyerEmailData {
   trackingNumber?: string;
 }
 
-const BUYER_EMAIL_SUBJECTS: Record<BuyerEmailType, string> = {
-  payment_confirmed: '[씨앗페] 결제가 완료되었습니다',
-  virtual_account_issued: '[씨앗페] 가상계좌 입금 안내',
-  deposit_confirmed: '[씨앗페] 입금이 확인되었습니다',
-  shipped: '[씨앗페] 작품이 발송되었습니다',
-  delivered: '[씨앗페] 작품이 배송 완료되었습니다',
-  refunded: '[씨앗페] 환불이 처리되었습니다',
-  auto_cancelled: '[씨앗페] 주문이 자동 취소되었습니다',
+const BUYER_EMAIL_SUBJECTS: Record<EmailLocale, Record<BuyerEmailType, string>> = {
+  ko: {
+    payment_confirmed: '[씨앗페] 결제가 완료되었습니다',
+    virtual_account_issued: '[씨앗페] 가상계좌 입금 안내',
+    deposit_confirmed: '[씨앗페] 입금이 확인되었습니다',
+    shipped: '[씨앗페] 작품이 발송되었습니다',
+    delivered: '[씨앗페] 작품이 배송 완료되었습니다',
+    refunded: '[씨앗페] 환불이 처리되었습니다',
+    auto_cancelled: '[씨앗페] 주문이 자동 취소되었습니다',
+  },
+  en: {
+    payment_confirmed: '[SAF] Your payment is complete',
+    virtual_account_issued: '[SAF] Virtual account deposit instructions',
+    deposit_confirmed: '[SAF] Your deposit has been confirmed',
+    shipped: '[SAF] Your artwork has shipped',
+    delivered: '[SAF] Your artwork has been delivered',
+    refunded: '[SAF] Your refund has been processed',
+    auto_cancelled: '[SAF] Your order has been auto-cancelled',
+  },
 };
 
 /**
@@ -140,7 +159,8 @@ const BUYER_EMAIL_SUBJECTS: Record<BuyerEmailType, string> = {
 export async function sendBuyerEmail(
   to: string,
   type: BuyerEmailType,
-  data: BuyerEmailData
+  data: BuyerEmailData,
+  locale: EmailLocale = 'ko'
 ): Promise<void> {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM_EMAIL;
@@ -158,6 +178,7 @@ export async function sendBuyerEmail(
           artistName: data.artistName,
           amount: data.amount,
           paymentMethod: data.paymentMethod,
+          locale,
         });
         break;
       case 'virtual_account_issued':
@@ -168,6 +189,7 @@ export async function sendBuyerEmail(
           artistName: data.artistName,
           amount: data.amount,
           virtualAccount: data.virtualAccount ?? {},
+          locale,
         });
         break;
       case 'deposit_confirmed':
@@ -177,6 +199,7 @@ export async function sendBuyerEmail(
           artworkTitle: data.artworkTitle,
           artistName: data.artistName,
           amount: data.amount,
+          locale,
         });
         break;
       case 'shipped':
@@ -187,6 +210,7 @@ export async function sendBuyerEmail(
           artistName: data.artistName,
           carrier: data.carrier ?? '',
           trackingNumber: data.trackingNumber,
+          locale,
         });
         break;
       case 'delivered':
@@ -195,6 +219,7 @@ export async function sendBuyerEmail(
           orderNo: data.orderNo,
           artworkTitle: data.artworkTitle,
           artistName: data.artistName,
+          locale,
         });
         break;
       case 'refunded':
@@ -204,6 +229,7 @@ export async function sendBuyerEmail(
           artworkTitle: data.artworkTitle,
           artistName: data.artistName,
           amount: data.amount,
+          locale,
         });
         break;
       case 'auto_cancelled':
@@ -213,6 +239,7 @@ export async function sendBuyerEmail(
           artworkTitle: data.artworkTitle,
           artistName: data.artistName,
           amount: data.amount,
+          locale,
         });
         break;
       default: {
@@ -224,8 +251,8 @@ export async function sendBuyerEmail(
 
     const html = await render(emailElement);
     await resendFetch(
-      { apiKey, from, to, subject: BUYER_EMAIL_SUBJECTS[type], html },
-      `[buyer-email:${type}]`
+      { apiKey, from, to, subject: BUYER_EMAIL_SUBJECTS[locale][type], html },
+      `[buyer-email:${type}:${locale}]`
     );
   } catch (err) {
     console.error(`[buyer-email:${type}] render/send failed:`, err);

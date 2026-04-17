@@ -3,6 +3,7 @@ import * as React from 'react';
 
 import SAFEmailLayout from './_components/saf-email-layout';
 import OrderInfoTable from './_components/order-info-table';
+import { formatAmount, t, type EmailLocale } from './_components/i18n';
 
 export interface AutoCancelledEmailProps {
   buyerName: string;
@@ -10,6 +11,7 @@ export interface AutoCancelledEmailProps {
   artworkTitle: string;
   artistName: string;
   amount: number;
+  locale?: EmailLocale;
 }
 
 export default function AutoCancelledEmail({
@@ -18,24 +20,42 @@ export default function AutoCancelledEmail({
   artworkTitle,
   artistName,
   amount,
+  locale = 'ko',
 }: AutoCancelledEmailProps) {
+  const orderAmountLabel = locale === 'en' ? 'Order Amount' : '주문금액';
   const rows = [
-    { label: '주문번호', value: orderNo },
-    { label: '작품', value: `${artworkTitle} (${artistName})` },
-    { label: '주문금액', value: `₩${amount.toLocaleString()}` },
+    { label: t('orderNo', locale), value: orderNo },
+    { label: t('artwork', locale), value: `${artworkTitle} (${artistName})` },
+    { label: orderAmountLabel, value: formatAmount(amount, locale) },
   ];
+
+  const header =
+    locale === 'en'
+      ? '[SAF] Your order has been auto-cancelled'
+      : '[씨앗페] 주문이 자동 취소되었습니다';
+  const preview =
+    locale === 'en'
+      ? `${buyerName}, your order was auto-cancelled as the deposit deadline passed.`
+      : `${buyerName}님, 입금 기한이 경과하여 주문이 자동 취소되었습니다.`;
+  const body =
+    locale === 'en'
+      ? `Dear ${buyerName}, your order has been auto-cancelled because the 24-hour deposit deadline has passed.`
+      : `${buyerName}님, 입금 기한(24시간)이 경과하여 주문이 자동 취소되었습니다.`;
+  const note =
+    locale === 'en'
+      ? 'If you would like to place another order, please visit the SAF website.'
+      : '다시 구매를 원하시면 씨앗페 웹사이트를 방문해 주세요.';
 
   return (
     <SAFEmailLayout
       headerColor="#ef4444"
-      headerTitle="[씨앗페] 주문이 자동 취소되었습니다"
-      previewText={`${buyerName}님, 입금 기한이 경과하여 주문이 자동 취소되었습니다.`}
+      headerTitle={header}
+      previewText={preview}
+      locale={locale}
     >
-      <Text style={bodyText}>
-        {buyerName}님, 입금 기한(24시간)이 경과하여 주문이 자동 취소되었습니다.
-      </Text>
+      <Text style={bodyText}>{body}</Text>
       <OrderInfoTable rows={rows} />
-      <Text style={noteText}>다시 구매를 원하시면 씨앗페 웹사이트를 방문해 주세요.</Text>
+      <Text style={noteText}>{note}</Text>
     </SAFEmailLayout>
   );
 }

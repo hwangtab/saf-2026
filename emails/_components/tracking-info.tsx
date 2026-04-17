@@ -1,9 +1,12 @@
 import { Link, Text } from '@react-email/components';
 import * as React from 'react';
 
+import type { EmailLocale } from './i18n';
+
 interface TrackingInfoProps {
   carrier: string;
   trackingNumber?: string;
+  locale?: EmailLocale;
 }
 
 const CARRIER_TRACKING_URLS: Record<string, string> = {
@@ -16,11 +19,17 @@ const CARRIER_TRACKING_URLS: Record<string, string> = {
   카카오택배: 'https://accounts.kakao.com/',
 };
 
-export default function TrackingInfo({ carrier, trackingNumber }: TrackingInfoProps) {
+export default function TrackingInfo({
+  carrier,
+  trackingNumber,
+  locale = 'ko',
+}: TrackingInfoProps) {
   const trackingUrl =
     trackingNumber && CARRIER_TRACKING_URLS[carrier]
       ? `${CARRIER_TRACKING_URLS[carrier]}${trackingNumber}`
       : null;
+  const carrierLabel = locale === 'en' ? 'Carrier' : '택배사';
+  const trackingLabel = locale === 'en' ? 'Tracking No.' : '운송장 번호';
 
   return (
     <table
@@ -35,12 +44,12 @@ export default function TrackingInfo({ carrier, trackingNumber }: TrackingInfoPr
     >
       <tbody>
         <tr>
-          <td style={tdKeyStyle}>택배사</td>
+          <td style={tdKeyStyle}>{carrierLabel}</td>
           <td style={tdValStyle}>{carrier}</td>
         </tr>
         {trackingNumber && (
           <tr>
-            <td style={tdKeyStyle}>운송장 번호</td>
+            <td style={tdKeyStyle}>{trackingLabel}</td>
             <td style={tdValStyle}>
               {trackingUrl ? (
                 <Link href={trackingUrl} style={linkStyle}>
