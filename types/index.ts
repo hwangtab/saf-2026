@@ -183,6 +183,7 @@ export interface Video {
   thumbnail?: string;
   transcript?: string; // AI-friendly summary or transcript
   duration?: string; // ISO 8601 duration (e.g. "PT5M30S")
+  publishedAt?: string; // ISO 8601 date (e.g. "2023-03-26") — YouTube upload date
 }
 
 export interface TestimonialItem {

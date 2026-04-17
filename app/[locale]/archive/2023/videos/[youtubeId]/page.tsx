@@ -24,6 +24,7 @@ type ArchiveVideo = {
   transcript?: string;
   duration?: string;
   created_at?: string;
+  publishedAt?: string;
 };
 
 const toArchiveVideo = (video: (typeof fallbackVideos)[number]): ArchiveVideo => ({
@@ -33,6 +34,7 @@ const toArchiveVideo = (video: (typeof fallbackVideos)[number]): ArchiveVideo =>
   youtube_id: video.youtubeId,
   transcript: video.transcript,
   duration: video.duration,
+  publishedAt: video.publishedAt,
 });
 
 const getArchiveVideos = async (): Promise<ArchiveVideo[]> => {
@@ -46,12 +48,16 @@ const getArchiveVideos = async (): Promise<ArchiveVideo[]> => {
     .order('created_at', { ascending: true });
   if (error || !data) return fallbackRows;
 
-  // Supabase에 duration 컬럼이 없을 수 있으므로 fallback 데이터에서 병합
-  const fallbackDurationMap = new Map(fallbackVideos.map((v) => [v.youtubeId, v.duration]));
-  return (data as ArchiveVideo[]).map((row) => ({
-    ...row,
-    duration: row.duration || fallbackDurationMap.get(row.youtube_id),
-  }));
+  // Supabase에 duration/publishedAt 컬럼이 없을 수 있으므로 fallback 데이터에서 병합
+  const fallbackMap = new Map(fallbackVideos.map((v) => [v.youtubeId, v]));
+  return (data as ArchiveVideo[]).map((row) => {
+    const fallback = fallbackMap.get(row.youtube_id);
+    return {
+      ...row,
+      duration: row.duration || fallback?.duration,
+      publishedAt: row.publishedAt || fallback?.publishedAt,
+    };
+  });
 };
 
 const localizeVideoTitle = (title: string, locale: 'ko' | 'en', index = 0): string => {
@@ -147,7 +153,7 @@ export default async function Archive2023VideoWatchPage({
     youtubeId: video.youtube_id,
     locale,
     watchPageUrl: pageUrl,
-    uploadDate: video.created_at,
+    uploadDate: video.publishedAt || video.created_at,
   });
 
   return (

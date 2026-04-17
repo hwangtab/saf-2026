@@ -19,7 +19,6 @@ import {
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { generateSAFClaimReviews } from '@/lib/schemas/claim-review';
-import { generateSAFCoreQA } from '@/lib/schemas/qa-page';
 import { createStandardPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
@@ -117,7 +116,6 @@ export default async function OurReality() {
     },
   };
   const claimReviews = generateSAFClaimReviews(locale);
-  const coreQA = generateSAFCoreQA(locale);
   const datasetSchema = {
     '@context': 'https://schema.org',
     '@type': 'Dataset',
@@ -170,9 +168,7 @@ export default async function OurReality() {
   if (locale === 'en') {
     return (
       <>
-        <JsonLdScript
-          data={[breadcrumbSchema, aboutPageSchema, datasetSchema, ...claimReviews, coreQA]}
-        />
+        <JsonLdScript data={[breadcrumbSchema, aboutPageSchema, datasetSchema, ...claimReviews]} />
         <PageHero
           title="Our Reality"
           description="Data from the 2025 report shows structural financial exclusion faced by artists in Korea."
@@ -317,9 +313,7 @@ export default async function OurReality() {
 
   return (
     <>
-      <JsonLdScript
-        data={[breadcrumbSchema, aboutPageSchema, datasetSchema, ...claimReviews, coreQA]}
-      />
+      <JsonLdScript data={[breadcrumbSchema, aboutPageSchema, datasetSchema, ...claimReviews]} />
       <PageHero
         title="우리의 현실"
         description="2025 예술인 금융 재난 보고서가 밝혀낸 한국 예술인의 금융 위기의 구조적 현실"
