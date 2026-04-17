@@ -10,6 +10,7 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: '*',
         allow: '/',
         disallow: [
+          // 인증·관리자·체크아웃 영역
           '/api/',
           '/admin/',
           '/en/admin/',
@@ -17,6 +18,8 @@ export default function robots(): MetadataRoute.Robots {
           '/en/dashboard/',
           '/exhibitor/',
           '/en/exhibitor/',
+          '/checkout/',
+          '/en/checkout/',
           '/login',
           '/en/login',
           '/signup',
@@ -25,16 +28,19 @@ export default function robots(): MetadataRoute.Robots {
           '/en/onboarding',
           '/terms-consent',
           '/en/terms-consent',
-          '/checkout/',
-          '/en/checkout/',
-          '/stories?*',
-          '/en/stories?*',
-          '/artworks?*',
-          '/en/artworks?*',
-          '/news?*',
-          '/en/news?*',
+          // 광고·추적 파라미터 (canonical URL만 인덱스)
           '/*?*utm_*',
           '/*?*fbclid=*',
+          '/*?*gclid=*',
+          '/*?*msclkid=*',
+          // 목록 페이지 쿼리 파라미터 (sort/filter/page 등 무한 조합 방지)
+          // `/path?*` 패턴: Google은 `/path?`로 시작하는 URL 매칭, 루트 `/path`는 매칭 안 됨 (의도대로)
+          '/artworks?*',
+          '/en/artworks?*',
+          '/stories?*',
+          '/en/stories?*',
+          '/news?*',
+          '/en/news?*',
         ],
       },
       {

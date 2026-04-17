@@ -71,6 +71,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     default: '씨앗페 온라인 | 한국 현대미술 작품 구매',
+    // messages/ko.json `seo.titleTemplate`과 동일하게 유지 — 표준 페이지(absolute title)와의 brand suffix 일관성
     template: '%s | 씨앗페 온라인 갤러리',
   },
   description:

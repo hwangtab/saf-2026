@@ -20,7 +20,7 @@ export default async function Footer() {
         <footer className="bg-charcoal-deep text-white pb-[env(safe-area-inset-bottom)]">
           <div className="container-max py-12">
             {/* Footer Content Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
               {/* Organization Info with Logo */}
               <div>
                 <Link href="/" className="flex items-start gap-3 mb-6 inline-flex">
@@ -37,19 +37,10 @@ export default async function Footer() {
                 <p className="text-sm text-gray-400">{t('guide')}</p>
               </div>
 
-              {/* Quick Links */}
+              {/* Explore — 콘텐츠·정보 페이지 */}
               <div>
-                <h3 className="font-sans font-bold text-lg mb-4">{t('links')}</h3>
+                <h3 className="font-sans font-bold text-lg mb-4">{t('explore')}</h3>
                 <ul className="space-y-2 text-sm">
-                  {/* 내부 링크: 출품작 페이지 — SEO 내부 링크 에쿼티 전달 */}
-                  <li>
-                    <Link
-                      href="/artworks"
-                      className="text-gray-300 hover:text-primary transition-colors"
-                    >
-                      {tNav('buyArt')}
-                    </Link>
-                  </li>
                   <li>
                     <Link
                       href="/our-reality"
@@ -96,6 +87,22 @@ export default async function Footer() {
                       className="text-gray-300 hover:text-primary transition-colors"
                     >
                       {tNav('archive')}
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Get Involved — 구매·참여·파트너 */}
+              <div>
+                <h3 className="font-sans font-bold text-lg mb-4">{t('getInvolved')}</h3>
+                <ul className="space-y-2 text-sm">
+                  {/* 내부 링크: 출품작 페이지 — SEO 내부 링크 에쿼티 전달 */}
+                  <li>
+                    <Link
+                      href="/artworks"
+                      className="text-gray-300 hover:text-primary transition-colors"
+                    >
+                      {tNav('buyArt')}
                     </Link>
                   </li>
                   <li>

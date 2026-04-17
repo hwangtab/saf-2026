@@ -151,11 +151,11 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
         },
       ],
     },
-    // Facebook/Instagram 제품 메타 태그 — 소셜 공유 시 가격 정보 노출
-    // og:type 'product'는 Next.js Metadata API가 지원하지 않아 other로 우회
+    // Facebook/Instagram/Pinterest 제품 메타 태그 — 소셜 공유 시 가격 정보 노출
+    // og:type은 openGraph.type의 'website'를 유지 — 'product'로 override하면 중복 송출되어 파서 혼란
+    // product:* 메타태그만으로 Facebook Merchant Catalog·Pinterest Product Rich Pin 충분히 인식
     other: {
       ...(hasFixedPrice && {
-        'og:type': 'product',
         'product:price:amount': String(numericPriceValue),
         'product:price:currency': 'KRW',
         'product:availability': isSold ? 'out of stock' : 'in stock',
@@ -249,8 +249,8 @@ export function generateArtworkJsonLd(
     url: SITE_URL,
   };
 
-  // Offer URL: prefer shopUrl for direct purchase link
-  const offerUrl = artwork.shopUrl || `${SITE_URL}/artworks/${artwork.id}`;
+  // Offer URL: 모든 결제는 내부 Toss 체크아웃 경유. shopUrl(legacy Cafe24) 우선순위 제거.
+  const offerUrl = `${SITE_URL}/artworks/${artwork.id}`;
 
   // Merchant return policy for e-commerce SEO
   const returnPolicy = {
@@ -310,23 +310,28 @@ export function generateArtworkJsonLd(
         ? { '@type': 'QuantitativeValue', value: artwork.edition_limit }
         : undefined;
 
-  const offers = isInquiry
-    ? undefined
-    : {
-        '@type': 'Offer',
-        url: offerUrl,
-        validFrom: CAMPAIGN.START_DATE,
-        priceCurrency: 'KRW',
-        price: parseFloat(numericPrice) || 0,
-        priceValidUntil,
-        availability: artwork.sold ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock',
-        itemCondition: 'https://schema.org/NewCondition',
-        acceptedPaymentMethod,
-        ...(eligibleQuantity && { eligibleQuantity }),
-        seller: sellerOrg,
-        hasMerchantReturnPolicy: returnPolicy,
-        shippingDetails,
-      };
+  // price가 0·NaN·undefined이면 Offer 자체를 생략 — "price: 0"로 Google Merchant에 노출되는 것 방지
+  const parsedOfferPrice = parseFloat(numericPrice);
+  const hasValidOfferPrice = Number.isFinite(parsedOfferPrice) && parsedOfferPrice > 0;
+
+  const offers =
+    isInquiry || !hasValidOfferPrice
+      ? undefined
+      : {
+          '@type': 'Offer',
+          url: offerUrl,
+          validFrom: CAMPAIGN.START_DATE,
+          priceCurrency: 'KRW',
+          price: parsedOfferPrice,
+          priceValidUntil,
+          availability: artwork.sold ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock',
+          itemCondition: 'https://schema.org/NewCondition',
+          acceptedPaymentMethod,
+          ...(eligibleQuantity && { eligibleQuantity }),
+          seller: sellerOrg,
+          hasMerchantReturnPolicy: returnPolicy,
+          shippingDetails,
+        };
 
   // Classify artwork medium for better SEO categorization
   const mediumCategory = classifyArtworkMedium(materialForLocale || '');
@@ -398,9 +403,10 @@ export function generateArtworkJsonLd(
       ? { '@type': 'QuantitativeValue', value: sizeForLocale, unitText: 'dimensions' }
       : undefined,
     ...(offers && { offers }),
+    // 임베디드 ExhibitionEvent — 전시 스키마가 독립 주입되지 않으므로 @id 참조 대신 인라인 객체로 표현
+    // (dangling @id 참조 방지)
     isPartOf: {
       '@type': 'ExhibitionEvent',
-      '@id': `${SITE_URL}#exhibition`,
       name: isEnglish
         ? 'SAF Online - Special Exhibition for Artist Mutual Aid'
         : '씨앗페 온라인 - 예술인 상호부조 기금 마련 특별전',
@@ -438,8 +444,6 @@ export function generateArtworkJsonLd(
         value: historyForLocale.substring(0, 200),
       },
     ].filter(Boolean),
-    // sameAs: 동일 제품의 외부 판매 URL
-    ...(artwork.shopUrl && { sameAs: artwork.shopUrl }),
     potentialAction: [
       {
         '@type': 'BuyAction',
