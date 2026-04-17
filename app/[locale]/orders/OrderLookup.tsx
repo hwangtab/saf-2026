@@ -33,11 +33,11 @@ const STATUS_STYLES: Record<string, { label: string; className: string }> = {
   refunded: { label: 'statusRefunded', className: 'bg-danger/20 text-danger-a11y' },
 };
 
-const PAYMENT_METHOD_LABELS: Record<string, string> = {
-  CARD: '신용/체크카드',
-  TRANSFER: '퀵계좌이체',
-  VIRTUAL_ACCOUNT: '계좌이체',
-  MOBILE_PHONE: '휴대폰결제',
+const PAYMENT_METHOD_I18N_KEYS: Record<string, string> = {
+  CARD: 'paymentMethodCard',
+  TRANSFER: 'paymentMethodTransfer',
+  VIRTUAL_ACCOUNT: 'paymentMethodVirtualAccount',
+  MOBILE_PHONE: 'paymentMethodMobilePhone',
 };
 
 // The ordered steps for the normal flow stepper
@@ -485,7 +485,9 @@ function OrderDetail({
           <div className="flex justify-between">
             <span className="text-gray-500">{t('paymentMethod')}</span>
             <span className="text-charcoal">
-              {PAYMENT_METHOD_LABELS[order.paymentMethod] ?? order.paymentMethod}
+              {PAYMENT_METHOD_I18N_KEYS[order.paymentMethod]
+                ? t(PAYMENT_METHOD_I18N_KEYS[order.paymentMethod] as Parameters<typeof t>[0])
+                : order.paymentMethod}
             </span>
           </div>
         )}
