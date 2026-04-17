@@ -317,7 +317,9 @@
     "untitled": "Untitled",
     "unknownArtist": "Unknown artist",
     "pendingInfo": "Detailed information coming soon",
-    "originalKoreanData": "Original details in Korean"
+    "originalKoreanData": "Original details in Korean",
+    "soldBadge": "SOLD",
+    "reservedBadge": "Reserved"
   },
   "trustBadges": {
     "authenticity": "100% authenticity guaranteed",

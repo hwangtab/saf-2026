@@ -317,7 +317,9 @@
     "untitled": "무제",
     "unknownArtist": "작가 미상",
     "pendingInfo": "상세 정보 준비 중",
-    "originalKoreanData": "상세 정보 원문은 한국어로 제공됩니다"
+    "originalKoreanData": "상세 정보 원문은 한국어로 제공됩니다",
+    "soldBadge": "판매완료",
+    "reservedBadge": "예약중"
   },
   "trustBadges": {
     "authenticity": "100% 진품 보증",

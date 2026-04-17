@@ -68,17 +68,17 @@ const getImageAlt = (
   return hasMaterial ? `${title}, ${rawMaterial} - ${artist}` : `${title} - ${artist}`;
 };
 
-function SoldBadge({ variant }: { variant: ArtworkCardVariant }) {
+function SoldBadge({ variant, label }: { variant: ArtworkCardVariant; label: string }) {
   return (
     <div
       className={cn('absolute bg-red-600 text-white font-bold', VARIANT_CONFIG[variant].soldBadge)}
     >
-      SOLD
+      {label}
     </div>
   );
 }
 
-function ReservedBadge({ variant }: { variant: ArtworkCardVariant }) {
+function ReservedBadge({ variant, label }: { variant: ArtworkCardVariant; label: string }) {
   return (
     <div
       className={cn(
@@ -86,7 +86,7 @@ function ReservedBadge({ variant }: { variant: ArtworkCardVariant }) {
         VARIANT_CONFIG[variant].soldBadge
       )}
     >
-      예약중
+      {label}
     </div>
   );
 }
@@ -185,6 +185,8 @@ function ArtworkCard({
   const unknownArtistLabel = t('unknownArtist');
   const pendingInfoLabel = t('pendingInfo');
   const originalKoreanDataLabel = t('originalKoreanData');
+  const soldLabel = t('soldBadge');
+  const reservedLabel = t('reservedBadge');
   const isPending = (value: string | undefined) => value === '확인 중' || value === 'Pending';
   const isInquiryPrice = (value: string | undefined) => value === '문의' || value === 'Inquiry';
   const localizeDataValue = (value: string | undefined) => {
@@ -227,8 +229,10 @@ function ArtworkCard({
               sizes={config.imageSizes}
             />
           </div>
-          {artwork.sold && <SoldBadge variant="slider" />}
-          {artwork.reserved && !artwork.sold && <ReservedBadge variant="slider" />}
+          {artwork.sold && <SoldBadge variant="slider" label={soldLabel} />}
+          {artwork.reserved && !artwork.sold && (
+            <ReservedBadge variant="slider" label={reservedLabel} />
+          )}
           {artwork.sold && artwork.sold_at && (
             <SoldDateBadge soldAt={artwork.sold_at} variant="slider" locale={locale} />
           )}
@@ -284,8 +288,10 @@ function ArtworkCard({
                 : 'bg-black/0 group-hover:bg-black/20'
             )}
           />
-          {artwork.sold && <SoldBadge variant="gallery" />}
-          {artwork.reserved && !artwork.sold && <ReservedBadge variant="gallery" />}
+          {artwork.sold && <SoldBadge variant="gallery" label={soldLabel} />}
+          {artwork.reserved && !artwork.sold && (
+            <ReservedBadge variant="gallery" label={reservedLabel} />
+          )}
           {artwork.sold && artwork.sold_at && (
             <SoldDateBadge soldAt={artwork.sold_at} variant="gallery" locale={locale} />
           )}

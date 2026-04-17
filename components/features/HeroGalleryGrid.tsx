@@ -1,6 +1,6 @@
 'use client';
 
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import SafeImage from '@/components/common/SafeImage';
 import { Link } from '@/i18n/navigation';
 import type { Artwork } from '@/types';
@@ -12,6 +12,7 @@ interface HeroGalleryGridProps {
 
 export default function HeroGalleryGrid({ artworks }: HeroGalleryGridProps) {
   const locale = useLocale();
+  const t = useTranslations('artworkCard');
 
   if (artworks.length === 0) return null;
 
@@ -59,12 +60,12 @@ export default function HeroGalleryGrid({ artworks }: HeroGalleryGridProps) {
 
             {artwork.sold && (
               <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded">
-                SOLD
+                {t('soldBadge')}
               </div>
             )}
             {artwork.reserved && !artwork.sold && (
               <div className="absolute top-2 right-2 bg-amber-500 text-white text-xs font-bold px-2 py-0.5 rounded">
-                예약중
+                {t('reservedBadge')}
               </div>
             )}
           </Link>
