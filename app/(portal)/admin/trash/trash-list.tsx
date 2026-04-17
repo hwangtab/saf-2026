@@ -178,14 +178,8 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
       setRestoreTargetId(null);
       setRestoreReason('');
       router.refresh();
-    } catch (error) {
-      const message =
-        locale === 'en'
-          ? t('restoreError')
-          : error instanceof Error
-            ? error.message
-            : t('restoreError');
-      toast.error(message);
+    } catch {
+      toast.error(t('restoreError'));
     } finally {
       setIsRestoring(false);
     }
@@ -208,14 +202,8 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
       setPurgeTargetId(null);
       setPurgeReason('');
       router.refresh();
-    } catch (error) {
-      const message =
-        locale === 'en'
-          ? t('purgeError')
-          : error instanceof Error
-            ? error.message
-            : t('purgeError');
-      toast.error(message);
+    } catch {
+      toast.error(t('purgeError'));
     } finally {
       setIsPurging(false);
     }

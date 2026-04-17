@@ -494,15 +494,9 @@ export function UserList({
     if (targetUser.exhibitorApplication) {
       try {
         await approveExhibitor(approveConfirmId);
-      } catch (error: unknown) {
+      } catch {
         setProcessingId(null);
-        const message =
-          locale === 'en'
-            ? t('exhibitorApproveError')
-            : error instanceof Error
-              ? error.message
-              : t('exhibitorApproveError');
-        toast.error(message);
+        toast.error(t('exhibitorApproveError'));
         return;
       }
 

@@ -308,15 +308,9 @@ export function AdminArtworkList({
       await deleteAdminArtwork(id);
       toast.success(t('deleted'));
       setDeleteConfirm(null);
-    } catch (error) {
+    } catch {
       setOptimisticArtworks(artworksRef.current);
-      toast.error(
-        locale === 'en'
-          ? t('deleteError')
-          : error instanceof Error
-            ? error.message
-            : t('deleteError')
-      );
+      toast.error(t('deleteError'));
     } finally {
       setProcessingId(null);
     }
@@ -350,15 +344,9 @@ export function AdminArtworkList({
         return;
       }
       toast.success(t('statusChanged'));
-    } catch (error) {
+    } catch {
       setOptimisticArtworks(artworksRef.current);
-      toast.error(
-        locale === 'en'
-          ? t('statusError')
-          : error instanceof Error
-            ? error.message
-            : t('statusError')
-      );
+      toast.error(t('statusError'));
     } finally {
       setProcessingId(null);
     }
@@ -386,15 +374,9 @@ export function AdminArtworkList({
         return;
       }
       toast.success(currentHidden ? t('shown') : t('hidden'));
-    } catch (error) {
+    } catch {
       setOptimisticArtworks(artworksRef.current);
-      toast.error(
-        locale === 'en'
-          ? t('visibilityError')
-          : error instanceof Error
-            ? error.message
-            : t('visibilityError')
-      );
+      toast.error(t('visibilityError'));
     } finally {
       setProcessingId(null);
     }
@@ -413,15 +395,9 @@ export function AdminArtworkList({
     try {
       await updateArtworkCategory(id, category);
       toast.success(t('categoryChanged'));
-    } catch (error) {
+    } catch {
       setOptimisticArtworks(artworksRef.current);
-      toast.error(
-        locale === 'en'
-          ? t('categoryError')
-          : error instanceof Error
-            ? error.message
-            : t('categoryError')
-      );
+      toast.error(t('categoryError'));
     } finally {
       setProcessingId(null);
     }
@@ -480,15 +456,9 @@ export function AdminArtworkList({
       setSelectedIds(new Set());
       setBatchStatusConfirm(null);
       toast.success(t('batchStatusChanged'));
-    } catch (error) {
+    } catch {
       setOptimisticArtworks(artworksRef.current);
-      toast.error(
-        locale === 'en'
-          ? t('batchStatusError')
-          : error instanceof Error
-            ? error.message
-            : t('batchStatusError')
-      );
+      toast.error(t('batchStatusError'));
     } finally {
       setBatchProcessing(false);
     }
@@ -527,15 +497,9 @@ export function AdminArtworkList({
       setSelectedIds(new Set());
       setBatchHiddenConfirm(null);
       toast.success(isHidden ? t('batchHidden') : t('batchShown'));
-    } catch (error) {
+    } catch {
       setOptimisticArtworks(artworksRef.current);
-      toast.error(
-        locale === 'en'
-          ? t('batchVisibilityError')
-          : error instanceof Error
-            ? error.message
-            : t('batchVisibilityError')
-      );
+      toast.error(t('batchVisibilityError'));
     } finally {
       setBatchProcessing(false);
     }
@@ -553,15 +517,9 @@ export function AdminArtworkList({
       setSelectedIds(new Set());
       setShowBatchDeleteConfirm(false);
       toast.success(t('batchDeleted'));
-    } catch (error) {
+    } catch {
       setOptimisticArtworks(artworksRef.current);
-      toast.error(
-        locale === 'en'
-          ? t('batchDeleteError')
-          : error instanceof Error
-            ? error.message
-            : t('batchDeleteError')
-      );
+      toast.error(t('batchDeleteError'));
     } finally {
       setBatchProcessing(false);
     }

@@ -5,6 +5,12 @@ import type { Components } from 'react-markdown';
 import React from 'react';
 import { Link } from '@/i18n/navigation';
 
+function isSafeHref(href: string | undefined): href is string {
+  if (!href) return false;
+  const lower = href.toLowerCase().trim();
+  return !lower.startsWith('javascript:') && !lower.startsWith('data:');
+}
+
 function ImageFigure({ src, alt }: { src: string; alt?: string }) {
   return (
     <figure className="my-8">
@@ -24,51 +30,55 @@ function ImageFigure({ src, alt }: { src: string; alt?: string }) {
   );
 }
 
-const markdownComponents: Components = {
-  img({ src, alt }) {
-    if (!src || typeof src !== 'string') return null;
-    return <ImageFigure src={src} alt={alt ?? undefined} />;
-  },
-  a({ href, children }) {
-    // [![alt](img)](/artworks/id) → 클릭 가능한 figure
-    const childArray = React.Children.toArray(children);
-    if (
-      href &&
-      childArray.length === 1 &&
-      React.isValidElement(childArray[0]) &&
-      childArray[0].type === ImageFigure
-    ) {
+function createMarkdownComponents(locale: string = 'ko'): Components {
+  return {
+    img({ src, alt }) {
+      if (!src || typeof src !== 'string') return null;
+      return <ImageFigure src={src} alt={alt ?? undefined} />;
+    },
+    a({ href, children }) {
+      if (!isSafeHref(href)) return <>{children}</>;
+      // [![alt](img)](/artworks/id) → 클릭 가능한 figure
+      const childArray = React.Children.toArray(children);
+      if (
+        href &&
+        childArray.length === 1 &&
+        React.isValidElement(childArray[0]) &&
+        childArray[0].type === ImageFigure
+      ) {
+        return (
+          <a
+            href={href}
+            className="block group no-underline hover:no-underline [&>figure>img]:transition-[transform,box-shadow] [&>figure>img]:duration-300 [&>figure>img]:group-hover:shadow-lg [&>figure>img]:group-hover:scale-[1.01]"
+          >
+            {children}
+            <span className="block text-center text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity -mt-2 mb-4">
+              {locale === 'en' ? 'View artwork →' : '작품 보러 가기 →'}
+            </span>
+          </a>
+        );
+      }
+      // 내부 링크 (작품 페이지 등) — i18n 라우팅
+      if (href && !href.startsWith('http')) {
+        return <Link href={href}>{children}</Link>;
+      }
+      // 외부 링크
       return (
-        <a
-          href={href}
-          className="block group no-underline hover:no-underline [&>figure>img]:transition-[transform,box-shadow] [&>figure>img]:duration-300 [&>figure>img]:group-hover:shadow-lg [&>figure>img]:group-hover:scale-[1.01]"
-        >
+        <a href={href} target="_blank" rel="noopener noreferrer">
           {children}
-          <span className="block text-center text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity -mt-2 mb-4">
-            작품 보러 가기 →
-          </span>
         </a>
       );
-    }
-    // 내부 링크 (작품 페이지 등) — i18n 라우팅
-    if (href && !href.startsWith('http')) {
-      return <Link href={href}>{children}</Link>;
-    }
-    // 외부 링크
-    return (
-      <a href={href} target="_blank" rel="noopener noreferrer">
-        {children}
-      </a>
-    );
-  },
-};
+    },
+  };
+}
 
 interface Props {
   content: string;
   className?: string;
+  locale?: string;
 }
 
-export default function MarkdownRenderer({ content, className }: Props) {
+export default function MarkdownRenderer({ content, className, locale = 'ko' }: Props) {
   return (
     <div
       className={clsx(
@@ -99,7 +109,7 @@ export default function MarkdownRenderer({ content, className }: Props) {
         className
       )}
     >
-      <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+      <ReactMarkdown remarkPlugins={[remarkGfm]} components={createMarkdownComponents(locale)}>
         {content}
       </ReactMarkdown>
     </div>

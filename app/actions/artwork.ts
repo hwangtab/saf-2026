@@ -368,7 +368,7 @@ export async function deleteArtwork(id: string): Promise<ActionState> {
 
     const { data: artist } = await supabase
       .from('artists')
-      .select('id')
+      .select('id, name_ko')
       .eq('user_id', user.id)
       .single();
 
@@ -385,6 +385,15 @@ export async function deleteArtwork(id: string): Promise<ActionState> {
       .eq('artist_id', artist.id)
       .single();
 
+    const { count: activeOrderCount } = await supabase
+      .from('orders')
+      .select('id', { count: 'exact', head: true })
+      .eq('artwork_id', id)
+      .in('status', ['paid', 'preparing', 'awaiting_deposit', 'shipped']);
+    if ((activeOrderCount ?? 0) > 0) {
+      return { message: '진행 중인 주문이 있어 삭제할 수 없습니다.', error: true };
+    }
+
     const { error } = await supabase
       .from('artworks')
       .delete()
@@ -393,32 +402,40 @@ export async function deleteArtwork(id: string): Promise<ActionState> {
 
     if (error) throw error;
 
-    let artistName: string | null = null;
-    if (artwork?.artist_id) {
-      const { data: artist } = await supabase
-        .from('artists')
-        .select('name_ko')
-        .eq('id', artwork.artist_id)
-        .single();
-      artistName = artist?.name_ko ?? null;
+    // 스토리지 이미지 삭제 (원본 + 모든 변형)
+    const imageUrls = Array.isArray(artwork?.images)
+      ? artwork.images.filter((img): img is string => typeof img === 'string' && img.length > 0)
+      : [];
+    if (imageUrls.length > 0) {
+      const removalPaths = getOwnedCleanupPaths(imageUrls, artist.id);
+      if (removalPaths.length > 0) {
+        const { error: removeError } = await supabase.storage.from('artworks').remove(removalPaths);
+        if (removeError) {
+          console.error('[deleteArtwork] storage cleanup failed:', removeError.message);
+        }
+      }
     }
 
     revalidatePath('/dashboard/artworks');
-    revalidatePublicArtworkSurfaces([artistName]);
+    revalidatePublicArtworkSurfaces([artist.name_ko]);
 
-    if (artwork) {
-      await logArtistAction(
-        'artist_artwork_deleted',
-        'artwork',
-        id,
-        { title: artwork.title || id },
-        {
-          summary: `작품 삭제: ${artwork.title || id}`,
-          beforeSnapshot: artwork,
-          afterSnapshot: null,
-          reversible: true,
-        }
-      );
+    try {
+      if (artwork) {
+        await logArtistAction(
+          'artist_artwork_deleted',
+          'artwork',
+          id,
+          { title: artwork.title || id },
+          {
+            summary: `작품 삭제: ${artwork.title || id}`,
+            beforeSnapshot: artwork,
+            afterSnapshot: null,
+            reversible: true,
+          }
+        );
+      }
+    } catch (logError) {
+      console.error('[deleteArtwork] activity log failed:', logError);
     }
 
     return { message: '작품이 삭제되었습니다.', error: false };

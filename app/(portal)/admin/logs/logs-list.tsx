@@ -61,14 +61,8 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
       }
       toast.success(t('revertSuccess'));
       router.refresh();
-    } catch (error) {
-      const message =
-        locale === 'en'
-          ? t('revertError')
-          : error instanceof Error
-            ? error.message
-            : t('revertError');
-      toast.error(message);
+    } catch {
+      toast.error(t('revertError'));
     }
   };
 

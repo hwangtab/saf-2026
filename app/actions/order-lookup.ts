@@ -9,7 +9,6 @@ import { sendBuyerEmail } from '@/lib/notify';
 import { getArtworkEmailInfo } from '@/lib/utils/get-artwork-email-info';
 import { rateLimit } from '@/lib/rate-limit';
 import { normalizePhoneDigits } from '@/lib/utils/phone';
-import { sanitizeIlikeQuery } from '@/lib/utils/query';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 
 export type PublicOrderListItem = {
@@ -69,7 +68,7 @@ export async function lookupOrders(
   }
 
   const trimmedName = name.trim();
-  const trimmedEmail = sanitizeIlikeQuery(email.trim().toLowerCase());
+  const trimmedEmail = email.trim().toLowerCase();
   const trimmedPhone = normalizePhoneDigits(phone);
 
   if (!trimmedName || !trimmedEmail || !trimmedPhone) {
@@ -93,7 +92,7 @@ export async function lookupOrders(
     `
     )
     .eq('buyer_name', trimmedName)
-    .ilike('buyer_email', trimmedEmail)
+    .eq('buyer_email', trimmedEmail)
     .neq('status', 'pending_payment')
     .order('created_at', { ascending: false });
 
@@ -106,7 +105,7 @@ export async function lookupOrders(
     .from('orders')
     .select('order_no, buyer_phone')
     .eq('buyer_name', trimmedName)
-    .ilike('buyer_email', trimmedEmail)
+    .eq('buyer_email', trimmedEmail)
     .neq('status', 'pending_payment');
 
   const verifiedOrderNos = new Set(
@@ -321,7 +320,8 @@ export async function updateBuyerShipping(
       shipping_address_detail: data.shippingAddressDetail?.trim() ?? null,
       shipping_memo: data.shippingMemo?.trim() ?? null,
     })
-    .eq('id', order.id);
+    .eq('id', order.id)
+    .in('status', ['paid', 'preparing']);
 
   if (updateError) return { success: false, error: 'UPDATE_FAILED' };
 

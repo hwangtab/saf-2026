@@ -121,6 +121,15 @@ export async function deleteAdminArtwork(id: string) {
     .eq('id', id)
     .single();
 
+  const { count: activeOrderCount } = await supabase
+    .from('orders')
+    .select('id', { count: 'exact', head: true })
+    .eq('artwork_id', id)
+    .in('status', ['paid', 'preparing', 'awaiting_deposit', 'shipped']);
+  if ((activeOrderCount ?? 0) > 0) {
+    throw new Error('진행 중인 주문이 있어 삭제할 수 없습니다.');
+  }
+
   const { error } = await supabase.from('artworks').delete().eq('id', id);
   if (error) throw error;
 
