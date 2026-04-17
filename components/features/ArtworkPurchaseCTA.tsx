@@ -98,7 +98,7 @@ export default function ArtworkPurchaseCTA({
         : '/artworks';
 
     return (
-      <div className="rounded-2xl border border-gray-200 bg-gradient-to-b from-success/10/50 to-white p-6 shadow-sm">
+      <div className="rounded-2xl border border-gray-200 bg-gradient-to-b from-success/10 to-white p-6 shadow-sm">
         <div className="text-center">
           <CheckCircle className="w-10 h-10 text-success mx-auto mb-3" />
           <p className="text-lg font-bold text-charcoal mb-1">{t('soldNotice')}</p>

@@ -187,7 +187,7 @@ export default async function AdminDashboardPage() {
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {stats.siteAnalytics ? (
           <>
-            <AdminCard className="flex h-full flex-col justify-between bg-success/10/50 p-6 transition-[transform,box-shadow] duration-200">
+            <AdminCard className="flex h-full flex-col justify-between bg-success/10 p-6 transition-[transform,box-shadow] duration-200">
               <div>
                 <p className="text-sm font-medium text-success-a11y">{t('realtimeVisitors')}</p>
                 <p className="mt-2 text-3xl font-bold tracking-tight text-success-a11y">

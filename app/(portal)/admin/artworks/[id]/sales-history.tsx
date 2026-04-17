@@ -500,7 +500,7 @@ export function SalesHistory({
 
                 if (isVoidTarget) {
                   return (
-                    <tr key={sale.id} className="bg-danger/10/50">
+                    <tr key={sale.id} className="bg-danger/10">
                       <td colSpan={7} className="px-4 py-3">
                         <div className="flex items-center gap-3">
                           <span className="shrink-0 text-sm font-medium text-danger-a11y">
