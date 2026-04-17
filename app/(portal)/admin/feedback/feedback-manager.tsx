@@ -205,7 +205,7 @@ export function FeedbackManager({ feedback: initialFeedback }: { feedback: Feedb
                   onClick={() => handleSelect(f)}
                   className={clsx(
                     'w-full px-4 py-3 text-left transition-colors hover:bg-gray-50',
-                    selectedId === f.id && 'bg-indigo-50'
+                    selectedId === f.id && 'bg-primary-surface'
                   )}
                 >
                   <div className="flex items-center gap-2">

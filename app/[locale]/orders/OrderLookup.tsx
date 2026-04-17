@@ -25,7 +25,7 @@ const STATUS_STYLES: Record<string, { label: string; className: string }> = {
   pending_payment: { label: 'statusPendingPayment', className: 'bg-gray-100 text-gray-600' },
   awaiting_deposit: { label: 'statusAwaitingDeposit', className: 'bg-amber-100 text-amber-700' },
   paid: { label: 'statusPaid', className: 'bg-blue-100 text-blue-700' },
-  preparing: { label: 'statusPreparing', className: 'bg-indigo-100 text-indigo-700' },
+  preparing: { label: 'statusPreparing', className: 'bg-primary-soft text-primary-strong' },
   shipped: { label: 'statusShipped', className: 'bg-purple-100 text-purple-700' },
   delivered: { label: 'statusDelivered', className: 'bg-green-100 text-green-700' },
   completed: { label: 'statusCompleted', className: 'bg-green-100 text-green-700' },

@@ -350,12 +350,12 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="연결할 사용자 검색..."
-                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
                     disabled={isLinking}
                   />
                   {isSearching && (
                     <div className="absolute right-3 top-[38px]">
-                      <div className="animate-spin h-4 w-4 border-2 border-indigo-500 border-t-transparent rounded-full"></div>
+                      <div className="animate-spin h-4 w-4 border-2 border-primary-a11y border-t-transparent rounded-full"></div>
                     </div>
                   )}
                 </div>
@@ -368,7 +368,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
                     <p className="text-xs text-gray-500">입력 반영 중...</p>
                   )}
                   {searchQuery.length >= 2 && isSearching && (
-                    <p className="text-xs text-indigo-600">사용자 계정을 검색 중입니다...</p>
+                    <p className="text-xs text-primary-a11y">사용자 계정을 검색 중입니다...</p>
                   )}
                   {isSearchSlow && (
                     <p className="text-xs text-amber-600">
@@ -482,7 +482,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
               onChange={(e) => setNameKo(e.target.value)}
               required
               className={cn(
-                'w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500 transition-colors',
+                'w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y transition-colors',
                 showErrors && !nameKo.trim() ? 'border-red-500 bg-red-50' : 'border-gray-300'
               )}
             />
@@ -499,7 +499,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
               id="name_en"
               name="name_en"
               defaultValue={artist.name_en || ''}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
             />
           </div>
 
@@ -513,7 +513,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
               type="tel"
               defaultValue={artist.contact_phone || ''}
               placeholder="010-1234-5678"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
             />
           </div>
 
@@ -526,7 +526,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
               name="contact_email"
               type="email"
               defaultValue={artist.contact_email || ''}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
             />
           </div>
 
@@ -539,7 +539,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
               name="instagram"
               defaultValue={artist.instagram || ''}
               placeholder="@username"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
             />
           </div>
 
@@ -553,7 +553,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
               type="url"
               defaultValue={artist.homepage || ''}
               placeholder="https://..."
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
             />
           </div>
 
@@ -569,7 +569,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
             name="bio"
             defaultValue={artist.bio || ''}
             rows={4}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
           />
         </div>
 
@@ -583,7 +583,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
             defaultValue={artist.bio_en || ''}
             rows={4}
             placeholder="English bio"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
           />
         </div>
 
@@ -596,7 +596,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
             name="history"
             defaultValue={artist.history || ''}
             rows={6}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
           />
         </div>
 
@@ -610,7 +610,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
             defaultValue={artist.history_en || ''}
             rows={6}
             placeholder="English exhibition history"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
           />
         </div>
 

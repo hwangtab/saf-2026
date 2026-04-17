@@ -41,7 +41,7 @@ export function AnalyticsPeriodTabs({ selected }: Props) {
           className={clsx(
             'rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
             value === selected
-              ? 'bg-indigo-600 text-white shadow-sm'
+              ? 'bg-primary-a11y text-white shadow-sm'
               : 'text-gray-600 hover:bg-gray-100'
           )}
         >

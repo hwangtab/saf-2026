@@ -156,7 +156,7 @@ export function BuyerList({ buyers }: { buyers: BuyerRecord[] }) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="이름 또는 전화번호 검색..."
-          className="w-full max-w-sm rounded-lg border border-gray-300 px-4 py-2 text-sm focus-visible:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/25"
+          className="w-full max-w-sm rounded-lg border border-gray-300 px-4 py-2 text-sm focus-visible:outline-none focus-visible:border-primary-a11y focus-visible:ring-2 focus-visible:ring-primary-a11y/25"
         />
         <span className="shrink-0 text-sm text-gray-500">
           {filtered.length}명{search.trim() ? ` / ${buyers.length}명` : ''}
@@ -249,7 +249,7 @@ export function BuyerList({ buyers }: { buyers: BuyerRecord[] }) {
                           disabled={saving}
                           // eslint-disable-next-line jsx-a11y/no-autofocus -- 인라인 편집 활성화 시 즉시 포커스가 UX상 필요
                           autoFocus
-                          className="w-36 rounded border border-indigo-300 px-2 py-1 text-sm focus-visible:outline-none"
+                          className="w-36 rounded border border-primary-soft px-2 py-1 text-sm focus-visible:outline-none"
                           placeholder="010-0000-0000"
                         />
                       ) : (

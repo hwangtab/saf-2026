@@ -287,7 +287,7 @@ export default async function AdminLogsPage({ searchParams }: Props) {
                 name="reversible"
                 value="1"
                 defaultChecked={params.reversible === '1'}
-                className="h-4 w-4 rounded border-gray-300 text-indigo-600"
+                className="h-4 w-4 rounded border-gray-300 text-primary-a11y"
               />
               {isEnglish ? 'Only show reversible logs' : '복구 가능한 로그만 보기'}
             </label>

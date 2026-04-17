@@ -226,13 +226,13 @@ export function ChangelogList({
             onClick={() => navigate({ filter: f.value })}
             className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
               filter === f.value
-                ? 'bg-indigo-600 text-white shadow-sm'
+                ? 'bg-primary-a11y text-white shadow-sm'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
           >
             {f.label}
             <span
-              className={`ml-1.5 text-xs ${filter === f.value ? 'text-indigo-200' : 'text-gray-400'}`}
+              className={`ml-1.5 text-xs ${filter === f.value ? 'text-primary-soft' : 'text-gray-400'}`}
             >
               {counts[f.value]}
             </span>
@@ -311,7 +311,7 @@ export function ChangelogList({
               onClick={() => navigate({ page: p })}
               className={`min-w-[2.25rem] rounded-lg px-2 py-2 text-sm font-medium transition ${
                 p === page
-                  ? 'bg-indigo-600 text-white shadow-sm'
+                  ? 'bg-primary-a11y text-white shadow-sm'
                   : 'text-gray-600 hover:bg-gray-100'
               }`}
             >

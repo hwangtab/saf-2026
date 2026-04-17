@@ -130,7 +130,7 @@ export function AdminMobileNav() {
                               aria-current={isActive ? 'page' : undefined}
                               className={`block rounded-md px-3 py-2 text-base font-medium transition-colors ${
                                 isActive
-                                  ? 'bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-600/20'
+                                  ? 'bg-primary-surface text-primary-strong ring-1 ring-inset ring-primary-a11y/20'
                                   : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
                               }`}
                               onClick={() => setIsOpen(false)}

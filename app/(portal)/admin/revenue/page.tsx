@@ -99,7 +99,7 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
       <div className="flex flex-wrap justify-end gap-2">
         <a
           href={accountingExportHref}
-          className="inline-flex items-center justify-center rounded-lg border border-indigo-300 bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700 hover:bg-indigo-100"
+          className="inline-flex items-center justify-center rounded-lg border border-primary-soft bg-primary-surface px-4 py-2 text-sm font-semibold text-primary-strong hover:bg-primary-soft"
         >
           {t('accountingCsv')}
         </a>
@@ -243,7 +243,7 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
                   analytics.filter.selectedMonth === month.month;
 
                 return (
-                  <tr key={month.month} className={isSelected ? 'bg-indigo-50/50' : ''}>
+                  <tr key={month.month} className={isSelected ? 'bg-primary-surface/50' : ''}>
                     <td className="px-4 py-3 font-medium text-gray-800">{month.label}</td>
                     <td className="px-4 py-3 text-right font-medium text-gray-900">
                       {krwFormatter.format(month.revenue)}
@@ -348,7 +348,7 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
                       <div className="min-w-0">
                         <Link
                           href={`/admin/artworks/${artwork.artworkId}`}
-                          className="block truncate text-sm font-medium text-gray-900 hover:text-indigo-700"
+                          className="block truncate text-sm font-medium text-gray-900 hover:text-primary-strong"
                         >
                           {artwork.title}
                         </Link>

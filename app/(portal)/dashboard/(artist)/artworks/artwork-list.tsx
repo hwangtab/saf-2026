@@ -137,7 +137,7 @@ export function ArtworkList({
                       <div className="flex items-center gap-2">
                         <Link
                           href={`/dashboard/artworks/${artwork.id}/edit`}
-                          className="truncate text-sm font-semibold text-gray-900 hover:text-indigo-700 hover:underline"
+                          className="truncate text-sm font-semibold text-gray-900 hover:text-primary-strong hover:underline"
                         >
                           {artwork.title}
                         </Link>

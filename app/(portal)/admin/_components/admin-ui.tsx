@@ -67,7 +67,7 @@ export function AdminInput({ className, ...props }: InputHTMLAttributes<HTMLInpu
   return (
     <input
       className={cn(
-        'block h-11 w-full rounded-md border border-[var(--admin-border)] bg-white px-3 text-sm text-charcoal-deep shadow-sm focus-visible:outline-none transition placeholder:text-charcoal-soft focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/25 disabled:cursor-not-allowed disabled:bg-charcoal/10 disabled:text-charcoal-soft',
+        'block h-11 w-full rounded-md border border-[var(--admin-border)] bg-white px-3 text-sm text-charcoal-deep shadow-sm focus-visible:outline-none transition placeholder:text-charcoal-soft focus-visible:border-primary-a11y focus-visible:ring-2 focus-visible:ring-primary-a11y/25 disabled:cursor-not-allowed disabled:bg-charcoal/10 disabled:text-charcoal-soft',
         className
       )}
       {...props}
@@ -82,7 +82,7 @@ export function AdminTextarea({
   return (
     <textarea
       className={cn(
-        'block w-full rounded-md border border-[var(--admin-border)] bg-white px-3 py-2.5 text-sm text-charcoal-deep shadow-sm focus-visible:outline-none transition placeholder:text-charcoal-soft focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/25 disabled:cursor-not-allowed disabled:bg-charcoal/10 disabled:text-charcoal-soft',
+        'block w-full rounded-md border border-[var(--admin-border)] bg-white px-3 py-2.5 text-sm text-charcoal-deep shadow-sm focus-visible:outline-none transition placeholder:text-charcoal-soft focus-visible:border-primary-a11y focus-visible:ring-2 focus-visible:ring-primary-a11y/25 disabled:cursor-not-allowed disabled:bg-charcoal/10 disabled:text-charcoal-soft',
         className
       )}
       {...props}
@@ -107,7 +107,7 @@ export function AdminBadge({
       className={cn(
         'inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset relative group cursor-help focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2',
         tone === 'default' && 'bg-charcoal/10 text-charcoal-muted ring-charcoal/15',
-        tone === 'info' && 'bg-indigo-50 text-indigo-700 ring-indigo-600/20',
+        tone === 'info' && 'bg-primary-surface text-primary-strong ring-primary-a11y/20',
         tone === 'success' && 'bg-emerald-50 text-emerald-700 ring-emerald-600/20',
         tone === 'warning' && 'bg-amber-50 text-amber-800 ring-amber-600/25',
         tone === 'danger' && 'bg-rose-50 text-rose-700 ring-rose-600/20',
@@ -182,7 +182,7 @@ export function AdminSelect({
     <div className={cn('relative', wrapperClassName)}>
       <select
         className={cn(
-          'block h-11 w-full appearance-none rounded-md border border-[var(--admin-border)] bg-white px-3 pr-9 text-sm text-charcoal shadow-sm focus-visible:outline-none transition focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/25 disabled:cursor-not-allowed disabled:bg-charcoal/10 disabled:text-charcoal-soft',
+          'block h-11 w-full appearance-none rounded-md border border-[var(--admin-border)] bg-white px-3 pr-9 text-sm text-charcoal shadow-sm focus-visible:outline-none transition focus-visible:border-primary-a11y focus-visible:ring-2 focus-visible:ring-primary-a11y/25 disabled:cursor-not-allowed disabled:bg-charcoal/10 disabled:text-charcoal-soft',
           className
         )}
         {...props}
@@ -214,7 +214,7 @@ export function AdminHelp({ children, className }: { children: ReactNode; classN
     <div className={cn('relative group inline-flex ml-1.5 align-middle', className)}>
       {/* eslint-disable-next-line jsx-a11y/prefer-tag-over-role -- 인라인 SVG는 <img>로 대체 불가; role="img"+aria-label로 스크린 리더 지원 */}
       <svg
-        className="w-4 h-4 text-charcoal-soft cursor-help hover:text-indigo-500 transition-colors focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded-full"
+        className="w-4 h-4 text-charcoal-soft cursor-help hover:text-primary-a11y transition-colors focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded-full"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"

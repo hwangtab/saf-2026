@@ -23,7 +23,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         </Suspense>
       }
       badge={
-        <span className="hidden sm:inline-flex mr-1 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-600/20 whitespace-nowrap">
+        <span className="hidden sm:inline-flex mr-1 rounded-full bg-primary-surface px-3 py-1 text-xs font-semibold text-primary-strong ring-1 ring-inset ring-primary-a11y/20 whitespace-nowrap">
           {t('modeLabel')}
         </span>
       }

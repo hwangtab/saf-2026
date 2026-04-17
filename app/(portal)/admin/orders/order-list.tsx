@@ -176,7 +176,7 @@ export function OrderList({
                   <td className="px-4 py-3">
                     <Link
                       href={`/admin/orders/${order.id}`}
-                      className="text-xs text-indigo-600 hover:underline"
+                      className="text-xs text-primary-a11y hover:underline"
                     >
                       상세 →
                     </Link>

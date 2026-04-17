@@ -614,11 +614,11 @@ export function AdminArtworkList({
 
         {/* Batch Actions Toolbar (Visible only when selected) */}
         {selectedInFiltered.length > 0 && (
-          <div className="flex flex-wrap items-center gap-4 border-b border-indigo-100 bg-indigo-50 px-6 py-4">
-            <span className="text-sm font-medium text-indigo-900">
+          <div className="flex flex-wrap items-center gap-4 border-b border-primary-soft bg-primary-surface px-6 py-4">
+            <span className="text-sm font-medium text-primary-strong">
               {t('selectedCount', { count: selectedInFiltered.length })}
             </span>
-            <div className="h-4 w-px bg-indigo-200"></div>
+            <div className="h-4 w-px bg-primary-soft"></div>
             <div className="flex items-center gap-2">
               <AdminSelect
                 onChange={(e) => {
@@ -626,7 +626,7 @@ export function AdminArtworkList({
                   e.target.value = '';
                 }}
                 disabled={batchProcessing}
-                className="border-indigo-200"
+                className="border-primary-soft"
               >
                 <option value="">{t('changeStatus')}</option>
                 <option value="available">{t('available')}</option>
@@ -657,7 +657,7 @@ export function AdminArtworkList({
               </Button>
             </div>
             {batchProcessing && (
-              <span className="text-xs text-indigo-600 animate-pulse">{t('processing')}</span>
+              <span className="text-xs text-primary-a11y animate-pulse">{t('processing')}</span>
             )}
           </div>
         )}
@@ -672,7 +672,7 @@ export function AdminArtworkList({
                     type="checkbox"
                     checked={allFilteredSelected}
                     onChange={toggleSelectAll}
-                    className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                    className="rounded border-gray-300 text-primary-a11y focus:ring-primary-a11y"
                   />
                 </th>
                 <th
@@ -763,14 +763,14 @@ export function AdminArtworkList({
                 sortedArtworks.map((artwork) => (
                   <tr
                     key={artwork.id}
-                    className={`hover:bg-gray-50 transition-colors ${selectedIds.has(artwork.id) ? 'bg-indigo-50/30' : ''}`}
+                    className={`hover:bg-gray-50 transition-colors ${selectedIds.has(artwork.id) ? 'bg-primary-surface/30' : ''}`}
                   >
                     <td className="px-6 py-4">
                       <input
                         type="checkbox"
                         checked={selectedIds.has(artwork.id)}
                         onChange={() => toggleSelect(artwork.id)}
-                        className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                        className="rounded border-gray-300 text-primary-a11y focus:ring-primary-a11y"
                       />
                     </td>
                     <td className="px-6 py-4">
@@ -826,11 +826,11 @@ export function AdminArtworkList({
                         <div className="ml-4">
                           <Link
                             href={`/admin/artworks/${artwork.id}`}
-                            className="font-medium text-gray-900 hover:text-indigo-600 hover:underline"
+                            className="font-medium text-gray-900 hover:text-primary-a11y hover:underline"
                           >
                             {artwork.title}
                             {artwork.admin_product_name && (
-                              <span className="ml-1.5 text-xs font-normal text-indigo-600">
+                              <span className="ml-1.5 text-xs font-normal text-primary-a11y">
                                 [{artwork.admin_product_name}]
                               </span>
                             )}
@@ -891,7 +891,7 @@ export function AdminArtworkList({
                         className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors ${
                           artwork.is_hidden
                             ? 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                            : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100'
+                            : 'bg-primary-surface text-primary-strong hover:bg-primary-soft'
                         }`}
                       >
                         {artwork.is_hidden ? t('hiddenLabel') : t('visibleNow')}
@@ -903,7 +903,7 @@ export function AdminArtworkList({
                           href={`/admin/artworks/${artwork.id}`}
                           variant="white"
                           size="sm"
-                          className="px-2 text-gray-500 hover:bg-indigo-50 hover:text-indigo-600"
+                          className="px-2 text-gray-500 hover:bg-primary-surface hover:text-primary-a11y"
                         >
                           {t('edit')}
                         </Button>

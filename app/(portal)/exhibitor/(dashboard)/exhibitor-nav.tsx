@@ -41,7 +41,7 @@ export default function ExhibitorNav() {
             className={clsx(
               'inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium transition-colors',
               isActive(item.href)
-                ? 'border-indigo-600 text-gray-900'
+                ? 'border-primary-a11y text-gray-900'
                 : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
             )}
           >
@@ -59,7 +59,7 @@ export default function ExhibitorNav() {
               className={clsx(
                 'inline-flex shrink-0 items-center border-b-2 py-3 text-sm font-medium transition-colors',
                 isActive(item.href)
-                  ? 'border-indigo-600 text-gray-900'
+                  ? 'border-primary-a11y text-gray-900'
                   : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
               )}
             >

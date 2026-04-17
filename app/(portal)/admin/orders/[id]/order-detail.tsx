@@ -125,7 +125,7 @@ function TrackingEditSection({
       <button
         type="button"
         onClick={() => setEditing(true)}
-        className="text-xs text-indigo-600 hover:underline"
+        className="text-xs text-primary-a11y hover:underline"
       >
         {initialCarrier ? '수정' : '운송장 입력'}
       </button>
@@ -146,7 +146,7 @@ function TrackingEditSection({
   }
 
   return (
-    <div className="mt-3 space-y-2 rounded-lg border border-indigo-200 bg-indigo-50 p-3">
+    <div className="mt-3 space-y-2 rounded-lg border border-primary-soft bg-primary-surface p-3">
       <div>
         <AdminFieldLabel>택배사</AdminFieldLabel>
         <AdminSelect value={carrier} onChange={(e) => setCarrier(e.target.value)}>
@@ -171,7 +171,7 @@ function TrackingEditSection({
           type="button"
           onClick={handleSave}
           disabled={isPending}
-          className="rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+          className="rounded-md bg-primary-a11y px-3 py-1.5 text-xs font-medium text-white hover:bg-primary-strong disabled:opacity-50"
         >
           저장
         </button>
@@ -238,7 +238,7 @@ function ShippedModal({
             type="button"
             onClick={() => onConfirm(carrier, trackingNumber)}
             disabled={isPending}
-            className="flex-1 rounded-xl bg-indigo-600 py-2.5 text-sm font-bold text-white hover:bg-indigo-700 disabled:opacity-50"
+            className="flex-1 rounded-xl bg-primary-a11y py-2.5 text-sm font-bold text-white hover:bg-primary-strong disabled:opacity-50"
           >
             {isPending ? '처리 중...' : '배송 시작'}
           </button>
@@ -419,7 +419,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
               key={opt.value}
               onClick={() => handleStatusUpdate(opt.value)}
               disabled={isPending}
-              className="rounded-md border border-indigo-300 bg-indigo-50 px-3 py-1.5 text-sm font-medium text-indigo-700 hover:bg-indigo-100 disabled:opacity-50"
+              className="rounded-md border border-primary-soft bg-primary-surface px-3 py-1.5 text-sm font-medium text-primary-strong hover:bg-primary-soft disabled:opacity-50"
             >
               {opt.label}
             </button>
@@ -428,7 +428,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
             <button
               onClick={() => setShowShippedModal(true)}
               disabled={isPending}
-              className="rounded-md border border-indigo-300 bg-indigo-50 px-3 py-1.5 text-sm font-medium text-indigo-700 hover:bg-indigo-100 disabled:opacity-50"
+              className="rounded-md border border-primary-soft bg-primary-surface px-3 py-1.5 text-sm font-medium text-primary-strong hover:bg-primary-soft disabled:opacity-50"
             >
               배송 중으로 변경
             </button>
@@ -527,7 +527,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
                               href={trackingUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="rounded bg-indigo-100 px-1.5 py-0.5 text-xs font-medium text-indigo-700 hover:bg-indigo-200"
+                              className="rounded bg-primary-soft px-1.5 py-0.5 text-xs font-medium text-primary-strong hover:bg-primary-soft"
                             >
                               조회
                             </a>
@@ -569,7 +569,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
                 order.artwork_id ? (
                   <Link
                     href={`/admin/artworks/${order.artwork_id}`}
-                    className="text-indigo-600 hover:underline"
+                    className="text-primary-a11y hover:underline"
                   >
                     {order.artwork_title ?? order.artwork_id}
                   </Link>

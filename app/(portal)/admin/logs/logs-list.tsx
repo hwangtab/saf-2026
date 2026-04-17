@@ -115,7 +115,7 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
             onChange={(e) => setRevertReason(e.target.value)}
             placeholder={t('revertReasonPlaceholder')}
             rows={3}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y"
             // eslint-disable-next-line jsx-a11y/no-autofocus -- 모달 열릴 때 즉시 포커스가 UX상 필요
             autoFocus
           />
@@ -186,7 +186,7 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                     <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {link ? (
                         <div className="space-y-0.5">
-                          <Link href={link} className="text-indigo-600 hover:underline">
+                          <Link href={link} className="text-primary-a11y hover:underline">
                             {getTargetTypeLabel(log.target_type, t)}
                           </Link>
                           <div className="text-xs text-gray-600">{targetDisplayName}</div>

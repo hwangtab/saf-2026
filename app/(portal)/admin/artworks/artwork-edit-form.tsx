@@ -241,7 +241,7 @@ export function ArtworkEditForm({
               onChange={(e) => setTitle(e.target.value)}
               required
               className={cn(
-                'w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500 transition-colors',
+                'w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y transition-colors',
                 showErrors && !title.trim() ? 'border-red-500 bg-red-50' : 'border-gray-300'
               )}
             />
@@ -259,7 +259,7 @@ export function ArtworkEditForm({
               name="title_en"
               defaultValue={artwork.title_en || ''}
               placeholder="English title"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
             />
           </div>
 
@@ -275,7 +275,7 @@ export function ArtworkEditForm({
               name="admin_product_name"
               defaultValue={artwork.admin_product_name || ''}
               placeholder="예: 연작 1, 파란배경"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
             />
             <p className="mt-1 text-xs text-gray-500">
               관리자 화면에서만 보이며, 동명 작품 구분에 사용됩니다.
@@ -299,7 +299,7 @@ export function ArtworkEditForm({
               value={artistQuery}
               onChange={(e) => setArtistQuery(e.target.value)}
               placeholder="작가명 검색..."
-              className="mb-2 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
+              className="mb-2 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
             />
             <AdminSelect
               id="artist_id"
@@ -338,7 +338,7 @@ export function ArtworkEditForm({
               value={price}
               onChange={handlePriceChange}
               placeholder="₩1,000,000"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
             />
           </div>
 
@@ -351,7 +351,7 @@ export function ArtworkEditForm({
               name="size"
               defaultValue={artwork.size || ''}
               placeholder="60x45cm"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
             />
           </div>
 
@@ -364,7 +364,7 @@ export function ArtworkEditForm({
               name="material"
               defaultValue={artwork.material || ''}
               placeholder="Oil on canvas"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
             />
           </div>
 
@@ -377,7 +377,7 @@ export function ArtworkEditForm({
               name="year"
               defaultValue={artwork.year || ''}
               placeholder="2026"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
             />
           </div>
 
@@ -390,7 +390,7 @@ export function ArtworkEditForm({
               name="edition"
               defaultValue={artwork.edition || ''}
               placeholder="1/10"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
             />
           </div>
 
@@ -408,7 +408,7 @@ export function ArtworkEditForm({
                   setEditionLimit('');
                 }
               }}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
             >
               <option value="unique">Unique (1점)</option>
               <option value="limited">Limited (한정판)</option>
@@ -424,7 +424,7 @@ export function ArtworkEditForm({
               id="tax_type"
               name="tax_type"
               defaultValue={artwork.tax_type || 'B'}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
             >
               <option value="B">면세</option>
               <option value="A">과세</option>
@@ -453,7 +453,7 @@ export function ArtworkEditForm({
                   setCategoryCustom('');
                 }
               }}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
             >
               <option value="">선택해주세요</option>
               {ARTWORK_CATEGORIES.map((cat) => (
@@ -469,7 +469,7 @@ export function ArtworkEditForm({
                 value={categoryCustom}
                 onChange={(e) => setCategoryCustom(e.target.value)}
                 placeholder="분류를 직접 입력하세요"
-                className="mt-2 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
+                className="mt-2 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
               />
             )}
           </div>
@@ -491,7 +491,7 @@ export function ArtworkEditForm({
                 min="1"
                 placeholder="예: 50"
                 className={cn(
-                  'w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500',
+                  'w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y',
                   showErrors && editionType === 'limited' && !editionLimit
                     ? 'border-red-500 bg-red-50'
                     : 'border-gray-300'
@@ -513,7 +513,7 @@ export function ArtworkEditForm({
             name="description"
             defaultValue={artwork.description || ''}
             rows={4}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
           />
         </div>
 

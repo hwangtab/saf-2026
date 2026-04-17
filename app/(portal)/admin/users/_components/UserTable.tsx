@@ -141,7 +141,7 @@ export function UserTable({
                       <button
                         type="button"
                         onClick={() => onSelectUser(user)}
-                        className="text-sm font-medium text-gray-900 hover:text-indigo-600 hover:underline text-left"
+                        className="text-sm font-medium text-gray-900 hover:text-primary-a11y hover:underline text-left"
                       >
                         {user.name || 'No Name'}
                       </button>
@@ -151,7 +151,7 @@ export function UserTable({
                           <span
                             className={`inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-medium ring-1 ring-inset ${
                               user.exhibitorApplication
-                                ? 'bg-indigo-50 text-indigo-700 ring-indigo-600/20'
+                                ? 'bg-primary-surface text-primary-strong ring-primary-a11y/20'
                                 : 'bg-emerald-50 text-emerald-700 ring-emerald-600/20'
                             }`}
                           >

@@ -765,16 +765,16 @@ export function UserList({
       >
         {artistPromoteContext && (
           <div className="space-y-5">
-            <div className="rounded-lg border border-indigo-100 bg-indigo-50/50 p-4">
-              <p className="text-sm text-indigo-900 font-medium">
+            <div className="rounded-lg border border-primary-soft bg-primary-surface/50 p-4">
+              <p className="text-sm text-primary-strong font-medium">
                 {t('targetUser')}: {artistPromoteContext.user.name || t('unnamed')} (
                 {artistPromoteContext.user.email})
               </p>
-              <p className="text-xs text-indigo-700 mt-1">
+              <p className="text-xs text-primary-strong mt-1">
                 {t('submittedArtistName')}:{' '}
                 {artistPromoteContext.user.application?.artist_name || t('noSubmittedArtistName')}
               </p>
-              <p className="text-xs text-indigo-700 mt-1">
+              <p className="text-xs text-primary-strong mt-1">
                 {t('submittedContact')}:{' '}
                 {artistPromoteContext.user.application?.contact || t('noSubmittedContact')}
               </p>
@@ -792,7 +792,7 @@ export function UserList({
                   }
                   className={`rounded-lg border px-3 py-2 text-left text-sm transition-colors ${
                     artistPromoteContext.mode === 'link_existing'
-                      ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
+                      ? 'border-primary-a11y bg-primary-surface text-primary-strong'
                       : 'border-gray-200 hover:bg-gray-50'
                   }`}
                 >
@@ -807,7 +807,7 @@ export function UserList({
                   }
                   className={`rounded-lg border px-3 py-2 text-left text-sm transition-colors ${
                     artistPromoteContext.mode === 'create_and_link'
-                      ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
+                      ? 'border-primary-a11y bg-primary-surface text-primary-strong'
                       : 'border-gray-200 hover:bg-gray-50'
                   }`}
                 >
@@ -846,7 +846,7 @@ export function UserList({
                   />
                   {isSearchingArtists && (
                     <span className="absolute right-3 top-1/2 -translate-y-1/2">
-                      <span className="animate-spin h-4 w-4 border-2 border-indigo-500 border-t-transparent rounded-full inline-block" />
+                      <span className="animate-spin h-4 w-4 border-2 border-primary-a11y border-t-transparent rounded-full inline-block" />
                     </span>
                   )}
                 </div>
@@ -870,7 +870,7 @@ export function UserList({
                     <p className="text-gray-500">{t('searchMinChars')}</p>
                   )}
                   {artistSearchQuery.trim().length >= 2 && isSearchingArtists && (
-                    <p className="text-indigo-600">{t('searchingUnlinkedArtist')}</p>
+                    <p className="text-primary-a11y">{t('searchingUnlinkedArtist')}</p>
                   )}
                   {isArtistSearchSlow && <p className="text-amber-600">{t('searchSlow')}</p>}
                   {artistSearchError && <p className="text-rose-600">{artistSearchError}</p>}
@@ -900,7 +900,7 @@ export function UserList({
                             )
                           }
                           className={`w-full px-3 py-3 text-left transition-colors ${
-                            isSelected ? 'bg-indigo-50' : 'hover:bg-gray-50'
+                            isSelected ? 'bg-primary-surface' : 'hover:bg-gray-50'
                           }`}
                         >
                           <div className="flex items-start justify-between gap-3">
@@ -923,7 +923,7 @@ export function UserList({
                                 </span>
                               )}
                               {isSelected && (
-                                <span className="rounded-md bg-indigo-100 px-2 py-0.5 text-[11px] font-medium text-indigo-700">
+                                <span className="rounded-md bg-primary-soft px-2 py-0.5 text-[11px] font-medium text-primary-strong">
                                   {t('selected')}
                                 </span>
                               )}

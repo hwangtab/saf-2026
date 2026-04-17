@@ -359,7 +359,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
                       <div className="flex justify-end items-center gap-2">
                         <Link
                           href={`/admin/artists/${artist.id}`}
-                          className="text-gray-500 hover:text-indigo-600 px-3 py-1.5 rounded-md hover:bg-indigo-50 transition-colors"
+                          className="text-gray-500 hover:text-primary-a11y px-3 py-1.5 rounded-md hover:bg-primary-surface transition-colors"
                         >
                           {t('edit')}
                         </Link>

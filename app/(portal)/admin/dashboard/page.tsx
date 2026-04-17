@@ -106,7 +106,7 @@ export default async function AdminDashboardPage() {
         </AdminPageHeader>
         <Link
           href="/admin/revenue"
-          className="inline-flex items-center justify-center rounded-lg border border-indigo-300 bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700 hover:bg-indigo-100"
+          className="inline-flex items-center justify-center rounded-lg border border-primary-soft bg-primary-surface px-4 py-2 text-sm font-semibold text-primary-strong hover:bg-primary-soft"
         >
           {t('revenueButton')}
         </Link>
@@ -175,7 +175,7 @@ export default async function AdminDashboardPage() {
           <div className="mt-6">
             <Link
               href="/admin/revenue"
-              className="inline-flex items-center justify-center rounded-lg border border-indigo-300 bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700 hover:bg-indigo-100"
+              className="inline-flex items-center justify-center rounded-lg border border-primary-soft bg-primary-surface px-4 py-2 text-sm font-semibold text-primary-strong hover:bg-primary-soft"
             >
               {t('analyticsPanelButton')}
             </Link>
@@ -235,7 +235,7 @@ export default async function AdminDashboardPage() {
             <h2 className="text-base font-semibold text-gray-900">{t('topPagesTitle')}</h2>
             <Link
               href="/admin/analytics"
-              className="text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:underline"
+              className="text-sm font-medium text-primary-a11y hover:text-primary-strong hover:underline"
             >
               {t('viewAll')}
             </Link>
@@ -263,7 +263,7 @@ export default async function AdminDashboardPage() {
                           href={page.path}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="truncate text-sm text-gray-900 hover:text-indigo-600 hover:underline"
+                          className="truncate text-sm text-gray-900 hover:text-primary-a11y hover:underline"
                         >
                           {displayPath}
                         </a>
@@ -284,7 +284,7 @@ export default async function AdminDashboardPage() {
             <h2 className="text-base font-semibold text-gray-900">{t('recentFeedbackTitle')}</h2>
             <Link
               href="/admin/feedback"
-              className="text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:underline"
+              className="text-sm font-medium text-primary-a11y hover:text-primary-strong hover:underline"
             >
               {t('viewAll')}
             </Link>
@@ -340,7 +340,7 @@ export default async function AdminDashboardPage() {
             <h2 className="text-base font-semibold text-gray-900">{t('recentOrdersTitle')}</h2>
             <Link
               href="/admin/orders"
-              className="text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:underline"
+              className="text-sm font-medium text-primary-a11y hover:text-primary-strong hover:underline"
             >
               {t('viewAll')}
             </Link>
@@ -364,7 +364,7 @@ export default async function AdminDashboardPage() {
                           <div className="flex items-center gap-2">
                             <Link
                               href={`/admin/orders/${order.id}`}
-                              className="text-sm font-medium text-gray-900 hover:text-indigo-600 hover:underline truncate"
+                              className="text-sm font-medium text-gray-900 hover:text-primary-a11y hover:underline truncate"
                             >
                               {order.artwork_title || order.order_no}
                               {order.artist_name && (
@@ -381,7 +381,7 @@ export default async function AdminDashboardPage() {
                                   : ['paid', 'preparing', 'shipped', 'delivered'].includes(
                                         order.status
                                       )
-                                    ? 'bg-indigo-100 text-indigo-700'
+                                    ? 'bg-primary-soft text-primary-strong'
                                     : order.status === 'completed'
                                       ? 'bg-emerald-100 text-emerald-700'
                                       : 'bg-rose-100 text-rose-700'
@@ -417,7 +417,7 @@ export default async function AdminDashboardPage() {
             </h2>
             <Link
               href="/admin/users?status=pending"
-              className="text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:underline"
+              className="text-sm font-medium text-primary-a11y hover:text-primary-strong hover:underline"
             >
               {t('viewAll')}
             </Link>
@@ -454,7 +454,7 @@ export default async function AdminDashboardPage() {
             <h2 className="text-base font-semibold text-gray-900">{t('recentArtworksTitle')}</h2>
             <Link
               href="/admin/artworks?sort=recent"
-              className="text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:underline"
+              className="text-sm font-medium text-primary-a11y hover:text-primary-strong hover:underline"
             >
               {t('viewRecent')}
             </Link>
@@ -470,7 +470,7 @@ export default async function AdminDashboardPage() {
                       <div className="flex flex-col">
                         <Link
                           href={`/admin/artworks/${artwork.id}`}
-                          className="text-sm font-medium text-gray-900 hover:text-indigo-600 truncate max-w-[200px]"
+                          className="text-sm font-medium text-gray-900 hover:text-primary-a11y truncate max-w-[200px]"
                         >
                           {artwork.title}
                         </Link>

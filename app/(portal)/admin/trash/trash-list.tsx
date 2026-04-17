@@ -241,7 +241,7 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
             onChange={(e) => setRestoreReason(e.target.value)}
             rows={3}
             placeholder={t('restoreReasonPlaceholder')}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y"
           />
         </div>
       </AdminConfirmModal>
@@ -268,7 +268,7 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
             onChange={(e) => setPurgeReason(e.target.value)}
             rows={3}
             placeholder={t('purgeReasonPlaceholder')}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y"
           />
         </div>
       </AdminConfirmModal>
@@ -309,7 +309,7 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
                   <td className="px-4 sm:px-6 py-4 text-sm text-gray-800">
                     <div className="space-y-0.5">
                       {targetLink ? (
-                        <Link href={targetLink} className="text-indigo-600 hover:underline">
+                        <Link href={targetLink} className="text-primary-a11y hover:underline">
                           {getTargetTypeLabel(log.target_type, t)}
                         </Link>
                       ) : (

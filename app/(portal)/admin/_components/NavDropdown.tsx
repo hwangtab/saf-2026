@@ -49,7 +49,7 @@ export function NavDropdown({ label, items }: NavDropdownProps) {
         onClick={() => setOpen((prev) => !prev)}
         className={`inline-flex items-center gap-1 whitespace-nowrap border-b-2 px-1 pt-1 text-sm font-medium transition-colors ${
           isGroupActive
-            ? 'border-indigo-500 text-indigo-700'
+            ? 'border-primary-a11y text-primary-strong'
             : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
         }`}
       >
@@ -78,7 +78,7 @@ export function NavDropdown({ label, items }: NavDropdownProps) {
                 onClick={() => setOpen(false)}
                 className={`block px-4 py-2 text-sm transition-colors ${
                   isActive
-                    ? 'bg-indigo-50 font-medium text-indigo-700'
+                    ? 'bg-primary-surface font-medium text-primary-strong'
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >

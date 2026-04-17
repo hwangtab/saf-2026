@@ -454,7 +454,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
                       name="hidden"
                       type="checkbox"
                       defaultChecked={artwork?.is_hidden ?? undefined}
-                      className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                      className="h-4 w-4 rounded border-gray-300 text-primary-a11y focus:ring-primary-a11y"
                     />
                   </div>
                   <div className="ml-3 text-sm">
