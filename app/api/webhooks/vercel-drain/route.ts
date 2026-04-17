@@ -37,6 +37,12 @@ type VercelDrainEvent = {
 const BATCH_SIZE = 500;
 const ACCEPTED_ANALYTICS_SCHEMAS = new Set(['vercel.analytics.v1', 'vercel.analytics.v2']);
 
+const PORTAL_PATH_PREFIXES = ['/admin', '/dashboard', '/exhibitor'];
+
+function isPortalPath(path: string): boolean {
+  return PORTAL_PATH_PREFIXES.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
 }
@@ -125,6 +131,7 @@ export async function GET(request: NextRequest) {
   }
 
   if (requestVerifyToken !== expectedVerifyToken) {
+    console.warn('[vercel-drain] Verification token mismatch');
     return NextResponse.json({ error: 'Invalid verification token' }, { status: 401 });
   }
 
@@ -146,6 +153,10 @@ export async function POST(request: NextRequest) {
 
   const signature = request.headers.get('x-vercel-signature');
   if (!verifySignature(raw, signature, secret)) {
+    console.warn('[vercel-drain] Invalid signature', {
+      hasSignature: signature !== null,
+      bodyLength: raw.length,
+    });
     return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
   }
 
@@ -173,7 +184,26 @@ export async function POST(request: NextRequest) {
   );
 
   if (invalidAnalyticsEvents.length > 0) {
+    console.error('[vercel-drain] Invalid analytics event payload', {
+      invalidCount: invalidAnalyticsEvents.length,
+      totalCount: events.length,
+    });
     return NextResponse.json({ error: 'Invalid analytics event payload' }, { status: 400 });
+  }
+
+  // Vercel이 v3+ 같은 새 스키마를 릴리스해 조용히 드롭되는 상황을 감지하기 위한 경고
+  const unknownSchemas = new Set<string>();
+  for (const event of events) {
+    if (isRecord(event) && typeof event.schema === 'string') {
+      if (!ACCEPTED_ANALYTICS_SCHEMAS.has(event.schema)) {
+        unknownSchemas.add(event.schema);
+      }
+    }
+  }
+  if (unknownSchemas.size > 0) {
+    console.warn('[vercel-drain] Dropping events with unknown schema', {
+      schemas: Array.from(unknownSchemas),
+    });
   }
 
   const analyticsEvents = events.filter(isValidVercelDrainEvent);
@@ -182,7 +212,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ inserted: 0, filtered: events.length });
   }
 
-  const rows = analyticsEvents.map((e) => ({
+  // 포털(/admin, /dashboard, /exhibitor) 이벤트는 RPC 집계에서 이미 제외되므로
+  // 원본 테이블에 저장하지 않는다.
+  const publicEvents = analyticsEvents.filter((e) => !isPortalPath(e.path));
+  const portalFiltered = analyticsEvents.length - publicEvents.length;
+
+  const rows = publicEvents.map((e) => ({
     event_type: e.eventType,
     path: e.path,
     referrer: e.referrer ?? null,
@@ -198,22 +233,38 @@ export async function POST(request: NextRequest) {
     event_timestamp: new Date(e.timestamp).toISOString(),
   }));
 
+  if (rows.length === 0) {
+    return NextResponse.json({ inserted: 0, portalFiltered });
+  }
+
   const supabase = createSupabaseAdminClient();
   let totalInserted = 0;
+  let skipped = 0;
 
-  // 배치 단위로 insert
+  // 배치 단위로 insert — 청크 하나가 실패해도 나머지는 계속 진행해
+  // 일시적 DB 에러가 전체 이벤트 손실로 이어지지 않도록 한다.
   for (let i = 0; i < rows.length; i += BATCH_SIZE) {
     const chunk = rows.slice(i, i + BATCH_SIZE);
     const { error } = await supabase.from('page_views').insert(chunk);
     if (error) {
-      console.error('[vercel-drain] Insert error:', error.message);
-      return NextResponse.json(
-        { error: 'Database insert failed', inserted: totalInserted },
-        { status: 500 }
-      );
+      console.error('[vercel-drain] Insert chunk failed, skipping', {
+        batchStart: i,
+        chunkSize: chunk.length,
+        error: error.message,
+      });
+      skipped += chunk.length;
+      continue;
     }
     totalInserted += chunk.length;
   }
 
-  return NextResponse.json({ inserted: totalInserted });
+  // 모든 청크가 실패한 경우에는 Vercel이 재시도하도록 500을 돌려준다.
+  if (totalInserted === 0 && skipped > 0) {
+    return NextResponse.json(
+      { error: 'Database insert failed', inserted: 0, skipped, portalFiltered },
+      { status: 500 }
+    );
+  }
+
+  return NextResponse.json({ inserted: totalInserted, skipped, portalFiltered });
 }
