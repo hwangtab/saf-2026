@@ -254,6 +254,7 @@ export const batch007: Artwork[] = [
     title: '월정교',
     title_en: 'Woljeong Bridge',
     description: `고대 이래로 미술은 정지되어 있는 상을 표현하였다. 한 순간의 시간을 표현한 인상주의에서 절정에 다다랐고, 미래파에 이르러서는 움직이는 물체를 온전하게 표현하고자 하는 시도가 행해진다. 이렇게 시간에 대한 연구는 작가들에게 중요한 과제였다. 작가는 오버랩의 효과를 이용하여 사물과 풍경의 시간을 중첩시키고 펼쳐 보인다. 하지만 여기서 작가의 욕망이 발현되는데, 단순히 시간만이 아닌 작가의 기억까지 오버랩하여 본인의 아이덴티티를 완성한다.`,
+    description_en: `Since ancient times, art has expressed static images. It reached its peak with Impressionism, which depicted a single moment in time, and with Futurism, attempts were made to fully represent moving objects. Research into time has therefore been an important challenge for artists. The artist uses the effect of overlap to superimpose and unfold the time of objects and landscapes. Here, however, the artist's desire manifests—not only overlapping time itself, but also overlapping the artist's own memories to complete their identity.`,
     size: '31.8x31.8cm',
     material: 'Oil on canvas',
     year: '2020',
@@ -270,6 +271,7 @@ export const batch007: Artwork[] = [
     title: '제주 섭지코지',
     title_en: 'Jeju Seopjikoji',
     description: `고대 이래로 미술은 정지되어 있는 상을 표현하였다. 한 순간의 시간을 표현한 인상주의에서 절정에 다다랐고, 미래파에 이르러서는 움직이는 물체를 온전하게 표현하고자 하는 시도가 행해진다. 이렇게 시간에 대한 연구는 작가들에게 중요한 과제였다. 작가는 오버랩의 효과를 이용하여 사물과 풍경의 시간을 중첩시키고 펼쳐 보인다. 하지만 여기서 작가의 욕망이 발현되는데, 단순히 시간만이 아닌 작가의 기억까지 오버랩하여 본인의 아이덴티티를 완성한다.`,
+    description_en: `Since ancient times, art has expressed static images. It reached its peak with Impressionism, which depicted a single moment in time, and with Futurism, attempts were made to fully represent moving objects. Research into time has therefore been an important challenge for artists. The artist uses the effect of overlap to superimpose and unfold the time of objects and landscapes. Here, however, the artist's desire manifests—not only overlapping time itself, but also overlapping the artist's own memories to complete their identity.`,
     size: '53x33.3cm',
     material: 'Oil on canvas',
     year: '2019',
@@ -406,6 +408,11 @@ export const batch007: Artwork[] = [
 이후 폴라 컬러의 이미지 전사를 이용한 누드 사진의 새로운 표현양식을 실험하였고,
 1987년부터는 김남진 사진공방을 운영하며 현대사진의 제경향과 이론 그리고 사진미학을 체계화하여 국내에 소개하고 많은 후배 사진가들을 양성하였다.
 전시기획자로서 서울국제사진페스티벌과 충무로사진축제를 기획•진행한 바 있으며, 현재 사진문화포럼과 갤러리 브레송의 대표로 있다.`,
+    description_en: `Kim Nam-jin (金南鎭) was born in 1957 in Gongju, South Chungcheong Province, and graduated from Korea University.
+In 1987, he held a solo exhibition 'Night of Itaewon' at Pine Hill Gallery, and in 1993, a 'Polaroid Nude' exhibition at Batangol Arts Center.
+His series of 'Night of Itaewon' documents, which he began in 1984, is evaluated as one of the self-generated formal experiments of successful Korean photography.
+Subsequently, he experimented with a new expressive style of nude photography using Polaroid color image transfer, and from 1987, he operated the Kim Nam-jin Photography Studio, systematizing the various tendencies, theories, and aesthetics of contemporary photography and introducing them to Korea, while also training many younger photographers.
+As an exhibition organizer, he has planned and directed the Seoul International Photo Festival and the Chungmuro Photography Festival, and is currently the representative of the Photography Culture Forum and Gallery Bresson.`,
     size: '확인 중',
     material: '1/5 프린트',
     year: '1992',

@@ -20,6 +20,13 @@ export const batch005: Artwork[] = [
 1990년 첫 개인전을 시작으로 현재까지 총 21회의 개인전과 130여 회의 단체전에 참여했으며, 전시기획 경력 또한 다수 보유하고 있습니다. 특히 2003년 중국에서 귀국하며 아트사이드 갤러리 3층 전관에서 국내 처음으로 본격적인 칠화와 칠벽화 개인전을 선보인 이후, 옻칠을 주된 재료로 하여 작업을 활발히 이어오고 있습니다.
 주요 경력으로는 2005년부터 2006년까지 국립현대미술관 미술창작스튜디오 고양 2기 입주작가로 활동했으며, 2003년부터 2022년까지 서울대를 비롯한 여러 대학에서 벽화 및 옻칠 재료기법 등을 강의했습니다. 국외 활동으로는 2013년 남인도 코타얌 국제 벽화축제 초청작가 참여, 일본 石川國際漆展 입상, 국제 아트페어 그리고 중국 중앙미술대학원 및 전국미술 우수작품상(2001, 2002) 수상 등의 성과를 통해 국제적인 역량을 입증했습니다.
 현재는 천연 재료와 동양 전통 기법을 바탕으로, 자연으로부터 얻어지는 삶의 경험과 기억 속에 축적된 심상의 풍경을 옻칠 작업을 중심으로 입체, 설치 등으로 장르를 확장하며 꾸준히 작품 세계를 심화시키고 있습니다.`,
+    profile_en: `Jung Chae-hee (丁彩僖, JUNG CHAE-HEE) graduated from Seoul National University's College of Fine Arts (Western Painting) and earned a graduate degree in mural painting from the Central Academy of Fine Arts in Beijing, China. Through her graduate studies, she explored diverse artistic media and became particularly fascinated by Eastern artistic values, deeply researching traditional materials and techniques. This interest led her to experience Asian cultures firsthand across China, Japan, India, and Southeast Asia.
+
+Starting with her first solo exhibition in 1990, she has participated in a total of 21 solo exhibitions and over 130 group exhibitions to date, along with extensive exhibition curation. After returning from China in 2003 and presenting Korea's first major lacquer painting and lacquer mural solo exhibition at Artside Gallery, she has continued to work actively with lacquer as her primary medium.
+
+Her major career highlights include serving as a resident artist at the National Museum of Modern and Contemporary Art's Goyang Art Studio (2nd cohort, 2005–2006), and teaching mural and lacquer material techniques at Seoul National University and various universities from 2003 to 2022. Her international achievements include an invitation to the South India Kottayam International Mural Festival (2013), a prize at the Ishikawa International Lacquer Exhibition in Japan, participation in international art fairs, and the National Art Excellence Award (2001, 2002) in China.
+
+Today, building upon natural materials and Eastern traditional techniques, she continues to deepen her artistic world through three-dimensional and installation works centered on lacquer, capturing the mental landscapes accumulated from life experiences and memories drawn from nature.`,
     history: `서울대학교 미술대학 회화과를 졸업하고 중국 북경 중앙미술학원 대학원에서 벽화 전공 졸업. 개인전 21회를 포함해 다수의 전시에 참여했으며, 특히 옻칠화 작업을 중심으로 활동.
 
 주요 개인전
@@ -40,6 +47,27 @@ export const batch005: Artwork[] = [
 2005-2006 국립현대미술관 미술창작스튜디오 고양 2기 입주작가
 2002 중국 전국미술 우수작품상 수상 (중국미술관, 북경)
 2001 중국 중앙미술대학원 우수작품상 수상 (북경)`,
+    history_en: `Graduated from Seoul National University's College of Fine Arts (Painting) and completed a graduate degree in mural painting at the Central Academy of Fine Arts in Beijing. Has participated in numerous exhibitions including 21 solo shows, with a primary focus on lacquer painting.
+
+Solo Exhibitions (Selected)
+2023 Bitter Leaves_Sea of the Universe Gallery, Busan
+2021 Breath, Rest_Nook Gallery, Seoul
+2020 Beyond the Landscape_Gallery Tomorrow, Seoul
+2014 The Deep Room_Saemter Gallery, Seoul
+2006 慈雲遊月_Hakgojae Gallery, Seoul (Seoul Cultural Foundation support)
+2003 Paintings in Lacquer_Gallery Artside, Seoul
+
+Selected Group Exhibitions & Activities
+2025 異.合 (Two-person exhibition)_Samseuyeong Gallery, Seoul
+2024 Art Miracle in Kangwha_Everrich Hotel, Ganghwado
+2021 Garden of Time_Woori Old Stone Museum, Seoul
+2017 Walking the Old Path with Gyeomjae_Gyeomjae Museum of Art, Seoul
+2013 Kottayam International Mural Festival (South India)
+2010 KIAF 10_COEX Pacific Hall, Seoul
+2009 Korean Painting into the New Millennium—Contemporary Transformations_Seoul Arts Center Hangaram Art Museum
+2005–2006 Resident Artist, National Museum of Modern and Contemporary Art, Goyang Studio (2nd cohort)
+2002 National Art Excellence Award (National Art Museum of China, Beijing)
+2001 Central Academy of Fine Arts Excellence Award (Beijing)`,
   },
   {
     id: '193',
@@ -57,6 +85,7 @@ export const batch005: Artwork[] = [
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/329',
     description: ``,
     profile: `작가 양순열은 회화와 조각 등 다양한 장르를 넘나드는 컨템포리 아티스트다. 작가가 평생에 걸쳐 작업을 수행해온 주제는 존재와 사물 일반에 대한 깊은 시적 공감과 연관된 것이다. 특히 그녀는 확장된 모성의 회복을 통해 이 시대가 처한 위기의 극복과, 인간/사물/자연 사이의 영적 교감의 가능성을 탐색한다.`,
+    profile_en: `Artist Yang Sun-yeol is a contemporary artist who works across diverse genres including painting and sculpture. The themes she has explored throughout her career are connected to a deep poetic empathy for existence and things in general. In particular, she explores the possibility of overcoming the crisis of our time through the recovery of expanded motherhood, and the potential for spiritual communion between humans, objects, and nature.`,
     history: ``,
   },
   {
@@ -74,7 +103,8 @@ export const batch005: Artwork[] = [
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/330',
     sold: true,
-    description: `도서관 환타지 Library Fantasy\n나는 수년간 책을 읽은 영감으로 그림을 그리고 글을 쓰는 ‘페인팅북리뷰＇작업을 해왔다.  저자가 구성해 놓은 책 속의 질서를 미술로 해체 deconstruction하고 재구성reconstruction하여, 이 과정 자체를 문장으로 기록하는, 즉 ‘메타적 시선＇을 표현하는 작업이다. 구조화된 지배적 이야기와 이미지들을 해체하는 이런 작업은, 화가인 나에게 대안적 상상 alternative imagination을 가능하게 만들었다. 읽고, 그리고, 쓰는 행위 사이에서 그것들 끼리의 독특한 연대와 화학반응이 일어났고,그 과정에서 나의 머리엔 다양한 영감들이 피어 올랐다. 나는 그 영감들을 ‘창조적 영감의 씨앗’이라고 부른다. 그 씨앗들은 책의 이야기에 따라 다양한 모습의 작품 시리즈를 가능하게 했다.\n‘도서관 환타지＇시리즈는 도서관을 ‘환상적인 거대한 생명체＇로 상상해서 시작했다. 그곳은  지식〮자연〮시간이 융합된 새로운 차원의 세계다. 나는 책을 단순한 정보의 덩어리가 아니라, 시간과 공간을 뛰어넘는 생명의 존재처럼 느낀다.  생명들이 살아 숨 쉬는 원초적 자연과 도서관은 공통의 기억을 가진다. 책과 자연에서 잉태되어 태어나는 것들은 상상력을 자라나게 하고, 경계가 없는 시공간을 만들어 확장한다.  그리하여 나는 책과 자연의 새로운 생태계를 관찰하고 상상하여 또 다른 우주를 낳는다.\n책 속에서 태어난 세계들이 지식과 지혜를 만들고 자연과 뒤엉킨 생태계는 끊임없이 움직이는 유기적인 존재다. 생동감이 넘치는 환상적인 도서관에 대한 관찰과 연구는 끝없이 떠오르는  영감의 씨앗처럼 한계가 없다.  우주의 생명처럼……`,
+    description: `도서관 환타지 Library Fantasy\n나는 수년간 책을 읽은 영감으로 그림을 그리고 글을 쓰는 ‘페인팅북리뷰＇작업을 해왔다.  저자가 구성해 놓은 책 속의 질서를 미술로 해체 deconstruction하고 재구성reconstruction하여, 이 과정 자체를 문장으로 기록하는, 즉 ‘메타적 시선＇을 표현하는 작업이다. 구조화된 지배적 이야기와 이미지들을 해체하는 이런 작업은, 화가인 나에게 대안적 상상 alternative imagination을 가능하게 만들었다. 읽고, 그리고, 쓰는 행위 사이에서 그것들 끼리의 독특한 연대와 화학반응이 일어났고,그 과정에서 나의 머리엔 다양한 영감들이 피어 올랐다. 나는 그 영감들을 ‘창조적 영감의 씨앗’이라고 부른다. 그 씨앗들은 책의 이야기에 따라 다양한 모습의 작품 시리즈를 가능하게 했다.\n’도서관 환타지＇시리즈는 도서관을 ‘환상적인 거대한 생명체＇로 상상해서 시작했다. 그곳은  지식〮자연〮시간이 융합된 새로운 차원의 세계다. 나는 책을 단순한 정보의 덩어리가 아니라, 시간과 공간을 뛰어넘는 생명의 존재처럼 느낀다.  생명들이 살아 숨 쉬는 원초적 자연과 도서관은 공통의 기억을 가진다. 책과 자연에서 잉태되어 태어나는 것들은 상상력을 자라나게 하고, 경계가 없는 시공간을 만들어 확장한다.  그리하여 나는 책과 자연의 새로운 생태계를 관찰하고 상상하여 또 다른 우주를 낳는다.\n책 속에서 태어난 세계들이 지식과 지혜를 만들고 자연과 뒤엉킨 생태계는 끊임없이 움직이는 유기적인 존재다. 생동감이 넘치는 환상적인 도서관에 대한 관찰과 연구는 끝없이 떠오르는  영감의 씨앗처럼 한계가 없다.  우주의 생명처럼……`,
+    description_en: `Library Fantasy\nI have been working on ‘Painting Book Reviews’—a practice of drawing pictures and writing text inspired by years of reading. This work deconstructs and reconstructs the order that authors have structured within their books through art, recording this very process in sentences—expressing what I call a ‘meta perspective.’ Deconstructing structured dominant narratives and images has enabled me, as a painter, to engage in alternative imagination. Between the acts of reading, drawing, and writing, a unique solidarity and chemical reaction occurred, and in this process, various inspirations blossomed in my mind. I call these inspirations ‘seeds of creative inspiration.’ These seeds made possible various series of works according to the stories of the books.\nThe ‘Library Fantasy’ series began by imagining a library as a ‘fantastic giant living creature.’ It is a new dimensional world where knowledge, nature, and time converge. I feel books not as mere bundles of information, but as living beings that transcend time and space. The primitive nature where life breathes and a library share common memories. Things conceived and born from books and nature grow the imagination and expand by creating a boundless time and space. Thus, I observe and imagine a new ecosystem of books and nature, giving birth to another universe.\nThe worlds born within books create knowledge and wisdom, and the ecosystem entangled with nature is an organic being that moves ceaselessly. The observation and research of a vibrant and fantastic library, like endlessly rising seeds of inspiration, knows no bounds. Like the life of the universe...`,
     profile: ``,
     history: `개인전
 1회 2001.5 ‘Giggle'기획초대전 (Moro갤러리,서울)
@@ -123,6 +153,37 @@ export const batch005: Artwork[] = [
 2023.2-2024.5 스포츠경향 ‘천지수가 읽은 그림책’서평
 2023.8-현재 책키라웃,문화뉴스, MHN스포츠 ‘천지수가 읽은 그림책’서평
 ‘천지수화가의 아프리카북에이징’그림서평/인터뷰365 천지수화가의 ‘페인팅북리뷰`,
+    history_en: `Solo Exhibitions
+1st 2001.5 ‘Giggle’ Invited Exhibition (Moro Gallery, Seoul)
+2nd 2001.11 ‘Time & Space’ (Artist Guild Space gallery, Paris, France)
+3rd 2005.5 ‘A Midsummer Night’s Dream’ Invited Exhibition (Korean Embassy in Italy, Rome)
+4th 2010.5 ‘Children’s Play’ Invited Exhibition (Art Space H, Seoul)
+5th 2021.6 ‘Book-Reading Atelier’ Publication Commemorative Invited Exhibition (Jijihyang of Forest, Paju)
+6th 2024.9 ‘The Key to Opening Myself’ Invited Exhibition (Gallery The Way, Chuncheon)
+7th 2025.4 ‘Book-Reading Atelier’ Invited Exhibition (Gallery Yeongton, Suwon)
+8th 2025.5 ‘The Shape of Life’ Invited Exhibition (Gallery Jijihyang, Paju)
+9th 2025.12 ‘Library Fantasy’ Invited Exhibition (The Space Gallery, Osan)
+Two-Person Exhibition
+2018.6 ‘How to Create Energy for Life’ (Guga Museum Invited Exhibition, Fukuoka, Japan)
+Awards
+1997 University Art Exhibition - Special Selection (Honam University)
+2003 4th ‘Giovanni Pericone’ National Art Competition - Grand Prize (Primo Premio)
+Mural Restoration
+2008 Rock mural restoration (Serengeti National Park, Tanzania, Africa - UNESCO designated)
+Collections
+Korean Embassy in Italy / Korean Catholic Church in Rome, Italy / Rotary Club Fiuggi, Italy
+Asia Publishing Culture Information Center / Korean Culture Content Research Institute
+Group Exhibitions
+1997–1999, 2006 ‘色’ Exhibition (Gwanhun Gallery, Seoul)
+1998 Print Academy Exhibition (MMCA, Gwacheon) / 1999 Dongkki Exhibition (Gwanhun Gallery, Seoul)
+2003 ‘Glocallizzazione’ (Inter Culturale Permenente Roma gallery, Rome, Italy)
+2010 Dongduk 100th Anniversary Exhibition (Dongduk Art Gallery)
+2018 Dongduk Women’s University Dept. of Painting 50th Anniversary Exhibition
+2020–2022 Mokhwa Exhibitions (Online)
+2024 Today’s Suwon Exhibition (Suwon Municipal Manseok Exhibition Hall)
+2025 32nd Mokhwa Exhibition (Dongduk Gallery) / LA Art Show / BAMA Busan International Gallery Art Fair / Gyeongnam Art Fair
+Publications
+2021.6 ‘Book-Reading Atelier’ published (Millennium of Imagination)`,
   },
   {
     id: '195',
@@ -139,7 +200,8 @@ export const batch005: Artwork[] = [
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/331',
     sold: true,
-    description: `도서관 환타지 Library Fantasy\n나는 수년간 책을 읽은 영감으로 그림을 그리고 글을 쓰는 ‘페인팅북리뷰＇작업을 해왔다.  저자가 구성해 놓은 책 속의 질서를 미술로 해체 deconstruction하고 재구성reconstruction하여, 이 과정 자체를 문장으로 기록하는, 즉 ‘메타적 시선＇을 표현하는 작업이다. 구조화된 지배적 이야기와 이미지들을 해체하는 이런 작업은, 화가인 나에게 대안적 상상 alternative imagination을 가능하게 만들었다. 읽고, 그리고, 쓰는 행위 사이에서 그것들 끼리의 독특한 연대와 화학반응이 일어났고,그 과정에서 나의 머리엔 다양한 영감들이 피어 올랐다. 나는 그 영감들을 ‘창조적 영감의 씨앗’이라고 부른다. 그 씨앗들은 책의 이야기에 따라 다양한 모습의 작품 시리즈를 가능하게 했다.\n‘도서관 환타지＇시리즈는 도서관을 ‘환상적인 거대한 생명체＇로 상상해서 시작했다. 그곳은  지식〮자연〮시간이 융합된 새로운 차원의 세계다. 나는 책을 단순한 정보의 덩어리가 아니라, 시간과 공간을 뛰어넘는 생명의 존재처럼 느낀다.  생명들이 살아 숨 쉬는 원초적 자연과 도서관은 공통의 기억을 가진다. 책과 자연에서 잉태되어 태어나는 것들은 상상력을 자라나게 하고, 경계가 없는 시공간을 만들어 확장한다.  그리하여 나는 책과 자연의 새로운 생태계를 관찰하고 상상하여 또 다른 우주를 낳는다.\n책 속에서 태어난 세계들이 지식과 지혜를 만들고 자연과 뒤엉킨 생태계는 끊임없이 움직이는 유기적인 존재다. 생동감이 넘치는 환상적인 도서관에 대한 관찰과 연구는 끝없이 떠오르는  영감의 씨앗처럼 한계가 없다.  우주의 생명처럼……`,
+    description: `도서관 환타지 Library Fantasy\n나는 수년간 책을 읽은 영감으로 그림을 그리고 글을 쓰는 ‘페인팅북리뷰＇작업을 해왔다.  저자가 구성해 놓은 책 속의 질서를 미술로 해체 deconstruction하고 재구성reconstruction하여, 이 과정 자체를 문장으로 기록하는, 즉 ‘메타적 시선＇을 표현하는 작업이다. 구조화된 지배적 이야기와 이미지들을 해체하는 이런 작업은, 화가인 나에게 대안적 상상 alternative imagination을 가능하게 만들었다. 읽고, 그리고, 쓰는 행위 사이에서 그것들 끼리의 독특한 연대와 화학반응이 일어났고,그 과정에서 나의 머리엔 다양한 영감들이 피어 올랐다. 나는 그 영감들을 ‘창조적 영감의 씨앗’이라고 부른다. 그 씨앗들은 책의 이야기에 따라 다양한 모습의 작품 시리즈를 가능하게 했다.\n’도서관 환타지＇시리즈는 도서관을 ‘환상적인 거대한 생명체＇로 상상해서 시작했다. 그곳은  지식〮자연〮시간이 융합된 새로운 차원의 세계다. 나는 책을 단순한 정보의 덩어리가 아니라, 시간과 공간을 뛰어넘는 생명의 존재처럼 느낀다.  생명들이 살아 숨 쉬는 원초적 자연과 도서관은 공통의 기억을 가진다. 책과 자연에서 잉태되어 태어나는 것들은 상상력을 자라나게 하고, 경계가 없는 시공간을 만들어 확장한다.  그리하여 나는 책과 자연의 새로운 생태계를 관찰하고 상상하여 또 다른 우주를 낳는다.\n책 속에서 태어난 세계들이 지식과 지혜를 만들고 자연과 뒤엉킨 생태계는 끊임없이 움직이는 유기적인 존재다. 생동감이 넘치는 환상적인 도서관에 대한 관찰과 연구는 끝없이 떠오르는  영감의 씨앗처럼 한계가 없다.  우주의 생명처럼……`,
+    description_en: `Library Fantasy\nI have been working on ‘Painting Book Reviews’—a practice of drawing pictures and writing text inspired by years of reading. This work deconstructs and reconstructs the order that authors have structured within their books through art, recording this very process in sentences—expressing what I call a ‘meta perspective.’ Deconstructing structured dominant narratives and images has enabled me, as a painter, to engage in alternative imagination. Between the acts of reading, drawing, and writing, a unique solidarity and chemical reaction occurred, and in this process, various inspirations blossomed in my mind. I call these inspirations ‘seeds of creative inspiration.’ These seeds made possible various series of works according to the stories of the books.\nThe ‘Library Fantasy’ series began by imagining a library as a ‘fantastic giant living creature.’ It is a new dimensional world where knowledge, nature, and time converge. I feel books not as mere bundles of information, but as living beings that transcend time and space. The primitive nature where life breathes and a library share common memories. Things conceived and born from books and nature grow the imagination and expand by creating a boundless time and space. Thus, I observe and imagine a new ecosystem of books and nature, giving birth to another universe.\nThe worlds born within books create knowledge and wisdom, and the ecosystem entangled with nature is an organic being that moves ceaselessly. The observation and research of a vibrant and fantastic library, like endlessly rising seeds of inspiration, knows no bounds. Like the life of the universe...`,
     profile: ``,
     history: `개인전
 1회 2001.5 ‘Giggle'기획초대전 (Moro갤러리,서울)
@@ -188,6 +250,37 @@ export const batch005: Artwork[] = [
 2023.2-2024.5 스포츠경향 ‘천지수가 읽은 그림책’서평
 2023.8-현재 책키라웃,문화뉴스, MHN스포츠 ‘천지수가 읽은 그림책’서평
 ‘천지수화가의 아프리카북에이징’그림서평/인터뷰365 천지수화가의 ‘페인팅북리뷰`,
+    history_en: `Solo Exhibitions
+1st 2001.5 ‘Giggle’ Invited Exhibition (Moro Gallery, Seoul)
+2nd 2001.11 ‘Time & Space’ (Artist Guild Space gallery, Paris, France)
+3rd 2005.5 ‘A Midsummer Night’s Dream’ Invited Exhibition (Korean Embassy in Italy, Rome)
+4th 2010.5 ‘Children’s Play’ Invited Exhibition (Art Space H, Seoul)
+5th 2021.6 ‘Book-Reading Atelier’ Publication Commemorative Invited Exhibition (Jijihyang of Forest, Paju)
+6th 2024.9 ‘The Key to Opening Myself’ Invited Exhibition (Gallery The Way, Chuncheon)
+7th 2025.4 ‘Book-Reading Atelier’ Invited Exhibition (Gallery Yeongton, Suwon)
+8th 2025.5 ‘The Shape of Life’ Invited Exhibition (Gallery Jijihyang, Paju)
+9th 2025.12 ‘Library Fantasy’ Invited Exhibition (The Space Gallery, Osan)
+Two-Person Exhibition
+2018.6 ‘How to Create Energy for Life’ (Guga Museum Invited Exhibition, Fukuoka, Japan)
+Awards
+1997 University Art Exhibition - Special Selection (Honam University)
+2003 4th ‘Giovanni Pericone’ National Art Competition - Grand Prize (Primo Premio)
+Mural Restoration
+2008 Rock mural restoration (Serengeti National Park, Tanzania, Africa - UNESCO designated)
+Collections
+Korean Embassy in Italy / Korean Catholic Church in Rome, Italy / Rotary Club Fiuggi, Italy
+Asia Publishing Culture Information Center / Korean Culture Content Research Institute
+Group Exhibitions
+1997–1999, 2006 ‘色’ Exhibition (Gwanhun Gallery, Seoul)
+1998 Print Academy Exhibition (MMCA, Gwacheon) / 1999 Dongkki Exhibition (Gwanhun Gallery, Seoul)
+2003 ‘Glocallizzazione’ (Inter Culturale Permenente Roma gallery, Rome, Italy)
+2010 Dongduk 100th Anniversary Exhibition (Dongduk Art Gallery)
+2018 Dongduk Women’s University Dept. of Painting 50th Anniversary Exhibition
+2020–2022 Mokhwa Exhibitions (Online)
+2024 Today’s Suwon Exhibition (Suwon Municipal Manseok Exhibition Hall)
+2025 32nd Mokhwa Exhibition (Dongduk Gallery) / LA Art Show / BAMA Busan International Gallery Art Fair / Gyeongnam Art Fair
+Publications
+2021.6 ‘Book-Reading Atelier’ published (Millennium of Imagination)`,
   },
   {
     id: '196',
@@ -259,6 +352,34 @@ export const batch005: Artwork[] = [
 2023년 전남 도립미술관 <지리산 반야봉181x360cm 2022>
 2025년 Gallery Northbruga <공작> 한지에 먹, 2025_145x74cm 외 매화 풍경 등 12점 출판  <두륜> 도서출판 헥사곤, 2020
 <지리> 도서출판 헥사곤 2025`,
+    history_en: `Solo Exhibitions
+2025 Ink Painting_Four Gracious Plants Exhibition, Haengchon Art Museum, Haenam
+2024 Birch Trees Nurtured by Inje That Heaven Bestowed (Miracle Library, Inje)
+2023 Fermano (Duin Museum of Art, Seoul)
+2022 Hwaeom Jiri Exhibition (Hwaeomsa Temple Sacred Treasure Museum), Tigers Descend, Blessings Descend (Sinan)
+2021 Moon and Stars at Kim Whanki's Old House Exhibition (Kim Whanki's Old House)
+2020 Duryun Exhibition (Haenam, Haengchon Art Museum)
+2019 Tangjin Ink Painting Exhibition (Seoul, Inyoung Gallery)
+2017 Artists Center (Seoul) / 2005 Yi-hyung Gallery
+Group Exhibitions
+2025 Sehwa Exhibition <Blue Dream> Haengchon Art Museum; Travel Sketch (Space Naljip, Seoul)
+2024 Poetic Landscape (Northbruga Gallery, Innsbruck, Austria); Haenam is an Art Museum from Spring (Haenam Culture & Arts Center); Ink Color Answers (Andong Arts Center); International Art Festival (Chiang Mai, Thailand)
+2023 Jeonnam International Ink Biennale; 17th Pochang International Art Festival (Bangkok); Bogugot Plum Blossom Fragrance Exhibition
+2022 Accumulated Improvisation Exhibition (Jeonnam Gallery); Pungryunamdo Art Project Mongryu Imha (Haengchon Art Museum)
+2021 1st Kim Whanki Art Festival; Accumulated Improvisation Exhibition (Gallery J&G); Korean Painting Figurative Association Exhibition; 2021 Jeonnam International Ink Biennale Haenam Exhibition
+2020 Cockscomb Not Wilting... (Jeonyeokneul Art Museum); Dunjang Village Art Museum Opening Exhibition
+2019 Sunrise Exhibition (Yun Gallery); Pungryunamdo Art Project-Spring (Suyun Art Museum); Haenam International Ink Workshop
+2018 Eastern Color and Ink Exhibition (Yeongwol); Jeonnam International Ink Biennale
+2017 Jeonnam International Ink Biennale; Pungryunamdo Art Project-Ink Painting Namdo; Tangjin Ink Painting Exhibition
+Awards
+2005 Special Selection, Modeung Art Competition / 2004 Honorable Mention, Seoul Art Grand Prize / 1989 National Art Exhibition / 1988 Moguhoae
+Collections
+2020 Haengchon Art Museum <Duryun> 198×545cm, ink on Korean paper
+2023 Jeonnam Provincial Art Museum <Snow Blossoms> 180×720cm, ink on Korean paper
+2024 Gallery Northbruga <Snow Pine Tiger> 145×74cm, ink on Korean paper
+2023 Jeonnam Provincial Art Museum <Jirisan Banyabong> 181×360cm
+2025 Gallery Northbruga <Peacock> 145×74cm + 12 other works
+Publications: <Duryun> Hexagon Publishing, 2020 / <Jiri> Hexagon Publishing, 2025`,
   },
   {
     id: '197',
@@ -280,6 +401,13 @@ export const batch005: Artwork[] = [
 중국 유학 시기부터 판화의 선과 면, 반복과 축적의 방식을 중심으로 작업을 이어온 그는, 이후 인도 오로빌에 정착하며 작업의 환경과 범위를 확장해왔다. 오로빌은 국적과 종교, 이념을 넘어선 국제 공동체로, 박영선은 이곳에서의 삶과 예술 실천을 통해 공동체, 노동, 자연, 인간의 존엄이라는 주제를 지속적으로 탐구해왔다. 오로빌 현지에서는 전시회를 열며 국제적 맥락 속에서 작품을 발표했다.
 박영선은 출판으로 『까이비간』(산지니, 2007), 인도에서 마하리쉬 마헤시 요기 관련 영성과 사유를 다루는 콘텐츠를 시각 언어로 구현하는 작업을 수행했다.
 박영선의 이력은 한국, 중국, 인도를 잇는 이동의 경로 속에서 형성되었다. 판화와 회화를 중심으로 한 그의 작업은 특정 지역이나 제도에 한정되지 않고, 학습과 정착, 공동체적 삶을 오가며 축적되어 왔다.`,
+    profile_en: `Park Young-seon is a printmaker and painter who studied at Lu Xun Academy of Fine Arts in China and currently resides and works in Auroville, India. After majoring in fine arts at Dong-A University, she systematically learned print-based painting and formal language at Lu Xun Academy of Fine Arts, the center of modern printmaking education in China.
+
+From her time studying in China, where she focused on the line, plane, and methods of repetition and accumulation in printmaking, she later settled in Auroville, India, expanding the environment and scope of her work. Auroville is an international community that transcends nationality, religion, and ideology, and Park has continuously explored themes of community, labor, nature, and human dignity through her life and artistic practice there. She has held exhibitions locally in Auroville, presenting her work in an international context.
+
+Park Young-seon's published works include 『Kaibigan』 (Sanjinim, 2007), and she has worked to express spiritual and philosophical content through visual language in India.
+
+Her career was shaped through a journey connecting Korea, China, and India. Her work, centered on printmaking and painting, has accumulated while moving between learning, settlement, and communal life, not limited to any particular region or institution.`,
     history: ``,
   },
   {
@@ -302,6 +430,13 @@ export const batch005: Artwork[] = [
 중국 유학 시기부터 판화의 선과 면, 반복과 축적의 방식을 중심으로 작업을 이어온 그는, 이후 인도 오로빌에 정착하며 작업의 환경과 범위를 확장해왔다. 오로빌은 국적과 종교, 이념을 넘어선 국제 공동체로, 박영선은 이곳에서의 삶과 예술 실천을 통해 공동체, 노동, 자연, 인간의 존엄이라는 주제를 지속적으로 탐구해왔다. 오로빌 현지에서는 전시회를 열며 국제적 맥락 속에서 작품을 발표했다.
 박영선은 출판으로 『까이비간』(산지니, 2007), 인도에서 마하리쉬 마헤시 요기 관련 영성과 사유를 다루는 콘텐츠를 시각 언어로 구현하는 작업을 수행했다.
 박영선의 이력은 한국, 중국, 인도를 잇는 이동의 경로 속에서 형성되었다. 판화와 회화를 중심으로 한 그의 작업은 특정 지역이나 제도에 한정되지 않고, 학습과 정착, 공동체적 삶을 오가며 축적되어 왔다.`,
+    profile_en: `Park Young-seon is a printmaker and painter who studied at Lu Xun Academy of Fine Arts in China and currently resides and works in Auroville, India. After majoring in fine arts at Dong-A University, she systematically learned print-based painting and formal language at Lu Xun Academy of Fine Arts, the center of modern printmaking education in China.
+
+From her time studying in China, where she focused on the line, plane, and methods of repetition and accumulation in printmaking, she later settled in Auroville, India, expanding the environment and scope of her work. Auroville is an international community that transcends nationality, religion, and ideology, and Park has continuously explored themes of community, labor, nature, and human dignity through her life and artistic practice there. She has held exhibitions locally in Auroville, presenting her work in an international context.
+
+Park Young-seon's published works include 『Kaibigan』 (Sanjinim, 2007), and she has worked to express spiritual and philosophical content through visual language in India.
+
+Her career was shaped through a journey connecting Korea, China, and India. Her work, centered on printmaking and painting, has accumulated while moving between learning, settlement, and communal life, not limited to any particular region or institution.`,
     history: ``,
   },
   {
@@ -324,6 +459,7 @@ export const batch005: Artwork[] = [
 그 외에 장편애니메이션 영화 '오돌또기', '별별이야기', '사람이 되어라'의 감독을 맡았으며, 우리만화 발전을 위한 연대모임의 회장을 역임했다. MBC 뉴스데스크 '박재동의 TV만평'을 감독하기도 했다. '제4회 민주 언론상'과 '제1회 한겨레상'을 수상했다. 현재 한국예술종합학교 영상원 애니메이션과 교수로 재직하며, 시사만화가로 활동 중이다.
 
 지은 책으로 『환상의 콤비, 아이야 우리 식탁엔 은쟁반에』, 『목 긴 사나이』, 『제억 공화국』, 『만화 내사랑』, 『한국 만화의 선구자들』, 『악! 법이라고?』, 『똥깅이』, 『어둠은 빛을 이길 수 없습니다』 외 다수가 있다.`,
+    profile_en: `An animator with a career as an editorial cartoonist and former art teacher. Born in 1953 in Ulsan, South Gyeongsang Province, he graduated from Seoul National University's College of Fine Arts and worked as an art teacher before debuting as a single-panel cartoon writer for The Hankyoreh newspaper in the late 1980s. His 'Hankyoreh Picture Panel,' which ran for about eight years, set a defining direction for newspaper editorial cartoons in the era. He subsequently devoted himself to animation, directing the feature films 'Odolttogi,' 'Various Tales,' and 'Become Human,' and served as president of the Association for the Development of Korean Comics. He also directed 'Park Jaedong's TV Review' for MBC News Desk and won the 4th Democratic Press Award and the 1st Hankyoreh Award. He currently serves as a professor in the Animation Department at the Korea National University of Arts and continues to work as an editorial cartoonist.`,
     history: ``,
   },
   {
@@ -346,6 +482,7 @@ export const batch005: Artwork[] = [
 그 외에 장편애니메이션 영화 '오돌또기', '별별이야기', '사람이 되어라'의 감독을 맡았으며, 우리만화 발전을 위한 연대모임의 회장을 역임했다. MBC 뉴스데스크 '박재동의 TV만평'을 감독하기도 했다. '제4회 민주 언론상'과 '제1회 한겨레상'을 수상했다. 현재 한국예술종합학교 영상원 애니메이션과 교수로 재직하며, 시사만화가로 활동 중이다.
 
 지은 책으로 『환상의 콤비, 아이야 우리 식탁엔 은쟁반에』, 『목 긴 사나이』, 『제억 공화국』, 『만화 내사랑』, 『한국 만화의 선구자들』, 『악! 법이라고?』, 『똥깅이』, 『어둠은 빛을 이길 수 없습니다』 외 다수가 있다.`,
+    profile_en: `An animator with a career as an editorial cartoonist and former art teacher. Born in 1953 in Ulsan, South Gyeongsang Province, he graduated from Seoul National University's College of Fine Arts and worked as an art teacher before debuting as a single-panel cartoon writer for The Hankyoreh newspaper in the late 1980s. His 'Hankyoreh Picture Panel,' which ran for about eight years, set a defining direction for newspaper editorial cartoons in the era. He subsequently devoted himself to animation, directing the feature films 'Odolttogi,' 'Various Tales,' and 'Become Human,' and served as president of the Association for the Development of Korean Comics. He also directed 'Park Jaedong's TV Review' for MBC News Desk and won the 4th Democratic Press Award and the 1st Hankyoreh Award. He currently serves as a professor in the Animation Department at the Korea National University of Arts and continues to work as an editorial cartoonist.`,
     history: ``,
   },
   {
@@ -368,6 +505,7 @@ export const batch005: Artwork[] = [
 그 외에 장편애니메이션 영화 '오돌또기', '별별이야기', '사람이 되어라'의 감독을 맡았으며, 우리만화 발전을 위한 연대모임의 회장을 역임했다. MBC 뉴스데스크 '박재동의 TV만평'을 감독하기도 했다. '제4회 민주 언론상'과 '제1회 한겨레상'을 수상했다. 현재 한국예술종합학교 영상원 애니메이션과 교수로 재직하며, 시사만화가로 활동 중이다.
 
 지은 책으로 『환상의 콤비, 아이야 우리 식탁엔 은쟁반에』, 『목 긴 사나이』, 『제억 공화국』, 『만화 내사랑』, 『한국 만화의 선구자들』, 『악! 법이라고?』, 『똥깅이』, 『어둠은 빛을 이길 수 없습니다』 외 다수가 있다.`,
+    profile_en: `An animator with a career as an editorial cartoonist and former art teacher. Born in 1953 in Ulsan, South Gyeongsang Province, he graduated from Seoul National University's College of Fine Arts and worked as an art teacher before debuting as a single-panel cartoon writer for The Hankyoreh newspaper in the late 1980s. His 'Hankyoreh Picture Panel,' which ran for about eight years, set a defining direction for newspaper editorial cartoons in the era. He subsequently devoted himself to animation, directing the feature films 'Odolttogi,' 'Various Tales,' and 'Become Human,' and served as president of the Association for the Development of Korean Comics. He also directed 'Park Jaedong's TV Review' for MBC News Desk and won the 4th Democratic Press Award and the 1st Hankyoreh Award. He currently serves as a professor in the Animation Department at the Korea National University of Arts and continues to work as an editorial cartoonist.`,
     history: ``,
   },
   {
@@ -386,6 +524,7 @@ export const batch005: Artwork[] = [
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/338',
     description: ``,
     profile: `강레아 작가는 한국 최초의 여성 클라이밍 및 산악 사진작가로, 암벽에 핀 소나무 등 자연의 강인한 생명력을 포착하는 작품으로 유명하며, 디자이너 출신으로 늦게 사진에 입문하여 신구대학교 사진과를 졸업 후 전문 사진작가로 활동하고 있다. 그녀의 작품은 한국을 넘어 프랑스 등 해외에서도 전시되며, 강인하면서도 서정적인 시선으로 산과 바위를 담아내는 것으로 평가받는다.`,
+    profile_en: `Artist Kang Re-ah is Korea's first female climbing and mountaineering photographer, renowned for works that capture the powerful vitality of nature—such as pine trees growing on rock faces. Originally trained as a designer, she came to photography later in life and, after graduating from the Photography Department at Shingu College, has been active as a professional photographer. Her work has been exhibited not only in Korea but also abroad including France, and she is recognized for capturing mountains and rocks with a strong yet lyrical perspective.`,
     history: ``,
   },
   {
@@ -405,6 +544,9 @@ export const batch005: Artwork[] = [
     description: ``,
     profile: `신학철(申鶴澈, 1943‒)은 민중미술 경향의 작가로 초기에는 실험미술에 참여하여 1970년대 초 한국아방가르드협회(AG)전을 통해 작품을 발표하기도 하였다. 그러나 1980년대부터 신군부 독재 체제를 비판하며 사회적 소통과 발언을 위한 미술의 역할에 대해 고민하였고 한국 근현대사의 주요 사건을 극사실주의 기법과 포토몽타주 기법을 이용하여 제작하였다.
 ‹묵시 802›는 신학철이 1970년대 후반부터 1980년대 초반에 집중했던 콜라주 기법으로 제작된 작품으로, 구두 모양의 얼굴을 한 샐러리맨들이 일제히 한 방향을 보고 있는 것을 통해 일방적인 정보의 흐름과 억압된 표현의 자유를 초현실적으로 풍자한다. 신학철의 작품에 등장하는 대상들은 주로 노동자, 중산층, 농민 등으로 다양한 계층의 인물들은 미화되지 않고 사실적으로 표현되어 구체적인 실체로서의 역사를 드러내고 있다.`,
+    profile_en: `Shin Hak-cheol (申鶴澈, 1943–) is an artist associated with the Minjung art movement who initially participated in experimental art, presenting works through the Korea Avant-Garde Association (AG) exhibition in the early 1970s. From the 1980s onward, he began critically examining the role of art for social communication while critiquing the new military dictatorship, creating works on major events in modern and contemporary Korean history using hyper-realism and photomontage techniques.
+
+‹Revelation 802› is a work created using the collage technique that Shin Hak-cheol focused on from the late 1970s to the early 1980s, which surreally satirizes the unilateral flow of information and the suppressed freedom of expression through salaried workers with shoe-shaped faces all looking in the same direction. The subjects in Shin's works are mainly workers, the middle class, and farmers—figures from various social strata depicted realistically without idealization, revealing history as concrete reality.`,
     history: ``,
   },
   {
@@ -424,6 +566,9 @@ export const batch005: Artwork[] = [
     description: ``,
     profile: `신학철(申鶴澈, 1943‒)은 민중미술 경향의 작가로 초기에는 실험미술에 참여하여 1970년대 초 한국아방가르드협회(AG)전을 통해 작품을 발표하기도 하였다. 그러나 1980년대부터 신군부 독재 체제를 비판하며 사회적 소통과 발언을 위한 미술의 역할에 대해 고민하였고 한국 근현대사의 주요 사건을 극사실주의 기법과 포토몽타주 기법을 이용하여 제작하였다.
 ‹묵시 802›는 신학철이 1970년대 후반부터 1980년대 초반에 집중했던 콜라주 기법으로 제작된 작품으로, 구두 모양의 얼굴을 한 샐러리맨들이 일제히 한 방향을 보고 있는 것을 통해 일방적인 정보의 흐름과 억압된 표현의 자유를 초현실적으로 풍자한다. 신학철의 작품에 등장하는 대상들은 주로 노동자, 중산층, 농민 등으로 다양한 계층의 인물들은 미화되지 않고 사실적으로 표현되어 구체적인 실체로서의 역사를 드러내고 있다.`,
+    profile_en: `Shin Hak-cheol (申鶴澈, 1943–) is an artist associated with the Minjung art movement who initially participated in experimental art, presenting works through the Korea Avant-Garde Association (AG) exhibition in the early 1970s. From the 1980s onward, he began critically examining the role of art for social communication while critiquing the new military dictatorship, creating works on major events in modern and contemporary Korean history using hyper-realism and photomontage techniques.
+
+‹Revelation 802› is a work created using the collage technique that Shin Hak-cheol focused on from the late 1970s to the early 1980s, which surreally satirizes the unilateral flow of information and the suppressed freedom of expression through salaried workers with shoe-shaped faces all looking in the same direction. The subjects in Shin's works are mainly workers, the middle class, and farmers—figures from various social strata depicted realistically without idealization, revealing history as concrete reality.`,
     history: ``,
   },
   {
@@ -443,6 +588,9 @@ export const batch005: Artwork[] = [
     description: ``,
     profile: `신학철(申鶴澈, 1943‒)은 민중미술 경향의 작가로 초기에는 실험미술에 참여하여 1970년대 초 한국아방가르드협회(AG)전을 통해 작품을 발표하기도 하였다. 그러나 1980년대부터 신군부 독재 체제를 비판하며 사회적 소통과 발언을 위한 미술의 역할에 대해 고민하였고 한국 근현대사의 주요 사건을 극사실주의 기법과 포토몽타주 기법을 이용하여 제작하였다.
 ‹묵시 802›는 신학철이 1970년대 후반부터 1980년대 초반에 집중했던 콜라주 기법으로 제작된 작품으로, 구두 모양의 얼굴을 한 샐러리맨들이 일제히 한 방향을 보고 있는 것을 통해 일방적인 정보의 흐름과 억압된 표현의 자유를 초현실적으로 풍자한다. 신학철의 작품에 등장하는 대상들은 주로 노동자, 중산층, 농민 등으로 다양한 계층의 인물들은 미화되지 않고 사실적으로 표현되어 구체적인 실체로서의 역사를 드러내고 있다.`,
+    profile_en: `Shin Hak-cheol (申鶴澈, 1943–) is an artist associated with the Minjung art movement who initially participated in experimental art, presenting works through the Korea Avant-Garde Association (AG) exhibition in the early 1970s. From the 1980s onward, he began critically examining the role of art for social communication while critiquing the new military dictatorship, creating works on major events in modern and contemporary Korean history using hyper-realism and photomontage techniques.
+
+‹Revelation 802› is a work created using the collage technique that Shin Hak-cheol focused on from the late 1970s to the early 1980s, which surreally satirizes the unilateral flow of information and the suppressed freedom of expression through salaried workers with shoe-shaped faces all looking in the same direction. The subjects in Shin's works are mainly workers, the middle class, and farmers—figures from various social strata depicted realistically without idealization, revealing history as concrete reality.`,
     history: ``,
   },
   {
@@ -462,6 +610,9 @@ export const batch005: Artwork[] = [
     description: ``,
     profile: `신학철(申鶴澈, 1943‒)은 민중미술 경향의 작가로 초기에는 실험미술에 참여하여 1970년대 초 한국아방가르드협회(AG)전을 통해 작품을 발표하기도 하였다. 그러나 1980년대부터 신군부 독재 체제를 비판하며 사회적 소통과 발언을 위한 미술의 역할에 대해 고민하였고 한국 근현대사의 주요 사건을 극사실주의 기법과 포토몽타주 기법을 이용하여 제작하였다.
 ‹묵시 802›는 신학철이 1970년대 후반부터 1980년대 초반에 집중했던 콜라주 기법으로 제작된 작품으로, 구두 모양의 얼굴을 한 샐러리맨들이 일제히 한 방향을 보고 있는 것을 통해 일방적인 정보의 흐름과 억압된 표현의 자유를 초현실적으로 풍자한다. 신학철의 작품에 등장하는 대상들은 주로 노동자, 중산층, 농민 등으로 다양한 계층의 인물들은 미화되지 않고 사실적으로 표현되어 구체적인 실체로서의 역사를 드러내고 있다.`,
+    profile_en: `Shin Hak-cheol (申鶴澈, 1943–) is an artist associated with the Minjung art movement who initially participated in experimental art, presenting works through the Korea Avant-Garde Association (AG) exhibition in the early 1970s. From the 1980s onward, he began critically examining the role of art for social communication while critiquing the new military dictatorship, creating works on major events in modern and contemporary Korean history using hyper-realism and photomontage techniques.
+
+‹Revelation 802› is a work created using the collage technique that Shin Hak-cheol focused on from the late 1970s to the early 1980s, which surreally satirizes the unilateral flow of information and the suppressed freedom of expression through salaried workers with shoe-shaped faces all looking in the same direction. The subjects in Shin's works are mainly workers, the middle class, and farmers—figures from various social strata depicted realistically without idealization, revealing history as concrete reality.`,
     history: ``,
   },
   {
@@ -481,6 +632,9 @@ export const batch005: Artwork[] = [
     description: ``,
     profile: `신학철(申鶴澈, 1943‒)은 민중미술 경향의 작가로 초기에는 실험미술에 참여하여 1970년대 초 한국아방가르드협회(AG)전을 통해 작품을 발표하기도 하였다. 그러나 1980년대부터 신군부 독재 체제를 비판하며 사회적 소통과 발언을 위한 미술의 역할에 대해 고민하였고 한국 근현대사의 주요 사건을 극사실주의 기법과 포토몽타주 기법을 이용하여 제작하였다.
 ‹묵시 802›는 신학철이 1970년대 후반부터 1980년대 초반에 집중했던 콜라주 기법으로 제작된 작품으로, 구두 모양의 얼굴을 한 샐러리맨들이 일제히 한 방향을 보고 있는 것을 통해 일방적인 정보의 흐름과 억압된 표현의 자유를 초현실적으로 풍자한다. 신학철의 작품에 등장하는 대상들은 주로 노동자, 중산층, 농민 등으로 다양한 계층의 인물들은 미화되지 않고 사실적으로 표현되어 구체적인 실체로서의 역사를 드러내고 있다.`,
+    profile_en: `Shin Hak-cheol (申鶴澈, 1943–) is an artist associated with the Minjung art movement who initially participated in experimental art, presenting works through the Korea Avant-Garde Association (AG) exhibition in the early 1970s. From the 1980s onward, he began critically examining the role of art for social communication while critiquing the new military dictatorship, creating works on major events in modern and contemporary Korean history using hyper-realism and photomontage techniques.
+
+‹Revelation 802› is a work created using the collage technique that Shin Hak-cheol focused on from the late 1970s to the early 1980s, which surreally satirizes the unilateral flow of information and the suppressed freedom of expression through salaried workers with shoe-shaped faces all looking in the same direction. The subjects in Shin's works are mainly workers, the middle class, and farmers—figures from various social strata depicted realistically without idealization, revealing history as concrete reality.`,
     history: ``,
   },
   {
@@ -500,6 +654,9 @@ export const batch005: Artwork[] = [
     description: ``,
     profile: `신학철(申鶴澈, 1943‒)은 민중미술 경향의 작가로 초기에는 실험미술에 참여하여 1970년대 초 한국아방가르드협회(AG)전을 통해 작품을 발표하기도 하였다. 그러나 1980년대부터 신군부 독재 체제를 비판하며 사회적 소통과 발언을 위한 미술의 역할에 대해 고민하였고 한국 근현대사의 주요 사건을 극사실주의 기법과 포토몽타주 기법을 이용하여 제작하였다.
 ‹묵시 802›는 신학철이 1970년대 후반부터 1980년대 초반에 집중했던 콜라주 기법으로 제작된 작품으로, 구두 모양의 얼굴을 한 샐러리맨들이 일제히 한 방향을 보고 있는 것을 통해 일방적인 정보의 흐름과 억압된 표현의 자유를 초현실적으로 풍자한다. 신학철의 작품에 등장하는 대상들은 주로 노동자, 중산층, 농민 등으로 다양한 계층의 인물들은 미화되지 않고 사실적으로 표현되어 구체적인 실체로서의 역사를 드러내고 있다.`,
+    profile_en: `Shin Hak-cheol (申鶴澈, 1943–) is an artist associated with the Minjung art movement who initially participated in experimental art, presenting works through the Korea Avant-Garde Association (AG) exhibition in the early 1970s. From the 1980s onward, he began critically examining the role of art for social communication while critiquing the new military dictatorship, creating works on major events in modern and contemporary Korean history using hyper-realism and photomontage techniques.
+
+‹Revelation 802› is a work created using the collage technique that Shin Hak-cheol focused on from the late 1970s to the early 1980s, which surreally satirizes the unilateral flow of information and the suppressed freedom of expression through salaried workers with shoe-shaped faces all looking in the same direction. The subjects in Shin's works are mainly workers, the middle class, and farmers—figures from various social strata depicted realistically without idealization, revealing history as concrete reality.`,
     history: ``,
   },
   {
@@ -519,6 +676,9 @@ export const batch005: Artwork[] = [
     description: ``,
     profile: `신학철(申鶴澈, 1943‒)은 민중미술 경향의 작가로 초기에는 실험미술에 참여하여 1970년대 초 한국아방가르드협회(AG)전을 통해 작품을 발표하기도 하였다. 그러나 1980년대부터 신군부 독재 체제를 비판하며 사회적 소통과 발언을 위한 미술의 역할에 대해 고민하였고 한국 근현대사의 주요 사건을 극사실주의 기법과 포토몽타주 기법을 이용하여 제작하였다.
 ‹묵시 802›는 신학철이 1970년대 후반부터 1980년대 초반에 집중했던 콜라주 기법으로 제작된 작품으로, 구두 모양의 얼굴을 한 샐러리맨들이 일제히 한 방향을 보고 있는 것을 통해 일방적인 정보의 흐름과 억압된 표현의 자유를 초현실적으로 풍자한다. 신학철의 작품에 등장하는 대상들은 주로 노동자, 중산층, 농민 등으로 다양한 계층의 인물들은 미화되지 않고 사실적으로 표현되어 구체적인 실체로서의 역사를 드러내고 있다.`,
+    profile_en: `Shin Hak-cheol (申鶴澈, 1943–) is an artist associated with the Minjung art movement who initially participated in experimental art, presenting works through the Korea Avant-Garde Association (AG) exhibition in the early 1970s. From the 1980s onward, he began critically examining the role of art for social communication while critiquing the new military dictatorship, creating works on major events in modern and contemporary Korean history using hyper-realism and photomontage techniques.
+
+‹Revelation 802› is a work created using the collage technique that Shin Hak-cheol focused on from the late 1970s to the early 1980s, which surreally satirizes the unilateral flow of information and the suppressed freedom of expression through salaried workers with shoe-shaped faces all looking in the same direction. The subjects in Shin's works are mainly workers, the middle class, and farmers—figures from various social strata depicted realistically without idealization, revealing history as concrete reality.`,
     history: ``,
   },
   {
@@ -543,6 +703,11 @@ export const batch005: Artwork[] = [
 그는 예술이 소수의 특권층이 향유하는 전유물이 되는 것을 경계했습니다. "미술은 많은 사람이 나누어야 한다"는 신념 아래, 자신의 판화를 시집의 표지나 노동 현장의 전단지에 아낌없이 내어주었던 일화는 그가 추구했던 예술의 공공성을 잘 보여줍니다. 자본주의의 기형적인 욕망을 풍자한 대작부터 고단한 삶을 위로하는 따뜻한 드로잉까지, 그의 작업은 언제나 인간에 대한 깊은 신뢰와 사랑에 뿌리를 두고 있었습니다. 비록 1986년, 마흔 한 살이라는 너무도 이른 나이에 간경화로 짧은 생을 마감했지만, 그가 남긴 칼자국들은 40여 년이 흐른 오늘날까지도 지워지지 않는 깊은 울림을 전해줍니다.
 
 2026년 현재, 우리는 그 어느 때보다 기술적으로 화려한 시대를 살아가고 있지만 오윤의 투박한 목판화가 여전히 큰 감동을 주는 이유는 그 안에 담긴 진정성 때문일 것입니다. 그는 예술가가 시대와 어떻게 마주해야 하는지, 그리고 가장 한국적인 것이 어떻게 보편적인 인간의 가치에 닿을 수 있는지를 몸소 보여주었습니다. 오윤은 떠났지만 그가 나무판 위에 새겨놓은 민중의 춤사위는 여전히 멈추지 않고 계속되고 있으며, 그의 예술은 한국 미술사에서 잊을 수 없는 가장 인간적이고도 찬란한 기록으로 남아 있습니다.`,
+    profile_en: `Oh Yoon, a towering figure in Korean contemporary art who sublimated the lives of the people into art, was the most passionate and sincere artist produced by the tumultuous 1980s. Born as the son of writer Oh Young-su (known for the novel 'Gaetmaeul'), he grew up in an artistically fertile environment, yet his gaze was always directed toward the lives of ordinary people rather than the glamorous art world. Although he majored in sculpture at Seoul National University, he yearned for a living art that breathed in the streets rather than a taxidermied aesthetic. The medium he chose was woodblock printing—a technique that leaves an irreversible mark with a single cut, perfectly suited to his rough yet vigorous artistic spirit.
+
+The most essential emotional element running through Oh Yoon's work is the harmony between 'han (恨),' the sorrow embedded in the Korean psyche, and 'sinmyeong,' the spirit that rises to overcome it. The figures in his prints, depicted with bold rough lines and dynamic dancing gestures, symbolize the tenacious vitality that rises above suppressed reality. He reinterpreted folk subjects such as mask dance, shamanism, and goblins with modern sensibility, powerfully imprinting on the Korean art world what its true cultural prototypes were. For him, printmaking was not just a reproductive technique, but a communicative ritual of carving the era's pain with a knife and sharing it with the public.
+
+Under the conviction that "art must be shared by many people," he gave his prints freely to book covers and labor field leaflets. Although he passed away from liver cirrhosis at just forty-one in 1986, the marks he left continue to resonate deeply more than forty years later. He showed how artists should face their era, and how the most Korean things can touch universal human values. His art remains in Korean art history as the most human and brilliant record that cannot be forgotten.`,
     history: ``,
   },
   {
@@ -567,6 +732,11 @@ export const batch005: Artwork[] = [
 그는 예술이 소수의 특권층이 향유하는 전유물이 되는 것을 경계했습니다. "미술은 많은 사람이 나누어야 한다"는 신념 아래, 자신의 판화를 시집의 표지나 노동 현장의 전단지에 아낌없이 내어주었던 일화는 그가 추구했던 예술의 공공성을 잘 보여줍니다. 자본주의의 기형적인 욕망을 풍자한 대작부터 고단한 삶을 위로하는 따뜻한 드로잉까지, 그의 작업은 언제나 인간에 대한 깊은 신뢰와 사랑에 뿌리를 두고 있었습니다. 비록 1986년, 마흔 한 살이라는 너무도 이른 나이에 간경화로 짧은 생을 마감했지만, 그가 남긴 칼자국들은 40여 년이 흐른 오늘날까지도 지워지지 않는 깊은 울림을 전해줍니다.
 
 2026년 현재, 우리는 그 어느 때보다 기술적으로 화려한 시대를 살아가고 있지만 오윤의 투박한 목판화가 여전히 큰 감동을 주는 이유는 그 안에 담긴 진정성 때문일 것입니다. 그는 예술가가 시대와 어떻게 마주해야 하는지, 그리고 가장 한국적인 것이 어떻게 보편적인 인간의 가치에 닿을 수 있는지를 몸소 보여주었습니다. 오윤은 떠났지만 그가 나무판 위에 새겨놓은 민중의 춤사위는 여전히 멈추지 않고 계속되고 있으며, 그의 예술은 한국 미술사에서 잊을 수 없는 가장 인간적이고도 찬란한 기록으로 남아 있습니다.`,
+    profile_en: `Oh Yoon, a towering figure in Korean contemporary art who sublimated the lives of the people into art, was the most passionate and sincere artist produced by the tumultuous 1980s. Born as the son of writer Oh Young-su (known for the novel 'Gaetmaeul'), he grew up in an artistically fertile environment, yet his gaze was always directed toward the lives of ordinary people rather than the glamorous art world. Although he majored in sculpture at Seoul National University, he yearned for a living art that breathed in the streets rather than a taxidermied aesthetic. The medium he chose was woodblock printing—a technique that leaves an irreversible mark with a single cut, perfectly suited to his rough yet vigorous artistic spirit.
+
+The most essential emotional element running through Oh Yoon's work is the harmony between 'han (恨),' the sorrow embedded in the Korean psyche, and 'sinmyeong,' the spirit that rises to overcome it. The figures in his prints, depicted with bold rough lines and dynamic dancing gestures, symbolize the tenacious vitality that rises above suppressed reality. He reinterpreted folk subjects such as mask dance, shamanism, and goblins with modern sensibility, powerfully imprinting on the Korean art world what its true cultural prototypes were. For him, printmaking was not just a reproductive technique, but a communicative ritual of carving the era's pain with a knife and sharing it with the public.
+
+Under the conviction that "art must be shared by many people," he gave his prints freely to book covers and labor field leaflets. Although he passed away from liver cirrhosis at just forty-one in 1986, the marks he left continue to resonate deeply more than forty years later. He showed how artists should face their era, and how the most Korean things can touch universal human values. His art remains in Korean art history as the most human and brilliant record that cannot be forgotten.`,
     history: ``,
   },
   {
@@ -591,6 +761,11 @@ export const batch005: Artwork[] = [
 그는 예술이 소수의 특권층이 향유하는 전유물이 되는 것을 경계했습니다. "미술은 많은 사람이 나누어야 한다"는 신념 아래, 자신의 판화를 시집의 표지나 노동 현장의 전단지에 아낌없이 내어주었던 일화는 그가 추구했던 예술의 공공성을 잘 보여줍니다. 자본주의의 기형적인 욕망을 풍자한 대작부터 고단한 삶을 위로하는 따뜻한 드로잉까지, 그의 작업은 언제나 인간에 대한 깊은 신뢰와 사랑에 뿌리를 두고 있었습니다. 비록 1986년, 마흔 한 살이라는 너무도 이른 나이에 간경화로 짧은 생을 마감했지만, 그가 남긴 칼자국들은 40여 년이 흐른 오늘날까지도 지워지지 않는 깊은 울림을 전해줍니다.
 
 2026년 현재, 우리는 그 어느 때보다 기술적으로 화려한 시대를 살아가고 있지만 오윤의 투박한 목판화가 여전히 큰 감동을 주는 이유는 그 안에 담긴 진정성 때문일 것입니다. 그는 예술가가 시대와 어떻게 마주해야 하는지, 그리고 가장 한국적인 것이 어떻게 보편적인 인간의 가치에 닿을 수 있는지를 몸소 보여주었습니다. 오윤은 떠났지만 그가 나무판 위에 새겨놓은 민중의 춤사위는 여전히 멈추지 않고 계속되고 있으며, 그의 예술은 한국 미술사에서 잊을 수 없는 가장 인간적이고도 찬란한 기록으로 남아 있습니다.`,
+    profile_en: `Oh Yoon, a towering figure in Korean contemporary art who sublimated the lives of the people into art, was the most passionate and sincere artist produced by the tumultuous 1980s. Born as the son of writer Oh Young-su (known for the novel 'Gaetmaeul'), he grew up in an artistically fertile environment, yet his gaze was always directed toward the lives of ordinary people rather than the glamorous art world. Although he majored in sculpture at Seoul National University, he yearned for a living art that breathed in the streets rather than a taxidermied aesthetic. The medium he chose was woodblock printing—a technique that leaves an irreversible mark with a single cut, perfectly suited to his rough yet vigorous artistic spirit.
+
+The most essential emotional element running through Oh Yoon's work is the harmony between 'han (恨),' the sorrow embedded in the Korean psyche, and 'sinmyeong,' the spirit that rises to overcome it. The figures in his prints, depicted with bold rough lines and dynamic dancing gestures, symbolize the tenacious vitality that rises above suppressed reality. He reinterpreted folk subjects such as mask dance, shamanism, and goblins with modern sensibility, powerfully imprinting on the Korean art world what its true cultural prototypes were. For him, printmaking was not just a reproductive technique, but a communicative ritual of carving the era's pain with a knife and sharing it with the public.
+
+Under the conviction that "art must be shared by many people," he gave his prints freely to book covers and labor field leaflets. Although he passed away from liver cirrhosis at just forty-one in 1986, the marks he left continue to resonate deeply more than forty years later. He showed how artists should face their era, and how the most Korean things can touch universal human values. His art remains in Korean art history as the most human and brilliant record that cannot be forgotten.`,
     history: ``,
   },
   {
@@ -615,6 +790,11 @@ export const batch005: Artwork[] = [
 그는 예술이 소수의 특권층이 향유하는 전유물이 되는 것을 경계했습니다. "미술은 많은 사람이 나누어야 한다"는 신념 아래, 자신의 판화를 시집의 표지나 노동 현장의 전단지에 아낌없이 내어주었던 일화는 그가 추구했던 예술의 공공성을 잘 보여줍니다. 자본주의의 기형적인 욕망을 풍자한 대작부터 고단한 삶을 위로하는 따뜻한 드로잉까지, 그의 작업은 언제나 인간에 대한 깊은 신뢰와 사랑에 뿌리를 두고 있었습니다. 비록 1986년, 마흔 한 살이라는 너무도 이른 나이에 간경화로 짧은 생을 마감했지만, 그가 남긴 칼자국들은 40여 년이 흐른 오늘날까지도 지워지지 않는 깊은 울림을 전해줍니다.
 
 2026년 현재, 우리는 그 어느 때보다 기술적으로 화려한 시대를 살아가고 있지만 오윤의 투박한 목판화가 여전히 큰 감동을 주는 이유는 그 안에 담긴 진정성 때문일 것입니다. 그는 예술가가 시대와 어떻게 마주해야 하는지, 그리고 가장 한국적인 것이 어떻게 보편적인 인간의 가치에 닿을 수 있는지를 몸소 보여주었습니다. 오윤은 떠났지만 그가 나무판 위에 새겨놓은 민중의 춤사위는 여전히 멈추지 않고 계속되고 있으며, 그의 예술은 한국 미술사에서 잊을 수 없는 가장 인간적이고도 찬란한 기록으로 남아 있습니다.`,
+    profile_en: `Oh Yoon, a towering figure in Korean contemporary art who sublimated the lives of the people into art, was the most passionate and sincere artist produced by the tumultuous 1980s. Born as the son of writer Oh Young-su (known for the novel 'Gaetmaeul'), he grew up in an artistically fertile environment, yet his gaze was always directed toward the lives of ordinary people rather than the glamorous art world. Although he majored in sculpture at Seoul National University, he yearned for a living art that breathed in the streets rather than a taxidermied aesthetic. The medium he chose was woodblock printing—a technique that leaves an irreversible mark with a single cut, perfectly suited to his rough yet vigorous artistic spirit.
+
+The most essential emotional element running through Oh Yoon's work is the harmony between 'han (恨),' the sorrow embedded in the Korean psyche, and 'sinmyeong,' the spirit that rises to overcome it. The figures in his prints, depicted with bold rough lines and dynamic dancing gestures, symbolize the tenacious vitality that rises above suppressed reality. He reinterpreted folk subjects such as mask dance, shamanism, and goblins with modern sensibility, powerfully imprinting on the Korean art world what its true cultural prototypes were. For him, printmaking was not just a reproductive technique, but a communicative ritual of carving the era's pain with a knife and sharing it with the public.
+
+Under the conviction that "art must be shared by many people," he gave his prints freely to book covers and labor field leaflets. Although he passed away from liver cirrhosis at just forty-one in 1986, the marks he left continue to resonate deeply more than forty years later. He showed how artists should face their era, and how the most Korean things can touch universal human values. His art remains in Korean art history as the most human and brilliant record that cannot be forgotten.`,
     history: ``,
   },
   {
@@ -639,6 +819,11 @@ export const batch005: Artwork[] = [
 그는 예술이 소수의 특권층이 향유하는 전유물이 되는 것을 경계했습니다. "미술은 많은 사람이 나누어야 한다"는 신념 아래, 자신의 판화를 시집의 표지나 노동 현장의 전단지에 아낌없이 내어주었던 일화는 그가 추구했던 예술의 공공성을 잘 보여줍니다. 자본주의의 기형적인 욕망을 풍자한 대작부터 고단한 삶을 위로하는 따뜻한 드로잉까지, 그의 작업은 언제나 인간에 대한 깊은 신뢰와 사랑에 뿌리를 두고 있었습니다. 비록 1986년, 마흔 한 살이라는 너무도 이른 나이에 간경화로 짧은 생을 마감했지만, 그가 남긴 칼자국들은 40여 년이 흐른 오늘날까지도 지워지지 않는 깊은 울림을 전해줍니다.
 
 2026년 현재, 우리는 그 어느 때보다 기술적으로 화려한 시대를 살아가고 있지만 오윤의 투박한 목판화가 여전히 큰 감동을 주는 이유는 그 안에 담긴 진정성 때문일 것입니다. 그는 예술가가 시대와 어떻게 마주해야 하는지, 그리고 가장 한국적인 것이 어떻게 보편적인 인간의 가치에 닿을 수 있는지를 몸소 보여주었습니다. 오윤은 떠났지만 그가 나무판 위에 새겨놓은 민중의 춤사위는 여전히 멈추지 않고 계속되고 있으며, 그의 예술은 한국 미술사에서 잊을 수 없는 가장 인간적이고도 찬란한 기록으로 남아 있습니다.`,
+    profile_en: `Oh Yoon, a towering figure in Korean contemporary art who sublimated the lives of the people into art, was the most passionate and sincere artist produced by the tumultuous 1980s. Born as the son of writer Oh Young-su (known for the novel 'Gaetmaeul'), he grew up in an artistically fertile environment, yet his gaze was always directed toward the lives of ordinary people rather than the glamorous art world. Although he majored in sculpture at Seoul National University, he yearned for a living art that breathed in the streets rather than a taxidermied aesthetic. The medium he chose was woodblock printing—a technique that leaves an irreversible mark with a single cut, perfectly suited to his rough yet vigorous artistic spirit.
+
+The most essential emotional element running through Oh Yoon's work is the harmony between 'han (恨),' the sorrow embedded in the Korean psyche, and 'sinmyeong,' the spirit that rises to overcome it. The figures in his prints, depicted with bold rough lines and dynamic dancing gestures, symbolize the tenacious vitality that rises above suppressed reality. He reinterpreted folk subjects such as mask dance, shamanism, and goblins with modern sensibility, powerfully imprinting on the Korean art world what its true cultural prototypes were. For him, printmaking was not just a reproductive technique, but a communicative ritual of carving the era's pain with a knife and sharing it with the public.
+
+Under the conviction that "art must be shared by many people," he gave his prints freely to book covers and labor field leaflets. Although he passed away from liver cirrhosis at just forty-one in 1986, the marks he left continue to resonate deeply more than forty years later. He showed how artists should face their era, and how the most Korean things can touch universal human values. His art remains in Korean art history as the most human and brilliant record that cannot be forgotten.`,
     history: ``,
   },
   {
@@ -663,6 +848,11 @@ export const batch005: Artwork[] = [
 그는 예술이 소수의 특권층이 향유하는 전유물이 되는 것을 경계했습니다. "미술은 많은 사람이 나누어야 한다"는 신념 아래, 자신의 판화를 시집의 표지나 노동 현장의 전단지에 아낌없이 내어주었던 일화는 그가 추구했던 예술의 공공성을 잘 보여줍니다. 자본주의의 기형적인 욕망을 풍자한 대작부터 고단한 삶을 위로하는 따뜻한 드로잉까지, 그의 작업은 언제나 인간에 대한 깊은 신뢰와 사랑에 뿌리를 두고 있었습니다. 비록 1986년, 마흔 한 살이라는 너무도 이른 나이에 간경화로 짧은 생을 마감했지만, 그가 남긴 칼자국들은 40여 년이 흐른 오늘날까지도 지워지지 않는 깊은 울림을 전해줍니다.
 
 2026년 현재, 우리는 그 어느 때보다 기술적으로 화려한 시대를 살아가고 있지만 오윤의 투박한 목판화가 여전히 큰 감동을 주는 이유는 그 안에 담긴 진정성 때문일 것입니다. 그는 예술가가 시대와 어떻게 마주해야 하는지, 그리고 가장 한국적인 것이 어떻게 보편적인 인간의 가치에 닿을 수 있는지를 몸소 보여주었습니다. 오윤은 떠났지만 그가 나무판 위에 새겨놓은 민중의 춤사위는 여전히 멈추지 않고 계속되고 있으며, 그의 예술은 한국 미술사에서 잊을 수 없는 가장 인간적이고도 찬란한 기록으로 남아 있습니다.`,
+    profile_en: `Oh Yoon, a towering figure in Korean contemporary art who sublimated the lives of the people into art, was the most passionate and sincere artist produced by the tumultuous 1980s. Born as the son of writer Oh Young-su (known for the novel 'Gaetmaeul'), he grew up in an artistically fertile environment, yet his gaze was always directed toward the lives of ordinary people rather than the glamorous art world. Although he majored in sculpture at Seoul National University, he yearned for a living art that breathed in the streets rather than a taxidermied aesthetic. The medium he chose was woodblock printing—a technique that leaves an irreversible mark with a single cut, perfectly suited to his rough yet vigorous artistic spirit.
+
+The most essential emotional element running through Oh Yoon's work is the harmony between 'han (恨),' the sorrow embedded in the Korean psyche, and 'sinmyeong,' the spirit that rises to overcome it. The figures in his prints, depicted with bold rough lines and dynamic dancing gestures, symbolize the tenacious vitality that rises above suppressed reality. He reinterpreted folk subjects such as mask dance, shamanism, and goblins with modern sensibility, powerfully imprinting on the Korean art world what its true cultural prototypes were. For him, printmaking was not just a reproductive technique, but a communicative ritual of carving the era's pain with a knife and sharing it with the public.
+
+Under the conviction that "art must be shared by many people," he gave his prints freely to book covers and labor field leaflets. Although he passed away from liver cirrhosis at just forty-one in 1986, the marks he left continue to resonate deeply more than forty years later. He showed how artists should face their era, and how the most Korean things can touch universal human values. His art remains in Korean art history as the most human and brilliant record that cannot be forgotten.`,
     history: ``,
   },
   {
@@ -687,6 +877,11 @@ export const batch005: Artwork[] = [
 그는 예술이 소수의 특권층이 향유하는 전유물이 되는 것을 경계했습니다. "미술은 많은 사람이 나누어야 한다"는 신념 아래, 자신의 판화를 시집의 표지나 노동 현장의 전단지에 아낌없이 내어주었던 일화는 그가 추구했던 예술의 공공성을 잘 보여줍니다. 자본주의의 기형적인 욕망을 풍자한 대작부터 고단한 삶을 위로하는 따뜻한 드로잉까지, 그의 작업은 언제나 인간에 대한 깊은 신뢰와 사랑에 뿌리를 두고 있었습니다. 비록 1986년, 마흔 한 살이라는 너무도 이른 나이에 간경화로 짧은 생을 마감했지만, 그가 남긴 칼자국들은 40여 년이 흐른 오늘날까지도 지워지지 않는 깊은 울림을 전해줍니다.
 
 2026년 현재, 우리는 그 어느 때보다 기술적으로 화려한 시대를 살아가고 있지만 오윤의 투박한 목판화가 여전히 큰 감동을 주는 이유는 그 안에 담긴 진정성 때문일 것입니다. 그는 예술가가 시대와 어떻게 마주해야 하는지, 그리고 가장 한국적인 것이 어떻게 보편적인 인간의 가치에 닿을 수 있는지를 몸소 보여주었습니다. 오윤은 떠났지만 그가 나무판 위에 새겨놓은 민중의 춤사위는 여전히 멈추지 않고 계속되고 있으며, 그의 예술은 한국 미술사에서 잊을 수 없는 가장 인간적이고도 찬란한 기록으로 남아 있습니다.`,
+    profile_en: `Oh Yoon, a towering figure in Korean contemporary art who sublimated the lives of the people into art, was the most passionate and sincere artist produced by the tumultuous 1980s. Born as the son of writer Oh Young-su (known for the novel 'Gaetmaeul'), he grew up in an artistically fertile environment, yet his gaze was always directed toward the lives of ordinary people rather than the glamorous art world. Although he majored in sculpture at Seoul National University, he yearned for a living art that breathed in the streets rather than a taxidermied aesthetic. The medium he chose was woodblock printing—a technique that leaves an irreversible mark with a single cut, perfectly suited to his rough yet vigorous artistic spirit.
+
+The most essential emotional element running through Oh Yoon's work is the harmony between 'han (恨),' the sorrow embedded in the Korean psyche, and 'sinmyeong,' the spirit that rises to overcome it. The figures in his prints, depicted with bold rough lines and dynamic dancing gestures, symbolize the tenacious vitality that rises above suppressed reality. He reinterpreted folk subjects such as mask dance, shamanism, and goblins with modern sensibility, powerfully imprinting on the Korean art world what its true cultural prototypes were. For him, printmaking was not just a reproductive technique, but a communicative ritual of carving the era's pain with a knife and sharing it with the public.
+
+Under the conviction that "art must be shared by many people," he gave his prints freely to book covers and labor field leaflets. Although he passed away from liver cirrhosis at just forty-one in 1986, the marks he left continue to resonate deeply more than forty years later. He showed how artists should face their era, and how the most Korean things can touch universal human values. His art remains in Korean art history as the most human and brilliant record that cannot be forgotten.`,
     history: ``,
   },
   {
@@ -705,6 +900,9 @@ export const batch005: Artwork[] = [
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/353',
     description: ``,
     profile: `최병수는 1960년 경기도 평택 출생. 태어나자마자 바로 서울 동작구 상도동으로 이사. 가난한 집안 형편 때문에 한광상업전수학교 2학년 중퇴 후 사회생활 시작. 신문팔이, 중국집 배달원, 선반 보조공, 미싱 수리공, 보일러공, 전기용접공, 목수 등 수십 개의 직업을 전전하며 전국을 돌면서 노동자 생활을 함. 어린 시절 동네 친구였던 김환영(신촌 벽화사건 관계자, <마당을 나온 암탉> 제작자)과 함께 지내며, 홍대 미생들과 자주 어울림. 20대 때 시절 오토바이 사고로 크게 다시고, 노동자 시절 다친 손 역시 제대로 치료 받지 못해, 군 면제 받음. 퇴원 후 구파발에 비닐하우스를 짓고 2여년을 지냄. 이 시기 김환영, 홍황기, 김진하 등 당시 홍대 미대생이었던 친구들이 아지트 삼아 자주 드나들었고, 이들과 어울리면서, 예술 검열과 탄압의 대표적 사건으로 거론되는 신촌 벽화사건(<일하는 사람들>), 정릉 벽화사건(<상생도>)에 모두 관계하게 됨. 벽화 작업 과정과 더불어 벽화가 지워지고 관련된 예술가들이 구속되는 과정, 공권력에 의해 화가로 불려지게 된 과정에 대해 상세하게 구술. 친구 김환영의 영향으로, 그림마당 민에 드나들며 ‘민미협’ 활동을 지켜보게 됐고, 이후 ‘민미협’에 가입해 벽화분과 활동을 하며 류연복 등과 함께 <연대 100년사>를 공동 작업함. 1987년 6월 항쟁 당시 경찰의 최루탄에 맞아 쓰러진 이한열 열사의 사진이 실린 신문 기사를 접하고, 문영미, 문영태 등의 도움을 받아 판화와 대형 걸개그림 <한열이를 살려내라>를 제작, 연세대학교 학생회관에 설치. 구술 과정에서 <한열이를 살려내라> 목판과 이한열 영결식에 사용된 장례식 도면을 공개함. <노동해방도>(1989), <백두산>(1989), <반전반핵도>(1988), <장산곶매> 등 1980년대 문화예술운동을 대표하는 수많은 걸개그림들을 제작, 1980년대 중후반, 문화예술운동 소집단들이 폭발적으로 증가한 분위기 속에서, 소집단 활동의 외부인 입장에서 비교적 객관적으로 시대의 분위기를 증언. 노동자 출신 전업화가로, 1980년대 문화예술운동의 분위기가 소강된 이후에도 지역(전남 여수 등)에서 예술운동(환경생태운동 등)을 지속적으로 이어가고 있음.`,
+    profile_en: `Choi Byeong-su was born in 1960 in Pyeongtaek, Gyeonggi Province. Due to poor family circumstances, he dropped out of school and began social life through dozens of jobs—newspaper seller, delivery boy, lathe assistant, sewing machine repairman, boiler operator, electric welder, carpenter—traveling the country as a laborer. Through his childhood friend Kim Hwan-young and a network of Hongdae art students, he became connected to both the Sinchon mural incident ('Working People') and the Jeongneung mural incident ('Sangsaengdo'), both cited as representative cases of artistic censorship and suppression in Korea. He subsequently joined the Minjung art group 'Min-mi-hyeop' and worked in its mural division.
+
+During the June Democracy Struggle of 1987, upon seeing a newspaper photograph of martyr Lee Han-yeol struck down by police tear gas, he created the print and large banner 'Save Han-yeol' and installed it at Yonsei University's student hall. He went on to create numerous representative banner paintings of the 1980s arts movement including 'Labor Liberation' (1989), 'Baekdu Mountain' (1989), and 'Anti-War Anti-Nuclear' (1988). As a full-time painter from a laborer background, he has continued arts movements (including environmental ecology movements) in local areas such as Yeosu, South Jeolla, even after the momentum of the 1980s cultural arts movement subsided.`,
     history: `- 1960년 경기 평택 출생
 
 - 한광상업전수학교 중퇴
@@ -732,6 +930,17 @@ export const batch005: Artwork[] = [
 - 1980년대 중후반, 문화예술운동 소집단들이 폭발적으로 증가한 분위기 속에서도 외부인의 입장에서 비교적 객관적으로 시대의 분위기를 증언
 
 - 명실공히 노동자 출신 전업화가로, 1980년대 문화예술운동의 분위기가 소강된 이후에도 지역(전남 여수 등)에서 예술운동(환경생태운동 등)을 지속`,
+    history_en: `- Born 1960, Pyeongtaek, Gyeonggi Province
+- Dropped out of Hankwang Commercial Technical School
+- Started working as a laborer from middle school age: newspaper seller, delivery boy, lathe assistant, sewing machine repairman, boiler operator, electric welder, carpenter
+- In his early twenties, befriended Hongdae art students through childhood friend Kim Hwan-young
+- Suffered a serious motorcycle accident; hand injured during labor years; received military exemption
+- Connected to the Sinchon mural incident ('Working People') and Jeongneung mural incident ('Sangsaengdo')—representative cases of Korean artistic censorship
+- Joined 'Min-mi-hyeop' (Minjung Art Association); worked in the mural division; co-created 'Yonsei 100-Year History' with Ryu Yeon-bok
+- During the June Democracy Struggle of 1987, created the print and large banner 'Save Han-yeol' and installed it at Yonsei University after martyr Lee Han-yeol was struck by police tear gas
+- Created representative banner paintings of the 1980s arts movement: 'Labor Liberation' (1989), 'Baekdu Mountain' (1989), 'Anti-War Anti-Nuclear' (1988), 'Jangsan Falcon'
+- Testified objectively about the explosive growth of small cultural arts movement groups in the mid-to-late 1980s from an outsider's perspective
+- As a full-time painter from a laborer background, has continued arts movements (environmental ecology movements) in local areas (Yeosu, South Jeolla) even after the 1980s momentum subsided`,
   },
   {
     id: '218',
@@ -751,6 +960,13 @@ export const batch005: Artwork[] = [
     profile: `민정기(閔晶基, Min Joung-Ki, b.1949)는 '현실과 발언' 창립회원으로 1979년말 '현실과 발언' 창립 초기부터 공식적 해체기(1990)까지 민중미술진영의 주요 작가로서 참여했으며, 또한 90년대 이후부터는 경기도 양평으로 거소를 옮겨 '산과 땅과 더불어 살아가는' 인간의 삶의 회화적 기록이라 이름할 산수화, 화훼화를 그려내고 있다. 민정기의 작품세계는 초기, 소위 '이발소그림'으로 통칭되는 촌스럽고 세련되지 않은 그림을 다시 모방해 고급미술의 회랑에 내놓았다. '통속'의 사회에서 통속적으로 살고 있다는 우리 모두의 자의식을 건드린 것이다. 반미학적 다다이스트적 기획이라는 점에서 음울한 시대의 알레고리로 읽혀졌다.
 이후 그는 숲으로 향해 걸어갔다. 그러나 정확히는 땅을 향해, 역사의 지층을 향해서다. 그러다가 그는 저잣거리로 나선다. 길, 도로, 강물의 흐름을 따라가는 것이다. 그것은 '오늘로 향하는 길'이다. 모든 것이 실증화(positivity)되어가는 세계의 방향, 모든 것이 깨끗해저만 가는 미술의 방향과 어긋나는 길이다. 또한 양평 시대의 '산수화'들은 산세와 지세 가운데 삶의 거처를 정하고, 이를 풍수(風水)의 지혜로 여겼던 옛사람들의 흔적을 좇아 시각화함으로써 동시대적 삶과의 그 거리를 통각하게 한다는 점에서 그의 소박하고 대중적인 삶의 진지한 감정에 대한 여전한 애정과 건강한 연민을 확인하게 된다.
 초기, 민중적 삶의 그늘진 길모퉁이를 외면하지 못했던 연민의 시선으로부터 그 삶의 시간의 지층을 파들어가는 인류학적 통찰에로 나아간 길, 풍경의 그늘, 회화의 그늘이라 이름할 이유다.`,
+    profile_en: `Min Joung-Ki (閔晶基, b.1949) is a founding member of 'Reality and Utterance' who participated as a key artist in the Minjung art movement from the group's founding in late 1979 until its official dissolution in 1990. From the 1990s onward, he moved to Yangpyeong, Gyeonggi Province, and has been painting landscape and flower paintings as pictorial records of human life 'living together with mountains and land.'
+
+In his early career, he mimicked the so-called 'barber shop paintings'—kitschy, unsophisticated works—and brought them into the gallery of high art, touching the self-consciousness that we all live vulgarly in a 'vulgar' society. Read as an anti-aesthetic Dadaist project, it functioned as an allegory of a gloomy era.
+
+He subsequently walked toward the forest—or more precisely, toward the land and the strata of history. Then he stepped out into the marketplace, following roads, highways, and rivers: 'a path toward today.' His Yangpyeong-era landscape paintings visualize traces of ancient people who settled their dwelling according to the wisdom of feng shui, making us acutely aware of the distance from contemporary life—confirming his enduring affection and healthy compassion for the sincere emotions of simple, popular life.
+
+From the initial sympathetic gaze that could not look away from the shaded back alleys of the people's lives, to the anthropological insight that delves into the strata of those lives' time—this is the reason to name it the shade of landscape, the shade of painting.`,
     history: ``,
   },
   {
@@ -771,6 +987,13 @@ export const batch005: Artwork[] = [
     profile: `민정기(閔晶基, Min Joung-Ki, b.1949)는 '현실과 발언' 창립회원으로 1979년말 '현실과 발언' 창립 초기부터 공식적 해체기(1990)까지 민중미술진영의 주요 작가로서 참여했으며, 또한 90년대 이후부터는 경기도 양평으로 거소를 옮겨 '산과 땅과 더불어 살아가는' 인간의 삶의 회화적 기록이라 이름할 산수화, 화훼화를 그려내고 있다. 민정기의 작품세계는 초기, 소위 '이발소그림'으로 통칭되는 촌스럽고 세련되지 않은 그림을 다시 모방해 고급미술의 회랑에 내놓았다. '통속'의 사회에서 통속적으로 살고 있다는 우리 모두의 자의식을 건드린 것이다. 반미학적 다다이스트적 기획이라는 점에서 음울한 시대의 알레고리로 읽혀졌다.
 이후 그는 숲으로 향해 걸어갔다. 그러나 정확히는 땅을 향해, 역사의 지층을 향해서다. 그러다가 그는 저잣거리로 나선다. 길, 도로, 강물의 흐름을 따라가는 것이다. 그것은 '오늘로 향하는 길'이다. 모든 것이 실증화(positivity)되어가는 세계의 방향, 모든 것이 깨끗해저만 가는 미술의 방향과 어긋나는 길이다. 또한 양평 시대의 '산수화'들은 산세와 지세 가운데 삶의 거처를 정하고, 이를 풍수(風水)의 지혜로 여겼던 옛사람들의 흔적을 좇아 시각화함으로써 동시대적 삶과의 그 거리를 통각하게 한다는 점에서 그의 소박하고 대중적인 삶의 진지한 감정에 대한 여전한 애정과 건강한 연민을 확인하게 된다.
 초기, 민중적 삶의 그늘진 길모퉁이를 외면하지 못했던 연민의 시선으로부터 그 삶의 시간의 지층을 파들어가는 인류학적 통찰에로 나아간 길, 풍경의 그늘, 회화의 그늘이라 이름할 이유다.`,
+    profile_en: `Min Joung-Ki (閔晶基, b.1949) is a founding member of 'Reality and Utterance' who participated as a key artist in the Minjung art movement from the group's founding in late 1979 until its official dissolution in 1990. From the 1990s onward, he moved to Yangpyeong, Gyeonggi Province, and has been painting landscape and flower paintings as pictorial records of human life 'living together with mountains and land.'
+
+In his early career, he mimicked the so-called 'barber shop paintings'—kitschy, unsophisticated works—and brought them into the gallery of high art, touching the self-consciousness that we all live vulgarly in a 'vulgar' society. Read as an anti-aesthetic Dadaist project, it functioned as an allegory of a gloomy era.
+
+He subsequently walked toward the forest—or more precisely, toward the land and the strata of history. Then he stepped out into the marketplace, following roads, highways, and rivers: 'a path toward today.' His Yangpyeong-era landscape paintings visualize traces of ancient people who settled their dwelling according to the wisdom of feng shui, making us acutely aware of the distance from contemporary life—confirming his enduring affection and healthy compassion for the sincere emotions of simple, popular life.
+
+From the initial sympathetic gaze that could not look away from the shaded back alleys of the people's lives, to the anthropological insight that delves into the strata of those lives' time—this is the reason to name it the shade of landscape, the shade of painting.`,
     history: ``,
   },
   {
@@ -791,6 +1014,13 @@ export const batch005: Artwork[] = [
     profile: `민정기(閔晶基, Min Joung-Ki, b.1949)는 '현실과 발언' 창립회원으로 1979년말 '현실과 발언' 창립 초기부터 공식적 해체기(1990)까지 민중미술진영의 주요 작가로서 참여했으며, 또한 90년대 이후부터는 경기도 양평으로 거소를 옮겨 '산과 땅과 더불어 살아가는' 인간의 삶의 회화적 기록이라 이름할 산수화, 화훼화를 그려내고 있다. 민정기의 작품세계는 초기, 소위 '이발소그림'으로 통칭되는 촌스럽고 세련되지 않은 그림을 다시 모방해 고급미술의 회랑에 내놓았다. '통속'의 사회에서 통속적으로 살고 있다는 우리 모두의 자의식을 건드린 것이다. 반미학적 다다이스트적 기획이라는 점에서 음울한 시대의 알레고리로 읽혀졌다.
 이후 그는 숲으로 향해 걸어갔다. 그러나 정확히는 땅을 향해, 역사의 지층을 향해서다. 그러다가 그는 저잣거리로 나선다. 길, 도로, 강물의 흐름을 따라가는 것이다. 그것은 '오늘로 향하는 길'이다. 모든 것이 실증화(positivity)되어가는 세계의 방향, 모든 것이 깨끗해저만 가는 미술의 방향과 어긋나는 길이다. 또한 양평 시대의 '산수화'들은 산세와 지세 가운데 삶의 거처를 정하고, 이를 풍수(風水)의 지혜로 여겼던 옛사람들의 흔적을 좇아 시각화함으로써 동시대적 삶과의 그 거리를 통각하게 한다는 점에서 그의 소박하고 대중적인 삶의 진지한 감정에 대한 여전한 애정과 건강한 연민을 확인하게 된다.
 초기, 민중적 삶의 그늘진 길모퉁이를 외면하지 못했던 연민의 시선으로부터 그 삶의 시간의 지층을 파들어가는 인류학적 통찰에로 나아간 길, 풍경의 그늘, 회화의 그늘이라 이름할 이유다.`,
+    profile_en: `Min Joung-Ki (閔晶基, b.1949) is a founding member of 'Reality and Utterance' who participated as a key artist in the Minjung art movement from the group's founding in late 1979 until its official dissolution in 1990. From the 1990s onward, he moved to Yangpyeong, Gyeonggi Province, and has been painting landscape and flower paintings as pictorial records of human life 'living together with mountains and land.'
+
+In his early career, he mimicked the so-called 'barber shop paintings'—kitschy, unsophisticated works—and brought them into the gallery of high art, touching the self-consciousness that we all live vulgarly in a 'vulgar' society. Read as an anti-aesthetic Dadaist project, it functioned as an allegory of a gloomy era.
+
+He subsequently walked toward the forest—or more precisely, toward the land and the strata of history. Then he stepped out into the marketplace, following roads, highways, and rivers: 'a path toward today.' His Yangpyeong-era landscape paintings visualize traces of ancient people who settled their dwelling according to the wisdom of feng shui, making us acutely aware of the distance from contemporary life—confirming his enduring affection and healthy compassion for the sincere emotions of simple, popular life.
+
+From the initial sympathetic gaze that could not look away from the shaded back alleys of the people's lives, to the anthropological insight that delves into the strata of those lives' time—this is the reason to name it the shade of landscape, the shade of painting.`,
     history: ``,
   },
   {
@@ -808,9 +1038,17 @@ export const batch005: Artwork[] = [
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/357',
     description: `(액자별도)`,
+    description_en: `(Frame sold separately)`,
     profile: `민정기(閔晶基, Min Joung-Ki, b.1949)는 '현실과 발언' 창립회원으로 1979년말 '현실과 발언' 창립 초기부터 공식적 해체기(1990)까지 민중미술진영의 주요 작가로서 참여했으며, 또한 90년대 이후부터는 경기도 양평으로 거소를 옮겨 '산과 땅과 더불어 살아가는' 인간의 삶의 회화적 기록이라 이름할 산수화, 화훼화를 그려내고 있다. 민정기의 작품세계는 초기, 소위 '이발소그림'으로 통칭되는 촌스럽고 세련되지 않은 그림을 다시 모방해 고급미술의 회랑에 내놓았다. '통속'의 사회에서 통속적으로 살고 있다는 우리 모두의 자의식을 건드린 것이다. 반미학적 다다이스트적 기획이라는 점에서 음울한 시대의 알레고리로 읽혀졌다.
 이후 그는 숲으로 향해 걸어갔다. 그러나 정확히는 땅을 향해, 역사의 지층을 향해서다. 그러다가 그는 저잣거리로 나선다. 길, 도로, 강물의 흐름을 따라가는 것이다. 그것은 '오늘로 향하는 길'이다. 모든 것이 실증화(positivity)되어가는 세계의 방향, 모든 것이 깨끗해저만 가는 미술의 방향과 어긋나는 길이다. 또한 양평 시대의 '산수화'들은 산세와 지세 가운데 삶의 거처를 정하고, 이를 풍수(風水)의 지혜로 여겼던 옛사람들의 흔적을 좇아 시각화함으로써 동시대적 삶과의 그 거리를 통각하게 한다는 점에서 그의 소박하고 대중적인 삶의 진지한 감정에 대한 여전한 애정과 건강한 연민을 확인하게 된다.
 초기, 민중적 삶의 그늘진 길모퉁이를 외면하지 못했던 연민의 시선으로부터 그 삶의 시간의 지층을 파들어가는 인류학적 통찰에로 나아간 길, 풍경의 그늘, 회화의 그늘이라 이름할 이유다.`,
+    profile_en: `Min Joung-Ki (閔晶基, b.1949) is a founding member of 'Reality and Utterance' who participated as a key artist in the Minjung art movement from the group's founding in late 1979 until its official dissolution in 1990. From the 1990s onward, he moved to Yangpyeong, Gyeonggi Province, and has been painting landscape and flower paintings as pictorial records of human life 'living together with mountains and land.'
+
+In his early career, he mimicked the so-called 'barber shop paintings'—kitschy, unsophisticated works—and brought them into the gallery of high art, touching the self-consciousness that we all live vulgarly in a 'vulgar' society. Read as an anti-aesthetic Dadaist project, it functioned as an allegory of a gloomy era.
+
+He subsequently walked toward the forest—or more precisely, toward the land and the strata of history. Then he stepped out into the marketplace, following roads, highways, and rivers: 'a path toward today.' His Yangpyeong-era landscape paintings visualize traces of ancient people who settled their dwelling according to the wisdom of feng shui, making us acutely aware of the distance from contemporary life—confirming his enduring affection and healthy compassion for the sincere emotions of simple, popular life.
+
+From the initial sympathetic gaze that could not look away from the shaded back alleys of the people's lives, to the anthropological insight that delves into the strata of those lives' time—this is the reason to name it the shade of landscape, the shade of painting.`,
     history: ``,
   },
   {
@@ -829,6 +1067,7 @@ export const batch005: Artwork[] = [
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/358',
     description: ``,
     profile: `서공임 작가는 40년 넘게 민화 외길을 걸어온 한국의 대표적인 현대 민화가로, 전통 민화의 맥을 잇되 세련된 색감과 현대적 감각을 더해 독자적인 작품 세계를 구축했으며, 《민화 컬러링 위시북》 등 저술 활동과 함께 민화의 대중화 및 국제화에 힘쓰고 있는 민화 대가다.`,
+    profile_en: `Artist Seo Gong-im is one of Korea's representative contemporary minhwa (Korean folk painting) artists, having dedicated over 40 years exclusively to the genre. She has built her own distinct artistic world by continuing the tradition of minhwa while adding a refined color sense and contemporary sensibility. A master of minhwa, she works to popularize and internationalize the form through writing activities including the 《Minhwa Coloring Wishbook》 and other publications.`,
     history: ``,
   },
   {
@@ -847,6 +1086,7 @@ export const batch005: Artwork[] = [
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/359',
     description: ``,
     profile: `서공임 작가는 40년 넘게 민화 외길을 걸어온 한국의 대표적인 현대 민화가로, 전통 민화의 맥을 잇되 세련된 색감과 현대적 감각을 더해 독자적인 작품 세계를 구축했으며, 《민화 컬러링 위시북》 등 저술 활동과 함께 민화의 대중화 및 국제화에 힘쓰고 있는 민화 대가다.`,
+    profile_en: `Artist Seo Gong-im is one of Korea's representative contemporary minhwa (Korean folk painting) artists, having dedicated over 40 years exclusively to the genre. She has built her own distinct artistic world by continuing the tradition of minhwa while adding a refined color sense and contemporary sensibility. A master of minhwa, she works to popularize and internationalize the form through writing activities including the 《Minhwa Coloring Wishbook》 and other publications.`,
     history: ``,
   },
   {
@@ -868,6 +1108,11 @@ export const batch005: Artwork[] = [
 깊은 밤 제주섬 중산간 들판에서 홀로 마나던 황홀한 풍광들. 별들과 달빛 아래 펼쳐진 오름의 부드러운 실루엣은 그 어떤 경치보다 평화롭고 따뜻한 감동을 불러 일으킨다.
 
 특히 야생의 제주 들판에서 태어나 한여름 비바람과 한겨울 눈보라를 온몸으로 견디며 살아가는 제주마들의 삶을 수년째 내밀하게 담아왔다. 나의 사진에 담긴 제주마, 소, 까마귀는 척박한 제주 산야에 순응하며 삶을 일궈온 제주민초들을 상징한다. 자연 그대로가 아름다운 제주 산야의 아름다움이 각종 난개발로 사라져가는 현실을 목도하며 채 사라지지 않은 제주의 속살을 담기 위해 오늘도 새벽과 저녁이면 카메라 가방을 메고 들판으로 나선다.`,
+    description_en: `After studying electronic engineering, I took up a camera while walking the path of a traditional Korean medicine doctor. During the day, I treat patients at my clinic, and at dawn and at night, I wander the mid-mountain fields and oreums (volcanic cones) of Jeju to capture the disappearing landscapes of this volcanic island.
+
+The spectacular views I encountered alone in the deep-night fields of Jeju's mid-mountains—the gentle silhouettes of oreums spread out under stars and moonlight—evoke a sense of peace and warmth unlike any other scenery.
+
+In particular, I have been intimately documenting for years the lives of Jeju horses born in the wild fields, enduring summer storms and winter blizzards. The Jeju horses, cattle, and crows in my photographs symbolize the ordinary people of Jeju who have cultivated their lives in harmony with the barren mountain fields. Witnessing the beauty of Jeju's mountain fields disappearing through reckless development, I still shoulder my camera bag and head out at dawn and evening to capture the remaining essence of Jeju before it vanishes.`,
     profile: ``,
     history: `<학력>
 서울대학교 전자공학과 졸업
@@ -881,6 +1126,16 @@ export const batch005: Artwork[] = [
 
 단체전
 제주의 자연과 평화를 위한 다수의 단체전에 참여`,
+    history_en: `Education
+B.S. in Electronic Engineering, Seoul National University
+Ph.D., Kyung Hee University College of Korean Medicine
+
+Solo Exhibitions
+2022 Land of the Gods, Gallery Keunbadaeyeong, Jeju
+2024 Reaching, Gallery Nubo, Jeju
+
+Group Exhibitions
+Participated in numerous group exhibitions for the nature and peace of Jeju`,
   },
   {
     id: '225',
@@ -901,6 +1156,11 @@ export const batch005: Artwork[] = [
 깊은 밤 제주섬 중산간 들판에서 홀로 마나던 황홀한 풍광들. 별들과 달빛 아래 펼쳐진 오름의 부드러운 실루엣은 그 어떤 경치보다 평화롭고 따뜻한 감동을 불러 일으킨다.
 
 특히 야생의 제주 들판에서 태어나 한여름 비바람과 한겨울 눈보라를 온몸으로 견디며 살아가는 제주마들의 삶을 수년째 내밀하게 담아왔다. 나의 사진에 담긴 제주마, 소, 까마귀는 척박한 제주 산야에 순응하며 삶을 일궈온 제주민초들을 상징한다. 자연 그대로가 아름다운 제주 산야의 아름다움이 각종 난개발로 사라져가는 현실을 목도하며 채 사라지지 않은 제주의 속살을 담기 위해 오늘도 새벽과 저녁이면 카메라 가방을 메고 들판으로 나선다.`,
+    description_en: `After studying electronic engineering, I took up a camera while walking the path of a traditional Korean medicine doctor. During the day, I treat patients at my clinic, and at dawn and at night, I wander the mid-mountain fields and oreums (volcanic cones) of Jeju to capture the disappearing landscapes of this volcanic island.
+
+The spectacular views I encountered alone in the deep-night fields of Jeju's mid-mountains—the gentle silhouettes of oreums spread out under stars and moonlight—evoke a sense of peace and warmth unlike any other scenery.
+
+In particular, I have been intimately documenting for years the lives of Jeju horses born in the wild fields, enduring summer storms and winter blizzards. The Jeju horses, cattle, and crows in my photographs symbolize the ordinary people of Jeju who have cultivated their lives in harmony with the barren mountain fields. Witnessing the beauty of Jeju's mountain fields disappearing through reckless development, I still shoulder my camera bag and head out at dawn and evening to capture the remaining essence of Jeju before it vanishes.`,
     profile: ``,
     history: `<학력>
 서울대학교 전자공학과 졸업
@@ -914,6 +1174,16 @@ export const batch005: Artwork[] = [
 
 단체전
 제주의 자연과 평화를 위한 다수의 단체전에 참여`,
+    history_en: `Education
+B.S. in Electronic Engineering, Seoul National University
+Ph.D., Kyung Hee University College of Korean Medicine
+
+Solo Exhibitions
+2022 Land of the Gods, Gallery Keunbadaeyeong, Jeju
+2024 Reaching, Gallery Nubo, Jeju
+
+Group Exhibitions
+Participated in numerous group exhibitions for the nature and peace of Jeju`,
   },
   {
     id: '226',
@@ -935,6 +1205,11 @@ export const batch005: Artwork[] = [
 깊은 밤 제주섬 중산간 들판에서 홀로 마나던 황홀한 풍광들. 별들과 달빛 아래 펼쳐진 오름의 부드러운 실루엣은 그 어떤 경치보다 평화롭고 따뜻한 감동을 불러 일으킨다.
 
 특히 야생의 제주 들판에서 태어나 한여름 비바람과 한겨울 눈보라를 온몸으로 견디며 살아가는 제주마들의 삶을 수년째 내밀하게 담아왔다. 나의 사진에 담긴 제주마, 소, 까마귀는 척박한 제주 산야에 순응하며 삶을 일궈온 제주민초들을 상징한다. 자연 그대로가 아름다운 제주 산야의 아름다움이 각종 난개발로 사라져가는 현실을 목도하며 채 사라지지 않은 제주의 속살을 담기 위해 오늘도 새벽과 저녁이면 카메라 가방을 메고 들판으로 나선다.`,
+    profile_en: `After studying electronic engineering, I took up a camera while walking the path of a traditional Korean medicine doctor. During the day, I treat patients at my clinic, and at dawn and at night, I wander the mid-mountain fields and oreums (volcanic cones) of Jeju to capture the disappearing landscapes of this volcanic island.
+
+The spectacular views I encountered alone in the deep-night fields of Jeju's mid-mountains—the gentle silhouettes of oreums spread out under stars and moonlight—evoke a sense of peace and warmth unlike any other scenery.
+
+In particular, I have been intimately documenting for years the lives of Jeju horses born in the wild fields, enduring summer storms and winter blizzards. The Jeju horses, cattle, and crows in my photographs symbolize the ordinary people of Jeju who have cultivated their lives in harmony with the barren mountain fields. Witnessing the beauty of Jeju's mountain fields disappearing through reckless development, I still shoulder my camera bag and head out at dawn and evening to capture the remaining essence of Jeju before it vanishes.`,
     history: `<학력>
 서울대학교 전자공학과 졸업
 경희대학교 한의대 박사
@@ -947,6 +1222,16 @@ export const batch005: Artwork[] = [
 
 단체전
 제주의 자연과 평화를 위한 다수의 단체전에 참여`,
+    history_en: `Education
+B.S. in Electronic Engineering, Seoul National University
+Ph.D., Kyung Hee University College of Korean Medicine
+
+Solo Exhibitions
+2022 Land of the Gods, Gallery Keunbadaeyeong, Jeju
+2024 Reaching, Gallery Nubo, Jeju
+
+Group Exhibitions
+Participated in numerous group exhibitions for the nature and peace of Jeju`,
   },
   {
     id: '227',
@@ -1019,5 +1304,33 @@ export const batch005: Artwork[] = [
 2023년 전남 도립미술관 <지리산 반야봉181x360cm 2022>
 2025년 Gallery Northbruga <공작> 한지에 먹, 2025_145x74cm 외 매화 풍경 등 12점 출판 <두륜> 도서출판 헥사곤, 2020
 <지리> 도서출판 헥사곤 2025`,
+    history_en: `Solo Exhibitions
+2025 Ink Painting_Four Gracious Plants Exhibition, Haengchon Art Museum, Haenam
+2024 Birch Trees Nurtured by Inje That Heaven Bestowed (Miracle Library, Inje)
+2023 Fermano (Duin Museum of Art, Seoul)
+2022 Hwaeom Jiri Exhibition (Hwaeomsa Temple Sacred Treasure Museum), Tigers Descend, Blessings Descend (Sinan)
+2021 Moon and Stars at Kim Whanki's Old House Exhibition (Kim Whanki's Old House)
+2020 Duryun Exhibition (Haenam, Haengchon Art Museum)
+2019 Tangjin Ink Painting Exhibition (Seoul, Inyoung Gallery)
+2017 Artists Center (Seoul) / 2005 Yi-hyung Gallery
+Group Exhibitions
+2025 Sehwa Exhibition <Blue Dream> Haengchon Art Museum; Travel Sketch (Space Naljip, Seoul)
+2024 Poetic Landscape (Northbruga Gallery, Innsbruck, Austria); Haenam is an Art Museum from Spring (Haenam Culture & Arts Center); Ink Color Answers (Andong Arts Center); International Art Festival (Chiang Mai, Thailand)
+2023 Jeonnam International Ink Biennale; 17th Pochang International Art Festival (Bangkok); Bogugot Plum Blossom Fragrance Exhibition
+2022 Accumulated Improvisation Exhibition (Jeonnam Gallery); Pungryunamdo Art Project Mongryu Imha (Haengchon Art Museum)
+2021 1st Kim Whanki Art Festival; Accumulated Improvisation Exhibition (Gallery J&G); Korean Painting Figurative Association Exhibition; 2021 Jeonnam International Ink Biennale Haenam Exhibition
+2020 Cockscomb Not Wilting... (Jeonyeokneul Art Museum); Dunjang Village Art Museum Opening Exhibition
+2019 Sunrise Exhibition (Yun Gallery); Pungryunamdo Art Project-Spring (Suyun Art Museum); Haenam International Ink Workshop
+2018 Eastern Color and Ink Exhibition (Yeongwol); Jeonnam International Ink Biennale
+2017 Jeonnam International Ink Biennale; Pungryunamdo Art Project-Ink Painting Namdo; Tangjin Ink Painting Exhibition
+Awards
+2005 Special Selection, Modeung Art Competition / 2004 Honorable Mention, Seoul Art Grand Prize / 1989 National Art Exhibition / 1988 Moguhoae
+Collections
+2020 Haengchon Art Museum <Duryun> 198×545cm, ink on Korean paper
+2023 Jeonnam Provincial Art Museum <Snow Blossoms> 180×720cm, ink on Korean paper
+2024 Gallery Northbruga <Snow Pine Tiger> 145×74cm, ink on Korean paper
+2023 Jeonnam Provincial Art Museum <Jirisan Banyabong> 181×360cm
+2025 Gallery Northbruga <Peacock> 145×74cm + 12 other works
+Publications: <Duryun> Hexagon Publishing, 2020 / <Jiri> Hexagon Publishing, 2025`,
   },
 ];
