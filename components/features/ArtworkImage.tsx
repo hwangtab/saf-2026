@@ -69,6 +69,8 @@ export default function ArtworkImage({
   const alt = `${title} - ${artist}`;
   const firstImage = images?.[0] || '';
   const src = resolveArtworkImageUrlForPreset(firstImage, 'detail');
+  const mobileSrc = resolveArtworkImageUrlForPreset(firstImage, 'slider');
+  const isRemoteImage = src.startsWith('http');
   const resolvedImages = (images || []).map((img) => resolveArtworkImageUrl(img));
 
   return (
@@ -79,14 +81,30 @@ export default function ArtworkImage({
         onClick={() => setIsOpen(true)}
         aria-label={copy.zoomImage}
       >
-        <SafeImage
-          src={src}
-          alt={alt}
-          fill
-          sizes="(max-width: 1024px) 100vw, 50vw"
-          className="object-contain transition-transform duration-300 group-hover:scale-[1.02]"
-          priority
-        />
+        {isRemoteImage ? (
+          // 모바일 LCP 최적화: picture+media로 모바일엔 slider(400w), 데스크톱엔 detail(1600w)
+          <picture>
+            <source media="(min-width: 768px)" srcSet={src} />
+            {}
+            <img
+              src={mobileSrc}
+              alt={alt}
+              loading="eager"
+              fetchPriority="high"
+              decoding="sync"
+              className="absolute inset-0 h-full w-full object-contain transition-transform duration-300 group-hover:scale-[1.02]"
+            />
+          </picture>
+        ) : (
+          <SafeImage
+            src={src}
+            alt={alt}
+            fill
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            className="object-contain transition-transform duration-300 group-hover:scale-[1.02]"
+            priority
+          />
+        )}
 
         {/* Zoom Hint Overlay */}
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/10 pointer-events-none">

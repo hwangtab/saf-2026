@@ -202,14 +202,27 @@ export default async function ArtworkDetailPage({ params }: Props) {
 
   const faqSchema = generateArtworkPurchaseFAQ(locale);
 
-  // LCP 이미지 preload — Next.js 16 + React 19가 <link>를 <head>로 자동 승격
-  const lcpImageUrl = artwork.images?.[0]
+  // LCP preload — 모바일은 slider 프리셋(400w) / 데스크톱은 detail(1600w)
+  // imageSrcSet + imageSizes로 <picture> + media query 분기에 맞춰 브라우저가 올바른 URL 선택
+  const lcpImageSrc = artwork.images?.[0]
+    ? resolveArtworkImageUrlForPreset(artwork.images[0], 'slider')
+    : null;
+  const lcpImageSrcSetDesktop = artwork.images?.[0]
     ? resolveArtworkImageUrlForPreset(artwork.images[0], 'detail')
     : null;
 
   return (
     <>
-      {lcpImageUrl && <link rel="preload" as="image" href={lcpImageUrl} fetchPriority="high" />}
+      {lcpImageSrc && lcpImageSrcSetDesktop && (
+        <link
+          rel="preload"
+          as="image"
+          href={lcpImageSrc}
+          imageSrcSet={`${lcpImageSrc} 767w, ${lcpImageSrcSetDesktop} 1920w`}
+          imageSizes="(max-width: 767px) 100vw, 50vw"
+          fetchPriority="high"
+        />
+      )}
       <JsonLdScript data={[productSchema, breadcrumbSchema, webPageSchema]} />
       <JsonLdScript data={faqSchema} />
       <Section

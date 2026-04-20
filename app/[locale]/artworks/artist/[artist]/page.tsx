@@ -315,14 +315,26 @@ export default async function ArtistPage({ params }: Props) {
     mainEntity: { '@id': `${artistPageUrl}#item-list` },
   };
 
-  // LCP 이미지 preload — Hero 배경 이미지 (hero 프리셋으로 최적화된 크기 요청)
-  const lcpImageUrl = representativeArtwork.images?.[0]
+  // LCP preload — 모바일은 slider(400w) / 데스크톱은 hero(1920w)
+  const lcpMobileUrl = representativeArtwork.images?.[0]
+    ? resolveArtworkImageUrlForPreset(representativeArtwork.images[0], 'slider')
+    : null;
+  const lcpDesktopUrl = representativeArtwork.images?.[0]
     ? resolveArtworkImageUrlForPreset(representativeArtwork.images[0], 'hero')
     : null;
 
   return (
     <div className="min-h-screen">
-      {lcpImageUrl && <link rel="preload" as="image" href={lcpImageUrl} fetchPriority="high" />}
+      {lcpMobileUrl && lcpDesktopUrl && (
+        <link
+          rel="preload"
+          as="image"
+          href={lcpMobileUrl}
+          imageSrcSet={`${lcpMobileUrl} 767w, ${lcpDesktopUrl} 1920w`}
+          imageSizes="100vw"
+          fetchPriority="high"
+        />
+      )}
       <JsonLdScript data={personSchema} />
       <JsonLdScript data={breadcrumbSchema} />
       <JsonLdScript data={collectionPageSchema} />
