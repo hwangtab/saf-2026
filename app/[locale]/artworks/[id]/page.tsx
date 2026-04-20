@@ -44,6 +44,13 @@ interface Props {
 
 export const revalidate = 600;
 
+/** 스토리 body 마크다운에서 첫 번째 이미지 URL 추출 — 썸네일 fallback용 */
+function extractFirstImage(body: string | null | undefined): string | null {
+  if (!body) return null;
+  const match = body.match(/!\[.*?\]\((https?:\/\/[^)]+)\)/);
+  return match?.[1] ?? null;
+}
+
 // Generate metadata for SEO
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const locale = (await getLocale()) === 'en' ? 'en' : 'ko';
@@ -437,57 +444,65 @@ export default async function ArtworkDetailPage({ params }: Props) {
 
               {/* Related Articles */}
               <RelatedArticles articles={relatedArticles} />
-
-              {/* Related Magazine Stories (Supabase) */}
-              {relatedMagazineStories.length > 0 && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wider">
-                      {locale === 'en' ? 'Magazine' : '관련 매거진'}
-                    </h2>
-                    <Link
-                      href={`/stories/category/artist-story`}
-                      className="text-xs font-medium text-primary hover:text-primary-strong transition-colors"
-                    >
-                      {locale === 'en' ? 'View all →' : '전체 보기 →'}
-                    </Link>
-                  </div>
-                  <div className="space-y-3">
-                    {relatedMagazineStories.map((story) => {
-                      const storyTitle =
-                        locale === 'en' && story.title_en ? story.title_en : story.title;
-                      return (
-                        <Link
-                          key={story.id}
-                          href={`/stories/${story.slug}`}
-                          className="group flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                        >
-                          {story.thumbnail && (
-                            <div className="relative w-16 h-12 rounded overflow-hidden shrink-0">
-                              <SafeImage
-                                src={story.thumbnail}
-                                alt={storyTitle}
-                                fill
-                                className="object-cover"
-                              />
-                            </div>
-                          )}
-                          <div className="min-w-0">
-                            <h3 className="text-sm font-medium text-charcoal line-clamp-2 group-hover:text-primary transition-colors">
-                              {storyTitle}
-                            </h3>
-                            <span className="text-xs text-charcoal-muted/60 mt-1 block">
-                              {story.published_at}
-                            </span>
-                          </div>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
             </div>
           </div>
+
+          {/* Related Magazine Stories — 이 작가 관련 매거진 아티클 */}
+          {relatedMagazineStories.length > 0 && (
+            <div className="mt-24 pt-24 border-t border-gray-100">
+              <div className="flex items-center justify-between mb-10">
+                <h2 className="text-2xl font-bold text-charcoal">
+                  {locale === 'en' ? `Magazine · ${displayArtist}` : `${displayArtist} 관련 매거진`}
+                </h2>
+                <Link href="/stories" className="text-primary font-medium hover:underline text-sm">
+                  {locale === 'en' ? 'All Magazine →' : '매거진 전체 보기 →'}
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {relatedMagazineStories.map((story) => {
+                  const storyTitle =
+                    locale === 'en' && story.title_en ? story.title_en : story.title;
+                  const storyExcerpt =
+                    locale === 'en' && story.excerpt_en ? story.excerpt_en : story.excerpt;
+                  const thumbUrl = story.thumbnail || extractFirstImage(story.body);
+                  return (
+                    <Link
+                      key={story.id}
+                      href={`/stories/${story.slug}`}
+                      className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl"
+                    >
+                      {thumbUrl && (
+                        <div className="relative aspect-[16/10] overflow-hidden">
+                          <SafeImage
+                            src={thumbUrl}
+                            alt={storyTitle}
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                        </div>
+                      )}
+                      <div className="p-5">
+                        <span className="text-xs font-semibold tracking-wider uppercase text-primary">
+                          {locale === 'en' ? 'Magazine' : '매거진'}
+                        </span>
+                        <h3 className="text-base font-bold mt-2 line-clamp-2 group-hover:text-primary transition-colors duration-300">
+                          {storyTitle}
+                        </h3>
+                        {storyExcerpt && (
+                          <p className="text-sm text-charcoal-muted mt-2 line-clamp-2">
+                            {storyExcerpt}
+                          </p>
+                        )}
+                        <span className="text-xs text-charcoal-muted/60 mt-3 block">
+                          {story.published_at}
+                        </span>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Other Works by this Artist Section */}
           {otherWorks.length > 0 ? (
