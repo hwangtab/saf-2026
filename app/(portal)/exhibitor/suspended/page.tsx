@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { SignOutButton } from '@/components/auth/SignOutButton';
+import FeedbackButton from '@/components/feedback/FeedbackButton';
 import { requireAuth } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { getTranslations } from 'next-intl/server';
@@ -55,6 +56,7 @@ export default async function ExhibitorSuspendedPage() {
           <SignOutButton />
         </div>
       </div>
+      <FeedbackButton />
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { createSupabaseServerClient } from '@/lib/auth/server';
 import { redirect } from 'next/navigation';
 import { OnboardingForm } from './onboarding-form';
 import { SignOutButton } from '@/components/auth/SignOutButton';
+import FeedbackButton from '@/components/feedback/FeedbackButton';
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 
@@ -119,6 +120,7 @@ export default async function OnboardingPage({
             </Link>
           </div>
         </div>
+        <FeedbackButton />
       </div>
     );
   }
@@ -146,6 +148,7 @@ export default async function OnboardingPage({
           <OnboardingForm defaultValues={application} />
         </div>
       </div>
+      <FeedbackButton />
     </div>
   );
 }
