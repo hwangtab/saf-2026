@@ -1,5 +1,65 @@
 [
   {
+    "hash": "b8b02f8b",
+    "type": "feat",
+    "scope": "artwork-detail",
+    "subject": "작가별 매거진 아티클 독립 섹션 신설",
+    "summary": "작품 상세 페이지에 해당 작가의 매거진 스토리를 별도 큰 카드 섹션으로 노출. 기존 사이드바의 작은 링크를 대체.",
+    "body": "- app/[locale]/artworks/[id]/page.tsx:\n  - extractFirstImage 헬퍼 추가 (썸네일 없는 스토리는 본문 첫 이미지 사용)\n  - 사이드바의 소형 'Magazine' 링크 블록 제거 (중복 방지)\n  - Other Works 섹션 직전에 aspect-[16/10] 썸네일 + 제목·excerpt·날짜 카드 3개 그리드 섹션 추가\n  - 작가명이 story.tags에 포함되면 자동 매칭",
+    "date": "2026-04-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "44e1597d",
+    "type": "fix",
+    "scope": "stories",
+    "subject": "같은 published_at 내 created_at DESC tie-breaker 추가",
+    "summary": "같은 날짜에 여러 스토리가 발행되면 순서가 무작위로 나오던 문제 수정. 최신 created_at이 목록 상단에 오도록 보조 정렬.",
+    "body": "- lib/supabase-data.ts: getSupabaseStoriesUncached에 .order('created_at', { ascending: false }) 추가",
+    "date": "2026-04-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "332b8823",
+    "type": "feat",
+    "scope": "stories",
+    "subject": "스토리 상세 상단 썸네일 이미지 노출 제거",
+    "summary": "스토리 상세 페이지 본문 상단의 큰 썸네일 이미지 블록을 제거. OG/BlogPosting 스키마에서는 썸네일 계속 사용.",
+    "body": "- app/[locale]/stories/[slug]/page.tsx: article 최상단 thumbnail 렌더 블록 삭제\n- 본문 첫 이미지는 마크다운 안에 이미 포함돼 있어 중복 제거 효과\n- 관련 스토리·작품 카드 썸네일은 유지",
+    "date": "2026-04-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "fe15bed6",
+    "type": "perf",
+    "scope": "hero",
+    "subject": "배경 이미지 제거 후 그라디언트 + Retina DPR srcSet",
+    "summary": "Hero 섹션 배경 이미지를 브랜드 그라디언트로 대체해 LCP 즉시 해소, 작품/작가 이미지 렌더에 DPR 2x 대응.",
+    "body": "- app/[locale]/page.tsx: 홈 HeroSection의 BackgroundSlider를 제거하고 charcoal 그라디언트 + radial accent로 교체 (이미지 0장이라 LCP 즉시)\n- components/ui/PageHero.tsx: 기본 배경을 그라디언트로, customBackgroundImage 지정 시에만 이미지 렌더\n- components/ui/PageHeroBackground.tsx: 서버 컴포넌트 전환, picture media + 1x/2x DPR srcSet, hash 계산 제거\n- components/features/ArtworkImage.tsx: detail(1600w) 1x + hero(1920w) 2x srcSet 변수 추가\n- content/changelog.json: 최근 성능/SEO/CLS 최적화 커밋 10건 이력 추가",
+    "date": "2026-04-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "4240dd53",
+    "type": "perf",
+    "scope": "fonts",
+    "subject": "PartialSansKR preload 제거 — LCP 대역폭 경쟁 회수",
+    "summary": "모바일 LCP 7초 진짜 원인은 폰트였음. PSI 상세 분석:",
+    "body": "- LCP breakdown: lcpLoadDelay 3,523ms (총 LCP 6,377ms의 55%)\n- 네트워크: PartialSansKR_Regular 303 KB / 952ms + Paperlogy 3종 417KB\n- Slow 4G 200KB/s에서 폰트 720KB가 LCP 이미지(12KB)보다 먼저 다운로드 점유\n\n변경:\n- app/layout.tsx: partialSans preload=true → preload=false\n- PartialSansKR은 font-display(hero title)에만 쓰이는 장식 폰트 — LCP 이미지 뒤에 로드돼도 display:swap이 Paperlogy fallback 표시 후 교체\n- Paperlogy는 본문 기본이라 preload 유지 (3개 weight, 417KB)\n\n예상 효과: LCP 6.4s → 3-4s대. 303KB 대역폭을 LCP 이미지에 양보.\n\n참고: Paperlogy 3 weight 총 417KB도 부담이지만 src 배열로 묶여 있어 weight별 preload 분기 불가. 추가 개선은 커스텀 @font-face로 가야 하나 복잡도 커 보류.",
+    "date": "2026-04-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "40dfa0b6",
+    "type": "perf",
+    "scope": "mobile-lcp",
+    "subject": "<picture>+media로 모바일만 저해상도 preview 이미지",
+    "summary": "모바일 LCP 7-10초 문제 해결. 데스크톱 UX는 그대로 유지하면서 모바일만 slider 프리셋(400w·q75)으로 저해상도 Hero/상세 이미지를 즉시 로드.",
+    "body": "변경:\n- components/ui/PageHeroBackground.tsx: 원격 작품 이미지(Supabase) 케이스에만 picture+source media=\"(min-width: 768px)\" 분기. 데스크톱 hero(1920w), 모바일 slider(400w). 로컬 hero 이미지는 기존 SafeImage 유지\n- components/features/ArtworkImage.tsx: 작품 상세 이미지 동일 방식. 데스크톱 detail(1600w), 모바일 slider(400w)\n- app/[locale]/artworks/[id]/page.tsx: <link rel=\"preload\">에 imageSrcSet/imageSizes 추가 → 브라우저가 picture media query에 맞춰 올바른 URL preload\n- app/[locale]/artworks/artist/[artist]/page.tsx: 동일\n\n작동 원리:\n- 모바일 뷰포트: preview URL(~20KB)만 로드 → LCP 2~3초대 기대\n- 데스크톱 뷰포트: full-res URL(200-500KB) 그대로 → UX 변화 없음\n- JS 없이 HTML 표준 <picture>+media query만으로 브라우저 네이티브 분기\n- lightbox는 resolvedImages로 원본 해상도 유지\n\n예상 효과: 모바일 LCP 7.5s → 3s대 (Good 기준 <2.5s 근접).",
+    "date": "2026-04-20",
+    "author": "황경하"
+  },
+  {
     "hash": "7e3f25a3",
     "type": "perf",
     "scope": "ssr",
