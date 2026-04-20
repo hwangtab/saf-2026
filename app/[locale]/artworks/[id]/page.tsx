@@ -44,6 +44,13 @@ interface Props {
 
 export const revalidate = 600;
 
+/** 스토리 body 마크다운에서 첫 번째 이미지 URL 추출 — 썸네일 fallback용 */
+function extractFirstImage(body: string | null | undefined): string | null {
+  if (!body) return null;
+  const match = body.match(/!\[.*?\]\((https?:\/\/[^)]+)\)/);
+  return match?.[1] ?? null;
+}
+
 // Generate metadata for SEO
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const locale = (await getLocale()) === 'en' ? 'en' : 'ko';
@@ -438,45 +445,48 @@ export default async function ArtworkDetailPage({ params }: Props) {
               {/* Related Articles */}
               <RelatedArticles articles={relatedArticles} />
 
-              {/* Related Magazine Stories (Supabase) */}
+              {/* Related Magazine Stories (Supabase) — 카드형 */}
               {relatedMagazineStories.length > 0 && (
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wider">
-                      {locale === 'en' ? 'Magazine' : '관련 매거진'}
-                    </h2>
-                    <Link
-                      href={`/stories/category/artist-story`}
-                      className="text-xs font-medium text-primary hover:text-primary-strong transition-colors"
-                    >
-                      {locale === 'en' ? 'View all →' : '전체 보기 →'}
-                    </Link>
-                  </div>
-                  <div className="space-y-3">
+                  <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wider">
+                    {locale === 'en' ? 'Magazine' : '관련 매거진'}
+                  </h2>
+                  <div className="space-y-4">
                     {relatedMagazineStories.map((story) => {
                       const storyTitle =
                         locale === 'en' && story.title_en ? story.title_en : story.title;
+                      const storyExcerpt =
+                        locale === 'en' && story.excerpt_en ? story.excerpt_en : story.excerpt;
+                      const thumbUrl = story.thumbnail || extractFirstImage(story.body);
                       return (
                         <Link
                           key={story.id}
                           href={`/stories/${story.slug}`}
-                          className="group flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                          className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-lg"
                         >
-                          {story.thumbnail && (
-                            <div className="relative w-16 h-12 rounded overflow-hidden shrink-0">
+                          {thumbUrl && (
+                            <div className="relative aspect-[16/10] overflow-hidden">
                               <SafeImage
-                                src={story.thumbnail}
+                                src={thumbUrl}
                                 alt={storyTitle}
                                 fill
-                                className="object-cover"
+                                className="object-cover transition-transform duration-500 group-hover:scale-105"
                               />
                             </div>
                           )}
-                          <div className="min-w-0">
-                            <h3 className="text-sm font-medium text-charcoal line-clamp-2 group-hover:text-primary transition-colors">
+                          <div className="p-4">
+                            <span className="text-[10px] font-semibold tracking-wider uppercase text-primary">
+                              {locale === 'en' ? 'Magazine' : '매거진'}
+                            </span>
+                            <h3 className="text-sm font-bold mt-1.5 line-clamp-2 group-hover:text-primary transition-colors duration-300">
                               {storyTitle}
                             </h3>
-                            <span className="text-xs text-charcoal-muted/60 mt-1 block">
+                            {storyExcerpt && (
+                              <p className="text-xs text-charcoal-muted mt-1.5 line-clamp-2 leading-relaxed">
+                                {storyExcerpt}
+                              </p>
+                            )}
+                            <span className="text-[10px] text-charcoal-muted/60 mt-2 block">
                               {story.published_at}
                             </span>
                           </div>
