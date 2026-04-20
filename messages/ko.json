@@ -347,12 +347,6 @@
     "expand": "더보기 ▼",
     "collapse": "접기 ▲"
   },
-  "backgroundSlider": {
-    "play": "재생",
-    "pause": "일시정지",
-    "playAria": "배경 슬라이드 재생",
-    "pauseAria": "배경 슬라이드 일시정지"
-  },
   "support": {
     "title": "예술이 예술을 지킵니다",
     "stat0Value": "10명 중 8명",

@@ -347,12 +347,6 @@
     "expand": "Show more ▼",
     "collapse": "Show less ▲"
   },
-  "backgroundSlider": {
-    "play": "Play",
-    "pause": "Pause",
-    "playAria": "Play background slideshow",
-    "pauseAria": "Pause background slideshow"
-  },
   "support": {
     "title": "Art protects art",
     "stat0Value": "8 out of 10",
