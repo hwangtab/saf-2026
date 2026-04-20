@@ -340,6 +340,99 @@ export const getSupabaseArtworksByArtist = cache(
   async (artistName: string): Promise<Artwork[]> => getSupabaseArtworksByArtistCached(artistName)
 );
 
+// --- Related artworks by category (for artwork detail page) ---
+
+/**
+ * 카테고리별 경량 쿼리. 작품 상세의 "같은 카테고리" 추천 4~6점용. 판매 가능(`sold=false`)만.
+ * TTFB 최적화 목적 — 기존 getSupabaseArtworks() 330개 전체 대신 limit 적용으로 payload 95% 감소.
+ */
+const getArtworksByCategoryLightUncached = async (
+  category: string,
+  limit: number
+): Promise<Artwork[]> => {
+  if (!hasSupabaseConfig || !supabase) {
+    return fallbackArtworks.filter((a) => a.category === category && !a.sold).slice(0, limit);
+  }
+
+  const { data, error } = await supabase
+    .from('artworks')
+    .select(`${ARTWORK_SELECT_COLUMNS}, artists (${ARTIST_SELECT_COLUMNS})`)
+    .eq('is_hidden', false)
+    .eq('category', category)
+    .eq('sold', false)
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error(`Error fetching artworks by category ${category}:`, error);
+    return fallbackArtworks.filter((a) => a.category === category && !a.sold).slice(0, limit);
+  }
+
+  return (data || []).map((item) =>
+    mapArtworkRow(item as ArtworkRow, item.artists as unknown as ArtistRow | null)
+  );
+};
+
+const getArtworksByCategoryLightCached = unstable_cache(
+  async (category: string, limit: number) => getArtworksByCategoryLightUncached(category, limit),
+  ['supabase-artworks-by-category-light-v1'],
+  {
+    revalidate: ARTWORK_DATA_REVALIDATE_SECONDS,
+    tags: ['artworks'],
+  }
+);
+
+export const getArtworksByCategoryLight = cache(
+  async (category: string, limit = 4): Promise<Artwork[]> =>
+    getArtworksByCategoryLightCached(category, limit)
+);
+
+// --- Available categories list (for artist/detail page category links) ---
+
+/**
+ * 사용 중인 카테고리 문자열 배열만. 작가 페이지 카테고리 바로가기 체크용.
+ * 기존 getSupabaseArtworks() 호출 (330개 row) → 12개 정도 distinct 카테고리 문자열로 축소.
+ */
+const getAvailableArtworkCategoriesUncached = async (): Promise<string[]> => {
+  if (!hasSupabaseConfig || !supabase) {
+    return Array.from(
+      new Set(fallbackArtworks.map((a) => a.category).filter((c): c is string => Boolean(c)))
+    );
+  }
+
+  const { data, error } = await supabase
+    .from('artworks')
+    .select('category')
+    .eq('is_hidden', false)
+    .not('category', 'is', null);
+
+  if (error) {
+    console.error('Error fetching available categories:', error);
+    return [];
+  }
+
+  return Array.from(
+    new Set(
+      (data || [])
+        .map((row) => (row as { category: string | null }).category)
+        .filter((c): c is string => Boolean(c))
+    )
+  );
+};
+
+const getAvailableArtworkCategoriesCached = unstable_cache(
+  async () => getAvailableArtworkCategoriesUncached(),
+  ['supabase-available-categories-v1'],
+  {
+    revalidate: ARTWORK_DATA_REVALIDATE_SECONDS,
+    tags: ['artworks'],
+  }
+);
+
+export const getAvailableArtworkCategories = cache(
+  async (): Promise<string[]> => getAvailableArtworkCategoriesCached()
+);
+
 // --- Recently sold artworks (for trust signal) ---
 
 const getRecentlySoldArtworksUncached = async (limit: number): Promise<Artwork[]> => {

@@ -1,6 +1,7 @@
 import {
   getSupabaseArtworks,
   getSupabaseArtworksByArtist,
+  getAvailableArtworkCategories,
   getSupabaseStories,
 } from '@/lib/supabase-data';
 import { CATEGORY_EN_MAP, getCategoryLabel } from '@/lib/artwork-category';
@@ -15,7 +16,11 @@ import {
   generateArtworkListSchema,
 } from '@/lib/seo-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { formatArtistName, resolveArtworkImageUrl } from '@/lib/utils';
+import {
+  formatArtistName,
+  resolveArtworkImageUrl,
+  resolveArtworkImageUrlForPreset,
+} from '@/lib/utils';
 import { parseArtworkPrice, resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
@@ -187,8 +192,11 @@ export default async function ArtistPage({ params }: Props) {
   const isEnglish = locale === 'en';
   const { artist } = await params;
   const artistName = decodeURIComponent(artist);
-  const artistArtworks = await getSupabaseArtworksByArtist(artistName);
-  const allArtworks = await getSupabaseArtworks();
+  // 병렬 fetch — 이전 getSupabaseArtworks() (전체 330개) → 카테고리 문자열 배열만으로 축소
+  const [artistArtworks, availableCategories] = await Promise.all([
+    getSupabaseArtworksByArtist(artistName),
+    getAvailableArtworkCategories(),
+  ]);
   const listArtworks: ArtworkListItem[] = artistArtworks.map(
     ({ profile: _p, history: _h, profile_en: _pe, history_en: _he, ...rest }: Artwork) => rest
   );
@@ -307,8 +315,14 @@ export default async function ArtistPage({ params }: Props) {
     mainEntity: { '@id': `${artistPageUrl}#item-list` },
   };
 
+  // LCP 이미지 preload — Hero 배경 이미지 (hero 프리셋으로 최적화된 크기 요청)
+  const lcpImageUrl = representativeArtwork.images?.[0]
+    ? resolveArtworkImageUrlForPreset(representativeArtwork.images[0], 'hero')
+    : null;
+
   return (
     <div className="min-h-screen">
+      {lcpImageUrl && <link rel="preload" as="image" href={lcpImageUrl} fetchPriority="high" />}
       <JsonLdScript data={personSchema} />
       <JsonLdScript data={breadcrumbSchema} />
       <JsonLdScript data={collectionPageSchema} />
@@ -344,7 +358,7 @@ export default async function ArtistPage({ params }: Props) {
             path: `/artworks/category/${encodeURIComponent(cat)}`,
             isPrimary: cat === primaryCategory,
           }))
-          .filter((c) => allArtworks.some((a) => a.category === c.cat));
+          .filter((c) => availableCategories.includes(c.cat));
         if (categoryLinks.length === 0) return null;
         return (
           <Section variant="white" prevVariant="primary-surface" className="pb-8">

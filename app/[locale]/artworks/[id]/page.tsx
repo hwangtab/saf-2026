@@ -7,6 +7,8 @@ import { getLocale, getTranslations } from 'next-intl/server';
 import {
   getSupabaseArtworks,
   getSupabaseArtworkById,
+  getSupabaseArtworksByArtist,
+  getArtworksByCategoryLight,
   getRecentlySoldArtworks,
   getTotalSoldCount,
   getSupabaseTestimonials,
@@ -29,6 +31,8 @@ import { JsonLdScript } from '@/components/common/JsonLdScript';
 import SupportMessage from '@/components/features/SupportMessage';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import ArtworkCard from '@/components/ui/ArtworkCard';
+import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
+import type { Artwork } from '@/types';
 import ArtworkPurchaseCTA from '@/components/features/ArtworkPurchaseCTA';
 import { containsHangul } from '@/lib/search-utils';
 
@@ -74,10 +78,9 @@ export default async function ArtworkDetailPage({ params }: Props) {
 
   // Legacy redirect는 middleware.ts에서 처리됨.
 
-  // Parallel fetch: artwork detail + all artworks (cached) to avoid waterfall
+  // Parallel fetch — artwork detail이 필요 없는 것들만 먼저 병렬 실행
   const [
     artwork,
-    allArtworks,
     recentlySold,
     totalSoldCount,
     testimonialCategories,
@@ -86,7 +89,6 @@ export default async function ArtworkDetailPage({ params }: Props) {
     tBreadcrumbs,
   ] = await Promise.all([
     getSupabaseArtworkById(id),
-    getSupabaseArtworks(),
     getRecentlySoldArtworks(3, id),
     getTotalSoldCount(),
     getSupabaseTestimonials(),
@@ -99,6 +101,14 @@ export default async function ArtworkDetailPage({ params }: Props) {
     notFound();
   }
 
+  // artwork 확정 후 관련 작품만 병렬 fetch (이전 전체 330개 fetch → ~20개로 축소)
+  const [artistWorks, categoryWorks] = await Promise.all([
+    getSupabaseArtworksByArtist(artwork.artist),
+    artwork.category
+      ? getArtworksByCategoryLight(artwork.category, 6)
+      : Promise.resolve([] as Artwork[]),
+  ]);
+
   const flatTestimonials = testimonialCategories
     .flatMap((c) => c.items)
     .map((item) => ({
@@ -106,16 +116,12 @@ export default async function ArtworkDetailPage({ params }: Props) {
       author: item.author,
     }));
 
-  const otherWorks = allArtworks
-    .filter((a) => a.artist === artwork.artist && a.id !== artwork.id)
-    .slice(0, 3);
+  const otherWorks = artistWorks.filter((a) => a.id !== artwork.id).slice(0, 3);
 
-  // 같은 카테고리의 다른 작품 (같은 작가 제외, 최대 3점)
-  const sameCategoryWorks = artwork.category
-    ? allArtworks
-        .filter((a) => a.category === artwork.category && a.id !== artwork.id && !a.sold)
-        .slice(0, 3)
-    : [];
+  // 같은 카테고리의 다른 작품 (같은 작가·현재 작품 제외, 판매중만, 최대 3점)
+  const sameCategoryWorks = categoryWorks
+    .filter((a) => a.id !== artwork.id && a.artist !== artwork.artist)
+    .slice(0, 3);
 
   // Extract numeric price using utility
   const parsedPrice = parsePrice(artwork.price);
@@ -196,8 +202,14 @@ export default async function ArtworkDetailPage({ params }: Props) {
 
   const faqSchema = generateArtworkPurchaseFAQ(locale);
 
+  // LCP 이미지 preload — Next.js 16 + React 19가 <link>를 <head>로 자동 승격
+  const lcpImageUrl = artwork.images?.[0]
+    ? resolveArtworkImageUrlForPreset(artwork.images[0], 'detail')
+    : null;
+
   return (
     <>
+      {lcpImageUrl && <link rel="preload" as="image" href={lcpImageUrl} fetchPriority="high" />}
       <JsonLdScript data={[productSchema, breadcrumbSchema, webPageSchema]} />
       <JsonLdScript data={faqSchema} />
       <Section
