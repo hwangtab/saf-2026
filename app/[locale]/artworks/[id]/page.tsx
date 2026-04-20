@@ -49,6 +49,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // Legacy 숫자 ID → UUID 308 리다이렉트. SEO 가치 보존 (GSC에 /artworks/151 등 노출 유지 중)
   if (isLegacyNumericId(id)) {
     const uuid = resolveLegacyArtworkId(id);
+    // eslint-disable-next-line no-console -- 디버깅 일회성
+    console.log(`LEGACY_REDIRECT_META id=${id} uuid=${uuid ?? 'NULL'}`);
     if (uuid) permanentRedirect(`/artworks/${uuid}`);
   }
 
@@ -79,6 +81,8 @@ export default async function ArtworkDetailPage({ params }: Props) {
   // Legacy 숫자 ID → UUID 308 리다이렉트 (generateMetadata에서도 동일하지만 이중 방어)
   if (isLegacyNumericId(id)) {
     const uuid = resolveLegacyArtworkId(id);
+    // eslint-disable-next-line no-console -- 디버깅 일회성
+    console.log(`LEGACY_REDIRECT_PAGE id=${id} uuid=${uuid ?? 'NULL'}`);
     if (uuid) permanentRedirect(`/artworks/${uuid}`);
   }
 
