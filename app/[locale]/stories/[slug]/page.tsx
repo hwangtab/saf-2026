@@ -243,65 +243,12 @@ export default async function StoryDetailPage({ params }: Props) {
       </Section>
 
       {/* Related Stories */}
-      {relatedStories.length > 0 && (
-        <Section variant="canvas-soft" prevVariant="white">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-2xl font-display text-charcoal mb-6">
-              {isEn ? 'Related Stories' : '관련 글'}
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-              {relatedStories.map((related, i) => {
-                const relTitle = isEn && related.title_en ? related.title_en : related.title;
-                return (
-                  <Link
-                    key={related.id}
-                    href={`/stories/${related.slug}`}
-                    className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl motion-safe:opacity-0 motion-safe:animate-fade-in-up"
-                    style={{
-                      animationDelay: `${i * 0.1}s`,
-                      animationFillMode: 'forwards',
-                    }}
-                  >
-                    {(() => {
-                      const relImg = related.thumbnail || extractFirstImage(related.body);
-                      return relImg ? (
-                        <div className="relative aspect-[16/10] overflow-hidden">
-                          <SafeImage
-                            src={relImg}
-                            alt={relTitle}
-                            fill
-                            className="object-cover transition-transform duration-500 group-hover:scale-105"
-                          />
-                        </div>
-                      ) : null;
-                    })()}
-                    <div className="p-5">
-                      <span className="text-xs font-semibold tracking-wider uppercase text-primary">
-                        {isEn
-                          ? CATEGORY_LABELS_EN[related.category]
-                          : CATEGORY_LABELS_KO[related.category]}
-                      </span>
-                      <h3 className="text-sm font-bold mt-2 line-clamp-2 group-hover:text-primary transition-colors duration-300">
-                        {relTitle}
-                      </h3>
-                      <span className="text-xs text-charcoal-muted/60 mt-2 block">
-                        {related.published_at}
-                      </span>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        </Section>
-      )}
-
       {/* 관련 작품 */}
       {relatedArtworks.length > 0 && (
         <Section
-          variant={relatedStories.length > 0 ? 'white' : 'canvas-soft'}
-          prevVariant={relatedStories.length > 0 ? 'canvas-soft' : 'white'}
-          className="pb-16 md:pb-24"
+          variant="canvas-soft"
+          prevVariant="white"
+          className={relatedStories.length === 0 ? 'pb-16 md:pb-24' : ''}
         >
           <div className="max-w-3xl mx-auto">
             <div className="flex items-center justify-between mb-6">
@@ -351,6 +298,64 @@ export default async function StoryDetailPage({ params }: Props) {
                       <p className="text-xs font-semibold text-primary mt-2">
                         {artwork.sold ? (isEn ? 'Sold' : '판매 완료') : artwork.price}
                       </p>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </Section>
+      )}
+
+      {/* 관련 글 */}
+      {relatedStories.length > 0 && (
+        <Section
+          variant={relatedArtworks.length > 0 ? 'white' : 'canvas-soft'}
+          prevVariant={relatedArtworks.length > 0 ? 'canvas-soft' : 'white'}
+          className="pb-16 md:pb-24"
+        >
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-2xl font-display text-charcoal mb-6">
+              {isEn ? 'Related Stories' : '관련 글'}
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+              {relatedStories.map((related, i) => {
+                const relTitle = isEn && related.title_en ? related.title_en : related.title;
+                return (
+                  <Link
+                    key={related.id}
+                    href={`/stories/${related.slug}`}
+                    className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl motion-safe:opacity-0 motion-safe:animate-fade-in-up"
+                    style={{
+                      animationDelay: `${i * 0.1}s`,
+                      animationFillMode: 'forwards',
+                    }}
+                  >
+                    {(() => {
+                      const relImg = related.thumbnail || extractFirstImage(related.body);
+                      return relImg ? (
+                        <div className="relative aspect-[16/10] overflow-hidden">
+                          <SafeImage
+                            src={relImg}
+                            alt={relTitle}
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                        </div>
+                      ) : null;
+                    })()}
+                    <div className="p-5">
+                      <span className="text-xs font-semibold tracking-wider uppercase text-primary">
+                        {isEn
+                          ? CATEGORY_LABELS_EN[related.category]
+                          : CATEGORY_LABELS_KO[related.category]}
+                      </span>
+                      <h3 className="text-sm font-bold mt-2 line-clamp-2 group-hover:text-primary transition-colors duration-300">
+                        {relTitle}
+                      </h3>
+                      <span className="text-xs text-charcoal-muted/60 mt-2 block">
+                        {related.published_at}
+                      </span>
                     </div>
                   </Link>
                 );
