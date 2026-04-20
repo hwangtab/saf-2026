@@ -12,6 +12,9 @@ import {
 import { BRAND_COLORS } from '@/lib/colors';
 import '@/styles/globals.css';
 
+// LCP 최적화: Paperlogy 3 weight 총 417KB preload 제거.
+// display: swap으로 system font fallback → Paperlogy 교체. 실사용자(LTE/5G)는 <500ms FOUT.
+// Slow 4G Lab 시뮬레이션에서 LCP 대역폭 경쟁 회수가 더 큰 이득.
 const paperlogy = localFont({
   src: [
     { path: '../public/fonts/Paperlogy-4Regular.woff2', weight: '400', style: 'normal' },
@@ -20,7 +23,7 @@ const paperlogy = localFont({
   ],
   variable: '--font-paperlogy',
   display: 'swap',
-  preload: true,
+  preload: false,
   declarations: [
     {
       prop: 'unicode-range',
