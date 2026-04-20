@@ -194,15 +194,6 @@ export default async function StoryDetailPage({ params }: Props) {
       {/* Article Body */}
       <Section variant="white">
         <article className="max-w-3xl mx-auto">
-          {story.thumbnail && (
-            <div
-              className="relative w-full aspect-video mb-10 rounded-2xl overflow-hidden shadow-sm motion-safe:opacity-0 motion-safe:animate-fade-in-up"
-              style={{ animationFillMode: 'forwards' }}
-            >
-              <SafeImage src={story.thumbnail} alt={title} fill className="object-cover" priority />
-            </div>
-          )}
-
           {excerpt && (
             <p
               className="text-xl md:text-2xl text-charcoal-muted leading-relaxed mb-10 border-l-4 border-primary pl-6 motion-safe:opacity-0 motion-safe:animate-fade-in-up"
