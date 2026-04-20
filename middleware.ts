@@ -3,6 +3,11 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { routing } from '@/i18n/routing';
 import { updateSession } from '@/lib/auth/middleware';
 import { belongsToSurface } from '@/lib/path-rules';
+import { resolveLegacyArtworkId } from '@/lib/artwork-legacy-map';
+
+// Legacy 숫자 작품 ID → UUID. page.tsx permanentRedirect가 error.tsx에 가로막힘.
+// middleware에서 렌더 전에 처리.
+const LEGACY_ARTWORK_PATH = /^\/(en\/)?artworks\/(\d+)\/?$/;
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -30,6 +35,18 @@ const STATIC_SKIP_PATHS = new Set([
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Legacy artwork ID (e.g. /artworks/151) → UUID 308 리다이렉트
+  // page.tsx의 permanentRedirect이 error boundary에 가로막히므로 middleware에서 처리
+  const legacyMatch = pathname.match(LEGACY_ARTWORK_PATH);
+  if (legacyMatch) {
+    const [, enPrefix, legacyId] = legacyMatch;
+    const uuid = resolveLegacyArtworkId(legacyId);
+    if (uuid) {
+      const newPath = `/${enPrefix ?? ''}artworks/${uuid}`;
+      return NextResponse.redirect(new URL(newPath, request.url), 308);
+    }
+  }
 
   // Admin redirect
   if (pathname === '/admin') {

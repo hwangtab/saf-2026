@@ -1,9 +1,8 @@
 import { Metadata } from 'next';
 import { Suspense } from 'react';
 import { Link } from '@/i18n/navigation';
-import { notFound, permanentRedirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { getLocale, getTranslations } from 'next-intl/server';
-import { resolveLegacyArtworkId, isLegacyNumericId } from '@/lib/artwork-legacy-map';
 
 import {
   getSupabaseArtworks,
@@ -46,13 +45,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const locale = (await getLocale()) === 'en' ? 'en' : 'ko';
   const { id } = await params;
 
-  // Legacy 숫자 ID → UUID 308 리다이렉트. SEO 가치 보존 (GSC에 /artworks/151 등 노출 유지 중)
-  if (isLegacyNumericId(id)) {
-    const uuid = resolveLegacyArtworkId(id);
-    // eslint-disable-next-line no-console -- 디버깅 일회성
-    console.log(`LEGACY_REDIRECT_META id=${id} uuid=${uuid ?? 'NULL'}`);
-    if (uuid) permanentRedirect(`/artworks/${uuid}`);
-  }
+  // Legacy redirect는 middleware.ts에서 page render 이전에 처리됨 (error.tsx 가로채기 회피).
+  // 여기 도달한 숫자 ID는 middleware에서 매핑 못 찾은 케이스 → notFound 경로.
 
   const artwork = await getSupabaseArtworkById(id);
   const t = await getTranslations('artworkDetail');
@@ -78,13 +72,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
   const locale = (await getLocale()) === 'en' ? 'en' : 'ko';
   const { id } = await params;
 
-  // Legacy 숫자 ID → UUID 308 리다이렉트 (generateMetadata에서도 동일하지만 이중 방어)
-  if (isLegacyNumericId(id)) {
-    const uuid = resolveLegacyArtworkId(id);
-    // eslint-disable-next-line no-console -- 디버깅 일회성
-    console.log(`LEGACY_REDIRECT_PAGE id=${id} uuid=${uuid ?? 'NULL'}`);
-    if (uuid) permanentRedirect(`/artworks/${uuid}`);
-  }
+  // Legacy redirect는 middleware.ts에서 처리됨.
 
   // Parallel fetch: artwork detail + all artworks (cached) to avoid waterfall
   const [
