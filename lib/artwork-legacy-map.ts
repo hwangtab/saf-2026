@@ -35,11 +35,20 @@ const buildLegacyToUuidMap = (): Map<string, string> => {
   return map;
 };
 
-const legacyToUuidMap = buildLegacyToUuidMap();
+let cachedMap: Map<string, string> | null = null;
+
+function getLegacyMap(): Map<string, string> {
+  if (cachedMap) return cachedMap;
+  cachedMap = buildLegacyToUuidMap();
+  // 프로덕션에서도 첫 빌드 시 1회 로그 — legacy resolve 동작 검증용
+  // eslint-disable-next-line no-console
+  console.log(`[artwork-legacy-map] initialized with ${cachedMap.size} mappings`);
+  return cachedMap;
+}
 
 export function resolveLegacyArtworkId(id: string): string | null {
   if (!LEGACY_NUMERIC.test(id)) return null;
-  return legacyToUuidMap.get(id) ?? null;
+  return getLegacyMap().get(id) ?? null;
 }
 
 export function isLegacyNumericId(id: string): boolean {
