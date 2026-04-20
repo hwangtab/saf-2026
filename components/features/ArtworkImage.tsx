@@ -75,17 +75,16 @@ export default function ArtworkImage({
     <>
       <button
         type="button"
-        className="relative block w-full text-left shadow-sm cursor-zoom-in group overflow-hidden rounded-lg bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:ring-offset-2"
+        className="relative block w-full aspect-[4/5] text-left shadow-sm cursor-zoom-in group overflow-hidden rounded-lg bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:ring-offset-2"
         onClick={() => setIsOpen(true)}
         aria-label={copy.zoomImage}
       >
         <SafeImage
           src={src}
           alt={alt}
-          width={1000}
-          height={1000}
+          fill
           sizes="(max-width: 1024px) 100vw, 50vw"
-          className="w-full h-auto object-contain max-h-[80vh] transition-transform duration-300 group-hover:scale-[1.02]"
+          className="object-contain transition-transform duration-300 group-hover:scale-[1.02]"
           priority
         />
 
