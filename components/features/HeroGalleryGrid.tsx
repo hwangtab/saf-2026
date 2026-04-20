@@ -1,6 +1,7 @@
 'use client';
 
 import { useLocale, useTranslations } from 'next-intl';
+import clsx from 'clsx';
 import SafeImage from '@/components/common/SafeImage';
 import { Link } from '@/i18n/navigation';
 import type { Artwork } from '@/types';
@@ -26,12 +27,13 @@ export default function HeroGalleryGrid({ artworks }: HeroGalleryGridProps) {
           'card'
         );
         const isInquiry = artwork.price === '문의' || artwork.price === 'Inquiry';
+        const visibilityClass = index < 8 ? '' : index < 12 ? 'hidden sm:block' : 'hidden lg:block';
 
         return (
           <Link
             key={artwork.id}
             href={`/artworks/${artwork.id}`}
-            className="group relative block overflow-hidden bg-canvas-soft"
+            className={clsx('group relative block overflow-hidden bg-canvas-soft', visibilityClass)}
           >
             <div className="relative aspect-[3/4]">
               <div className="absolute inset-3 md:inset-4">
