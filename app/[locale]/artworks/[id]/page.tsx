@@ -1,8 +1,9 @@
 import { Metadata } from 'next';
 import { Suspense } from 'react';
 import { Link } from '@/i18n/navigation';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { getLocale, getTranslations } from 'next-intl/server';
+import { resolveLegacyArtworkId, isLegacyNumericId } from '@/lib/artwork-legacy-map';
 
 import {
   getSupabaseArtworks,
@@ -44,6 +45,13 @@ export const revalidate = 600;
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const locale = (await getLocale()) === 'en' ? 'en' : 'ko';
   const { id } = await params;
+
+  // Legacy 숫자 ID → UUID 308 리다이렉트. SEO 가치 보존 (GSC에 /artworks/151 등 노출 유지 중)
+  if (isLegacyNumericId(id)) {
+    const uuid = resolveLegacyArtworkId(id);
+    if (uuid) permanentRedirect(`/artworks/${uuid}`);
+  }
+
   const artwork = await getSupabaseArtworkById(id);
   const t = await getTranslations('artworkDetail');
 
@@ -67,6 +75,12 @@ export async function generateStaticParams() {
 export default async function ArtworkDetailPage({ params }: Props) {
   const locale = (await getLocale()) === 'en' ? 'en' : 'ko';
   const { id } = await params;
+
+  // Legacy 숫자 ID → UUID 308 리다이렉트 (generateMetadata에서도 동일하지만 이중 방어)
+  if (isLegacyNumericId(id)) {
+    const uuid = resolveLegacyArtworkId(id);
+    if (uuid) permanentRedirect(`/artworks/${uuid}`);
+  }
 
   // Parallel fetch: artwork detail + all artworks (cached) to avoid waterfall
   const [
