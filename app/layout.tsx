@@ -30,11 +30,13 @@ const paperlogy = localFont({
   ],
 });
 
+// PartialSansKR은 hero title 전용 (font-display 클래스). 초기 LCP 이후 로드되어도
+// UX 영향 미미 — display: swap으로 Paperlogy fallback 표시 후 교체. 303KB 대역폭 회수.
 const partialSans = localFont({
   src: '../public/fonts/PartialSansKR-Regular.woff2',
   variable: '--font-partial-sans',
   display: 'swap',
-  preload: true,
+  preload: false,
   declarations: [
     {
       prop: 'unicode-range',
