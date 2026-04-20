@@ -1,5 +1,305 @@
 [
   {
+    "hash": "7e3f25a3",
+    "type": "perf",
+    "scope": "ssr",
+    "subject": "작품 상세·작가 페이지 TTFB/LCP 최적화",
+    "summary": "PSI 모바일 실측에서 TTFB 작품 상세 2.2초·작가 페이지 1.84초, LCP 7-10초로 병목 확인. 두 페이지에서 불필요하게 전체 artworks(330개) fetch하던 것을 경량 쿼리로 교체 + LCP 이미지 preload hint 추가.",
+    "body": "A. 경량 쿼리 (lib/supabase-data.ts 함수 2개 추가)\n- getArtworksByCategoryLight(category, limit): 카테고리 내 판매중 작품 limit개만 (이전 330개 → ~6개)\n- getAvailableArtworkCategories(): distinct 카테고리 문자열 배열 (이전 330행 → 12개 string)\n\nB. 작품 상세 (app/[locale]/artworks/[id]/page.tsx)\n- Promise.all에서 getSupabaseArtworks() 제거\n- artwork 확정 후 getSupabaseArtworksByArtist + getArtworksByCategoryLight 2단계 병렬\n- 페이로드 감소 대폭: 전체 artworks → 작가별 + 카테고리 6개\n\nC. 작가 페이지 (app/[locale]/artworks/artist/[artist]/page.tsx)\n- getSupabaseArtworks() → getAvailableArtworkCategories()로 교체\n- 카테고리 링크 체크용 string[] 배열만 로드\n\nD. LCP preload (두 페이지)\n- <link rel=\"preload\" as=\"image\" fetchpriority=\"high\"> 주입\n- 작품 상세: detail 프리셋 이미지\n- 작가 페이지: hero 프리셋 배경 이미지\n- React 19/Next 16의 자동 <head> 승격 활용\n\n예상 효과: TTFB 2.2초 → 1초 미만, LCP 7초 → 3-4초.",
+    "date": "2026-04-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "ddd37373",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "legacy 작품 ID redirect를 middleware로 이동 (error boundary 가로채기 회피)",
+    "summary": "page.tsx의 permanentRedirect가 동작하지 않는 원인 파악. Vercel runtime logs에 LEGACY_REDIRECT_PAGE id=151 uuid=4c920878 로그가 찍히지만 응답은 여전히 HTTP 200. /artworks/error.tsx 바운더리가 NEXT_REDIRECT throw를 가로챘을 가능성. middleware에서 렌더 이전에 처리하여 확실하게 해결.",
+    "body": "변경:\n- middleware.ts: LEGACY_ARTWORK_PATH 정규식(/^\\/(en\\/)?artworks\\/(\\d+)\\/?$/)으로 매칭, resolveLegacyArtworkId → NextResponse.redirect(..., 308)\n- page.tsx: permanentRedirect 호출 및 디버그 로그 제거 (middleware로 위임)\n- /en/artworks/\\d+ 패턴도 동일하게 처리\n\n미들웨어는 edge runtime에서 page render·cache 이전에 실행되어 ISR/error boundary 이슈 전부 우회.",
+    "date": "2026-04-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "93023c82",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "legacy artwork map lazy init — Turbopack 빌드 시 module eval 순서 회피",
+    "summary": "legacy artwork redirect가 프로덕션에서 작동 안 함 (/artworks/151이 여전히 notFound 반환). 로컬에선 매핑 성공(351개 중 21개 legacy → 330개 UUID 중 매칭) 확인. Turbopack 프로덕션 빌드에서 module top-level evaluation 시점에 artworks 배열이 비어있었던 것으로 추정. lazy init 패턴으로 해결.",
+    "body": "변경:\n- const legacyToUuidMap = buildLegacyToUuidMap() — 즉시 실행\n  → let cachedMap = null; function getLegacyMap() { if (cachedMap) return; cachedMap = build(); ... }\n- 첫 호출 시 1회만 빌드 + console.log로 entry 수 기록 → Vercel runtime logs에서 검증\n\n이렇게 하면 artwork 데이터가 완전히 import된 뒤(런타임) 맵이 구축됨.",
+    "date": "2026-04-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "a45bbafb",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "legacy 숫자 작품 ID → UUID 308 영구 리다이렉트",
+    "summary": "GSC 페이지 리포트에서 /artworks/151(9클릭/399노출), /artworks/90, /artworks/45 등 숫자 ID로 상위 노출 중인 276개 URL이 현재 soft 404 상태. DB-generated 작품이 배치 파일을 중복 제거하면서 숫자 ID가 artworks 목록에서 탈락. Legacy ID → UUID 자동 매핑 + permanentRedirect로 SEO 가치 100% 보존.",
+    "body": "문제:\n- GSC 페이지 리포트 기준 숫자 ID URL 다수가 노출/클릭 발생 중\n- 실제 방문 시 \"작품을 찾을 수 없습니다\" 페이지 렌더 (HTTP 200이라 soft 404)\n- Google이 곧 인덱스에서 제거할 위험 + 사용자 이탈\n\n해결:\n- lib/artwork-legacy-map.ts: 모든 legacy batch(001~004, 005~008)의 (artist, title)를 artworks 최종 목록의 UUID와 매칭해 legacyToUuidMap 구축\n- app/[locale]/artworks/[id]/page.tsx: generateMetadata와 default export 모두에서 숫자 ID 감지 시 resolveLegacyArtworkId() → permanentRedirect()\n- 308 Permanent Redirect로 Google 인덱스 권한 이전\n\n참고: PSI 실측 데이터에서 /artworks/151 CLS 0.218이었던 것은 notFound 페이지의 CLS였음. 실제 UUID 작품 상세 페이지는 CLS 0.016 (이전 ArtworkImage aspect-[4/5] 수정으로 해결됨).",
+    "date": "2026-04-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "7cf21aa2",
+    "type": "fix",
+    "scope": "cls",
+    "subject": "작품 상세 이미지 1000x1000 고정 → aspect-[4/5] 박스로 CLS 제거",
+    "summary": "PSI 실측에서 /artworks/[id] 데스크톱 CLS 0.218(개선필요) 발견. 원인은 SafeImage에 width/height=1000 고정 지정 후 className에 h-auto object-contain을 쓰면서 초기 1:1 정사각형 공간 예약 → 실제 이미지 비율 적용 시 거대한 레이아웃 점프 유발.",
+    "body": "수정:\n- button 자체에 aspect-[4/5] 부여해 공간 선점\n- SafeImage는 fill + object-contain으로 박스 안에 맞춤\n- 가로/세로 비율 상관없이 컨테이너 크기 불변 → CLS 0 기대\n\n영향 범위:\n- /artworks/[id] 데스크톱 CLS 0.218 → 0 목표\n- 작가 페이지는 구조가 달라 별도 분석 필요 (mobile CLS=1.0)",
+    "date": "2026-04-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "58915a51",
+    "type": "feat",
+    "scope": "content",
+    "subject": "작품 데이터 영어 번역 추가 (batch-001~004)",
+    "summary": "batch-001~004 작품 설명(description_en) 영어 번역 일괄 추가",
+    "body": "- batch-001: 안소현(7,8,9), 손은영(12,13), 심모비(20,21,2d8348ce), 김종환(29,30,31), 최재란(57)\n- batch-002: 최재란(58), 홍진희(68,69), 김동석(70,71), 양운철(72,73), 윤겸(76,77), 안은경(78,79), 박수지(86~89), 송광연(92,93), 김규학(94,95), 변경희(96,97), 서금앵(98,99), 신연진(100,101), 김영서(111,112)\n- batch-003: 오아(113), 이유지(114,115), 이지은(116,117), 김우주(118,119), 민정See(123,124), 정서온(130~134), 김호성(135,136), 김주희(137), 정금희(138,139), 조신욱(141,142), 박지혜(143,144), 정연수(160,161), 이혜선(162,163), 이현정(164~166)\n- batch-004: 김레이시(167~172), 김태균(173,174), 이채원(187)\n\nhttps://claude.ai/code/session_014XLhPQhxtDtQ8Ei2ViiAjD",
+    "date": "2026-04-19",
+    "author": "Claude"
+  },
+  {
+    "hash": "642c128f",
+    "type": "feat",
+    "scope": "content",
+    "subject": "작품 데이터 영어 번역 추가 (batch-005, 007, 008)",
+    "summary": "한국어만 있던 작품 설명·작가 약력·프로필에 영어 번역(description_en, profile_en, history_en) 추가",
+    "body": "- batch-005: 192~227번 작품, 16명 작가 — profile_en 44건, history_en, description_en 포함\n- batch-007: 263, 264, 272번 작품 description_en 3건\n- batch-008: 280번 작품 (윤겸) description_en 1건\n\nhttps://claude.ai/code/session_014XLhPQhxtDtQ8Ei2ViiAjD",
+    "date": "2026-04-19",
+    "author": "Claude"
+  },
+  {
+    "hash": "f64dcfac",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Round 2 — /exhibition 리다이렉트·작품 상세 title·영어 메타 숫자 보강",
+    "summary": "GSC 실측 3대 잠재 레버 처리. (1) /exhibition 587노출 404 방치 → /archive/2026 301 리다이렉트로 즉시 회수, (2) 작품 상세 title에 가격/판매상태 추가해 8,883노출 CTR 개선, (3) 영어 메타에 127명·95%·84.9%·34M KRW 등 임팩트 숫자 앞배치.",
+    "body": "1. /exhibition 리다이렉트\n- next.config.js: /exhibition, /en/exhibition → /archive/2026, /en/archive/2026 301 추가\n- 과거 삭제된 경로의 노출(587건) 중 404 이탈분을 유효 페이지로 회수\n\n2. 작품 상세 페이지 (lib/schemas/artwork.ts)\n- title에 가격/판매상태 접미사 추가: \"피멍 · 이익태 · ₩5,000,000\" / \"· 판매 완료\" / \"· 가격 문의\"\n- og:image alt에 year·material·category 포함해 Google Images 유입 잠재력 ↑\n- 예: \"박불똥 작가의 작품 \\\"피멍\\\" (2023) — 캔버스에 아크릴 — 회화 — 씨앗페 온라인\"\n\n3. 영어 메타 숫자 보강\n- /en 홈: title \"127 Korean artists\", description 앞머리에 127·95%·84.9% 숫자 배치\n- /en/archive/2023: description에 \"7 days · 50+ artists · KRW 34M mutual-aid fund\"\n- /en/archive/2026: \"127 original artworks · Jan 14–26, 2026 · Insa Art Center\"",
+    "date": "2026-04-17",
+    "author": "황경하"
+  },
+  {
+    "hash": "f00873d7",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "GSC 실측 데이터 기반 메타 리라이트 + 효과 없는 keywords 정리",
+    "summary": "3개월 Search Console Performance 데이터로 효과가 실측된 부분을 키우고, 효과 없는 부분을 정리. 작가 페이지는 동적 숫자 메타로 CTR 개선, our-reality/our-proof는 임팩트 숫자를 타이틀 앞머리에 배치.",
+    "body": "A. 작가 페이지 메타 리라이트 (4,460 노출 / CTR 1.8% → 목표 3~5%)\n- messages/{ko,en}.json artistPage: metaTitleWithCategory, metaDescriptionWithPrice 등 동적 변수용 키 추가\n- 작품 수, 대표 카테고리, 가격 min/max, 판매 가능 점수를 타이틀·디스크립션에 주입\n- 예: \"박불똥 작품 8점 · 판화 | 씨앗페 온라인\"\n- 미사용 profileSnippet/historySnippet/noteSnippet 로컬 변수 제거\n\nB. 저효율 페이지 타이틀·디스크립션 리라이트\n- our-reality: \"한국 예술인 84.9%가 대출에서 배제된다 | 2025 금융 재난 보고서\" — 84.9%·48.6%·88.3% 숫자 앞쪽 배치\n- our-proof: \"예술인 상호부조 대출 354건, 상환율 95%\" — 354건·7억·95%·5% 숫자 반영\n- news 허브: getSupabaseNews() 호출해 기사 건수 동적 삽입\n- stories 허브: 최신 글 3개 제목 description에 추가\n- sitemap: /stories priority 0.85 → 0.65\n\nD. 효과 없는 metadata.keywords 필드 제거 (6개 파일)\n- our-reality, our-proof, news, stories, about, transparency — Google은 meta keywords를 순위 신호로 사용하지 않고 실측상 해당 키워드로 노출되지도 않음\n- 홈·artworks·artworks/category·artworks/artist(축소)·archive·special/oh-yoon은 유지",
+    "date": "2026-04-17",
+    "author": "황경하"
+  },
+  {
+    "hash": "1147f55d",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "GSC 보고서 기반 Q&A 중복·Video uploadDate 의미 수정",
+    "summary": "Search Console(2026-04-17) Q&A 1건·Videos 9건 실제 문제 해결. 나머지 0건 이슈는 이전 커밋에서 해결 완료.",
+    "body": "- fix(our-reality): QAPage 스키마 제거 — /와 /our-reality 양쪽이 홈 URL을 가리키는 동일 QAPage를 렌더해 Google이 mainEntity 중복으로 감지했음. QAPage는 홈에만 유지, /our-reality에는 ClaimReview+Dataset만 노출\n- feat(video): Video.publishedAt 필드 추가 + 9개 fallback 영상에 2023-03-24~26 주입 → 시청 페이지가 publishedAt || created_at 순으로 uploadDate 결정. Supabase 행 생성시각(2026-02-04)을 2023년 영상 업로드일로 쓰던 의미 부정확성 해소",
+    "date": "2026-04-17",
+    "author": "황경하"
+  },
+  {
+    "hash": "073d3f5a",
+    "type": "feat",
+    "scope": "footer",
+    "subject": "링크 컬럼 2개 카테고리로 분할 (탐색/참여·구매)",
+    "summary": "푸터 링크 12개를 '탐색'과 '참여·구매' 2개 카테고리로 나눠 4열 레이아웃으로 재편",
+    "body": "- grid: md:grid-cols-3 → grid-cols-1 md:grid-cols-2 lg:grid-cols-4\n- 탐색(6): 우리의 현실/증명, 운용 보고서, 언론 보도, 매거진, 아카이브\n- 참여·구매(6): 작품 구매, 조합원 가입, 온라인 갤러리, 상호부조 대출, 협동조합 홈페이지, 주문/배송 조회\n- i18n 키 추가: footer.explore, footer.getInvolved (ko/en)",
+    "date": "2026-04-17",
+    "author": "황경하"
+  },
+  {
+    "hash": "69306ebc",
+    "type": "feat",
+    "scope": "notify",
+    "subject": "결제 알림 이메일 데이터 보강 (관리자/구매자)",
+    "summary": "관리자·구매자 결제 알림에 구매자·작품·작가·배송지·항목별 금액 표시",
+    "body": "- 관리자 알림(notifyEmail): 결제 승인·가상계좌 발급·입금 확인·환불·취소 등 6개 시점에서 주문번호+금액만 보내던 문제 해결. 구매자명·이메일·전화·작품·작가·상품가/배송료/총액·수령인·배송지·관리자 딥링크 모두 포함\n- 구매자 알림(sendBuyerEmail): 항목별 금액(상품가/배송료/총액) 분리 표시 + 수령인·배송지 표시\n- 신규 헬퍼 lib/utils/get-order-notification-info.ts: orders+artworks+artists 단일 join 쿼리 + buildAdminNotificationFields 표시 포맷 통일\n- 이메일 템플릿 5종 보강 (payment-confirmed, deposit-confirmed, shipped, delivered, refunded)\n- i18n 라벨 7개 추가 (itemAmount, shippingAmount, totalAmount, recipient, recipientPhone, shippingAddress, shippingMemo) — ko/en 모두",
+    "date": "2026-04-17",
+    "author": "황경하"
+  },
+  {
+    "hash": "044c9b08",
+    "type": "fix",
+    "scope": "ui",
+    "subject": "이중 opacity modifier 3건 + hero-routes JSDoc 정정",
+    "summary": "이전 팔레트 일괄 치환(b2812060)에서 기존 'green-50/50' 같은 \"색조+opacity\" 조합이 'success/10/50'이 되어 Tailwind JIT가 인식 못 해 배경이 사라지던 회귀 수정. hero-routes.ts JSDoc이 리네임 전 타입명 참조하던 부분도 정정",
+    "body": "- components/features/ArtworkPurchaseCTA.tsx: from-success/10/50 → from-success/10\n- app/(portal)/admin/dashboard/page.tsx: bg-success/10/50 → bg-success/10\n- app/(portal)/admin/artworks/[id]/sales-history.tsx: bg-danger/10/50 → bg-danger/10\n- lib/hero-routes.ts: {@link EndsWithSlash} → {@link Slashed} (리네임 누락분)\n\n원인: sed 정규식이 'green-50([^0-9])'이라 뒤에 오는 '/50'의 '/' 문자를 허용해 변환됐고, 변환 결과 'success/10/50'이 이중 opacity가 돼 무효 클래스가 됨. 원래 의도한 \"매우 연한 배경\" → 투명.",
+    "date": "2026-04-17",
+    "author": "황경하"
+  },
+  {
+    "hash": "5bdaf5d6",
+    "type": "feat",
+    "scope": "i18n",
+    "subject": "checkout 서버액션 에러 메시지 다국어 지원",
+    "summary": "createOrder / initiatePayment / createBankTransferOrder의 20+ 한국어 고정 에러를 locale 기반 apiError()로 교체",
+    "body": "- lib/api-locale.ts: 체크아웃 흐름용 에러 코드 17종 추가 (rate_limited, invalid_email_format, artwork_sold_out 등)\n- checkout.ts createOrder: locale(input 또는 'ko')로 모든 에러 메시지 분기\n- checkout.ts initiatePayment: locale 파라미터 추가, 에러 메시지 8종 i18n\n- checkout.ts createBankTransferOrder: input.locale 기반 에러 분기\n- CheckoutClient.tsx: initiatePayment 호출 시 next-intl locale 전달",
+    "date": "2026-04-17",
+    "author": "황경하"
+  },
+  {
+    "hash": "9f42c26a",
+    "type": "fix",
+    "scope": "i18n",
+    "subject": "OrderLookup 결제수단 라벨 하드코딩 i18n화",
+    "summary": "en locale에서 \"신용/체크카드\"·\"퀵계좌이체\"·\"계좌이체\"·\"휴대폰결제\"가 한국어로 노출되던 UX 버그 수정",
+    "body": "- messages/{ko,en}.json orderLookup 네임스페이스에 paymentMethod{Card/Transfer/VirtualAccount/MobilePhone} 키 추가\n- PAYMENT_METHOD_LABELS(한국어 고정 레코드) → PAYMENT_METHOD_I18N_KEYS(매핑 레코드)\n- 렌더 시 기존 t() 훅으로 locale에 맞는 라벨 조회",
+    "date": "2026-04-17",
+    "author": "황경하"
+  },
+  {
+    "hash": "0a79e0a7",
+    "type": "fix",
+    "scope": "i18n",
+    "subject": "ErrorView 액션 라벨 한국어 기본값 제거 + 호출처 명시 전달",
+    "summary": "retryLabel/homeLabel 기본값 '다시 시도하기'/'홈으로 돌아가기'가 en locale에서도 노출되던 버그 수정. 필수 prop으로 변경해 TypeScript가 누락을 차단",
+    "body": "- ErrorView: retryLabel/homeLabel을 필수 prop으로 (기본값 제거)\n- lib/portal-error-copy.ts: getErrorActionLabels(locale) 공통 헬퍼 신설\n- 13개 포털 error.tsx: labels = getErrorActionLabels(locale) 주입 후\n  retryLabel/homeLabel 명시 전달\n- global-error.tsx: 기존 isEnglish 분기에 라벨 추가\n- checkout/[artworkId]/error.tsx: 한국어 하드코딩 제거, locale 분기로 리팩터\n  (title/message/backLabel까지 전부 영어 지원)\n\n영향 범위: 전체 error boundary 14개 (포털 13 + 결제 1).\n타입 시스템이 향후 신규 error.tsx에서도 누락 자동 차단.",
+    "date": "2026-04-17",
+    "author": "황경하"
+  },
+  {
+    "hash": "b7bf7d53",
+    "type": "fix",
+    "scope": "i18n",
+    "subject": "작품 배지 \"예약중\"/\"SOLD\" 하드코딩 i18n화",
+    "summary": "en locale에서도 한국어 \"예약중\"이 그대로 노출되던 UX 버그 수정. 3개 배지 컴포넌트의 텍스트를 messages로 이관",
+    "body": "- messages/{ko,en}.json: artworkCard.soldBadge/reservedBadge 키 추가\n- ArtworkCard.tsx: SoldBadge/ReservedBadge에 label prop 추가,\n  부모에서 t('soldBadge')/t('reservedBadge') 주입\n- HeroGalleryGrid.tsx: useTranslations 도입, 배지 라벨 i18n화\n- ArtworkImage.tsx: 기존 locale 분기 copy 객체에 sold/reserved 추가",
+    "date": "2026-04-17",
+    "author": "황경하"
+  },
+  {
+    "hash": "3ddd9c60",
+    "type": "feat",
+    "scope": "i18n",
+    "subject": "구매자 이메일·결제 API 에러 다국어 지원 (실제 적용)",
+    "summary": "직전 커밋이 lint-staged 이슈로 i18n 변경을 누락해 재커밋",
+    "body": "- emails/_components/i18n.ts: EmailLocale 타입 + formatAmount/formatDate/t 헬퍼\n- emails 7종 + saf-email-layout + tracking-info: locale prop, 한/영 분기\n- lib/notify.ts: sendBuyerEmail(to,type,data,locale) + extractBuyerLocale + 언어별 제목\n- lib/api-locale.ts: getRequestLocale(Accept-Language) + apiError(code,locale)\n- app/actions/checkout.ts: CreateOrderInput.locale, orders.metadata.locale 저장\n- CheckoutClient.tsx: next-intl locale을 주문 생성에 전달\n- confirm route + webhook + admin-orders + order-lookup + expire-stale-orders: order.metadata 기준 buyer email 언어 결정",
+    "date": "2026-04-17",
+    "author": "황경하"
+  },
+  {
+    "hash": "b59e7e61",
+    "type": "feat",
+    "scope": "i18n",
+    "subject": "구매자 이메일·결제 API 에러 다국어 지원",
+    "summary": "구매자 locale을 orders.metadata에 저장하고, 이메일 7종과 결제 API 에러를 한국어/영어로 분기",
+    "body": "- emails/_components/i18n.ts: EmailLocale 타입 + formatAmount/formatDate/t 헬퍼\n- emails 7종 + 레이아웃 + tracking-info: locale prop 추가, 한/영 제목·본문·레이블 분기\n- Html lang·통화·날짜 포맷을 locale 기준으로 렌더링\n- lib/notify.ts: sendBuyerEmail(to,type,data,locale) 시그니처 + BUYER_EMAIL_SUBJECTS 언어별 분리 + extractBuyerLocale 헬퍼\n- lib/api-locale.ts: getRequestLocale(Accept-Language) + apiError(code,locale) 에러 사전\n- app/actions/checkout.ts: CreateOrderInput.locale 추가, orders.metadata.locale 저장\n- CheckoutClient.tsx: next-intl locale을 createOrder/createBankTransferOrder에 전달\n- confirm route: order.metadata.locale 우선, 없으면 Accept-Language로 buyer email + API 에러 i18n\n- webhook + admin-orders + order-lookup + expire-stale-orders: metadata 조회 후 extractBuyerLocale로 이메일 언어 결정",
+    "date": "2026-04-17",
+    "author": "황경하"
+  },
+  {
+    "hash": "e38c7cff",
+    "type": "fix",
+    "scope": "analytics",
+    "subject": "vercel-drain webhook 부분 성공·포털 경로 필터링·구조적 로그 추가",
+    "summary": "Log Drain 수신 핸들러의 장애 복원력을 높이고 원본 테이블 노이즈를 줄임",
+    "body": "- 배치 insert 중 청크 하나가 실패해도 다음 배치 계속 진행 (continue-on-error),\n  전체 실패 시에만 500으로 Vercel에 재시도 유도\n- /admin, /dashboard, /exhibitor 경로 이벤트를 insert 전에 제거해 RPC 필터와 중복 제거\n- accepted 목록에 없는 스키마(v3+ 등) 이벤트 수신 시 경고 로그 출력해 조용한 드롭 방지\n- 401/400 응답 시 구조적 console.warn/error 추가 (서명 길이·무효 이벤트 수 등)",
+    "date": "2026-04-17",
+    "author": "황경하"
+  },
+  {
+    "hash": "867246a0",
+    "type": "fix",
+    "scope": "quality",
+    "subject": "Phase 12 — 배송 TOCTOU + 일괄 삭제 주문 차단 + 결제 에러 로깅 3건",
+    "summary": "updateTrackingInfo 상태 가드 추가, batchDeleteArtworks에 진행중 주문 체크, CheckoutClient silent failure 로깅",
+    "body": "- 12-1: updateTrackingInfo UPDATE에 .in('status',['shipped','delivered']) optimistic lock 추가\n- 12-2: batchDeleteArtworks 삭제 전 active 주문(paid/preparing/awaiting_deposit/shipped) 존재 확인 (deleteAdminArtwork와 동일 패턴)\n- 12-3: CheckoutClient에서 cancelPendingOrder 실패 시 void 대신 .catch로 console.error 로깅 (2곳)",
+    "date": "2026-04-17",
+    "author": "황경하"
+  },
+  {
+    "hash": "f45c86aa",
+    "type": "fix",
+    "scope": "quality",
+    "subject": "Phase 12 — 체크아웃 검증·admin 페이지·작품 상세 locale 3건 방어",
+    "summary": "체크아웃 이메일/전화/우편번호 형식 검증, 작품 수정 후 영문 상세 캐시 무효화, 어드민 페이지네이션 음수 방어",
+    "body": "- BUG 62: updateArtworkDetails가 /artworks/{id}만 revalidate, /en/artworks/{id} 누락 → 영문 상세 stale\n- BUG 63: createOrder에 이메일 정규식·전화번호 자릿수·우편번호 5자리 검증 추가\n- BUG 64: getArtistsPaginated가 page=-5 입력 시 offset 음수로 Supabase .range() 에러 → Math.max(1, ...) 가드",
+    "date": "2026-04-17",
+    "author": "황경하"
+  },
+  {
+    "hash": "b9ce7409",
+    "type": "fix",
+    "scope": "ui",
+    "subject": "헤더 투명 오매칭·톱니 경계선 여백·재발방지 종합",
+    "summary": "/terms-consent 헤더 투명 버그와 톱니 경계선 여백 부족을 수정하고, hero 경로 판정을 lib/hero-routes.ts 단일 출처로 통합 + 타입 시스템으로 접두어 슬래시 종결을 강제해 과거 3회 반복된 재발(/stories, /transparency, /terms-consent)을 구조적으로 차단",
+    "body": "- BUG: /terms-consent에서 useHeaderStyle의 startsWith('/terms')가 /terms 접두어로 오매칭돼 헤더가 투명하게 렌더됨. 버튼·메뉴 텍스트가 안 보이던 문제\n- BUG: /terms-consent 페이지 컨테이너 pb-12(48px)가 SawtoothDivider(position=\"top\")의 40px 침범 이후 8px만 남아 \"동의하고 계속하기\" 버튼이 톱니에 묻힘\n- NEW: lib/hero-routes.ts — HERO_EXACT / HERO_PREFIXES 단일 출처. type Slashed = \\`\\${string}/\\`로 접두어 슬래시 종결을 컴파일 타임 강제 → '/terms' 같은 실수가 타입 에러\n- NEW: __tests__/lib/hero-routes.test.ts — 42개 회귀 케이스 (정확 매칭·하위 매칭·형제 오매칭·작품 상세 배제·prefixes 슬래시 종결 검증)\n- NEW: components/ui/SawtoothDivider.tsx의 SAWTOOTH_TOP_SAFE_PADDING 상수 export (pb-24 md:pb-32). 페이지에서 하드코딩 대신 import\n- UPDATE: lib/hooks/useHeaderStyle.ts — termsPage/storyDetail/artworkDetail 등 하드코딩 로직 제거, isHeroRoute/isArtworkDetail 호출 한 줄로 단순화\n- UPDATE: __tests__/hooks/useHeaderStyle.test.tsx — /terms-consent solid 회귀 케이스 추가\n- UPDATE: CLAUDE.md — \"Sawtooth Divider 여백 규칙\"과 \"Header 투명화 규칙(Hero 경로)\" 두 섹션 추가\n- REMOVE: lib/constants.ts의 HERO_PAGES / HeroPage (hero-routes.ts로 이관, 다른 사용처 없음)",
+    "date": "2026-04-17",
+    "author": "황경하"
+  },
+  {
+    "hash": "9a181766",
+    "type": "fix",
+    "scope": "quality",
+    "subject": "Phase 11 — 이메일 수신자·Toss 조회·업로드 파일명 3건 방어 강화",
+    "summary": "빈 이메일 주소 필터, Toss 조회 API 비JSON 크래시 방어, 업로드 파일명 충돌 가능성 제거",
+    "body": "- BUG 59: notify.ts NOTIFY_EMAIL_TO에 빈 항목 포함 시 Resend API 실패 방지 (filter 추가)\n- BUG 60: fetchPayment/fetchPaymentByOrderId도 BUG 56과 동일한 text+JSON.parse 가드 적용\n- BUG 61: useImageUpload 파일명 Math.random()+Date.now() → crypto.randomUUID()로 충돌 가능성 제거",
+    "date": "2026-04-17",
+    "author": "황경하"
+  },
+  {
+    "hash": "c5351f66",
+    "type": "fix",
+    "scope": "quality",
+    "subject": "Phase 10 — 인증·훅·결제·스토리지·SEO 등 21건 방어 강화",
+    "summary": "OAuth 미들웨어, React hook 무한 루프, 결제 레이스, trash purge 누수, Toss 비JSON 크래시 등 21건 수정",
+    "body": "- BUG 30-37: terms-consent 라벨, global-error 이중언어, parsePrice, Modal 스크롤/포커스 트랩\n- BUG 38: /auth/ 경로 intlMiddleware 우회로 OAuth 복구\n- BUG 39/47: useFetchWithRetry/useRetry ref 패턴으로 무한 루프 방지\n- BUG 40/52: confirm route deriveAndSyncArtworkStatus 호출 + artwork_id null 가드\n- BUG 41: dashboard-context .single() → .maybeSingle()\n- BUG 42/49: suspendExhibitor role 검증 + getExhibitors 필터 일관성\n- BUG 43: login/signup useMemo\n- BUG 44: AuthButtons getUser()로 stale 세션 제거\n- BUG 45/46/48: archive/about/sitemap SEO 누락 보정\n- BUG 50/51: MarkdownRenderer locale prop, oh-yoon 성능\n- BUG 53: trash purge TRASHABLE_ACTIONS에 exhibitor 삭제 action 추가 (영구 스토리지 누수 방지)\n- BUG 54: sanitizeIlikeQuery 백슬래시 이스케이프\n- BUG 55: admin-orders cancelled_at 기록\n- BUG 56: Toss confirm/cancel 비JSON(502/504 HTML) 응답 폴백\n- BUG 57: confirm route auto-refund after() 적용 (Vercel 조기 종료 방지)\n- BUG 58: useImageUpload removeImage currentUrlsRef로 stale closure 해결",
+    "date": "2026-04-17",
+    "author": "황경하"
+  },
+  {
+    "hash": "3d869504",
+    "type": "fix",
+    "scope": "security",
+    "subject": "Phase 9 — XSS 방어 + 데이터 정합성 + UX 5건",
+    "summary": "MarkdownRenderer XSS 차단, admin 에러 내부 노출 제거, 배송 TOCTOU 수정, 이메일 정확 일치, 작품 삭제 주문 고아 방지",
+    "body": "- 9-1: MarkdownRenderer에 isSafeHref 헬퍼 추가 — javascript:/data: URL을 텍스트로 렌더링\n- 9-2: admin 포털 4파일(admin-artwork-list, user-list, trash-list, logs-list) raw error.message 제거 → t() i18n 키로 단순화\n- 9-3: updateBuyerShipping UPDATE에 .in('status',['paid','preparing']) optimistic lock 추가\n- 9-4: lookupOrders 이메일 필터를 .ilike → .eq 정확 일치로 변경, sanitizeIlikeQuery 불필요 제거\n- 9-5: deleteAdminArtwork/deleteArtwork 삭제 전 paid/preparing/awaiting_deposit/shipped 주문 존재 확인",
+    "date": "2026-04-17",
+    "author": "황경하"
+  },
+  {
+    "hash": "c73f815c",
+    "type": "fix",
+    "scope": "orders",
+    "subject": "Phase 8 주문/결제 흐름 방어 코드 6건",
+    "summary": "webhook DONE 누락 분기, cancelBuyerOrder 상태 불일치, awaiting_deposit 취소 시 artwork 복원, admin-artists 입력 검증, confirmDeposit artwork 상태 동기화, confirm route payment 조건 수정",
+    "body": "- 8-1: webhook DEPOSIT_CALLBACK DONE — paymentRecord null 시 notifyEmail + 500 반환 (Toss 재시도 유도)\n- 8-2: cancelBuyerOrder — Toss 환불 후 status 'cancelled' → 'refunded', refunded_at 기록\n- 8-3: updateOrderStatus — awaiting_deposit→cancelled 시 artwork reserved→available 복원 추가\n- 8-4: admin-artists.ts — updateArtist/createAdminArtist에 validateTextLength/validateUrl/validateEmail 적용\n- 8-5: confirmDeposit — artwork_sales INSERT 성공 후 deriveAndSyncArtworkStatus 호출\n- 8-6: confirm route — payment && 제거하여 payment INSERT 실패해도 artwork_sales 생성 진행\n- useFetchWithRetry.ts: 미사용 useMemo import 제거, latest ref 패턴 eslint-disable 주석 추가",
+    "date": "2026-04-16",
+    "author": "황경하"
+  },
+  {
+    "hash": "5fc3c615",
+    "type": "fix",
+    "scope": "payments",
+    "subject": "Phase 7 — 가상계좌 artwork reserved 누락·결제 레이스·XSS 방어 7건",
+    "summary": "가상계좌 발급 시 작품 예약 누락 수정, 결제 기록 실패 시 500 대신 계속 진행, URL 검증 추가",
+    "body": "- confirm route: 가상계좌(WAITING_FOR_DEPOSIT) 발급 시 artwork status를 reserved로 변경\n  createBankTransferOrder와 동일한 패턴 적용 — 중복 주문 방지\n- confirm route: payments INSERT 실패 시 500 반환 대신 notifyEmail + 계속 진행\n  Toss 결제는 이미 승인됨 — reconciliation cron이 보정\n- reconcile-payments: WAITING_FOR_DEPOSIT 보정 시 artwork reserved 처리 + 캐시 무효화\n- SuccessClient: useRef 가드 추가 — React Strict Mode/새로고침 시 confirm API 중복 호출 방지\n- checkout.ts createOrder: buyer_email을 trim().toLowerCase()로 정규화\n  cancelPendingOrder/자동 정리 쿼리와의 대소문자 불일치 수정\n- admin-content.ts: news/video/story의 link·thumbnail URL에 validateUrl 적용 (XSS 방어)\n- profile.ts: profile_image에 validateUrl 적용",
+    "date": "2026-04-16",
+    "author": "황경하"
+  },
+  {
+    "hash": "609222e1",
+    "type": "fix",
+    "scope": "orders",
+    "subject": "Phase 6 — 결제 흐름 레이스 컨디션 + 방어 코드 4건",
+    "summary": "paid 주문 잘못된 취소 경로 차단, 레이스 컨디션 자동 환불, 판매 기록 실패 알림, 낙관적 잠금 보완",
+    "body": "- VALID_STATUS_TRANSITIONS: paid → ['preparing']만 허용 (cancelled 제거)\n  paid 주문 취소는 refundOrder를 통해서만 가능하도록 강제\n  (updateOrderStatus paid→cancelled는 Toss cancelPayment를 호출하지 않아 환불 누락 발생)\n- confirmDeposit: artwork_sales INSERT 실패 시 notifyEmail 추가\n  console.error만으로는 프로덕션에서 인지 불가 — 관리자 알림 추가\n- confirm route: Toss 결제 성공 but 주문 이미 cancelled(레이스)인 경우 자동 환불 + admin 알림\n  cancelPendingOrder와 confirm API가 동시 실행될 때 고객 결제 금액 미환불 문제 수정\n- cancelAwaitingOrder: optimistic lock 결과 확인 추가 (.select('id') + length 체크)\n- artworks/artist/[artist]/page.tsx, stories/[slug]/page.tsx: images[0] ?? '' 빈 배열 방어 5곳",
+    "date": "2026-04-16",
+    "author": "황경하"
+  },
+  {
+    "hash": "40e2482c",
+    "type": "fix",
+    "scope": "security",
+    "subject": "Phase 5 — initiatePayment 보안 + 캐시 누락 + 동시성 3건 수정",
+    "summary": "initiatePayment rate limit + DB 금액 검증, expire-stale-orders 캐시 무효화, confirmDeposit 중복 실행 방어, CRUDManager 폼 초기화",
+    "body": "- 5-A-1: checkout.ts initiatePayment — IP 기준 분당 10회 rate limit 추가, DB에서 total_amount 재조회하여\n  클라이언트 전달 금액 검증, pending_payment 상태 확인 (외부 Toss API 금액 변조 방어)\n- 5-B-1: expire-stale-orders cron — awaiting_deposit 만료로 artwork reserved→available 복원 후\n  revalidatePublicArtworkSurfaces + revalidatePath 추가 (공개 페이지 캐시 갱신 누락 수정)\n- 5-B-2: admin-orders confirmDeposit — .select('id') + updatedRows.length 체크 추가 (동시 실행 시\n  중복 artwork_sales INSERT 방어, refundOrder/updateOrderStatus와 일관성 맞춤)\n- 5-C-1: CRUDManager — create 성공 후 formEl.reset() 호출 (FAQ 등 콘텐츠 중복 제출 방지)\n- profile-form.tsx: react-hooks/set-state-in-effect + react-hooks/refs lint 에러 수정\n  (showSuccess 타이머 패턴 제거 → state 직접 파생으로 단순화, 미저장 이미지 cleanup 로직 유지)",
+    "date": "2026-04-16",
+    "author": "황경하"
+  },
+  {
     "hash": "7ff0558b",
     "type": "fix",
     "scope": "security",

@@ -5,7 +5,11 @@ import { useLocale } from 'next-intl';
 import SafeImage from '@/components/common/SafeImage';
 import Button from '@/components/ui/Button';
 import dynamic from 'next/dynamic';
-import { resolveArtworkImageUrl, resolveArtworkImageUrlForPreset } from '@/lib/utils';
+import {
+  resolveArtworkImageUrl,
+  resolveArtworkImageUrlForPreset,
+  resolveOptimizedArtworkImageUrl,
+} from '@/lib/utils';
 import { parseArtworkSize } from '@/lib/utils/parseArtworkSize';
 
 const NON_WALL_CATEGORIES = ['조각', '도자/공예'];
@@ -70,6 +74,9 @@ export default function ArtworkImage({
   const firstImage = images?.[0] || '';
   const src = resolveArtworkImageUrlForPreset(firstImage, 'detail');
   const mobileSrc = resolveArtworkImageUrlForPreset(firstImage, 'slider');
+  // DPR 2x (Retina) 대응 — detail(1600w)을 1x, hero(1920w)를 2x
+  const desktop1x = src;
+  const desktop2x = resolveOptimizedArtworkImageUrl(firstImage, { width: 1920, quality: 80 });
   const isRemoteImage = src.startsWith('http');
   const resolvedImages = (images || []).map((img) => resolveArtworkImageUrl(img));
 
@@ -82,9 +89,9 @@ export default function ArtworkImage({
         aria-label={copy.zoomImage}
       >
         {isRemoteImage ? (
-          // 모바일 LCP 최적화: picture+media로 모바일엔 slider(400w), 데스크톱엔 detail(1600w)
+          // LCP 최적화: 모바일 slider(400w), 데스크톱 detail(1600w) 1x + hero(1920w) 2x (Retina)
           <picture>
-            <source media="(min-width: 768px)" srcSet={src} />
+            <source media="(min-width: 768px)" srcSet={`${desktop1x} 1x, ${desktop2x} 2x`} />
             {}
             <img
               src={mobileSrc}

@@ -35,7 +35,8 @@ export default function PageHero({
   return (
     <section
       className={cn(
-        'relative min-h-[60vh] flex items-center justify-center pt-12 pb-12 md:pt-20 md:pb-20 overflow-hidden bg-charcoal',
+        'relative min-h-[60vh] flex items-center justify-center pt-12 pb-12 md:pt-20 md:pb-20 overflow-hidden',
+        'bg-gradient-to-br from-charcoal-deep via-charcoal to-primary-strong/70',
         className
       )}
     >
@@ -44,10 +45,21 @@ export default function PageHero({
         aria-hidden="true"
         className="absolute top-0 left-0 h-px w-px"
       />
-      {/* Background Image */}
-      <PageHeroBackground customImage={customBackgroundImage} seed={id || title} />
-      {/* Dark Overlay */}
-      <div className="absolute inset-0 bg-black/60 z-10" />
+      {/* Subtle radial accent — 브랜드 톤 */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 opacity-60 mix-blend-overlay"
+        style={{
+          background:
+            'radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.18) 0%, transparent 50%), radial-gradient(ellipse at 80% 100%, rgba(255,224,138,0.15) 0%, transparent 55%)',
+        }}
+      />
+      {/* 작품 이미지 배경 — customBackgroundImage 지정 시에만 (작가 페이지 등) */}
+      {customBackgroundImage && (
+        <PageHeroBackground customImage={customBackgroundImage} seed={id || title} />
+      )}
+      {/* Dark Overlay — 이미지 위 텍스트 가독성 확보, 이미지 없으면 그라디언트 그대로 */}
+      {customBackgroundImage && <div className="absolute inset-0 bg-black/60 z-10" />}
 
       {/* Content */}
       <div className="relative z-10 container-max text-center w-full">

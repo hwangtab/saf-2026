@@ -10,7 +10,6 @@ import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
 import HeroGalleryGrid from '@/components/features/HeroGalleryGrid';
-import BackgroundSlider from '@/components/features/BackgroundSlider';
 import SafeImage from '@/components/common/SafeImage';
 import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
 import Badge from '@/components/ui/Badge';
@@ -253,8 +252,16 @@ async function HeroSection({ locale }: { locale: 'ko' | 'en' }) {
     <>
       <JsonLdScript data={featuredListSchema} />
       {aggregateOfferSchema && <JsonLdScript data={aggregateOfferSchema} />}
-      <section className="relative overflow-hidden">
-        <BackgroundSlider />
+      <section className="relative overflow-hidden bg-gradient-to-br from-charcoal-deep via-charcoal to-primary-strong/70">
+        {/* Subtle radial accent — 브랜드 톤 더함. 이미지 0장이라 LCP 즉시 */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-60 mix-blend-overlay"
+          style={{
+            background:
+              'radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.18) 0%, transparent 50%), radial-gradient(ellipse at 80% 100%, rgba(255,224,138,0.15) 0%, transparent 55%)',
+          }}
+        />
         <SawtoothDivider position="bottom" colorClass="text-canvas-soft" />
         <div className="relative z-10 container-max pt-16 pb-24 md:pt-20 md:pb-32">
           {/* Logo */}
