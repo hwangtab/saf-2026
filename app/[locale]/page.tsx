@@ -10,7 +10,6 @@ import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
 import HeroGalleryGrid from '@/components/features/HeroGalleryGrid';
-import SafeImage from '@/components/common/SafeImage';
 import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
 import Badge from '@/components/ui/Badge';
 import {
@@ -264,19 +263,6 @@ async function HeroSection({ locale }: { locale: 'ko' | 'en' }) {
         />
         <SawtoothDivider position="bottom" colorClass="text-canvas-soft" />
         <div className="relative z-10 container-max pt-16 pb-24 md:pt-20 md:pb-32">
-          {/* Logo */}
-          <div className="mb-6 hidden md:flex justify-center">
-            <SafeImage
-              src="/images/logo/320pxX90px_white.webp"
-              alt={t('logoAlt')}
-              width={1120}
-              height={320}
-              className="w-64 md:w-[36rem] h-auto drop-shadow-2xl"
-              priority
-              placeholder="empty"
-            />
-          </div>
-
           {/* Title */}
           <div className="mb-8 text-center">
             <h1
