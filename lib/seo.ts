@@ -2,6 +2,16 @@ import type { Metadata } from 'next';
 import { OG_IMAGE } from '@/lib/constants';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 
+// URL 확장자 → MIME 추론 (쿼리 스트링 제거). Supabase transform 등 포맷 변환이 개입할 수 있지만
+// og:image:type은 힌트일 뿐이라 파서는 실제 바이트로 결정함 — 정확한 확장자 케이스만 매핑
+function inferImageMime(url: string): string {
+  const ext = url.split('?')[0].split('.').pop()?.toLowerCase();
+  if (ext === 'jpg' || ext === 'jpeg') return 'image/jpeg';
+  if (ext === 'png') return 'image/png';
+  if (ext === 'webp') return 'image/webp';
+  return 'image/jpeg';
+}
+
 export function createPageMetadata(
   title: string,
   description: string,
@@ -17,9 +27,12 @@ export function createPageMetadata(
   const siteName = locale === 'en' ? 'SAF Online' : '씨앗페 온라인';
   const ogLocale = locale === 'en' ? 'en_US' : 'ko_KR';
   const ogAlt = imageAlt ?? (locale === 'en' ? OG_IMAGE.altEn : OG_IMAGE.alt);
+  const finalUrl = imageUrl || OG_IMAGE.url;
   const images = [
     {
-      url: imageUrl || OG_IMAGE.url,
+      url: finalUrl,
+      secureUrl: finalUrl.startsWith('https://') ? finalUrl : undefined,
+      type: inferImageMime(finalUrl),
       width: imageUrl ? 1200 : OG_IMAGE.width,
       height: imageUrl ? 630 : OG_IMAGE.height,
       alt: ogAlt,
@@ -87,7 +100,16 @@ export function createStandardPageMetadata(
       url: localizedPageUrl || pageUrl,
       locale: locale === 'en' ? 'en_US' : 'ko_KR',
       siteName: locale === 'en' ? 'SAF Online' : '씨앗페 온라인',
-      images: [{ url: OG_IMAGE.url, width: OG_IMAGE.width, height: OG_IMAGE.height, alt: ogAlt }],
+      images: [
+        {
+          url: OG_IMAGE.url,
+          secureUrl: OG_IMAGE.url,
+          type: inferImageMime(OG_IMAGE.url),
+          width: OG_IMAGE.width,
+          height: OG_IMAGE.height,
+          alt: ogAlt,
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
