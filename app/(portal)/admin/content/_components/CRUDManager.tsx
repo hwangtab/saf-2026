@@ -83,6 +83,7 @@ export function CRUDManager<T extends { id: string }>({
     try {
       await actions.update(id, formData);
       toast.success(labels.savedMessage);
+      router.refresh();
     } catch (err: unknown) {
       setOptimisticItems(previous);
       toast.error(err instanceof Error ? err.message : '저장 중 오류가 발생했습니다.');
@@ -103,6 +104,7 @@ export function CRUDManager<T extends { id: string }>({
     try {
       await actions.delete(id);
       toast.success(labels.deletedMessage);
+      router.refresh();
     } catch (err: unknown) {
       console.error('삭제 중 오류:', err);
       setOptimisticItems(previous);
