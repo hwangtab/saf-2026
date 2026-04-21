@@ -68,6 +68,21 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     return { success: false, error: apiError('required_shipping_info', buyerLocale) };
   }
 
+  // 입력 길이 상한 — 거대 페이로드로 DB INSERT/이메일 렌더 비용 폭주 방지
+  if (
+    buyerName.length > 50 ||
+    buyerEmail.length > 254 ||
+    buyerPhone.length > 20 ||
+    shippingName.length > 50 ||
+    shippingPhone.length > 20 ||
+    shippingAddress.length > 200 ||
+    (shippingAddressDetail?.length ?? 0) > 200 ||
+    shippingPostalCode.length > 10 ||
+    (shippingMemo?.length ?? 0) > 500
+  ) {
+    return { success: false, error: apiError('invalid_input_length', buyerLocale) };
+  }
+
   // Format validation
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(buyerEmailNorm)) {

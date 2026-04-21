@@ -35,6 +35,7 @@ export type ApiErrorCode =
   | 'invalid_phone_format'
   | 'invalid_shipping_phone_format'
   | 'invalid_postal_code'
+  | 'invalid_input_length'
   | 'invalid_redirect_url'
   | 'artwork_not_found'
   | 'artwork_sold_out'
@@ -62,6 +63,7 @@ const ERROR_MESSAGES: Record<ApiLocale, Record<ApiErrorCode, string>> = {
     invalid_phone_format: '올바른 연락처 형식이 아닙니다.',
     invalid_shipping_phone_format: '올바른 배송지 연락처 형식이 아닙니다.',
     invalid_postal_code: '우편번호는 5자리 숫자여야 합니다.',
+    invalid_input_length: '입력 정보의 길이가 너무 깁니다. 다시 확인해주세요.',
     invalid_redirect_url: '잘못된 결제 URL입니다.',
     artwork_not_found: '작품을 찾을 수 없습니다.',
     artwork_sold_out: '이미 판매된 작품입니다.',
@@ -88,6 +90,7 @@ const ERROR_MESSAGES: Record<ApiLocale, Record<ApiErrorCode, string>> = {
     invalid_phone_format: 'Please enter a valid phone number.',
     invalid_shipping_phone_format: 'Please enter a valid shipping phone number.',
     invalid_postal_code: 'Postal code must be 5 digits.',
+    invalid_input_length: 'Some fields are too long. Please check and try again.',
     invalid_redirect_url: 'Invalid payment redirect URL.',
     artwork_not_found: 'Artwork not found.',
     artwork_sold_out: 'This artwork has already been sold.',

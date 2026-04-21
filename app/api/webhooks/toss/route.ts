@@ -155,18 +155,31 @@ export async function POST(req: NextRequest) {
             .single();
 
           if (order) {
-            const { error: saleInsertError } = await supabase.from('artwork_sales').insert({
-              artwork_id: order.artwork_id,
-              sale_price: order.total_amount,
-              quantity: 1,
-              source: 'toss',
-              source_detail: 'toss_api',
-              order_id: paymentRecord.order_id,
-              external_order_id: order.order_no,
-              buyer_name: order.buyer_name,
-              buyer_phone: order.buyer_phone,
-              sold_at: new Date().toISOString(),
-            });
+            // 멱등성: 동일 order에 대한 active artwork_sales가 이미 있으면 중복 INSERT 방지
+            // (DB UNIQUE constraint가 가장 확실하지만 그 전 코드 레벨 방어선)
+            const { data: existingSale } = await supabase
+              .from('artwork_sales')
+              .select('id')
+              .eq('order_id', paymentRecord.order_id)
+              .is('voided_at', null)
+              .maybeSingle();
+
+            const saleInsertError = existingSale
+              ? null
+              : (
+                  await supabase.from('artwork_sales').insert({
+                    artwork_id: order.artwork_id,
+                    sale_price: order.total_amount,
+                    quantity: 1,
+                    source: 'toss',
+                    source_detail: 'toss_api',
+                    order_id: paymentRecord.order_id,
+                    external_order_id: order.order_no,
+                    buyer_name: order.buyer_name,
+                    buyer_phone: order.buyer_phone,
+                    sold_at: new Date().toISOString(),
+                  })
+                ).error;
 
             if (saleInsertError) {
               console.error(

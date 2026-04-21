@@ -13,6 +13,7 @@ import {
 import { rateLimit } from '@/lib/rate-limit';
 import { normalizePhoneDigits } from '@/lib/utils/phone';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
+import { logBuyerAction } from './activity-log-writer';
 
 export type PublicOrderListItem = {
   orderNo: string;
@@ -76,6 +77,11 @@ export async function lookupOrders(
 
   if (!trimmedName || !trimmedEmail || !trimmedPhone) {
     return { success: false, error: 'REQUIRED' };
+  }
+
+  // 입력 길이 상한 — 거대 페이로드 차단
+  if (trimmedName.length > 50 || trimmedEmail.length > 254 || trimmedPhone.length > 20) {
+    return { success: false, error: 'INVALID_INPUT' };
   }
 
   const adminClient = createSupabaseAdminClient();
@@ -156,6 +162,10 @@ export async function lookupOrderDetail(
 
   if (!trimmedOrderNo || !trimmedEmail) {
     return { success: false, error: 'REQUIRED' };
+  }
+
+  if (trimmedOrderNo.length > 50 || trimmedEmail.length > 254) {
+    return { success: false, error: 'INVALID_INPUT' };
   }
 
   const adminClient = createSupabaseAdminClient();
@@ -299,6 +309,18 @@ export async function updateBuyerShipping(
     return { success: false, error: 'REQUIRED' };
   }
 
+  if (
+    trimmedOrderNo.length > 50 ||
+    trimmedEmail.length > 254 ||
+    data.shippingName.length > 50 ||
+    data.shippingPhone.length > 20 ||
+    data.shippingAddress.length > 200 ||
+    (data.shippingAddressDetail?.length ?? 0) > 200 ||
+    (data.shippingMemo?.length ?? 0) > 500
+  ) {
+    return { success: false, error: 'INVALID_INPUT' };
+  }
+
   const adminClient = createSupabaseAdminClient();
 
   const { data: order, error } = await adminClient
@@ -350,6 +372,10 @@ export async function cancelBuyerOrder(
 
   if (!trimmedOrderNo || !trimmedEmail || !trimmedReason) {
     return { success: false, error: 'REQUIRED' };
+  }
+
+  if (trimmedOrderNo.length > 50 || trimmedEmail.length > 254 || trimmedReason.length > 500) {
+    return { success: false, error: 'INVALID_INPUT' };
   }
 
   const adminClient = createSupabaseAdminClient();
@@ -435,6 +461,26 @@ export async function cancelBuyerOrder(
     revalidatePath(`/artworks/${order.artwork_id}`);
     revalidatePath(`/en/artworks/${order.artwork_id}`);
   }
+
+  // 구매자 셀프 취소 audit log — 관리자 환불(refundOrder)과 동등한 추적성 확보
+  await logBuyerAction(
+    'order_buyer_cancelled',
+    'order',
+    order.id,
+    trimmedEmail,
+    {
+      order_no: order.order_no,
+      reason: trimmedReason,
+      artwork_id: order.artwork_id,
+      buyer_name: order.buyer_name,
+      total_amount: order.total_amount,
+      payment_key: payment.payment_key,
+    },
+    {
+      summary: `구매자 셀프 취소: ${order.order_no} (${order.buyer_name ?? '구매자 미상'}, ₩${order.total_amount.toLocaleString()}, 사유: ${trimmedReason})`,
+      reversible: false,
+    }
+  );
 
   // 관리자 + 구매자 환불 이메일 발송 (fire-and-forget)
   void (async () => {

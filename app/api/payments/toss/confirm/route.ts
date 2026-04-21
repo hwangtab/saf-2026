@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import type { Json } from '@/types/supabase';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { confirmPayment } from '@/lib/integrations/toss/confirm';
+import { sanitizeConfirmResponse, sanitizeMethodDetail } from '@/lib/integrations/toss/sanitize';
 import { notifyEmail, sendBuyerEmail } from '@/lib/notify';
 import {
   buildAdminNotificationFields,
@@ -75,6 +76,28 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // 레이스 컨디션 방지: createOrder와 confirm 사이에 동일 작품의 다른 주문이
+  // 결제 완료될 수 있으므로, Toss confirm 호출 직전에 availability 재확인.
+  // 이 체크 이후 artwork_sales INSERT 사이의 잔여 윈도우는 짧지만 0은 아님 —
+  // 완전한 원자성 보장을 위해서는 artwork_sales(artwork_id) WHERE voided_at IS NULL
+  // partial UNIQUE constraint를 DB 마이그레이션으로 추가하는 것이 권장됨.
+  if (order.artwork_id) {
+    const { data: availResult, error: availError } = await supabase.rpc(
+      'check_artwork_availability',
+      { p_artwork_id: order.artwork_id }
+    );
+    const isAvailable = Array.isArray(availResult) && availResult[0]?.is_available === true;
+    if (availError || !isAvailable) {
+      // 작품이 이미 판매됨 — 주문 취소 후 안내
+      await supabase
+        .from('orders')
+        .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
+        .eq('id', order.id)
+        .eq('status', 'pending_payment');
+      return NextResponse.json({ error: apiError('artwork_sold_out', reqLocale) }, { status: 409 });
+    }
+  }
+
   // Confirm with Toss
   const idempotencyKey = `confirm-${orderId}`;
   const confirmResult = await confirmPayment({ paymentKey, orderId, amount }, idempotencyKey);
@@ -108,18 +131,19 @@ export async function POST(req: NextRequest) {
   const isVirtualAccount = tossResponse.status === 'WAITING_FOR_DEPOSIT';
   const isDone = tossResponse.status === 'DONE';
 
-  // Insert payment record
+  // Insert payment record — PII(카드번호·승인번호·휴대폰)는 저장 전 sanitize.
+  // virtualAccount.secret은 후속 입금 콜백 검증에 필요하므로 sanitize 함수가 보존.
   const { error: paymentInsertError } = await supabase.from('payments').insert({
     order_id: order.id,
     payment_key: tossResponse.paymentKey,
     toss_order_id: tossResponse.orderId,
     method: tossResponse.method ?? null,
-    method_detail: (tossResponse.card ?? tossResponse.virtualAccount ?? null) as Json,
+    method_detail: sanitizeMethodDetail(tossResponse) as Json,
     amount: tossResponse.totalAmount,
     currency: tossResponse.currency ?? 'KRW',
     status: tossResponse.status,
     approved_at: tossResponse.approvedAt ?? null,
-    confirm_response: tossResponse as unknown as Json,
+    confirm_response: sanitizeConfirmResponse(tossResponse) as Json,
     idempotency_key: idempotencyKey,
   });
 

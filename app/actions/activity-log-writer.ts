@@ -74,6 +74,34 @@ export async function logArtistAction(
   });
 }
 
+/**
+ * 비로그인 구매자(셀프서비스 주문 취소·배송지 변경 등) 행위 로그.
+ * 인증된 user가 없으므로 actor_role='system'으로 기록하고
+ * metadata.buyer_email로 행위자를 식별한다.
+ */
+export async function logBuyerAction(
+  action: string,
+  targetType: string,
+  targetId: string,
+  buyerEmail: string,
+  details?: Record<string, unknown>,
+  options?: Parameters<typeof writeActivityLog>[0]['options']
+) {
+  await writeActivityLog({
+    actor: {
+      id: '00000000-0000-0000-0000-000000000000',
+      role: 'system',
+      name: '구매자(셀프서비스)',
+      email: buyerEmail,
+    },
+    action,
+    targetType,
+    targetId,
+    metadata: { ...(details ?? {}), buyer_email: buyerEmail },
+    options,
+  });
+}
+
 export async function logExhibitorAction(
   action: string,
   targetType: string,

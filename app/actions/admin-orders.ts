@@ -73,6 +73,20 @@ export async function getOrders(filters: OrderFilters = {}): Promise<AdminOrderL
     query = query.eq('status', filters.status);
   }
 
+  if (filters.q) {
+    // PostgREST .or() 구문 파싱을 깨뜨릴 수 있는 문자(쉼표·괄호·따옴표·역슬래시)와
+    // ilike 와일드카드(%·_)를 제거. 100자 상한으로 페이로드 폭주 차단.
+    const q = filters.q
+      .trim()
+      .slice(0, 100)
+      .replace(/[,()"\\%_*]/g, '');
+    if (q) {
+      query = query.or(
+        `order_no.ilike.%${q}%,buyer_name.ilike.%${q}%,buyer_phone.ilike.%${q}%,buyer_email.ilike.%${q}%`
+      );
+    }
+  }
+
   const { data, error } = await query;
   if (error) throw error;
 
