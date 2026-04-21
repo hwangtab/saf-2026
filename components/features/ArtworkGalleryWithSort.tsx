@@ -6,6 +6,7 @@ import MasonryGallery from './MasonryGallery';
 import SearchBar from './SearchBar';
 import FilterBar from './gallery/FilterBar';
 import CategoryFilter from './gallery/CategoryFilter';
+import PriceRangeFilter from './gallery/PriceRangeFilter';
 import ArtistNavigation from './gallery/ArtistNavigation';
 import GalleryEmptyState from './gallery/GalleryEmptyState';
 import { ArtworkListItem } from '@/types';
@@ -32,12 +33,17 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
     setStatusFilter,
     categoryFilter,
     setCategoryFilter,
+    priceBucket,
+    setPriceBucket,
     selectedArtist,
     filteredArtworks,
     sortedArtworks,
     uniqueArtists,
     categoryCounts,
+    priceBucketCounts,
   } = useArtworkFilter(artworks, initialArtist);
+
+  const totalPricedCount = priceBucketCounts.reduce((acc, b) => acc + b.count, 0);
 
   // Handler for artist button click - navigate to artist page
   const handleArtistClick = useCallback(
@@ -89,6 +95,18 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
               />
             </div>
           )}
+
+          {/* Price Range Filter - third row */}
+          {totalPricedCount > 0 && (
+            <div className="pb-3">
+              <PriceRangeFilter
+                buckets={priceBucketCounts}
+                selected={priceBucket}
+                onSelect={setPriceBucket}
+                totalCount={totalPricedCount}
+              />
+            </div>
+          )}
         </div>
       </div>
 
@@ -124,6 +142,7 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
             onReset={() => {
               setSearchQuery('');
               setCategoryFilter(null);
+              setPriceBucket(null);
             }}
           />
         ) : (

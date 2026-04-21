@@ -4,6 +4,13 @@ import { ArtworkListItem, SortOption } from '@/types';
 import { matchesAnySearch } from '@/lib/search-utils';
 import { useDebounce } from './useDebounce';
 import { sortArtworks, extractUniqueArtists } from '@/lib/artworkUtils';
+import {
+  PRICE_BUCKETS,
+  isValidPriceBucketId,
+  matchesPriceBucket,
+  type PriceBucketId,
+} from '@/lib/artwork-price-buckets';
+import { parseArtworkPrice } from '@/lib/schemas/utils';
 
 /** Status filter options for artwork gallery */
 export type StatusFilter = 'all' | 'selling' | 'sold';
@@ -11,6 +18,12 @@ export type StatusFilter = 'all' | 'selling' | 'sold';
 /** Category with artwork count */
 export interface CategoryCount {
   value: string;
+  count: number;
+}
+
+/** Price bucket with artwork count */
+export interface PriceBucketCount {
+  id: PriceBucketId;
   count: number;
 }
 
@@ -65,6 +78,10 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
   const [categoryFilter, setCategoryFilter] = useState<string | null>(
     searchParams.get('category') || null
   );
+  const [priceBucket, setPriceBucket] = useState<PriceBucketId | null>(() => {
+    const raw = searchParams.get('price');
+    return isValidPriceBucketId(raw) ? raw : null;
+  });
   const [selectedArtist, setSelectedArtist] = useState<string | null>(
     initialArtist || searchParams.get('artist') || null
   );
@@ -78,6 +95,7 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
     debouncedSearchQuery,
     statusFilter,
     categoryFilter,
+    priceBucket,
     selectedArtist,
   });
 
@@ -88,9 +106,18 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
       debouncedSearchQuery,
       statusFilter,
       categoryFilter,
+      priceBucket,
       selectedArtist,
     };
-  }, [sortOption, searchQuery, debouncedSearchQuery, statusFilter, categoryFilter, selectedArtist]);
+  }, [
+    sortOption,
+    searchQuery,
+    debouncedSearchQuery,
+    statusFilter,
+    categoryFilter,
+    priceBucket,
+    selectedArtist,
+  ]);
 
   // Sync selectedArtist with initialArtist prop
   // This effect intentionally updates state based on prop changes for URL/prop synchronization
@@ -109,6 +136,7 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
     if (debouncedSearchQuery) params.set('q', debouncedSearchQuery);
     if (statusFilter !== 'all') params.set('status', statusFilter);
     if (categoryFilter) params.set('category', categoryFilter);
+    if (priceBucket) params.set('price', priceBucket);
     if (selectedArtist) params.set('artist', selectedArtist);
 
     const search = params.toString();
@@ -124,6 +152,7 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
     debouncedSearchQuery,
     statusFilter,
     categoryFilter,
+    priceBucket,
     selectedArtist,
   ]);
 
@@ -141,6 +170,8 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
     const urlQ = searchParams.get('q') || '';
     const urlStatus = (searchParams.get('status') as StatusFilter) || 'all';
     const urlCategory = searchParams.get('category') || null;
+    const rawPrice = searchParams.get('price');
+    const urlPrice: PriceBucketId | null = isValidPriceBucketId(rawPrice) ? rawPrice : null;
     const urlArtist = searchParams.get('artist') || null;
 
     const effectiveArtist = initialArtist || urlArtist;
@@ -151,6 +182,7 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
       debouncedSearchQuery: currentDebouncedQuery,
       statusFilter: currentStatus,
       categoryFilter: currentCategory,
+      priceBucket: currentPrice,
       selectedArtist: currentArtist,
     } = stateRef.current;
 
@@ -160,6 +192,7 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
     if (urlQ !== currentQuery && urlQ !== currentDebouncedQuery) setSearchQuery(urlQ);
     if (urlStatus !== currentStatus) setStatusFilter(urlStatus);
     if (urlCategory !== currentCategory) setCategoryFilter(urlCategory);
+    if (urlPrice !== currentPrice) setPriceBucket(urlPrice);
     if (effectiveArtist !== currentArtist) setSelectedArtist(effectiveArtist);
   }, [searchParams, initialArtist]);
 
@@ -177,6 +210,18 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
       .sort((a, b) => b.count - a.count);
   }, [artworks]);
 
+  // Compute price bucket counts from all artworks (before filtering)
+  const priceBucketCounts = useMemo<PriceBucketCount[]>(() => {
+    return PRICE_BUCKETS.map((bucket) => ({
+      id: bucket.id,
+      count: artworks.reduce((acc, artwork) => {
+        const parsed = parseArtworkPrice(artwork.price);
+        if (parsed === null || parsed <= 0) return acc;
+        return matchesPriceBucket(parsed, bucket) ? acc + 1 : acc;
+      }, 0),
+    }));
+  }, [artworks]);
+
   const filteredArtworks = useMemo(() => {
     let result = artworks;
 
@@ -188,6 +233,17 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
 
     if (categoryFilter) {
       result = result.filter((a) => a.category === categoryFilter);
+    }
+
+    if (priceBucket) {
+      const bucket = PRICE_BUCKETS.find((b) => b.id === priceBucket);
+      if (bucket) {
+        result = result.filter((a) => {
+          const parsed = parseArtworkPrice(a.price);
+          if (parsed === null || parsed <= 0) return false;
+          return matchesPriceBucket(parsed, bucket);
+        });
+      }
     }
 
     if (debouncedSearchQuery.trim()) {
@@ -208,7 +264,7 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
     }
 
     return result;
-  }, [artworks, debouncedSearchQuery, statusFilter, categoryFilter, selectedArtist]);
+  }, [artworks, debouncedSearchQuery, statusFilter, categoryFilter, priceBucket, selectedArtist]);
 
   const sortedArtworks = useMemo(
     () => sortArtworks(filteredArtworks, sortOption),
@@ -235,12 +291,15 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
       setStatusFilter,
       categoryFilter,
       setCategoryFilter,
+      priceBucket,
+      setPriceBucket,
       selectedArtist,
       setSelectedArtist,
       filteredArtworks,
       sortedArtworks,
       uniqueArtists,
       categoryCounts,
+      priceBucketCounts,
     }),
     [
       sortOption,
@@ -248,11 +307,13 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
       handleSetSearchQuery,
       statusFilter,
       categoryFilter,
+      priceBucket,
       selectedArtist,
       filteredArtworks,
       sortedArtworks,
       uniqueArtists,
       categoryCounts,
+      priceBucketCounts,
     ]
   );
 }

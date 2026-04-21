@@ -60,7 +60,8 @@
     "selling": "Available",
     "sold": "Sold",
     "reserved": "Reserved",
-    "categoryAll": "All Categories"
+    "categoryAll": "All Categories",
+    "priceAll": "All Prices"
   },
   "sort": {
     "artistAsc": "Artist Name",
@@ -107,6 +108,7 @@
     "sortOptions": "Select sort option",
     "filterStatus": "Filter by sale status",
     "filterCategory": "Filter by category",
+    "filterPrice": "Filter by price range",
     "searchLabel": "Search artworks",
     "clearSearch": "Clear search",
     "viewArtist": "View artist's works",
