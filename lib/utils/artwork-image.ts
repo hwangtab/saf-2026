@@ -36,7 +36,7 @@ export function resolveArtworkImageUrl(image: string): string {
     return normalizedImage;
   }
   // bare filename (legacy) — local files no longer exist, return placeholder
-  return '/images/og-image.png';
+  return '/images/og-image.jpg';
 }
 
 export function resolveArtworkVariantUrl(image: string, variant: ArtworkImageVariant): string {

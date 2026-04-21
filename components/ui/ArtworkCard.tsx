@@ -38,7 +38,7 @@ const getHref = (artwork: ArtworkCardData, returnTo?: string) => {
   if (!returnTo) return base;
   return `${base}?returnTo=${encodeURIComponent(returnTo)}`;
 };
-const ARTWORK_PLACEHOLDER_IMAGE = '/images/og-image.png';
+const ARTWORK_PLACEHOLDER_IMAGE = '/images/og-image.jpg';
 
 const getSafeTitle = (artwork: ArtworkCardData, untitledLabel: string, locale?: string) =>
   (locale === 'en' && artwork.title_en?.trim()) || artwork.title?.trim() || untitledLabel;

@@ -88,7 +88,7 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
         content: {
           title: title,
           description: description,
-          imageUrl: `${window.location.origin}/images/og-image.png`,
+          imageUrl: `${window.location.origin}/images/og-image.jpg`,
           link: {
             webUrl: url,
             mobileWebUrl: url,

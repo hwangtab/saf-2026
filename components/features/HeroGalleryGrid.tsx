@@ -23,7 +23,7 @@ export default function HeroGalleryGrid({ artworks }: HeroGalleryGridProps) {
         const title = (locale === 'en' && artwork.title_en?.trim()) || artwork.title;
         const artist = (locale === 'en' && artwork.artist_en?.trim()) || artwork.artist;
         const imageSrc = resolveArtworkImageUrlForPreset(
-          artwork.images?.[0] || '/images/og-image.png',
+          artwork.images?.[0] || '/images/og-image.jpg',
           'card'
         );
         const isInquiry = artwork.price === '문의' || artwork.price === 'Inquiry';

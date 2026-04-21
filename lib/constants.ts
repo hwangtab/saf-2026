@@ -1,10 +1,13 @@
 // External Links
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.saf2026.com';
+// Trailing slash 정규화: Vercel 환경변수에 "https://www.saf2026.com/"처럼 슬래시가 들어가면
+// `${SITE_URL}/path` 패턴 전반(OG·sitemap·hreflang·JSON-LD)이 이중 슬래시로 오염됨
+const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.saf2026.com';
+export const SITE_URL = rawSiteUrl.replace(/\/+$/, '');
 export const SITE_URL_ALIAS = 'https://saf2026.com';
 
 export const OG_IMAGE = {
-  path: '/images/og-image.png',
-  url: `${SITE_URL}/images/og-image.png`,
+  path: '/images/og-image.jpg',
+  url: `${SITE_URL}/images/og-image.jpg`,
   width: 1200,
   height: 630,
   alt: '씨앗페 온라인 캠페인 대표 이미지',
