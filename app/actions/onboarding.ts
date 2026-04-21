@@ -33,6 +33,14 @@ export async function submitArtistApplication(
       .eq('id', user.id)
       .maybeSingle();
 
+    // 정지된 계정은 재신청 불가. 서버 액션은 페이지 가드와 독립적이므로 여기에서 명시 차단.
+    if (profile?.status === 'suspended') {
+      return {
+        message: '정지된 계정은 재신청할 수 없습니다. 관리자에게 문의해주세요.',
+        error: true,
+      };
+    }
+
     const artistName = (formData.get('artist_name') as string | null)?.trim() || '';
     const contact = (formData.get('contact') as string | null)?.trim() || '';
     const bio = (formData.get('bio') as string | null)?.trim() || '';

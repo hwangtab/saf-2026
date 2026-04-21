@@ -1,6 +1,6 @@
 'use server';
 
-import { createSupabaseServerClient } from '@/lib/auth/server';
+import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/auth/server';
 import { requireAuth } from '@/lib/auth/guards';
 import {
   EXHIBITOR_APPLICATION_TERMS_VERSION,
@@ -49,6 +49,15 @@ export async function submitExhibitorApplication(
     if (profile.role === 'artist' && profile.status === 'pending') {
       return {
         message: '작가 신청이 진행 중입니다. 관리자 승인 후 역할 전환을 요청해주세요.',
+        error: true,
+      };
+    }
+
+    // 정지된 계정은 온보딩 재제출로 자기 복권할 수 없음.
+    // 페이지 컴포넌트 redirect와 별개로 서버 액션은 직접 POST로 호출 가능하므로 이중 방어.
+    if (profile.status === 'suspended') {
+      return {
+        message: '정지된 계정은 재신청할 수 없습니다. 관리자에게 문의해주세요.',
         error: true,
       };
     }
@@ -109,7 +118,12 @@ export async function submitExhibitorApplication(
       profile.role !== 'exhibitor' ||
       (profile.status !== 'pending' && profile.status !== 'active')
     ) {
-      const { error: profileUpdateError } = await supabase
+      // profiles.role/status 는 prevent_profile_self_escalation 트리거에 의해
+      // 비관리자 세션에서는 변경할 수 없음. 온보딩 흐름은 본인 검증을 이미
+      // requireAuth + status !== suspended 로 마쳤으므로 service_role 클라이언트로
+      // 전환해 신청 결과에 따른 role/status 상승을 수행한다.
+      const adminClient = createSupabaseAdminClient();
+      const { error: profileUpdateError } = await adminClient
         .from('profiles')
         .update({ role: 'exhibitor', status: 'pending' })
         .eq('id', user.id);
