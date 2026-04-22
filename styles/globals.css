@@ -31,7 +31,7 @@ html {
   word-break: keep-all;
   overflow-wrap: break-word;
   font-weight: 400;
-  overflow-x: hidden;
+  overflow-x: clip;
   overscroll-behavior-x: none;
   -webkit-overflow-scrolling: touch;
 }
@@ -41,7 +41,7 @@ body {
   color: var(--color-charcoal);
   line-height: 1.6;
   font-weight: 400;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 ::-webkit-scrollbar {
