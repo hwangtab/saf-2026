@@ -274,9 +274,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
   });
 
-  // Story pages (한국어 로케일만 — 대부분 스토리는 body_en 미번역)
+  // Story pages: body_en이 채워진 글은 양 locale alternate 생성, 미번역 글은 koOnly
   const storyPages: MetadataRoute.Sitemap = allStories.map((story) => {
     const storyPath = `/stories/${story.slug}`;
+    const hasEnglish = Boolean(story.body_en && story.body_en.trim().length > 0);
 
     // 이미지: thumbnail 우선, 없으면 body 마크다운 첫 번째 이미지
     let storyImageUrl: string | null = story.thumbnail || null;
@@ -292,7 +293,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: story.updated_at ? new Date(story.updated_at) : new Date(story.published_at),
       changeFrequency: 'monthly' as const,
       priority: 0.7,
-      alternates: createAlternates(baseUrl, storyPath, true),
+      alternates: createAlternates(baseUrl, storyPath, !hasEnglish),
       ...(absoluteStoryImage ? { images: [absoluteStoryImage] } : {}),
     };
   });
