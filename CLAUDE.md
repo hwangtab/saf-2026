@@ -49,6 +49,19 @@ npm run trash:purge:expired:dry            # Preview expired trash purge
 npm run trash:purge:expired                # Purge expired trash items
 ```
 
+### CLI Tools (로컬에 설치됨)
+
+| CLI        | 버전 (2026-04 기준) | 인증 상태          | 대표 용도                                                               |
+| ---------- | ------------------- | ------------------ | ----------------------------------------------------------------------- |
+| `vercel`   | 51.7.0              | 로그인 완료        | 배포, `vercel env pull/add`, 로그 확인, 프리뷰 URL 생성                 |
+| `supabase` | 2.84.2              | 프로젝트 링크 완료 | 마이그레이션(`db push`, `migration new`), 타입 생성, 로컬 DB, 로그 조회 |
+
+- 둘 다 `Bash` 툴로 바로 호출 가능. 별도 설치 명령 제안 불필요
+- 프로덕션·공유 리소스에 영향을 주는 명령(`vercel deploy --prod`, `supabase db push`, 데이터 삭제 등)은 실행 전 사용자 확인 필수
+- 읽기 전용/조회(`vercel ls`, `vercel env ls`, `supabase projects list`, `supabase migration list` 등)는 승인 없이 자유롭게 사용
+- Supabase CLI 최신 버전은 2.90.0이지만 업그레이드는 사용자 판단. 현 버전으로 충분히 동작함
+- MCP도 연결되어 있음(`mcp__claude_ai_Supabase__*`, `mcp__claude_ai_Vercel__*`) — 다건 조회·대시보드성 작업은 MCP가 더 빠를 수 있음
+
 ## Architecture
 
 ### Multi-Portal Structure
