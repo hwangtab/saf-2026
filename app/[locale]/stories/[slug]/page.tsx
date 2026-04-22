@@ -31,6 +31,28 @@ function extractFirstImage(body: string | null | undefined): string | null {
   return match?.[1] ?? null;
 }
 
+/**
+ * body 마크다운에서 `/artworks/{uuid}` 링크로 직접 참조된 작품 id를 중복 없이 등장 순서대로 추출.
+ * artist-story 외 카테고리에서도 '이 글에서 소개한 작품'을 관련 작품 카드로 노출하기 위함.
+ */
+function extractArtworkIds(body: string | null | undefined): string[] {
+  if (!body) return [];
+  // 뒤따르는 문자로 끝(`)`, `"`, 공백, 문자열 끝)일 때만 매칭 — Supabase Storage URL
+  // (`/artworks/{artist-id}/...` 구조)의 artist-id가 잡히지 않도록 경계 제약.
+  const pattern =
+    /\/(?:en\/)?artworks\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(?=[)"\s]|$)/gi;
+  const seen = new Set<string>();
+  const ordered: string[] = [];
+  for (const match of body.matchAll(pattern)) {
+    const id = match[1].toLowerCase();
+    if (!seen.has(id)) {
+      seen.add(id);
+      ordered.push(id);
+    }
+  }
+  return ordered;
+}
+
 interface Props {
   params: Promise<{ slug: string }>;
 }
@@ -160,10 +182,23 @@ export default async function StoryDetailPage({ params }: Props) {
     .slice(0, 3);
 
   // Related artworks
+  // 우선순위: 본문에 직접 인용된 작품 → 작가 태그(artist-story) → 최신 판매중 작품 fallback
   let relatedArtworks: Artwork[] = [];
-  if (primaryArtistTag) {
+
+  const referencedArtworkIds = extractArtworkIds(story.body);
+  if (referencedArtworkIds.length > 0) {
+    const allArtworks = await getSupabaseArtworks();
+    const byId = new Map(allArtworks.map((a) => [a.id, a]));
+    relatedArtworks = referencedArtworkIds
+      .map((id) => byId.get(id))
+      .filter((a): a is Artwork => Boolean(a))
+      .slice(0, 3);
+  }
+
+  if (relatedArtworks.length === 0 && primaryArtistTag) {
     relatedArtworks = (await getSupabaseArtworksByArtist(primaryArtistTag)).slice(0, 3);
   }
+
   if (relatedArtworks.length === 0) {
     const allArtworks = await getSupabaseArtworks();
     relatedArtworks = allArtworks.filter((a) => !a.sold).slice(0, 3);
