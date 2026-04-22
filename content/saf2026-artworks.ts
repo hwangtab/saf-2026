@@ -25,12 +25,19 @@ const allRaw = [
   ...batch008,
 ];
 
+// DB(dbGeneratedArtworks)에서 hidden=true 로 내려온 작품의 title+artist 는
+// 레거시 batch 파일에 동일 제목이 있어도 노출하지 않는다. sync 스크립트가
+// is_hidden 을 복사하므로 이 Set 이 관리자 숨김 의도를 단일 진실 소스로 전파한다.
+const hiddenKeys = new Set<string>(
+  allRaw.filter((artwork) => artwork.hidden).map((a) => `${a.artist}::${a.title}`)
+);
 const seen = new Set<string>();
 
 export const artworks: Artwork[] = allRaw
   .filter((artwork) => !artwork.hidden)
   .filter((artwork) => {
     const key = `${artwork.artist}::${artwork.title}`;
+    if (hiddenKeys.has(key)) return false;
     if (seen.has(key)) return false;
     seen.add(key);
     return true;

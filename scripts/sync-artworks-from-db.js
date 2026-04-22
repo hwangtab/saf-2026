@@ -39,10 +39,9 @@ async function fetchAllArtworks() {
       .from('artworks')
       .select(
         `id, title, title_en, description, description_en, size, material, year, edition,
-         price, images, shop_url, status, sold_at, category,
+         price, images, shop_url, status, sold_at, category, is_hidden,
          artists (name_ko, name_en)`
       )
-      .eq('is_hidden', false)
       .order('created_at', { ascending: false })
       .range(from, from + PAGE_SIZE - 1);
 
@@ -93,6 +92,7 @@ function mapRow(row) {
   if (row.status === 'sold' || row.status === 'reserved') artwork.sold = true;
   if (row.sold_at) artwork.sold_at = row.sold_at;
   if (row.category) artwork.category = row.category;
+  if (row.is_hidden === true) artwork.hidden = true;
 
   return artwork;
 }
