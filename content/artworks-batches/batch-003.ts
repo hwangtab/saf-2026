@@ -342,7 +342,9 @@ export const artworksBatch3: Artwork[] = [
     year: '2023',
     edition: '',
     price: '₩600,000',
-    images: ['132.jpg'],
+    images: [
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/52b7dcc4-7c74-49b7-8869-9d71e1fedaa1/132__original.webp',
+    ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/220',
   },
   {
@@ -358,7 +360,9 @@ export const artworksBatch3: Artwork[] = [
     year: '2023',
     edition: '',
     price: '₩600,000',
-    images: ['133.jpg'],
+    images: [
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/52b7dcc4-7c74-49b7-8869-9d71e1fedaa1/133__original.webp',
+    ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/221',
   },
   {
@@ -604,7 +608,9 @@ A recurring dream from childhood served as an important motif for the work. In t
     year: '2024',
     edition: '',
     price: '₩800,000',
-    images: ['146.jpg'],
+    images: [
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/b1c90901-f58d-431f-8d89-268d7f9ec06d/146__original.webp',
+    ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/234',
   },
   {

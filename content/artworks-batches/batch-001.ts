@@ -359,7 +359,8 @@ export const artworksBatch1: Artwork[] = [
     title_en: '9407 SIM_Visibility',
     description:
       '손 닿을 수 없는 저기 어딘가\n오늘도 넌 숨쉬고 있지만\n\n너와 머물던 작은 의자 위엔\n같은 모습의 바람이 지나네\n\n너는 떠나며 마치 날 떠나가듯이\n멀리 손을 흔들며 언젠간 추억에 남겨져 갈 거라고\n\n그리워하면 언젠간 만나게 되는\n어느 영화와 같은 일들이 이루어져 가기를\n\n힘겨워한 날에 너를 지킬 수 없었던\n아름다운 시절 속에 머문 그대이기에\n\n<부활 - Never Ending Story>\n\n기약의 연옥 (Purgatory of Promise)',
-    description_en: 'Somewhere out there, beyond my reach,\nyou breathe again today,\n\nOn the small chair where we stayed together,\nthe same-looking wind passes by.\n\nYou left as if you were leaving me,\nwaving your hand from afar, saying you would someday be left in memory.\n\nWishing that things would come to pass\nlike a movie in which those who long for each other eventually meet—\n\nUnable to protect you on the days you struggled,\nbecause you are the one who remained in a beautiful season—\n\n<Boohwal (부활) - Never Ending Story>\n\n기약의 연옥 (Purgatory of Promise)',
+    description_en:
+      'Somewhere out there, beyond my reach,\nyou breathe again today,\n\nOn the small chair where we stayed together,\nthe same-looking wind passes by.\n\nYou left as if you were leaving me,\nwaving your hand from afar, saying you would someday be left in memory.\n\nWishing that things would come to pass\nlike a movie in which those who long for each other eventually meet—\n\nUnable to protect you on the days you struggled,\nbecause you are the one who remained in a beautiful season—\n\n<Boohwal (부활) - Never Ending Story>\n\n기약의 연옥 (Purgatory of Promise)',
     size: '45.5x53cm',
     material: '믹스미디어 이후 아크릴 스틱 콜라주, 아크릴 채색',
     year: '',
@@ -614,7 +615,9 @@ export const artworksBatch1: Artwork[] = [
     year: '2021',
     edition: '',
     price: '₩7,000,000',
-    images: ['36.jpeg'],
+    images: [
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4c71ed18-bbba-4068-97b8-52124b8e4a20/36__original.webp',
+    ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/56',
   },
   {
@@ -644,7 +647,9 @@ export const artworksBatch1: Artwork[] = [
     year: '2023',
     edition: '',
     price: '₩500,000',
-    images: ['38.jpeg'],
+    images: [
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4c71ed18-bbba-4068-97b8-52124b8e4a20/38__original.webp',
+    ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/58',
     sold: true,
   },
@@ -659,7 +664,9 @@ export const artworksBatch1: Artwork[] = [
     year: '2025',
     edition: '',
     price: '₩500,000',
-    images: ['39.jpg'],
+    images: [
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4c71ed18-bbba-4068-97b8-52124b8e4a20/39__original.webp',
+    ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/59',
     sold: true,
   },

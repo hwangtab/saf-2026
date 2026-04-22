@@ -171,7 +171,9 @@ My painting is completed as I draw lines on the canvas and the surface is gradua
     year: '2024',
     edition: '',
     price: '₩200,000',
-    images: ['173.jpg'],
+    images: [
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/fa1cffe8-2c0c-4e68-ad9b-5a1ba7abf348/173__original.webp',
+    ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/283',
   },
   {
@@ -187,7 +189,9 @@ My painting is completed as I draw lines on the canvas and the surface is gradua
     year: '2024',
     edition: '',
     price: '₩500,000',
-    images: ['174.jpg'],
+    images: [
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/fa1cffe8-2c0c-4e68-ad9b-5a1ba7abf348/174__original.webp',
+    ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/284',
   },
   {
