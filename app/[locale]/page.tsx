@@ -95,9 +95,7 @@ export default async function Home() {
   return (
     <>
       {/* Gallery Wall Hero */}
-      <Suspense fallback={<BrandLoader minHeight="100vh" />}>
-        <HeroSection locale={locale} />
-      </Suspense>
+      <HeroSection locale={locale} />
 
       {/* Mission Banner */}
       <Section variant="canvas-soft" padding="sm">
