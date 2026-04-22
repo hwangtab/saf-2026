@@ -56,8 +56,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const locale = (await getLocale()) === 'en' ? 'en' : 'ko';
   const { id } = await params;
 
-  // Legacy redirect는 middleware.ts에서 page render 이전에 처리됨 (error.tsx 가로채기 회피).
-  // 여기 도달한 숫자 ID는 middleware에서 매핑 못 찾은 케이스 → notFound 경로.
+  // Legacy redirect는 proxy.ts에서 page render 이전에 처리됨 (error.tsx 가로채기 회피).
+  // 여기 도달한 숫자 ID는 proxy에서 매핑 못 찾은 케이스 → notFound 경로.
 
   const artwork = await getSupabaseArtworkById(id);
   const t = await getTranslations('artworkDetail');
@@ -83,7 +83,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
   const locale = (await getLocale()) === 'en' ? 'en' : 'ko';
   const { id } = await params;
 
-  // Legacy redirect는 middleware.ts에서 처리됨.
+  // Legacy redirect는 proxy.ts에서 처리됨.
 
   // Parallel fetch — artwork detail이 필요 없는 것들만 먼저 병렬 실행
   const [

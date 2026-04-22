@@ -11,8 +11,21 @@ import { batch008 } from '@/content/artworks-batches/batch-008';
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const LEGACY_NUMERIC = /^\d+$/;
 
-const buildLegacyToUuidMap = (): Map<string, string> => {
+// 공백/제로폭 문자/유니코드 NFC 차이로 매칭이 빗나가는 것 방지.
+// 한글 자모 결합형(NFD)과 완성형(NFC) 혼재 케이스도 흡수.
+const normalizeKey = (s: string | null | undefined): string =>
+  (s ?? '')
+    .normalize('NFC')
+    .replace(/[\u200B-\u200D\uFEFF]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const buildLegacyToUuidMap = (): {
+  map: Map<string, string>;
+  unmapped: Array<{ id: string; artist: string; title: string }>;
+} => {
   const map = new Map<string, string>();
+  const unmapped: Array<{ id: string; artist: string; title: string }> = [];
   const legacyBatches = [
     ...artworksBatch1,
     ...artworksBatch2,
@@ -24,25 +37,45 @@ const buildLegacyToUuidMap = (): Map<string, string> => {
     ...batch008,
   ];
 
-  for (const legacy of legacyBatches) {
-    if (!LEGACY_NUMERIC.test(legacy.id)) continue;
-    const match = artworks.find(
-      (a) => a.artist === legacy.artist && a.title === legacy.title && UUID_REGEX.test(a.id)
-    );
-    if (match) map.set(legacy.id, match.id);
+  // DB 작품을 normalized (artist+title) 키로 인덱싱 — O(N) 룩업
+  const dbIndex = new Map<string, string>();
+  for (const a of artworks) {
+    if (!UUID_REGEX.test(a.id)) continue;
+    const key = `${normalizeKey(a.artist)}|${normalizeKey(a.title)}`;
+    if (!dbIndex.has(key)) dbIndex.set(key, a.id);
   }
 
-  return map;
+  for (const legacy of legacyBatches) {
+    if (!LEGACY_NUMERIC.test(legacy.id)) continue;
+    const key = `${normalizeKey(legacy.artist)}|${normalizeKey(legacy.title)}`;
+    const uuid = dbIndex.get(key);
+    if (uuid) {
+      map.set(legacy.id, uuid);
+    } else {
+      unmapped.push({ id: legacy.id, artist: legacy.artist, title: legacy.title });
+    }
+  }
+
+  return { map, unmapped };
 };
 
 let cachedMap: Map<string, string> | null = null;
 
 function getLegacyMap(): Map<string, string> {
   if (cachedMap) return cachedMap;
-  cachedMap = buildLegacyToUuidMap();
-  // 프로덕션에서도 첫 빌드 시 1회 로그 — legacy resolve 동작 검증용
+  const { map, unmapped } = buildLegacyToUuidMap();
+  cachedMap = map;
+  // 빌드 시 매핑 검증 로그 — 미매핑 ID는 middleware에서 404 응답되어 색인 차단됨
   // eslint-disable-next-line no-console
-  console.log(`[artwork-legacy-map] initialized with ${cachedMap.size} mappings`);
+  console.log(
+    `[artwork-legacy-map] mapped=${map.size}, unmapped=${unmapped.length}` +
+      (unmapped.length > 0
+        ? ` — first 5 unmapped: ${unmapped
+            .slice(0, 5)
+            .map((u) => `${u.id}(${u.artist}/${u.title})`)
+            .join(', ')}`
+        : '')
+  );
   return cachedMap;
 }
 

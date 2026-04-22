@@ -66,6 +66,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const description = isEn && story.excerpt_en ? story.excerpt_en : story.excerpt;
   const path = `/stories/${story.slug}`;
   const pageUrl = buildLocaleUrl(path, locale);
+  // Discover/SNS는 1200px+ 이미지 필수. thumbnail이 없으면 body 마크다운 첫 이미지로 fallback.
+  const bodyForImage = isEn && story.body_en ? story.body_en : story.body;
+  const heroImage = story.thumbnail || extractFirstImage(bodyForImage) || OG_IMAGE.url;
+  const isCustomImage = heroImage !== OG_IMAGE.url;
 
   return {
     title,
@@ -84,10 +88,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       section: isEn ? 'Magazine' : '매거진',
       images: [
         {
-          url: story.thumbnail || OG_IMAGE.url,
+          url: heroImage,
           width: OG_IMAGE.width,
           height: OG_IMAGE.height,
-          alt: story.thumbnail ? title : isEn ? OG_IMAGE.altEn : OG_IMAGE.alt,
+          alt: isCustomImage ? title : isEn ? OG_IMAGE.altEn : OG_IMAGE.alt,
         },
       ],
     },
@@ -97,8 +101,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
       images: [
         {
-          url: story.thumbnail || OG_IMAGE.url,
-          alt: story.thumbnail ? title : isEn ? OG_IMAGE.altEn : OG_IMAGE.alt,
+          url: heroImage,
+          alt: isCustomImage ? title : isEn ? OG_IMAGE.altEn : OG_IMAGE.alt,
         },
       ],
     },
@@ -128,12 +132,14 @@ export default async function StoryDetailPage({ params }: Props) {
   const path = `/stories/${story.slug}`;
   const pageUrl = buildLocaleUrl(path, locale);
 
+  // BlogPosting schema도 동일한 thumbnail/body 첫 이미지 fallback 적용 — 일관성
+  const schemaImage = story.thumbnail || extractFirstImage(body) || OG_IMAGE.url;
   const blogPostingSchema = generateBlogPostingSchema({
     title,
     description: excerpt,
     datePublished: story.published_at,
     dateModified: story.updated_at,
-    image: story.thumbnail || OG_IMAGE.url,
+    image: schemaImage,
     url: pageUrl,
     authorName: story.author,
     locale,

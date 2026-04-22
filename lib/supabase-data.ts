@@ -249,10 +249,11 @@ const getSupabaseArtworkByIdUncached = async (id: string): Promise<Artwork | nul
     return getArtworkById(id) || null;
   }
 
-  // Legacy numeric IDs (e.g. "20", "157") are not valid UUIDs — skip Supabase query
-  // to avoid "invalid input syntax for type uuid" errors and fall back to static data.
+  // Legacy numeric IDs (e.g. "20", "157")는 middleware에서 매핑되거나 404 처리되어야 함.
+  // 여기까지 numeric이 흘러왔다면 정상 흐름이 아니므로 정적 fallback 사용 금지 —
+  // UUID 페이지와 중복 색인되는 것 차단. (GSC "크롤링됨-색인 미생성" 대응)
   if (!UUID_REGEX.test(id)) {
-    return getArtworkById(id) || null;
+    return null;
   }
 
   const { data: artwork, error } = await supabase

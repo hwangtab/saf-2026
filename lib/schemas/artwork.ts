@@ -387,11 +387,8 @@ export function generateArtworkJsonLd(
     '@id': `${SITE_URL}/artworks/${artwork.id}`,
     name: titleForLocale,
     inLanguage: isEnglish ? 'en' : 'ko',
-    audience: {
-      '@type': 'PeopleAudience',
-      suggestedGender: 'unisex',
-      suggestedMinAge: 18,
-    },
+    // GSC가 PeopleAudience 고정값을 "audience 개체 유형이 잘못됨"으로 16건 보고함.
+    // 모든 작품에 동일 적용되는 의류 카탈로그성 필드라 SEO 가치도 없어 제거.
     artform: getArtformForSchema(materialForLocale || ''),
     // Category for faceted navigation SEO
     ...(mediumCategory && {
@@ -443,9 +440,9 @@ export function generateArtworkJsonLd(
     },
     artMedium: materialForLocale || undefined,
     dateCreated: artwork.year || undefined,
-    size: sizeForLocale
-      ? { '@type': 'QuantitativeValue', value: sizeForLocale, unitText: 'dimensions' }
-      : undefined,
+    // size는 additionalProperty에 PropertyValue로 별도 노출 (라인 470 부근).
+    // Product.size에 QuantitativeValue + 비표준 unitText:'dimensions'로 넣었더니
+    // GSC가 80건 "size 개체 유형이 잘못됨" 보고 → 직속 필드 제거.
     ...(offers && { offers }),
     // 임베디드 ExhibitionEvent — 전시 스키마가 독립 주입되지 않으므로 @id 참조 대신 인라인 객체로 표현
     // (dangling @id 참조 방지)
