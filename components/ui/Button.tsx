@@ -72,12 +72,13 @@ export default function Button({
   const isBusy = loading || isLoading;
   const hasLeadingIcon = Boolean(leadingIcon);
   const isFixedLeftLayout = iconLayout === 'fixed-left' && (hasLeadingIcon || isBusy);
+  const isInlineBusy = isBusy && !isFixedLeftLayout;
   const iconOffsetClass = FIXED_LEFT_ICON_OFFSET[resolvedSize];
 
   const styles = cn(
     buttonVariants({ variant, size }),
     interactiveClasses,
-    isFixedLeftLayout && 'relative',
+    (isFixedLeftLayout || isInlineBusy) && 'relative',
     className
   );
 
@@ -99,9 +100,8 @@ export default function Button({
         <div
           className={cn(
             'h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin',
-            isFixedLeftLayout
-              ? `absolute ${iconOffsetClass} top-1/2 -translate-y-1/2 pointer-events-none`
-              : 'mr-2'
+            'absolute top-1/2 -translate-y-1/2 pointer-events-none',
+            isFixedLeftLayout ? iconOffsetClass : 'left-1/2 -translate-x-1/2'
           )}
           aria-hidden="true"
         />
@@ -119,7 +119,7 @@ export default function Button({
           {leadingIcon}
         </span>
       )}
-      {children}
+      <span className={cn(isInlineBusy && 'invisible')}>{children}</span>
     </>
   );
 
