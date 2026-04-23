@@ -4,6 +4,7 @@ import {
   getOAuthStateCookieOptions,
   isValidOAuthState,
   OAUTH_STATE_COOKIE_NAME,
+  OAUTH_STATE_QUERY_PARAM,
 } from '@/lib/auth/oauth-state';
 import {
   ARTIST_APPLICATION_CONSENT_SELECT,
@@ -26,7 +27,7 @@ function redirectWithOAuthStateCleared(url: string) {
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
-  const requestState = searchParams.get('state');
+  const requestState = searchParams.get(OAUTH_STATE_QUERY_PARAM);
   const cookieState = request.cookies.get(OAUTH_STATE_COOKIE_NAME)?.value ?? null;
 
   if (code && !isValidOAuthState(requestState, cookieState)) {

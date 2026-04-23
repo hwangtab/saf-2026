@@ -3,6 +3,7 @@ import crypto from 'crypto';
 export const OAUTH_STATE_COOKIE_NAME = 'oauth_state';
 export const OAUTH_STATE_COOKIE_PATH = '/auth/callback';
 export const OAUTH_STATE_MAX_AGE_SECONDS = 600;
+export const OAUTH_STATE_QUERY_PARAM = 'oauth_nonce';
 
 export function createOAuthStateNonce() {
   return crypto.randomBytes(24).toString('hex');

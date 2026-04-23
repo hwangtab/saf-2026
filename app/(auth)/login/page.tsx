@@ -58,12 +58,6 @@ export default function LoginPage() {
   const router = useRouter();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
-  const getOAuthRedirectUrl = () => {
-    const envUrl = process.env.NEXT_PUBLIC_SITE_URL;
-    const baseUrl = envUrl && envUrl.startsWith('http') ? envUrl : window.location.origin;
-    return `${baseUrl}/auth/callback`;
-  };
-
   const requestOAuthState = async () => {
     const response = await fetch('/api/auth/oauth/state', {
       method: 'POST',
@@ -74,12 +68,12 @@ export default function LoginPage() {
       throw new Error('Failed to initialize oauth state');
     }
 
-    const payload = (await response.json()) as { state?: unknown };
-    if (typeof payload.state !== 'string' || payload.state.length === 0) {
+    const payload = (await response.json()) as { redirectTo?: unknown };
+    if (typeof payload.redirectTo !== 'string' || payload.redirectTo.length === 0) {
       throw new Error('Invalid oauth state payload');
     }
 
-    return payload.state;
+    return payload.redirectTo;
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -281,9 +275,9 @@ export default function LoginPage() {
     setOauthLoading(provider);
     setError(null);
 
-    let state: string;
+    let redirectTo: string;
     try {
-      state = await requestOAuthState();
+      redirectTo = await requestOAuthState();
     } catch {
       setError(copy.oauthError);
       setOauthLoading(null);
@@ -293,8 +287,7 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: getOAuthRedirectUrl(),
-        queryParams: { state },
+        redirectTo,
       },
     });
 

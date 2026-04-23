@@ -2,6 +2,7 @@
 
 import { NextRequest } from 'next/server';
 import { GET } from '@/app/(auth)/auth/callback/route';
+import { OAUTH_STATE_QUERY_PARAM } from '@/lib/auth/oauth-state';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 
 jest.mock('@/lib/auth/server', () => ({
@@ -38,7 +39,10 @@ describe('auth callback oauth state guard', () => {
 
   it('redirects to login when state and cookie do not match', async () => {
     const response = await GET(
-      createCallbackRequest('code=test-code&state=nonce-1', 'oauth_state=nonce-2')
+      createCallbackRequest(
+        `code=test-code&${OAUTH_STATE_QUERY_PARAM}=nonce-1`,
+        'oauth_state=nonce-2'
+      )
     );
 
     expect(response.status).toBe(307);
@@ -56,7 +60,10 @@ describe('auth callback oauth state guard', () => {
     } as unknown as Awaited<ReturnType<typeof createSupabaseServerClient>>);
 
     const response = await GET(
-      createCallbackRequest('code=test-code&state=nonce-1', 'oauth_state=nonce-1')
+      createCallbackRequest(
+        `code=test-code&${OAUTH_STATE_QUERY_PARAM}=nonce-1`,
+        'oauth_state=nonce-1'
+      )
     );
 
     expect(mockCreateSupabaseServerClient).toHaveBeenCalledTimes(1);
