@@ -1,6 +1,11 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
+function throwConfigurationError(code: string): never {
+  console.error(`[auth] ${code}`);
+  throw new Error('Configuration error');
+}
+
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({
     request: {
@@ -11,7 +16,7 @@ export async function updateSession(request: NextRequest) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !key) {
-    throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY');
+    throwConfigurationError('AUTH_CFG_MISSING_PUBLIC_SUPABASE_CONFIG_MW');
   }
   const supabase = createServerClient(url, key, {
     cookies: {

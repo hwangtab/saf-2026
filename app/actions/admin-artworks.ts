@@ -1,8 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { requireAdmin } from '@/lib/auth/guards';
-import { createSupabaseAdminClient } from '@/lib/auth/server';
+import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 import type { Database } from '@/types/supabase';
 import { logAdminAction } from './activity-log-writer';
 import { getString, getStoragePathsForRemoval, validateBatchSize } from '@/lib/utils/form-helpers';
@@ -35,7 +34,7 @@ function isMissingVoidedAtColumnError(error: unknown): boolean {
  * reserved 상태는 관리자 수동 설정이므로 판매 완료가 아닌 한 유지.
  */
 export async function deriveAndSyncArtworkStatus(
-  supabase: Awaited<ReturnType<typeof createSupabaseAdminClient>>,
+  supabase: Awaited<ReturnType<typeof requireAdminClient>>,
   artworkId: string
 ): Promise<'available' | 'sold' | 'reserved'> {
   const { data: artwork } = await supabase
@@ -111,7 +110,7 @@ type BatchArtworkMutationResult = {
 
 export async function deleteAdminArtwork(id: string) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   const { data: artwork } = await supabase
     .from('artworks')
@@ -164,7 +163,7 @@ export async function deleteAdminArtwork(id: string) {
 
 export async function getArtworkById(id: string) {
   await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   const { data, error } = await supabase
     .from('artworks')
@@ -178,7 +177,7 @@ export async function getArtworkById(id: string) {
 
 export async function getAllArtists() {
   await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   const { data, error } = await supabase.from('artists').select('id, name_ko').order('name_ko');
 
@@ -188,7 +187,7 @@ export async function getAllArtists() {
 
 export async function updateArtworkDetails(id: string, formData: FormData) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   const dataValidation = validateArtworkData(formData);
   if (dataValidation.error) throw new Error(dataValidation.error);
@@ -287,7 +286,7 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
 
 export async function createAdminArtwork(formData: FormData) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   const dataValidation = validateArtworkData(formData);
   if (dataValidation.error) throw new Error(dataValidation.error);
@@ -358,7 +357,7 @@ export async function createAdminArtwork(formData: FormData) {
 
 export async function updateArtworkImages(id: string, images: string[]) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   const { data: beforeArtwork } = await supabase
     .from('artworks')
@@ -438,7 +437,7 @@ export async function batchUpdateArtworkStatus(
     } satisfies BatchArtworkMutationResult;
   }
   validateBatchSize(ids);
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   if (!['available', 'reserved', 'sold'].includes(status)) {
     throw new Error('Invalid status');
@@ -529,7 +528,7 @@ export async function batchUpdateArtworkStatus(
 
 export async function updateArtworkCategory(id: string, category: string | null) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   const { data: before } = await supabase
     .from('artworks')
@@ -568,7 +567,7 @@ export async function updateArtworkCategory(id: string, category: string | null)
 
 export async function getArtworkSales(artworkId: string) {
   await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   let { data, error } = await supabase
     .from('artwork_sales')
@@ -591,7 +590,7 @@ export async function getArtworkSales(artworkId: string) {
 
 export async function recordArtworkSale(formData: FormData) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   const artworkId = getString(formData, 'artwork_id');
   const salePriceRaw = getString(formData, 'sale_price');
@@ -686,7 +685,7 @@ export async function recordArtworkSale(formData: FormData) {
 
 export async function updateArtworkSale(formData: FormData) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   const saleId = getString(formData, 'sale_id');
   const artworkId = getString(formData, 'artwork_id');
@@ -801,7 +800,7 @@ export async function updateArtworkSale(formData: FormData) {
 
 export async function voidArtworkSale(saleId: string, reason: string) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   if (!saleId) throw new Error('판매 기록 ID가 필요합니다.');
   if (!reason.trim()) throw new Error('취소 사유를 입력해주세요.');
@@ -875,7 +874,7 @@ export async function batchToggleHidden(
   }
   validateBatchSize(ids);
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   const { data: beforeArtworks } = await supabase
     .from('artworks')
@@ -931,7 +930,7 @@ export async function batchDeleteArtworks(ids: string[]) {
   if (ids.length === 0) return { success: true, count: 0 };
   validateBatchSize(ids);
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   // Keep full snapshots so deleted rows can be restored from activity logs.
   const { data: artworks } = await supabase

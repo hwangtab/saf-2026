@@ -1,10 +1,11 @@
-import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@supabase/supabase-js';
 import { fetchPaymentByOrderId } from '@/lib/integrations/toss/confirm';
+import { sanitizeConfirmResponse } from '@/lib/integrations/toss/sanitize';
 import { notifyEmail } from '@/lib/notify';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
+import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 
@@ -26,17 +27,9 @@ export const runtime = 'nodejs';
  * 매 10분 Vercel Cron 실행 (expire-stale-orders 직후).
  */
 export async function GET(request: NextRequest) {
-  const cronSecret = process.env.CRON_SECRET;
-  if (!cronSecret) {
-    return NextResponse.json({ error: 'CRON_SECRET is not configured.' }, { status: 500 });
-  }
-
-  const authHeader = request.headers.get('authorization') ?? '';
-  const expected = `Bearer ${cronSecret}`;
-  const a = Buffer.from(authHeader);
-  const b = Buffer.from(expected);
-  if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const authError = validateInternalCronRequest(request);
+  if (authError) {
+    return authError;
   }
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -45,6 +38,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Supabase admin credentials are missing.' }, { status: 500 });
   }
 
+  // System cron route: explicit service-role client usage is intentional (no user session context).
   const supabase = createClient(supabaseUrl, adminKey, {
     auth: { persistSession: false, autoRefreshToken: false },
     global: { headers: { Authorization: `Bearer ${adminKey}` } },
@@ -104,7 +98,7 @@ export async function GET(request: NextRequest) {
             currency: tossPayment.currency ?? 'KRW',
             status: tossPayment.status,
             approved_at: tossPayment.approvedAt ?? null,
-            confirm_response: tossPayment as Record<string, unknown>,
+            confirm_response: sanitizeConfirmResponse(tossPayment),
             idempotency_key: `reconcile-${order.order_no}`,
           });
 
@@ -208,7 +202,7 @@ export async function GET(request: NextRequest) {
             amount: tossPayment.totalAmount,
             currency: tossPayment.currency ?? 'KRW',
             status: tossPayment.status,
-            confirm_response: tossPayment as Record<string, unknown>,
+            confirm_response: sanitizeConfirmResponse(tossPayment),
             idempotency_key: `reconcile-${order.order_no}`,
           });
 

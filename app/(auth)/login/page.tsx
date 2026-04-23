@@ -64,6 +64,24 @@ export default function LoginPage() {
     return `${baseUrl}/auth/callback`;
   };
 
+  const requestOAuthState = async () => {
+    const response = await fetch('/api/auth/oauth/state', {
+      method: 'POST',
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to initialize oauth state');
+    }
+
+    const payload = (await response.json()) as { state?: unknown };
+    if (typeof payload.state !== 'string' || payload.state.length === 0) {
+      throw new Error('Invalid oauth state payload');
+    }
+
+    return payload.state;
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -262,10 +280,21 @@ export default function LoginPage() {
   const handleOAuthLogin = async (provider: 'google') => {
     setOauthLoading(provider);
     setError(null);
+
+    let state: string;
+    try {
+      state = await requestOAuthState();
+    } catch {
+      setError(copy.oauthError);
+      setOauthLoading(null);
+      return;
+    }
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
         redirectTo: getOAuthRedirectUrl(),
+        queryParams: { state },
       },
     });
 

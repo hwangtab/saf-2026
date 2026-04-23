@@ -1,4 +1,4 @@
-import { createSupabaseServerClient } from './server';
+import { createSupabaseAdminClient, createSupabaseServerClient } from './server';
 import { redirect } from 'next/navigation';
 import { cache } from 'react';
 import { UserRole, UserStatus } from '@/types/database.types';
@@ -116,11 +116,16 @@ export const requireArtistActive = cache(async function requireArtistActive() {
 export async function requireAdmin() {
   const { user, profile } = await getCurrentProfile();
 
-  if (!profile || profile.role !== 'admin') {
+  if (!profile || profile.role !== 'admin' || profile.status !== 'active') {
     redirect('/');
   }
 
   return user;
+}
+
+export async function requireAdminClient() {
+  await requireAdmin();
+  return createSupabaseAdminClient();
 }
 
 /**

@@ -1,8 +1,7 @@
 'use server';
 
 import { revalidatePath, revalidateTag } from 'next/cache';
-import { requireAdmin } from '@/lib/auth/guards';
-import { createSupabaseAdminClient } from '@/lib/auth/server';
+import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 import type { TablesInsert } from '@/types/supabase';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { getStoragePathFromPublicUrl, getStoragePathsForRemoval } from '@/lib/utils/form-helpers';
@@ -246,7 +245,7 @@ function collectStorageCleanupPaths(log: ActivityLogEntry) {
 }
 
 async function removeStoragePaths(
-  supabase: Awaited<ReturnType<typeof createSupabaseAdminClient>>,
+  supabase: Awaited<ReturnType<typeof requireAdminClient>>,
   bucket: 'artworks' | 'profiles',
   paths: string[]
 ) {
@@ -350,7 +349,7 @@ function extractTrashPurgeTargetNames(log: ActivityLogEntry): {
 
 export async function purgeActivityTrashLog(logId: string, reason: string) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
   const actor = await resolveActorIdentity(admin.id, 'admin');
 
   const { data: log, error: logError } = await supabase
@@ -470,7 +469,7 @@ export async function revertActivityLog(
 ): Promise<{ success: boolean; message?: string }> {
   try {
     const admin = await requireAdmin();
-    const supabase = await createSupabaseAdminClient();
+    const supabase = await requireAdminClient();
     const actor = await resolveActorIdentity(admin.id, 'admin');
 
     const { data: log, error: logError } = await supabase

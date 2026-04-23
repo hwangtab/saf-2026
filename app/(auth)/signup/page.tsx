@@ -2,6 +2,11 @@
 
 import { useMemo, useState } from 'react';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
+import {
+  isWeakPasswordError,
+  MIN_PASSWORD_LENGTH,
+  hasValidPasswordLength,
+} from '@/lib/auth/password-policy';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
@@ -25,6 +30,8 @@ const SIGNUP_COPY = {
     successLine2: '로그인 후 아티스트 정보를 제출해주세요.',
     goLogin: '로그인 페이지로 이동',
     userExists: '이미 등록된 이메일입니다. 로그인을 시도해주세요.',
+    passwordMinLengthHint: '비밀번호는 최소 8자 이상이어야 합니다.',
+    weakPassword: '비밀번호는 최소 8자 이상으로 설정해주세요.',
     signupError: '회원가입 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
     oauthError: '소셜 로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
   },
@@ -45,6 +52,8 @@ const SIGNUP_COPY = {
     successLine2: 'Sign in and submit your artist information.',
     goLogin: 'Go to sign-in page',
     userExists: 'This email is already registered. Please sign in instead.',
+    passwordMinLengthHint: 'Password must be at least 8 characters long.',
+    weakPassword: 'Please use a password with at least 8 characters.',
     signupError: 'An error occurred during sign-up. Please try again shortly.',
     oauthError: 'An error occurred during social sign-in. Please try again shortly.',
   },
@@ -71,10 +80,34 @@ export default function SignUpPage() {
     return `${baseUrl}/auth/callback`;
   };
 
+  const requestOAuthState = async () => {
+    const response = await fetch('/api/auth/oauth/state', {
+      method: 'POST',
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to initialize oauth state');
+    }
+
+    const payload = (await response.json()) as { state?: unknown };
+    if (typeof payload.state !== 'string' || payload.state.length === 0) {
+      throw new Error('Invalid oauth state payload');
+    }
+
+    return payload.state;
+  };
+
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+
+    if (!hasValidPasswordLength(password)) {
+      setError(copy.weakPassword);
+      setLoading(false);
+      return;
+    }
 
     // 1. SignUp
     const { data, error: signUpError } = await supabase.auth.signUp({
@@ -89,8 +122,17 @@ export default function SignUpPage() {
     });
 
     if (signUpError) {
+      const errorCode = (signUpError as { code?: string }).code;
+      const weakPasswordError = isWeakPasswordError({
+        code: errorCode,
+        message: signUpError.message,
+      });
       setError(
-        signUpError.message === 'User already registered' ? copy.userExists : copy.signupError
+        weakPasswordError
+          ? copy.weakPassword
+          : signUpError.message === 'User already registered'
+            ? copy.userExists
+            : copy.signupError
       );
       setLoading(false);
       return;
@@ -111,10 +153,21 @@ export default function SignUpPage() {
   const handleOAuthLogin = async (provider: 'google') => {
     setOauthLoading(provider);
     setError(null);
+
+    let state: string;
+    try {
+      state = await requestOAuthState();
+    } catch {
+      setError(copy.oauthError);
+      setOauthLoading(null);
+      return;
+    }
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
         redirectTo: getOAuthRedirectUrl(),
+        queryParams: { state },
       },
     });
 
@@ -231,10 +284,12 @@ export default function SignUpPage() {
                   type="password"
                   autoComplete="new-password"
                   required
+                  minLength={MIN_PASSWORD_LENGTH}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="block w-full px-3 py-2 border border-gray-300 rounded-lg placeholder-gray-400 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary"
                 />
+                <p className="mt-1 text-xs text-charcoal-soft">{copy.passwordMinLengthHint}</p>
               </div>
             </div>
 

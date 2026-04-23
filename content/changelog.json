@@ -1,5 +1,155 @@
 [
   {
+    "hash": "50b80e52",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "GSC 0422 드릴다운 기반 색인 커버리지 이슈 정리",
+    "summary": "/llms.txt·/reports PDF 404 해결, /en/* auth 경로 301 리디렉트, 작품 상세 쿼리 URL 크롤 차단",
+    "body": "- proxy.ts: STATIC_SKIP_ROOTS에 /reports, STATIC_SKIP_PATHS에 /llms.txt 추가\n  및 matcher 동기화 — AI 크롤러용 llms.txt와 보고서 PDF 3건의 next-intl 가로채기로 인한 404 제거\n- next.config.js: /en/login, /en/signup, /en/onboarding, /en/terms-consent를\n  각 ko 경로로 301 permanent 리디렉트 — GSC 404 보고 중 /en/login 1건 해소 및 선제 차단\n- app/robots.ts: /artworks/*?*, /en/artworks/*?* Disallow 추가 —\n  /special/oh-yoon 등에서 생성되는 ?returnTo=... 쿼리 URL 10건의\n  \"표준 없는 중복\" 보고 원인 제거 (canonical은 이미 정확하지만 크롤 자체 차단)",
+    "date": "2026-04-23",
+    "author": "황경하"
+  },
+  {
+    "hash": "6a88a86e",
+    "type": "fix",
+    "scope": "stories",
+    "subject": "관련 작품 추출을 본문 인용 작품 우선으로 변경",
+    "summary": "스토리 상세 하단 '관련 작품' 섹션이 buying-guide/art-knowledge에서 전부 최신 판매중 작품 3점(최근 등록된 최재란 시리즈 등)만 보이던 문제 수정. 본문 마크다운의 /artworks/{uuid} 링크에서 실제 인용된 작품을 1순위로 추출해 노출.",
+    "body": "- extractArtworkIds(body) 헬퍼 추가 — 본문 링크 UUID 등장 순서대로 dedupe\n- 정규식 경계 `(?=[)\"\\s]|$)` 로 Supabase Storage URL 내 artist-id 오매칭 차단\n- 순서: 본문 인용 작품 → (artist-story인 경우) 작가 태그 → 최신 판매중 fallback\n- 6편 검증 완료: COA/이사/2030/액자/걸이도구 각 4~7점 정확 추출, what-95는 링크 없어 fallback 유지",
+    "date": "2026-04-22",
+    "author": "황경하"
+  },
+  {
+    "hash": "cd84453b",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "GSC 0422 진단 기반 색인·스키마·CTR·OG 종합 개선",
+    "summary": "GSC 90일 보고서에서 \"크롤링됨-색인 미생성\" 1,705 페이지와 Merchant listings 96건 형식 오류, 작가 검색 0% CTR이 확인되어 원인을 차단·정리하고 Next.js 16 proxy 마이그레이션과 작가 페이지 동적 OG도 함께 처리.",
+    "body": "Phase 1 — 색인 정상화\n- artwork-legacy-map: NFC 정규화·제로폭 제거·O(N) 인덱싱으로 매핑률 향상, 빌드 시 unmapped 통계 로그 노출\n- proxy(구 middleware): 매핑 실패 numeric ID는 404로 응답해 UUID 페이지와 중복 색인 차단\n- supabase-data: numeric ID fallback 제거 (proxy 우회 시 안전망)\n\nPhase 2 — Schema.org 정리\n- Product.audience PeopleAudience 고정값 제거 (16건 형식 오류 해소)\n- Product.size QuantitativeValue 제거 (80건 형식 오류 해소, 정보는 additionalProperty로 유지)\n\nPhase 3 — CTR 개선\n- artist 페이지 메타에 \"작가/원본 구매/화랑 직매/갤러리\" search-intent 키워드 추가 (ko/en)\n\n잔여 권장사항\n- middleware.ts → proxy.ts 마이그레이션 (Next.js 16 deprecation 해소, 함수·변수명 동시 갱신)\n- artist 페이지 동적 OG 추가 (Satori, 작가명+작품수+가격대+카테고리, Discover 1200x630 표준)\n- /stories OG/BlogPosting 이미지에 본문 마크다운 첫 이미지 fallback 추가\n\n검증: type-check ✓ / lint 0 errors / build 1115 pages exit 0 / \"ƒ Proxy (Middleware)\" 정상 인식",
+    "date": "2026-04-22",
+    "author": "황경하"
+  },
+  {
+    "hash": "08ab4a21",
+    "type": "fix",
+    "scope": "artworks",
+    "subject": "작품 상세 진입 시 스크롤 최상단으로 리셋",
+    "summary": "갤러리에서 작품 상세로 이동할 때 이전 스크롤 위치가 유지되는 문제 수정",
+    "body": "- ArtworkDetailNav에 pathname 감지 useEffect 추가\n- 상세 페이지 진입 및 작품 간 이동 시 window.scrollTo로 최상단 강제 이동\n- 목록의 useArtworkFilter가 history.replaceState로 URL 동기화하면서 Next.js 기본 scroll-to-top이 누락되던 케이스 보정",
+    "date": "2026-04-22",
+    "author": "황경하"
+  },
+  {
+    "hash": "b1b8fb9a",
+    "type": "fix",
+    "scope": "data",
+    "subject": "DB 숨김 의도가 레거시 batch까지 전파되도록 필터·sync 수정",
+    "summary": "admin에서 is_hidden=true로 바꾼 작품이 공개 갤러리에서 여전히 노출되던 문제를 고쳤다. 신학철 작품 12건이 숨김 의도와 다르게 노출되던 사고 재발 방지.",
+    "body": "- sync-artworks-from-db.js: `is_hidden=false` 필터 제거, row.is_hidden=true면 artwork.hidden=true로 기록해 batch-db-generated.ts에 숨김 메타데이터까지 동기화\n- saf2026-artworks.ts: 숨김 작품의 title+artist 키를 hiddenKeys Set으로 수집해, 레거시 batch에 하드코딩된 동일 작품도 함께 배제. 기존엔 filter(!hidden) 후 중복 제거라 DB 버전이 사라지면 레거시가 노출되던 누수 경로\n- batch-db-generated.ts: 2026-04-22 기준 재동기화 (377 artworks, hidden 14)\n- 공개 페이지: 360 → 348건 (신학철 12건 정상 숨김)",
+    "date": "2026-04-22",
+    "author": "황경하"
+  },
+  {
+    "hash": "f942bbf5",
+    "type": "fix",
+    "scope": "images",
+    "subject": "레거시 batch 이미지 URL 13건 Supabase Storage로 복구",
+    "summary": "2026-03-11 로컬 이미지 제거 마이그레이션에서 URL 교체가 누락된 bare filename 항목을 Supabase Storage URL로 일괄 교체했다. 그대로 두면 갤러리에서 og-image 플레이스홀더로 폴백됐다.",
+    "body": "- 김준권 36/38/39, 윤겸 76/77/280, 양운철 73, 강석태 239/242, 정서온 132/133, 예미킴 146, 김태균 173/174\n- 11건은 Supabase Storage에 원본/variant가 이미 업로드돼 있어 URL만 교체\n- 양운철 73은 storage에도 없어서 git blob(353544e1^)에서 추출 후 supabase CLI로 업로드. hidden=true라 현 공개 페이지엔 미노출이지만 향후 복원 시 즉시 사용 가능\n- 전 batch 파일에 남은 bare filename 0건 확인",
+    "date": "2026-04-22",
+    "author": "황경하"
+  },
+  {
+    "hash": "ba0ff607",
+    "type": "fix",
+    "scope": "styles",
+    "subject": "overflow-x clip으로 페이지 네비게이션 스크롤 복원",
+    "summary": "작품 카드 클릭 후 상세 페이지가 중간부터 보이던 문제 해결",
+    "body": "- html/body의 overflow-x: hidden → overflow-x: clip\n- Next.js App Router 알려진 버그: overflow-x: hidden은 CSS 스펙상 overflow-y를 auto로 컴퓨트하게 만들어 body가 스스로 스크롤 컨테이너가 됨\n- 결과적으로 라우팅 시 window.scrollTo(0,0)이 body 내부 스크롤에 적용되지 않아 이전 스크롤 위치가 유지됨\n- clip은 overflow-y를 변경하지 않아 스크롤 컨테이너가 생기지 않음\n- 브라우저 지원: Chrome 90+, Firefox 81+, Safari 16+ (충분)",
+    "date": "2026-04-22",
+    "author": "황경하"
+  },
+  {
+    "hash": "1ba09dc8",
+    "type": "fix",
+    "scope": "home",
+    "subject": "히어로 Suspense 로더 제거",
+    "summary": "홈 히어로 앞에 잠깐 보이던 로딩 화면 제거",
+    "body": "- HeroSection 래퍼 <Suspense fallback={<BrandLoader 100vh />}> 제거\n- ISR(revalidate 1800)로 대부분 캐시 히트라 콜드 요청에서만 깜빡였고, 현재 사이트 속도에선 불필요\n- CategorySections / FAQ 하단 Suspense는 그대로 유지",
+    "date": "2026-04-22",
+    "author": "황경하"
+  },
+  {
+    "hash": "36343cea",
+    "type": "fix",
+    "scope": "sitemap",
+    "subject": "스토리 영문 번역 108편에 양 locale alternate 반영",
+    "summary": "전 스토리 body_en 번역 완료에 따라 sitemap 스토리 항목을 body_en 유무로 분기해 영문 alternate를 노출하도록 복구",
+    "body": "- 기존: 모든 스토리를 koOnly로 고정 → /en/stories/* 108개가 hreflang 알리아스에 빠져 색인 누락\n- 변경: story.body_en 존재 시 양 locale alternate, 미번역 시만 koOnly 유지\n- 동시 작업으로 stories.body_en 87건, stories.body 6건의 '' 시드 아티팩트 정리 (DB 직접 UPDATE)",
+    "date": "2026-04-22",
+    "author": "황경하"
+  },
+  {
+    "hash": "aaa792d4",
+    "type": "fix",
+    "scope": "admin-content",
+    "subject": "CRUD 성공 후 router.refresh()로 즉시 반영",
+    "summary": "관리자 콘텐츠 페이지에서 항목 수정·삭제 후 SSR 데이터가 갱신되지 않아 새로고침해야 반영되던 문제 해결.",
+    "body": "- update/delete 성공 직후 router.refresh() 호출해 서버 컴포넌트 재조회\n- optimistic UI는 그대로 유지, 실패 시 롤백 로직 변경 없음",
+    "date": "2026-04-21",
+    "author": "황경하"
+  },
+  {
+    "hash": "0f5f6ddd",
+    "type": "fix",
+    "scope": "payments",
+    "subject": "Toss 결제·주문 보안 및 PII 방어선 강화",
+    "summary": "Toss 결제 확정 레이스 컨디션 방어, PII sanitize, 입력 길이 상한, 관리자 검색 쿼리 sanitize, 구매자 셀프 취소 audit log 추가. 결제 이중 승인 및 민감정보 저장/노출·대형 페이로드 DoS·PostgREST 쿼리 인젝션 위험을 코드 레벨에서 다층 방어.",
+    "body": "- toss/confirm: check_artwork_availability RPC로 confirm 직전 재확인하여 동일 작품 이중 결제 방어. 잔여 윈도우는 DB partial UNIQUE 마이그레이션으로 봉합 예정\n- toss/sanitize.ts(신규): card.number/approveNo, mobilePhone 제거. virtualAccount.secret은 입금 콜백 검증 위해 보존\n- toss/webhook: artwork_sales INSERT 전 동일 order 중복 여부 확인(멱등성)\n- checkout / order-lookup / admin-orders: 입력 필드 길이 상한(50/200/500자 등) + admin q 파라미터 PostgREST 구문 문자 제거\n- activity-log-writer: logBuyerAction 헬퍼 추가 — 비로그인 구매자 셀프 취소를 관리자 환불과 동등하게 audit\n- api-locale: invalid_input_length 에러 코드 ko/en",
+    "date": "2026-04-21",
+    "author": "황경하"
+  },
+  {
+    "hash": "28607239",
+    "type": "feat",
+    "scope": "artworks",
+    "subject": "갤러리에 가격대 프리셋 필터 추가",
+    "summary": "작품 갤러리에 100만원 이하·100~300만원·300~500만원·500만원 이상 4단계 가격대 프리셋 버튼 추가. 기존 작가/카테고리 필터와 조합 가능하며 URL(?price=)로 공유·뒤로가기 동작.",
+    "body": "- lib/artwork-price-buckets.ts: 4단계 버킷을 단일 출처로 정의 (ko/en 라벨 포함)\n- useArtworkFilter: priceBucket state + ?price URL 동기화 + 버킷별 카운트\n- PriceRangeFilter: CategoryFilter와 동일한 칩 UI, count 0 버킷 자동 숨김\n- ArtworkGalleryWithSort: sticky FilterBar 3행에 배치, empty-state 리셋에 포함\n- messages: filters.priceAll / a11y.filterPrice 키 추가",
+    "date": "2026-04-21",
+    "author": "황경하"
+  },
+  {
+    "hash": "cc191a0c",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "OG 이미지에 secure_url / image:type 메타 추가",
+    "summary": "카카오·페이스북 등 엄격한 파서를 위해 OG 이미지 헬퍼에 `og:image:secure_url`과 `og:image:type`(MIME) 메타를 추가했다.",
+    "body": "- lib/seo.ts createPageMetadata / createStandardPageMetadata 두 함수 모두 적용\n- MIME은 URL 확장자 기반 추론 (jpg/jpeg/png/webp) — Supabase transform 등 불확실한 경우 image/jpeg 기본값\n- secureUrl은 URL이 https로 시작할 때만 설정, http 폴백 시 undefined",
+    "date": "2026-04-21",
+    "author": "황경하"
+  },
+  {
+    "hash": "8bc9f5d2",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "OG 이미지 경로와 SITE_URL 정규화 코드 반영 (재커밋)",
+    "summary": "직전 커밋에서 lint-staged 처리 중 코드 변경이 누락되어, OG/SITE_URL 관련 소스 수정본을 다시 포함시켰다.",
+    "body": "- lib/constants.ts: SITE_URL trailing slash 정규화 + OG_IMAGE 확장자 .jpg 반영\n- lib/utils/artwork-image.ts, ShareButtons, HeroGalleryGrid, ArtworkCard: 플레이스홀더 경로 .jpg 갱신\n- next-image-export-optimizer-hashes.json: 이미지 해시 테이블 재생성",
+    "date": "2026-04-21",
+    "author": "황경하"
+  },
+  {
+    "hash": "5074d509",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "SITE_URL 트레일링 슬래시 정규화 + OG 이미지 포맷 정합",
+    "summary": "썸네일·사이트맵·hreflang에서 이중 슬래시가 발생하던 SEO 버그를 수정하고, OG 이미지의 확장자를 실제 포맷(JPEG)과 일치시켰다.",
+    "body": "- NEXT_PUBLIC_SITE_URL 환경변수가 `https://www.saf2026.com/`(trailing slash)로 저장돼 있어\n  og:image, <loc>, hreflang alternate, JSON-LD @id 전 영역에 `//` 이중 슬래시 생성되던 버그 수정\n- lib/constants.ts의 SITE_URL을 `replace(/\\/+$/, '')`로 정규화 → 환경변수 값과 무관하게 방어\n- public/images/og-image.png 내부 데이터가 실제로 JPEG라 .jpg로 리네이밍, Content-Type 정합\n- 참조 6곳 업데이트: constants, utils/artwork-image, HeroGalleryGrid, ShareButtons, ArtworkCard, image hashes",
+    "date": "2026-04-21",
+    "author": "황경하"
+  },
+  {
     "hash": "df2807a8",
     "type": "fix",
     "scope": "security",

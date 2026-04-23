@@ -1,7 +1,6 @@
 'use server';
 
-import { requireAdmin } from '@/lib/auth/guards';
-import { createSupabaseAdminClient } from '@/lib/auth/server';
+import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 import { sanitizeIlikeQuery } from '@/lib/utils/query';
 
 export type ActivityLogEntry = {
@@ -71,7 +70,7 @@ async function enrichActivityLogActors(logs: ActivityLogEntry[]): Promise<Activi
   const actorIds = Array.from(new Set(unresolvedLogs.map((log) => log.actor_id).filter(Boolean)));
   if (actorIds.length === 0) return logs;
 
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
   const { data: profiles } = await supabase
     .from('profiles')
     .select('id, name, email')
@@ -194,7 +193,7 @@ async function enrichActivityLogTargets(logs: ActivityLogEntry[]): Promise<Activ
     return logs;
   }
 
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   const [orderResult, artworkResult, artistResult, applicationResult, exhibitorAppResult] =
     await Promise.all([
@@ -322,7 +321,7 @@ async function enrichTrashPurgedTargetNames(logs: ActivityLogEntry[]): Promise<A
   );
   if (purgedLogIds.length === 0) return logs;
 
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
   const { data: sourceLogs } = await supabase
     .from('activity_logs')
     .select('id, target_id, metadata')
@@ -377,7 +376,7 @@ async function getLegacyAdminLogs(
   page = 1,
   limit = 50
 ): Promise<{ logs: ActivityLogEntry[]; total: number }> {
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
   const offset = (page - 1) * limit;
 
   const { count } = await supabase.from('admin_logs').select('id', { count: 'exact', head: true });
@@ -420,7 +419,7 @@ async function getLegacyAdminLogs(
 
 export async function getActivityLogs(filters: ActivityLogFilters = {}) {
   await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   const page = filters.page && filters.page > 0 ? filters.page : 1;
   const limit = filters.limit && filters.limit > 0 ? Math.min(filters.limit, 100) : 50;
@@ -499,7 +498,7 @@ type TrashLogFilters = {
 
 export async function getTrashLogs(filters: TrashLogFilters = {}) {
   await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   const page = filters.page && filters.page > 0 ? filters.page : 1;
   const limit = filters.limit && filters.limit > 0 ? Math.min(filters.limit, 100) : 30;

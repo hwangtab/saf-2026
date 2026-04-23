@@ -1,6 +1,6 @@
-import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
 export const runtime = 'nodejs';
 
 const SYSTEM_ACTOR_ID = '00000000-0000-0000-0000-000000000000';
@@ -191,17 +191,9 @@ async function removeStoragePaths(supabase: any, bucket: 'artworks' | 'profiles'
 }
 
 export async function GET(request: NextRequest) {
-  const cronSecret = process.env.CRON_SECRET;
-  if (!cronSecret) {
-    return NextResponse.json({ error: 'CRON_SECRET is not configured.' }, { status: 500 });
-  }
-
-  const authHeader = request.headers.get('authorization') ?? '';
-  const expected = `Bearer ${cronSecret}`;
-  const a = Buffer.from(authHeader);
-  const b = Buffer.from(expected);
-  if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const authError = validateInternalCronRequest(request);
+  if (authError) {
+    return authError;
   }
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

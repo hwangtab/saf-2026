@@ -1,7 +1,6 @@
 'use server';
 
-import { requireAdmin } from '@/lib/auth/guards';
-import { createSupabaseAdminClient } from '@/lib/auth/server';
+import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 
 export type DashboardPeriodKey = '7d' | '30d' | '90d' | '365d' | 'all' | `year_${number}`;
 type FixedDashboardPeriodKey = Exclude<DashboardPeriodKey, 'all' | `year_${number}`>;
@@ -468,7 +467,7 @@ function buildRevenueTimeSeries(
 }
 
 async function computeDashboardStats(period: DashboardPeriodKey = '7d'): Promise<DashboardStats> {
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
   const now = new Date();
   const periodKey: DashboardPeriodKey =
     isDashboardPeriodKey(period) || isAllowedYearPeriod(period, now) ? period : '7d';

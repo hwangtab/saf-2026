@@ -1,8 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { requireAdmin } from '@/lib/auth/guards';
-import { createSupabaseAdminClient } from '@/lib/auth/server';
+import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import {
   hasComposedTrailingConsonantQuery,
@@ -51,7 +50,7 @@ function parseApplicationContact(contact: string | null | undefined) {
 
 export async function getArtistsWithArtworkCount() {
   await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   const { data: artists, error } = await supabase
     .from('artists')
@@ -75,7 +74,7 @@ type GetArtistsPaginatedParams = {
 
 export async function getArtistsPaginated(params: GetArtistsPaginatedParams = {}) {
   await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   const page = Math.max(1, Math.floor(Number(params.page) || 1));
   const limit = Math.max(1, Math.min(100, Math.floor(Number(params.limit) || 25)));
@@ -124,7 +123,7 @@ export async function getArtistsPaginated(params: GetArtistsPaginatedParams = {}
 
 export async function getArtistById(id: string) {
   await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   const { data, error } = await supabase
     .from('artists')
@@ -145,7 +144,7 @@ export async function getArtistById(id: string) {
 
 export async function updateArtist(id: string, formData: FormData) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   const name_ko = validateTextLength(getString(formData, 'name_ko'), 100, '한국어 이름');
   if (!name_ko.trim()) throw new Error('작가명(한국어)을 입력해주세요.');
@@ -213,7 +212,7 @@ export async function updateArtist(id: string, formData: FormData) {
 
 export async function updateArtistProfileImage(id: string, profileImage: string | null) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   const { data: oldArtist } = await supabase
     .from('artists')
@@ -259,7 +258,7 @@ export async function updateArtistProfileImage(id: string, profileImage: string 
 
 export async function deleteArtist(id: string) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   // Keep full snapshot so deleted row can be restored from activity logs.
   // Fetch artist data and artwork count in parallel (independent queries).
@@ -308,7 +307,7 @@ export async function deleteArtist(id: string) {
 
 export async function createAdminArtist(formData: FormData) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   const name_ko = validateTextLength(getString(formData, 'name_ko'), 100, '한국어 이름');
   if (!name_ko.trim()) throw new Error('작가명(한국어)을 입력해주세요.');
@@ -354,7 +353,7 @@ export async function createAdminArtist(formData: FormData) {
 
 export async function searchUsersByName(query: string) {
   await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
   const normalizedQuery = query.trim().normalize('NFC');
   if (normalizedQuery.length < 2) return [];
 
@@ -389,7 +388,7 @@ export async function searchUsersByName(query: string) {
 
 export async function linkArtistToUser(artistId: string, userId: string) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   // Check if user is already linked to another artist
   const { data: existingArtist, error: checkError } = await supabase
@@ -485,7 +484,7 @@ export async function linkArtistToUser(artistId: string, userId: string) {
 
 export async function unlinkArtistFromUser(artistId: string) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   // Get full artist info for snapshot (before unlinking)
   const { data: oldArtist } = await supabase

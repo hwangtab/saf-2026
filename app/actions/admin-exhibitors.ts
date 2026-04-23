@@ -1,7 +1,6 @@
 'use server';
 
-import { requireAdmin } from '@/lib/auth/guards';
-import { createSupabaseAdminClient } from '@/lib/auth/server';
+import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 import { revalidatePath } from 'next/cache';
 import { logAdminAction } from './activity-log-writer';
 import { sanitizeIlikeQuery } from '@/lib/utils/query';
@@ -29,7 +28,7 @@ export async function getExhibitors(filters?: {
   query?: string;
 }) {
   await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   const { data: applications, error: appError } = await supabase
     .from('exhibitor_applications')
@@ -114,7 +113,7 @@ export async function getExhibitors(filters?: {
 
 export async function approveExhibitor(userId: string) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   const { data: profile } = await supabase
     .from('profiles')
@@ -171,7 +170,7 @@ export async function approveExhibitor(userId: string) {
 
 export async function suspendExhibitor(userId: string) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   const { data: profile } = await supabase
     .from('profiles')

@@ -3,6 +3,11 @@ import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import type { Database } from '@/types/supabase';
 
+function throwConfigurationError(code: string): never {
+  console.error(`[auth] ${code}`);
+  throw new Error('Configuration error');
+}
+
 /**
  * SERVICE_ROLE client – bypasses RLS.
  * Use ONLY in server actions AFTER requireAdmin() validation.
@@ -11,12 +16,12 @@ export function createSupabaseAdminClient() {
   const adminKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!adminKey) {
-    throw new Error('SUPABASE_SECRET_KEY 또는 SUPABASE_SERVICE_ROLE_KEY가 필요합니다.');
+    throwConfigurationError('AUTH_CFG_MISSING_ADMIN_KEY');
   }
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   if (!url) {
-    throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL');
+    throwConfigurationError('AUTH_CFG_MISSING_SUPABASE_URL');
   }
   return createClient<Database>(url, adminKey, {
     auth: {
@@ -37,7 +42,7 @@ export async function createSupabaseServerClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !key) {
-    throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY');
+    throwConfigurationError('AUTH_CFG_MISSING_PUBLIC_SUPABASE_CONFIG');
   }
   return createServerClient<Database>(url, key, {
     cookies: {

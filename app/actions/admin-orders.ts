@@ -1,9 +1,8 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { requireAdmin } from '@/lib/auth/guards';
+import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
-import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { cancelPayment } from '@/lib/integrations/toss/cancel';
 import { logAdminAction } from './activity-log-writer';
 import { deriveAndSyncArtworkStatus } from './admin-artworks';
@@ -60,7 +59,7 @@ export type OrderFilters = {
 
 export async function getOrders(filters: OrderFilters = {}): Promise<AdminOrderListItem[]> {
   await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   let query = supabase
     .from('orders')
@@ -115,7 +114,7 @@ export async function getOrders(filters: OrderFilters = {}): Promise<AdminOrderL
 
 export async function getOrderDetail(orderId: string): Promise<OrderDetail | null> {
   await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   const { data: order, error } = await supabase
     .from('orders')
@@ -205,7 +204,7 @@ export type RefundInput = {
 
 export async function refundOrder(input: RefundInput) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   const { orderId, cancelReason, refundReceiveAccount } = input;
 
@@ -385,7 +384,7 @@ export async function updateOrderStatus(
   trackingInfo?: { carrier: string; trackingNumber: string }
 ) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   const { data: order, error } = await supabase
     .from('orders')
@@ -535,7 +534,7 @@ export async function updateOrderStatus(
 
 export async function updateTrackingInfo(orderId: string, carrier: string, trackingNumber: string) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   const { data: order, error } = await supabase
     .from('orders')
@@ -579,7 +578,7 @@ export async function updateTrackingInfo(orderId: string, carrier: string, track
 
 export async function confirmDeposit(orderId: string) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   const { data: order, error } = await supabase
     .from('orders')
@@ -712,7 +711,7 @@ export async function confirmDeposit(orderId: string) {
 
 export async function cancelAwaitingOrder(orderId: string, cancelReason: string) {
   const admin = await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   if (!cancelReason.trim()) throw new Error('취소 사유를 입력해주세요.');
 

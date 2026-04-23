@@ -135,6 +135,18 @@ describe('requireAdmin', () => {
     const user = await requireAdmin();
     expect(user.id).toBe('admin-1');
   });
+
+  it('redirects to / when admin is pending', async () => {
+    setAuth('admin-1', 'admin@test.com');
+    setProfile('admin', 'pending');
+    await expect(requireAdmin()).rejects.toThrow('REDIRECT:/');
+  });
+
+  it('redirects to / when admin is suspended', async () => {
+    setAuth('admin-1', 'admin@test.com');
+    setProfile('admin', 'suspended');
+    await expect(requireAdmin()).rejects.toThrow('REDIRECT:/');
+  });
 });
 
 // ---------- requireArtistActive ----------

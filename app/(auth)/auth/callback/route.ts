@@ -1,6 +1,11 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import {
+  getOAuthStateCookieOptions,
+  isValidOAuthState,
+  OAUTH_STATE_COOKIE_NAME,
+} from '@/lib/auth/oauth-state';
+import {
   ARTIST_APPLICATION_CONSENT_SELECT,
   EXHIBITOR_APPLICATION_CONSENT_SELECT,
   buildTermsConsentPath,
@@ -12,9 +17,21 @@ import {
   resolveArtistReconsentRequirements,
 } from '@/lib/auth/terms-consent';
 
+function redirectWithOAuthStateCleared(url: string) {
+  const response = NextResponse.redirect(url);
+  response.cookies.set(OAUTH_STATE_COOKIE_NAME, '', getOAuthStateCookieOptions(0));
+  return response;
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
+  const requestState = searchParams.get('state');
+  const cookieState = request.cookies.get(OAUTH_STATE_COOKIE_NAME)?.value ?? null;
+
+  if (code && !isValidOAuthState(requestState, cookieState)) {
+    return redirectWithOAuthStateCleared(`${origin}/login?error=oauth_state`);
+  }
 
   if (code) {
     const supabase = await createSupabaseServerClient();
@@ -34,11 +51,11 @@ export async function GET(request: NextRequest) {
           .maybeSingle();
 
         if (profileError) {
-          return NextResponse.redirect(`${origin}/login`);
+          return redirectWithOAuthStateCleared(`${origin}/login`);
         }
 
         if (profile?.role === 'admin') {
-          return NextResponse.redirect(`${origin}/admin/dashboard`);
+          return redirectWithOAuthStateCleared(`${origin}/admin/dashboard`);
         }
 
         if (profile?.role === 'exhibitor') {
@@ -49,7 +66,7 @@ export async function GET(request: NextRequest) {
             .maybeSingle();
 
           if (applicationError) {
-            return NextResponse.redirect(`${origin}/login`);
+            return redirectWithOAuthStateCleared(`${origin}/login`);
           }
 
           const hasApplication = hasExhibitorApplication(application);
@@ -58,11 +75,11 @@ export async function GET(request: NextRequest) {
           const needsTos = needsTosConsent(application);
 
           if (profile.status === 'suspended') {
-            return NextResponse.redirect(`${origin}/exhibitor/suspended`);
+            return redirectWithOAuthStateCleared(`${origin}/exhibitor/suspended`);
           }
 
           if (profile.status === 'active') {
-            return NextResponse.redirect(
+            return redirectWithOAuthStateCleared(
               hasApplication
                 ? `${origin}${
                     needsTermsConsent || needsPrivacy || needsTos
@@ -78,7 +95,7 @@ export async function GET(request: NextRequest) {
             );
           }
 
-          return NextResponse.redirect(
+          return redirectWithOAuthStateCleared(
             hasApplication
               ? `${origin}${
                   needsTermsConsent || needsPrivacy || needsTos
@@ -102,14 +119,14 @@ export async function GET(request: NextRequest) {
             .maybeSingle();
 
           if (applicationError) {
-            return NextResponse.redirect(`${origin}/login`);
+            return redirectWithOAuthStateCleared(`${origin}/login`);
           }
 
           const hasApplication = hasArtistApplication(application);
           const artistReconsent = resolveArtistReconsentRequirements(application);
 
           if (profile.status === 'active') {
-            return NextResponse.redirect(
+            return redirectWithOAuthStateCleared(
               hasApplication
                 ? `${origin}${
                     artistReconsent.needsArtistConsent ||
@@ -128,7 +145,7 @@ export async function GET(request: NextRequest) {
           }
 
           if (profile.status === 'pending') {
-            return NextResponse.redirect(
+            return redirectWithOAuthStateCleared(
               hasApplication
                 ? `${origin}${
                     artistReconsent.needsArtistConsent ||
@@ -146,7 +163,7 @@ export async function GET(request: NextRequest) {
             );
           }
           if (profile.status === 'suspended') {
-            return NextResponse.redirect(`${origin}/dashboard/suspended`);
+            return redirectWithOAuthStateCleared(`${origin}/dashboard/suspended`);
           }
         }
 
@@ -165,7 +182,7 @@ export async function GET(request: NextRequest) {
           ]);
 
           if (exhibitorResult.error || artistResult.error) {
-            return NextResponse.redirect(`${origin}/login`);
+            return redirectWithOAuthStateCleared(`${origin}/login`);
           }
 
           const exhibitorApplication = exhibitorResult.data;
@@ -197,7 +214,7 @@ export async function GET(request: NextRequest) {
                 ? '/exhibitor/pending'
                 : '/dashboard/pending';
 
-            return NextResponse.redirect(
+            return redirectWithOAuthStateCleared(
               `${origin}${
                 needsArtistConsent || needsExhibitorConsent || needsPrivacy || needsTos
                   ? buildTermsConsentPath({
@@ -212,11 +229,11 @@ export async function GET(request: NextRequest) {
             );
           }
 
-          return NextResponse.redirect(`${origin}/onboarding`);
+          return redirectWithOAuthStateCleared(`${origin}/onboarding`);
         }
       }
     }
   }
 
-  return NextResponse.redirect(`${origin}/onboarding`);
+  return redirectWithOAuthStateCleared(`${origin}/onboarding`);
 }

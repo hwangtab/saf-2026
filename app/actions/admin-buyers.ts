@@ -1,7 +1,6 @@
 'use server';
 
-import { requireAdmin } from '@/lib/auth/guards';
-import { createSupabaseAdminClient } from '@/lib/auth/server';
+import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 
 export type BuyerRecord = {
   buyerName: string;
@@ -32,7 +31,7 @@ function mapChannel(source: string | null): 'offline' | 'online' {
 
 export async function getAllBuyers(): Promise<BuyerRecord[]> {
   await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   let { data, error } = await supabase
     .from('artwork_sales')
@@ -128,7 +127,7 @@ export async function updateBuyerPhone(
   if (saleIds.length === 0) return { success: true };
   if (saleIds.length > 500) throw new Error('한 번에 처리할 수 있는 항목 수를 초과했습니다.');
 
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
   const trimmedPhone = phone.trim() || null;
 
   const { error } = await supabase

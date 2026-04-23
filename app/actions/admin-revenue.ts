@@ -1,7 +1,6 @@
 'use server';
 
-import { requireAdmin } from '@/lib/auth/guards';
-import { createSupabaseAdminClient } from '@/lib/auth/server';
+import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 
 const KST_TIME_ZONE = 'Asia/Seoul';
 
@@ -287,7 +286,7 @@ export async function getRevenueAnalytics(
 }
 
 async function fetchBoundarySoldDate(
-  supabase: Awaited<ReturnType<typeof createSupabaseAdminClient>>,
+  supabase: Awaited<ReturnType<typeof requireAdminClient>>,
   ascending: boolean
 ) {
   let result = await supabase
@@ -314,7 +313,7 @@ export async function getRevenueAnalyticsForAuthorizedUser(
   input: RevenueQueryInput = {}
 ): Promise<RevenueAnalytics> {
   await requireAdmin();
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await requireAdminClient();
 
   const now = new Date();
   const currentKstYear = getKstCurrentYear(now);
