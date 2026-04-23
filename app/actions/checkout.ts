@@ -35,6 +35,19 @@ export type CreateOrderResult =
   | { success: true; orderId: string; orderNo: string; totalAmount: number; orderName: string }
   | { success: false; error: string };
 
+const MAX_ORDER_NO_INSERT_RETRIES = 3;
+
+function isOrderNoUniqueViolation(error: unknown) {
+  const typed = error as { code?: string; message?: string } | null;
+  if (!typed) return false;
+  return (
+    typed.code === '23505' ||
+    typed.message?.includes('orders_order_no_key') ||
+    typed.message?.includes('duplicate key value') ||
+    false
+  );
+}
+
 export async function createOrder(input: CreateOrderInput): Promise<CreateOrderResult> {
   const {
     artworkId,
@@ -55,7 +68,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
   // Rate limiting — IP 기준 분당 10회
   const headersList = await headers();
   const ip = headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
-  const rl = rateLimit(`createOrder:${ip}`, { limit: 10, windowMs: 60_000 });
+  const rl = await rateLimit(`createOrder:${ip}`, { limit: 10, windowMs: 60_000 });
   if (!rl.success) {
     return { success: false, error: apiError('rate_limited', buyerLocale) };
   }
@@ -148,7 +161,6 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
   const shippingAmount = calculateShippingFee(itemAmount);
   const totalAmount = itemAmount + shippingAmount;
 
-  const orderNo = generateOrderNumber();
   const artistRow = artwork.artists as { name_ko: string } | { name_ko: string }[] | null;
   const artistName = Array.isArray(artistRow)
     ? (artistRow[0]?.name_ko ?? 'Unknown Artist')
@@ -168,33 +180,53 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     buyerUserId = null;
   }
 
-  // Insert order
-  const { data: order, error: insertError } = await adminClient
-    .from('orders')
-    .insert({
-      order_no: orderNo,
-      artwork_id: artworkId,
-      quantity: 1,
-      buyer_name: buyerName,
-      buyer_email: buyerEmailNorm,
-      buyer_phone: buyerPhone,
-      buyer_user_id: buyerUserId,
-      shipping_name: shippingName,
-      shipping_phone: shippingPhone,
-      shipping_address: shippingAddress,
-      shipping_address_detail: shippingAddressDetail ?? null,
-      shipping_postal_code: shippingPostalCode,
-      shipping_memo: shippingMemo ?? null,
-      item_amount: itemAmount,
-      shipping_amount: shippingAmount,
-      total_amount: totalAmount,
-      status: 'pending_payment',
-      metadata: { locale: buyerLocale },
-    })
-    .select('id')
-    .single();
+  // Insert order (order_no UNIQUE 충돌 시 최대 3회 재시도)
+  let order: {
+    id: string;
+  } | null = null;
+  let orderNo = '';
 
-  if (insertError || !order) {
+  for (let attempt = 1; attempt <= MAX_ORDER_NO_INSERT_RETRIES; attempt++) {
+    orderNo = generateOrderNumber();
+
+    const { data: insertedOrder, error: insertError } = await adminClient
+      .from('orders')
+      .insert({
+        order_no: orderNo,
+        artwork_id: artworkId,
+        quantity: 1,
+        buyer_name: buyerName,
+        buyer_email: buyerEmailNorm,
+        buyer_phone: buyerPhone,
+        buyer_user_id: buyerUserId,
+        shipping_name: shippingName,
+        shipping_phone: shippingPhone,
+        shipping_address: shippingAddress,
+        shipping_address_detail: shippingAddressDetail ?? null,
+        shipping_postal_code: shippingPostalCode,
+        shipping_memo: shippingMemo ?? null,
+        item_amount: itemAmount,
+        shipping_amount: shippingAmount,
+        total_amount: totalAmount,
+        status: 'pending_payment',
+        metadata: { locale: buyerLocale },
+      })
+      .select('id')
+      .single();
+
+    if (!insertError && insertedOrder) {
+      order = insertedOrder;
+      break;
+    }
+
+    if (!isOrderNoUniqueViolation(insertError)) {
+      return { success: false, error: apiError('order_creation_failed', buyerLocale) };
+    }
+
+    console.error(`[checkout] ORDER_NO_COLLISION_RETRY attempt=${attempt}`);
+  }
+
+  if (!order) {
     return { success: false, error: apiError('order_creation_failed', buyerLocale) };
   }
 
@@ -234,7 +266,7 @@ export async function initiatePayment(input: InitiatePaymentInput): Promise<Init
   // Rate limiting — IP 기준 분당 10회
   const headersList = await headers();
   const ip = headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
-  const rl = rateLimit(`initiatePayment:${ip}`, { limit: 10, windowMs: 60_000 });
+  const rl = await rateLimit(`initiatePayment:${ip}`, { limit: 10, windowMs: 60_000 });
   if (!rl.success) {
     return { success: false, error: apiError('rate_limited', buyerLocale) };
   }
@@ -377,7 +409,7 @@ export async function cancelPendingOrder(orderNo: string, buyerEmail: string): P
   // BUG 29: rate limit — IP 기준 분당 10회
   const headersList = await headers();
   const ip = headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
-  const rl = rateLimit(`cancelPendingOrder:${ip}`, { limit: 10, windowMs: 60_000 });
+  const rl = await rateLimit(`cancelPendingOrder:${ip}`, { limit: 10, windowMs: 60_000 });
   if (!rl.success) return;
   const adminClient = createSupabaseAdminClient();
   await adminClient

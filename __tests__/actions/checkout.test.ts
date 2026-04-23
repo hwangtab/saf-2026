@@ -5,15 +5,30 @@
  * Supabase 모킹 기반으로 테스트합니다.
  */
 
+import { TextDecoder, TextEncoder } from 'util';
+import type { CreateOrderInput } from '@/app/actions/checkout';
+
+if (typeof global.TextEncoder === 'undefined') {
+  (global as typeof global & { TextEncoder: typeof TextEncoder }).TextEncoder = TextEncoder;
+}
+if (typeof global.TextDecoder === 'undefined') {
+  (global as typeof global & { TextDecoder: typeof TextDecoder }).TextDecoder =
+    TextDecoder as typeof global.TextDecoder;
+}
+
 // --- Mock: next/headers ---
 // --- Import SUT ---
-import type { CreateOrderInput } from '@/app/actions/checkout';
 
 const mockHeadersGet = jest.fn();
 jest.mock('next/headers', () => ({
   headers: jest.fn(async () => ({
     get: mockHeadersGet,
   })),
+}));
+
+jest.mock('next/cache', () => ({
+  revalidatePath: jest.fn(),
+  revalidateTag: jest.fn(),
 }));
 
 // --- Mock: rate-limit ---
@@ -28,6 +43,7 @@ type MockResult = { data: unknown; error: unknown };
 let mockArtworkResult: MockResult = { data: null, error: null };
 let mockRpcResult: MockResult = { data: null, error: null };
 let mockInsertResult: MockResult = { data: null, error: null };
+let mockInsertResultsQueue: MockResult[] = [];
 let mockUpdateResult: MockResult = { data: null, error: null };
 let mockAuthUserResult: MockResult = { data: { user: null }, error: null };
 
@@ -64,7 +80,12 @@ jest.mock('@/lib/auth/server', () => ({
         };
       }
       if (table === 'orders') {
-        const insertSingle = jest.fn(() => mockInsertResult);
+        const insertSingle = jest.fn(() => {
+          if (mockInsertResultsQueue.length > 0) {
+            return mockInsertResultsQueue.shift();
+          }
+          return mockInsertResult;
+        });
         const insertSelect = jest.fn(() => ({ single: insertSingle }));
         const updateEq: jest.Mock = jest.fn(() => ({ eq: updateEq, ...mockUpdateResult }));
         return {
@@ -165,6 +186,7 @@ beforeEach(async () => {
   mockArtworkResult = { data: null, error: null };
   mockRpcResult = { data: null, error: null };
   mockInsertResult = { data: null, error: null };
+  mockInsertResultsQueue = [];
   mockUpdateResult = { data: null, error: null };
   mockAuthUserResult = { data: { user: null }, error: null };
   mockFetchResponse = null;
@@ -289,6 +311,40 @@ describe('createOrder', () => {
       expect(result.error).toContain('주문 생성');
     }
   });
+
+  it('order_no UNIQUE 충돌 시 재시도 후 성공한다', async () => {
+    setupSuccessfulArtwork();
+    mockInsertResultsQueue = [
+      {
+        data: null,
+        error: {
+          code: '23505',
+          message: 'duplicate key value violates unique constraint "orders_order_no_key"',
+        },
+      },
+      {
+        data: { id: 'order-retry' },
+        error: null,
+      },
+    ];
+
+    const orderNoMock = (
+      jest.requireMock('@/lib/integrations/toss/order-number') as {
+        generateOrderNumber: jest.Mock;
+      }
+    ).generateOrderNumber;
+    orderNoMock
+      .mockImplementationOnce(() => 'SAF-20260414-COLLIDE1')
+      .mockImplementationOnce(() => 'SAF-20260414-COLLIDE2');
+
+    const result = await createOrder(validInput);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.orderId).toBe('order-retry');
+      expect(result.orderNo).toBe('SAF-20260414-COLLIDE2');
+    }
+    expect(orderNoMock).toHaveBeenCalledTimes(2);
+  });
 });
 
 // ========== initiatePayment ==========
@@ -301,9 +357,16 @@ describe('initiatePayment', () => {
     totalAmount: 5_000_000,
     buyerName: '홍길동',
     buyerEmail: 'buyer@test.com',
-    successUrl: 'http://localhost:3000/checkout/success',
-    failUrl: 'http://localhost:3000/checkout/fail',
+    successUrl: 'https://www.saf2026.com/checkout/success',
+    failUrl: 'https://www.saf2026.com/checkout/fail',
   };
+
+  beforeEach(() => {
+    mockArtworkResult = {
+      data: { total_amount: 5_000_000, status: 'pending_payment' },
+      error: null,
+    };
+  });
 
   it('결제 서버 연결 실패 시 에러 반환', async () => {
     mockFetchShouldThrow = true;

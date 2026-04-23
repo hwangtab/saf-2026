@@ -66,7 +66,7 @@ export async function lookupOrders(
   // Rate limiting — IP 기준 분당 5회
   const headersList = await headers();
   const ip = headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
-  const rl = rateLimit(`lookupOrders:${ip}`, { limit: 5, windowMs: 60_000 });
+  const rl = await rateLimit(`lookupOrders:${ip}`, { limit: 5, windowMs: 60_000 });
   if (!rl.success) {
     return { success: false, error: 'RATE_LIMITED' };
   }
@@ -152,7 +152,7 @@ export async function lookupOrderDetail(
   // Rate limiting — IP 기준 분당 5회
   const headersList = await headers();
   const ip = headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
-  const rl = rateLimit(`lookupOrderDetail:${ip}`, { limit: 5, windowMs: 60_000 });
+  const rl = await rateLimit(`lookupOrderDetail:${ip}`, { limit: 5, windowMs: 60_000 });
   if (!rl.success) {
     return { success: false, error: 'RATE_LIMITED' };
   }
@@ -297,7 +297,7 @@ export async function updateBuyerShipping(
   // Rate limiting — IP 기준 분당 3회
   const headersList = await headers();
   const ip = headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
-  const rl = rateLimit(`updateBuyerShipping:${ip}`, { limit: 3, windowMs: 60_000 });
+  const rl = await rateLimit(`updateBuyerShipping:${ip}`, { limit: 3, windowMs: 60_000 });
   if (!rl.success) {
     return { success: false, error: 'RATE_LIMITED' };
   }
@@ -361,7 +361,7 @@ export async function cancelBuyerOrder(
   // Rate limiting — IP 기준 분당 3회
   const headersList = await headers();
   const ip = headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
-  const rl = rateLimit(`cancelBuyerOrder:${ip}`, { limit: 3, windowMs: 60_000 });
+  const rl = await rateLimit(`cancelBuyerOrder:${ip}`, { limit: 3, windowMs: 60_000 });
   if (!rl.success) {
     return { success: false, error: 'RATE_LIMITED' };
   }
