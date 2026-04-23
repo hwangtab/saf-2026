@@ -41,6 +41,10 @@ export default function robots(): MetadataRoute.Robots {
           '/en/stories?*',
           '/news?*',
           '/en/news?*',
+          // 작품 상세 쿼리 파라미터 (예: `?returnTo=/special/oh-yoon`) — canonical은 `/artworks/:id` 고정이지만
+          // GSC가 쿼리 동반 URL을 "표준 없는 중복"으로 보고하므로 크롤 자체 차단
+          '/artworks/*?*',
+          '/en/artworks/*?*',
         ],
       },
       {

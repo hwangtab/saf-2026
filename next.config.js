@@ -78,6 +78,11 @@ const nextConfig = {
         destination: '/en/archive/2026',
         permanent: true,
       },
+      // /en/{auth route}는 페이지가 없어 404 — 한국어 auth 페이지로 귀속 (영문 UI는 해당 페이지 내 자동 locale 분기)
+      { source: '/en/login', destination: '/login', permanent: true },
+      { source: '/en/signup', destination: '/signup', permanent: true },
+      { source: '/en/onboarding', destination: '/onboarding', permanent: true },
+      { source: '/en/terms-consent', destination: '/terms-consent', permanent: true },
     ];
   },
   async headers() {
