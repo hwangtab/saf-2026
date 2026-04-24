@@ -137,6 +137,7 @@ export function TermsConsentForm({
   const privacyContainerRef = useRef<HTMLDivElement>(null);
   const tosContainerRef = useRef<HTMLDivElement>(null);
   const submitTriggerRef = useRef<HTMLElement | null>(null);
+  const errorRegionRef = useRef<HTMLDivElement | null>(null);
 
   const artistReady = !needsArtistConsent || (hasReadArtistTerms && artistAgreed);
   const exhibitorReady = !needsExhibitorConsent || (hasReadExhibitorTerms && exhibitorAgreed);
@@ -322,6 +323,13 @@ export function TermsConsentForm({
       setHasReadTos(true);
     }
   };
+
+  // 서버 액션이 에러 state를 반환하면(특히 silent RLS 실패), 사용자가 메시지를 놓치지 않도록 alert 박스를 화면 가운데로 스크롤.
+  useEffect(() => {
+    if (state.error && state.message && errorRegionRef.current) {
+      errorRegionRef.current.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }
+  }, [state.error, state.message]);
 
   useEffect(() => {
     const checkScrollableState = () => {
@@ -677,8 +685,17 @@ export function TermsConsentForm({
         </div>
       )}
 
-      <div className="flex items-center justify-between gap-3 border-t border-gray-100 pt-4">
-        {state.error && <p className="text-sm text-danger-a11y">{state.message}</p>}
+      {state.error && state.message && (
+        <div
+          ref={errorRegionRef}
+          role="alert"
+          className="rounded-lg border border-danger bg-danger/10 px-4 py-3 text-sm text-danger-a11y"
+        >
+          {state.message}
+        </div>
+      )}
+
+      <div className="flex justify-end border-t border-gray-100 pt-4">
         <Button type="submit" loading={isPending} disabled={isPending} variant="secondary">
           {copy.continueAfterConsent}
         </Button>
