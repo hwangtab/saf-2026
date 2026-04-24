@@ -40,8 +40,11 @@ yarn-error.log*
 # Vercel
 .vercel/
 
-# next-image-export-optimizer
-/public/images/**/nextImageExportOptimizer/
+# next-image-export-optimizer (모든 nextImageExportOptimizer/ 디렉토리 + hash manifest)
+# 빌드 시 자동 생성 — sharp/optimizer 버전 변경 시 hash가 일괄 갱신되어 working tree에 churn을 유발.
+# Vercel 빌드에서 같은 lockfile로 재생성되므로 추적할 필요 없음.
+/public/**/nextImageExportOptimizer/
+/public/next-image-export-optimizer-hashes.json
 .gstack/
 
 # TypeScript build cache
