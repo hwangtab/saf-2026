@@ -63,11 +63,12 @@ export type { ClaimReviewInput } from './claim-review';
 export { generateClaimReviewSchema, generateSAFClaimReviews } from './claim-review';
 
 // HowTo (AEO/GEO)
-export type { HowToStep, HowToInput } from './howto';
+export type { HowToStep, HowToInput, ArtworkSpecificFAQInput } from './howto';
 export {
   generateHowToSchema,
   generateArtworkPurchaseHowTo,
   generateArtworkPurchaseFAQ,
+  generateArtworkSpecificFAQ,
   generateMemberJoinHowTo,
   generateExhibitionEnjoyHowTo,
 } from './howto';

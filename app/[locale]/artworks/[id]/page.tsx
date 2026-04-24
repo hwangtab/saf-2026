@@ -25,13 +25,13 @@ import { SITE_URL } from '@/lib/constants';
 import RelatedArticles from '@/components/features/RelatedArticles';
 import ExpandableHistory from '@/components/features/ExpandableHistory';
 import { generateArtworkMetadata, generateArtworkJsonLd } from '@/lib/seo-utils';
-import { generateArtworkPurchaseFAQ } from '@/lib/schemas/howto';
+import { generateArtworkPurchaseFAQ, generateArtworkSpecificFAQ } from '@/lib/schemas/howto';
 import { getCategoryLabel } from '@/lib/artwork-category';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import SupportMessage from '@/components/features/SupportMessage';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import ArtworkCard from '@/components/ui/ArtworkCard';
-import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
+import { resolveArtworkImageUrlForPreset, shuffleArray } from '@/lib/utils';
 import type { Artwork } from '@/types';
 import ArtworkPurchaseCTA from '@/components/features/ArtworkPurchaseCTA';
 import { containsHangul } from '@/lib/search-utils';
@@ -112,7 +112,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
   const [artistWorks, categoryWorks] = await Promise.all([
     getSupabaseArtworksByArtist(artwork.artist),
     artwork.category
-      ? getArtworksByCategoryLight(artwork.category, 6)
+      ? getArtworksByCategoryLight(artwork.category, 20)
       : Promise.resolve([] as Artwork[]),
   ]);
 
@@ -126,9 +126,10 @@ export default async function ArtworkDetailPage({ params }: Props) {
   const otherWorks = artistWorks.filter((a) => a.id !== artwork.id).slice(0, 3);
 
   // 같은 카테고리의 다른 작품 (같은 작가·현재 작품 제외, 판매중만, 최대 3점)
-  const sameCategoryWorks = categoryWorks
-    .filter((a) => a.id !== artwork.id && a.artist !== artwork.artist)
-    .slice(0, 3);
+  // 20개 후보 풀에서 셔플 후 3점 추출 — revalidate=600 주기마다 다른 조합 노출
+  const sameCategoryWorks = shuffleArray(
+    categoryWorks.filter((a) => a.id !== artwork.id && a.artist !== artwork.artist)
+  ).slice(0, 3);
 
   // Extract numeric price using utility
   const parsedPrice = parsePrice(artwork.price);
@@ -208,6 +209,26 @@ export default async function ArtworkDetailPage({ params }: Props) {
   );
 
   const faqSchema = generateArtworkPurchaseFAQ(locale);
+  // 작품-특화 FAQ — 제목·작가·매체·크기·가격을 답변에 포함시켜 작품마다 unique한 Q&A.
+  // "{작가명} 작품 가격", "{작품명} 어떤 작품" 같은 롱테일 검색·LLM 인용 흡수.
+  const artworkSpecificFaqSchema = generateArtworkSpecificFAQ(
+    {
+      id: artwork.id,
+      title: artwork.title,
+      title_en: artwork.title_en,
+      artist: artwork.artist,
+      artist_en: artwork.artist_en,
+      material: artwork.material,
+      size: artwork.size,
+      year: artwork.year,
+      price: artwork.price,
+      description: artwork.description,
+      description_en: artwork.description_en,
+      category: artwork.category,
+      sold: artwork.sold,
+    },
+    locale
+  );
 
   // LCP preload — 모바일은 slider 프리셋(400w) / 데스크톱은 detail(1600w)
   // imageSrcSet + imageSizes로 <picture> + media query 분기에 맞춰 브라우저가 올바른 URL 선택
@@ -232,6 +253,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
       )}
       <JsonLdScript data={[productSchema, breadcrumbSchema, webPageSchema]} />
       <JsonLdScript data={faqSchema} />
+      {artworkSpecificFaqSchema !== null && <JsonLdScript data={artworkSpecificFaqSchema} />}
       <Section
         variant="white"
         prevVariant="canvas-soft"
