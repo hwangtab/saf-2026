@@ -30,12 +30,14 @@ const LAST_UPDATED = '2026-01-15';
 const PAGE_URL = `${SITE_URL}/our-reality`;
 const PAGE_COPY = {
   ko: {
-    title: '한국 예술인 84.9%가 대출에서 배제된다 | 2025 금융 재난 보고서',
+    // 끝에 "· 씨앗페" 브랜드 추가 — Twitter 카드는 twitter:title만 노출하고 siteName 안 보여줌.
+    // 페이스북/카카오는 OG siteName 별도 표시되지만 트위터·LinkedIn 등은 title 단독 → 브랜드 명시 필요.
+    title: '한국 예술인 84.9%가 대출에서 배제된다 · 2025 금융 재난 보고서 | 씨앗페',
     description:
       '한국 예술인 84.9%가 제1금융권 대출에서 배제, 48.6%가 연 15% 이상 고금리 상품에 노출, 88.3%가 채권추심 후 창작을 중단한다. 2025 실태조사 데이터로 본 예술인 금융 위기의 구조.',
   },
   en: {
-    title: '84.9% of Korean artists are excluded from bank loans | 2025 Report',
+    title: '84.9% of Korean artists are excluded from bank loans · 2025 Report | SAF',
     description:
       '84.9% of Korean artists are shut out of primary banking, 48.6% are pushed to high-interest products (15%+ APR), and 88.3% stop creating after debt collection. Evidence from the 2025 artist finance survey.',
   },
@@ -44,10 +46,8 @@ const PAGE_COPY = {
 export async function generateMetadata(): Promise<Metadata> {
   const locale = resolveLocale(await getLocale());
   const copy = PAGE_COPY[locale];
-  const tSeo = await getTranslations('seo');
-  const title = `${copy.title} | ${tSeo('siteTitle')}`;
   const base = createStandardPageMetadata(
-    title,
+    copy.title,
     copy.description,
     PAGE_URL,
     '/our-reality',

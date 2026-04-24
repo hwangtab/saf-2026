@@ -27,12 +27,13 @@ const LAST_UPDATED = '2026-03-01';
 const PAGE_URL = `${SITE_URL}/transparency`;
 const PAGE_COPY = {
   ko: {
-    title: '운용 보고서',
+    // 끝에 "| 씨앗페" 브랜드 추가 — 트위터/링크드인 카드는 siteName 미노출, title 단독 표시.
+    title: '예술인 상호부조 대출 운용 보고서 · 354건 누적·95% 상환 | 씨앗페',
     description:
       '2022년 12월 시작된 예술인 상호부조 대출 운영 현황. 누적 354건, 상환율 95%, 총 7억 원 이상 지원의 성과를 연간 보고서로 투명하게 공개합니다.',
   },
   en: {
-    title: 'Transparency Reports',
+    title: 'Transparency Reports · 354 Loans, 95% Repayment | SAF',
     description:
       'Launched in December 2022, the artist mutual aid loan program publishes annual reports to ensure full operational transparency.',
   },
@@ -41,10 +42,8 @@ const PAGE_COPY = {
 export async function generateMetadata(): Promise<Metadata> {
   const locale = resolveLocale(await getLocale());
   const copy = PAGE_COPY[locale];
-  const tSeo = await getTranslations('seo');
-  const title = `${copy.title} | ${tSeo('siteTitle')}`;
   const base = createStandardPageMetadata(
-    title,
+    copy.title,
     copy.description,
     PAGE_URL,
     '/transparency',

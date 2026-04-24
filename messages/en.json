@@ -201,7 +201,7 @@
   },
   "seo": {
     "siteTitle": "SAF Online Gallery",
-    "titleTemplate": "%s | SAF Online Gallery",
+    "titleTemplate": "%s",
     "siteDescription": "SAF Online is an art gallery selling original works by 127 Korean artists — paintings, prints, photography, and sculptures. All proceeds support the Artist Mutual Aid Fund.",
     "ogImageAlt": "SAF Online Gallery representative image"
   },

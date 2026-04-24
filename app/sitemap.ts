@@ -1,6 +1,5 @@
 import type { MetadataRoute } from 'next';
 import { SITE_URL, CAMPAIGN } from '@/lib/constants';
-import { routing } from '@/i18n/routing';
 import { getSupabaseArtworks, getSupabaseNews, getSupabaseStories } from '@/lib/supabase-data';
 import { videos as archiveVideos } from '@/content/videos';
 import { CATEGORY_EN_MAP } from '@/lib/artwork-category';
@@ -9,26 +8,21 @@ import { STORY_CATEGORIES } from '@/types';
 
 export const revalidate = 3600;
 
-function localizedUrl(baseUrl: string, path: string, locale: string): string {
-  if (locale === routing.defaultLocale) {
-    return `${baseUrl}${path}`;
-  }
-  return `${baseUrl}/${locale}${path}`;
+// 영문 사이트는 운영하지 않음 — sitemap은 ko 단일 언어만 발행.
+// /en/* 페이지는 layout 차원에서 noindex 처리되며, 디인덱스 완료 후
+// robots.txt에서 /en/ 차단 추가 검토.
+function koUrl(baseUrl: string, path: string): string {
+  return `${baseUrl}${path}`;
 }
 
-function createAlternates(baseUrl: string, path: string, koOnly = false) {
-  const languages: Record<string, string> = {};
-  if (koOnly) {
-    // 한국어 전용 콘텐츠: 영어 alternate 생략 (noindex 대상과 hreflang 충돌 방지)
-    languages['ko-KR'] = localizedUrl(baseUrl, path, 'ko');
-  } else {
-    for (const locale of routing.locales) {
-      const langCode = locale === 'ko' ? 'ko-KR' : 'en-US';
-      languages[langCode] = localizedUrl(baseUrl, path, locale);
-    }
-  }
-  languages['x-default'] = localizedUrl(baseUrl, path, routing.defaultLocale);
-  return { languages };
+function koAlternates(baseUrl: string, path: string) {
+  const url = koUrl(baseUrl, path);
+  return {
+    languages: {
+      'ko-KR': url,
+      'x-default': url,
+    },
+  };
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -148,24 +142,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // Generate entries for both locales with hreflang alternates
-  const staticPages: MetadataRoute.Sitemap = staticPaths.flatMap((page) =>
-    routing.locales.map((locale) => ({
-      url: localizedUrl(baseUrl, page.path, locale),
-      lastModified: page.lastModified || now,
-      changeFrequency: page.changeFrequency,
-      priority: locale === routing.defaultLocale ? page.priority : page.priority * 0.9,
-      alternates: createAlternates(baseUrl, page.path),
-    }))
-  );
+  // 한국어 단일 언어로 발행 (영문 사이트는 noindex)
+  const staticPages: MetadataRoute.Sitemap = staticPaths.map((page) => ({
+    url: koUrl(baseUrl, page.path),
+    lastModified: page.lastModified || now,
+    changeFrequency: page.changeFrequency,
+    priority: page.priority,
+    alternates: koAlternates(baseUrl, page.path),
+  }));
 
-  // 법적 페이지: 한국어만 (koOnly hreflang)
   const legalPages: MetadataRoute.Sitemap = legalPaths.map((page) => ({
-    url: localizedUrl(baseUrl, page.path, routing.defaultLocale),
+    url: koUrl(baseUrl, page.path),
     lastModified: page.lastModified,
     changeFrequency: page.changeFrequency,
     priority: page.priority,
-    alternates: createAlternates(baseUrl, page.path, true),
+    alternates: koAlternates(baseUrl, page.path),
   }));
 
   // Dynamic artwork detail pages (both locales)
@@ -190,14 +181,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // lastModified: 판매 완료 시 sold_at 날짜, 판매 중이면 전시 종료일
     const artworkLastModified = artwork.sold_at ? new Date(artwork.sold_at) : exhibitionEndDate;
 
-    return routing.locales.map((locale) => ({
-      url: localizedUrl(baseUrl, artworkPath, locale),
-      lastModified: artworkLastModified,
-      changeFrequency: freq,
-      priority: locale === routing.defaultLocale ? basePriority : basePriority * 0.7,
-      alternates: createAlternates(baseUrl, artworkPath),
-      ...(absoluteImageUrl ? { images: [absoluteImageUrl] } : {}),
-    }));
+    return [
+      {
+        url: koUrl(baseUrl, artworkPath),
+        lastModified: artworkLastModified,
+        changeFrequency: freq,
+        priority: basePriority,
+        alternates: koAlternates(baseUrl, artworkPath),
+        ...(absoluteImageUrl ? { images: [absoluteImageUrl] } : {}),
+      },
+    ];
   });
 
   // Artist pages (한국어 로케일만 — 영어 아티스트 페이지는 한국어 콘텐츠만 있어 thin content)
@@ -216,24 +209,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       : null;
 
     return {
-      url: localizedUrl(baseUrl, artistPath, routing.defaultLocale),
+      url: koUrl(baseUrl, artistPath),
       lastModified: exhibitionEndDate,
       changeFrequency: 'monthly' as const,
       priority: 0.65,
-      alternates: createAlternates(baseUrl, artistPath, true),
+      alternates: koAlternates(baseUrl, artistPath),
       ...(absoluteArtistImg ? { images: [absoluteArtistImg] } : {}),
     };
   });
 
-  // News pages (한국어 로케일만 — 뉴스 콘텐츠가 한국어 전용)
+  // News pages
   const newsPages: MetadataRoute.Sitemap = allNews.map((article) => {
     const newsPath = `/news/${article.id}`;
     return {
-      url: localizedUrl(baseUrl, newsPath, routing.defaultLocale),
+      url: koUrl(baseUrl, newsPath),
       lastModified: article.date ? new Date(article.date) : now,
       changeFrequency: 'yearly' as const,
       priority: 0.6,
-      alternates: createAlternates(baseUrl, newsPath, true),
+      alternates: koAlternates(baseUrl, newsPath),
     };
   });
 
@@ -253,31 +246,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       : null;
 
     return {
-      url: localizedUrl(baseUrl, categoryPath, routing.defaultLocale),
+      url: koUrl(baseUrl, categoryPath),
       lastModified: exhibitionEndDate,
       changeFrequency: 'monthly' as const,
       priority: 0.75,
-      alternates: createAlternates(baseUrl, categoryPath, true),
+      alternates: koAlternates(baseUrl, categoryPath),
       ...(absoluteCatImg ? { images: [absoluteCatImg] } : {}),
     };
   });
 
   // Story category landing pages (SEO: 토픽 클러스터 — "작가 인터뷰", "미술 구매 가이드" 등)
-  const storyCategoryPages: MetadataRoute.Sitemap = STORY_CATEGORIES.flatMap((category) => {
+  const storyCategoryPages: MetadataRoute.Sitemap = STORY_CATEGORIES.map((category) => {
     const categoryPath = `/stories/category/${category}`;
-    return routing.locales.map((locale) => ({
-      url: localizedUrl(baseUrl, categoryPath, locale),
+    return {
+      url: koUrl(baseUrl, categoryPath),
       lastModified: now,
       changeFrequency: 'weekly' as const,
-      priority: locale === routing.defaultLocale ? 0.8 : 0.72,
-      alternates: createAlternates(baseUrl, categoryPath),
-    }));
+      priority: 0.8,
+      alternates: koAlternates(baseUrl, categoryPath),
+    };
   });
 
-  // Story pages: body_en이 채워진 글은 양 locale alternate 생성, 미번역 글은 koOnly
   const storyPages: MetadataRoute.Sitemap = allStories.map((story) => {
     const storyPath = `/stories/${story.slug}`;
-    const hasEnglish = Boolean(story.body_en && story.body_en.trim().length > 0);
 
     // 이미지: thumbnail 우선, 없으면 body 마크다운 첫 번째 이미지
     let storyImageUrl: string | null = story.thumbnail || null;
@@ -289,26 +280,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       storyImageUrl && storyImageUrl.startsWith('http') ? storyImageUrl : null;
 
     return {
-      url: localizedUrl(baseUrl, storyPath, routing.defaultLocale),
+      url: koUrl(baseUrl, storyPath),
       lastModified: story.updated_at ? new Date(story.updated_at) : new Date(story.published_at),
       changeFrequency: 'monthly' as const,
       priority: 0.7,
-      alternates: createAlternates(baseUrl, storyPath, !hasEnglish),
+      alternates: koAlternates(baseUrl, storyPath),
       ...(absoluteStoryImage ? { images: [absoluteStoryImage] } : {}),
     };
   });
 
-  // 비디오 시청 페이지: 한국어 전용 (영어는 thin content — noindex 대상)
   const videoWatchPages: MetadataRoute.Sitemap = archiveVideos.map((video) => {
     const path = `/archive/2023/videos/${video.youtubeId}`;
     const thumbnailUrl = `https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`;
 
     return {
-      url: localizedUrl(baseUrl, path, routing.defaultLocale),
+      url: koUrl(baseUrl, path),
       lastModified: new Date('2023-12-31'),
       changeFrequency: 'yearly' as const,
       priority: 0.72,
-      alternates: createAlternates(baseUrl, path, true),
+      alternates: koAlternates(baseUrl, path),
       images: [thumbnailUrl],
     };
   });

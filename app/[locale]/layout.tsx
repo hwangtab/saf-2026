@@ -28,6 +28,23 @@ export async function generateMetadata({
       template: tSeo('titleTemplate'),
     },
     description: tSeo('siteDescription'),
+    // 영문 사이트는 색인 제외 (자동 번역 수준이라 thin/duplicate content).
+    // follow는 유지해 내부 링크 발견·평가에는 영향 없음.
+    // Next.js metadata 머지 규칙상 자식이 robots를 설정하면 부모(root layout)의 robots 객체가
+    // 통째로 교체됨 → root에 있던 googleBot 디렉티브(max-snippet 등)가 사라지므로 여기서 명시.
+    // index:false라 max-image-preview 등은 SERP에 노출 안 되지만 일관성·디버깅 용이성 위해 유지.
+    // 페이지별 generateMetadata에서 robots를 별도 지정하면 해당 값이 우선됨.
+    robots: {
+      index: false,
+      follow: true,
+      googleBot: {
+        index: false,
+        follow: true,
+        'max-snippet': -1,
+        'max-image-preview': 'large',
+        'max-video-preview': -1,
+      },
+    },
     openGraph: {
       locale: 'en_US',
       siteName: 'SAF Online',

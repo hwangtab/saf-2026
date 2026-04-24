@@ -85,18 +85,16 @@ const NEWS_COPY: Record<LocaleCode, NewsPageCopy> = {
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = resolveLocale(await getLocale());
-  const tSeo = await getTranslations('seo');
   const newsArticles = await getSupabaseNews();
   const count = newsArticles.length;
-  const dynamicTitle =
+  const title =
     locale === 'en'
-      ? `Press coverage — ${count} articles about SAF Online`
-      : `씨앗페 언론 보도 모음 — ${count}건의 기사·인터뷰`;
+      ? `Press coverage · ${count} articles about SAF Online`
+      : `씨앗페 언론 보도 ${count}건 · 한겨레·경향·KBS 기사·인터뷰`;
   const dynamicDescription =
     locale === 'en'
       ? `${count} press articles and interviews about the SAF Online campaign and Korean artist financial exclusion. Curated by major outlets.`
-      : `씨앗페 캠페인과 예술인 금융 차별을 다룬 주요 언론의 기사·인터뷰 ${count}건 모음. 한겨레·경향·KBS 등 보도 링크 제공.`;
-  const title = `${dynamicTitle} | ${tSeo('siteTitle')}`;
+      : `씨앗페 캠페인과 예술인 금융 차별을 다룬 주요 언론의 기사·인터뷰 ${count}건. 한겨레·경향신문·KBS 등 보도 원문 링크와 인용 모음.`;
   const pageUrl = buildLocaleUrl('/news', locale);
 
   return {

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getLocale, getTranslations } from 'next-intl/server';
+import { getLocale } from 'next-intl/server';
 
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
@@ -20,12 +20,12 @@ export const revalidate = false;
 const PAGE_URL = `${SITE_URL}/about`;
 const PAGE_COPY = {
   ko: {
-    title: '씨앗페 소개',
+    title: '씨앗페 소개 · 예술인 상호부조 캠페인 | 127명 작가, 354건 대출',
     description:
       '씨앗페는 금융 차별에 맞서는 예술인 상호부조 캠페인입니다. 127명의 연대 작가, 354건의 저금리 대출, 95%의 상환율 — 작품이 금융이 되는 구조를 소개합니다.',
   },
   en: {
-    title: 'About SAF',
+    title: 'About SAF · Mutual-Aid Campaign for Korean Artists',
     description:
       'SAF is a mutual-aid campaign against financial discrimination toward Korean artists. 127 solidarity artists, 354 low-interest loans, 95% repayment — art becomes finance.',
   },
@@ -34,9 +34,7 @@ const PAGE_COPY = {
 export async function generateMetadata(): Promise<Metadata> {
   const locale = resolveLocale(await getLocale());
   const copy = PAGE_COPY[locale];
-  const tSeo = await getTranslations('seo');
-  const title = `${copy.title} | ${tSeo('siteTitle')}`;
-  const base = createStandardPageMetadata(title, copy.description, PAGE_URL, '/about', locale);
+  const base = createStandardPageMetadata(copy.title, copy.description, PAGE_URL, '/about', locale);
   return {
     ...base,
     openGraph: {

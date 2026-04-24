@@ -37,9 +37,13 @@ const PAGE_COPY = {
 export async function generateMetadata(): Promise<Metadata> {
   const locale = resolveLocale(await getLocale());
   const copy = PAGE_COPY[locale];
-  const tSeo = await getTranslations('seo');
-  const title = `${copy.title} | ${tSeo('siteTitle')}`;
-  const base = createStandardPageMetadata(title, copy.description, PAGE_URL, '/our-proof', locale);
+  const base = createStandardPageMetadata(
+    copy.title,
+    copy.description,
+    PAGE_URL,
+    '/our-proof',
+    locale
+  );
   return {
     ...base,
     openGraph: {
