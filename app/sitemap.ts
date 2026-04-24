@@ -25,6 +25,15 @@ function koAlternates(baseUrl: string, path: string) {
   };
 }
 
+// Next.js 16의 sitemap.xml 직렬화는 <image:loc> 안의 query string `&`를 XML escape하지 않음
+// → Supabase render URL의 `?width=1200&quality=80&resize=contain`이 그대로 들어가 XML 파싱 실패.
+// 해결: query string 제거. Supabase render endpoint는 query 없어도 원본 이미지 반환하므로
+// Google Image crawler 인덱싱에 영향 없음 (이미지가 1200px이든 원본이든 색인 자체는 동일).
+function safeSitemapImageUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  return url.split('?')[0];
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = SITE_URL;
   const [allArtworks, allNews, allStories] = await Promise.all([
@@ -188,7 +197,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         changeFrequency: freq,
         priority: basePriority,
         alternates: koAlternates(baseUrl, artworkPath),
-        ...(absoluteImageUrl ? { images: [absoluteImageUrl] } : {}),
+        ...(safeSitemapImageUrl(absoluteImageUrl)
+          ? { images: [safeSitemapImageUrl(absoluteImageUrl)!] }
+          : {}),
       },
     ];
   });
@@ -214,7 +225,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly' as const,
       priority: 0.65,
       alternates: koAlternates(baseUrl, artistPath),
-      ...(absoluteArtistImg ? { images: [absoluteArtistImg] } : {}),
+      ...(safeSitemapImageUrl(absoluteArtistImg)
+        ? { images: [safeSitemapImageUrl(absoluteArtistImg)!] }
+        : {}),
     };
   });
 
@@ -251,7 +264,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly' as const,
       priority: 0.75,
       alternates: koAlternates(baseUrl, categoryPath),
-      ...(absoluteCatImg ? { images: [absoluteCatImg] } : {}),
+      ...(safeSitemapImageUrl(absoluteCatImg)
+        ? { images: [safeSitemapImageUrl(absoluteCatImg)!] }
+        : {}),
     };
   });
 
@@ -285,7 +300,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly' as const,
       priority: 0.7,
       alternates: koAlternates(baseUrl, storyPath),
-      ...(absoluteStoryImage ? { images: [absoluteStoryImage] } : {}),
+      ...(safeSitemapImageUrl(absoluteStoryImage)
+        ? { images: [safeSitemapImageUrl(absoluteStoryImage)!] }
+        : {}),
     };
   });
 
@@ -299,7 +316,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'yearly' as const,
       priority: 0.72,
       alternates: koAlternates(baseUrl, path),
-      images: [thumbnailUrl],
+      images: [safeSitemapImageUrl(thumbnailUrl) ?? thumbnailUrl],
     };
   });
 
