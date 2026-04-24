@@ -1,5 +1,25 @@
 [
   {
+    "hash": "ac89d4c3",
+    "type": "fix",
+    "scope": "slider",
+    "subject": "푸터 슬라이더 카드 날아가는 버그 + 애니메이션 경량화",
+    "summary": "푸터 작품 슬라이더에서 간헐적으로 왼쪽 끝 카드가 오른쪽으로 미끄러지듯 날아가는 버그를 근본 해결하고, 스크롤 애니메이션을 GPU 합성으로 더 가볍게 만듦.",
+    "body": "- components/ui/ArtworkCard.tsx (slider variant): Embla 슬라이드 루트 요소(Link)에서 transition-transform 제거 → 내부 div로 hover transform 분리. Link가 슬라이드 요소이기 때문에 loop 모드에서 Embla가 카드를 끝→끝으로 순간이동시킬 때 걸려 있던 transition이 300ms 동안 애니메이션되어 \"날아가는\" 착시가 발생. hover shadow는 shadow-xl → shadow-lg로 완화해 커서가 스쳐 지나갈 때 페인트 비용 감소.\n- components/features/RelatedArtworksSlider.tsx: AutoScroll speed 1 → 0.8로 낮춰 프레임당 이동 거리 감소(체감 부드러움 개선), Embla 트랙에 will-change-transform 추가해 GPU 합성 레이어로 명시 승격.\n\n검증: npm run type-check 통과. 기존 ArtworkCard 테스트 2/3 통과(실패 1건은 수정 범위 밖 gallery variant의 pre-existing i18n 관련 이슈).",
+    "date": "2026-04-24",
+    "author": "황경하"
+  },
+  {
+    "hash": "0c924768",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "영문 색인 정리·메타 리라이팅·매거진 카테고리 큐레이션",
+    "summary": "검색 유입과 CTR 증대를 위한 SEO 개선 — 영문 사이트 noindex 통일, 핵심 페이지 타이틀·디스크립션 재작성, 매거진 카테고리에 큐레이션 인트로 본문 추가.",
+    "body": "D — 영문 사이트 색인 정리:\n- sitemap에서 /en/ URL 전부 제거 (기존 1,116 SSG 페이지 그대로 유지)\n- /en/* 전역 noindex (layout에 robots+googleBot 디렉티브 명시 — Next.js metadata 머지 시 root의 googleBot 블록 손실 방지)\n- canonical 항상 ko URL, en hreflang 미발행 — 구글에 \"ko가 정본\" 명확 시그널\n- createLocaleAlternates 시그니처 호환 유지 (@deprecated 주석으로 점진적 정리 안내)\n\nA — 타이틀/디스크립션 리라이팅:\n- title.template 'brand suffix' 제거 → '%s' (Google sitename 자동 처리)\n- 홈/작품/작가/카테고리/about/our-reality/our-proof/transparency/news 메타 카피 재작성 (숫자 + 사회적 의미 + USP 패턴)\n- our-reality·transparency title에 브랜드 suffix 명시 (Twitter/LinkedIn 카드는 OG siteName 미노출 → title 단독에 브랜드 필요)\n- en.json titleTemplate도 동일 패턴으로 통일\n\nC — Stories 카테고리 큐레이션 인트로:\n- 3개 카테고리(artist-story, buying-guide, art-knowledge)에 editorial intro + 3단락 본문 추가 (ko ~1,000자, en 단축본)\n- thin content → topical authority 페이지로 전환\n- Section padding=\"none\" 명시로 className의 pt/pb 단독 적용\n\n검증: type-check ✓, schema/i18n 71/71 ✓, build 1,116 SSG 페이지 ✓, lint 0 errors. 6차 리뷰 사이클을 통해 발견된 잠재 버그 모두 수정 후 안정화 확인.",
+    "date": "2026-04-24",
+    "author": "황경하"
+  },
+  {
     "hash": "770f6de2",
     "type": "feat",
     "scope": "seo",

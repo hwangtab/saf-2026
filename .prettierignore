@@ -1,0 +1,17 @@
+# Next.js typegen이 "..." (double quote)로 자동 생성하는 파일.
+# Prettier 기본 설정(singleQuote: true)이 '...'로 바꾸면 다음 typegen이 "..."로 되돌려
+# 무한 토글이 발생하므로 prettier 대상에서 제외한다. Next.js 공식 가이드도 편집 금지.
+next-env.d.ts
+
+# 빌드 산출물·자동 생성물
+/.next/
+/out/
+/build/
+/coverage/
+/public/**/nextImageExportOptimizer/
+/public/next-image-export-optimizer-hashes.json
+/content/changelog.json
+
+# 의존성·CI
+/node_modules/
+package-lock.json
