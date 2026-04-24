@@ -86,7 +86,8 @@ export default function RelatedArtworksSlider({
     },
     [
       AutoScroll({
-        speed: 1,
+        // speed를 낮추면 프레임당 이동 거리가 줄어 compositor 부담 감소 + 시각적으로 더 부드러움
+        speed: 0.8,
         startDelay: 0,
         stopOnInteraction: false,
         stopOnMouseEnter: true,
@@ -170,9 +171,9 @@ export default function RelatedArtworksSlider({
         </div>
       </div>
 
-      {/* Embla 슬라이더 */}
+      {/* Embla 슬라이더 — will-change-transform으로 트랙을 GPU 합성 레이어로 명시 승격 */}
       <div className="overflow-hidden" ref={emblaRef}>
-        <div className="flex gap-4 pl-4 sm:pl-5">
+        <div className="flex gap-4 pl-4 sm:pl-5 will-change-transform">
           {relatedArtworks.map((artwork) => (
             <ArtworkCard key={artwork.id} artwork={artwork} variant="slider" />
           ))}

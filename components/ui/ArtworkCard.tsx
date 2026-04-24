@@ -205,44 +205,46 @@ function ArtworkCard({
 
   if (variant === 'slider') {
     return (
+      // Link는 Embla의 슬라이드 요소이므로 transition-transform을 걸면 안 됨
+      // (loop 모드에서 Embla가 슬라이드를 끝→끝으로 순간이동시킬 때 애니메이션이 걸려
+      // "카드가 왼쪽에서 오른쪽으로 날아가는" 버그 발생). hover 효과는 내부 div로 분리.
       <Link
         href={getHref(artwork, returnTo)}
-        className={cn(
-          'flex-shrink-0 w-[160px] sm:w-[180px] md:w-[200px] group transition-transform duration-300 hover:-translate-y-1',
-          className
-        )}
+        className={cn('flex-shrink-0 w-[160px] sm:w-[180px] md:w-[200px] group', className)}
       >
-        <div
-          className={cn(
-            'relative aspect-square overflow-hidden rounded-2xl shadow-sm group-hover:shadow-xl transition-shadow duration-300',
-            theme === 'dark' ? 'bg-charcoal' : 'bg-primary-surface'
-          )}
-        >
-          <div className="absolute inset-2">
-            <SafeImage
-              src={getImageSrc(artwork, variant)}
-              alt={getImageAlt(artwork, untitledLabel, unknownArtistLabel, locale)}
-              fill
-              className="object-contain"
-              sizes={config.imageSizes}
-            />
+        <div className="transition-transform duration-300 group-hover:-translate-y-1">
+          <div
+            className={cn(
+              'relative aspect-square overflow-hidden rounded-2xl shadow-sm group-hover:shadow-lg transition-shadow duration-300',
+              theme === 'dark' ? 'bg-charcoal' : 'bg-primary-surface'
+            )}
+          >
+            <div className="absolute inset-2">
+              <SafeImage
+                src={getImageSrc(artwork, variant)}
+                alt={getImageAlt(artwork, untitledLabel, unknownArtistLabel, locale)}
+                fill
+                className="object-contain"
+                sizes={config.imageSizes}
+              />
+            </div>
+            {artwork.sold && <SoldBadge variant="slider" label={soldLabel} />}
+            {artwork.reserved && !artwork.sold && (
+              <ReservedBadge variant="slider" label={reservedLabel} />
+            )}
+            {artwork.sold && artwork.sold_at && (
+              <SoldDateBadge soldAt={artwork.sold_at} variant="slider" locale={locale} />
+            )}
           </div>
-          {artwork.sold && <SoldBadge variant="slider" label={soldLabel} />}
-          {artwork.reserved && !artwork.sold && (
-            <ReservedBadge variant="slider" label={reservedLabel} />
-          )}
-          {artwork.sold && artwork.sold_at && (
-            <SoldDateBadge soldAt={artwork.sold_at} variant="slider" locale={locale} />
-          )}
-        </div>
-        <div className="mt-3 px-1">
-          <p className="text-sm font-medium text-charcoal truncate group-hover:text-primary transition-colors">
-            {getSafeTitle(artwork, untitledLabel, locale)}
-          </p>
-          <p className="text-xs text-gray-500 truncate">
-            {getSafeArtist(artwork, unknownArtistLabel, locale)}
-          </p>
-          <p className="text-sm font-semibold text-charcoal mt-1">{localizedPrice}</p>
+          <div className="mt-3 px-1">
+            <p className="text-sm font-medium text-charcoal truncate group-hover:text-primary transition-colors">
+              {getSafeTitle(artwork, untitledLabel, locale)}
+            </p>
+            <p className="text-xs text-gray-500 truncate">
+              {getSafeArtist(artwork, unknownArtistLabel, locale)}
+            </p>
+            <p className="text-sm font-semibold text-charcoal mt-1">{localizedPrice}</p>
+          </div>
         </div>
       </Link>
     );
