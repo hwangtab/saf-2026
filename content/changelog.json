@@ -1,5 +1,55 @@
 [
   {
+    "hash": "770f6de2",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "작품 상세에 작품-특화 FAQ JSON-LD 추가 + Next 16.2 type narrowing 호환",
+    "summary": "작품 상세 페이지에 작품마다 unique한 FAQ 스키마(generateArtworkSpecificFAQ)를 출력해 롱테일 검색·LLM 인용을 흡수. 동시에 Next.js 16.2.4의 엄격한 빌드 type-check가 거부하던 nullable schema의 && 좁히기를 !== null 명시로 교체.",
+    "body": "- lib/schemas/howto.ts: generateArtworkSpecificFAQ 신규 (제목·작가·매체·크기·가격을 답변에 포함, 영문 페이지에서 한국어 fallback이 question name을 망가뜨릴 때 schema 자체 skip하는 가드 포함)\n- lib/schemas/index.ts: 위 함수 + ArtworkSpecificFAQInput 타입 re-export\n- app/[locale]/artworks/[id]/page.tsx:\n  - artworkSpecificFaqSchema 계산 후 JsonLdScript로 렌더\n  - {schema && <JsonLdScript .../>} → {schema !== null && <JsonLdScript .../>}로 변경 (Next.js 16.2.4 빌드 type-check가 schema | null을 Record<string, unknown>으로 좁히지 못하던 호환 이슈 우회)\n\n검증: npm run type-check 통과.",
+    "date": "2026-04-24",
+    "author": "황경하"
+  },
+  {
+    "hash": "fa75c8a6",
+    "type": "fix",
+    "scope": "auth",
+    "subject": "/terms-consent 무한 스피너 종합 수정 + Next 16.2.4/React 19.2.5 업그레이드",
+    "summary": "작가/출품자 재동의 페이지에서 동의 클릭 후 스피너가 멈추지 않던 버그를 서버 액션 방어·UI 가시성·테스트 커버리지로 종합 수정. Next.js 16.2.4 / React 19.2.5로 업그레이드 동반.",
+    "body": "근본 원인 (3중):\n- artist_applications RLS가 profiles.status IN ('pending','active')를 요구해 status가 다른 상태(suspended·legacy NULL)면 UPDATE가 error=null·rows=0으로 silent 실패. 액션은 성공으로 간주하고 redirect → 가드가 다시 재동의 요구 → /terms-consent 복귀 루프가 사용자에게 \"스피너 영원히\"로 체감.\n- 처리되지 않은 throw가 useActionState의 isPending을 풀지 못함.\n- 에러 메시지 <p>가 submit 버튼과 같은 flex justify-between row에 있어 사용자가 못 봄.\n\n서버 액션 (app/actions/terms-consent.ts):\n- computeTermsConsentOutcome 내부 함수로 분리, redirect는 try-catch 바깥에서만 호출 (Outcome value 패턴).\n- try-catch에서 unstable_rethrow로 NEXT_REDIRECT/notFound만 재전파.\n- .update().select('user_id')로 영향받은 행 수 확인. affectedRows=0이면 명시적 에러 + console.warn.\n- needs*=true인데 updates 큐가 비어 있는 잠복 케이스(예: exhibitor record는 있지만 representative_name 비어 hasExhibitorApplication=false)도 별도 가드로 차단.\n\n폼 UI (terms-consent-form.tsx):\n- 에러 영역을 submit 버튼 위 단독 박스로 분리. role=\"alert\" + scrollIntoView로 보조기술·시각 모두 알림.\n\n테스트:\n- __tests__/actions/terms-consent.test.ts: 10건 신규 (success/silent skip/DB error/체크박스/버전 mismatch/admin/throw 처리/exhibitor/empty-updates 가드).\n- __tests__/app/terms-consent-form.test.tsx: 4건 신규 (alert role/DOM 순서/error 미렌더/pending disabled).\n\n의존성:\n- next 16.1.1 → 16.2.4 (2026-04-15 stable)\n- react/react-dom 19.2.3 → 19.2.5 (2026-04-08 stable)\n- @next/bundle-analyzer / eslint-config-next 동기화\n\n검증: type-check, build (Next 16.2.4 Turbopack), 신규 14건 + 기존 35건 모두 통과.",
+    "date": "2026-04-24",
+    "author": "황경하"
+  },
+  {
+    "hash": "abf29480",
+    "type": "fix",
+    "scope": "ui",
+    "subject": "Button 로딩 스피너가 텍스트를 오른쪽으로 밀던 현상 수정",
+    "summary": "아티스트·출품자 포털 등에서 submit 버튼 클릭 시 글자가 오른쪽으로 튀던 버그 수정. 스피너를 중앙에 오버레이하고 텍스트는 invisible로 공간만 유지해 위치 고정.",
+    "body": "- 기존: isBusy일 때 스피너가 `mr-2` 마진과 함께 children 앞에 inline 삽입\n  → justify-center가 [스피너+마진+텍스트] 묶음 기준으로 동작해\n    텍스트가 약 12px 오른쪽으로 밀려 보이던 현상\n- 수정: inline 레이아웃의 busy 상태에서 스피너를 `absolute left-1/2 -translate-x-1/2`로\n  버튼 정중앙에 오버레이. children은 <span class=\"invisible\">으로 감싸\n  폭·위치를 유지한 채 시각적으로만 숨김\n- iconLayout=\"fixed-left\" 분기는 기존 동작 유지 (왼쪽 고정 스피너)\n- `relative` 클래스를 inline-busy 상황에도 부여해 absolute 기준점 보장",
+    "date": "2026-04-23",
+    "author": "황경하"
+  },
+  {
+    "hash": "97b18cab",
+    "type": "fix",
+    "scope": "auth",
+    "subject": "restore google oauth dashboard redirect",
+    "summary": "로그인 버그 수정",
+    "body": null,
+    "date": "2026-04-23",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "d622363c",
+    "type": "feat",
+    "scope": "security",
+    "subject": "harden auth and internal cron protections",
+    "summary": "새 기능 추가",
+    "body": null,
+    "date": "2026-04-23",
+    "author": "hwangtab"
+  },
+  {
     "hash": "50b80e52",
     "type": "fix",
     "scope": "seo",
