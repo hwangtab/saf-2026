@@ -352,7 +352,9 @@
     "copyLinkTitle": "링크 복사",
     "copyLink": "링크 복사하기",
     "copied": "링크가 복사되었습니다",
-    "copyFailed": "복사 실패"
+    "copyFailed": "복사 실패",
+    "smsAria": "문자로 공유하기",
+    "smsTitle": "문자 메시지로 공유"
   },
   "artworkCard": {
     "untitled": "무제",
