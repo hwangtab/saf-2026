@@ -142,10 +142,16 @@ export default async function PetitionOhYoonPage() {
           </p>
           <h1
             id="petition-hero-title"
-            className="font-display text-4xl md:text-6xl leading-tight mb-4 break-keep text-balance whitespace-pre-line"
+            className="font-display text-4xl md:text-6xl leading-tight mb-4 break-keep"
             style={{ textShadow: '0 2px 16px rgba(0,0,0,0.5)' }}
           >
-            {t('heroTitle')}
+            {t('heroTitle')
+              .split('\n')
+              .map((line, i) => (
+                <span key={i} className="block text-balance">
+                  {line}
+                </span>
+              ))}
           </h1>
           <p className="text-lg md:text-xl opacity-90 mb-2 text-balance">{t('heroSubtitle')}</p>
           <p className="text-sm md:text-base opacity-80 mb-8 text-balance">
@@ -179,7 +185,9 @@ export default async function PetitionOhYoonPage() {
       <Section variant="white" className="py-20 md:py-24">
         <div className="container-max max-w-5xl mx-auto px-4">
           <div className="max-w-3xl mx-auto">
-            <SectionTitle as="h2">{t('storyHeading')}</SectionTitle>
+            <SectionTitle as="h2" className="mb-8 md:mb-10">
+              {t('storyHeading')}
+            </SectionTitle>
             <div className="space-y-6 text-base md:text-lg leading-relaxed text-charcoal break-keep">
               <p>{t('storyP1')}</p>
               <p>{t('storyP2')}</p>
@@ -226,7 +234,9 @@ export default async function PetitionOhYoonPage() {
       {/* 4부 이미 시작된 일 — 세 가지 일 */}
       <Section variant="canvas-soft" className="py-20 md:py-24">
         <div className="container-max max-w-5xl mx-auto px-4">
-          <SectionTitle as="h2">{t('threeStepsHeading')}</SectionTitle>
+          <SectionTitle as="h2" className="mb-8 md:mb-10">
+            {t('threeStepsHeading')}
+          </SectionTitle>
           <p className="mb-10 text-base md:text-lg leading-relaxed text-charcoal-muted break-keep">
             {t('threeStepsLead')}
           </p>
@@ -283,39 +293,46 @@ export default async function PetitionOhYoonPage() {
       {/* 6부 참여 방법 — 3단 카드 + 폼 placeholder */}
       <Section variant="canvas-soft" className="py-20 md:py-24" id="sign-form">
         <div className="container-max max-w-5xl mx-auto px-4">
-          <SectionTitle as="h2">{t('participationHeading')}</SectionTitle>
-          <div className="grid gap-5 md:grid-cols-3 mb-10">
-            <article className="rounded-xl bg-white p-6 shadow-sm border border-primary/30">
-              <h3 className="font-semibold text-lg text-charcoal-deep mb-2 break-keep">
+          <SectionTitle as="h2" className="mb-8 md:mb-10">
+            {t('participationHeading')}
+          </SectionTitle>
+          {/* 3카드 — 균등 길이, flex column으로 CTA를 하단에 정렬 */}
+          <div className="grid gap-5 md:grid-cols-3 mb-12 items-stretch">
+            <article className="flex flex-col rounded-xl bg-white p-6 shadow-sm border border-primary/30">
+              <h3 className="font-semibold text-lg text-charcoal-deep mb-3 break-keep">
                 {t('participationCard1Title')}
               </h3>
-              <p className="text-charcoal text-sm md:text-base leading-relaxed break-keep mb-4">
+              <p className="text-charcoal text-sm md:text-base leading-relaxed break-keep">
                 {t('participationCard1Body')}
               </p>
               <a
                 href="#sign-form-anchor"
-                className="text-primary font-semibold hover:underline text-sm"
+                className="mt-auto pt-4 text-primary font-semibold hover:underline text-sm"
               >
                 ↓ {t('participationCard1Cta')}
               </a>
             </article>
-            <article className="rounded-xl bg-white p-6 shadow-sm border border-gray-200">
-              <h3 className="font-semibold text-lg text-charcoal-deep mb-2 break-keep">
+            <article className="flex flex-col rounded-xl bg-white p-6 shadow-sm border border-gray-200">
+              <h3 className="font-semibold text-lg text-charcoal-deep mb-3 break-keep">
                 {t('participationCard2Title')}
               </h3>
               <p className="text-charcoal text-sm md:text-base leading-relaxed break-keep">
                 {t('participationCard2Body')}
               </p>
             </article>
-            <article className="rounded-xl bg-white p-6 shadow-sm border border-gray-200">
-              <h3 className="font-semibold text-lg text-charcoal-deep mb-2 break-keep">
+            <article className="flex flex-col rounded-xl bg-white p-6 shadow-sm border border-gray-200">
+              <h3 className="font-semibold text-lg text-charcoal-deep mb-3 break-keep">
                 {t('participationCard3Title')}
               </h3>
-              <p className="text-charcoal text-sm md:text-base leading-relaxed break-keep mb-4">
+              <p className="text-charcoal text-sm md:text-base leading-relaxed break-keep">
                 {t('participationCard3Body')}
               </p>
-              <ShareTemplates url={PAGE_URL} />
             </article>
+          </div>
+
+          {/* 카드 외부 — 사전 작성 공유 문구 박스 (3카드보다 별도 영역으로 분리) */}
+          <div className="mb-12 mx-auto max-w-2xl">
+            <ShareTemplates url={PAGE_URL} />
           </div>
 
           <div id="sign-form-anchor" className="mx-auto max-w-2xl">
@@ -333,7 +350,9 @@ export default async function PetitionOhYoonPage() {
       {/* 7부 시점의 무게 — v1.1 구조: 헤드라인 + 참고 박스 */}
       <Section variant="white" className="py-20 md:py-24">
         <div className="container-max max-w-3xl mx-auto px-4">
-          <SectionTitle as="h2">{t('urgencyHeading')}</SectionTitle>
+          <SectionTitle as="h2" className="mb-8 md:mb-10">
+            {t('urgencyHeading')}
+          </SectionTitle>
           <p className="text-lg md:text-xl font-semibold text-charcoal-deep leading-relaxed break-keep mb-8">
             {t('urgencyLead')}
           </p>
@@ -356,7 +375,9 @@ export default async function PetitionOhYoonPage() {
       {/* 8부 추진 주체 */}
       <Section variant="canvas-soft" className="py-20 md:py-24">
         <div className="container-max max-w-3xl mx-auto px-4">
-          <SectionTitle as="h2">{t('proponentsHeading')}</SectionTitle>
+          <SectionTitle as="h2" className="mb-8 md:mb-10">
+            {t('proponentsHeading')}
+          </SectionTitle>
           <div className="space-y-4 text-base md:text-lg leading-relaxed text-charcoal break-keep">
             <p>{t('proponentsBody1')}</p>
             <p>{t('proponentsBody2')}</p>
@@ -368,7 +389,9 @@ export default async function PetitionOhYoonPage() {
       {/* 9부 FAQ + 9b 씨앗페 관계 */}
       <Section variant="white" className="py-20 md:py-24">
         <div className="container-max max-w-3xl mx-auto px-4">
-          <SectionTitle as="h2">{t('faqHeading')}</SectionTitle>
+          <SectionTitle as="h2" className="mb-8 md:mb-10">
+            {t('faqHeading')}
+          </SectionTitle>
           <PetitionFAQ />
           <div className="mt-6 text-center">
             <LinkButton href={PETITION_OH_YOON_PROPOSAL_PDF} variant="ghost" size="sm" external>

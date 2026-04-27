@@ -46,7 +46,11 @@ export default function SignForm() {
   const [pending, startTransition] = useTransition();
   const [result, setResult] = useState<SignPetitionResult | null>(null);
 
-  const sitekey = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY ?? '';
+  // dev 환경에서 sitekey 미설정 시 hCaptcha 공식 test key fallback
+  // (항상 통과하는 테스트용 — 운영 환경에서는 sitekey 미설정 시 폼이 막힘)
+  const sitekey =
+    process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY ||
+    (process.env.NODE_ENV !== 'production' ? '10000000-ffff-ffff-ffff-000000000001' : '');
 
   if (result?.ok) {
     return (
@@ -276,8 +280,8 @@ export default function SignForm() {
         )}
       </fieldset>
 
-      {/* hCaptcha */}
-      {sitekey ? (
+      {/* hCaptcha — dev에서는 test key fallback이 동작하므로 sitekey가 항상 존재 */}
+      {sitekey && (
         <div className="flex justify-center">
           <HCaptchaWidget
             sitekey={sitekey}
@@ -285,8 +289,6 @@ export default function SignForm() {
             onExpire={() => setHcaptchaToken('')}
           />
         </div>
-      ) : (
-        <p className="text-xs text-charcoal-muted text-center">(개발 모드 — hCaptcha 비활성)</p>
       )}
 
       {/* 결과 메시지 */}
