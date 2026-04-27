@@ -97,14 +97,18 @@ export default function Button({
   const content = (
     <>
       {isBusy && (
+        // animate-spin이 transform: rotate를 강제 설정하면서 같은 노드의
+        // -translate-x-1/2 / -translate-y-1/2를 덮어쓰는 문제 회피 →
+        // 외곽 div(위치 transform)와 내부 div(회전 animation) 분리
         <div
           className={cn(
-            'h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin',
             'absolute top-1/2 -translate-y-1/2 pointer-events-none',
             isFixedLeftLayout ? iconOffsetClass : 'left-1/2 -translate-x-1/2'
           )}
           aria-hidden="true"
-        />
+        >
+          <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+        </div>
       )}
       {hasLeadingIcon && !isBusy && (
         <span
