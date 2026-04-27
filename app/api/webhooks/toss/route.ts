@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import type { Json } from '@/types/supabase';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { fetchPayment } from '@/lib/integrations/toss/confirm';
+import { resolveOrderProvider, type PaymentProvider } from '@/lib/integrations/toss/config';
 import {
   parseWebhookPayload,
   verifyWebhookRequest,
@@ -65,6 +66,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 
+    let provider: PaymentProvider = 'api_v1';
+    if (paymentRecord?.order_id) {
+      const { data: orderForProvider } = await supabase
+        .from('orders')
+        .select('metadata')
+        .eq('id', paymentRecord.order_id)
+        .single();
+      provider = resolveOrderProvider(orderForProvider?.metadata);
+    }
+
     // SEC-04a: Verify per-payment secret from confirm_response.virtualAccount.secret
     const storedSecret =
       (
@@ -85,7 +96,7 @@ export async function POST(req: NextRequest) {
 
     if (payload.data.paymentStatus === 'DONE') {
       // SEC-04b: Double-verify from Toss API
-      const verified = await fetchPayment(paymentKey);
+      const verified = await fetchPayment(paymentKey, provider);
       if (!verified || verified.status !== 'DONE') {
         console.error(`[toss-webhook] Toss API double-verify failed: ${paymentKey}`);
         void notifyEmail('error', '웹훅 Toss API 이중검증 실패', {
@@ -172,7 +183,7 @@ export async function POST(req: NextRequest) {
                     sale_price: order.total_amount,
                     quantity: 1,
                     source: 'toss',
-                    source_detail: 'toss_api',
+                    source_detail: provider === 'widget' ? 'toss_widget' : 'toss_api',
                     order_id: paymentRecord.order_id,
                     external_order_id: order.order_no,
                     buyer_name: order.buyer_name,
@@ -307,8 +318,22 @@ export async function POST(req: NextRequest) {
     const paymentKey = payload.data.paymentKey;
     const newStatus = payload.data.status;
 
+    // Resolve provider from payment → order metadata
+    let provider: PaymentProvider = 'api_v1';
+    const { data: providerLookup } = await supabase
+      .from('payments')
+      .select('orders!inner(metadata)')
+      .eq('payment_key', paymentKey)
+      .maybeSingle();
+    if (providerLookup?.orders) {
+      const orderRow = Array.isArray(providerLookup.orders)
+        ? providerLookup.orders[0]
+        : providerLookup.orders;
+      provider = resolveOrderProvider(orderRow?.metadata);
+    }
+
     // Toss API double-verify BEFORE any DB mutations
-    const verified = await fetchPayment(paymentKey);
+    const verified = await fetchPayment(paymentKey, provider);
     if (!verified) {
       console.error(`[toss-webhook] STATUS_CHANGED Toss API verify failed: ${paymentKey}`);
       const { data: existingPayment } = await supabase
