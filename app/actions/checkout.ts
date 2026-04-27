@@ -338,6 +338,9 @@ export async function initiatePayment(input: InitiatePaymentInput): Promise<Init
         failUrl: input.failUrl,
         customerName: input.buyerName,
         customerEmail: input.buyerEmail,
+        // 에스크로 미사용 — 명시적으로 false 전달.
+        // (MID 설정에서 에스크로가 '강제'면 토스 대시보드에서 끄는 게 우선)
+        useEscrow: false,
       }),
     });
   } catch {
