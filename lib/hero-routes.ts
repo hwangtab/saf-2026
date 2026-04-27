@@ -32,6 +32,7 @@ const HERO_EXACT = new Set<string>([
   '/stories',
   '/privacy',
   '/terms',
+  '/petition/oh-yoon',
 ]);
 
 /**

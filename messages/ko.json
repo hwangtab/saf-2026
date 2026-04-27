@@ -914,7 +914,15 @@
       "shareTwitter": "트위터로 공유",
       "shareSms": "문자로 공유",
       "shareCopy": "링크 복사",
-      "shareCopied": "복사되었습니다"
+      "shareCopied": "복사되었습니다",
+      "shareTemplatesHeading": "다섯 분께 보내실 때, 이 문구를 그대로 붙여넣으세요",
+      "shareTemplateKakaoLabel": "카카오톡 / 단톡방",
+      "shareTemplateKakao": "오윤이 1974년 새긴 구의동 테라코타 벽화가 8월 철거 위기에 있습니다. 한국 현대미술 거장의 양면 부조 — 차기 서울시장께 작품 보존을 청원합니다. 30초 서명으로 함께해 주세요. → {url}",
+      "shareTemplateSmsLabel": "문자",
+      "shareTemplateSms": "[청원] 오윤 1974 구의동 벽화 멸실 위기. 차기 서울시장께 보존 청원. 30초 서명 → {url}",
+      "shareTemplateSnsLabel": "트위터·인스타·페이스북",
+      "shareTemplateSns": "오윤이 1974년에 새긴 구의동 테라코타 벽화가 50년 만에 멸실 위기. 차기 서울시장께 시민이 청원합니다. 5월 10일까지 1만 명. 30초 서명 → {url} #오윤 #구의동벽화 #서울시장청원",
+      "copyTemplate": "복사"
     }
   }
 }
