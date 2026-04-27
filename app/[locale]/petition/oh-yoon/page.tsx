@@ -71,23 +71,13 @@ export async function generateMetadata(): Promise<Metadata> {
     PETITION_OH_YOON_PATH,
     locale
   );
-  // OG 이미지는 청원 작품 사진(mural-1, 정면 인체 부조)으로 override.
-  // 외부 크롤러가 직접 PNG를 가져오므로 raw URL 사용 (옵티마이저 통과 X).
-  const ogImage = `${SITE_URL}/images/petition-oh-yoon/mural-1.png`;
-  const ogAlt = '오윤, 1974, 테라코타 벽화 — 구의동 정면';
+  // OG 이미지는 같은 디렉토리의 opengraph-image.tsx가 Next.js convention으로 자동 적용.
+  // 작품 사진 + 다크 오버레이 + 슬로건 합성, 1200×630.
   return {
     ...base,
     openGraph: {
       ...base.openGraph,
       type: 'article',
-      images: [
-        {
-          url: ogImage,
-          secureUrl: ogImage,
-          type: 'image/png',
-          alt: ogAlt,
-        },
-      ],
     },
   };
 }
