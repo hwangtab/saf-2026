@@ -46,6 +46,7 @@ let mockInsertResult: MockResult = { data: null, error: null };
 let mockInsertResultsQueue: MockResult[] = [];
 let mockUpdateResult: MockResult = { data: null, error: null };
 let mockAuthUserResult: MockResult = { data: { user: null }, error: null };
+const capturedInsertedRows: Array<Record<string, unknown>> = [];
 
 const mockSingle = jest.fn();
 const mockSelect = jest.fn();
@@ -90,7 +91,10 @@ jest.mock('@/lib/auth/server', () => ({
         const updateEq: jest.Mock = jest.fn(() => ({ eq: updateEq, ...mockUpdateResult }));
         return {
           select: buildChain(mockArtworkResult).select,
-          insert: jest.fn(() => ({ select: insertSelect })),
+          insert: jest.fn((row: Record<string, unknown>) => {
+            capturedInsertedRows.push(row);
+            return { select: insertSelect };
+          }),
           update: jest.fn(() => ({ eq: updateEq })),
         };
       }
@@ -113,18 +117,6 @@ jest.mock('@/lib/auth/server', () => ({
 // --- Mock: toss config ---
 jest.mock('@/lib/integrations/toss/config', () => ({
   calculateShippingFee: jest.fn((amount: number) => (amount >= 200000 ? 0 : 4000)),
-  getTossAuthHeader: jest.fn(() => 'Basic dGVzdDo='),
-  TOSS_API_BASE_URL: 'https://api.tosspayments.com',
-}));
-
-// --- Mock: toss fetch ---
-let mockFetchResponse: { ok: boolean; json: () => Promise<unknown> } | null = null;
-let mockFetchShouldThrow = false;
-jest.mock('@/lib/integrations/toss/fetch-with-timeout', () => ({
-  fetchWithTimeout: jest.fn(async () => {
-    if (mockFetchShouldThrow) throw new Error('network error');
-    return mockFetchResponse;
-  }),
 }));
 
 // --- Mock: order number ---
@@ -175,7 +167,6 @@ function setupSuccessfulArtwork() {
 // ---------- Tests ----------
 
 let createOrder: typeof import('@/app/actions/checkout').createOrder;
-let initiatePayment: typeof import('@/app/actions/checkout').initiatePayment;
 let createBankTransferOrder: typeof import('@/app/actions/checkout').createBankTransferOrder;
 let cancelPendingOrder: typeof import('@/app/actions/checkout').cancelPendingOrder;
 
@@ -189,12 +180,10 @@ beforeEach(async () => {
   mockInsertResultsQueue = [];
   mockUpdateResult = { data: null, error: null };
   mockAuthUserResult = { data: { user: null }, error: null };
-  mockFetchResponse = null;
-  mockFetchShouldThrow = false;
+  capturedInsertedRows.length = 0;
 
   const mod = await import('@/app/actions/checkout');
   createOrder = mod.createOrder;
-  initiatePayment = mod.initiatePayment;
   createBankTransferOrder = mod.createBankTransferOrder;
   cancelPendingOrder = mod.cancelPendingOrder;
 });
@@ -347,73 +336,6 @@ describe('createOrder', () => {
   });
 });
 
-// ========== initiatePayment ==========
-
-describe('initiatePayment', () => {
-  const paymentInput = {
-    method: '카드',
-    orderNo: 'SAF-20260414-TEST',
-    orderName: '봄의 정원 (김작가)',
-    totalAmount: 5_000_000,
-    buyerName: '홍길동',
-    buyerEmail: 'buyer@test.com',
-    successUrl: 'https://www.saf2026.com/checkout/success',
-    failUrl: 'https://www.saf2026.com/checkout/fail',
-  };
-
-  beforeEach(() => {
-    mockArtworkResult = {
-      data: { total_amount: 5_000_000, status: 'pending_payment' },
-      error: null,
-    };
-  });
-
-  it('결제 서버 연결 실패 시 에러 반환', async () => {
-    mockFetchShouldThrow = true;
-    const result = await initiatePayment(paymentInput);
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.error).toContain('결제 서버 연결');
-    }
-  });
-
-  it('Toss API 에러 응답 시 에러 반환', async () => {
-    mockFetchResponse = {
-      ok: false,
-      json: async () => ({ code: 'INVALID_REQUEST', message: '잘못된 요청' }),
-    };
-    const result = await initiatePayment(paymentInput);
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.error).toBe('잘못된 요청');
-    }
-  });
-
-  it('checkout URL 없는 응답 시 에러 반환', async () => {
-    mockFetchResponse = {
-      ok: true,
-      json: async () => ({ checkout: {} }),
-    };
-    const result = await initiatePayment(paymentInput);
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.error).toContain('결제 URL');
-    }
-  });
-
-  it('성공 시 checkout URL 반환', async () => {
-    mockFetchResponse = {
-      ok: true,
-      json: async () => ({ checkout: { url: 'https://pay.toss/checkout/abc' } }),
-    };
-    const result = await initiatePayment(paymentInput);
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.checkoutUrl).toBe('https://pay.toss/checkout/abc');
-    }
-  });
-});
-
 // ========== createBankTransferOrder ==========
 
 describe('createBankTransferOrder', () => {
@@ -455,5 +377,24 @@ describe('cancelPendingOrder', () => {
   it('유효한 입력으로 호출 시 에러 없이 완료', async () => {
     await cancelPendingOrder('SAF-20260414-TEST', 'buyer@test.com');
     // 에러 없이 완료되면 성공
+  });
+});
+
+// ========== createOrder — payment_provider metadata ==========
+
+describe('createOrder — payment_provider metadata', () => {
+  it('stamps metadata.payment_provider = "widget" on insert', async () => {
+    setupSuccessfulArtwork();
+
+    const result = await createOrder({
+      ...validInput,
+      locale: 'ko',
+    });
+
+    expect(result.success).toBe(true);
+    expect(capturedInsertedRows).toHaveLength(1);
+    const meta = capturedInsertedRows[0].metadata as Record<string, unknown>;
+    expect(meta.payment_provider).toBe('widget');
+    expect(meta.locale).toBe('ko');
   });
 });
