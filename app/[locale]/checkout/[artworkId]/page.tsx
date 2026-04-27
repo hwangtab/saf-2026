@@ -70,7 +70,7 @@ export default async function CheckoutPage({ params }: Props) {
     ? (artistRow[0]?.name_ko ?? 'Unknown Artist')
     : (artistRow?.name_ko ?? 'Unknown Artist');
 
-  if (locale === 'en') {
+  if (locale !== 'ko') {
     return <PaypalPlaceholder artworkId={artworkId} artworkTitle={artwork.title} />;
   }
 
