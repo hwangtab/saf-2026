@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@supabase/supabase-js';
 import { fetchPaymentByOrderId } from '@/lib/integrations/toss/confirm';
+import { resolveOrderProvider } from '@/lib/integrations/toss/config';
 import { sanitizeConfirmResponse } from '@/lib/integrations/toss/sanitize';
 import { notifyEmail } from '@/lib/notify';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
@@ -69,8 +70,11 @@ export async function GET(request: NextRequest) {
 
   for (const order of staleOrders) {
     try {
+      // 주문별 provider 해석 — 위젯/레거시 MID 시크릿이 다르므로 반드시 매칭되는 provider로 호출
+      const provider = resolveOrderProvider(order.metadata);
+
       // Toss API에서 결제 상태 확인
-      const tossPayment = await fetchPaymentByOrderId(order.order_no);
+      const tossPayment = await fetchPaymentByOrderId(order.order_no, provider);
 
       if (!tossPayment) continue; // Toss에 결제 기록 없음 → 미결제, 스킵
 
@@ -154,7 +158,7 @@ export async function GET(request: NextRequest) {
               sale_price: order.total_amount,
               quantity: 1,
               source: 'toss',
-              source_detail: 'toss_api',
+              source_detail: provider === 'widget' ? 'toss_widget' : 'toss_api',
               order_id: order.id,
               external_order_id: order.order_no,
               buyer_name: order.buyer_name,

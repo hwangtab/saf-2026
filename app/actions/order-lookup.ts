@@ -4,6 +4,7 @@ import { headers } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { cancelPayment } from '@/lib/integrations/toss/cancel';
+import { resolveOrderProvider } from '@/lib/integrations/toss/config';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
 import { notifyEmail, sendBuyerEmail, extractBuyerLocale } from '@/lib/notify';
 import {
@@ -403,10 +404,13 @@ export async function cancelBuyerOrder(
 
   if (!payment?.payment_key) return { success: false, error: 'NO_PAYMENT' };
 
+  const provider = resolveOrderProvider(order.metadata);
+
   const cancelResult = await cancelPayment(
     payment.payment_key,
     { cancelReason: trimmedReason },
-    `buyer-cancel-${order.order_no}`
+    `buyer-cancel-${order.order_no}`,
+    provider
   );
 
   if (!cancelResult.success) {

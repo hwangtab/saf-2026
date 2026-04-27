@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { cancelPayment } from '@/lib/integrations/toss/cancel';
+import { resolveOrderProvider } from '@/lib/integrations/toss/config';
 import { logAdminAction } from './activity-log-writer';
 import { deriveAndSyncArtworkStatus } from './admin-artworks';
 import { notifyEmail, sendBuyerEmail, extractBuyerLocale } from '@/lib/notify';
@@ -237,14 +238,16 @@ export async function refundOrder(input: RefundInput) {
   const now = new Date().toISOString();
 
   if (hasTossPayment) {
-    // 2a. Toss 결제 — Toss Cancel API 호출
+    // 2a. Toss 결제 — Toss Cancel API 호출 (provider 매칭 시크릿 사용)
+    const provider = resolveOrderProvider(order.metadata);
     const cancelResult = await cancelPayment(
       payment!.payment_key!,
       {
         cancelReason: cancelReason.trim(),
         ...(refundReceiveAccount ? { refundReceiveAccount } : {}),
       },
-      `refund-${order.order_no}`
+      `refund-${order.order_no}`,
+      provider
     );
 
     if (!cancelResult.success) {
