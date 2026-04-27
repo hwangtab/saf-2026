@@ -73,6 +73,18 @@ const nextConfig = {
         destination: '/archive/2026',
         permanent: true,
       },
+      // 단축 도메인 — saf2026.com/oh-yoon → 청원 페이지 (PRD §14 OQ-10)
+      // permanent: false (서비스 종료 후 다른 곳으로 redirect할 가능성).
+      {
+        source: '/oh-yoon',
+        destination: '/petition/oh-yoon',
+        permanent: false,
+      },
+      {
+        source: '/en/oh-yoon',
+        destination: '/en/petition/oh-yoon',
+        permanent: false,
+      },
       {
         source: '/en/exhibition',
         destination: '/en/archive/2026',

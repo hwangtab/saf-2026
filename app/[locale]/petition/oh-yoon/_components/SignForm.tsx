@@ -310,6 +310,7 @@ export default function SignForm() {
       <p className="text-xs text-charcoal-muted text-center">
         서명은 30초입니다. 입력하신 정보는 청원 운영에만 사용되며, 청원 종료 후 6개월 내 파기됩니다.
       </p>
+      <p className="text-[11px] text-charcoal-muted text-center">{t('formAgeNotice')}</p>
     </form>
   );
 }
