@@ -723,7 +723,13 @@
     "bankTransferHolder": "Account Holder",
     "bankTransferHolderName": "Korea Smart Cooperative",
     "bankTransferNoticeName": "Please use your name as the depositor.",
-    "bankTransferNoticeDeadline": "Orders not deposited by {deadline} will be automatically cancelled."
+    "bankTransferNoticeDeadline": "Orders not deposited by {deadline} will be automatically cancelled.",
+    "paypalPreparing": {
+      "title": "International payment is coming soon",
+      "description": "We are integrating PayPal to support international collectors. While we finalize this, please contact us at contact@kosmart.org or support the campaign through Social Funch.",
+      "donateCta": "Support the campaign",
+      "backCta": "Back to artwork"
+    }
   },
   "orderLookup": {
     "pageTitle": "Order Lookup",
