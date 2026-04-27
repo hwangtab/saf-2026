@@ -1,5 +1,15 @@
 [
   {
+    "hash": "0f821fb2",
+    "type": "feat",
+    "scope": "checkout",
+    "subject": "add PaypalPlaceholder for English locale",
+    "summary": "영문 체크아웃은 해외결제 MID(PayPal) 연동 전까지 안내 페이지로 라우팅. 사회적펀딩 기부 링크와 작품 페이지 복귀 버튼 제공. Task 7에서 임시로 둔 notFound() 가드를 placeholder 렌더로 교체",
+    "body": "- EXTERNAL_LINKS.DONATE 상수 추가 (https://www.socialfunch.org/SAF)\n- PaypalPlaceholder는 artwork 로드 후 widgetClientKey 조회 직전에 렌더되어 영문 사용자도 작품 메타데이터를 안전하게 받음\n- next-intl checkout.paypalPreparing 메시지 키 사용 (Task 6에서 추가됨)",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
     "hash": "21e8560f",
     "type": "fix",
     "scope": "checkout",
