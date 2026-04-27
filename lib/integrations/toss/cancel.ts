@@ -1,9 +1,9 @@
 /**
- * TossPayments v2 — server-side payment cancellation / refund.
- * Called from admin-orders server action when processing a refund.
+ * TossPayments — server-side payment cancellation / refund.
+ * Provider must match the order's payment_provider metadata.
  */
 
-import { getTossAuthHeader, getTossConfig } from './config';
+import { getTossAuthHeader, getTossConfig, type PaymentProvider, DEFAULT_PROVIDER } from './config';
 import { fetchWithTimeout } from './fetch-with-timeout';
 import type {
   TossCancelRequest,
@@ -12,28 +12,20 @@ import type {
   TossCancelResponse,
 } from './types';
 
-/**
- * Calls POST /v1/payments/{paymentKey}/cancel with Basic Auth.
- * @param paymentKey - payment key from TossPayments
- * @param request - cancelReason required; refundReceiveAccount required for virtual account payments
- * @param idempotencyKey - optional Idempotency-Key header to prevent duplicate cancels
- */
 export async function cancelPayment(
   paymentKey: string,
   request: TossCancelRequest,
-  idempotencyKey?: string
+  idempotencyKey?: string,
+  provider: PaymentProvider = DEFAULT_PROVIDER
 ): Promise<CancelResult> {
-  const config = getTossConfig();
-  if (!config) throw new Error('TossPayments is not configured');
+  const config = getTossConfig(provider);
+  if (!config) throw new Error(`TossPayments (${provider}) is not configured`);
 
   const headers: Record<string, string> = {
-    Authorization: getTossAuthHeader(),
+    Authorization: getTossAuthHeader(provider),
     'Content-Type': 'application/json',
   };
-
-  if (idempotencyKey) {
-    headers['Idempotency-Key'] = idempotencyKey;
-  }
+  if (idempotencyKey) headers['Idempotency-Key'] = idempotencyKey;
 
   const response = await fetchWithTimeout(`${config.apiBaseUrl}/v1/payments/${paymentKey}/cancel`, {
     method: 'POST',
@@ -58,9 +50,6 @@ export async function cancelPayment(
     throw new Error(`Toss 응답 파싱 실패: ${text.slice(0, 200)}`);
   }
 
-  if (!response.ok) {
-    return { success: false, error: body as TossErrorResponse };
-  }
-
+  if (!response.ok) return { success: false, error: body as TossErrorResponse };
   return { success: true, data: body as TossCancelResponse };
 }
