@@ -743,7 +743,7 @@
     "orderIdLabel": "Order",
     "paymentMethodSelect": "Payment Method",
     "methodCard": "Credit/Debit Card",
-    "methodTransfer": "Quick Transfer",
+    "methodTransfer": "Bank Transfer",
     "methodVirtualAccount": "Bank Transfer",
     "bankTransferTitle": "Bank Transfer Details",
     "bankTransferGuide": "Please deposit to the account below. Your order will be confirmed after payment verification.",

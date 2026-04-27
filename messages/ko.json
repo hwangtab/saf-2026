@@ -747,7 +747,7 @@
     "orderIdLabel": "주문 번호",
     "paymentMethodSelect": "결제수단 선택",
     "methodCard": "신용/체크카드",
-    "methodTransfer": "퀵계좌이체",
+    "methodTransfer": "계좌이체",
     "methodVirtualAccount": "계좌이체",
     "bankTransferTitle": "계좌이체 안내",
     "bankTransferGuide": "아래 계좌로 입금해주세요. 입금 확인 후 주문이 완료됩니다.",

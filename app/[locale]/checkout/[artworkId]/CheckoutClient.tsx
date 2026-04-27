@@ -13,7 +13,7 @@ import { createOrder, cancelPendingOrder, initiatePayment } from '@/app/actions/
 import BuyerInfoForm from './BuyerInfoForm';
 import type { BuyerInfo } from './BuyerInfoForm';
 
-type PaymentMethod = 'CARD' | 'VIRTUAL_ACCOUNT';
+type PaymentMethod = 'CARD' | 'TRANSFER';
 
 interface Props {
   artworkId: string;
@@ -25,21 +25,18 @@ interface Props {
 }
 
 /**
- * 노출하는 결제 수단 목록.
+ * saf202i818 MID 활성화 결제 수단:
+ *   - CARD: 신용·체크카드 + 카카오페이/토스페이 (간편결제는 카드창 안에 자동 노출)
+ *   - TRANSFER: 계좌이체 — Toss API method=TRANSFER (실시간 계좌이체, 뱅크페이 경유)
  *
- * - CARD: 신용/체크카드 — Toss-hosted 결제창에서 카카오페이/토스페이가 자동 노출됨 (간편결제)
- * - VIRTUAL_ACCOUNT: 가상계좌 — 임시 계좌번호 발급 후 별도 입금
- *
- * 'TRANSFER' (퀵계좌이체)는 saf202i818 MID에서 뱅크페이로 라우팅되어 공인인증서·앱
- * 설치를 요구하는 UX 문제로 제거. 사용자는 카카오페이/토스페이(카드 안에 노출)로
- * 동등하거나 더 나은 즉시 결제 가능.
+ * 'VIRTUAL_ACCOUNT' (가상계좌)는 saf202i818 MID에 미계약 (에러 2003)이라 제외.
  */
 const PAYMENT_METHODS: {
   value: PaymentMethod;
-  labelKey: 'methodCard' | 'methodVirtualAccount';
+  labelKey: 'methodCard' | 'methodTransfer';
 }[] = [
   { value: 'CARD', labelKey: 'methodCard' },
-  { value: 'VIRTUAL_ACCOUNT', labelKey: 'methodVirtualAccount' },
+  { value: 'TRANSFER', labelKey: 'methodTransfer' },
 ];
 
 /**
