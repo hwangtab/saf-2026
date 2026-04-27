@@ -1,5 +1,75 @@
 [
   {
+    "hash": "ce796379",
+    "type": "feat",
+    "scope": "petition",
+    "subject": "HERO 진행률 옆 보조 지표 노출 (참여 시·도/24h 신규)",
+    "summary": "PRD §14 OQ-6 권고 (C) 적용. 모멘텀 보호 — 절대 서명 수가 낮을 때 흐름 신호로 보완",
+    "body": "- ProgressBar 컴포넌트 prop 확장: initialRegionTopCount, initialRecent24h\n- 30초 폴링 시 petition_counts 뷰의 region_top_count, recent_24h 칼럼도 같이 갱신\n- 진행률 바 아래 작은 글자로 \"참여 시·도 N/17 · 24h 신규 N명\" 노출 (둘 중 하나라도 0보다 클 때만)\n- page.tsx의 fetchPetitionCount에 두 칼럼 SSR 시점에 함께 fetch + ProgressBar에 prop 전달\n- messages: heroProgressRegions / heroProgressRecent24h 키 ko·en 추가",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "e5fa5d8a",
+    "type": "feat",
+    "scope": "petition",
+    "subject": "단축 도메인 redirect + 만 14세 안내 + PRD §14 권고 답안",
+    "summary": "PRD §14 OQ-5~OQ-13 9건 권고 답안 명시 + 의뢰자 결정 기다리는 동안 가벼운 항목(OQ-10, OQ-12) 미리 적용",
+    "body": "- next.config.js: /oh-yoon → /petition/oh-yoon, /en/oh-yoon → /en/petition/oh-yoon redirect (PRD §14 OQ-10) — 단축 도메인 saf2026.com/oh-yoon\n- SignForm: 폼 하단에 만 14세 이상 시민 서명 가능 안내 1줄 추가 (PRD §14 OQ-12) — 청원 운동 표준 패턴, 14세 미만 응답은 운영자 모더레이션\n- messages/ko.json + en.json: formAgeNotice 키 추가\n- PRD §14: D-9 안 결정 9건에 옵션·권고·트레이드오프 명시. i18n(C 풀 영문 노출), 카운터 임계값(C 보조 지표), 마감 후(B 배너만 — 이미 구현), 추진위원장(A 즉시), 메시지 디폴트(A 익명), 단축도메인(C 둘 다), 엠바고(B 1~2매체 사전), 만14세(A 안내문), 라이브 피드(B v2)\n\n검증: tsc·lint·build 통과. 모바일 viewport 검증 완료(이전 commit)",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "f59c30cd",
+    "type": "feat",
+    "scope": "petition-admin",
+    "subject": "운영자 5탭 페이지 + 메시지 모더레이션 + CSV 3종 + 감사 로그",
+    "summary": "/admin/petition/oh-yoon 운영자 단일 페이지에 KPI 바 + 5탭(개요·메시지·추진위원·메일 발송·감사 로그) 통합. PRD §10.7 v1 Must 12개 항목 달성",
+    "body": "- requireAdmin 가드(layout 레벨) + nav 사이드바 «캠페인 > 오윤 청원 운영» 추가(ko/en)\n- KpiBar: 총 서명자/추진위원/참여 시·도(17)/24h 신규 + D-N\n- OverviewTab: 지역별 분포 막대(가나다 라벨) + CSV 3종 다운로드 + 청원 강제 마감/재개 버튼\n- MessagesTab: 검토 대기/공개 동의분만/마스킹된 것만/전체 4종 필터 + 본문 검색 + 1클릭 마스킹/복원(트리거가 자동 감사 로그 기록) + 광역 라벨 노출\n- CommitteeTab: 가나다순 명단 표 + 검색 + 발족 선언문용 콤마 구분 텍스트 자동 생성·복사\n- AuditLogTab: 액션 13종 한국어 라벨 + 행위자 이메일 검색 + 시간/상세 jsonb 노출\n- MailTab: v1 자동 발송 영수증 안내 + v2 일괄 발송 placeholder\n- CsvDownloadButtons: 전체 PII / 마스킹(공개 동의분만 메시지) / 추진위원 — 모두 BOM 포함 Excel 호환 + 감사 로그 자동 기록\n- Server Action petition-admin: setMessageMasked / forceCloseCampaign(close_petition RPC) / reopenCampaign / exportSignaturesCsv(3 모드)\n\n검증: tsc 0 에러, lint 0 에러(청원 코드), build 통과. log_petition_audit RPC가 typegen에서 nullable 잘못 처리하는 supabase 한계는 직접 INSERT로 우회 (audit_log 테이블의 service_role INSERT 권한 활용)",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "192503b8",
+    "type": "feat",
+    "scope": "petition",
+    "subject": "랜딩 페이지 + 자체 서명 폼 + 시·도/시·군·구 선택 + hCaptcha",
+    "summary": "/petition/oh-yoon 청원 페이지 11부 콘텐츠 + 인라인 서명 폼(외부 redirect 없음) + 실시간 카운터·D-N + 공유 5종·문구 템플릿 3종",
+    "body": "- /petition/oh-yoon 라우트 + ISR revalidate=60. 11부 구조(HERO·위기·작품·세 가지 일·청원박스·참여3단·시점·추진주체·FAQ·결구) + v1.1 변경(테라코타·양면 새김·8월 철거 헤드라인) 반영\n- 작품 사진 3장(mural-1/2/3): HERO 배경(인체 부조 정면) + 작품 이야기 그리드 3장(양면 새김 시각 입증)\n- 자체 서명 폼: 6필드 + 청원/개인정보/국외 이전 동의 3종 + 메시지 공개 동의 + 시·도(17) + 시·군·구(228) 2단계 드롭다운 + hCaptcha + 인라인 에러 + 30초 완료\n- Server Action signPetition: 입력 검증 → rate-limit(IP 60s 5회, 분산 RPC 재사용) → hCaptcha siteverify → sign_petition RPC → 영수증 메일(Resend, fire-and-forget) → revalidatePath\n- lib/petition: regions(228 시·군·구, 가나다 정렬, isValidRegionPair 검증) / constants(deadline·goal ENV) / captcha(secret 미설정 시 graceful skip) / mail(Resend HTML 영수증, KEY 미설정 시 skip)\n- 메시지 키 75개 ko/en 추가(petition.ohYoon) + 사전 작성 공유 문구 3종(카톡·SMS·SNS)을 6부 카드3에 노출\n- hero-routes 등록 + 테스트 통과(/petition/oh-yoon)\n- 클라이언트 컴포넌트: CountdownTimer(useSyncExternalStore, hourly), ProgressBar(30s 폴링·env 미설정 시 baseline 유지), ShareKit(카톡/페북/트윗/SMS/복사), ShareTemplates(3종 카피), PetitionFAQ, SignForm, RegionSelect, HCaptchaWidget\n- 정적 자산은 페이지 라우트 충돌 회피 위해 /images/petition-oh-yoon/로 분리\n\n검증: tsc 0 에러, lint 0 에러(청원 코드), build 성공, dev 환경 시각 확인 완료",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "84b0c172",
+    "type": "feat",
+    "scope": "petition",
+    "subject": "DB 마이그레이션 4종 + 타입 갱신 + PRD v1.5",
+    "summary": "오윤 구의동 벽화 시민 청원 데이터 인프라(테이블·뷰·RPC·트리거·cron) KOSMART에 push, PRD 1.0→1.5 의사결정 5회 누적",
+    "body": "- 20260427034000_petition_signatures: petitions/petition_signatures 테이블 + petition_counts 뷰(anon SELECT 가능, PII 미노출) + sign_petition RPC(service_role 전용, hash_email/hash_ip 솔트, unique 충돌 시 DUPLICATE_EMAIL 분기) + RLS(admin SELECT/UPDATE만)\n- 20260427034100_petition_audit_log: 운영자 행위 추적 테이블 + log_petition_audit RPC + is_masked 변경 시 자동 감사 로그 트리거 + masked_at/masked_by 자동 채움 트리거\n- 20260427034200_petition_snapshot: 마감 동결값 저장 테이블 + close_petition + purge_petition_pii(180일 후 PII 마스킹)\n- 20260427034300_petition_cron: 매시간 마감 디스패처 + 매일 03:00 KST 파기 디스패처. pg_cron 미설치 시 graceful skip\n- types/supabase.ts: petitions/petition_signatures/petition_audit_log/petition_snapshot/petition_counts 포함하도록 supabase gen types --linked로 재생성\n- PRD v1.0→v1.5: 의뢰자 결정 5회(거주지·동의문·hCaptcha·리전 정정·구현 완료) + §10.7 관리자 페이지 통합 명세(13개 하위 절) + §13 출시 게이트 30개 항목\n\n검증: 로컬 supabase db reset 통과, KOSMART 원격 push 후 MCP execute_sql로 객체·seed·RLS 모두 확인. digest() search_path 버그(extensions 스키마 미포함) 1건 발견·수정.",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "2cb1e6a5",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "/artworks SEO 본문·작가 메타 hook·매거진 5편·백링크 가이드 추가",
+    "summary": "GSC 데이터 분석 후 \"그림 구매\" 키워드 미타겟팅 + 도메인 권위 부족을 진단. /artworks 페이지에 SEO 본문 섹션·카테고리 가이드·FAQ를 추가하고, 작가 페이지 metaTitle을 클릭 hook 강화 형태로 개선. 그림 구매 키워드 클러스터를 형성하는 매거진 5편을 신규 작성하고, 백링크 회수 운영 가이드를 docs/에 정리.",
+    "body": "- /artworks: 인트로 본문 + 4개 카테고리 가이드 카드 + FAQ 6항 accordion 추가. \"그림 구매·미술품·회화 원본·화랑 직거래\" 등 long-tail 키워드를 H1·H2·본문에 자연 흡수\n- 작가 페이지: metaTitle을 \"{artist} 원본 작품 N점 — 작가 직매·진품 보증\"으로 변경. 작가 이름이 첫 단어로 오게 하고 클릭 hook 강화 (이전 CTR 1.4% 개선 목표)\n- 매거진 5편 신규: 01(가격대별 추천)·03(매체 비교)·05(구매처 비교)·06(가격 결정 요인)·08(온라인 구매 5단계). 토픽 클러스터 + 풍부한 internal_links로 권위 분배\n- docs/SEO-BACKLINK-RECOVERY-GUIDE.md: 언론 32건 백링크 회수, 작가 127명 SNS 요청, 공공기관 디렉토리 등재 등 도메인 권위 빌딩 비개발 가이드 (운영자용)",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "35b0d0a3",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "sitemap 이미지 URL의 query string 제거 — XML 파싱 에러 수정",
+    "summary": "sitemap.xml이 EntityRef 에러로 파싱 실패하던 현상 수정. Supabase render URL의 ?width=&quality=&resize= query string 안의 raw `&`가 Next.js sitemap 직렬화에서 XML escape 안 돼서 발생.",
+    "body": "원인:\n- resolveSeoArtworkImageUrl이 width/quality/resize를 query로 추가\n- Next.js 16 sitemap 직렬화가 <image:loc> 안의 `&`를 `&amp;`로 escape하지 않음\n- 결과: line 136 col 190에서 \"EntityRef: expecting ';'\" 파싱 실패\n\n해결:\n- safeSitemapImageUrl() 헬퍼로 query string 제거 (split('?')[0])\n- artwork/artist/category/story/video 5개 라우트의 images 필드에 적용\n- Supabase render endpoint는 query 없어도 원본 이미지 반환하므로 Google Image 인덱싱 영향 없음\n\n검증: type-check ✓, build 1,116 페이지 ✓, sitemap.xml.body raw `&` 0개 확인.",
+    "date": "2026-04-24",
+    "author": "황경하"
+  },
+  {
     "hash": "ac89d4c3",
     "type": "fix",
     "scope": "slider",
