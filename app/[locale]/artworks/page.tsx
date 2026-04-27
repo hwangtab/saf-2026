@@ -2,11 +2,13 @@ import { Metadata } from 'next';
 import { getLocale, getTranslations } from 'next-intl/server';
 
 import Section from '@/components/ui/Section';
+import SectionTitle from '@/components/ui/SectionTitle';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import PageHero from '@/components/ui/PageHero';
 import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
 import GalleryCampaignBanner from '@/components/features/GalleryCampaignBanner';
 import GalleryStatusBar from '@/components/features/GalleryStatusBar';
+import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { SITE_URL, CONTACT } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
@@ -138,6 +140,40 @@ export default async function ArtworksPage() {
     .filter((c) => c.count > 0)
     .sort((a, b) => b.count - a.count);
 
+  // 메인 카테고리 가이드 — visible H2 + 본문 (SEO 키워드 흡수)
+  const mainCategoryGuides = [
+    {
+      key: '회화',
+      title: t('categoryPaintingTitle'),
+      description: t('categoryPaintingDescription'),
+    },
+    {
+      key: '판화',
+      title: t('categoryPrintTitle'),
+      description: t('categoryPrintDescription'),
+    },
+    {
+      key: '사진',
+      title: t('categoryPhotoTitle'),
+      description: t('categoryPhotoDescription'),
+    },
+    {
+      key: '조각',
+      title: t('categorySculptureTitle'),
+      description: t('categorySculptureDescription'),
+    },
+  ];
+
+  // FAQ — visible accordion (FAQ JSON-LD와 별개로 페이지 본문에 노출)
+  const faqItems = [
+    { q: t('faqQ1'), a: t('faqA1') },
+    { q: t('faqQ2'), a: t('faqA2') },
+    { q: t('faqQ3'), a: t('faqA3') },
+    { q: t('faqQ4'), a: t('faqA4') },
+    { q: t('faqQ5'), a: t('faqA5') },
+    { q: t('faqQ6'), a: t('faqA6') },
+  ];
+
   return (
     <>
       <JsonLdScript data={breadcrumbSchema} />
@@ -146,7 +182,7 @@ export default async function ArtworksPage() {
       {aggregateOfferSchema && <JsonLdScript data={aggregateOfferSchema} />}
       <JsonLdScript data={generateArtworkPurchaseHowTo(locale)} />
       <JsonLdScript data={generateArtworkPurchaseFAQ(locale)} />
-      <div className="min-h-screen">
+      <div className={`min-h-screen ${SAWTOOTH_TOP_SAFE_PADDING}`}>
         <PageHero
           title={t('title')}
           description={dynamicHeroDescription}
@@ -160,7 +196,7 @@ export default async function ArtworksPage() {
           />
         </PageHero>
 
-        {/* 카테고리 바로가기 — 검색엔진 크롤링용, 시각적으로 숨김 */}
+        {/* 카테고리 바로가기 — 검색엔진 크롤링용, 시각적으로 숨김 (전체 카테고리) */}
         <nav
           aria-label={locale === 'en' ? 'Browse by category' : '카테고리별 둘러보기'}
           className="sr-only"
@@ -175,6 +211,19 @@ export default async function ArtworksPage() {
           ))}
         </nav>
 
+        {/* SEO Intro — 한국 작가 그림·미술품 구매 본문 (long-tail 키워드 흡수) */}
+        <Section variant="white" padding="sm">
+          <div className="container-max max-w-4xl">
+            <h2 className="text-2xl md:text-3xl font-section font-normal text-charcoal-deep text-balance mb-6">
+              {t('introHeading')}
+            </h2>
+            <div className="space-y-4 text-charcoal text-base md:text-lg leading-relaxed">
+              <p>{t('introParagraph1')}</p>
+              <p>{t('introParagraph2')}</p>
+            </div>
+          </div>
+        </Section>
+
         {/* Gallery Section */}
         <Section
           variant="primary-surface"
@@ -188,9 +237,62 @@ export default async function ArtworksPage() {
           </div>
         </Section>
 
+        {/* Category Guide — 장르별 H2 + 가이드 텍스트 */}
+        <Section variant="white" prevVariant="primary-surface" padding="default">
+          <div className="container-max">
+            <SectionTitle className="mb-4">{t('categoryGuideHeading')}</SectionTitle>
+            <p className="text-charcoal-muted text-center max-w-2xl mx-auto mb-10 md:mb-12">
+              {t('categoryGuideIntro')}
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6 max-w-5xl mx-auto">
+              {mainCategoryGuides.map((cat) => (
+                <Link
+                  key={cat.key}
+                  href={`/artworks/category/${encodeURIComponent(cat.key)}`}
+                  className="block bg-canvas-soft rounded-2xl p-6 md:p-7 border border-gray-200 hover:border-primary/40 hover:bg-canvas transition-colors"
+                >
+                  <h3 className="text-lg md:text-xl font-section font-normal text-charcoal-deep mb-3">
+                    {cat.title}
+                  </h3>
+                  <p className="text-charcoal text-base leading-relaxed">{cat.description}</p>
+                  <span className="inline-block mt-4 text-sm text-primary font-medium">
+                    {t('categoryViewAll', { category: getCategoryLabel(cat.key, locale) })} →
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </Section>
+
         {/* Campaign Banner */}
-        <Section variant="white" prevVariant="primary-surface" className="pb-24 md:pb-32">
+        <Section variant="white" padding="default">
           <GalleryCampaignBanner />
+        </Section>
+
+        {/* FAQ — 그림 구매 자주 묻는 질문 */}
+        <Section variant="white" padding="default">
+          <div className="container-max max-w-3xl">
+            <SectionTitle className="mb-8 md:mb-10">{t('faqHeading')}</SectionTitle>
+            <div className="space-y-3">
+              {faqItems.map((item, idx) => (
+                <details
+                  key={idx}
+                  className="group bg-canvas-soft rounded-xl border border-gray-200 open:border-primary/30"
+                >
+                  <summary className="cursor-pointer p-5 font-medium text-charcoal-deep flex justify-between items-center list-none gap-4">
+                    <span className="flex-1">{item.q}</span>
+                    <span
+                      aria-hidden="true"
+                      className="text-charcoal-muted transition-transform group-open:rotate-180 shrink-0"
+                    >
+                      ▾
+                    </span>
+                  </summary>
+                  <div className="px-5 pb-5 text-charcoal leading-relaxed">{item.a}</div>
+                </details>
+              ))}
+            </div>
+          </div>
         </Section>
       </div>
     </>
