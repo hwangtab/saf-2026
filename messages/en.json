@@ -931,7 +931,8 @@
       "shareTemplateSms": "[Petition] Oh Yoon's 1974 Guui-dong mural faces demolition. Petitioning Seoul's next mayor for preservation. 30s sign → {url}",
       "shareTemplateSnsLabel": "Twitter / Instagram / Facebook",
       "shareTemplateSns": "Oh Yoon's 1974 Guui-dong terracotta mural faces demolition after 50 years. Citizens petition Seoul's next mayor. Gathering 10,000 signatures by May 10. 30s sign → {url} #OhYoon #GuuiDongMural",
-      "copyTemplate": "Copy"
+      "copyTemplate": "Copy",
+      "shareTemplateOpen": "Share"
     }
   }
 }
