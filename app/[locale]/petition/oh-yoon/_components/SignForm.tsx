@@ -4,7 +4,6 @@ import { useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 
 import RegionSelect from './RegionSelect';
-import HCaptchaWidget from './HCaptchaWidget';
 import { signPetition } from '@/app/actions/petition';
 import type { SignPetitionInput, SignPetitionResult } from '@/app/actions/petition';
 
@@ -24,9 +23,8 @@ const PRIVACY_BLURB =
   '수집 주체: 한국스마트협동조합 (예술인협동조합). 동의 거부 시 청원에 참여하실 수 없습니다.';
 
 const OVERSEAS_BLURB =
-  '청원 응답 저장은 Supabase Inc.(인도 뭄바이), 호스팅은 Vercel Inc., ' +
-  '봇 차단은 hCaptcha(Intuition Machines, Inc.)에 위탁되어 국외로 이전됩니다. ' +
-  '이전 거부 시 청원에 참여하실 수 없습니다.';
+  '청원 응답 저장은 Supabase Inc.(인도 뭄바이), 호스팅은 Vercel Inc.에 ' +
+  '위탁되어 국외로 이전됩니다. 이전 거부 시 청원에 참여하실 수 없습니다.';
 
 export default function SignForm() {
   const t = useTranslations('petition.ohYoon');
@@ -41,16 +39,9 @@ export default function SignForm() {
   const [agreedPetition, setAgreedPetition] = useState(false);
   const [agreedPrivacy, setAgreedPrivacy] = useState(false);
   const [agreedOverseas, setAgreedOverseas] = useState(false);
-  const [hcaptchaToken, setHcaptchaToken] = useState<string>('');
 
   const [pending, startTransition] = useTransition();
   const [result, setResult] = useState<SignPetitionResult | null>(null);
-
-  // dev 환경에서 sitekey 미설정 시 hCaptcha 공식 test key fallback
-  // (항상 통과하는 테스트용 — 운영 환경에서는 sitekey 미설정 시 폼이 막힘)
-  const sitekey =
-    process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY ||
-    (process.env.NODE_ENV !== 'production' ? '10000000-ffff-ffff-ffff-000000000001' : '');
 
   if (result?.ok) {
     return (
@@ -77,15 +68,6 @@ export default function SignForm() {
     e.preventDefault();
     if (pending) return;
 
-    if (!sitekey) {
-      setResult({
-        ok: false,
-        code: 'CAPTCHA_FAILED',
-        message: '봇 차단이 설정되지 않았습니다. 운영자에게 문의해 주세요.',
-      });
-      return;
-    }
-
     startTransition(async () => {
       const res = await signPetition({
         fullName,
@@ -98,13 +80,8 @@ export default function SignForm() {
         agreedPetition,
         agreedPrivacy,
         agreedOverseas,
-        hcaptchaToken,
       });
       setResult(res);
-      // 검증 실패 시 hCaptcha 토큰 1회용이라 무효화
-      if (!res.ok && res.code === 'CAPTCHA_FAILED') {
-        setHcaptchaToken('');
-      }
     });
   }
 
@@ -280,17 +257,6 @@ export default function SignForm() {
         )}
       </fieldset>
 
-      {/* hCaptcha — dev에서는 test key fallback이 동작하므로 sitekey가 항상 존재 */}
-      {sitekey && (
-        <div className="flex justify-center">
-          <HCaptchaWidget
-            sitekey={sitekey}
-            onVerify={(token) => setHcaptchaToken(token)}
-            onExpire={() => setHcaptchaToken('')}
-          />
-        </div>
-      )}
-
       {/* 결과 메시지 */}
       {result && !result.ok && result.message && (
         <p
@@ -303,7 +269,7 @@ export default function SignForm() {
 
       <button
         type="submit"
-        disabled={pending || (sitekey !== '' && !hcaptchaToken)}
+        disabled={pending}
         className="w-full inline-flex items-center justify-center rounded-lg px-6 py-4 text-lg font-bold bg-primary hover:bg-primary-strong text-white transition-all hover:scale-[1.01] hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
       >
         {pending ? '제출 중…' : `${t('heroCta')} →`}

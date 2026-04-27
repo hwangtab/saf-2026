@@ -4,7 +4,6 @@ import { revalidatePath } from 'next/cache';
 
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { rateLimit } from '@/lib/rate-limit';
-import { verifyHCaptcha } from '@/lib/petition/captcha';
 import { sendPetitionReceipt } from '@/lib/petition/mail';
 import { PETITION_OH_YOON_PATH, PETITION_OH_YOON_SLUG } from '@/lib/petition/constants';
 import { isValidRegionPair } from '@/lib/petition/regions';
@@ -22,13 +21,11 @@ export interface SignPetitionInput {
   agreedPetition: boolean;
   agreedPrivacy: boolean;
   agreedOverseas: boolean;
-  hcaptchaToken: string;
 }
 
 export type SignPetitionResultCode =
   | 'OK'
   | 'INVALID_INPUT'
-  | 'CAPTCHA_FAILED'
   | 'RATE_LIMITED'
   | 'DUPLICATE_EMAIL'
   | 'PETITION_CLOSED'
@@ -96,13 +93,9 @@ export async function signPetition(input: SignPetitionInput): Promise<SignPetiti
     return fail('RATE_LIMITED', '요청이 너무 잦습니다. 잠시 후 다시 시도해 주십시오.');
   }
 
-  // ─── 3. hCaptcha 검증 ─────────────────────────────────────────
-  const captcha = await verifyHCaptcha(input.hcaptchaToken, meta.ip ?? null);
-  if (!captcha.ok) {
-    return fail('CAPTCHA_FAILED', '봇 차단 검증에 실패했습니다. 다시 시도해 주십시오.');
-  }
-
-  // ─── 4. sign_petition RPC 호출 ────────────────────────────────
+  // ─── 3. sign_petition RPC 호출 ────────────────────────────────
+  // 봇 방지: (a) DB unique constraint 이메일 중복 차단 + (b) IP rate-limit + (c) 영수증 메일로 이메일 진성 검증
+  // (hCaptcha 사용 안 함 — 운영 결정으로 제거됨)
   const supabase = createSupabaseAdminClient();
   const payload = {
     petition_slug: PETITION_OH_YOON_SLUG,
@@ -141,14 +134,14 @@ export async function signPetition(input: SignPetitionInput): Promise<SignPetiti
     return fail('INTERNAL_ERROR', '저장에 실패했습니다.');
   }
 
-  // ─── 5. 영수증 메일 (실패해도 서명 자체는 성공으로 응답) ─────
+  // ─── 4. 영수증 메일 (실패해도 서명 자체는 성공으로 응답) ─────
   void sendPetitionReceipt({
     to: email,
     fullName,
     petitionUrl: `${SITE_URL}${PETITION_OH_YOON_PATH}`,
   }).catch((err) => console.error('[petition/sign] receipt enqueue failed:', err));
 
-  // ─── 6. ISR 카운터 즉시 갱신 ─────────────────────────────────
+  // ─── 5. ISR 카운터 즉시 갱신 ─────────────────────────────────
   try {
     revalidatePath(PETITION_OH_YOON_PATH);
     revalidatePath(`/ko${PETITION_OH_YOON_PATH}`);
