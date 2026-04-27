@@ -23,7 +23,7 @@ import {
 
 import CountdownTimer from './_components/CountdownTimer';
 import ProgressBar from './_components/ProgressBar';
-import ShareKit from './_components/ShareKit';
+import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import ShareTemplates from './_components/ShareTemplates';
 import PetitionFAQ from './_components/PetitionFAQ';
 import SignForm from './_components/SignForm';
@@ -279,12 +279,11 @@ export default async function PetitionOhYoonPage() {
               <br />
               <strong className="text-primary-strong">{t('statementLine3')}</strong>
             </p>
-            <div className="mt-8">
-              <ShareKit
+            <div className="mt-8 flex justify-center">
+              <ShareButtonsWrapper
                 url={PAGE_URL}
-                text={statementText}
-                tone="light"
-                className="!justify-center"
+                title={statementText}
+                description={t('metaDescription')}
               />
             </div>
           </div>
