@@ -98,7 +98,11 @@ export default function CheckoutClient({
     return () => {
       cancelled = true;
     };
-  }, [totalAmount, widgetClientKey, t]);
+    // Toss widget SDK has no unmount API; we deliberately mount once for the
+    // component lifetime. Dynamic amount changes are handled by setAmount in
+    // handlePayment, not by re-mounting.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function handlePayment() {
     setError(null);

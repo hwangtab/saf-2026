@@ -26,7 +26,11 @@ interface Props {
 }
 
 export default async function CheckoutPage({ params }: Props) {
-  const { artworkId } = await params;
+  const { artworkId, locale } = await params;
+
+  if (locale === 'en') {
+    notFound();
+  }
 
   if (getPaymentMode() !== 'toss') {
     notFound();
