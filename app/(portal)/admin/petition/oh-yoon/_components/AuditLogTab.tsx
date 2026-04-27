@@ -1,28 +1,30 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 import type { AdminAuditRow } from './types';
 
-const ACTION_LABEL: Record<string, string> = {
-  mask_message: '메시지 마스킹',
-  unmask_message: '메시지 복원',
-  delete_message: '메시지 삭제',
-  csv_export_full: 'CSV 전체(PII)',
-  csv_export_masked: 'CSV 마스킹',
-  csv_export_committee: 'CSV 추진위원',
-  mail_send_milestone: '메일 — 마일스톤',
-  mail_send_d1: '메일 — D-1 안내',
-  mail_send_result: '메일 — 결과 통지',
-  mail_send_committee: '메일 — 추진위원',
-  force_close_campaign: '청원 강제 마감',
-  reopen_campaign: '청원 재개',
-  manual_purge_pii: 'PII 수동 파기',
+const ACTION_LABEL_KEYS: Record<string, string> = {
+  mask_message: 'auditActionMaskMessage',
+  unmask_message: 'auditActionUnmaskMessage',
+  delete_message: 'auditActionDeleteMessage',
+  csv_export_full: 'auditActionCsvFull',
+  csv_export_masked: 'auditActionCsvMasked',
+  csv_export_committee: 'auditActionCsvCommittee',
+  mail_send_milestone: 'auditActionMailMilestone',
+  mail_send_d1: 'auditActionMailD1',
+  mail_send_result: 'auditActionMailResult',
+  mail_send_committee: 'auditActionMailCommittee',
+  force_close_campaign: 'auditActionForceClose',
+  reopen_campaign: 'auditActionReopen',
+  manual_purge_pii: 'auditActionPurge',
 };
 
-const ACTIONS = Object.keys(ACTION_LABEL);
+const ACTIONS = Object.keys(ACTION_LABEL_KEYS);
 
 export default function AuditLogTab({ audit }: { audit: AdminAuditRow[] }) {
+  const t = useTranslations('admin.petition');
   const [actionFilter, setActionFilter] = useState<string>('');
   const [search, setSearch] = useState('');
 
@@ -35,6 +37,11 @@ export default function AuditLogTab({ audit }: { audit: AdminAuditRow[] }) {
     });
   }, [audit, actionFilter, search]);
 
+  function actionLabel(action: string): string {
+    const key = ACTION_LABEL_KEYS[action];
+    return key ? t(key) : action;
+  }
+
   return (
     <div className="space-y-4">
       <header className="flex flex-wrap items-center gap-2">
@@ -43,10 +50,10 @@ export default function AuditLogTab({ audit }: { audit: AdminAuditRow[] }) {
           onChange={(e) => setActionFilter(e.target.value)}
           className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         >
-          <option value="">전체 액션</option>
+          <option value="">{t('auditFilterAll')}</option>
           {ACTIONS.map((a) => (
             <option key={a} value={a}>
-              {ACTION_LABEL[a]}
+              {actionLabel(a)}
             </option>
           ))}
         </select>
@@ -54,27 +61,27 @@ export default function AuditLogTab({ audit }: { audit: AdminAuditRow[] }) {
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="행위자 이메일"
+          placeholder={t('auditSearchPlaceholder')}
           className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         />
         <span className="ml-auto text-xs text-charcoal-muted">
-          최근 100건 표시 · {filtered.length.toLocaleString('ko-KR')}건
+          {t('auditCountLine', { count: filtered.length.toLocaleString('ko-KR') })}
         </span>
       </header>
 
       {filtered.length === 0 ? (
         <p className="rounded-lg border border-dashed border-gray-300 bg-gray-50 px-6 py-12 text-center text-sm text-charcoal-muted">
-          조건에 맞는 로그가 없습니다.
+          {t('auditEmpty')}
         </p>
       ) : (
         <div className="overflow-auto rounded-lg border border-gray-200">
           <table className="min-w-full divide-y divide-gray-200 text-sm">
             <thead className="bg-gray-50 text-left text-xs uppercase text-charcoal-muted">
               <tr>
-                <th className="px-3 py-2.5 font-semibold">시각</th>
-                <th className="px-3 py-2.5 font-semibold">행위자</th>
-                <th className="px-3 py-2.5 font-semibold">액션</th>
-                <th className="px-3 py-2.5 font-semibold">대상/상세</th>
+                <th className="px-3 py-2.5 font-semibold">{t('auditColTime')}</th>
+                <th className="px-3 py-2.5 font-semibold">{t('auditColActor')}</th>
+                <th className="px-3 py-2.5 font-semibold">{t('auditColAction')}</th>
+                <th className="px-3 py-2.5 font-semibold">{t('auditColTarget')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 bg-white">
@@ -84,9 +91,7 @@ export default function AuditLogTab({ audit }: { audit: AdminAuditRow[] }) {
                     {new Date(row.created_at).toLocaleString('ko-KR')}
                   </td>
                   <td className="px-3 py-2 text-charcoal-deep">{row.actor_email}</td>
-                  <td className="px-3 py-2 text-charcoal">
-                    {ACTION_LABEL[row.action] ?? row.action}
-                  </td>
+                  <td className="px-3 py-2 text-charcoal">{actionLabel(row.action)}</td>
                   <td className="px-3 py-2 text-charcoal-muted text-xs break-all">
                     {row.target_id && (
                       <span className="mr-2 text-[10px] font-mono text-charcoal-muted">

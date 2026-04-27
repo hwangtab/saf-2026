@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 import { getRegionByKey } from '@/lib/petition/regions';
 
@@ -11,6 +12,7 @@ interface CommitteeTabProps {
 }
 
 export default function CommitteeTab({ committee }: CommitteeTabProps) {
+  const t = useTranslations('admin.petition');
   const [search, setSearch] = useState('');
 
   const filtered = useMemo(() => {
@@ -21,7 +23,6 @@ export default function CommitteeTab({ committee }: CommitteeTabProps) {
     );
   }, [committee, search]);
 
-  // 발족 선언문용 — 가나다순 콤마 구분 텍스트
   const declarationText = useMemo(() => committee.map((c) => c.full_name).join(', '), [committee]);
 
   const [copied, setCopied] = useState(false);
@@ -37,50 +38,48 @@ export default function CommitteeTab({ committee }: CommitteeTabProps) {
     <div className="space-y-5">
       <header className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm text-charcoal-muted">
-          전체 {committee.length.toLocaleString('ko-KR')}명 (가나다순)
+          {t('committeeCountLine', { count: committee.length.toLocaleString('ko-KR') })}
         </p>
         <input
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="이름/이메일 검색"
+          placeholder={t('committeeSearchPlaceholder')}
           className="w-full sm:w-64 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         />
       </header>
 
-      {/* 발족 선언문용 텍스트 자동 생성 */}
       <section className="rounded-lg border border-gray-200 bg-canvas-soft p-4">
         <div className="flex items-center justify-between gap-2 mb-2">
           <h2 className="text-sm font-semibold text-charcoal-deep">
-            발족 선언문용 명단 (가나다순)
+            {t('committeeDeclarationHeading')}
           </h2>
           <button
             type="button"
             onClick={copyDeclaration}
             className="rounded-md border border-gray-300 bg-white px-3 py-1 text-xs font-semibold text-charcoal-deep hover:bg-gray-50"
           >
-            {copied ? '복사됨' : '복사'}
+            {copied ? t('committeeCopied') : t('committeeCopy')}
           </button>
         </div>
         <p className="text-sm text-charcoal whitespace-pre-wrap break-keep max-h-32 overflow-auto">
-          {declarationText || '(아직 추진위원 신청자가 없습니다)'}
+          {declarationText || t('committeeDeclarationEmpty')}
         </p>
       </section>
 
-      {/* 명단 표 */}
       {filtered.length === 0 ? (
         <p className="rounded-lg border border-dashed border-gray-300 bg-gray-50 px-6 py-12 text-center text-sm text-charcoal-muted">
-          조건에 맞는 추진위원이 없습니다.
+          {t('committeeEmpty')}
         </p>
       ) : (
         <div className="overflow-auto rounded-lg border border-gray-200">
           <table className="min-w-full divide-y divide-gray-200 text-sm">
             <thead className="bg-gray-50 text-left text-xs uppercase text-charcoal-muted">
               <tr>
-                <th className="px-3 py-2.5 font-semibold">이름</th>
-                <th className="px-3 py-2.5 font-semibold">이메일</th>
-                <th className="px-3 py-2.5 font-semibold">지역</th>
-                <th className="px-3 py-2.5 font-semibold">서명일</th>
+                <th className="px-3 py-2.5 font-semibold">{t('committeeColName')}</th>
+                <th className="px-3 py-2.5 font-semibold">{t('committeeColEmail')}</th>
+                <th className="px-3 py-2.5 font-semibold">{t('committeeColRegion')}</th>
+                <th className="px-3 py-2.5 font-semibold">{t('committeeColSignedAt')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 bg-white">
@@ -104,9 +103,7 @@ export default function CommitteeTab({ committee }: CommitteeTabProps) {
         </div>
       )}
 
-      <p className="text-xs text-charcoal-muted break-keep">
-        추진위원 명단은 청원 결과 발표 시 발족 선언문에 게재됩니다. CSV는 «개요» 탭에서 받으세요.
-      </p>
+      <p className="text-xs text-charcoal-muted break-keep">{t('committeeFooter')}</p>
     </div>
   );
 }

@@ -71,23 +71,13 @@ export async function generateMetadata(): Promise<Metadata> {
     PETITION_OH_YOON_PATH,
     locale
   );
-  // OG 이미지는 청원 작품 사진(mural-1, 정면 인체 부조)으로 override.
-  // 외부 크롤러가 직접 PNG를 가져오므로 raw URL 사용 (옵티마이저 통과 X).
-  const ogImage = `${SITE_URL}/images/petition-oh-yoon/mural-1.png`;
-  const ogAlt = '오윤, 1974, 테라코타 벽화 — 구의동 정면';
+  // OG 이미지는 같은 디렉토리의 opengraph-image.tsx가 Next.js convention으로 자동 적용.
+  // 작품 사진 + 다크 오버레이 + 슬로건 합성, 1200×630.
   return {
     ...base,
     openGraph: {
       ...base.openGraph,
       type: 'article',
-      images: [
-        {
-          url: ogImage,
-          secureUrl: ogImage,
-          type: 'image/png',
-          alt: ogAlt,
-        },
-      ],
     },
   };
 }
@@ -124,10 +114,19 @@ export default async function PetitionOhYoonPage() {
             className="object-cover object-center"
           />
         </div>
-        {/* 다크 오버레이 — 텍스트 가독성 + 작품 톤 살리기 */}
+        {/* 다크 오버레이 — 텍스트 가독성 강화 (작품 톤은 가장자리에서 살짝 살린다) */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 -z-10 bg-gradient-to-br from-charcoal-deep/90 via-charcoal/80 to-primary-strong/70"
+          className="absolute inset-0 -z-10 bg-gradient-to-br from-charcoal-deep/95 via-charcoal/88 to-primary-strong/78"
+        />
+        {/* 슬로건 영역 추가 어두움 — 중앙 vignette */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10"
+          style={{
+            background:
+              'radial-gradient(ellipse at 50% 50%, rgba(15,23,33,0.4) 0%, transparent 70%)',
+          }}
         />
         <div
           aria-hidden="true"
@@ -144,6 +143,7 @@ export default async function PetitionOhYoonPage() {
           <h1
             id="petition-hero-title"
             className="font-display text-4xl md:text-6xl leading-tight mb-4 break-keep text-balance whitespace-pre-line"
+            style={{ textShadow: '0 2px 16px rgba(0,0,0,0.5)' }}
           >
             {t('heroTitle')}
           </h1>
@@ -389,9 +389,24 @@ export default async function PetitionOhYoonPage() {
         </div>
       </Section>
 
-      {/* 10부 마지막 결구 + 두 번째 CTA */}
-      <Section variant="primary" className="py-24 md:py-32 text-center">
-        <div className="container-max max-w-2xl mx-auto px-4">
+      {/* 10부 마지막 결구 + 두 번째 CTA — HERO와 톤 통일 (어두운 그라디언트로 페이지 감싸기) */}
+      <section
+        aria-labelledby="petition-closing-title"
+        className="relative isolate overflow-hidden py-24 md:py-32 text-center text-white bg-charcoal-deep"
+      >
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 bg-gradient-to-br from-charcoal-deep via-charcoal to-primary-strong/80"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-30 mix-blend-overlay"
+          style={{
+            background:
+              'radial-gradient(ellipse at 50% 0%, rgba(255,224,138,0.18) 0%, transparent 60%), radial-gradient(ellipse at 50% 100%, rgba(255,255,255,0.12) 0%, transparent 60%)',
+          }}
+        />
+        <div className="relative container-max max-w-2xl mx-auto px-4">
           {!is_active && (
             <p className="mb-4 text-sm font-semibold uppercase tracking-wide opacity-80">
               {t('closedTitle')}
@@ -403,7 +418,10 @@ export default async function PetitionOhYoonPage() {
           <p className="text-xl md:text-2xl leading-relaxed mb-3 break-keep opacity-90">
             {t('closingLine2')}
           </p>
-          <p className="font-display text-3xl md:text-4xl leading-tight mb-10 break-keep">
+          <p
+            id="petition-closing-title"
+            className="font-display text-3xl md:text-4xl leading-tight mb-10 break-keep"
+          >
             {t('closingLine3')}
           </p>
           {is_active && (
@@ -415,7 +433,7 @@ export default async function PetitionOhYoonPage() {
             </a>
           )}
         </div>
-      </Section>
+      </section>
     </main>
   );
 }

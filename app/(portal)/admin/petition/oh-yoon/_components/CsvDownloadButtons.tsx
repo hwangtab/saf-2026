@@ -1,19 +1,21 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import { useTranslations } from 'next-intl';
 
 import { exportSignaturesCsv, type CsvExportMode } from '@/app/actions/petition-admin';
 
-const MODES: { mode: CsvExportMode; label: string; tone: 'primary' | 'secondary' }[] = [
-  { mode: 'full', label: '전체 PII (관리자 전용)', tone: 'primary' },
-  { mode: 'masked', label: '마스킹 (보도자료·통계)', tone: 'secondary' },
-  { mode: 'committee', label: '추진위원 명단', tone: 'secondary' },
-];
-
 export default function CsvDownloadButtons() {
+  const t = useTranslations('admin.petition');
   const [pending, startTransition] = useTransition();
   const [busyMode, setBusyMode] = useState<CsvExportMode | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
+
+  const modes: { mode: CsvExportMode; labelKey: string; tone: 'primary' | 'secondary' }[] = [
+    { mode: 'full', labelKey: 'csvFull', tone: 'primary' },
+    { mode: 'masked', labelKey: 'csvMasked', tone: 'secondary' },
+    { mode: 'committee', labelKey: 'csvCommittee', tone: 'secondary' },
+  ];
 
   function downloadCsv(filename: string, csv: string) {
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -34,18 +36,18 @@ export default function CsvDownloadButtons() {
       const result = await exportSignaturesCsv(mode);
       setBusyMode(null);
       if (!result.ok || !result.csv || !result.filename) {
-        setMsg(result.message ?? '실패');
+        setMsg(result.message ?? t('csvFailed'));
         return;
       }
       downloadCsv(result.filename, result.csv);
-      setMsg(`${result.rowCount?.toLocaleString('ko-KR') ?? 0}건 다운로드 — 감사 로그 기록됨`);
+      setMsg(t('csvDownloaded', { count: (result.rowCount ?? 0).toLocaleString('ko-KR') }));
     });
   }
 
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap gap-2">
-        {MODES.map((m) => (
+        {modes.map((m) => (
           <button
             key={m.mode}
             type="button"
@@ -57,7 +59,7 @@ export default function CsvDownloadButtons() {
                 : 'rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-charcoal-deep hover:bg-gray-50 disabled:opacity-60'
             }
           >
-            {pending && busyMode === m.mode ? '생성 중…' : m.label}
+            {pending && busyMode === m.mode ? t('csvGenerating') : t(m.labelKey)}
           </button>
         ))}
       </div>

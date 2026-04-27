@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import { useTranslations } from 'next-intl';
 
 import { forceCloseCampaign, reopenCampaign } from '@/app/actions/petition-admin';
 import { getRegionByKey } from '@/lib/petition/regions';
@@ -14,35 +15,35 @@ interface OverviewTabProps {
 }
 
 export default function OverviewTab({ counts, regionBreakdown }: OverviewTabProps) {
+  const t = useTranslations('admin.petition');
   const [pending, startTransition] = useTransition();
   const [msg, setMsg] = useState<string | null>(null);
 
   const max = regionBreakdown[0]?.count ?? 1;
 
   function handleClose() {
-    if (
-      !confirm('청원을 강제 마감합니다. 폼이 비활성화되고 카운터가 동결됩니다. 계속하시겠습니까?')
-    )
-      return;
+    if (!confirm(t('overviewForceCloseConfirm'))) return;
     startTransition(async () => {
       const r = await forceCloseCampaign();
-      setMsg(r.message ?? (r.ok ? '강제 마감 완료' : '실패'));
+      setMsg(r.message ?? (r.ok ? t('overviewCloseSuccess') : t('overviewActionFailed')));
     });
   }
   function handleReopen() {
-    if (!confirm('청원을 재개합니다. 폼이 다시 활성화됩니다. 계속하시겠습니까?')) return;
+    if (!confirm(t('overviewReopenConfirm'))) return;
     startTransition(async () => {
       const r = await reopenCampaign();
-      setMsg(r.message ?? (r.ok ? '재개 완료' : '실패'));
+      setMsg(r.message ?? (r.ok ? t('overviewReopenSuccess') : t('overviewActionFailed')));
     });
   }
 
   return (
     <div className="space-y-6">
       <section>
-        <h2 className="text-lg font-semibold text-charcoal-deep mb-3">지역별 분포</h2>
+        <h2 className="text-lg font-semibold text-charcoal-deep mb-3">
+          {t('overviewRegionHeading')}
+        </h2>
         {regionBreakdown.length === 0 ? (
-          <p className="text-sm text-charcoal-muted">아직 서명이 없습니다.</p>
+          <p className="text-sm text-charcoal-muted">{t('overviewRegionEmpty')}</p>
         ) : (
           <ul className="space-y-1.5">
             {regionBreakdown.map((r) => {
@@ -71,12 +72,16 @@ export default function OverviewTab({ counts, regionBreakdown }: OverviewTabProp
       </section>
 
       <section>
-        <h2 className="text-lg font-semibold text-charcoal-deep mb-3">데이터 내보내기</h2>
+        <h2 className="text-lg font-semibold text-charcoal-deep mb-3">
+          {t('overviewExportHeading')}
+        </h2>
         <CsvDownloadButtons />
       </section>
 
       <section>
-        <h2 className="text-lg font-semibold text-charcoal-deep mb-3">청원 상태 제어</h2>
+        <h2 className="text-lg font-semibold text-charcoal-deep mb-3">
+          {t('overviewControlHeading')}
+        </h2>
         <div className="flex flex-wrap gap-2 items-center">
           {counts.is_active ? (
             <button
@@ -85,7 +90,7 @@ export default function OverviewTab({ counts, regionBreakdown }: OverviewTabProp
               disabled={pending}
               className="rounded-lg border border-danger/40 bg-white px-4 py-2 text-sm font-semibold text-danger-a11y hover:bg-danger/10 disabled:opacity-60"
             >
-              청원 강제 마감
+              {t('overviewForceClose')}
             </button>
           ) : (
             <button
@@ -94,7 +99,7 @@ export default function OverviewTab({ counts, regionBreakdown }: OverviewTabProp
               disabled={pending}
               className="rounded-lg border border-primary/40 bg-white px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/10 disabled:opacity-60"
             >
-              청원 재개
+              {t('overviewReopen')}
             </button>
           )}
           {msg && (
@@ -103,10 +108,7 @@ export default function OverviewTab({ counts, regionBreakdown }: OverviewTabProp
             </span>
           )}
         </div>
-        <p className="mt-2 text-xs text-charcoal-muted break-keep">
-          마감 시각 도래 시 pg_cron이 자동으로 close_petition 함수를 실행합니다 (활성화 시).
-          여기서는 마감일 전 강제 종료/재개를 수동으로 트리거합니다.
-        </p>
+        <p className="mt-2 text-xs text-charcoal-muted break-keep">{t('overviewCronNote')}</p>
       </section>
     </div>
   );
