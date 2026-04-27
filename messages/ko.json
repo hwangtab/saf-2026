@@ -851,6 +851,8 @@
       "heroCta": "지금 서명하기",
       "heroProgressLabel": "현재 {current}명 / 목표 {goal}명",
       "heroProgressLoading": "집계 불러오는 중…",
+      "heroProgressRegions": "참여 시·도 {count}/17",
+      "heroProgressRecent24h": "24h 신규 {count}명",
       "countdownPrefix": "마감까지",
       "countdownDays": "{days}일",
       "countdownClosed": "서명이 마감되었습니다",

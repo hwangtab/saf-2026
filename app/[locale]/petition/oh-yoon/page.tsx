@@ -34,6 +34,8 @@ const PAGE_URL = `${SITE_URL}${PETITION_OH_YOON_PATH}`;
 
 interface PetitionCount {
   total: number;
+  region_top_count: number;
+  recent_24h: number;
   is_active: boolean;
 }
 
@@ -42,15 +44,17 @@ async function fetchPetitionCount(): Promise<PetitionCount> {
     const supabase = await createSupabaseServerClient();
     const { data } = await supabase
       .from('petition_counts')
-      .select('total, is_active')
+      .select('total, region_top_count, recent_24h, is_active')
       .eq('petition_slug', PETITION_OH_YOON_SLUG)
       .maybeSingle();
     return {
       total: data?.total ?? 0,
+      region_top_count: data?.region_top_count ?? 0,
+      recent_24h: data?.recent_24h ?? 0,
       is_active: data?.is_active ?? true,
     };
   } catch {
-    return { total: 0, is_active: true };
+    return { total: 0, region_top_count: 0, recent_24h: 0, is_active: true };
   }
 }
 
@@ -91,7 +95,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function PetitionOhYoonPage() {
   const t = await getTranslations('petition.ohYoon');
   const locale = resolveLocale(await getLocale());
-  const { total, is_active } = await fetchPetitionCount();
+  const { total, region_top_count, recent_24h, is_active } = await fetchPetitionCount();
 
   const breadcrumbSchema = createBreadcrumbSchema([
     { name: 'SAF2026', url: SITE_URL },
@@ -148,7 +152,12 @@ export default async function PetitionOhYoonPage() {
             {t('heroDeadlineLine')}
           </p>
           <div className="mb-8">
-            <ProgressBar initialTotal={total} goal={PETITION_OH_YOON_GOAL} />
+            <ProgressBar
+              initialTotal={total}
+              goal={PETITION_OH_YOON_GOAL}
+              initialRegionTopCount={region_top_count}
+              initialRecent24h={recent_24h}
+            />
           </div>
           <a
             href="#sign-form"

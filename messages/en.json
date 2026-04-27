@@ -851,6 +851,8 @@
       "heroCta": "Sign now",
       "heroProgressLabel": "{current} of {goal}",
       "heroProgressLoading": "Loading count…",
+      "heroProgressRegions": "{count}/17 regions",
+      "heroProgressRecent24h": "{count} in last 24h",
       "countdownPrefix": "Closes in",
       "countdownDays": "{days} days",
       "countdownClosed": "Petition closed",

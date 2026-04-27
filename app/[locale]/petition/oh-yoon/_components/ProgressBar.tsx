@@ -9,6 +9,9 @@ import { PETITION_OH_YOON_SLUG } from '@/lib/petition/constants';
 interface ProgressBarProps {
   initialTotal: number;
   goal: number;
+  /** 보조 지표 (PRD §14 OQ-6 권고 — 모멘텀 보호) */
+  initialRegionTopCount?: number;
+  initialRecent24h?: number;
   /** 30초 폴링 (PRD §10.8) */
   pollIntervalMs?: number;
 }
@@ -16,10 +19,14 @@ interface ProgressBarProps {
 export default function ProgressBar({
   initialTotal,
   goal,
+  initialRegionTopCount = 0,
+  initialRecent24h = 0,
   pollIntervalMs = 30_000,
 }: ProgressBarProps) {
   const t = useTranslations('petition.ohYoon');
   const [total, setTotal] = useState(initialTotal);
+  const [regionTopCount, setRegionTopCount] = useState(initialRegionTopCount);
+  const [recent24h, setRecent24h] = useState(initialRecent24h);
 
   useEffect(() => {
     // supabase env가 없으면 baseline 값만 노출하고 폴링 비활성 (dev에서 페이지를 다운시키지 않음)
@@ -37,12 +44,13 @@ export default function ProgressBar({
       try {
         const { data } = await supabase
           .from('petition_counts')
-          .select('total')
+          .select('total, region_top_count, recent_24h')
           .eq('petition_slug', PETITION_OH_YOON_SLUG)
           .maybeSingle();
-        if (!cancelled && typeof data?.total === 'number') {
-          setTotal(data.total);
-        }
+        if (cancelled || !data) return;
+        if (typeof data.total === 'number') setTotal(data.total);
+        if (typeof data.region_top_count === 'number') setRegionTopCount(data.region_top_count);
+        if (typeof data.recent_24h === 'number') setRecent24h(data.recent_24h);
       } catch (err) {
         console.warn('[petition/progress] count fetch 실패:', err);
       }
@@ -86,6 +94,14 @@ export default function ProgressBar({
           style={{ width: `${ratio * 100}%` }}
         />
       </div>
+      {/* 보조 지표 — 모멘텀 신호 (PRD §14 OQ-6) */}
+      {(regionTopCount > 0 || recent24h > 0) && (
+        <p className="mt-2 text-xs opacity-75 tabular-nums text-center">
+          {t('heroProgressRegions', { count: regionTopCount.toLocaleString('ko-KR') })}
+          {' · '}
+          {t('heroProgressRecent24h', { count: recent24h.toLocaleString('ko-KR') })}
+        </p>
+      )}
     </div>
   );
 }
