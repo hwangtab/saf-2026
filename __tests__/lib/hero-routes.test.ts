@@ -20,6 +20,7 @@ describe('isHeroRoute', () => {
       '/stories',
       '/privacy',
       '/terms',
+      '/petition/oh-yoon',
     ])('%s는 hero 경로', (path) => {
       expect(isHeroRoute(path)).toBe(true);
     });

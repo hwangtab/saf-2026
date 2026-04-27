@@ -27,6 +27,10 @@ const ADMIN_NAV_GROUPS_BY_LOCALE: Record<LocaleCode, AdminNavGroup[]> = {
       ],
     },
     {
+      label: '캠페인',
+      items: [{ href: '/admin/petition/oh-yoon', label: '오윤 청원 운영' }],
+    },
+    {
       label: '주문',
       items: [{ href: '/admin/orders', label: '주문 관리' }],
     },
@@ -67,6 +71,10 @@ const ADMIN_NAV_GROUPS_BY_LOCALE: Record<LocaleCode, AdminNavGroup[]> = {
         { href: '/admin/artworks', label: 'Artworks' },
         { href: '/admin/content', label: 'Content Manager' },
       ],
+    },
+    {
+      label: 'Campaigns',
+      items: [{ href: '/admin/petition/oh-yoon', label: 'Oh Yoon Petition' }],
     },
     {
       label: 'Orders',
