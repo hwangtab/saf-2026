@@ -316,9 +316,12 @@ export async function POST(req: NextRequest) {
     }
   } else if (isPaymentStatusChanged(payload)) {
     const paymentKey = payload.data.paymentKey;
+    const orderId = payload.data.orderId;
     const newStatus = payload.data.status;
 
-    // Resolve provider from payment → order metadata
+    // Resolve provider from payment → order metadata.
+    // ABORTED 주문은 confirm 단계 전이라 payments 테이블에 행이 없을 수 있음 →
+    // payments 조회 실패 시 orders.order_no(=Toss orderId)로 직접 fallback.
     let provider: PaymentProvider = 'api_v1';
     const { data: providerLookup } = await supabase
       .from('payments')
@@ -330,6 +333,33 @@ export async function POST(req: NextRequest) {
         ? providerLookup.orders[0]
         : providerLookup.orders;
       provider = resolveOrderProvider(orderRow?.metadata);
+    } else {
+      // payments 행 없음 → orders 테이블에서 직접 metadata 조회
+      const { data: orderRow } = await supabase
+        .from('orders')
+        .select('metadata')
+        .eq('order_no', orderId)
+        .maybeSingle();
+      if (orderRow) {
+        provider = resolveOrderProvider(orderRow.metadata);
+      }
+    }
+
+    // ABORTED/EXPIRED 등 confirm 전 종결 상태는 payments 행이 없으므로 멱등 처리:
+    // - DB에 paymentKey가 없는 상태에서 더 이상 할 게 없음 (주문은 pending_payment에서
+    //   타임아웃 cron이 정리하거나 사용자가 새 주문 생성)
+    // - 200 OK로 응답하여 Toss 재시도 회피
+    const ABORTED_STATUSES = new Set(['ABORTED', 'EXPIRED']);
+    if (ABORTED_STATUSES.has(newStatus)) {
+      const { data: paymentExists } = await supabase
+        .from('payments')
+        .select('id')
+        .eq('payment_key', paymentKey)
+        .maybeSingle();
+      if (!paymentExists) {
+        // 결제 시도 후 사용자 취소·실패 — DB 변경 없이 200 종료
+        return NextResponse.json({ received: true, status: 'aborted_no_record' }, { status: 200 });
+      }
     }
 
     // Toss API double-verify BEFORE any DB mutations
