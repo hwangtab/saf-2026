@@ -1,5 +1,45 @@
 [
   {
+    "hash": "407f7152",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "색상 토큰 누락으로 CTA 안 보임 + ShareKit 다크 톤이 청원 박스에서 안 보임",
+    "summary": "두 가지 시각 회귀 수정 — (1) bg-sun-500/sun-400 invalid → bg-sun/sun-strong (BRAND_COLORS에 sun.500이 없어 노란 CTA가 다크 배경에 묻힘) (2) ShareKit이 다크 톤 단일이라 청원 박스(canvas 배경)에서 흰 텍스트가 흰 배경에 안 보임",
+    "body": "- page.tsx: HERO + 결구 CTA의 bg-sun-500 hover:bg-sun-400 → bg-sun hover:bg-sun-strong\n- ProgressBar.tsx: bar fill의 bg-sun-500 → bg-sun\n- ShareKit.tsx: tone prop 추가 ('dark' 기본 / 'light')\n  - dark: bg-white/15 hover:bg-white/25 text-white (HERO 등 다크 배경용)\n  - light: bg-white border-gray-300 text-charcoal-deep + hover primary border/text (청원 박스 등 밝은 배경용)\n- 5부 청원 박스의 ShareKit에 tone=\"light\" 전달",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "76ad4ccb",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "/v1/payments 요청에 useEscrow:false 명시",
+    "summary": "에스크로 미사용을 명시적으로 표명하여 MID 설정 모호성 제거. (MID 자체가 '에스크로 강제' 설정이면 토스 대시보드에서 별도로 꺼야 함 — 이 코드 변경은 그 보완책)",
+    "body": null,
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "96a65aec",
+    "type": "feat",
+    "scope": "petition",
+    "subject": "헤더 «전시 작품» 드롭다운에 시민 청원 메뉴 항목 추가",
+    "summary": "청원 페이지를 직접 URL로만 접근할 수 있던 문제 해소. «전시 작품» 드롭다운 안 «오윤 40주기 특별전» 옆에 «오윤 구의동 벽화 시민 청원» 항목 노출 (ko/en)",
+    "body": "- messages/ko.json + en.json: nav.ohYoonPetition / ohYoonPetitionDesc 키 추가\n- useLocalizedNavigation.ts: «전시 작품» group의 items에 청원 페이지 항목 push\n- 같은 작가(오윤) 맥락으로 묶음 — 작품 전시(특별전)와 작품 보존 운동(청원)이 자연스럽게 인접 노출",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "4e27bfef",
+    "type": "feat",
+    "scope": "petition",
+    "subject": "6부 카드3 UX 다듬기 — ShareKit 제거, 공유 메시지 박스에 채널별 공유 버튼 통합",
+    "summary": "카드3 «다섯 분께 전합니다»가 ShareKit(5종 버튼) + ShareTemplates(3종 카피) 중복 노출되던 시각 압박을 해소. 메시지 박스마다 (복사) + (공유) 버튼을 묶어 한 번에 처리",
+    "body": "- page.tsx: 카드3에서 ShareKit 제거 (5부 청원 박스에서만 유지). ShareKit는 슬로건만 공유, ShareTemplates는 사전작성 안내문 공유로 의미 분리\n- ShareTemplates: 박스마다 (복사) + (공유) 버튼 페어. 채널별 공유 동작\n  - 카카오 박스 → Kakao Share SDK (sendDefault, OG 이미지 자동 사용)\n  - SMS 박스 → sms: URL\n  - SNS 박스 → 트위터 intent\n- 메시지 키: shareTemplateOpen 추가 (\"공유\" / \"Share\")\n- types/kakao.d.ts의 글로벌 KakaoSDK 사용 (별도 declare 불필요 — 빌드 충돌 회피)",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
     "hash": "cb6b4966",
     "type": "fix",
     "scope": "db",
