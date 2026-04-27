@@ -85,9 +85,11 @@ export async function POST(req: NextRequest) {
   // 완전한 원자성 보장을 위해서는 artwork_sales(artwork_id) WHERE voided_at IS NULL
   // partial UNIQUE constraint를 DB 마이그레이션으로 추가하는 것이 권장됨.
   if (order.artwork_id) {
+    // 자기 자신(현재 confirm 중인 주문)은 pending_count에서 제외 — 그렇지 않으면
+    // unique edition 작품의 경우 (sold=0 + pending=1) >= 1로 즉시 unavailable 판정됨.
     const { data: availResult, error: availError } = await supabase.rpc(
       'check_artwork_availability',
-      { p_artwork_id: order.artwork_id }
+      { p_artwork_id: order.artwork_id, p_exclude_order_id: order.id }
     );
     const isAvailable = Array.isArray(availResult) && availResult[0]?.is_available === true;
     if (availError || !isAvailable) {
