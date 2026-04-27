@@ -57,3 +57,14 @@ export function getPaymentMode(): 'toss' | 'disabled' {
 export function calculateShippingFee(itemAmount: number): number {
   return itemAmount >= SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
 }
+
+/**
+ * Reads the payment provider from an order's metadata JSON.
+ * Defaults to 'api_v1' for legacy orders that pre-date the widget migration.
+ */
+export function resolveOrderProvider(metadata: unknown): PaymentProvider {
+  if (!metadata || typeof metadata !== 'object') return 'api_v1';
+  const value = (metadata as { payment_provider?: unknown }).payment_provider;
+  if (value === 'widget' || value === 'api_v1') return value;
+  return 'api_v1';
+}

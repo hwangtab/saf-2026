@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import type { Json } from '@/types/supabase';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { confirmPayment } from '@/lib/integrations/toss/confirm';
+import { resolveOrderProvider } from '@/lib/integrations/toss/config';
 import { sanitizeConfirmResponse, sanitizeMethodDetail } from '@/lib/integrations/toss/sanitize';
 import { notifyEmail, sendBuyerEmail } from '@/lib/notify';
 import {
@@ -60,6 +61,8 @@ export async function POST(req: NextRequest) {
   const buyerLocale: 'ko' | 'en' =
     storedLocale === 'en' ? 'en' : storedLocale === 'ko' ? 'ko' : reqLocale;
 
+  const provider = resolveOrderProvider(order.metadata);
+
   // SEC-01: Amount must match exactly
   if (order.total_amount !== amount) {
     return NextResponse.json({ error: apiError('amount_mismatch', reqLocale) }, { status: 400 });
@@ -100,7 +103,11 @@ export async function POST(req: NextRequest) {
 
   // Confirm with Toss
   const idempotencyKey = `confirm-${orderId}`;
-  const confirmResult = await confirmPayment({ paymentKey, orderId, amount }, idempotencyKey);
+  const confirmResult = await confirmPayment(
+    { paymentKey, orderId, amount },
+    idempotencyKey,
+    provider
+  );
 
   if (!confirmResult.success) {
     // Mark order as cancelled on failure (optimistic lock: pending_payment일 때만)
@@ -202,7 +209,8 @@ export async function POST(req: NextRequest) {
         await cancelPayment(
           paymentKey as string,
           { cancelReason: '주문 취소 후 결제 승인 — 자동 환불' },
-          `auto-refund-${orderId}`
+          `auto-refund-${orderId}`,
+          provider
         );
       } catch (err) {
         console.error('[confirm] auto-refund failed:', err);
@@ -223,7 +231,7 @@ export async function POST(req: NextRequest) {
       sale_price: order.total_amount,
       quantity: 1,
       source: 'toss',
-      source_detail: 'toss_api',
+      source_detail: provider === 'widget' ? 'toss_widget' : 'toss_api',
       order_id: order.id,
       external_order_id: order.order_no,
       buyer_name: order.buyer_name,

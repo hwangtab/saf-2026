@@ -2,6 +2,7 @@ import {
   getTossConfig,
   getTossAuthHeader,
   getTossWidgetClientKey,
+  resolveOrderProvider,
   type PaymentProvider,
 } from '@/lib/integrations/toss/config';
 
@@ -79,5 +80,25 @@ describe('toss/config — provider switch', () => {
     const a: PaymentProvider = 'widget';
     const b: PaymentProvider = 'api_v1';
     expect([a, b]).toEqual(['widget', 'api_v1']);
+  });
+});
+
+describe('toss/config — resolveOrderProvider', () => {
+  it('returns widget for explicit widget metadata', () => {
+    expect(resolveOrderProvider({ payment_provider: 'widget' })).toBe('widget');
+  });
+
+  it('returns api_v1 for explicit api_v1 metadata', () => {
+    expect(resolveOrderProvider({ payment_provider: 'api_v1' })).toBe('api_v1');
+  });
+
+  it('returns api_v1 for legacy null/undefined metadata', () => {
+    expect(resolveOrderProvider(null)).toBe('api_v1');
+    expect(resolveOrderProvider({})).toBe('api_v1');
+    expect(resolveOrderProvider(undefined)).toBe('api_v1');
+  });
+
+  it('returns api_v1 for unknown values', () => {
+    expect(resolveOrderProvider({ payment_provider: 'mystery' })).toBe('api_v1');
   });
 });
