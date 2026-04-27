@@ -8,6 +8,11 @@ interface ShareKitProps {
   url: string;
   /** 사전 작성된 공유 문구 (기본: 슬로건). 카카오·문자·SNS 별 분기는 추후 확장 가능. */
   text: string;
+  /**
+   * 'dark' = 다크 배경 위 (HERO 등) — 흰색 반투명 버튼.
+   * 'light' = 밝은 배경 위 (청원 박스 canvas 등) — primary 강조 + 어두운 텍스트.
+   */
+  tone?: 'dark' | 'light';
   className?: string;
 }
 
@@ -22,7 +27,7 @@ function ensureKakaoInit(): boolean {
   return window.Kakao.isInitialized();
 }
 
-export default function ShareKit({ url, text, className }: ShareKitProps) {
+export default function ShareKit({ url, text, tone = 'dark', className }: ShareKitProps) {
   const t = useTranslations('petition.ohYoon');
   const [copied, setCopied] = useState(false);
 
@@ -73,10 +78,12 @@ export default function ShareKit({ url, text, className }: ShareKitProps) {
     }
   }
 
-  const buttonClass =
-    'inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium ' +
-    'bg-white/15 hover:bg-white/25 text-white transition-colors ' +
-    'focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60';
+  const buttonClass = clsx(
+    'inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-colors focus:outline-none',
+    tone === 'dark'
+      ? 'bg-white/15 hover:bg-white/25 text-white focus-visible:ring-2 focus-visible:ring-white/60'
+      : 'bg-white border border-gray-300 hover:border-primary hover:text-primary text-charcoal-deep focus-visible:ring-2 focus-visible:ring-primary'
+  );
 
   return (
     <div className={clsx('flex flex-wrap gap-2 justify-center', className)}>

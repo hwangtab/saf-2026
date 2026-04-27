@@ -161,7 +161,7 @@ export default async function PetitionOhYoonPage() {
           </div>
           <a
             href="#sign-form"
-            className="inline-flex items-center justify-center px-8 py-4 rounded-lg text-lg font-bold bg-sun-500 hover:bg-sun-400 text-charcoal-deep transition-all hover:scale-[1.03] hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            className="inline-flex items-center justify-center px-8 py-4 rounded-lg text-lg font-bold bg-sun hover:bg-sun-strong text-charcoal-deep transition-all hover:scale-[1.03] hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
           >
             {t('heroCta')} →
           </a>
@@ -269,7 +269,12 @@ export default async function PetitionOhYoonPage() {
               <strong className="text-primary-strong">{t('statementLine3')}</strong>
             </p>
             <div className="mt-8">
-              <ShareKit url={PAGE_URL} text={statementText} className="!justify-center" />
+              <ShareKit
+                url={PAGE_URL}
+                text={statementText}
+                tone="light"
+                className="!justify-center"
+              />
             </div>
           </div>
         </div>
@@ -426,7 +431,7 @@ export default async function PetitionOhYoonPage() {
           {is_active && (
             <a
               href="#sign-form-anchor"
-              className="inline-flex items-center justify-center px-8 py-4 rounded-lg text-lg font-bold bg-sun-500 hover:bg-sun-400 text-charcoal-deep transition-all hover:scale-[1.03] hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              className="inline-flex items-center justify-center px-8 py-4 rounded-lg text-lg font-bold bg-sun hover:bg-sun-strong text-charcoal-deep transition-all hover:scale-[1.03] hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
             >
               {t('closingCta')} →
             </a>
