@@ -352,7 +352,9 @@
     "copyLinkTitle": "Copy link",
     "copyLink": "Copy link",
     "copied": "Link copied",
-    "copyFailed": "Copy failed"
+    "copyFailed": "Copy failed",
+    "smsAria": "Share via SMS",
+    "smsTitle": "Share via text message"
   },
   "artworkCard": {
     "untitled": "Untitled",
