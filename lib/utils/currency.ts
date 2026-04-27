@@ -14,20 +14,28 @@
 export const KRW_USD_RATE = Number(process.env.NEXT_PUBLIC_KRW_USD_RATE ?? '1400');
 
 /**
- * KRW를 USD로 환산. cents 단위 올림(ceil)으로 환율 손실 미연 방지.
- * 예: 5,000,000 KRW / 1400 = 3571.42857... → 3571.43 USD
+ * KRW를 USD로 환산. **whole dollar 단위 올림(ceil).**
+ *
+ * Toss /v1/payments + FOREIGN_EASY_PAY(PayPal)는 amount를 정수 USD로 받음.
+ * 소수(2.93 등)를 보내면 Toss 내부에서 truncate되어 PayPal에 부정확한 금액 전달
+ * → COMMON_ERROR 반환 사례 확인. 따라서 항상 dollar 단위 올림.
+ *
+ * 예: 4,100 KRW / 1400 = 2.928... → 3 USD
+ *     5,000,000 KRW / 1400 = 3571.42... → 3572 USD
+ *
+ * 환율 손실은 사용자가 부담 (소액 작품일수록 비율 커지지만, KRW 표시도 같이 노출)
  */
 export function krwToUsd(krw: number): number {
   if (!Number.isFinite(krw) || krw <= 0) return 0;
-  return Math.ceil((krw / KRW_USD_RATE) * 100) / 100;
+  return Math.ceil(krw / KRW_USD_RATE);
 }
 
-/** USD 통화 표시 ($35.71) */
+/** USD 통화 표시 ($36) — 정수 USD 기준이므로 소수 미표시 */
 export function formatUsd(usd: number): string {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   }).format(usd);
 }
