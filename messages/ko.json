@@ -696,7 +696,7 @@
     "errorPayment": "결제 중 오류가 발생했습니다.",
     "widgetMountFailed": "결제 모듈을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.",
     "agreementTitle": "이용약관 동의",
-    "preparingPayment": "결제 준비 중…",
+    "preparingPayment": "결제 준비 중...",
     "transferOptionLabel": "계좌이체 / 무통장입금",
     "processingShort": "처리 중...",
     "placeholderName": "홍길동",
