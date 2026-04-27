@@ -14,31 +14,13 @@ interface Props {
     paymentKey?: string;
     orderId?: string;
     amount?: string;
-    paymentType?: string;
-    method?: string;
   }>;
 }
 
-export default async function SuccessPage({ params, searchParams }: Props) {
-  const { artworkId } = await params;
-  const { paymentKey, orderId, amount, paymentType, method } = await searchParams;
+export default async function SuccessPage({ searchParams }: Props) {
+  const { paymentKey, orderId, amount } = await searchParams;
 
-  const isBankTransfer = method === 'BANK_TRANSFER';
+  if (!paymentKey || !orderId || !amount) notFound();
 
-  if (isBankTransfer) {
-    if (!orderId || !amount) notFound();
-  } else {
-    if (!paymentKey || !orderId || !amount) notFound();
-  }
-
-  return (
-    <SuccessClient
-      paymentKey={paymentKey ?? ''}
-      orderId={orderId!}
-      amount={amount!}
-      paymentType={paymentType ?? ''}
-      artworkId={artworkId}
-      method={method ?? ''}
-    />
-  );
+  return <SuccessClient paymentKey={paymentKey} orderId={orderId} amount={amount} />;
 }

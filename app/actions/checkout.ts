@@ -1,9 +1,7 @@
 'use server';
 
 import { headers } from 'next/headers';
-import { revalidatePath } from 'next/cache';
 import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/auth/server';
-import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { parsePrice } from '@/lib/parsePrice';
 import { calculateShippingFee } from '@/lib/integrations/toss/config';
 import { generateOrderNumber } from '@/lib/integrations/toss/order-number';
@@ -230,56 +228,6 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     totalAmount,
     orderName,
   };
-}
-
-/**
- * Creates an order for manual bank transfer (계좌이체).
- * Skips Toss payment — sets order to awaiting_deposit and artwork to reserved.
- * Admin confirms deposit manually and transitions order to paid.
- */
-export async function createBankTransferOrder(input: CreateOrderInput): Promise<CreateOrderResult> {
-  const buyerLocale: ApiLocale = input.locale === 'en' ? 'en' : 'ko';
-  const result = await createOrder(input);
-  if (!result.success) return result;
-
-  const adminClient = createSupabaseAdminClient();
-
-  const { error: orderUpdateError } = await adminClient
-    .from('orders')
-    .update({ status: 'awaiting_deposit' })
-    .eq('order_no', result.orderNo);
-
-  if (orderUpdateError) {
-    // 주문 상태 업데이트 실패 → 생성된 주문을 취소 처리
-    await adminClient
-      .from('orders')
-      .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
-      .eq('order_no', result.orderNo);
-    return { success: false, error: apiError('order_state_update_failed', buyerLocale) };
-  }
-
-  const { data: reservedArtwork, error: artworkUpdateError } = await adminClient
-    .from('artworks')
-    .update({ status: 'reserved' })
-    .eq('id', input.artworkId)
-    .eq('status', 'available')
-    .select('id');
-
-  // error이거나 0건 matched(동시 구매로 이미 상태 변경됨) → 주문 취소
-  if (artworkUpdateError || !reservedArtwork || reservedArtwork.length === 0) {
-    await adminClient
-      .from('orders')
-      .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
-      .eq('order_no', result.orderNo);
-    return { success: false, error: apiError('artwork_sold_out', buyerLocale) };
-  }
-
-  // artwork available → reserved 반영
-  revalidatePublicArtworkSurfaces();
-  revalidatePath(`/artworks/${input.artworkId}`);
-  revalidatePath(`/en/artworks/${input.artworkId}`);
-
-  return result;
 }
 
 /**

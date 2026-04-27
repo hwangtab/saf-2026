@@ -1,5 +1,15 @@
 [
   {
+    "hash": "3d1e1cf0",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "apply sawtooth safe-padding + tighten locale check on placeholder",
+    "summary": "Task 8 리뷰 후속 수정. (1) PaypalPlaceholder의 min-h-screen 컨테이너에 SAWTOOTH_TOP_SAFE_PADDING 적용 — 기존 pb-16은 Footer 톱니에 카드 하단이 가려지는 위험. (2) 영문 분기를 locale === 'en'에서 locale !== 'ko'로 변경 — 향후 jp/zh 등 추가 로케일이 한국 위젯으로 누출되지 않도록 화이트리스트화",
+    "body": null,
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
     "hash": "0f821fb2",
     "type": "feat",
     "scope": "checkout",

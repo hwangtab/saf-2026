@@ -188,7 +188,7 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  // 가상계좌 발급 시 artwork 예약 처리 (createBankTransferOrder와 동일)
+  // 가상계좌 발급 시 artwork 예약 처리 — available → reserved (race condition 방지)
   if (isVirtualAccount && updatedOrders && updatedOrders.length > 0 && order.artwork_id) {
     await supabase
       .from('artworks')

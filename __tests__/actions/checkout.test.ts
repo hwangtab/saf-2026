@@ -1,7 +1,7 @@
 /**
  * checkout.ts Server Action 단위 테스트
  *
- * createOrder, initiatePayment, createBankTransferOrder, cancelPendingOrder를
+ * createOrder, cancelPendingOrder를
  * Supabase 모킹 기반으로 테스트합니다.
  */
 
@@ -160,14 +160,12 @@ function setupSuccessfulArtwork() {
   };
   mockRpcResult = { data: [{ is_available: true }], error: null };
   mockInsertResult = { data: { id: 'order-1' }, error: null };
-  // createBankTransferOrder: artworks.update().select('id')가 예약 성공 반환
   mockUpdateResult = { data: [{ id: 'art-1' }], error: null };
 }
 
 // ---------- Tests ----------
 
 let createOrder: typeof import('@/app/actions/checkout').createOrder;
-let createBankTransferOrder: typeof import('@/app/actions/checkout').createBankTransferOrder;
 let cancelPendingOrder: typeof import('@/app/actions/checkout').cancelPendingOrder;
 
 beforeEach(async () => {
@@ -184,7 +182,6 @@ beforeEach(async () => {
 
   const mod = await import('@/app/actions/checkout');
   createOrder = mod.createOrder;
-  createBankTransferOrder = mod.createBankTransferOrder;
   cancelPendingOrder = mod.cancelPendingOrder;
 });
 
@@ -333,36 +330,6 @@ describe('createOrder', () => {
       expect(result.orderNo).toBe('SAF-20260414-COLLIDE2');
     }
     expect(orderNoMock).toHaveBeenCalledTimes(2);
-  });
-});
-
-// ========== createBankTransferOrder ==========
-
-describe('createBankTransferOrder', () => {
-  it('createOrder 실패 시 그대로 에러 전파', async () => {
-    mockArtworkResult = { data: null, error: { message: 'not found' } };
-    const result = await createBankTransferOrder(validInput);
-    expect(result.success).toBe(false);
-  });
-
-  it('동시 구매로 artwork reserve 0건 시 에러 반환', async () => {
-    setupSuccessfulArtwork();
-    // artworks.update가 0건 matched (다른 요청이 이미 reserved로 변경)
-    mockUpdateResult = { data: [], error: null };
-    const result = await createBankTransferOrder(validInput);
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.error).toContain('이미 판매된');
-    }
-  });
-
-  it('성공 시 주문 생성 후 상태 업데이트', async () => {
-    setupSuccessfulArtwork();
-    const result = await createBankTransferOrder(validInput);
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.orderNo).toBe('SAF-20260414-TEST');
-    }
   });
 });
 
