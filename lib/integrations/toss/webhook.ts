@@ -14,21 +14,43 @@ import type {
 } from './types';
 
 /**
- * Verifies the TossPayments webhook request using HTTP Basic Authentication.
- * Toss는 웹훅 요청 헤더에 Authorization: Basic {base64(webhookSecret:)}를 포함한다.
- * TOSS_PAYMENTS_WEBHOOK_SECRET 환경 변수가 반드시 설정되어야 한다.
+ * Verifies the TossPayments webhook request via HTTP Basic Authentication
+ * IF AND ONLY IF the legacy global webhook secret is configured.
+ *
+ * 토스 공식 문서(2026 기준)에는 글로벌 webhook secret이 더 이상 명시되지 않으며,
+ * 결제위젯 신규 MID 등록 시 secret이 발급되지 않는다. 따라서 두 가지 시나리오를
+ * 모두 지원한다:
+ *
+ * - **Legacy MID** (예: cafe24 경유 API 개별 연동) — `TOSS_PAYMENTS_WEBHOOK_SECRET`
+ *   환경변수와 Authorization 헤더가 모두 존재. 기존대로 timing-safe 비교로 검증.
+ * - **New MID** (결제위젯) — env / 헤더 둘 중 하나라도 없으면 이 검증을 건너뛰고
+ *   상위 layer(per-payment body secret + Toss API double-verify)에 의존.
+ *
+ * 보안 모델은 토스 공식 권장과 일치:
+ * 1. DEPOSIT_CALLBACK은 `verifyDepositCallbackSecret`(요청 body의 `secret` 필드를
+ *    결제 시점 저장된 `virtualAccount.secret`과 비교)로 검증.
+ * 2. PAYMENT_STATUS_CHANGED는 `fetchPayment(paymentKey)` 호출로 토스 API 재조회 검증.
  */
 export function verifyWebhookRequest(req: {
   headers: { get(name: string): string | null };
 }): boolean {
-  const secret = process.env.TOSS_PAYMENTS_WEBHOOK_SECRET;
-  if (!secret) {
-    console.error('[TossWebhook] TOSS_PAYMENTS_WEBHOOK_SECRET is not set — rejecting request');
-    return false;
+  const authHeader = req.headers.get('Authorization');
+
+  // 헤더 부재 — 신규 결제위젯 MID처럼 토스가 Authorization 헤더를 보내지 않는 케이스.
+  // 상위 검증 layer(DEPOSIT_CALLBACK은 body의 per-payment secret, PAYMENT_STATUS_CHANGED는
+  // Toss API 재조회)에 의존하므로 헤더 없이도 통과시킨다.
+  if (!authHeader || !authHeader.startsWith('Basic ')) {
+    return true;
   }
 
-  const authHeader = req.headers.get('Authorization');
-  if (!authHeader || !authHeader.startsWith('Basic ')) return false;
+  // 헤더가 존재하면 반드시 env에 설정된 secret과 일치해야 한다 (legacy cafe24 경유 MID).
+  const secret = process.env.TOSS_PAYMENTS_WEBHOOK_SECRET;
+  if (!secret) {
+    console.error(
+      '[TossWebhook] Authorization 헤더는 있는데 TOSS_PAYMENTS_WEBHOOK_SECRET이 미설정 — 검증 실패'
+    );
+    return false;
+  }
 
   const encoded = authHeader.slice(6); // 'Basic ' 이후
   const expected = Buffer.from(`${secret}:`).toString('base64');
