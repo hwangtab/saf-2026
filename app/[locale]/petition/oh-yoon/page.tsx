@@ -114,10 +114,19 @@ export default async function PetitionOhYoonPage() {
             className="object-cover object-center"
           />
         </div>
-        {/* 다크 오버레이 — 텍스트 가독성 + 작품 톤 살리기 */}
+        {/* 다크 오버레이 — 텍스트 가독성 강화 (작품 톤은 가장자리에서 살짝 살린다) */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 -z-10 bg-gradient-to-br from-charcoal-deep/90 via-charcoal/80 to-primary-strong/70"
+          className="absolute inset-0 -z-10 bg-gradient-to-br from-charcoal-deep/95 via-charcoal/88 to-primary-strong/78"
+        />
+        {/* 슬로건 영역 추가 어두움 — 중앙 vignette */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10"
+          style={{
+            background:
+              'radial-gradient(ellipse at 50% 50%, rgba(15,23,33,0.4) 0%, transparent 70%)',
+          }}
         />
         <div
           aria-hidden="true"
@@ -134,6 +143,7 @@ export default async function PetitionOhYoonPage() {
           <h1
             id="petition-hero-title"
             className="font-display text-4xl md:text-6xl leading-tight mb-4 break-keep text-balance whitespace-pre-line"
+            style={{ textShadow: '0 2px 16px rgba(0,0,0,0.5)' }}
           >
             {t('heroTitle')}
           </h1>
