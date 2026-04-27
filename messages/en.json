@@ -25,6 +25,8 @@
     "allArtworksDesc": "Browse the full SAF collection",
     "ohYoon": "Oh Yoon 40th Memorial",
     "ohYoonDesc": "A special exhibition for the 40th anniversary of Korean master Oh Yoon",
+    "ohYoonPetition": "Oh Yoon Guui-dong Mural Petition",
+    "ohYoonPetitionDesc": "1974 two-sided terracotta — petition the next Seoul mayor to preserve the work",
     "transparency": "Reports",
     "transparencyDesc": "Annual transparency reports for the mutual aid loan program",
     "magazine": "Magazine",
@@ -931,7 +933,8 @@
       "shareTemplateSms": "[Petition] Oh Yoon's 1974 Guui-dong mural faces demolition. Petitioning Seoul's next mayor for preservation. 30s sign → {url}",
       "shareTemplateSnsLabel": "Twitter / Instagram / Facebook",
       "shareTemplateSns": "Oh Yoon's 1974 Guui-dong terracotta mural faces demolition after 50 years. Citizens petition Seoul's next mayor. Gathering 10,000 signatures by May 10. 30s sign → {url} #OhYoon #GuuiDongMural",
-      "copyTemplate": "Copy"
+      "copyTemplate": "Copy",
+      "shareTemplateOpen": "Share"
     }
   }
 }

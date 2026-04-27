@@ -22,6 +22,11 @@ export function useLocalizedNavigation(): NavigationItem[] {
           href: '/special/oh-yoon',
           description: t('ohYoonDesc'),
         },
+        {
+          name: t('ohYoonPetition'),
+          href: '/petition/oh-yoon',
+          description: t('ohYoonPetitionDesc'),
+        },
       ],
     },
     {

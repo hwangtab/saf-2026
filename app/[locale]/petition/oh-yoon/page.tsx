@@ -309,7 +309,6 @@ export default async function PetitionOhYoonPage() {
               <p className="text-charcoal text-sm md:text-base leading-relaxed break-keep mb-4">
                 {t('participationCard3Body')}
               </p>
-              <ShareKit url={PAGE_URL} text={statementText} className="!justify-start" />
               <ShareTemplates url={PAGE_URL} />
             </article>
           </div>
