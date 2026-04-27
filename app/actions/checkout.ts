@@ -248,6 +248,12 @@ export type InitiatePaymentInput = {
    * - 'FOREIGN_EASY_PAY' (해외 PayPal)
    */
   method: string;
+  /**
+   * 간편결제 직접 라우팅. method='CARD'와 함께 사용하면 사용자가 결제수단 선택 단계
+   * 없이 바로 해당 간편결제 앱/웹으로 이동.
+   * 예: 'KAKAOPAY' / 'TOSSPAY' / 'NAVERPAY' / 'PAYCO' / 'SAMSUNGPAY' / 'APPLEPAY'
+   */
+  easyPay?: string;
   orderNo: string;
   orderName: string;
   totalAmount: number;
@@ -339,8 +345,9 @@ export async function initiatePayment(input: InitiatePaymentInput): Promise<Init
         customerName: input.buyerName,
         customerEmail: input.buyerEmail,
         // 에스크로 미사용 — 명시적으로 false 전달.
-        // (MID 설정에서 에스크로가 '강제'면 토스 대시보드에서 끄는 게 우선)
         useEscrow: false,
+        // 간편결제 직접 라우팅 (있을 때만 포함). method=CARD와 함께 사용.
+        ...(input.easyPay ? { easyPay: input.easyPay } : {}),
       }),
     });
   } catch {

@@ -13,7 +13,27 @@ import { createOrder, cancelPendingOrder, initiatePayment } from '@/app/actions/
 import BuyerInfoForm from './BuyerInfoForm';
 import type { BuyerInfo } from './BuyerInfoForm';
 
-type PaymentMethod = 'CARD' | 'TRANSFER';
+/**
+ * 사용자가 클릭하는 결제 옵션. Toss API method/easyPay와 매핑됨.
+ *
+ * - CARD       → method=CARD, easyPay 없음 → Toss 카드 결제창
+ * - KAKAOPAY   → method=CARD, easyPay='KAKAOPAY' → 카카오페이 직행
+ * - TOSSPAY    → method=CARD, easyPay='TOSSPAY' → 토스페이 직행
+ * - TRANSFER   → method=TRANSFER, easyPay 없음 → 뱅크페이 계좌이체
+ *
+ * 'VIRTUAL_ACCOUNT' (가상계좌)는 saf202i818 MID에 미계약 (에러 2003)이라 제외.
+ * 네이버페이는 심사 진행 중 — 활성화 후 NAVERPAY 추가 예정.
+ */
+type PaymentChoice = 'CARD' | 'KAKAOPAY' | 'TOSSPAY' | 'TRANSFER';
+
+interface PaymentChoiceConfig {
+  value: PaymentChoice;
+  labelKey: 'methodCard' | 'methodKakaopay' | 'methodTosspay' | 'methodTransfer';
+  /** Toss /v1/payments method 파라미터 */
+  tossMethod: 'CARD' | 'TRANSFER';
+  /** Toss /v1/payments easyPay 파라미터 (간편결제 직접 라우팅) */
+  easyPay?: string;
+}
 
 interface Props {
   artworkId: string;
@@ -24,19 +44,11 @@ interface Props {
   imageUrl: string;
 }
 
-/**
- * saf202i818 MID 활성화 결제 수단:
- *   - CARD: 신용·체크카드 + 카카오페이/토스페이 (간편결제는 카드창 안에 자동 노출)
- *   - TRANSFER: 계좌이체 — Toss API method=TRANSFER (실시간 계좌이체, 뱅크페이 경유)
- *
- * 'VIRTUAL_ACCOUNT' (가상계좌)는 saf202i818 MID에 미계약 (에러 2003)이라 제외.
- */
-const PAYMENT_METHODS: {
-  value: PaymentMethod;
-  labelKey: 'methodCard' | 'methodTransfer';
-}[] = [
-  { value: 'CARD', labelKey: 'methodCard' },
-  { value: 'TRANSFER', labelKey: 'methodTransfer' },
+const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
+  { value: 'CARD', labelKey: 'methodCard', tossMethod: 'CARD' },
+  { value: 'TRANSFER', labelKey: 'methodTransfer', tossMethod: 'TRANSFER' },
+  { value: 'KAKAOPAY', labelKey: 'methodKakaopay', tossMethod: 'CARD', easyPay: 'KAKAOPAY' },
+  { value: 'TOSSPAY', labelKey: 'methodTosspay', tossMethod: 'CARD', easyPay: 'TOSSPAY' },
 ];
 
 /**
@@ -64,7 +76,7 @@ export default function CheckoutClient({
   const shippingFee = calculateShippingFee(price);
   const totalAmount = price + shippingFee;
 
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('CARD');
+  const [paymentChoice, setPaymentChoice] = useState<PaymentChoice>('CARD');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const buyerInfoRef = useRef<BuyerInfo | null>(null);
@@ -133,8 +145,11 @@ export default function CheckoutClient({
       const successUrl = `${window.location.origin}/checkout/${artworkId}/success`;
       const failUrl = `${window.location.origin}/checkout/${artworkId}/fail`;
 
+      const choice = PAYMENT_CHOICES.find((c) => c.value === paymentChoice) ?? PAYMENT_CHOICES[0];
+
       const payResult = await initiatePayment({
-        method: paymentMethod,
+        method: choice.tossMethod,
+        easyPay: choice.easyPay,
         orderNo,
         orderName,
         totalAmount: serverTotal,
@@ -239,14 +254,14 @@ export default function CheckoutClient({
         <div className="mb-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
           <h3 className="mb-4 text-base font-semibold text-charcoal">{t('paymentMethodSelect')}</h3>
           <div className="grid grid-cols-2 gap-3 pt-1">
-            {PAYMENT_METHODS.map(({ value, labelKey }) => (
+            {PAYMENT_CHOICES.map(({ value, labelKey }) => (
               <button
                 key={value}
                 type="button"
-                onClick={() => setPaymentMethod(value)}
+                onClick={() => setPaymentChoice(value)}
                 className={clsx(
                   'rounded-xl border-2 py-3 text-sm font-medium transition-colors',
-                  paymentMethod === value
+                  paymentChoice === value
                     ? 'border-primary bg-primary/5 text-primary'
                     : 'border-gray-200 text-gray-600 hover:border-gray-300'
                 )}
