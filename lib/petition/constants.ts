@@ -12,7 +12,9 @@ export const PETITION_OH_YOON_DEADLINE_ISO =
 
 export const PETITION_OH_YOON_GOAL = Number(process.env.NEXT_PUBLIC_PETITION_GOAL ?? '10000');
 
+// 페이지 라우트 `/petition/oh-yoon`과 충돌 회피를 위해 대시 경로 사용.
+// 정적 파일은 `public/petition-oh-yoon/proposal-v5.pdf`에 둘 것.
 export const PETITION_OH_YOON_PROPOSAL_PDF =
-  process.env.NEXT_PUBLIC_PETITION_PROPOSAL_PDF ?? '/petition/oh-yoon/proposal-v5.pdf';
+  process.env.NEXT_PUBLIC_PETITION_PROPOSAL_PDF ?? '/petition-oh-yoon/proposal-v5.pdf';
 
 export const PETITION_OH_YOON_PATH = '/petition/oh-yoon' as const;
