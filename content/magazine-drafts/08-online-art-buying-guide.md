@@ -82,6 +82,8 @@ display_order: 8
 
 ### 단계 ② 작품 정보 확인 — 무엇을 사는가
 
+[![이철수, 〈호박옹〉, 목판·한지, 60x50cm, 에디션 10 — 작가명·작품명·재료·크기·에디션이 모두 명시된 정식 한정 판화](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-e292e8b4-fa55-453f-825a-1f050fdd95ae/tf0uetfcjs_1771896697698__original.webp)](/artworks/e292e8b4-fa55-453f-825a-1f050fdd95ae)
+
 플랫폼이 안전하면, 다음은 **작품 자체의 정보**입니다. 온라인은 갤러리와 달리 직접 만져볼 수 없으므로 정보가 더 풍부해야 합니다.
 
 #### 회화·드로잉의 경우
@@ -282,6 +284,8 @@ display_order: 8
 - 진위 검증이 까다로운 작가 — 위작 시장이 형성된 작가
 
 ## 안전한 온라인 그림 구매를 위한 마지막 원칙
+
+[![최재란, 〈쿼크의시간#138〉, Archival pigment print, 40x30cm, 에디션 16 — 사진·디지털 판화의 에디션 시스템 예시](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/cfb9572a-72da-46ff-8082-ccb4e01e698d/40de2fae-6e9a-496e-a506-31180e3f3b31.webp)](/artworks/e538b891-6f93-453f-8d2e-3d97daea2bb6)
 
 세 가지로 정리합니다.
 

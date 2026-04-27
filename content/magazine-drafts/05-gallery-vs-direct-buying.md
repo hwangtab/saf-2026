@@ -54,6 +54,8 @@ display_order: 5
 
 ## ① 갤러리(Gallery) — 가장 안전하지만 가장 비싸다
 
+[![이광수, 〈回1〉, 캔버스에 아크릴, 60x45cm — KIAF에서 자주 보이는 한국 단색·반복 회화, 갤러리 채널의 전형](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/269077db-441d-48ca-8690-5c8d37803384/5__original.webp)](/artworks/a4c9601a-a42c-408c-b07f-02d75802bf49)
+
 ### 갤러리 가격에 포함된 것
 
 갤러리에서 그림을 살 때 50% 수수료에 포함되는 가치는 다음입니다.
@@ -79,6 +81,8 @@ display_order: 5
 - 격식 있는 분위기 — 처음 가는 사람에게는 부담스러울 수 있음
 
 ## ② 작가 직매(Direct from Artist) — 가장 합리적이지만 책임은 본인 몫
+
+[![안은경, 〈서툰 여행〉, 장지 혼합재료, 45.5x53cm — 신진 작가의 작업실에서 직접 만나는 한국화](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/d3e4275b-5baa-4e4d-810a-4051fb142d63/79__original.webp)](/artworks/734ed0f3-1f9f-41bd-b0a1-70a09417f6c1)
 
 ### 작가 직매란
 
@@ -208,6 +212,8 @@ display_order: 5
 **무조건 갤러리**. 진위 보증, 재판매 시장 진입, 사후 컨설팅의 가치가 절대적입니다.
 
 ## SAF 온라인 갤러리는 어디에 있는가
+
+[![박재동, 〈달빛아래 연인〉, 수채 텍스처 위 안료, 21x29.7cm, ₩300,000 — SAF 온라인 갤러리의 입문 가격대 작품](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-5a752957-47c0-404d-9978-247819cb04ca/x4tijee396a_1773289503427.webp)](/artworks/5a752957-47c0-404d-9978-247819cb04ca)
 
 [SAF(씨앗페) 온라인 갤러리](/artworks)는 위 네 채널 중 **온라인 + 작가 직매가 결합된 형태**입니다.
 

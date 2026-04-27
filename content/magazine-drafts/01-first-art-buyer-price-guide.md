@@ -59,6 +59,8 @@ display_order: 1
 
 ## 가격대 1 — 30만원 구간: "벽에 걸 첫 작품"
 
+[![박재동, 〈엄마 저 나무 봐〉, 수채 텍스처 위 안료 프린트, 21x29.7cm, ₩300,000 — 30만원 구간의 대표적 입문 작품](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-cd08a6c1-b2aa-4fc4-a1f8-74494dc53550/2m8r9y3zt2_1773289613272.webp)](/artworks/cd08a6c1-b2aa-4fc4-a1f8-74494dc53550)
+
 가장 부담 없는 입문 가격대입니다. 30만원으로는 **무엇이 가능하고**, **무엇이 불가능한지** 명확히 알아두면 실망이 줄어듭니다.
 
 ### 이 구간에서 살 수 있는 것
@@ -92,6 +94,8 @@ display_order: 1
 
 ## 가격대 2 — 100만원 구간: "본격 컬렉션의 시작"
 
+[![안은경, 〈쉼표(,)〉, 장지에 채색, 19x24cm — 100만원대에서 만날 수 있는 신진 한국화 작가의 소형 원본](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/d3e4275b-5baa-4e4d-810a-4051fb142d63/lomoxkql8f_1773039763798__original.webp)](/artworks/8d143bb8-ebf5-4aa7-ac76-9da489a69eab)
+
 가장 많은 첫 컬렉터가 진입하는 가격대입니다. 신진~중견 작가의 회화 원본을 만날 수 있는 첫 구간입니다.
 
 ### 이 구간에서 살 수 있는 것
@@ -116,6 +120,8 @@ display_order: 1
 
 ## 가격대 3 — 300만원 구간: "중견 작가의 회화 원본"
 
+[![김규학, 〈바람과 빛-51〉, 캔버스에 유화, 50x65cm — 300만원대 중견 작가의 회화 원본 예시](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/87c030a1-5bd1-41da-aa6c-39890a4ca624/kx3cftpw7s8_1771651596386__original.webp)](/artworks/2d4e2768-eeae-4fca-8cf0-4bdf9ab1991a)
+
 여기서부터는 본격적인 컬렉터의 영역입니다. 인지도 있는 중견 작가의 회화 원본, 또는 중요한 시리즈의 작품을 만날 수 있습니다.
 
 ### 이 구간에서 살 수 있는 것
@@ -137,6 +143,8 @@ display_order: 1
 - **위작 위험의 시작** — 300만원 이상부터는 위작 시장이 형성됩니다. 갤러리 전속이거나 작가 직접 거래가 아닌 작품은 진위 감정을 거치는 것이 안전합니다.
 
 ## 가격대 4 — 1000만원 구간: "본격 투자급 컬렉션"
+
+[![이광수, 〈回1〉, 캔버스에 아크릴, 60x45cm — 한국 단색·반복 회화의 결, 1000만원대 컬렉션의 영역](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/269077db-441d-48ca-8690-5c8d37803384/5__original.webp)](/artworks/a4c9601a-a42c-408c-b07f-02d75802bf49)
 
 이 구간은 처음 그림을 구매하는 사람의 영역이 아닐 수 있습니다. 하지만 **결혼·이사·증여 같은 큰 결정과 함께** 첫 작품을 1000만원대로 시작하는 경우도 있어 짚어둡니다.
 
