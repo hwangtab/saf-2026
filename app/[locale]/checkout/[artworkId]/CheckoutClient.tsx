@@ -13,7 +13,7 @@ import { createOrder, cancelPendingOrder, initiatePayment } from '@/app/actions/
 import BuyerInfoForm from './BuyerInfoForm';
 import type { BuyerInfo } from './BuyerInfoForm';
 
-type PaymentMethod = 'CARD' | 'TRANSFER' | 'VIRTUAL_ACCOUNT';
+type PaymentMethod = 'CARD' | 'VIRTUAL_ACCOUNT';
 
 interface Props {
   artworkId: string;
@@ -24,12 +24,21 @@ interface Props {
   imageUrl: string;
 }
 
+/**
+ * 노출하는 결제 수단 목록.
+ *
+ * - CARD: 신용/체크카드 — Toss-hosted 결제창에서 카카오페이/토스페이가 자동 노출됨 (간편결제)
+ * - VIRTUAL_ACCOUNT: 가상계좌 — 임시 계좌번호 발급 후 별도 입금
+ *
+ * 'TRANSFER' (퀵계좌이체)는 saf202i818 MID에서 뱅크페이로 라우팅되어 공인인증서·앱
+ * 설치를 요구하는 UX 문제로 제거. 사용자는 카카오페이/토스페이(카드 안에 노출)로
+ * 동등하거나 더 나은 즉시 결제 가능.
+ */
 const PAYMENT_METHODS: {
   value: PaymentMethod;
-  labelKey: 'methodCard' | 'methodTransfer' | 'methodVirtualAccount';
+  labelKey: 'methodCard' | 'methodVirtualAccount';
 }[] = [
   { value: 'CARD', labelKey: 'methodCard' },
-  { value: 'TRANSFER', labelKey: 'methodTransfer' },
   { value: 'VIRTUAL_ACCOUNT', labelKey: 'methodVirtualAccount' },
 ];
 
@@ -232,7 +241,7 @@ export default function CheckoutClient({
         {/* Payment method selector */}
         <div className="mb-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
           <h3 className="mb-4 text-base font-semibold text-charcoal">{t('paymentMethodSelect')}</h3>
-          <div className="grid grid-cols-3 gap-3 pt-1">
+          <div className="grid grid-cols-2 gap-3 pt-1">
             {PAYMENT_METHODS.map(({ value, labelKey }) => (
               <button
                 key={value}

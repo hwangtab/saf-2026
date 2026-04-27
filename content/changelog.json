@@ -1,5 +1,55 @@
 [
   {
+    "hash": "cb6b4966",
+    "type": "fix",
+    "scope": "db",
+    "subject": "drop 1-arg check_artwork_availability overload — createOrder ambiguity 차단",
+    "summary": "직전 마이그레이션(20260427160000)이 2-arg 시그니처를 추가했지만 1-arg 버전이 그대로 남아 PostgreSQL function overload 상태가 됨. Supabase-js가 1-arg로 호출하면 'function ... is not unique' 에러 → createOrder가 모든 새 주문에서 실패하는 결함",
+    "body": "- 1-arg DROP, 2-arg는 p_exclude_order_id DEFAULT NULL이라 1-arg 호출도 그대로 동작\n- 검증: SELECT * FROM check_artwork_availability(<id>::uuid) 정상 응답 확인",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "e60fabe2",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "HERO 다크 오버레이 강화 — 슬로건 가독성 보강",
+    "summary": "HERO 배경 작품 사진이 슬로건과 너무 경쟁하던 문제를 그라디언트 강화 + 중앙 vignette + 슬로건 textShadow로 해결",
+    "body": "- 그라디언트 알파 90/80/70 → 95/88/78로 상향\n- 중앙 ellipse vignette 추가 (rgba(15,23,33,0.4) at center)\n- h1 슬로건에 textShadow(0 2px 16px rgba(0,0,0,0.5)) 적용\n- 작품 사진은 가장자리에서 자연스럽게 노출 — 톤은 살리되 글자 가독성 우선",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "f8e46a65",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "confirm route에서 자기 자신을 pending_count에서 제외",
+    "summary": "check_artwork_availability RPC가 자기 자신을 pending_count에 포함시켜 unique edition 작품의 confirm 시점에 항상 (sold=0+pending=1)>=1로 unavailable 판정 → 409 반환하던 사전 존재 버그 수정. p_exclude_order_id 파라미터 추가하여 confirm route는 order.id를 전달",
+    "body": "- supabase/migrations/20260427160000: RPC에 p_exclude_order_id 추가, NULL이면 기존 동작 유지\n- confirm/route.ts: order.id를 전달해 자기 자신 제외\n- types/supabase.ts: gen types 재생성하여 새 시그니처 반영\n- createOrder 호출은 그대로 (주문 INSERT 전이므로 제외할 게 없음)\n\n증상: 위젯/카드 모두 unique edition 작품 결제 시 success 페이지에서 \"이미 판매된 작품\" 409 에러\n영향: 모든 unique edition 작품. limited/open은 영향 없음\n검증: type-check, lint 통과",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "2d234e65",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "결구 섹션 톤을 HERO와 통일 — 단색 primary → charcoal 그라디언트",
+    "summary": "마지막 결구 영역(10부)이 strong primary 단색이라 페이지 톤과 따로 놀던 문제를 HERO와 동일한 다크 그라디언트로 정렬. 페이지 시작·끝이 같은 청원의 무게로 감싸짐",
+    "body": "- Section variant=primary → 자체 section + bg-charcoal-deep\n- HERO와 동일한 그라디언트 (charcoal-deep via charcoal to primary-strong/80) 적용\n- radial 액센트 동일 적용 (위·아래 부드러운 글로우)\n- aria-labelledby 추가 (closing line 3 — \"오윤의 작품을 시민의 품으로.\")\n- sun-500 노란 CTA 버튼이 다크 그라디언트 위에서 더 강하게 노출",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "510d6bef",
+    "type": "feat",
+    "scope": "petition",
+    "subject": "OG 이미지 1200×630 동적 합성 (Next.js opengraph-image convention)",
+    "summary": "청원 페이지를 SNS·카톡 공유 시 정사각 mural-1 raw가 아닌 슬로건·메타 합성된 1200×630 OG 카드 노출. ko/en 자동 분기",
+    "body": "- app/[locale]/petition/oh-yoon/opengraph-image.tsx 신규: nodejs runtime + ImageResponse + NotoSansKR-Bold ttf 로드 + mural-1 base64 임베드\n- 디자인: 작품 사진 풀배경 + 다크 그라디언트 오버레이(charcoal-deep/charcoal/primary-strong) + 시민 청원 pill + 큰 슬로건 + 부제 + 마감 메타 + 브랜드(SAF2026)\n- ko/en 분기: 슬로건·부제·메타·브랜드 한국어/영어 자동 전환\n- generateStaticParams으로 ko/en 각 1장 SSG (revalidate 1h)\n- page.tsx의 og:image override 제거 — Next.js convention이 opengraph-image.tsx를 자동 적용\n- 페북·트위터·카톡 공유 시 정사각 잘림 없이 1200×630 카드 노출\n\n검증: tsc·build 통과, dev 환경 시각 확인 (ko·en 둘 다)",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
     "hash": "9836b318",
     "type": "fix",
     "scope": "webhook",
