@@ -17,10 +17,16 @@ interface Props {
   }>;
 }
 
-export default async function SuccessPage({ searchParams }: Props) {
+export default async function SuccessPage({ params, searchParams }: Props) {
+  const { locale } = await params;
   const { paymentKey, orderId, amount } = await searchParams;
 
   if (!paymentKey || !orderId || !amount) notFound();
 
-  return <SuccessClient paymentKey={paymentKey} orderId={orderId} amount={amount} />;
+  // en 로케일 = PayPal/USD, ko = 국내/KRW
+  const currency: 'KRW' | 'USD' = locale === 'en' ? 'USD' : 'KRW';
+
+  return (
+    <SuccessClient paymentKey={paymentKey} orderId={orderId} amount={amount} currency={currency} />
+  );
 }

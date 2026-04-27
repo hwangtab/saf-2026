@@ -47,8 +47,8 @@ export default function OverseasCheckoutClient({
   const t = useTranslations('checkout');
   const shippingFee = calculateShippingFee(price);
   const totalKrw = price + shippingFee;
-  const usdItem = krwToUsd(price);
-  const usdShipping = krwToUsd(shippingFee);
+  // PayPal에 전달하는 USD는 totalKrw 단일 ceiling만 사용 — 라인별 ceiling 합과
+  // 다를 수 있으므로 라인은 KRW로만 표시하여 합계 불일치 회피
   const usdTotal = krwToUsd(totalKrw);
 
   const [submitting, setSubmitting] = useState(false);
@@ -185,8 +185,7 @@ export default function OverseasCheckoutClient({
             <div className="flex-1 min-w-0">
               <p className="text-xs text-gray-500">{artist}</p>
               <p className="mt-0.5 font-semibold text-charcoal truncate">{artworkTitle}</p>
-              <p className="mt-1 text-lg font-bold text-primary-a11y">{formatUsd(usdItem)}</p>
-              <p className="text-xs text-gray-500">{displayPrice} (KRW reference)</p>
+              <p className="mt-1 text-lg font-bold text-primary-a11y">{displayPrice}</p>
             </div>
           </div>
         </div>
@@ -196,42 +195,40 @@ export default function OverseasCheckoutClient({
           <BuyerInfoForm ref={buyerInfoRef} />
         </div>
 
-        {/* Price breakdown — USD primary, KRW reference */}
+        {/* Price breakdown — KRW for line items + final USD total */}
         <div className="mb-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
           <h3 className="mb-4 text-base font-semibold text-charcoal">{t('orderSummaryTitle')}</h3>
           <table className="w-full text-sm">
             <tbody className="divide-y divide-gray-100">
               <tr>
                 <td className="py-2 text-gray-600">{t('artworkAmountLabel')}</td>
-                <td className="py-2 text-right">
-                  <div className="font-medium text-charcoal">{formatUsd(usdItem)}</div>
-                  <div className="text-xs text-gray-500">{formatPriceForDisplay(price)}</div>
+                <td className="py-2 text-right font-medium text-charcoal">
+                  {formatPriceForDisplay(price)}
                 </td>
               </tr>
               <tr>
                 <td className="py-2 text-gray-600">{t('shippingFee')}</td>
-                <td className="py-2 text-right">
-                  <div className="font-medium text-charcoal">
-                    {shippingFee === 0 ? t('freeShipping') : formatUsd(usdShipping)}
-                  </div>
-                  {shippingFee !== 0 && (
-                    <div className="text-xs text-gray-500">
-                      {formatPriceForDisplay(shippingFee)}
-                    </div>
-                  )}
+                <td className="py-2 text-right font-medium text-charcoal">
+                  {shippingFee === 0 ? t('freeShipping') : formatPriceForDisplay(shippingFee)}
                 </td>
               </tr>
               <tr>
-                <td className="py-2 font-bold text-charcoal">{t('totalAmount')}</td>
-                <td className="py-2 text-right">
-                  <div className="text-lg font-bold text-primary-a11y">{formatUsd(usdTotal)}</div>
-                  <div className="text-xs text-gray-500">{formatPriceForDisplay(totalKrw)}</div>
+                <td className="py-2 text-gray-600">{t('totalAmount')} (KRW)</td>
+                <td className="py-2 text-right font-medium text-charcoal">
+                  {formatPriceForDisplay(totalKrw)}
+                </td>
+              </tr>
+              <tr className="border-t-2 border-charcoal">
+                <td className="py-3 font-bold text-charcoal">PayPal charge (USD)</td>
+                <td className="py-3 text-right text-xl font-bold text-primary-a11y">
+                  {formatUsd(usdTotal)}
                 </td>
               </tr>
             </tbody>
           </table>
           <p className="mt-3 text-xs text-gray-500">
-            International payment processed via PayPal in USD. Exchange rate is fixed at order time.
+            International payment processed via PayPal in USD. Amount is rounded up to the nearest
+            dollar; exchange rate is fixed at order time.
           </p>
         </div>
 
