@@ -271,7 +271,8 @@ export default async function PetitionOhYoonPage() {
       <Section variant="white" className="py-20 md:py-24">
         <div className="container-max max-w-3xl mx-auto px-4 text-center">
           <div className="rounded-2xl border-y-4 border-primary px-6 py-12 md:px-12 md:py-16 bg-canvas">
-            <p className="font-display text-2xl md:text-4xl leading-relaxed text-charcoal-deep break-keep">
+            {/* 청원 동의문 본문 — PartialSansKR(font-display)가 가운뎃점(·) 글리프를 안 가져 빠지므로 일반 sans 폰트 사용 */}
+            <p className="font-bold text-2xl md:text-4xl leading-relaxed text-charcoal-deep break-keep">
               {t('statementLine1')}
               <br />
               {t('statementLine2')}
