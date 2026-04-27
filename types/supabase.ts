@@ -810,6 +810,198 @@ export type Database = {
           },
         ];
       };
+      petition_audit_log: {
+        Row: {
+          action: string;
+          actor_id: string | null;
+          created_at: string;
+          details: Json;
+          id: number;
+          ip_hash: string | null;
+          petition_slug: string;
+          target_id: string | null;
+          target_type: string | null;
+        };
+        Insert: {
+          action: string;
+          actor_id?: string | null;
+          created_at?: string;
+          details?: Json;
+          id?: number;
+          ip_hash?: string | null;
+          petition_slug: string;
+          target_id?: string | null;
+          target_type?: string | null;
+        };
+        Update: {
+          action?: string;
+          actor_id?: string | null;
+          created_at?: string;
+          details?: Json;
+          id?: number;
+          ip_hash?: string | null;
+          petition_slug?: string;
+          target_id?: string | null;
+          target_type?: string | null;
+        };
+        Relationships: [];
+      };
+      petition_signatures: {
+        Row: {
+          agreed_overseas: boolean;
+          agreed_petition: boolean;
+          agreed_privacy: boolean;
+          created_at: string;
+          email: string;
+          email_hash: string;
+          full_name: string;
+          id: string;
+          ip_hash: string | null;
+          is_committee: boolean;
+          is_masked: boolean;
+          masked_at: string | null;
+          masked_by: string | null;
+          message: string | null;
+          message_public: boolean;
+          petition_slug: string;
+          region_sub: string | null;
+          region_top: string;
+          user_agent: string | null;
+        };
+        Insert: {
+          agreed_overseas: boolean;
+          agreed_petition: boolean;
+          agreed_privacy: boolean;
+          created_at?: string;
+          email: string;
+          email_hash: string;
+          full_name: string;
+          id?: string;
+          ip_hash?: string | null;
+          is_committee?: boolean;
+          is_masked?: boolean;
+          masked_at?: string | null;
+          masked_by?: string | null;
+          message?: string | null;
+          message_public?: boolean;
+          petition_slug: string;
+          region_sub?: string | null;
+          region_top: string;
+          user_agent?: string | null;
+        };
+        Update: {
+          agreed_overseas?: boolean;
+          agreed_petition?: boolean;
+          agreed_privacy?: boolean;
+          created_at?: string;
+          email?: string;
+          email_hash?: string;
+          full_name?: string;
+          id?: string;
+          ip_hash?: string | null;
+          is_committee?: boolean;
+          is_masked?: boolean;
+          masked_at?: string | null;
+          masked_by?: string | null;
+          message?: string | null;
+          message_public?: boolean;
+          petition_slug?: string;
+          region_sub?: string | null;
+          region_top?: string;
+          user_agent?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'petition_signatures_petition_slug_fkey';
+            columns: ['petition_slug'];
+            isOneToOne: false;
+            referencedRelation: 'petition_counts';
+            referencedColumns: ['petition_slug'];
+          },
+          {
+            foreignKeyName: 'petition_signatures_petition_slug_fkey';
+            columns: ['petition_slug'];
+            isOneToOne: false;
+            referencedRelation: 'petitions';
+            referencedColumns: ['slug'];
+          },
+        ];
+      };
+      petition_snapshot: {
+        Row: {
+          committee_total: number;
+          petition_slug: string;
+          region_breakdown: Json;
+          region_top_count: number;
+          taken_at: string;
+          total: number;
+        };
+        Insert: {
+          committee_total: number;
+          petition_slug: string;
+          region_breakdown?: Json;
+          region_top_count: number;
+          taken_at?: string;
+          total: number;
+        };
+        Update: {
+          committee_total?: number;
+          petition_slug?: string;
+          region_breakdown?: Json;
+          region_top_count?: number;
+          taken_at?: string;
+          total?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'petition_snapshot_petition_slug_fkey';
+            columns: ['petition_slug'];
+            isOneToOne: true;
+            referencedRelation: 'petition_counts';
+            referencedColumns: ['petition_slug'];
+          },
+          {
+            foreignKeyName: 'petition_snapshot_petition_slug_fkey';
+            columns: ['petition_slug'];
+            isOneToOne: true;
+            referencedRelation: 'petitions';
+            referencedColumns: ['slug'];
+          },
+        ];
+      };
+      petitions: {
+        Row: {
+          closed_at: string | null;
+          created_at: string;
+          deadline_at: string;
+          goal: number;
+          is_active: boolean;
+          slug: string;
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          closed_at?: string | null;
+          created_at?: string;
+          deadline_at: string;
+          goal?: number;
+          is_active?: boolean;
+          slug: string;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          closed_at?: string | null;
+          created_at?: string;
+          deadline_at?: string;
+          goal?: number;
+          is_active?: boolean;
+          slug?: string;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       profiles: {
         Row: {
           avatar_url: string | null;
@@ -840,6 +1032,30 @@ export type Database = {
           role?: Database['public']['Enums']['user_role'] | null;
           status?: Database['public']['Enums']['user_status'] | null;
           updated_at?: string | null;
+        };
+        Relationships: [];
+      };
+      rate_limit_counters: {
+        Row: {
+          count: number;
+          key: string;
+          updated_at: string;
+          window_ms: number;
+          window_started_at: string;
+        };
+        Insert: {
+          count: number;
+          key: string;
+          updated_at?: string;
+          window_ms: number;
+          window_started_at?: string;
+        };
+        Update: {
+          count?: number;
+          key?: string;
+          updated_at?: string;
+          window_ms?: number;
+          window_started_at?: string;
         };
         Relationships: [];
       };
@@ -995,7 +1211,20 @@ export type Database = {
       };
     };
     Views: {
-      [_ in never]: never;
+      petition_counts: {
+        Row: {
+          committee_total: number | null;
+          deadline_at: string | null;
+          goal: number | null;
+          is_active: boolean | null;
+          petition_slug: string | null;
+          recent_24h: number | null;
+          region_top_count: number | null;
+          title: string | null;
+          total: number | null;
+        };
+        Relationships: [];
+      };
     };
     Functions: {
       check_artwork_availability: {
@@ -1008,6 +1237,15 @@ export type Database = {
           sold_count: number;
         }[];
       };
+      check_rate_limit: {
+        Args: { p_key: string; p_limit: number; p_window_ms: number };
+        Returns: {
+          remaining: number;
+          success: boolean;
+        }[];
+      };
+      close_petition: { Args: { p_slug: string }; Returns: Json };
+      close_petitions_due: { Args: never; Returns: Json };
       execute_sql: { Args: { sql: string }; Returns: undefined };
       get_my_role: { Args: never; Returns: string };
       get_my_status: { Args: never; Returns: string };
@@ -1085,7 +1323,27 @@ export type Database = {
           referrer: string;
         }[];
       };
+      hash_email: { Args: { p_email: string; p_salt: string }; Returns: string };
+      hash_ip: { Args: { p_ip: string; p_salt: string }; Returns: string };
+      log_petition_audit: {
+        Args: {
+          p_action: string;
+          p_actor_id?: string;
+          p_details?: Json;
+          p_ip_hash?: string;
+          p_slug: string;
+          p_target_id: string;
+          p_target_type: string;
+        };
+        Returns: number;
+      };
       parse_artwork_price: { Args: { price_text: string }; Returns: number };
+      purge_petition_pii: {
+        Args: { p_days?: number; p_slug: string };
+        Returns: Json;
+      };
+      purge_petitions_expired: { Args: never; Returns: Json };
+      sign_petition: { Args: { p_payload: Json }; Returns: Json };
     };
     Enums: {
       artwork_status: 'available' | 'sold' | 'reserved' | 'hidden';
