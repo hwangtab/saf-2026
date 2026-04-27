@@ -5,7 +5,6 @@ import { useTranslations } from 'next-intl';
 
 import SafeImage from '@/components/common/SafeImage';
 import { Link } from '@/i18n/navigation';
-import Button from '@/components/ui/Button';
 import { formatPriceForDisplay } from '@/lib/utils';
 import { calculateShippingFee } from '@/lib/integrations/toss/config';
 import { krwToUsd, formatUsd } from '@/lib/utils/currency';
