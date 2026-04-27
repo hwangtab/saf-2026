@@ -1,5 +1,15 @@
 [
   {
+    "hash": "0087ac3d",
+    "type": "fix",
+    "scope": "toss",
+    "subject": "thread provider through reconcile cron + cancel/refund callers",
+    "summary": "최종 리뷰에서 위젯 마이그레이션 누락 호출 사이트 3건 발견 — reconcile-payments cron의 fetchPaymentByOrderId, order-lookup의 cancelBuyerOrder, admin-orders의 refundOrder 모두 provider를 전달하지 않아 위젯/레거시 MID 시크릿 라우팅이 깨질 수 있는 결함",
+    "body": "- reconcile cron이 order.metadata로 provider 결정 후 fetchPaymentByOrderId / source_detail 둘 다 적용 (위젯 결제도 'toss_widget'으로 정확히 기록)\n- cancelBuyerOrder, refundOrder가 cancelPayment 호출 시 provider 인자 추가\n- 레거시 in-flight 환불·취소가 위젯 시크릿으로 잘못 라우팅되어 실패하는 문제 차단",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
     "hash": "3d1e1cf0",
     "type": "fix",
     "scope": "checkout",
