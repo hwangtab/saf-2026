@@ -1,5 +1,105 @@
 [
   {
+    "hash": "21e8560f",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "guard en locale + clarify widget mount-once intent",
+    "summary": "Task 7 리뷰 후속 수정. (1) 영문 체크아웃은 Task 8의 PaypalPlaceholder가 도입되기 전까지 notFound()로 안전 차단 — 누락된 번역 키로 인한 MISSING_MESSAGE 크래시 방지. (2) widget mount useEffect deps를 []로 좁히고 mountedOnceRef의 의도(SDK가 unmount API를 제공하지 않아 컴포넌트 생애주기 동안 1회만 마운트)를 주석으로 명시",
+    "body": "- 영문 체크아웃 처리는 Task 8에서 PaypalPlaceholder로 대체 예정\n- totalAmount 변경에 대한 위젯 동기화는 handlePayment의 setAmount(serverTotal)이 책임",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "235c0cbb",
+    "type": "feat",
+    "scope": "checkout",
+    "subject": "mount Toss Payment Widget for Korean checkout",
+    "summary": "ko 로케일 체크아웃을 결제위젯 v2로 마이그레이션. SDK가 카드/간편결제/가상계좌 선택 UI와 약관 동의 패널을 직접 렌더하고, 결제하기 버튼 클릭 시 위젯이 결제창을 띄움. 영문 로케일 분기는 Task 8(PaypalPlaceholder)에서 추가",
+    "body": "- 페이지 로드 시 widget mount 후 setAmount/renderPaymentMethods/renderAgreement 호출\n- createOrder 성공 후 widgetsRef.requestPayment로 결제 요청\n- 사용자 취소(USER_CANCEL)는 에러로 표시하지 않음\n- 결제 후 successUrl 리다이렉트 → 기존 SuccessClient의 confirm 흐름 그대로 사용",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "911d1a1e",
+    "type": "feat",
+    "scope": "i18n",
+    "subject": "add Toss widget + PayPal placeholder strings",
+    "summary": "결제위젯 마운트 실패/약관 동의/준비중 라벨, 영문 PayPal 준비중 안내 문구 추가",
+    "body": "- ko.json checkout: widgetMountFailed, agreementTitle, preparingPayment, transferOptionLabel\n- en.json checkout: paypalPreparing { title, description, donateCta, backCta } (en-only by design)",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "d02e43be",
+    "type": "feat",
+    "scope": "webhook",
+    "subject": "route Toss webhook double-verify through per-order provider",
+    "summary": "웹훅이 payments→orders 조인으로 metadata.payment_provider를 읽어 fetchPayment에 전달. DEPOSIT_CALLBACK·PAYMENT_STATUS_CHANGED 양쪽 분기 모두 적용",
+    "body": "- artwork_sales.source_detail도 위젯 결제는 'toss_widget'으로 구분\n- 레거시 메타 없는 주문은 'api_v1'로 폴백 — 마이그레이션 윈도우 동안 안전",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "4925f988",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "allow 'toss_widget' in artwork_sales.source_detail CHECK",
+    "summary": "Task 4에서 artwork_sales.source_detail에 'toss_widget' 값을 쓰도록 했으나 기존 CHECK 제약조건에 해당 값이 없어 모든 위젯 결제가 INSERT 단계에서 실패할 수 있는 문제 수정. 제약조건에 'toss_widget' 추가",
+    "body": "Reviewer 지적: 결제위젯 첫 주문 INSERT가 23514 check_violation으로 실패 → artwork_sales 누락 → reconciliation cron도 같은 사유로 실패 (production 차단 결함)",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "4f4af232",
+    "type": "feat",
+    "scope": "checkout",
+    "subject": "resolve payment provider from order metadata",
+    "summary": "confirm route가 주문의 metadata.payment_provider를 읽어 위젯 MID와 레거시 MID 시크릿을 자동 선택. 레거시 메타가 없는 주문은 'api_v1'로 폴백",
+    "body": "- resolveOrderProvider 헬퍼 + 4건 테스트 추가\n- confirm/cancel/auto-refund 호출이 provider 인자를 전달\n- artwork_sales.source_detail이 위젯 결제는 'toss_widget'으로 구분 저장",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "f3069501",
+    "type": "feat",
+    "scope": "checkout",
+    "subject": "stamp payment_provider on orders.metadata, remove initiatePayment",
+    "summary": "결제위젯 마이그레이션을 위한 서버 액션 정리. 새 주문은 모두 metadata.payment_provider='widget'로 기록되고, v1 redirect 플로우용 initiatePayment 액션은 위젯이 대체하므로 제거",
+    "body": "- createOrder가 metadata에 payment_provider, locale을 함께 저장\n- initiatePayment, InitiatePaymentInput, InitiatePaymentResult 삭제\n- toss config 의존성 calculateShippingFee + generateOrderNumber만 남김\n- 신규 단위 테스트 1건 (provider 메타 검증)\n\nCheckoutClient의 type 에러는 Task 7에서 해소",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "281ea077",
+    "type": "feat",
+    "scope": "toss",
+    "subject": "route confirm/cancel through per-order provider",
+    "summary": "confirmPayment, fetchPayment, fetchPaymentByOrderId, cancelPayment에 provider 파라미터 추가하여 위젯 MID와 레거시 MID의 시크릿 키를 주문 메타데이터 기준으로 선택",
+    "body": "- 기본 provider는 'widget' — 새 주문은 결제위젯 MID로 처리\n- 명시적으로 'api_v1' 전달 시 기존 cafe24 경유 MID 시크릿 사용 (마이그레이션 윈도우 동안의 in-flight 주문 처리용)\n- confirmPayment provider 라우팅 테스트 3건",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "420cb574",
+    "type": "feat",
+    "scope": "toss",
+    "subject": "add provider-aware Toss config (widget + api_v1)",
+    "summary": "Toss 결제위젯 MID와 기존 API 개별 연동 MID를 한 코드베이스에서 공존시키기 위해 provider 파라미터로 키를 선택하는 헬퍼 추가",
+    "body": "- PaymentProvider 타입 ('widget' | 'api_v1') 도입\n- getTossConfig(provider), getTossAuthHeader(provider) 시그니처 확장 (기본값 'widget')\n- getTossWidgetClientKey() — 브라우저 노출용\n- getPaymentMode()는 둘 중 하나라도 구성되어 있으면 'toss' 반환\n- 신규 유닛 테스트 10건",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "35b0d0a3",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "sitemap 이미지 URL의 query string 제거 — XML 파싱 에러 수정",
+    "summary": "sitemap.xml이 EntityRef 에러로 파싱 실패하던 현상 수정. Supabase render URL의 ?width=&quality=&resize= query string 안의 raw `&`가 Next.js sitemap 직렬화에서 XML escape 안 돼서 발생.",
+    "body": "원인:\n- resolveSeoArtworkImageUrl이 width/quality/resize를 query로 추가\n- Next.js 16 sitemap 직렬화가 <image:loc> 안의 `&`를 `&amp;`로 escape하지 않음\n- 결과: line 136 col 190에서 \"EntityRef: expecting ';'\" 파싱 실패\n\n해결:\n- safeSitemapImageUrl() 헬퍼로 query string 제거 (split('?')[0])\n- artwork/artist/category/story/video 5개 라우트의 images 필드에 적용\n- Supabase render endpoint는 query 없어도 원본 이미지 반환하므로 Google Image 인덱싱 영향 없음\n\n검증: type-check ✓, build 1,116 페이지 ✓, sitemap.xml.body raw `&` 0개 확인.",
+    "date": "2026-04-24",
+    "author": "황경하"
+  },
+  {
     "hash": "ac89d4c3",
     "type": "fix",
     "scope": "slider",

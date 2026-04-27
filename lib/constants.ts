@@ -18,6 +18,7 @@ export const EXTERNAL_LINKS = {
   JOIN_MEMBER:
     'https://forms.office.com/Pages/ResponsePage.aspx?id=9mV1Wuu2mEyE027O-cC0uR1bZ14IzxZDqGiMboW32uhUNEFPMzlQRjQxNE04RjNPNVFCSTZaMVFNTCQlQCN0PWcu',
   ONLINE_GALLERY: 'https://www.saf2026.com',
+  DONATE: 'https://www.socialfunch.org/SAF',
   LOAN_INFO: 'https://www.kosmart.co.kr/loan',
   KOSMART_HOME: 'https://www.kosmart.co.kr',
   KOSMERT_2023_GALLERY: 'https://www.news-art.co.kr/news/section_list_all.html?sec_no=135',

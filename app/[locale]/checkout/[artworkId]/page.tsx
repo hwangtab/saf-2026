@@ -6,6 +6,7 @@ import { getPaymentMode, getTossWidgetClientKey } from '@/lib/integrations/toss/
 import { parsePrice } from '@/lib/parsePrice';
 import { formatPriceForDisplay, resolveArtworkImageUrl } from '@/lib/utils';
 import CheckoutClient from './CheckoutClient';
+import PaypalPlaceholder from './PaypalPlaceholder';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,10 +28,6 @@ interface Props {
 
 export default async function CheckoutPage({ params }: Props) {
   const { artworkId, locale } = await params;
-
-  if (locale === 'en') {
-    notFound();
-  }
 
   if (getPaymentMode() !== 'toss') {
     notFound();
@@ -72,6 +69,10 @@ export default async function CheckoutPage({ params }: Props) {
   const artistName = Array.isArray(artistRow)
     ? (artistRow[0]?.name_ko ?? 'Unknown Artist')
     : (artistRow?.name_ko ?? 'Unknown Artist');
+
+  if (locale === 'en') {
+    return <PaypalPlaceholder artworkId={artworkId} artworkTitle={artwork.title} />;
+  }
 
   const widgetClientKey = getTossWidgetClientKey();
   if (!widgetClientKey) {
