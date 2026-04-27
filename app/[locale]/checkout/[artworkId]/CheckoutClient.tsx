@@ -1,26 +1,16 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import clsx from 'clsx';
 
-import ExportedImage from 'next-image-export-optimizer';
 import SafeImage from '@/components/common/SafeImage';
 import { Link } from '@/i18n/navigation';
 import Button from '@/components/ui/Button';
-import tossLogo from '@/public/images/logo/toss-logo.png';
 import { calculateShippingFee } from '@/lib/integrations/toss/config';
 import { formatPriceForDisplay } from '@/lib/utils';
-import {
-  createOrder,
-  cancelPendingOrder,
-  initiatePayment,
-  createBankTransferOrder,
-} from '@/app/actions/checkout';
+import { createOrder, cancelPendingOrder } from '@/app/actions/checkout';
 import BuyerInfoForm from './BuyerInfoForm';
 import type { BuyerInfo } from './BuyerInfoForm';
-
-type PaymentMethod = 'CARD' | 'TRANSFER' | 'VIRTUAL_ACCOUNT';
 
 interface Props {
   artworkId: string;
@@ -29,17 +19,26 @@ interface Props {
   price: number;
   displayPrice: string;
   imageUrl: string;
-  locale: 'ko' | 'en';
+  locale: 'ko';
+  widgetClientKey: string;
 }
 
-const PAYMENT_METHODS: {
-  value: PaymentMethod;
-  labelKey: 'methodCard' | 'methodTransfer' | 'methodVirtualAccount';
-}[] = [
-  { value: 'CARD', labelKey: 'methodCard' },
-  { value: 'VIRTUAL_ACCOUNT', labelKey: 'methodVirtualAccount' },
-  { value: 'TRANSFER', labelKey: 'methodTransfer' },
-];
+type Stage = 'idle' | 'mounting' | 'ready' | 'submitting' | 'mountError';
+
+interface TossWidgetsInstance {
+  setAmount(input: { currency: string; value: number }): Promise<void>;
+  renderPaymentMethods(input: { selector: string; variantKey: string }): Promise<unknown>;
+  renderAgreement(input: { selector: string; variantKey: string }): Promise<unknown>;
+  requestPayment(input: {
+    orderId: string;
+    orderName: string;
+    successUrl: string;
+    failUrl: string;
+    customerName?: string;
+    customerEmail?: string;
+    customerMobilePhone?: string;
+  }): Promise<void>;
+}
 
 export default function CheckoutClient({
   artworkId,
@@ -48,21 +47,65 @@ export default function CheckoutClient({
   price,
   displayPrice,
   imageUrl,
-  locale,
+  widgetClientKey,
 }: Props) {
   const t = useTranslations('checkout');
   const shippingFee = calculateShippingFee(price);
   const totalAmount = price + shippingFee;
 
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('CARD');
-  const [submitting, setSubmitting] = useState(false);
+  const [stage, setStage] = useState<Stage>('idle');
   const [error, setError] = useState<string | null>(null);
-
   const buyerInfoRef = useRef<BuyerInfo | null>(null);
+  const widgetsRef = useRef<TossWidgetsInstance | null>(null);
+  const mountedOnceRef = useRef(false);
+
+  useEffect(() => {
+    if (mountedOnceRef.current) return;
+    mountedOnceRef.current = true;
+    setStage('mounting');
+
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const { loadTossPayments, ANONYMOUS } = await import('@tosspayments/tosspayments-sdk');
+        const tossPayments = await loadTossPayments(widgetClientKey);
+        const widgets = tossPayments.widgets({ customerKey: ANONYMOUS });
+
+        await widgets.setAmount({ currency: 'KRW', value: totalAmount });
+
+        await widgets.renderPaymentMethods({
+          selector: '#toss-payment-methods',
+          variantKey: 'DEFAULT',
+        });
+        await widgets.renderAgreement({
+          selector: '#toss-payment-agreement',
+          variantKey: 'AGREEMENT',
+        });
+
+        if (cancelled) return;
+        widgetsRef.current = widgets as TossWidgetsInstance;
+        setStage('ready');
+      } catch (err) {
+        console.error('[checkout] widget mount failed:', err);
+        if (!cancelled) {
+          setStage('mountError');
+          setError(t('widgetMountFailed'));
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [totalAmount, widgetClientKey, t]);
 
   async function handlePayment() {
     setError(null);
-    let createdOrderNo: string | null = null;
+    if (stage !== 'ready' || !widgetsRef.current) {
+      setError(t('widgetMountFailed'));
+      return;
+    }
 
     const buyerInfo = buyerInfoRef.current;
     if (!buyerInfo) {
@@ -95,37 +138,10 @@ export default function CheckoutClient({
       return;
     }
 
-    setSubmitting(true);
+    setStage('submitting');
+    let createdOrderNo: string | null = null;
+
     try {
-      // 계좌이체 — Toss 없이 직접 주문 생성 후 입금 안내 페이지로 이동
-      if (paymentMethod === 'VIRTUAL_ACCOUNT') {
-        const result = await createBankTransferOrder({
-          artworkId,
-          buyerName,
-          buyerEmail,
-          buyerPhone,
-          shippingName,
-          shippingPhone,
-          shippingAddress,
-          shippingAddressDetail,
-          shippingPostalCode,
-          shippingMemo,
-          locale: locale === 'en' ? 'en' : 'ko',
-        });
-
-        if (!result.success) {
-          setError(result.error);
-          setSubmitting(false);
-          return;
-        }
-
-        const localePrefix = locale === 'en' ? '/en' : '';
-        window.location.href = `${window.location.origin}${localePrefix}/checkout/${artworkId}/success?method=BANK_TRANSFER&orderId=${result.orderNo}&amount=${result.totalAmount}`;
-        await new Promise(() => {});
-        return;
-      }
-
-      // 1. Create order via server action
       const result = await createOrder({
         artworkId,
         buyerName,
@@ -137,62 +153,55 @@ export default function CheckoutClient({
         shippingAddressDetail,
         shippingPostalCode,
         shippingMemo,
-        locale: locale === 'en' ? 'en' : 'ko',
+        locale: 'ko',
       });
 
       if (!result.success) {
         setError(result.error);
-        setSubmitting(false);
+        setStage('ready');
         return;
       }
 
       const { orderNo, orderName, totalAmount: serverTotal } = result;
       createdOrderNo = orderNo;
 
-      // 2. Create payment session server-side (POST /v1/payments with sk key)
-      const localePrefix = locale === 'en' ? '/en' : '';
-      const successUrl = `${window.location.origin}${localePrefix}/checkout/${artworkId}/success`;
-      const failUrl = `${window.location.origin}${localePrefix}/checkout/${artworkId}/fail`;
+      // Re-sync widget amount with server-validated total before requestPayment
+      await widgetsRef.current.setAmount({ currency: 'KRW', value: serverTotal });
 
-      const payResult = await initiatePayment({
-        method: paymentMethod,
-        orderNo,
+      const successUrl = `${window.location.origin}/checkout/${artworkId}/success`;
+      const failUrl = `${window.location.origin}/checkout/${artworkId}/fail`;
+
+      await widgetsRef.current.requestPayment({
+        orderId: orderNo,
         orderName,
-        totalAmount: serverTotal,
-        buyerName,
-        buyerEmail,
         successUrl,
         failUrl,
-        locale: locale === 'en' ? 'en' : 'ko',
+        customerName: buyerName,
+        customerEmail: buyerEmail,
+        customerMobilePhone: buyerPhone.replace(/\D/g, ''),
       });
-
-      if (!payResult.success) {
-        cancelPendingOrder(orderNo, buyerEmail).catch((err) =>
-          console.error('[checkout] cancelPendingOrder failed:', err)
-        );
-        setError(payResult.error);
-        setSubmitting(false);
-        return;
-      }
-
-      // 3. Redirect to Toss-hosted payment page — submitting stays true until page unloads
-      window.location.href = payResult.checkoutUrl;
-      await new Promise(() => {});
+      // Toss redirects the browser; setStage stays 'submitting' until unload.
     } catch (err: unknown) {
       if (createdOrderNo) {
         cancelPendingOrder(createdOrderNo, buyerInfoRef.current?.buyerEmail ?? '').catch(
           (cancelErr) => console.error('[checkout] cancelPendingOrder failed:', cancelErr)
         );
       }
-      setError((err as Error)?.message ?? t('errorPayment'));
-      setSubmitting(false);
+      const message = (err as { message?: string })?.message ?? t('errorPayment');
+      // Toss SDK throws a known shape with .code on user cancel — silence those
+      const code = (err as { code?: string })?.code;
+      if (code === 'USER_CANCEL') {
+        setError(null);
+      } else {
+        setError(message);
+      }
+      setStage('ready');
     }
   }
 
   return (
     <div className="bg-canvas-soft">
       <div className="max-w-2xl mx-auto px-4 pt-24 pb-24">
-        {/* Back button */}
         <Link
           href={`/artworks/${artworkId}`}
           className="mb-6 inline-flex items-center gap-1 text-sm text-gray-500 hover:text-charcoal"
@@ -257,48 +266,30 @@ export default function CheckoutClient({
           </table>
         </div>
 
-        {/* Payment method selector */}
-        <div className="mb-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-          <h3 className="mb-4 text-base font-semibold text-charcoal">{t('paymentMethodSelect')}</h3>
-          <div className="grid grid-cols-3 gap-3 pt-3">
-            {PAYMENT_METHODS.map(({ value, labelKey }) => (
-              <button
-                key={value}
-                type="button"
-                onClick={() => setPaymentMethod(value)}
-                className={clsx(
-                  'relative overflow-visible rounded-xl border-2 py-3 text-sm font-medium transition-colors',
-                  paymentMethod === value
-                    ? 'border-primary bg-primary/5 text-primary'
-                    : 'border-gray-200 text-gray-600 hover:border-gray-300'
-                )}
-              >
-                {value === 'TRANSFER' && (
-                  <ExportedImage
-                    src={tossLogo}
-                    alt="toss"
-                    height={32}
-                    width={106}
-                    className="absolute -top-4 -left-1 h-8 w-auto object-contain drop-shadow-sm"
-                    unoptimized
-                  />
-                )}
-                {t(labelKey)}
-              </button>
-            ))}
-          </div>
+        {/* Toss widget mount targets */}
+        <div className="mb-4 rounded-2xl border border-gray-200 bg-white p-2 shadow-sm">
+          <div id="toss-payment-methods" />
+          <div id="toss-payment-agreement" />
         </div>
 
-        {/* Error */}
+        {(stage === 'mounting' || stage === 'idle') && (
+          <p className="mb-4 text-center text-sm text-gray-500">{t('preparingPayment')}</p>
+        )}
+
         {error && (
           <div className="mb-4 rounded-lg bg-danger/10 px-4 py-3 text-sm text-danger-a11y">
             {error}
           </div>
         )}
 
-        {/* CTA */}
-        <Button onClick={handlePayment} loading={submitting} size="lg" className="w-full">
-          {submitting ? t('processingShort') : t('payNow')}
+        <Button
+          onClick={handlePayment}
+          loading={stage === 'submitting'}
+          disabled={stage !== 'ready' && stage !== 'submitting'}
+          size="lg"
+          className="w-full"
+        >
+          {stage === 'submitting' ? t('processingShort') : t('payNow')}
         </Button>
       </div>
     </div>
