@@ -243,10 +243,25 @@ export default function OverseasCheckoutClient({
           </div>
         )}
 
-        {/* CTA */}
-        <Button onClick={handlePayment} loading={submitting} size="lg" className="w-full">
-          {submitting ? t('processingShort') : t('payWithPaypal')}
-        </Button>
+        {/* CTA — PayPal brand button (gold #FFC439, official PayPal wordmark) */}
+        <button
+          type="button"
+          onClick={handlePayment}
+          disabled={submitting}
+          aria-label={t('payWithPaypal')}
+          className="w-full rounded-xl py-4 text-lg transition-shadow flex items-center justify-center gap-2 bg-[#FFC439] hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{ fontFamily: 'system-ui, -apple-system, sans-serif', letterSpacing: '-0.03em' }}
+        >
+          {submitting ? (
+            <span className="inline-block h-5 w-5 border-2 border-[#003087] border-t-transparent rounded-full animate-spin" />
+          ) : (
+            // PayPal 공식 wordmark: "Pay" 다크블루 #003087 + "Pal" 라이트블루 #009CDE
+            <span className="font-extrabold italic">
+              <span className="text-[#003087]">Pay</span>
+              <span className="text-[#009CDE]">Pal</span>
+            </span>
+          )}
+        </button>
       </div>
     </div>
   );

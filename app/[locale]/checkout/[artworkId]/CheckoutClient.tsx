@@ -26,6 +26,8 @@ import type { BuyerInfo } from './BuyerInfoForm';
  */
 type PaymentChoice = 'CARD' | 'KAKAOPAY' | 'TOSSPAY' | 'TRANSFER';
 
+type BrandKind = 'kakaopay' | 'tosspay' | null;
+
 interface PaymentChoiceConfig {
   value: PaymentChoice;
   labelKey: 'methodCard' | 'methodKakaopay' | 'methodTosspay' | 'methodTransfer';
@@ -33,6 +35,8 @@ interface PaymentChoiceConfig {
   tossMethod: 'CARD' | 'TRANSFER';
   /** Toss /v1/payments easyPay 파라미터 (간편결제 직접 라우팅) */
   easyPay?: string;
+  /** 브랜드 로고 렌더링 식별자 — null이면 텍스트 라벨 사용 */
+  brand: BrandKind;
 }
 
 interface Props {
@@ -45,11 +49,55 @@ interface Props {
 }
 
 const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
-  { value: 'CARD', labelKey: 'methodCard', tossMethod: 'CARD' },
-  { value: 'TRANSFER', labelKey: 'methodTransfer', tossMethod: 'TRANSFER' },
-  { value: 'KAKAOPAY', labelKey: 'methodKakaopay', tossMethod: 'CARD', easyPay: 'KAKAOPAY' },
-  { value: 'TOSSPAY', labelKey: 'methodTosspay', tossMethod: 'CARD', easyPay: 'TOSSPAY' },
+  { value: 'CARD', labelKey: 'methodCard', tossMethod: 'CARD', brand: null },
+  { value: 'TRANSFER', labelKey: 'methodTransfer', tossMethod: 'TRANSFER', brand: null },
+  {
+    value: 'KAKAOPAY',
+    labelKey: 'methodKakaopay',
+    tossMethod: 'CARD',
+    easyPay: 'KAKAOPAY',
+    brand: 'kakaopay',
+  },
+  {
+    value: 'TOSSPAY',
+    labelKey: 'methodTosspay',
+    tossMethod: 'CARD',
+    easyPay: 'TOSSPAY',
+    brand: 'tosspay',
+  },
 ];
+
+/**
+ * 브랜드 로고 컴포넌트.
+ * 각 사 공식 브랜드 색상 + 텍스트 마크 (단순 wordmark 스타일).
+ * Kakao Pay: 카카오 옐로 #FEE500 + 다크 텍스트
+ * Toss Pay : 토스 블루 #3182F6 + 화이트 텍스트
+ */
+function BrandLogo({ brand }: { brand: BrandKind }) {
+  if (brand === 'kakaopay') {
+    return (
+      <span
+        className="font-bold text-[#3C1E1E]"
+        style={{ fontFamily: 'system-ui, -apple-system, sans-serif', letterSpacing: '-0.02em' }}
+      >
+        kakao
+        <span className="font-extrabold">pay</span>
+      </span>
+    );
+  }
+  if (brand === 'tosspay') {
+    return (
+      <span
+        className="font-bold text-white"
+        style={{ fontFamily: 'system-ui, -apple-system, sans-serif', letterSpacing: '-0.02em' }}
+      >
+        toss
+        <span className="opacity-80">pay</span>
+      </span>
+    );
+  }
+  return null;
+}
 
 /**
  * 한국어 체크아웃 클라이언트.
@@ -254,21 +302,58 @@ export default function CheckoutClient({
         <div className="mb-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
           <h3 className="mb-4 text-base font-semibold text-charcoal">{t('paymentMethodSelect')}</h3>
           <div className="grid grid-cols-2 gap-3 pt-1">
-            {PAYMENT_CHOICES.map(({ value, labelKey }) => (
-              <button
-                key={value}
-                type="button"
-                onClick={() => setPaymentChoice(value)}
-                className={clsx(
-                  'rounded-xl border-2 py-3 text-sm font-medium transition-colors',
-                  paymentChoice === value
-                    ? 'border-primary bg-primary/5 text-primary'
-                    : 'border-gray-200 text-gray-600 hover:border-gray-300'
-                )}
-              >
-                {t(labelKey)}
-              </button>
-            ))}
+            {PAYMENT_CHOICES.map(({ value, labelKey, brand }) => {
+              const selected = paymentChoice === value;
+              // 브랜드 버튼: 항상 브랜드 색상 배경. 선택 시 외곽 ring으로 강조
+              if (brand === 'kakaopay') {
+                return (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setPaymentChoice(value)}
+                    aria-label={t(labelKey)}
+                    className={clsx(
+                      'rounded-xl py-3 text-base transition-shadow flex items-center justify-center bg-[#FEE500]',
+                      selected ? 'ring-2 ring-charcoal ring-offset-2 shadow-md' : 'hover:shadow-md'
+                    )}
+                  >
+                    <BrandLogo brand={brand} />
+                  </button>
+                );
+              }
+              if (brand === 'tosspay') {
+                return (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setPaymentChoice(value)}
+                    aria-label={t(labelKey)}
+                    className={clsx(
+                      'rounded-xl py-3 text-base transition-shadow flex items-center justify-center bg-[#3182F6]',
+                      selected ? 'ring-2 ring-charcoal ring-offset-2 shadow-md' : 'hover:shadow-md'
+                    )}
+                  >
+                    <BrandLogo brand={brand} />
+                  </button>
+                );
+              }
+              // 일반 버튼 (카드/계좌이체): 기존 outline 스타일 유지
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setPaymentChoice(value)}
+                  className={clsx(
+                    'rounded-xl border-2 py-3 text-sm font-medium transition-colors',
+                    selected
+                      ? 'border-primary bg-primary/5 text-primary'
+                      : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                  )}
+                >
+                  {t(labelKey)}
+                </button>
+              );
+            })}
           </div>
         </div>
 
