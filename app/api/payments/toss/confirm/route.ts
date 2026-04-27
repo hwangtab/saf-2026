@@ -64,7 +64,13 @@ export async function POST(req: NextRequest) {
   const provider = resolveOrderProvider(order.metadata);
 
   // SEC-01: Amount must match exactly
-  if (order.total_amount !== amount) {
+  // - domestic/widget/api_v1: order.total_amount(KRW)와 비교
+  // - overseas (PayPal/USD): metadata.usd_amount와 비교 — createOrder 시점에 환산 저장된 값
+  const expectedAmount =
+    provider === 'overseas'
+      ? Number((order.metadata as { usd_amount?: number } | null)?.usd_amount ?? NaN)
+      : order.total_amount;
+  if (!Number.isFinite(expectedAmount) || expectedAmount !== amount) {
     return NextResponse.json({ error: apiError('amount_mismatch', reqLocale) }, { status: 400 });
   }
 

@@ -750,6 +750,7 @@
     "methodTransfer": "계좌이체",
     "methodKakaopay": "카카오페이",
     "methodTosspay": "토스페이",
+    "payWithPaypal": "PayPal로 결제",
     "methodVirtualAccount": "계좌이체",
     "bankTransferTitle": "계좌이체 안내",
     "bankTransferGuide": "아래 계좌로 입금해주세요. 입금 확인 후 주문이 완료됩니다.",

@@ -15,6 +15,7 @@ import type { TossErrorResponse } from '@/lib/integrations/toss/types';
 import { rateLimit } from '@/lib/rate-limit';
 import { SITE_URL, SITE_URL_ALIAS } from '@/lib/constants';
 import { apiError, type ApiLocale } from '@/lib/api-locale';
+import { krwToUsd } from '@/lib/utils/currency';
 
 export type CreateOrderInput = {
   artworkId: string;
@@ -211,6 +212,9 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
         metadata: {
           locale: buyerLocale,
           payment_provider: buyerLocale === 'en' ? 'overseas' : 'domestic',
+          // 영문 주문은 PayPal(USD) 결제이므로 환산 USD 금액을 시점 고정해서 저장.
+          // confirm 시점에 Toss가 USD로 amount를 반환하면 이 값으로 검증.
+          ...(buyerLocale === 'en' ? { usd_amount: krwToUsd(totalAmount) } : {}),
         },
       })
       .select('id')
@@ -335,20 +339,35 @@ export async function initiatePayment(input: InitiatePaymentInput): Promise<Init
         'Content-Type': 'application/json',
         'Idempotency-Key': input.orderNo,
       },
-      body: JSON.stringify({
-        method: input.method,
-        amount: input.totalAmount,
-        orderId: input.orderNo,
-        orderName: input.orderName,
-        successUrl: input.successUrl,
-        failUrl: input.failUrl,
-        customerName: input.buyerName,
-        customerEmail: input.buyerEmail,
-        // 에스크로 미사용 — 명시적으로 false 전달.
-        useEscrow: false,
-        // 간편결제 직접 라우팅 (있을 때만 포함). method=CARD와 함께 사용.
-        ...(input.easyPay ? { easyPay: input.easyPay } : {}),
-      }),
+      body: JSON.stringify(
+        provider === 'overseas'
+          ? {
+              // PayPal 결제 (saf202719y MID): USD 환산 + FOREIGN_EASY_PAY + provider=PAYPAL
+              method: 'FOREIGN_EASY_PAY',
+              provider: 'PAYPAL',
+              currency: 'USD',
+              amount: krwToUsd(input.totalAmount),
+              orderId: input.orderNo,
+              orderName: input.orderName,
+              successUrl: input.successUrl,
+              failUrl: input.failUrl,
+              customerName: input.buyerName,
+              customerEmail: input.buyerEmail,
+            }
+          : {
+              // 국내 결제 (saf202i818 MID): KRW + 카드/계좌이체/간편결제
+              method: input.method,
+              amount: input.totalAmount,
+              orderId: input.orderNo,
+              orderName: input.orderName,
+              successUrl: input.successUrl,
+              failUrl: input.failUrl,
+              customerName: input.buyerName,
+              customerEmail: input.buyerEmail,
+              useEscrow: false,
+              ...(input.easyPay ? { easyPay: input.easyPay } : {}),
+            }
+      ),
     });
   } catch {
     return { success: false, error: apiError('payment_server_unreachable', buyerLocale) };

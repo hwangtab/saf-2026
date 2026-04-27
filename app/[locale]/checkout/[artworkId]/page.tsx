@@ -6,7 +6,7 @@ import { getPaymentMode } from '@/lib/integrations/toss/config';
 import { parsePrice } from '@/lib/parsePrice';
 import { formatPriceForDisplay, resolveArtworkImageUrl } from '@/lib/utils';
 import CheckoutClient from './CheckoutClient';
-import PaypalPlaceholder from './PaypalPlaceholder';
+import OverseasCheckoutClient from './OverseasCheckoutClient';
 
 export const dynamic = 'force-dynamic';
 
@@ -71,7 +71,16 @@ export default async function CheckoutPage({ params }: Props) {
     : (artistRow?.name_ko ?? 'Unknown Artist');
 
   if (locale !== 'ko') {
-    return <PaypalPlaceholder artworkId={artworkId} artworkTitle={artwork.title} />;
+    return (
+      <OverseasCheckoutClient
+        artworkId={artworkId}
+        artworkTitle={artwork.title}
+        artist={artistName}
+        price={price}
+        displayPrice={displayPrice}
+        imageUrl={imageUrl}
+      />
+    );
   }
 
   return (
