@@ -1,3 +1,6 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
 import type { AdminCounts } from './types';
 
 const HOUR_MS = 60 * 60 * 1000;
@@ -13,31 +16,44 @@ interface KpiBarProps {
 }
 
 export default function KpiBar({ counts }: KpiBarProps) {
+  const t = useTranslations('admin.petition');
   const ratio = Math.min(1, counts.total / Math.max(1, counts.goal));
   const percent = Math.round(ratio * 100);
   const dn = daysUntil(counts.deadline_at);
 
+  const deadlineLabel = counts.is_active
+    ? dn !== null
+      ? t('kpiDeadline', { days: dn })
+      : t('kpiDeadlineUnknown')
+    : t('kpiClosed');
+  const deadlineSub = counts.is_active
+    ? t('kpiDeadlineSub', { date: counts.deadline_at?.slice(0, 10) ?? t('kpiDeadlineDateUnknown') })
+    : t('kpiClosedSub');
+
   return (
     <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
       <KpiCard
-        label="총 서명자"
+        label={t('kpiTotal')}
         value={counts.total.toLocaleString('ko-KR')}
-        sub={`${percent}% / 목표 ${counts.goal.toLocaleString('ko-KR')}`}
+        sub={t('kpiTotalSub', {
+          percent,
+          goal: counts.goal.toLocaleString('ko-KR'),
+        })}
       />
       <KpiCard
-        label="추진위원 신청"
+        label={t('kpiCommittee')}
         value={counts.committee_total.toLocaleString('ko-KR')}
-        sub="+이름 발족 선언문에 게재"
+        sub={t('kpiCommitteeSub')}
       />
       <KpiCard
-        label="참여 시·도"
-        value={`${counts.region_top_count} / 17`}
-        sub="해외 제외 광역 분포"
+        label={t('kpiRegions')}
+        value={t('kpiRegionsValue', { count: counts.region_top_count })}
+        sub={t('kpiRegionsSub')}
       />
       <KpiCard
-        label={counts.is_active ? `마감까지 D-${dn ?? '?'}` : '마감 완료'}
-        value={`24h 신규 ${counts.recent_24h.toLocaleString('ko-KR')}`}
-        sub={counts.is_active ? `마감 ${counts.deadline_at?.slice(0, 10) ?? '미정'}` : '폼 비활성'}
+        label={deadlineLabel}
+        value={t('kpiRecent24h', { count: counts.recent_24h.toLocaleString('ko-KR') })}
+        sub={deadlineSub}
         accent={!counts.is_active}
       />
     </div>

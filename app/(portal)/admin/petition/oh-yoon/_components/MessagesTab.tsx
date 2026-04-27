@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState, useTransition } from 'react';
+import { useTranslations } from 'next-intl';
 import clsx from 'clsx';
 
 import { setMessageMasked } from '@/app/actions/petition-admin';
@@ -15,6 +16,7 @@ interface MessagesTabProps {
 }
 
 export default function MessagesTab({ messages: initial }: MessagesTabProps) {
+  const t = useTranslations('admin.petition');
   const [messages, setMessages] = useState<AdminMessageRow[]>(initial);
   const [filter, setFilter] = useState<Filter>('open');
   const [search, setSearch] = useState('');
@@ -38,7 +40,7 @@ export default function MessagesTab({ messages: initial }: MessagesTabProps) {
       const r = await setMessageMasked(id, next);
       setBusyId(null);
       if (!r.ok) {
-        alert(r.message ?? '실패');
+        alert(r.message ?? t('errorMaskFailed'));
         return;
       }
       setMessages((rows) =>
@@ -59,39 +61,45 @@ export default function MessagesTab({ messages: initial }: MessagesTabProps) {
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
         <FilterPill
-          label="검토 대기"
+          label={t('messagesFilterOpen')}
           active={filter === 'open'}
           onClick={() => setFilter('open')}
         />
         <FilterPill
-          label="공개 동의분만"
+          label={t('messagesFilterPublic')}
           active={filter === 'public'}
           onClick={() => setFilter('public')}
         />
         <FilterPill
-          label="마스킹된 것만"
+          label={t('messagesFilterMasked')}
           active={filter === 'masked'}
           onClick={() => setFilter('masked')}
         />
-        <FilterPill label="전체" active={filter === 'all'} onClick={() => setFilter('all')} />
+        <FilterPill
+          label={t('messagesFilterAll')}
+          active={filter === 'all'}
+          onClick={() => setFilter('all')}
+        />
 
         <input
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="메시지 본문 검색"
+          placeholder={t('messagesSearchPlaceholder')}
           className="ml-auto w-full sm:w-64 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         />
       </div>
 
       <p className="text-xs text-charcoal-muted">
-        {filtered.length.toLocaleString('ko-KR')}건 표시 (전체{' '}
-        {messages.length.toLocaleString('ko-KR')}건)
+        {t('messagesShownCount', {
+          count: filtered.length.toLocaleString('ko-KR'),
+          total: messages.length.toLocaleString('ko-KR'),
+        })}
       </p>
 
       {filtered.length === 0 ? (
         <p className="rounded-lg border border-dashed border-gray-300 bg-gray-50 px-6 py-12 text-center text-sm text-charcoal-muted">
-          조건에 맞는 메시지가 없습니다.
+          {t('messagesEmpty')}
         </p>
       ) : (
         <ul className="space-y-3">
@@ -114,12 +122,12 @@ export default function MessagesTab({ messages: initial }: MessagesTabProps) {
                     {subLabel} · {dateLabel}
                     {m.message_public && (
                       <span className="ml-2 inline-flex items-center rounded-full bg-primary-surface px-2 py-0.5 text-[11px] font-semibold text-primary-strong">
-                        공개동의
+                        {t('messagesPublicBadge')}
                       </span>
                     )}
                     {m.is_masked && (
                       <span className="ml-2 inline-flex items-center rounded-full bg-gray-200 px-2 py-0.5 text-[11px] font-semibold text-gray-700">
-                        마스킹됨
+                        {t('messagesMaskedBadge')}
                       </span>
                     )}
                   </span>
@@ -136,7 +144,7 @@ export default function MessagesTab({ messages: initial }: MessagesTabProps) {
                       disabled={isBusy}
                       className="rounded-md border border-primary/40 bg-white px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary/10 disabled:opacity-60"
                     >
-                      {isBusy ? '처리 중…' : '복원'}
+                      {isBusy ? t('messagesActionPending') : t('messagesActionRestore')}
                     </button>
                   ) : (
                     <button
@@ -145,7 +153,7 @@ export default function MessagesTab({ messages: initial }: MessagesTabProps) {
                       disabled={isBusy}
                       className="rounded-md border border-danger/40 bg-white px-3 py-1.5 text-xs font-semibold text-danger-a11y hover:bg-danger/10 disabled:opacity-60"
                     >
-                      {isBusy ? '처리 중…' : '마스킹'}
+                      {isBusy ? t('messagesActionPending') : t('messagesActionMask')}
                     </button>
                   )}
                 </div>
@@ -155,9 +163,7 @@ export default function MessagesTab({ messages: initial }: MessagesTabProps) {
         </ul>
       )}
 
-      <p className="text-xs text-charcoal-muted">
-        마스킹 처리는 트리거가 자동으로 감사 로그에 기록합니다 (mask_message / unmask_message).
-      </p>
+      <p className="text-xs text-charcoal-muted">{t('messagesAuditNote')}</p>
     </div>
   );
 }
