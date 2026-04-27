@@ -13,6 +13,10 @@ describe('toss/confirm — provider routing', () => {
     process.env.TOSS_PAYMENTS_WIDGET_SECRET_KEY = 'gsk_widget';
     process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY = 'ck';
     process.env.TOSS_PAYMENTS_SECRET_KEY = 'sk_legacy';
+    process.env.NEXT_PUBLIC_TOSS_DOMESTIC_CLIENT_KEY = 'ck_dom';
+    process.env.TOSS_PAYMENTS_DOMESTIC_SECRET_KEY = 'sk_domestic';
+    process.env.NEXT_PUBLIC_TOSS_OVERSEAS_CLIENT_KEY = 'ck_ovs';
+    process.env.TOSS_PAYMENTS_OVERSEAS_SECRET_KEY = 'sk_overseas';
   });
 
   afterEach(() => {
@@ -50,7 +54,33 @@ describe('toss/confirm — provider routing', () => {
     expect(auth).toBe('Basic ' + Buffer.from('sk_legacy:').toString('base64'));
   });
 
-  it('defaults to widget when provider omitted', async () => {
+  it('uses domestic secret when provider is domestic', async () => {
+    const calls: { headers: HeadersInit | undefined }[] = [];
+    global.fetch = jest.fn(async (_url, init) => {
+      calls.push({ headers: init?.headers });
+      return new Response(JSON.stringify({ status: 'DONE' }), { status: 200 });
+    }) as unknown as typeof fetch;
+
+    await confirmPayment({ paymentKey: 'p', orderId: 'o', amount: 1 }, 'i', 'domestic');
+
+    const auth = (calls[0].headers as Record<string, string>).Authorization;
+    expect(auth).toBe('Basic ' + Buffer.from('sk_domestic:').toString('base64'));
+  });
+
+  it('uses overseas secret when provider is overseas', async () => {
+    const calls: { headers: HeadersInit | undefined }[] = [];
+    global.fetch = jest.fn(async (_url, init) => {
+      calls.push({ headers: init?.headers });
+      return new Response(JSON.stringify({ status: 'DONE' }), { status: 200 });
+    }) as unknown as typeof fetch;
+
+    await confirmPayment({ paymentKey: 'p', orderId: 'o', amount: 1 }, 'i', 'overseas');
+
+    const auth = (calls[0].headers as Record<string, string>).Authorization;
+    expect(auth).toBe('Basic ' + Buffer.from('sk_overseas:').toString('base64'));
+  });
+
+  it('defaults to domestic when provider omitted', async () => {
     const calls: { headers: HeadersInit | undefined }[] = [];
     global.fetch = jest.fn(async (_url, init) => {
       calls.push({ headers: init?.headers });
@@ -60,6 +90,6 @@ describe('toss/confirm — provider routing', () => {
     await confirmPayment({ paymentKey: 'p', orderId: 'o', amount: 1 }, 'i');
 
     const auth = (calls[0].headers as Record<string, string>).Authorization;
-    expect(auth).toBe('Basic ' + Buffer.from('gsk_widget:').toString('base64'));
+    expect(auth).toBe('Basic ' + Buffer.from('sk_domestic:').toString('base64'));
   });
 });

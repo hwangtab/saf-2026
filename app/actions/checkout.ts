@@ -3,9 +3,17 @@
 import { headers } from 'next/headers';
 import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/auth/server';
 import { parsePrice } from '@/lib/parsePrice';
-import { calculateShippingFee } from '@/lib/integrations/toss/config';
+import {
+  calculateShippingFee,
+  getTossAuthHeader,
+  getTossConfig,
+  type PaymentProvider,
+} from '@/lib/integrations/toss/config';
+import { fetchWithTimeout } from '@/lib/integrations/toss/fetch-with-timeout';
 import { generateOrderNumber } from '@/lib/integrations/toss/order-number';
+import type { TossErrorResponse } from '@/lib/integrations/toss/types';
 import { rateLimit } from '@/lib/rate-limit';
+import { SITE_URL, SITE_URL_ALIAS } from '@/lib/constants';
 import { apiError, type ApiLocale } from '@/lib/api-locale';
 
 export type CreateOrderInput = {
@@ -200,7 +208,10 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
         shipping_amount: shippingAmount,
         total_amount: totalAmount,
         status: 'pending_payment',
-        metadata: { locale: buyerLocale, payment_provider: 'widget' },
+        metadata: {
+          locale: buyerLocale,
+          payment_provider: buyerLocale === 'en' ? 'overseas' : 'domestic',
+        },
       })
       .select('id')
       .single();
@@ -228,6 +239,137 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     totalAmount,
     orderName,
   };
+}
+
+export type InitiatePaymentInput = {
+  /**
+   * Toss 결제 method:
+   * - 'CARD' / 'TRANSFER' / 'VIRTUAL_ACCOUNT' / 'MOBILE_PHONE' (국내)
+   * - 'FOREIGN_EASY_PAY' (해외 PayPal)
+   */
+  method: string;
+  orderNo: string;
+  orderName: string;
+  totalAmount: number;
+  buyerName: string;
+  buyerEmail: string;
+  successUrl: string;
+  failUrl: string;
+  /** locale 기준으로 provider 결정 (ko → domestic, en → overseas) */
+  locale?: 'ko' | 'en';
+};
+
+export type InitiatePaymentResult =
+  | { success: true; checkoutUrl: string }
+  | { success: false; error: string };
+
+/**
+ * POST /v1/payments — Toss-hosted 결제창 URL 발급.
+ *
+ * locale에 따라 provider 자동 선택:
+ * - ko → 'domestic' (saf202i818)
+ * - en → 'overseas' (saf202719y, PayPal)
+ *
+ * 위 두 MID는 모두 API 개별 연동 키 사용 (live_ck_/live_sk_).
+ */
+export async function initiatePayment(input: InitiatePaymentInput): Promise<InitiatePaymentResult> {
+  const buyerLocale: ApiLocale = input.locale === 'en' ? 'en' : 'ko';
+  const provider: PaymentProvider = buyerLocale === 'en' ? 'overseas' : 'domestic';
+
+  // Rate limiting
+  const headersList = await headers();
+  const ip = headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+  const rl = await rateLimit(`initiatePayment:${ip}`, { limit: 10, windowMs: 60_000 });
+  if (!rl.success) {
+    return { success: false, error: apiError('rate_limited', buyerLocale) };
+  }
+
+  // redirect URL origin 검증 — 외부 URL 주입 방지
+  const allowedOrigins = [new URL(SITE_URL).origin, new URL(SITE_URL_ALIAS).origin];
+  const isValidUrl = (url: string) => {
+    try {
+      return allowedOrigins.includes(new URL(url).origin);
+    } catch {
+      return false;
+    }
+  };
+  if (!isValidUrl(input.successUrl) || !isValidUrl(input.failUrl)) {
+    return { success: false, error: apiError('invalid_redirect_url', buyerLocale) };
+  }
+
+  // DB 주문 검증 — 클라이언트 전달 금액·상태를 신뢰하지 않고 DB에서 재조회
+  const adminClient = createSupabaseAdminClient();
+  const { data: dbOrder } = await adminClient
+    .from('orders')
+    .select('total_amount, status')
+    .eq('order_no', input.orderNo)
+    .maybeSingle();
+
+  if (!dbOrder) {
+    return { success: false, error: apiError('order_not_found', buyerLocale) };
+  }
+  if (dbOrder.status !== 'pending_payment') {
+    return { success: false, error: apiError('invalid_order_status', buyerLocale) };
+  }
+  if (dbOrder.total_amount !== input.totalAmount) {
+    return { success: false, error: apiError('amount_mismatch', buyerLocale) };
+  }
+
+  const config = getTossConfig(provider);
+  if (!config) {
+    return { success: false, error: apiError('payment_session_failed', buyerLocale) };
+  }
+
+  let response: Response;
+  try {
+    response = await fetchWithTimeout(`${config.apiBaseUrl}/v1/payments`, {
+      method: 'POST',
+      headers: {
+        Authorization: getTossAuthHeader(provider),
+        'Content-Type': 'application/json',
+        'Idempotency-Key': input.orderNo,
+      },
+      body: JSON.stringify({
+        method: input.method,
+        amount: input.totalAmount,
+        orderId: input.orderNo,
+        orderName: input.orderName,
+        successUrl: input.successUrl,
+        failUrl: input.failUrl,
+        customerName: input.buyerName,
+        customerEmail: input.buyerEmail,
+      }),
+    });
+  } catch {
+    return { success: false, error: apiError('payment_server_unreachable', buyerLocale) };
+  }
+
+  if (!response.ok) {
+    let err: TossErrorResponse = {
+      code: 'UNKNOWN',
+      message: apiError('payment_session_failed', buyerLocale),
+    };
+    try {
+      err = await response.json();
+    } catch {}
+    console.error(
+      `[initiatePayment] Toss API error (provider=${provider}):`,
+      response.status,
+      JSON.stringify(err)
+    );
+    return {
+      success: false,
+      error: err.message || apiError('payment_session_failed', buyerLocale),
+    };
+  }
+
+  const data = await response.json();
+  const checkoutUrl = (data as { checkout?: { url?: string } })?.checkout?.url;
+  if (!checkoutUrl) {
+    return { success: false, error: apiError('checkout_url_missing', buyerLocale) };
+  }
+
+  return { success: true, checkoutUrl };
 }
 
 /**

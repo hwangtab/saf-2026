@@ -350,7 +350,7 @@ describe('cancelPendingOrder', () => {
 // ========== createOrder — payment_provider metadata ==========
 
 describe('createOrder — payment_provider metadata', () => {
-  it('stamps metadata.payment_provider = "widget" on insert', async () => {
+  it('stamps metadata.payment_provider = "domestic" for ko orders', async () => {
     setupSuccessfulArtwork();
 
     const result = await createOrder({
@@ -361,7 +361,21 @@ describe('createOrder — payment_provider metadata', () => {
     expect(result.success).toBe(true);
     expect(capturedInsertedRows).toHaveLength(1);
     const meta = capturedInsertedRows[0].metadata as Record<string, unknown>;
-    expect(meta.payment_provider).toBe('widget');
+    expect(meta.payment_provider).toBe('domestic');
     expect(meta.locale).toBe('ko');
+  });
+
+  it('stamps metadata.payment_provider = "overseas" for en orders', async () => {
+    setupSuccessfulArtwork();
+
+    const result = await createOrder({
+      ...validInput,
+      locale: 'en',
+    });
+
+    expect(result.success).toBe(true);
+    const meta = capturedInsertedRows[0].metadata as Record<string, unknown>;
+    expect(meta.payment_provider).toBe('overseas');
+    expect(meta.locale).toBe('en');
   });
 });

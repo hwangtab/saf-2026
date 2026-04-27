@@ -15,6 +15,10 @@ describe('toss/config — provider switch', () => {
     delete process.env.TOSS_PAYMENTS_SECRET_KEY;
     delete process.env.NEXT_PUBLIC_TOSS_WIDGET_CLIENT_KEY;
     delete process.env.TOSS_PAYMENTS_WIDGET_SECRET_KEY;
+    delete process.env.NEXT_PUBLIC_TOSS_DOMESTIC_CLIENT_KEY;
+    delete process.env.TOSS_PAYMENTS_DOMESTIC_SECRET_KEY;
+    delete process.env.NEXT_PUBLIC_TOSS_OVERSEAS_CLIENT_KEY;
+    delete process.env.TOSS_PAYMENTS_OVERSEAS_SECRET_KEY;
   });
 
   afterAll(() => {
@@ -49,10 +53,27 @@ describe('toss/config — provider switch', () => {
     expect(cfg?.secretKey).toBe('live_sk_old');
   });
 
-  it('defaults to widget when no provider passed', () => {
-    process.env.NEXT_PUBLIC_TOSS_WIDGET_CLIENT_KEY = 'live_gck_test';
-    process.env.TOSS_PAYMENTS_WIDGET_SECRET_KEY = 'live_gsk_test';
-    expect(getTossConfig()?.provider).toBe('widget');
+  it('defaults to domestic when no provider passed', () => {
+    process.env.NEXT_PUBLIC_TOSS_DOMESTIC_CLIENT_KEY = 'live_ck_dom';
+    process.env.TOSS_PAYMENTS_DOMESTIC_SECRET_KEY = 'live_sk_dom';
+    expect(getTossConfig()?.provider).toBe('domestic');
+  });
+
+  it('returns domestic config when domestic keys set', () => {
+    process.env.NEXT_PUBLIC_TOSS_DOMESTIC_CLIENT_KEY = 'live_ck_d';
+    process.env.TOSS_PAYMENTS_DOMESTIC_SECRET_KEY = 'live_sk_d';
+    const cfg = getTossConfig('domestic');
+    expect(cfg?.provider).toBe('domestic');
+    expect(cfg?.clientKey).toBe('live_ck_d');
+    expect(cfg?.secretKey).toBe('live_sk_d');
+  });
+
+  it('returns overseas config when overseas keys set', () => {
+    process.env.NEXT_PUBLIC_TOSS_OVERSEAS_CLIENT_KEY = 'live_ck_o';
+    process.env.TOSS_PAYMENTS_OVERSEAS_SECRET_KEY = 'live_sk_o';
+    const cfg = getTossConfig('overseas');
+    expect(cfg?.provider).toBe('overseas');
+    expect(cfg?.clientKey).toBe('live_ck_o');
   });
 
   it('builds Basic auth header with secret + colon', () => {
