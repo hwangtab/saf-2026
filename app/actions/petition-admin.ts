@@ -1,6 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { getTranslations } from 'next-intl/server';
 
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/auth/server';
@@ -48,6 +49,7 @@ export async function setMessageMasked(
   masked: boolean
 ): Promise<AdminActionResult> {
   await requireAdmin();
+  const t = await getTranslations('admin.petition');
   const supabase = await createSupabaseServerClient();
 
   const { error } = await supabase
@@ -57,7 +59,7 @@ export async function setMessageMasked(
 
   if (error) {
     console.error('[petition-admin] mask error:', error);
-    return { ok: false, message: '마스킹 처리에 실패했습니다.' };
+    return { ok: false, message: t('errorMaskFailed') };
   }
   // is_masked 트리거가 audit log를 자동 기록 (mask_message / unmask_message)
   revalidatePath(ADMIN_PATH);
@@ -68,13 +70,14 @@ export async function setMessageMasked(
 // ─── 청원 강제 마감 / 재개 ────────────────────────────────────────
 export async function forceCloseCampaign(): Promise<AdminActionResult> {
   await requireAdmin();
+  const t = await getTranslations('admin.petition');
   const admin = createSupabaseAdminClient();
   const { data, error } = await admin.rpc('close_petition', {
     p_slug: PETITION_OH_YOON_SLUG,
   });
   if (error) {
     console.error('[petition-admin] force_close error:', error);
-    return { ok: false, message: '강제 마감에 실패했습니다.' };
+    return { ok: false, message: t('errorForceCloseFailed') };
   }
   revalidatePath(ADMIN_PATH);
   revalidatePath(PETITION_OH_YOON_PATH);
@@ -82,12 +85,13 @@ export async function forceCloseCampaign(): Promise<AdminActionResult> {
   return {
     ok: Boolean(result?.ok),
     rowCount: result?.total,
-    message: result?.ok ? '청원을 강제 마감했습니다.' : '강제 마감에 실패했습니다.',
+    message: result?.ok ? t('successForceClosed') : t('errorForceCloseFailed'),
   };
 }
 
 export async function reopenCampaign(): Promise<AdminActionResult> {
   await requireAdmin();
+  const t = await getTranslations('admin.petition');
   const admin = createSupabaseAdminClient();
   const { error } = await admin
     .from('petitions')
@@ -95,12 +99,12 @@ export async function reopenCampaign(): Promise<AdminActionResult> {
     .eq('slug', PETITION_OH_YOON_SLUG);
   if (error) {
     console.error('[petition-admin] reopen error:', error);
-    return { ok: false, message: '재개에 실패했습니다.' };
+    return { ok: false, message: t('errorReopenFailed') };
   }
   await logAudit({ action: 'reopen_campaign', targetType: 'campaign', details: {} });
   revalidatePath(ADMIN_PATH);
   revalidatePath(PETITION_OH_YOON_PATH);
-  return { ok: true, message: '청원을 재개했습니다.' };
+  return { ok: true, message: t('successReopened') };
 }
 
 // ─── CSV 내보내기 (3종) ────────────────────────────────────────
@@ -132,6 +136,7 @@ function buildCsv(headers: string[], rows: (string | number | boolean | null)[][
 
 export async function exportSignaturesCsv(mode: CsvExportMode): Promise<CsvExportResult> {
   await requireAdmin();
+  const t = await getTranslations('admin.petition');
   const admin = createSupabaseAdminClient();
 
   const baseQuery = admin
@@ -147,7 +152,7 @@ export async function exportSignaturesCsv(mode: CsvExportMode): Promise<CsvExpor
 
   if (error) {
     console.error('[petition-admin] csv error:', error);
-    return { ok: false, message: 'CSV 생성에 실패했습니다.' };
+    return { ok: false, message: t('errorCsvFailed') };
   }
 
   const rows = data ?? [];
