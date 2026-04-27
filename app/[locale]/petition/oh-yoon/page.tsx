@@ -379,9 +379,24 @@ export default async function PetitionOhYoonPage() {
         </div>
       </Section>
 
-      {/* 10부 마지막 결구 + 두 번째 CTA */}
-      <Section variant="primary" className="py-24 md:py-32 text-center">
-        <div className="container-max max-w-2xl mx-auto px-4">
+      {/* 10부 마지막 결구 + 두 번째 CTA — HERO와 톤 통일 (어두운 그라디언트로 페이지 감싸기) */}
+      <section
+        aria-labelledby="petition-closing-title"
+        className="relative isolate overflow-hidden py-24 md:py-32 text-center text-white bg-charcoal-deep"
+      >
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 bg-gradient-to-br from-charcoal-deep via-charcoal to-primary-strong/80"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-30 mix-blend-overlay"
+          style={{
+            background:
+              'radial-gradient(ellipse at 50% 0%, rgba(255,224,138,0.18) 0%, transparent 60%), radial-gradient(ellipse at 50% 100%, rgba(255,255,255,0.12) 0%, transparent 60%)',
+          }}
+        />
+        <div className="relative container-max max-w-2xl mx-auto px-4">
           {!is_active && (
             <p className="mb-4 text-sm font-semibold uppercase tracking-wide opacity-80">
               {t('closedTitle')}
@@ -393,7 +408,10 @@ export default async function PetitionOhYoonPage() {
           <p className="text-xl md:text-2xl leading-relaxed mb-3 break-keep opacity-90">
             {t('closingLine2')}
           </p>
-          <p className="font-display text-3xl md:text-4xl leading-tight mb-10 break-keep">
+          <p
+            id="petition-closing-title"
+            className="font-display text-3xl md:text-4xl leading-tight mb-10 break-keep"
+          >
             {t('closingLine3')}
           </p>
           {is_active && (
@@ -405,7 +423,7 @@ export default async function PetitionOhYoonPage() {
             </a>
           )}
         </div>
-      </Section>
+      </section>
     </main>
   );
 }
