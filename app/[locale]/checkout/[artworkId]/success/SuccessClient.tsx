@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
 import LinkButton from '@/components/ui/LinkButton';
 import { formatPriceForDisplay } from '@/lib/utils';
 import { formatUsd } from '@/lib/utils/currency';
@@ -11,10 +11,8 @@ interface Props {
   orderId: string;
   amount: string;
   currency: 'KRW' | 'USD';
-}
-
-function formatAmount(amount: number, currency: 'KRW' | 'USD'): string {
-  return currency === 'USD' ? formatUsd(amount) : formatPriceForDisplay(amount);
+  /** 'BANK_TRANSFER' for manual NH 농협 무통장 입금 안내 */
+  method: string;
 }
 
 interface VirtualAccount {
@@ -23,12 +21,36 @@ interface VirtualAccount {
   dueDate: string;
 }
 
-type PageState = 'loading' | 'success' | 'virtual' | 'error';
+type PageState = 'loading' | 'success' | 'virtual' | 'bank_transfer' | 'error';
 
-export default function SuccessClient({ paymentKey, orderId, amount, currency }: Props) {
+function formatAmount(amount: number, currency: 'KRW' | 'USD'): string {
+  return currency === 'USD' ? formatUsd(amount) : formatPriceForDisplay(amount);
+}
+
+function formatDeadline(locale: string): string {
+  const deadline = new Date(Date.now() + 24 * 60 * 60 * 1000);
+  if (locale === 'ko') {
+    const m = deadline.getMonth() + 1;
+    const d = deadline.getDate();
+    const hh = String(deadline.getHours()).padStart(2, '0');
+    const mm = String(deadline.getMinutes()).padStart(2, '0');
+    return `${m}월 ${d}일 ${hh}:${mm}`;
+  }
+  return deadline.toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+}
+
+export default function SuccessClient({ paymentKey, orderId, amount, currency, method }: Props) {
   const t = useTranslations('checkout');
   const tOrder = useTranslations('orderLookup');
+  const locale = useLocale();
 
+  const deadline = useMemo(() => formatDeadline(locale), [locale]);
   const [state, setPageState] = useState<PageState>('loading');
   const [virtualAccount, setVirtualAccount] = useState<VirtualAccount | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -37,6 +59,12 @@ export default function SuccessClient({ paymentKey, orderId, amount, currency }:
   useEffect(() => {
     if (confirmedRef.current) return;
     confirmedRef.current = true;
+
+    // 무통장 계좌이체 흐름은 Toss confirm 호출 없이 바로 안내 페이지 노출
+    if (method === 'BANK_TRANSFER') {
+      setPageState('bank_transfer');
+      return;
+    }
 
     async function confirm() {
       try {
@@ -108,6 +136,62 @@ export default function SuccessClient({ paymentKey, orderId, amount, currency }:
     );
   }
 
+  // 무통장 계좌이체 — 우리 계좌번호 안내 (NH 농협 / 한국스마트협동조합)
+  if (state === 'bank_transfer') {
+    return (
+      <div className="min-h-screen bg-canvas-soft flex items-center justify-center pt-24 pb-16">
+        <div className="max-w-lg w-full mx-auto px-4">
+          <div className="rounded-2xl border border-gray-200 bg-white p-10 shadow-sm text-center">
+            <p className="text-4xl mb-4">🏦</p>
+            <h1 className="text-2xl font-bold text-charcoal mb-2">{t('bankTransferTitle')}</h1>
+            <p className="text-sm text-gray-500 mb-8">{t('bankTransferGuide')}</p>
+
+            <div className="rounded-xl bg-gray-50 p-6 text-left space-y-3 mb-6">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">{t('depositBankName')}</span>
+                <span className="font-semibold text-charcoal">{t('bankTransferBank')}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">{t('depositAccountNumber')}</span>
+                <span className="font-semibold text-charcoal font-mono">
+                  {t('bankTransferAccount')}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">{t('bankTransferHolder')}</span>
+                <span className="font-semibold text-charcoal">{t('bankTransferHolderName')}</span>
+              </div>
+              <div className="flex justify-between text-sm border-t border-gray-200 pt-3">
+                <span className="text-gray-500">{t('orderNo')}</span>
+                <span className="font-mono font-semibold text-charcoal">{orderId}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">{t('depositAmount')}</span>
+                <span className="font-bold text-primary-a11y">
+                  {formatAmount(Number(amount), currency)}
+                </span>
+              </div>
+            </div>
+
+            <div className="text-xs text-charcoal-soft mb-6 space-y-1">
+              <p>{t('bankTransferNoticeName')}</p>
+              <p>{t('bankTransferNoticeDeadline', { deadline })}</p>
+            </div>
+
+            <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+              <LinkButton href="/artworks" variant="primary" size="sm" className="px-6 py-3">
+                {t('browseMore')}
+              </LinkButton>
+              <LinkButton href="/orders" variant="white" size="sm" className="px-6 py-3">
+                {tOrder('viewOrders')}
+              </LinkButton>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (state === 'virtual' && virtualAccount) {
     return (
       <div className="min-h-screen bg-canvas-soft flex items-center justify-center pt-24 pb-16">
@@ -173,7 +257,7 @@ export default function SuccessClient({ paymentKey, orderId, amount, currency }:
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">{t('paymentAmount')}</span>
               <span className="font-bold text-primary-a11y">
-                {formatPriceForDisplay(Number(amount))}
+                {formatAmount(Number(amount), currency)}
               </span>
             </div>
           </div>

@@ -9,7 +9,12 @@ import { Link } from '@/i18n/navigation';
 import Button from '@/components/ui/Button';
 import { formatPriceForDisplay } from '@/lib/utils';
 import { calculateShippingFee } from '@/lib/integrations/toss/config';
-import { createOrder, cancelPendingOrder, initiatePayment } from '@/app/actions/checkout';
+import {
+  createOrder,
+  cancelPendingOrder,
+  initiatePayment,
+  createBankTransferOrder,
+} from '@/app/actions/checkout';
 import BuyerInfoForm from './BuyerInfoForm';
 import type { BuyerInfo } from './BuyerInfoForm';
 
@@ -19,7 +24,9 @@ import type { BuyerInfo } from './BuyerInfoForm';
  * - CARD       → method=CARD, easyPay 없음 → Toss 카드 결제창
  * - KAKAOPAY   → method=CARD, easyPay='KAKAOPAY' → 카카오페이 직행
  * - TOSSPAY    → method=CARD, easyPay='TOSSPAY' → 토스페이 직행
- * - TRANSFER   → method=TRANSFER, easyPay 없음 → 뱅크페이 계좌이체
+ * - TRANSFER   → **Toss 거치지 않음.** createBankTransferOrder 직접 호출하여
+ *                awaiting_deposit + artwork=reserved 처리. 사용자에게 하드코딩된
+ *                NH 농협 계좌번호 안내 (뱅크페이 인증서·앱 설치 UX 회피).
  *
  * 'VIRTUAL_ACCOUNT' (가상계좌)는 saf202i818 MID에 미계약 (에러 2003)이라 제외.
  * 네이버페이는 심사 진행 중 — 활성화 후 NAVERPAY 추가 예정.
@@ -167,6 +174,34 @@ export default function CheckoutClient({
     let createdOrderNo: string | null = null;
 
     try {
+      // 계좌이체(TRANSFER): Toss 거치지 않고 무통장 입금 흐름.
+      // createBankTransferOrder가 awaiting_deposit + artwork=reserved 처리 후
+      // 우리 success page로 redirect하여 NH 농협 계좌번호 안내.
+      if (paymentChoice === 'TRANSFER') {
+        const result = await createBankTransferOrder({
+          artworkId,
+          buyerName,
+          buyerEmail,
+          buyerPhone,
+          shippingName,
+          shippingPhone,
+          shippingAddress,
+          shippingAddressDetail,
+          shippingPostalCode,
+          shippingMemo,
+          locale: 'ko',
+        });
+        if (!result.success) {
+          setError(result.error);
+          setSubmitting(false);
+          return;
+        }
+        // success page에 method=BANK_TRANSFER로 redirect — confirm 호출 없이 바로 안내
+        window.location.href = `${window.location.origin}/checkout/${artworkId}/success?method=BANK_TRANSFER&orderId=${result.orderNo}&amount=${result.totalAmount}`;
+        await new Promise(() => {});
+        return;
+      }
+
       const result = await createOrder({
         artworkId,
         buyerName,
