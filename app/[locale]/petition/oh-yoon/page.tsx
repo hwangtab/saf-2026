@@ -3,6 +3,7 @@ import Link from 'next/link';
 import ExportedImage from 'next-image-export-optimizer';
 import { getLocale, getTranslations } from 'next-intl/server';
 
+import PaperGrain from '@/components/common/PaperGrain';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
@@ -117,6 +118,7 @@ export default async function PetitionOhYoonPage() {
   return (
     <main className="bg-canvas text-pretty">
       <JsonLdScript data={breadcrumbSchema} />
+      <PaperGrain />
 
       {/* 1부 HERO — 제목·부제·D-N·진행률·CTA가 모바일 한 화면에 (PRD §6.1 FR-LP-01) */}
       <section
@@ -331,7 +333,7 @@ export default async function PetitionOhYoonPage() {
       {/* 5부 청원 한 줄 — 강조 박스 (페이지 정중앙) */}
       <Section variant="white" className="py-20 md:py-24">
         <div className="container-max max-w-3xl mx-auto px-4 text-center">
-          <div className="rounded-2xl border-y-4 border-primary px-6 py-14 md:px-14 md:py-20 bg-canvas-soft shadow-sm">
+          <div className="border-4 border-charcoal bg-canvas-soft px-6 py-14 md:px-14 md:py-20 shadow-[8px_8px_0px_0px_rgba(247,152,36,0.35)]">
             {/* 청원 동의문 본문 — PartialSansKR(font-display)가 가운뎃점(·) 글리프를 안 가져 빠지므로 일반 sans 폰트 사용 */}
             <p className="font-bold text-2xl md:text-4xl leading-relaxed text-charcoal-deep break-keep">
               {t('statementLine1')}

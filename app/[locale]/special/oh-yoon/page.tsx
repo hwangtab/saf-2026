@@ -4,6 +4,7 @@ import { getLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import OhYoonMasonryGallery from '@/components/special/OhYoonMasonryGallery';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
+import PaperGrain from '@/components/common/PaperGrain';
 import { OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
 import {
   createBreadcrumbSchema,
@@ -186,6 +187,7 @@ export default async function OhYoonPage() {
       <>
         <JsonLdScript data={[breadcrumbSchema, exhibitionEventSchema, itemListSchema]} />
         {aggregateOfferSchema && <JsonLdScript data={aggregateOfferSchema} />}
+        <PaperGrain />
         <div className="w-full bg-canvas-soft min-h-screen font-sans">
           <section className="relative w-full pt-28 md:pt-36 pb-20 md:pb-32 px-4 overflow-hidden border-b-8 border-double border-white/10 bg-charcoal">
             <div className="max-w-4xl mx-auto text-center relative z-10">
@@ -395,6 +397,7 @@ export default async function OhYoonPage() {
     <>
       <JsonLdScript data={[breadcrumbSchema, exhibitionEventSchema, itemListSchema]} />
       {aggregateOfferSchema && <JsonLdScript data={aggregateOfferSchema} />}
+      <PaperGrain />
       <div className="w-full bg-canvas-soft min-h-screen font-sans">
         {/* Hero Section */}
         <section className="relative w-full py-20 md:py-32 px-4 overflow-hidden border-b-8 border-double border-white/10 bg-charcoal">
