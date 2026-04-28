@@ -223,8 +223,8 @@ export default async function OhYoonPage() {
             </div>
 
             <div className="grid lg:grid-cols-[280px_1fr_1fr] gap-8 lg:gap-16 mb-24 items-start">
-              {/* Portrait */}
-              <div className="flex flex-col items-center lg:items-start">
+              {/* Portrait + Quote */}
+              <div className="flex flex-col items-center lg:items-start gap-7">
                 <figure className="relative w-full max-w-[260px] lg:max-w-none">
                   <div className="border-4 border-charcoal shadow-[8px_8px_0px_0px_rgba(49,57,60,0.15)] overflow-hidden">
                     <ExportedImage
@@ -240,6 +240,17 @@ export default async function OhYoonPage() {
                     Oh Yoon, 1946–1986
                   </figcaption>
                 </figure>
+
+                <blockquote className="w-full max-w-[260px] lg:max-w-none border-l-[6px] border-accent bg-white px-5 py-5 shadow-[4px_4px_0px_0px_rgba(247,152,36,0.25)]">
+                  <p className="font-display text-lg leading-snug text-charcoal mb-3">
+                    &ldquo;Art should be shared
+                    <br />
+                    by everyone.&rdquo;
+                  </p>
+                  <footer className="text-xs text-charcoal/60 tracking-widest uppercase">
+                    — Oh Yoon
+                  </footer>
+                </blockquote>
               </div>
 
               <div className="space-y-8">
@@ -267,22 +278,84 @@ export default async function OhYoonPage() {
                 </div>
               </div>
 
-              <div className="bg-white p-8 md:p-12 border-4 border-charcoal shadow-[8px_8px_0px_0px_rgba(247,152,36,0.3)]">
-                <h3 className="text-2xl font-normal text-charcoal mb-8 flex items-center gap-3 border-b-2 border-charcoal pb-4 font-display text-balance">
-                  <span className="w-4 h-4 bg-accent rotate-45" />
-                  Major themes
-                </h3>
-                <ul className="space-y-6 text-lg text-charcoal/85">
-                  <li>
-                    <strong>Reality:</strong> recording concrete sites of everyday life.
-                  </li>
-                  <li>
-                    <strong>Han:</strong> transforming collective grief into artistic vitality.
-                  </li>
-                  <li>
-                    <strong>Shared art:</strong> practicing art beyond galleries, in public spaces.
-                  </li>
-                </ul>
+              <div className="space-y-8">
+                <div className="bg-white p-8 md:p-12 border-4 border-charcoal shadow-[8px_8px_0px_0px_rgba(247,152,36,0.3)]">
+                  <h3 className="text-2xl font-normal text-charcoal mb-8 flex items-center gap-3 border-b-2 border-charcoal pb-4 font-display text-balance">
+                    <span className="w-4 h-4 bg-accent rotate-45" />
+                    Major themes
+                  </h3>
+                  <ul className="space-y-6 text-lg text-charcoal/85">
+                    <li>
+                      <strong>Reality:</strong> recording concrete sites of everyday life.
+                    </li>
+                    <li>
+                      <strong>Han:</strong> transforming collective grief into artistic vitality.
+                    </li>
+                    <li>
+                      <strong>Shared art:</strong> practicing art beyond galleries, in public
+                      spaces.
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Timeline card — balances the 3-column grid */}
+                <div className="bg-white p-7 md:p-9 border-4 border-charcoal shadow-[6px_6px_0px_0px_rgba(49,57,60,0.12)]">
+                  <h3 className="text-xl md:text-2xl font-normal text-charcoal mb-6 flex items-center gap-3 border-b-2 border-charcoal pb-3 font-display">
+                    <span className="w-3 h-3 bg-charcoal rotate-45" />A life in time
+                  </h3>
+                  <ol className="space-y-4">
+                    <li className="flex gap-5 items-baseline">
+                      <span className="shrink-0 font-bold text-charcoal/70 text-base tabular-nums w-12">
+                        1946
+                      </span>
+                      <span className="text-charcoal/85 text-base leading-snug">
+                        Born in Busan, eldest son of novelist Oh Young-su.
+                      </span>
+                    </li>
+                    <li className="flex gap-5 items-baseline">
+                      <span className="shrink-0 font-bold text-charcoal/70 text-base tabular-nums w-12">
+                        1969
+                      </span>
+                      <span className="text-charcoal/85 text-base leading-snug">
+                        Co-founds &ldquo;Hyeonsil Dong-in,&rdquo; launching Korean realist art.
+                      </span>
+                    </li>
+                    <li className="flex gap-5 items-baseline">
+                      <span className="shrink-0 font-bold text-charcoal/70 text-base tabular-nums w-12">
+                        1974
+                      </span>
+                      <span className="text-charcoal/85 text-base leading-snug">
+                        At 28, carves terracotta murals at Sangup Bank&apos;s Dongdaemun and
+                        Guui-dong branches.
+                      </span>
+                    </li>
+                    <li className="flex gap-5 items-baseline">
+                      <span className="shrink-0 font-bold text-charcoal/70 text-base tabular-nums w-12">
+                        1979
+                      </span>
+                      <span className="text-charcoal/85 text-base leading-snug">
+                        Founding member of &ldquo;Hyeonsil-gwa Baleon,&rdquo; the heart of the
+                        minjung art movement.
+                      </span>
+                    </li>
+                    <li className="flex gap-5 items-baseline">
+                      <span className="shrink-0 font-bold text-charcoal/70 text-base tabular-nums w-12">
+                        1986
+                      </span>
+                      <span className="text-charcoal/85 text-base leading-snug">
+                        Passes away shortly after his very first solo show. Aged forty.
+                      </span>
+                    </li>
+                    <li className="flex gap-5 items-baseline">
+                      <span className="shrink-0 font-bold text-charcoal/70 text-base tabular-nums w-12">
+                        2006
+                      </span>
+                      <span className="text-charcoal/85 text-base leading-snug">
+                        MMCA retrospective &ldquo;Oh Yoon: Daytime Goblin&apos;s Festival.&rdquo;
+                      </span>
+                    </li>
+                  </ol>
+                </div>
               </div>
             </div>
           </div>
@@ -396,8 +469,8 @@ export default async function OhYoonPage() {
 
           {/* Bio / Narrative Section */}
           <div className="grid lg:grid-cols-[280px_1fr_1fr] gap-8 lg:gap-16 mb-32 items-start">
-            {/* Portrait */}
-            <div className="flex flex-col items-center lg:items-start">
+            {/* Portrait + 어록 */}
+            <div className="flex flex-col items-center lg:items-start gap-7">
               <figure className="relative w-full max-w-[260px] lg:max-w-none">
                 <div className="border-4 border-charcoal shadow-[8px_8px_0px_0px_rgba(49,57,60,0.15)] overflow-hidden">
                   <ExportedImage
@@ -413,6 +486,17 @@ export default async function OhYoonPage() {
                   오윤, 1946–1986
                 </figcaption>
               </figure>
+
+              <blockquote className="w-full max-w-[260px] lg:max-w-none border-l-[6px] border-accent bg-white px-5 py-5 shadow-[4px_4px_0px_0px_rgba(247,152,36,0.25)]">
+                <p className="font-display text-lg leading-snug text-charcoal mb-3 break-keep">
+                  &ldquo;미술은 많은 사람이
+                  <br />
+                  나누어야 한다.&rdquo;
+                </p>
+                <footer className="text-xs text-charcoal/60 tracking-widest uppercase">
+                  — 오윤
+                </footer>
+              </blockquote>
             </div>
 
             <div className="space-y-8">
@@ -448,56 +532,116 @@ export default async function OhYoonPage() {
               </div>
             </div>
 
-            <div className="bg-white p-8 md:p-12 border-4 border-charcoal shadow-[8px_8px_0px_0px_rgba(247,152,36,0.3)]">
-              <h3 className="text-2xl font-normal text-charcoal mb-8 flex items-center gap-3 border-b-2 border-charcoal pb-4 font-display text-balance">
-                <span className="w-4 h-4 bg-accent rotate-45" />
-                주요 테마
-              </h3>
+            <div className="space-y-8">
+              <div className="bg-white p-8 md:p-12 border-4 border-charcoal shadow-[8px_8px_0px_0px_rgba(247,152,36,0.3)]">
+                <h3 className="text-2xl font-normal text-charcoal mb-8 flex items-center gap-3 border-b-2 border-charcoal pb-4 font-display text-balance">
+                  <span className="w-4 h-4 bg-accent rotate-45" />
+                  주요 테마
+                </h3>
 
-              <ul className="space-y-8">
-                <li className="flex gap-6 items-start group">
-                  <span className="shrink-0 flex items-center justify-center w-10 h-10 border-2 border-charcoal rounded-full font-bold text-charcoal text-lg group-hover:bg-charcoal group-hover:text-white transition-colors">
-                    1
-                  </span>
-                  <div>
-                    <h4 className="font-bold text-charcoal text-xl mb-2 group-hover:text-accent-strong transition-colors">
-                      현실 (Reality)
-                    </h4>
-                    <p className="text-charcoal/80 leading-relaxed text-lg">
-                      구체적인 삶의 현장과 그 속에서 살아가는 사람들의 모습을 가감 없이
-                      기록했습니다.
-                    </p>
-                  </div>
-                </li>
-                <li className="flex gap-6 items-start group">
-                  <span className="shrink-0 flex items-center justify-center w-10 h-10 border-2 border-charcoal rounded-full font-bold text-charcoal text-lg group-hover:bg-charcoal group-hover:text-white transition-colors">
-                    2
-                  </span>
-                  <div>
-                    <h4 className="font-bold text-charcoal text-xl mb-2 group-hover:text-accent-strong transition-colors">
-                      한 (Han)
-                    </h4>
-                    <p className="text-charcoal/80 leading-relaxed text-lg">
-                      민중의 가슴 속에 맺힌 한을 예술적 승화로 풀어내어, 슬픔을 넘어선 생명력을
-                      표현했습니다.
-                    </p>
-                  </div>
-                </li>
-                <li className="flex gap-6 items-start group">
-                  <span className="shrink-0 flex items-center justify-center w-10 h-10 border-2 border-charcoal rounded-full font-bold text-charcoal text-lg group-hover:bg-charcoal group-hover:text-white transition-colors">
-                    3
-                  </span>
-                  <div>
-                    <h4 className="font-bold text-charcoal text-xl mb-2 group-hover:text-accent-strong transition-colors">
-                      함께하는 미술
-                    </h4>
-                    <p className="text-charcoal/80 leading-relaxed text-lg">
-                      미술관을 넘어, 거리와 현장에서 사람들과 직접 소통하며 예술의 사회적 가치를
-                      실천했습니다.
-                    </p>
-                  </div>
-                </li>
-              </ul>
+                <ul className="space-y-8">
+                  <li className="flex gap-6 items-start group">
+                    <span className="shrink-0 flex items-center justify-center w-10 h-10 border-2 border-charcoal rounded-full font-bold text-charcoal text-lg group-hover:bg-charcoal group-hover:text-white transition-colors">
+                      1
+                    </span>
+                    <div>
+                      <h4 className="font-bold text-charcoal text-xl mb-2 group-hover:text-accent-strong transition-colors">
+                        현실 (Reality)
+                      </h4>
+                      <p className="text-charcoal/80 leading-relaxed text-lg">
+                        구체적인 삶의 현장과 그 속에서 살아가는 사람들의 모습을 가감 없이
+                        기록했습니다.
+                      </p>
+                    </div>
+                  </li>
+                  <li className="flex gap-6 items-start group">
+                    <span className="shrink-0 flex items-center justify-center w-10 h-10 border-2 border-charcoal rounded-full font-bold text-charcoal text-lg group-hover:bg-charcoal group-hover:text-white transition-colors">
+                      2
+                    </span>
+                    <div>
+                      <h4 className="font-bold text-charcoal text-xl mb-2 group-hover:text-accent-strong transition-colors">
+                        한 (Han)
+                      </h4>
+                      <p className="text-charcoal/80 leading-relaxed text-lg">
+                        민중의 가슴 속에 맺힌 한을 예술적 승화로 풀어내어, 슬픔을 넘어선 생명력을
+                        표현했습니다.
+                      </p>
+                    </div>
+                  </li>
+                  <li className="flex gap-6 items-start group">
+                    <span className="shrink-0 flex items-center justify-center w-10 h-10 border-2 border-charcoal rounded-full font-bold text-charcoal text-lg group-hover:bg-charcoal group-hover:text-white transition-colors">
+                      3
+                    </span>
+                    <div>
+                      <h4 className="font-bold text-charcoal text-xl mb-2 group-hover:text-accent-strong transition-colors">
+                        함께하는 미술
+                      </h4>
+                      <p className="text-charcoal/80 leading-relaxed text-lg">
+                        미술관을 넘어, 거리와 현장에서 사람들과 직접 소통하며 예술의 사회적 가치를
+                        실천했습니다.
+                      </p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              {/* 작가의 시간 — 연표 카드 (3열 비대칭 보강) */}
+              <div className="bg-white p-7 md:p-9 border-4 border-charcoal shadow-[6px_6px_0px_0px_rgba(49,57,60,0.12)]">
+                <h3 className="text-xl md:text-2xl font-normal text-charcoal mb-6 flex items-center gap-3 border-b-2 border-charcoal pb-3 font-display text-balance">
+                  <span className="w-3 h-3 bg-charcoal rotate-45" />
+                  작가의 시간
+                </h3>
+                <ol className="space-y-4">
+                  <li className="flex gap-5 items-baseline">
+                    <span className="shrink-0 font-bold text-charcoal/70 text-base tabular-nums w-12">
+                      1946
+                    </span>
+                    <span className="text-charcoal/85 text-base leading-snug break-keep">
+                      부산 출생. 소설가 오영수의 장남.
+                    </span>
+                  </li>
+                  <li className="flex gap-5 items-baseline">
+                    <span className="shrink-0 font-bold text-charcoal/70 text-base tabular-nums w-12">
+                      1969
+                    </span>
+                    <span className="text-charcoal/85 text-base leading-snug break-keep">
+                      「현실 동인」 결성, 한국 리얼리즘 미술 운동 제창.
+                    </span>
+                  </li>
+                  <li className="flex gap-5 items-baseline">
+                    <span className="shrink-0 font-bold text-charcoal/70 text-base tabular-nums w-12">
+                      1974
+                    </span>
+                    <span className="text-charcoal/85 text-base leading-snug break-keep">
+                      28세에 상업은행 동대문·구의동지점 테라코타 부조 제작.
+                    </span>
+                  </li>
+                  <li className="flex gap-5 items-baseline">
+                    <span className="shrink-0 font-bold text-charcoal/70 text-base tabular-nums w-12">
+                      1979
+                    </span>
+                    <span className="text-charcoal/85 text-base leading-snug break-keep">
+                      「현실과 발언」 동인 창립 회원으로 참여.
+                    </span>
+                  </li>
+                  <li className="flex gap-5 items-baseline">
+                    <span className="shrink-0 font-bold text-charcoal/70 text-base tabular-nums w-12">
+                      1986
+                    </span>
+                    <span className="text-charcoal/85 text-base leading-snug break-keep">
+                      첫 개인전 직후 별세. 향년 마흔.
+                    </span>
+                  </li>
+                  <li className="flex gap-5 items-baseline">
+                    <span className="shrink-0 font-bold text-charcoal/70 text-base tabular-nums w-12">
+                      2006
+                    </span>
+                    <span className="text-charcoal/85 text-base leading-snug break-keep">
+                      국립현대미술관 회고전 「오윤: 낮도깨비 신명마당」.
+                    </span>
+                  </li>
+                </ol>
+              </div>
             </div>
           </div>
         </div>
