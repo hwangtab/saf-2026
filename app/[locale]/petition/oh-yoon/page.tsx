@@ -455,22 +455,55 @@ export default async function PetitionOhYoonPage() {
           <div className="space-y-4 text-base md:text-lg leading-relaxed text-charcoal break-keep">
             <p>{t('proponentsBody1')}</p>
             <p>{t('proponentsBody2')}</p>
-          </div>
-          <div className="mt-8 rounded-xl border border-gray-200 bg-white p-5 space-y-3 text-sm text-charcoal-muted">
-            <p className="italic">{t('proponentsCommitteeNote')}</p>
-            <p>
-              {t.rich('proponentsExhibitionLine', {
-                link: (chunks) => (
-                  <Link
-                    href={`/${locale}/special/oh-yoon`}
-                    className="text-primary font-semibold hover:underline"
-                  >
-                    {chunks}
-                  </Link>
-                ),
-              })}
+            <p className="text-sm text-charcoal-muted italic pt-1">
+              {t('proponentsCommitteeNote')}
             </p>
           </div>
+
+          {/* 특별전 + 작품 듀얼 CTA 카드 — 청원 외 오윤 40주기 노출 강화 */}
+          <article className="mt-12 overflow-hidden rounded-2xl bg-white border border-charcoal/10 shadow-md">
+            <div className="md:grid md:grid-cols-[220px_1fr]">
+              <div className="relative aspect-[4/5] md:aspect-auto md:h-full bg-charcoal-deep">
+                <ExportedImage
+                  src="/images/ohyoon.webp"
+                  alt={t('exhibitionCardImageAlt')}
+                  fill
+                  sizes="(min-width: 768px) 220px, 100vw"
+                  className="object-cover grayscale"
+                />
+              </div>
+              <div className="flex flex-col gap-4 p-6 md:p-8">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-2">
+                    {t('exhibitionCardEyebrow')}
+                  </p>
+                  <h3 className="font-display text-2xl md:text-3xl text-charcoal-deep leading-tight break-keep">
+                    {t('exhibitionCardTitle')}
+                  </h3>
+                  <p className="mt-1 text-sm md:text-base text-charcoal-muted break-keep">
+                    {t('exhibitionCardSubtitle')}
+                  </p>
+                </div>
+                <p className="text-sm md:text-base text-charcoal leading-relaxed break-keep">
+                  {t('exhibitionCardBody')}
+                </p>
+                <div className="flex flex-col sm:flex-row gap-2 mt-auto pt-2">
+                  <Link
+                    href={`/${locale}/special/oh-yoon`}
+                    className="inline-flex items-center justify-center rounded-lg bg-charcoal-deep hover:bg-charcoal text-white px-5 py-3 text-sm font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  >
+                    {t('exhibitionCardCtaPrimary')} →
+                  </Link>
+                  <Link
+                    href={`/${locale}/artworks/artist/${encodeURIComponent('오윤')}`}
+                    className="inline-flex items-center justify-center rounded-lg border border-charcoal/20 bg-white hover:border-primary hover:text-primary-strong text-charcoal-deep px-5 py-3 text-sm font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  >
+                    {t('exhibitionCardCtaSecondary')} →
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </article>
         </div>
       </Section>
 
