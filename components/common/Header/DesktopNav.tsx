@@ -101,7 +101,7 @@ export default function DesktopNav({
           {t('orderStatus')}
         </Link>
 
-        <AuthButtons size="xs" variant="white" />
+        <AuthButtons size="xs" variant="white" buttonClassName={utilityButtonClassName} />
 
         <LanguageSwitcher className={textColor} compact />
       </div>
