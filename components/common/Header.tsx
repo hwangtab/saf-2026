@@ -41,7 +41,7 @@ function PublicHeader() {
   return (
     <header
       className={clsx(
-        'fixed top-0 left-0 right-0 transition-[background-color,border-color,backdrop-filter] duration-200',
+        'fixed top-0 left-0 right-0 isolate transition-[background-color,border-color,backdrop-filter] duration-200',
         'pt-[env(safe-area-inset-top,0px)]',
         headerStyle
       )}
@@ -50,6 +50,16 @@ function PublicHeader() {
         willChange: 'background-color, border-color',
       }}
     >
+      {/* transparent(hero) 모드 전용 fade — 흰글씨가 어떤 페이지 배경 위에서도 가독성 보장.
+          solid 모드에선 opacity-0 + 헤더 자체 bg-white/80가 위에 깔려 자연스럽게 사라짐.
+          헤더 영역 64px 높이만 어둡게, hero gradient와 자연스럽게 섞임. */}
+      <div
+        aria-hidden="true"
+        className={clsx(
+          'absolute inset-0 -z-10 pointer-events-none bg-gradient-to-b from-black/30 via-black/10 to-transparent transition-opacity duration-200',
+          isDarkText ? 'opacity-0' : 'opacity-100'
+        )}
+      />
       <nav className="relative container-max flex items-center justify-between h-16">
         <HeaderLogo isDarkText={isDarkText} />
 

@@ -1,13 +1,9 @@
-import { useState, useCallback, useEffect, useMemo, useLayoutEffect } from 'react';
+import { useState, useCallback, useMemo, useLayoutEffect } from 'react';
 import { usePathname } from '@/i18n/navigation';
 import { isArtworkDetail, isHeroRoute } from '@/lib/hero-routes';
 
 const HEADER_SOLID_STYLE = 'bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200/50';
 const HERO_SCROLL_TOP_THRESHOLD = 8;
-// 라우트 전환 직후 헤더를 solid로 lock해 hero 라우트 진입 시 흰글씨가
-// 연노란 body bg에 떠서 안 보이는 짧은 깜빡임을 차단. 새 페이지 RSC mount 시간 정도.
-// dev 환경 첫 방문은 페이지 컴파일이 250ms 이상 걸릴 수 있어 안전마진 포함.
-const TRANSITION_LOCK_MS = 500;
 
 type HeaderMode = 'transparent' | 'solid' | 'overlay';
 
@@ -46,26 +42,6 @@ export function useHeaderStyle() {
 
   // Hero routes should render transparent at top by default.
   const [heroAtTop, setHeroAtTop] = useState(true);
-
-  // 라우트 전환 lock — pathname 변경 시 + 첫 mount(hard refresh 포함) 짧게 solid 유지.
-  // useState(true) 초기값으로 SSR HTML과 client hydrate가 일치한 상태에서 lock 시작 →
-  // useEffect의 timer가 500ms 후 unlock. hero 라우트 hard refresh 시 hero 배경 mount
-  // 전 빈 frame에 흰글씨가 노출되는 회귀 차단.
-  const [transitionLock, setTransitionLock] = useState(true);
-  const [prevPathname, setPrevPathname] = useState(pathname);
-
-  if (prevPathname !== pathname) {
-    setPrevPathname(pathname);
-    setTransitionLock(true);
-  }
-
-  // pathname을 deps에 포함시켜 연속 navigation 시 timer 재시작 (B→C가 A→B의 lock을
-  // 일찍 풀어버리지 않도록). transitionLock state도 deps라 풀린 시점에 cleanup만 실행.
-  useEffect(() => {
-    if (!transitionLock) return;
-    const id = window.setTimeout(() => setTransitionLock(false), TRANSITION_LOCK_MS);
-    return () => window.clearTimeout(id);
-  }, [transitionLock, pathname]);
 
   useLayoutEffect(() => {
     if (artworkDetail || !prefersHeroLayout) {
@@ -114,11 +90,10 @@ export function useHeaderStyle() {
 
   const headerMode: HeaderMode = useMemo(() => {
     if (isMenuOpen) return 'overlay';
-    if (transitionLock) return 'solid';
     if (artworkDetail) return 'solid';
     if (!prefersHeroLayout) return 'solid';
     return heroAtTop ? 'transparent' : 'solid';
-  }, [heroAtTop, artworkDetail, isMenuOpen, prefersHeroLayout, transitionLock]);
+  }, [heroAtTop, artworkDetail, isMenuOpen, prefersHeroLayout]);
 
   const headerStyle = headerMode === 'transparent' ? 'bg-transparent' : HEADER_SOLID_STYLE;
 
