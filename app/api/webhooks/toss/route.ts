@@ -345,10 +345,9 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // ABORTED/EXPIRED 등 confirm 전 종결 상태는 payments 행이 없으므로 멱등 처리:
-    // - DB에 paymentKey가 없는 상태에서 더 이상 할 게 없음 (주문은 pending_payment에서
-    //   타임아웃 cron이 정리하거나 사용자가 새 주문 생성)
-    // - 200 OK로 응답하여 Toss 재시도 회피
+    // ABORTED/EXPIRED 등 confirm 전 종결 상태는 payments 행이 없을 수 있음. 추가로:
+    // pending_payment 상태인 주문이 있으면 cancelled로 정리 — 그렇지 않으면 30분간
+    // 살아남아 unique 작품의 다음 구매 시도가 RPC pending_count 때문에 차단됨.
     const ABORTED_STATUSES = new Set(['ABORTED', 'EXPIRED']);
     if (ABORTED_STATUSES.has(newStatus)) {
       const { data: paymentExists } = await supabase
@@ -356,9 +355,26 @@ export async function POST(req: NextRequest) {
         .select('id')
         .eq('payment_key', paymentKey)
         .maybeSingle();
+
+      // paymentKey 기반 payments 행이 없으면 confirm 전 종결.
+      // orders.order_no(=Toss orderId)로 pending_payment 주문 cancelled 처리.
       if (!paymentExists) {
-        // 결제 시도 후 사용자 취소·실패 — DB 변경 없이 200 종료
-        return NextResponse.json({ received: true, status: 'aborted_no_record' }, { status: 200 });
+        const { data: cancelled } = await supabase
+          .from('orders')
+          .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
+          .eq('order_no', orderId)
+          .eq('status', 'pending_payment')
+          .select('order_no');
+
+        if (cancelled && cancelled.length > 0) {
+          console.error(
+            `[toss-webhook] auto-cancelled pending order ${orderId} on ${newStatus} webhook`
+          );
+        }
+        return NextResponse.json(
+          { received: true, status: 'aborted_pending_cleared' },
+          { status: 200 }
+        );
       }
     }
 
