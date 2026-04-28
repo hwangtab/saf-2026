@@ -223,8 +223,8 @@ export default async function OhYoonPage() {
             </div>
 
             <div className="grid lg:grid-cols-[280px_1fr_1fr] gap-8 lg:gap-16 mb-24 items-start">
-              {/* Portrait + Quote */}
-              <div className="flex flex-col items-center lg:items-start gap-7">
+              {/* Portrait */}
+              <div className="flex flex-col items-center lg:items-start lg:sticky lg:top-24">
                 <figure className="relative w-full max-w-[260px] lg:max-w-none">
                   <div className="border-4 border-charcoal shadow-[8px_8px_0px_0px_rgba(49,57,60,0.15)] overflow-hidden">
                     <ExportedImage
@@ -240,17 +240,6 @@ export default async function OhYoonPage() {
                     Oh Yoon, 1946–1986
                   </figcaption>
                 </figure>
-
-                <blockquote className="w-full max-w-[260px] lg:max-w-none border-l-[6px] border-accent bg-white px-5 py-5 shadow-[4px_4px_0px_0px_rgba(247,152,36,0.25)]">
-                  <p className="font-display text-lg leading-snug text-charcoal mb-3">
-                    &ldquo;Art should be shared
-                    <br />
-                    by everyone.&rdquo;
-                  </p>
-                  <footer className="text-xs text-charcoal/60 tracking-widest uppercase">
-                    — Oh Yoon
-                  </footer>
-                </blockquote>
               </div>
 
               <div className="space-y-8">
@@ -469,8 +458,8 @@ export default async function OhYoonPage() {
 
           {/* Bio / Narrative Section */}
           <div className="grid lg:grid-cols-[280px_1fr_1fr] gap-8 lg:gap-16 mb-32 items-start">
-            {/* Portrait + 어록 */}
-            <div className="flex flex-col items-center lg:items-start gap-7">
+            {/* Portrait */}
+            <div className="flex flex-col items-center lg:items-start lg:sticky lg:top-24">
               <figure className="relative w-full max-w-[260px] lg:max-w-none">
                 <div className="border-4 border-charcoal shadow-[8px_8px_0px_0px_rgba(49,57,60,0.15)] overflow-hidden">
                   <ExportedImage
@@ -486,17 +475,6 @@ export default async function OhYoonPage() {
                   오윤, 1946–1986
                 </figcaption>
               </figure>
-
-              <blockquote className="w-full max-w-[260px] lg:max-w-none border-l-[6px] border-accent bg-white px-5 py-5 shadow-[4px_4px_0px_0px_rgba(247,152,36,0.25)]">
-                <p className="font-display text-lg leading-snug text-charcoal mb-3 break-keep">
-                  &ldquo;미술은 많은 사람이
-                  <br />
-                  나누어야 한다.&rdquo;
-                </p>
-                <footer className="text-xs text-charcoal/60 tracking-widest uppercase">
-                  — 오윤
-                </footer>
-              </blockquote>
             </div>
 
             <div className="space-y-8">
