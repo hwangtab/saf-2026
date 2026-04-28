@@ -435,8 +435,20 @@ export async function initiatePayment(input: InitiatePaymentInput): Promise<Init
   }
 
   const data = await response.json();
+  // PayPal 디버깅용 로그 — Toss /v1/payments 200 응답이지만 Toss-hosted PayPal 단계에서
+  // COMMON_ERROR가 발생하는 케이스. 응답 구조와 checkout URL을 기록해 원인 추적.
+  if (provider === 'overseas') {
+    console.error(
+      `[initiatePayment] PayPal Toss response (orderId=${input.orderNo}):`,
+      JSON.stringify(data).slice(0, 2000)
+    );
+  }
   const checkoutUrl = (data as { checkout?: { url?: string } })?.checkout?.url;
   if (!checkoutUrl) {
+    console.error(
+      `[initiatePayment] checkout.url missing (provider=${provider}, orderId=${input.orderNo}):`,
+      JSON.stringify(data).slice(0, 2000)
+    );
     return { success: false, error: apiError('checkout_url_missing', buyerLocale) };
   }
 
