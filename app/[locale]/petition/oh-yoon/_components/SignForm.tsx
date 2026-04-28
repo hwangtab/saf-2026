@@ -17,7 +17,7 @@ const LABEL_BASE = 'block text-sm font-semibold text-charcoal-deep mb-1.5';
 const ERROR_TEXT = 'mt-1.5 text-sm text-danger';
 
 const PRIVACY_BLURB =
-  '수집 항목: 성함, 이메일, 전화번호, 거주 지역. ' +
+  '수집 항목: 성함(주민등록상 이름), 이메일, 전화번호, 거주 지역. ' +
   '이용 목적: 청원 집계, 차기 서울시장 후보 측 전달, 진행 상황 안내(이메일·전화). ' +
   '보유 기간: 청원 종료 후 6개월. ' +
   '수집 주체: 한국스마트협동조합 (예술인협동조합). 동의 거부 시 청원에 참여하실 수 없습니다.';
@@ -104,10 +104,11 @@ export default function SignForm() {
       noValidate
       className="space-y-5 rounded-xl bg-white p-6 md:p-8 shadow-sm border border-gray-200"
     >
-      {/* 성함 */}
+      {/* 성함 — 주민등록상 본명 (닉네임·별명은 청원 효력에 영향) */}
       <div>
         <label htmlFor="petition-full-name" className={LABEL_BASE}>
-          성함 <span className="text-danger">*</span>
+          성함 <span className="text-charcoal-muted text-xs font-normal">(주민등록상 이름)</span>{' '}
+          <span className="text-danger">*</span>
         </label>
         <input
           id="petition-full-name"
@@ -117,8 +118,13 @@ export default function SignForm() {
           maxLength={100}
           required
           autoComplete="name"
+          placeholder="예: 홍길동"
           className={INPUT_BASE}
         />
+        <p className="mt-1.5 text-xs text-charcoal-muted">
+          청원은 시민의 이름으로 차기 서울시장께 전달됩니다. 정중한 전달을 위해 닉네임·별명이 아닌
+          본명으로 입력해 주세요.
+        </p>
         {fieldError('fullName') && <p className={ERROR_TEXT}>{fieldError('fullName')}</p>}
       </div>
 
