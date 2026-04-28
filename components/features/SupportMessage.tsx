@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Sprout } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
+import { LOAN_COUNT } from '@/lib/site-stats';
 
 const STAT_COUNT = 4;
 const STAT_INTERVAL = 6000;
@@ -84,7 +85,7 @@ export default function SupportMessage({
                   )}
                 >
                   <p className="text-2xl font-bold text-primary">
-                    {t(`stat${i}Value` as 'stat0Value')}
+                    {t(`stat${i}Value` as 'stat0Value', { loanCount: LOAN_COUNT })}
                   </p>
                   <p className="text-xs text-gray-600 mt-0.5 break-keep">
                     {t(`stat${i}Label` as 'stat0Label')}

@@ -1,4 +1,5 @@
 import { SITE_URL, CONTACT } from '@/lib/constants';
+import { LOAN_COUNT } from '@/lib/site-stats';
 
 export interface ClaimReviewInput {
   /** The claim being reviewed (e.g., "84.9% of Korean artists are excluded from primary banking") */
@@ -114,8 +115,8 @@ export function generateSAFClaimReviews(locale: 'ko' | 'en' = 'ko') {
       truthRating: 5,
       ratingLabel: isEnglish ? 'Verified by operational records' : '운용 기록으로 검증됨',
       evidenceSource: isEnglish
-        ? 'Artist Mutual Aid Loan Operations Record (Dec 2022 - Sep 2025, 354 cumulative loans)'
-        : '예술인 상호부조 대출 운용 기록 (2022.12 ~ 2025.09, 누적 354건)',
+        ? `Artist Mutual Aid Loan Operations Record (Dec 2022 - Sep 2025, ${LOAN_COUNT} cumulative loans)`
+        : `예술인 상호부조 대출 운용 기록 (2022.12 ~ 2025.09, 누적 ${LOAN_COUNT}건)`,
       datePublished: '2025-11-05',
     },
   ];

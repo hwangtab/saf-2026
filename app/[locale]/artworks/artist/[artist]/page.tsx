@@ -9,6 +9,7 @@ import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { SITE_URL } from '@/lib/constants';
+import { LOAN_COUNT } from '@/lib/site-stats';
 import {
   generateEnhancedArtistSchema,
   createBreadcrumbSchema,
@@ -115,6 +116,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         category: categoryForDesc,
         priceRange,
         availability: availabilityText,
+        loanCount: LOAN_COUNT,
       })
     : t('metaDescriptionNoPrice', {
         artist: formattedName,
