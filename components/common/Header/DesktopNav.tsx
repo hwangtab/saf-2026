@@ -101,7 +101,16 @@ export default function DesktopNav({
           {t('orderStatus')}
         </Link>
 
-        <AuthButtons size="xs" variant="white" buttonClassName={utilityButtonClassName} />
+        <AuthButtons
+          size="xs"
+          variant="white"
+          buttonClassName={clsx(
+            utilityButtonClassName,
+            // cva 기본 hover/active scale 무효화 — utility의 transition-colors가 transform transition을
+            // 덮어써 scale이 즉시 토글되며 떨림 현상 발생
+            'hover:scale-100 active:scale-100 hover:shadow-none'
+          )}
+        />
 
         <LanguageSwitcher className={textColor} compact />
       </div>

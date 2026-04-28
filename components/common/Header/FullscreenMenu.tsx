@@ -247,7 +247,7 @@ export default function FullscreenMenu({
               layout="inline"
               variant="white"
               size="sm"
-              buttonClassName="rounded-full bg-gray-50 border-gray-200 text-charcoal-muted font-medium hover:bg-gray-100 hover:border-gray-300 hover:scale-100 hover:shadow-none"
+              buttonClassName="rounded-full bg-gray-50 border-gray-200 text-charcoal-muted font-medium hover:bg-gray-100 hover:border-gray-300 hover:scale-100 active:scale-100 hover:shadow-none"
             />
           </div>
         </div>
