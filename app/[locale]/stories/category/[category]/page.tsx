@@ -10,6 +10,7 @@ import { JsonLdScript } from '@/components/common/JsonLdScript';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 
 import { CONTACT, OG_IMAGE, SITE_URL } from '@/lib/constants';
+import { ARTIST_COUNT, LOAN_COUNT } from '@/lib/site-stats';
 import { resolveLocale } from '@/lib/server-locale';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
@@ -54,8 +55,7 @@ const CATEGORY_META: Record<LocaleCode, Record<StoryCategory, CategoryEditorial>
         '씨앗페 작가',
         '미술 인터뷰',
       ],
-      editorialIntro:
-        '작품 한 점이 만들어지기까지, 작가는 어떤 시간을 보냈을까요. 씨앗페 2026에는 회화·판화·사진·조각으로 자신의 세계를 짓는 127명의 한국 작가가 모였습니다. 그들이 동료 예술인을 위해 작품을 내놓은 이유부터, 작업실의 일상과 작품 너머의 사유까지 — 한 작품을 진짜로 ‘본다’는 것은 그 작가를 아는 일에서 시작됩니다.',
+      editorialIntro: `작품 한 점이 만들어지기까지, 작가는 어떤 시간을 보냈을까요. 씨앗페 2026에는 회화·판화·사진·조각으로 자신의 세계를 짓는 ${ARTIST_COUNT}명의 한국 작가가 모였습니다. 그들이 동료 예술인을 위해 작품을 내놓은 이유부터, 작업실의 일상과 작품 너머의 사유까지 — 한 작품을 진짜로 ‘본다’는 것은 그 작가를 아는 일에서 시작됩니다.`,
       editorialParagraphs: [
         '한국 현대미술 작가의 인터뷰는 미술관 도록이나 학술 글에 갇혀 있는 경우가 많습니다. 씨앗페 매거진의 작가 인터뷰는 그보다 가까운 거리에서, 작가 본인의 언어로 작품을 풀어냅니다. “이 색을 왜 골랐나요”, “이 작업을 멈추고 싶었던 순간이 있었나요” 같은 단순한 질문에서 작가의 결이 드러납니다. 처음 한국 작가의 작품을 만나는 분이라면, 작품 이미지보다 인터뷰 한 편을 먼저 읽는 쪽이 작품을 오래 사랑하게 만들기도 합니다.',
         '씨앗페 출품 작가들은 작품 판매 수익 일부를 동료 예술인을 위한 상호부조 기금에 내놓기로 한 “연대 작가”들입니다. 한국 예술인의 84.9%가 제1금융권 대출에서 배제되는 현실에서, 한 사람의 작가가 다른 작가를 떠받치는 작은 공동체를 만드는 시도에 동참한 사람들입니다. 그래서 이곳의 작가 이야기는 개인사이면서 동시에 한국 미술의 구조를 비추는 거울이기도 합니다.',
@@ -80,7 +80,7 @@ const CATEGORY_META: Record<LocaleCode, Record<StoryCategory, CategoryEditorial>
         '“미술 작품을 사고 싶지만 어디서 어떻게 시작해야 할지 모르겠다.” 가장 많이 듣는 말입니다. 컬렉팅은 부유한 사람의 취미가 아니라, 좋아하는 작품 한 점을 자기 공간으로 들이는 결정에서 시작됩니다. 이 코너는 첫 작품을 사는 분을 위한 안내 — 가격은 무엇이 결정하는지, 원본과 판화의 차이는 무엇인지, 보증서와 보관은 어떻게 챙기는지를 부담 없는 분량으로 다룹니다.',
       editorialParagraphs: [
         '미술 작품 가격은 마법이 아닙니다. 작가의 이력과 시장에서의 거래 기록, 작품의 크기·매체·에디션 수가 가격의 골격을 만듭니다. 같은 작가라도 회화 원본과 한정 에디션 판화의 가격대가 다르고, 같은 매체라도 시리즈 안에서의 위치에 따라 다릅니다. 처음에는 “내가 매일 봐도 좋을 것 같은가”라는 단순한 기준으로 시작하시고, 익숙해지면 가격의 구조를 들여다보세요.',
-        '씨앗페 온라인은 화랑 수수료가 끼지 않는 작가 직매 구조이고, 작품 판매 수익은 354건의 저금리 대출(95% 상환율)로 운영된 예술인 상호부조 기금이 됩니다. 한 점을 사는 일이 한 명의 작가를 응원하는 것이 아니라, 한국 예술 생태계의 작은 안전망을 보태는 일이 됩니다. 그래서 “왜 이 갤러리에서 사야 하는가”에 대한 답이 가격표 너머에 있습니다.',
+        `씨앗페 온라인은 화랑 수수료가 끼지 않는 작가 직매 구조이고, 작품 판매 수익은 ${LOAN_COUNT}건의 저금리 대출(95% 상환율)로 운영된 예술인 상호부조 기금이 됩니다. 한 점을 사는 일이 한 명의 작가를 응원하는 것이 아니라, 한국 예술 생태계의 작은 안전망을 보태는 일이 됩니다. 그래서 “왜 이 갤러리에서 사야 하는가”에 대한 답이 가격표 너머에 있습니다.`,
         '구매 절차는 단순합니다: 마음에 드는 작품을 클릭 → 작가·재료·크기·가격을 확인 → 토스페이먼츠로 결제 → 4,000원 정액 배송비로 전국 배송. 7일 이내 반품도 가능합니다. 처음에는 가격대가 부담 없는 판화나 소형 회화로 시작하시는 분이 많습니다. 가격대별 필터로 예산에 맞는 작품을 추리고, 인테리어와 어울리는지 작품 옆 사진을 함께 확인해 보세요.',
       ],
     },
@@ -103,7 +103,7 @@ const CATEGORY_META: Record<LocaleCode, Record<StoryCategory, CategoryEditorial>
       editorialParagraphs: [
         '현대미술이 “이해 안 되는 그림”의 동의어처럼 쓰일 때가 있습니다. 그러나 작품을 이해하는 일은 정답을 맞히는 게 아니라 질문을 던지는 일에 가깝습니다. “이 작가는 왜 이 색을 골랐을까”, “왜 이 크기여야 했을까” 같은 작은 질문이 감상의 기본기입니다. 미술 산책의 글들은 한 작품을 두고 그런 질문을 함께 따라가는 식으로 쓰입니다.',
         '한국 현대미술의 흐름도 이 코너에서 가볍게 다룹니다. 1980년대 민중미술의 목판화, 1990년대 단색화의 부상, 2000년대 이후의 사진과 미디어 — 큰 사조의 윤곽을 알면 동시대 작가의 작업이 어디서 출발해 어디로 향하는지 보이기 시작합니다. 작가 한 사람의 인터뷰가 나무라면, 미술 산책의 글은 그 나무가 자란 숲의 풍경입니다.',
-        '읽다가 마음에 닿는 작가나 매체가 생기면, 작품 갤러리에서 직접 그 결의 작품을 찾아보세요. 회화·판화·사진·조각 카테고리별로 127명 작가의 작품을 비교해 볼 수 있고, 가격대 필터로 부담 없이 시작할 수도 있습니다. 미술은 결국 좋아하는 작품을 한 점 들이는 데서 진짜로 시작됩니다.',
+        `읽다가 마음에 닿는 작가나 매체가 생기면, 작품 갤러리에서 직접 그 결의 작품을 찾아보세요. 회화·판화·사진·조각 카테고리별로 ${ARTIST_COUNT}명 작가의 작품을 비교해 볼 수 있고, 가격대 필터로 부담 없이 시작할 수도 있습니다. 미술은 결국 좋아하는 작품을 한 점 들이는 데서 진짜로 시작됩니다.`,
       ],
     },
   },
@@ -121,8 +121,7 @@ const CATEGORY_META: Record<LocaleCode, Record<StoryCategory, CategoryEditorial>
         'artist story',
         'SAF artist',
       ],
-      editorialIntro:
-        'Behind every artwork is a life of decisions. SAF 2026 brings together 127 Korean artists who chose to put their work into a mutual-aid campaign for fellow artists. Their interviews, studio notes, and reflections give you the context that turns a passing glance into a lasting connection with a piece.',
+      editorialIntro: `Behind every artwork is a life of decisions. SAF 2026 brings together ${ARTIST_COUNT} Korean artists who chose to put their work into a mutual-aid campaign for fellow artists. Their interviews, studio notes, and reflections give you the context that turns a passing glance into a lasting connection with a piece.`,
       editorialParagraphs: [
         'Korean contemporary artist interviews often live behind academic prose. The SAF magazine asks simpler questions in the artists’ own words, so first-time visitors can build a real sense of who made the work — and why.',
         'Every featured artist is a “solidarity artist”: they donated work knowing the proceeds would fund low-interest loans for peers excluded from primary banking (84.9% of Korean artists). Their stories are personal, but they also reveal the structural reality of Korean art-making.',
@@ -146,7 +145,7 @@ const CATEGORY_META: Record<LocaleCode, Record<StoryCategory, CategoryEditorial>
         'Art collecting is not a hobby reserved for the wealthy. It starts with deciding to bring a piece you love into your space. This section is a no-pressure guide for first-time buyers: how prices are formed, the difference between originals and editions, and what to know about provenance and care.',
       editorialParagraphs: [
         'Artwork prices are shaped by the artist’s exhibition history, market record, size, medium, and edition count. Originals and limited-edition prints by the same artist sit in different price tiers — knowing the structure helps you read a price tag with confidence.',
-        'SAF Online is artist-direct: there is no gallery markup. All proceeds become an artist mutual-aid fund — already 354 loans deployed at 95% repayment. Buying one work supports one artist; buying through SAF strengthens a small safety net for Korean art as a whole.',
+        `SAF Online is artist-direct: there is no gallery markup. All proceeds become an artist mutual-aid fund — already ${LOAN_COUNT} loans deployed at 95% repayment. Buying one work supports one artist; buying through SAF strengthens a small safety net for Korean art as a whole.`,
         'The process is simple: pick a work, review the artist and details, check out via Toss Payments, and receive nationwide shipping at a flat ₩4,000. Returns are accepted within 7 days. Many first-time collectors begin with smaller prints or paintings — use the price filter to find a starting point.',
       ],
     },
@@ -484,8 +483,8 @@ export default async function StoryCategoryPage({ params }: Props) {
             </p>
             <p className="text-sm text-charcoal-muted mt-1">
               {locale === 'en'
-                ? '127 artists, artworks available online.'
-                : '127명의 작가, 지금 바로 구매 가능한 작품들'}
+                ? `${ARTIST_COUNT} artists, artworks available online.`
+                : `${ARTIST_COUNT}명의 작가, 지금 바로 구매 가능한 작품들`}
             </p>
           </div>
           <LinkButton

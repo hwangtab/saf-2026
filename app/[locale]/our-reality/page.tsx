@@ -7,6 +7,7 @@ import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import CTAButtonGroup from '@/components/common/CTAButtonGroup';
 import { getSupabaseTestimonials } from '@/lib/supabase-data';
 import { CONTACT, EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
+import { LOAN_COUNT } from '@/lib/site-stats';
 import HighlightedText from '@/components/ui/HighlightedText';
 import {
   FirstBankAccessChart,
@@ -613,7 +614,7 @@ export default async function OurReality() {
               </li>
               <li>
                 <strong>상환율 데이터</strong>: 2022년 12월~2025년 9월 예술인 상호부조 대출 운용
-                기록 (누적 354건 집계)
+                기록 (누적 {LOAN_COUNT}건 집계)
               </li>
               <li>
                 <strong>관련 보도</strong>: 한겨레(2025.11.05), 뉴스아트(2025.11.05),

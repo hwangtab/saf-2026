@@ -1,4 +1,5 @@
 import { SITE_URL, CONTACT } from '@/lib/constants';
+import { ARTIST_COUNT, ARTWORK_COUNT, LOAN_COUNT } from '@/lib/site-stats';
 
 export interface QAItem {
   question: string;
@@ -140,7 +141,7 @@ export function generateSAFCoreQA(locale: 'ko' | 'en' = 'ko') {
     ? [
         {
           question: 'What is SAF (Seed Art Festival) Online?',
-          answer: `SAF Online is a special art exhibition organized by ${CONTACT.ORGANIZATION_NAME_EN} to raise mutual-aid funds for Korean artists facing financial exclusion. 127 artists voluntarily contributed their works, and 100% of sales proceeds go to a low-interest loan fund (5% fixed APR) for artists in financial distress.`,
+          answer: `SAF Online is a special art exhibition organized by ${CONTACT.ORGANIZATION_NAME_EN} to raise mutual-aid funds for Korean artists facing financial exclusion. ${ARTIST_COUNT} artists voluntarily contributed their works, and 100% of sales proceeds go to a low-interest loan fund (5% fixed APR) for artists in financial distress.`,
           url: `${SITE_URL}/en`,
         },
         {
@@ -157,8 +158,7 @@ export function generateSAFCoreQA(locale: 'ko' | 'en' = 'ko') {
         },
         {
           question: 'What is the repayment rate of the SAF mutual-aid loan?',
-          answer:
-            'The SAF mutual-aid loan has a 95% repayment rate, based on 354 cumulative loans issued between December 2022 and September 2025. This demonstrates that artists are reliable borrowers when given fair financial terms.',
+          answer: `The SAF mutual-aid loan has a 95% repayment rate, based on ${LOAN_COUNT} cumulative loans issued between December 2022 and September 2025. This demonstrates that artists are reliable borrowers when given fair financial terms.`,
           url: `${SITE_URL}/en/our-reality`,
         },
         {
@@ -174,8 +174,7 @@ export function generateSAFCoreQA(locale: 'ko' | 'en' = 'ko') {
         },
         {
           question: 'What is the price range of artworks at SAF Online?',
-          answer:
-            'Artwork prices at SAF Online range from affordable prints to unique original paintings. Most original paintings are priced between KRW 300,000 and KRW 5,000,000. Visit the gallery to see current pricing for all 127 works across painting, printmaking, photography, and sculpture.',
+          answer: `Artwork prices at SAF Online range from affordable prints to unique original paintings. Most original paintings are priced between KRW 300,000 and KRW 5,000,000. Visit the gallery to see current pricing for all ${ARTWORK_COUNT} works across painting, printmaking, photography, and sculpture.`,
           url: `${SITE_URL}/en/artworks`,
         },
         {
@@ -186,14 +185,12 @@ export function generateSAFCoreQA(locale: 'ko' | 'en' = 'ko') {
         },
         {
           question: 'Where can I find the SAF exhibition catalog?',
-          answer:
-            'The SAF Online Gallery at saf2026.com/en/artworks serves as the digital exhibition catalog. Browse all 127 artworks by 127 artists across painting, printmaking, photography, and sculpture. The 2026 offline exhibition archive with poster and visitor reviews is also available.',
+          answer: `The SAF Online Gallery at saf2026.com/en/artworks serves as the digital exhibition catalog. Browse all ${ARTWORK_COUNT} artworks by ${ARTIST_COUNT} artists across painting, printmaking, photography, and sculpture. The 2026 offline exhibition archive with poster and visitor reviews is also available.`,
           url: `${SITE_URL}/en/artworks`,
         },
         {
           question: 'Are the exhibiting artists the ones receiving loans?',
-          answer:
-            'No. The 127 exhibiting artists are solidarity participants who voluntarily contributed their works to help fellow artists. Loans go to other artists facing financial exclusion. The exhibitors are helpers, not recipients.',
+          answer: `No. The ${ARTIST_COUNT} exhibiting artists are solidarity participants who voluntarily contributed their works to help fellow artists. Loans go to other artists facing financial exclusion. The exhibitors are helpers, not recipients.`,
           url: `${SITE_URL}/en/our-proof`,
         },
         {
@@ -218,7 +215,7 @@ export function generateSAFCoreQA(locale: 'ko' | 'en' = 'ko') {
     : [
         {
           question: '씨앗페(SAF) 온라인이란 무엇인가요?',
-          answer: `씨앗페 온라인은 ${CONTACT.ORGANIZATION_NAME}이 주최하는 예술인 상호부조 기금 마련 특별전입니다. 127명의 작가가 자발적으로 작품을 출품했으며, 판매 수익금 전액이 금융 위기에 처한 예술인에게 연 5% 고정금리 대출로 전달됩니다.`,
+          answer: `씨앗페 온라인은 ${CONTACT.ORGANIZATION_NAME}이 주최하는 예술인 상호부조 기금 마련 특별전입니다. ${ARTIST_COUNT}명의 작가가 자발적으로 작품을 출품했으며, 판매 수익금 전액이 금융 위기에 처한 예술인에게 연 5% 고정금리 대출로 전달됩니다.`,
           url: SITE_URL,
         },
         {
@@ -235,8 +232,7 @@ export function generateSAFCoreQA(locale: 'ko' | 'en' = 'ko') {
         },
         {
           question: '씨앗페 상호부조 대출의 상환율은 얼마인가요?',
-          answer:
-            '씨앗페 상호부조 대출의 상환율은 95%입니다. 이는 2022년 12월부터 2025년 9월까지 누적 354건의 대출 운용 기록에 기반합니다. 공정한 금융 조건이 제공되면 예술인도 신뢰할 수 있는 대출자임을 증명합니다.',
+          answer: `씨앗페 상호부조 대출의 상환율은 95%입니다. 이는 2022년 12월부터 2025년 9월까지 누적 ${LOAN_COUNT}건의 대출 운용 기록에 기반합니다. 공정한 금융 조건이 제공되면 예술인도 신뢰할 수 있는 대출자임을 증명합니다.`,
           url: `${SITE_URL}/our-reality`,
         },
         {
@@ -252,8 +248,7 @@ export function generateSAFCoreQA(locale: 'ko' | 'en' = 'ko') {
         },
         {
           question: '씨앗페 온라인 작품 가격대는 어떻게 되나요?',
-          answer:
-            '씨앗페 온라인 작품 가격은 판화·사진 등 소형 작품부터 대형 회화까지 다양합니다. 대부분의 작품은 30만 원에서 500만 원 사이에 형성되어 있으며, 회화·판화·사진·조각 등 127점의 작품이 출품되어 있습니다.',
+          answer: `씨앗페 온라인 작품 가격은 판화·사진 등 소형 작품부터 대형 회화까지 다양합니다. 대부분의 작품은 30만 원에서 500만 원 사이에 형성되어 있으며, 회화·판화·사진·조각 등 ${ARTWORK_COUNT}점의 작품이 출품되어 있습니다.`,
           url: `${SITE_URL}/artworks`,
         },
         {
@@ -264,8 +259,7 @@ export function generateSAFCoreQA(locale: 'ko' | 'en' = 'ko') {
         },
         {
           question: '씨앗페 전시 도록은 어디서 볼 수 있나요?',
-          answer:
-            '씨앗페 온라인 갤러리(saf2026.com/artworks)가 디지털 전시 도록 역할을 합니다. 127명 작가의 127점 작품 전체를 온라인에서 확인·구매하실 수 있으며, 아카이브 페이지(saf2026.com/archive/2026)에서는 오프라인 전시 기록과 포스터도 제공됩니다.',
+          answer: `씨앗페 온라인 갤러리(saf2026.com/artworks)가 디지털 전시 도록 역할을 합니다. ${ARTIST_COUNT}명 작가의 ${ARTWORK_COUNT}점 작품 전체를 온라인에서 확인·구매하실 수 있으며, 아카이브 페이지(saf2026.com/archive/2026)에서는 오프라인 전시 기록과 포스터도 제공됩니다.`,
           url: `${SITE_URL}/artworks`,
         },
         {
@@ -282,8 +276,7 @@ export function generateSAFCoreQA(locale: 'ko' | 'en' = 'ko') {
         },
         {
           question: '출품 작가가 대출을 받는 건가요?',
-          answer:
-            '아닙니다. 127명의 출품 작가는 동료 예술인을 돕기 위해 자발적으로 작품을 내놓은 연대자들입니다. 대출은 금융 소외를 겪는 다른 예술인에게 제공됩니다. 출품 작가는 돕는 사람이지, 수혜자가 아닙니다.',
+          answer: `아닙니다. ${ARTIST_COUNT}명의 출품 작가는 동료 예술인을 돕기 위해 자발적으로 작품을 내놓은 연대자들입니다. 대출은 금융 소외를 겪는 다른 예술인에게 제공됩니다. 출품 작가는 돕는 사람이지, 수혜자가 아닙니다.`,
           url: `${SITE_URL}/our-proof`,
         },
         {

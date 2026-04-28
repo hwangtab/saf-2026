@@ -10,6 +10,7 @@ import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort
 import GalleryCampaignBanner from '@/components/features/GalleryCampaignBanner';
 
 import { SITE_URL, CONTACT } from '@/lib/constants';
+import { LOAN_COUNT } from '@/lib/site-stats';
 import { CATEGORY_EN_MAP } from '@/lib/artwork-category';
 import { resolveLocale } from '@/lib/server-locale';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
@@ -68,6 +69,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     category: displayCategory,
     count,
     availableCount,
+    loanCount: LOAN_COUNT,
   });
 
   // 대표 이미지: 판매중인 첫 번째 작품 이미지

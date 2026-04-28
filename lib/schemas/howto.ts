@@ -1,4 +1,5 @@
 import { SITE_URL, CONTACT, MERCHANT_POLICIES } from '@/lib/constants';
+import { ARTIST_COUNT, ARTWORK_COUNT } from '@/lib/site-stats';
 import { containsHangul } from '@/lib/search-utils';
 import { generateFAQSchema } from './content';
 
@@ -357,7 +358,7 @@ export function generateExhibitionEnjoyHowTo(locale: 'ko' | 'en' = 'ko') {
       ? [
           {
             name: 'Browse the exhibition gallery',
-            text: 'Visit the online gallery at saf2026.com/en/artworks to explore 127 works across painting, printmaking, photography, and sculpture by 127 Korean artists.',
+            text: `Visit the online gallery at saf2026.com/en/artworks to explore ${ARTWORK_COUNT} works across painting, printmaking, photography, and sculpture by ${ARTIST_COUNT} Korean artists.`,
             url: `${SITE_URL}/en/artworks`,
           },
           {
@@ -379,7 +380,7 @@ export function generateExhibitionEnjoyHowTo(locale: 'ko' | 'en' = 'ko') {
       : [
           {
             name: '전시 갤러리 탐색',
-            text: '온라인 갤러리(saf2026.com/artworks)에서 127명 작가의 회화·판화·사진·조각 127점을 카테고리별·가격별로 둘러보세요.',
+            text: `온라인 갤러리(saf2026.com/artworks)에서 ${ARTIST_COUNT}명 작가의 회화·판화·사진·조각 ${ARTWORK_COUNT}점을 카테고리별·가격별로 둘러보세요.`,
             url: `${SITE_URL}/artworks`,
           },
           {

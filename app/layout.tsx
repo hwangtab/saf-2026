@@ -4,6 +4,7 @@ import { getLocale } from 'next-intl/server';
 import GlobalAnalyticsGate from '@/components/common/GlobalAnalyticsGate';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
+import { ARTWORK_COUNT, ARTIST_COUNT, LOAN_COUNT } from '@/lib/site-stats';
 import {
   generateOrganizationSchema,
   generateWebsiteSchema,
@@ -75,14 +76,13 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   metadataBase: new URL(SITE_URL),
   title: {
-    default: '한국 현대미술 작품 127점 · 회화 판화 사진 조각 원본 구매 | 씨앗페',
+    default: `한국 현대미술 작품 ${ARTWORK_COUNT}점 · 회화 판화 사진 조각 원본 구매 | 씨앗페`,
     // 브랜드 suffix 제거 — Google SERP의 sitename 기능이 도메인 기반으로 브랜드를 자동 표시
     // (반복되는 "| 씨앗페 온라인 갤러리" 픽셀 낭비 방지). 페이지 단위로 브랜드 노출이 필요하면
     // generateMetadata에서 absolute title로 명시하거나 필요한 곳만 수동으로 붙임.
     template: '%s',
   },
-  description:
-    '127명 한국 작가가 동료 예술인을 돕기 위해 내놓은 회화·판화·사진·조각 원본. 작품 판매 수익은 354건의 저금리 대출로 이어진 예술인 상호부조 기금이 됩니다. 무료 배송·7일 이내 반품.',
+  description: `${ARTIST_COUNT}명 한국 작가가 동료 예술인을 돕기 위해 내놓은 회화·판화·사진·조각 원본. 작품 판매 수익은 ${LOAN_COUNT}건의 저금리 대출로 이어진 예술인 상호부조 기금이 됩니다. 무료 배송·7일 이내 반품.`,
   keywords:
     '한국 현대미술, 미술 작품 구매, 작품 원본 구매, 회화 원본, 판화 원본, 사진 작품, 조각 작품, 서울 전시회, 현대미술 전시회, 씨앗페, 씨앗페 온라인, 예술인 상호부조, 예술인 금융 차별, 예술인 대출',
   authors: [{ name: CONTACT.ORGANIZATION_NAME }],
@@ -93,9 +93,8 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'ko_KR',
-    title: '씨앗페 온라인 | 한국 현대미술 원본 작품 127점',
-    description:
-      '127명 한국 작가가 동료 예술인을 돕기 위해 내놓은 회화·판화·사진·조각 원본. 구매 수익이 354건의 저금리 대출이 된 예술인 상호부조 기금. 무료 배송·7일 반품.',
+    title: `씨앗페 온라인 | 한국 현대미술 원본 작품 ${ARTWORK_COUNT}점`,
+    description: `${ARTIST_COUNT}명 한국 작가가 동료 예술인을 돕기 위해 내놓은 회화·판화·사진·조각 원본. 구매 수익이 ${LOAN_COUNT}건의 저금리 대출이 된 예술인 상호부조 기금. 무료 배송·7일 반품.`,
     siteName: '씨앗페 온라인',
     images: [
       {
@@ -109,9 +108,8 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     site: '@saf2026',
-    title: '씨앗페 온라인 | 한국 현대미술 원본 작품 127점',
-    description:
-      '127명 한국 작가의 회화·판화·사진·조각 원본. 구매가 354건 저금리 대출이 된 예술인 상호부조 기금. 무료 배송·7일 반품.',
+    title: `씨앗페 온라인 | 한국 현대미술 원본 작품 ${ARTWORK_COUNT}점`,
+    description: `${ARTIST_COUNT}명 한국 작가의 회화·판화·사진·조각 원본. 구매가 ${LOAN_COUNT}건 저금리 대출이 된 예술인 상호부조 기금. 무료 배송·7일 반품.`,
     images: [{ url: OG_IMAGE.url, alt: OG_IMAGE.alt }],
   },
   robots: {

@@ -1,11 +1,11 @@
+import { LOAN_COUNT } from '@/lib/site-stats';
 import { FAQItem, generateFAQSchema } from './content';
 
 const OUR_PROOF_FAQ_ITEMS: Record<'ko' | 'en', FAQItem[]> = {
   en: [
     {
       question: 'What are the results of the SAF mutual-aid loan program?',
-      answer:
-        '354 mutual-aid loans have been issued since December 2022, totaling nearly KRW 700 million. The repayment rate stands at 95%, demonstrating that artists are reliable borrowers when given fair financial terms.',
+      answer: `${LOAN_COUNT} mutual-aid loans have been issued since December 2022, totaling nearly KRW 700 million. The repayment rate stands at 95%, demonstrating that artists are reliable borrowers when given fair financial terms.`,
     },
     {
       question: 'What is the default rate for SAF mutual-aid loans?',
@@ -21,8 +21,7 @@ const OUR_PROOF_FAQ_ITEMS: Record<'ko' | 'en', FAQItem[]> = {
   ko: [
     {
       question: '씨앗페 상호부조 대출의 실제 성과는 어떻게 되나요?',
-      answer:
-        '2022년 12월부터 354건의 상호부조 대출이 실행되어 약 7억 원이 지원되었습니다. 상환율은 95%로, 공정한 금융 조건이 주어지면 예술인도 신뢰할 수 있는 대출자임을 증명합니다.',
+      answer: `2022년 12월부터 ${LOAN_COUNT}건의 상호부조 대출이 실행되어 약 7억 원이 지원되었습니다. 상환율은 95%로, 공정한 금융 조건이 주어지면 예술인도 신뢰할 수 있는 대출자임을 증명합니다.`,
     },
     {
       question: '씨앗페 상호부조 대출의 연체율은 얼마인가요?',

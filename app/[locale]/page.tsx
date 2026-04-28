@@ -11,6 +11,7 @@ import SectionTitle from '@/components/ui/SectionTitle';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
 import HeroGalleryGrid from '@/components/features/HeroGalleryGrid';
 import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
+import { ARTIST_COUNT, ARTWORK_COUNT, LOAN_COUNT } from '@/lib/site-stats';
 import Badge from '@/components/ui/Badge';
 import {
   generateExhibitionSchema,
@@ -48,9 +49,15 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('home');
   const pageUrl = buildLocaleUrl('/', locale);
 
+  const counts = {
+    artistCount: ARTIST_COUNT,
+    artworkCount: ARTWORK_COUNT,
+    loanCount: LOAN_COUNT,
+  };
+
   return {
-    title: t('metaTitle'),
-    description: t('metaDescription'),
+    title: t('metaTitle', counts),
+    description: t('metaDescription', counts),
     keywords:
       locale === 'en'
         ? 'Korean contemporary art, original artworks for sale, art gallery, artist mutual aid, SAF Online, Seed Art Festival, paintings, prints, sculpture, photography'
@@ -59,8 +66,8 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       type: 'website',
       siteName: locale === 'en' ? 'SAF Online' : '씨앗페 온라인',
-      title: t('metaTitle'),
-      description: t('ogDescription'),
+      title: t('metaTitle', counts),
+      description: t('ogDescription', counts),
       locale: locale === 'en' ? 'en_US' : 'ko_KR',
       url: pageUrl,
       images: [
@@ -74,8 +81,8 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     twitter: {
       card: 'summary_large_image',
-      title: t('metaTitle'),
-      description: t('twitterDescription'),
+      title: t('metaTitle', counts),
+      description: t('twitterDescription', counts),
       images: [{ url: OG_IMAGE.url, alt: locale === 'en' ? OG_IMAGE.altEn : OG_IMAGE.alt }],
     },
   };
@@ -226,8 +233,16 @@ export default async function Home() {
       <div className="hidden">
         <ShareButtonsWrapper
           url={SITE_URL}
-          title={t('shareTitle')}
-          description={t('shareDescription')}
+          title={t('shareTitle', {
+            artistCount: ARTIST_COUNT,
+            artworkCount: ARTWORK_COUNT,
+            loanCount: LOAN_COUNT,
+          })}
+          description={t('shareDescription', {
+            artistCount: ARTIST_COUNT,
+            artworkCount: ARTWORK_COUNT,
+            loanCount: LOAN_COUNT,
+          })}
         />
       </div>
     </>
@@ -273,7 +288,7 @@ async function HeroSection({ locale }: { locale: 'ko' | 'en' }) {
               className="text-white/70 text-sm md:text-base motion-safe:opacity-0 motion-safe:animate-fade-in-up"
               style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}
             >
-              {t('heroGallerySubtitle')}
+              {t('heroGallerySubtitle', { artistCount: ARTIST_COUNT })}
             </p>
 
             {/* Always-available badge */}

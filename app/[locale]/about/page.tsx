@@ -11,6 +11,7 @@ import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { createStandardPageMetadata } from '@/lib/seo';
 import { SITE_URL, EXTERNAL_LINKS } from '@/lib/constants';
+import { ARTIST_COUNT, ARTWORK_COUNT, LOAN_COUNT } from '@/lib/site-stats';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
 import { Link } from '@/i18n/navigation';
@@ -20,14 +21,12 @@ export const revalidate = false;
 const PAGE_URL = `${SITE_URL}/about`;
 const PAGE_COPY = {
   ko: {
-    title: '씨앗페 소개 · 예술인 상호부조 캠페인 | 127명 작가, 354건 대출',
-    description:
-      '씨앗페는 금융 차별에 맞서는 예술인 상호부조 캠페인입니다. 127명의 연대 작가, 354건의 저금리 대출, 95%의 상환율 — 작품이 금융이 되는 구조를 소개합니다.',
+    title: `씨앗페 소개 · 예술인 상호부조 캠페인 | ${ARTIST_COUNT}명 작가, ${LOAN_COUNT}건 대출`,
+    description: `씨앗페는 금융 차별에 맞서는 예술인 상호부조 캠페인입니다. ${ARTIST_COUNT}명의 연대 작가, ${LOAN_COUNT}건의 저금리 대출, 95%의 상환율 — 작품이 금융이 되는 구조를 소개합니다.`,
   },
   en: {
     title: 'About SAF · Mutual-Aid Campaign for Korean Artists',
-    description:
-      'SAF is a mutual-aid campaign against financial discrimination toward Korean artists. 127 solidarity artists, 354 low-interest loans, 95% repayment — art becomes finance.',
+    description: `SAF is a mutual-aid campaign against financial discrimination toward Korean artists. ${ARTIST_COUNT} solidarity artists, ${LOAN_COUNT} low-interest loans, 95% repayment — art becomes finance.`,
   },
 } as const;
 
@@ -132,7 +131,7 @@ export default async function AboutPage() {
                   step: '01',
                   icon: '🤝',
                   label: 'Artists unite',
-                  desc: '127 artists voluntarily contribute works to the exhibition — not as victims, but as allies standing with peers.',
+                  desc: `${ARTIST_COUNT} artists voluntarily contribute works to the exhibition — not as victims, but as allies standing with peers.`,
                 },
                 {
                   step: '02',
@@ -224,8 +223,8 @@ export default async function AboutPage() {
                     SAF 2026
                   </h3>
                   <p className="text-sm text-white/80 leading-relaxed">
-                    Jan 14–26, Insa Art Center, Seoul. 127 artists, 127 works. The largest SAF
-                    exhibition to date.
+                    Jan 14–26, Insa Art Center, Seoul. {ARTIST_COUNT} artists, {ARTWORK_COUNT}{' '}
+                    works. The largest SAF exhibition to date.
                   </p>
                   <span className="inline-block mt-4 text-sm font-semibold text-accent group-hover:underline">
                     View archive →
@@ -272,7 +271,7 @@ export default async function AboutPage() {
                   href: '/our-proof',
                   icon: '✅',
                   title: 'Our Proof',
-                  desc: '354 loans, 95% repayment, 0% default rate. The numbers that prove mutual-aid lending works.',
+                  desc: `${LOAN_COUNT} loans, 95% repayment, 0% default rate. The numbers that prove mutual-aid lending works.`,
                 },
                 {
                   href: '/transparency',
@@ -335,7 +334,7 @@ export default async function AboutPage() {
       <JsonLdScript data={[breadcrumbSchema, aboutPageSchema]} />
       <PageHero
         title="씨앗페 소개"
-        description="작품이 금융이 됩니다. 예술인 금융 차별에 맞서는 127명의 연대, 354건의 저금리 대출, 95%의 상환율 — 씨앗페의 구조를 소개합니다."
+        description={`작품이 금융이 됩니다. 예술인 금융 차별에 맞서는 ${ARTIST_COUNT}명의 연대, ${LOAN_COUNT}건의 저금리 대출, 95%의 상환율 — 씨앗페의 구조를 소개합니다.`}
         breadcrumbItems={breadcrumbItems}
       >
         <ShareButtonsWrapper
@@ -382,8 +381,8 @@ export default async function AboutPage() {
             2022년 12월 첫 대출부터 2025년 9월까지의 누적 성과
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
-            <StatCard value="127" label="연대 작가" variant="highlight" />
-            <StatCard value="354건" label="대출 실행" variant="highlight" />
+            <StatCard value={String(ARTIST_COUNT)} label="연대 작가" variant="highlight" />
+            <StatCard value={`${LOAN_COUNT}건`} label="대출 실행" variant="highlight" />
             <StatCard value="~7억 원" label="누적 지원" variant="highlight" />
             <StatCard value="95%" label="상환율" variant="highlight" />
           </div>
@@ -400,7 +399,7 @@ export default async function AboutPage() {
                 step: '01',
                 icon: '🤝',
                 label: '작가 연대',
-                desc: '127명의 작가가 동료 예술인의 금융 차별에 맞서 자발적으로 작품을 출품합니다. 피해 당사자가 아닌, 연대자로서.',
+                desc: `${ARTIST_COUNT}명의 작가가 동료 예술인의 금융 차별에 맞서 자발적으로 작품을 출품합니다. 피해 당사자가 아닌, 연대자로서.`,
               },
               {
                 step: '02',
@@ -544,8 +543,8 @@ export default async function AboutPage() {
                   씨앗페 2026
                 </h3>
                 <p className="text-sm text-white/80 leading-relaxed">
-                  2026년 1월 14~26일, 인사아트센터. 127명 작가, 127점 작품. 역대 최대 규모의 씨앗페
-                  전시.
+                  2026년 1월 14~26일, 인사아트센터. {ARTIST_COUNT}명 작가, {ARTWORK_COUNT}점 작품.
+                  역대 최대 규모의 씨앗페 전시.
                 </p>
                 <span className="inline-block mt-4 text-sm font-semibold text-accent group-hover:underline">
                   전시 기록 보기 →
@@ -592,7 +591,7 @@ export default async function AboutPage() {
                 href: '/our-proof',
                 icon: '✅',
                 title: '우리의 증명',
-                desc: '354건 대출, 95% 상환율, 연체율 0%. 상호부조 대출이 실제로 작동한다는 수치 증명.',
+                desc: `${LOAN_COUNT}건 대출, 95% 상환율, 연체율 0%. 상호부조 대출이 실제로 작동한다는 수치 증명.`,
               },
               {
                 href: '/transparency',

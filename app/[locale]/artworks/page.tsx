@@ -11,6 +11,7 @@ import GalleryStatusBar from '@/components/features/GalleryStatusBar';
 import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { SITE_URL, CONTACT } from '@/lib/constants';
+import { ARTIST_COUNT, ARTWORK_COUNT, LOAN_COUNT } from '@/lib/site-stats';
 import { createPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
 import {
@@ -170,7 +171,7 @@ export default async function ArtworksPage() {
     { q: t('faqQ2'), a: t('faqA2') },
     { q: t('faqQ3'), a: t('faqA3') },
     { q: t('faqQ4'), a: t('faqA4') },
-    { q: t('faqQ5'), a: t('faqA5') },
+    { q: t('faqQ5'), a: t('faqA5', { loanCount: LOAN_COUNT }) },
     { q: t('faqQ6'), a: t('faqA6') },
   ];
 
@@ -191,8 +192,16 @@ export default async function ArtworksPage() {
         >
           <ShareButtonsWrapper
             url={PAGE_URL}
-            title={t('shareTitle')}
-            description={t('shareDescription')}
+            title={t('shareTitle', {
+              artistCount: ARTIST_COUNT,
+              artworkCount: ARTWORK_COUNT,
+              loanCount: LOAN_COUNT,
+            })}
+            description={t('shareDescription', {
+              artistCount: ARTIST_COUNT,
+              artworkCount: ARTWORK_COUNT,
+              loanCount: LOAN_COUNT,
+            })}
           />
         </PageHero>
 
@@ -218,8 +227,8 @@ export default async function ArtworksPage() {
               {t('introHeading')}
             </h2>
             <div className="space-y-4 text-charcoal text-base md:text-lg leading-relaxed">
-              <p>{t('introParagraph1')}</p>
-              <p>{t('introParagraph2')}</p>
+              <p>{t('introParagraph1', { artistCount: ARTIST_COUNT })}</p>
+              <p>{t('introParagraph2', { loanCount: LOAN_COUNT })}</p>
             </div>
           </div>
         </Section>

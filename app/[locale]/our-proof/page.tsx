@@ -9,6 +9,7 @@ import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import TestimonialCard from '@/components/ui/TestimonialCard';
 import StatCard from '@/components/ui/StatCard';
 import { CONTACT, EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
+import { LOAN_COUNT } from '@/lib/site-stats';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { getOurProofFaqSchema } from '@/lib/schemas/our-proof-faq';
@@ -23,14 +24,12 @@ const LAST_UPDATED = '2026-03-01';
 const PAGE_URL = `${SITE_URL}/our-proof`;
 const PAGE_COPY = {
   ko: {
-    title: '예술인 상호부조 대출 354건, 상환율 95% | 씨앗페 증명',
-    description:
-      '354건·7억 원 대출, 상환율 95%, 연 5% 고정금리. 금융 배제율 84.9%의 현실에서 3년간 실증된 예술인 상호부조 모델의 운영 지표와 증언.',
+    title: `예술인 상호부조 대출 ${LOAN_COUNT}건, 상환율 95% | 씨앗페 증명`,
+    description: `${LOAN_COUNT}건·7억 원 대출, 상환율 95%, 연 5% 고정금리. 금융 배제율 84.9%의 현실에서 3년간 실증된 예술인 상호부조 모델의 운영 지표와 증언.`,
   },
   en: {
-    title: '354 mutual-aid loans to artists, 95% repayment | SAF Proof',
-    description:
-      '354 loans · KRW 700M deployed · 95% repayment rate · 5% fixed APR. Three years of evidence that the SAF artist mutual-aid model works against 84.9% banking exclusion.',
+    title: `${LOAN_COUNT} mutual-aid loans to artists, 95% repayment | SAF Proof`,
+    description: `${LOAN_COUNT} loans · KRW 700M deployed · 95% repayment rate · 5% fixed APR. Three years of evidence that the SAF artist mutual-aid model works against 84.9% banking exclusion.`,
   },
 } as const;
 
@@ -131,7 +130,7 @@ export default async function OurProof() {
       {
         '@type': 'PropertyValue',
         name: locale === 'en' ? 'Total loans issued' : '총 대출 실행 건수',
-        value: '354',
+        value: String(LOAN_COUNT),
         unitText: locale === 'en' ? 'loans' : '건',
       },
       {
@@ -186,7 +185,7 @@ export default async function OurProof() {
         />
         <PageHero
           title="Our Proof"
-          description="Mutual-aid finance is not a theory. 354 loans and a 95% repayment rate prove that trust-based lending to artists works."
+          description={`Mutual-aid finance is not a theory. ${LOAN_COUNT} loans and a 95% repayment rate prove that trust-based lending to artists works.`}
           descriptionId="proof-hero-description"
           breadcrumbItems={breadcrumbItems}
         >
@@ -209,14 +208,14 @@ export default async function OurProof() {
                 A <span className="text-primary font-bold">95%</span> repayment rate tells the story
               </SectionTitle>
               <p className="text-xl text-sky-strong">
-                Out of 354 loans totaling nearly KRW 700 million, 95% were repaid on time. Even the
-                5.10% subrogation level remains lower than many conventional low-credit loan
-                markets.
+                Out of {LOAN_COUNT} loans totaling nearly KRW 700 million, 95% were repaid on time.
+                Even the 5.10% subrogation level remains lower than many conventional low-credit
+                loan markets.
               </p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-              <StatCard value="354" label="Loans approved" variant="highlight" />
+              <StatCard value={String(LOAN_COUNT)} label="Loans approved" variant="highlight" />
               <StatCard value="~KRW 700M" label="Total support deployed" variant="highlight" />
               <StatCard
                 value="95%"
@@ -284,9 +283,9 @@ export default async function OurProof() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
               <StatCard
-                value="354"
+                value={String(LOAN_COUNT)}
                 label="Cumulative loans"
-                description="354 loans were executed between Dec 2022 and Sep 2025."
+                description={`${LOAN_COUNT} loans were executed between Dec 2022 and Sep 2025.`}
                 variant="bordered"
               />
               <StatCard
@@ -438,14 +437,14 @@ export default async function OurProof() {
       />
       <PageHero
         title="우리의 증명"
-        description="예술인 상호부조 대출의 실제 성과. 354건, 약 7억 원의 신뢰가 데이터로 증명되었습니다."
+        description={`예술인 상호부조 대출의 실제 성과. ${LOAN_COUNT}건, 약 7억 원의 신뢰가 데이터로 증명되었습니다.`}
         descriptionId="proof-hero-description"
         breadcrumbItems={breadcrumbItems}
       >
         <ShareButtonsWrapper
           url={PAGE_URL}
           title="우리의 증명 - 씨앗페 온라인"
-          description="예술인 상호부조 대출 354건, 누적 약 7억 원 지원. 데이터로 확인하세요."
+          description={`예술인 상호부조 대출 ${LOAN_COUNT}건, 누적 약 7억 원 지원. 데이터로 확인하세요.`}
         />
       </PageHero>
 
@@ -461,13 +460,13 @@ export default async function OurProof() {
               <span className="text-primary font-bold">95%</span>의 상환율이 증명합니다
             </SectionTitle>
             <p className="text-xl text-sky-strong">
-              신용점수에 상관없이 빌려준 354건, 약 7억 원 가운데 95%가 제때 돌아왔고 빚을 대신
-              갚아야 했던 비율도 5.10%뿐이라 흔한 저신용 대출보다 오히려 안정적입니다.
+              신용점수에 상관없이 빌려준 {LOAN_COUNT}건, 약 7억 원 가운데 95%가 제때 돌아왔고 빚을
+              대신 갚아야 했던 비율도 5.10%뿐이라 흔한 저신용 대출보다 오히려 안정적입니다.
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <StatCard value="354건" label="신용 무관 대출 건수" variant="highlight" />
+            <StatCard value={`${LOAN_COUNT}건`} label="신용 무관 대출 건수" variant="highlight" />
             <StatCard value="약 7억 원" label="총 대출 규모" variant="highlight" />
             <StatCard value="95%" label="상환율 (대위변제율 5.10%)" variant="highlight" />
           </div>
@@ -480,8 +479,8 @@ export default async function OurProof() {
               </span>
             </p>
             <p className="text-base text-charcoal-muted mb-4">
-              354건 중 95%가 제때 갚혔고 대위변제율도 5.10%에 머물러 뉴스아트(2025.05.22)가 소개한
-              것처럼 일반 금융기관 저신용 대출 연체율보다 낮은 수준이 유지되고 있습니다.
+              {LOAN_COUNT}건 중 95%가 제때 갚혔고 대위변제율도 5.10%에 머물러 뉴스아트(2025.05.22)가
+              소개한 것처럼 일반 금융기관 저신용 대출 연체율보다 낮은 수준이 유지되고 있습니다.
             </p>
             <p className="text-sm text-charcoal-muted mb-6">
               예술인이 처한 금융 배제의 구조적 원인은{' '}
@@ -539,9 +538,9 @@ export default async function OurProof() {
           {/* Success Stories */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
             <StatCard
-              value="354건"
+              value={`${LOAN_COUNT}건`}
               label="누적 대출 실행"
-              description="2022년 12월부터 2025년 9월말까지 354건의 상호부조 대출이 실행되었습니다."
+              description={`2022년 12월부터 2025년 9월말까지 ${LOAN_COUNT}건의 상호부조 대출이 실행되었습니다.`}
               variant="bordered"
             />
             <StatCard

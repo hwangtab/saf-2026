@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
 import { OG_IMAGE } from '@/lib/constants';
+import { ARTIST_COUNT, LOAN_COUNT } from '@/lib/site-stats';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import ToastProvider from '@/components/providers/ToastProvider';
@@ -27,7 +28,7 @@ export async function generateMetadata({
       default: tSeo('siteTitle'),
       template: tSeo('titleTemplate'),
     },
-    description: tSeo('siteDescription'),
+    description: tSeo('siteDescription', { artistCount: ARTIST_COUNT, loanCount: LOAN_COUNT }),
     // 영문 사이트는 색인 제외 (자동 번역 수준이라 thin/duplicate content).
     // follow는 유지해 내부 링크 발견·평가에는 영향 없음.
     // Next.js metadata 머지 규칙상 자식이 robots를 설정하면 부모(root layout)의 robots 객체가
@@ -86,8 +87,10 @@ export default async function LocaleLayout({
           {locale === 'en' ? 'Skip to main content' : '메인 콘텐츠로 이동'}
         </a>
         <Header />
-        <main id="main-content" className="flex-1">
-          <Suspense fallback={null}>{children}</Suspense>
+        <main id="main-content" className="flex-1 min-h-[100svh]">
+          <Suspense fallback={<div className="min-h-[100svh]" aria-hidden="true" />}>
+            {children}
+          </Suspense>
         </main>
         <Suspense>
           <Footer />

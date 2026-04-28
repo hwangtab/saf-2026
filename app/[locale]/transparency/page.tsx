@@ -8,6 +8,7 @@ import PageHero from '@/components/ui/PageHero';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import StatCard from '@/components/ui/StatCard';
 import { CONTACT, EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
+import { LOAN_COUNT } from '@/lib/site-stats';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { createStandardPageMetadata } from '@/lib/seo';
@@ -28,12 +29,11 @@ const PAGE_URL = `${SITE_URL}/transparency`;
 const PAGE_COPY = {
   ko: {
     // 끝에 "| 씨앗페" 브랜드 추가 — 트위터/링크드인 카드는 siteName 미노출, title 단독 표시.
-    title: '예술인 상호부조 대출 운용 보고서 · 354건 누적·95% 상환 | 씨앗페',
-    description:
-      '2022년 12월 시작된 예술인 상호부조 대출 운영 현황. 누적 354건, 상환율 95%, 총 7억 원 이상 지원의 성과를 연간 보고서로 투명하게 공개합니다.',
+    title: `예술인 상호부조 대출 운용 보고서 · ${LOAN_COUNT}건 누적·95% 상환 | 씨앗페`,
+    description: `2022년 12월 시작된 예술인 상호부조 대출 운영 현황. 누적 ${LOAN_COUNT}건, 상환율 95%, 총 7억 원 이상 지원의 성과를 연간 보고서로 투명하게 공개합니다.`,
   },
   en: {
-    title: 'Transparency Reports · 354 Loans, 95% Repayment | SAF',
+    title: `Transparency Reports · ${LOAN_COUNT} Loans, 95% Repayment | SAF`,
     description:
       'Launched in December 2022, the artist mutual aid loan program publishes annual reports to ensure full operational transparency.',
   },
@@ -447,7 +447,7 @@ export default async function TransparencyPage() {
         <div className="container-max">
           <SectionTitle className="mb-12">누적 성과 요약</SectionTitle>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
-            <StatCard value="354건" label="누적 대출 건수" variant="highlight" />
+            <StatCard value={`${LOAN_COUNT}건`} label="누적 대출 건수" variant="highlight" />
             <StatCard value="약 7억 원" label="누적 지원 금액" variant="highlight" />
             <StatCard value="95%" label="상환율" variant="highlight" />
             <StatCard
