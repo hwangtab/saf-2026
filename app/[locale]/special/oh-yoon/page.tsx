@@ -250,13 +250,19 @@ export default async function OhYoonPage() {
                 </h2>
                 <div className="prose prose-xl text-charcoal/90 leading-loose space-y-6 font-medium">
                   <p>
-                    Oh Yoon (1946-1986) chose woodcut printmaking as a social language. At a time
+                    Oh Yoon (1946–1986) chose woodcut printmaking as a social language. At a time
                     when elite abstraction dominated, he turned toward ordinary people and
-                    collective realities.
+                    collective realities. Pressed not by machine but by a spoon rubbed against
+                    paper, his prints traveled freely — to poetry covers, workers&apos; leaflets,
+                    and children&apos;s storybooks. &ldquo;Art should be shared by everyone,&rdquo;
+                    he insisted, and he meant it.
                   </p>
                   <p>
-                    His visual language captured labor, grief, resilience, and shared dignity. Even
-                    today, his prints remain urgent and alive.
+                    His visual language captured labor, grief, resilience, and shared dignity. In
+                    July 1986, shortly after his very first solo exhibition, he passed away at the
+                    age of forty. Forty years on, the roughly one hundred prints he left behind
+                    still touch the most aching parts of our time, still speaking of a life lived
+                    together.
                   </p>
                 </div>
               </div>
@@ -427,14 +433,17 @@ export default async function OhYoonPage() {
                   그가 선택한 <strong className="font-bold text-charcoal">목판화</strong>는 단순한
                   예술 형식이 아니었습니다. 그것은 한 번 칼을 대면 되돌릴 수 없는 결기였으며, 수만
                   장을 찍어내어 공장 담벼락과 대학가, 시장통의 사람들과 나눌 수 있는 가장 민주적인
-                  그릇이었습니다.
+                  그릇이었습니다. 프레스기조차 없이 숟가락으로 종이를 문질러 전사한 그 손길은,
+                  &apos;미술은 많은 사람이 나누어야 한다&apos;는 그의 신념을 가장 정직하게
+                  보여줍니다.
                 </p>
                 <p>
                   부산 가마골의 억센 웃음, 구로공단 노동자의 땀방울, 그리고 짓눌린 한(恨)을
                   신명(神明)나는 춤사위로 풀어내는 민중의 생명력. 오윤의 칼자국은 투박하지만
-                  정직하게 이 모든 것을 나무에 새겼습니다. 마흔이라는 짧은 생을 마감했지만, 그가
-                  남긴 선 굵은 판화들은 여전히 우리 시대의 가장 아픈 곳을 어루만지며 &apos;함께 사는
-                  삶&apos;을 이야기하고 있습니다.
+                  정직하게 이 모든 것을 나무에 새겼습니다. 1986년 7월, 그는 자신의 이름을 단 첫
+                  개인전을 연 지 얼마 되지 않아 세상을 떠나셨습니다. 향년 마흔. 짧은 생애 동안 그가
+                  남긴 100여 점의 선 굵은 판화들은, 40년이 지난 지금도 우리 시대의 가장 아픈 곳을
+                  어루만지며 &apos;함께 사는 삶&apos;을 이야기하고 있습니다.
                 </p>
               </div>
             </div>
