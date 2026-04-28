@@ -47,11 +47,11 @@ export function useHeaderStyle() {
   // Hero routes should render transparent at top by default.
   const [heroAtTop, setHeroAtTop] = useState(true);
 
-  // 라우트 전환 lock — pathname 변경 시 짧게 solid 유지.
-  // React가 권장하는 "previous prop을 state로 저장하는 패턴"으로 effect 안 setState
-  // 및 render 중 ref 접근 lint 룰을 모두 우회. 첫 mount는 prevPathname === pathname이라
-  // 자동으로 lock이 켜지지 않음.
-  const [transitionLock, setTransitionLock] = useState(false);
+  // 라우트 전환 lock — pathname 변경 시 + 첫 mount(hard refresh 포함) 짧게 solid 유지.
+  // useState(true) 초기값으로 SSR HTML과 client hydrate가 일치한 상태에서 lock 시작 →
+  // useEffect의 timer가 500ms 후 unlock. hero 라우트 hard refresh 시 hero 배경 mount
+  // 전 빈 frame에 흰글씨가 노출되는 회귀 차단.
+  const [transitionLock, setTransitionLock] = useState(true);
   const [prevPathname, setPrevPathname] = useState(pathname);
 
   if (prevPathname !== pathname) {
