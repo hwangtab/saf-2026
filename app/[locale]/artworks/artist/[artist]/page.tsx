@@ -36,7 +36,10 @@ import SafeImage from '@/components/common/SafeImage';
 import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
 import GalleryCampaignBanner from '@/components/features/GalleryCampaignBanner';
 
-export const revalidate = 600;
+// 작가 lifecycle (작품 전체 숨김/삭제)이 발생하면 ISR prerender + revalidate 조합으로는
+// stale 200 + not-found UI가 송출되어 GSC가 NOINDEX로 보고함 (신학철 케이스).
+// force-dynamic으로 매 요청 SSR + notFound() 시 정확한 404 응답 보장.
+export const dynamic = 'force-dynamic';
 
 interface Props {
   params: Promise<{

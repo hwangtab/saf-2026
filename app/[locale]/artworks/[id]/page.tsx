@@ -42,7 +42,11 @@ interface Props {
   }>;
 }
 
-export const revalidate = 600;
+// 작품 lifecycle (추가/판매/삭제)이 잦아 ISR prerender + revalidate 조합으로는
+// 삭제된 작품에 대해 stale 200 응답이 서빙되어 GSC가 NOINDEX로 보고하는 문제가 있었음.
+// force-dynamic으로 매 요청 SSR + notFound() 시 정확한 404 응답을 보장 — Google에 명확한
+// 색인 제거 시그널 송출. Supabase fetch 비용은 페이지당 6병렬로 분산되어 영향 미미.
+export const dynamic = 'force-dynamic';
 
 /** 스토리 body 마크다운에서 첫 번째 이미지 URL 추출 — 썸네일 fallback용 */
 function extractFirstImage(body: string | null | undefined): string | null {
