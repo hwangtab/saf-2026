@@ -221,7 +221,7 @@ export default async function ArtworksPage() {
         </nav>
 
         {/* SEO Intro — 한국 작가 그림·미술품 구매 본문 (long-tail 키워드 흡수) */}
-        <Section variant="white" padding="sm">
+        <Section variant="white" padding="none" className="pt-8 md:pt-12">
           <div className="container-max max-w-4xl">
             <h2 className="text-2xl md:text-3xl font-section font-normal text-charcoal-deep text-balance mb-6">
               {t('introHeading')}
