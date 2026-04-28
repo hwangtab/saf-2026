@@ -5,7 +5,6 @@ import { getLocale, getTranslations } from 'next-intl/server';
 
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
-import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { createStandardPageMetadata } from '@/lib/seo';
@@ -116,7 +115,7 @@ export default async function PetitionOhYoonPage() {
   const statementText = `${t('statementLine1')} ${t('statementLine2')} ${t('statementLine3')}`;
 
   return (
-    <main className={`bg-canvas ${SAWTOOTH_TOP_SAFE_PADDING}`}>
+    <main className="bg-canvas">
       <JsonLdScript data={breadcrumbSchema} />
 
       {/* 1부 HERO — 제목·부제·D-N·진행률·CTA가 모바일 한 화면에 (PRD §6.1 FR-LP-01) */}
@@ -504,9 +503,10 @@ export default async function PetitionOhYoonPage() {
       </Section>
 
       {/* 10부 마지막 결구 + 두 번째 CTA — HERO와 톤 통일 (어두운 그라디언트로 페이지 감싸기) */}
+      {/* closing section이 main 마지막이라 SAFE_PADDING을 자체 pb로 흡수 — 어두운 색이 톱니구분선까지 이어져 연노란 띠 노출 차단 */}
       <section
         aria-labelledby="petition-closing-title"
-        className="relative isolate overflow-hidden py-24 md:py-32 text-center text-white bg-charcoal-deep"
+        className="relative isolate overflow-hidden pt-24 md:pt-32 pb-48 md:pb-64 text-center text-white bg-charcoal-deep"
       >
         <div
           aria-hidden="true"
