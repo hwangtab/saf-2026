@@ -53,18 +53,20 @@ export default function ProposalModal() {
             <h3 className="font-display text-xl text-charcoal-deep">
               {t('proposalSection2Heading')}
             </h3>
-            <p>{t('proposalSection2Body1')}</p>
-            <p>{t('proposalSection2Body2')}</p>
-            <p>{t('proposalSection2Body3')}</p>
+            {/* (가)/(나)/(다) marker가 본문에 박혀 있어 줄바꿈 시 hanging indent 적용 */}
+            <p className="pl-[1.75rem] [text-indent:-1.75rem]">{t('proposalSection2Body1')}</p>
+            <p className="pl-[1.75rem] [text-indent:-1.75rem]">{t('proposalSection2Body2')}</p>
+            <p className="pl-[1.75rem] [text-indent:-1.75rem]">{t('proposalSection2Body3')}</p>
           </section>
 
           <section className="space-y-3">
             <h3 className="font-display text-xl text-charcoal-deep">
               {t('proposalSection3Heading')}
             </h3>
-            <p>{t('proposalSection3Step1')}</p>
-            <p>{t('proposalSection3Step2')}</p>
-            <p>{t('proposalSection3Step3')}</p>
+            {/* (1)/(2)/(3) marker hanging indent */}
+            <p className="pl-[1.75rem] [text-indent:-1.75rem]">{t('proposalSection3Step1')}</p>
+            <p className="pl-[1.75rem] [text-indent:-1.75rem]">{t('proposalSection3Step2')}</p>
+            <p className="pl-[1.75rem] [text-indent:-1.75rem]">{t('proposalSection3Step3')}</p>
             <p className="pt-2">{t('proposalSection3Summary')}</p>
           </section>
 

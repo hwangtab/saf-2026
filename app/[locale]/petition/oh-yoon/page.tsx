@@ -435,9 +435,24 @@ export default async function PetitionOhYoonPage() {
               {t('urgencyNote')}
             </p>
             <ul className="space-y-2 text-base text-charcoal break-keep">
-              <li>· {t('urgencyBullet1')}</li>
-              <li>· {t('urgencyBullet2')}</li>
-              <li>· {t('urgencyBullet3')}</li>
+              <li className="flex gap-2">
+                <span aria-hidden="true" className="shrink-0">
+                  ·
+                </span>
+                <span>{t('urgencyBullet1')}</span>
+              </li>
+              <li className="flex gap-2">
+                <span aria-hidden="true" className="shrink-0">
+                  ·
+                </span>
+                <span>{t('urgencyBullet2')}</span>
+              </li>
+              <li className="flex gap-2">
+                <span aria-hidden="true" className="shrink-0">
+                  ·
+                </span>
+                <span>{t('urgencyBullet3')}</span>
+              </li>
             </ul>
           </div>
           <p className="mt-8 text-base md:text-lg leading-relaxed text-charcoal-muted break-keep">
