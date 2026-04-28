@@ -33,6 +33,7 @@ const HERO_EXACT = new Set<string>([
   '/privacy',
   '/terms',
   '/petition/oh-yoon',
+  '/special/oh-yoon',
 ]);
 
 /**
