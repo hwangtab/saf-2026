@@ -6,7 +6,8 @@ const HEADER_SOLID_STYLE = 'bg-white/80 backdrop-blur-md shadow-sm border-b bord
 const HERO_SCROLL_TOP_THRESHOLD = 8;
 // 라우트 전환 직후 헤더를 solid로 lock해 hero 라우트 진입 시 흰글씨가
 // 연노란 body bg에 떠서 안 보이는 짧은 깜빡임을 차단. 새 페이지 RSC mount 시간 정도.
-const TRANSITION_LOCK_MS = 250;
+// dev 환경 첫 방문은 페이지 컴파일이 250ms 이상 걸릴 수 있어 안전마진 포함.
+const TRANSITION_LOCK_MS = 500;
 
 type HeaderMode = 'transparent' | 'solid' | 'overlay';
 
@@ -55,16 +56,16 @@ export function useHeaderStyle() {
 
   if (prevPathname !== pathname) {
     setPrevPathname(pathname);
-    if (!transitionLock) {
-      setTransitionLock(true);
-    }
+    setTransitionLock(true);
   }
 
+  // pathname을 deps에 포함시켜 연속 navigation 시 timer 재시작 (B→C가 A→B의 lock을
+  // 일찍 풀어버리지 않도록). transitionLock state도 deps라 풀린 시점에 cleanup만 실행.
   useEffect(() => {
     if (!transitionLock) return;
     const id = window.setTimeout(() => setTransitionLock(false), TRANSITION_LOCK_MS);
     return () => window.clearTimeout(id);
-  }, [transitionLock]);
+  }, [transitionLock, pathname]);
 
   useLayoutEffect(() => {
     if (artworkDetail || !prefersHeroLayout) {

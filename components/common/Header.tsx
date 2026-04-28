@@ -41,7 +41,7 @@ function PublicHeader() {
   return (
     <header
       className={clsx(
-        'fixed top-0 left-0 right-0 transition-[border-color,backdrop-filter] duration-200',
+        'fixed top-0 left-0 right-0 transition-[background-color,border-color,backdrop-filter] duration-200',
         'pt-[env(safe-area-inset-top,0px)]',
         headerStyle
       )}
