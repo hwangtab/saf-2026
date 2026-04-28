@@ -1,9 +1,12 @@
-import { useState, useCallback, useMemo, useLayoutEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo, useLayoutEffect } from 'react';
 import { usePathname } from '@/i18n/navigation';
 import { isArtworkDetail, isHeroRoute } from '@/lib/hero-routes';
 
 const HEADER_SOLID_STYLE = 'bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200/50';
 const HERO_SCROLL_TOP_THRESHOLD = 8;
+// 라우트 전환 직후 헤더를 solid로 lock해 hero 라우트 진입 시 흰글씨가
+// 연노란 body bg에 떠서 안 보이는 짧은 깜빡임을 차단. 새 페이지 RSC mount 시간 정도.
+const TRANSITION_LOCK_MS = 250;
 
 type HeaderMode = 'transparent' | 'solid' | 'overlay';
 
@@ -42,6 +45,26 @@ export function useHeaderStyle() {
 
   // Hero routes should render transparent at top by default.
   const [heroAtTop, setHeroAtTop] = useState(true);
+
+  // 라우트 전환 lock — pathname 변경 시 짧게 solid 유지.
+  // React가 권장하는 "previous prop을 state로 저장하는 패턴"으로 effect 안 setState
+  // 및 render 중 ref 접근 lint 룰을 모두 우회. 첫 mount는 prevPathname === pathname이라
+  // 자동으로 lock이 켜지지 않음.
+  const [transitionLock, setTransitionLock] = useState(false);
+  const [prevPathname, setPrevPathname] = useState(pathname);
+
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
+    if (!transitionLock) {
+      setTransitionLock(true);
+    }
+  }
+
+  useEffect(() => {
+    if (!transitionLock) return;
+    const id = window.setTimeout(() => setTransitionLock(false), TRANSITION_LOCK_MS);
+    return () => window.clearTimeout(id);
+  }, [transitionLock]);
 
   useLayoutEffect(() => {
     if (artworkDetail || !prefersHeroLayout) {
@@ -90,10 +113,11 @@ export function useHeaderStyle() {
 
   const headerMode: HeaderMode = useMemo(() => {
     if (isMenuOpen) return 'overlay';
+    if (transitionLock) return 'solid';
     if (artworkDetail) return 'solid';
     if (!prefersHeroLayout) return 'solid';
     return heroAtTop ? 'transparent' : 'solid';
-  }, [heroAtTop, artworkDetail, isMenuOpen, prefersHeroLayout]);
+  }, [heroAtTop, artworkDetail, isMenuOpen, prefersHeroLayout, transitionLock]);
 
   const headerStyle = headerMode === 'transparent' ? 'bg-transparent' : HEADER_SOLID_STYLE;
 
