@@ -38,7 +38,7 @@ export default function ProposalModal() {
         title={t('proposalDocTitle')}
         className="max-w-3xl"
       >
-        <article className="space-y-8 text-base leading-relaxed text-charcoal break-keep">
+        <article className="space-y-8 text-base leading-relaxed text-charcoal break-keep text-pretty">
           <p className="text-sm text-charcoal-muted">{t('proposalDocSubtitle')}</p>
 
           <section className="space-y-3">

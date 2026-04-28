@@ -115,7 +115,7 @@ export default async function PetitionOhYoonPage() {
   const statementText = `${t('statementLine1')} ${t('statementLine2')} ${t('statementLine3')}`;
 
   return (
-    <main className="bg-canvas">
+    <main className="bg-canvas text-pretty">
       <JsonLdScript data={breadcrumbSchema} />
 
       {/* 1부 HERO — 제목·부제·D-N·진행률·CTA가 모바일 한 화면에 (PRD §6.1 FR-LP-01) */}
@@ -196,7 +196,7 @@ export default async function PetitionOhYoonPage() {
 
       {/* 2부 위기 한 줄 — 어두운 배경 + 흰 글자 띠 (PRD §8.1) */}
       <section className="bg-charcoal-deep text-white py-6 px-4">
-        <p className="container-max max-w-3xl mx-auto text-center text-base md:text-xl font-medium leading-relaxed break-keep">
+        <p className="container-max max-w-3xl mx-auto text-center text-base md:text-xl font-medium leading-relaxed break-keep text-balance">
           {t('crisis')}
         </p>
       </section>
@@ -427,7 +427,7 @@ export default async function PetitionOhYoonPage() {
           <SectionTitle as="h2" className="mb-8 md:mb-10">
             {t('urgencyHeading')}
           </SectionTitle>
-          <p className="text-lg md:text-xl font-semibold text-charcoal-deep leading-relaxed break-keep mb-8">
+          <p className="text-lg md:text-xl font-semibold text-charcoal-deep leading-relaxed break-keep text-balance mb-8">
             {t('urgencyLead')}
           </p>
           <div className="rounded-xl bg-canvas border border-gray-200 p-6">
@@ -455,7 +455,7 @@ export default async function PetitionOhYoonPage() {
               </li>
             </ul>
           </div>
-          <p className="mt-8 text-base md:text-lg leading-relaxed text-charcoal-muted break-keep">
+          <p className="mt-8 text-base md:text-lg leading-relaxed text-charcoal-muted break-keep text-balance">
             {t('urgencyTail')}
           </p>
         </div>
@@ -574,15 +574,15 @@ export default async function PetitionOhYoonPage() {
               {t('closedTitle')}
             </p>
           )}
-          <p className="text-xl md:text-2xl leading-relaxed mb-4 break-keep opacity-90">
+          <p className="text-xl md:text-2xl leading-relaxed mb-4 break-keep text-balance opacity-90">
             {t('closingLine1')}
           </p>
-          <p className="text-xl md:text-2xl leading-relaxed mb-4 break-keep opacity-90">
+          <p className="text-xl md:text-2xl leading-relaxed mb-4 break-keep text-balance opacity-90">
             {t('closingLine2')}
           </p>
           <p
             id="petition-closing-title"
-            className="font-display text-3xl md:text-4xl leading-tight mb-14 md:mb-16 break-keep"
+            className="font-display text-3xl md:text-4xl leading-tight mb-14 md:mb-16 break-keep text-balance"
           >
             {t('closingLine3')}
           </p>
