@@ -187,7 +187,7 @@ export default async function OhYoonPage() {
         <JsonLdScript data={[breadcrumbSchema, exhibitionEventSchema, itemListSchema]} />
         {aggregateOfferSchema && <JsonLdScript data={aggregateOfferSchema} />}
         <div className="w-full bg-canvas-soft min-h-screen font-sans">
-          <section className="relative w-full py-20 md:py-32 px-4 overflow-hidden border-b-8 border-double border-white/10 bg-charcoal">
+          <section className="relative w-full pt-28 md:pt-36 pb-20 md:pb-32 px-4 overflow-hidden border-b-8 border-double border-white/10 bg-charcoal">
             <div className="max-w-4xl mx-auto text-center relative z-10">
               <div className="inline-block relative mb-8 animate-stamp [animation-fill-mode:both]">
                 <span className="relative z-10 inline-block px-6 py-3 border-4 border-charcoal bg-white text-charcoal font-bold text-lg tracking-widest transform -rotate-1 shadow-[4px_4px_0px_0px_rgba(49,57,60,0.2)]">
