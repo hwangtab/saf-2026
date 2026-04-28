@@ -70,13 +70,35 @@ export async function generateMetadata(): Promise<Metadata> {
     PETITION_OH_YOON_PATH,
     locale
   );
-  // OG 이미지는 같은 디렉토리의 opengraph-image.tsx가 Next.js convention으로 자동 적용.
-  // 작품 사진 + 다크 오버레이 + 슬로건 합성, 1200×630.
+
+  // 카카오톡·페이스북 등 OG 크롤러 미리보기에 1974년 구의동 양면 부조 사진을 노출.
+  // createStandardPageMetadata가 기본 OG 이미지(/images/og-image.jpg)를 강제하므로
+  // 청원 페이지는 작품 사진으로 명시 override한다. 절대 URL 필수 (외부 봇이 접근).
+  const muralImageUrl = `${SITE_URL}/images/petition-oh-yoon/mural-1.png`;
+  const muralImageAlt =
+    locale === 'en'
+      ? 'Oh Yoon, 1974 — terracotta mural at the former Sangup Bank Guui-dong branch'
+      : '오윤, 1974, 테라코타 양면 부조 — 옛 상업은행 구의동지점';
+
   return {
     ...base,
     openGraph: {
       ...base.openGraph,
       type: 'article',
+      images: [
+        {
+          url: muralImageUrl,
+          secureUrl: muralImageUrl,
+          type: 'image/png',
+          width: 1280,
+          height: 960,
+          alt: muralImageAlt,
+        },
+      ],
+    },
+    twitter: {
+      ...base.twitter,
+      images: [{ url: muralImageUrl, alt: muralImageAlt }],
     },
   };
 }
