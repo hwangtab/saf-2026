@@ -8,14 +8,16 @@ import KpiBar from './KpiBar';
 import OverviewTab from './OverviewTab';
 import MessagesTab from './MessagesTab';
 import CommitteeTab from './CommitteeTab';
+import SignaturesTab from './SignaturesTab';
 import AuditLogTab from './AuditLogTab';
 import MailTab from './MailTab';
 import type { AdminBootstrap } from './types';
 
-type TabKey = 'overview' | 'messages' | 'committee' | 'mail' | 'audit';
+type TabKey = 'overview' | 'signatures' | 'messages' | 'committee' | 'mail' | 'audit';
 
 const TABS: { key: TabKey; labelKey: string }[] = [
   { key: 'overview', labelKey: 'tabOverview' },
+  { key: 'signatures', labelKey: 'tabSignatures' },
   { key: 'messages', labelKey: 'tabMessages' },
   { key: 'committee', labelKey: 'tabCommittee' },
   { key: 'mail', labelKey: 'tabMail' },
@@ -54,6 +56,11 @@ export default function PetitionAdminClient({ bootstrap }: { bootstrap: AdminBoo
               )}
             >
               {t(tab_.labelKey)}
+              {tab_.key === 'signatures' && bootstrap.signaturesTotal > 0 && (
+                <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-primary-surface px-1.5 py-0.5 text-xs font-medium text-primary-strong">
+                  {bootstrap.signaturesTotal.toLocaleString('ko-KR')}
+                </span>
+              )}
               {tab_.key === 'messages' && bootstrap.messages.length > 0 && (
                 <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-primary-surface px-1.5 py-0.5 text-xs font-medium text-primary-strong">
                   {bootstrap.messages.length}
@@ -72,6 +79,12 @@ export default function PetitionAdminClient({ bootstrap }: { bootstrap: AdminBoo
       <div className="min-h-[300px]">
         {tab === 'overview' && (
           <OverviewTab counts={bootstrap.counts} regionBreakdown={bootstrap.regionBreakdown} />
+        )}
+        {tab === 'signatures' && (
+          <SignaturesTab
+            signatures={bootstrap.signatures}
+            signaturesTotal={bootstrap.signaturesTotal}
+          />
         )}
         {tab === 'messages' && <MessagesTab messages={bootstrap.messages} />}
         {tab === 'committee' && <CommitteeTab committee={bootstrap.committee} />}

@@ -53,6 +53,17 @@ export default async function PetitionAdminPage() {
     .eq('is_committee', true)
     .order('full_name', { ascending: true });
 
+  // 3b. 전체 서명 명단 (운영자 표 — 최근 1000개, total은 카운트로 별도 표시)
+  const { data: signatures, count: signaturesTotal } = await admin
+    .from('petition_signatures')
+    .select(
+      'id, full_name, email, phone, region_top, region_sub, is_committee, message, message_public, is_masked, created_at',
+      { count: 'exact' }
+    )
+    .eq('petition_slug', PETITION_OH_YOON_SLUG)
+    .order('created_at', { ascending: false })
+    .limit(1000);
+
   // 4. 감사 로그 (최근 100개)
   const { data: auditRaw } = await admin
     .from('petition_audit_log')
@@ -87,6 +98,8 @@ export default async function PetitionAdminPage() {
     regionBreakdown,
     messages: messages ?? [],
     committee: committee ?? [],
+    signatures: signatures ?? [],
+    signaturesTotal: signaturesTotal ?? 0,
     audit,
   };
 

@@ -22,8 +22,10 @@ async function logAudit(args: {
     | 'csv_export_committee'
     | 'force_close_campaign'
     | 'reopen_campaign'
-    | 'manual_purge_pii';
-  targetType: 'campaign' | 'batch';
+    | 'manual_purge_pii'
+    | 'delete_signature'
+    | 'update_signature';
+  targetType: 'campaign' | 'batch' | 'signature';
   targetId?: string | null;
   details?: Record<string, unknown>;
   actorId?: string | null;
@@ -232,4 +234,162 @@ export async function exportSignaturesCsv(mode: CsvExportMode): Promise<CsvExpor
   }
 
   return { ok: true, csv, filename, rowCount: rows.length };
+}
+
+// ─── 서명 삭제 (운영자 직접 조작 — 잘못된/중복 입력 정정) ───────────
+export async function deleteSignature(signatureId: string): Promise<AdminActionResult> {
+  await requireAdmin();
+  const t = await getTranslations('admin.petition');
+
+  if (!signatureId) {
+    return { ok: false, message: t('errorSignatureNotFound') };
+  }
+
+  const admin = createSupabaseAdminClient();
+
+  // 삭제 전 행을 읽어 audit log 상세에 보존
+  const { data: snapshot } = await admin
+    .from('petition_signatures')
+    .select('id, full_name, email, region_top, region_sub, is_committee, message_public')
+    .eq('id', signatureId)
+    .maybeSingle();
+
+  if (!snapshot) {
+    return { ok: false, message: t('errorSignatureNotFound') };
+  }
+
+  const { error } = await admin.from('petition_signatures').delete().eq('id', signatureId);
+
+  if (error) {
+    console.error('[petition-admin] delete error:', error);
+    return { ok: false, message: t('errorDeleteFailed') };
+  }
+
+  await logAudit({
+    action: 'delete_signature',
+    targetType: 'signature',
+    targetId: signatureId,
+    details: snapshot as unknown as Record<string, unknown>,
+  });
+
+  revalidatePath(ADMIN_PATH);
+  revalidatePath(PETITION_OH_YOON_PATH);
+  return { ok: true, message: t('successDeleted') };
+}
+
+// ─── 서명 내용 수정 (운영자 정정) ────────────────────────────────
+// 보안: email은 email_hash 동기화 + unique 제약 영향 때문에 별도 흐름 필요 → 이번 버전에서는 미지원.
+// 잘못된 이메일은 deleteSignature 후 재서명 안내.
+export interface UpdateSignaturePatch {
+  fullName?: string;
+  phone?: string | null;
+  regionTop?: string;
+  regionSub?: string | null;
+  message?: string | null;
+  messagePublic?: boolean;
+  isCommittee?: boolean;
+  isMasked?: boolean;
+}
+
+const PHONE_DIGIT_RE = /\D+/g;
+
+export async function updateSignature(
+  signatureId: string,
+  patch: UpdateSignaturePatch
+): Promise<AdminActionResult> {
+  await requireAdmin();
+  const t = await getTranslations('admin.petition');
+
+  if (!signatureId) {
+    return { ok: false, message: t('errorSignatureNotFound') };
+  }
+
+  // 동적으로 update 객체 구성 — 명시된 필드만 반영.
+  const update: Record<string, unknown> = {};
+  const audited: Record<string, unknown> = {};
+
+  if (patch.fullName !== undefined) {
+    const v = patch.fullName.trim();
+    if (v.length < 1 || v.length > 100) {
+      return { ok: false, message: t('errorUpdateInvalidName') };
+    }
+    update.full_name = v;
+    audited.full_name = v;
+  }
+
+  if (patch.phone !== undefined) {
+    if (patch.phone === null || patch.phone.trim() === '') {
+      update.phone = null;
+      audited.phone = null;
+    } else {
+      const raw = patch.phone.trim();
+      const digits = raw.replace(PHONE_DIGIT_RE, '');
+      if (digits.length < 9 || digits.length > 15 || raw.length > 30) {
+        return { ok: false, message: t('errorUpdateInvalidPhone') };
+      }
+      update.phone = raw;
+      audited.phone = raw;
+    }
+  }
+
+  if (patch.regionTop !== undefined) {
+    update.region_top = patch.regionTop.trim();
+    audited.region_top = patch.regionTop.trim();
+  }
+  if (patch.regionSub !== undefined) {
+    update.region_sub = patch.regionSub === null ? null : patch.regionSub.trim() || null;
+    audited.region_sub = update.region_sub;
+  }
+
+  if (patch.message !== undefined) {
+    if (patch.message === null || patch.message.trim() === '') {
+      update.message = null;
+      audited.message_changed = true;
+    } else {
+      const m = patch.message.trim();
+      if (m.length > 500) {
+        return { ok: false, message: t('errorUpdateInvalidMessage') };
+      }
+      update.message = m;
+      audited.message_changed = true;
+    }
+  }
+  if (patch.messagePublic !== undefined) {
+    update.message_public = patch.messagePublic;
+    audited.message_public = patch.messagePublic;
+  }
+  if (patch.isCommittee !== undefined) {
+    update.is_committee = patch.isCommittee;
+    audited.is_committee = patch.isCommittee;
+  }
+  // is_masked는 트리거가 자동 audit 기록하므로 logAudit details에는 별도 표시만.
+  if (patch.isMasked !== undefined) {
+    update.is_masked = patch.isMasked;
+  }
+
+  if (Object.keys(update).length === 0) {
+    return { ok: true };
+  }
+
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.from('petition_signatures').update(update).eq('id', signatureId);
+
+  if (error) {
+    console.error('[petition-admin] update error:', error);
+    return { ok: false, message: t('errorUpdateFailed') };
+  }
+
+  // is_masked만 단독 변경한 경우는 트리거가 audit 기록 → 여기서는 추가 항목이 있을 때만 explicit log.
+  if (Object.keys(audited).length > 0) {
+    await logAudit({
+      action: 'update_signature',
+      targetType: 'signature',
+      targetId: signatureId,
+      details: audited,
+    });
+  }
+
+  revalidatePath(ADMIN_PATH);
+  revalidatePath(PETITION_OH_YOON_PATH);
+  return { ok: true, message: t('successUpdated') };
 }

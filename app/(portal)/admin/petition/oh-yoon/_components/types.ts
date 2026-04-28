@@ -35,6 +35,20 @@ export interface AdminCommitteeRow {
   created_at: string;
 }
 
+export interface AdminSignatureRow {
+  id: string;
+  full_name: string;
+  email: string;
+  phone: string | null;
+  region_top: string;
+  region_sub: string | null;
+  is_committee: boolean;
+  message: string | null;
+  message_public: boolean;
+  is_masked: boolean;
+  created_at: string;
+}
+
 export interface AdminAuditRow {
   id: number;
   actor_id: string | null;
@@ -51,5 +65,7 @@ export interface AdminBootstrap {
   regionBreakdown: AdminRegionRow[];
   messages: AdminMessageRow[];
   committee: AdminCommitteeRow[];
+  signatures: AdminSignatureRow[];
+  signaturesTotal: number;
   audit: AdminAuditRow[];
 }
