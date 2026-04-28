@@ -354,8 +354,54 @@ export async function initiatePayment(input: InitiatePaymentInput): Promise<Init
     return { success: false, error: apiError('payment_session_failed', buyerLocale) };
   }
 
+  // PayPal foreignEasyPay 페이로드 — products 정보 포함하여 리스크 검증 통과율 향상.
+  // (Toss 가이드: PayPal 판매자 보호를 받으려면 상품/배송 정보 권장)
+  // shipping은 형식 명세가 불확실해서 제외 (선택 필드)
+  const buildForeignEasyPay = () => ({
+    country: 'KR',
+    products: [
+      {
+        name: input.orderName.slice(0, 127),
+        quantity: 1,
+        unitAmount: krwToUsd(input.totalAmount),
+        currency: 'USD',
+        description: input.orderName.slice(0, 127),
+      },
+    ],
+  });
+
   let response: Response;
   try {
+    const tossPayload =
+      provider === 'overseas'
+        ? {
+            // PayPal 결제 (saf202719y MID): USD 환산 + FOREIGN_EASY_PAY + provider=PAYPAL
+            method: 'FOREIGN_EASY_PAY',
+            provider: 'PAYPAL',
+            currency: 'USD',
+            amount: krwToUsd(input.totalAmount),
+            orderId: input.orderNo,
+            orderName: input.orderName,
+            successUrl: input.successUrl,
+            failUrl: input.failUrl,
+            customerName: input.buyerName,
+            customerEmail: input.buyerEmail,
+            foreignEasyPay: buildForeignEasyPay(),
+          }
+        : {
+            // 국내 결제 (saf202i818 MID): KRW + 카드/계좌이체/간편결제
+            method: input.method,
+            amount: input.totalAmount,
+            orderId: input.orderNo,
+            orderName: input.orderName,
+            successUrl: input.successUrl,
+            failUrl: input.failUrl,
+            customerName: input.buyerName,
+            customerEmail: input.buyerEmail,
+            useEscrow: false,
+            ...(input.easyPay ? { easyPay: input.easyPay } : {}),
+          };
+
     response = await fetchWithTimeout(`${config.apiBaseUrl}/v1/payments`, {
       method: 'POST',
       headers: {
@@ -363,35 +409,7 @@ export async function initiatePayment(input: InitiatePaymentInput): Promise<Init
         'Content-Type': 'application/json',
         'Idempotency-Key': input.orderNo,
       },
-      body: JSON.stringify(
-        provider === 'overseas'
-          ? {
-              // PayPal 결제 (saf202719y MID): USD 환산 + FOREIGN_EASY_PAY + provider=PAYPAL
-              method: 'FOREIGN_EASY_PAY',
-              provider: 'PAYPAL',
-              currency: 'USD',
-              amount: krwToUsd(input.totalAmount),
-              orderId: input.orderNo,
-              orderName: input.orderName,
-              successUrl: input.successUrl,
-              failUrl: input.failUrl,
-              customerName: input.buyerName,
-              customerEmail: input.buyerEmail,
-            }
-          : {
-              // 국내 결제 (saf202i818 MID): KRW + 카드/계좌이체/간편결제
-              method: input.method,
-              amount: input.totalAmount,
-              orderId: input.orderNo,
-              orderName: input.orderName,
-              successUrl: input.successUrl,
-              failUrl: input.failUrl,
-              customerName: input.buyerName,
-              customerEmail: input.buyerEmail,
-              useEscrow: false,
-              ...(input.easyPay ? { easyPay: input.easyPay } : {}),
-            }
-      ),
+      body: JSON.stringify(tossPayload),
     });
   } catch {
     return { success: false, error: apiError('payment_server_unreachable', buyerLocale) };
