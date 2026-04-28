@@ -53,3 +53,7 @@ tsconfig.tsbuildinfo
 
 # 외부 조사 보고서(대용량 PDF) — 참고용 로컬 보관, 레포 포함 금지
 docs/미술시장 보고서/
+
+# Magazine SQL — gen-magazine-sql.ts 출력. content/magazine-drafts/가 진본,
+# .sql은 일회성 빌드 산출물이라 추적 불필요.
+scripts/.magazine-sql/
