@@ -121,10 +121,6 @@ export default function SignForm() {
           placeholder="예: 홍길동"
           className={INPUT_BASE}
         />
-        <p className="mt-1.5 text-xs text-charcoal-muted">
-          청원은 시민의 이름으로 차기 서울시장께 전달됩니다. 정중한 전달을 위해 닉네임·별명이 아닌
-          본명으로 입력해 주세요.
-        </p>
         {fieldError('fullName') && <p className={ERROR_TEXT}>{fieldError('fullName')}</p>}
       </div>
 
