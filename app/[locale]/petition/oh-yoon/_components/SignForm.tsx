@@ -17,8 +17,8 @@ const LABEL_BASE = 'block text-sm font-semibold text-charcoal-deep mb-1.5';
 const ERROR_TEXT = 'mt-1.5 text-sm text-danger';
 
 const PRIVACY_BLURB =
-  '수집 항목: 성함, 이메일, 거주 지역. ' +
-  '이용 목적: 청원 집계, 차기 서울시장 후보 측 전달, 진행 상황 안내. ' +
+  '수집 항목: 성함, 이메일, 전화번호, 거주 지역. ' +
+  '이용 목적: 청원 집계, 차기 서울시장 후보 측 전달, 진행 상황 안내(이메일·전화). ' +
   '보유 기간: 청원 종료 후 6개월. ' +
   '수집 주체: 한국스마트협동조합 (예술인협동조합). 동의 거부 시 청원에 참여하실 수 없습니다.';
 
@@ -31,6 +31,7 @@ export default function SignForm() {
 
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [regionTop, setRegionTop] = useState('');
   const [regionSub, setRegionSub] = useState('');
   const [isCommittee, setIsCommittee] = useState(false);
@@ -72,6 +73,7 @@ export default function SignForm() {
       const res = await signPetition({
         fullName,
         email,
+        phone,
         regionTop,
         regionSub,
         isCommittee,
@@ -134,6 +136,29 @@ export default function SignForm() {
           청원의 진행 상황과 결과를 이 메일로 정중히 알려드립니다.
         </p>
         {fieldError('email') && <p className={ERROR_TEXT}>{fieldError('email')}</p>}
+      </div>
+
+      {/* 전화번호 — 평문 저장(연락 목적). 형식 자유, 숫자 9~15자리 검증. */}
+      <div>
+        <label htmlFor="petition-phone" className={LABEL_BASE}>
+          전화번호 <span className="text-danger">*</span>
+        </label>
+        <input
+          id="petition-phone"
+          type="tel"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          maxLength={30}
+          required
+          autoComplete="tel"
+          inputMode="tel"
+          placeholder="010-1234-5678"
+          className={INPUT_BASE}
+        />
+        <p className="mt-1.5 text-xs text-charcoal-muted">
+          이메일이 닿지 않거나, 언론 인터뷰·청원 전달식 등 시급한 연락이 필요할 때만 사용합니다.
+        </p>
+        {fieldError('phone') && <p className={ERROR_TEXT}>{fieldError('phone')}</p>}
       </div>
 
       {/* 거주 지역 — 시·도 + 시·군·구 (시·군·구까지만; 상세 주소는 받지 않음) */}

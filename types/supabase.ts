@@ -6,31 +6,6 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: '14.1';
   };
-  graphql_public: {
-    Tables: {
-      [_ in never]: never;
-    };
-    Views: {
-      [_ in never]: never;
-    };
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json;
-          operationName?: string;
-          query?: string;
-          variables?: Json;
-        };
-        Returns: Json;
-      };
-    };
-    Enums: {
-      [_ in never]: never;
-    };
-    CompositeTypes: {
-      [_ in never]: never;
-    };
-  };
   public: {
     Tables: {
       activity_logs: {
@@ -889,6 +864,7 @@ export type Database = {
           message: string | null;
           message_public: boolean;
           petition_slug: string;
+          phone: string | null;
           region_sub: string | null;
           region_top: string;
           user_agent: string | null;
@@ -910,6 +886,7 @@ export type Database = {
           message?: string | null;
           message_public?: boolean;
           petition_slug: string;
+          phone?: string | null;
           region_sub?: string | null;
           region_top: string;
           user_agent?: string | null;
@@ -931,6 +908,7 @@ export type Database = {
           message?: string | null;
           message_public?: boolean;
           petition_slug?: string;
+          phone?: string | null;
           region_sub?: string | null;
           region_top?: string;
           user_agent?: string | null;
@@ -1252,27 +1230,16 @@ export type Database = {
       };
     };
     Functions: {
-      check_artwork_availability:
-        | {
-            Args: { p_artwork_id: string };
-            Returns: {
-              artwork_edition_limit: number;
-              artwork_edition_type: string;
-              is_available: boolean;
-              pending_count: number;
-              sold_count: number;
-            }[];
-          }
-        | {
-            Args: { p_artwork_id: string; p_exclude_order_id?: string };
-            Returns: {
-              artwork_edition_limit: number;
-              artwork_edition_type: string;
-              is_available: boolean;
-              pending_count: number;
-              sold_count: number;
-            }[];
-          };
+      check_artwork_availability: {
+        Args: { p_artwork_id: string; p_exclude_order_id?: string };
+        Returns: {
+          artwork_edition_limit: number;
+          artwork_edition_type: string;
+          is_available: boolean;
+          pending_count: number;
+          sold_count: number;
+        }[];
+      };
       check_rate_limit: {
         Args: { p_key: string; p_limit: number; p_window_ms: number };
         Returns: {
@@ -1509,9 +1476,6 @@ export type CompositeTypes<
     : never;
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       artwork_status: ['available', 'sold', 'reserved', 'hidden'],

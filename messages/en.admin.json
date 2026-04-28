@@ -591,6 +591,7 @@
       "committeeEmpty": "No committee members match.",
       "committeeColName": "Name",
       "committeeColEmail": "Email",
+      "committeeColPhone": "Phone",
       "committeeColRegion": "Region",
       "committeeColSignedAt": "Signed at",
       "committeeFooter": "The committee list is published in the founding declaration when results are announced. Get CSVs from the Overview tab.",

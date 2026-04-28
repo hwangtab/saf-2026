@@ -13,6 +13,7 @@ import { getRequestMetadata } from './request-metadata';
 export interface SignPetitionInput {
   fullName: string;
   email: string;
+  phone: string;
   regionTop: string;
   regionSub: string;
   isCommittee: boolean;
@@ -40,6 +41,12 @@ export interface SignPetitionResult {
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// 한국 전화번호 — 입력은 자유(공백·하이픈·괄호·국가코드 허용),
+// 숫자만 추출 후 9~15자리이면 OK. 운영자가 보고 직접 전화하므로 사용자 입력은 그대로 보존.
+function normalizePhoneDigits(raw: string): string {
+  return raw.replace(/\D+/g, '');
+}
+
 function fail(
   code: SignPetitionResultCode,
   message?: string,
@@ -52,6 +59,8 @@ export async function signPetition(input: SignPetitionInput): Promise<SignPetiti
   // ─── 1. 입력 검증 ────────────────────────────────────────────
   const fullName = (input.fullName ?? '').trim();
   const email = (input.email ?? '').trim().toLowerCase();
+  const phone = (input.phone ?? '').trim();
+  const phoneDigits = normalizePhoneDigits(phone);
   const regionTop = (input.regionTop ?? '').trim();
   const regionSub = (input.regionSub ?? '').trim();
   const message = (input.message ?? '').trim();
@@ -62,6 +71,9 @@ export async function signPetition(input: SignPetitionInput): Promise<SignPetiti
   }
   if (!EMAIL_RE.test(email)) {
     errors.email = '이메일 주소 형식이 올바르지 않습니다.';
+  }
+  if (phoneDigits.length < 9 || phoneDigits.length > 15 || phone.length > 30) {
+    errors.phone = '연락 가능한 전화번호를 입력해 주십시오.';
   }
   if (!isValidRegionPair(regionTop, regionSub)) {
     errors.regionTop = '거주 지역을 정확히 선택해 주십시오.';
@@ -101,6 +113,7 @@ export async function signPetition(input: SignPetitionInput): Promise<SignPetiti
     petition_slug: PETITION_OH_YOON_SLUG,
     full_name: fullName,
     email,
+    phone,
     region_top: regionTop,
     region_sub: regionSub || null,
     is_committee: input.isCommittee === true,

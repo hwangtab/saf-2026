@@ -29,6 +29,7 @@ export interface AdminCommitteeRow {
   id: string;
   full_name: string;
   email: string;
+  phone: string | null;
   region_top: string;
   region_sub: string | null;
   created_at: string;

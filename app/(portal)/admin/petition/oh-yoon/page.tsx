@@ -48,7 +48,7 @@ export default async function PetitionAdminPage() {
   // 3. 추진위원 명단 (가나다순)
   const { data: committee } = await admin
     .from('petition_signatures')
-    .select('id, full_name, email, region_top, region_sub, created_at')
+    .select('id, full_name, email, phone, region_top, region_sub, created_at')
     .eq('petition_slug', PETITION_OH_YOON_SLUG)
     .eq('is_committee', true)
     .order('full_name', { ascending: true });

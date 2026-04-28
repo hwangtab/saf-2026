@@ -591,6 +591,7 @@
       "committeeEmpty": "조건에 맞는 추진위원이 없습니다.",
       "committeeColName": "이름",
       "committeeColEmail": "이메일",
+      "committeeColPhone": "전화번호",
       "committeeColRegion": "지역",
       "committeeColSignedAt": "서명일",
       "committeeFooter": "추진위원 명단은 청원 결과 발표 시 발족 선언문에 게재됩니다. CSV는 «개요» 탭에서 받으세요.",

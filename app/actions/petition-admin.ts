@@ -142,7 +142,7 @@ export async function exportSignaturesCsv(mode: CsvExportMode): Promise<CsvExpor
   const baseQuery = admin
     .from('petition_signatures')
     .select(
-      'id, full_name, email, region_top, region_sub, is_committee, message, message_public, is_masked, created_at'
+      'id, full_name, email, phone, region_top, region_sub, is_committee, message, message_public, is_masked, created_at'
     )
     .eq('petition_slug', PETITION_OH_YOON_SLUG)
     .order('created_at', { ascending: true });
@@ -163,11 +163,23 @@ export async function exportSignaturesCsv(mode: CsvExportMode): Promise<CsvExpor
 
   if (mode === 'full') {
     csv = buildCsv(
-      ['서명일', '성함', '이메일', '시·도', '시·군·구', '추진위원', '메시지', '공개동의', '마스킹'],
+      [
+        '서명일',
+        '성함',
+        '이메일',
+        '전화번호',
+        '시·도',
+        '시·군·구',
+        '추진위원',
+        '메시지',
+        '공개동의',
+        '마스킹',
+      ],
       rows.map((r) => [
         new Date(r.created_at).toLocaleString('ko-KR'),
         r.full_name,
         r.email,
+        r.phone ?? '',
         r.region_top,
         r.region_sub ?? '',
         r.is_committee ? 'Y' : '',
@@ -201,10 +213,11 @@ export async function exportSignaturesCsv(mode: CsvExportMode): Promise<CsvExpor
     });
   } else {
     csv = buildCsv(
-      ['성함', '이메일', '시·도', '시·군·구', '서명일'],
+      ['성함', '이메일', '전화번호', '시·도', '시·군·구', '서명일'],
       rows.map((r) => [
         r.full_name,
         r.email,
+        r.phone ?? '',
         r.region_top,
         r.region_sub ?? '',
         new Date(r.created_at).toLocaleString('ko-KR'),

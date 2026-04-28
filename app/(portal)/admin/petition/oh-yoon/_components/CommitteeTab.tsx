@@ -19,7 +19,10 @@ export default function CommitteeTab({ committee }: CommitteeTabProps) {
     const q = search.trim().toLowerCase();
     if (!q) return committee;
     return committee.filter(
-      (c) => c.full_name.toLowerCase().includes(q) || c.email.toLowerCase().includes(q)
+      (c) =>
+        c.full_name.toLowerCase().includes(q) ||
+        c.email.toLowerCase().includes(q) ||
+        (c.phone ?? '').toLowerCase().includes(q)
     );
   }, [committee, search]);
 
@@ -78,6 +81,7 @@ export default function CommitteeTab({ committee }: CommitteeTabProps) {
               <tr>
                 <th className="px-3 py-2.5 font-semibold">{t('committeeColName')}</th>
                 <th className="px-3 py-2.5 font-semibold">{t('committeeColEmail')}</th>
+                <th className="px-3 py-2.5 font-semibold">{t('committeeColPhone')}</th>
                 <th className="px-3 py-2.5 font-semibold">{t('committeeColRegion')}</th>
                 <th className="px-3 py-2.5 font-semibold">{t('committeeColSignedAt')}</th>
               </tr>
@@ -91,6 +95,15 @@ export default function CommitteeTab({ committee }: CommitteeTabProps) {
                   <tr key={c.id}>
                     <td className="px-3 py-2 text-charcoal-deep font-medium">{c.full_name}</td>
                     <td className="px-3 py-2 text-charcoal-muted">{c.email}</td>
+                    <td className="px-3 py-2 text-charcoal-muted tabular-nums">
+                      {c.phone ? (
+                        <a href={`tel:${c.phone}`} className="hover:underline">
+                          {c.phone}
+                        </a>
+                      ) : (
+                        <span className="text-gray-400">—</span>
+                      )}
+                    </td>
                     <td className="px-3 py-2 text-charcoal-muted">{region}</td>
                     <td className="px-3 py-2 text-charcoal-muted tabular-nums">
                       {new Date(c.created_at).toLocaleDateString('ko-KR')}
