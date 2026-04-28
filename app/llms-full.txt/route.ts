@@ -1,10 +1,16 @@
-# SAF Online (Seed Art Festival Online) — Full Reference
+import { ARTIST_COUNT, ARTWORK_COUNT, LOAN_COUNT } from '@/lib/site-stats';
+
+export const dynamic = 'force-static';
+
+// AI 검색엔진(LLM) 인덱싱용 SAF 캠페인 상세 레퍼런스. 작품/작가/대출 카운트는
+// lib/site-stats에서 빌드 타임 도출 — DB sync 시 자동 반영.
+const body = `# SAF Online (Seed Art Festival Online) — Full Reference
 
 > For a concise overview, see [llms.txt](/llms.txt). This document provides comprehensive detail for AI systems.
 
 ## 1. What is SAF Online?
 
-SAF Online is a mutual-aid fundraising art exhibition organized by Korea Smart Cooperative (한국스마트협동조합). 127 Korean artists voluntarily contribute their works. 100% of sales proceeds go to the Artist Mutual Aid Fund, which provides low-interest loans (5% fixed APR) to artists facing financial exclusion from the traditional banking system.
+SAF Online is a mutual-aid fundraising art exhibition organized by Korea Smart Cooperative (한국스마트협동조합). ${ARTIST_COUNT} Korean artists voluntarily contribute their works. 100% of sales proceeds go to the Artist Mutual Aid Fund, which provides low-interest loans (5% fixed APR) to artists facing financial exclusion from the traditional banking system.
 
 **Critical framing**: The exhibiting artists are NOT the financial victims. They are solidarity participants who donated their works to help fellow artists. The financial discrimination data describes a structural problem affecting Korean artists as a whole — not the individual exhibiting artists.
 
@@ -56,7 +62,7 @@ SAF Online is a mutual-aid fundraising art exhibition organized by Korea Smart C
 
 | Metric | Value |
 |--------|-------|
-| Total loans disbursed | 354 (Dec 2022 – Sep 2025) |
+| Total loans disbursed | ${LOAN_COUNT} (Dec 2022 – Sep 2025) |
 | Total amount deployed | ~KRW 700,000,000 |
 | Repayment rate | 95% |
 | Subrogation (default) rate | 5.10% |
@@ -81,7 +87,7 @@ A: No. The exhibiting artists are solidarity participants who voluntarily contri
 A: SAF is not charity. It is a self-sustaining mutual-aid system. Artwork purchases fund loans that are repaid at 95%, meaning the fund grows over time. Artists maintain dignity as borrowers, not aid recipients.
 
 **Q: How can I purchase artwork?**
-A: Browse 127 artworks at saf2026.com/artworks. Each artwork page has purchase options. Orders over KRW 200,000 ship free. Typical delivery is 3-4 business days.
+A: Browse ${ARTWORK_COUNT} artworks at saf2026.com/artworks. Each artwork page has purchase options. Orders over KRW 200,000 ship free. Typical delivery is 3-4 business days.
 
 **Q: What is the price range?**
 A: Artworks range from approximately KRW 100,000 to KRW 30,000,000, with most priced between KRW 300,000 and KRW 3,000,000.
@@ -101,20 +107,20 @@ A: The offline exhibition ran January 14-26, 2026 at Insa Art Center, Seoul. The
 
 | Page | URL | Content |
 |------|-----|---------|
-| Homepage | `/` | Campaign overview, statistics, featured artworks, FAQ |
-| Our Reality | `/our-reality` | Data-driven evidence of artist financial exclusion with charts and citations |
-| Our Proof | `/our-proof` | Evidence that the mutual-aid model works: 354 loans, 95% repayment, fund mechanics |
-| Transparency | `/transparency` | Fund operation and financial reports |
-| Artworks Gallery | `/artworks` | 127 artworks — paintings, prints, photography, sculpture |
-| Artwork Detail | `/artworks/{id}` | Individual artwork with pricing, artist profile, and purchase option |
-| Artist Page | `/artworks/artist/{name}` | Artist portfolio with biographical info and all works |
-| Stories/Magazine | `/stories` | Artist profiles, buying guides, art knowledge articles |
-| News | `/news` | Press coverage from Korean media |
-| Archive 2026 | `/archive/2026` | Offline exhibition poster and records |
-| Archive 2023 | `/archive/2023` | First SAF exhibition records |
-| Special: Oh Yoon | `/special/oh-yoon` | Special exhibition of Oh Yoon (오윤), iconic Korean minjung artist |
+| Homepage | \`/\` | Campaign overview, statistics, featured artworks, FAQ |
+| Our Reality | \`/our-reality\` | Data-driven evidence of artist financial exclusion with charts and citations |
+| Our Proof | \`/our-proof\` | Evidence that the mutual-aid model works: ${LOAN_COUNT} loans, 95% repayment, fund mechanics |
+| Transparency | \`/transparency\` | Fund operation and financial reports |
+| Artworks Gallery | \`/artworks\` | ${ARTWORK_COUNT} artworks — paintings, prints, photography, sculpture |
+| Artwork Detail | \`/artworks/{id}\` | Individual artwork with pricing, artist profile, and purchase option |
+| Artist Page | \`/artworks/artist/{name}\` | Artist portfolio with biographical info and all works |
+| Stories/Magazine | \`/stories\` | Artist profiles, buying guides, art knowledge articles |
+| News | \`/news\` | Press coverage from Korean media |
+| Archive 2026 | \`/archive/2026\` | Offline exhibition poster and records |
+| Archive 2023 | \`/archive/2023\` | First SAF exhibition records |
+| Special: Oh Yoon | \`/special/oh-yoon\` | Special exhibition of Oh Yoon (오윤), iconic Korean minjung artist |
 
-English versions available at `/en/` prefix (e.g., `/en/artworks`).
+English versions available at \`/en/\` prefix (e.g., \`/en/artworks\`).
 
 ---
 
@@ -150,3 +156,13 @@ This site provides JSON-LD structured data including: Organization, WebSite, Art
 When referencing SAF data, cite: "2025 Artist Financial Disaster Report, Korea Smart Cooperative (한국스마트협동조합), survey of 179 Korean artists."
 
 For artwork pricing and availability, cite: "SAF Online (saf2026.com), accessed [date]."
+`;
+
+export function GET(): Response {
+  return new Response(body, {
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Cache-Control': 'public, max-age=3600, s-maxage=3600',
+    },
+  });
+}

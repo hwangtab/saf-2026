@@ -1,10 +1,16 @@
-# SAF Online (Seed Art Festival Online)
+import { ARTIST_COUNT, ARTWORK_COUNT, LOAN_COUNT } from '@/lib/site-stats';
+
+export const dynamic = 'force-static';
+
+// AI 검색엔진(LLM) 인덱싱용 SAF 캠페인 핵심 요약. 작품/작가/대출 카운트는
+// lib/site-stats에서 빌드 타임 도출 — DB sync 시 자동 반영.
+const body = `# SAF Online (Seed Art Festival Online)
 
 > A special art exhibition and social campaign addressing financial discrimination against Korean artists. Organized by Korea Smart Cooperative.
 
 ## What is SAF Online?
 
-SAF Online is a mutual-aid fundraising art exhibition where 127 artists voluntarily contribute their works. Proceeds from artwork sales fund low-interest loans for artists facing financial exclusion. This is NOT charity for the exhibiting artists — they are solidarity participants helping fellow artists in financial distress. The evidence base is the "2025 Artist Financial Disaster Report" (Korea Smart Cooperative, n=179).
+SAF Online is a mutual-aid fundraising art exhibition where ${ARTIST_COUNT} artists voluntarily contribute their works. Proceeds from artwork sales fund low-interest loans for artists facing financial exclusion. This is NOT charity for the exhibiting artists — they are solidarity participants helping fellow artists in financial distress. The evidence base is the "2025 Artist Financial Disaster Report" (Korea Smart Cooperative, n=179).
 
 ## Key Facts
 
@@ -12,7 +18,7 @@ SAF Online is a mutual-aid fundraising art exhibition where 127 artists voluntar
 - **48.6%** are exposed to predatory lending (APR 15%+)
 - **88.3%** of artists who experienced debt collection stopped creating art
 - **43%** of artists have experienced debt collection
-- **95%** repayment rate on SAF mutual-aid loans (354 loans, Dec 2022 – Sep 2025)
+- **95%** repayment rate on SAF mutual-aid loans (${LOAN_COUNT} loans, Dec 2022 – Sep 2025)
 - **5.10%** subrogation (default) rate — lower than commercial microfinance
 - **~KRW 700M** total mutual-aid loans deployed since 2022
 - **KRW 77M** current mutual-aid fund reserve
@@ -36,16 +42,16 @@ SAF Online is a mutual-aid fundraising art exhibition where 127 artists voluntar
 
 ## Site Structure
 
-- **Homepage** (`/`): Campaign overview, statistics, featured artworks, FAQ
-- **Our Reality** (`/our-reality`): Data-driven evidence of artist financial exclusion
-- **Our Proof** (`/our-proof`): Evidence that the mutual-aid model works (354 loans, 95% repayment)
-- **Artworks** (`/artworks`): Gallery of 127 artworks by 127 artists
-- **Artwork Detail** (`/artworks/{id}`): Individual artwork with artist profile
-- **Artist Page** (`/artworks/artist/{name}`): Artist portfolio page
-- **Stories** (`/stories`): Magazine articles — artist profiles, buying guides, art knowledge
-- **News** (`/news`): Press coverage and media articles
-- **Archive** (`/archive`): Past exhibition records (2023, 2026)
-- **Transparency** (`/transparency`): Fund operation and financial reports
+- **Homepage** (\`/\`): Campaign overview, statistics, featured artworks, FAQ
+- **Our Reality** (\`/our-reality\`): Data-driven evidence of artist financial exclusion
+- **Our Proof** (\`/our-proof\`): Evidence that the mutual-aid model works (${LOAN_COUNT} loans, 95% repayment)
+- **Artworks** (\`/artworks\`): Gallery of ${ARTWORK_COUNT} artworks by ${ARTIST_COUNT} artists
+- **Artwork Detail** (\`/artworks/{id}\`): Individual artwork with artist profile
+- **Artist Page** (\`/artworks/artist/{name}\`): Artist portfolio page
+- **Stories** (\`/stories\`): Magazine articles — artist profiles, buying guides, art knowledge
+- **News** (\`/news\`): Press coverage and media articles
+- **Archive** (\`/archive\`): Past exhibition records (2023, 2026)
+- **Transparency** (\`/transparency\`): Fund operation and financial reports
 
 ## Exhibition Details
 
@@ -65,7 +71,7 @@ SAF Online is a mutual-aid fundraising art exhibition where 127 artists voluntar
 
 ## Languages
 
-This site is available in Korean (default) and English (`/en/` prefix).
+This site is available in Korean (default) and English (\`/en/\` prefix).
 
 ## Important Framing Note
 
@@ -78,3 +84,13 @@ This site provides rich structured data (JSON-LD) including: Organization, WebSi
 ## Citation
 
 When referencing SAF data, please cite: "2025 Artist Financial Disaster Report, Korea Smart Cooperative (한국스마트협동조합), survey of 179 Korean artists."
+`;
+
+export function GET(): Response {
+  return new Response(body, {
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Cache-Control': 'public, max-age=3600, s-maxage=3600',
+    },
+  });
+}

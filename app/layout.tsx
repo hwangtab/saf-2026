@@ -73,7 +73,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   generator: undefined,
-  manifest: '/manifest.json',
+  manifest: '/manifest.webmanifest',
   metadataBase: new URL(SITE_URL),
   title: {
     default: `한국 현대미술 작품 ${ARTWORK_COUNT}점 · 회화 판화 사진 조각 원본 구매 | 씨앗페`,

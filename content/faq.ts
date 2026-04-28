@@ -1,4 +1,5 @@
 import { STATISTICS_DATA } from '@/lib/constants';
+import { ARTWORK_COUNT } from '@/lib/site-stats';
 
 export interface FAQItem {
   question: string;
@@ -42,8 +43,7 @@ export const faqs: FAQItem[] = [
   },
   {
     question: '씨앗페 온라인 전시를 즐기는 방법은 무엇인가요?',
-    answer:
-      '작품 갤러리(saf2026.com/artworks)에서 회화·판화·사진·조각 127점을 자유롭게 탐색하고, 마음에 드는 작품을 구매하세요. 매거진에서는 작가 인터뷰와 컬렉팅 가이드를, 아카이브에서는 오프라인 전시 현장 기록과 포스터를 만날 수 있습니다.',
+    answer: `작품 갤러리(saf2026.com/artworks)에서 회화·판화·사진·조각 ${ARTWORK_COUNT}점을 자유롭게 탐색하고, 마음에 드는 작품을 구매하세요. 매거진에서는 작가 인터뷰와 컬렉팅 가이드를, 아카이브에서는 오프라인 전시 현장 기록과 포스터를 만날 수 있습니다.`,
   },
 ];
 
@@ -80,8 +80,7 @@ export const faqsEn: FAQItem[] = [
   },
   {
     question: 'How can I enjoy the SAF Online exhibition?',
-    answer:
-      'Explore 127 artworks across paintings, prints, photography, and sculpture at saf2026.com/artworks. Read artist interviews and collecting guides in the Magazine section, then view the 2026 offline exhibition poster and archive at saf2026.com/archive/2026.',
+    answer: `Explore ${ARTWORK_COUNT} artworks across paintings, prints, photography, and sculpture at saf2026.com/artworks. Read artist interviews and collecting guides in the Magazine section, then view the 2026 offline exhibition poster and archive at saf2026.com/archive/2026.`,
   },
 ];
 

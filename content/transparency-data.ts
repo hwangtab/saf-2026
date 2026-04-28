@@ -1,3 +1,5 @@
+import { LOAN_COUNT } from '@/lib/site-stats';
+
 export interface ReportStat {
   value: { ko: string; en: string };
   label: { ko: string; en: string };
@@ -99,12 +101,12 @@ export const REPORTS: Report[] = [
       en: 'Published October 18, 2025',
     },
     summary: {
-      ko: '354건, 약 7억 원 누적 지원. 상환율 95%, 1금융권 배제율 84.9%의 구조적 데이터를 종합 분석했습니다.',
-      en: '354 loans, ~KRW 700M cumulative. 95% repayment rate. Structural data reveals 84.9% primary bank exclusion.',
+      ko: `${LOAN_COUNT}건, 약 7억 원 누적 지원. 상환율 95%, 1금융권 배제율 84.9%의 구조적 데이터를 종합 분석했습니다.`,
+      en: `${LOAN_COUNT} loans, ~KRW 700M cumulative. 95% repayment rate. Structural data reveals 84.9% primary bank exclusion.`,
     },
     stats: [
       {
-        value: { ko: '354건', en: '354' },
+        value: { ko: `${LOAN_COUNT}건`, en: String(LOAN_COUNT) },
         label: { ko: '누적 대출 건수', en: 'Cumulative loans' },
       },
       {
@@ -163,7 +165,7 @@ export const YEARLY_GROWTH: YearlyGrowthRow[] = [
   },
   {
     year: '2025',
-    loans: { ko: '354건 (누적)', en: '354 (cumulative)' },
+    loans: { ko: `${LOAN_COUNT}건 (누적)`, en: `${LOAN_COUNT} (cumulative)` },
     amount: { ko: '약 7억 원 (누적)', en: '~KRW 700M (cumulative)' },
     repaymentRate: { ko: '95%', en: '95%' },
     subrogationRate: { ko: '5.10%', en: '5.10%' },
