@@ -35,6 +35,7 @@ describe('isHeroRoute', () => {
       ['/artworks/category/painting', true],
       ['/terms/artist', true],
       ['/terms/exhibitor', true],
+      ['/archive/2023/videos/abc123', true],
     ] as const)('%s → %s', (path, expected) => {
       expect(isHeroRoute(path)).toBe(expected);
     });

@@ -48,6 +48,7 @@ const HERO_PREFIXES = [
   '/stories/',
   '/news/',
   '/terms/',
+  '/archive/2023/',
 ] as const satisfies readonly Slashed[];
 
 /**
