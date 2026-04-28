@@ -9,7 +9,7 @@ interface NotFoundViewProps {
 
 export default function NotFoundView({ icon, title, message, backLink }: NotFoundViewProps) {
   return (
-    <div className="min-h-[60vh] flex items-center justify-center p-4">
+    <div className="min-h-[100svh] flex items-center justify-center p-4">
       <div className="text-center max-w-md mx-auto">
         <div className="text-6xl mb-6" aria-hidden="true">
           {icon}
