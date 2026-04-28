@@ -324,6 +324,7 @@ export default async function PetitionOhYoonPage() {
                 url={PAGE_URL}
                 title={statementText}
                 description={t('metaDescription')}
+                imageUrl={`${SITE_URL}/images/petition-oh-yoon/mural-1.png`}
               />
             </div>
           </div>

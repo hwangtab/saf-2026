@@ -10,6 +10,12 @@ interface ShareButtonsProps {
   url: string;
   title: string;
   description: string;
+  /**
+   * 카카오톡 공유 시 사용할 썸네일 절대 URL.
+   * 미지정 시 사이트 기본 OG 이미지(/images/og-image.jpg) 사용.
+   * 페이지별로 캠페인 hero 이미지를 보내고 싶을 때 명시.
+   */
+  imageUrl?: string;
 }
 
 type CopyStatus = 'idle' | 'copied' | 'error';
@@ -21,7 +27,7 @@ function openSharePopup(shareUrl: string) {
   window.open(shareUrl, '_blank', 'noopener,noreferrer,width=600,height=400');
 }
 
-export default function ShareButtons({ url, title, description }: ShareButtonsProps) {
+export default function ShareButtons({ url, title, description, imageUrl }: ShareButtonsProps) {
   const t = useTranslations('shareButtons');
   const [copyStatus, setCopyStatus] = useState<CopyStatus>('idle');
   const [kakaoStatusMessage, setKakaoStatusMessage] = useState('');
@@ -93,7 +99,7 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
         content: {
           title: title,
           description: description,
-          imageUrl: `${window.location.origin}/images/og-image.jpg`,
+          imageUrl: imageUrl ?? `${window.location.origin}/images/og-image.jpg`,
           link: {
             webUrl: url,
             mobileWebUrl: url,
