@@ -242,7 +242,13 @@ export default function FullscreenMenu({
             >
               {t('orderStatus')}
             </Link>
-            <AuthButtons layout="stacked" variant="white" size="sm" className="w-full max-w-xs" />
+            {/* "주문/배송 조회"와 동일한 작은 알약 스타일로 통일 — buttonClassName으로 Button variant white의 사각/색을 알약으로 override */}
+            <AuthButtons
+              layout="inline"
+              variant="white"
+              size="sm"
+              buttonClassName="rounded-full bg-gray-50 border-gray-200 text-charcoal-muted font-medium hover:bg-gray-100 hover:border-gray-300 hover:scale-100 hover:shadow-none"
+            />
           </div>
         </div>
 

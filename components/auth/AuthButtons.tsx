@@ -15,6 +15,8 @@ type Profile = {
 type AuthButtonsProps = {
   layout?: 'inline' | 'stacked';
   className?: string;
+  /** 내부 Button 자체에 추가될 className. shape/색 override 용도 (예: 알약 스타일). */
+  buttonClassName?: string;
   variant?:
     | 'primary'
     | 'secondary'
@@ -30,9 +32,12 @@ type AuthButtonsProps = {
 export default memo(function AuthButtons({
   layout = 'inline',
   className = '',
+  buttonClassName = '',
   variant = 'white',
   size = 'md',
 }: AuthButtonsProps) {
+  const stackedClass = layout === 'stacked' ? 'w-full justify-center' : '';
+  const mergedButtonClass = [stackedClass, buttonClassName].filter(Boolean).join(' ');
   const locale = useLocale();
   const copy =
     locale === 'en'
@@ -200,12 +205,7 @@ export default memo(function AuthButtons({
   if (!userId) {
     return (
       <div className={wrapperClassName}>
-        <Button
-          href="/login"
-          variant={variant}
-          size={size}
-          className={layout === 'stacked' ? 'w-full justify-center' : ''}
-        >
+        <Button href="/login" variant={variant} size={size} className={mergedButtonClass}>
           {copy.artistMenu}
         </Button>
       </div>
@@ -241,17 +241,12 @@ export default memo(function AuthButtons({
           href={dashboardLink.href}
           variant={variant}
           size={size}
-          className={layout === 'stacked' ? 'w-full justify-center' : ''}
+          className={mergedButtonClass}
         >
           {dashboardLink.label}
         </Button>
       ) : (
-        <Button
-          variant={variant}
-          size={size}
-          disabled
-          className={layout === 'stacked' ? 'w-full justify-center' : ''}
-        >
+        <Button variant={variant} size={size} disabled className={mergedButtonClass}>
           {copy.checkingAccount}
         </Button>
       )}
