@@ -4,11 +4,17 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import LinkButton from '@/components/ui/LinkButton';
 import { formatPriceForDisplay } from '@/lib/utils';
+import { formatUsd } from '@/lib/utils/currency';
 
 interface Props {
   paymentKey: string;
   orderId: string;
   amount: string;
+  currency: 'KRW' | 'USD';
+}
+
+function formatAmount(amount: number, currency: 'KRW' | 'USD'): string {
+  return currency === 'USD' ? formatUsd(amount) : formatPriceForDisplay(amount);
 }
 
 interface VirtualAccount {
@@ -19,7 +25,7 @@ interface VirtualAccount {
 
 type PageState = 'loading' | 'success' | 'virtual' | 'error';
 
-export default function SuccessClient({ paymentKey, orderId, amount }: Props) {
+export default function SuccessClient({ paymentKey, orderId, amount, currency }: Props) {
   const t = useTranslations('checkout');
   const tOrder = useTranslations('orderLookup');
 
@@ -129,7 +135,7 @@ export default function SuccessClient({ paymentKey, orderId, amount }: Props) {
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">{t('depositAmount')}</span>
                 <span className="font-bold text-primary-a11y">
-                  {formatPriceForDisplay(Number(amount))}
+                  {formatAmount(Number(amount), currency)}
                 </span>
               </div>
             </div>
