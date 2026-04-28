@@ -313,7 +313,7 @@ export default async function PetitionOhYoonPage() {
             ].map((card) => (
               <article
                 key={card.title}
-                className="rounded-xl bg-white p-6 shadow-sm border border-gray-200"
+                className="rounded-xl bg-white p-6 border-2 border-charcoal shadow-[4px_4px_0px_0px_rgba(247,152,36,0.25)]"
               >
                 <h3 className="font-semibold text-lg text-charcoal-deep mb-2 break-keep">
                   {card.title}
@@ -362,7 +362,7 @@ export default async function PetitionOhYoonPage() {
           </SectionTitle>
           {/* 3카드 — 균등 길이, flex column으로 CTA를 하단에 정렬 */}
           <div className="grid gap-5 md:grid-cols-3 mb-12 items-stretch">
-            <article className="flex flex-col rounded-xl bg-white p-6 shadow-sm border border-primary/30">
+            <article className="flex flex-col rounded-xl bg-white p-6 border-2 border-charcoal shadow-[4px_4px_0px_0px_rgba(247,152,36,0.35)]">
               <h3 className="font-semibold text-lg text-charcoal-deep mb-3 break-keep">
                 {t('participationCard1Title')}
               </h3>
@@ -376,7 +376,7 @@ export default async function PetitionOhYoonPage() {
                 ↓ {t('participationCard1Cta')}
               </a>
             </article>
-            <article className="flex flex-col rounded-xl bg-white p-6 shadow-sm border border-gray-200">
+            <article className="flex flex-col rounded-xl bg-white p-6 border-2 border-charcoal shadow-[4px_4px_0px_0px_rgba(247,152,36,0.25)]">
               <h3 className="font-semibold text-lg text-charcoal-deep mb-3 break-keep">
                 {t('participationCard2Title')}
               </h3>
@@ -390,7 +390,7 @@ export default async function PetitionOhYoonPage() {
                 {t('participationCard2Cta')}
               </a>
             </article>
-            <article className="flex flex-col rounded-xl bg-white p-6 shadow-sm border border-gray-200">
+            <article className="flex flex-col rounded-xl bg-white p-6 border-2 border-charcoal shadow-[4px_4px_0px_0px_rgba(247,152,36,0.25)]">
               <h3 className="font-semibold text-lg text-charcoal-deep mb-3 break-keep">
                 {t('participationCard3Title')}
               </h3>
@@ -478,7 +478,7 @@ export default async function PetitionOhYoonPage() {
           </div>
 
           {/* 특별전 + 작품 듀얼 CTA 카드 — 청원 외 오윤 40주기 노출 강화 */}
-          <article className="mt-12 overflow-hidden rounded-2xl bg-white border border-charcoal/10 shadow-md">
+          <article className="mt-12 overflow-hidden rounded-2xl bg-white border-2 border-charcoal shadow-[6px_6px_0px_0px_rgba(247,152,36,0.3)]">
             <div className="md:grid md:grid-cols-[220px_1fr]">
               <div className="relative aspect-[4/5] md:aspect-auto md:h-full bg-charcoal-deep">
                 <ExportedImage
@@ -535,7 +535,7 @@ export default async function PetitionOhYoonPage() {
             <ProposalModal />
           </div>
 
-          <div className="mt-16 rounded-xl bg-canvas border border-gray-200 p-6 md:p-8">
+          <div className="mt-16 rounded-xl bg-canvas border-2 border-charcoal p-6 md:p-8 shadow-[4px_4px_0px_0px_rgba(247,152,36,0.25)]">
             <h3 className="font-display text-xl md:text-2xl text-charcoal-deep mb-3 break-keep">
               {t('saffestHeading')}
             </h3>
