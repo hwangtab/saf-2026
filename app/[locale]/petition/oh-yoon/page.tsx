@@ -116,7 +116,7 @@ export default async function PetitionOhYoonPage() {
         {/* 다크 오버레이 — 텍스트 가독성 강화 (작품 톤은 가장자리에서 살짝 살린다) */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 -z-10 bg-gradient-to-br from-charcoal-deep/95 via-charcoal/88 to-primary-strong/78"
+          className="absolute inset-0 -z-10 bg-gradient-to-br from-charcoal-deep/85 via-charcoal/72 to-primary-strong/55"
         />
         {/* 슬로건 영역 추가 어두움 — 중앙 vignette */}
         <div
@@ -124,12 +124,12 @@ export default async function PetitionOhYoonPage() {
           className="absolute inset-0 -z-10"
           style={{
             background:
-              'radial-gradient(ellipse at 50% 50%, rgba(15,23,33,0.4) 0%, transparent 70%)',
+              'radial-gradient(ellipse at 50% 50%, rgba(15,23,33,0.28) 0%, transparent 70%)',
           }}
         />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-40 mix-blend-overlay"
+          className="pointer-events-none absolute inset-0 opacity-25 mix-blend-overlay"
           style={{
             background:
               'radial-gradient(ellipse at 25% 0%, rgba(255,255,255,0.18) 0%, transparent 55%), radial-gradient(ellipse at 80% 100%, rgba(255,224,138,0.18) 0%, transparent 55%)',
@@ -142,7 +142,7 @@ export default async function PetitionOhYoonPage() {
           <h1
             id="petition-hero-title"
             className="font-display text-4xl md:text-6xl leading-tight mb-4 break-keep"
-            style={{ textShadow: '0 2px 16px rgba(0,0,0,0.5)' }}
+            style={{ textShadow: '0 2px 18px rgba(0,0,0,0.65)' }}
           >
             {t('heroTitle')
               .split('\n')
@@ -239,7 +239,7 @@ export default async function PetitionOhYoonPage() {
             <div className="relative aspect-square overflow-hidden rounded-lg bg-charcoal-deep">
               <ExportedImage
                 src="/images/petition-oh-yoon/mural-1.png"
-                alt="오윤, 1974, 테라코타 벽화 — 정면(인체 부조)"
+                alt={t('muralAltFront')}
                 fill
                 sizes="(min-width: 768px) 33vw, 100vw"
                 className="object-cover"
@@ -248,7 +248,7 @@ export default async function PetitionOhYoonPage() {
             <div className="relative aspect-square overflow-hidden rounded-lg bg-charcoal-deep">
               <ExportedImage
                 src="/images/petition-oh-yoon/mural-2.png"
-                alt="오윤, 1974, 테라코타 벽화 — 인체 부조 디테일"
+                alt={t('muralAltDetail')}
                 fill
                 sizes="(min-width: 768px) 33vw, 100vw"
                 className="object-cover"
@@ -257,15 +257,17 @@ export default async function PetitionOhYoonPage() {
             <div className="relative aspect-square overflow-hidden rounded-lg bg-charcoal-deep">
               <ExportedImage
                 src="/images/petition-oh-yoon/mural-3.png"
-                alt="오윤, 1974, 테라코타 벽화 — 반대 면(추상 부조)"
+                alt={t('muralAltBack')}
                 fill
                 sizes="(min-width: 768px) 33vw, 100vw"
                 className="object-cover"
               />
+              <div className="absolute top-2 left-2 rounded bg-white/90 backdrop-blur-sm px-2 py-0.5 text-xs font-semibold text-charcoal-deep">
+                {t('muralOtherSideBadge')}
+              </div>
             </div>
             <figcaption className="md:col-span-3 text-xs text-charcoal-muted text-center mt-1">
-              서울 광진구 구의동 현장. 양면에 새겨진 테라코타 부조 — 인체 부조 면(좌·중)과 추상 부조
-              면(우).
+              {t('muralCaption')}
             </figcaption>
           </figure>
         </div>
@@ -282,15 +284,13 @@ export default async function PetitionOhYoonPage() {
           </p>
           <div className="grid gap-5 md:grid-cols-3">
             {[
-              { title: t('threeStepsCard1Title'), body: t('threeStepsCard1Body'), tone: 'soft' },
-              { title: t('threeStepsCard2Title'), body: t('threeStepsCard2Body'), tone: 'strong' },
-              { title: t('threeStepsCard3Title'), body: t('threeStepsCard3Body'), tone: 'strong' },
+              { title: t('threeStepsCard1Title'), body: t('threeStepsCard1Body') },
+              { title: t('threeStepsCard2Title'), body: t('threeStepsCard2Body') },
+              { title: t('threeStepsCard3Title'), body: t('threeStepsCard3Body') },
             ].map((card) => (
               <article
                 key={card.title}
-                className={`rounded-xl bg-white p-6 shadow-sm border ${
-                  card.tone === 'strong' ? 'border-primary/20' : 'border-gray-200'
-                }`}
+                className="rounded-xl bg-white p-6 shadow-sm border border-gray-200"
               >
                 <h3 className="font-semibold text-lg text-charcoal-deep mb-2 break-keep">
                   {card.title}
@@ -310,7 +310,7 @@ export default async function PetitionOhYoonPage() {
       {/* 5부 청원 한 줄 — 강조 박스 (페이지 정중앙) */}
       <Section variant="white" className="py-20 md:py-24">
         <div className="container-max max-w-3xl mx-auto px-4 text-center">
-          <div className="rounded-2xl border-y-4 border-primary px-6 py-12 md:px-12 md:py-16 bg-canvas">
+          <div className="rounded-2xl border-y-4 border-primary px-6 py-14 md:px-14 md:py-20 bg-canvas-soft shadow-sm">
             {/* 청원 동의문 본문 — PartialSansKR(font-display)가 가운뎃점(·) 글리프를 안 가져 빠지므로 일반 sans 폰트 사용 */}
             <p className="font-bold text-2xl md:text-4xl leading-relaxed text-charcoal-deep break-keep">
               {t('statementLine1')}
@@ -359,6 +359,12 @@ export default async function PetitionOhYoonPage() {
               <p className="text-charcoal text-sm md:text-base leading-relaxed break-keep">
                 {t('participationCard2Body')}
               </p>
+              <a
+                href="#sign-form-anchor"
+                className="mt-auto pt-4 text-primary font-semibold hover:underline text-sm"
+              >
+                {t('participationCard2Cta')}
+              </a>
             </article>
             <article className="flex flex-col rounded-xl bg-white p-6 shadow-sm border border-gray-200">
               <h3 className="font-semibold text-lg text-charcoal-deep mb-3 break-keep">
@@ -367,11 +373,17 @@ export default async function PetitionOhYoonPage() {
               <p className="text-charcoal text-sm md:text-base leading-relaxed break-keep">
                 {t('participationCard3Body')}
               </p>
+              <a
+                href="#share-templates"
+                className="mt-auto pt-4 text-primary font-semibold hover:underline text-sm"
+              >
+                ↓ {t('participationCard3Cta')}
+              </a>
             </article>
           </div>
 
           {/* 카드 외부 — 사전 작성 공유 문구 박스 (3카드보다 별도 영역으로 분리) */}
-          <div className="mb-12 mx-auto max-w-2xl">
+          <div id="share-templates" className="mb-12 mx-auto max-w-2xl scroll-mt-24">
             <ShareTemplates url={PAGE_URL} />
           </div>
 
@@ -421,8 +433,10 @@ export default async function PetitionOhYoonPage() {
           <div className="space-y-4 text-base md:text-lg leading-relaxed text-charcoal break-keep">
             <p>{t('proponentsBody1')}</p>
             <p>{t('proponentsBody2')}</p>
-            <p className="text-sm text-charcoal-muted italic">{t('proponentsCommitteeNote')}</p>
-            <p className="pt-2 text-sm text-charcoal-muted">
+          </div>
+          <div className="mt-8 rounded-xl border border-gray-200 bg-white p-5 space-y-3 text-sm text-charcoal-muted">
+            <p className="italic">{t('proponentsCommitteeNote')}</p>
+            <p>
               {t.rich('proponentsExhibitionLine', {
                 link: (chunks) => (
                   <Link
@@ -489,15 +503,15 @@ export default async function PetitionOhYoonPage() {
               {t('closedTitle')}
             </p>
           )}
-          <p className="text-xl md:text-2xl leading-relaxed mb-3 break-keep opacity-90">
+          <p className="text-xl md:text-2xl leading-relaxed mb-4 break-keep opacity-90">
             {t('closingLine1')}
           </p>
-          <p className="text-xl md:text-2xl leading-relaxed mb-3 break-keep opacity-90">
+          <p className="text-xl md:text-2xl leading-relaxed mb-4 break-keep opacity-90">
             {t('closingLine2')}
           </p>
           <p
             id="petition-closing-title"
-            className="font-display text-3xl md:text-4xl leading-tight mb-10 break-keep"
+            className="font-display text-3xl md:text-4xl leading-tight mb-14 md:mb-16 break-keep"
           >
             {t('closingLine3')}
           </p>

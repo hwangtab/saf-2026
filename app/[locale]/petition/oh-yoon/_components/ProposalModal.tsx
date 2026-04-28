@@ -13,8 +13,22 @@ export default function ProposalModal() {
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="text-sm font-medium text-charcoal-muted underline underline-offset-4 decoration-gray-300 hover:text-primary-strong hover:decoration-primary transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
+        className="inline-flex items-center gap-2 rounded-lg border border-charcoal/20 bg-white px-4 py-2 text-sm font-semibold text-charcoal-deep hover:border-primary hover:text-primary-strong transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
       >
+        <svg
+          aria-hidden="true"
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+          />
+        </svg>
         {t('faqProposalLink')}
       </button>
 

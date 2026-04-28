@@ -66,6 +66,9 @@ export default function ProgressBar({
 
   const ratio = Math.min(1, total / goal);
   const percent = Math.round(ratio * 100);
+  // 시각 보정: 1만 명 목표 대비 초기 0~수십 명에서 막대가 거의 안 보이는 무력감 완화.
+  // ARIA value(`aria-valuenow`)는 실제 값 그대로, 시각만 floor 적용.
+  const visualWidthPct = Math.max(ratio * 100, 1.5);
 
   return (
     <div className="w-full max-w-md mx-auto">
@@ -91,7 +94,7 @@ export default function ProgressBar({
       >
         <div
           className="h-full bg-sun transition-[width] duration-700 ease-out"
-          style={{ width: `${ratio * 100}%` }}
+          style={{ width: `${visualWidthPct}%` }}
         />
       </div>
       {/* 보조 지표 — 모멘텀 신호 (PRD §14 OQ-6) */}
