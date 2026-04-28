@@ -3,7 +3,6 @@ import Link from 'next/link';
 import ExportedImage from 'next-image-export-optimizer';
 import { getLocale, getTranslations } from 'next-intl/server';
 
-import LinkButton from '@/components/ui/LinkButton';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
 import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
@@ -17,7 +16,6 @@ import {
   PETITION_OH_YOON_DEADLINE_ISO,
   PETITION_OH_YOON_GOAL,
   PETITION_OH_YOON_PATH,
-  PETITION_OH_YOON_PROPOSAL_PDF,
   PETITION_OH_YOON_SLUG,
 } from '@/lib/petition/constants';
 
@@ -26,6 +24,7 @@ import ProgressBar from './_components/ProgressBar';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import ShareTemplates from './_components/ShareTemplates';
 import PetitionFAQ from './_components/PetitionFAQ';
+import ProposalModal from './_components/ProposalModal';
 import SignForm from './_components/SignForm';
 
 export const revalidate = 60; // 60초 ISR — 카운터 baseline 갱신 (PRD §10.8)
@@ -188,9 +187,50 @@ export default async function PetitionOhYoonPage() {
             <SectionTitle as="h2" className="mb-8 md:mb-10">
               {t('storyHeading')}
             </SectionTitle>
+            <aside
+              aria-label={t('storyTributeLabel')}
+              className="mb-10 rounded-2xl bg-canvas-soft px-6 py-7 md:px-8 md:py-8"
+            >
+              <div className="grid gap-5 md:grid-cols-[auto_1fr] md:items-center md:gap-8">
+                <figure className="flex flex-col items-center md:items-start">
+                  <div className="w-28 h-28 md:w-32 md:h-32 overflow-hidden rounded-full border-4 border-white shadow-md">
+                    <ExportedImage
+                      src="/images/ohyoon.webp"
+                      alt={t('storyPortraitAlt')}
+                      width={256}
+                      height={256}
+                      className="w-full h-full object-cover grayscale"
+                    />
+                  </div>
+                  <figcaption className="mt-3 text-center md:text-left">
+                    <span className="block text-sm font-semibold text-charcoal-deep">
+                      {t('storyPortraitName')}
+                    </span>
+                    <span className="block text-xs text-charcoal-muted tracking-wider mt-0.5">
+                      {t('storyPortraitCaption')}
+                    </span>
+                  </figcaption>
+                </figure>
+                <blockquote className="relative md:pl-2">
+                  <span
+                    aria-hidden="true"
+                    className="absolute -left-1 -top-4 md:-left-2 md:-top-5 text-6xl md:text-7xl leading-none text-charcoal/15 font-display select-none"
+                  >
+                    &ldquo;
+                  </span>
+                  <p className="relative font-display italic text-xl md:text-2xl leading-snug text-charcoal-deep break-keep">
+                    {t('storyQuote')}
+                  </p>
+                  <footer className="mt-3 text-xs md:text-sm text-charcoal-muted tracking-widest uppercase">
+                    — {t('storyQuoteAttribution')}
+                  </footer>
+                </blockquote>
+              </div>
+            </aside>
             <div className="space-y-6 text-base md:text-lg leading-relaxed text-charcoal break-keep">
               <p>{t('storyP1')}</p>
               <p>{t('storyP2')}</p>
+              <p>{t('storyP3')}</p>
             </div>
           </div>
 
@@ -382,6 +422,18 @@ export default async function PetitionOhYoonPage() {
             <p>{t('proponentsBody1')}</p>
             <p>{t('proponentsBody2')}</p>
             <p className="text-sm text-charcoal-muted italic">{t('proponentsCommitteeNote')}</p>
+            <p className="pt-2 text-sm text-charcoal-muted">
+              {t.rich('proponentsExhibitionLine', {
+                link: (chunks) => (
+                  <Link
+                    href={`/${locale}/special/oh-yoon`}
+                    className="text-primary font-semibold hover:underline"
+                  >
+                    {chunks}
+                  </Link>
+                ),
+              })}
+            </p>
           </div>
         </div>
       </Section>
@@ -394,9 +446,7 @@ export default async function PetitionOhYoonPage() {
           </SectionTitle>
           <PetitionFAQ />
           <div className="mt-6 text-center">
-            <LinkButton href={PETITION_OH_YOON_PROPOSAL_PDF} variant="ghost" size="sm" external>
-              {t('faqProposalLink')}
-            </LinkButton>
+            <ProposalModal />
           </div>
 
           <div className="mt-16 rounded-xl bg-canvas border border-gray-200 p-6 md:p-8">
