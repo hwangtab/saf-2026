@@ -731,6 +731,7 @@
     "transferOptionLabel": "계좌이체 / 무통장입금",
     "processingShort": "처리 중...",
     "placeholderName": "홍길동",
+    "placeholderPhone": "010-0000-0000",
     "placeholderAddress": "주소 검색을 클릭하세요",
     "placeholderAddressDetail": "동/호수 등 상세 주소",
     "placeholderMemo": "배송 시 요청사항 (선택)",

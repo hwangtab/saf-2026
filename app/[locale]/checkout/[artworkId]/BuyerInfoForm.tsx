@@ -52,6 +52,8 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
   const t = useTranslations('checkout');
   const locale = useLocale();
   const langAttr = locale === 'ko' ? 'ko' : 'en';
+  // 영문 사용자는 한국 우편번호 검색 API(Daum)를 못 쓰므로 주소·우편번호를 직접 입력
+  const isKorean = locale === 'ko';
   const detailRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState<FormState>({
@@ -157,7 +159,7 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
               value={form.buyerPhone}
               onChange={handleChange('buyerPhone')}
               required
-              placeholder="010-0000-0000"
+              placeholder={t('placeholderPhone')}
             />
           </div>
         </div>
@@ -208,7 +210,7 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
                   value={form.shippingPhone}
                   onChange={handleChange('shippingPhone')}
                   required
-                  placeholder="010-0000-0000"
+                  placeholder={t('placeholderPhone')}
                 />
               </div>
             </>
@@ -218,24 +220,39 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
             <label className={labelClass}>
               {t('addressLabel')} <span className="text-danger">*</span>
             </label>
-            <div className="flex gap-2">
+            {isKorean ? (
+              // 한국 사용자: Daum 우편번호 API로 주소 선택 (readOnly)
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  className={inputClass}
+                  value={form.shippingAddress}
+                  readOnly
+                  placeholder={t('placeholderAddress')}
+                />
+                <Button
+                  type="button"
+                  onClick={handleAddressSearch}
+                  variant="outline"
+                  size="sm"
+                  className="shrink-0"
+                >
+                  {t('searchAddress')}
+                </Button>
+              </div>
+            ) : (
+              // 영문 사용자: 자유 입력
               <input
                 type="text"
+                name="address"
+                autoComplete="shipping street-address"
                 className={inputClass}
                 value={form.shippingAddress}
-                readOnly
-                placeholder={t('placeholderAddress')}
+                onChange={handleChange('shippingAddress')}
+                required
+                placeholder="123 Main St, City, State"
               />
-              <Button
-                type="button"
-                onClick={handleAddressSearch}
-                variant="outline"
-                size="sm"
-                className="shrink-0"
-              >
-                {t('searchAddress')}
-              </Button>
-            </div>
+            )}
           </div>
 
           <div>
@@ -246,8 +263,9 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
               autoComplete="postal-code"
               className={inputClass}
               value={form.shippingPostalCode}
-              readOnly
-              placeholder={t('shippingPostalCode')}
+              readOnly={isKorean}
+              onChange={isKorean ? undefined : handleChange('shippingPostalCode')}
+              placeholder={isKorean ? t('shippingPostalCode') : '12345 / SW1A 1AA'}
             />
           </div>
 

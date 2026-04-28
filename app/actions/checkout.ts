@@ -101,15 +101,23 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
   if (!emailRegex.test(buyerEmailNorm)) {
     return { success: false, error: apiError('invalid_email_format', buyerLocale) };
   }
+  // 전화번호: ITU E.164 — 국가코드 포함 7-15 digits 허용 (한국 9-11도 포함)
   const phoneDigits = buyerPhone.replace(/\D/g, '');
-  if (phoneDigits.length < 9 || phoneDigits.length > 11) {
+  if (phoneDigits.length < 7 || phoneDigits.length > 15) {
     return { success: false, error: apiError('invalid_phone_format', buyerLocale) };
   }
   const shippingPhoneDigits = shippingPhone.replace(/\D/g, '');
-  if (shippingPhone && (shippingPhoneDigits.length < 9 || shippingPhoneDigits.length > 11)) {
+  if (shippingPhone && (shippingPhoneDigits.length < 7 || shippingPhoneDigits.length > 15)) {
     return { success: false, error: apiError('invalid_shipping_phone_format', buyerLocale) };
   }
-  if (!/^\d{5}$/.test(shippingPostalCode.trim())) {
+  // 우편번호: ko는 5자리 숫자, en은 알파+숫자+공백+하이픈 3-10자
+  // (예: US 12345 / 12345-6789, UK SW1A 1AA, Canada K1A 0B1, Japan 123-4567)
+  const trimmedPostal = shippingPostalCode.trim();
+  const postalValid =
+    buyerLocale === 'ko'
+      ? /^\d{5}$/.test(trimmedPostal)
+      : /^[A-Za-z0-9 -]{3,10}$/.test(trimmedPostal);
+  if (!postalValid) {
     return { success: false, error: apiError('invalid_postal_code', buyerLocale) };
   }
 

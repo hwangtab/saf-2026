@@ -727,6 +727,7 @@
     "errorPayment": "An error occurred during payment.",
     "processingShort": "Processing...",
     "placeholderName": "Full name",
+    "placeholderPhone": "+1 555 123 4567",
     "placeholderAddress": "Click to search address",
     "placeholderAddressDetail": "Apartment, suite, etc.",
     "placeholderMemo": "Special instructions (optional)",
