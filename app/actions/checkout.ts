@@ -18,6 +18,20 @@ import { rateLimit } from '@/lib/rate-limit';
 import { SITE_URL, SITE_URL_ALIAS } from '@/lib/constants';
 import { apiError, type ApiLocale } from '@/lib/api-locale';
 import { krwToUsd } from '@/lib/utils/currency';
+import { notifyEmail, sendBuyerEmail } from '@/lib/notify';
+import {
+  getOrderNotificationInfo,
+  buildAdminNotificationFields,
+} from '@/lib/utils/get-order-notification-info';
+
+// 무통장 계좌이체 안내 — 한국스마트협동조합 기업은행 (IBK)
+// (messages/*.json bankTransfer*와 동기 유지 필요)
+const BANK_TRANSFER_INFO = {
+  bankName: '기업은행 (IBK)',
+  accountNumber: '301-101031-04-095',
+  holderName: '한국스마트협동조합',
+} as const;
+const DEPOSIT_DEADLINE_HOURS = 24;
 
 export type CreateOrderInput = {
   artworkId: string;
@@ -466,6 +480,61 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
   revalidatePublicArtworkSurfaces();
   revalidatePath(`/artworks/${input.artworkId}`);
   revalidatePath(`/en/artworks/${input.artworkId}`);
+
+  // 이메일 발송 (fire-and-forget — 결제 흐름 차단 X)
+  // - 구매자: virtual_account_issued 템플릿 재사용 (bankName/accountNumber/dueDate 동일 구조)
+  // - 관리자: 입금 대기 알림
+  void (async () => {
+    try {
+      const info = await getOrderNotificationInfo(adminClient, { id: result.orderId });
+      const dueDate = new Date(Date.now() + DEPOSIT_DEADLINE_HOURS * 60 * 60 * 1000);
+      const dueDateStr =
+        buyerLocale === 'ko'
+          ? dueDate.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })
+          : dueDate.toLocaleString('en-US', { timeZone: 'Asia/Seoul' });
+
+      // 관리자 알림 — 입금 확인 작업 필요
+      if (info) {
+        void notifyEmail(
+          'info',
+          '계좌이체 주문 접수 (입금 대기)',
+          buildAdminNotificationFields(info, {
+            은행: BANK_TRANSFER_INFO.bankName,
+            계좌번호: BANK_TRANSFER_INFO.accountNumber,
+            예금주: BANK_TRANSFER_INFO.holderName,
+            입금기한: dueDateStr,
+          })
+        );
+      } else {
+        void notifyEmail('info', '계좌이체 주문 접수 (입금 대기)', {
+          주문번호: result.orderNo,
+          금액: `₩${result.totalAmount.toLocaleString()}`,
+          입금기한: dueDateStr,
+        });
+      }
+
+      // 구매자 이메일 — 계좌 안내 + 입금 마감
+      void sendBuyerEmail(
+        input.buyerEmail.trim().toLowerCase(),
+        'virtual_account_issued',
+        {
+          orderNo: result.orderNo,
+          buyerName: input.buyerName,
+          artworkTitle: info?.artworkTitle ?? '',
+          artistName: info?.artistName ?? '',
+          amount: result.totalAmount,
+          virtualAccount: {
+            bankName: BANK_TRANSFER_INFO.bankName,
+            accountNumber: BANK_TRANSFER_INFO.accountNumber,
+            dueDate: dueDateStr,
+          },
+        },
+        buyerLocale
+      );
+    } catch (err) {
+      console.error('[createBankTransferOrder] email failed:', err);
+    }
+  })();
 
   return result;
 }
