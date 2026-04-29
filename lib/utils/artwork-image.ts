@@ -3,9 +3,11 @@ export type ArtworkImageVariant = (typeof ARTWORK_IMAGE_VARIANTS)[number];
 export type ArtworkImagePreset = 'slider' | 'card' | 'detail' | 'hero' | 'original';
 
 export const ARTWORK_TRANSFORM_PRESETS = {
-  // 모바일 1x DPR 갤러리 카드 LCP 최적화 — 모바일 viewport 343px에 충분.
-  // PSI 모바일 측정에서 srcset이 이 사이즈를 우선 선택해 LCP 이미지 transfer 단축.
-  mobile: { width: 320, quality: 70 },
+  // 모바일 갤러리 카드 LCP 최적화용 변형. PSI Lighthouse 모바일 emulation
+  // (Pixel 5 412px × DPR 1.75 = 720 effective px)이 srcset에서 이 사이즈를 우선 선택.
+  // 320w로 시도했지만 실제 effective px 600~700에 비해 너무 작아 브라우저가 960w를 픽함을 확인.
+  // 600w로 조정해 Lighthouse + 실제 사용자(작은 viewport, 1~1.75x DPR)에 적용.
+  mobile: { width: 600, quality: 72 },
   slider: { width: 400, quality: 75 },
   card: { width: 960, quality: 75 },
   detail: { width: 1600, quality: 80 },

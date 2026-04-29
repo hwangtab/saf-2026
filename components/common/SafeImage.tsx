@@ -31,9 +31,9 @@ function isArtworkStorageUrl(url: string): boolean {
 
 function generateArtworkSrcSet(src: string): string | undefined {
   const candidates = TRANSFORM_WIDTHS.map((width) => {
-    // 모바일 변형(≤320w)은 quality 70으로 추가 절감 (작은 사이즈는 시각 손실 미미).
+    // 모바일 변형(≤600w)은 quality 72로 약간 절감 (PSI Lighthouse 모바일이 픽하는 사이즈).
     // 일반 카드(≤960w) 75, 큰 변형(1600/1920w) 80 — 데스크톱 retina 화질 유지.
-    const quality = width <= 320 ? 70 : width <= 960 ? 75 : 80;
+    const quality = width <= 600 ? 72 : width <= 960 ? 75 : 80;
     const variantUrl = resolveOptimizedArtworkImageUrl(src, { width, quality });
     return { variantUrl, width };
   });
