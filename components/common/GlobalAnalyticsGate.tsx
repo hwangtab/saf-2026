@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation';
 import { Analytics } from '@vercel/analytics/react';
 import GoogleAnalytics from '@/components/common/GoogleAnalytics';
+import WebVitalsTracker from '@/components/common/WebVitalsTracker';
 
 const ANALYTICS_DISABLED_PREFIXES = [
   '/admin',
@@ -31,6 +32,7 @@ export default function GlobalAnalyticsGate() {
     <>
       <Analytics />
       <GoogleAnalytics />
+      <WebVitalsTracker />
     </>
   );
 }
