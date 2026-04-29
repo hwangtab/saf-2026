@@ -238,7 +238,7 @@ export default function FullscreenMenu({
           <div className="flex flex-wrap items-center justify-center gap-2">
             <Link
               href="/orders"
-              className="inline-flex items-center justify-center rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm font-medium text-charcoal-muted transition-colors hover:border-gray-300 hover:bg-gray-100"
+              className="inline-flex items-center justify-center rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs font-medium text-charcoal-muted transition-colors hover:border-gray-300 hover:bg-gray-100"
               onClick={onClose}
             >
               {t('orderStatus')}
@@ -247,7 +247,7 @@ export default function FullscreenMenu({
               layout="inline"
               variant="white"
               size="xs"
-              buttonClassName="rounded-full bg-gray-50 border-gray-200 text-charcoal-muted font-medium hover:bg-gray-100 hover:border-gray-300 hover:scale-100 active:scale-100 hover:shadow-none"
+              buttonClassName="rounded-full bg-gray-50 border-gray-200 text-charcoal-muted font-medium text-xs px-2.5 py-1 min-h-0 hover:bg-gray-100 hover:border-gray-300 hover:scale-100 active:scale-100 hover:shadow-none"
             />
           </div>
         </div>
