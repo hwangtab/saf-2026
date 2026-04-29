@@ -772,8 +772,10 @@ const getSupabaseStoriesUncached = async (): Promise<Story[]> => {
     .order('created_at', { ascending: false });
 
   if (error) {
+    // 빈 fallbackStories([])가 unstable_cache에 600초 캐시되면 매거진 전체가
+    // 비어 보이는 사고가 발생. throw로 캐시 저장을 막고 stale 데이터 유지.
     console.error('Error fetching stories from Supabase:', error);
-    return fallbackStories;
+    throw new Error(`Supabase stories fetch failed: ${error.message}`);
   }
 
   return (data || []).map((item) => mapStoryRow(item as StoryRow));
@@ -785,7 +787,17 @@ const getSupabaseStoriesCached = unstable_cache(
   { revalidate: 600, tags: ['stories'] }
 );
 
-export const getSupabaseStories = cache(async (): Promise<Story[]> => getSupabaseStoriesCached());
+export const getSupabaseStories = cache(async (): Promise<Story[]> => {
+  // 캐시 미스 + Supabase 일시 장애 시 throw가 페이지 레벨로 올라가
+  // /stories·/archive 등 전 페이지가 error.tsx로 떨어지는 것을 방지.
+  // 호출자에게는 빈 배열 fallback을 노출하되, 빈 결과는 캐시되지 않음.
+  try {
+    return await getSupabaseStoriesCached();
+  } catch (err) {
+    console.error('getSupabaseStories fallback to empty array:', err);
+    return fallbackStories;
+  }
+});
 
 export const getSupabaseStoryBySlug = cache(async (slug: string): Promise<Story | null> => {
   const all = await getSupabaseStories();
