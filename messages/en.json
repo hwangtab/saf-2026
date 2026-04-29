@@ -211,6 +211,7 @@
   },
   "artworksPage": {
     "title": "Buy Artworks",
+    "seoTitle": "Buy Original Korean Art — {artworkCount} Paintings, Prints, Photography & Sculpture | SAF Online",
     "metaDescription": "SAF Online exhibition catalog. Browse {artworkCount} original Korean artworks across paintings, prints, photography, and sculpture. Filter by genre, price, or artist. Free shipping.",
     "heroDescription": "Original works from {artistCount} Korean artists at accessible prices. Free shipping, 7-day returns.",
     "shareTitle": "Buy Artworks - SAF Online Gallery",
@@ -761,6 +762,10 @@
     "bankTransferHolderName": "Korea Smart Cooperative",
     "bankTransferNoticeName": "Please use your name as the depositor.",
     "bankTransferNoticeDeadline": "Orders not deposited by {deadline} will be automatically cancelled.",
+    "agreementTitle": "Terms of Service",
+    "preparingPayment": "Preparing payment...",
+    "transferOptionLabel": "Bank Transfer / Wire Deposit",
+    "widgetMountFailed": "Failed to load the payment module. Please try again in a moment.",
     "paypalPreparing": {
       "title": "International payment is coming soon",
       "description": "We are integrating PayPal to support international collectors. While we finalize this, please contact us at contact@kosmart.org or support the campaign through Social Funch.",

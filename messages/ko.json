@@ -211,6 +211,7 @@
   },
   "artworksPage": {
     "title": "작품 구매",
+    "seoTitle": "한국 현대미술 작품 구매 — 회화·판화·사진·조각 원본 {artworkCount}점 | 씨앗페 온라인",
     "metaDescription": "{artistCount}명 한국 작가의 회화·판화·사진·조각 원본 작품 {artworkCount}점. 장르·가격·작가별 필터링으로 한눈에 비교·구매. 작품 판매 수익은 {loanCount}건 저금리 대출(95% 상환율)이 된 예술인 상호부조 기금. 무료 배송·7일 반품.",
     "heroDescription": "{artistCount}명 작가의 작품을 합리적인 가격에 만나보세요. 무료 배송, 7일 이내 반품 가능.",
     "shareTitle": "한국 현대미술 원본 {artworkCount}점 · 작품 구매가 예술인 상호부조 기금",
@@ -764,7 +765,13 @@
     "bankTransferHolder": "예금주",
     "bankTransferHolderName": "한국스마트협동조합",
     "bankTransferNoticeName": "입금자명을 주문자명과 동일하게 해주세요.",
-    "bankTransferNoticeDeadline": "{deadline}까지 미입금 시 주문이 자동 취소됩니다."
+    "bankTransferNoticeDeadline": "{deadline}까지 미입금 시 주문이 자동 취소됩니다.",
+    "paypalPreparing": {
+      "title": "해외 결제는 곧 지원됩니다",
+      "description": "해외 컬렉터를 위한 PayPal 결제를 준비 중입니다. 통합이 완료될 때까지 contact@kosmart.org로 문의하시거나 소셜펀치를 통해 캠페인을 후원해주세요.",
+      "donateCta": "캠페인 후원하기",
+      "backCta": "작품 페이지로 돌아가기"
+    }
   },
   "orderLookup": {
     "pageTitle": "주문 조회",

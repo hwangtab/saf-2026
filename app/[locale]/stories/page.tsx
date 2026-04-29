@@ -27,6 +27,7 @@ type LocaleCode = 'ko' | 'en';
 
 type StoriesPageCopy = {
   pageTitle: string;
+  seoTitle: string;
   pageDescription: string;
   heroTitle: string;
   heroDescription: string;
@@ -40,6 +41,8 @@ type StoriesPageCopy = {
 const STORIES_COPY: Record<LocaleCode, StoriesPageCopy> = {
   ko: {
     pageTitle: '매거진',
+    // SEO `<title>`은 길게 — H1과 분리. SERP 차별화·키워드 매칭 향상.
+    seoTitle: '씨앗페 매거진 — 작가 인터뷰·미술 상식·컬렉팅 가이드 | 한국 현대미술',
     pageDescription:
       '전시회 추천, 작가 인터뷰, 컬렉팅 가이드, 미술 상식까지. 씨앗페 온라인 매거진에서 전시회를 즐기는 방법을 찾아보세요.',
     heroTitle: '매거진',
@@ -52,6 +55,8 @@ const STORIES_COPY: Record<LocaleCode, StoriesPageCopy> = {
   },
   en: {
     pageTitle: 'Magazine',
+    seoTitle:
+      'SAF Magazine — Artist Interviews, Art Guides & Collecting Tips | Korean Contemporary Art',
     pageDescription:
       'Artist stories, collecting guides, and art knowledge. Get closer to art with the SAF Online Magazine.',
     heroTitle: 'Magazine',
@@ -110,11 +115,11 @@ export async function generateMetadata({
       : copy.pageDescription;
 
   return {
-    title: copy.pageTitle,
+    title: copy.seoTitle,
     description: dynamicDescription,
     alternates: createLocaleAlternates(path, locale),
     openGraph: {
-      title: copy.pageTitle,
+      title: copy.seoTitle,
       description: dynamicDescription,
       url: pageUrl,
       type: 'website',
@@ -131,7 +136,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: 'summary_large_image',
-      title: copy.pageTitle,
+      title: copy.seoTitle,
       description: dynamicDescription,
       images: [{ url: OG_IMAGE.url, alt: locale === 'en' ? OG_IMAGE.altEn : OG_IMAGE.alt }],
     },

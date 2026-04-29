@@ -58,9 +58,11 @@ export async function generateMetadata(): Promise<Metadata> {
       : `${representativeArtwork.artist} 작가의 작품 "${representativeArtwork.title}" — 씨앗페 온라인`
     : undefined;
 
+  // SEO `<title>`은 길게(키워드 보강) — H1과 분리. GSC 데이터상 "작품 구매" 단독으로는
+  // SERP에서 차별화 안 되고 CTR 손실 큼.
   return {
     ...createPageMetadata(
-      t('title'),
+      t('seoTitle', { artworkCount: artworks.length }),
       dynamicDescription,
       '/artworks',
       ogImageUrl,
