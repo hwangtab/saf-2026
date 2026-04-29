@@ -144,7 +144,7 @@ export default async function PetitionOhYoonPage() {
           </p>
           <h1
             id="petition-hero-title"
-            className="font-display font-bold text-4xl md:text-6xl leading-tight mb-4 break-keep"
+            className="font-display font-black text-4xl md:text-6xl leading-tight mb-4 break-keep"
             style={{ textShadow: '0 2px 18px rgba(0,0,0,0.65)' }}
           >
             {t('heroTitle')
@@ -217,7 +217,7 @@ export default async function PetitionOhYoonPage() {
                 <blockquote className="relative md:pl-2">
                   <span
                     aria-hidden="true"
-                    className="absolute -left-1 -top-4 md:-left-2 md:-top-5 text-6xl md:text-7xl leading-none text-charcoal/15 font-display font-bold select-none"
+                    className="absolute -left-1 -top-4 md:-left-2 md:-top-5 text-6xl md:text-7xl leading-none text-charcoal/15 font-display font-black select-none"
                   >
                     &ldquo;
                   </span>

@@ -336,7 +336,7 @@ export default async function StoriesPage({
                               </>
                             ) : (
                               <div className="absolute inset-0 bg-gradient-to-br from-canvas to-canvas-soft flex items-center justify-center">
-                                <span className="text-charcoal-muted/20 text-5xl font-display font-bold">
+                                <span className="text-charcoal-muted/20 text-5xl font-display font-black">
                                   M
                                 </span>
                               </div>

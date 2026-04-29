@@ -215,7 +215,7 @@ export default async function OhYoonPage() {
           <div className="max-w-[1440px] mx-auto px-4 py-16 md:py-24">
             <div className="mb-20 flex justify-center">
               <blockquote className="relative p-8 sm:p-10 md:p-16 text-center max-w-4xl border-4 border-charcoal bg-white shadow-[8px_8px_0px_0px_rgba(49,57,60,0.1)]">
-                <p className="text-2xl sm:text-3xl md:text-5xl text-charcoal leading-relaxed text-balance pt-4 font-display font-bold">
+                <p className="text-2xl sm:text-3xl md:text-5xl text-charcoal leading-relaxed text-balance pt-4 font-display font-black">
                   Art should be shared by everyone.
                 </p>
                 <footer className="mt-8 text-xl text-charcoal font-bold tracking-widest">
@@ -354,7 +354,7 @@ export default async function OhYoonPage() {
           <div className="relative py-20 bg-charcoal text-white">
             <div className="max-w-[1440px] mx-auto px-4 mb-16 flex flex-col md:flex-row justify-between md:items-end gap-4 md:gap-6 border-b border-white/20 pb-8">
               <div>
-                <h2 className="text-4xl md:text-5xl mb-4 text-white font-bold font-display text-balance">
+                <h2 className="text-4xl md:text-5xl mb-4 text-white font-black font-display text-balance">
                   Exhibition Works
                 </h2>
                 <p className="text-base sm:text-lg text-white/70 font-medium">
@@ -447,7 +447,7 @@ export default async function OhYoonPage() {
               <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-accent flex items-center justify-center rounded-full text-white font-display font-black text-3xl">
                 &ldquo;
               </div>
-              <p className="text-2xl sm:text-3xl md:text-5xl text-charcoal leading-relaxed text-balance pt-4 font-display font-bold">
+              <p className="text-2xl sm:text-3xl md:text-5xl text-charcoal leading-relaxed text-balance pt-4 font-display font-black">
                 미술은 많은 사람이
                 <br className="md:hidden" /> 나누어야 한다
               </p>
@@ -634,7 +634,7 @@ export default async function OhYoonPage() {
           {/* Section Header */}
           <div className="max-w-[1440px] mx-auto px-4 mb-16 flex flex-col md:flex-row justify-between items-end gap-6 border-b border-white/20 pb-8">
             <div className="relative">
-              <h2 className="text-4xl md:text-5xl mb-4 text-white font-bold font-display text-balance">
+              <h2 className="text-4xl md:text-5xl mb-4 text-white font-black font-display text-balance">
                 전시 작품
               </h2>
               <div className="absolute -left-4 -top-6 text-[80px] text-white/5 -z-10 font-display font-black select-none">
