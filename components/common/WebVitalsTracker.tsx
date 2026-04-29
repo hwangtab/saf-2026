@@ -27,16 +27,18 @@ import { onCLS, onFCP, onINP, onLCP, onTTFB, type Metric } from 'web-vitals';
 declare global {
   interface Window {
     gtag?: (...args: unknown[]) => void;
+
+    dataLayer?: any[];
   }
 }
 
 function sendToGA(metric: Metric) {
-  if (typeof window === 'undefined' || typeof window.gtag !== 'function') return;
+  if (typeof window === 'undefined') return;
 
   // GA4는 event value를 정수로만 받음 — CLS는 ×1000으로 정수화 (0.05 → 50).
   const eventValue = Math.round(metric.name === 'CLS' ? metric.value * 1000 : metric.value);
 
-  window.gtag('event', 'web_vitals', {
+  const eventPayload = {
     event_category: 'Web Vitals',
     event_label: metric.id,
     value: eventValue,
@@ -45,9 +47,18 @@ function sendToGA(metric: Metric) {
     metric_rating: metric.rating, // 'good' | 'needs-improvement' | 'poor'
     metric_delta: metric.delta,
     metric_id: metric.id,
-    page_path: typeof window !== 'undefined' ? window.location.pathname : '',
+    page_path: window.location.pathname,
     non_interaction: true, // 사용자 상호작용 카운트에서 제외 (bounce rate 영향 없음)
-  });
+  };
+
+  // gtag.js가 lazyOnload(LCP 최적화)이라 vitals callback이 gtag 정의 전에 발화할 수 있음.
+  // dataLayer에 직접 push해두면 gtag.js 로드 후 자동 처리됨 (Google 권장 패턴).
+  if (typeof window.gtag === 'function') {
+    window.gtag('event', 'web_vitals', eventPayload);
+  } else {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ event: 'web_vitals', ...eventPayload });
+  }
 }
 
 export default function WebVitalsTracker() {
