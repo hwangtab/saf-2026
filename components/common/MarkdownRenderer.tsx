@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import type { Components } from 'react-markdown';
 import React from 'react';
 import { Link } from '@/i18n/navigation';
+import { resolveOptimizedArtworkImageUrl } from '@/lib/utils';
 
 function isSafeHref(href: string | undefined): href is string {
   if (!href) return false;
@@ -11,15 +12,40 @@ function isSafeHref(href: string | undefined): href is string {
   return !lower.startsWith('javascript:') && !lower.startsWith('data:');
 }
 
+const ARTWORK_STORAGE_HINT = '/storage/v1/object/public/artworks/';
+const ARTWORK_RENDER_HINT = '/storage/v1/render/image/public/artworks/';
+// Article body max-width is ~720px (prose). Cover 1x/2x DPR up to 1440w.
+const BODY_IMG_WIDTHS = [400, 720, 1080, 1440] as const;
+const BODY_IMG_DEFAULT_WIDTH = 1080;
+const BODY_IMG_SIZES = '(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 720px';
+
+function isArtworkStorageUrl(src: string): boolean {
+  return src.includes(ARTWORK_STORAGE_HINT) || src.includes(ARTWORK_RENDER_HINT);
+}
+
 function ImageFigure({ src, alt }: { src: string; alt?: string }) {
+  const useTransform = isArtworkStorageUrl(src);
+  const displaySrc = useTransform
+    ? resolveOptimizedArtworkImageUrl(src, { width: BODY_IMG_DEFAULT_WIDTH, quality: 75 })
+    : src;
+  const srcSet = useTransform
+    ? BODY_IMG_WIDTHS.map((w) => {
+        const url = resolveOptimizedArtworkImageUrl(src, { width: w, quality: 75 });
+        return `${url} ${w}w`;
+      }).join(', ')
+    : undefined;
+
   return (
     <figure className="my-8">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={src}
+        src={displaySrc}
+        srcSet={srcSet}
+        sizes={srcSet ? BODY_IMG_SIZES : undefined}
         alt={alt ?? ''}
         className="w-full rounded-xl shadow-md object-cover"
         loading="lazy"
+        decoding="async"
       />
       {alt && (
         <figcaption className="mt-3 text-center text-sm text-gray-500 leading-relaxed">
