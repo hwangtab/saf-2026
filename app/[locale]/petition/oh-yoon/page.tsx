@@ -324,7 +324,7 @@ export default async function PetitionOhYoonPage() {
               </article>
             ))}
           </div>
-          <p className="mt-10 text-center text-base md:text-lg font-semibold text-primary-strong break-keep">
+          <p className="mt-12 md:mt-16 text-center font-display text-2xl md:text-3xl leading-snug text-primary-strong break-keep text-balance">
             {t('threeStepsBridge')}
           </p>
         </div>
