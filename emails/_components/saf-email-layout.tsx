@@ -55,7 +55,9 @@ const bodyStyle: React.CSSProperties = {
   margin: '0',
   padding: '0',
   background: '#FAFAFC',
-  fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+  // 이메일 클라이언트는 외부 폰트 차단이 일반적 → 한글 시스템 폰트 fallback chain 표준화
+  fontFamily:
+    "-apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Segoe UI', 'Malgun Gothic', 'Noto Sans KR', sans-serif",
 };
 
 const containerStyle: React.CSSProperties = {

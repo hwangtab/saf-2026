@@ -12,7 +12,7 @@ const config: Config = {
       fontFamily: {
         // 기본 폰트 (본문) — Noto Sans KR
         sans: [
-          'var(--font-paperlogy)',
+          'var(--font-sans)',
           '-apple-system',
           'BlinkMacSystemFont',
           'system-ui',
@@ -23,14 +23,14 @@ const config: Config = {
         ],
         // 히어로 타이틀 — Noto Sans KR. weight는 globals.css 또는 컴포넌트에서 font-black/font-bold 명시
         display: [
-          'var(--font-paperlogy)',
+          'var(--font-sans)',
           '-apple-system',
           'BlinkMacSystemFont',
           'system-ui',
           'sans-serif',
         ],
         // 섹션 제목 — Noto Sans KR Bold (본문 변수 재사용, weight는 globals.css에서 명시)
-        section: ['var(--font-paperlogy)', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        section: ['var(--font-sans)', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
       },
       backgroundImage: {
         'gradient-portal': 'radial-gradient(circle at top, #EDF3FF 0%, #F7F8FA 38%, #FFFFFF 100%)',

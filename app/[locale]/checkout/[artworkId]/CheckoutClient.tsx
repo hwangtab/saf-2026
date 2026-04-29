@@ -83,6 +83,7 @@ const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
 function BrandLogo({ brand }: { brand: BrandKind }) {
   if (brand === 'kakaopay') {
     return (
+      // 결제 브랜드 wordmark는 자체 brand 무드 모방을 위해 시스템 폰트 사용 — 사이트 본문(Noto Sans KR)과 의도적 분리
       <span
         className="font-bold text-[#3C1E1E]"
         style={{ fontFamily: 'system-ui, -apple-system, sans-serif', letterSpacing: '-0.02em' }}

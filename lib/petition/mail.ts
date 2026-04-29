@@ -69,7 +69,7 @@ function receiptHtml(params: { fullName: string; petitionUrl: string }) {
   return `<!doctype html>
 <html lang="ko">
 <head><meta charset="utf-8"><title>서명 확인 — 오윤 구의동 벽화 시민 청원</title></head>
-<body style="margin:0;padding:24px;background:#FAFAFC;font-family:-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;color:#1F2428;">
+<body style="margin:0;padding:24px;background:#FAFAFC;font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Segoe UI','Malgun Gothic','Noto Sans KR',sans-serif;color:#1F2428;">
   <div style="max-width:560px;margin:0 auto;background:#fff;border-radius:12px;padding:32px;border:1px solid #E0E0E0;">
     <p style="font-size:16px;line-height:1.7;margin:0 0 16px;">
       ${safeName} 님, 서명해 주셔서 감사합니다.

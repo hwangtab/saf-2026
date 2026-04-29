@@ -87,15 +87,25 @@
 
 ## 3. Typography Rules
 
-Google Fonts 두 패밀리 (`next/font/google`, 자동 self-host + unicode-range chunked):
+**Noto Sans KR 단일 패밀리** (`next/font/google`, 자동 self-host + unicode-range chunked).
+weight로 위계 표현 — Hero/Section/Body 모두 같은 폰트, 굵기로만 구분.
 
-| 변수                  | 폰트           | 용도                                       | weight / display        |
-| --------------------- | -------------- | ------------------------------------------ | ----------------------- |
-| `--font-paperlogy`    | Noto Sans KR   | **기본 sans + 섹션 타이틀** — 본문/UI 전반 | 400/500/700/900 / swap  |
-| `--font-partial-sans` | Black Han Sans | **히어로 디스플레이**                      | 400 단일 / **optional** |
+| 변수          | 폰트         | weight 호출         | display |
+| ------------- | ------------ | ------------------- | ------- |
+| `--font-sans` | Noto Sans KR | 400/500/600/700/900 | swap    |
 
-> `--font-paperlogy` / `--font-partial-sans` 변수명은 과거 폰트 이름의 잔재. 폰트는 교체됐지만 변수명은 유지.
-> 히어로는 `display: 'optional'` — 0.1초 안에 못 받으면 fallback(Noto Sans KR 900) 영구 유지하여 LCP 갱신 차단.
+Tailwind weight ↔ Noto Sans KR 호출:
+
+| 클래스          | weight | 용도               |
+| --------------- | ------ | ------------------ |
+| `font-normal`   | 400    | 본문               |
+| `font-medium`   | 500    | 강조 본문, eyebrow |
+| `font-semibold` | 600    | 일반 강조          |
+| `font-bold`     | 700    | 섹션·카드 제목     |
+| `font-black`    | 900    | Hero·작품 타이틀   |
+
+> `font-light` (300), `font-thin` (100), `font-extralight` (200), `font-extrabold` (800)는 미호출 — 이 weight 사용 시 브라우저 합성 굵기로 떨어지므로 사용 금지.
+> `font-display` / `font-section` 토큰은 `font-sans`와 같은 폰트를 가리키되 의미적 구분만 유지 (위계는 weight로).
 
 ### 유틸리티 클래스 ([globals.css](../styles/globals.css))
 
@@ -313,7 +323,7 @@ CTA 오렌지:     #F79824 (accent)
 
 - Soft Sand 캔버스 (`canvas-soft #FFF9E8`)
 - SawtoothDivider 톱니 디테일
-- HakgyoansimPosterB 섹션 타이틀 폰트의 묵직함
+- Noto Sans KR 단일 패밀리 (weight로만 위계 표현)
 - WCAG AA 모든 색 검증
 
 **리뉴얼에서 검토할 만한 것**:
@@ -322,4 +332,4 @@ CTA 오렌지:     #F79824 (accent)
 - 카드 `rounded-2xl`이 매거진 톤과 어울리는지 (잡지는 보통 0~4px)
 - `shadow-sm/md/lg/xl` 4단계가 종이 질감과 충돌 — flat + border만으로?
 - 모든 섹션 패딩 `py-12 md:py-20` 일률 — 챕터 구조 강조 위해 가변화?
-- Display 폰트(PartialSansKR)와 Section 폰트(HakgyoansimPoster)의 위계 정리
+- 단일 패밀리 통합으로 폰트 위계 정리됨 (2026-04 기준)

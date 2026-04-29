@@ -21,7 +21,7 @@ import '@/styles/globals.css';
 const notoSansKR = Noto_Sans_KR({
   weight: ['400', '500', '600', '700', '900'],
   subsets: ['latin'],
-  variable: '--font-paperlogy',
+  variable: '--font-sans',
   display: 'swap',
   adjustFontFallback: true,
 });
