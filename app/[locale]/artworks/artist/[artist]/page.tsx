@@ -24,7 +24,7 @@ import {
 } from '@/lib/utils';
 import { parseArtworkPrice, resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import { Metadata } from 'next';
-import { permanentRedirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { getLocale, getTranslations } from 'next-intl/server';
 import type { Artwork, ArtworkListItem } from '@/types';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
@@ -208,9 +208,10 @@ export default async function ArtistPage({ params }: Props) {
   const t = await getTranslations('artistPage');
 
   if (artistArtworks.length === 0) {
-    // 작품 전체 숨김된 작가는 308 영구 redirect — Next.js segment-level not-found.tsx가
-    // status 200으로 응답하던 문제(신학철 케이스) 회피.
-    permanentRedirect(isEnglish ? '/en/artworks' : '/artworks');
+    // 작품 전체 숨김된 작가는 not-found.tsx 렌더(noindex 메타) — 신학철 케이스.
+    // Vercel + Next.js 16 + force-dynamic 환경에서 status 200으로 응답하는 한계는 실측 확인됨.
+    // SEO 측면에선 noindex 메타로 색인 제거 효과 동일.
+    notFound();
   }
 
   // Use the first artwork's image as the hero background

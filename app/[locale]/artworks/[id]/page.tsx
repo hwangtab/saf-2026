@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { Suspense } from 'react';
 import { Link } from '@/i18n/navigation';
-import { permanentRedirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { getLocale, getTranslations } from 'next-intl/server';
 
 import {
@@ -109,10 +109,11 @@ export default async function ArtworkDetailPage({ params }: Props) {
   ]);
 
   if (!artwork) {
-    // 삭제·숨김된 작품은 308 영구 redirect — Next.js segment-level not-found.tsx가
-    // status 200으로 응답하던 문제(GSC NOINDEX 153건의 진짜 원인) 회피.
-    // 작품 목록으로 보내 색인 시그널을 명확히 전달 + UX 손실 최소화.
-    permanentRedirect(locale === 'en' ? '/en/artworks' : '/artworks');
+    // 삭제·숨김 작품은 not-found.tsx 렌더(noindex 메타).
+    // Vercel + Next.js 16 + force-dynamic 조합에서 segment-level notFound() / permanentRedirect()가
+    // status 200으로 응답하는 한계는 실측 확인됨. 다만 SEO 측면에선 noindex 메타가 송출되어
+    // Google이 색인 제거하는 효과는 동일해 그대로 유지(GSC 보고서엔 NOINDEX 카테고리로 표시).
+    notFound();
   }
 
   // artwork 확정 후 관련 작품만 병렬 fetch (이전 전체 330개 fetch → ~20개로 축소)
