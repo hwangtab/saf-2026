@@ -263,7 +263,7 @@ export default async function StoriesPage({
                         />
                       ) : (
                         <div className="absolute inset-0 bg-gradient-to-br from-charcoal to-charcoal/80 flex items-center justify-center">
-                          <span className="text-white/20 text-8xl font-display">M</span>
+                          <span className="text-white/20 text-8xl font-display font-black">M</span>
                         </div>
                       );
                     })()}
@@ -274,7 +274,7 @@ export default async function StoriesPage({
                       <span className="inline-block self-start text-xs font-semibold tracking-wider uppercase bg-white/15 backdrop-blur-sm border border-white/20 rounded-full px-3 py-1 mb-4 text-white">
                         {CATEGORY_LABELS[locale][featured.category]}
                       </span>
-                      <h2 className="text-2xl md:text-3xl lg:text-4xl font-display text-white drop-shadow-lg mb-3 max-w-3xl">
+                      <h2 className="text-2xl md:text-3xl lg:text-4xl font-display font-bold text-white drop-shadow-lg mb-3 max-w-3xl">
                         {locale === 'en' && featured.title_en ? featured.title_en : featured.title}
                       </h2>
                       {(locale === 'en' ? featured.excerpt_en : featured.excerpt) && (
@@ -336,7 +336,7 @@ export default async function StoriesPage({
                               </>
                             ) : (
                               <div className="absolute inset-0 bg-gradient-to-br from-canvas to-canvas-soft flex items-center justify-center">
-                                <span className="text-charcoal-muted/20 text-5xl font-display">
+                                <span className="text-charcoal-muted/20 text-5xl font-display font-bold">
                                   M
                                 </span>
                               </div>

@@ -198,7 +198,7 @@ export default async function OhYoonPage() {
                 <div className="absolute inset-0 border-4 border-accent transform rotate-2 translate-x-1 translate-y-1 -z-0 opacity-60" />
               </div>
 
-              <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-normal mb-8 md:mb-10 leading-tight text-white tracking-tighter text-balance drop-shadow-sm font-display animate-fade-in-up opacity-0 [animation-fill-mode:both] [animation-delay:200ms]">
+              <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl mb-8 md:mb-10 leading-tight text-white tracking-tighter text-balance drop-shadow-sm font-display font-black animate-fade-in-up opacity-0 [animation-fill-mode:both] [animation-delay:200ms]">
                 The Blade of the People,
                 <br />
                 Returning After 40 Years
@@ -215,7 +215,7 @@ export default async function OhYoonPage() {
           <div className="max-w-[1440px] mx-auto px-4 py-16 md:py-24">
             <div className="mb-20 flex justify-center">
               <blockquote className="relative p-8 sm:p-10 md:p-16 text-center max-w-4xl border-4 border-charcoal bg-white shadow-[8px_8px_0px_0px_rgba(49,57,60,0.1)]">
-                <p className="text-2xl sm:text-3xl md:text-5xl font-normal text-charcoal leading-relaxed text-balance pt-4 font-display">
+                <p className="text-2xl sm:text-3xl md:text-5xl text-charcoal leading-relaxed text-balance pt-4 font-display font-bold">
                   Art should be shared by everyone.
                 </p>
                 <footer className="mt-8 text-xl text-charcoal font-bold tracking-widest">
@@ -245,7 +245,7 @@ export default async function OhYoonPage() {
               </div>
 
               <div className="space-y-8">
-                <h2 className="text-4xl font-normal border-l-[12px] border-charcoal pl-6 py-2 leading-tight font-display text-balance">
+                <h2 className="text-4xl border-l-[12px] border-charcoal pl-6 py-2 leading-tight font-bold font-display text-balance">
                   Carving the pain of the era
                   <br />
                   <span className="text-accent-strong">into hope</span>
@@ -271,7 +271,7 @@ export default async function OhYoonPage() {
 
               <div className="space-y-8">
                 <div className="bg-white p-8 md:p-12 border-4 border-charcoal shadow-[8px_8px_0px_0px_rgba(247,152,36,0.3)]">
-                  <h3 className="text-2xl font-normal text-charcoal mb-8 flex items-center gap-3 border-b-2 border-charcoal pb-4 font-display text-balance">
+                  <h3 className="text-2xl text-charcoal mb-8 flex items-center gap-3 border-b-2 border-charcoal pb-4 font-bold font-display text-balance">
                     <span className="w-4 h-4 bg-accent rotate-45" />
                     Major themes
                   </h3>
@@ -291,7 +291,7 @@ export default async function OhYoonPage() {
 
                 {/* Timeline card — balances the 3-column grid */}
                 <div className="bg-white p-7 md:p-9 border-4 border-charcoal shadow-[6px_6px_0px_0px_rgba(49,57,60,0.12)]">
-                  <h3 className="text-xl md:text-2xl font-normal text-charcoal mb-6 flex items-center gap-3 border-b-2 border-charcoal pb-3 font-display">
+                  <h3 className="text-xl md:text-2xl text-charcoal mb-6 flex items-center gap-3 border-b-2 border-charcoal pb-3 font-display font-bold">
                     <span className="w-3 h-3 bg-charcoal rotate-45" />A life in time
                   </h3>
                   <ol className="space-y-4">
@@ -354,7 +354,7 @@ export default async function OhYoonPage() {
           <div className="relative py-20 bg-charcoal text-white">
             <div className="max-w-[1440px] mx-auto px-4 mb-16 flex flex-col md:flex-row justify-between md:items-end gap-4 md:gap-6 border-b border-white/20 pb-8">
               <div>
-                <h2 className="text-4xl md:text-5xl font-normal mb-4 text-white font-display text-balance">
+                <h2 className="text-4xl md:text-5xl mb-4 text-white font-bold font-display text-balance">
                   Exhibition Works
                 </h2>
                 <p className="text-base sm:text-lg text-white/70 font-medium">
@@ -414,7 +414,7 @@ export default async function OhYoonPage() {
               <div className="absolute inset-0 border-4 border-accent transform rotate-2 translate-x-1 translate-y-1 -z-0 opacity-60" />
             </div>
 
-            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-normal mb-8 md:mb-10 leading-tight text-white tracking-tighter text-balance drop-shadow-sm font-display animate-fade-in-up opacity-0 [animation-fill-mode:both] [animation-delay:200ms]">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl mb-8 md:mb-10 leading-tight text-white tracking-tighter text-balance drop-shadow-sm font-display font-black animate-fade-in-up opacity-0 [animation-fill-mode:both] [animation-delay:200ms]">
               40년 만에 돌아온
               <br />
               <span className="relative inline-block px-2">
@@ -444,10 +444,10 @@ export default async function OhYoonPage() {
           {/* Quote Section */}
           <div className="mb-24 flex justify-center">
             <blockquote className="relative p-8 sm:p-10 md:p-16 text-center max-w-4xl border-4 border-charcoal bg-white shadow-[8px_8px_0px_0px_rgba(49,57,60,0.1)]">
-              <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-accent flex items-center justify-center rounded-full text-white font-display text-3xl font-normal">
+              <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-accent flex items-center justify-center rounded-full text-white font-display font-black text-3xl">
                 &ldquo;
               </div>
-              <p className="text-2xl sm:text-3xl md:text-5xl font-normal text-charcoal leading-relaxed text-balance pt-4 font-display">
+              <p className="text-2xl sm:text-3xl md:text-5xl text-charcoal leading-relaxed text-balance pt-4 font-display font-bold">
                 미술은 많은 사람이
                 <br className="md:hidden" /> 나누어야 한다
               </p>
@@ -481,7 +481,7 @@ export default async function OhYoonPage() {
             </div>
 
             <div className="space-y-8">
-              <h2 className="text-4xl font-normal border-l-[12px] border-charcoal pl-6 py-2 leading-tight font-display text-balance">
+              <h2 className="text-4xl border-l-[12px] border-charcoal pl-6 py-2 leading-tight font-bold font-display text-balance">
                 시대의 아픔을
                 <br />
                 <span className="text-accent-strong">희망으로 새기다</span>
@@ -517,7 +517,7 @@ export default async function OhYoonPage() {
 
             <div className="space-y-8">
               <div className="bg-white p-8 md:p-12 border-4 border-charcoal shadow-[8px_8px_0px_0px_rgba(247,152,36,0.3)]">
-                <h3 className="text-2xl font-normal text-charcoal mb-8 flex items-center gap-3 border-b-2 border-charcoal pb-4 font-display text-balance">
+                <h3 className="text-2xl text-charcoal mb-8 flex items-center gap-3 border-b-2 border-charcoal pb-4 font-bold font-display text-balance">
                   <span className="w-4 h-4 bg-accent rotate-45" />
                   주요 테마
                 </h3>
@@ -570,7 +570,7 @@ export default async function OhYoonPage() {
 
               {/* 작가의 시간 — 연표 카드 (3열 비대칭 보강) */}
               <div className="bg-white p-7 md:p-9 border-4 border-charcoal shadow-[6px_6px_0px_0px_rgba(49,57,60,0.12)]">
-                <h3 className="text-xl md:text-2xl font-normal text-charcoal mb-6 flex items-center gap-3 border-b-2 border-charcoal pb-3 font-display text-balance">
+                <h3 className="text-xl md:text-2xl text-charcoal mb-6 flex items-center gap-3 border-b-2 border-charcoal pb-3 font-bold font-display text-balance">
                   <span className="w-3 h-3 bg-charcoal rotate-45" />
                   작가의 시간
                 </h3>
@@ -634,10 +634,10 @@ export default async function OhYoonPage() {
           {/* Section Header */}
           <div className="max-w-[1440px] mx-auto px-4 mb-16 flex flex-col md:flex-row justify-between items-end gap-6 border-b border-white/20 pb-8">
             <div className="relative">
-              <h2 className="text-4xl md:text-5xl font-normal mb-4 text-white font-display text-balance">
+              <h2 className="text-4xl md:text-5xl mb-4 text-white font-bold font-display text-balance">
                 전시 작품
               </h2>
-              <div className="absolute -left-4 -top-6 text-[80px] text-white/5 font-normal -z-10 font-display select-none">
+              <div className="absolute -left-4 -top-6 text-[80px] text-white/5 -z-10 font-display font-black select-none">
                 ARCHIVE
               </div>
               <p className="text-base sm:text-lg text-white/70 font-medium">

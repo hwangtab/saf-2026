@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Black_Han_Sans, Noto_Sans_KR } from 'next/font/google';
+import { Noto_Sans_KR } from 'next/font/google';
 import { getLocale } from 'next-intl/server';
 import GlobalAnalyticsGate from '@/components/common/GlobalAnalyticsGate';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
@@ -16,24 +16,14 @@ import '@/styles/globals.css';
 // next/font/google: 빌드 타임에 Google Fonts에서 폰트 다운로드 → 자체 도메인으로 self-host 변환.
 // unicode-range chunk 자동 분할로 한글 글리프가 사용 시점에 lazy fetch됨.
 //
-// 본문 (font-sans) — Noto Sans KR. swap으로 fallback 후 교체.
+// 단일 패밀리 (Noto Sans KR) — 본문/섹션/Hero 전부. weight로 위계 표현.
+// 400 본문 / 500 강조 본문 / 700 섹션·카드 제목 / 900 Hero·작품 타이틀
 const notoSansKR = Noto_Sans_KR({
   weight: ['400', '500', '700', '900'],
   subsets: ['latin'],
   variable: '--font-paperlogy',
   display: 'swap',
   adjustFontFallback: true,
-});
-
-// Hero (font-display) — Black Han Sans.
-// display: 'swap' — fallback(Noto Sans KR 900) 표시 후 폰트 받으면 교체.
-// 'optional'은 100ms 안에 한글 chunk가 도착해야 표시되어 첫 방문에서 거의 항상 fallback 영구 고정 → 디자인 의도 손상.
-// LCP는 약간 손해보더라도 디자인 보존이 우선.
-const blackHanSans = Black_Han_Sans({
-  weight: '400',
-  subsets: ['latin'],
-  variable: '--font-partial-sans',
-  display: 'swap',
 });
 
 export const viewport: Viewport = {
@@ -114,11 +104,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const localBusinessSchema = generateLocalBusinessSchema(resolvedLocale);
 
   return (
-    <html
-      lang={locale}
-      className={`${notoSansKR.variable} ${blackHanSans.variable}`}
-      suppressHydrationWarning
-    >
+    <html lang={locale} className={notoSansKR.variable} suppressHydrationWarning>
       <head>
         {process.env.NEXT_PUBLIC_SUPABASE_URL && (
           <>

@@ -42,7 +42,7 @@ export default function ProposalModal() {
           <p className="text-sm text-charcoal-muted">{t('proposalDocSubtitle')}</p>
 
           <section className="space-y-3">
-            <h3 className="font-display text-xl text-charcoal-deep">
+            <h3 className="font-display font-bold text-xl text-charcoal-deep">
               {t('proposalSection1Heading')}
             </h3>
             <p>{t('proposalSection1Body1')}</p>
@@ -50,7 +50,7 @@ export default function ProposalModal() {
           </section>
 
           <section className="space-y-3">
-            <h3 className="font-display text-xl text-charcoal-deep">
+            <h3 className="font-display font-bold text-xl text-charcoal-deep">
               {t('proposalSection2Heading')}
             </h3>
             {/* (가)/(나)/(다) marker가 본문에 박혀 있어 줄바꿈 시 hanging indent 적용 */}
@@ -60,7 +60,7 @@ export default function ProposalModal() {
           </section>
 
           <section className="space-y-3">
-            <h3 className="font-display text-xl text-charcoal-deep">
+            <h3 className="font-display font-bold text-xl text-charcoal-deep">
               {t('proposalSection3Heading')}
             </h3>
             {/* (1)/(2)/(3) marker hanging indent */}
@@ -71,7 +71,7 @@ export default function ProposalModal() {
           </section>
 
           <section className="space-y-3">
-            <h3 className="font-display text-xl text-charcoal-deep">
+            <h3 className="font-display font-bold text-xl text-charcoal-deep">
               {t('proposalSection4Heading')}
             </h3>
             <p className="rounded-xl bg-canvas border border-primary/20 p-4 font-bold text-charcoal-deep">
@@ -80,7 +80,7 @@ export default function ProposalModal() {
           </section>
 
           <section className="space-y-1 pt-2 border-t border-gray-100">
-            <h3 className="font-display text-xl text-charcoal-deep mb-3">
+            <h3 className="font-display font-bold text-xl text-charcoal-deep mb-3">
               {t('proposalSection5Heading')}
             </h3>
             <p>{t('proposalSection5Line1')}</p>

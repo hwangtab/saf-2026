@@ -225,7 +225,7 @@ export default async function ArtworksPage() {
         {/* SEO Intro — 한국 작가 그림·미술품 구매 본문 (long-tail 키워드 흡수) */}
         <Section variant="white" padding="none" className="pt-8 md:pt-12">
           <div className="container-max max-w-4xl">
-            <h2 className="text-2xl md:text-3xl font-section font-normal text-charcoal-deep text-balance mb-6">
+            <h2 className="text-2xl md:text-3xl font-section font-bold text-charcoal-deep text-balance mb-6">
               {t('introHeading')}
             </h2>
             <div className="space-y-4 text-charcoal text-base md:text-lg leading-relaxed">
@@ -262,7 +262,7 @@ export default async function ArtworksPage() {
                   href={`/artworks/category/${encodeURIComponent(cat.key)}`}
                   className="block bg-canvas rounded-2xl p-6 md:p-7 border border-gray-200 hover:border-primary/40 hover:bg-canvas transition-colors"
                 >
-                  <h3 className="text-lg md:text-xl font-section font-normal text-charcoal-deep mb-3">
+                  <h3 className="text-lg md:text-xl font-section font-bold text-charcoal-deep mb-3">
                     {cat.title}
                   </h3>
                   <p className="text-charcoal text-base leading-relaxed">{cat.description}</p>

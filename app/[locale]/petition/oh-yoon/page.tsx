@@ -144,7 +144,7 @@ export default async function PetitionOhYoonPage() {
           </p>
           <h1
             id="petition-hero-title"
-            className="font-display text-4xl md:text-6xl leading-tight mb-4 break-keep"
+            className="font-display font-bold text-4xl md:text-6xl leading-tight mb-4 break-keep"
             style={{ textShadow: '0 2px 18px rgba(0,0,0,0.65)' }}
           >
             {t('heroTitle')
@@ -217,11 +217,11 @@ export default async function PetitionOhYoonPage() {
                 <blockquote className="relative md:pl-2">
                   <span
                     aria-hidden="true"
-                    className="absolute -left-1 -top-4 md:-left-2 md:-top-5 text-6xl md:text-7xl leading-none text-charcoal/15 font-display select-none"
+                    className="absolute -left-1 -top-4 md:-left-2 md:-top-5 text-6xl md:text-7xl leading-none text-charcoal/15 font-display font-bold select-none"
                   >
                     &ldquo;
                   </span>
-                  <p className="relative font-display italic text-xl md:text-2xl leading-snug text-charcoal-deep break-keep">
+                  <p className="relative font-display font-bold italic text-xl md:text-2xl leading-snug text-charcoal-deep break-keep">
                     {t('storyQuote')}
                   </p>
                   <footer className="mt-3 text-xs md:text-sm text-charcoal-muted tracking-widest uppercase">
@@ -304,7 +304,7 @@ export default async function PetitionOhYoonPage() {
               </article>
             ))}
           </div>
-          <p className="mt-12 md:mt-16 text-center font-display text-2xl md:text-3xl leading-snug text-primary-strong break-keep text-balance">
+          <p className="mt-12 md:mt-16 text-center font-display font-bold text-2xl md:text-3xl leading-snug text-primary-strong break-keep text-balance">
             {t('threeStepsBridge')}
           </p>
         </div>
@@ -314,7 +314,7 @@ export default async function PetitionOhYoonPage() {
       <Section variant="white" className="py-20 md:py-24">
         <div className="container-max max-w-3xl mx-auto px-4 text-center">
           <div className="border-4 border-charcoal bg-canvas px-6 py-14 md:px-14 md:py-20 shadow-[8px_8px_0px_0px_rgba(31,36,40,0.35)]">
-            {/* 청원 동의문 본문 — PartialSansKR(font-display)가 가운뎃점(·) 글리프를 안 가져 빠지므로 일반 sans 폰트 사용 */}
+            {/* 청원 동의문 본문 — PartialSansKR(font-display font-bold)가 가운뎃점(·) 글리프를 안 가져 빠지므로 일반 sans 폰트 사용 */}
             <p className="font-bold text-2xl md:text-4xl leading-relaxed text-charcoal-deep break-keep">
               {t('statementLine1')}
               <br />
@@ -474,7 +474,7 @@ export default async function PetitionOhYoonPage() {
                   <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-2">
                     {t('exhibitionCardEyebrow')}
                   </p>
-                  <h3 className="font-display text-2xl md:text-3xl text-charcoal-deep leading-tight break-keep">
+                  <h3 className="font-display font-bold text-2xl md:text-3xl text-charcoal-deep leading-tight break-keep">
                     {t('exhibitionCardTitle')}
                   </h3>
                   <p className="mt-1 text-sm md:text-base text-charcoal-muted break-keep">
@@ -516,7 +516,7 @@ export default async function PetitionOhYoonPage() {
           </div>
 
           <div className="mt-16 rounded-xl bg-canvas border-2 border-charcoal p-6 md:p-8 shadow-[4px_4px_0px_0px_rgba(31,36,40,0.25)]">
-            <h3 className="font-display text-xl md:text-2xl text-charcoal-deep mb-3 break-keep">
+            <h3 className="font-display font-bold text-xl md:text-2xl text-charcoal-deep mb-3 break-keep">
               {t('saffestHeading')}
             </h3>
             <p className="text-base text-charcoal leading-relaxed break-keep mb-4">
@@ -553,7 +553,7 @@ export default async function PetitionOhYoonPage() {
           </p>
           <p
             id="petition-closing-title"
-            className="font-display text-3xl md:text-4xl leading-tight mb-14 md:mb-16 break-keep text-balance"
+            className="font-display font-bold text-3xl md:text-4xl leading-tight mb-14 md:mb-16 break-keep text-balance"
           >
             {t('closingLine3')}
           </p>

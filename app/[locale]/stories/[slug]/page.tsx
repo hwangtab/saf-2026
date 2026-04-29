@@ -301,7 +301,7 @@ export default async function StoryDetailPage({ params }: Props) {
         >
           <div className="max-w-3xl mx-auto">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-display text-charcoal">
+              <h2 className="text-2xl font-display font-bold text-charcoal">
                 {isEn ? 'Featured Artworks' : '관련 작품'}
               </h2>
               <Link
@@ -335,7 +335,9 @@ export default async function StoryDetailPage({ params }: Props) {
                         />
                       ) : (
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <span className="text-charcoal-muted/20 text-4xl font-display">M</span>
+                          <span className="text-charcoal-muted/20 text-4xl font-display font-bold">
+                            M
+                          </span>
                         </div>
                       )}
                     </div>
@@ -364,7 +366,7 @@ export default async function StoryDetailPage({ params }: Props) {
           className="pb-16 md:pb-24"
         >
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-2xl font-display text-charcoal mb-6">
+            <h2 className="text-2xl font-display font-bold text-charcoal mb-6">
               {isEn ? 'Related Stories' : '관련 글'}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">

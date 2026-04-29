@@ -449,7 +449,7 @@ export default async function ArtistPage({ params }: Props) {
         >
           <div className="container-max">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-display text-charcoal">
+              <h2 className="text-2xl font-display font-bold text-charcoal">
                 {isEnglish ? 'Magazine' : '관련 매거진'}
               </h2>
               <Link

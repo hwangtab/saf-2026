@@ -57,7 +57,7 @@ export default function SignForm() {
         role="status"
         aria-live="polite"
       >
-        <h3 className="font-display text-2xl text-charcoal-deep mb-2 break-keep">
+        <h3 className="font-display font-bold text-2xl text-charcoal-deep mb-2 break-keep">
           서명해 주셔서 감사합니다.
         </h3>
         <p className="text-base text-charcoal leading-relaxed mb-4 break-keep">

@@ -62,7 +62,7 @@ export default function PageHero({
         )}
         <h1
           id={id}
-          className="font-display text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight text-white drop-shadow-lg break-keep text-balance"
+          className="font-display font-black text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight text-white drop-shadow-lg break-keep text-balance"
         >
           {title}
         </h1>

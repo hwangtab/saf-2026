@@ -303,7 +303,7 @@ export default async function CategoryPage({ params }: Props) {
 
               {featuredArtists.length > 0 && (
                 <div className="mt-10 md:mt-12">
-                  <h2 className="text-xl md:text-2xl font-section font-normal text-charcoal-deep mb-4">
+                  <h2 className="text-xl md:text-2xl font-section font-bold text-charcoal-deep mb-4">
                     {isEnglish
                       ? `Featured ${displayCategory} Artists`
                       : `${displayCategory} 추천 작가`}
@@ -327,7 +327,7 @@ export default async function CategoryPage({ params }: Props) {
                 priceBuckets.midCount > 0 ||
                 priceBuckets.highCount > 0) && (
                 <div className="mt-10 md:mt-12">
-                  <h2 className="text-xl md:text-2xl font-section font-normal text-charcoal-deep mb-4">
+                  <h2 className="text-xl md:text-2xl font-section font-bold text-charcoal-deep mb-4">
                     {isEnglish ? 'Price Range Distribution' : '가격대별 작품 수'}
                   </h2>
                   <dl className="grid grid-cols-3 gap-3 text-center">
@@ -335,7 +335,7 @@ export default async function CategoryPage({ params }: Props) {
                       <dt className="text-xs text-charcoal-muted mb-1">
                         {isEnglish ? 'Under ₩1M' : '100만 원 미만'}
                       </dt>
-                      <dd className="text-2xl font-display text-charcoal-deep">
+                      <dd className="text-2xl font-display font-bold text-charcoal-deep">
                         {priceBuckets.lowCount}
                       </dd>
                     </div>
@@ -343,7 +343,7 @@ export default async function CategoryPage({ params }: Props) {
                       <dt className="text-xs text-charcoal-muted mb-1">
                         {isEnglish ? '₩1M – ₩5M' : '100만 ~ 500만 원'}
                       </dt>
-                      <dd className="text-2xl font-display text-charcoal-deep">
+                      <dd className="text-2xl font-display font-bold text-charcoal-deep">
                         {priceBuckets.midCount}
                       </dd>
                     </div>
@@ -351,7 +351,7 @@ export default async function CategoryPage({ params }: Props) {
                       <dt className="text-xs text-charcoal-muted mb-1">
                         {isEnglish ? 'Over ₩5M' : '500만 원 이상'}
                       </dt>
-                      <dd className="text-2xl font-display text-charcoal-deep">
+                      <dd className="text-2xl font-display font-bold text-charcoal-deep">
                         {priceBuckets.highCount}
                       </dd>
                     </div>
@@ -377,7 +377,7 @@ export default async function CategoryPage({ params }: Props) {
         {faqs && faqs.length > 0 && (
           <Section variant="white" prevVariant="primary-surface" className="pt-12 pb-12">
             <div className="container-max max-w-3xl">
-              <h2 className="text-2xl md:text-3xl font-section font-normal text-charcoal-deep mb-6">
+              <h2 className="text-2xl md:text-3xl font-section font-bold text-charcoal-deep mb-6">
                 {isEnglish
                   ? `${displayCategory}: Frequently Asked Questions`
                   : `${displayCategory} 자주 묻는 질문`}

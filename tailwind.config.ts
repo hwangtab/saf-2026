@@ -21,9 +21,8 @@ const config: Config = {
           'Arial',
           'sans-serif',
         ],
-        // 히어로 타이틀 — Black Han Sans (1 weight). 못 받으면 Noto Sans KR 900으로 폴백
+        // 히어로 타이틀 — Noto Sans KR. weight는 globals.css 또는 컴포넌트에서 font-black/font-bold 명시
         display: [
-          'var(--font-partial-sans)',
           'var(--font-paperlogy)',
           '-apple-system',
           'BlinkMacSystemFont',
