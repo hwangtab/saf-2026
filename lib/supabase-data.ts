@@ -783,7 +783,9 @@ const getSupabaseStoriesUncached = async (): Promise<Story[]> => {
 
 const getSupabaseStoriesCached = unstable_cache(
   async () => getSupabaseStoriesUncached(),
-  ['supabase-stories'],
+  // 'supabase-stories' v1 키에 빈 배열이 캐시되는 사고 후, 캐시 미스 강제를 위해 v2로 bump.
+  // Vercel Data Cache는 deployment 간 공유되어 stale 데이터가 유지될 수 있음.
+  ['supabase-stories-v2'],
   { revalidate: 600, tags: ['stories'] }
 );
 
