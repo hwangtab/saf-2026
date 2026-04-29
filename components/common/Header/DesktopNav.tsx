@@ -31,7 +31,7 @@ export default function DesktopNav({
   const tSearch = useTranslations('globalSearch');
   const isInverse = textColor === 'text-white';
   const utilityButtonClassName = clsx(
-    'flex items-center gap-1.5 text-sm font-medium rounded-full px-3 py-1.5',
+    'inline-flex items-center gap-1 text-xs font-medium rounded-full px-2.5 py-1 min-h-0',
     'border transition-colors duration-200',
     isInverse
       ? 'border-white/30 bg-white/10 text-white/90 hover:bg-white/20 hover:border-white/50'
