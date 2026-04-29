@@ -2941,3 +2941,14 @@ export const artistArticles: Record<string, Article[]> = {
 export function getArticlesByArtist(artistName: string): Article[] {
   return artistArticles[artistName] || [];
 }
+
+/**
+ * 작가명으로 외부 권위 URL 목록만 추출 — Person schema의 sameAs로 송출되어
+ * Google Knowledge Graph entity 연결의 핵심 시그널이 됨.
+ * GSC Performance상 작가 검색 노출 다수에 0 클릭이던 page 2 작가들을 page 1로
+ * 끌어올리는 가장 큰 레버. 매핑이 없으면 빈 배열.
+ */
+export function getArticleUrlsByArtist(artistName: string): string[] {
+  const articles = artistArticles[artistName] || [];
+  return articles.map((a) => a.url).filter(Boolean);
+}

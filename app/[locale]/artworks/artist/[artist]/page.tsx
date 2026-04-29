@@ -6,6 +6,7 @@ import {
   getSupabaseArtistExternalLinks,
 } from '@/lib/supabase-data';
 import { getArtistExternalLinks } from '@/lib/artist-external-links';
+import { getArticleUrlsByArtist } from '@/content/artist-articles';
 import { CATEGORY_EN_MAP, getCategoryLabel } from '@/lib/artwork-category';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
@@ -270,11 +271,15 @@ export default async function ArtistPage({ params }: Props) {
     locale === 'en' && effectiveHistory && containsHangul(effectiveHistory)
       ? undefined
       : effectiveHistory;
-  // sameAs 외부 권위 링크 — Supabase 작가 메타(homepage/instagram) + 정적 매핑(Wikipedia 등)
-  // GSC Performance상 작가 검색 노출은 다수지만 page 1 진입 못 한 페이지들이 다수.
-  // Knowledge Graph entity 연결 강화를 위한 시그널.
+  // sameAs 외부 권위 링크 — Knowledge Graph entity 연결 강화 시그널.
+  // 출처 3개 합침:
+  // 1) artist-articles.ts (사용자가 사전 큐레이션한 매체/MMCA/Wikipedia/달진닷컴 등 386 URL)
+  // 2) lib/artist-external-links.ts (거장 정적 매핑)
+  // 3) Supabase artists.homepage / artists.instagram (작가 본인 SNS)
+  // GSC Performance상 작가 검색 노출은 다수인데 page 2~3에 머무는 페이지들 다수 — 이를 page 1로 끌어올리는 레버.
   const artistMeta = await getSupabaseArtistExternalLinks(artistName);
   const sameAs: string[] = [
+    ...getArticleUrlsByArtist(artistName),
     ...getArtistExternalLinks(artistName),
     ...(artistMeta?.homepage ? [artistMeta.homepage] : []),
     ...(artistMeta?.instagram ? [artistMeta.instagram] : []),
