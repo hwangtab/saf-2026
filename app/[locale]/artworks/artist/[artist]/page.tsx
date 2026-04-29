@@ -24,7 +24,7 @@ import {
 } from '@/lib/utils';
 import { parseArtworkPrice, resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { permanentRedirect } from 'next/navigation';
 import { getLocale, getTranslations } from 'next-intl/server';
 import type { Artwork, ArtworkListItem } from '@/types';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
@@ -208,7 +208,9 @@ export default async function ArtistPage({ params }: Props) {
   const t = await getTranslations('artistPage');
 
   if (artistArtworks.length === 0) {
-    notFound();
+    // 작품 전체 숨김된 작가는 308 영구 redirect — Next.js segment-level not-found.tsx가
+    // status 200으로 응답하던 문제(신학철 케이스) 회피.
+    permanentRedirect(isEnglish ? '/en/artworks' : '/artworks');
   }
 
   // Use the first artwork's image as the hero background

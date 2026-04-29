@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { Suspense } from 'react';
 import { Link } from '@/i18n/navigation';
-import { notFound } from 'next/navigation';
+import { permanentRedirect } from 'next/navigation';
 import { getLocale, getTranslations } from 'next-intl/server';
 
 import {
@@ -109,7 +109,10 @@ export default async function ArtworkDetailPage({ params }: Props) {
   ]);
 
   if (!artwork) {
-    notFound();
+    // 삭제·숨김된 작품은 308 영구 redirect — Next.js segment-level not-found.tsx가
+    // status 200으로 응답하던 문제(GSC NOINDEX 153건의 진짜 원인) 회피.
+    // 작품 목록으로 보내 색인 시그널을 명확히 전달 + UX 손실 최소화.
+    permanentRedirect(locale === 'en' ? '/en/artworks' : '/artworks');
   }
 
   // artwork 확정 후 관련 작품만 병렬 fetch (이전 전체 330개 fetch → ~20개로 축소)
