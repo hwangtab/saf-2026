@@ -84,9 +84,9 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
             />
           </div>
 
-          {/* Category Filter - second row */}
+          {/* Category Filter — 모바일에선 숨김 (ArtistNavigation과 동일 정책, 768px 미만 chrome 단순화) */}
           {categoryCounts.length > 0 && (
-            <div className="pb-3">
+            <div className="hidden md:block pb-3">
               <CategoryFilter
                 categories={categoryCounts}
                 selected={categoryFilter}
@@ -96,9 +96,9 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
             </div>
           )}
 
-          {/* Price Range Filter - third row */}
+          {/* Price Range Filter — 모바일에선 숨김 */}
           {totalPricedCount > 0 && (
-            <div className="pb-3">
+            <div className="hidden md:block pb-3">
               <PriceRangeFilter
                 buckets={priceBucketCounts}
                 selected={priceBucket}
