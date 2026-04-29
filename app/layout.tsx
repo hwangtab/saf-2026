@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from 'next';
 import { Black_Han_Sans, Noto_Sans_KR } from 'next/font/google';
-import localFont from 'next/font/local';
 import { getLocale } from 'next-intl/server';
 import GlobalAnalyticsGate from '@/components/common/GlobalAnalyticsGate';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
@@ -14,60 +13,26 @@ import {
 import { BRAND_COLORS } from '@/lib/colors';
 import '@/styles/globals.css';
 
-// LCP 최적화: Paperlogy 3 weight 총 417KB preload 제거.
-// display: swap으로 system font fallback → Paperlogy 교체. 실사용자(LTE/5G)는 <500ms FOUT.
-// Slow 4G Lab 시뮬레이션에서 LCP 대역폭 경쟁 회수가 더 큰 이득.
-const paperlogy = localFont({
-  src: [
-    { path: '../public/fonts/Paperlogy-4Regular.woff2', weight: '400', style: 'normal' },
-    { path: '../public/fonts/Paperlogy-5Medium.woff2', weight: '500', style: 'normal' },
-    { path: '../public/fonts/Paperlogy-7Bold.woff2', weight: '700', style: 'normal' },
-  ],
+// next/font/google: 빌드 타임에 Google Fonts에서 폰트 다운로드 → 자체 도메인으로 self-host 변환.
+// unicode-range chunk 자동 분할로 한글 글리프가 사용 시점에 lazy fetch됨.
+//
+// 본문 (font-sans) — Noto Sans KR. swap으로 fallback 후 교체.
+const notoSansKR = Noto_Sans_KR({
+  weight: ['400', '500', '700', '900'],
+  subsets: ['latin'],
   variable: '--font-paperlogy',
   display: 'swap',
-  preload: false,
-  declarations: [
-    {
-      prop: 'unicode-range',
-      value:
-        'U+0000-00FF, U+0100-024F, U+2000-206F, U+2190-21FF, U+2200-22FF, U+3000-303F, U+3131-318E, U+AC00-D7AF, U+F900-FAFF, U+FE10-FE1F, U+FF00-FFEF',
-    },
-  ],
+  adjustFontFallback: true,
 });
 
-// PartialSansKR은 hero title 전용 (font-display 클래스). 초기 LCP 이후 로드되어도
-// UX 영향 미미 — display: swap으로 Paperlogy fallback 표시 후 교체. 303KB 대역폭 회수.
-//
-// unicode-range에서 U+00B7(·), U+2013(–), U+2014(—)를 제외함:
-// PartialSansKR 폰트가 이 세 코드포인트를 cmap에 매핑해두고도 outline이 비어 있어
-// font-display 영역에서 빈 칸으로 렌더되는 결함이 있음. 범위 밖으로 빼면 브라우저가
-// fallback(Paperlogy)에게 넘김. 0x00B6/0x00B8, 0x2012/0x2015 경계로 분할 표기.
-const partialSans = localFont({
-  src: '../public/fonts/PartialSansKR-Regular.woff2',
+// Hero (font-display) — Black Han Sans. display: optional로 LCP 갱신 차단.
+// 0.1초 안에 못 받으면 fallback (Noto Sans KR 900 → 시스템 굵은 폰트) 영구 유지.
+// 빠른 네트워크 사용자는 Black Han Sans로 보이고, 느린 모바일 4G도 LCP 영향 없음.
+const blackHanSans = Black_Han_Sans({
+  weight: '400',
+  subsets: ['latin'],
   variable: '--font-partial-sans',
-  display: 'swap',
-  preload: false,
-  declarations: [
-    {
-      prop: 'unicode-range',
-      value:
-        'U+0000-00B6, U+00B8-00FF, U+0100-024F, U+2000-2012, U+2015-206F, U+2190-21FF, U+2200-22FF, U+3000-303F, U+3131-318E, U+AC00-D7AF, U+F900-FAFF, U+FE10-FE1F, U+FF00-FFEF',
-    },
-  ],
-});
-
-const schoolSafetyPoster = localFont({
-  src: '../public/fonts/HakgyoansimPosterB.woff2',
-  variable: '--font-section',
-  display: 'swap',
-  preload: false,
-  declarations: [
-    {
-      prop: 'unicode-range',
-      value:
-        'U+0000-00FF, U+0100-024F, U+2000-206F, U+2190-21FF, U+2200-22FF, U+3000-303F, U+3131-318E, U+AC00-D7AF, U+F900-FAFF, U+FE10-FE1F, U+FF00-FFEF',
-    },
-  ],
+  display: 'optional',
 });
 
 export const viewport: Viewport = {
@@ -150,7 +115,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html
       lang={locale}
-      className={`${paperlogy.variable} ${partialSans.variable} ${schoolSafetyPoster.variable}`}
+      className={`${notoSansKR.variable} ${blackHanSans.variable}`}
       suppressHydrationWarning
     >
       <head>

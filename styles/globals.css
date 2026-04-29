@@ -124,11 +124,11 @@ button:focus:not(:focus-visible) {
 
 @layer utilities {
   .text-hero {
-    @apply font-display text-5xl md:text-6xl lg:text-7xl leading-tight;
+    @apply font-display font-black text-5xl md:text-6xl lg:text-7xl leading-tight;
   }
 
   .text-section-title {
-    @apply font-section font-normal text-4xl md:text-5xl leading-snug;
+    @apply font-section font-bold text-4xl md:text-5xl leading-snug;
   }
 
   .text-card-title {
@@ -159,7 +159,7 @@ button:focus:not(:focus-visible) {
 
   /* 작품명 — 갤러리 도록 스타일 */
   .text-artwork-title {
-    @apply font-display text-2xl md:text-3xl tracking-tight leading-tight;
+    @apply font-display font-black text-2xl md:text-3xl tracking-tight leading-tight;
   }
 }
 

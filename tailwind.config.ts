@@ -10,7 +10,7 @@ const config: Config = {
         slate: {}, // slate 팔레트 비활성화 — gray 브랜드 토큰 사용
       },
       fontFamily: {
-        // 기본 폰트 - 모든 텍스트에 사용
+        // 기본 폰트 (본문) — Noto Sans KR
         sans: [
           'var(--font-paperlogy)',
           '-apple-system',
@@ -21,7 +21,7 @@ const config: Config = {
           'Arial',
           'sans-serif',
         ],
-        // 히어로 타이틀 전용
+        // 히어로 타이틀 — Black Han Sans (1 weight). 못 받으면 Noto Sans KR 900으로 폴백
         display: [
           'var(--font-partial-sans)',
           'var(--font-paperlogy)',
@@ -30,14 +30,8 @@ const config: Config = {
           'system-ui',
           'sans-serif',
         ],
-        // 섹션 제목 전용
-        section: [
-          'var(--font-section)',
-          'var(--font-paperlogy)',
-          '-apple-system',
-          'BlinkMacSystemFont',
-          'sans-serif',
-        ],
+        // 섹션 제목 — Noto Sans KR Bold (본문 변수 재사용, weight는 globals.css에서 명시)
+        section: ['var(--font-paperlogy)', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
       },
       backgroundImage: {
         'gradient-portal': 'radial-gradient(circle at top, #EDF3FF 0%, #F7F8FA 38%, #FFFFFF 100%)',
