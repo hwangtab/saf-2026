@@ -63,8 +63,8 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
 
   return (
     <div>
-      {/* Sticky FilterBar - Sticks below header after scrolling */}
-      <div className="sticky top-[calc(4rem+env(safe-area-inset-top,0px))] left-0 right-0 z-30 bg-gray-50 border-b border-gray-200/50">
+      {/* FilterBar — 데스크톱에선 헤더 아래 sticky, 모바일에선 normal scroll로 chrome stack 최소화 */}
+      <div className="md:sticky md:top-[calc(4rem+env(safe-area-inset-top,0px))] left-0 right-0 z-30 bg-gray-50 border-b border-gray-200/50">
         <div className="container-max">
           {/* Search & Sort Controls - Single row on desktop, stacked on mobile */}
           <div className="flex flex-col md:flex-row md:items-center gap-3 py-3">
