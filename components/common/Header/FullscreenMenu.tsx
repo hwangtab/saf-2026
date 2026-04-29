@@ -233,8 +233,8 @@ export default function FullscreenMenu({
           </ul>
         </nav>
 
-        {/* 보조 알약 - 주문 조회 + 아티스트 메뉴 (위/아래 padding 균등으로 알약 수직 가운데) */}
-        <div className="mt-6 border-t border-gray-100 pt-8 pb-8">
+        {/* 보조 알약 - 주문 조회 + 아티스트 메뉴 (위/아래 padding 균등 + 적정 비율) */}
+        <div className="mt-6 border-t border-gray-100 py-5">
           <div className="flex flex-wrap items-center justify-center gap-2">
             <Link
               href="/orders"
