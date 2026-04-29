@@ -233,12 +233,12 @@ export default function FullscreenMenu({
           </ul>
         </nav>
 
-        {/* 보조 알약 - 주문 조회 + 아티스트 메뉴 (자연 너비, 가로 배치) */}
+        {/* 보조 알약 - 주문 조회 + 아티스트 메뉴 (컴팩트, 가로 배치) */}
         <div className="mt-6 border-t border-gray-100 pt-5">
           <div className="flex flex-wrap items-center justify-center gap-2">
             <Link
               href="/orders"
-              className="inline-flex min-h-[40px] items-center justify-center rounded-full border border-gray-200 bg-gray-50 px-5 py-2 text-sm font-medium text-charcoal-muted transition-colors hover:border-gray-300 hover:bg-gray-100"
+              className="inline-flex items-center justify-center rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm font-medium text-charcoal-muted transition-colors hover:border-gray-300 hover:bg-gray-100"
               onClick={onClose}
             >
               {t('orderStatus')}
@@ -246,8 +246,8 @@ export default function FullscreenMenu({
             <AuthButtons
               layout="inline"
               variant="white"
-              size="sm"
-              buttonClassName="rounded-full bg-gray-50 border-gray-200 text-charcoal-muted font-medium px-5 hover:bg-gray-100 hover:border-gray-300 hover:scale-100 active:scale-100 hover:shadow-none"
+              size="xs"
+              buttonClassName="rounded-full bg-gray-50 border-gray-200 text-charcoal-muted font-medium hover:bg-gray-100 hover:border-gray-300 hover:scale-100 active:scale-100 hover:shadow-none"
             />
           </div>
         </div>
