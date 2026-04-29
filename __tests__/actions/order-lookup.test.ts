@@ -3,6 +3,8 @@
  *
  * lookupOrders, lookupOrderDetail, updateBuyerShipping, cancelBuyerOrder를
  * Supabase 모킹 기반으로 테스트합니다.
+ *
+ * @jest-environment node
  */
 
 // --- Mock: next/headers ---
@@ -11,6 +13,14 @@ jest.mock('next/headers', () => ({
   headers: jest.fn(async () => ({
     get: mockHeadersGet,
   })),
+}));
+
+// --- Mock: next/cache ---
+// 테스트 환경에서는 revalidatePath/revalidateTag가 request scope를 요구해 throw하므로 무력화
+jest.mock('next/cache', () => ({
+  revalidatePath: jest.fn(),
+  revalidateTag: jest.fn(),
+  unstable_cache: (fn: unknown) => fn,
 }));
 
 // --- Mock: rate-limit ---
@@ -127,8 +137,10 @@ function createOrdersMock() {
       };
     }),
     update: jest.fn(() => {
+      const inFn = jest.fn(() => ({ error: mockOrderUpdateError }));
       const eq: jest.Mock = jest.fn(() => ({
         eq,
+        in: inFn,
         error: mockOrderUpdateError,
       }));
       return { eq };
@@ -183,7 +195,15 @@ function createDefaultMock() {
     eq,
     maybeSingle: jest.fn(() => ({ data: null, error: null })),
   }));
-  return { select: jest.fn(() => ({ eq })) };
+  return {
+    select: jest.fn(() => ({ eq })),
+    insert: jest.fn(() => ({
+      select: jest.fn(() => ({
+        single: jest.fn(() => ({ data: { id: 'log-1' }, error: null })),
+      })),
+      error: null,
+    })),
+  };
 }
 
 // --- Import SUT ---

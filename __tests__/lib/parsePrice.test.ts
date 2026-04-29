@@ -32,8 +32,8 @@ describe('parsePrice', () => {
     expect(parsePrice('$100 (USD)')).toBe(100);
   });
 
-  it('should treat 0 as Infinity based on current logic', () => {
-    expect(parsePrice('₩0')).toBe(Infinity);
-    expect(parsePrice('0')).toBe(Infinity);
+  it('parses 0 as numeric 0 (lowest price for ascending sort)', () => {
+    expect(parsePrice('₩0')).toBe(0);
+    expect(parsePrice('0')).toBe(0);
   });
 });

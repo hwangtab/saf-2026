@@ -1,5 +1,15 @@
+import { TextEncoder, TextDecoder } from 'util';
 // Learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
+
+// Polyfill for Next.js 16: jsdom 환경에는 TextEncoder/TextDecoder가 없어
+// `next/cache`를 import하는 순간 ReferenceError가 발생한다.
+if (typeof global.TextEncoder === 'undefined') {
+  global.TextEncoder = TextEncoder;
+}
+if (typeof global.TextDecoder === 'undefined') {
+  global.TextDecoder = TextDecoder;
+}
 
 // Mock Next.js router
 jest.mock('next/navigation', () => ({

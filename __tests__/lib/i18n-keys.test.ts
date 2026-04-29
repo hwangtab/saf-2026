@@ -31,16 +31,12 @@ describe('i18n key consistency', () => {
 
   it('no keys exist in ko.json but missing from en.json', () => {
     const missingInEn = koKeys.filter((k) => !enKeys.includes(k));
-    if (missingInEn.length > 0) {
-      fail(`Keys in ko.json missing from en.json:\n  - ${missingInEn.join('\n  - ')}`);
-    }
+    expect(missingInEn).toEqual([]);
   });
 
   it('no keys exist in en.json but missing from ko.json', () => {
     const missingInKo = enKeys.filter((k) => !koKeys.includes(k));
-    if (missingInKo.length > 0) {
-      fail(`Keys in en.json missing from ko.json:\n  - ${missingInKo.join('\n  - ')}`);
-    }
+    expect(missingInKo).toEqual([]);
   });
 
   it('no empty string values in ko.json', () => {
@@ -52,9 +48,7 @@ describe('i18n key consistency', () => {
       }
       return val === '';
     });
-    if (emptyKeys.length > 0) {
-      fail(`Empty values in ko.json:\n  - ${emptyKeys.join('\n  - ')}`);
-    }
+    expect(emptyKeys).toEqual([]);
   });
 
   it('no unexpected empty string values in en.json', () => {
@@ -72,8 +66,6 @@ describe('i18n key consistency', () => {
       }
       return val === '' && !allowedEmpty.includes(key);
     });
-    if (emptyKeys.length > 0) {
-      fail(`Empty values in en.json:\n  - ${emptyKeys.join('\n  - ')}`);
-    }
+    expect(emptyKeys).toEqual([]);
   });
 });

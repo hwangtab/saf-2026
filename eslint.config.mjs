@@ -69,7 +69,7 @@ const config = [
     },
   },
   {
-    ignores: ['scripts/*', 'coverage/**'],
+    ignores: ['scripts/*', 'coverage/**', '.next/**', '.worktrees/**'],
   },
 ];
 

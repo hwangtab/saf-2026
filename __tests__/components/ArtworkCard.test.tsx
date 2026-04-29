@@ -47,6 +47,8 @@ describe('ArtworkCard', () => {
     const soldArtwork = { ...mockArtwork, sold: true };
     render(<ArtworkCard artwork={soldArtwork} variant="gallery" />);
 
-    expect(screen.getAllByText('SOLD')).toHaveLength(1); // Badge
+    // ArtworkCard now uses t('soldBadge') for the badge label, and the
+    // global next-intl mock returns the key verbatim.
+    expect(screen.getAllByText('soldBadge')).toHaveLength(1);
   });
 });

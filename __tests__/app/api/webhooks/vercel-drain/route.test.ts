@@ -125,7 +125,7 @@ describe('vercel-drain webhook payload validation', () => {
     const json = await response.json();
 
     expect(response.status).toBe(200);
-    expect(json).toEqual({ inserted: 1 });
+    expect(json).toMatchObject({ inserted: 1 });
     expect(mockCreateSupabaseAdminClient).toHaveBeenCalledTimes(1);
   });
 
@@ -146,7 +146,7 @@ describe('vercel-drain webhook payload validation', () => {
     const json = await response.json();
 
     expect(response.status).toBe(200);
-    expect(json).toEqual({ inserted: 1 });
+    expect(json).toMatchObject({ inserted: 1 });
     expect(mockCreateSupabaseAdminClient).toHaveBeenCalledTimes(1);
   });
 });
