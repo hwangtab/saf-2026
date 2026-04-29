@@ -36,6 +36,11 @@ const paperlogy = localFont({
 
 // PartialSansKR은 hero title 전용 (font-display 클래스). 초기 LCP 이후 로드되어도
 // UX 영향 미미 — display: swap으로 Paperlogy fallback 표시 후 교체. 303KB 대역폭 회수.
+//
+// unicode-range에서 U+00B7(·), U+2013(–), U+2014(—)를 제외함:
+// PartialSansKR 폰트가 이 세 코드포인트를 cmap에 매핑해두고도 outline이 비어 있어
+// font-display 영역에서 빈 칸으로 렌더되는 결함이 있음. 범위 밖으로 빼면 브라우저가
+// fallback(Paperlogy)에게 넘김. 0x00B6/0x00B8, 0x2012/0x2015 경계로 분할 표기.
 const partialSans = localFont({
   src: '../public/fonts/PartialSansKR-Regular.woff2',
   variable: '--font-partial-sans',
@@ -45,7 +50,7 @@ const partialSans = localFont({
     {
       prop: 'unicode-range',
       value:
-        'U+0000-00FF, U+0100-024F, U+2000-206F, U+2190-21FF, U+2200-22FF, U+3000-303F, U+3131-318E, U+AC00-D7AF, U+F900-FAFF, U+FE10-FE1F, U+FF00-FFEF',
+        'U+0000-00B6, U+00B8-00FF, U+0100-024F, U+2000-2012, U+2015-206F, U+2190-21FF, U+2200-22FF, U+3000-303F, U+3131-318E, U+AC00-D7AF, U+F900-FAFF, U+FE10-FE1F, U+FF00-FFEF',
     },
   ],
 });
