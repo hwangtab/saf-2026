@@ -250,7 +250,7 @@ export default async function PetitionOhYoonPage() {
                 </blockquote>
               </div>
             </aside>
-            <div className="space-y-6 text-base md:text-lg leading-relaxed text-charcoal break-keep">
+            <div className="space-y-6 text-base md:text-lg leading-relaxed text-charcoal break-keep text-balance">
               <p>{t('storyP1')}</p>
               <p>{t('storyP2')}</p>
               <p>{t('storyP3')}</p>
@@ -302,7 +302,7 @@ export default async function PetitionOhYoonPage() {
           <SectionTitle as="h2" className="mb-8 md:mb-10">
             {t('threeStepsHeading')}
           </SectionTitle>
-          <p className="mb-10 text-base md:text-lg leading-relaxed text-charcoal-muted break-keep">
+          <p className="mb-10 text-base md:text-lg leading-relaxed text-charcoal-muted break-keep text-balance">
             {t('threeStepsLead')}
           </p>
           <div className="grid gap-5 md:grid-cols-3">
@@ -318,7 +318,7 @@ export default async function PetitionOhYoonPage() {
                 <h3 className="font-semibold text-lg text-charcoal-deep mb-2 break-keep">
                   {card.title}
                 </h3>
-                <p className="text-charcoal text-sm md:text-base leading-relaxed break-keep">
+                <p className="text-charcoal text-sm md:text-base leading-relaxed break-keep text-balance">
                   {card.body}
                 </p>
               </article>
@@ -366,7 +366,7 @@ export default async function PetitionOhYoonPage() {
               <h3 className="font-semibold text-lg text-charcoal-deep mb-3 break-keep">
                 {t('participationCard1Title')}
               </h3>
-              <p className="text-charcoal text-sm md:text-base leading-relaxed break-keep">
+              <p className="text-charcoal text-sm md:text-base leading-relaxed break-keep text-balance">
                 {t('participationCard1Body')}
               </p>
               <a
@@ -380,7 +380,7 @@ export default async function PetitionOhYoonPage() {
               <h3 className="font-semibold text-lg text-charcoal-deep mb-3 break-keep">
                 {t('participationCard2Title')}
               </h3>
-              <p className="text-charcoal text-sm md:text-base leading-relaxed break-keep">
+              <p className="text-charcoal text-sm md:text-base leading-relaxed break-keep text-balance">
                 {t('participationCard2Body')}
               </p>
               <a
@@ -394,7 +394,7 @@ export default async function PetitionOhYoonPage() {
               <h3 className="font-semibold text-lg text-charcoal-deep mb-3 break-keep">
                 {t('participationCard3Title')}
               </h3>
-              <p className="text-charcoal text-sm md:text-base leading-relaxed break-keep">
+              <p className="text-charcoal text-sm md:text-base leading-relaxed break-keep text-balance">
                 {t('participationCard3Body')}
               </p>
               <a
@@ -469,7 +469,7 @@ export default async function PetitionOhYoonPage() {
           <SectionTitle as="h2" className="mb-8 md:mb-10">
             {t('proponentsHeading')}
           </SectionTitle>
-          <div className="space-y-4 text-base md:text-lg leading-relaxed text-charcoal break-keep">
+          <div className="space-y-4 text-base md:text-lg leading-relaxed text-charcoal break-keep text-balance">
             <p>{t('proponentsBody1')}</p>
             <p>{t('proponentsBody2')}</p>
             <p className="text-sm text-charcoal-muted italic pt-1">
@@ -501,7 +501,7 @@ export default async function PetitionOhYoonPage() {
                     {t('exhibitionCardSubtitle')}
                   </p>
                 </div>
-                <p className="text-sm md:text-base text-charcoal leading-relaxed break-keep">
+                <p className="text-sm md:text-base text-charcoal leading-relaxed break-keep text-balance">
                   {t('exhibitionCardBody')}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-2 mt-auto pt-2">
@@ -539,7 +539,7 @@ export default async function PetitionOhYoonPage() {
             <h3 className="font-display text-xl md:text-2xl text-charcoal-deep mb-3 break-keep">
               {t('saffestHeading')}
             </h3>
-            <p className="text-base text-charcoal leading-relaxed break-keep mb-4">
+            <p className="text-base text-charcoal leading-relaxed break-keep text-balance mb-4">
               {t('saffestBody')}
             </p>
             <Link
