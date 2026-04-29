@@ -233,28 +233,28 @@ export default function FullscreenMenu({
           </ul>
         </nav>
 
+        {/* 보조 알약 - 주문 조회 + 아티스트 메뉴 (width 통일로 정렬 정리) */}
         <div className="mt-6 border-t border-gray-100 pt-5">
-          <div className="flex flex-col items-center gap-3">
+          <div className="flex flex-col items-center gap-2">
             <Link
               href="/orders"
-              className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-medium text-charcoal-muted transition-colors hover:border-gray-300 hover:bg-gray-100"
+              className="inline-flex min-h-[44px] w-44 items-center justify-center rounded-full border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-medium text-charcoal-muted transition-colors hover:border-gray-300 hover:bg-gray-100"
               onClick={onClose}
             >
               {t('orderStatus')}
             </Link>
-            {/* "주문/배송 조회"와 동일한 작은 알약 스타일로 통일 — buttonClassName으로 Button variant white의 사각/색을 알약으로 override */}
             <AuthButtons
               layout="inline"
               variant="white"
               size="sm"
-              buttonClassName="rounded-full bg-gray-50 border-gray-200 text-charcoal-muted font-medium hover:bg-gray-100 hover:border-gray-300 hover:scale-100 active:scale-100 hover:shadow-none"
+              buttonClassName="rounded-full w-44 bg-gray-50 border-gray-200 text-charcoal-muted font-medium hover:bg-gray-100 hover:border-gray-300 hover:scale-100 active:scale-100 hover:shadow-none"
             />
           </div>
         </div>
 
-        {/* 푸터 - 가입 버튼 */}
+        {/* 푸터 — 핵심 CTA: 작품 구경하기 (캠페인 본질, 작품 판매가 기금이 됨) + 보조: 기부하기 */}
         <footer className={styles.footer}>
-          <div className="mb-4 flex items-center justify-center gap-2 text-sm text-charcoal-muted">
+          <div className="mb-4 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm text-charcoal-muted">
             <Link
               href="/privacy"
               className="hover:text-primary transition-colors"
@@ -268,16 +268,38 @@ export default function FullscreenMenu({
             <Link href="/terms" className="hover:text-primary transition-colors" onClick={onClose}>
               {tFooter('termsOfService')}
             </Link>
+            <span className="text-gray-400" aria-hidden="true">
+              |
+            </span>
+            <a
+              href={EXTERNAL_LINKS.JOIN_MEMBER}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-primary transition-colors"
+              onClick={onClose}
+            >
+              {t('joinMember')}
+            </a>
           </div>
-          <Button
-            href={EXTERNAL_LINKS.JOIN_MEMBER}
-            variant="primary"
-            external
-            className="w-full justify-center"
-            onClick={onClose}
-          >
-            {t('donate')}
-          </Button>
+          <div className="flex flex-col gap-2">
+            <Button
+              href="/artworks"
+              variant="primary"
+              className="w-full justify-center"
+              onClick={onClose}
+            >
+              {t('browseArtworks')}
+            </Button>
+            <Button
+              href={EXTERNAL_LINKS.DONATE}
+              variant="outline"
+              external
+              className="w-full justify-center"
+              onClick={onClose}
+            >
+              {t('donate')}
+            </Button>
+          </div>
         </footer>
       </div>
     </dialog>
