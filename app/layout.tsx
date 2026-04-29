@@ -25,14 +25,15 @@ const notoSansKR = Noto_Sans_KR({
   adjustFontFallback: true,
 });
 
-// Hero (font-display) — Black Han Sans. display: optional로 LCP 갱신 차단.
-// 0.1초 안에 못 받으면 fallback (Noto Sans KR 900 → 시스템 굵은 폰트) 영구 유지.
-// 빠른 네트워크 사용자는 Black Han Sans로 보이고, 느린 모바일 4G도 LCP 영향 없음.
+// Hero (font-display) — Black Han Sans.
+// display: 'swap' — fallback(Noto Sans KR 900) 표시 후 폰트 받으면 교체.
+// 'optional'은 100ms 안에 한글 chunk가 도착해야 표시되어 첫 방문에서 거의 항상 fallback 영구 고정 → 디자인 의도 손상.
+// LCP는 약간 손해보더라도 디자인 보존이 우선.
 const blackHanSans = Black_Han_Sans({
   weight: '400',
   subsets: ['latin'],
   variable: '--font-partial-sans',
-  display: 'optional',
+  display: 'swap',
 });
 
 export const viewport: Viewport = {
