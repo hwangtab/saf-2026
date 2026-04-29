@@ -626,6 +626,10 @@ export function generateArtworkListSchema(
     itemListOrder: 'https://schema.org/ItemListUnordered',
     // Price range for art buyers
     ...(embeddedOffer && { offers: embeddedOffer }),
+    // /artworks 페이지 HTML 페이로드 절감 — ItemList의 각 항목에서 Offers 객체(Offer+seller) 제거.
+    // 작품 detail의 Product/VisualArtwork schema에 이미 가격·재고·판매자 마크업이 풍부하므로
+    // ItemList는 url+name+image만 남겨 Google Carousel rich result 자격은 유지하면서 페이로드 ~50% 절감.
+    // (이전: 카드당 ~827B × 30 = 24KB → 변경 후 추정 ~12KB)
     itemListElement: artworks.slice(0, limit).map((artwork, index) => {
       const rawImg = artwork.images[0] ? resolveSeoArtworkImageUrl(artwork.images[0]) : null;
       const absImg = rawImg ? (rawImg.startsWith('http') ? rawImg : `${SITE_URL}${rawImg}`) : null;
@@ -634,7 +638,6 @@ export function generateArtworkListSchema(
         ? artworkLocalePath
         : `${SITE_URL}${artworkLocalePath}`;
       const artworkName = isEnglish && artwork.title_en ? artwork.title_en : artwork.title;
-      const numericPrice = parseArtworkPrice(artwork.price);
       return {
         '@type': 'ListItem',
         position: index + 1,
@@ -644,20 +647,6 @@ export function generateArtworkListSchema(
           url: artworkUrl,
           name: artworkName,
           ...(absImg && { image: absImg }),
-          ...(numericPrice !== null && {
-            offers: {
-              '@type': 'Offer',
-              url: artworkUrl,
-              price: numericPrice,
-              priceCurrency: 'KRW',
-              priceValidUntil: PRICE_VALID_UNTIL,
-              availability: artwork.sold
-                ? 'https://schema.org/SoldOut'
-                : 'https://schema.org/InStock',
-              itemCondition: 'https://schema.org/NewCondition',
-              seller: { '@type': 'Organization', '@id': `${SITE_URL}#organization` },
-            },
-          }),
         },
       };
     }),
