@@ -352,7 +352,7 @@ export default async function OhYoonPage() {
           </div>
 
           <div className="relative py-20 bg-charcoal text-white">
-            <div className="max-w-[1440px] mx-auto px-4 mb-16 flex flex-col md:flex-row justify-between items-end gap-6 border-b border-white/20 pb-8">
+            <div className="max-w-[1440px] mx-auto px-4 mb-16 flex flex-col md:flex-row justify-between md:items-end gap-4 md:gap-6 border-b border-white/20 pb-8">
               <div>
                 <h2 className="text-4xl md:text-5xl font-normal mb-4 text-white font-display text-balance">
                   Exhibition Works
@@ -643,7 +643,7 @@ export default async function OhYoonPage() {
                 점의 판화가 전시되어 있습니다.
               </p>
             </div>
-            <div className="flex flex-col items-end gap-1">
+            <div className="flex flex-col md:items-end gap-1">
               <span className="text-xs text-white/40 uppercase tracking-widest">
                 Oh Yoon 40th Anniversary
               </span>
