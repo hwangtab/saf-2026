@@ -7,12 +7,33 @@ export interface ArtistSchemaInput {
   image?: string;
   url: string;
   jobTitle?: string;
+  /**
+   * 외부 권위 링크 (Wikipedia, MMCA, 작가 홈페이지/SNS 등). Google Knowledge Graph
+   * entity 연결의 핵심 시그널. 빈 배열은 sameAs 필드 자체를 schema에서 생략.
+   */
+  sameAs?: readonly string[];
 }
 
 // Enhanced artist schema input for SEO optimization
 export interface EnhancedArtistSchemaInput extends ArtistSchemaInput {
   history?: string;
   artworks?: Array<{ id: string; title: string; image: string }>;
+}
+
+/** sameAs URL 정규화 + 중복 제거. 빈 문자열 / null / undefined 제거. */
+function normalizeSameAs(urls: readonly (string | null | undefined)[] | undefined): string[] {
+  if (!urls || urls.length === 0) return [];
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const u of urls) {
+    if (!u) continue;
+    const trimmed = u.trim();
+    if (!trimmed || !trimmed.startsWith('http')) continue;
+    if (seen.has(trimmed)) continue;
+    seen.add(trimmed);
+    out.push(trimmed);
+  }
+  return out;
 }
 
 // Helper: Extract expertise topics from artist history/profile
@@ -122,6 +143,7 @@ function extractMemberships(history?: string): Array<{ '@type': string; name: st
 }
 
 export function generateArtistSchema(artist: ArtistSchemaInput) {
+  const sameAs = normalizeSameAs(artist.sameAs);
   return {
     '@context': 'https://schema.org',
     '@type': 'Person',
@@ -136,7 +158,8 @@ export function generateArtistSchema(artist: ArtistSchemaInput) {
       : undefined,
     url: artist.url,
     jobTitle: artist.jobTitle || 'Artist',
-    // sameAs: 외부 SNS/Wikipedia URI만 포함 (자기 자신 URL은 url 필드에 있으므로 제외)
+    // 외부 권위 링크 (Wikipedia, MMCA, 작가 홈페이지/SNS 등) — Knowledge Graph entity 연결
+    ...(sameAs.length > 0 && { sameAs }),
     mainEntityOfPage: {
       '@type': 'ProfilePage',
       '@id': `${artist.url}#webpage`,
@@ -151,6 +174,7 @@ export function generateEnhancedArtistSchema(artist: EnhancedArtistSchemaInput) 
   const knowsAbout = extractKnowsAbout(artist.history, artist.description);
   const credentials = parseArtistCredentials(artist.history);
   const memberships = extractMemberships(artist.history);
+  const sameAs = normalizeSameAs(artist.sameAs);
 
   return {
     '@context': 'https://schema.org',
@@ -171,7 +195,8 @@ export function generateEnhancedArtistSchema(artist: EnhancedArtistSchemaInput) 
       name: 'South Korea',
       '@id': 'https://www.wikidata.org/wiki/Q884',
     },
-    // sameAs: 외부 SNS/Wikipedia URI만 포함 (자기 자신 URL은 url 필드에 있으므로 제외)
+    // 외부 권위 링크 (Wikipedia, MMCA, 작가 홈페이지/SNS 등) — Knowledge Graph entity 연결
+    ...(sameAs.length > 0 && { sameAs }),
     mainEntityOfPage: {
       '@type': 'ProfilePage',
       '@id': `${artist.url}#webpage`,

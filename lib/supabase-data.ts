@@ -792,6 +792,47 @@ export const getSupabaseStoryBySlug = cache(async (slug: string): Promise<Story 
   return all.find((s) => s.slug === slug) ?? null;
 });
 
+/**
+ * 작가 이름(name_ko)으로 외부 링크(homepage/instagram)만 가벼이 조회.
+ * Person schema의 sameAs 구성에 사용. 캐시 5분.
+ */
+export type ArtistExternalLinkRow = {
+  homepage: string | null;
+  instagram: string | null;
+};
+
+const getSupabaseArtistExternalLinksUncached = async (
+  nameKo: string
+): Promise<ArtistExternalLinkRow | null> => {
+  if (!hasSupabaseConfig || !supabase) return null;
+
+  const { data, error } = await supabase
+    .from('artists')
+    .select('homepage, instagram')
+    .eq('name_ko', nameKo)
+    .maybeSingle();
+
+  if (error) {
+    console.error(`Error fetching artist external links for ${nameKo}:`, error);
+    return null;
+  }
+  return data ?? null;
+};
+
+const getSupabaseArtistExternalLinksCached = unstable_cache(
+  async (nameKo: string) => getSupabaseArtistExternalLinksUncached(nameKo),
+  ['supabase-artist-external-links-v1'],
+  {
+    revalidate: ARTWORK_DATA_REVALIDATE_SECONDS,
+    tags: ['artists'],
+  }
+);
+
+export const getSupabaseArtistExternalLinks = cache(
+  async (nameKo: string): Promise<ArtistExternalLinkRow | null> =>
+    getSupabaseArtistExternalLinksCached(nameKo)
+);
+
 export const getSupabaseArtistsByOwner = cache(async (ownerId: string): Promise<ArtistRow[]> => {
   if (!hasSupabaseConfig || !supabase) {
     return [];

@@ -3,7 +3,9 @@ import {
   getSupabaseArtworksByArtist,
   getAvailableArtworkCategories,
   getSupabaseStories,
+  getSupabaseArtistExternalLinks,
 } from '@/lib/supabase-data';
+import { getArtistExternalLinks } from '@/lib/artist-external-links';
 import { CATEGORY_EN_MAP, getCategoryLabel } from '@/lib/artwork-category';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
@@ -268,6 +270,16 @@ export default async function ArtistPage({ params }: Props) {
     locale === 'en' && effectiveHistory && containsHangul(effectiveHistory)
       ? undefined
       : effectiveHistory;
+  // sameAs 외부 권위 링크 — Supabase 작가 메타(homepage/instagram) + 정적 매핑(Wikipedia 등)
+  // GSC Performance상 작가 검색 노출은 다수지만 page 1 진입 못 한 페이지들이 다수.
+  // Knowledge Graph entity 연결 강화를 위한 시그널.
+  const artistMeta = await getSupabaseArtistExternalLinks(artistName);
+  const sameAs: string[] = [
+    ...getArtistExternalLinks(artistName),
+    ...(artistMeta?.homepage ? [artistMeta.homepage] : []),
+    ...(artistMeta?.instagram ? [artistMeta.instagram] : []),
+  ];
+
   const personSchema = generateEnhancedArtistSchema({
     name: displayArtistName,
     description: schemaDescription,
@@ -275,6 +287,7 @@ export default async function ArtistPage({ params }: Props) {
     url: pageUrl,
     jobTitle: 'Artist',
     history: schemaHistory,
+    sameAs,
     artworks: artistArtworks.map((a) => ({
       id: a.id,
       title: locale === 'en' && a.title_en ? a.title_en : a.title,
