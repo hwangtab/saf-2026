@@ -22,6 +22,7 @@ import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { Link } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
 import type { StoryCategory, Artwork } from '@/types';
+import { getStorySeoOverride } from '@/lib/stories-seo-overrides';
 
 export const revalidate = 1800;
 
@@ -84,8 +85,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!story) return { title: 'Not Found' };
 
   const isEn = locale === 'en';
-  const title = isEn && story.title_en ? story.title_en : story.title;
-  const description = isEn && story.excerpt_en ? story.excerpt_en : story.excerpt;
+  const baseTitle = isEn && story.title_en ? story.title_en : story.title;
+  const baseDescription = isEn && story.excerpt_en ? story.excerpt_en : story.excerpt;
+  // SEO 오버라이드: GSC Performance상 검색어 매칭이 약한 long-tail에 키워드 풍부 title/desc 적용.
+  // 본문 H1은 baseTitle 그대로(매거진 톤 유지), SERP `<title>`만 키워드 풍부하게 분리.
+  const seoOverride = getStorySeoOverride(story.slug);
+  const title = isEn ? (seoOverride?.titleEn ?? baseTitle) : (seoOverride?.titleKo ?? baseTitle);
+  const description = isEn
+    ? (seoOverride?.descriptionEn ?? baseDescription)
+    : (seoOverride?.descriptionKo ?? baseDescription);
   const path = `/stories/${story.slug}`;
   const pageUrl = buildLocaleUrl(path, locale);
   // Discover/SNS는 1200px+ 이미지 필수. thumbnail이 없으면 body 마크다운 첫 이미지로 fallback.
