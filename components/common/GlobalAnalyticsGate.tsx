@@ -2,7 +2,6 @@
 
 import { usePathname } from 'next/navigation';
 import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from '@vercel/speed-insights/next';
 import GoogleAnalytics from '@/components/common/GoogleAnalytics';
 
 const ANALYTICS_DISABLED_PREFIXES = [
@@ -31,7 +30,6 @@ export default function GlobalAnalyticsGate() {
   return (
     <>
       <Analytics />
-      <SpeedInsights />
       <GoogleAnalytics />
     </>
   );

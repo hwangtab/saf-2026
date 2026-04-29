@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { getLocale } from 'next-intl/server';
 import GlobalAnalyticsGate from '@/components/common/GlobalAnalyticsGate';
-import { SpeedInsights } from '@vercel/speed-insights/next';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
 import { ARTWORK_COUNT, ARTIST_COUNT, LOAN_COUNT } from '@/lib/site-stats';
@@ -174,9 +173,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <JsonLdScript data={localBusinessSchema} />
 
         <GlobalAnalyticsGate />
-        {/* Vercel Speed Insights — 실제 사용자 LCP/CLS/INP 측정 (RUM).
-            PSI Lab 측정 노이즈 회피용. Pro plan 100,000 events/월 무료. */}
-        <SpeedInsights />
       </body>
     </html>
   );
