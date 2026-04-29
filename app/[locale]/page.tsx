@@ -270,7 +270,7 @@ async function HeroSection({ locale }: { locale: 'ko' | 'en' }) {
           {/* Title */}
           <div className="mb-8 text-center">
             <h1
-              className="font-display text-3xl sm:text-4xl md:text-5xl text-white mb-3 leading-tight drop-shadow-lg motion-safe:opacity-0 motion-safe:animate-fade-in-up"
+              className="font-display font-black text-3xl sm:text-4xl md:text-5xl text-white mb-3 leading-tight drop-shadow-lg motion-safe:opacity-0 motion-safe:animate-fade-in-up"
               style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}
             >
               {t('heroGalleryTitle')}

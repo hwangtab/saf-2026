@@ -87,24 +87,27 @@
 
 ## 3. Typography Rules
 
-세 종류의 한국어 로컬 폰트 (`localFont`, `display: swap`, `preload: false`):
+Google Fonts 두 패밀리 (`next/font/google`, 자동 self-host + unicode-range chunked):
 
-| 변수                  | 폰트               | 용도                         | 크기                          |
-| --------------------- | ------------------ | ---------------------------- | ----------------------------- |
-| `--font-paperlogy`    | Paperlogy (4/5/7)  | **기본 sans** — 모든 본문/UI | 400/500/700                   |
-| `--font-partial-sans` | PartialSansKR      | **히어로 디스플레이**        | 단일 weight                   |
-| `--font-section`      | HakgyoansimPosterB | **섹션 타이틀**              | 단일 weight (학교안전 포스터) |
+| 변수                  | 폰트           | 용도                                       | weight / display        |
+| --------------------- | -------------- | ------------------------------------------ | ----------------------- |
+| `--font-paperlogy`    | Noto Sans KR   | **기본 sans + 섹션 타이틀** — 본문/UI 전반 | 400/500/700/900 / swap  |
+| `--font-partial-sans` | Black Han Sans | **히어로 디스플레이**                      | 400 단일 / **optional** |
+
+> `--font-paperlogy` / `--font-partial-sans` 변수명은 과거 폰트 이름의 잔재. 폰트는 교체됐지만 변수명은 유지.
+> 히어로는 `display: 'optional'` — 0.1초 안에 못 받으면 fallback(Noto Sans KR 900) 영구 유지하여 LCP 갱신 차단.
 
 ### 유틸리티 클래스 ([globals.css](../styles/globals.css))
 
-| 클래스                | Tailwind                                                      | 비고                   |
-| --------------------- | ------------------------------------------------------------- | ---------------------- |
-| `.text-hero`          | `font-display text-5xl md:text-6xl lg:text-7xl leading-tight` | PartialSansKR + 반응형 |
-| `.text-section-title` | `font-section font-normal text-4xl md:text-5xl leading-snug`  | HakgyoansimPoster      |
-| `.text-card-title`    | `font-sans font-bold text-xl leading-normal`                  | Paperlogy 700          |
-| `.text-body-large`    | `font-sans text-lg md:text-xl leading-relaxed`                |                        |
-| `.text-label`         | `font-sans text-sm text-charcoal-muted`                       |                        |
-| `.text-helper`        | `font-sans text-xs text-charcoal-soft`                        |                        |
+| 클래스                | Tailwind                                                                 | 비고                          |
+| --------------------- | ------------------------------------------------------------------------ | ----------------------------- |
+| `.text-hero`          | `font-display font-black text-5xl md:text-6xl lg:text-7xl leading-tight` | Black Han Sans / fallback 900 |
+| `.text-section-title` | `font-section font-bold text-4xl md:text-5xl leading-snug`               | Noto Sans KR Bold (700)       |
+| `.text-artwork-title` | `font-display font-black text-2xl md:text-3xl tracking-tight`            | Black Han Sans / fallback 900 |
+| `.text-card-title`    | `font-sans font-bold text-xl leading-normal`                             | Noto Sans KR 700              |
+| `.text-body-large`    | `font-sans text-lg md:text-xl leading-relaxed`                           |                               |
+| `.text-label`         | `font-sans text-sm text-charcoal-muted`                                  |                               |
+| `.text-helper`        | `font-sans text-xs text-charcoal-soft`                                   |                               |
 
 ### 한국어 룰 (전역 강제)
 
