@@ -1,6 +1,6 @@
 export const ARTWORK_IMAGE_VARIANTS = ['thumb', 'card', 'detail', 'hero', 'original'] as const;
 export type ArtworkImageVariant = (typeof ARTWORK_IMAGE_VARIANTS)[number];
-export type ArtworkImagePreset = 'slider' | 'card' | 'detail' | 'hero' | 'original';
+export type ArtworkImagePreset = 'mobile' | 'slider' | 'card' | 'detail' | 'hero' | 'original';
 
 export const ARTWORK_TRANSFORM_PRESETS = {
   // 모바일 갤러리 카드 LCP 최적화용 변형. PSI Lighthouse 모바일 emulation
@@ -23,6 +23,7 @@ const ARTWORK_STORAGE_MARKERS = [
 ];
 
 const PRESET_TO_VARIANT: Record<ArtworkImagePreset, ArtworkImageVariant> = {
+  mobile: 'thumb',
   slider: 'thumb',
   card: 'card',
   detail: 'detail',

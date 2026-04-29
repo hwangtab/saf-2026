@@ -45,10 +45,12 @@ const getSafeTitle = (artwork: ArtworkCardData, untitledLabel: string, locale?: 
 const getSafeArtist = (artwork: ArtworkCardData, unknownArtistLabel: string, locale?: string) =>
   (locale === 'en' && artwork.artist_en?.trim()) || artwork.artist?.trim() || unknownArtistLabel;
 
-const getImageSrc = (artwork: ArtworkCardData, variant: ArtworkCardVariant) =>
+const getImageSrc = (artwork: ArtworkCardData, variant: ArtworkCardVariant, isAboveFold = false) =>
   resolveArtworkImageUrlForPreset(
     artwork.images?.[0] || ARTWORK_PLACEHOLDER_IMAGE,
-    variant === 'slider' ? 'slider' : 'card'
+    // LCP 후보(첫 화면 카드)는 모바일 LCP 측정에서 src 기준으로 판정되므로
+    // mobile preset(600w)로 직접 줄임. 데스크톱은 srcset에서 더 큰 변형 자동 픽 — 화질 영향 없음.
+    isAboveFold ? 'mobile' : variant === 'slider' ? 'slider' : 'card'
   );
 const getImageAlt = (
   artwork: ArtworkCardData,
@@ -271,7 +273,7 @@ function ArtworkCard({
           <div className="absolute inset-0 shimmer-loading" />
           <div className="absolute inset-3 md:inset-4">
             <SafeImage
-              src={getImageSrc(artwork, variant)}
+              src={getImageSrc(artwork, variant, isAboveFold)}
               alt={getImageAlt(artwork, untitledLabel, unknownArtistLabel, locale)}
               loading={isAboveFold ? 'eager' : 'lazy'}
               priority={isAboveFold}
