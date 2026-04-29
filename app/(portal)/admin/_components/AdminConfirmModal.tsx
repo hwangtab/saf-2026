@@ -42,7 +42,7 @@ export function AdminConfirmModal({
             className={cn(
               'flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full',
               variant === 'danger' && 'bg-danger/10 text-danger-a11y',
-              variant === 'warning' && 'bg-sun-soft text-sun-strong',
+              variant === 'warning' && 'bg-charcoal-deep/5 text-charcoal-deep',
               variant === 'info' && 'bg-primary-surface text-primary-a11y'
             )}
           >

@@ -71,7 +71,7 @@ export function ExhibitorList({ initialExhibitors }: { initialExhibitors: Exhibi
           onClick={() => handleStatusFilter('pending')}
           className={`px-3 py-1.5 text-sm font-medium rounded-md ${
             currentStatus === 'pending'
-              ? 'bg-sun-soft text-sun-strong'
+              ? 'bg-gray-100 text-charcoal-muted'
               : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
           }`}
         >
@@ -156,7 +156,7 @@ export function ExhibitorList({ initialExhibitors }: { initialExhibitors: Exhibi
                         exhibitor.status === 'active'
                           ? 'bg-success/20 text-success-a11y'
                           : exhibitor.status === 'pending'
-                            ? 'bg-sun-soft text-sun-strong'
+                            ? 'bg-gray-100 text-charcoal-muted'
                             : 'bg-danger/20 text-danger-a11y'
                       }`}
                     >

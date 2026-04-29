@@ -22,11 +22,14 @@ import type {
 } from '@/app/actions/order-lookup';
 
 const STATUS_STYLES: Record<string, { label: string; className: string }> = {
-  pending_payment: { label: 'statusPendingPayment', className: 'bg-gray-100 text-gray-600' },
-  awaiting_deposit: { label: 'statusAwaitingDeposit', className: 'bg-sun-soft text-sun-strong' },
-  paid: { label: 'statusPaid', className: 'bg-primary-soft text-primary-strong' },
-  preparing: { label: 'statusPreparing', className: 'bg-primary-soft text-primary-strong' },
-  shipped: { label: 'statusShipped', className: 'bg-accent-soft text-accent-a11y' },
+  pending_payment: { label: 'statusPendingPayment', className: 'bg-gray-100 text-charcoal-muted' },
+  awaiting_deposit: {
+    label: 'statusAwaitingDeposit',
+    className: 'bg-gray-100 text-charcoal-muted',
+  },
+  paid: { label: 'statusPaid', className: 'bg-primary-surface text-primary-strong' },
+  preparing: { label: 'statusPreparing', className: 'bg-primary-surface text-primary-strong' },
+  shipped: { label: 'statusShipped', className: 'bg-primary-soft text-primary-strong' },
   delivered: { label: 'statusDelivered', className: 'bg-success/20 text-success-a11y' },
   completed: { label: 'statusCompleted', className: 'bg-success/20 text-success-a11y' },
   cancelled: { label: 'statusCancelled', className: 'bg-danger/20 text-danger-a11y' },
@@ -423,22 +426,26 @@ function OrderDetail({
 
       {/* 가상계좌 입금 안내 */}
       {order.status === 'awaiting_deposit' && order.virtualAccount && (
-        <div className="rounded-xl border border-sun-soft bg-sun-soft p-4 text-sm">
-          <p className="mb-2 font-semibold text-sun-strong">{t('virtualAccountInfo')}</p>
+        <div className="rounded-xl border border-primary-soft bg-primary-surface p-4 text-sm">
+          <p className="mb-2 font-semibold text-primary-strong">{t('virtualAccountInfo')}</p>
           <div className="space-y-1.5">
             <div className="flex justify-between">
-              <span className="text-sun-strong">{t('bankName')}</span>
-              <span className="font-semibold text-sun-strong">{order.virtualAccount.bankName}</span>
+              <span className="text-charcoal-muted">{t('bankName')}</span>
+              <span className="font-semibold text-charcoal-deep">
+                {order.virtualAccount.bankName}
+              </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-sun-strong">{t('accountNumber')}</span>
-              <span className="font-mono font-semibold text-sun-strong">
+              <span className="text-charcoal-muted">{t('accountNumber')}</span>
+              <span className="font-mono font-semibold text-charcoal-deep">
                 {order.virtualAccount.accountNumber}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-sun-strong">{t('dueDate')}</span>
-              <span className="font-semibold text-sun-strong">{order.virtualAccount.dueDate}</span>
+              <span className="text-charcoal-muted">{t('dueDate')}</span>
+              <span className="font-semibold text-charcoal-deep">
+                {order.virtualAccount.dueDate}
+              </span>
             </div>
           </div>
         </div>
@@ -446,25 +453,27 @@ function OrderDetail({
 
       {/* 수동 계좌이체 입금 안내 */}
       {order.status === 'awaiting_deposit' && !order.virtualAccount && (
-        <div className="rounded-xl border border-sun-soft bg-sun-soft p-4 text-sm">
-          <p className="mb-2 font-semibold text-sun-strong">{t('bankTransferTitle')}</p>
+        <div className="rounded-xl border border-primary-soft bg-primary-surface p-4 text-sm">
+          <p className="mb-2 font-semibold text-primary-strong">{t('bankTransferTitle')}</p>
           <div className="space-y-1.5">
             <div className="flex justify-between">
-              <span className="text-sun-strong">{t('bankName')}</span>
-              <span className="font-semibold text-sun-strong">{t('bankTransferBank')}</span>
+              <span className="text-charcoal-muted">{t('bankName')}</span>
+              <span className="font-semibold text-charcoal-deep">{t('bankTransferBank')}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-sun-strong">{t('accountNumber')}</span>
-              <span className="font-mono font-semibold text-sun-strong">
+              <span className="text-charcoal-muted">{t('accountNumber')}</span>
+              <span className="font-mono font-semibold text-charcoal-deep">
                 {t('bankTransferAccount')}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-sun-strong">{t('bankTransferHolder')}</span>
-              <span className="font-semibold text-sun-strong">{t('bankTransferHolderName')}</span>
+              <span className="text-charcoal-muted">{t('bankTransferHolder')}</span>
+              <span className="font-semibold text-charcoal-deep">
+                {t('bankTransferHolderName')}
+              </span>
             </div>
           </div>
-          <div className="mt-2 text-xs text-sun-strong space-y-0.5">
+          <div className="mt-2 text-xs text-charcoal-muted space-y-0.5">
             <p>{t('bankTransferNoticeName')}</p>
             <p>{t('bankTransferNoticeDeadline', { deadline: bankTransferDeadline })}</p>
           </div>

@@ -53,7 +53,7 @@ export default function SignForm() {
   if (result?.ok) {
     return (
       <div
-        className="rounded-xl border border-primary/30 bg-canvas-soft px-6 py-10 text-center"
+        className="rounded-xl border border-primary/30 bg-canvas px-6 py-10 text-center"
         role="status"
         aria-live="polite"
       >
@@ -186,7 +186,7 @@ export default function SignForm() {
       </div>
 
       {/* 시민 추진위원 */}
-      <div className="flex items-start gap-3 rounded-lg bg-canvas-soft p-4">
+      <div className="flex items-start gap-3 rounded-lg bg-canvas p-4">
         <input
           id="petition-committee"
           type="checkbox"
@@ -219,7 +219,7 @@ export default function SignForm() {
         />
         <p className="mt-1.5 text-xs text-charcoal-muted text-right">{message.length}/500</p>
         {message.length > 0 && (
-          <div className="mt-2 flex items-start gap-3 rounded-lg bg-canvas-soft p-3">
+          <div className="mt-2 flex items-start gap-3 rounded-lg bg-canvas p-3">
             <input
               id="petition-message-public"
               type="checkbox"
@@ -303,7 +303,7 @@ export default function SignForm() {
       <button
         type="submit"
         disabled={pending}
-        className="w-full inline-flex items-center justify-center rounded-lg px-6 py-4 text-lg font-bold bg-primary hover:bg-primary-strong text-white transition-all hover:scale-[1.01] hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        className="w-full inline-flex items-center justify-center rounded-lg px-6 py-4 text-lg font-bold bg-primary hover:bg-primary-strong text-white transition-all hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
       >
         {pending ? '제출 중…' : `${t('heroCta')} →`}
       </button>

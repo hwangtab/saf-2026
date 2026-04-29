@@ -56,7 +56,7 @@ export default function HeroGalleryGrid({ artworks }: HeroGalleryGridProps) {
                 <p className="text-white/60 text-xs mt-0.5 truncate">{artwork.material}</p>
               )}
               {!isInquiry && artwork.price && (
-                <p className="text-sun text-xs font-semibold mt-1">{artwork.price}</p>
+                <p className="text-white text-xs font-bold mt-1">{artwork.price}</p>
               )}
             </div>
 
@@ -66,7 +66,7 @@ export default function HeroGalleryGrid({ artworks }: HeroGalleryGridProps) {
               </div>
             )}
             {artwork.reserved && !artwork.sold && (
-              <div className="absolute top-2 right-2 bg-sun text-white text-xs font-bold px-2 py-0.5 rounded">
+              <div className="absolute top-2 right-2 bg-charcoal-deep text-white text-xs font-bold px-2 py-0.5 rounded">
                 {t('reservedBadge')}
               </div>
             )}

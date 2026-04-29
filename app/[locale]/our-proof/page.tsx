@@ -207,7 +207,7 @@ export default async function OurProof() {
               <SectionTitle className="mb-8">
                 A <span className="text-primary font-bold">95%</span> repayment rate tells the story
               </SectionTitle>
-              <p className="text-xl text-sky-strong">
+              <p className="text-xl text-charcoal">
                 Out of {LOAN_COUNT} loans totaling nearly KRW 700 million, 95% were repaid on time.
                 Even the 5.10% subrogation level remains lower than many conventional low-credit
                 loan markets.
@@ -304,7 +304,7 @@ export default async function OurProof() {
           </div>
         </Section>
 
-        <Section variant="sun-soft" prevVariant="white">
+        <Section variant="canvas" prevVariant="white">
           <div className="container-max">
             <SectionTitle className="mb-12">Voices from artists</SectionTitle>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -313,21 +313,21 @@ export default async function OurProof() {
                 author="Kim"
                 context="Visual Artist"
                 borderColor="border-primary"
-                contextColor="text-sky-strong"
+                contextColor="text-primary-strong"
               />
               <TestimonialCard
                 quote="I had been denied at every bank. Here, I was recognized as an artist with a viable future."
                 author="Lee"
                 context="Independent Film Director"
-                borderColor="border-sun"
-                contextColor="text-sun-strong"
+                borderColor="border-charcoal-deep"
+                contextColor="text-charcoal-deep"
               />
               <TestimonialCard
                 quote="The program enabled my exhibition preparation when production costs were impossible to cover."
                 author="Park"
                 context="Installation Artist"
-                borderColor="border-accent"
-                contextColor="text-accent-strong"
+                borderColor="border-primary"
+                contextColor="text-primary-strong"
               />
               <TestimonialCard
                 quote="Knowing my repayments can support another artist makes me even more responsible."
@@ -340,7 +340,7 @@ export default async function OurProof() {
           </div>
         </Section>
 
-        <Section variant="primary-surface" prevVariant="sun-soft">
+        <Section variant="primary-surface" prevVariant="canvas">
           <div id="proof-qa-section" className="container-max">
             <SectionTitle className="mb-12">Traditional finance vs mutual-aid lending</SectionTitle>
             <div className="overflow-x-auto">
@@ -410,7 +410,7 @@ export default async function OurProof() {
                   Become a member of Korea Smart Cooperative and help sustain artist mutual-aid
                   finance.
                 </p>
-                <LinkButton href={EXTERNAL_LINKS.JOIN_MEMBER} external variant="accent" size="md">
+                <LinkButton href={EXTERNAL_LINKS.JOIN_MEMBER} external variant="primary" size="md">
                   Join now
                 </LinkButton>
               </div>
@@ -459,7 +459,7 @@ export default async function OurProof() {
             <SectionTitle className="mb-8">
               <span className="text-primary font-bold">95%</span>의 상환율이 증명합니다
             </SectionTitle>
-            <p className="text-xl text-sky-strong">
+            <p className="text-xl text-charcoal">
               신용점수에 상관없이 빌려준 {LOAN_COUNT}건, 약 7억 원 가운데 95%가 제때 돌아왔고 빚을
               대신 갚아야 했던 비율도 5.10%뿐이라 흔한 저신용 대출보다 오히려 안정적입니다.
             </p>
@@ -615,7 +615,7 @@ export default async function OurProof() {
       </Section>
 
       {/* Testimonials Section */}
-      <Section variant="sun-soft" prevVariant="white">
+      <Section variant="canvas" prevVariant="white">
         <div className="container-max">
           <SectionTitle className="mb-12">예술인들의 증언</SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -624,21 +624,21 @@ export default async function OurProof() {
               author="김OO"
               context="시각 예술가"
               borderColor="border-primary"
-              contextColor="text-sky-strong"
+              contextColor="text-primary-strong"
             />
             <TestimonialCard
               quote="은행 문턱이 너무 높았는데, 여기서는 저를 '예술인'으로 인정해주더군요. 단순한 대출이 아니라 큰 위로와 응원이었습니다."
               author="이OO"
               context="독립 영화감독"
-              borderColor="border-sun"
-              contextColor="text-sun-strong"
+              borderColor="border-charcoal-deep"
+              contextColor="text-charcoal-deep"
             />
             <TestimonialCard
               quote="다음 전시 준비 자금이 막막했는데, 덕분에 무사히 작품을 완성하고 전시를 열 수 있었습니다. 이 제도가 없었다면 불가능했을 거예요."
               author="박OO"
               context="설치 미술가"
-              borderColor="border-accent"
-              contextColor="text-accent-strong"
+              borderColor="border-primary"
+              contextColor="text-primary-strong"
             />
             <TestimonialCard
               quote="내 상환금이 다른 동료 예술가에게 희망이 된다는 사실이 저를 더 책임감 있게 만듭니다. 우리는 서로의 안전망입니다."
@@ -652,7 +652,7 @@ export default async function OurProof() {
       </Section>
 
       {/* Statistics Comparison */}
-      <Section variant="primary-surface" prevVariant="sun-soft">
+      <Section variant="primary-surface" prevVariant="canvas">
         <div id="proof-qa-section" className="container-max">
           <SectionTitle className="mb-12">기존 금융 vs 상호부조 대출</SectionTitle>
           <div className="overflow-x-auto">
@@ -724,7 +724,7 @@ export default async function OurProof() {
                 한국스마트협동조합의 조합원이 되어 예술인 상호부조 대출 기금 조성과 운영에 함께하실
                 수 있습니다.
               </p>
-              <LinkButton href={EXTERNAL_LINKS.JOIN_MEMBER} external variant="accent" size="md">
+              <LinkButton href={EXTERNAL_LINKS.JOIN_MEMBER} external variant="primary" size="md">
                 조합원 가입하기
               </LinkButton>
             </div>

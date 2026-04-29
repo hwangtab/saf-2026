@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { Black_Han_Sans, Noto_Sans_KR } from 'next/font/google';
 import localFont from 'next/font/local';
 import { getLocale } from 'next-intl/server';
 import GlobalAnalyticsGate from '@/components/common/GlobalAnalyticsGate';

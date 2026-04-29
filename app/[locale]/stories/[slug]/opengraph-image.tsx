@@ -27,26 +27,26 @@ const CATEGORY_COLORS: Record<
   StoryCategory,
   { bg: string; accent: string; border: string; labelKo: string; labelEn: string }
 > = {
-  // artist-story만 BRAND_COLORS와 일치. buying-guide/art-knowledge는 카테고리 특화 팔레트
-  // (OG 이미지 내부 카테고리 구분용으로 의도된 독립 톤 — BRAND_COLORS 규칙의 예외)
+  // Gallery White Cube: 카테고리별 차별화는 BRAND_COLORS 안에서 모노크롬+의미적 색으로.
+  // artist-story = primary 블루 / buying-guide = charcoal 모노톤 / art-knowledge = success 그린.
   'artist-story': {
     bg: BRAND_COLORS.primary.surface,
     accent: BRAND_COLORS.primary.a11y,
-    border: '#C3D4FF',
+    border: '#D2E1FF',
     labelKo: '작가를 만나다',
     labelEn: 'Artist Stories',
   },
   'buying-guide': {
-    bg: '#FFF8E1',
-    accent: '#B7700D',
-    border: '#FFE082',
+    bg: '#FAFAFC', // gallery-pearl
+    accent: BRAND_COLORS.charcoal.deep,
+    border: '#E0E0E0', // gallery-hairline
     labelKo: '컬렉팅 시작하기',
     labelEn: 'Buying Guide',
   },
   'art-knowledge': {
-    bg: '#F1F8E9',
-    accent: '#2E7D32',
-    border: '#C8E6C9',
+    bg: '#EAFAF3', // success/10 hint
+    accent: BRAND_COLORS.success.a11y,
+    border: '#A5DEC7',
     labelKo: '미술 산책',
     labelEn: 'Art Knowledge',
   },

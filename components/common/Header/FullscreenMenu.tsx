@@ -271,7 +271,7 @@ export default function FullscreenMenu({
           </div>
           <Button
             href={EXTERNAL_LINKS.JOIN_MEMBER}
-            variant="accent"
+            variant="primary"
             external
             className="w-full justify-center"
             onClick={onClose}

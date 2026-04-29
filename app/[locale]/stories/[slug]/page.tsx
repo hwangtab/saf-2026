@@ -295,7 +295,7 @@ export default async function StoryDetailPage({ params }: Props) {
       {/* 관련 작품 */}
       {relatedArtworks.length > 0 && (
         <Section
-          variant="canvas-soft"
+          variant="canvas"
           prevVariant="white"
           className={relatedStories.length === 0 ? 'pb-16 md:pb-24' : ''}
         >
@@ -319,7 +319,7 @@ export default async function StoryDetailPage({ params }: Props) {
                   <Link
                     key={artwork.id}
                     href={`/artworks/${artwork.id}`}
-                    className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl motion-safe:opacity-0 motion-safe:animate-fade-in-up"
+                    className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-gallery-hover motion-safe:opacity-0 motion-safe:animate-fade-in-up"
                     style={{
                       animationDelay: `${i * 0.1}s`,
                       animationFillMode: 'forwards',
@@ -374,7 +374,7 @@ export default async function StoryDetailPage({ params }: Props) {
                   <Link
                     key={related.id}
                     href={`/stories/${related.slug}`}
-                    className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl motion-safe:opacity-0 motion-safe:animate-fade-in-up"
+                    className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-gallery-hover motion-safe:opacity-0 motion-safe:animate-fade-in-up"
                     style={{
                       animationDelay: `${i * 0.1}s`,
                       animationFillMode: 'forwards',

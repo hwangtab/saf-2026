@@ -721,8 +721,8 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
             />
           </div>
           {isVirtualAccount && (
-            <div className="space-y-2 rounded-lg border border-sun-soft bg-sun-soft p-3">
-              <p className="text-xs font-medium text-sun-strong">
+            <div className="space-y-2 rounded-lg border border-charcoal-deep/20 bg-charcoal-deep/5 p-3">
+              <p className="text-xs font-medium text-charcoal-deep">
                 가상계좌 결제 — 환불 계좌 입력 필수
               </p>
               <div>

@@ -168,7 +168,7 @@ export default async function TransparencyPage() {
               {REPORTS.map((report) => (
                 <div
                   key={report.id}
-                  className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl"
+                  className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col transition-shadow duration-300 hover:shadow-gallery-hover"
                 >
                   <div className="flex items-center gap-3 mb-4">
                     <span className="text-3xl font-bold text-primary">{report.year}</span>
@@ -309,7 +309,7 @@ export default async function TransparencyPage() {
                 <p className="text-charcoal-muted mb-4 flex-grow">
                   Membership contributions strengthen the fund&apos;s lending capacity.
                 </p>
-                <LinkButton href={EXTERNAL_LINKS.JOIN_MEMBER} external variant="accent" size="md">
+                <LinkButton href={EXTERNAL_LINKS.JOIN_MEMBER} external variant="primary" size="md">
                   Join now
                 </LinkButton>
               </div>
@@ -349,7 +349,7 @@ export default async function TransparencyPage() {
             {REPORTS.map((report) => (
               <div
                 key={report.id}
-                className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl"
+                className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col transition-shadow duration-300 hover:shadow-gallery-hover"
               >
                 <div className="flex items-center gap-3 mb-4">
                   <span className="text-3xl font-bold text-primary">{report.year}</span>
@@ -488,7 +488,7 @@ export default async function TransparencyPage() {
               <p className="text-charcoal-muted mb-4 flex-grow">
                 조합원 가입으로 기금 조성에 직접 참여하고 대출 가능 금액을 늘릴 수 있습니다.
               </p>
-              <LinkButton href={EXTERNAL_LINKS.JOIN_MEMBER} external variant="accent" size="md">
+              <LinkButton href={EXTERNAL_LINKS.JOIN_MEMBER} external variant="primary" size="md">
                 조합원 가입하기
               </LinkButton>
             </div>

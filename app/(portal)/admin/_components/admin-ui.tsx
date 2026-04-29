@@ -109,7 +109,7 @@ export function AdminBadge({
         tone === 'default' && 'bg-charcoal/10 text-charcoal-muted ring-charcoal/15',
         tone === 'info' && 'bg-primary-surface text-primary-strong ring-primary-a11y/20',
         tone === 'success' && 'bg-success/10 text-success-a11y ring-success-a11y/20',
-        tone === 'warning' && 'bg-sun-soft text-sun-strong ring-sun-strong/25',
+        tone === 'warning' && 'bg-charcoal-deep/5 text-charcoal-deep ring-charcoal-deep/20',
         tone === 'danger' && 'bg-danger/10 text-danger-a11y ring-danger-a11y/20',
         className
       )}

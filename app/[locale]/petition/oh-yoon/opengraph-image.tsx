@@ -76,7 +76,7 @@ export default async function Image({ params }: Props) {
             position: 'absolute',
             inset: 0,
             background:
-              'linear-gradient(135deg, rgba(15,23,33,0.92) 0%, rgba(15,23,33,0.78) 50%, rgba(124,45,18,0.65) 100%)',
+              'linear-gradient(135deg, rgba(31,36,40,0.92) 0%, rgba(31,36,40,0.82) 50%, rgba(31,36,40,0.7) 100%)',
             display: 'flex',
           }}
         />

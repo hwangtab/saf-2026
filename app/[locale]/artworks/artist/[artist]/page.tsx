@@ -467,7 +467,7 @@ export default async function ArtistPage({ params }: Props) {
                   <Link
                     key={s.id}
                     href={`/stories/${s.slug}`}
-                    className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl motion-safe:opacity-0 motion-safe:animate-fade-in-up"
+                    className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-gallery-hover motion-safe:opacity-0 motion-safe:animate-fade-in-up"
                     style={{ animationDelay: `${i * 0.1}s`, animationFillMode: 'forwards' }}
                   >
                     {s.thumbnail && (

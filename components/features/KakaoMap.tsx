@@ -69,7 +69,7 @@ export default function KakaoMap(props?: KakaoMapProps): React.JSX.Element {
 
   if (!hasAppKey) {
     return (
-      <div className="flex h-[400px] w-full items-center justify-center rounded-lg border border-dashed border-gray-300 bg-canvas-soft text-sm text-charcoal-soft">
+      <div className="flex h-[400px] w-full items-center justify-center rounded-lg border border-dashed border-gray-300 bg-canvas text-sm text-charcoal-soft">
         {copy.missingKey}
       </div>
     );
@@ -77,7 +77,7 @@ export default function KakaoMap(props?: KakaoMapProps): React.JSX.Element {
 
   if (loading) {
     return (
-      <div className="flex h-[400px] w-full items-center justify-center rounded-lg bg-canvas-soft text-sm text-charcoal-soft">
+      <div className="flex h-[400px] w-full items-center justify-center rounded-lg bg-canvas text-sm text-charcoal-soft">
         {copy.loading}
       </div>
     );

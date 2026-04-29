@@ -112,9 +112,9 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
       </div>
 
       {analytics.dataQuality.soldWithoutSoldAtCount > 0 ? (
-        <AdminCard className="border-sun-soft bg-sun-soft p-4">
-          <p className="text-sm font-semibold text-sun-strong">{t('dataWarningTitle')}</p>
-          <p className="mt-1 text-sm text-sun-strong">
+        <AdminCard className="border-charcoal-deep/20 bg-charcoal-deep/5 p-4">
+          <p className="text-sm font-semibold text-charcoal-deep">{t('dataWarningTitle')}</p>
+          <p className="mt-1 text-sm text-charcoal-deep">
             {t('dataWarningDescPrefix')}{' '}
             {numberFormatter.format(analytics.dataQuality.soldWithoutSoldAtCount)}.{' '}
             {t('dataWarningDescSuffix')}

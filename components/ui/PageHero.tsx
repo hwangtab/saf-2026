@@ -36,7 +36,8 @@ export default function PageHero({
     <section
       className={cn(
         'relative min-h-[60vh] flex items-center justify-center pt-12 pb-12 md:pt-20 md:pb-20 overflow-hidden',
-        'bg-gradient-to-br from-charcoal-deep via-charcoal to-primary-strong/70',
+        // Gallery White Cube: 다크 hero를 단색 charcoal-deep로 — Apple/Tesla 모델
+        'bg-charcoal-deep',
         className
       )}
     >
@@ -44,15 +45,6 @@ export default function PageHero({
         data-hero-sentinel="true"
         aria-hidden="true"
         className="absolute top-0 left-0 h-px w-px"
-      />
-      {/* Subtle radial accent — 브랜드 톤 */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-60 mix-blend-overlay"
-        style={{
-          background:
-            'radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.18) 0%, transparent 50%), radial-gradient(ellipse at 80% 100%, rgba(255,224,138,0.15) 0%, transparent 55%)',
-        }}
       />
       {/* 작품 이미지 배경 — customBackgroundImage 지정 시에만 (작가 페이지 등) */}
       {customBackgroundImage && (

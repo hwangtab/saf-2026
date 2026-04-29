@@ -183,7 +183,7 @@ export default async function OurReality() {
             <p className="text-xs text-charcoal-soft">Last updated: {LAST_UPDATED}</p>
           </div>
         </div>
-        <Section variant="white" prevVariant="canvas-soft">
+        <Section variant="white" prevVariant="canvas">
           <div className="container-max max-w-3xl text-balance">
             <SectionTitle className="mb-8">
               For artists, finance is a life-support system
@@ -229,16 +229,16 @@ export default async function OurReality() {
           </div>
         </Section>
 
-        <Section variant="accent-soft" prevVariant="primary-surface">
+        <Section variant="primary-surface" prevVariant="primary-surface">
           <div className="container-max">
             <div className="mb-10">
-              <span className="text-sm font-bold text-accent-strong uppercase">Stage 2</span>
+              <span className="text-sm font-bold text-primary-strong uppercase">Stage 2</span>
               <SectionTitle className="mb-4">Predatory exposure under pressure</SectionTitle>
               <p
                 id="stage2-description"
                 className="text-xl text-charcoal-muted max-w-2xl leading-relaxed"
               >
-                Predatory product exposure: <strong className="text-accent-strong">48.6%</strong>
+                Predatory product exposure: <strong className="text-primary-strong">48.6%</strong>
               </p>
             </div>
             <div className="grid md:grid-cols-2 gap-12 items-start mb-16">
@@ -252,7 +252,7 @@ export default async function OurReality() {
           </div>
         </Section>
 
-        <Section variant="sun-soft" prevVariant="accent-soft">
+        <Section variant="canvas" prevVariant="primary-surface">
           <div className="container-max">
             <div className="mb-10">
               <span className="text-sm font-bold text-danger uppercase">Stage 3</span>
@@ -276,7 +276,7 @@ export default async function OurReality() {
           </div>
         </Section>
 
-        <Section variant="white" prevVariant="sun-soft">
+        <Section variant="white" prevVariant="canvas">
           <div className="container-max max-w-4xl">
             <SectionTitle className="mb-6">
               This is a structural issue, not a personal failure
@@ -362,7 +362,7 @@ export default async function OurReality() {
       })}
 
       {/* 도입: 금융의 재정의 */}
-      <Section variant="white" prevVariant="canvas-soft">
+      <Section variant="white" prevVariant="canvas">
         <div className="container-max">
           <div className="max-w-3xl mx-auto text-balance">
             <SectionTitle className="mb-8">예술인에게 금융은 산소호흡기</SectionTitle>
@@ -377,7 +377,7 @@ export default async function OurReality() {
                 단순한 &lsquo;빚&rsquo;이 아닌,
                 <strong>
                   {' '}
-                  창작의 시간을 살려내는 <span className="text-sun-strong">생명의 산소</span>
+                  창작의 시간을 살려내는 <span className="text-charcoal-deep">생명의 산소</span>
                 </strong>
                 입니다.
               </p>
@@ -437,16 +437,16 @@ export default async function OurReality() {
       </Section>
 
       {/* Stage 2: 약탈 (48.6%) */}
-      <Section variant="accent-soft" prevVariant="primary-surface">
+      <Section variant="primary-surface" prevVariant="primary-surface">
         <div className="container-max">
           <div className="mb-12">
             <div className="text-5xl mb-4" aria-hidden="true">
               ⚠️
             </div>
-            <span className="text-sm font-bold text-accent-strong uppercase">STAGE 2</span>
+            <span className="text-sm font-bold text-primary-strong uppercase">STAGE 2</span>
             <SectionTitle className="mb-4">낭떠러지: 고리대금로 내몰리다</SectionTitle>
             <p className="text-xl text-charcoal-muted max-w-2xl leading-relaxed">
-              고리대금 상품 노출률 <strong className="text-accent-strong">48.6%</strong> (연 15%
+              고리대금 상품 노출률 <strong className="text-primary-strong">48.6%</strong> (연 15%
               이상)
             </p>
           </div>
@@ -476,7 +476,7 @@ export default async function OurReality() {
       </Section>
 
       {/* Stage 3: 파괴 (88.3%) */}
-      <Section variant="red" prevVariant="accent-soft">
+      <Section variant="red" prevVariant="primary-surface">
         <div className="container-max">
           <div className="mb-12">
             <div className="text-5xl mb-4" aria-hidden="true">
@@ -545,7 +545,7 @@ export default async function OurReality() {
       </Section>
 
       {/* 제언: 산소호흡기가 필요하다 */}
-      <Section variant="canvas-soft" prevVariant="white">
+      <Section variant="canvas" prevVariant="white">
         <div className="container-max">
           <SectionTitle className="mb-8">산소호흡기가 필요하다</SectionTitle>
           <div className="space-y-6 text-lg text-charcoal mb-12 max-w-3xl mx-auto text-balance">
@@ -588,14 +588,14 @@ export default async function OurReality() {
       </Section>
 
       {/* Call to Action */}
-      <Section variant="primary-surface" prevVariant="canvas-soft" className="pb-24 md:pb-32">
+      <Section variant="primary-surface" prevVariant="canvas" className="pb-24 md:pb-32">
         <div className="container-max text-center">
           <SectionTitle className="mb-6">이제 행동할 시간입니다</SectionTitle>
           <p className="text-lg text-charcoal-muted mb-8 max-w-2xl mx-auto text-balance">
             한국 예술인들의 창작 시간을 살려내는 일에 함께해주세요.
             <br />
             조합원 가입과 작품 구매가 예술이 계속 숨 쉬게 하는{' '}
-            <span className="text-sun-strong font-semibold">산소호흡기</span>가 됩니다.
+            <span className="text-charcoal-deep font-semibold">산소호흡기</span>가 됩니다.
           </p>
           <CTAButtonGroup variant="large" className="justify-center" />
 

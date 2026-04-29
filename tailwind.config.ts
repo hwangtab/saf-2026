@@ -42,6 +42,13 @@ const config: Config = {
       backgroundImage: {
         'gradient-portal': 'radial-gradient(circle at top, #EDF3FF 0%, #F7F8FA 38%, #FFFFFF 100%)',
       },
+      boxShadow: {
+        // Gallery white cube — 다층 stack으로 자연광 같은 부드러운 깊이 (Apple/Notion 모델)
+        'gallery-artwork': '0 20px 40px -12px rgba(0,0,0,0.10), 0 6px 14px -6px rgba(0,0,0,0.05)',
+        'gallery-hover': '0 30px 60px -15px rgba(0,0,0,0.14), 0 10px 24px -8px rgba(0,0,0,0.06)',
+        'gallery-card':
+          '0 4px 18px rgba(0,0,0,0.04), 0 2px 7.85px rgba(0,0,0,0.027), 0 0.8px 2.93px rgba(0,0,0,0.02)',
+      },
       spacing: {
         safe: 'max(1rem, env(safe-area-inset-bottom))',
       },

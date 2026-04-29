@@ -149,7 +149,7 @@ export function ArtworkList({
                           {artwork.status === 'sold' ? (
                             <span className="font-medium text-danger-a11y">{t('sold')}</span>
                           ) : artwork.status === 'reserved' ? (
-                            <span className="font-medium text-sun-strong">{t('reserved')}</span>
+                            <span className="font-medium text-charcoal-deep">{t('reserved')}</span>
                           ) : (
                             <span className="font-medium text-success-a11y">{t('available')}</span>
                           )}

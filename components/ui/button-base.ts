@@ -10,21 +10,25 @@ export const FIXED_LEFT_ICON_OFFSET: Record<ButtonSize, string> = {
   lg: 'left-8',
 };
 
+// Gallery White Cube 모델: 호버에 scale/translate 사용 금지. 색·그림자만 변화.
+// (Apple/Tesla/Figma 갤러리 사이트의 정적 인터랙션 패턴)
 export const buttonVariants = cva(
-  'inline-flex items-center justify-center font-bold rounded-lg transition-[transform,box-shadow,color,background-color,border-color] duration-300 ease-out group',
+  'inline-flex items-center justify-center font-bold rounded-lg transition-[box-shadow,color,background-color,border-color] duration-300 ease-out group',
   {
     variants: {
       variant: {
-        primary: 'bg-primary hover:bg-primary-strong text-white hover:scale-[1.02] hover:shadow-lg',
-        secondary: 'bg-gray-900 hover:bg-gray-800 text-white hover:scale-[1.02] hover:shadow-lg',
-        accent: 'bg-accent hover:bg-accent-strong text-white hover:scale-[1.02] hover:shadow-lg',
+        primary: 'bg-primary hover:bg-primary-strong text-white hover:shadow-gallery-artwork',
+        secondary: 'bg-gray-900 hover:bg-gray-800 text-white hover:shadow-gallery-artwork',
+        // accent variant는 deprecated (Gallery 모델은 단일 액센트만) — primary로 리다이렉트.
+        // 기존 사용처 호환을 위해 variant 자체는 유지하되 색은 primary 블루.
+        accent: 'bg-primary hover:bg-primary-strong text-white hover:shadow-gallery-artwork',
         outline:
-          'border-2 border-gray-200 hover:border-primary hover:text-primary bg-white text-gray-600 hover:bg-white hover:scale-[1.02] hover:shadow-md',
+          'border border-gray-200 hover:border-primary hover:text-primary bg-white text-gray-700 hover:shadow-gallery-card',
         'outline-white':
-          'border-2 border-white/50 text-white bg-transparent hover:bg-white hover:text-gray-900 hover:border-white hover:scale-[1.02] hover:shadow-md',
+          'border border-white/50 text-white bg-transparent hover:bg-white hover:text-gray-900 hover:border-white',
         white:
-          'bg-white border border-gray-200 text-gray-900 hover:border-primary hover:text-primary hover:scale-[1.02] hover:shadow-md',
-        ghost: 'bg-transparent hover:bg-gray-100 text-gray-600 hover:text-primary',
+          'bg-white border border-gray-200 text-gray-900 hover:border-primary hover:text-primary hover:shadow-gallery-card',
+        ghost: 'bg-transparent hover:bg-gray-100 text-gray-700 hover:text-primary',
         'ghost-white': 'bg-transparent text-white/90 hover:bg-white/10 hover:text-white',
       },
       size: {

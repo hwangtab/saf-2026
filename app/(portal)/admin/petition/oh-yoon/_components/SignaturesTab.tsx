@@ -126,7 +126,7 @@ export default function SignaturesTab({ signatures, signaturesTotal }: Signature
       )}
 
       {signaturesTotal > signatures.length && (
-        <p className="rounded-lg border border-amber/30 bg-canvas-soft px-3 py-2 text-xs text-charcoal-muted">
+        <p className="rounded-lg border border-charcoal-deep/20 bg-charcoal-deep/5 px-3 py-2 text-xs text-charcoal-muted">
           {t('signaturesTruncatedNotice', {
             shown: signatures.length.toLocaleString('ko-KR'),
             total: signaturesTotal.toLocaleString('ko-KR'),
@@ -168,7 +168,7 @@ export default function SignaturesTab({ signatures, signaturesTotal }: Signature
                         {isDup && (
                           <span
                             title={t('signaturesDuplicateBadgeTitle')}
-                            className="inline-flex items-center rounded bg-amber-surface px-1.5 py-0.5 text-[10px] font-semibold text-amber-a11y"
+                            className="inline-flex items-center rounded bg-charcoal-deep/5 px-1.5 py-0.5 text-[10px] font-semibold text-charcoal-deep"
                           >
                             {t('signaturesDuplicateBadge')}
                           </span>

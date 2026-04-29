@@ -80,7 +80,7 @@ export default function ShareTemplates({ url }: ShareTemplatesProps) {
       <p className="text-xs font-semibold text-charcoal-deep">{t('shareTemplatesHeading')}</p>
       <ul className="space-y-2">
         {templates.map((tpl) => (
-          <li key={tpl.key} className="rounded-md border border-gray-200 bg-canvas-soft p-3">
+          <li key={tpl.key} className="rounded-md border border-gray-200 bg-canvas p-3">
             <div className="flex items-center justify-between gap-2 mb-1.5">
               <span className="text-[11px] font-semibold uppercase tracking-wide text-charcoal-muted">
                 {tpl.label}

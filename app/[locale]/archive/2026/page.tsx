@@ -181,7 +181,7 @@ export default async function Archive2026Page() {
                   <LinkButton
                     href={EXTERNAL_LINKS.JOIN_MEMBER}
                     external
-                    variant="accent"
+                    variant="primary"
                     className="w-full"
                     size="md"
                     leadingIcon="🤝"
@@ -278,7 +278,7 @@ export default async function Archive2026Page() {
                   <LinkButton
                     href={EXTERNAL_LINKS.JOIN_MEMBER}
                     external
-                    variant="accent"
+                    variant="primary"
                     className="w-full"
                     size="md"
                     leadingIcon="🤝"
@@ -327,7 +327,7 @@ export default async function Archive2026Page() {
       </Section>
 
       {/* Access Information */}
-      <Section variant="accent-soft" prevVariant="primary-surface">
+      <Section variant="primary-surface" prevVariant="primary-surface">
         <div className="container-max">
           <SectionTitle className="mb-12">오시는 길</SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
@@ -398,7 +398,7 @@ export default async function Archive2026Page() {
       </Section>
 
       {/* Schedule Section */}
-      <Section variant="gray" prevVariant="accent-soft">
+      <Section variant="gray" prevVariant="primary-surface">
         <div className="container-max">
           <SectionTitle className="mb-12">행사 일정</SectionTitle>
           <div className="bg-white rounded-2xl shadow-sm p-8">
@@ -453,13 +453,15 @@ export default async function Archive2026Page() {
             {exhibitionReviews.map((rev) => (
               <div
                 key={rev.id}
-                className="bg-canvas-soft p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl"
+                className="bg-canvas p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col transition-shadow duration-300 hover:shadow-gallery-hover"
               >
                 <div className="flex items-center gap-1 mb-4">
                   {[...Array(5)].map((_, i) => (
                     <span
                       key={i}
-                      className={i < Math.floor(rev.rating) ? 'text-sun' : 'text-gray-300'}
+                      className={
+                        i < Math.floor(rev.rating) ? 'text-charcoal-deep' : 'text-gray-300'
+                      }
                       aria-hidden="true"
                     >
                       ★

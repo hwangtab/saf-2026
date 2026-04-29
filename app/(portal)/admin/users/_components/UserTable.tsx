@@ -171,7 +171,7 @@ export function UserTable({
                         user.status === 'active'
                           ? 'bg-success/10 text-success-a11y ring-success-a11y/20'
                           : user.status === 'pending'
-                            ? 'bg-sun-soft text-sun-strong ring-sun-strong/20'
+                            ? 'bg-gray-100 text-charcoal-muted ring-charcoal-muted/20'
                             : 'bg-danger/10 text-danger-a11y ring-danger-a11y/10'
                       }`}
                     >
@@ -180,7 +180,7 @@ export function UserTable({
                           user.status === 'active'
                             ? 'bg-success-a11y'
                             : user.status === 'pending'
-                              ? 'bg-sun-strong'
+                              ? 'bg-charcoal-muted'
                               : 'bg-danger-a11y'
                         }`}
                       />
@@ -212,7 +212,9 @@ export function UserTable({
                       <option value="admin">{t('roleAdmin')}</option>
                     </AdminSelect>
                     {user.status === 'pending' && (
-                      <span className="text-[11px] text-sun-strong">{t('reviewQueueHint')}</span>
+                      <span className="text-[11px] text-charcoal-muted">
+                        {t('reviewQueueHint')}
+                      </span>
                     )}
                   </div>
                 </td>

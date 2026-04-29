@@ -260,7 +260,7 @@ export default async function ArtworksPage() {
                 <Link
                   key={cat.key}
                   href={`/artworks/category/${encodeURIComponent(cat.key)}`}
-                  className="block bg-canvas-soft rounded-2xl p-6 md:p-7 border border-gray-200 hover:border-primary/40 hover:bg-canvas transition-colors"
+                  className="block bg-canvas rounded-2xl p-6 md:p-7 border border-gray-200 hover:border-primary/40 hover:bg-canvas transition-colors"
                 >
                   <h3 className="text-lg md:text-xl font-section font-normal text-charcoal-deep mb-3">
                     {cat.title}
@@ -288,7 +288,7 @@ export default async function ArtworksPage() {
               {faqItems.map((item, idx) => (
                 <details
                   key={idx}
-                  className="group bg-canvas-soft rounded-xl border border-gray-200 open:border-primary/30"
+                  className="group bg-canvas rounded-xl border border-gray-200 open:border-primary/30"
                 >
                   <summary className="cursor-pointer p-5 font-medium text-charcoal-deep flex justify-between items-center list-none gap-4">
                     <span className="flex-1">{item.q}</span>

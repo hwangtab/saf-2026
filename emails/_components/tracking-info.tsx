@@ -36,7 +36,7 @@ export default function TrackingInfo({
       style={{
         width: '100%',
         borderCollapse: 'collapse',
-        border: '1px solid #e5e7eb',
+        border: '1px solid #E0E0E0',
         borderRadius: '6px',
         overflow: 'hidden',
         marginTop: '12px',
@@ -69,21 +69,21 @@ export default function TrackingInfo({
 const tdKeyStyle: React.CSSProperties = {
   padding: '10px 14px',
   fontWeight: '600',
-  color: '#374151',
-  background: '#f9fafb',
+  color: '#555E67',
+  background: '#FAFAFC',
   width: '110px',
-  borderBottom: '1px solid #f3f4f6',
+  borderBottom: '1px solid #E0E0E0',
   verticalAlign: 'top',
   whiteSpace: 'nowrap',
 };
 
 const tdValStyle: React.CSSProperties = {
   padding: '10px 14px',
-  color: '#111827',
-  borderBottom: '1px solid #f3f4f6',
+  color: '#1F2428',
+  borderBottom: '1px solid #E0E0E0',
 };
 
 const linkStyle: React.CSSProperties = {
-  color: '#3b82f6',
+  color: '#0E4ECF',
   textDecoration: 'underline',
 };

@@ -422,9 +422,9 @@ export function TermsConsentForm({
             )}
           </div>
           {!hasReadArtistTerms && (
-            <div className="mb-3 flex items-center gap-2 rounded-lg border border-sun-soft bg-sun-soft px-3 py-2">
-              <span className="text-sm text-sun-strong">↓</span>
-              <p className="text-xs font-medium text-sun-strong">{copy.scrollHint}</p>
+            <div className="mb-3 flex items-center gap-2 rounded-lg border border-primary-soft bg-primary-surface px-3 py-2">
+              <span className="text-sm text-primary-strong">↓</span>
+              <p className="text-xs font-medium text-primary-strong">{copy.scrollHint}</p>
             </div>
           )}
 
@@ -492,9 +492,9 @@ export function TermsConsentForm({
             )}
           </div>
           {!hasReadExhibitorTerms && (
-            <div className="mb-3 flex items-center gap-2 rounded-lg border border-sun-soft bg-sun-soft px-3 py-2">
-              <span className="text-sm text-sun-strong">↓</span>
-              <p className="text-xs font-medium text-sun-strong">{copy.scrollHint}</p>
+            <div className="mb-3 flex items-center gap-2 rounded-lg border border-primary-soft bg-primary-surface px-3 py-2">
+              <span className="text-sm text-primary-strong">↓</span>
+              <p className="text-xs font-medium text-primary-strong">{copy.scrollHint}</p>
             </div>
           )}
 
@@ -564,9 +564,9 @@ export function TermsConsentForm({
             )}
           </div>
           {!hasReadPrivacy && (
-            <div className="mb-3 flex items-center gap-2 rounded-lg border border-sun-soft bg-sun-soft px-3 py-2">
-              <span className="text-sm text-sun-strong">↓</span>
-              <p className="text-xs font-medium text-sun-strong">{copy.scrollHint}</p>
+            <div className="mb-3 flex items-center gap-2 rounded-lg border border-primary-soft bg-primary-surface px-3 py-2">
+              <span className="text-sm text-primary-strong">↓</span>
+              <p className="text-xs font-medium text-primary-strong">{copy.scrollHint}</p>
             </div>
           )}
 
@@ -646,9 +646,9 @@ export function TermsConsentForm({
             )}
           </div>
           {!hasReadTos && (
-            <div className="mb-3 flex items-center gap-2 rounded-lg border border-sun-soft bg-sun-soft px-3 py-2">
-              <span className="text-sm text-sun-strong">↓</span>
-              <p className="text-xs font-medium text-sun-strong">{copy.scrollHint}</p>
+            <div className="mb-3 flex items-center gap-2 rounded-lg border border-primary-soft bg-primary-surface px-3 py-2">
+              <span className="text-sm text-primary-strong">↓</span>
+              <p className="text-xs font-medium text-primary-strong">{copy.scrollHint}</p>
             </div>
           )}
 

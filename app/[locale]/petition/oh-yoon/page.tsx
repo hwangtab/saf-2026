@@ -136,28 +136,8 @@ export default async function PetitionOhYoonPage() {
             className="object-cover object-center"
           />
         </div>
-        {/* 다크 오버레이 — 텍스트 가독성 강화 (작품 톤은 가장자리에서 살짝 살린다) */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 -z-10 bg-gradient-to-br from-charcoal-deep/85 via-charcoal/72 to-primary-strong/55"
-        />
-        {/* 슬로건 영역 추가 어두움 — 중앙 vignette */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 -z-10"
-          style={{
-            background:
-              'radial-gradient(ellipse at 50% 50%, rgba(15,23,33,0.28) 0%, transparent 70%)',
-          }}
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-25 mix-blend-overlay"
-          style={{
-            background:
-              'radial-gradient(ellipse at 25% 0%, rgba(255,255,255,0.18) 0%, transparent 55%), radial-gradient(ellipse at 80% 100%, rgba(255,224,138,0.18) 0%, transparent 55%)',
-          }}
-        />
+        {/* 다크 오버레이 — 단색 charcoal-deep로 텍스트 가독성 보장 (Apple radical subtraction) */}
+        <div aria-hidden="true" className="absolute inset-0 -z-10 bg-charcoal-deep/80" />
         <div className="relative container-max text-center max-w-3xl mx-auto px-4">
           <p className="text-sm md:text-base font-medium opacity-90 mb-4">
             <CountdownTimer deadlineIso={PETITION_OH_YOON_DEADLINE_ISO} />
@@ -212,7 +192,7 @@ export default async function PetitionOhYoonPage() {
             </SectionTitle>
             <aside
               aria-label={t('storyTributeLabel')}
-              className="mb-10 rounded-2xl bg-canvas-soft px-6 py-7 md:px-8 md:py-8"
+              className="mb-10 rounded-2xl bg-canvas px-6 py-7 md:px-8 md:py-8"
             >
               <div className="grid gap-5 md:grid-cols-[auto_1fr] md:items-center md:gap-8">
                 <figure className="flex flex-col items-center md:items-start">
@@ -297,7 +277,7 @@ export default async function PetitionOhYoonPage() {
       </Section>
 
       {/* 4부 이미 시작된 일 — 세 가지 일 */}
-      <Section variant="canvas-soft" className="py-20 md:py-24">
+      <Section variant="canvas" className="py-20 md:py-24">
         <div className="container-max max-w-5xl mx-auto px-4">
           <SectionTitle as="h2" className="mb-8 md:mb-10">
             {t('threeStepsHeading')}
@@ -313,7 +293,7 @@ export default async function PetitionOhYoonPage() {
             ].map((card) => (
               <article
                 key={card.title}
-                className="rounded-xl bg-white p-6 border-2 border-charcoal shadow-[4px_4px_0px_0px_rgba(247,152,36,0.25)]"
+                className="rounded-xl bg-white p-6 border-2 border-charcoal shadow-[4px_4px_0px_0px_rgba(31,36,40,0.25)]"
               >
                 <h3 className="font-semibold text-lg text-charcoal-deep mb-2 break-keep">
                   {card.title}
@@ -333,7 +313,7 @@ export default async function PetitionOhYoonPage() {
       {/* 5부 청원 한 줄 — 강조 박스 (페이지 정중앙) */}
       <Section variant="white" className="py-20 md:py-24">
         <div className="container-max max-w-3xl mx-auto px-4 text-center">
-          <div className="border-4 border-charcoal bg-canvas-soft px-6 py-14 md:px-14 md:py-20 shadow-[8px_8px_0px_0px_rgba(247,152,36,0.35)]">
+          <div className="border-4 border-charcoal bg-canvas px-6 py-14 md:px-14 md:py-20 shadow-[8px_8px_0px_0px_rgba(31,36,40,0.35)]">
             {/* 청원 동의문 본문 — PartialSansKR(font-display)가 가운뎃점(·) 글리프를 안 가져 빠지므로 일반 sans 폰트 사용 */}
             <p className="font-bold text-2xl md:text-4xl leading-relaxed text-charcoal-deep break-keep">
               {t('statementLine1')}
@@ -355,14 +335,14 @@ export default async function PetitionOhYoonPage() {
       </Section>
 
       {/* 6부 참여 방법 — 3단 카드 + 폼 placeholder */}
-      <Section variant="canvas-soft" className="py-20 md:py-24" id="sign-form">
+      <Section variant="canvas" className="py-20 md:py-24" id="sign-form">
         <div className="container-max max-w-5xl mx-auto px-4">
           <SectionTitle as="h2" className="mb-8 md:mb-10">
             {t('participationHeading')}
           </SectionTitle>
           {/* 3카드 — 균등 길이, flex column으로 CTA를 하단에 정렬 */}
           <div className="grid gap-5 md:grid-cols-3 mb-12 items-stretch">
-            <article className="flex flex-col rounded-xl bg-white p-6 border-2 border-charcoal shadow-[4px_4px_0px_0px_rgba(247,152,36,0.35)]">
+            <article className="flex flex-col rounded-xl bg-white p-6 border-2 border-charcoal shadow-[4px_4px_0px_0px_rgba(31,36,40,0.35)]">
               <h3 className="font-semibold text-lg text-charcoal-deep mb-3 break-keep">
                 {t('participationCard1Title')}
               </h3>
@@ -376,7 +356,7 @@ export default async function PetitionOhYoonPage() {
                 ↓ {t('participationCard1Cta')}
               </a>
             </article>
-            <article className="flex flex-col rounded-xl bg-white p-6 border-2 border-charcoal shadow-[4px_4px_0px_0px_rgba(247,152,36,0.25)]">
+            <article className="flex flex-col rounded-xl bg-white p-6 border-2 border-charcoal shadow-[4px_4px_0px_0px_rgba(31,36,40,0.25)]">
               <h3 className="font-semibold text-lg text-charcoal-deep mb-3 break-keep">
                 {t('participationCard2Title')}
               </h3>
@@ -390,7 +370,7 @@ export default async function PetitionOhYoonPage() {
                 {t('participationCard2Cta')}
               </a>
             </article>
-            <article className="flex flex-col rounded-xl bg-white p-6 border-2 border-charcoal shadow-[4px_4px_0px_0px_rgba(247,152,36,0.25)]">
+            <article className="flex flex-col rounded-xl bg-white p-6 border-2 border-charcoal shadow-[4px_4px_0px_0px_rgba(31,36,40,0.25)]">
               <h3 className="font-semibold text-lg text-charcoal-deep mb-3 break-keep">
                 {t('participationCard3Title')}
               </h3>
@@ -415,7 +395,7 @@ export default async function PetitionOhYoonPage() {
             {is_active ? (
               <SignForm />
             ) : (
-              <div className="rounded-xl border border-gray-200 bg-canvas-soft px-6 py-12 text-center">
+              <div className="rounded-xl border border-gray-200 bg-canvas px-6 py-12 text-center">
                 <p className="text-base text-charcoal-deep font-semibold">{t('closedTitle')}</p>
               </div>
             )}
@@ -464,7 +444,7 @@ export default async function PetitionOhYoonPage() {
       </Section>
 
       {/* 8부 추진 주체 */}
-      <Section variant="canvas-soft" className="py-20 md:py-24">
+      <Section variant="canvas" className="py-20 md:py-24">
         <div className="container-max max-w-3xl mx-auto px-4">
           <SectionTitle as="h2" className="mb-8 md:mb-10">
             {t('proponentsHeading')}
@@ -478,7 +458,7 @@ export default async function PetitionOhYoonPage() {
           </div>
 
           {/* 특별전 + 작품 듀얼 CTA 카드 — 청원 외 오윤 40주기 노출 강화 */}
-          <article className="mt-12 overflow-hidden rounded-2xl bg-white border-2 border-charcoal shadow-[6px_6px_0px_0px_rgba(247,152,36,0.3)]">
+          <article className="mt-12 overflow-hidden rounded-2xl bg-white border-2 border-charcoal shadow-[6px_6px_0px_0px_rgba(31,36,40,0.3)]">
             <div className="md:grid md:grid-cols-[220px_1fr]">
               <div className="relative aspect-[4/5] md:aspect-auto md:h-full bg-charcoal-deep">
                 <Image
@@ -535,7 +515,7 @@ export default async function PetitionOhYoonPage() {
             <ProposalModal />
           </div>
 
-          <div className="mt-16 rounded-xl bg-canvas border-2 border-charcoal p-6 md:p-8 shadow-[4px_4px_0px_0px_rgba(247,152,36,0.25)]">
+          <div className="mt-16 rounded-xl bg-canvas border-2 border-charcoal p-6 md:p-8 shadow-[4px_4px_0px_0px_rgba(31,36,40,0.25)]">
             <h3 className="font-display text-xl md:text-2xl text-charcoal-deep mb-3 break-keep">
               {t('saffestHeading')}
             </h3>
@@ -558,18 +538,7 @@ export default async function PetitionOhYoonPage() {
         aria-labelledby="petition-closing-title"
         className="relative isolate overflow-hidden pt-24 md:pt-32 pb-48 md:pb-64 text-center text-white bg-charcoal-deep"
       >
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 -z-10 bg-gradient-to-br from-charcoal-deep via-charcoal to-primary-strong/80"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-30 mix-blend-overlay"
-          style={{
-            background:
-              'radial-gradient(ellipse at 50% 0%, rgba(255,224,138,0.18) 0%, transparent 60%), radial-gradient(ellipse at 50% 100%, rgba(255,255,255,0.12) 0%, transparent 60%)',
-          }}
-        />
+        <div aria-hidden="true" className="absolute inset-0 -z-10 bg-charcoal-deep" />
         <div className="relative container-max max-w-2xl mx-auto px-4">
           {!is_active && (
             <p className="mb-4 text-sm font-semibold uppercase tracking-wide opacity-80">

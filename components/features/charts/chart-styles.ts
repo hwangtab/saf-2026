@@ -4,7 +4,7 @@ import { CHART_COLORS } from '@/lib/chartColors';
 export const tooltipContentStyle: CSSProperties = {
   borderRadius: '0.75rem',
   border: `1px solid ${CHART_COLORS.border}`,
-  boxShadow: '0 20px 45px rgba(17, 24, 39, 0.15)',
+  boxShadow: '0 20px 45px rgba(31, 36, 40, 0.15)',
   backgroundColor: CHART_COLORS.background,
   padding: '12px 16px',
 };

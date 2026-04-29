@@ -14,7 +14,7 @@ const toneClasses: Record<BadgeTone, string> = {
   default: 'bg-gray-100 text-charcoal-muted',
   info: 'bg-primary-surface text-primary-strong',
   success: 'bg-success/10 text-success-a11y',
-  warning: 'bg-sun-soft text-sun-strong',
+  warning: 'bg-charcoal-deep/5 text-charcoal-deep',
   danger: 'bg-danger/10 text-danger-a11y',
   'outline-primary': 'border border-primary text-primary bg-transparent',
 };

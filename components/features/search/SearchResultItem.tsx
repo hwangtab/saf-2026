@@ -20,7 +20,7 @@ export default function SearchResultItem({ artwork, onSelect }: SearchResultItem
       className="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-gray-50"
     >
       {/* 썸네일 */}
-      <div className="w-12 h-12 flex-shrink-0 rounded-md overflow-hidden bg-canvas-soft relative">
+      <div className="w-12 h-12 flex-shrink-0 rounded-md overflow-hidden bg-canvas relative">
         {artwork.image ? (
           <div className="absolute inset-1">
             <SafeImage
@@ -50,7 +50,7 @@ export default function SearchResultItem({ artwork, onSelect }: SearchResultItem
         </span>
       )}
       {artwork.reserved && !artwork.sold && (
-        <span className="flex-shrink-0 text-xs font-medium text-sun-strong bg-sun-soft px-2 py-0.5 rounded">
+        <span className="flex-shrink-0 text-xs font-medium text-white bg-charcoal-deep px-2 py-0.5 rounded">
           {tFilters('reserved')}
         </span>
       )}

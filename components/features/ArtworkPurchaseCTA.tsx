@@ -75,11 +75,11 @@ export default function ArtworkPurchaseCTA({
   // E분기: reserved — 예약 중 안내
   if (reserved && !sold) {
     return (
-      <div className="rounded-2xl border border-sun-soft bg-gradient-to-b from-sun-soft/50 to-white p-6 shadow-sm">
+      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-gallery-card">
         <div className="text-center">
-          <Clock className="w-10 h-10 text-sun mx-auto mb-3" />
-          <p className="text-lg font-bold text-charcoal mb-1">{t('reservedNotice')}</p>
-          <p className="text-sm text-gray-500 mb-4">{t('reservedExplore')}</p>
+          <Clock className="w-10 h-10 text-charcoal-muted mx-auto mb-3" />
+          <p className="text-lg font-bold text-charcoal-deep mb-1">{t('reservedNotice')}</p>
+          <p className="text-sm text-charcoal-soft mb-4">{t('reservedExplore')}</p>
           <LinkButton href="/artworks" variant="outline" className="w-full">
             {t('soldExploreAll')} →
           </LinkButton>

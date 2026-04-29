@@ -70,7 +70,7 @@ export default async function Image({ params }: Props) {
           width: '100%',
           height: '100%',
           display: 'flex',
-          backgroundColor: '#F8F5F0',
+          backgroundColor: '#FFFFFF',
           fontFamily: 'NotoSansKR',
         }}
       >
@@ -80,7 +80,7 @@ export default async function Image({ params }: Props) {
             width: '420px',
             height: '100%',
             flexShrink: 0,
-            backgroundColor: '#E8E2DA',
+            backgroundColor: '#F5F5F7',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -97,7 +97,7 @@ export default async function Image({ params }: Props) {
             <div
               style={{
                 fontSize: '60px',
-                color: '#BDB7AF',
+                color: '#8F98A5',
               }}
             >
               🎨
@@ -135,7 +135,7 @@ export default async function Image({ params }: Props) {
             {isSold && (
               <div
                 style={{
-                  backgroundColor: '#374151',
+                  backgroundColor: '#1F2428',
                   color: 'white',
                   padding: '6px 20px',
                   borderRadius: '100px',
@@ -164,7 +164,7 @@ export default async function Image({ params }: Props) {
               style={{
                 fontSize: displayTitle.length > 20 ? '44px' : '52px',
                 fontWeight: 700,
-                color: '#1A1F2B',
+                color: '#1F2428',
                 lineHeight: 1.25,
                 letterSpacing: '-0.5px',
               }}
@@ -175,7 +175,7 @@ export default async function Image({ params }: Props) {
               <div
                 style={{
                   fontSize: '28px',
-                  color: '#555E6B',
+                  color: '#555E67',
                   fontWeight: 400,
                 }}
               >
@@ -202,11 +202,11 @@ export default async function Image({ params }: Props) {
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              borderTop: '1px solid #D5CFC7',
+              borderTop: '1px solid #E0E0E0',
               paddingTop: '20px',
             }}
           >
-            <div style={{ fontSize: '20px', color: '#9CA3AF', fontWeight: 400 }}>
+            <div style={{ fontSize: '20px', color: '#8F98A5', fontWeight: 400 }}>
               {isEn ? 'SAF Online Gallery' : '씨앗페 온라인 갤러리'}
             </div>
             <div

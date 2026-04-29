@@ -133,15 +133,32 @@ types/
 
 **Data Sources**: Public pages use static content files (`/content`). Authenticated portals fetch from Supabase. Both sources follow the same type definitions in `/types`.
 
-**Brand Colors**: Defined in `lib/colors.ts` as `BRAND_COLORS`, consumed by `tailwind.config.ts`. Use semantic names: `primary`, `accent`, `canvas`, `charcoal`. Use `a11y` variants for text requiring WCAG AA contrast.
+**Brand Colors (Gallery White Cube edition, 2026-04-29~)**: 정체성은 **현대미술 작품 판매 사이트**. 인터페이스 chrome은 무채색이고, **색은 작품(콘텐츠)에서만 나옴** — Apple/Figma의 white gallery wall 모델. 토큰 정의는 [lib/colors.ts](lib/colors.ts), 시각 가이드는 [docs/DESIGN.md](docs/DESIGN.md), 리뉴얼 결정은 [docs/DESIGN-RENEWAL-PROPOSAL.md](docs/DESIGN-RENEWAL-PROPOSAL.md).
 
 **Color Usage Rules**:
 
 - **`slate-*` 사용 금지** — `tailwind.config.ts`에서 비활성화됨. 사용해도 CSS가 생성되지 않음
-- **`indigo-*` / `blue-*` / `red-*` / `green-*` / `amber-*` / `sky-*` / `teal-*` / `orange-*` 등 Tailwind 기본 팔레트 사용 금지** — 포털·공개 페이지 모두 `primary-*`, `accent-*`, `sun-*`, `success-*`, `danger-*`, `charcoal-*`, `gray-*` 브랜드 토큰 사용
+- **`indigo-*` / `blue-*` / `red-*` / `green-*` / `amber-*` / `sky-*` / `teal-*` / `orange-*` 등 Tailwind 기본 팔레트 사용 금지** — 포털·공개 페이지 모두 `primary-*`, `success-*`, `danger-*`, `charcoal-*`, `gray-*`, `canvas-*`, `gallery-*` 브랜드 토큰 사용
+- **`canvas`, `canvas-soft`, `canvas-strong` 토큰은 화이트 스케일** (`#FAFAFC` Pearl / `#FFFFFF` Canvas / `#F5F5F7` Parchment). 과거 sand 톤 아님. 작품 색이 chrome에서 왜곡되지 않게 함
+- **`accent-*` 토큰은 deprecated** — 신규 코드에서 사용 금지. CTA/링크는 모두 `primary` 단일 액센트로 통일. Button `variant="accent"`는 자동으로 primary 블루로 alias됨
+- **`sun-*` 토큰은 통계/숫자 강조 텍스트 전용** — chrome 배경(`bg-sun`, `bg-sun-soft`) 사용 금지. 차트의 데이터 식별 색으로만 BRAND_COLORS.sun.\* 참조 가능 (`/admin/_components/StatusDonutChart` 등). Section의 `variant="sun"`은 다크 챕터로, `variant="sun-soft"`는 pearl로 자동 alias
+- **다크 hero/챕터는 단색 `bg-charcoal-deep`** — 그라디언트 사용 금지 (Apple radical subtraction)
 - 중성 색상은 반드시 `gray-*` 브랜드 토큰 사용 (`lib/colors.ts`의 `BRAND_COLORS.gray`)
 - 텍스트 계층: `text-charcoal-deep` (제목) > `text-charcoal` / `text-gray-800` (본문) > `text-charcoal-muted` / `text-gray-600` (보조) > `text-gray-500` (뮤트)
 - **차트·OG 이미지·Satori 렌더 등 런타임 hex가 필요한 곳은 반드시 `import { BRAND_COLORS } from '@/lib/colors'`로 참조.** `stroke="#D1D7E0"` 같은 리터럴 대신 `stroke={BRAND_COLORS.gray[200]}`, 템플릿 문자열(`` `1px solid ${BRAND_COLORS.gray[200]}` ``) 사용
+
+**Gallery interaction rules**:
+
+- **호버에 `scale-*`, `translate-*` 사용 금지** — 갤러리는 정적. 색·border·그림자만 변화 (Apple/Tesla/Figma 모델)
+- 카드/CTA 호버는 `shadow-gallery-card` → `shadow-gallery-hover` 다층 그림자 stack 사용 (단층 `shadow-sm/md/lg/xl` 지양)
+- 작품 이미지는 `shadow-gallery-artwork` (시그니처 단일 그림자)
+- SOLD/RESERVED 스탬프는 `bg-charcoal-deep text-white` (도록 클래식) 또는 `bg-danger-a11y text-white` (판매)
+
+**Editorial label utilities** (`globals.css`에 정의):
+
+- `.text-eyebrow` — 카테고리·날짜 같은 메타 라벨. mono UPPERCASE tracking
+- `.text-caption-meta` — 작품 매체·연도·사이즈 큐레이터 톤
+- `.text-artwork-title` — 도록 스타일 작품명 (display font + tight tracking)
 
 **i18n 필수 규칙**: 사용자 노출 텍스트는 전부 next-intl 메시지로. 배지·상태·버튼 라벨에 `"예약중"`, `"SOLD"`, `"판매완료"` 같은 리터럴 직접 박으면 영어 locale에서도 그대로 노출됨. `messages/ko.json`·`messages/en.json`에 키 추가 후 `useTranslations` / `getTranslations`로 소비.
 

@@ -54,14 +54,14 @@ export default function SAFEmailLayout({
 const bodyStyle: React.CSSProperties = {
   margin: '0',
   padding: '0',
-  background: '#f9fafb',
+  background: '#FAFAFC',
   fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
 };
 
 const containerStyle: React.CSSProperties = {
   maxWidth: '560px',
   margin: '32px auto',
-  background: '#fff',
+  background: '#FFFFFF',
   borderRadius: '8px',
   overflow: 'hidden',
   boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
@@ -71,18 +71,18 @@ const headerTextStyle: React.CSSProperties = {
   margin: '0',
   fontSize: '20px',
   fontWeight: '700',
-  color: '#fff',
+  color: '#FFFFFF',
 };
 
 const footerStyle: React.CSSProperties = {
   padding: '12px 28px 20px',
-  background: '#f9fafb',
-  borderTop: '1px solid #f3f4f6',
+  background: '#FAFAFC',
+  borderTop: '1px solid #E0E0E0',
   marginTop: '12px',
 };
 
 const footerTextStyle: React.CSSProperties = {
   margin: '0',
   fontSize: '12px',
-  color: '#9ca3af',
+  color: '#8F98A5',
 };

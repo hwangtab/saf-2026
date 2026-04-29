@@ -51,7 +51,7 @@ export default function ShippedEmail({
 
   return (
     <SAFEmailLayout
-      headerColor="#3b82f6"
+      headerColor="#0E4ECF"
       headerTitle={header}
       previewText={preview}
       locale={locale}
@@ -65,6 +65,6 @@ export default function ShippedEmail({
 
 const bodyText: React.CSSProperties = {
   margin: '0 0 20px',
-  color: '#374151',
+  color: '#555E67',
   fontSize: '15px',
 };

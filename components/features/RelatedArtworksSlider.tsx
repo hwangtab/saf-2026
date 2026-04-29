@@ -6,7 +6,6 @@ import useEmblaCarousel from 'embla-carousel-react';
 import AutoScroll from 'embla-carousel-auto-scroll';
 import { useLocale } from 'next-intl';
 import ArtworkCard from '@/components/ui/ArtworkCard';
-import SawtoothDivider from '@/components/ui/SawtoothDivider';
 
 interface RelatedArtworksProps {
   artworks?: ArtworkCardData[];
@@ -149,8 +148,9 @@ export default function RelatedArtworksSlider({
   if (relatedArtworks.length === 0) return null;
 
   return (
-    <section className="w-full bg-gray-50 py-12 pb-20 relative">
-      <SawtoothDivider position="top" colorClass="text-gray-50" />
+    // Gallery White Cube: 작품 ↔ 관련 작품 사이는 hairline divider가 도록 톤에 어울림.
+    // 톱니는 Footer/Hero 같은 큰 챕터 경계 전용.
+    <section className="w-full bg-gray-50 py-12 pb-20 relative border-t border-gray-200">
       <div className="container-max mb-8">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>

@@ -78,7 +78,7 @@ export default async function ExhibitorTermsPage() {
                 Version: {EXHIBITOR_APPLICATION_TERMS_VERSION}
               </p>
 
-              <div className="rounded-lg bg-canvas-soft p-5 text-sm leading-7 text-charcoal-muted">
+              <div className="rounded-lg bg-canvas p-5 text-sm leading-7 text-charcoal-muted">
                 The official exhibitor agreement text is currently provided in Korean.
                 <br />
                 Please review the Korean version for legal interpretation.
@@ -86,7 +86,7 @@ export default async function ExhibitorTermsPage() {
 
               <section>
                 <SectionTitle className="mb-4">Contact</SectionTitle>
-                <div className="rounded-lg bg-canvas-soft p-4 text-sm leading-7">
+                <div className="rounded-lg bg-canvas p-4 text-sm leading-7">
                   <p>
                     Email:{' '}
                     <a href={`mailto:${CONTACT.EMAIL}`} className="hover:underline">
@@ -127,7 +127,7 @@ export default async function ExhibitorTermsPage() {
             </p>
 
             {doc.preamble && (
-              <div className="mb-10 rounded-lg bg-canvas-soft p-5 text-sm leading-7 text-charcoal-muted">
+              <div className="mb-10 rounded-lg bg-canvas p-5 text-sm leading-7 text-charcoal-muted">
                 {doc.preamble.map((line) => (
                   <p key={line} className="mb-2 last:mb-0">
                     {line}
@@ -167,7 +167,7 @@ export default async function ExhibitorTermsPage() {
                   {section.table && (
                     <div className="mt-2 overflow-x-auto">
                       <table className="min-w-full border border-gray-200 text-sm">
-                        <thead className="bg-canvas-soft">
+                        <thead className="bg-canvas">
                           <tr>
                             {section.table.headers.map((header) => (
                               <th
@@ -181,7 +181,7 @@ export default async function ExhibitorTermsPage() {
                         </thead>
                         <tbody>
                           {section.table.rows.map((row, rowIdx) => (
-                            <tr key={rowIdx} className="even:bg-canvas-soft">
+                            <tr key={rowIdx} className="even:bg-canvas">
                               {row.map((cell, cellIdx) => (
                                 <td
                                   key={cellIdx}
@@ -212,7 +212,7 @@ export default async function ExhibitorTermsPage() {
 
               <section>
                 <SectionTitle className="mb-4">문의처</SectionTitle>
-                <div className="rounded-lg bg-canvas-soft p-4 text-sm leading-7">
+                <div className="rounded-lg bg-canvas p-4 text-sm leading-7">
                   <p>
                     이메일:{' '}
                     <a href={`mailto:${CONTACT.EMAIL}`} className="hover:underline">

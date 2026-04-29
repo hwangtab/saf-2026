@@ -365,7 +365,7 @@ export default async function StoryCategoryPage({ params }: Props) {
       </Section>
 
       {stories.length === 0 ? (
-        <Section variant="canvas-soft" prevVariant="white">
+        <Section variant="canvas" prevVariant="white">
           <div className="flex flex-col items-center justify-center py-20">
             <p className="text-lg font-medium text-charcoal mb-1">
               {locale === 'en' ? 'No stories available yet.' : '아직 등록된 글이 없습니다.'}
@@ -389,7 +389,7 @@ export default async function StoryCategoryPage({ params }: Props) {
                   <Link
                     key={story.id}
                     href={`/stories/${story.slug}`}
-                    className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl motion-safe:opacity-0 motion-safe:animate-fade-in-up"
+                    className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-gallery-hover motion-safe:opacity-0 motion-safe:animate-fade-in-up"
                     style={{
                       animationDelay: `${i * 0.08}s`,
                       animationFillMode: 'forwards',
@@ -473,7 +473,7 @@ export default async function StoryCategoryPage({ params }: Props) {
       </Section>
 
       {/* 작품 갤러리 교차 링크 — 매거진에서 작품 구매로 전환 유도 */}
-      <Section variant="canvas-soft" prevVariant="white" className="pb-16">
+      <Section variant="canvas" prevVariant="white" className="pb-16">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
           <div>
             <p className="text-lg font-display font-bold text-charcoal">

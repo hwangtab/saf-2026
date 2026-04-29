@@ -204,14 +204,14 @@ export function createNoiseNormalMap(
 export function createEnvironmentMap(renderer: THREE.WebGLRenderer): THREE.Texture {
   const scene = new THREE.Scene();
 
-  // Warm gradient sky dome
+  // Gallery White Cube sky dome — neutral cool gradient (no warm sand)
   const skyGeo = new THREE.SphereGeometry(10, 32, 16);
   const skyMat = new THREE.ShaderMaterial({
     side: THREE.BackSide,
     uniforms: {
-      topColor: { value: new THREE.Color('#e8ddd0') },
-      midColor: { value: new THREE.Color('#f5efe6') },
-      bottomColor: { value: new THREE.Color('#d4c4aa') },
+      topColor: { value: new THREE.Color('#FAFAFC') }, // Gallery Pearl
+      midColor: { value: new THREE.Color('#FFFFFF') }, // Gallery Canvas
+      bottomColor: { value: new THREE.Color('#F5F5F7') }, // Gallery Parchment
     },
     vertexShader: `
       varying vec3 vWorldPos;
@@ -238,7 +238,7 @@ export function createEnvironmentMap(renderer: THREE.WebGLRenderer): THREE.Textu
 
   // Soft area lights represented as bright emissive panels
   const panelGeo = new THREE.PlaneGeometry(4, 2);
-  const panelMat = new THREE.MeshBasicMaterial({ color: '#fff8f0', side: THREE.DoubleSide });
+  const panelMat = new THREE.MeshBasicMaterial({ color: '#FFFFFF', side: THREE.DoubleSide });
   const panel1 = new THREE.Mesh(panelGeo, panelMat);
   panel1.position.set(0, 6, -3);
   panel1.lookAt(0, 0, 0);

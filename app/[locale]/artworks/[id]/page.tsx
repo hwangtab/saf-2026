@@ -264,7 +264,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
       {artworkSpecificFaqSchema !== null && <JsonLdScript data={artworkSpecificFaqSchema} />}
       <Section
         variant="white"
-        prevVariant="canvas-soft"
+        prevVariant="canvas"
         padding="none"
         className="pb-24 md:pb-32 pt-[calc(4rem+env(safe-area-inset-top,0px))]"
       >
@@ -492,7 +492,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                         <Link
                           key={story.id}
                           href={`/stories/${story.slug}`}
-                          className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-lg"
+                          className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-[transform,box-shadow] duration-300 hover:shadow-lg"
                         >
                           {thumbUrl && (
                             <div className="relative aspect-[16/10] overflow-hidden">

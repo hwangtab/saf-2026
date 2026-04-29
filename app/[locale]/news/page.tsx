@@ -420,7 +420,7 @@ export default async function NewsPage() {
         />
       </PageHero>
 
-      <Section variant="sun-soft" prevVariant="white">
+      <Section variant="canvas" prevVariant="white">
         <div className="container-max flex flex-col gap-12">
           <div className="max-w-3xl mx-auto text-center">
             <Badge tone="outline-primary" className="tracking-wide uppercase font-semibold mb-4">
@@ -455,7 +455,7 @@ export default async function NewsPage() {
         </div>
       </Section>
 
-      <Section variant="primary-surface" prevVariant="sun-soft" className="pb-24 md:pb-32">
+      <Section variant="primary-surface" prevVariant="canvas" className="pb-24 md:pb-32">
         <div className="container-max">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {newsArticles.map((article, index) => {
@@ -468,7 +468,7 @@ export default async function NewsPage() {
               return (
                 <article
                   key={article.id}
-                  className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl"
+                  className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm transition-shadow duration-300 hover:shadow-gallery-hover"
                 >
                   <Link
                     href={`/news/${article.id}`}
@@ -482,7 +482,7 @@ export default async function NewsPage() {
                           alt={localizedTitle}
                           fill
                           priority={index === 0}
-                          className="object-cover transition-transform duration-300 hover:scale-105"
+                          className="object-cover transition-transform duration-300"
                           sizes="(max-width: 768px) 100vw, 50vw"
                         />
                       ) : (

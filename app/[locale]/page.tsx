@@ -105,7 +105,7 @@ export default async function Home() {
       <HeroSection locale={locale} />
 
       {/* Mission Banner */}
-      <Section variant="canvas-soft" padding="sm">
+      <Section variant="canvas" padding="sm">
         <div className="container-max text-center py-4 md:py-6">
           <p className="text-charcoal text-xl md:text-2xl font-semibold break-keep mb-6">
             {t('missionBanner')}
@@ -153,7 +153,7 @@ export default async function Home() {
       </Suspense>
 
       {/* Impact Stats + CTA */}
-      <Section variant="white" prevVariant="canvas-soft" className="pb-20">
+      <Section variant="white" prevVariant="canvas" className="pb-20">
         <div className="container-max">
           <SectionTitle className="mb-12">{t('statsTitle')}</SectionTitle>
           <Suspense fallback={<div className="h-32 animate-pulse bg-gray-100 rounded" />}>
@@ -172,7 +172,7 @@ export default async function Home() {
             <LinkButton
               href={EXTERNAL_LINKS.LOAN_INFO}
               external
-              variant="accent"
+              variant="primary"
               size="lg"
               className="w-full sm:w-auto justify-center min-w-[180px]"
             >
@@ -183,7 +183,7 @@ export default async function Home() {
       </Section>
 
       {/* FAQ */}
-      <Section variant="sun-soft" prevVariant="white" className="pb-24 md:pb-32">
+      <Section variant="canvas" prevVariant="white" className="pb-24 md:pb-32">
         <div className="container-max">
           <SectionTitle className="mb-12">{t('faqTitle')}</SectionTitle>
           <Suspense fallback={<BrandLoader minHeight="30vh" />}>
@@ -264,16 +264,7 @@ async function HeroSection({ locale }: { locale: 'ko' | 'en' }) {
     <>
       <JsonLdScript data={featuredListSchema} />
       {aggregateOfferSchema && <JsonLdScript data={aggregateOfferSchema} />}
-      <section className="relative overflow-hidden bg-gradient-to-br from-charcoal-deep via-charcoal to-primary-strong/70">
-        {/* Subtle radial accent — 브랜드 톤 더함. 이미지 0장이라 LCP 즉시 */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-60 mix-blend-overlay"
-          style={{
-            background:
-              'radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.18) 0%, transparent 50%), radial-gradient(ellipse at 80% 100%, rgba(255,224,138,0.15) 0%, transparent 55%)',
-          }}
-        />
+      <section className="relative overflow-hidden bg-charcoal-deep">
         <SawtoothDivider position="bottom" colorClass="text-canvas-soft" />
         <div className="relative z-10 container-max pt-16 pb-24 md:pt-20 md:pb-32">
           {/* Title */}
@@ -321,7 +312,7 @@ async function HeroSection({ locale }: { locale: 'ko' | 'en' }) {
           >
             <LinkButton
               href="/artworks"
-              variant="accent"
+              variant="primary"
               size="lg"
               className="w-full sm:w-auto shadow-lg min-w-[200px] justify-center text-lg"
             >

@@ -56,7 +56,7 @@ export default function RefundedEmail({
 
   return (
     <SAFEmailLayout
-      headerColor="#f59e0b"
+      headerColor="#1F2428"
       headerTitle={header}
       previewText={preview}
       locale={locale}
@@ -70,12 +70,12 @@ export default function RefundedEmail({
 
 const bodyText: React.CSSProperties = {
   margin: '0 0 20px',
-  color: '#374151',
+  color: '#555E67',
   fontSize: '15px',
 };
 
 const noteText: React.CSSProperties = {
   margin: '16px 0 0',
-  color: '#6b7280',
+  color: '#707A84',
   fontSize: '13px',
 };

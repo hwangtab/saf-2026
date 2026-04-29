@@ -565,7 +565,7 @@ export function SalesHistory({
                         className={cn(
                           'inline-flex rounded-full px-2 py-0.5 text-xs font-medium',
                           normalizeSaleSource(sale.source) === 'online'
-                            ? 'bg-accent-soft text-accent-a11y'
+                            ? 'bg-primary-surface text-primary-strong'
                             : 'bg-success/20 text-success-a11y'
                         )}
                       >

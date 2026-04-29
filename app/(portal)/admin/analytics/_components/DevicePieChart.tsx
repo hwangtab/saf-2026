@@ -19,7 +19,7 @@ const DEVICE_LABELS: Record<string, string> = {
 const DEVICE_COLORS: Record<string, string> = {
   desktop: BRAND_COLORS.primary.DEFAULT,
   mobile: BRAND_COLORS.success.DEFAULT,
-  tablet: BRAND_COLORS.sun.DEFAULT,
+  tablet: BRAND_COLORS.charcoal.DEFAULT,
   unknown: BRAND_COLORS.gray[400],
 };
 

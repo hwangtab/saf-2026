@@ -217,7 +217,7 @@ export default async function StoriesPage({
       </Section>
 
       {stories.length === 0 ? (
-        <Section variant="canvas-soft" prevVariant="white" className="pb-16 md:pb-24">
+        <Section variant="canvas" prevVariant="white" className="pb-16 md:pb-24">
           <div className="flex flex-col items-center justify-center py-20">
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
               <svg
@@ -243,11 +243,11 @@ export default async function StoriesPage({
         <>
           {/* Featured Story */}
           {featured && (
-            <Section variant="canvas-soft" prevVariant="white">
+            <Section variant="canvas" prevVariant="white">
               <div className="max-w-6xl mx-auto">
                 <Link
                   href={`/stories/${featured.slug}`}
-                  className="group block overflow-hidden rounded-2xl border border-gray-200 shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl"
+                  className="group block overflow-hidden rounded-2xl border border-gray-200 shadow-sm transition-shadow duration-300 hover:shadow-gallery-hover"
                 >
                   <div className="relative aspect-[16/10] md:aspect-[21/9]">
                     {(() => {
@@ -302,7 +302,7 @@ export default async function StoriesPage({
 
           {/* Story Grid */}
           {rest.length > 0 && (
-            <Section variant="white" prevVariant="canvas-soft" className="pb-16 md:pb-24">
+            <Section variant="white" prevVariant="canvas" className="pb-16 md:pb-24">
               <div className="max-w-6xl mx-auto">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {rest.map((story, i) => {
@@ -315,7 +315,7 @@ export default async function StoriesPage({
                       <Link
                         key={story.id}
                         href={`/stories/${story.slug}`}
-                        className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl motion-safe:opacity-0 motion-safe:animate-fade-in-up"
+                        className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-gallery-hover motion-safe:opacity-0 motion-safe:animate-fade-in-up"
                         style={{
                           animationDelay: `${i * 0.08}s`,
                           animationFillMode: 'forwards',

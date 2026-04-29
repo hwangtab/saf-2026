@@ -305,7 +305,7 @@ export default async function AdminDashboardPage() {
                               : item.category === 'improvement'
                                 ? 'bg-primary-soft text-primary-strong'
                                 : item.category === 'question'
-                                  ? 'bg-sun-soft text-sun-strong'
+                                  ? 'bg-gray-100 text-charcoal-muted'
                                   : 'bg-gray-100 text-gray-700'
                           }`}
                         >
@@ -377,7 +377,7 @@ export default async function AdminDashboardPage() {
                             <span
                               className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
                                 isPending
-                                  ? 'bg-sun-soft text-sun-strong'
+                                  ? 'bg-gray-100 text-charcoal-muted'
                                   : ['paid', 'preparing', 'shipped', 'delivered'].includes(
                                         order.status
                                       )

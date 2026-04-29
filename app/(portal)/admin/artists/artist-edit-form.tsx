@@ -371,7 +371,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
                     <p className="text-xs text-primary-a11y">사용자 계정을 검색 중입니다...</p>
                   )}
                   {isSearchSlow && (
-                    <p className="text-xs text-sun-strong">
+                    <p className="text-xs text-charcoal-muted">
                       검색이 평소보다 오래 걸리고 있습니다. 잠시만 기다려주세요.
                     </p>
                   )}

@@ -64,7 +64,7 @@ export default function DepositConfirmedEmail({
 
   return (
     <SAFEmailLayout
-      headerColor="#22c55e"
+      headerColor="#1D7A5F"
       headerTitle={header}
       previewText={preview}
       locale={locale}
@@ -77,6 +77,6 @@ export default function DepositConfirmedEmail({
 
 const bodyText: React.CSSProperties = {
   margin: '0 0 20px',
-  color: '#374151',
+  color: '#555E67',
   fontSize: '15px',
 };

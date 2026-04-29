@@ -48,7 +48,7 @@ export default function AutoCancelledEmail({
 
   return (
     <SAFEmailLayout
-      headerColor="#ef4444"
+      headerColor="#B91C1C"
       headerTitle={header}
       previewText={preview}
       locale={locale}
@@ -62,12 +62,12 @@ export default function AutoCancelledEmail({
 
 const bodyText: React.CSSProperties = {
   margin: '0 0 20px',
-  color: '#374151',
+  color: '#555E67',
   fontSize: '15px',
 };
 
 const noteText: React.CSSProperties = {
   margin: '16px 0 0',
-  color: '#6b7280',
+  color: '#707A84',
   fontSize: '13px',
 };

@@ -28,14 +28,15 @@ const TOAST_ICONS: Record<ToastType, string> = {
 const TOAST_STYLES: Record<ToastType, string> = {
   success: 'bg-success text-white',
   error: 'bg-danger text-white',
-  warning: 'bg-warning text-charcoal',
+  // Gallery 모노톤: warning은 charcoal-deep + white (semantic warning은 dark mono로 대체)
+  warning: 'bg-charcoal-deep text-white',
   info: 'bg-primary text-white',
 };
 
 const ICON_STYLES: Record<ToastType, string> = {
   success: 'bg-white/20',
   error: 'bg-white/20',
-  warning: 'bg-charcoal/10',
+  warning: 'bg-white/20',
   info: 'bg-white/20',
 };
 

@@ -294,9 +294,9 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
               )}
             </div>
             {!hasReadTerms && (
-              <div className="mt-1 flex items-center gap-2 rounded-lg border border-sun-soft bg-sun-soft px-3 py-2">
-                <span className="text-sm text-sun-strong">↓</span>
-                <p className="text-xs font-medium text-sun-strong">{t('scrollHint')}</p>
+              <div className="mt-1 flex items-center gap-2 rounded-lg border border-primary-soft bg-primary-surface px-3 py-2">
+                <span className="text-sm text-primary-strong">↓</span>
+                <p className="text-xs font-medium text-primary-strong">{t('scrollHint')}</p>
               </div>
             )}
           </div>
@@ -328,9 +328,9 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
               )}
             </div>
             {!hasReadTos && (
-              <div className="mt-1 flex items-center gap-2 rounded-lg border border-sun-soft bg-sun-soft px-3 py-2">
-                <span className="text-sm text-sun-strong">↓</span>
-                <p className="text-xs font-medium text-sun-strong">{t('scrollHint')}</p>
+              <div className="mt-1 flex items-center gap-2 rounded-lg border border-primary-soft bg-primary-surface px-3 py-2">
+                <span className="text-sm text-primary-strong">↓</span>
+                <p className="text-xs font-medium text-primary-strong">{t('scrollHint')}</p>
               </div>
             )}
           </div>
@@ -362,9 +362,9 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
               )}
             </div>
             {!hasReadPrivacy && (
-              <div className="mt-1 flex items-center gap-2 rounded-lg border border-sun-soft bg-sun-soft px-3 py-2">
-                <span className="text-sm text-sun-strong">↓</span>
-                <p className="text-xs font-medium text-sun-strong">{t('scrollHint')}</p>
+              <div className="mt-1 flex items-center gap-2 rounded-lg border border-primary-soft bg-primary-surface px-3 py-2">
+                <span className="text-sm text-primary-strong">↓</span>
+                <p className="text-xs font-medium text-primary-strong">{t('scrollHint')}</p>
               </div>
             )}
           </div>

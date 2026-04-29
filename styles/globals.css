@@ -1,20 +1,21 @@
 :root {
-  --color-canvas: #fff6dd;
-  --color-canvas-soft: #fff9e8;
+  /* Gallery White Cube edition — 작품 색이 chrome에서 왜곡되지 않도록 화이트 스케일 */
+  --color-canvas: #fafafc; /* Gallery Pearl */
+  --color-canvas-soft: #ffffff; /* Gallery Canvas (body bg) */
   --color-charcoal: #31393c;
   --color-charcoal-muted: #555e67;
   --color-charcoal-soft: #6a7378;
   --color-primary: #2176ff;
-  --color-sun: #fdca40;
   --color-gray-50: #f7f8fa;
   --color-gray-100: #e6eaf0;
   --color-gray-200: #d1d7e0;
   --color-gray-400: #8f98a5;
-  --admin-bg: #f4f7fc;
-  --admin-surface: #ffffff;
-  --admin-surface-muted: #f7f8fa;
-  --admin-border: #dbe4ef;
-  --admin-border-soft: #e6edf5;
+  /* Gallery 모노톤: 관리자 chrome도 cool blue 톤 제거, gallery white scale로 통일 */
+  --admin-bg: #fafafc; /* gallery-pearl */
+  --admin-surface: #ffffff; /* gallery-canvas */
+  --admin-surface-muted: #f7f8fa; /* gray-50 */
+  --admin-border: #e0e0e0; /* gallery-hairline */
+  --admin-border-soft: #efefef;
 }
 
 @tailwind base;
@@ -85,8 +86,9 @@ button:focus:not(:focus-visible) {
   position: absolute;
   top: 0;
   left: 0;
-  background: var(--color-sun);
-  color: var(--color-charcoal);
+  /* Gallery 모노톤: 접근성 skip link도 흰글씨/짙은 charcoal로 통일. 노란색 미사용. */
+  background: var(--color-charcoal);
+  color: #ffffff;
   padding: 8px 16px;
   text-decoration: none;
   border-radius: 0 0 4px 0;
@@ -144,6 +146,21 @@ button:focus:not(:focus-visible) {
   .text-helper {
     @apply font-sans text-xs text-charcoal-soft;
   }
+
+  /* Gallery editorial labels — 메타 정보(매체·연도·카테고리) 위계 */
+  .text-eyebrow {
+    @apply text-[11px] uppercase tracking-[0.15em] font-medium text-charcoal-muted;
+  }
+
+  /* 작품 캡션 — "OIL ON CANVAS · 2024 · 60×45CM" 같은 큐레이터 톤 */
+  .text-caption-meta {
+    @apply text-xs uppercase tracking-[0.12em] text-charcoal-soft;
+  }
+
+  /* 작품명 — 갤러리 도록 스타일 */
+  .text-artwork-title {
+    @apply font-display text-2xl md:text-3xl tracking-tight leading-tight;
+  }
 }
 
 .shimmer-loading {
@@ -168,27 +185,22 @@ button:focus:not(:focus-visible) {
 }
 
 @media (hover: none) {
+  /* Gallery 모델 적용 후 dead override 정리됨. 살아있는 호버 효과만 유지.
+     hover:scale-[1.02], hover:-translate-y-1, hover:shadow-xl는 코드베이스에서 제거됨 */
+
   /* Disable hover scale effects on touch devices to prevent sticky hover states */
   .group:hover .group-hover\:scale-105 {
     transform: none;
   }
 
-  /* Disable generic hover scale effects */
-  .hover\:scale-105:hover,
-  .hover\:scale-\[1\.02\]:hover {
-    transform: none;
-  }
-
-  /* Disable shadow hover effects */
+  /* Disable shadow hover effects (살아있음: shadow-md/lg) */
   .hover\:shadow-md:hover,
-  .hover\:shadow-lg:hover,
-  .hover\:shadow-xl:hover {
+  .hover\:shadow-lg:hover {
     box-shadow: none;
   }
 
-  /* Disable lift hover effects */
-  .hover\:-translate-y-0\.5:hover,
-  .hover\:-translate-y-1:hover {
+  /* Disable lift hover effects (살아있음: -translate-y-0.5) */
+  .hover\:-translate-y-0\.5:hover {
     transform: none;
   }
 
@@ -199,8 +211,7 @@ button:focus:not(:focus-visible) {
     border-color: inherit;
   }
 
-  /* Disable group hover shadow effects */
-  .group:hover .group-hover\:shadow-xl,
+  /* Disable group hover shadow effects (살아있음: group-hover:shadow-lg) */
   .group:hover .group-hover\:shadow-lg {
     box-shadow: none;
   }

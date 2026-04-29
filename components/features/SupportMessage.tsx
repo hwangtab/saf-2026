@@ -154,7 +154,7 @@ export default function SupportMessage({
 
       {/* Background decoration */}
       <div className="absolute top-0 right-0 -mt-8 -mr-8 w-24 h-24 bg-primary/10 rounded-full blur-2xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 -mb-8 -ml-8 w-24 h-24 bg-accent/10 rounded-full blur-2xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 -mb-8 -ml-8 w-24 h-24 bg-primary/10 rounded-full blur-2xl pointer-events-none" />
     </div>
   );
 }

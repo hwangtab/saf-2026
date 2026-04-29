@@ -345,7 +345,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
                           {t('linked')}
                         </span>
                       ) : (
-                        <span className="inline-flex items-center rounded-md bg-sun-soft px-2 py-1 text-xs font-medium text-sun-strong ring-1 ring-inset ring-sun-strong/20">
+                        <span className="inline-flex items-center rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-charcoal-muted ring-1 ring-inset ring-charcoal-muted/20">
                           {t('unlinked')}
                         </span>
                       )}

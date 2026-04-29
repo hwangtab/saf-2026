@@ -75,7 +75,7 @@ export default async function PendingPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-canvas-soft px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-canvas px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 text-center bg-white p-10 rounded-2xl shadow-sm border border-gray-200">
         <div>
           <h2 className="mt-6 text-3xl font-extrabold text-charcoal">{t('title')}</h2>

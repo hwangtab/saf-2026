@@ -20,13 +20,13 @@ import type { Feedback, FeedbackCategory, FeedbackStatus } from '@/types';
 const CATEGORY_COLORS: Record<FeedbackCategory, string> = {
   bug: 'bg-danger/20 text-danger-a11y',
   improvement: 'bg-primary-soft text-primary-strong',
-  question: 'bg-sun-soft text-sun-strong',
+  question: 'bg-gray-100 text-charcoal-muted',
   other: 'bg-gray-100 text-gray-700',
 };
 
 const STATUS_COLORS: Record<FeedbackStatus, string> = {
   open: 'bg-success/20 text-success-a11y',
-  reviewing: 'bg-sun-soft text-sun-strong',
+  reviewing: 'bg-primary-surface text-primary-strong',
   resolved: 'bg-primary-soft text-primary-strong',
   closed: 'bg-gray-100 text-gray-500',
 };

@@ -27,11 +27,13 @@ export function extractBuyerLocale(metadata: unknown): EmailLocale {
   return locale === 'en' ? 'en' : 'ko';
 }
 
+// Gallery 모노톤: warning은 charcoal-deep로 (노란/주황 대신).
+// payment/error는 의미적 색 보존 (성공 그린/에러 빨강은 universal).
 const LEVEL_CONFIG: Record<NotifyLevel, { emoji: string; color: string }> = {
-  payment: { emoji: '💳', color: '#22c55e' },
-  warning: { emoji: '⚠️', color: '#f59e0b' },
-  error: { emoji: '🚨', color: '#ef4444' },
-  info: { emoji: 'ℹ️', color: '#3b82f6' },
+  payment: { emoji: '💳', color: '#1D7A5F' }, // success.a11y
+  warning: { emoji: '⚠️', color: '#1F2428' }, // charcoal.deep
+  error: { emoji: '🚨', color: '#B91C1C' }, // danger.a11y
+  info: { emoji: 'ℹ️', color: '#0E4ECF' }, // primary.strong
 };
 
 function escapeHtml(str: string): string {
@@ -77,8 +79,8 @@ export async function notifyEmail(
         .map(
           ([key, value]) => `
       <tr>
-        <td style="padding:6px 12px;font-weight:600;color:#374151;white-space:nowrap;border-bottom:1px solid #f3f4f6;">${escapeHtml(key)}</td>
-        <td style="padding:6px 12px;color:#111827;border-bottom:1px solid #f3f4f6;">${escapeHtml(value)}</td>
+        <td style="padding:6px 12px;font-weight:600;color:#555E67;white-space:nowrap;border-bottom:1px solid #E0E0E0;">${escapeHtml(key)}</td>
+        <td style="padding:6px 12px;color:#1F2428;border-bottom:1px solid #E0E0E0;">${escapeHtml(value)}</td>
       </tr>`
         )
         .join('')
@@ -87,10 +89,10 @@ export async function notifyEmail(
   const html = `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background:#f9fafb;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
-  <div style="max-width:520px;margin:32px auto;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+<body style="margin:0;padding:0;background:#FAFAFC;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <div style="max-width:520px;margin:32px auto;background:#FFFFFF;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
     <div style="background:${color};padding:16px 24px;">
-      <p style="margin:0;font-size:18px;font-weight:700;color:#fff;">${emoji} ${safeTitle}</p>
+      <p style="margin:0;font-size:18px;font-weight:700;color:#FFFFFF;">${emoji} ${safeTitle}</p>
     </div>
     ${
       fieldsHtml
@@ -99,8 +101,8 @@ export async function notifyEmail(
       </table>`
         : ''
     }
-    <div style="padding:12px 24px;background:#f9fafb;border-top:1px solid #f3f4f6;">
-      <p style="margin:0;font-size:12px;color:#9ca3af;">씨앗페 결제 시스템 • ${timestamp}</p>
+    <div style="padding:12px 24px;background:#FAFAFC;border-top:1px solid #E0E0E0;">
+      <p style="margin:0;font-size:12px;color:#8F98A5;">씨앗페 결제 시스템 • ${timestamp}</p>
     </div>
   </div>
 </body>

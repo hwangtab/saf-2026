@@ -141,7 +141,7 @@ export default function ArtworkImage({
           </div>
         )}
         {reserved && !sold && (
-          <div className="absolute top-4 right-4 bg-sun text-white px-4 py-2 rounded-lg font-bold text-lg shadow-lg transform rotate-3 pointer-events-none">
+          <div className="absolute top-4 right-4 bg-charcoal-deep text-white px-4 py-2 rounded-lg font-bold text-lg shadow-lg transform rotate-3 pointer-events-none">
             {copy.reserved}
           </div>
         )}

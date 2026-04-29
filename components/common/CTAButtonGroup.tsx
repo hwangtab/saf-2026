@@ -53,7 +53,7 @@ export default function CTAButtonGroup({
 
   return (
     <div className={containerClasses}>
-      <LinkButton href={donateHref} external={isDonateExternal} variant="accent" size={buttonSize}>
+      <LinkButton href={donateHref} external={isDonateExternal} variant="primary" size={buttonSize}>
         {resolvedDonateText}
       </LinkButton>
       <LinkButton

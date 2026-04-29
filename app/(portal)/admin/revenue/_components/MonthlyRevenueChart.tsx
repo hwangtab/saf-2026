@@ -106,7 +106,7 @@ export function MonthlyRevenueChart({ data }: MonthlyRevenueChartProps) {
               yAxisId="left"
               dataKey="onlineRevenue"
               name="온라인 매출"
-              fill={BRAND_COLORS.accent.a11y}
+              fill={BRAND_COLORS.primary.strong}
               radius={[5, 5, 0, 0]}
               maxBarSize={28}
               stackId="revenue"

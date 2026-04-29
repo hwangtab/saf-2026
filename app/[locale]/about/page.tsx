@@ -96,8 +96,8 @@ export default async function AboutPage() {
                 <p>
                   Banks see &ldquo;no steady paycheck&rdquo; and close the door.{' '}
                   <strong className="text-primary-strong">84.9%</strong> of artists are excluded
-                  from mainstream banking. <strong className="text-accent-strong">48.6%</strong> are
-                  pushed into predatory lending at 15%+ annual interest.
+                  from mainstream banking. <strong className="text-primary-strong">48.6%</strong>{' '}
+                  are pushed into predatory lending at 15%+ annual interest.
                 </p>
                 <p>
                   This is not a personal failure. It is a <strong>structural crisis</strong> — and
@@ -168,7 +168,7 @@ export default async function AboutPage() {
         </Section>
 
         {/* Why it matters */}
-        <Section variant="canvas-soft" prevVariant="white">
+        <Section variant="canvas" prevVariant="white">
           <div className="container-max">
             <SectionTitle className="mb-8">Why it matters</SectionTitle>
             <div className="max-w-3xl mx-auto">
@@ -207,7 +207,7 @@ export default async function AboutPage() {
         </Section>
 
         {/* Exhibition archive */}
-        <Section variant="white" prevVariant="canvas-soft">
+        <Section variant="white" prevVariant="canvas">
           <div className="container-max">
             <SectionTitle className="mb-12">Exhibition history</SectionTitle>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -219,14 +219,14 @@ export default async function AboutPage() {
                   <span className="text-xs font-bold tracking-widest uppercase text-white/60">
                     Latest
                   </span>
-                  <h3 className="text-2xl font-bold mt-2 mb-3 group-hover:text-accent transition-colors">
+                  <h3 className="text-2xl font-bold mt-2 mb-3 group-hover:text-primary transition-colors">
                     SAF 2026
                   </h3>
                   <p className="text-sm text-white/80 leading-relaxed">
                     Jan 14–26, Insa Art Center, Seoul. {ARTIST_COUNT} artists, {ARTWORK_COUNT}{' '}
                     works. The largest SAF exhibition to date.
                   </p>
-                  <span className="inline-block mt-4 text-sm font-semibold text-accent group-hover:underline">
+                  <span className="inline-block mt-4 text-sm font-semibold text-primary group-hover:underline">
                     View archive →
                   </span>
                 </div>
@@ -358,13 +358,13 @@ export default async function AboutPage() {
               <p>
                 은행은 &ldquo;고정 소득 없음&rdquo;이라는 이유로 문을 닫습니다.{' '}
                 <strong className="text-primary-strong">84.9%</strong>의 예술인이 제1금융권에서
-                배제되고, <strong className="text-accent-strong">48.6%</strong>가 연 15% 이상의
+                배제되고, <strong className="text-primary-strong">48.6%</strong>가 연 15% 이상의
                 고금리 대출에 내몰립니다.
               </p>
               <p>
                 이것은 개인의 실패가 아닙니다.{' '}
                 <strong>
-                  시스템이 만든 <span className="text-sun-strong">구조적 위기</span>
+                  시스템이 만든 <span className="text-charcoal-deep">구조적 위기</span>
                 </strong>
                 이며, 씨앗페는 이 악순환을 끊기 위해 존재합니다.
               </p>
@@ -457,7 +457,7 @@ export default async function AboutPage() {
       </Section>
 
       {/* 왜 중요한가 */}
-      <Section variant="canvas-soft" prevVariant="white">
+      <Section variant="canvas" prevVariant="white">
         <div className="container-max">
           <SectionTitle className="mb-8">왜 이것이 중요한가</SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
@@ -494,7 +494,7 @@ export default async function AboutPage() {
       </Section>
 
       {/* 기존 금융 vs 상호부조 */}
-      <Section variant="white" prevVariant="canvas-soft">
+      <Section variant="white" prevVariant="canvas">
         <div className="container-max">
           <SectionTitle className="mb-12">기존 금융 vs 상호부조 대출</SectionTitle>
           <div className="max-w-4xl mx-auto overflow-x-auto">
@@ -539,14 +539,14 @@ export default async function AboutPage() {
                 <span className="text-xs font-bold tracking-widest uppercase text-white/60">
                   최신 전시
                 </span>
-                <h3 className="text-2xl font-bold mt-2 mb-3 group-hover:text-accent transition-colors">
+                <h3 className="text-2xl font-bold mt-2 mb-3 group-hover:text-primary transition-colors">
                   씨앗페 2026
                 </h3>
                 <p className="text-sm text-white/80 leading-relaxed">
                   2026년 1월 14~26일, 인사아트센터. {ARTIST_COUNT}명 작가, {ARTWORK_COUNT}점 작품.
                   역대 최대 규모의 씨앗페 전시.
                 </p>
-                <span className="inline-block mt-4 text-sm font-semibold text-accent group-hover:underline">
+                <span className="inline-block mt-4 text-sm font-semibold text-primary group-hover:underline">
                   전시 기록 보기 →
                 </span>
               </div>

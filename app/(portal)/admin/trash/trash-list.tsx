@@ -338,7 +338,7 @@ export function TrashList({ logs, currentPage, totalPages, total }: TrashListPro
                         <button
                           type="button"
                           onClick={() => setRestoreTargetId(log.id)}
-                          className="rounded-md border border-sun-soft bg-sun-soft px-2.5 py-1 text-xs font-medium text-sun-strong hover:bg-sun-soft"
+                          className="rounded-md border border-primary-soft bg-primary-surface px-2.5 py-1 text-xs font-medium text-primary-strong hover:bg-primary-soft"
                         >
                           {t('restore')}
                         </button>

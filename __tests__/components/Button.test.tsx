@@ -18,10 +18,12 @@ describe('Button', () => {
     expect(button).toHaveClass('text-white');
   });
 
-  it('renders accent variant correctly', () => {
+  it('renders accent variant correctly (aliased to primary in Gallery model)', () => {
     render(<Button variant="accent">Donate</Button>);
     const button = screen.getByRole('button', { name: /donate/i });
-    expect(button).toHaveClass('bg-accent');
+    // Gallery White Cube: accent variant는 deprecated되어 primary 블루로 alias됨.
+    // 단일 액센트 룰 (Apple/Figma white gallery wall 모델).
+    expect(button).toHaveClass('bg-primary');
     expect(button).toHaveClass('text-white');
   });
 

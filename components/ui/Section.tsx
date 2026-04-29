@@ -30,6 +30,11 @@ interface VariantStyle {
   to: string;
 }
 
+// Gallery White Cube edition: 모든 색면 variant를 white/neutral/dark 스케일로 매핑.
+// - canvas/canvas-soft: 토큰 리다이렉트로 이미 white scale (Gallery Pearl/Canvas/Parchment)
+// - accent/accent-soft: deprecated. primary 톤으로 alias 처리 (단일 액센트 룰)
+// - sun/sun-soft: deprecated. 갤러리 톤(white scale + dark) 또는 primary로 alias
+// - red: danger semantic 보존 (오류·취소 등 명확한 의미)
 const SECTION_STYLES: Record<SectionVariant, VariantStyle> = {
   white: { bg: 'bg-white', from: 'from-white', to: 'to-white' },
   gray: { bg: 'bg-gray-50', from: 'from-gray-50', to: 'to-gray-50' },
@@ -42,10 +47,16 @@ const SECTION_STYLES: Record<SectionVariant, VariantStyle> = {
     from: 'from-primary-surface',
     to: 'to-primary-surface',
   },
-  accent: { bg: 'bg-accent', from: 'from-accent', to: 'to-accent' },
-  'accent-soft': { bg: 'bg-accent-soft', from: 'from-accent-soft', to: 'to-accent-soft' },
-  sun: { bg: 'bg-sun', from: 'from-sun', to: 'to-sun' },
-  'sun-soft': { bg: 'bg-sun-soft', from: 'from-sun-soft', to: 'to-sun-soft' },
+  // accent → primary alias (단일 액센트)
+  accent: { bg: 'bg-primary', from: 'from-primary', to: 'to-primary' },
+  'accent-soft': {
+    bg: 'bg-primary-surface',
+    from: 'from-primary-surface',
+    to: 'to-primary-surface',
+  },
+  // sun → 다크 챕터(작품 큐레이션 톤) / sun-soft → 미세 농담 챕터
+  sun: { bg: 'bg-charcoal-deep', from: 'from-charcoal-deep', to: 'to-charcoal-deep' },
+  'sun-soft': { bg: 'bg-canvas', from: 'from-canvas', to: 'to-canvas' }, // = gallery-pearl
   red: { bg: 'bg-danger/20', from: 'from-danger/20', to: 'to-danger/20' },
 };
 

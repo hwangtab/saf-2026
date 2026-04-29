@@ -154,7 +154,7 @@ export default async function Archive2023Page() {
             ? 'A record of SAF milestones, outcomes, and media coverage.'
             : '씨앗페의 발자취와 성과, 언론 보도를 기록합니다'
         }
-        dividerColor="text-sun-soft"
+        dividerColor="text-canvas"
         className="py-24 md:py-32"
         breadcrumbItems={breadcrumbItems}
       >
@@ -162,7 +162,7 @@ export default async function Archive2023Page() {
       </PageHero>
 
       {/* Past Events Section */}
-      <Section variant="sun-soft">
+      <Section variant="canvas">
         <div className="container-max">
           <SectionTitle className="mb-12">
             {isEnglish ? '🎉 2023 Event Highlights' : '🎉 2023년 행사 기록'}
@@ -259,7 +259,7 @@ export default async function Archive2023Page() {
       </Section>
 
       {/* SAF 2023 Artworks Section */}
-      <Section variant="gray" prevVariant="sun-soft">
+      <Section variant="gray" prevVariant="canvas">
         <div className="container-max">
           <SectionTitle className="mb-12">
             {isEnglish ? '🎨 2023 Featured Works' : '🎨 2023년 출품작'}
@@ -309,7 +309,7 @@ export default async function Archive2023Page() {
             {saf2023Photos.map((photo) => (
               <div
                 key={photo.id}
-                className="group relative aspect-square overflow-hidden rounded-2xl border border-gray-200 shadow-sm hover:shadow-xl transition-shadow"
+                className="group relative aspect-square overflow-hidden rounded-2xl border border-gray-200 shadow-sm hover:shadow-gallery-hover transition-shadow"
               >
                 <Image
                   src={`/images/saf2023/${photo.filename}`}
@@ -330,7 +330,7 @@ export default async function Archive2023Page() {
       </Section>
 
       {/* Video Archive Section */}
-      <Section variant="accent-soft" prevVariant="white">
+      <Section variant="primary-surface" prevVariant="white">
         <div className="container-max">
           <SectionTitle className="mb-12">
             {isEnglish ? '📹 Video Archive' : '📹 영상 아카이브'}
@@ -380,7 +380,7 @@ export default async function Archive2023Page() {
       </Section>
 
       {/* Call to Action */}
-      <Section variant="primary-soft" prevVariant="accent-soft" className="pb-24 md:pb-32">
+      <Section variant="primary-soft" prevVariant="primary-surface" className="pb-24 md:pb-32">
         <div className="container-max text-center">
           <SectionTitle className="mb-6">
             {isEnglish ? 'Be part of this ongoing history' : '이 역사에 당신도 함께하세요'}

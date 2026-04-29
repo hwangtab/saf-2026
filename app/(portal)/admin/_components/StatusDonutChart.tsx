@@ -16,7 +16,11 @@ export function StatusDonutChart({ data }: StatusDonutChartProps) {
       value: data.statusVisible.available,
       color: BRAND_COLORS.success.DEFAULT,
     },
-    { name: '예약됨(공개)', value: data.statusVisible.reserved, color: BRAND_COLORS.sun.DEFAULT },
+    {
+      name: '예약됨(공개)',
+      value: data.statusVisible.reserved,
+      color: BRAND_COLORS.charcoal.DEFAULT,
+    },
     {
       name: '판매 완료(공개)',
       value: data.statusVisible.sold,

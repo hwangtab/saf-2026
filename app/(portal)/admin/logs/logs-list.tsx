@@ -213,7 +213,7 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                           <button
                             type="button"
                             onClick={() => setRevertTargetId(log.id)}
-                            className="rounded-md border border-sun-soft bg-sun-soft px-2.5 py-1 text-xs font-medium text-sun-strong hover:bg-sun-soft"
+                            className="rounded-md border border-danger/30 bg-danger/10 px-2.5 py-1 text-xs font-medium text-danger-a11y hover:bg-danger/15"
                             title={t('revertTitle')}
                           >
                             {t('revertButton')}
@@ -240,7 +240,7 @@ export function LogsList({ logs, currentPage, totalPages, total }: LogsListProps
                           </div>
                           {(snapshotWarnings.missingInAfter.length > 0 ||
                             snapshotWarnings.addedInAfter.length > 0) && (
-                            <div className="rounded-md border border-sun-soft bg-sun-soft px-3 py-2 text-xs text-sun-strong">
+                            <div className="rounded-md border border-danger/30 bg-danger/10 px-3 py-2 text-xs text-danger-a11y">
                               {snapshotWarnings.missingInAfter.length > 0 && (
                                 <div>
                                   {t('missingInAfter', {

@@ -85,7 +85,12 @@ function SoldBadge({ variant, label }: { variant: ArtworkCardVariant; label: str
 
 function ReservedBadge({ variant, label }: { variant: ArtworkCardVariant; label: string }) {
   return (
-    <div className={cn('absolute bg-sun text-white font-bold', VARIANT_CONFIG[variant].soldBadge)}>
+    <div
+      className={cn(
+        'absolute bg-charcoal-deep text-white font-bold',
+        VARIANT_CONFIG[variant].soldBadge
+      )}
+    >
       {label}
     </div>
   );
@@ -214,10 +219,10 @@ function ArtworkCard({
         href={getHref(artwork, returnTo)}
         className={cn('flex-shrink-0 w-[160px] sm:w-[180px] md:w-[200px] group', className)}
       >
-        <div className="transition-transform duration-300 group-hover:-translate-y-1">
+        <div>
           <div
             className={cn(
-              'relative aspect-square overflow-hidden rounded-2xl shadow-sm group-hover:shadow-lg transition-shadow duration-300',
+              'relative aspect-square overflow-hidden rounded-2xl shadow-gallery-card group-hover:shadow-gallery-artwork transition-shadow duration-300',
               theme === 'dark' ? 'bg-charcoal' : 'bg-primary-surface'
             )}
           >
@@ -257,7 +262,7 @@ function ArtworkCard({
   return (
     <div
       className={cn(
-        'bg-gray-100 border border-gray-200 shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl group rounded-2xl overflow-hidden',
+        'bg-white border border-gray-200 shadow-gallery-card transition-shadow duration-300 hover:shadow-gallery-hover group rounded-2xl overflow-hidden',
         className
       )}
     >
@@ -305,7 +310,7 @@ function ArtworkCard({
           className={cn(
             'text-lg font-bold font-sans transition-colors duration-300 break-keep line-clamp-2 min-h-[3.5rem]',
             theme === 'dark'
-              ? 'text-white group-hover:text-sun'
+              ? 'text-white group-hover:text-primary-soft'
               : 'text-charcoal group-hover:text-primary'
           )}
         >
@@ -366,7 +371,7 @@ function ArtworkCard({
                     ? 'text-white/70'
                     : 'text-gray-500'
                   : theme === 'dark'
-                    ? 'text-sun'
+                    ? 'text-primary-soft'
                     : 'text-primary'
             )}
           >

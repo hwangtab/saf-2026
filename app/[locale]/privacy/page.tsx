@@ -74,7 +74,7 @@ export default async function PrivacyPolicyPage() {
               <p className="text-sm text-charcoal-muted">Effective date: {effectiveDate}</p>
               <p className="text-sm text-charcoal-muted">Version: {PRIVACY_POLICY_VERSION}</p>
 
-              <div className="rounded-lg bg-canvas-soft p-5 text-sm leading-7 text-charcoal-muted">
+              <div className="rounded-lg bg-canvas p-5 text-sm leading-7 text-charcoal-muted">
                 The official Privacy Policy text is currently provided in Korean.
                 <br />
                 Please refer to the Korean version for legally binding interpretation.
@@ -82,7 +82,7 @@ export default async function PrivacyPolicyPage() {
 
               <section>
                 <SectionTitle className="mb-4">Contact</SectionTitle>
-                <div className="rounded-lg bg-canvas-soft p-4 text-sm leading-7">
+                <div className="rounded-lg bg-canvas p-4 text-sm leading-7">
                   <p>
                     Email:{' '}
                     <a href={`mailto:${CONTACT.EMAIL}`} className="hover:underline">
@@ -121,7 +121,7 @@ export default async function PrivacyPolicyPage() {
             <p className="mb-8 text-sm text-charcoal-muted">버전: {PRIVACY_POLICY_VERSION}</p>
 
             {doc.preamble && (
-              <div className="mb-10 rounded-lg bg-canvas-soft p-5 text-sm leading-7 text-charcoal-muted">
+              <div className="mb-10 rounded-lg bg-canvas p-5 text-sm leading-7 text-charcoal-muted">
                 {doc.preamble.map((line) => (
                   <p key={line} className="mb-2 last:mb-0">
                     {line}
@@ -161,7 +161,7 @@ export default async function PrivacyPolicyPage() {
                   {section.table && (
                     <div className="mt-2 overflow-x-auto">
                       <table className="min-w-full border border-gray-200 text-sm">
-                        <thead className="bg-canvas-soft">
+                        <thead className="bg-canvas">
                           <tr>
                             {section.table.headers.map((header) => (
                               <th
@@ -175,7 +175,7 @@ export default async function PrivacyPolicyPage() {
                         </thead>
                         <tbody>
                           {section.table.rows.map((row, rowIdx) => (
-                            <tr key={rowIdx} className="even:bg-canvas-soft">
+                            <tr key={rowIdx} className="even:bg-canvas">
                               {row.map((cell, cellIdx) => (
                                 <td
                                   key={cellIdx}
@@ -206,7 +206,7 @@ export default async function PrivacyPolicyPage() {
 
               <section>
                 <SectionTitle className="mb-4">문의처</SectionTitle>
-                <div className="rounded-lg bg-canvas-soft p-4 text-sm leading-7">
+                <div className="rounded-lg bg-canvas p-4 text-sm leading-7">
                   <p>
                     이메일:{' '}
                     <a href={`mailto:${CONTACT.EMAIL}`} className="hover:underline">

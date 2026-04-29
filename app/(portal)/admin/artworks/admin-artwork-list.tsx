@@ -529,7 +529,7 @@ export function AdminArtworkList({
     <div className="space-y-6">
       <AdminCard className="overflow-hidden">
         {isTruncated && (
-          <div className="border-b border-sun-soft bg-sun-soft px-6 py-3 text-sm text-sun-strong">
+          <div className="border-b border-charcoal-deep/20 bg-charcoal-deep/5 px-6 py-3 text-sm text-charcoal-deep">
             {t('truncatedNotice', { count: maxRows })}{' '}
             <span className="font-medium">{t('downloadAllArtworks')}</span>
           </div>
@@ -852,7 +852,7 @@ export function AdminArtworkList({
                           artwork.status === 'available'
                             ? 'border-success/30 bg-success/10 text-success-a11y focus:border-success/60'
                             : artwork.status === 'reserved'
-                              ? 'border-sun-soft bg-sun-soft text-sun-strong focus:border-sun/60'
+                              ? 'border-charcoal-deep/20 bg-gray-100 text-charcoal-deep focus:border-charcoal-deep/40'
                               : 'border-primary-soft bg-primary-surface text-primary-strong focus:border-primary/60'
                         }`}
                       >

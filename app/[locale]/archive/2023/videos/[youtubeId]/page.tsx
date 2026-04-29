@@ -188,7 +188,7 @@ export default async function Archive2023VideoWatchPage({
         </div>
       </Section>
 
-      <Section variant="canvas-soft" prevVariant="white" className="pb-20">
+      <Section variant="canvas" prevVariant="white" className="pb-20">
         <div className="container-max max-w-4xl text-sm text-charcoal-muted">
           {isEnglish
             ? `Video publisher: ${CONTACT.ORGANIZATION_NAME_EN}`
