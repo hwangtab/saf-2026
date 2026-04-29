@@ -1,5 +1,6 @@
 import { getTranslations, getLocale } from 'next-intl/server';
 import LinkButton from '@/components/ui/LinkButton';
+import ScrollToTopOnMount from '@/components/common/ScrollToTopOnMount';
 import type { Metadata } from 'next';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -15,6 +16,7 @@ export default async function ArtworkNotFound() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-canvas-soft pt-20">
+      <ScrollToTopOnMount />
       <div className="text-center max-w-md px-6">
         <div className="text-6xl mb-6" aria-hidden="true">
           🖼️

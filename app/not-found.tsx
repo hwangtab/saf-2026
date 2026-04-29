@@ -2,6 +2,7 @@ import { getLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { CONTACT } from '@/lib/constants';
 import LinkButton from '@/components/ui/LinkButton';
+import ScrollToTopOnMount from '@/components/common/ScrollToTopOnMount';
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale().catch(() => 'ko');
@@ -36,6 +37,7 @@ export default async function NotFound() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-canvas-soft pt-20">
+      <ScrollToTopOnMount />
       <div className="text-center max-w-md px-6">
         <div className="text-6xl mb-6" aria-hidden="true">
           🔍
