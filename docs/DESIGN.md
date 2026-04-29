@@ -109,15 +109,15 @@ Tailwind weight ↔ Noto Sans KR 호출:
 
 ### 유틸리티 클래스 ([globals.css](../styles/globals.css))
 
-| 클래스                | Tailwind                                                                 | 비고                          |
-| --------------------- | ------------------------------------------------------------------------ | ----------------------------- |
-| `.text-hero`          | `font-display font-black text-5xl md:text-6xl lg:text-7xl leading-tight` | Black Han Sans / fallback 900 |
-| `.text-section-title` | `font-section font-bold text-4xl md:text-5xl leading-snug`               | Noto Sans KR Bold (700)       |
-| `.text-artwork-title` | `font-display font-black text-2xl md:text-3xl tracking-tight`            | Black Han Sans / fallback 900 |
-| `.text-card-title`    | `font-sans font-bold text-xl leading-normal`                             | Noto Sans KR 700              |
-| `.text-body-large`    | `font-sans text-lg md:text-xl leading-relaxed`                           |                               |
-| `.text-label`         | `font-sans text-sm text-charcoal-muted`                                  |                               |
-| `.text-helper`        | `font-sans text-xs text-charcoal-soft`                                   |                               |
+| 클래스                | Tailwind                                                                 | 비고                    |
+| --------------------- | ------------------------------------------------------------------------ | ----------------------- |
+| `.text-hero`          | `font-display font-black text-5xl md:text-6xl lg:text-7xl leading-tight` | Noto Sans KR 900 (Hero) |
+| `.text-section-title` | `font-section font-bold text-4xl md:text-5xl leading-snug`               | Noto Sans KR 700        |
+| `.text-artwork-title` | `font-display font-black text-2xl md:text-3xl tracking-tight`            | Noto Sans KR 900        |
+| `.text-card-title`    | `font-sans font-bold text-xl leading-normal`                             | Noto Sans KR 700        |
+| `.text-body-large`    | `font-sans text-lg md:text-xl leading-relaxed`                           | Noto Sans KR 400        |
+| `.text-label`         | `font-sans text-sm text-charcoal-muted`                                  | Noto Sans KR 400        |
+| `.text-helper`        | `font-sans text-xs text-charcoal-soft`                                   | Noto Sans KR 400        |
 
 ### 한국어 룰 (전역 강제)
 
