@@ -2,15 +2,43 @@
 
 신규 유저 유입을 목적으로 집필한 매거진 초안 모음입니다. 승인된 원고는 Supabase `stories` 테이블에 등재합니다.
 
-## 상태 요약 (2026-04-27 기준, Phase 5·6 완료)
+## 상태 요약 (2026-04-29 기준, GSC SEO 사이클 완료)
 
 | 상태                                      | 편수      | 비고                                                          |
 | ----------------------------------------- | --------- | ------------------------------------------------------------- |
-| **드래프트 → DB 업로드 완료** (검수 대기) | **33편**  | Phase 1~4 17편 + 리라이트 3편 + Phase 5~7 신규 13편           |
-| **이번 사이클 신규 집필**                 | **+3편**  | #40 금박, #41 옻칠, #44 아키벌 피그먼트                       |
+| **이번 사이클 신규 집필·업로드**          | **+4편**  | #49 샤머니즘, #50 오윤 칼노래, #51 페어 캘린더, #52 농경·노동 |
+| **이번 사이클 SEO 보강**                  | **11편**  | 기존 hub 글에 역방향 인링크 추가 (Track B)                    |
+| **드래프트 → DB 업로드 완료** (검수 대기) | **37편**  | 직전 33편 + 이번 4편                                          |
 | **아카이브** (DB 중복으로 폐기)           | **10편**  | [archived/](./archived/) 참조                                 |
 | **참고: Supabase 기발행**                 | **114편** | artist-story 69편 / buying-guide 23편 / art-knowledge 22편    |
 | **다음 배치 미작성**                      | **10편**  | Phase 8 인터뷰 6편 + Phase 9 실용 심화 4편 (자동 집필 어려움) |
+
+## 이번 사이클 (2026-04-29) — GSC 데이터 기반 SEO 사이클
+
+[saf2026.com Performance on Search 2026-04-29] GSC export를 분석해 작가 검색 노출(오윤 429·안은경 378·박소형 205 등)에 비해 매거진 글 노출이 0~3에 그치는 문제를 확인. 새 글 추가가 아닌 두 갈래 전략으로 응답:
+
+### Track A — GSC 빈자리에 신규 4편
+
+- [49-korean-shamanism-art.md](./49-korean-shamanism-art.md) — 한국 샤머니즘 미술 (오윤·박생광·안은경 큐레이션). target: '안은경 무속인'(20)·'낮도깨비'(17)·'헛헛함'(17)·'오윤 원귀도'(5)
+- [50-oh-yun-song-of-the-blade.md](./50-oh-yun-song-of-the-blade.md) — 오윤 〈칼노래〉 단일 작품론. target: '오윤 칼노래'(29)·'사후판화'·'오윤 판화'
+- [51-korea-art-fair-calendar-2026.md](./51-korea-art-fair-calendar-2026.md) — 한국 미술 페어 1년 캘린더 2026. target: '아시아프 2026'(14)·'한국 아트페어 일정'
+- [52-agriculture-labor-korean-art.md](./52-agriculture-labor-korean-art.md) — 농경·노동의 한국 미술 (김준권·민정기·이철수·정영신). target: '신학철 모내기'(70)·'김준권 산처럼'·'민정기 벼베기'
+
+### Track B — 기존 hub 글 11편에 역방향 인링크 추가
+
+작가/주제 hub 글이 SERP에 매거진 슬롯으로 함께 뜨도록, 본문 끝에 "## 함께 읽을 매거진" 섹션 추가:
+
+- `oh-yun-40th-anniversary` ← #49, #50, korean-contemporary-printmaking-saf
+- `korean-contemporary-printmaking-saf` ← #50
+- `meet-artist-an-eungyeong` ← #49, janji-painting-an-eunkyung
+- `meet-artist-jung-young-shin` ← #52
+- `janji-painting-an-eunkyung` ← #49, meet-artist-an-eungyeong
+- `park-saenggwang-last-transformation` ← #49
+- `lee-cheolsu-from-resistance-to-zen` ← #52, korean-contemporary-printmaking-saf
+- `editions-explained` ← #50, korean-contemporary-printmaking-saf
+- `meet-artist-min-jeonggi` ← #52
+- `art-busan-daegu-art-fair-travel-guide` ← #51
+- `frieze-kiaf-seoul-checklist` ← #51
 
 ## 작성 원칙
 
