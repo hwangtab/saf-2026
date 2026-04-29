@@ -20,6 +20,7 @@ describe('isHeroRoute', () => {
       '/stories',
       '/privacy',
       '/terms',
+      '/refund-policy',
       '/petition/oh-yoon',
       '/special/oh-yoon',
     ])('%s는 hero 경로', (path) => {
