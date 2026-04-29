@@ -1,11 +1,11 @@
 import { Metadata } from 'next';
+import dynamic from 'next/dynamic';
 import { getLocale, getTranslations } from 'next-intl/server';
 
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import PageHero from '@/components/ui/PageHero';
-import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
 import GalleryCampaignBanner from '@/components/features/GalleryCampaignBanner';
 import GalleryStatusBar from '@/components/features/GalleryStatusBar';
 import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
@@ -25,6 +25,11 @@ import { parseArtworkPrice, resolveSeoArtworkImageUrl } from '@/lib/schemas/util
 import { CATEGORY_EN_MAP, getCategoryLabel } from '@/lib/artwork-category';
 import { Link } from '@/i18n/navigation';
 import type { Artwork, ArtworkListItem } from '@/types';
+// Lazy-load gallery + filter UI — main chunk에서 분리해 initial bundle size 절감
+// (PSI 모바일 "사용 안 하는 JS 145KB" 대응). SSR은 유지되어 SEO/카드 인덱싱 영향 없음.
+const ArtworkGalleryWithSort = dynamic(
+  () => import('@/components/features/ArtworkGalleryWithSort')
+);
 
 export const revalidate = 600;
 

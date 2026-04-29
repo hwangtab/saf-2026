@@ -36,8 +36,13 @@ import { containsHangul } from '@/lib/search-utils';
 import { Link } from '@/i18n/navigation';
 
 import SafeImage from '@/components/common/SafeImage';
-import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
+import nextDynamic from 'next/dynamic';
 import GalleryCampaignBanner from '@/components/features/GalleryCampaignBanner';
+// Lazy-load gallery + filter UI — main chunk에서 분리 (PSI "사용 안 하는 JS 145KB" 대응).
+// SSR 유지로 SEO/카드 인덱싱 영향 없음. `export const dynamic` 이름 충돌 회피용 alias.
+const ArtworkGalleryWithSort = nextDynamic(
+  () => import('@/components/features/ArtworkGalleryWithSort')
+);
 
 // 작가 lifecycle (작품 전체 숨김/삭제)이 발생하면 ISR prerender + revalidate 조합으로는
 // stale 200 + not-found UI가 송출되어 GSC가 NOINDEX로 보고함 (신학철 케이스).
@@ -426,7 +431,7 @@ export default async function ArtistPage({ params }: Props) {
 
       {/* 관련 매거진 */}
       {relatedStories.length > 0 && (
-        <Section variant="canvas-soft" prevVariant="white" className="pb-8">
+        <Section variant="canvas" prevVariant="white" className="pb-8">
           <div className="container-max">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-display text-charcoal">
