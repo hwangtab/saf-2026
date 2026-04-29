@@ -1,4 +1,4 @@
-import ExportedImage from 'next-image-export-optimizer';
+import Image from 'next/image';
 
 interface BrandLoaderProps {
   minHeight?: string;
@@ -14,7 +14,7 @@ export default function BrandLoader({ minHeight = '80vh' }: BrandLoaderProps) {
     >
       {/* 로고 */}
       <div className="animate-fade-in opacity-0" style={{ animationFillMode: 'forwards' }}>
-        <ExportedImage
+        <Image
           src="/images/logo/320pxX90px_white.webp"
           alt="씨앗페 온라인 – SAF Online"
           width={320}

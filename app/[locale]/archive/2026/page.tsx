@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { getLocale, getTranslations } from 'next-intl/server';
-import ExportedImage from 'next-image-export-optimizer';
+import Image from 'next/image';
 import LinkButton from '@/components/ui/LinkButton';
 import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
@@ -148,7 +148,7 @@ export default async function Archive2026Page() {
           <div className="container-max">
             <SectionTitle className="mb-8">Exhibition overview</SectionTitle>
             <div className="mb-12">
-              <ExportedImage
+              <Image
                 src="/images/safposter.png"
                 alt="SAF 2026 official poster"
                 width={1200}
@@ -240,7 +240,7 @@ export default async function Archive2026Page() {
 
           {/* Poster - Full Width */}
           <div className="mb-12">
-            <ExportedImage
+            <Image
               src="/images/safposter.png"
               alt="씨앗페 2026 공식 포스터"
               width={1200}

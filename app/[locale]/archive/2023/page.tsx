@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { getLocale, getTranslations } from 'next-intl/server';
-import ExportedImage from 'next-image-export-optimizer';
+import Image from 'next/image';
 import SafeImage from '@/components/common/SafeImage';
 import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
@@ -170,7 +170,7 @@ export default async function Archive2023Page() {
 
           {/* 2023 SAF Poster */}
           <div className="mb-12">
-            <ExportedImage
+            <Image
               src="/images/saf2023/saf2023poster.png"
               alt={isEnglish ? 'Official SAF 2023 poster' : '씨앗페 2023 공식 포스터'}
               width={1200}
@@ -311,7 +311,7 @@ export default async function Archive2023Page() {
                 key={photo.id}
                 className="group relative aspect-square overflow-hidden rounded-2xl border border-gray-200 shadow-sm hover:shadow-xl transition-shadow"
               >
-                <ExportedImage
+                <Image
                   src={`/images/saf2023/${photo.filename}`}
                   alt={isEnglish ? photo.altEn : photo.alt}
                   fill

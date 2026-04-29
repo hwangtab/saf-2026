@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { getLocale, getTranslations } from 'next-intl/server';
-import ExportedImage from 'next-image-export-optimizer';
+import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
@@ -112,7 +112,7 @@ export default async function ArchiveHubPage() {
               <Link href="/archive/2026" className="group block">
                 <div className="bg-canvas-soft rounded-2xl overflow-hidden border border-gray-200 shadow-sm transition-[transform,box-shadow] duration-300 hover:shadow-xl hover:-translate-y-1">
                   <div className="relative aspect-[4/3] w-full overflow-hidden">
-                    <ExportedImage
+                    <Image
                       src="/images/safposter.png"
                       alt="SAF 2026 poster"
                       fill
@@ -138,7 +138,7 @@ export default async function ArchiveHubPage() {
               <Link href="/archive/2023" className="group block">
                 <div className="bg-canvas-soft rounded-2xl overflow-hidden border border-gray-200 shadow-sm transition-[transform,box-shadow] duration-300 hover:shadow-xl hover:-translate-y-1">
                   <div className="relative aspect-[4/3] w-full overflow-hidden">
-                    <ExportedImage
+                    <Image
                       src="/images/saf2023/saf2023poster.png"
                       alt="SAF 2023 poster"
                       fill
@@ -184,7 +184,7 @@ export default async function ArchiveHubPage() {
             <Link href="/archive/2026" className="group block">
               <div className="bg-canvas-soft rounded-2xl overflow-hidden border border-gray-200 shadow-sm transition-[transform,box-shadow] duration-300 hover:shadow-xl hover:-translate-y-1">
                 <div className="relative aspect-[4/3] w-full overflow-hidden">
-                  <ExportedImage
+                  <Image
                     src="/images/safposter.png"
                     alt="씨앗페 2026 포스터"
                     fill
@@ -212,7 +212,7 @@ export default async function ArchiveHubPage() {
             <Link href="/archive/2023" className="group block">
               <div className="bg-canvas-soft rounded-2xl overflow-hidden border border-gray-200 shadow-sm transition-[transform,box-shadow] duration-300 hover:shadow-xl hover:-translate-y-1">
                 <div className="relative aspect-[4/3] w-full overflow-hidden">
-                  <ExportedImage
+                  <Image
                     src="/images/saf2023/saf2023poster.png"
                     alt="씨앗페 2023 포스터"
                     fill

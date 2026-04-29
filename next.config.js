@@ -11,8 +11,10 @@ const nextConfig = {
   turbopack: {
     root: __dirname,
   },
+  // Vercel Image Optimization 사용 — next-image-export-optimizer + Supabase render endpoint 조합에서
+  // 마이그레이션. Vercel Edge가 한국 리전에서 자체 변환·캐시·전송 (장기 immutable cache).
+  // SafeImage가 호출 시 Supabase render URL을 raw object URL로 자동 정리해 Vercel에 전달.
   images: {
-    loader: 'custom',
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     remotePatterns: [
@@ -38,16 +40,6 @@ const nextConfig = {
       { protocol: 'https', hostname: 'cdn.eroun.net' },
     ],
   },
-  env: {
-    nextImageExportOptimizer_imageFolderPath: 'public',
-    nextImageExportOptimizer_exportFolderPath: 'out',
-    nextImageExportOptimizer_quality: '75',
-    nextImageExportOptimizer_storePicturesInWEBP: 'true',
-    nextImageExportOptimizer_exportFolderName: 'nextImageExportOptimizer',
-    nextImageExportOptimizer_generateAndUseBlurImages: 'true',
-    nextImageExportOptimizer_remoteImageCacheTTL: '604800',
-  },
-  transpilePackages: ['next-image-export-optimizer'],
   experimental: {},
   reactStrictMode: true,
   async redirects() {

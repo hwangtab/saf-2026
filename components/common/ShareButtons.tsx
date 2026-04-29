@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import ExportedImage from 'next-image-export-optimizer';
+import Image from 'next/image';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import { useKakaoShareSDK } from '@/lib/hooks/useKakaoSDK';
@@ -168,7 +168,7 @@ export default function ShareButtons({ url, title, description, imageUrl }: Shar
         title={hasAppKey ? t('kakaoButtonTitle') : t('kakaoNeedKey')}
         aria-label={t('kakaoAria')}
       >
-        <ExportedImage
+        <Image
           src="/images/free-icon-kakao-talk-3669973.png"
           alt={t('kakaoIconAlt')}
           width={32}

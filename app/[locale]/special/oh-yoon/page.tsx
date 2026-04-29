@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import ExportedImage from 'next-image-export-optimizer';
+import Image from 'next/image';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import OhYoonMasonryGallery from '@/components/special/OhYoonMasonryGallery';
@@ -229,7 +229,7 @@ export default async function OhYoonPage() {
               <div className="flex flex-col items-center lg:items-start lg:sticky lg:top-24">
                 <figure className="relative w-full max-w-[260px] lg:max-w-none">
                   <div className="border-4 border-charcoal shadow-[8px_8px_0px_0px_rgba(49,57,60,0.15)] overflow-hidden">
-                    <ExportedImage
+                    <Image
                       src="/images/ohyoon.webp"
                       alt="Oh Yoon (1946-1986)"
                       width={400}
@@ -465,7 +465,7 @@ export default async function OhYoonPage() {
             <div className="flex flex-col items-center lg:items-start lg:sticky lg:top-24">
               <figure className="relative w-full max-w-[260px] lg:max-w-none">
                 <div className="border-4 border-charcoal shadow-[8px_8px_0px_0px_rgba(49,57,60,0.15)] overflow-hidden">
-                  <ExportedImage
+                  <Image
                     src="/images/ohyoon.webp"
                     alt="오윤 작가 (1946-1986)"
                     width={400}
@@ -489,7 +489,9 @@ export default async function OhYoonPage() {
               <div className="prose prose-xl text-charcoal/90 leading-loose space-y-6 font-medium">
                 <p>
                   오윤(1946-1986). 소설가 오영수의 아들로 태어났으나, 그는 문학적 언어 대신{' '}
-                  <strong className="font-bold text-charcoal bg-sun-soft px-1">칼끝</strong>
+                  <strong className="font-bold text-charcoal-deep border-b-2 border-charcoal-deep">
+                    칼끝
+                  </strong>
                   으로 시대를 기록했습니다. 화려한 추상미술이 강단을 지배하던 시절, 그는
                   &quot;미술은 썩어가는 현실을 도려내는 칼이어야 한다&quot;고 믿으며 가장 낮은
                   곳으로 향했습니다.

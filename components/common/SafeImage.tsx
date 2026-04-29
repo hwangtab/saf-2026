@@ -1,156 +1,62 @@
 'use client';
 
-import ExportedImage from 'next-image-export-optimizer';
-import type { ImageProps } from 'next/image';
-import { useEffect, useState, useMemo, type ComponentProps } from 'react';
-import {
-  ARTWORK_TRANSFORM_PRESETS,
-  resolveArtworkImageFallbackUrl,
-  resolveOptimizedArtworkImageUrl,
-} from '@/lib/utils';
+import Image, { type ImageProps } from 'next/image';
+import { useEffect, useState } from 'react';
 
-type SafeImageProps = ComponentProps<typeof ExportedImage>;
+/**
+ * 이미지 컴포넌트 — Vercel Image Optimization 기반.
+ *
+ * 주요 동작:
+ * - Supabase Storage render endpoint URL(`/render/image/public/...?width=X&quality=Y`)을
+ *   raw object URL(`/object/public/...`)로 자동 변환. Vercel Edge가 변환·캐시·전송 일임.
+ * - 호출처는 transform URL을 그대로 보내도 자동으로 정리되므로 인터페이스 변경 없음.
+ * - onError 시 1x1 투명 PNG로 graceful fallback (깨진 이미지 아이콘 방지).
+ *
+ * 마이그레이션 배경: 기존 `next-image-export-optimizer` + Supabase render endpoint 조합은
+ * Cloudflare cache(max-age=3600) 의존이라 PSI Lighthouse cf-cache MISS 시 LCP 9.6초 측정.
+ * Vercel Image Optimization은 한국 edge + 장기 immutable cache → 첫 방문자에게도 안정.
+ */
 
 const TRANSPARENT_FALLBACK =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12NgAAIABQABNjN9GQAAAAlwSFlzAAAWJQAAFiUBSVIk8AAAAA0lEQVQI12P4z8BQDwAEgAF/QualzQAAAABJRU5ErkJggg==';
-const ARTWORK_STORAGE_MARKERS = [
-  '/storage/v1/object/public/artworks/',
-  '/storage/v1/render/image/public/artworks/',
-] as const;
-const TRANSFORM_WIDTHS = [
-  ARTWORK_TRANSFORM_PRESETS.mobile.width,
-  ARTWORK_TRANSFORM_PRESETS.slider.width,
-  ARTWORK_TRANSFORM_PRESETS.card.width,
-  ARTWORK_TRANSFORM_PRESETS.detail.width,
-  ARTWORK_TRANSFORM_PRESETS.hero.width,
-] as const;
 
-function isArtworkStorageUrl(url: string): boolean {
-  return ARTWORK_STORAGE_MARKERS.some((marker) => url.includes(marker));
+const SUPABASE_RENDER_PATH = '/storage/v1/render/image/public/';
+const SUPABASE_OBJECT_PATH = '/storage/v1/object/public/';
+
+/**
+ * Supabase render endpoint URL → raw object URL 변환.
+ * Vercel Image Optimization이 raw URL을 받아 자체 변환해 Edge 캐시.
+ * 이미 raw URL이면 그대로 반환.
+ */
+function toRawSupabaseUrl(src: string): string {
+  if (!src.includes(SUPABASE_RENDER_PATH)) return src;
+  const [pathPart] = src.split('?');
+  return pathPart.replace(SUPABASE_RENDER_PATH, SUPABASE_OBJECT_PATH);
 }
 
-function generateArtworkSrcSet(src: string): string | undefined {
-  const candidates = TRANSFORM_WIDTHS.map((width) => {
-    // 모바일 변형(≤600w)은 quality 72로 약간 절감 (PSI Lighthouse 모바일이 픽하는 사이즈).
-    // 일반 카드(≤960w) 75, 큰 변형(1600/1920w) 80 — 데스크톱 retina 화질 유지.
-    const quality = width <= 600 ? 72 : width <= 960 ? 75 : 80;
-    const variantUrl = resolveOptimizedArtworkImageUrl(src, { width, quality });
-    return { variantUrl, width };
-  });
+function normalizeSrc(src: ImageProps['src']): ImageProps['src'] {
+  if (typeof src !== 'string') return src;
+  if (!src.startsWith('http://') && !src.startsWith('https://')) return src;
+  return toRawSupabaseUrl(src);
+}
 
-  const uniqueUrlCount = new Set(candidates.map((candidate) => candidate.variantUrl)).size;
-  if (uniqueUrlCount <= 1) {
-    return undefined;
+export default function SafeImage({ src, alt, onError, ...props }: ImageProps) {
+  if (process.env.NODE_ENV !== 'production' && alt === undefined) {
+    console.warn('[SafeImage] Missing alt prop. Pass alt="" for decorative images.', { src });
   }
 
-  return candidates.map((candidate) => `${candidate.variantUrl} ${candidate.width}w`).join(', ');
-}
-
-function RemoteSafeImage({ src, sizes, ...props }: { src: string } & Omit<ImageProps, 'src'>) {
-  const [currentSrc, setCurrentSrc] = useState(src);
-  const { alt, onError, ...restProps } = props;
-
-  const isArtwork = useMemo(() => isArtworkStorageUrl(src), [src]);
-  const srcSet = useMemo(
-    () => (isArtwork ? generateArtworkSrcSet(src) : undefined),
-    [src, isArtwork]
-  );
+  const [currentSrc, setCurrentSrc] = useState<ImageProps['src']>(() => normalizeSrc(src));
 
   useEffect(() => {
-    setCurrentSrc(src);
+    setCurrentSrc(normalizeSrc(src));
   }, [src]);
 
-  const { fill, width, height, className, loading, priority, style } = restProps;
-
-  const classObjectFit = (() => {
-    if (typeof className !== 'string') return undefined;
-    if (className.includes('object-contain')) return 'contain';
-    if (className.includes('object-cover')) return 'cover';
-    if (className.includes('object-fill')) return 'fill';
-    if (className.includes('object-none')) return 'none';
-    if (className.includes('object-scale-down')) return 'scale-down';
-    return undefined;
-  })();
-
-  const resolvedObjectFit =
-    (style as React.CSSProperties | undefined)?.objectFit || classObjectFit || 'cover';
-
-  const defaultSizes = '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw';
-  const effectiveSizes = sizes || defaultSizes;
-
-  const handleError = (event: React.SyntheticEvent<HTMLImageElement>) => {
+  const handleError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
     onError?.(event);
-    if (isArtwork) {
-      const fallbackSrc = resolveArtworkImageFallbackUrl(currentSrc);
-      if (fallbackSrc !== currentSrc) {
-        setCurrentSrc(fallbackSrc);
-        return;
-      }
-    }
-    // 최종 fallback: 1x1 투명 PNG (깨진 이미지 아이콘 방지)
     if (currentSrc !== TRANSPARENT_FALLBACK) {
       setCurrentSrc(TRANSPARENT_FALLBACK);
     }
   };
 
-  if (fill) {
-    return (
-      // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- onError는 에러 이벤트 핸들러이며 마우스/키보드 상호작용 아님
-      <img
-        src={currentSrc}
-        srcSet={srcSet}
-        sizes={srcSet ? effectiveSizes : undefined}
-        alt={alt || ''}
-        className={className}
-        loading={priority ? 'eager' : (loading as 'lazy' | 'eager') || 'lazy'}
-        fetchPriority={priority ? 'high' : undefined}
-        decoding={priority ? 'sync' : 'auto'}
-        style={{
-          position: 'absolute',
-          height: '100%',
-          width: '100%',
-          maxWidth: 'none',
-          inset: 0,
-          objectFit: resolvedObjectFit,
-          ...style,
-        }}
-        onError={handleError}
-      />
-    );
-  }
-
-  return (
-    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- onError는 에러 이벤트 핸들러이며 마우스/키보드 상호작용 아님
-    <img
-      src={currentSrc}
-      srcSet={srcSet}
-      sizes={srcSet ? effectiveSizes : undefined}
-      alt={alt || ''}
-      width={typeof width === 'number' ? width : undefined}
-      height={typeof height === 'number' ? height : undefined}
-      className={className}
-      loading={priority ? 'eager' : (loading as 'lazy' | 'eager') || 'lazy'}
-      fetchPriority={priority ? 'high' : undefined}
-      decoding={priority ? 'sync' : 'async'}
-      style={style as React.CSSProperties}
-      onError={handleError}
-    />
-  );
-}
-
-export default function SafeImage({ src, ...props }: SafeImageProps) {
-  const hasAltProp = Object.prototype.hasOwnProperty.call(props, 'alt');
-  if (process.env.NODE_ENV !== 'production' && !hasAltProp) {
-    console.warn('[SafeImage] Missing alt prop. Pass alt="" for decorative images.', { src });
-  }
-
-  const isRemote =
-    typeof src === 'string' && (src.startsWith('http://') || src.startsWith('https://'));
-
-  if (isRemote && typeof src === 'string') {
-    const remoteProps = props as Omit<ImageProps, 'src'>;
-    return <RemoteSafeImage src={src} {...remoteProps} />;
-  }
-
-  return <ExportedImage src={src} {...props} />;
+  return <Image {...props} src={currentSrc} alt={alt ?? ''} onError={handleError} />;
 }
