@@ -235,7 +235,7 @@ export default async function Footer() {
                   })}
                 </p>
               </div>
-              <div className="mb-4 flex items-center justify-center gap-2 text-sm text-gray-300">
+              <div className="mb-4 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm text-gray-300">
                 <Link
                   href="/privacy"
                   className="hover:text-primary transition-colors link-underline-offset"
@@ -250,6 +250,15 @@ export default async function Footer() {
                   className="hover:text-primary transition-colors link-underline-offset"
                 >
                   {t('termsOfService')}
+                </Link>
+                <span className="text-gray-500" aria-hidden="true">
+                  |
+                </span>
+                <Link
+                  href="/refund-policy"
+                  className="hover:text-primary transition-colors link-underline-offset"
+                >
+                  {t('refundPolicy')}
                 </Link>
               </div>
               {/* Copyright */}

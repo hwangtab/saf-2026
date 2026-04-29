@@ -56,6 +56,7 @@ export const ARTIST_APPLICATION_TERMS_VERSION = 'artist-contract-v4-2026-03-09';
 export const EXHIBITOR_APPLICATION_TERMS_VERSION = 'exhibitor-contract-v4-2026-03-09';
 export const PRIVACY_POLICY_VERSION = 'privacy-v2-2026-03-05';
 export const TERMS_OF_SERVICE_VERSION = 'terms-v1-2026-03-05';
+export const SHIPPING_REFUND_POLICY_VERSION = 'shipping-refund-v1-2026-04-29';
 
 // Exhibition Info
 export const EXHIBITION = {
