@@ -6,7 +6,8 @@ import {
   getSupabaseArtistExternalLinks,
 } from '@/lib/supabase-data';
 import { getArtistExternalLinks } from '@/lib/artist-external-links';
-import { getArticleUrlsByArtist } from '@/content/artist-articles';
+import { getArticleUrlsByArtist, getArticlesByArtist } from '@/content/artist-articles';
+import RelatedArticles from '@/components/features/RelatedArticles';
 import { CATEGORY_EN_MAP, getCategoryLabel } from '@/lib/artwork-category';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
@@ -306,6 +307,11 @@ export default async function ArtistPage({ params }: Props) {
     .filter((s) => s.tags?.some((tag) => tag === artistName || tag === displayArtistName))
     .slice(0, 3);
 
+  // 작가 외부 권위 자료 (한겨레·MMCA·달진닷컴·Wikipedia·namu.wiki 등 큐레이션 386 URL).
+  // 작품 detail에서만 visible이었던 RelatedArticles를 작가 페이지에도 노출 — entity 신뢰도 +
+  // 사용자 dwell time 향상. 거장 작가(오윤·박재동·박불똥 등) 페이지가 풍부해져 page 1 진입 가속.
+  const relatedArticles = getArticlesByArtist(artistName);
+
   // Breadcrumb Schema: Home > Artworks > Artist Name
   const tBreadcrumbs = await getTranslations('breadcrumbs');
   const breadcrumbItems = [
@@ -424,9 +430,23 @@ export default async function ArtistPage({ params }: Props) {
         );
       })()}
 
+      {/* 외부 보도/인터뷰 — 한겨례, MMCA, 달진닷컴, namu.wiki, Wikipedia 등 큐레이션된 자료.
+          거장 작가(오윤·박재동·박불똥 등) 페이지에서 entity 신뢰도 + 사용자 dwell time 향상. */}
+      {relatedArticles.length > 0 && (
+        <Section variant="white" prevVariant="white" className="pb-8">
+          <div className="container-max">
+            <RelatedArticles articles={relatedArticles} />
+          </div>
+        </Section>
+      )}
+
       {/* 관련 매거진 */}
       {relatedStories.length > 0 && (
-        <Section variant="canvas" prevVariant="white" className="pb-8">
+        <Section
+          variant="canvas"
+          prevVariant={relatedArticles.length > 0 ? 'white' : 'white'}
+          className="pb-8"
+        >
           <div className="container-max">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-display text-charcoal">
