@@ -314,8 +314,7 @@ export default async function PetitionOhYoonPage() {
       <Section variant="white" className="py-20 md:py-24">
         <div className="container-max max-w-3xl mx-auto px-4 text-center">
           <div className="border-4 border-charcoal bg-canvas px-6 py-14 md:px-14 md:py-20 shadow-[8px_8px_0px_0px_rgba(31,36,40,0.35)]">
-            {/* 청원 동의문 본문 — PartialSansKR(font-display font-bold)가 가운뎃점(·) 글리프를 안 가져 빠지므로 일반 sans 폰트 사용 */}
-            <p className="font-bold text-2xl md:text-4xl leading-relaxed text-charcoal-deep break-keep">
+            <p className="font-display font-black text-2xl md:text-4xl leading-relaxed text-charcoal-deep break-keep">
               {t('statementLine1')}
               <br />
               {t('statementLine2')}

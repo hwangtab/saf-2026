@@ -252,7 +252,7 @@ export default function OverseasCheckoutClient({
             <span className="inline-block h-5 w-5 border-2 border-[#003087] border-t-transparent rounded-full animate-spin" />
           ) : (
             // PayPal 공식 wordmark: "Pay" 다크블루 #003087 + "Pal" 라이트블루 #009CDE
-            <span className="font-extrabold italic">
+            <span className="font-black italic">
               <span className="text-[#003087]">Pay</span>
               <span className="text-[#009CDE]">Pal</span>
             </span>

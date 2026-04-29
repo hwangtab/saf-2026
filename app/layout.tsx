@@ -17,9 +17,9 @@ import '@/styles/globals.css';
 // unicode-range chunk 자동 분할로 한글 글리프가 사용 시점에 lazy fetch됨.
 //
 // 단일 패밀리 (Noto Sans KR) — 본문/섹션/Hero 전부. weight로 위계 표현.
-// 400 본문 / 500 강조 본문 / 700 섹션·카드 제목 / 900 Hero·작품 타이틀
+// 400 본문 / 500 강조 본문 / 600 semibold (사용처 다수) / 700 섹션·카드 제목 / 900 Hero·작품 타이틀
 const notoSansKR = Noto_Sans_KR({
-  weight: ['400', '500', '700', '900'],
+  weight: ['400', '500', '600', '700', '900'],
   subsets: ['latin'],
   variable: '--font-paperlogy',
   display: 'swap',

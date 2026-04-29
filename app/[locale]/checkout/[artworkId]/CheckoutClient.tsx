@@ -88,7 +88,7 @@ function BrandLogo({ brand }: { brand: BrandKind }) {
         style={{ fontFamily: 'system-ui, -apple-system, sans-serif', letterSpacing: '-0.02em' }}
       >
         kakao
-        <span className="font-extrabold">pay</span>
+        <span className="font-black">pay</span>
       </span>
     );
   }

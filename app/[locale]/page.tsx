@@ -119,8 +119,8 @@ export default async function Home() {
               </span>
               <span className="text-sm font-semibold text-charcoal">{t('missionStep1')}</span>
             </div>
-            <span className="text-charcoal-soft text-xl font-light hidden sm:block mx-3">→</span>
-            <span className="text-charcoal-soft text-lg font-light sm:hidden">↓</span>
+            <span className="text-charcoal-soft text-xl hidden sm:block mx-3">→</span>
+            <span className="text-charcoal-soft text-lg sm:hidden">↓</span>
             {/* Step 2 */}
             <div className="flex items-center gap-2 bg-white rounded-xl px-5 py-3 shadow-sm">
               <span className="text-2xl" aria-hidden="true">
@@ -128,8 +128,8 @@ export default async function Home() {
               </span>
               <span className="text-sm font-semibold text-charcoal">{t('missionStep2')}</span>
             </div>
-            <span className="text-charcoal-soft text-xl font-light hidden sm:block mx-3">→</span>
-            <span className="text-charcoal-soft text-lg font-light sm:hidden">↓</span>
+            <span className="text-charcoal-soft text-xl hidden sm:block mx-3">→</span>
+            <span className="text-charcoal-soft text-lg sm:hidden">↓</span>
             {/* Step 3 */}
             <div className="flex items-center gap-2 bg-primary/10 rounded-xl px-5 py-3 shadow-sm border border-primary/20">
               <span className="text-2xl" aria-hidden="true">
