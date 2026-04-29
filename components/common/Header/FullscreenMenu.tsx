@@ -20,7 +20,6 @@ interface FullscreenMenuProps {
   isOpen: boolean;
   onClose: () => void;
   navigation: NavigationItem[];
-  isActive: (href: string) => boolean;
   onSearchClick: () => void;
 }
 
@@ -28,7 +27,6 @@ export default function FullscreenMenu({
   isOpen,
   onClose,
   navigation,
-  isActive,
   onSearchClick,
 }: FullscreenMenuProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -205,7 +203,7 @@ export default function FullscreenMenu({
                         <li key={subItem.href} className="text-center">
                           <Link
                             href={subItem.href}
-                            className={`block py-1 text-lg text-charcoal-muted hover:text-primary ${isActive(subItem.href) ? 'text-primary font-semibold' : ''}`}
+                            className="block py-1 text-lg text-charcoal-muted hover:text-primary"
                             onClick={onClose}
                           >
                             {subItem.name}
@@ -220,11 +218,7 @@ export default function FullscreenMenu({
                     </ul>
                   </details>
                 ) : (
-                  <Link
-                    href={item.href}
-                    className={`${styles.navLink} ${isActive(item.href) ? styles.active : ''}`}
-                    onClick={onClose}
-                  >
+                  <Link href={item.href} className={styles.navLink} onClick={onClose}>
                     {item.name}
                   </Link>
                 )}

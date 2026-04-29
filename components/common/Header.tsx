@@ -125,7 +125,6 @@ function PublicHeader() {
         isOpen={isMenuOpen}
         onClose={closeMenu}
         navigation={navigation}
-        isActive={isActive}
         onSearchClick={handleOpenSearch}
       />
 
