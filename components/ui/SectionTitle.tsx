@@ -9,7 +9,7 @@ interface SectionTitleProps {
 
 /**
  * A standardized section title component that ensures consistent typography and line wrapping.
- * Applies 'font-section', 'font-normal', responsive sizes, and 'text-balance'.
+ * Uses 'text-section-title' utility (font-section font-bold + responsive sizes) and 'text-balance'.
  */
 export default function SectionTitle({
   children,
