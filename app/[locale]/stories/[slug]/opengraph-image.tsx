@@ -69,8 +69,10 @@ export default async function Image({ params }: Props) {
   const categoryLabel = isEn ? colors.labelEn : colors.labelKo;
   const author = story?.author ?? '';
 
-  const fontPath = path.join(process.cwd(), 'public/fonts/NotoSansKR-Bold.ttf');
-  const fontData = fs.readFileSync(fontPath);
+  const fontBoldPath = path.join(process.cwd(), 'public/fonts/NotoSansKR-Bold.ttf');
+  const fontRegularPath = path.join(process.cwd(), 'public/fonts/NotoSansKR-Regular.ttf');
+  const fontBoldData = fs.readFileSync(fontBoldPath);
+  const fontRegularData = fs.readFileSync(fontRegularPath);
 
   const displayTitle = truncate(title, 55);
   const displayExcerpt = truncate(excerpt, 80);
@@ -195,9 +197,15 @@ export default async function Image({ params }: Props) {
       fonts: [
         {
           name: 'NotoSansKR',
-          data: fontData,
+          data: fontBoldData,
           style: 'normal',
           weight: 700,
+        },
+        {
+          name: 'NotoSansKR',
+          data: fontRegularData,
+          style: 'normal',
+          weight: 400,
         },
       ],
     }

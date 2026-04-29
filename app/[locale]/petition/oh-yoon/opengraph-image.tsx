@@ -23,8 +23,10 @@ export async function generateStaticParams() {
 export default async function Image({ params }: Props) {
   const { locale } = await params;
 
-  const fontPath = path.join(process.cwd(), 'public/fonts/NotoSansKR-Bold.ttf');
-  const fontData = fs.readFileSync(fontPath);
+  const fontBoldPath = path.join(process.cwd(), 'public/fonts/NotoSansKR-Bold.ttf');
+  const fontRegularPath = path.join(process.cwd(), 'public/fonts/NotoSansKR-Regular.ttf');
+  const fontBoldData = fs.readFileSync(fontBoldPath);
+  const fontRegularData = fs.readFileSync(fontRegularPath);
 
   const muralPath = path.join(process.cwd(), 'public/images/petition-oh-yoon/mural-1.png');
   const muralBase64 = fs.readFileSync(muralPath).toString('base64');
@@ -181,9 +183,15 @@ export default async function Image({ params }: Props) {
       fonts: [
         {
           name: 'NotoSansKR',
-          data: fontData,
+          data: fontBoldData,
           style: 'normal',
           weight: 700,
+        },
+        {
+          name: 'NotoSansKR',
+          data: fontRegularData,
+          style: 'normal',
+          weight: 400,
         },
       ],
     }
