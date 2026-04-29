@@ -3,6 +3,9 @@ export type ArtworkImageVariant = (typeof ARTWORK_IMAGE_VARIANTS)[number];
 export type ArtworkImagePreset = 'slider' | 'card' | 'detail' | 'hero' | 'original';
 
 export const ARTWORK_TRANSFORM_PRESETS = {
+  // 모바일 1x DPR 갤러리 카드 LCP 최적화 — 모바일 viewport 343px에 충분.
+  // PSI 모바일 측정에서 srcset이 이 사이즈를 우선 선택해 LCP 이미지 transfer 단축.
+  mobile: { width: 320, quality: 70 },
   slider: { width: 400, quality: 75 },
   card: { width: 960, quality: 75 },
   detail: { width: 1600, quality: 80 },

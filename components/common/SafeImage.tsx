@@ -18,6 +18,7 @@ const ARTWORK_STORAGE_MARKERS = [
   '/storage/v1/render/image/public/artworks/',
 ] as const;
 const TRANSFORM_WIDTHS = [
+  ARTWORK_TRANSFORM_PRESETS.mobile.width,
   ARTWORK_TRANSFORM_PRESETS.slider.width,
   ARTWORK_TRANSFORM_PRESETS.card.width,
   ARTWORK_TRANSFORM_PRESETS.detail.width,
@@ -30,7 +31,9 @@ function isArtworkStorageUrl(url: string): boolean {
 
 function generateArtworkSrcSet(src: string): string | undefined {
   const candidates = TRANSFORM_WIDTHS.map((width) => {
-    const quality = width <= 960 ? 75 : 80;
+    // 모바일 변형(≤320w)은 quality 70으로 추가 절감 (작은 사이즈는 시각 손실 미미).
+    // 일반 카드(≤960w) 75, 큰 변형(1600/1920w) 80 — 데스크톱 retina 화질 유지.
+    const quality = width <= 320 ? 70 : width <= 960 ? 75 : 80;
     const variantUrl = resolveOptimizedArtworkImageUrl(src, { width, quality });
     return { variantUrl, width };
   });
