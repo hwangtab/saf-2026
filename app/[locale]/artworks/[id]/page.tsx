@@ -368,7 +368,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
               <header className="sr-only lg:not-sr-only lg:block mb-6 border-b border-gray-100 pb-6 lg:border-none lg:pb-0 lg:mb-0">
                 <h1
                   id="artwork-title"
-                  className="text-3xl md:text-4xl font-bold font-sans text-charcoal mb-2 break-keep"
+                  className="text-3xl md:text-4xl font-black font-display text-charcoal mb-2 break-keep"
                 >
                   {displayTitle}
                 </h1>

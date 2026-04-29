@@ -273,7 +273,7 @@ export default async function OurProof() {
               <div className="bg-primary/10 rounded-2xl p-8 border-2 border-primary text-center">
                 <h3 className="text-card-title mb-6">Fund leverage</h3>
                 <p className="text-sm text-charcoal-muted mb-3">Accumulated mutual-aid reserve</p>
-                <p className="text-4xl font-bold text-primary">KRW 77,000,000</p>
+                <p className="text-4xl font-black text-primary">KRW 77,000,000</p>
                 <p className="text-sm text-charcoal-muted mt-4">
                   Built through artwork sales, co-op membership, and special solidarity
                   contributions.
@@ -528,7 +528,7 @@ export default async function OurProof() {
             <div className="bg-primary/10 rounded-2xl p-8 border-2 border-primary text-center">
               <h3 className="text-card-title mb-6">기금의 힘</h3>
               <p className="text-sm text-charcoal-muted mb-3">누적 조성된 상호부조 기금</p>
-              <p className="text-4xl font-bold text-primary">77,000,000원</p>
+              <p className="text-4xl font-black text-primary">77,000,000원</p>
               <p className="text-sm text-charcoal-muted mt-4">
                 작품 판매와 조합원 가입, 특별조합비로 함께 채워온 신뢰의 안전망입니다.
               </p>

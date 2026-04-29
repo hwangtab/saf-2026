@@ -28,7 +28,7 @@ export default function DynamicCounter({ items, locale = 'ko' }: DynamicCounterP
         {items.map((item) => (
           <Card key={item.label} className="text-center p-6 md:p-8">
             <h3 className="text-sm font-medium text-charcoal-muted mb-3">{item.label}</h3>
-            <div className="text-5xl md:text-6xl font-bold text-primary">
+            <div className="text-5xl md:text-6xl font-black text-primary">
               <span aria-live="polite" aria-atomic="true">
                 {inView ? (
                   <>

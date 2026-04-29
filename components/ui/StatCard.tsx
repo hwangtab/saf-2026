@@ -25,7 +25,7 @@ export default function StatCard({
 
   return (
     <div className={cn(baseStyles, variantStyles[variant], className)}>
-      <p className="text-4xl md:text-5xl font-bold text-primary mb-2">{value}</p>
+      <p className="text-4xl md:text-5xl font-black text-primary mb-2">{value}</p>
       <p className="text-lg font-medium text-charcoal">{label}</p>
       {description && <p className="text-sm text-charcoal-muted mt-2">{description}</p>}
     </div>
