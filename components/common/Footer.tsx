@@ -112,7 +112,7 @@ export default async function Footer() {
                       rel="noopener noreferrer"
                       className="text-gray-300 hover:text-primary transition-colors"
                     >
-                      {tNav('donate')}
+                      {tNav('joinMember')}
                     </a>
                   </li>
                   <li>

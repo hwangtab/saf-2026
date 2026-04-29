@@ -281,25 +281,14 @@ export default function FullscreenMenu({
               {t('joinMember')}
             </a>
           </div>
-          <div className="flex flex-col gap-2">
-            <Button
-              href="/artworks"
-              variant="primary"
-              className="w-full justify-center"
-              onClick={onClose}
-            >
-              {t('browseArtworks')}
-            </Button>
-            <Button
-              href={EXTERNAL_LINKS.DONATE}
-              variant="outline"
-              external
-              className="w-full justify-center"
-              onClick={onClose}
-            >
-              {t('donate')}
-            </Button>
-          </div>
+          <Button
+            href="/artworks"
+            variant="primary"
+            className="w-full justify-center"
+            onClick={onClose}
+          >
+            {t('browseArtworks')}
+          </Button>
         </footer>
       </div>
     </dialog>

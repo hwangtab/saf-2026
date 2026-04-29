@@ -2,7 +2,7 @@ import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import LinkButton from '@/components/ui/LinkButton';
 import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
-import { EXTERNAL_LINKS } from '@/lib/constants';
+import { CONTACT } from '@/lib/constants';
 
 interface Props {
   artworkId: string;
@@ -29,13 +29,13 @@ export default async function PaypalPlaceholder({ artworkId, artworkTitle }: Pro
 
           <div className="flex flex-col gap-3">
             <LinkButton
-              href={EXTERNAL_LINKS.DONATE}
+              href={`mailto:${CONTACT.EMAIL}`}
               variant="primary"
               size="sm"
               external
               className="w-full"
             >
-              {t('donateCta')}
+              {t('contactCta')}
             </LinkButton>
             <Link
               href={`/artworks/${artworkId}`}

@@ -768,8 +768,8 @@
     "widgetMountFailed": "Failed to load the payment module. Please try again in a moment.",
     "paypalPreparing": {
       "title": "International payment is coming soon",
-      "description": "We are integrating PayPal to support international collectors. While we finalize this, please contact us at contact@kosmart.org or support the campaign through Social Funch.",
-      "donateCta": "Support the campaign",
+      "description": "We are integrating PayPal to support international collectors. While we finalize this, please contact us at contact@kosmart.org.",
+      "contactCta": "Email us",
       "backCta": "Back to artwork"
     }
   },
