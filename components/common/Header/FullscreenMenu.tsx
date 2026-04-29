@@ -233,12 +233,12 @@ export default function FullscreenMenu({
           </ul>
         </nav>
 
-        {/* 보조 알약 - 주문 조회 + 아티스트 메뉴 (컴팩트, 가로 배치) */}
-        <div className="mt-6 border-t border-gray-100 pt-5">
+        {/* 보조 알약 - 주문 조회 + 아티스트 메뉴 (가로 배치, 아래 여백 확보로 footer와 간격) */}
+        <div className="mt-6 border-t border-gray-100 pt-5 pb-8">
           <div className="flex flex-wrap items-center justify-center gap-2">
             <Link
               href="/orders"
-              className="inline-flex items-center justify-center rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs font-medium text-charcoal-muted transition-colors hover:border-gray-300 hover:bg-gray-100"
+              className="inline-flex items-center justify-center rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm font-medium text-charcoal-muted transition-colors hover:border-gray-300 hover:bg-gray-100"
               onClick={onClose}
             >
               {t('orderStatus')}
@@ -247,7 +247,7 @@ export default function FullscreenMenu({
               layout="inline"
               variant="white"
               size="xs"
-              buttonClassName="rounded-full bg-gray-50 border-gray-200 text-charcoal-muted font-medium text-xs px-2.5 py-1 min-h-0 hover:bg-gray-100 hover:border-gray-300 hover:scale-100 active:scale-100 hover:shadow-none"
+              buttonClassName="rounded-full bg-gray-50 border-gray-200 text-charcoal-muted font-medium hover:bg-gray-100 hover:border-gray-300 hover:scale-100 active:scale-100 hover:shadow-none"
             />
           </div>
         </div>
