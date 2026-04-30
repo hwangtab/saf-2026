@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { getLocale, getTranslations } from 'next-intl/server';
 import PageHero from '@/components/ui/PageHero';
 import Section from '@/components/ui/Section';
-import SectionTitle from '@/components/ui/SectionTitle';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { CONTACT, SITE_URL, PRIVACY_POLICY_VERSION } from '@/lib/constants';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
@@ -81,7 +80,9 @@ export default async function PrivacyPolicyPage() {
               </div>
 
               <section>
-                <SectionTitle className="mb-4">Contact</SectionTitle>
+                <h2 className="text-2xl md:text-3xl font-bold text-charcoal mb-4 leading-snug text-balance">
+                  Contact
+                </h2>
                 <div className="rounded-lg bg-canvas p-4 text-sm leading-7">
                   <p>
                     Email:{' '}
@@ -133,7 +134,9 @@ export default async function PrivacyPolicyPage() {
             <div className="space-y-10 text-charcoal">
               {doc.sections.map((section) => (
                 <section key={section.title}>
-                  <SectionTitle className="mb-4">{section.title}</SectionTitle>
+                  <h2 className="text-2xl md:text-3xl font-bold text-charcoal mb-4 leading-snug text-balance">
+                    {section.title}
+                  </h2>
                   {section.paragraphs?.map((paragraph) => (
                     <p key={paragraph} className="mb-2 leading-7 text-charcoal-muted last:mb-0">
                       {paragraph}
@@ -195,7 +198,9 @@ export default async function PrivacyPolicyPage() {
 
               {doc.appendix && (
                 <section>
-                  <SectionTitle className="mb-4">부칙</SectionTitle>
+                  <h2 className="text-2xl md:text-3xl font-bold text-charcoal mb-4 leading-snug text-balance">
+                    부칙
+                  </h2>
                   {doc.appendix.map((line) => (
                     <p key={line} className="mb-2 leading-7 text-charcoal-muted last:mb-0">
                       {line}
@@ -205,7 +210,9 @@ export default async function PrivacyPolicyPage() {
               )}
 
               <section>
-                <SectionTitle className="mb-4">문의처</SectionTitle>
+                <h2 className="text-2xl md:text-3xl font-bold text-charcoal mb-4 leading-snug text-balance">
+                  문의처
+                </h2>
                 <div className="rounded-lg bg-canvas p-4 text-sm leading-7">
                   <p>
                     이메일:{' '}

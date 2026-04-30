@@ -3,7 +3,6 @@ import { getLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import PageHero from '@/components/ui/PageHero';
 import Section from '@/components/ui/Section';
-import SectionTitle from '@/components/ui/SectionTitle';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { CONTACT, SITE_URL, TERMS_OF_SERVICE_VERSION } from '@/lib/constants';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
@@ -80,7 +79,9 @@ export default async function TermsPage() {
               </div>
 
               <section>
-                <SectionTitle className="mb-4">Role-specific agreements</SectionTitle>
+                <h2 className="text-2xl md:text-3xl font-bold text-charcoal mb-4 leading-snug text-balance">
+                  Role-specific agreements
+                </h2>
                 <ul className="list-disc space-y-2 pl-5 text-charcoal-muted">
                   <li>
                     <Link href="/terms/artist" className="hover:underline">
@@ -96,7 +97,9 @@ export default async function TermsPage() {
               </section>
 
               <section>
-                <SectionTitle className="mb-4">Contact</SectionTitle>
+                <h2 className="text-2xl md:text-3xl font-bold text-charcoal mb-4 leading-snug text-balance">
+                  Contact
+                </h2>
                 <div className="rounded-lg bg-canvas p-4 text-sm leading-7">
                   <p>
                     Email:{' '}
@@ -148,7 +151,9 @@ export default async function TermsPage() {
             <div className="space-y-10 text-charcoal">
               {doc.sections.map((section) => (
                 <section key={section.title}>
-                  <SectionTitle className="mb-4">{section.title}</SectionTitle>
+                  <h2 className="text-2xl md:text-3xl font-bold text-charcoal mb-4 leading-snug text-balance">
+                    {section.title}
+                  </h2>
                   {section.paragraphs?.map((paragraph) => (
                     <p key={paragraph} className="mb-2 leading-7 text-charcoal-muted last:mb-0">
                       {paragraph}
@@ -210,7 +215,9 @@ export default async function TermsPage() {
 
               {doc.appendix && (
                 <section>
-                  <SectionTitle className="mb-4">부칙</SectionTitle>
+                  <h2 className="text-2xl md:text-3xl font-bold text-charcoal mb-4 leading-snug text-balance">
+                    부칙
+                  </h2>
                   {doc.appendix.map((line) => (
                     <p key={line} className="mb-2 leading-7 text-charcoal-muted last:mb-0">
                       {line}
@@ -220,7 +227,9 @@ export default async function TermsPage() {
               )}
 
               <section>
-                <SectionTitle className="mb-4">역할별 계약서</SectionTitle>
+                <h2 className="text-2xl md:text-3xl font-bold text-charcoal mb-4 leading-snug text-balance">
+                  역할별 계약서
+                </h2>
                 <p className="mb-3 leading-7 text-charcoal-muted">
                   아티스트 또는 출품자로 가입 신청 시에는 아래 역할별 계약서 동의가 추가로
                   필요합니다.
@@ -240,7 +249,9 @@ export default async function TermsPage() {
               </section>
 
               <section>
-                <SectionTitle className="mb-4">문의처</SectionTitle>
+                <h2 className="text-2xl md:text-3xl font-bold text-charcoal mb-4 leading-snug text-balance">
+                  문의처
+                </h2>
                 <div className="rounded-lg bg-canvas p-4 text-sm leading-7">
                   <p>
                     이메일:{' '}
