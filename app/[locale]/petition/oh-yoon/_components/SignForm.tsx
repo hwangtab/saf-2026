@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 
 import RegionSelect from './RegionSelect';
@@ -34,6 +34,24 @@ export default function SignForm() {
   const [pending, startTransition] = useTransition();
   const [result, setResult] = useState<SignPetitionResult | null>(null);
 
+  // 서명 성공 시 9c 특별전 카드로 부드럽게 스크롤. 사용자가 성공 메시지를
+  // 읽을 수 있도록 1.5초 지연. prefers-reduced-motion 사용자는 즉시 점프.
+  useEffect(() => {
+    if (!result?.ok) return;
+    const target = document.getElementById('special-cta-card');
+    if (!target) return;
+    const reduceMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const timer = window.setTimeout(() => {
+      target.scrollIntoView({
+        behavior: reduceMotion ? 'auto' : 'smooth',
+        block: 'center',
+      });
+    }, 1500);
+    return () => window.clearTimeout(timer);
+  }, [result?.ok]);
+
   if (result?.ok) {
     return (
       <div
@@ -47,7 +65,10 @@ export default function SignForm() {
         <p className="text-base text-charcoal leading-relaxed mb-4 break-keep whitespace-pre-line">
           {t('successBody')}
         </p>
-        <p className="text-sm text-charcoal-muted">{t('successFooter')}</p>
+        <p className="text-sm text-charcoal-muted mb-4">{t('successFooter')}</p>
+        <p className="text-xs font-semibold text-primary-strong break-keep">
+          {t('successScrollHint')}
+        </p>
       </div>
     );
   }

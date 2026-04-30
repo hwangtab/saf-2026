@@ -456,9 +456,40 @@ export default async function PetitionOhYoonPage() {
               {t('proponentsCommitteeNote')}
             </p>
           </div>
+        </div>
+      </Section>
 
-          {/* 특별전 + 작품 듀얼 CTA 카드 — 청원 외 오윤 40주기 노출 강화 */}
-          <article className="mt-12 overflow-hidden rounded-2xl bg-white border-2 border-charcoal shadow-[6px_6px_0px_0px_rgba(31,36,40,0.3)]">
+      {/* 9부 FAQ + 9b 씨앗페 관계 + 9c 함께 보면 좋은 (특별전 카드) */}
+      <Section variant="white" className="py-20 md:py-24">
+        <div className="container-max max-w-3xl mx-auto px-4">
+          <SectionTitle as="h2" className="mb-8 md:mb-10">
+            {t('faqHeading')}
+          </SectionTitle>
+          <PetitionFAQ />
+          <div className="mt-6 text-center">
+            <ProposalModal />
+          </div>
+
+          <div className="mt-16 rounded-xl bg-canvas border-2 border-charcoal p-6 md:p-8 shadow-[4px_4px_0px_0px_rgba(31,36,40,0.25)]">
+            <h3 className="font-display font-bold text-xl md:text-2xl text-charcoal-deep mb-3 break-keep">
+              {t('saffestHeading')}
+            </h3>
+            <p className="text-base text-charcoal leading-relaxed break-keep mb-4">
+              {t('saffestBody')}
+            </p>
+            <Link
+              href={`/${locale}`}
+              className="text-primary font-semibold hover:underline text-sm"
+            >
+              {t('saffestCta')} →
+            </Link>
+          </div>
+
+          {/* 특별전 + 작품 듀얼 CTA 카드 — 청원 외 오윤 40주기 노출 강화. 폼 제출 후 SignForm이 #special-cta-card로 스크롤 */}
+          <article
+            id="special-cta-card"
+            className="mt-8 overflow-hidden rounded-2xl bg-white border-2 border-charcoal shadow-[6px_6px_0px_0px_rgba(31,36,40,0.3)] scroll-mt-24"
+          >
             <div className="md:grid md:grid-cols-[220px_1fr]">
               <div className="relative aspect-[4/5] md:aspect-auto md:h-full bg-charcoal-deep">
                 <SafeImage
@@ -501,34 +532,6 @@ export default async function PetitionOhYoonPage() {
               </div>
             </div>
           </article>
-        </div>
-      </Section>
-
-      {/* 9부 FAQ + 9b 씨앗페 관계 */}
-      <Section variant="white" className="py-20 md:py-24">
-        <div className="container-max max-w-3xl mx-auto px-4">
-          <SectionTitle as="h2" className="mb-8 md:mb-10">
-            {t('faqHeading')}
-          </SectionTitle>
-          <PetitionFAQ />
-          <div className="mt-6 text-center">
-            <ProposalModal />
-          </div>
-
-          <div className="mt-16 rounded-xl bg-canvas border-2 border-charcoal p-6 md:p-8 shadow-[4px_4px_0px_0px_rgba(31,36,40,0.25)]">
-            <h3 className="font-display font-bold text-xl md:text-2xl text-charcoal-deep mb-3 break-keep">
-              {t('saffestHeading')}
-            </h3>
-            <p className="text-base text-charcoal leading-relaxed break-keep mb-4">
-              {t('saffestBody')}
-            </p>
-            <Link
-              href={`/${locale}`}
-              className="text-primary font-semibold hover:underline text-sm"
-            >
-              {t('saffestCta')} →
-            </Link>
-          </div>
         </div>
       </Section>
 
