@@ -14,13 +14,21 @@
 export interface RegionSubdivision {
   readonly key: string;
   readonly label: string;
+  readonly labelEn: string;
   readonly subs: readonly string[];
+  /**
+   * `subs`와 동일 인덱스로 정렬된 영문 라벨. Revised Romanization of Korean(2000)을
+   * 따르며 행정구역 접미사(-gu, -gun, -si)는 표기 그대로 유지.
+   * DB에는 `subs`(한글)만 저장되므로 이 배열은 영어 locale UI 노출 전용.
+   */
+  readonly subsEn: readonly string[];
 }
 
 export const REGIONS: readonly RegionSubdivision[] = [
   {
     key: '서울',
     label: '서울특별시',
+    labelEn: 'Seoul',
     subs: [
       '강남구',
       '강동구',
@@ -48,10 +56,38 @@ export const REGIONS: readonly RegionSubdivision[] = [
       '중구',
       '중랑구',
     ],
+    subsEn: [
+      'Gangnam-gu',
+      'Gangdong-gu',
+      'Gangbuk-gu',
+      'Gangseo-gu',
+      'Gwanak-gu',
+      'Gwangjin-gu',
+      'Guro-gu',
+      'Geumcheon-gu',
+      'Nowon-gu',
+      'Dobong-gu',
+      'Dongdaemun-gu',
+      'Dongjak-gu',
+      'Mapo-gu',
+      'Seodaemun-gu',
+      'Seocho-gu',
+      'Seongdong-gu',
+      'Seongbuk-gu',
+      'Songpa-gu',
+      'Yangcheon-gu',
+      'Yeongdeungpo-gu',
+      'Yongsan-gu',
+      'Eunpyeong-gu',
+      'Jongno-gu',
+      'Jung-gu',
+      'Jungnang-gu',
+    ],
   },
   {
     key: '부산',
     label: '부산광역시',
+    labelEn: 'Busan',
     subs: [
       '강서구',
       '금정구',
@@ -70,15 +106,46 @@ export const REGIONS: readonly RegionSubdivision[] = [
       '중구',
       '해운대구',
     ],
+    subsEn: [
+      'Gangseo-gu',
+      'Geumjeong-gu',
+      'Gijang-gun',
+      'Nam-gu',
+      'Dong-gu',
+      'Dongnae-gu',
+      'Busanjin-gu',
+      'Buk-gu',
+      'Sasang-gu',
+      'Saha-gu',
+      'Seo-gu',
+      'Suyeong-gu',
+      'Yeonje-gu',
+      'Yeongdo-gu',
+      'Jung-gu',
+      'Haeundae-gu',
+    ],
   },
   {
     key: '대구',
     label: '대구광역시',
+    labelEn: 'Daegu',
     subs: ['군위군', '남구', '달서구', '달성군', '동구', '북구', '서구', '수성구', '중구'],
+    subsEn: [
+      'Gunwi-gun',
+      'Nam-gu',
+      'Dalseo-gu',
+      'Dalseong-gun',
+      'Dong-gu',
+      'Buk-gu',
+      'Seo-gu',
+      'Suseong-gu',
+      'Jung-gu',
+    ],
   },
   {
     key: '인천',
     label: '인천광역시',
+    labelEn: 'Incheon',
     subs: [
       '강화군',
       '계양구',
@@ -91,30 +158,51 @@ export const REGIONS: readonly RegionSubdivision[] = [
       '옹진군',
       '중구',
     ],
+    subsEn: [
+      'Ganghwa-gun',
+      'Gyeyang-gu',
+      'Namdong-gu',
+      'Dong-gu',
+      'Michuhol-gu',
+      'Bupyeong-gu',
+      'Seo-gu',
+      'Yeonsu-gu',
+      'Ongjin-gun',
+      'Jung-gu',
+    ],
   },
   {
     key: '광주',
     label: '광주광역시',
+    labelEn: 'Gwangju',
     subs: ['광산구', '남구', '동구', '북구', '서구'],
+    subsEn: ['Gwangsan-gu', 'Nam-gu', 'Dong-gu', 'Buk-gu', 'Seo-gu'],
   },
   {
     key: '대전',
     label: '대전광역시',
+    labelEn: 'Daejeon',
     subs: ['대덕구', '동구', '서구', '유성구', '중구'],
+    subsEn: ['Daedeok-gu', 'Dong-gu', 'Seo-gu', 'Yuseong-gu', 'Jung-gu'],
   },
   {
     key: '울산',
     label: '울산광역시',
+    labelEn: 'Ulsan',
     subs: ['남구', '동구', '북구', '울주군', '중구'],
+    subsEn: ['Nam-gu', 'Dong-gu', 'Buk-gu', 'Ulju-gun', 'Jung-gu'],
   },
   {
     key: '세종',
     label: '세종특별자치시',
+    labelEn: 'Sejong',
     subs: [],
+    subsEn: [],
   },
   {
     key: '경기',
     label: '경기도',
+    labelEn: 'Gyeonggi',
     subs: [
       '가평군',
       '고양시',
@@ -148,10 +236,44 @@ export const REGIONS: readonly RegionSubdivision[] = [
       '하남시',
       '화성시',
     ],
+    subsEn: [
+      'Gapyeong-gun',
+      'Goyang-si',
+      'Gwacheon-si',
+      'Gwangmyeong-si',
+      'Gwangju-si',
+      'Guri-si',
+      'Gunpo-si',
+      'Gimpo-si',
+      'Namyangju-si',
+      'Dongducheon-si',
+      'Bucheon-si',
+      'Seongnam-si',
+      'Suwon-si',
+      'Siheung-si',
+      'Ansan-si',
+      'Anseong-si',
+      'Anyang-si',
+      'Yangju-si',
+      'Yangpyeong-gun',
+      'Yeoju-si',
+      'Yeoncheon-gun',
+      'Osan-si',
+      'Yongin-si',
+      'Uiwang-si',
+      'Uijeongbu-si',
+      'Icheon-si',
+      'Paju-si',
+      'Pyeongtaek-si',
+      'Pocheon-si',
+      'Hanam-si',
+      'Hwaseong-si',
+    ],
   },
   {
     key: '강원',
     label: '강원특별자치도',
+    labelEn: 'Gangwon',
     subs: [
       '강릉시',
       '고성군',
@@ -172,10 +294,31 @@ export const REGIONS: readonly RegionSubdivision[] = [
       '화천군',
       '횡성군',
     ],
+    subsEn: [
+      'Gangneung-si',
+      'Goseong-gun',
+      'Donghae-si',
+      'Samcheok-si',
+      'Sokcho-si',
+      'Yanggu-gun',
+      'Yangyang-gun',
+      'Yeongwol-gun',
+      'Wonju-si',
+      'Inje-gun',
+      'Jeongseon-gun',
+      'Cheorwon-gun',
+      'Chuncheon-si',
+      'Taebaek-si',
+      'Pyeongchang-gun',
+      'Hongcheon-gun',
+      'Hwacheon-gun',
+      'Hoengseong-gun',
+    ],
   },
   {
     key: '충북',
     label: '충청북도',
+    labelEn: 'Chungcheongbuk-do',
     subs: [
       '괴산군',
       '단양군',
@@ -189,10 +332,24 @@ export const REGIONS: readonly RegionSubdivision[] = [
       '청주시',
       '충주시',
     ],
+    subsEn: [
+      'Goesan-gun',
+      'Danyang-gun',
+      'Boeun-gun',
+      'Yeongdong-gun',
+      'Okcheon-gun',
+      'Eumseong-gun',
+      'Jecheon-si',
+      'Jeungpyeong-gun',
+      'Jincheon-gun',
+      'Cheongju-si',
+      'Chungju-si',
+    ],
   },
   {
     key: '충남',
     label: '충청남도',
+    labelEn: 'Chungcheongnam-do',
     subs: [
       '계룡시',
       '공주시',
@@ -210,10 +367,28 @@ export const REGIONS: readonly RegionSubdivision[] = [
       '태안군',
       '홍성군',
     ],
+    subsEn: [
+      'Gyeryong-si',
+      'Gongju-si',
+      'Geumsan-gun',
+      'Nonsan-si',
+      'Dangjin-si',
+      'Boryeong-si',
+      'Buyeo-gun',
+      'Seosan-si',
+      'Seocheon-gun',
+      'Asan-si',
+      'Yesan-gun',
+      'Cheonan-si',
+      'Cheongyang-gun',
+      'Taean-gun',
+      'Hongseong-gun',
+    ],
   },
   {
     key: '전북',
     label: '전북특별자치도',
+    labelEn: 'Jeonbuk',
     subs: [
       '고창군',
       '군산시',
@@ -230,10 +405,27 @@ export const REGIONS: readonly RegionSubdivision[] = [
       '정읍시',
       '진안군',
     ],
+    subsEn: [
+      'Gochang-gun',
+      'Gunsan-si',
+      'Gimje-si',
+      'Namwon-si',
+      'Muju-gun',
+      'Buan-gun',
+      'Sunchang-gun',
+      'Wanju-gun',
+      'Iksan-si',
+      'Imsil-gun',
+      'Jangsu-gun',
+      'Jeonju-si',
+      'Jeongeup-si',
+      'Jinan-gun',
+    ],
   },
   {
     key: '전남',
     label: '전라남도',
+    labelEn: 'Jeollanam-do',
     subs: [
       '강진군',
       '고흥군',
@@ -258,10 +450,35 @@ export const REGIONS: readonly RegionSubdivision[] = [
       '해남군',
       '화순군',
     ],
+    subsEn: [
+      'Gangjin-gun',
+      'Goheung-gun',
+      'Gokseong-gun',
+      'Gwangyang-si',
+      'Gurye-gun',
+      'Naju-si',
+      'Damyang-gun',
+      'Mokpo-si',
+      'Muan-gun',
+      'Boseong-gun',
+      'Suncheon-si',
+      'Sinan-gun',
+      'Yeosu-si',
+      'Yeonggwang-gun',
+      'Yeongam-gun',
+      'Wando-gun',
+      'Jangseong-gun',
+      'Jangheung-gun',
+      'Jindo-gun',
+      'Hampyeong-gun',
+      'Haenam-gun',
+      'Hwasun-gun',
+    ],
   },
   {
     key: '경북',
     label: '경상북도',
+    labelEn: 'Gyeongsangbuk-do',
     subs: [
       '경산시',
       '경주시',
@@ -286,10 +503,35 @@ export const REGIONS: readonly RegionSubdivision[] = [
       '칠곡군',
       '포항시',
     ],
+    subsEn: [
+      'Gyeongsan-si',
+      'Gyeongju-si',
+      'Goryeong-gun',
+      'Gumi-si',
+      'Gimcheon-si',
+      'Mungyeong-si',
+      'Bonghwa-gun',
+      'Sangju-si',
+      'Seongju-gun',
+      'Andong-si',
+      'Yeongdeok-gun',
+      'Yeongyang-gun',
+      'Yeongju-si',
+      'Yeongcheon-si',
+      'Yecheon-gun',
+      'Ulleung-gun',
+      'Uljin-gun',
+      'Uiseong-gun',
+      'Cheongdo-gun',
+      'Cheongsong-gun',
+      'Chilgok-gun',
+      'Pohang-si',
+    ],
   },
   {
     key: '경남',
     label: '경상남도',
+    labelEn: 'Gyeongsangnam-do',
     subs: [
       '거제시',
       '거창군',
@@ -310,16 +552,40 @@ export const REGIONS: readonly RegionSubdivision[] = [
       '함양군',
       '합천군',
     ],
+    subsEn: [
+      'Geoje-si',
+      'Geochang-gun',
+      'Goseong-gun',
+      'Gimhae-si',
+      'Namhae-gun',
+      'Miryang-si',
+      'Sacheon-si',
+      'Sancheong-gun',
+      'Yangsan-si',
+      'Uiryeong-gun',
+      'Jinju-si',
+      'Changnyeong-gun',
+      'Changwon-si',
+      'Tongyeong-si',
+      'Hadong-gun',
+      'Haman-gun',
+      'Hamyang-gun',
+      'Hapcheon-gun',
+    ],
   },
   {
     key: '제주',
     label: '제주특별자치도',
+    labelEn: 'Jeju',
     subs: ['서귀포시', '제주시'],
+    subsEn: ['Seogwipo-si', 'Jeju-si'],
   },
   {
     key: '해외',
     label: '해외',
+    labelEn: 'Overseas',
     subs: [],
+    subsEn: [],
   },
 ] as const;
 
@@ -339,6 +605,20 @@ export function getRegionByKey(key: string): RegionSubdivision | undefined {
 
 export function getSubregions(key: string): readonly string[] {
   return REGION_BY_KEY.get(key)?.subs ?? [];
+}
+
+type SupportedLocale = 'ko' | 'en';
+
+export function getRegionLabel(region: RegionSubdivision, locale: SupportedLocale): string {
+  return locale === 'en' ? region.labelEn : region.label;
+}
+
+export function getSubregionLabel(topKey: string, subKo: string, locale: SupportedLocale): string {
+  if (locale !== 'en') return subKo;
+  const region = REGION_BY_KEY.get(topKey);
+  if (!region) return subKo;
+  const idx = region.subs.indexOf(subKo);
+  return idx >= 0 ? region.subsEn[idx] : subKo;
 }
 
 /**

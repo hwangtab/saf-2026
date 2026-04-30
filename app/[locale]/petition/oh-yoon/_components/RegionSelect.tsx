@@ -1,7 +1,8 @@
 'use client';
 
 import { useMemo } from 'react';
-import { REGIONS, getSubregions } from '@/lib/petition/regions';
+import { useLocale, useTranslations } from 'next-intl';
+import { REGIONS, getRegionLabel, getSubregionLabel, getSubregions } from '@/lib/petition/regions';
 
 interface RegionSelectProps {
   topValue: string;
@@ -27,6 +28,8 @@ export default function RegionSelect({
   disabled = false,
   required = true,
 }: RegionSelectProps) {
+  const locale = (useLocale() === 'en' ? 'en' : 'ko') as 'ko' | 'en';
+  const t = useTranslations('petition.ohYoon');
   const subs = useMemo(() => getSubregions(topValue), [topValue]);
   const subRequired = required && subs.length > 0;
 
@@ -41,11 +44,11 @@ export default function RegionSelect({
         className={SELECT_BASE}
       >
         <option value="" disabled>
-          시·도 선택
+          {t('formRegionTopPlaceholder')}
         </option>
         {REGIONS.map((r) => (
           <option key={r.key} value={r.key}>
-            {r.label}
+            {getRegionLabel(r, locale)}
           </option>
         ))}
       </select>
@@ -57,12 +60,14 @@ export default function RegionSelect({
         disabled={disabled || subs.length === 0}
         required={subRequired}
         className={SELECT_BASE}
-        aria-label="시·군·구"
+        aria-label={t('formRegionSubAriaLabel')}
       >
-        <option value="">{subs.length === 0 ? '해당 없음' : '시·군·구 선택'}</option>
+        <option value="">
+          {subs.length === 0 ? t('formRegionSubNone') : t('formRegionSubPlaceholder')}
+        </option>
         {subs.map((s) => (
           <option key={s} value={s}>
-            {s}
+            {getSubregionLabel(topValue, s, locale)}
           </option>
         ))}
       </select>
