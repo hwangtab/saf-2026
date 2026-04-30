@@ -22,6 +22,8 @@ import { resolveLocale } from '@/lib/server-locale';
 // Dynamically import KakaoMap (client-side only, reduces initial bundle)
 import ExhibitionMapWrapper from '@/components/features/ExhibitionMapWrapper';
 
+import { Ban, ClipboardList, Handshake, Palette } from 'lucide-react';
+
 export const revalidate = 3600;
 
 const PAGE_URL = `${SITE_URL}/archive/2026`;
@@ -135,8 +137,9 @@ export default async function Archive2026Page() {
 
         <Section variant="red">
           <div className="container-max text-center">
-            <p className="text-lg font-bold text-primary">
-              🚫 This offline exhibition ended on January 26, 2026.
+            <p className="text-lg font-bold text-primary inline-flex items-center gap-2 justify-center">
+              <Ban aria-hidden="true" className="h-5 w-5" />
+              This offline exhibition ended on January 26, 2026.
             </p>
             <p className="text-charcoal-muted mt-2">
               Online exhibition and artwork purchase are currently available.
@@ -184,7 +187,7 @@ export default async function Archive2026Page() {
                     variant="primary"
                     className="w-full"
                     size="md"
-                    leadingIcon="🤝"
+                    leadingIcon={<Handshake className="h-5 w-5" />}
                     iconLayout="fixed-left"
                   >
                     Join as a member
@@ -194,7 +197,7 @@ export default async function Archive2026Page() {
                     variant="secondary"
                     className="w-full"
                     size="md"
-                    leadingIcon="🎨"
+                    leadingIcon={<Palette className="h-5 w-5" />}
                     iconLayout="fixed-left"
                   >
                     Buy artworks
@@ -226,8 +229,9 @@ export default async function Archive2026Page() {
 
       <Section variant="red">
         <div className="container-max text-center">
-          <p className="text-lg font-bold text-primary">
-            🚫 본 오프라인 전시는 2026년 1월 26일에 종료되었습니다.
+          <p className="text-lg font-bold text-primary inline-flex items-center gap-2 justify-center">
+            <Ban aria-hidden="true" className="h-5 w-5" />본 오프라인 전시는 2026년 1월 26일에
+            종료되었습니다.
           </p>
           <p className="text-charcoal-muted mt-2">현재는 온라인 전시 및 작품 구매만 가능합니다.</p>
         </div>
@@ -281,7 +285,7 @@ export default async function Archive2026Page() {
                     variant="primary"
                     className="w-full"
                     size="md"
-                    leadingIcon="🤝"
+                    leadingIcon={<Handshake className="h-5 w-5" />}
                     iconLayout="fixed-left"
                   >
                     조합원 가입하기
@@ -291,7 +295,7 @@ export default async function Archive2026Page() {
                     variant="secondary"
                     className="w-full"
                     size="md"
-                    leadingIcon="🎨"
+                    leadingIcon={<Palette className="h-5 w-5" />}
                     iconLayout="fixed-left"
                   >
                     작품 구매하기
@@ -425,7 +429,10 @@ export default async function Archive2026Page() {
             </div>
 
             <div className="pt-8 border-t">
-              <h3 className="text-card-title mb-4">📋 기본 정보</h3>
+              <h3 className="text-card-title mb-4 inline-flex items-center gap-2">
+                <ClipboardList aria-hidden="true" className="h-5 w-5 text-charcoal-muted" />
+                기본 정보
+              </h3>
               <ul className="text-charcoal-muted space-y-2 text-sm">
                 <li>✓ 입장료: 무료 (후원금은 자율)</li>
                 <li>✓ 개별 방문 및 단체 관람 가능</li>

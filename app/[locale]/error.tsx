@@ -1,5 +1,6 @@
 'use client';
 
+import { Home } from 'lucide-react';
 import ErrorView from '@/components/common/ErrorView';
 import { useTranslations } from 'next-intl';
 
@@ -15,7 +16,7 @@ export default function HomeError({
 
   return (
     <ErrorView
-      icon="🏠"
+      icon={<Home className="h-16 w-16" />}
       title={t('title')}
       message={t('message')}
       backLink={{ href: '/', label: t('backLabel') }}

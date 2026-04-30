@@ -1,3 +1,4 @@
+import { Hourglass } from 'lucide-react';
 import { SignOutButton } from '@/components/auth/SignOutButton';
 import FeedbackButton from '@/components/feedback/FeedbackButton';
 import { requireAuth } from '@/lib/auth/guards';
@@ -79,7 +80,7 @@ export default async function ExhibitorPendingPage() {
       <div className="max-w-md w-full space-y-8 text-center bg-white p-10 rounded-2xl shadow-sm border border-gray-200">
         <div>
           <h2 className="mt-6 text-3xl font-black text-charcoal">{t('title')}</h2>
-          <div className="mt-4 text-5xl">⏳</div>
+          <Hourglass aria-hidden="true" className="mx-auto mt-4 h-12 w-12 text-charcoal-muted" />
           <p className="mt-6 text-sm text-charcoal-muted leading-relaxed">
             {t('applicationSubmitted')}
             <br />

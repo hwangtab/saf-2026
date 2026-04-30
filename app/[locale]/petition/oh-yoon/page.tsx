@@ -487,45 +487,10 @@ export default async function PetitionOhYoonPage() {
         </div>
       </Section>
 
-      {/* 10부 마지막 결구 + 두 번째 CTA — HERO와 톤 통일 (어두운 그라디언트). 11부 tribute 섹션이 페이지 마지막이므로 closing은 일반 pb 사용 */}
-      <section
-        aria-labelledby="petition-closing-title"
-        className="relative isolate overflow-hidden pt-24 md:pt-32 pb-24 md:pb-32 text-center text-white bg-charcoal-deep"
-      >
-        <div aria-hidden="true" className="absolute inset-0 -z-10 bg-charcoal-deep" />
-        <div className="relative container-max max-w-2xl mx-auto px-4">
-          {!is_active && (
-            <p className="mb-4 text-sm font-semibold uppercase tracking-wide opacity-80">
-              {t('closedTitle')}
-            </p>
-          )}
-          <p className="text-xl md:text-2xl leading-relaxed mb-4 break-keep text-balance opacity-90">
-            {t('closingLine1')}
-          </p>
-          <p className="text-xl md:text-2xl leading-relaxed mb-4 break-keep text-balance opacity-90">
-            {t('closingLine2')}
-          </p>
-          <p
-            id="petition-closing-title"
-            className="font-display font-bold text-3xl md:text-4xl leading-tight mb-14 md:mb-16 break-keep text-balance"
-          >
-            {t('closingLine3')}
-          </p>
-          {is_active && (
-            <a
-              href="#sign-form-anchor"
-              className="inline-flex items-center justify-center px-8 py-4 rounded-lg text-lg font-bold bg-primary hover:bg-primary-strong text-white transition-shadow hover:shadow-gallery-artwork focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
-            >
-              {t('closingCta')} →
-            </a>
-          )}
-        </div>
-      </section>
-
-      {/* 11부 오윤 40주기, 함께 기리는 자리 — 페이지의 마지막 안식처. 청원의 시점을 작가의 시대로 확장. 폼 제출 후 SignForm이 #special-cta-card로 스크롤 */}
+      {/* 10부 오윤 40주기, 함께 기리는 자리 — closing 직전의 정서적 빌드업. 청원의 시점을 작가의 시대로 확장. 폼 제출 후 SignForm이 #petition-tribute-title로 스크롤 */}
       <Section
         variant="canvas"
-        className={`pt-20 md:pt-24 ${SAWTOOTH_TOP_SAFE_PADDING}`}
+        className="pt-20 md:pt-24 pb-20 md:pb-24"
         aria-labelledby="petition-tribute-title"
       >
         <div className="container-max max-w-3xl mx-auto px-4">
@@ -600,6 +565,41 @@ export default async function PetitionOhYoonPage() {
           </p>
         </div>
       </Section>
+
+      {/* 11부 마지막 결구 + 두 번째 CTA — HERO와 톤 통일(어두운 그라디언트). 페이지 마지막이라 SAWTOOTH_TOP_SAFE_PADDING으로 footer 톱니 안전 여백 흡수 */}
+      <section
+        aria-labelledby="petition-closing-title"
+        className={`relative isolate overflow-hidden pt-24 md:pt-32 ${SAWTOOTH_TOP_SAFE_PADDING} text-center text-white bg-charcoal-deep`}
+      >
+        <div aria-hidden="true" className="absolute inset-0 -z-10 bg-charcoal-deep" />
+        <div className="relative container-max max-w-2xl mx-auto px-4">
+          {!is_active && (
+            <p className="mb-4 text-sm font-semibold uppercase tracking-wide opacity-80">
+              {t('closedTitle')}
+            </p>
+          )}
+          <p className="text-xl md:text-2xl leading-relaxed mb-4 break-keep text-balance opacity-90">
+            {t('closingLine1')}
+          </p>
+          <p className="text-xl md:text-2xl leading-relaxed mb-4 break-keep text-balance opacity-90">
+            {t('closingLine2')}
+          </p>
+          <p
+            id="petition-closing-title"
+            className="font-display font-bold text-3xl md:text-4xl leading-tight mb-14 md:mb-16 break-keep text-balance"
+          >
+            {t('closingLine3')}
+          </p>
+          {is_active && (
+            <a
+              href="#sign-form-anchor"
+              className="inline-flex items-center justify-center px-8 py-4 rounded-lg text-lg font-bold bg-primary hover:bg-primary-strong text-white transition-shadow hover:shadow-gallery-artwork focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            >
+              {t('closingCta')} →
+            </a>
+          )}
+        </div>
+      </section>
     </main>
   );
 }

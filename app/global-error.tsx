@@ -1,5 +1,6 @@
 'use client';
 
+import { AlertTriangle } from 'lucide-react';
 import ErrorView from '@/components/common/ErrorView';
 
 export default function GlobalError({
@@ -18,7 +19,7 @@ export default function GlobalError({
     <html lang={lang}>
       <body>
         <ErrorView
-          icon="⚠️"
+          icon={<AlertTriangle className="h-16 w-16" />}
           title={isEnglish ? 'A critical error occurred' : '치명적인 오류가 발생했습니다'}
           message={
             isEnglish

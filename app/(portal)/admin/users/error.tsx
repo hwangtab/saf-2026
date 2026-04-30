@@ -1,5 +1,6 @@
 'use client';
 
+import { AlertTriangle } from 'lucide-react';
 import ErrorView from '@/components/common/ErrorView';
 import { usePathname } from 'next/navigation';
 import { resolveClientLocale } from '@/lib/client-locale';
@@ -19,7 +20,7 @@ export default function AdminUsersError({
 
   return (
     <ErrorView
-      icon="⚠️"
+      icon={<AlertTriangle className="h-16 w-16" />}
       title={copy.title}
       message={copy.message}
       backLink={{ href: '/admin/dashboard', label: copy.backLabel || 'Back' }}

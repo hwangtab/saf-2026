@@ -9,7 +9,7 @@ import LinkButton from '@/components/ui/LinkButton';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
-import { ArrowRight, ChevronDown, ChevronRight } from 'lucide-react';
+import { ArrowRight, ChevronDown, ChevronRight, Coins, Handshake, Palette } from 'lucide-react';
 import HeroSpotlight, { type SpotlightSlide } from '@/components/features/HeroSpotlight';
 import { getActiveShowingItems, type NowShowingItem } from '@/lib/now-showing';
 import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
@@ -108,9 +108,7 @@ export default async function Home() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-0 mb-6">
             {/* Step 1 */}
             <div className="flex items-center gap-2 bg-white rounded-xl px-5 py-3 shadow-sm">
-              <span className="text-2xl" aria-hidden="true">
-                🎨
-              </span>
+              <Palette aria-hidden="true" className="h-5 w-5 text-charcoal" />
               <span className="text-sm font-semibold text-charcoal">{t('missionStep1')}</span>
             </div>
             <ChevronRight
@@ -120,9 +118,7 @@ export default async function Home() {
             <ChevronDown aria-hidden="true" className="sm:hidden h-5 w-5 text-charcoal-soft" />
             {/* Step 2 */}
             <div className="flex items-center gap-2 bg-white rounded-xl px-5 py-3 shadow-sm">
-              <span className="text-2xl" aria-hidden="true">
-                💰
-              </span>
+              <Coins aria-hidden="true" className="h-5 w-5 text-charcoal" />
               <span className="text-sm font-semibold text-charcoal">{t('missionStep2')}</span>
             </div>
             <ChevronRight
@@ -132,9 +128,7 @@ export default async function Home() {
             <ChevronDown aria-hidden="true" className="sm:hidden h-5 w-5 text-charcoal-soft" />
             {/* Step 3 */}
             <div className="flex items-center gap-2 bg-primary/10 rounded-xl px-5 py-3 shadow-sm border border-primary/20">
-              <span className="text-2xl" aria-hidden="true">
-                🤝
-              </span>
+              <Handshake aria-hidden="true" className="h-5 w-5 text-primary-a11y" />
               <span className="text-sm font-semibold text-primary-a11y">{t('missionStep3')}</span>
             </div>
           </div>

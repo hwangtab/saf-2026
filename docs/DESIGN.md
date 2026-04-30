@@ -191,6 +191,21 @@ Tailwind weight ↔ Noto Sans KR 호출:
 - `position="top"`은 위 섹션의 마지막 24~40px를 덮음 → 위 컨테이너에 `SAWTOOTH_TOP_SAFE_PADDING = 'pb-24 md:pb-32'` 필수
 - 색 지정: `colorClass="text-canvas-soft"` 등
 
+### Rounded radius 표준 매핑
+
+라운드 반경은 컴포넌트 위계와 1:1로 매핑. 같은 위계의 컴포넌트는 같은 반경을 사용해 시각 리듬을 유지함. 현재 코드 분포(2026-04 기준): `rounded-md` 122건 / `rounded-lg` 206건 / `rounded-xl` 52건 / `rounded-2xl` 134건 / `rounded-full` 162건 / `rounded-3xl` 0건.
+
+| 토큰           | 반경 | 표준 사용처                                                            |
+| -------------- | ---- | ---------------------------------------------------------------------- |
+| `rounded-md`   | 6px  | Input·작은 칩·인디케이터                                               |
+| `rounded-lg`   | 8px  | **Button** (button-base default)·작은 카드·뱃지 컨테이너               |
+| `rounded-xl`   | 12px | 중간 카드·작은 다이얼로그·alert 박스                                   |
+| `rounded-2xl`  | 16px | **Card·Section 카드·메인 컨텐츠 컨테이너** (DESIGN.md §4 Card 표준)    |
+| `rounded-full` | ∞    | 점 인디케이터·아바타·circular 버튼·`Badge` (`tone='info'` 등)          |
+| `rounded-3xl`  | 24px | **사용 금지** (현재 0건 — 매거진 톤과 어울리지 않음, 의도적 제한 유지) |
+
+같은 컨테이너 안에서 라운드 반경을 섞지 말 것 — 큰 카드 안의 작은 칩이라면 카드 `rounded-2xl` + 칩 `rounded-md` 식으로 위계가 명확해야 함. 동일 위계의 형제 요소가 서로 다른 반경을 가지면 시각 정렬이 깨짐.
+
 ---
 
 ## 5. Layout Principles
@@ -221,6 +236,35 @@ Tailwind weight ↔ Noto Sans KR 호출:
 - Footer 위 안전 여백: `pb-24 md:pb-32` (SAWTOOTH_TOP_SAFE_PADDING)
 - 터치 타겟: 최소 44px (`min-h-[44px]`)
 
+### Spacing 표준
+
+| 영역                      | 클래스                           | 비고                                  |
+| ------------------------- | -------------------------------- | ------------------------------------- |
+| 섹션 간 (vertical rhythm) | `py-12 md:py-20`                 | Section default                       |
+| 카드 그리드 gap           | `gap-6` (모바일) ~ `gap-8` (md+) | 같은 행 카드 사이                     |
+| Footer 안전 패딩          | `pb-24 md:pb-32`                 | `SAWTOOTH_TOP_SAFE_PADDING` 상수 사용 |
+| Hero top                  | `pt-16 md:pt-20`                 | 헤더 높이 보정 포함                   |
+| Hero bottom               | `pb-24 md:pb-32`                 | SawtoothDivider 안전 영역             |
+
+#### 카드 내부 패딩 (위계별)
+
+| 위계 | 클래스                       | 사용처                                 |
+| ---- | ---------------------------- | -------------------------------------- |
+| 작음 | `p-4` (16px)                 | 칩·작은 정보 카드·테이블 셀 컨테이너   |
+| 일반 | `p-6` (24px)                 | **Card 기본**·뱃지·아이콘 박스         |
+| 강조 | `p-8` (32px) ~ `p-10` (40px) | 메인 CTA 카드·Hero 내부 박스·증언 카드 |
+
+#### Line-height 표준
+
+| 클래스            | 값    | 사용처                                         |
+| ----------------- | ----- | ---------------------------------------------- |
+| `leading-tight`   | 1.25  | Hero 타이틀 (`.text-hero`)                     |
+| `leading-snug`    | 1.375 | 헤딩·섹션 타이틀 (`.text-section-title`)       |
+| `leading-normal`  | 1.5   | Card 타이틀 (`.text-card-title`)               |
+| `leading-relaxed` | 1.625 | **본문 기본** (`.text-body-large`·매거진 본문) |
+
+본문은 한국어 가독성을 위해 `leading-relaxed`가 default. `leading-loose` (2.0)는 쓰지 않음 — 줄 사이가 끊겨 보임.
+
 ---
 
 ## 6. Depth & Elevation
@@ -238,6 +282,20 @@ Tailwind weight ↔ Noto Sans KR 호출:
 
 `@media (hover: none)` 가드: 터치 디바이스에서는 hover scale/translate/shadow 모두 끔 — sticky hover 방지.
 
+### Transition duration 표준
+
+전환 시간은 **인터랙션의 무게**에 매핑. 너무 짧으면 잘려 보이고, 너무 길면 응답성이 떨어짐. 현재 코드 분포(2026-04 기준): `duration-200` 16건 / `duration-300` 56건 / `duration-500` 16건 / `duration-700` 2건.
+
+| 클래스         | 시간  | 표준 사용처                                                       |
+| -------------- | ----- | ----------------------------------------------------------------- |
+| `duration-150` | 150ms | **사용 금지** — 너무 빠름, 끊겨 보임. 대신 `duration-200`         |
+| `duration-200` | 200ms | hover·active·focus 같은 즉각 반응 (Button hover, link underline)  |
+| `duration-300` | 300ms | **default** — Card hoverable, color/background 변화, 일반 UI 전환 |
+| `duration-500` | 500ms | 큰 시각 변화 (이미지 zoom, slide-in, masonry reveal)              |
+| `duration-700` | 700ms | **사용 자제** — 정말 필요한 큰 reveal에만 (현재 2건, 검토 권장)   |
+
+`transition-[transform,box-shadow]` 등 **속성 분리 표기**는 그대로 유지 — `transition-all`보다 비용이 낮고 불필요한 속성 변화가 트리거되지 않음. 호버 인터랙션에서는 `transition-[transform,box-shadow] duration-300 ease-out` 패턴을 default로 사용.
+
 ---
 
 ## 7. Do's and Don'ts
@@ -249,6 +307,9 @@ Tailwind weight ↔ Noto Sans KR 호출:
 - 이미지: **모두 `SafeImage`로 통일** (`@/components/common/SafeImage`). Vercel Image Optimization 기반으로 Supabase URL 자동 정규화 + onError 1x1 투명 fallback 포함
 - 한국어는 `text-balance` + `keep-all` 활용 — 어색한 줄바꿈 방지
 - 새 hero 페이지 추가 시 [lib/hero-routes.ts](../lib/hero-routes.ts)에 등록
+- Button·LinkButton의 `leadingIcon`/`trailingIcon` prop 사용 — 텍스트 옆에 화살표 직박 금지
+- 화살표·아이콘은 [lucide-react](https://lucide.dev) 컴포넌트 사용 (`ArrowRight`, `ChevronDown`, `ExternalLink` 등)
+- 이모지는 **콘텐츠 영역**(매거진 본문·증언·아티클)에만 사용. 구조적 UI(버튼·뱃지·메뉴 라벨)에는 lucide 아이콘만
 
 ### ❌ Don't
 
@@ -260,6 +321,10 @@ Tailwind weight ↔ Noto Sans KR 호출:
 - `sun.DEFAULT`를 배경/CTA로 사용 (강조 전용)
 - 공개 라우트에 skeleton `loading.tsx` 추가
 - 출품 작가를 "금융 차별 피해자"로 프레이밍 (CLAUDE.md 캠페인 구조 참조)
+- **텍스트 화살표 직박** (`>`, `→`, `↓`, `‹`, `›`) — 폰트 baseline 어긋남, lucide SVG 컴포넌트 사용 필수
+- **구조적 UI에 이모지 사용** — 버튼·뱃지·메뉴 등은 lucide만. 콘텐츠 본문은 OK
+- `duration-150` / `duration-700` — 표준 어긋남 (200/300/500이 표준, §6 Transition duration 참조)
+- `rounded-3xl` — 매거진 톤과 어울리지 않음 (§4 Rounded radius 표준 참조)
 
 ---
 

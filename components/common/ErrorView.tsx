@@ -3,7 +3,8 @@
 import { useEffect } from 'react';
 
 interface ErrorViewProps {
-  icon: string;
+  /** Visual indicator. Pass a lucide icon component or any ReactNode. */
+  icon: React.ReactNode;
   title: string;
   message: string;
   backLink?: { href: string; label: string };
@@ -34,7 +35,7 @@ export default function ErrorView({
   return (
     <div className="min-h-[100svh] flex items-center justify-center p-4">
       <div className="text-center max-w-md mx-auto">
-        <div className="text-6xl mb-6" aria-hidden="true">
+        <div className="mb-6 flex justify-center text-charcoal-muted" aria-hidden="true">
           {icon}
         </div>
         <h1 className="text-2xl font-bold mb-4 text-charcoal">{title}</h1>

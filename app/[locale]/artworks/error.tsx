@@ -1,5 +1,6 @@
 'use client';
 
+import { Frown } from 'lucide-react';
 import ErrorView from '@/components/common/ErrorView';
 import { useTranslations } from 'next-intl';
 
@@ -15,7 +16,7 @@ export default function ArtworksError({
 
   return (
     <ErrorView
-      icon="😔"
+      icon={<Frown className="h-16 w-16" />}
       title={t('title')}
       message={t('message')}
       backLink={{ href: '/artworks', label: t('backLabel') }}

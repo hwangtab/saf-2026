@@ -1,9 +1,12 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { ArrowDown, ArrowUp, Coins, ImageIcon, UserRound } from 'lucide-react';
 import { SortOption } from '@/types';
 import { ChevronDownIcon, CheckMarkIcon } from '@/components/ui/Icons';
 import { useTranslations } from 'next-intl';
+
+type SortIcon = React.ReactNode;
 
 interface SortControlsProps {
   value: SortOption;
@@ -13,12 +16,38 @@ interface SortControlsProps {
 export default function SortControls({ value, onChange }: SortControlsProps) {
   const tSort = useTranslations('sort');
   const tA11y = useTranslations('a11y');
-  const sortOptions = useMemo<{ value: SortOption; label: string; icon: string }[]>(
+  const sortOptions = useMemo<{ value: SortOption; label: string; icon: SortIcon }[]>(
     () => [
-      { value: 'artist-asc', label: tSort('artistAsc'), icon: '👤' },
-      { value: 'title-asc', label: tSort('titleAsc'), icon: '🖼️' },
-      { value: 'price-desc', label: tSort('priceDesc'), icon: '💰↓' },
-      { value: 'price-asc', label: tSort('priceAsc'), icon: '💰↑' },
+      {
+        value: 'artist-asc',
+        label: tSort('artistAsc'),
+        icon: <UserRound aria-hidden="true" className="h-4 w-4" />,
+      },
+      {
+        value: 'title-asc',
+        label: tSort('titleAsc'),
+        icon: <ImageIcon aria-hidden="true" className="h-4 w-4" />,
+      },
+      {
+        value: 'price-desc',
+        label: tSort('priceDesc'),
+        icon: (
+          <span className="inline-flex items-center" aria-hidden="true">
+            <Coins className="h-4 w-4" />
+            <ArrowDown className="h-3 w-3" />
+          </span>
+        ),
+      },
+      {
+        value: 'price-asc',
+        label: tSort('priceAsc'),
+        icon: (
+          <span className="inline-flex items-center" aria-hidden="true">
+            <Coins className="h-4 w-4" />
+            <ArrowUp className="h-3 w-3" />
+          </span>
+        ),
+      },
     ],
     [tSort]
   );
@@ -101,8 +130,9 @@ export default function SortControls({ value, onChange }: SortControlsProps) {
         aria-expanded={isOpen}
         aria-label={tA11y('sortOptions')}
       >
-        <span className="text-xs sm:text-sm font-medium text-charcoal whitespace-nowrap">
-          {currentOption?.icon} {currentOption?.label}
+        <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-charcoal whitespace-nowrap">
+          {currentOption?.icon}
+          {currentOption?.label}
         </span>
         <ChevronDownIcon
           className={`w-4 h-4 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`}

@@ -15,6 +15,19 @@ import { ARTIST_COUNT, ARTWORK_COUNT, LOAN_COUNT } from '@/lib/site-stats';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
 import { Link } from '@/i18n/navigation';
+import {
+  BarChart3,
+  CheckCircle2,
+  ClipboardList,
+  Coins,
+  Handshake,
+  ImageIcon,
+  Landmark,
+  Leaf,
+  Newspaper,
+  ShieldCheck,
+  Timer,
+} from 'lucide-react';
 
 export const revalidate = false;
 
@@ -129,33 +142,31 @@ export default async function AboutPage() {
               {[
                 {
                   step: '01',
-                  icon: '🤝',
+                  Icon: Handshake,
                   label: 'Artists unite',
                   desc: `${ARTIST_COUNT} artists voluntarily contribute works to the exhibition — not as victims, but as allies standing with peers.`,
                 },
                 {
                   step: '02',
-                  icon: '🖼️',
+                  Icon: ImageIcon,
                   label: 'Art is sold',
                   desc: 'Works are sold through the SAF online gallery. Every purchase directly funds the mutual-aid reserve.',
                 },
                 {
                   step: '03',
-                  icon: '🏦',
+                  Icon: Landmark,
                   label: 'Fund grows',
                   desc: 'Sales revenue joins cooperative membership fees and solidarity contributions to build a shared reserve.',
                 },
                 {
                   step: '04',
-                  icon: '💰',
+                  Icon: Coins,
                   label: 'Loans reach artists',
                   desc: 'Partner banks lend up to 7× the fund amount at a fixed 5% APR to artists excluded from mainstream finance.',
                 },
               ].map((item) => (
                 <div key={item.step} className="text-center">
-                  <div className="text-4xl mb-4" aria-hidden="true">
-                    {item.icon}
-                  </div>
+                  <item.Icon aria-hidden="true" className="mx-auto mb-4 h-10 w-10 text-charcoal" />
                   <span className="text-xs font-bold text-primary-strong uppercase tracking-widest">
                     Step {item.step}
                   </span>
@@ -175,17 +186,17 @@ export default async function AboutPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {[
                   {
-                    icon: '⏱️',
+                    Icon: Timer,
                     title: 'Protecting creative time',
                     desc: 'Low-interest loans bridge income gaps so artists can keep creating instead of taking survival jobs.',
                   },
                   {
-                    icon: '🛡️',
+                    Icon: ShieldCheck,
                     title: 'Restoring dignity',
                     desc: 'Artists are evaluated on their work and potential — not rejected for lacking a monthly paycheck.',
                   },
                   {
-                    icon: '🌱',
+                    Icon: Leaf,
                     title: 'Sustaining the ecosystem',
                     desc: 'Repayments flow back into the fund. Each cycle supports more artists, growing a self-sustaining safety net.',
                   },
@@ -194,9 +205,7 @@ export default async function AboutPage() {
                     key={item.title}
                     className="bg-white p-6 rounded-2xl border-t-4 border-primary"
                   >
-                    <div className="text-3xl mb-3" aria-hidden="true">
-                      {item.icon}
-                    </div>
+                    <item.Icon aria-hidden="true" className="mb-3 h-8 w-8 text-primary-strong" />
                     <h3 className="text-base font-bold text-charcoal-deep mb-2">{item.title}</h3>
                     <p className="text-sm text-charcoal-muted leading-relaxed">{item.desc}</p>
                   </div>
@@ -263,25 +272,25 @@ export default async function AboutPage() {
               {[
                 {
                   href: '/our-reality',
-                  icon: '📊',
+                  Icon: BarChart3,
                   title: 'Our Reality',
                   desc: 'The data behind 84.9% banking exclusion — six charts showing why the system fails artists.',
                 },
                 {
                   href: '/our-proof',
-                  icon: '✅',
+                  Icon: CheckCircle2,
                   title: 'Our Proof',
                   desc: `${LOAN_COUNT} loans, 95% repayment, 0% default rate. The numbers that prove mutual-aid lending works.`,
                 },
                 {
                   href: '/transparency',
-                  icon: '📋',
+                  Icon: ClipboardList,
                   title: 'Transparency Reports',
                   desc: 'Annual reports published openly since December 2022. Full operational transparency.',
                 },
                 {
                   href: '/news',
-                  icon: '📰',
+                  Icon: Newspaper,
                   title: 'Press',
                   desc: 'Media coverage spotlighting the issue of artist financial discrimination in Korea.',
                 },
@@ -291,9 +300,7 @@ export default async function AboutPage() {
                   href={page.href}
                   className="group flex items-start gap-5 p-6 rounded-2xl border border-gray-200 bg-white hover:border-primary hover:shadow-md transition-all duration-200"
                 >
-                  <span className="text-3xl shrink-0" aria-hidden="true">
-                    {page.icon}
-                  </span>
+                  <page.Icon aria-hidden="true" className="h-7 w-7 shrink-0 text-primary-strong" />
                   <div>
                     <h3 className="text-lg font-bold text-charcoal-deep mb-1 group-hover:text-primary transition-colors">
                       {page.title}
@@ -315,8 +322,8 @@ export default async function AboutPage() {
               the safety net. Your support directly reaches artists who need it most.
             </p>
             <CTAButtonGroup
-              donateText="🤝 Become a member"
-              purchaseText="🎨 Browse artworks"
+              donateText="Become a member"
+              purchaseText="Browse artworks"
               donateHref={EXTERNAL_LINKS.JOIN_MEMBER}
               purchaseHref="/artworks"
               variant="large"
@@ -397,33 +404,31 @@ export default async function AboutPage() {
             {[
               {
                 step: '01',
-                icon: '🤝',
+                Icon: Handshake,
                 label: '작가 연대',
                 desc: `${ARTIST_COUNT}명의 작가가 동료 예술인의 금융 차별에 맞서 자발적으로 작품을 출품합니다. 피해 당사자가 아닌, 연대자로서.`,
               },
               {
                 step: '02',
-                icon: '🖼️',
+                Icon: ImageIcon,
                 label: '작품 판매',
                 desc: '씨앗페 온라인 갤러리에서 작품이 판매됩니다. 모든 수익이 상호부조 기금으로 직접 연결됩니다.',
               },
               {
                 step: '03',
-                icon: '🏦',
+                Icon: Landmark,
                 label: '기금 적립',
                 desc: '작품 판매 수익 + 조합원 회비 + 특별 연대 기여금이 합쳐져 공동 기금이 쌓입니다. 현재 약 7,700만 원.',
               },
               {
                 step: '04',
-                icon: '💰',
+                Icon: Coins,
                 label: '저금리 대출',
                 desc: '협력 금융기관이 기금의 최대 7배를 연 5% 고정금리로 예술인에게 대출합니다.',
               },
             ].map((item) => (
               <div key={item.step} className="text-center">
-                <div className="text-4xl mb-4" aria-hidden="true">
-                  {item.icon}
-                </div>
+                <item.Icon aria-hidden="true" className="mx-auto mb-4 h-10 w-10 text-charcoal" />
                 <span className="text-xs font-bold text-primary-strong uppercase tracking-widest">
                   STEP {item.step}
                 </span>
@@ -463,17 +468,17 @@ export default async function AboutPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {[
               {
-                icon: '⏱️',
+                Icon: Timer,
                 title: '창작 시간을 살려내고',
                 desc: '소득 공백기 동안 저금리 대출이 생존형 아르바이트 대신 창작에 집중할 시간을 돌려줍니다.',
               },
               {
-                icon: '🛡️',
+                Icon: ShieldCheck,
                 title: '예술적 존엄성을 지키며',
                 desc: '정기 급여가 아닌 작품과 잠재력으로 평가받습니다. 금융에서도 예술인으로 존중받는 구조.',
               },
               {
-                icon: '🌱',
+                Icon: Leaf,
                 title: '생태계를 지속가능하게',
                 desc: '상환금이 다시 기금으로 돌아와 새로운 예술인을 지원합니다. 순환하는 상호부조의 선순환.',
               },
@@ -482,9 +487,7 @@ export default async function AboutPage() {
                 key={item.title}
                 className="bg-white p-8 rounded-2xl border-t-4 border-primary shadow-sm"
               >
-                <div className="text-3xl mb-4" aria-hidden="true">
-                  {item.icon}
-                </div>
+                <item.Icon aria-hidden="true" className="mb-4 h-8 w-8 text-primary-strong" />
                 <h3 className="text-base font-bold text-charcoal-deep mb-3">{item.title}</h3>
                 <p className="text-sm text-charcoal-muted leading-relaxed">{item.desc}</p>
               </div>
@@ -583,25 +586,25 @@ export default async function AboutPage() {
             {[
               {
                 href: '/our-reality',
-                icon: '📊',
+                Icon: BarChart3,
                 title: '우리의 현실',
                 desc: '84.9% 배제율의 근거 — 6개 차트로 확인하는 예술인 금융 차별의 구조적 실태와 데이터.',
               },
               {
                 href: '/our-proof',
-                icon: '✅',
+                Icon: CheckCircle2,
                 title: '우리의 증명',
                 desc: `${LOAN_COUNT}건 대출, 95% 상환율, 연체율 0%. 상호부조 대출이 실제로 작동한다는 수치 증명.`,
               },
               {
                 href: '/transparency',
-                icon: '📋',
+                Icon: ClipboardList,
                 title: '운용 보고서',
                 desc: '2022년 12월부터의 운영 현황. 연간 보고서와 함께 투명하게 공개합니다.',
               },
               {
                 href: '/news',
-                icon: '📰',
+                Icon: Newspaper,
                 title: '언론 보도',
                 desc: '씨앗페와 예술인 금융 차별 문제를 조명한 언론의 기록.',
               },
@@ -611,9 +614,7 @@ export default async function AboutPage() {
                 href={page.href}
                 className="group flex items-start gap-5 p-6 rounded-2xl border border-gray-200 bg-white hover:border-primary hover:shadow-md transition-all duration-200"
               >
-                <span className="text-3xl shrink-0" aria-hidden="true">
-                  {page.icon}
-                </span>
+                <page.Icon aria-hidden="true" className="h-7 w-7 shrink-0 text-primary-strong" />
                 <div>
                   <h3 className="text-lg font-bold text-charcoal-deep mb-1 group-hover:text-primary transition-colors">
                     {page.title}
@@ -635,8 +636,8 @@ export default async function AboutPage() {
             선택이 금융 차별에 맞서는 가장 구체적인 행동이 됩니다.
           </p>
           <CTAButtonGroup
-            donateText="🤝 조합원 가입"
-            purchaseText="🎨 작품 보러 가기"
+            donateText="조합원 가입"
+            purchaseText="작품 보러 가기"
             donateHref={EXTERNAL_LINKS.JOIN_MEMBER}
             purchaseHref="/artworks"
             variant="large"

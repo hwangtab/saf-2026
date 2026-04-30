@@ -1,5 +1,6 @@
 import { getLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
+import { Palette, Search } from 'lucide-react';
 import { CONTACT } from '@/lib/constants';
 import LinkButton from '@/components/ui/LinkButton';
 import ScrollToTopOnMount from '@/components/common/ScrollToTopOnMount';
@@ -39,9 +40,7 @@ export default async function NotFound() {
     <div className="min-h-screen flex items-center justify-center bg-canvas-soft pt-20">
       <ScrollToTopOnMount />
       <div className="text-center max-w-md px-6">
-        <div className="text-6xl mb-6" aria-hidden="true">
-          🔍
-        </div>
+        <Search aria-hidden="true" className="mx-auto h-16 w-16 text-charcoal-muted mb-6" />
         <h1 className="text-2xl font-bold text-charcoal mb-4">{copy.title}</h1>
         <p className="text-charcoal-muted mb-8 leading-relaxed whitespace-pre-line">
           {copy.description}
@@ -59,13 +58,10 @@ export default async function NotFound() {
             href={locale === 'en' ? '/en/artworks' : '/artworks'}
             variant="primary"
             size="sm"
-            className="inline-grid grid-cols-[1.25rem_auto_1.25rem] gap-2 px-6 py-3 shadow-sm hover:shadow-md min-h-[48px]"
+            leadingIcon={<Palette className="h-5 w-5" />}
+            className="px-6 py-3 shadow-sm hover:shadow-md min-h-[48px]"
           >
-            <span aria-hidden="true">🎨</span>
-            <span>{copy.browseArtworks}</span>
-            <span aria-hidden="true" className="invisible">
-              🎨
-            </span>
+            {copy.browseArtworks}
           </LinkButton>
         </div>
 

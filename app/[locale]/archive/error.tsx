@@ -1,5 +1,6 @@
 'use client';
 
+import { BookOpen } from 'lucide-react';
 import ErrorView from '@/components/common/ErrorView';
 import { useTranslations } from 'next-intl';
 
@@ -15,7 +16,7 @@ export default function ArchiveError({
 
   return (
     <ErrorView
-      icon="📚"
+      icon={<BookOpen className="h-16 w-16" />}
       title={t('title')}
       message={t('message')}
       backLink={{ href: '/archive', label: t('backLabel') }}

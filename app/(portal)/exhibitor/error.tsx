@@ -1,5 +1,6 @@
 'use client';
 
+import { Frown } from 'lucide-react';
 import ErrorView from '@/components/common/ErrorView';
 import { usePathname } from 'next/navigation';
 import { resolveClientLocale } from '@/lib/client-locale';
@@ -19,7 +20,7 @@ export default function ExhibitorError({
 
   return (
     <ErrorView
-      icon="😔"
+      icon={<Frown className="h-16 w-16" />}
       title={copy.title}
       message={copy.message}
       backLink={{ href: '/exhibitor', label: copy.backLabel || 'Back' }}

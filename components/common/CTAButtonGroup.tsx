@@ -1,5 +1,6 @@
 'use client';
 
+import { Handshake, Palette } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 import { EXTERNAL_LINKS } from '@/lib/constants';
 import { useTranslations } from 'next-intl';
@@ -53,7 +54,13 @@ export default function CTAButtonGroup({
 
   return (
     <div className={containerClasses}>
-      <LinkButton href={donateHref} external={isDonateExternal} variant="primary" size={buttonSize}>
+      <LinkButton
+        href={donateHref}
+        external={isDonateExternal}
+        variant="primary"
+        size={buttonSize}
+        leadingIcon={<Handshake className="h-5 w-5" />}
+      >
         {resolvedDonateText}
       </LinkButton>
       <LinkButton
@@ -61,6 +68,7 @@ export default function CTAButtonGroup({
         external={isPurchaseExternal}
         variant="secondary"
         size={buttonSize}
+        leadingIcon={<Palette className="h-5 w-5" />}
       >
         {resolvedPurchaseText}
       </LinkButton>

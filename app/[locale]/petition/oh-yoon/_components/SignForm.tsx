@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import RegionSelect from './RegionSelect';
 import { signPetition } from '@/app/actions/petition';
 import type { SignPetitionInput, SignPetitionResult } from '@/app/actions/petition';
+import Button from '@/components/ui/Button';
 
 const INPUT_BASE =
   'w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-base text-charcoal-deep ' +
@@ -301,13 +302,15 @@ export default function SignForm() {
         </p>
       )}
 
-      <button
+      <Button
         type="submit"
+        variant="primary"
+        size="lg"
         disabled={pending}
-        className="w-full inline-flex items-center justify-center rounded-lg px-6 py-4 text-lg font-bold bg-primary hover:bg-primary-strong text-white transition-all hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        className="w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
       >
         {pending ? t('formSubmitting') : `${t('heroCta')} →`}
-      </button>
+      </Button>
 
       <p className="text-xs text-charcoal-muted text-center">{t('formFooter')}</p>
       <p className="text-[11px] text-charcoal-muted text-center">{t('formAgeNotice')}</p>

@@ -15,6 +15,7 @@ import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
 import { Link } from '@/i18n/navigation';
+import { Newspaper } from 'lucide-react';
 
 export const revalidate = 300;
 
@@ -487,7 +488,7 @@ export default async function NewsPage() {
                         />
                       ) : (
                         <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-500">
-                          <span className="text-4xl mb-2">📰</span>
+                          <Newspaper aria-hidden="true" className="h-10 w-10 mb-2" />
                           <span className="text-sm">{copy.noImage}</span>
                         </div>
                       )}

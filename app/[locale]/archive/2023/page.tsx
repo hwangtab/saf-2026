@@ -20,6 +20,7 @@ import { buildLocaleUrl } from '@/lib/locale-alternates';
 import Card from '@/components/ui/Card';
 import { resolveLocale } from '@/lib/server-locale';
 import { Link } from '@/i18n/navigation';
+import { Camera, Clock, Film, MapPin, Music, Palette, Video } from 'lucide-react';
 
 export const revalidate = 3600;
 
@@ -221,23 +222,33 @@ export default async function Archive2023Page() {
           {/* Event Details */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
-              <h4 className="text-card-title mb-4">{isEnglish ? '📍 Venues' : '📍 전시 장소'}</h4>
+              <h4 className="text-card-title mb-4 inline-flex items-center gap-2">
+                <MapPin aria-hidden="true" className="h-5 w-5 text-charcoal-muted" />
+                {isEnglish ? 'Venues' : '전시 장소'}
+              </h4>
               <ul className="space-y-2 text-charcoal-muted">
-                <li>
-                  {isEnglish
-                    ? '🎪 Audioguy Studio (23 Hyoja-ro, Jongno-gu, Seoul)'
-                    : '🎪 오디오가이 스튜디오 (서울시 종로구 효자로 23)'}
+                <li className="inline-flex items-center gap-2">
+                  <Music aria-hidden="true" className="h-4 w-4 text-charcoal-muted shrink-0" />
+                  <span>
+                    {isEnglish
+                      ? 'Audioguy Studio (23 Hyoja-ro, Jongno-gu, Seoul)'
+                      : '오디오가이 스튜디오 (서울시 종로구 효자로 23)'}
+                  </span>
                 </li>
-                <li>
-                  {isEnglish
-                    ? '🎨 Indiepress Gallery (31 Hyoja-ro, Jongno-gu, Seoul)'
-                    : '🎨 인디프레스 갤러리 (서울시 종로구 효자로 31)'}
+                <li className="inline-flex items-center gap-2">
+                  <Palette aria-hidden="true" className="h-4 w-4 text-charcoal-muted shrink-0" />
+                  <span>
+                    {isEnglish
+                      ? 'Indiepress Gallery (31 Hyoja-ro, Jongno-gu, Seoul)'
+                      : '인디프레스 갤러리 (서울시 종로구 효자로 31)'}
+                  </span>
                 </li>
               </ul>
             </div>
             <div>
-              <h4 className="text-card-title mb-4">
-                {isEnglish ? '⏰ Performance Schedule' : '⏰ 공연 일정'}
+              <h4 className="text-card-title mb-4 inline-flex items-center gap-2">
+                <Clock aria-hidden="true" className="h-5 w-5 text-charcoal-muted" />
+                {isEnglish ? 'Performance Schedule' : '공연 일정'}
               </h4>
               <ul className="space-y-2 text-charcoal-muted text-sm">
                 <li>
@@ -261,7 +272,7 @@ export default async function Archive2023Page() {
       <Section variant="gray" prevVariant="canvas">
         <div className="container-max">
           <SectionTitle className="mb-12">
-            {isEnglish ? '🎨 2023 Featured Works' : '🎨 2023년 출품작'}
+            {isEnglish ? '2023 Featured Works' : '2023년 출품작'}
           </SectionTitle>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {saf2023Artworks.map((artwork, index) => {
@@ -302,7 +313,10 @@ export default async function Archive2023Page() {
       <Section variant="white" prevVariant="gray">
         <div className="container-max">
           <SectionTitle className="mb-12">
-            {isEnglish ? '📸 SAF 2023 On-site Moments' : '📸 씨앗페 2023 현장'}
+            <span className="inline-flex items-center gap-2">
+              <Camera aria-hidden="true" className="h-6 w-6 text-charcoal-muted" />
+              {isEnglish ? 'SAF 2023 On-site Moments' : '씨앗페 2023 현장'}
+            </span>
           </SectionTitle>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {saf2023Photos.map((photo) => (
@@ -332,7 +346,10 @@ export default async function Archive2023Page() {
       <Section variant="primary-surface" prevVariant="white">
         <div className="container-max">
           <SectionTitle className="mb-12">
-            {isEnglish ? '📹 Video Archive' : '📹 영상 아카이브'}
+            <span className="inline-flex items-center gap-2">
+              <Video aria-hidden="true" className="h-6 w-6 text-charcoal-muted" />
+              {isEnglish ? 'Video Archive' : '영상 아카이브'}
+            </span>
           </SectionTitle>
           <p className="mb-8 text-sm text-charcoal-muted">
             {isEnglish
@@ -363,7 +380,8 @@ export default async function Archive2023Page() {
                     {video.transcript && !isEnglish && (
                       <div className="mt-4 p-4 bg-primary/5 rounded-lg border-l-4 border-primary/30">
                         <h4 className="flex items-center gap-2 text-xs font-bold text-primary mb-2 uppercase tracking-wider">
-                          🎞️ 영상 기록 요약
+                          <Film aria-hidden="true" className="h-3.5 w-3.5" />
+                          영상 기록 요약
                         </h4>
                         <p className="text-xs md:text-sm text-charcoal leading-relaxed">
                           {video.transcript}
@@ -396,8 +414,8 @@ export default async function Archive2023Page() {
           <CTAButtonGroup
             variant="large"
             className="justify-center"
-            donateText={isEnglish ? '🤝 Join the Co-op' : undefined}
-            purchaseText={isEnglish ? '🎨 Browse Artworks' : undefined}
+            donateText={isEnglish ? 'Join the Co-op' : undefined}
+            purchaseText={isEnglish ? 'Browse Artworks' : undefined}
           />
         </div>
       </Section>

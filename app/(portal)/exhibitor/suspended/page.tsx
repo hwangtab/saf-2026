@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+import { Ban } from 'lucide-react';
 import { SignOutButton } from '@/components/auth/SignOutButton';
 import FeedbackButton from '@/components/feedback/FeedbackButton';
 import { requireAuth } from '@/lib/auth/guards';
@@ -45,7 +46,7 @@ export default async function ExhibitorSuspendedPage() {
       <div className="max-w-md w-full space-y-8 text-center bg-white p-10 rounded-2xl shadow-sm border border-danger/20">
         <div>
           <h2 className="mt-6 text-3xl font-black text-danger-a11y">{t('title')}</h2>
-          <div className="mt-4 text-5xl">🚫</div>
+          <Ban aria-hidden="true" className="mx-auto mt-4 h-12 w-12 text-danger-a11y" />
           <p className="mt-6 text-sm text-charcoal-muted leading-relaxed">
             {t('description')}
             <br />

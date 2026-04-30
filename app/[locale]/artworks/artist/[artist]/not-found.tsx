@@ -1,4 +1,5 @@
 import { getTranslations, getLocale } from 'next-intl/server';
+import { Palette } from 'lucide-react';
 import LinkButton from '@/components/ui/LinkButton';
 import ScrollToTopOnMount from '@/components/common/ScrollToTopOnMount';
 import type { Metadata } from 'next';
@@ -18,9 +19,7 @@ export default async function ArtistNotFound() {
     <div className="flex min-h-screen items-center justify-center bg-canvas-soft pt-20">
       <ScrollToTopOnMount />
       <div className="max-w-md px-6 text-center">
-        <div className="mb-6 text-6xl" aria-hidden="true">
-          🎨
-        </div>
+        <Palette aria-hidden="true" className="mx-auto h-16 w-16 text-charcoal-muted mb-6" />
         <h1 className="mb-4 text-2xl font-bold text-charcoal">{t('artistTitle')}</h1>
         <p className="mb-8 leading-relaxed text-charcoal-muted">{t('artistDescription')}</p>
         <LinkButton href="/artworks" variant="primary">
