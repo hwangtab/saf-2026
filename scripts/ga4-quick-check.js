@@ -2,37 +2,71 @@
 /**
  * GA4 빠른 점검 — web_vitals 이벤트 발생 자체 확인.
  * Custom dimension 미등록 상태에서도 동작.
+ *
+ * 인증 우선순위:
+ *  1. GA4_SERVICE_ACCOUNT_JSON env (JSON 문자열) — GitHub Actions 등 CI 환경용
+ *  2. GA4_ACCESS_TOKEN env (OAuth Playground access_token) — 로컬 빠른 점검용 (1시간 만료)
+ *  3. GA4_CREDENTIALS env (서비스 계정 JSON 파일 경로) — 로컬 SA fallback
  */
 
 const path = require('path');
 const fs = require('fs');
 
 const envPath = path.join(__dirname, '..', '.env.local');
-fs.readFileSync(envPath, 'utf8')
-  .split('\n')
-  .forEach((line) => {
-    const m = line.match(/^([^#=]+)=(.*)$/);
-    if (m && !process.env[m[1].trim()]) {
-      process.env[m[1].trim()] = m[2].trim().replace(/^["']|["']$/g, '');
-    }
-  });
+if (fs.existsSync(envPath)) {
+  fs.readFileSync(envPath, 'utf8')
+    .split('\n')
+    .forEach((line) => {
+      const m = line.match(/^([^#=]+)=(.*)$/);
+      if (m && !process.env[m[1].trim()]) {
+        process.env[m[1].trim()] = m[2].trim().replace(/^["']|["']$/g, '');
+      }
+    });
+}
 
 const PROPERTY_ID = process.env.GA4_PROPERTY_ID;
-const ACCESS_TOKEN = process.env.GA4_ACCESS_TOKEN;
-const API_URL = `https://analyticsdata.googleapis.com/v1beta/properties/${PROPERTY_ID}:runReport`;
 
-async function runReport(body) {
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${ACCESS_TOKEN}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(body),
+if (!PROPERTY_ID) {
+  console.error('❌ GA4_PROPERTY_ID 미설정');
+  process.exit(1);
+}
+
+let runReport;
+
+if (process.env.GA4_SERVICE_ACCOUNT_JSON) {
+  const { BetaAnalyticsDataClient } = require('@google-analytics/data');
+  const client = new BetaAnalyticsDataClient({
+    credentials: JSON.parse(process.env.GA4_SERVICE_ACCOUNT_JSON),
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(`API ${res.status}: ${JSON.stringify(data)}`);
-  return data;
+  runReport = async (body) => {
+    const [data] = await client.runReport({ property: `properties/${PROPERTY_ID}`, ...body });
+    return data;
+  };
+} else if (process.env.GA4_ACCESS_TOKEN) {
+  const API_URL = `https://analyticsdata.googleapis.com/v1beta/properties/${PROPERTY_ID}:runReport`;
+  runReport = async (body) => {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.GA4_ACCESS_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(`API ${res.status}: ${JSON.stringify(data)}`);
+    return data;
+  };
+} else if (process.env.GA4_CREDENTIALS) {
+  const { BetaAnalyticsDataClient } = require('@google-analytics/data');
+  const client = new BetaAnalyticsDataClient({ keyFilename: process.env.GA4_CREDENTIALS });
+  runReport = async (body) => {
+    const [data] = await client.runReport({ property: `properties/${PROPERTY_ID}`, ...body });
+    return data;
+  };
+} else {
+  console.error('❌ 인증 정보 없음: GA4_SERVICE_ACCOUNT_JSON / GA4_ACCESS_TOKEN / GA4_CREDENTIALS 중 하나 필요');
+  process.exit(1);
 }
 
 async function main() {
