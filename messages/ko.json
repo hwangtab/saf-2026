@@ -174,7 +174,19 @@
     "sectionPrint": "판화",
     "sectionPhotoMedia": "사진·미디어",
     "sectionSculpture": "입체·공예",
-    "statsTitle": "숫자로 보는 예술인 금융 현실"
+    "statsTitle": "숫자로 보는 예술인 금융 현실",
+    "nowShowing": {
+      "title": "이번 큐레이션 전시",
+      "subtitle": "시한성으로 열리는 특별 전시와 시민 행동",
+      "ohYoon40thStatus": "전시 중",
+      "ohYoon40thTitle": "오윤 40주기 특별전",
+      "ohYoon40thDesc": "1985년 〈칼노래〉부터 1996년 사후판화까지 — 작가의 정전을 한 자리에",
+      "ohYoon40thCta": "전시 보러 가기 →",
+      "parkSaenggwangStatus": "준비 중",
+      "parkSaenggwangTitle": "박생광 드로잉전",
+      "parkSaenggwangDesc": "오방색의 거장이 연필로 잡아둔 첫 호흡들 — 곧 공개됩니다",
+      "parkSaenggwangCta": "곧 공개"
+    }
   },
   "breadcrumbs": {
     "home": "홈",

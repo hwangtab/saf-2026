@@ -10,6 +10,7 @@ import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
 import HeroGalleryGrid from '@/components/features/HeroGalleryGrid';
+import NowShowing from '@/components/features/NowShowing';
 import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
 import { ARTIST_COUNT, ARTWORK_COUNT, LOAN_COUNT } from '@/lib/site-stats';
 import Badge from '@/components/ui/Badge';
@@ -103,6 +104,9 @@ export default async function Home() {
     <>
       {/* Gallery Wall Hero */}
       <HeroSection locale={locale} />
+
+      {/* Now Showing — 이번 호 머리기사 (시한성 큐레이션 전시·캠페인) */}
+      <NowShowing />
 
       {/* Mission Banner */}
       <Section variant="canvas" padding="sm">
