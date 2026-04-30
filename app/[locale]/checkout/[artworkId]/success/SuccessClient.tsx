@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import LinkButton from '@/components/ui/LinkButton';
+import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
 import { formatPriceForDisplay } from '@/lib/utils';
 import { formatUsd } from '@/lib/utils/currency';
 
@@ -121,7 +122,9 @@ export default function SuccessClient({ paymentKey, orderId, amount, currency, m
 
   if (state === 'error') {
     return (
-      <div className="min-h-screen bg-canvas-soft flex items-center justify-center pt-24 pb-16">
+      <div
+        className={`min-h-screen bg-canvas-soft flex items-center justify-center pt-24 ${SAWTOOTH_TOP_SAFE_PADDING}`}
+      >
         <div className="max-w-lg w-full mx-auto px-4 text-center">
           <div className="rounded-2xl border border-danger/20 bg-white p-10 shadow-sm">
             <p className="text-4xl mb-4">!</p>
@@ -139,7 +142,9 @@ export default function SuccessClient({ paymentKey, orderId, amount, currency, m
   // 무통장 계좌이체 — 우리 계좌번호 안내 (NH 농협 / 한국스마트협동조합)
   if (state === 'bank_transfer') {
     return (
-      <div className="min-h-screen bg-canvas-soft flex items-center justify-center pt-24 pb-16">
+      <div
+        className={`min-h-screen bg-canvas-soft flex items-center justify-center pt-24 ${SAWTOOTH_TOP_SAFE_PADDING}`}
+      >
         <div className="max-w-lg w-full mx-auto px-4">
           <div className="rounded-2xl border border-gray-200 bg-white p-10 shadow-sm text-center">
             <p className="text-4xl mb-4">🏦</p>
@@ -194,7 +199,9 @@ export default function SuccessClient({ paymentKey, orderId, amount, currency, m
 
   if (state === 'virtual' && virtualAccount) {
     return (
-      <div className="min-h-screen bg-canvas-soft flex items-center justify-center pt-24 pb-16">
+      <div
+        className={`min-h-screen bg-canvas-soft flex items-center justify-center pt-24 ${SAWTOOTH_TOP_SAFE_PADDING}`}
+      >
         <div className="max-w-lg w-full mx-auto px-4">
           <div className="rounded-2xl border border-gray-200 bg-white p-10 shadow-sm text-center">
             <p className="text-4xl mb-4">🏦</p>
@@ -242,7 +249,9 @@ export default function SuccessClient({ paymentKey, orderId, amount, currency, m
 
   // Success
   return (
-    <div className="min-h-screen bg-canvas-soft flex items-center justify-center pt-24 pb-16">
+    <div
+      className={`min-h-screen bg-canvas-soft flex items-center justify-center pt-24 ${SAWTOOTH_TOP_SAFE_PADDING}`}
+    >
       <div className="max-w-lg w-full mx-auto px-4">
         <div className="rounded-2xl border border-gray-200 bg-white p-10 shadow-sm text-center">
           <p className="text-5xl mb-4">✓</p>

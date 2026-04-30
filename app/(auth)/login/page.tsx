@@ -17,6 +17,7 @@ import { useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
+import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
 
 const LOGIN_COPY = {
   ko: {
@@ -298,7 +299,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-canvas-soft flex flex-col justify-center pt-20 pb-12 sm:px-6 lg:px-8">
+    <div
+      className={`min-h-screen bg-canvas-soft flex flex-col justify-center pt-20 ${SAWTOOTH_TOP_SAFE_PADDING} sm:px-6 lg:px-8`}
+    >
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-black text-gray-900">
           SAF Online
