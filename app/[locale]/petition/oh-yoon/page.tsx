@@ -594,6 +594,10 @@ export default async function PetitionOhYoonPage() {
               </div>
             </div>
           </article>
+
+          <p className="mt-10 md:mt-12 text-sm text-charcoal-muted text-center break-keep italic">
+            {t('tributeClosingNote')}
+          </p>
         </div>
       </Section>
     </main>
