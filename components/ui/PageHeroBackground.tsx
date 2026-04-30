@@ -38,10 +38,7 @@ export default function PageHeroBackground({ customImage }: PageHeroBackgroundPr
 
   return (
     <div className="absolute inset-0">
-      <div
-        className="absolute inset-0 animate-hero-breathing motion-reduce:!animate-none motion-reduce:!scale-100 motion-reduce:!transition-none"
-        style={{ opacity: 1 }}
-      >
+      <div className="absolute inset-0 animate-hero-breathing motion-reduce:!animate-none motion-reduce:!scale-100 motion-reduce:!transition-none">
         <picture>
           <source media="(min-width: 768px)" srcSet={`${desktop1x} 1x, ${desktop2x} 2x`} />
           {}

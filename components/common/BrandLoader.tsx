@@ -13,7 +13,7 @@ export default function BrandLoader({ minHeight = '80vh' }: BrandLoaderProps) {
       role="status"
     >
       {/* 로고 */}
-      <div className="animate-fade-in opacity-0" style={{ animationFillMode: 'forwards' }}>
+      <div className="animate-fade-in opacity-0">
         <SafeImage
           src="/images/logo/320pxX90px_white.webp"
           alt="씨앗페 온라인 – SAF Online"
@@ -26,10 +26,7 @@ export default function BrandLoader({ minHeight = '80vh' }: BrandLoaderProps) {
       </div>
 
       {/* 로딩 dot */}
-      <div
-        className="mt-6 flex items-center gap-2 animate-fade-in opacity-0"
-        style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}
-      >
+      <div className="mt-6 flex items-center gap-2 animate-fade-in opacity-0 [animation-delay:0.2s]">
         {[0, 0.15, 0.3].map((delay, i) => (
           <span
             key={i}

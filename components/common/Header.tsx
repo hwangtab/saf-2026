@@ -43,12 +43,10 @@ function PublicHeader() {
       className={clsx(
         'fixed top-0 left-0 right-0 isolate transition-[background-color,border-color,backdrop-filter] duration-200',
         'pt-[env(safe-area-inset-top,0px)]',
+        '[will-change:background-color,border-color]',
         headerStyle
       )}
-      style={{
-        zIndex: Z_INDEX.HEADER,
-        willChange: 'background-color, border-color',
-      }}
+      style={{ zIndex: Z_INDEX.HEADER }}
     >
       {/* transparent(hero) 모드 전용 fade — 흰글씨가 어떤 페이지 배경 위에서도 가독성 보장.
           solid 모드에선 opacity-0 + 헤더 자체 bg-white/80가 위에 깔려 자연스럽게 사라짐.

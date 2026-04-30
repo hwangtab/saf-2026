@@ -140,8 +140,7 @@ interface ToastContainerProps {
 export function ToastContainer({ toasts, onDismiss }: ToastContainerProps) {
   return (
     <div
-      className="fixed top-4 right-4 z-[9999] flex flex-col gap-2"
-      style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
+      className="fixed top-4 right-4 z-[9999] flex flex-col gap-2 pt-[env(safe-area-inset-top,0px)]"
       aria-live="polite"
     >
       {toasts.map((toast) => (

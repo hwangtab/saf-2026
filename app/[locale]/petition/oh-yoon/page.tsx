@@ -145,8 +145,7 @@ export default async function PetitionOhYoonPage() {
           </p>
           <h1
             id="petition-hero-title"
-            className="font-display font-black text-4xl md:text-6xl leading-tight mb-4 break-keep"
-            style={{ textShadow: '0 2px 18px rgba(0,0,0,0.65)' }}
+            className="font-display font-black text-4xl md:text-6xl leading-tight mb-4 break-keep [text-shadow:0_2px_18px_rgba(0,0,0,0.65)]"
           >
             {t('heroTitle')
               .split('\n')

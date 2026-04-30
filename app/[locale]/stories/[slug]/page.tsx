@@ -244,25 +244,16 @@ export default async function StoryDetailPage({ params }: Props) {
       <Section variant="white">
         <article className="max-w-3xl mx-auto">
           {excerpt && (
-            <p
-              className="text-xl md:text-2xl text-charcoal-muted leading-relaxed mb-10 border-l-4 border-primary pl-6 motion-safe:opacity-0 motion-safe:animate-fade-in-up"
-              style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}
-            >
+            <p className="text-xl md:text-2xl text-charcoal-muted leading-relaxed mb-10 border-l-4 border-primary pl-6 motion-safe:opacity-0 motion-safe:animate-fade-in-up [animation-delay:0.1s]">
               {excerpt}
             </p>
           )}
 
-          <div
-            className="motion-safe:opacity-0 motion-safe:animate-fade-in-up"
-            style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}
-          >
+          <div className="motion-safe:opacity-0 motion-safe:animate-fade-in-up [animation-delay:0.2s]">
             <MarkdownRenderer content={body} />
           </div>
 
-          <div
-            className="mt-10 text-lg font-semibold tracking-tight text-primary motion-safe:opacity-0 motion-safe:animate-fade-in-up"
-            style={{ animationDelay: '0.25s', animationFillMode: 'forwards' }}
-          >
+          <div className="mt-10 text-lg font-semibold tracking-tight text-primary motion-safe:opacity-0 motion-safe:animate-fade-in-up [animation-delay:0.25s]">
             {footerLinks.map((link, index) => (
               <span key={link.href}>
                 {index > 0 ? ' · ' : ''}
