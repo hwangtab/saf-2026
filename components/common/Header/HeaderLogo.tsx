@@ -1,7 +1,7 @@
 'use client';
 
 import { Link } from '@/i18n/navigation';
-import Image from 'next/image';
+import SafeImage from '@/components/common/SafeImage';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 
@@ -18,7 +18,7 @@ export default function HeaderLogo({ isDarkText }: HeaderLogoProps) {
       className="flex items-center gap-2 hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded"
     >
       <div className="relative h-9 w-40">
-        <Image
+        <SafeImage
           src="/images/logo/320pxX90px.webp"
           alt={tA11y('logoAlt')}
           width={160}
@@ -29,7 +29,7 @@ export default function HeaderLogo({ isDarkText }: HeaderLogoProps) {
           )}
           priority
         />
-        <Image
+        <SafeImage
           src="/images/logo/320pxX90px_white.webp"
           alt=""
           aria-hidden="true"

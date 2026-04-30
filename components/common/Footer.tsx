@@ -1,6 +1,6 @@
 import { getLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
-import Image from 'next/image';
+import SafeImage from '@/components/common/SafeImage';
 import { SOCIAL_LINKS, CONTACT, EXTERNAL_LINKS } from '@/lib/constants';
 import FooterSliderWrapper from '@/components/common/FooterSliderWrapper';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
@@ -24,7 +24,7 @@ export default async function Footer() {
               {/* Organization Info with Logo */}
               <div>
                 <Link href="/" className="flex items-start gap-3 mb-6 inline-flex">
-                  <Image
+                  <SafeImage
                     src="/images/logo/320pxX90px_feet.webp"
                     alt={tA11y('logoAlt')}
                     width={200}

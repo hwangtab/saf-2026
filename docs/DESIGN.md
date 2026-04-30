@@ -246,14 +246,14 @@ Tailwind weight ↔ Noto Sans KR 호출:
 
 - 색은 항상 `BRAND_COLORS` 토큰 사용 (`text-charcoal-deep`, `bg-canvas-soft`, `text-primary-strong`)
 - 사용자 노출 텍스트는 next-intl 메시지로 (`messages/ko.json` + `useTranslations`)
-- 이미지: 로컬은 `next-image-export-optimizer`, Supabase는 `SafeImage`
+- 이미지: **모두 `SafeImage`로 통일** (`@/components/common/SafeImage`). Vercel Image Optimization 기반으로 Supabase URL 자동 정규화 + onError 1x1 투명 fallback 포함
 - 한국어는 `text-balance` + `keep-all` 활용 — 어색한 줄바꿈 방지
 - 새 hero 페이지 추가 시 [lib/hero-routes.ts](../lib/hero-routes.ts)에 등록
 
 ### ❌ Don't
 
 - `slate-*`, `indigo-*`, `blue-*`, `red-*`, `green-*`, `amber-*`, `sky-*`, `teal-*`, `orange-*` Tailwind 기본 팔레트
-- `import Image from 'next/image'` 직접 사용 (정적 export 깨짐)
+- `import Image from 'next/image'` 직접 사용 — 대신 `SafeImage` 사용 (Supabase URL 정규화·onError fallback 미동작 방지). 단 `SafeImage` 자체 구현체는 예외
 - 배지·상태 라벨에 한글 리터럴 박기 (`"예약중"`, `"SOLD"` 직박 금지)
 - `pathname.startsWith('/foo')` 하드코딩 (대신 `isHeroRoute(pathname)`)
 - `pb-12` 같은 짧은 하단 패딩 (SawtoothDivider에 묻힘)

@@ -166,10 +166,13 @@ types/
 
 **Responsive Design**: Mobile-first with breakpoints at `sm` (640px), `md` (768px), `lg` (1024px - mobile/desktop nav switch), `xl` (1280px).
 
-**Image Components**: This project uses `next-image-export-optimizer` for static export. **Never use `import Image from 'next/image'` directly** — it breaks the static export build.
+**Image Components**: 모든 이미지는 **`SafeImage`로 통일** (`import SafeImage from '@/components/common/SafeImage'`). Vercel Image Optimization 기반 next/image wrapper로 다음을 추가 제공:
 
-- Local images (`public/` directory): `import ExportedImage from 'next-image-export-optimizer'`
-- Remote artwork images (Supabase storage URLs): `import SafeImage from '@/components/common/SafeImage'`
+- Supabase Storage render endpoint URL을 raw object URL로 자동 변환 (Vercel Edge가 자체 변환·캐시)
+- onError 시 1x1 투명 PNG fallback (깨진 이미지 아이콘 방지)
+- production에서 alt 누락 경고
+
+`import Image from 'next/image'` 직접 사용 금지 (SafeImage 자체 구현체만 예외). `output: 'export'`는 Server Actions·Middleware 지원 위해 비활성화 상태 — 정적 export 가이드(`next-image-export-optimizer`/`ExportedImage`)는 폐기.
 
 **Sawtooth Divider 여백 규칙**: Footer와 FooterSlider 상단에는 `SawtoothDivider position="top"`이 있고, 이 톱니는 `-translate-y-full`로 **위 섹션의 마지막 24~40px를 덮어씁니다**. 따라서 Footer 위에 렌더되는 페이지 최상위 컨테이너(특히 `min-h-screen` 래퍼)는 반드시 충분한 하단 패딩을 가져야 함.
 

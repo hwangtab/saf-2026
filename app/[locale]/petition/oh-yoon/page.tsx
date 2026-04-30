@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import Image from 'next/image';
+import SafeImage from '@/components/common/SafeImage';
 import { getLocale, getTranslations } from 'next-intl/server';
 
 import PaperGrain from '@/components/common/PaperGrain';
@@ -128,7 +128,7 @@ export default async function PetitionOhYoonPage() {
       >
         {/* 작품 사진 배경 (mural-2: 인체 부조 정면) */}
         <div aria-hidden="true" className="absolute inset-0 -z-10">
-          <Image
+          <SafeImage
             src="/images/petition-oh-yoon/mural-2.png"
             alt=""
             fill
@@ -198,7 +198,7 @@ export default async function PetitionOhYoonPage() {
               <div className="grid gap-5 md:grid-cols-[auto_1fr] md:items-center md:gap-8">
                 <figure className="flex flex-col items-center md:items-start">
                   <div className="w-28 h-28 md:w-32 md:h-32 overflow-hidden rounded-full border-4 border-white shadow-md">
-                    <Image
+                    <SafeImage
                       src="/images/ohyoon.webp"
                       alt={t('storyPortraitAlt')}
                       width={256}
@@ -241,7 +241,7 @@ export default async function PetitionOhYoonPage() {
           {/* 작품 사진 3장 — 인체 부조 면(2장) + 반대 V자 부조 면(1장) */}
           <figure className="mt-10 grid gap-3 md:grid-cols-3">
             <div className="relative aspect-square overflow-hidden rounded-lg bg-charcoal-deep">
-              <Image
+              <SafeImage
                 src="/images/petition-oh-yoon/mural-1.png"
                 alt={t('muralAltFront')}
                 fill
@@ -250,7 +250,7 @@ export default async function PetitionOhYoonPage() {
               />
             </div>
             <div className="relative aspect-square overflow-hidden rounded-lg bg-charcoal-deep">
-              <Image
+              <SafeImage
                 src="/images/petition-oh-yoon/mural-2.png"
                 alt={t('muralAltDetail')}
                 fill
@@ -259,7 +259,7 @@ export default async function PetitionOhYoonPage() {
               />
             </div>
             <div className="relative aspect-square overflow-hidden rounded-lg bg-charcoal-deep">
-              <Image
+              <SafeImage
                 src="/images/petition-oh-yoon/mural-3.png"
                 alt={t('muralAltBack')}
                 fill
@@ -461,7 +461,7 @@ export default async function PetitionOhYoonPage() {
           <article className="mt-12 overflow-hidden rounded-2xl bg-white border-2 border-charcoal shadow-[6px_6px_0px_0px_rgba(31,36,40,0.3)]">
             <div className="md:grid md:grid-cols-[220px_1fr]">
               <div className="relative aspect-[4/5] md:aspect-auto md:h-full bg-charcoal-deep">
-                <Image
+                <SafeImage
                   src="/images/ohyoon.webp"
                   alt={t('exhibitionCardImageAlt')}
                   fill
