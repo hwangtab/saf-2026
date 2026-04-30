@@ -253,10 +253,11 @@ export default async function Home() {
 
 async function HeroSection({ locale }: { locale: 'ko' | 'en' }) {
   const t = await getTranslations('home');
-  const artworks = await getSupabaseHomepageArtworks(16);
+  // 4점 화보 — 매거진 표지 톤. 16점 카탈로그는 카테고리 섹션 + /artworks에서 노출
+  const artworks = await getSupabaseHomepageArtworks(4);
   const homepageUrl = buildLocaleUrl('/', locale);
   // 홈페이지 추천 작품 ItemList — @id를 홈 URL 기반으로 설정 (/artworks ItemList와 충돌 방지)
-  const featuredListSchema = generateArtworkListSchema(artworks, locale, 16, homepageUrl);
+  const featuredListSchema = generateArtworkListSchema(artworks, locale, 4, homepageUrl);
   // AggregateOffer — 브랜드 검색 시 가격 범위 리치 스니펫 노출
   const aggregateOfferSchema = generateGalleryAggregateOffer(artworks, locale, homepageUrl);
 
@@ -264,19 +265,19 @@ async function HeroSection({ locale }: { locale: 'ko' | 'en' }) {
     <>
       <JsonLdScript data={featuredListSchema} />
       {aggregateOfferSchema && <JsonLdScript data={aggregateOfferSchema} />}
-      <section className="relative overflow-hidden bg-charcoal-deep">
+      <section className="relative min-h-[75vh] flex items-center overflow-hidden bg-charcoal-deep">
         <SawtoothDivider position="bottom" colorClass="text-canvas-soft" />
-        <div className="relative z-10 container-max pt-16 pb-24 md:pt-20 md:pb-32">
+        <div className="relative z-10 container-max w-full pt-16 pb-24 md:pt-20 md:pb-32">
           {/* Title */}
-          <div className="mb-8 text-center">
+          <div className="mb-10 md:mb-12 text-center">
             <h1
-              className="font-display font-black text-3xl sm:text-4xl md:text-5xl text-white mb-3 leading-tight drop-shadow-lg motion-safe:opacity-0 motion-safe:animate-fade-in-up"
+              className="text-hero text-white mb-4 drop-shadow-lg motion-safe:opacity-0 motion-safe:animate-fade-in-up"
               style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}
             >
               {t('heroGalleryTitle')}
             </h1>
             <p
-              className="text-white/70 text-sm md:text-base motion-safe:opacity-0 motion-safe:animate-fade-in-up"
+              className="text-body-large text-white/70 motion-safe:opacity-0 motion-safe:animate-fade-in-up"
               style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}
             >
               {t('heroGallerySubtitle', { artistCount: ARTIST_COUNT })}
@@ -284,7 +285,7 @@ async function HeroSection({ locale }: { locale: 'ko' | 'en' }) {
 
             {/* Always-available badge */}
             <div
-              className="mt-4 flex justify-center motion-safe:opacity-0 motion-safe:animate-fade-in-up"
+              className="mt-5 flex justify-center motion-safe:opacity-0 motion-safe:animate-fade-in-up"
               style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}
             >
               <Badge className="gap-2 bg-white/15 backdrop-blur-sm border-white/20 text-white font-medium px-4 py-1.5">
@@ -297,7 +298,7 @@ async function HeroSection({ locale }: { locale: 'ko' | 'en' }) {
             </div>
           </div>
 
-          {/* Gallery Grid */}
+          {/* Gallery Grid — 4점 화보 (모바일 2x2, 데스크톱 1x4) */}
           <div
             className="motion-safe:opacity-0 motion-safe:animate-fade-in-up"
             style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}
@@ -307,7 +308,7 @@ async function HeroSection({ locale }: { locale: 'ko' | 'en' }) {
 
           {/* CTA */}
           <div
-            className="mt-8 flex flex-col sm:flex-row gap-4 justify-center motion-safe:opacity-0 motion-safe:animate-fade-in-up"
+            className="mt-10 md:mt-12 flex flex-col sm:flex-row gap-4 justify-center motion-safe:opacity-0 motion-safe:animate-fade-in-up"
             style={{ animationDelay: '0.5s', animationFillMode: 'forwards' }}
           >
             <LinkButton
