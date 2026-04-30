@@ -28,8 +28,9 @@ export const NOW_SHOWING: NowShowingItem[] = [
     slug: 'all-artworks',
     i18nKey: 'allArtworks',
     href: '/artworks',
+    // 강석태 「부드러운 바람이 불던 날」 (id 82) — SAF 인기 라인업 비주얼
     imageUrl:
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4c71ed18-bbba-4068-97b8-52124b8e4a20/36__original.webp',
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/82__original.webp',
     startDate: '2026-01-01',
     status: 'on',
   },
