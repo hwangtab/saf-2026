@@ -45,7 +45,8 @@ export const NOW_SHOWING: NowShowingItem[] = [
   {
     slug: 'park-saenggwang-drawings',
     i18nKey: 'parkSaenggwang',
-    href: null,
+    // 드로잉전 페이지 준비 중 — 작가 페이지로 임시 진입 (작품 미리 보기)
+    href: '/artworks/artist/박생광',
     imageUrl:
       'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/273__original.webp',
     startDate: '2026-08-01',

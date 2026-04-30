@@ -183,7 +183,7 @@
       "goToSlide": "{n}번 슬라이드로 이동",
       "allArtworksStatus": "구매 가능",
       "allArtworksTitle": "한국 현대미술 작품",
-      "allArtworksDesc": "100여 명 한국 작가의 회화·판화·사진·조각 원본을 합리적 가격에",
+      "allArtworksDesc": "{artistCount}명 한국 작가의 회화·판화·사진·조각 원본을 합리적 가격에",
       "allArtworksCta": "전체 작품 보기 →",
       "ohYoon40thStatus": "전시 중",
       "ohYoon40thTitle": "오윤 40주기 특별전",
@@ -191,8 +191,8 @@
       "ohYoon40thCta": "전시 보러 가기 →",
       "parkSaenggwangStatus": "준비 중",
       "parkSaenggwangTitle": "박생광 드로잉전",
-      "parkSaenggwangDesc": "오방색의 거장이 연필로 잡아둔 첫 호흡들 — 곧 공개됩니다",
-      "parkSaenggwangCta": "곧 공개"
+      "parkSaenggwangDesc": "오방색의 거장이 연필로 잡아둔 첫 호흡들 — 작가의 작품을 먼저 만나보세요",
+      "parkSaenggwangCta": "작가의 작품 보기 →"
     }
   },
   "breadcrumbs": {

@@ -183,7 +183,7 @@
       "goToSlide": "Go to slide {n}",
       "allArtworksStatus": "Shop now",
       "allArtworksTitle": "Contemporary Korean Art",
-      "allArtworksDesc": "Original paintings, prints, photography, and sculpture by 100+ Korean artists at accessible prices",
+      "allArtworksDesc": "Original paintings, prints, photography, and sculpture by {artistCount} Korean artists at accessible prices",
       "allArtworksCta": "Browse all artworks →",
       "ohYoon40thStatus": "On view",
       "ohYoon40thTitle": "Oh Yoon — 40th Anniversary Exhibition",
@@ -191,8 +191,8 @@
       "ohYoon40thCta": "View the exhibition →",
       "parkSaenggwangStatus": "Coming soon",
       "parkSaenggwangTitle": "Park Saeng-gwang Drawings",
-      "parkSaenggwangDesc": "First breaths the master of five colors held in pencil — opening soon.",
-      "parkSaenggwangCta": "Coming soon"
+      "parkSaenggwangDesc": "First breaths the master of five colors held in pencil — meet the artist's works first.",
+      "parkSaenggwangCta": "View the artist's works →"
     }
   },
   "breadcrumbs": {

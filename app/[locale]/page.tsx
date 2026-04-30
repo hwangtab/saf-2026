@@ -256,7 +256,8 @@ async function HeroSpotlightSection() {
     state: item.status,
     status: t(`${item.i18nKey}Status` as 'allArtworksStatus'),
     title: t(`${item.i18nKey}Title` as 'allArtworksTitle'),
-    desc: t(`${item.i18nKey}Desc` as 'allArtworksDesc'),
+    // {artistCount} 자리표시자가 있는 키만 실제 사용. 다른 키는 변수 무시됨
+    desc: t(`${item.i18nKey}Desc` as 'allArtworksDesc', { artistCount: ARTIST_COUNT }),
     cta: t(`${item.i18nKey}Cta` as 'allArtworksCta'),
   }));
 
