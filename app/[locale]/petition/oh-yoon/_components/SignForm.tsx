@@ -16,22 +16,6 @@ const LABEL_BASE = 'block text-sm font-semibold text-charcoal-deep mb-1.5';
 
 const ERROR_TEXT = 'mt-1.5 text-sm text-danger';
 
-const PRIVACY_BLURB =
-  '수집 항목: 성함(주민등록상 이름), 이메일, 전화번호, 거주 지역. ' +
-  '이용 목적: 청원 집계, 차기 서울시장 후보 측 전달, 진행 상황 안내(이메일·전화). ' +
-  '보유 기간: 청원 종료 후 6개월. ' +
-  '수집 주체: 한국스마트협동조합 (예술인협동조합). 동의 거부 시 청원에 참여하실 수 없습니다.';
-
-const OVERSEAS_BLURB =
-  '본 사이트는 글로벌 클라우드 인프라로 운영되어, 서명 정보가 국외 서버를 거쳐 보관됩니다. ' +
-  '이전 받는 자: 호스팅(연산) — Vercel Inc.(미국), 저장(DB) — Supabase Inc.(미국 법인, 저장 리전: 인도 뭄바이). ' +
-  '이는 서버·DB의 단순 인프라 위탁이며 데이터를 외부에 판매하거나 제3자에게 제공하지 않습니다. ' +
-  '수집·이용·관리 책임은 한국스마트협동조합(예술인협동조합)에 있고, ' +
-  '이전 받는 자는 SOC 2·GDPR 등 국제 정보보호 표준 인증을 갖춘 사업자입니다. ' +
-  '이전 시점·방법: 서명 즉시 HTTPS 암호화 전송. ' +
-  '이전 항목·이용 목적·보유 기간은 위 「수집·이용」 동의 항목과 동일합니다(청원 종료 후 6개월 내 파기). ' +
-  '동의 거부 시 청원에 참여하실 수 없습니다.';
-
 export default function SignForm() {
   const t = useTranslations('petition.ohYoon');
 
@@ -58,15 +42,12 @@ export default function SignForm() {
         aria-live="polite"
       >
         <h3 className="font-display font-bold text-2xl text-charcoal-deep mb-2 break-keep">
-          서명해 주셔서 감사합니다.
+          {t('successTitle')}
         </h3>
-        <p className="text-base text-charcoal leading-relaxed mb-4 break-keep">
-          오윤의 작품을 시민의 품으로.
-          <br />이 청원을 다섯 분께만 더 전해 주시면 1만 명의 이름이 모입니다.
+        <p className="text-base text-charcoal leading-relaxed mb-4 break-keep whitespace-pre-line">
+          {t('successBody')}
         </p>
-        <p className="text-sm text-charcoal-muted">
-          입력하신 이메일로 영수증과 진행 상황 안내를 보내드립니다.
-        </p>
+        <p className="text-sm text-charcoal-muted">{t('successFooter')}</p>
       </div>
     );
   }
@@ -107,7 +88,8 @@ export default function SignForm() {
       {/* 성함 — 주민등록상 본명 (닉네임·별명은 청원 효력에 영향) */}
       <div>
         <label htmlFor="petition-full-name" className={LABEL_BASE}>
-          성함 <span className="text-charcoal-muted text-xs font-normal">(주민등록상 이름)</span>{' '}
+          {t('formNameLabel')}{' '}
+          <span className="text-charcoal-muted text-xs font-normal">{t('formNameHint')}</span>{' '}
           <span className="text-danger">*</span>
         </label>
         <input
@@ -118,7 +100,7 @@ export default function SignForm() {
           maxLength={100}
           required
           autoComplete="name"
-          placeholder="예: 홍길동"
+          placeholder={t('formNamePlaceholder')}
           className={INPUT_BASE}
         />
         {fieldError('fullName') && <p className={ERROR_TEXT}>{fieldError('fullName')}</p>}
@@ -127,7 +109,7 @@ export default function SignForm() {
       {/* 이메일 */}
       <div>
         <label htmlFor="petition-email" className={LABEL_BASE}>
-          이메일 <span className="text-danger">*</span>
+          {t('formEmailLabel')} <span className="text-danger">*</span>
         </label>
         <input
           id="petition-email"
@@ -140,16 +122,14 @@ export default function SignForm() {
           inputMode="email"
           className={INPUT_BASE}
         />
-        <p className="mt-1.5 text-xs text-charcoal-muted">
-          청원의 진행 상황과 결과를 이 메일로 정중히 알려드립니다.
-        </p>
+        <p className="mt-1.5 text-xs text-charcoal-muted">{t('formEmailHelp')}</p>
         {fieldError('email') && <p className={ERROR_TEXT}>{fieldError('email')}</p>}
       </div>
 
       {/* 전화번호 — 평문 저장(연락 목적). 형식 자유, 숫자 9~15자리 검증. */}
       <div>
         <label htmlFor="petition-phone" className={LABEL_BASE}>
-          전화번호 <span className="text-danger">*</span>
+          {t('formPhoneLabel')} <span className="text-danger">*</span>
         </label>
         <input
           id="petition-phone"
@@ -163,16 +143,14 @@ export default function SignForm() {
           placeholder="010-1234-5678"
           className={INPUT_BASE}
         />
-        <p className="mt-1.5 text-xs text-charcoal-muted">
-          이메일이 닿지 않거나, 언론 인터뷰·청원 전달식 등 시급한 연락이 필요할 때만 사용합니다.
-        </p>
+        <p className="mt-1.5 text-xs text-charcoal-muted">{t('formPhoneHelp')}</p>
         {fieldError('phone') && <p className={ERROR_TEXT}>{fieldError('phone')}</p>}
       </div>
 
       {/* 거주 지역 — 시·도 + 시·군·구 (시·군·구까지만; 상세 주소는 받지 않음) */}
       <div>
         <label htmlFor="petition-region-top" className={LABEL_BASE}>
-          거주 지역 <span className="text-danger">*</span>
+          {t('formRegionLabel')} <span className="text-danger">*</span>
         </label>
         <RegionSelect
           topValue={regionTop}
@@ -195,19 +173,19 @@ export default function SignForm() {
           className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
         />
         <label htmlFor="petition-committee" className="text-sm text-charcoal break-keep">
-          <span className="font-semibold">서명에 더해, 시민 추진위원으로도 참여합니다.</span>
+          <span className="font-semibold">{t('formCommitteeTitle')}</span>
           <br />
-          <span className="text-charcoal-muted">
-            추진위원회 발족 선언문에 이름이 함께 오릅니다. 별도의 시간 부담은 없습니다.
-          </span>
+          <span className="text-charcoal-muted">{t('formCommitteeHint')}</span>
         </label>
       </div>
 
       {/* 차기 서울시장께 한 마디 */}
       <div>
         <label htmlFor="petition-message" className={LABEL_BASE}>
-          차기 서울시장께 한 마디{' '}
-          <span className="text-charcoal-muted text-xs font-normal">(선택)</span>
+          {t('formMessageLabel')}{' '}
+          <span className="text-charcoal-muted text-xs font-normal">
+            {t('formMessageOptional')}
+          </span>
         </label>
         <textarea
           id="petition-message"
@@ -228,8 +206,7 @@ export default function SignForm() {
               className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
             />
             <label htmlFor="petition-message-public" className="text-xs text-charcoal break-keep">
-              이 메시지가 익명/실명 형태로 공개·발췌되는 데 동의합니다. 미동의 시 비공개 통계로만
-              사용됩니다.
+              {t('formMessagePublic')}
             </label>
           </div>
         )}
@@ -238,7 +215,9 @@ export default function SignForm() {
 
       {/* 동의 3종 */}
       <fieldset className="space-y-3 rounded-lg border border-gray-200 p-4">
-        <legend className="px-2 text-sm font-semibold text-charcoal-deep">필수 동의</legend>
+        <legend className="px-2 text-sm font-semibold text-charcoal-deep">
+          {t('formConsentTitle')}
+        </legend>
 
         <label className="flex items-start gap-3 text-sm text-charcoal break-keep cursor-pointer">
           <input
@@ -249,8 +228,7 @@ export default function SignForm() {
             required
           />
           <span>
-            <strong>[필수]</strong> 차기 서울시장께서 오윤의 1974년 구의동 벽화의 안전한
-            해체·보존·이관을 해결해 주십시오. — 위 청원에 동의하며 서명합니다.
+            <strong>{t('formConsentRequired')}</strong> {t('formConsentPetition')}
           </span>
         </label>
         {fieldError('agreedPetition') && (
@@ -266,8 +244,8 @@ export default function SignForm() {
             required
           />
           <span>
-            <strong>[필수]</strong> 개인정보 수집·이용에 동의합니다.{' '}
-            <span className="text-charcoal-muted">{PRIVACY_BLURB}</span>
+            <strong>{t('formConsentRequired')}</strong> {t('formConsentPrivacy')}{' '}
+            <span className="text-charcoal-muted">{t('formPrivacyBlurb')}</span>
           </span>
         </label>
         {fieldError('agreedPrivacy') && <p className={ERROR_TEXT}>{fieldError('agreedPrivacy')}</p>}
@@ -281,8 +259,8 @@ export default function SignForm() {
             required
           />
           <span>
-            <strong>[필수]</strong> 개인정보 국외 이전에 동의합니다.{' '}
-            <span className="text-charcoal-muted">{OVERSEAS_BLURB}</span>
+            <strong>{t('formConsentRequired')}</strong> {t('formConsentOverseas')}{' '}
+            <span className="text-charcoal-muted">{t('formOverseasBlurb')}</span>
           </span>
         </label>
         {fieldError('agreedOverseas') && (
@@ -305,12 +283,10 @@ export default function SignForm() {
         disabled={pending}
         className="w-full inline-flex items-center justify-center rounded-lg px-6 py-4 text-lg font-bold bg-primary hover:bg-primary-strong text-white transition-all hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
       >
-        {pending ? '제출 중…' : `${t('heroCta')} →`}
+        {pending ? t('formSubmitting') : `${t('heroCta')} →`}
       </button>
 
-      <p className="text-xs text-charcoal-muted text-center">
-        서명은 30초입니다. 입력하신 정보는 청원 운영에만 사용되며, 청원 종료 후 6개월 내 파기됩니다.
-      </p>
+      <p className="text-xs text-charcoal-muted text-center">{t('formFooter')}</p>
       <p className="text-[11px] text-charcoal-muted text-center">{t('formAgeNotice')}</p>
     </form>
   );

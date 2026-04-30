@@ -992,7 +992,32 @@
       "shareTemplateSnsLabel": "Twitter / Instagram / Facebook",
       "shareTemplateSns": "Oh Yoon's 1974 Guui-dong terracotta mural faces demolition after 50 years. Citizens petition Seoul's next mayor. Gathering 10,000 signatures by May 10. 30s sign → {url} #OhYoon #GuuiDongMural",
       "copyTemplate": "Copy",
-      "shareTemplateOpen": "Share"
+      "shareTemplateOpen": "Share",
+      "successTitle": "Thank you for signing.",
+      "successBody": "Bring Oh Yoon's work into citizens' hands.\nIf you forward this petition to just five more people, 10,000 names will gather.",
+      "successFooter": "We will send a receipt and progress updates to your email.",
+      "formNameLabel": "Name",
+      "formNameHint": "(legal name)",
+      "formNamePlaceholder": "e.g., Hong Gildong",
+      "formEmailLabel": "Email",
+      "formEmailHelp": "We will inform you of the petition's progress and outcome via this email.",
+      "formPhoneLabel": "Phone",
+      "formPhoneHelp": "Used only when email cannot reach you, or for urgent press interviews and petition delivery events.",
+      "formRegionLabel": "Region of residence",
+      "formCommitteeTitle": "I would also like to participate as a citizen committee member, beyond signing.",
+      "formCommitteeHint": "Your name will be listed in the committee's inaugural declaration. No additional time commitment required.",
+      "formMessageLabel": "A message to the next Seoul mayor",
+      "formMessageOptional": "(optional)",
+      "formMessagePublic": "I agree this message may be published or excerpted, anonymously or with my name. If not agreed, it will be used only in private statistics.",
+      "formConsentTitle": "Required consents",
+      "formConsentRequired": "[Required]",
+      "formConsentPetition": "Please ensure the safe removal, conservation, and public transfer of Oh Yoon's 1974 Guui-dong mural. — I agree with the above petition and sign it.",
+      "formConsentPrivacy": "I consent to the collection and use of personal data.",
+      "formPrivacyBlurb": "Items collected: name (legal name), email, phone, region of residence. Purpose: petition tally, transmission to next-mayor candidates, progress updates (email/phone). Retention: 6 months after petition closes. Collector: Korea Smart Cooperative (Artists' Cooperative). Refusal makes participation impossible.",
+      "formConsentOverseas": "I consent to overseas transfer of personal data.",
+      "formOverseasBlurb": "This site runs on global cloud infrastructure, so signature data is stored across overseas servers. Recipients: Hosting (compute) — Vercel Inc. (USA); Storage (DB) — Supabase Inc. (US entity, storage region: Mumbai, India). This is simple infrastructure outsourcing for server/DB; data is not sold or provided to third parties. Collection/use/management responsibility lies with Korea Smart Cooperative (Artists' Cooperative); recipients are certified by SOC 2 / GDPR international privacy standards. Transfer timing/method: HTTPS encryption immediately upon signing. Items, purpose, retention same as above 'Collection & Use' consent (disposed within 6 months of petition close). Refusal makes participation impossible.",
+      "formSubmitting": "Submitting…",
+      "formFooter": "Signing takes 30 seconds. Your information is used only for petition operations and disposed within 6 months of petition close."
     }
   }
 }
