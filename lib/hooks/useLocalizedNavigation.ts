@@ -22,11 +22,6 @@ export function useLocalizedNavigation(): NavigationItem[] {
           href: '/special/oh-yoon',
           description: t('ohYoonDesc'),
         },
-        {
-          name: t('ohYoonPetition'),
-          href: '/petition/oh-yoon',
-          description: t('ohYoonPetitionDesc'),
-        },
       ],
     },
     {
@@ -101,6 +96,12 @@ export function useLocalizedNavigation(): NavigationItem[] {
           description: t('archive2023Desc'),
         },
       ],
+    },
+    // 청원은 큐레이션 전시(/special)와는 다른 시민 행동 카테고리.
+    // 단독 메뉴로 분리해 정보 구조를 명확히 함.
+    {
+      name: t('petition'),
+      href: '/petition/oh-yoon',
     },
   ];
 }
