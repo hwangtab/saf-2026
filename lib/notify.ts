@@ -9,6 +9,7 @@
 import { render } from '@react-email/render';
 import * as React from 'react';
 
+import { BRAND_COLORS } from '@/lib/colors';
 import PaymentConfirmedEmail from '@/emails/payment-confirmed';
 import VirtualAccountIssuedEmail from '@/emails/virtual-account-issued';
 import DepositConfirmedEmail from '@/emails/deposit-confirmed';
@@ -30,10 +31,10 @@ export function extractBuyerLocale(metadata: unknown): EmailLocale {
 // Gallery 모노톤: warning은 charcoal-deep로 (노란/주황 대신).
 // payment/error는 의미적 색 보존 (성공 그린/에러 빨강은 universal).
 const LEVEL_CONFIG: Record<NotifyLevel, { emoji: string; color: string }> = {
-  payment: { emoji: '💳', color: '#1D7A5F' }, // success.a11y
-  warning: { emoji: '⚠️', color: '#1F2428' }, // charcoal.deep
-  error: { emoji: '🚨', color: '#B91C1C' }, // danger.a11y
-  info: { emoji: 'ℹ️', color: '#0E4ECF' }, // primary.strong
+  payment: { emoji: '💳', color: BRAND_COLORS.success.a11y },
+  warning: { emoji: '⚠️', color: BRAND_COLORS.charcoal.deep },
+  error: { emoji: '🚨', color: BRAND_COLORS.danger.a11y },
+  info: { emoji: 'ℹ️', color: BRAND_COLORS.primary.strong },
 };
 
 function escapeHtml(str: string): string {
@@ -79,8 +80,8 @@ export async function notifyEmail(
         .map(
           ([key, value]) => `
       <tr>
-        <td style="padding:6px 12px;font-weight:600;color:#555E67;white-space:nowrap;border-bottom:1px solid #E0E0E0;">${escapeHtml(key)}</td>
-        <td style="padding:6px 12px;color:#1F2428;border-bottom:1px solid #E0E0E0;">${escapeHtml(value)}</td>
+        <td style="padding:6px 12px;font-weight:600;color:${BRAND_COLORS.charcoal.muted};white-space:nowrap;border-bottom:1px solid ${BRAND_COLORS.gallery.hairline};">${escapeHtml(key)}</td>
+        <td style="padding:6px 12px;color:${BRAND_COLORS.charcoal.deep};border-bottom:1px solid ${BRAND_COLORS.gallery.hairline};">${escapeHtml(value)}</td>
       </tr>`
         )
         .join('')
@@ -89,10 +90,10 @@ export async function notifyEmail(
   const html = `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background:#FAFAFC;font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Segoe UI','Malgun Gothic','Noto Sans KR',sans-serif;">
-  <div style="max-width:520px;margin:32px auto;background:#FFFFFF;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+<body style="margin:0;padding:0;background:${BRAND_COLORS.canvas.DEFAULT};font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Segoe UI','Malgun Gothic','Noto Sans KR',sans-serif;">
+  <div style="max-width:520px;margin:32px auto;background:${BRAND_COLORS.gallery.canvas};border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
     <div style="background:${color};padding:16px 24px;">
-      <p style="margin:0;font-size:18px;font-weight:700;color:#FFFFFF;">${emoji} ${safeTitle}</p>
+      <p style="margin:0;font-size:18px;font-weight:700;color:${BRAND_COLORS.light};">${emoji} ${safeTitle}</p>
     </div>
     ${
       fieldsHtml
@@ -101,8 +102,8 @@ export async function notifyEmail(
       </table>`
         : ''
     }
-    <div style="padding:12px 24px;background:#FAFAFC;border-top:1px solid #E0E0E0;">
-      <p style="margin:0;font-size:12px;color:#8F98A5;">씨앗페 결제 시스템 • ${timestamp}</p>
+    <div style="padding:12px 24px;background:${BRAND_COLORS.canvas.DEFAULT};border-top:1px solid ${BRAND_COLORS.gallery.hairline};">
+      <p style="margin:0;font-size:12px;color:${BRAND_COLORS.gray[400]};">씨앗페 결제 시스템 • ${timestamp}</p>
     </div>
   </div>
 </body>

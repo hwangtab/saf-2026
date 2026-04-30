@@ -4,6 +4,7 @@ import path from 'path';
 import { getSupabaseArtworkById } from '@/lib/supabase-data';
 import { parseArtworkPrice } from '@/lib/schemas/utils';
 import { getCategoryLabel } from '@/lib/artwork-category';
+import { BRAND_COLORS } from '@/lib/colors';
 
 export const runtime = 'nodejs';
 export const alt = 'SAF 작품 상세';
@@ -43,7 +44,7 @@ export default async function Image({ params }: Props) {
   const fontPath = path.join(process.cwd(), 'public/fonts/NotoSansKR-Bold.ttf');
   const fontData = fs.readFileSync(fontPath);
 
-  const accentColor = '#2176FF'; // BRAND_COLORS.primary.DEFAULT
+  const accentColor = BRAND_COLORS.primary.DEFAULT;
   const displayTitle = truncate(title, 40);
   const displayArtist = truncate(artist, 30);
 
@@ -70,7 +71,7 @@ export default async function Image({ params }: Props) {
           width: '100%',
           height: '100%',
           display: 'flex',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: BRAND_COLORS.gallery.canvas,
           fontFamily: 'NotoSansKR',
         }}
       >
@@ -80,7 +81,7 @@ export default async function Image({ params }: Props) {
             width: '420px',
             height: '100%',
             flexShrink: 0,
-            backgroundColor: '#F5F5F7',
+            backgroundColor: BRAND_COLORS.gallery.parchment,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -97,7 +98,7 @@ export default async function Image({ params }: Props) {
             <div
               style={{
                 fontSize: '60px',
-                color: '#8F98A5',
+                color: BRAND_COLORS.gray[400],
               }}
             >
               🎨
@@ -135,7 +136,7 @@ export default async function Image({ params }: Props) {
             {isSold && (
               <div
                 style={{
-                  backgroundColor: '#1F2428',
+                  backgroundColor: BRAND_COLORS.charcoal.deep,
                   color: 'white',
                   padding: '6px 20px',
                   borderRadius: '100px',
@@ -164,7 +165,7 @@ export default async function Image({ params }: Props) {
               style={{
                 fontSize: displayTitle.length > 20 ? '44px' : '52px',
                 fontWeight: 700,
-                color: '#1F2428',
+                color: BRAND_COLORS.charcoal.deep,
                 lineHeight: 1.25,
                 letterSpacing: '-0.5px',
               }}
@@ -175,7 +176,7 @@ export default async function Image({ params }: Props) {
               <div
                 style={{
                   fontSize: '28px',
-                  color: '#555E67',
+                  color: BRAND_COLORS.charcoal.muted,
                   fontWeight: 400,
                 }}
               >
@@ -202,11 +203,11 @@ export default async function Image({ params }: Props) {
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              borderTop: '1px solid #E0E0E0',
+              borderTop: `1px solid ${BRAND_COLORS.gallery.hairline}`,
               paddingTop: '20px',
             }}
           >
-            <div style={{ fontSize: '20px', color: '#8F98A5', fontWeight: 400 }}>
+            <div style={{ fontSize: '20px', color: BRAND_COLORS.gray[400], fontWeight: 400 }}>
               {isEn ? 'SAF Online Gallery' : '씨앗페 온라인 갤러리'}
             </div>
             <div

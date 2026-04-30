@@ -50,7 +50,7 @@ export default async function Image({ params }: Props) {
           display: 'flex',
           position: 'relative',
           fontFamily: 'NotoSansKR',
-          color: '#FFFFFF',
+          color: BRAND_COLORS.light,
           backgroundColor: BRAND_COLORS.charcoal.deep,
         }}
       >

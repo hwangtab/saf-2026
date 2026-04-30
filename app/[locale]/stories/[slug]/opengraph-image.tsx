@@ -32,21 +32,21 @@ const CATEGORY_COLORS: Record<
   'artist-story': {
     bg: BRAND_COLORS.primary.surface,
     accent: BRAND_COLORS.primary.a11y,
-    border: '#D2E1FF',
+    border: BRAND_COLORS.primary.soft,
     labelKo: '작가를 만나다',
     labelEn: 'Artist Stories',
   },
   'buying-guide': {
-    bg: '#FAFAFC', // gallery-pearl
+    bg: BRAND_COLORS.gallery.pearl,
     accent: BRAND_COLORS.charcoal.deep,
-    border: '#E0E0E0', // gallery-hairline
+    border: BRAND_COLORS.gallery.hairline,
     labelKo: '컬렉팅 시작하기',
     labelEn: 'Buying Guide',
   },
   'art-knowledge': {
-    bg: '#EAFAF3', // success/10 hint
+    bg: '#EAFAF3', // success/10 hint (no token match)
     accent: BRAND_COLORS.success.a11y,
-    border: '#A5DEC7',
+    border: '#A5DEC7', // success-soft (no token match)
     labelKo: '미술 산책',
     labelEn: 'Art Knowledge',
   },

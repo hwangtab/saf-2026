@@ -5,6 +5,7 @@ import SafeImage from '@/components/common/SafeImage';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import { useKakaoShareSDK } from '@/lib/hooks/useKakaoSDK';
+import { BRAND_COLORS } from '@/lib/colors';
 
 interface ShareButtonsProps {
   url: string;
@@ -186,7 +187,7 @@ export default function ShareButtons({ url, title, description, imageUrl }: Shar
         aria-label={t('smsAria')}
       >
         <svg className="w-8 h-8" viewBox="0 0 64 64" fill="none">
-          <circle cx="32" cy="32" r="32" fill="#1F2428" />
+          <circle cx="32" cy="32" r="32" fill={BRAND_COLORS.charcoal.deep} />
           <path
             d="M32 16c-9.94 0-18 6.94-18 15.5 0 4.7 2.43 8.9 6.27 11.74-.27 1.93-1.07 4.4-2.83 6.65-.3.38-.04.95.44.84 3.84-.84 7.06-2.67 9.06-4.09C28.74 47.21 30.34 47.4 32 47.4c9.94 0 18-6.94 18-15.5S41.94 16 32 16zm-8 17.5c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm8 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm8 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"
             fill="#fff"

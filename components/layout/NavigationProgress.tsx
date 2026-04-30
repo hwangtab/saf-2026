@@ -3,6 +3,8 @@
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { BRAND_COLORS } from '@/lib/colors';
+
 export default function NavigationProgress() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -13,8 +15,7 @@ export default function NavigationProgress() {
   const rafIdsRef = useRef<number[]>([]);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(
     () =>
-      typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
   );
 
   const clearTimers = useCallback(() => {
@@ -158,7 +159,7 @@ export default function NavigationProgress() {
           display: 'none',
           width: '0%',
           height: '100%',
-          backgroundColor: '#2176FF',
+          backgroundColor: BRAND_COLORS.primary.DEFAULT,
         }}
       />
     </div>

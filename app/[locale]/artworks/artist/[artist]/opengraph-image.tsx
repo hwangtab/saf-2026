@@ -89,7 +89,7 @@ export default async function Image({ params }: Props) {
           width: '100%',
           height: '100%',
           display: 'flex',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: BRAND_COLORS.gallery.canvas,
           fontFamily: 'NotoSansKR',
         }}
       >
@@ -99,7 +99,7 @@ export default async function Image({ params }: Props) {
             width: '420px',
             height: '100%',
             flexShrink: 0,
-            backgroundColor: '#F5F5F7',
+            backgroundColor: BRAND_COLORS.gallery.parchment,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -113,7 +113,7 @@ export default async function Image({ params }: Props) {
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
           ) : (
-            <div style={{ fontSize: '60px', color: '#8F98A5' }}>🎨</div>
+            <div style={{ fontSize: '60px', color: BRAND_COLORS.gray[400] }}>🎨</div>
           )}
         </div>
 
@@ -146,7 +146,7 @@ export default async function Image({ params }: Props) {
             )}
             <div
               style={{
-                backgroundColor: '#1F2428',
+                backgroundColor: BRAND_COLORS.charcoal.deep,
                 color: 'white',
                 padding: '6px 20px',
                 borderRadius: '100px',
@@ -173,7 +173,7 @@ export default async function Image({ params }: Props) {
             <div
               style={{
                 fontSize: '32px',
-                color: '#555E67',
+                color: BRAND_COLORS.charcoal.muted,
                 fontWeight: 400,
               }}
             >
@@ -183,7 +183,7 @@ export default async function Image({ params }: Props) {
               style={{
                 fontSize: displayName.length > 12 ? '60px' : '72px',
                 fontWeight: 700,
-                color: '#1F2428',
+                color: BRAND_COLORS.charcoal.deep,
                 lineHeight: 1.15,
                 letterSpacing: '-0.5px',
               }}
@@ -206,7 +206,7 @@ export default async function Image({ params }: Props) {
               <div
                 style={{
                   fontSize: '22px',
-                  color: '#555E67',
+                  color: BRAND_COLORS.charcoal.muted,
                   fontWeight: 400,
                 }}
               >
@@ -223,11 +223,11 @@ export default async function Image({ params }: Props) {
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              borderTop: '1px solid #E0E0E0',
+              borderTop: `1px solid ${BRAND_COLORS.gallery.hairline}`,
               paddingTop: '20px',
             }}
           >
-            <div style={{ fontSize: '20px', color: '#8F98A5', fontWeight: 400 }}>
+            <div style={{ fontSize: '20px', color: BRAND_COLORS.gray[400], fontWeight: 400 }}>
               {isEn ? 'SAF Online Gallery' : '씨앗페 온라인 갤러리'}
             </div>
             <div

@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next';
+import { BRAND_COLORS } from '@/lib/colors';
 import { ARTWORK_COUNT } from '@/lib/site-stats';
 
 export default function manifest(): MetadataRoute.Manifest {
@@ -12,8 +13,8 @@ export default function manifest(): MetadataRoute.Manifest {
     categories: ['shopping', 'lifestyle', 'art'],
     start_url: '/',
     display: 'standalone',
-    background_color: '#31393C',
-    theme_color: '#2176FF',
+    background_color: BRAND_COLORS.charcoal.DEFAULT,
+    theme_color: BRAND_COLORS.primary.DEFAULT,
     icons: [
       {
         src: '/images/icons/icon-192.png',

@@ -5,6 +5,8 @@
  * 로그만 남기고 graceful skip 한다.
  */
 
+import { BRAND_COLORS } from '@/lib/colors';
+
 interface SendReceiptParams {
   to: string;
   fullName: string;
@@ -69,26 +71,26 @@ function receiptHtml(params: { fullName: string; petitionUrl: string }) {
   return `<!doctype html>
 <html lang="ko">
 <head><meta charset="utf-8"><title>서명 확인 — 오윤 구의동 벽화 시민 청원</title></head>
-<body style="margin:0;padding:24px;background:#FAFAFC;font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Segoe UI','Malgun Gothic','Noto Sans KR',sans-serif;color:#1F2428;">
-  <div style="max-width:560px;margin:0 auto;background:#fff;border-radius:12px;padding:32px;border:1px solid #E0E0E0;">
+<body style="margin:0;padding:24px;background:${BRAND_COLORS.canvas.DEFAULT};font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Segoe UI','Malgun Gothic','Noto Sans KR',sans-serif;color:${BRAND_COLORS.charcoal.deep};">
+  <div style="max-width:560px;margin:0 auto;background:${BRAND_COLORS.gallery.canvas};border-radius:12px;padding:32px;border:1px solid ${BRAND_COLORS.gallery.hairline};">
     <p style="font-size:16px;line-height:1.7;margin:0 0 16px;">
       ${safeName} 님, 서명해 주셔서 감사합니다.
     </p>
-    <p style="font-size:15px;line-height:1.7;color:#31393C;margin:0 0 16px;">
+    <p style="font-size:15px;line-height:1.7;color:${BRAND_COLORS.charcoal.DEFAULT};margin:0 0 16px;">
       오윤이 1974년에 만든 테라코타가 50년 만에 멸실될 위기에 처해 있습니다.
       차기 서울시장께서 안전한 해체·보존·이관을 해결해 주시기를 청합니다.
       이 청원을 다섯 분께만 더 전해 주시면, 5월 10일까지 1만 명의 이름이 모입니다.
     </p>
-    <p style="font-size:15px;line-height:1.7;color:#31393C;margin:0 0 24px;">
+    <p style="font-size:15px;line-height:1.7;color:${BRAND_COLORS.charcoal.DEFAULT};margin:0 0 24px;">
       청원 진행 상황은 이 메일 주소로 정중히 알려드리겠습니다.
     </p>
     <p style="margin:0 0 24px;">
-      <a href="${safeUrl}" style="display:inline-block;padding:12px 24px;background:#0E4ECF;color:#fff;text-decoration:none;border-radius:8px;font-weight:600;">
+      <a href="${safeUrl}" style="display:inline-block;padding:12px 24px;background:${BRAND_COLORS.primary.strong};color:#fff;text-decoration:none;border-radius:8px;font-weight:600;">
         청원 페이지로 이동
       </a>
     </p>
-    <hr style="border:none;border-top:1px solid #E0E0E0;margin:24px 0;">
-    <p style="font-size:12px;color:#707A84;margin:0;">
+    <hr style="border:none;border-top:1px solid ${BRAND_COLORS.gallery.hairline};margin:24px 0;">
+    <p style="font-size:12px;color:${BRAND_COLORS.gray[500]};margin:0;">
       한국스마트협동조합 (예술인협동조합) · 씨앗페 SAF2026 운영
     </p>
   </div>
