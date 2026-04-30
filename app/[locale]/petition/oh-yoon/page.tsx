@@ -459,7 +459,7 @@ export default async function PetitionOhYoonPage() {
         </div>
       </Section>
 
-      {/* 9부 FAQ + 9b 씨앗페 관계 + 9c 함께 보면 좋은 (특별전 카드) */}
+      {/* 9부 FAQ + 9b 씨앗페 관계 */}
       <Section variant="white" className="py-20 md:py-24">
         <div className="container-max max-w-3xl mx-auto px-4">
           <SectionTitle as="h2" className="mb-8 md:mb-10">
@@ -484,11 +484,69 @@ export default async function PetitionOhYoonPage() {
               {t('saffestCta')} →
             </Link>
           </div>
+        </div>
+      </Section>
 
-          {/* 특별전 + 작품 듀얼 CTA 카드 — 청원 외 오윤 40주기 노출 강화. 폼 제출 후 SignForm이 #special-cta-card로 스크롤 */}
+      {/* 10부 마지막 결구 + 두 번째 CTA — HERO와 톤 통일 (어두운 그라디언트). 11부 tribute 섹션이 페이지 마지막이므로 closing은 일반 pb 사용 */}
+      <section
+        aria-labelledby="petition-closing-title"
+        className="relative isolate overflow-hidden pt-24 md:pt-32 pb-24 md:pb-32 text-center text-white bg-charcoal-deep"
+      >
+        <div aria-hidden="true" className="absolute inset-0 -z-10 bg-charcoal-deep" />
+        <div className="relative container-max max-w-2xl mx-auto px-4">
+          {!is_active && (
+            <p className="mb-4 text-sm font-semibold uppercase tracking-wide opacity-80">
+              {t('closedTitle')}
+            </p>
+          )}
+          <p className="text-xl md:text-2xl leading-relaxed mb-4 break-keep text-balance opacity-90">
+            {t('closingLine1')}
+          </p>
+          <p className="text-xl md:text-2xl leading-relaxed mb-4 break-keep text-balance opacity-90">
+            {t('closingLine2')}
+          </p>
+          <p
+            id="petition-closing-title"
+            className="font-display font-bold text-3xl md:text-4xl leading-tight mb-14 md:mb-16 break-keep text-balance"
+          >
+            {t('closingLine3')}
+          </p>
+          {is_active && (
+            <a
+              href="#sign-form-anchor"
+              className="inline-flex items-center justify-center px-8 py-4 rounded-lg text-lg font-bold bg-primary hover:bg-primary-strong text-white transition-shadow hover:shadow-gallery-artwork focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            >
+              {t('closingCta')} →
+            </a>
+          )}
+        </div>
+      </section>
+
+      {/* 11부 오윤 40주기, 함께 기리는 자리 — 페이지의 마지막 안식처. 청원의 시점을 작가의 시대로 확장. 폼 제출 후 SignForm이 #special-cta-card로 스크롤 */}
+      <Section
+        variant="canvas"
+        className={`pt-20 md:pt-24 ${SAWTOOTH_TOP_SAFE_PADDING}`}
+        aria-labelledby="petition-tribute-title"
+      >
+        <div className="container-max max-w-3xl mx-auto px-4">
+          <p className="text-eyebrow text-primary text-center mb-3">{t('tributeEyebrow')}</p>
+          <SectionTitle as="h2" id="petition-tribute-title" className="text-center mb-6 md:mb-8">
+            {t('tributeTitle')}
+          </SectionTitle>
+          <p className="text-base md:text-lg leading-relaxed text-charcoal text-center break-keep mb-12 md:mb-14 text-balance">
+            {t('tributeLead')}
+          </p>
+
+          <div className="space-y-5 text-base md:text-lg leading-relaxed text-charcoal break-keep">
+            <p>{t('tributeBody1')}</p>
+            <p>{t('tributeBody2')}</p>
+            <p>{t('tributeBody3')}</p>
+          </div>
+
+          {/* 듀얼 CTA 카드 — 작가 사진과 작품 안내 */}
           <article
             id="special-cta-card"
-            className="mt-8 overflow-hidden rounded-2xl bg-white border-2 border-charcoal shadow-[6px_6px_0px_0px_rgba(31,36,40,0.3)] scroll-mt-24"
+            className="mt-12 md:mt-14 overflow-hidden rounded-2xl bg-white border-2 border-charcoal shadow-[6px_6px_0px_0px_rgba(31,36,40,0.3)] scroll-mt-24"
           >
             <div className="md:grid md:grid-cols-[220px_1fr]">
               <div className="relative aspect-[4/5] md:aspect-auto md:h-full bg-charcoal-deep">
@@ -532,44 +590,12 @@ export default async function PetitionOhYoonPage() {
               </div>
             </div>
           </article>
+
+          <p className="mt-10 md:mt-12 text-sm text-charcoal-muted text-center break-keep italic">
+            {t('tributeClosingNote')}
+          </p>
         </div>
       </Section>
-
-      {/* 10부 마지막 결구 + 두 번째 CTA — HERO와 톤 통일 (어두운 그라디언트로 페이지 감싸기) */}
-      {/* closing section이 main 마지막이라 SAWTOOTH_TOP_SAFE_PADDING을 자체 pb로 흡수 — 어두운 색이 톱니구분선까지 이어져 연노란 띠 노출 차단 */}
-      <section
-        aria-labelledby="petition-closing-title"
-        className={`relative isolate overflow-hidden pt-24 md:pt-32 ${SAWTOOTH_TOP_SAFE_PADDING} text-center text-white bg-charcoal-deep`}
-      >
-        <div aria-hidden="true" className="absolute inset-0 -z-10 bg-charcoal-deep" />
-        <div className="relative container-max max-w-2xl mx-auto px-4">
-          {!is_active && (
-            <p className="mb-4 text-sm font-semibold uppercase tracking-wide opacity-80">
-              {t('closedTitle')}
-            </p>
-          )}
-          <p className="text-xl md:text-2xl leading-relaxed mb-4 break-keep text-balance opacity-90">
-            {t('closingLine1')}
-          </p>
-          <p className="text-xl md:text-2xl leading-relaxed mb-4 break-keep text-balance opacity-90">
-            {t('closingLine2')}
-          </p>
-          <p
-            id="petition-closing-title"
-            className="font-display font-bold text-3xl md:text-4xl leading-tight mb-14 md:mb-16 break-keep text-balance"
-          >
-            {t('closingLine3')}
-          </p>
-          {is_active && (
-            <a
-              href="#sign-form-anchor"
-              className="inline-flex items-center justify-center px-8 py-4 rounded-lg text-lg font-bold bg-primary hover:bg-primary-strong text-white transition-shadow hover:shadow-gallery-artwork focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
-            >
-              {t('closingCta')} →
-            </a>
-          )}
-        </div>
-      </section>
     </main>
   );
 }
