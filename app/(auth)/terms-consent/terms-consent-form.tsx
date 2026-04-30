@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { type RefObject, useActionState, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocale } from 'next-intl';
+import { ChevronDown } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { LegalDocumentContent } from '@/components/auth/LegalDocumentContent';
 import { IncompleteItemsModal, type IncompleteItem } from '@/components/ui/IncompleteItemsModal';
@@ -423,7 +424,7 @@ export function TermsConsentForm({
           </div>
           {!hasReadArtistTerms && (
             <div className="mb-3 flex items-center gap-2 rounded-lg border border-primary-soft bg-primary-surface px-3 py-2">
-              <span className="text-sm text-primary-strong">↓</span>
+              <ChevronDown aria-hidden="true" className="h-4 w-4 text-primary-strong" />
               <p className="text-xs font-medium text-primary-strong">{copy.scrollHint}</p>
             </div>
           )}
@@ -493,7 +494,7 @@ export function TermsConsentForm({
           </div>
           {!hasReadExhibitorTerms && (
             <div className="mb-3 flex items-center gap-2 rounded-lg border border-primary-soft bg-primary-surface px-3 py-2">
-              <span className="text-sm text-primary-strong">↓</span>
+              <ChevronDown aria-hidden="true" className="h-4 w-4 text-primary-strong" />
               <p className="text-xs font-medium text-primary-strong">{copy.scrollHint}</p>
             </div>
           )}
@@ -565,7 +566,7 @@ export function TermsConsentForm({
           </div>
           {!hasReadPrivacy && (
             <div className="mb-3 flex items-center gap-2 rounded-lg border border-primary-soft bg-primary-surface px-3 py-2">
-              <span className="text-sm text-primary-strong">↓</span>
+              <ChevronDown aria-hidden="true" className="h-4 w-4 text-primary-strong" />
               <p className="text-xs font-medium text-primary-strong">{copy.scrollHint}</p>
             </div>
           )}
@@ -647,7 +648,7 @@ export function TermsConsentForm({
           </div>
           {!hasReadTos && (
             <div className="mb-3 flex items-center gap-2 rounded-lg border border-primary-soft bg-primary-surface px-3 py-2">
-              <span className="text-sm text-primary-strong">↓</span>
+              <ChevronDown aria-hidden="true" className="h-4 w-4 text-primary-strong" />
               <p className="text-xs font-medium text-primary-strong">{copy.scrollHint}</p>
             </div>
           )}

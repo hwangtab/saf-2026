@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
+import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import SafeImage from '@/components/common/SafeImage';
 import { Link } from '@/i18n/navigation';
 
@@ -105,17 +106,17 @@ export default function HeroSpotlight({ slides }: HeroSpotlightProps) {
             type="button"
             onClick={scrollPrev}
             aria-label={t('prevSlide')}
-            className="hidden md:flex absolute left-4 lg:left-6 top-1/2 -translate-y-1/2 z-20 h-12 w-12 items-center justify-center rounded-full bg-black/30 hover:bg-black/60 backdrop-blur-sm text-white text-2xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            className="hidden md:flex absolute left-4 lg:left-6 top-1/2 -translate-y-1/2 z-20 h-12 w-12 items-center justify-center rounded-full bg-black/30 hover:bg-black/60 backdrop-blur-sm text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
           >
-            <span aria-hidden="true">‹</span>
+            <ChevronLeft aria-hidden="true" className="h-6 w-6" />
           </button>
           <button
             type="button"
             onClick={scrollNext}
             aria-label={t('nextSlide')}
-            className="hidden md:flex absolute right-4 lg:right-6 top-1/2 -translate-y-1/2 z-20 h-12 w-12 items-center justify-center rounded-full bg-black/30 hover:bg-black/60 backdrop-blur-sm text-white text-2xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            className="hidden md:flex absolute right-4 lg:right-6 top-1/2 -translate-y-1/2 z-20 h-12 w-12 items-center justify-center rounded-full bg-black/30 hover:bg-black/60 backdrop-blur-sm text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
           >
-            <span aria-hidden="true">›</span>
+            <ChevronRight aria-hidden="true" className="h-6 w-6" />
           </button>
         </>
       )}
@@ -168,6 +169,7 @@ function SlideCard({ slide, priority }: { slide: SpotlightSlide; priority: boole
           }`}
         >
           {slide.cta}
+          <ArrowRight aria-hidden="true" className="h-5 w-5" />
         </span>
       </div>
     </div>

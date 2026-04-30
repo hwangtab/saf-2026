@@ -19,6 +19,8 @@ interface ButtonProps extends ButtonStyleProps {
   loading?: boolean;
   disabled?: boolean;
   leadingIcon?: React.ReactNode;
+  /** 텍스트 우측에 붙는 아이콘. lucide 컴포넌트 권장. fixed-left layout과 무관하게 inline */
+  trailingIcon?: React.ReactNode;
   iconLayout?: IconLayout;
   iconClassName?: string;
   className?: string;
@@ -35,6 +37,7 @@ export default function Button({
   loading = false,
   disabled = false,
   leadingIcon,
+  trailingIcon,
   iconLayout = 'inline',
   iconClassName = '',
   className = '',
@@ -124,6 +127,11 @@ export default function Button({
         </span>
       )}
       <span className={cn(isInlineBusy && 'invisible')}>{children}</span>
+      {trailingIcon && !isBusy && (
+        <span aria-hidden="true" className={cn('ml-2 inline-flex items-center', iconClassName)}>
+          {trailingIcon}
+        </span>
+      )}
     </>
   );
 

@@ -3,6 +3,7 @@
 import { type RefObject, useActionState, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
+import { ChevronDown } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { LegalDocumentContent } from '@/components/auth/LegalDocumentContent';
 import { IncompleteItemsModal, type IncompleteItem } from '@/components/ui/IncompleteItemsModal';
@@ -295,7 +296,7 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
             </div>
             {!hasReadTerms && (
               <div className="mt-1 flex items-center gap-2 rounded-lg border border-primary-soft bg-primary-surface px-3 py-2">
-                <span className="text-sm text-primary-strong">↓</span>
+                <ChevronDown aria-hidden="true" className="h-4 w-4 text-primary-strong" />
                 <p className="text-xs font-medium text-primary-strong">{t('scrollHint')}</p>
               </div>
             )}
@@ -329,7 +330,7 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
             </div>
             {!hasReadTos && (
               <div className="mt-1 flex items-center gap-2 rounded-lg border border-primary-soft bg-primary-surface px-3 py-2">
-                <span className="text-sm text-primary-strong">↓</span>
+                <ChevronDown aria-hidden="true" className="h-4 w-4 text-primary-strong" />
                 <p className="text-xs font-medium text-primary-strong">{t('scrollHint')}</p>
               </div>
             )}
@@ -363,7 +364,7 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
             </div>
             {!hasReadPrivacy && (
               <div className="mt-1 flex items-center gap-2 rounded-lg border border-primary-soft bg-primary-surface px-3 py-2">
-                <span className="text-sm text-primary-strong">↓</span>
+                <ChevronDown aria-hidden="true" className="h-4 w-4 text-primary-strong" />
                 <p className="text-xs font-medium text-primary-strong">{t('scrollHint')}</p>
               </div>
             )}

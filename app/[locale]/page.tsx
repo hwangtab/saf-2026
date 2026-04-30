@@ -9,6 +9,7 @@ import LinkButton from '@/components/ui/LinkButton';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
+import { ArrowRight, ChevronDown, ChevronRight } from 'lucide-react';
 import HeroSpotlight, { type SpotlightSlide } from '@/components/features/HeroSpotlight';
 import { getActiveShowingItems, type NowShowingItem } from '@/lib/now-showing';
 import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
@@ -112,8 +113,11 @@ export default async function Home() {
               </span>
               <span className="text-sm font-semibold text-charcoal">{t('missionStep1')}</span>
             </div>
-            <span className="text-charcoal-soft text-xl hidden sm:block mx-3">→</span>
-            <span className="text-charcoal-soft text-lg sm:hidden">↓</span>
+            <ChevronRight
+              aria-hidden="true"
+              className="hidden sm:block mx-2 h-5 w-5 text-charcoal-soft"
+            />
+            <ChevronDown aria-hidden="true" className="sm:hidden h-5 w-5 text-charcoal-soft" />
             {/* Step 2 */}
             <div className="flex items-center gap-2 bg-white rounded-xl px-5 py-3 shadow-sm">
               <span className="text-2xl" aria-hidden="true">
@@ -121,8 +125,11 @@ export default async function Home() {
               </span>
               <span className="text-sm font-semibold text-charcoal">{t('missionStep2')}</span>
             </div>
-            <span className="text-charcoal-soft text-xl hidden sm:block mx-3">→</span>
-            <span className="text-charcoal-soft text-lg sm:hidden">↓</span>
+            <ChevronRight
+              aria-hidden="true"
+              className="hidden sm:block mx-2 h-5 w-5 text-charcoal-soft"
+            />
+            <ChevronDown aria-hidden="true" className="sm:hidden h-5 w-5 text-charcoal-soft" />
             {/* Step 3 */}
             <div className="flex items-center gap-2 bg-primary/10 rounded-xl px-5 py-3 shadow-sm border border-primary/20">
               <span className="text-2xl" aria-hidden="true">
@@ -135,7 +142,8 @@ export default async function Home() {
             href="/our-reality"
             className="inline-flex items-center gap-1 text-sm text-charcoal-muted hover:text-primary transition-colors border-b border-charcoal-muted/30 hover:border-primary pb-0.5"
           >
-            {t('missionLearnMore')} →
+            {t('missionLearnMore')}
+            <ArrowRight aria-hidden="true" className="h-4 w-4" />
           </Link>
         </div>
       </Section>

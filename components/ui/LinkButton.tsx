@@ -14,6 +14,8 @@ interface LinkButtonProps extends ButtonStyleProps {
   external?: boolean;
   disabled?: boolean;
   leadingIcon?: React.ReactNode;
+  /** 텍스트 우측에 붙는 아이콘. lucide 컴포넌트 권장. inline 고정 */
+  trailingIcon?: React.ReactNode;
   iconLayout?: IconLayout;
   iconClassName?: string;
   className?: string;
@@ -59,6 +61,7 @@ export default function LinkButton({
   variant,
   size,
   leadingIcon,
+  trailingIcon,
   iconLayout = 'inline',
   iconClassName = '',
   className = '',
@@ -96,6 +99,11 @@ export default function LinkButton({
         </span>
       )}
       {children}
+      {trailingIcon && (
+        <span aria-hidden="true" className={cn('ml-2 inline-flex items-center', iconClassName)}>
+          {trailingIcon}
+        </span>
+      )}
     </>
   );
 
