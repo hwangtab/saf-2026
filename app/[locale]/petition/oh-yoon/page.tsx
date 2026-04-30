@@ -6,6 +6,7 @@ import { getLocale, getTranslations } from 'next-intl/server';
 import PaperGrain from '@/components/common/PaperGrain';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
+import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { createStandardPageMetadata } from '@/lib/seo';
@@ -532,10 +533,10 @@ export default async function PetitionOhYoonPage() {
       </Section>
 
       {/* 10부 마지막 결구 + 두 번째 CTA — HERO와 톤 통일 (어두운 그라디언트로 페이지 감싸기) */}
-      {/* closing section이 main 마지막이라 SAFE_PADDING을 자체 pb로 흡수 — 어두운 색이 톱니구분선까지 이어져 연노란 띠 노출 차단 */}
+      {/* closing section이 main 마지막이라 SAWTOOTH_TOP_SAFE_PADDING을 자체 pb로 흡수 — 어두운 색이 톱니구분선까지 이어져 연노란 띠 노출 차단 */}
       <section
         aria-labelledby="petition-closing-title"
-        className="relative isolate overflow-hidden pt-24 md:pt-32 pb-48 md:pb-64 text-center text-white bg-charcoal-deep"
+        className={`relative isolate overflow-hidden pt-24 md:pt-32 ${SAWTOOTH_TOP_SAFE_PADDING} text-center text-white bg-charcoal-deep`}
       >
         <div aria-hidden="true" className="absolute inset-0 -z-10 bg-charcoal-deep" />
         <div className="relative container-max max-w-2xl mx-auto px-4">
