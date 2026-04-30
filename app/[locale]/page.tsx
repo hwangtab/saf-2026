@@ -9,17 +9,14 @@ import LinkButton from '@/components/ui/LinkButton';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
-import HeroGalleryGrid from '@/components/features/HeroGalleryGrid';
-import NowShowing from '@/components/features/NowShowing';
+import HeroSpotlight, { type SpotlightSlide } from '@/components/features/HeroSpotlight';
+import { getActiveShowingItems, type NowShowingItem } from '@/lib/now-showing';
 import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
 import { ARTIST_COUNT, ARTWORK_COUNT, LOAN_COUNT } from '@/lib/site-stats';
-import Badge from '@/components/ui/Badge';
 import {
   generateExhibitionSchema,
   generateFAQSchema,
   generateCampaignSchema,
-  generateArtworkListSchema,
-  generateGalleryAggregateOffer,
 } from '@/lib/seo-utils';
 import {
   generateArtworkPurchaseHowTo,
@@ -27,14 +24,9 @@ import {
   generateExhibitionEnjoyHowTo,
 } from '@/lib/schemas/howto';
 import { generateSAFCoreQA } from '@/lib/schemas/qa-page';
-import {
-  getSupabaseHomepageArtworks,
-  getSupabaseArtworksByCategories,
-  getSupabaseFAQs,
-} from '@/lib/supabase-data';
+import { getSupabaseArtworksByCategories, getSupabaseFAQs } from '@/lib/supabase-data';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
-import { formatCurrentDate } from '@/lib/utils/format-date';
 import type { Artwork } from '@/types';
 
 export const revalidate = 1800;
@@ -102,11 +94,8 @@ export default async function Home() {
 
   return (
     <>
-      {/* Gallery Wall Hero */}
-      <HeroSection locale={locale} />
-
-      {/* Now Showing — 이번 호 머리기사 (시한성 큐레이션 전시·캠페인) */}
-      <NowShowing />
+      {/* Hero Spotlight — 풀폭 슬라이더 (1번: 전체 작품, 그 외: 시한성 큐레이션) */}
+      <HeroSpotlightSection />
 
       {/* Mission Banner */}
       <Section variant="canvas" padding="sm">
@@ -255,86 +244,32 @@ export default async function Home() {
 
 // ─── Async server sub-components ──────────────────────────────────────────────
 
-async function HeroSection({ locale }: { locale: 'ko' | 'en' }) {
-  const t = await getTranslations('home');
-  // 4점 화보 — 매거진 표지 톤. 16점 카탈로그는 카테고리 섹션 + /artworks에서 노출
-  const artworks = await getSupabaseHomepageArtworks(4);
-  const homepageUrl = buildLocaleUrl('/', locale);
-  // 홈페이지 추천 작품 ItemList — @id를 홈 URL 기반으로 설정 (/artworks ItemList와 충돌 방지)
-  const featuredListSchema = generateArtworkListSchema(artworks, locale, 4, homepageUrl);
-  // AggregateOffer — 브랜드 검색 시 가격 범위 리치 스니펫 노출
-  const aggregateOfferSchema = generateGalleryAggregateOffer(artworks, locale, homepageUrl);
+async function HeroSpotlightSection() {
+  const t = await getTranslations('home.nowShowing');
+  const items = getActiveShowingItems();
+
+  // i18n 키를 풀어 SpotlightSlide 형태로 변환 (server에서 미리 풀어 client 슬라이더에 전달)
+  const slides: SpotlightSlide[] = items.map((item: NowShowingItem) => ({
+    slug: item.slug,
+    href: item.href,
+    imageUrl: item.imageUrl,
+    state: item.status,
+    status: t(`${item.i18nKey}Status` as 'allArtworksStatus'),
+    title: t(`${item.i18nKey}Title` as 'allArtworksTitle'),
+    desc: t(`${item.i18nKey}Desc` as 'allArtworksDesc'),
+    cta: t(`${item.i18nKey}Cta` as 'allArtworksCta'),
+  }));
 
   return (
-    <>
-      <JsonLdScript data={featuredListSchema} />
-      {aggregateOfferSchema && <JsonLdScript data={aggregateOfferSchema} />}
-      <section className="relative min-h-[75vh] flex items-center overflow-hidden bg-charcoal-deep">
-        <SawtoothDivider position="bottom" colorClass="text-canvas-soft" />
-        <div className="relative z-10 container-max w-full pt-16 pb-24 md:pt-20 md:pb-32">
-          {/* Title */}
-          <div className="mb-10 md:mb-12 text-center">
-            <h1
-              className="text-hero text-white mb-4 drop-shadow-lg motion-safe:opacity-0 motion-safe:animate-fade-in-up"
-              style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}
-            >
-              {t('heroGalleryTitle')}
-            </h1>
-            <p
-              className="text-body-large text-white/70 motion-safe:opacity-0 motion-safe:animate-fade-in-up"
-              style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}
-            >
-              {t('heroGallerySubtitle', { artistCount: ARTIST_COUNT })}
-            </p>
-
-            {/* Always-available badge */}
-            <div
-              className="mt-5 flex justify-center motion-safe:opacity-0 motion-safe:animate-fade-in-up"
-              style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}
-            >
-              <Badge className="gap-2 bg-white/15 backdrop-blur-sm border-white/20 text-white font-medium px-4 py-1.5">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success/60 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-success/60" />
-                </span>
-                {t('alwaysAvailable', { date: formatCurrentDate(locale) })}
-              </Badge>
-            </div>
-          </div>
-
-          {/* Gallery Grid — 4점 화보 (모바일 2x2, 데스크톱 1x4) */}
-          <div
-            className="motion-safe:opacity-0 motion-safe:animate-fade-in-up"
-            style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}
-          >
-            <HeroGalleryGrid artworks={artworks} />
-          </div>
-
-          {/* CTA */}
-          <div
-            className="mt-10 md:mt-12 flex flex-col sm:flex-row gap-4 justify-center motion-safe:opacity-0 motion-safe:animate-fade-in-up"
-            style={{ animationDelay: '0.5s', animationFillMode: 'forwards' }}
-          >
-            <LinkButton
-              href="/artworks"
-              variant="primary"
-              size="lg"
-              className="w-full sm:w-auto shadow-lg min-w-[200px] justify-center text-lg"
-            >
-              {t('viewArtworks')}
-            </LinkButton>
-            <LinkButton
-              href="/our-reality"
-              variant="outline-white"
-              size="lg"
-              className="w-full sm:w-auto backdrop-blur-sm min-w-[160px] justify-center"
-            >
-              {t('aboutSaf')}
-            </LinkButton>
-          </div>
-        </div>
-      </section>
-    </>
+    <div className="relative">
+      <HeroSpotlight
+        slides={slides}
+        prevLabel={t('prevSlide')}
+        nextLabel={t('nextSlide')}
+        goToLabel={(n) => t('goToSlide', { n })}
+      />
+      <SawtoothDivider position="bottom" colorClass="text-canvas-soft" />
+    </div>
   );
 }
 

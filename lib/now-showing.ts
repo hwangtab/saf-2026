@@ -23,6 +23,16 @@ export interface NowShowingItem {
 }
 
 export const NOW_SHOWING: NowShowingItem[] = [
+  // 1번 — 본업: 전체 작품 페이지로 유도. 항상 첫 슬라이드, 구매 직결.
+  {
+    slug: 'all-artworks',
+    i18nKey: 'allArtworks',
+    href: '/artworks',
+    imageUrl:
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4c71ed18-bbba-4068-97b8-52124b8e4a20/36__original.webp',
+    startDate: '2026-01-01',
+    status: 'on',
+  },
   {
     slug: 'oh-yoon-40th',
     i18nKey: 'ohYoon40th',
