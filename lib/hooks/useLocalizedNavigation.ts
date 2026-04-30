@@ -97,12 +97,8 @@ export function useLocalizedNavigation(): NavigationItem[] {
         },
       ],
     },
-    // 청원은 큐레이션 전시(/special)와는 다른 시민 행동 카테고리.
-    // 단독 메뉴로 분리해 정보 구조를 명확히 함.
-    {
-      name: t('petition'),
-      href: '/petition/oh-yoon',
-    },
+    // 청원(/petition/oh-yoon)은 시민 행동 카테고리로, 큐레이션 전시(/special)와 본질이 다름.
+    // 헤더 메뉴에는 노출하지 않고 Now Showing 카드와 본문 인링크로만 진입.
   ];
 }
 
