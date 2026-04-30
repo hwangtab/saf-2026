@@ -133,18 +133,20 @@ types/
 
 **Data Sources**: Public pages use static content files (`/content`). Authenticated portals fetch from Supabase. Both sources follow the same type definitions in `/types`.
 
-**Brand Colors & Visual Theme**: 정체성은 **따뜻한 종이 캔버스 위의 사회적 매거진** — Soft Sand 바탕에 진중한 charcoal 텍스트, 한국형 디스플레이 폰트의 묵직함, SawtoothDivider가 만드는 인쇄물·우표 같은 손맛. 매거진/포스터/출판물 톤이며 디지털 SaaS 미니멀리즘과 다름. **단일 출처 가이드는 [docs/DESIGN.md](docs/DESIGN.md)** — 토큰 정의는 [lib/colors.ts](lib/colors.ts), 시각 가이드 전체는 DESIGN.md를 따른다.
+**Brand Colors & Visual Theme**: 정체성은 **힙하고 현대적인 미술 갤러리** — Apple/Figma 가이드를 떠올리게 하는 갤러리 white cube. "interface chrome is colorless, color comes only from artworks." 모든 chrome 배경은 white scale, 단일 액센트는 `primary` 블루로 통일. **단일 출처 가이드는 [docs/DESIGN.md](docs/DESIGN.md)** — 토큰 정의는 [lib/colors.ts](lib/colors.ts), 시각 가이드 전체는 DESIGN.md를 따른다.
 
 **Color Usage Rules** (DESIGN.md §2·§7 기준):
 
 - **`slate-*` 사용 금지** — `tailwind.config.ts`에서 비활성화됨. 사용해도 CSS가 생성되지 않음
-- **`indigo-*` / `blue-*` / `red-*` / `green-*` / `amber-*` / `sky-*` / `teal-*` / `orange-*` / `purple-*` / `pink-*` / `yellow-*` 등 Tailwind 기본 팔레트 사용 금지** — 포털·공개 페이지 모두 `primary-*`, `accent-*`, `success-*`, `danger-*`, `charcoal-*`, `gray-*`, `canvas-*`, `sun-*` 브랜드 토큰 사용
-- **`canvas` 토큰 = Soft Sand 색조** (DESIGN.md §2): `canvas.DEFAULT #FFF6DD` (페이지 캔버스 메인) / `canvas.soft #FFF9E8` (body 기본 배경, 가장 옅은 sand) / `canvas.strong #F3E2AA` (sand core, 강조 면)
-- **CTA = `accent` (테라코타 #F79824)** — Button `variant="accent"` 사용. 호버는 `accent-strong`. 본문 텍스트로는 `accent-a11y` (4.78:1 AA)
-- **링크 텍스트·강조 = `primary-strong` (#0E4ECF, 6.98:1 AA)** — 큰 UI는 `primary` (#2176FF, 4.12:1)
-- **`sun-*` 토큰**: `sun.DEFAULT` (#FDCA40)는 **숫자·통계·가격 강조 텍스트 전용**. 배경/CTA 사용 금지. `sun.soft` (#FEE9A3)는 highlight 섹션 배경 가능. `sun.strong`은 텍스트
+- **`indigo-*` / `blue-*` / `red-*` / `green-*` / `amber-*` / `sky-*` / `teal-*` / `orange-*` / `purple-*` / `pink-*` / `yellow-*` 등 Tailwind 기본 팔레트 사용 금지** — 포털·공개 페이지 모두 `primary-*`, `success-*`, `danger-*`, `charcoal-*`, `gray-*`, `canvas-*`, `gallery-*`, `sun-*` 브랜드 토큰 사용
+- **`canvas` 토큰 = Gallery White Scale** (DESIGN.md §2): `canvas.DEFAULT #FAFAFC` (Gallery Pearl, 미세 농담 챕터) / `canvas.soft #FFFFFF` (body 기본 배경, 순백 갤러리 벽) / `canvas.strong #F5F5F7` (Gallery Parchment, 대안 챕터)
+- **`gallery.*` 토큰** (신규 코드 권장 — 의미 명확): `gallery.canvas #FFFFFF`, `gallery.pearl #FAFAFC`, `gallery.parchment #F5F5F7`, `gallery.hairline #E0E0E0` (작품 카드 1px border), `gallery.divider #F0F0F0`, `gallery.tile #1F2428` (다크 챕터)
+- **CTA·링크·강조 = `primary` 블루로 통일.** 신규 코드는 `Button variant="primary"`. `primary.strong #0E4ECF` (6.98:1 AA, 링크/호버), `primary.DEFAULT #2176FF` (4.12:1, 큰 UI)
+- **`accent` (테라코타) 토큰 `@deprecated`** — Gallery White Cube 모델에서 사용 금지. 기존 `Button variant="accent"`는 단계적으로 `variant="primary"`로 이전 중. 신규 코드 추가 사용 금지
+- **`sun-*` 토큰**: `sun.DEFAULT` (#FDCA40)는 **숫자·통계·가격 강조 텍스트 전용**. 배경/CTA 사용 금지(작품 색과 충돌). `sun.soft` (#FEE9A3)는 highlight 섹션 배경 한정 허용. `sun.strong`은 텍스트
 - 중성 색상은 반드시 `gray-*` 브랜드 토큰 사용 (`lib/colors.ts`의 `BRAND_COLORS.gray`)
 - 텍스트 계층: `text-charcoal-deep` (헤딩, 14.68:1 AAA) > `text-charcoal` (본문, 11.79:1 AAA) > `text-charcoal-muted` (보조, 6.60:1 AA) > `text-charcoal-soft` (캡션, 4.84:1 AA)
+- **chrome 무채색 원칙**: `bg-sun`, `bg-accent`, `bg-primary` 등 채도 있는 배경은 작품 색과 충돌 — 사용 자제. 배경은 항상 화이트 스케일(`canvas-*` / `gallery-*`)
 - **차트·OG 이미지·Satori 렌더 등 런타임 hex가 필요한 곳은 반드시 `import { BRAND_COLORS } from '@/lib/colors'`로 참조.** `stroke="#D1D7E0"` 같은 리터럴 대신 `stroke={BRAND_COLORS.gray[200]}`, 템플릿 문자열(`` `1px solid ${BRAND_COLORS.gray[200]}` ``) 사용
 
 **Component & interaction rules** (DESIGN.md §4·§6 기준):
@@ -156,11 +158,11 @@ types/
 - **터치 디바이스 보호**: `@media (hover: none)`에서 hover scale/translate/shadow 자동 비활성 — sticky hover 방지
 - **`prefers-reduced-motion`**: 모든 애니메이션 0.01ms로 단축
 
-**Editorial label utilities** (`globals.css`에 정의):
+**Curator label utilities** (`globals.css`에 정의):
 
 - `.text-eyebrow` — 카테고리·날짜 같은 메타 라벨
 - `.text-caption-meta` — 작품 매체·연도·사이즈 큐레이터 톤
-- `.text-artwork-title` — 도록 스타일 작품명 (display font + tight tracking)
+- `.text-artwork-title` — 갤러리 도록 스타일 작품명 (display font + tight tracking)
 
 **i18n 필수 규칙**: 사용자 노출 텍스트는 전부 next-intl 메시지로. 배지·상태·버튼 라벨에 `"예약중"`, `"SOLD"`, `"판매완료"` 같은 리터럴 직접 박으면 영어 locale에서도 그대로 노출됨. `messages/ko.json`·`messages/en.json`에 키 추가 후 `useTranslations` / `getTranslations`로 소비.
 

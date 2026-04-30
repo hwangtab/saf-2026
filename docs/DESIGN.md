@@ -1,22 +1,23 @@
 # SAF 2026 — DESIGN.md
 
-> 현재 시스템 스냅샷 (2026-04-29 기준). 디자인 리뉴얼 시 비교 기준점으로 사용.
+> 현재 시스템 스냅샷 (2026-04-30 기준). 디자인 리뉴얼 시 비교 기준점으로 사용.
 > 단일 출처: [lib/colors.ts](../lib/colors.ts), [tailwind.config.ts](../tailwind.config.ts), [styles/globals.css](../styles/globals.css), [app/layout.tsx](../app/layout.tsx).
 
 ---
 
 ## 1. Visual Theme & Atmosphere
 
-**한 줄 정체성**: 따뜻한 종이 캔버스 위의 사회적 매거진 — Soft Sand 바탕에 진중한 자카드(charcoal) 텍스트, 한국형 디스플레이 폰트의 묵직함, 톱니(SawtoothDivider)가 만드는 인쇄물·우표 같은 손맛.
+**한 줄 정체성**: 힙하고 현대적인 미술 갤러리 — 순백 white cube 벽, 절제된 charcoal 타이포, 단일 블루 액센트. 작품 색이 인터페이스 chrome에 흐트러지지 않도록 모든 배경은 화이트 스케일.
 
-**무드**: 매거진 / 캠페인 포스터 / 출판물. 디지털 SaaS 제품의 차가운 미니멀리즘이 아니라, **종이·잉크·갤러리 도록**에 가까운 질감.
+**무드**: Apple / Figma 가이드를 떠올리게 하는 **갤러리 white cube**. "interface chrome is colorless, color comes only from artworks." 디자인 자체가 톤을 만드는 게 아니라, 작품 사진과 캠페인 메시지가 톤을 만든다.
 
 **밀도**: 중간. 통계·수치는 큰 면적으로 과감히 띄우되, 본문과 카드 그리드는 절제된 여백.
 
 **디자인 철학**:
 
-- 사회적 캠페인이라는 주제 무게에 어울리는 **에디토리얼 진중함**
-- 그러나 갤러리 작품을 다루므로 **따뜻함과 호흡**도 필요 → canvas 계열 배경
+- 작품 색이 인터페이스에 의해 왜곡되지 않도록 **chrome은 무채색** (canvas/gallery 화이트 스케일)
+- 그러나 사회적 캠페인이라는 주제 무게에 어울리는 **현대적 진중함**
+- 단일 액센트 = `primary` 블루. CTA·링크·강조 모두 통일 (accent 테라코타는 deprecated)
 - 한국어 가독성 최우선: `word-break: keep-all`, `text-balance` 전역 적용
 - WCAG AA 준수가 모든 색 결정의 전제
 
@@ -36,14 +37,16 @@
 | `primary.surface` | `#EDF3FF` | 가장 옅은 면 — 정보 섹션 배경            |
 | `primary.a11y`    | `#1565D8` | 본문 텍스트 (4.63:1, AA)                 |
 
-### Accent (테라코타 오렌지 — Carrot)
+### Accent (테라코타 오렌지 — Carrot) — `@deprecated`
 
-| 토큰             | Hex       | 역할                                       |
-| ---------------- | --------- | ------------------------------------------ |
-| `accent.DEFAULT` | `#F79824` | **CTA 버튼**, 기부 유도 (장식 전용 2.22:1) |
-| `accent.soft`    | `#FFD4A3` | 강조 박스 배경                             |
-| `accent.strong`  | `#D97800` | CTA 호버                                   |
-| `accent.a11y`    | `#B45309` | 텍스트 가능 (4.78:1, AA)                   |
+> **신규 코드에서 사용 금지.** Gallery White Cube 모델에서는 단일 액센트 = `primary` 블루로 통일. 기존 `Button variant="accent"` 사용처는 단계적으로 `variant="primary"`로 이전 중이다. 제출이나 기부 CTA처럼 강한 시각적 우선순위가 필요한 곳도 primary로 처리.
+
+| 토큰             | Hex       | 상태                          |
+| ---------------- | --------- | ----------------------------- |
+| `accent.DEFAULT` | `#F79824` | deprecated (장식 전용 2.22:1) |
+| `accent.soft`    | `#FFD4A3` | deprecated                    |
+| `accent.strong`  | `#D97800` | deprecated                    |
+| `accent.a11y`    | `#B45309` | deprecated (4.78:1, AA)       |
 
 ### Sun (강조 옐로우 — Sun Glow)
 
@@ -53,13 +56,28 @@
 | `sun.soft`    | `#FEE9A3` | 섹션 배경(highlight 전용)                         |
 | `sun.strong`  | `#E3AC0D` | 텍스트                                            |
 
-### Canvas (배경 — Soft Sand)
+### Canvas (배경 — Gallery White Scale)
 
-| 토큰             | Hex       | 역할                                |
-| ---------------- | --------- | ----------------------------------- |
-| `canvas.DEFAULT` | `#FFF6DD` | 페이지 캔버스 메인                  |
-| `canvas.soft`    | `#FFF9E8` | **body 기본 배경** (가장 옅은 sand) |
-| `canvas.strong`  | `#F3E2AA` | sand core, 강조 면                  |
+> 갤러리 화이트 큐브 모델: 모든 배경은 white scale. 작품 색이 chrome에 의해 왜곡되지 않도록 채도 0.
+
+| 토큰             | Hex       | 역할                                          |
+| ---------------- | --------- | --------------------------------------------- |
+| `canvas.DEFAULT` | `#FAFAFC` | Gallery Pearl — 미세한 농담 차로 챕터 분리    |
+| `canvas.soft`    | `#FFFFFF` | **body 기본 배경** — Gallery Canvas (순백 벽) |
+| `canvas.strong`  | `#F5F5F7` | Gallery Parchment — 대안 챕터                 |
+
+### Gallery (명시 토큰 — 신규 코드 권장)
+
+> `canvas-*`와 동일 값의 alias. 의미가 더 명확하므로 새 코드는 이쪽 사용.
+
+| 토큰                | Hex       | 역할                             |
+| ------------------- | --------- | -------------------------------- |
+| `gallery.canvas`    | `#FFFFFF` | 순백 갤러리 벽                   |
+| `gallery.pearl`     | `#FAFAFC` | 미세 농담 챕터                   |
+| `gallery.parchment` | `#F5F5F7` | 대안 챕터                        |
+| `gallery.hairline`  | `#E0E0E0` | 작품 카드 1px border             |
+| `gallery.divider`   | `#F0F0F0` | 섹션 divider                     |
+| `gallery.tile`      | `#1F2428` | 다크 챕터 단색 (= charcoal.deep) |
 
 ### Charcoal (텍스트)
 
@@ -80,8 +98,9 @@
 ### 핵심 룰
 
 1. **slate-\* 사용 금지** (tailwind config에서 비활성화)
-2. **CTA = accent**, **링크 = primary-strong**, **숫자 강조 = sun**, **배경 = canvas/canvas-soft/sun-soft**
+2. **CTA·링크·강조 = primary 블루로 통일** (accent 테라코타 deprecated). **숫자 강조 = sun (텍스트 한정)**. **배경 = canvas/gallery 화이트 스케일**
 3. 차트·OG 이미지·Satori 등 hex 직접 필요 시 반드시 `import { BRAND_COLORS } from '@/lib/colors'`
+4. **chrome 무채색 원칙**: `bg-sun`, `bg-accent` 등 채도 있는 배경은 작품 색과 충돌 — 사용 금지. 배경은 항상 화이트 스케일
 
 ---
 
@@ -195,14 +214,14 @@ Tailwind weight ↔ Noto Sans KR 호출:
 
 라운드 반경은 컴포넌트 위계와 1:1로 매핑. 같은 위계의 컴포넌트는 같은 반경을 사용해 시각 리듬을 유지함. 현재 코드 분포(2026-04 기준): `rounded-md` 122건 / `rounded-lg` 206건 / `rounded-xl` 52건 / `rounded-2xl` 134건 / `rounded-full` 162건 / `rounded-3xl` 0건.
 
-| 토큰           | 반경 | 표준 사용처                                                            |
-| -------------- | ---- | ---------------------------------------------------------------------- |
-| `rounded-md`   | 6px  | Input·작은 칩·인디케이터                                               |
-| `rounded-lg`   | 8px  | **Button** (button-base default)·작은 카드·뱃지 컨테이너               |
-| `rounded-xl`   | 12px | 중간 카드·작은 다이얼로그·alert 박스                                   |
-| `rounded-2xl`  | 16px | **Card·Section 카드·메인 컨텐츠 컨테이너** (DESIGN.md §4 Card 표준)    |
-| `rounded-full` | ∞    | 점 인디케이터·아바타·circular 버튼·`Badge` (`tone='info'` 등)          |
-| `rounded-3xl`  | 24px | **사용 금지** (현재 0건 — 매거진 톤과 어울리지 않음, 의도적 제한 유지) |
+| 토큰           | 반경 | 표준 사용처                                                                 |
+| -------------- | ---- | --------------------------------------------------------------------------- |
+| `rounded-md`   | 6px  | Input·작은 칩·인디케이터                                                    |
+| `rounded-lg`   | 8px  | **Button** (button-base default)·작은 카드·뱃지 컨테이너                    |
+| `rounded-xl`   | 12px | 중간 카드·작은 다이얼로그·alert 박스                                        |
+| `rounded-2xl`  | 16px | **Card·Section 카드·메인 컨텐츠 컨테이너** (DESIGN.md §4 Card 표준)         |
+| `rounded-full` | ∞    | 점 인디케이터·아바타·circular 버튼·`Badge` (`tone='info'` 등)               |
+| `rounded-3xl`  | 24px | **사용 금지** (현재 0건 — 갤러리 톤은 hard edge가 정체성, 의도적 제한 유지) |
 
 같은 컨테이너 안에서 라운드 반경을 섞지 말 것 — 큰 카드 안의 작은 칩이라면 카드 `rounded-2xl` + 칩 `rounded-md` 식으로 위계가 명확해야 함. 동일 위계의 형제 요소가 서로 다른 반경을 가지면 시각 정렬이 깨짐.
 
@@ -261,7 +280,7 @@ Tailwind weight ↔ Noto Sans KR 호출:
 | `leading-tight`   | 1.25  | Hero 타이틀 (`.text-hero`)                     |
 | `leading-snug`    | 1.375 | 헤딩·섹션 타이틀 (`.text-section-title`)       |
 | `leading-normal`  | 1.5   | Card 타이틀 (`.text-card-title`)               |
-| `leading-relaxed` | 1.625 | **본문 기본** (`.text-body-large`·매거진 본문) |
+| `leading-relaxed` | 1.625 | **본문 기본** (`.text-body-large`·아티클 본문) |
 
 본문은 한국어 가독성을 위해 `leading-relaxed`가 default. `leading-loose` (2.0)는 쓰지 않음 — 줄 사이가 끊겨 보임.
 
@@ -309,7 +328,7 @@ Tailwind weight ↔ Noto Sans KR 호출:
 - 새 hero 페이지 추가 시 [lib/hero-routes.ts](../lib/hero-routes.ts)에 등록
 - Button·LinkButton의 `leadingIcon`/`trailingIcon` prop 사용 — 텍스트 옆에 화살표 직박 금지
 - 화살표·아이콘은 [lucide-react](https://lucide.dev) 컴포넌트 사용 (`ArrowRight`, `ChevronDown`, `ExternalLink` 등)
-- 이모지는 **콘텐츠 영역**(매거진 본문·증언·아티클)에만 사용. 구조적 UI(버튼·뱃지·메뉴 라벨)에는 lucide 아이콘만
+- 이모지는 **콘텐츠 영역**(아티클 본문·증언·스토리)에만 사용. 구조적 UI(버튼·뱃지·메뉴 라벨)에는 lucide 아이콘만
 
 ### ❌ Don't
 
@@ -324,7 +343,8 @@ Tailwind weight ↔ Noto Sans KR 호출:
 - **텍스트 화살표 직박** (`>`, `→`, `↓`, `‹`, `›`) — 폰트 baseline 어긋남, lucide SVG 컴포넌트 사용 필수
 - **구조적 UI에 이모지 사용** — 버튼·뱃지·메뉴 등은 lucide만. 콘텐츠 본문은 OK
 - `duration-150` / `duration-700` — 표준 어긋남 (200/300/500이 표준, §6 Transition duration 참조)
-- `rounded-3xl` — 매거진 톤과 어울리지 않음 (§4 Rounded radius 표준 참조)
+- `rounded-3xl` — 갤러리 톤의 hard edge와 어긋남 (§4 Rounded radius 표준 참조)
+- **`Button variant="accent"` (테라코타)** — Gallery White Cube 모델에서 deprecated. CTA·강조는 `variant="primary"`로 통일. 기존 사용처는 단계적으로 이전 중이며 신규 코드에서 추가 사용 금지
 
 ---
 
@@ -344,14 +364,15 @@ Tailwind weight ↔ Noto Sans KR 호출:
 ### 빠른 색 참조
 
 ```
-배경:           #FFF9E8 (canvas-soft)
-페이지 캔버스:  #FFF6DD (canvas)
+body 배경:      #FFFFFF (canvas-soft / gallery-canvas)
+챕터 면:        #FAFAFC (canvas / gallery-pearl)
+대안 챕터 면:   #F5F5F7 (canvas-strong / gallery-parchment)
 본문 텍스트:    #31393C (charcoal)
 헤딩:           #1F2428 (charcoal-deep)
-링크/강조 블루: #0E4ECF (primary-strong)
-CTA 오렌지:     #F79824 (accent)
-숫자 강조:      #FDCA40 (sun) — 배경 사용 금지
-보더:           #D1D7E0 (gray-200)
+링크/CTA/강조:  #0E4ECF (primary-strong) / #2176FF (primary)
+숫자 강조 텍스트: #FDCA40 (sun) — 배경 사용 금지
+보더(작품 카드): #E0E0E0 (gallery-hairline)
+보더(일반):      #D1D7E0 (gray-200)
 ```
 
 ### 빠른 클래스 조합
@@ -369,8 +390,8 @@ CTA 오렌지:     #F79824 (accent)
 // 본문
 <p className="text-body-large text-charcoal">
 
-// CTA
-<Button variant="accent" size="lg">기부하기</Button>
+// CTA — primary로 통일 (accent deprecated)
+<Button variant="primary" size="lg">기부하기</Button>
 
 // 카드
 <Card hoverable className="p-6">
@@ -378,23 +399,28 @@ CTA 오렌지:     #F79824 (accent)
 
 ### 에이전트에게 줄 프롬프트 예시
 
-> "이 페이지는 사회적 캠페인의 일부입니다. 톤은 매거진/포스터에 가깝고, 차가운 SaaS 미니멀리즘은 피하세요. 배경은 `bg-canvas-soft`, 본문은 `text-charcoal`, CTA는 `Button variant=accent`를 사용하세요. 섹션 경계가 필요하면 `<SawtoothDivider position=bottom>`을 쓰고, 위 컨테이너에 `SAWTOOTH_TOP_SAFE_PADDING`을 추가하세요. Tailwind 기본 팔레트(blue/red/green 등)는 절대 사용하지 말고 모두 브랜드 토큰을 쓰세요."
+> "이 사이트는 힙하고 현대적인 미술 갤러리입니다. 톤은 갤러리 white cube에 가깝고, 모든 chrome 배경은 white scale이며 색은 작품에서만 옵니다. 배경은 `bg-canvas-soft`(=흰색), 본문은 `text-charcoal`, CTA·링크·강조는 모두 `primary` 블루로 통일(accent 테라코타는 deprecated)하세요. 섹션 경계는 `<SawtoothDivider position=bottom>`, 위 컨테이너에 `SAWTOOTH_TOP_SAFE_PADDING`. Tailwind 기본 팔레트(blue/red/green 등)는 절대 금지, 모두 브랜드 토큰을 사용하세요."
 
 ---
 
-## Appendix: 리뉴얼 시 검토 후보
+## Appendix: 디자인 결정 메모
 
-현재 시스템에서 **건드리면 안 되는 것** (강한 정체성):
+**Gallery White Cube 모델 (2026-04-29 결정)**:
 
-- Soft Sand 캔버스 (`canvas-soft #FFF9E8`)
-- SawtoothDivider 톱니 디테일
+- 사이트 정체성 = "interface chrome is colorless, color comes only from artworks." (Apple/Figma white gallery wall 모델)
+- canvas 토큰을 Soft Sand(`#FFF6DD` 계열)에서 Gallery White Scale(`#FFFFFF`/`#FAFAFC`/`#F5F5F7`)로 리다이렉트
+- accent 테라코타 토큰 `@deprecated` — CTA·강조는 단일 액센트 `primary` 블루로 통일
+
+**강한 정체성 (건드리면 안 됨)**:
+
+- Gallery White Cube 화이트 스케일 (`canvas-*` / `gallery-*`)
+- 단일 액센트 = `primary` 블루
+- SawtoothDivider 톱니 디테일 (Soft Sand 시절부터 유지된 시그니처)
 - Noto Sans KR 단일 패밀리 (weight로만 위계 표현)
 - WCAG AA 모든 색 검증
 
-**리뉴얼에서 검토할 만한 것**:
+**점진 정리 중**:
 
-- Primary 블루(`#2176FF`)가 캔버스 톤과 강도 차이 큼 — 더 데시추레이트된 잉크 블루로?
-- 카드 `rounded-2xl`이 매거진 톤과 어울리는지 (잡지는 보통 0~4px)
-- `shadow-sm/md/lg/xl` 4단계가 종이 질감과 충돌 — flat + border만으로?
-- 모든 섹션 패딩 `py-12 md:py-20` 일률 — 챕터 구조 강조 위해 가변화?
+- `Button variant="accent"` 사용처 → `variant="primary"` 이전
+- `accent`/`accent-soft`/`accent-strong` 클래스 사용처 점진 제거
 - 단일 패밀리 통합으로 폰트 위계 정리됨 (2026-04 기준)
