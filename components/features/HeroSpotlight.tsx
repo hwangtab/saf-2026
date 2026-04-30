@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
 import SafeImage from '@/components/common/SafeImage';
@@ -20,10 +21,6 @@ export interface SpotlightSlide {
 
 interface HeroSpotlightProps {
   slides: SpotlightSlide[];
-  /** locale('ko'|'en')에 따른 컨트롤 aria-label */
-  prevLabel: string;
-  nextLabel: string;
-  goToLabel: (index: number) => string;
 }
 
 /**
@@ -33,15 +30,15 @@ interface HeroSpotlightProps {
  *
  * - autoplay 6초, 호버·포커스 시 일시정지
  * - 점 인디케이터(하단 중앙) + 좌우 화살표(데스크톱 호버 시)
- * - prefers-reduced-motion 시 autoplay 자동 비활성 (embla autoplay 옵션)
  * - 비활성 슬라이드(status=coming-soon, href=null)는 클릭 비활성
+ *
+ * RSC 제약: 함수 props는 server → client 전달 불가하므로 a11y 라벨은
+ * 컴포넌트 내부에서 useTranslations로 직접 처리. 슬라이드 콘텐츠(title/desc 등)는
+ * server에서 미리 풀어 SSR HTML에 정적 노출 → SEO 유지.
  */
-export default function HeroSpotlight({
-  slides,
-  prevLabel,
-  nextLabel,
-  goToLabel,
-}: HeroSpotlightProps) {
+export default function HeroSpotlight({ slides }: HeroSpotlightProps) {
+  const t = useTranslations('home.nowShowing');
+
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start' }, [
     Autoplay({
       delay: 6000,
@@ -90,7 +87,7 @@ export default function HeroSpotlight({
                 key={idx}
                 type="button"
                 onClick={() => scrollTo(idx)}
-                aria-label={goToLabel(idx + 1)}
+                aria-label={t('goToSlide', { n: idx + 1 })}
                 aria-current={idx === selectedIndex ? 'true' : 'false'}
                 className={`h-2 rounded-full transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-charcoal-deep ${
                   idx === selectedIndex ? 'w-8 bg-white' : 'w-2 bg-white/40 hover:bg-white/60'
@@ -107,7 +104,7 @@ export default function HeroSpotlight({
           <button
             type="button"
             onClick={scrollPrev}
-            aria-label={prevLabel}
+            aria-label={t('prevSlide')}
             className="hidden md:flex absolute left-4 lg:left-6 top-1/2 -translate-y-1/2 z-20 h-12 w-12 items-center justify-center rounded-full bg-black/30 hover:bg-black/60 backdrop-blur-sm text-white text-2xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
           >
             <span aria-hidden="true">‹</span>
@@ -115,7 +112,7 @@ export default function HeroSpotlight({
           <button
             type="button"
             onClick={scrollNext}
-            aria-label={nextLabel}
+            aria-label={t('nextSlide')}
             className="hidden md:flex absolute right-4 lg:right-6 top-1/2 -translate-y-1/2 z-20 h-12 w-12 items-center justify-center rounded-full bg-black/30 hover:bg-black/60 backdrop-blur-sm text-white text-2xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
           >
             <span aria-hidden="true">›</span>

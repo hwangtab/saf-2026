@@ -262,12 +262,7 @@ async function HeroSpotlightSection() {
 
   return (
     <div className="relative">
-      <HeroSpotlight
-        slides={slides}
-        prevLabel={t('prevSlide')}
-        nextLabel={t('nextSlide')}
-        goToLabel={(n) => t('goToSlide', { n })}
-      />
+      <HeroSpotlight slides={slides} />
       <SawtoothDivider position="bottom" colorClass="text-canvas-soft" />
     </div>
   );
