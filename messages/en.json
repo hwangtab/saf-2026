@@ -102,8 +102,8 @@
     "error": "An error occurred while searching"
   },
   "cta": {
-    "donateNow": "🤝 Join the Co-op",
-    "buyArt": "🎨 Buy Artwork"
+    "donateNow": "Join the Co-op",
+    "buyArt": "Buy Artwork"
   },
   "error": {
     "goHome": "Go Home",
@@ -143,16 +143,16 @@
     "archiveDesc": "Explore the records and achievements of past exhibitions.",
     "archiveLink": "View Archive",
     "problemTitle": "The Problem We Face",
-    "problemFinancial": "🚫 Financial Discrimination",
+    "problemFinancial": "Financial Discrimination",
     "problemFinancialDesc": "Artists struggle to prove regular income, leading to rejection from bank loans. Without a credit score, they are completely excluded from the financial system.",
-    "problemDebt": "💳 Cycle of Predatory Lending",
+    "problemDebt": "Cycle of Predatory Lending",
     "problemDebtDesc": "With nowhere to borrow, artists rely on credit card loans and cash advances with interest rates approaching 20% annually.",
-    "problemDamage": "😔 Severe Impact",
+    "problemDamage": "Severe Impact",
     "problemDamageDesc": "This hinders artists' creative activities and threatens the sustainability of the art ecosystem.",
-    "problemSolution": "🤝 The Solution: Mutual Aid",
+    "problemSolution": "The Solution: Mutual Aid",
     "problemSolutionDesc": "Mutual aid loans built on the fund of <orgLink>Korea Smart Cooperative</orgLink> and the trust of partner financial institutions are the answer.",
     "solutionTitle": "Our Solution",
-    "solutionTrust": "📈 95% Repayment Rate",
+    "solutionTrust": "95% Repayment Rate",
     "solutionTrustDesc": "When <orgLink>Korea Smart Cooperative</orgLink> builds a fund, partner financial institutions lend up to 7 times that amount to artists at low interest rates.",
     "solutionProof": "Over 95% of artists who received support have been faithfully repaying their loans. This proves that when given access to a trustworthy financial system, artists act responsibly.",
     "applyLoan": "Apply for a Loan",
@@ -999,7 +999,6 @@
       "tributeBody1": "The 100 or so woodblock prints Oh Yoon left behind remain a spiritual map of Korean people's art in the 1980s, and a body of imagery that still touches the public closer than any other. In his hands, the carving knife was not a tool but a question put to its time; a single print was not merely a picture but the faces of countless unnamed people. Forty years after his passing, his cuts still ask us — whose faces are we keeping unforgotten?",
       "tributeBody2": "To mark Oh Yoon's 40th anniversary, SAF has prepared a special exhibition that opens his world of work to citizens once more. From the 1985 Song of the Blade series to the 1996 posthumous print collection, scattered plates are gathered in one place — and you can follow them slowly, with curated text alongside each work, tracing what the artist was asking and what he meant to inscribe. It is a place where you can meet, work by work, the full range of Oh Yoon that a single Guui-dong mural could never tell on its own.",
       "tributeBody3": "When those who have added their names to this petition also meet the artist's broader world of work, this movement becomes more than protecting a single wall — it becomes the citizens' way of remembering an artist's era together. Welcoming a single work into your home is itself another way of carrying the departed artist's beliefs forward to the living artists of today: proceeds from each sale fund mutual-aid loans for working artists, rebuilding the place his lifelong colleagues deserve.",
-      "tributeClosingNote": "Protecting and commemorating are, in the end, the same breath. Thank you for being here.",
       "formComingSoon": "The signing form will appear here shortly.",
       "formAgeNotice": "Citizens aged 14 and over may sign this petition.",
       "closedTitle": "Petition closed",

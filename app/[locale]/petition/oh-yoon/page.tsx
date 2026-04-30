@@ -530,7 +530,11 @@ export default async function PetitionOhYoonPage() {
       >
         <div className="container-max max-w-3xl mx-auto px-4">
           <p className="text-eyebrow text-primary text-center mb-3">{t('tributeEyebrow')}</p>
-          <SectionTitle as="h2" id="petition-tribute-title" className="text-center mb-6 md:mb-8">
+          <SectionTitle
+            as="h2"
+            id="petition-tribute-title"
+            className="text-center mb-6 md:mb-8 scroll-mt-28 md:scroll-mt-32"
+          >
             {t('tributeTitle')}
           </SectionTitle>
           <p className="text-base md:text-lg leading-relaxed text-charcoal text-center break-keep mb-12 md:mb-14 text-balance">
@@ -590,10 +594,6 @@ export default async function PetitionOhYoonPage() {
               </div>
             </div>
           </article>
-
-          <p className="mt-10 md:mt-12 text-sm text-charcoal-muted text-center break-keep italic">
-            {t('tributeClosingNote')}
-          </p>
         </div>
       </Section>
     </main>

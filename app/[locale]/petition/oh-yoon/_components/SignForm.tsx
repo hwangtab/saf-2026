@@ -34,11 +34,13 @@ export default function SignForm() {
   const [pending, startTransition] = useTransition();
   const [result, setResult] = useState<SignPetitionResult | null>(null);
 
-  // 서명 성공 시 9c 특별전 카드로 부드럽게 스크롤. 사용자가 성공 메시지를
-  // 읽을 수 있도록 1.5초 지연. prefers-reduced-motion 사용자는 즉시 점프.
+  // 서명 성공 시 11부 오윤 40주기 헌사 섹션 머리로 부드럽게 스크롤.
+  // SectionTitle을 타겟으로 잡아 에디토리얼 헤더부터 읽히게 함.
+  // 1.5초 지연으로 사용자가 성공 메시지를 먼저 보게 하고,
+  // prefers-reduced-motion 사용자는 즉시 점프.
   useEffect(() => {
     if (!result?.ok) return;
-    const target = document.getElementById('special-cta-card');
+    const target = document.getElementById('petition-tribute-title');
     if (!target) return;
     const reduceMotion =
       typeof window !== 'undefined' &&
@@ -46,7 +48,7 @@ export default function SignForm() {
     const timer = window.setTimeout(() => {
       target.scrollIntoView({
         behavior: reduceMotion ? 'auto' : 'smooth',
-        block: 'center',
+        block: 'start',
       });
     }, 1500);
     return () => window.clearTimeout(timer);
