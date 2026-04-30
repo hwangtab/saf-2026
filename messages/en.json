@@ -165,7 +165,7 @@
     "alwaysAvailable": "Available now · {date}",
     "heroGalleryTitle": "Buy Contemporary Korean Art",
     "heroGallerySubtitle": "Original works from {artistCount} artists at accessible prices",
-    "missionBanner": "100% of sales proceeds go to the Artist Mutual Aid Fund",
+    "missionBanner": "Each purchase becomes a fund that supports fellow artists trapped in predatory lending",
     "missionStep1": "Buy Artwork",
     "missionStep2": "Fund Grows",
     "missionStep3": "Low-Rate Artist Loans",
@@ -181,7 +181,7 @@
       "prevSlide": "Previous slide",
       "nextSlide": "Next slide",
       "goToSlide": "Go to slide {n}",
-      "allArtworksStatus": "Shop now",
+      "allArtworksStatus": "Online Gallery",
       "allArtworksTitle": "Works Offered for Fellow Artists",
       "allArtworksDesc": "Korean contemporary paintings, prints, photography, and sculpture — every purchase becomes a mutual aid fund for fellow artists",
       "allArtworksCta": "Browse all artworks",
@@ -227,7 +227,7 @@
   "seo": {
     "siteTitle": "SAF Online Gallery",
     "titleTemplate": "%s",
-    "siteDescription": "SAF Online is an art gallery selling original works by {artistCount} Korean artists — paintings, prints, photography, and sculptures. All proceeds support the Artist Mutual Aid Fund.",
+    "siteDescription": "SAF Online is an art gallery selling original works by {artistCount} Korean artists — paintings, prints, photography, and sculptures. Each purchase becomes a fund that supports fellow artists trapped in predatory lending.",
     "ogImageAlt": "SAF Online Gallery representative image"
   },
   "artworksPage": {

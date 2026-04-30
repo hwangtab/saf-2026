@@ -34,7 +34,7 @@ const PAGE_COPY = {
   },
   en: {
     title: '2026 Offline Exhibition Archive',
-    description: `${ARTWORK_COUNT} original artworks by ${ARTIST_COUNT} Korean artists exhibited Jan 14–26, 2026 at Insa Art Center, Seoul. Campaign poster, digital catalog, and visitor reviews — all proceeds funded the artist mutual-aid program.`,
+    description: `${ARTWORK_COUNT} original artworks by ${ARTIST_COUNT} Korean artists exhibited Jan 14–26, 2026 at Insa Art Center, Seoul. Campaign poster, digital catalog, and visitor reviews — proceeds funded the artist mutual-aid program.`,
   },
 } as const;
 

@@ -139,7 +139,7 @@ export function generateArtworkPurchaseFAQ(locale: 'ko' | 'en' = 'ko') {
         },
         {
           question: 'What is the purpose of artwork sales revenue?',
-          answer: `All proceeds are donated to the ${CONTACT.ORGANIZATION_NAME_EN} artist mutual-aid fund, which provides low-interest loans to Korean artists facing financial discrimination.`,
+          answer: `Sales proceeds support the ${CONTACT.ORGANIZATION_NAME_EN} artist mutual-aid fund, which provides low-interest loans to fellow artists trapped in predatory lending.`,
         },
       ]
     : [
@@ -166,7 +166,7 @@ export function generateArtworkPurchaseFAQ(locale: 'ko' | 'en' = 'ko') {
         },
         {
           question: '작품 판매 수익금은 어디에 쓰이나요?',
-          answer: `수익금 전액은 ${CONTACT.ORGANIZATION_NAME}의 예술인 상호부조 기금으로 귀속되어, 금융 차별을 겪는 예술인에게 저금리 대출로 지원됩니다.`,
+          answer: `작품 판매 수익이 ${CONTACT.ORGANIZATION_NAME}의 예술인 상호부조 기금이 되어, 고리대금에 고통받는 예술인들에게 저금리 대출로 지원됩니다.`,
         },
       ];
 
@@ -373,7 +373,7 @@ export function generateExhibitionEnjoyHowTo(locale: 'ko' | 'en' = 'ko') {
           },
           {
             name: 'Purchase your favorite artwork',
-            text: 'Support Korean artists by purchasing a work. All proceeds fund low-interest mutual-aid loans for artists facing financial exclusion.',
+            text: 'Support Korean artists by purchasing a work. Sales proceeds fund low-interest mutual-aid loans for fellow artists trapped in predatory lending.',
             url: `${SITE_URL}/en/artworks`,
           },
         ]

@@ -165,7 +165,7 @@
     "alwaysAvailable": "{date} 현재 작품 구매 가능",
     "heroGalleryTitle": "한국 현대미술 작품 구매",
     "heroGallerySubtitle": "{artistCount}명 작가의 작품을 합리적 가격에",
-    "missionBanner": "작품 구매 수익은 전액 예술인 상호부조 기금으로 귀속됩니다",
+    "missionBanner": "작품 한 점의 구매가 고리대금에 고통받는 예술인들을 돕는 기금이 됩니다",
     "missionStep1": "작품 구매",
     "missionStep2": "기금 조성",
     "missionStep3": "예술인 저금리 대출",
@@ -181,7 +181,7 @@
       "prevSlide": "이전 슬라이드",
       "nextSlide": "다음 슬라이드",
       "goToSlide": "{n}번 슬라이드로 이동",
-      "allArtworksStatus": "구매 가능",
+      "allArtworksStatus": "온라인 갤러리",
       "allArtworksTitle": "예술인 동료를 위해 내놓은 작품",
       "allArtworksDesc": "한국 현대미술 회화·판화·사진·조각 — 작품 구매가 예술인 상호부조 기금이 됩니다",
       "allArtworksCta": "전체 작품 보기",
@@ -227,7 +227,7 @@
   "seo": {
     "siteTitle": "씨앗페 온라인 갤러리",
     "titleTemplate": "%s",
-    "siteDescription": "씨앗페 온라인은 {artistCount}명 한국 작가의 회화·판화·사진·조각 원본을 판매하는 갤러리입니다. 작품 구매 수익은 전액 예술인 상호부조 기금으로 귀속되어 {loanCount}건의 저금리 대출(95% 상환율)로 이어졌습니다.",
+    "siteDescription": "씨앗페 온라인은 {artistCount}명 한국 작가의 회화·판화·사진·조각 원본을 판매하는 갤러리입니다. 작품 한 점의 구매가 고리대금에 고통받는 예술인들을 돕는 기금이 되어 {loanCount}건의 저금리 대출(95% 상환율)로 이어졌습니다.",
     "ogImageAlt": "씨앗페 온라인 갤러리 대표 이미지"
   },
   "artworksPage": {

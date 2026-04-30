@@ -731,7 +731,8 @@ export default async function OurProof() {
             <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-2xl bg-white text-left shadow-sm">
               <h3 className="text-card-title mb-3">작품을 구매해 예술인을 응원하세요</h3>
               <p className="text-charcoal-muted mb-4 flex-grow">
-                판매 수익은 전액 기금으로 귀속됩니다. 온라인 갤러리에서 작품을 만나보세요.
+                작품 한 점의 구매가 고리대금에 고통받는 예술인들을 돕는 기금이 됩니다. 온라인
+                갤러리에서 작품을 만나보세요.
               </p>
               <LinkButton href="/artworks" variant="secondary" size="md">
                 작품 구매하기

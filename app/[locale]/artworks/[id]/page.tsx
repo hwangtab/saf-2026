@@ -340,11 +340,11 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   </>
                 ) : (
                   <>
-                    판매 수익 전액은{' '}
+                    판매 수익이 고리대금에 고통받는 예술인들을 돕는{' '}
                     <Link href="/our-proof" className="text-primary hover:underline">
                       예술인 상호부조 기금
                     </Link>
-                    으로 귀속됩니다.
+                    이 됩니다.
                   </>
                 )}
               </p>

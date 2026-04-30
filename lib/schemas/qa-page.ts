@@ -141,7 +141,7 @@ export function generateSAFCoreQA(locale: 'ko' | 'en' = 'ko') {
     ? [
         {
           question: 'What is SAF (Seed Art Festival) Online?',
-          answer: `SAF Online is a special art exhibition organized by ${CONTACT.ORGANIZATION_NAME_EN} to raise mutual-aid funds for Korean artists facing financial exclusion. ${ARTIST_COUNT} artists voluntarily contributed their works, and 100% of sales proceeds go to a low-interest loan fund (5% fixed APR) for artists in financial distress.`,
+          answer: `SAF Online is a special art exhibition organized by ${CONTACT.ORGANIZATION_NAME_EN} to raise mutual-aid funds for Korean artists facing financial exclusion. ${ARTIST_COUNT} artists voluntarily contributed their works, and sales proceeds go to a low-interest loan fund (5% fixed APR) for fellow artists trapped in predatory lending.`,
           url: `${SITE_URL}/en`,
         },
         {
@@ -215,7 +215,7 @@ export function generateSAFCoreQA(locale: 'ko' | 'en' = 'ko') {
     : [
         {
           question: '씨앗페(SAF) 온라인이란 무엇인가요?',
-          answer: `씨앗페 온라인은 ${CONTACT.ORGANIZATION_NAME}이 주최하는 예술인 상호부조 기금 마련 특별전입니다. ${ARTIST_COUNT}명의 작가가 자발적으로 작품을 출품했으며, 판매 수익금 전액이 금융 위기에 처한 예술인에게 연 5% 고정금리 대출로 전달됩니다.`,
+          answer: `씨앗페 온라인은 ${CONTACT.ORGANIZATION_NAME}이 주최하는 예술인 상호부조 기금 마련 특별전입니다. ${ARTIST_COUNT}명의 작가가 자발적으로 작품을 출품했으며, 판매 수익이 고리대금에 고통받는 예술인들에게 연 5% 고정금리 대출로 전달됩니다.`,
           url: SITE_URL,
         },
         {

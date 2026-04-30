@@ -295,7 +295,7 @@ export default async function OurReality() {
               <Link href="/artworks" className="text-primary-strong hover:underline font-medium">
                 artworks from participating artists
               </Link>{' '}
-              sends all proceeds directly to the fund.
+              supports fellow artists trapped in predatory lending.
             </p>
             <CTAButtonGroup
               donateText="Join as a member"
@@ -535,7 +535,7 @@ export default async function OurReality() {
               <Link href="/artworks" className="text-primary-strong hover:underline font-medium">
                 출품 작가들의 작품을 구매
               </Link>
-              하면 판매 수익 전액이 이 기금으로 귀속됩니다.
+              하면 판매 수익이 고리대금에 고통받는 예술인들을 돕는 기금이 됩니다.
             </p>
           </div>
         </div>
