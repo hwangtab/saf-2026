@@ -4,9 +4,9 @@
  * Custom dimension 미등록 상태에서도 동작.
  *
  * 인증 우선순위:
- *  1. GA4_SERVICE_ACCOUNT_JSON env (JSON 문자열) — GitHub Actions 등 CI 환경용
- *  2. GA4_ACCESS_TOKEN env (OAuth Playground access_token) — 로컬 빠른 점검용 (1시간 만료)
- *  3. GA4_CREDENTIALS env (서비스 계정 JSON 파일 경로) — 로컬 SA fallback
+ *  1. GA4_OAUTH_CLIENT_ID + SECRET + REFRESH_TOKEN — 정식 자동화 (CI/로컬 영구 사용)
+ *     refresh token으로 access token 자동 갱신 (1시간 만료 시 자동 재발급)
+ *  2. GA4_ACCESS_TOKEN env — 로컬 즉석 점검용 fallback (1시간 만료, 수동 갱신)
  */
 
 const path = require('path');
@@ -31,19 +31,56 @@ if (!PROPERTY_ID) {
   process.exit(1);
 }
 
+const API_URL = `https://analyticsdata.googleapis.com/v1beta/properties/${PROPERTY_ID}:runReport`;
+
 let runReport;
 
-if (process.env.GA4_SERVICE_ACCOUNT_JSON) {
-  const { BetaAnalyticsDataClient } = require('@google-analytics/data');
-  const client = new BetaAnalyticsDataClient({
-    credentials: JSON.parse(process.env.GA4_SERVICE_ACCOUNT_JSON),
-  });
+if (
+  process.env.GA4_OAUTH_CLIENT_ID &&
+  process.env.GA4_OAUTH_CLIENT_SECRET &&
+  process.env.GA4_OAUTH_REFRESH_TOKEN
+) {
+  let cachedAccessToken = null;
+  let tokenExpiresAt = 0;
+
+  const refreshAccessToken = async () => {
+    const params = new URLSearchParams({
+      client_id: process.env.GA4_OAUTH_CLIENT_ID,
+      client_secret: process.env.GA4_OAUTH_CLIENT_SECRET,
+      refresh_token: process.env.GA4_OAUTH_REFRESH_TOKEN,
+      grant_type: 'refresh_token',
+    });
+    const res = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params.toString(),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(`Token refresh ${res.status}: ${JSON.stringify(data)}`);
+    }
+    cachedAccessToken = data.access_token;
+    // expires_in는 초 단위. 60초 안전 마진.
+    tokenExpiresAt = Date.now() + (data.expires_in - 60) * 1000;
+  };
+
   runReport = async (body) => {
-    const [data] = await client.runReport({ property: `properties/${PROPERTY_ID}`, ...body });
+    if (!cachedAccessToken || Date.now() >= tokenExpiresAt) {
+      await refreshAccessToken();
+    }
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${cachedAccessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(`API ${res.status}: ${JSON.stringify(data)}`);
     return data;
   };
 } else if (process.env.GA4_ACCESS_TOKEN) {
-  const API_URL = `https://analyticsdata.googleapis.com/v1beta/properties/${PROPERTY_ID}:runReport`;
   runReport = async (body) => {
     const res = await fetch(API_URL, {
       method: 'POST',
@@ -57,15 +94,10 @@ if (process.env.GA4_SERVICE_ACCOUNT_JSON) {
     if (!res.ok) throw new Error(`API ${res.status}: ${JSON.stringify(data)}`);
     return data;
   };
-} else if (process.env.GA4_CREDENTIALS) {
-  const { BetaAnalyticsDataClient } = require('@google-analytics/data');
-  const client = new BetaAnalyticsDataClient({ keyFilename: process.env.GA4_CREDENTIALS });
-  runReport = async (body) => {
-    const [data] = await client.runReport({ property: `properties/${PROPERTY_ID}`, ...body });
-    return data;
-  };
 } else {
-  console.error('❌ 인증 정보 없음: GA4_SERVICE_ACCOUNT_JSON / GA4_ACCESS_TOKEN / GA4_CREDENTIALS 중 하나 필요');
+  console.error(
+    '❌ 인증 정보 없음: GA4_OAUTH_CLIENT_ID/SECRET/REFRESH_TOKEN 3종 또는 GA4_ACCESS_TOKEN 필요'
+  );
   process.exit(1);
 }
 
