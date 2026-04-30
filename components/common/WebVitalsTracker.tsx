@@ -51,14 +51,16 @@ function sendToGA(metric: Metric) {
     non_interaction: true, // 사용자 상호작용 카운트에서 제외 (bounce rate 영향 없음)
   };
 
-  // gtag.js가 lazyOnload(LCP 최적화)이라 vitals callback이 gtag 정의 전에 발화할 수 있음.
-  // dataLayer에 직접 push해두면 gtag.js 로드 후 자동 처리됨 (Google 권장 패턴).
-  if (typeof window.gtag === 'function') {
-    window.gtag('event', 'web_vitals', eventPayload);
-  } else {
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({ event: 'web_vitals', ...eventPayload });
+  // gtag.js가 lazyOnload(LCP 최적화)이라 vitals callback이 gtag 정의 전에 발화함.
+  // gtag.js와 동일한 stub을 미리 정의해 dataLayer에 함수 인자(arguments) 형태로 큐잉.
+  // gtag.js 로드 후 큐를 순차 처리. (객체 push는 GTM 전용 — gtag.js는 무시)
+  window.dataLayer = window.dataLayer || [];
+  if (typeof window.gtag !== 'function') {
+    window.gtag = function gtagStub(...args: unknown[]) {
+      window.dataLayer!.push(args);
+    };
   }
+  window.gtag('event', 'web_vitals', eventPayload);
 }
 
 export default function WebVitalsTracker() {
