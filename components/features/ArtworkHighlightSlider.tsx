@@ -147,6 +147,10 @@ export default function ArtworkHighlightSlider({
                 artwork={artwork}
                 variant="gallery"
                 theme={theme}
+                // 카드 폭이 flex 슬롯(220/260/300px)에 고정되어 있어 gallery 기본
+                // sizes(`calc(100vw - 2rem)` 등)보다 훨씬 작음 — sizesOverride로
+                // 실제 렌더 폭만큼만 이미지 변형을 요청하게 함(PSI "이미지 적정 크기" 312KB 절감 항목).
+                sizesOverride="(max-width: 640px) 220px, (max-width: 768px) 260px, 300px"
                 className={cn(
                   'h-full shadow-sm hover:shadow-gallery-hover transition-shadow duration-500',
                   isDark ? 'border border-white/10' : 'border border-gray-200'

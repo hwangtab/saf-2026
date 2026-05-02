@@ -19,6 +19,12 @@ interface ArtworkCardProps {
   returnTo?: string;
   className?: string;
   priorityIndex?: number;
+  /**
+   * `sizes` 속성을 컨텍스트에 맞게 오버라이드. 카드가 variant 기본값과 다른 폭으로 렌더되는 경우
+   * (예: 홈 카테고리 슬라이더의 220~300px flex 슬롯 안에 gallery 비주얼 사용) 사용.
+   * 미지정 시 variant 기본값을 그대로 적용.
+   */
+  sizesOverride?: string;
 }
 
 const VARIANT_CONFIG = {
@@ -144,10 +150,12 @@ function ArtworkCard({
   returnTo,
   className,
   priorityIndex,
+  sizesOverride,
 }: ArtworkCardProps) {
   const locale = useLocale();
   const t = useTranslations('artworkCard');
   const config = VARIANT_CONFIG[variant];
+  const imageSizes = sizesOverride ?? config.imageSizes;
   const isAboveFold =
     variant === 'gallery' && typeof priorityIndex === 'number' && priorityIndex < 3;
 
@@ -232,7 +240,7 @@ function ArtworkCard({
                 alt={getImageAlt(artwork, untitledLabel, unknownArtistLabel, locale)}
                 fill
                 className="object-contain"
-                sizes={config.imageSizes}
+                sizes={imageSizes}
               />
             </div>
             {artwork.sold && <SoldBadge variant="slider" label={soldLabel} />}
@@ -284,7 +292,7 @@ function ArtworkCard({
               priority={isAboveFold}
               fill
               className={cn('object-contain', imageReady ? 'opacity-100' : 'opacity-0')}
-              sizes={config.imageSizes}
+              sizes={imageSizes}
             />
           </div>
           <div
