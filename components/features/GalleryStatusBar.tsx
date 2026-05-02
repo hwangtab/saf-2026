@@ -29,8 +29,8 @@ export default function GalleryStatusBar({ className }: GalleryStatusBarProps) {
           <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-success" />
         </span>
         {t('status', { date: formattedDate })}
-        <span className="text-charcoal/40 hidden md:inline">|</span>
-        <span className="text-charcoal/70 font-normal">{t('hours')}</span>
+        <span className="text-charcoal-soft hidden md:inline">|</span>
+        <span className="text-charcoal-muted font-normal">{t('hours')}</span>
       </div>
 
       <div className="flex items-center gap-3">

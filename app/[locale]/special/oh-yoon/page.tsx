@@ -238,7 +238,7 @@ export default async function OhYoonPage() {
                       priority
                     />
                   </div>
-                  <figcaption className="mt-3 text-xs text-charcoal/50 font-medium tracking-widest uppercase text-center">
+                  <figcaption className="mt-3 text-xs text-charcoal-soft font-medium tracking-widest uppercase text-center">
                     Oh Yoon, 1946–1986
                   </figcaption>
                 </figure>
@@ -250,7 +250,7 @@ export default async function OhYoonPage() {
                   <br />
                   <span className="text-primary-strong">into hope</span>
                 </h2>
-                <div className="prose prose-xl text-charcoal/90 leading-relaxed space-y-6 font-medium">
+                <div className="prose prose-xl text-charcoal leading-relaxed space-y-6 font-medium">
                   <p>
                     Oh Yoon (1946–1986) chose woodcut printmaking as a social language. At a time
                     when elite abstraction dominated, he turned toward ordinary people and
@@ -275,7 +275,7 @@ export default async function OhYoonPage() {
                     <span className="w-4 h-4 bg-primary rotate-45" />
                     Major themes
                   </h3>
-                  <ul className="space-y-6 text-lg text-charcoal/85">
+                  <ul className="space-y-6 text-lg text-charcoal">
                     <li>
                       <strong>Reality:</strong> recording concrete sites of everyday life.
                     </li>
@@ -296,52 +296,52 @@ export default async function OhYoonPage() {
                   </h3>
                   <ol className="space-y-4">
                     <li className="flex gap-5 items-baseline">
-                      <span className="shrink-0 font-bold text-charcoal/70 text-base tabular-nums w-12">
+                      <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
                         1946
                       </span>
-                      <span className="text-charcoal/85 text-base leading-snug">
+                      <span className="text-charcoal text-base leading-snug">
                         Born in Busan, eldest son of novelist Oh Young-su.
                       </span>
                     </li>
                     <li className="flex gap-5 items-baseline">
-                      <span className="shrink-0 font-bold text-charcoal/70 text-base tabular-nums w-12">
+                      <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
                         1969
                       </span>
-                      <span className="text-charcoal/85 text-base leading-snug">
+                      <span className="text-charcoal text-base leading-snug">
                         Co-founds &ldquo;Hyeonsil Dong-in,&rdquo; launching Korean realist art.
                       </span>
                     </li>
                     <li className="flex gap-5 items-baseline">
-                      <span className="shrink-0 font-bold text-charcoal/70 text-base tabular-nums w-12">
+                      <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
                         1974
                       </span>
-                      <span className="text-charcoal/85 text-base leading-snug">
+                      <span className="text-charcoal text-base leading-snug">
                         At 28, carves terracotta murals at Sangup Bank&apos;s Dongdaemun and
                         Guui-dong branches.
                       </span>
                     </li>
                     <li className="flex gap-5 items-baseline">
-                      <span className="shrink-0 font-bold text-charcoal/70 text-base tabular-nums w-12">
+                      <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
                         1979
                       </span>
-                      <span className="text-charcoal/85 text-base leading-snug">
+                      <span className="text-charcoal text-base leading-snug">
                         Founding member of &ldquo;Hyeonsil-gwa Baleon,&rdquo; the heart of the
                         minjung art movement.
                       </span>
                     </li>
                     <li className="flex gap-5 items-baseline">
-                      <span className="shrink-0 font-bold text-charcoal/70 text-base tabular-nums w-12">
+                      <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
                         1986
                       </span>
-                      <span className="text-charcoal/85 text-base leading-snug">
+                      <span className="text-charcoal text-base leading-snug">
                         Passes away shortly after his very first solo show. Aged forty.
                       </span>
                     </li>
                     <li className="flex gap-5 items-baseline">
-                      <span className="shrink-0 font-bold text-charcoal/70 text-base tabular-nums w-12">
+                      <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
                         2006
                       </span>
-                      <span className="text-charcoal/85 text-base leading-snug">
+                      <span className="text-charcoal text-base leading-snug">
                         MMCA retrospective &ldquo;Oh Yoon: Daytime Goblin&apos;s Festival.&rdquo;
                       </span>
                     </li>
@@ -474,7 +474,7 @@ export default async function OhYoonPage() {
                     priority
                   />
                 </div>
-                <figcaption className="mt-3 text-xs text-charcoal/50 font-medium tracking-widest uppercase text-center">
+                <figcaption className="mt-3 text-xs text-charcoal-soft font-medium tracking-widest uppercase text-center">
                   오윤, 1946–1986
                 </figcaption>
               </figure>
@@ -486,7 +486,7 @@ export default async function OhYoonPage() {
                 <br />
                 <span className="text-primary-strong">희망으로 새기다</span>
               </h2>
-              <div className="prose prose-xl text-charcoal/90 leading-relaxed space-y-6 font-medium">
+              <div className="prose prose-xl text-charcoal leading-relaxed space-y-6 font-medium">
                 <p>
                   오윤(1946-1986). 소설가 오영수의 아들로 태어났으나, 그는 문학적 언어 대신{' '}
                   <strong className="font-bold text-charcoal-deep border-b-2 border-charcoal-deep">
@@ -531,7 +531,7 @@ export default async function OhYoonPage() {
                       <h4 className="font-bold text-charcoal text-xl mb-2 group-hover:text-primary-strong transition-colors">
                         현실 (Reality)
                       </h4>
-                      <p className="text-charcoal/80 leading-relaxed text-lg">
+                      <p className="text-charcoal leading-relaxed text-lg">
                         구체적인 삶의 현장과 그 속에서 살아가는 사람들의 모습을 가감 없이
                         기록했습니다.
                       </p>
@@ -545,7 +545,7 @@ export default async function OhYoonPage() {
                       <h4 className="font-bold text-charcoal text-xl mb-2 group-hover:text-primary-strong transition-colors">
                         한 (Han)
                       </h4>
-                      <p className="text-charcoal/80 leading-relaxed text-lg">
+                      <p className="text-charcoal leading-relaxed text-lg">
                         민중의 가슴 속에 맺힌 한을 예술적 승화로 풀어내어, 슬픔을 넘어선 생명력을
                         표현했습니다.
                       </p>
@@ -559,7 +559,7 @@ export default async function OhYoonPage() {
                       <h4 className="font-bold text-charcoal text-xl mb-2 group-hover:text-primary-strong transition-colors">
                         함께하는 미술
                       </h4>
-                      <p className="text-charcoal/80 leading-relaxed text-lg">
+                      <p className="text-charcoal leading-relaxed text-lg">
                         미술관을 넘어, 거리와 현장에서 사람들과 직접 소통하며 예술의 사회적 가치를
                         실천했습니다.
                       </p>
@@ -576,50 +576,50 @@ export default async function OhYoonPage() {
                 </h3>
                 <ol className="space-y-4">
                   <li className="flex gap-5 items-baseline">
-                    <span className="shrink-0 font-bold text-charcoal/70 text-base tabular-nums w-12">
+                    <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
                       1946
                     </span>
-                    <span className="text-charcoal/85 text-base leading-snug break-keep">
+                    <span className="text-charcoal text-base leading-snug break-keep">
                       부산 출생. 소설가 오영수의 장남.
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
-                    <span className="shrink-0 font-bold text-charcoal/70 text-base tabular-nums w-12">
+                    <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
                       1969
                     </span>
-                    <span className="text-charcoal/85 text-base leading-snug break-keep">
+                    <span className="text-charcoal text-base leading-snug break-keep">
                       「현실 동인」 결성, 한국 리얼리즘 미술 운동 제창.
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
-                    <span className="shrink-0 font-bold text-charcoal/70 text-base tabular-nums w-12">
+                    <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
                       1974
                     </span>
-                    <span className="text-charcoal/85 text-base leading-snug break-keep">
+                    <span className="text-charcoal text-base leading-snug break-keep">
                       28세에 상업은행 동대문·구의동지점 테라코타 부조 제작.
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
-                    <span className="shrink-0 font-bold text-charcoal/70 text-base tabular-nums w-12">
+                    <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
                       1979
                     </span>
-                    <span className="text-charcoal/85 text-base leading-snug break-keep">
+                    <span className="text-charcoal text-base leading-snug break-keep">
                       「현실과 발언」 동인 창립 회원으로 참여.
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
-                    <span className="shrink-0 font-bold text-charcoal/70 text-base tabular-nums w-12">
+                    <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
                       1986
                     </span>
-                    <span className="text-charcoal/85 text-base leading-snug break-keep">
+                    <span className="text-charcoal text-base leading-snug break-keep">
                       첫 개인전 직후 별세. 향년 마흔.
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
-                    <span className="shrink-0 font-bold text-charcoal/70 text-base tabular-nums w-12">
+                    <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
                       2006
                     </span>
-                    <span className="text-charcoal/85 text-base leading-snug break-keep">
+                    <span className="text-charcoal text-base leading-snug break-keep">
                       국립현대미술관 회고전 「오윤: 낮도깨비 신명마당」.
                     </span>
                   </li>

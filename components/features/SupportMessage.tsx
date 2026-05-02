@@ -60,7 +60,7 @@ export default function SupportMessage({
   return (
     <div
       className={cn(
-        'relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/5 to-white border border-primary/10 p-8',
+        'relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-surface to-white border border-primary/10 p-8',
         className
       )}
     >

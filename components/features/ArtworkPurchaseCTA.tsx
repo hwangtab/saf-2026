@@ -124,7 +124,7 @@ export default function ArtworkPurchaseCTA({
   // C분기: "문의" 가격 — 연락처 강조
   if (!hasActionablePrice) {
     return (
-      <div className="rounded-2xl border border-primary/15 bg-gradient-to-b from-primary/5 to-white p-6 shadow-sm space-y-4">
+      <div className="rounded-2xl border border-primary/15 bg-gradient-to-b from-primary-surface to-white p-6 shadow-sm space-y-4">
         <div className="text-center">
           <p className="text-base font-bold text-charcoal mb-1">{t('inquiryTitle')}</p>
           <p className="text-sm text-gray-500">{t('inquiryDescription')}</p>
