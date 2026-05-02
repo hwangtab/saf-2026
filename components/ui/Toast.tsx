@@ -30,7 +30,8 @@ const TOAST_STYLES: Record<ToastType, string> = {
   error: 'bg-danger text-white',
   // Gallery 모노톤: warning은 charcoal-deep + white (semantic warning은 dark mono로 대체)
   warning: 'bg-charcoal-deep text-white',
-  info: 'bg-primary text-white',
+  // primary-strong (6.98:1 AAA on white text). 기본 primary(#2176FF, 4.12:1)는 미달.
+  info: 'bg-primary-strong text-white',
 };
 
 const ICON_STYLES: Record<ToastType, string> = {

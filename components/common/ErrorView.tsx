@@ -45,7 +45,7 @@ export default function ErrorView({
           <button
             type="button"
             onClick={reset}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white transition hover:opacity-90"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary-strong px-6 py-3 text-sm font-bold text-white transition hover:opacity-90"
           >
             {retryLabel}
           </button>

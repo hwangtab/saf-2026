@@ -193,7 +193,7 @@ export default async function TransparencyPage() {
                     href={`/reports/${encodeURIComponent(report.pdfFilename)}`}
                     variant="white"
                     size="sm"
-                    className="w-full border-2 border-primary text-primary hover:bg-primary hover:text-white hover:border-primary"
+                    className="w-full border-2 border-primary text-primary hover:bg-primary-strong hover:text-white hover:border-primary-strong"
                   >
                     Download PDF
                   </LinkButton>

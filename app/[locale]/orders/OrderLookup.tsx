@@ -128,7 +128,7 @@ function OrderStatusStepper({ status }: { status: string }) {
                   className={clsx(
                     'flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 text-xs font-bold transition-colors',
                     isDone
-                      ? 'border-primary bg-primary text-white'
+                      ? 'border-primary-strong bg-primary-strong text-white'
                       : isCurrent
                         ? 'border-primary bg-white text-primary'
                         : 'border-gray-200 bg-white text-gray-300'
