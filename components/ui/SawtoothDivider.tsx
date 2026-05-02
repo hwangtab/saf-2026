@@ -13,6 +13,27 @@ import { cn } from '@/lib/utils/cn';
  */
 export const SAWTOOTH_TOP_SAFE_PADDING = 'pb-24 md:pb-32';
 
+/**
+ * PageHero(또는 다크 hero)에 `SawtoothDivider position="bottom"`이 붙으면, hero의 마지막
+ * 24~40px가 톱니 패턴이 됩니다(흰 삼각형이 다크 영역으로 침범). 그 직후의 섹션이 작은
+ * top padding(`pt-0`, `pt-2`, `pt-4` 등)으로 시작하면 본문 첫 줄이 톱니 경계에 거의 붙어
+ * 답답합니다.
+ *
+ * 이 상수를 사용해 hero 다음 섹션의 top padding을 일괄 강제하면 디자인 회귀가 재발하지
+ * 않습니다. Section의 기본 padding(`py-12 md:py-20`)을 그대로 두면 자동으로 안전하므로,
+ * **`padding="none"` 또는 명시적 `pt-X`로 override할 때만** 이 상수를 적용하세요.
+ *
+ * @example
+ *   // ❌ 회귀 패턴 — 톱니 직후 본문이 답답
+ *   <PageHero ... />
+ *   <Section className="pt-2 md:pt-4">...</Section>
+ *
+ *   // ✅ 안전 패턴 — 명시 override 시 이 상수 사용
+ *   <PageHero ... />
+ *   <Section className={`${SAWTOOTH_BOTTOM_SAFE_PADDING} pb-8 md:pb-12`}>...</Section>
+ */
+export const SAWTOOTH_BOTTOM_SAFE_PADDING = 'pt-12 md:pt-16';
+
 interface SawtoothDividerProps {
   /**
    * 톱니 방향.

@@ -21,6 +21,17 @@ interface PageHeroProps {
   breadcrumbItems?: BreadcrumbItem[];
 }
 
+/**
+ * 다크 hero 섹션 — 모든 서브페이지의 헤더. 하단에 SawtoothDivider position="bottom"이
+ * 자동으로 박혀 마지막 24~40px가 톱니 패턴이 됩니다.
+ *
+ * ⚠️ 중요: 이 PageHero 직후의 Section이 작은 top padding(`pt-0/2/4` 등)으로 시작하면
+ * 본문이 톱니 경계에 답답하게 붙습니다. Section 기본 padding(`py-12 md:py-20`)으로 두거나,
+ * 명시 override 시 `SAWTOOTH_BOTTOM_SAFE_PADDING` 상수를 사용하세요.
+ *
+ * @see {@link './SawtoothDivider'.SAWTOOTH_BOTTOM_SAFE_PADDING}
+ */
+
 export default function PageHero({
   title,
   description,

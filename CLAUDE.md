@@ -176,11 +176,16 @@ types/
 
 `import Image from 'next/image'` 직접 사용 금지 (SafeImage 자체 구현체만 예외). `output: 'export'`는 Server Actions·Middleware 지원 위해 비활성화 상태 — 정적 export 가이드(`next-image-export-optimizer`/`ExportedImage`)는 폐기.
 
-**Sawtooth Divider 여백 규칙**: Footer와 FooterSlider 상단에는 `SawtoothDivider position="top"`이 있고, 이 톱니는 `-translate-y-full`로 **위 섹션의 마지막 24~40px를 덮어씁니다**. 따라서 Footer 위에 렌더되는 페이지 최상위 컨테이너(특히 `min-h-screen` 래퍼)는 반드시 충분한 하단 패딩을 가져야 함.
+**Sawtooth Divider 여백 규칙 (양방향)**: Sawtooth는 두 위치에서 콘텐츠를 침범하므로 **양쪽 모두에 표준 상수**가 있습니다. 하드코딩 금지, 임의 짧은 값(`pb-12`, `pt-2`) 금지.
 
-- 하드코딩 금지. `import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider'`로 표준 상수 사용
-- 예시: `<div className={\`min-h-screen ${SAWTOOTH_TOP_SAFE_PADDING}\`}>`
-- `pb-12` 등 짧은 값은 버튼·본문이 톱니에 묻히므로 사용 금지. 여백을 더 키우고 싶다면 상수 자체를 수정
+1. **`SAWTOOTH_TOP_SAFE_PADDING` (`pb-24 md:pb-32`)** — Footer/FooterSlider 위쪽 sawtooth(`position="top"`)에 적용. 톱니가 `-translate-y-full`로 위 섹션 마지막 24~40px를 덮어쓰므로 페이지 최상위 컨테이너(`min-h-screen` 래퍼)에 하단 패딩 필요
+   - 예시: `<div className={\`min-h-screen ${SAWTOOTH_TOP_SAFE_PADDING}\`}>`
+
+2. **`SAWTOOTH_BOTTOM_SAFE_PADDING` (`pt-12 md:pt-16`)** — PageHero(다크 hero) 직후 섹션 sawtooth(`position="bottom"`)에 적용. hero 마지막 24~40px가 톱니 패턴이라 다음 섹션이 작은 top padding(`pt-0/2/4`)으로 시작하면 본문 첫 줄이 톱니에 답답하게 붙음. **Section의 기본 padding(`py-12 md:py-20`)을 그대로 두면 자동 안전. `padding="none"` 또는 명시적 `pt-X` override 시에만** 이 상수 적용
+   - 회귀 패턴(과거 카테고리 페이지 사고): `<Section className="pt-2 md:pt-4">` ← 톱니 직후 답답
+   - 안전 패턴: `<Section className={\`${SAWTOOTH_BOTTOM_SAFE_PADDING} pb-8 md:pb-12\`}>`
+
+- 두 상수 모두 [components/ui/SawtoothDivider.tsx](components/ui/SawtoothDivider.tsx)에 정의 — 값을 키우려면 거기서 한 번에 조정
 
 **Header 투명화 규칙 (Hero 경로)**: 특정 경로에서는 헤더가 페이지 상단에서 투명하게 렌더됩니다. 판정 로직은 [lib/hero-routes.ts](lib/hero-routes.ts)가 **단일 출처**. 과거 `/stories`, `/transparency`, `/terms-consent` 세 건의 반복 버그가 있어 재발 방지 구조를 마련했습니다.
 

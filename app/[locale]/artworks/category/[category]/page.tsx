@@ -4,6 +4,7 @@ import { getLocale, getTranslations } from 'next-intl/server';
 
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
+import { SAWTOOTH_BOTTOM_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
@@ -291,7 +292,11 @@ export default async function CategoryPage({ params }: Props) {
             카테고리 페이지를 long-tail 검색어("회화 작품 구매", "한국 판화 작가" 등)
             흡수 페이지로 격상. visible 본문이라 사용자에게도 가치 전달. */}
         {introText && (
-          <Section variant="white" prevVariant="white" className="pt-2 pb-8 md:pt-4 md:pb-12">
+          <Section
+            variant="white"
+            prevVariant="white"
+            className={`${SAWTOOTH_BOTTOM_SAFE_PADDING} pb-8 md:pb-12`}
+          >
             <div className="container-max max-w-3xl">
               <div className="space-y-4 text-charcoal text-base md:text-lg leading-relaxed">
                 {introText.split('\n\n').map((paragraph, i) => (
