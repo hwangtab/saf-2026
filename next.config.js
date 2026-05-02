@@ -17,7 +17,15 @@ const nextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    // 480 추가 — 모바일 작품 카드(220px DPR 2 = 440px 소스 필요)에서 기존
+    // 640 변형 대신 480 변형 매칭. PSI "이미지 적정 크기" 230KiB 절감 항목 직결.
+    deviceSizes: [480, 640, 750, 828, 1080, 1200, 1920],
+    // 작품 카드용 quality=70 / 일반 75 / hero 등 고화질 85 화이트리스트.
+    // Next.js 16+에서 quality prop 사용 시 명시적 등록 필요.
+    qualities: [70, 75, 85],
+    // PSI "정적 자원 효율적 캐시" 항목 — Vercel Image Optimization edge cache TTL.
+    // 30일. 작품 이미지는 한 번 업로드되면 거의 변경되지 않으므로 길게 잡아 cache hit률 ↑.
+    minimumCacheTTL: 60 * 60 * 24 * 30,
     remotePatterns: [
       {
         protocol: 'https',
@@ -89,7 +97,9 @@ const nextConfig = {
       {
         source: '/images/:path*',
         headers: [
-          { key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' },
+          // 정적 이미지 (icon, og, 가이드 자산 등) — 7일 max-age + 30일 stale-while-revalidate.
+          // 작품 이미지는 Supabase에서 서빙되므로 별도 영향. PSI "효율적 캐시" 항목 개선.
+          { key: 'Cache-Control', value: 'public, max-age=604800, stale-while-revalidate=2592000' },
         ],
       },
       // _next/static 청크는 배포마다 `?dpl=...` 쿼리로 매번 새 URL이 생성되어

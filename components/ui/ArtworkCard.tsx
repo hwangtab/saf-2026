@@ -239,6 +239,7 @@ function ArtworkCard({
                 src={getImageSrc(artwork, variant)}
                 alt={getImageAlt(artwork, untitledLabel, unknownArtistLabel, locale)}
                 fill
+                quality={70}
                 className="object-contain"
                 sizes={imageSizes}
               />
@@ -267,53 +268,64 @@ function ArtworkCard({
 
   // Gallery variant (default)
   const artistHref = `/artworks/artist/${encodeURIComponent(artwork.artist)}`;
+  const safeTitle = getSafeTitle(artwork, untitledLabel, locale);
+  const safeArtist = getSafeArtist(artwork, unknownArtistLabel, locale);
   return (
     <div
       className={cn(
-        'bg-white border border-gray-200 shadow-gallery-card transition-shadow duration-300 hover:shadow-gallery-hover group rounded-2xl overflow-hidden',
+        'bg-white border border-gray-200 shadow-gallery-card transition-shadow duration-300 hover:shadow-gallery-hover group rounded-2xl overflow-hidden relative',
         className
       )}
     >
-      {/* 이미지 영역만 작품 상세 링크로 감쌈 — 작가명 링크와 중첩 방지 */}
-      <Link href={getHref(artwork, returnTo)} className="block">
-        <div
-          ref={imageContainerRef}
-          className={cn(
-            'relative w-full overflow-hidden aspect-[4/5]',
-            theme === 'dark' ? 'bg-charcoal' : 'bg-canvas-soft'
-          )}
-        >
-          <div className="absolute inset-0 shimmer-loading" />
-          <div className="absolute inset-3 md:inset-4">
-            <SafeImage
-              src={getImageSrc(artwork, variant, isAboveFold)}
-              alt={getImageAlt(artwork, untitledLabel, unknownArtistLabel, locale)}
-              loading={isAboveFold ? 'eager' : 'lazy'}
-              priority={isAboveFold}
-              fill
-              className={cn('object-contain', imageReady ? 'opacity-100' : 'opacity-0')}
-              sizes={imageSizes}
-            />
-          </div>
-          <div
-            className={cn(
-              'absolute inset-0 transition-colors duration-300 pointer-events-none',
-              theme === 'dark'
-                ? 'bg-black/0 group-hover:bg-black/0'
-                : 'bg-black/0 group-hover:bg-black/20'
-            )}
-          />
-          {artwork.sold && <SoldBadge variant="gallery" label={soldLabel} />}
-          {artwork.reserved && !artwork.sold && (
-            <ReservedBadge variant="gallery" label={reservedLabel} />
-          )}
-          {artwork.sold && artwork.sold_at && (
-            <SoldDateBadge soldAt={artwork.sold_at} variant="gallery" locale={locale} />
-          )}
-        </div>
-      </Link>
+      {/* Stretched-link 패턴: 작품 상세로 가는 단일 링크가 카드 전체를 덮음.
+          이미지·제목 두 군데로 중복 링크하던 구조(PSI "동일한 링크의 목적이 동일" 지적)를
+          하나로 통합. 카드 안 다른 링크(작가명)는 z-20으로 punch-through. */}
+      <Link
+        href={getHref(artwork, returnTo)}
+        className="absolute inset-0 z-10 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-2xl"
+        aria-label={`${safeTitle} — ${safeArtist} 자세히 보기`}
+      />
 
-      <div className={cn('p-4', theme === 'dark' ? 'bg-charcoal' : 'bg-white')}>
+      <div
+        ref={imageContainerRef}
+        className={cn(
+          'relative w-full overflow-hidden aspect-[4/5]',
+          theme === 'dark' ? 'bg-charcoal' : 'bg-canvas-soft'
+        )}
+      >
+        <div className="absolute inset-0 shimmer-loading" />
+        <div className="absolute inset-3 md:inset-4">
+          <SafeImage
+            src={getImageSrc(artwork, variant, isAboveFold)}
+            alt={getImageAlt(artwork, untitledLabel, unknownArtistLabel, locale)}
+            loading={isAboveFold ? 'eager' : 'lazy'}
+            priority={isAboveFold}
+            fill
+            // quality=70 (default 75 대비 ~10% 작음, 작품 썸네일 화질에 거의 영향 없음).
+            // PSI "이미지 압축률" 항목 (Hero 외 일반 카드).
+            quality={70}
+            className={cn('object-contain', imageReady ? 'opacity-100' : 'opacity-0')}
+            sizes={imageSizes}
+          />
+        </div>
+        <div
+          className={cn(
+            'absolute inset-0 transition-colors duration-300 pointer-events-none',
+            theme === 'dark'
+              ? 'bg-black/0 group-hover:bg-black/0'
+              : 'bg-black/0 group-hover:bg-black/20'
+          )}
+        />
+        {artwork.sold && <SoldBadge variant="gallery" label={soldLabel} />}
+        {artwork.reserved && !artwork.sold && (
+          <ReservedBadge variant="gallery" label={reservedLabel} />
+        )}
+        {artwork.sold && artwork.sold_at && (
+          <SoldDateBadge soldAt={artwork.sold_at} variant="gallery" locale={locale} />
+        )}
+      </div>
+
+      <div className={cn('relative p-4', theme === 'dark' ? 'bg-charcoal' : 'bg-white')}>
         <h2
           className={cn(
             'text-lg font-bold font-sans transition-colors duration-300 break-keep line-clamp-2 min-h-[3.5rem]',
@@ -322,9 +334,7 @@ function ArtworkCard({
               : 'text-charcoal group-hover:text-primary'
           )}
         >
-          <Link href={getHref(artwork, returnTo)} className="hover:underline">
-            {getSafeTitle(artwork, untitledLabel, locale)}
-          </Link>
+          {safeTitle}
         </h2>
         <p
           className={cn(
@@ -332,15 +342,16 @@ function ArtworkCard({
             theme === 'dark' ? 'text-white/75' : 'text-charcoal-muted'
           )}
         >
-          {/* 작가명 → 작가 페이지 링크: 카테고리/아티스트 페이지 간 내부 링크 강화 */}
+          {/* 작가명 → 작가 페이지 링크: stretched 작품 링크(z-10) 위에 떠 있어야
+              하므로 relative z-20. 카테고리/아티스트 페이지 간 내부 링크 강화. */}
           <Link
             href={artistHref}
             className={cn(
-              'hover:underline transition-colors',
+              'relative z-20 hover:underline transition-colors',
               theme === 'dark' ? 'hover:text-white' : 'hover:text-primary'
             )}
           >
-            {getSafeArtist(artwork, unknownArtistLabel, locale)}
+            {safeArtist}
           </Link>
         </p>
         <p
