@@ -106,17 +106,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang={locale} className={notoSansKR.variable} suppressHydrationWarning>
       <head>
-        {process.env.NEXT_PUBLIC_SUPABASE_URL && (
-          <>
-            <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
-            <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
-          </>
-        )}
+        {/* LCP 이미지가 next/image(/_next/image) 경유로 같은 origin에서 서빙되므로
+            Supabase preconnect는 LCP 경로에 들어오지 않음 — PSI "미사용 preconnect" 진단으로
+            확인되어 제거. 모든 외부 origin은 dns-prefetch로만 처리. */}
         <link rel="dns-prefetch" href="https://img.youtube.com" />
         <link rel="dns-prefetch" href="https://i.ytimg.com" />
-        <link rel="preconnect" href="https://t1.kakaocdn.net" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://dapi.kakao.com" />
         <link rel="dns-prefetch" href="https://t1.kakaocdn.net" />
+        <link rel="dns-prefetch" href="https://dapi.kakao.com" />
       </head>
       <body className="bg-canvas-soft text-charcoal flex flex-col min-h-screen font-sans antialiased">
         {children}

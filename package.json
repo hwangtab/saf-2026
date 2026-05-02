@@ -3,6 +3,14 @@
   "version": "1.0.0",
   "description": "SAF(Seed Art Festival) 2026 공식 웹사이트",
   "private": true,
+  "browserslist": [
+    "Chrome >= 90",
+    "Firefox >= 90",
+    "Safari >= 14",
+    "Edge >= 90",
+    "iOS >= 14",
+    "Samsung >= 14"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "npm run generate-changelog && next build",
