@@ -195,7 +195,7 @@ export default async function OhYoonPage() {
                 <span className="relative z-10 inline-block px-6 py-3 border-4 border-charcoal bg-white text-charcoal font-bold text-lg tracking-widest transform -rotate-1 shadow-[4px_4px_0px_0px_rgba(49,57,60,0.2)]">
                   Oh Yoon 40th Anniversary
                 </span>
-                <div className="absolute inset-0 border-4 border-accent transform rotate-2 translate-x-1 translate-y-1 -z-0 opacity-60" />
+                <div className="absolute inset-0 border-4 border-primary transform rotate-2 translate-x-1 translate-y-1 -z-0 opacity-60" />
               </div>
 
               <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl mb-8 md:mb-10 leading-tight text-white tracking-tighter text-balance drop-shadow-sm font-display font-black animate-fade-in-up opacity-0 [animation-fill-mode:both] [animation-delay:200ms]">
@@ -248,7 +248,7 @@ export default async function OhYoonPage() {
                 <h2 className="text-4xl border-l-[12px] border-charcoal pl-6 py-2 leading-tight font-bold font-display text-balance">
                   Carving the pain of the era
                   <br />
-                  <span className="text-accent-strong">into hope</span>
+                  <span className="text-primary-strong">into hope</span>
                 </h2>
                 <div className="prose prose-xl text-charcoal/90 leading-loose space-y-6 font-medium">
                   <p>
@@ -272,7 +272,7 @@ export default async function OhYoonPage() {
               <div className="space-y-8">
                 <div className="bg-white p-8 md:p-12 border-4 border-charcoal shadow-[8px_8px_0px_0px_rgba(247,152,36,0.3)]">
                   <h3 className="text-2xl text-charcoal mb-8 flex items-center gap-3 border-b-2 border-charcoal pb-4 font-bold font-display text-balance">
-                    <span className="w-4 h-4 bg-accent rotate-45" />
+                    <span className="w-4 h-4 bg-primary rotate-45" />
                     Major themes
                   </h3>
                   <ul className="space-y-6 text-lg text-charcoal/85">
@@ -358,7 +358,7 @@ export default async function OhYoonPage() {
                   Exhibition Works
                 </h2>
                 <p className="text-base sm:text-lg text-white/70 font-medium">
-                  <span className="text-accent font-bold text-xl">{artworkCountLabel}</span> prints
+                  <span className="text-primary font-bold text-xl">{artworkCountLabel}</span> prints
                   are currently on display.
                 </p>
               </div>
@@ -411,14 +411,14 @@ export default async function OhYoonPage() {
               <span className="relative z-10 inline-block px-6 py-3 border-4 border-charcoal bg-white text-charcoal font-bold text-lg tracking-widest transform -rotate-1 shadow-[4px_4px_0px_0px_rgba(49,57,60,0.2)]">
                 오윤 40주기 특별전
               </span>
-              <div className="absolute inset-0 border-4 border-accent transform rotate-2 translate-x-1 translate-y-1 -z-0 opacity-60" />
+              <div className="absolute inset-0 border-4 border-primary transform rotate-2 translate-x-1 translate-y-1 -z-0 opacity-60" />
             </div>
 
             <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl mb-8 md:mb-10 leading-tight text-white tracking-tighter text-balance drop-shadow-sm font-display font-black animate-fade-in-up opacity-0 [animation-fill-mode:both] [animation-delay:200ms]">
               40년 만에 돌아온
               <br />
               <span className="relative inline-block px-2">
-                <span className="relative z-10 text-accent">민중의 칼날</span>
+                <span className="relative z-10 text-primary">민중의 칼날</span>
                 <span className="absolute bottom-2 left-0 w-full h-4 bg-white/15 -z-0 -rotate-1" />
               </span>
               , 다시
@@ -436,7 +436,7 @@ export default async function OhYoonPage() {
           {/* Background Decorative Elements */}
           <div className="absolute top-0 left-0 w-32 h-32 border-l-[12px] border-t-[12px] border-white/15" />
           <div className="absolute bottom-0 right-0 w-32 h-32 border-r-[12px] border-b-[12px] border-white/15" />
-          <div className="absolute top-1/2 left-4 w-4 h-4 rounded-full bg-accent opacity-40" />
+          <div className="absolute top-1/2 left-4 w-4 h-4 rounded-full bg-primary opacity-40" />
           <div className="absolute top-1/3 right-8 w-6 h-6 rounded-full bg-white opacity-10" />
         </section>
 
@@ -444,7 +444,7 @@ export default async function OhYoonPage() {
           {/* Quote Section */}
           <div className="mb-24 flex justify-center">
             <blockquote className="relative p-8 sm:p-10 md:p-16 text-center max-w-4xl border-4 border-charcoal bg-white shadow-[8px_8px_0px_0px_rgba(49,57,60,0.1)]">
-              <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-accent flex items-center justify-center rounded-full text-white font-display font-black text-3xl">
+              <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-primary flex items-center justify-center rounded-full text-white font-display font-black text-3xl">
                 &ldquo;
               </div>
               <p className="text-2xl sm:text-3xl md:text-5xl text-charcoal leading-relaxed text-balance pt-4 font-display font-black">
@@ -484,7 +484,7 @@ export default async function OhYoonPage() {
               <h2 className="text-4xl border-l-[12px] border-charcoal pl-6 py-2 leading-tight font-bold font-display text-balance">
                 시대의 아픔을
                 <br />
-                <span className="text-accent-strong">희망으로 새기다</span>
+                <span className="text-primary-strong">희망으로 새기다</span>
               </h2>
               <div className="prose prose-xl text-charcoal/90 leading-loose space-y-6 font-medium">
                 <p>
@@ -518,7 +518,7 @@ export default async function OhYoonPage() {
             <div className="space-y-8">
               <div className="bg-white p-8 md:p-12 border-4 border-charcoal shadow-[8px_8px_0px_0px_rgba(247,152,36,0.3)]">
                 <h3 className="text-2xl text-charcoal mb-8 flex items-center gap-3 border-b-2 border-charcoal pb-4 font-bold font-display text-balance">
-                  <span className="w-4 h-4 bg-accent rotate-45" />
+                  <span className="w-4 h-4 bg-primary rotate-45" />
                   주요 테마
                 </h3>
 
@@ -528,7 +528,7 @@ export default async function OhYoonPage() {
                       1
                     </span>
                     <div>
-                      <h4 className="font-bold text-charcoal text-xl mb-2 group-hover:text-accent-strong transition-colors">
+                      <h4 className="font-bold text-charcoal text-xl mb-2 group-hover:text-primary-strong transition-colors">
                         현실 (Reality)
                       </h4>
                       <p className="text-charcoal/80 leading-relaxed text-lg">
@@ -542,7 +542,7 @@ export default async function OhYoonPage() {
                       2
                     </span>
                     <div>
-                      <h4 className="font-bold text-charcoal text-xl mb-2 group-hover:text-accent-strong transition-colors">
+                      <h4 className="font-bold text-charcoal text-xl mb-2 group-hover:text-primary-strong transition-colors">
                         한 (Han)
                       </h4>
                       <p className="text-charcoal/80 leading-relaxed text-lg">
@@ -556,7 +556,7 @@ export default async function OhYoonPage() {
                       3
                     </span>
                     <div>
-                      <h4 className="font-bold text-charcoal text-xl mb-2 group-hover:text-accent-strong transition-colors">
+                      <h4 className="font-bold text-charcoal text-xl mb-2 group-hover:text-primary-strong transition-colors">
                         함께하는 미술
                       </h4>
                       <p className="text-charcoal/80 leading-relaxed text-lg">
@@ -641,7 +641,7 @@ export default async function OhYoonPage() {
                 ARCHIVE
               </div>
               <p className="text-base sm:text-lg text-white/70 font-medium">
-                총 <span className="text-accent font-bold text-xl">{artworkCountLabel}</span>
+                총 <span className="text-primary font-bold text-xl">{artworkCountLabel}</span>
                 점의 판화가 전시되어 있습니다.
               </p>
             </div>

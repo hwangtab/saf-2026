@@ -20,7 +20,6 @@ type AuthButtonsProps = {
   variant?:
     | 'primary'
     | 'secondary'
-    | 'accent'
     | 'outline'
     | 'outline-white'
     | 'white'

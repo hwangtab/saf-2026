@@ -19,9 +19,6 @@ export const buttonVariants = cva(
       variant: {
         primary: 'bg-primary hover:bg-primary-strong text-white hover:shadow-gallery-artwork',
         secondary: 'bg-gray-900 hover:bg-gray-800 text-white hover:shadow-gallery-artwork',
-        // accent variant는 deprecated (Gallery 모델은 단일 액센트만) — primary로 리다이렉트.
-        // 기존 사용처 호환을 위해 variant 자체는 유지하되 색은 primary 블루.
-        accent: 'bg-primary hover:bg-primary-strong text-white hover:shadow-gallery-artwork',
         outline:
           'border border-gray-200 hover:border-primary hover:text-primary bg-white text-gray-700 hover:shadow-gallery-card',
         'outline-white':
