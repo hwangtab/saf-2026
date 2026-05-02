@@ -273,12 +273,16 @@ async function HeroSpotlightSection() {
 async function CategorySections() {
   const t = await getTranslations('home');
 
+  // 카테고리당 12점으로 제한 — 홈 카테고리 슬라이더는 시각적 hook이지 카탈로그가 아니므로
+  // 12점이면 충분 (auto-scroll loop도 자연스러움). 4 카테고리 × 20 = 80 → 4 × 12 = 48 카드로
+  // DOM/이미지/하이드레이션 비용 40% 감소 (PSI DOM 1,979 노드, JS hydration 부담 완화).
+  // 전체 카테고리는 viewAllHref(/artworks/category/...)에서 그리드로 안내됨.
   const [paintingArtworks, printArtworks, photoMediaArtworks, sculptureArtworks] =
     await Promise.all([
-      getSupabaseArtworksByCategories(['회화', '한국화', '드로잉'], 20),
-      getSupabaseArtworksByCategories(['판화', '사후판화', '아트프린트'], 20),
-      getSupabaseArtworksByCategories(['사진', '디지털아트', '혼합매체'], 20),
-      getSupabaseArtworksByCategories(['조각', '도자/공예'], 20),
+      getSupabaseArtworksByCategories(['회화', '한국화', '드로잉'], 12),
+      getSupabaseArtworksByCategories(['판화', '사후판화', '아트프린트'], 12),
+      getSupabaseArtworksByCategories(['사진', '디지털아트', '혼합매체'], 12),
+      getSupabaseArtworksByCategories(['조각', '도자/공예'], 12),
     ]);
 
   const sections: {
