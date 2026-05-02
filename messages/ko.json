@@ -123,7 +123,8 @@
     "skipToMain": "메인 콘텐츠로 이동",
     "menu": "메뉴",
     "closeMenu": "메뉴 닫기",
-    "close": "닫기"
+    "close": "닫기",
+    "loading": "로딩 중"
   },
   "home": {
     "heroTitle": "한국 현대미술\n작품 구매",

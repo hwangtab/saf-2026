@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server';
 import { cn } from '@/lib/utils/cn';
 
 interface SpinnerProps {
@@ -18,11 +19,16 @@ const variantClasses = {
   white: 'border-white/30 border-t-white',
 };
 
-export default function Spinner({ size = 'md', variant = 'default', className }: SpinnerProps) {
+export default async function Spinner({
+  size = 'md',
+  variant = 'default',
+  className,
+}: SpinnerProps) {
+  const t = await getTranslations('a11y');
   return (
     <div
       role="status"
-      aria-label="로딩 중"
+      aria-label={t('loading')}
       className={cn(
         'animate-spin rounded-full',
         sizeClasses[size],

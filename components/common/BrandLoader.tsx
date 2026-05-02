@@ -1,15 +1,17 @@
+import { getTranslations } from 'next-intl/server';
 import SafeImage from '@/components/common/SafeImage';
 
 interface BrandLoaderProps {
   minHeight?: string;
 }
 
-export default function BrandLoader({ minHeight = '80vh' }: BrandLoaderProps) {
+export default async function BrandLoader({ minHeight = '80vh' }: BrandLoaderProps) {
+  const t = await getTranslations('a11y');
   return (
     <div
       className="flex flex-col items-center justify-center bg-charcoal"
       style={{ minHeight }}
-      aria-label="로딩 중"
+      aria-label={t('loading')}
       role="status"
     >
       {/* 로고 */}
