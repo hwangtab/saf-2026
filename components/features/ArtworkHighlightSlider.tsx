@@ -47,7 +47,16 @@ export default function ArtworkHighlightSlider({
 
   const resolvedTitle = title ?? defaultCopy.title;
   const resolvedViewAllHref = viewAllHref ?? '/artworks';
-  const resolvedViewAllText = locale === 'en' ? 'View all' : '전체 보기';
+  // 카테고리별로 링크 텍스트가 동일("전체 보기")이면 PSI/Google이 SEO 신호 약하다고
+  // 짚음 (홈에 4개 카테고리 슬라이더가 같은 텍스트로 보이면 4 링크 모두 식별 불명).
+  // 카테고리명을 anchor text에 노출시켜 각 링크의 destination을 명확히 함.
+  // title prop이 있으면 "회화 전체 보기" / "View all paintings" 식으로,
+  // title이 없으면 기본 "전체 작품 보기" / "View all artworks" fallback.
+  const resolvedViewAllText = title
+    ? locale === 'en'
+      ? `View all ${title}`
+      : `${title} 전체 보기`
+    : defaultCopy.viewAll;
 
   const [mounted, setMounted] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
