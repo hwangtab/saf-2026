@@ -378,7 +378,7 @@ export default async function Archive2023Page() {
                     </Link>
 
                     {video.transcript && !isEnglish && (
-                      <div className="mt-4 p-4 bg-primary/5 rounded-lg border-l-4 border-primary/30">
+                      <div className="mt-4 p-4 bg-primary-surface rounded-lg border-l-4 border-primary/30">
                         <h4 className="flex items-center gap-2 text-xs font-bold text-primary mb-2 uppercase tracking-wider">
                           <Film aria-hidden="true" className="h-3.5 w-3.5" />
                           영상 기록 요약

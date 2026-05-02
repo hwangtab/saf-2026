@@ -125,7 +125,7 @@ export default function SortControls({ value, onChange }: SortControlsProps) {
         type="button"
         ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-primary hover:bg-primary/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+        className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-primary hover:bg-primary-surface transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         aria-label={tA11y('sortOptions')}
@@ -158,7 +158,9 @@ export default function SortControls({ value, onChange }: SortControlsProps) {
               className={`w-full text-left px-4 py-3 text-sm flex items-center gap-2 transition-colors first:rounded-t-lg last:rounded-b-lg ${
                 focusedIndex === index ? 'bg-gray-100 outline-none' : 'hover:bg-gray-50'
               } ${
-                value === option.value ? 'bg-primary/10 text-primary font-medium' : 'text-charcoal'
+                value === option.value
+                  ? 'bg-primary-surface text-primary font-medium'
+                  : 'text-charcoal'
               }`}
               role="option"
               aria-selected={value === option.value}

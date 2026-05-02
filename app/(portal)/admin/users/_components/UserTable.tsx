@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslations, useLocale } from 'next-intl';
+import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react';
 import { Profile, UserSortKey, SortDirection } from '@/types/admin';
 import Button from '@/components/ui/Button';
 import SafeAvatarImage from '@/components/common/SafeAvatarImage';
@@ -35,8 +36,13 @@ export function UserTable({
   const t = useTranslations('admin.users');
 
   const getSortArrow = (key: UserSortKey) => {
-    if (sortKey !== key) return '↕';
-    return sortDirection === 'asc' ? '↑' : '↓';
+    if (sortKey !== key)
+      return <ChevronsUpDown className="inline h-3 w-3 opacity-40" aria-hidden="true" />;
+    return sortDirection === 'asc' ? (
+      <ChevronUp className="inline h-3 w-3" aria-hidden="true" />
+    ) : (
+      <ChevronDown className="inline h-3 w-3" aria-hidden="true" />
+    );
   };
 
   const getSortAriaLabel = (label: string, key: UserSortKey) => {

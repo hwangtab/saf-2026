@@ -439,7 +439,7 @@ export default async function AboutPage() {
           </div>
 
           {/* 기금 레버리지 callout */}
-          <div className="mt-16 max-w-3xl mx-auto bg-primary/10 rounded-2xl p-8 border-2 border-primary text-center">
+          <div className="mt-16 max-w-3xl mx-auto bg-primary-surface rounded-2xl p-8 border-2 border-primary text-center">
             <h3 className="text-card-title mb-2">상호부조 기금 레버리지</h3>
             <p className="text-sm text-charcoal-muted mb-4">
               적립된 기금의 최대 7배가 예술인 대출로 전환됩니다

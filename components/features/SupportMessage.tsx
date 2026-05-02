@@ -71,7 +71,7 @@ export default function SupportMessage({
           <h3 className="font-bold text-gray-800 text-2xl break-keep text-center">{t('title')}</h3>
 
           {/* 순환 통계 콜아웃 */}
-          <div className="w-full rounded-xl bg-primary/[0.08] py-4 px-5 relative min-h-[60px]">
+          <div className="w-full rounded-xl bg-primary-surface py-4 px-5 relative min-h-[60px]">
             <div aria-live="polite">
               {Array.from({ length: STAT_COUNT }).map((_, i) => (
                 <div
@@ -153,8 +153,8 @@ export default function SupportMessage({
       </div>
 
       {/* Background decoration */}
-      <div className="absolute top-0 right-0 -mt-8 -mr-8 w-24 h-24 bg-primary/10 rounded-full blur-2xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 -mb-8 -ml-8 w-24 h-24 bg-primary/10 rounded-full blur-2xl pointer-events-none" />
+      <div className="absolute top-0 right-0 -mt-8 -mr-8 w-24 h-24 bg-primary-surface rounded-full blur-2xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 -mb-8 -ml-8 w-24 h-24 bg-primary-surface rounded-full blur-2xl pointer-events-none" />
     </div>
   );
 }

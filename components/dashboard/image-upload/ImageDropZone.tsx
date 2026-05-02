@@ -57,8 +57,8 @@ export function ImageDropZone({
         uploading
           ? 'border-gray-200 bg-gray-50 cursor-wait'
           : isDragging
-            ? 'border-primary bg-primary/5 cursor-pointer'
-            : 'border-gray-300 hover:border-primary hover:bg-primary/5 cursor-pointer'
+            ? 'border-primary bg-primary-surface cursor-pointer'
+            : 'border-gray-300 hover:border-primary hover:bg-primary-surface cursor-pointer'
       }`}
     >
       {uploading ? (

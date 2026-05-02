@@ -127,7 +127,7 @@ export default async function Home() {
             />
             <ChevronDown aria-hidden="true" className="sm:hidden h-5 w-5 text-charcoal-soft" />
             {/* Step 3 */}
-            <div className="flex items-center gap-2 bg-primary/10 rounded-xl px-5 py-3 shadow-sm border border-primary/20">
+            <div className="flex items-center gap-2 bg-primary-surface rounded-xl px-5 py-3 shadow-sm border border-primary/20">
               <Handshake aria-hidden="true" className="h-5 w-5 text-primary-a11y" />
               <span className="text-sm font-semibold text-primary-a11y">{t('missionStep3')}</span>
             </div>

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
+import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react';
 import SafeImage from '@/components/common/SafeImage';
 import Button from '@/components/ui/Button';
 import {
@@ -272,8 +273,13 @@ export function AdminArtworkList({
   };
 
   const getSortArrow = (key: SortKey) => {
-    if (sortKey !== key) return '↕';
-    return sortDirection === 'asc' ? '↑' : '↓';
+    if (sortKey !== key)
+      return <ChevronsUpDown className="inline h-3 w-3 opacity-40" aria-hidden="true" />;
+    return sortDirection === 'asc' ? (
+      <ChevronUp className="inline h-3 w-3" aria-hidden="true" />
+    ) : (
+      <ChevronDown className="inline h-3 w-3" aria-hidden="true" />
+    );
   };
 
   const getSortAriaLabel = (label: string, key: SortKey) => {

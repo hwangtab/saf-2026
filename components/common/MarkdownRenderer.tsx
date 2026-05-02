@@ -127,7 +127,7 @@ export default function MarkdownRenderer({ content, className, locale = 'ko' }: 
         // 이미지
         'prose-img:rounded-xl prose-img:shadow-md',
         // 인용구 — prose 기본 자동 따옴표 제거 (본문에 이미 따옴표가 있을 때 중복 방지)
-        'prose-blockquote:border-primary prose-blockquote:bg-primary/5 prose-blockquote:rounded-r-lg prose-blockquote:py-2 prose-blockquote:px-6 prose-blockquote:not-italic',
+        'prose-blockquote:border-primary prose-blockquote:bg-primary-surface prose-blockquote:rounded-r-lg prose-blockquote:py-2 prose-blockquote:px-6 prose-blockquote:not-italic',
         '[&_blockquote_p:first-of-type]:before:content-none [&_blockquote_p:last-of-type]:after:content-none',
         // 목록 간격
         'prose-li:mb-2',

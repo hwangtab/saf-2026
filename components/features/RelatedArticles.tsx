@@ -75,7 +75,7 @@ export default async function RelatedArticles({ articles }: RelatedArticlesProps
             >
               {/* Source Badge */}
               <div className="flex items-center justify-between mb-3">
-                <span className="inline-block px-2.5 py-1 text-xs font-bold text-primary bg-primary/10 rounded">
+                <span className="inline-block px-2.5 py-1 text-xs font-bold text-primary bg-primary-surface rounded">
                   {localizedSource}
                 </span>
                 <svg

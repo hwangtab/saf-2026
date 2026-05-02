@@ -4,6 +4,7 @@ import { useMemo, useOptimistic, useState, useTransition } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
+import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react';
 import { deleteArtist } from '@/app/actions/admin-artists';
 import SafeAvatarImage from '@/components/common/SafeAvatarImage';
 import {
@@ -128,8 +129,13 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
   };
 
   const getSortArrow = (key: SortKey) => {
-    if (sortKey !== key) return '↕';
-    return sortDirection === 'asc' ? '↑' : '↓';
+    if (sortKey !== key)
+      return <ChevronsUpDown className="inline h-3 w-3 opacity-40" aria-hidden="true" />;
+    return sortDirection === 'asc' ? (
+      <ChevronUp className="inline h-3 w-3" aria-hidden="true" />
+    ) : (
+      <ChevronDown className="inline h-3 w-3" aria-hidden="true" />
+    );
   };
 
   const getSortAriaLabel = (label: string, key: SortKey) => {

@@ -163,7 +163,7 @@ export default async function NewsArticlePage({ params }: Props) {
               {locale === 'en' ? 'Read original article' : '원문 기사 보기'}
             </LinkButton>
           )}
-          <div className="mt-10 p-5 bg-primary/5 rounded-lg border border-primary/15">
+          <div className="mt-10 p-5 bg-primary-surface rounded-lg border border-primary/15">
             <p className="text-sm text-charcoal-muted leading-relaxed">
               {locale === 'en' ? (
                 <>

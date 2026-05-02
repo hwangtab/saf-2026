@@ -451,7 +451,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
 
               {/* Artist Note */}
               {localizedDescription && (
-                <div className="bg-primary/5 p-6 rounded-xl">
+                <div className="bg-primary-surface p-6 rounded-xl">
                   <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">
                     {t('artistNote')}
                   </h2>

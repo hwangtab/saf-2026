@@ -320,7 +320,7 @@ function renderHighlightedExcerpt(excerpt: string, highlights?: string[]) {
       return (
         <mark
           key={`highlight-${part}-${index}`}
-          className="rounded px-1 font-semibold text-primary bg-primary/10"
+          className="rounded px-1 font-semibold text-primary bg-primary-surface"
         >
           {part}
         </mark>

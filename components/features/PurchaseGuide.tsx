@@ -92,7 +92,7 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
           {copy.guides.map((guide, index) => (
             <div key={index} className="flex items-start gap-3">
-              <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+              <div className="w-9 h-9 rounded-full bg-primary-surface flex items-center justify-center shrink-0">
                 {guide.icon}
               </div>
               <div className="min-w-0">

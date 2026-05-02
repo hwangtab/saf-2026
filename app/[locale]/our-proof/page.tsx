@@ -270,7 +270,7 @@ export default async function OurProof() {
                   </p>
                 </div>
               </div>
-              <div className="bg-primary/10 rounded-2xl p-8 border-2 border-primary text-center">
+              <div className="bg-primary-surface rounded-2xl p-8 border-2 border-primary text-center">
                 <h3 className="text-card-title mb-6">Fund leverage</h3>
                 <p className="text-sm text-charcoal-muted mb-3">Accumulated mutual-aid reserve</p>
                 <p className="text-4xl font-black text-primary">KRW 77,000,000</p>
@@ -525,7 +525,7 @@ export default async function OurProof() {
                 </p>
               </div>
             </div>
-            <div className="bg-primary/10 rounded-2xl p-8 border-2 border-primary text-center">
+            <div className="bg-primary-surface rounded-2xl p-8 border-2 border-primary text-center">
               <h3 className="text-card-title mb-6">기금의 힘</h3>
               <p className="text-sm text-charcoal-muted mb-3">누적 조성된 상호부조 기금</p>
               <p className="text-4xl font-black text-primary">77,000,000원</p>

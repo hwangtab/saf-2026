@@ -382,7 +382,7 @@ export default function CheckoutClient({
                   className={clsx(
                     'rounded-xl border-2 py-3 text-sm font-medium transition-colors',
                     selected
-                      ? 'border-primary bg-primary/5 text-primary'
+                      ? 'border-primary bg-primary-surface text-primary'
                       : 'border-gray-200 text-gray-600 hover:border-gray-300'
                   )}
                 >
