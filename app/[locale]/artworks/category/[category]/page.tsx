@@ -313,7 +313,7 @@ export default async function CategoryPage({ params }: Props) {
                       <Link
                         key={artist}
                         href={`/artworks/artist/${encodeURIComponent(artist)}`}
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-canvas-soft border border-gray-200 rounded-full text-sm font-medium text-charcoal hover:bg-primary/5 hover:border-primary/30 transition-colors"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-canvas-soft border border-gray-200 rounded-full text-sm font-medium text-charcoal hover:bg-primary-surface hover:border-primary/30 transition-colors"
                       >
                         <span>{artist}</span>
                         <span className="text-xs text-charcoal-muted">{count}</span>
@@ -388,7 +388,7 @@ export default async function CategoryPage({ params }: Props) {
                     key={i}
                     className="group rounded-2xl bg-canvas-soft border border-gray-200 overflow-hidden"
                   >
-                    <summary className="cursor-pointer list-none px-5 py-4 flex items-center justify-between gap-3 text-base font-medium text-charcoal hover:bg-primary/5 transition-colors">
+                    <summary className="cursor-pointer list-none px-5 py-4 flex items-center justify-between gap-3 text-base font-medium text-charcoal hover:bg-primary-surface transition-colors">
                       <span className="flex-1">{faq.q}</span>
                       <span
                         aria-hidden="true"
@@ -431,7 +431,7 @@ export default async function CategoryPage({ params }: Props) {
                 ))}
                 <Link
                   href="/stories"
-                  className="px-3 md:px-4 py-1.5 text-xs font-medium rounded-full border border-primary/20 bg-primary/5 text-primary hover:bg-primary/10 transition-colors"
+                  className="px-3 md:px-4 py-1.5 text-xs font-medium rounded-full border border-primary/20 bg-primary-surface text-primary hover:bg-primary-surface transition-colors"
                 >
                   {isEnglish ? 'Magazine' : '매거진'}
                 </Link>

@@ -142,7 +142,7 @@ export default function MessagesTab({ messages: initial }: MessagesTabProps) {
                       type="button"
                       onClick={() => toggleMask(m.id, false)}
                       disabled={isBusy}
-                      className="rounded-md border border-primary/40 bg-white px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary/10 disabled:opacity-60"
+                      className="rounded-md border border-primary/40 bg-white px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary-surface disabled:opacity-60"
                     >
                       {isBusy ? t('messagesActionPending') : t('messagesActionRestore')}
                     </button>

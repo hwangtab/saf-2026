@@ -250,7 +250,7 @@ export default async function OhYoonPage() {
                   <br />
                   <span className="text-primary-strong">into hope</span>
                 </h2>
-                <div className="prose prose-xl text-charcoal/90 leading-loose space-y-6 font-medium">
+                <div className="prose prose-xl text-charcoal/90 leading-relaxed space-y-6 font-medium">
                   <p>
                     Oh Yoon (1946–1986) chose woodcut printmaking as a social language. At a time
                     when elite abstraction dominated, he turned toward ordinary people and
@@ -486,7 +486,7 @@ export default async function OhYoonPage() {
                 <br />
                 <span className="text-primary-strong">희망으로 새기다</span>
               </h2>
-              <div className="prose prose-xl text-charcoal/90 leading-loose space-y-6 font-medium">
+              <div className="prose prose-xl text-charcoal/90 leading-relaxed space-y-6 font-medium">
                 <p>
                   오윤(1946-1986). 소설가 오영수의 아들로 태어났으나, 그는 문학적 언어 대신{' '}
                   <strong className="font-bold text-charcoal-deep border-b-2 border-charcoal-deep">

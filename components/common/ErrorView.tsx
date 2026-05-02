@@ -51,7 +51,7 @@ export default function ErrorView({
           </button>
           <a
             href={resolvedBackLink.href}
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-primary px-6 py-3 text-sm font-bold text-primary transition hover:bg-primary/5"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-primary px-6 py-3 text-sm font-bold text-primary transition hover:bg-primary-surface"
           >
             {resolvedBackLink.label}
           </a>

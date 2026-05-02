@@ -259,7 +259,7 @@ export default function GlobalSearchDialog({
                   <button
                     type="button"
                     onClick={handleViewAll}
-                    className="w-full text-sm text-primary hover:text-primary/80 font-medium py-2 px-4 rounded-lg hover:bg-primary/5 transition-colors text-left"
+                    className="w-full text-sm text-primary hover:text-primary/80 font-medium py-2 px-4 rounded-lg hover:bg-primary-surface transition-colors text-left"
                   >
                     {t('viewAll', { count: results.totalArtworkMatches })}
                   </button>

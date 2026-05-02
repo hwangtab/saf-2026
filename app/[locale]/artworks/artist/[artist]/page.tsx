@@ -418,7 +418,7 @@ export default async function ArtistPage({ params }: Props) {
                     href={path}
                     className={`px-3 md:px-4 py-1.5 text-xs font-medium rounded-full border transition-colors ${
                       isPrimary
-                        ? 'border-primary bg-primary/5 text-primary hover:bg-primary/10'
+                        ? 'border-primary bg-primary-surface text-primary hover:bg-primary-surface'
                         : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-100'
                     }`}
                   >

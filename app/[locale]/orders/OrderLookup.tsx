@@ -579,7 +579,7 @@ function OrderDetail({
                       href={getTrackingUrl(order.shippingCarrier, order.trackingNumber)!}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border border-primary/30 bg-primary/5 py-2.5 text-sm font-semibold text-primary hover:bg-primary/10 transition-colors"
+                      className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border border-primary/30 bg-primary-surface py-2.5 text-sm font-semibold text-primary hover:bg-primary-surface transition-colors"
                     >
                       {t('trackDelivery')}
                     </a>

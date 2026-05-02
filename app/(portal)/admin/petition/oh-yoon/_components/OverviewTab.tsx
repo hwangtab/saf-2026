@@ -97,7 +97,7 @@ export default function OverviewTab({ counts, regionBreakdown }: OverviewTabProp
               type="button"
               onClick={handleReopen}
               disabled={pending}
-              className="rounded-lg border border-primary/40 bg-white px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/10 disabled:opacity-60"
+              className="rounded-lg border border-primary/40 bg-white px-4 py-2 text-sm font-semibold text-primary hover:bg-primary-surface disabled:opacity-60"
             >
               {t('overviewReopen')}
             </button>
