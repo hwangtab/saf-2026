@@ -7,6 +7,7 @@ import RegionSelect from './RegionSelect';
 import { signPetition } from '@/app/actions/petition';
 import type { SignPetitionInput, SignPetitionResult } from '@/app/actions/petition';
 import Button from '@/components/ui/Button';
+import { ArrowRight } from 'lucide-react';
 
 const INPUT_BASE =
   'w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-base text-charcoal-deep ' +
@@ -309,7 +310,14 @@ export default function SignForm() {
         disabled={pending}
         className="w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
       >
-        {pending ? t('formSubmitting') : `${t('heroCta')} →`}
+        {pending ? (
+          t('formSubmitting')
+        ) : (
+          <span className="inline-flex items-center gap-2">
+            {t('heroCta')}
+            <ArrowRight className="h-5 w-5" aria-hidden="true" />
+          </span>
+        )}
       </Button>
 
       <p className="text-xs text-charcoal-muted text-center">{t('formFooter')}</p>

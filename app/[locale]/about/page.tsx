@@ -27,6 +27,7 @@ import {
   Newspaper,
   ShieldCheck,
   Timer,
+  ArrowRight,
 } from 'lucide-react';
 
 export const revalidate = false;
@@ -235,8 +236,9 @@ export default async function AboutPage() {
                     Jan 14–26, Insa Art Center, Seoul. {ARTIST_COUNT} artists, {ARTWORK_COUNT}{' '}
                     works. The largest SAF exhibition to date.
                   </p>
-                  <span className="inline-block mt-4 text-sm font-semibold text-primary group-hover:underline">
-                    View archive →
+                  <span className="inline-flex items-center gap-1 mt-4 text-sm font-semibold text-primary group-hover:underline">
+                    View archive
+                    <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                   </span>
                 </div>
               </Link>
@@ -255,8 +257,9 @@ export default async function AboutPage() {
                     The first exhibition in Insadong. 50+ artists, 7 days of solidarity — raising
                     KRW 34M for the mutual-aid fund.
                   </p>
-                  <span className="inline-block mt-4 text-sm font-semibold text-primary group-hover:underline">
-                    View archive →
+                  <span className="inline-flex items-center gap-1 mt-4 text-sm font-semibold text-primary group-hover:underline">
+                    View archive
+                    <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                   </span>
                 </div>
               </Link>
@@ -449,9 +452,7 @@ export default async function AboutPage() {
                 <p className="text-sm text-charcoal-muted">기금</p>
                 <p className="text-2xl font-bold text-primary">7,700만 원</p>
               </div>
-              <span className="text-2xl text-charcoal-muted" aria-hidden="true">
-                →
-              </span>
+              <ArrowRight className="h-6 w-6 text-charcoal-muted" aria-hidden="true" />
               <div>
                 <p className="text-sm text-charcoal-muted">대출 가용액</p>
                 <p className="text-2xl font-bold text-primary">~5.4억 원</p>
@@ -549,8 +550,9 @@ export default async function AboutPage() {
                   2026년 1월 14~26일, 인사아트센터. {ARTIST_COUNT}명 작가, {ARTWORK_COUNT}점 작품.
                   역대 최대 규모의 씨앗페 전시.
                 </p>
-                <span className="inline-block mt-4 text-sm font-semibold text-primary group-hover:underline">
-                  전시 기록 보기 →
+                <span className="inline-flex items-center gap-1 mt-4 text-sm font-semibold text-primary group-hover:underline">
+                  전시 기록 보기
+                  <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                 </span>
               </div>
             </Link>
@@ -569,8 +571,9 @@ export default async function AboutPage() {
                   인사동에서 열린 첫 번째 전시. 50여 명의 예술인, 7일간의 연대로 3,400만 원의
                   상호부조 기금을 조성했습니다.
                 </p>
-                <span className="inline-block mt-4 text-sm font-semibold text-primary group-hover:underline">
-                  전시 기록 보기 →
+                <span className="inline-flex items-center gap-1 mt-4 text-sm font-semibold text-primary group-hover:underline">
+                  전시 기록 보기
+                  <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                 </span>
               </div>
             </Link>
@@ -658,18 +661,27 @@ export default async function AboutPage() {
                   href="/our-reality"
                   className="text-primary-strong hover:underline font-medium"
                 >
-                  데이터 상세 →
+                  <span className="inline-flex items-center gap-1">
+                    데이터 상세
+                    <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                  </span>
                 </Link>{' '}
                 /{' '}
                 <Link href="/our-proof" className="text-primary-strong hover:underline font-medium">
-                  성과 상세 →
+                  <span className="inline-flex items-center gap-1">
+                    성과 상세
+                    <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                  </span>
                 </Link>{' '}
                 /{' '}
                 <Link
                   href="/transparency"
                   className="text-primary-strong hover:underline font-medium"
                 >
-                  연간 보고서 →
+                  <span className="inline-flex items-center gap-1">
+                    연간 보고서
+                    <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                  </span>
                 </Link>
               </li>
             </ul>

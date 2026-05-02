@@ -11,6 +11,7 @@ import {
   AdminBadge,
   AdminEmptyState,
 } from '@/app/admin/_components/admin-ui';
+import { ArrowRight } from 'lucide-react';
 import type { AdminOrderListItem } from '@/app/actions/admin-orders';
 import type { OrderStatus } from '@/lib/integrations/toss/types';
 
@@ -178,7 +179,10 @@ export function OrderList({
                       href={`/admin/orders/${order.id}`}
                       className="text-xs text-primary-a11y hover:underline"
                     >
-                      상세 →
+                      <span className="inline-flex items-center gap-1">
+                        상세
+                        <ArrowRight className="h-3 w-3" aria-hidden="true" />
+                      </span>
                     </Link>
                   </td>
                 </tr>

@@ -35,6 +35,7 @@ import { resolveArtworkImageUrlForPreset, shuffleArray } from '@/lib/utils';
 import type { Artwork } from '@/types';
 import ArtworkPurchaseCTA from '@/components/features/ArtworkPurchaseCTA';
 import { containsHangul } from '@/lib/search-utils';
+import { ArrowRight } from 'lucide-react';
 
 interface Props {
   params: Promise<{
@@ -540,7 +541,10 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   href={`/artworks/artist/${encodeURIComponent(artwork.artist)}`}
                   className="text-primary font-medium hover:underline text-sm"
                 >
-                  {t('viewAll')} →
+                  <span className="inline-flex items-center gap-1">
+                    {t('viewAll')}
+                    <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                  </span>
                 </Link>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -564,10 +568,12 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   href={`/artworks/category/${encodeURIComponent(artwork.category)}`}
                   className="text-primary font-medium hover:underline text-sm"
                 >
-                  {t('viewAllCategory', {
-                    category: getCategoryLabel(artwork.category, locale),
-                  })}{' '}
-                  →
+                  <span className="inline-flex items-center gap-1">
+                    {t('viewAllCategory', {
+                      category: getCategoryLabel(artwork.category, locale),
+                    })}
+                    <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                  </span>
                 </Link>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">

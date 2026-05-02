@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { ArrowRight } from 'lucide-react';
 
 interface ShareTemplatesProps {
   url: string;
@@ -98,7 +99,10 @@ export default function ShareTemplates({ url }: ShareTemplatesProps) {
                   onClick={tpl.share}
                   className="rounded-md bg-primary px-2.5 py-0.5 text-[11px] font-semibold text-white hover:bg-primary-strong"
                 >
-                  {t('shareTemplateOpen')} →
+                  <span className="inline-flex items-center gap-1">
+                    {t('shareTemplateOpen')}
+                    <ArrowRight className="h-3 w-3" aria-hidden="true" />
+                  </span>
                 </button>
               </div>
             </div>

@@ -13,6 +13,7 @@ import { createStandardPageMetadata } from '@/lib/seo';
 import { resolveLocale } from '@/lib/server-locale';
 import { SITE_URL } from '@/lib/constants';
 import { createSupabaseServerClient } from '@/lib/auth/server';
+import { ArrowRight } from 'lucide-react';
 import {
   PETITION_OH_YOON_DEADLINE_ISO,
   PETITION_OH_YOON_GOAL,
@@ -171,7 +172,10 @@ export default async function PetitionOhYoonPage() {
             href="#sign-form"
             className="inline-flex items-center justify-center px-8 py-4 rounded-lg text-lg font-bold bg-primary hover:bg-primary-strong text-white transition-shadow hover:shadow-gallery-artwork focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
           >
-            {t('heroCta')} →
+            <span className="inline-flex items-center gap-2">
+              {t('heroCta')}
+              <ArrowRight className="h-5 w-5" aria-hidden="true" />
+            </span>
           </a>
         </div>
       </section>
@@ -480,7 +484,10 @@ export default async function PetitionOhYoonPage() {
               href={`/${locale}`}
               className="text-primary font-semibold hover:underline text-sm"
             >
-              {t('saffestCta')} →
+              <span className="inline-flex items-center gap-1">
+                {t('saffestCta')}
+                <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+              </span>
             </Link>
           </div>
         </div>
@@ -546,13 +553,19 @@ export default async function PetitionOhYoonPage() {
                     href={`/${locale}/special/oh-yoon`}
                     className="inline-flex items-center justify-center rounded-lg bg-charcoal-deep hover:bg-charcoal text-white px-5 py-3 text-sm font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                   >
-                    {t('exhibitionCardCtaPrimary')} →
+                    <span className="inline-flex items-center gap-2">
+                      {t('exhibitionCardCtaPrimary')}
+                      <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                    </span>
                   </Link>
                   <Link
                     href={`/${locale}/artworks/artist/${encodeURIComponent('오윤')}`}
                     className="inline-flex items-center justify-center rounded-lg border border-charcoal/20 bg-white hover:border-primary hover:text-primary-strong text-charcoal-deep px-5 py-3 text-sm font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                   >
-                    {t('exhibitionCardCtaSecondary')} →
+                    <span className="inline-flex items-center gap-2">
+                      {t('exhibitionCardCtaSecondary')}
+                      <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                    </span>
                   </Link>
                 </div>
               </div>
@@ -594,7 +607,10 @@ export default async function PetitionOhYoonPage() {
               href="#sign-form-anchor"
               className="inline-flex items-center justify-center px-8 py-4 rounded-lg text-lg font-bold bg-primary hover:bg-primary-strong text-white transition-shadow hover:shadow-gallery-artwork focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
             >
-              {t('closingCta')} →
+              <span className="inline-flex items-center gap-2">
+                {t('closingCta')}
+                <ArrowRight className="h-5 w-5" aria-hidden="true" />
+              </span>
             </a>
           )}
         </div>

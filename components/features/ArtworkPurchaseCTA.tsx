@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import LinkButton from '@/components/ui/LinkButton';
 import TrackClick from '@/components/common/TrackingLink';
 import TrustBadges from '@/components/features/TrustBadges';
-import { Phone, Mail, CheckCircle, Clock } from 'lucide-react';
+import { Phone, Mail, CheckCircle, Clock, ArrowRight } from 'lucide-react';
 
 const PurchaseGuide = dynamic(() => import('@/components/features/PurchaseGuide'), {
   loading: () => <div className="h-20 rounded-xl shimmer-loading" aria-hidden="true" />,
@@ -81,7 +81,10 @@ export default function ArtworkPurchaseCTA({
           <p className="text-lg font-bold text-charcoal-deep mb-1">{t('reservedNotice')}</p>
           <p className="text-sm text-charcoal-soft mb-4">{t('reservedExplore')}</p>
           <LinkButton href="/artworks" variant="outline" className="w-full">
-            {t('soldExploreAll')} →
+            <span className="inline-flex items-center gap-1">
+              {t('soldExploreAll')}
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </span>
           </LinkButton>
         </div>
       </div>
@@ -104,11 +107,14 @@ export default function ArtworkPurchaseCTA({
           <p className="text-lg font-bold text-charcoal mb-1">{t('soldNotice')}</p>
           <p className="text-sm text-gray-500 mb-4">{t('soldExploreOther')}</p>
           <LinkButton href={fallbackHref} variant="outline" className="w-full">
-            {hasOtherWorks
-              ? `${t('otherWorks', { artist })} →`
-              : hasSameCategoryWorks && category
-                ? `${t('sameCategoryBrowse', { category })} →`
-                : `${t('soldExploreAll')} →`}
+            <span className="inline-flex items-center gap-1">
+              {hasOtherWorks
+                ? t('otherWorks', { artist })
+                : hasSameCategoryWorks && category
+                  ? t('sameCategoryBrowse', { category })
+                  : t('soldExploreAll')}
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </span>
           </LinkButton>
         </div>
       </div>

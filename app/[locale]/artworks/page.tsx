@@ -8,6 +8,7 @@ import PageHero from '@/components/ui/PageHero';
 import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
 import GalleryCampaignBanner from '@/components/features/GalleryCampaignBanner';
 import GalleryStatusBar from '@/components/features/GalleryStatusBar';
+import { ArrowRight } from 'lucide-react';
 import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { SITE_URL, CONTACT } from '@/lib/constants';
@@ -266,8 +267,9 @@ export default async function ArtworksPage() {
                     {cat.title}
                   </h3>
                   <p className="text-charcoal text-base leading-relaxed">{cat.description}</p>
-                  <span className="inline-block mt-4 text-sm text-primary font-medium">
-                    {t('categoryViewAll', { category: getCategoryLabel(cat.key, locale) })} →
+                  <span className="inline-flex items-center gap-1 mt-4 text-sm text-primary font-medium">
+                    {t('categoryViewAll', { category: getCategoryLabel(cat.key, locale) })}
+                    <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                   </span>
                 </Link>
               ))}
