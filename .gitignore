@@ -57,3 +57,9 @@ docs/미술시장 보고서/
 # Magazine SQL — gen-magazine-sql.ts 출력. content/magazine-drafts/가 진본,
 # .sql은 일회성 빌드 산출물이라 추적 불필요.
 scripts/.magazine-sql/
+
+# 디버깅 스크린샷 — 루트에 임시로 떨어지는 PNG/JPG는 추적 안 함
+# (실 자산은 public/ 또는 docs/에 보관). 디자인 변경 점검용 working artifact.
+/*.png
+/*.jpg
+/*.jpeg
