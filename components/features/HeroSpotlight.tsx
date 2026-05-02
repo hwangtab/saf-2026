@@ -90,10 +90,19 @@ export default function HeroSpotlight({ slides }: HeroSpotlightProps) {
                 onClick={() => scrollTo(idx)}
                 aria-label={t('goToSlide', { n: idx + 1 })}
                 aria-current={idx === selectedIndex ? 'true' : 'false'}
-                className={`h-2 rounded-full transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-charcoal-deep ${
-                  idx === selectedIndex ? 'w-8 bg-white' : 'w-2 bg-white/40 hover:bg-white/60'
-                }`}
-              />
+                // 터치 영역 24x24px 확보(WCAG 2.5.5 / PSI a11y 권장) — 시각 dot은
+                // inner span으로 분리해 디자인 톤(8px) 유지. button 자체는 투명 hit area.
+                className="group relative inline-flex h-6 w-6 items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-charcoal-deep"
+              >
+                <span
+                  aria-hidden="true"
+                  className={`block h-2 rounded-full transition-all duration-300 ${
+                    idx === selectedIndex
+                      ? 'w-8 bg-white'
+                      : 'w-2 bg-white/40 group-hover:bg-white/60'
+                  }`}
+                />
+              </button>
             ))}
           </div>
         </div>

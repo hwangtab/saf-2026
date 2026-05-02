@@ -380,7 +380,9 @@ function ArtworkCard({
                     : 'text-gray-500'
                   : theme === 'dark'
                     ? 'text-primary-soft'
-                    : 'text-primary'
+                    : // light theme: primary-strong(6.98:1, AAA) — text-sm는 4.5:1 필요한데
+                      // 기본 primary(#2176FF, 4.12:1)는 미달. PSI a11y "색상 대비" 지적 해결.
+                      'text-primary-strong'
             )}
           >
             {localizedPrice}
