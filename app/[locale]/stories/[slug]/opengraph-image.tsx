@@ -25,27 +25,27 @@ export async function generateStaticParams() {
 
 const CATEGORY_COLORS: Record<
   StoryCategory,
-  { bg: string; accent: string; border: string; labelKo: string; labelEn: string }
+  { bg: string; highlight: string; border: string; labelKo: string; labelEn: string }
 > = {
   // Gallery White Cube: 카테고리별 차별화는 BRAND_COLORS 안에서 모노크롬+의미적 색으로.
   // artist-story = primary 블루 / buying-guide = charcoal 모노톤 / art-knowledge = success 그린.
   'artist-story': {
     bg: BRAND_COLORS.primary.surface,
-    accent: BRAND_COLORS.primary.a11y,
+    highlight: BRAND_COLORS.primary.a11y,
     border: BRAND_COLORS.primary.soft,
     labelKo: '작가를 만나다',
     labelEn: 'Artist Stories',
   },
   'buying-guide': {
     bg: BRAND_COLORS.gallery.pearl,
-    accent: BRAND_COLORS.charcoal.deep,
+    highlight: BRAND_COLORS.charcoal.deep,
     border: BRAND_COLORS.gallery.hairline,
     labelKo: '컬렉팅 시작하기',
     labelEn: 'Buying Guide',
   },
   'art-knowledge': {
     bg: '#EAFAF3', // success/10 hint (no token match)
-    accent: BRAND_COLORS.success.a11y,
+    highlight: BRAND_COLORS.success.a11y,
     border: '#A5DEC7', // success-soft (no token match)
     labelKo: '미술 산책',
     labelEn: 'Art Knowledge',
@@ -86,7 +86,7 @@ export default async function Image({ params }: Props) {
           justifyContent: 'space-between',
           padding: '56px 64px',
           backgroundColor: colors.bg,
-          borderTop: `8px solid ${colors.accent}`,
+          borderTop: `8px solid ${colors.highlight}`,
           fontFamily: 'NotoSansKR',
         }}
       >
@@ -94,7 +94,7 @@ export default async function Image({ params }: Props) {
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <div
             style={{
-              backgroundColor: colors.accent,
+              backgroundColor: colors.highlight,
               color: 'white',
               padding: '8px 22px',
               borderRadius: '100px',
@@ -174,7 +174,7 @@ export default async function Image({ params }: Props) {
               gap: '10px',
               fontSize: '24px',
               fontWeight: 700,
-              color: colors.accent,
+              color: colors.highlight,
             }}
           >
             <div
@@ -182,7 +182,7 @@ export default async function Image({ params }: Props) {
                 width: '28px',
                 height: '28px',
                 borderRadius: '50%',
-                backgroundColor: colors.accent,
+                backgroundColor: colors.highlight,
               }}
             />
             SAF 2026

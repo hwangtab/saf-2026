@@ -34,6 +34,7 @@ import type { Artwork, ArtworkListItem } from '@/types';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
 import { containsHangul } from '@/lib/search-utils';
+import { ArrowRight } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
 
 import SafeImage from '@/components/common/SafeImage';
@@ -456,7 +457,10 @@ export default async function ArtistPage({ params }: Props) {
                 href="/stories"
                 className="text-sm font-medium text-primary hover:text-primary-strong transition-colors"
               >
-                {isEnglish ? 'View all →' : '전체 보기 →'}
+                <span className="inline-flex items-center gap-1">
+                  {isEnglish ? 'View all' : '전체 보기'}
+                  <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                </span>
               </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">

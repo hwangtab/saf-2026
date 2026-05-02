@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import AutoScroll from 'embla-carousel-auto-scroll';
+import { ArrowRight } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import { Artwork } from '@/types';
 import ArtworkCard from '@/components/ui/ArtworkCard';
@@ -46,7 +47,7 @@ export default function ArtworkHighlightSlider({
 
   const resolvedTitle = title ?? defaultCopy.title;
   const resolvedViewAllHref = viewAllHref ?? '/artworks';
-  const resolvedViewAllLabel = locale === 'en' ? 'View all →' : '전체 보기 →';
+  const resolvedViewAllText = locale === 'en' ? 'View all' : '전체 보기';
 
   const [mounted, setMounted] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
@@ -113,7 +114,10 @@ export default function ArtworkHighlightSlider({
                 : 'text-charcoal-muted hover:text-primary border-charcoal-muted/20 hover:border-primary'
             )}
           >
-            {resolvedViewAllLabel}
+            <span className="inline-flex items-center gap-1">
+              {resolvedViewAllText}
+              <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+            </span>
           </Link>
         </div>
         <button

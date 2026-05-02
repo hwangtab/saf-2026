@@ -3,6 +3,7 @@ import remarkGfm from 'remark-gfm';
 import clsx from 'clsx';
 import type { Components } from 'react-markdown';
 import React from 'react';
+import { ArrowRight } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
 import { resolveOptimizedArtworkImageUrl } from '@/lib/utils';
 
@@ -78,8 +79,9 @@ function createMarkdownComponents(locale: string = 'ko'): Components {
             className="block group no-underline hover:no-underline [&>figure>img]:transition-[transform,box-shadow] [&>figure>img]:duration-300 [&>figure>img]:group-hover:shadow-lg [&>figure>img]:group-hover:scale-[1.01]"
           >
             {children}
-            <span className="block text-center text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity -mt-2 mb-4">
-              {locale === 'en' ? 'View artwork →' : '작품 보러 가기 →'}
+            <span className="block text-center text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity -mt-2 mb-4 inline-flex items-center justify-center gap-1">
+              {locale === 'en' ? 'View artwork' : '작품 보러 가기'}
+              <ArrowRight className="h-3 w-3" aria-hidden="true" />
             </span>
           </a>
         );

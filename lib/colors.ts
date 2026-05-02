@@ -14,7 +14,7 @@
  * - 단일 액센트: primary 블루 — CTA, 링크 모두 통일
  * - 텍스트: charcoal-deep / charcoal / charcoal-muted
  * - 통계/숫자 강조 한정: sun (chrome 배경으로는 사용 금지)
- * - accent(테라코타) 토큰은 deprecated — 신규 코드에서 사용하지 말 것 (Button accent variant도 primary로 이전 예정)
+ * - accent(테라코타) 토큰은 완전 제거됨 — 모든 CTA·강조는 primary 블루로 통일
  */
 export const BRAND_COLORS = {
   primary: {
@@ -33,16 +33,6 @@ export const BRAND_COLORS = {
     DEFAULT: '#FDCA40', // Sun Glow
     soft: '#FEE9A3', // Sun Mist
     strong: '#E3AC0D', // Sun Core
-  },
-  /**
-   * @deprecated Gallery White Cube 리뉴얼 후 사용 금지. CTA는 primary로 통일.
-   * 기존 사용처가 단계적으로 primary로 이전되는 동안 임시로 유지.
-   */
-  accent: {
-    DEFAULT: '#F79824', // Carrot Orange (2.22:1 on white - decorative only)
-    soft: '#FFD4A3', // Carrot Glow
-    strong: '#D97800', // Carrot Core (3.16:1 - large text only)
-    a11y: '#B45309', // Accessible Orange (4.78:1 on white - AA compliant)
   },
   /**
    * Gallery white scale. 기존 토큰 이름(canvas/canvas-soft/canvas-strong) 유지하되

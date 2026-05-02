@@ -112,7 +112,7 @@ export default function SupportMessage({
                 <div
                   key={i}
                   className={cn(
-                    'transition-opacity duration-700',
+                    'transition-opacity duration-500',
                     i === 0 ? '' : 'absolute inset-0 flex flex-col items-center justify-center',
                     i === testimonialIndex ? 'opacity-100' : 'opacity-0 pointer-events-none'
                   )}

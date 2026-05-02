@@ -22,6 +22,7 @@ import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { Link } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
 import type { StoryCategory, Artwork } from '@/types';
+import { ArrowRight } from 'lucide-react';
 import { getStorySeoOverride } from '@/lib/stories-seo-overrides';
 
 export const revalidate = 1800;
@@ -299,7 +300,10 @@ export default async function StoryDetailPage({ params }: Props) {
                 href="/artworks"
                 className="text-sm font-medium text-primary hover:text-primary-strong transition-colors"
               >
-                {isEn ? 'View all →' : '전체 보기 →'}
+                <span className="inline-flex items-center gap-1">
+                  {isEn ? 'View all' : '전체 보기'}
+                  <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                </span>
               </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">

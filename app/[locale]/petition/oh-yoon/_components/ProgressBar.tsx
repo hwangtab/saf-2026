@@ -93,7 +93,7 @@ export default function ProgressBar({
         })}
       >
         <div
-          className="h-full bg-primary transition-[width] duration-700 ease-out"
+          className="h-full bg-primary transition-[width] duration-500 ease-out"
           style={{ width: `${visualWidthPct}%` }}
         />
       </div>
