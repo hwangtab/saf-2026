@@ -1,0 +1,57 @@
+name: Cache Warm (post-deploy)
+
+# Vercel production 배포가 성공하면 핵심 페이지를 한 번씩 미리 GET해서
+# ISR 캐시를 hot 상태로 만든다. 결과: 첫 사용자(또는 PSI 측정)가 도착했을 때
+# cold ISR 빌드 1초+가 아닌 hit 캐시(~50-200ms TTFB)에서 시작.
+#
+# 트리거: Vercel이 GitHub에 deployment_status: success 이벤트를 보낼 때.
+# 작동 환경: production만 (preview 제외)
+#
+# 비용: 페이지당 1번 GET = 배포당 ~7 function invocations.
+# 하루 평균 5번 배포 가정 시 월 ~1,050건 — Vercel Hobby 100k/월의 1%.
+
+on:
+  deployment_status:
+  workflow_dispatch:
+
+jobs:
+  warm:
+    name: Warm Vercel ISR cache
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production') }}
+    steps:
+      - name: Wait for Vercel edge propagation
+        run: sleep 10
+
+      - name: Warm critical pages
+        run: |
+          set -u
+          urls=(
+            'https://www.saf2026.com/'
+            'https://www.saf2026.com/ko'
+            'https://www.saf2026.com/en'
+            'https://www.saf2026.com/artworks'
+            'https://www.saf2026.com/petition/oh-yoon'
+            'https://www.saf2026.com/special/oh-yoon'
+            'https://www.saf2026.com/our-reality'
+          )
+          failed=0
+          for url in "${urls[@]}"; do
+            echo "→ Warming: $url"
+            if curl -fsSL -o /dev/null \
+                 -w "  HTTP %{http_code} · TTFB %{time_starttransfer}s · total %{time_total}s\n" \
+                 -A 'GitHub-Action-CacheWarm/1.0 (saf-2026 post-deploy)' \
+                 --max-time 30 \
+                 "$url"; then
+              :
+            else
+              echo "  ⚠ failed (continuing)"
+              failed=$((failed + 1))
+            fi
+          done
+          echo
+          if [ "$failed" -gt 0 ]; then
+            echo "::warning::$failed URL(s) failed to warm. ISR cold path may persist."
+          else
+            echo "::notice::All ${#urls[@]} URLs warmed successfully."
+          fi
