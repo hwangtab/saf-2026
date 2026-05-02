@@ -20,11 +20,17 @@ import '@/styles/globals.css';
 // Google Fonts Noto Sans KR 정적 weight: 100/300/400/500/700/900. 600은 파일 없음 →
 // font-semibold(600) 사용처는 브라우저가 가장 가까운 weight(500 또는 700)로 자동 매핑.
 // 400 본문 / 500 medium·semibold / 700 bold·section·card / 900 Hero·display
+//
+// display: 'optional' — 첫 방문자가 100ms 안에 폰트가 로드되지 않으면 시스템 한글
+// fallback(Apple SD Gothic Neo / Noto Sans CJK KR / Malgun Gothic)으로 그대로 표시,
+// swap 없이 페이지가 흘러감. 결과: ① CLS 0 (폰트 swap으로 인한 레이아웃 변경 제거)
+// ② LCP 측정에서 폰트 대기 시간 1초+ 절감 ③ 재방문자는 캐시된 Noto Sans KR을 즉시 사용.
+// 한글 fallback이 Noto Sans KR과 시각적으로 매우 가까워 첫 방문자 디자인 차이 미세.
 const notoSansKR = Noto_Sans_KR({
   weight: ['400', '500', '700', '900'],
   subsets: ['latin'],
   variable: '--font-sans',
-  display: 'swap',
+  display: 'optional',
   adjustFontFallback: true,
 });
 
