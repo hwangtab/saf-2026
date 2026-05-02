@@ -17,7 +17,10 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: 'bg-primary hover:bg-primary-strong text-white hover:shadow-gallery-artwork',
+        // primary-strong(#0E4ECF, 6.98:1 AAA on white). 기본 primary(#2176FF, 4.12:1)는
+        // 작은 텍스트 4.5:1 미달 — PSI a11y "색상 대비" 지적 해결.
+        primary:
+          'bg-primary-strong hover:bg-primary-strong/90 text-white hover:shadow-gallery-artwork',
         secondary: 'bg-gray-900 hover:bg-gray-800 text-white hover:shadow-gallery-artwork',
         outline:
           'border border-gray-200 hover:border-primary hover:text-primary bg-white text-gray-700 hover:shadow-gallery-card',

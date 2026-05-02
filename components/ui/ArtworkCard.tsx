@@ -343,11 +343,13 @@ function ArtworkCard({
           )}
         >
           {/* 작가명 → 작가 페이지 링크: stretched 작품 링크(z-10) 위에 떠 있어야
-              하므로 relative z-20. 카테고리/아티스트 페이지 간 내부 링크 강화. */}
+              하므로 relative z-20. WCAG 2.5.5 / PSI 터치 영역 24x24px 확보를 위해
+              inline-flex + min-h-6 + py-0.5 — 텍스트 자체는 그대로지만 클릭 영역을
+              명시적으로 24px 이상으로 키움. 카테고리/아티스트 페이지 간 내부 링크 강화. */}
           <Link
             href={artistHref}
             className={cn(
-              'relative z-20 hover:underline transition-colors',
+              'relative z-20 inline-flex items-center min-h-6 py-0.5 hover:underline transition-colors',
               theme === 'dark' ? 'hover:text-white' : 'hover:text-primary'
             )}
           >

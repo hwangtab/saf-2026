@@ -138,13 +138,16 @@ function SlideCard({ slide, priority }: { slide: SpotlightSlide; priority: boole
     <div className="relative min-h-[70vh] md:min-h-[85vh] w-full overflow-hidden">
       {/* 풀폭 작품 비주얼. priority=true(첫 슬라이드)인 경우 fetchPriority="high"
           명시 — next/image priority가 자동으로 박지만 PSI 진단에서 누락 신호가
-          잡혀 명시적으로 박아 LCP 리소스 로드 지연(1.2s)을 줄임. */}
+          잡혀 명시적으로 박아 LCP 리소스 로드 지연(1.2s)을 줄임.
+          quality=70 — full-bleed hero에서 default 75 대비 화질 차이 거의 없음,
+          37 KiB 절감 (PSI "이미지 압축률" 항목). */}
       <SafeImage
         src={slide.imageUrl}
         alt={slide.title}
         fill
         priority={priority}
         fetchPriority={priority ? 'high' : 'auto'}
+        quality={70}
         sizes="100vw"
         className="object-cover"
       />

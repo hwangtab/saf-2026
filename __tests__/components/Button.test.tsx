@@ -7,14 +7,14 @@ describe('Button', () => {
     const button = screen.getByRole('button', { name: /click me/i });
     expect(button).toBeInTheDocument();
     // Default is primary
-    expect(button).toHaveClass('bg-primary');
+    expect(button).toHaveClass('bg-primary-strong');
     expect(button).toHaveClass('text-white');
   });
 
   it('renders primary variant correctly', () => {
     render(<Button variant="primary">Submit</Button>);
     const button = screen.getByRole('button', { name: /submit/i });
-    expect(button).toHaveClass('bg-primary');
+    expect(button).toHaveClass('bg-primary-strong');
     expect(button).toHaveClass('text-white');
   });
 
@@ -23,7 +23,7 @@ describe('Button', () => {
     const button = screen.getByRole('button', { name: /donate/i });
     // Gallery White Cube: accent variant는 deprecated되어 primary 블루로 alias됨.
     // 단일 액센트 룰 (Apple/Figma white gallery wall 모델).
-    expect(button).toHaveClass('bg-primary');
+    expect(button).toHaveClass('bg-primary-strong');
     expect(button).toHaveClass('text-white');
   });
 
