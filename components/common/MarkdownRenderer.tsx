@@ -138,7 +138,14 @@ export default function MarkdownRenderer({ content, className, locale = 'ko' }: 
         className
       )}
     >
-      <ReactMarkdown remarkPlugins={[remarkGfm]} components={createMarkdownComponents(locale)}>
+      <ReactMarkdown
+        // singleTilde: false — GFM strict 모드. 단일 `~text~`를 strikethrough로 해석하지 않고
+        // 일반 텍스트로 처리. 한국어 가격·연도 범위 표기("1970~80년대", "₩500만~900만",
+        // "50만~150만원" 등)가 strikethrough 구분자로 잘못 잡히던 회귀 차단.
+        // GFM 정식 strikethrough는 `~~text~~`(이중 tilde) 형태로만 동작.
+        remarkPlugins={[[remarkGfm, { singleTilde: false }]]}
+        components={createMarkdownComponents(locale)}
+      >
         {content}
       </ReactMarkdown>
     </div>
