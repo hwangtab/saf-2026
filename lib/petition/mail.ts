@@ -1,8 +1,12 @@
 /**
- * 청원 영수증 / 안내 메일 발송 헬퍼.
+ * 청원 서명 확인 메일 발송 헬퍼.
  *
  * Resend API를 사용한다. RESEND_API_KEY가 설정되지 않은 환경(로컬·스테이징)에서는
  * 로그만 남기고 graceful skip 한다.
+ *
+ * 함수명 sendPetitionReceipt는 호환성을 위해 유지(외부 호출처 변경 불필요).
+ * 사용자 노출 텍스트는 모두 "서명 확인"으로 통일 — 한국어 "영수증"이 결제
+ * 함의를 가져 무료 청원에서 오해 유발 가능.
  */
 
 import { BRAND_COLORS } from '@/lib/colors';
@@ -31,7 +35,7 @@ export async function sendPetitionReceipt({
   const from = process.env.PETITION_MAIL_FROM ?? DEFAULT_FROM;
 
   if (!apiKey) {
-    console.warn('[petition/mail] RESEND_API_KEY 미설정 — 영수증 메일 발송 skip (to=%s)', to);
+    console.warn('[petition/mail] RESEND_API_KEY 미설정 — 서명 확인 메일 발송 skip (to=%s)', to);
     return { ok: false, skipped: true };
   }
 

@@ -106,7 +106,7 @@ export async function signPetition(input: SignPetitionInput): Promise<SignPetiti
   }
 
   // ─── 3. sign_petition RPC 호출 ────────────────────────────────
-  // 봇 방지: (a) DB unique constraint 이메일 중복 차단 + (b) IP rate-limit + (c) 영수증 메일로 이메일 진성 검증
+  // 봇 방지: (a) DB unique constraint 이메일 중복 차단 + (b) IP rate-limit + (c) 서명 확인 메일로 이메일 진성 검증
   // (hCaptcha 사용 안 함 — 운영 결정으로 제거됨)
   const supabase = createSupabaseAdminClient();
   const payload = {
@@ -139,7 +139,12 @@ export async function signPetition(input: SignPetitionInput): Promise<SignPetiti
 
   if (!rpcResult?.ok) {
     if (rpcResult?.code === 'DUPLICATE_EMAIL') {
-      return fail('DUPLICATE_EMAIL', '이미 서명하셨습니다. 영수증 메일을 확인해 주세요.');
+      // 한국어 "영수증"은 결제 영수증을 강하게 함의해 무료 청원에서 결제 오해 유발 가능 →
+      // "확인 메일"로 표현. 메일이 안 보였을 가능성 대비 스팸함 안내까지 한 번에.
+      return fail(
+        'DUPLICATE_EMAIL',
+        '이미 서명하셨습니다. 보내드린 확인 메일이 보이지 않으면 스팸함을 확인해 주세요.'
+      );
     }
     if (rpcResult?.code === 'PETITION_CLOSED') {
       return fail('PETITION_CLOSED', '서명이 마감되었습니다.');
@@ -147,7 +152,7 @@ export async function signPetition(input: SignPetitionInput): Promise<SignPetiti
     return fail('INTERNAL_ERROR', '저장에 실패했습니다.');
   }
 
-  // ─── 4. 영수증 메일 (실패해도 서명 자체는 성공으로 응답) ─────
+  // ─── 4. 서명 확인 메일 (실패해도 서명 자체는 성공으로 응답) ─────
   void sendPetitionReceipt({
     to: email,
     fullName,
