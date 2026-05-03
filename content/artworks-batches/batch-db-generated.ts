@@ -1,11 +1,65 @@
 // ⚡ AUTO-GENERATED — do not edit manually
 // Run: npm run sync-artworks
-// Last synced: 2026-04-22T03:58:07.314Z
-// Total: 377 artworks
+// Last synced: 2026-05-03T05:50:15.899Z
+// Total: 379 artworks
 
 import type { Artwork } from '@/types';
 
 export const dbGeneratedArtworks: Artwork[] = [
+  {
+    id: '4df2aa83-1168-4873-8a2b-f4d36ea39727',
+    artist: '남진현',
+    title: '혼미한 세계',
+    description:
+      '세상은, 복잡할 뿐만 아니라 매우 모순적입니다. 세상의 종말이 바로 여기서 비롯되겠구나 싶은 구석과 세상을 참으로 아름다운 곳으로 만들 수 있을 것 같은 희망의 싹들이 공존하는 곳입니다. 혼미한 세계에서 길을 잃지 않도록 깊고 지혜로운 정신을 품어야겠습니다.',
+    size: '60.0cm×80.0cm',
+    material: 'acrylic and oil pastel on panel',
+    year: '2022',
+    edition: '1',
+    price: '₩3,500,000',
+    images: [
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6f8d5f94-7dc3-4e41-aad5-45e270b07290/36473a6e-7a52-41a1-898c-8910d9671b20.webp',
+    ],
+    shopUrl: '',
+    artist_en: 'Nam, Jin Hyun',
+    category: '회화',
+  },
+  {
+    id: '28170883-6c73-4a4c-9dc6-c16b2f7c4cad',
+    artist: '남진현',
+    title: '지친 그대에게',
+    description:
+      '나 자신을 비롯해 세파에 지친 이 시대의 영혼들을 위로하는 마음을 담았습니다. 현실이 힘겹고 고달파도 희망의 끈을 붙들고 한걸음 한걸음 나아가기를 빕니다. 희망은, 한번 뿐인 내 삶을 소중히 여기는 내 마음 속에 있습니다.',
+    size: '90.9cm×72.7cm',
+    material: 'acrylic on canvas',
+    year: '2024',
+    edition: '1',
+    price: '₩3,500,000',
+    images: [
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6f8d5f94-7dc3-4e41-aad5-45e270b07290/68806832-1764-428d-8ea8-1ca91d15c1f7.webp',
+    ],
+    shopUrl: '',
+    artist_en: 'Nam, Jin Hyun',
+    category: '회화',
+  },
+  {
+    id: '4b6f8e69-54c8-4a0f-a535-2c1b6bc398e9',
+    artist: '남진현',
+    title: '한 점 부끄럼 없이',
+    description:
+      '하늘을 우러러 한 점 부끄럼 없이, 라고 시인은 말했다. 그 시구를 마음에 받아들인 이후로 늘 부끄러웠다. 어느 날의  언행들이 떠올라, 하늘은커녕 스스로에게 부끄러웠다. 스스로에게 부끄럽지 않기 위해 늘 노력한다.',
+    size: '53.0cm×40.9cm',
+    material: 'acrylic on canvas',
+    year: '2022',
+    edition: '1',
+    price: '₩1,500,000',
+    images: [
+      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6f8d5f94-7dc3-4e41-aad5-45e270b07290/4a8d7d00-584e-4337-9005-629fb59df951.webp',
+    ],
+    shopUrl: '',
+    artist_en: 'Nam, Jin Hyun',
+    category: '회화',
+  },
   {
     id: '31c7d0fc-a95e-4314-b020-196b88f34a96',
     artist: '최재란',
@@ -4293,7 +4347,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     material: '(사후판화)목판',
     year: '1985',
     edition: '',
-    price: '₩2,950,000',
+    price: '₩3,900,000',
     images: [
       'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/151__original.webp',
     ],
@@ -4963,25 +5017,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/204',
     title_en: 'Hollowed blue 02',
     artist_en: 'Lee Jieun',
-    category: '회화',
-  },
-  {
-    id: '6237e18c-73a5-42d3-9d6e-984a677e47c9',
-    artist: '이유지',
-    title: '염원의 빛이 뿌리내린 쉼터',
-    description:
-      "나의 작업은 안식처의 풍경을 이야기한다. ‘염원의 쉼터’ 시리즈는 회상과 희망, 정화의 감정을 담았다. 나는 염원(念願)을 잠재된 에너지이자 치유의 순간을 끌어당기는 원초적 힘으로 바라보며, 회화의 언어로 이 힘을 탐구한다. 염원의 힘에 따라 좋은 카르마를 쌓아 극복하고 해탈에 이르는 여정을 'Karmadise(카르마다이스)'로 명명했다. 마음 속 바램은 염원의 안식처에 머물며 정화되고, 다시 빛을 향해 나아간다. 회복의 시간을 회화에 담고, 그곳을 지나 삶으로 돌아올 때 새로운 숨을 얻게 된다. 나는 불확실하고 흔들리는 감정, 도달하고자 하는 소망들 사이에서 조용히 숨 고를 수 있는 보호의 공간을 표현한다. 반복되는 형상과 흐르는 선의 리듬은 내면의 혼돈 속 미세한 희망의 진동을 시각화하며, 이를 ‘주술적 안식처’라 부른다. 이는 단순한 표현을 넘어 내면을 해방시키고 생명력을 되살리는 신성한 힘을 지닌다. 작품 속 소재들은 치유의 비유적 상징들로 구성된다. 엉켜진 실은 돌아가신 아버지와의 기억에서 비롯된 상처를 꿰매는 치유의 실로 등장하며, 중첩된 붓질은 쌓인 기억과 수행의 과정을 나타낸다. 나는 디디에 앙지외의 ‘심리적 싸개(Psychic Envelope)’ 개념을 인용해, 피부처럼 감싸는 내면의 보호막을 구현하고자 했다. 실타래와 주술적 상징들이 결합된 나의 작업은 믿음의 형태가 지닌 힘을 시각화하며, 캔버스는 부정적 기운을 걸러내는 정제된 성물로 변모한다. 유화와 형광 안료를 사용하여 조명 아래에서 발광하는 시각적 파라다이스를 연출하고, ‘염원의 쉼터’, ‘보호수’, ‘루시드 드림’과 같은 이상세계를 그린다. 나에게 예술은 어두운 세상 속 한 줄기 빛이자 삶 그 자체이다. 무의식의 풍경이자 보호의 공간으로서, 불안한 심리를 잠식시키고 모두가 숨통이 트이는 순간을 맞이하길 기원한다.",
-    size: '60.6x60.6cm',
-    material: '캔버스에 유채',
-    year: '2026',
-    edition: '',
-    price: '₩1,600,000',
-    images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/130afdb8-1f02-45ce-89db-e7d15522d2b9/115__original.webp',
-    ],
-    shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/203',
-    title_en: 'Shelter Where the Light of Wishes Took Root',
-    artist_en: 'Lee Yuji',
     category: '회화',
   },
   {
@@ -6338,7 +6373,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     artist: '김준권',
     title: 'Blue Moon-3',
     description: '',
-    size: '확인 중',
+    size: '22 x 34 cm',
     material: '유성목판',
     year: '2025',
     edition: '에디션 5/20',
@@ -6630,7 +6665,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     title_en: 'Modern Korean History-June Uprising (1988)',
     artist_en: 'Sin Hakcheol',
     category: '판화',
-    hidden: true,
   },
   {
     id: '10db2d8a-2a10-4a01-a1bd-8ab79641b496',
@@ -6649,7 +6683,6 @@ export const dbGeneratedArtworks: Artwork[] = [
     title_en: 'Modern Korean History-Long Live Democracy (5.18)',
     artist_en: 'Sin Hakcheol',
     category: '회화',
-    hidden: true,
   },
   {
     id: '5226af92-98f8-4dfd-9663-5ac1bb6a8fe5',
