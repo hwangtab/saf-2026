@@ -3,25 +3,19 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { ArrowRight } from 'lucide-react';
+import { useKakaoShareSDK } from '@/lib/hooks/useKakaoSDK';
 
 interface ShareTemplatesProps {
   url: string;
 }
 
-// Kakao SDK 글로벌 타입은 types/kakao.d.ts에서 이미 정의됨.
-function ensureKakaoInit(): boolean {
-  if (typeof window === 'undefined') return false;
-  const key = process.env.NEXT_PUBLIC_KAKAO_JS_KEY;
-  if (!key || typeof window.Kakao === 'undefined') return false;
-  if (!window.Kakao.isInitialized()) {
-    window.Kakao.init(key);
-  }
-  return window.Kakao.isInitialized();
-}
-
 export default function ShareTemplates({ url }: ShareTemplatesProps) {
   const t = useTranslations('petition.ohYoon');
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  // 카카오 SDK는 페이지 로드 시 자동으로 안 붙어 있음 — 공유 버튼 클릭 시 동적 로드.
+  // 이전 버전은 typeof window.Kakao === 'undefined' 시 즉시 SMS fallback이라
+  // 버튼 누르면 항상 문자 메시지가 떴던 회귀(ShareButtons.tsx의 정상 패턴 미적용).
+  const { hasAppKey, ensureLoaded } = useKakaoShareSDK();
 
   type Channel = 'kakao' | 'sms' | 'sns';
   const templates: { key: Channel; label: string; text: string; share: () => void }[] = [
@@ -29,10 +23,15 @@ export default function ShareTemplates({ url }: ShareTemplatesProps) {
       key: 'kakao',
       label: t('shareTemplateKakaoLabel'),
       text: t('shareTemplateKakao', { url }),
-      share: () => {
+      share: async () => {
         const text = t('shareTemplateKakao', { url });
-        if (!ensureKakaoInit() || !window.Kakao?.Share) {
-          // fallback — sms
+        // App key 미설정이거나 SDK 로드/초기화 실패 시에만 SMS fallback.
+        if (!hasAppKey) {
+          window.location.href = `sms:?&body=${encodeURIComponent(text)}`;
+          return;
+        }
+        const loaded = await ensureLoaded();
+        if (!loaded || !window.Kakao?.Share) {
           window.location.href = `sms:?&body=${encodeURIComponent(text)}`;
           return;
         }
