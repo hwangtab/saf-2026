@@ -209,7 +209,7 @@ export default async function StoriesPage({
 
       {/* Category Filter */}
       <Section variant="white">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-6xl mx-auto px-4 sm:px-5">
           <Suspense fallback={null}>
             <StoriesCategoryFilter locale={locale} />
           </Suspense>
@@ -244,7 +244,7 @@ export default async function StoriesPage({
           {/* Featured Story */}
           {featured && (
             <Section variant="canvas" prevVariant="white">
-              <div className="max-w-6xl mx-auto">
+              <div className="max-w-6xl mx-auto px-4 sm:px-5">
                 <Link
                   href={`/stories/${featured.slug}`}
                   className="group block overflow-hidden rounded-2xl border border-gray-200 shadow-sm transition-shadow duration-300 hover:shadow-gallery-hover"
@@ -303,7 +303,7 @@ export default async function StoriesPage({
           {/* Story Grid */}
           {rest.length > 0 && (
             <Section variant="white" prevVariant="canvas" className="pb-16 md:pb-24">
-              <div className="max-w-6xl mx-auto">
+              <div className="max-w-6xl mx-auto px-4 sm:px-5">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {rest.map((story, i) => {
                     const title = locale === 'en' && story.title_en ? story.title_en : story.title;

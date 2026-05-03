@@ -352,7 +352,7 @@ export default async function StoryCategoryPage({ params }: Props) {
           그라디언트 생략하고 단색 white로 시작 (다른 페이지의 hero→section 전환과 동일).
           padding="none"로 Section의 기본 py-12 md:py-20 비활성화 → className의 pt-12 pb-8가 단독 적용. */}
       <Section variant="white" padding="none" className="pt-12 pb-8">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-3xl mx-auto px-4 sm:px-5">
           <p className="text-lg leading-relaxed text-charcoal-deep break-keep mb-6 font-medium">
             {meta.editorialIntro}
           </p>
@@ -377,7 +377,7 @@ export default async function StoryCategoryPage({ params }: Props) {
         </Section>
       ) : (
         <Section variant="white">
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-6xl mx-auto px-4 sm:px-5">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {stories.map((story, i) => {
                 const title = locale === 'en' && story.title_en ? story.title_en : story.title;
@@ -447,7 +447,7 @@ export default async function StoryCategoryPage({ params }: Props) {
         prevVariant={stories.length === 0 ? 'canvas-soft' : 'white'}
         className="pb-8"
       >
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-6xl mx-auto px-4 sm:px-5">
           <div className="flex flex-wrap items-center gap-3">
             <p className="text-sm font-medium text-gray-500">
               {locale === 'en' ? 'More in Magazine' : '매거진 더 보기'}
@@ -476,7 +476,7 @@ export default async function StoryCategoryPage({ params }: Props) {
 
       {/* 작품 갤러리 교차 링크 — 매거진에서 작품 구매로 전환 유도 */}
       <Section variant="canvas" prevVariant="white" className="pb-16">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-5 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div>
             <p className="text-lg font-display font-bold text-charcoal">
               {locale === 'en'

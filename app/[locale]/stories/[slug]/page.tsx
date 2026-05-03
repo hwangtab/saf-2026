@@ -243,7 +243,7 @@ export default async function StoryDetailPage({ params }: Props) {
 
       {/* Article Body */}
       <Section variant="white">
-        <article className="max-w-3xl mx-auto">
+        <article className="max-w-3xl mx-auto px-4 sm:px-5">
           {excerpt && (
             <p className="text-xl md:text-2xl text-charcoal-muted leading-relaxed mb-10 border-l-4 border-primary pl-6 motion-safe:opacity-0 motion-safe:animate-fade-in-up [animation-delay:0.1s]">
               {excerpt}
@@ -291,7 +291,7 @@ export default async function StoryDetailPage({ params }: Props) {
           prevVariant="white"
           className={relatedStories.length === 0 ? 'pb-16 md:pb-24' : ''}
         >
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-3xl mx-auto px-4 sm:px-5">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-display font-bold text-charcoal">
                 {isEn ? 'Featured Artworks' : '관련 작품'}
@@ -360,7 +360,7 @@ export default async function StoryDetailPage({ params }: Props) {
           prevVariant={relatedArtworks.length > 0 ? 'canvas-soft' : 'white'}
           className="pb-16 md:pb-24"
         >
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-3xl mx-auto px-4 sm:px-5">
             <h2 className="text-2xl font-display font-bold text-charcoal mb-6">
               {isEn ? 'Related Stories' : '관련 글'}
             </h2>
