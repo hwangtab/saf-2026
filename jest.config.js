@@ -17,6 +17,9 @@ const customJestConfig = {
     '<rootDir>/node_modules/',
     '<rootDir>/.worktrees/',
   ],
+  // jest 30 haste map이 .worktrees/ 안 package.json을 보고 module 이름 collision
+  // 워닝을 띄움. testPathIgnorePatterns로는 module 스캔까지 막지 못해 별도 추가.
+  modulePathIgnorePatterns: ['<rootDir>/.worktrees/'],
   collectCoverageFrom: [
     'app/**/*.{js,jsx,ts,tsx}',
     'components/**/*.{js,jsx,ts,tsx}',
