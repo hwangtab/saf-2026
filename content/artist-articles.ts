@@ -327,7 +327,7 @@ export const artistArticles: Record<string, Article[]> = {
   ],
   김주희: [
     {
-      url: 'https://www.saf2026.com/artworks/263',
+      url: 'https://www.saf2026.com/artworks/53f0d943-9039-416c-9dd0-1215618e36b8',
       title: '월정교 - 이미지 오버랩으로 표현한 기억의 순간',
       description:
         '씨앗페 온라인 출품작 정보. 경주 월정교를 소재로 시간의 중첩과 기억의 오버랩을 회화적 언어로 풀어낸 김주희 작가의 작품 설명 및 작가 노트.',
