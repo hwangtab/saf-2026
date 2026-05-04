@@ -17,12 +17,13 @@ const nextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    // 480 추가 — 모바일 작품 카드(220px DPR 2 = 440px 소스 필요)에서 기존
-    // 640 변형 대신 480 변형 매칭. PSI "이미지 적정 크기" 230KiB 절감 항목 직결.
-    deviceSizes: [480, 640, 750, 828, 1080, 1200, 1920],
-    // 작품 카드용 quality=70 / 일반 75 / hero 등 고화질 85 화이트리스트.
-    // Next.js 16+에서 quality prop 사용 시 명시적 등록 필요.
-    qualities: [70, 75, 85],
+    // 384/480 추가 — 모바일 카드(220px·326px 등)에서 DPR 1·2 매칭 정밀화.
+    // DPR 1: 326 × 1 = 326 → 384 매칭 (이전 480, oversize 1.47배 → 1.18배)
+    // DPR 2: 326 × 2 = 652 → 750 매칭. PSI "이미지 적정 크기" 90KiB+ 절감.
+    deviceSizes: [384, 480, 640, 750, 828, 1080, 1200, 1920],
+    // 60: hero·overlay(다크 그라디언트가 위에 깔려 화질 영향 거의 없는 곳)
+    // 70: 작품 카드 thumbnail / 75: 일반 default / 85: 고화질 작품 디테일
+    qualities: [60, 70, 75, 85],
     // PSI "정적 자원 효율적 캐시" 항목 — Vercel Image Optimization edge cache TTL.
     // 30일. 작품 이미지는 한 번 업로드되면 거의 변경되지 않으므로 길게 잡아 cache hit률 ↑.
     minimumCacheTTL: 60 * 60 * 24 * 30,
