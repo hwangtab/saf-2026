@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { ArrowRight } from 'lucide-react';
 import { useKakaoShareSDK } from '@/lib/hooks/useKakaoSDK';
+import { formatPetitionDeadline } from '@/lib/petition/format';
 
 interface ShareTemplatesProps {
   url: string;
@@ -11,6 +12,8 @@ interface ShareTemplatesProps {
 
 export default function ShareTemplates({ url }: ShareTemplatesProps) {
   const t = useTranslations('petition.ohYoon');
+  const locale = useLocale() === 'en' ? 'en' : 'ko';
+  const deadline = formatPetitionDeadline(locale);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   // 카카오 SDK는 페이지 로드 시 자동으로 안 붙어 있음 — 공유 버튼 클릭 시 동적 로드.
   // 이전 버전은 typeof window.Kakao === 'undefined' 시 즉시 SMS fallback이라
@@ -59,9 +62,9 @@ export default function ShareTemplates({ url }: ShareTemplatesProps) {
     {
       key: 'sns',
       label: t('shareTemplateSnsLabel'),
-      text: t('shareTemplateSns', { url }),
+      text: t('shareTemplateSns', { url, deadlineShort: deadline.short }),
       share: () => {
-        const text = t('shareTemplateSns', { url });
+        const text = t('shareTemplateSns', { url, deadlineShort: deadline.short });
         const u = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
         window.open(u, '_blank', 'noopener,noreferrer');
       },

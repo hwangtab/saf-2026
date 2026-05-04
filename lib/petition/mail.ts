@@ -10,6 +10,7 @@
  */
 
 import { BRAND_COLORS } from '@/lib/colors';
+import { formatPetitionDeadline } from './format';
 
 interface SendReceiptParams {
   to: string;
@@ -72,6 +73,7 @@ export async function sendPetitionReceipt({
 function receiptHtml(params: { fullName: string; petitionUrl: string }) {
   const safeName = escapeHtml(params.fullName);
   const safeUrl = escapeHtml(params.petitionUrl);
+  const deadline = formatPetitionDeadline('ko');
   return `<!doctype html>
 <html lang="ko">
 <head><meta charset="utf-8"><title>서명 확인 — 오윤 구의동 벽화 시민 청원</title></head>
@@ -83,7 +85,7 @@ function receiptHtml(params: { fullName: string; petitionUrl: string }) {
     <p style="font-size:15px;line-height:1.7;color:${BRAND_COLORS.charcoal.DEFAULT};margin:0 0 16px;">
       오윤이 1974년에 만든 테라코타가 50년 만에 멸실될 위기에 처해 있습니다.
       차기 서울시장께서 안전한 해체·보존·이관을 해결해 주시기를 청합니다.
-      이 청원을 다섯 분께만 더 전해 주시면, 5월 10일까지 1만 명의 이름이 모입니다.
+      이 청원을 다섯 분께만 더 전해 주시면, ${deadline.short}까지 1만 명의 이름이 모입니다.
     </p>
     <p style="font-size:15px;line-height:1.7;color:${BRAND_COLORS.charcoal.DEFAULT};margin:0 0 24px;">
       청원 진행 상황은 이 메일 주소로 정중히 알려드리겠습니다.

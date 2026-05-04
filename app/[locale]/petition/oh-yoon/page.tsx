@@ -13,6 +13,7 @@ import { createStandardPageMetadata } from '@/lib/seo';
 import { resolveLocale } from '@/lib/server-locale';
 import { SITE_URL } from '@/lib/constants';
 import { createSupabaseServerClient } from '@/lib/auth/server';
+import { formatPetitionDeadline } from '@/lib/petition/format';
 import { ArrowRight } from 'lucide-react';
 import {
   PETITION_OH_YOON_DEADLINE_ISO,
@@ -65,9 +66,10 @@ export async function generateMetadata(): Promise<Metadata> {
     locale,
     namespace: 'petition.ohYoon',
   });
+  const deadline = formatPetitionDeadline(locale);
   const base = createStandardPageMetadata(
     t('metaTitle'),
-    t('metaDescription'),
+    t('metaDescription', { deadlineFull: deadline.full }),
     PAGE_URL,
     PETITION_OH_YOON_PATH,
     locale
@@ -108,6 +110,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function PetitionOhYoonPage() {
   const t = await getTranslations('petition.ohYoon');
   const locale = resolveLocale(await getLocale());
+  const deadline = formatPetitionDeadline(locale);
   const { total, region_top_count, recent_24h, is_active } = await fetchPetitionCount();
 
   const breadcrumbSchema = createBreadcrumbSchema([
@@ -158,7 +161,7 @@ export default async function PetitionOhYoonPage() {
           </h1>
           <p className="text-lg md:text-xl opacity-90 mb-2 text-balance">{t('heroSubtitle')}</p>
           <p className="text-sm md:text-base opacity-80 mb-8 text-balance">
-            {t('heroDeadlineLine')}
+            {t('heroDeadlineLine', { deadlineFull: deadline.full })}
           </p>
           <div className="mb-8">
             <ProgressBar
@@ -329,7 +332,7 @@ export default async function PetitionOhYoonPage() {
               <ShareButtonsWrapper
                 url={PAGE_URL}
                 title={statementText}
-                description={t('metaDescription')}
+                description={t('metaDescription', { deadlineFull: deadline.full })}
                 imageUrl={`${SITE_URL}/images/petition-oh-yoon/mural-1.png`}
               />
             </div>
@@ -378,7 +381,7 @@ export default async function PetitionOhYoonPage() {
                 {t('participationCard3Title')}
               </h3>
               <p className="text-charcoal text-sm md:text-base leading-relaxed break-keep">
-                {t('participationCard3Body')}
+                {t('participationCard3Body', { deadlineShort: deadline.short })}
               </p>
               <a
                 href="#share-templates"
