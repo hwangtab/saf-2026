@@ -135,7 +135,7 @@ export default function HeroSpotlight({ slides }: HeroSpotlightProps) {
 
 function SlideCard({ slide, priority }: { slide: SpotlightSlide; priority: boolean }) {
   const inner = (
-    <div className="relative min-h-[70vh] md:min-h-[85vh] w-full overflow-hidden">
+    <div className="relative min-h-[70svh] md:min-h-[85svh] w-full overflow-hidden">
       {/* 풀폭 작품 비주얼. priority=true(첫 슬라이드)인 경우 fetchPriority="high"
           명시 — next/image priority가 자동으로 박지만 PSI 진단에서 누락 신호가
           잡혀 명시적으로 박아 LCP 리소스 로드 지연을 줄임.
@@ -158,7 +158,7 @@ function SlideCard({ slide, priority }: { slide: SpotlightSlide; priority: boole
       <div className="absolute inset-0 bg-gradient-to-t from-charcoal-deep/90 via-charcoal-deep/45 to-charcoal-deep/25" />
 
       {/* 텍스트 블록 — 중앙 정렬, hero 톤 */}
-      <div className="relative z-10 flex h-full min-h-[70vh] md:min-h-[85vh] flex-col items-center justify-center px-4 pt-24 pb-32 md:pb-40 text-center text-white">
+      <div className="relative z-10 flex h-full min-h-[70svh] md:min-h-[85svh] flex-col items-center justify-center px-4 pt-24 pb-32 md:pb-40 text-center text-white">
         <span
           className={`mb-5 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold tracking-wide uppercase ${
             slide.state === 'on'
