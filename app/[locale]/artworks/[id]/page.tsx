@@ -35,6 +35,7 @@ import { resolveArtworkImageUrlForPreset, shuffleArray } from '@/lib/utils';
 import type { Artwork } from '@/types';
 import ArtworkPurchaseCTA from '@/components/features/ArtworkPurchaseCTA';
 import { containsHangul } from '@/lib/search-utils';
+import { generateArtworkOverview } from '@/lib/artwork-description-fallback';
 import { ArrowRight } from 'lucide-react';
 
 interface Props {
@@ -185,6 +186,8 @@ export default async function ArtworkDetailPage({ params }: Props) {
     artwork.description_en,
     t('originalKoreanNote')
   );
+  // description이 비어있으면 메타데이터로 1~2 문장 작품 개요를 합성한다 (thin content 시그널 완화).
+  const artworkOverview = localizedDescription ? null : generateArtworkOverview(artwork, locale);
   const localizedHistory = localizeLongText(
     artwork.history,
     artwork.history_en,
@@ -461,6 +464,18 @@ export default async function ArtworkDetailPage({ params }: Props) {
                     className="text-charcoal leading-relaxed text-sm whitespace-pre-line"
                   >
                     {localizedDescription}
+                  </p>
+                </div>
+              )}
+
+              {/* Artwork Overview — description이 비어있을 때 메타데이터로 합성한 작품 개요 */}
+              {!localizedDescription && artworkOverview && (
+                <div className="bg-primary-surface p-6 rounded-xl">
+                  <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">
+                    {t('artworkOverview')}
+                  </h2>
+                  <p id="artwork-overview" className="text-charcoal leading-relaxed text-sm">
+                    {artworkOverview}
                   </p>
                 </div>
               )}
