@@ -109,12 +109,13 @@ function sendToGA(metric: Metric) {
   };
 
   // gtag.js가 lazyOnload(LCP 최적화)이라 vitals callback이 gtag 정의 전에 발화함.
-  // gtag.js와 동일한 stub을 미리 정의해 dataLayer에 함수 인자(arguments) 형태로 큐잉.
-  // gtag.js 로드 후 큐를 순차 처리. (객체 push는 GTM 전용 — gtag.js는 무시)
+  // 정통 Google bootstrap 패턴(`function gtag(){dataLayer.push(arguments)}`)을 그대로
+  // 사용해 dataLayer에 IArguments 형태로 큐잉 — rest spread Array push 대신.
+  // gtag.js 로드 후 큐를 순차 처리할 때 IArguments 형태를 기대하므로 호환성 보장.
   window.dataLayer = window.dataLayer || [];
   if (typeof window.gtag !== 'function') {
-    window.gtag = function gtagStub(...args: unknown[]) {
-      window.dataLayer!.push(args);
+    window.gtag = function gtagStub() {
+      window.dataLayer!.push(arguments);
     };
   }
   window.gtag('event', 'web_vitals', eventPayload);
